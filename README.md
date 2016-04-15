@@ -8,7 +8,7 @@ Build Instructions for Windows 7 and up
 You will need the following:
 
 1.	Visual Studio 2015 to build the applications and libs
-2.	Common folder, obtain from the GPU Open site (CXL_Common)
+2.	Common folder, obtain from the [GPU Open site (CXL_Common)] (https://github.com/GPUOpen-Tools)
 
 The directory should be as follows
 
@@ -34,13 +34,16 @@ This solution will create a build folder that contains a
 CompressonatorCLI.exe and a new plugins folder under
 \Compressonator\Build\VS2015\(configuration)\(platform)\
 
-The command line tool has dependencies on Qt (V5.4 and up) 
--Qt5Core.dll
--icuin54.dll
--icuuc54.dll
--icudt54.dll
--Qt5Gui.dll
--libGLESv2.dll
+The command line tool has dependencies on Qt (V5.4 and up)
+
+- Qt5Core.dll
+- icuin54.dll
+- icuuc54.dll
+- icudt54.dll
+- Qt5Gui.dll
+- libGLESv2.dll
+
+The dlls above are copied from common to CompressonatorCLI.exe folder by building the "CopyScript" project in the VS2015.sln.
 
 -----------------------------------------------------------
 C: Build the GUI Tool using
@@ -51,4 +54,9 @@ This solution will create a build folder that contains a
 Compressonator.exe and a plugins folder under
 \Compressonator\Build\VS2015\(configuration)\(platform)\
 
-The GUI tool has dependencies on Qt(V5.4 and up) and CXL - These file are copied from common & CLX folders to the Compressonator.exe folder when the project solution builds "CopyScript"
+If building in Debug_MD configuration, please make sure the working directory is in \Compressonator\Build\VS2015\Debug_MD\(platform)\
+
+The GUI tool has dependencies on Qt(V5.4 and up) and CXL - These file are copied from common & CLX folders to the Compressonator.exe folder when the project solution builds "CopyScript" project.
+
+
+
