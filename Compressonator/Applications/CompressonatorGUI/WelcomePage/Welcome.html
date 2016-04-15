@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Compressonator GUI</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <!--[if lt IE 7]>
+        <style type="text/css">
+            #wrapper { height:100%; }
+        </style>
+    <![endif]-->
+
+    <script type="text/javascript">
+    var doc = document.getElementById('doc');
+    doc.removeAttribute('class', 'no-js');
+    doc.setAttribute('class', 'js');
+    var current_mode = 'debug';
+    function clickButton(action) {
+        console.log(action);
+    }
+    </script>
+
+
+
+</head>
+<body>
+    <div id="wrapper">
+        <div id="header">
+            <h1 id="title">Compressonator</h1>
+        </div>
+        <div id="intro" class="section">
+            <p><br /> </p>
+        </div>
+        <div id="content">
+            <div class="column">
+                <div class="section">
+                    <h2>Sample Projects</h2>
+                    <table id="sample_table">
+                        <tbody>
+                            <tr><td><a href="" onclick='clickButton("open_project_BC7_Compression")'>BC7  Compression</a></td></tr>
+                            <tr><td><a href="" onclick='clickButton("open_project_BC6H_Compression")'>BC6H Compression</a></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="section">
+                    <h2>Recent Projects</h2>
+                    <table id="recent_table">
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="main">
+                <div class="section">
+                    <h2>Did you know?</h2>
+                    <dl>
+                        <dt><b>Drag and Drop</b></dt>
+                        <dd>
+                            Single or Multiple Image files can be placed onto the Project Explorer view
+                            by grabbing images from file explorer or desktop and placing them onto the project panel
+                        </dd>
+                        <p></p>
+                        <dt><b>New image formats</b></dt>
+                        <dd>By adding 3rd party Qt image view components you can extend which source images can be compressed</dd>
+                    </dl>
+                </div>
+            </div>
+        </div><!-- #content -->
+        <div id="footer">
+            <div id="footer_in">
+                <table width=100%>
+                    <tr>
+                        <td>
+                            <ul style="white-space:nowrap">
+                                <a href="" onclick='clickButton("show_help")'>User Guide</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="" onclick='clickButton("show_quick_start")'>Getting Started</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="" onclick='clickButton("show_website")'>Compressonator Web Site</a>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div><!-- #footer -->
+    </div><!-- #wrapper -->
+</body>
+</html>

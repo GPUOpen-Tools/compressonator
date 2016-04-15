@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <PropertyGroup Label="UserMacros">
+     <QTDIR>$(SolutionDir)..\..\..\..\Common\Lib\Ext\Qt\5.5\</QTDIR>
+     <Compressonator_RootDev>$(SolutionDir)..\..\..\</Compressonator_RootDev>
+     <Compressonator_BOOST>$(SolutionDir)..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\</Compressonator_BOOST>
+     <Compressonator_QT>$(SolutionDir)..\..\..\..\Common\Lib\Ext\Qt\5.5\</Compressonator_QT>
+     <Compressonator_OPENCV>$(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenCV\2.49\</Compressonator_OPENCV>
+     <Compressonator_OPENEXR>$(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\</Compressonator_OPENEXR>
+     <Compressonator_OPENGL>$(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenGL\</Compressonator_OPENGL>
+     <Compressonator_TINYXML>$(SolutionDir)..\..\..\..\Common\Lib\Ext\tinyxml\2.6.2\</Compressonator_TINYXML>
+     <Compressonator_ZLIB>$(SolutionDir)..\..\..\..\Common\Lib\Ext\zlib\1.2.8\</Compressonator_ZLIB>
+     <Compressonator_APPSDK>$(SolutionDir)..\..\..\..\Common\Lib\AMD\APPSDK\3-0\</Compressonator_APPSDK>
+     <Compressonator_VULKAN>$(SolutionDir)..\..\..\..\Common\Lib\AMD\Vulkan\rev_1_0_0\</Compressonator_VULKAN>
+
+     <DebugSuffix Condition="'$(Configuration)'=='Debug_MD'">d</DebugSuffix>
+     <ShortPlatform Condition="'$(Platform)' == 'Win32'">x86</ShortPlatform>
+
+    </PropertyGroup>
+
+    <ItemDefinitionGroup>
+        <ClCompile>
+            <AdditionalIncludeDirectories>
+                $(Compressonator_QT)include;
+                $(Compressonator_QT)include\QtCore;
+                $(Compressonator_QT)include\QtWidgets;
+                $(Compressonator_QT)include\QtGui;
+                $(Compressonator_QT)include\QtNetwork;
+                $(Compressonator_QT)include\QtXml;
+                $(Compressonator_QT)include\QtWebKit;
+                $(Compressonator_QT)include\QtWebKitWidgets;
+                $(Compressonator_QT)include\QtPrintSupport;
+                $(Compressonator_QT)include\QtOpenGL;
+                $(Compressonator_QT)include\QtANGLE;
+                %(AdditionalIncludeDirectories)
+            </AdditionalIncludeDirectories>
+        </ClCompile>
+        <Link>
+            <AdditionalDependencies>
+                Qt5Widgets$(DebugSuffix).lib;
+                Qt5Core$(DebugSuffix).lib;
+                Qt5Gui$(DebugSuffix).lib;
+                Qt5Network$(DebugSuffix).lib;
+                Qt5Xml$(DebugSuffix).lib;
+                Qt5OpenGL$(DebugSuffix).lib;
+                Qt5WebKit$(DebugSuffix).lib;
+                Qt5WebKitWidgets$(DebugSuffix).lib;
+                Qt5PrintSupport$(DebugSuffix).lib;
+                %(AdditionalDependencies)
+            </AdditionalDependencies>
+            <AdditionalLibraryDirectories>
+                $(Compressonator_QT)lib\win32;
+                %(AdditionalLibraryDirectories)
+            </AdditionalLibraryDirectories>
+        </Link>
+    </ItemDefinitionGroup>    
+    
+  <ItemGroup>
+    <BuildMacro Include="QTDIR">
+        <Value>$(QTDIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_RootDev">
+        <Value>$(Compressonator_RootDev)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_BOOST">
+        <Value>$(Compressonator_BOOST)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_QT">
+        <Value>$(Compressonator_QT)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_OPENCV">
+        <Value>$(Compressonator_OPENCV)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_OPENEXR">
+        <Value>$(Compressonator_OPENEXR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_TINYXML">
+        <Value>$(Compressonator_TINYXML)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_ZLIB">
+        <Value>$(Compressonator_ZLIB)</Value>
+    </BuildMacro>
+      <BuildMacro Include="Compressonator_APPSDK">
+          <Value>$(Compressonator_APPSDK)</Value>
+      </BuildMacro>
+      <BuildMacro Include="Compressonator_VULKAN">
+          <Value>$(Compressonator_VULKAN)</Value>
+      </BuildMacro>
+      <BuildMacro Include="Compressonator_OPENGL">
+          <Value>$(Compressonator_OPENGL)</Value>
+      </BuildMacro>
+  </ItemGroup>
+
+</Project>

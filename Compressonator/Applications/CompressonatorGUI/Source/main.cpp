@@ -1,0 +1,187 @@
+//=====================================================================
+// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files(the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions :
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+//=====================================================================
+
+#include <QApplication>
+#include "appQtApplication.h"
+#include "cpMainComponents.h"
+#include "PluginManager.h"
+#include "mips.h"
+
+#define MSG_HANDLER
+
+// Our Static Plugin Interfaces
+#pragma comment(lib,"ASTC.lib")
+#pragma comment(lib,"BoxFilter.lib")
+#pragma comment(lib,"DDS.lib")
+#pragma comment(lib,"EXR.lib")
+#pragma comment(lib,"KTX.lib")
+
+extern void *make_Plugin_ASTC();
+extern void *make_Plugin_BoxFilter();
+extern void *make_Plugin_DDS();
+extern void *make_Plugin_EXR();
+extern void *make_Plugin_KTX();
+
+#ifdef _DEBUG
+#pragma comment(lib,"CXLApplicationComponents-d.lib")
+#pragma comment(lib,"CXLApiClasses-d.lib")
+#pragma comment(lib,"CXLOSWrappers-d.lib")
+#pragma comment(lib,"CXLBaseTools-d.lib")
+#pragma comment(lib,"libGLESv2d.lib")
+#else
+#pragma comment(lib,"CXLApplicationComponents.lib")
+#pragma comment(lib,"CXLApiClasses.lib")
+#pragma comment(lib,"CXLOSWrappers.lib")
+#pragma comment(lib,"CXLBaseTools.lib")
+#pragma comment(lib,"libGLESv2.lib")
+#endif
+
+#include <CXLBaseTools/Include/gtAssert.h>
+#include <CXLBaseTools/Include/gtList.h>
+#include <CXLBaseTools/Include/gtString.h>
+#include <CXLApplicationComponents/Include/acSendErrorReportDialog.h>
+#include <CXLApplicationComponents/Include/acIcons.h>
+
+// CodeXL Error Reports
+#include <CXLApplicationComponents/Include/acSendErrorReportDialog.h>
+#include <CXLApplicationComponents/Include/acMessageBox.h>
+#include <CXLApplicationComponents/Include/acSoftwareUpdaterWindow.h>
+
+
+#define SEPERATOR_STYLE "QMainWindow::separator { background-color: #d7d6d5; width: 3px; height: 3px; border:none; }"
+#define PERCENTAGE_OF_MONITOR_WIDTH_FOR_SCREEN  0.65
+#define PERCENTAGE_OF_MONITOR_HEIGHT_FOR_SCREEN 0.8
+
+PluginManager   g_pluginManager;
+bool            g_bAbortCompression;
+CMIPS*          g_CMIPS;                            // Global MIPS functions shared between app and all IMAGE plugins
+
+
+void GetSupportedFileFormats(QList<QByteArray> &g_supportedFormats)
+{
+
+    // Assemble list of supported Image Formats from our plugin
+    int numPlugins = g_pluginManager.getNumPlugins();
+    for (int i = 0; i< numPlugins; i++)
+    {
+        if (strcmp(g_pluginManager.getPluginType(i), "IMAGE") == 0)
+        {
+            QByteArray bArray = g_pluginManager.getPluginName(i);
+            QByteArray fformat = bArray.toUpper();
+            if (!g_supportedFormats.contains(fformat))
+                g_supportedFormats.append(fformat);
+        }
+    }
+
+    // Get a list of all Supported file formats from Qt Plugins
+    QList<QByteArray> QtFormats = QImageReader::supportedImageFormats();
+
+    // Upppercase List
+    QList<QByteArray>::Iterator i;
+    for (i = QtFormats.begin(); i != QtFormats.end(); ++i)
+    {
+        QByteArray fformat = (*i);
+        fformat = fformat.toUpper();
+        if (!g_supportedFormats.contains(fformat))
+            g_supportedFormats.append(fformat);
+    }
+    
+    // Sort the list to alphabetical order
+    std::sort(g_supportedFormats.begin(), g_supportedFormats.end());
+
+}
+
+MyThread *m_thread;
+
+int main(int argc, char **argv)
+{
+
+    try
+    {
+        osDebugLog& theDebugLog = osDebugLog::instance();
+        theDebugLog.initialize(L"Compressonator.log");
+
+        appQtApplication app(argc, argv);
+
+        app.setWindowIcon(QIcon(":/CompressonatorGUI/Images/acompress-256.png"));
+
+
+        m_thread = new MyThread();
+    
+        // register the memory allocation failure event handler.
+        std::set_new_handler(appQtApplication::AppMemAllocFailureHandler);
+
+        /// connect the Qt application to the slots that handle the out of memory signals:
+        QObject::connect(qApp, SIGNAL(AppMemAllocFailureSignal()), qApp, SLOT(OnAppMemAllocFailureSignal()));
+
+        QObject::connect(qApp, SIGNAL(ClientMemAllocFailureSignal()), qApp, SLOT(OnClientMemAllocFailureSignal()));
+
+        //------------------------------------------------
+        // Bug reporting
+        //-------------------------------------------------
+        // QPixmap iconPixMap;
+        // acIconId iconID = AC_ICON_DEBUG_MODE;
+        // Adding Exception Handle
+        // acSetIconInPixmap(iconPixMap, iconID, AC_64x64_ICON);
+    
+        const QIcon iconPixMap(":/CompressonatorGUI/Images/compress.png");
+        const QString ProductName = "Compressonator";
+        acSendErrorReportDialog *m_pSendErrorReportDialog = new acSendErrorReportDialog(NULL, ProductName, iconPixMap);
+        m_pSendErrorReportDialog->registerForRecievingDebuggedProcessEvents();
+    
+        //----------------------------------
+        // Load plugin List for processing
+        //----------------------------------
+    
+        g_pluginManager.registerStaticPlugin("IMAGE",  "ASTC",      make_Plugin_ASTC);
+        g_pluginManager.registerStaticPlugin("IMAGE",  "DDS",       make_Plugin_DDS);
+        g_pluginManager.registerStaticPlugin("IMAGE",  "EXR",       make_Plugin_EXR);
+        g_pluginManager.registerStaticPlugin("IMAGE",  "KTX",       make_Plugin_KTX);
+        g_pluginManager.registerStaticPlugin("FILTER", "BOXFILTER", make_Plugin_BoxFilter);
+    
+        g_pluginManager.getPluginList("/plugins");
+        g_bAbortCompression = false;
+    
+        cpMainComponents mainComponents(NULL,NULL);
+
+#ifdef MSG_HANDLER
+        PrintStatusLine = &mainComponents.PrintStatus;
+        qInstallMsgHandler(mainComponents.msgHandler);
+#endif
+        QDesktopWidget *desktop = new QDesktopWidget();
+        mainComponents.resize(desktop->screenGeometry().width()*PERCENTAGE_OF_MONITOR_WIDTH_FOR_SCREEN, desktop->screenGeometry().height()*PERCENTAGE_OF_MONITOR_HEIGHT_FOR_SCREEN);
+        mainComponents.show();
+    
+        app.setStyleSheet(SEPERATOR_STYLE);
+        return app.exec();
+    }
+    catch (std::exception &e)
+    {
+        qDebug() << e.what();
+    }
+    catch (...)
+    {
+        qDebug() << "Unknown Error";
+    }
+    return(-1);
+}
