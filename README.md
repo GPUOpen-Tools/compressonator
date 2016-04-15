@@ -12,10 +12,10 @@ You will need the following:
 
 The directory should be as follows
 
--Common
--Compressonator
--LICENSE
--README.md
+- Common
+- Compressonator
+- LICENSE
+- README.md
 
 ----------------------- 
 A: Build the libs using
