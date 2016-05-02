@@ -22,7 +22,8 @@ You will need the following:
 - Common/Lib/Ext/Boost/boost_1_59_0/lib/VC14/x86/libboost_system-vc140-mt-1_59.lib 
 - Common/Lib/Ext/OpenEXR/v1.4.0/
 - Common/Lib/Ext/OpenCV/2.49/
-- Common/Lib/Ext/Qt/
+- Common/Lib/Ext/Qt/5.5/
+- Common/Lib/Ext/Qt/Global-QT.props
 - Common/Lib/Ext/tinyxml/
 - Common/Lib/Ext/zlib/1.2.8/
 
