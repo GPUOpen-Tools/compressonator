@@ -8,7 +8,7 @@ Build Instructions for Windows 7 and up
 You will need the following:
 
 1.	Visual Studio 2015 to build the applications and libs
-2.	Common folder, obtain from the [GPU Open site (CXL_Common)] (https://github.com/GPUOpen-Tools)
+2.	Common folder, obtain from the [GPU Open site (CxlCommon)] (https://github.com/GPUOpen-Tools/CxlCommon)
 
 The directory should be as follows
 
