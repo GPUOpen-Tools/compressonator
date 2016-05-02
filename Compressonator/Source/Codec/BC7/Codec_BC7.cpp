@@ -111,7 +111,7 @@ bool CCodec_BC7::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
     if (strcmp(pszParamName, "ModeMask") == 0)
     {
         m_ModeMask = (CMP_BYTE)std::stoi(sValue) & 0xFF;
-        if (m_ModeMask == 0) m_ModeMask = 0xFF;
+        if (m_ModeMask <= 0) m_ModeMask = 0xCF;
     }
     else
     if(strcmp(pszParamName, "ColourRestrict") == 0)
@@ -311,7 +311,7 @@ CodecError CCodec_BC7::InitializeBC7Library()
         for(i=0; i < m_NumEncodingThreads; i++)
         {
             // Create single encoder instance
-            m_encoder[i] = new BC7BlockEncoder(    m_ModeMask,
+            m_encoder[i] = new BC7BlockEncoder( m_ModeMask,
                                                 m_ImageNeedsAlpha,
                                                 m_Quality,
                                                 m_ColourRestrict,
@@ -453,7 +453,7 @@ CodecError CCodec_BC7::FinishBC7Encoding(void)
         return CE_Unknown;
     }
 
-    if (g_EncodeParameterStorage)
+    if (!g_EncodeParameterStorage)
     {
         return CE_Unknown;
     }

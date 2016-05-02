@@ -1323,9 +1323,9 @@ double BC7BlockEncoder::CompressBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_B
 #endif
     DWORD   i, j;
     BOOL    blockNeedsAlpha        = FALSE;
-    BOOL    blockAlphaZeroOne    = FALSE;
-    DWORD   validModeMask        = m_validModeMask;
-    BOOL    encodedBlock        = FALSE;
+    BOOL    blockAlphaZeroOne      = FALSE;
+    DWORD   validModeMask          = m_validModeMask;
+    BOOL    encodedBlock           = FALSE;
 
 #ifdef    BC7_DEBUG_TO_RESULTS_TXT
     fp = fopen("debugdata.txt","w");

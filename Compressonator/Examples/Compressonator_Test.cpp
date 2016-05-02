@@ -100,8 +100,7 @@ bool CompressionCallback(float fProgress, DWORD_PTR pUser1, DWORD_PTR pUser2)
 {
     UNREFERENCED_PARAMETER(pUser1);
     UNREFERENCED_PARAMETER(pUser2);
-
-    printf("\rCompression progress = %2.0f", fProgress);
+    printf(_T("\rCompression progress = %2.0f"), fProgress);
     return g_bAbortCompression;
 }
 
@@ -122,7 +121,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
     if (destFormat == CMP_FORMAT_Unknown)
     {
-        _tprintf(_T("Unsupported dest format\n"));
+        _tprintf(_T("Unsupported destination format\n"));
         return 0;
     }
 
@@ -136,11 +135,11 @@ int _tmain(int argc, _TCHAR* argv[])
 
     // Init dest texture
     CMP_Texture destTexture;
-    destTexture.dwSize = sizeof(destTexture);
-    destTexture.dwWidth = srcTexture.dwWidth;
-    destTexture.dwHeight = srcTexture.dwHeight;
-    destTexture.dwPitch = 0;
-    destTexture.format = destFormat;
+    destTexture.dwSize     = sizeof(destTexture);
+    destTexture.dwWidth    = srcTexture.dwWidth;
+    destTexture.dwHeight   = srcTexture.dwHeight;
+    destTexture.dwPitch    = 0;
+    destTexture.format     = destFormat;
     destTexture.dwDataSize = CMP_CalculateBufferSize(&destTexture);
     destTexture.pData = (CMP_BYTE*)malloc(destTexture.dwDataSize);
 
@@ -150,20 +149,33 @@ int _tmain(int argc, _TCHAR* argv[])
 
     // Option 1 of setting compression options - Prefered Method
     sprintf_s(options.CmdSet[0].strCommand, "Quality");
-    sprintf_s(options.CmdSet[0].strParameter, "%s", argv[4]);
+    sprintf_s(options.CmdSet[0].strParameter, "%s", argv[4]);  // Use user specified Quality (lower values increases performance)
     sprintf_s(options.CmdSet[1].strCommand, "ModeMask");
-    sprintf_s(options.CmdSet[1].strParameter, "255");          // 0xFF
-    options.NumCmds = 2;
+    sprintf_s(options.CmdSet[1].strParameter, "207");          // 0xCF
+    sprintf_s(options.CmdSet[2].strCommand, "NumThreads");     // Use Multi Threading for fast performance
+    sprintf_s(options.CmdSet[2].strParameter, "8");
+    options.NumCmds = 3;
 
     // Option 2 of setting compression options - For backward compatibility  (will be removed in future releases)
     // options.fquality             = fQuality;
     // options.dwmodeMask           = 0xFF;
+    // options.dwnumThreads         = 8;
 
     // Example 1 : Using SDK API
 #ifdef USE_EXAMPLE1
-    CMP_ConvertTexture(&srcTexture, &destTexture, &options, &CompressionCallback, NULL, NULL);
+    CMP_ERROR  cmp_status;
+    cmp_status = CMP_ConvertTexture(&srcTexture, &destTexture, &options, &CompressionCallback, NULL, NULL);
+    if (cmp_status != CMP_OK)
+    {
+        if (srcTexture.pData)  free(srcTexture.pData);
+        if (destTexture.pData) free(destTexture.pData);
+        printf(_T("Compression returned an error %d\n"), cmp_status);
+        return 0;
+    }
+
 #else
-   // Example 2 : Using Low level Block Access code valid only for BC6H and BC7
+    BC_ERROR  cmp_status;
+    // Example 2 : Using Low level Block Access code valid only for BC6H and BC7
     if (destTexture.format == CMP_FORMAT_BC7)
     {
 
@@ -211,12 +223,18 @@ int _tmain(int argc, _TCHAR* argv[])
                 }
 
                 // Call the block encoder : output is 128 bit compressed data
-                CMP_EncodeBC7Block(BC7Encoder, blockToEncode, (destTexture.pData + dstIndex) );
+                cmp_status = CMP_EncodeBC7Block(BC7Encoder, blockToEncode, (destTexture.pData + dstIndex));
+                if (cmp_status != CMP_OK)
+                {
+                    printf(_T("Compression error at block X = %d Block Y = %d \n"), i,j);
+                    i = dwBlocksX;
+                    j = dwBlocksY;
+                }
                 dstIndex += 16;
 
                 // Show Progress
                 float fProgress = 100.f * (j * dwBlocksX) / dwBlocksXY;
-                printf("\rCompression progress = %2.0f", fProgress);
+                printf(_T("\rCompression progress = %2.0f"), fProgress);
             }
         }
 
@@ -228,10 +246,11 @@ int _tmain(int argc, _TCHAR* argv[])
     }
 #endif
 
-   SaveDDSFile(pszDestFile, destTexture);
+    if (cmp_status == CMP_OK)
+        SaveDDSFile(pszDestFile, destTexture);
 
-   free(srcTexture.pData);
-   free(destTexture.pData);
-      
+   if (srcTexture.pData)  free(srcTexture.pData);
+   if (destTexture.pData) free(destTexture.pData);
+
    return 0;
 }

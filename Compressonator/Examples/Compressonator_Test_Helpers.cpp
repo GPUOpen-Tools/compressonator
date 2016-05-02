@@ -21,6 +21,8 @@
 //
 // AMD_Compress_Test_Helpers.cpp
 
+#pragma warning(disable:4996)   // Ignoring 'fopen': This function or variable may be unsafe
+
 #include <stdio.h>
 #include <tchar.h>
 #include <assert.h>

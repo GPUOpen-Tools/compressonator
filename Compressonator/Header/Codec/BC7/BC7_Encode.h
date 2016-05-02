@@ -45,8 +45,8 @@ public:
                     )
                     {
                         // Bug check : ModeMask must be > 0
-                        if (validModeMask < 0) 
-                            m_validModeMask = 0xFF;
+                        if (validModeMask <= 0) 
+                            m_validModeMask = 0xCF;
                         else
                             m_validModeMask = validModeMask;
 

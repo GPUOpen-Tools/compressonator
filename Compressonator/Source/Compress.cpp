@@ -168,12 +168,14 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
         // New override to that set quality if compresion for DXTn & ATInN codecs
         if (pOptions->fquality != AMD_CODEC_QUALITY_DEFAULT)
         {
+#ifndef _WIN64
             if (pOptions->fquality < 0.3)
                 pCodec->SetParameter("CompressionSpeed", (CMP_DWORD)CMP_Speed_SuperFast);
             else
                 if (pOptions->fquality < 0.6)
                     pCodec->SetParameter("CompressionSpeed", (CMP_DWORD)CMP_Speed_Fast);
                 else
+#endif
                     pCodec->SetParameter("CompressionSpeed", (CMP_DWORD)CMP_Speed_Normal);
         }
         else
