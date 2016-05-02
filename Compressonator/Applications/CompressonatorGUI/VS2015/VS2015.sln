@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Copy Files To Output", "Copy Files To Output", "{C982A3B8-FA8A-44F1-AF81-A6B735C7E4D4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins_Libs", "Plugins_Libs", "{CAF6EE95-57C7-4F35-A4B3-F688A44C36B9}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins_DLL", "Plugins_DLL", "{3AD490D0-FEDE-4014-9569-347D842E1C54}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WelcomePage", "WelcomePage", "{60648980-5642-42FA-AE15-2EAB01A06E49}"
 	ProjectSection(SolutionItems) = preProject
@@ -19,16 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SampleProjects", "SamplePro
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\..\..\Program Files (x86)\AMD\AMD Compress\Projects\BC6H_Compression.cprj = ..\..\..\..\..\Program Files (x86)\AMD\AMD Compress\Projects\BC6H_Compression.cprj
 		..\..\..\..\..\Program Files (x86)\AMD\AMD Compress\Projects\BC7_Compression.cprj = ..\..\..\..\..\Program Files (x86)\AMD\AMD Compress\Projects\BC7_Compression.cprj
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IMGAnalysis", "..\..\_Plugins\CAnalysis\Analysis\VS2015\CAnalysis.vcxproj", "{51581D29-8097-49A6-A692-0C16D56B5D9A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{F9834E0C-3037-4AAB-B7A2-2E0265BC0211} = {F9834E0C-3037-4AAB-B7A2-2E0265BC0211}
-		{0671333B-4D11-43EE-BBEE-9F96E54DACAE} = {0671333B-4D11-43EE-BBEE-9F96E54DACAE}
-		{B9809E47-2BA9-44F4-A91D-29D2493509A2} = {B9809E47-2BA9-44F4-A91D-29D2493509A2}
-		{B439F755-9F29-480A-BB3E-C055C682E796} = {B439F755-9F29-480A-BB3E-C055C682E796}
-		{E19A9BE7-2E54-4475-B484-03434E03A7DB} = {E19A9BE7-2E54-4475-B484-03434E03A7DB}
-		{411CD7F5-D04B-456A-8B30-631170C7445A} = {411CD7F5-D04B-456A-8B30-631170C7445A}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ASTC", "..\..\_Plugins\CImage\ASTC\VS2015\ASTC.vcxproj", "{F9834E0C-3037-4AAB-B7A2-2E0265BC0211}"
@@ -59,16 +47,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CopyScript", "..\CopyFileTo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Compressonator", "..\..\..\VS2015\CompressonatorLib.vcxproj", "{B439F755-9F29-480A-BB3E-C055C682E796}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IMGAnalysis", "..\..\_Plugins\CAnalysis\Analysis\VS2015\CAnalysis.vcxproj", "{51581D29-8097-49A6-A692-0C16D56B5D9A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_MD|Win32 = Debug_MD|Win32
 		Release_MD|Win32 = Release_MD|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{51581D29-8097-49A6-A692-0C16D56B5D9A}.Debug_MD|Win32.ActiveCfg = Debug_MD|Win32
-		{51581D29-8097-49A6-A692-0C16D56B5D9A}.Debug_MD|Win32.Build.0 = Debug_MD|Win32
-		{51581D29-8097-49A6-A692-0C16D56B5D9A}.Release_MD|Win32.ActiveCfg = Release_MD|Win32
-		{51581D29-8097-49A6-A692-0C16D56B5D9A}.Release_MD|Win32.Build.0 = Release_MD|Win32
 		{F9834E0C-3037-4AAB-B7A2-2E0265BC0211}.Debug_MD|Win32.ActiveCfg = Debug_MD|Win32
 		{F9834E0C-3037-4AAB-B7A2-2E0265BC0211}.Debug_MD|Win32.Build.0 = Debug_MD|Win32
 		{F9834E0C-3037-4AAB-B7A2-2E0265BC0211}.Release_MD|Win32.ActiveCfg = Release_MD|Win32
@@ -101,18 +87,22 @@ Global
 		{B439F755-9F29-480A-BB3E-C055C682E796}.Debug_MD|Win32.Build.0 = Debug_MD|Win32
 		{B439F755-9F29-480A-BB3E-C055C682E796}.Release_MD|Win32.ActiveCfg = Release_MD|Win32
 		{B439F755-9F29-480A-BB3E-C055C682E796}.Release_MD|Win32.Build.0 = Release_MD|Win32
+		{51581D29-8097-49A6-A692-0C16D56B5D9A}.Debug_MD|Win32.ActiveCfg = Debug_MD|Win32
+		{51581D29-8097-49A6-A692-0C16D56B5D9A}.Debug_MD|Win32.Build.0 = Debug_MD|Win32
+		{51581D29-8097-49A6-A692-0C16D56B5D9A}.Release_MD|Win32.ActiveCfg = Release_MD|Win32
+		{51581D29-8097-49A6-A692-0C16D56B5D9A}.Release_MD|Win32.Build.0 = Release_MD|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{51581D29-8097-49A6-A692-0C16D56B5D9A} = {3AD490D0-FEDE-4014-9569-347D842E1C54}
 		{F9834E0C-3037-4AAB-B7A2-2E0265BC0211} = {CAF6EE95-57C7-4F35-A4B3-F688A44C36B9}
 		{0671333B-4D11-43EE-BBEE-9F96E54DACAE} = {CAF6EE95-57C7-4F35-A4B3-F688A44C36B9}
 		{E19A9BE7-2E54-4475-B484-03434E03A7DB} = {CAF6EE95-57C7-4F35-A4B3-F688A44C36B9}
 		{B9809E47-2BA9-44F4-A91D-29D2493509A2} = {CAF6EE95-57C7-4F35-A4B3-F688A44C36B9}
 		{411CD7F5-D04B-456A-8B30-631170C7445A} = {CAF6EE95-57C7-4F35-A4B3-F688A44C36B9}
 		{077EF46E-74ED-4219-B577-2CC3C8003C85} = {C982A3B8-FA8A-44F1-AF81-A6B735C7E4D4}
+		{51581D29-8097-49A6-A692-0C16D56B5D9A} = {CAF6EE95-57C7-4F35-A4B3-F688A44C36B9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		Qt5Version = V5.5

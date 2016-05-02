@@ -240,7 +240,7 @@
       <PreprocessorDefinitions>WIN64;_DEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalIncludeDirectories>..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\Header;..\..\..\..\..\Header\Codec;..\..\..\..\..\Utils;..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\shared;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\um;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\winrt;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

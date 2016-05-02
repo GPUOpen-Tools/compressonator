@@ -169,7 +169,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Lib;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtANGLE;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -215,10 +215,10 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Lib;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtANGLE;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -237,10 +237,10 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Lib;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtANGLE;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -264,7 +264,7 @@
       </FunctionLevelLinking>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Lib;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtANGLE;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -310,10 +310,10 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Lib;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtANGLE;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -337,10 +337,10 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Lib;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtANGLE;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>

@@ -180,7 +180,7 @@
       <FloatingPointModel>Precise</FloatingPointModel>
       <OpenMPSupport>
       </OpenMPSupport>
-      <AdditionalIncludeDirectories>.\;..\..\..\Header;..\..\..\Applications\_Plugins\Common;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\shared;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\um;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\winrt;..\..\_Plugins\CImage\BMP;..\..\..\..\Common\lib\ext\Qt\5.4\Include;..\..\..\..\Common\lib\ext\Qt\5.4\Include\QtGui;..\..\..\..\Common\lib\ext\OpenEXR\v1.4.0\Source\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\..\Header;..\..\..\Applications\_Plugins\Common;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\shared;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\um;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\winrt;..\..\..\..\Common\lib\ext\Qt\5.5\Include;..\..\..\..\Common\lib\ext\Qt\5.5\Include\QtGui;..\..\..\..\Common\lib\ext\Qt\5.5\Include\QtCore;..\..\_Plugins\CImage\BMP;..\..\..\..\Common\lib\ext\OpenEXR\v1.4.0\Source\include;$(AMDCOMPRESS_ROOT)\SDK\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -189,7 +189,7 @@
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\VS2015\$(Platform)\lib\;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VS2015\$(Platform)\;..\..\..\Build\VS2015\$(Configuration)\$(Platform);$(OutDir)\Plugins;%(AdditionalLibraryDirectories);..\..\..\..\Common\lib\ext\qt\5.4\lib\win32;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\VS2015\$(Platform)\lib\;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VS2015\$(Platform)\;..\..\..\..\Common\lib\ext\qt\5.5\lib\win32;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86;..\..\..\Build\VS2015\$(Configuration)\$(Platform);$(OutDir)\Plugins;$(AMDCOMPRESS_ROOT)\SDK\lib\VS2015\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Compressonator_MTd.lib;user32.lib;ole32.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
