@@ -1,0 +1,3 @@
+[submodule "Common"]
+	path = Common
+	url = https://github.com/GPUOpen-Tools/cxl-common.git
