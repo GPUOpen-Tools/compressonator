@@ -39,7 +39,7 @@
 
 using namespace std;
 
-#define MAX_PLUGIN_STRING 128
+#define MAX_PLUGIN_STRING 256
 
 class PluginDetails
 {

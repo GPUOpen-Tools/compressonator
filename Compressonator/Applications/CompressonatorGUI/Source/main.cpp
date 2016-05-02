@@ -35,12 +35,14 @@
 #pragma comment(lib,"DDS.lib")
 #pragma comment(lib,"EXR.lib")
 #pragma comment(lib,"KTX.lib")
+#pragma comment(lib,"IMGAnalysis.lib")
 
 extern void *make_Plugin_ASTC();
 extern void *make_Plugin_BoxFilter();
 extern void *make_Plugin_DDS();
 extern void *make_Plugin_EXR();
 extern void *make_Plugin_KTX();
+extern void *make_Plugin_CAnalysis();
 
 #ifdef _DEBUG
 #pragma comment(lib,"CXLApplicationComponents-d.lib")
@@ -56,16 +58,16 @@ extern void *make_Plugin_KTX();
 #pragma comment(lib,"libGLESv2.lib")
 #endif
 
-#include <CXLBaseTools/Include/gtAssert.h>
-#include <CXLBaseTools/Include/gtList.h>
-#include <CXLBaseTools/Include/gtString.h>
-#include <CXLApplicationComponents/Include/acSendErrorReportDialog.h>
-#include <CXLApplicationComponents/Include/acIcons.h>
+#include <AMDTBaseTools/Include/gtAssert.h>
+#include <AMDTBaseTools/Include/gtList.h>
+#include <AMDTBaseTools/Include/gtString.h>
+#include <AMDTApplicationComponents/Include/acSendErrorReportDialog.h>
+#include <AMDTApplicationComponents/Include/acIcons.h>
 
 // CodeXL Error Reports
-#include <CXLApplicationComponents/Include/acSendErrorReportDialog.h>
-#include <CXLApplicationComponents/Include/acMessageBox.h>
-#include <CXLApplicationComponents/Include/acSoftwareUpdaterWindow.h>
+#include <AMDTApplicationComponents/Include/acSendErrorReportDialog.h>
+#include <AMDTApplicationComponents/Include/acMessageBox.h>
+#include <AMDTApplicationComponents/Include/acSoftwareUpdaterWindow.h>
 
 
 #define SEPERATOR_STYLE "QMainWindow::separator { background-color: #d7d6d5; width: 3px; height: 3px; border:none; }"
@@ -158,6 +160,7 @@ int main(int argc, char **argv)
         g_pluginManager.registerStaticPlugin("IMAGE",  "EXR",       make_Plugin_EXR);
         g_pluginManager.registerStaticPlugin("IMAGE",  "KTX",       make_Plugin_KTX);
         g_pluginManager.registerStaticPlugin("FILTER", "BOXFILTER", make_Plugin_BoxFilter);
+        g_pluginManager.registerStaticPlugin("IMAGE", "ANALYSIS",   make_Plugin_CAnalysis);
     
         g_pluginManager.getPluginList("/plugins");
         g_bAbortCompression = false;

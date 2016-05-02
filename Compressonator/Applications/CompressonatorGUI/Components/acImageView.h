@@ -36,7 +36,7 @@
 #include <QGLWidget>
 
 // GT ASSERT
-#include <CXLBaseTools/Include/gtAssert.h>
+#include <AMDTBaseTools/Include/gtAssert.h>
 
 // Local
 #include "acCustomGraphics.h"

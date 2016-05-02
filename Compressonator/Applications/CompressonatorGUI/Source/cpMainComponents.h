@@ -42,12 +42,12 @@
 #include "acCustomDockWidget.h"
 
 // Progress Bar
-#include <CXLApplicationComponents/Include/acProgressDlg.h>
+#include <AMDTApplicationComponents/Include/acProgressDlg.h>
 
 // CodeXL Help Dialog
-#include <CXLOSWrappers/Include/osProductVersion.h>
-//#include <CXLApplicationFramework/Include/afGlobalVariablesManager.h>
-#include <CXLApplicationComponents/Include/acHelpAboutDialog.h>
+#include <AMDTOSWrappers/Include/osProductVersion.h>
+//#include <AMDTApplicationFramework/Include/afGlobalVariablesManager.h>
+#include <AMDTApplicationComponents/Include/acHelpAboutDialog.h>
 
 // //Reserved: GPUDecode
 

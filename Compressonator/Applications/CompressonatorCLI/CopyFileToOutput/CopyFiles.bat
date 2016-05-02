@@ -22,5 +22,8 @@ XCopy /r /d /y "%BUILD_QTDIR%bin\win32\icuuc54.dll"                      %BUILD_
 XCopy /r /d /y "%BUILD_QTDIR%bin\win32\libGLESv2%_DEBUG%.dll"            %BUILD_OUTDIR%
 XCopy /r /d /y "%BUILD_QTDIR%bin\win32\Qt5Core%_DEBUG%.dll"              %BUILD_OUTDIR%
 XCopy /r /d /y "%BUILD_QTDIR%bin\win32\Qt5Gui%_DEBUG%.dll"               %BUILD_OUTDIR%
+XCopy /r /d /y "%BUILD_OPENCV_DIR%opencv_core249%_DEBUG%.dll"    %BUILD_OUTDIR%
+XCopy /r /d /y "%BUILD_OPENCV_DIR%opencv_imgproc249%_DEBUG%.dll" %BUILD_OUTDIR%
+XCopy /r /d /y "%BUILD_OPENCV_DIR%opencv_highgui249%_DEBUG%.dll" %BUILD_OUTDIR%
 
 IF NOT EXIST %BUILD_OUTDIR%plugins mkdir %BUILD_OUTDIR%plugins 

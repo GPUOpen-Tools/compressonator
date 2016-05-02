@@ -27,9 +27,6 @@
     <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half\half.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\AMDCompressGUI\Components\cpImageLoader.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Common\TextureIO.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -48,8 +45,11 @@
     <ClCompile Include="..\..\..\Common\cExr.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\AMDCompressGUI\Common\cvmatandqimage.cpp">
-      <Filter>Common</Filter>
+    <ClCompile Include="..\..\..\..\CompressonatorGUI\Common\cvmatandqimage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\CompressonatorGUI\Components\cpImageLoader.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -57,9 +57,6 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Common\PluginManager.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\AMDCompressGUI\Components\cpImageLoader.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Common\TextureIO.h">
@@ -80,8 +77,11 @@
     <ClInclude Include="..\..\..\Common\cExr.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\AMDCompressGUI\Common\cvmatandqimage.h">
-      <Filter>Common</Filter>
+    <ClInclude Include="..\..\..\..\CompressonatorGUI\Common\cvmatandqimage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\CompressonatorGUI\Components\cpImageLoader.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

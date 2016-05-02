@@ -28,22 +28,22 @@
 #include <QApplication>
 
 // Compiler warnings:
-#include <CXLBaseTools/Include/gtIgnoreCompilerWarnings.h>
+#include <AMDTBaseTools/Include/gtIgnoreCompilerWarnings.h>
 
 // Qt:
 #include <QtWidgets>
 
 // Infra:
-#include <CXLBaseTools/Include/gtAssert.h>
-#include <CXLOSWrappers/Include/osDebugLog.h>
-#include <CXLOSWrappers/Include/osCallStack.h>
-#include <CXLOSWrappers/Include/osCallsStackReader.h>
-#include <CXLOSWrappers/Include/osProcess.h>
-#include <CXLApplicationComponents/Include/acMessageBox.h>
-#include <CXLApplicationComponents/Include/acSendErrorReportDialog.h>
+#include <AMDTBaseTools/Include/gtAssert.h>
+#include <AMDTOSWrappers/Include/osDebugLog.h>
+#include <AMDTOSWrappers/Include/osCallStack.h>
+#include <AMDTOSWrappers/Include/osCallsStackReader.h>
+#include <AMDTOSWrappers/Include/osProcess.h>
+#include <AMDTApplicationComponents/Include/acMessageBox.h>
+#include <AMDTApplicationComponents/Include/acSendErrorReportDialog.h>
 
 // Components:
-#include <CXLApplicationComponents/Include/acSendErrorReportDialog.h>
+#include <AMDTApplicationComponents/Include/acSendErrorReportDialog.h>
 
 // Declare osExceptionCode as a meta types for Qt to be able to queue its instances:
 Q_DECLARE_METATYPE(osExceptionCode);

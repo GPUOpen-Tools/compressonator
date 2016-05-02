@@ -25,19 +25,19 @@
 #include <QtWidgets>
 
 // Infra:
-#include <CXLBaseTools/Include/AMDTDefinitions.h>
-#include <CXLBaseTools/Include/gtAssert.h>
-#include <CXLOSWrappers/Include/osDebugLog.h>
-#include <CXLOSWrappers/Include/osCallStack.h>
-#include <CXLOSWrappers/Include/osCallsStackReader.h>
-#include <CXLOSWrappers/Include/osProcess.h>
-#include <CXLOSWrappers/Include/osThread.h>
+#include <AMDTBaseTools/Include/AMDTDefinitions.h>
+#include <AMDTBaseTools/Include/gtAssert.h>
+#include <AMDTOSWrappers/Include/osDebugLog.h>
+#include <AMDTOSWrappers/Include/osCallStack.h>
+#include <AMDTOSWrappers/Include/osCallsStackReader.h>
+#include <AMDTOSWrappers/Include/osProcess.h>
+#include <AMDTOSWrappers/Include/osThread.h>
 
 // AMDTApplicationFramework:
-//#include <CXLApplicationFramework/Include/afApplicationCommands.h>
+//#include <AMDTApplicationFramework/Include/afApplicationCommands.h>
 
 // AMDTApplicationComponents:
-#include <CXLApplicationComponents/Include/acMessageBox.h>
+#include <AMDTApplicationComponents/Include/acMessageBox.h>
 
 // local
 #include <cpUnhandledExceptionHandler.h>

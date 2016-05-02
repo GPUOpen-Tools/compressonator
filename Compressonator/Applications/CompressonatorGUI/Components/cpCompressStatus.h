@@ -38,8 +38,8 @@
 #include <QtWidgets>
 #include "acCustomDockWidget.h"
 // Progress Bar
-#include <CXLApplicationComponents/Include/acProgressDlg.h>
-#include <CXLApplicationComponents/Include/acApplicationComponentsDLLBuild.h>
+#include <AMDTApplicationComponents/Include/acProgressDlg.h>
+#include <AMDTApplicationComponents/Include/acApplicationComponentsDLLBuild.h>
 
 class CompressStatusDialog : 
     public QDockWidget

@@ -797,7 +797,7 @@ bool GenerateAnalysis(std::string SourceFile, std::string DestFile)
 {
     PluginInterface_Analysis *Plugin_Analysis;
     int testpassed = 0;
-    Plugin_Analysis = reinterpret_cast<PluginInterface_Analysis *>(g_pluginManager.GetPlugin("ANALYSIS", "IMAGE"));
+    Plugin_Analysis = reinterpret_cast<PluginInterface_Analysis *>(g_pluginManager.GetPlugin("IMAGE", "ANALYSIS"));
     if (Plugin_Analysis)
     {
         string src_ext = boost::filesystem::extension((SourceFile.c_str()));
@@ -1056,6 +1056,15 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
         if (PrintStatusLine == NULL)
             PrintStatusLine = &LocalPrintF;
 
+		
+		if (g_CmdPrams.analysis)
+		{
+			if (!(GenerateAnalysis(g_CmdPrams.SourceFile, g_CmdPrams.DestFile)))
+				PrintInfo("Error: Image Analysis Failed\n");
+
+			return 0;
+		}
+
         QueryPerformanceFrequency(&frequency);
 
         // ==========================
@@ -1088,7 +1097,6 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
 
         // Determin if destinationfile is to be Compressed
         DestinationFormatIsCompressed = CompressedFormat(destFormat);
-
 
         //========================
         // Set the source format
@@ -1346,7 +1354,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
                 if (pFeedbackProc)
                     pFeedbackProc(100, NULL, NULL);
         }
-
+	
         //==============================================
         // Save to file destination buffer if 
         // Uncomprssed file to Compressed File format
@@ -1623,12 +1631,6 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
 
     if (g_CmdPrams.showperformance)
         QueryPerformanceCounter(&conversion_loopEndTime);
-
-    if (g_CmdPrams.analysis)
-    {
-        if(!(GenerateAnalysis(g_CmdPrams.SourceFile, g_CmdPrams.DestFile)))
-            PrintInfo("Error: Image Analysis Failed\n");
-    }
 
     if ((!g_CmdPrams.silent) && (g_CmdPrams.showperformance))
     {

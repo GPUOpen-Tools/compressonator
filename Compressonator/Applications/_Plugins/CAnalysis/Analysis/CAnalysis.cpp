@@ -52,11 +52,6 @@ using namespace Imath;
 
 using namespace std;
 
-PluginManager   g_pluginManager;
-bool            g_bAbortCompression;
-CMIPS*            g_CMIPS;
-int             g_OpenGLMajorVersion = 0;
-int             g_OpenGLMinorVersion = 0;
 extern MipSet*  DecompressMIPSet(MipSet *MipSetIn, bool swizzle = false);
 
 #ifdef _DEBUG
@@ -73,12 +68,11 @@ extern MipSet*  DecompressMIPSet(MipSet *MipSetIn, bool swizzle = false);
 
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_Canalysis)
-SET_PLUGIN_TYPE("ANALYSIS")
-SET_PLUGIN_NAME("IMAGE")
+SET_PLUGIN_TYPE("IMAGE")
+SET_PLUGIN_NAME("ANALYSIS")
 #else
 void *make_Plugin_CAnalysis() { return new Plugin_Canalysis; }
 #endif
-
 
 vector<Mat>                       spl;
 vector<Mat>                       dpl;

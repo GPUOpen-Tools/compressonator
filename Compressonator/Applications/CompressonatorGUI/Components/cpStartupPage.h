@@ -28,17 +28,17 @@
 #include <QWebPage>
 
 // Infra:
-#include <CXLOSWrappers/Include/osFilePath.h>
+#include <AMDTOSWrappers/Include/osFilePath.h>
 // Infra:
-#include <CXLBaseTools/Include/gtAssert.h>
-#include <CXLBaseTools/Include/gtVector.h>
-#include <CXLOSWrappers/Include/osDebuggingFunctions.h>
-#include <CXLOSWrappers/Include/osFile.h>
-#include <CXLOSWrappers/Include/osFileLauncher.h>
-#include <CXLAPIClasses/Include/apFrameTerminators.h>
-#include <CXLApplicationComponents/Include/acColours.h>
-#include <CXLApplicationComponents/Include/acFunctions.h>
-#include <CXLApplicationComponents/Include/acMessageBox.h>
+#include <AMDTBaseTools/Include/gtAssert.h>
+#include <AMDTBaseTools/Include/gtVector.h>
+#include <AMDTOSWrappers/Include/osDebuggingFunctions.h>
+#include <AMDTOSWrappers/Include/osFile.h>
+#include <AMDTOSWrappers/Include/osFileLauncher.h>
+#include <AMDTAPIClasses/Include/apFrameTerminators.h>
+#include <AMDTApplicationComponents/Include/acColours.h>
+#include <AMDTApplicationComponents/Include/acFunctions.h>
+#include <AMDTApplicationComponents/Include/acMessageBox.h>
 
 
 

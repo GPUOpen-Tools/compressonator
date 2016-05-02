@@ -44,7 +44,7 @@
 #include "objectcontroller.h"
 
 // Progress Bar
-#include <CXLApplicationComponents/Include/acProgressDlg.h>
+#include <AMDTApplicationComponents/Include/acProgressDlg.h>
 
 #include "cpTreeWidget.h"
 #include "cpImageView.h"

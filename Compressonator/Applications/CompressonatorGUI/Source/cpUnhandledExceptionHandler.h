@@ -28,7 +28,7 @@
 #include <QtWidgets>
 
 // Infra:
-#include <CXLOSWrappers/Include/osUnhandledExceptionHandler.h>
+#include <AMDTOSWrappers/Include/osUnhandledExceptionHandler.h>
 
 // ----------------------------------------------------------------------------------
 // Class Name:           GD_API cpUnhandledExceptionHandler : public osUnhandledExceptionHandler

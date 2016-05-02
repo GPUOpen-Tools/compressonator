@@ -77,7 +77,7 @@ CMipImages* C_AnalysisData::GenerateDiffImage(const char *fsource, const char *f
     results_file = results_file.substr(0, index);
     results_file.append("_analysis.xml");
 
-    Plugin_Analysis = reinterpret_cast<Plugin_Canalysis*>(g_pluginManager.GetPlugin("ANALYSIS", "IMAGE"));
+    Plugin_Analysis = reinterpret_cast<Plugin_Canalysis*>(g_pluginManager.GetPlugin("IMAGE", "ANALYSIS"));
     if (Plugin_Analysis)
     {
         testpassed = Plugin_Analysis->TC_ImageDiff(fsource, fdest, fdiff.c_str(), (char*)results_file.c_str(), &g_pluginManager, (void**)&diffCMipImages);
@@ -130,7 +130,7 @@ int C_AnalysisData::GeneratePSNRMSEAnalysis(const char *fsource, const char *fde
     results_file = results_file.substr(0, index);
     results_file.append("_analysis.xml");
 
-    Plugin_Analysis = reinterpret_cast<Plugin_Canalysis*>(g_pluginManager.GetPlugin("ANALYSIS", "IMAGE"));
+    Plugin_Analysis = reinterpret_cast<Plugin_Canalysis*>(g_pluginManager.GetPlugin("IMAGE", "ANALYSIS"));
     if (Plugin_Analysis)
     {
         testpassed = Plugin_Analysis->TC_PSNR_MSE(fsource, fdest, (char*)results_file.c_str(), &g_pluginManager);
@@ -181,7 +181,7 @@ int C_AnalysisData::GenerateSSIMAnalysis(const char *fsource, const char *fdest)
     results_file = results_file.substr(0, index);
     results_file.append("_analysis.xml");
 
-    Plugin_Analysis = reinterpret_cast<Plugin_Canalysis*>(g_pluginManager.GetPlugin("ANALYSIS", "IMAGE"));
+    Plugin_Analysis = reinterpret_cast<Plugin_Canalysis*>(g_pluginManager.GetPlugin("IMAGE", "ANALYSIS"));
     if (Plugin_Analysis)
     {
         testpassed = Plugin_Analysis->TC_SSIM(fsource, fdest, (char*)results_file.c_str(), &g_pluginManager);
