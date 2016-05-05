@@ -25,12 +25,10 @@
 #include "stdafx.h"
 #include <stdio.h>
 #include "CAnalysis.h"
-#include <string>
 #include "PluginManager.h"
 #include <stdlib.h>
 #include <ImfRgbaFile.h>
 #include <ImfArray.h>
-#include <string>
 #include <stdio.h>
 #include <assert.h>
 #include "Compressonator.h"
@@ -452,31 +450,18 @@ void Plugin_Canalysis::write(REPORT_DATA data, char *resultsFile, char option)
 
 }
 
-bool psnr(QImage *src, QImage *dest, REPORT_DATA &myReport){
+bool psnr(QImage *src, QImage *dest, REPORT_DATA &myReport)
+{
     double bMSE = 0, gMSE = 0, rMSE = 0, MSE = 0;
     double MAX = 255.0; // Maximum possible pixel range. For our BMP's, which have 8 bits, it's 255.
     int w = src->width();
     int h = src->height();
+
     for (int y = 0; y < h; y++){
         for (int x = 0; x < w; x++){
             bMSE += pow(qBlue(src->pixel(x, y)) - qBlue(dest->pixel(x, y)), 2.0);
             gMSE += pow(qGreen(src->pixel(x, y)) - qGreen(dest->pixel(x, y)), 2.0);
             rMSE += pow(qRed(src->pixel(x, y)) - qRed(dest->pixel(x, y)), 2.0);
-
-#ifdef _DEBUG
-            bool color;
-            if (qRed(src->pixel(x, y) >0)){
-                color = true;
-            }
-
-            if (qGreen(src->pixel(x, y) >0)){
-                color = true;
-            }
-
-            if (qBlue(src->pixel(x, y) >0)){
-                color = true;
-            }
-#endif
         }
     }
 
@@ -663,6 +648,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1, const char * in2, const cha
         }
         else if (saved && cmipImages == NULL)  //cmdline version pass in null
         {
+			QFile::remove(out);
             return 0;
         }
         else //failed to save image diff

@@ -800,12 +800,10 @@ bool GenerateAnalysis(std::string SourceFile, std::string DestFile)
     Plugin_Analysis = reinterpret_cast<PluginInterface_Analysis *>(g_pluginManager.GetPlugin("IMAGE", "ANALYSIS"));
     if (Plugin_Analysis)
     {
-        string src_ext = boost::filesystem::extension((SourceFile.c_str()));
         g_CmdPrams.DiffFile = DestFile;
         int lastindex = g_CmdPrams.DiffFile.find_last_of(".");
         g_CmdPrams.DiffFile = g_CmdPrams.DiffFile.substr(0, lastindex);
-        g_CmdPrams.DiffFile.append("_diff");
-        g_CmdPrams.DiffFile.append(src_ext);
+        g_CmdPrams.DiffFile.append("_diff.bmp");
 
         string results_file = "";
         results_file = DestFile;
@@ -1154,7 +1152,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
             if (AMDLoadMIPSTextureImage(g_CmdPrams.SourceFile.c_str(), &g_MipSetIn, g_CmdPrams.use_OCV) != 0)
             {
                 cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
-                PrintInfo("Error: loading image\n");
+                PrintInfo("Error: loading image, data type not supported.\n");
                 return -1;
             }
         }
