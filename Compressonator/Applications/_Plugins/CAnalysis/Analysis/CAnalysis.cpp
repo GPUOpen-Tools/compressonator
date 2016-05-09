@@ -72,6 +72,8 @@ SET_PLUGIN_NAME("ANALYSIS")
 void *make_Plugin_CAnalysis() { return new Plugin_Canalysis; }
 #endif
 
+#define TEST_TOLERANCE 5 //for 4x4 test block omly
+
 vector<Mat>                       spl;
 vector<Mat>                       dpl;
 Plugin_Canalysis::Plugin_Canalysis()
@@ -190,6 +192,15 @@ void Plugin_Canalysis::write(REPORT_DATA data, char *resultsFile, char option)
                 v.second.put("PSNR_BLUE", data.PSNR_Blue);
                 v.second.put("PSNR_GREEN", data.PSNR_Green);
                 v.second.put("PSNR_RED", data.PSNR_Red);
+                if (data.srcdecodePattern[0]!='\0')
+                    v.second.put("FAIL_SRCDECODEPATTERN", data.srcdecodePattern);
+                else
+                    v.second.erase("FAIL_SRCDECODEPATTERN");
+                if (data.destdecodePattern[0] != '\0')
+                    v.second.put("FAIL_DESTDECODEPATTERN", data.destdecodePattern);
+                else
+                    v.second.erase("FAIL_DESTDECODEPATTERN");
+
                 nodeExist = true;
                 break;
             }
@@ -207,6 +218,11 @@ void Plugin_Canalysis::write(REPORT_DATA data, char *resultsFile, char option)
             node.add("PSNR_BLUE", data.PSNR_Blue);
             node.add("PSNR_GREEN", data.PSNR_Green);
             node.add("PSNR_RED", data.PSNR_Red);
+            if (data.srcdecodePattern[0] != '\0')
+                node.add("FAIL_SRCDECODEPATTERN", data.srcdecodePattern);
+           
+            if (data.destdecodePattern[0] != '\0')
+                node.add("FAIL_DESTDECODEPATTERN", data.destdecodePattern);
         }
     }
     else //file not exist
@@ -236,6 +252,11 @@ void Plugin_Canalysis::write(REPORT_DATA data, char *resultsFile, char option)
             node.add("PSNR_BLUE", data.PSNR_Blue);
             node.add("PSNR_GREEN", data.PSNR_Green);
             node.add("PSNR_RED", data.PSNR_Red);
+            if (data.srcdecodePattern[0] != '\0')
+                node.add("FAIL_SRCDECODEPATTERN", data.srcdecodePattern);
+
+            if (data.destdecodePattern[0] != '\0')
+                node.add("FAIL_DESTDECODEPATTERN", data.destdecodePattern);
         }
     }
 
@@ -450,12 +471,77 @@ void Plugin_Canalysis::write(REPORT_DATA data, char *resultsFile, char option)
 
 }
 
+void checkPattern(int* r, int* g, int* b, char *pattern)
+{
+    // 1=Red 2=Green 3=R+G 4=Blue 5=R+B 6=G+B 7=R+G+B
+    if (*r <= (0 + TEST_TOLERANCE) && *g <= (0 + TEST_TOLERANCE) && *b <= (0 + TEST_TOLERANCE))
+        *pattern = '0';
+    else if (*r > 0 && *g <= (0 + TEST_TOLERANCE) && *b <= (0 + TEST_TOLERANCE))
+        *pattern = '1';
+    else if (*r <= (0 + TEST_TOLERANCE) && *g > 0 && *b <= (0 + TEST_TOLERANCE))
+        *pattern = '2';
+    else if (*r <= (0 + TEST_TOLERANCE) && *g <= (0 + TEST_TOLERANCE) && *b > 0)
+        *pattern = '4';
+    else if (*r > 0 && *g > 0 && *b <= (0 + TEST_TOLERANCE))
+        *pattern = '3';
+    else if (*r > 0 && *g <= (0 + TEST_TOLERANCE) && *b > 0)
+        *pattern = '5';
+    else if (*r <= (0 + TEST_TOLERANCE) && *g > 0 && *b > 0)
+        *pattern = '6';
+    else if (*r > 0 && *g > 0 && *b > 0)
+        *pattern = '7';
+    else
+        *pattern = '8';
+
+}
+
+void generateBCtestResult(QImage *src, QImage *dest, REPORT_DATA &myReport)
+{
+    int srcR = 0, srcG = 0, srcB = 0;
+    int destR = 0, destG = 0, destB = 0;
+
+    char srcPattern[17];
+    char destPattern[17];
+    memset(srcPattern, 0, 17);
+    memset(destPattern, 0, 17);
+
+    //form decode string for src amd dest image
+    int index = 0;
+    for (int y = 0; y < 4; y++) {
+        for (int x = 0; x < 4; x++) {
+            QRgb srcPixel = src->pixel(x, y);
+            QRgb dstPixel = dest->pixel(x, y);
+            srcR = qRed(srcPixel);
+            srcG = qGreen(srcPixel);
+            srcB = qBlue (srcPixel);
+
+            destR = qRed  (dstPixel);
+            destG = qGreen(dstPixel);
+            destB = qBlue (dstPixel);
+
+            checkPattern(&srcR, &srcG, &srcB, &srcPattern[index]);
+            checkPattern(&destR, &destG, &destB, &destPattern[index]);
+            index++;
+        }
+    }
+
+    //compare and if not equal , write to myReport.decodePattern
+    if (strcmp(srcPattern, destPattern) != 0)
+    {
+        strncpy(myReport.srcdecodePattern, srcPattern, 16);
+        strncpy(myReport.destdecodePattern, destPattern, 16);
+    }
+}
+
 bool psnr(QImage *src, QImage *dest, REPORT_DATA &myReport)
 {
     double bMSE = 0, gMSE = 0, rMSE = 0, MSE = 0;
     double MAX = 255.0; // Maximum possible pixel range. For our BMP's, which have 8 bits, it's 255.
     int w = src->width();
     int h = src->height();
+
+    if (w == 4 && h == 4)
+        generateBCtestResult(src, dest, myReport);
 
     for (int y = 0; y < h; y++){
         for (int x = 0; x < w; x++){
@@ -648,7 +734,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1, const char * in2, const cha
         }
         else if (saved && cmipImages == NULL)  //cmdline version pass in null
         {
-			QFile::remove(out);
+		    QFile::remove(out);
             return 0;
         }
         else //failed to save image diff
