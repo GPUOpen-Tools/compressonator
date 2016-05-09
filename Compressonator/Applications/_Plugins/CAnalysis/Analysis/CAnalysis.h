@@ -69,8 +69,9 @@ public:
 
 
 private:
-		bool InitAnalysisLimits(char *inputfile);
         void write(REPORT_DATA data, char *resultsFile, char option);
+        void generateBCtestResult(QImage *src, QImage *dest, REPORT_DATA &myReport); //for testing only
+        bool psnr(QImage *src, QImage *dest, REPORT_DATA &myReport);
 		char m_results_path[MAX_PATH];
         string m_srcFile;
         string m_destFile;
@@ -82,6 +83,7 @@ private:
 		CMipImages                       *m_MipSrcImages;
 		CMipImages                       *m_MipDestImages;
         CMipImages                       *m_MipDiffImages;
+        CMP_FORMAT                        m_Compressformat;
 };
 
 #endif

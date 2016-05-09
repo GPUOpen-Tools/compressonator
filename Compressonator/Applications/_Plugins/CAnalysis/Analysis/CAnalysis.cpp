@@ -471,35 +471,50 @@ void Plugin_Canalysis::write(REPORT_DATA data, char *resultsFile, char option)
 
 }
 
-void checkPattern(int* r, int* g, int* b, char *pattern)
+void checkPattern(int* r, int* g, int* b, char *pattern, CMP_FORMAT format)
 {
-    // 1=Red 2=Green 3=R+G 4=Blue 5=R+B 6=G+B 7=R+G+B
-    if (*r <= (0 + TEST_TOLERANCE) && *g <= (0 + TEST_TOLERANCE) && *b <= (0 + TEST_TOLERANCE))
-        *pattern = '0';
-    else if (*r > 0 && *g <= (0 + TEST_TOLERANCE) && *b <= (0 + TEST_TOLERANCE))
-        *pattern = '1';
-    else if (*r <= (0 + TEST_TOLERANCE) && *g > 0 && *b <= (0 + TEST_TOLERANCE))
-        *pattern = '2';
-    else if (*r <= (0 + TEST_TOLERANCE) && *g <= (0 + TEST_TOLERANCE) && *b > 0)
-        *pattern = '4';
-    else if (*r > 0 && *g > 0 && *b <= (0 + TEST_TOLERANCE))
-        *pattern = '3';
-    else if (*r > 0 && *g <= (0 + TEST_TOLERANCE) && *b > 0)
-        *pattern = '5';
-    else if (*r <= (0 + TEST_TOLERANCE) && *g > 0 && *b > 0)
-        *pattern = '6';
-    else if (*r > 0 && *g > 0 && *b > 0)
-        *pattern = '7';
+    if (format == CMP_FORMAT_ATI1N) //BC4
+    {
+        // only test on red channel output
+        if (*r <= (0 + TEST_TOLERANCE))
+            *pattern = '2';
+        else if (*r > 0)
+            *pattern = '1';
+        else
+            *pattern = '8';
+    }
     else
-        *pattern = '8';
+    {
+        // 1=Red 2=Green 3=R+G 4=Blue 5=R+B 6=G+B 7=R+G+B
+        if (*r <= (0 + TEST_TOLERANCE) && *g <= (0 + TEST_TOLERANCE) && *b <= (0 + TEST_TOLERANCE))
+            *pattern = '0';
+        else if (*r > 0 && *g <= (0 + TEST_TOLERANCE) && *b <= (0 + TEST_TOLERANCE))
+            *pattern = '1';
+        else if (*r <= (0 + TEST_TOLERANCE) && *g > 0 && *b <= (0 + TEST_TOLERANCE))
+            *pattern = '2';
+        else if (*r <= (0 + TEST_TOLERANCE) && *g <= (0 + TEST_TOLERANCE) && *b > 0)
+            *pattern = '4';
+        else if (*r > 0 && *g > 0 && *b <= (0 + TEST_TOLERANCE))
+            *pattern = '3';
+        else if (*r > 0 && *g <= (0 + TEST_TOLERANCE) && *b > 0)
+            *pattern = '5';
+        else if (*r <= (0 + TEST_TOLERANCE) && *g > 0 && *b > 0)
+            *pattern = '6';
+        else if (*r > 0 && *g > 0 && *b > 0)
+            *pattern = '7';
+        else
+            *pattern = '8';
+    }
 
 }
 
-void generateBCtestResult(QImage *src, QImage *dest, REPORT_DATA &myReport)
+void  Plugin_Canalysis::generateBCtestResult(QImage *src, QImage *dest, REPORT_DATA &myReport)
 {
     int srcR = 0, srcG = 0, srcB = 0;
     int destR = 0, destG = 0, destB = 0;
 
+    if (m_MipDestImages != NULL)
+        m_Compressformat = m_MipDestImages->mipset->m_format;
     char srcPattern[17];
     char destPattern[17];
     memset(srcPattern, 0, 17);
@@ -519,8 +534,8 @@ void generateBCtestResult(QImage *src, QImage *dest, REPORT_DATA &myReport)
             destG = qGreen(dstPixel);
             destB = qBlue (dstPixel);
 
-            checkPattern(&srcR, &srcG, &srcB, &srcPattern[index]);
-            checkPattern(&destR, &destG, &destB, &destPattern[index]);
+            checkPattern(&srcR, &srcG, &srcB, &srcPattern[index], m_Compressformat);
+            checkPattern(&destR, &destG, &destB, &destPattern[index], m_Compressformat);
             index++;
         }
     }
@@ -533,7 +548,7 @@ void generateBCtestResult(QImage *src, QImage *dest, REPORT_DATA &myReport)
     }
 }
 
-bool psnr(QImage *src, QImage *dest, REPORT_DATA &myReport)
+bool Plugin_Canalysis::psnr(QImage *src, QImage *dest, REPORT_DATA &myReport)
 {
     double bMSE = 0, gMSE = 0, rMSE = 0, MSE = 0;
     double MAX = 255.0; // Maximum possible pixel range. For our BMP's, which have 8 bits, it's 255.
