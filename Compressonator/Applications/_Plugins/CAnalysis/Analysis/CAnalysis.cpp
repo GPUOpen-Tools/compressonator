@@ -471,9 +471,9 @@ void Plugin_Canalysis::write(REPORT_DATA data, char *resultsFile, char option)
 
 }
 
-void checkPattern(int* r, int* g, int* b, char *pattern, CMP_FORMAT format)
+void checkPattern(int* r, int* g, int* b, char *pattern, CMP_FORMAT format, bool src)
 {
-    if (format == CMP_FORMAT_ATI1N) //BC4
+    if (format == CMP_FORMAT_ATI1N && !src) //BC4 compressed dest image
     {
         // only test on red channel output
         if (*r <= (0 + TEST_TOLERANCE) && *g <= (0 + TEST_TOLERANCE) && *b <= (0 + TEST_TOLERANCE))
@@ -534,8 +534,8 @@ void  Plugin_Canalysis::generateBCtestResult(QImage *src, QImage *dest, REPORT_D
             destG = qGreen(dstPixel);
             destB = qBlue (dstPixel);
 
-            checkPattern(&srcR, &srcG, &srcB, &srcPattern[index], m_Compressformat);
-            checkPattern(&destR, &destG, &destB, &destPattern[index], m_Compressformat);
+            checkPattern(&srcR, &srcG, &srcB, &srcPattern[index], m_Compressformat, true);
+            checkPattern(&destR, &destG, &destB, &destPattern[index], m_Compressformat, false);
             index++;
         }
     }
