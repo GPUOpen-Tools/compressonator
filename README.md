@@ -2,32 +2,18 @@
 
 Compressonator is a set of tools for compressing textures and creating mip-map levels
 
+Compressonator DXTn (S3TC)is developed for Microsoft Windows® platform.
+
+
 Build Instructions for Windows 7 and up
 ------------------------------------------------------
 
 You will need the following:
 
 1.	Visual Studio 2015 to build the applications and libs
-2.	Common folder (submodule), or you can obtain the folder content from the [GPU Open site (CxlCommon)] (https://github.com/GPUOpen-Tools/CxlCommon) . You will only need the contents of the following folder for compressonator build:
+2.	Common folder, obtain from the [GPU Open site (CXL_Common)] (https://github.com/GPUOpen-Tools)
 
-- Common/Lib/AMD/APPSDK/3-0/
-- Common/Lib/Ext/Boost/boost_1_59_0/boost/
-- Common/Lib/Ext/Boost/boost_1_59_0/lib/VC14/x86/libboost_filesystem-vc140-mt-s-1_59.lib 
-- Common/Lib/Ext/Boost/boost_1_59_0/lib/VC14/x86/libboost_filesystem-vc140-mt-sgd-1_59.lib 
-- Common/Lib/Ext/Boost/boost_1_59_0/lib/VC14/x86/libboost_filesystem-vc140-mt-gd-1_59.lib 
-- Common/Lib/Ext/Boost/boost_1_59_0/lib/VC14/x86/libboost_filesystem-vc140-mt-1_59.lib 
-- Common/Lib/Ext/Boost/boost_1_59_0/lib/VC14/x86/libboost_system-vc140-mt-s-1_59.lib 
-- Common/Lib/Ext/Boost/boost_1_59_0/lib/VC14/x86/libboost_system-vc140-mt-sgd-1_59.lib 
-- Common/Lib/Ext/Boost/boost_1_59_0/lib/VC14/x86/libboost_system-vc140-mt-gd-1_59.lib 
-- Common/Lib/Ext/Boost/boost_1_59_0/lib/VC14/x86/libboost_system-vc140-mt-1_59.lib 
-- Common/Lib/Ext/OpenEXR/v1.4.0/
-- Common/Lib/Ext/OpenCV/2.49/
-- Common/Lib/Ext/Qt/5.5/
-- Common/Lib/Ext/Qt/Global-QT.props
-- Common/Lib/Ext/tinyxml/
-- Common/Lib/Ext/zlib/1.2.8/
-
-The directory of your workspace should be as follows
+The directory should be as follows
 
 - Common
 - Compressonator
@@ -59,6 +45,9 @@ The command line tool has dependencies on Qt (V5.4 and up)
 - icudt54.dll
 - Qt5Gui.dll
 - libGLESv2.dll
+- opencv_core249.dll
+- opencv_imgproc249.dll
+- opencv_highgui249.dll
 
 The dlls above are copied from common to CompressonatorCLI.exe folder by building the "CopyScript" project in the VS2015.sln.
 
@@ -74,6 +63,4 @@ Compressonator.exe and a plugins folder under
 If building in Debug_MD configuration, please make sure the working directory is in \Compressonator\Build\VS2015\Debug_MD\(platform)\
 
 The GUI tool has dependencies on Qt(V5.4 and up) and CXL - These file are copied from common & CLX folders to the Compressonator.exe folder when the project solution builds "CopyScript" project.
-
-
 
