@@ -42,9 +42,6 @@ public:
     virtual CodecError Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, DWORD_PTR pUser1 = NULL, DWORD_PTR pUser2 = NULL);
 
 protected:
-    virtual void DeriveBlockB(CMP_BYTE r[BLOCK_SIZE_4X4], CMP_BYTE g[BLOCK_SIZE_4X4], CMP_BYTE b[BLOCK_SIZE_4X4]);
-    virtual void DeriveBlockB(CODECFLOAT r[BLOCK_SIZE_4X4], CODECFLOAT g[BLOCK_SIZE_4X4], CODECFLOAT b[BLOCK_SIZE_4X4]);
-
     CodecType m_codecType;
 };
 

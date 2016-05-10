@@ -131,7 +131,7 @@ CodecError CCodec_ATI2N_DXT5::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& b
                 {
                     destBlock[(k * 4) + RGBA8888_CHANNEL_R] = tempBlock[(k* 4) + RGBA8888_CHANNEL_A];
                     destBlock[(k * 4) + RGBA8888_CHANNEL_G] = tempBlock[(k* 4) + RGBA8888_CHANNEL_G];
-                    destBlock[(k * 4) + RGBA8888_CHANNEL_B] = DeriveB(tempBlock[(k* 4) + RGBA8888_CHANNEL_G], tempBlock[(k* 4) + RGBA8888_CHANNEL_A]);
+                    destBlock[(k * 4) + RGBA8888_CHANNEL_B] = 0;
                     destBlock[(k * 4) + RGBA8888_CHANNEL_A] = 0xff;
                 }
 
@@ -147,7 +147,7 @@ CodecError CCodec_ATI2N_DXT5::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& b
                 {
                     destBlock[(k * 4) + RGBA32F_OFFSET_R] = tempBlock[(k* 4) + RGBA32F_OFFSET_A];
                     destBlock[(k * 4) + RGBA32F_OFFSET_G] = tempBlock[(k* 4) + RGBA32F_OFFSET_G];
-                    destBlock[(k * 4) + RGBA32F_OFFSET_B] = DeriveB(tempBlock[(k* 4) + RGBA32F_OFFSET_G], tempBlock[(k* 4) + RGBA32F_OFFSET_A]);
+                    destBlock[(k * 4) + RGBA32F_OFFSET_B] = 0.f;
                     destBlock[(k * 4) + RGBA32F_OFFSET_A] = 1.0;
                 }
 

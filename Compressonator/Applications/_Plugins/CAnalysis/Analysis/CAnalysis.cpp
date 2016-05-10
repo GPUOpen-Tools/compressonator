@@ -476,9 +476,9 @@ void checkPattern(int* r, int* g, int* b, char *pattern, CMP_FORMAT format)
     if (format == CMP_FORMAT_ATI1N) //BC4
     {
         // only test on red channel output
-        if (*r <= (0 + TEST_TOLERANCE))
+        if (*r <= (0 + TEST_TOLERANCE) && *g <= (0 + TEST_TOLERANCE) && *b <= (0 + TEST_TOLERANCE))
             *pattern = '2';
-        else if (*r > 0)
+        else if (*r > 0 && *g >0 && *b > 0)
             *pattern = '1';
         else
             *pattern = '8';

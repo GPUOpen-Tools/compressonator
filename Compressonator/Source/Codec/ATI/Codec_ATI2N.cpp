@@ -173,75 +173,59 @@ CodecError CCodec_ATI2N::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& buffer
 
     bool bUseFixed = (!bufferOut.IsFloat() && bufferOut.GetChannelDepth() == 8 && !m_bUseFloat);
     
-    CMP_BYTE alphaBlockA[BLOCK_SIZE_4X4];
-    CMP_BYTE alphaBlockR[BLOCK_SIZE_4X4];
-    CMP_BYTE alphaBlockG[BLOCK_SIZE_4X4];
-    CMP_BYTE alphaBlockB[BLOCK_SIZE_4X4];
-    memset(alphaBlockA, 0, sizeof(alphaBlockA));
+   CMP_BYTE alphaBlockA[BLOCK_SIZE_4X4];
+   CMP_BYTE alphaBlockR[BLOCK_SIZE_4X4];
+   CMP_BYTE alphaBlockG[BLOCK_SIZE_4X4];
+   CMP_BYTE alphaBlockB[BLOCK_SIZE_4X4];
+   memset(alphaBlockA, 255, sizeof(alphaBlockA));
+   memset(alphaBlockB, 0, sizeof(alphaBlockB));
 
-    float falphaBlockR[BLOCK_SIZE_4X4];
-    float falphaBlockG[BLOCK_SIZE_4X4];
-    float falphaBlockB[BLOCK_SIZE_4X4];
-    float falphaBlockA[BLOCK_SIZE_4X4];
-    memset(falphaBlockA, 0, sizeof(falphaBlockA));
+   float falphaBlockR[BLOCK_SIZE_4X4];
+   float falphaBlockG[BLOCK_SIZE_4X4];
+   float falphaBlockB[BLOCK_SIZE_4X4];
+   float falphaBlockA[BLOCK_SIZE_4X4];
+   memset(falphaBlockA, 255, sizeof(falphaBlockA));
+   memset(falphaBlockB, 0, sizeof(falphaBlockB));
+   
+   CMP_DWORD compressedBlock[4];
+   
+   for(CMP_DWORD j = 0; j < dwBlocksY; j++)
+   {
+       for(CMP_DWORD i = 0; i < dwBlocksX; i++)
+       {
+           bufferIn.ReadBlock(i*4, j*4, compressedBlock, 4);
+   
+           if(bUseFixed)
+           {
+               DecompressAlphaBlock(alphaBlockR, &compressedBlock[dwXOffset]);
+               DecompressAlphaBlock(alphaBlockG, &compressedBlock[dwYOffset]);
+               bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, alphaBlockR);
+               bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, alphaBlockG);
+               bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, alphaBlockB);
+               bufferOut.WriteBlockA(i * 4, j * 4, 4, 4, alphaBlockA);
+           }
+           else
+           {
+               DecompressAlphaBlock(falphaBlockR, &compressedBlock[dwXOffset]);
+               DecompressAlphaBlock(falphaBlockG, &compressedBlock[dwYOffset]);
+               bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, falphaBlockR);
+               bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, falphaBlockG);
+               bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, falphaBlockB);
+               bufferOut.WriteBlockA(i * 4, j * 4, 4, 4, falphaBlockA);
+           }
+       }
 
-    CMP_DWORD compressedBlock[4];
+       if (pFeedbackProc)
+       {
+           float fProgress = 100.f * (j * dwBlocksX) / dwBlocksXY;
+           if (pFeedbackProc(fProgress, pUser1, pUser2))
+           {
+               return CE_Aborted;
+           }
+       }
 
-    for(CMP_DWORD j = 0; j < dwBlocksY; j++)
-    {
-        for(CMP_DWORD i = 0; i < dwBlocksX; i++)
-        {
-            bufferIn.ReadBlock(i*4, j*4, compressedBlock, 4);
-
-            if(bUseFixed)
-            {
-                DecompressAlphaBlock(alphaBlockR, &compressedBlock[dwXOffset]);
-                DecompressAlphaBlock(alphaBlockG, &compressedBlock[dwYOffset]);
-                DeriveBlockB(alphaBlockR, alphaBlockG, alphaBlockB);
-                bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, alphaBlockR);
-                bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, alphaBlockG);
-                bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, alphaBlockB);
-                bufferOut.WriteBlockA(i * 4, j * 4, 4, 4, alphaBlockA);
-            }
-            else
-            {
-                DecompressAlphaBlock(falphaBlockR, &compressedBlock[dwXOffset]);
-                DecompressAlphaBlock(falphaBlockG, &compressedBlock[dwYOffset]);
-                DeriveBlockB(falphaBlockR, falphaBlockG, falphaBlockB);
-                bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, falphaBlockR);
-                bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, falphaBlockG);
-                bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, falphaBlockB);
-                bufferOut.WriteBlockA(i * 4, j * 4, 4, 4, falphaBlockA);
-            }
-        }
-
-        if (pFeedbackProc)
-        {
-            float fProgress = 100.f * (j * dwBlocksX) / dwBlocksXY;
-            if (pFeedbackProc(fProgress, pUser1, pUser2))
-            {
-                return CE_Aborted;
-            }
-        }
-
-
-    }
+   }
 
     return CE_OK;
 }
 
-void CCodec_ATI2N::DeriveBlockB(CMP_BYTE r[BLOCK_SIZE_4X4], CMP_BYTE g[BLOCK_SIZE_4X4], CMP_BYTE b[BLOCK_SIZE_4X4])
-{
-    for (CMP_DWORD i = 0; i < BLOCK_SIZE_4X4; i++)
-    {
-        b[i] = DeriveB(r[i], g[i]);
-    }
-}
-
-void CCodec_ATI2N::DeriveBlockB(CODECFLOAT r[BLOCK_SIZE_4X4], CODECFLOAT g[BLOCK_SIZE_4X4], CODECFLOAT b[BLOCK_SIZE_4X4])
-{
-    for (CMP_DWORD i = 0; i < BLOCK_SIZE_4X4; i++)
-    {
-        b[i] = DeriveB(r[i], g[i]);
-    }
-}
