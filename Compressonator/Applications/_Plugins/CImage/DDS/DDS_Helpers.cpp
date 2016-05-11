@@ -437,9 +437,9 @@ TC_PluginError LoopRGB8888(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*& extra
         DWORD* pEnd = (DWORD*)pARGB8888Struct->pMemory + (pMipLevel->m_dwLinearSize / 4);
         while(pTempPtr < pEnd)
         {
-            *pData++ = static_cast<BYTE> ((*pTempPtr & pARGB8888Struct->nBMask) >> pARGB8888Struct->nBShift);
-            *pData++ = static_cast<BYTE> ((*pTempPtr & pARGB8888Struct->nGMask) >> pARGB8888Struct->nGShift);
             *pData++ = static_cast<BYTE> ((*pTempPtr & pARGB8888Struct->nRMask) >> pARGB8888Struct->nRShift);
+            *pData++ = static_cast<BYTE> ((*pTempPtr & pARGB8888Struct->nGMask) >> pARGB8888Struct->nGShift);
+            *pData++ = static_cast<BYTE> ((*pTempPtr & pARGB8888Struct->nBMask) >> pARGB8888Struct->nBShift);
             *pData++ = static_cast<BYTE> ((*pTempPtr & 0xFF000000) >> 24);    //take alpha whether or not its used
             pTempPtr++;
         }

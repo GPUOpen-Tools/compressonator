@@ -1102,7 +1102,9 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
         if (p_userMipSetIn)
         {
             memcpy(&g_MipSetIn, p_userMipSetIn, sizeof(MipSet));
-            g_MipSetIn.m_swizzle = KeepSwizzle(destFormat);
+            // Data in DXTn Files are expected to be in BGRA as input to CMP_ConvertTexture
+            // Data in ASTC BC6 BC7 etc - expect data to be RGBA as input to CMP_ConvertTexture
+            g_MipSetIn.m_swizzle = KeepSwizzle(destFormat); 
             g_MipSetIn.m_pMipLevelTable = p_userMipSetIn->m_pMipLevelTable;
         }
 

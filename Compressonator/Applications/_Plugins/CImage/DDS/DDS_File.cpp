@@ -336,8 +336,6 @@ TC_PluginError SaveDDS_ARGB8888(FILE* pFile, const MipSet* pMipSet)
     for(int nSlice = 0; nSlice < nSlices; nSlice++)
         for(int nMipLevel = 0 ; nMipLevel < pMipSet->m_nMipLevels ; nMipLevel++)
         {
-            if (pMipSet->m_swizzle)
-            {
                 BYTE* pbData = DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData;
                 BYTE temp;
                 int i = 0;
@@ -353,11 +351,6 @@ TC_PluginError SaveDDS_ARGB8888(FILE* pFile, const MipSet* pMipSet)
                     }
                 }
                 fwrite(pbData, (DDS_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize), 1, pFile);
-            }
-            else
-            {
-                fwrite(DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData, DDS_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize, 1, pFile);
-            }
         }
     fclose(pFile);
 
