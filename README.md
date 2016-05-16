@@ -11,7 +11,7 @@ Build Instructions for Windows 7 and up
 You will need the following:
 
 1.	Visual Studio 2015 to build the applications and libs
-2.	Common folder (submodule), or you can obtain the folder content from the [GPU Open site (CxlCommon)] (https://github.com/GPUOpen-Tools/CxlCommon) . You will only need the contents of the following folder for compressonator build:
+2.	Common folder (submodule), or you can obtain the folder content from the [GPU Open site (CxlCommon)] (https://github.com/GPUOpen-Tools/CxlCommon) . You will only need the contents of the following folder for compressonator build (you can run the SparseCheckoutCommon.sh to get only this content):
 
 - Common/Lib/AMD/APPSDK/3-0/
 - Common/Lib/Ext/Boost/boost_1_59_0/boost/
