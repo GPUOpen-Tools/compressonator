@@ -56,7 +56,11 @@ typedef struct
 	int			brestrictColour;	
 	int			brestrictAlpha;		
 	unsigned long	dwmodeMask;		
-
+	
+	// for testing 4x4 image only. disable related code whenever necessary
+    char srcdecodePattern[17];
+    char destdecodePattern[17];
+	
 	// Compression Type
 	char  Compression[128];
 
