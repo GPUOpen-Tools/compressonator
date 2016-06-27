@@ -1,4 +1,4 @@
-//// etcpack v2.73
+//// etcpack v2.74
 //// 
 //// NO WARRANTY 
 //// 
@@ -42,7 +42,7 @@
 //// THEORY OF LIABILITY (CONTRACT, TORT OR OTHERWISE), EVEN IF SUCH HOLDER
 //// OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 //// 
-//// (C) Ericsson AB 2013. All Rights Reserved.
+//// (C) Ericsson AB 2005-2013. All Rights Reserved.
 //// 
 
 #include <stdio.h>
@@ -50,20 +50,14 @@
 #include <string.h>
 #include "etcimage.h"
 
-#include "etcpack_lib.h"
-
 // Remove warnings for unsafe functions such as strcpy
 #pragma warning(disable : 4996)
 // Remove warnings for conversions between different time variables
 #pragma warning(disable : 4244)
-// Others
-#pragma warning(disable : 4456)
-#pragma warning(disable : 4473)
-
 
 // Removes comments in a .ppm file
 // (i.e., lines starting with #)
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void removeComments(FILE *f1)
 {
     int c;
@@ -78,7 +72,7 @@ void removeComments(FILE *f1)
 
 
 // Removes white spaces in a .ppm file
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void removeSpaces(FILE *f1)
 {
     int c;
@@ -105,7 +99,7 @@ void removeSpaces(FILE *f1)
 //
 // after that follows RGBRGBRGB...
 // 
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 bool fReadPPM(char *filename, int &width, int &height, unsigned char *&pixels, int targetbitrate)
 {
     FILE *f1;
@@ -124,7 +118,7 @@ bool fReadPPM(char *filename, int &width, int &height, unsigned char *&pixels, i
 
         if(strcmp(line, "P6")!=0)
         {
-            printf("Error: %s is not binary\n");
+            printf("Error: %s is not binary\n",filename);
             printf("(Binary .ppm files start with P6).\n");
             fclose(f1);
             return false;
@@ -195,9 +189,9 @@ bool fReadPPM(char *filename, int &width, int &height, unsigned char *&pixels, i
                 {
                     for(int y=0; y<height; y++) 
                     {
-                        for(int c=0; c<3; c++) 
+                        for(int c1=0; c1<3; c1++) 
                         {
-                            pixels[3*(x+y*width)+c]=readbuffer[6*(x+y*width)+2*c];
+                            pixels[3*(x+y*width)+c1]=readbuffer[6*(x+y*width)+2*c1];
                         }
                     }
                 }
@@ -210,10 +204,10 @@ bool fReadPPM(char *filename, int &width, int &height, unsigned char *&pixels, i
                 {
                     for(int y=0; y<height; y++) 
                     {
-                        for(int c=0; c<3; c++) 
+                        for(int c1=0; c1<3; c1++) 
                         {
-                            pixels[6*(x+y*width)+2*c]=readbuffer[3*(x+y*width)+c];
-                            pixels[6*(x+y*width)+2*c+1]=readbuffer[3*(x+y*width)+c];
+                            pixels[6*(x+y*width)+2*c1]=readbuffer[3*(x+y*width)+c1];
+                            pixels[6*(x+y*width)+2*c1+1]=readbuffer[3*(x+y*width)+c1];
                         }
                     }
                 }
@@ -231,7 +225,7 @@ bool fReadPPM(char *filename, int &width, int &height, unsigned char *&pixels, i
 }
 
 // Write PPM 
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 bool fWritePPM(char *filename, int width, int height, unsigned char *pixels, int bitrate, bool reverse_y)
 {
     FILE *fsave;
@@ -262,7 +256,7 @@ bool fWritePPM(char *filename, int width, int height, unsigned char *pixels, int
 }
 
 // WritePGM
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 bool fWritePGM(char *filename, int width, int height, unsigned char *pixels,bool reverse_y, int bitdepth)
 {
    FILE *f;
@@ -301,7 +295,7 @@ bool fWritePGM(char *filename, int width, int height, unsigned char *pixels,bool
  *---------
  * then follows RGBRGBRGBRGBRGB...
  */
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 int fReadPGM(char *filename, int &width, int &height, unsigned char *&pixels, int wantedBitDepth)
 {
     FILE *f;

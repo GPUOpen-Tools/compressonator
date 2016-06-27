@@ -250,10 +250,12 @@ void CImageCompare::createImageView()
     m_imageviewFile2->setFeatures(NoDockWidgetFeatures);
 
     setting->onBrightness = true;
+    setting->generateDiff = true;
     QString diffFile = QString::fromUtf8(m_analyzed.c_str());
     m_imageviewDiff = new cpImageView(diffFile, "  Diff Image", m_newInnerWidget, m_diffMips, setting);
     m_imageviewDiff->m_useOriginalImageCursor = true;
     m_imageviewDiff->showToobar(true);
+    setting->generateDiff = false;
     for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
     {
         m_imageviewDiff->m_acImageView->onToggleImageBrightnessUp();

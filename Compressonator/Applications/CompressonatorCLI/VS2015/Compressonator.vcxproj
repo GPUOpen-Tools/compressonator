@@ -180,7 +180,7 @@
       <FloatingPointModel>Precise</FloatingPointModel>
       <OpenMPSupport>
       </OpenMPSupport>
-      <AdditionalIncludeDirectories>.\;..\..\..\Header;..\..\..\Applications\_Plugins\Common;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\shared;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\um;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\winrt;..\..\..\..\Common\lib\ext\Qt\5.5\Include;..\..\..\..\Common\lib\ext\Qt\5.5\Include\QtGui;..\..\..\..\Common\lib\ext\Qt\5.5\Include\QtCore;..\..\_Plugins\CImage\BMP;..\..\..\..\Common\lib\ext\OpenEXR\v1.4.0\Source\include;$(AMDCOMPRESS_ROOT)\SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\Common\Lib\Ext\glew\1.9.0\include\;..\..\_Plugins\Common\;..\..\..\Source\GPU_Decode\DirectXTex;..\..\..\Header\GPU_Decode;.\;..\..\..\Header;..\..\..\Applications\_Plugins\Common;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\shared;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\um;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\winrt;..\..\..\..\Common\lib\ext\Qt\5.5\Include;..\..\..\..\Common\lib\ext\Qt\5.5\Include\QtGui;..\..\..\..\Common\lib\ext\Qt\5.5\Include\QtCore;..\..\_Plugins\CImage\BMP;..\..\..\..\Common\lib\ext\OpenEXR\v1.4.0\Source\include;$(AMDCOMPRESS_ROOT)\SDK\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -189,8 +189,8 @@
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\VS2015\$(Platform)\lib\;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VS2015\$(Platform)\;..\..\..\..\Common\lib\ext\qt\5.5\lib\win32;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86;..\..\..\Build\VS2015\$(Configuration)\$(Platform);$(OutDir)\Plugins;$(AMDCOMPRESS_ROOT)\SDK\lib\VS2015\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Compressonator_MTd.lib;user32.lib;ole32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\..\Common\Lib\Ext\glew\1.9.0\lib\x86\;..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\VS2015\$(Platform)\lib\;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VS2015\$(Platform)\;..\..\..\..\Common\lib\ext\qt\5.5\lib\win32;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86;..\..\..\Build\VS2015\$(Configuration)\$(Platform);$(OutDir)\Plugins;$(AMDCOMPRESS_ROOT)\SDK\lib\VS2015\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Compressonator_MTd.lib;GPU_Decode_MTd.lib;user32.lib;ole32.lib;glew32.lib;d3d11.lib;Gdi32.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -204,7 +204,7 @@
       <FloatingPointModel>Precise</FloatingPointModel>
       <OpenMPSupport>
       </OpenMPSupport>
-      <AdditionalIncludeDirectories>.\;..\..\..\Header;..\..\..\Applications\_Plugins\Common;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\shared;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\um;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\winrt;..\..\..\..\Common\lib\ext\Qt\5.5\Include;..\..\..\..\Common\lib\ext\Qt\5.5\Include\QtGui;..\..\..\..\Common\lib\ext\Qt\5.5\Include\QtCore;..\..\_Plugins\CImage\BMP;..\..\..\..\Common\lib\ext\OpenEXR\v1.4.0\Source\include;$(AMDCOMPRESS_ROOT)\SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\Common\Lib\Ext\glew\1.9.0\include\;..\..\_Plugins\Common\;..\..\..\Source\GPU_Decode;..\..\..\Header\GPU_Decode;.\;..\..\..\Header;..\..\..\Applications\_Plugins\Common;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\shared;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\um;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\winrt;..\..\..\..\Common\lib\ext\Qt\5.5\Include;..\..\..\..\Common\lib\ext\Qt\5.5\Include\QtGui;..\..\..\..\Common\lib\ext\Qt\5.5\Include\QtCore;..\..\_Plugins\CImage\BMP;..\..\..\..\Common\lib\ext\OpenEXR\v1.4.0\Source\include;$(AMDCOMPRESS_ROOT)\SDK\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -213,8 +213,8 @@
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\VS2015\$(Platform)\lib\;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VS2015\$(Platform)\;..\..\..\..\Common\lib\ext\qt\5.5\lib\win32;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86;..\..\..\Build\VS2015\$(Configuration)\$(Platform);$(OutDir)\Plugins;$(AMDCOMPRESS_ROOT)\SDK\lib\VS2015\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Compressonator_MDd.lib;user32.lib;ole32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\..\Common\Lib\Ext\glew\1.9.0\lib\x86\;..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\VS2015\$(Platform)\lib\;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VS2015\$(Platform)\;..\..\..\..\Common\lib\ext\qt\5.5\lib\win32;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86;..\..\..\Build\VS2015\$(Configuration)\$(Platform);$(OutDir)\Plugins;$(AMDCOMPRESS_ROOT)\SDK\lib\VS2015\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Compressonator_MDd.lib;GPU_Decode_MDd.lib;user32.lib;ole32.lib;glew32.lib;d3d11.lib;Gdi32.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -228,7 +228,7 @@
       <FloatingPointModel>Precise</FloatingPointModel>
       <OpenMPSupport>
       </OpenMPSupport>
-      <AdditionalIncludeDirectories>.\;$(DK_ROOT)\win\ms_sdk\8.0\Include\shared;$(DK_ROOT)\win\ms_sdk\8.0\Include\um;$(DK_ROOT)\win\ms_sdk\8.0\Include\winrt;..\..\..\Header;..\..\..\Utils;..\..\..\Applications\_Plugins;..\..\..\Applications\_Plugins\Common;..\..\..\Applications\TheCompressonator\Source;..\..\..\Header\Codec;..\..\..\Header\Codec\BC7;..\..\..\Header\Codec\BC6H;..\..\..\..\Common\src;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex\;..\..\..\;..\..\_Plugins\CImage\BMP;..\..\..\..\Common\lib\ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\Common\lib\ext\qt\5.5\include\QtGui;..\..\..\..\Common\lib\ext\qt\5.5\include\QtCore;..\..\..\..\Common\lib\ext\qt\5.5\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\Common\Lib\Ext\glew\1.9.0\include\;..\..\_Plugins\Common\;..\..\..\Source\GPU_Decode\DirectXTex;..\..\..\Header\GPU_Decode;.\;$(DK_ROOT)\win\ms_sdk\8.0\Include\shared;$(DK_ROOT)\win\ms_sdk\8.0\Include\um;$(DK_ROOT)\win\ms_sdk\8.0\Include\winrt;..\..\..\Header;..\..\..\Utils;..\..\..\Applications\_Plugins;..\..\..\Applications\_Plugins\Common;..\..\..\Applications\TheCompressonator\Source;..\..\..\Header\Codec;..\..\..\Header\Codec\BC7;..\..\..\Header\Codec\BC6H;..\..\..\..\Common\src;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex\;..\..\..\;..\..\_Plugins\CImage\BMP;..\..\..\..\Common\lib\ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\Common\lib\ext\qt\5.5\include\QtGui;..\..\..\..\Common\lib\ext\qt\5.5\include\QtCore;..\..\..\..\Common\lib\ext\qt\5.5\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -237,8 +237,8 @@
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\$(SolutionName)\$(Platform)\lib\;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\vc14\x64;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86_64;..\..\..\Build\VS2015\$(Configuration)\$(Platform);$(OutDir)\Plugins;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Compressonator_MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\..\Common\Lib\Ext\glew\1.9.0\lib\x64\;..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\$(SolutionName)\$(Platform)\lib\;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\vc14\x64;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86_64;..\..\..\Build\VS2015\$(Configuration)\$(Platform);$(OutDir)\Plugins;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Compressonator_MTd.lib;GPU_Decode_MTd.lib;%(AdditionalDependencies);glew32.lib;d3d11.lib;Gdi32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
@@ -251,7 +251,7 @@
       <FloatingPointModel>Precise</FloatingPointModel>
       <OpenMPSupport>
       </OpenMPSupport>
-      <AdditionalIncludeDirectories>.\;$(DK_ROOT)\win\ms_sdk\8.0\Include\shared;$(DK_ROOT)\win\ms_sdk\8.0\Include\um;$(DK_ROOT)\win\ms_sdk\8.0\Include\winrt;..\..\..\Header;..\..\..\Utils;..\..\..\Applications\_Plugins;..\..\..\Applications\_Plugins\Common;..\..\..\Applications\TheCompressonator\Source;..\..\..\Header\Codec;..\..\..\Header\Codec\BC7;..\..\..\Header\Codec\BC6H;..\..\..\..\Common\src;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex\;..\..\..\;..\..\_Plugins\CImage\BMP;..\..\..\..\Common\lib\ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\Common\lib\ext\qt\5.5\include\QtGui;..\..\..\..\Common\lib\ext\qt\5.5\include\QtCore;..\..\..\..\Common\lib\ext\qt\5.5\include;$(AMDCOMPRESS_ROOT)\SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\Common\Lib\Ext\glew\1.9.0\include\;..\..\_Plugins\Common\;..\..\..\Source\GPU_Decode\DirectXTex;..\..\..\Header\GPU_Decode;.\;$(DK_ROOT)\win\ms_sdk\8.0\Include\shared;$(DK_ROOT)\win\ms_sdk\8.0\Include\um;$(DK_ROOT)\win\ms_sdk\8.0\Include\winrt;..\..\..\Header;..\..\..\Utils;..\..\..\Applications\_Plugins;..\..\..\Applications\_Plugins\Common;..\..\..\Applications\TheCompressonator\Source;..\..\..\Header\Codec;..\..\..\Header\Codec\BC7;..\..\..\Header\Codec\BC6H;..\..\..\..\Common\src;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex\;..\..\..\;..\..\_Plugins\CImage\BMP;..\..\..\..\Common\lib\ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\Common\lib\ext\qt\5.5\include\QtGui;..\..\..\..\Common\lib\ext\qt\5.5\include\QtCore;..\..\..\..\Common\lib\ext\qt\5.5\include;$(AMDCOMPRESS_ROOT)\SDK\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -260,8 +260,8 @@
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\$(SolutionName)\$(Platform)\lib\;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\vc14\x64;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86_64;..\..\..\Build\VS2015\$(Configuration)\$(Platform);$(OutDir)\Plugins;$(AMDCOMPRESS_ROOT)\SDK\lib\VS2015\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Compressonator_MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\..\Common\Lib\Ext\glew\1.9.0\lib\x64\;..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\$(SolutionName)\$(Platform)\lib\;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\vc14\x64;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86_64;..\..\..\Build\VS2015\$(Configuration)\$(Platform);$(OutDir)\Plugins;$(AMDCOMPRESS_ROOT)\SDK\lib\VS2015\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Compressonator_MDd.lib;GPU_Decode_MDd.lib;%(AdditionalDependencies);glew32.lib;d3d11.lib;Gdi32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -275,7 +275,7 @@
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
       <OpenMPSupport>true</OpenMPSupport>
-      <AdditionalIncludeDirectories>.\;..\..\..\Header;..\..\..\Applications\_Plugins\Common;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\shared;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\um;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\winrt;..\..\_Plugins\CImage\BMP;..\..\..\..\Common\lib\ext\Qt\5.4\Include;..\..\..\..\Common\Lib\Ext\Qt\5.4\include\QtGui;..\..\..\..\Common\lib\ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\Common\Lib\Ext\Qt\5.4\include\QtCore</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\Common\Lib\Ext\glew\1.9.0\include\;..\..\_Plugins\Common\;..\..\..\Source\GPU_Decode\DirectXTex;..\..\..\Header\GPU_Decode;.\;..\..\..\Header;..\..\..\Applications\_Plugins\Common;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\shared;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\um;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\winrt;..\..\_Plugins\CImage\BMP;..\..\..\..\Common\lib\ext\Qt\5.4\Include;..\..\..\..\Common\Lib\Ext\Qt\5.4\include\QtGui;..\..\..\..\Common\lib\ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\Common\Lib\Ext\Qt\5.4\include\QtCore</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -285,8 +285,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\$(SolutionName)\$(Platform)\lib\;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86;..\..\..\Build\VS2015\$(Configuration)\$(Platform);$(OutDir)\Plugins;%(AdditionalLibraryDirectories);..\..\..\..\Common\lib\ext\qt\5.4\lib\win32</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Compressonator_MT.lib;user32.lib;ole32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\..\Common\Lib\Ext\glew\1.9.0\lib\x86\;..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\$(SolutionName)\$(Platform)\lib\;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86;..\..\..\Build\VS2015\$(Configuration)\$(Platform);$(OutDir)\Plugins;%(AdditionalLibraryDirectories);..\..\..\..\Common\lib\ext\qt\5.4\lib\win32</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Compressonator_MT.lib;GPU_Decode_MT.lib;user32.lib;ole32.lib;glew32.lib;d3d11.lib;Gdi32.lib</AdditionalDependencies>
       <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <CustomBuildStep>
@@ -305,7 +305,7 @@
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
       <OpenMPSupport>true</OpenMPSupport>
-      <AdditionalIncludeDirectories>.\;..\..\..\Header;..\..\..\Applications\_Plugins\Common;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\shared;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\um;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\winrt;..\..\_Plugins\CImage\BMP;..\..\..\..\Common\lib\ext\Qt\5.5\Include;..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtCore;..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtGui;..\..\..\..\Common\lib\ext\OpenEXR\v1.4.0\Source\include;$(AMDCOMPRESS_ROOT)\SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\Common\Lib\Ext\glew\1.9.0\include\;..\..\_Plugins\Common\;..\..\..\Source\GPU_Decode\DirectXTex;..\..\..\Header\GPU_Decode;.\;..\..\..\Header;..\..\..\Applications\_Plugins\Common;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\shared;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\um;..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\winrt;..\..\_Plugins\CImage\BMP;..\..\..\..\Common\lib\ext\Qt\5.5\Include;..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtCore;..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtGui;..\..\..\..\Common\lib\ext\OpenEXR\v1.4.0\Source\include;$(AMDCOMPRESS_ROOT)\SDK\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -315,8 +315,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\$(SolutionName)\$(Platform)\lib\;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86;..\..\..\Build\VS2015\$(Configuration)\$(Platform);..\..\..\..\Common\lib\ext\qt\5.5\lib\win32;$(OutDir)\Plugins;$(AMDCOMPRESS_ROOT)\SDK\lib\VS2015\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Compressonator_MD.lib;user32.lib;ole32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\..\Common\Lib\Ext\glew\1.9.0\lib\x86\;..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\$(SolutionName)\$(Platform)\lib\;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86;..\..\..\Build\VS2015\$(Configuration)\$(Platform);..\..\..\..\Common\lib\ext\qt\5.5\lib\win32;$(OutDir)\Plugins;$(AMDCOMPRESS_ROOT)\SDK\lib\VS2015\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Compressonator_MD.lib;GPU_Decode_MD.lib;user32.lib;ole32.lib;glew32.lib;d3d11.lib;Gdi32.lib</AdditionalDependencies>
       <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <CustomBuildStep>
@@ -337,7 +337,7 @@
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
       <OpenMPSupport>true</OpenMPSupport>
-      <AdditionalIncludeDirectories>.\;$(DK_ROOT)\win\ms_sdk\8.0\Include\shared;$(DK_ROOT)\win\ms_sdk\8.0\Include\um;$(DK_ROOT)\win\ms_sdk\8.0\Include\winrt;..\..\..\Header;..\..\..\Utils;..\..\..\Applications\_Plugins;..\..\..\Applications\_Plugins\Common;..\..\..\Applications\TheCompressonator\Source;..\..\..\Header\Codec;..\..\..\Header\Codec\BC7;..\..\..\Header\Codec\BC6H;..\..\..\..\Common\src;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex\;..\..\..\;..\..\_Plugins\CImage\BMP;..\..\..\..\Common\lib\ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\Common\lib\ext\qt\5.5\include\QtGui;..\..\..\..\Common\lib\ext\qt\5.5\include\QtCore;..\..\..\..\Common\lib\ext\qt\5.5\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\Common\Lib\Ext\glew\1.9.0\include\;..\..\_Plugins\Common\;..\..\..\Source\GPU_Decode\DirectXTex;..\..\..\Header\GPU_Decode;.\;$(DK_ROOT)\win\ms_sdk\8.0\Include\shared;$(DK_ROOT)\win\ms_sdk\8.0\Include\um;$(DK_ROOT)\win\ms_sdk\8.0\Include\winrt;..\..\..\Header;..\..\..\Utils;..\..\..\Applications\_Plugins;..\..\..\Applications\_Plugins\Common;..\..\..\Applications\TheCompressonator\Source;..\..\..\Header\Codec;..\..\..\Header\Codec\BC7;..\..\..\Header\Codec\BC6H;..\..\..\..\Common\src;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex\;..\..\..\;..\..\_Plugins\CImage\BMP;..\..\..\..\Common\lib\ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\Common\lib\ext\qt\5.5\include\QtGui;..\..\..\..\Common\lib\ext\qt\5.5\include\QtCore;..\..\..\..\Common\lib\ext\qt\5.5\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -347,8 +347,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\$(SolutionName)\$(Platform)\lib\;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\vc14\x64;..\..\..\Build\VS2015\$(Configuration)\$(Platform);..\..\..\VS2015\Release_MD\Win32\;..\..\..\..\Common\;..\..\..\Build;%(AdditionalLibraryDirectories);$(OutDir)\Plugins;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC12\x86_64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Compressonator_MD.lib;user32.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\..\Common\Lib\Ext\glew\1.9.0\lib\x64\;..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\$(SolutionName)\$(Platform)\lib\;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\vc14\x64;..\..\..\Build\VS2015\$(Configuration)\$(Platform);..\..\..\VS2015\Release_MD\Win32\;..\..\..\..\Common\;..\..\..\Build;%(AdditionalLibraryDirectories);$(OutDir)\Plugins;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC12\x86_64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Compressonator_MT.lib;GPU_Decode_MT.lib;user32.lib;glew32.lib;d3d11.lib;Gdi32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
@@ -362,7 +362,7 @@
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
       <OpenMPSupport>true</OpenMPSupport>
-      <AdditionalIncludeDirectories>.\;$(DK_ROOT)\win\ms_sdk\8.0\Include\shared;$(DK_ROOT)\win\ms_sdk\8.0\Include\um;$(DK_ROOT)\win\ms_sdk\8.0\Include\winrt;..\..\..\Header;..\..\..\Utils;..\..\..\Applications\_Plugins;..\..\..\Applications\_Plugins\Common;..\..\..\Applications\TheCompressonator\Source;..\..\..\Header\Codec;..\..\..\Header\Codec\BC7;..\..\..\Header\Codec\BC6H;..\..\..\..\Common\src;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex\;..\..\..\;..\..\_Plugins\CImage\BMP;..\..\..\..\Common\lib\ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\Common\lib\ext\qt\5.5\include\QtGui;..\..\..\..\Common\lib\ext\qt\5.5\include\QtCore;..\..\..\..\Common\lib\ext\qt\5.5\include;$(AMDCOMPRESS_ROOT)\SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\Common\Lib\Ext\glew\1.9.0\include\;..\..\_Plugins\Common\;..\..\..\Source\GPU_Decode\DirectXTex;..\..\..\Header\GPU_Decode;.\;$(DK_ROOT)\win\ms_sdk\8.0\Include\shared;$(DK_ROOT)\win\ms_sdk\8.0\Include\um;$(DK_ROOT)\win\ms_sdk\8.0\Include\winrt;..\..\..\Header;..\..\..\Utils;..\..\..\Applications\_Plugins;..\..\..\Applications\_Plugins\Common;..\..\..\Applications\TheCompressonator\Source;..\..\..\Header\Codec;..\..\..\Header\Codec\BC7;..\..\..\Header\Codec\BC6H;..\..\..\..\Common\src;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex\;..\..\..\;..\..\_Plugins\CImage\BMP;..\..\..\..\Common\lib\ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\Common\lib\ext\qt\5.5\include\QtGui;..\..\..\..\Common\lib\ext\qt\5.5\include\QtCore;..\..\..\..\Common\lib\ext\qt\5.5\include;$(AMDCOMPRESS_ROOT)\SDK\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -372,8 +372,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\$(SolutionName)\$(Platform)\lib\;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\vc14\x64;..\..\..\Build\VS2015\$(Configuration)\$(Platform);..\..\..\VS2015\Release_MD\Win32\;..\..\..\..\Common\;..\..\..\Build;%(AdditionalLibraryDirectories);$(OutDir)\Plugins;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC12\x86_64;$(AMDCOMPRESS_ROOT)\SDK\lib\VS2015\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Compressonator_MD.lib;user32.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\..\Common\Lib\Ext\glew\1.9.0\lib\x64\;..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\$(SolutionName)\$(Platform)\lib\;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\vc14\x64;..\..\..\Build\VS2015\$(Configuration)\$(Platform);..\..\..\VS2015\Release_MD\Win32\;..\..\..\..\Common\;..\..\..\Build;%(AdditionalLibraryDirectories);$(OutDir)\Plugins;..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC12\x86_64;$(AMDCOMPRESS_ROOT)\SDK\lib\VS2015\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Compressonator_MD.lib;GPU_Decode_MD.lib;user32.lib;glew32.lib;d3d11.lib;Gdi32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

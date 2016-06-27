@@ -153,9 +153,9 @@ ktxWriteKTXS(struct ktxStream *stream, const KTX_texture_info* textureInfo,
         }
         else {
             compressed = GL_TRUE;
-            if (header.glBaseInternalFormat == GL_RED_EXT)
+            if (header.glBaseInternalFormat == GL_RED)
                 groupBytes = 1;
-            if (header.glBaseInternalFormat== GL_RG_EXT)
+            if (header.glBaseInternalFormat== GL_RG)
                 groupBytes = 2;
             if (header.glBaseInternalFormat == GL_RGB)
                 groupBytes = 3;

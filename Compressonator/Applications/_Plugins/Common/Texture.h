@@ -81,6 +81,7 @@ extern "C" {
 #define FOURCC_ETC_RGBA_INTERP        MAKEFOURCC('E', 'T', 'C', 'I')
 
 // Deprecated but still supported for decompression
+
 #define FOURCC_DXT5_GXRB               MAKEFOURCC('G', 'X', 'R', 'B')
 #define FOURCC_DXT5_GRXB               MAKEFOURCC('G', 'R', 'X', 'B')
 #define FOURCC_DXT5_RXGB               MAKEFOURCC('R', 'X', 'G', 'B')
@@ -103,6 +104,7 @@ extern "C" {
 #define FOURCC_BC7                     MAKEFOURCC('B', 'C', '7', 'x')
 #define FOURCC_ASTC                    MAKEFOURCC('A', 'S', 'T', 'C')
 #define FOURCC_GT                      MAKEFOURCC('G', 'T', '1', 'x')
+#define FOURCC_ETC2_RGB                MAKEFOURCC('E', 'T', 'C', '2')
 
 /*
  * FOURCC codes for DX compressed-texture pixel formats
@@ -112,6 +114,8 @@ extern "C" {
 #define FOURCC_DXT3                    (MAKEFOURCC('D','X','T','3'))        // aka BC3
 #define FOURCC_DXT4                    (MAKEFOURCC('D','X','T','4'))        // aka BC4
 #define FOURCC_DXT5                    (MAKEFOURCC('D','X','T','5'))        // aka BC5
+
+
 
 /// A struct for storing ARGB8 colors.
 typedef struct

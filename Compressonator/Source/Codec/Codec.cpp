@@ -45,6 +45,7 @@
 #include "Codec_ATC_RGBA_Explicit.h"
 #include "Codec_ATC_RGBA_Interpolated.h"
 #include "Codec_ETC_RGB.h"
+#include "Codec_ETC2_RGB.h"
 #include "Codec_BC6H.h"
 #include "Codec_BC7.h"
 #include "ASTC\Codec_ASTC.h"
@@ -131,6 +132,7 @@ CCodec* CreateCodec(CodecType nCodecType)
         case CT_ATC_RGBA_Explicit:          return new CCodec_ATC_RGBA_Explicit;
         case CT_ATC_RGBA_Interpolated:      return new CCodec_ATC_RGBA_Interpolated;
         case CT_ETC_RGB:                    return new CCodec_ETC_RGB;
+        case CT_ETC2_RGB:                   return new CCodec_ETC2_RGB;
         case CT_BC6H:                       return new CCodec_BC6H;
         case CT_BC7:                        return new CCodec_BC7;
         case CT_ASTC:                       return new CCodec_ASTC;
@@ -142,7 +144,7 @@ CCodec* CreateCodec(CodecType nCodecType)
     }
 }
 
-CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHeight)
+CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(("IN: nCodecType %d, dwWidth %d, dwHeight %d",nCodecType,dwWidth,dwHeight));
@@ -157,6 +159,7 @@ CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHe
         case CT_ATI1N:
         case CT_ATC_RGB:
         case CT_ETC_RGB:
+        case CT_ETC2_RGB:
             dwChannels       = 1;
             dwBitsPerChannel = 4;
             dwWidth = ((dwWidth + 3) / 4) * 4;
@@ -197,9 +200,9 @@ CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHe
             buffsize = dwWidth * dwHeight; 
             if (buffsize < BC7_BLOCK_BYTES) buffsize = BC7_BLOCK_BYTES; 
             break;
-        case CT_ASTC:    //notes: to be implemented! this is veriable size so addtional code is needed.
-            dwWidth  = ((dwWidth + 3) / 4) * 4;
-            dwHeight = ((dwHeight + 3) / 4) * 4;
+        case CT_ASTC: 
+            dwWidth  = ((dwWidth + nBlockWidth - 1) / nBlockWidth) * 4;
+            dwHeight = ((dwHeight + nBlockHeight - 1) / nBlockHeight) * 4;
             buffsize = dwWidth * dwHeight; 
             break;
         case CT_GT:

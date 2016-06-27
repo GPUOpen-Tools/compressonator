@@ -1,4 +1,4 @@
-//// etcpack v2.73
+//// etcpack v2.74
 //// 
 //// NO WARRANTY 
 //// 
@@ -42,7 +42,7 @@
 //// THEORY OF LIABILITY (CONTRACT, TORT OR OTHERWISE), EVEN IF SUCH HOLDER
 //// OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 //// 
-//// (C) Ericsson AB 2013. All Rights Reserved.
+//// (C) Ericsson AB 2005-2013. All Rights Reserved.
 //// 
 
 #ifndef IMAGE_H

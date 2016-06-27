@@ -33,9 +33,6 @@
 #include <AMDTOSWrappers/Include/osProcess.h>
 #include <AMDTOSWrappers/Include/osThread.h>
 
-// AMDTApplicationFramework:
-//#include <AMDTApplicationFramework/Include/afApplicationCommands.h>
-
 // AMDTApplicationComponents:
 #include <AMDTApplicationComponents/Include/acMessageBox.h>
 

@@ -46,9 +46,11 @@ CCodec_ATI1N::~CCodec_ATI1N()
 
 }
 
-CCodecBuffer* CCodec_ATI1N::CreateBuffer(CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData) const
+CCodecBuffer* CCodec_ATI1N::CreateBuffer(
+    CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
+    CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData) const
 {
-    return CreateCodecBuffer(CBT_4x4Block_4BPP, dwWidth, dwHeight, dwPitch, pData);
+    return CreateCodecBuffer(CBT_4x4Block_4BPP, 4,4,1,dwWidth, dwHeight, dwPitch, pData);
 }
 
 CodecError CCodec_ATI1N::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)

@@ -44,7 +44,9 @@ public:
     virtual bool SetParameter(const CMP_CHAR* pszParamName, CODECFLOAT fValue);
     virtual bool GetParameter(const CMP_CHAR* pszParamName, CODECFLOAT& fValue);
 
-    virtual CCodecBuffer* CreateBuffer(CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0) const;
+    virtual CCodecBuffer* CreateBuffer(
+                                        CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
+                                        CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0) const;
 
     virtual DWORD GetBlockHeight() {return 4;};
 

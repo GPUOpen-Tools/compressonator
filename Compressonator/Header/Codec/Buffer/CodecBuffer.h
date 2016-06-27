@@ -203,7 +203,10 @@ class CCodecBuffer
 {
 public:
 
-    CCodecBuffer(CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0);
+    CCodecBuffer(
+                 CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
+                 CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, 
+                 CMP_BYTE* pData = 0);
     virtual ~CCodecBuffer();
 
     virtual void Copy(CCodecBuffer& srcBuffer);
@@ -213,9 +216,22 @@ public:
     virtual CMP_DWORD GetChannelCount() const = 0;
     virtual bool IsFloat() const = 0;
 
-    inline const CMP_DWORD GetWidth() const {return m_dwWidth;};
+    inline const CMP_DWORD GetWidth()  const {return m_dwWidth;};
     inline const CMP_DWORD GetHeight() const {return m_dwHeight;};
-    inline const CMP_DWORD GetPitch() const {return m_dwPitch;};
+    inline const CMP_DWORD GetPitch()  const {return m_dwPitch;};
+
+    inline const void SetPitch(CMP_DWORD dwPitch)  { 
+        m_dwPitch = dwPitch;
+        };
+
+    inline const CMP_BYTE GetBlockWidth()  const { return m_nBlockWidth; };
+    inline const CMP_BYTE GetBlockHeight() const { return m_nBlockHeight; };
+    inline const CMP_BYTE GetBlockDepth()  const { return m_nBlockDepth; };
+
+    inline const void SetBlockWidth(CMP_BYTE BlockWidth)      { m_nBlockWidth  = BlockWidth;   };
+    inline const void SetBlockHeight(CMP_BYTE BlockHeight)    { m_nBlockHeight = BlockHeight;  };
+    inline const void SetBlockDepth(CMP_BYTE BlockDepth)      { m_nBlockDepth  = BlockDepth;   };
+
 
     virtual bool ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_BYTE cBlock[]);
     virtual bool ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_BYTE cBlock[]);
@@ -344,10 +360,14 @@ protected:
     void SwizzleBlock(CMP_DWORD dwBlock[], CMP_DWORD dwBlockSize);
     void SwizzleBlock(CMP_WORD wBlock[], CMP_DWORD dwBlockSize);
 
-    CMP_DWORD m_dwWidth;        // x size
-    CMP_DWORD m_dwHeight;    // y size
-    CMP_DWORD m_dwDepth;        // z size
-    CMP_DWORD m_dwPitch;        
+    CMP_DWORD m_dwWidth;        // Final Image Width  
+    CMP_DWORD m_dwHeight;       // Final Image Height 
+    CMP_DWORD m_dwDepth;        // Final Image Depth  
+    CMP_DWORD m_dwPitch;
+
+    CMP_BYTE m_nBlockWidth;     // DeCompression Block Sizes (Default is 4x4x1)
+    CMP_BYTE m_nBlockHeight;    //
+    CMP_BYTE m_nBlockDepth;     //
 
     bool m_bUserAllocedData;
     CMP_BYTE* m_pData;
@@ -355,7 +375,9 @@ protected:
     bool m_bPerformingConversion;
 };
 
-CCodecBuffer* CreateCodecBuffer(CodecBufferType nCodecBufferType, CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0);
+CCodecBuffer*   CreateCodecBuffer(CodecBufferType nCodecBufferType, 
+                                  CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
+                                  CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0);
 CodecBufferType GetCodecBufferType(CMP_FORMAT format);
 
 #endif // !defined(_CODECBUFFER_H_INCLUDED_)

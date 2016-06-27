@@ -37,6 +37,7 @@
 
 #define DROPDOWN_FILEEXT_WIDTH  60
 
+
 extern void GetSupportedFileFormats(QList<QByteArray> &g_supportedFormats);
 
 #ifdef USE_TREEVIEW_PROP
@@ -74,7 +75,16 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget *parent) :
 {
     changeSelf        = false;
     m_propQuality    = NULL;
+    m_propChannelWeightingR = NULL;
+    m_propChannelWeightingG = NULL;
+    m_propChannelWeightingB = NULL;
+    m_propAlphaThreshold = NULL;
+    m_propAdaptiveColor = NULL;
+    m_propUseAlpha = NULL;
+    m_propNoAlpha =NULL;
+    m_propBitrate = NULL;
     isEditing        = false;
+    isInit           = false;
 
     setWindowTitle(title);
     Qt::WindowFlags flags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
@@ -141,12 +151,31 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget *parent) :
 
     connect(&m_data, SIGNAL(compressionChanged(QVariant &)), this, SLOT(compressionValueChanged(QVariant &)));
     connect(&m_data, SIGNAL(qualityChanged(QVariant &)), this, SLOT(qualityValueChanged(QVariant &)));
+    connect(&m_data, SIGNAL(redwChanged(QVariant &)), this, SLOT(redwValueChanged(QVariant &)));
+    connect(&m_data, SIGNAL(greenwChanged(QVariant &)), this, SLOT(greenwValueChanged(QVariant &)));
+    connect(&m_data, SIGNAL(bluewChanged(QVariant &)), this, SLOT(bluewValueChanged(QVariant &)));
+    connect(&m_data, SIGNAL(thresholdChanged(QVariant &)), this, SLOT(thresholdValueChanged(QVariant &)));
+    connect(&m_data, SIGNAL(noAlphaChannel()), this, SLOT(noAlphaChannelValue()));
+    connect(&m_data, SIGNAL(hasAlphaChannel()), this, SLOT(hasAlphaChannelValue()));
+    connect(&m_data, SIGNAL(bitrateChanged(QString &, int&, int&)), this, SLOT(bitrateValueChanged(QString &, int&, int&)));
 
     m_theController->setObject(&m_data, true);
 
     // Set Editing Defaults 
     m_propQuality = m_theController->getProperty(COMPRESS_OPTIONS_QUALITY);
+    m_propFormat = m_theController->getProperty(COMPRESS_OPTIONS_FORMAT);
+    m_propChannelWeightingR = m_theController->getProperty(COMPRESS_OPTIONS_CHANNEL_WEIGHTING_R);
+    m_propChannelWeightingG = m_theController->getProperty(COMPRESS_OPTIONS_CHANNEL_WEIGHTING_G);
+    m_propChannelWeightingB = m_theController->getProperty(COMPRESS_OPTIONS_CHANNEL_WEIGHTING_B);
+    m_propAlphaThreshold = m_theController->getProperty(COMPRESS_OPTIONS_ALPHATHRESHOLD);
+    m_propAdaptiveColor = m_theController->getProperty(COMPRESS_OPTIONS_ADAPTIVECOLOR);
+    m_propUseAlpha = m_theController->getProperty(COMPRESS_OPTIONS_USEALPHA);
+    m_propBitrate = m_theController->getProperty(COMPRESS_OPTIONS_BITRATE);
+    m_propNoAlpha = m_theController->getProperty(COMPRESS_OPTIONS_NOALPHA);
     m_propDestImage = m_theController->getProperty(DESTINATION_IMAGE_CLASS_NAME);
+    m_propChannelWeight = m_theController->getProperty(CHANNEL_WEIGHTING_CLASS_NAME);
+    m_propDXT1Alpha     = m_theController->getProperty(DXT1_ALPHA_CLASS_NAME);
+    m_propASTCBlockRate = m_theController->getProperty(ASTC_BLOCKRATE_CLASS_NAME);
 
     //=================================
     // Text View for help and Hints
@@ -154,8 +183,8 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget *parent) :
 
     m_infotext = new QTextBrowser(this);
     // Always show min Two lines of text and Max to 5 lines at font size 16
-    m_infotext->setMinimumHeight(32);
-    m_infotext->setMaximumHeight(96);
+    m_infotext->setMinimumHeight(40);
+    m_infotext->setMaximumHeight(100);
     m_infotext->setReadOnly(true);
     m_infotext->setAcceptRichText(true);
 
@@ -273,121 +302,301 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
     C_Destination_Options::eCompression comp = (C_Destination_Options::eCompression &)value;
     QMessageBox msgBox;
     bool ok = false;
-    QString Extension = m_fileFormats->currentText();
+    QString extension = "DDS";
     bool compressedOptions = false;
-
-    m_infotext->clear();
-    m_infotext->append("<b>Format</b>");
+    bool colorWeightOptions = false;
+    bool alphaChannelOptions = false;
+    bool astcbitrateOptions = false;
 
     m_fileFormats->clear();
 
     if (m_propQuality)
         m_propQuality->setEnabled(true);
-
-    //if (m_data.m_settoUseOnlyBC6)
-    //{
-    //    if (comp != C_Destination_Options::BC6H)
-    //    {
-    //        msgBox.setText("Only BC6H compression is supported for EXR files");
-    //        msgBox.exec();
-    //        m_data.m_Compression = C_Destination_Options::BC6H;
-    //    }
-    //}
+    if (m_propChannelWeightingR)
+        m_propChannelWeightingR->setEnabled(true);
+    if (m_propChannelWeightingG)
+        m_propChannelWeightingG->setEnabled(true);
+    if (m_propChannelWeightingB)
+        m_propChannelWeightingB->setEnabled(true);
+    if (m_propAlphaThreshold)
+        m_propAlphaThreshold->setEnabled(true);
+    if (m_propAdaptiveColor)
+        m_propAdaptiveColor->setEnabled(true);
+    if (m_propUseAlpha)
+        m_propUseAlpha->setEnabled(true);
+    if (m_propNoAlpha)
+        m_propNoAlpha->setEnabled(true);
+    if (m_propBitrate)
+        m_propBitrate->setEnabled(true);
 
     switch (comp)
     {
     case C_Destination_Options::BC6H:
-                                compressedOptions = true;
-                                //ok = (Extension.compare("DDS") == 0) | (Extension.compare("KTX") == 0);
-                                //ok = (Extension.compare("EXR") == 0) || ok;
-                                //if (ok == false)
-                                //{
-                                //    msgBox.setText("Extension " + Extension + " is not supported by BC6H format\nit will be changed to DDS");
-                                //    msgBox.exec();
-                                //}
-                                //else
-                                //{
-                                //    if (!m_data.m_settoUseOnlyBC6)
-                                //    {
-                                //        msgBox.setText("Only BC6H compression is supported for EXR files\nSetting will be reset to BC7");
-                                //        msgBox.exec();
-                                //        m_data.m_Compression = C_Destination_Options::BC7;
-                                //    }
-                                //}
-                                m_fileFormats->addItem("DDS");
-                                m_fileFormats->addItem("KTX");
-                                m_fileFormats->setCurrentIndex(0);
-                                break;
-
-
+        compressedOptions = true;
+        colorWeightOptions = false;
+        alphaChannelOptions = false;
+        astcbitrateOptions = false;
+        m_fileFormats->addItem("DDS");
+        m_fileFormats->addItem("KTX");
+        m_fileFormats->setCurrentIndex(0);
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("Block Compression (BC) format designed to support high-dynamic range (floating point) color spaces. (e.g. .exr extension image file).");
+        break;             
     case C_Destination_Options::BC1:
+    case C_Destination_Options::DXT1:
+        compressedOptions = true;
+        colorWeightOptions = true;
+        alphaChannelOptions = true;
+        astcbitrateOptions = false;
+        m_fileFormats->addItem("DDS");
+        m_fileFormats->addItem("KTX");
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("A four component opaque (or 1-bit alpha) compressed texture format for Microsoft DirectX10. DXT1 identical to BC1.  Four bits per pixel.");
+        break;
     case C_Destination_Options::BC3:
-    case C_Destination_Options::BC7:
-    case C_Destination_Options::DXT3:
     case C_Destination_Options::DXT5:
-                                compressedOptions = true;
-                                //ok = (Extension.compare("DDS") == 0) | (Extension.compare("KTX") == 0);
-                                //if (ok == false)
-                                //{
-                                //    msgBox.setText("Extension " + Extension + " is not supported by BCn compression formats\nit will be changed to DDS");
-                                //    msgBox.exec();
-                                //    Extension = "DDS";
-                                //}
-                                m_fileFormats->addItem("DDS");
-                                m_fileFormats->addItem("KTX");
-                                break;
-
+        compressedOptions = true;
+        colorWeightOptions = true;
+        alphaChannelOptions = false;
+        astcbitrateOptions = false;
+        m_fileFormats->addItem("DDS");
+        m_fileFormats->addItem("KTX");
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("A four component compressed texture format with interpolated alpha for Microsoft DirectX10. DXT5 identical to BC3. Eight bits per pixel.");
+        break;
     case C_Destination_Options::BC2:
+    case C_Destination_Options::DXT3:
+        compressedOptions = true;
+        colorWeightOptions = true;
+        alphaChannelOptions = false;
+        astcbitrateOptions = false;
+        m_fileFormats->addItem("DDS");
+        m_fileFormats->addItem("KTX");
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("A four component compressed texture format with explicit alpha for Microsoft DirectX10. DXT3 identical to BC2. Eight bits per pixel.");
+        break;
     case C_Destination_Options::BC4:
+        compressedOptions = true;
+        colorWeightOptions = false;
+        alphaChannelOptions = false;
+        astcbitrateOptions = false;
+        m_fileFormats->addItem("DDS");
+        m_fileFormats->addItem("KTX");
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("A single component compressed texture format for Microsoft DirectX10. Identical to ATI1N. Four bits per pixel.");
+        break;
     case C_Destination_Options::BC5:
-    case C_Destination_Options::ATC_RGB:
-    case C_Destination_Options::ATC_RGBA_Explicit:
-    case C_Destination_Options::ATC_RGBA_Interpolated:
     case C_Destination_Options::ATI2N:
     case C_Destination_Options::ATI2N_XY:
     case C_Destination_Options::ATI2N_DXT5:
+        compressedOptions = true;
+        colorWeightOptions = false;
+        alphaChannelOptions = false;
+        astcbitrateOptions = false;
+        m_fileFormats->addItem("DDS");
+        m_fileFormats->addItem("KTX");
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("A two component compressed texture format for Microsoft DirectX10. BC5 identical to ATI2N. Eight bits per pixel.");
+        break;
+    case C_Destination_Options::ATC_RGB:
+        compressedOptions = true;
+        colorWeightOptions = true;
+        alphaChannelOptions = false;
+        astcbitrateOptions = false;
+        m_fileFormats->addItem("DDS");
+        m_fileFormats->addItem("KTX");
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("A compressed RGB format.");
+        break;
+    case C_Destination_Options::ATC_RGBA_Explicit:
+        compressedOptions = true;
+        colorWeightOptions = true;
+        alphaChannelOptions = false;
+        astcbitrateOptions = false;
+        m_fileFormats->addItem("DDS");
+        m_fileFormats->addItem("KTX");
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("A compressed ARGB format with explicit alpha.");
+        break;
+    case C_Destination_Options::ATC_RGBA_Interpolated:
+        compressedOptions = true;
+        colorWeightOptions = true;
+        alphaChannelOptions = false;
+        astcbitrateOptions = false;
+        m_fileFormats->addItem("DDS");
+        m_fileFormats->addItem("KTX");
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("A compressed ARGB format with interpolated alpha.");
+        break;
     case C_Destination_Options::DXT5_xGBR:
+        compressedOptions = true;
+        colorWeightOptions = true;
+        alphaChannelOptions = false;
+        astcbitrateOptions = false;
+        m_fileFormats->addItem("DDS");
+        m_fileFormats->addItem("KTX");
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append(" DXT5 with the red component swizzled into the alpha channel. Eight bits per pixel.");
+        break;
     case C_Destination_Options::DXT5_RxBG:
+        compressedOptions = true;
+        colorWeightOptions = true;
+        alphaChannelOptions = false;
+        astcbitrateOptions = false;
+        m_fileFormats->addItem("DDS");
+        m_fileFormats->addItem("KTX");
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("swizzled DXT5 format with the green component swizzled into the alpha channel. Eight bits per pixel.");
+        break;
     case C_Destination_Options::DXT5_RBxG:
+        compressedOptions = true;
+        colorWeightOptions = true;
+        alphaChannelOptions = false;
+        astcbitrateOptions = false;
+        m_fileFormats->addItem("DDS");
+        m_fileFormats->addItem("KTX");
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append(" swizzled DXT5 format with the green component swizzled into the alpha channel & the blue component swizzled into the green channel. Eight bits per pixel.");
+        break;
     case C_Destination_Options::DXT5_xRBG:
+        compressedOptions = true;
+        colorWeightOptions = true;
+        alphaChannelOptions = false;
+        astcbitrateOptions = false;
+        m_fileFormats->addItem("DDS");
+        m_fileFormats->addItem("KTX");
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("swizzled DXT5 format with the green component swizzled into the alpha channel & the red component swizzled into the green channel. Eight bits per pixel.");
+        break;
     case C_Destination_Options::DXT5_RGxB:
+        compressedOptions = true;
+        colorWeightOptions = true;
+        alphaChannelOptions = false;
+        astcbitrateOptions = false;
+        m_fileFormats->addItem("DDS");
+        m_fileFormats->addItem("KTX");
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("swizzled DXT5 format with the blue component swizzled into the alpha channel. Eight bits per pixel.");
+        break;
     case C_Destination_Options::DXT5_xGxR:
+        compressedOptions = true;
+        colorWeightOptions = true;
+        alphaChannelOptions = false;
+        astcbitrateOptions = false;
+        m_fileFormats->addItem("DDS");
+        m_fileFormats->addItem("KTX");
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("two-component swizzled DXT5 format with the red component swizzled into the alpha channel & the green component in the green channel. Eight bits per pixel.");
+        break;
+    case C_Destination_Options::BC7:
+        compressedOptions = true;
+        colorWeightOptions = false;
+        alphaChannelOptions = false;
+        astcbitrateOptions = false;
+        m_fileFormats->addItem("DDS");
+        m_fileFormats->addItem("KTX");
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("The latest block Compression (BC) format designed to support high-quality compression of RGB and RGBA bytes color spaces.");
+        break;
     case C_Destination_Options::ETC_RGB:
-                                compressedOptions = true;
-                                //ok = (Extension.compare("DDS") == 0) | (Extension.compare("KTX") == 0);
-                                //if (ok == false)
-                                //{
-                                //    msgBox.setText("Extension " + Extension + " is not supported by BCn compression formats\nit will be changed to DDS");
-                                //    msgBox.exec();
-                                //    Extension = "DDS";
-                                //}
-                                m_fileFormats->addItem("DDS");
-                                m_fileFormats->addItem("KTX");
-                                break;
-
-    // Enable when qualified  
-    // case C_Destination_Options::ASTC:
-    //                             ok = (Extension.compare("DDS") == 0) | (Extension.compare("ASTC") == 0) | (Extension.compare("KTX") == 0);
-    //                             if (ok == false)
-    //                             {
-    //                                 msgBox.setText("Extension " + Extension + " is not supported by ASTC compression format \nit will be changed to ASTC");
-    //                                 msgBox.exec();
-    //                                 Extension = "ASTC";
-    //                             }
-    //                             m_fileFormats->addItem("ASTC");
-    //                             m_fileFormats->addItem("DDS");
-    //                             m_fileFormats->addItem("KTX");
-    //                             break;
-
+    case C_Destination_Options::ETC2_RGB:
+        compressedOptions = true;
+        colorWeightOptions = false;
+        alphaChannelOptions = false;
+        astcbitrateOptions = false;
+        m_fileFormats->addItem("DDS");
+        m_fileFormats->addItem("KTX");
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("ETC (Ericsson Texture Compression, lossy texture compression developed with Ericsson Research.)");
+        break;
+    case C_Destination_Options::ASTC:
+        compressedOptions = true;
+        colorWeightOptions = false;
+        alphaChannelOptions = false;
+        astcbitrateOptions = true;
+        extension = "KTX";
+        m_fileFormats->addItem("ASTC");
+        m_fileFormats->addItem("KTX");
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("ASTC (Adaptive Scalable Texture Compression),lossy block-based texture compression developed with ARM.");
+        break;
     default:
         m_fileFormats->addItems(m_AllFileTypes);
         if (m_propQuality)
             m_propQuality->setEnabled(false);
+        if (m_propChannelWeightingR)
+            m_propChannelWeightingR->setEnabled(false);
+        if (m_propChannelWeightingG)
+            m_propChannelWeightingG->setEnabled(false);
+        if (m_propChannelWeightingB)
+            m_propChannelWeightingB->setEnabled(false);
+        if (m_propAlphaThreshold)
+            m_propAlphaThreshold->setEnabled(false);
+        if (m_propAdaptiveColor)
+            m_propAdaptiveColor->setEnabled(false);
+        if (m_propUseAlpha)
+            m_propUseAlpha->setEnabled(false);
+        if (m_propNoAlpha)
+            m_propNoAlpha->setEnabled(false);
+        if (m_propBitrate)
+            m_propBitrate->setEnabled(false);
 
         break;
     }
 
-    int i = m_fileFormats->findText(Extension);
+    if (m_propQuality)
+        m_propQuality->setEnabled(compressedOptions);
+    if (m_propChannelWeightingR)
+        m_propChannelWeightingR->setEnabled(colorWeightOptions);
+    if (m_propChannelWeightingG)
+        m_propChannelWeightingG->setEnabled(colorWeightOptions);
+    if (m_propChannelWeightingB)
+        m_propChannelWeightingB->setEnabled(colorWeightOptions);
+    if (m_propAlphaThreshold)
+        m_propAlphaThreshold->setEnabled(alphaChannelOptions);
+    if (m_propAdaptiveColor)
+        m_propAdaptiveColor->setEnabled(colorWeightOptions);
+    if (m_propUseAlpha)
+        m_propUseAlpha->setEnabled(alphaChannelOptions);
+    if (m_propNoAlpha)
+        m_propNoAlpha->setEnabled(alphaChannelOptions);
+    if (m_propBitrate)
+        m_propBitrate->setEnabled(astcbitrateOptions);
+
+    if (m_propDXT1Alpha)
+    {
+        m_propDXT1Alpha->setHidden(!alphaChannelOptions);
+    }
+
+    if (m_propASTCBlockRate)
+    {
+        m_propASTCBlockRate->setHidden(!astcbitrateOptions);
+    }
+
+    if (m_propChannelWeight)
+    {
+        m_propChannelWeight->setHidden(!colorWeightOptions);
+    }
+   
+    int i = m_fileFormats->findText(extension);
     m_fileFormats->setCurrentIndex(i);
 
     if (compressedOptions)
@@ -398,7 +607,7 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
 
 
 //===================================================================
-// Check if compression is been specified 
+// Check if compression quality value changed
 //===================================================================
 void CSetCompressOptions::qualityValueChanged(QVariant &value)
 {
@@ -406,6 +615,88 @@ void CSetCompressOptions::qualityValueChanged(QVariant &value)
     m_infotext->clear();
     m_infotext->append("<b>Quality</b> Applies only to compressed formats");
     m_infotext->append("Value range is 0 (Poor Quality) to 1 (High Quality) with default set at 0.05");
+}
+
+//===================================================================
+// Check if red weight value changed
+//===================================================================
+void CSetCompressOptions::redwValueChanged(QVariant &value)
+{
+    Q_UNUSED(value);
+    m_infotext->clear();
+    m_infotext->append("<b>Red Channel Weighting</b> Applies only to compressed formats");
+    m_infotext->append("Value range is 0.01 (Lowest Weight) to 1 (Highest Weight) with default set at 0.3086");
+}
+
+//===================================================================
+// Check if green weight value changed
+//===================================================================
+void CSetCompressOptions::greenwValueChanged(QVariant &value)
+{
+    Q_UNUSED(value);
+    m_infotext->clear();
+    m_infotext->append("<b>Green Channel Weighting</b> Applies only to compressed formats");
+    m_infotext->append("Value range is 0.01 (Lowest Weight) to 1 (Highest Weight) with default set at 0.6094");
+}
+
+//===================================================================
+// Check if blue weight value changed
+//===================================================================
+void CSetCompressOptions::bluewValueChanged(QVariant &value)
+{
+    Q_UNUSED(value);
+    m_infotext->clear();
+    m_infotext->append("<b>Blue Channel Weighting</b> Applies only to compressed formats");
+    m_infotext->append("Value range is 0.01 (Lowest Weight) to 1 (Highest Weight) with default set at 0.0820");
+}
+
+//===================================================================
+// Check if alpha threshold value changed
+//===================================================================
+void CSetCompressOptions::thresholdValueChanged(QVariant &value)
+{
+    Q_UNUSED(value);
+    m_infotext->clear();
+    m_infotext->append("<b>Alpha Threshold</b> Applies only to compressed formats (with alpha channel on)");
+    m_infotext->append("Value range is 1-255");
+}
+
+//===================================================================
+// Check if alpha is selected 
+//===================================================================
+void CSetCompressOptions::noAlphaChannelValue()
+{
+    if (m_propAlphaThreshold)
+        m_propAlphaThreshold->setEnabled(false);
+}
+
+void CSetCompressOptions::hasAlphaChannelValue()
+{
+    if (m_propAlphaThreshold)
+        m_propAlphaThreshold->setEnabled(true);
+}
+
+//===================================================================
+// Check if compression is been specified 
+//===================================================================
+void CSetCompressOptions::bitrateValueChanged(QString &actualbitrate, int&xblock, int&yblock)
+{
+    QString msg="";
+    QString blockmsg = "";
+    if (xblock == -1 && yblock == -1)
+    {
+        msg = "Invalid input. Not supported.";
+        blockmsg = "Value changed to default bit rate 8.00 (4x4).";
+    }
+    else
+    {
+        msg = "The <b>closet bit rate</b> is " + actualbitrate;
+        blockmsg = "<b>Block number</b> is (XxY): " + QString::number(xblock) + "x" + QString::number(yblock);
+    }
+    
+    m_infotext->clear();
+    m_infotext->append(msg);
+    m_infotext->append(blockmsg);
 }
 
 // -----------------------------------------------------------
@@ -461,16 +752,10 @@ bool CSetCompressOptions::updateDisplayContent()
     m_data.m_FileInfoDestinationName = m_data.m_compname;
 
     // Check source file extension for special cases
-    m_data.m_settoUseOnlyBC6 = false;
+    //m_data.m_settoUseOnlyBC6 = false;
     QFileInfo fi(m_data.m_sourceFileNamePath);
     QString ext = fi.suffix().toUpper();
-    if (ext.compare("EXR") == 0)
-    {
-        m_data.m_settoUseOnlyBC6 = true;
-        m_data.m_Compression = C_Destination_Options::BC6H;
-    }
 
-    
     // Update Property Managed Settings and content view
     m_theController->setObject(&m_data, true, true);
     m_theController->update();
@@ -478,9 +763,10 @@ bool CSetCompressOptions::updateDisplayContent()
     // Destination FileName
     QString FileName;
     QFileInfo fileinfo;
-    if (m_data.m_editing)
+    if (isInit)
     {
         fileinfo.setFile(m_data.m_destFileNamePath);
+        m_DestinationFolder->setText(m_destFilePath);
         // Destination File Name
         FileName = fileinfo.baseName();
         if (FileName.length() <= 0) FileName = m_data.m_compname;
@@ -489,18 +775,18 @@ bool CSetCompressOptions::updateDisplayContent()
     {
         fileinfo.setFile(m_data.m_sourceFileNamePath);
         FileName = m_data.m_compname;
+        // Destination Folder
+        QDir dir(fileinfo.absoluteDir());
+        QString DestFolder = dir.absolutePath();
+        if ((DestFolder.length() <= 1) && DestFolder.contains("."))
+        {
+            DestFolder = "./Results";
+        }
+        m_DestinationFolder->setText(DestFolder);
+        isInit = true;
     }
 
     //m_DestinationFile->setText(FileName);
-
-    // Destination Folder
-    QDir dir(fileinfo.absoluteDir());
-    QString DestFolder = dir.absolutePath();
-    if ((DestFolder.length() <= 1) && DestFolder.contains("."))
-    {
-        DestFolder = "./Results";
-    }
-    m_DestinationFolder->setText(DestFolder);
 
     m_PBSaveSettings->setEnabled(true);
 
@@ -510,13 +796,57 @@ bool CSetCompressOptions::updateDisplayContent()
         m_propQuality->setEnabled(true);
         // Set  Properties for editing
         QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propQuality->propertyManager();
-        if (Manager)
-        {
-            QtVariantProperty *prop = Manager->variantProperty(m_propQuality);
-            prop->setAttribute(STR_QUALITY_SETTING_MINIMUM,    0.0);
-            prop->setAttribute(STR_QUALITY_SETTING_MAXIMUM,    1.0);
-            prop->setAttribute(STR_QUALITY_SETTING_SINGLESTEP, 0.05);
-        }
+        setMinMaxStep(Manager, m_propQuality, 0.0, 1.0, 0.05);
+    }
+
+    if (m_propFormat)
+    {
+        m_propFormat->setToolTip(STR_FORMAT_SETTING_HINT);
+    }
+
+    if (m_propChannelWeightingR)
+    {
+        m_propChannelWeightingR->setToolTip(STR_CHANNELWEIGHTR_SETTING_HINT);
+        m_propChannelWeightingR->setEnabled(true);
+        // Set  Properties for editing
+        QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propChannelWeightingR->propertyManager();
+        setMinMaxStep(Manager, m_propChannelWeightingR, 0.01, 1.0, 0.01);
+    }
+
+    if (m_propChannelWeightingG)
+    {
+        m_propChannelWeightingG->setToolTip(STR_CHANNELWEIGHTG_SETTING_HINT);
+        m_propChannelWeightingG->setEnabled(true);
+        // Set  Properties for editing
+        QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propChannelWeightingG->propertyManager();
+        setMinMaxStep(Manager, m_propChannelWeightingG, 0.01, 1.0, 0.01);
+    }
+
+    if (m_propChannelWeightingB)
+    {
+        m_propChannelWeightingB->setToolTip(STR_CHANNELWEIGHTB_SETTING_HINT);
+        m_propChannelWeightingB->setEnabled(true);
+        // Set  Properties for editing
+        QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propChannelWeightingB->propertyManager();
+        setMinMaxStep(Manager, m_propChannelWeightingB, 0.01, 1.0, 0.01);
+    }
+
+    if (m_propBitrate)
+    {
+        m_propBitrate->setToolTip(STR_BITRATE_SETTING_HINT);
+        m_propBitrate->setEnabled(true);
+        // Set  Properties for editing
+        QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propBitrate->propertyManager();
+        setMinMaxStep(Manager, m_propBitrate, 0.00, 8.00, 0.01);
+    }
+
+    if (m_propAlphaThreshold)
+    {
+        m_propAlphaThreshold->setToolTip(STR_ALPHATHRESHOLD_HINT);
+        m_propAlphaThreshold->setEnabled(true);
+        // Set  Properties for editing
+        QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propAlphaThreshold->propertyManager();
+        setMinMaxStep(Manager, m_propAlphaThreshold, 0, 255, 1);
     }
 
     if (m_propDestImage)
@@ -524,10 +854,29 @@ bool CSetCompressOptions::updateDisplayContent()
         m_propDestImage->setHidden(true);
     }
 
+    if (m_propDXT1Alpha)
+    {
+        m_propDXT1Alpha->setHidden(true);
+    }
+
+    if (m_propASTCBlockRate)
+    {
+        m_propASTCBlockRate->setHidden(true);
+    }
+
     return true;
 }
 
-
+void CSetCompressOptions::setMinMaxStep(QtVariantPropertyManager* manager, QtProperty *m_prop, double min, double max, double step)
+{
+    if (manager)
+    {
+        QtVariantProperty *prop = manager->variantProperty(m_prop);
+        prop->setAttribute(STR_SETTING_MINIMUM, min);
+        prop->setAttribute(STR_SETTING_MAXIMUM, max);
+        prop->setAttribute(STR_SETTING_SINGLESTEP, step);
+    }
+}
 
 void CSetCompressOptions::onPBCancel()
 {
@@ -557,7 +906,11 @@ void CSetCompressOptions::onPBCancel()
 void CSetCompressOptions::PBSaveCompressSetting()
 {
     m_data.m_compname = m_LEName->displayText();
-    m_data.m_FileInfoDestinationName = m_data.m_compname;
+
+    QString ImageExt = m_fileFormats->currentText();
+
+    // Path+FileName+Ext
+    m_data.m_FileInfoDestinationName = m_data.m_compname + "." + ImageExt;
 
     // Path
     QString Path = m_DestinationFolder->text();
@@ -567,9 +920,6 @@ void CSetCompressOptions::PBSaveCompressSetting()
     // Path+FileName
     finalPath.append("/");
     finalPath.append(m_data.m_compname);
-
-    // Path+FileName+Ext
-    QString ImageExt = m_fileFormats->currentText();
 
     if (m_fileFormats->currentIndex() >= 0 && !(ImageExt.isEmpty()))
     {

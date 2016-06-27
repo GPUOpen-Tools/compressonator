@@ -169,7 +169,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\Lib;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtANGLE;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\Lib;..\..\..\..\..\..\Common\Lib\Ext\glew\1.9.0\include;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -192,7 +192,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\Lib;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtANGLE;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\Lib;..\..\..\..\..\..\Common\Lib\Ext\glew\1.9.0\include;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
@@ -218,7 +218,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\Lib;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtANGLE;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\Lib;..\..\..\..\..\..\Common\Lib\Ext\glew\1.9.0\include;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -240,7 +240,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\Lib;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtANGLE;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\Lib;..\..\..\..\..\..\Common\Lib\Ext\glew\1.9.0\include;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -264,7 +264,7 @@
       </FunctionLevelLinking>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\Lib;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtANGLE;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\Lib;..\..\..\..\..\..\Common\Lib\Ext\glew\1.9.0\include;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -288,7 +288,7 @@
       </FunctionLevelLinking>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\Lib;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtANGLE;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\Lib;..\..\..\..\..\..\Common\Lib\Ext\glew\1.9.0\include;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -313,7 +313,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\Lib;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtANGLE;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\Lib;..\..\..\..\..\..\Common\Lib\Ext\glew\1.9.0\include;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -340,7 +340,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\Lib;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtANGLE;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\Lib;..\..\..\..\..\..\Common\Lib\Ext\glew\1.9.0\include;..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\header;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>

@@ -37,7 +37,9 @@ public:
     CCodec_Block_8x8(CodecType codecType);
     virtual ~CCodec_Block_8x8();
 
-    virtual CCodecBuffer* CreateBuffer(CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0) const;
+    virtual CCodecBuffer* CreateBuffer(
+        CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth, 
+        CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0) const;
 
     virtual DWORD GetBlockHeight() {return 4;};
 };

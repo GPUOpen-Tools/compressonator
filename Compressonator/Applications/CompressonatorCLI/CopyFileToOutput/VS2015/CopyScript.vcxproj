@@ -59,7 +59,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <PostBuildEvent>
-      <Command>..\CopyFiles.bat $(SolutionDir)..\..\..\..\Common\Lib\Ext\Qt\5.5\  $(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenCV\2.49\$(Platform)\VS2015\bin\debug  $(OUTDIR) $(SolutionDir) d</Command>
+      <Command>..\CopyFiles.bat $(SolutionDir)..\..\..\..\Common\Lib\Ext\Qt\5.5\  $(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenCV\2.49\$(Platform)\VS2015\bin\debug  $(OUTDIR) $(SolutionDir) $(SolutionDir)..\..\..\..\Common\Lib\Ext\glew\1.9.0\bin\x86\ $(SolutionDir)..\..\..\..\Common\Lib\Ext\Vulkan\1.0.8.0\SDK\win\Source\lib32\ d</Command>
       <Message>Copying  component binary files to Debug output directory</Message>
     </PostBuildEvent>
     <ClCompile>
@@ -71,7 +71,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug_MD'">
     <PostBuildEvent>
-      <Command>..\CopyFiles.bat $(SolutionDir)..\..\..\..\Common\Lib\Ext\Qt\5.5\  $(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenCV\2.49\$(Platform)\VS2015\bin\debug\  $(OUTDIR) $(SolutionDir) d</Command>
+      <Command>..\CopyFiles.bat $(SolutionDir)..\..\..\..\Common\Lib\Ext\Qt\5.5\  $(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenCV\2.49\$(Platform)\VS2015\bin\debug\  $(OUTDIR) $(SolutionDir) $(SolutionDir)..\..\..\..\Common\Lib\Ext\glew\1.9.0\bin\x86\ $(SolutionDir)..\..\..\..\Common\Lib\Ext\Vulkan\1.0.8.0\SDK\win\Source\lib32\ d</Command>
       <Message>Copying  component binary files to Debug output directory</Message>
     </PostBuildEvent>
     <ClCompile>
@@ -87,7 +87,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
     <PostBuildEvent>
-      <Command>..\CopyFiles.bat $(SolutionDir)..\..\..\..\Common\Lib\Ext\Qt\5.5\  $(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenCV\2.49\$(Platform)\VS2015\bin\release  $(OUTDIR) $(SolutionDir)</Command>
+      <Command>..\CopyFiles.bat $(SolutionDir)..\..\..\..\Common\Lib\Ext\Qt\5.5\  $(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenCV\2.49\$(Platform)\VS2015\bin\release  $(OUTDIR) $(SolutionDir) $(SolutionDir)..\..\..\..\Common\Lib\Ext\glew\1.9.0\bin\x86\ $(SolutionDir)..\..\..\..\Common\Lib\Ext\Vulkan\1.0.8.0\SDK\win\Source\lib32\</Command>
       <Message>Copying  component binary files to Release output directory</Message>
     </PostBuildEvent>
     <ClCompile>
@@ -99,7 +99,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release_MD'">
     <PostBuildEvent>
-      <Command>..\CopyFiles.bat $(SolutionDir)..\..\..\..\Common\Lib\Ext\Qt\5.5\  $(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenCV\2.49\$(Platform)\VS2015\bin\release\  $(OUTDIR) $(SolutionDir)</Command>
+      <Command>..\CopyFiles.bat $(SolutionDir)..\..\..\..\Common\Lib\Ext\Qt\5.5\  $(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenCV\2.49\$(Platform)\VS2015\bin\release\  $(OUTDIR) $(SolutionDir) $(SolutionDir)..\..\..\..\Common\Lib\Ext\glew\1.9.0\bin\x86\ $(SolutionDir)..\..\..\..\Common\Lib\Ext\Vulkan\1.0.8.0\SDK\win\Source\lib32\</Command>
       <Message>Copying  component binary files to Release output directory</Message>
     </PostBuildEvent>
     <ClCompile>

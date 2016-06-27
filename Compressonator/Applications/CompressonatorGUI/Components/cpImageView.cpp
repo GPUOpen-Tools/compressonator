@@ -115,6 +115,13 @@ cpImageView::~cpImageView()
         if (m_MipImages)
             m_imageLoader->clearMipImages(m_MipImages);
         delete m_imageLoader;
+        m_imageLoader = NULL;
+    }
+
+    if (m_imageLoader)
+    {
+        delete m_imageLoader;
+        m_imageLoader = NULL;
     }
 
     if (Plastique_style)
@@ -184,7 +191,16 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
 
     if (MipImages)
     {
-        m_MipImages = MipImages;
+        if (setting->reloadImage && !setting->generateDiff)
+        {
+            m_imageLoader = new CImageLoader();
+            if (m_imageLoader)
+            {
+                m_MipImages = m_imageLoader->LoadPluginImage(filePathName);
+            }
+        }
+        else
+            m_MipImages = MipImages;
     }
     else
     {
@@ -233,12 +249,12 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
         {
             m_MipLevels = m_MipImages->mipset->m_nMipLevels;
             // check levels with number of images to view
-            if (m_MipImages->m_MipImageFormat == MIPIMAGE_FORMAT::Format_QImage)
-            {
+            //if (m_MipImages->m_MipImageFormat == MIPIMAGE_FORMAT::Format_QImage)
+            //{
                 int count = m_MipImages->Image_list.count();
                 if (count <= 1)
                     m_MipLevels = 0;
-            }
+            //}
         }
 
     }
@@ -253,17 +269,38 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
     // Need to check if MipImages is valid here!!
     if (m_MipImages)
     {
+        QString gpuView = "";
+        bool useGPUView = false;
         switch (m_MipImages->m_DecompressedFormat)
         {
             case MIPIMAGE_FORMAT_DECOMPRESSED::Format_CPU:
                     custTitleBar->setTitle("Compressed Image: CPU View");
                     break;
             case MIPIMAGE_FORMAT_DECOMPRESSED::Format_GPU:
-                    custTitleBar->setTitle("Compressed Image: GPU View");
+                    useGPUView = true;
+                    gpuView = "Compressed Image: GPU View ";
                     break;
             default:
             case MIPIMAGE_FORMAT_DECOMPRESSED::Format_NONE:
                     break;
+        }
+
+        if (useGPUView)
+        {
+            switch (m_MipImages->m_MipImageFormat)
+            {
+            case MIPIMAGE_FORMAT::Format_OpenGL:
+                gpuView += "using OpenGL";
+                custTitleBar->setTitle(gpuView);
+                break;
+            case MIPIMAGE_FORMAT::Format_DirectX:
+                gpuView += "using DirectX";
+                custTitleBar->setTitle(gpuView);
+                break;
+            default: 
+                custTitleBar->setTitle(gpuView);
+                break;
+            }
         }
     }
 
@@ -293,8 +330,8 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
     //GridLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     m_toolBar->addWidget(GridLabel);
     m_CBimageview_GridBackground = new QComboBox(this);
+	m_CBimageview_GridBackground->addItem(tr("ChkBox"));
     m_CBimageview_GridBackground->addItem(tr("Black"));
-    m_CBimageview_GridBackground->addItem(tr("ChkBox"));
     m_CBimageview_GridBackground->addItem(tr("Lines"));
     m_CBimageview_GridBackground->addItem(tr("Points"));
     m_CBimageview_GridBackground->setStyle(Plastique_style);
@@ -306,7 +343,9 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
     //m_CBimageview_GridBackground->setStyleSheet("QComboBox::drop-down {subcontrol-origin: padding; subcontrol-position: top right; width: 15px; border-left-width: 1px; border-left-color: darkgray;     border-left-style: solid; border-top-right-radius: 3px; border-bottom-right-radius: 3px; }");
 
     connect(m_CBimageview_GridBackground, SIGNAL(currentIndexChanged(int)), m_acImageView, SLOT(onGridBackground(int)));
-
+    
+    int i = m_CBimageview_GridBackground->findText("ChkBox");
+    m_CBimageview_GridBackground->setCurrentIndex(i);
     m_toolBar->addWidget(m_CBimageview_GridBackground);
 
     m_toolBar->addSeparator();

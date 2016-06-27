@@ -37,7 +37,9 @@
 class CCodecBuffer_RG32F : public CCodecBuffer  
 {
 public:
-    CCodecBuffer_RG32F(CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0);
+    CCodecBuffer_RG32F(
+        CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
+        CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0);
     virtual ~CCodecBuffer_RG32F();
 
     virtual void Copy(CCodecBuffer& srcBuffer);

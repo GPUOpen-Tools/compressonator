@@ -118,17 +118,6 @@ int Plugin_ASTC::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMip
     }
 
 
-   // check supported types
-       if (!((header.blockdim_x == 4) && 
-        (header.blockdim_y == 4) &&
-        (header.blockdim_z == 1)))
-    {
-       if (ASTC_CMips)
-            ASTC_CMips->PrintError(_T("Error(%d): ASTC Plugin ID(%d) only 4x4 block are supported. Filename = %s "), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, pszFilename);
-      fclose(pFile);
-      return -1;
-    }
-       
     m_xdim = header.blockdim_x;
     m_ydim = header.blockdim_y;
     m_zdim = header.blockdim_z;
@@ -140,7 +129,7 @@ int Plugin_ASTC::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMip
     if (m_xdim < 3 || m_xdim > 12 || m_ydim < 3 || m_ydim > 12 || (m_zdim < 3 && m_zdim != 1) || m_zdim > 12)
     {
         if (ASTC_CMips)
-            ASTC_CMips->PrintError(_T("Error(%d): ASTC Plugin ID(%d) only block size not supported. %d %d %d Filename = %s "), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, pszFilename,m_xdim, m_ydim, m_zdim);
+            ASTC_CMips->PrintError(_T("Error(%d): ASTC Plugin ID(%d) Block size %d %d %d is not supported. Filename = %s "), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, pszFilename,m_xdim, m_ydim, m_zdim);
          fclose(pFile);
         return -1;
     }
@@ -161,11 +150,11 @@ int Plugin_ASTC::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMip
     pMipSet->m_format     = CMP_FORMAT_ASTC;
 
     // Allocate compression 
-    pMipSet->m_ChannelFormat = CF_Compressed;
-    pMipSet->m_nMaxMipLevels = 1; 
+    pMipSet->m_ChannelFormat  = CF_Compressed;
+    pMipSet->m_nMaxMipLevels  = 1; 
     pMipSet->m_nMipLevels     = 1;    // this is overwriiten depending on input.
 
-   if(!ASTC_CMips->AllocateMipSet(pMipSet, CF_8bit, TDT_ARGB, TT_2D, pMipSet->m_nWidth, pMipSet->m_nHeight, pMipSet->m_nDepth))
+   if(!ASTC_CMips->AllocateMipSet(pMipSet, CF_8bit, TDT_ARGB, TT_2D, xsize, ysize, zsize))
    {        
         fclose(pFile);
         return PE_Unknown;
@@ -176,7 +165,11 @@ int Plugin_ASTC::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMip
    int dwTotalSize = xblocks * yblocks * zblocks * 16;
 
    // Allocate a data buffer 
-   if(!ASTC_CMips->AllocateCompressedMipLevelData(mipLevel, pMipSet->m_nWidth, pMipSet->m_nHeight, dwTotalSize))
+   // The actual size should be xblocks , yblocks, 1
+   // Since Decompressed Output Texture is also calculated from these params
+   // We will have to oversize the input buffer for now, This should be corrected 
+   // in future releases.
+   if(!ASTC_CMips->AllocateCompressedMipLevelData(mipLevel, xsize, ysize, dwTotalSize))
    {
         fclose(pFile);
         if (ASTC_CMips)

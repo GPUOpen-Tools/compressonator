@@ -35,17 +35,21 @@
 
 using namespace std;
 
-//#define USE_DBGTRACE                                //    Show messages via Win Debug 
+#define UNREFERENCED_PARAMETER(P)          (P)
+
+//#define USE_DBGTRACE                                //  Show messages via Win Debug 
 //#define BC7_DEBUG_TO_RESULTS_TXT                    //  Send debug info to a results text file
-//#define DXT5_COMPDEBUGGER                           //    Remote connect data to Comp Debugger views
+//#define DXT5_COMPDEBUGGER                           //  Remote connect data to Comp Debugger views
 //#define BC6H_COMPDEBUGGER                           //  Remote connect data to Comp Debugger views
 //#define BC7_COMPDEBUGGER                            //  Remote connect data to Comp Debugger views
-//#define BC6H_NO_OPTIMIZE_ENDPOINTS                  //    Turn off BC6H optimization of endpoints - useful for debugging quantization and mode checking
+//#define BC6H_NO_OPTIMIZE_ENDPOINTS                  //  Turn off BC6H optimization of endpoints - useful for debugging quantization and mode checking
 //#define BC6H_DEBUG_TO_RESULTS_TXT                   //  Generates a Results.txt file on exe working directory; MultiThreading is turned off for debuging to text file
 //#define BC6H_DECODE_DEBUG                           //  Enables debug info on decoder
 
+//#define MAKE_FORMAT_COMPATIBLE                      //  Byte<->Float to make all source and dest compatible
+
 // Internal experimental code
-//#define ARGB_32_SUPPORT
-//#define SUPPORT_ETC_ALPHA
+// #define ARGB_32_SUPPORT
+// #define SUPPORT_ETC_ALPHA
 
 #endif // !COMMON_H

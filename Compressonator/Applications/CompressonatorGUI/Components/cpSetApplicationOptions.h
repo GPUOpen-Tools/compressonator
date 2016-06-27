@@ -53,6 +53,8 @@ public:
 public slots:
     void onClose();
     void oncurrentItemChanged(QtBrowserItem *item);
+    void onImageViewDecodeChanged(QVariant &value);
+    void onGPUDecompressChanged(QVariant &value);
 
 private:
     // Common for all
@@ -63,10 +65,12 @@ private:
     QWidget                     *m_parent;
     QPushButton                 *m_PBClose;
     ObjectController            *m_theController;
+    QtProperty                  *m_propAppOptions;
 };
 
 
 extern C_Application_Options g_Application_Options;
 extern bool g_useCPUDecode;
+extern MIPIMAGE_FORMAT g_gpudecodeFormat;
 
 #endif

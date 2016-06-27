@@ -96,8 +96,8 @@ public:
 
 enum eCustomGraphicsScene_Grids
 {
-    None = 0,
-    Block,
+	Block = 0,
+    None,
     Lines,
     Dots
 };

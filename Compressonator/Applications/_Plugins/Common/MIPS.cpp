@@ -176,8 +176,11 @@ bool CMIPS::AllocateAllMipLevels(MipLevelTable* pMipLevelTable, TextureType /*te
             //free previous mipLevels
             for(i -= 1; i>=0; i--)
             {
-                free(pMipLevelTable[i]);
-                pMipLevelTable[i] = NULL;
+                if (pMipLevelTable[i])
+                {
+                    free(pMipLevelTable[i]);
+                    pMipLevelTable[i] = NULL;
+                }
             }
             return false;
         }
@@ -215,8 +218,11 @@ bool CMIPS::AllocateMipSet(MipSet* pMipSet, ChannelFormat channelFormat, Texture
     if(!AllocateAllMipLevels(pMipSet->m_pMipLevelTable, textureType, numLevelsToAllocate))
     {
         //allocation of mip levels failed
-        free(pMipSet->m_pMipLevelTable);
-        pMipSet->m_pMipLevelTable = NULL;
+        if (pMipSet->m_pMipLevelTable)
+        {
+            free(pMipSet->m_pMipLevelTable);
+            pMipSet->m_pMipLevelTable = NULL;
+        }
         return false;
     }
     return true;
@@ -332,15 +338,23 @@ void CMIPS::FreeMipSet(MipSet* pMipSet)
             //free all miplevels and their data
             for(int i=0; i<nTotalOldMipLevels; i++)
             {
-                free(pMipSet->m_pMipLevelTable[i]->m_pbData);
-                pMipSet->m_pMipLevelTable[i]->m_pbData = NULL;
-                free(pMipSet->m_pMipLevelTable[i]);
-                pMipSet->m_pMipLevelTable[i] = NULL;
+                if (pMipSet->m_pMipLevelTable[i]->m_pbData)
+                {
+                    free(pMipSet->m_pMipLevelTable[i]->m_pbData);
+                    pMipSet->m_pMipLevelTable[i]->m_pbData = NULL;
+                }
+
+                if (pMipSet->m_pMipLevelTable[i])
+                {
+                    free(pMipSet->m_pMipLevelTable[i]);
+                    pMipSet->m_pMipLevelTable[i] = NULL;
+                }
             }
+
             free(pMipSet->m_pMipLevelTable);
             pMipSet->m_pMipLevelTable = NULL;
-            pMipSet->m_nMaxMipLevels = 0;
-            pMipSet->m_nMipLevels = 0;
+            pMipSet->m_nMaxMipLevels  = 0;
+            pMipSet->m_nMipLevels     = 0;
         }
     }
 }

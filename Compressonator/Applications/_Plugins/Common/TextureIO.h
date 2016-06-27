@@ -67,23 +67,23 @@ typedef struct
     bool             bForceFloatPath;
 #endif // AMD_COMPRESS_INTERNAL_BUILD
    //  BC7 Options
-   CMP_DWORD      dwnumThreads;
+   CMP_DWORD         dwnumThreads;
    double            fquality;                
                                             
    BOOL              brestrictColour;
    BOOL              brestrictAlpha;
-   CMP_DWORD      dwmodeMask;
+   CMP_DWORD         dwmodeMask;
 }    ATICompressor_CompressParams;
 
 
-CMP_FORMAT    GetFormat(MipSet* pMipSet);
+CMP_FORMAT      GetFormat(MipSet* pMipSet);
 void            Format2FourCC(CMP_FORMAT format, MipSet *pMipSet);
 
 extern  CMIPS *g_CMIPS;
 
 bool            IsFileExt(const char *fname, const char *fext);
 bool            IsDestinationUnCompressed(const char *fname);
-CMP_FORMAT   FormatByFileExtension(const char *fname, MipSet *pMipSet);
+CMP_FORMAT      FormatByFileExtension(const char *fname, MipSet *pMipSet);
 
 int             AMDLoadMIPSTextureImage(const char *SourceFile, MipSet *CMips, bool use_OCV);
 int             AMDSaveMIPSTextureImage(const char *DestFile, MipSet *CMips, bool use_OCV);
@@ -93,5 +93,9 @@ QRgb            floatToQrgba(float r, float g, float b, float a);
 bool            CompressedFormat(CMP_FORMAT format);
 
 void            astc_find_closest_blockdim_2d(float target_bitrate, int *x, int *y, int consider_illegal);
+
+bool            FormatSupportsQualitySetting(CMP_FORMAT format);
+bool            FormatSupportsDXTCBase(CMP_FORMAT format);
+
 
 #endif

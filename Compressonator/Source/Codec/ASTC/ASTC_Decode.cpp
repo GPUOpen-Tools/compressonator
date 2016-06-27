@@ -22,29 +22,33 @@
 // THE SOFTWARE.
 //
 // ASTC_Decode.cpp : A reference decoder for ASTC
-// Current decoder only supports 4x4 blocks - future releases will support upto 12x12
 //
 
 #include "ASTC\ASTC_Decode.h"
 
-void ASTCBlockDecoder::DecompressBlock(float   out[][4],
-                                       BYTE    in[ASTC_COMPRESSED_BLOCK_SIZE])
+void ASTCBlockDecoder::DecompressBlock( BYTE BlockWidth, 
+                                        BYTE BlockHeight,
+                                        BYTE bitness,
+                                        float   out[][4],
+                                        BYTE    in[ASTC_COMPRESSED_BLOCK_SIZE])
 {
     swizzlepattern swz_decode = { 0, 1, 2, 3 };
-    astc_codec_image *img = allocate_image(8, 4, 4, 1, 0);
+    
+
+    // Results Buffer
+    astc_codec_image *img = allocate_image(bitness, BlockWidth, BlockHeight, 1, 0);
     initialize_image(img);
 
     uint8_t *bp = in;
     physical_compressed_block pcb = *(physical_compressed_block *) bp;
     symbolic_compressed_block scb;
     
-    physical_to_symbolic(4, 4, 1, pcb, &scb);
+    physical_to_symbolic(BlockWidth, BlockHeight, 1, pcb, &scb);
 
     imageblock pb;
     astc_decode_mode decode_mode = DECODE_HDR;
-    decompress_symbolic_block(decode_mode, 4, 4, 1, 0,0,0, &scb, &pb);
-    write_imageblock(img, &pb, 4, 4, 1, 0, 0, 0, swz_decode);
-
+    decompress_symbolic_block(decode_mode, BlockWidth, BlockHeight, 1, 0,0,0, &scb, &pb);
+    write_imageblock(img, &pb, BlockWidth, BlockHeight, 1, 0, 0, 0, swz_decode);
 
     // copy results to our output buffer
     int x, y, z;
@@ -61,28 +65,24 @@ void ASTCBlockDecoder::DecompressBlock(float   out[][4],
             {
                 for (x = 0; x < exsize; x++)
                 {
-                    if (index < 16) 
-                    {
-                        out[index][0] = img->imagedata8[z][y][4 * x];
-                        out[index][1] = img->imagedata8[z][y][4 * x + 1];
-                        out[index][2] = img->imagedata8[z][y][4 * x + 2];
-                        out[index][3] = img->imagedata8[z][y][4 * x + 3];
-                    }
-                index++;
+                    out[index][0] = img->imagedata8[z][y][4 * x];
+                    out[index][1] = img->imagedata8[z][y][4 * x + 1];
+                    out[index][2] = img->imagedata8[z][y][4 * x + 2];
+                    out[index][3] = img->imagedata8[z][y][4 * x + 3];
+                    index++;
                 }
             }
     }
-    // No supported in this version
     else if (img->imagedata16)
     {
         for (z = 0; z < ezsize; z++)
             for (y = 0; y < eysize; y++)
                 for (x = 0; x < exsize; x++)
                 {
-                     out[index][0] = img->imagedata16[z][y][4 * x];        
-                     out[index][1] = img->imagedata16[z][y][4 * x + 1];    
-                     out[index][2] = img->imagedata16[z][y][4 * x + 2];    
-                     out[index][3] = img->imagedata16[z][y][4 * x + 3];    
+                     out[index][0] = img->imagedata16[z][y][4 * x];
+                     out[index][1] = img->imagedata16[z][y][4 * x + 1];
+                     out[index][2] = img->imagedata16[z][y][4 * x + 2];
+                     out[index][3] = img->imagedata16[z][y][4 * x + 3];
                 }
     }
 

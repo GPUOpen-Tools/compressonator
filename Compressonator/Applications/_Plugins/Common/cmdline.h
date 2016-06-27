@@ -30,6 +30,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include "Compressonator.h"
+#include "GPU_Decode\GPU_Decode.h"
 #include "MIPS.h"
 
 class CCmdLineParamaters
@@ -115,5 +116,7 @@ extern int  GetNumberOfCores(wchar_t *envp[ ]);
 extern bool SouceAndDestCompatible(CCmdLineParamaters g_CmdPrams);
 extern void SwizzleMipMap(MipSet *pMipSet);
 extern bool KeepSwizzle(CMP_FORMAT destformat);
+
+extern int  DecompressCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *userMips);
 
 #endif

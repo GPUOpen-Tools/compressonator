@@ -118,7 +118,7 @@ submitted to the exclusive jurisdiction of the Swedish Courts.
 
 */
 
-//// etcpack v2.73
+//// etcpack v2.74
 //// 
 //// NO WARRANTY 
 //// 
@@ -162,17 +162,12 @@ submitted to the exclusive jurisdiction of the Swedish Courts.
 //// THEORY OF LIABILITY (CONTRACT, TORT OR OTHERWISE), EVEN IF SUCH HOLDER
 //// OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 //// 
-//// (C) Ericsson AB 2013. All Rights Reserved.
+//// (C) Ericsson AB 2005-2013. All Rights Reserved.
 //// 
 
+#include "windows.h"
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "etcpack_lib.h"
-
-#pragma warning(disable:4100)
-// Remove warnings for conversions between different time variables
-#pragma warning(disable : 4244)
 
 // Typedefs
 typedef unsigned char uint8;
@@ -253,7 +248,7 @@ int formatSigned = 0;
 
 
 // Code used to create the valtab
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void setupAlphaTable() 
 {
   if(alphaTableInitialized)
@@ -289,7 +284,7 @@ void setupAlphaTable()
 }
 
 // Read a word in big endian style
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void read_big_endian_2byte_word(unsigned short *blockadr, FILE *f)
 {
     uint8 bytes[2];
@@ -307,7 +302,7 @@ void read_big_endian_2byte_word(unsigned short *blockadr, FILE *f)
 }
 
 // Read a word in big endian style
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void read_big_endian_4byte_word(unsigned int *blockadr, FILE *f)
 {
     uint8 bytes[4];
@@ -333,7 +328,7 @@ void read_big_endian_4byte_word(unsigned int *blockadr, FILE *f)
 // The format stores the bits for the three extra modes in a roundabout way to be able to
 // fit them without increasing the bit rate. This function converts them into something
 // that is easier to work with. 
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void unstuff57bits(unsigned int planar_word1, unsigned int planar_word2, unsigned int &planar57_word1, unsigned int &planar57_word2)
 {
     // Get bits from twotimer configuration for 57 bits
@@ -403,7 +398,7 @@ void unstuff57bits(unsigned int planar_word1, unsigned int planar_word2, unsigne
 // The format stores the bits for the three extra modes in a roundabout way to be able to
 // fit them without increasing the bit rate. This function converts them into something
 // that is easier to work with. 
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void unstuff58bits(unsigned int thumbH_word1, unsigned int thumbH_word2, unsigned int &thumbH58_word1, unsigned int &thumbH58_word2)
 {
     // Go to this layout:
@@ -437,7 +432,7 @@ void unstuff58bits(unsigned int thumbH_word1, unsigned int thumbH_word2, unsigne
 // The format stores the bits for the three extra modes in a roundabout way to be able to
 // fit them without increasing the bit rate. This function converts them into something
 // that is easier to work with. 
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void unstuff59bits(unsigned int thumbT_word1, unsigned int thumbT_word2, unsigned int &thumbT59_word1, unsigned int &thumbT59_word2)
 {
     // Get bits from twotimer configuration 59 bits. 
@@ -484,7 +479,7 @@ void unstuff59bits(unsigned int thumbT_word1, unsigned int thumbT_word2, unsigne
 }
 
 // The color bits are expanded to the full color
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void decompressColor(int R_B, int G_B, int B_B, uint8 (colors_RGB444)[2][3], uint8 (colors)[2][3]) 
 {
     // The color should be retrieved as:
@@ -552,9 +547,11 @@ void calculatePaintColors59T(uint8 d, uint8 p, uint8 (colors)[2][3], uint8 (poss
 //
 //|31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00|
 //|----------------------------------------index bits---------------------------------------------|
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void decompressBlockTHUMB59Tc(unsigned int block_part1, unsigned int block_part2, uint8 *img,int width,int height,int startx,int starty, int channels)
 {
+
+    UNREFERENCED_PARAMETER(height);
     uint8 colorsRGB444[2][3];
     uint8 colors[2][3];
     uint8 paint_colors[4][3];
@@ -601,7 +598,7 @@ void decompressBlockTHUMB59T(unsigned int block_part1, unsigned int block_part2,
 
 // Calculate the paint colors from the block colors 
 // using a distance d and one of the H- or T-patterns.
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void calculatePaintColors58H(uint8 d, uint8 p, uint8 (colors)[2][3], uint8 (possible_colors)[4][3]) 
 {
     
@@ -645,9 +642,11 @@ void calculatePaintColors58H(uint8 d, uint8 p, uint8 (colors)[2][3], uint8 (poss
 }
 
 // Decompress an H-mode block 
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void decompressBlockTHUMB58Hc(unsigned int block_part1, unsigned int block_part2, uint8 *img, int width, int height, int startx, int starty, int channels)
 {
+
+    UNREFERENCED_PARAMETER(height);
     unsigned int col0, col1;
     uint8 colors[2][3];
     uint8 colorsRGB444[2][3];
@@ -703,9 +702,11 @@ void decompressBlockTHUMB58H(unsigned int block_part1, unsigned int block_part2,
 }
 
 // Decompress the planar mode.
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void decompressBlockPlanar57c(unsigned int compressed57_1, unsigned int compressed57_2, uint8 *img, int width, int height, int startx, int starty, int channels)
 {
+
+    UNREFERENCED_PARAMETER(height);
     uint8 colorO[3], colorH[3], colorV[3];
 
     colorO[0] = GETBITSHIGH( compressed57_1, 6, 63);
@@ -736,9 +737,9 @@ void decompressBlockPlanar57c(unsigned int compressed57_1, unsigned int compress
     {
         for( yy=0; yy<4; yy++)
         {
-            img[channels*width*(starty+yy) + channels*(startx+xx) + 0] = CLAMP(0, ((xx*(colorH[0]-colorO[0]) + yy*(colorV[0]-colorO[0]) + 4*colorO[0] + 2) >> 2),255);
-            img[channels*width*(starty+yy) + channels*(startx+xx) + 1] = CLAMP(0, ((xx*(colorH[1]-colorO[1]) + yy*(colorV[1]-colorO[1]) + 4*colorO[1] + 2) >> 2),255);
-            img[channels*width*(starty+yy) + channels*(startx+xx) + 2] = CLAMP(0, ((xx*(colorH[2]-colorO[2]) + yy*(colorV[2]-colorO[2]) + 4*colorO[2] + 2) >> 2),255);
+            img[channels*width*(starty+yy) + channels*(startx+xx) + 0] = (uint8)CLAMP(0, ((xx*(colorH[0]-colorO[0]) + yy*(colorV[0]-colorO[0]) + 4*colorO[0] + 2) >> 2),255);
+            img[channels*width*(starty+yy) + channels*(startx+xx) + 1] = (uint8)CLAMP(0, ((xx*(colorH[1]-colorO[1]) + yy*(colorV[1]-colorO[1]) + 4*colorO[1] + 2) >> 2),255);
+            img[channels*width*(starty+yy) + channels*(startx+xx) + 2] = (uint8)CLAMP(0, ((xx*(colorH[2]-colorO[2]) + yy*(colorV[2]-colorO[2]) + 4*colorO[2] + 2) >> 2),255);
 
             //Equivalent method
             /*img[channels*width*(starty+yy) + channels*(startx+xx) + 0] = (int)CLAMP(0, JAS_ROUND((xx*(colorH[0]-colorO[0])/4.0 + yy*(colorV[0]-colorO[0])/4.0 + colorO[0])), 255);
@@ -753,9 +754,11 @@ void decompressBlockPlanar57(unsigned int compressed57_1, unsigned int compresse
   decompressBlockPlanar57c(compressed57_1, compressed57_2, img, width, height, startx, starty, 3);
 }
 // Decompress an ETC1 block (or ETC2 using individual or differential mode).
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void decompressBlockDiffFlipC(unsigned int block_part1, unsigned int block_part2, uint8 *img, int width, int height, int startx, int starty, int channels)
 {
+
+    UNREFERENCED_PARAMETER(height);
     uint8 avg_color[3], enc_color1[3], enc_color2[3];
     signed char diff[3];
     int table;
@@ -803,9 +806,9 @@ void decompressBlockDiffFlipC(unsigned int block_part1, unsigned int block_part2
                     shift++;
                     index=unscramble[index];
 
-                     r=RED_CHANNEL(img,width,x,y,channels)  =CLAMP(0,avg_color[0]+compressParams[table][index],255);
-                     g=GREEN_CHANNEL(img,width,x,y,channels)=CLAMP(0,avg_color[1]+compressParams[table][index],255);
-                     b=BLUE_CHANNEL(img,width,x,y,channels) =CLAMP(0,avg_color[2]+compressParams[table][index],255);
+                     r=RED_CHANNEL(img,width,x,y,channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
+                     g = GREEN_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0, avg_color[1] + compressParams[table][index], 255);
+                     b = BLUE_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0,avg_color[2]+compressParams[table][index],255);
                 }
             }
         }
@@ -822,9 +825,9 @@ void decompressBlockDiffFlipC(unsigned int block_part1, unsigned int block_part2
                     shift++;
                     index=unscramble[index];
 
-                     r=RED_CHANNEL(img,width,x,y,channels)  =CLAMP(0,avg_color[0]+compressParams[table][index],255);
-                     g=GREEN_CHANNEL(img,width,x,y,channels)=CLAMP(0,avg_color[1]+compressParams[table][index],255);
-                     b=BLUE_CHANNEL(img,width,x,y,channels) =CLAMP(0,avg_color[2]+compressParams[table][index],255);
+                     r=RED_CHANNEL(img,width,x,y,channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
+                     g = GREEN_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0, avg_color[1] + compressParams[table][index], 255);
+                     b = BLUE_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0,avg_color[2]+compressParams[table][index],255);
                 }
                 shift+=2;
             }
@@ -859,9 +862,9 @@ void decompressBlockDiffFlipC(unsigned int block_part1, unsigned int block_part2
                     shift++;
                     index=unscramble[index];
 
-                     r=RED_CHANNEL(img,width,x,y,channels)  =CLAMP(0,avg_color[0]+compressParams[table][index],255);
-                     g=GREEN_CHANNEL(img,width,x,y,channels)=CLAMP(0,avg_color[1]+compressParams[table][index],255);
-                     b=BLUE_CHANNEL(img,width,x,y,channels) =CLAMP(0,avg_color[2]+compressParams[table][index],255);
+                     r=RED_CHANNEL(img,width,x,y,channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
+                     g = GREEN_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0, avg_color[1] + compressParams[table][index], 255);
+                     b = BLUE_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0,avg_color[2]+compressParams[table][index],255);
                 }
             }
         }
@@ -878,9 +881,9 @@ void decompressBlockDiffFlipC(unsigned int block_part1, unsigned int block_part2
                     shift++;
                     index=unscramble[index];
 
-                     r=RED_CHANNEL(img,width,x,y,channels)  =CLAMP(0,avg_color[0]+compressParams[table][index],255);
-                     g=GREEN_CHANNEL(img,width,x,y,channels)=CLAMP(0,avg_color[1]+compressParams[table][index],255);
-                     b=BLUE_CHANNEL(img,width,x,y,channels) =CLAMP(0,avg_color[2]+compressParams[table][index],255);
+                     r=RED_CHANNEL(img,width,x,y,channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
+                     g = GREEN_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0, avg_color[1] + compressParams[table][index], 255);
+                     b = BLUE_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0,avg_color[2]+compressParams[table][index],255);
                 }
                 shift += 2;
             }
@@ -935,9 +938,9 @@ void decompressBlockDiffFlipC(unsigned int block_part1, unsigned int block_part2
                     shift++;
                     index=unscramble[index];
 
-                     r=RED_CHANNEL(img,width,x,y,channels)  =CLAMP(0,avg_color[0]+compressParams[table][index],255);
-                     g=GREEN_CHANNEL(img,width,x,y,channels)=CLAMP(0,avg_color[1]+compressParams[table][index],255);
-                     b=BLUE_CHANNEL(img,width,x,y,channels) =CLAMP(0,avg_color[2]+compressParams[table][index],255);
+                     r=RED_CHANNEL(img,width,x,y,channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
+                     g = GREEN_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0, avg_color[1] + compressParams[table][index], 255);
+                     b = BLUE_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0,avg_color[2]+compressParams[table][index],255);
                 }
             }
         }
@@ -954,9 +957,9 @@ void decompressBlockDiffFlipC(unsigned int block_part1, unsigned int block_part2
                     shift++;
                     index=unscramble[index];
 
-                     r=RED_CHANNEL(img,width,x,y,channels)  =CLAMP(0,avg_color[0]+compressParams[table][index],255);
-                     g=GREEN_CHANNEL(img,width,x,y,channels)=CLAMP(0,avg_color[1]+compressParams[table][index],255);
-                     b=BLUE_CHANNEL(img,width,x,y,channels) =CLAMP(0,avg_color[2]+compressParams[table][index],255);
+                     r=RED_CHANNEL(img,width,x,y,channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
+                     g = GREEN_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0, avg_color[1] + compressParams[table][index], 255);
+                     b = BLUE_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0,avg_color[2]+compressParams[table][index],255);
                 }
                 shift+=2;
             }
@@ -1002,9 +1005,9 @@ void decompressBlockDiffFlipC(unsigned int block_part1, unsigned int block_part2
                     shift++;
                     index=unscramble[index];
 
-                     r=RED_CHANNEL(img,width,x,y,channels)  =CLAMP(0,avg_color[0]+compressParams[table][index],255);
-                     g=GREEN_CHANNEL(img,width,x,y,channels)=CLAMP(0,avg_color[1]+compressParams[table][index],255);
-                     b=BLUE_CHANNEL(img,width,x,y,channels) =CLAMP(0,avg_color[2]+compressParams[table][index],255);
+                     r=RED_CHANNEL(img,width,x,y,channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
+                     g = GREEN_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0, avg_color[1] + compressParams[table][index], 255);
+                     b = BLUE_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0,avg_color[2]+compressParams[table][index],255);
                 }
             }
         }
@@ -1021,9 +1024,9 @@ void decompressBlockDiffFlipC(unsigned int block_part1, unsigned int block_part2
                     shift++;
                     index=unscramble[index];
 
-                     r=RED_CHANNEL(img,width,x,y,channels)  =CLAMP(0,avg_color[0]+compressParams[table][index],255);
-                     g=GREEN_CHANNEL(img,width,x,y,channels)=CLAMP(0,avg_color[1]+compressParams[table][index],255);
-                     b=BLUE_CHANNEL(img,width,x,y,channels) =CLAMP(0,avg_color[2]+compressParams[table][index],255);
+                     r=RED_CHANNEL(img,width,x,y,channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
+                     g = GREEN_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0, avg_color[1] + compressParams[table][index], 255);
+                     b = BLUE_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0,avg_color[2]+compressParams[table][index],255);
                 }
                 shift += 2;
             }
@@ -1036,7 +1039,7 @@ void decompressBlockDiffFlip(unsigned int block_part1, unsigned int block_part2,
 }
 
 // Decompress an ETC2 RGB block
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void decompressBlockETC2c(unsigned int block_part1, unsigned int block_part2, uint8 *img, int width, int height, int startx, int starty, int channels)
 {
     int diffbit;
@@ -1107,10 +1110,12 @@ void decompressBlockETC2(unsigned int block_part1, unsigned int block_part2, uin
   decompressBlockETC2c(block_part1, block_part2, img, width, height, startx, starty, 3);
 }
 // Decompress an ETC2 block with punchthrough alpha
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void decompressBlockDifferentialWithAlphaC(unsigned int block_part1, unsigned int block_part2, uint8* img, uint8* alpha, int width, int height, int startx, int starty, int channelsRGB)
 {
-    
+
+    UNREFERENCED_PARAMETER(height);
+
     uint8 avg_color[3], enc_color1[3], enc_color2[3];
     signed char diff[3];
     int table;
@@ -1173,9 +1178,9 @@ void decompressBlockDifferentialWithAlphaC(unsigned int block_part1, unsigned in
                     mod=0;
                 }
                 
-                r=RED_CHANNEL(img,width,x,y,channelsRGB)  =CLAMP(0,avg_color[0]+mod,255);
-                g=GREEN_CHANNEL(img,width,x,y,channelsRGB)=CLAMP(0,avg_color[1]+mod,255);
-                b=BLUE_CHANNEL(img,width,x,y,channelsRGB) =CLAMP(0,avg_color[2]+mod,255);
+                r=RED_CHANNEL(img,width,x,y,channelsRGB)  = (uint8)CLAMP(0, avg_color[0] + mod, 255);
+                g = GREEN_CHANNEL(img, width, x, y, channelsRGB) = (uint8)CLAMP(0, avg_color[1] + mod, 255);
+                b = BLUE_CHANNEL(img, width, x, y, channelsRGB) = (uint8)CLAMP(0,avg_color[2]+mod,255);
                 if(diffbit==0&&index==1) 
                 {
                     alpha[(y*width+x)*channelsA]=0;
@@ -1208,9 +1213,9 @@ void decompressBlockDifferentialWithAlphaC(unsigned int block_part1, unsigned in
                 {
                     mod=0;
                 }
-                r=RED_CHANNEL(img,width,x,y,channelsRGB)  =CLAMP(0,avg_color[0]+mod,255);
-                g=GREEN_CHANNEL(img,width,x,y,channelsRGB)=CLAMP(0,avg_color[1]+mod,255);
-                b=BLUE_CHANNEL(img,width,x,y,channelsRGB) =CLAMP(0,avg_color[2]+mod,255);
+                r=RED_CHANNEL(img,width,x,y,channelsRGB)  = (uint8)CLAMP(0, avg_color[0] + mod, 255);
+                g = GREEN_CHANNEL(img, width, x, y, channelsRGB) = (uint8)CLAMP(0, avg_color[1] + mod, 255);
+                b = BLUE_CHANNEL(img, width, x, y, channelsRGB) = (uint8)CLAMP(0,avg_color[2]+mod,255);
                 if(diffbit==0&&index==1) 
                 {
                     alpha[(y*width+x)*channelsA]=0;
@@ -1271,9 +1276,9 @@ void decompressBlockDifferentialWithAlphaC(unsigned int block_part1, unsigned in
                     mod=0;
                 }
                 
-                r=RED_CHANNEL(img,width,x,y,channelsRGB)  =CLAMP(0,avg_color[0]+mod,255);
-                g=GREEN_CHANNEL(img,width,x,y,channelsRGB)=CLAMP(0,avg_color[1]+mod,255);
-                b=BLUE_CHANNEL(img,width,x,y,channelsRGB) =CLAMP(0,avg_color[2]+mod,255);
+                r=RED_CHANNEL(img,width,x,y,channelsRGB)  = (uint8)CLAMP(0, avg_color[0] + mod, 255);
+                g = GREEN_CHANNEL(img, width, x, y, channelsRGB) = (uint8)CLAMP(0, avg_color[1] + mod, 255);
+                b = BLUE_CHANNEL(img, width, x, y, channelsRGB) = (uint8)CLAMP(0,avg_color[2]+mod,255);
                 if(diffbit==0&&index==1) 
                 {
                     alpha[(y*width+x)*channelsA]=0;
@@ -1306,9 +1311,9 @@ void decompressBlockDifferentialWithAlphaC(unsigned int block_part1, unsigned in
                     mod=0;
                 }
                 
-                r=RED_CHANNEL(img,width,x,y,channelsRGB)  =CLAMP(0,avg_color[0]+mod,255);
-                g=GREEN_CHANNEL(img,width,x,y,channelsRGB)=CLAMP(0,avg_color[1]+mod,255);
-                b=BLUE_CHANNEL(img,width,x,y,channelsRGB) =CLAMP(0,avg_color[2]+mod,255);
+                r=RED_CHANNEL(img,width,x,y,channelsRGB)  = (uint8)CLAMP(0, avg_color[0] + mod, 255);
+                g = GREEN_CHANNEL(img, width, x, y, channelsRGB) = (uint8)CLAMP(0, avg_color[1] + mod, 255);
+                b = BLUE_CHANNEL(img, width, x, y, channelsRGB) = (uint8)CLAMP(0,avg_color[2]+mod,255);
                 if(diffbit==0&&index==1) 
                 {
                     alpha[(y*width+x)*channelsA]=0;
@@ -1332,9 +1337,11 @@ void decompressBlockDifferentialWithAlpha(unsigned int block_part1, unsigned int
 
 
 // similar to regular decompression, but alpha channel is set to 0 if pixel index is 2, otherwise 255.
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void decompressBlockTHUMB59TAlphaC(unsigned int block_part1, unsigned int block_part2, uint8 *img, uint8* alpha, int width, int height, int startx, int starty, int channelsRGB)
 {
+
+    UNREFERENCED_PARAMETER(height);
 
     uint8 colorsRGB444[2][3];
     uint8 colors[2][3];
@@ -1404,9 +1411,12 @@ void decompressBlockTHUMB59TAlpha(unsigned int block_part1, unsigned int block_p
 
 
 // Decompress an H-mode block with alpha
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void decompressBlockTHUMB58HAlphaC(unsigned int block_part1, unsigned int block_part2, uint8 *img, uint8* alpha, int width, int height, int startx, int starty, int channelsRGB)
 {
+
+    UNREFERENCED_PARAMETER(height);
+
     unsigned int col0, col1;
     uint8 colors[2][3];
     uint8 colorsRGB444[2][3];
@@ -1485,7 +1495,7 @@ void decompressBlockTHUMB58HAlpha(unsigned int block_part1, unsigned int block_p
   decompressBlockTHUMB58HAlphaC(block_part1, block_part2, img, alpha, width, height, startx, starty, 3);
 }
 // Decompression function for ETC2_RGBA1 format.
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void decompressBlockETC21BitAlphaC(unsigned int block_part1, unsigned int block_part2, uint8 *img, uint8* alphaimg, int width, int height, int startx, int starty, int channelsRGB)
 {
     int diffbit;
@@ -1630,16 +1640,17 @@ void decompressBlockETC21BitAlpha(unsigned int block_part1, unsigned int block_p
 //
 
 // bit number frompos is extracted from input, and moved to bit number topos in the return value.
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 uint8 getbit(uint8 input, int frompos, int topos) 
 {
+    //uint8 output=0;
     if(frompos>topos)
         return ((1<<frompos)&input)>>(frompos-topos);
     return ((1<<frompos)&input)<<(topos-frompos);
 }
 
 // takes as input a value, returns the value clamped to the interval [0,255].
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 int clamp(int val) 
 {
     if(val<0)
@@ -1653,9 +1664,12 @@ int clamp(int val)
 // Note that this decoding is slightly different from that of GL_COMPRESSED_R11_EAC.
 // However, a hardware decoder can share gates between the two formats as explained
 // in the specification under GL_COMPRESSED_R11_EAC.
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void decompressBlockAlphaC(uint8* data, uint8* img, int width, int height, int ix, int iy, int channels) 
 {
+
+    UNREFERENCED_PARAMETER(height);
+
     int alpha = data[0];
     int table = data[1];
     
@@ -1678,7 +1692,7 @@ void decompressBlockAlphaC(uint8* data, uint8* img, int width, int height, int i
                     byte++;
                 }
             }
-            img[(ix+x+(iy+y)*width)*channels]=clamp(alpha +alphaTable[table][index]);
+            img[(ix+x+(iy+y)*width)*channels]=(uint8)clamp(alpha +alphaTable[table][index]);
         }
     }
 }
@@ -1689,7 +1703,7 @@ void decompressBlockAlpha(uint8* data, uint8* img, int width, int height, int ix
 
 // Does decompression and then immediately converts from 11 bit signed to a 16-bit format.
 // 
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 int16 get16bits11signed(int base, int table, int mul, int index) 
 {
     int elevenbase = base-128;
@@ -1726,7 +1740,7 @@ int16 get16bits11signed(int base, int table, int mul, int index)
     //so we extend to 15 bits signed.
     sign = elevenbits<0;
     elevenbits=abs(elevenbits);
-    int16 fifteenbits = (elevenbits<<5)+(elevenbits>>5);
+    int16 fifteenbits = (uint16)((elevenbits<<5)+(elevenbits>>5));
     int16 sixteenbits=fifteenbits;
 
     if(sign)
@@ -1737,7 +1751,7 @@ int16 get16bits11signed(int base, int table, int mul, int index)
 
 // Does decompression and then immediately converts from 11 bit signed to a 16-bit format 
 // Calculates the 11 bit value represented by base, table, mul and index, and extends it to 16 bits.
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 uint16 get16bits11bits(int base, int table, int mul, int index) 
 {
     int elevenbase = base*8+4;
@@ -1770,15 +1784,17 @@ uint16 get16bits11bits(int base, int table, int mul, int index)
     //elevenbits now contains the 11 bit alpha value as defined in the spec.
 
     //extend to 16 bits before returning, since we don't have any good 11-bit file formats.
-    uint16 sixteenbits = (elevenbits<<5)+(elevenbits>>6);
+    uint16 sixteenbits = (uint16)((elevenbits<<5)+(elevenbits>>6));
 
     return sixteenbits;
 }
 
 // Decompresses a block using one of the GL_COMPRESSED_R11_EAC or GL_COMPRESSED_SIGNED_R11_EAC-formats
-// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2013. All Rights Reserved.
+// NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
 void decompressBlockAlpha16bitC(uint8* data, uint8* img, int width, int height, int ix, int iy, int channels) 
 {
+    UNREFERENCED_PARAMETER(height);
+
     int alpha = data[0];
     int table = data[1];
 
@@ -1833,7 +1849,7 @@ void decompressBlockAlpha16bitC(uint8* data, uint8* img, int width, int height, 
                 uSixteen = get16bits11bits(alpha,(table%16),(table/16),index);
             }
             //byte swap for pgm
-            img[windex] = uSixteen/256;
+            img[windex]   = (uint8)(uSixteen/256);
             img[windex+1] = uSixteen%256;
 #endif
 

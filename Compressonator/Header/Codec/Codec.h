@@ -59,6 +59,7 @@ typedef enum _CodecType
     CT_ETC_RGBA_Explicit,
     CT_ETC_RGBA_Interpolated,
 #endif // SUPPORT_ETC_ALPHA
+    CT_ETC2_RGB,
     CT_BC6H,
     CT_BC7,
     CT_ASTC,
@@ -96,7 +97,9 @@ public:
 
     virtual DWORD GetBlockHeight() {return 1;};
 
-    virtual CCodecBuffer* CreateBuffer(CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0) const = 0;
+    virtual CCodecBuffer* CreateBuffer(
+                                        CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth, 
+                                        CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0) const = 0;
 
     virtual CodecError Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, DWORD_PTR pUser1 = NULL, DWORD_PTR pUser2 = NULL) = 0;
     virtual CodecError Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, DWORD_PTR pUser1 = NULL, DWORD_PTR pUser2 = NULL) = 0;
@@ -113,8 +116,8 @@ bool SupportsSSE();
 bool SupportsSSE2();
 
 CCodec* CreateCodec(CodecType nCodecType);
-CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
-CMP_DWORD CalcBufferSize(CMP_FORMAT format, CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch);
+CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight);
+CMP_DWORD CalcBufferSize(CMP_FORMAT format, CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight);
 
 CMP_BYTE DeriveB(CMP_BYTE R, CMP_BYTE G);
 CODECFLOAT DeriveB(CODECFLOAT R, CODECFLOAT G);

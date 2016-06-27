@@ -1,0 +1,7 @@
+; CompressonatorLib.def : Declares the module parameters for the DLL.
+
+EXPORTS
+    CMP_DecompressTexture
+    CMP_InitializeDecompessLibrary
+    CMP_ShutdownDecompessLibrary
+

@@ -87,7 +87,7 @@ CCodec_ASTC::CCodec_ASTC() : CCodec_DXTC(CT_ASTC)
     m_ydim                      = 4;
     m_zdim                      = 1;
     m_decode_mode               = DECODE_HDR;
-
+    m_decoder                   = NULL;
 }
 
 
@@ -241,17 +241,6 @@ CodecError CCodec_ASTC::InitializeOCL()
     return CE_OK;
 }
 
-//  notes: Investigate these interfaces to Implement these for alternate methods : IE GPU & HSA based compression!!
-
-CodecError CCodec_ASTC::Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
-{
-    return CE_OK;
-}
-
-CodecError CCodec_ASTC::Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
-{
-    return CE_OK;
-}
 
 void CCodec_ASTC::find_closest_blockdim_2d(float target_bitrate, int *x, int *y, int consider_illegal)
 {
@@ -444,7 +433,7 @@ void *encode_astc_image_threadfunc(void *vblk)
     Codec_Feedback_Proc pFeedbackProc = blk->pFeedbackProc;
 
 
-    // Common ARM and AMD Code
+    // Common ARM and Compressonator Code
     int x, y, z, i;
     int xsize = input_image->xsize;
     int ysize = input_image->ysize;
@@ -477,7 +466,7 @@ void *encode_astc_image_threadfunc(void *vblk)
                     ctr = threadcount - 1;
                     pctr++;
 
-                    // New AMD Implemented code for feedback
+                    // New Implemented code for feedback
                     // routine to call user FeedbackProc
                     if (pFeedbackProc && (pctr % progress_counter_divider) == 0)
                     {
@@ -621,8 +610,11 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
         }
     }
 
-    m_NumEncodingThreads = min(m_NumThreads, MAX_ASTC_THREADS);
-    if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1;
+    //multithreading disabled for now
+    //m_NumEncodingThreads = min(m_NumThreads, MAX_ASTC_THREADS);
+    //if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1;
+
+    m_NumEncodingThreads = 1;
 
     int *counters = new int[m_NumEncodingThreads];
     int *threads_completed = new int[m_NumEncodingThreads];
@@ -665,7 +657,7 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
         ai[i].pUser2 = pUser2;
         ai[i].abort_requested = &m_AbortRequested;
     }
-
+ 
     if (m_NumEncodingThreads == 1)
         encode_astc_image_threadfunc(&ai[0]);
     else
@@ -700,78 +692,100 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
 
 // notes:
 // Slow CPU based decompression : Should look into also using HW based decompression with this interface
-// The diminsions for input block sizes and output block sizes needs further work
-// we are set to 4x4 by default on this code, question is should it use a dynamic range 
 //
 CodecError CCodec_ASTC::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
 {
-
     CodecError err = InitializeASTCLibrary();
-
     if (err != CE_OK) return err;
-    
-    CMP_BYTE  Block_Width  = 4;    
-    CMP_BYTE  Block_Height = 4;
 
-    const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + (Block_Width - 1)) / Block_Width);
-    const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight()+ (Block_Height- 1)) / Block_Height);
+    // Our Compressed data Blocks are always 128 bit long (4x4 blocks)
+    const CMP_DWORD imageWidth  = bufferIn.GetWidth();
+    const CMP_DWORD imageHeight = bufferIn.GetHeight();
+    const CMP_DWORD imageDepth  = 1;
+    const BYTE      bitness     = 8;
+
+    const CMP_DWORD CompBlockX  = bufferIn.GetBlockWidth();
+    const CMP_DWORD CompBlockY  = bufferIn.GetBlockHeight();
+    CMP_BYTE  Block_Width       = bufferIn.GetBlockWidth();
+    CMP_BYTE  Block_Height      = bufferIn.GetBlockHeight();
+
+    const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + (CompBlockX - 1)) / CompBlockX);
+    const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight()+ (CompBlockY - 1)) / CompBlockY);
+    const CMP_DWORD dwBlocksZ = 1;
+    const CMP_DWORD dwBufferInDepth = 1;
+
+    // Override the current input buffer Pitch size  (Since it will be set according to the Compressed Block Sizes
+    // and not to the Compressed Codec data which is for ASTC 16 Bytes per block x Number of blocks per row
+    bufferIn.SetPitch(16 * dwBlocksX);
+
+    // Output data size Pitch
+    CMP_DWORD  dwPitch = bufferOut.GetPitch();
+
+    // Output Buffer
+    BYTE *pDataOut      = bufferOut.GetData();
+
     const CMP_DWORD dwBlocksXY = dwBlocksX*dwBlocksY;
 
-    //
-    //  notes: All of the block sizes must be variable and not fixed to 4x4
-    //
-    for(CMP_DWORD j = 0; j < dwBlocksY; j++)        // row = height
+    for(CMP_DWORD cmpRowY = 0; cmpRowY < dwBlocksY; cmpRowY++)        // Compressed images row = height
     {
-        for(CMP_DWORD i = 0; i < dwBlocksX; i++)    // Col = width
+        for(CMP_DWORD cmpColX = 0; cmpColX < dwBlocksX; cmpColX++)    // Compressed images Col = width
         {
             union FBLOCKS
             {
                 float decodedBlock[144][4];            // max 12x12 block size
-                float destBlock[576];                // max 12x12x4
+                float destBlock[576];                  // max 12x12x4
             } DecData;
-
+    
             union BBLOCKS
             {
-                CMP_DWORD    compressedBlock[4];
+                CMP_DWORD       compressedBlock[4];
                 BYTE            out[16];
                 BYTE            in[16];
             } CompData;
 
-            CMP_BYTE destBlock[576];    // Max decompressed data size 12x12x4 (bitness = 8 bits per channel!!)
-            
-            bufferIn.ReadBlock(i*Block_Width, j*Block_Height, CompData.compressedBlock, 4);
+            bufferIn.ReadBlock(cmpColX*4, cmpRowY*4, CompData.compressedBlock, 4);
 
             // Encode to the appropriate location in the compressed image
-            m_decoder->DecompressBlock(DecData.decodedBlock,CompData.in);
+            m_decoder->DecompressBlock(Block_Width, Block_Height, bitness, DecData.decodedBlock,CompData.in);
+            
+            // Now that we have a decoded block lets copy that data over to the target image buffer
+            CMP_DWORD outCol = cmpColX*Block_Width;
+            CMP_DWORD outRow = cmpRowY*Block_Height;
+            CMP_DWORD outImgRow = outRow;
+            CMP_DWORD outImgCol = outCol;
 
-            // Create the block for decoding
-            // napate; notes: We need to figure out proper dimensions or output buffer!!
-            int srcIndex = 0;
-            for(int row=0; row < Block_Width; row++)
+            for (int row = 0; row < Block_Height; row++)
             {
-                for(int col=0; col < Block_Height; col++)
+                CMP_DWORD  nextRowCol  = (outRow+row)*dwPitch + (outCol * 4);
+                CMP_BYTE*  pData       = (CMP_BYTE*)(pDataOut + nextRowCol);
+                if ((outImgRow + row) < imageHeight)
                 {
-                    destBlock[srcIndex]   = (CMP_BYTE)DecData.decodedBlock[row*Block_Width+col][BC_COMP_RED];         
-                    destBlock[srcIndex+1] = (CMP_BYTE)DecData.decodedBlock[row*Block_Width+col][BC_COMP_GREEN];     
-                    destBlock[srcIndex+2] = (CMP_BYTE)DecData.decodedBlock[row*Block_Width+col][BC_COMP_BLUE];     
-                    destBlock[srcIndex+3] = (CMP_BYTE)DecData.decodedBlock[row*Block_Width+col][BC_COMP_ALPHA];     
-                    srcIndex+=4;    // Go to next target pixel (RGBA data)
+                    outImgCol = outCol;
+                    for (int col = 0; col < Block_Width; col++)
+                    {
+                        if ((outImgCol + col) < imageWidth)
+                        {
+                            *pData++ = (CMP_BYTE)DecData.decodedBlock[row*Block_Height + col][BC_COMP_RED];
+                            *pData++ = (CMP_BYTE)DecData.decodedBlock[row*Block_Height + col][BC_COMP_GREEN];
+                            *pData++ = (CMP_BYTE)DecData.decodedBlock[row*Block_Height + col][BC_COMP_BLUE];
+                            *pData++ = (CMP_BYTE)DecData.decodedBlock[row*Block_Height + col][BC_COMP_ALPHA];
+                        }
+                        else break;
+                    }
                 }
             }
-
-            bufferOut.WriteBlockRGBA(i*Block_Width, j*Block_Height, Block_Width, Block_Height, destBlock);
-
         }
 
         if (pFeedbackProc)
         {
-            float fProgress = 100.f * (j * dwBlocksX) / dwBlocksXY;
+            float fProgress = 100.f * (cmpRowY * dwBlocksX) / dwBlocksXY;
             if (pFeedbackProc(fProgress, pUser1, pUser2))
             {
                 return CE_Aborted;
             }
         }
     }
+
     return CE_OK;
 }
 

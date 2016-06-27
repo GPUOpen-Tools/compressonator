@@ -35,7 +35,11 @@ public:
     ~ASTCBlockDecoder() {};
 
     // *out is determined by ImageData::m_DataType
-    void DecompressBlock(float  out[][4],                    
+    void DecompressBlock(
+                         BYTE BlockWidth,
+                         BYTE BlockHeight,
+                         BYTE bitness,
+                         float  out[][4],
                          BYTE   in[ASTC_COMPRESSED_BLOCK_SIZE]);
 
 private:

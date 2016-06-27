@@ -34,9 +34,17 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////////////
 
-CCodecBuffer_Block::CCodecBuffer_Block(CodecBufferType nCodecBufferType, CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData)
-: CCodecBuffer(dwWidth, dwHeight, dwPitch, pData), m_nCodecBufferType(nCodecBufferType)
+CCodecBuffer_Block::CCodecBuffer_Block(CodecBufferType nCodecBufferType, 
+                                       CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
+                                       CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData)
+: CCodecBuffer(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData), m_nCodecBufferType(nCodecBufferType)
 {
+    // ToDo: All of these cases all need to be updated from default values 
+    // to those passed down! for now we has asjusted the case
+    // of CBT_4x4Block_8BPP which is common for DXTn and BCn (defaults should be 4x4 however since the introduction of ASTC
+    // and GT Codec the sizes are now variable from 4x4 to 12x12 (for ASTC) and 4x4 to BlockW x BlockH for GT
+    // Should also investigate changing m_dwBlockBPP
+
     switch(nCodecBufferType)
     {
         case CBT_4x4Block_2BPP:
@@ -60,7 +68,7 @@ CCodecBuffer_Block::CCodecBuffer_Block(CodecBufferType nCodecBufferType, CMP_DWO
         case CBT_8x8Block_32BPP:
             m_dwBlockWidth = 8; m_dwBlockHeight = 8; m_dwBlockBPP = 32; break;
         default:
-            assert(0);
+            m_dwBlockWidth = nBlockWidth; m_dwBlockHeight = nBlockHeight; m_dwBlockBPP = 8; break;
     }
 
     CMP_DWORD dwBlocksX = ((GetWidth() + m_dwBlockWidth - 1) / m_dwBlockWidth);
@@ -84,16 +92,15 @@ CCodecBuffer_Block::~CCodecBuffer_Block()
 bool CCodecBuffer_Block::ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_DWORD* pBlock, CMP_DWORD dwBlockSize)
 {
     assert(pBlock);
-    assert(dwBlockSize == m_dwBlockSize / sizeof(CMP_DWORD));
     assert(x < GetWidth());
     assert(y < GetHeight());
-    assert(x % m_dwBlockWidth == 0);
-    assert(y % m_dwBlockHeight == 0);
 
-    if(!pBlock || dwBlockSize != (m_dwBlockSize / sizeof(CMP_DWORD)) || x >= GetWidth() || y >= GetHeight())
+    if(!pBlock || x >= GetWidth() || y >= GetHeight())
         return false;
 
-    memcpy(pBlock, GetData() + ((y / m_dwBlockHeight) * m_dwPitch) + ((x / m_dwBlockWidth) * dwBlockSize * sizeof(CMP_DWORD)), dwBlockSize * sizeof(CMP_DWORD));
+    int offset = ((y / m_dwBlockHeight) * m_dwPitch) + ((x / m_dwBlockWidth) * dwBlockSize * sizeof(CMP_DWORD));
+
+    memcpy(pBlock, GetData() + offset, dwBlockSize * sizeof(CMP_DWORD));
 
     return true;
 }
@@ -101,16 +108,13 @@ bool CCodecBuffer_Block::ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_DWORD* pBlock, 
 bool CCodecBuffer_Block::WriteBlock(CMP_DWORD x, CMP_DWORD y, CMP_DWORD* pBlock, CMP_DWORD dwBlockSize)
 {
     assert(pBlock);
-    assert(dwBlockSize == m_dwBlockSize / sizeof(CMP_DWORD));
     assert(x < GetWidth());
     assert(y < GetHeight());
-    assert(x % m_dwBlockWidth == 0);
-    assert(y % m_dwBlockHeight == 0);
 
-    if(!pBlock || dwBlockSize != m_dwBlockSize / sizeof(CMP_DWORD) || x >= GetWidth() || y >= GetHeight())
+    if(!pBlock || x >= GetWidth() || y >= GetHeight())
         return false;
-
-    memcpy(GetData() + ((y / m_dwBlockHeight) * m_dwPitch) + ((x / m_dwBlockWidth) * dwBlockSize * sizeof(CMP_DWORD)), pBlock, dwBlockSize * sizeof(CMP_DWORD));
+    int offset = ((y / m_dwBlockHeight) * m_dwPitch) + ((x / m_dwBlockWidth) * dwBlockSize * sizeof(CMP_DWORD));
+    memcpy(GetData() + offset, pBlock, dwBlockSize * sizeof(CMP_DWORD));
 
     return true;
 }

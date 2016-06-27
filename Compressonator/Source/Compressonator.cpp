@@ -73,10 +73,10 @@ CMP_DWORD CMP_API CMP_CalculateBufferSize(const CMP_Texture* pTexture)
     if(pTexture->format < CMP_FORMAT_ARGB_8888 || pTexture->format > CMP_FORMAT_MAX)
         return 0;
 
-    return CalcBufferSize(pTexture->format, pTexture->dwWidth, pTexture->dwHeight, pTexture->dwPitch);
+    return CalcBufferSize(pTexture->format, pTexture->dwWidth, pTexture->dwHeight, pTexture->dwPitch, pTexture->nBlockWidth, pTexture->nBlockHeight);
 }
 
-CMP_DWORD CalcBufferSize(CMP_FORMAT format, CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch)
+CMP_DWORD CalcBufferSize(CMP_FORMAT format, CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(("format %d dwWidth %d dwHeight %d dwPitch %d",format, dwWidth, dwHeight, dwPitch));
@@ -128,7 +128,7 @@ CMP_DWORD CalcBufferSize(CMP_FORMAT format, CMP_DWORD dwWidth, CMP_DWORD dwHeigh
             return ((dwPitch) ? (dwPitch * dwHeight) : (dwWidth * 1 * sizeof(float) * dwHeight));
 
         default:
-            return CalcBufferSize(GetCodecType(format), dwWidth, dwHeight);
+            return CalcBufferSize(GetCodecType(format), dwWidth, dwHeight, nBlockWidth, nBlockHeight);
     }
 }
 
@@ -173,12 +173,16 @@ CMP_ERROR CMP_API CMP_ConvertTexture(const CMP_Texture* pSourceTexture, CMP_Text
             CodecBufferType srcBufferType = GetCodecBufferType(pSourceTexture->format);
             CodecBufferType destBufferType = GetCodecBufferType(pDestTexture->format);
 
-            CCodecBuffer* pSrcBuffer = CreateCodecBuffer(srcBufferType, pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData);
+            CCodecBuffer* pSrcBuffer = CreateCodecBuffer(srcBufferType, 
+                                                         pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight, pSourceTexture->nBlockDepth,
+                                                         pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData);
             assert(pSrcBuffer);
             if(!pSrcBuffer)
                 return CMP_ERR_GENERIC;
 
-            CCodecBuffer* pDestBuffer = CreateCodecBuffer(destBufferType, pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData);
+            CCodecBuffer* pDestBuffer = CreateCodecBuffer(destBufferType, 
+                                                         pDestTexture->nBlockWidth, pDestTexture->nBlockHeight, pDestTexture->nBlockDepth,
+                                                         pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData);
             assert(pDestBuffer);
             if(!pDestBuffer)
             {
@@ -231,8 +235,16 @@ CMP_ERROR CMP_API CMP_ConvertTexture(const CMP_Texture* pSourceTexture, CMP_Text
 
         CodecBufferType destBufferType = GetCodecBufferType(pDestTexture->format);
 
-        CCodecBuffer* pSrcBuffer = pCodec->CreateBuffer(pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData);
-        CCodecBuffer* pDestBuffer = CreateCodecBuffer(destBufferType, pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData);
+        CCodecBuffer* pSrcBuffer = pCodec->CreateBuffer(pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight, pSourceTexture->nBlockDepth,
+                                                        pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData);
+
+        pDestTexture->nBlockWidth  = pSourceTexture->nBlockWidth;
+        pDestTexture->nBlockHeight = pSourceTexture->nBlockHeight;
+        pDestTexture->nBlockDepth  = pSourceTexture->nBlockDepth;
+
+        CCodecBuffer* pDestBuffer = CreateCodecBuffer(destBufferType, 
+                                                      pDestTexture->nBlockWidth, pDestTexture->nBlockHeight, pDestTexture->nBlockDepth,
+                                                      pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData);
 
         assert(pSrcBuffer);
         assert(pDestBuffer);
@@ -245,6 +257,11 @@ CMP_ERROR CMP_API CMP_ConvertTexture(const CMP_Texture* pSourceTexture, CMP_Text
         }
 
         DISABLE_FP_EXCEPTIONS;
+
+        pSrcBuffer->SetBlockHeight(pSourceTexture->nBlockHeight);
+        pSrcBuffer->SetBlockWidth (pSourceTexture->nBlockWidth );
+        pSrcBuffer->SetBlockDepth (pSourceTexture->nBlockDepth );
+
         CodecError err1 = pCodec->Decompress(*pSrcBuffer, *pDestBuffer, pFeedbackProc, pUser1, pUser2);
         RESTORE_FP_EXCEPTIONS;
 
@@ -269,9 +286,15 @@ CMP_ERROR CMP_API CMP_ConvertTexture(const CMP_Texture* pSourceTexture, CMP_Text
             return CMP_ERR_UNABLE_TO_INIT_CODEC;
         }
 
-        CCodecBuffer* pSrcBuffer = pCodecIn->CreateBuffer(pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData);
-        CCodecBuffer* pTempBuffer = CreateCodecBuffer(CBT_RGBA32F, pDestTexture->dwWidth, pDestTexture->dwHeight);
-        CCodecBuffer* pDestBuffer = pCodecOut->CreateBuffer(pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData);
+        CCodecBuffer* pSrcBuffer = pCodecIn->CreateBuffer(
+                                                      pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight, pSourceTexture->nBlockDepth,
+                                                      pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData);
+        CCodecBuffer* pTempBuffer = CreateCodecBuffer(CBT_RGBA32F,
+                                                      pDestTexture->nBlockWidth, pDestTexture->nBlockHeight, pDestTexture->nBlockDepth,
+                                                      pDestTexture->dwWidth, pDestTexture->dwHeight);
+        CCodecBuffer* pDestBuffer = pCodecOut->CreateBuffer(
+                                                      pDestTexture->nBlockWidth, pDestTexture->nBlockHeight, pDestTexture->nBlockDepth,
+                                                      pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData);
 
         assert(pSrcBuffer);
         assert(pTempBuffer);

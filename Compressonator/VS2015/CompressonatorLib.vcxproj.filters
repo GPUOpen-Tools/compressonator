@@ -428,6 +428,12 @@
     <ClCompile Include="..\Source\Codec\GT\Codec_GT.cpp">
       <Filter>Source Files\Codec\GT</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Codec\ETC\Codec_ETC2.cpp">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Codec\ETC\Codec_ETC2_RGB.cpp">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\Source\Codec\DXTC\dxtc_v11_compress_64.asm">
@@ -707,6 +713,12 @@
     </ClInclude>
     <ClInclude Include="..\Header\Codec\GT\GT_Definitions.h">
       <Filter>Header Files\Codec\GT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Codec\ETC\Codec_ETC2.h">
+      <Filter>Header Files\Codec\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Codec\ETC\Codec_ETC2_RGB.h">
+      <Filter>Header Files\Codec\ETC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

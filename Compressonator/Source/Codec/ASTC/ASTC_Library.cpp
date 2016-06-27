@@ -50,7 +50,11 @@ void astc_codec_internal_error(const char *filename, int linenum)
 //
 //
 //
-extern "C" BC_ERROR CMP_DecodeASTCBlock( BYTE *in, float out[][4])
+extern "C" BC_ERROR CMP_DecodeASTCBlock( CMP_BYTE BlockWidth, 
+                                         CMP_BYTE BlockHeight, 
+                                         CMP_BYTE Bitness,
+                                         BYTE *in, 
+                                         float out[][4])
 {
     if(!g_LibraryInitialized)
     {
@@ -62,7 +66,7 @@ extern "C" BC_ERROR CMP_DecodeASTCBlock( BYTE *in, float out[][4])
         return BC_ERROR_INVALID_PARAMETERS;
     }
 
-    g_Decoder.DecompressBlock(out, in);
+    g_Decoder.DecompressBlock(BlockWidth, BlockHeight, Bitness, out, in);
     return BC_ERROR_NONE;
 }
 

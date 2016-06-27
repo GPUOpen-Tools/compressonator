@@ -46,7 +46,6 @@
 
 // CodeXL Help Dialog
 #include <AMDTOSWrappers/Include/osProductVersion.h>
-//#include <AMDTApplicationFramework/Include/afGlobalVariablesManager.h>
 #include <AMDTApplicationComponents/Include/acHelpAboutDialog.h>
 
 // //Reserved: GPUDecode

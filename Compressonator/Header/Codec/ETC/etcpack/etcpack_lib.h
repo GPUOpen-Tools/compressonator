@@ -13,5 +13,10 @@ void decompressBlockDiffFlip(unsigned int block_part1, unsigned int block_part2,
 
 bool readCompressParams(void);
 
-// ETC2
+// ETC2 - Fast
+void compressBlockETC2FastPerceptual(uint8 *img, uint8 *imgdec, int width, int height, int startx, int starty, unsigned int &compressed1, unsigned int &compressed2);
+// ETC2 - Slow
+void compressBlockETC2ExhaustivePerceptual(uint8 *img, uint8 *imgdec, int width, int height, int startx, int starty, unsigned int &compressed1, unsigned int &compressed2);
+void decompressBlockETC2(unsigned int block_part1, unsigned int block_part2, uint8 *img, int width, int height, int startx, int starty);
+
 #endif

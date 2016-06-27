@@ -232,7 +232,7 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
 
     // Set some global setting 
     #ifdef  ENABLED_USER_GPUVIEW
-    g_useCPUDecode = (g_Application_Options.m_ImageVewDecode == g_Application_Options.ImageViewDecode::CPU);
+    g_useCPUDecode = (g_Application_Options.m_ImageViewDecode == g_Application_Options.ImageViewDecode::CPU);
     #else
     g_useCPUDecode = true;
     #endif
@@ -264,7 +264,7 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     SetProjectWindowTitle();
 
     // Get the product version:
-    m_apptitle = "AMD Compress";
+    m_apptitle = "Compressonator";
    
     QString ver  = QString("%1.%2.%3.%4").arg(
         QString::number(VERSION_MAJOR_MAJOR),
@@ -280,7 +280,7 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     m_copyRightCaption = "";
     //Reserved: GPUDecode
     m_companyLogoBitmapString = L"";
-    m_pacHelpAboutDialog->Init(QString("About AMD Compress"), m_apptitle, m_appVersion, m_copyRightCaption, m_copyRightInformation, m_productIconId, m_versionCaption, m_companyLogoBitmapString,false);
+    m_pacHelpAboutDialog->Init(QString("About Compressonator"), m_apptitle, m_appVersion, m_copyRightCaption, m_copyRightInformation, m_productIconId, m_versionCaption, m_companyLogoBitmapString,false);
     
     // Work Around for CodeXL About box
     m_pacHelpAboutDialog->setWindowIcon(QApplication::windowIcon());
@@ -500,6 +500,7 @@ void cpMainComponents::settings()
         {
             m_setapplicationoptions->UpdateViewData();
             m_setapplicationoptions->show();
+            m_setapplicationoptions->raise();
         }
     }
 }
@@ -743,10 +744,10 @@ void cpMainComponents::createActions()
         connect(userGuideAct, SIGNAL(triggered()), this, SLOT(userGuide()));
     }
 
-    aboutAct = new QAction(tr("About AMD Compress"), this);
+    aboutAct = new QAction(tr("About Compressonator"), this);
     if (aboutAct)
     {
-        aboutAct->setStatusTip(tr("About AMD Compress"));
+        aboutAct->setStatusTip(tr("About Compressonator"));
         connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
     }
 }
@@ -1314,6 +1315,7 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
                 {
                     // Create a new view image
                     ImageType = " Original Image file";
+                    setting->reloadImage = g_Application_Options.m_useNewImageViews;
                     m_imageview = new cpImageView(fileName, ImageType, m_parent, m_filedata->m_MipImages, setting);
                 }
             }
@@ -1499,6 +1501,7 @@ void cpMainComponents::SetRaised()
 
 cpMainComponents::~cpMainComponents()
 {
+    CMP_ShutdownDecompessLibrary();
 }
 
 void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
@@ -1507,6 +1510,8 @@ void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
     QString CompProjectName = "New";
 
     m_setcompressoptions->m_data.init();
+
+    emit m_setcompressoptions->m_data.compressionChanged((QVariant &)m_setcompressoptions->m_data.m_Compression);
 
     // Obtain the Parent and its data
     QTreeWidgetItem *parent = item->parent();
@@ -1523,16 +1528,6 @@ void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
             CompProjectName = fileinfo.baseName();
             m_setcompressoptions->m_data.m_sourceFileNamePath = m_imagefile->m_Full_Path;
             m_setcompressoptions->m_data.m_SourceImageSize    = m_imagefile->m_ImageSize;
-
-            // Check source file extension for special cases
-            QFileInfo fi(m_setcompressoptions->m_data.m_sourceFileNamePath);
-            QString ext = fi.suffix().toUpper();
-            if (ext.compare("EXR") == 0)
-            {
-                m_setcompressoptions->m_data.m_settoUseOnlyBC6 = true;
-                m_setcompressoptions->m_data.m_Compression = C_Destination_Options::BC6H;
-            }
-
             m_setcompressoptions->m_data.m_SourceIscompressedFormat = CompressedFormat(m_imagefile->m_Format);
 
             // Used to append to name - for unique name
@@ -1575,6 +1570,7 @@ void cpMainComponents::onAddedCompressSettingNode()
 {
     if (compressAct)
         compressAct->setEnabled(true);
+    m_setcompressoptions->m_destFilePath = m_setcompressoptions->m_DestinationFolder->text();
 }
 
 void cpMainComponents::onEditCompressSettings(QTreeWidgetItem *item)

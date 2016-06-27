@@ -29,10 +29,10 @@
 #include "CmdLine.h"
 
 bool g_useCPUDecode = true;
-
+MIPIMAGE_FORMAT g_gpudecodeFormat = Format_OpenGL;
 
 extern PluginManager g_pluginManager;
-extern MipSet* DecompressMIPSet(MipSet *MipSetIn, bool swizzle = false);
+extern MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, bool useCPU, bool swizzle = false);
 extern QRgb RgbaToQrgba(struct Imf::Rgba imagePixel);
 extern int    g_OpenGLMajorVersion;
 
@@ -78,8 +78,8 @@ bool CImageLoader::clearMipImages(CMipImages *MipImages)
 
     try
     {
-        if (MipImages->m_MipImageFormat == MIPIMAGE_FORMAT::Format_QImage)
-        {
+        //if (MipImages->m_MipImageFormat == MIPIMAGE_FORMAT::Format_QImage)
+        //{
             for (int i = 0; i < MipImages->Image_list.count(); i++)
             {
                 QImage *image = MipImages->Image_list[i];
@@ -91,7 +91,7 @@ bool CImageLoader::clearMipImages(CMipImages *MipImages)
             }
 
             MipImages->Image_list.clear();
-        }
+        //}
 
         if (MipImages->mipset)
             m_CMips->FreeMipSet(MipImages->mipset);
@@ -331,7 +331,7 @@ MipSet *CImageLoader::DecompressMipSet(CMipImages *MipImages)
             MipImages->m_DecompressedFormat = MIPIMAGE_FORMAT_DECOMPRESSED::Format_CPU;
 
             // This call decompresses all MIP levels so it should only be called once
-            tmpMipSet = DecompressMIPSet(MipImages->mipset);
+            tmpMipSet = DecompressMIPSet(MipImages->mipset, GPUDecode_INVALID, true);
 
             if (tmpMipSet)
             {
@@ -354,11 +354,32 @@ MipSet *CImageLoader::DecompressMipSet(CMipImages *MipImages)
             if (!g_useCPUDecode)
             {
                 MipImages->m_DecompressedFormat = MIPIMAGE_FORMAT_DECOMPRESSED::Format_GPU;
-                MipImages->m_MipImageFormat     = MIPIMAGE_FORMAT::Format_OpenGL;
-            }
+                MipImages->m_MipImageFormat     = g_gpudecodeFormat;
+                
+                CMP_GPUDecode decodeWith = CMP_GPUDecode::GPUDecode_INVALID;
+                switch (g_gpudecodeFormat)
+                {
+                    case MIPIMAGE_FORMAT::Format_OpenGL:
+                        decodeWith = CMP_GPUDecode::GPUDecode_OPENGL;
+                        break;
+                    case MIPIMAGE_FORMAT::Format_DirectX:
+                        decodeWith = CMP_GPUDecode::GPUDecode_DIRECTX;
+                        break;
+                    default:
+                        break;
+                }
 
-            MipImages->m_Error                  = MIPIMAGE_FORMAT_ERRORS::Format_CompressedImage;
-            
+                // This call decompresses all MIP levels so it should only be called once
+                tmpMipSet = DecompressMIPSet(MipImages->mipset, decodeWith, false);
+
+                if (tmpMipSet)
+                {
+                    tmpMipSet->m_isDeCompressed = true;
+                    MipImages->decompressedMipSet = tmpMipSet;
+                }
+            }
+            else
+                MipImages->m_Error              = MIPIMAGE_FORMAT_ERRORS::Format_CompressedImage;    
             //Reserved: GPUDecode           
         }
         else
@@ -394,6 +415,7 @@ QImage *CImageLoader::MIPS2QImage(MipSet *tmpMipSet, int level)
         (tmpMipSet->m_TextureDataType == TDT_XRGB)
         )
    {
+
         if (tmpMipSet->m_ChannelFormat == CF_Float32)
         {
             Array2D<Rgba> pixels(tmpMipSet->m_nHeight, tmpMipSet->m_nWidth);
@@ -427,7 +449,9 @@ QImage *CImageLoader::MIPS2QImage(MipSet *tmpMipSet, int level)
                         data++;
                         b = *data * 5.55555;
                         data++;
-                        a = *data * 5.55555;
+                        // For Float channel formats Alpha channel is ignored
+                        // Please update this as needed for specific image formats
+                        a = 16777216;
                         data++;
                         image->setPixel(x, y, floatToQrgba(r, g, b, a));
                     }
@@ -436,6 +460,7 @@ QImage *CImageLoader::MIPS2QImage(MipSet *tmpMipSet, int level)
             else
             {
                 float r, g, b, a;
+
                 //copy pixels into image
                 for (int y = 0; y < mipLevel->m_nHeight; y++) {
                     for (int x = 0; x < mipLevel->m_nWidth; x++) {
@@ -447,16 +472,15 @@ QImage *CImageLoader::MIPS2QImage(MipSet *tmpMipSet, int level)
                         //  Step 2) Multiply the defogged pixel values by
                         //     2^(exposure + 2.47393).
                         // (2^2.47393) is 5.55555
-                      
+ 
                         r = half_conv_float((unsigned short)(*data)) * 5.55555;
                         data++;
                         g = half_conv_float((unsigned short)(*data)) * 5.55555;
                         data++;
                         b = half_conv_float((unsigned short)(*data)) * 5.55555;
                         data++;
-                        a = half_conv_float((unsigned short)(*data)) * 5.55555;
+                        a = *data;
                         data++;
-
                         image->setPixel(x, y, floatToQrgba(r, g, b, a));
                     }
                 }
@@ -499,8 +523,8 @@ QImage *CImageLoader::MIPS2QImage(MipSet *tmpMipSet, int level)
                     B = pData[i];
                     i++;
                     A = pData[i];
-                    if (!A)
-                        A = 255;
+                    //if (!A)                   // BugFix: Preseve the Alpha value
+                    //    A = 255;
                     i++;
                     image->setPixel(x, y, qRgba(R, G, B, A));
                 }
@@ -579,8 +603,8 @@ void CImageLoader::UpdateMIPMapImages(CMipImages *MipImages)
     if (!MipImages->mipset) return;
     QImage *image;
 
-    if (MipImages->m_MipImageFormat == MIPIMAGE_FORMAT::Format_QImage)
-    {
+    //if (MipImages->m_MipImageFormat == MIPIMAGE_FORMAT::Format_QImage)
+    //{
         if (MipImages->Image_list.count() <= MipImages->mipset->m_nMipLevels)
         {
             for (int i = 1; i <= MipImages->mipset->m_nMipLevels; i++)
@@ -596,7 +620,7 @@ void CImageLoader::UpdateMIPMapImages(CMipImages *MipImages)
                 }
             }
         }
-    }
+    //}
 }
 
 

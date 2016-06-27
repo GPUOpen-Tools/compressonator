@@ -41,7 +41,8 @@ enum MIPIMAGE_FORMAT_DECOMPRESSED {
 
 enum MIPIMAGE_FORMAT {
     Format_QImage,
-    Format_OpenGL
+    Format_OpenGL,
+    Format_DirectX
 };
 
 

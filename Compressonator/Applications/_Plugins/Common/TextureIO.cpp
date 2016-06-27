@@ -213,7 +213,8 @@ CMP_FORMAT GetFormat(DWORD dwFourCC)
         case FOURCC_ATC_RGBA_EXPLICIT:  return CMP_FORMAT_ATC_RGBA_Explicit;
         case FOURCC_ATC_RGBA_INTERP:    return CMP_FORMAT_ATC_RGBA_Interpolated;
         case FOURCC_ETC_RGB:            return CMP_FORMAT_ETC_RGB;
-        case FOURCC_BC6H:               return CMP_FORMAT_BC6H; 
+        case FOURCC_ETC2_RGB:           return CMP_FORMAT_ETC2_RGB;
+        case FOURCC_BC6H:               return CMP_FORMAT_BC6H;
         case FOURCC_BC7:                return CMP_FORMAT_BC7;
         case FOURCC_ASTC:               return CMP_FORMAT_ASTC;
         case FOURCC_GT:                 return CMP_FORMAT_GT;
@@ -259,6 +260,7 @@ void Format2FourCC(CMP_FORMAT format, MipSet *pMipSet)
         case CMP_FORMAT_ATC_RGBA_Interpolated:  pMipSet->m_dwFourCC =  FOURCC_ATC_RGBA_INTERP;     break;
 
         case CMP_FORMAT_ETC_RGB:                pMipSet->m_dwFourCC =  FOURCC_ETC_RGB;             break;
+        case CMP_FORMAT_ETC2_RGB:               pMipSet->m_dwFourCC =  FOURCC_ETC2_RGB;            break;
         case CMP_FORMAT_GT:                     pMipSet->m_dwFourCC =  FOURCC_GT;                  break;
 
         case CMP_FORMAT_BC6H:                   pMipSet->m_dwFourCC =  FOURCC_DX10;                break;
@@ -404,6 +406,7 @@ bool CompressedFormat(CMP_FORMAT format)
     }
     return true;
 }
+
 
 QImage::Format MipFormat2QFormat(MipSet *mipset)
 {
@@ -704,3 +707,42 @@ int AMDSaveMIPSTextureImage(const char * DestFile, MipSet *MipSetIn, bool use_OC
 
     return 0;
 }
+
+
+bool FormatSupportsQualitySetting(CMP_FORMAT format)
+{
+    return CompressedFormat(format);
+}
+
+bool FormatSupportsDXTCBase(CMP_FORMAT format)
+{
+    switch (format)
+    {
+    case  CMP_FORMAT_ATI1N                :
+    case  CMP_FORMAT_ATI2N                :
+    case  CMP_FORMAT_ATI2N_XY             :
+    case  CMP_FORMAT_ATI2N_DXT5           :
+    case  CMP_FORMAT_BC1                  :
+    case  CMP_FORMAT_BC2                  :
+    case  CMP_FORMAT_BC3                  :
+    case  CMP_FORMAT_BC4                  :
+    case  CMP_FORMAT_BC5                  :
+    case  CMP_FORMAT_BC6H                 :
+    case  CMP_FORMAT_BC7                  :
+    case  CMP_FORMAT_DXT1                 :
+    case  CMP_FORMAT_DXT3                 :
+    case  CMP_FORMAT_DXT5                 :
+    case  CMP_FORMAT_DXT5_xGBR            :
+    case  CMP_FORMAT_DXT5_RxBG            :
+    case  CMP_FORMAT_DXT5_RBxG            :
+    case  CMP_FORMAT_DXT5_xRBG            :
+    case  CMP_FORMAT_DXT5_RGxB            :
+    case  CMP_FORMAT_DXT5_xGxR            :
+            return (true);
+    break;
+    default:
+            break;
+    }
+    return false;
+}
+

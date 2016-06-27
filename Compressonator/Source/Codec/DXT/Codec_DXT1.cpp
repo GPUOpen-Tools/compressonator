@@ -80,9 +80,11 @@ bool CCodec_DXT1::GetParameter(const CMP_CHAR* pszParamName, CMP_DWORD& dwValue)
     return true;
 }
 
-CCodecBuffer* CCodec_DXT1::CreateBuffer(CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData) const
+CCodecBuffer* CCodec_DXT1::CreateBuffer(
+                                        CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
+                                        CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData) const
 {
-    return CreateCodecBuffer(CBT_4x4Block_4BPP, dwWidth, dwHeight, dwPitch, pData);
+    return CreateCodecBuffer(CBT_4x4Block_4BPP, nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
 }
 
 CodecError CCodec_DXT1::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)

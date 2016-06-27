@@ -132,7 +132,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 
 #include "KHR/khrplatform.h"
-#define KTX_OPENGL_ES2 1
+#define KTX_OPENGL 1
 #if KTX_OPENGL
 
 	#ifdef _WIN32

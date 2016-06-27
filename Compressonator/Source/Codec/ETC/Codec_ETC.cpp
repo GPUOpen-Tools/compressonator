@@ -86,6 +86,7 @@ void CCodec_ETC::DecompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWO
             rgbBlock[(x*16) + (y*4) + RGBA8888_CHANNEL_R] = destRGB[x][y].red;
             rgbBlock[(x*16) + (y*4) + RGBA8888_CHANNEL_G] = destRGB[x][y].green;
             rgbBlock[(x*16) + (y*4) + RGBA8888_CHANNEL_B] = destRGB[x][y].blue;
+            rgbBlock[(x*16) + (y*4) + RGBA8888_CHANNEL_A] = 0xFF;
         }
     }
 }

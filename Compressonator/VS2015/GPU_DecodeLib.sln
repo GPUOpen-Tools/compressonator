@@ -1,0 +1,64 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GPU_Decode", "GPU_DecodeLib.vcxproj", "{B439F755-9F29-480A-BB3E-C055C682E796}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_DLL|Win32 = Debug_DLL|Win32
+		Debug_DLL|x64 = Debug_DLL|x64
+		Debug_MD_DLL|Win32 = Debug_MD_DLL|Win32
+		Debug_MD_DLL|x64 = Debug_MD_DLL|x64
+		Debug_MD|Win32 = Debug_MD|Win32
+		Debug_MD|x64 = Debug_MD|x64
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release_DLL|Win32 = Release_DLL|Win32
+		Release_DLL|x64 = Release_DLL|x64
+		Release_MD_DLL|Win32 = Release_MD_DLL|Win32
+		Release_MD_DLL|x64 = Release_MD_DLL|x64
+		Release_MD|Win32 = Release_MD|Win32
+		Release_MD|x64 = Release_MD|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Debug_DLL|Win32.ActiveCfg = Debug_DLL|Win32
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Debug_DLL|Win32.Build.0 = Debug_DLL|Win32
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Debug_DLL|x64.ActiveCfg = Debug_DLL|x64
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Debug_DLL|x64.Build.0 = Debug_DLL|x64
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Debug_MD_DLL|Win32.ActiveCfg = Debug_MD_DLL|Win32
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Debug_MD_DLL|Win32.Build.0 = Debug_MD_DLL|Win32
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Debug_MD_DLL|x64.ActiveCfg = Debug_MD_DLL|x64
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Debug_MD_DLL|x64.Build.0 = Debug_MD_DLL|x64
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Debug_MD|Win32.ActiveCfg = Debug_MD|Win32
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Debug_MD|Win32.Build.0 = Debug_MD|Win32
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Debug_MD|x64.ActiveCfg = Debug_MD|x64
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Debug_MD|x64.Build.0 = Debug_MD|x64
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Debug|Win32.Build.0 = Debug|Win32
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Debug|x64.ActiveCfg = Debug|x64
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Debug|x64.Build.0 = Debug|x64
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Release_DLL|Win32.ActiveCfg = Release_DLL|Win32
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Release_DLL|Win32.Build.0 = Release_DLL|Win32
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Release_DLL|x64.ActiveCfg = Release_DLL|x64
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Release_DLL|x64.Build.0 = Release_DLL|x64
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Release_MD_DLL|Win32.ActiveCfg = Release_MD_DLL|Win32
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Release_MD_DLL|Win32.Build.0 = Release_MD_DLL|Win32
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Release_MD_DLL|x64.ActiveCfg = Release_MD_DLL|x64
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Release_MD_DLL|x64.Build.0 = Release_MD_DLL|x64
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Release_MD|Win32.ActiveCfg = Release_MD|Win32
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Release_MD|Win32.Build.0 = Release_MD|Win32
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Release_MD|x64.ActiveCfg = Release_MD|x64
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Release_MD|x64.Build.0 = Release_MD|x64
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Release|Win32.ActiveCfg = Release|Win32
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Release|Win32.Build.0 = Release|Win32
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Release|x64.ActiveCfg = Release|x64
+		{B439F755-9F29-480A-BB3E-C055C682E796}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

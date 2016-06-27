@@ -34,6 +34,9 @@ typedef struct
 	double	PSNR_Green;
 	double	PSNR_Blue;
 
+    char srcdecodePattern[17];
+    char destdecodePattern[17];
+
 	float	encodeTime;		
 
 	// Pass Conditions
@@ -56,11 +59,7 @@ typedef struct
 	int			brestrictColour;	
 	int			brestrictAlpha;		
 	unsigned long	dwmodeMask;		
-	
-	// for testing 4x4 image only. disable related code whenever necessary
-    char srcdecodePattern[17];
-    char destdecodePattern[17];
-	
+
 	// Compression Type
 	char  Compression[128];
 

@@ -5,18 +5,6 @@
  * 
  * dxtc_v11_compress.c : A high-performance, reasonable quality DXTC compressor
  *
- * Written by Dave Oldcorn of V11 for ATI
- *
- *
- * ACKNOWLEDGEMENTS / THANKS TO
- *
- * Konstantine Iourcha of ATI for significant suggestions to improve the resultant image quality and
- *        solve specific issues
- * Andy Pomianowski of V11/ATI for code review, magic eyes, algorithm suggestions and assistance with test suites
- * Raja Koduri of ATI for algorithm review
- *
- *
- *
  * PREFACE:
  *
  * All DXTC compressors have a big issue in trading off performance versus image quality. A

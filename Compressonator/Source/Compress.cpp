@@ -81,6 +81,7 @@ CodecType GetCodecType(CMP_FORMAT format)
         case CMP_FORMAT_ATC_RGBA_Explicit:       return CT_ATC_RGBA_Explicit;
         case CMP_FORMAT_ATC_RGBA_Interpolated:   return CT_ATC_RGBA_Interpolated;
         case CMP_FORMAT_ETC_RGB:                 return CT_ETC_RGB;
+        case CMP_FORMAT_ETC2_RGB:                return CT_ETC2_RGB;
         case CMP_FORMAT_GT:                      return CT_GT;
         default: assert(0);                            return CT_Unknown;
     }
@@ -219,8 +220,12 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
 
     CodecBufferType srcBufferType = GetCodecBufferType(pSourceTexture->format);
 
-    CCodecBuffer* pSrcBuffer = CreateCodecBuffer(srcBufferType, pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData);
-    CCodecBuffer* pDestBuffer = pCodec->CreateBuffer(pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData);
+    CCodecBuffer* pSrcBuffer  = CreateCodecBuffer(srcBufferType, 
+                                                  pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight, pSourceTexture->nBlockDepth,
+                                                  pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData);
+    CCodecBuffer* pDestBuffer = pCodec->CreateBuffer(
+                                                  pDestTexture->nBlockWidth, pDestTexture->nBlockHeight, pDestTexture->nBlockDepth,
+                                                  pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData);
 
     assert(pSrcBuffer);
     assert(pDestBuffer);
@@ -379,11 +384,15 @@ CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture
 
         if(dwHeight > 0)
         {
-            threadData.m_pSrcBuffer = CreateCodecBuffer(srcBufferType, pSourceTexture->dwWidth, dwHeight, pSourceTexture->dwPitch, pSourceData);
-            threadData.m_pDestBuffer = threadData.m_pCodec->CreateBuffer(pDestTexture->dwWidth, dwHeight, pDestTexture->dwPitch, pDestData);
+            threadData.m_pSrcBuffer = CreateCodecBuffer(srcBufferType, 
+                                                        pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight, pSourceTexture->nBlockDepth,
+                                                        pSourceTexture->dwWidth, dwHeight, pSourceTexture->dwPitch, pSourceData);
+            threadData.m_pDestBuffer = threadData.m_pCodec->CreateBuffer(
+                                                        pDestTexture->nBlockWidth, pDestTexture->nBlockHeight, pDestTexture->nBlockDepth,
+                                                        pDestTexture->dwWidth, dwHeight, pDestTexture->dwPitch, pDestData);
 
-            pSourceData += CalcBufferSize(pSourceTexture->format, pSourceTexture->dwWidth, dwHeight, pSourceTexture->dwPitch);
-            pDestData += CalcBufferSize(destType, pDestTexture->dwWidth, dwHeight);
+            pSourceData += CalcBufferSize(pSourceTexture->format, pSourceTexture->dwWidth, dwHeight, pSourceTexture->dwPitch, pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight);
+            pDestData += CalcBufferSize(destType, pDestTexture->dwWidth, dwHeight, pDestTexture->nBlockWidth, pDestTexture->nBlockHeight);
 
             assert(threadData.m_pSrcBuffer);
             assert(threadData.m_pDestBuffer);

@@ -50,18 +50,14 @@ using namespace Imath;
 
 using namespace std;
 
-extern MipSet*  DecompressMIPSet(MipSet *MipSetIn, bool swizzle = false);
-
 #ifdef _DEBUG
 #pragma comment(lib,"Qt5Cored.lib")
 #pragma comment(lib,"Qt5Guid.lib")
 #pragma comment(lib, "Qt5Widgetsd.lib")
-#pragma comment(lib, "libGLESv2d.lib")
 #else
 #pragma comment(lib,"Qt5Core.lib")
 #pragma comment(lib,"Qt5Gui.lib")
 #pragma comment(lib, "Qt5Widgets.lib")
-#pragma comment(lib, "libGLESv2.lib")
 #endif
 
 #ifdef BUILD_AS_PLUGIN_DLL
@@ -471,14 +467,14 @@ void Plugin_Canalysis::write(REPORT_DATA data, char *resultsFile, char option)
 
 }
 
-void checkPattern(int* r, int* g, int* b, char *pattern, CMP_FORMAT format, bool src)
+void checkPattern(int* r, int* g, int* b, char *pattern, CMP_FORMAT format)
 {
-    if (format == CMP_FORMAT_ATI1N && !src) //BC4 compressed dest image
+    if (format == CMP_FORMAT_ATI1N) //BC4
     {
         // only test on red channel output
-        if (*r <= (0 + TEST_TOLERANCE) && *g <= (0 + TEST_TOLERANCE) && *b <= (0 + TEST_TOLERANCE))
+        if (*r <= (0 + TEST_TOLERANCE))
             *pattern = '2';
-        else if (*r > 0 && *g >0 && *b > 0)
+        else if (*r > 0)
             *pattern = '1';
         else
             *pattern = '8';
@@ -534,8 +530,8 @@ void  Plugin_Canalysis::generateBCtestResult(QImage *src, QImage *dest, REPORT_D
             destG = qGreen(dstPixel);
             destB = qBlue (dstPixel);
 
-            checkPattern(&srcR, &srcG, &srcB, &srcPattern[index], m_Compressformat, true);
-            checkPattern(&destR, &destG, &destB, &destPattern[index], m_Compressformat, false);
+            checkPattern(&srcR, &srcG, &srcB, &srcPattern[index], m_Compressformat);
+            checkPattern(&destR, &destG, &destB, &destPattern[index], m_Compressformat);
             index++;
         }
     }

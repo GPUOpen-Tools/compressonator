@@ -33,8 +33,6 @@
 #include "Compressonator.h"
 #include "cpProjectData.h"
 
-
-
 class CSetCompressOptions : public QDialog
 {
     Q_OBJECT
@@ -56,9 +54,13 @@ public:
     bool updateDisplayContent();                            // Update data to all widgets and vaildate compressable image format support
     bool updateFileFormat(QFileInfo &fileinfo);             // Update the Image Type Combo box by matching the input image format : return false if imput is not supported
     void resetData();                                       // Reset all data back to defaults
+    void setMinMaxStep(QtVariantPropertyManager* manager, QtProperty *m_prop, double min, double max, double step);
 
 	bool isEditing;											// True when dislog is shown and in edit mode
+    bool isInit;
+    QString         m_destFilePath;
 	QTextBrowser	*m_infotext;
+    QLineEdit                   *m_DestinationFolder;
 
 private:
     // Common for all
@@ -67,7 +69,7 @@ private:
     QHBoxLayout                 *m_HlayoutButtons;
     QVBoxLayout                 *m_VlayoutWindow;
     QVBoxLayout                 *m_VlayoutDestination;
-
+    
     QWidget                     *m_newWidget;
     const QString                m_title;
     QWidget                     *m_parent;
@@ -77,7 +79,6 @@ private:
     QPushButton                 *m_PBDestFileFolder;
     QLineEdit                   *m_DestinationFile;
     QLineEdit                   *m_LEName;
-    QLineEdit                   *m_DestinationFolder;
     QComboBox                   *m_CBCompression;
     QComboBox                   *m_fileFormats;
     QStringList                 m_AllFileTypes;
@@ -90,8 +91,21 @@ private:
 
     // Options that can change during editing
     QtProperty                  *m_propQuality;
+    QtProperty                  *m_propChannelWeightingR;
+    QtProperty                  *m_propChannelWeightingG;
+    QtProperty                  *m_propChannelWeightingB;
+    QtProperty                  *m_propAlphaThreshold;
+    QtProperty                  *m_propAdaptiveColor;
+    QtProperty                  *m_propUseAlpha;
+    QtProperty                  *m_propNoAlpha;
+    QtProperty                  *m_propBitrate;
 	QtProperty					*m_propFormat;
+
+    // Property class that changed based on compression format
     QtProperty                  *m_propDestImage;
+    QtProperty                  *m_propChannelWeight;
+    QtProperty                  *m_propDXT1Alpha;
+    QtProperty                  *m_propASTCBlockRate;
 
 signals:
 	void SaveCompressSettings(QTreeWidgetItem *m_item, C_Destination_Options &m_data);
@@ -99,6 +113,12 @@ signals:
 public Q_SLOTS:
 
     void    compressionValueChanged(QVariant &value);
+    void    noAlphaChannelValue();
+    void    hasAlphaChannelValue();
+    void    redwValueChanged(QVariant &value);
+    void    greenwValueChanged(QVariant &value);
+    void    bluewValueChanged(QVariant &value);
+    void    thresholdValueChanged(QVariant &value);
     void    PBSaveCompressSetting();
     void    onDestFileFolder();
     void    onPBCancel();
@@ -107,6 +127,7 @@ public Q_SLOTS:
     void    onNameEditingFinished();
 
 	void	qualityValueChanged(QVariant &value);
+    void    bitrateValueChanged(QString &actualbitrate, int&xblock, int&yblock);
 	void	oncurrentItemChanged(QtBrowserItem *);
 
 

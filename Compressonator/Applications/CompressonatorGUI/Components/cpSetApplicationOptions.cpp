@@ -57,8 +57,18 @@ m_parent(parent)
         connect(m_browser, SIGNAL(currentItemChanged(QtBrowserItem *)), this, SLOT(oncurrentItemChanged(QtBrowserItem *)));
     }
 
+    connect(&g_Application_Options, SIGNAL(ImageViewDecodeChanged(QVariant &)), this, SLOT(onImageViewDecodeChanged(QVariant &)));
+    connect(&g_Application_Options, SIGNAL(GPUDecompressChanged(QVariant &)), this, SLOT(onGPUDecompressChanged(QVariant &)));
+
     m_theController->setObject(&g_Application_Options, true);
     m_layoutV->addWidget(m_theController);
+
+    m_propAppOptions= m_theController->getProperty(DECOMP_OPTION_CLASS_NAME);
+
+    if (m_propAppOptions)
+    {
+        m_propAppOptions->setHidden(g_useCPUDecode);
+    }
 
     m_infotext = new QTextBrowser(this);
     // Always show min Two lines of text and Max to 5 lines at font size 16
@@ -67,7 +77,7 @@ m_parent(parent)
     m_infotext->setReadOnly(true);
     m_infotext->setAcceptRichText(true);
     m_layoutV->addWidget(m_infotext);
-    setMinimumWidth(350);
+    setMinimumWidth(360);
 
     // Buttons
     m_PBClose = new QPushButton("Close");
@@ -79,6 +89,34 @@ m_parent(parent)
     connect(m_PBClose, SIGNAL(pressed()), this, SLOT(onClose()));
 
     setLayout(m_layoutV);
+}
+
+void CSetApplicationOptions::onImageViewDecodeChanged(QVariant &value)
+{
+    C_Application_Options::ImageViewDecode decodewith= (C_Application_Options::ImageViewDecode &)value;
+
+    if (decodewith == C_Application_Options::ImageViewDecode::CPU)
+        g_useCPUDecode = true;
+    else if (decodewith == C_Application_Options::ImageViewDecode::GPU)
+        g_useCPUDecode = false;
+    else;
+
+    if (m_propAppOptions)
+    {
+        m_propAppOptions->setHidden(g_useCPUDecode);
+    }
+}
+
+void CSetApplicationOptions::onGPUDecompressChanged(QVariant &value)
+{
+    C_Application_Options::DecompressAPI decodeformat = (C_Application_Options::DecompressAPI &)value;
+
+    if (decodeformat == C_Application_Options::DecompressAPI::OpenGL)
+        g_gpudecodeFormat = MIPIMAGE_FORMAT::Format_OpenGL;
+    else if (decodeformat == C_Application_Options::DecompressAPI::DirectX)
+        g_gpudecodeFormat = MIPIMAGE_FORMAT::Format_DirectX;
+    else
+        g_gpudecodeFormat = MIPIMAGE_FORMAT::Format_QImage;
 }
 
 void CSetApplicationOptions::onClose()
@@ -114,24 +152,27 @@ void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem *item)
         m_infotext->append("<b>Compressed image views</b>");
         m_infotext->append("For compressed images this option selects how images are decompressed for viewing");
     }
-    else
-    if (text.compare(APP_Reload_image_views_on_selection) == 0)
+    else if (text.compare(APP_GPU_Decompress) == 0)
+    {
+        m_infotext->append("<b>Note:</b>");
+        m_infotext->append("For ASTC, GPU Decompress will not work until hardware supports it");
+        m_infotext->append("For ETCn, GPU Decompress with DirectX is not supported");
+    }
+    else if (text.compare(APP_Reload_image_views_on_selection) == 0)
     {
         m_infotext->append("<b>Reload image views</b>");
         m_infotext->append("Refreshes image cache views when an image is processed or a setting has changed\n");
     }
-    else
-    if (text.compare(APP_Load_recent_project_on_startup) == 0)
+    else if (text.compare(APP_Load_recent_project_on_startup) == 0)
     {
         m_infotext->append("<b>Load recent project</b>");
         m_infotext->append("Reloads the last project session each time the application is started");
     }
-    else
-        if (text.compare(APP_Close_all_image_views_prior_to_process) == 0)
-        {
-            m_infotext->append("<b>Close all image views prior to processing</b>");
-            m_infotext->append("This will free up system memory, to avoid out of memory issues when processing large files");
-        }
+    else if (text.compare(APP_Close_all_image_views_prior_to_process) == 0)
+    {
+        m_infotext->append("<b>Close all image views prior to processing</b>");
+        m_infotext->append("This will free up system memory, to avoid out of memory issues when processing large files");
+    }
 
 }
 
@@ -148,7 +189,19 @@ void CSetApplicationOptions::SaveSettings(QString SettingsFile, QSettings::Forma
     QString  name;
 
     int count = g_Application_Options.metaObject()->propertyCount();
-    for (int i = 0; i<count; ++i) {
+    int parent_cnt= g_Application_Options.metaObject()->superClass()->propertyCount();
+
+    for (int i = 0; i < parent_cnt; ++i) 
+    {
+        if (g_Application_Options.metaObject()->superClass()->property(i).isStored(&g_Application_Options)) {
+            var = g_Application_Options.metaObject()->superClass()->property(i).read(&g_Application_Options);
+            name = g_Application_Options.metaObject()->superClass()->property(i).name();
+            settings.setValue(name, var);
+        }
+    }
+
+    for (int i = 0; i<count; ++i) 
+    {
         if (g_Application_Options.metaObject()->property(i).isStored(&g_Application_Options)) {
             var = g_Application_Options.metaObject()->property(i).read(&g_Application_Options);
             name = g_Application_Options.metaObject()->property(i).name();
@@ -163,6 +216,27 @@ void CSetApplicationOptions::LoadSettings(QString SettingsFile, QSettings::Forma
     QVariant var;
     QString  name;
     int count = g_Application_Options.metaObject()->propertyCount();
+    int parent_cnt = g_Application_Options.metaObject()->superClass()->propertyCount();
+
+    for (int i = 0; i < parent_cnt; ++i)
+    {
+        if (g_Application_Options.metaObject()->superClass()->property(i).isStored(&g_Application_Options)) {
+            name = g_Application_Options.metaObject()->superClass()->property(i).name();
+            var = g_Application_Options.metaObject()->superClass()->property(i).read(&g_Application_Options);
+            var = settings.value(name, var);
+            name.replace(QString("_"), QString(" "));
+            // ENum bug in Write need to fix this, for now we will use this
+            if (name.compare(APP_GPU_Decompress) == 0)
+            {
+                int value = var.value<int>();
+                C_Application_Options::DecompressAPI decodeWith = (C_Application_Options::DecompressAPI) value;
+                g_Application_Options.setGPUDecompress(decodeWith);
+            }
+            else
+                g_Application_Options.metaObject()->superClass()->property(i).write(&g_Application_Options, var);
+        }
+    }
+
     for (int i = 0; i<count; ++i) {
         if (g_Application_Options.metaObject()->property(i).isStored(&g_Application_Options)) {
             name = g_Application_Options.metaObject()->property(i).name();

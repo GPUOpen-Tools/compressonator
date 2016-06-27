@@ -45,7 +45,13 @@ CCodec_Block_8x8::~CCodec_Block_8x8()
 
 }
 
-CCodecBuffer* CCodec_Block_8x8::CreateBuffer(CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData) const
+CCodecBuffer* CCodec_Block_8x8::CreateBuffer(
+    CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth, 
+    CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData) const
 {
-    return CreateCodecBuffer(CBT_8x8Block_8BPP, dwWidth, dwHeight, dwPitch, pData);
+    UNREFERENCED_PARAMETER(nBlockWidth);
+    UNREFERENCED_PARAMETER(nBlockHeight);
+    UNREFERENCED_PARAMETER(nBlockDepth);
+
+    return CreateCodecBuffer(CBT_8x8Block_8BPP, 8,8,1, dwWidth, dwHeight, dwPitch, pData);
 }

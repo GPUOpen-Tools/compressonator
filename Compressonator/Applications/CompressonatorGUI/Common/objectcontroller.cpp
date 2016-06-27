@@ -244,7 +244,10 @@ void ObjectControllerPrivate::addClassProperties(const QMetaObject *inmetaObject
 
             // Process Class name into a user friendly view
             // Strip prefix C_ and process all _ to spaces
-            className.replace(QString("C_"), QString(""));
+            
+            QString prefix("C_"); // String to replace.
+            QString replaceprefix(""); // Replacement string.
+            className.replace(className.indexOf(prefix), prefix.size(), replaceprefix);
             className.replace(QString("_"), QString(" "));
             classProperty = m_manager->addProperty(QtVariantPropertyManager::groupTypeId(), className);
             m_classToProperty[metaObject] = classProperty;

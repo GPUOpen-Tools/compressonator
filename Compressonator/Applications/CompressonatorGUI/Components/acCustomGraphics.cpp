@@ -181,7 +181,7 @@ acCustomGraphicsScene::acCustomGraphicsScene(QObject *parent = 0) : QGraphicsSce
     ID = acCustomGraphicsScene_ID;
 
     m_gridStep = 25;
-    m_gridenabled = eCustomGraphicsScene_Grids::None;
+    m_gridenabled = eCustomGraphicsScene_Grids::Block;
 
 }
 
@@ -236,7 +236,7 @@ void acCustomGraphicsScene::drawBackground(QPainter *painter, const QRectF &rect
     QColor ColorWhite(255, 255, 255);
 
     // Draw a line grid
-    if (m_gridenabled > 0)
+    if (m_gridenabled != eCustomGraphicsScene_Grids::None)
     {
         painter->setPen(Qt::white);
 

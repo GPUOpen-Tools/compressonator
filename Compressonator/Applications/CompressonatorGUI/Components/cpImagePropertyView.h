@@ -52,6 +52,7 @@ public:
 
     void refreshView();
     void SetDefaults();
+    void setMinMaxStep(QtVariantPropertyManager* manager, QtProperty *m_prop, double min, double max, double step);
     void evalProperties();
 
 private:
@@ -87,6 +88,19 @@ public:
     // Options that can change during editing
     QtProperty         *m_propQuality;
     QtProperty         *m_propFormat;
+    QtProperty         *m_propChannelWeightingR;
+    QtProperty         *m_propChannelWeightingG;
+    QtProperty         *m_propChannelWeightingB;
+    QtProperty         *m_propAlphaThreshold;
+    QtProperty         *m_propAdaptiveColor;
+    QtProperty         *m_propUseAlpha;
+    QtProperty         *m_propNoAlpha;
+    QtProperty         *m_propBitrate;
+
+    // Property class that changed based on compression format
+    QtProperty         *m_propChannelWeight;
+    QtProperty         *m_propDXT1Alpha;
+    QtProperty         *m_propASTCBlockRate;
 
 public slots:
     void OnUpdateData(QObject *data);
@@ -96,8 +110,15 @@ public slots:
     void onCompressionStart();
     void onCompressionDone();
     void onCompressDataChanged();
+    void noAlphaChannelValue();
+    void hasAlphaChannelValue();
     void compressionValueChanged(QVariant &value);
     void qualityValueChanged(QVariant &value);
+    void redwValueChanged(QVariant &value);
+    void greenwValueChanged(QVariant &value);
+    void bluewValueChanged(QVariant &value);
+    void thresholdValueChanged(QVariant &value);
+    void bitrateValueChanged(QString &actualbitrate, int&xblock, int&yblock);
     void oncurrentItemChanged(QtBrowserItem *);
     void onImageLoadStart();
     void onImageLoadDone();

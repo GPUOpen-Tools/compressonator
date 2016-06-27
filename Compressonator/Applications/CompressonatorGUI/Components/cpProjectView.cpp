@@ -205,7 +205,8 @@ void ProjectView::SetupTreeView()
 
     // Progress Dialod During Compression
     m_pProgressDlg = new acProgressDlg();
-    m_pProgressDlg->setWindowFlags(Qt::FramelessWindowHint|Qt::WindowStaysOnTopHint);
+    m_pProgressDlg->setParent(this);
+    m_pProgressDlg->setWindowFlags(Qt::FramelessWindowHint|Qt::Window);
     m_pProgressDlg->ShowCancelButton(true, &OnCancel);
     m_pProgressDlg->SetHeader("");
     m_pProgressDlg->SetLabelText("");
@@ -428,17 +429,22 @@ void ProjectView::Tree_AddCompressFile(QTreeWidgetItem *ParentItem, QString desc
     if ((levelType == TREETYPE_COMPRESSION_DATA) && (m_data))
     {
 
-        // Create a temp decompress file 
+#ifdef SAVE_TEMP_FILE
+        // Create a temp decompress file for analysis later 
         m_data->CreateTempFile();
+#endif
 
         // Check source file extension for special cases
         QFileInfo fi(m_data->m_sourceFileNamePath);
         QString ext = fi.suffix().toUpper();
-        if (ext.compare("EXR") == 0)
-        {
-            m_data->m_settoUseOnlyBC6 = true;
-            m_data->m_Compression = C_Destination_Options::BC6H;
-        }
+        // if (ext.compare("EXR") == 0)
+        // {
+        //     m_data->m_settoUseOnlyBC6 = true;
+        //     if (
+        //         (m_data->m_Compression != C_Destination_Options::BC6H) ||
+        //         (m_data->m_Compression != C_Destination_Options::ASTC) )
+        //                     m_data->m_Compression = C_Destination_Options::BC6H;
+        // }
 
         if (checkable && m_EnableCheckedItemsView)
         {
@@ -907,6 +913,7 @@ void ProjectView::onTree_ItemClicked(QTreeWidgetItem * item, int column)
             m_CurrentCompressedImageItem = item;
             QFile fileInfo(m_data->m_destFileNamePath);
             m_data->m_FileSize = fileInfo.size();
+
             if (m_data->m_FileSize > 1024000)
                 m_data->m_FileSizeStr = QString().number((double)m_data->m_FileSize / 1024000, 'f', 2) + " MB";
             else
@@ -1567,6 +1574,27 @@ void ProjectView::copyFullPath()
     }
 }
 
+void makeFormatExtCompatible(C_Destination_Options* C_Destination_Options)
+{
+    C_Destination_Options::eCompression format = C_Destination_Options->m_Compression;
+    QString destfilePath = C_Destination_Options->m_destFileNamePath;
+    QFileInfo info(destfilePath);
+    QString newDestPath;
+    if (format == C_Destination_Options::eCompression::ASTC && info.suffix() == "DDS")
+    {
+        newDestPath = info.path() + "/" + info.completeBaseName() + ".KTX";
+        C_Destination_Options->m_destFileNamePath = newDestPath;
+        C_Destination_Options->m_FileInfoDestinationName = C_Destination_Options->m_compname + ".KTX";
+    }
+    else if (format != C_Destination_Options::eCompression::ASTC && info.suffix() == "ASTC")
+    {
+        newDestPath = info.path() + "/" + info.completeBaseName() + ".DDS";
+        C_Destination_Options->m_destFileNamePath = newDestPath;
+        C_Destination_Options->m_FileInfoDestinationName = C_Destination_Options->m_compname + ".DDS";
+    }
+    
+}
+
 void ProjectView::saveProjectFile()
 {
     // Writing to a file
@@ -1631,6 +1659,8 @@ void ProjectView::saveProjectFile()
 
                             if (data)
                             {
+                                makeFormatExtCompatible(data);
+
                                 xmlWriter.writeTextElement("Destination", data->m_destFileNamePath);
 
                                 QMetaObject meta = C_Destination_Options::staticMetaObject;
@@ -1641,6 +1671,13 @@ void ProjectView::saveProjectFile()
 
                                 xmlWriter.writeTextElement("Quality", QString::number(data->m_Quality,'g',4));
 
+                                xmlWriter.writeTextElement("WeightR", QString::number(data->X_RED, 'g', 4));
+                                xmlWriter.writeTextElement("WeightG", QString::number(data->Y_GREEN, 'g', 4));
+                                xmlWriter.writeTextElement("WeightB", QString::number(data->Z_BLUE, 'g', 4));
+
+                                xmlWriter.writeTextElement("AlphaThreshold", QString::number(data->Threshold));
+
+                                xmlWriter.writeTextElement("BlockRate", data->m_Bitrate);
                             }
                             // </Compression>
                             xmlWriter.writeEndElement();
@@ -1743,6 +1780,7 @@ bool ProjectView::loadProjectFile(QString fileToLoad)
                             QDomElement eleCompress = domCompress.toElement();
                             QString Setting = eleCompress.attribute("Setting");
                             QString Enabled = eleCompress.attribute("Enabled").toUpper();
+                           
                             // See also cpMainComponents - for new C_Destination_Options usage
                             C_Destination_Options *m_data = new C_Destination_Options();
                             if (m_data)
@@ -1750,16 +1788,6 @@ bool ProjectView::loadProjectFile(QString fileToLoad)
                                 m_data->m_compname                  = Setting;
                                 m_data->m_FileInfoDestinationName   = Setting;
                                 m_data->m_sourceFileNamePath        = FilePathName;
-
-                                // Check source file extension for special cases
-                                QFileInfo fi(m_data->m_sourceFileNamePath);
-                                QString ext = fi.suffix().toUpper();
-                                if (ext.compare("EXR") == 0)
-                                {
-                                    m_data->m_settoUseOnlyBC6 = true;
-                                    m_data->m_Compression = C_Destination_Options::BC6H;
-                                }
-
 
                                 if (m_dataout)
                                 {
@@ -1785,6 +1813,8 @@ bool ProjectView::loadProjectFile(QString fileToLoad)
                                             m_data->m_destFileNamePath.append(fileInfo.fileName());
                                             m_data->m_destFileNamePath.replace("/", "\\");
                                         }
+                                        else
+                                            m_data->m_FileInfoDestinationName = Setting + "." + fileInfo.suffix();
 
                                     }
                                     else if (child.toElement().tagName() == "fd") {
@@ -1803,6 +1833,46 @@ bool ProjectView::loadProjectFile(QString fileToLoad)
                                         m_data->m_Quality = Quality.toFloat(&ok);
                                         if (!ok)
                                             m_data->m_Quality = AMD_CODEC_QUALITY_DEFAULT;
+                                    }
+                                    else if (child.toElement().tagName() == "WeightR") {
+                                        QDomElement eleFD = child.toElement();
+                                        QString WeightR = eleFD.text();
+                                        bool ok;
+                                        m_data->X_RED = WeightR.toFloat(&ok);
+                                        if (!ok)
+                                            m_data->X_RED = 0.3086;
+                                    }
+                                    else if (child.toElement().tagName() == "WeightG") {
+                                        QDomElement eleFD = child.toElement();
+                                        QString WeightG = eleFD.text();
+                                        bool ok;
+                                        m_data->Y_GREEN = WeightG.toFloat(&ok);
+                                        if (!ok)
+                                            m_data->Y_GREEN = 0.6094;
+                                    }
+                                    else if (child.toElement().tagName() == "WeightB") {
+                                        QDomElement eleFD = child.toElement();
+                                        QString WeightB = eleFD.text();
+                                        bool ok;
+                                        m_data->Z_BLUE = WeightB.toFloat(&ok);
+                                        if (!ok)
+                                            m_data->Z_BLUE = 0.0820;
+                                    }
+                                    else if (child.toElement().tagName() == "AlphaThreshold") {
+                                        QDomElement eleFD = child.toElement();
+                                        QString AlphaThreshold = eleFD.text();
+                                        bool ok;
+                                        m_data->Threshold = AlphaThreshold.toInt(&ok);
+                                        if (!ok)
+                                            m_data->Threshold = 0;
+                                    }
+                                    else if (child.toElement().tagName() == "BlockRate") {
+                                        QDomElement eleFD = child.toElement();
+                                        QString BlockRate = eleFD.text();
+                                        bool ok;
+                                        m_data->m_Bitrate = BlockRate;
+                                        if (!ok)
+                                            m_data->m_Bitrate = 8.00;  //4x4
                                     }
                                     child = child.nextSibling();
                                 }
@@ -1955,8 +2025,6 @@ void ProjectView::onSignalProcessMessage()
     }
 }
 
-
-
 void CompressFiles(
     QFile                *file,
     ProjectView          *ProjectView
@@ -2091,9 +2159,14 @@ void CompressFiles(
                                 // This flag is also set when compression data has been edited
                                 data->m_data_has_been_changed = true;
 
+								// make compression format and file extension compatible
+                                makeFormatExtCompatible(data);
+
                                 //"Destination" = data->m_destFileNamePath
                                 string DestinationFile = data->m_destFileNamePath.toStdString();
                                 QString msgCommandLine;
+                                bool useWeightChannel = false;
+                                bool useAlphaChannel = false;
                                 QFileInfo fileInfo(data->m_destFileNamePath);
                                 QDir dir(fileInfo.absoluteDir());
                                 QString DestPath = dir.absolutePath();
@@ -2142,13 +2215,15 @@ void CompressFiles(
                                 argvVec.back().push_back(0); // Terminate String
                                 argv.push_back(argvVec.back().data());
 
-                                //"Format"
+
+                                //"-fd Format"
                                 QMetaObject meta = C_Destination_Options::staticMetaObject;
                                 const char* key = NULL;
 
                                 int indexCompression = meta.indexOfEnumerator("eCompression");
                                 QMetaEnum metaEnumCompression = meta.enumerator(indexCompression);
                                 key = metaEnumCompression.valueToKey(data->m_Compression);
+                                CMP_FORMAT cmp_format = ParseFormat((CMP_CHAR *)key);
 
                                 //"fd" = key
                                 if (key != NULL)
@@ -2187,26 +2262,225 @@ void CompressFiles(
 
                                 }
 
-                                // MipLevels 
-                                if (data->m_Quality != setDefaultOptions.m_Quality)
+                                //=============================
+                                // Quality Settings
+                                //=============================
+                                if (FormatSupportsQualitySetting(cmp_format))
                                 {
-                                    // User Msg
-                                    QString value = QString::number(data->m_Quality, 'f', 4);
-                                    msgCommandLine.append(" -Quality ");
-                                    msgCommandLine.append(value);
-                                    msgCommandLine.append(" ");
+                                    if (data->m_Quality != setDefaultOptions.m_Quality)
+                                    {
+                                        // User Msg
+                                        QString value = QString::number(data->m_Quality, 'f', 4);
+                                        msgCommandLine.append(" -Quality ");
+                                        msgCommandLine.append(value);
+                                        msgCommandLine.append(" ");
 
-                                    // User Setting Text
-                                    string squality = "-Quality";
-                                    argvVec.push_back(CharArray(squality.begin(), squality.end()));
-                                    argvVec.back().push_back(0); // Terminate String
-                                    argv.push_back(argvVec.back().data());
+                                        // User Setting Text
+                                        string squality = "-Quality";
+                                        argvVec.push_back(CharArray(squality.begin(), squality.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
 
-                                    // User Setting Value
-                                    squality = value.toStdString(); //  std::to_string(data->m_Quality);
-                                    argvVec.push_back(CharArray(squality.begin(), squality.end()));
-                                    argvVec.back().push_back(0); // Terminate String
-                                    argv.push_back(argvVec.back().data());
+                                        // User Setting Value
+                                        squality = value.toStdString(); //  std::to_string(data->m_Quality);
+                                        argvVec.push_back(CharArray(squality.begin(), squality.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+                                    }
+                                }
+
+                                if (FormatSupportsDXTCBase(cmp_format))
+                                {
+                                    //=============================
+                                    // Channel Weighting
+                                    //=============================
+                                    if (data->X_RED != setDefaultOptions.X_RED)
+                                    {
+                                        // User Msg
+                                        QString value = QString::number(data->X_RED, 'f', 4);
+                                        if (!useWeightChannel)
+                                        {
+                                            msgCommandLine.append(" -UseChannelWeighting 1 ");
+                                            useWeightChannel = true;
+
+                                            // User Setting Text
+                                            string suseweighChannel = "-UseChannelWeighting";
+                                            argvVec.push_back(CharArray(suseweighChannel.begin(), suseweighChannel.end()));
+                                            argvVec.back().push_back(0); // Terminate String
+                                            argv.push_back(argvVec.back().data());
+                                            // User Setting Value
+                                            suseweighChannel = "1";
+                                            argvVec.push_back(CharArray(suseweighChannel.begin(), suseweighChannel.end()));
+                                            argvVec.back().push_back(0); // Terminate String
+                                            argv.push_back(argvVec.back().data());
+                                        }
+
+                                        msgCommandLine.append(" -WeightR ");
+                                        msgCommandLine.append(value);
+                                        msgCommandLine.append(" ");
+
+                                        // User Setting Text
+                                        string sweightr = "-WeightR";
+                                        argvVec.push_back(CharArray(sweightr.begin(), sweightr.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+
+                                        // User Setting Value
+                                        sweightr = value.toStdString();
+                                        argvVec.push_back(CharArray(sweightr.begin(), sweightr.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+                                    }
+
+                                    if (data->Y_GREEN != setDefaultOptions.Y_GREEN)
+                                    {
+                                        // User Msg
+                                        QString value = QString::number(data->Y_GREEN, 'f', 4);
+                                        if (!useWeightChannel)
+                                        {
+                                            msgCommandLine.append(" -UseChannelWeighting 1 ");
+                                            useWeightChannel = true;
+
+                                            // User Setting Text
+                                            string suseweighChannel = "-UseChannelWeighting";
+                                            argvVec.push_back(CharArray(suseweighChannel.begin(), suseweighChannel.end()));
+                                            argvVec.back().push_back(0); // Terminate String
+                                            argv.push_back(argvVec.back().data());
+                                            // User Setting Value
+                                            suseweighChannel = "1";
+                                            argvVec.push_back(CharArray(suseweighChannel.begin(), suseweighChannel.end()));
+                                            argvVec.back().push_back(0); // Terminate String
+                                            argv.push_back(argvVec.back().data());
+                                        }
+
+                                        msgCommandLine.append(" -WeightG ");
+                                        msgCommandLine.append(value);
+                                        msgCommandLine.append(" ");
+
+                                        // User Setting Text
+                                        string sweightg = "-WeightG";
+                                        argvVec.push_back(CharArray(sweightg.begin(), sweightg.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+
+                                        // User Setting Value
+                                        sweightg = value.toStdString();
+                                        argvVec.push_back(CharArray(sweightg.begin(), sweightg.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+                                    }
+
+                                    if (data->Z_BLUE != setDefaultOptions.Z_BLUE)
+                                    {
+                                        // User Msg
+                                        QString value = QString::number(data->Z_BLUE, 'f', 4);
+                                        if (!useWeightChannel)
+                                        {
+                                            msgCommandLine.append(" -UseChannelWeighting 1 ");
+                                            useWeightChannel = true;
+
+                                            // User Setting Text
+                                            string suseweighChannel = "-UseChannelWeighting";
+                                            argvVec.push_back(CharArray(suseweighChannel.begin(), suseweighChannel.end()));
+                                            argvVec.back().push_back(0); // Terminate String
+                                            argv.push_back(argvVec.back().data());
+                                            // User Setting Value
+                                            suseweighChannel = "1";
+                                            argvVec.push_back(CharArray(suseweighChannel.begin(), suseweighChannel.end()));
+                                            argvVec.back().push_back(0); // Terminate String
+                                            argv.push_back(argvVec.back().data());
+                                        }
+
+                                        msgCommandLine.append(" -WeightB ");
+                                        msgCommandLine.append(value);
+                                        msgCommandLine.append(" ");
+
+                                        // User Setting Text
+                                        string sweightb = "-WeightB";
+                                        argvVec.push_back(CharArray(sweightb.begin(), sweightb.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+
+                                        // User Setting Value
+                                        sweightb = value.toStdString();
+                                        argvVec.push_back(CharArray(sweightb.begin(), sweightb.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+                                    }
+                                }
+
+                                // ====================================
+                                // DXTC1 settings only
+                                // ====================================
+                                if (cmp_format == CMP_FORMAT_DXT1)
+                                {
+                                    if (data->Threshold != setDefaultOptions.Threshold)
+                                    {
+                                        // User Msg
+                                        QString value = QString::number(data->Threshold);
+                                        if (!useAlphaChannel)
+                                        {
+                                            msgCommandLine.append(" -DXT1UseAlpha 1 ");
+                                            useAlphaChannel = true;
+
+                                            // User Setting Text
+                                            string susealphaChannel = "-DXT1UseAlpha";
+                                            argvVec.push_back(CharArray(susealphaChannel.begin(), susealphaChannel.end()));
+                                            argvVec.back().push_back(0); // Terminate String
+                                            argv.push_back(argvVec.back().data());
+                                            // User Setting Value
+                                            susealphaChannel = "1";
+                                            argvVec.push_back(CharArray(susealphaChannel.begin(), susealphaChannel.end()));
+                                            argvVec.back().push_back(0); // Terminate String
+                                            argv.push_back(argvVec.back().data());
+                                        }
+
+                                        msgCommandLine.append(" -AlphaThreshold ");
+                                        msgCommandLine.append(value);
+                                        msgCommandLine.append(" ");
+
+                                        // User Setting Text
+                                        string sthreshold = "-AlphaThreshold";
+                                        argvVec.push_back(CharArray(sthreshold.begin(), sthreshold.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+
+                                        // User Setting Value
+                                        sthreshold = value.toStdString();
+                                        argvVec.push_back(CharArray(sthreshold.begin(), sthreshold.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+
+                                        //g_CmdPrams.CompressOptions.bDXT1UseAlpha = true;
+                                        //g_CmdPrams.CompressOptions.nAlphaThreshold = data->Threshold;
+                                    }
+                                }
+
+                                // ====================================
+                                // ASTC Settings
+                                // ====================================
+                                if (cmp_format == CMP_FORMAT_ASTC)
+                                {
+                                    if (data->m_Bitrate != setDefaultOptions.m_Bitrate)
+                                    {
+                                        // User Msg
+                                        QString value = data->m_Bitrate;
+                                        msgCommandLine.append(" -BlockRate ");
+                                        msgCommandLine.append(value);
+                                        msgCommandLine.append(" ");
+
+                                        // User Setting Text
+                                        string sbitrate = "-BlockRate";
+                                        argvVec.push_back(CharArray(sbitrate.begin(), sbitrate.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+
+                                        // User Setting Value
+                                        sbitrate = value.toStdString(); //  std::to_string(data->m_Bitrate);
+                                        argvVec.push_back(CharArray(sbitrate.begin(), sbitrate.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+                                    }
                                 }
 
                                 //===========================
@@ -2246,6 +2520,8 @@ void CompressFiles(
                                         g_CmdPrams.conversion_fDuration = 0;
 
                                         g_CmdPrams.doDecompress = false;
+
+                                        #ifdef SAVE_TEMP_FILE
                                         if (m_data->m_ImageSize > 0)
                                         {
                                             // Force a decompress file to be used
@@ -2263,6 +2539,7 @@ void CompressFiles(
                                             g_CmdPrams.DecompressFile = data->m_decompressedFileNamePath.toStdString();
                                             g_CmdPrams.doDecompress = true;
                                         }
+                                        #endif
 
                                         // Do the Compression by loading a new MIP set
                                         if (ProcessCMDLine(&ProgressCompressionCallback, sourceImageMipSet) == 0)
@@ -2290,13 +2567,18 @@ void CompressFiles(
                                                     if (g_CmdPrams.conversion_fDuration > 0)
                                                     {
                                                         data->m_CompressionTime = g_CmdPrams.conversion_fDuration;
-                                                            if (g_CmdPrams.conversion_fDuration < 60)
-                                                                data->m_CompressionTimeStr = QString().number((double)data->m_CompressionTime, 'f', 3) + " Sec";
+                                                        double CompressionRatio = data->m_SourceImageSize / (double)data->m_FileSize;
+                                                        char buffer[128];
+                                                        sprintf(buffer, "%2.2f", CompressionRatio);
+                                                        data->m_CompressionRatio = QString("%1 to 1").arg(buffer);
+
+                                                        if (g_CmdPrams.conversion_fDuration < 60)
+                                                            data->m_CompressionTimeStr = QString().number((double)data->m_CompressionTime, 'f', 3) + " Sec";
+                                                        else
+                                                            if (g_CmdPrams.conversion_fDuration < 3600)
+                                                                data->m_CompressionTimeStr = QString().number((double)data->m_CompressionTime / 60, 'f', 2) + " Min";
                                                             else
-                                                                if (g_CmdPrams.conversion_fDuration < 3600)
-                                                                    data->m_CompressionTimeStr = QString().number((double)data->m_CompressionTime / 60, 'f', 2) + " Min";
-                                                                else
-                                                                    data->m_CompressionTimeStr = QString().number((double)data->m_CompressionTime / 3600, 'f', 2) + " Hrs";
+                                                                data->m_CompressionTimeStr = QString().number((double)data->m_CompressionTime / 3600, 'f', 2) + " Hrs";
                                                     }
                                                     else
                                                     {

@@ -28,7 +28,6 @@
 #include "GT_Definitions.h"
 #include "GT_Decode.h"
 
-#define UNREFERENCED_PARAMETER(P)          (P)
 
 void GTBlockDecoder::DecompressBlock(BYTE  out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
                                      BYTE  in[COMPRESSED_BLOCK_SIZE])

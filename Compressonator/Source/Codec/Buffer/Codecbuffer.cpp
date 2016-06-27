@@ -49,7 +49,9 @@
 #include "CodecBuffer_Block.h"
 
 
-CCodecBuffer* CreateCodecBuffer(CodecBufferType nCodecBufferType, CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData)
+CCodecBuffer* CreateCodecBuffer(CodecBufferType nCodecBufferType, 
+                                CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
+                                CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(("nCodecBufferType %d dwWidth %d dwHeight %d dwPitch %d pData [%x]",nCodecBufferType,dwWidth, dwHeight, dwPitch, pData));  
@@ -57,48 +59,51 @@ CCodecBuffer* CreateCodecBuffer(CodecBufferType nCodecBufferType, CMP_DWORD dwWi
     switch(nCodecBufferType)
     {
         case CBT_RGBA8888:
-            return new CCodecBuffer_RGBA8888(dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RGBA8888(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
         case CBT_RGB888:
-            return new CCodecBuffer_RGB888(dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RGB888(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
         case CBT_RG8:
-            return new CCodecBuffer_RG8(dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RG8(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
         case CBT_R8:
-            return new CCodecBuffer_R8(dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_R8(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
         case CBT_RGBA2101010:
-            return new CCodecBuffer_RGBA2101010(dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RGBA2101010(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
         case CBT_RGBA16:
-            return new CCodecBuffer_RGBA16(dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RGBA16(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
         case CBT_RG16:
-            return new CCodecBuffer_RG16(dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RG16(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
         case CBT_R16:
-            return new CCodecBuffer_R16(dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_R16(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
         case CBT_RGBA16F:
-            return new CCodecBuffer_RGBA16F(dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RGBA16F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
         case CBT_RG16F:
-            return new CCodecBuffer_RG16F(dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RG16F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
         case CBT_R16F:
-            return new CCodecBuffer_R16F(dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_R16F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
         case CBT_RGBA32:
-            return new CCodecBuffer_RGBA32(dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RGBA32(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
         case CBT_RG32:
-            return new CCodecBuffer_RG32(dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RG32(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
         case CBT_R32:
-            return new CCodecBuffer_R32(dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_R32(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
         case CBT_RGBA32F:
-            return new CCodecBuffer_RGBA32F(dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RGBA32F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
         case CBT_RG32F:
-            return new CCodecBuffer_RG32F(dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RG32F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
         case CBT_R32F:
-            return new CCodecBuffer_R32F(dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_R32F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+
         case CBT_4x4Block_2BPP:
         case CBT_4x4Block_4BPP:
         case CBT_4x4Block_8BPP:
         case CBT_4x4Block_16BPP:
+            return new CCodecBuffer_Block(nCodecBufferType, nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+
         case CBT_8x8Block_2BPP:
         case CBT_8x8Block_4BPP:
         case CBT_8x8Block_8BPP:
         case CBT_8x8Block_16BPP:
-            return new CCodecBuffer_Block(nCodecBufferType, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_Block(nCodecBufferType, nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
 
         case CBT_Unknown:
         default:
@@ -183,14 +188,20 @@ CodecBufferType GetCodecBufferType(CMP_FORMAT format)
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CCodecBuffer::CCodecBuffer(CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData)
+CCodecBuffer::CCodecBuffer(
+                            CMP_BYTE nBlockHeight, CMP_BYTE nBlockWidth, CMP_BYTE nBlockDepth,
+                            CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(("dwWidth %d,dwHeight %d,dwPitch %d pData [%x]",dwWidth,dwHeight,dwPitch,pData));  
 #endif
-    m_dwWidth = dwWidth;
+    m_dwWidth  = dwWidth;
     m_dwHeight = dwHeight;
-    m_dwPitch = dwPitch;
+    m_dwPitch  = dwPitch;
+
+    m_nBlockWidth = nBlockWidth;
+    m_nBlockHeight= nBlockHeight;
+    m_nBlockDepth = nBlockDepth;
 
     m_pData = pData;
     m_bUserAllocedData = (pData != NULL);

@@ -49,13 +49,11 @@ extern void *make_Plugin_CAnalysis();
 #pragma comment(lib,"CXLApiClasses-d.lib")
 #pragma comment(lib,"CXLOSWrappers-d.lib")
 #pragma comment(lib,"CXLBaseTools-d.lib")
-#pragma comment(lib,"libGLESv2d.lib")
 #else
 #pragma comment(lib,"CXLApplicationComponents.lib")
 #pragma comment(lib,"CXLApiClasses.lib")
 #pragma comment(lib,"CXLOSWrappers.lib")
 #pragma comment(lib,"CXLBaseTools.lib")
-#pragma comment(lib,"libGLESv2.lib")
 #endif
 
 #include <AMDTBaseTools/Include/gtAssert.h>
