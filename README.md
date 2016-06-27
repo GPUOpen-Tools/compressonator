@@ -1,8 +1,17 @@
 # Compressonator
 
-Compressonator is a set of tools for compressing textures and creating mip-map levels
+Compressonator is a set of tools to allow artists and developers to more easily create compressed texture image assets and easily visualize the quality impact of various compression technologies.  It consists of a GUI application, a command line application and an SDK for easy integration into a developer tool chain.
 
 Compressonator DXTn (S3TC)is developed for Microsoft Windows® platform.
+
+Recent additions
+------------------------------------------------------
+
+Installer for prebuilt SDK Libs, GUI and Command line application
+
+Support for ASTC and ETC2
+Variable sized compression buffers
+GPU based compressed image views using OpenGL and DirectX 11
 
 
 Build Instructions for Windows 7 and up
