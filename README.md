@@ -10,7 +10,9 @@ Recent additions
 Installer for prebuilt SDK Libs, GUI and Command line application
 
 Support for ASTC and ETC2
+
 Variable sized compression buffers
+
 GPU based compressed image views using OpenGL and DirectX 11
 
 
