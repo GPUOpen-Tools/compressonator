@@ -1,0 +1,3 @@
+CXL_QT_VER="5.2"
+CXL_QT_INC="-I${COMMON_DIR}/Lib/Ext/Qt/${CXL_QT_VER}/include/"
+CXL_QT_LIB="-L${COMMON_DIR}/Lib/Ext/Qt/${CXL_QT_VER}/lib/linux/x86_64/"

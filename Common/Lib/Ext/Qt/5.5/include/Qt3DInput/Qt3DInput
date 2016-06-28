@@ -1,0 +1,13 @@
+#ifndef QT_QT3DINPUT_MODULE_H
+#define QT_QT3DINPUT_MODULE_H
+#include <Qt3DInput/Qt3DInputDepends>
+#include "mouseeventfilter.h"
+#include "q3dkeyevent.h"
+#include "q3dmouseevent.h"
+#include "qinputaspect.h"
+#include "qkeyboardcontroller.h"
+#include "qkeyboardinput.h"
+#include "qmousecontroller.h"
+#include "qmouseinput.h"
+#include "qt3dinputversion.h"
+#endif

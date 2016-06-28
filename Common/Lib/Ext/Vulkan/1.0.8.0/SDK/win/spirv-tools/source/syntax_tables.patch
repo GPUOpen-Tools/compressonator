@@ -1,0 +1,500 @@
+diff --git a/tools/spirv/CMakeLists.txt b/tools/spirv/CMakeLists.txt
+index af51f86..5775510 100644
+--- a/tools/spirv/CMakeLists.txt
++++ b/tools/spirv/CMakeLists.txt
+@@ -12,6 +12,7 @@ include_directories(../..)
+ 
+ set(SOURCES
+     main.cpp
++    assembler_table.cpp
+     disassemble.cpp
+     header.cpp
+     doc.cpp
+diff --git a/tools/spirv/OclDoc.cpp b/tools/spirv/OclDoc.cpp
+index 1f25221..ff2c7c6 100644
+--- a/tools/spirv/OclDoc.cpp
++++ b/tools/spirv/OclDoc.cpp
+@@ -28,11 +28,14 @@
+ #include "headers/spirv.hpp"
+ #include "headers/OpenCL.std.h"
+ 
+-#include "doc.h"
+ #include "OclDoc.h"
+ 
++#include "assembler_table.h"
++#include "doc.h"
++
+ #include <stdio.h>
+ #include <string.h>
++#include <cassert>
+ #include <algorithm>
+ #include <map>
+ 
+@@ -2187,4 +2190,31 @@ void PrintOclCommonDoc()
+     PrintOclDoc(SPIROpenCLCommonVersion);
+ }
+ 
++void PrintOclInstructionsTable(std::ostream& out) {
++  ParameterizeBuiltins(SPIROpenCLCommonVersion);
++
++  out << R"(
++// OpenCL extended instructions table, one instruction per line.
++// All instructions have a result type and a result ID.
++// Fields in this file are:
++//  - name
++//  - extended instruction index
++//  - EmptyList, or List of operand classes.
++)";
++  for (int i = 0; i < OclExtInstCeiling; ++i) {
++    const BuiltInFunctionParameters& inst = BuiltInDesc[i];
++    // Skip gaps in the enum space, if any.
++    if (0 == strcmp("unknown", inst.opName)) continue;
++    assert(inst.hasType());
++    assert(inst.hasResult());
++    out << "ExtInst(" << inst.opName << ", " << i << ", ";
++    std::vector<OperandClassInfo> classes_info;
++    for (const auto& operand_class : inst.operands.classes()) {
++      classes_info.push_back({operand_class, false /* not optional */});
++    }
++    PrintOperandClasses(classes_info, out);
++    out << ")" << std::endl;
++  }
++}
++
+ };  // end namespace spv
+diff --git a/tools/spirv/OclDoc.h b/tools/spirv/OclDoc.h
+index 8568880..7cf8a31 100644
+--- a/tools/spirv/OclDoc.h
++++ b/tools/spirv/OclDoc.h
+@@ -35,6 +35,8 @@
+ #include <map>
+ #include "headers/spirv.hpp"
+ 
++#include "doc.h"
++
+ namespace spv {
+ 
+ void OclGetDebugNames(const char** names);
+@@ -189,6 +191,8 @@ public:
+     int getImageType(int op) { return Type[op]; }
+     AccessQualifier getAccessQualifier(int op) { return accessQualifier[op]; }
+ 
++    const std::vector<OperandClass>& classes() const  { return opClass; }
++
+ protected:
+     std::vector<OperandClass> opClass;
+     std::vector<const char*> desc;
+@@ -307,4 +311,7 @@ protected:
+ // Print out the OpenCL common (all spec revisions) documentation.
+ void PrintOclCommonDoc();
+ 
++// Prints the OpenCL instructions table, for consumption by SPIR-V Tools.
++void PrintOclInstructionsTable(std::ostream& out);
++
+ };  // end namespace spv
+diff --git a/tools/spirv/assembler_table.cpp b/tools/spirv/assembler_table.cpp
+new file mode 100644
+index 0000000..8dd8fa1
+--- /dev/null
++++ b/tools/spirv/assembler_table.cpp
+@@ -0,0 +1,229 @@
++// Copyright (c) 2015-2016 The Khronos Group Inc.
++//
++// Permission is hereby granted, free of charge, to any person obtaining a
++// copy of this software and/or associated documentation files (the
++// "Materials"), to deal in the Materials without restriction, including
++// without limitation the rights to use, copy, modify, merge, publish,
++// distribute, sublicense, and/or sell copies of the Materials, and to
++// permit persons to whom the Materials are furnished to do so, subject to
++// the following conditions:
++//
++// The above copyright notice and this permission notice shall be included
++// in all copies or substantial portions of the Materials.
++//
++// MODIFICATIONS TO THIS FILE MAY MEAN IT NO LONGER ACCURATELY REFLECTS
++// KHRONOS STANDARDS. THE UNMODIFIED, NORMATIVE VERSIONS OF KHRONOS
++// SPECIFICATIONS AND HEADER INFORMATION ARE LOCATED AT
++//    https://www.khronos.org/registry/
++//
++// THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
++// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
++// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
++// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
++// MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
++
++#include "assembler_table.h"
++
++#include <cassert>
++#include <cstring>
++#include <sstream>
++
++#include "doc.h"
++
++namespace spv {
++
++namespace {
++
++// Returns true if the given instruction can vary in width.
++bool IsVariableLength(const InstructionParameters& inst) {
++  const OperandParameters& operands = inst.operands;
++  for (int i = 0; i < operands.getNum() ; i++) {
++    switch (operands.getClass(i)) {
++      case spv::OperandVariableIds:
++      case spv::OperandOptionalLiteral:
++      case spv::OperandOptionalLiteralString:
++      case spv::OperandVariableLiterals:
++      case spv::OperandVariableIdLiteral:
++      case spv::OperandVariableLiteralId:
++      case spv::OperandLiteralString:
++        return true;
++      default:
++        break;
++    }
++    if (operands.isOptional(i)) return true;
++  }
++  return false;
++}
++
++// Returns a string for the given operand class, or nullptr if it's invalid.
++const char* GetOperandClassString(OperandClass operandClass) {
++  switch (operandClass) {
++#define CASE(X) case X: return #X;
++    CASE(OperandNone)
++    CASE(OperandId)
++    CASE(OperandVariableIds)
++    CASE(OperandOptionalLiteral)
++    CASE(OperandOptionalLiteralString)
++    CASE(OperandVariableLiterals)
++    CASE(OperandVariableIdLiteral)
++    CASE(OperandVariableLiteralId)
++    CASE(OperandLiteralNumber)
++    CASE(OperandLiteralString)
++    CASE(OperandSource)
++    CASE(OperandExecutionModel)
++    CASE(OperandAddressing)
++    CASE(OperandMemory)
++    CASE(OperandExecutionMode)
++    CASE(OperandStorage)
++    CASE(OperandDimensionality)
++    CASE(OperandSamplerAddressingMode)
++    CASE(OperandSamplerFilterMode)
++    CASE(OperandSamplerImageFormat)
++    CASE(OperandImageChannelOrder)
++    CASE(OperandImageChannelDataType)
++    CASE(OperandImageOperands)
++    CASE(OperandFPFastMath)
++    CASE(OperandFPRoundingMode)
++    CASE(OperandLinkageType)
++    CASE(OperandAccessQualifier)
++    CASE(OperandFuncParamAttr)
++    CASE(OperandDecoration)
++    CASE(OperandBuiltIn)
++    CASE(OperandSelect)
++    CASE(OperandLoop)
++    CASE(OperandFunction)
++    CASE(OperandMemorySemantics)
++    CASE(OperandMemoryAccess)
++    CASE(OperandScope)
++    CASE(OperandGroupOperation)
++    CASE(OperandKernelEnqueueFlags)
++    CASE(OperandKernelProfilingInfo)
++    CASE(OperandCapability)
++    CASE(OperandOpcode)
++#undef CASE
++
++    case OperandCount:
++    default:
++      break;
++  }
++  return nullptr;
++}
++} // anonymous namespace
++
++// Prints a listing of the operand kinds for the given instruction.
++// If the list is empty, then emit just "EmptyList",
++// otherwise the output looks like a call to the "List" macro.
++void PrintOperandClasses(const std::vector<OperandClassInfo>& classes, std::ostream& out) {
++  std::stringstream contents;
++  int numPrinted = 0;
++  for (auto class_info : classes) {
++    if (const char* name = GetOperandClassString(class_info.value)) {
++      if (numPrinted) contents << ", ";
++      switch (class_info.value) {
++        case OperandId:
++        case OperandImageOperands:
++        case OperandLiteralString:
++        case OperandMemoryAccess:
++        case OperandAccessQualifier:
++          if (class_info.is_optional) {
++            contents << "OperandOptional" << (name + strlen("Operand"));
++          } else {
++            contents << name;
++          }
++          break;
++        default:
++          contents << name;
++          break;
++      }
++      numPrinted++;
++      if (class_info.value == OperandImageOperands) {
++        // There are Id and/or VariableIds after this.  Skip them
++        // because the bits in an OperandImageOperands determine
++        // exactly the number of Ids required to follow.
++        break;
++      }
++    }
++  }
++
++  if (numPrinted)
++    out << "List(" << contents.str() << ")";
++  else
++    out << "EmptyList";
++}
++}  // namespace spv
++
++namespace spv {
++
++// Prints a listing of the operand kinds for the given instruction.
++// If the list is empty, then emit just "EmptyList",
++// otherwise the output looks like a call to the "List" macro.
++void PrintOperandClassesForInstruction(const InstructionParameters& inst,
++                                       std::ostream& out) {
++  std::vector<OperandClassInfo> result;
++
++  const OperandParameters& operands = inst.operands;
++  for (int i = 0; i < operands.getNum(); i++) {
++    result.push_back({operands.getClass(i), operands.isOptional(i)});
++  }
++  PrintOperandClasses(result, out);
++}
++
++// Prints the table entry for the given instruction with the given opcode.
++void PrintInstructionDesc(int opcode, const InstructionParameters& inst, std::ostream& out) {
++  const char* name = OpcodeString(opcode);
++  // There can be gaps in the listing.
++  // All valid operations have a name beginning with "Op".
++  if (strlen(name) > 2 && name[0] == 'O' && name[1] == 'p') {
++    out << "Instruction("
++        << name + 2 << ", "; // Skip the "Op" part.
++    out << (inst.hasResult() ? 1 : 0) << ", ";
++    out << (inst.hasType() ? 1 : 0) << ", ";
++    out << inst.operands.getNum() << ", ";
++
++    // Emit the capability, if any.
++    // The SPIR-V tools doesn't handle the concept of depending on more than
++    // one capability.  So call it out separately.  Currently the biggest case
++    // is 2.  This is a big hack.
++    out << inst.capabilities.size() << ", ";
++    assert(inst.capabilities.size() < 3);
++    if (inst.capabilities.size() == 1) {
++      out << "Capability(" << CapabilityString(inst.capabilities[0]) << "), ";
++    } else if (inst.capabilities.size() == 2) {
++      out << "Capability2(" << CapabilityString(inst.capabilities[0]) << ","
++          << CapabilityString(inst.capabilities[1]) << "), ";
++    } else {
++      out << "Capability(None), ";
++    }
++
++    out << (IsVariableLength(inst) ? 1 : 0) << ", ";
++    PrintOperandClassesForInstruction(inst, out);
++    out << ")" << std::endl;
++  }
++}
++
++void PrintAssemblerTable(std::ostream& out) {
++  out << "// Instruction fields are:\n"
++      << "//    name - skips the \"Op\" prefix\n"
++      << "//    {0|1} - whether the instruction generates a result Id\n"
++      << "//    {0|1} - whether the instruction encodes the type of the result Id\n"
++      << "//    numLogicalOperands - does not include result id or type id\n"
++      << "//    numCapabilities - we only handle 0 or 1 required capabilities\n"
++      << "//    Capability(<capability-name>) - capability required to use this instruction. Might be None.\n"
++      << "//       There can be Capability2(a,b) for dependence on two capabilities.\n"
++      << "//    {0|1} - whether the instruction is variable number of logical operands\n"
++      << "//    EmptyList or List(...) - list of classes of logical operands\n"
++      << "// Example use:\n"
++      << "// #define EmptyList {}\n"
++      << "// #define List(...) {__VA_ARGS__}\n"
++      << "// #define Capability(C) Capability##C\n"
++      << "// #define CapabilityNone -1\n"
++      << "// #define Instruction(Name,HasResult,HasType,NumLogicalOperands,CapabiltyRequired,IsVariable,LogicalArgsList)\n";
++
++  for (int i = 0; i < spv::OpcodeCeiling ; i++ ) {
++    PrintInstructionDesc(i, InstructionDesc[i], out);
++  }
++}
++
++}
+diff --git a/tools/spirv/assembler_table.h b/tools/spirv/assembler_table.h
+new file mode 100644
+index 0000000..16ea384
+--- /dev/null
++++ b/tools/spirv/assembler_table.h
+@@ -0,0 +1,55 @@
++// Copyright (c) 2015-2016 The Khronos Group Inc.
++//
++// Permission is hereby granted, free of charge, to any person obtaining a
++// copy of this software and/or associated documentation files (the
++// "Materials"), to deal in the Materials without restriction, including
++// without limitation the rights to use, copy, modify, merge, publish,
++// distribute, sublicense, and/or sell copies of the Materials, and to
++// permit persons to whom the Materials are furnished to do so, subject to
++// the following conditions:
++//
++// The above copyright notice and this permission notice shall be included
++// in all copies or substantial portions of the Materials.
++//
++// MODIFICATIONS TO THIS FILE MAY MEAN IT NO LONGER ACCURATELY REFLECTS
++// KHRONOS STANDARDS. THE UNMODIFIED, NORMATIVE VERSIONS OF KHRONOS
++// SPECIFICATIONS AND HEADER INFORMATION ARE LOCATED AT
++//    https://www.khronos.org/registry/
++//
++// THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
++// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
++// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
++// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
++// MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
++
++#pragma once
++#ifndef ASSEMBLER_TABLE_H
++#define ASSEMBLER_TABLE_H
++
++#include <iostream>
++#include <vector>
++
++#include "doc.h"
++
++namespace spv {
++
++    // Relevant facts about an operand class value.
++    struct OperandClassInfo {
++      OperandClass value;
++      bool is_optional;
++    };
++
++    // Prints the tables used to define the structure of instructions.
++    // Assumes that parameterization has already occurred
++    void PrintAssemblerTable(std::ostream& out);
++
++    // Prints a listing of the operand kinds.
++    // If the list is empty, then emit just "EmptyList",
++    // otherwise the output looks like a call to the "List" macro.
++    void PrintOperandClasses(const std::vector<OperandClassInfo>& classes, std::ostream& out);
++
++};  // end namespace spv
++
++#endif // ASSEMBLER_TABLE_H
+diff --git a/tools/spirv/doc.h b/tools/spirv/doc.h
+index 4c11d3b..6e1718a 100644
+--- a/tools/spirv/doc.h
++++ b/tools/spirv/doc.h
+@@ -32,6 +32,9 @@
+ //ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ //POSSIBILITY OF SUCH DAMAGE.
+ 
++#ifndef DOC_H_
++#define DOC_H_
++
+ //
+ // Author: John Kessenich, LunarG
+ //
+@@ -81,6 +84,7 @@ const char* KernelEnqueueFlagsString(int);
+ const char* KernelProfilingInfoString(int);
+ const char* CapabilityString(int);
+ const char* OpcodeString(int);
++const char* OperandClassString(int);
+ 
+ // For grouping opcodes into subsections
+ enum OpcodeClass {
+@@ -157,6 +161,10 @@ enum OperandClass {
+ 
+     OperandOpcode,
+ 
++    // The operand class enum is not part of the spec, so
++    // it should come after OperandOpcode.
++    OperandOperandClass,
++
+     OperandCount
+ };
+ 
+@@ -259,3 +267,5 @@ const char* AccessQualifierString(int attr);
+ void PrintOperands(const OperandParameters& operands, int reservedOperands);
+ 
+ };  // end namespace spv
++
++#endif // DOC_H_
+diff --git a/tools/spirv/main.cpp b/tools/spirv/main.cpp
+index d7312f9..e1413bb 100644
+--- a/tools/spirv/main.cpp
++++ b/tools/spirv/main.cpp
+@@ -46,6 +46,7 @@ namespace spv {
+ #include "headers/OpenCL.std.h"
+ 
+ // This tool's includes
++#include "assembler_table.h"
+ #include "disassemble.h"
+ #include "header.h"
+ #include "doc.h"
+@@ -65,6 +66,8 @@ enum TOptions {
+     EOptionDisassemble                = 0x004,
+     EOptionPrintHeader                = 0x008,
+     EOptionPrintOclBuiltinsAsciidoc   = 0x010,
++    EOptionPrintAssemblerTable        = 0x020,
++    EOptionPrintOclInstructionsTable  = 0x040,
+ };
+ 
+ std::string Filename;
+@@ -86,9 +89,11 @@ void Usage()
+            "  -H print header in all supported languages to files in current directory\n"
+            "  -p print documentation\n"
+            "  -s [version] prints the SPIR-V extended instructions documentation\n"
+-           "      'CL12': OpenCL 1.2 extended instructions documentation\n"
+-           "      'CL20': OpenCL 2.0 extended instructions documentation\n"
+-           "      'CL21': OpenCL 2.1 extended instructions documentation\n"
++           "      'OpenCL': OpenCL 1.2, 2.0, 2.1 extended instructions documentation\n"
++           "      'GLSL': GLSL extended instructions documentation\n"
++           "  -a print table for the assembler\n"
++           "  -C print OpenCL instructions for the assembler\n"
++           "     This is incompatibile with -s OpenCL\n"
+            );
+ }
+ 
+@@ -155,6 +160,12 @@ bool ProcessArguments(int argc, char* argv[])
+                 }
+                 return true;
+             }
++            case 'a':
++                Options |= EOptionPrintAssemblerTable;
++                break;
++            case 'C':
++                Options |= EOptionPrintOclInstructionsTable;
++                break;
+             default:
+                 return false;
+             }
+@@ -162,6 +173,9 @@ bool ProcessArguments(int argc, char* argv[])
+             Filename = std::string(argv[0]);
+         }
+     }
++    if ((Options & EOptionPrintOclBuiltinsAsciidoc) &&
++        (Options & EOptionPrintOclInstructionsTable))
++      return false;
+ 
+     return true;
+ }
+@@ -220,5 +234,11 @@ int main(int argc, char* argv[])
+     if (Options & EOptionPrintHeader)
+         spv::PrintHeader(Language, std::cout);
+ 
++    if (Options & EOptionPrintAssemblerTable)
++        spv::PrintAssemblerTable(std::cout);
++
++    if (Options & EOptionPrintOclInstructionsTable)
++        spv::PrintOclInstructionsTable(std::cout);
++
+     return 0;
+ }

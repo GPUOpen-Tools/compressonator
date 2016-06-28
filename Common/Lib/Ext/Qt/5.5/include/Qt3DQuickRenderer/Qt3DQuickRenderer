@@ -1,0 +1,22 @@
+#ifndef QT_QT3DQUICKRENDERER_MODULE_H
+#define QT_QT3DQUICKRENDERER_MODULE_H
+#include <Qt3DQuickRenderer/Qt3DQuickRendererDepends>
+#include "quick3deffect.h"
+#include "quick3dgeometry.h"
+#include "quick3dmaterial.h"
+#include "quick3dparameter.h"
+#include "quick3drenderpass.h"
+#include "quick3drenderpassfilter.h"
+#include "quick3drendertarget.h"
+#include "quick3drendertargetselector.h"
+#include "quick3dscene.h"
+#include "quick3dshaderdata.h"
+#include "quick3dshaderdataarray.h"
+#include "quick3dsortmethod.h"
+#include "quick3dstateset.h"
+#include "quick3dtechnique.h"
+#include "quick3dtechniquefilter.h"
+#include "quick3dtexture.h"
+#include "quick3dviewport.h"
+#include "qt3dquickrendererversion.h"
+#endif

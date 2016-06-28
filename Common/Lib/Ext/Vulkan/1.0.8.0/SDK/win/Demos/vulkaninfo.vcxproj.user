@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalDebuggerEnvironment>VK_LAYER_PATH=$(ProjectDir)..\Source\lib
+VK_INSTANCE_LAYERS=VK_LAYER_LUNARG_api_dump
+VK_DEVICE_LAYERS=VK_LAYER_LUNARG_api_dump</LocalDebuggerEnvironment>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LocalDebuggerEnvironment>VK_LAYER_PATH=$(ProjectDir)..\Source\lib32
+VK_INSTANCE_LAYERS=VK_LAYER_LUNARG_api_dump
+VK_DEVICE_LAYERS=VK_LAYER_LUNARG_api_dump</LocalDebuggerEnvironment>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+</Project>

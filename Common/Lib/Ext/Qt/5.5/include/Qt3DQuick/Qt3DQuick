@@ -1,0 +1,11 @@
+#ifndef QT_QT3DQUICK_MODULE_H
+#define QT_QT3DQUICK_MODULE_H
+#include <Qt3DQuick/Qt3DQuickDepends>
+#include "qqmlaspectengine.h"
+#include "quick3dconfiguration.h"
+#include "quick3dentity.h"
+#include "quick3dentityloader.h"
+#include "quick3dnode.h"
+#include "quick3dtransform.h"
+#include "qt3dquickversion.h"
+#endif

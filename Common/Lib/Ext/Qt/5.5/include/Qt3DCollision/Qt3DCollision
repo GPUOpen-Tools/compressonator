@@ -1,0 +1,11 @@
+#ifndef QT_QT3DCOLLISION_MODULE_H
+#define QT_QT3DCOLLISION_MODULE_H
+#include <Qt3DCollision/Qt3DCollisionDepends>
+#include "qabstractcollider.h"
+#include "qboxcollider.h"
+#include "qcapsulecollider.h"
+#include "qcollisionaspect.h"
+#include "qgeometrycollider.h"
+#include "qspherecollider.h"
+#include "qt3dcollisionversion.h"
+#endif
