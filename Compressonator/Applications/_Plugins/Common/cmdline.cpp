@@ -1318,8 +1318,10 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
         if (g_CmdPrams.analysis)
         {
             if (!(GenerateAnalysis(g_CmdPrams.SourceFile, g_CmdPrams.DestFile)))
+            {
                 PrintInfo("Error: Image Analysis Failed\n");
-
+                return -1;
+            }
             return 0;
         }
 
@@ -1607,8 +1609,13 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
                                 //========================
                                 // Process ConvertTexture
                                 //========================
-                                CMP_ConvertTexture(&srcTexture, &destTexture, &g_CmdPrams.CompressOptions, pFeedbackProc, NULL, NULL);
- 
+                                if (CMP_ConvertTexture(&srcTexture, &destTexture, &g_CmdPrams.CompressOptions, pFeedbackProc, NULL, NULL) != CMP_OK)
+                                {
+                                    PrintInfo("Error in compressing destination texture\n");
+                                    cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
+                                    return -1;
+                                }
+
                                 #ifdef MAKE_FORMAT_COMPATIBLE 
                                 if (srcTexture.pData)
                                 {
@@ -1862,11 +1869,23 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
 
                         if (use_GPUDecode)
                         {
-                            CMP_DecompressTexture(&srcTexture, &destTexture, DecodeWith);
+                            if (CMP_DecompressTexture(&srcTexture, &destTexture, DecodeWith) != CMP_OK)
+                            {
+                                PrintInfo("Error in decompressing source texture\n");
+                                cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
+                                return -1;
+                            }
 
                         }
                         else
-                            CMP_ConvertTexture(&srcTexture, &destTexture, &g_CmdPrams.CompressOptions, pFeedbackProc, NULL, NULL);
+                        {
+                            if (CMP_ConvertTexture(&srcTexture, &destTexture, &g_CmdPrams.CompressOptions, pFeedbackProc, NULL, NULL) != CMP_OK)
+                            {
+                                PrintInfo("Error(2) in compressing destination texture\n");
+                                cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
+                                return -1;
+                            }
+                        }
 
                         if (g_CmdPrams.showperformance)
                                         decompress_nIterations++;

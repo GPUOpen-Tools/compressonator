@@ -693,7 +693,12 @@ int AMDSaveMIPSTextureImage(const char * DestFile, MipSet *MipSetIn, bool use_OC
 
         if (qimage)
         {
-            qimage->save(DestFile);
+            if (!qimage->save(DestFile))
+            {
+                delete qimage;
+                qimage = NULL;
+                return(-1);
+            }
             delete qimage;
             qimage = NULL;
         }
