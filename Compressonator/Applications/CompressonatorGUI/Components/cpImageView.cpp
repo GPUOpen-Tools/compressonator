@@ -497,7 +497,7 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
 
         m_CBimageview_MipLevel = new QComboBox(this);
 
-        for (int num = 0; num <= m_MipLevels; num++)
+        for (int num = 0; num < m_MipLevels; num++)
         {
             if (m_MipImages)
             {

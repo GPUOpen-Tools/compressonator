@@ -58,9 +58,9 @@ MipLevel* CMIPS::GetMipLevel(const MipSet* pMipSet, int nMipLevel,    int nFaceO
         ASSERT(pMipSet);
         return NULL;
     }
-    if(nMipLevel >= pMipSet->m_nMaxMipLevels)
+    if(nMipLevel > pMipSet->m_nMaxMipLevels)
     {
-        ASSERT(nMipLevel < pMipSet->m_nMaxMipLevels);
+        ASSERT(nMipLevel <= pMipSet->m_nMaxMipLevels);
         return NULL;
     }
     if(nFaceOrSlice < 0)
@@ -110,13 +110,17 @@ int CMIPS::GetMaxMipLevels(int nWidth, int nHeight, int nDepth)
     int maxMipLevels = 1;
     ASSERT(nWidth > 0 && nHeight > 0 && nDepth > 0);
 
-    while (nWidth > 1 || nHeight > 1 || nDepth > 1)
+    while (nWidth >= 1 || nHeight >= 1 || nDepth > 1)
     {
         maxMipLevels++;
+
+        if (nWidth == 1 || nHeight == 1)
+            break;
         //div by 2
         nWidth = nWidth>1 ? nWidth>>1 : 1;
         nHeight = nHeight>1 ? nHeight>>1 : 1;
         nDepth = nDepth>1 ? nDepth>>1 : 1;
+ 
     }
     return maxMipLevels;
 }

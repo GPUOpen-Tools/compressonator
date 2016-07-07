@@ -82,15 +82,14 @@ int Plugin_BoxFilter::TC_GenerateMIPLevels(MipSet *pMipSet, int nMinSize)
 
     
     int nPrevMipLevels = pMipSet->m_nMipLevels;
-    pMipSet->m_nMipLevels = 0;
     int nWidth = pMipSet->m_nWidth;
     int nHeight = pMipSet->m_nHeight;
 
-    while(nWidth > nMinSize || nHeight > nMinSize)
+    while(nWidth >= nMinSize || nHeight >= nMinSize)
     {
         nWidth = max(nWidth >> 1, 1);
         nHeight = max(nHeight >> 1, 1);
-        int nCurMipLevel = ++pMipSet->m_nMipLevels;
+        int nCurMipLevel = pMipSet->m_nMipLevels;
         int maxFacesOrSlices = max((pMipSet->m_TextureType == TT_VolumeTexture) ? (MaxFacesOrSlices(pMipSet, nCurMipLevel-1)>>1) : MaxFacesOrSlices(pMipSet, nCurMipLevel-1), 1);
         for(int nFaceOrSlice=0; nFaceOrSlice<maxFacesOrSlices; nFaceOrSlice++)
         {
@@ -141,6 +140,9 @@ int Plugin_BoxFilter::TC_GenerateMIPLevels(MipSet *pMipSet, int nMinSize)
                 }
             }
         }
+        pMipSet->m_nMipLevels++;
+        if (nWidth == 1 || nHeight == 1)
+            break;
     }
 
 
@@ -171,7 +173,6 @@ void GenerateMipLevel(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, MipLev
         {
             bool bDiffHeights = pCurMipLevel->m_nHeight != pPrevMipLevelOne->m_nHeight;
             bool bDiffWidths = pCurMipLevel->m_nWidth != pPrevMipLevelOne->m_nWidth;
-            assert(bDiffHeights || bDiffWidths);
             COLOR *pDst = pCurMipLevel->m_pcData;
             for(int y=0; y<pCurMipLevel->m_nHeight; y++)
             {
