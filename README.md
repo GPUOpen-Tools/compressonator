@@ -4,24 +4,27 @@ Compressonator is a set of tools to allow artists and developers to more easily 
 
 Compressonator DXTn (S3TC)is developed for Microsoft Windows® platform.
 
-Recent additions
+Recent additions and changes to note
 ------------------------------------------------------
 
+Mainline Branch
+
+Added GPU based compressed image views using OpenGL, DirectX 11 
+and Vulkan
+
+V2.3 Branch
 Installer for prebuilt SDK Libs, GUI and Command line application
 
 Support for ASTC and ETC2
 
 Variable sized compression buffers
 
-GPU based compressed image views using OpenGL and DirectX 11
 
 
 Build Instructions for Windows 7 and up
 ------------------------------------------------------
 
-You will need the following:
-
-1.	Visual Studio 2015 to build the applications and libs
+To build the applications you will need to have Visual Studio 2015 installed.
 
 The directory of your workspace should be as follows
 
@@ -30,16 +33,46 @@ The directory of your workspace should be as follows
 - LICENSE
 - README.md
 
------------------------ 
-A: Build the libs using
------------------------ 
+
+It is also recommended that you install and configure Visual Studio Qt5 Package extension from MSDN Visual Studio Gallery, and set in Qt Options dialog, Qt Default Version name V5.5 and path to Common\Lib\Ext\Qt\5.5\bin
+
+https://visualstudiogallery.msdn.microsoft.com/c89ff880-8509-47a4-a262-e4fa07168408 
+
+-------------------------------------
+
+
+
+
+Build Applications using Batch Files
+================================================================
+
+Simply run one of the batch files from a window console.
+
+To build the Compressonator GUI run BuildGUI
+To build the Compressonator Command line Tool run BuildCLI
+
+
+
+Manual Build Steps
+=================================================================
+
+Go to the associated directory where Visual Studio Solution Files are located as indicated in steps A through C.
+
+All of the Applications (B, C) apart from the SDL libs (A) can be built as either Release_MD or Debug_MD 32 Bit applications.
+
+
+---------------------------- 
+(A) Build the SDK libs using
+---------------------------- 
 \Compressonator\VS2015\CompressonatorLib.sln
 
 This solution will create a build folder that contains DLL and Libs under \Compressonator\Build\VS2015\(configuration)\(platform)\
 
+example: Compressonator\Build\VS2015\Release_MD\Win32\
+
 
 --------------------------------------
-B: Build the Command line tool using 
+(B) Build the Command line tool using 
 --------------------------------------
 \Compressonator\Applications\CompressonatorCLI\VS2015\VS2015.sln
 
@@ -64,7 +97,7 @@ The command line tool has dependencies on Qt (V5.4 and up)
 The dlls above are copied from common to CompressonatorCLI.exe folder by building the "CopyScript" project in the VS2015.sln.
 
 -----------------------------------------------------------
-C: Build the GUI Tool using
+(C) Build the GUI Tool using
 ------------------------------------------------------------
 \Compressonator\Applications\CompressonatorGUI\VS2015\VS2015.sln
 

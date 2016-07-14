@@ -95,16 +95,18 @@ echo --3
 echo %Building%  >> %OUTPUT_LOG%
 ::
 echo ------------------------------------------------------------
-echo VS2015 Build CompressonatorCLI Exe
+echo VS2015 Build Compressonator GUI Exe
 echo ------------------------------------------------------------
-cd %COMPRESSONATOR_ROOT%\Applications\CompressonatorCLI\VS2015
+cd %COMPRESSONATOR_ROOT%\Applications\CompressonatorGUI\VS2015
 ::
-set Building="STEP  a2:  VS2015 Build CompressonatorCLI Win32:Release -----------------------"
+set Building="STEP  a2:  VS2015 Build CompressonatorGUI Win32:Release_MD -----------------------"
 echo --1
 echo %Building%  >> %OUTPUT_LOG%
 echo --2
 MSBUILD VS2015.sln /p:Configuration=release_md  /t:rebuild  /p:Platform=win32  /p:VCTargetsPath="%MSBUILDROOT%\Microsoft.Cpp\v4.0\V140/" >> %OUTPUT_LOG%
+
 IF %ERRORLEVEL% GTR 0 goto Error
+
 ::
 Goto Done
 :Error
@@ -115,6 +117,7 @@ echo ***** MSBuild Exit Error = %errorlevel%                        >> %OUTPUT_L
 echo ------------------------------------------------------------   >> %OUTPUT_LOG%
 ::
 cd %BatchDir%
+
 echo "BUILD FAILED"
 exit /b %ERRORLEVEL%
 :Done
