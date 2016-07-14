@@ -58,7 +58,7 @@ Manual Build Steps
 
 Go to the associated directory where Visual Studio Solution Files are located as indicated in steps A through C.
 
-All of the Applications (B, C) apart from the SDL libs (A) can be built as either Release_MD or Debug_MD 32 Bit applications.
+All of the Applications (B, C) apart from the SDK libs (A) can be built as either Release_MD or Debug_MD 32 Bit applications.
 
 
 ---------------------------- 
