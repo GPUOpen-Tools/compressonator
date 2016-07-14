@@ -54,12 +54,19 @@ To build the Compressonator Command line Tool run BuildCLI
 
 
 Manual Build Steps
-=================================================================
+================================================================
 
 Go to the associated directory where Visual Studio Solution Files are located as indicated in steps A through C.
 
 All of the Applications (B, C) apart from the SDK libs (A) can be built as either Release_MD or Debug_MD 32 Bit applications.
 
+
+For Application builds make sure that the default startup projects are set as follows:
+
+(B) CommandLine solution set to CompressonatorCLI
+(C) GUI solution set to MainApp
+
+Always clean and rebuild the projects
 
 ---------------------------- 
 (A) Build the SDK libs using
