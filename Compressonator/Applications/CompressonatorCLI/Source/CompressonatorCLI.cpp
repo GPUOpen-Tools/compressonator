@@ -30,6 +30,7 @@
 #pragma comment(lib,"DDS.lib")
 #pragma comment(lib,"EXR.lib")
 #pragma comment(lib,"KTX.lib")
+#pragma comment(lib,"TGA.lib")
 #pragma comment(lib,"IMGAnalysis.lib")
 
 extern void *make_Plugin_ASTC();
@@ -37,6 +38,7 @@ extern void *make_Plugin_BoxFilter();
 extern void *make_Plugin_DDS();
 extern void *make_Plugin_EXR();
 extern void *make_Plugin_KTX();
+extern void *make_Plugin_TGA();
 extern void *make_Plugin_CAnalysis();
 
 #ifdef USE_AMD_PNG
@@ -73,6 +75,7 @@ int main(int argc,  char* argv[])
     g_pluginManager.registerStaticPlugin("IMAGE","DDS", make_Plugin_DDS);
     g_pluginManager.registerStaticPlugin("IMAGE","EXR", make_Plugin_EXR);
     g_pluginManager.registerStaticPlugin("IMAGE","KTX", make_Plugin_KTX);
+    g_pluginManager.registerStaticPlugin("IMAGE","TGA", make_Plugin_TGA);  // Use for load only, Qt will be used for Save
     g_pluginManager.registerStaticPlugin("IMAGE", "ANALYSIS", make_Plugin_CAnalysis);
     
 #ifdef USE_AMD_PNG

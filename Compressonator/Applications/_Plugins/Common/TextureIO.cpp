@@ -493,6 +493,7 @@ int QImage2MIPS(QImage *qimage, CMIPS *m_CMips, MipSet *pMipSet)
                 i++;
             }
         }
+        pMipSet->m_swizzle = false; //already swizzled; reset
     }
     else
     {
@@ -668,8 +669,8 @@ int AMDSaveMIPSTextureImage(const char * DestFile, MipSet *MipSetIn, bool use_OC
         plugin_Image = reinterpret_cast<PluginInterface_Image *>(g_pluginManager.GetPlugin("IMAGE",(char *)file_extension.c_str()));
 
 
-    // do the save
-    if (plugin_Image)
+    // do the save, Let Qt handle tga extension saves 
+    if ((plugin_Image) && (file_extension.compare("TGA") != 0))
     {
         plugin_Image->TC_PluginSetSharedIO(&m_CMIPS);
         if (plugin_Image->TC_PluginFileSaveTexture(DestFile, MipSetIn) != 0)

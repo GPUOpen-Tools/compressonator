@@ -1361,23 +1361,17 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
         //========================
         // Set the source format
         //========================
-        if (p_userMipSetIn)
+        //----------------
+        // Read Input file
+        //----------------
+        if (p_userMipSetIn)  //for GUI
         {
             memcpy(&g_MipSetIn, p_userMipSetIn, sizeof(MipSet));
             // Data in DXTn Files are expected to be in BGRA as input to CMP_ConvertTexture
             // Data in ASTC BC6 BC7 etc - expect data to be RGBA as input to CMP_ConvertTexture
             g_MipSetIn.m_swizzle = KeepSwizzle(destFormat); 
             g_MipSetIn.m_pMipLevelTable = p_userMipSetIn->m_pMipLevelTable;
-        }
 
-        //----------------
-        // Read Input file
-        //----------------
-        if (g_CmdPrams.showperformance)
-            QueryPerformanceCounter(&conversion_loopStartTime);
-
-        if (p_userMipSetIn)
-        {
             if (g_MipSetIn.m_swizzle)
             {
                 SwizzleMipMap(&g_MipSetIn);
@@ -1385,7 +1379,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
             }
             Delete_gMipSetIn = false;
         }
-        else
+        else  //for CLI
         {
             Delete_gMipSetIn = true;
 
@@ -1419,8 +1413,13 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
                 PrintInfo("Error: loading image, data type not supported.\n");
                 return -1;
             }
+
+            if (g_MipSetIn.m_swizzle)
+                SwizzleMipMap(&g_MipSetIn);
         }
 
+        if (g_CmdPrams.showperformance)
+            QueryPerformanceCounter(&conversion_loopStartTime);
       
         // User setting overrides file setting in this case
         if (g_CmdPrams.SourceFormat != CMP_FORMAT_Unknown)

@@ -162,7 +162,6 @@ TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
             pMipSet->m_compressed = true;
             pMipSet->m_format     = CMP_FORMAT_BC1;
             err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, FOURCC_BC1);
-            pMipSet->m_swizzle    = true;
             break;
 
         case DXGI_FORMAT_BC2_TYPELESS:    
@@ -171,7 +170,6 @@ TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
             pMipSet->m_compressed = true;
             pMipSet->m_format     = CMP_FORMAT_BC2;
             err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, FOURCC_BC2);
-            pMipSet->m_swizzle    = true;
             break;
 
         case DXGI_FORMAT_BC3_TYPELESS:    
@@ -180,7 +178,6 @@ TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
             pMipSet->m_compressed = true;
             pMipSet->m_format     = CMP_FORMAT_BC3;
             err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, FOURCC_BC3);
-            pMipSet->m_swizzle    = true;
             break;
 
         case DXGI_FORMAT_BC4_TYPELESS:    
@@ -189,7 +186,6 @@ TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
             pMipSet->m_compressed = true;
             pMipSet->m_format     = CMP_FORMAT_BC4;
             err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, FOURCC_BC4);
-            pMipSet->m_swizzle    = true;
             break;
 
         case DXGI_FORMAT_BC5_TYPELESS:    
@@ -197,7 +193,6 @@ TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
         case DXGI_FORMAT_BC5_SNORM:    
             pMipSet->m_compressed = true;
             err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, FOURCC_BC5);
-            pMipSet->m_swizzle    = true;
             break;
 
         case DXGI_FORMAT_BC6H_TYPELESS:    
@@ -206,7 +201,6 @@ TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
             pMipSet->m_compressed = true;
             pMipSet->m_format     = CMP_FORMAT_BC6H;
             err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, FOURCC_DX10);
-            pMipSet->m_swizzle    = true;
             break;
 
         case DXGI_FORMAT_BC7_TYPELESS:    
@@ -215,7 +209,6 @@ TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
             pMipSet->m_compressed = true;
             pMipSet->m_format     = CMP_FORMAT_BC7;
             err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, FOURCC_DX10);
-            pMipSet->m_swizzle    = true;
             break;
 
         // case DXGI_FORMAT_???:    
