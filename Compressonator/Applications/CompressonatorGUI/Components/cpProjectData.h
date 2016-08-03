@@ -766,7 +766,8 @@ public:
     
     enum DecompressAPI {
         OpenGL,
-        DirectX
+        DirectX,
+        Vulkan
     };
 
     C_GPU_Decompress_Options()

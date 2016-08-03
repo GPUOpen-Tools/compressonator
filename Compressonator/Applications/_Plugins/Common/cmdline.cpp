@@ -255,6 +255,8 @@ CMP_GPUDecode DecodeWith(const  char *strParameter)
         return GPUDecode_OPENGL;
     else if (strcmp(strParameter, "OpenGL") == 0)
         return GPUDecode_OPENGL;
+    else if (strcmp(strParameter, "Vulkan") == 0)
+        return GPUDecode_VULKAN;
     else
         return GPUDecode_INVALID;
 }

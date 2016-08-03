@@ -27,6 +27,7 @@
 #include "GPU_Decode.h"
 #include "GPU_DirectX.h"
 #include "GPU_OpenGL.h"
+#include "GPU_Vulkan.h"
 
 using namespace GPU_Decode;
 
@@ -36,7 +37,7 @@ static CMP_GPUDecode DecodeType = GPUDecode_INVALID;
 //
 // CMP_InitializeDecompessLibrary - Initialize the DeCompression library based in GPU Driver support types
 //
-CMP_ERROR CMP_API CMP_InitializeDecompessLibrary(CMP_GPUDecode GPUDecodeType)
+CMP_ERROR CMP_API CMP_InitializeDecompessLibrary(CMP_GPUDecode GPUDecodeType, CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback)
 {
     if (g_GPUDecode && (DecodeType == GPUDecodeType)) return CMP_OK;
 
@@ -48,10 +49,13 @@ CMP_ERROR CMP_API CMP_InitializeDecompessLibrary(CMP_GPUDecode GPUDecodeType)
     switch (GPUDecodeType)
     {
     case GPUDecode_DIRECTX:
-                            g_GPUDecode = (TextureControl *) new GPU_DirectX();
+                            g_GPUDecode = (TextureControl *) new GPU_DirectX(Width, Height, callback);
                             break;
     case GPUDecode_OPENGL: 
-                            g_GPUDecode = (TextureControl *) new GPU_OpenGL();
+                            g_GPUDecode = (TextureControl *) new GPU_OpenGL(Width, Height, callback);
+                            break;
+    case GPUDecode_VULKAN:
+                            g_GPUDecode = (TextureControl *) new GPU_Vulkan(Width, Height, callback);
                             break;
     default:
                             return CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB;
@@ -68,6 +72,8 @@ CMP_ERROR CMP_API CMP_ShutdownDecompessLibrary()
 {
     if (g_GPUDecode)
     {
+        // shutdown Window context
+        g_GPUDecode->DisableWindowContext(g_GPUDecode->m_hWnd, g_GPUDecode->m_hDC, g_GPUDecode->m_hRC);
         free(g_GPUDecode);
         g_GPUDecode = NULL;
     }
@@ -84,7 +90,7 @@ CMP_ERROR CMP_API CMP_DecompressTexture(
     CMP_ERROR result;
 
     // This is temporary code we should move this into CLI and GUI
-    result = CMP_InitializeDecompessLibrary(GPUDecodeType);
+    result = CMP_InitializeDecompessLibrary(GPUDecodeType, pSourceTexture->dwWidth, pSourceTexture->dwHeight, NULL);
     if (result  != CMP_OK) return (result);
 
     if (g_GPUDecode)

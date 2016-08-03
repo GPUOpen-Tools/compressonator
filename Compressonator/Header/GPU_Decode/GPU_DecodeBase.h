@@ -44,8 +44,9 @@ namespace GPU_Decode
         HDC         m_hDC = 0;
         HGLRC       m_hRC = 0;
         HWND        m_hWnd = nullptr;
+        HINSTANCE hInstance = GetModuleHandle(NULL);
 
-        HRESULT InitWindow(HINSTANCE hInstance, int width, int height);
+        HRESULT InitWindow(HINSTANCE hInstance, int width, int height, WNDPROC callback =NULL);
         void    EnableWindowContext(HWND hWnd, HDC * hDC, HGLRC * hRC);
         void    DisableWindowContext(HWND hWnd, HDC hDC, HGLRC hRC);
 

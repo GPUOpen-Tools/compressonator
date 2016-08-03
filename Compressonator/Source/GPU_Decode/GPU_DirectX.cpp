@@ -56,7 +56,7 @@ struct CBArrayControl
 
 
 
-GPU_DirectX::GPU_DirectX()
+GPU_DirectX::GPU_DirectX(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback)
 {
     m_driverType = D3D_DRIVER_TYPE_NULL;
     m_featureLevel = D3D_FEATURE_LEVEL_11_0;
@@ -79,6 +79,16 @@ GPU_DirectX::GPU_DirectX()
     m_iCurrentIndex = 0;
     m_iMaxIndex = 1;
     m_iIndices = 0;
+    //set default width and height if is 0
+    if (Width <= 0)
+        Width = 640;
+    if (Height <= 0)
+        Height = 480;
+
+    if (FAILED(InitWindow(hInstance, Width, Height, callback)))
+        assert(0);
+
+    EnableWindowContext(m_hWnd, &m_hDC, &m_hRC);
 }
 
 GPU_DirectX::~GPU_DirectX()
@@ -583,10 +593,6 @@ int WINAPI GPU_DirectX::Decompress(
     )
 {
     HRESULT hr;
-    HINSTANCE hInstance = GetModuleHandle(NULL);
-
-    if (FAILED(InitWindow(hInstance, pSourceTexture->dwWidth, pSourceTexture->dwHeight)))
-        return 0;
 
     TexMetadata mdata;
 

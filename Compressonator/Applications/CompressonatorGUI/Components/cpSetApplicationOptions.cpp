@@ -115,6 +115,8 @@ void CSetApplicationOptions::onGPUDecompressChanged(QVariant &value)
         g_gpudecodeFormat = MIPIMAGE_FORMAT::Format_OpenGL;
     else if (decodeformat == C_Application_Options::DecompressAPI::DirectX)
         g_gpudecodeFormat = MIPIMAGE_FORMAT::Format_DirectX;
+    else if (decodeformat == C_Application_Options::DecompressAPI::Vulkan)
+        g_gpudecodeFormat = MIPIMAGE_FORMAT::Format_Vulkan;
     else
         g_gpudecodeFormat = MIPIMAGE_FORMAT::Format_QImage;
 }

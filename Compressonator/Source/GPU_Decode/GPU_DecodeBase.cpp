@@ -86,7 +86,7 @@ void RenderWindow::DisableWindowContext(HWND hWnd, HDC hDC, HGLRC hRC)
     ReleaseDC(hWnd, hDC);
 }
 
-HRESULT RenderWindow::InitWindow(HINSTANCE hInstance, int width, int height)
+HRESULT RenderWindow::InitWindow(HINSTANCE hInstance, int width, int height,WNDPROC callback)
 {
     if (!FindWindowA(str_WindowsClassName, str_WindowName))
     {
@@ -94,7 +94,10 @@ HRESULT RenderWindow::InitWindow(HINSTANCE hInstance, int width, int height)
         WNDCLASSEX wcex;
         wcex.cbSize = sizeof(WNDCLASSEX);
         wcex.style = CS_HREDRAW | CS_VREDRAW;
-        wcex.lpfnWndProc = WndProc2;
+        if (callback)
+            wcex.lpfnWndProc = callback;
+        else
+            wcex.lpfnWndProc = WndProc2;
         wcex.cbClsExtra = 0;
         wcex.cbWndExtra = 0;
         wcex.hInstance = hInstance;

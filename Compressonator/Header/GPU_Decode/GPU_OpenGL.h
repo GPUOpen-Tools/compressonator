@@ -38,7 +38,7 @@ namespace GPU_Decode
     class GPU_OpenGL : public RenderWindow
     {
     public:
-        GPU_OpenGL();
+        GPU_OpenGL(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback);
         ~GPU_OpenGL();
 
         virtual int WINAPI Decompress(

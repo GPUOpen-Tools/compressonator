@@ -54,6 +54,15 @@
     <ClCompile Include="..\Source\GPU_Decode\GPU_DecodeBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\GPU_Decode\GPU_Vulkan.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GPU_Decode\vulkandebug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GPU_Decode\vulkantools.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Header\GPU_Decode\GPU_Decode.h">
@@ -81,6 +90,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\GPU_Decode\GPU_OpenGL.h">
+    <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\GPU_Decode\GPU_Vulkan.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

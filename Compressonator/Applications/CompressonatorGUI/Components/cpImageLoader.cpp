@@ -365,6 +365,9 @@ MipSet *CImageLoader::DecompressMipSet(CMipImages *MipImages)
                     case MIPIMAGE_FORMAT::Format_DirectX:
                         decodeWith = CMP_GPUDecode::GPUDecode_DIRECTX;
                         break;
+                    case MIPIMAGE_FORMAT::Format_Vulkan:
+                        decodeWith = CMP_GPUDecode::GPUDecode_VULKAN;
+                        break;
                     default:
                         break;
                 }

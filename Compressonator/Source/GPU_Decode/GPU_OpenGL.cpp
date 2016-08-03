@@ -35,9 +35,18 @@
 
 using namespace GPU_Decode;
 
-GPU_OpenGL::GPU_OpenGL()
+GPU_OpenGL::GPU_OpenGL(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback)
 {
+    //set default width and height if is 0
+    if (Width <= 0)
+        Width = 640;
+    if (Height <= 0)
+        Height = 480;
 
+    if (FAILED(InitWindow(hInstance, Width, Height, callback)))
+        assert(0);
+
+    EnableWindowContext(m_hWnd, &m_hDC, &m_hRC);
 }
 
 GPU_OpenGL::~GPU_OpenGL()
@@ -217,14 +226,6 @@ int WINAPI GPU_OpenGL::Decompress(
     CMP_Texture* pDestTexture
 )
 {
-    HINSTANCE hInstance = GetModuleHandle(NULL);
-    // load our texture
-
-    if (FAILED(InitWindow(hInstance, pDestTexture->dwWidth, pDestTexture->dwHeight)))
-        return 0;
-
-    EnableWindowContext(m_hWnd, &m_hDC, &m_hRC);
-
     GLint majVer = 0;
     GLint minVer = 0;
     glGetIntegerv(GL_MAJOR_VERSION, &majVer);
@@ -259,17 +260,16 @@ int WINAPI GPU_OpenGL::Decompress(
         }
     }
 
-    if (pSourceTexture->format == CMP_FORMAT_ETC_RGB || pSourceTexture->format == CMP_FORMAT_ETC2_RGB)
-        glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_BGRA_EXT, GL_UNSIGNED_BYTE, pDestTexture->pData);
-    else
-        glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_RGBA, GL_UNSIGNED_BYTE, pDestTexture->pData);
-
+    if (pDestTexture)
+    {
+        if (pSourceTexture->format == CMP_FORMAT_ETC_RGB || pSourceTexture->format == CMP_FORMAT_ETC2_RGB)
+            glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_BGRA_EXT, GL_UNSIGNED_BYTE, pDestTexture->pData);
+        else
+            glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_RGBA, GL_UNSIGNED_BYTE, pDestTexture->pData);
+    }
 
     // free the texture
     FreeTexture(texture);
-
-    // shutdown OpenGL
-    DisableWindowContext(m_hWnd, m_hDC, m_hRC);
 
     return (int)0; // msg.wParam;
 }

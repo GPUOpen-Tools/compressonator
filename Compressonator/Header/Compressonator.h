@@ -116,6 +116,7 @@ typedef enum
 {
     GPUDecode_OPENGL,                      ///< Use OpenGL   to decode Textures
     GPUDecode_DIRECTX,                     ///< Use DirectX  to decode Textures
+    GPUDecode_VULKAN,                      ///< Use Vulkan  to decode Textures
     GPUDecode_INVALID
 } CMP_GPUDecode;
 

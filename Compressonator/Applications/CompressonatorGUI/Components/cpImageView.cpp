@@ -297,6 +297,10 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
                 gpuView += "using DirectX";
                 custTitleBar->setTitle(gpuView);
                 break;
+            case MIPIMAGE_FORMAT::Format_Vulkan:
+                gpuView += "using Vulkan";
+                custTitleBar->setTitle(gpuView);
+                break;
             default: 
                 custTitleBar->setTitle(gpuView);
                 break;

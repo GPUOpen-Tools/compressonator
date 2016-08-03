@@ -42,7 +42,7 @@ namespace GPU_Decode
     class GPU_DirectX : public RenderWindow
     {
     public:
-        GPU_DirectX();
+        GPU_DirectX(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback);
         ~GPU_DirectX();
 
         virtual int WINAPI Decompress(
