@@ -9,10 +9,16 @@ Recent additions and changes to note
 
 Mainline Branch
 
-Added GPU based compressed image views using OpenGL, DirectX 11 
-and Vulkan
+Support mipmap generation on KTX output
+
+Add TGA image plugin
+
+Enable GUI decompress view with vulkan
+
+Added GPU based compressed image views using OpenGL, DirectX 11 and Vulkan
 
 V2.3 Branch
+
 Installer for prebuilt SDK Libs, GUI and Command line application
 
 Support for ASTC and ETC2

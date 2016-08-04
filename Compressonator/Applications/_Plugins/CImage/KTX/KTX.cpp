@@ -51,12 +51,10 @@ uint32_t Endian_Conversion(uint32_t dword)
 
 Plugin_KTX::Plugin_KTX()
 { 
-    //MessageBox(0,"Plugin_TGA","Plugin_KTX",MB_OK);  
 }
 
 Plugin_KTX::~Plugin_KTX()
 { 
-    //MessageBox(0,"Plugin_TGA","~Plugin_KTX",MB_OK);  
 }
 
 int Plugin_KTX::TC_PluginSetSharedIO(void* Shared)
@@ -72,7 +70,6 @@ int Plugin_KTX::TC_PluginSetSharedIO(void* Shared)
 
 int Plugin_KTX::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
 { 
-    //MessageBox(0,"TC_PluginGetVersion","Plugin_KTX",MB_OK);  
     pPluginVersion->guid                    = g_GUID;
     pPluginVersion->dwAPIVersionMajor        = TC_API_VERSION_MAJOR;
     pPluginVersion->dwAPIVersionMinor        = TC_API_VERSION_MINOR;
@@ -83,13 +80,450 @@ int Plugin_KTX::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
 
 int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture)
 {
-    //MessageBox(0,"TC_PluginFileLoadTexture srcTexture","Plugin_KTX",MB_OK);  
+    assert(pszFilename);
+
+    FILE* pFile = NULL;
+    if (_tfopen_s(&pFile, pszFilename, _T("rb")) != 0 || pFile == NULL)
+    {
+        return -1;
+    }
+
+    //using libktx
+    KTX_header fheader;
+    KTX_texinfo texinfo;
+    if (fread(&fheader, sizeof(KTX_header), 1, pFile) != 1)
+    {
+        fclose(pFile);
+        return -1;
+    }
+
+    if (_ktxCheckHeader(&fheader, &texinfo) != KTX_SUCCESS)
+    {
+        fclose(pFile);
+        return -1;
+    }
+
+    memset(srcTexture, 0, sizeof(*srcTexture));
+    srcTexture->dwSize = sizeof(*srcTexture);
+    srcTexture->dwWidth = fheader.pixelWidth;
+    srcTexture->dwHeight = fheader.pixelHeight;
+    srcTexture->dwPitch = 0;
+
+    if (texinfo.compressed)
+    {
+        srcTexture->nBlockHeight = 4;
+        srcTexture->nBlockWidth = 4;
+        srcTexture->nBlockDepth = 1;
+
+        //todo: add in texture data type; 1D, 2D etc, please refer to load texture mipset
+        switch (fheader.glInternalFormat)
+        {
+        case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
+            srcTexture->format = CMP_FORMAT_BC1;
+            break;
+        case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+            srcTexture->format = CMP_FORMAT_BC1;
+            break;
+        case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+            srcTexture->format = CMP_FORMAT_BC2;
+            break;
+        case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+            srcTexture->format = CMP_FORMAT_BC3;
+            break;
+        case RGB_BP_UNorm:
+            srcTexture->format = CMP_FORMAT_BC7;
+            break;
+        case R_ATI1N_UNorm:
+            srcTexture->format = CMP_FORMAT_ATI1N;
+            break;
+        case R_ATI1N_SNorm:
+            srcTexture->format = CMP_FORMAT_ATI2N;
+            break;
+        case RG_ATI2N_UNorm:
+            srcTexture->format = CMP_FORMAT_ATI2N_XY;
+            break;
+        case RG_ATI2N_SNorm:
+            srcTexture->format = CMP_FORMAT_ATI2N_DXT5;
+            break;
+        case RGB_BP_UNSIGNED_FLOAT:
+            srcTexture->format = CMP_FORMAT_BC6H;
+            break;
+        case RGB_BP_SIGNED_FLOAT:
+            srcTexture->format = CMP_FORMAT_BC6H;
+            break;
+        case ATC_RGB_AMD:
+            srcTexture->format = CMP_FORMAT_ATC_RGB;
+            break;
+        case ATC_RGBA_EXPLICIT_ALPHA_AMD:
+            srcTexture->format = CMP_FORMAT_ATC_RGBA_Explicit;
+            break;
+        case ATC_RGBA_INTERPOLATED_ALPHA_AMD:
+            srcTexture->format = CMP_FORMAT_ATC_RGBA_Interpolated;
+            break;
+        case GL_COMPRESSED_RGBA_ASTC_4x4_KHR:
+            srcTexture->format = CMP_FORMAT_ASTC;
+            srcTexture->nBlockWidth = 4;
+            srcTexture->nBlockHeight = 4;
+            break;
+        case GL_COMPRESSED_RGBA_ASTC_5x4_KHR:
+            srcTexture->format = CMP_FORMAT_ASTC;
+            srcTexture->nBlockWidth = 5;
+            srcTexture->nBlockHeight = 4;
+            break;
+        case GL_COMPRESSED_RGBA_ASTC_5x5_KHR:
+            srcTexture->format = CMP_FORMAT_ASTC;
+            srcTexture->nBlockWidth = 5;
+            srcTexture->nBlockHeight = 5;
+            break;
+        case GL_COMPRESSED_RGBA_ASTC_6x5_KHR:
+            srcTexture->format = CMP_FORMAT_ASTC;
+            srcTexture->nBlockWidth = 6;
+            srcTexture->nBlockHeight = 5;
+            break;
+        case GL_COMPRESSED_RGBA_ASTC_6x6_KHR:
+            srcTexture->format = CMP_FORMAT_ASTC;
+            srcTexture->nBlockWidth = 6;
+            srcTexture->nBlockHeight = 6;
+            break;
+        case GL_COMPRESSED_RGBA_ASTC_8x5_KHR:
+            srcTexture->format = CMP_FORMAT_ASTC;
+            srcTexture->nBlockWidth = 8;
+            srcTexture->nBlockHeight = 5;
+            break;
+        case GL_COMPRESSED_RGBA_ASTC_8x6_KHR:
+            srcTexture->format = CMP_FORMAT_ASTC;
+            srcTexture->nBlockWidth = 8;
+            srcTexture->nBlockHeight = 6;
+            break;
+        case GL_COMPRESSED_RGBA_ASTC_10x5_KHR:
+            srcTexture->format = CMP_FORMAT_ASTC;
+            srcTexture->nBlockWidth = 10;
+            srcTexture->nBlockHeight = 5;
+            break;
+        case GL_COMPRESSED_RGBA_ASTC_10x6_KHR:
+            srcTexture->format = CMP_FORMAT_ASTC;
+            srcTexture->nBlockWidth = 10;
+            srcTexture->nBlockHeight = 6;
+            break;
+        case GL_COMPRESSED_RGBA_ASTC_8x8_KHR:
+            srcTexture->format = CMP_FORMAT_ASTC;
+            srcTexture->nBlockWidth = 8;
+            srcTexture->nBlockHeight = 8;
+            break;
+        case GL_COMPRESSED_RGBA_ASTC_10x8_KHR:
+            srcTexture->format = CMP_FORMAT_ASTC;
+            srcTexture->nBlockWidth = 10;
+            srcTexture->nBlockHeight = 8;
+            break;
+        case GL_COMPRESSED_RGBA_ASTC_10x10_KHR:
+            srcTexture->format = CMP_FORMAT_ASTC;
+            srcTexture->nBlockWidth = 10;
+            srcTexture->nBlockHeight = 10;
+            break;
+        case GL_COMPRESSED_RGBA_ASTC_12x10_KHR:
+            srcTexture->format = CMP_FORMAT_ASTC;
+            srcTexture->nBlockWidth = 12;
+            srcTexture->nBlockHeight = 10;
+            break;
+        case GL_COMPRESSED_RGBA_ASTC_12x12_KHR:
+            srcTexture->format = CMP_FORMAT_ASTC;
+            srcTexture->nBlockWidth = 12;
+            srcTexture->nBlockHeight = 12;
+            break;
+        case ETC1_RGB8_OES:
+            srcTexture->format = CMP_FORMAT_ETC_RGB;
+            break;
+        case GL_COMPRESSED_RGB8_ETC2:
+            srcTexture->format = CMP_FORMAT_ETC2_RGB;
+            break;
+        case COMPRESSED_FORMAT_DXT5_RxBG:
+            srcTexture->format = CMP_FORMAT_DXT5_RxBG;
+            break;
+        case COMPRESSED_FORMAT_DXT5_RBxG:
+            srcTexture->format = CMP_FORMAT_DXT5_RBxG;
+            break;
+        case COMPRESSED_FORMAT_DXT5_xRBG:
+            srcTexture->format = CMP_FORMAT_DXT5_xRBG;
+            break;
+        case COMPRESSED_FORMAT_DXT5_RGxB:
+            srcTexture->format = CMP_FORMAT_DXT5_RGxB;
+            break;
+        case COMPRESSED_FORMAT_DXT5_xGxR:
+            srcTexture->format = CMP_FORMAT_DXT5_xGxR;
+            break;
+        default:
+            fclose(pFile);
+            return -1;
+        }
+    }
+    else
+    {
+        switch (fheader.glType)
+        {
+        case GL_UNSIGNED_BYTE:
+            srcTexture->format = CMP_FORMAT_ARGB_8888;
+            break;
+        default:
+            fclose(pFile);
+            return -1;
+        }
+    }
+
+    srcTexture->dwDataSize = CMP_CalculateBufferSize(srcTexture);
+    srcTexture->pData = (CMP_BYTE*)malloc(srcTexture->dwDataSize);
+    
+
+    fclose(pFile);
+    pFile = NULL;
+    pFile = fopen(pszFilename, "rb");
+    if (pFile == NULL)
+    {
+        return -1;
+    }
+
+    //skip key value data
+    int imageSizeOffset = sizeof(KTX_header) + fheader.bytesOfKeyValueData;
+    if (fseek(pFile, imageSizeOffset, SEEK_SET))
+    {
+        fclose(pFile);
+        return -1;
+    }
+
+    //load image size
+    UINT imageByteCount = 0;
+    if (fread((void*)&imageByteCount, 1, 4, pFile) != 4)
+    {
+        fclose(pFile);
+        return -1;
+    }
+
+    //read image data
+    const UINT bytesRead = fread(srcTexture->pData, 1, imageByteCount, pFile);
+    if (bytesRead != imageByteCount)
+    {
+        fclose(pFile);
+        return -1;
+    }
+    fclose(pFile);
     return 0;
 }
 
 int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture)
 {
-    //MessageBox(0,"TC_PluginFileSaveTexture srcTexture","Plugin_KTX",MB_OK);  
+    assert(pszFilename);
+
+    FILE* pFile = NULL;
+    pFile = fopen(pszFilename, "wb");
+    if (pFile == NULL)
+    {
+        return -1;
+    }
+
+    //using libktx
+    KTX_texture_info textureinfo;
+    KTX_image_info* inputMip = new KTX_image_info();
+
+    UINT pDataLen = 0;
+    BYTE* pData = NULL;
+    BOOLEAN isCompressed = false;
+
+	//todo: textureinfo.numberOfFaces = 6; reserved for cubemap
+    textureinfo.numberOfFaces = 1;
+
+	//todo: array textures
+    textureinfo.numberOfArrayElements = 0;
+
+    inputMip->data = srcTexture->pData;
+    int w = srcTexture->dwWidth;
+    int h = srcTexture->dwHeight;
+
+    switch (srcTexture->format)
+    {
+        //uncompressed format case
+    case CMP_FORMAT_ARGB_8888:
+    case CMP_FORMAT_RGB_888:
+    case CMP_FORMAT_RG_8:
+    case CMP_FORMAT_R_8:
+        isCompressed = false;
+        textureinfo.glType = GL_UNSIGNED_BYTE;
+        textureinfo.glTypeSize = 1;
+        break;
+    case  CMP_FORMAT_ARGB_2101010:
+        textureinfo.glType = GL_UNSIGNED_INT_2_10_10_10_REV;
+        textureinfo.glTypeSize = 1;
+        break;
+    case  CMP_FORMAT_ARGB_16:
+        textureinfo.glType = GL_UNSIGNED_SHORT;
+        textureinfo.glTypeSize = 2;
+        break;
+    case  CMP_FORMAT_RG_16:
+        textureinfo.glType = GL_UNSIGNED_SHORT;
+        textureinfo.glTypeSize = 2;
+        break;
+    case  CMP_FORMAT_R_16:
+        textureinfo.glType = GL_UNSIGNED_SHORT;
+        textureinfo.glTypeSize = 2;
+        break;
+    case  CMP_FORMAT_ARGB_16F:
+    case  CMP_FORMAT_RG_16F:
+    case  CMP_FORMAT_R_16F:
+		textureinfo.glType = GL_HALF_FLOAT;
+		textureinfo.glTypeSize = 1;
+		break;
+    case  CMP_FORMAT_ARGB_32F:
+    case  CMP_FORMAT_RGB_32F:
+    case  CMP_FORMAT_RG_32F:
+    case  CMP_FORMAT_R_32F:
+        textureinfo.glType = GL_FLOAT;
+        textureinfo.glTypeSize = 1;
+        break;
+        //compressed format case
+    case  CMP_FORMAT_ATI1N:
+    case  CMP_FORMAT_ATI2N:
+    case  CMP_FORMAT_ATI2N_XY:
+    case  CMP_FORMAT_ATI2N_DXT5:
+    case  CMP_FORMAT_ATC_RGB:
+    case  CMP_FORMAT_ATC_RGBA_Explicit:
+    case  CMP_FORMAT_ATC_RGBA_Interpolated:
+    case  CMP_FORMAT_BC1:
+    case  CMP_FORMAT_BC2:
+    case  CMP_FORMAT_BC3:
+    case  CMP_FORMAT_BC4:
+    case  CMP_FORMAT_BC5:
+    case  CMP_FORMAT_BC6H:
+    case  CMP_FORMAT_BC7:
+    case  CMP_FORMAT_DXT1:
+    case  CMP_FORMAT_DXT3:
+    case  CMP_FORMAT_DXT5:
+    case  CMP_FORMAT_DXT5_xGBR:
+    case  CMP_FORMAT_DXT5_RxBG:
+    case  CMP_FORMAT_DXT5_RBxG:
+    case  CMP_FORMAT_DXT5_xRBG:
+    case  CMP_FORMAT_DXT5_RGxB:
+    case  CMP_FORMAT_DXT5_xGxR:
+    case  CMP_FORMAT_ETC_RGB:
+    case  CMP_FORMAT_ETC2_RGB:
+    case  CMP_FORMAT_ASTC:
+    case  CMP_FORMAT_GT:
+        isCompressed = true;
+        textureinfo.glType = 0;
+        textureinfo.glTypeSize = 1;
+        textureinfo.glFormat = 0;
+        break;
+        //default case
+    default:
+        isCompressed = false;
+        textureinfo.glType = GL_UNSIGNED_BYTE;
+        textureinfo.glTypeSize = 1;
+        break;
+    }
+
+    //todo:check for texture type: RGBA, XRGB etc, refer to save mipset
+    inputMip->size = srcTexture->dwDataSize;
+    if (!isCompressed)
+    {
+        textureinfo.glFormat = textureinfo.glBaseInternalFormat = GL_RGBA;
+        textureinfo.glInternalFormat = GL_RGBA;
+    }
+    else
+    {
+        textureinfo.glBaseInternalFormat = GL_RGBA;
+        switch (srcTexture->format)
+        {
+        case CMP_FORMAT_BC1:
+        case CMP_FORMAT_DXT1:
+            textureinfo.glInternalFormat = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+            break;
+        case CMP_FORMAT_BC2:
+        case CMP_FORMAT_DXT3:
+            textureinfo.glInternalFormat = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+            break;
+        case CMP_FORMAT_BC3:
+        case CMP_FORMAT_DXT5:
+            textureinfo.glInternalFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+            break;
+        case CMP_FORMAT_BC7:
+            textureinfo.glInternalFormat = RGB_BP_UNorm;
+            break;
+        case  CMP_FORMAT_ATI1N:
+            textureinfo.glInternalFormat = R_ATI1N_UNorm;
+            break;
+        case  CMP_FORMAT_ATI2N:
+            textureinfo.glInternalFormat = R_ATI1N_SNorm;
+            break;
+        case  CMP_FORMAT_ATI2N_XY:
+            textureinfo.glInternalFormat = RG_ATI2N_UNorm;
+            break;
+        case  CMP_FORMAT_ATI2N_DXT5:
+            textureinfo.glInternalFormat = RG_ATI2N_SNorm;
+            break;
+        case  CMP_FORMAT_ATC_RGB:
+            textureinfo.glInternalFormat = ATC_RGB_AMD;
+            break;
+        case  CMP_FORMAT_ATC_RGBA_Explicit:
+            textureinfo.glInternalFormat = ATC_RGBA_EXPLICIT_ALPHA_AMD;
+            break;
+        case  CMP_FORMAT_ATC_RGBA_Interpolated:
+            textureinfo.glInternalFormat = ATC_RGBA_INTERPOLATED_ALPHA_AMD;
+            break;
+        case  CMP_FORMAT_BC4:
+            textureinfo.glInternalFormat = COMPRESSED_RED_RGTC1;
+            break;
+        case  CMP_FORMAT_BC5:
+            textureinfo.glInternalFormat = COMPRESSED_RG_RGTC2;
+            break;
+        case  CMP_FORMAT_BC6H:
+            textureinfo.glInternalFormat = RGB_BP_UNSIGNED_FLOAT;
+            break;
+        case CMP_FORMAT_ETC_RGB:
+            textureinfo.glInternalFormat = ETC1_RGB8_OES;
+            break;
+        case CMP_FORMAT_ETC2_RGB:
+            textureinfo.glInternalFormat = GL_COMPRESSED_RGB8_ETC2;
+            break;
+        case CMP_FORMAT_DXT5_xGBR:
+            textureinfo.glInternalFormat = COMPRESSED_FORMAT_DXT5_xGBR;
+            break;
+        case CMP_FORMAT_DXT5_RxBG:
+            textureinfo.glInternalFormat = COMPRESSED_FORMAT_DXT5_RxBG;
+            break;
+        case CMP_FORMAT_DXT5_RBxG:
+            textureinfo.glInternalFormat = COMPRESSED_FORMAT_DXT5_RBxG;
+            break;
+        case CMP_FORMAT_DXT5_xRBG:
+            textureinfo.glInternalFormat = COMPRESSED_FORMAT_DXT5_xRBG;
+            break;
+        case CMP_FORMAT_DXT5_RGxB:
+            textureinfo.glInternalFormat = COMPRESSED_FORMAT_DXT5_RGxB;
+            break;
+        case CMP_FORMAT_DXT5_xGxR:
+            textureinfo.glInternalFormat = COMPRESSED_FORMAT_DXT5_xGxR;
+            break;
+        }
+    }
+  
+    textureinfo.pixelWidth = srcTexture->dwWidth;
+    textureinfo.pixelHeight = srcTexture->dwHeight;
+    textureinfo.pixelDepth = 0; //for 1D, 2D and cube texture , depth =0;
+
+                                //1D 
+    if (srcTexture->dwHeight == 1 && pData != NULL) {
+        delete(pData);
+        pData = NULL;
+        pDataLen = 0;
+    }
+
+    textureinfo.numberOfMipmapLevels = 1;
+
+    KTX_error_code save = ktxWriteKTXF(pFile, &textureinfo, pDataLen, pData, 1, inputMip);
+    if (save == KTX_SUCCESS) {
+        fclose(pFile);
+    }
+    else {
+        fclose(pFile);
+        return -1;
+    }
+    fclose(pFile);
     return 0;
 }
 
@@ -369,7 +803,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
         return -1;
     }
 
-//using libktx
+    //using libktx
     KTX_header fheader;
     KTX_texinfo texinfo;
     if (fread(&fheader, sizeof(KTX_header), 1, pFile) != 1)
@@ -397,10 +831,6 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
 
         switch (fheader.glInternalFormat)
         {
-        //case GL_RED_EXT:
-        //    break;
-        //case GL_RG_EXT:
-        //    break;
         case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
             pMipSet->m_format = CMP_FORMAT_BC1;
             pMipSet->m_TextureDataType = TDT_XRGB;
@@ -582,19 +1012,111 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
         switch (fheader.glType) 
         {
         case GL_UNSIGNED_BYTE:
-            pMipSet->m_format = CMP_FORMAT_ARGB_8888;
-            pMipSet->m_TextureDataType = TDT_ARGB;
-            pMipSet->m_ChannelFormat = CF_8bit;
-            break;
+			pMipSet->m_ChannelFormat = CF_8bit;
+			switch (fheader.glFormat)
+			{
+			case GL_RED:
+				pMipSet->m_format = CMP_FORMAT_R_8;
+				pMipSet->m_TextureDataType = TDT_R;
+				break;
+			case GL_RG:
+				pMipSet->m_format = CMP_FORMAT_RG_8;
+				pMipSet->m_TextureDataType = TDT_RG;
+				break;
+			case GL_RGB:
+				pMipSet->m_format = CMP_FORMAT_RGB_888;
+				pMipSet->m_TextureDataType = TDT_XRGB;
+				break;
+			case GL_RGBA:
+				pMipSet->m_format = CMP_FORMAT_ARGB_8888;
+				pMipSet->m_TextureDataType = TDT_ARGB;
+				break;
+			case GL_BGR:
+				pMipSet->m_swizzle = true;
+				pMipSet->m_format = CMP_FORMAT_RGB_888;
+				pMipSet->m_TextureDataType = TDT_XRGB;
+				break;
+			case GL_BGRA:
+				pMipSet->m_swizzle = true;
+				pMipSet->m_format = CMP_FORMAT_ARGB_8888;
+				pMipSet->m_TextureDataType = TDT_ARGB;
+				break;
+			}
+			break;
+		case GL_UNSIGNED_SHORT:
+			pMipSet->m_ChannelFormat = CF_16bit;
+			switch (fheader.glFormat)
+			{
+			case GL_RED:
+				pMipSet->m_format = CMP_FORMAT_R_16;
+				pMipSet->m_TextureDataType = TDT_R;
+				break;
+			case GL_RG:
+				pMipSet->m_format = CMP_FORMAT_RG_16;
+				pMipSet->m_TextureDataType = TDT_RG;
+				break;
+			case GL_RGBA:
+				pMipSet->m_format = CMP_FORMAT_ARGB_16;
+				pMipSet->m_TextureDataType = TDT_ARGB;
+				break;
+			case GL_BGRA:
+				pMipSet->m_swizzle = true;
+				pMipSet->m_format = CMP_FORMAT_ARGB_16;
+				pMipSet->m_TextureDataType = TDT_ARGB;
+				break;
+			}
+			break;
+		case GL_HALF_FLOAT:
+			pMipSet->m_ChannelFormat = CF_Float16;
+			switch (fheader.glFormat)
+			{
+			case GL_RED:
+				pMipSet->m_format = CMP_FORMAT_R_16F;
+				pMipSet->m_TextureDataType = TDT_R;
+				break;
+			case GL_RG:
+				pMipSet->m_format = CMP_FORMAT_RG_16F;
+				pMipSet->m_TextureDataType = TDT_RG;
+				break;
+			case GL_RGBA:
+				pMipSet->m_format = CMP_FORMAT_ARGB_16F;
+				pMipSet->m_TextureDataType = TDT_ARGB;
+				break;
+			case GL_BGRA:
+				pMipSet->m_swizzle = true;
+				pMipSet->m_format = CMP_FORMAT_ARGB_16F;
+				pMipSet->m_TextureDataType = TDT_ARGB;
+				break;
+			}
+			break;
         case GL_UNSIGNED_INT_2_10_10_10_REV:
             pMipSet->m_format = CMP_FORMAT_ARGB_2101010;
             pMipSet->m_TextureDataType = TDT_ARGB;
             pMipSet->m_ChannelFormat = CF_2101010;
             break;
-        case GL_HALF_FLOAT:
-            pMipSet->m_format = CMP_FORMAT_ARGB_32F;
-            pMipSet->m_TextureDataType = TDT_ARGB;
-            pMipSet->m_ChannelFormat = CF_Float32;
+        case GL_FLOAT:
+			pMipSet->m_ChannelFormat = CF_Float32;
+			switch (fheader.glFormat)
+			{
+			case GL_RED:
+				pMipSet->m_format = CMP_FORMAT_R_32F;
+				pMipSet->m_TextureDataType = TDT_R;
+				break;
+			case GL_RG:
+				pMipSet->m_format = CMP_FORMAT_RG_32F;
+				pMipSet->m_TextureDataType = TDT_RG;
+				break;
+			case GL_RGBA:
+				pMipSet->m_format = CMP_FORMAT_ARGB_32F;
+				pMipSet->m_TextureDataType = TDT_ARGB;
+				break;
+			case GL_BGRA:
+				pMipSet->m_swizzle = true;
+				pMipSet->m_format = CMP_FORMAT_ARGB_32F;
+				pMipSet->m_TextureDataType = TDT_ARGB;
+				break;
+			}
+			break;
             break;
         default:
             if (KTX_CMips)
@@ -603,6 +1125,15 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
             return -1;
         }
     }
+
+	if (fheader.numberOfMipmapLevels == 0) fheader.numberOfMipmapLevels = 1;
+	if (fheader.numberOfArrayElements != 0)
+	{
+		if (KTX_CMips)
+			KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) array textures not supported %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.numberOfArrayElements);
+		fclose(pFile);
+		return -1;
+	}
 
     // Allocate MipSet header
     KTX_CMips->AllocateMipSet(pMipSet,
@@ -613,13 +1144,18 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
         fheader.pixelHeight,
         1);
 
-    // Determine buffer size and set Mip Set Levels 
-    MipLevel *mipLevel = KTX_CMips->GetMipLevel(pMipSet, 0);
-    pMipSet->m_nMipLevels = 1;
-    KTX_CMips->AllocateMipLevelData(mipLevel, pMipSet->m_nWidth, pMipSet->m_nHeight, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType);
+	int w = pMipSet->m_nWidth;
+	int h = pMipSet->m_nHeight;
 
-    // We have allocated a data buffer to fill get its referance
-    BYTE* pData = (BYTE*)(mipLevel->m_pbData);
+	for (int nMipLevel = 0; nMipLevel < fheader.numberOfMipmapLevels; nMipLevel++)
+	{
+		// Determine buffer size and set Mip Set Levels 
+		KTX_CMips->AllocateMipLevelData(KTX_CMips->GetMipLevel(pMipSet, nMipLevel), w, h, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType);
+		w = w >> 1;
+		h = h >> 1;
+	}
+    
+    pMipSet->m_nMipLevels = fheader.numberOfMipmapLevels;
     
     fclose(pFile);
     pFile = NULL;
@@ -641,365 +1177,32 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
         return -1;
     }
 
-    //load image size
-    UINT imageByteCount = 0;
-    if (fread((void*)&imageByteCount, 1, 4, pFile) != 4)
-    {
-        if (KTX_CMips)
-            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) Read image size failed. Format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
-        fclose(pFile);
-        return -1;
-    }
+	for (int nMipLevel = 0; nMipLevel < fheader.numberOfMipmapLevels; nMipLevel++)
+	{
+        //load image size
+        UINT imageByteCount = 0;
+        if (fread((void*)&imageByteCount, 1, 4, pFile) != 4)
+        {
+            if (KTX_CMips)
+                KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) Read image size failed. Format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
+            fclose(pFile);
+            return -1;
+        }
 
-    //read image data
-    const UINT bytesRead = fread(pData, 1, imageByteCount, pFile);
-    if (bytesRead != imageByteCount)
-    {
-        if (KTX_CMips)
-            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) Read image data failed. Format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
-        fclose(pFile);
-        return -1;
-    }
+		// We have allocated a data buffer to fill get its referance
+		BYTE* pData = (BYTE*)(KTX_CMips->GetMipLevel(pMipSet, nMipLevel)->m_pbData);
+		KTX_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize = imageByteCount;
+		//read image data
+		const UINT bytesRead = fread(pData, 1, imageByteCount, pFile);
+		if (bytesRead != imageByteCount)
+		{
+			if (KTX_CMips)
+				KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) Read image data failed. Format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
+			fclose(pFile);
+			return -1;
+		}
+	}
 
-//without using libktx    
-// Read the header
-
-//    int components;
-//    ktx_header header;
-//
-//    if (fread(&header, sizeof(ktx_header), 1, pFile) != 1)
-//    {
-//       if (KTX_CMips)
-//                KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) invalid KTX header. Filename = %s \n"), EL_Error, IDS_ERROR_NOT_KTX, pszFilename);
-//       fclose(pFile);
-//       return -1;
-//    }
-//
-//    // ckeck the header
-//    if (memcmp((uint8_t *) header.identifier, FileIdentifier, 12) != 0)
-//    {
-//       if (KTX_CMips)
-//                KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) invalid KTX identifier. Filename = %s \n"), EL_Error, IDS_ERROR_NOT_KTX, pszFilename);
-//       fclose(pFile);
-//       return -1;
-//    }
-//
-//    if ((header.endianness != 0x04030201) && (header.endianness != 0x01020304))
-//    {
-//       if (KTX_CMips)
-//                KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) invalid KTX endianness. Filename = %s \n"), EL_Error, IDS_ERROR_NOT_KTX, pszFilename);
-//       fclose(pFile);
-//       return -1;
-//    }
-//
-//    int switch_endianness = 0;
-//
-//    if (header.endianness == 0x01020304)
-//    {
-//        // reverse all header values for endness after the flag
-//        header.gl_Type                    = Endian_Conversion(header.gl_Type);                
-//        header.gl_TypeSize                = Endian_Conversion(header.gl_TypeSize);            
-//        header.gl_Format                = Endian_Conversion(header.gl_Format);            
-//        header.gl_InternalFormat        = Endian_Conversion(header.gl_InternalFormat);    
-//        header.gl_BaseInternalFormat    = Endian_Conversion(header.gl_BaseInternalFormat);
-//        header.pixelWidth                = Endian_Conversion(header.pixelWidth);            
-//        header.pixelHeight                = Endian_Conversion(header.pixelHeight);            
-//        header.pixelDepth                = Endian_Conversion(header.pixelDepth);            
-//        header.numberOfArrayElements    = Endian_Conversion(header.numberOfArrayElements);
-//        header.numberOfFaces            = Endian_Conversion(header.numberOfFaces);        
-//        header.numberOfMipmapLevels        = Endian_Conversion(header.numberOfMipmapLevels);    
-//        header.bytesOfKeyValueData        = Endian_Conversion(header.bytesOfKeyValueData);    
-//        switch_endianness                = 1;
-//    }
-//
-//    // Skip Key value pairs
-//    fseek(pFile, header.bytesOfKeyValueData, SEEK_CUR);
-//
-//
-//    // the formats we support are:
-//    // cartesian product of gl_type=(UNSIGNED_BYTE, UNSIGNED_SHORT, HALF_FLOAT, FLOAT) x gl_format=(RED, RG, RGB, RGBA, BGR, BGRA)
-//    switch (header.gl_Format)
-//    {
-//    case GL_RED_EXT:
-//        components = 1;
-//        break;
-//    case GL_RG_EXT:
-//        components = 2;
-//        break;
-//    case GL_RGB:
-//        components = 3;
-//        break;
-//    case GL_RGBA:
-//        components = 4;
-//        break;
-////    case GL_BGR:
-////        components = 3;
-////        break;
-//    case GL_BGRA_EXT:
-//        components = 4;
-//        break;
-//    case GL_LUMINANCE:
-//        components = 1;
-//        break;
-//    case GL_LUMINANCE_ALPHA:
-//        components = 2;
-//        break;
-//    default:
-//        if (KTX_CMips)
-//            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) unsupported GL format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, header.gl_Format);
-//       fclose(pFile);
-//       return -1;
-//    };
-//
-//
-//    // Although these are set up later, we include a default initializer to remove warnings
-//
-//    int bytes_per_component            = 1;    // bytes per component in the KTX file.
-//    ChannelFormat channelformat        = CF_8bit;    
-//    scanline_copy_method cm            = R8_TO_RGBA8;
-//
-//    switch (header.gl_Type)
-//    {
-//    case GL_UNSIGNED_BYTE:
-//        {
-//            bytes_per_component = 1;
-//            switch (header.gl_Format)
-//            {
-//            case GL_RED_EXT:
-//                cm = R8_TO_RGBA8;
-//                break;
-//            case GL_RG_EXT:
-//                cm = RG8_TO_RGBA8;
-//                break;
-//            case GL_RGB:
-//                cm = RGB8_TO_RGBA8;
-//                break;
-//            case GL_RGBA:
-//                cm = RGBA8_TO_RGBA8;
-//                break;
-//        //    case GL_BGR:
-//        //        cm = BGR8_TO_RGBA8;
-//        //        break;
-//            case GL_BGRA_EXT:
-//                cm = BGRA8_TO_RGBA8;
-//                break;
-//            case GL_LUMINANCE:
-//                cm = L8_TO_RGBA8;
-//                break;
-//            case GL_LUMINANCE_ALPHA:
-//                cm = LA8_TO_RGBA8;
-//                break;
-//            }
-//            break;
-//        }
-//    case GL_UNSIGNED_SHORT:
-//        {
-//            channelformat = CF_16bit;
-//            bytes_per_component = 2;
-//            switch (header.gl_Format)
-//            {
-//            case GL_RED_EXT:
-//                cm = R16_TO_RGBA16F;
-//                break;
-//            case GL_RG_EXT:
-//                cm = RG16_TO_RGBA16F;
-//                break;
-//            case GL_RGB:
-//                cm = RGB16_TO_RGBA16F;
-//                break;
-//            case GL_RGBA:
-//                cm = RGBA16_TO_RGBA16F;
-//                break;
-//        //    case GL_BGR:
-//        //        cm = BGR16_TO_RGBA16F;
-//        //        break;
-//            case GL_BGRA_EXT:
-//                cm = BGRA16_TO_RGBA16F;
-//                break;
-//            case GL_LUMINANCE:
-//                cm = L16_TO_RGBA16F;
-//                break;
-//            case GL_LUMINANCE_ALPHA:
-//                cm = LA16_TO_RGBA16F;
-//                break;
-//            }
-//            break;
-//        }
-//    case GL_HALF_FLOAT_OES:
-//        {
-//            channelformat = CF_16bit;
-//            bytes_per_component = 2;
-//            switch (header.gl_Format)
-//            {
-//            case GL_RED_EXT:
-//                cm = R16F_TO_RGBA16F;
-//                break;
-//            case GL_RG_EXT:
-//                cm = RG16F_TO_RGBA16F;
-//                break;
-//            case GL_RGB:
-//                cm = RGB16F_TO_RGBA16F;
-//                break;
-//            case GL_RGBA:
-//                cm = RGBA16F_TO_RGBA16F;
-//                break;
-////            case GL_BGR:
-////                cm = BGR16F_TO_RGBA16F;
-////                break;
-//            case GL_BGRA_EXT:
-//                cm = BGRA16F_TO_RGBA16F;
-//                break;
-//            case GL_LUMINANCE:
-//                cm = L16F_TO_RGBA16F;
-//                break;
-//            case GL_LUMINANCE_ALPHA:
-//                cm = LA16F_TO_RGBA16F;
-//                break;
-//            }
-//            break;
-//        }
-//    case GL_FLOAT:
-//        {
-//            channelformat = CF_16bit;
-//            bytes_per_component = 4;
-//            switch (header.gl_Format)
-//            {
-//            case GL_RED_EXT:
-//                cm = R32F_TO_RGBA16F;
-//                break;
-//            case GL_RG_EXT:
-//                cm = RG32F_TO_RGBA16F;
-//                break;
-//            case GL_RGB:
-//                cm = RGB32F_TO_RGBA16F;
-//                break;
-//            case GL_RGBA:
-//                cm = RGBA32F_TO_RGBA16F;
-//                break;
-//        //    case GL_BGR:
-//        //        cm = BGR32F_TO_RGBA16F;
-//        //        break;
-//            case GL_BGRA_EXT:
-//                cm = BGRA32F_TO_RGBA16F;
-//                break;
-//            case GL_LUMINANCE:
-//                cm = L32F_TO_RGBA16F;
-//                break;
-//            case GL_LUMINANCE_ALPHA:
-//                cm = LA32F_TO_RGBA16F;
-//                break;
-//            }
-//            break;
-//        }
-//    default:
-//        if (KTX_CMips)
-//            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) unsupported GL Type %x"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, header.gl_Type);
-//       fclose(pFile);
-//       return -1;
-//    };
-//    
-//
-//    int xsize = header.pixelWidth;
-//    int ysize = header.pixelHeight;
-//    int zsize = header.pixelDepth;
-//
-//    if (ysize == 0)
-//        ysize = 1;
-//    if (zsize == 0)
-//        zsize = 1;
-//
-//    uint32_t specified_bytes_of_surface = 0;
-//    size_t sb_read = fread(&specified_bytes_of_surface, 1, 4, pFile);
-//    if (sb_read != 4)
-//    {
-//        if (KTX_CMips)
-//            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) file read error %d"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, sb_read);
-//       fclose(pFile);
-//       return -1;
-//    }
-//
-//    if (switch_endianness)
-//        specified_bytes_of_surface = ktx_u32_byterev(specified_bytes_of_surface);
-//
-//    // read the surface
-//    uint32_t xstride = bytes_per_component * components * xsize;
-//    uint32_t ystride = xstride * ysize;
-//    uint32_t computed_bytes_of_surface = zsize * ystride;
-//    if (computed_bytes_of_surface != specified_bytes_of_surface)
-//    {
-//        if (KTX_CMips)
-//            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) surface bytes %d != computed %d"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, specified_bytes_of_surface, computed_bytes_of_surface);
-//        fclose(pFile);
-//        return -1;
-//    }
-//
-//
-//    uint8_t *buf = (uint8_t *) malloc(specified_bytes_of_surface);
-//    size_t bytes_read = fread(buf, 1, specified_bytes_of_surface, pFile);
-//    fclose(pFile);
-//
-//    if (bytes_read != specified_bytes_of_surface)
-//    {
-//        free(buf);
-//        if (KTX_CMips)
-//            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) Bytes read %d != specified bytes %d"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, bytes_read, specified_bytes_of_surface);
-//        fclose(pFile);
-//        return -1;
-//    }
-//
-//    // perform an endianness swap on the surface if needed.
-//    if (switch_endianness)
-//    {
-//        if (header.gl_TypeSize == 2)
-//            switch_endianness2(buf, specified_bytes_of_surface);
-//        if (header.gl_TypeSize == 4)
-//            switch_endianness4(buf, specified_bytes_of_surface);
-//    }
-//
-//
-//    if(!KTX_CMips->AllocateMipSet(pMipSet, channelformat, TDT_ARGB, TT_2D, header.pixelWidth, header.pixelHeight, 1))
-//    {
-//        if (KTX_CMips)
-//            KTX_CMips->PrintError("Error(0): KTX Plugin ID(5)\n");
-//        return PE_Unknown;
-//    }
-//
-//    // Allocate the permanent buffer and unpack the bitmap data into it
-//    if(!KTX_CMips->AllocateMipLevelData(KTX_CMips->GetMipLevel(pMipSet, 0), header.pixelWidth, header.pixelHeight, channelformat, pMipSet->m_TextureDataType))
-//    {
-//        if (KTX_CMips)
-//            KTX_CMips->PrintError("Error(0): KTX Plugin ID(6)\n");
-//        return PE_Unknown;
-//        }
-//
-//
-//    pMipSet->m_dwFourCC        = 0;
-//    pMipSet->m_dwFourCC2    = 0;
-//    pMipSet->m_nMipLevels    = 1;
-//    pMipSet->m_format        = CMP_FORMAT_ARGB_8888;
-//
-//    BYTE* pData = KTX_CMips->GetMipLevel(pMipSet,0)->m_pbData;
-//    ASSERT(pData);
-//    if(pData == NULL)
-//    {
-//      return PE_Unknown;
-//    }
-//
-//    int  destLineSize = xsize * 4;
-//    // Note we only support 2D for now so z loops only once
-//    // Source is any size format but destination is always RGBA buffer either 8 bit or 16 bit)
-//    for (int z = 0; z < 1; z++)
-//    {
-//        for (int y = 0; y < ysize; y++)
-//        {
-//            uint8_t *src = buf + (z * ystride) + (y * xstride);
-//            copy_scanline(pData, src, xsize, cm);
-//            // Set next output buffer location 4 bytes * width of image
-//            pData += destLineSize;
-//        }
-//    }
-//
-//    free(buf);
     return 0;
 }
 
@@ -1018,9 +1221,9 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
         return -1;
     }
 
-//using libktx
+    //using libktx
     KTX_texture_info textureinfo;
-    KTX_image_info* inputMip = new KTX_image_info();
+    KTX_image_info* inputMip = new KTX_image_info[pMipSet->m_nMipLevels];
 
     UINT pDataLen = 0;
     BYTE* pData = NULL;
@@ -1031,7 +1234,9 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
     else
         textureinfo.numberOfFaces = 1;
 
-    textureinfo.numberOfArrayElements = 0;
+	//todo: handle array textures
+	textureinfo.numberOfArrayElements = 0;
+
     if (pMipSet->m_pMipLevelTable == NULL)
     {
         if (KTX_CMips)
@@ -1039,19 +1244,23 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
         return -1;
     }
 
-    MipLevel *miplevel = KTX_CMips->GetMipLevel(pMipSet, 0);
-    if (miplevel == NULL)
-    {
-        if (KTX_CMips)
-            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) saving file = %s "), EL_Error, IDS_ERROR_ALLOCATEMIPSET, pszFilename);
-        return -1;
-    }
+	if (KTX_CMips->GetMipLevel(pMipSet, 0) == NULL)
+	{
+		if (KTX_CMips)
+			KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) saving file = %s "), EL_Error, IDS_ERROR_ALLOCATEMIPSET, pszFilename);
+		return -1;
+	}
 
-    //int len = strlen((char*)KTX_CMips->GetMipLevel(pMipSet, 0)->m_pbData);
-    //int siz = sizeof(BYTE*);
-    inputMip->data = miplevel->m_pbData;
-    int w = miplevel->m_nWidth;
-    int h = miplevel->m_nHeight;
+	int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
+	
+	for (int nSlice = 0; nSlice < nSlices; nSlice++)
+	{
+		for (int nMipLevel = 0; nMipLevel < pMipSet->m_nMipLevels; nMipLevel++)
+		{
+			inputMip[nMipLevel].size = KTX_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize;
+			inputMip[nMipLevel].data = KTX_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData;
+		}
+	}
 
     switch (pMipSet->m_format)
     {
@@ -1082,12 +1291,15 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
         break;
     case  CMP_FORMAT_ARGB_16F :                 
     case  CMP_FORMAT_RG_16F :                   
-    case  CMP_FORMAT_R_16F :                    
+    case  CMP_FORMAT_R_16F : 
+		textureinfo.glType = GL_HALF_FLOAT;
+		textureinfo.glTypeSize = 1;
+		break;
     case  CMP_FORMAT_ARGB_32F :                 
     case  CMP_FORMAT_RGB_32F :                  
     case  CMP_FORMAT_RG_32F :                   
     case  CMP_FORMAT_R_32F :
-        textureinfo.glType = GL_HALF_FLOAT;
+        textureinfo.glType = GL_FLOAT;
         textureinfo.glTypeSize = 1;
         break;
     //compressed format case
@@ -1135,7 +1347,6 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
     {
     case TDT_R:  //single component-- can be Luminance and Alpha case, here only cover R
     {
-        inputMip->size = KTX_CMips->GetMipLevel(pMipSet, 0)->m_dwLinearSize;
         if (!isCompressed) 
         {
             textureinfo.glFormat = textureinfo.glBaseInternalFormat = GL_RED;
@@ -1150,7 +1361,6 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
     break;
     case TDT_RG:  //two component
     {
-        inputMip->size = KTX_CMips->GetMipLevel(pMipSet, 0)->m_dwLinearSize ;
         if (!isCompressed)
         {
             textureinfo.glFormat = textureinfo.glBaseInternalFormat = GL_RG;
@@ -1165,7 +1375,6 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
     break;
     case TDT_XRGB:  //normally 3 component
     {
-        inputMip->size = KTX_CMips->GetMipLevel(pMipSet, 0)->m_dwLinearSize;
         if (!isCompressed)
         {
             textureinfo.glFormat = textureinfo.glBaseInternalFormat = GL_RGB;
@@ -1183,7 +1392,6 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
     break;
     case TDT_ARGB:  //4 component
     {
-        inputMip->size = KTX_CMips->GetMipLevel(pMipSet, 0)->m_dwLinearSize;
         if (!isCompressed)
         {
             textureinfo.glFormat = textureinfo.glBaseInternalFormat = GL_RGBA;
@@ -1231,13 +1439,13 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
                 textureinfo.glInternalFormat = ATC_RGBA_INTERPOLATED_ALPHA_AMD;
                 break;
             case  CMP_FORMAT_BC4:
-                textureinfo.glInternalFormat = COMPRESSED_RED_RGTC1;
+				textureinfo.glInternalFormat = GL_COMPRESSED_RED_RGTC1; 
                 break;
             case  CMP_FORMAT_BC5:
-                textureinfo.glInternalFormat = COMPRESSED_RG_RGTC2;
+                textureinfo.glInternalFormat = GL_COMPRESSED_RG_RGTC2;
                 break;
             case  CMP_FORMAT_BC6H:
-                textureinfo.glInternalFormat = RGB_BP_UNSIGNED_FLOAT;
+                textureinfo.glInternalFormat = GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT;
                 break;
             case  CMP_FORMAT_ASTC:
                 if ((pMipSet->m_nBlockWidth == 4) && (pMipSet->m_nBlockHeight == 4))
@@ -1317,7 +1525,7 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
 
     textureinfo.numberOfMipmapLevels = pMipSet->m_nMipLevels;
 
-    KTX_error_code save = ktxWriteKTXF(pFile, &textureinfo, pDataLen, pData, 1, inputMip);
+    KTX_error_code save = ktxWriteKTXF(pFile, &textureinfo, pDataLen, pData, pMipSet->m_nMipLevels, inputMip);
     if (save == KTX_SUCCESS) {
         fclose(pFile);
     }
@@ -1327,223 +1535,6 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
         fclose(pFile);
         return -1;
     }
-
-//without using libktx
-//    int x, y, z;
-//    int i, j;
-//
-//    int xsize = pMipSet->m_nWidth;
-//    int ysize = pMipSet->m_nHeight;
-//    int zsize = 1;
-//
-//    int gl_format_of_channels[4] = { GL_LUMINANCE, GL_LUMINANCE_ALPHA, GL_RGB, GL_RGBA };
-//    int image_channels;
-//    switch (pMipSet->m_format)
-//    {
-//        default:
-//            image_channels = 4;    // Default ARGB
-//    };
-//
-//        // Read the header
-//    ktx_header header;
-//    memset(&header, 0, sizeof(header));
-//    
-//    memcpy((void *)header.identifier, FileIdentifier, 12);
-//    header.endianness    = 0x04030201;
-//    header.gl_Type        = (pMipSet->m_ChannelFormat == CF_16bit) ? GL_HALF_FLOAT : GL_UNSIGNED_BYTE;
-//    header.gl_TypeSize    = 0; // for now not saving compressed files
-//    header.gl_Format    = gl_format_of_channels[image_channels - 1];
-//    header.gl_InternalFormat = gl_format_of_channels[image_channels - 1];
-//    header.gl_BaseInternalFormat = gl_format_of_channels[image_channels - 1];
-//    header.pixelWidth = xsize;
-//    header.pixelHeight = ysize;
-//    header.pixelDepth = (zsize == 1) ? 0 : zsize;
-//    header.numberOfArrayElements = 0;
-//    header.numberOfFaces = 1;
-//    header.numberOfMipmapLevels = 1;
-//    header.bytesOfKeyValueData = 0;
-//
-//    WORD* pwData;
-//    BYTE* pData;
-//
-//    // get data pointer
-//    if (pMipSet->m_ChannelFormat == CF_16bit)
-//    {
-//        BYTE* pData = KTX_CMips->GetMipLevel(pMipSet,0)->m_pbData;
-//        if(pData == NULL)
-//        {
-//            return PE_Unknown;
-//        }
-//    }
-//    else
-//    {
-//        WORD* pwData = (WORD *)KTX_CMips->GetMipLevel(pMipSet,0)->m_pbData;
-//        ASSERT(pwData);
-//        if(pwData == NULL)
-//        {
-//            return PE_Unknown;
-//        }
-//    }
-//    
-//
-//
-//    
-//    // collect image data to write
-//    int bitness = (pMipSet->m_ChannelFormat == CF_16bit) ? 16: 8;
-//    
-//    BYTE ***row_pointers8 = NULL;
-//    WORD ***row_pointers16 = NULL;
-//
-//    if (bitness == 8)
-//    {
-//        row_pointers8        = new BYTE **[zsize];
-//        row_pointers8[0]    = new BYTE *[ysize * zsize];
-//        row_pointers8[0][0] = new BYTE[xsize * ysize * zsize * image_channels + 3];
-//
-//        for (i = 1; i < zsize; i++)
-//        {
-//            row_pointers8[i]        = row_pointers8[0] + ysize * i;
-//            row_pointers8[i][0]        = row_pointers8[0][0] + ysize * xsize * image_channels * i;
-//        }
-//        for (i = 0; i < zsize; i++)
-//            for (j = 1; j < ysize; j++)
-//                row_pointers8[i][j] = row_pointers8[i][0] + xsize * image_channels * j;
-//
-//        for (z = 0; z < zsize; z++)
-//        {
-//            for (y = 0; y < ysize; y++)
-//            {
-//                switch (image_channels)
-//                {
-//                case 1:        // single-component, treated as Luminance
-//                    for (x = 0; x < xsize; x++)
-//                    {
-//                        row_pointers8[z][y][x]            = *pData;
-//                        pData++;
-//                    }
-//                    break;
-//                case 2:        // two-component, treated as Luminance-Alpha
-//                    for (x = 0; x < xsize; x++)
-//                    {
-//                        row_pointers8[z][y][2 * x]        = *pData;
-//                        pData +=3;
-//                        row_pointers8[z][y][2 * x + 1]    = *pData;
-//                        pData++;
-//                    }
-//                    break;
-//                case 3:        // three-component, treated as RGB
-//                    for (x = 0; x < xsize; x++)
-//                    {
-//                        row_pointers8[z][y][3 * x]        = *pData++;
-//                        row_pointers8[z][y][3 * x + 1]    = *pData++;
-//                        row_pointers8[z][y][3 * x + 2]    = *pData++;
-//                    }
-//                    break;
-//                case 4:        // four-component, treated as RGBA
-//                    for (x = 0; x < xsize; x++)
-//                    {
-//                        row_pointers8[z][y][4 * x]        = *pData++;
-//                        row_pointers8[z][y][4 * x + 1]    = *pData++;
-//                        row_pointers8[z][y][4 * x + 2]    = *pData++;
-//                        row_pointers8[z][y][4 * x + 3]    = *pData++;
-//                    }
-//                    break;
-//                }
-//            }
-//        }
-//    }
-//    else                        // if bitness == 16
-//    {
-//        row_pointers16            = new WORD **[zsize];
-//        row_pointers16[0]        = new WORD *[ysize * zsize];
-//        row_pointers16[0][0]    = new WORD[xsize * ysize * zsize * image_channels + 1];
-//
-//        for (i = 1; i < zsize; i++)
-//        {
-//            row_pointers16[i]        = row_pointers16[0] + ysize * i;
-//            row_pointers16[i][0]    = row_pointers16[0][0] + ysize * xsize * image_channels * i;
-//        }
-//        for (i = 0; i < zsize; i++)
-//            for (j = 1; j < ysize; j++)
-//                row_pointers16[i][j] = row_pointers16[i][0] + xsize * image_channels * j;
-//
-//        for (z = 0; z < zsize; z++)
-//        {
-//            for (y = 0; y < ysize; y++)
-//            {
-//                switch (image_channels)
-//                {
-//                case 1:        // single-component, treated as Luminance
-//                    for (x = 0; x < xsize; x++)
-//                    {
-//                        row_pointers16[z][y][x] = *pwData++;
-//                    }
-//                    break;
-//                case 2:        // two-component, treated as Luminance-Alpha
-//                    for (x = 0; x < xsize; x++)
-//                    {
-//                        row_pointers16[z][y][2 * x]        = *pwData;
-//                        pwData +=3;
-//                        row_pointers16[z][y][2 * x + 1] = *pwData;
-//                    }
-//                    break;
-//                case 3:        // three-component, treated as RGB
-//                    for (x = 0; x < xsize; x++)
-//                    {
-//                        row_pointers16[z][y][3 * x]        = *pwData++;
-//                        row_pointers16[z][y][3 * x + 1] = *pwData++;
-//                        row_pointers16[z][y][3 * x + 2] = *pwData++;
-//                    }
-//                    break;
-//                case 4:        // four-component, treated as RGBA
-//                    for (x = 0; x < xsize; x++)
-//                    {
-//                        row_pointers16[z][y][4 * x]        = *pwData++;
-//                        row_pointers16[z][y][4 * x + 1] = *pwData++;
-//                        row_pointers16[z][y][4 * x + 2] = *pwData++;
-//                        row_pointers16[z][y][4 * x + 3] = *pwData++;
-//                    }
-//                    break;
-//                }
-//            }
-//        }
-//    }
-//
-//    int retval = image_channels + (bitness == 16 ? 0x80 : 0);
-//    UINT image_bytes = xsize * ysize * zsize * image_channels * (bitness / 8);
-//    UINT image_write_bytes = (image_bytes + 3) & ~3;
-//
-//    FILE *wf = fopen(pszFilename, "wb");
-//    if (wf)
-//    {
-//        void *dataptr = (bitness == 16) ? (void *)(row_pointers16[0][0]) : (void *)(row_pointers8[0][0]);
-//
-//        size_t expected_bytes_written = sizeof(ktx_header) + image_write_bytes + 4;
-//        size_t hdr_bytes_written = fwrite(&header, 1, sizeof(ktx_header), wf);
-//        size_t bytecount_bytes_written = fwrite(&image_bytes, 1, 4, wf);
-//        size_t data_bytes_written = fwrite(dataptr, 1, image_write_bytes, wf);
-//        fclose(wf);
-//        if (hdr_bytes_written + bytecount_bytes_written + data_bytes_written != expected_bytes_written)
-//            retval = -1;
-//
-//    }
-//    else
-//    {
-//        retval = -1;
-//    }
-//
-//    if (row_pointers8)
-//    {
-//        delete[]row_pointers8[0][0];
-//        delete[]row_pointers8[0];
-//        delete[]row_pointers8;
-//    }
-//    if (row_pointers16)
-//    {
-//        delete[]row_pointers16[0][0];
-//        delete[]row_pointers16[0];
-//        delete[]row_pointers16;
-//    }
 
     fclose(pFile);
     return 0;

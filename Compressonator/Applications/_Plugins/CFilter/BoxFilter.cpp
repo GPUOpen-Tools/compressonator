@@ -85,7 +85,7 @@ int Plugin_BoxFilter::TC_GenerateMIPLevels(MipSet *pMipSet, int nMinSize)
     int nWidth = pMipSet->m_nWidth;
     int nHeight = pMipSet->m_nHeight;
 
-    while(nWidth >= nMinSize || nHeight >= nMinSize)
+    while(nWidth > nMinSize && nHeight > nMinSize)
     {
         nWidth = max(nWidth >> 1, 1);
         nHeight = max(nHeight >> 1, 1);
@@ -140,7 +140,7 @@ int Plugin_BoxFilter::TC_GenerateMIPLevels(MipSet *pMipSet, int nMinSize)
                 }
             }
         }
-        pMipSet->m_nMipLevels++;
+        ++pMipSet->m_nMipLevels;
         if (nWidth == 1 || nHeight == 1)
             break;
     }
