@@ -61,6 +61,28 @@ extern     CompViewerClient g_CompClient;
 //======================================================================================
 #define USE_MULTITHREADING  1
 
+struct ASTCEncodeThreadParam
+{
+    ASTCBlockEncoder   *encoder;
+
+    // Encoder params
+    astc_codec_image *input_image;
+    uint8_t *bp;
+    int xdim;
+    int ydim;
+    int zdim;
+    int x;
+    int y;
+    int z;
+    astc_decode_mode decode_mode;
+    const error_weighting_params * ewp;
+
+    volatile BOOL      run;
+    volatile BOOL      exit;
+};
+
+static ASTCEncodeThreadParam *g_EncodeParameterStorage = NULL;
+
 //////////////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////////////
@@ -68,10 +90,10 @@ extern     CompViewerClient g_CompClient;
 CCodec_ASTC::CCodec_ASTC() : CCodec_DXTC(CT_ASTC)
 {
     m_LibraryInitialized    = false;
-    m_AbortRequested = false;
-    m_NumThreads = 8;
-    m_NumEncodingThreads = m_NumThreads;
-    m_EncodingThreadHandle = NULL;
+    m_AbortRequested        = false;
+    m_NumThreads            = 8;
+    m_NumEncodingThreads    = m_NumThreads;
+    m_EncodingThreadHandle  = NULL;
 
 #ifdef USE_OPENCL
     m_OCLInitialized            = false;
@@ -101,11 +123,8 @@ void CCodec_ASTC::InitializeASTCSettingsForSetBlockSize()
     int ydim_3d = m_ydim;
     int zdim_3d = m_zdim;
 
-    float log10_texels_2d = 0.0f;
-    float log10_texels_3d = 0.0f;
-
-    log10_texels_2d = log((float)(xdim_2d * ydim_2d)) / log(10.0f);
-    log10_texels_3d = log((float)(xdim_3d * ydim_3d * zdim_3d)) / log(10.0f);
+    float log10_texels_2d = log((float)(xdim_2d * ydim_2d)) / log(10.0f);
+    float log10_texels_3d = log((float)(xdim_3d * ydim_3d * zdim_3d)) / log(10.0f);
 
     int plimit_autoset = -1;
     int plimit_user_specified = -1;
@@ -132,14 +151,66 @@ void CCodec_ASTC::InitializeASTCSettingsForSetBlockSize()
     int maxiters_autoset = 0;
     int maxiters_set_by_user = 0;
 
-    // Medium speed setting
-    plimit_autoset = 25;
-    oplimit_autoset = 1.2f;
-    mincorrel_autoset = 0.75f;
-    dblimit_autoset_2d = MAX(95 - 35 * log10_texels_2d, 70 - 19 * log10_texels_2d);
-    dblimit_autoset_3d = MAX(95 - 35 * log10_texels_3d, 70 - 19 * log10_texels_3d);
-    bmc_autoset = 75;
-    maxiters_autoset = 2;
+    // Codec Speed Setting Defaults based on Quality Settings
+
+    if (m_Quality < 0.2)
+    {
+        // Very Fast
+        plimit_autoset = 2;
+        oplimit_autoset = 1.0;
+        dblimit_autoset_2d = MAX(70 - 35 * log10_texels_2d, 53 - 19 * log10_texels_2d);
+        dblimit_autoset_3d = MAX(70 - 35 * log10_texels_3d, 53 - 19 * log10_texels_3d);
+        bmc_autoset = 25;
+        mincorrel_autoset = 0.5;
+        maxiters_autoset = 1;
+    }
+    else
+    if (m_Quality < 0.4)
+    {
+        // Fast Setting
+        plimit_autoset = 4;
+        oplimit_autoset = 1.0;
+        mincorrel_autoset = 0.5;
+        dblimit_autoset_2d = MAX(85 - 35 * log10_texels_2d, 63 - 19 * log10_texels_2d);
+        dblimit_autoset_2d = MAX(85 - 35 * log10_texels_3d, 63 - 19 * log10_texels_3d);
+        bmc_autoset = 50;
+        maxiters_autoset = 1;
+    }
+    else
+    if (m_Quality < 0.6)
+    {
+        // Medium speed setting
+        plimit_autoset = 25;
+        oplimit_autoset = 1.2f;
+        mincorrel_autoset = 0.75f;
+        dblimit_autoset_2d = MAX(95 - 35 * log10_texels_2d, 70 - 19 * log10_texels_2d);
+        dblimit_autoset_3d = MAX(95 - 35 * log10_texels_3d, 70 - 19 * log10_texels_3d);
+        bmc_autoset = 75;
+        maxiters_autoset = 2;
+    }
+    else
+    if (m_Quality < 0.8)
+    {
+        // Thorough
+        plimit_autoset = 100;
+        oplimit_autoset = 2.5f;
+        mincorrel_autoset = 0.95f;
+        dblimit_autoset_2d = MAX(105 - 35 * log10_texels_2d, 77 - 19 * log10_texels_2d);
+        dblimit_autoset_3d = MAX(105 - 35 * log10_texels_3d, 77 - 19 * log10_texels_3d);
+        bmc_autoset = 95;
+        maxiters_autoset = 4;
+    }
+    else
+    {
+        // Exhaustive
+        plimit_autoset = PARTITION_COUNT;
+        oplimit_autoset = 1000.0f;
+        mincorrel_autoset = 0.99f;
+        dblimit_autoset_2d = 999.0f;
+        dblimit_autoset_3d = 999.0f;
+        bmc_autoset = 100;
+        maxiters_autoset = 4;
+    }
 
     float texel_avg_error_limit_2d = 0.0f;
     float texel_avg_error_limit_3d = 0.0f;
@@ -214,6 +285,69 @@ CCodec_ASTC::~CCodec_ASTC()
 {
     if (m_LibraryInitialized)
     {
+
+        if (m_Use_MultiThreading)
+        {
+            // Tell all the live threads that they can exit when they have finished any current work
+            for (int i = 0; i < m_LiveThreads; i++)
+            {
+                // If a thread is in the running state then we need to wait for it to finish
+                // any queued work from the producer before we can tell it to exit.
+                //
+                // If we don't wait then there is a race condition here where we have
+                // told the thread to run but it hasn't yet been scheduled - if we set
+                // the exit flag before it runs then its block will not be processed.
+#pragma warning(push)
+#pragma warning(disable:4127) //warning C4127: conditional expression is constant
+                while (1)
+                {
+                    if (g_EncodeParameterStorage[i].run != TRUE)
+                    {
+                        break;
+                    }
+                }
+#pragma warning(pop)
+                // Signal to the thread that it can exit
+                g_EncodeParameterStorage[i].exit = TRUE;
+            }
+
+            // Now wait for all threads to have exited
+            if (m_LiveThreads > 0)
+            {
+                WaitForMultipleObjects(m_LiveThreads,
+                    m_EncodingThreadHandle,
+                    true,
+                    INFINITE);
+            }
+
+        } // MultiThreading
+
+        for (int i = 0; i < m_LiveThreads; i++)
+        {
+            if (m_EncodingThreadHandle[i])
+            {
+                CloseHandle(m_EncodingThreadHandle[i]);
+            }
+            m_EncodingThreadHandle[i] = 0;
+        }
+
+        delete[] m_EncodingThreadHandle;
+        m_EncodingThreadHandle = NULL;
+
+        delete[] g_EncodeParameterStorage;
+        g_EncodeParameterStorage = NULL;
+
+
+        for (int i = 0; i < m_NumEncodingThreads; i++)
+        {
+            if (m_encoder[i])
+            {
+                delete m_encoder[i];
+                m_encoder[i] = NULL;
+            }
+        }
+
+
         if (m_decoder)
         {
             delete m_decoder;
@@ -339,6 +473,14 @@ bool CCodec_ASTC::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
             if ((m_ydim == 7) || (m_ydim == 9) || (m_ydim == 11)) return false;
         }
     }
+    if (strcmp(pszParamName, "Quality") == 0)
+    {
+        m_Quality = std::stof(sValue);
+        if ((m_Quality < 0) || (m_Quality > 1.0))
+        {
+            return false;
+        }
+    }
     else
         return CCodec_DXTC::SetParameter(pszParamName, sValue);
     return true;
@@ -357,7 +499,48 @@ bool CCodec_ASTC::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue)
 
 bool CCodec_ASTC::SetParameter(const CMP_CHAR* pszParamName, CODECFLOAT fValue)
 {
+    if (strcmp(pszParamName, "Quality") == 0)
+        m_Quality = fValue;
+    else
     return CCodec_DXTC::SetParameter(pszParamName, fValue);
+    return true;
+}
+
+
+//
+// Thread procedure for encoding a block
+//
+// The thread stays alive, and expects blocks to be pushed to it by a producer
+// process that signals it when new work is available. When the producer is finished
+// it should set the exit flag in the parameters to allow the tread to quit
+//
+
+unsigned int    _stdcall ASTCThreadProcEncode(void* param)
+{
+    ASTCEncodeThreadParam *tp = (ASTCEncodeThreadParam*)param;
+
+    while (tp->exit == FALSE)
+    {
+        if (tp->run == TRUE)
+        {
+            tp->encoder->CompressBlock(
+                tp->input_image,
+                tp->bp,
+                tp->xdim,
+                tp->ydim,
+                tp->zdim,
+                tp->x,
+                tp->y,
+                tp->z,
+                tp->decode_mode,
+                tp->ewp
+            );
+            tp->run = FALSE;
+        }
+        Sleep(0);
+    }
+
+    return 0;
 }
 
 CodecError CCodec_ASTC::InitializeASTCLibrary()
@@ -370,9 +553,204 @@ CodecError CCodec_ASTC::InitializeASTCLibrary()
         prepare_angular_tables();               // ARM - ASTC code
         build_quantization_mode_table();        // ARM - ASTC code
 
+        //====================== Threads
+        for (DWORD i = 0; i < MAX_ASTC_THREADS; i++)
+        {
+            m_encoder[i] = NULL;
+        }
+
+        // Create threaded encoder instances
+        m_LiveThreads = 0;
+        m_LastThread = 0;
+        m_NumEncodingThreads = min(m_NumThreads, MAX_ASTC_THREADS);
+        if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1;
+        m_Use_MultiThreading = m_NumEncodingThreads > 1;
+
+        g_EncodeParameterStorage = new ASTCEncodeThreadParam[m_NumEncodingThreads];
+        if (!g_EncodeParameterStorage)
+        {
+            return CE_Unknown;
+        }
+
+        m_EncodingThreadHandle = new HANDLE[m_NumEncodingThreads];
+        if (!m_EncodingThreadHandle)
+        {
+            delete[] g_EncodeParameterStorage;
+            g_EncodeParameterStorage = NULL;
+
+            return CE_Unknown;
+        }
+
+        DWORD   i;
+
+        for (i = 0; i < m_NumEncodingThreads; i++)
+        {
+            // Create single encoder instance
+            m_encoder[i] = new ASTCBlockEncoder();
+
+
+            // Cleanup if problem!
+            if (!m_encoder[i])
+            {
+
+                delete[] g_EncodeParameterStorage;
+                g_EncodeParameterStorage = NULL;
+
+                delete[] m_EncodingThreadHandle;
+                m_EncodingThreadHandle = NULL;
+
+                for (DWORD j = 0; j<i; j++)
+                {
+                    delete m_encoder[j];
+                    m_encoder[j] = NULL;
+                }
+
+                return CE_Unknown;
+            }
+
+#ifdef USE_DBGTRACE
+            DbgTrace(("Encoder[%d]:ModeMask %X, Quality %f\n", i, m_ModeMask, m_Quality));
+#endif
+
+        }
+
+        // Create the encoding threads in the suspended state
+        for (i = 0; i<m_NumEncodingThreads; i++)
+        {
+            m_EncodingThreadHandle[i] = (HANDLE)_beginthreadex(NULL,
+                0,
+                ASTCThreadProcEncode,
+                (void*)&g_EncodeParameterStorage[i],
+                CREATE_SUSPENDED,
+                NULL);
+            if (m_EncodingThreadHandle[i])
+            {
+                g_EncodeParameterStorage[i].encoder = m_encoder[i];
+                // Inform the thread that at the moment it doesn't have any work to do
+                // but that it should wait for some and not exit
+                g_EncodeParameterStorage[i].run = FALSE;
+                g_EncodeParameterStorage[i].exit = FALSE;
+                // Start the thread and have it wait for work
+                ResumeThread(m_EncodingThreadHandle[i]);
+                m_LiveThreads++;
+            }
+        }
+
         // Create single decoder instance
         m_decoder = new ASTCBlockDecoder();
+
+        if (!m_decoder)
+        {
+            for (DWORD j = 0; j<m_NumEncodingThreads; j++)
+            {
+                delete m_encoder[j];
+                m_encoder[j] = NULL;
+            }
+            return CE_Unknown;
+        }
+
         m_LibraryInitialized = true;
+    }
+    return CE_OK;
+}
+
+CodecError CCodec_ASTC::EncodeASTCBlock(
+    astc_codec_image *input_image,
+    uint8_t *bp,
+    int xdim,
+    int ydim,
+    int zdim,
+    int x,
+    int y,
+    int z,
+    astc_decode_mode decode_mode,
+    const error_weighting_params * ewp)
+{
+    if (m_Use_MultiThreading)
+    {
+        WORD   threadIndex;
+
+        // Loop and look for an available thread
+        BOOL found = FALSE;
+        threadIndex = m_LastThread;
+        while (found == FALSE)
+        {
+
+            if (g_EncodeParameterStorage == NULL)
+                return CE_Unknown;
+
+            if (g_EncodeParameterStorage[threadIndex].run == FALSE)
+            {
+                found = TRUE;
+                break;
+            }
+
+            // Increment and wrap the thread index
+            threadIndex++;
+            if (threadIndex == m_LiveThreads)
+            {
+                threadIndex = 0;
+            }
+        }
+
+        m_LastThread = threadIndex;
+
+        g_EncodeParameterStorage[threadIndex].input_image = input_image;
+        g_EncodeParameterStorage[threadIndex].bp = bp;
+        g_EncodeParameterStorage[threadIndex].xdim = xdim;
+        g_EncodeParameterStorage[threadIndex].ydim = ydim;
+        g_EncodeParameterStorage[threadIndex].zdim = zdim;
+        g_EncodeParameterStorage[threadIndex].x = x;
+        g_EncodeParameterStorage[threadIndex].y = y;
+        g_EncodeParameterStorage[threadIndex].z = z;
+        g_EncodeParameterStorage[threadIndex].decode_mode = decode_mode;
+        g_EncodeParameterStorage[threadIndex].ewp = ewp;
+
+        // Tell the thread to start working
+        g_EncodeParameterStorage[threadIndex].run = TRUE;
+    }
+    else
+    {
+        m_encoder[0]->CompressBlock(
+            input_image,
+            bp,
+            xdim,
+            ydim,
+            zdim,
+            x,
+            y,
+            z,
+            decode_mode,
+            ewp);
+    }
+    return CE_OK;
+}
+
+
+CodecError CCodec_ASTC::FinishASTCEncoding(void)
+{
+    if (!m_LibraryInitialized)
+    {
+        return CE_Unknown;
+    }
+
+    if (!g_EncodeParameterStorage)
+    {
+        return CE_Unknown;
+    }
+
+    if (m_Use_MultiThreading)
+    {
+        // Wait for all the live threads to finish any current work
+        for (DWORD i = 0; i < m_LiveThreads; i++)
+        {
+            // If a thread is in the running state then we need to wait for it to finish
+            // its work from the producer
+            while (g_EncodeParameterStorage[i].run == TRUE)
+            {
+                Sleep(1);
+            }
+        }
     }
     return CE_OK;
 }
@@ -390,7 +768,6 @@ struct encode_astc_image_info
     swizzlepattern swz_encode;
     volatile int *counters;
     volatile int *threads_completed;
-    volatile bool *abort_requested;
     const astc_codec_image *input_image;
     Codec_Feedback_Proc pFeedbackProc;
     DWORD_PTR pUser1;
@@ -398,120 +775,6 @@ struct encode_astc_image_info
 };
 
 #define USE_ARM_CODE
-
-void *encode_astc_image_threadfunc(void *vblk)
-{
-    // Common ARM and AMD Code
-    const encode_astc_image_info *blk = (const encode_astc_image_info *)vblk;
-    int xdim = blk->xdim;
-    int ydim = blk->ydim;
-    int zdim = blk->zdim;
-    uint8_t *buffer = blk->buffer;
-    int thread_id = blk->thread_id;
-    int threadcount = blk->threadcount;
-    volatile int *counters = blk->counters;
-    swizzlepattern swz_encode = blk->swz_encode;
-    volatile int *threads_completed = blk->threads_completed;
-    volatile bool *abort_requested = blk->abort_requested;
-    const astc_codec_image *input_image = blk->input_image;
-
-#ifdef USE_ARM_CODE
-    astc_decode_mode decode_mode = blk->decode_mode;
-    const error_weighting_params *ewp = blk->ewp;
-#endif
-
-#ifdef USE_ARM_CODE
-    imageblock pb;
-    int ctr = thread_id;
-#else
-    // Reserved for new code
-#endif
-
-    int pctr = 0;
-
-    // AMD Added code
-    Codec_Feedback_Proc pFeedbackProc = blk->pFeedbackProc;
-
-
-    // Common ARM and Compressonator Code
-    int x, y, z, i;
-    int xsize = input_image->xsize;
-    int ysize = input_image->ysize;
-    int zsize = input_image->zsize;
-    int xblocks = (xsize + xdim - 1) / xdim;
-    int yblocks = (ysize + ydim - 1) / ydim;
-    int zblocks = (zsize + zdim - 1) / zdim;
-    int owns_progress_counter = 0;
-
-    // AMD Added Code
-    int total_blocks = xblocks * yblocks * zblocks;
-    #define NEXT_BLOCK_IN_BATCH(dx, dy, dz) if (++dx >= xblocks){ dx = 0; if (++dy >= yblocks){ dy = 0; dz++; }    }
-
-#ifdef USE_ARM_CODE
-    for (z = 0; z < zblocks; z++)
-        for (y = 0; y < yblocks; y++)
-            for (x = 0; x < xblocks; x++)
-            {
-                if (ctr == 0)
-                {
-                    int offset = ((z * yblocks + y) * xblocks + x) * 16;
-                    uint8_t *bp = buffer + offset;
-                    fetch_imageblock(input_image, &pb, xdim, ydim, zdim, x * xdim, y * ydim, z * zdim, swz_encode);
-                    symbolic_compressed_block scb;
-                    compress_symbolic_block(input_image, decode_mode, xdim, ydim, zdim, ewp, &pb, &scb);
-                    physical_compressed_block pcb;
-                    pcb = symbolic_to_physical(xdim, ydim, zdim, &scb);
-                    *(physical_compressed_block *)bp = pcb;
-                    counters[thread_id]++;
-                    ctr = threadcount - 1;
-                    pctr++;
-
-                    // New Implemented code for feedback
-                    // routine to call user FeedbackProc
-                    if (pFeedbackProc && (pctr % progress_counter_divider) == 0)
-                    {
-                        int do_call_feedback_proc = 1;
-                        // the current thread has the responsibility for calling user FeedbackProc
-                        // if every previous thread has completed. Also, if we have ever received the
-                        // responsibility to call user FeedbackProc, we are going to keep it
-                        // until the thread is completed.
-                        if (!owns_progress_counter)
-                        {
-                            for (i = thread_id - 1; i >= 0; i--)
-                            {
-                                if (threads_completed[i] == 0)
-                                {
-                                    do_call_feedback_proc = 0;
-                                    break;
-                                }
-                            }
-                        }
-                        if (do_call_feedback_proc)
-                        {
-                            owns_progress_counter = 1;
-                            int summa = 0;
-                            for (i = 0; i < threadcount; i++)
-                                summa += counters[i];
-                            float fProgress = (100.0f * summa) / total_blocks;
-                            if (pFeedbackProc(fProgress, blk->pUser1, blk->pUser2))
-                            {
-                                *abort_requested = true;
-                            }
-                        }
-                    }
-
-                }
-                else
-                    ctr--;
-            }
-#else
-    // Reserved for new code
-#endif
-
-    threads_completed[thread_id] = 1;
-    return NULL;
-}
-
 
 CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
 {
@@ -588,8 +851,6 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
     if (!input_image)
         assert("Unable to allocate image buffer");
 
-    swizzlepattern swz_encode = { 0, 1, 2, 3 };
-
     InitializeASTCSettingsForSetBlockSize();
 
     // Loop through the original input image and setup compression threads for each 
@@ -610,84 +871,64 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
         }
     }
 
-    //multithreading disabled for now
-    //m_NumEncodingThreads = min(m_NumThreads, MAX_ASTC_THREADS);
-    //if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1;
+    m_NumEncodingThreads = min(m_NumThreads, MAX_ASTC_THREADS);
+    if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1;
 
-    m_NumEncodingThreads = 1;
+// Common ARM and AMD Code
+    CodecError result = CE_OK;
+    int xdim = m_xdim;
+    int ydim = m_ydim;
+    int zdim = m_zdim;
+    uint8_t *bufferOutput = bufferOut.GetData();
 
-    int *counters = new int[m_NumEncodingThreads];
-    int *threads_completed = new int[m_NumEncodingThreads];
-
-    // before entering into the multithreadeed routine, ensure that the block size descriptors
-    // and the partition table descriptors needed actually exist.
-    get_block_size_descriptor(m_xdim, m_ydim, m_zdim);
-    get_partition_table(m_xdim, m_ydim, m_zdim, 0);
-
-    encode_astc_image_info *ai = new encode_astc_image_info[m_NumEncodingThreads];
-    if (!ai)
-    {
-        assert("Unable to allocate encoder thread");
-    }
-
-    for (int i = 0; i < m_NumEncodingThreads; i++)
-    {
-        ai[i].xdim = m_xdim;
-        ai[i].ydim = m_ydim;
-        ai[i].zdim = m_zdim;
-        ai[i].buffer = bufferOut.GetData();
-        ai[i].ewp = &m_ewp;
-        ai[i].counters = counters;
-        ai[i].thread_id = i;
-        ai[i].threadcount = m_NumEncodingThreads;
-        ai[i].decode_mode = m_decode_mode;
-        ai[i].swz_encode = swz_encode;
-        ai[i].threads_completed = threads_completed;
-        ai[i].input_image = input_image;
-        counters[i] = 0;
-        threads_completed[i] = 0;
-
-        // AMD Added Code
-#ifdef USE_AMD_ENCODER
-        ai[i].batch_compressor = new ASTCBatchBlockEncoder;
-        ai[i].batch_compressor->SetParams(input_image, m_decode_mode, m_xdim, m_ydim, m_zdim, &m_ewp, batch_size);
+#ifdef USE_ARM_CODE
+    astc_decode_mode decode_mode = m_decode_mode;
+    const error_weighting_params *ewp = &m_ewp;
 #endif
-        ai[i].pFeedbackProc = pFeedbackProc;
-        ai[i].pUser1 = pUser1;
-        ai[i].pUser2 = pUser2;
-        ai[i].abort_requested = &m_AbortRequested;
-    }
- 
-    if (m_NumEncodingThreads == 1)
-        encode_astc_image_threadfunc(&ai[0]);
-    else
-    {
-        HANDLE *threads = new HANDLE[m_NumEncodingThreads];
-        for (int i = 0; i < m_NumEncodingThreads; i++)
-            threads[i] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)encode_astc_image_threadfunc, &(ai[i]), 0, NULL);
 
-        WaitForMultipleObjects(m_NumEncodingThreads, threads, true, INFINITE);
-        delete[]threads;
+    // Common ARM and Compressonator Code
+    int x, y, z, i;
+    int xblocks = (xsize + xdim - 1) / xdim;
+    int yblocks = (ysize + ydim - 1) / ydim;
+    int zblocks = (zsize + zdim - 1) / zdim;
+    float TotalBlocks = (float) (yblocks * xblocks);
+
+    for (z = 0; z < zblocks; z++)
+    {
+        for (y = 0; y < yblocks; y++)
+        {
+            for (x = 0; x < xblocks; x++)
+            {
+                int offset = ((z * yblocks + y) * xblocks + x) * 16;
+                uint8_t *bp = bufferOutput + offset;
+                EncodeASTCBlock(input_image, bp, xdim, ydim, zdim, x * xdim, y * ydim, z * zdim, decode_mode, ewp);
+            }
+
+            if (pFeedbackProc)
+            {
+                float fProgress = 100.f * ((float)(y * yblocks) / TotalBlocks);
+                if (pFeedbackProc(fProgress, pUser1, pUser2))
+                {
+                    result = CE_Aborted;
+                    break;
+                }
+            }
+
+        }
     }
 
-#ifdef USE_AMD_ENCODER
-    for (int i = 0; i < m_NumEncodingThreads; i++)
-    {
-        delete ai[i].batch_compressor;
-    }
-#endif
+    CodecError EncodeResult = FinishASTCEncoding();
+
+    if (result != CE_Aborted)
+        result = EncodeResult;
 
     destroy_image(input_image);
 
-    delete[]ai;
-    delete[]counters;
-    delete[]threads_completed;
-
-    #ifdef ASTC_COMPDEBUGGER
+#ifdef ASTC_COMPDEBUGGER
     g_CompClient.disconnect();
-    #endif
+#endif
 
-    return CE_OK;
+    return result;
 }
 
 // notes:

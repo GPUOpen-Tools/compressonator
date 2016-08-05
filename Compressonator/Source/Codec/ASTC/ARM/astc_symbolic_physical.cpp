@@ -121,7 +121,9 @@ physical_compressed_block symbolic_to_physical(int xdim, int ydim, int zdim, con
 
     int real_weight_count = is_dual_plane ? 2 * weight_count : weight_count;
 
-    int bits_for_weights = compute_ise_bitcount(real_weight_count,(quantization_method) weight_quantization_method);
+    int bits_for_weights = compute_ise_bitcount(real_weight_count,
+                                                (quantization_method) weight_quantization_method);
+
 
     if (is_dual_plane)
     {
@@ -139,7 +141,7 @@ physical_compressed_block symbolic_to_physical(int xdim, int ydim, int zdim, con
     }
 
     for (i = 0; i < 16; i++)
-        res.data[i] = (uint8_t)bitrev8(weightbuf[15 - i]);
+        res.data[i] = bitrev8(weightbuf[15 - i]);
 
     write_bits(sc->block_mode, 11, 0, res.data);
     write_bits(partition_count - 1, 2, 11, res.data);
@@ -211,7 +213,7 @@ physical_compressed_block symbolic_to_physical(int xdim, int ydim, int zdim, con
     {
         int vals = 2 * (sc->color_formats[i] >> 2) + 2;
         for (j = 0; j < vals; j++)
-            values_to_encode[j + valuecount_to_encode] = (uint8_t)sc->color_values[i][j];
+            values_to_encode[j + valuecount_to_encode] = sc->color_values[i][j];
         valuecount_to_encode += vals;
     }
     // then, encode an ISE based on them.
@@ -276,9 +278,9 @@ void physical_to_symbolic(int xdim, int ydim, int zdim, physical_compressed_bloc
             int vx_low_s = read_bits(9, 10, pb.data);
             int vx_high_s = read_bits(9, 19, pb.data);
             int vx_low_t = read_bits(9, 28, pb.data);
-            int vx_high_t = read_bits(9, 36, pb.data);
-            int vx_low_p = read_bits(9, 45, pb.data);
-            int vx_high_p = read_bits(9, 54, pb.data);
+            int vx_high_t = read_bits(9, 37, pb.data);
+            int vx_low_p = read_bits(9, 46, pb.data);
+            int vx_high_p = read_bits(9, 55, pb.data);
 
             int all_ones = vx_low_s == 0x1FF && vx_high_s == 0x1FF && vx_low_t == 0x1FF && vx_high_t == 0x1FF && vx_low_p == 0x1FF && vx_high_p == 0x1FF;
 
@@ -307,7 +309,7 @@ void physical_to_symbolic(int xdim, int ydim, int zdim, physical_compressed_bloc
     res->partition_count = partition_count;
 
     for (i = 0; i < 16; i++)
-        bswapped[i] = (uint8_t)bitrev8(pb.data[15 - i]);
+        bswapped[i] = bitrev8(pb.data[15 - i]);
 
     int bits_for_weights = compute_ise_bitcount(real_weight_count,
                                                 (quantization_method) weight_quantization_method);

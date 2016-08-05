@@ -46,3 +46,27 @@ int realign_weights(astc_decode_mode decode_mode, int xdim, int ydim, int zdim, 
 #define SAFE_DELETE(x) if(x) { delete x; x = NULL;}
 #define SAFE_DELETE_ARR(x) if (x) { delete[] x; x = NULL;}
 
+
+double ASTCBlockEncoder::CompressBlock(
+    astc_codec_image *input_image,
+    uint8_t *bp,
+    int xdim, 
+    int ydim, 
+    int zdim, 
+    int x, 
+    int y, 
+    int z, 
+    astc_decode_mode decode_mode,
+    const error_weighting_params * ewp
+    )
+{
+
+    swizzlepattern swz_encode = { 0, 1, 2, 3 };
+    fetch_imageblock(input_image, &m_pb, xdim, ydim, zdim, x , y, z, swz_encode);
+    compress_symbolic_block(input_image, decode_mode, xdim, ydim, zdim, ewp, &m_pb, &m_scb);
+    m_pcb = symbolic_to_physical(xdim, ydim, zdim, &m_scb);
+    *(physical_compressed_block *)bp = m_pcb;
+    return 0.0;
+}
+
+

@@ -4,10 +4,19 @@ Compressonator is a set of tools to allow artists and developers to more easily 
 
 Compressonator DXTn (S3TC)is developed for Microsoft Windows® platform.
 
-Recent additions and changes to note
+Recent additions and changes since v2.3 release
 ------------------------------------------------------
 
-Mainline Branch
+Added ASTC speed setting according to Quality
+
+Quality Setting
+<0.2 = VeryFast  (default)
+<0.4 = Fast
+<0.6 = Medium
+<0.8 = Thorough
+else Exhaustive
+
+Added Multithreaded ASTC block processing
 
 Support mipmap generation on KTX output
 
@@ -16,15 +25,6 @@ Add TGA image plugin
 Enable GUI decompress view with vulkan
 
 Added GPU based compressed image views using OpenGL, DirectX 11 and Vulkan
-
-V2.3 Branch
-
-Installer for prebuilt SDK Libs, GUI and Command line application
-
-Support for ASTC and ETC2
-
-Variable sized compression buffers
-
 
 
 Build Instructions for Windows 7 and up

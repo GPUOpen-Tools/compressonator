@@ -122,7 +122,6 @@ int realign_weights(astc_decode_mode decode_mode,
 
 
     int adjustments = 0;
-    bool isTrue = true;
 
     for (i = 0; i < weight_count; i++)
     {
@@ -134,8 +133,7 @@ int realign_weights(astc_decode_mode decode_mode,
         COMPUTE_ERROR(current_error);
 
         // increment until error starts increasing.
-
-        while (isTrue)
+        while (1)
         {
             int next_wt = qat->next_quantized_value[current_wt];
             if (next_wt == current_wt)
@@ -158,7 +156,7 @@ int realign_weights(astc_decode_mode decode_mode,
             }
         }
         // decrement until error starts increasing
-        while (isTrue)
+        while (1)
         {
             int prev_wt = qat->prev_quantized_value[current_wt];
             if (prev_wt == current_wt)
@@ -181,7 +179,7 @@ int realign_weights(astc_decode_mode decode_mode,
             }
         }
 
-        weight_set8[i] = (uint8_t)current_wt;
+        weight_set8[i] = current_wt;
     }
 
     if (!is_dual_plane)
@@ -198,7 +196,7 @@ int realign_weights(astc_decode_mode decode_mode,
         COMPUTE_ERROR(current_error);
 
         // increment until error starts increasing.
-        while (isTrue)
+        while (1)
         {
             int next_wt = qat->next_quantized_value[current_wt];
             if (next_wt == current_wt)
@@ -221,7 +219,7 @@ int realign_weights(astc_decode_mode decode_mode,
             }
         }
         // decrement until error starts increasing
-        while (isTrue)
+        while (1)
         {
             int prev_wt = qat->prev_quantized_value[current_wt];
             if (prev_wt == current_wt)
@@ -244,7 +242,7 @@ int realign_weights(astc_decode_mode decode_mode,
             }
         }
 
-        plane2_weight_set8[i] = (uint8_t)current_wt;
+        plane2_weight_set8[i] = current_wt;
     }
 
     return adjustments;
@@ -257,11 +255,11 @@ int realign_weights(astc_decode_mode decode_mode,
 
 
 static void compress_symbolic_block_fixed_partition_1_plane(astc_decode_mode decode_mode,
-                                                    float mode_cutoff,
-                                                    int max_refinement_iters,
-                                                    int xdim, int ydim, int zdim,
-                                                    int partition_count, int partition_index,
-                                                    const imageblock * blk, const error_weight_block * ewb, symbolic_compressed_block * scb)
+                                                            float mode_cutoff,
+                                                            int max_refinement_iters,
+                                                            int xdim, int ydim, int zdim,
+                                                            int partition_count, int partition_index,
+                                                            const imageblock * blk, const error_weight_block * ewb, symbolic_compressed_block * scb)
 {
     int i, j, k;
 
@@ -527,12 +525,12 @@ static void compress_symbolic_block_fixed_partition_1_plane(astc_decode_mode dec
 
 
 static void compress_symbolic_block_fixed_partition_2_planes(astc_decode_mode decode_mode,
-                                                    float mode_cutoff,
-                                                    int max_refinement_iters,
-                                                    int xdim, int ydim, int zdim,
-                                                    int partition_count, int partition_index,
-                                                    int separate_component, const imageblock * blk, const error_weight_block * ewb,
-                                                    symbolic_compressed_block * scb)
+                                                             float mode_cutoff,
+                                                             int max_refinement_iters,
+                                                             int xdim, int ydim, int zdim,
+                                                             int partition_count, int partition_index,
+                                                             int separate_component, const imageblock * blk, const error_weight_block * ewb,
+                                                             symbolic_compressed_block * scb)
 {
     int i, j, k;
 
@@ -849,8 +847,8 @@ void expand_block_artifact_suppression(int xdim, int ydim, int zdim, error_weigh
                 float zdif = (z - centerpos_z) / zdim;
 
                 float wdif = 0.36f;
-                float dist = (float)sqrt(xdif * xdif + ydif * ydif + zdif * zdif + wdif * wdif);
-                *bef = (float)pow(dist, ewp->block_artifact_suppression);
+                float dist = sqrt(xdif * xdif + ydif * ydif + zdif * zdif + wdif * wdif);
+                *bef = pow(dist, ewp->block_artifact_suppression);
                 bef++;
             }
 }
@@ -861,7 +859,7 @@ void expand_block_artifact_suppression(int xdim, int ydim, int zdim, error_weigh
 // Returns the sum of all the error values set.
 
 float prepare_error_weight_block(const astc_codec_image * input_image,
-                                 int xdim, int ydim, int zdim, const error_weighting_params * ewp, const imageblock * blk, error_weight_block * ewb)
+                                 int xdim, int ydim, int zdim, const error_weighting_params * ewp, const imageblock * blk, error_weight_block * ewb, error_weight_block_orig * ewbo)
 {
 
     int x, y, z;
@@ -923,10 +921,10 @@ float prepare_error_weight_block(const astc_codec_image * input_image,
                         avg.xyz = float3(favg, favg, favg) * mixing + avg.xyz * (1.0f - mixing);
                         variance.xyz = float3(fvar, fvar, fvar) * mixing + variance.xyz * (1.0f - mixing);
 
-                        float4 stdev = float4((float)sqrt((float)MAX(variance.x, 0.0f)),
-                                              (float)sqrt((float)MAX(variance.y, 0.0f)),
-                                              (float)sqrt((float)MAX(variance.z, 0.0f)),
-                                              (float)sqrt((float)MAX(variance.w, 0.0f)));
+                        float4 stdev = float4(sqrt(MAX(variance.x, 0.0f)),
+                                              sqrt(MAX(variance.y, 0.0f)),
+                                              sqrt(MAX(variance.z, 0.0f)),
+                                              sqrt(MAX(variance.w, 0.0f)));
 
                         avg.xyz = avg.xyz * ewp->rgb_mean_weight;
                         avg.w = avg.w * ewp->alpha_mean_weight;
@@ -939,14 +937,14 @@ float prepare_error_weight_block(const astc_codec_image * input_image,
 
                     if (ewp->ra_normal_angular_scale)
                     {
-                        float x1 = (blk->orig_data[4 * idx] - 0.5f) * 2.0f;
-                        float y1 = (blk->orig_data[4 * idx + 3] - 0.5f) * 2.0f;
-                        float denom = 1.0f - x1 * x1 - y1 * y1;
+                        float x = (blk->orig_data[4 * idx] - 0.5f) * 2.0f;
+                        float y = (blk->orig_data[4 * idx + 3] - 0.5f) * 2.0f;
+                        float denom = 1.0f - x * x - y * y;
                         if (denom < 0.1f)
                             denom = 0.1f;
                         denom = 1.0f / denom;
-                        error_weight.x *= 1.0f + x1 * x1 * denom;
-                        error_weight.w *= 1.0f + y1 * y1 * denom;
+                        error_weight.x *= 1.0f + x * x * denom;
+                        error_weight.w *= 1.0f + y * y * denom;
                     }
 
                     if (ewp->enable_rgb_scale_with_alpha)
@@ -974,15 +972,15 @@ float prepare_error_weight_block(const astc_codec_image * input_image,
                         if (r < 0.0031308f)
                             r = 12.92f;
                         else
-                            r = (float)(0.4396f * pow(r, -0.58333f));
+                            r = 0.4396f * pow(r, -0.58333f);
                         if (g < 0.0031308f)
                             g = 12.92f;
                         else
-                            g = (float)(0.4396f * pow(g, -0.58333f));
+                            g = 0.4396f * pow(g, -0.58333f);
                         if (b < 0.0031308f)
                             b = 12.92f;
                         else
-                            b = (float)(0.4396f * pow(b, -0.58333f));
+                            b = 0.4396f * pow(b, -0.58333f);
                         error_weight.x *= r;
                         error_weight.y *= g;
                         error_weight.z *= b;
@@ -999,7 +997,9 @@ float prepare_error_weight_block(const astc_codec_image * input_image,
                     // error weights by the derivative of the inverse of the transfer function,
                     // which is equivalent to dividing by the derivative of the transfer
                     // function.
-                    
+
+                    ewbo->error_weights[idx] = error_weight;
+
                     error_weight.x /= (blk->deriv_data[4 * idx] * blk->deriv_data[4 * idx] * 1e-10f);
                     error_weight.y /= (blk->deriv_data[4 * idx + 1] * blk->deriv_data[4 * idx + 1] * 1e-10f);
                     error_weight.z /= (blk->deriv_data[4 * idx + 2] * blk->deriv_data[4 * idx + 2] * 1e-10f);
@@ -1133,12 +1133,12 @@ void prepare_block_statistics(int xdim, int ydim, int zdim, const imageblock * b
     float bb_var = cov_matrix.v[2].z;
     float aa_var = cov_matrix.v[3].w;
 
-    float rg_correlation = (float)(cov_matrix.v[0].y / sqrt(MAX(rr_var * gg_var, 1e-30f)));
-    float rb_correlation = (float)(cov_matrix.v[0].z / sqrt(MAX(rr_var * bb_var, 1e-30f)));
-    float ra_correlation = (float)(cov_matrix.v[0].w / sqrt(MAX(rr_var * aa_var, 1e-30f)));
-    float gb_correlation = (float)(cov_matrix.v[1].z / sqrt(MAX(gg_var * bb_var, 1e-30f)));
-    float ga_correlation = (float)(cov_matrix.v[1].w / sqrt(MAX(gg_var * aa_var, 1e-30f)));
-    float ba_correlation = (float)(cov_matrix.v[2].w / sqrt(MAX(bb_var * aa_var, 1e-30f)));
+    float rg_correlation = cov_matrix.v[0].y / sqrt(MAX(rr_var * gg_var, 1e-30f));
+    float rb_correlation = cov_matrix.v[0].z / sqrt(MAX(rr_var * bb_var, 1e-30f));
+    float ra_correlation = cov_matrix.v[0].w / sqrt(MAX(rr_var * aa_var, 1e-30f));
+    float gb_correlation = cov_matrix.v[1].z / sqrt(MAX(gg_var * bb_var, 1e-30f));
+    float ga_correlation = cov_matrix.v[1].w / sqrt(MAX(gg_var * aa_var, 1e-30f));
+    float ba_correlation = cov_matrix.v[2].w / sqrt(MAX(bb_var * aa_var, 1e-30f));
 
     if (astc_isnan(rg_correlation))
         rg_correlation = 1.0f;
@@ -1153,11 +1153,11 @@ void prepare_block_statistics(int xdim, int ydim, int zdim, const imageblock * b
     if (astc_isnan(ba_correlation))
         ba_correlation = 1.0f;
 
-    float lowest_correlation = (float)MIN(fabs(rg_correlation), fabs(rb_correlation));
-    lowest_correlation = (float)MIN(lowest_correlation, fabs(ra_correlation));
-    lowest_correlation = (float)MIN(lowest_correlation, fabs(gb_correlation));
-    lowest_correlation = (float)MIN(lowest_correlation, fabs(ga_correlation));
-    lowest_correlation = (float)MIN(lowest_correlation, fabs(ba_correlation));
+    float lowest_correlation = MIN(fabs(rg_correlation), fabs(rb_correlation));
+    lowest_correlation = MIN(lowest_correlation, fabs(ra_correlation));
+    lowest_correlation = MIN(lowest_correlation, fabs(gb_correlation));
+    lowest_correlation = MIN(lowest_correlation, fabs(ga_correlation));
+    lowest_correlation = MIN(lowest_correlation, fabs(ba_correlation));
     *lowest_correl = lowest_correlation;
 
     // compute a "normal-map" factor
@@ -1176,7 +1176,7 @@ void prepare_block_statistics(int xdim, int ydim, int zdim, const imageblock * b
                             blk->orig_data[4 * i + 2]);
         val = (val - float3(0.5f, 0.5f, 0.5f)) * 2.0f;
         float length_squared = dot(val, val);
-        float nf = (float)fabs(length_squared - 1.0f);
+        float nf = fabs(length_squared - 1.0f);
         nf_sum += nf;
     }
     float nf_avg = nf_sum / texels_per_block;
@@ -1237,9 +1237,9 @@ void compress_constant_color_block(int xdim, int ydim, int zdim, const imagebloc
         else if (avg_blue > 65535)
             avg_blue = 65535;
 
-        avg_color.x = sf16_to_float(lns_to_sf16((uint16_t)avg_red));
-        avg_color.y = sf16_to_float(lns_to_sf16((uint16_t)avg_green));
-        avg_color.z = sf16_to_float(lns_to_sf16((uint16_t)avg_blue));
+        avg_color.x = sf16_to_float(lns_to_sf16(avg_red));
+        avg_color.y = sf16_to_float(lns_to_sf16(avg_green));
+        avg_color.z = sf16_to_float(lns_to_sf16(avg_blue));
     }
     else
     {
@@ -1256,7 +1256,7 @@ void compress_constant_color_block(int xdim, int ydim, int zdim, const imagebloc
         else if (avg_alpha > 65535)
             avg_alpha = 65535;
 
-        avg_color.w = sf16_to_float(lns_to_sf16((uint16_t)avg_alpha));
+        avg_color.w = sf16_to_float(lns_to_sf16(avg_alpha));
     }
     else
     {
@@ -1408,6 +1408,9 @@ float compress_symbolic_block(const astc_codec_image * input_image,
             }
         #endif
 
+        //if (print_tile_errors)
+        //    printf("0\n");
+
         physical_compressed_block psb = symbolic_to_physical(xdim, ydim, zdim, scb);
         physical_to_symbolic(xdim, ydim, zdim, psb, scb);
 
@@ -1415,9 +1418,11 @@ float compress_symbolic_block(const astc_codec_image * input_image,
     }
 
     error_weight_block *ewb = new error_weight_block;
+    error_weight_block_orig *ewbo = new error_weight_block_orig;
+
     float error_weight_sum = prepare_error_weight_block(input_image,
                                                         xdim, ydim, zdim,
-                                                        ewp, blk, ewb);
+                                                        ewp, blk, ewb, ewbo);
 
     #ifdef DEBUG_PRINT_DIAGNOSTICS
         if (print_diagnostics)
@@ -1441,11 +1446,53 @@ float compress_symbolic_block(const astc_codec_image * input_image,
 
     imageblock *temp = new imageblock;
 
-    float best_errorvals_in_modes[15];
-    for (i = 0; i < 15; i++)
+    float best_errorvals_in_modes[17];
+    for (i = 0; i < 17; i++)
         best_errorvals_in_modes[i] = 1e30f;
 
     int uses_alpha = imageblock_uses_alpha(xdim, ydim, zdim, blk);
+
+
+    // compression of average-color blocks disabled for the time being;
+    // they produce extremely severe block artifacts.
+#if 0
+    // first, compress an averaged-color block
+    compress_constant_color_block(xdim, ydim, zdim, blk, ewb, scb);
+
+    decompress_symbolic_block(decode_mode, xdim, ydim, zdim, xpos, ypos, zpos, scb, temp);
+
+    float avgblock_errorval = compute_imageblock_difference(xdim, ydim, zdim,
+                                                            blk, temp, ewb) * 4.0f;    // bias somewhat against the average-color block.
+
+    #ifdef DEBUG_PRINT_DIAGNOSTICS
+        if (print_diagnostics)
+        {
+            printf("\n-----------------------------------\n");
+            printf("Average-color block test completed\n");
+            printf("Resulting error value: %g\n", avgblock_errorval);
+        }
+    #endif
+
+
+    if (avgblock_errorval < error_of_best_block)
+    {
+        #ifdef DEBUG_PRINT_DIAGNOSTICS
+            if (print_diagnostics)
+                printf("Accepted as better than previous-best-error, which was %g\n", error_of_best_block);
+        #endif
+
+        error_of_best_block = avgblock_errorval;
+        // *scb = tempblocks[j];
+        modesel = 0;
+    }
+
+    #ifdef DEBUG_PRINT_DIAGNOSTICS
+        if (print_diagnostics)
+        {
+            printf("-----------------------------------\n");
+        }
+    #endif
+#endif
 
 
     float mode_cutoff = ewp->block_mode_cutoff;
@@ -1458,6 +1505,11 @@ float compress_symbolic_block(const astc_codec_image * input_image,
     float errorval_mult[2] = { 2.5, 1 };
     modecutoffs[0] = 0;
     modecutoffs[1] = mode_cutoff;
+
+    #if 0
+        if ((error_of_best_block / error_weight_sum) < ewp->texel_avg_error_limit)
+            goto END_OF_TESTS;
+    #endif
 
     float best_errorval_in_mode;
     for (i = 0; i < 2; i++)
@@ -1635,7 +1687,7 @@ float compress_symbolic_block(const astc_codec_image * input_image,
                 }
             }
 
-            best_errorvals_in_modes[4 * (partition_count - 2) + 5 + i] = best_errorval_in_mode;
+            best_errorvals_in_modes[4 * (partition_count - 2) + 5] = best_errorval_in_mode;
 
             #ifdef DEBUG_PRINT_DIAGNOSTICS
                 if (print_diagnostics)
@@ -1704,7 +1756,7 @@ float compress_symbolic_block(const astc_codec_image * input_image,
                 }
             }
 
-            best_errorvals_in_modes[4 * (partition_count - 2) + 5 + 2 + i] = best_errorval_in_mode;
+            best_errorvals_in_modes[4 * (partition_count - 2) + 5 + 2] = best_errorval_in_mode;
 
             #ifdef DEBUG_PRINT_DIAGNOSTICS
                 if (print_diagnostics)
@@ -1720,17 +1772,38 @@ float compress_symbolic_block(const astc_codec_image * input_image,
 
   END_OF_TESTS:
 
+    #if 0
+        if (print_statistics)
+        {
+            for (i = 0; i < 13; i++)
+                printf("%f ", best_errorvals_in_modes[i]);
+    
+            printf("%d  %f  %f  %f ", modesel, error_of_best_block,
+                MIN(best_errorvals_in_modes[1], best_errorvals_in_modes[2]) / best_errorvals_in_modes[0],
+                MIN(MIN(best_errorvals_in_modes[7], best_errorvals_in_modes[8]), best_errorvals_in_modes[9]) / best_errorvals_in_modes[0]);
+    
+            printf("\n");
+        }
+    #endif
+
     if (scb->block_mode >= 0)
         block_mode_histogram[scb->block_mode & 0x7ff]++;
 
     delete[]tempblocks;
     delete temp;
     delete ewb;
+    delete ewbo;
 
     // compress/decompress to a physical block
 
+
     physical_compressed_block psb = symbolic_to_physical(xdim, ydim, zdim, scb);
     physical_to_symbolic(xdim, ydim, zdim, psb, scb);
+
+
+    //if (print_tile_errors)
+    //    printf("%g\n", error_of_best_block);
+
 
     // mean squared error per color component.
     return error_of_best_block / ((float)xdim * ydim * zdim);

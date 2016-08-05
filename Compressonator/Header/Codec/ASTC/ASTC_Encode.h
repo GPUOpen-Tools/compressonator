@@ -28,4 +28,37 @@
 #include <float.h>
 #include "ASTC_definitions.h"
 
+class ASTCBlockEncoder
+{
+public:
+
+    ASTCBlockEncoder()
+    {
+    };
+
+
+    ~ASTCBlockEncoder()
+    {
+    };
+
+    // This routine compresses a block and returns the RMS error
+    double CompressBlock(
+        astc_codec_image *input_image,
+        uint8_t *bp,
+        int xdim,
+        int ydim,
+        int zdim,
+        int x,
+        int y,
+        int z,
+        astc_decode_mode decode_mode,
+        const error_weighting_params * ewp
+        );
+
+private:
+    imageblock                  m_pb;
+    symbolic_compressed_block   m_scb;
+    physical_compressed_block   m_pcb;
+};
+
 #endif

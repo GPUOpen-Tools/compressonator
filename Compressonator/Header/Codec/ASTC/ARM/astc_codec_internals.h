@@ -17,7 +17,7 @@
 
 #define ASTC_CODEC_INTERNALS_INCLUDED
 
-#include "arm_stdint.h"
+#include <stdint.h>
 #include <stdlib.h>
 #include "mathlib.h"
 
@@ -64,6 +64,9 @@ void astc_codec_internal_error(const char *filename, int linenumber);
 #ifdef DEBUG_PRINT_DIAGNOSTICS
     extern int print_diagnostics;
 #endif
+
+extern int print_tile_errors;
+extern int print_statistics;
 
 extern int perform_srgb_transform;
 extern int rgb_force_use_of_hdr;
@@ -284,6 +287,13 @@ struct error_weight_block
     float texel_weight_a[MAX_TEXELS_PER_BLOCK];
 
     int contains_zeroweight_texels;
+};
+
+
+
+struct error_weight_block_orig
+{
+    float4 error_weights[MAX_TEXELS_PER_BLOCK];
 };
 
 
@@ -726,7 +736,7 @@ void expand_block_artifact_suppression(int xdim, int ydim, int zdim, error_weigh
 // Returns the sum of all the error values set.
 float prepare_error_weight_block(const astc_codec_image * input_image,
                                  // dimensions of error weight block.
-                                 int xdim, int ydim, int zdim, const error_weighting_params * ewp, const imageblock * blk, error_weight_block * ewb);
+                                 int xdim, int ydim, int zdim, const error_weighting_params * ewp, const imageblock * blk, error_weight_block * ewb, error_weight_block_orig * ewbo);
 
 
 // functions pertaining to weight alignment

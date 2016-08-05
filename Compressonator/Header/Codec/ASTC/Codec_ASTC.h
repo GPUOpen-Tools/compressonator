@@ -85,10 +85,25 @@ private:
     int batch_size;
 
     // ASTC Encoders and decoders: for encoding use the interfaces below
-    HANDLE*              m_EncodingThreadHandle;
     ASTCBlockDecoder*    m_decoder;
-//  ASTCBlockEncoder*    m_encoder[MAX_ASTC_THREADS];
+    ASTCBlockEncoder*    m_encoder[MAX_ASTC_THREADS];
 
+    // Encoder interfaces
+    HANDLE*         m_EncodingThreadHandle;
+
+    CodecError      EncodeASTCBlock(
+        astc_codec_image *input_image,
+        uint8_t *bp,
+        int xdim,
+        int ydim,
+        int zdim,
+        int x,
+        int y,
+        int z,
+        astc_decode_mode decode_mode,
+        const error_weighting_params * ewp);
+
+    CodecError      FinishASTCEncoding();
     CodecError      InitializeASTCLibrary();
     CodecError      InitializeOCL();
     void            ReleaseOCL();
@@ -97,6 +112,15 @@ private:
     // Encoder interfaces
     void find_closest_blockdim_2d(float target_bitrate, int *x, int *y, int consider_illegal);
     void find_closest_blockdim_3d(float target_bitrate, int *x, int *y, int *z, int consider_illegal);
+
+    // Internal status 
+    BOOL     m_Use_MultiThreading;
+    WORD     m_LiveThreads;
+    WORD     m_LastThread;
+
+    // Speed and Quality
+    double  m_Quality;
+
 };
 
 #endif // !defined(_CODEC_ASTC_H_INCLUDED_)
