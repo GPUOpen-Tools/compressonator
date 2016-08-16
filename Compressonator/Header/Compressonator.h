@@ -74,7 +74,7 @@ typedef enum
    // Compression formats -----------------------------------------------------------------------------------
    CMP_FORMAT_ASTC,                       ///< ASTC (Adaptive Scalable Texture Compression) open texture compression standard
    CMP_FORMAT_ATI1N,                      ///< Single component compression format using the same technique as DXT5 alpha. Four bits per pixel.
-   CMP_FORMAT_ATI2N,                      ///<     Two component compression format using the same technique as DXT5 alpha. Designed for compression object space normal maps. Eight bits per pixel.
+   CMP_FORMAT_ATI2N,                      ///<     Two component compression format using the same technique as DXT5 alpha. Designed for compression of tangent space normal maps. Eight bits per pixel.
    CMP_FORMAT_ATI2N_XY,                   ///<    Two component compression format using the same technique as DXT5 alpha. The same as ATI2N but with the channels swizzled. Eight bits per pixel.
    CMP_FORMAT_ATI2N_DXT5,                 ///<    ATI2N like format using DXT5. Intended for use on GPUs that do not natively support ATI2N. Eight bits per pixel.
    CMP_FORMAT_ATC_RGB,                    ///< CMP - a compressed RGB format.
@@ -84,7 +84,7 @@ typedef enum
    CMP_FORMAT_BC2,                        ///< A four component compressed texture format with explicit alpha for Microsoft DirectX10. Identical to DXT3. Eight bits per pixel.
    CMP_FORMAT_BC3,                        ///< A four component compressed texture format with interpolated alpha for Microsoft DirectX10. Identical to DXT5. Eight bits per pixel.
    CMP_FORMAT_BC4,                        ///< A single component compressed texture format for Microsoft DirectX10. Identical to ATI1N. Four bits per pixel.
-   CMP_FORMAT_BC5,                        ///< A two component compressed texture format for Microsoft DirectX10. Identical to ATI2N. Eight bits per pixel.
+   CMP_FORMAT_BC5,                        ///< A two component compressed texture format for Microsoft DirectX10. Identical to ATI2N_XY. Eight bits per pixel.
    CMP_FORMAT_BC6H,                       ///< BC6H compressed texture format 
    CMP_FORMAT_BC7,                        ///< BC7  compressed texture format
    CMP_FORMAT_DXT1,                       ///< An DXTC compressed texture matopaque (or 1-bit alpha). Four bits per pixel.
