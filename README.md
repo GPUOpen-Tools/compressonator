@@ -54,8 +54,9 @@ Build Applications using Batch Files
 
 Simply run one of the batch files from a window console.
 
-To build the Compressonator GUI run BuildGUI
-To build the Compressonator Command line Tool run BuildCLI
+To build the Compressonator GUI run BuildGUI.
+
+To build the Compressonator Command line Tool run BuildCLI.
 
 
 

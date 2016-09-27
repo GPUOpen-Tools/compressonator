@@ -19,8 +19,6 @@ set BatchDir=%CD%
 echo --1
 IF EXIST %BatchDir%\Compressonator     (set COMPRESSONATOR_ROOT=%CD%\Compressonator)
 IF EXIST %BatchDir%\Common             (set COMMON_ROOT=%CD%\Common)
-IF EXIST %BatchDir%\..\Compressonator  (set COMPRESSONATOR_ROOT=%CD%\..\Compressonator)
-IF EXIST %BatchDir%\..\Common          (set COMMON_ROOT=%CD%\..\Common)
 IF [%COMPRESSONATOR_ROOT%]==[]         (set COMPRESSONATOR_ROOT=%CD%)
 echo --2
 
