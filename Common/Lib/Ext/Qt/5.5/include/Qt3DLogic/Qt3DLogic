@@ -1,7 +1,0 @@
-#ifndef QT_QT3DLOGIC_MODULE_H
-#define QT_QT3DLOGIC_MODULE_H
-#include <Qt3DLogic/Qt3DLogicDepends>
-#include "qlogicaspect.h"
-#include "qlogiccomponent.h"
-#include "qt3dlogicversion.h"
-#endif

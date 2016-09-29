@@ -1,0 +1,27 @@
+[submodule "Common/Lib/Ext/zlib"]
+	path = Common/Lib/Ext/zlib
+	url = https://github.com/GPUOpen-Tools/common-lib-ext-zlib-1.2.8.git
+[submodule "Common/Lib/Ext/tinyxml"]
+	path = Common/Lib/Ext/tinyxml
+	url = https://github.com/GPUOpen-Tools/common-lib-ext-tinyxml-2.6.2.git
+[submodule "Common/Lib/Ext/Vulkan"]
+	path = Common/Lib/Ext/Vulkan
+	url = https://github.com/GPUOpen-Tools/common-lib-ext-Vulkan-1.0.21.1.git
+[submodule "Common/Lib/Ext/Qt"]
+	path = Common/Lib/Ext/Qt
+	url = https://github.com/GPUOpen-Tools/common-lib-ext-Qt-5.5.git
+[submodule "Common/Lib/Ext/OpenGL"]
+	path = Common/Lib/Ext/OpenGL
+	url = https://github.com/GPUOpen-Tools/common-lib-ext-OpenGL.git
+[submodule "Common/Lib/Ext/OpenEXR"]
+	path = Common/Lib/Ext/OpenEXR
+	url = https://github.com/GPUOpen-Tools/common-lib-ext-OpenEXR-1.4.git
+[submodule "Common/Lib/Ext/OpenCV"]
+	path = Common/Lib/Ext/OpenCV
+	url = https://github.com/GPUOpen-Tools/common-lib-ext-OpenCV-2.49.git
+[submodule "Common/Lib/Ext/Boost"]
+	path = Common/Lib/Ext/Boost
+	url = https://github.com/GPUOpen-Tools/common-lib-ext-Boost-1.59.git
+[submodule "Common/Lib/AMD/APPSDK"]
+	path = Common/Lib/AMD/APPSDK
+	url = https://github.com/GPUOpen-Tools/common-lib-amd-APPSDK-3.0.git
