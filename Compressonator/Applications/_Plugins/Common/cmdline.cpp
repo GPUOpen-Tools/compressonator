@@ -449,6 +449,7 @@ bool ProcessCMDLineOptions(const  char *strCommand, const char *strParameter)
                 throw "DXT1UseAlpha value should be 1 or 0";
             }
             g_CmdPrams.CompressOptions.bDXT1UseAlpha = bool(value);
+            g_CmdPrams.CompressOptions.nAlphaThreshold = 128;  //default to 128
         }
 
         if (strcmp(strCommand, "-UseGPUDecompress") == 0)
