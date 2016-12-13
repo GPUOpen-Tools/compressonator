@@ -30,7 +30,7 @@ Added GPU based compressed image views using OpenGL, DirectX 11 and Vulkan
 Build Instructions for Windows 7 and up
 ------------------------------------------------------
 
-To build the applications you will need to have Visual Studio 2015 installed.
+To build the applications you will need to have Visual Studio 2015 installed and Qtv5.7 msvc2015 and msvc2015_64 opensource downloaded from Qt website.
 
 The directory of your workspace should be as follows
 
@@ -40,7 +40,7 @@ The directory of your workspace should be as follows
 - README.md
 
 
-It is also recommended that you install and configure Visual Studio Qt5 Package extension from MSDN Visual Studio Gallery, and set in Qt Options dialog, Qt Default Version name V5.5 and path to Common\Lib\Ext\Qt\5.5\bin
+It is also recommended that you install and configure Visual Studio Qt5 Package extension from MSDN Visual Studio Gallery, and set in Qt Options dialog, Qt Default Version name V5.7 and path to default download path C:\Qt\5.7\msvc2015_64\bin\
 
 https://visualstudiogallery.msdn.microsoft.com/c89ff880-8509-47a4-a262-e4fa07168408 
 
