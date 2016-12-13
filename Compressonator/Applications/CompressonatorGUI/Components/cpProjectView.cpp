@@ -32,6 +32,7 @@
 
 
 extern bool        g_bAbortCompression;
+bool g_useCPUEncode = true;
 static signalProcessMsgHandler static_processmsghandler;
 extern void GetSupportedFileFormats(QList<QByteArray> &g_supportedFormats);
 extern PluginManager g_pluginManager;
@@ -202,8 +203,8 @@ void ProjectView::SetupTreeView()
     m_contextMenu->addAction(actViewImageDiff);
     m_contextMenu->addAction(actSeperator);
     m_contextMenu->addAction(actRemoveImage);
-
-    // Progress Dialod During Compression
+    
+	// Progress Dialog During Compression
     m_pProgressDlg = new acProgressDlg();
     m_pProgressDlg->setParent(this);
     m_pProgressDlg->setWindowFlags(Qt::FramelessWindowHint|Qt::Window);
@@ -213,7 +214,6 @@ void ProjectView::SetupTreeView()
     m_pProgressDlg->SetRange(0, 100);
     m_pProgressDlg->hide();
 
-    //m_elapsedTimer.start(); 
 
 }
 
@@ -495,7 +495,15 @@ void ProjectView::Tree_AddCompressFile(QTreeWidgetItem *ParentItem, QString desc
 void ProjectView::setCurrentProjectName(QString filePathName)
 {
     QFileInfo fileInfo(filePathName);
-    QString filename(fileInfo.baseName());
+    QString filename;
+    if (filePathName.contains(".cprj"))
+        filename = fileInfo.completeBaseName();
+    else
+    {
+        QString fitempo = QString(filePathName + ".cprj");
+        QFileInfo fileInfo2(fitempo);
+        filename = fileInfo2.completeBaseName();
+    }
 
     if (fileInfo.isWritable())
     {
@@ -932,9 +940,14 @@ void ProjectView::onTree_ItemClicked(QTreeWidgetItem * item, int column)
                 sprintf(buffer, "%2.2f", CompressionRatio);
                 m_data->m_CompressionRatio =  QString("%1 to 1").arg(buffer);
             }
-            // Now we dont show the image on Click 
-            // emit OnDecompressImage();
-            // emit ViewImageFile(m_data->m_destFileNamePath, item);
+
+            if (file.exists())
+            {
+                m_CurrentCompressedImageItem = item;
+                emit OnDecompressImage();
+                emit ViewImageFile(m_data->m_destFileNamePath, item);
+            }
+
         }
         // Update the compression data poperty view for the item clicked
         SignalUpdateData(item,levelType);
@@ -978,41 +991,41 @@ void ProjectView::onTree_ItemDoubleClicked(QTreeWidgetItem * item, int column)
         emit AddCompressSettings(item);
     }
     break;
-    case TREETYPE_COMPRESSION_DATA:  // Display a Compressed Image Format only if it exists
-    {
-//       editing an existing compression setting
-//        QVariant v = item->data(1, Qt::UserRole);
-//        C_Destination_Options *m_data = v.value<C_Destination_Options *>();
-//        // Edit setting
-//        if (m_data)
-//        {
-//            m_data->m_editing = true;
-//            emit EditCompressSettings(item);
-//        }
-
-        // view image
-        QVariant v = item->data(1, Qt::UserRole);
-        C_Destination_Options *m_data = v.value<C_Destination_Options *>();
-        if (m_data)
-        {
-            QFileInfo fileinfo(m_data->m_destFileNamePath);
-            QFile file(m_data->m_destFileNamePath);
-
-            actViewImageDiff->setEnabled(file.exists());
-            
-            if (file.exists())
-            {
-                m_CurrentCompressedImageItem = item;
-                emit OnDecompressImage();
-                emit ViewImageFile(m_data->m_destFileNamePath, item);
-            }
-            // Update the compression data poperty view for the item clicked
-        }
-
-        // Show the Items Data 
-        SignalUpdateData(item, levelType);
-    }
-    break;
+//     case TREETYPE_COMPRESSION_DATA:  // Display a Compressed Image Format only if it exists
+//     {
+// //       editing an existing compression setting
+// //        QVariant v = item->data(1, Qt::UserRole);
+// //        C_Destination_Options *m_data = v.value<C_Destination_Options *>();
+// //        // Edit setting
+// //        if (m_data)
+// //        {
+// //            m_data->m_editing = true;
+// //            emit EditCompressSettings(item);
+// //        }
+// 
+//         // view image
+//         QVariant v = item->data(1, Qt::UserRole);
+//         C_Destination_Options *m_data = v.value<C_Destination_Options *>();
+//         if (m_data)
+//         {
+//             QFileInfo fileinfo(m_data->m_destFileNamePath);
+//             QFile file(m_data->m_destFileNamePath);
+// 
+//             actViewImageDiff->setEnabled(file.exists());
+//             
+//             if (file.exists())
+//             {
+//                 m_CurrentCompressedImageItem = item;
+//                 emit OnDecompressImage();
+//                 emit ViewImageFile(m_data->m_destFileNamePath, item);
+//             }
+//             // Update the compression data poperty view for the item clicked
+//         }
+// 
+//         // Show the Items Data 
+//         //SignalUpdateData(item, levelType);
+//     }
+//     break;
     //  case TREETYPE_IMAGEFILE_DATA:   // On an existing image item
     //  default:                    // any other item just update data views
     //  {
@@ -1869,10 +1882,9 @@ bool ProjectView::loadProjectFile(QString fileToLoad)
                                     else if (child.toElement().tagName() == "BlockRate") {
                                         QDomElement eleFD = child.toElement();
                                         QString BlockRate = eleFD.text();
-                                        bool ok;
                                         m_data->m_Bitrate = BlockRate;
-                                        if (!ok)
-                                            m_data->m_Bitrate = 8.00;  //4x4
+                                        if (BlockRate.length() < 2) // Default back to 4x4!
+                                            m_data->m_Bitrate = "8.00";
                                     }
                                     child = child.nextSibling();
                                 }
@@ -1959,42 +1971,6 @@ void ProjectView::onSetNewProject(QString &FilePathName)
 extern int      g_MipLevel;
 extern float    g_fProgress;
 
-MyThread::MyThread()
-{
-    // Progress Dialod During Compression
-    m_pProgressDlg = new acProgressDlg();
-    m_pProgressDlg->ShowCancelButton(true, &OnCancel);
-    m_pProgressDlg->SetHeader("");
-    m_pProgressDlg->SetLabelText("");
-    m_pProgressDlg->SetRange(0, 100);
-    m_pProgressDlg->hide();
-    Stop = false;
-}
-
-// run() will be called when a thread starts
-void MyThread::run()
-{
-    while (!Stop)
-    {
-        m_pProgressDlg->SetValue(g_fProgress);
-    }
-}
-
-void MyThread::show()
-{
-    m_pProgressDlg->show();
-}
-
-// run() will be called when a thread starts
-void MyThread::done()
-{
-    Stop = true;
-    m_pProgressDlg->hide();
-}
-
-
-extern MyThread *m_thread;
-
 bool ProgressCompressionCallback(float fProgress, DWORD_PTR pUser1, DWORD_PTR pUser2)
 {
     // Keep Qt responsive
@@ -2034,6 +2010,7 @@ void CompressFiles(
 
 
     ProjectView->m_CompressStatusDialog->showOutput();
+
     ProjectView->m_pProgressDlg->SetValue(0);
     ProjectView->m_pProgressDlg->SetHeader("Processing");
     ProjectView->m_pProgressDlg->SetLabelText("");
@@ -2242,6 +2219,24 @@ void CompressFiles(
                                     argvVec.back().push_back(0); // Terminate String
                                     argv.push_back(argvVec.back().data());
                                 }
+								
+								////using GPU to compress
+								if (!g_useCPUEncode) 
+								{
+									string format = key;
+									if (format == "BC1" || format == "DXT1" || format == "BC7")
+									{
+										msgCommandLine.append(" -useGPU ");
+										string usegpu = "-useGPU";
+										argvVec.push_back(CharArray(usegpu.begin(), usegpu.end()));
+										argvVec.back().push_back(0); // Terminate String
+										argv.push_back(argvVec.back().data());
+									}
+									else 
+									{
+										g_useCPUEncode = true;
+									}
+								}
 
                                 // MipLevels
                                 if (miplevels > 1)
@@ -2464,7 +2459,7 @@ void CompressFiles(
                                     if (data->m_Bitrate != setDefaultOptions.m_Bitrate)
                                     {
                                         // User Msg
-                                        QString value = data->m_Bitrate;
+                                        QString value = data->m_correctBitrate;
                                         msgCommandLine.append(" -BlockRate ");
                                         msgCommandLine.append(value);
                                         msgCommandLine.append(" ");
@@ -2509,7 +2504,9 @@ void CompressFiles(
                                     //Show Command line to user
                                     ProjectView->m_CompressStatusDialog->appendText(msgCommandLine);
                                     QString msg = "File: " + data->m_compname;
+
                                     ProjectView->m_pProgressDlg->SetLabelText(msg);
+
                                     emit ProjectView->OnProcessing(data->m_destFileNamePath);
                                     // Pass over the command line params
                                     if (ParseParams(argv.size(), (CMP_CHAR **)argv.data()))
@@ -2600,7 +2597,9 @@ void CompressFiles(
                                         }
 
                                     }
+
                                     ProjectView->m_pProgressDlg->SetValue(0);
+
                                     argvVec.clear();
                                     argv.clear();
                                 }
@@ -2668,9 +2667,9 @@ void CompressFiles(
     }
 
     ProjectView->m_pProgressDlg->hide();
+
     ProjectView->m_bCompressing = false;
     g_bAbortCompression = false;
-    m_thread->done();
 
 }
 
@@ -2678,6 +2677,7 @@ void CompressFiles(
 void ProjectView::compressProjectFiles(QFile *file)
 {
     if (m_CompressStatusDialog == NULL) return;
+
     if (m_pProgressDlg == NULL) return;
 
     g_bAbortCompression = false;
@@ -2699,9 +2699,6 @@ void ProjectView::compressProjectFiles(QFile *file)
 
     if (actRemoveImage)
         actRemoveImage->setEnabled(true);
-
-
-
 }
 
 void ProjectView::viewImageDiff()

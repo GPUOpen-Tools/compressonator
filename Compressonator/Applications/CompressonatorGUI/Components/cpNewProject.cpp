@@ -136,10 +136,13 @@ void cpNewProject::onPBOk()
     // Get file name as enetered by the user
     QString FileName = m_LEName->text();
 
-    // Remove any extension from file name
-    QFileInfo FileInfo(FileName);
-    FileName = FileInfo.baseName();
-    
+    // Remove cprj extension from file name
+    if (FileName.contains(".cprj"))
+    {
+        QFileInfo FileInfo(FileName);
+        FileName = FileInfo.baseName();
+    }
+   
     // Check if we have a name
     if (FileName.size() == 0)
     {

@@ -22,7 +22,6 @@
 //=====================================================================
 
 #include <QApplication>
-#include "appQtApplication.h"
 #include "cpMainComponents.h"
 #include "PluginManager.h"
 #include "mips.h"
@@ -46,30 +45,6 @@ extern void *make_Plugin_KTX();
 extern void *make_Plugin_TGA();
 extern void *make_Plugin_CAnalysis();
 
-#ifdef _DEBUG
-#pragma comment(lib,"CXLApplicationComponents-d.lib")
-#pragma comment(lib,"CXLApiClasses-d.lib")
-#pragma comment(lib,"CXLOSWrappers-d.lib")
-#pragma comment(lib,"CXLBaseTools-d.lib")
-#else
-#pragma comment(lib,"CXLApplicationComponents.lib")
-#pragma comment(lib,"CXLApiClasses.lib")
-#pragma comment(lib,"CXLOSWrappers.lib")
-#pragma comment(lib,"CXLBaseTools.lib")
-#endif
-
-#include <AMDTBaseTools/Include/gtAssert.h>
-#include <AMDTBaseTools/Include/gtList.h>
-#include <AMDTBaseTools/Include/gtString.h>
-#include <AMDTApplicationComponents/Include/acSendErrorReportDialog.h>
-#include <AMDTApplicationComponents/Include/acIcons.h>
-
-// CodeXL Error Reports
-#include <AMDTApplicationComponents/Include/acSendErrorReportDialog.h>
-#include <AMDTApplicationComponents/Include/acMessageBox.h>
-#include <AMDTApplicationComponents/Include/acSoftwareUpdaterWindow.h>
-
-
 #define SEPERATOR_STYLE "QMainWindow::separator { background-color: #d7d6d5; width: 3px; height: 3px; border:none; }"
 #define PERCENTAGE_OF_MONITOR_WIDTH_FOR_SCREEN  0.65
 #define PERCENTAGE_OF_MONITOR_HEIGHT_FOR_SCREEN 0.8
@@ -90,6 +65,7 @@ void GetSupportedFileFormats(QList<QByteArray> &g_supportedFormats)
         {
             QByteArray bArray = g_pluginManager.getPluginName(i);
             QByteArray fformat = bArray.toUpper();
+            if (fformat == "ANALYSIS") continue;
             if (!g_supportedFormats.contains(fformat))
                 g_supportedFormats.append(fformat);
         }
@@ -113,25 +89,20 @@ void GetSupportedFileFormats(QList<QByteArray> &g_supportedFormats)
 
 }
 
-MyThread *m_thread;
-
 int main(int argc, char **argv)
 {
 
     try
     {
-        osDebugLog& theDebugLog = osDebugLog::instance();
-        theDebugLog.initialize(L"Compressonator.log");
-
-        appQtApplication app(argc, argv);
+        QString dirPath = QApplication::applicationDirPath();
+        QApplication::addLibraryPath(dirPath + "./plugins/platforms/");
+        QApplication::addLibraryPath(dirPath + "./plugins/");
+        QApplication app(argc, argv);
 
         app.setWindowIcon(QIcon(":/CompressonatorGUI/Images/acompress-256.png"));
-
-
-        m_thread = new MyThread();
     
         // register the memory allocation failure event handler.
-        std::set_new_handler(appQtApplication::AppMemAllocFailureHandler);
+        //std::set_new_handler(appQtApplication::AppMemAllocFailureHandler);
 
         /// connect the Qt application to the slots that handle the out of memory signals:
         QObject::connect(qApp, SIGNAL(AppMemAllocFailureSignal()), qApp, SLOT(OnAppMemAllocFailureSignal()));
@@ -148,9 +119,6 @@ int main(int argc, char **argv)
     
         const QIcon iconPixMap(":/CompressonatorGUI/Images/compress.png");
         const QString ProductName = "Compressonator";
-        acSendErrorReportDialog *m_pSendErrorReportDialog = new acSendErrorReportDialog(NULL, ProductName, iconPixMap);
-        m_pSendErrorReportDialog->registerForRecievingDebuggedProcessEvents();
-    
         //----------------------------------
         // Load plugin List for processing
         //----------------------------------
@@ -159,8 +127,10 @@ int main(int argc, char **argv)
         g_pluginManager.registerStaticPlugin("IMAGE",  "DDS",       make_Plugin_DDS);
         g_pluginManager.registerStaticPlugin("IMAGE",  "EXR",       make_Plugin_EXR);
         g_pluginManager.registerStaticPlugin("IMAGE",  "KTX",       make_Plugin_KTX);
+
         // TGA is supported by Qt to some extent if it fails we will try to load it using our custom code
         g_pluginManager.registerStaticPlugin("IMAGE",  "TGA",       make_Plugin_TGA);
+
         g_pluginManager.registerStaticPlugin("FILTER", "BOXFILTER", make_Plugin_BoxFilter);
         g_pluginManager.registerStaticPlugin("IMAGE", "ANALYSIS",   make_Plugin_CAnalysis);
     
@@ -178,7 +148,7 @@ int main(int argc, char **argv)
         mainComponents.show();
     
         app.setStyleSheet(SEPERATOR_STYLE);
-        return app.exec();
+      return app.exec();
     }
     catch (std::exception &e)
     {

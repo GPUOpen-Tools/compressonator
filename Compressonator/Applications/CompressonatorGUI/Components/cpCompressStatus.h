@@ -37,9 +37,6 @@
 #include <qlayout.h>
 #include <QtWidgets>
 #include "acCustomDockWidget.h"
-// Progress Bar
-#include <AMDTApplicationComponents/Include/acProgressDlg.h>
-#include <AMDTApplicationComponents/Include/acApplicationComponentsDLLBuild.h>
 
 class CompressStatusDialog : 
     public QDockWidget
@@ -51,13 +48,13 @@ public:
     CompressStatusDialog(const QString title,QWidget *parent);
     ~CompressStatusDialog();
 
-	void appendText(QString text);
-	void showOutput();
-	void hideOutput();
+    void appendText(QString text);
+    void showOutput();
+    void hideOutput();
 
 private:
-	QTextBrowser  *m_textBrowser;
-	QPushButton   *m_btnClearText;
+    QTextBrowser  *m_textBrowser;
+    QPushButton   *m_btnClearText;
     QWidget       *m_newWidget;
     QHBoxLayout   *m_layoutH;
     QVBoxLayout   *m_layoutV;

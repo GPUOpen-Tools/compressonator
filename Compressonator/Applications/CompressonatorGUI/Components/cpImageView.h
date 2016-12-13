@@ -51,6 +51,7 @@ typedef struct{
     bool onBrightness;
     bool reloadImage;
     bool generateDiff;
+    bool generateMips;
 } Setting;
 
 class PushButtonAction : public QWidgetAction

@@ -25,3 +25,6 @@
 [submodule "Common/Lib/AMD/APPSDK"]
 	path = Common/Lib/AMD/APPSDK
 	url = https://github.com/GPUOpen-Tools/common-lib-amd-APPSDK-3.0.git
+[submodule "Common/Lib/Ext/glew"]
+	path = Common/Lib/Ext/glew
+	url = https://github.com/GPUOpen-Tools/common-lib-ext-glew-1.9.git

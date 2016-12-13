@@ -49,9 +49,9 @@ m_parent(parent)
     connect(variantManager, SIGNAL(valueChanged(QtProperty *, const QVariant &)),this, SLOT(valueChanged(QtProperty *, const QVariant &)));
     QtVariantEditorFactory *variantFactory = new QtVariantEditorFactory(this);
     
-	m_propertyEditor = new QtGroupBoxPropertyBrowser(this);
-	// m_propertyEditor = new QtTreePropertyBrowser(this); 
-	m_propertyEditor->setFactoryForManager(variantManager, variantFactory);
+    m_propertyEditor = new QtGroupBoxPropertyBrowser(this);
+    // m_propertyEditor = new QtTreePropertyBrowser(this); 
+    m_propertyEditor->setFactoryForManager(variantManager, variantFactory);
     
     SetDefaults();
 
@@ -122,11 +122,11 @@ void CGenMips::onGenerate()
 
 CGenMips::~CGenMips()
 {
-	if (m_cdata)
-	{
-		delete m_cdata;
-		m_cdata = NULL;
-	}
+    if (m_cdata)
+    {
+        delete m_cdata;
+        m_cdata = NULL;
+    }
 }
 
 

@@ -24,23 +24,10 @@
 #ifndef __CPSTARTUPPAGE_H
 #define __CPSTARTUPPAGE_H
 
-#include <QWebView>
-#include <QWebPage>
-
-// Infra:
-#include <AMDTOSWrappers/Include/osFilePath.h>
-// Infra:
-#include <AMDTBaseTools/Include/gtAssert.h>
-#include <AMDTBaseTools/Include/gtVector.h>
-#include <AMDTOSWrappers/Include/osDebuggingFunctions.h>
-#include <AMDTOSWrappers/Include/osFile.h>
-#include <AMDTOSWrappers/Include/osFileLauncher.h>
-#include <AMDTAPIClasses/Include/apFrameTerminators.h>
-#include <AMDTApplicationComponents/Include/acColours.h>
-#include <AMDTApplicationComponents/Include/acFunctions.h>
-#include <AMDTApplicationComponents/Include/acMessageBox.h>
-
-
+#include <QWebEngineView>
+#include <QWebEnginePage>
+#include <assert.h>
+#include <algorithm>
 
 // ----------------------------------------------------------------------------------
 // Class Name:          afWebPage: public QWebPage
@@ -50,7 +37,7 @@
 // Author:              Sigal Algranaty
 // Creation Date:       23/9/2014
 // ----------------------------------------------------------------------------------
-class afWebPage : public QWebPage
+class afWebPage : public QWebEnginePage
 {
     Q_OBJECT
 
@@ -65,9 +52,9 @@ Q_SIGNALS:
 
 
 protected:
-    // Overrides QWebPage: is used for catching requests from welcome page, and implement in Qt:
-    virtual void javaScriptConsoleMessage(const QString & message, int lineNumber, const QString & sourceID);
-    virtual bool acceptNavigationRequest(QWebFrame * frame, const QNetworkRequest & request, QWebPage::NavigationType type);
+    // Overrides QWebEnginePage: is used for catching requests from welcome page, and implement in Qt:
+    virtual void javaScriptConsoleMessage(JavaScriptConsoleMessageLevel level, const QString& message, int lineNumber, const QString& sourceID);
+    virtual bool acceptNavigationRequest(const QUrl &url, NavigationType type, bool isMainFrame);
 };
 
 // ----------------------------------------------------------------------------------
@@ -76,7 +63,7 @@ protected:
 // Author:              Sigal Algranaty
 // Creation Date:       23/9/2014
 // ----------------------------------------------------------------------------------
-class cpStartupPage : public QWebView
+class cpStartupPage : public QWebEngineView
 {
     Q_OBJECT
 
@@ -84,9 +71,7 @@ public:
 
     virtual ~cpStartupPage();
     cpStartupPage(QWidget * parent);
-
-    // Update from current recent projects:
-    bool UpdateHTML(gtVector<gtString>& projectsNames);
+    bool UpdateHTML(QVector<QString>& projectsNames);
 
 Q_SIGNALS:
     void PageButtonClick(QString &Request, QString &Msg);
@@ -101,13 +86,11 @@ protected:
 
 protected slots:
 
-    /// Slot handling the link clicked signal. Will open the links in an external window:
-    virtual void OnLinkClicked(const QUrl& link);
-
     /// Build the recently opened projects table, and replace it in the HTML text:
     /// \param htmlText the loaded HTML text (should contain dummy table for replacement)
     /// \return true for success (the text contain the expected table)
-    bool BuildRecentlyOpenedProjectsTable(QString& htmlText, gtVector<gtString>& recentlyUsedProjectsNames);
+    bool BuildRecentlyOpenedProjectsTable(QString& htmlText, QVector<QString>& recentlyUsedProjectsNames);
+
 };
 
 #endif //__CPSTARTUPPAGE_H

@@ -43,84 +43,84 @@ using namespace std;
 
 class PluginDetails
 {
-	public:
-		PluginDetails() { clearMembers(); }
+    public:
+        PluginDetails() { clearMembers(); }
         
-		~PluginDetails();
-		
-		PluginBase *makeNewInstance();
+        ~PluginDetails();
+        
+        PluginBase *makeNewInstance();
 
-		void setFileName(char * nm);
-		char *getName() { return pluginName; }
-		char *getType() { return pluginType; }
-		void setName(char * nm);		
-		void setType(char * nm);
+        void setFileName(char * nm);
+        char *getName() { return pluginName; }
+        char *getType() { return pluginType; }
+        void setName(char * nm);        
+        void setType(char * nm);
 
-		bool				isStatic;
-		PLUGIN_FACTORYFUNC  funcHandle;		
-		
-	private:
+        bool                isStatic;
+        PLUGIN_FACTORYFUNC  funcHandle;        
+        
+    private:
 
-		void clearMembers()
-		{
-			dllHandle = NULL;
-			isStatic  = false;
-		}
+        void clearMembers()
+        {
+            dllHandle = NULL;
+            isStatic  = false;
+        }
 
-		char filename[MAX_PLUGIN_STRING];
-		char pluginType[MAX_PLUGIN_STRING];
-		char pluginName[MAX_PLUGIN_STRING];
+        char filename[MAX_PLUGIN_STRING];
+        char pluginType[MAX_PLUGIN_STRING];
+        char pluginName[MAX_PLUGIN_STRING];
 
-		HINSTANCE           dllHandle;
+        HINSTANCE           dllHandle;
 
 };
 
 
 class PluginManager
 {
-	public:
-		PluginManager(){}
-		~PluginManager() { clearPluginList(); }
+    public:
+        PluginManager(){}
+        ~PluginManager() { clearPluginList(); }
 
-		void getPluginList(char * dirPath);
+        void getPluginList(char * dirPath);
 
-		void registerStaticPlugin(char *pluginType, char *pluginName, void *  makePlugin);
+        void registerStaticPlugin(char *pluginType, char *pluginName, void *  makePlugin);
 
-		PluginBase * makeNewPluginInstance(int index)
-		{
-			return pluginRegister.at(index)->makeNewInstance();
-		}
-		
-		int getNumPlugins()
-		{
-			return int(pluginRegister.size());
-		}
-		
-		char * getPluginName(int index)
-		{
-			return pluginRegister.at(index)->getName();
-		}
-		
+        PluginBase * makeNewPluginInstance(int index)
+        {
+            return pluginRegister.at(index)->makeNewInstance();
+        }
+        
+        int getNumPlugins()
+        {
+            return int(pluginRegister.size());
+        }
+        
+        char * getPluginName(int index)
+        {
+            return pluginRegister.at(index)->getName();
+        }
+        
         char * getPluginType(int index)
-		{
-			return pluginRegister.at(index)->getType();
-		}
+        {
+            return pluginRegister.at(index)->getType();
+        }
 
-		void *GetPlugin(char *type, char *name)
-		{
-			int numPlugins = getNumPlugins();
-			for (int i=0; i< numPlugins; i++)
-			{
+        void *GetPlugin(char *type, char *name)
+        {
+            int numPlugins = getNumPlugins();
+            for (int i=0; i< numPlugins; i++)
+            {
                 //char * Type = getPluginType(i);
                 //char * Name = getPluginName(i);
-				if ( (strcmp(getPluginType(i),type) == 0) && 
-					 (strcmp(getPluginName(i),name)   == 0))
-				{
-						return ( (void *)makeNewPluginInstance(i) );
-				}
-			}
-			return (NULL);
-		}
+                if ( (strcmp(getPluginType(i),type) == 0) && 
+                     (strcmp(getPluginName(i),name)   == 0))
+                {
+                        return ( (void *)makeNewPluginInstance(i) );
+                }
+            }
+            return (NULL);
+        }
 
 
         bool PluginSupported(char *type, char *name)
@@ -138,18 +138,18 @@ class PluginManager
             return (false);
         }
 
-	private:
+    private:
 
-		void clearPluginList()
-		{
-			for (unsigned int i = 0; i < pluginRegister.size(); i++)
-			{
-				delete pluginRegister.at(i);
-				pluginRegister.at(i) = NULL;
-			}	
-			pluginRegister.clear();
-		}
-		vector<PluginDetails*> pluginRegister;
+        void clearPluginList()
+        {
+            for (unsigned int i = 0; i < pluginRegister.size(); i++)
+            {
+                delete pluginRegister.at(i);
+                pluginRegister.at(i) = NULL;
+            }    
+            pluginRegister.clear();
+        }
+        vector<PluginDetails*> pluginRegister;
 };
 
 #endif

@@ -189,7 +189,7 @@ int Plugin_EXR::TC_PluginFileSaveTexture(const TCHAR* pszFilename, CMP_Texture *
     int  image_height    = srcTexture->dwHeight;
     Array2D<Rgba> pixels (image_height,image_width);
     string sFile = pszFilename;
-    Texture2Rgba((float *)srcTexture->pData, pixels, image_width, image_height, false);
+    Texture2Rgba((float *)srcTexture->pData, pixels, image_width, image_height, CMP_FORMAT_Unknown);
     Exr::writeRgba(sFile,pixels,image_width,image_height);
     return 0;
 }
@@ -202,18 +202,16 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
 {
     if (!boost::filesystem::exists( pszFilename )) return -1;
 
-    // NP The MIP Level feature is disabled for EXR loading
-    // code works on loading and compression, but saving Tiled file is unvarifiable 
-    // and seens to produce all tiles overlapping at origin
-    pMipSet->m_Flags |= MS_FLAG_DisableMipMapping;
+    // uncomment the flag below to disable EXR mipmap loading / load only level 0
+    // pMipSet->m_Flags |= MS_FLAG_DisableMipMapping;
     
     string inf = pszFilename;
-    int version;
+    bool isTile = false;
 
     try
     {
         RgbaInputFile fileInfo(pszFilename);
-        version = fileInfo.version();
+        isTile = Imf::isTiled(fileInfo.version());   
     }
     catch (std::exception& e)
     {
@@ -222,9 +220,8 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
         return PE_Unknown;
     }
 
-    
-    // Check if file is tiled!
-    if ((!(version & TILED_FLAG)) || ((pMipSet->m_Flags & MS_FLAG_DisableMipMapping)))
+    // Check if file is tiled
+    if ((!(isTile)) || ((pMipSet->m_Flags & MS_FLAG_DisableMipMapping)))
     { 
         Array2D<Rgba> pixels;
         int width, height;
@@ -271,55 +268,48 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
 
         free(srcTexture.pData);
     }
-else // File is tiled
-{
-
-    TiledRgbaInputFile file(pszFilename);
-
-    if(!file.isComplete())
-        return PE_Unknown;
-
-    DWORD dwWidth  = file.levelWidth(0);
-    DWORD dwHeight = file.levelHeight(0);
-
-    if(!EXR_CMips->AllocateMipSet(pMipSet, CF_Float32, TDT_ARGB, TT_2D, dwWidth, dwHeight, 1))
-    {
-        return PE_Unknown;
-    }
-
-    pMipSet->m_dwFourCC = 0;
-    pMipSet->m_dwFourCC2 = 0;
-    pMipSet->m_nMipLevels = (file.levelMode() == MIPMAP_LEVELS) ? file.numLevels() : 1;
-
-    Array2D<Rgba> pixels;
+    else // File is tiled
+    {  
+        TiledRgbaInputFile file(pszFilename);
     
-    for(int i = 0; i < pMipSet->m_nMipLevels; i++)
-    {
-        if(!file.isValidLevel(i, i))
-        {
-            pMipSet->m_nMipLevels = i;
-            break;
-        }
-
-        Imath::Box2i dw = file.dataWindowForLevel(i);
-
-        dwWidth  = file.levelWidth(i);
-        dwHeight = file.levelHeight(i);
-
-        pixels.resizeErase(dwWidth, dwHeight);
-
-        Rgba* pSrcData = &pixels[0][0] - dw.min.x - dw.min.y * dwWidth;
-        file.setFrameBuffer(pSrcData, 1, dwWidth);
-        file.readTiles(0, file.numXTiles(i) - 1, 0, file.numYTiles(i) - 1, i);
-
-        // Allocate the permanent buffer and unpack the bitmap data into it
-        if(!EXR_CMips->AllocateMipLevelData(EXR_CMips->GetMipLevel(pMipSet, i), dwWidth, dwHeight, CF_Float32, pMipSet->m_TextureDataType))
+        if(!file.isComplete())
             return PE_Unknown;
+    
+        DWORD dwWidth  = file.levelWidth(0);
+        DWORD dwHeight = file.levelHeight(0);
+    
+        if(!EXR_CMips->AllocateMipSet(pMipSet, CF_Float32, TDT_ARGB, TT_2D, dwWidth, dwHeight, 1))
+        {
+            return PE_Unknown;
+        }
+    
+        pMipSet->m_dwFourCC = 0;
+        pMipSet->m_dwFourCC2 = 0;
+        pMipSet->m_nMipLevels = (file.levelMode() == MIPMAP_LEVELS) ? file.numLevels() : 1;
+        
+        for(int i = 0; i < pMipSet->m_nMipLevels; i++)
+        {
+            if(!file.isValidLevel(i, i))
+            {
+                pMipSet->m_nMipLevels = i;
+                break;
+            }
+    
+            dwWidth  = file.levelWidth(i);
+            dwHeight = file.levelHeight(i);
+            Array2D<Rgba> pixels(dwHeight, dwWidth);
+            pixels.resizeErase(dwHeight, dwWidth);
 
-        pSrcData = &pixels[0][0];
-        Rgba2Texture(pixels,(float *)EXR_CMips->GetMipLevel(pMipSet, i)->m_pbData,dwWidth,dwHeight);
-    }
-
+            file.setFrameBuffer(pixels[0], 1, dwWidth);
+            file.readTiles(0, file.numXTiles(i) - 1, 0, file.numYTiles(i) - 1, i);
+    
+            // Allocate the permanent buffer and unpack the bitmap data into it
+            if(!EXR_CMips->AllocateMipLevelData(EXR_CMips->GetMipLevel(pMipSet, i), dwWidth, dwHeight, CF_Float32, pMipSet->m_TextureDataType))
+                return PE_Unknown;
+    
+            Rgba2Texture(pixels,(float *)EXR_CMips->GetMipLevel(pMipSet, i)->m_pbData,dwWidth,dwHeight);
+        }
+    
     } // Tiled file
 
     return PE_OK;
@@ -357,23 +347,22 @@ int Plugin_EXR::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
     // Save Muliple MIP levels as TiledRGB 
     else    
     {
-            TiledRgbaOutputFile file(pszFilename, pMipSet->m_nWidth, pMipSet->m_nHeight, TILE_WIDTH, TILE_HEIGHT, levelMode, ROUND_DOWN);
-            Rgba* pOutputData = (Rgba*) malloc(EXR_CMips->GetMipLevel(pMipSet, 0)->m_dwLinearSize);
-    
-            for(int i = 0; i < file.numLevels(); i++)
+        TiledRgbaOutputFile file(pszFilename, pMipSet->m_nWidth, pMipSet->m_nHeight, TILE_WIDTH, TILE_HEIGHT, levelMode, ROUND_DOWN);
+        for(int i = 0; i < file.numLevels(); i++)
+        {
+            Array2D<Rgba> pixels(file.levelHeight(i), file.levelWidth(i));
+            pixels.resizeErase(file.levelHeight(i), file.levelWidth(i));
+            float *data = EXR_CMips->GetMipLevel(pMipSet, i)->m_pfData;
+            if(data)
             {
-            if(EXR_CMips->GetMipLevel(pMipSet, i)->m_pbData)
-            {
-                memcpy(pOutputData, EXR_CMips->GetMipLevel(pMipSet, i)->m_pbData, EXR_CMips->GetMipLevel(pMipSet, i)->m_dwLinearSize);
+                Texture2Rgba(data, pixels, file.levelWidth(i), file.levelHeight(i), pMipSet->m_isDeCompressed);
             }
             else
-                memset(pOutputData, 0, EXR_CMips->GetMipLevel(pMipSet, 0)->m_dwLinearSize);
-    
-            file.setFrameBuffer(pOutputData, 1, file.levelWidth(i));
+                memset(data, 0, EXR_CMips->GetMipLevel(pMipSet, 0)->m_dwLinearSize);
+            
+            file.setFrameBuffer(pixels[0], 1, file.levelWidth(i));
             file.writeTiles(0, file.numXTiles(i) - 1, 0, file.numYTiles(i) - 1, i);
-            }
-
-            free(pOutputData);
+        }
     }
 
     return PE_OK;

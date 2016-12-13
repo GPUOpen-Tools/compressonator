@@ -5,9 +5,17 @@
       <Configuration>Debug_MD</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug_MD|x64">
+      <Configuration>Debug_MD</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release_MD|Win32">
       <Configuration>Release_MD</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_MD|x64">
+      <Configuration>Release_MD</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
@@ -47,7 +55,17 @@
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v140</PlatformToolset>
@@ -57,32 +75,58 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\..\..\Common\Lib\Ext\Qt\Global-QT.props" />
+    <Import Project="..\..\..\..\..\Compressonator_Root.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\..\..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\..\..\Common\Lib\Ext\Qt\Global-QT.props" />
+    <Import Project="..\..\..\..\..\Compressonator_Root.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\..\..\Compressonator_Root.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">false</LinkIncremental>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" />
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
@@ -95,7 +139,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\CompressonatorGUI\Common;..\..\..\..\CompressonatorGUI\Components;..\..\..\..\..\Header;..\..\..\..\CImage\EXR;..\..\..\..\_Plugins\Common;..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\..\..\Common\Lib\Ext\OpenCV\2.49\include;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtCore;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtWidgets;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\Compute;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;..\..\..\..\CompressonatorGUI\Common;..\..\..\..\CompressonatorGUI\Components;..\..\..\..\..\Header;..\..\..\..\CImage\EXR;..\..\..\..\_Plugins\Common;..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\..\..\Common\Lib\Ext\OpenCV\2.49\include;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;$(Compressonator_QT)\include;$(Compressonator_QT)\include\QtCore;$(Compressonator_QT)\include\QtWidgets;$(Compressonator_QT)\include\QtGui;..\..\..\..\..\Header\Codec\ASTC\ARM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
@@ -105,7 +149,7 @@
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(OutDir)\..\;$(OutDir);..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\$(SolutionName)\$(Platform)\lib;..\..\..\..\..\..\Common\Lib\Ext\OpenCV\2.49\$(Platform)\VS2015\lib;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\lib\win32;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\vc14\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir)\..\;$(OutDir);..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\$(SolutionName)\$(Platform)\lib;..\..\..\..\..\..\Common\Lib\Ext\OpenCV\2.49\$(Platform)\VS2015\lib;$(Compressonator_QT)\lib;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\vc14\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>user32.lib;comctl32.lib;Imath_MDd.lib;IlmImf_MDd.lib;IlmThread_MDd.lib;Iex_MDd.lib;zlib_static_MDd.lib;Half_MDd.lib;Compressonator_MDd.lib;opencv_highgui249d.lib;opencv_imgproc249d.lib;opencv_core249d.lib</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
@@ -126,6 +170,45 @@
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
     </ProjectReference>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>..\..\..\..\..\Compute;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;..\..\..\..\CompressonatorGUI\Common;..\..\..\..\CompressonatorGUI\Components;..\..\..\..\..\Header;..\..\..\..\CImage\EXR;..\..\..\..\_Plugins\Common;..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\..\..\Common\Lib\Ext\OpenCV\2.49\include;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;$(Compressonator_QT)\include;$(Compressonator_QT)\include\QtCore;$(Compressonator_QT)\include\QtWidgets;$(Compressonator_QT)\include\QtGui;..\..\..\..\..\Header\Codec\ASTC\ARM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <BrowseInformation>true</BrowseInformation>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
+      <AdditionalLibraryDirectories>$(OutDir)\..\;$(OutDir);..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\$(SolutionName)\$(Platform)\lib;..\..\..\..\..\..\Common\Lib\Ext\OpenCV\2.49\$(Platform)\VS2015\lib;$(Compressonator_QT)\lib;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\vc14\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>user32.lib;comctl32.lib;Imath_MDd.lib;IlmImf_MDd.lib;IlmThread_MDd.lib;Iex_MDd.lib;zlib_static_MDd.lib;Half_MDd.lib;Compressonator_MDd.lib;opencv_highgui249d.lib;opencv_imgproc249d.lib;opencv_core249d.lib</AdditionalDependencies>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
+    <Lib>
+      <AdditionalDependencies>opencv_core249d.lib;opencv_highgui249d.lib;opencv_imgproc249d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\Lib\Ext\OpenCV\2.49\x64\VS2015\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
@@ -138,7 +221,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\CompressonatorGUI\Common;..\..\..\..\CompressonatorGUI\Components;..\..\..\..\..\Header;..\..\..\..\CImage\EXR;..\..\..\..\_Plugins\Common;..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\..\..\Common\Lib\Ext\OpenCV\2.49\include;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtCore;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtWidgets;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\include\QtGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\Compute;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;..\..\..\..\CompressonatorGUI\Common;..\..\..\..\CompressonatorGUI\Components;..\..\..\..\..\Header;..\..\..\..\CImage\EXR;..\..\..\..\_Plugins\Common;..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\..\..\Common\Lib\Ext\OpenCV\2.49\include;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;$(Compressonator_QT)\include;$(Compressonator_QT)\include\QtCore;$(Compressonator_QT)\include\QtWidgets;$(Compressonator_QT)\include\QtGui;..\..\..\..\..\Header\Codec\ASTC\ARM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -148,7 +231,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(OutDir)\..\;$(OutDir);..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\$(SolutionName)\$(Platform)\lib;..\..\..\..\..\..\Common\Lib\Ext\OpenCV\2.49\$(Platform)\VS2015\lib;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.5\lib\win32;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\vc14\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir)\..\;$(OutDir);..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\$(SolutionName)\$(Platform)\lib;..\..\..\..\..\..\Common\Lib\Ext\OpenCV\2.49\$(Platform)\VS2015\lib;$(Compressonator_QT)\lib;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\vc14\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>user32.lib;comctl32.lib;Imath_MD.lib;IlmImf_MD.lib;IlmThread_MD.lib;Iex_MD.lib;zlib_static_MD.lib;Half_MD.lib;Compressonator_MD.lib;opencv_highgui249.lib;opencv_imgproc249.lib;opencv_core249.lib</AdditionalDependencies>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
@@ -159,6 +242,44 @@
     </PostBuildEvent>
     <Lib>
       <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\Lib\Ext\OpenCV\2.49\win32\VS2015\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_core249.lib;opencv_highgui249.lib;opencv_imgproc249.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <OmitFramePointers>false</OmitFramePointers>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;APPLICATION_PLUGIN;CANALYSISEXR_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>..\..\..\..\..\Compute;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;..\..\..\..\CompressonatorGUI\Common;..\..\..\..\CompressonatorGUI\Components;..\..\..\..\..\Header;..\..\..\..\CImage\EXR;..\..\..\..\_Plugins\Common;..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\..\..\Common\Lib\Ext\OpenCV\2.49\include;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;$(Compressonator_QT)\include;$(Compressonator_QT)\include\QtCore;$(Compressonator_QT)\include\QtWidgets;$(Compressonator_QT)\include\QtGui;..\..\..\..\..\Header\Codec\ASTC\ARM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
+      <AdditionalLibraryDirectories>$(OutDir)\..\;$(OutDir);..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Lib\$(SolutionName)\$(Platform)\lib;..\..\..\..\..\..\Common\Lib\Ext\OpenCV\2.49\$(Platform)\VS2015\lib;$(Compressonator_QT)\lib;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\vc14\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>user32.lib;comctl32.lib;Imath_MD.lib;IlmImf_MD.lib;IlmThread_MD.lib;Iex_MD.lib;zlib_static_MD.lib;Half_MD.lib;Compressonator_MD.lib;opencv_highgui249.lib;opencv_imgproc249.lib;opencv_core249.lib</AdditionalDependencies>
+      <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <Lib>
+      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\Lib\Ext\OpenCV\2.49\x64\VS2015\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opencv_core249.lib;opencv_highgui249.lib;opencv_imgproc249.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <ProjectReference>

@@ -1481,7 +1481,8 @@ void QtAbstractPropertyBrowserPrivate::removeBrowserIndex(QtBrowserItem *index)
     if (m_propertyToIndexes[property].isEmpty())
         m_propertyToIndexes.remove(property);
 
-    delete index;
+    if(index->d_ptr != nullptr)
+        delete index;
 }
 
 void QtAbstractPropertyBrowserPrivate::clearIndex(QtBrowserItem *index)

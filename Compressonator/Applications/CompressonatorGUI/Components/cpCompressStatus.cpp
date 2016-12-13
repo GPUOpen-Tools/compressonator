@@ -30,15 +30,15 @@ CompressStatusDialog::CompressStatusDialog(const QString title, QWidget *parent)
     // acCustomDockWidget(title, parent)
 {
     m_parent		= parent;
-	m_menu			= NULL;
-	m_btnClearText	= NULL;
-	m_layoutH		= NULL;
-	m_layoutV		= NULL;
-	m_clear			= NULL;
-	m_textBrowser	= NULL;
+    m_menu			= NULL;
+    m_btnClearText	= NULL;
+    m_layoutH		= NULL;
+    m_layoutV		= NULL;
+    m_clear			= NULL;
+    m_textBrowser	= NULL;
 
     m_newWidget = new QWidget(parent);
-	if (!m_newWidget) return;
+    if (!m_newWidget) return;
 
     // if (custTitleBar)
     // {
@@ -52,26 +52,26 @@ CompressStatusDialog::CompressStatusDialog(const QString title, QWidget *parent)
     //setWindowFlags(Qt::Dialog | Qt::WindowStaysOnTopHint);
 
     m_textBrowser = new QTextBrowser(this);
-	m_textBrowser->setMinimumHeight(32);
-	m_textBrowser->setReadOnly(true);
+    m_textBrowser->setMinimumHeight(32);
+    m_textBrowser->setReadOnly(true);
     m_textBrowser->setAcceptRichText(true);
-	
-	/*
+    
+    /*
     This code has a clear button and widget above the editor
     Enable it if you want to use it or add addition items to the output window
     by defining USE_CLEAR_WIDGET
     */
 #ifdef USE_CLEAR_WIDGET
-	m_textBrowser->setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(m_textBrowser, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(OnshowContextMenu(const QPoint&)));
+    m_textBrowser->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(m_textBrowser, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(OnshowContextMenu(const QPoint&)));
 
-	m_menu = m_textBrowser->createStandardContextMenu();
-	m_clear = new QAction(tr("&Clear text"), this);
-	if (m_clear)
-	{
-		connect(m_clear, SIGNAL(triggered()), this, SLOT(onClearText()));
-	}
-	m_menu->addAction(m_clear);
+    m_menu = m_textBrowser->createStandardContextMenu();
+    m_clear = new QAction(tr("&Clear text"), this);
+    if (m_clear)
+    {
+        connect(m_clear, SIGNAL(triggered()), this, SLOT(onClearText()));
+    }
+    m_menu->addAction(m_clear);
 
 
     m_newWidget = new QWidget(this);
@@ -113,25 +113,25 @@ CompressStatusDialog::~CompressStatusDialog()
 
 void CompressStatusDialog::showOutput()
 {
-	show();
+    show();
 }
 
 void CompressStatusDialog::hideOutput()
 {
-	hide();
+    hide();
 }
 
 
 void CompressStatusDialog::appendText(QString text)
 {
-	if (m_textBrowser)
-		m_textBrowser->append(text);
+    if (m_textBrowser)
+        m_textBrowser->append(text);
 }
 
 void CompressStatusDialog::onClearText()
 {
-	if (m_textBrowser)
-		m_textBrowser->clear();
+    if (m_textBrowser)
+        m_textBrowser->clear();
 }
 
 void CompressStatusDialog::onShowContextMenu(const QPoint& point)

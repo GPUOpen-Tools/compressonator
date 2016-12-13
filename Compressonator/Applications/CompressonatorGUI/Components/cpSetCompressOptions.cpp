@@ -85,6 +85,7 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget *parent) :
     m_propBitrate = NULL;
     isEditing        = false;
     isInit           = false;
+    m_extnum         = 1;
 
     setWindowTitle(title);
     Qt::WindowFlags flags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
@@ -283,9 +284,9 @@ bool CSetCompressOptions::updateFileFormat(QFileInfo &fileinfo)
 
 void    CSetCompressOptions::onNameEditingFinished()
 {
-    m_data.m_compname = m_LEName->displayText();
-    m_data.m_FileInfoDestinationName = m_data.m_compname;
-    m_theController->update();
+    // m_data.m_compname = m_LEName->displayText();
+    // m_data.m_FileInfoDestinationName = m_data.m_compname;
+    // m_theController->update();
 }
 
 void CSetCompressOptions::onNameTextChanged(QString text)
@@ -300,8 +301,8 @@ void CSetCompressOptions::onNameTextChanged(QString text)
 void CSetCompressOptions::compressionValueChanged(QVariant &value)
 {
     C_Destination_Options::eCompression comp = (C_Destination_Options::eCompression &)value;
-    QMessageBox msgBox;
     bool ok = false;
+
     QString extension = "DDS";
     bool compressedOptions = false;
     bool colorWeightOptions = false;
@@ -537,8 +538,10 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("ASTC (Adaptive Scalable Texture Compression),lossy block-based texture compression developed with ARM.");
+        
         break;
     default:
+        m_infotext->clear();
         m_fileFormats->addItems(m_AllFileTypes);
         if (m_propQuality)
             m_propQuality->setEnabled(false);
@@ -603,6 +606,11 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         m_infotext->append("Destination file will be <b>Compressed</b> when processed");
     else
         m_infotext->append("Destination file will be <b>Transcoded</b> when processed");
+
+
+    // Update Compression Name
+    m_LEName->clear();
+    m_LEName->insert(m_data.m_compname + "_" + GetFormatString() + "_" + QString::number(m_extnum));
 }
 
 
@@ -735,6 +743,16 @@ void CSetCompressOptions::resetData()
 }
 
 
+QString CSetCompressOptions::GetFormatString()
+{
+    QMetaObject meta = C_Destination_Options::staticMetaObject;
+    int indexCompression = meta.indexOfEnumerator("eCompression");
+    QMetaEnum metaEnumCompression = meta.enumerator(indexCompression);
+    QString format = metaEnumCompression.valueToKey(m_data.m_Compression);
+    return format;
+}
+
+
 //===================================================================
 // Called just before the display of this editor 
 // normally called prior to Adding or Editing data
@@ -746,15 +764,17 @@ bool CSetCompressOptions::updateDisplayContent()
 
     m_dataOriginal << m_data;
 
-    // Compression Name
-    m_LEName->clear();
-    m_LEName->insert(m_data.m_compname);
-    m_data.m_FileInfoDestinationName = m_data.m_compname;
-
     // Check source file extension for special cases
     //m_data.m_settoUseOnlyBC6 = false;
     QFileInfo fi(m_data.m_sourceFileNamePath);
-    QString ext = fi.suffix().toUpper();
+    m_srcext = fi.suffix().toUpper();
+
+    m_data.m_compname = m_data.m_compname + "_" + m_srcext;
+    m_data.m_FileInfoDestinationName = m_data.m_compname;
+    // Compression Name
+    m_LEName->clear();
+    m_LEName->insert(m_data.m_compname + "_" + GetFormatString()+ "_" + QString::number(m_extnum));
+
 
     // Update Property Managed Settings and content view
     m_theController->setObject(&m_data, true, true);

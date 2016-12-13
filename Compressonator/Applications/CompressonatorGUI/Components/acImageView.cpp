@@ -59,6 +59,7 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** i
     //Reserved: GPUDecode
 
     m_navVisible        = false;
+    m_isDiffView        = false;
     m_imageOrientation  = 0;
     m_ImageScale        = 100;
     m_MouseHandDown     = false;
@@ -622,6 +623,14 @@ void acImageView::onToggleChannelR()
     m_imageItem->m_ChannelR = !m_imageItem->m_ChannelR;
     m_imageItem->UpdateImage();
     m_imageItem->m_UseOriginalImage = false;
+
+    if (this->m_isDiffView)
+    {
+        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
+        {
+            this->onToggleImageBrightnessUp();
+        }
+    }
 }
 
 void acImageView::onToggleChannelG()
@@ -635,6 +644,14 @@ void acImageView::onToggleChannelG()
     m_imageItem->m_ChannelG = !m_imageItem->m_ChannelG;
     m_imageItem->UpdateImage();
     m_imageItem->m_UseOriginalImage = false;
+
+    if (this->m_isDiffView)
+    {
+        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
+        {
+            this->onToggleImageBrightnessUp();
+        }
+    }
 }
 
 void acImageView::onToggleChannelB()
@@ -648,6 +665,14 @@ void acImageView::onToggleChannelB()
     m_imageItem->m_ChannelB = !m_imageItem->m_ChannelB;
     m_imageItem->UpdateImage();
     m_imageItem->m_UseOriginalImage = false;
+
+    if (this->m_isDiffView)
+    {
+        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
+        {
+            this->onToggleImageBrightnessUp();
+        }
+    }
 }
 
 void acImageView::onToggleChannelA()
@@ -661,6 +686,14 @@ void acImageView::onToggleChannelA()
     m_imageItem->m_ChannelA = !m_imageItem->m_ChannelA;
     m_imageItem->UpdateImage();
     m_imageItem->m_UseOriginalImage = false;
+
+    if (this->m_isDiffView)
+    {
+        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
+        {
+            this->onToggleImageBrightnessUp();
+        }
+    }
 }
 
 void acImageView::onToggleGrayScale()
@@ -674,6 +707,14 @@ void acImageView::onToggleGrayScale()
     m_imageItem->m_GrayScale = !m_imageItem->m_GrayScale;
     m_imageItem->UpdateImage();
     m_imageItem->m_UseOriginalImage = false;
+
+    if (this->m_isDiffView)
+    {
+        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
+        {
+            this->onToggleImageBrightnessUp();
+        }
+    }
 }
 
 

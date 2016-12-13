@@ -33,6 +33,13 @@
 
 #include "softfloat.h"
 
+// Feature is been removed as of Aug 2016
+// #define CMP_Texture_IO_SUPPORTED
+
+#pragma comment(lib, "opengl32.lib")        // Open GL
+#pragma comment(lib, "Glu32.lib")           // Glu 
+#pragma comment(lib, "glew32.lib")          // glew 1.13.0
+
 CMIPS *KTX_CMips;
 
 #ifdef BUILD_AS_PLUGIN_DLL
@@ -47,7 +54,6 @@ uint32_t Endian_Conversion(uint32_t dword)
 {
     return (((dword>>24)&0x000000FF) | ((dword>>8)&0x0000FF00) | ((dword<<8)&0x00FF0000) | ((dword<<24)&0xFF000000));
 }
-
 
 Plugin_KTX::Plugin_KTX()
 { 
@@ -67,7 +73,6 @@ int Plugin_KTX::TC_PluginSetSharedIO(void* Shared)
     return 1;
 }
 
-
 int Plugin_KTX::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
 { 
     pPluginVersion->guid                    = g_GUID;
@@ -80,6 +85,7 @@ int Plugin_KTX::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
 
 int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture)
 {
+#ifdef CMP_Texture_IO_SUPPORTED
     assert(pszFilename);
 
     FILE* pFile = NULL;
@@ -306,10 +312,13 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, CMP_Texture *
     }
     fclose(pFile);
     return 0;
+#endif
+    return -1;
 }
 
 int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture)
 {
+#ifdef CMP_Texture_IO_SUPPORTED
     assert(pszFilename);
 
     FILE* pFile = NULL;
@@ -327,10 +336,10 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, CMP_Texture *
     BYTE* pData = NULL;
     BOOLEAN isCompressed = false;
 
-	//todo: textureinfo.numberOfFaces = 6; reserved for cubemap
+    //todo: textureinfo.numberOfFaces = 6; reserved for cubemap
     textureinfo.numberOfFaces = 1;
 
-	//todo: array textures
+    //todo: array textures
     textureinfo.numberOfArrayElements = 0;
 
     inputMip->data = srcTexture->pData;
@@ -367,9 +376,9 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, CMP_Texture *
     case  CMP_FORMAT_ARGB_16F:
     case  CMP_FORMAT_RG_16F:
     case  CMP_FORMAT_R_16F:
-		textureinfo.glType = GL_HALF_FLOAT;
-		textureinfo.glTypeSize = 1;
-		break;
+        textureinfo.glType = GL_HALF_FLOAT;
+        textureinfo.glTypeSize = 1;
+        break;
     case  CMP_FORMAT_ARGB_32F:
     case  CMP_FORMAT_RGB_32F:
     case  CMP_FORMAT_RG_32F:
@@ -525,8 +534,9 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, CMP_Texture *
     }
     fclose(pFile);
     return 0;
+#endif
+    return -1;
 }
-
 
 uint32_t ktx_u32_byterev(uint32_t v)
 {
@@ -792,7 +802,6 @@ static void copy_scanline(void *dst, const void *src, int pixels, int method)
     };
 }
 
-
 int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipSet)
 {
     FILE* pFile = NULL;
@@ -828,6 +837,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
         pMipSet->m_nBlockHeight = 4;
         pMipSet->m_nBlockWidth  = 4;
         pMipSet->m_nBlockDepth  = 1;
+        pMipSet->m_ChannelFormat = CF_Compressed;
 
         switch (fheader.glInternalFormat)
         {
@@ -1012,111 +1022,111 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
         switch (fheader.glType) 
         {
         case GL_UNSIGNED_BYTE:
-			pMipSet->m_ChannelFormat = CF_8bit;
-			switch (fheader.glFormat)
-			{
-			case GL_RED:
-				pMipSet->m_format = CMP_FORMAT_R_8;
-				pMipSet->m_TextureDataType = TDT_R;
-				break;
-			case GL_RG:
-				pMipSet->m_format = CMP_FORMAT_RG_8;
-				pMipSet->m_TextureDataType = TDT_RG;
-				break;
-			case GL_RGB:
-				pMipSet->m_format = CMP_FORMAT_RGB_888;
-				pMipSet->m_TextureDataType = TDT_XRGB;
-				break;
-			case GL_RGBA:
-				pMipSet->m_format = CMP_FORMAT_ARGB_8888;
-				pMipSet->m_TextureDataType = TDT_ARGB;
-				break;
-			case GL_BGR:
-				pMipSet->m_swizzle = true;
-				pMipSet->m_format = CMP_FORMAT_RGB_888;
-				pMipSet->m_TextureDataType = TDT_XRGB;
-				break;
-			case GL_BGRA:
-				pMipSet->m_swizzle = true;
-				pMipSet->m_format = CMP_FORMAT_ARGB_8888;
-				pMipSet->m_TextureDataType = TDT_ARGB;
-				break;
-			}
-			break;
-		case GL_UNSIGNED_SHORT:
-			pMipSet->m_ChannelFormat = CF_16bit;
-			switch (fheader.glFormat)
-			{
-			case GL_RED:
-				pMipSet->m_format = CMP_FORMAT_R_16;
-				pMipSet->m_TextureDataType = TDT_R;
-				break;
-			case GL_RG:
-				pMipSet->m_format = CMP_FORMAT_RG_16;
-				pMipSet->m_TextureDataType = TDT_RG;
-				break;
-			case GL_RGBA:
-				pMipSet->m_format = CMP_FORMAT_ARGB_16;
-				pMipSet->m_TextureDataType = TDT_ARGB;
-				break;
-			case GL_BGRA:
-				pMipSet->m_swizzle = true;
-				pMipSet->m_format = CMP_FORMAT_ARGB_16;
-				pMipSet->m_TextureDataType = TDT_ARGB;
-				break;
-			}
-			break;
-		case GL_HALF_FLOAT:
-			pMipSet->m_ChannelFormat = CF_Float16;
-			switch (fheader.glFormat)
-			{
-			case GL_RED:
-				pMipSet->m_format = CMP_FORMAT_R_16F;
-				pMipSet->m_TextureDataType = TDT_R;
-				break;
-			case GL_RG:
-				pMipSet->m_format = CMP_FORMAT_RG_16F;
-				pMipSet->m_TextureDataType = TDT_RG;
-				break;
-			case GL_RGBA:
-				pMipSet->m_format = CMP_FORMAT_ARGB_16F;
-				pMipSet->m_TextureDataType = TDT_ARGB;
-				break;
-			case GL_BGRA:
-				pMipSet->m_swizzle = true;
-				pMipSet->m_format = CMP_FORMAT_ARGB_16F;
-				pMipSet->m_TextureDataType = TDT_ARGB;
-				break;
-			}
-			break;
+            pMipSet->m_ChannelFormat = CF_8bit;
+            switch (fheader.glFormat)
+            {
+            case GL_RED:
+                pMipSet->m_format = CMP_FORMAT_R_8;
+                pMipSet->m_TextureDataType = TDT_R;
+                break;
+            case GL_RG:
+                pMipSet->m_format = CMP_FORMAT_RG_8;
+                pMipSet->m_TextureDataType = TDT_RG;
+                break;
+            case GL_RGB:
+                pMipSet->m_format = CMP_FORMAT_RGB_888;
+                pMipSet->m_TextureDataType = TDT_XRGB;
+                break;
+            case GL_RGBA:
+                pMipSet->m_format = CMP_FORMAT_ARGB_8888;
+                pMipSet->m_TextureDataType = TDT_ARGB;
+                break;
+            case GL_BGR:
+                pMipSet->m_swizzle = true;
+                pMipSet->m_format = CMP_FORMAT_RGB_888;
+                pMipSet->m_TextureDataType = TDT_XRGB;
+                break;
+            case GL_BGRA:
+                pMipSet->m_swizzle = true;
+                pMipSet->m_format = CMP_FORMAT_ARGB_8888;
+                pMipSet->m_TextureDataType = TDT_ARGB;
+                break;
+            }
+            break;
+        case GL_UNSIGNED_SHORT:
+            pMipSet->m_ChannelFormat = CF_16bit;
+            switch (fheader.glFormat)
+            {
+            case GL_RED:
+                pMipSet->m_format = CMP_FORMAT_R_16;
+                pMipSet->m_TextureDataType = TDT_R;
+                break;
+            case GL_RG:
+                pMipSet->m_format = CMP_FORMAT_RG_16;
+                pMipSet->m_TextureDataType = TDT_RG;
+                break;
+            case GL_RGBA:
+                pMipSet->m_format = CMP_FORMAT_ARGB_16;
+                pMipSet->m_TextureDataType = TDT_ARGB;
+                break;
+            case GL_BGRA:
+                pMipSet->m_swizzle = true;
+                pMipSet->m_format = CMP_FORMAT_ARGB_16;
+                pMipSet->m_TextureDataType = TDT_ARGB;
+                break;
+            }
+            break;
+        case GL_HALF_FLOAT:
+            pMipSet->m_ChannelFormat = CF_Float16;
+            switch (fheader.glFormat)
+            {
+            case GL_RED:
+                pMipSet->m_format = CMP_FORMAT_R_16F;
+                pMipSet->m_TextureDataType = TDT_R;
+                break;
+            case GL_RG:
+                pMipSet->m_format = CMP_FORMAT_RG_16F;
+                pMipSet->m_TextureDataType = TDT_RG;
+                break;
+            case GL_RGBA:
+                pMipSet->m_format = CMP_FORMAT_ARGB_16F;
+                pMipSet->m_TextureDataType = TDT_ARGB;
+                break;
+            case GL_BGRA:
+                pMipSet->m_swizzle = true;
+                pMipSet->m_format = CMP_FORMAT_ARGB_16F;
+                pMipSet->m_TextureDataType = TDT_ARGB;
+                break;
+            }
+            break;
         case GL_UNSIGNED_INT_2_10_10_10_REV:
             pMipSet->m_format = CMP_FORMAT_ARGB_2101010;
             pMipSet->m_TextureDataType = TDT_ARGB;
             pMipSet->m_ChannelFormat = CF_2101010;
             break;
         case GL_FLOAT:
-			pMipSet->m_ChannelFormat = CF_Float32;
-			switch (fheader.glFormat)
-			{
-			case GL_RED:
-				pMipSet->m_format = CMP_FORMAT_R_32F;
-				pMipSet->m_TextureDataType = TDT_R;
-				break;
-			case GL_RG:
-				pMipSet->m_format = CMP_FORMAT_RG_32F;
-				pMipSet->m_TextureDataType = TDT_RG;
-				break;
-			case GL_RGBA:
-				pMipSet->m_format = CMP_FORMAT_ARGB_32F;
-				pMipSet->m_TextureDataType = TDT_ARGB;
-				break;
-			case GL_BGRA:
-				pMipSet->m_swizzle = true;
-				pMipSet->m_format = CMP_FORMAT_ARGB_32F;
-				pMipSet->m_TextureDataType = TDT_ARGB;
-				break;
-			}
-			break;
+            pMipSet->m_ChannelFormat = CF_Float32;
+            switch (fheader.glFormat)
+            {
+            case GL_RED:
+                pMipSet->m_format = CMP_FORMAT_R_32F;
+                pMipSet->m_TextureDataType = TDT_R;
+                break;
+            case GL_RG:
+                pMipSet->m_format = CMP_FORMAT_RG_32F;
+                pMipSet->m_TextureDataType = TDT_RG;
+                break;
+            case GL_RGBA:
+                pMipSet->m_format = CMP_FORMAT_ARGB_32F;
+                pMipSet->m_TextureDataType = TDT_ARGB;
+                break;
+            case GL_BGRA:
+                pMipSet->m_swizzle = true;
+                pMipSet->m_format = CMP_FORMAT_ARGB_32F;
+                pMipSet->m_TextureDataType = TDT_ARGB;
+                break;
+            }
+            break;
             break;
         default:
             if (KTX_CMips)
@@ -1126,14 +1136,14 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
         }
     }
 
-	if (fheader.numberOfMipmapLevels == 0) fheader.numberOfMipmapLevels = 1;
-	if (fheader.numberOfArrayElements != 0)
-	{
-		if (KTX_CMips)
-			KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) array textures not supported %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.numberOfArrayElements);
-		fclose(pFile);
-		return -1;
-	}
+    if (fheader.numberOfMipmapLevels == 0) fheader.numberOfMipmapLevels = 1;
+    if (fheader.numberOfArrayElements != 0)
+    {
+        if (KTX_CMips)
+            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) array textures not supported %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.numberOfArrayElements);
+        fclose(pFile);
+        return -1;
+    }
 
     // Allocate MipSet header
     KTX_CMips->AllocateMipSet(pMipSet,
@@ -1143,17 +1153,6 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
         fheader.pixelWidth,
         fheader.pixelHeight,
         1);
-
-	int w = pMipSet->m_nWidth;
-	int h = pMipSet->m_nHeight;
-
-	for (int nMipLevel = 0; nMipLevel < fheader.numberOfMipmapLevels; nMipLevel++)
-	{
-		// Determine buffer size and set Mip Set Levels 
-		KTX_CMips->AllocateMipLevelData(KTX_CMips->GetMipLevel(pMipSet, nMipLevel), w, h, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType);
-		w = w >> 1;
-		h = h >> 1;
-	}
     
     pMipSet->m_nMipLevels = fheader.numberOfMipmapLevels;
     
@@ -1177,8 +1176,12 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
         return -1;
     }
 
-	for (int nMipLevel = 0; nMipLevel < fheader.numberOfMipmapLevels; nMipLevel++)
-	{
+
+    int w = pMipSet->m_nWidth;
+    int h = pMipSet->m_nHeight;
+
+    for (int nMipLevel = 0; nMipLevel < fheader.numberOfMipmapLevels; nMipLevel++)
+    {
         //load image size
         UINT imageByteCount = 0;
         if (fread((void*)&imageByteCount, 1, 4, pFile) != 4)
@@ -1189,23 +1192,36 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
             return -1;
         }
 
-		// We have allocated a data buffer to fill get its referance
-		BYTE* pData = (BYTE*)(KTX_CMips->GetMipLevel(pMipSet, nMipLevel)->m_pbData);
-		KTX_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize = imageByteCount;
-		//read image data
-		const UINT bytesRead = fread(pData, 1, imageByteCount, pFile);
-		if (bytesRead != imageByteCount)
-		{
-			if (KTX_CMips)
-				KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) Read image data failed. Format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
-			fclose(pFile);
-			return -1;
-		}
-	}
+        // Determine buffer size and set Mip Set Levels 
+        MipLevel *pMipLevel = KTX_CMips->GetMipLevel(pMipSet, nMipLevel);
+        if (pMipSet->m_compressed)
+            KTX_CMips->AllocateCompressedMipLevelData(pMipLevel, w, h, imageByteCount);
+        else
+            KTX_CMips->AllocateMipLevelData(pMipLevel, w, h, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType);
+
+        BYTE* pData = (BYTE*)(pMipLevel)->m_pbData;
+        //KTX_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize = imageByteCount;
+        //read image data
+        const UINT bytesRead = fread(pData, 1, imageByteCount, pFile);
+        if (bytesRead != imageByteCount)
+        {
+            if (KTX_CMips)
+                KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) Read image data failed. Format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
+            fclose(pFile);
+            return -1;
+        }
+
+        if ((w <= 1) || (h <= 1)) break;
+        else
+        {
+            w = w >> 1;
+            h = h >> 1;
+        }
+
+    }
 
     return 0;
 }
-
 
 int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipSet)
 {
@@ -1234,8 +1250,8 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
     else
         textureinfo.numberOfFaces = 1;
 
-	//todo: handle array textures
-	textureinfo.numberOfArrayElements = 0;
+    //todo: handle array textures
+    textureinfo.numberOfArrayElements = 0;
 
     if (pMipSet->m_pMipLevelTable == NULL)
     {
@@ -1244,23 +1260,23 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
         return -1;
     }
 
-	if (KTX_CMips->GetMipLevel(pMipSet, 0) == NULL)
-	{
-		if (KTX_CMips)
-			KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) saving file = %s "), EL_Error, IDS_ERROR_ALLOCATEMIPSET, pszFilename);
-		return -1;
-	}
+    if (KTX_CMips->GetMipLevel(pMipSet, 0) == NULL)
+    {
+        if (KTX_CMips)
+            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) saving file = %s "), EL_Error, IDS_ERROR_ALLOCATEMIPSET, pszFilename);
+        return -1;
+    }
 
-	int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
-	
-	for (int nSlice = 0; nSlice < nSlices; nSlice++)
-	{
-		for (int nMipLevel = 0; nMipLevel < pMipSet->m_nMipLevels; nMipLevel++)
-		{
-			inputMip[nMipLevel].size = KTX_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize;
-			inputMip[nMipLevel].data = KTX_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData;
-		}
-	}
+    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
+    
+    for (int nSlice = 0; nSlice < nSlices; nSlice++)
+    {
+        for (int nMipLevel = 0; nMipLevel < pMipSet->m_nMipLevels; nMipLevel++)
+        {
+            inputMip[nMipLevel].size = KTX_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize;
+            inputMip[nMipLevel].data = KTX_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData;
+        }
+    }
 
     switch (pMipSet->m_format)
     {
@@ -1292,9 +1308,9 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
     case  CMP_FORMAT_ARGB_16F :                 
     case  CMP_FORMAT_RG_16F :                   
     case  CMP_FORMAT_R_16F : 
-		textureinfo.glType = GL_HALF_FLOAT;
-		textureinfo.glTypeSize = 1;
-		break;
+        textureinfo.glType = GL_HALF_FLOAT;
+        textureinfo.glTypeSize = 1;
+        break;
     case  CMP_FORMAT_ARGB_32F :                 
     case  CMP_FORMAT_RGB_32F :                  
     case  CMP_FORMAT_RG_32F :                   
@@ -1439,7 +1455,7 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
                 textureinfo.glInternalFormat = ATC_RGBA_INTERPOLATED_ALPHA_AMD;
                 break;
             case  CMP_FORMAT_BC4:
-				textureinfo.glInternalFormat = GL_COMPRESSED_RED_RGTC1; 
+                textureinfo.glInternalFormat = GL_COMPRESSED_RED_RGTC1; 
                 break;
             case  CMP_FORMAT_BC5:
                 textureinfo.glInternalFormat = GL_COMPRESSED_RG_RGTC2;

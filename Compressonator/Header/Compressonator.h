@@ -28,6 +28,7 @@
 #define H_COMPRESS
 
 #include <Windows.h>
+#include "Common.h"
 
 typedef unsigned long       CMP_DWORD;         ///< A 32-bit integer format.
 typedef unsigned short      CMP_WORD;          ///< A 16-bit integer format.
@@ -37,7 +38,7 @@ typedef float               CMP_FLOAT;         ///< A 32-bit float   format.
 
 
 #define AMD_COMPRESS_VERSION_MAJOR 2         ///< The major version number of this release.
-#define AMD_COMPRESS_VERSION_MINOR 3         ///< The minor version number of this release.
+#define AMD_COMPRESS_VERSION_MINOR 4         ///< The minor version number of this release.
 
 
 
@@ -57,20 +58,34 @@ typedef enum
    CMP_FORMAT_Unknown,                    ///< Undefined texture format.
    // Channel Component formats --------------------------------------------------------------------------------
    CMP_FORMAT_ARGB_8888,                  ///< ARGB format with 8-bit fixed channels.
-   CMP_FORMAT_RGB_888,                    ///<    RGB format with 8-bit fixed channels.
-   CMP_FORMAT_RG_8,                       ///<    Two component format with 8-bit fixed channels.
-   CMP_FORMAT_R_8,                        ///<    Single component format with 8-bit fixed channels.
+   CMP_FORMAT_ABGR_8888,                  ///< ABGR format with 8-bit fixed channels.
+   CMP_FORMAT_RGBA_8888,                  ///< RGBA format with 8-bit fixed channels.
+   CMP_FORMAT_BGRA_8888,                  ///< BGRA format with 8-bit fixed channels.
+   CMP_FORMAT_RGB_888,                    ///< RGB format with 8-bit fixed channels.
+   CMP_FORMAT_BGR_888,                    ///< BGR format with 8-bit fixed channels.
+   CMP_FORMAT_RG_8,                       ///< Two component format with 8-bit fixed channels.
+   CMP_FORMAT_R_8,                        ///< Single component format with 8-bit fixed channels.
    CMP_FORMAT_ARGB_2101010,               ///< ARGB format with 10-bit fixed channels for color & a 2-bit fixed channel for alpha.
-   CMP_FORMAT_ARGB_16,                    ///<    RGB format with 16-bit fixed channels.
-   CMP_FORMAT_RG_16,                      ///<    Two component format with 16-bit fixed channels.
-   CMP_FORMAT_R_16,                       ///<    Single component format with 16-bit fixed channels.
+   CMP_FORMAT_ARGB_16,                    ///< ARGB format with 16-bit fixed channels.
+   CMP_FORMAT_ABGR_16,                    ///< ABGR format with 16-bit fixed channels.
+   CMP_FORMAT_RGBA_16,                    ///< RGBA format with 16-bit fixed channels.
+   CMP_FORMAT_BGRA_16,                    ///< BGRA format with 16-bit fixed channels.
+   CMP_FORMAT_RG_16,                      ///< Two component format with 16-bit fixed channels.
+   CMP_FORMAT_R_16,                       ///< Single component format with 16-bit fixed channels.
    CMP_FORMAT_ARGB_16F,                   ///< ARGB format with 16-bit floating-point channels.
-   CMP_FORMAT_RG_16F,                     ///<    Two component format with 16-bit floating-point channels.
-   CMP_FORMAT_R_16F,                      ///<    Single component with 16-bit floating-point channels.
+   CMP_FORMAT_ABGR_16F,                   ///< ABGR format with 16-bit floating-point channels.
+   CMP_FORMAT_RGBA_16F,                   ///< RGBA format with 16-bit floating-point channels.
+   CMP_FORMAT_BGRA_16F,                   ///< BGRA format with 16-bit floating-point channels.
+   CMP_FORMAT_RG_16F,                     ///< Two component format with 16-bit floating-point channels.
+   CMP_FORMAT_R_16F,                      ///< Single component with 16-bit floating-point channels.
    CMP_FORMAT_ARGB_32F,                   ///< ARGB format with 32-bit floating-point channels.
-   CMP_FORMAT_RGB_32F,                     ///<     RGB format with 32-bit floating-point channels.
-   CMP_FORMAT_RG_32F,                     ///<    Two component format with 32-bit floating-point channels.
-   CMP_FORMAT_R_32F,                      ///<    Single component with 32-bit floating-point channels.
+   CMP_FORMAT_ABGR_32F,                   ///< ABGR format with 32-bit floating-point channels.
+   CMP_FORMAT_RGBA_32F,                   ///< RGBA format with 32-bit floating-point channels.
+   CMP_FORMAT_BGRA_32F,                   ///< BGRA format with 32-bit floating-point channels.
+   CMP_FORMAT_RGB_32F,                    ///< RGB format with 32-bit floating-point channels.
+   CMP_FORMAT_BGR_32F,                    ///< BGR format with 32-bit floating-point channels.
+   CMP_FORMAT_RG_32F,                     ///< Two component format with 32-bit floating-point channels.
+   CMP_FORMAT_R_32F,                      ///< Single component with 32-bit floating-point channels.
    // Compression formats -----------------------------------------------------------------------------------
    CMP_FORMAT_ASTC,                       ///< ASTC (Adaptive Scalable Texture Compression) open texture compression standard
    CMP_FORMAT_ATI1N,                      ///< Single component compression format using the same technique as DXT5 alpha. Four bits per pixel.
@@ -114,11 +129,20 @@ typedef enum
 /// An enum selecting the different GPU driver types.
 typedef enum
 {
-    GPUDecode_OPENGL,                      ///< Use OpenGL   to decode Textures
+    GPUDecode_OPENGL = 0,                  ///< Use OpenGL   to decode Textures
     GPUDecode_DIRECTX,                     ///< Use DirectX  to decode Textures
     GPUDecode_VULKAN,                      ///< Use Vulkan  to decode Textures
     GPUDecode_INVALID
 } CMP_GPUDecode;
+
+/// An enum selecting the different GPU driver types.
+typedef enum
+{
+    Compute_OPENCL = 0,                  ///< Use OpenCL  to compress Textures
+    Compute_VULKAN,                      ///< Use Vulkan  SPIR-V to compress Textures
+    Compute_OPENGL,                      ///< Use OpenGL  Shader code to compress Textures
+    Compute_INVALID
+} CMP_Compute;
 
 /// Compress error codes
 typedef enum
@@ -132,6 +156,7 @@ typedef enum
    CMP_ERR_SIZE_MISMATCH,                 ///< The source and destination texture sizes do not match.
    CMP_ERR_UNABLE_TO_INIT_CODEC,          ///< Compressonator was unable to initialize the codec needed for conversion.
    CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB,  ///< GPU_Decode Lib was unable to initialize the codec needed for decompression .
+   CMP_ERR_UNABLE_TO_INIT_COMPUTELIB,     ///< Compute Lib was unable to initialize the codec needed for compression.
    CMP_ERR_GENERIC                        ///< An unknown error occurred.
 } CMP_ERROR;
 
@@ -140,6 +165,14 @@ typedef enum
 #define AMD_MAX_CMD_PARAM   16
 
 #define AMD_CODEC_QUALITY_DEFAULT 0.05      ///< This is the default value set for all Codecs (Gives fast Processing and lowest Quality)
+
+struct CMP_MAP_BYTES_SET
+{
+    CMP_BYTE B0;
+    CMP_BYTE B1;
+    CMP_BYTE B2;
+    CMP_BYTE B3;
+};
 
 typedef struct
 {
@@ -396,9 +429,10 @@ extern "C" {
    /// \param[in] pUser1 User data to pass to the feedback function.
    /// \param[in] pUser2 User data to pass to the feedback function.
    /// \return    CMP_OK if successful, otherwise the error code.
-   CMP_ERROR CMP_API CMP_ConvertTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture,
-                                                 const CMP_CompressOptions* pOptions,
-                                                 CMP_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2);
+   CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, 
+                                        CMP_Texture* pDestTexture,
+                                        const CMP_CompressOptions* pOptions,
+                                        CMP_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2);
 
 #ifdef __cplusplus
 };

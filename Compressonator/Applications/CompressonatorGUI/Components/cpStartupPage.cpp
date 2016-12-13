@@ -32,11 +32,11 @@
 #define CP_STR_startup_page_openProjectLinkPrefix                   CP_STR_startup_page_openProjectLink "_"
 #define CP_STR_startup_page_noRecentProjects                        "No recent projects"
 
-afWebPage::afWebPage(QObject* pParent) : QWebPage(pParent)
+afWebPage::afWebPage(QObject* pParent) : QWebEnginePage(pParent)
 {
 }
 
-void afWebPage::javaScriptConsoleMessage(const QString & message, int lineNumber, const QString & sourceID)
+void afWebPage::javaScriptConsoleMessage(JavaScriptConsoleMessageLevel level, const QString& message, int lineNumber, const QString& sourceID)
 {
     (void)(sourceID);
     (void)(lineNumber);
@@ -59,14 +59,12 @@ void afWebPage::javaScriptConsoleMessage(const QString & message, int lineNumber
 
 }
 
-bool afWebPage::acceptNavigationRequest(QWebFrame * frame, const QNetworkRequest & request, QWebPage::NavigationType type)
+bool afWebPage::acceptNavigationRequest(const QUrl &url, NavigationType type, bool isMainFrame)
 {
-    GT_UNREFERENCED_PARAMETER(frame);
-    GT_UNREFERENCED_PARAMETER(request);
     bool retVal = true;
 
     // Do not allow navigation clicks:
-    if (type == QWebPage::NavigationTypeLinkClicked)
+    if (type == QWebEnginePage::NavigationTypeLinkClicked)
     {
         retVal = false;
     }
@@ -80,19 +78,15 @@ bool afWebPage::acceptNavigationRequest(QWebFrame * frame, const QNetworkRequest
 // Author:      Sigal Algranaty
 // Date:        21/2/2012
 // ---------------------------------------------------------------------------
-cpStartupPage::cpStartupPage(QWidget * parent) : QWebView(parent)
+cpStartupPage::cpStartupPage(QWidget * parent) : QWebEngineView(parent)
 {
-    page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-    bool rc = connect(this, SIGNAL(linkClicked(const QUrl&)), this, SLOT(OnLinkClicked(const QUrl&)));
-    GT_ASSERT(rc);
-
     // Allow focus in this widget:
     setFocusPolicy(Qt::ClickFocus);
 
     afWebPage* pPage = new afWebPage(this);
     setPage(pPage);
-    rc = connect(pPage, SIGNAL(PageButtonClick(QString &, QString &)), this, SLOT(onPageButtonClick(QString &, QString &)));
-    GT_ASSERT(rc);
+    bool rc = connect(pPage, SIGNAL(PageButtonClick(QString &, QString &)), this, SLOT(onPageButtonClick(QString &, QString &)));
+    assert(rc);
 
     // Hide context menu:
     setContextMenuPolicy(Qt::NoContextMenu);
@@ -121,7 +115,7 @@ cpStartupPage::~cpStartupPage()
 // Author:      Sigal Algranaty
 // Date:        21/2/2012
 // ---------------------------------------------------------------------------
-bool cpStartupPage::UpdateHTML(gtVector<gtString>& projectsNames)
+bool cpStartupPage::UpdateHTML(QVector<QString>& projectsNames)
 {
     bool retVal = true;
 
@@ -129,19 +123,17 @@ bool cpStartupPage::UpdateHTML(gtVector<gtString>& projectsNames)
     QString fileName = "Welcome.html";
 
     // Get the HTML welcome page from  binary application folder:
-    osFilePath codeXLWelcomePagePath;
+    QString compWelcomePagePath;
     QString appDir = qApp->applicationDirPath();
-    QString htmlText, cssText, htmlFilePath;
-   
+    QString htmlText, cssText;
+
     // Complete the welcome HTML file path:
-    codeXLWelcomePagePath.appendSubDirectory(L"WelcomePage");
-    codeXLWelcomePagePath.setFileName(acQStringToGTString(fileName));
+    compWelcomePagePath.append("\\WelcomePage\\");
+    compWelcomePagePath.append(fileName);
 
     // Load the file into a QString:
-    gtString fileNameWithExt = codeXLWelcomePagePath.asString();
-    htmlFilePath = acGTStringToQString(fileNameWithExt);
-    appDir.append(htmlFilePath);
-
+    appDir.append(compWelcomePagePath);
+    std::string current_locale_text = appDir.toLocal8Bit().constData();
     QFile file(appDir);
     bool rc = file.open(QIODevice::ReadOnly | QIODevice::Text);
     if (rc)
@@ -168,18 +160,6 @@ bool cpStartupPage::UpdateHTML(gtVector<gtString>& projectsNames)
 }
 
 // ---------------------------------------------------------------------------
-// Name:        afStartupPage::onLinkClick
-// Description: Implement the startup page click event
-// Return Val:  void
-// Author:      Sigal Algranaty
-// Date:        21/2/2012
-// ---------------------------------------------------------------------------
-void cpStartupPage::OnLinkClicked(const QUrl& url)
-{
-    Q_UNUSED(url);
-}
-
-// ---------------------------------------------------------------------------
 // Name:        afStartupPage::setSource
 // Description: Prevent Qt from activating links
 // Arguments:   const QUrl & name
@@ -188,7 +168,7 @@ void cpStartupPage::OnLinkClicked(const QUrl& url)
 // ---------------------------------------------------------------------------
 void cpStartupPage::setSource(const QUrl& name)
 {
-    GT_UNREFERENCED_PARAMETER(name);
+    (name);
     //qDebug() << "cpStartupPage::setSource";
 }
 
@@ -200,33 +180,31 @@ void cpStartupPage::setSource(const QUrl& name)
 // Author:      Sigal Algranaty
 // Date:        28/2/2012
 // ---------------------------------------------------------------------------
-bool cpStartupPage::BuildRecentlyOpenedProjectsTable(QString& htmlText, gtVector<gtString>& recentlyUsedProjectsNames)
+bool cpStartupPage::BuildRecentlyOpenedProjectsTable(QString& htmlText, QVector<QString>& recentlyUsedProjectsNames)
 {
     bool retVal = false;
 
 
     QString recentProjectsTableStr;
-    gtString appName;
+    QString appName;
 
     int numberOfRecentProjects = (int)recentlyUsedProjectsNames.size();
-    int projectsForDisplayNumber = min(numberOfRecentProjects, 5);
+    int projectsForDisplayNumber = std::min(numberOfRecentProjects, 5);
     if (0 < projectsForDisplayNumber)
     {
         for (int i = 0; i < projectsForDisplayNumber; i++)
         {
             // Get the current recent project path:
-            gtString currentProjectPath = recentlyUsedProjectsNames[i];
-            if (QFile(acGTStringToQString(recentlyUsedProjectsNames[i])).exists())
+            QString currentProjectPath = recentlyUsedProjectsNames[i];
+            if (QFile(recentlyUsedProjectsNames[i]).exists())
             {
                 // Build the file path from the project path:
-                osFilePath filePath(currentProjectPath);
+                QFileInfo filePath(currentProjectPath);
 
                 // Get the project name:
-                gtString currentProjectName;
-                filePath.getFileName(currentProjectName);
-                QString wsName = acGTStringToQString(currentProjectName);
+                QString wsName = filePath.fileName();
                 QString tooltip1 = QString("<tr><td><a title=\"");
-                tooltip1.append(acGTStringToQString(currentProjectPath));
+                tooltip1.append(currentProjectPath);
                 tooltip1.append(QString("\" "));
                 QString currentProjectCell = tooltip1.append(QString("href=\"\" onclick = 'clickButton(\"" CP_STR_startup_page_openProjectLinkPrefix "%1\")'>%2</a></td></tr>")).arg(wsName).arg(wsName);
                 recentProjectsTableStr.append(currentProjectCell);
@@ -246,7 +224,7 @@ bool cpStartupPage::BuildRecentlyOpenedProjectsTable(QString& htmlText, gtVector
         int tableBodyStartPos = htmlText.indexOf("<tbody>", tableHeadPos + 1);
         int tableBodyEndPos = htmlText.indexOf("</tbody>", tableBodyStartPos + 1);
 
-        GT_IF_WITH_ASSERT((tableBodyStartPos > 0) && (tableBodyEndPos > 0) && (tableBodyEndPos > tableBodyStartPos))
+        if((tableBodyStartPos > 0) && (tableBodyEndPos > 0) && (tableBodyEndPos > tableBodyStartPos))
         {
             // Get the length of the replaced string:
             int len = tableBodyEndPos - tableBodyStartPos;
@@ -257,7 +235,6 @@ bool cpStartupPage::BuildRecentlyOpenedProjectsTable(QString& htmlText, gtVector
 
     return retVal;
 }
-
 
 // ---------------------------------------------------------------------------
 // Name:        afStartupPage::canLinkBeClicked

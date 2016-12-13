@@ -36,18 +36,11 @@
 #include "cpWelcomePage.h"
 #include "cpImageCompare.h"
 #include "cpCompressStatus.h"
+#include "acaboutdlg.h"
 #include "cmdline.h"
 
 #include <QTimer>
 #include "acCustomDockWidget.h"
-
-// Progress Bar
-#include <AMDTApplicationComponents/Include/acProgressDlg.h>
-
-// CodeXL Help Dialog
-#include <AMDTOSWrappers/Include/osProductVersion.h>
-#include <AMDTApplicationComponents/Include/acHelpAboutDialog.h>
-
 // //Reserved: GPUDecode
 
 // Common Project Data Types
@@ -80,8 +73,7 @@ class cpMainComponents : public QMainWindow
 public:
     static void  msgHandler(QtMsgType type, const char* msg);
     static void PrintStatus(char *buff);
-
-    gtVector<gtString>   m_projectsRecentFiles;
+    QVector<QString>   m_projectsRecentFiles;
 
     cpMainComponents(QDockWidget *root_dock, QMainWindow *parent = 0);
     ~cpMainComponents();
@@ -120,17 +112,10 @@ public:
     QAction *separatorAct;
 
     CompressStatusDialog *  m_CompressStatusDialog;
-    acHelpAboutDialog*      m_pacHelpAboutDialog;
-
-    // from CodeXL 
-    osExecutedApplicationType m_executionApplicationType;
+    CHelpAboutDialog*      m_pacHelpAboutDialog;
     QString m_apptitle;
     QString  m_copyRightCaption;
     QString  m_copyRightInformation;
-    acIconId m_productIconId;
-    gtString m_versionCaption;
-    gtString m_companyLogoBitmapString;
-    osProductVersion m_appVersion;
 
     bool    isCompressInProgress;
 

@@ -46,21 +46,24 @@ public:
     QTreeWidgetItem* AddChildItem(QTreeWidgetItem *parent, int col, QString itemtext, bool checkable);
 #endif
 
-    QTreeWidgetItem             *m_item;                    // Ref to a projects item when the dialog was called: Must be set if Saving the data int a project tree
-	C_Destination_Options           m_data;                    // Our loacal data settings: copy of orignal or default
-	C_Destination_Options           m_data2;                    // Our loacal data settings: copy of orignal or default
-	C_Destination_Options           m_dataOriginal;            // Original Data prior to Edit
+    QTreeWidgetItem                *m_item;                // Ref to a projects item when the dialog was called: Must be set if Saving the data int a project tree
+    C_Destination_Options           m_data;                // Our loacal data settings: copy of orignal or default
+    C_Destination_Options           m_dataOriginal;        // Original Data prior to Edit
 
     bool updateDisplayContent();                            // Update data to all widgets and vaildate compressable image format support
     bool updateFileFormat(QFileInfo &fileinfo);             // Update the Image Type Combo box by matching the input image format : return false if imput is not supported
     void resetData();                                       // Reset all data back to defaults
     void setMinMaxStep(QtVariantPropertyManager* manager, QtProperty *m_prop, double min, double max, double step);
+    QString GetFormatString();                              // Reads the m_data format and returns format enum as a string 
 
-	bool isEditing;											// True when dislog is shown and in edit mode
+    bool isEditing;                                         // True when dislog is shown and in edit mode
     bool isInit;
-    QString         m_destFilePath;
-	QTextBrowser	*m_infotext;
+    int  m_extnum;
+
+    QString                      m_destFilePath;
+    QTextBrowser                *m_infotext;
     QLineEdit                   *m_DestinationFolder;
+    QString                      m_srcext;
 
 private:
     // Common for all
@@ -99,7 +102,7 @@ private:
     QtProperty                  *m_propUseAlpha;
     QtProperty                  *m_propNoAlpha;
     QtProperty                  *m_propBitrate;
-	QtProperty					*m_propFormat;
+    QtProperty                  *m_propFormat;
 
     // Property class that changed based on compression format
     QtProperty                  *m_propDestImage;
@@ -108,7 +111,7 @@ private:
     QtProperty                  *m_propASTCBlockRate;
 
 signals:
-	void SaveCompressSettings(QTreeWidgetItem *m_item, C_Destination_Options &m_data);
+    void SaveCompressSettings(QTreeWidgetItem *m_item, C_Destination_Options &m_data);
 
 public Q_SLOTS:
 
@@ -126,13 +129,12 @@ public Q_SLOTS:
     void    onNameTextChanged(QString text);
     void    onNameEditingFinished();
 
-	void	qualityValueChanged(QVariant &value);
+    void    qualityValueChanged(QVariant &value);
     void    bitrateValueChanged(QString &actualbitrate, int&xblock, int&yblock);
-	void	oncurrentItemChanged(QtBrowserItem *);
+    void    oncurrentItemChanged(QtBrowserItem *);
 
 
 };
-
 
 extern PluginManager g_pluginManager;
 

@@ -89,6 +89,32 @@ void astc_find_closest_blockdim_2d(float target_bitrate, int *x, int *y, int con
     }
 }
 
+void astc_find_closest_blockxy_2d(int *x, int *y, int consider_illegal)
+{
+    int blockdims[6] = { 4, 5, 6, 8, 10, 12 };
+
+    bool exists_x = std::find(std::begin(blockdims), std::end(blockdims), (*x)) != std::end(blockdims);
+    bool exists_y = std::find(std::begin(blockdims), std::end(blockdims), (*y)) != std::end(blockdims);
+
+    if (exists_x && exists_y)
+    {
+        if ((*x) < (*y)) 
+        {
+            int temp = *x;
+            *x = *y;
+            *y = temp;
+        }
+        float bitrateF = float(128.0f / ((*x)*(*y)));
+        astc_find_closest_blockdim_2d(bitrateF, x, y, 0);
+    }
+    else
+    {
+        float bitrateF = float(128.0f / ((*x)*(*y)));
+        astc_find_closest_blockdim_2d(bitrateF, x, y, 0);
+    }
+  
+}
+
 int MaxFacesOrSlices(const MipSet* pMipSet, int nMipLevel)
 {
     if(!pMipSet)
@@ -255,7 +281,7 @@ void Format2FourCC(CMP_FORMAT format, MipSet *pMipSet)
         case CMP_FORMAT_DXT5_RGxB:              pMipSet->m_dwFourCC =  FOURCC_DXT5_RGxB;           break;
         case CMP_FORMAT_DXT5_xGxR:              pMipSet->m_dwFourCC =  FOURCC_DXT5_xGxR;           break;
 
-        case CMP_FORMAT_ATC_RGB:
+        case CMP_FORMAT_ATC_RGB:                pMipSet->m_dwFourCC = FOURCC_ATC_RGB;             break;
         case CMP_FORMAT_ATC_RGBA_Explicit:      pMipSet->m_dwFourCC =  FOURCC_ATC_RGBA_EXPLICIT;   break;
         case CMP_FORMAT_ATC_RGBA_Interpolated:  pMipSet->m_dwFourCC =  FOURCC_ATC_RGBA_INTERP;     break;
 
@@ -654,6 +680,7 @@ int AMDLoadMIPSTextureImage(const char *SourceFile, MipSet *MipSetIn, bool use_O
 
 int AMDSaveMIPSTextureImage(const char * DestFile, MipSet *MipSetIn, bool use_OCV)
 {
+    bool filesaved = false;
     CMIPS m_CMIPS;
     string file_extension  = boost::filesystem::extension(DestFile);
     boost::algorithm::to_upper(file_extension); 
@@ -668,28 +695,45 @@ int AMDSaveMIPSTextureImage(const char * DestFile, MipSet *MipSetIn, bool use_OC
     else
         plugin_Image = reinterpret_cast<PluginInterface_Image *>(g_pluginManager.GetPlugin("IMAGE",(char *)file_extension.c_str()));
 
-
-    // do the save, Let Qt handle tga extension saves 
-    if ((plugin_Image) && (file_extension.compare("TGA") != 0))
+    if (plugin_Image)
     {
         plugin_Image->TC_PluginSetSharedIO(&m_CMIPS);
-        if (plugin_Image->TC_PluginFileSaveTexture(DestFile, MipSetIn) != 0)
+
+        bool holdswizzle = MipSetIn->m_swizzle;
+
+        if (file_extension.compare("TGA") == 0)
         {
-                // Process Error
-                delete plugin_Image;
-                plugin_Image = NULL;
-                return -1;
+            // Special case Patch for TGA plugin
+            // to be fixed in V2.5 release
+            MipSetIn->m_swizzle = false;
+            switch (MipSetIn->m_isDeCompressed)
+            {
+            case CMP_FORMAT_ASTC:
+            case CMP_FORMAT_BC7:
+            case CMP_FORMAT_BC6H:
+            case CMP_FORMAT_ETC_RGB:
+            case CMP_FORMAT_ETC2_RGB:
+                MipSetIn->m_swizzle = true;
+                break;
+            }
         }
+
+        if (plugin_Image->TC_PluginFileSaveTexture(DestFile, MipSetIn) == 0)
+        {
+            filesaved = true;
+        }
+
+        MipSetIn->m_swizzle = holdswizzle;
 
         delete plugin_Image;
         plugin_Image = NULL;
     }
-    else 
-    {
+
 
 #ifdef USE_QT_IMAGELOAD
-        // Failed to load using a AMD Plugin 
-        // Try Qt based
+    if (!filesaved)
+    {
+        // Try Qt based filesave!
         QImage *qimage = MIPS2QImage(&m_CMIPS, MipSetIn, 0);
 
         if (qimage)
@@ -703,13 +747,12 @@ int AMDSaveMIPSTextureImage(const char * DestFile, MipSet *MipSetIn, bool use_OC
             delete qimage;
             qimage = NULL;
         }
-        else 
+        else
             return -1;
+    }
 #else
         return -1;
 #endif
-    }
-
 
     return 0;
 }

@@ -333,6 +333,27 @@ static void DXTCDecompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
     else v += (0x80>>shift) - (v>>shift);\
 }
 
+void __cdecl DXTCV11CompressExplicitAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
+{
+    int i;
+    block_dxtc[0] = block_dxtc[1] = 0;
+    for (i = 0; i<16; i++)
+    {
+        int v = block_8[i];
+        v = (v + 7 - (v >> 4));
+        v >>= 4;
+        if (v<0)
+            v = 0;
+        if (v>0xf)
+            v = 0xf;
+        if (i<8)
+            block_dxtc[0] |= v << (4 * i);
+        else
+            block_dxtc[1] |= v << (4 * (i - 8));
+    }
+}
+
+
 #ifndef _WIN64
 // This compressor can only create opaque, 4-colour blocks
 void DXTCV11CompressBlock(DWORD block_32[16], DWORD block_dxtc[2])
@@ -358,6 +379,10 @@ void DXTCV11CompressBlock(DWORD block_32[16], DWORD block_dxtc[2])
     int swap;                                // Indicator if the RGB values need swapping to generate an opaque result
     int blocktype=0;
 
+
+    // -------------------------------------------------------------------------------------
+    // Find the array of unique pixel values and sum them to find their average position
+    // -------------------------------------------------------------------------------------
     {
         // Find the array of unique pixel values and sum them to find their average position
         float *up = (float *)uniques;
@@ -425,15 +450,17 @@ void DXTCV11CompressBlock(DWORD block_32[16], DWORD block_dxtc[2])
     }
 
 
-
+    // -------------------------------------------------------------------------------------
+    // For each component, reflect points about the average so all lie on the same side
+    // of the average, and compute the new average - this gives a second point that defines the axis
+    // To compute the sign of the axis sum the positive differences of G for each of R and B (the
+    // G axis is always positive in this implementation
+    // -------------------------------------------------------------------------------------
+    // An interesting situation occurs if the G axis contains no information, in which case the RB
+    // axis is also compared. I am not entirely sure if this is the correct implementation - should
+    // the priority axis be determined by magnitude?
     {
-        // For each component, reflect points about the average so all lie on the same side
-        // of the average, and compute the new average - this gives a second point that defines the axis
-        // To compute the sign of the axis sum the differences of G for each of R and B (the
-        // G axis is always positive in this implementation)
-        // An interesting situation occurs if the G axis contains no information, in which case the RB
-        // axis is also compared. I am not entirely sure if this is the correct implementation - should
-        // the priority axis be determined by magnitude?
+
         float rg_pos, bg_pos, rb_pos;
 
         v_r = v_g = v_b = 0;
@@ -613,7 +640,7 @@ void DXTCV11CompressBlock(DWORD block_32[16], DWORD block_dxtc[2])
 
 
 //#define REFINE_AXIS
-                // Latest enhancements / bug fixes seem to have rendered this redundant
+// Latest enhancements / bug fixes seem to have rendered this redundant
 #ifdef REFINE_AXIS
         if (retry == 0)
         {
@@ -733,14 +760,14 @@ void DXTCV11CompressBlock(DWORD block_32[16], DWORD block_dxtc[2])
     }
 
 
-    //-------------- END -----------------
 
+    // -------------------------------------------------------------------------------------
+    // Now we have a good axis and the basic information about how the points are mapped
+    // to it
+    // Our initial guess is to represent the endpoints accurately, by moving the average
+    // to the centre and recalculating the point positions along the line
+    // -------------------------------------------------------------------------------------
     {
-        // Now we have a good axis and the basic information about how the points are mapped
-        // to it
-
-        // Our initial guess is to represent the endpoints accurately, by moving the average
-        // to the centre and recalculating the point positions along the line
         centre = (left + right) / 2;
         average_r += centre*v_r;
         average_g += centre*v_g;
@@ -940,9 +967,6 @@ void DXTCV11CompressBlock(DWORD block_32[16], DWORD block_dxtc[2])
 #endif
 
 
-
-
-
 #define PROGRESSIVE_REFINEMENT
 #ifdef PROGRESSIVE_REFINEMENT
     {
@@ -1124,19 +1148,20 @@ void DXTCV11CompressBlock(DWORD block_32[16], DWORD block_dxtc[2])
     blocktype = 4;
 #endif
 
+    // -------------------------------------------------------------------------------------
+    // Calculate the high and low output colour values
+    // Involved in this is a rounding procedure which is undoubtedly slightly twitchy. A
+    // straight rounded average is not correct, as the decompressor 'unrounds' by replicating
+    // the top bits to the bottom.
+    // In order to take account of this process, we don't just apply a straight rounding correction,
+    // but base our rounding on the input value (a straight rounding is actually pretty good in terms of
+    // error measure, but creates a visual colour and/or brightness shift relative to the original image)
+    // The method used here is to apply a centre-biased rounding dependent on the input value, which was
+    // (mostly by experiment) found to give minimum MSE while preserving the visual characteristics of
+    // the image.
+    // rgb = (average_rgb + (left|right)*v_rgb);
+    // -------------------------------------------------------------------------------------
     {
-        // Calculate the high and low output colour values
-
-        // Involved in this is a rounding procedure which is undoubtedly slightly twitchy. A
-        // straight rounded average is not correct, as the decompressor 'unrounds' by replicating
-        // the top bits to the bottom.
-
-        // In order to take account of this process, we don't just apply a straight rounding correction,
-        // but base our rounding on the input value (doing so is actually pretty good in terms of actual
-        // error measure, but creates a visual colour and/or brightness shift relative to the original image)
-        // The method used here is to apply a centre-biased rounding dependent on the input value, which was
-        // (mostly by experiment) found to give minimum MSE while preserving the visual characteristics of
-        // the image.
         DWORD c0, c1, t;
         int rd, gd, bd;
 
@@ -1210,9 +1235,10 @@ void DXTCV11CompressBlock(DWORD block_32[16], DWORD block_dxtc[2])
         block_dxtc[0] = c0 | (c1<<16);
     }
 
-
+    // -------------------------------------------------------------------------------------
+    // Final clustering, creating the 2-bit values that define the output
+    // -------------------------------------------------------------------------------------
     {
-        // Final clustering, creating the 2-bit values that define the output
         DWORD bit;
         float division;
         float cluster_x[4];
@@ -1284,7 +1310,7 @@ void DXTCV11CompressBlock(DWORD block_32[16], DWORD block_dxtc[2])
                 int xstep=0, ystep=0;
 
                 // Find a corner to search from
-#define POS(x,y) (pos_on_axis[(x)+(y)*4])
+                #define POS(x,y) (pos_on_axis[(x)+(y)*4])
                 for(k1=0; k1<4; k1++)
                 {
                     switch(k1)
@@ -1346,6 +1372,396 @@ void DXTCV11CompressBlock(DWORD block_32[16], DWORD block_dxtc[2])
                 block_dxtc[1] |= bit<<(2*i);
             }
         }
+    }
+    // done
+}
+
+// This compressor can only create opaque, 4-colour blocks
+void DXTCV11CompressBlockMinimal(DWORD block_32[16], DWORD block_dxtc[2])
+{
+    int i, k;
+    float r, g, b;
+
+    float uniques[16][3];                  // The list of unique colours
+    int unique_pixels;                     // The number of unique pixels
+    float unique_recip;                    // Reciprocal of the above for fast multiplication
+    int index_map[16];                     // The map of source pixels to unique indices
+    int pixel_count[16];                   // The number of occurrences of each unique
+
+    float average_r, average_g, average_b; // The centrepoint of the axis
+    float v_r, v_g, v_b;                   // The axis
+
+    float pos_on_axis[16];                 // The distance each unique falls along the compression axis
+    float dist_from_axis[16];              // The distance each unique falls from the compression axis
+    float left = 0, right = 0, centre = 0; // The extremities and centre (average of left/right) of uniques along the compression axis
+    float axis_mapping_error = 0;          // The total computed error in mapping pixels to the axis
+
+    int swap;                              // Indicator if the RGB values need swapping to generate an opaque result
+
+
+    // -------------------------------------------------------------------------------------
+    // (3) Find the array of unique pixel values and sum them to find their average position
+    // -------------------------------------------------------------------------------------
+    {
+        // Find the array of unique pixel values and sum them to find their average position
+        float *up = (float *)uniques;
+        int current_pixel, firstdiff;
+
+        current_pixel = unique_pixels = 0;
+        average_r = average_g = average_b = 0;
+        firstdiff = -1;
+        for (i = 0; i<16; i++)
+        {
+            for (k = 0; k<i; k++)
+                if (!((block_32[k] ^ block_32[i]) & 0xf8fcf8))
+                    break;
+
+#ifdef AVERAGE_UNIQUE_PIXELS_ONLY
+            // Only add non-identical pixels to the list
+            if (k == i)
+#endif
+            {
+                float tr, tg, tb;
+
+                index_map[i] = current_pixel++;
+                pixel_count[i] = 1;
+
+                r = (float)((block_32[i] >> 16) & 0xff);
+                g = (float)((block_32[i] >> 8) & 0xff);
+                b = (float)((block_32[i] >> 0) & 0xff);
+
+                tr = CS_RED(r, g, b);
+                tg = CS_GREEN(r, g, b);
+                tb = CS_BLUE(r, g, b);
+
+                *up++ = tr;
+                *up++ = tg;
+                *up++ = tb;
+
+                if (k == i)
+                {
+                    unique_pixels++;
+                    if ((i != 0) && (firstdiff < 0)) firstdiff = i;
+                }
+
+                average_r += tr;
+                average_g += tg;
+                average_b += tb;
+            }
+#ifdef AVERAGE_UNIQUE_PIXELS_ONLY
+            else
+            {
+                index_map[i] = index_map[k];
+                pixel_count[k]++;
+            }
+#endif
+        }
+
+#ifndef AVERAGE_UNIQUE_PIXELS_ONLY
+        unique_pixels = 16;
+#endif
+
+        // Compute average of the uniques
+        unique_recip = 1.0f / (float)unique_pixels;
+        average_r *= unique_recip;
+        average_g *= unique_recip;
+        average_b *= unique_recip;
+    }
+
+    // -------------------------------------------------------------------------------------
+    // (4) For each component, reflect points about the average so all lie on the same side
+    // of the average, and compute the new average - this gives a second point that defines the axis
+    // To compute the sign of the axis sum the positive differences of G for each of R and B (the
+    // G axis is always positive in this implementation
+    // -------------------------------------------------------------------------------------
+    // An interesting situation occurs if the G axis contains no information, in which case the RB
+    // axis is also compared. I am not entirely sure if this is the correct implementation - should
+    // the priority axis be determined by magnitude?
+    {
+
+        float rg_pos, bg_pos, rb_pos;
+
+        v_r = v_g = v_b = 0;
+        rg_pos = bg_pos = rb_pos = 0;
+        for (i = 0; i<unique_pixels; i++)
+        {
+            r = uniques[i][0] - average_r;
+            g = uniques[i][1] - average_g;
+            b = uniques[i][2] - average_b;
+            v_r += (float)fabs(r);
+            v_g += (float)fabs(g);
+            v_b += (float)fabs(b);
+
+            if (r > 0) { rg_pos += g; rb_pos += b; }
+            if (b > 0) bg_pos += g;
+        }
+        v_r *= unique_recip;
+        v_g *= unique_recip;
+        v_b *= unique_recip;
+        if (rg_pos < 0) v_r = -v_r;
+        if (bg_pos < 0) v_b = -v_b;
+        if ((rg_pos == bg_pos) && (rg_pos == 0))
+            if (rb_pos < 0) v_b = -v_b;
+
+    }
+
+    // -------------------------------------------------------------------------------------
+    // (5) Axis projection and remapping
+    // -------------------------------------------------------------------------------------
+    {
+        float v2_recip;
+
+        // Normalise the axis for simplicity of future calculation
+        v2_recip = (v_r*v_r + v_g*v_g + v_b*v_b);
+        if (v2_recip > 0)
+            v2_recip = 1.0f / (float)sqrt(v2_recip);
+        else
+            v2_recip = 1.0f;
+        v_r *= v2_recip;
+        v_g *= v2_recip;
+        v_b *= v2_recip;
+    }
+
+    // -------------------------------------------------------------------------------------
+    // (6) Map the axis
+    // -------------------------------------------------------------------------------------
+    // the line joining (and extended on either side of) average and axis
+    // defines the axis onto which the points will be projected
+    // Project all the points onto the axis, calculate the distance along
+    // the axis from the centre of the axis (average)
+    // From Foley & Van Dam: Closest point of approach of a line (P + v) to a point (R) is
+    //                            P + ((R-P).v) / (v.v))v
+    // The distance along v is therefore (R-P).v / (v.v)
+    // (v.v) is 1 if v is a unit vector.
+    //
+    // Calculate the extremities at the same time - these need to be reasonably accurately
+    // represented in all cases
+    //
+    // In this first calculation, also find the error of mapping the points to the axis - this
+    // is our major indicator of whether or not the block has compressed well - if the points
+    // map well onto the axis then most of the noise introduced is high-frequency noise
+    {
+        left = 10000.0f;
+        right = -10000.0f;
+        axis_mapping_error = 0;
+        for (i = 0; i < unique_pixels; i++)
+        {
+            // Compute the distance along the axis of the point of closest approach
+            pos_on_axis[i] = ((uniques[i][0] - average_r) * v_r) +
+                ((uniques[i][1] - average_g) * v_g) +
+                ((uniques[i][2] - average_b) * v_b);
+
+            // Compute the actual point and thence the mapping error
+            r = uniques[i][0] - (average_r + pos_on_axis[i] * v_r);
+            g = uniques[i][1] - (average_g + pos_on_axis[i] * v_g);
+            b = uniques[i][2] - (average_b + pos_on_axis[i] * v_b);
+            dist_from_axis[i] = r*r + g*g + b*b;
+            axis_mapping_error += dist_from_axis[i];
+
+            // Work out the extremities
+            if (pos_on_axis[i] < left)
+                left = pos_on_axis[i];
+            if (pos_on_axis[i] > right)
+                right = pos_on_axis[i];
+        }
+    }
+    
+    // -------------------------------------------------------------------------------------
+    // (7) Now we have a good axis and the basic information about how the points are mapped
+    // to it
+    // Our initial guess is to represent the endpoints accurately, by moving the average
+    // to the centre and recalculating the point positions along the line
+    // -------------------------------------------------------------------------------------
+    {
+        centre = (left + right) / 2;
+        average_r += centre*v_r;
+        average_g += centre*v_g;
+        average_b += centre*v_b;
+        for (i = 0; i<unique_pixels; i++)
+            pos_on_axis[i] -= centre;
+        right -= centre;
+        left -= centre;
+
+        // Accumulate our final resultant error
+        axis_mapping_error *= unique_recip * (1 / 255.0f);
+
+    }
+
+    // -------------------------------------------------------------------------------------
+    // (8) Calculate the high and low output colour values
+    // Involved in this is a rounding procedure which is undoubtedly slightly twitchy. A
+    // straight rounded average is not correct, as the decompressor 'unrounds' by replicating
+    // the top bits to the bottom.
+    // In order to take account of this process, we don't just apply a straight rounding correction,
+    // but base our rounding on the input value (a straight rounding is actually pretty good in terms of
+    // error measure, but creates a visual colour and/or brightness shift relative to the original image)
+    // The method used here is to apply a centre-biased rounding dependent on the input value, which was
+    // (mostly by experiment) found to give minimum MSE while preserving the visual characteristics of
+    // the image.
+    // rgb = (average_rgb + (left|right)*v_rgb);
+    // -------------------------------------------------------------------------------------
+    {
+        DWORD c0, c1, t;
+        int rd, gd, bd;
+
+        r = (average_r + left*v_r);
+        g = (average_g + left*v_g);
+        b = (average_b + left*v_b);
+        rd = (int)DCS_RED(r, g, b);
+        gd = (int)DCS_GREEN(r, g, b);
+        bd = (int)DCS_BLUE(r, g, b);
+        ROUND_AND_CLAMP(rd, 5);
+        ROUND_AND_CLAMP(gd, 6);
+        ROUND_AND_CLAMP(bd, 5);
+        c0 = ((rd & 0xf8) << 8) + ((gd & 0xfc) << 3) + ((bd & 0xf8) >> 3);
+
+        r = (average_r + right*v_r);
+        g = (average_g + right*v_g);
+        b = (average_b + right*v_b);
+        rd = (int)DCS_RED(r, g, b);
+        gd = (int)DCS_GREEN(r, g, b);
+        bd = (int)DCS_BLUE(r, g, b);
+        ROUND_AND_CLAMP(rd, 5);
+        ROUND_AND_CLAMP(gd, 6);
+        ROUND_AND_CLAMP(bd, 5);
+        c1 = (((rd & 0xf8) << 8) + ((gd & 0xfc) << 3) + ((bd & 0xf8) >> 3));
+
+        // Force to be a 4-colour opaque block - in which case, c0 is greater than c1
+        // blocktype == 4
+        {
+            if (c0 < c1)
+            {
+                t = c0;
+                c0 = c1;
+                c1 = t;
+                swap = 1;
+            }
+            else if (c0 == c1)
+            {
+                // This block will always be encoded in 3-colour mode
+                // Need to ensure that only one of the two points gets used,
+                // avoiding accidentally setting some transparent pixels into the block
+                for (i = 0; i<unique_pixels; i++)
+                    pos_on_axis[i] = left;
+                swap = 0;
+            }
+            else
+                swap = 0;
+        }
+
+
+        block_dxtc[0] = c0 | (c1 << 16);
+    }
+
+    // -------------------------------------------------------------------------------------
+    // (9) Final clustering, creating the 2-bit values that define the output
+    // -------------------------------------------------------------------------------------
+    {
+        DWORD bit;
+        float division;
+        float cluster_x[4];
+        float cluster_y[4];
+        int cluster_count[4];
+
+        // (blocktype == 4)
+        {
+            block_dxtc[1] = 0;
+            division = right*2.0f / 3.0f;
+            centre = (left + right) / 2;        // Actually, this code only works if centre is 0 or approximately so
+
+            for (i = 0; i<4; i++)
+            {
+                cluster_x[i] = cluster_y[i] = 0.0f;
+                cluster_count[i] = 0;
+            }
+
+
+            for (i = 0; i<16; i++)
+            {
+                b = pos_on_axis[index_map[i]];
+
+                // Endpoints (indicated by block > average) are 0 and 1, while
+                // interpolants are 2 and 3
+                if (fabs(b) >= division)
+                    bit = 0;
+                else
+                    bit = 2;
+
+                // Positive is in the latter half of the block
+                if (b >= centre)
+                    bit += 1;
+
+                // Set the output, taking swapping into account
+                block_dxtc[1] |= (bit^swap) << (2 * i);
+
+                // Average the X and Y locations for each cluster
+                cluster_x[bit] += (float)(i & 3);
+                cluster_y[bit] += (float)(i >> 2);
+                cluster_count[bit]++;
+            }
+
+            for (i = 0; i<4; i++)
+            {
+                float cr;
+                if (cluster_count[i])
+                {
+                    cr = 1.0f / cluster_count[i];
+                    cluster_x[i] *= cr;
+                    cluster_y[i] *= cr;
+                }
+                else
+                {
+                    cluster_x[i] = cluster_y[i] = -1;
+                }
+            }
+
+            // patterns in axis position detection
+            // (same algorithm as used in the SSE version)
+            if ((block_dxtc[0] & 0xffff) != (block_dxtc[0] >> 16))
+            {
+                DWORD i1, k1;
+                DWORD x = 0, y = 0;
+                int xstep = 0, ystep = 0;
+
+                // Find a corner to search from
+                #define POS(x,y) (pos_on_axis[(x)+(y)*4])
+                for (k1 = 0; k1<4; k1++)
+                {
+                    switch (k1)
+                    {
+                    case 0:
+                        x = 0; y = 0; xstep = 1; ystep = 1;
+                        break;
+                    case 1:
+                        x = 0; y = 3; xstep = 1; ystep = -1;
+                        break;
+                    case 2:
+                        x = 3; y = 0; xstep = -1; ystep = 1;
+                        break;
+                    case 3:
+                        x = 3; y = 3; xstep = -1; ystep = -1;
+                        break;
+                    }
+
+                    for (i1 = 0; i1<4; i1++)
+                    {
+                        if ((POS(x, y + ystep*i1)                < POS(x + xstep, y + ystep*i1)) ||
+                            (POS(x + xstep, y + ystep*i1)        < POS(x + 2 * xstep, y + ystep*i1)) ||
+                            (POS(x + 2 * xstep, y + ystep*i1)    < POS(x + 3 * xstep, y + ystep*i1))
+                            )
+                            break;
+                        if ((POS(x + xstep*i1, y)                < POS(x + xstep*i1, y + ystep)) ||
+                            (POS(x + xstep*i1, y + ystep)        < POS(x + xstep*i1, y + 2 * ystep)) ||
+                            (POS(x + xstep*i1, y + 2 * ystep)    < POS(x + xstep*i1, y + 3 * ystep))
+                            )
+                            break;
+                    }
+                    if (i1 == 4)
+                        break;
+                }
+            }
+        }
+
     }
     // done
 }
@@ -1595,24 +2011,6 @@ void __cdecl DXTCV11CompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
 
     // done
 }
+
 #endif // !_WIN64
 
-void __cdecl DXTCV11CompressExplicitAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
-{
-    int i;
-    block_dxtc[0] = block_dxtc[1] = 0;
-    for(i=0; i<16; i++)
-    {
-        int v = block_8[i];
-        v = (v + 7 - (v>>4));
-        v >>= 4;
-        if(v<0)
-            v = 0;
-        if(v>0xf)
-            v = 0xf;
-        if(i<8)
-            block_dxtc[0] |= v<<(4*i);
-        else
-            block_dxtc[1] |= v<<(4*(i-8));
-    }
-}

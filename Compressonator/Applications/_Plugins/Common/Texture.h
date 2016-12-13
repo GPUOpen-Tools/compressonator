@@ -232,7 +232,7 @@ typedef struct
    int               m_nDepth;            ///< Depth in MipLevels of the topmost mip-map level of the mip-map set. Initialized by TC_AppAllocateMipSet. See Remarks.
    CMP_FORMAT        m_format;            ///< New format support
    bool              m_compressed;        ///< New Flags if data is compressed (example Block Compressed data in form of BCxx)
-   bool              m_isDeCompressed;    ///< The MipSet is a decompressed result from a prior Compressed MipSet
+   CMP_FORMAT        m_isDeCompressed;    ///< The New MipSet is a decompressed result from a prior Compressed MipSet Format specified
    bool              m_swizzle;           ///< Flag is used by image load and save to indicate compression is to be or has occured on the data; Compression data is typically ARGB.
    int               m_nBlockWidth;       ///< Width in pixels of the Compression Block that is to be processed default for ASTC is 4 
    int               m_nBlockHeight;      ///< Height in pixels of the Compression Block that is to be processed default for ASTC is 4

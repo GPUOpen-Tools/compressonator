@@ -46,11 +46,12 @@ CCodec_DXT3::~CCodec_DXT3()
 
 CodecError CCodec_DXT3::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
 {
+#ifndef _WIN64  //todo: add sse2 feature for win64
     if(m_nCompressionSpeed == CMP_Speed_SuperFast && m_bUseSSE2)
         return Compress_SuperFast(bufferIn, bufferOut, pFeedbackProc, pUser1, pUser2);
     else if((m_nCompressionSpeed == CMP_Speed_Fast || m_nCompressionSpeed == CMP_Speed_SuperFast) && m_bUseSSE)
         return Compress_Fast(bufferIn, bufferOut, pFeedbackProc, pUser1, pUser2);
-
+#endif
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
 

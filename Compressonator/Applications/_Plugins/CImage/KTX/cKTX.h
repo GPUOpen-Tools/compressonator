@@ -100,7 +100,7 @@ uint8_t FileIdentifier[12] = {
 
 struct ktx_header
 {
-    uint8_t      identifier[12];            // identifier = '«','K','T','X',' ','1','1','»','\r','\n','\x1A','\n'
+    uint8_t   identifier[12];
     uint32_t  endianness;                // should be 0x04030201 if 0x01020304 then all data below must be switched
     uint32_t  gl_Type;                    // 0 = compressed data else use OpenGL Spec to determine uncompressed data type (OpenGL 4.4 tables 8.3) 
     uint32_t  gl_TypeSize;                // endness data size for texture data stored in file 0=size of gl_type, 1 = for compressed data

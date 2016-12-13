@@ -72,7 +72,7 @@ TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
 
     switch(HeaderDDS10.dxgiFormat)
     {
-        case DXGI_FORMAT_R32G32B32A32_FLOAT:    
+        case DXGI_FORMAT_R32G32B32A32_FLOAT:
             err = LoadDDS_DX10_RGBA_32F(pFile, pDDSD, pMipSet);
             break;
 

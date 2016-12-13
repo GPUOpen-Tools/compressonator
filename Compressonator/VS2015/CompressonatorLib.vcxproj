@@ -615,6 +615,7 @@
       <ProgramDataBaseFileName>
       </ProgramDataBaseFileName>
       <MinimalRebuild>false</MinimalRebuild>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

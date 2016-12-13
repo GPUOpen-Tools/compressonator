@@ -112,6 +112,7 @@ private:
     // Encoder interfaces
     void find_closest_blockdim_2d(float target_bitrate, int *x, int *y, int consider_illegal);
     void find_closest_blockdim_3d(float target_bitrate, int *x, int *y, int *z, int consider_illegal);
+    void find_closest_blockxy_2d(int *x, int *y, int consider_illegal);
 
     // Internal status 
     BOOL     m_Use_MultiThreading;

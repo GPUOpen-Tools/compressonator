@@ -680,7 +680,394 @@ void __declspec(naked) __cdecl DXTCV11CompressBlockSSE(DWORD *block_32, DWORD *b
 
 
 }
+#endif // !_WIN64
+
+#ifndef _WIN64
+
+void __declspec(naked) __cdecl DXTCV11CompressBlockSSEMinimal(DWORD *block_32, DWORD *block_dxtc)
+{
+#define SP_BLOCK_32         20
+#define SP_BLOCK_DXTC       24
+#define EBP_UNIQUES         (16*16)
+#define EBP_POS_ON_AXIS     (EBP_UNIQUES+(16*4))
+#define EBP_DIST_FROM_AXIS  (EBP_POS_ON_AXIS+(16*4))
+#define EBP_VALUES          (EBP_DIST_FROM_AXIS+16)
+#define EBP_OLDLEFT         (EBP_VALUES+16)
+#define EBP_OLDRIGHT        (EBP_OLDLEFT+16)
+#define EBP_RIGHTSAVE       (EBP_OLDRIGHT+16)
+#define EBP_MAXERROR        (EBP_RIGHTSAVE+4)
+#define EBP_ERROR           (EBP_MAXERROR+4)
+#define EBP_SWAP            (EBP_ERROR+4)
+
+// *block_32 *block_dxtc (VS2010) compiler generates warning C4100: unreferenced formal parameter
+__asm
+{
+    push esi
+    push edi
+    push ebx
+    push ebp
+
+    // Set up a 16-byte aligned storage space pointer
+    mov ebp, esp
+    and ebp, ~0x0f
+
+    // init to 0
+    xorps AVERAGE, AVERAGE        // average (r, g, b)
+
+	// -------------------------------------------------------------------------------------
+	// (3) Find the array of unique pixel values and sum them to find their average position
+	// -------------------------------------------------------------------------------------
+    {
+    lea		edi,[ebp - EBP_UNIQUES]
+    mov		esi,[esp + SP_BLOCK_32]
+    mov		ecx, 16
+    pxor	mm2, mm2
+
+average_unique_loop :
+    {
+    movd        mm0 ,[esi]
+    add         esi , 4
+    punpcklbw   mm0 , mm2
+    movq        mm1 , mm0
+    punpckhwd   mm0 , mm2
+    punpcklwd   mm1 , mm2
+    cvtpi2ps    xmm7, mm0
+    movlhps     xmm7, xmm7
+    cvtpi2ps    xmm7, mm1
+
+        // colourspace conversion
+    movaps[edi], xmm7
+    add			edi, 16
+    addps		AVERAGE, xmm7
+
+    sub ecx, 1
+    jne average_unique_loop
+    }
+
+    // Compute average of the uniques
+    mulps AVERAGE,[one_over_16]
+    }
+
+	// -------------------------------------------------------------------------------------
+	// (4) For each component, reflect points about the average so all lie on the same side
+    // of the average, and compute the new average - this gives a second point that defines the axis
+    // To compute the sign of the axis sum the positive differences of G for each of R and B (the
+    // G axis is always positive in this implementation
+	// -------------------------------------------------------------------------------------
+    { 
+
+            xorps	AXIS, AXIS				// v (r, g, b)
+                xorps	xmm2, xmm2				// rg_pos, rb_pos, bg_pos
+                lea		edi, [ebp - EBP_UNIQUES]
+                mov		ecx, 16
+
+                find_axis_loop:
+            {
+                movaps	xmm7, [edi]			// R G B value
+                    add		edi, 16
+                    subps	xmm7, AVERAGE			// centred
+                    movaps	xmm6, xmm7
+                    movaps	xmm5, xmm7
+
+                    andps	xmm7, [clearsign]		// fabs (r, g, b)
+                    addps	AXIS, xmm7			// direction of axis
+
+                    shufps	xmm6, xmm6, SHUFFLE_SELECT(0, 2, 2, 3)    // B R R 0
+                    shufps	xmm5, xmm5, SHUFFLE_SELECT(1, 0, 1, 3)    // G B G 0
+
+                    cmpnltps xmm6, [zero]		// R/B > 0?
+                    andps	xmm6, xmm5			// insert the G or B value for those channels which are positive
+                    addps	xmm2, xmm6			// bg_pos rb_pos rg_pos
+
+                    sub		ecx, 1
+                    jne		find_axis_loop
+            }
+
+
+            mulps AXIS, [one_over_16]
+
+                // Handle RB_pos - RB pos is used if RG_pos and BG_pos are both zero.
+                movaps	xmm5, xmm2								 // duplicate the pos across these three
+                movaps	xmm6, xmm2
+                movaps	xmm7, xmm2
+                shufps	xmm5, xmm5, SHUFFLE_SELECT(1, 3, 3, 3)    // RB_pos 0 ->
+                shufps	xmm6, xmm6, SHUFFLE_SELECT(2, 2, 2, 2)    // RG_pos ->
+                shufps	xmm7, xmm7, SHUFFLE_SELECT(0, 0, 0, 0)    // BG_pos ->
+                orps	xmm6, xmm7
+                cmpneqps xmm6, [zero]							// so check for any non-zero in RG_pos or BG_pos
+                andps	xmm2, xmm6								// Mask out RG_pos in current if we need to the current
+                xorps	xmm6, [invert]
+                andps	xmm5, xmm6
+                orps	xmm2, xmm5									// insert RB pos instead
+
+                // Change the sign of the R and B portions of the axis appropriately
+                cmpltps xmm2, [zero]
+                andps	xmm2, [rb_sign_bits]
+                xorps	AXIS, xmm2								// Flip the sign of the axis if the r/g or b/g tests indicate a negative slope
+    }
+
+	// -------------------------------------------------------------------------------------
+	// (5) Axis projection and remapping
+	// -------------------------------------------------------------------------------------
+	{
+        // Normalise the axis for simplicity of future calculation
+        movaps		xmm7, AXIS
+        mulps		xmm7, xmm7
+
+        PARALLEL_ADD_XMM7
+
+        // low of xmm7 is the DP result
+        // If this is 0 we haven't actually got an axis, and we can't rsq it,
+        // so mask the output to 0 in this case. This generates an acceptable result
+        movaps		xmm2, xmm7
+        cmpneqps	xmm2, [zero]
+        rsqrtps		xmm7, xmm7
+        andps		xmm7, xmm2
+        shufps		xmm7, xmm7, SHUFFLE_SELECT(0, 0, 0, 0)
+
+        // Normalise
+        mulps AXIS, xmm7
+    }
+
+    #define LEFT  xmm2
+    #define RIGHT xmm3
+
+	// -------------------------------------------------------------------------------------
+	// (6) Map the axis
+	// -------------------------------------------------------------------------------------
+	{
+        lea		edi, [ebp - EBP_UNIQUES]
+        lea		edx, [ebp - EBP_POS_ON_AXIS]
+        mov		ecx, 16
+        movaps	LEFT, [lots]
+        movaps	RIGHT, [minuslots]
+        xorps	xmm4, xmm4				// axis mapping error
+        {
+map_axis_loop:
+                movaps	xmm7,[edi]
+                subps	xmm7, AVERAGE
+                mulps	xmm7, AXIS
+                PARALLEL_ADD_XMM7
+                movss[edx], xmm7
+                add		edx, 4
+                // xmm7 == pos_on_axis
+                minss	LEFT,  xmm7        // calculate left
+                maxss	RIGHT, xmm7        // calculate right
+                add		edi, 16
+                sub		ecx, 1
+                jne		 map_axis_loop
+        }
+    }
+
+    shufps	LEFT, LEFT, SHUFFLE_SELECT(0, 0, 0, 0)
+    shufps	RIGHT, RIGHT, SHUFFLE_SELECT(0, 0, 0, 0)
+
+	// -------------------------------------------------------------------------------------
+	// (7) Now we have a good axis and the basic information about how the points are mapped
+    // to it
+    // Our initial guess is to represent the endpoints accurately, by moving the average
+    // to the centre and recalculating the point positions along the line
+	// -------------------------------------------------------------------------------------
+    { 
+            // Calculate centre
+            movaps	xmm7, LEFT
+                addps	xmm7, RIGHT
+                mulps	xmm7, [half]
+
+                // Offset all the axis positions to the centre
+                lea		edi, [ebp - EBP_POS_ON_AXIS]
+                movaps	xmm5, [edi]
+                movaps	xmm6, [edi + 16]
+                subps	xmm5, xmm7
+                subps	xmm6, xmm7
+                movaps[edi], xmm5
+                movaps[edi + 16], xmm6
+                movaps	xmm5, [edi + 32]
+                movaps	xmm6, [edi + 48]
+                subps	xmm5, xmm7
+                subps	xmm6, xmm7
+                movaps[edi + 32], xmm5
+                movaps[edi + 48], xmm6
+
+                // Offset left, right and average to centre
+                subps LEFT, xmm7
+                subps RIGHT, xmm7
+
+                mulps xmm7, AXIS
+                addps AVERAGE, xmm7
+     }
+
+	// -------------------------------------------------------------------------------------
+	// (8) Calculate the high and low output colour values
+    // Involved in this is a rounding procedure which is undoubtedly slightly twitchy. A
+    // straight rounded average is not correct, as the decompressor 'unrounds' by replicating
+    // the top bits to the bottom.
+    // In order to take account of this process, we don't just apply a straight rounding correction,
+    // but base our rounding on the input value (a straight rounding is actually pretty good in terms of
+    // error measure, but creates a visual colour and/or brightness shift relative to the original image)
+    // The method used here is to apply a centre-biased rounding dependent on the input value, which was
+    // (mostly by experiment) found to give minimum MSE while preserving the visual characteristics of
+    // the image.
+    // rgb = (average_rgb + (left|right)*v_rgb);
+	// -------------------------------------------------------------------------------------
+	{
+        movaps	xmm6, LEFT
+        movaps	xmm7, RIGHT
+        mulps	xmm6, AXIS
+        mulps	xmm7, AXIS
+        addps	xmm6, AVERAGE
+        addps	xmm7, AVERAGE
+
+        // Rearrange so B and R are in the same register half (they both use 5-bit rounding)
+        shufps	xmm6, xmm6, SHUFFLE_SELECT(0, 2, 1, 3)    // B R G
+        shufps	xmm7, xmm7, SHUFFLE_SELECT(0, 2, 1, 3)
+
+        // Convert to integer (by truncation, as C code does)
+        cvttps2pi	mm0, xmm6
+        cvttps2pi	mm1, xmm7
+        movhlps		xmm6, xmm6
+        movhlps		xmm7, xmm7
+        cvttps2pi	mm2, xmm6
+        cvttps2pi	mm3, xmm7
+
+        // mm0/1 is blue/red, mm2/3 is green
+        // This isn't quite the same as the C algorithm, but should generate the same result
+        // if the input range is ensured to be 0-255
+        // This code could be heavily interleaved, but for P4 it's not worth the hassle - the
+        // P4 reordering range of 15 instructions will let it do the job for us
+
+        pmaxsw	mm0, [clamp_0]        // Note: faster to do these max/min in MMX than float XMM - better reordering opportunities
+        pmaxsw	mm1, [clamp_0]
+        pminsw	mm0, [clamp_255]
+        pminsw	mm1, [clamp_255]
+        movq	mm6, mm0
+        movq	mm7, mm1
+        paddd	mm0, [blue_red_rounding]
+        paddd	mm1, [blue_red_rounding]
+        psrld	mm6, 5
+        psrld	mm7, 5
+        psubd	mm0, mm6
+        psubd	mm1, mm7
+        // No need to clamp here, with the input in 0-255 range it can never be outside at the end
+        pand	mm0, [mask_blue_red]
+        pand	mm1, [mask_blue_red]
+
+        // Separate out R and B as they will need separate shifts later
+        pshufw	mm4, mm0, SHUFFLE_SELECT(2, 3, 2, 3)    // extract R    (this is an SSE, not MMX, instruction)
+        pshufw	mm5, mm1, SHUFFLE_SELECT(2, 3, 2, 3)    // also R
+
+        pmaxsw	mm2, [clamp_0]
+        pmaxsw	mm3, [clamp_0]
+        pminsw	mm2, [clamp_255]
+        pminsw	mm3, [clamp_255]
+        movq	mm6, mm2
+        movq	mm7, mm3
+        paddd	mm2, [green_rounding]
+        paddd	mm3, [green_rounding]
+        psrld	mm6, 6
+        psrld	mm7, 6
+        psubd	mm2, mm6
+        psubd	mm3, mm7
+        pand	mm2, [mask_green]
+        pand	mm3, [mask_green]
+
+        // Convert the 8-bit values to final RGB565 colours in mm0 and mm1
+        psrld	mm0, 3
+        psrld	mm1, 3
+        pslld	mm4, 8
+        pslld	mm5, 8
+        pslld	mm2, 3
+        pslld	mm3, 3
+        por		mm0, mm4
+        por		mm1, mm5
+        por		mm0, mm2
+        por		mm1, mm3
+
+        // mm0 and mm1 are c0 and c1
+
+        // Need to compare c0/c1 for sign and flip and set swap if required - and handle colour equality as well....
+        mov		edi, [esp + SP_BLOCK_DXTC]
+        pxor	mm5, mm5
+        punpcklwd mm0, mm5				// unpack c0/c1 to DWORD's as pcmp is a signed comparison
+        punpcklwd mm1, mm5
+        movq	mm2, mm0
+        movq	mm3, mm0
+        movq	mm4, mm0
+        pcmpgtd mm2, mm1
+        pxor	mm2, [invert]				// Need less than, so flip the result
+        movd[ebp - EBP_SWAP], mm2		// Set the swap flag (used below) appropriately)
+                                        // mm2 is the mask to indicate flipping is needed
+        pcmpeqd mm4, mm1
+        movd	ebx, mm4					// ebx is the equality flag, plenty of time for this slow move to resolve
+        punpcklwd mm0, mm1				// 'normal' order
+        punpcklwd mm1, mm3				// reversed order
+        pand	mm1, mm2
+        pandn	mm2, mm0
+        por		mm1, mm2					// one of the two, selected by mm2
+        movd[edi], mm1					// write the result
+	}
+
+
+    // Clear the output bitmasks
+    add edi, 4
+    mov dword ptr[edi], 0
+
+    // If the values are equal, the bit selector is 0 because the two colours are
+    // the same (which implies transparent)
+    // This seems the easiest way to do it, and will only rarely break branch prediction on
+    // typical images.
+    test	ebx, ebx
+    jnz		all_done
+
+	// -------------------------------------------------------------------------------------
+	// (9) Final clustering, creating the 2-bit values that define the output
+	// -------------------------------------------------------------------------------------
+	{
+		lea		ecx, split_point
+
+		movaps	xmm7, RIGHT
+		mulps	RIGHT,[ecx]					// split point
+		addps	xmm7, LEFT
+		mulps	xmm7,[half]					// centre (probably 0, but what the hell)
+
+		lea		esi,[ebp - EBP_POS_ON_AXIS]
+		lea		edx,[expandtable]
+		movss	xmm6,[ebp - EBP_SWAP]
+		shufps	xmm6, xmm6, 0
+		mov		ecx, 4
+		{
+next_bit_loop:							// Do 4 at once
+			movaps		xmm4,[esi]			// Read the four pos_on_axis entries
+			add			esi, 16
+			movaps		xmm5, xmm4
+			andps		xmm4,[clearsign]
+			cmpltps		xmm4, RIGHT			// < division means 2
+			cmpnltps	xmm5, xmm7			// >= centre means add 1
+			xorps		xmm5, xmm6			// Swap the order if we had to flip our colours
+			movmskps	eax, xmm4
+			movmskps	ebx, xmm5
+			movzx		eax, byte ptr[edx + eax + 16]
+			movzx		ebx, byte ptr[edx + ebx]
+			or			eax, ebx
+			mov			byte ptr[edi], al
+			add			edi, 1
+			sub			ecx, 1
+			jne			next_bit_loop
+		}
+	}
+
+all_done:
+    emms
+    pop ebp
+    pop ebx
+    pop edi
+    pop esi
+    ret
+
+    } // _asm
+}
 
 #pragma warning( pop )
 
 #endif // !_WIN64
+

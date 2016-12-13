@@ -53,7 +53,7 @@ public:
 };
 
 extern void Rgba2Texture(Array2D<Rgba> &pixels, float *data, int w, int h);
-extern void Texture2Rgba(float* data, Array2D<Rgba> &pixels, int w, int h, bool isDeCompressed);
+extern void Texture2Rgba(float* data, Array2D<Rgba> &pixels, int w, int h, CMP_FORMAT isDeCompressed);
 extern float half_conv_float(unsigned short in);
 
 #endif

@@ -99,10 +99,10 @@ void Rgba2Texture(Array2D<Rgba> &pixels, float* data, int w, int h)
     }
 }
 
-void Texture2Rgba(float* data, Array2D<Rgba> &pixels, int w, int h, bool isDeCompressed)
+void Texture2Rgba(float* data, Array2D<Rgba> &pixels, int w, int h, CMP_FORMAT isDeCompressed)
 {
 
-    if (isDeCompressed)
+    if (isDeCompressed != CMP_FORMAT_Unknown)
     {
         // Save the Half Data format value into a Float for processing later
         for (int y = 0; y < h; ++y)

@@ -35,51 +35,51 @@
 
 class C_AnalysisData : public QObject
 {
-	Q_OBJECT
-		Q_PROPERTY(double  _MSE            MEMBER m_MSE)
-		Q_PROPERTY(double  _SSIM           MEMBER m_SSIM)
-		Q_PROPERTY(double  _SSIM_Blue      MEMBER m_SSIM_Blue)
-		Q_PROPERTY(double  _SSIM_Green     MEMBER m_SSIM_Green)
-		Q_PROPERTY(double  _SSIM_Red       MEMBER m_SSIM_Red)
-		Q_PROPERTY(double  _PSNR		   MEMBER m_PSNR)
-		Q_PROPERTY(double  _PSNR_Blue      MEMBER m_PSNR_Blue)
-		Q_PROPERTY(double  _PSNR_Green     MEMBER m_PSNR_Green)
-		Q_PROPERTY(double  _PSNR_Red       MEMBER m_PSNR_Red)
+    Q_OBJECT
+        Q_PROPERTY(double  _MSE            MEMBER m_MSE)
+        Q_PROPERTY(double  _SSIM           MEMBER m_SSIM)
+        Q_PROPERTY(double  _SSIM_Blue      MEMBER m_SSIM_Blue)
+        Q_PROPERTY(double  _SSIM_Green     MEMBER m_SSIM_Green)
+        Q_PROPERTY(double  _SSIM_Red       MEMBER m_SSIM_Red)
+        Q_PROPERTY(double  _PSNR		   MEMBER m_PSNR)
+        Q_PROPERTY(double  _PSNR_Blue      MEMBER m_PSNR_Blue)
+        Q_PROPERTY(double  _PSNR_Green     MEMBER m_PSNR_Green)
+        Q_PROPERTY(double  _PSNR_Red       MEMBER m_PSNR_Red)
 
 public:
-	C_AnalysisData()
-	{
-		m_MSE = 0.0;
-		m_SSIM = 0.0;
-		m_SSIM_Blue = 0.0;
-		m_SSIM_Green = 0.0;
-		m_SSIM_Red = 0.0;
-		m_PSNR = 0.0;
-		m_PSNR_Blue = 0.0;
-		m_PSNR_Green = 0.0;
-		m_PSNR_Red = 0.0;
-		diffCMipImages = new CMipImages();
-	}
+    C_AnalysisData()
+    {
+        m_MSE = 0.0;
+        m_SSIM = 0.0;
+        m_SSIM_Blue = 0.0;
+        m_SSIM_Green = 0.0;
+        m_SSIM_Red = 0.0;
+        m_PSNR = 0.0;
+        m_PSNR_Blue = 0.0;
+        m_PSNR_Green = 0.0;
+        m_PSNR_Red = 0.0;
+        diffCMipImages = new CMipImages();
+    }
 
-	double m_MSE;
-	double m_SSIM;
-	double m_SSIM_Blue;
-	double m_SSIM_Green;
-	double m_SSIM_Red;
-	double m_PSNR;
-	double m_PSNR_Blue;
-	double m_PSNR_Green;
-	double m_PSNR_Red;
+    double m_MSE;
+    double m_SSIM;
+    double m_SSIM_Blue;
+    double m_SSIM_Green;
+    double m_SSIM_Red;
+    double m_PSNR;
+    double m_PSNR_Blue;
+    double m_PSNR_Green;
+    double m_PSNR_Red;
 
-	~C_AnalysisData();
+    ~C_AnalysisData();
 
-	bool SourceAndDestFileExtMatch(const char *fsource, const char *fdest);
-	CMipImages* GenerateDiffImage(const char *fsource, const char *fdest);
+    bool SourceAndDestFileExtMatch(const char *fsource, const char *fdest);
+    CMipImages* GenerateDiffImage(const char *fsource, const char *fdest);
     int GenerateSSIMAnalysis(const char *fsource, const char *fdest);
     int GeneratePSNRMSEAnalysis(const char *fsource, const char *fdest);
 
-	CMipImages* diffCMipImages;
-	
+    CMipImages* diffCMipImages;
+    
 };
 
 class C_SSIM_Analysis : public QObject

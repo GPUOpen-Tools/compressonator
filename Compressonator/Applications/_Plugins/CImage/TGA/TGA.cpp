@@ -354,11 +354,11 @@ TC_PluginError LoadTGA_ARGB8888_RLE(FILE* pFile, MipSet* pMipSet, TGAHeader& Hea
 
 TC_PluginError LoadTGA_RGB888(FILE* pFile, MipSet* pMipSet, TGAHeader& Header)
 {
-    if(!TGA_CMips->AllocateMipLevelData(TGA_CMips->GetMipLevel(pMipSet, 0), Header.nWidth, Header.nHeight, CF_8bit, TDT_XRGB))
+    if(!TGA_CMips->AllocateMipLevelData(TGA_CMips->GetMipLevel(pMipSet, 0), Header.nWidth, Header.nHeight, CF_8bit, TDT_ARGB))
         return PE_Unknown;
 
     pMipSet->m_ChannelFormat    = CF_8bit;
-    pMipSet->m_TextureDataType  = TDT_XRGB;
+    pMipSet->m_TextureDataType  = TDT_ARGB;
     pMipSet->m_dwFourCC         = 0;
     pMipSet->m_dwFourCC2        = 0;
     pMipSet->m_nMipLevels       = 1;
@@ -414,11 +414,11 @@ TC_PluginError LoadTGA_RGB888(FILE* pFile, MipSet* pMipSet, TGAHeader& Header)
 
 TC_PluginError LoadTGA_RGB888_RLE(FILE* pFile, MipSet* pMipSet, TGAHeader& Header)
 {
-    if(!TGA_CMips->AllocateMipLevelData(TGA_CMips->GetMipLevel(pMipSet, 0), Header.nWidth, Header.nHeight, CF_8bit, TDT_XRGB))
+    if(!TGA_CMips->AllocateMipLevelData(TGA_CMips->GetMipLevel(pMipSet, 0), Header.nWidth, Header.nHeight, CF_8bit, TDT_ARGB))
         return PE_Unknown;
 
     pMipSet->m_ChannelFormat    = CF_8bit;
-    pMipSet->m_TextureDataType  = TDT_XRGB;
+    pMipSet->m_TextureDataType  = TDT_ARGB;
     pMipSet->m_dwFourCC         = 0;
     pMipSet->m_dwFourCC2        = 0;
     pMipSet->m_nMipLevels       = 1;
@@ -557,7 +557,7 @@ TC_PluginError LoadTGA_G8_RLE(FILE* pFile, MipSet* pMipSet, TGAHeader& Header)
         return PE_Unknown;
 
     pMipSet->m_ChannelFormat    = CF_8bit;
-    pMipSet->m_TextureDataType  = TDT_XRGB;
+    pMipSet->m_TextureDataType  = TDT_ARGB;
     pMipSet->m_dwFourCC         = 0;
     pMipSet->m_dwFourCC2        = 0;
     pMipSet->m_nMipLevels       = 1;
@@ -726,14 +726,35 @@ TC_PluginError SaveRLE(FILE* pFile, const MipSet* pMipSet, int nSize, int nOffse
 
 TC_PluginError SaveTGA_ARGB8888(FILE* pFile, const MipSet* pMipSet)
 {
-    DWORD dwPitch = pMipSet->m_nWidth * sizeof(COLOR);
-    for(int j=pMipSet->m_nHeight-1; j>=0; j--)
+    DWORD dwPitch = pMipSet->m_nWidth * 4;
+
+    if (pMipSet->m_swizzle)
     {
-        BYTE* pData = (BYTE*) (TGA_CMips->GetMipLevel(pMipSet, 0)->m_pbData + (j * dwPitch));
-        fwrite(pData, dwPitch, 1, pFile);
+        BYTE RGBA[4];
+        for (int j = pMipSet->m_nHeight - 1; j >= 0; j--)
+        {
+            BYTE* pData = (BYTE*)(TGA_CMips->GetMipLevel(pMipSet, 0)->m_pbData + (j * dwPitch));
+            for (int i = 0; i < pMipSet->m_nWidth; i++)
+            {
+                RGBA[2] = (BYTE)*pData++;
+                RGBA[1] = (BYTE)*pData++;
+                RGBA[0] = (BYTE)*pData++;
+                RGBA[3] = (BYTE)*pData++;
+                fwrite(RGBA, 4, 1, pFile);
+            }
+        }
+    }
+    else
+    {
+        for (int j = pMipSet->m_nHeight - 1; j >= 0; j--)
+        {
+            BYTE* pData = (BYTE*)(TGA_CMips->GetMipLevel(pMipSet, 0)->m_pbData + (j * dwPitch));
+            fwrite(pData, dwPitch, 1, pFile);
+        }
     }
 
     fclose(pFile);
+
 
     return PE_OK;
 }

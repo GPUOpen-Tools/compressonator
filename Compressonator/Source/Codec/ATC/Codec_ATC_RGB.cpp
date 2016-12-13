@@ -100,6 +100,7 @@ CodecError CCodec_ATC_RGB::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& buff
 
     CMP_DWORD compressedBlock[2];
     CMP_BYTE destBlock[BLOCK_SIZE_4X4X4];
+    memset(destBlock, 0xFF, BLOCK_SIZE_4X4X4);
     for(CMP_DWORD j = 0; j < dwBlocksY; j++)
     {
         for(CMP_DWORD i = 0; i < dwBlocksX; i++)

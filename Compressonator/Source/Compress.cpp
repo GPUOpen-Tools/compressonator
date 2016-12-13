@@ -38,6 +38,8 @@ CodecType GetCodecType(CMP_FORMAT format)
     switch(format)
     {
         case CMP_FORMAT_ARGB_2101010:            return CT_None;
+        case CMP_FORMAT_RGBA_8888:               return CT_None;
+        case CMP_FORMAT_BGRA_8888:               return CT_None;
         case CMP_FORMAT_ARGB_8888:               return CT_None;
         case CMP_FORMAT_RGB_888:                 return CT_None;
         case CMP_FORMAT_RG_8:                    return CT_None;
@@ -138,6 +140,8 @@ CMP_ERROR CheckTexture(const CMP_Texture* pTexture, bool bSource)
     return CMP_OK;
 }
 
+
+
 CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2, CodecType destType)
 {
     // Compressing
@@ -145,6 +149,7 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
     assert(pCodec);
     if(pCodec == NULL)
         return CMP_ERR_UNABLE_TO_INIT_CODEC;
+
 
     // Have we got valid options ?
     if(pOptions && pOptions->dwSize == sizeof(CMP_CompressOptions))
@@ -198,10 +203,16 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
                 pCodec->SetParameter("AlphaRestrict", (CMP_DWORD) pOptions->brestrictAlpha);
                 pCodec->SetParameter("Quality", (CODECFLOAT) pOptions->fquality);
                 break;
+        case CT_ASTC:
+                pCodec->SetParameter("Quality", (CODECFLOAT)pOptions->fquality);
+                break;
         case CT_GT:
         case CT_BC6H:
-        case CT_ASTC:
                 // Reserved
+#ifdef _DEBUG
+                // napatel : remove this after
+                // pCodec->SetParameter("NumThreads", (CMP_DWORD)1);
+#endif
                 break;
         }
 

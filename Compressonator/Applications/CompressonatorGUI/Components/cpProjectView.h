@@ -44,8 +44,7 @@
 #include "objectcontroller.h"
 
 // Progress Bar
-#include <AMDTApplicationComponents/Include/acProgressDlg.h>
-
+#include <acProgressDlg.h>
 #include "cpTreeWidget.h"
 #include "cpImageView.h"
 #include "cpProjectData.h"
@@ -76,29 +75,6 @@ public:
 Q_SIGNALS:
     void  signalProcessMessage();
 };
-
-
-class MyThread : public QThread
-{
-public:
-    // constructor
-    // set name and Stop is set as false by default
-    MyThread();
-    acProgressDlg*                          m_pProgressDlg;
-
-    // overriding the QThread's run() method
-    void run();
-
-    void done();
-    void show();
-
-    // variable that mutex protects
-    bool Stop;
-private:
-    QString name;
-};
-
-
 
 class cpItemDelegate : public QItemDelegate
 {
@@ -135,7 +111,6 @@ public:
     
     CompressStatusDialog *                  m_CompressStatusDialog;
     acProgressDlg*                          m_pProgressDlg;
-
     void SetupHeader();
     void SetupTreeView();
     bool loadProjectFile(QString fileToLoad);

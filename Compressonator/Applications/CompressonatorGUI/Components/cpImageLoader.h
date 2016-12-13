@@ -82,7 +82,7 @@ public:
     CMipImages *LoadPluginImage(QString filename);      // Creates Image & MIP data 
     bool    clearMipImages(CMipImages *MipImages);      // Clears (delete) all Image & MIP data
     void    UpdateMIPMapImages(CMipImages *MipImages);  // Maps MIP levels to Images
-	MipSet *QImage2MIPS(QImage *qimage);            // Converts a QImage to MipSet
+    MipSet *QImage2MIPS(QImage *qimage);            // Converts a QImage to MipSet
     MipSet *DecompressMipSet(CMipImages *MipImages);
 
 private:

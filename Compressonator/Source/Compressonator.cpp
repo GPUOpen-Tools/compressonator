@@ -36,7 +36,7 @@
 #include <assert.h>
 #include "debug.h"
 
-extern CodecType    GetCodecType(CMP_FORMAT format);
+extern CodecType GetCodecType(CMP_FORMAT format);
 extern CMP_ERROR GetError(CodecError err);
 extern CMP_ERROR CheckTexture(const CMP_Texture* pTexture, bool bSource);
 extern CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2, CodecType destType);
@@ -84,6 +84,8 @@ CMP_DWORD CalcBufferSize(CMP_FORMAT format, CMP_DWORD dwWidth, CMP_DWORD dwHeigh
 
     switch(format)
     {
+        case CMP_FORMAT_RGBA_8888:
+        case CMP_FORMAT_BGRA_8888:
         case CMP_FORMAT_ARGB_8888:
         case CMP_FORMAT_ARGB_2101010:
             return ((dwPitch) ? (dwPitch * dwHeight) : (dwWidth * 4 * dwHeight));
@@ -132,7 +134,280 @@ CMP_DWORD CalcBufferSize(CMP_FORMAT format, CMP_DWORD dwWidth, CMP_DWORD dwHeigh
     }
 }
 
-CMP_ERROR CMP_API CMP_ConvertTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+#ifndef USE_OLD_SWIZZLE
+void CMP_Map_Bytes(BYTE *src, int width, int height, CMP_MAP_BYTES_SET map, CMP_BYTE offset)
+{
+    int  i, j;
+    BYTE b[4];
+
+    for (i = 0; i<height; i++)
+    {
+        for (j = 0; j<width; j++)
+        {
+            if (offset == 4)
+            {
+                b[0] = *src;
+                b[1] = *(src + 1);
+                b[2] = *(src + 2);
+                b[3] = *(src + 3);
+                *(src) = b[map.B0];
+                *(src + 1) = b[map.B1];
+                *(src + 2) = b[map.B2];
+                *(src + 3) = b[map.B3];
+                src = src + 4;   // move to next set of bytes
+            }
+            else
+            if (offset == 3)
+            {
+                b[0] = *src;
+                b[1] = *(src + 1);
+                b[2] = *(src + 2);
+                b[3] = *(src + 3);
+                *(src)     = b[map.B0];
+                *(src + 1) = b[map.B1];
+                *(src + 2) = b[map.B2];
+                src = src + 3;   // move to next set of bytes
+            }
+        }
+    }
+
+}
+
+// For now this function will only handle a single case
+// where the source data remains the same size and only RGBA channels
+// are swizzled according output compressed formats, 
+// if source is compressed then no change is performed
+
+void CMP_PrepareSourceForCMP_Destination(CMP_Texture* pTexture, CMP_FORMAT  DestFormat)
+{
+
+    CMP_DWORD       dwWidth = pTexture->dwWidth;
+    CMP_DWORD       dwHeight = pTexture->dwHeight;
+    CMP_FORMAT      newSrcFormat = pTexture->format;
+    CMP_BYTE        *pData;
+
+    pData = pTexture->pData;
+
+    switch (newSrcFormat)
+    {
+    case CMP_FORMAT_BGRA_8888:
+    {
+        switch (DestFormat)
+        {
+        case CMP_FORMAT_ATI1N:
+        case CMP_FORMAT_ATI2N:
+        case CMP_FORMAT_ATI2N_XY:
+        case CMP_FORMAT_ATI2N_DXT5:
+        case CMP_FORMAT_ATC_RGB:
+        case CMP_FORMAT_ATC_RGBA_Explicit:
+        case CMP_FORMAT_ATC_RGBA_Interpolated:
+        case CMP_FORMAT_BC1:
+        case CMP_FORMAT_BC2:
+        case CMP_FORMAT_BC3:
+        case CMP_FORMAT_BC4:
+        case CMP_FORMAT_BC5:
+        case CMP_FORMAT_DXT1:
+        case CMP_FORMAT_DXT3:
+        case CMP_FORMAT_DXT5:
+        case CMP_FORMAT_DXT5_xGBR:
+        case CMP_FORMAT_DXT5_RxBG:
+        case CMP_FORMAT_DXT5_RBxG:
+        case CMP_FORMAT_DXT5_xRBG:
+        case CMP_FORMAT_DXT5_RGxB:
+        case CMP_FORMAT_DXT5_xGxR:
+        {
+            // The source format is correct for these codecs
+            break;
+        }
+        case CMP_FORMAT_ASTC:
+        case CMP_FORMAT_BC6H:
+        case CMP_FORMAT_BC7:
+        case CMP_FORMAT_GT:
+        case CMP_FORMAT_ETC_RGB:
+        case CMP_FORMAT_ETC2_RGB:
+        {
+            newSrcFormat = CMP_FORMAT_RGBA_8888;
+            CMP_Map_Bytes(pData, dwWidth, dwHeight, { 2, 1, 0, 3 },4);
+            break;
+        }
+        default: break;
+        }
+        break;
+    }
+    case CMP_FORMAT_RGBA_8888:
+    {
+        switch (DestFormat)
+        {
+        case CMP_FORMAT_ATI1N:
+        case CMP_FORMAT_ATI2N:
+        case CMP_FORMAT_ATI2N_XY:
+        case CMP_FORMAT_ATI2N_DXT5:
+        case CMP_FORMAT_ATC_RGB:
+        case CMP_FORMAT_ATC_RGBA_Explicit:
+        case CMP_FORMAT_ATC_RGBA_Interpolated:
+        case CMP_FORMAT_BC1:
+        case CMP_FORMAT_BC2:
+        case CMP_FORMAT_BC3:
+        case CMP_FORMAT_BC4:
+        case CMP_FORMAT_BC5:
+        case CMP_FORMAT_DXT1:
+        case CMP_FORMAT_DXT3:
+        case CMP_FORMAT_DXT5:
+        case CMP_FORMAT_DXT5_xGBR:
+        case CMP_FORMAT_DXT5_RxBG:
+        case CMP_FORMAT_DXT5_RBxG:
+        case CMP_FORMAT_DXT5_xRBG:
+        case CMP_FORMAT_DXT5_RGxB:
+        case CMP_FORMAT_DXT5_xGxR:
+        {
+            newSrcFormat = CMP_FORMAT_BGRA_8888;
+            CMP_Map_Bytes(pData, dwWidth, dwHeight, { 2,1,0,3 },4);
+            break;
+        }
+        case CMP_FORMAT_ASTC:
+        case CMP_FORMAT_BC6H:
+        case CMP_FORMAT_BC7:
+        case CMP_FORMAT_ETC_RGB:
+        case CMP_FORMAT_ETC2_RGB:
+        case CMP_FORMAT_GT:
+        {
+            // format is correct
+        }
+        default: break;
+        }
+        break;
+    }
+    case CMP_FORMAT_ARGB_8888:
+    {
+        switch (DestFormat)
+        {
+        case CMP_FORMAT_ATI1N:
+        case CMP_FORMAT_ATI2N:
+        case CMP_FORMAT_ATI2N_XY:
+        case CMP_FORMAT_ATI2N_DXT5:
+        case CMP_FORMAT_ATC_RGB:
+        case CMP_FORMAT_ATC_RGBA_Explicit:
+        case CMP_FORMAT_ATC_RGBA_Interpolated:
+        case CMP_FORMAT_BC1:
+        case CMP_FORMAT_BC2:
+        case CMP_FORMAT_BC3:
+        case CMP_FORMAT_BC4:
+        case CMP_FORMAT_BC5:
+        case CMP_FORMAT_DXT1:
+        case CMP_FORMAT_DXT3:
+        case CMP_FORMAT_DXT5:
+        case CMP_FORMAT_DXT5_xGBR:
+        case CMP_FORMAT_DXT5_RxBG:
+        case CMP_FORMAT_DXT5_RBxG:
+        case CMP_FORMAT_DXT5_xRBG:
+        case CMP_FORMAT_DXT5_RGxB:
+        case CMP_FORMAT_DXT5_xGxR:
+        {
+            newSrcFormat = CMP_FORMAT_BGRA_8888;
+            CMP_Map_Bytes(pData, dwWidth, dwHeight, { 3,2,1,0 }, 4);
+            break;
+        }
+        case CMP_FORMAT_ASTC:
+        case CMP_FORMAT_BC6H:
+        case CMP_FORMAT_BC7:
+        case CMP_FORMAT_ETC_RGB:
+        case CMP_FORMAT_ETC2_RGB:
+        case CMP_FORMAT_GT:
+        {
+            newSrcFormat = CMP_FORMAT_RGBA_8888;
+            CMP_Map_Bytes(pData, dwWidth, dwHeight, { 1,2,3,0 }, 4);
+            break;
+        }
+        default: break;
+        }
+        break;
+    }
+    default: break;
+    }
+
+    // Update Source format to new one
+    pTexture->format = newSrcFormat;
+
+}
+
+
+
+// For now this function will only handle a single case
+// where the source data remains the same size and only RGBA channels
+// are swizzled according output compressed formats, 
+// if source is compressed then no change is performed
+
+void CMP_PrepareCMPSourceForIMG_Destination(CMP_Texture* pDstTexture, CMP_FORMAT  SrcFormat)
+{
+
+    CMP_DWORD       dwWidth = pDstTexture->dwWidth;
+    CMP_DWORD       dwHeight = pDstTexture->dwHeight;
+    CMP_FORMAT      newDstFormat = pDstTexture->format;
+    CMP_BYTE        *pData;
+
+    pData = pDstTexture->pData;
+
+    switch (SrcFormat)
+    {
+        // decompressed Data  is in the form BGRA
+    case CMP_FORMAT_ATI1N:
+    case CMP_FORMAT_ATI2N:
+    case CMP_FORMAT_ATI2N_XY:
+    case CMP_FORMAT_ATI2N_DXT5:
+    case CMP_FORMAT_ATC_RGB:
+    case CMP_FORMAT_ATC_RGBA_Explicit:
+    case CMP_FORMAT_ATC_RGBA_Interpolated:
+    case CMP_FORMAT_BC1:
+    case CMP_FORMAT_BC2:
+    case CMP_FORMAT_BC3:
+    case CMP_FORMAT_BC4:
+    case CMP_FORMAT_BC5:
+    case CMP_FORMAT_DXT1:
+    case CMP_FORMAT_DXT3:
+    case CMP_FORMAT_DXT5:
+    case CMP_FORMAT_DXT5_xGBR:
+    case CMP_FORMAT_DXT5_RxBG:
+    case CMP_FORMAT_DXT5_RBxG:
+    case CMP_FORMAT_DXT5_xRBG:
+    case CMP_FORMAT_DXT5_RGxB:
+    case CMP_FORMAT_DXT5_xGxR:
+    {
+        switch (newDstFormat)
+        {
+        case CMP_FORMAT_BGRA_8888: break;
+        case CMP_FORMAT_RGBA_8888:
+        {
+            CMP_Map_Bytes(pData, dwWidth, dwHeight, { 2, 1, 0, 3 },4);
+            break;
+        }
+        default: break;
+        }
+    }
+    // decompressed Data  is in the form RGBA_8888
+    case CMP_FORMAT_ASTC:
+    case CMP_FORMAT_BC6H:
+    case CMP_FORMAT_BC7:
+    case CMP_FORMAT_GT:
+    case CMP_FORMAT_ETC_RGB:
+    case CMP_FORMAT_ETC2_RGB:
+    {
+        switch (newDstFormat)
+        {
+        case CMP_FORMAT_RGBA_8888: break;
+        case CMP_FORMAT_BGRA_8888:
+        {
+            CMP_Map_Bytes(pData, dwWidth, dwHeight, { 2, 1, 0, 3 },4);
+            break;
+        }
+        default: break;
+        }
+    }
+    }
+}
+#endif
+
+
+CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(("-------> pSourceTexture [%x] pDestTexture [%x] pOptions [%x]",pSourceTexture, pDestTexture, pOptions));
@@ -202,6 +477,11 @@ CMP_ERROR CMP_API CMP_ConvertTexture(const CMP_Texture* pSourceTexture, CMP_Text
     }
     else if(srcType == CT_None && destType != CT_None)
     {
+
+#ifndef USE_OLD_SWIZZLE
+        CMP_PrepareSourceForCMP_Destination(pSourceTexture, pDestTexture->format);
+#endif
+
 #ifdef THREADED_COMPRESS
         // Note: 
         // BC7/BC6H has issues with this setting - we already set multithreading via numThreads so
@@ -228,6 +508,8 @@ CMP_ERROR CMP_API CMP_ConvertTexture(const CMP_Texture* pSourceTexture, CMP_Text
     else if(srcType != CT_None && destType == CT_None)
     {
         // Decompressing
+
+
         CCodec* pCodec = CreateCodec(srcType);
         assert(pCodec);
         if(pCodec == NULL)
@@ -264,6 +546,10 @@ CMP_ERROR CMP_API CMP_ConvertTexture(const CMP_Texture* pSourceTexture, CMP_Text
 
         CodecError err1 = pCodec->Decompress(*pSrcBuffer, *pDestBuffer, pFeedbackProc, pUser1, pUser2);
         RESTORE_FP_EXCEPTIONS;
+
+#ifndef  USE_OLD_SWIZZLE
+        CMP_PrepareCMPSourceForIMG_Destination(pDestTexture, pSourceTexture->format);
+#endif
 
         SAFE_DELETE(pCodec);
         SAFE_DELETE(pSrcBuffer);

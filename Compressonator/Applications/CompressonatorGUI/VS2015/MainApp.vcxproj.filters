@@ -151,9 +151,6 @@
     <ClCompile Include="..\Components\acDockWidgetTitleBar.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\appQtApplication.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\cpMainComponents.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -164,12 +161,6 @@
       <Filter>Generated Files\Release_MD</Filter>
     </ClCompile>
     <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpMainComponents.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_appQtApplication.cpp">
-      <Filter>Generated Files\Release_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_appQtApplication.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
     <ClCompile Include="..\GeneratedFiles\Release_MD\moc_acDockWidgetTitleBar.cpp">
@@ -334,15 +325,6 @@
     <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_qtbuttonpropertybrowser.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\cpUnhandledExceptionHandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpUnhandledExceptionHandler.cpp">
-      <Filter>Generated Files\Release_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpUnhandledExceptionHandler.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
     <ClCompile Include="..\Components\cpNewProject.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -354,6 +336,33 @@
     </ClCompile>
     <ClCompile Include="..\GeneratedFiles\qrc_CompressonatorGUI.cpp">
       <Filter>Generated Files\Release_MD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\acProgressDlg.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_acProgressDlg.cpp">
+      <Filter>Generated Files\Release_MD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_acProgressDlg.cpp">
+      <Filter>Generated Files\Debug_MD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_acProgressAnimationWidget.cpp">
+      <Filter>Generated Files\Release_MD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_acProgressAnimationWidget.cpp">
+      <Filter>Generated Files\Debug_MD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\acProgressAnimationWidget.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\acAboutDlg.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_acAboutDlg.cpp">
+      <Filter>Generated Files\Release_MD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_acAboutDlg.cpp">
+      <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -476,9 +485,6 @@
     <CustomBuild Include="..\Components\acDockWidgetTitleBar.h">
       <Filter>Components</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\Source\appQtApplication.h">
-      <Filter>Source Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\Source\cpMainComponents.h">
       <Filter>Source Files</Filter>
     </CustomBuild>
@@ -500,14 +506,20 @@
     <CustomBuild Include="..\GeneratedFiles\Debug_MD\qteditorfactory.moc">
       <Filter>Generated Files\Debug_MD</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\Source\cpUnhandledExceptionHandler.h">
-      <Filter>Source Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\Components\cpNewProject.h">
       <Filter>Components</Filter>
     </CustomBuild>
     <CustomBuild Include="..\CompressonatorGUI.qrc">
       <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\acProgressDlg.h">
+      <Filter>Components</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\acProgressAnimationWidget.h">
+      <Filter>Components</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\acAboutDlg.h">
+      <Filter>Components</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -645,5 +657,10 @@
     <ResourceCompile Include="..\Resources\MainApp.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CopyFiles.bat">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

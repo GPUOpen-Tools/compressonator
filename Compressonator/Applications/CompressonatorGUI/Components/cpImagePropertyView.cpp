@@ -325,13 +325,12 @@ void CImagePropertyView::hasAlphaChannelValue()
 //===================================================================
 void CImagePropertyView::compressionValueChanged(QVariant &value)
 {
-    QMessageBox msgBox;
     bool compressedOptions = false;
     bool colorWeightOptions = false;
     bool alphaChannelOptions = false;
     bool astcbitrateOptions = false;
     C_Destination_Options *Data = (C_Destination_Options *)m_data;
-
+    
     C_Destination_Options::eCompression comp = (C_Destination_Options::eCompression &)value;
 
     switch (comp)
@@ -549,9 +548,14 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
     }
 
     if (compressedOptions)
+    {
         m_infotext->append("Destination file will be <b>Compressed</b> when processed");
+    }
     else
+    {
+        m_infotext->clear();
         m_infotext->append("Destination file will be <b>Transcoded</b> when processed");
+    }
 
 }
 

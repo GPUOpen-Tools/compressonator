@@ -35,9 +35,6 @@
 #include <QGraphicsRectItem>
 #include <QGLWidget>
 
-// GT ASSERT
-#include <AMDTBaseTools/Include/gtAssert.h>
-
 // Local
 #include "acCustomGraphics.h"
 #include "acTableImageDataModel.h"
@@ -45,6 +42,8 @@
 
 #define AC_IMAGE_MAX_ZOOM  9999
 #define AC_IMAGE_MIN_ZOOM  10
+
+#define DEFAULT_BRIGHTNESS_LEVEL 6
 
 // ----------------------------------------------------------------------------------
 // Class Name:          acImageView
@@ -80,7 +79,7 @@ public:
 
     QWidget                          *m_navigateButton;       // Navigation button     
     bool                              m_navVisible;           // Navigation visible states (default : false = which is not shown)
-
+    bool                              m_isDiffView;
 
     QGraphicsItem *                  m_tableViewitem;         // Table Image Data View item
     QTableView*                      m_tableView;             // Qt Table View Widget

@@ -152,6 +152,16 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     m_projectview->setMinimumWidth(200);
     m_parent->addDockWidget(Qt::LeftDockWidgetArea, m_projectview);
 
+    QString tempSetting = m_sSettingsFile;
+    QFileInfo fileInfo(tempSetting);
+    if (!fileInfo.isWritable())
+    {
+        QFileInfo fileInfo2(m_projectview->m_curProjectFilePathName);
+        m_sSettingsFile = fileInfo2.dir().path();
+        m_sSettingsFile.append(QDir::separator());
+        m_sSettingsFile.append(tempSetting);
+        m_sSettingsFile.replace("/", "\\");
+    }
     //
     m_imagePropertyView = new CImagePropertyView("  Properties", this);
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
@@ -232,11 +242,13 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
 
     // Set some global setting 
     #ifdef  ENABLED_USER_GPUVIEW
-    g_useCPUDecode = (g_Application_Options.m_ImageViewDecode == g_Application_Options.ImageViewDecode::CPU);
+    g_useCPUDecode = (g_Application_Options.m_ImageViewDecode == g_Application_Options.ImageEncodeDecodeWith::CPU);
     #else
     g_useCPUDecode = true;
     #endif
-
+#ifdef USE_COMPUTE
+    g_useCPUEncode = g_Application_Options.m_ImageEncode == g_Application_Options.ImageEncodeDecodeWith::CPU;
+#endif
     setUnifiedTitleAndToolBarOnMac(true);
 
     if (m_showAppSettingsDialog)
@@ -256,10 +268,7 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     //=============================
     // Help About
     //=============================
-    m_executionApplicationType  = osExecutedApplicationType::OS_STANDALONE_APPLICATION_TYPE;
-    m_pacHelpAboutDialog        = new acHelpAboutDialog(m_executionApplicationType, this);
-
-
+    m_pacHelpAboutDialog = new CHelpAboutDialog(this);
     // Sett current project name on app title bar
     SetProjectWindowTitle();
 
@@ -272,19 +281,6 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
         QString::number(VERSION_MINOR_MAJOR),
         QString::number(0)
         );
-
-    m_appVersion.fromString(acQStringToGTString(ver));
-
-    m_versionCaption = L"";
-    m_productIconId = acIconId::AC_ICON_EMPTY;
-    m_copyRightCaption = "";
-    //Reserved: GPUDecode
-    m_companyLogoBitmapString = L"";
-    m_pacHelpAboutDialog->Init(QString("About Compressonator"), m_apptitle, m_appVersion, m_copyRightCaption, m_copyRightInformation, m_productIconId, m_versionCaption, m_companyLogoBitmapString,false);
-    
-    // Work Around for CodeXL About box
-    m_pacHelpAboutDialog->setWindowIcon(QApplication::windowIcon());
-
 
     // Compression Connections
 
@@ -320,7 +316,8 @@ void cpMainComponents::OnWelcomePageButtonClick(QString &Request, QString &Msg)
 
 
         bool found = false;
-        Msg.append(PROJECT_EXTENSION);
+        if(Msg.indexOf(".cprj")==-1)
+            Msg.append(PROJECT_EXTENSION);
 
         // Try the Current Path
         if (!found)
@@ -756,13 +753,32 @@ void cpMainComponents::onGenerateMIPMap(int nMinSize)
 {
     if (!m_projectview) return;
 
+    QTreeWidgetItem *item = m_projectview->GetCurrentItem(TREETYPE_IMAGEFILE_DATA);
+    if (item)
+    {
+        QVariant v = item->data(1, Qt::UserRole);
+        C_Source_Image *data = v.value<C_Source_Image *>();
+    
+        if (data->m_MipImages)
+            if (data->m_MipImages->mipset)
+                if (data->m_MipImages->mipset->m_compressed)
+                {
+                    if (m_CompressStatusDialog)
+                    {
+                        m_CompressStatusDialog->onClearText();
+                        m_CompressStatusDialog->showOutput();
+                    }
+                    PrintInfo("Mipmap generation is not supported for compressed image.");
+                    return;
+                }
+    }
+   
     if (nMinSize <= 0) nMinSize = 1;
 
     PluginInterface_Filters *plugin_Filter;
     plugin_Filter = reinterpret_cast<PluginInterface_Filters *>(g_pluginManager.GetPlugin("FILTER", "BOXFILTER"));
     if (plugin_Filter)
     {
-        QTreeWidgetItem *item = m_projectview->GetCurrentItem(TREETYPE_IMAGEFILE_DATA);
         if (item)
         {
             QVariant v = item->data(1, Qt::UserRole);
@@ -897,10 +913,9 @@ void cpMainComponents::updateRecentFileActions()
     UpdatedList.clear();
     for (int i = 0; i < scan_numRecentFiles; ++i)
     {
-        // QString to gtString ...!!
-        // should do this just before using a CodeXL specific call.!!
-        gtString str = acQStringToGTString(files[i]);
-        m_projectsRecentFiles.push_back(str);
+
+        m_projectsRecentFiles.push_back(files[i]);
+
         QFile file(files[i]);
         if (file.exists())
         {
@@ -1180,12 +1195,12 @@ void cpMainComponents::AddImageCompSettings(QTreeWidgetItem *item, C_Destination
 
 void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
 {
+    bool isComp = true, isDel = true;
+    bool doRefreshCompressView = false;
+
     try
     {
         if (isCompressInProgress) return;
-
-        bool isComp = true, isDel = true;
-        bool doRefreshCompressView = false;
 
         if (!item) return;
 
@@ -1316,7 +1331,12 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
                     // Create a new view image
                     ImageType = " Original Image file";
                     setting->reloadImage = g_Application_Options.m_useNewImageViews;
+                    if (m_filedata->m_MipImages->Image_list.count() > 1)
+                        setting->generateMips = true;
+
                     m_imageview = new cpImageView(fileName, ImageType, m_parent, m_filedata->m_MipImages, setting);
+
+                    setting->generateMips = false;
                 }
             }
 
@@ -1346,11 +1366,21 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
             }
 
             m_activeImageTab->raise();
-            QTimer::singleShot(30, this, SLOT(SetRaised()));
+            //QTimer::singleShot(10, this, SLOT(SetRaised()));
         }
+    }
+    catch (...)
+    {
+        if (m_CompressStatusDialog)
+        {
+            m_CompressStatusDialog->showOutput();
+            m_CompressStatusDialog->raise();
+            //QTimer::singleShot(10, this, SLOT(SetRaised()));
+        }
+          // do some message 
+    }
 
 
-    hideProgressBusy("Ready");
     emit OnImageLoadDone();
     if (compressAct)
         compressAct->setEnabled(isComp);
@@ -1358,12 +1388,7 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
         imagediffAct->setEnabled(isComp);
     if (deleteImageAct)
         deleteImageAct->setEnabled(isDel);
-    
-    }
-    catch (...)
-    {
-          // do some message 
-    }
+    hideProgressBusy("Ready");
 }
 
 void cpMainComponents::AddImageDiff(C_Destination_Options *destination)
@@ -1506,7 +1531,7 @@ cpMainComponents::~cpMainComponents()
 
 void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
 {
-    int setting = 1;
+    //int setting = 1;
     QString CompProjectName = "New";
 
     m_setcompressoptions->m_data.init();
@@ -1539,15 +1564,16 @@ void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
             if (m_imagefile->m_extnum <= parentcount)
                     m_imagefile->m_extnum = parentcount;
 
-            setting = m_imagefile->m_extnum++;
+            //setting = m_imagefile->m_extnum++;
+            m_setcompressoptions->m_extnum = m_imagefile->m_extnum++;
             m_setcompressoptions->m_data.m_Width  = m_imagefile->m_Width;
             m_setcompressoptions->m_data.m_Height = m_imagefile->m_Height;
         }
     }
 
     m_setcompressoptions->m_data.m_compname = CompProjectName;
-    m_setcompressoptions->m_data.m_compname.append("_");
-    m_setcompressoptions->m_data.m_compname.append(QString::number(setting));
+    //m_setcompressoptions->m_data.m_compname.append("_");
+    //m_setcompressoptions->m_data.m_compname.append(QString::number(setting));
 
 
     m_setcompressoptions->m_data.m_editing = false;

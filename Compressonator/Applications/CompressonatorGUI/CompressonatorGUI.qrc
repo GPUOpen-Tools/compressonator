@@ -51,5 +51,6 @@
         <file>Images/psnrmse.png</file>
         <file>Images/ssim.png</file>
         <file>Images/plusSettings.png</file>
+        <file>Resources/appicon.ico</file>
     </qresource>
 </RCC>

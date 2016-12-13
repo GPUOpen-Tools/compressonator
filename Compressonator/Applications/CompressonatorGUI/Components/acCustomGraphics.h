@@ -96,7 +96,7 @@ public:
 
 enum eCustomGraphicsScene_Grids
 {
-	Block = 0,
+    Block = 0,
     None,
     Lines,
     Dots
@@ -196,7 +196,7 @@ public:
     int ID;
 
     acCustomGraphicsImageItem(QPixmap &PixItem);
-	void setOriginalPixMap(QPixmap &PixItem);
+    void setOriginalPixMap(QPixmap &PixItem);
 
     // Enable the use of qgraphicsitem_cast with this item.
     int type() const
@@ -220,12 +220,12 @@ public:
     bool m_Mirrored_h;
     bool m_Mirrored_v;
     bool m_UseOriginalImage;
-	bool m_ImageBrightnessUp;
-	bool m_ImageBrightnessDown;
+    bool m_ImageBrightnessUp;
+    bool m_ImageBrightnessDown;
     int  m_alpha;
     QPixmap m_originalPixMap;
-	float  m_fBrightness;
-	float  m_fContast;
+    float  m_fBrightness;
+    float  m_fContast;
 
 };
 

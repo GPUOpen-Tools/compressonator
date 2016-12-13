@@ -343,7 +343,7 @@ MipSet *CImageLoader::DecompressMipSet(CMipImages *MipImages)
                     SwizzleMipMap(tmpMipSet);
                 }
 
-                tmpMipSet->m_isDeCompressed = true;
+                tmpMipSet->m_isDeCompressed = MipImages->mipset->m_format != CMP_FORMAT_Unknown? MipImages->mipset->m_format:CMP_FORMAT_MAX;
                 MipImages->m_MipImageFormat = MIPIMAGE_FORMAT::Format_QImage;
                 MipImages->decompressedMipSet = tmpMipSet;
             }
@@ -377,8 +377,8 @@ MipSet *CImageLoader::DecompressMipSet(CMipImages *MipImages)
 
                 if (tmpMipSet)
                 {
-                    tmpMipSet->m_isDeCompressed = true;
-                    MipImages->decompressedMipSet = tmpMipSet;
+                    tmpMipSet->m_isDeCompressed     = MipImages->mipset->m_format != CMP_FORMAT_Unknown ? MipImages->mipset->m_format : CMP_FORMAT_MAX;
+                    MipImages->decompressedMipSet   = tmpMipSet;
                 }
             }
             else
@@ -389,7 +389,11 @@ MipSet *CImageLoader::DecompressMipSet(CMipImages *MipImages)
             MipImages->m_DecompressedFormat = MIPIMAGE_FORMAT_DECOMPRESSED::Format_CPU;
     }
     else
+    {
         tmpMipSet = MipImages->mipset;
+        if (!(tmpMipSet->m_compressed))
+            tmpMipSet->m_isDeCompressed = tmpMipSet->m_format;
+    }
 
     return tmpMipSet;
 }
@@ -432,7 +436,7 @@ QImage *CImageLoader::MIPS2QImage(MipSet *tmpMipSet, int level)
                 return nullptr;
             }
 
-            if (tmpMipSet->m_isDeCompressed)
+            if (tmpMipSet->m_isDeCompressed != CMP_FORMAT_Unknown)
             {
                 float r, g, b, a;
                 //copy pixels into image
@@ -525,9 +529,10 @@ QImage *CImageLoader::MIPS2QImage(MipSet *tmpMipSet, int level)
                     i++;
                     B = pData[i];
                     i++;
-                    A = pData[i];
-                    //if (!A)                   // BugFix: Preseve the Alpha value
-                    //    A = 255;
+                    if (R==G && R==B)
+                        A = 255;
+                    else
+                        A = pData[i];
                     i++;
                     image->setPixel(x, y, qRgba(R, G, B, A));
                 }
@@ -672,9 +677,12 @@ CMipImages * CImageLoader::LoadPluginImage(QString filename)
                 MipImages->mipset->m_format = GetFormat(MipImages->mipset);
             }
 
-
             MipSet *tmpMipSet;
             tmpMipSet = DecompressMipSet(MipImages);
+
+            if (filename.contains(".exr") || filename.contains(".EXR"))
+                tmpMipSet->m_isDeCompressed = CMP_FORMAT_Unknown;
+
             if (tmpMipSet == NULL)
             {
                 image  = new QImage(":/CompressonatorGUI/Images/DeCompressImageError.png");

@@ -61,6 +61,4 @@ extern "C" {
 #endif
 
 
-
-
 #endif // !H_GPU_DECOMP

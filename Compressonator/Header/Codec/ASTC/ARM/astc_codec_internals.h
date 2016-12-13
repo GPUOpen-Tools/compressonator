@@ -758,7 +758,7 @@ void compute_angular_endpoints_2planes(float mode_cutoff,
 /* *********************************** high-level encode and decode functions ************************************ */
 
 float compress_symbolic_block(const astc_codec_image * input_image,
-                              astc_decode_mode decode_mode, int xdim, int ydim, int zdim, const error_weighting_params * ewp, const imageblock * blk, symbolic_compressed_block * scb);
+    astc_decode_mode decode_mode, int xdim, int ydim, int zdim, const error_weighting_params * ewp, const imageblock * blk, symbolic_compressed_block * scb);
 
 
 float4 lerp_color_flt(const float4 color0, const float4 color1, float weight,    // 0..1

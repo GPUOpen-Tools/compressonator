@@ -32,7 +32,12 @@
 #include "TC_PluginInternal.h"
 #include "Version.h"
 
+
+
 // #define SHOW_PROCESS_MEMORY
+// #define USE_COMPUTE
+#define USE_SWIZZLE
+
 
 #ifdef SHOW_PROCESS_MEMORY
 #include "windows.h"
@@ -80,12 +85,12 @@ void PrintUsage()
     printf("                     with the sources format,decompress formats are typically\n");
     printf("                     set to ARGB_8888 or ARGB_32F\n");
     printf("-UseGPUDecompress    By default decompression is done using CPU\n");
-    printf("                     set this to 1 when you want to decode using GPU\n");
     printf("                     when set OpenGL will be used by default, this can be \n");
     printf("                     changed to DirectX using DecodeWith setting\n");
     printf("-DecodeWith          Sets OpenGL or DirectX for GPU decompress\n");
     printf("                     Default is OpenGL, UseGPUDecompress is implied when\n");
     printf("                     this option is set\n");
+    printf("-doswizzle           Swizzle the source images Red and Blue channels\n");
     printf("\n");
     printf("The following is a list of channel formats\n");
     printf("ARGB_16        ARGB format with 16-bit fixed channels\n");
@@ -206,7 +211,7 @@ void PrintUsage()
     printf("Example decompression from compressed image using CPU:\n\n");
     printf("CompressonatorCLI.exe  result.dds image.bmp\n\n");
     printf("Example decompression from compressed image using GPU:\n\n");
-    printf("CompressonatorCLI.exe  -UseGPUDecompress 1 result.dds image.bmp\n\n");
+    printf("CompressonatorCLI.exe  -UseGPUDecompress result.dds image.bmp\n\n");
     printf("Example compression with decompressed result (Useful for qualitative analysis):\n\n");
     printf("CompressonatorCLI.exe -fd BC7  image.bmp result.bmp\n");
     printf("CompressonatorCLI.exe -fd BC6H image.exr result.exr\n");
@@ -261,6 +266,34 @@ CMP_GPUDecode DecodeWith(const  char *strParameter)
         return GPUDecode_INVALID;
 }
 
+bool isFloat(CMP_FORMAT format)
+{
+    // determin of the swizzle flag needs to be turned on!
+    switch (format)
+    {
+    case CMP_FORMAT_BC6H     :
+    case CMP_FORMAT_ARGB_16F :            
+    case CMP_FORMAT_ABGR_16F :        
+    case CMP_FORMAT_RGBA_16F :        
+    case CMP_FORMAT_BGRA_16F :        
+    case CMP_FORMAT_RG_16F   :       
+    case CMP_FORMAT_R_16F    :        
+    case CMP_FORMAT_ARGB_32F :        
+    case CMP_FORMAT_ABGR_32F :        
+    case CMP_FORMAT_RGBA_32F :        
+    case CMP_FORMAT_BGRA_32F :        
+    case CMP_FORMAT_RGB_32F  :        
+    case CMP_FORMAT_BGR_32F  :        
+    case CMP_FORMAT_RG_32F   :        
+    case CMP_FORMAT_R_32F    :
+        return true;
+        break;
+    default:
+        break;
+    }
+    return false;
+}
+
 bool ProcessSingleFlags(const  char *strCommand)
 {
     bool isset = false;
@@ -305,6 +338,18 @@ bool ProcessSingleFlags(const  char *strCommand)
         g_CmdPrams.analysis = true;
         isset = true;
     }
+    else
+    if ((strcmp(strCommand, "-useGPU") == 0))
+    {
+        g_CmdPrams.useGPU = true;
+        isset = true;
+    }
+    else
+    if (strcmp(strCommand, "-UseGPUDecompress") == 0)
+    {
+        g_CmdPrams.CompressOptions.bUseGPUDecompress = true;
+        isset = true;
+    }
     return isset;
 }
 
@@ -313,7 +358,6 @@ bool ProcessCMDLineOptions(const  char *strCommand, const char *strParameter)
 {
     try
     {
-
         // ====================================
         // Prechecks prior to sending to Codec
         // ====================================
@@ -333,9 +377,12 @@ bool ProcessCMDLineOptions(const  char *strCommand, const char *strParameter)
             {
                 int dimensions = sscanf(strParameter, "%dx%dx", &g_CmdPrams.BlockWidth, &g_CmdPrams.BlockHeight);
                 if (dimensions < 2) throw "Command Parameter is invalid";
+                else{
+                    astc_find_closest_blockxy_2d(&g_CmdPrams.BlockWidth, &g_CmdPrams.BlockHeight, 0);
+                }
             }
         }
-
+        else
         if (strcmp(strCommand, "-Quality") == 0)
         {
             if (strlen(strParameter) == 0)
@@ -350,8 +397,8 @@ bool ProcessCMDLineOptions(const  char *strCommand, const char *strParameter)
             g_CmdPrams.CompressOptions.fquality = value;
 
         }
-        
-         if (strcmp(strCommand, "-WeightR") == 0)
+        else
+        if (strcmp(strCommand, "-WeightR") == 0)
         {
             if (!g_CmdPrams.CompressOptions.bUseChannelWeighting)
             {
@@ -370,7 +417,7 @@ bool ProcessCMDLineOptions(const  char *strCommand, const char *strParameter)
             g_CmdPrams.CompressOptions.fWeightingRed = value;
 
         }
-
+        else
         if (strcmp(strCommand, "-WeightG") == 0)
         {
             if (!g_CmdPrams.CompressOptions.bUseChannelWeighting)
@@ -389,7 +436,7 @@ bool ProcessCMDLineOptions(const  char *strCommand, const char *strParameter)
             g_CmdPrams.CompressOptions.fWeightingGreen = value;
 
         }
-
+        else
         if (strcmp(strCommand, "-WeightB") == 0)
         {
             if (!g_CmdPrams.CompressOptions.bUseChannelWeighting)
@@ -407,7 +454,7 @@ bool ProcessCMDLineOptions(const  char *strCommand, const char *strParameter)
             }
             g_CmdPrams.CompressOptions.fWeightingBlue = value;
         }
-
+        else
         if (strcmp(strCommand, "-UseChannelWeighting") == 0)
         {
             if (strlen(strParameter) == 0)
@@ -421,7 +468,7 @@ bool ProcessCMDLineOptions(const  char *strCommand, const char *strParameter)
             }
             g_CmdPrams.CompressOptions.bUseChannelWeighting = bool(value);
         }
-
+        else
         if (strcmp(strCommand, "-AlphaThreshold") == 0)
         {
             if (strlen(strParameter) == 0)
@@ -436,7 +483,7 @@ bool ProcessCMDLineOptions(const  char *strCommand, const char *strParameter)
             g_CmdPrams.CompressOptions.nAlphaThreshold = value;
 
         }
-
+        else
         if (strcmp(strCommand, "-DXT1UseAlpha") == 0)
         {
             if (strlen(strParameter) == 0)
@@ -451,21 +498,7 @@ bool ProcessCMDLineOptions(const  char *strCommand, const char *strParameter)
             g_CmdPrams.CompressOptions.bDXT1UseAlpha = bool(value);
             g_CmdPrams.CompressOptions.nAlphaThreshold = 128;  //default to 128
         }
-
-        if (strcmp(strCommand, "-UseGPUDecompress") == 0)
-        {
-            if (strlen(strParameter) == 0)
-            {
-                throw "No UseGPUDecompress value specified (default is 0:off; 1:on)";
-            }
-            int value = std::stof(strParameter);
-            if ((value < 0) || (value > 1))
-            {
-                throw "UseGPUDecompress value should be 1 or 0";
-            }
-            g_CmdPrams.CompressOptions.bUseGPUDecompress = bool(value);
-        }
-
+        else
         if (strcmp(strCommand, "-DecodeWith") == 0)
         {
             if (strlen(strParameter) == 0)
@@ -482,7 +515,7 @@ bool ProcessCMDLineOptions(const  char *strCommand, const char *strParameter)
 
             g_CmdPrams.CompressOptions.bUseGPUDecompress = true;
         }
-
+        else
         if (strcmp(strCommand, "-decomp") == 0)
         {
             if (strlen(strParameter) == 0)
@@ -615,9 +648,15 @@ bool ProcessCMDLineOptions(const  char *strCommand, const char *strParameter)
                     g_CmdPrams.SourceFile = strCommand;
                 }
                 else 
-                    if (g_CmdPrams.DestFile.length()  == 0)
+                if (g_CmdPrams.DestFile.length()  == 0)
                 {
                     g_CmdPrams.DestFile = strCommand;
+                    string file_extension = boost::filesystem::extension(strCommand);
+                    // User did not supply a destination extension default to KTX
+                    if (file_extension.length() == 0)
+                    {
+                        g_CmdPrams.DestFile.append(".DDS");
+                    }
                 }
                 else
                 {
@@ -637,7 +676,6 @@ bool ProcessCMDLineOptions(const  char *strCommand, const char *strParameter)
     return true;
 
 }
-
 
 /*
  This function can be called using one of these examples:
@@ -875,8 +913,8 @@ void SwizzleMipMap(MipSet *pMipSet)
                     // may want to try this patch on other file types BMP & PNG to move swizzle out to main code.
                         switch (pMipSet->m_TextureDataType)
                         {
-                            case TDT_ARGB:    swap_Bytes(pInMipLevel->m_pbData,dwWidth,dwHeight,4); break;
-                            case TDT_XRGB:    swap_Bytes(pInMipLevel->m_pbData,dwWidth,dwHeight,3); break;
+                            case TDT_ARGB: swap_Bytes(pInMipLevel->m_pbData, dwWidth, dwHeight, 4); break;
+                            case TDT_XRGB: swap_Bytes(pInMipLevel->m_pbData, dwWidth, dwHeight, 3); break;
                             default: break;
                         }
             }
@@ -884,7 +922,7 @@ void SwizzleMipMap(MipSet *pMipSet)
 
 }
 
-// Determin if RGB channel to BGA can be done or skipped
+// Determine if RGB channel to BGA can be done or skipped
 // for special cases of compressed formats.
 
 bool KeepSwizzle(CMP_FORMAT destformat)
@@ -904,6 +942,9 @@ bool KeepSwizzle(CMP_FORMAT destformat)
             case CMP_FORMAT_DXT3:        // same as BC2     
             case CMP_FORMAT_BC3:         
             case CMP_FORMAT_DXT5:        // same as BC3     
+            case CMP_FORMAT_ATC_RGB:
+            case CMP_FORMAT_ATC_RGBA_Explicit:
+            case CMP_FORMAT_ATC_RGBA_Interpolated:
             return true;    
             break;
             default:
@@ -919,10 +960,17 @@ bool FormatIsFloat(CMP_FORMAT InFormat)
     switch (InFormat)
     {
     case CMP_FORMAT_ARGB_16F :
+    case CMP_FORMAT_ABGR_16F :
+    case CMP_FORMAT_RGBA_16F :
+    case CMP_FORMAT_BGRA_16F :
     case CMP_FORMAT_RG_16F   :
     case CMP_FORMAT_R_16F    :
     case CMP_FORMAT_ARGB_32F :
+    case CMP_FORMAT_ABGR_32F :
+    case CMP_FORMAT_RGBA_32F :
+    case CMP_FORMAT_BGRA_32F :
     case CMP_FORMAT_RGB_32F  :
+    case CMP_FORMAT_BGR_32F  :
     case CMP_FORMAT_RG_32F   :
     case CMP_FORMAT_R_32F    :
     case CMP_FORMAT_BC6H     :
@@ -1076,6 +1124,37 @@ void LocalPrintF(char *buff)
     printf(buff);
 }
 
+#ifdef USE_COMPUTE  
+#include "Common_Kernel.h"
+#include "Compute_Lib\Compute_Base.h"
+
+#ifdef _DEBUG
+#pragma comment(lib,"Compute_lib_MDd.lib")
+#else
+#pragma comment(lib,"Compute_lib_MD.lib")
+#endif
+
+bool SVMInitCodec(KernalOptions *options)
+{
+    CMP_FORMAT format = (CMP_FORMAT)options->data_type;
+    switch (format)
+    {
+    case CMP_FORMAT_BC1:
+    case CMP_FORMAT_DXT1:
+    case CMP_FORMAT_BC7:
+    case CMP_FORMAT_ASTC:
+    {
+        unsigned char *src = (unsigned char *)options->data;
+        unsigned char *dst = (unsigned char *)options->dataSVM;
+        memcpy(dst,src, options->size);
+        return true;
+    }
+    break;
+    }
+    return false;
+}
+
+#endif
 //
 // Used exclusively by the GUI app 
 // ToDo : Remove this code and try to use ProcessCMDLine
@@ -1083,6 +1162,11 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, bool useCPU
 {
     // validate MipSet is Compressed
     if (!MipSetIn->m_compressed) return NULL;
+    if (MipSetIn->m_format == CMP_FORMAT_ASTC && !useCPU)
+    {
+        PrintInfo("Decompress Error: ASTC decompressed with GPU is not supported yet. Please view ASTC compressed images using CPU (under Settings->Application Options).\n");
+        return NULL;
+    }
 
     // Compress Options
     bool silent = true;
@@ -1240,10 +1324,32 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, bool useCPU
                     }
 
                     // Return values of the CMP_ calls should be checked for failures
+                    CMP_ERROR res;
                     if (useCPU)
-                        CMP_ConvertTexture(&srcTexture, &destTexture, &CompressOptions, NULL, NULL, NULL);
+                    {
+                        res = CMP_ConvertTexture(&srcTexture, &destTexture, &CompressOptions, NULL, NULL, NULL);
+                        if (res != CMP_OK)
+                        {
+                            PrintInfo("Compress Failed with Error %d\n", res);
+                            m_CMIPS.FreeMipSet(MipSetOut);
+                            delete MipSetOut;
+                            MipSetOut = NULL;
+                            return NULL;
+                        }
+                    }
                     else
-                        CMP_DecompressTexture(&srcTexture, &destTexture, decodeWith); 
+                    {
+                        CMP_ERROR res;
+                        res = CMP_DecompressTexture(&srcTexture, &destTexture, decodeWith);
+                        if (res != CMP_OK)
+                        {
+                            PrintInfo("Decompress Failed with Error %d\n",res);
+                            m_CMIPS.FreeMipSet(MipSetOut);
+                            delete MipSetOut;
+                            MipSetOut = NULL;
+                            return NULL;
+                        }
+                    }
                     
 
                 }
@@ -1375,11 +1481,6 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
             g_MipSetIn.m_swizzle = KeepSwizzle(destFormat); 
             g_MipSetIn.m_pMipLevelTable = p_userMipSetIn->m_pMipLevelTable;
 
-            if (g_MipSetIn.m_swizzle)
-            {
-                SwizzleMipMap(&g_MipSetIn);
-                SwizzledMipSetIn = true;
-            }
             Delete_gMipSetIn = false;
         }
         else  //for CLI
@@ -1389,7 +1490,10 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
             // ===============================================
             // INPUT IMAGE Swizzling options for DXT formats
             // ===============================================
-            g_MipSetIn.m_swizzle = KeepSwizzle(destFormat);
+#ifdef USE_SWIZZLE
+            if (!g_CmdPrams.useGPU)
+                g_MipSetIn.m_swizzle = KeepSwizzle(destFormat);
+#endif
 
             // Flag to image loader that data is going to be compressed
             // and that we want data to be in ARGB format
@@ -1416,9 +1520,6 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
                 PrintInfo("Error: loading image, data type not supported.\n");
                 return -1;
             }
-
-            if (g_MipSetIn.m_swizzle)
-                SwizzleMipMap(&g_MipSetIn);
         }
 
         if (g_CmdPrams.showperformance)
@@ -1445,9 +1546,15 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
             srcFormat = g_MipSetIn.m_format;
         }
 
-
         // Determin if Source file Is Compressed
         SourceFormatIsCompressed = CompressedFormat(srcFormat);
+
+        if ((isFloat(srcFormat) && !isFloat(destFormat)) || (!isFloat(srcFormat) && isFloat(destFormat)))
+        {
+            cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
+            PrintInfo("Error: Processing floating point format <-> non-floating point format is not supported\n");
+            return -1;
+        }
 
         //=====================================================
         // Unsupported conversion !
@@ -1457,6 +1564,25 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
             cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
             PrintInfo("Error: Processing compressed source and compressed destination is not supported\n");
             return -1;
+        }
+
+        //=====================================================
+        // Perform swizzle
+        // ===================================================
+        if (p_userMipSetIn)  //for GUI
+        {
+#ifdef USE_SWIZZLE
+            if (g_MipSetIn.m_swizzle && !g_CmdPrams.useGPU)
+            {
+                SwizzleMipMap(&g_MipSetIn);
+                SwizzledMipSetIn = true;
+            }
+#endif
+        }
+        else
+        {
+            if (g_MipSetIn.m_swizzle)
+                SwizzleMipMap(&g_MipSetIn);
         }
 
         //======================================================
@@ -1542,95 +1668,166 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
                {        
                     g_MipLevel = nMipLevel+1;
 
-                    for(int nFaceOrSlice=0; nFaceOrSlice<MaxFacesOrSlices(&g_MipSetIn, nMipLevel); nFaceOrSlice++)
+                    for (int nFaceOrSlice = 0; nFaceOrSlice < MaxFacesOrSlices(&g_MipSetIn, nMipLevel); nFaceOrSlice++)
                     {
 
-                                //=====================
-                                // Uncompressed source
-                                //======================
-                                MipLevel* pInMipLevel   = g_CMIPS->GetMipLevel(&g_MipSetIn, nMipLevel, nFaceOrSlice);
-                                srcTexture.dwWidth      = pInMipLevel->m_nWidth;
-                                srcTexture.dwHeight     = pInMipLevel->m_nHeight;
-                                srcTexture.dwPitch      = 0;
-                                srcTexture.nBlockWidth  = g_MipSetIn.m_nBlockWidth;
-                                srcTexture.nBlockHeight = g_MipSetIn.m_nBlockHeight;
-                                srcTexture.nBlockDepth  = g_MipSetIn.m_nBlockDepth;
-                                srcTexture.format       = srcFormat;
-                                srcTexture.pData        = NULL;
-                                
-                                //========================
-                                // Compressed Destination
-                                //========================
-                                CMP_Texture destTexture;
-                                destTexture.dwSize       = sizeof(destTexture);
-                                destTexture.dwWidth      = pInMipLevel->m_nWidth;
-                                destTexture.dwHeight     = pInMipLevel->m_nHeight;
-                                destTexture.dwPitch      = 0;
-                                destTexture.nBlockWidth  = g_CmdPrams.BlockWidth;
-                                destTexture.nBlockHeight = g_CmdPrams.BlockHeight;
-                                destTexture.format       = destFormat;
-                                destTexture.dwDataSize   = CMP_CalculateBufferSize(&destTexture);
-                                
-                                // Check Both Source and Destination formats are compatible
-                                if (!MakeFormatCompatible(srcTexture, pInMipLevel, g_CmdPrams.DestFormat))
+                        //=====================
+                        // Uncompressed source
+                        //======================
+                        MipLevel* pInMipLevel = g_CMIPS->GetMipLevel(&g_MipSetIn, nMipLevel, nFaceOrSlice);
+                        srcTexture.dwWidth = pInMipLevel->m_nWidth;
+                        srcTexture.dwHeight = pInMipLevel->m_nHeight;
+                        srcTexture.dwPitch = 0;
+                        srcTexture.nBlockWidth = g_MipSetIn.m_nBlockWidth;
+                        srcTexture.nBlockHeight = g_MipSetIn.m_nBlockHeight;
+                        srcTexture.nBlockDepth = g_MipSetIn.m_nBlockDepth;
+                        srcTexture.format = srcFormat;
+                        srcTexture.pData = NULL;
+
+                        //========================
+                        // Compressed Destination
+                        //========================
+                        CMP_Texture destTexture;
+                        destTexture.dwSize = sizeof(destTexture);
+                        destTexture.dwWidth = pInMipLevel->m_nWidth;
+                        destTexture.dwHeight = pInMipLevel->m_nHeight;
+                        destTexture.dwPitch = 0;
+                        destTexture.nBlockWidth = g_CmdPrams.BlockWidth;
+                        destTexture.nBlockHeight = g_CmdPrams.BlockHeight;
+                        destTexture.format = destFormat;
+                        destTexture.dwDataSize = CMP_CalculateBufferSize(&destTexture);
+
+                        // Check Both Source and Destination formats are compatible
+                        if (!MakeFormatCompatible(srcTexture, pInMipLevel, g_CmdPrams.DestFormat))
+                        {
+                            PrintInfo("Source and Destination formats are not Compatible\n");
+                            cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
+                            return -1;
+                        }
+
+
+                        PrintInfo("Source Texture size = %d Bytes, width = %d px  height = %d px\n",
+                            srcTexture.dwDataSize,
+                            srcTexture.dwWidth,
+                            srcTexture.dwHeight);
+
+                        if (destTexture.dwDataSize > 0)
+                            PrintInfo("Destination Texture size = %d Bytes   Resulting compression ratio = %2.2f:1\n",
+                                destTexture.dwDataSize,
+                                srcTexture.dwDataSize / (float)destTexture.dwDataSize);
+
+                        MipLevel* pOutMipLevel = g_CMIPS->GetMipLevel(&g_MipSetCmp, nMipLevel, nFaceOrSlice);
+                        if (!g_CMIPS->AllocateCompressedMipLevelData(pOutMipLevel, destTexture.dwWidth, destTexture.dwHeight, destTexture.dwDataSize))
+                        {
+                            PrintInfo("Memory Error(1): allocating MIPSet compression level data buffer\n");
+                            cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
+#ifdef MAKE_FORMAT_COMPATIBLE 
+                            if (srcTexture.pData)
+                            {
+                                free(srcTexture.pData);
+                                srcTexture.pData = NULL;
+                            }
+#endif
+                            return -1;
+                        }
+
+                        destTexture.pData = pOutMipLevel->m_pbData;
+                        g_fProgress = -1;
+
+                        //========================
+                        // Process ConvertTexture
+                        //========================
+#ifdef USE_COMPUTE
+                        if (g_CmdPrams.useGPU)
+                        {
+                            bool format_support_gpu = true;
+                            KernalOptions   kernel_options;
+                            memset(&kernel_options, 0, sizeof(KernalOptions));
+                            PluginInterface_Compute *plugin_compute = NULL;
+                            kernel_options.data_type = (unsigned int)g_CmdPrams.DestFormat;
+
+                            plugin_compute = reinterpret_cast<PluginInterface_Compute *>(g_pluginManager.GetPlugin("COMPUTE", GetFormatDesc(g_CmdPrams.DestFormat)));
+
+                            // Plugin was not found!
+                            if (plugin_compute == NULL)
+                            {
+                                PrintInfo("Failed to load %s compute plugin\n", GetFormatDesc(g_CmdPrams.DestFormat));
+                                PrintInfo("CPU will be used for compression.\n");
+                                format_support_gpu = false;
+                            }
+                            else
+                            {
+                                do
                                 {
-                                    PrintInfo("Source and Destination formats are not Compatible\n");
-                                    cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
-                                    return -1;
-                                }
-                            
+                                    TC_PluginVersion PluginVersion;
+                                    plugin_compute->TC_PluginGetVersion(&PluginVersion);
+                                    printf("Using %s Compute plugin V%d.%d\n", GetFormatDesc(g_CmdPrams.DestFormat), PluginVersion.dwPluginVersionMajor, PluginVersion.dwPluginVersionMinor);
 
-                                PrintInfo("Source Texture size = %d Bytes, width = %d px  height = %d px\n",
-                                    srcTexture.dwDataSize,
-                                    srcTexture.dwWidth,
-                                    srcTexture.dwHeight);
-
-                                if (destTexture.dwDataSize > 0)
-                                    PrintInfo("Destination Texture size = %d Bytes   Resulting compression ratio = %2.2f:1\n",
-                                        destTexture.dwDataSize,
-                                        srcTexture.dwDataSize / (float)destTexture.dwDataSize);
-
-                                MipLevel* pOutMipLevel  = g_CMIPS->GetMipLevel(&g_MipSetCmp, nMipLevel, nFaceOrSlice);
-                                if (!g_CMIPS->AllocateCompressedMipLevelData(pOutMipLevel, destTexture.dwWidth, destTexture.dwHeight, destTexture.dwDataSize))
-                                {
-                                    PrintInfo("Memory Error(1): allocating MIPSet compression level data buffer\n");
-                                    cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
-                                    #ifdef MAKE_FORMAT_COMPATIBLE 
-                                    if (srcTexture.pData)
+                                    if (plugin_compute->TC_Init(&srcTexture, &kernel_options) != 0)
                                     {
-                                        free(srcTexture.pData);
-                                        srcTexture.pData = NULL;
+                                        PrintInfo("Failed to init compute plugin\nCPU will be used for compression.\n");
+                                        format_support_gpu = false;
+                                        break;
                                     }
-                                    #endif
-                                    return -1;
-                                }
 
-                                destTexture.pData = pOutMipLevel->m_pbData;
-                                g_fProgress = -1;
+                                    if (CMP_InitializeCompressLibrary(Compute_OPENCL) != CMP_OK)
+                                    {
+                                        PrintInfo("Failed to init compute plugin\nCPU will be used for compression.\n");
+                                        format_support_gpu = false;
+                                        break;
+                                    }
 
-                                //========================
-                                // Process ConvertTexture
-                                //========================
+                                    char opencl_source[512];
+                                    sprintf_s(opencl_source, 512, "%s", plugin_compute->TC_ComputeSourceFile());
+                                    if (CMP_CompressTexture(opencl_source, &kernel_options, srcTexture, destTexture) != CMP_OK)
+                                    {
+                                        PrintInfo("Failed to run compute plugin\nCPU will be used for compression.\n");
+                                        format_support_gpu = false;
+                                        break;
+                                    }
+
+                                    CMP_ShutdownComputeLibrary();
+                                } while (0);
+                            }
+
+                            if (!format_support_gpu)
+                            {
+                                g_MipSetIn.m_swizzle = KeepSwizzle(destFormat);
+                                if (g_MipSetIn.m_swizzle)
+                                    SwizzleMipMap(&g_MipSetIn);
                                 if (CMP_ConvertTexture(&srcTexture, &destTexture, &g_CmdPrams.CompressOptions, pFeedbackProc, NULL, NULL) != CMP_OK)
                                 {
                                     PrintInfo("Error in compressing destination texture\n");
                                     cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                                     return -1;
                                 }
-
-                                #ifdef MAKE_FORMAT_COMPATIBLE 
-                                if (srcTexture.pData)
-                                {
-                                    free(srcTexture.pData);
-                                    srcTexture.pData = NULL;
-                                }
-                                #endif
-
-                                if (g_CmdPrams.showperformance)
-                                            compress_nIterations++;
-
                             }
-                            g_MipSetCmp.m_nMipLevels++;
+
+                        }
+                        else
+#endif
+                        {
+
+                            if (CMP_ConvertTexture(&srcTexture, &destTexture, &g_CmdPrams.CompressOptions, pFeedbackProc, NULL, NULL) != CMP_OK)
+                            {
+                                PrintInfo("Error in compressing destination texture\n");
+                                cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
+                                return -1;
+                            }
+                        }
+                        #ifdef MAKE_FORMAT_COMPATIBLE 
+                        if (srcTexture.pData)
+                        {
+                            free(srcTexture.pData);
+                            srcTexture.pData = NULL;
+                        }
+                        #endif
+
+                        if (g_CmdPrams.showperformance)
+                                    compress_nIterations++;
+
+                    }
+                    g_MipSetCmp.m_nMipLevels++;
                 }
 
                 if (g_CmdPrams.showperformance)
@@ -1721,12 +1918,12 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
         // Example(s): 
         //                DDS - BMP  with no -fd flag 
         //                BMP - BMP  with no -fd flag(s) 
-        //                BMP - BMP  with -fd flag(s) 
+        //                BMP - BMP  with    -fd flag(s) 
         //
         //=====================================================
         if (((SourceFormatIsCompressed) && (!DestinationFormatIsCompressed)) || (TranscodeBits) || (MidwayDecompress))
         {
-                g_MipSetOut.m_TextureDataType    = TDT_ARGB;
+                g_MipSetOut.m_TextureDataType = TDT_ARGB;
 
                 if (SourceFormatIsCompressed)
                 {
@@ -1765,10 +1962,10 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
                 // Something went wrone in determining destination format
                 // Just default it!
                 if (destFormat == CMP_FORMAT_Unknown)
-                            destFormat = CMP_FORMAT_ARGB_8888;
+                    destFormat = CMP_FORMAT_ARGB_8888;
 
-                g_MipSetOut.m_format = destFormat;
-                g_MipSetOut.m_isDeCompressed = true;
+                g_MipSetOut.m_format         = destFormat;
+                g_MipSetOut.m_isDeCompressed = srcFormat!= CMP_FORMAT_Unknown ? srcFormat : CMP_FORMAT_MAX;
 
                // Allocate output MipSet
                 if (!g_CMIPS->AllocateMipSet(&g_MipSetOut,
@@ -1855,7 +2052,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
                         if (!g_CmdPrams.silent)
                         {
                             if ((nMipLevel > 1) || (nFaceOrSlice > 1))
-                                PrintInfo("\rProcessing destination MipLevel %2d FaceOrSlice %2d",nMipLevel+1,nFaceOrSlice);
+                                PrintInfo("\rProcessing destination     MipLevel %2d FaceOrSlice %2d",nMipLevel+1,nFaceOrSlice);
                             else
                                 PrintInfo("\rProcessing destination    ");
                         }
@@ -1871,6 +2068,13 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
 
                         if (use_GPUDecode)
                         {
+                            if (srcTexture.format == CMP_FORMAT_ASTC)
+                            {
+                                PrintInfo("Decompress Error: ASTC decompressed with GPU is not supported yet. Please view ASTC compressed images using CPU.\n");
+                                cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
+                                return -1;
+                            }
+
                             if (CMP_DecompressTexture(&srcTexture, &destTexture, DecodeWith) != CMP_OK)
                             {
                                 PrintInfo("Error in decompressing source texture\n");
@@ -1936,7 +2140,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
 
                 if (AMDSaveMIPSTextureImage(g_CmdPrams.DestFile.c_str(), p_MipSetOut, g_CmdPrams.use_OCV_out) != 0)
                 {
-                    PrintInfo("Error: saving image or format is unsupported\n");
+                    PrintInfo(" Error: saving image or destination format is unsupported by Qt\n");
                     cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                     return -1;
                 }
@@ -1982,7 +2186,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
     if (!g_CmdPrams.silent)
     {
 #ifdef USE_WITH_COMMANDLINE_TOOL
-        PrintInfo(" Done\n");
+        PrintInfo("\rDone                                                  \n");
 #else
         PrintInfo("Done\n");
 #endif

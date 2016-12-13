@@ -31,8 +31,6 @@
 
 #include "cpImageCompare.h"
 
-#define DEFAULT_BRIGHTNESS_LEVEL 6
-
 CImageCompare::CImageCompare(const QString title, C_Destination_Options *destination, QMainWindow *parent) : acCustomDockWidget(title, parent)
 {
     m_parent = parent;
@@ -255,6 +253,7 @@ void CImageCompare::createImageView()
     m_imageviewDiff = new cpImageView(diffFile, "  Diff Image", m_newInnerWidget, m_diffMips, setting);
     m_imageviewDiff->m_useOriginalImageCursor = true;
     m_imageviewDiff->showToobar(true);
+    m_imageviewDiff->m_acImageView->m_isDiffView = true;
     setting->generateDiff = false;
     for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
     {

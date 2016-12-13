@@ -224,7 +224,7 @@ int par_vectors_nd[][2*MAX_DIMENSION_BIG][(1<<(2*MAX_DIMENSION_BIG-1))][2][MAX_D
 };
 
 
-// #define GIG_TABLE
+//#define GIG_TABLE
 #ifdef  GIG_TABLE
 static double ramp_err[LOG_CL_RANGE-LOG_CL_BASE][BIT_RANGE-BIT_BASE][256][256][256][16];
 #endif

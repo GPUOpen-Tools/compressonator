@@ -191,7 +191,7 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
 
     if (MipImages)
     {
-        if (setting->reloadImage && !setting->generateDiff)
+        if (setting->reloadImage && !setting->generateDiff && !setting->generateMips)
         {
             m_imageLoader = new CImageLoader();
             if (m_imageLoader)

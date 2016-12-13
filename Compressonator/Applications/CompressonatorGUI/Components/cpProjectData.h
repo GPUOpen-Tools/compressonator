@@ -103,8 +103,10 @@ public:
     C_ASTC_BlockRate()
     {
         m_Bitrate = "8.00";
+        m_correctBitrate = "8.00";
         xblock = 4;
         yblock = 4;
+        
     }
 
     void setBitrate(QString bitrate)
@@ -122,13 +124,22 @@ public:
                 if (bitrateF)
                 {
                     if (bitrateF > 8.00)
+                    {
                         m_Bitrate = "8.00";
+                        m_correctBitrate = "8.00";
+                    }
+                    else if (bitrateF < 0)
+                    {
+                        m_Bitrate = "0.89";
+                        m_correctBitrate = "0.89";
+                    }
                     else
-                        if (bitrateF < 0)
-                            m_Bitrate = "0.89";
-                        else
-                            m_Bitrate = bitrate;
+                    {
+                        m_Bitrate = bitrate;
+                        m_correctBitrate = bitrate;
+                    }
                     astc_find_closest_blockdim_2d(bitrateF, &xblock, &yblock, 1);
+                    m_correctBitrate = bitrateF;
                     emit bitrateChanged(m_Bitrate, xblock, yblock);
                     m_data_has_been_changed = true;
                     emit dataChanged();
@@ -139,18 +150,20 @@ public:
                 int dimensions = sscanf(bitrate.toUtf8().constData(), "%dx%dx", &xblock, &yblock);
                 if (dimensions < 2) 
                     return;
-
+                astc_find_closest_blockxy_2d(&xblock, &yblock, 0);
                 if (xblock < 3 || xblock > 12 || yblock < 3 || yblock > 12)
                 {
                     xblock = -1;
                     yblock = -1;
                     emit bitrateChanged(m_Bitrate, xblock, yblock);
                     m_Bitrate = "8.00";
+                    m_correctBitrate = "8.00";
                 }
                 else
                 {
                     float bitrateF = float(128.0f / (xblock*yblock));
                     m_Bitrate = bitrate;
+                    m_correctBitrate = QString::number(xblock) + "x" + QString::number(yblock);
                     emit bitrateChanged(QString::number(bitrateF, 'f', 2), xblock, yblock);
                     m_data_has_been_changed = true;
                     emit dataChanged();
@@ -162,6 +175,7 @@ public:
                 yblock = -1;
                 emit bitrateChanged(m_Bitrate, xblock, yblock);
                 m_Bitrate = "8.00";
+                m_correctBitrate = "8.00";
             }
         }
     }
@@ -173,6 +187,7 @@ public:
 
 
     QString m_Bitrate;
+    QString m_correctBitrate;
     int xblock;
     int yblock;
     bool m_data_has_been_changed;
@@ -449,7 +464,6 @@ class C_Destination_Options : public C_Destination_Image
 
 public:
     enum eCompression {
-        GT,
         BC1,
         BC2,
         BC3,
@@ -749,6 +763,9 @@ public:
 // =======================================================
 // APPLICATION DATA
 // =======================================================
+#ifdef USE_COMPUTE
+#define APP_compress_image_using                        "Compress images using"
+#endif
 #define APP_Decompress_image_views_using                "View compressed images using"
 #define APP_Reload_image_views_on_selection             "Reload image views on selection"
 #define APP_Load_recent_project_on_startup              "Load recent project on startup"
@@ -796,15 +813,18 @@ signals:
 class C_Application_Options :public C_GPU_Decompress_Options
 {
     Q_OBJECT
-        Q_ENUMS(ImageViewDecode)
-        Q_PROPERTY(ImageViewDecode  View_compressed_images_using            READ getImageViewDecode     WRITE setImageViewDecode NOTIFY ImageViewDecodeChanged)
+        Q_ENUMS(ImageEncodeDecodeWith)
+#ifdef USE_COMPUTE
+		Q_PROPERTY(ImageEncodeDecodeWith  Compress_images_using                   READ getImageEncode         WRITE setImageEncode NOTIFY ImageEncodeChanged)
+#endif
+        Q_PROPERTY(ImageEncodeDecodeWith  View_compressed_images_using            READ getImageViewDecode     WRITE setImageViewDecode NOTIFY ImageViewDecodeChanged)
         Q_PROPERTY(bool             Reload_image_views_on_selection         READ getUseNewImageViews        WRITE setUseNewImageViews)
         Q_PROPERTY(bool             Close_all_image_views_prior_to_process  READ getCloseAllImageViews      WRITE setCloseAllImageViews)
         Q_PROPERTY(bool             Load_recent_project_on_startup          READ getLoadRecentFile          WRITE setLoadRecentFile)
 
 public:
     
-    enum ImageViewDecode{
+    enum ImageEncodeDecodeWith {
         CPU,
         GPU,
     };
@@ -818,24 +838,35 @@ public:
     
     C_Application_Options()
     {
-        m_ImageViewDecode    = ImageViewDecode::CPU;
+        m_ImageViewDecode    = ImageEncodeDecodeWith::CPU;
         m_loadRecentFile     = false;
         m_useNewImageViews   = true;
         m_refreshCurrentView = false;
         m_closeAllDocuments  = true;
     }
 
-    void setImageViewDecode(ImageViewDecode decodewith)
+    void setImageViewDecode(ImageEncodeDecodeWith decodewith)
     {
         m_ImageViewDecode = decodewith;
         emit ImageViewDecodeChanged((QVariant &)decodewith);
     }
 
-    ImageViewDecode getImageViewDecode() const
+	ImageEncodeDecodeWith getImageViewDecode() const
     {
         return m_ImageViewDecode;
     }
+#ifdef USE_COMPUTE
+	void setImageEncode(ImageEncodeDecodeWith encodewith)
+	{
+		m_ImageEncode = encodewith;
+		emit ImageEncodeChanged((QVariant &)encodewith);
+	}
 
+	ImageEncodeDecodeWith getImageEncode() const
+	{
+		return m_ImageEncode;
+	}
+#endif
     void setCloseAllImageViews(bool recent)
     {
         m_closeAllDocuments = recent;
@@ -866,13 +897,19 @@ public:
         return m_useNewImageViews;
     }
 
-    ImageViewDecode m_ImageViewDecode;
+	ImageEncodeDecodeWith m_ImageViewDecode;
+#ifdef USE_COMPUTE
+	ImageEncodeDecodeWith m_ImageEncode;
+#endif
     bool            m_closeAllDocuments;
     bool            m_loadRecentFile;
     bool            m_refreshCurrentView;
 
 signals:
     void ImageViewDecodeChanged(QVariant &);
+#ifdef USE_COMPUTE
+	void ImageEncodeChanged(QVariant &);
+#endif
 
 };
 

@@ -48,8 +48,14 @@ using namespace std;
 
 //#define MAKE_FORMAT_COMPATIBLE                      //  Byte<->Float to make all source and dest compatible
 
-// Internal experimental code
-// #define ARGB_32_SUPPORT
-// #define SUPPORT_ETC_ALPHA
+// V2.4 / V2.5 features and changes
+#define USE_OLD_SWIZZLE                            //  Remove swizzle flag and abide by CMP_Formats
+
+// To Be enabled in future releases
+// #define ARGB_32_SUPPORT                            // Enables 32bit Float channel formats
+// #define SUPPORT_ETC_ALPHA                          // for ATC_RGB output enable A
+// #define SHOW_PROCESS_MEMORY                        // display available CPU process memory
+// #define USE_COMPUTE                                // Enable compute code for compression
+
 
 #endif // !COMMON_H

@@ -24,14 +24,16 @@
 //
 //=====================================================================
 
+#include "GPU_DecodeBase.h"
 #include "GPU_Decode.h"
-#include "GPU_DirectX.h"
-#include "GPU_OpenGL.h"
-#include "GPU_Vulkan.h"
+#include "PluginInterface.h"
+
+extern PluginManager    g_pluginManager;
 
 using namespace GPU_Decode;
 
-TextureControl *g_GPUDecode = NULL;
+PluginInterface_GPUDecode   *g_GPUDecode_plugin = NULL;
+
 static CMP_GPUDecode DecodeType = GPUDecode_INVALID;
 
 //
@@ -39,7 +41,7 @@ static CMP_GPUDecode DecodeType = GPUDecode_INVALID;
 //
 CMP_ERROR CMP_API CMP_InitializeDecompessLibrary(CMP_GPUDecode GPUDecodeType, CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback)
 {
-    if (g_GPUDecode && (DecodeType == GPUDecodeType)) return CMP_OK;
+    if (g_GPUDecode_plugin && (DecodeType == GPUDecodeType)) return CMP_OK;
 
     if (GPUDecodeType != DecodeType)
     {
@@ -49,17 +51,24 @@ CMP_ERROR CMP_API CMP_InitializeDecompessLibrary(CMP_GPUDecode GPUDecodeType, CM
     switch (GPUDecodeType)
     {
     case GPUDecode_DIRECTX:
-                            g_GPUDecode = (TextureControl *) new GPU_DirectX(Width, Height, callback);
+                            g_GPUDecode_plugin = reinterpret_cast<PluginInterface_GPUDecode *>(g_pluginManager.GetPlugin("GPUDECODE", "DIRECTX"));
                             break;
     case GPUDecode_OPENGL: 
-                            g_GPUDecode = (TextureControl *) new GPU_OpenGL(Width, Height, callback);
+                            g_GPUDecode_plugin = reinterpret_cast<PluginInterface_GPUDecode *>(g_pluginManager.GetPlugin("GPUDECODE", "OPENGL"));
                             break;
     case GPUDecode_VULKAN:
-                            g_GPUDecode = (TextureControl *) new GPU_Vulkan(Width, Height, callback);
+                            g_GPUDecode_plugin = reinterpret_cast<PluginInterface_GPUDecode *>(g_pluginManager.GetPlugin("GPUDECODE", "VULKAN"));
                             break;
     default:
                             return CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB;
     }
+
+    if (g_GPUDecode_plugin)
+    {
+        if (g_GPUDecode_plugin->TC_Init(Width, Height, callback) != 0)
+            return CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB;
+    }
+    else return CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB;
 
     return CMP_OK;
 }
@@ -70,12 +79,11 @@ CMP_ERROR CMP_API CMP_InitializeDecompessLibrary(CMP_GPUDecode GPUDecodeType, CM
 //
 CMP_ERROR CMP_API CMP_ShutdownDecompessLibrary()
 {
-    if (g_GPUDecode)
+    if (g_GPUDecode_plugin)
     {
-        // shutdown Window context
-        g_GPUDecode->DisableWindowContext(g_GPUDecode->m_hWnd, g_GPUDecode->m_hDC, g_GPUDecode->m_hRC);
-        free(g_GPUDecode);
-        g_GPUDecode = NULL;
+        g_GPUDecode_plugin->TC_Close();
+        delete g_GPUDecode_plugin;
+        g_GPUDecode_plugin = NULL;
     }
 
     return CMP_OK;
@@ -93,10 +101,13 @@ CMP_ERROR CMP_API CMP_DecompressTexture(
     result = CMP_InitializeDecompessLibrary(GPUDecodeType, pSourceTexture->dwWidth, pSourceTexture->dwHeight, NULL);
     if (result  != CMP_OK) return (result);
 
-    if (g_GPUDecode)
+    if (g_GPUDecode_plugin)
     {
-        g_GPUDecode->Decompress(pSourceTexture, pDestTexture);
+        result = g_GPUDecode_plugin->TC_Decompress(pSourceTexture, pDestTexture);
+        if (result != CMP_OK) return (result);
     }
+    else return CMP_ABORTED;
+
 
     return CMP_OK;
 }

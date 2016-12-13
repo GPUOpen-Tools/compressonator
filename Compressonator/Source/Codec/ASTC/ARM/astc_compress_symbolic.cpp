@@ -252,14 +252,24 @@ int realign_weights(astc_decode_mode decode_mode,
     function for compressing a block symbolically, given that we have already decided on a partition 
 */
 
-
+float decimated_weights[2 * MAX_DECIMATION_MODES * MAX_WEIGHTS_PER_BLOCK];
+uint8_t u8_quantized_decimated_quantized_weights[2 * MAX_WEIGHT_MODES * MAX_WEIGHTS_PER_BLOCK];
+float decimated_quantized_weights[2 * MAX_DECIMATION_MODES * MAX_WEIGHTS_PER_BLOCK];
+float flt_quantized_decimated_quantized_weights[2 * MAX_WEIGHT_MODES * MAX_WEIGHTS_PER_BLOCK];
 
 static void compress_symbolic_block_fixed_partition_1_plane(astc_decode_mode decode_mode,
                                                             float mode_cutoff,
                                                             int max_refinement_iters,
                                                             int xdim, int ydim, int zdim,
-                                                            int partition_count, int partition_index,
-                                                            const imageblock * blk, const error_weight_block * ewb, symbolic_compressed_block * scb)
+                                                            int partition_count,
+                                                            int partition_index,
+                                                            const imageblock * blk, 
+                                                            const error_weight_block * ewb, 
+                                                            symbolic_compressed_block * scb,
+                                                            endpoints_and_weights *ei1,
+                                                            endpoints_and_weights *eix1,
+                                                            const block_size_descriptor *bsd
+                                                            )
 {
     int i, j, k;
 
@@ -271,20 +281,12 @@ static void compress_symbolic_block_fixed_partition_1_plane(astc_decode_mode dec
 
     // first, compute ideal weights and endpoint colors, under thre assumption that
     // there is no quantization or decimation going on.
-    endpoints_and_weights *ei = new endpoints_and_weights;
-    endpoints_and_weights *eix = new endpoints_and_weights[MAX_DECIMATION_MODES];
-    compute_endpoints_and_ideal_weights_1_plane(xdim, ydim, zdim, pi, blk, ewb, ei);
+    compute_endpoints_and_ideal_weights_1_plane(xdim, ydim, zdim, pi, blk, ewb, ei1);
 
     // next, compute ideal weights and endpoint colors for every decimation.
-    const block_size_descriptor *bsd = get_block_size_descriptor(xdim, ydim, zdim);
+
     const decimation_table *const *ixtab2 = bsd->decimation_tables;
-    // int block_mode_count = bsd->single_plane_block_mode_count;
 
-
-    float *decimated_quantized_weights = new float[MAX_DECIMATION_MODES * MAX_WEIGHTS_PER_BLOCK];
-    float *decimated_weights = new float[MAX_DECIMATION_MODES * MAX_WEIGHTS_PER_BLOCK];
-    float *flt_quantized_decimated_quantized_weights = new float[MAX_WEIGHT_MODES * MAX_WEIGHTS_PER_BLOCK];
-    uint8_t *u8_quantized_decimated_quantized_weights = new uint8_t[MAX_WEIGHT_MODES * MAX_WEIGHTS_PER_BLOCK];
 
     // for each decimation mode, compute an ideal set of weights
     // (that is, weights computed with the assumption that they are not quantized)
@@ -292,8 +294,8 @@ static void compress_symbolic_block_fixed_partition_1_plane(astc_decode_mode dec
     {
         if (bsd->permit_encode[i] == 0 || bsd->decimation_mode_maxprec_1plane[i] < 0 || bsd->decimation_mode_percentile[i] > mode_cutoff)
             continue;
-        eix[i] = *ei;
-        compute_ideal_weights_for_decimation_table(&(eix[i]), ixtab2[i], decimated_quantized_weights + i * MAX_WEIGHTS_PER_BLOCK, decimated_weights + i * MAX_WEIGHTS_PER_BLOCK);
+        eix1[i] = *ei1;
+        compute_ideal_weights_for_decimation_table(&(eix1[i]), ixtab2[i], decimated_quantized_weights + i * MAX_WEIGHTS_PER_BLOCK, decimated_weights + i * MAX_WEIGHTS_PER_BLOCK);
 
     }
 
@@ -309,7 +311,7 @@ static void compress_symbolic_block_fixed_partition_1_plane(astc_decode_mode dec
             fedisableexcept(FE_DIVBYZERO | FE_INVALID);
         #endif
 
-        float4 ep = (float4(1, 1, 1, 1) - ei->ep.endpt0[i]) / (ei->ep.endpt1[i] - ei->ep.endpt0[i]);
+        float4 ep = (float4(1, 1, 1, 1) - ei1->ep.endpt0[i]) / (ei1->ep.endpt1[i] - ei1->ep.endpt0[i]);
         if (ep.x > 0.5f && ep.x < min_ep.x)
             min_ep.x = ep.x;
         if (ep.y > 0.5f && ep.y < min_ep.y)
@@ -368,7 +370,7 @@ static void compress_symbolic_block_fixed_partition_1_plane(astc_decode_mode dec
 
 
         // then, generate the optimized set of weights for the weight mode.
-        compute_ideal_quantized_weights_for_decimation_table(&(eix[decimation_mode]),
+        compute_ideal_quantized_weights_for_decimation_table(&(eix1[decimation_mode]),
                                                              ixtab2[decimation_mode],
                                                              weight_low_value[i], weight_high_value[i],
                                                              decimated_quantized_weights + MAX_WEIGHTS_PER_BLOCK * decimation_mode,
@@ -377,12 +379,7 @@ static void compress_symbolic_block_fixed_partition_1_plane(astc_decode_mode dec
                                                              bsd->block_modes[i].quantization_mode);
 
         // then, compute weight-errors for the weight mode.
-        qwt_errors[i] = compute_error_of_weight_set(&(eix[decimation_mode]), ixtab2[decimation_mode], flt_quantized_decimated_quantized_weights + MAX_WEIGHTS_PER_BLOCK * i);
-
-        #ifdef DEBUG_PRINT_DIAGNOSTICS
-            if (print_diagnostics)
-                printf("Block mode %d -> weight error = %f\n", i, qwt_errors[i]);
-        #endif
+        qwt_errors[i] = compute_error_of_weight_set(&(eix1[decimation_mode]), ixtab2[decimation_mode], flt_quantized_decimated_quantized_weights + MAX_WEIGHTS_PER_BLOCK * i);
     }
 
     // for each weighting mode, determine the optimal combination of color endpoint encodings
@@ -392,7 +389,7 @@ static void compress_symbolic_block_fixed_partition_1_plane(astc_decode_mode dec
     int quantized_weight[4];
     int color_quantization_level[4];
     int color_quantization_level_mod[4];
-    determine_optimal_set_of_endpoint_formats_to_use(xdim, ydim, zdim, pi, blk, ewb, &(ei->ep), -1,    // used to flag that we are in single-weight mode
+    determine_optimal_set_of_endpoint_formats_to_use(xdim, ydim, zdim, pi, blk, ewb, &(ei1->ep), -1,    // used to flag that we are in single-weight mode
                                                      qwt_bitcounts, qwt_errors, partition_format_specifiers, quantized_weight, color_quantization_level, color_quantization_level_mod);
 
 
@@ -414,15 +411,6 @@ static void compress_symbolic_block_fixed_partition_1_plane(astc_decode_mode dec
         int weight_quantization_mode = bsd->block_modes[quantized_weight[i]].quantization_mode;
         const decimation_table *it = ixtab2[decimation_mode];
 
-        #ifdef DEBUG_PRINT_DIAGNOSTICS
-            if (print_diagnostics)
-            {
-                printf("Selected mode = %d\n", quantized_weight[i]);
-                printf("Selected decimation mode = %d\n", decimation_mode);
-                printf("Selected weight-quantization mode = %d\n", weight_quantization_mode);
-            }
-        #endif
-
         u8_weight_src = u8_quantized_decimated_quantized_weights + MAX_WEIGHTS_PER_BLOCK * quantized_weight[i];
 
         weights_to_copy = it->num_weights;
@@ -435,7 +423,7 @@ static void compress_symbolic_block_fixed_partition_1_plane(astc_decode_mode dec
         int l;
         for (l = 0; l < max_refinement_iters; l++)
         {
-            recompute_ideal_colors(xdim, ydim, zdim, weight_quantization_mode, &(eix[decimation_mode].ep), rgbs_colors, rgbo_colors, lum_intervals, u8_weight_src, NULL, -1, pi, it, blk, ewb);
+            recompute_ideal_colors(xdim, ydim, zdim, weight_quantization_mode, &(eix1[decimation_mode].ep), rgbs_colors, rgbo_colors, lum_intervals, u8_weight_src, NULL, -1, pi, it, blk, ewb);
 
             // quantize the chosen color
 
@@ -443,8 +431,8 @@ static void compress_symbolic_block_fixed_partition_1_plane(astc_decode_mode dec
             for (j = 0; j < partition_count; j++)
             {
                 scb->color_formats[j] = pack_color_endpoints(decode_mode,
-                                                             eix[decimation_mode].ep.endpt0[j],
-                                                             eix[decimation_mode].ep.endpt1[j],
+                                                             eix1[decimation_mode].ep.endpt0[j],
+                                                             eix1[decimation_mode].ep.endpt1[j],
                                                              rgbs_colors[j], rgbo_colors[j], lum_intervals[j], partition_format_specifiers[i][j], scb->color_values[j], color_quantization_level[i]);
             }
 
@@ -464,8 +452,8 @@ static void compress_symbolic_block_fixed_partition_1_plane(astc_decode_mode dec
                 for (j = 0; j < partition_count; j++)
                 {
                     color_formats_mod[j] = pack_color_endpoints(decode_mode,
-                                                                eix[decimation_mode].ep.endpt0[j],
-                                                                eix[decimation_mode].ep.endpt1[j],
+                                                                eix1[decimation_mode].ep.endpt0[j],
+                                                                eix1[decimation_mode].ep.endpt1[j],
                                                                 rgbs_colors[j], rgbo_colors[j], lum_intervals[j], partition_format_specifiers[i][j], colorvals[j], color_quantization_level_mod[i]);
                 }
                 if (color_formats_mod[0] == color_formats_mod[1]
@@ -510,27 +498,31 @@ static void compress_symbolic_block_fixed_partition_1_plane(astc_decode_mode dec
         scb++;
     }
 
-    delete[]flt_quantized_decimated_quantized_weights;
-    delete[]u8_quantized_decimated_quantized_weights;
-    delete[]decimated_quantized_weights;
-    delete[]decimated_weights;
-    delete ei;
-    delete[]eix;
+    // delete[]flt_quantized_decimated_quantized_weights;
+    // delete[]decimated_quantized_weights;
+    // delete[]u8_quantized_decimated_quantized_weights;
+    // delete[]decimated_weights;
 
 }
-
-
-
-
-
 
 static void compress_symbolic_block_fixed_partition_2_planes(astc_decode_mode decode_mode,
                                                              float mode_cutoff,
                                                              int max_refinement_iters,
                                                              int xdim, int ydim, int zdim,
-                                                             int partition_count, int partition_index,
+                                                             int partition_count, 
+                                                             int partition_index,
                                                              int separate_component, const imageblock * blk, const error_weight_block * ewb,
-                                                             symbolic_compressed_block * scb)
+                                                             symbolic_compressed_block * scb,
+                                                             endpoints_and_weights *ei1,
+                                                             endpoints_and_weights *ei2,
+                                                             endpoints_and_weights *eix1,
+                                                             endpoints_and_weights *eix2,
+                                                             const block_size_descriptor *bsd
+                                                             // float *decimated_quantized_weights,
+                                                             // float *decimated_weights,
+                                                             // float *flt_quantized_decimated_quantized_weights,
+                                                             // uint8_t *u8_quantized_decimated_quantized_weights
+                                                             )
 {
     int i, j, k;
 
@@ -541,21 +533,15 @@ static void compress_symbolic_block_fixed_partition_2_planes(astc_decode_mode de
     pi += partition_index;
 
     // first, compute ideal weights and endpoint colors
-    endpoints_and_weights *ei1 = new endpoints_and_weights;
-    endpoints_and_weights *ei2 = new endpoints_and_weights;
-    endpoints_and_weights *eix1 = new endpoints_and_weights[MAX_DECIMATION_MODES];
-    endpoints_and_weights *eix2 = new endpoints_and_weights[MAX_DECIMATION_MODES];
     compute_endpoints_and_ideal_weights_2_planes(xdim, ydim, zdim, pi, blk, ewb, separate_component, ei1, ei2);
 
-    // next, compute ideal weights and endpoint colors for every decimation.
-    const block_size_descriptor *bsd = get_block_size_descriptor(xdim, ydim, zdim);
     const decimation_table *const *ixtab2 = bsd->decimation_tables;
 
 
-    float *decimated_quantized_weights = new float[2 * MAX_DECIMATION_MODES * MAX_WEIGHTS_PER_BLOCK];
-    float *decimated_weights = new float[2 * MAX_DECIMATION_MODES * MAX_WEIGHTS_PER_BLOCK];
-    float *flt_quantized_decimated_quantized_weights = new float[2 * MAX_WEIGHT_MODES * MAX_WEIGHTS_PER_BLOCK];
-    uint8_t *u8_quantized_decimated_quantized_weights = new uint8_t[2 * MAX_WEIGHT_MODES * MAX_WEIGHTS_PER_BLOCK];
+    // float *decimated_quantized_weights = new float[2 * MAX_DECIMATION_MODES * MAX_WEIGHTS_PER_BLOCK];
+    // float *decimated_weights = new float[2 * MAX_DECIMATION_MODES * MAX_WEIGHTS_PER_BLOCK];
+    // float *flt_quantized_decimated_quantized_weights = new float[2 * MAX_WEIGHT_MODES * MAX_WEIGHTS_PER_BLOCK];
+    // uint8_t *u8_quantized_decimated_quantized_weights = new uint8_t[2 * MAX_WEIGHT_MODES * MAX_WEIGHTS_PER_BLOCK];
 
     // for each decimation mode, compute an ideal set of weights
     for (i = 0; i < MAX_DECIMATION_MODES; i++)
@@ -815,20 +801,11 @@ static void compress_symbolic_block_fixed_partition_2_planes(astc_decode_mode de
         scb++;
     }
 
-    delete[]flt_quantized_decimated_quantized_weights;
-    delete[]u8_quantized_decimated_quantized_weights;
-    delete[]decimated_quantized_weights;
-    delete[]decimated_weights;
-    delete ei1;
-    delete ei2;
-    delete[]eix1;
-    delete[]eix2;
-
+    // delete[]flt_quantized_decimated_quantized_weights;
+    // delete[]u8_quantized_decimated_quantized_weights;
+    // delete[]decimated_quantized_weights;
+    // delete[]decimated_weights;
 }
-
-
-
-
 
 void expand_block_artifact_suppression(int xdim, int ydim, int zdim, error_weighting_params * ewp)
 {
@@ -852,8 +829,6 @@ void expand_block_artifact_suppression(int xdim, int ydim, int zdim, error_weigh
                 bef++;
             }
 }
-
-
 
 // Function to set error weights for each color component for each texel in a block.
 // Returns the sum of all the error values set.
@@ -1052,7 +1027,6 @@ float prepare_error_weight_block(const astc_codec_image * input_image,
         * covariance-matrix correllation coefficients
  */
 
-
 // compute averages and covariance matrices for 4 components
 static void compute_covariance_matrix(int xdim, int ydim, int zdim, const imageblock * blk, const error_weight_block * ewb, mat4 * cov_matrix)
 {
@@ -1115,8 +1089,6 @@ static void compute_covariance_matrix(int xdim, int ydim, int zdim, const imageb
     cov_matrix->v[3] = float4(ra_sum - rs * as * rpt, ga_sum - gs * as * rpt, ba_sum - bs * as * rpt, aa_sum - as * as * rpt);
 
 }
-
-
 
 void prepare_block_statistics(int xdim, int ydim, int zdim, const imageblock * blk, const error_weight_block * ewb, int *is_normal_map, float *lowest_correl)
 {
@@ -1183,10 +1155,6 @@ void prepare_block_statistics(int xdim, int ydim, int zdim, const imageblock * b
     *is_normal_map = nf_avg < 0.2;
 }
 
-
-
-
-
 void compress_constant_color_block(int xdim, int ydim, int zdim, const imageblock * blk, const error_weight_block * ewb, symbolic_compressed_block * scb)
 {
     int texel_count = xdim * ydim * zdim;
@@ -1207,13 +1175,6 @@ void compress_constant_color_block(int xdim, int ydim, int zdim, const imagebloc
     float4 avg_color = color_sum / color_weight_sum;
 
     int use_fp16 = blk->rgb_lns[0];
-
-    #ifdef DEBUG_PRINT_DIAGNOSTICS
-        if (print_diagnostics)
-        {
-            printf("Averaged color: %f %f %f %f\n", avg_color.x, avg_color.y, avg_color.z, avg_color.w);
-        }
-    #endif
 
     // convert the color
     if (blk->rgb_lns[0])
@@ -1263,14 +1224,6 @@ void compress_constant_color_block(int xdim, int ydim, int zdim, const imagebloc
         avg_color.w *= (1.0f / 65535.0f);
     }
 
-#ifdef DEBUG_PRINT_DIAGNOSTICS
-    if (print_diagnostics)
-    {
-        printf("Averaged color: %f %f %f %f   (%d)\n", avg_color.x, avg_color.y, avg_color.z, avg_color.w, use_fp16);
-
-    }
-#endif
-
     if (use_fp16)
     {
         scb->error_block = 0;
@@ -1314,10 +1267,11 @@ void compress_constant_color_block(int xdim, int ydim, int zdim, const imagebloc
     }
 }
 
-int block_mode_histogram[2048];
-
 float compress_symbolic_block(const astc_codec_image * input_image,
-                              astc_decode_mode decode_mode, int xdim, int ydim, int zdim, const error_weighting_params * ewp, const imageblock * blk, symbolic_compressed_block * scb)
+                              astc_decode_mode decode_mode, int xdim, int ydim, int zdim, 
+                              const error_weighting_params * ewp, const imageblock * blk, 
+                              symbolic_compressed_block * scb
+                              )
 {
     int i, j;
     int xpos = blk->xpos;
@@ -1325,35 +1279,15 @@ float compress_symbolic_block(const astc_codec_image * input_image,
     int zpos = blk->zpos;
 
     int x, y, z;
+    imageblock temp;
+    error_weight_block ewb;
+    error_weight_block_orig ewbo;
+    symbolic_compressed_block tempblocks[4];
 
-
-    #ifdef DEBUG_PRINT_DIAGNOSTICS
-        if (print_diagnostics)
-        {
-            printf("Diagnostics of block of dimension %d x %d x %d\n\n", xdim, ydim, zdim);
-    
-            printf("XPos: %d  YPos: %d  ZPos: %d\n", xpos, ypos, zpos);
-    
-            printf("Red-min: %f   Red-max: %f\n", blk->red_min, blk->red_max);
-            printf("Green-min: %f   Green-max: %f\n", blk->green_min, blk->green_max);
-            printf("Blue-min: %f   Blue-max: %f\n", blk->blue_min, blk->blue_max);
-            printf("Alpha-min: %f   Alpha-max: %f\n", blk->alpha_min, blk->alpha_max);
-            printf("Grayscale: %d\n", blk->grayscale);
-    
-            for (z = 0; z < zdim; z++)
-                for (y = 0; y < ydim; y++)
-                    for (x = 0; x < xdim; x++)
-                    {
-                        int idx = ((z * ydim + y) * xdim + x) * 4;
-                        printf("Texel (%d %d %d) : orig=< %g, %g, %g, %g >, work=< %g, %g, %g, %g >\n",
-                            x, y, z,
-                            blk->orig_data[idx],
-                            blk->orig_data[idx + 1], blk->orig_data[idx + 2], blk->orig_data[idx + 3], blk->work_data[idx], blk->work_data[idx + 1], blk->work_data[idx + 2], blk->work_data[idx + 3]);
-                    }
-            printf("\n");
-        }
-    #endif
-
+    endpoints_and_weights ei1;
+    endpoints_and_weights ei2;
+    endpoints_and_weights eix1[MAX_DECIMATION_MODES];
+    endpoints_and_weights eix2[MAX_DECIMATION_MODES];
 
     if (blk->red_min == blk->red_max && blk->green_min == blk->green_max && blk->blue_min == blk->blue_max && blk->alpha_min == blk->alpha_max)
     {
@@ -1401,99 +1335,20 @@ float compress_symbolic_block(const astc_codec_image * input_image,
             scb->constant_color[3] = (int)floor(alpha * 65535.0f + 0.5f);
         }
 
-        #ifdef DEBUG_PRINT_DIAGNOSTICS
-            if (print_diagnostics)
-            {
-                printf("Block is single-color <%4.4X %4.4X %4.4X %4.4X>\n", scb->constant_color[0], scb->constant_color[1], scb->constant_color[2], scb->constant_color[3]);
-            }
-        #endif
-
-        //if (print_tile_errors)
-        //    printf("0\n");
-
-        physical_compressed_block psb = symbolic_to_physical(xdim, ydim, zdim, scb);
-        physical_to_symbolic(xdim, ydim, zdim, psb, scb);
-
         return 0.0f;
     }
 
-    error_weight_block *ewb = new error_weight_block;
-    error_weight_block_orig *ewbo = new error_weight_block_orig;
-
     float error_weight_sum = prepare_error_weight_block(input_image,
                                                         xdim, ydim, zdim,
-                                                        ewp, blk, ewb, ewbo);
-
-    #ifdef DEBUG_PRINT_DIAGNOSTICS
-        if (print_diagnostics)
-        {
-            printf("\n");
-            for (z = 0; z < zdim; z++)
-                for (y = 0; y < ydim; y++)
-                    for (x = 0; x < xdim; x++)
-                    {
-                        int idx = (z * ydim + y) * xdim + x;
-                        printf("ErrorWeight (%d %d %d) : < %g, %g, %g, %g >\n", x, y, z, ewb->error_weights[idx].x, ewb->error_weights[idx].y, ewb->error_weights[idx].z, ewb->error_weights[idx].w);
-                    }
-            printf("\n");
-        }
-    #endif
-
-    symbolic_compressed_block *tempblocks = new symbolic_compressed_block[4];
+                                                        ewp, blk, &ewb, &ewbo);
 
     float error_of_best_block = 1e20f;
-    // int modesel=0;
-
-    imageblock *temp = new imageblock;
 
     float best_errorvals_in_modes[17];
     for (i = 0; i < 17; i++)
         best_errorvals_in_modes[i] = 1e30f;
 
     int uses_alpha = imageblock_uses_alpha(xdim, ydim, zdim, blk);
-
-
-    // compression of average-color blocks disabled for the time being;
-    // they produce extremely severe block artifacts.
-#if 0
-    // first, compress an averaged-color block
-    compress_constant_color_block(xdim, ydim, zdim, blk, ewb, scb);
-
-    decompress_symbolic_block(decode_mode, xdim, ydim, zdim, xpos, ypos, zpos, scb, temp);
-
-    float avgblock_errorval = compute_imageblock_difference(xdim, ydim, zdim,
-                                                            blk, temp, ewb) * 4.0f;    // bias somewhat against the average-color block.
-
-    #ifdef DEBUG_PRINT_DIAGNOSTICS
-        if (print_diagnostics)
-        {
-            printf("\n-----------------------------------\n");
-            printf("Average-color block test completed\n");
-            printf("Resulting error value: %g\n", avgblock_errorval);
-        }
-    #endif
-
-
-    if (avgblock_errorval < error_of_best_block)
-    {
-        #ifdef DEBUG_PRINT_DIAGNOSTICS
-            if (print_diagnostics)
-                printf("Accepted as better than previous-best-error, which was %g\n", error_of_best_block);
-        #endif
-
-        error_of_best_block = avgblock_errorval;
-        // *scb = tempblocks[j];
-        modesel = 0;
-    }
-
-    #ifdef DEBUG_PRINT_DIAGNOSTICS
-        if (print_diagnostics)
-        {
-            printf("-----------------------------------\n");
-        }
-    #endif
-#endif
-
 
     float mode_cutoff = ewp->block_mode_cutoff;
 
@@ -1506,58 +1361,43 @@ float compress_symbolic_block(const astc_codec_image * input_image,
     modecutoffs[0] = 0;
     modecutoffs[1] = mode_cutoff;
 
-    #if 0
-        if ((error_of_best_block / error_weight_sum) < ewp->texel_avg_error_limit)
-            goto END_OF_TESTS;
-    #endif
+
+    // compute ideal weights and endpoint colors for every decimation.
+    const block_size_descriptor *bsd = get_block_size_descriptor(xdim, ydim, zdim);
 
     float best_errorval_in_mode;
     for (i = 0; i < 2; i++)
     {
-        compress_symbolic_block_fixed_partition_1_plane(decode_mode, modecutoffs[i], ewp->max_refinement_iters, xdim, ydim, zdim, 1,    // partition count
+        compress_symbolic_block_fixed_partition_1_plane(decode_mode, modecutoffs[i], ewp->max_refinement_iters, 
+                                                        xdim, ydim, zdim, 
+                                                        1,    // partition count
                                                         0,    // partition index
-                                                        blk, ewb, tempblocks);
+                                                        blk,
+                                                        &ewb, 
+                                                        tempblocks,
+                                                        &ei1,
+                                                        eix1,
+                                                        bsd
+                                                        );
 
         best_errorval_in_mode = 1e30f;
         for (j = 0; j < 4; j++)
         {
             if (tempblocks[j].error_block)
                 continue;
-            decompress_symbolic_block(decode_mode, xdim, ydim, zdim, xpos, ypos, zpos, tempblocks + j, temp);
+            decompress_symbolic_block(decode_mode, xdim, ydim, zdim, xpos, ypos, zpos, tempblocks + j, &temp);
             float errorval = compute_imageblock_difference(xdim, ydim, zdim,
-                                                           blk, temp, ewb) * errorval_mult[i];
-
-            #ifdef DEBUG_PRINT_DIAGNOSTICS
-                if (print_diagnostics)
-                {
-                    printf("\n-----------------------------------\n");
-                    printf("Single-weight partition test 0 (1 partition) completed\n");
-                    printf("Resulting error value: %g\n", errorval);
-                }
-            #endif
+                                                           blk, &temp, &ewb) * errorval_mult[i];
 
             if (errorval < best_errorval_in_mode)
                 best_errorval_in_mode = errorval;
 
             if (errorval < error_of_best_block)
             {
-                #ifdef DEBUG_PRINT_DIAGNOSTICS
-                    if (print_diagnostics)
-                        printf("Accepted as better than previous-best-error, which was %g\n", error_of_best_block);
-                #endif
-
                 error_of_best_block = errorval;
                 *scb = tempblocks[j];
-
-                // modesel = 0;
             }
 
-            #ifdef DEBUG_PRINT_DIAGNOSTICS
-                if (print_diagnostics)
-                {
-                    printf("-----------------------------------\n");
-                }
-            #endif
         }
 
         best_errorvals_in_modes[0] = best_errorval_in_mode;
@@ -1567,7 +1407,7 @@ float compress_symbolic_block(const astc_codec_image * input_image,
 
     int is_normal_map;
     float lowest_correl;
-    prepare_block_statistics(xdim, ydim, zdim, blk, ewb, &is_normal_map, &lowest_correl);
+    prepare_block_statistics(xdim, ydim, zdim, blk, &ewb, &is_normal_map, &lowest_correl);
 
     if (is_normal_map && lowest_correl < 0.99f)
         lowest_correl = 0.99f;
@@ -1585,50 +1425,37 @@ float compress_symbolic_block(const astc_codec_image * input_image,
         if (!uses_alpha && i == 3)
             continue;
 
-        compress_symbolic_block_fixed_partition_2_planes(decode_mode, mode_cutoff, ewp->max_refinement_iters, xdim, ydim, zdim, 1,    // partition count
+        compress_symbolic_block_fixed_partition_2_planes(decode_mode,
+                                                         mode_cutoff, 
+                                                         ewp->max_refinement_iters,
+                                                         xdim, ydim, zdim, // Block Dimensions (4x4..12x12) Remains constant when called
+                                                         1,    // partition count
                                                          0,    // partition index
                                                          i,    // the color component to test a separate plane of weights for.
-                                                         blk, ewb, tempblocks);
+                                                         blk, &ewb, tempblocks,
+                                                         &ei1,
+                                                         &ei2,
+                                                         eix1,
+                                                         eix2,
+                                                         bsd
+                                                         );
 
         for (j = 0; j < 4; j++)
         {
             if (tempblocks[j].error_block)
                 continue;
-            decompress_symbolic_block(decode_mode, xdim, ydim, zdim, xpos, ypos, zpos, tempblocks + j, temp);
+            decompress_symbolic_block(decode_mode, xdim, ydim, zdim, xpos, ypos, zpos, tempblocks + j, &temp);
             float errorval = compute_imageblock_difference(xdim, ydim, zdim,
-                                                           blk, temp, ewb);
-
-            #ifdef DEBUG_PRINT_DIAGNOSTICS
-                if (print_diagnostics)
-                {
-                    printf("\n-----------------------------------\n");
-                    printf("Dual-weight partition test %d (1 partition) completed\n", i);
-                    printf("Resulting error value: %g\n", errorval);
-                }
-            #endif
+                                                           blk, &temp, &ewb);
 
             if (errorval < best_errorval_in_mode)
                 best_errorval_in_mode = errorval;
 
             if (errorval < error_of_best_block)
             {
-                #ifdef DEBUG_PRINT_DIAGNOSTICS
-                    if (print_diagnostics)
-                        printf("Accepted as better than previous-best-error, which was %g\n", error_of_best_block);
-                #endif
-
                 error_of_best_block = errorval;
                 *scb = tempblocks[j];
-
-                // modesel = i+1;
             }
-
-            #ifdef DEBUG_PRINT_DIAGNOSTICS
-                if (print_diagnostics)
-                {
-                    printf("-----------------------------------\n");
-                }
-            #endif
 
             best_errorvals_in_modes[i + 1] = best_errorval_in_mode;
         }
@@ -1645,56 +1472,45 @@ float compress_symbolic_block(const astc_codec_image * input_image,
         int partition_indices_2planes[2];
 
         find_best_partitionings(ewp->partition_search_limit,
-                                xdim, ydim, zdim, partition_count, blk, ewb, 1, 
+                                xdim, ydim, zdim, partition_count, blk, &ewb, 1, 
                                 &(partition_indices_1plane[0]), &(partition_indices_1plane[1]), &(partition_indices_2planes[0]));
 
         for (i = 0; i < 2; i++)
         {
-            compress_symbolic_block_fixed_partition_1_plane(decode_mode, mode_cutoff, ewp->max_refinement_iters, xdim, ydim, zdim, partition_count, partition_indices_1plane[i], blk, ewb, tempblocks);
+            compress_symbolic_block_fixed_partition_1_plane(decode_mode,
+                mode_cutoff,
+                ewp->max_refinement_iters,
+                xdim, ydim, zdim,
+                partition_count,
+                partition_indices_1plane[i],
+                blk,
+                &ewb,
+                tempblocks,
+                &ei1,
+                eix1,
+                bsd
+            );
 
             best_errorval_in_mode = 1e30f;
             for (j = 0; j < 4; j++)
             {
                 if (tempblocks[j].error_block)
                     continue;
-                decompress_symbolic_block(decode_mode, xdim, ydim, zdim, xpos, ypos, zpos, tempblocks + j, temp);
+                decompress_symbolic_block(decode_mode, xdim, ydim, zdim, xpos, ypos, zpos, tempblocks + j, &temp);
                 float errorval = compute_imageblock_difference(xdim, ydim, zdim,
-                                                               blk, temp, ewb);
-
-                #ifdef DEBUG_PRINT_DIAGNOSTICS
-                    if (print_diagnostics)
-                    {
-                        printf("\n-----------------------------------\n");
-                        printf("Single-weight partition test %d (%d partitions) completed\n", i, partition_count);
-                        printf("Resulting error value: %g\n", errorval);
-                    }
-                #endif
+                                                               blk, &temp, &ewb);
 
                 if (errorval < best_errorval_in_mode)
                     best_errorval_in_mode = errorval;
 
                 if (errorval < error_of_best_block)
                 {
-                    #ifdef DEBUG_PRINT_DIAGNOSTICS
-                        if (print_diagnostics)
-                            printf("Accepted as better than previous-best-error, which was %g\n", error_of_best_block);
-                    #endif
-
                     error_of_best_block = errorval;
                     *scb = tempblocks[j];
-
-                    // modesel = 4*(partition_count-2) + 5;
                 }
             }
 
             best_errorvals_in_modes[4 * (partition_count - 2) + 5] = best_errorval_in_mode;
-
-            #ifdef DEBUG_PRINT_DIAGNOSTICS
-                if (print_diagnostics)
-                {
-                    printf("-----------------------------------\n");
-                }
-            #endif
 
             if ((error_of_best_block / error_weight_sum) < ewp->texel_avg_error_limit)
                 goto END_OF_TESTS;
@@ -1718,92 +1534,42 @@ float compress_symbolic_block(const astc_codec_image * input_image,
                                                              xdim, ydim, zdim,
                                                              partition_count,
                                                              partition_indices_2planes[i] & (PARTITION_COUNT - 1), partition_indices_2planes[i] >> PARTITION_BITS,
-                                                             blk, ewb, tempblocks);
+                                                             blk, &ewb, tempblocks,
+                                                             &ei1,
+                                                             &ei2,
+                                                             eix1,
+                                                             eix2,
+                                                             bsd
+                                                             );
 
             best_errorval_in_mode = 1e30f;
             for (j = 0; j < 4; j++)
             {
                 if (tempblocks[j].error_block)
                     continue;
-                decompress_symbolic_block(decode_mode, xdim, ydim, zdim, xpos, ypos, zpos, tempblocks + j, temp);
+                decompress_symbolic_block(decode_mode, xdim, ydim, zdim, xpos, ypos, zpos, tempblocks + j, &temp);
 
                 float errorval = compute_imageblock_difference(xdim, ydim, zdim,
-                                                               blk, temp, ewb);
-
-                #ifdef DEBUG_PRINT_DIAGNOSTICS
-                    if (print_diagnostics)
-                    {
-                        printf("\n-----------------------------------\n");
-                        printf("Dual-weight partition test %d (%d partitions) completed\n", i, partition_count);
-                        printf("Resulting error value: %g\n", errorval);
-                    }
-                #endif
+                                                               blk, &temp, &ewb);
 
                 if (errorval < best_errorval_in_mode)
                     best_errorval_in_mode = errorval;
 
                 if (errorval < error_of_best_block)
                 {
-                    #ifdef DEBUG_PRINT_DIAGNOSTICS
-                        if (print_diagnostics)
-                            printf("Accepted as better than previous-best-error, which was %g\n", error_of_best_block);
-                    #endif
-
                     error_of_best_block = errorval;
                     *scb = tempblocks[j];
-
-                    // modesel = 4*(partition_count-2) + 5 + 2;
                 }
             }
 
             best_errorvals_in_modes[4 * (partition_count - 2) + 5 + 2] = best_errorval_in_mode;
-
-            #ifdef DEBUG_PRINT_DIAGNOSTICS
-                if (print_diagnostics)
-                {
-                    printf("-----------------------------------\n");
-                }
-            #endif
 
             if ((error_of_best_block / error_weight_sum) < ewp->texel_avg_error_limit)
                 goto END_OF_TESTS;
         }
     }
 
-  END_OF_TESTS:
-
-    #if 0
-        if (print_statistics)
-        {
-            for (i = 0; i < 13; i++)
-                printf("%f ", best_errorvals_in_modes[i]);
-    
-            printf("%d  %f  %f  %f ", modesel, error_of_best_block,
-                MIN(best_errorvals_in_modes[1], best_errorvals_in_modes[2]) / best_errorvals_in_modes[0],
-                MIN(MIN(best_errorvals_in_modes[7], best_errorvals_in_modes[8]), best_errorvals_in_modes[9]) / best_errorvals_in_modes[0]);
-    
-            printf("\n");
-        }
-    #endif
-
-    if (scb->block_mode >= 0)
-        block_mode_histogram[scb->block_mode & 0x7ff]++;
-
-    delete[]tempblocks;
-    delete temp;
-    delete ewb;
-    delete ewbo;
-
-    // compress/decompress to a physical block
-
-
-    physical_compressed_block psb = symbolic_to_physical(xdim, ydim, zdim, scb);
-    physical_to_symbolic(xdim, ydim, zdim, psb, scb);
-
-
-    //if (print_tile_errors)
-    //    printf("%g\n", error_of_best_block);
-
+END_OF_TESTS:
 
     // mean squared error per color component.
     return error_of_best_block / ((float)xdim * ydim * zdim);

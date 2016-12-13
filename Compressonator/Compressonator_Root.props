@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--===============================================-->
+  <!--Define Macros to be used for external files    -->
+  <!--===============================================-->
+
+  <PropertyGroup Label="UserMacros">
+    <Compressonator_RootDev>$(SolutionDir)..\..\..\</Compressonator_RootDev>
+    <Compressonator_APPSDK>$(SolutionDir)..\..\..\..\Common\Lib\AMD\APPSDK\3-0\</Compressonator_APPSDK>
+    <Compressonator_BOOST>$(SolutionDir)..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\</Compressonator_BOOST>
+    <Compressonator_DIRECTX>$(SolutionDir)..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\</Compressonator_DIRECTX>
+    <Compressonator_GLEW>$(SolutionDir)..\..\..\..\Common\Lib\Ext\glew\1.9.0\</Compressonator_GLEW>
+    <Compressonator_OPENCV>$(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenCV\2.49\</Compressonator_OPENCV>
+    <Compressonator_OPENEXR>$(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\</Compressonator_OPENEXR>
+    <Compressonator_OPENGL>$(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenGL\</Compressonator_OPENGL>
+    <Compressonator_QT   Condition="'$(Platform)' == 'Win32'">C:\Qt\5.7\msvc2015\</Compressonator_QT>
+    <Compressonator_QT   Condition="'$(Platform)' == 'x64'"  >C:\Qt\5.7\msvc2015_64\</Compressonator_QT>
+    <Compressonator_TINYXML>$(SolutionDir)..\..\..\..\Common\Lib\Ext\tinyxml\2.6.2\</Compressonator_TINYXML>
+    <Compressonator_VULKANDLL Condition="'$(Platform)' == 'Win32'">$(SolutionDir)..\..\..\..\Common\Lib\Ext\Vulkan\1.0.21.1\SDK\Bin32\</Compressonator_VULKANDLL>
+    <Compressonator_VULKANDLL Condition="'$(Platform)' == 'x64'">$(SolutionDir)..\..\..\..\Common\Lib\Ext\Vulkan\1.0.21.1\SDK\Bin\</Compressonator_VULKANDLL>
+    <Compressonator_ZLIB>$(SolutionDir)..\..\..\..\Common\Lib\Ext\zlib\1.2.8\</Compressonator_ZLIB>
+
+    <DebugSuffix Condition="'$(Configuration)'=='Debug_MD'">d</DebugSuffix>
+    <DebugSuffix Condition="'$(Configuration)'=='Release_MD'"></DebugSuffix>
+    <DebugRelease Condition="'$(Configuration)'=='Debug_MD'">debug</DebugRelease>
+    <DebugRelease Condition="'$(Configuration)'=='Release_MD'">release</DebugRelease>
+    <ShortPlatform Condition="'$(Platform)' == 'Win32'">x86</ShortPlatform>
+    <ShortPlatform Condition="'$(Platform)' == 'x64'"  >x64</ShortPlatform>
+    
+  </PropertyGroup>
+
+  <ItemGroup>
+    <BuildMacro Include="Compressonator_RootDev">
+        <Value>$(Compressonator_RootDev)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_BOOST">
+        <Value>$(Compressonator_BOOST)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_GLEW">
+        <Value>$(Compressonator_GLEW)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_OPENCV">
+        <Value>$(Compressonator_OPENCV)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_OPENEXR">
+        <Value>$(Compressonator_OPENEXR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_TINYXML">
+        <Value>$(Compressonator_TINYXML)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_ZLIB">
+        <Value>$(Compressonator_ZLIB)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_APPSDK">
+        <Value>$(Compressonator_APPSDK)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_VULKAN">
+        <Value>$(Compressonator_VULKAN)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_VULKANDLL">
+        <Value>$(Compressonator_VULKANDLL)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_OPENGL">
+        <Value>$(Compressonator_OPENGL)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_DIRECTX">
+      <Value>$(Compressonator_DIRECTX)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_QT32">
+      <Value>$(Compressonator_QT32)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_QT64">
+      <Value>$(Compressonator_QT64)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Compressonator_QT">
+      <Value>$(Compressonator_QT)</Value>
+    </BuildMacro>
+  </ItemGroup>
+
+  <!--=================================-->
+  <!--Define common cl and link options-->
+  <!--=================================-->
+
+  <ItemDefinitionGroup>
+
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+    </ClCompile>
+
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+
+  </ItemDefinitionGroup>
+
+</Project>

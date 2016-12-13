@@ -69,6 +69,9 @@
 /// 
 /// \page VersionHistory Version History
 ///
+/// \section v24 v2.4
+/// \li    Improve ASTC performance, Enable 64bit CLI app.
+///
 /// \section v21 v2.1
 /// \li    Supports ASTC destination compression format with variable bit rates or 2D block sizes
 ///

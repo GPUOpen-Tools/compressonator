@@ -1,104 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{11c7e435-2a6e-4813-a26b-eb79a141f463}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{025fdf03-4a13-4a19-8ff4-a378c9f1df68}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DirectXTex">
-      <UniqueIdentifier>{678225f7-99af-4a1f-a243-8d9f77538ed2}</UniqueIdentifier>
+    <Filter Include="Common">
+      <UniqueIdentifier>{bc1c0ae0-9746-4b3d-b4fb-3b1f4461e721}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\GPU_Decode\GPU_Decode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\GPU_Decode\GPU_DirectX.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTexCompress.cpp">
-      <Filter>DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTexConvert.cpp">
-      <Filter>DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTexD3D11.cpp">
-      <Filter>DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTexImage.cpp">
-      <Filter>DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTexMipmaps.cpp">
-      <Filter>DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTexResize.cpp">
-      <Filter>DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTexUtil.cpp">
-      <Filter>DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\Lib\Ext\DirectXTex\v132\BC.cpp">
-      <Filter>DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\Lib\Ext\DirectXTex\v132\BC4BC5.cpp">
-      <Filter>DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\Lib\Ext\DirectXTex\v132\BC6HBC7.cpp">
-      <Filter>DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\GPU_Decode\GPU_OpenGL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\GPU_Decode\GPU_DecodeBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\GPU_Decode\GPU_Vulkan.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\GPU_Decode\vulkandebug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\GPU_Decode\vulkantools.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Applications\_Plugins\Common\PluginInterface.h">
+      <Filter>Common</Filter>
+    </ClInclude>
     <ClInclude Include="..\Header\GPU_Decode\GPU_Decode.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTexP.h">
-      <Filter>DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\Lib\Ext\DirectXTex\v132\Filters.h">
-      <Filter>DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\Lib\Ext\DirectXTex\v132\scoped.h">
-      <Filter>DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\Lib\Ext\DirectXTex\v132\BC.h">
-      <Filter>DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTex.h">
-      <Filter>DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\GPU_Decode\GPU_DecodeBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\GPU_Decode\GPU_DirectX.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\GPU_Decode\GPU_OpenGL.h">
-    <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\GPU_Decode\GPU_Vulkan.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTex.inl">
-      <Filter>DirectXTex</Filter>
-    </None>
   </ItemGroup>
 </Project>

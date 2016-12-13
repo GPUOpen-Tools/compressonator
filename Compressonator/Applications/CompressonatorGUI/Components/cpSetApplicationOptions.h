@@ -53,6 +53,7 @@ public:
 public slots:
     void onClose();
     void oncurrentItemChanged(QtBrowserItem *item);
+	void onImageEncodeChanged(QVariant &value);
     void onImageViewDecodeChanged(QVariant &value);
     void onGPUDecompressChanged(QVariant &value);
 
@@ -71,6 +72,7 @@ private:
 
 extern C_Application_Options g_Application_Options;
 extern bool g_useCPUDecode;
+extern bool g_useCPUEncode;
 extern MIPIMAGE_FORMAT g_gpudecodeFormat;
 
 #endif

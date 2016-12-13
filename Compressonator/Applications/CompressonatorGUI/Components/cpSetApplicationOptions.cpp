@@ -57,7 +57,8 @@ m_parent(parent)
         connect(m_browser, SIGNAL(currentItemChanged(QtBrowserItem *)), this, SLOT(oncurrentItemChanged(QtBrowserItem *)));
     }
 
-    connect(&g_Application_Options, SIGNAL(ImageViewDecodeChanged(QVariant &)), this, SLOT(onImageViewDecodeChanged(QVariant &)));
+	connect(&g_Application_Options, SIGNAL(ImageViewDecodeChanged(QVariant &)), this, SLOT(onImageViewDecodeChanged(QVariant &)));
+    connect(&g_Application_Options, SIGNAL(ImageEncodeChanged(QVariant &)), this, SLOT(onImageEncodeChanged(QVariant &)));
     connect(&g_Application_Options, SIGNAL(GPUDecompressChanged(QVariant &)), this, SLOT(onGPUDecompressChanged(QVariant &)));
 
     m_theController->setObject(&g_Application_Options, true);
@@ -93,11 +94,11 @@ m_parent(parent)
 
 void CSetApplicationOptions::onImageViewDecodeChanged(QVariant &value)
 {
-    C_Application_Options::ImageViewDecode decodewith= (C_Application_Options::ImageViewDecode &)value;
+    C_Application_Options::ImageEncodeDecodeWith decodewith= (C_Application_Options::ImageEncodeDecodeWith &)value;
 
-    if (decodewith == C_Application_Options::ImageViewDecode::CPU)
+    if (decodewith == C_Application_Options::ImageEncodeDecodeWith::CPU)
         g_useCPUDecode = true;
-    else if (decodewith == C_Application_Options::ImageViewDecode::GPU)
+    else if (decodewith == C_Application_Options::ImageEncodeDecodeWith::GPU)
         g_useCPUDecode = false;
     else;
 
@@ -105,6 +106,17 @@ void CSetApplicationOptions::onImageViewDecodeChanged(QVariant &value)
     {
         m_propAppOptions->setHidden(g_useCPUDecode);
     }
+}
+
+void CSetApplicationOptions::onImageEncodeChanged(QVariant &value)
+{
+	C_Application_Options::ImageEncodeDecodeWith encodewith = (C_Application_Options::ImageEncodeDecodeWith &)value;
+
+	if (encodewith == C_Application_Options::ImageEncodeDecodeWith::CPU)
+		g_useCPUEncode = true;
+	else if (encodewith == C_Application_Options::ImageEncodeDecodeWith::GPU)
+		g_useCPUEncode = false;
+	else;
 }
 
 void CSetApplicationOptions::onGPUDecompressChanged(QVariant &value)
@@ -123,7 +135,10 @@ void CSetApplicationOptions::onGPUDecompressChanged(QVariant &value)
 
 void CSetApplicationOptions::onClose()
 {
-    g_useCPUDecode = (g_Application_Options.m_ImageViewDecode == g_Application_Options.ImageViewDecode::CPU);
+    g_useCPUDecode = (g_Application_Options.m_ImageViewDecode == g_Application_Options.ImageEncodeDecodeWith::CPU);
+#ifdef USE_COMPUTE
+	g_useCPUEncode = (g_Application_Options.m_ImageEncode == g_Application_Options.ImageEncodeDecodeWith::CPU);
+#endif
     close();
 }
 
@@ -154,7 +169,18 @@ void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem *item)
         m_infotext->append("<b>Compressed image views</b>");
         m_infotext->append("For compressed images this option selects how images are decompressed for viewing");
     }
-    else if (text.compare(APP_GPU_Decompress) == 0)
+#ifdef USE_COMPUTE	
+    if (text.compare(APP_compress_image_using) == 0)
+    {
+    	m_infotext->append("<b>Compressed image</b>");
+    	m_infotext->append("For compressed images this option selects how images are compressed either with CPU or GPU.");
+		m_infotext->append("<b>Note:</b>");
+		m_infotext->append("Only BC1, BC7 format are supported with GPU Compress, if you choose other format under GPU Compress, they will be compressed with CPU.");
+    }
+
+    else
+#endif
+    if (text.compare(APP_GPU_Decompress) == 0)
     {
         m_infotext->append("<b>Note:</b>");
         m_infotext->append("For ASTC, GPU Decompress will not work until hardware supports it");
@@ -181,7 +207,10 @@ void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem *item)
 void CSetApplicationOptions::UpdateViewData()
 {
     m_theController->setObject(&g_Application_Options, true, true);
-    g_useCPUDecode = g_Application_Options.m_ImageViewDecode == g_Application_Options.ImageViewDecode::CPU;
+    g_useCPUDecode = g_Application_Options.m_ImageViewDecode == g_Application_Options.ImageEncodeDecodeWith::CPU;
+#ifdef USE_COMPUTE
+	g_useCPUEncode = g_Application_Options.m_ImageEncode == g_Application_Options.ImageEncodeDecodeWith::CPU;
+#endif
 }
 
 void CSetApplicationOptions::SaveSettings(QString SettingsFile, QSettings::Format Format)
@@ -249,9 +278,17 @@ void CSetApplicationOptions::LoadSettings(QString SettingsFile, QSettings::Forma
             if (name.compare(APP_Decompress_image_views_using) == 0)
             {
                 int value = var.value<int>();
-                C_Application_Options::ImageViewDecode decode = (C_Application_Options::ImageViewDecode) value;
+                C_Application_Options::ImageEncodeDecodeWith decode = (C_Application_Options::ImageEncodeDecodeWith) value;
                 g_Application_Options.setImageViewDecode(decode);
             }
+#ifdef USE_COMPUTE
+			if (name.compare(APP_compress_image_using) == 0)
+			{
+				int value = var.value<int>();
+				C_Application_Options::ImageEncodeDecodeWith encode = (C_Application_Options::ImageEncodeDecodeWith) value;
+				g_Application_Options.setImageEncode(encode);
+			}
+#endif
             else
                 g_Application_Options.metaObject()->property(i).write(&g_Application_Options, var);
         }

@@ -36,6 +36,10 @@ extern "C" {
 void __cdecl DXTCV11CompressBlockSSE(DWORD *block_32, DWORD *block_dxtc);
 void __cdecl DXTCV11CompressBlockSSE2(DWORD *block_32, DWORD *block_dxtc);
 
+
+void __cdecl  DXTCV11CompressBlockSSEMinimal(DWORD *block_32, DWORD *block_dxtc);
+void __cdecl  DXTCV11CompressBlockMinimal(DWORD block_32[16], DWORD block_dxtc[2]);
+
 void __cdecl DXTCV11CompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2]);
 void __cdecl DXTCV11CompressExplicitAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2]);
 

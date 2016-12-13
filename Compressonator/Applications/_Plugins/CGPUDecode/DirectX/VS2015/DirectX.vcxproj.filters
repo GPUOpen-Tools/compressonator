@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{eef987de-c4d9-41e5-8a52-379ac257cfe7}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{58a56801-babd-4bed-9169-b541d4c6144b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DirectX">
+      <UniqueIdentifier>{21a57c34-8c67-4dc6-b9ac-29a4dfdd47a0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Common\MIPS.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\TC_PluginInternal.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\UtilFuncs.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CDirectX.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\v132\BC.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\v132\BC4BC5.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\v132\BC6HBC7.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTexCompress.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTexConvert.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTexD3D11.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTexImage.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTexMipmaps.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTexResize.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTexUtil.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GPU_DirectX.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Source\GPU_Decode\GPU_DecodeBase.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Common\MIPS.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\TC_PluginAPI.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\TC_PluginInternal.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\UtilFuncs.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CDirectX.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\v132\BC.h">
+      <Filter>DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTex.h">
+      <Filter>DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTexP.h">
+      <Filter>DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\v132\Filters.h">
+      <Filter>DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\v132\scoped.h">
+      <Filter>DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GPU_DirectX.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\v132\DirectXTex.inl">
+      <Filter>DirectX</Filter>
+    </None>
+  </ItemGroup>
+</Project>

@@ -21,7 +21,7 @@
 // THE SOFTWARE.
 //
 /// \file PluginInterface.h
-/// \version 2.20
+/// \version 2.40
 /// \brief Declares the interface to the AMDCompress library.
 //
 //=====================================================================
@@ -42,7 +42,7 @@
 typedef struct _TC_PluginVersion
 {
    GUID  guid;
-   DWORD dwAPIVersionMajor;		// Do not load plugin with greater API major version than app
+   DWORD dwAPIVersionMajor;         // Do not load plugin with greater API major version than app
    DWORD dwAPIVersionMinor;
    DWORD dwPluginVersionMajor;
    DWORD dwPluginVersionMinor;
@@ -52,32 +52,32 @@ typedef struct _TC_PluginVersion
 /// We should obviously return more meaningful error codes than we currently like.
 typedef enum
 {
-	PE_OK,            ///< No error - success.
-	PE_AlreadyLoaded, ///< The plugin is already loaded. 
-	PE_Unknown,       ///< An error occured.
+    PE_OK,            ///< No error - success.
+    PE_AlreadyLoaded, ///< The plugin is already loaded. 
+    PE_Unknown,       ///< An error occured.
 } TC_PluginError;
 
 /// Indicates the error level of an error message.
 typedef enum
 {
-	EL_Error,      ///< The error message is for an error.
-	EL_Warning,    ///< The error message is for a warning.
+    EL_Error,      ///< The error message is for an error.
+    EL_Warning,    ///< The error message is for a warning.
 } TC_ErrorLevel;
 
-#define DECLARE_PLUGIN(x)		extern "C"{__declspec(dllexport) void * makePlugin()   { return new x;}}
-#define SET_PLUGIN_TYPE(x)		extern "C"{__declspec(dllexport) char * getPluginType(){ return x;}}
-#define SET_PLUGIN_NAME(x)		extern "C"{__declspec(dllexport) char * getPluginName(){ return x;}}
+#define DECLARE_PLUGIN(x)        extern "C"{__declspec(dllexport) void * makePlugin()   { return new x;}}
+#define SET_PLUGIN_TYPE(x)        extern "C"{__declspec(dllexport) char * getPluginType(){ return x;}}
+#define SET_PLUGIN_NAME(x)        extern "C"{__declspec(dllexport) char * getPluginName(){ return x;}}
 
 class PluginBase 
 {
 public:
-		PluginBase(){}
-		virtual ~PluginBase(){}
-		virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
+    PluginBase(){}
+    virtual ~PluginBase(){}
+    virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
 };
 
-typedef PluginBase*		(*PLUGIN_FACTORYFUNC)();
-typedef char * (*PLUGIN_TEXTFUNC)();
+typedef PluginBase  *(*PLUGIN_FACTORYFUNC)();
+typedef char        *(*PLUGIN_TEXTFUNC)();
 
 //===========================================================================================
 // END OF: BASIC PLUGIN INTERFACE ----- DO NOT CHANGE CODE ABOVE FOR BACKWARD SUPPORT------
@@ -99,24 +99,24 @@ typedef TC_HANDLE HVIEW;      ///< \internal Handle to a View.
 class PluginInterface_Image : PluginBase
 {
 public:
-		PluginInterface_Image(){}
-		virtual ~PluginInterface_Image(){}
-		virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
-		virtual int TC_PluginSetSharedIO(void* Shared)=0;
-
-		virtual int TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSet) = 0;
-		virtual int TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSet) = 0;
-		virtual int TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *srcTexture) = 0;
-		virtual int TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *srcTexture) = 0;
+    PluginInterface_Image(){}
+    virtual ~PluginInterface_Image(){}
+    virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
+    virtual int TC_PluginSetSharedIO(void* Shared)=0;
+    
+    virtual int TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSet) = 0;
+    virtual int TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSet) = 0;
+    virtual int TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *srcTexture) = 0;
+    virtual int TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *srcTexture) = 0;
 };
 
 
 class PluginInterface_Codec : PluginBase
 {
 public:
-		PluginInterface_Codec(){}
-		virtual ~PluginInterface_Codec(){}
-		virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
+    PluginInterface_Codec(){}
+    virtual ~PluginInterface_Codec(){}
+    virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
 };
 
 
@@ -124,10 +124,10 @@ public:
 class PluginInterface_Analysis : PluginBase
 {
 public:
-		PluginInterface_Analysis(){}
-		virtual ~PluginInterface_Analysis(){}
-		virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
-		virtual int TC_ImageDiff(const char *in1, const char *in2, const char *out, char *resultsFile, void *pluginManager, void **cmipImages) { (void)in1, (void)in2, (void)out, (void)resultsFile; (void)pluginManager; (void*)cmipImages; return 0; };
+        PluginInterface_Analysis(){}
+        virtual ~PluginInterface_Analysis(){}
+        virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
+        virtual int TC_ImageDiff(const char *in1, const char *in2, const char *out, char *resultsFile, void *pluginManager, void **cmipImages) { (void)in1, (void)in2, (void)out, (void)resultsFile; (void)pluginManager; (void*)cmipImages; return 0; };
         virtual int TC_PSNR_MSE(const char *in1, const char *in2, char *resultsFile, void *pluginManager) { (void)in1, (void)in2, (void)resultsFile; (void)pluginManager; return 0; };
         virtual int TC_SSIM(const char *in1, const char *in2, char *resultsFile, void *pluginManager) { (void)in1, (void)in2, (void)resultsFile; (void)pluginManager; return 0; };
 };
@@ -137,17 +137,44 @@ public:
 class PluginInterface_Filters : PluginBase
 {
 public:
-		PluginInterface_Filters(){}
-		virtual ~PluginInterface_Filters(){}
-		virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
-		virtual int TC_GenerateMIPLevels(MipSet *pMipSet, int nMinSize)=0;
+        PluginInterface_Filters(){}
+        virtual ~PluginInterface_Filters(){}
+        virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
+        virtual int TC_GenerateMIPLevels(MipSet *pMipSet, int nMinSize)=0;
+};
+
+
+// These type of plugins are used for Compute
+class PluginInterface_Compute : PluginBase
+{
+public:
+    PluginInterface_Compute() {}
+    virtual ~PluginInterface_Compute() {}
+    virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
+    virtual int TC_Init(CMP_Texture *srcTexture, void  *kernel_options) = 0;
+    virtual char *TC_ComputeSourceFile() = 0;
+};
+
+
+// These type of plugins are used to Decompress Images using GPU
+class PluginInterface_GPUDecode : PluginBase
+{
+public:
+    PluginInterface_GPUDecode() {}
+    virtual ~PluginInterface_GPUDecode() {}
+    virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
+    virtual int TC_Init(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback) = 0;
+    virtual CMP_ERROR TC_Decompress(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture) = 0;
+    virtual int TC_Close() = 0;
 };
 
 
 // Feature driven classes based on Base Plugin interface
-typedef PluginInterface_Codec*		(*PLUGIN_FACTORYFUNC_CODEC)();
-typedef PluginInterface_Image*		(*PLUGIN_FACTORYFUNC_IMAGE)();
-typedef PluginInterface_Analysis*	(*PLUGIN_FACTORYFUNC_ANALYSIS)();
-typedef PluginInterface_Filters*	(*PLUGIN_FACTORYFUNC_FILTERS)();
+typedef PluginInterface_Codec*      (*PLUGIN_FACTORYFUNC_CODEC)();
+typedef PluginInterface_Image*      (*PLUGIN_FACTORYFUNC_IMAGE)();
+typedef PluginInterface_Analysis*   (*PLUGIN_FACTORYFUNC_ANALYSIS)();
+typedef PluginInterface_Filters*    (*PLUGIN_FACTORYFUNC_FILTERS)();
+typedef PluginInterface_Compute*    (*PLUGIN_FACTORYFUNC_COMPUTE)();
+typedef PluginInterface_GPUDecode*  (*PLUGIN_FACTORYFUNC_GPUDECODE)();
 
 #endif

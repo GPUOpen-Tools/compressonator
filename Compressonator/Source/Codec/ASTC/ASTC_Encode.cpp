@@ -39,7 +39,6 @@
 
 #pragma warning(disable:4100)       // Dont show parameter warnings
 
-extern int block_mode_histogram[2048];
 void prepare_block_statistics(int xdim, int ydim, int zdim, const imageblock * blk, const error_weight_block * ewb, int *is_normal_map, float *lowest_correl);
 int realign_weights(astc_decode_mode decode_mode, int xdim, int ydim, int zdim, const imageblock * blk, const error_weight_block * ewb, symbolic_compressed_block * scb, uint8_t * weight_set8, uint8_t * plane2_weight_set8);
 
@@ -63,8 +62,11 @@ double ASTCBlockEncoder::CompressBlock(
 
     swizzlepattern swz_encode = { 0, 1, 2, 3 };
     fetch_imageblock(input_image, &m_pb, xdim, ydim, zdim, x , y, z, swz_encode);
+    
     compress_symbolic_block(input_image, decode_mode, xdim, ydim, zdim, ewp, &m_pb, &m_scb);
+
     m_pcb = symbolic_to_physical(xdim, ydim, zdim, &m_scb);
+
     *(physical_compressed_block *)bp = m_pcb;
     return 0.0;
 }

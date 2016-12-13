@@ -25,7 +25,7 @@
 #define _WELCOMEPAGE_H
 
 #include <QtWidgets>
-#include <QtWebKitWidgets/qwebview.h>
+#include <QtWebEngineWidgets/qwebengineview.h>
 #include "cpStartupPage.h"
 #include "acCustomDockWidget.h"
 
@@ -38,8 +38,7 @@ public:
     ~CWelcomePage();
 
     cpStartupPage                *m_startUpPage;
-
-    void  GoToAMDHomePage(gtVector<gtString>& projectsNames);
+    void  GoToAMDHomePage(QVector<QString>& projectsNames);
     acDockWidgetTitlebar    *custTitleBar;
 
 signals:
@@ -61,7 +60,7 @@ private:
 
 };
 
-#define COMPRESSONATOR_HOME "http://developer.amd.com/tools-and-sdks/graphics-development/amdcompress/"
+#define COMPRESSONATOR_HOME "http://gpuopen.com/gaming-product/compressonator/"
 #define URL_FILE                     "file:///"
 #define COMPRESSONATOR_GETTING_STARTED  "GettingStarted.chm"
 #define COMPRESSONATOR_USER_GUIDE       "UserGuide.chm"

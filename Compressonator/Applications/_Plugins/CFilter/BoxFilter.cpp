@@ -159,7 +159,6 @@ int Plugin_BoxFilter::TC_GenerateMIPLevels(MipSet *pMipSet, int nMinSize)
     //}
 
     return PE_OK;
-    return 0;
 }
 
 void GenerateMipLevel(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, MipLevel* pPrevMipLevelTwo)

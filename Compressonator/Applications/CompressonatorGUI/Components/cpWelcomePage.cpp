@@ -60,7 +60,7 @@ m_parent(parent)
     setWidget(m_newWidget);
 }
 
-void CWelcomePage::GoToAMDHomePage(gtVector<gtString>& projectsNames)
+void CWelcomePage::GoToAMDHomePage(QVector<QString>& projectsNames)
 {
     if (m_startUpPage)
         m_startUpPage->UpdateHTML(projectsNames);

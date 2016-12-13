@@ -59,6 +59,8 @@ CCodecBuffer* CreateCodecBuffer(CodecBufferType nCodecBufferType,
     switch(nCodecBufferType)
     {
         case CBT_RGBA8888:
+        case CBT_BGRA8888:
+        case CBT_ARGB8888:
             return new CCodecBuffer_RGBA8888(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
         case CBT_RGB888:
             return new CCodecBuffer_RGB888(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
@@ -118,9 +120,13 @@ CodecBufferType GetCodecBufferType(CMP_FORMAT format)
 #ifdef USE_DBGTRACE
     DbgTrace(("IN : CMP_FORMAT %d",format)); 
 #endif
+    // ToDo Expand the CBT data types listed below so that CMP_FORMAT maps to a single CBT_ type
     switch(format)
     {
         case CMP_FORMAT_ARGB_32F:
+        case CMP_FORMAT_ABGR_32F:
+        case CMP_FORMAT_RGBA_32F:
+        case CMP_FORMAT_BGRA_32F:   
                                     CBT_type = CBT_RGBA32F;
                                     break;
         case CMP_FORMAT_RG_32F: 
@@ -129,7 +135,10 @@ CodecBufferType GetCodecBufferType(CMP_FORMAT format)
         case CMP_FORMAT_R_32F: 
                                     CBT_type = CBT_R32F;
                                     break;
-        case CMP_FORMAT_ARGB_16F: 
+        case CMP_FORMAT_ARGB_16F:
+        case CMP_FORMAT_ABGR_16F:
+        case CMP_FORMAT_RGBA_16F:
+        case CMP_FORMAT_BGRA_16F:
                                     CBT_type =  CBT_RGBA16F;
                                     break;
         case CMP_FORMAT_RG_16F: 
@@ -138,7 +147,10 @@ CodecBufferType GetCodecBufferType(CMP_FORMAT format)
         case CMP_FORMAT_R_16F: 
                                     CBT_type =  CBT_R16F;
                                     break;
-        case CMP_FORMAT_ARGB_16: 
+        case CMP_FORMAT_ARGB_16:
+        case CMP_FORMAT_ABGR_16:
+        case CMP_FORMAT_RGBA_16:
+        case CMP_FORMAT_BGRA_16:
                                     CBT_type =  CBT_RGBA16;
                                     break;
         case CMP_FORMAT_RG_16: 
@@ -162,9 +174,12 @@ CodecBufferType GetCodecBufferType(CMP_FORMAT format)
         case CMP_FORMAT_ARGB_2101010: 
                                     CBT_type = CBT_RGBA2101010;
                                     break;
-        case CMP_FORMAT_ARGB_8888: 
+        case CMP_FORMAT_ARGB_8888:  // Need to expand on this format
+        case CMP_FORMAT_BGRA_8888:  // Need to expand on this format
+        case CMP_FORMAT_RGBA_8888:
                                     CBT_type = CBT_RGBA8888;
                                     break;
+        case CMP_FORMAT_BGR_888:    // Need to expand on this format
         case CMP_FORMAT_RGB_888: 
                                     CBT_type = CBT_RGB888;
                                     break;

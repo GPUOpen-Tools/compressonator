@@ -39,7 +39,10 @@ typedef enum _CodecBufferType
 {
     CBT_Unknown = 0,
     CBT_RGBA8888,
+    CBT_BGRA8888,       // Reserved for future work
+    CBT_ARGB8888,       // Reserved for future work
     CBT_RGB888,
+    CBT_BGR888,         // Reserved for future work
     CBT_RG8,
     CBT_R8,
     CBT_RGBA2101010,

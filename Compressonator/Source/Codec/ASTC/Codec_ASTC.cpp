@@ -123,8 +123,11 @@ void CCodec_ASTC::InitializeASTCSettingsForSetBlockSize()
     int ydim_3d = m_ydim;
     int zdim_3d = m_zdim;
 
-    float log10_texels_2d = log((float)(xdim_2d * ydim_2d)) / log(10.0f);
-    float log10_texels_3d = log((float)(xdim_3d * ydim_3d * zdim_3d)) / log(10.0f);
+    float log10_texels_2d = 0.0f;
+    float log10_texels_3d = 0.0f;
+
+    log10_texels_2d = log((float)(xdim_2d * ydim_2d)) / log(10.0f);
+    log10_texels_3d = log((float)(xdim_3d * ydim_3d * zdim_3d)) / log(10.0f);
 
     int plimit_autoset = -1;
     int plimit_user_specified = -1;
@@ -152,65 +155,92 @@ void CCodec_ASTC::InitializeASTCSettingsForSetBlockSize()
     int maxiters_set_by_user = 0;
 
     // Codec Speed Setting Defaults based on Quality Settings
+    //mincorrel_autoset = m_Quality;
+    //bmc_autoset = (int)(m_Quality * 100);
 
     if (m_Quality < 0.2)
     {
         // Very Fast
-        plimit_autoset = 2;
+        plimit_autoset = 1;
         oplimit_autoset = 1.0;
         dblimit_autoset_2d = MAX(70 - 35 * log10_texels_2d, 53 - 19 * log10_texels_2d);
         dblimit_autoset_3d = MAX(70 - 35 * log10_texels_3d, 53 - 19 * log10_texels_3d);
-        bmc_autoset = 25;
-        mincorrel_autoset = 0.5;
+        bmc_autoset = 5;
+        mincorrel_autoset = m_Quality;
         maxiters_autoset = 1;
     }
     else
-    if (m_Quality < 0.4)
-    {
-        // Fast Setting
-        plimit_autoset = 4;
-        oplimit_autoset = 1.0;
-        mincorrel_autoset = 0.5;
-        dblimit_autoset_2d = MAX(85 - 35 * log10_texels_2d, 63 - 19 * log10_texels_2d);
-        dblimit_autoset_2d = MAX(85 - 35 * log10_texels_3d, 63 - 19 * log10_texels_3d);
-        bmc_autoset = 50;
-        maxiters_autoset = 1;
-    }
-    else
-    if (m_Quality < 0.6)
+    if (m_Quality < 0.5)
     {
         // Medium speed setting
-        plimit_autoset = 25;
-        oplimit_autoset = 1.2f;
-        mincorrel_autoset = 0.75f;
-        dblimit_autoset_2d = MAX(95 - 35 * log10_texels_2d, 70 - 19 * log10_texels_2d);
-        dblimit_autoset_3d = MAX(95 - 35 * log10_texels_3d, 70 - 19 * log10_texels_3d);
-        bmc_autoset = 75;
-        maxiters_autoset = 2;
+        plimit_autoset = 2;
+        oplimit_autoset = 1.0;
+        mincorrel_autoset = m_Quality;
+        dblimit_autoset_2d = MAX(85 - 35 * log10_texels_2d, 63 - 19 * log10_texels_2d);
+        dblimit_autoset_2d = MAX(85 - 35 * log10_texels_3d, 63 - 19 * log10_texels_3d);
+        bmc_autoset = 15;
+        maxiters_autoset = 1;
     }
     else
     if (m_Quality < 0.8)
     {
         // Thorough
-        plimit_autoset = 100;
-        oplimit_autoset = 2.5f;
-        mincorrel_autoset = 0.95f;
-        dblimit_autoset_2d = MAX(105 - 35 * log10_texels_2d, 77 - 19 * log10_texels_2d);
-        dblimit_autoset_3d = MAX(105 - 35 * log10_texels_3d, 77 - 19 * log10_texels_3d);
-        bmc_autoset = 95;
-        maxiters_autoset = 4;
+        plimit_autoset = 15;
+        oplimit_autoset = 1.0;
+        mincorrel_autoset = 0.5;
+        dblimit_autoset_2d = MAX(85 - 35 * log10_texels_2d, 63 - 19 * log10_texels_2d);
+        dblimit_autoset_2d = MAX(85 - 35 * log10_texels_3d, 63 - 19 * log10_texels_3d);
+        bmc_autoset = 25;
+        maxiters_autoset = 1;
     }
     else
-    {
-        // Exhaustive
-        plimit_autoset = PARTITION_COUNT;
-        oplimit_autoset = 1000.0f;
-        mincorrel_autoset = 0.99f;
-        dblimit_autoset_2d = 999.0f;
-        dblimit_autoset_3d = 999.0f;
-        bmc_autoset = 100;
-        maxiters_autoset = 4;
-    }
+        {
+            // Exhaustive
+            plimit_autoset = 10;
+            oplimit_autoset = 1.0;
+            mincorrel_autoset = 0.5;
+            dblimit_autoset_2d = MAX(85 - 35 * log10_texels_2d, 63 - 19 * log10_texels_2d);
+            dblimit_autoset_2d = MAX(85 - 35 * log10_texels_3d, 63 - 19 * log10_texels_3d);
+            bmc_autoset = 50;
+            maxiters_autoset = 1;
+        }
+
+
+//        else
+//            if (m_Quality < 0.6)
+//            {
+//                // Medium speed setting
+//                plimit_autoset = 25;
+//                oplimit_autoset = 1.2f;
+//                mincorrel_autoset = 0.75f;
+//                dblimit_autoset_2d = MAX(95 - 35 * log10_texels_2d, 70 - 19 * log10_texels_2d);
+//                dblimit_autoset_3d = MAX(95 - 35 * log10_texels_3d, 70 - 19 * log10_texels_3d);
+//                bmc_autoset = 75;
+//                maxiters_autoset = 2;
+//            }
+//            else
+//                if (m_Quality < 0.8)
+//                {
+//                    // Thorough
+//                    plimit_autoset = 100;
+//                    oplimit_autoset = 2.5f;
+//                    mincorrel_autoset = 0.95f;
+//                    dblimit_autoset_2d = MAX(105 - 35 * log10_texels_2d, 77 - 19 * log10_texels_2d);
+//                    dblimit_autoset_3d = MAX(105 - 35 * log10_texels_3d, 77 - 19 * log10_texels_3d);
+//                    bmc_autoset = 95;
+//                    maxiters_autoset = 4;
+//                }
+//                else
+//                {
+//                    // Exhaustive
+//                    plimit_autoset = PARTITION_COUNT;
+//                    oplimit_autoset = 1000.0f;
+//                    mincorrel_autoset = 0.99f;
+//                    dblimit_autoset_2d = 999.0f;
+//                    dblimit_autoset_3d = 999.0f;
+//                    bmc_autoset = 100;
+//                    maxiters_autoset = 4;
+//                }
 
     float texel_avg_error_limit_2d = 0.0f;
     float texel_avg_error_limit_3d = 0.0f;
@@ -410,6 +440,31 @@ void CCodec_ASTC::find_closest_blockdim_2d(float target_bitrate, int *x, int *y,
     }
 }
 
+void CCodec_ASTC::find_closest_blockxy_2d(int *x, int *y, int consider_illegal)
+{
+    int blockdims[6] = { 4, 5, 6, 8, 10, 12 };
+
+    bool exists_x = std::find(std::begin(blockdims), std::end(blockdims), (*x)) != std::end(blockdims);
+    bool exists_y = std::find(std::begin(blockdims), std::end(blockdims), (*y)) != std::end(blockdims);
+
+    if (exists_x && exists_y)
+    {
+        if ((*x) < (*y))
+        {
+            int temp = *x;
+            *x = *y;
+            *y = temp;
+        }
+        float bitrateF = float(128.0f / ((*x)*(*y)));
+        find_closest_blockdim_2d(bitrateF, x, y, 0);
+    }
+    else
+    {
+        float bitrateF = float(128.0f / ((*x)*(*y)));
+        find_closest_blockdim_2d(bitrateF, x, y, 0);
+    }
+}
+
 void CCodec_ASTC::find_closest_blockdim_3d(float target_bitrate, int *x, int *y, int *z, int consider_illegal)
 {
     int blockdims[4] = { 3, 4, 5, 6 };
@@ -465,6 +520,8 @@ bool CCodec_ASTC::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
         {
             int dimensions = sscanf(sValue, "%dx%dx", &m_xdim, &m_ydim);
             if (dimensions < 2) return false;
+            find_closest_blockxy_2d(&m_xdim, &m_ydim, DEBUG_ALLOW_ILLEGAL_BLOCK_SIZES);
+
             // Valid block sizes are for 2D support only  (3D is todo later)
             // are in cominations of {4,5,6,8,10,12}
             if ((m_xdim < 4) || (m_xdim > 12)) return false;
@@ -816,6 +873,8 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
     switch (bufferIn.GetBufferType())
     {
     case CBT_RGBA8888:
+    case CBT_BGRA8888:
+    case CBT_ARGB8888:
     case CBT_RGB888:
     case CBT_RG8:
     case CBT_R8:
@@ -1004,12 +1063,14 @@ CodecError CCodec_ASTC::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferO
                     outImgCol = outCol;
                     for (int col = 0; col < Block_Width; col++)
                     {
-                        if ((outImgCol + col) < imageWidth)
+                        int w = outImgCol + col;
+                        if (w < imageWidth)
                         {
-                            *pData++ = (CMP_BYTE)DecData.decodedBlock[row*Block_Height + col][BC_COMP_RED];
-                            *pData++ = (CMP_BYTE)DecData.decodedBlock[row*Block_Height + col][BC_COMP_GREEN];
-                            *pData++ = (CMP_BYTE)DecData.decodedBlock[row*Block_Height + col][BC_COMP_BLUE];
-                            *pData++ = (CMP_BYTE)DecData.decodedBlock[row*Block_Height + col][BC_COMP_ALPHA];
+                            int index = row*Block_Width + col;
+                            *pData++ = (CMP_BYTE)DecData.decodedBlock[index][BC_COMP_RED];
+                            *pData++ = (CMP_BYTE)DecData.decodedBlock[index][BC_COMP_GREEN];
+                            *pData++ = (CMP_BYTE)DecData.decodedBlock[index][BC_COMP_BLUE];
+                            *pData++ = (CMP_BYTE)DecData.decodedBlock[index][BC_COMP_ALPHA];
                         }
                         else break;
                     }

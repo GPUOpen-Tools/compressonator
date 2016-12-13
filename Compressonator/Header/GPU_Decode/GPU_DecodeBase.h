@@ -28,6 +28,9 @@
 
 #include "Compressonator.h"
 
+//uncomment to show image on console window for debug
+//#define SHOW_WINDOW  
+
 namespace GPU_Decode
 {
 
@@ -58,7 +61,7 @@ namespace GPU_Decode
         TextureControl() {};
         virtual ~TextureControl() {};
 
-        virtual int WINAPI Decompress(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture) const = 0;
+        virtual CMP_ERROR WINAPI Decompress(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture) const = 0;
 
     private:
     };
