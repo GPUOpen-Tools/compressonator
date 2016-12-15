@@ -48,6 +48,8 @@ ProjectView::ProjectView(const QString title, CompressStatusDialog *StatusDialog
     m_parent = parent;
     m_CompressStatusDialog = StatusDialog;
 
+    m_processBusy = false;
+
     // Tracks number of items added to the Project View
     // Includes (+) Add ... items
 
@@ -846,6 +848,7 @@ int ProjectView::PromptSaveChanges()
 void ProjectView::onTree_ItemClicked(QTreeWidgetItem * item, int column)
 {
     if (!item) return;
+    if (m_processBusy) return;
 
     // There is a chance of roll over : in these cases
     // user will be clicking the mouse several time to get 

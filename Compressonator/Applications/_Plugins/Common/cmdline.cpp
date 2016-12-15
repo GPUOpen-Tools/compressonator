@@ -53,7 +53,7 @@ void AboutCompressonator()
     printf( "------------------------------------------------\n");
     // current build release
     if ((VERSION_MINOR_MAJOR > 0))
-        printf("CompressonatorCLI V%d.%d.%d%s Copyright AMD 2016\n", VERSION_MAJOR_MAJOR, VERSION_MAJOR_MINOR, VERSION_MINOR_MAJOR);
+        printf("CompressonatorCLI V%d.%d.%d Copyright AMD 2016\n", VERSION_MAJOR_MAJOR, VERSION_MAJOR_MINOR, VERSION_MINOR_MAJOR);
     else
     {
         // Keep track of Customer patches from last release to current

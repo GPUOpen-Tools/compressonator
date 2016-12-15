@@ -252,6 +252,6 @@ public:
                                                         //  based on checked flags along with highlited items.
     int                       m_NumItems;
     bool                      m_AllItemsSelected;
-
+    bool                      m_processBusy;
 };
 #endif

@@ -1051,12 +1051,16 @@ void cpMainComponents::showProgressBusy(QString Message)
 {
     statusBar()->showMessage(Message);
     qApp->setOverrideCursor(Qt::BusyCursor);
+    if (m_projectview)
+        m_projectview->m_processBusy = true;
 }
 
 void cpMainComponents::hideProgressBusy(QString Message)
 {
     statusBar()->showMessage(Message);
     qApp->restoreOverrideCursor();
+    if (m_projectview)
+        m_projectview->m_processBusy = false;
 }
 
 void cpMainComponents::readSettings()

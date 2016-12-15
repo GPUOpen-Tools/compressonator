@@ -56,26 +56,40 @@ void PluginManager::getPluginList(char * SubFolderName)
 
     // v2.1 change - to check if path exists in PATH or AMDCOMPRESS_PLUGINS is set
     // else use current exe directory
-    char *pPath = getenv ("AMDCOMPRESS_PLUGINS");
+    char *pPath = getenv ("AMDCOMPRESS_PLUGINS") + '\0';
     if (pPath)
     {
-        strcat_s(dirPath,pPath);
+        sprintf_s(dirPath,"%s",pPath);
     }
     else 
     {
 
         bool pathFound = false;
 
-        //Get the current working directory
-        if (_getcwd(dirPath, MAX_PATH) != NULL)
+        //Get the exe directory
+        DWORD pathsize;
+        HMODULE hModule = GetModuleHandleA(NULL);
+        pathsize = GetModuleFileNameA(hModule, dirPath, MAX_PATH);
+        if (pathsize > 0)
         {
+            char *appName = (strrchr(dirPath, '\\') + 1);
+            int pathLen = strlen(dirPath);
+            int appNameLen = strlen(appName);
+
+            // Null terminate the dirPath so that FileName is removed
+            pathLen = pathLen - appNameLen;
+            dirPath[pathLen] = 0;
+            if (dirPath[pathLen - 1] == '/' || dirPath[pathLen - 1] == '\\')
+            {
+                pathLen--;
+                dirPath[pathLen] = 0;
+            }
+
             strcat_s(dirPath, SubFolderName);
 
-            // Test for dll existance!
-            strcpy_s(fname, dirPath);
-            size_t len = strlen(fname);
-            if (fname[len - 1] == '/' || fname[len - 1] == '\\')    strcat_s(fname, "*.dll");
-            else strcat_s(fname, "\\*.dll");
+            sprintf_s(fname, "%s\\*.dll",dirPath);
+
+
             HANDLE hFind = FindFirstFileA(fname, &fd);
 
             if (hFind != INVALID_HANDLE_VALUE)
@@ -142,7 +156,7 @@ void PluginManager::getPluginList(char * SubFolderName)
                     if(funcHandle !=NULL)
                     {                            
                         PluginDetails * curPlugin = new PluginDetails();
-                        //printf("new: %s %s\n",__FILE__,__LINE__);
+                        //printf("new: %s\n", fname);
                         curPlugin->setFileName(fname);
 
                         PLUGIN_TEXTFUNC textFunc;
