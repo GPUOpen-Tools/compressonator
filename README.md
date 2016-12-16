@@ -83,6 +83,7 @@ The command line tool has dependencies on the following:
 Qt (V5.7 and up)
 - Qt5Core.dll
 - Qt5Gui.dll
+- qt.conf
 
 OpenGL
 - glew32.dll
@@ -92,7 +93,6 @@ OpenCV
 - opencv_core249.dll
 - opencv_imgproc249.dll
 - opencv_highgui249.dll
-- qt.conf
 
 Required only when using Vulkan plugin
 - vulkan-1.dll 
