@@ -2,29 +2,11 @@
 
 Compressonator is a set of tools to allow artists and developers to more easily create compressed texture image assets and easily visualize the quality impact of various compression technologies.  It consists of a GUI application, a command line application and an SDK for easy integration into a developer tool chain.
 
-Compressonator DXTn (S3TC)is developed for Microsoft Windows® platform.
+Compressonator DXTn (S3TC)is developed for Microsoft WindowsÂ® platform.
 
-Recent additions and changes since v2.3 release
+Recent additions and changes since v2.4 release
 ------------------------------------------------------
 
-Added ASTC speed setting according to Quality
-
-Quality Setting
-<0.2 = VeryFast  (default)
-<0.4 = Fast
-<0.6 = Medium
-<0.8 = Thorough
-else Exhaustive
-
-Added Multithreaded ASTC block processing
-
-Support mipmap generation on KTX output
-
-Add TGA image plugin
-
-Enable GUI decompress view with vulkan
-
-Added GPU based compressed image views using OpenGL, DirectX 11 and Vulkan
 
 
 Build Instructions for Windows 7 and up
@@ -94,21 +76,32 @@ This solution will create a build folder that contains a
 CompressonatorCLI.exe and a new plugins folder under
 \Compressonator\Build\VS2015\(configuration)\(platform)\
 
-The command line tool has dependencies on Qt (V5.4 and up)
+The command line tool has dependencies on the following:
 
-- icuin54.dll
-- icuuc54.dll
-- icudt54.dll
+Qt (V5.7 and up)
 - Qt5Core.dll
 - Qt5Gui.dll
+
+OpenGL
+- glew32.dll
 - libGLESv2.dll
+
+OpenCV
 - opencv_core249.dll
 - opencv_imgproc249.dll
 - opencv_highgui249.dll
-- glew32.dll
-- vulkan-1.dll
+- qt.conf
 
-The dlls above are copied from common to CompressonatorCLI.exe folder by building the "CopyScript" project in the VS2015.sln.
+Required only when using Vulkan plugin
+- vulkan-1.dll 
+- texture.vert.spv
+- texture.frag.spv
+
+Optional for image loading and saving
+- qtga.dll
+- qtiff.dll
+ 
+The dlls above are copied to CompressonatorCLI.exe folder by "CopyFiles.bat" in the VS2015.sln.
 
 -----------------------------------------------------------
 (C) Build the GUI Tool using
@@ -121,5 +114,5 @@ Compressonator.exe and a plugins folder under
 
 If building in Debug_MD configuration, please make sure the working directory is in \Compressonator\Build\VS2015\Debug_MD\(platform)\
 
-The GUI tool has dependencies on Qt(V5.4 and up) and CXL - These file are copied from common & CLX folders to the Compressonator.exe folder when the project solution builds "CopyScript" project.
+The GUI tool has dependencies on Qt(V5.7 and up) - These file are copied  to the Compressonator.exe folder when the project solution builds and run "CopyFiles.bat".
 
