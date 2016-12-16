@@ -242,6 +242,10 @@ CMP_ERROR WINAPI GPU_OpenGL::Decompress(
    }
 
     texture = LoadTexture(pSourceTexture, false);
+    if (texture == -1)
+    {
+        return CMP_ERR_UNSUPPORTED_SOURCE_FORMAT;
+    }
 
 #ifdef SHOW_WINDOW
     //for debug, show window to view image

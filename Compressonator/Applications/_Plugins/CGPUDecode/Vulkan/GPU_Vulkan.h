@@ -139,7 +139,7 @@ namespace GPU_Decode
         // Command buffers used for rendering
         std::vector<VkCommandBuffer> drawCmdBuffers;
         // Descriptor set pool
-        VkDescriptorPool descriptorPool;
+        VkDescriptorPool m_descriptorPool;
         // List of shader modules created (stored for cleanup)
         std::vector<VkShaderModule> shaderModules;
 
@@ -164,9 +164,9 @@ namespace GPU_Decode
         void updateUniformBuffers();
         void setImageLayout(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout oldImageLayout, VkImageLayout newImageLayout);
         void setImageLayout(VkCommandBuffer cmdBuffer, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout oldImageLayout, VkImageLayout newImageLayout, VkImageSubresourceRange subresourceRange);
-        void loadTexture(const CMP_Texture* pSourceTexture);
+        CMP_ERROR loadTexture(const CMP_Texture* pSourceTexture);
         VkPipelineShaderStageCreateInfo loadShader(const char * fileName, VkShaderStageFlagBits stage);
-        void prepare(const CMP_Texture* pSourceTexture);
+        CMP_ERROR prepare(const CMP_Texture* pSourceTexture);
         void destroyCommandBuffers();
         void clean();
         bool memory_type_from_properties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);

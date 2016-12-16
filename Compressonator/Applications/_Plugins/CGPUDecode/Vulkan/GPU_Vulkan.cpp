@@ -98,6 +98,9 @@ GPU_Vulkan::GPU_Vulkan(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback)
     if (Height <= 0)
         Height = 480;
 
+
+    m_descriptorPool = VK_NULL_HANDLE;
+
     if (FAILED(InitWindow(hInstance, Width, Height, callback)))
         assert(0);
 
@@ -201,8 +204,13 @@ bool GPU_Vulkan::initVulkan(bool enableValidation)
     uint32_t gpuCount = 0;
     // Get number of available physical devices
     err = vkEnumeratePhysicalDevices(instance, &gpuCount, nullptr);
-    assert(!err);
+    if (err)
+    {
+        return false;
+    }
+
     assert(gpuCount > 0);
+
     // Enumerate devices
     std::vector<VkPhysicalDevice> physicalDevices(gpuCount);
     err = vkEnumeratePhysicalDevices(instance, &gpuCount, physicalDevices.data());
@@ -421,7 +429,7 @@ void GPU_Vulkan::createCommandBuffers()
 {
     // Create one command buffer per frame buffer in the swap chain
 
-    drawCmdBuffers.resize(swapChain.imageCount);
+    drawCmdBuffers.resize(swapChain.m_imageCount);
 
     VkCommandBufferAllocateInfo cmdBufAllocateInfo =
         vkTools::initializers::commandBufferAllocateInfo(
@@ -596,7 +604,7 @@ void GPU_Vulkan::setupFrameBuffer()
     frameBufferCreateInfo.layers = 1;
 
     // Create frame buffers for every swap chain image
-    frameBuffers.resize(swapChain.imageCount);
+    frameBuffers.resize(swapChain.m_imageCount);
     for (uint32_t i = 0; i < frameBuffers.size(); i++)
     {
         attachments[0] = swapChain.buffers[i].view;
@@ -885,9 +893,15 @@ VkFormat GPU_Vulkan::MIP2VK_Format(const CMP_Texture* pSourceTexture)
     return m_VKnum;
 }
 
-void GPU_Vulkan::loadTexture(const CMP_Texture* pSourceTexture)
+CMP_ERROR GPU_Vulkan::loadTexture(const CMP_Texture* pSourceTexture)
 {
+        VkResult res;
+
         VkFormat format = MIP2VK_Format(pSourceTexture);
+        
+        if (format == VK_FORMAT_UNDEFINED) return(CMP_ERR_UNSUPPORTED_SOURCE_FORMAT);
+
+
         VkFormatProperties formatProperties;
 
         texture.width = static_cast<uint32_t>(pSourceTexture->dwWidth);
@@ -909,7 +923,11 @@ void GPU_Vulkan::loadTexture(const CMP_Texture* pSourceTexture)
             VkBufferCreateInfo bufferCreateInfo = vkTools::initializers::bufferCreateInfo(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, pSourceTexture->dwDataSize);
             bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-            VK_CHECK_RESULT(vkCreateBuffer(device, &bufferCreateInfo, nullptr, &stagingBuffer));
+            res = vkCreateBuffer(device, &bufferCreateInfo, nullptr, &stagingBuffer);
+            if (res != VK_SUCCESS)
+            {
+                return(CMP_ERR_GENERIC);
+            }
 
             // Get memory requirements for the staging buffer (alignment, memory type bits)
             vkGetBufferMemoryRequirements(device, stagingBuffer, &memReqs);
@@ -919,12 +937,26 @@ void GPU_Vulkan::loadTexture(const CMP_Texture* pSourceTexture)
             getMemoryType(memReqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, &memAllocInfo.memoryTypeIndex);
 
 
-            VK_CHECK_RESULT(vkAllocateMemory(device, &memAllocInfo, nullptr, &stagingMemory));
-            VK_CHECK_RESULT(vkBindBufferMemory(device, stagingBuffer, stagingMemory, 0));
+            res = vkAllocateMemory(device, &memAllocInfo, nullptr, &stagingMemory);
+            if (res != VK_SUCCESS)
+            {
+                return(CMP_ERR_GENERIC);
+            }
+
+            res = vkBindBufferMemory(device, stagingBuffer, stagingMemory, 0);
+            if (res != VK_SUCCESS)
+            {
+                return(CMP_ERR_GENERIC);
+            }
 
             // Copy texture data into staging buffer
             uint8_t *data;
-            VK_CHECK_RESULT(vkMapMemory(device, stagingMemory, 0, memReqs.size, 0, (void **)&data));
+            res = vkMapMemory(device, stagingMemory, 0, memReqs.size, 0, (void **)&data);
+            if (res != VK_SUCCESS)
+            {
+                return(CMP_ERR_GENERIC);
+            }
+
             memcpy(data, pSourceTexture->pData, pSourceTexture->dwDataSize);
             vkUnmapMemory(device, stagingMemory);
 
@@ -959,7 +991,11 @@ void GPU_Vulkan::loadTexture(const CMP_Texture* pSourceTexture)
             imageCreateInfo.extent = { texture.width, texture.height, 1 };
             imageCreateInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 
-            VK_CHECK_RESULT(vkCreateImage(device, &imageCreateInfo, nullptr, &texture.image));
+            res = vkCreateImage(device, &imageCreateInfo, nullptr, &texture.image);
+            if (res != VK_SUCCESS)
+            {
+                return(CMP_ERR_GENERIC);
+            }
 
             vkGetImageMemoryRequirements(device, texture.image, &memReqs);
 
@@ -967,8 +1003,17 @@ void GPU_Vulkan::loadTexture(const CMP_Texture* pSourceTexture)
             getMemoryType(memReqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &memAllocInfo.memoryTypeIndex);
 
 
-            VK_CHECK_RESULT(vkAllocateMemory(device, &memAllocInfo, nullptr, &texture.deviceMemory));
-            VK_CHECK_RESULT(vkBindImageMemory(device, texture.image, texture.deviceMemory, 0));
+            res = vkAllocateMemory(device, &memAllocInfo, nullptr, &texture.deviceMemory);
+            if (res != VK_SUCCESS)
+            {
+                return(CMP_ERR_GENERIC);
+            }
+
+            res = vkBindImageMemory(device, texture.image, texture.deviceMemory, 0);
+            if (res != VK_SUCCESS)
+            {
+                return(CMP_ERR_GENERIC);
+            }
 
             VkCommandBuffer copyCmd = createCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
@@ -1043,7 +1088,11 @@ void GPU_Vulkan::loadTexture(const CMP_Texture* pSourceTexture)
         sampler.maxAnisotropy = 1.0;
         sampler.anisotropyEnable = VK_FALSE;
         sampler.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
-        VK_CHECK_RESULT(vkCreateSampler(device, &sampler, nullptr, &texture.sampler));
+        res = vkCreateSampler(device, &sampler, nullptr, &texture.sampler);
+        if (res != VK_SUCCESS)
+        {
+            return(CMP_ERR_GENERIC);
+        }
 
         // Create image view
         // Textures are not directly accessed by the shaders and
@@ -1064,7 +1113,13 @@ void GPU_Vulkan::loadTexture(const CMP_Texture* pSourceTexture)
         // Only set mip map count if optimal tiling is used
         view.subresourceRange.levelCount = texture.mipLevels;
         view.image = texture.image;
-        VK_CHECK_RESULT(vkCreateImageView(device, &view, nullptr, &texture.view));
+        res = vkCreateImageView(device, &view, nullptr, &texture.view);
+        if (res != VK_SUCCESS)
+        {
+            return(CMP_ERR_GENERIC);
+        }
+
+        return(CMP_OK);
 }
 
 //==============================================================
@@ -1128,7 +1183,9 @@ VkPipelineShaderStageCreateInfo GPU_Vulkan::loadShader(const char * fileName, Vk
     return shaderStage;
 }
 
-void GPU_Vulkan::prepare(const CMP_Texture* pSourceTexture)
+// ToDo remove asserts and replace with cmp_res
+
+CMP_ERROR GPU_Vulkan::prepare(const CMP_Texture* pSourceTexture)
 {
     if (m_tenableValidation)
     {
@@ -1218,8 +1275,13 @@ void GPU_Vulkan::prepare(const CMP_Texture* pSourceTexture)
         &uniformDataVS.descriptor);
 
     updateUniformBuffers();
+    
+    CMP_ERROR cmp_res = loadTexture(pSourceTexture);
 
-    loadTexture(pSourceTexture); 
+    if (cmp_res != CMP_OK)
+    {
+        return (cmp_res);
+    }
 
     //setupDescriptorSetLayout
     std::vector<VkDescriptorSetLayoutBinding> setLayoutBindings =
@@ -1340,13 +1402,13 @@ void GPU_Vulkan::prepare(const CMP_Texture* pSourceTexture)
             poolSizes.data(),
             2);
 
-    VkResult vkRes = vkCreateDescriptorPool(device, &descriptorPoolInfo, nullptr, &descriptorPool);
+    VkResult vkRes = vkCreateDescriptorPool(device, &descriptorPoolInfo, nullptr, &m_descriptorPool);
     assert(!vkRes);
 
     //setupDescriptorSet
     VkDescriptorSetAllocateInfo allocInfo =
         vkTools::initializers::descriptorSetAllocateInfo(
-            descriptorPool,
+            m_descriptorPool,
             &descriptorSetLayout,
             1);
 
@@ -1434,6 +1496,8 @@ void GPU_Vulkan::prepare(const CMP_Texture* pSourceTexture)
     }
 
     m_prepared = true;
+
+    return (cmp_res);
 }
 
 void GPU_Vulkan::destroyCommandBuffers()
@@ -1447,7 +1511,8 @@ void GPU_Vulkan::clean()
 {
     // Clean up Vulkan resources
     swapChain.cleanup();
-    vkDestroyDescriptorPool(device, descriptorPool, nullptr);
+    if (m_descriptorPool != VK_NULL_HANDLE)
+        vkDestroyDescriptorPool(device, m_descriptorPool, nullptr);
     if (setupCmdBuffer != VK_NULL_HANDLE)
     {
         vkFreeCommandBuffers(device, cmdPool, 1, &setupCmdBuffer);
@@ -1768,6 +1833,7 @@ CMP_ERROR WINAPI GPU_Vulkan::Decompress(
     CMP_Texture* pDestTexture
     )
 {
+    CMP_ERROR cmp_res;
 
     m_width = pSourceTexture->dwWidth;
     m_height = pSourceTexture->dwHeight;
@@ -1776,7 +1842,13 @@ CMP_ERROR WINAPI GPU_Vulkan::Decompress(
 
     swapChain.initSurface(hInstance, m_hWnd);
 
-    prepare(pSourceTexture);
+    cmp_res = prepare(pSourceTexture);
+
+    if (cmp_res != CMP_OK) 
+    {
+        swapChain.cleanup();
+        return (cmp_res);
+    }
 
 #ifdef SHOW_WINDOW
     // Activate the window -- for debug view purpose

@@ -79,7 +79,7 @@ public:
 
     VkSwapchainKHR swapChain = VK_NULL_HANDLE;
 
-    uint32_t imageCount;
+    uint32_t m_imageCount;
     std::vector<VkImage> images;
     std::vector<SwapChainBuffer> buffers;
 
@@ -239,6 +239,7 @@ public:
     {
         VkResult err;
         VkSwapchainKHR oldSwapchain = swapChain;
+        m_imageCount = 0;
 
         // Get physical device surface properties and formats
         VkSurfaceCapabilitiesKHR surfCaps;
@@ -334,17 +335,17 @@ public:
             fpDestroySwapchainKHR(device, oldSwapchain, nullptr);
         }
 
-        err = fpGetSwapchainImagesKHR(device, swapChain, &imageCount, NULL);
+        err = fpGetSwapchainImagesKHR(device, swapChain, &m_imageCount, NULL);
         assert(!err);
 
         // Get the swap chain images
-        images.resize(imageCount);
-        err = fpGetSwapchainImagesKHR(device, swapChain, &imageCount, images.data());
+        images.resize(m_imageCount);
+        err = fpGetSwapchainImagesKHR(device, swapChain, &m_imageCount, images.data());
         assert(!err);
 
         // Get the swap chain buffers containing the image and imageview
-        buffers.resize(imageCount);
-        for (uint32_t i = 0; i < imageCount; i++)
+        buffers.resize(m_imageCount);
+        for (uint32_t i = 0; i < m_imageCount; i++)
         {
             VkImageViewCreateInfo colorAttachmentView = {};
             colorAttachmentView.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -420,12 +421,23 @@ public:
     // Free all Vulkan resources used by the swap chain
     void cleanup()
     {
-        for (uint32_t i = 0; i < imageCount; i++)
+        for (uint32_t i = 0; i < m_imageCount; i++)
         {
             vkDestroyImageView(device, buffers[i].view, nullptr);
         }
-        fpDestroySwapchainKHR(device, swapChain, nullptr);
-        vkDestroySurfaceKHR(instance, surface, nullptr);
+        m_imageCount = 0;
+
+        if (swapChain != VK_NULL_HANDLE)
+        {
+            fpDestroySwapchainKHR(device, swapChain, nullptr);
+            swapChain = VK_NULL_HANDLE;
+        }
+
+        if (surface != VK_NULL_HANDLE)
+        {
+            vkDestroySurfaceKHR(instance, surface, nullptr);
+            surface = VK_NULL_HANDLE;
+        }
     }
 
 };
