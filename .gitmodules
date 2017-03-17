@@ -8,9 +8,6 @@
 [submodule "Common/Lib/Ext/Vulkan"]
 	path = Common/Lib/Ext/Vulkan
 	url = https://github.com/GPUOpen-Tools/common-lib-ext-Vulkan-1.0.21.1.git
-[submodule "Common/Lib/Ext/Qt"]
-	path = Common/Lib/Ext/Qt
-	url = https://github.com/GPUOpen-Tools/common-lib-ext-Qt-5.5.git
 [submodule "Common/Lib/Ext/OpenGL"]
 	path = Common/Lib/Ext/OpenGL
 	url = https://github.com/GPUOpen-Tools/common-lib-ext-OpenGL.git
