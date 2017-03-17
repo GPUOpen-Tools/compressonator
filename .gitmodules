@@ -19,3 +19,9 @@
 [submodule "Common/Lib/Ext/glew"]
 	path = Common/Lib/Ext/glew
 	url = https://github.com/GPUOpen-Tools/common-lib-ext-glew-1.9.git
+[submodule "Common/Lib/Ext/zlib"]
+	path = Common/Lib/Ext/zlib
+	url = https://github.com/GPUOpen-Tools/common-lib-ext-zlib-1.2.10.git
+[submodule "Common/Lib/Ext/OpenEXR"]
+	path = Common/Lib/Ext/OpenEXR
+	url = https://github.com/GPUOpen-Tools/common-lib-ext-OpenEXR-2.2.git
