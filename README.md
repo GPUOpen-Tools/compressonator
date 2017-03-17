@@ -14,7 +14,9 @@ V2.4 release Dec 16 2016
 Build Instructions for Windows 7 and up
 ------------------------------------------------------
 
-To build the applications you will need to have Visual Studio 2015 installed and Qtv5.7 msvc2015 and msvc2015_64 opensource downloaded from Qt website.
+To build the applications you will need to have Visual Studio 2015 installed and Qt V5.7 msvc2015 and msvc2015_64 opensource downloaded from [Qt website] (https://www.qt.io/download-open-source/ )
+
+**Note**: The solution project assume QT is installed in default path (C:\Qt\5.7). If you use different path, please change the project property accordingly in the  Compressonator_Root.props file. 
 
 The directory of your workspace should be as follows
 
