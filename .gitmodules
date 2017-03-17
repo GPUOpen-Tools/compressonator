@@ -1,7 +1,3 @@
-[submodule "Common/Lib/Ext/zlib"]
-	path = Common/Lib/Ext/zlib
-	url = https://github.com/GPUOpen-Tools/common-lib-ext-zlib-1.2.10.git
-	branch = master
 [submodule "Common/Lib/Ext/tinyxml"]
 	path = Common/Lib/Ext/tinyxml
 	url = https://github.com/GPUOpen-Tools/common-lib-ext-tinyxml-2.6.2.git
