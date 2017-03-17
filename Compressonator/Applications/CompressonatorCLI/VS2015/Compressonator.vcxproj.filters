@@ -35,9 +35,6 @@
     <ClCompile Include="..\Source\CompressonatorCLI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\_Plugins\Common\query_timer.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\AMDCompressCLI_Documentation.h">
@@ -59,9 +56,6 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\_Plugins\Common\ATIFormats.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\_Plugins\Common\query_timer.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
