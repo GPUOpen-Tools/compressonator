@@ -492,6 +492,7 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
             && (destType != CT_ASTC)
             && (destType != CT_BC7)
             && (destType != CT_BC6H)
+            && (destType != CT_BC6H_SF)
             && (destType != CT_GT)
             )
         {

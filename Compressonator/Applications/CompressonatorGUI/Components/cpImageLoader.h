@@ -82,8 +82,15 @@ public:
     CMipImages *LoadPluginImage(QString filename);      // Creates Image & MIP data 
     bool    clearMipImages(CMipImages *MipImages);      // Clears (delete) all Image & MIP data
     void    UpdateMIPMapImages(CMipImages *MipImages);  // Maps MIP levels to Images
+    void    loadExrProperties(MipSet* mipset, int level, QImage *image);
     MipSet *QImage2MIPS(QImage *qimage);            // Converts a QImage to MipSet
     MipSet *DecompressMipSet(CMipImages *MipImages);
+    void   float2Pixel(float kl, float f, float r, float g, float b, float a, int x, int y, QImage *image);
+
+    float kneeLow;
+    float kneeHigh;
+    float exposure;
+    float defog;
 
 private:
     void QImageFormatInfo(QImage *image);
@@ -99,5 +106,7 @@ private:
     QImage  *MIPS2QImage(MipSet *tmpMipSet, int level); // Converts a MipSet to QImage, Mips level (0 to n) where n <  MipSet::m_nMaxMipLevels
 };
 
+
+extern float half_conv_float(unsigned short in);
 
 #endif

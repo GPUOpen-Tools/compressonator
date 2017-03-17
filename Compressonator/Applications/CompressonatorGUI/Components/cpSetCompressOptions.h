@@ -46,23 +46,26 @@ public:
     QTreeWidgetItem* AddChildItem(QTreeWidgetItem *parent, int col, QString itemtext, bool checkable);
 #endif
 
-    QTreeWidgetItem                *m_item;                // Ref to a projects item when the dialog was called: Must be set if Saving the data int a project tree
+    QTreeWidgetItem                *m_item;                // Ref to a project's item when the dialog was called: Must be set if Saving the data int a project tree
     C_Destination_Options           m_data;                // Our loacal data settings: copy of orignal or default
     C_Destination_Options           m_dataOriginal;        // Original Data prior to Edit
 
     bool updateDisplayContent();                            // Update data to all widgets and vaildate compressable image format support
     bool updateFileFormat(QFileInfo &fileinfo);             // Update the Image Type Combo box by matching the input image format : return false if imput is not supported
     void resetData();                                       // Reset all data back to defaults
+    void SaveCompressedInfo();                              // Save compress setting
     void setMinMaxStep(QtVariantPropertyManager* manager, QtProperty *m_prop, double min, double max, double step);
     QString GetFormatString();                              // Reads the m_data format and returns format enum as a string 
 
     bool isEditing;                                         // True when dislog is shown and in edit mode
     bool isInit;
+    bool isNoSetting;
     int  m_extnum;
 
     QString                      m_destFilePath;
     QTextBrowser                *m_infotext;
     QLineEdit                   *m_DestinationFolder;
+    QLineEdit                   *m_LEName;
     QString                      m_srcext;
 
 private:
@@ -81,7 +84,6 @@ private:
     QPushButton                 *m_PBCancel;
     QPushButton                 *m_PBDestFileFolder;
     QLineEdit                   *m_DestinationFile;
-    QLineEdit                   *m_LEName;
     QComboBox                   *m_CBCompression;
     QComboBox                   *m_fileFormats;
     QStringList                 m_AllFileTypes;
@@ -110,6 +112,7 @@ private:
     QtProperty                  *m_propDXT1Alpha;
     QtProperty                  *m_propASTCBlockRate;
 
+    
 signals:
     void SaveCompressSettings(QTreeWidgetItem *m_item, C_Destination_Options &m_data);
 

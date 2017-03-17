@@ -369,7 +369,7 @@ CodecError CCodec_GT::FinishGTEncoding(void)
         return CE_Unknown;
     }
 
-    if (g_EncodeParameterStorage)
+    if (!g_EncodeParameterStorage)
     {
         return CE_Unknown;
     }

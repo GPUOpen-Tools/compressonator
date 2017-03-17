@@ -117,15 +117,7 @@ extern "C" {
 
 
 
-/// A struct for storing ARGB8 colors.
-typedef struct
-{
-   union
-   {
-      BYTE    rgba[4]; ///< The color as an array of components.
-      DWORD    asDword; ///< The color as a DWORD.
-   };
-} COLOR;
+
 
 /// The format of data in the channels of texture.
 typedef enum
@@ -137,6 +129,7 @@ typedef enum
    CF_16bit       = 4,  ///< 16-bit integer data.
    CF_2101010     = 5,  ///< 10-bit integer data in the color channels & 2-bit integer data in the alpha channel.
    CF_32bit       = 6,  ///< 32-bit integer data.
+   CF_Float9995E  = 7,  ///< 32-bit partial precision float.
 } ChannelFormat;
 
 /// The type of data the texture represents.
@@ -192,14 +185,15 @@ typedef struct
 {
    int         m_nWidth;         ///< Width of the data in pixels.
    int         m_nHeight;        ///< Height of the data in pixels.
-   DWORD       m_dwLinearSize;   ///< Size of the data in bytes.
+   CMP_DWORD       m_dwLinearSize;   ///< Size of the data in bytes.
    union
    {    
-      BYTE*    m_pbData;         ///< A pointer to the texture data that this MipLevel contains.
-      WORD*    m_pwData;         ///< A pointer to the texture data that this MipLevel contains.
-      COLOR*   m_pcData;         ///< A pointer to the texture data that this MipLevel contains.
-      FLOAT*   m_pfData;         ///< A pointer to the texture data that this MipLevel contains.
-      DWORD*   m_pdwData;        ///< A pointer to the texture data that this MipLevel contains.
+      CMP_BYTE*    m_pbData;         ///< A pointer to the texture data that this MipLevel contains.
+      CMP_WORD*    m_pwData;         ///< A pointer to the texture data that this MipLevel contains.
+      CMP_COLOR*   m_pcData;         ///< A pointer to the texture data that this MipLevel contains.
+      CMP_FLOAT*   m_pfData;         ///< A pointer to the texture data that this MipLevel contains.
+      CMP_HALF*    m_phfData;        ///< A pointer to the texture data that this MipLevel contains.
+      CMP_DWORD*   m_pdwData;        ///< A pointer to the texture data that this MipLevel contains.
    };
 } MipLevel;
 
@@ -222,9 +216,9 @@ typedef struct
    TextureDataType   m_TextureDataType;   ///< An indication of the type of data that the texture contains. A texture with just RGB values would use TDT_XRGB, while a texture that also uses the alpha channel would use TDT_ARGB.
    TextureType       m_TextureType;       ///< Indicates whether the texture is 2D, a cube map, or a volume texture. Used to determine how to treat MipLevels, among other things.
    unsigned int      m_Flags;             ///< Flags that for this mip-map set.
-   BYTE              m_CubeFaceMask;      ///< A mask of MS_CubeFace values indicating which cube-map faces are present.
-   DWORD             m_dwFourCC;          ///< The FourCC for this mip-map set. 0 if the mip-map set is uncompressed. Generated using MAKEFOURCC (defined in the Platform SDK or DX SDK).
-   DWORD             m_dwFourCC2;         ///< An extra FourCC used by The Compressonator internally. Our DDS plugin saves/loads m_dwFourCC2 from pDDSD->ddpfPixelFormat.dwPrivateFormatBitCount (since it's not really used by anything else) whether or not it is 0. Generated using MAKEFOURCC (defined in the Platform SDK or DX SDK). The FourCC2 field is currently used to allow differentiation between the various swizzled DXT5 formats. These formats must have a FourCC of DXT5 to be supported by the DirectX runtime but The Compressonator needs to know the swizzled FourCC to correctly display the texture. 
+   CMP_BYTE              m_CubeFaceMask;      ///< A mask of MS_CubeFace values indicating which cube-map faces are present.
+   CMP_DWORD             m_dwFourCC;          ///< The FourCC for this mip-map set. 0 if the mip-map set is uncompressed. Generated using MAKEFOURCC (defined in the Platform SDK or DX SDK).
+   CMP_DWORD             m_dwFourCC2;         ///< An extra FourCC used by The Compressonator internally. Our DDS plugin saves/loads m_dwFourCC2 from pDDSD->ddpfPixelFormat.dwPrivateFormatBitCount (since it's not really used by anything else) whether or not it is 0. Generated using MAKEFOURCC (defined in the Platform SDK or DX SDK). The FourCC2 field is currently used to allow differentiation between the various swizzled DXT5 formats. These formats must have a FourCC of DXT5 to be supported by the DirectX runtime but The Compressonator needs to know the swizzled FourCC to correctly display the texture. 
    int               m_nMaxMipLevels;     ///< Set by The Compressonator when you call TC_AppAllocateMipSet based on the width, height, depth, and textureType values passed in. Is really the maximum number of mip-map levels possible for that texture including the topmost mip-map level if you integer divide width height and depth by 2, rounding down but never falling below 1 until all three of them are 1. So a 5x10 2D texture would have a m_nMaxMipLevels of 4 (5x10 -> 2x5 -> 1x2 -> 1x1).
    int               m_nMipLevels;        ///< The number of mip-map levels in the mip-map set that actually have data. Always less than or equal to m_nMaxMipLevels. Set to 0 after TC_AppAllocateMipSet.
    int               m_nWidth;            ///< Width in pixels of the topmost mip-map level of the mip-map set. Initialized by TC_AppAllocateMipSet.
@@ -240,14 +234,14 @@ typedef struct
    MipLevelTable*    m_pMipLevelTable;    ///< This is an implementation dependent way of storing the MipLevels that this mip-map set contains. Do not depend on it, use TC_AppGetMipLevel to access a mip-map set's MipLevels.
 } MipSet;
 
-DWORD GetChannelSize(ChannelFormat channelFormat);       //< \internal
-DWORD GetChannelCount(TextureDataType textureDataType);  //< \internal
-DWORD GetPixelSize(const MipSet& mipset);                //< \internal
+CMP_DWORD GetChannelSize(ChannelFormat channelFormat);       //< \internal
+CMP_DWORD GetChannelCount(TextureDataType textureDataType);  //< \internal
+CMP_DWORD GetPixelSize(const MipSet& mipset);                //< \internal
 
-bool GetMipSetPixelColorARGB8888(const MipSet& mipset, int nMipLevel, int nFaceOrSlice, int nXpos, int nYpos, COLOR& color);        //< \internal
-bool GetMipSetPixelColorARGB2101010(const MipSet& mipset, int nMipLevel, int nFaceOrSlice, int nXpos, int nYpos, WORD color[4]);    //< \internal
-bool GetMipSetPixelColorARGB16161616(const MipSet& mipset, int nMipLevel, int nFaceOrSlice, int nXpos, int nYpos, WORD color[4]);   //< \internal
-bool GetMipSetPixelColorARGB32(const MipSet& mipset, int nMipLevel, int nFaceOrSlice, int nXpos, int nYpos, DWORD color[4]);        //< \internal
+bool GetMipSetPixelColorARGB8888(const MipSet& mipset, int nMipLevel, int nFaceOrSlice, int nXpos, int nYpos, CMP_COLOR& color);        //< \internal
+bool GetMipSetPixelColorARGB2101010(const MipSet& mipset, int nMipLevel, int nFaceOrSlice, int nXpos, int nYpos, CMP_WORD color[4]);    //< \internal
+bool GetMipSetPixelColorARGB16161616(const MipSet& mipset, int nMipLevel, int nFaceOrSlice, int nXpos, int nYpos, CMP_WORD color[4]);   //< \internal
+bool GetMipSetPixelColorARGB32(const MipSet& mipset, int nMipLevel, int nFaceOrSlice, int nXpos, int nYpos, CMP_DWORD color[4]);        //< \internal
 bool GetMipSetPixelColorARGB32F(const MipSet& mipset, int nMipLevel, int nFaceOrSlice, int nXpos, int nYpos, float color[4]);       //< \internal
 
 #ifdef __cplusplus

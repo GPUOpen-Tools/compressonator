@@ -33,8 +33,6 @@
 
 #include <windows.h>
 #include "..\Compressonator.h"
-#include "BC6H_3dquant_vpc.h"
-#include "BC6H_shake.h"
 #include "BC6H_Definitions.h"
 
 // Maximum number of threads supported by the compressor
@@ -66,9 +64,5 @@ typedef struct
 {
     enum _BC6H_MODES  type;   // Type of block
 } BC6MODE;
-
-extern void Quant_DeInit();
-extern void Quant_Init();
-
 
 #endif

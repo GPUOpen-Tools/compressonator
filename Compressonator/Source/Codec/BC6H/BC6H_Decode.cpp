@@ -29,8 +29,8 @@
 #include <assert.h>
 #include "debug.h"
 #include "common.h"
+#include "HDR_Encode.h"
 #include "BC6H_Definitions.h"
-#include "BC6H_Partitions.h"
 #include "BC6H_Decode.h"
 #include "BC6H_Utils.h"
 #include "BC6H_Decode.h"
@@ -48,6 +48,9 @@ int  g_dblock = 0;
 #endif
 
 using namespace std;
+using namespace HDR_Encode;
+
+float dec_red_out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG] = {0};
 
 //---------------------------------------------------------------------------------------------------------------------------------------
 // Need improve or use alternate implementation: These segments are based on NV code and need to be redone
@@ -287,12 +290,12 @@ void generate_palette_quantized(int max, AMD_BC6H_Format& bc6h_format, int regio
         bc6h_format.Palete[region][i].z = finish_unquantize(bc6h_format, lerp(a, b, i, max-1));
 }
 
-AMD_BC6H_Format extract_format(BYTE in[BC6H_COMPRESSED_BLOCK_SIZE])
+AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
 {
     AMD_BC6H_Format bc6h_format;
     unsigned short decvalue;
-    BYTE iData[BC6H_COMPRESSED_BLOCK_SIZE];
-    memcpy(iData,in,BC6H_COMPRESSED_BLOCK_SIZE);
+    BYTE iData[COMPRESSED_BLOCK_SIZE];
+    memcpy(iData,in,COMPRESSED_BLOCK_SIZE);
 
     memset(&bc6h_format,0,sizeof(AMD_BC6H_Format));
 
@@ -308,178 +311,176 @@ AMD_BC6H_Format extract_format(BYTE in[BC6H_COMPRESSED_BLOCK_SIZE])
     }
 
     BitHeader header(in,16);
-
-    bc6h_format.format            = UNSIGNED_F16; 
     
     switch (decvalue)
     {
     case 0x00:
-                bc6h_format.m_mode = 1; // 10:5:5:5                    // Bits: location
-                bc6h_format.wBits  = 10;
+                bc6h_format.m_mode          = 1; // 10:5:5:5
+                bc6h_format.wBits           = 10;
                 bc6h_format.tBits[C_RED]    = 5;
-                bc6h_format.tBits[C_GREEN]    = 5;
-                bc6h_format.tBits[C_BLUE]    = 5;
-                bc6h_format.rw = header.getvalue(5 ,10);            // 10:    rw[9:0] 
-                bc6h_format.rx = header.getvalue(35,5);                // 5:    rx[4:0]
-                bc6h_format.ry = header.getvalue(65,5);                // 5:    ry[4:0]
-                bc6h_format.rz = header.getvalue(71,5);                // 5:    rz[4:0]
-                bc6h_format.gw = header.getvalue(15,10);            // 10:    gw[9:0]
-                bc6h_format.gx = header.getvalue(45,5);                // 5:    gx[4:0]
+                bc6h_format.tBits[C_GREEN]  = 5;
+                bc6h_format.tBits[C_BLUE]   = 5;
+                bc6h_format.rw = header.getvalue(5 ,10);            // 10:   rw[9:0] 
+                bc6h_format.rx = header.getvalue(35,5);             // 5:    rx[4:0]
+                bc6h_format.ry = header.getvalue(65,5);             // 5:    ry[4:0]
+                bc6h_format.rz = header.getvalue(71,5);             // 5:    rz[4:0]
+                bc6h_format.gw = header.getvalue(15,10);            // 10:   gw[9:0]
+                bc6h_format.gx = header.getvalue(45,5);             // 5:    gx[4:0]
                 bc6h_format.gy = header.getvalue(41,4) |            // 5:    gy[3:0]
-                                (header.getvalue(2,1) << 4);        //        gy[4]
+                                (header.getvalue(2,1) << 4);        //       gy[4]
                 bc6h_format.gz = header.getvalue(51,4) |            // 5:    gz[3:0]
-                                (header.getvalue(40,1) << 4);        //        gz[4]
-                bc6h_format.bw = header.getvalue(25,10);            // 10:    bw[9:0]
-                bc6h_format.bx = header.getvalue(55,5);                // 5:    bx[4:0]
+                                (header.getvalue(40,1) << 4);       //       gz[4]
+                bc6h_format.bw = header.getvalue(25,10);            // 10:   bw[9:0]
+                bc6h_format.bx = header.getvalue(55,5);             // 5:    bx[4:0]
                 bc6h_format.by = header.getvalue(61,4) |            // 5:    by[3:0]
-                                (header.getvalue(3,1) << 4);        //        by[4]
+                                (header.getvalue(3,1) << 4);        //       by[4]
                 bc6h_format.bz = header.getvalue(50,1) |            // 5:    bz[0]
-                                (header.getvalue(60,1) << 1) |        //        bz[1]
-                                (header.getvalue(70,1) << 2) |        //        bz[2]
-                                (header.getvalue(76,1) << 3) |        //        bz[3]
-                                (header.getvalue(4 ,1) << 4);        //        bz[4]
+                                (header.getvalue(60,1) << 1) |      //       bz[1]
+                                (header.getvalue(70,1) << 2) |      //       bz[2]
+                                (header.getvalue(76,1) << 3) |      //       bz[3]
+                                (header.getvalue(4 ,1) << 4);       //       bz[4]
                 break;
     case 0x01:
-                bc6h_format.m_mode = 2;    // 7:6:6:6                    // Bits: location
-                bc6h_format.wBits  = 7;
+                bc6h_format.m_mode          = 2;    // 7:6:6:6
+                bc6h_format.wBits           = 7;
                 bc6h_format.tBits[C_RED]    = 6;
-                bc6h_format.tBits[C_GREEN]    = 6;
-                bc6h_format.tBits[C_BLUE]    = 6;
-                bc6h_format.rw = header.getvalue(5,7);                // 7:    rw[6:0] 
-                bc6h_format.rx = header.getvalue(35,6);                // 6:    rx[5:0]
-                bc6h_format.ry = header.getvalue(65,6);                // 6:    ry[5:0]
-                bc6h_format.rz = header.getvalue(71,6);                // 6:    rz[5:0]
-                bc6h_format.gw = header.getvalue(15,7);                // 7:    gw[6:0]
-                bc6h_format.gx = header.getvalue(45,6);                // 6:    gx[5:0]
-                bc6h_format.gy = header.getvalue(41,4)    |            // 6:    gy[3:0]
-                                (header.getvalue(24,1) << 4) |        //        gy[4]
-                                (header.getvalue(2,1)   << 5);         //        gy[5]
-                bc6h_format.gz = header.getvalue(51,4)    |            // 6:    gz[3:0]
-                                (header.getvalue(3,1) << 4) |        //        gz[4]
-                                (header.getvalue(4,1) << 5);        //        gz[5]
-                bc6h_format.bw = header.getvalue(25,7);                // 7:    bw[6:0]
-                bc6h_format.bx = header.getvalue(55,6);                // 6:    bx[5:0]
-                bc6h_format.by = header.getvalue(61,4)    |            // 6:    by[3:0]
-                                (header.getvalue(14,1) << 4) |        //        by[4]
-                                (header.getvalue(22,1) << 5);        //        by[5]
-                bc6h_format.bz = header.getvalue(12,1)    |            // 6:    bz[0]
-                                (header.getvalue(13,1) << 1) |        //        bz[1]
-                                (header.getvalue(23,1) << 2) |        //        bz[2]
-                                (header.getvalue(32,1) << 3) |        //        bz[3]
-                                (header.getvalue(34,1) << 4) |        //        bz[4]
-                                (header.getvalue(33,1) << 5);         //        bz[5]
+                bc6h_format.tBits[C_GREEN]  = 6;
+                bc6h_format.tBits[C_BLUE]   = 6;
+                bc6h_format.rw = header.getvalue(5,7);               // 7:    rw[6:0] 
+                bc6h_format.rx = header.getvalue(35,6);              // 6:    rx[5:0]
+                bc6h_format.ry = header.getvalue(65,6);              // 6:    ry[5:0]
+                bc6h_format.rz = header.getvalue(71,6);              // 6:    rz[5:0]
+                bc6h_format.gw = header.getvalue(15,7);              // 7:    gw[6:0]
+                bc6h_format.gx = header.getvalue(45,6);              // 6:    gx[5:0]
+                bc6h_format.gy = header.getvalue(41,4)    |          // 6:    gy[3:0]
+                                (header.getvalue(24,1) << 4) |       //       gy[4]
+                                (header.getvalue(2,1)   << 5);       //       gy[5]
+                bc6h_format.gz = header.getvalue(51,4)    |          // 6:    gz[3:0]
+                                (header.getvalue(3,1) << 4) |        //       gz[4]
+                                (header.getvalue(4,1) << 5);         //       gz[5]
+                bc6h_format.bw = header.getvalue(25,7);              // 7:    bw[6:0]
+                bc6h_format.bx = header.getvalue(55,6);              // 6:    bx[5:0]
+                bc6h_format.by = header.getvalue(61,4)    |          // 6:    by[3:0]
+                                (header.getvalue(14,1) << 4) |       //       by[4]
+                                (header.getvalue(22,1) << 5);        //       by[5]
+                bc6h_format.bz = header.getvalue(12,1)    |          // 6:    bz[0]
+                                (header.getvalue(13,1) << 1) |       //       bz[1]
+                                (header.getvalue(23,1) << 2) |       //       bz[2]
+                                (header.getvalue(32,1) << 3) |       //       bz[3]
+                                (header.getvalue(34,1) << 4) |       //       bz[4]
+                                (header.getvalue(33,1) << 5);        //       bz[5]
                 break;
     case 0x02:
-                bc6h_format.m_mode = 3;  // 11:5:4:4                // Bits: location
-                bc6h_format.wBits  = 11;
+                bc6h_format.m_mode          = 3;  // 11:5:4:4
+                bc6h_format.wBits           = 11;
                 bc6h_format.tBits[C_RED]    = 5;
-                bc6h_format.tBits[C_GREEN]    = 4;
-                bc6h_format.tBits[C_BLUE]    = 4;
-                bc6h_format.rw = header.getvalue(5,10)  |             //11:    rw[9:0] 
-                                (header.getvalue(40,1) << 10);        //        rw[10]
-                bc6h_format.rx = header.getvalue(35,5);                //5:    rx[4:0]
-                bc6h_format.ry = header.getvalue(65,5);                //5:    ry[4:0]
-                bc6h_format.rz = header.getvalue(71,5);                //5:    rz[4:0]
+                bc6h_format.tBits[C_GREEN]  = 4;
+                bc6h_format.tBits[C_BLUE]   = 4;
+                bc6h_format.rw = header.getvalue(5,10)  |            //11:    rw[9:0] 
+                                (header.getvalue(40,1) << 10);       //       rw[10]
+                bc6h_format.rx = header.getvalue(35,5);              // 5:    rx[4:0]
+                bc6h_format.ry = header.getvalue(65,5);              // 5:    ry[4:0]
+                bc6h_format.rz = header.getvalue(71,5);              // 5:    rz[4:0]
                 bc6h_format.gw = header.getvalue(15,10) |            //11:    gw[9:0]
-                                (header.getvalue(49,1) << 10);        //        gw[10]
-                bc6h_format.gx = header.getvalue(45,4);                //4:    gx[3:0]
-                bc6h_format.gy = header.getvalue(41,4);                //4:    gy[3:0]
-                bc6h_format.gz = header.getvalue(51,4);                //4:    gz[3:0]
+                                (header.getvalue(49,1) << 10);       //       gw[10]
+                bc6h_format.gx = header.getvalue(45,4);              //4:     gx[3:0]
+                bc6h_format.gy = header.getvalue(41,4);              //4:     gy[3:0]
+                bc6h_format.gz = header.getvalue(51,4);              //4:     gz[3:0]
                 bc6h_format.bw = header.getvalue(25,10) |            //11:    bw[9:0]
-                                (header.getvalue(59,1) << 10);        //        bw[10]
-                bc6h_format.bx = header.getvalue(55,4);                //4:    bx[3:0]
-                bc6h_format.by = header.getvalue(61,4);                //4:    by[3:0]
-                bc6h_format.bz = header.getvalue(50,1) |             //4:    bz[0]
-                                (header.getvalue(60,1) << 1) |        //        bz[1]
-                                (header.getvalue(70,1) << 2) |        //        bz[2]
-                                (header.getvalue(76,1) << 3);        //        bz[3]
+                                (header.getvalue(59,1) << 10);       //       bw[10]
+                bc6h_format.bx = header.getvalue(55,4);              //4:     bx[3:0]
+                bc6h_format.by = header.getvalue(61,4);              //4:     by[3:0]
+                bc6h_format.bz = header.getvalue(50,1) |             //4:     bz[0]
+                                (header.getvalue(60,1) << 1) |       //       bz[1]
+                                (header.getvalue(70,1) << 2) |       //       bz[2]
+                                (header.getvalue(76,1) << 3);        //       bz[3]
                 break;
     case 0x06:
-                bc6h_format.m_mode = 4;  // 11:4:5:4                // Bits: location
-                bc6h_format.wBits  = 11;
+                bc6h_format.m_mode          = 4;  // 11:4:5:4
+                bc6h_format.wBits           = 11;
                 bc6h_format.tBits[C_RED]    = 4;
-                bc6h_format.tBits[C_GREEN]    = 5;
-                bc6h_format.tBits[C_BLUE]    = 4;
-                bc6h_format.rw = header.getvalue(5,10)  |             //11:    rw[9:0] 
-                                (header.getvalue(39,1) << 10);        //        rw[10]
-                bc6h_format.rx = header.getvalue(35,4);                //4:    rx[3:0]
-                bc6h_format.ry = header.getvalue(65,4);                //4:    ry[3:0]
-                bc6h_format.rz = header.getvalue(71,4);                //4:    rz[3:0]
-                bc6h_format.gw = header.getvalue(15,10) |            //11:    gw[9:0]
-                                (header.getvalue(50,1) << 10);        //        gw[10]
-                bc6h_format.gx = header.getvalue(45,5);                //5:    gx[4:0]
-                bc6h_format.gy = header.getvalue(41,4) |            //5:    gy[3:0]
-                                (header.getvalue(75,1) << 4);        //        gy[4]
-                bc6h_format.gz = header.getvalue(51,4) |            //5:    gz[3:0]
-                                (header.getvalue(40,1) << 4);        //        gz[4]
-                bc6h_format.bw = header.getvalue(25,10) |            //11:    bw[9:0]
-                                (header.getvalue(59,1) << 10);        //        bw[10]
-                bc6h_format.bx = header.getvalue(55,4);                //4:    bx[3:0]
-                bc6h_format.by = header.getvalue(61,4);                //4:    by[3:0]
-                bc6h_format.bz = header.getvalue(69,1) |             //4:    bz[0]
-                                (header.getvalue(60,1) << 1) |        //        bz[1]
-                                (header.getvalue(70,1) << 2) |        //        bz[2]
-                                (header.getvalue(76,1) << 3);        //        bz[3]
+                bc6h_format.tBits[C_GREEN]  = 5;
+                bc6h_format.tBits[C_BLUE]   = 4;
+                bc6h_format.rw = header.getvalue(5,10)  |             //11:   rw[9:0] 
+                                (header.getvalue(39,1) << 10);        //      rw[10]
+                bc6h_format.rx = header.getvalue(35,4);               //4:    rx[3:0]
+                bc6h_format.ry = header.getvalue(65,4);               //4:    ry[3:0]
+                bc6h_format.rz = header.getvalue(71,4);               //4:    rz[3:0]
+                bc6h_format.gw = header.getvalue(15,10) |             //11:   gw[9:0]
+                                (header.getvalue(50,1) << 10);        //      gw[10]
+                bc6h_format.gx = header.getvalue(45,5);               //5:    gx[4:0]
+                bc6h_format.gy = header.getvalue(41,4) |              //5:    gy[3:0]
+                                (header.getvalue(75,1) << 4);         //      gy[4]
+                bc6h_format.gz = header.getvalue(51,4) |              //5:    gz[3:0]
+                                (header.getvalue(40,1) << 4);         //      gz[4]
+                bc6h_format.bw = header.getvalue(25,10) |             //11:   bw[9:0]
+                                (header.getvalue(59,1) << 10);        //      bw[10]
+                bc6h_format.bx = header.getvalue(55,4);               //4:    bx[3:0]
+                bc6h_format.by = header.getvalue(61,4);               //4:    by[3:0]
+                bc6h_format.bz = header.getvalue(69,1) |              //4:    bz[0]
+                                (header.getvalue(60,1) << 1) |        //      bz[1]
+                                (header.getvalue(70,1) << 2) |        //      bz[2]
+                                (header.getvalue(76,1) << 3);         //      bz[3]
                 break;
     case 0x0A:
-                bc6h_format.m_mode = 5; // 11:4:4:5                    // Bits: location                    
-                bc6h_format.wBits  = 11;
+                bc6h_format.m_mode          = 5; // 11:4:4:5
+                bc6h_format.wBits           = 11;
                 bc6h_format.tBits[C_RED]    = 4;
-                bc6h_format.tBits[C_GREEN]    = 4;
-                bc6h_format.tBits[C_BLUE]    = 5;
-                bc6h_format.rw = header.getvalue(5,10)  |             //11:    rw[9:0] 
-                                (header.getvalue(39,1) << 10);        //        rw[10]
-                bc6h_format.rx = header.getvalue(35,4);                //4:    rx[3:0]
-                bc6h_format.ry = header.getvalue(65,4);                //4:    ry[3:0]
-                bc6h_format.rz = header.getvalue(71,4);                //4:    rz[3:0]
-                bc6h_format.gw = header.getvalue(15,10) |            //11:    gw[9:0]
-                                (header.getvalue(49,1) << 10);        //        gw[10]
-                bc6h_format.gx = header.getvalue(45,4);                //4:    gx[3:0]
-                bc6h_format.gy = header.getvalue(41,4);                //4:    gy[3:0]
-                bc6h_format.gz = header.getvalue(51,4);                //4:    gz[3:0]
-                bc6h_format.bw = header.getvalue(25,10) |            //11:    bw[9:0]
-                                (header.getvalue(60,1) << 10);        //        bw[10]
-                bc6h_format.bx = header.getvalue(55,5);                //5:    bx[4:0]
-                bc6h_format.by = header.getvalue(61,4);                //5:    by[3:0]
-                                (header.getvalue(40,1) << 4);        //        by[4]
-                bc6h_format.bz = header.getvalue(50,1) |             //5:    bz[0]
-                                (header.getvalue(69,1) << 1) |        //        bz[1]
-                                (header.getvalue(70,1) << 2) |        //        bz[2]
-                                (header.getvalue(76,1) << 3) |        //        bz[3]
-                                (header.getvalue(75,1) << 4);        //        bz[4]
+                bc6h_format.tBits[C_GREEN]  = 4;
+                bc6h_format.tBits[C_BLUE]   = 5;
+                bc6h_format.rw = header.getvalue(5,10)  |             //11:   rw[9:0] 
+                                (header.getvalue(39,1) << 10);        //      rw[10]
+                bc6h_format.rx = header.getvalue(35,4);               //4:    rx[3:0]
+                bc6h_format.ry = header.getvalue(65,4);               //4:    ry[3:0]
+                bc6h_format.rz = header.getvalue(71,4);               //4:    rz[3:0]
+                bc6h_format.gw = header.getvalue(15,10) |             //11:   gw[9:0]
+                                (header.getvalue(49,1) << 10);        //      gw[10]
+                bc6h_format.gx = header.getvalue(45,4);               //4:    gx[3:0]
+                bc6h_format.gy = header.getvalue(41,4);               //4:    gy[3:0]
+                bc6h_format.gz = header.getvalue(51,4);               //4:    gz[3:0]
+                bc6h_format.bw = header.getvalue(25,10) |             //11:   bw[9:0]
+                                (header.getvalue(60,1) << 10);        //      bw[10]
+                bc6h_format.bx = header.getvalue(55,5);               //5:    bx[4:0]
+                bc6h_format.by = header.getvalue(61,4);               //5:    by[3:0]
+                                (header.getvalue(40,1) << 4);         //      by[4]
+                bc6h_format.bz = header.getvalue(50,1) |              //5:    bz[0]
+                                (header.getvalue(69,1) << 1) |        //      bz[1]
+                                (header.getvalue(70,1) << 2) |        //      bz[2]
+                                (header.getvalue(76,1) << 3) |        //      bz[3]
+                                (header.getvalue(75,1) << 4);         //      bz[4]
                 break;
     case 0x0E:
-                bc6h_format.m_mode = 6;  // 9:5:5:5                    // Bits: location    
-                bc6h_format.wBits  = 9;
+                bc6h_format.m_mode          = 6;  // 9:5:5:5
+                bc6h_format.wBits           = 9;
                 bc6h_format.tBits[C_RED]    = 5;
-                bc6h_format.tBits[C_GREEN]    = 5;
-                bc6h_format.tBits[C_BLUE]    = 5;
-                bc6h_format.rw = header.getvalue(5,9);                 //9:    rw[8:0] 
-                bc6h_format.gw = header.getvalue(15,9);                //9:    gw[8:0]
-                bc6h_format.bw = header.getvalue(25,9);                //9:    bw[8:0]
-                bc6h_format.rx = header.getvalue(35,5);                //5:    rx[4:0]
-                bc6h_format.gx = header.getvalue(45,5);                //5:    gx[4:0]
-                bc6h_format.bx = header.getvalue(55,5);                //5:    bx[4:0]
-                bc6h_format.ry = header.getvalue(65,5);                //5:    ry[4:0]
-                bc6h_format.gy = header.getvalue(41,4) |            //5:    gy[3:0]
-                                (header.getvalue(24,1) << 4);        //        gy[4]
-                bc6h_format.by = header.getvalue(61,4) |            //5:    by[3:0]
-                                (header.getvalue(14,1) << 4);        //        by[4]
-                bc6h_format.rz = header.getvalue(71,5);                //5:    rz[4:0]
-                bc6h_format.gz = header.getvalue(51,4) |            //5:    gz[3:0]
-                                (header.getvalue(40,1) << 4);        //        gz[4]
-                bc6h_format.bz = header.getvalue(50,1) |             //5:    bz[0]
-                                (header.getvalue(60,1) << 1) |        //        bz[1]
-                                (header.getvalue(70,1) << 2) |        //        bz[2]
-                                (header.getvalue(76,1) << 3) |        //        bz[3]
-                                (header.getvalue(34,1) << 4);        //        bz[4]
+                bc6h_format.tBits[C_GREEN]  = 5;
+                bc6h_format.tBits[C_BLUE]   = 5;
+                bc6h_format.rw = header.getvalue(5,9);                 //9:   rw[8:0] 
+                bc6h_format.gw = header.getvalue(15,9);                //9:   gw[8:0]
+                bc6h_format.bw = header.getvalue(25,9);                //9:   bw[8:0]
+                bc6h_format.rx = header.getvalue(35,5);                //5:   rx[4:0]
+                bc6h_format.gx = header.getvalue(45,5);                //5:   gx[4:0]
+                bc6h_format.bx = header.getvalue(55,5);                //5:   bx[4:0]
+                bc6h_format.ry = header.getvalue(65,5);                //5:   ry[4:0]
+                bc6h_format.gy = header.getvalue(41,4) |               //5:   gy[3:0]
+                                (header.getvalue(24,1) << 4);          //     gy[4]
+                bc6h_format.by = header.getvalue(61,4) |               //5:   by[3:0]
+                                (header.getvalue(14,1) << 4);          //     by[4]
+                bc6h_format.rz = header.getvalue(71,5);                //5:   rz[4:0]
+                bc6h_format.gz = header.getvalue(51,4) |               //5:   gz[3:0]
+                                (header.getvalue(40,1) << 4);          //     gz[4]
+                bc6h_format.bz = header.getvalue(50,1) |               //5:   bz[0]
+                                (header.getvalue(60,1) << 1) |         //     bz[1]
+                                (header.getvalue(70,1) << 2) |         //     bz[2]
+                                (header.getvalue(76,1) << 3) |         //     bz[3]
+                                (header.getvalue(34,1) << 4);          //     bz[4]
                 break;
     case 0x12:
-                bc6h_format.m_mode = 7;  // 8:6:5:5                    // Bits: location    
-                bc6h_format.wBits  = 8;
+                bc6h_format.m_mode          = 7;  // 8:6:5:5
+                bc6h_format.wBits           = 8;
                 bc6h_format.tBits[C_RED]    = 6;
-                bc6h_format.tBits[C_GREEN]    = 5;
-                bc6h_format.tBits[C_BLUE]    = 5;
+                bc6h_format.tBits[C_GREEN]  = 5;
+                bc6h_format.tBits[C_BLUE]   = 5;
                 bc6h_format.rw = header.getvalue(5,8);                 //8:    rw[7:0] 
                 bc6h_format.gw = header.getvalue(15,8);                //8:    gw[7:0]
                 bc6h_format.bw = header.getvalue(25,8);                //8:    bw[7:0]
@@ -487,25 +488,25 @@ AMD_BC6H_Format extract_format(BYTE in[BC6H_COMPRESSED_BLOCK_SIZE])
                 bc6h_format.gx = header.getvalue(45,5);                //5:    gx[4:0]
                 bc6h_format.bx = header.getvalue(55,5);                //5:    bx[4:0]
                 bc6h_format.ry = header.getvalue(65,6);                //6:    ry[5:0]
-                bc6h_format.gy = header.getvalue(41,4) |            //5:    gy[3:0]
-                                (header.getvalue(24,1) << 4);        //        gy[4]
-                bc6h_format.by = header.getvalue(61,4) |            //5:    by[3:0]
-                                (header.getvalue(14,1) << 4);        //        by[4]
+                bc6h_format.gy = header.getvalue(41,4) |               //5:    gy[3:0]
+                                (header.getvalue(24,1) << 4);          //      gy[4]
+                bc6h_format.by = header.getvalue(61,4) |               //5:    by[3:0]
+                                (header.getvalue(14,1) << 4);          //      by[4]
                 bc6h_format.rz = header.getvalue(71,6);                //6:    rz[5:0]
-                bc6h_format.gz = header.getvalue(51,4) |            //5:    gz[3:0]
-                                (header.getvalue(13,1) << 4);        //        gz[4]
-                bc6h_format.bz = header.getvalue(50,1) |             //5:    bz[0]
-                                (header.getvalue(60,1) << 1) |        //        bz[1]
-                                (header.getvalue(23,1) << 2) |        //        bz[2]
-                                (header.getvalue(33,1) << 3) |        //        bz[3]
-                                (header.getvalue(34,1) << 4);        //        bz[4]
+                bc6h_format.gz = header.getvalue(51,4) |               //5:    gz[3:0]
+                                (header.getvalue(13,1) << 4);          //      gz[4]
+                bc6h_format.bz = header.getvalue(50,1) |               //5:    bz[0]
+                                (header.getvalue(60,1) << 1) |         //      bz[1]
+                                (header.getvalue(23,1) << 2) |         //      bz[2]
+                                (header.getvalue(33,1) << 3) |         //      bz[3]
+                                (header.getvalue(34,1) << 4);          //      bz[4]
                 break;
     case 0x16:
-                bc6h_format.m_mode = 8;  // 8:5:6:5                    // Bits: location
-                bc6h_format.wBits  = 8;
+                bc6h_format.m_mode          = 8;  // 8:5:6:5
+                bc6h_format.wBits           = 8;
                 bc6h_format.tBits[C_RED]    = 5;
-                bc6h_format.tBits[C_GREEN]    = 6;
-                bc6h_format.tBits[C_BLUE]    = 5;
+                bc6h_format.tBits[C_GREEN]  = 6;
+                bc6h_format.tBits[C_BLUE]   = 5;
                 bc6h_format.rw = header.getvalue(5,8);                 //8:    rw[7:0] 
                 bc6h_format.gw = header.getvalue(15,8);                //8:    gw[7:0]
                 bc6h_format.bw = header.getvalue(25,8);                //8:    bw[7:0]
@@ -513,27 +514,27 @@ AMD_BC6H_Format extract_format(BYTE in[BC6H_COMPRESSED_BLOCK_SIZE])
                 bc6h_format.gx = header.getvalue(45,6);                //6:    gx[5:0]
                 bc6h_format.bx = header.getvalue(55,5);                //5:    bx[4:0]
                 bc6h_format.ry = header.getvalue(65,5);                //5:    ry[4:0]
-                bc6h_format.gy = header.getvalue(41,4) |            //6:    gy[3:0]
-                                (header.getvalue(24,1) << 4) |        //        gy[4]
-                                (header.getvalue(23,1) << 5);        //        gy[5]
-                bc6h_format.by = header.getvalue(61,4) |            //5:    by[3:0]
-                                (header.getvalue(14,1) << 4);        //        by[4]
+                bc6h_format.gy = header.getvalue(41,4) |               //6:    gy[3:0]
+                                (header.getvalue(24,1) << 4) |         //      gy[4]
+                                (header.getvalue(23,1) << 5);          //      gy[5]
+                bc6h_format.by = header.getvalue(61,4) |               //5:    by[3:0]
+                                (header.getvalue(14,1) << 4);          //      by[4]
                 bc6h_format.rz = header.getvalue(71,5);                //5:    rz[4:0]
-                bc6h_format.gz = header.getvalue(51,4) |            //6:    gz[3:0]
-                                (header.getvalue(40,1) << 4) |        //        gz[4]
-                                (header.getvalue(33,1) << 5);        //        gz[5]
-                bc6h_format.bz = header.getvalue(13,1) |             //5:    bz[0]
-                                (header.getvalue(60,1) << 1) |        //        bz[1]
-                                (header.getvalue(70,1) << 2) |        //        bz[2]
-                                (header.getvalue(76,1) << 3) |        //        bz[3]
-                                (header.getvalue(34,1) << 4);        //        bz[4]
+                bc6h_format.gz = header.getvalue(51,4) |               //6:    gz[3:0]
+                                (header.getvalue(40,1) << 4) |         //      gz[4]
+                                (header.getvalue(33,1) << 5);          //      gz[5]
+                bc6h_format.bz = header.getvalue(13,1) |               //5:    bz[0]
+                                (header.getvalue(60,1) << 1) |         //      bz[1]
+                                (header.getvalue(70,1) << 2) |         //      bz[2]
+                                (header.getvalue(76,1) << 3) |         //      bz[3]
+                                (header.getvalue(34,1) << 4);          //      bz[4]
                 break;
     case 0x1A:
-                bc6h_format.m_mode = 9;  // 8:5:5:6                    // Bits: location
-                bc6h_format.wBits  = 8;
+                bc6h_format.m_mode          = 9;  // 8:5:5:6
+                bc6h_format.wBits           = 8;
                 bc6h_format.tBits[C_RED]    = 5;
-                bc6h_format.tBits[C_GREEN]    = 5;
-                bc6h_format.tBits[C_BLUE]    = 6;
+                bc6h_format.tBits[C_GREEN]  = 5;
+                bc6h_format.tBits[C_BLUE]   = 6;
                 bc6h_format.rw = header.getvalue(5,8);                 //8:    rw[7:0] 
                 bc6h_format.gw = header.getvalue(15,8);                //8:    gw[7:0]
                 bc6h_format.bw = header.getvalue(25,8);                //8:    bw[7:0]
@@ -541,28 +542,28 @@ AMD_BC6H_Format extract_format(BYTE in[BC6H_COMPRESSED_BLOCK_SIZE])
                 bc6h_format.gx = header.getvalue(45,5);                //5:    gx[4:0]
                 bc6h_format.bx = header.getvalue(55,6);                //6:    bx[5:0]
                 bc6h_format.ry = header.getvalue(65,5);                //5:    ry[4:0]
-                bc6h_format.gy = header.getvalue(41,4) |            //5:    gy[3:0]
-                                (header.getvalue(24,1) << 4);        //        gy[4]
+                bc6h_format.gy = header.getvalue(41,4) |               //5:    gy[3:0]
+                                (header.getvalue(24,1) << 4);          //      gy[4]
                 bc6h_format.by = header.getvalue(61,4)    |            //6:    by[3:0]
-                                (header.getvalue(14,1) << 4) |        //        by[4]
-                                (header.getvalue(23,1) << 5);        //        by[5]
+                                (header.getvalue(14,1) << 4) |         //      by[4]
+                                (header.getvalue(23,1) << 5);          //      by[5]
                 bc6h_format.rz = header.getvalue(71,5);                //5:    rz[4:0]
-                bc6h_format.gz = header.getvalue(51,4) |            //5:    gz[3:0]
-                                (header.getvalue(40,1) << 4);        //        gz[4]
-                bc6h_format.bz = header.getvalue(50,1) |             //6:    bz[0]
-                                (header.getvalue(13,1) << 1) |        //        bz[1]
-                                (header.getvalue(70,1) << 2) |        //        bz[2]
-                                (header.getvalue(76,1) << 3) |        //        bz[3]
-                                (header.getvalue(34,1) << 4) |        //        bz[4]
-                                (header.getvalue(33,1) << 5);        //        bz[5]
+                bc6h_format.gz = header.getvalue(51,4) |               //5:    gz[3:0]
+                                (header.getvalue(40,1) << 4);          //      gz[4]
+                bc6h_format.bz = header.getvalue(50,1) |               //6:    bz[0]
+                                (header.getvalue(13,1) << 1) |         //      bz[1]
+                                (header.getvalue(70,1) << 2) |         //      bz[2]
+                                (header.getvalue(76,1) << 3) |         //      bz[3]
+                                (header.getvalue(34,1) << 4) |         //      bz[4]
+                                (header.getvalue(33,1) << 5);          //      bz[5]
                 break;
     case 0x1E:
-                bc6h_format.m_mode = 10;  // 6:6:6:6                // Bits: location        
-                bc6h_format.istransformed = FALSE;
-                bc6h_format.wBits  = 6;
+                bc6h_format.m_mode          = 10;  // 6:6:6:6
+                bc6h_format.istransformed   = FALSE;
+                bc6h_format.wBits           = 6;
                 bc6h_format.tBits[C_RED]    = 6;
-                bc6h_format.tBits[C_GREEN]    = 6;
-                bc6h_format.tBits[C_BLUE]    = 6;
+                bc6h_format.tBits[C_GREEN]  = 6;
+                bc6h_format.tBits[C_BLUE]   = 6;
                 bc6h_format.rw = header.getvalue(5,6);                 //6:    rw[5:0] 
                 bc6h_format.gw = header.getvalue(15,6);                //6:    gw[5:0]
                 bc6h_format.bw = header.getvalue(25,6);                //6:    bw[5:0]
@@ -570,32 +571,32 @@ AMD_BC6H_Format extract_format(BYTE in[BC6H_COMPRESSED_BLOCK_SIZE])
                 bc6h_format.gx = header.getvalue(45,6);                //6:    gx[5:0]
                 bc6h_format.bx = header.getvalue(55,6);                //6:    bx[5:0]
                 bc6h_format.ry = header.getvalue(65,6);                //6:    ry[5:0]
-                bc6h_format.gy = header.getvalue(41,4) |            //6:    gy[3:0]
-                                (header.getvalue(24,1) << 4) |        //        gy[4]
-                                (header.getvalue(21,1) << 5);        //        gy[5]
+                bc6h_format.gy = header.getvalue(41,4) |               //6:    gy[3:0]
+                                (header.getvalue(24,1) << 4) |         //      gy[4]
+                                (header.getvalue(21,1) << 5);          //      gy[5]
                 bc6h_format.by = header.getvalue(61,4)    |            //6:    by[3:0]
-                                (header.getvalue(14,1) << 4) |        //        by[4]
-                                (header.getvalue(22,1) << 5);        //        by[5]
+                                (header.getvalue(14,1) << 4) |         //      by[4]
+                                (header.getvalue(22,1) << 5);          //      by[5]
                 bc6h_format.rz = header.getvalue(71,6);                //6:    rz[5:0]
-                bc6h_format.gz = header.getvalue(51,4) |            //6:    gz[3:0]
-                                (header.getvalue(11,1) << 4) |        //        gz[4]
-                                (header.getvalue(31,1) << 5);        //        gz[5]
-                bc6h_format.bz = header.getvalue(12,1) |             //6:    bz[0]
-                                (header.getvalue(13,1) << 1) |        //        bz[1]
-                                (header.getvalue(23,1) << 2) |        //        bz[2]
-                                (header.getvalue(32,1) << 3) |        //        bz[3]
-                                (header.getvalue(34,1) << 4) |        //        bz[4]
-                                (header.getvalue(33,1) << 5);        //        bz[5]
+                bc6h_format.gz = header.getvalue(51,4) |               //6:    gz[3:0]
+                                (header.getvalue(11,1) << 4) |         //      gz[4]
+                                (header.getvalue(31,1) << 5);          //      gz[5]
+                bc6h_format.bz = header.getvalue(12,1) |               //6:    bz[0]
+                                (header.getvalue(13,1) << 1) |         //      bz[1]
+                                (header.getvalue(23,1) << 2) |         //      bz[2]
+                                (header.getvalue(32,1) << 3) |         //      bz[3]
+                                (header.getvalue(34,1) << 4) |         //      bz[4]
+                                (header.getvalue(33,1) << 5);          //      bz[5]
                 break;
 
     // Single region modes    
     case 0x03:
-                bc6h_format.m_mode = 11;  // 10:10                    // Bits: location
-                bc6h_format.wBits  = 10;
-                bc6h_format.tBits[C_RED]    = 10;
+                bc6h_format.m_mode            = 11;  // 10:10
+                bc6h_format.wBits             = 10;
+                bc6h_format.tBits[C_RED]      = 10;
                 bc6h_format.tBits[C_GREEN]    = 10;
-                bc6h_format.tBits[C_BLUE]    = 10;
-                bc6h_format.rw = header.getvalue(5,10);                // 10: rw[9:0] 
+                bc6h_format.tBits[C_BLUE]     = 10;
+                bc6h_format.rw = header.getvalue(5,10);             // 10: rw[9:0] 
                 bc6h_format.gw = header.getvalue(15,10);            // 10: gw[9:0]
                 bc6h_format.bw = header.getvalue(25,10);            // 10: bw[9:0]
                 bc6h_format.rx = header.getvalue(35,10);            // 10: rx[9:0]
@@ -603,52 +604,55 @@ AMD_BC6H_Format extract_format(BYTE in[BC6H_COMPRESSED_BLOCK_SIZE])
                 bc6h_format.bx = header.getvalue(55,10);            // 10: bx[9:0]
                 break;
     case 0x07:
-                bc6h_format.m_mode = 12;  // 11:9                    // Bits: location
-                bc6h_format.wBits  = 11;
-                bc6h_format.tBits[C_RED]    = 9;
-                bc6h_format.tBits[C_GREEN]    = 9;
-                bc6h_format.tBits[C_BLUE]    = 9;
-                bc6h_format.rw = header.getvalue(5,10) |                // 10:    rw[9:0] 
-                                (header.getvalue(44,1) << 10);        //        rw[10]
-                bc6h_format.gw = header.getvalue(15,10) |            // 10:    gw[9:0]
-                                (header.getvalue(54,1) << 10);        //        gw[10]
-                bc6h_format.bw = header.getvalue(25,10) |            // 10:    bw[9:0]
-                                (header.getvalue(64,1) << 10);        //        bw[10]
+                bc6h_format.m_mode              = 12;  // 11:9
+                bc6h_format.wBits               = 11;
+                bc6h_format.tBits[C_RED]        = 9;
+                bc6h_format.tBits[C_GREEN]      = 9;
+                bc6h_format.tBits[C_BLUE]       = 9;
+                bc6h_format.rw = header.getvalue(5,10) |               // 10:   rw[9:0] 
+                                (header.getvalue(44,1) << 10);         //       rw[10]
+                bc6h_format.gw = header.getvalue(15,10) |              // 10:   gw[9:0]
+                                (header.getvalue(54,1) << 10);         //       gw[10]
+                bc6h_format.bw = header.getvalue(25,10) |              // 10:   bw[9:0]
+                                (header.getvalue(64,1) << 10);         //       bw[10]
                 bc6h_format.rx = header.getvalue(35,9);                // 9:    rx[8:0]
                 bc6h_format.gx = header.getvalue(45,9);                // 9:    gx[8:0]
                 bc6h_format.bx = header.getvalue(55,9);                // 9:    bx[8:0]
                 break;
     case 0x0B:
-                bc6h_format.m_mode = 13;  // 12:8
-                bc6h_format.wBits  = 12;
-                bc6h_format.tBits[C_RED]    = 8;
-                bc6h_format.tBits[C_GREEN]    = 8;
-                bc6h_format.tBits[C_BLUE]    = 8;
-                bc6h_format.rw = header.getvalue(5,10) |            // 12:    rw[9:0] 
-                        (header.getvalue(43,2) << 10);                //        rw[11:10]
-                bc6h_format.gw = header.getvalue(15,10) |            // 12:    gw[9:0]
-                        (header.getvalue(53,2) << 10);                //        gw[11:10]
-                bc6h_format.bw = header.getvalue(25,10) |            // 12:    bw[9:0]
-                        (header.getvalue(63,2) << 10);                //        bw[11:10]
-                bc6h_format.rx = header.getvalue(35,8);                // 8:    rx[7:0]
-                bc6h_format.gx = header.getvalue(45,8);                // 8:    gx[7:0]
-                bc6h_format.bx = header.getvalue(55,8);                // 8:    bx[7:0]
+                bc6h_format.m_mode              = 13;  // 12:8
+                bc6h_format.wBits               = 12;
+                bc6h_format.tBits[C_RED]        = 8;
+                bc6h_format.tBits[C_GREEN]      = 8;
+                bc6h_format.tBits[C_BLUE]       = 8;
+                bc6h_format.rw = header.getvalue(5, 10) |               // 12:   rw[9:0] 
+                                 (header.getvalue(43, 1) << 11) |       //       rw[11]
+                                 (header.getvalue(44, 1) << 10);        //       rw[10]
+                bc6h_format.gw = header.getvalue(15, 10) |              // 12:   gw[9:0]
+                                 (header.getvalue(53, 1) << 11) |       //       gw[11]
+                                 (header.getvalue(54, 1) << 10);        //       gw[10]
+                bc6h_format.bw = header.getvalue(25,10) |               // 12:   bw[9:0]
+                                 (header.getvalue(63, 1) << 11) |       //       bw[11]
+                                 (header.getvalue(64,1) << 10);         //       bw[10]
+                bc6h_format.rx = header.getvalue(35,8);                 //  8:   rx[7:0]
+                bc6h_format.gx = header.getvalue(45,8);                 //  8:   gx[7:0]
+                bc6h_format.bx = header.getvalue(55,8);                 //  8:   bx[7:0]
                 break;
     case 0x0F:
-                bc6h_format.m_mode = 14;  // 16:4
-                bc6h_format.wBits  = 16;
+                bc6h_format.m_mode          = 14;  // 16:4
+                bc6h_format.wBits           = 16;
                 bc6h_format.tBits[C_RED]    = 4;
-                bc6h_format.tBits[C_GREEN]    = 4;
-                bc6h_format.tBits[C_BLUE]    = 4;
-                bc6h_format.rw = header.getvalue(5,10) |            // 16:    rw[9:0] 
-                        (header.getvalue(39,6) << 10);                //        rw[15:10]
-                bc6h_format.gw = header.getvalue(15,10) |            // 16:    gw[9:0]
-                        (header.getvalue(49,6) << 10);                //        gw[15:10]
-                bc6h_format.bw = header.getvalue(25,10) |            // 16:    bw[9:0]
-                        (header.getvalue(59,6) << 10);                //        bw[15:10]
-                bc6h_format.rx = header.getvalue(35,4);                // 4:    rx[3:0]
-                bc6h_format.gx = header.getvalue(45,4);                // 4:    gx[3:0]
-                bc6h_format.bx = header.getvalue(55,4);                // 4:    bx[3:0]
+                bc6h_format.tBits[C_GREEN]  = 4;
+                bc6h_format.tBits[C_BLUE]   = 4;
+                bc6h_format.rw = header.getvalue(5,10) |                // 16:   rw[9:0] 
+                                 (header.getvalue(39,6) << 10);         //       rw[15:10]
+                bc6h_format.gw = header.getvalue(15,10) |               // 16:   gw[9:0]
+                                 (header.getvalue(49,6) << 10);         //       gw[15:10]
+                bc6h_format.bw = header.getvalue(25,10) |               // 16:   bw[9:0]
+                                 (header.getvalue(59,6) << 10);         //       bw[15:10]
+                bc6h_format.rx = header.getvalue(35,4);                 // 4:    rx[3:0]
+                bc6h_format.gx = header.getvalue(45,4);                 // 4:    gx[3:0]
+                bc6h_format.bx = header.getvalue(55,4);                 // 4:    bx[3:0]
                 break;
     default:
                 bc6h_format.m_mode = 0;
@@ -666,15 +670,14 @@ AMD_BC6H_Format extract_format(BYTE in[BC6H_COMPRESSED_BLOCK_SIZE])
         bc6h_format.region = BC6_TWO;
         // Get the shape index bits 77 to 81
         bc6h_format.d_shape_index = (unsigned short) header.getvalue(77,5);
-        bc6h_format.istransformed = (bc6h_format.m_mode < 10)?TRUE:FALSE; 
+        bc6h_format.istransformed = (bc6h_format.m_mode < 10) ? TRUE : FALSE; 
     }
     else 
-        {
-            bc6h_format.region            = BC6_ONE;
-            bc6h_format.d_shape_index    = 0;
-            bc6h_format.istransformed    = FALSE; 
-
-        }
+    {
+        bc6h_format.region           = BC6_ONE;
+        bc6h_format.d_shape_index    = 0;
+        bc6h_format.istransformed    = (bc6h_format.m_mode > 11) ? TRUE : FALSE; 
+    }
 
     // Save the points in a form easy to compute with
     bc6h_format.EC[0].A[0] = bc6h_format.rw; bc6h_format.EC[0].B[0] = bc6h_format.rx; bc6h_format.EC[1].A[0] = bc6h_format.ry; bc6h_format.EC[1].B[0] = bc6h_format.rz;
@@ -711,10 +714,14 @@ AMD_BC6H_Format extract_format(BYTE in[BC6H_COMPRESSED_BLOCK_SIZE])
 
 //---------------------------------------------------------------------------------------------------------------------------------------
 
-void BC6HBlockDecoder::DecompressBlock( float out[BC6H_MAX_SUBSET_SIZE][BC6H_MAX_DIMENSION_BIG],BYTE in[BC6H_COMPRESSED_BLOCK_SIZE])
+void BC6HBlockDecoder::DecompressBlock( float out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],BYTE in[COMPRESSED_BLOCK_SIZE])
 {
     // now determine the mode type and extract the coded endpoints data 
     AMD_BC6H_Format bc6h_format = extract_format(in);
+    if (!bc6signed)
+        bc6h_format.format = UNSIGNED_F16;
+    else
+        bc6h_format.format = SIGNED_F16;
 
     if(bc6h_format.region == BC6_ONE)
     {
@@ -747,7 +754,7 @@ void BC6HBlockDecoder::DecompressBlock( float out[BC6H_MAX_SUBSET_SIZE][BC6H_MAX
         // for a one region partitions : its always return 0 so there is room for performance improvement
         // by seperating the condition into another looped call.
         //int region = bc6h_format.region == BC6_ONE?0:BC6H_PARTITIONS[1][bc6h_format.d_shape_index][indexPos];
-        int region = bc6h_format.region == BC6_ONE?0:BC7_PARTITIONS[1][bc6h_format.d_shape_index][indexPos];
+        int region = bc6h_format.region == BC6_ONE?0:PARTITIONS[1][bc6h_format.d_shape_index][indexPos];
 
         // Index is validated as ok
         int paleteIndex  = bc6h_format.indices[block_row][block_col];

@@ -104,6 +104,7 @@ TC_PluginError LoopABGR32(FILE*& pFile, DDSD2*& , MipSet*& pMipSet, void*&,int n
 TC_PluginError PostLoopABGR32(FILE*&, DDSD2*&, MipSet*&, void*&);
 TC_PluginError LoopR32G32(FILE*& pFile, DDSD2*& , MipSet*& pMipSet, void*&,int nMipLevel, int nFaceOrSlice, DWORD dwWidth, DWORD dwHeight);
 TC_PluginError LoopR10G10B10A2(FILE*& pFile, DDSD2*& , MipSet*& pMipSet, void*&,int nMipLevel, int nFaceOrSlice, DWORD dwWidth, DWORD dwHeight);
+TC_PluginError LoopR9G9B9E5(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, DWORD dwWidth, DWORD dwHeight);
 TC_PluginError LoopR16G16(FILE*& pFile, DDSD2*& , MipSet*& pMipSet, void*&,int nMipLevel, int nFaceOrSlice, DWORD dwWidth, DWORD dwHeight);
 TC_PluginError LoopR32(FILE*& pFile, DDSD2*& , MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, DWORD dwWidth, DWORD dwHeight);
 TC_PluginError LoopR8G8(FILE*& pFile, DDSD2*& , MipSet*& pMipSet, void*&,int nMipLevel, int nFaceOrSlice, DWORD dwWidth, DWORD dwHeight);

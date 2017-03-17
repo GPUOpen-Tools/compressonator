@@ -33,16 +33,13 @@
 #include <QtWidgets>
 
 
-
 class CSetApplicationOptions : public QDialog
 {
     Q_OBJECT
 
-
 public:
     CSetApplicationOptions(const QString title, QWidget *parent);
     ~CSetApplicationOptions();
-
 
     void SaveSettings(QString SettingsFile, QSettings::Format Format);
     void LoadSettings(QString SettingsFile, QSettings::Format Format);
@@ -53,9 +50,8 @@ public:
 public slots:
     void onClose();
     void oncurrentItemChanged(QtBrowserItem *item);
-	void onImageEncodeChanged(QVariant &value);
+    void onImageEncodeChanged(QVariant &value);
     void onImageViewDecodeChanged(QVariant &value);
-    void onGPUDecompressChanged(QVariant &value);
 
 private:
     // Common for all
@@ -68,7 +64,6 @@ private:
     ObjectController            *m_theController;
     QtProperty                  *m_propAppOptions;
 };
-
 
 extern C_Application_Options g_Application_Options;
 extern bool g_useCPUDecode;

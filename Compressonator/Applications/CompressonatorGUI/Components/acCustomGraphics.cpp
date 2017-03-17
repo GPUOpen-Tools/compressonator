@@ -180,9 +180,12 @@ acCustomGraphicsScene::acCustomGraphicsScene(QObject *parent = 0) : QGraphicsSce
     acCustomGraphicsScene_ID++;
     ID = acCustomGraphicsScene_ID;
 
+    isDebug = false;
     m_gridStep = 25;
     m_gridenabled = eCustomGraphicsScene_Grids::Block;
 
+    cursorBlockX = 4;
+    cursorBlockY = 4;
 }
 
 bool acCustomGraphicsScene::isGridEnabled()

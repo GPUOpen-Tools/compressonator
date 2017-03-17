@@ -44,6 +44,8 @@ void cpImageView::oncpImageViewMousePosition(QPointF *scenePos, QPointF *localPo
     // is mouse inside image view
     if (localPos) 
     {
+        // Rounds up pixel co-ordinates
+        // if in debugMode: blocks at 0,0 will start at 1,1
         int x = qRound(localPos->rx() + 0.5);
         int y = qRound(localPos->ry() + 0.5);
         if (x < 0) x = 0;
@@ -64,19 +66,32 @@ void cpImageView::oncpImageViewMousePosition(QPointF *scenePos, QPointF *localPo
         }
 
         QColor color(localRgb);
-      
-        QString Txt;
-        Txt = " RGBA " +
-            QString::number(color.red()) + "," +
-            QString::number(color.green()) + ',' +
-            QString::number(color.blue()) + "," +
-            QString::number(color.alpha());
-
-        m_labelColorTxt->setText(Txt);
-
         QString Txt2;
-        Txt2 = QString::number(x) + "," +
-            QString::number(y) + " px";
+
+#ifdef _DEBUG
+        if (m_acImageView->m_debugMode)
+        {
+            m_labelColorTxt->setText("");
+            XBlockNum = x;
+            YBlockNum = y;
+            Txt2 = QString::number(x) + "," +
+                QString::number(y) + " Block";
+        }
+        else
+#endif
+        {
+            QString Txt;
+            Txt = " RGBA " +
+                QString::number(color.red()) + "," +
+                QString::number(color.green()) + ',' +
+                QString::number(color.blue()) + "," +
+                QString::number(color.alpha());
+
+            m_labelColorTxt->setText(Txt);
+
+            Txt2 = QString::number(x) + "," +
+                QString::number(y) + " px";
+        }
 
         m_labelPos->setText(Txt2);
 
@@ -94,6 +109,199 @@ void cpImageView::oncpImageViewMousePosition(QPointF *scenePos, QPointF *localPo
        palette.setColor(QPalette::WindowText, Qt::black);
        m_labelColorRGBA->setPalette(palette);
     }
+}
+
+void cpImageView::keyPressEvent(QKeyEvent *event)
+{
+    if (m_acImageView == NULL) return;
+    if (m_OriginalMipImages->mipset == NULL) return;
+
+#ifdef _DEBUG
+    if (event->key() == Qt::Key_Space)
+    {
+        if (m_acImageView->m_debugMode)
+        {
+            MipLevel   *mipLevel = m_CMips->GetMipLevel(m_OriginalMipImages->mipset, 0);
+            
+            if (!mipLevel) return;
+
+            // Check the block size matches what we expect for  BC6H or BC7
+            if (m_acImageView->m_graphicsScene->cursorBlockX != 4) return;
+            if (m_acImageView->m_graphicsScene->cursorBlockY != 4) return;
+
+            // Flag to indicate we have data to process
+            bool hasData = false;
+
+            // Calc data stride for each row index = width * num channels
+            int  row_stride = m_OriginalMipImages->mipset->m_nWidth * 4;
+
+            // (BC6 Block Width * BC6 Block Height * Num Channels) * (Image Width / BC6 Block Width)
+            // (4*4*4) * (Width / 4) = 4*4*Width
+            int  block_offset = 4 * 4 * m_OriginalMipImages->mipset->m_nWidth;
+
+            // Get the block position we need to fill from
+            // 16 = BC6 Block Width * Num Channels
+            int start_index = (((XBlockNum - 1) * 16)) + ((YBlockNum - 1) * block_offset);
+            int index;
+
+            // napatel check format before getting data!
+            // we have two sets Float16 (2 Bytes alligned) and Float32 (4 Bytes alligned)
+
+            if (m_acImageView->m_debugFormat == "BC6H" || m_acImageView->m_debugFormat == "BC6H_SF")
+            {
+                // Encoder input to fill with data
+                float  in[16][4];
+                float  dec_out[16][4];
+                BYTE   cmp_in[16];
+
+                if (m_OriginalMipImages->mipset->m_ChannelFormat == CF_Float16)
+                {
+                    // Get origin data pointer
+                    WORD *data = mipLevel->m_pwData;
+                    int  d = 0;
+                    for (int row = 0; row < 4; row++)
+                    {
+                        index = (row * row_stride) + start_index;
+                        for (int col = 0; col < 4; col++)
+                        {
+                            in[d][0] = data[index];
+                            in[d][1] = data[index + 1];
+                            in[d][2] = data[index + 2];
+                            in[d][3] = data[index + 3];
+                            d++;
+                            index += 4;
+                        }
+                    }
+                    hasData = true;
+                }
+                else
+                if (m_OriginalMipImages->mipset->m_ChannelFormat == CF_Float32)
+                {
+                    // Get origin data pointer
+                    float *data = mipLevel->m_pfData;
+                    int  d = 0;
+                    for (int row = 0; row < 4; row++)
+                    {
+                        index = (row * row_stride) + start_index;
+                        for (int col = 0; col < 4; col++)
+                        {
+                            in[d][0] = data[index];
+                            in[d][1] = data[index + 1];
+                            in[d][2] = data[index + 2];
+                            in[d][3] = data[index + 3];
+                            d++;
+                            index += 4;
+                        }
+                    }
+                    hasData = true;
+                }
+                else
+                if (m_OriginalMipImages->mipset->m_ChannelFormat == CF_Compressed)
+                {
+                    // Get origin data pointer
+                    BYTE *data = mipLevel->m_pbData;
+
+                    // set the data offset to the compressed block row,col which is in 16 byte incriments
+                    // Note : 16 bytes per block * (Width in pixels / width of block which is 4 ) = 4 * width
+                    int  cmp_block_offset = 4 * m_OriginalMipImages->mipset->m_nWidth;
+                    int  offset = (((XBlockNum - 1) * 16)) + ((YBlockNum - 1) * cmp_block_offset);
+                    data = data + offset;
+                    for (int d = 0; d < 16; d++)
+                    {
+                            cmp_in[d] = data[d];
+                    }
+                    hasData = true;
+                }
+
+                if (hasData)
+                {
+                    // Use SDK interface to Encode a Block for debugging with
+                    BC6HBlockEncoder *blockEncode;
+                    BYTE              output[16];
+                    if (CMP_InitializeBCLibrary() == BC_ERROR_NONE)
+                    {
+                        CMP_BC6H_BLOCK_PARAMETERS  user_settings;
+                        user_settings.fQuality = 1.0;
+                        user_settings.bUsePatternRec = false;
+                        if(m_acImageView->m_debugFormat == "BC6H")
+                            user_settings.bIsSigned = false;
+                        else
+                            user_settings.bIsSigned = true;
+                        user_settings.fExposure = 1.00;
+                        if (CMP_CreateBC6HEncoder(user_settings, &blockEncode) == BC_ERROR_NONE)
+                        {
+                            if (m_OriginalMipImages->mipset->m_ChannelFormat != CF_Compressed)
+                            {
+                                CMP_EncodeBC6HBlock(blockEncode, in, output);
+                                // Feed compressed output to be decoded into dec_out
+                                CMP_DecodeBC6HBlock(output, dec_out);
+                            }
+                            else
+                            {
+                                CMP_DecodeBC6HBlock(cmp_in, dec_out);
+                            }
+                            CMP_DestroyBC6HEncoder(blockEncode);
+                        }
+                        CMP_ShutdownBCLibrary();
+                    }
+                }
+            }
+            else
+            if (m_acImageView->m_debugFormat == "BC7")
+            {
+                // Encoder input to fill with data
+                double  in[16][4];
+                double  dec_out[16][4];
+
+
+                // Get origin data pointer
+                BYTE *data = mipLevel->m_pbData;
+                int  d = 0;
+                for (int row = 0; row < 4; row++)
+                {
+                    index = (row * row_stride) + start_index;
+                    for (int col = 0; col < 4; col++)
+                    {
+                        in[d][0] = data[index];
+                        in[d][1] = data[index + 1];
+                        in[d][2] = data[index + 2];
+                        in[d][3] = data[index + 3];
+                        d++;
+                        index += 4;
+                    }
+                }
+                hasData = true;
+
+                if (hasData)
+                {
+                    // Use SDK interface to Encode a Block for debugging with
+                    BC7BlockEncoder *blockEncode;
+                    BYTE              output[16];
+                    if (CMP_InitializeBCLibrary() == BC_ERROR_NONE)
+                    {
+                        CMP_BC6H_BLOCK_PARAMETERS  user_settings;
+                        user_settings.fQuality = 1.0;
+                        user_settings.bUsePatternRec = false;
+                        user_settings.bIsSigned = false;
+                        user_settings.fExposure = 1.00;
+                        if (CMP_CreateBC7Encoder(0.05,false,false, 0xCF, 1.0, &blockEncode) == BC_ERROR_NONE)
+                        {
+                            CMP_EncodeBC7Block(blockEncode, in, output);
+                            // Feed compressed output to be decoded into dec_out
+                            CMP_DecodeBC7Block(output, dec_out);
+                            CMP_DestroyBC7Encoder(blockEncode);
+                        }
+                        CMP_ShutdownBCLibrary();
+                    }
+                }
+            }
+        }
+        else
+            return; 
+    }
+#endif
+
+    return;
 }
 
 void cpImageView::EnableMipLevelDisplay(int level)
@@ -122,6 +330,12 @@ cpImageView::~cpImageView()
     {
         delete m_imageLoader;
         m_imageLoader = NULL;
+    }
+
+    if (m_CMips)
+    {
+        delete m_CMips;
+        m_CMips = NULL;
     }
 
     if (Plastique_style)
@@ -174,21 +388,28 @@ void cpImageView::InitData()
     imageview_ViewImageOriginalSize         = NULL;
     imageview_FitInWindow                   = NULL;
     m_CBimageview_GridBackground            = NULL;
+    m_CBimageview_ToolList                  = NULL;
     m_CBimageview_MipLevel                  = NULL;
     m_CBimage_DecompressUsing               = NULL;
+    m_ExrProperties                         = NULL;
+    m_OriginalMipImages                     = NULL;
     m_bOnacScaleChange                      = false;
     m_useOriginalImageCursor                = false;
+    XBlockNum                               = 1;
+    YBlockNum                               = 1;
 }
 
-cpImageView::cpImageView(const QString filePathName, const QString Title, QWidget *parent, CMipImages *MipImages, Setting *setting) : acCustomDockWidget(filePathName, parent)
+
+cpImageView::cpImageView(const QString filePathName, const QString Title, QWidget *parent, CMipImages *MipImages, Setting *setting, CMipImages *OriginalMipImages) : acCustomDockWidget(filePathName, parent)
 {
     InitData();
     m_parent    = parent;
     m_fileName  = filePathName;
     m_localMipImages = false;           // Flags if we used our own MipImage and not from parameter
     m_CBimageview_MipLevel = NULL;
+    m_CMips = new CMIPS();
     Plastique_style = QStyleFactory::create("Plastique");
-
+    
     if (MipImages)
     {
         if (setting->reloadImage && !setting->generateDiff && !setting->generateMips)
@@ -212,6 +433,19 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
         }
         else
             m_MipImages = NULL;
+    }
+
+    // if our current image is compressed, Are we suppiled with a pointer to its uncomprssed source image miplevels
+    // else we just use the current miplevels, this pointer can be either compressed or uncompressed data
+    // check its MIPIMAGE_FORMAT property to determine which one it is 
+
+    if (OriginalMipImages)
+    {
+        m_OriginalMipImages = OriginalMipImages;
+    }
+    else
+    {
+        m_OriginalMipImages = m_MipImages;
     }
 
     QFile f(filePathName);
@@ -265,7 +499,16 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
     // Image/Texture Viewer Component
     //================================
     m_acImageView = new acImageView(filePathName, this, NULL, m_MipImages);
-   
+
+    m_viewContextMenu = new QMenu(m_acImageView);
+
+    // Image View Context Menu Item
+    m_acImageView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(m_acImageView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(onViewCustomContextMenu(const QPoint &)));
+    actSaveView = new QAction("Save View as...", this);
+    connect(actSaveView, SIGNAL(triggered()), this, SLOT(onSaveViewAs()));
+    m_viewContextMenu->addAction(actSaveView);
+
     // Need to check if MipImages is valid here!!
     if (m_MipImages)
     {
@@ -319,6 +562,13 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
         connect(custTitleBar, SIGNAL(ToolBarCliked()), this, SLOT(OnToolBarClicked()));
     }
 
+    //  //===============
+    //  // Virtual mouse with block
+    //  //===============
+    //  connect(this->m_acImageView, SIGNAL(acImageViewMousePosition(QPointF *, QPointF *, int)), &m_customMouse, SLOT(onVirtualMouseMoveEvent(QPointF *, QPointF *, int)));
+    //  
+    //  connect(&m_customMouse, SIGNAL(VirtialMousePosition(QPointF *, QPointF *, int)), this->m_acImageView, SLOT(onVirtualMouseMoveEvent(QPointF *, QPointF *, int)));
+
     //===============
     // Tool Bar
     //===============
@@ -361,7 +611,7 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
         QLabel *ZoomLabel = new QLabel(this);
         ZoomLabel->setText("Zoom:");
         m_toolBar->addWidget(ZoomLabel);
-        connect(m_ZoomLevel, SIGNAL(valueChanged(int)), SLOT(onZoomLevelChanged(int)));
+        connect(m_ZoomLevel, SIGNAL(valueChanged(int)), this, SLOT(onZoomLevelChanged(int)));
         connect(this, SIGNAL(OnSetScale(int)), m_acImageView, SLOT(onSetScale(int)));
         connect(m_acImageView, SIGNAL(acScaleChanged(int)), this, SLOT(onacScaleChange(int)));
 
@@ -521,8 +771,53 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
 
         //m_CBimageview_MipLevel->setStyleSheet("QComboBox { border: 1px solid gray; border - radius: 3px; padding: 1px 18px 1px 3px; min - width: 6em; }");
         connect(m_CBimageview_MipLevel, SIGNAL(currentIndexChanged(int)), m_acImageView, SLOT(onImageLevelChanged(int)));
+        connect(m_CBimageview_MipLevel, SIGNAL(currentIndexChanged(int)), this, SLOT(onResetHDR(int)));
         m_toolBar->addWidget(m_CBimageview_MipLevel);
 
+    }
+
+    m_toolBar->addSeparator();
+
+#ifdef _DEBUG
+    // Debug Checkbox
+    m_CBimageview_Debug = new QComboBox(this);
+    m_CBimageview_Debug->addItem(tr("Debug..."));
+    m_CBimageview_Debug->addItem(tr("BC6H"));
+    m_CBimageview_Debug->addItem(tr("BC6H_SF"));
+    m_CBimageview_Debug->addItem(tr("BC7"));
+    m_toolBar->addWidget(m_CBimageview_Debug);
+
+    connect(m_CBimageview_Debug, SIGNAL(activated(int)), m_acImageView, SLOT(onToggleDebugChanged(int)));
+
+    m_toolBar->addSeparator();
+#endif
+
+    if (m_MipImages && (m_MipImages->mipset != NULL))
+    {
+        if (m_MipImages->mipset->m_format == CMP_FORMAT_ARGB_32F || (m_MipImages->mipset->m_format == CMP_FORMAT_ARGB_16F) 
+            || (m_MipImages->mipset->m_format == CMP_FORMAT_RGBE_32F) || (m_MipImages->mipset->m_format == CMP_FORMAT_BC6H)
+            || (m_MipImages->mipset->m_format == CMP_FORMAT_BC6H_SF))
+        {
+            m_ExrProperties = new acEXRTool();
+            // Tool list
+            QLabel *GridLabel = new QLabel(this);
+            GridLabel->setText("");
+
+            m_toolBar->addWidget(GridLabel);
+            m_CBimageview_ToolList = new QComboBox(this);
+            m_CBimageview_ToolList->addItem(tr("View..."));
+            m_CBimageview_ToolList->addItem(tr("HDR Properties"));
+            m_CBimageview_ToolList->setStyle(Plastique_style);
+            m_toolBar->addWidget(m_CBimageview_ToolList);
+            connect(m_CBimageview_ToolList, SIGNAL(activated(int)), this, SLOT(onToolListChanged(int)));
+            if (m_ExrProperties)
+            {
+                connect(m_ExrProperties->exrExposureBox, SIGNAL(valueChanged(double)), m_acImageView, SLOT(onExrExposureChanged(double)));
+                connect(m_ExrProperties->exrDefogBox, SIGNAL(valueChanged(double)), m_acImageView, SLOT(onExrDefogChanged(double)));
+                connect(m_ExrProperties->exrKneeLowBox, SIGNAL(valueChanged(double)), m_acImageView, SLOT(onExrKneeLowChanged(double)));
+                connect(m_ExrProperties->exrKneeHighBox, SIGNAL(valueChanged(double)), m_acImageView, SLOT(onExrKneeHighChanged(double)));
+            }
+        }
     }
 
 #ifdef USE_INTERNAL_DECOMPRESS
@@ -599,11 +894,64 @@ void cpImageView::oncpResetImageView()
     imageview_ToggleChannelB->setChecked(false);
     imageview_ToggleChannelA->setChecked(false);
     imageview_ToggleGrayScale->setCheckable(false);
+
+    onResetHDR(0);
 }
 
 void cpImageView::onDecompressUsing(int useDecomp)
 {
     Q_UNUSED(useDecomp);
+}
+
+void cpImageView::onResetHDR(int value)
+{
+    Q_UNUSED(value);
+    if (m_ExrProperties)
+    {
+        if (m_ExrProperties->isVisible())
+            m_ExrProperties->hide();
+        m_ExrProperties->exrExposureBox->setValue(DEFAULT_EXPOSURE);
+        m_ExrProperties->exrDefogBox->setValue(DEFAULT_DEFOG);
+        m_ExrProperties->exrKneeLowBox->setValue(DEFAULT_KNEELOW);
+        m_ExrProperties->exrKneeHighBox->setValue(DEFAULT_KNEEHIGH);
+    }
+}
+
+void cpImageView::onToolListChanged(int index)
+{
+    switch (index) 
+    {
+    case 1:  //EXR
+        if (m_ExrProperties)
+        {
+            if (m_ExrProperties->isVisible())
+                m_ExrProperties->raise();
+            else
+                m_ExrProperties->show();
+        }
+        break;
+    default:
+        if (m_ExrProperties)
+            m_ExrProperties->hide();
+        break;
+    }
+}
+
+void cpImageView::onViewCustomContextMenu(const QPoint &point)
+{
+    m_viewContextMenu->exec(m_acImageView->mapToGlobal(point));
+}
+
+void cpImageView::onSaveViewAs()
+{
+    if (m_acImageView)
+    {
+        QString filePathName = QFileDialog::getSaveFileName(this, tr("Save Image View as"), "ImageView", tr("Image View files (*.bmp)"));
+        if (filePathName.length() == 0) return;
+        QPixmap pixmap = m_acImageView->m_imageItem->pixmap();
+        QImage img = pixmap.toImage();
+        img.save(filePathName);
+    }
 }
 
 void cpImageView::showToobar(bool show)

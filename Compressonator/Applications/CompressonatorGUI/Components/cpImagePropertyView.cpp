@@ -344,6 +344,15 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("Block Compression (BC) format designed to support high-dynamic range (floating point) color spaces. (e.g. .exr extension image file).");
         break;
+    case C_Destination_Options::BC6H_SF:
+        compressedOptions = true;
+        colorWeightOptions = false;
+        alphaChannelOptions = false;
+        astcbitrateOptions = false;
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("Block Compression (BC) format designed to support high-dynamic range (signed floating point) color spaces. (e.g. .exr extension image file).");
+        break;
     case C_Destination_Options::BC1:
     case C_Destination_Options::DXT1:
         compressedOptions = true;

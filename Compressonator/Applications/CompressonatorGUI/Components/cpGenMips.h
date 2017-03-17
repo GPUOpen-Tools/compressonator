@@ -116,7 +116,7 @@ private:
 
 Q_SIGNALS:
     
-    void generateMIPMap(int levels);
+    void generateMIPMap(int levels, QTreeWidgetItem *item);
 
 public Q_SLOTS:
     void valueChanged(QtProperty *property, const QVariant &value);
@@ -125,6 +125,7 @@ public Q_SLOTS:
 
 public:
     CData   *m_cdata;
+    QTreeWidgetItem *m_mipsitem;
 };
 
 // External R&D - Info pages

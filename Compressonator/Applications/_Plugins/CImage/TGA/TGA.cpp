@@ -207,7 +207,7 @@ TC_PluginError LoadTGA_ARGB8888(FILE* pFile, MipSet* pMipSet, TGAHeader& Header)
     pMipSet->m_nMipLevels = 1;
 
     // Allocate a temporary buffer and read the bitmap data into it
-    DWORD dwSize = pMipSet->m_nWidth *  pMipSet->m_nHeight * sizeof(COLOR);
+    DWORD dwSize = pMipSet->m_nWidth *  pMipSet->m_nHeight * sizeof(CMP_COLOR);
     unsigned char* pTempData = static_cast<unsigned char*>(malloc(dwSize));
     fread(pTempData, dwSize, 1, pFile);
     fclose(pFile);
@@ -236,7 +236,7 @@ TC_PluginError LoadTGA_ARGB8888(FILE* pFile, MipSet* pMipSet, TGAHeader& Header)
 
     for(int j = nStart; j != nEnd; j+= nIncrement)
     {
-        BYTE* pData = (BYTE*) (TGA_CMips->GetMipLevel(pMipSet, 0)->m_pbData + (j * pMipSet->m_nWidth * sizeof(COLOR)));
+        BYTE* pData = (BYTE*) (TGA_CMips->GetMipLevel(pMipSet, 0)->m_pbData + (j * pMipSet->m_nWidth * sizeof(CMP_COLOR)));
         for(int i=0; i < pMipSet->m_nWidth; i++)
         {
             // Note MIPSet is  RGBA
@@ -282,7 +282,7 @@ TC_PluginError LoadTGA_ARGB8888_RLE(FILE* pFile, MipSet* pMipSet, TGAHeader& Hea
     fread(pTempData, dwTempSize, 1, pFile);
     fclose(pFile);
 
-    DWORD dwPitch = pMipSet->m_nWidth * sizeof(COLOR);
+    DWORD dwPitch = pMipSet->m_nWidth * sizeof(CMP_COLOR);
     BYTE* pTempPtr = pTempData;
 
     int nStart, nEnd, nIncrement;
@@ -393,7 +393,7 @@ TC_PluginError LoadTGA_RGB888(FILE* pFile, MipSet* pMipSet, TGAHeader& Header)
 
     for(int j = nStart; j != nEnd; j+= nIncrement)
     {
-        BYTE* pData = (BYTE*) (TGA_CMips->GetMipLevel(pMipSet, 0)->m_pbData + (j * pMipSet->m_nWidth * sizeof(COLOR)));
+        BYTE* pData = (BYTE*) (TGA_CMips->GetMipLevel(pMipSet, 0)->m_pbData + (j * pMipSet->m_nWidth * sizeof(CMP_COLOR)));
         for(int i=0; i < pMipSet->m_nWidth; i++)
         {
             nBlue    = *pTempPtr++;
@@ -435,7 +435,7 @@ TC_PluginError LoadTGA_RGB888_RLE(FILE* pFile, MipSet* pMipSet, TGAHeader& Heade
     fclose(pFile);
 
     BYTE* pTempPtr = pTempData;
-    DWORD dwPitchOut = pMipSet->m_nWidth * sizeof(COLOR);
+    DWORD dwPitchOut = pMipSet->m_nWidth * sizeof(CMP_COLOR);
 
     int nStart, nEnd, nIncrement;
     // Bottom up ?
@@ -592,7 +592,7 @@ TC_PluginError LoadTGA_G8_RLE(FILE* pFile, MipSet* pMipSet, TGAHeader& Header)
 
     for(int j = nStart; j != nEnd; j+= nIncrement)
     {
-        BYTE* pData = (BYTE*) (TGA_CMips->GetMipLevel(pMipSet, 0)->m_pbData + (j * pMipSet->m_nWidth * sizeof(COLOR)));
+        BYTE* pData = (BYTE*) (TGA_CMips->GetMipLevel(pMipSet, 0)->m_pbData + (j * pMipSet->m_nWidth * sizeof(CMP_COLOR)));
 
         int nColumn =0;
         while(nColumn < pMipSet->m_nWidth)
@@ -761,12 +761,12 @@ TC_PluginError SaveTGA_ARGB8888(FILE* pFile, const MipSet* pMipSet)
 
 TC_PluginError SaveTGA_ARGB8888_RLE(FILE* pFile, const MipSet* pMipSet)
 {
-    return SaveRLE(pFile, pMipSet, sizeof(COLOR), sizeof(COLOR));
+    return SaveRLE(pFile, pMipSet, sizeof(CMP_COLOR), sizeof(CMP_COLOR));
 }
 
 TC_PluginError SaveTGA_RGB888(FILE* pFile, const MipSet* pMipSet)
 {
-    DWORD dwPitch = pMipSet->m_nWidth * sizeof(COLOR);
+    DWORD dwPitch = pMipSet->m_nWidth * sizeof(CMP_COLOR);
     for(int j=pMipSet->m_nHeight-1; j>=0; j--)
         //    for(int j=0; j < pMipSet->m_nHeight-1; j++)
     {
@@ -774,7 +774,7 @@ TC_PluginError SaveTGA_RGB888(FILE* pFile, const MipSet* pMipSet)
         for(int i=0; i < pMipSet->m_nWidth; i++)
         {
             fwrite(pData, 3, 1, pFile);
-            pData += sizeof(COLOR);
+            pData += sizeof(CMP_COLOR);
         }
     }
 
@@ -785,7 +785,7 @@ TC_PluginError SaveTGA_RGB888(FILE* pFile, const MipSet* pMipSet)
 
 TC_PluginError SaveTGA_RGB888_RLE(FILE* pFile, const MipSet* pMipSet)
 {
-    return SaveRLE(pFile, pMipSet, 3, sizeof(COLOR));
+    return SaveRLE(pFile, pMipSet, 3, sizeof(CMP_COLOR));
 }
 
 TC_PluginError SaveTGA_G8(FILE* pFile, const MipSet* pMipSet)

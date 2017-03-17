@@ -89,15 +89,7 @@ public:
     // Creates an os specific surface
     // Tries to find a graphics and a present queue
     void initSurface(
-#ifdef _WIN32
-        void* platformHandle, void* platformWindow
-#else
-#ifdef __ANDROID__
-        ANativeWindow* window
-#else
-        xcb_connection_t* connection, xcb_window_t window
-#endif
-#endif
+        void* platformHandle, void* platformWindow, CMP_FORMAT cmp_format
     )
     {
         VkResult err;
@@ -201,10 +193,13 @@ public:
         assert(!err);
 
         // If the surface format list only includes one entry with VK_FORMAT_UNDEFINED,
-        // there is no preferered format, so we assume VK_FORMAT_B8G8R8A8_UNORM
+        // there is no preferered format, so we assume VK_FORMAT_R8G8B8A8_UNORM
         if ((formatCount == 1) && (surfaceFormats[0].format == VK_FORMAT_UNDEFINED))
         {
-            colorFormat = VK_FORMAT_R8G8B8A8_UNORM;//VK_FORMAT_B8G8R8A8_UNORM;
+            if(cmp_format ==  CMP_FORMAT_ARGB_16F)
+                colorFormat = VK_FORMAT_R16G16B16A16_SFLOAT;
+            else
+                colorFormat = VK_FORMAT_R8G8B8A8_UNORM;
         }
         else
         {
@@ -212,7 +207,10 @@ public:
             // If you need a specific format (e.g. SRGB) you'd need to
             // iterate over the list of available surface format and
             // check for it's presence
-            colorFormat = VK_FORMAT_R8G8B8A8_UNORM;//surfaceFormats[0].format;
+            if (cmp_format == CMP_FORMAT_ARGB_16F)
+                colorFormat = VK_FORMAT_R16G16B16A16_SFLOAT;
+            else
+                colorFormat = VK_FORMAT_R8G8B8A8_UNORM;
         }
         colorSpace = surfaceFormats[0].colorSpace;
     }

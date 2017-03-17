@@ -115,7 +115,7 @@ void CGenMips::onGenerate()
     int temp= m_MipLevelSizes.count() - m_MipLevels;
     m_MipLevels = temp - 1;
     minsize = minsize >> m_MipLevels;
-    emit generateMIPMap(minsize);
+    emit generateMIPMap(minsize, this->m_mipsitem);
     hide();
 }
 

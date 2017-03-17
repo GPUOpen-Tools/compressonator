@@ -34,7 +34,7 @@
 #include "qtbuttonpropertybrowser.h"
 #include "qtgroupboxpropertybrowser.h"
 
-
+#include "cpMainComponents.h"
 #define DROPDOWN_FILEEXT_WIDTH  60
 
 
@@ -85,6 +85,7 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget *parent) :
     m_propBitrate = NULL;
     isEditing        = false;
     isInit           = false;
+    isNoSetting      = false;
     m_extnum         = 1;
 
     setWindowTitle(title);
@@ -301,8 +302,9 @@ void CSetCompressOptions::onNameTextChanged(QString text)
 void CSetCompressOptions::compressionValueChanged(QVariant &value)
 {
     C_Destination_Options::eCompression comp = (C_Destination_Options::eCompression &)value;
+    m_data.m_Compression = comp;
+    
     bool ok = false;
-
     QString extension = "DDS";
     bool compressedOptions = false;
     bool colorWeightOptions = false;
@@ -333,6 +335,7 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
     switch (comp)
     {
     case C_Destination_Options::BC6H:
+    case C_Destination_Options::BC6H_SF:
         compressedOptions = true;
         colorWeightOptions = false;
         alphaChannelOptions = false;
@@ -900,6 +903,7 @@ void CSetCompressOptions::setMinMaxStep(QtVariantPropertyManager* manager, QtPro
 
 void CSetCompressOptions::onPBCancel()
 {
+    isNoSetting = false;
     resetData();
     hide();
     isEditing = false;
@@ -923,23 +927,58 @@ void CSetCompressOptions::onPBCancel()
 
 }
 
-void CSetCompressOptions::PBSaveCompressSetting()
+void CSetCompressOptions::SaveCompressedInfo()
 {
-    m_data.m_compname = m_LEName->displayText();
+    if (!isNoSetting)
+    {
+        m_data.m_compname = m_LEName->displayText();
+    }
+    else
+    {
+        m_data.m_compname.append(m_LEName->displayText());
+    }
 
     QString ImageExt = m_fileFormats->currentText();
 
-    // Path+FileName+Ext
+    // FileName+Ext
     m_data.m_FileInfoDestinationName = m_data.m_compname + "." + ImageExt;
 
     // Path
     QString Path = m_DestinationFolder->text();
     QDir dir(Path);
     QString finalPath = dir.absolutePath();
-
     // Path+FileName
     finalPath.append("/");
     finalPath.append(m_data.m_compname);
+    QFile file;
+    file.setFileName(finalPath);
+    bool isWritable = file.open(QIODevice::ReadWrite);      
+
+    if (!isWritable)
+    {
+        QString appLocalPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+        QFileInfo fileInfo2(appLocalPath);
+        finalPath = fileInfo2.dir().path();
+        // Path+FileName
+        finalPath.append("/");
+        finalPath.append(m_data.m_compname);
+        QFileInfo fileInfo(finalPath);
+
+        cpMainComponents *temp = (cpMainComponents*)(m_parent);
+        if (temp)
+        {
+            if (temp->m_CompressStatusDialog)
+            {
+                temp->m_CompressStatusDialog->onClearText();
+                temp->m_CompressStatusDialog->showOutput();
+            }
+        }
+        PrintInfo("Warning: Destination path is not writable, the path has been changed to app local path.\n");
+       
+    }
+
+    file.close();
+    file.remove();
 
     if (m_fileFormats->currentIndex() >= 0 && !(ImageExt.isEmpty()))
     {
@@ -953,11 +992,65 @@ void CSetCompressOptions::PBSaveCompressSetting()
 
     // check if user change the file name or path
     if (m_data.m_destFileNamePath.compare(m_dataOriginal.m_destFileNamePath) != 0)
-                    m_data.m_data_has_been_changed = true;
+        m_data.m_data_has_been_changed = true;
 
     emit SaveCompressSettings(m_item, m_data);
     hide();
     isEditing = false;
+}
+
+void CSetCompressOptions::PBSaveCompressSetting()
+{
+    if (!isNoSetting)
+    {
+        SaveCompressedInfo();
+    }
+    else
+        hide();
+//    else
+//    {
+//        QTreeWidgetItem *itr = m_items.back();
+//        if (!m_items.empty())
+//            m_items.pop_back();
+//        else return;
+//
+//        while (itr)
+//        {
+//            QVariant v = itr->data(1, Qt::UserRole);
+//            C_Source_Image *m_imagefile = v.value<C_Source_Image *>();
+//            QFileInfo fileinfo(m_imagefile->m_Name);
+//            m_data.m_sourceFileNamePath = m_imagefile->m_Full_Path;
+//            m_data.m_SourceImageSize = m_imagefile->m_ImageSize;
+//            m_data.m_SourceIscompressedFormat = CompressedFormat(m_imagefile->m_Format);
+//
+//            int count = itr->childCount();
+//
+//            if (m_imagefile->m_extnum <= count)
+//                m_imagefile->m_extnum = count;
+//
+//            m_extnum = m_imagefile->m_extnum++;
+//            m_data.m_Width = m_imagefile->m_Width;
+//            m_data.m_Height = m_imagefile->m_Height;
+//
+//            m_data.m_compname = fileinfo.baseName();
+//
+//            m_data.m_editing = false;
+//            m_item = itr;
+//
+//            SaveCompressedInfo();
+//
+//            if (!m_items.empty())
+//            {
+//                itr = m_items.back();
+//                m_items.pop_back();
+//            }                
+//            else 
+//                break;
+//        }
+//
+//        isNoSetting = false; //reset value
+//        m_LEName->setEnabled(true); //re-enable file naming
+//    }
 }
 
 

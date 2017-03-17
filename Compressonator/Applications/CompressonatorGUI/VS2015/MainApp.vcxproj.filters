@@ -337,6 +337,9 @@
     <ClCompile Include="..\GeneratedFiles\qrc_CompressonatorGUI.cpp">
       <Filter>Generated Files\Release_MD</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\_Plugins\Common\query_timer.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
     <ClCompile Include="..\Components\acProgressDlg.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -362,6 +365,15 @@
       <Filter>Generated Files\Release_MD</Filter>
     </ClCompile>
     <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_acAboutDlg.cpp">
+      <Filter>Generated Files\Debug_MD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\acEXRTool.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_acEXRTool.cpp">
+      <Filter>Generated Files\Release_MD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_acEXRTool.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
   </ItemGroup>
@@ -401,6 +413,9 @@
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\_Plugins\Common\query_timer.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -519,6 +534,9 @@
       <Filter>Components</Filter>
     </CustomBuild>
     <CustomBuild Include="..\Components\acAboutDlg.h">
+      <Filter>Components</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\acEXRTool.h">
       <Filter>Components</Filter>
     </CustomBuild>
   </ItemGroup>

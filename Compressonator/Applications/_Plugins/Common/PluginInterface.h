@@ -21,7 +21,7 @@
 // THE SOFTWARE.
 //
 /// \file PluginInterface.h
-/// \version 2.40
+/// \version 2.50
 /// \brief Declares the interface to the AMDCompress library.
 //
 //=====================================================================
@@ -64,7 +64,7 @@ typedef enum
     EL_Warning,    ///< The error message is for a warning.
 } TC_ErrorLevel;
 
-#define DECLARE_PLUGIN(x)        extern "C"{__declspec(dllexport) void * makePlugin()   { return new x;}}
+#define DECLARE_PLUGIN(x)         extern "C"{__declspec(dllexport) void * makePlugin()   { return new x;}}
 #define SET_PLUGIN_TYPE(x)        extern "C"{__declspec(dllexport) char * getPluginType(){ return x;}}
 #define SET_PLUGIN_NAME(x)        extern "C"{__declspec(dllexport) char * getPluginName(){ return x;}}
 
@@ -150,9 +150,23 @@ class PluginInterface_Compute : PluginBase
 public:
     PluginInterface_Compute() {}
     virtual ~PluginInterface_Compute() {}
+    virtual int     TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
+    virtual int     TC_Init(CMP_Texture *srcTexture, void  *kernel_options) = 0;
+    virtual char    *TC_ComputeSourceFile() = 0;
+};
+
+// These type of plugins are used to Decompress Images using GPU
+class PluginInterface_Compute2 : PluginBase
+{
+public:
+    PluginInterface_Compute2() {}
+    virtual ~PluginInterface_Compute2() {}
     virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
     virtual int TC_Init(CMP_Texture *srcTexture, void  *kernel_options) = 0;
+    virtual CMP_ERROR TC_Compress(char *source_file, void  *kernel_options, CMP_Texture &SrcTexture, CMP_Texture &destTexture) = 0;
+    virtual void TC_SetComputeOptions(void *options) = 0;
     virtual char *TC_ComputeSourceFile() = 0;
+    virtual int TC_Close() = 0;
 };
 
 
@@ -175,6 +189,7 @@ typedef PluginInterface_Image*      (*PLUGIN_FACTORYFUNC_IMAGE)();
 typedef PluginInterface_Analysis*   (*PLUGIN_FACTORYFUNC_ANALYSIS)();
 typedef PluginInterface_Filters*    (*PLUGIN_FACTORYFUNC_FILTERS)();
 typedef PluginInterface_Compute*    (*PLUGIN_FACTORYFUNC_COMPUTE)();
+typedef PluginInterface_Compute2*   (*PLUGIN_FACTORYFUNC_COMPUTE2)();
 typedef PluginInterface_GPUDecode*  (*PLUGIN_FACTORYFUNC_GPUDECODE)();
 
 #endif

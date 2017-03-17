@@ -61,6 +61,7 @@ typedef enum _CodecType
 #endif // SUPPORT_ETC_ALPHA
     CT_ETC2_RGB,
     CT_BC6H,
+    CT_BC6H_SF,
     CT_BC7,
     CT_ASTC,
     CT_GT,

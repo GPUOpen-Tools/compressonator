@@ -98,5 +98,6 @@ void            astc_find_closest_blockxy_2d(int *x, int *y, int consider_illega
 bool            FormatSupportsQualitySetting(CMP_FORMAT format);
 bool            FormatSupportsDXTCBase(CMP_FORMAT format);
 
-
+CMP_FLOAT      F16toF32(CMP_HALF f);
+CMP_HALF    F32toF16(CMP_FLOAT   f);
 #endif

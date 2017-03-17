@@ -388,7 +388,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -427,7 +427,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -466,7 +466,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -505,7 +505,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -544,7 +544,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -577,7 +577,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -608,7 +608,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -642,7 +642,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -676,7 +676,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -724,7 +724,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -772,7 +772,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -820,7 +820,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -867,7 +867,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -902,7 +902,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -937,7 +937,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -972,7 +972,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -1087,10 +1087,12 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half\half.cpp" />
+    <ClCompile Include="..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half\half.cpp" />
     <ClCompile Include="..\Header\Codec\ASTC\ARM\stb_image.c" />
+    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_RGB9995EF.cpp" />
     <ClCompile Include="..\Source\Codec\ETC\Codec_ETC2.cpp" />
     <ClCompile Include="..\Source\Codec\ETC\Codec_ETC2_RGB.cpp" />
+    <ClCompile Include="..\Source\Common\HDR_Encode.cpp" />
     <ClCompile Include="..\Source\Compressonator.cpp" />
     <ClCompile Include="..\Source\Codec\ATI\Compressonatori_tc.c" />
     <ClCompile Include="..\Source\Codec\ATI\CompressonatorXCodec.cpp" />
@@ -1129,15 +1131,12 @@
     <ClCompile Include="..\Source\Codec\ASTC\ASTC_Encode.cpp" />
     <ClCompile Include="..\Source\Codec\ASTC\ASTC_Library.cpp" />
     <ClCompile Include="..\Source\Codec\ASTC\Codec_ASTC.cpp" />
-    <ClCompile Include="..\Source\Codec\BC6H\BC6H_3dquant_vpc.cpp" />
     <ClCompile Include="..\Source\Codec\BC6H\BC6H_Decode.cpp" />
     <ClCompile Include="..\Source\Codec\BC6H\BC6H_Definitions.cpp" />
     <ClCompile Include="..\Source\Codec\BC6H\BC6H_Encode.cpp" />
     <ClCompile Include="..\Source\Codec\BC6H\BC6H_Library.cpp" />
-    <ClCompile Include="..\Source\Codec\BC6H\BC6H_Partitions.cpp" />
     <ClCompile Include="..\Source\Codec\BC6H\BC6H_utils.cpp" />
     <ClCompile Include="..\Source\Codec\BC6H\Codec_BC6H.cpp" />
-    <ClCompile Include="..\Source\Codec\BC6H\BC6H_shake.cpp" />
     <ClCompile Include="..\Source\Codec\BC7\3dquant_vpc.cpp" />
     <ClCompile Include="..\Source\Codec\BC7\BC7_Decode.cpp" />
     <ClCompile Include="..\Source\Codec\BC7\BC7_Definitions.cpp" />
@@ -1198,7 +1197,8 @@
     <ClCompile Include="..\Source\Compress.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half\half.h" />
+    <ClInclude Include="..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half\half.h" />
+    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_RGB9995EF.h" />
     <ClInclude Include="..\Header\Codec\ETC\Codec_ETC2.h" />
     <ClInclude Include="..\Header\Codec\ETC\Codec_ETC2_RGB.h" />
     <ClInclude Include="..\Header\Compressonator.h" />
@@ -1214,14 +1214,10 @@
     <ClInclude Include="..\Header\Codec\ASTC\Codec_ASTC.h" />
     <ClInclude Include="..\Header\Codec\ATI\CompressonatorXCodec.h" />
     <ClInclude Include="..\Header\Codec\ATI\Compressonator_tc.h" />
-    <ClInclude Include="..\Header\Codec\BC6H\BC6H_3dquant_constants.h" />
-    <ClInclude Include="..\Header\Codec\BC6H\BC6H_3dquant_vpc.h" />
     <ClInclude Include="..\Header\Codec\BC6H\BC6H_Decode.h" />
     <ClInclude Include="..\Header\Codec\BC6H\BC6H_Definitions.h" />
     <ClInclude Include="..\Header\Codec\BC6H\BC6H_Encode.h" />
     <ClInclude Include="..\Header\Codec\BC6H\BC6H_Library.h" />
-    <ClInclude Include="..\Header\Codec\BC6H\BC6H_Partitions.h" />
-    <ClInclude Include="..\Header\Codec\BC6H\BC6H_shake.h" />
     <ClInclude Include="..\Header\Codec\BC6H\BC6H_utils.h" />
     <ClInclude Include="..\Header\Codec\BC6H\Codec_BC6H.h" />
     <ClInclude Include="..\Header\Codec\BC7\3dquant_constants.h" />
@@ -1290,6 +1286,7 @@
     <ClInclude Include="..\Header\Internal\CompClient.h" />
     <ClInclude Include="..\Header\Internal\debug.h" />
     <ClInclude Include="..\Header\Version.h" />
+    <ClInclude Include="..\Source\Common\HDR_Encode.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\CompressonatorLib.def" />

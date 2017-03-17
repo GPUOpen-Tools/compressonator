@@ -105,6 +105,9 @@
     <Filter Include="Source Files\Codec\GT">
       <UniqueIdentifier>{ba2a928f-426a-4ae3-8f30-bb0dc3222858}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{1f288b42-e7e4-4dd1-84b6-328fe90c42de}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Compress.cpp">
@@ -152,16 +155,7 @@
     <ClCompile Include="..\Source\Codec\BC6H\BC6H_Library.cpp">
       <Filter>Source Files\Codec\BC6H</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Codec\BC6H\BC6H_3dquant_vpc.cpp">
-      <Filter>Source Files\Codec\BC6H</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\Codec\BC6H\BC6H_Definitions.cpp">
-      <Filter>Source Files\Codec\BC6H</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\BC6H\BC6H_Partitions.cpp">
-      <Filter>Source Files\Codec\BC6H</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\BC6H\BC6H_shake.cpp">
       <Filter>Source Files\Codec\BC6H</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Codec\BC6H\BC6H_utils.cpp">
@@ -398,9 +392,6 @@
     <ClCompile Include="..\Source\Codec\ETC\Codec_ETC_RGB.cpp">
       <Filter>Source Files\Codec\ETC</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half\half.cpp">
-      <Filter>Source Files\External Codec</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\Codec\ATI\Compressonatori_tc.c">
       <Filter>Source Files\Codec\ATC</Filter>
     </ClCompile>
@@ -433,6 +424,15 @@
     </ClCompile>
     <ClCompile Include="..\Source\Codec\ETC\Codec_ETC2_RGB.cpp">
       <Filter>Source Files\Codec\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half\half.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Common\HDR_Encode.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_RGB9995EF.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -522,12 +522,6 @@
     <ClInclude Include="..\Header\Codec\ATI\Codec_ATI2N_DXT5.h">
       <Filter>Header Files\Codec\ATI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\Codec\BC6H\BC6H_3dquant_constants.h">
-      <Filter>Header Files\Codec\BC6H</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\Codec\BC6H\BC6H_3dquant_vpc.h">
-      <Filter>Header Files\Codec\BC6H</Filter>
-    </ClInclude>
     <ClInclude Include="..\Header\Codec\BC6H\BC6H_Decode.h">
       <Filter>Header Files\Codec\BC6H</Filter>
     </ClInclude>
@@ -538,12 +532,6 @@
       <Filter>Header Files\Codec\BC6H</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Codec\BC6H\BC6H_Library.h">
-      <Filter>Header Files\Codec\BC6H</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\Codec\BC6H\BC6H_Partitions.h">
-      <Filter>Header Files\Codec\BC6H</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\Codec\BC6H\BC6H_shake.h">
       <Filter>Header Files\Codec\BC6H</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Codec\BC6H\BC6H_utils.h">
@@ -684,9 +672,6 @@
     <ClInclude Include="..\Header\Internal\debug.h">
       <Filter>Header Files\Internal</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\Half\half.h">
-      <Filter>Header Files\External Codec</Filter>
-    </ClInclude>
     <ClInclude Include="..\Header\Codec\ATI\Compressonator_tc.h">
       <Filter>Header Files\Codec\ATI</Filter>
     </ClInclude>
@@ -719,6 +704,15 @@
     </ClInclude>
     <ClInclude Include="..\Header\Codec\ETC\Codec_ETC2_RGB.h">
       <Filter>Header Files\Codec\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half\half.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Common\HDR_Encode.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_RGB9995EF.h">
+      <Filter>Header Files\Codec\Buffer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

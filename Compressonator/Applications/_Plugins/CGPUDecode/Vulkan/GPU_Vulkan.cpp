@@ -847,6 +847,9 @@ VkFormat GPU_Vulkan::MIP2VK_Format(const CMP_Texture* pSourceTexture)
     case CMP_FORMAT_BC6H:
         m_VKnum = VK_FORMAT_BC6H_UFLOAT_BLOCK;
         break;
+    case CMP_FORMAT_BC6H_SF:
+        m_VKnum = VK_FORMAT_BC6H_SFLOAT_BLOCK;
+        break;
     case CMP_FORMAT_BC7:
         m_VKnum = VK_FORMAT_BC7_UNORM_BLOCK;
         break;
@@ -1812,6 +1815,19 @@ void GPU_Vulkan::write(const CMP_Texture* pDestTexture) {
                 pData++;
             }
         }
+        else if (swapChain.colorFormat == VK_FORMAT_R16G16B16A16_SFLOAT)
+        {
+            for (x = 0; x < m_width; x++)
+            {
+                //only "int" type work, use int type and copy twice for this case
+                *pData = *row;
+                row++;
+                pData++;
+                *pData = *row;
+                row++;
+                pData++;
+            }
+        }
         else {
             //printf("Unrecognized image format - will not write image files");
             break;
@@ -1840,7 +1856,7 @@ CMP_ERROR WINAPI GPU_Vulkan::Decompress(
 
     if (!initVulkan(m_tenableValidation)) return CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB;
 
-    swapChain.initSurface(hInstance, m_hWnd);
+    swapChain.initSurface(hInstance, m_hWnd, pDestTexture->format);
 
     cmp_res = prepare(pSourceTexture);
 

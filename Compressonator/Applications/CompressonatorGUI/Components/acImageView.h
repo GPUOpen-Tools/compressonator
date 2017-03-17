@@ -76,10 +76,17 @@ public:
     QGraphicsLineItem                *m_linex;                
     QGraphicsLineItem                *m_liney;
 
+    QGraphicsRectItem                *m_rectBlocks;
+
 
     QWidget                          *m_navigateButton;       // Navigation button     
     bool                              m_navVisible;           // Navigation visible states (default : false = which is not shown)
     bool                              m_isDiffView;
+
+#ifdef _DEBUG
+    bool                              m_debugMode;
+    QString                           m_debugFormat;
+#endif
 
     QGraphicsItem *                  m_tableViewitem;         // Table Image Data View item
     QTableView*                      m_tableView;             // Qt Table View Widget
@@ -113,10 +120,14 @@ private:
     int  m_imageOrientation;                                 // Tracks Image Rotation from 0 - North (upright) to 1 - East 2 - South 3 - West
     bool m_localMipImages;
     int  m_ImageIndex;                                       // QImage[] index
-
+    int  m_currentMiplevel;
 public slots:
     void onVirtualMouseMoveEvent(QPointF *pos, QPointF *localPos, int onID);     //   
     void onResetImageView();                                  // 
+    void onExrExposureChanged(double value);                  // exr exposure
+    void onExrDefogChanged(double value);                     // exr defog
+    void onExrKneeLowChanged(double value);                   // exr knee low
+    void onExrKneeHighChanged(double value);                  // exr knee high
     void onToggleChannelR();                                  // Channel Red
     void onToggleChannelG();                                  // Channel Green
     void onToggleChannelB();                                  // Channel Blue
@@ -139,6 +150,10 @@ public slots:
     void onWheelScaleDown(QPointF &pos);                      // Zoom Image Out
     void onSetScale(int value);
     void ManageScrollBars();
+
+#ifdef _DEBUG
+    void onToggleDebugChanged(int index);
+#endif
 
 private slots:
     void onacImageViewMousePosition(QPointF *pos, int ID);   // connects to SIGNAL graphicsscene::scenemouseposition   

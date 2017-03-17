@@ -46,6 +46,10 @@
 // Common Project Data Types
 #include "cpProjectData.h"
 
+// #define ENABLE_AGS_SUPPORT
+#ifdef ENABLE_AGS_SUPPORT
+#include <amd_ags.h>
+#endif
 
 #define PROJECT_EXTENSION   ".cprj"
 #define ENV_COMPRESSONATOR_ROOT "COMPRESSONATOR_ROOT"
@@ -88,6 +92,11 @@ public:
     void showProgressBusy(QString Message);
     void hideProgressBusy(QString Message);
 
+#ifdef ENABLE_AGS_SUPPORT
+    void AGSGetDisplayInfo(AGSDisplaySettings *settings);
+    bool AGSSetDisplay(AGSDisplaySettings *settings);
+#endif
+
     bool                    m_ForceImageRefresh;
     QString                 m_sSettingsFile;
     QString                 curFile;
@@ -118,6 +127,16 @@ public:
     QString  m_copyRightInformation;
 
     bool    isCompressInProgress;
+
+#ifdef ENABLE_AGS_SUPPORT
+    // HDR & FullScreen Modes
+    AGSDisplaySettings  m_settings;
+    bool                m_bIsHDRAvailableOnPrimary;
+    bool                m_bIsFullScreenModeOn;
+    AGSContext*         m_agsContext;
+    int                 m_DeviceIndex;
+    int                 m_DisplayIndex;
+#endif
 
 public slots:
     void AddImageView(QString &fileName, QTreeWidgetItem * item);
@@ -159,6 +178,7 @@ private slots:
     void openImageFile();
     bool saveProjectFile();
     bool saveAsProjectFile();
+    bool saveImageFile();
     void settings();
     void userGuide();
     void gettingStarted();
@@ -166,7 +186,10 @@ private slots:
     void browserMsg(const char *msg);
     void OnWelcomePageButtonClick(QString &Request, QString &Msg);
     void genMIPMaps(); // Dialog
-    void onGenerateMIPMap(int nMinSize); // Generate the MIP levels on selected item(s)
+#ifdef ENABLE_AGS_SUPPORT
+    void handleHDRon();
+#endif
+    void onGenerateMIPMap(int nMinSize, QTreeWidgetItem *item); // Generate the MIP levels on selected item(s)
     void deleteImageFile();
     void onCompressionDone();
     void onCloseAllDocuments();
@@ -202,6 +225,7 @@ private:
     QAction *exportAct;
     QAction *saveAct;
     QAction *saveAsAct;
+    QAction *saveImageAct;
     QAction *exitAct;
     QAction *userGuideAct;
     QAction *gettingStartedAct;
@@ -211,13 +235,16 @@ private:
     QAction *closeAllDocuments;
     QAction *showOutputAct;
     QAction *showWelcomePageAct;
-
     QAction *deleteImageAct;
 
     // Compression Action used for toolbar
     QAction *compressAct;
 
     QAction *imagediffAct;
+
+#ifdef ENABLE_AGS_SUPPORT
+    QPushButton *onHDRButton;
+#endif
 
     // MIP Generation Action used for toolbar
     QAction *MIPGenAct;

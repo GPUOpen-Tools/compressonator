@@ -55,7 +55,7 @@ float half_conv_float(unsigned short in)
 
 void Exr::fileinfo(const string inf, int &width, int &height)
 {
-	RgbaInputFile file (inf.c_str());
+    RgbaInputFile file (inf.c_str());
     Box2i dw = file.dataWindow();
 
     width  = dw.max.x - dw.min.x + 1;
@@ -75,34 +75,53 @@ void Exr::readRgba(const string inf, Array2D<Rgba> &pix, int &w, int &h)
 
 void Exr::writeRgba(const string outf, const Array2D<Rgba> &pix, int w, int h)
 {
-	RgbaOutputFile file (outf.c_str(), w, h, WRITE_RGBA);
-	file.setFrameBuffer (&pix[0][0], 1, w);
-	file.writePixels (h);
+    RgbaOutputFile file (outf.c_str(), w, h, WRITE_RGBA);
+    file.setFrameBuffer (&pix[0][0], 1, w);
+    file.writePixels (h);
 }
 
-void Rgba2Texture(Array2D<Rgba> &pixels, float* data, int w, int h)
+void Rgba2Texture(Array2D<Rgba> &pixels, CMP_HALF* data, int w, int h)
 {
-	// Save the Half Data format value into a Float for processing later
+    // Save the Half Data format value into CMP_HALF bit format for processing later
     for (int y = 0; y < h; ++y)
     {
-		for (int x = 0; x < w; ++x)
-		{
-			*data  = pixels[y][x].r.bits();		
-			data++;
-			*data  = pixels[y][x].g.bits();
-			data++;
-			*data  = pixels[y][x].b.bits();
-			data++;
-			*data  = pixels[y][x].a.bits();
-			data++;
-		}
+        for (int x = 0; x < w; ++x)
+        {
+            *data  = pixels[y][x].r.bits();
+            data++;
+            *data  = pixels[y][x].g.bits();
+            data++;
+            *data  = pixels[y][x].b.bits();
+            data++;
+            *data  = pixels[y][x].a.bits();
+            data++;
+        }
     }
 }
 
-void Texture2Rgba(float* data, Array2D<Rgba> &pixels, int w, int h, CMP_FORMAT isDeCompressed)
+void Texture2Rgba(CMP_HALF* data, Array2D<Rgba> &pixels, int w, int h, CMP_FORMAT isDeCompressed)
 {
 
     if (isDeCompressed != CMP_FORMAT_Unknown)
+    {
+        // Save the Half Data format value into a Float for processing later
+        for (int y = 0; y < h; ++y)
+        {
+            for (int x = 0; x < w; ++x)
+            {
+                pixels[y][x].r.setBits(*data);
+                data++;
+                pixels[y][x].g.setBits(*data);
+                data++;
+                pixels[y][x].b.setBits(*data);
+                data++;
+                pixels[y][x].a.setBits(*data);
+                data++;
+            }
+        }
+
+    }
+    else
     {
         // Save the Half Data format value into a Float for processing later
         for (int y = 0; y < h; ++y)
@@ -116,25 +135,6 @@ void Texture2Rgba(float* data, Array2D<Rgba> &pixels, int w, int h, CMP_FORMAT i
                 pixels[y][x].b = *data;
                 data++;
                 pixels[y][x].a = *data;
-                data++;
-            }
-        }
-
-    }
-    else
-    {
-        // Save the Half Data format value into a Float for processing later
-        for (int y = 0; y < h; ++y)
-        {
-            for (int x = 0; x < w; ++x)
-            {
-                pixels[y][x].r = half_conv_float((unsigned short)(*data));
-                data++;
-                pixels[y][x].g = half_conv_float((unsigned short)(*data));
-                data++;
-                pixels[y][x].b = half_conv_float((unsigned short)(*data));
-                data++;
-                pixels[y][x].a = half_conv_float((unsigned short)(*data));
                 data++;
             }
         }

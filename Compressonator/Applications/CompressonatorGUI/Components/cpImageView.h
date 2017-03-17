@@ -44,6 +44,7 @@
 //#include "objectcontroller.h"
 #include "cpImageView.h"
 #include "acImageView.h"
+#include "acEXRTool.h"
 #include "cpImageLoader.h"
 #include "acCustomDockWidget.h"
 
@@ -82,7 +83,7 @@ class cpImageView : public acCustomDockWidget
     Q_OBJECT
 public:
 
-    cpImageView(const QString fileName, const QString Title, QWidget *parent, CMipImages *MipImages, Setting *setting);
+    cpImageView(const QString filePathName, const QString Title, QWidget *parent, CMipImages *MipImages, Setting *setting, CMipImages *OriginalMipImages = NULL);
     ~cpImageView();
 
     void InitData();
@@ -95,14 +96,23 @@ public:
 
     CImageLoader        *m_imageLoader;
     acImageView         *m_acImageView;
+    QMenu               *m_viewContextMenu;
     CMipImages          *m_MipImages;
+    CMipImages          *m_OriginalMipImages;            // Read only pointer to original images
+    acEXRTool           *m_ExrProperties;                // HDR image properties window
 
+    QAction             *actSaveView;
 
     QSize               m_imageSize;
     int                 ID;
+    int                 XBlockNum;
+    int                 YBlockNum;
     bool                m_localMipImages;
     bool                m_bOnacScaleChange;
     bool                m_useOriginalImageCursor;
+
+protected:
+    void keyPressEvent(QKeyEvent *event);
 
 public slots:
     void OnToolBarClicked();                                // Hook into the CustomeWidgets TitleBars On Tool Button Clicked events
@@ -112,7 +122,10 @@ public slots:
     void oncpResetImageView();
     void onZoomLevelChanged(int value);
     void onacScaleChange(int value);
-
+    void onResetHDR(int value);
+    void onToolListChanged(int index);
+    void onViewCustomContextMenu(const QPoint &point);
+    void onSaveViewAs();
     
 private:
     void showEvent(QShowEvent *);
@@ -160,9 +173,17 @@ private:
     QAction             *imageview_ZoomOut;
     QAction             *imageview_ViewImageOriginalSize;
     QAction             *imageview_FitInWindow;
+#ifdef _DEBUG
+    QComboBox           *m_CBimageview_Debug;
+#endif
     QComboBox           *m_CBimageview_GridBackground;
+    QComboBox           *m_CBimageview_ToolList;
     QComboBox           *m_CBimageview_MipLevel;
     QComboBox           *m_CBimage_DecompressUsing;
+
+    acVirtualMouseHub    m_customMouse;
+
+    CMIPS               *m_CMips;
 
 Q_SIGNALS:
     void UpdateData(QObject *data);

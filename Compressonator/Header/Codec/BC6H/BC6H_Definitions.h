@@ -25,8 +25,8 @@
 #ifndef _BC6H_DEFINITIONS_H_
 #define _BC6H_DEFINITIONS_H_
 
-#include "BC6H_3dquant_constants.h"
 #include <Windows.h>
+#include "HDR_Encode.h"
 
 #define BC6H_NUM_BLOCK_TYPES            14
 #define BC6H_MAX_PARTITIONS             32
@@ -61,7 +61,6 @@
 #define R_3(ep)                         (ep)[1][1][i]
 #define MASK(n)                         ((1<<(n))-1)
 #define SIGN_EXTEND(w,tbits)            ((((signed(w))&(1<<((tbits)-1)))?((~0)<<(tbits)):0)|(signed(w)))
-#define Float16bitMAX1                  0x7C00            // max 16bit half float value (0x7BFF) + 1
 #define REGION(x,y,si)                  shapes[((si)&3)*4+((si)>>2)*64+(x)+(y)*16]
 #define BC6H_NREGIONS                   2                 // shapes for two regions
 
@@ -124,6 +123,11 @@ struct BC6H_Vec3
     int x,y,z;
 };
 
+struct BC6H_Vec3f
+{
+    float x, y, z;
+};
+
 struct UShortVec3
 {
     unsigned short x,y,z;
@@ -138,29 +142,30 @@ struct ModePartitions
     int modebits;           // number of mode bits
     int IndexPrec;          // Index Precision
     int mode;               // Mode value to save
+    int lowestPrec;         // Step size of each precesion incriment
 };
 
 static ModePartitions ModePartition[MAX_BC6H_PARTITIONS+1] =
 {
-    0,    0,0,0,        0,    0,    0,    0,        // Mode = Invaild
+    0,    0,0,0,        0,    0,    0,    0,     0,   // Mode = Invaild
 
     // Two region Partition
-    10,   5,5,5,        1,    2,    3,    0x00,    // Mode = 1
-    7,    6,6,6,        1,    2,    3,    0x01,    // Mode = 2
-    11,   5,4,4,        1,    5,    3,    0x02,    // Mode = 3
-    11,   4,5,4,        1,    5,    3,    0x06,    // Mode = 4 
-    11,   4,4,5,        1,    5,    3,    0x0a,    // Mode = 5
-    9,    5,5,5,        1,    5,    3,    0x0e,    // Mode = 6
-    8,    6,5,5,        1,    5,    3,    0x12,    // Mode = 7
-    8,    5,6,5,        1,    5,    3,    0x16,    // Mode = 8
-    8,    5,5,6,        1,    5,    3,    0x1a,    // Mode = 9
-    6,    6,6,6,        0,    5,    3,    0x1e,    // Mode = 10
+    10,   5,5,5,        1,    2,    3,    0x00,  31,    // Mode = 1
+    7,    6,6,6,        1,    2,    3,    0x01,  248,   // Mode = 2
+    11,   5,4,4,        1,    5,    3,    0x02,  15,    // Mode = 3
+    11,   4,5,4,        1,    5,    3,    0x06,  15,    // Mode = 4 
+    11,   4,4,5,        1,    5,    3,    0x0a,  15,    // Mode = 5
+    9,    5,5,5,        1,    5,    3,    0x0e,  62,    // Mode = 6
+    8,    6,5,5,        1,    5,    3,    0x12,  124,   // Mode = 7
+    8,    5,6,5,        1,    5,    3,    0x16,  124,   // Mode = 8
+    8,    5,5,6,        1,    5,    3,    0x1a,  124,   // Mode = 9
+    6,    6,6,6,        0,    5,    3,    0x1e,  496,   // Mode = 10
                             
     // One region Partition    
-    10,   10,10,10,     0,    5,    4,    0x03,    // Mode = 11
-    11,   9,9,9,        0,    5,    4,    0x07,    // Mode = 12
-    12,   8,8,8,        0,    5,    4,    0x0b,    // Mode = 13
-    16,   4,4,4,        0,    5,    4,    0x0f,    // Mode = 14
+    10,   10,10,10,     0,    5,    4,    0x03,  31,    // Mode = 11
+    11,   9,9,9,        1,    5,    4,    0x07,  15,    // Mode = 12
+    12,   8,8,8,        1,    5,    4,    0x0b,  7,     // Mode = 13
+    16,   4,4,4,        1,    5,    4,    0x0f,  1,     // Mode = 14
 };
 
 
@@ -205,8 +210,6 @@ static const int g_indexfixups[32] =
 8, 8, 2, 2,
 };
 
-static int g_aWeights3[]    = {0, 9, 18, 27, 37, 46, 55, 64};    // 3 bit color Indices
-static int g_aWeights4[]    = {0, 4, 9, 13, 17, 21, 26, 30, 34, 38, 43, 47, 51, 55, 60, 64}; // 4 bit color indices
 
 //------------------------------------------------------------------------------
 
@@ -261,6 +264,7 @@ struct AMD_BC6H_Format
         byte indices16[16];
     };
 
+    float         din[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];   // Original data input
     END_Points    EC[MAXENDPOINTS];    // compressed endpoints expressed as endpt[0].A[] and endpt[1].B[]
     END_Points    E[MAXENDPOINTS];     // decompressed endpoints 
     BOOL          issigned;            // Format is 16 bit signed floating point 
@@ -268,14 +272,14 @@ struct AMD_BC6H_Format
     short         wBits;               // number of bits for the root endpoint
     short         tBits[NCHANNELS];    // number of bits used for the transformed endpoints
     int           format;              // floating point format are we using for decompression
-    BC6H_Vec3     Palete[2][16];
+    BC6H_Vec3      Palete[2][16];
+    BC6H_Vec3f     Paletef[2][16];
 
     int           index;               // for debugging
-    float         EndPoints[2][2][3];
-    int           shape_indices[BC6H_MAX_SUBSETS][BC6H_MAX_SUBSET_SIZE];
-    float         indexedcolors[2][16][3];        // this is same as Palete!
-    DWORD         entryCount[BC6H_MAX_SUBSETS];
-    double        partition[BC6H_MAX_SUBSETS][BC6H_MAX_SUBSET_SIZE][BC6H_MAX_DIMENSION_BIG];
+    float         fEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];
+    int           shape_indices[MAX_SUBSETS][MAX_SUBSET_SIZE];
+    int           entryCount[MAX_SUBSETS];
+    float         partition[MAX_SUBSETS][MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
     bool          optimized;           // were end points optimized during final encoding
 };
 

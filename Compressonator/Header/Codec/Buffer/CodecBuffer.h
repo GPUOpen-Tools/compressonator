@@ -53,6 +53,7 @@ typedef enum _CodecBufferType
     CBT_RG32,
     CBT_R32,
     CBT_RGBA16F,
+    CBT_RGBE32F,
     CBT_RG16F,
     CBT_R16F,
     CBT_RGBA32F,

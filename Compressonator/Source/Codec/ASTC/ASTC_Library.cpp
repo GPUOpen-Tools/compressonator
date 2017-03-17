@@ -29,8 +29,6 @@
 
 
 extern BOOL    g_LibraryInitialized;
-extern  void BC6H_init_ramps(); 
-
 static ASTCBlockDecoder  g_Decoder;
 
 // Need to remove these calls 

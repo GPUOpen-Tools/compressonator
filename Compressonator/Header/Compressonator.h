@@ -19,7 +19,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
+// 
 /// \file Compressonator.h
 //
 //=====================================================================
@@ -30,15 +30,52 @@
 #include <Windows.h>
 #include "Common.h"
 
-typedef unsigned long       CMP_DWORD;         ///< A 32-bit integer format.
-typedef unsigned short      CMP_WORD;          ///< A 16-bit integer format.
-typedef unsigned char       CMP_BYTE;          ///< An 8-bit integer format.
-typedef char                CMP_CHAR;          ///< An 8-bit char    format.
-typedef float               CMP_FLOAT;         ///< A 32-bit float   format.
+typedef unsigned long       CMP_DWORD;         ///< A 32-bit unsigned integer format.
+typedef unsigned short      CMP_WORD;          ///< A 16-bit unsigned integer format.
+typedef unsigned char       CMP_BYTE;          ///< An 8-bit unsigned integer format.
+typedef char                CMP_CHAR;          ///< An 8-bit signed   char    format.
+typedef float               CMP_FLOAT;         ///< A 32-bit signed   float   format.
+typedef short               CMP_HALF;          ///< A 16-bit Half format.
+
+// CMP_HALF and CMP_FLOAT
+//bit-layout for a half number, h:
+//
+// CMP_HALF (HALF)
+//    15 (msb)
+//    | 
+//    | 14  10
+//    | |   |
+//    | |   | 9        0 (lsb)
+//    | |   | |        |
+//    X XXXXX XXXXXXXXXX
+//
+//When converted to 32 Float the bit are as follows
+//IEEE 754 single-precision
+//floating point number, whose bits are arranged as follows:
+//
+// CMP_FLOAT
+//    31 (msb)
+//    | 
+//    | 30     23
+//    | |      | 
+//    | |      | 22                    0 (lsb)
+//    | |      | |                     |
+//    X XXXXXXXX XXXXXXXXXXXXXXXXXXXXXXX
+//
+
+
+typedef struct
+{
+    union
+    {
+        CMP_BYTE    rgba[4]; ///< The color as an array of components.
+        CMP_DWORD    asDword; ///< The color as a DWORD.
+    };
+} CMP_COLOR;
 
 
 #define AMD_COMPRESS_VERSION_MAJOR 2         ///< The major version number of this release.
-#define AMD_COMPRESS_VERSION_MINOR 4         ///< The minor version number of this release.
+#define AMD_COMPRESS_VERSION_MINOR 5         ///< The minor version number of this release.
 
 
 
@@ -72,6 +109,7 @@ typedef enum
    CMP_FORMAT_BGRA_16,                    ///< BGRA format with 16-bit fixed channels.
    CMP_FORMAT_RG_16,                      ///< Two component format with 16-bit fixed channels.
    CMP_FORMAT_R_16,                       ///< Single component format with 16-bit fixed channels.
+   CMP_FORMAT_RGBE_32F,                 ///< RGB format with 9-bit floating point each channel and shared 5 bit exponent
    CMP_FORMAT_ARGB_16F,                   ///< ARGB format with 16-bit floating-point channels.
    CMP_FORMAT_ABGR_16F,                   ///< ABGR format with 16-bit floating-point channels.
    CMP_FORMAT_RGBA_16F,                   ///< RGBA format with 16-bit floating-point channels.
@@ -100,7 +138,8 @@ typedef enum
    CMP_FORMAT_BC3,                        ///< A four component compressed texture format with interpolated alpha for Microsoft DirectX10. Identical to DXT5. Eight bits per pixel.
    CMP_FORMAT_BC4,                        ///< A single component compressed texture format for Microsoft DirectX10. Identical to ATI1N. Four bits per pixel.
    CMP_FORMAT_BC5,                        ///< A two component compressed texture format for Microsoft DirectX10. Identical to ATI2N_XY. Eight bits per pixel.
-   CMP_FORMAT_BC6H,                       ///< BC6H compressed texture format 
+   CMP_FORMAT_BC6H,                       ///< BC6H compressed texture format (UF)
+   CMP_FORMAT_BC6H_SF,                    ///< BC6H compressed texture format (SF)
    CMP_FORMAT_BC7,                        ///< BC7  compressed texture format
    CMP_FORMAT_DXT1,                       ///< An DXTC compressed texture matopaque (or 1-bit alpha). Four bits per pixel.
    CMP_FORMAT_DXT3,                       ///<    DXTC compressed texture format with explicit alpha. Eight bits per pixel.
@@ -139,10 +178,12 @@ typedef enum
 typedef enum
 {
     Compute_OPENCL = 0,                  ///< Use OpenCL  to compress Textures
+    Compute_DIRECTX,                     ///< Use DirectX to compress Textures
     Compute_VULKAN,                      ///< Use Vulkan  SPIR-V to compress Textures
     Compute_OPENGL,                      ///< Use OpenGL  Shader code to compress Textures
     Compute_INVALID
-} CMP_Compute;
+} CMP_Compute_type;
+
 
 /// Compress error codes
 typedef enum
@@ -193,6 +234,7 @@ typedef struct
    BOOL              bUseAdaptiveWeighting;     ///<    Adapt weighting on a per-block basis. 
    BOOL              bDXT1UseAlpha;             ///< Encode single-bit alpha data. Only valid when compressing to DXT1 & BC1.
    BOOL              bUseGPUDecompress;         ///< Use GPU to decompress. Decode API can be changed by specified in DecodeWith parameter. Default is OpenGL.
+   BOOL              bUseGPUCompress;           ///< Use GPU to compress. Encode API can be changed by specified in EncodeWith parameter. Default is OpenCL.
    CMP_BYTE          nAlphaThreshold;           ///< The alpha threshold to use when compressing to DXT1 & BC1 with bDXT1UseAlpha. Texels with an alpha value less than the threshold are treated as transparent.
                                                 ///< Note: When nCompressionSpeed is not set to Normal AphaThreshold is ignored for DXT1 & BC1
    BOOL              bDisableMultiThreading;    ///< Disable multi-threading of the compression. This will slow the compression but can be useful if you're managing threads in your application.
@@ -202,7 +244,8 @@ typedef struct
                                                 ///< 1. This value is ignored for BC6H and BC7 (for BC7 the compression speed depends on fquaility value)  
                                                 ///< 2. For 64 bit DXT1 to DXT5 and BC1 to BC5 nCompressionSpeed is ignored and set to Noramal Speed
                                                 ///< 3. To force the use of nCompressionSpeed setting regarless of Note 2 use fQuality at 0.05
-   CMP_GPUDecode     nGPUDecode;                ///< This value is set using DecodeWith argument (OpenGL, DirectX)
+   CMP_GPUDecode     nGPUDecode;                ///< This value is set using DecodeWith argument (OpenGL, DirectX) default is OpenGL
+   CMP_Compute_type  nComputeWith;              ///< This value is set using ComputeWith argument (OpenGL, DirectX)  default is OpenCL
    CMP_DWORD         dwnumThreads;              ///< Number of threads to initialize for BC7 encoding (Max up to 128). Default set to 8, 
    double            fquality;                  ///< Quality of encoding. This value ranges between 0.0 and 1.0. Default set to 0.05
                                                 ///< setting fquality above 0.0 gives the fastest, lowest quality encoding, 1.0 is the slowest, highest quality encoding. Default set to a low value of 0.05

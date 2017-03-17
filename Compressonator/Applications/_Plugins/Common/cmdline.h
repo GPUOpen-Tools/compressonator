@@ -104,7 +104,6 @@ public:
     int                         BlockWidth;             // Width (xdim) in pixels of the Compression Block that is to be processed default for ASTC is 4 
     int                         BlockHeight;            // Height (ydim)in pixels of the Compression Block that is to be processed default for ASTC is 4
     int                         BlockDepth;             // Depth  (zdim)in pixels of the Compression Block that is to be processed default for ASTC is 1
-    bool                        useGPU;                 // Reserved Feature: Enable GPU Compression, default is false which uses CPU
 };
 
 

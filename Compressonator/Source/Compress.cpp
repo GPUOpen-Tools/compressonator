@@ -53,6 +53,7 @@ CodecType GetCodecType(CMP_FORMAT format)
         case CMP_FORMAT_ARGB_32F:                return CT_None;
         case CMP_FORMAT_RG_32F:                  return CT_None;
         case CMP_FORMAT_R_32F:                   return CT_None;
+        case CMP_FORMAT_RGBE_32F:                return CT_None;
 #ifdef ARGB_32_SUPPORT
         case CMP_FORMAT_ARGB_32:                 return CT_None;
         case CMP_FORMAT_RG_32:                   return CT_None;
@@ -76,7 +77,8 @@ CodecType GetCodecType(CMP_FORMAT format)
         case CMP_FORMAT_BC3:                     return CT_DXT5;
         case CMP_FORMAT_BC4:                     return CT_ATI1N;
         case CMP_FORMAT_BC5:                     return CT_ATI2N_XY;
-        case CMP_FORMAT_BC6H:                    return CT_BC6H;    
+        case CMP_FORMAT_BC6H:                    return CT_BC6H; 
+        case CMP_FORMAT_BC6H_SF:                 return CT_BC6H_SF;
         case CMP_FORMAT_BC7:                     return CT_BC7;    
         case CMP_FORMAT_ASTC:                    return CT_ASTC;    
         case CMP_FORMAT_ATC_RGB:                 return CT_ATC_RGB;
@@ -208,7 +210,8 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
                 break;
         case CT_GT:
         case CT_BC6H:
-                // Reserved
+        case CT_BC6H_SF:
+                pCodec->SetParameter("Quality", (CODECFLOAT)pOptions->fquality);
 #ifdef _DEBUG
                 // napatel : remove this after
                 // pCodec->SetParameter("NumThreads", (CMP_DWORD)1);

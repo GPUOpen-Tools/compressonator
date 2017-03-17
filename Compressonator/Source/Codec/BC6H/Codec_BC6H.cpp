@@ -31,10 +31,11 @@
 #include "Codec_BC6H.h"
 #include "BC7_Definitions.h"
 #include "BC6H_library.h"
-#include "BC6H_shake.h"
 #include "BC6H_Definitions.h"
 #include "process.h"
+#include "HDR_Encode.h"
 
+using namespace HDR_Encode;
 
 #ifdef BC6H_COMPDEBUGGER
 #include "CompClient.h"
@@ -48,7 +49,7 @@ extern     CompViewerClient g_CompClient;
 struct BC6HEncodeThreadParam
 {
     BC6HBlockEncoder    *encoder;
-    float    in[BC6H_MAX_SUBSET_SIZE][BC6H_MAX_DIMENSION_BIG];
+    float    in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
     BYTE    *out;
     volatile BOOL    run;
     volatile BOOL    exit;
@@ -89,16 +90,19 @@ int    g_block= 0; // Keep track of current encoder block!
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////////////
 
-CCodec_BC6H::CCodec_BC6H() : CCodec_DXTC(CT_BC6H)
+CCodec_BC6H::CCodec_BC6H(CodecType codecType) : CCodec_DXTC(codecType)
 {
 
     // user definable setting
-    m_Exposure              = 0.950;
+    m_Exposure              = 1.0;
     m_ModeMask              = 0xFFFF;
     m_Quality               = AMD_CODEC_QUALITY_DEFAULT;
     m_Use_MultiThreading    = true;
     m_NumThreads            = 8;
-    m_bIsSigned             = false;
+    if(codecType == CT_BC6H)
+        m_bIsSigned = false;
+    else
+        m_bIsSigned = true;
     m_UsePatternRec         = false;
 
     // Internal setting
@@ -107,6 +111,7 @@ CCodec_BC6H::CCodec_BC6H() : CCodec_DXTC(CT_BC6H)
     m_EncodingThreadHandle  = NULL;
     m_LiveThreads           = 0;
     m_LastThread            = 0;
+    m_CodecType             = codecType;
 }
 
 
@@ -262,7 +267,6 @@ CCodec_BC6H::~CCodec_BC6H()
             m_decoder = NULL;
         }
 
-        Quant_DeInit();
         m_LibraryInitialized = false;
     }
 }
@@ -273,17 +277,6 @@ CodecError CCodec_BC6H::CInitializeBC6HLibrary()
 {
     if (!m_LibraryInitialized)
     {
-        // This is shared between BC7 also
-        // and checked for initialization based on static flag
-        // See the function for details.
-        Quant_Init();
-
-        // One time initialisation for quantizer and shaker
-        // check this is ok to remove for when we are encoding 
-        // should have no effect on decoding
-        BC6H_init_ramps();
-
-
         for(DWORD i=0; i < BC6H_MAX_THREADS; i++)
         {
             m_encoder[i] = NULL;
@@ -392,7 +385,7 @@ CodecError CCodec_BC6H::CInitializeBC6HLibrary()
 }
 
 
-CodecError CCodec_BC6H::CEncodeBC6HBlock(float  in[BC6H_BLOCK_PIXELS][BC6H_MAX_DIMENSION_BIG],
+CodecError CCodec_BC6H::CEncodeBC6HBlock(float  in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
                                          BYTE  *out)
 {
 if (m_Use_MultiThreading)
@@ -430,7 +423,7 @@ if (m_Use_MultiThreading)
     // Copy the input data into the thread storage
     memcpy(g_BC6EncodeParameterStorage[threadIndex].in,
            in,
-           BC6H_MAX_SUBSET_SIZE * BC6H_MAX_DIMENSION_BIG * sizeof(float));
+           MAX_SUBSET_SIZE * MAX_DIMENSION_BIG * sizeof(float));
 
     // Set the output pointer for the thread to the provided location
     g_BC6EncodeParameterStorage[threadIndex].out = out;
@@ -441,7 +434,7 @@ if (m_Use_MultiThreading)
 else 
 {
         // Copy the input data into the thread storage
-        memcpy(g_BC6EncodeParameterStorage[0].in, in, BC6H_MAX_SUBSET_SIZE * BC6H_MAX_DIMENSION_BIG * sizeof(float));
+        memcpy(g_BC6EncodeParameterStorage[0].in, in, BC6H_MAX_SUBSET_SIZE * MAX_DIMENSION_BIG * sizeof(float));
         // Set the output pointer for the thread to write
         g_BC6EncodeParameterStorage[0].out = out;
         m_encoder[0]->CompressBlock(g_BC6EncodeParameterStorage[0].in,g_BC6EncodeParameterStorage[0].out);
@@ -672,6 +665,11 @@ CodecError CCodec_BC6H::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferO
             bufferIn.ReadBlock(i*4, j*4, CompData.compressedBlock, 4);
 
             // Encode to the appropriate location in the compressed image
+            if (m_CodecType == CT_BC6H_SF)
+                m_decoder->bc6signed = true;
+            else
+                m_decoder->bc6signed = false;
+
             m_decoder->DecompressBlock(DecData.decodedBlock,CompData.in);
 
             // Create the block for decoding

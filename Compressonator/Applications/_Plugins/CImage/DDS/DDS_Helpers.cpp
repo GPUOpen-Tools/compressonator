@@ -1069,6 +1069,21 @@ TC_PluginError LoopR10G10B10A2(FILE*& pFile, DDSD2*& , MipSet*& pMipSet, void*&,
     return PE_OK;
 }
 
+TC_PluginError LoopR9G9B9E5(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, DWORD dwWidth, DWORD dwHeight)
+{
+    MipLevel* pMipLevel = DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nFaceOrSlice);
+    // Allocate the permanent buffer and unpack the bitmap data into it
+    if (!DDS_CMips->AllocateMipLevelData(pMipLevel, dwWidth, dwHeight, CF_Float9995E, pMipSet->m_TextureDataType))
+    {
+        return PE_Unknown;
+    }
+
+    if (fread(pMipLevel->m_pfData, pMipLevel->m_dwLinearSize, 1, pFile) != 1)
+        return PE_Unknown;
+
+    return PE_OK;
+}
+
 TC_PluginError LoopR16G16(FILE*& pFile, DDSD2*& , MipSet*& pMipSet, void*&,
                       int nMipLevel, int nFaceOrSlice, DWORD dwWidth, DWORD dwHeight)
 {

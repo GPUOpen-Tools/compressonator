@@ -33,6 +33,7 @@ static const GUID g_GUID = { 0x3af62198, 0x7326, 0x48fa, { 0xb1, 0xfb, 0x1d, 0x1
 #define TC_PLUGIN_VERSION_MAJOR	1
 #define TC_PLUGIN_VERSION_MINOR	0
 
+
 class Plugin_BoxFilter : public PluginInterface_Filters
 {
 	public: 
@@ -46,7 +47,7 @@ class Plugin_BoxFilter : public PluginInterface_Filters
 
 
 void GenerateMipLevel(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, MipLevel* pPrevMipLevelTwo = NULL);
-void GenerateMipLevel32F(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, MipLevel* pPrevMipLevelTwo = NULL);
+template <typename T> void GenerateMipLevelF(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, MipLevel* pPrevMipLevelTwo = NULL, T* curMipData = NULL, T* prevMip1Data = NULL, T* prevMip2Data = NULL);
 
 extern void *make_Plugin_BoxFIlter();
 

@@ -4,7 +4,8 @@ set BUILD_OUTDIR=%3
 set BUILD_SOLUTIONDIR=%4
 set BUILD_GLEWDIR=%5
 set BUILD_VULKANDIR=%6
-set _DEBUG=%7
+set BUILD_AGSDIR=%7
+set _DEBUG=%8
 
 echo ---------------------------------------
 echo QT      : [%BUILD_QTDIR%]
@@ -61,6 +62,8 @@ XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5Network%_DEBUG%.dll"           %BUILD_OUTDIR
 XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5WebChannel%_DEBUG%.dll"        %BUILD_OUTDIR%
 XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5xml%_DEBUG%.dll"               %BUILD_OUTDIR%
 
+
+
 IF NOT EXIST %BUILD_OUTDIR%plugins\platforms mkdir %BUILD_OUTDIR%plugins\platforms
 XCopy /r /d /y "%BUILD_QTDIR%plugins\platforms\qwindows%_DEBUG%.dll" %BUILD_OUTDIR%plugins\platforms\
 
@@ -77,6 +80,18 @@ XCopy /r /d /y "%BUILD_QTDIR%translations\qtwebengine_en.qm" %BUILD_OUTDIR%trans
 
 IF NOT EXIST %BUILD_OUTDIR%translations\qtwebengine_locales mkdir %BUILD_OUTDIR%translations\qtwebengine_locales
 XCopy /s /r /d /y "%BUILD_QTDIR%translations\qtwebengine_locales\en-US.pak" %BUILD_OUTDIR%translations\qtwebengine_locales\
+
+REM IF "%PLATFORM%" == "Win32" goto :copy32ags
+REM IF "%PLATFORM%" == "x64" goto :copy64ags
+
+REM :copy32ags
+REM XCopy /r /d /y "%BUILD_AGSDIR%\amd_ags_x86.dll"               %BUILD_OUTDIR%
+REM goto :copyend
+
+REM :copy64ags
+REM XCopy /r /d /y "%BUILD_AGSDIR%\amd_ags_x64.dll"               %BUILD_OUTDIR%
+
+REM :copyend
 
 echo "Dependencies copied done"
 

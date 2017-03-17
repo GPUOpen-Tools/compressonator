@@ -144,12 +144,12 @@ extern void    BC6H_WriteBit(BYTE   *base,
                  int  offset,
                  BYTE   bitVal);
 
-extern void BC6H_GetRamp(DWORD endpoint[][BC6H_MAX_DIMENSION_BIG],
-             double ramp[BC6H_MAX_DIMENSION_BIG][(1<<BC6H_MAX_INDEX_BITS)],
+extern void BC6H_GetRamp(DWORD endpoint[][MAX_DIMENSION_BIG],
+             double ramp[MAX_DIMENSION_BIG][(1<<BC6H_MAX_INDEX_BITS)],
              DWORD clusters[2],
-             DWORD componentBits[BC6H_MAX_DIMENSION_BIG]);
+             DWORD componentBits[MAX_DIMENSION_BIG]);
 
-extern const double  BC6H_rampLerpWeights[5][1<<BC6H_MAX_INDEX_BITS];
+extern const double  BC6H_rampLerpWeights[5][1<<MAX_INDEX_BITS];
 
 
 #endif

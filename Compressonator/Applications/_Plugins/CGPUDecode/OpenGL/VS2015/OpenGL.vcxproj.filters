@@ -51,5 +51,8 @@
     <ClInclude Include="..\GPU_OpenGL.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\shader.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

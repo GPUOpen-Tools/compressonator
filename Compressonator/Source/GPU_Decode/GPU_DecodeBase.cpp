@@ -111,7 +111,7 @@ HRESULT RenderWindow::InitWindow(HINSTANCE hInstance, int width, int height,WNDP
 
         if (!RegisterClassEx(&wcex))
         {
-            PrintStatusLine("Error: RegisterClass failed.\n");
+            PrintInfo("Error: RegisterClass failed.\n");
             return E_FAIL;
         }
     }
@@ -132,7 +132,7 @@ HRESULT RenderWindow::InitWindow(HINSTANCE hInstance, int width, int height,WNDP
 
     if (!m_hWnd)
     {
-        PrintStatusLine("Error: CreateWindow Failed.\n");
+        PrintInfo("Error: CreateWindow Failed.\n");
         return E_FAIL;
     }
 

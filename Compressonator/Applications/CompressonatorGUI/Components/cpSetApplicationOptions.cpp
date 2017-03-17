@@ -57,19 +57,11 @@ m_parent(parent)
         connect(m_browser, SIGNAL(currentItemChanged(QtBrowserItem *)), this, SLOT(oncurrentItemChanged(QtBrowserItem *)));
     }
 
-	connect(&g_Application_Options, SIGNAL(ImageViewDecodeChanged(QVariant &)), this, SLOT(onImageViewDecodeChanged(QVariant &)));
+    connect(&g_Application_Options, SIGNAL(ImageViewDecodeChanged(QVariant &)), this, SLOT(onImageViewDecodeChanged(QVariant &)));
     connect(&g_Application_Options, SIGNAL(ImageEncodeChanged(QVariant &)), this, SLOT(onImageEncodeChanged(QVariant &)));
-    connect(&g_Application_Options, SIGNAL(GPUDecompressChanged(QVariant &)), this, SLOT(onGPUDecompressChanged(QVariant &)));
 
     m_theController->setObject(&g_Application_Options, true);
     m_layoutV->addWidget(m_theController);
-
-    m_propAppOptions= m_theController->getProperty(DECOMP_OPTION_CLASS_NAME);
-
-    if (m_propAppOptions)
-    {
-        m_propAppOptions->setHidden(g_useCPUDecode);
-    }
 
     m_infotext = new QTextBrowser(this);
     // Always show min Two lines of text and Max to 5 lines at font size 16
@@ -78,7 +70,7 @@ m_parent(parent)
     m_infotext->setReadOnly(true);
     m_infotext->setAcceptRichText(true);
     m_layoutV->addWidget(m_infotext);
-    setMinimumWidth(360);
+    setMinimumWidth(400);
 
     // Buttons
     m_PBClose = new QPushButton("Close");
@@ -94,50 +86,40 @@ m_parent(parent)
 
 void CSetApplicationOptions::onImageViewDecodeChanged(QVariant &value)
 {
-    C_Application_Options::ImageEncodeDecodeWith decodewith= (C_Application_Options::ImageEncodeDecodeWith &)value;
+    C_Application_Options::ImageDecodeWith decodewith= (C_Application_Options::ImageDecodeWith &)value;
 
-    if (decodewith == C_Application_Options::ImageEncodeDecodeWith::CPU)
+    if (decodewith == C_Application_Options::ImageDecodeWith::CPU)
         g_useCPUDecode = true;
-    else if (decodewith == C_Application_Options::ImageEncodeDecodeWith::GPU)
+    else
         g_useCPUDecode = false;
-    else;
 
-    if (m_propAppOptions)
-    {
-        m_propAppOptions->setHidden(g_useCPUDecode);
-    }
-}
-
-void CSetApplicationOptions::onImageEncodeChanged(QVariant &value)
-{
-	C_Application_Options::ImageEncodeDecodeWith encodewith = (C_Application_Options::ImageEncodeDecodeWith &)value;
-
-	if (encodewith == C_Application_Options::ImageEncodeDecodeWith::CPU)
-		g_useCPUEncode = true;
-	else if (encodewith == C_Application_Options::ImageEncodeDecodeWith::GPU)
-		g_useCPUEncode = false;
-	else;
-}
-
-void CSetApplicationOptions::onGPUDecompressChanged(QVariant &value)
-{
-    C_Application_Options::DecompressAPI decodeformat = (C_Application_Options::DecompressAPI &)value;
-
-    if (decodeformat == C_Application_Options::DecompressAPI::OpenGL)
+    if (decodewith == C_Application_Options::ImageDecodeWith::GPU_OpenGL)
         g_gpudecodeFormat = MIPIMAGE_FORMAT::Format_OpenGL;
-    else if (decodeformat == C_Application_Options::DecompressAPI::DirectX)
+    else if (decodewith == C_Application_Options::ImageDecodeWith::GPU_DirectX)
         g_gpudecodeFormat = MIPIMAGE_FORMAT::Format_DirectX;
-    else if (decodeformat == C_Application_Options::DecompressAPI::Vulkan)
+    else if (decodewith == C_Application_Options::ImageDecodeWith::GPU_Vulkan)
         g_gpudecodeFormat = MIPIMAGE_FORMAT::Format_Vulkan;
     else
         g_gpudecodeFormat = MIPIMAGE_FORMAT::Format_QImage;
 }
 
+C_Application_Options::ImageEncodeWith encodewith = C_Application_Options::ImageEncodeWith::GPU_OpenCL;
+void CSetApplicationOptions::onImageEncodeChanged(QVariant &value)
+{
+    encodewith = (C_Application_Options::ImageEncodeWith &)value;
+
+    if (encodewith == C_Application_Options::ImageEncodeWith::CPU)
+        g_useCPUEncode = true;
+    else 
+        g_useCPUEncode = false;
+
+}
+
 void CSetApplicationOptions::onClose()
 {
-    g_useCPUDecode = (g_Application_Options.m_ImageViewDecode == g_Application_Options.ImageEncodeDecodeWith::CPU);
+    g_useCPUDecode = (g_Application_Options.m_ImageViewDecode == g_Application_Options.ImageDecodeWith::CPU);
 #ifdef USE_COMPUTE
-	g_useCPUEncode = (g_Application_Options.m_ImageEncode == g_Application_Options.ImageEncodeDecodeWith::CPU);
+    g_useCPUEncode = (g_Application_Options.m_ImageEncode == g_Application_Options.ImageEncodeWith::CPU);
 #endif
     close();
 }
@@ -167,26 +149,24 @@ void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem *item)
     if (text.compare(APP_Decompress_image_views_using) == 0)
     {
         m_infotext->append("<b>Compressed image views</b>");
-        m_infotext->append("For compressed images this option selects how images are decompressed for viewing");
+        m_infotext->append("For compressed images this option selects how images are decompressed for viewing.");
+        m_infotext->append("<b>Note:</b>");
+        m_infotext->append("For ASTC, GPU Decompress will not work until hardware supports it");
+        m_infotext->append("For ETCn, GPU Decompress with DirectX is not supported");
+        m_infotext->append("For HDR image view, decode with OpenGL is not supported. It may appear darker.");
     }
-#ifdef USE_COMPUTE	
+#ifdef USE_COMPUTE    
     if (text.compare(APP_compress_image_using) == 0)
     {
-    	m_infotext->append("<b>Compressed image</b>");
-    	m_infotext->append("For compressed images this option selects how images are compressed either with CPU or GPU.");
-		m_infotext->append("<b>Note:</b>");
-		m_infotext->append("Only BC1, BC7 format are supported with GPU Compress, if you choose other format under GPU Compress, they will be compressed with CPU.");
+        m_infotext->append("<b>Compressed image</b>");
+        m_infotext->append("For compressed images this option selects how images are compressed either with CPU or GPU.");
+        m_infotext->append("<b>Note:</b>");
+        m_infotext->append("Only BC1, BC7 format are supported with GPU Compress, if you choose other format under GPU Compress, they will be compressed with CPU.");
     }
 
     else
 #endif
-    if (text.compare(APP_GPU_Decompress) == 0)
-    {
-        m_infotext->append("<b>Note:</b>");
-        m_infotext->append("For ASTC, GPU Decompress will not work until hardware supports it");
-        m_infotext->append("For ETCn, GPU Decompress with DirectX is not supported");
-    }
-    else if (text.compare(APP_Reload_image_views_on_selection) == 0)
+    if (text.compare(APP_Reload_image_views_on_selection) == 0)
     {
         m_infotext->append("<b>Reload image views</b>");
         m_infotext->append("Refreshes image cache views when an image is processed or a setting has changed\n");
@@ -207,9 +187,9 @@ void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem *item)
 void CSetApplicationOptions::UpdateViewData()
 {
     m_theController->setObject(&g_Application_Options, true, true);
-    g_useCPUDecode = g_Application_Options.m_ImageViewDecode == g_Application_Options.ImageEncodeDecodeWith::CPU;
+    g_useCPUDecode = g_Application_Options.m_ImageViewDecode == g_Application_Options.ImageDecodeWith::CPU;
 #ifdef USE_COMPUTE
-	g_useCPUEncode = g_Application_Options.m_ImageEncode == g_Application_Options.ImageEncodeDecodeWith::CPU;
+    g_useCPUEncode = g_Application_Options.m_ImageEncode == g_Application_Options.ImageEncodeWith::CPU;
 #endif
 }
 
@@ -257,14 +237,7 @@ void CSetApplicationOptions::LoadSettings(QString SettingsFile, QSettings::Forma
             var = settings.value(name, var);
             name.replace(QString("_"), QString(" "));
             // ENum bug in Write need to fix this, for now we will use this
-            if (name.compare(APP_GPU_Decompress) == 0)
-            {
-                int value = var.value<int>();
-                C_Application_Options::DecompressAPI decodeWith = (C_Application_Options::DecompressAPI) value;
-                g_Application_Options.setGPUDecompress(decodeWith);
-            }
-            else
-                g_Application_Options.metaObject()->superClass()->property(i).write(&g_Application_Options, var);
+           
         }
     }
 
@@ -274,21 +247,20 @@ void CSetApplicationOptions::LoadSettings(QString SettingsFile, QSettings::Forma
             var = g_Application_Options.metaObject()->property(i).read(&g_Application_Options);
             var = settings.value(name, var);
             name.replace(QString("_"), QString(" "));
-            // ENum bug in Write need to fix this, for now we will use this
+#ifdef USE_COMPUTE
+            if (name.compare(APP_compress_image_using) == 0)
+            {
+                int value = var.value<int>();
+                C_Application_Options::ImageEncodeWith encode = (C_Application_Options::ImageEncodeWith) value;
+                g_Application_Options.setImageEncode(encode);
+            }
+#endif
             if (name.compare(APP_Decompress_image_views_using) == 0)
             {
                 int value = var.value<int>();
-                C_Application_Options::ImageEncodeDecodeWith decode = (C_Application_Options::ImageEncodeDecodeWith) value;
-                g_Application_Options.setImageViewDecode(decode);
+                C_Application_Options::ImageDecodeWith decodeWith = (C_Application_Options::ImageDecodeWith) value;
+                g_Application_Options.setImageViewDecode(decodeWith);
             }
-#ifdef USE_COMPUTE
-			if (name.compare(APP_compress_image_using) == 0)
-			{
-				int value = var.value<int>();
-				C_Application_Options::ImageEncodeDecodeWith encode = (C_Application_Options::ImageEncodeDecodeWith) value;
-				g_Application_Options.setImageEncode(encode);
-			}
-#endif
             else
                 g_Application_Options.metaObject()->property(i).write(&g_Application_Options, var);
         }

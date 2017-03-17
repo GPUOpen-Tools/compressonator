@@ -94,6 +94,7 @@ int Plugin_BoxFilter::TC_GenerateMIPLevels(MipSet *pMipSet, int nMinSize)
         for(int nFaceOrSlice=0; nFaceOrSlice<maxFacesOrSlices; nFaceOrSlice++)
         {
             MipLevel* pThisMipLevel = CMips->GetMipLevel(pMipSet, nCurMipLevel, nFaceOrSlice);
+            if (!pThisMipLevel) continue;
             assert(CMips->GetMipLevel(pMipSet, nCurMipLevel-1, nFaceOrSlice)->m_pbData);    //prev miplevel ok
 
             if(pThisMipLevel->m_pbData) // Space for mip level already allocated ?
@@ -116,31 +117,45 @@ int Plugin_BoxFilter::TC_GenerateMIPLevels(MipSet *pMipSet, int nMinSize)
             assert(pThisMipLevel->m_pbData);
             if(pMipSet->m_TextureType != TT_VolumeTexture)
             {
+                MipLevel *tempMipOne = CMips->GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice);
                 if(pMipSet->m_ChannelFormat == CF_8bit)
-                    GenerateMipLevel(pThisMipLevel, CMips->GetMipLevel(pMipSet, nCurMipLevel-1, nFaceOrSlice));
+                    GenerateMipLevel(pThisMipLevel, tempMipOne);
+                else if (pMipSet->m_ChannelFormat == CF_Float16)
+                    GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_phfData, tempMipOne->m_phfData);
                 else if(pMipSet->m_ChannelFormat == CF_Float32)
-                    GenerateMipLevel32F(pThisMipLevel, CMips->GetMipLevel(pMipSet, nCurMipLevel-1, nFaceOrSlice));
+                    GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_pfData, tempMipOne->m_pfData);
             }
             else
             {
                 if(MaxFacesOrSlices(pMipSet, nCurMipLevel-1) > 1)
                 {
+                    MipLevel *tempMipOne = CMips->GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice * 2);
+                    MipLevel *tempMipTwo = CMips->GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice * 2 + 1);
                     //prev miplevel had 2 or more slices, so avg together slices
                     if(pMipSet->m_ChannelFormat == CF_8bit)
-                        GenerateMipLevel(pThisMipLevel,  CMips->GetMipLevel(pMipSet, nCurMipLevel-1, nFaceOrSlice*2), CMips->GetMipLevel(pMipSet, nCurMipLevel-1, nFaceOrSlice*2+1));
+                        GenerateMipLevel(pThisMipLevel, tempMipOne, tempMipTwo);
+                    else if (pMipSet->m_ChannelFormat == CF_Float16)
+                        GenerateMipLevelF(pThisMipLevel, tempMipOne, tempMipTwo, pThisMipLevel->m_phfData, tempMipOne->m_phfData, tempMipTwo->m_phfData);
                     else if(pMipSet->m_ChannelFormat == CF_Float32)
-                        GenerateMipLevel32F(pThisMipLevel,  CMips->GetMipLevel(pMipSet, nCurMipLevel-1, nFaceOrSlice*2), CMips->GetMipLevel(pMipSet, nCurMipLevel-1, nFaceOrSlice*2+1));
+                        GenerateMipLevelF(pThisMipLevel, tempMipOne, tempMipTwo, pThisMipLevel->m_pfData, tempMipOne->m_pfData, tempMipTwo->m_pfData);
                 }
                 else
                 {
+                    MipLevel *tempMipOne = CMips->GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice);
                     if(pMipSet->m_ChannelFormat == CF_8bit)
-                        GenerateMipLevel(pThisMipLevel, CMips->GetMipLevel(pMipSet, nCurMipLevel-1, nFaceOrSlice));
+                        GenerateMipLevel(pThisMipLevel, tempMipOne);
+                    else if (pMipSet->m_ChannelFormat == CF_Float16)
+                        GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_phfData, tempMipOne->m_phfData);
                     else if(pMipSet->m_ChannelFormat == CF_Float32)
-                        GenerateMipLevel32F(pThisMipLevel, CMips->GetMipLevel(pMipSet, nCurMipLevel-1, nFaceOrSlice));
+                        GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_pfData, tempMipOne->m_pfData);
                 }
             }
         }
-        ++pMipSet->m_nMipLevels;
+
+        if (pMipSet->m_nMipLevels < MAX_MIPLEVEL_SUPPORTED)
+            ++pMipSet->m_nMipLevels;
+        else
+            break;
         if (nWidth == 1 || nHeight == 1)
             break;
     }
@@ -172,11 +187,11 @@ void GenerateMipLevel(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, MipLev
         {
             bool bDiffHeights = pCurMipLevel->m_nHeight != pPrevMipLevelOne->m_nHeight;
             bool bDiffWidths = pCurMipLevel->m_nWidth != pPrevMipLevelOne->m_nWidth;
-            COLOR *pDst = pCurMipLevel->m_pcData;
+            CMP_COLOR *pDst = pCurMipLevel->m_pcData;
             for(int y=0; y<pCurMipLevel->m_nHeight; y++)
             {
-                COLOR *pSrc = pPrevMipLevelOne->m_pcData + (2 * y * pPrevMipLevelOne->m_nWidth);
-                COLOR *pSrc2;
+                CMP_COLOR *pSrc = pPrevMipLevelOne->m_pcData + (2 * y * pPrevMipLevelOne->m_nWidth);
+                CMP_COLOR *pSrc2;
                 if(bDiffHeights)
                 {
                     pSrc2 = pSrc+pPrevMipLevelOne->m_nWidth;
@@ -188,7 +203,7 @@ void GenerateMipLevel(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, MipLev
                 }
                 for(int x=0; x<pCurMipLevel->m_nWidth; x++, pSrc+=2, pSrc2+=2)
                 {
-                    COLOR c1, c2, c3, c4;
+                    CMP_COLOR c1, c2, c3, c4;
                     c1 = *pSrc;
                     c3 = *pSrc2;
                     if(bDiffWidths)
@@ -212,10 +227,10 @@ void GenerateMipLevel(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, MipLev
             bool bDiffHeights = pCurMipLevel->m_nHeight != pPrevMipLevelOne->m_nHeight;
             bool bDiffWidths = pCurMipLevel->m_nWidth != pPrevMipLevelOne->m_nWidth;
             //don't need to check that either height or width is diff, b/c slices are diff
-            COLOR *pDst = pCurMipLevel->m_pcData;
+            CMP_COLOR *pDst = pCurMipLevel->m_pcData;
             for(int y=0; y<pCurMipLevel->m_nHeight; y++)
             {
-                COLOR *pSrc, *pSrc2, *pOtherSrc, *pOtherSrc2;
+                CMP_COLOR *pSrc, *pSrc2, *pOtherSrc, *pOtherSrc2;
                 pSrc = pPrevMipLevelOne->m_pcData + (2 * y * pPrevMipLevelOne->m_nWidth);
                 pOtherSrc = pPrevMipLevelTwo->m_pcData + (2 * y * pPrevMipLevelTwo->m_nWidth);
                 if(bDiffHeights)
@@ -232,7 +247,7 @@ void GenerateMipLevel(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, MipLev
                 }
                 for(int x=0; x<pCurMipLevel->m_nWidth; x++, pSrc+=2, pSrc2+=2, pOtherSrc+=2, pOtherSrc2+=2)
                 {
-                    COLOR c1, c2, c3, c4, c5, c6, c7, c8;
+                    CMP_COLOR c1, c2, c3, c4, c5, c6, c7, c8;
                     c1 = *pSrc;
                     c3 = *pSrc2;
                     c5 = *pOtherSrc;
@@ -262,24 +277,25 @@ void GenerateMipLevel(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, MipLev
     }
 }
 
-void GenerateMipLevel32F(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, MipLevel* pPrevMipLevelTwo)
+template <typename T>
+void GenerateMipLevelF(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, MipLevel* pPrevMipLevelTwo, T* curMipData, T* prevMip1Data, T* prevMip2Data)
 {
     assert(pCurMipLevel);
     assert(pPrevMipLevelOne);
 
-    if(pCurMipLevel && pPrevMipLevelOne)
+    if (pCurMipLevel && pPrevMipLevelOne)
     {
-        if(!pPrevMipLevelTwo)
+        if (!pPrevMipLevelTwo)
         {
             bool bDiffHeights = pCurMipLevel->m_nHeight != pPrevMipLevelOne->m_nHeight;
             bool bDiffWidths = pCurMipLevel->m_nWidth != pPrevMipLevelOne->m_nWidth;
             assert(bDiffHeights || bDiffWidths);
-            float *pDst = pCurMipLevel->m_pfData;
-            for(int y=0; y<pCurMipLevel->m_nHeight; y++)
+            T *pDst = curMipData;
+            for (int y = 0; y<pCurMipLevel->m_nHeight; y++)
             {
-                float *pSrc = pPrevMipLevelOne->m_pfData + (2 * y * pPrevMipLevelOne->m_nWidth * 4);
-                float *pSrc2;
-                if(bDiffHeights)
+                T *pSrc = prevMip1Data + (2 * y * pPrevMipLevelOne->m_nWidth * 4);
+                T *pSrc2;
+                if (bDiffHeights)
                 {
                     pSrc2 = pSrc + (pPrevMipLevelOne->m_nWidth * 4);
                 }
@@ -288,23 +304,23 @@ void GenerateMipLevel32F(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, Mip
                     //if no change in height, then use same line as source
                     pSrc2 = pSrc;
                 }
-                for(int x=0; x<pCurMipLevel->m_nWidth; x++, pSrc+=8, pSrc2+=8)
+                for (int x = 0; x<pCurMipLevel->m_nWidth; x++, pSrc += 8, pSrc2 += 8)
                 {
-                    float c1[4], c2[4], c3[4], c4[4];
+                    T c1[4], c2[4], c3[4], c4[4];
                     memcpy(c1, pSrc, sizeof(c1));
                     memcpy(c3, pSrc2, sizeof(c3));
-                    if(bDiffWidths)
+                    if (bDiffWidths)
                     {
-                        memcpy(c2, pSrc+4, sizeof(c2));
-                        memcpy(c4, pSrc2+4, sizeof(c4));
+                        memcpy(c2, pSrc + 4, sizeof(c2));
+                        memcpy(c4, pSrc2 + 4, sizeof(c4));
                     }
                     else
                     {
                         memcpy(c2, pSrc, sizeof(c2));
                         memcpy(c4, pSrc2, sizeof(c4));
                     }
-                    for(int i=0; i<4 ;i++)
-                        *pDst++= (c1[i] + c2[i] + c3[i] + c4[i])/4.f;
+                    for (int i = 0; i<4; i++)
+                        *pDst++ = (c1[i] + c2[i] + c3[i] + c4[i]) / 4.f;
                 }
             }
         }
@@ -313,13 +329,13 @@ void GenerateMipLevel32F(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, Mip
             bool bDiffHeights = pCurMipLevel->m_nHeight != pPrevMipLevelOne->m_nHeight;
             bool bDiffWidths = pCurMipLevel->m_nWidth != pPrevMipLevelOne->m_nWidth;
             //don't need to check that either height or width is diff, b/c slices are diff
-            float *pDst = pCurMipLevel->m_pfData;
-            for(int y=0; y<pCurMipLevel->m_nHeight; y++)
+            T *pDst = curMipData;
+            for (int y = 0; y<pCurMipLevel->m_nHeight; y++)
             {
-                float *pSrc, *pSrc2, *pOtherSrc, *pOtherSrc2;
-                pSrc = pPrevMipLevelOne->m_pfData + (2 * y * pPrevMipLevelOne->m_nWidth * 4);
-                pOtherSrc = pPrevMipLevelTwo->m_pfData + (2 * y * pPrevMipLevelTwo->m_nWidth * 4);
-                if(bDiffHeights)
+                T *pSrc, *pSrc2, *pOtherSrc, *pOtherSrc2;
+                pSrc = prevMip1Data + (2 * y * pPrevMipLevelOne->m_nWidth * 4);
+                pOtherSrc = prevMip2Data + (2 * y * pPrevMipLevelTwo->m_nWidth * 4);
+                if (bDiffHeights)
                 {
                     //point to next line, same column
                     pSrc2 = pSrc + (pPrevMipLevelOne->m_nWidth * 4);
@@ -331,19 +347,19 @@ void GenerateMipLevel32F(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, Mip
                     pSrc2 = pSrc;
                     pOtherSrc2 = pOtherSrc;
                 }
-                for(int x=0; x<pCurMipLevel->m_nWidth; x++, pSrc+=8, pSrc2+=8, pOtherSrc+=8, pOtherSrc2+=8)
+                for (int x = 0; x<pCurMipLevel->m_nWidth; x++, pSrc += 8, pSrc2 += 8, pOtherSrc += 8, pOtherSrc2 += 8)
                 {
-                    float c1[4], c2[4], c3[4], c4[4], c5[4], c6[4], c7[4], c8[4];
+                    T c1[4], c2[4], c3[4], c4[4], c5[4], c6[4], c7[4], c8[4];
                     memcpy(c1, pSrc, sizeof(c1));
                     memcpy(c3, pSrc2, sizeof(c3));
                     memcpy(c5, pOtherSrc, sizeof(c5));
                     memcpy(c7, pOtherSrc2, sizeof(c7));
-                    if(bDiffWidths)
+                    if (bDiffWidths)
                     {
-                        memcpy(c2, pSrc+4, sizeof(c2));
-                        memcpy(c4, pSrc2+4, sizeof(c4));
-                        memcpy(c6, pOtherSrc+4, sizeof(c6));
-                        memcpy(c8, pOtherSrc2+4, sizeof(c8));
+                        memcpy(c2, pSrc + 4, sizeof(c2));
+                        memcpy(c4, pSrc2 + 4, sizeof(c4));
+                        memcpy(c6, pOtherSrc + 4, sizeof(c6));
+                        memcpy(c8, pOtherSrc2 + 4, sizeof(c8));
                     }
                     else
                     {
@@ -352,10 +368,11 @@ void GenerateMipLevel32F(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, Mip
                         memcpy(c6, pOtherSrc, sizeof(c6));
                         memcpy(c8, pOtherSrc2, sizeof(c8));
                     }
-                    for(int i=0; i<4; i++)
-                        *pDst++= (c1[i] + c2[i] + c3[i] + c4[i] + c5[i] + c6[i] + c7[i] + c8[i])/8.f;
+                    for (int i = 0; i<4; i++)
+                        *pDst++ = (c1[i] + c2[i] + c3[i] + c4[i] + c5[i] + c6[i] + c7[i] + c8[i]) / 8.f;
                 }
             }
         }
     }
 }
+

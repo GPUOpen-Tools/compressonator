@@ -27,8 +27,6 @@
 #include "CAnalysis.h"
 #include "PluginManager.h"
 #include <stdlib.h>
-#include <ImfRgbaFile.h>
-#include <ImfArray.h>
 #include <stdio.h>
 #include <assert.h>
 #include "Compressonator.h"

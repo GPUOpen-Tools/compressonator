@@ -47,6 +47,7 @@
 #include "CodecBuffer_RG32F.h"
 #include "CodecBuffer_R32F.h"
 #include "CodecBuffer_Block.h"
+#include "CodecBuffer_RGB9995EF.h"
 
 
 CCodecBuffer* CreateCodecBuffer(CodecBufferType nCodecBufferType, 
@@ -94,13 +95,13 @@ CCodecBuffer* CreateCodecBuffer(CodecBufferType nCodecBufferType,
             return new CCodecBuffer_RG32F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
         case CBT_R32F:
             return new CCodecBuffer_R32F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
-
+        case CBT_RGBE32F:
+            return new CCodecBuffer_RGB9995EF(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
         case CBT_4x4Block_2BPP:
         case CBT_4x4Block_4BPP:
         case CBT_4x4Block_8BPP:
         case CBT_4x4Block_16BPP:
             return new CCodecBuffer_Block(nCodecBufferType, nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
-
         case CBT_8x8Block_2BPP:
         case CBT_8x8Block_4BPP:
         case CBT_8x8Block_8BPP:
@@ -140,6 +141,9 @@ CodecBufferType GetCodecBufferType(CMP_FORMAT format)
         case CMP_FORMAT_RGBA_16F:
         case CMP_FORMAT_BGRA_16F:
                                     CBT_type =  CBT_RGBA16F;
+                                    break;
+        case CMP_FORMAT_RGBE_32F:
+                                    CBT_type = CBT_RGBE32F;
                                     break;
         case CMP_FORMAT_RG_16F: 
                                     CBT_type =  CBT_RG16F;

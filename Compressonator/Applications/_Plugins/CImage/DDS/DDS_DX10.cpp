@@ -43,6 +43,7 @@ TC_PluginError LoadDDS_DX10_RGBA_16F(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
 TC_PluginError LoadDDS_DX10_RGBA16(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
 TC_PluginError LoadDDS_DX10_RG32(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
 TC_PluginError LoadDDS_DX10_R10G10B10A2(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
+TC_PluginError LoadDDS_DX10_R9G9B9E5_SHAREDEXP(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
 TC_PluginError LoadDDS_DX10_R11G11B10F(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
 TC_PluginError LoadDDS_DX10_R8G8B8A8(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
 TC_PluginError LoadDDS_DX10_R16G16(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
@@ -101,6 +102,10 @@ TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
         case DXGI_FORMAT_R10G10B10A2_UNORM:    
         case DXGI_FORMAT_R10G10B10A2_UINT:    
             err = LoadDDS_DX10_R10G10B10A2(pFile, pDDSD, pMipSet);
+            break;
+
+        case DXGI_FORMAT_R9G9B9E5_SHAREDEXP:
+            err = LoadDDS_DX10_R9G9B9E5_SHAREDEXP(pFile, pDDSD, pMipSet);
             break;
 
         case DXGI_FORMAT_R11G11B10_FLOAT:    
@@ -196,10 +201,14 @@ TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
             break;
 
         case DXGI_FORMAT_BC6H_TYPELESS:    
-        case DXGI_FORMAT_BC6H_UF16:    
+        case DXGI_FORMAT_BC6H_UF16:  
+            pMipSet->m_compressed = true;
+            pMipSet->m_format = CMP_FORMAT_BC6H;
+            err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, FOURCC_DX10);
+            break;
         case DXGI_FORMAT_BC6H_SF16:    
             pMipSet->m_compressed = true;
-            pMipSet->m_format     = CMP_FORMAT_BC6H;
+            pMipSet->m_format     = CMP_FORMAT_BC6H_SF;
             err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, FOURCC_DX10);
             break;
 
@@ -263,6 +272,14 @@ TC_PluginError LoadDDS_DX10_R10G10B10A2(FILE* pFile, DDSD2* pDDSD, MipSet* pMipS
     ChannelFormat channelFormat = CF_2101010;
     void* pChannelFormat = &channelFormat;
     return GenericLoadFunction(pFile, pDDSD, pMipSet, pChannelFormat, channelFormat, pMipSet->m_TextureDataType, PreLoopDefault, LoopR10G10B10A2, PostLoopDefault);
+}
+
+TC_PluginError LoadDDS_DX10_R9G9B9E5_SHAREDEXP(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
+{
+    pMipSet->m_TextureDataType = TDT_XRGB;
+    ChannelFormat channelFormat = CF_Float9995E;
+    void* pChannelFormat = &channelFormat;
+    return GenericLoadFunction(pFile, pDDSD, pMipSet, pChannelFormat, channelFormat, pMipSet->m_TextureDataType, PreLoopDefault, LoopR9G9B9E5, PostLoopDefault);
 }
 
 TC_PluginError LoadDDS_DX10_R11G11B10F(FILE* /*pFile*/, DDSD2* /*pDDSD*/, MipSet* /*pMipSet*/)
@@ -337,6 +354,7 @@ DXGI_FORMAT GetDXGIFormat(const MipSet* pMipSet)
         switch (pMipSet->m_format)
         {
         case CMP_FORMAT_BC6H:       return DXGI_FORMAT_BC6H_UF16;
+        case CMP_FORMAT_BC6H_SF:    return DXGI_FORMAT_BC6H_SF16;
         case CMP_FORMAT_BC1:        return DXGI_FORMAT_BC1_UNORM;
         case CMP_FORMAT_BC2:        return DXGI_FORMAT_BC2_UNORM;
         case CMP_FORMAT_BC3:        return DXGI_FORMAT_BC3_UNORM;
@@ -414,6 +432,7 @@ TC_PluginError SaveDDS_DX10(FILE* pFile, const MipSet* pMipSet)
     switch (pMipSet->m_format)
     {
     case CMP_FORMAT_BC6H:
+    case CMP_FORMAT_BC6H_SF:
                             ddsd2.lPitch = ddsd2.dwWidth * 4; 
                             break;
     case CMP_FORMAT_BC7:

@@ -133,7 +133,8 @@ CCodec* CreateCodec(CodecType nCodecType)
         case CT_ATC_RGBA_Interpolated:      return new CCodec_ATC_RGBA_Interpolated;
         case CT_ETC_RGB:                    return new CCodec_ETC_RGB;
         case CT_ETC2_RGB:                   return new CCodec_ETC2_RGB;
-        case CT_BC6H:                       return new CCodec_BC6H;
+        case CT_BC6H:                       return new CCodec_BC6H(CT_BC6H);
+        case CT_BC6H_SF:                    return new CCodec_BC6H(CT_BC6H_SF);
         case CT_BC7:                        return new CCodec_BC7;
         case CT_ASTC:                       return new CCodec_ASTC;
         case CT_GT:                         return new CCodec_GT;
@@ -186,7 +187,8 @@ CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHe
             dwHeight = ((dwHeight + 3) / 4) * 4;
             buffsize = (dwWidth * dwHeight * dwChannels * dwBitsPerChannel) / 8;
             break;
-        case CT_BC6H:    
+        case CT_BC6H:
+        case CT_BC6H_SF:    
             dwWidth  = ((dwWidth + 3) / 4) * 4;
             dwHeight = ((dwHeight + 3) / 4) * 4;
             buffsize = dwWidth * dwHeight; 

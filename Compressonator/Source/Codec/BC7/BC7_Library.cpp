@@ -28,11 +28,10 @@
 #include "3dquant_vpc.h"
 #include "shake.h"
 #include "Compressonator.h"
+#include "HDR_Encode.h"
 
 
 BOOL    g_LibraryInitialized = FALSE;
-extern  void BC6H_init_ramps(); 
-
 static BC7BlockDecoder  g_Decoder;
 
 //
@@ -50,8 +49,6 @@ extern "C" BC_ERROR CMP_InitializeBCLibrary()
     // One time initialisation for quantizer and shaker
     Quant_Init();
     init_ramps();
-    BC6H_init_ramps();
-
     g_LibraryInitialized = TRUE;
     return BC_ERROR_NONE;
 }
@@ -156,9 +153,7 @@ extern "C" BC_ERROR CMP_ShutdownBCLibrary(void)
     {
         return BC_ERROR_LIBRARY_NOT_INITIALIZED;
     }
-
     Quant_DeInit();
-
     g_LibraryInitialized = FALSE;
 
     return BC_ERROR_NONE;

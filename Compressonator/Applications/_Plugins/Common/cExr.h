@@ -24,6 +24,8 @@
 #ifndef cEXR_HEADER
 #define cEXR_HEADER
 
+#include "namespaceAlias.h"
+
 #include "stdafx.h"
 #include "ImfArray.h"
 #include "ImfRgba.h"
@@ -34,9 +36,9 @@
 
 #include "Compressonator.h"
 
+using namespace IMF;
+using namespace IMATH;
 using namespace std;
-using namespace Imf;
-using namespace Imath;
 
 #pragma warning(disable:4201)
 typedef unsigned int uint;
@@ -52,8 +54,8 @@ public:
 	static void writeRgba(const string outf, const Array2D<Rgba> &pix, int w, int h);
 };
 
-extern void Rgba2Texture(Array2D<Rgba> &pixels, float *data, int w, int h);
-extern void Texture2Rgba(float* data, Array2D<Rgba> &pixels, int w, int h, CMP_FORMAT isDeCompressed);
+extern void Rgba2Texture(Array2D<Rgba> &pixels, CMP_HALF *data, int w, int h);
+extern void Texture2Rgba(CMP_HALF* data, Array2D<Rgba> &pixels, int w, int h, CMP_FORMAT isDeCompressed);
 extern float half_conv_float(unsigned short in);
 
 #endif

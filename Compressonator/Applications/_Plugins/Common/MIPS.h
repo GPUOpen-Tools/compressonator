@@ -28,8 +28,10 @@
 #include "stdlib.h"
 #include "TC_PluginAPI.h"
 
-extern void(*PrintStatusLine)(char *);
+#define MAX_MIPLEVEL_SUPPORTED 10
 
+extern void(*PrintStatusLine)(char *);
+extern void PrintInfo(const char* Format, ...);
 class CMIPS
 {
     public: 

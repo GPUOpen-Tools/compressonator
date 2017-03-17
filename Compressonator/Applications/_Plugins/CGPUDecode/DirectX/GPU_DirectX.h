@@ -73,7 +73,7 @@ namespace GPU_Decode
         UINT                        m_iIndices;
         ID3D11Resource*             m_pResource;
 
-        HRESULT InitDevice(const TexMetadata& mdata);
+        HRESULT InitDevice(const TexMetadata& mdata, CMP_FORMAT cmp_format);
         DXGI_FORMAT CMP2DXGIFormat(CMP_FORMAT cmp_format);
         int CaptureAnImage(HWND hWnd, CMP_Texture* pDestTexture);
         void Render();

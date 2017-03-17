@@ -882,7 +882,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
             pMipSet->m_TextureDataType = TDT_ARGB;
             break;
         case RGB_BP_SIGNED_FLOAT:
-            pMipSet->m_format = CMP_FORMAT_BC6H;
+            pMipSet->m_format = CMP_FORMAT_BC6H_SF;
             pMipSet->m_TextureDataType = TDT_ARGB;
             break;
         case ATC_RGB_AMD:
@@ -1309,14 +1309,14 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
     case  CMP_FORMAT_RG_16F :                   
     case  CMP_FORMAT_R_16F : 
         textureinfo.glType = GL_HALF_FLOAT;
-        textureinfo.glTypeSize = 1;
+        textureinfo.glTypeSize = 2;
         break;
     case  CMP_FORMAT_ARGB_32F :                 
     case  CMP_FORMAT_RGB_32F :                  
     case  CMP_FORMAT_RG_32F :                   
     case  CMP_FORMAT_R_32F :
         textureinfo.glType = GL_FLOAT;
-        textureinfo.glTypeSize = 1;
+        textureinfo.glTypeSize = 4;
         break;
     //compressed format case
     case  CMP_FORMAT_ATI1N :                   
@@ -1331,7 +1331,8 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
     case  CMP_FORMAT_BC3 :                     
     case  CMP_FORMAT_BC4 :                     
     case  CMP_FORMAT_BC5 :                     
-    case  CMP_FORMAT_BC6H :                    
+    case  CMP_FORMAT_BC6H :  
+    case  CMP_FORMAT_BC6H_SF:
     case  CMP_FORMAT_BC7 :                     
     case  CMP_FORMAT_DXT1 :                    
     case  CMP_FORMAT_DXT3 :                    
@@ -1462,6 +1463,9 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
                 break;
             case  CMP_FORMAT_BC6H:
                 textureinfo.glInternalFormat = GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT;
+                break;
+            case  CMP_FORMAT_BC6H_SF:
+                textureinfo.glInternalFormat = GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT;
                 break;
             case  CMP_FORMAT_ASTC:
                 if ((pMipSet->m_nBlockWidth == 4) && (pMipSet->m_nBlockHeight == 4))

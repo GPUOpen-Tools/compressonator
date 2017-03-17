@@ -37,7 +37,7 @@
 class CCodec_BC6H : public CCodec_DXTC  
 {
 public:
-    CCodec_BC6H();
+    CCodec_BC6H(CodecType codecType);
     ~CCodec_BC6H();
 
     virtual bool SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue);
@@ -68,14 +68,16 @@ private:
     WORD     m_LastThread;
 
     // BC6H Encoders and decoders: for encding use the interfaces below
-    HANDLE*                m_EncodingThreadHandle;
+    HANDLE*              m_EncodingThreadHandle;
     BC6HBlockEncoder*    m_encoder[BC6H_MAX_THREADS];
     BC6HBlockDecoder*    m_decoder;
 
     // Encoder interfaces
     CodecError    CInitializeBC6HLibrary();
-    CodecError    CEncodeBC6HBlock(float  in[BC6H_BLOCK_PIXELS][BC6H_MAX_DIMENSION_BIG],BYTE *out);
+    CodecError    CEncodeBC6HBlock(float  in[BC6H_BLOCK_PIXELS][MAX_DIMENSION_BIG],BYTE *out);
     CodecError    CFinishBC6HEncoding(void);
+
+    
 };
 
 #endif // !defined(_CODEC_DXT5_H_INCLUDED_)

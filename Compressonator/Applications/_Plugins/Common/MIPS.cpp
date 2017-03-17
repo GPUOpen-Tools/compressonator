@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include "MIPS.h"
 
+
 void(*PrintStatusLine)(char *) = NULL;
 
 
@@ -58,6 +59,17 @@ MipLevel* CMIPS::GetMipLevel(const MipSet* pMipSet, int nMipLevel,    int nFaceO
         ASSERT(pMipSet);
         return NULL;
     }
+
+    if (!pMipSet->m_pMipLevelTable)
+    {
+        return NULL;
+    }
+
+    if (nMipLevel > MAX_MIPLEVEL_SUPPORTED)
+    {
+        return NULL;
+    }
+
     if(nMipLevel > pMipSet->m_nMaxMipLevels)
     {
         ASSERT(nMipLevel <= pMipSet->m_nMaxMipLevels);
@@ -196,7 +208,8 @@ bool CMIPS::AllocateMipSet(MipSet* pMipSet, ChannelFormat channelFormat, Texture
 {
     //TODO test
     ASSERT(pMipSet);
-    ASSERT(nWidth > 0 && nHeight > 0 && nDepth > 0);
+   if (!(nWidth > 0 && nHeight > 0 && nDepth > 0)) return false;
+
     if(pMipSet->m_pMipLevelTable)
     {
         ASSERT(!pMipSet->m_pMipLevelTable);
@@ -243,6 +256,7 @@ bool CMIPS::AllocateMipLevelData(MipLevel* pMipLevel, int nWidth, int nHeight, C
     {
         case CF_8bit:
         case CF_2101010:
+        case CF_Float9995E:
             dwBitsPerPixel = 8;
             break;
 

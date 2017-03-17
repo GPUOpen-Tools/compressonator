@@ -101,7 +101,7 @@ public:
     ProjectView(const QString title, CompressStatusDialog *StatusDialog, QWidget *parent);
     ~ProjectView();
     bool    m_saveProjectChanges;            // Flag if any changes were made to a project file
-
+    bool    m_processFromContext;            // Flag if users click process from context
     QString m_curProjectFilePathName;        // Current Project Full Path and Name
     QString m_curProjectName;            
     void setCurrentProjectName(QString filePathName);    // Set the Member var above using filePathName
@@ -115,6 +115,7 @@ public:
     void SetupTreeView();
     bool loadProjectFile(QString fileToLoad);
     bool OpenImageFile();
+
     int  PromptSaveChanges();
     bool userSaveProjectAndContinue();
 
@@ -124,6 +125,7 @@ public:
     void Tree_AddRootNode();
     QTreeWidgetItem *Tree_AddImageFile(QString filePathName, int index, C_Source_Image **m_dataout);
     void Tree_AddCompressFile(QTreeWidgetItem *parent, QString description, bool checkable, bool checked, int levelType, C_Destination_Options *m_data);
+    void AddSettingtoEmptyTree();
 
     // Changes the Icon for the item if file exists or not return true if file exists
     // Red Icon or Null is used on Files that dont exist
@@ -133,12 +135,10 @@ public:
     void Tree_clearAllItemsSetected();
     void SelectImageItem(QString filePathName);
     bool AnySelectedItems();
+    bool saveImageAs();
     void Tree_selectAllChildItems(QTreeWidgetItem *item);
     int  Tree_numSelectedtems(int &ItemsCount);
     int  Tree_numCompresstemsSelected(int &ItemsCount, int &NumCompressedItems);
-
-
-
 
     QTreeWidgetItem *GetCurrentItem(int inLevelType);
     QTreeWidgetItem *Tree_FindImageItem(QString filePathName, bool inCludeDestination);

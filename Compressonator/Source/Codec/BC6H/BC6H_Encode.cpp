@@ -34,29 +34,21 @@
 #include <stdio.h>
 #include <math.h>
 #include "Common.h"
+#include "HDR_Encode.h"
 #include "BC6H_Definitions.h"
-#include "BC6H_Partitions.h"
 #include "BC6H_Encode.h"
 #include "BC6H_Utils.h"
-#include "BC6H_3dquant_vpc.h"
-#include "BC6H_shake.h"
 
-#pragma warning(disable:4244)
-#include "half.h"
-#pragma warning(default:4244)
+using namespace HDR_Encode;
 
-#ifdef BC6H_COMPDEBUGGER
-#include "compclient.h"
-#endif
+
+#define USE_SHAKERHD  // reserved for future use!
+
+BYTE Cmp_Red_Block[16] = { 0xc2,0x7b,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xe0,0x03,0x00,0x00,0x00,0x00,0x00 };
 
 extern int  g_block;
 extern FILE *g_fp;
 int gl_block = 0;
-
-#ifdef BC6H_DEBUG_TO_RESULTS_TXT
-extern FILE *g_fp;
-extern int  g_mode;
-#endif
 
 #ifdef DEBUG_PATTERNS
 // random pixel noise range
@@ -72,37 +64,340 @@ Reserved Feature MONOSHAPE_PATTERNS
 int BC6HBlockEncoder::FindPattern();
 */
 
-#ifdef BC6H_COMPDEBUGGER
-    CompViewerClient    g_CompClient;
-    BOOL                g_Remote_Connected;
-#endif
-
-int QuantizeToInt(float value, int prec, bool signedfloat16, double exposure)
-{
-    if (value == 0) value = 0.01f;
-
-    int ivalue = (int)(value * exposure);
-    if (prec <= 1) return ivalue;
-    
-    int iQuantized; 
-    bool negvalue = false;
-    int bias = (prec > 10) ? ((1<<(prec-1))-1) : 0;    
-    
-    if (signedfloat16)
+void SaveDataBlock(AMD_BC6H_Format bc6h_format, BYTE out[BC6H_COMPRESSED_BLOCK_SIZE])
     {
-        if(ivalue < 0)
+        BitHeader header(NULL, BC6H_COMPRESSED_BLOCK_SIZE);
+
+        // Save the RGB end point values
+        switch (bc6h_format.m_mode)
         {
-            negvalue = true;
-            ivalue = -ivalue;
+        case 1: //0x00
+            header.setvalue(0, 2, 0x00);
+            header.setvalue(2, 1, bc6h_format.gy, 4);        //        gy[4]
+            header.setvalue(3, 1, bc6h_format.by, 4);        //        by[4]
+            header.setvalue(4, 1, bc6h_format.bz, 4);        //        bz[4]
+            header.setvalue(5, 10, bc6h_format.rw);          // 10:    rw[9:0] 
+            header.setvalue(15, 10, bc6h_format.gw);          // 10:    gw[9:0]
+            header.setvalue(25, 10, bc6h_format.bw);          // 10:    bw[9:0]
+            header.setvalue(35, 5, bc6h_format.rx);          // 5:     rx[4:0]
+            header.setvalue(40, 1, bc6h_format.gz, 4);        //        gz[4]
+            header.setvalue(41, 4, bc6h_format.gy);          // 5:     gy[3:0]
+            header.setvalue(45, 5, bc6h_format.gx);          // 5:     gx[4:0]
+            header.setvalue(50, 1, bc6h_format.bz);          // 5:     bz[0]
+            header.setvalue(51, 4, bc6h_format.gz);          // 5:     gz[3:0]
+            header.setvalue(55, 5, bc6h_format.bx);          // 5:     bx[4:0]
+            header.setvalue(60, 1, bc6h_format.bz, 1);        //        bz[1]
+            header.setvalue(61, 4, bc6h_format.by);          // 5:     by[3:0]
+            header.setvalue(65, 5, bc6h_format.ry);          // 5:     ry[4:0]
+            header.setvalue(70, 1, bc6h_format.bz, 2);        //        bz[2]
+            header.setvalue(71, 5, bc6h_format.rz);          // 5:     rz[4:0]
+            header.setvalue(76, 1, bc6h_format.bz, 3);        //        bz[3]
+            break;
+        case 2: // 0x01
+            header.setvalue(0, 2, 0x01);
+            header.setvalue(2, 1, bc6h_format.gy, 5);        //        gy[5]
+            header.setvalue(3, 1, bc6h_format.gz, 4);        //        gz[4]
+            header.setvalue(4, 1, bc6h_format.gz, 5);        //        gz[5]
+            header.setvalue(5, 7, bc6h_format.rw);          //        rw[6:0] 
+            header.setvalue(12, 1, bc6h_format.bz);          //        bz[0]
+            header.setvalue(13, 1, bc6h_format.bz, 1);        //        bz[1]
+            header.setvalue(14, 1, bc6h_format.by, 4);        //        by[4]
+            header.setvalue(15, 7, bc6h_format.gw);          //        gw[6:0]
+            header.setvalue(22, 1, bc6h_format.by, 5);        //        by[5]
+            header.setvalue(23, 1, bc6h_format.bz, 2);        //        bz[2]
+            header.setvalue(24, 1, bc6h_format.gy, 4);        //        gy[4]
+            header.setvalue(25, 7, bc6h_format.bw);          // 7:     bw[6:0]
+            header.setvalue(32, 1, bc6h_format.bz, 3);        //        bz[3]
+            header.setvalue(33, 1, bc6h_format.bz, 5);        //        bz[5]
+            header.setvalue(34, 1, bc6h_format.bz, 4);        //        bz[4]
+            header.setvalue(35, 6, bc6h_format.rx);          // 6:     rx[5:0]
+            header.setvalue(41, 4, bc6h_format.gy);          // 6:     gy[3:0]
+            header.setvalue(45, 6, bc6h_format.gx);          // 6:     gx[5:0]
+            header.setvalue(51, 4, bc6h_format.gz);          // 6:     gz[3:0]
+            header.setvalue(55, 6, bc6h_format.bx);          // 6:     bx[5:0]
+            header.setvalue(61, 4, bc6h_format.by);          // 6:     by[3:0]
+            header.setvalue(65, 6, bc6h_format.ry);          // 6:     ry[5:0]
+            header.setvalue(71, 6, bc6h_format.rz);          // 6:     rz[5:0]
+            break;
+        case 3: // 0x02
+            header.setvalue(0, 5, 0x02);
+            header.setvalue(5, 10, bc6h_format.rw);          // 11:    rw[9:0] 
+            header.setvalue(15, 10, bc6h_format.gw);          // 11:    gw[9:0]
+            header.setvalue(25, 10, bc6h_format.bw);          // 11:    bw[9:0]
+            header.setvalue(35, 5, bc6h_format.rx);          // 5:     rx[4:0]
+            header.setvalue(40, 1, bc6h_format.rw, 10);       //        rw[10]
+            header.setvalue(41, 4, bc6h_format.gy);          // 4:     gy[3:0]
+            header.setvalue(45, 4, bc6h_format.gx);          // 4:     gx[3:0]
+            header.setvalue(49, 1, bc6h_format.gw, 10);       //        gw[10]
+            header.setvalue(50, 1, bc6h_format.bz);          // 4:     bz[0]
+            header.setvalue(51, 4, bc6h_format.gz);          // 4:     gz[3:0]
+            header.setvalue(55, 4, bc6h_format.bx);          // 4:     bx[3:0]
+            header.setvalue(59, 1, bc6h_format.bw, 10);       //        bw[10]
+            header.setvalue(60, 1, bc6h_format.bz, 1);        //        bz[1]
+            header.setvalue(61, 4, bc6h_format.by);          // 4:     by[3:0]
+            header.setvalue(65, 5, bc6h_format.ry);          // 5:     ry[4:0]
+            header.setvalue(70, 1, bc6h_format.bz, 2);        //        bz[2]
+            header.setvalue(71, 5, bc6h_format.rz);          // 5:     rz[4:0]
+            header.setvalue(76, 1, bc6h_format.bz, 3);        //        bz[3]
+            break;
+        case 4: // 0x06
+            header.setvalue(0, 5, 0x06);
+            header.setvalue(5, 10, bc6h_format.rw);          // 11:    rw[9:0] 
+            header.setvalue(15, 10, bc6h_format.gw);          // 11:    gw[9:0]
+            header.setvalue(25, 10, bc6h_format.bw);          // 11:    bw[9:0]
+            header.setvalue(35, 4, bc6h_format.rx);          //        rx[3:0]
+            header.setvalue(39, 1, bc6h_format.rw, 10);       //        rw[10]
+            header.setvalue(40, 1, bc6h_format.gz, 4);        //        gz[4]
+            header.setvalue(41, 4, bc6h_format.gy);          // 5:     gy[3:0]
+            header.setvalue(45, 5, bc6h_format.gx);          //        gx[4:0]
+            header.setvalue(50, 1, bc6h_format.gw, 10);       // 5:     gw[10]
+            header.setvalue(51, 4, bc6h_format.gz);          // 5:     gz[3:0]
+            header.setvalue(55, 4, bc6h_format.bx);          // 4:     bx[3:0]
+            header.setvalue(59, 1, bc6h_format.bw, 10);       //        bw[10]
+            header.setvalue(60, 1, bc6h_format.bz, 1);        //        bz[1]
+            header.setvalue(61, 4, bc6h_format.by);          // 4:     by[3:0]
+            header.setvalue(65, 4, bc6h_format.ry);          // 4:     ry[3:0]
+            header.setvalue(69, 1, bc6h_format.bz);          // 4:     bz[0]
+            header.setvalue(70, 1, bc6h_format.bz, 2);        //        bz[2]
+            header.setvalue(71, 4, bc6h_format.rz);          // 4:     rz[3:0]
+            header.setvalue(75, 1, bc6h_format.gy, 4);        //        gy[4]
+            header.setvalue(76, 1, bc6h_format.bz, 3);        //        bz[3]
+            break;
+        case 5: // 0x0A
+            header.setvalue(0, 5, 0x0A);
+            header.setvalue(5, 10, bc6h_format.rw);           // 11:   rw[9:0] 
+            header.setvalue(15, 10, bc6h_format.gw);           // 11:   gw[9:0]
+            header.setvalue(25, 10, bc6h_format.bw);           // 11:   bw[9:0]
+            header.setvalue(35, 4, bc6h_format.rx);           // 4:    rx[3:0]
+            header.setvalue(39, 1, bc6h_format.rw, 10);        //       rw[10]
+            header.setvalue(40, 1, bc6h_format.by, 4);         //       by[4]
+            header.setvalue(41, 4, bc6h_format.gy);           // 4:    gy[3:0]
+            header.setvalue(45, 4, bc6h_format.gx);           // 4:    gx[3:0]
+            header.setvalue(49, 1, bc6h_format.gw, 10);        //       gw[10]
+            header.setvalue(50, 1, bc6h_format.bz);           // 5:    bz[0]
+            header.setvalue(51, 4, bc6h_format.gz);           // 4:    gz[3:0]
+            header.setvalue(55, 5, bc6h_format.bx);           // 5:    bx[4:0]
+            header.setvalue(60, 1, bc6h_format.bw, 10);        //       bw[10]
+            header.setvalue(61, 4, bc6h_format.by);           // 5:    by[3:0]
+            header.setvalue(65, 4, bc6h_format.ry);           // 4:    ry[3:0]
+            header.setvalue(69, 1, bc6h_format.bz, 1);         //       bz[1]
+            header.setvalue(70, 1, bc6h_format.bz, 2);         //       bz[2]
+            header.setvalue(71, 4, bc6h_format.rz);           // 4:    rz[3:0]
+            header.setvalue(75, 1, bc6h_format.bz, 4);         //       bz[4]
+            header.setvalue(76, 1, bc6h_format.bz, 3);         //       bz[3]
+            break;
+        case 6: // 0x0E
+            header.setvalue(0, 5, 0x0E);
+            header.setvalue(5, 9, bc6h_format.rw);           // 9:    rw[8:0] 
+            header.setvalue(14, 1, bc6h_format.by, 4);         //       by[4]
+            header.setvalue(15, 9, bc6h_format.gw);           // 9:    gw[8:0]
+            header.setvalue(24, 1, bc6h_format.gy, 4);         //       gy[4]
+            header.setvalue(25, 9, bc6h_format.bw);           // 9:    bw[8:0]
+            header.setvalue(34, 1, bc6h_format.bz, 4);         //       bz[4]
+            header.setvalue(35, 5, bc6h_format.rx);           // 5:    rx[4:0]
+            header.setvalue(40, 1, bc6h_format.gz, 4);         //       gz[4]
+            header.setvalue(41, 4, bc6h_format.gy);           // 5:    gy[3:0]
+            header.setvalue(45, 5, bc6h_format.gx);           // 5:    gx[4:0]
+            header.setvalue(50, 1, bc6h_format.bz);           // 5:    bz[0]
+            header.setvalue(51, 4, bc6h_format.gz);           // 5:    gz[3:0]
+            header.setvalue(55, 5, bc6h_format.bx);           // 5:    bx[4:0]
+            header.setvalue(60, 1, bc6h_format.bz, 1);         //       bz[1]
+            header.setvalue(61, 4, bc6h_format.by);           // 5:    by[3:0]
+            header.setvalue(65, 5, bc6h_format.ry);           // 5:    ry[4:0]
+            header.setvalue(70, 1, bc6h_format.bz, 2);         //       bz[2]
+            header.setvalue(71, 5, bc6h_format.rz);           // 5:    rz[4:0]
+            header.setvalue(76, 1, bc6h_format.bz, 3);         //       bz[3]
+            break;
+        case 7: // 0x12
+            header.setvalue(0, 5, 0x12);
+            header.setvalue(5, 8, bc6h_format.rw);           // 8:    rw[7:0] 
+            header.setvalue(13, 1, bc6h_format.gz, 4);         //       gz[4]
+            header.setvalue(14, 1, bc6h_format.by, 4);         //       by[4]
+            header.setvalue(15, 8, bc6h_format.gw);           // 8:    gw[7:0]
+            header.setvalue(23, 1, bc6h_format.bz, 2);         //       bz[2]
+            header.setvalue(24, 1, bc6h_format.gy, 4);         //       gy[4]
+            header.setvalue(25, 8, bc6h_format.bw);           // 8:    bw[7:0]
+            header.setvalue(33, 1, bc6h_format.bz, 3);         //       bz[3]
+            header.setvalue(34, 1, bc6h_format.bz, 4);         //       bz[4]
+            header.setvalue(35, 6, bc6h_format.rx);           // 6:    rx[5:0]
+            header.setvalue(41, 4, bc6h_format.gy);           // 5:    gy[3:0]
+            header.setvalue(45, 5, bc6h_format.gx);           // 5:    gx[4:0]
+            header.setvalue(50, 1, bc6h_format.bz);           // 5:    bz[0]
+            header.setvalue(51, 4, bc6h_format.gz);           // 5:    gz[3:0]
+            header.setvalue(55, 5, bc6h_format.bx);           // 5:    bx[4:0]
+            header.setvalue(60, 1, bc6h_format.bz, 1);         //       bz[1]
+            header.setvalue(61, 4, bc6h_format.by);           // 5:    by[3:0]
+            header.setvalue(65, 6, bc6h_format.ry);           // 6:    ry[5:0]
+            header.setvalue(71, 6, bc6h_format.rz);           // 6:    rz[5:0]
+            break;
+        case 8: // 0x16
+            header.setvalue(0, 5, 0x16);
+            header.setvalue(5, 8, bc6h_format.rw);            // 8:   rw[7:0] 
+            header.setvalue(13, 1, bc6h_format.bz);            // 5:   bz[0]
+            header.setvalue(14, 1, bc6h_format.by, 4);          //      by[4]
+            header.setvalue(15, 8, bc6h_format.gw);            // 8:   gw[7:0]
+            header.setvalue(23, 1, bc6h_format.gy, 5);          //      gy[5]
+            header.setvalue(24, 1, bc6h_format.gy, 4);          //      gy[4]
+            header.setvalue(25, 8, bc6h_format.bw);            // 8:   bw[7:0]
+            header.setvalue(33, 1, bc6h_format.gz, 5);          //      gz[5]
+            header.setvalue(34, 1, bc6h_format.bz, 4);          //      bz[4]
+            header.setvalue(35, 5, bc6h_format.rx);            // 5:   rx[4:0]
+            header.setvalue(40, 1, bc6h_format.gz, 4);          //      gz[4]
+            header.setvalue(41, 4, bc6h_format.gy);            // 6:   gy[3:0]
+            header.setvalue(45, 6, bc6h_format.gx);            // 6:   gx[5:0]
+            header.setvalue(51, 4, bc6h_format.gz);            // 6:   gz[3:0]
+            header.setvalue(55, 5, bc6h_format.bx);            // 5:   bx[4:0]
+            header.setvalue(60, 1, bc6h_format.bz, 1);          //      bz[1]
+            header.setvalue(61, 4, bc6h_format.by);            // 5:   by[3:0]
+            header.setvalue(65, 5, bc6h_format.ry);            // 5:   ry[4:0]
+            header.setvalue(70, 1, bc6h_format.bz, 2);          //      bz[2]
+            header.setvalue(71, 5, bc6h_format.rz);            // 5:   rz[4:0]
+            header.setvalue(76, 1, bc6h_format.bz, 3);          //      bz[3]
+            break;
+        case 9: // 0x1A
+            header.setvalue(0, 5, 0x1A);
+            header.setvalue(5, 8, bc6h_format.rw);            // 8:   rw[7:0] 
+            header.setvalue(13, 1, bc6h_format.bz, 1);          //      bz[1]
+            header.setvalue(14, 1, bc6h_format.by, 4);          //      by[4]
+            header.setvalue(15, 8, bc6h_format.gw);            // 8:   gw[7:0]
+            header.setvalue(23, 1, bc6h_format.by, 5);          //      by[5]
+            header.setvalue(24, 1, bc6h_format.gy, 4);          //      gy[4]
+            header.setvalue(25, 8, bc6h_format.bw);            // 8:   bw[7:0]
+            header.setvalue(33, 1, bc6h_format.bz, 5);          //      bz[5]
+            header.setvalue(34, 1, bc6h_format.bz, 4);          //      bz[4]
+            header.setvalue(35, 5, bc6h_format.rx);            // 5:   rx[4:0]
+            header.setvalue(40, 1, bc6h_format.gz, 4);          //      gz[4]
+            header.setvalue(41, 4, bc6h_format.gy);            // 5:   gy[3:0]
+            header.setvalue(45, 5, bc6h_format.gx);            // 5:   gx[4:0]
+            header.setvalue(50, 1, bc6h_format.bz);            // 6:   bz[0]
+            header.setvalue(51, 4, bc6h_format.gz);            // 5:   gz[3:0]
+            header.setvalue(55, 6, bc6h_format.bx);            // 6:   bx[5:0]
+            header.setvalue(61, 4, bc6h_format.by);            // 6:   by[3:0]
+            header.setvalue(65, 5, bc6h_format.ry);            // 5:   ry[4:0]
+            header.setvalue(70, 1, bc6h_format.bz, 2);          //      bz[2]
+            header.setvalue(71, 5, bc6h_format.rz);            // 5:   rz[4:0]
+            header.setvalue(76, 1, bc6h_format.bz, 3);          //      bz[3]
+            break;
+        case 10: // 0x1E
+            header.setvalue(0, 5, 0x1E);
+            header.setvalue(5, 6, bc6h_format.rw);            // 6:   rw[5:0] 
+            header.setvalue(11, 1, bc6h_format.gz, 4);          //      gz[4]
+            header.setvalue(12, 1, bc6h_format.bz);            // 6:   bz[0]
+            header.setvalue(13, 1, bc6h_format.bz, 1);          //      bz[1]
+            header.setvalue(14, 1, bc6h_format.by, 4);          //      by[4]
+            header.setvalue(15, 6, bc6h_format.gw);            // 6:   gw[5:0]
+            header.setvalue(21, 1, bc6h_format.gy, 5);          //      gy[5]
+            header.setvalue(22, 1, bc6h_format.by, 5);          //      by[5]
+            header.setvalue(23, 1, bc6h_format.bz, 2);          //      bz[2]
+            header.setvalue(24, 1, bc6h_format.gy, 4);          //      gy[4]
+            header.setvalue(25, 6, bc6h_format.bw);            // 6:   bw[5:0]
+            header.setvalue(31, 1, bc6h_format.gz, 5);          //      gz[5]
+            header.setvalue(32, 1, bc6h_format.bz, 3);          //      bz[3]
+            header.setvalue(33, 1, bc6h_format.bz, 5);          //      bz[5]
+            header.setvalue(34, 1, bc6h_format.bz, 4);          //      bz[4]
+            header.setvalue(35, 6, bc6h_format.rx);            // 6:   rx[5:0]
+            header.setvalue(41, 4, bc6h_format.gy);            // 6:   gy[3:0]
+            header.setvalue(45, 6, bc6h_format.gx);            // 6:   gx[5:0]
+            header.setvalue(51, 4, bc6h_format.gz);            // 6:   gz[3:0]
+            header.setvalue(55, 6, bc6h_format.bx);            // 6:   bx[5:0]
+            header.setvalue(61, 4, bc6h_format.by);            // 6:   by[3:0]
+            header.setvalue(65, 6, bc6h_format.ry);            // 6:   ry[5:0]
+            header.setvalue(71, 6, bc6h_format.rz);            // 6:   rz[5:0]
+            break;
+
+            // Single regions Modes
+        case 11: // 0x03
+            header.setvalue(0, 5, 0x03);
+            header.setvalue(5, 10, bc6h_format.rw);            // 10:   rw[9:0] 
+            header.setvalue(15, 10, bc6h_format.gw);            // 10:   gw[9:0]
+            header.setvalue(25, 10, bc6h_format.bw);            // 10:   bw[9:0]
+            header.setvalue(35, 10, bc6h_format.rx);            // 10:   rx[9:0]
+            header.setvalue(45, 10, bc6h_format.gx);            // 10:   gx[9:0]
+            header.setvalue(55, 10, bc6h_format.bx);            // 10:   bx[9:0]
+            break;
+        case 12: // 0x07
+            header.setvalue(0, 5, 0x07);
+            header.setvalue(5, 10, bc6h_format.rw);            // 11:   rw[9:0] 
+            header.setvalue(15, 10, bc6h_format.gw);            // 11:   gw[9:0]
+            header.setvalue(25, 10, bc6h_format.bw);            // 11:   bw[9:0]
+            header.setvalue(35, 9, bc6h_format.rx);            // 9:    rx[8:0]
+            header.setvalue(44, 1, bc6h_format.rw, 10);         //       rw[10]
+            header.setvalue(45, 9, bc6h_format.gx);            // 9:    gx[8:0]
+            header.setvalue(54, 1, bc6h_format.gw, 10);         //       gw[10]
+            header.setvalue(55, 9, bc6h_format.bx);            // 9:    bx[8:0]
+            header.setvalue(64, 1, bc6h_format.bw, 10);         //       bw[10]
+            break;
+        case 13: // 0x0B
+            header.setvalue(0, 5, 0x0B);
+            header.setvalue(5, 10, bc6h_format.rw);            // 12:   rw[9:0] 
+            header.setvalue(15, 10, bc6h_format.gw);            // 12:   gw[9:0]
+            header.setvalue(25, 10, bc6h_format.bw);            // 12:   bw[9:0]
+            header.setvalue(35, 8, bc6h_format.rx);            // 8:    rx[7:0]
+            header.setvalue(43, 1, bc6h_format.rw, 11);         //       rw[11]
+            header.setvalue(44, 1, bc6h_format.rw, 10);         //       rw[10]
+            header.setvalue(45, 8, bc6h_format.gx);            // 8:    gx[7:0]
+            header.setvalue(53, 1, bc6h_format.gw, 11);         //       gw[11]
+            header.setvalue(54, 1, bc6h_format.gw, 10);         //       gw[10]
+            header.setvalue(55, 8, bc6h_format.bx);            // 8:    bx[7:0]
+            header.setvalue(63, 1, bc6h_format.bw, 11);         //       bw[11]
+            header.setvalue(64, 1, bc6h_format.bw, 10);         //       bw[10]
+            break;
+        case 14: // 0x0F
+            header.setvalue(0, 5, 0x0F);
+            header.setvalue(5, 10, bc6h_format.rw);            // 16:   rw[9:0] 
+            header.setvalue(15, 10, bc6h_format.gw);            // 16:   gw[9:0]
+            header.setvalue(25, 10, bc6h_format.bw);            // 16:   bw[9:0]
+            header.setvalue(35, 4, bc6h_format.rx);            //  4:   rx[3:0]
+            header.setvalue(39, 6, bc6h_format.rw, 10);         //       rw[15:10]
+            header.setvalue(45, 4, bc6h_format.gx);            //  4:   gx[3:0]
+            header.setvalue(49, 6, bc6h_format.gw, 10);         //       gw[15:10]
+            header.setvalue(55, 4, bc6h_format.bx);            //  4:   bx[3:0]
+            header.setvalue(59, 6, bc6h_format.bw, 10);         //       bw[15:10]
+            break;
+        default: // Need to indicate error!
+            return;
         }
-        prec--;
+
+        // Each format in the mode table can be uniquely identified by the mode bits. 
+        // The first ten modes are used for two-region tiles, and the mode bit field 
+        // can be either two or five bits long. These blocks also have fields for 
+        // the compressed color endpoints (72 or 75 bits), the partition (5 bits), 
+        // and the partition indices (46 bits).
+
+        if (bc6h_format.m_mode >= MIN_MODE_FOR_ONE_REGION)
+        {
+            int startbit = ONE_REGION_INDEX_OFFSET;
+            header.setvalue(startbit, 3, bc6h_format.indices16[0]);
+            startbit += 3;
+            for (int i = 1; i<16; i++)
+            {
+                header.setvalue(startbit, 4, bc6h_format.indices16[i]);
+                startbit += 4;
+            }
+        }
+        else
+        {
+            header.setvalue(77, 5, bc6h_format.d_shape_index);            // Shape Index
+            int startbit = TWO_REGION_INDEX_OFFSET,
+                nbits = 2;
+            header.setvalue(startbit, nbits, bc6h_format.indices16[0]);
+            for (int i = 1; i<16; i++)
+            {
+                startbit += nbits; // offset start bit for next index using prior nbits used
+                nbits = g_indexfixups[bc6h_format.d_shape_index] == i ? 2 : 3; // get new number of bit to save index with
+                header.setvalue(startbit, nbits, bc6h_format.indices16[i]);
+            }
+        }
+
+        // save to output buffer our new bit values
+        // this can be optimized if header is part of bc6h_format struct
+        header.transferbits(out, 16);
+
     }
-    iQuantized = ((ivalue << prec) + bias) / Float16bitMAX1;
-    return (negvalue?-iQuantized:iQuantized);
-}
+
 
 // decompress endpoints
-static void decompress_endpts(const int in[2][2][3], int out[2][2][3], const int mode, bool issigned)
+static void decompress_endpts(const int in[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int out[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], const int mode, bool issigned)
 {
 
     if (ModePartition[mode].transformed)
@@ -136,352 +431,25 @@ static void decompress_endpts(const int in[2][2][3], int out[2][2][3], const int
     }
 }
 
-void SaveDataBlock(AMD_BC6H_Format bc6h_format, BYTE out[BC6H_COMPRESSED_BLOCK_SIZE])
-{
-    BitHeader header(NULL,BC6H_COMPRESSED_BLOCK_SIZE);
-
-    // Save the RGB end point values
-    switch (bc6h_format.m_mode)
-    {
-        case 1: //0x00
-                header.setvalue(0,2,0x00);
-                header.setvalue(2 ,1 ,bc6h_format.gy,4);        //        gy[4]
-                header.setvalue(3 ,1 ,bc6h_format.by,4);        //        by[4]
-                header.setvalue(4 ,1 ,bc6h_format.bz,4);        //        bz[4]
-                header.setvalue(5 ,10,bc6h_format.rw);          // 10:    rw[9:0] 
-                header.setvalue(15,10,bc6h_format.gw);          // 10:    gw[9:0]
-                header.setvalue(25,10,bc6h_format.bw);          // 10:    bw[9:0]
-                header.setvalue(35,5 ,bc6h_format.rx);          // 5:     rx[4:0]
-                header.setvalue(40,1 ,bc6h_format.gz,4);        //        gz[4]
-                header.setvalue(41,4 ,bc6h_format.gy);          // 5:     gy[3:0]
-                header.setvalue(45,5 ,bc6h_format.gx);          // 5:     gx[4:0]
-                header.setvalue(50,1 ,bc6h_format.bz);          // 5:     bz[0]
-                header.setvalue(51,4 ,bc6h_format.gz);          // 5:     gz[3:0]
-                header.setvalue(55,5 ,bc6h_format.bx);          // 5:     bx[4:0]
-                header.setvalue(60,1 ,bc6h_format.bz,1);        //        bz[1]
-                header.setvalue(61,4 ,bc6h_format.by);          // 5:     by[3:0]
-                header.setvalue(65,5 ,bc6h_format.ry);          // 5:     ry[4:0]
-                header.setvalue(70,1 ,bc6h_format.bz,2);        //        bz[2]
-                header.setvalue(71,5 ,bc6h_format.rz);          // 5:     rz[4:0]
-                header.setvalue(76,1 ,bc6h_format.bz,3);        //        bz[3]
-                break;
-        case 2: // 0x01
-                header.setvalue(0,2,0x01);
-                header.setvalue(2 ,1 ,bc6h_format.gy,5);        //        gy[5]
-                header.setvalue(3 ,1 ,bc6h_format.gz,4);        //        gz[4]
-                header.setvalue(4 ,1 ,bc6h_format.gz,5);        //        gz[5]
-                header.setvalue(5 ,7 ,bc6h_format.rw);          //        rw[6:0] 
-                header.setvalue(12,1 ,bc6h_format.bz);          //        bz[0]
-                header.setvalue(13,1 ,bc6h_format.bz,1);        //        bz[1]
-                header.setvalue(14,1 ,bc6h_format.by,4);        //        by[4]
-                header.setvalue(15,7 ,bc6h_format.gw);          //        gw[6:0]
-                header.setvalue(22,1 ,bc6h_format.by,5);        //        by[5]
-                header.setvalue(23,1 ,bc6h_format.bz,2);        //        bz[2]
-                header.setvalue(24,1 ,bc6h_format.gy,4);        //        gy[4]
-                header.setvalue(25,7 ,bc6h_format.bw);          // 7:     bw[6:0]
-                header.setvalue(32,1 ,bc6h_format.bz,3);        //        bz[3]
-                header.setvalue(33,1 ,bc6h_format.bz,5);        //        bz[5]
-                header.setvalue(34,1 ,bc6h_format.bz,4);        //        bz[4]
-                header.setvalue(35,6 ,bc6h_format.rx);          // 6:     rx[5:0]
-                header.setvalue(41,4 ,bc6h_format.gy);          // 6:     gy[3:0]
-                header.setvalue(45,6 ,bc6h_format.gx);          // 6:     gx[5:0]
-                header.setvalue(51,4 ,bc6h_format.gz);          // 6:     gz[3:0]
-                header.setvalue(55,6 ,bc6h_format.bx);          // 6:     bx[5:0]
-                header.setvalue(61,4 ,bc6h_format.by);          // 6:     by[3:0]
-                header.setvalue(65,6 ,bc6h_format.ry);          // 6:     ry[5:0]
-                header.setvalue(71,6 ,bc6h_format.rz);          // 6:     rz[5:0]
-                break;
-        case 3: // 0x02
-                header.setvalue(0,5,0x02);
-                header.setvalue(5 ,10,bc6h_format.rw);          // 11:    rw[9:0] 
-                header.setvalue(15,10,bc6h_format.gw);          // 11:    gw[9:0]
-                header.setvalue(25,10,bc6h_format.bw);          // 11:    bw[9:0]
-                header.setvalue(35,5 ,bc6h_format.rx);          // 5:     rx[4:0]
-                header.setvalue(40,1 ,bc6h_format.rw,10);       //        rw[10]
-                header.setvalue(41,4 ,bc6h_format.gy);          // 4:     gy[3:0]
-                header.setvalue(45,4 ,bc6h_format.gx);          // 4:     gx[3:0]
-                header.setvalue(49,1 ,bc6h_format.gw,10);       //        gw[10]
-                header.setvalue(50,1 ,bc6h_format.bz);          // 4:     bz[0]
-                header.setvalue(51,4 ,bc6h_format.gz);          // 4:     gz[3:0]
-                header.setvalue(55,4 ,bc6h_format.bx);          // 4:     bx[3:0]
-                header.setvalue(59,1 ,bc6h_format.bw,10);       //        bw[10]
-                header.setvalue(60,1 ,bc6h_format.bz,1);        //        bz[1]
-                header.setvalue(61,4 ,bc6h_format.by);          // 4:     by[3:0]
-                header.setvalue(65,5 ,bc6h_format.ry);          // 5:     ry[4:0]
-                header.setvalue(70,1 ,bc6h_format.bz,2);        //        bz[2]
-                header.setvalue(71,5 ,bc6h_format.rz);          // 5:     rz[4:0]
-                header.setvalue(76,1 ,bc6h_format.bz,3);        //        bz[3]
-                break;
-        case 4: // 0x06
-                header.setvalue(0,5,0x06);
-                header.setvalue(5 ,10,bc6h_format.rw);          // 11:    rw[9:0] 
-                header.setvalue(15,10,bc6h_format.gw);          // 11:    gw[9:0]
-                header.setvalue(25,10,bc6h_format.bw);          // 11:    bw[9:0]
-                header.setvalue(35,4 ,bc6h_format.rx);          //        rx[3:0]
-                header.setvalue(39,1 ,bc6h_format.rw,10);       //        rw[10]
-                header.setvalue(40,1 ,bc6h_format.gz,4);        //        gz[4]
-                header.setvalue(41,4 ,bc6h_format.gy);          // 5:     gy[3:0]
-                header.setvalue(45,5 ,bc6h_format.gx);          //        gx[4:0]
-                header.setvalue(50,1 ,bc6h_format.gw,10);       // 5:     gw[10]
-                header.setvalue(51,4 ,bc6h_format.gz);          // 5:     gz[3:0]
-                header.setvalue(55,4 ,bc6h_format.bx);          // 4:     bx[3:0]
-                header.setvalue(59,1 ,bc6h_format.bw,10);       //        bw[10]
-                header.setvalue(60,1 ,bc6h_format.bz,1);        //        bz[1]
-                header.setvalue(61,4 ,bc6h_format.by);          // 4:     by[3:0]
-                header.setvalue(65,4 ,bc6h_format.ry);          // 4:     ry[3:0]
-                header.setvalue(69,1 ,bc6h_format.bz);          // 4:     bz[0]
-                header.setvalue(70,1 ,bc6h_format.bz,2);        //        bz[2]
-                header.setvalue(71,4 ,bc6h_format.rz);          // 4:     rz[3:0]
-                header.setvalue(75,1 ,bc6h_format.gy,4);        //        gy[4]
-                header.setvalue(76,1 ,bc6h_format.bz,3);        //        bz[3]
-                break;
-        case 5: // 0x0A
-                header.setvalue(0,5,0x0A);
-                header.setvalue(5 ,10,bc6h_format.rw);           // 11:   rw[9:0] 
-                header.setvalue(15,10,bc6h_format.gw);           // 11:   gw[9:0]
-                header.setvalue(25,10,bc6h_format.bw);           // 11:   bw[9:0]
-                header.setvalue(35,4 ,bc6h_format.rx);           // 4:    rx[3:0]
-                header.setvalue(39,1 ,bc6h_format.rw,10);        //       rw[10]
-                header.setvalue(40,1 ,bc6h_format.by,4);         //       by[4]
-                header.setvalue(41,4 ,bc6h_format.gy);           // 4:    gy[3:0]
-                header.setvalue(45,4 ,bc6h_format.gx);           // 4:    gx[3:0]
-                header.setvalue(49,1 ,bc6h_format.gw,10);        //       gw[10]
-                header.setvalue(50,1 ,bc6h_format.bz);           // 5:    bz[0]
-                header.setvalue(51,4 ,bc6h_format.gz);           // 4:    gz[3:0]
-                header.setvalue(55,5 ,bc6h_format.bx);           // 5:    bx[4:0]
-                header.setvalue(60,1 ,bc6h_format.bw,10);        //       bw[10]
-                header.setvalue(61,4 ,bc6h_format.by);           // 5:    by[3:0]
-                header.setvalue(65,4 ,bc6h_format.ry);           // 4:    ry[3:0]
-                header.setvalue(69,1 ,bc6h_format.bz,1);         //       bz[1]
-                header.setvalue(70,1 ,bc6h_format.bz,2);         //       bz[2]
-                header.setvalue(71,4 ,bc6h_format.rz);           // 4:    rz[3:0]
-                header.setvalue(75,1 ,bc6h_format.bz,4);         //       bz[4]
-                header.setvalue(76,1 ,bc6h_format.bz,3);         //       bz[3]
-                break;
-        case 6: // 0x0E
-                header.setvalue(0,5,0x0E);
-                header.setvalue(5 ,9 ,bc6h_format.rw);           // 9:    rw[8:0] 
-                header.setvalue(14,1 ,bc6h_format.by,4);         //       by[4]
-                header.setvalue(15,9 ,bc6h_format.gw);           // 9:    gw[8:0]
-                header.setvalue(24,1 ,bc6h_format.gy,4);         //       gy[4]
-                header.setvalue(25,9 ,bc6h_format.bw);           // 9:    bw[8:0]
-                header.setvalue(34,1 ,bc6h_format.bz,4);         //       bz[4]
-                header.setvalue(35,5 ,bc6h_format.rx);           // 5:    rx[4:0]
-                header.setvalue(40,1 ,bc6h_format.gz,4);         //       gz[4]
-                header.setvalue(41,4 ,bc6h_format.gy);           // 5:    gy[3:0]
-                header.setvalue(45,5 ,bc6h_format.gx);           // 5:    gx[4:0]
-                header.setvalue(50,1 ,bc6h_format.bz);           // 5:    bz[0]
-                header.setvalue(51,4 ,bc6h_format.gz);           // 5:    gz[3:0]
-                header.setvalue(55,5 ,bc6h_format.bx);           // 5:    bx[4:0]
-                header.setvalue(60,1 ,bc6h_format.bz,1);         //       bz[1]
-                header.setvalue(61,4 ,bc6h_format.by);           // 5:    by[3:0]
-                header.setvalue(65,5 ,bc6h_format.ry);           // 5:    ry[4:0]
-                header.setvalue(70,1 ,bc6h_format.bz,2);         //       bz[2]
-                header.setvalue(71,5 ,bc6h_format.rz);           // 5:    rz[4:0]
-                header.setvalue(76,1 ,bc6h_format.bz,3);         //       bz[3]
-                break;
-        case 7: // 0x12
-                header.setvalue(0,5,0x12);
-                header.setvalue(5 ,8 ,bc6h_format.rw);           // 8:    rw[7:0] 
-                header.setvalue(13,1 ,bc6h_format.gz,4);         //       gz[4]
-                header.setvalue(14,1 ,bc6h_format.by,4);         //       by[4]
-                header.setvalue(15,8 ,bc6h_format.gw);           // 8:    gw[7:0]
-                header.setvalue(23,1 ,bc6h_format.bz,2);         //       bz[2]
-                header.setvalue(24,1 ,bc6h_format.gy,4);         //       gy[4]
-                header.setvalue(25,8 ,bc6h_format.bw);           // 8:    bw[7:0]
-                header.setvalue(33,1 ,bc6h_format.bz,3);         //       bz[3]
-                header.setvalue(34,1 ,bc6h_format.bz,4);         //       bz[4]
-                header.setvalue(35,6 ,bc6h_format.rx);           // 6:    rx[5:0]
-                header.setvalue(41,4 ,bc6h_format.gy);           // 5:    gy[3:0]
-                header.setvalue(45,5 ,bc6h_format.gx);           // 5:    gx[4:0]
-                header.setvalue(50,1 ,bc6h_format.bz);           // 5:    bz[0]
-                header.setvalue(51,4 ,bc6h_format.gz);           // 5:    gz[3:0]
-                header.setvalue(55,5 ,bc6h_format.bx);           // 5:    bx[4:0]
-                header.setvalue(60,1 ,bc6h_format.bz,1);         //       bz[1]
-                header.setvalue(61,4 ,bc6h_format.by);           // 5:    by[3:0]
-                header.setvalue(65,6 ,bc6h_format.ry);           // 6:    ry[5:0]
-                header.setvalue(71,6 ,bc6h_format.rz);           // 6:    rz[5:0]
-                break;
-        case 8: // 0x16
-                header.setvalue(0,5,0x16);
-                header.setvalue(5 ,8 ,bc6h_format.rw);            // 8:   rw[7:0] 
-                header.setvalue(13,1 ,bc6h_format.bz);            // 5:   bz[0]
-                header.setvalue(14,1 ,bc6h_format.by,4);          //      by[4]
-                header.setvalue(15,8 ,bc6h_format.gw);            // 8:   gw[7:0]
-                header.setvalue(23,1 ,bc6h_format.gy,5);          //      gy[5]
-                header.setvalue(24,1 ,bc6h_format.gy,4);          //      gy[4]
-                header.setvalue(25,8 ,bc6h_format.bw);            // 8:   bw[7:0]
-                header.setvalue(33,1 ,bc6h_format.gz,5);          //      gz[5]
-                header.setvalue(34,1 ,bc6h_format.bz,4);          //      bz[4]
-                header.setvalue(35,5 ,bc6h_format.rx);            // 5:   rx[4:0]
-                header.setvalue(40,1 ,bc6h_format.gz,4);          //      gz[4]
-                header.setvalue(41,4 ,bc6h_format.gy);            // 6:   gy[3:0]
-                header.setvalue(45,6 ,bc6h_format.gx);            // 6:   gx[5:0]
-                header.setvalue(51,4 ,bc6h_format.gz);            // 6:   gz[3:0]
-                header.setvalue(55,5 ,bc6h_format.bx);            // 5:   bx[4:0]
-                header.setvalue(60,1 ,bc6h_format.bz,1);          //      bz[1]
-                header.setvalue(61,4 ,bc6h_format.by);            // 5:   by[3:0]
-                header.setvalue(65,5 ,bc6h_format.ry);            // 5:   ry[4:0]
-                header.setvalue(70,1 ,bc6h_format.bz,2);          //      bz[2]
-                header.setvalue(71,5 ,bc6h_format.rz);            // 5:   rz[4:0]
-                header.setvalue(76,1 ,bc6h_format.bz,3);          //      bz[3]
-                break;
-        case 9: // 0x1A
-                header.setvalue(0,5,0x1A);
-                header.setvalue(5 ,8 ,bc6h_format.rw);            // 8:   rw[7:0] 
-                header.setvalue(13,1 ,bc6h_format.bz,1);          //      bz[1]
-                header.setvalue(14,1 ,bc6h_format.by,4);          //      by[4]
-                header.setvalue(15,8 ,bc6h_format.gw);            // 8:   gw[7:0]
-                header.setvalue(23,1 ,bc6h_format.by,5);          //      by[5]
-                header.setvalue(24,1 ,bc6h_format.gy,4);          //      gy[4]
-                header.setvalue(25,8 ,bc6h_format.bw);            // 8:   bw[7:0]
-                header.setvalue(33,1 ,bc6h_format.bz,5);          //      bz[5]
-                header.setvalue(34,1 ,bc6h_format.bz,4);          //      bz[4]
-                header.setvalue(35,5 ,bc6h_format.rx);            // 5:   rx[4:0]
-                header.setvalue(40,1 ,bc6h_format.gz,4);          //      gz[4]
-                header.setvalue(41,4 ,bc6h_format.gy);            // 5:   gy[3:0]
-                header.setvalue(45,5 ,bc6h_format.gx);            // 5:   gx[4:0]
-                header.setvalue(50,1 ,bc6h_format.bz);            // 6:   bz[0]
-                header.setvalue(51,4 ,bc6h_format.gz);            // 5:   gz[3:0]
-                header.setvalue(55,6 ,bc6h_format.bx);            // 6:   bx[5:0]
-                header.setvalue(61,4 ,bc6h_format.by);            // 6:   by[3:0]
-                header.setvalue(65,5 ,bc6h_format.ry);            // 5:   ry[4:0]
-                header.setvalue(70,1 ,bc6h_format.bz,2);          //      bz[2]
-                header.setvalue(71,5 ,bc6h_format.rz);            // 5:   rz[4:0]
-                header.setvalue(76,1 ,bc6h_format.bz,3);          //      bz[3]
-                break;
-        case 10: // 0x1E
-                header.setvalue(0,5,0x1E);
-                header.setvalue(5 ,6 ,bc6h_format.rw);            // 6:   rw[5:0] 
-                header.setvalue(11,1 ,bc6h_format.gz,4);          //      gz[4]
-                header.setvalue(12,1 ,bc6h_format.bz);            // 6:   bz[0]
-                header.setvalue(13,1 ,bc6h_format.bz,1);          //      bz[1]
-                header.setvalue(14,1 ,bc6h_format.by,4);          //      by[4]
-                header.setvalue(15,6 ,bc6h_format.gw);            // 6:   gw[5:0]
-                header.setvalue(21,1 ,bc6h_format.gy,5);          //      gy[5]
-                header.setvalue(22,1 ,bc6h_format.by,5);          //      by[5]
-                header.setvalue(23,1 ,bc6h_format.bz,2);          //      bz[2]
-                header.setvalue(24,1 ,bc6h_format.gy,4);          //      gy[4]
-                header.setvalue(25,6 ,bc6h_format.bw);            // 6:   bw[5:0]
-                header.setvalue(31,1 ,bc6h_format.gz,5);          //      gz[5]
-                header.setvalue(32,1 ,bc6h_format.bz,3);          //      bz[3]
-                header.setvalue(33,1 ,bc6h_format.bz,5);          //      bz[5]
-                header.setvalue(34,1 ,bc6h_format.bz,4);          //      bz[4]
-                header.setvalue(35,6 ,bc6h_format.rx);            // 6:   rx[5:0]
-                header.setvalue(41,4 ,bc6h_format.gy);            // 6:   gy[3:0]
-                header.setvalue(45,6 ,bc6h_format.gx);            // 6:   gx[5:0]
-                header.setvalue(51,4 ,bc6h_format.gz);            // 6:   gz[3:0]
-                header.setvalue(55,6 ,bc6h_format.bx);            // 6:   bx[5:0]
-                header.setvalue(61,4 ,bc6h_format.by);            // 6:   by[3:0]
-                header.setvalue(65,6 ,bc6h_format.ry);            // 6:   ry[5:0]
-                header.setvalue(71,6 ,bc6h_format.rz);            // 6:   rz[5:0]
-                break;
-
-        // Single regions Modes
-        case 11: // 0x03
-                header.setvalue(0,5,0x03);
-                header.setvalue(5 ,10,bc6h_format.rw);            // 10:   rw[9:0] 
-                header.setvalue(15,10,bc6h_format.gw);            // 10:   gw[9:0]
-                header.setvalue(25,10,bc6h_format.bw);            // 10:   bw[9:0]
-                header.setvalue(35,10,bc6h_format.rx);            // 10:   rx[9:0]
-                header.setvalue(45,10,bc6h_format.gx);            // 10:   gx[9:0]
-                header.setvalue(55,10,bc6h_format.bx);            // 10:   bx[9:0]
-                break;
-        case 12: // 0x07
-                header.setvalue(0,5,0x07);
-                header.setvalue(5 ,10,bc6h_format.rw);            // 11:   rw[9:0] 
-                header.setvalue(15,10,bc6h_format.gw);            // 11:   gw[9:0]
-                header.setvalue(25,10,bc6h_format.bw);            // 11:   bw[9:0]
-                header.setvalue(35,9 ,bc6h_format.rx);            // 9:    rx[8:0]
-                header.setvalue(44,1 ,bc6h_format.rw,10);         //       rw[10]
-                header.setvalue(45,9 ,bc6h_format.gx);            // 9:    gx[8:0]
-                header.setvalue(54,1 ,bc6h_format.gw,10);         //       gw[10]
-                header.setvalue(55,9 ,bc6h_format.bx);            // 9:    bx[8:0]
-                header.setvalue(64,1 ,bc6h_format.bw,10);         //       bw[10]
-                break;
-        case 13: // 0x0B
-                header.setvalue(0,5,0x0B);
-                header.setvalue(5 ,10,bc6h_format.rw);            // 12:   rw[9:0] 
-                header.setvalue(15,10,bc6h_format.gw);            // 12:   gw[9:0]
-                header.setvalue(25,10,bc6h_format.bw);            // 12:   bw[9:0]
-                header.setvalue(35,8 ,bc6h_format.rx);            // 8:    rx[7:0]
-                header.setvalue(43,2 ,bc6h_format.rw,10);         //       rw[11:10]
-                header.setvalue(45,8 ,bc6h_format.gx);            // 8:    gx[7:0]
-                header.setvalue(53,2 ,bc6h_format.gw,10);         //       gw[11:10]
-                header.setvalue(55,8 ,bc6h_format.bx);            // 8:    bx[7:0]
-                header.setvalue(63,2 ,bc6h_format.bw,10);         //       bw[11:10]
-                break;
-        case 14: // 0x0F
-                header.setvalue(0,5,0x0F);
-                header.setvalue(5 ,10,bc6h_format.rw);            // 16:   rw[9:0] 
-                header.setvalue(15,10,bc6h_format.gw);            // 16:   gw[9:0]
-                header.setvalue(25,10,bc6h_format.bw);            // 16:   bw[9:0]
-                header.setvalue(35,4 ,bc6h_format.rx);            //  4:   rx[3:0]
-                header.setvalue(39,6 ,bc6h_format.rw,10);         //       rw[15:10]
-                header.setvalue(45,4 ,bc6h_format.gx);            //  4:   gx[3:0]
-                header.setvalue(49,6 ,bc6h_format.gw,10);         //       gw[15:10]
-                header.setvalue(55,4 ,bc6h_format.bx);            //  4:   bx[3:0]
-                header.setvalue(59,6 ,bc6h_format.bw,10);         //       bw[15:10]
-                break;
-        default: // Need to indicate error!
-                return;
-    }
-
-    // Each format in the mode table can be uniquely identified by the mode bits. 
-    // The first ten modes are used for two-region tiles, and the mode bit field 
-    // can be either two or five bits long. These blocks also have fields for 
-    // the compressed color endpoints (72 or 75 bits), the partition (5 bits), 
-    // and the partition indices (46 bits).
-
-    if (bc6h_format.m_mode >= MIN_MODE_FOR_ONE_REGION) 
-    {
-        int startbit = ONE_REGION_INDEX_OFFSET;
-        header.setvalue(startbit, 3,bc6h_format.indices16[0 ]);
-        startbit  += 3;
-        for (int i= 1; i<16; i++)
-        {
-            header.setvalue(startbit,4,bc6h_format.indices16[i]);    
-            startbit +=4;
-        }
-    }
-    else
-    {
-        header.setvalue(77,5,bc6h_format.d_shape_index);            // Shape Index
-        int startbit = TWO_REGION_INDEX_OFFSET, 
-            nbits = 2;
-        header.setvalue(startbit,nbits,bc6h_format.indices16[0 ]);    
-        for (int i= 1; i<16; i++)
-        {
-            startbit += nbits; // offset start bit for next index using prior nbits used
-            nbits        = g_indexfixups[bc6h_format.d_shape_index] == i?2:3; // get new number of bit to save index with
-            header.setvalue(startbit,nbits,bc6h_format.indices16[i]);    
-        }
-    }
-
-    // save to output buffer our new bit values
-    // this can be optimized if header is part of bc6h_format struct
-    header.transferbits(out,16);
-
-}
-
 // endpoints fit only if the compression was lossless
-static bool endpts_fit(const int orig[2][2][3], const int compressed[2][2][3], const int mode, int max_subsets, bool issigned)
+static bool endpts_fit(const int orig[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], const int compressed[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], const int mode, int max_subsets, bool issigned)
 {
-    int uncompressed[2][2][3];
+    int uncompressed[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];
 
     decompress_endpts(compressed, uncompressed, mode, issigned);
-
+    
     for (int j=0; j<max_subsets; ++j)
     for (int i=0; i<3; ++i)
     {
         if (orig[j][0][i] != uncompressed[j][0][i]) return false;
         if (orig[j][1][i] != uncompressed[j][1][i]) return false;
     }
+
     return true;
 }
 
-
-void BC6HBlockEncoder::clampF16Max(float    EndPoints[2][2][3])
+// Dont know exact limits : for now just say is -2.0 to +2.0
+void BC6HBlockEncoder::clampF16Max(float EndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG])
 {
     for(int region=0; region<2; region++)
     for(int ab = 0; ab<2; ab++)
@@ -497,25 +465,27 @@ void BC6HBlockEncoder::clampF16Max(float    EndPoints[2][2][3])
             if (EndPoints[region][ab][rgb] < 0.0) EndPoints[region][ab][rgb] = 0;
             else if (EndPoints[region][ab][rgb] > F16MAX) EndPoints[region][ab][rgb] = F16MAX;
         }
+        // Zero region
+        // if ((EndPoints[region][ab][rgb] > -0.01) && ((EndPoints[region][ab][rgb] < 0.01))) EndPoints[region][ab][rgb] = 0.0;
     }
-}    
+}
 
 /*=================================================================
     Quantize Endpoints
     for a given mode
 ==================================================================*/
 
-void BC6HBlockEncoder::QuantizeEndPoint(float    EndPoints[2][2][3], int iEndPoints[2][2][3], int max_subsets, int prec)
+void BC6HBlockEncoder::QuantizeEndPointToF16Prec(float EndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int max_subsets, int prec)
 {
 
     for (int subset = 0; subset < max_subsets; ++subset)
     {
-        iEndPoints[subset][0][0] = QuantizeToInt(EndPoints[subset][0][0],prec,m_isSigned, m_Exposure);    // A.Red
-        iEndPoints[subset][0][1] = QuantizeToInt(EndPoints[subset][0][1],prec,m_isSigned, m_Exposure);    // A.Green
-        iEndPoints[subset][0][2] = QuantizeToInt(EndPoints[subset][0][2],prec,m_isSigned, m_Exposure);    // A.Blue
-        iEndPoints[subset][1][0] = QuantizeToInt(EndPoints[subset][1][0],prec,m_isSigned, m_Exposure);    // B.Red
-        iEndPoints[subset][1][1] = QuantizeToInt(EndPoints[subset][1][1],prec,m_isSigned, m_Exposure);    // B.Green
-        iEndPoints[subset][1][2] = QuantizeToInt(EndPoints[subset][1][2],prec,m_isSigned, m_Exposure);    // B.Blue
+        iEndPoints[subset][0][0] = QuantizeToInt((short)EndPoints[subset][0][0],prec,m_isSigned, m_Exposure);    // A.Red
+        iEndPoints[subset][0][1] = QuantizeToInt((short)EndPoints[subset][0][1],prec,m_isSigned, m_Exposure);    // A.Green
+        iEndPoints[subset][0][2] = QuantizeToInt((short)EndPoints[subset][0][2],prec,m_isSigned, m_Exposure);    // A.Blue
+        iEndPoints[subset][1][0] = QuantizeToInt((short)EndPoints[subset][1][0],prec,m_isSigned, m_Exposure);    // B.Red
+        iEndPoints[subset][1][1] = QuantizeToInt((short)EndPoints[subset][1][1],prec,m_isSigned, m_Exposure);    // B.Green
+        iEndPoints[subset][1][2] = QuantizeToInt((short)EndPoints[subset][1][2],prec,m_isSigned, m_Exposure);    // B.Blue
     }
 }
 
@@ -524,7 +494,7 @@ void BC6HBlockEncoder::QuantizeEndPoint(float    EndPoints[2][2][3], int iEndPoi
     so that indices at fix up points have higher order bit set to 0
 ==================================================================*/
 
-void BC6HBlockEncoder::SwapIndices(int iEndPoints[2][2][3], int iIndices[3][BC6H_MAX_SUBSET_SIZE], DWORD  entryCount[BC6H_MAX_SUBSETS], int max_subsets, int mode, int shape_pattern)
+void BC6HBlockEncoder::SwapIndices(int iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int iIndices[3][BC6H_MAX_SUBSET_SIZE], int  entryCount[BC6H_MAX_SUBSETS], int max_subsets, int mode, int shape_pattern)
 {
     
     UINT uNumIndices    = 1 << ModePartition[mode].IndexPrec;
@@ -554,16 +524,16 @@ void BC6HBlockEncoder::SwapIndices(int iEndPoints[2][2][3], int iIndices[3][BC6H
 
 
 /*=================================================================
-    Compress Endpoints
-    according to shape precission
+    Tranforms according to shape precission
 ==================================================================*/
 
-void BC6HBlockEncoder::CompressEndPoints(int iEndPoints[2][2][3], int oEndPoints[2][2][3],int max_subsets, int mode)
+void BC6HBlockEncoder::TransformEndPoints(AMD_BC6H_Format &BC6H_data, int iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int oEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG],int max_subsets, int mode)
 {
 
     int Mask;
     if ( ModePartition[mode].transformed)
     {
+        BC6H_data.istransformed = true;
         for (int i=0; i<3; ++i)
         {
             Mask = MASK(ModePartition[mode].nbits);
@@ -581,6 +551,7 @@ void BC6HBlockEncoder::CompressEndPoints(int iEndPoints[2][2][3], int oEndPoints
     }
     else
     {
+        BC6H_data.istransformed = false;
         for (int i=0; i<3; ++i)
         {
             Mask = MASK(ModePartition[mode].nbits);
@@ -600,8 +571,8 @@ void BC6HBlockEncoder::CompressEndPoints(int iEndPoints[2][2][3], int oEndPoints
 
 
 void BC6HBlockEncoder::SaveCompressedBlockData( AMD_BC6H_Format &BC6H_data, 
-                                            int oEndPoints[2][2][3],
-                                            int iIndices[3][BC6H_MAX_SUBSET_SIZE], 
+                                            int oEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG],
+                                            int iIndices[2][BC6H_MAX_SUBSET_SIZE], 
                                             int max_subsets, 
                                             int mode)
 {
@@ -633,9 +604,9 @@ void BC6HBlockEncoder::SaveCompressedBlockData( AMD_BC6H_Format &BC6H_data,
         for (int i=0; i<BC6H_MAX_SUBSET_SIZE; i++)
         {
             if (max_subsets > 1)
-                asubset                = BC7_PARTITIONS[1][BC6H_data.d_shape_index][i]; // Two region shapes 
+                asubset                = PARTITIONS[1][BC6H_data.d_shape_index][i]; // Two region shapes 
             else
-                asubset                = BC7_PARTITIONS[0][BC6H_data.d_shape_index][i]; // One region shapes 
+                asubset                = PARTITIONS[0][BC6H_data.d_shape_index][i]; // One region shapes 
             BC6H_data.indices16[i]    = (byte)iIndices[asubset][pos[asubset]];
             pos[asubset]++;
         }
@@ -643,418 +614,615 @@ void BC6HBlockEncoder::SaveCompressedBlockData( AMD_BC6H_Format &BC6H_data,
 }
 
 
-#ifdef BC6H_COMPDEBUGGER
-
-void SetLineColor(float colr)
+void palitizeEndPointsF(AMD_BC6H_Format &BC6H_data, float fEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG])
 {
-    if (g_Remote_Connected)
+    // scale endpoints
+    int    r, g, b;            // really need a IntVec3...
+    float  Ar,Ag,Ab, Br,Bg,Bb;
+
+
+    // Compose index colors from end points
+    if (BC6H_data.region == 1)
     {
-        float region1[1] = {colr};
-        // Clear display to show new pattern encoding
-        g_CompClient.SendData(100,sizeof(float),(byte *)region1,false);
-    }
-}
+        Ar = fEndPoints[0][0][0];
+        Ag = fEndPoints[0][0][1];
+        Ab = fEndPoints[0][0][2];
+        Br = fEndPoints[0][1][0];
+        Bg = fEndPoints[0][1][1];
+        Bb = fEndPoints[0][1][2];
 
-
-void RemoteDataReset()
-{
-    if (g_Remote_Connected)
-    {
-        float region1[1] = {0};
-        // Clear display to show new pattern encoding
-        g_CompClient.SendData(0,sizeof(float),(byte *)region1,false);
-    }
-}
-
-void ShowInputColors(float in[BC6H_MAX_SUBSET_SIZE][BC6H_MAX_DIMENSION_BIG])
-{
-    if (g_Remote_Connected)
-    {
-        float region1[BC6H_MAX_SUBSET_SIZE][3];
-        memset(region1,0,sizeof(region1));
-
-        for (int i = 0; i<16; i++)
+        for (int i = 0; i < 16; i++)
         {
-            region1[i][0] = in[i][0];
-            region1[i][1] = in[i][1];
-            region1[i][2] = in[i][2];
+
+            // Red
+            BC6H_data.Paletef[0][i].x = lerpf(Ar, Br, i, 15);
+            // Green
+            BC6H_data.Paletef[0][i].y = lerpf(Ag, Bg, i, 15);
+            // Blue
+            BC6H_data.Paletef[0][i].z = lerpf(Ab, Bb, i, 15);
         }
-        g_CompClient.SendData(5,sizeof(region1),(byte *)region1,false);
+
     }
-}
-
-
-void ShowEndPointColors()
-{
-    #ifdef _BC6H_COMPDEBUGGER
-    // show the normalized colors on the line
-    if (g_Remote_Connected)
+    else //mode.type == BC6_TWO
     {
-    float Region0[BC6H_MAX_SUBSET_SIZE][3];
-    float Region1[BC6H_MAX_SUBSET_SIZE][3];
-
-    // Clean initial data
-    memset(Region0,0,sizeof(Region0));
-    memset(Region1,0,sizeof(Region1));
-
-    for (int i=0; i<BC6H_MAX_SUBSET_SIZE; i++)
-    {
-        Region1[i][0] = outB[subset][i][0];
-        Region1[i][1] = outB[subset][i][1];
-        Region1[i][2] = outB[subset][i][2];
-    }
-    //BYTE B=0;
-    //g_CompClient.SendData(0,1,&B,false);
-    g_CompClient.SendData(6,sizeof(Region1),(byte *)Region1,false);
-    }
-    #endif
-}
-
-void ShowEndPointLine(AMD_BC6H_Format    &BC6H_data, int max_subsets)
-{
-    // show the line where most or all colors pass through (_B_)
-    if (g_Remote_Connected)
-    {
-        for (int subset=0; subset<max_subsets; subset++)
-            g_CompClient.SendData(4,sizeof(BC6H_data.EndPoints[subset]),(byte *)BC6H_data.EndPoints[subset],false);
-    }
-}
-
-void ShowBestResults(float in[BC6H_MAX_SUBSET_SIZE][BC6H_MAX_DIMENSION_BIG],AMD_BC6H_Format    &BC6H_data)
-{
-    // show the input colors (_A_)
-    if (g_Remote_Connected)
-    {
-        float region1[BC6H_MAX_SUBSET_SIZE][3];
-        memset(region1,0,sizeof(region1));
-
-        // Clear display to show new pattern encoding
-        g_CompClient.SendData(0,sizeof(float),(byte *)region1,false);
-
-        for (int i = 0; i<16; i++)
+        for (int region = 0; region<2; region++)
         {
-            region1[i][0] = in[i][0];
-            region1[i][1] = in[i][1];
-            region1[i][2] = in[i][2];
-        }
-        g_CompClient.SendData(5,sizeof(region1),(byte *)region1,false);
+            Ar = fEndPoints[region][0][0];
+            Ag = fEndPoints[region][0][1];
+            Ab = fEndPoints[region][0][2];
+            Br = fEndPoints[region][1][0];
+            Bg = fEndPoints[region][1][1];
+            Bb = fEndPoints[region][1][2];
+            for (int i = 0; i < 8; i++)
+            {
+                // Red
+                BC6H_data.Paletef[region][i].x = lerpf(Ar, Br, i, 7);
+                // Greed
+                BC6H_data.Paletef[region][i].y = lerpf(Ag, Bg, i, 7);
+                // Blue
+                BC6H_data.Paletef[region][i].z = lerpf(Ab, Bb, i, 7);
+            }
 
-        for (int subset=0; subset < 2; subset++)
-        {
-            g_CompClient.SendData(4,sizeof(BC6H_data.EndPoints[subset]),(byte *)BC6H_data.EndPoints[subset],false);
-            g_CompClient.SendData(6,16*3*sizeof(float),(byte *)BC6H_data.indexedcolors[subset],false);
         }
     }
 }
-#endif
 
-
-void    BC6HBlockEncoder::BlockSetup(DWORD blockMode)
+float CalcShapeError(AMD_BC6H_Format &BC6H_data, float fEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int shape_indices[MAX_SUBSETS][MAX_SUBSET_SIZE], bool SkipPallet)
 {
-#ifdef USE_DBGTRACE
-    DbgTrace(());
-#endif
-    m_parityBits = BC6H_CART;
-    m_componentBits[BC6H_COMP_RED]        = ModePartition[blockMode].prec[0];
-    m_componentBits[BC6H_COMP_GREEN]    = ModePartition[blockMode].prec[1];
-    m_componentBits[BC6H_COMP_BLUE]        = ModePartition[blockMode].prec[2];
-    m_componentBits[BC6H_COMP_ALPHA]    = 0;
-
-    m_clusters[0] = 1 << ModePartition[blockMode].IndexPrec;
-    m_clusters[1] = 0;
-}
-
-
-void CopyEndPoints(float EndPoints[2][2][3], double outB[2][BC6H_MAX_SUBSET_SIZE][BC6H_MAX_DIMENSION_BIG], int max_subsets, DWORD entryCount[2], float scale)
-{
-    // Save Min and Max OutB points as EndPoints
-    for (int subset=0; subset<max_subsets; subset++)
-    {
-            // We now have points on direction vector(s) 
-            // find the min and max points
-            double min = FLT_MAX;
-            double max = 0;
-            double val;
-            int mini = 0;
-            int maxi = 0;
-
-    
-            for (DWORD i=0; i < entryCount[subset]; i++)
-            {
-                val = outB[subset][i][0] + outB[subset][i][1] + outB[subset][i][2];
-                if (val < min) 
-                {
-                    min = val;
-                    mini = i;
-                }
-                if (val > max)
-                {
-                    max  = val;
-                    maxi = i;
-                }
-            }
-
-            EndPoints[subset][0][0] = (float)outB[subset][mini][0]*scale;
-            EndPoints[subset][0][1] = (float)outB[subset][mini][1]*scale;
-            EndPoints[subset][0][2] = (float)outB[subset][mini][2]*scale;
-
-            EndPoints[subset][1][0] = (float)outB[subset][maxi][0]*scale;
-            EndPoints[subset][1][1] = (float)outB[subset][maxi][1]*scale;
-            EndPoints[subset][1][2] = (float)outB[subset][maxi][2]*scale;
-
-    }    
-}
-
-
-double BC6HBlockEncoder::optimize_endpts(
-                                        AMD_BC6H_Format &BC6H_data,
-                                        float    best_EndPoints    [2][2][3], 
-                                        int        best_Indices    [2][16],
-                                        int        max_subsets, 
-                                        int        mode, 
-                                        double error)
-{
-    error = 0; // unreferenced
-    // Set the number of bits per endpoint that each color 
-    // component has. Note that our quatization has a limit 
-    // on the number of bits per channel (Max ? bits)
-    int bits[4] = {0,0,0,0};
-
-    if (BC6H_data.region == 2)
-    {
-        bits[0] = ModePartition[mode].prec[0];
-        bits[1] = ModePartition[mode].prec[1];
-        bits[2] = ModePartition[mode].prec[2];
-        bits[3] = (bits[0]+bits[1]+bits[2]) * 2;
-    }
-    else
-    {
-        bits[0] = ModePartition[mode].nbits/3;
-        bits[1] = bits[0];
-        bits[2] = bits[0];
-        bits[3] = (bits[0]+bits[1]+bits[2]) * 2;
-    }        
-
-    BlockSetup(mode);
-
-    double  outB[2][BC6H_MAX_SUBSET_SIZE][BC6H_MAX_DIMENSION_BIG];
-    double  outB1[BC6H_MAX_SUBSET_SIZE][BC6H_MAX_DIMENSION_BIG];
-    double  outB2[BC6H_MAX_SUBSET_SIZE][BC6H_MAX_DIMENSION_BIG];
-
-    int     epo_code[BC6H_MAX_SUBSETS][2][BC6H_MAX_DIMENSION_BIG];
-    double  bestError = 0;
-    int     temp_epo_code[2][BC6H_MAX_DIMENSION_BIG];
-    double  epo[2][BC6H_MAX_DIMENSION_BIG];
-    int        temp_Indices1    [16];
-    int        temp_Indices2    [16];
-    double    tempPartition[2][16][4];
-    int        last_cluster =  (BC6H_data.region == 1)?15:7;
-    
-    double tempError1;
-    double tempError2;
-    float  ScaleEndPoints = 100.0f;
-
-    memset(tempPartition,0,sizeof(tempPartition));
-    memset(temp_Indices1,0,sizeof(temp_Indices1));
-    memset(temp_Indices2,0,sizeof(temp_Indices2));
-
-    for(int subset=0; subset < max_subsets; subset++)
-    {
-
-            for(int k=0; k < 16; k++)
-            {
-                tempPartition[subset][k][0] = BC6H_data.partition[subset][k][0] / ScaleEndPoints;
-                tempPartition[subset][k][1] = BC6H_data.partition[subset][k][1] / ScaleEndPoints;
-                tempPartition[subset][k][2] = BC6H_data.partition[subset][k][2] / ScaleEndPoints;
-                tempPartition[subset][k][3] = BC6H_data.partition[subset][k][3] / ScaleEndPoints;
-                temp_Indices1[k]    =  BC6H_data.shape_indices[subset][k];
-                temp_Indices2[k]    =  BC6H_data.shape_indices[subset][k];
-            }
-
-
-            tempError1  = BC6H_ep_shaker_d(tempPartition[subset],
-                                        BC6H_data.entryCount[subset],
-                                        temp_Indices1,
-                                        outB1,
-                                        temp_epo_code,
-                                        last_cluster, 
-                                        bits,
-                                        BC6H_CART,
-                                        3);
-             
-             tempError2 = BC6H_ep_shaker_2_d(tempPartition[subset],
-                                            BC6H_data.entryCount[subset],
-                                            temp_Indices2,
-                                            outB2,
-                                            epo_code[subset],
-                                            2,
-                                            last_cluster,
-                                            bits[3],
-                                            3,
-                                            epo);
-             
-             
-            if (tempError1 < tempError2)
-            {
-            
-                tempError2 = BC6H_ep_shaker_2_d(tempPartition[subset],
-                                           BC6H_data.entryCount[subset],
-                                           temp_Indices1,
-                                           outB2,
-                                           temp_epo_code,
-                                           2,
-                                           last_cluster,
-                                           bits[3],
-                                           3,
-                                           epo);
-
-                bestError += tempError2;
-                // Save the new indices results 
-                memcpy(best_Indices[subset],temp_Indices1,sizeof(int)*16);
-                memcpy(outB[subset], outB2, sizeof(double) * 16 * 4);
-            }
-            else
-            {
-                bestError += tempError1;
-                // Save the new results 
-                memcpy(best_Indices[subset],temp_Indices2,sizeof(int)*16);
-                memcpy(outB[subset], outB1, sizeof(double) * 16 * 4);
-            }
-
-    }
-
-    // Save the new end point results 
-    CopyEndPoints(best_EndPoints,outB,max_subsets,BC6H_data.entryCount, ScaleEndPoints);
-
-    return (bestError*ScaleEndPoints);
-}
-
-
-double    BC6HBlockEncoder::FindBestPattern(AMD_BC6H_Format &BC6H_data, 
-                          bool TwoRegionShapes, 
-                          int shape_pattern, 
-                          double in[BC6H_MAX_SUBSET_SIZE][BC6H_MAX_DIMENSION_BIG])
-{
-    int        max_subsets            = TwoRegionShapes?2:1;
-
-    double  error = 0;
-    double  outB[2][BC6H_MAX_SUBSET_SIZE][BC6H_MAX_DIMENSION_BIG];
-    double  direction[BC6H_MAX_DIMENSION_BIG];
-    double  step;
-
-
-    // Index bit size for the patterns been used. 
-    // All two zone shapes have 3 bits per color, max index value < 8  
-    // All one zone shapes gave 4 bits per color, max index value < 16
-    int        Index_BitSize = TwoRegionShapes?8:16;    
-    BC6H_data.region    = (unsigned short)max_subsets;
-    BC6H_data.index        = 0;
-
-    // for debugging
-    double  OrgShape[BC6H_MAX_SUBSET_SIZE][BC6H_MAX_DIMENSION_BIG];
-    memcpy(OrgShape, in, sizeof(OrgShape));
-
-    BC6H_data.d_shape_index = (unsigned short)shape_pattern;
-
-    // Get the pattern to encode with
-    BC6H_Partition( shape_pattern,          // Shape pattern we want to get
-                    in,                     // Input data
-                    BC6H_data.partition,    // Returns the patterned shape data
-                    BC6H_data.entryCount,   // counts the number of pixel used in each subset region num of 0's amd 1's
-                    max_subsets,            // Table Shapes to use eithe one regions 1 or two regions 2
-                    3);                     // rgb no alpha always = 3
-
-
-    m_parityBits  = BC6H_CART;    // Should set this someplace else higher up in code.
-
-    // Clear the output buffers: Really don't need to do this!
-    memset(outB,0,sizeof(outB));
-
-    //
-    // Get Shape bits, Direction, StepSize etc...
-    //
-    for (int subset = 0; subset < max_subsets; subset++)
-    {
-
-            // Single Index Block
-            BC6H_optQuantAnD_d(BC6H_data.partition[subset],        // The Shape index to quantize to
-                               BC6H_data.entryCount[subset],       // number of 0's and 1's
-                               Index_BitSize,                      // Bit size to use for indices
-                               BC6H_data.shape_indices[subset],    // Resulting indices for each shape region
-                               outB[subset],                       // OutB[] points on a line
-                               direction,                          // normalized direction vector
-                               &step,                              // incriments 
-                               3);                                 // always 3 = RGB
-                    
-            #ifdef _BC6H_COMPDEBUGGER
-                ShowEndPointColors();
-            #endif
-
-    } // subsets
-
-    CopyEndPoints(BC6H_data.EndPoints, outB, max_subsets, BC6H_data.entryCount, 1);
-    clampF16Max(BC6H_data.EndPoints);
-
-    error = 0;
-    double  NewShape[BC6H_MAX_SUBSET_SIZE][BC6H_MAX_DIMENSION_BIG];
-
-    // Build the new shape from the partition output data
+    float error = 0;
     int sub0index = 0;
     int sub1index = 0;
+    int region = (BC6H_data.region - 1);
+    int index;
+
+    if (!SkipPallet)
+        palitizeEndPointsF(BC6H_data, fEndPoints);
+
+    float  NewShape[BC6H_MAX_SUBSET_SIZE][3];
+
     for (int i = 0; i < BC6H_MAX_SUBSET_SIZE; i++)
     {
         // subset 0 or subset 1
-        if (BC7_PARTITIONS[1][shape_pattern][i])
+        if (PARTITIONS[region][BC6H_data.d_shape_index][i])
         {
-            NewShape[i][0] = outB[1][sub1index][0];
-            NewShape[i][1] = outB[1][sub1index][1];
-            NewShape[i][2] = outB[1][sub1index][2];
-            NewShape[i][3] = outB[1][sub1index][3];
+            index = shape_indices[1][sub1index];
+            NewShape[i][0] = BC6H_data.Paletef[1][index].x;
+            NewShape[i][1] = BC6H_data.Paletef[1][index].y;
+            NewShape[i][2] = BC6H_data.Paletef[1][index].z;
             sub1index++;
         }
         else
         {
-            NewShape[i][0] = outB[0][sub0index][0];
-            NewShape[i][1] = outB[0][sub0index][1];
-            NewShape[i][2] = outB[0][sub0index][2];
-            NewShape[i][3] = outB[0][sub0index][3];
+            index = shape_indices[0][sub0index];
+            NewShape[i][0] = BC6H_data.Paletef[0][index].x;
+            NewShape[i][1] = BC6H_data.Paletef[0][index].y;
+            NewShape[i][2] = BC6H_data.Paletef[0][index].z;
             sub0index++;
         }
 
         // Calculate error from original
-        error +=    abs(in[i][0] - NewShape[i][0]) +
-                    abs(in[i][1] - NewShape[i][1]) +
-                    abs(in[i][2] - NewShape[i][2]) +
-                    abs(in[i][3] - NewShape[i][3]);
+        error += abs(BC6H_data.din[i][0] - NewShape[i][0]) +
+                 abs(BC6H_data.din[i][1] - NewShape[i][1]) +
+                 abs(BC6H_data.din[i][2] - NewShape[i][2]);
+
     }
-
-
-    #ifdef _BC6H_COMPDEBUGGER
-        ShowEndPointLine(BC6H_data,max_subsets);
-    #endif
 
     return error;
 }
 
-// Mode Pathern seach order to try on endpoints
-// The order is to be optimized for best image quality
-static int ModeFitOrder[MAX_BC6H_PARTITIONS+1] =  // Pattern order: in order of highest bits to low header bits
-                       {
-                       0,                // N/A skipped in for loops
-                       3,4,5,            // 11 ...
-                       1,                // 10 ...
-                       6,                // 9  ...
-                       7,8,9,            // 8  ...
-                       2,                // 7  ...
-                       10,               // 6  ...
-                       14,               // 16 .
-                       13,               // 12 . 
-                       12,               // 11 .
-                       11                // 10 .
-                       }; 
+void ReIndexShapef(AMD_BC6H_Format &BC6H_data, int shape_indices[BC6H_MAX_SUBSETS][MAX_SUBSET_SIZE])
+{
+    float error = 0;
+    float bestError;
+    int bestIndex = 0;
+    int sub0index = 0;
+    int sub1index = 0;
+    int MaxPallet;
+    int region = (BC6H_data.region - 1);
 
-double    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data, 
-                                        double  error)
+    if (region == 0)
+        MaxPallet = 16;
+    else
+        MaxPallet = 8;
+
+    for (int i = 0; i < BC6H_MAX_SUBSET_SIZE; i++)
+    {
+        // subset 0 or subset 1
+        if (PARTITIONS[region][BC6H_data.d_shape_index][i])
+        {
+            bestError = FLT_MAX;
+            bestIndex = 0;
+
+            // For two shape regions max Pallet is 8
+            for (int j = 0; j < MaxPallet; j++)
+            {
+                // Calculate error from original
+                error = abs(BC6H_data.din[i][0] - BC6H_data.Paletef[1][j].x) +
+                        abs(BC6H_data.din[i][1] - BC6H_data.Paletef[1][j].y) +
+                        abs(BC6H_data.din[i][2] - BC6H_data.Paletef[1][j].z);
+                if (error < bestError)
+                {
+                    bestError = error;
+                    bestIndex = j;
+                }
+            }
+
+            shape_indices[1][sub1index] = bestIndex;
+            sub1index++;
+        }
+        else
+        {
+            // This is shared for one or two shape regions max Pallet either 16 or 8
+            bestError = FLT_MAX;
+            bestIndex = 0;
+
+            for (int j = 0; j < MaxPallet; j++)
+            {
+                // Calculate error from original
+                error = abs(BC6H_data.din[i][0] - BC6H_data.Paletef[0][j].x) +
+                        abs(BC6H_data.din[i][1] - BC6H_data.Paletef[0][j].y) +
+                        abs(BC6H_data.din[i][2] - BC6H_data.Paletef[0][j].z);
+                if (error < bestError)
+                {
+                    bestError = error;
+                    bestIndex = j;
+                }
+            }
+
+            shape_indices[0][sub0index] = bestIndex;
+            sub0index++;
+        }
+    }
+
+}
+
+float    BC6HBlockEncoder::FindBestPattern(AMD_BC6H_Format &BC6H_data,
+                          bool TwoRegionShapes, 
+                          int shape_pattern)
+{
+    // Index bit size for the patterns been used. 
+    // All two zone shapes have 3 bits per color, max index value < 8  
+    // All one zone shapes gave 4 bits per color, max index value < 16
+    int        Index_BitSize = TwoRegionShapes ? 8 : 16;
+    int     max_subsets = TwoRegionShapes ? 2 : 1;
+    float  direction[MAX_DIMENSION_BIG];
+    float  step;
+
+    BC6H_data.region    = (unsigned short)max_subsets;
+    BC6H_data.index        = 0;
+    BC6H_data.d_shape_index = (unsigned short)shape_pattern;
+    memset(BC6H_data.partition, 0, sizeof(BC6H_data.partition));
+    memset(BC6H_data.shape_indices, 0, sizeof(BC6H_data.shape_indices));
+
+    // Get the pattern to encode with
+    Partition( shape_pattern,          // Shape pattern we want to get
+               BC6H_data.din,          // Input data
+               BC6H_data.partition,    // Returns the patterned shape data
+               BC6H_data.entryCount,   // counts the number of pixel used in each subset region num of 0's amd 1's
+               max_subsets,            // Table Shapes to use eithe one regions 1 or two regions 2
+               3);                     // rgb no alpha always = 3
+
+
+    float  error[MAX_SUBSETS] = { 0.0,FLT_MAX,FLT_MAX };
+    int    BestOutB = 0;
+    float  BestError;
+
+    float  outB[2][2][MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
+    int     shape_indicesB[2][MAX_SUBSETS][MAX_SUBSET_SIZE];
+
+    for (int subset = 0; subset < max_subsets; subset++)
+    {
+        error[0] += optQuantAnD_d(
+            BC6H_data.partition[subset],        // input data 
+            BC6H_data.entryCount[subset],       // number of input points above (not clear about 1, better to avoid)
+            Index_BitSize,                      // number of clusters on the ramp, 8  or 16
+            shape_indicesB[0][subset],          // output index, if not all points of the ramp used, 0 may not be assigned
+            outB[0][subset],                    // resulting quantization
+            direction,                          // direction vector of the ramp (check normalization) 
+            &step,                              // step size (check normalization) 
+            3,                                  // number of channels (always 3 = RGB for BC6H)
+            m_quality                           // Quality set number of retry to get good end points 
+                                                // Max retries = MAX_TRY = 4000 when Quality is 1.0
+                                                // Min = 0 and default with quality 0.05 is 200 times
+            );
+   }
+
+    BestError = error[0];
+    BestOutB  = 0;
+
+    // The following code is almost complete - runs very slow and not sure if % of improvement is justified..
+#ifdef USE_SHAKERHD
+    // Valid only for 2 region shapes
+    if ((max_subsets > 1) && (m_quality > 0.80))
+    {
+        int     tempIndices[MAX_SUBSET_SIZE];
+        int     temp_epo_code[2][2][MAX_DIMENSION_BIG];
+        int     bits[3] = { 8,8,8 };     // Channel index bit size
+
+        float   epo[2][MAX_DIMENSION_BIG];
+        int     epo_code[MAX_SUBSETS][2][MAX_DIMENSION_BIG];
+        int     shakeSize = 8;
+
+        error[1] = 0.0;
+        for (int subset = 0; subset < max_subsets; subset++)
+        {
+            for (int k = 0; k < BC6H_data.entryCount[subset]; k++)
+            {
+                tempIndices[k] = shape_indicesB[0][subset][k];
+            }
+
+             error[1] += ep_shaker_HD(
+                 BC6H_data.partition[subset],
+                 BC6H_data.entryCount[subset],
+                 tempIndices,                    // output index, if not all points of the ramp used, 0 may not be assigned
+                 outB[1][subset],                // resulting quantization
+                 epo_code[subset],
+                 BC6H_data.entryCount[subset] - 1,
+                 bits,
+                 3
+             );
+
+            // error[1] += ep_shaker_2_d(
+            //      BC6H_data.partition[subset],
+            //      BC6H_data.entryCount[subset],
+            //      tempIndices,                    // output index, if not all points of the ramp used, 0 may not be assigned
+            //      outB[1][subset],                // resulting quantization
+            //      epo_code[subset],
+            //      shakeSize,
+            //      BC6H_data.entryCount[subset] - 1,
+            //      bits[0],
+            //      3,
+            //      epo
+            //      );
+
+
+            for (int k = 0; k < BC6H_data.entryCount[subset]; k++)
+            {
+                shape_indicesB[1][subset][k] = tempIndices[k];
+            }
+
+        } // subsets
+
+        if (BestError > error[1])
+        {
+            BestError = error[1];
+            BestOutB = 1;
+            for (int subset = 0; subset < max_subsets; subset++)
+            {
+                for (int k = 0; k < MAX_DIMENSION_BIG; k++)
+                {
+                    BC6H_data.fEndPoints[subset][0][k] = epo_code[subset][0][k];
+                    BC6H_data.fEndPoints[subset][1][k] = epo_code[subset][1][k];
+                }
+            }
+        }
+
+    }
+#endif
+
+    // Save the best for BC6H data processing later
+    if (BestOutB == 0)
+        GetEndPoints(BC6H_data.fEndPoints, outB[BestOutB], max_subsets, BC6H_data.entryCount);
+
+    memcpy(BC6H_data.shape_indices, shape_indicesB[BestOutB], sizeof(BC6H_data.shape_indices));
+    clampF16Max(BC6H_data.fEndPoints);
+
+    return BestError;
+}
+
+int finish_unquantizeF16(int q, bool isSigned)
+{
+    // Is it F16 Signed else F16 Unsigned
+    if (isSigned)
+        return (q < 0) ? -(((-q) * 31) >> 5) : (q * 31) >> 5;       // scale the magnitude by 31/32
+    else
+        return (q * 31) >> 6;                                       // scale the magnitude by 31/64
+
+    // Note for Undefined we should return q as is
+
+}
+
+void decompress_endpoints1(AMD_BC6H_Format& bc6h_format, int oEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], float outf[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int mode)
+{
+    int i;
+    int t;
+    int out[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];
+
+    if (bc6h_format.issigned)
+    {
+        if (bc6h_format.istransformed)
+        {
+            for (i = 0; i<NCHANNELS; i++)
+            {
+                out[0][0][i] = SIGN_EXTEND(oEndPoints[0][0][i], ModePartition[mode].nbits);
+
+                t = SIGN_EXTEND(oEndPoints[0][1][i], ModePartition[mode].prec[i]); //C_RED
+                t = (t + oEndPoints[0][0][i]) & MASK(ModePartition[mode].nbits);
+                out[0][1][i] = SIGN_EXTEND(t, ModePartition[mode].nbits);
+
+                // Unquantize all points to nbits
+                out[0][0][i] = Unquantize(out[0][0][i], ModePartition[mode].nbits, false);
+                out[0][1][i] = Unquantize(out[0][1][i], ModePartition[mode].nbits, false);
+                
+                // F16 format
+                outf[0][0][i] = finish_unquantizeF16(out[0][0][i], false);
+                outf[0][1][i] = finish_unquantizeF16(out[0][1][i], false);
+            }
+        }
+        else
+        {
+            for (i = 0; i<NCHANNELS; i++)
+            {
+                out[0][0][i] = SIGN_EXTEND(oEndPoints[0][0][i], ModePartition[mode].nbits);
+                out[0][1][i] = SIGN_EXTEND(oEndPoints[0][1][i], ModePartition[mode].prec[i]);
+
+                // Unquantize all points to nbits
+                out[0][0][i] = Unquantize(out[0][0][i], ModePartition[mode].nbits, false);
+                out[0][1][i] = Unquantize(out[0][1][i], ModePartition[mode].nbits, false);
+                
+                // F16 format
+                outf[0][0][i] = finish_unquantizeF16(out[0][0][i],false);
+                outf[0][1][i] = finish_unquantizeF16(out[0][1][i],false);
+            }
+        }
+
+    }
+    else
+    {
+        if (bc6h_format.istransformed)
+        {
+            for (i = 0; i<NCHANNELS; i++)
+            {
+                out[0][0][i] = oEndPoints[0][0][i];
+                t = SIGN_EXTEND(oEndPoints[0][1][i], ModePartition[mode].prec[i]);
+                out[0][1][i] = (t + oEndPoints[0][0][i]) & MASK(ModePartition[mode].nbits);
+
+                // Unquantize all points to nbits
+                out[0][0][i] = Unquantize(out[0][0][i], ModePartition[mode].nbits, false);
+                out[0][1][i] = Unquantize(out[0][1][i], ModePartition[mode].nbits, false);
+                
+                // F16 format
+                outf[0][0][i] = finish_unquantizeF16(out[0][0][i], false);
+                outf[0][1][i] = finish_unquantizeF16(out[0][1][i], false);
+            }
+        }
+        else
+        {
+            for (i = 0; i<NCHANNELS; i++)
+            {
+                out[0][0][i] = oEndPoints[0][0][i];
+                out[0][1][i] = oEndPoints[0][1][i];
+
+                // Unquantize all points to nbits
+                out[0][0][i] = Unquantize(out[0][0][i], ModePartition[mode].nbits, false);
+                out[0][1][i] = Unquantize(out[0][1][i], ModePartition[mode].nbits, false);
+                
+                // F16 format
+                outf[0][0][i] = finish_unquantizeF16(out[0][0][i], false);
+                outf[0][1][i] = finish_unquantizeF16(out[0][1][i], false);
+            }
+        }
+    }
+}
+
+void decompress_endpoints2(AMD_BC6H_Format& bc6h_format, int oEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], float outf[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int mode)
+{
+    int i;
+    int t;
+    int out[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];
+
+    if (bc6h_format.issigned)
+    {
+        if (bc6h_format.istransformed)
+        {
+            for (i = 0; i<NCHANNELS; i++)
+            {
+                // get the quantized values 
+                out[0][0][i] = SIGN_EXTEND(oEndPoints[0][0][i], ModePartition[mode].nbits);
+
+                t = SIGN_EXTEND(oEndPoints[0][1][i], ModePartition[mode].prec[i]); 
+                t = (t + oEndPoints[0][0][i]) & MASK(ModePartition[mode].nbits);
+                out[0][1][i] = SIGN_EXTEND(t, ModePartition[mode].nbits);
+
+                t = SIGN_EXTEND(oEndPoints[1][0][i], ModePartition[mode].prec[i]); 
+                t = (t + oEndPoints[0][0][i]) & MASK(ModePartition[mode].nbits);
+                out[1][0][i] = SIGN_EXTEND(t, ModePartition[mode].nbits);
+
+                t = SIGN_EXTEND(oEndPoints[1][1][i], ModePartition[mode].prec[i]); 
+                t = (t + oEndPoints[0][0][i]) & MASK(ModePartition[mode].nbits);
+                out[1][1][i] = SIGN_EXTEND(t, ModePartition[mode].nbits);
+
+                // Unquantize all points to nbits 
+                out[0][0][i] = Unquantize(out[0][0][i], ModePartition[mode].nbits, true);
+                out[0][1][i] = Unquantize(out[0][1][i], ModePartition[mode].nbits, true);
+                out[1][0][i] = Unquantize(out[1][0][i], ModePartition[mode].nbits, true);
+                out[1][1][i] = Unquantize(out[1][1][i], ModePartition[mode].nbits, true);
+
+                // F16 format
+                outf[0][0][i] = finish_unquantizeF16(out[0][0][i], true);
+                outf[0][1][i] = finish_unquantizeF16(out[0][1][i], true);
+                outf[1][0][i] = finish_unquantizeF16(out[1][0][i], true);
+                outf[1][1][i] = finish_unquantizeF16(out[1][1][i], true);
+
+            }
+        }
+        else
+        {
+            for (i = 0; i<NCHANNELS; i++)
+            {
+                out[0][0][i] = SIGN_EXTEND(oEndPoints[0][0][i], ModePartition[mode].nbits);
+                out[0][1][i] = SIGN_EXTEND(oEndPoints[0][1][i], ModePartition[mode].prec[i]); 
+                out[1][0][i] = SIGN_EXTEND(oEndPoints[1][0][i], ModePartition[mode].prec[i]); 
+                out[1][1][i] = SIGN_EXTEND(oEndPoints[1][1][i], ModePartition[mode].prec[i]);
+
+                // Unquantize all points to nbits
+                out[0][0][i] = Unquantize(out[0][0][i], ModePartition[mode].nbits, false);
+                out[0][1][i] = Unquantize(out[0][1][i], ModePartition[mode].nbits, false);
+                out[1][0][i] = Unquantize(out[1][0][i], ModePartition[mode].nbits, false);
+                out[1][1][i] = Unquantize(out[1][1][i], ModePartition[mode].nbits, false);
+                
+                // nbits to F16 format
+                outf[0][0][i] = finish_unquantizeF16(out[0][0][i], false);
+                outf[0][1][i] = finish_unquantizeF16(out[0][1][i], false);
+                outf[1][0][i] = finish_unquantizeF16(out[1][0][i], false);
+                outf[1][1][i] = finish_unquantizeF16(out[1][1][i], false);
+            }
+        }
+
+    }
+    else
+    {
+        if (bc6h_format.istransformed)
+        {
+            for (i = 0; i<NCHANNELS; i++)
+            {
+                out[0][0][i] = oEndPoints[0][0][i];
+                t = SIGN_EXTEND(oEndPoints[0][1][i], ModePartition[mode].prec[i]); 
+                out[0][1][i] = (t + oEndPoints[0][0][i]) & MASK(ModePartition[mode].nbits);
+
+                t = SIGN_EXTEND(oEndPoints[1][0][i], ModePartition[mode].prec[i]); 
+                out[1][0][i] = (t + oEndPoints[0][0][i]) & MASK(ModePartition[mode].nbits);
+
+                t = SIGN_EXTEND(oEndPoints[1][1][i], ModePartition[mode].prec[i]);
+                out[1][1][i] = (t + oEndPoints[0][0][i]) & MASK(ModePartition[mode].nbits);
+
+                // Unquantize all points to nbits
+                out[0][0][i] = Unquantize(out[0][0][i], ModePartition[mode].nbits, false);
+                out[0][1][i] = Unquantize(out[0][1][i], ModePartition[mode].nbits, false);
+                out[1][0][i] = Unquantize(out[1][0][i], ModePartition[mode].nbits, false);
+                out[1][1][i] = Unquantize(out[1][1][i], ModePartition[mode].nbits, false);
+                
+                // nbits to F16 format
+                outf[0][0][i] = finish_unquantizeF16(out[0][0][i], false);
+                outf[0][1][i] = finish_unquantizeF16(out[0][1][i], false);
+                outf[1][0][i] = finish_unquantizeF16(out[1][0][i], false);
+                outf[1][1][i] = finish_unquantizeF16(out[1][1][i], false);
+
+            }
+        }
+        else
+        {
+            for (i = 0; i<NCHANNELS; i++)
+            {
+                out[0][0][i] = oEndPoints[0][0][i];
+                out[0][1][i] = oEndPoints[0][1][i];
+                out[1][0][i] = oEndPoints[1][0][i];
+                out[1][1][i] = oEndPoints[1][1][i];
+
+                // Unquantize all points to nbits
+                out[0][0][i] = Unquantize(out[0][0][i], ModePartition[mode].nbits, false);
+                out[0][1][i] = Unquantize(out[0][1][i], ModePartition[mode].nbits, false);
+                out[1][0][i] = Unquantize(out[1][0][i], ModePartition[mode].nbits, false);
+                out[1][1][i] = Unquantize(out[1][1][i], ModePartition[mode].nbits, false);
+
+                // nbits to F16 format
+                outf[0][0][i] = finish_unquantizeF16(out[0][0][i], false);
+                outf[0][1][i] = finish_unquantizeF16(out[0][1][i], false);
+                outf[1][0][i] = finish_unquantizeF16(out[1][0][i], false);
+                outf[1][1][i] = finish_unquantizeF16(out[1][1][i], false);
+            }
+        }
+    }
+}
+
+void BC6HBlockEncoder::AverageEndPoint(float EndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], float fEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int max_subsets, int mode)
+{
+
+    if (ModePartition[mode].nbits > 7)
+    {
+        for (int subset = 0; subset < max_subsets; ++subset)
+        {
+            fEndPoints[subset][0][0] = EndPoints[subset][0][0];    // A.Red
+            fEndPoints[subset][0][1] = EndPoints[subset][0][1];    // A.Green
+            fEndPoints[subset][0][2] = EndPoints[subset][0][2];    // A.Blue
+            fEndPoints[subset][1][0] = EndPoints[subset][1][0];    // A.Red
+            fEndPoints[subset][1][1] = EndPoints[subset][1][1];    // A.Green
+            fEndPoints[subset][1][2] = EndPoints[subset][1][2];    // A.Blue
+        }
+
+        return;
+    }
+
+    float diff;
+    float avr;
+
+    // determin differance level based on lowest precision of the mode
+    m_DiffLevel = ModePartition[mode].lowestPrec;
+
+    for (int subset = 0; subset < max_subsets; ++subset)
+    {
+        avr = (EndPoints[subset][0][0] +
+            EndPoints[subset][0][1] +
+            EndPoints[subset][0][2]) / 3.0f;
+
+        // determine average diff 
+        diff = (abs(EndPoints[subset][0][0] - avr) +
+            abs(EndPoints[subset][0][1] - avr) +
+            abs(EndPoints[subset][0][2] - avr)) / 3;
+
+        if ((diff < m_DiffLevel) && (avr > m_DiffLevel))
+        {
+            fEndPoints[subset][0][0] = avr;    // A.Red
+            fEndPoints[subset][0][1] = avr;    // A.Green
+            fEndPoints[subset][0][2] = avr;    // A.Blue
+        }
+        else
+        {
+            fEndPoints[subset][0][0] = EndPoints[subset][0][0];    // A.Red
+            fEndPoints[subset][0][1] = EndPoints[subset][0][1];    // A.Green
+            fEndPoints[subset][0][2] = EndPoints[subset][0][2];    // A.Blue
+        }
+
+        avr = (EndPoints[subset][1][0] +
+            EndPoints[subset][1][1] +
+            EndPoints[subset][1][2]) / 3.0f;
+
+        diff = (abs(EndPoints[subset][1][0] - avr) +
+            abs(EndPoints[subset][1][1] - avr) +
+            abs(EndPoints[subset][1][2] - avr)) / 3;
+
+        if ((diff < m_DiffLevel) && (avr > m_DiffLevel))
+        {
+            fEndPoints[subset][1][0] = avr;   // B.Red
+            fEndPoints[subset][1][1] = avr;   // B.Green
+            fEndPoints[subset][1][2] = avr;   // B.Blue
+        }
+        else
+        {
+            fEndPoints[subset][1][0] = EndPoints[subset][1][0];    // A.Red
+            fEndPoints[subset][1][1] = EndPoints[subset][1][1];    // A.Green
+            fEndPoints[subset][1][2] = EndPoints[subset][1][2];    // A.Blue
+        }
+    }
+}
+
+//================================================
+// Mode Pathern order to try on endpoints
+// The order can be rearranged to set which modes gets processed first
+// for now it is set in order.
+//================================================
+static int ModeFitOrder[MAX_BC6H_PARTITIONS+1] = 
+                       {
+                       0,                //0: N/A
+                                         // ----  2 region lower bits ---
+                       1,                // 10 5 5 5
+                       2,                // 7  6 6 6 
+                       3,                // 11 5 4 5
+                       4,                // 11 4 5 4
+                       5,                // 11 4 4 5
+                       6,                // 9  5 5 5
+                       7,                // 8  6 5 5
+                       8,                // 8  5 6 5
+                       9,                // 8  5 5 6
+                       10,               // 6  6 6 6
+                                         //------ 1 region high bits ---
+                       11,               // 10 10 10 10
+                       12,               // 11 9  9  9
+                       13,               // 12 8  8  8
+                       14                // 16 4  4  4
+}; 
+
+float    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data, float  error)
 {
     int        max_subsets            = BC6H_data.region;
 
@@ -1062,164 +1230,145 @@ double    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data,
     // and a set of colors on the line equally spaced (indexedcolors)
     // Lets assign indices
 
+    float SrcEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];                  // temp endpoints used during calculations
+
     // Quantize the EndPoints 
-    int iEndPoints[2][2][3];                    // temp endpoints used during calculations
-    int iIndices[3][BC6H_MAX_SUBSET_SIZE];        // temp indices used during calculations
-    int oEndPoints[2][2][3];                    // endpoints to save for a given mode
+    int F16EndPoints[MAX_BC6H_PARTITIONS + 1][MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];                    // temp endpoints used during calculations
+    int quantEndPoints[MAX_BC6H_PARTITIONS + 1][MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];                    // endpoints to save for a given mode
 
     // ModePartition[] starts from 1 to 14
     // If we have a shape pattern set the loop to check modes from 1 to 10 else from 11 to 14
     // of the ModePartition table
-    int min_mode = (BC6H_data.region == 2)?1:11; 
-     int    max_mode = (BC6H_data.region == 2)?MAX_TWOREGION_PARTITIONS:MAX_BC6H_PARTITIONS;
+    int     min_mode = (BC6H_data.region == 2)?1:11; 
+    int     max_mode = (BC6H_data.region == 2)?MAX_TWOREGION_PARTITIONS:MAX_BC6H_PARTITIONS;
 
-    bool fits[15];
+    bool    fits[15];
     memset(fits,0,sizeof(fits));
 
+    int     bestFit = 0;
+    float  bestError = FLT_MAX;
+
+    // Try Optimization for the Mode
+    float       best_EndPoints[MAX_BC6H_PARTITIONS + 1][MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];
+    int         best_Indices[MAX_BC6H_PARTITIONS + 1][MAX_SUBSETS][MAX_SUBSET_SIZE];
+    float      opt_toterr[MAX_BC6H_PARTITIONS + 1];
+
+    // for debugging
+    memset(opt_toterr, 0, sizeof(opt_toterr));
+
+    int numfits = 0;
     //
     // Notes;  Only the endpoints are varying; the indices stay fixed in values!
     // so to optimize which mode we need only check the endpoints error against our original to pick the mode to save
     //
     for (int modes = min_mode; modes <= max_mode; ++modes)
     {
-            // Indices data to save for given mode
-            memcpy(iIndices,BC6H_data.shape_indices,sizeof(iIndices));
-            QuantizeEndPoint(BC6H_data.EndPoints,iEndPoints, max_subsets, ModePartition[ModeFitOrder[modes]].nbits);
+            memcpy(best_EndPoints[modes], BC6H_data.fEndPoints,     sizeof(BC6H_data.fEndPoints));
+            memcpy(best_Indices[modes],   BC6H_data.shape_indices, sizeof(BC6H_data.shape_indices));
 
-#ifdef BC6H_DEBUG_TO_RESULTS_TXT
-            //fprintf(g_fp,"Check Fit shape sp %d  Mode 0x%X  bits %d\n",modes,ModePartition[ModeFitOrder[modes]].mode, ModePartition[ModeFitOrder[modes]].nbits);
-#endif
-            SwapIndices(iEndPoints,iIndices,BC6H_data.entryCount,max_subsets,ModeFitOrder[modes],BC6H_data.d_shape_index);    
-            CompressEndPoints(iEndPoints,oEndPoints, max_subsets,ModeFitOrder[modes]);
-
-            /*=================================================================
-                Check Fit
-            ==================================================================*/
-
-            fits[modes] = endpts_fit(iEndPoints, oEndPoints, ModeFitOrder[modes],max_subsets, m_isSigned);
-
-            if (fits[modes])
+            // For some modes the differances between channels can be quite small
+            // typically for 6 bits 0..32 an increment of 1 in a channel can cause
+            // unwanted color artifacts.
+            // Check if computed channel endpoint have a wide spread between channels if not 
+            // scale all the channels to a avarage so that the variance is not noticed at lower bit values
+            if (m_bAverageEndPoint)
             {
-#ifdef BC6H_DEBUG_TO_RESULTS_TXT
-                        fprintf(g_fp,"FITS --------------------\n");
-                        fprintf(g_fp,"Input End Points 0\n");
-                        fprintf(g_fp,"A.x = %d\n",iEndPoints[0][0][0]);
-                        fprintf(g_fp,"A.y = %d\n",iEndPoints[0][0][1]);
-                        fprintf(g_fp,"A.z = %d\n",iEndPoints[0][0][2]);
-                        fprintf(g_fp,"B.x = %d\n",iEndPoints[0][1][0]);
-                        fprintf(g_fp,"B.y = %d\n",iEndPoints[0][1][1]);
-                        fprintf(g_fp,"B.z = %d\n",iEndPoints[0][1][2]);
-                        fprintf(g_fp,"Input End Points 1\n");
-                        fprintf(g_fp,"A.x = %d\n",iEndPoints[1][0][0]);
-                        fprintf(g_fp,"A.y = %d\n",iEndPoints[1][0][1]);
-                        fprintf(g_fp,"A.z = %d\n",iEndPoints[1][0][2]);
-                        fprintf(g_fp,"B.x = %d\n",iEndPoints[1][1][0]);
-                        fprintf(g_fp,"B.y = %d\n",iEndPoints[1][1][1]);
-                        fprintf(g_fp,"B.z = %d\n",iEndPoints[1][1][2]);
-                        fprintf(g_fp,"Compressed End Points 0\n");
-                        fprintf(g_fp,"A.x = %d\n",oEndPoints[0][0][0]);
-                        fprintf(g_fp,"A.y = %d\n",oEndPoints[0][0][1]);
-                        fprintf(g_fp,"A.z = %d\n",oEndPoints[0][0][2]);
-                        fprintf(g_fp,"B.x = %d\n",oEndPoints[0][1][0]);
-                        fprintf(g_fp,"B.y = %d\n",oEndPoints[0][1][1]);
-                        fprintf(g_fp,"B.z = %d\n",oEndPoints[0][1][2]);
-                        fprintf(g_fp,"End Points 1\n");
-                        fprintf(g_fp,"A.x = %d\n",oEndPoints[1][0][0]);
-                        fprintf(g_fp,"A.y = %d\n",oEndPoints[1][0][1]);
-                        fprintf(g_fp,"A.z = %d\n",oEndPoints[1][0][2]);
-                        fprintf(g_fp,"B.x = %d\n",oEndPoints[1][1][0]);
-                        fprintf(g_fp,"B.y = %d\n",oEndPoints[1][1][1]);
-                        fprintf(g_fp,"B.z = %d\n",oEndPoints[1][1][2]);
-#endif
-
-                    #ifdef BC6H_COMPDEBUGGER
-                            // Non-optimzed points
-                            SetLineColor(1.0);
-                            ShowEndPointLine(BC6H_data,max_subsets);
-                    #endif
-
-                    bool optimize = false; // Disabled 
-                    if (optimize)
-                    {
-                            // This section of code is not work well and is disabled
-                            double  opt_toterr;
-                            float   best_EndPoints[2][2][3]; 
-                            int     best_iEndPoints[2][2][3];
-                            int     best_oEndPoints[2][2][3];
-                            int     best_iIndices[2][16];
-                
-
-                            // Returns optimized endpoints for a given mode and its error value from the input endpoints
-                            opt_toterr = optimize_endpts(BC6H_data,                //
-                                                        best_EndPoints,            // New endpoint if any optimized
-                                                        best_iIndices,             // New optimized indices
-                                                        max_subsets,               // 1 or 2 regions shape
-                                                        ModeFitOrder[modes],       // Mode we want to fit data into    
-                                                        error);                    // Unoptimized error value we started with
-
-                            // Did the optimization take place if so we should have 
-                            // a new lower valued error : else we keep the original
-                            if (opt_toterr < error)
-                            {
-                                QuantizeEndPoint(best_EndPoints,best_iEndPoints, max_subsets, ModePartition[ModeFitOrder[modes]].nbits);
-                                SwapIndices(best_iEndPoints,best_iIndices,BC6H_data.entryCount,max_subsets,ModeFitOrder[modes],BC6H_data.d_shape_index);
-                                CompressEndPoints(best_iEndPoints,best_oEndPoints, max_subsets,ModeFitOrder[modes]);
-
-                                fits[modes] = endpts_fit(best_iEndPoints, best_oEndPoints, ModeFitOrder[modes],max_subsets, m_isSigned);
-
-                                // do these new endpoints fit the mode precision
-                                if (fits[modes] && ( opt_toterr <= error) ) 
-                                {
-                                    #ifdef BC6H_DEBUG_TO_RESULTS_TXT
-                                    g_mode = ModePartition[ModeFitOrder[modes]].mode;
-                                    #endif
-                                    BC6H_data.optimized = true;
-                                    // keep the new optimized endpoints
-                                    memcpy(BC6H_data.EndPoints,best_EndPoints,sizeof(float)*2*2*3);
-
-                                    SaveCompressedBlockData(BC6H_data,best_oEndPoints,best_iIndices,max_subsets, ModeFitOrder[modes]);
-
-                                    #ifdef BC6H_COMPDEBUGGER
-                                        // Optimzed points
-                                        SetLineColor(0.5);
-                                        ShowEndPointLine(BC6H_data,max_subsets);
-                                    #endif
-
-                                    return opt_toterr;
-                                }
-                            }
-                    }// if optimize
-
-                    // Keep the original endpoints
-                    #ifdef BC6H_DEBUG_TO_RESULTS_TXT
-                    g_mode = ModePartition[ModeFitOrder[modes]].mode;
-                    #endif
-
-                    SaveCompressedBlockData(BC6H_data,oEndPoints,iIndices,max_subsets,ModeFitOrder[modes]);
-
-#ifdef BC6H_DEBUG_TO_RESULTS_TXT
-
-#endif
-
-                    return error;
+                AverageEndPoint(best_EndPoints[modes], SrcEndPoints, max_subsets, ModeFitOrder[modes]);
+                QuantizeEndPointToF16Prec(SrcEndPoints, F16EndPoints[modes], max_subsets, ModePartition[ModeFitOrder[modes]].nbits);
+            }
+            else
+            {
+                QuantizeEndPointToF16Prec(best_EndPoints[modes], F16EndPoints[modes], max_subsets, ModePartition[ModeFitOrder[modes]].nbits);
             }
 
+            // Indices data to save for given mode
+            SwapIndices(F16EndPoints[modes], best_Indices[modes], BC6H_data.entryCount, max_subsets, ModeFitOrder[modes], BC6H_data.d_shape_index);
+            TransformEndPoints(BC6H_data, F16EndPoints[modes], quantEndPoints[modes], max_subsets,ModeFitOrder[modes]);
+            fits[modes] = endpts_fit(F16EndPoints[modes], quantEndPoints[modes], ModeFitOrder[modes],max_subsets, m_isSigned);
+            if (fits[modes])
+            {
+                numfits++;
+
+                // The new compressed end points fit the mode
+                // recalculate the error for this mode with a new set of indices
+                // since we have shifted the end points from what we origially calc
+                // from the find_bestpattern
+                float uncompressed[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];
+                if (BC6H_data.region == 1)
+                    decompress_endpoints1(BC6H_data, quantEndPoints[modes], uncompressed, ModeFitOrder[modes]);
+                else
+                    decompress_endpoints2(BC6H_data, quantEndPoints[modes], uncompressed, ModeFitOrder[modes]);
+                // Takes the end points and creates a pallet of colors
+                // based on preset weights along a vector formed by the two end points
+                palitizeEndPointsF(BC6H_data, uncompressed);
+                
+                // Once we have the pallet - recalculate the optimal indices using the pallet
+                // and the original image data stored in BC6H_data.din[]
+                if (!m_isSigned)
+                    ReIndexShapef(BC6H_data, best_Indices[modes]);
+
+                // Calculate the error of the new tile vs the old tile data
+                opt_toterr[modes] = CalcShapeError(BC6H_data, uncompressed, best_Indices[modes],true);
+
+                // Save hold this mode fit data if its better than the last one checked.
+                if (opt_toterr[modes] < bestError)
+                {
+                    if (!m_isSigned)
+                    {
+                        QuantizeEndPointToF16Prec(uncompressed, F16EndPoints[modes], max_subsets, ModePartition[ModeFitOrder[modes]].nbits);
+                        SwapIndices(F16EndPoints[modes], best_Indices[modes], BC6H_data.entryCount, max_subsets, ModeFitOrder[modes], BC6H_data.d_shape_index);
+                        TransformEndPoints(BC6H_data, F16EndPoints[modes], quantEndPoints[modes], max_subsets, ModeFitOrder[modes]);
+                    }
+                    bestError = opt_toterr[modes];
+                    bestFit = modes;
+                    error = bestError;
+                }
+
+            }
     }
 
-#ifdef BC6H_DEBUG_TO_RESULTS_TXT
-        if (g_fp)
-        {
-            fprintf(g_fp,"=== Error === at block %d\n",g_block);
-        }
-#endif
+    if (numfits > 0)
+    {
+        SaveCompressedBlockData(BC6H_data, quantEndPoints[bestFit], best_Indices[bestFit], max_subsets, ModeFitOrder[bestFit]);
+        return error;
+    }
 
     // Should not get here!
     return error;
-
 }
 
+//==================================================================================
+// CompressBlock 
+// in[]  is half float32 data  [0..1] for unsigned and [-1..+1] for signed
+// it will be converted to 16 bit half CMP_HALF (short with signed component) for processing
+//
+// out is 128 bits BC6H Encoded data
+//==================================================================================
 
-float BC6HBlockEncoder::CompressBlock(float    in[BC6H_MAX_SUBSET_SIZE][BC6H_MAX_DIMENSION_BIG], BYTE out[BC6H_COMPRESSED_BLOCK_SIZE])
+//#define DEBUG_A_BLOCK
+#ifdef DEBUG_A_BLOCK
+float Testdin[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG] =
+{
+    {29440.0000, 29440.0000, 30255.0000, 0.000000000},
+    {29440.0000, 29440.0000, 30123.0000, 0.000000000},
+    {29440.0000, 29440.0000, 29440.0000, 0.000000000},
+    {29440.0000, 29440.0000, 29440.0000, 0.000000000},
+    {29440.0000, 29440.0000, 30251.0000, 0.000000000},
+    {29440.0000, 29440.0000, 30105.0000, 0.000000000},
+    {29440.0000, 29440.0000, 29440.0000, 0.000000000},
+    {29440.0000, 29440.0000, 29440.0000, 0.000000000},
+    {29440.0000, 29440.0000, 30246.0000, 0.000000000},
+    {29440.0000, 29440.0000, 30086.0000, 0.000000000},
+    {29440.0000, 29440.0000, 29440.0000, 0.000000000},
+    {29440.0000, 29440.0000, 29440.0000, 0.000000000},
+    {29440.0000, 29440.0000, 30240.0000, 0.000000000},
+    {29440.0000, 29440.0000, 30047.0000, 0.000000000},
+    {29440.0000, 29440.0000, 29440.0000, 0.000000000},
+    {29440.0000, 29440.0000, 29440.0000, 0.000000000},
+};
+#endif
+
+float BC6HBlockEncoder::CompressBlock(float in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG], BYTE out[COMPRESSED_BLOCK_SIZE])
 {
     /* Reserved feature:
     float smono[16];
@@ -1227,39 +1376,62 @@ float BC6HBlockEncoder::CompressBlock(float    in[BC6H_MAX_SUBSET_SIZE][BC6H_MAX
     float smin = FLT_MAX;
     */
 
-
-    // Try to remove this section
-    double din[BC6H_MAX_SUBSET_SIZE][BC6H_MAX_DIMENSION_BIG];
-    
-    for (int i=0; i<BC6H_MAX_SUBSET_SIZE; i++)
-    {
-        din[i][0] = (double) in[i][0];
-        din[i][1] = (double) in[i][1];
-        din[i][2] = (double) in[i][2];
-        din[i][3] = (double) in[i][3]; // this is not used....
-    }
-
-    #ifdef DEBUG_PATTERNS
-    srand (100);
+#ifdef DEBUG_PATTERNS
+    srand(100);
     // Save delta image to file
-    fi = fopen("deltaImages.txt","w");
-    #endif
+    fi = fopen("deltaImages.txt", "w");
+#endif
 
-    #ifdef BC6H_COMPDEBUGGER
-        g_Remote_Connected = g_CompClient.connect();
-        RemoteDataReset();
-        ShowInputColors(in);
-    #endif
-
-    double    bestError        = DBL_MAX;
-    int       bestShape        = 0;
-    double    Error            = 0;
-    int       shape_pattern    = -1;            // init to no shapes found
+    float    bestError = FLT_MAX;
+    int       bestShape = 0;
+    float    Error = 0;
+    int       shape_pattern = -1;            // init to no shapes found
 
     AMD_BC6H_Format            BC6H_data;
     AMD_BC6H_Format            best_BC6H_data;
 
-    memset(&best_BC6H_data,0,sizeof(AMD_BC6H_Format));
+    memset(&BC6H_data, 0, sizeof(AMD_BC6H_Format));
+    memset(&best_BC6H_data, 0, sizeof(AMD_BC6H_Format));
+
+    for (int i = 0; i < BC6H_MAX_SUBSET_SIZE; i++)
+    {
+            // Our Half floats will be restricted to 0x7BFF with a sign components
+            // so use 0..0x7BFF and sign bit for the floats
+            if (in[i][0] < 0)
+            {
+                BC6H_data.din[i][0] = -half(abs(in[i][0])).bits();
+            }
+            else
+                BC6H_data.din[i][0] = half(in[i][0]).bits();
+
+            if (in[i][1] < 0)
+            {
+                BC6H_data.din[i][1] = -half(abs(in[i][1])).bits();
+            }
+            else
+                BC6H_data.din[i][1] = half(in[i][1]).bits();
+
+            if (in[i][2] < 0)
+            {
+                BC6H_data.din[i][2] = -half(abs(in[i][2])).bits();
+            }
+            else
+                BC6H_data.din[i][2] = half(in[i][2]).bits();
+
+            BC6H_data.din[i][3] = 0.0;
+
+    }
+
+#ifdef DEBUG_A_BLOCK
+    // Used for debugging blocks!
+    for (int i = 0; i < BC6H_MAX_SUBSET_SIZE; i++)
+    {
+            BC6H_data.din[i][0] = Testdin[i][0];
+            BC6H_data.din[i][1] = Testdin[i][1];
+            BC6H_data.din[i][2] = Testdin[i][2];
+            BC6H_data.din[i][3] = Testdin[i][3];
+    }
+#endif
 
     if (m_useMonoShapePatterns)
     {
@@ -1270,10 +1442,8 @@ float BC6HBlockEncoder::CompressBlock(float    in[BC6H_MAX_SUBSET_SIZE][BC6H_MAX
 
     if (shape_pattern == -1)
     {
-        // Try region 0 
-        memset(&BC6H_data,0,sizeof(BC6H_data));
-        Error = FindBestPattern(BC6H_data,false,0,din);
-    
+        Error = FindBestPattern(BC6H_data,false,0);
+        
         // Save our first value
         if (Error < bestError)
         {
@@ -1281,12 +1451,11 @@ float BC6HBlockEncoder::CompressBlock(float    in[BC6H_MAX_SUBSET_SIZE][BC6H_MAX
                 bestShape = -1;
                 memcpy(&best_BC6H_data,&BC6H_data,sizeof(BC6H_data));
         }
-
+    
         // now run through all two regions shapes to find the best pattern
         for (int shape=0; shape<32; shape++)
         {
-            memset(&BC6H_data,0,sizeof(BC6H_data));
-            Error = FindBestPattern(BC6H_data,true,shape,din);
+            Error = FindBestPattern(BC6H_data,true,shape);
             if (Error <= bestError)
             {
                 bestError = Error + 1E-24;
@@ -1297,76 +1466,26 @@ float BC6HBlockEncoder::CompressBlock(float    in[BC6H_MAX_SUBSET_SIZE][BC6H_MAX
         }
     }
 
+
     // Optimize the result for encoding
     bestError = EncodePattern(best_BC6H_data,bestError);
-    
-    // do final encoding and save to output block
-    SaveDataBlock(best_BC6H_data,out);
 
-    #ifdef BC6H_COMPDEBUGGER
-        // Show the results
-        ShowBestResults(in,best_BC6H_data);
+
+    // used for debugging modes, set the value you want to debug with
+    if (best_BC6H_data.m_mode != 0) 
+    {
+        // do final encoding and save to output block
+        SaveDataBlock(best_BC6H_data, out);
+    }
+    else
+        memcpy(out, Cmp_Red_Block, 16);
         
-        if (g_Remote_Connected)
-            g_CompClient.disconnect();
-    #endif
+    // do final encoding and save to output block
+    // SaveDataBlock(best_BC6H_data,out);
 
     #ifdef DEBUG_PATTERNS
     if (fi)
         fclose(fi);
-    #endif
-
-    #ifdef BC6H_DEBUG_TO_RESULTS_TXT
-        if (g_fp)
-        {
-            /***********************
-            best_BC6H_data.EndPoints[0][0][0],
-            best_BC6H_data.EndPoints[0][0][1],
-            best_BC6H_data.EndPoints[0][0][2],
-            best_BC6H_data.EndPoints[0][1][0],
-            best_BC6H_data.EndPoints[0][1][1],
-            best_BC6H_data.EndPoints[0][1][2],
-            *************************/
-            //(%5.0f %5.0f %5.0f) (%5.0f %5.0f %5.0f)"
-            fprintf(g_fp,"%3d :: %02x, %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x  Mode %2x Shape %2d %c %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d\n",
-                    g_block,
-                    0xFF&out[0],
-                    0xFF&out[1],
-                    0xFF&out[2],
-                    0xFF&out[3],
-                    0xFF&out[4],
-                    0xFF&out[5],
-                    0xFF&out[6],
-                    0xFF&out[7],
-                    0xFF&out[8],
-                    0xFF&out[9],
-                    0xFF&out[10],
-                    0xFF&out[11],
-                    0xFF&out[12],
-                    0xFF&out[13],
-                    0xFF&out[14],
-                    0xFF&out[15],
-                    g_mode,
-                    bestShape,
-                    best_BC6H_data.optimized?'*':' ',
-                    best_BC6H_data.indices16[0],
-                    best_BC6H_data.indices16[1],
-                    best_BC6H_data.indices16[2],
-                    best_BC6H_data.indices16[3],
-                    best_BC6H_data.indices16[4],
-                    best_BC6H_data.indices16[5],
-                    best_BC6H_data.indices16[6],
-                    best_BC6H_data.indices16[7],
-                    best_BC6H_data.indices16[8],
-                    best_BC6H_data.indices16[9],
-                    best_BC6H_data.indices16[10],
-                    best_BC6H_data.indices16[11],
-                    best_BC6H_data.indices16[12],
-                    best_BC6H_data.indices16[13],
-                    best_BC6H_data.indices16[14],
-                    best_BC6H_data.indices16[15]
-        );
-        }
     #endif
 
     g_block++;

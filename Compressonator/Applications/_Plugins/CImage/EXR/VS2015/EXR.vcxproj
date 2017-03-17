@@ -85,27 +85,35 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\..\..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\..\..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\..\..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\..\..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\..\..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\..\..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\..\..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\..\..\Compressonator_Root.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -162,14 +170,14 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_USEMT; WIN32;_DEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_USEMT; WIN32;_DEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions) </PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\Header;..\..\..\..\..\Header\Codec;..\..\..\..\..\Utils;..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\shared;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\um;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\winrt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\Applications\_Plugins\;$(Compressonator_RootDev)\Applications\_Plugins\Common\;$(Compressonator_RootDev)\Header\;$(Compressonator_RootDev)\Header\Codec\;(Compressonator_OPENEXR)\config\;$(Compressonator_BOOST)\;$(Compressonator_DIRECTX)\Include\shared\;$(Compressonator_DIRECTX)Include\um\;$(Compressonator_DIRECTX)winrt\;%(AdditionalIncludeDirectories);$(Compressonator_OPENEXR)\IlmImf\;$(Compressonator_OPENEXR)\config.windows\;$(Compressonator_ILMBASE)\config\;$(Compressonator_ILMBASE)\config.windows\;$(Compressonator_ILMBASE)\Iex\;$(Compressonator_ILMBASE)\Imath\;$(Compressonator_ILMBASE)\half\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -192,7 +200,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\Header;..\..\..\..\..\Header\Codec;..\..\..\..\..\Utils;..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\shared;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\um;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\winrt;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\Applications\_Plugins\;$(Compressonator_RootDev)\Applications\_Plugins\Common\;$(Compressonator_RootDev)\Header\;$(Compressonator_RootDev)\Header\Codec\;$(Compressonator_BOOST)\;$(Compressonator_DIRECTX)\Include\shared\;$(Compressonator_DIRECTX)Include\um\;$(Compressonator_DIRECTX)winrt\;$(AMDCOMPRESS_ROOT)\SDK\include;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR\;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
@@ -212,13 +220,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN64;_DEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN64;_DEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;%(PreprocessorDefinitions) </PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\Header;..\..\..\..\..\Header\Codec;..\..\..\..\..\Utils;..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\shared;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\um;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\winrt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\Applications\_Plugins\;$(Compressonator_RootDev)\Applications\_Plugins\Common\;$(Compressonator_RootDev)\Header\;$(Compressonator_RootDev)\Header\Codec\;$(Compressonator_OPENEXR)\config\;$(Compressonator_BOOST)\;$(Compressonator_DIRECTX)\Include\shared\;$(Compressonator_DIRECTX)Include\um\;$(Compressonator_DIRECTX)winrt\;$(AMDCOMPRESS_ROOT)\SDK\include;$(Compressonator_OPENEXR)\IlmImf\;$(Compressonator_OPENEXR)\config.windows\;$(Compressonator_ILMBASE)\config\;$(Compressonator_ILMBASE)\config.windows\;$(Compressonator_ILMBASE)\Iex\;$(Compressonator_ILMBASE)\Imath\;$(Compressonator_ILMBASE)\half\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -243,7 +251,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\Header;..\..\..\..\..\Header\Codec;..\..\..\..\..\Utils;..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\shared;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\um;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\winrt;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\Applications\_Plugins\;$(Compressonator_RootDev)\Applications\_Plugins\Common\;$(Compressonator_RootDev)\Header\;$(Compressonator_RootDev)\Header\Codec\;$(Compressonator_BOOST)\;$(Compressonator_DIRECTX)\Include\shared\;$(Compressonator_DIRECTX)Include\um\;$(Compressonator_DIRECTX)winrt\;$(AMDCOMPRESS_ROOT)\SDK\include;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR\;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -264,14 +272,14 @@
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <OmitFramePointers>true</OmitFramePointers>
-      <PreprocessorDefinitions>_USEMT; WIN32;NDEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_USEMT; WIN32;NDEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions) </PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\Header;..\..\..\..\..\Header\Codec;..\..\..\..\..\Utils;..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\shared;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\um;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\winrt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\Applications\_Plugins\;$(Compressonator_RootDev)\Applications\_Plugins\Common\;$(Compressonator_RootDev)\Header\;$(Compressonator_RootDev)\Header\Codec\;(Compressonator_OPENEXR)\config\;$(Compressonator_BOOST)\;$(Compressonator_DIRECTX)\Include\shared\;$(Compressonator_DIRECTX)Include\um\;$(Compressonator_DIRECTX)winrt\;%(AdditionalIncludeDirectories);$(Compressonator_OPENEXR)\IlmImf\;$(Compressonator_OPENEXR)\config.windows\;$(Compressonator_ILMBASE)\config\;$(Compressonator_ILMBASE)\config.windows\;$(Compressonator_ILMBASE)\Iex\;$(Compressonator_ILMBASE)\Imath\;$(Compressonator_ILMBASE)\half\</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
@@ -303,7 +311,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\Header;..\..\..\..\..\Header\Codec;..\..\..\..\..\Utils;..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\shared;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\um;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\winrt;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\Applications\_Plugins\;$(Compressonator_RootDev)\Applications\_Plugins\Common\;$(Compressonator_RootDev)\Header\;$(Compressonator_RootDev)\Header\Codec\;$(Compressonator_BOOST)\;$(Compressonator_DIRECTX)\Include\shared\;$(Compressonator_DIRECTX)Include\um\;$(Compressonator_DIRECTX)winrt\;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories);$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR\;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR\</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
@@ -337,7 +345,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\Header;..\..\..\..\..\Header\Codec;..\..\..\..\..\Utils;..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\shared;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\um;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\winrt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\Applications\_Plugins\;$(Compressonator_RootDev)\Applications\_Plugins\Common\;$(Compressonator_RootDev)\Header\;$(Compressonator_RootDev)\Header\Codec\;$(Compressonator_OPENEXR)\config\;$(Compressonator_BOOST)\;$(Compressonator_DIRECTX)\Include\shared\;$(Compressonator_DIRECTX)Include\um\;$(Compressonator_DIRECTX)winrt\;$(AMDCOMPRESS_ROOT)\SDK\include;$(Compressonator_OPENEXR)\IlmImf\;$(Compressonator_OPENEXR)\config.windows\;$(Compressonator_ILMBASE)\config\;$(Compressonator_ILMBASE)\config.windows\;$(Compressonator_ILMBASE)\Iex\;$(Compressonator_ILMBASE)\Imath\;$(Compressonator_ILMBASE)\half\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
       <IntrinsicFunctions>true</IntrinsicFunctions>
     </ClCompile>
@@ -366,7 +374,7 @@
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <OmitFramePointers>
       </OmitFramePointers>
-      <PreprocessorDefinitions>WIN64;NDEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN64;NDEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;%(PreprocessorDefinitions) </PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -374,7 +382,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Applications\_Plugins\;..\..\..\..\..\Applications\_Plugins\Common;..\..\..\..\..\Header;..\..\..\..\..\Header\Codec;..\..\..\..\..\Utils;..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\Source\include;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\shared;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\um;..\..\..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\Include\winrt;$(AMDCOMPRESS_ROOT)\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\Applications\_Plugins\;$(Compressonator_RootDev)\Applications\_Plugins\Common\;$(Compressonator_RootDev)\Header\;$(Compressonator_RootDev)\Header\Codec\;$(Compressonator_BOOST)\;$(Compressonator_DIRECTX)\Include\shared\;$(Compressonator_DIRECTX)Include\um\;$(Compressonator_DIRECTX)winrt\;$(AMDCOMPRESS_ROOT)\SDK\include;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR\;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
       <IntrinsicFunctions>true</IntrinsicFunctions>
     </ClCompile>
@@ -408,6 +416,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\Common\cExr.h" />
     <ClInclude Include="..\..\..\Common\MIPS.h" />
+    <ClInclude Include="..\..\..\Common\namespaceAlias.h" />
     <ClInclude Include="..\..\..\Common\TC_PluginAPI.h" />
     <ClInclude Include="..\..\..\Common\TC_PluginInternal.h" />
     <ClInclude Include="..\..\..\Common\UtilFuncs.h" />

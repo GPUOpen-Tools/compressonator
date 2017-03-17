@@ -68,10 +68,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\GPU_Decode\GPU_Decode.cpp" />
+    <ClCompile Include="..\Source\GPU_Decode\GPU_DecodeBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Applications\_Plugins\Common\PluginInterface.h" />
     <ClInclude Include="..\Header\GPU_Decode\GPU_Decode.h" />
+    <ClInclude Include="..\Header\GPU_Decode\GPU_DecodeBase.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{17CCD4C6-5E35-404C-8613-32775F250A92}</ProjectGuid>

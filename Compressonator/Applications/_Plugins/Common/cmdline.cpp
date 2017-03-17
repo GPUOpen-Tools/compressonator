@@ -32,7 +32,10 @@
 #include "TC_PluginInternal.h"
 #include "Version.h"
 
-
+#include <ImfStandardAttributes.h>
+#include <ImathBox.h>
+#include <ImfArray.h>
+#include <imfrgba.h>
 
 // #define SHOW_PROCESS_MEMORY
 // #define USE_COMPUTE
@@ -58,7 +61,7 @@ void AboutCompressonator()
     {
         // Keep track of Customer patches from last release to current
         // This is what is shown when you build the exe outside of the automated Build System (such as Jenkins)
-        printf("CompressonatorCLI V2.3.0  SP1 Copyright AMD 2016\n");
+        printf("CompressonatorCLI V2.5.0  SP1 Copyright AMD 2016 - 2017\n");
     }
     printf( "------------------------------------------------\n");
     printf( "\n");
@@ -84,10 +87,18 @@ void PrintUsage()
     printf("                     be compatible \n");
     printf("                     with the sources format,decompress formats are typically\n");
     printf("                     set to ARGB_8888 or ARGB_32F\n");
+#ifdef USE_COMPUTE
+    printf("-UseGPUCompress      By default compression is done using CPU\n");
+    printf("                     when set, OpenCL will be used by default, this can be \n");
+    printf("                     changed to DirectX using EcodeWith setting\n");
+    printf("-EncodeWith          Sets OpenCL or DirectX for GPU compress\n");
+    printf("                     Default is OpenCL, UseGPUCompress is implied when\n");
+    printf("                     this option is set\n");
+#endif
     printf("-UseGPUDecompress    By default decompression is done using CPU\n");
     printf("                     when set OpenGL will be used by default, this can be \n");
-    printf("                     changed to DirectX using DecodeWith setting\n");
-    printf("-DecodeWith          Sets OpenGL or DirectX for GPU decompress\n");
+    printf("                     changed to DirectX or Vulkan using DecodeWith setting\n");
+    printf("-DecodeWith          Sets OpenGL, DirectX or Vulkan for GPU decompress\n");
     printf("                     Default is OpenGL, UseGPUDecompress is implied when\n");
     printf("                     this option is set\n");
     printf("-doswizzle           Swizzle the source images Red and Blue channels\n");
@@ -266,26 +277,46 @@ CMP_GPUDecode DecodeWith(const  char *strParameter)
         return GPUDecode_INVALID;
 }
 
+CMP_Compute_type EncodeWith(const  char *strParameter)
+{
+    if (strcmp(strParameter, "DX") == 0)
+        return Compute_DIRECTX;
+    else if (strcmp(strParameter, "DirectX") == 0)
+        return Compute_DIRECTX;
+    else if (strcmp(strParameter, "CL") == 0)
+        return Compute_OPENCL;
+    else if (strcmp(strParameter, "OpenCL") == 0)
+        return Compute_OPENCL;
+    else if (strcmp(strParameter, "VK") == 0)
+        return Compute_VULKAN;
+    else if (strcmp(strParameter, "Vulkan") == 0)
+        return Compute_VULKAN;
+    else
+        return Compute_INVALID;
+}
+
 bool isFloat(CMP_FORMAT format)
 {
     // determin of the swizzle flag needs to be turned on!
     switch (format)
     {
-    case CMP_FORMAT_BC6H     :
-    case CMP_FORMAT_ARGB_16F :            
-    case CMP_FORMAT_ABGR_16F :        
-    case CMP_FORMAT_RGBA_16F :        
-    case CMP_FORMAT_BGRA_16F :        
-    case CMP_FORMAT_RG_16F   :       
-    case CMP_FORMAT_R_16F    :        
-    case CMP_FORMAT_ARGB_32F :        
-    case CMP_FORMAT_ABGR_32F :        
-    case CMP_FORMAT_RGBA_32F :        
-    case CMP_FORMAT_BGRA_32F :        
-    case CMP_FORMAT_RGB_32F  :        
-    case CMP_FORMAT_BGR_32F  :        
-    case CMP_FORMAT_RG_32F   :        
-    case CMP_FORMAT_R_32F    :
+    case CMP_FORMAT_BC6H       :
+    case CMP_FORMAT_BC6H_SF    :
+    case CMP_FORMAT_ARGB_16F   :            
+    case CMP_FORMAT_ABGR_16F   :        
+    case CMP_FORMAT_RGBA_16F   :        
+    case CMP_FORMAT_BGRA_16F   :        
+    case CMP_FORMAT_RG_16F     :       
+    case CMP_FORMAT_R_16F      :        
+    case CMP_FORMAT_ARGB_32F   :        
+    case CMP_FORMAT_ABGR_32F   :        
+    case CMP_FORMAT_RGBA_32F   :   
+    case CMP_FORMAT_RGBE_32F   :
+    case CMP_FORMAT_BGRA_32F   :        
+    case CMP_FORMAT_RGB_32F    :        
+    case CMP_FORMAT_BGR_32F    :        
+    case CMP_FORMAT_RG_32F     :        
+    case CMP_FORMAT_R_32F      :
         return true;
         break;
     default:
@@ -338,12 +369,14 @@ bool ProcessSingleFlags(const  char *strCommand)
         g_CmdPrams.analysis = true;
         isset = true;
     }
+#ifdef USE_COMPUTE
     else
-    if ((strcmp(strCommand, "-useGPU") == 0))
+    if ((strcmp(strCommand, "-UseGPUCompress") == 0))
     {
-        g_CmdPrams.useGPU = true;
+        g_CmdPrams.CompressOptions.bUseGPUCompress = true;
         isset = true;
     }
+#endif
     else
     if (strcmp(strCommand, "-UseGPUDecompress") == 0)
     {
@@ -515,6 +548,25 @@ bool ProcessCMDLineOptions(const  char *strCommand, const char *strParameter)
 
             g_CmdPrams.CompressOptions.bUseGPUDecompress = true;
         }
+#ifdef USE_COMPUTE
+        else
+        if (strcmp(strCommand, "-EncodeWith") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
+                throw "No API specified (set either OpenCL or DirectX (Default is OpenCL).";
+            }
+
+            g_CmdPrams.CompressOptions.nComputeWith = EncodeWith((char *)strParameter);
+
+            if (g_CmdPrams.CompressOptions.nComputeWith == Compute_INVALID)
+            {
+                throw "Unknown API format specified.";
+            }
+
+            g_CmdPrams.CompressOptions.bUseGPUCompress = true;
+        }
+#endif
         else
         if (strcmp(strCommand, "-decomp") == 0)
         {
@@ -959,21 +1011,23 @@ bool FormatIsFloat(CMP_FORMAT InFormat)
 {
     switch (InFormat)
     {
-    case CMP_FORMAT_ARGB_16F :
-    case CMP_FORMAT_ABGR_16F :
-    case CMP_FORMAT_RGBA_16F :
-    case CMP_FORMAT_BGRA_16F :
-    case CMP_FORMAT_RG_16F   :
-    case CMP_FORMAT_R_16F    :
-    case CMP_FORMAT_ARGB_32F :
-    case CMP_FORMAT_ABGR_32F :
-    case CMP_FORMAT_RGBA_32F :
-    case CMP_FORMAT_BGRA_32F :
-    case CMP_FORMAT_RGB_32F  :
-    case CMP_FORMAT_BGR_32F  :
-    case CMP_FORMAT_RG_32F   :
-    case CMP_FORMAT_R_32F    :
-    case CMP_FORMAT_BC6H     :
+    case CMP_FORMAT_ARGB_16F   :
+    case CMP_FORMAT_ABGR_16F   :
+    case CMP_FORMAT_RGBA_16F   :
+    case CMP_FORMAT_BGRA_16F   :
+    case CMP_FORMAT_RG_16F     :
+    case CMP_FORMAT_R_16F      :
+    case CMP_FORMAT_ARGB_32F   :
+    case CMP_FORMAT_ABGR_32F   :
+    case CMP_FORMAT_RGBA_32F   :
+    case CMP_FORMAT_BGRA_32F   :
+    case CMP_FORMAT_RGB_32F    :
+    case CMP_FORMAT_BGR_32F    :
+    case CMP_FORMAT_RG_32F     :
+    case CMP_FORMAT_R_32F      :
+    case CMP_FORMAT_BC6H       :
+    case CMP_FORMAT_BC6H_SF    :
+    case CMP_FORMAT_RGBE_32F   :
                                 {
                                         return true;
                                 }
@@ -984,8 +1038,12 @@ bool FormatIsFloat(CMP_FORMAT InFormat)
 
     return false;
 }
+
+#ifdef MAKE_FORMAT_COMPATIBLE
 extern float half_conv_float(unsigned short in);
-void Float2Byte(CMP_BYTE cBlock[], FLOAT* fBlock, CMP_DWORD dwBlockSize)
+extern inline float knee(double x, double f);
+extern float findKneeF(float x, float y);
+void Float2Byte(CMP_BYTE cBlock[], FLOAT* fBlock, CMP_Texture& srcTexture)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -993,18 +1051,102 @@ void Float2Byte(CMP_BYTE cBlock[], FLOAT* fBlock, CMP_DWORD dwBlockSize)
 
     assert(cBlock);
     assert(fBlock);
-    assert(dwBlockSize);
+    assert(&srcTexture);
 
-    if (cBlock && fBlock && dwBlockSize)
+    if (cBlock && fBlock)
     {
-        for (CMP_DWORD i = 0; i < dwBlockSize; i++)
-        {
-            float f= half_conv_float(fBlock[i]);
-            if (f > 1.0f)
-                f = 1.0f;
+        float r, g, b, a;
+        float kl = Imath::Math<float>::pow(2.f, 0);
+        float f = findKneeF(Imath::Math<float>::pow(2.f, 5) - kl, Imath::Math<float>::pow(2.f, 3.5f) - kl);
+        int i = 0;
+        for (int y = 0; y < srcTexture.dwHeight; y++) {
+            for (int x = 0; x < srcTexture.dwWidth; x++) {
 
-            cBlock[i] = CMP_BYTE(f * 255.0f);
+                r = *fBlock;
+                fBlock++;
+                g = *fBlock;
+                fBlock++;
+                b = *fBlock;
+                fBlock++;
+                a = *fBlock;
+                fBlock++;
+                BYTE r_b, g_b, b_b, a_b;
+
+
+                //  1) Compensate for fogging by subtracting defog
+                //     from the raw pixel values.
+                // We assume a defog of 0
+
+
+                //  2) Multiply the defogged pixel values by
+                //     2^(exposure + 2.47393).
+                const float exposeScale = Imath::Math<float>::pow(2, 3.47393f);
+                r = r * exposeScale;
+                g = g * exposeScale;
+                b = b * exposeScale;
+                a = a * exposeScale;
+
+                //  3) Values that are now 1.0 are called "middle gray".
+                //     If defog and exposure are both set to 0.0, then
+                //     middle gray corresponds to a raw pixel value of 0.18.
+                //     In step 6, middle gray values will be mapped to an
+                //     intensity 3.5 f-stops below the display's maximum
+                //     intensity.
+
+                //  4) Apply a knee function.  The knee function has two
+                //     parameters, kneeLow and kneeHigh.  Pixel values
+                //     below 2^kneeLow are not changed by the knee
+                //     function.  Pixel values above kneeLow are lowered
+                //     according to a logarithmic curve, such that the
+                //     value 2^kneeHigh is mapped to 2^3.5.  (In step 6,
+                //     this value will be mapped to the the display's
+                //     maximum intensity.)
+                if (r > kl) {
+                    r = kl + knee(r - kl, f);
+                }
+                if (g > kl) {
+                    g = kl + knee(g - kl, f);
+                }
+                if (b > kl) {
+                    b = kl + knee(b - kl, f);
+                }
+                if (a > kl) {
+                    a = kl + knee(a - kl, f);
+                }
+
+                //  5) Gamma-correct the pixel values, according to the
+                //     screen's gamma.  (We assume that the gamma curve
+                //     is a simple power function.)
+                r = Imath::Math<float>::pow(r, 0.4545);
+                g = Imath::Math<float>::pow(g, 0.4545);
+                b = Imath::Math<float>::pow(b, 0.4545);
+                a = Imath::Math<float>::pow(a, 2.2);
+
+                //  6) Scale the values such that middle gray pixels are
+                //     mapped to a frame buffer value that is 3.5 f-stops
+                //     below the display's maximum intensity. (84.65 if
+                //     the screen's gamma is 2.2)
+                r *= 84.65;
+                g *= 84.65;
+                b *= 84.65;
+                a *= 84.65;
+
+                r_b = Imath::clamp<float>(r, 0.f, 255.f);
+                g_b = Imath::clamp<float>(g, 0.f, 255.f);
+                b_b = Imath::clamp<float>(b, 0.f, 255.f);
+                a_b = Imath::clamp<float>(a, 0.f, 255.f);
+                cBlock[i] = r_b;
+                i++;
+                cBlock[i] = g_b;
+                i++;
+                cBlock[i] = b_b;
+                i++;
+                cBlock[i] = a_b;
+                i++;
+            }
+            
         }
+
     }
 }
 
@@ -1027,6 +1169,24 @@ void Byte2Float(FLOAT* fBlock, CMP_BYTE* cBlock, CMP_DWORD dwBlockSize)
         }
     }
 }
+#endif
+
+//http://www.ludicon.com/castano/blog/2016/09/lightmap-compression-in-the-witness/
+#ifdef RGBM_BC7     
+inline int ftoi_round(float f) {
+    return _mm_cvt_ss2si(_mm_set_ss(f));
+}
+
+template <typename T>
+inline T clamp(const T & x, const T & a, const T & b)
+{
+    return min(max(x, a), b);
+}
+inline float saturate(float f) {
+    return clamp(f, 0.0f, 1.0f);
+}
+inline float square(float f) { return f * f; }
+#endif
 
 bool MakeFormatCompatible(CMP_Texture& srcTexture, MipLevel* pInMipLevel, CMP_FORMAT destFormat)
 {
@@ -1046,8 +1206,62 @@ bool MakeFormatCompatible(CMP_Texture& srcTexture, MipLevel* pInMipLevel, CMP_FO
     {
         FLOAT* pfData = pInMipLevel->m_pfData;
         CMP_BYTE *byteData = new CMP_BYTE[size*4];
-        Float2Byte(byteData, pfData, size*4);
-        srcTexture.pData = byteData;
+  
+#ifdef RGBM_BC7
+        float r, g, b, a;
+        float threshold = 0.95;
+        float bestError = FLT_MAX;
+        float bestM;
+        int i = 0;
+        int j = 0;
+        for (int x = 0; x<size; x++)
+        {
+                r = pfData[i];
+                i++;
+                g = pfData[i];
+                i++;
+                b = pfData[i];
+                i++;
+                a = pfData[i];
+                i++;
+                for (int m = 0; m < 256; m++) {
+                    // Decode M
+                    float M = float(m) / 255.0f * (1 - threshold) + threshold;
+
+                    // Encode RGB.
+                    int R = ftoi_round(255.0f * saturate(r / M));
+                    int G = ftoi_round(255.0f * saturate(g / M));
+                    int B = ftoi_round(255.0f * saturate(b / M));
+
+                    // Decode RGB.
+                    float dr = (float(R) / 255.0f) * M;
+                    float dg = (float(G) / 255.0f) * M;
+                    float db = (float(B) / 255.0f) * M;
+
+                    // Measure error.
+                    float error = square(r - dr) + square(g - dg) + square(b - db);
+
+                    if (error < bestError) {
+                        bestError = error;
+                        bestM = M;
+                    }
+                }
+
+                byteData[j] = ftoi_round(255.0f * saturate(r / bestM));
+                j++;
+                byteData[j] = ftoi_round(255.0f * saturate(g / bestM));
+                j++;
+                byteData[j] = ftoi_round(255.0f * saturate(b / bestM));
+                j++;
+                byteData[j] = ftoi_round(255.0f * saturate(a / bestM));
+                j++;
+            
+        }
+#else
+        Float2Byte(byteData, pfData, srcTexture);
+#endif
+
+        srcTexture.pData = (CMP_BYTE*)byteData;
         srcTexture.format = CMP_FORMAT_ARGB_8888;    
         srcTexture.dwDataSize = size*4;
 
@@ -1188,20 +1402,13 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, bool useCPU
     MipSetOut->m_nWidth          = MipSetIn->m_nWidth;
 
     // BMP is saved as CMP_FORMAT_ARGB_8888
-    // EXR is saved as CMP_FORMAT_ARGB_32F
+    // EXR is saved as CMP_FORMAT_ARGB_16F
     switch (MipSetIn->m_format)
     {
         case CMP_FORMAT_BC6H:
-            if (useCPU)
-            {
-                MipSetOut->m_format = CMP_FORMAT_ARGB_32F;
-                MipSetOut->m_ChannelFormat = CF_Float32;
-            }
-            else 
-            {
-                MipSetOut->m_format = CMP_FORMAT_ARGB_8888;
-                MipSetOut->m_ChannelFormat = CF_8bit;
-            }
+        case CMP_FORMAT_BC6H_SF:
+                MipSetOut->m_format = CMP_FORMAT_ARGB_16F;
+                MipSetOut->m_ChannelFormat = CF_Float16;
             break;
         default:
             MipSetOut->m_format            = CMP_FORMAT_ARGB_8888;
@@ -1491,7 +1698,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
             // INPUT IMAGE Swizzling options for DXT formats
             // ===============================================
 #ifdef USE_SWIZZLE
-            if (!g_CmdPrams.useGPU)
+            if (!g_CmdPrams.CompressOptions.bUseGPUCompress)
                 g_MipSetIn.m_swizzle = KeepSwizzle(destFormat);
 #endif
 
@@ -1549,12 +1756,14 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
         // Determin if Source file Is Compressed
         SourceFormatIsCompressed = CompressedFormat(srcFormat);
 
+#ifndef MAKE_FORMAT_COMPATIBLE
         if ((isFloat(srcFormat) && !isFloat(destFormat)) || (!isFloat(srcFormat) && isFloat(destFormat)))
         {
             cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
             PrintInfo("Error: Processing floating point format <-> non-floating point format is not supported\n");
             return -1;
         }
+#endif
 
         //=====================================================
         // Unsupported conversion !
@@ -1572,7 +1781,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
         if (p_userMipSetIn)  //for GUI
         {
 #ifdef USE_SWIZZLE
-            if (g_MipSetIn.m_swizzle && !g_CmdPrams.useGPU)
+            if (g_MipSetIn.m_swizzle && !g_CmdPrams.CompressOptions.bUseGPUCompress)
             {
                 SwizzleMipMap(&g_MipSetIn);
                 SwizzledMipSetIn = true;
@@ -1738,13 +1947,15 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
                         // Process ConvertTexture
                         //========================
 #ifdef USE_COMPUTE
-                        if (g_CmdPrams.useGPU)
+                        if (g_CmdPrams.CompressOptions.bUseGPUCompress)
                         {
                             bool format_support_gpu = true;
                             KernalOptions   kernel_options;
                             memset(&kernel_options, 0, sizeof(KernalOptions));
                             PluginInterface_Compute *plugin_compute = NULL;
-                            kernel_options.data_type = (unsigned int)g_CmdPrams.DestFormat;
+
+                            kernel_options.data_type = (unsigned int)(g_CmdPrams.DestFormat);
+                            kernel_options.Compute_type = (unsigned int)(g_CmdPrams.CompressOptions.nComputeWith);
 
                             plugin_compute = reinterpret_cast<PluginInterface_Compute *>(g_pluginManager.GetPlugin("COMPUTE", GetFormatDesc(g_CmdPrams.DestFormat)));
 
@@ -1759,6 +1970,9 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
                             {
                                 do
                                 {
+                                    CMP_Compute_Base::ComputeOptions options;
+                                    options.force_rebuild = true;
+
                                     TC_PluginVersion PluginVersion;
                                     plugin_compute->TC_PluginGetVersion(&PluginVersion);
                                     printf("Using %s Compute plugin V%d.%d\n", GetFormatDesc(g_CmdPrams.DestFormat), PluginVersion.dwPluginVersionMajor, PluginVersion.dwPluginVersionMinor);
@@ -1770,11 +1984,18 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
                                         break;
                                     }
 
-                                    if (CMP_InitializeCompressLibrary(Compute_OPENCL) != CMP_OK)
+                                    if (CMP_InitializeCompressLibrary(g_CmdPrams.CompressOptions.nComputeWith, &srcTexture, &kernel_options) != CMP_OK)
                                     {
                                         PrintInfo("Failed to init compute plugin\nCPU will be used for compression.\n");
                                         format_support_gpu = false;
                                         break;
+                                    }
+
+
+                                    if (CMP_SetComputeOptions(&options) != CMP_OK)
+                                    {
+                                        PrintInfo("Failed to set compute options\n");
+                                        return -1;
                                     }
 
                                     char opencl_source[512];
@@ -1932,8 +2153,9 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
                     switch (srcFormat)
                     {
                         case CMP_FORMAT_BC6H:
-                                destFormat                        = CMP_FORMAT_ARGB_32F;
-                                g_MipSetOut.m_ChannelFormat        = CF_Float32;
+                        case CMP_FORMAT_BC6H_SF:
+                                destFormat                        = CMP_FORMAT_ARGB_16F;
+                                g_MipSetOut.m_ChannelFormat        = CF_Float16;
                                 break;
                         default:
                                 destFormat                        = CMP_FORMAT_ARGB_8888;
@@ -1949,8 +2171,9 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
                         switch (srcFormat)
                         {
                         case CMP_FORMAT_BC6H:
-                            destFormat = CMP_FORMAT_ARGB_32F;
-                            g_MipSetOut.m_ChannelFormat = CF_Float32;
+                        case CMP_FORMAT_BC6H_SF:
+                            destFormat = CMP_FORMAT_ARGB_16F;
+                            g_MipSetOut.m_ChannelFormat = CF_Float16;
                             break;
                         default:
                             destFormat = FormatByFileExtension((const char *)g_CmdPrams.DestFile.c_str(), &g_MipSetOut);
@@ -1963,6 +2186,12 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
                 // Just default it!
                 if (destFormat == CMP_FORMAT_Unknown)
                     destFormat = CMP_FORMAT_ARGB_8888;
+
+                if (destFormat == CMP_FORMAT_ARGB_32F)
+                    g_MipSetOut.m_ChannelFormat = CF_Float32;
+                else
+                if (destFormat == CMP_FORMAT_ARGB_16F)
+                    g_MipSetOut.m_ChannelFormat = CF_Float16;
 
                 g_MipSetOut.m_format         = destFormat;
                 g_MipSetOut.m_isDeCompressed = srcFormat!= CMP_FORMAT_Unknown ? srcFormat : CMP_FORMAT_MAX;

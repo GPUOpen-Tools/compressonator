@@ -40,12 +40,20 @@ CImageLoader::CImageLoader()
 {
     m_CMips = new CMIPS();
     m_pluginManager = &g_pluginManager;
+    kneeLow = 0;
+    kneeHigh = 5;
+    exposure = 0;
+    defog = 0;
 }
 
 CImageLoader::CImageLoader(void *plugin)
 {
     m_CMips = new CMIPS();
     m_pluginManager = (PluginManager *) plugin;
+    kneeLow = 0;
+    kneeHigh = 5;
+    exposure = 0;
+    defog = 0;
 }
 
 
@@ -253,6 +261,7 @@ QImage::Format CImageLoader::MipFormat2QFormat(MipSet *mipset)
         case CF_8bit        : {format = QImage::Format_ARGB32; break; }
         case CF_Float16     : {format = QImage::Format_ARGB32; break; }
         case CF_Float32     : {format = QImage::Format_ARGB32; break; }
+        case CF_Float9995E  : {format = QImage::Format_ARGB32; break; }
         case CF_Compressed  : {break;}
         case CF_16bit       : {break;}
         case CF_2101010     : {break;}
@@ -398,8 +407,54 @@ MipSet *CImageLoader::DecompressMipSet(CMipImages *MipImages)
     return tmpMipSet;
 }
 
+inline float knee(double x, double f)
+{
+    return float(Imath::Math<double>::log(x * f + 1.f) / f);
+}
 
+float findKneeF(float x, float y)
+{
+    float f0 = 0;
+    float f1 = 1.f;
 
+    while (knee(x, f1) > y) {
+        f0 = f1;
+        f1 = f1 * 2.f;
+    }
+
+    for (int i = 0; i < 30; ++i) {
+        const float f2 = (f0 + f1) / 2.f;
+        const float y2 = knee(x, f2);
+
+        if (y2 < y) {
+            f1 = f2;
+        }
+        else {
+            f0 = f2;
+        }
+    }
+
+    return (f0 + f1) / 2.f;
+}
+typedef struct _R9G9B9E5
+{
+    union
+    {
+        struct
+        {
+            uint32_t rm : 9; // r-mantissa
+            uint32_t gm : 9; // g-mantissa
+            uint32_t bm : 9; // b-mantissa
+            uint32_t e : 5; // shared exponent
+        };
+        uint32_t v;
+    };
+
+    operator uint32_t () const { return v; }
+
+    _R9G9B9E5& operator= (const _R9G9B9E5& floatrgb9e5) { v = floatrgb9e5.v; return *this; }
+    _R9G9B9E5& operator= (uint32_t Packed) { v = Packed; return *this; }
+}R9G9B9E5;
 //load data byte in mipset into Qimage ARGB32 format
 QImage *CImageLoader::MIPS2QImage(MipSet *tmpMipSet, int level)
 {
@@ -423,11 +478,23 @@ QImage *CImageLoader::MIPS2QImage(MipSet *tmpMipSet, int level)
         )
    {
 
-        if (tmpMipSet->m_ChannelFormat == CF_Float32)
+        if ((tmpMipSet->m_ChannelFormat == CF_Float32) || (tmpMipSet->m_ChannelFormat == CF_Float16))
         {
-            Array2D<Rgba> pixels(tmpMipSet->m_nHeight, tmpMipSet->m_nWidth);
-            float *data = mipLevel->m_pfData;
-            if (data == NULL)  return nullptr;
+            if (tmpMipSet->m_ChannelFormat == CF_Float32)
+            {
+                float* pData = mipLevel->m_pfData;
+                if (pData == NULL)  return nullptr;
+            }
+            else
+            if (tmpMipSet->m_ChannelFormat == CF_Float16)
+            {
+                CMP_HALF* pData = mipLevel->m_phfData;
+                if (pData == NULL)  return nullptr;
+            }
+            else {
+                WORD* pData = mipLevel->m_pwData;
+                if (pData == NULL)  return nullptr;
+            }
 
             image = new QImage(mipLevel->m_nWidth, mipLevel->m_nHeight, MipFormat2QFormat(tmpMipSet));
             if (image == NULL)
@@ -436,63 +503,21 @@ QImage *CImageLoader::MIPS2QImage(MipSet *tmpMipSet, int level)
                 return nullptr;
             }
 
-            if (tmpMipSet->m_isDeCompressed != CMP_FORMAT_Unknown)
+            loadExrProperties(tmpMipSet,level,image);
+        }
+        else if (tmpMipSet->m_ChannelFormat == CF_Float9995E)
+        {
+          
+            float* pData = mipLevel->m_pfData;
+            if (pData == NULL)  return nullptr;
+           
+            image = new QImage(mipLevel->m_nWidth, mipLevel->m_nHeight, MipFormat2QFormat(tmpMipSet));
+            if (image == NULL)
             {
-                float r, g, b, a;
-                //copy pixels into image
-                for (int y = 0; y < mipLevel->m_nHeight; y++) {
-                    for (int x = 0; x < mipLevel->m_nWidth; x++) {
-
-                        //  Step 1) Compensate for fogging by subtracting defog
-                        //     from the raw pixel values.
-                        //  with defog of 0.0, this is a no-op
-
-                        //  Step 2) Multiply the defogged pixel values by
-                        //     2^(exposure + 2.47393).
-                        // (2^2.47393) is 5.55555
-                        r = *data * 5.55555;
-                        data++;
-                        g = *data * 5.55555;
-                        data++;
-                        b = *data * 5.55555;
-                        data++;
-                        // For Float channel formats Alpha channel is ignored
-                        // Please update this as needed for specific image formats
-                        a = 16777216;
-                        data++;
-                        image->setPixel(x, y, floatToQrgba(r, g, b, a));
-                    }
-                }
+                image = new QImage(":/CompressonatorGUI/Images/OutOfMemoryError.png");
+                return nullptr;
             }
-            else
-            {
-                float r, g, b, a;
-
-                //copy pixels into image
-                for (int y = 0; y < mipLevel->m_nHeight; y++) {
-                    for (int x = 0; x < mipLevel->m_nWidth; x++) {
-
-                        //  Step 1) Compensate for fogging by subtracting defog
-                        //     from the raw pixel values.
-                        //  with defog of 0.0, this is a no-op
-
-                        //  Step 2) Multiply the defogged pixel values by
-                        //     2^(exposure + 2.47393).
-                        // (2^2.47393) is 5.55555
- 
-                        r = half_conv_float((unsigned short)(*data)) * 5.55555;
-                        data++;
-                        g = half_conv_float((unsigned short)(*data)) * 5.55555;
-                        data++;
-                        b = half_conv_float((unsigned short)(*data)) * 5.55555;
-                        data++;
-                        a = *data;
-                        data++;
-                        image->setPixel(x, y, floatToQrgba(r, g, b, a));
-                    }
-                }
-            }
-
+            loadExrProperties(tmpMipSet, level, image);
         }
         else
         {
@@ -603,6 +628,167 @@ MipSet * CImageLoader::LoadPluginMIPS(QString filename)
         return (NULL);
 }
 
+
+
+void CImageLoader::float2Pixel(float kl, float f ,float r, float g, float b, float a, int x, int y, QImage *image)
+{
+    BYTE r_b, g_b, b_b, a_b;
+
+
+    //  1) Compensate for fogging by subtracting defog
+    //     from the raw pixel values.
+    // We assume a defog of 0
+    if (defog > 0.0)
+    {
+        r = r - defog;
+        g = g - defog;
+        b = b - defog;
+        a = a - defog;
+    }
+
+    //  2) Multiply the defogged pixel values by
+    //     2^(exposure + 2.47393).
+    const float exposeScale = Imath::Math<float>::pow(2, exposure + 2.47393f);
+    r = r * exposeScale;
+    g = g * exposeScale;
+    b = b * exposeScale;
+    a = a * exposeScale;
+
+    //  3) Values that are now 1.0 are called "middle gray".
+    //     If defog and exposure are both set to 0.0, then
+    //     middle gray corresponds to a raw pixel value of 0.18.
+    //     In step 6, middle gray values will be mapped to an
+    //     intensity 3.5 f-stops below the display's maximum
+    //     intensity.
+
+    //  4) Apply a knee function.  The knee function has two
+    //     parameters, kneeLow and kneeHigh.  Pixel values
+    //     below 2^kneeLow are not changed by the knee
+    //     function.  Pixel values above kneeLow are lowered
+    //     according to a logarithmic curve, such that the
+    //     value 2^kneeHigh is mapped to 2^3.5.  (In step 6,
+    //     this value will be mapped to the the display's
+    //     maximum intensity.)
+    if (r > kl) {
+        r = kl + knee(r - kl, f);
+    }
+    if (g > kl) {
+        g = kl + knee(g - kl, f);
+    }
+    if (b > kl) {
+        b = kl + knee(b - kl, f);
+    }
+    if (a > kl) {
+        a = kl + knee(a - kl, f);
+    }
+
+    //  5) Gamma-correct the pixel values, according to the
+    //     screen's gamma.  (We assume that the gamma curve
+    //     is a simple power function.)
+    r = Imath::Math<float>::pow(r, 0.4545);
+    g = Imath::Math<float>::pow(g, 0.4545);
+    b = Imath::Math<float>::pow(b, 0.4545);
+    a = Imath::Math<float>::pow(a, 2.2);
+
+    //  6) Scale the values such that middle gray pixels are
+    //     mapped to a frame buffer value that is 3.5 f-stops
+    //     below the display's maximum intensity. (84.65 if
+    //     the screen's gamma is 2.2)
+    r *= 84.65;
+    g *= 84.65;
+    b *= 84.65;
+    a *= 84.65;
+
+    r_b = Imath::clamp<float>(r, 0.f, 255.f);
+    g_b = Imath::clamp<float>(g, 0.f, 255.f);
+    b_b = Imath::clamp<float>(b, 0.f, 255.f);
+    a_b = Imath::clamp<float>(a, 0.f, 255.f);
+
+    image->setPixel(x, y, qRgba(r_b, g_b, b_b, a_b));
+}
+
+//
+// load Exr Image Properties
+//
+
+void CImageLoader::loadExrProperties(MipSet* mipset, int level, QImage *image)
+{
+    MipLevel* mipLevel = m_CMips->GetMipLevel(mipset, level);
+    if (mipLevel->m_pbData == NULL) return;
+
+
+    float kl = Imath::Math<float>::pow(2.f, kneeLow);
+    float f = findKneeF(Imath::Math<float>::pow(2.f, kneeHigh) - kl, Imath::Math<float>::pow(2.f, 3.5f) - kl);
+
+    if (mipset->m_ChannelFormat == CF_Float32)
+    {
+        float *data = mipLevel->m_pfData;
+        float r, g, b, a;
+        //copy pixels into image
+        for (int y = 0; y < mipLevel->m_nHeight; y++) {
+            for (int x = 0; x < mipLevel->m_nWidth; x++) {
+                r = *data;
+                data++;
+                g = *data;
+                data++;
+                b = *data;
+                data++;
+                a = *data;
+                data++;
+                float2Pixel(kl, f, r, g, b, a, x, y, image);
+            }
+        }
+    }
+    else if (mipset->m_ChannelFormat == CF_Float16)
+    {
+        CMP_HALF *data = mipLevel->m_phfData;
+        CMP_HALF r, g, b, a;
+        //copy pixels into image
+        for (int y = 0; y < mipLevel->m_nHeight; y++) {
+            for (int x = 0; x < mipLevel->m_nWidth; x++) {
+                r = *data;
+                data++;
+                g = *data;
+                data++;
+                b = *data;
+                data++;
+                a = *data;
+                data++;
+                float2Pixel(kl, f,F16toF32(r), F16toF32(g), F16toF32(b), F16toF32(a), x, y, image);
+            }
+        }
+    }
+    else if (mipset->m_ChannelFormat == CF_Float9995E)
+    {
+        DWORD dwSize = mipLevel->m_dwLinearSize;
+        DWORD* pSrc = mipLevel->m_pdwData;
+        float r, g, b, a;
+        union { float f; int32_t i; } fi;
+        float Scale = 0.0f;
+        for (int y = 0; y < mipLevel->m_nHeight; y++) {
+            for (int x = 0; x < mipLevel->m_nWidth; x++) {
+                DWORD dwSrc = *pSrc++;
+                R9G9B9E5 pTemp;
+
+                pTemp.rm = (dwSrc & 0x000001ff);
+                pTemp.gm = (dwSrc & 0x0003fe00) >> 9;
+                pTemp.bm = (dwSrc & 0x07fc0000) >> 18;
+                pTemp.e  = (dwSrc & 0xf8000000) >> 27;
+      
+                fi.i = 0x33800000 + (pTemp.e << 23);
+                Scale = fi.f;
+                r = Scale * float(pTemp.rm);
+                g = Scale * float(pTemp.gm);
+                b = Scale * float(pTemp.bm);
+                a = 1.0f;
+                float2Pixel(kl, f, r, g, b, a, x, y, image);
+            }
+        }
+    }
+    else return;
+
+}
+
 // 
 // Scans to match MIP levels with Generated Images
 //
@@ -679,9 +865,6 @@ CMipImages * CImageLoader::LoadPluginImage(QString filename)
 
             MipSet *tmpMipSet;
             tmpMipSet = DecompressMipSet(MipImages);
-
-            if (filename.contains(".exr") || filename.contains(".EXR"))
-                tmpMipSet->m_isDeCompressed = CMP_FORMAT_Unknown;
 
             if (tmpMipSet == NULL)
             {

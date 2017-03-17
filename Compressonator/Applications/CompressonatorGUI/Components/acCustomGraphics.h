@@ -112,6 +112,10 @@ public:
     acCustomGraphicsScene(QObject *parent);
     void gridEnabled(eCustomGraphicsScene_Grids enable);
     bool isGridEnabled();
+    bool isDebug;
+
+    int cursorBlockX;
+    int cursorBlockY;
 
 Q_SIGNALS:
     void sceneMousePosition(QPointF *pos, int ID);

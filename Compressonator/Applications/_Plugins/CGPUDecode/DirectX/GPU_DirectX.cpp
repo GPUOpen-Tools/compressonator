@@ -100,7 +100,7 @@ GPU_DirectX::~GPU_DirectX()
 
 
 //--------------------------------------------------------------------------------------
-HRESULT GPU_DirectX::InitDevice(const TexMetadata& mdata)
+HRESULT GPU_DirectX::InitDevice(const TexMetadata& mdata, CMP_FORMAT cmp_format)
 {
     HRESULT hr = S_OK;
 
@@ -135,7 +135,10 @@ HRESULT GPU_DirectX::InitDevice(const TexMetadata& mdata)
     sd.BufferCount = 1;
     sd.BufferDesc.Width = width;
     sd.BufferDesc.Height = height;
-    sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    if(cmp_format == CMP_FORMAT_ARGB_16F)
+        sd.BufferDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+    else
+        sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     sd.BufferDesc.RefreshRate.Numerator = 60;
     sd.BufferDesc.RefreshRate.Denominator = 1;
     sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -559,6 +562,9 @@ DXGI_FORMAT GPU_DirectX::CMP2DXGIFormat(CMP_FORMAT cmp_format)
     case CMP_FORMAT_BC6H:
                             dxgi_format = DXGI_FORMAT_BC6H_UF16;
                             break;
+    case CMP_FORMAT_BC6H_SF:
+                            dxgi_format = DXGI_FORMAT_BC6H_SF16;
+                            break;
     case CMP_FORMAT_BC7:
                             dxgi_format = DXGI_FORMAT_BC7_UNORM;
                             break;
@@ -620,7 +626,7 @@ CMP_ERROR WINAPI GPU_DirectX::Decompress(
     }
 ***/
 
-    if (FAILED(InitDevice(mdata)))
+    if (FAILED(InitDevice(mdata, pDestTexture->format)))
     {
         CleanupDevice();
         return CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB;

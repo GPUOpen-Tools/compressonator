@@ -50,7 +50,8 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     saveToBatchFileAct      = NULL;
     openAct                 = NULL;
     saveAct                 = NULL;
-    saveAsAct                = NULL;
+    saveAsAct               = NULL;
+    saveImageAct           = NULL;
     openImageFileAct        = NULL;
     exportAct               = NULL;
     exitAct                 = NULL;
@@ -70,6 +71,15 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     isCompressInProgress    = false;
     m_ForceImageRefresh     = false;
 
+#ifdef ENABLE_AGS_SUPPORT
+    onHDRButton = NULL;
+    // AGS specific
+    m_bIsHDRAvailableOnPrimary = false;
+    m_bIsFullScreenModeOn   = false;
+    m_agsContext = nullptr;
+    m_DeviceIndex = 0;
+    m_DisplayIndex = 0;
+#endif
 
 #ifdef USE_MAINA_IMAVEVIEW_TOOLBAR
     ImageViewToolBar        = NULL;
@@ -100,12 +110,6 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     m_viewDiff = false;
     m_sSettingsFile = "CompressSettings.ini";
 
-    //------------------------------------------------------------------
-    // find an alternative way to get the version or call glFunctions!
-    // look into using 
-    //------------------------------------------------------------------
-
-    //Reserved: GPUDecode
 
     if (m_showAppSettingsDialog)
     {
@@ -231,7 +235,7 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     // 
     m_genmips = new CGenMips("Generate MIP Maps",NULL);
     m_genmips->hide();
-    connect(m_genmips, SIGNAL(generateMIPMap(int)), this, SLOT(onGenerateMIPMap(int)));
+    connect(m_genmips, SIGNAL(generateMIPMap(int, QTreeWidgetItem *)), this, SLOT(onGenerateMIPMap(int, QTreeWidgetItem *)));
         
     createActions();
     createMenus();
@@ -242,12 +246,12 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
 
     // Set some global setting 
     #ifdef  ENABLED_USER_GPUVIEW
-    g_useCPUDecode = (g_Application_Options.m_ImageViewDecode == g_Application_Options.ImageEncodeDecodeWith::CPU);
+    g_useCPUDecode = (g_Application_Options.m_ImageViewDecode == g_Application_Options.ImageDecodeWith::CPU);
     #else
     g_useCPUDecode = true;
     #endif
 #ifdef USE_COMPUTE
-    g_useCPUEncode = g_Application_Options.m_ImageEncode == g_Application_Options.ImageEncodeDecodeWith::CPU;
+    g_useCPUEncode = g_Application_Options.m_ImageEncode == g_Application_Options.ImageEncodeWith::CPU;
 #endif
     setUnifiedTitleAndToolBarOnMac(true);
 
@@ -287,6 +291,15 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     connect(m_imagePropertyView, SIGNAL(saveSetting(QString *)), this, SLOT(onPropertyViewSaveSetting(QString *)));
     connect(m_imagePropertyView, SIGNAL(compressImage(QString *)), this, SLOT(onPropertyViewCompressImage(QString *)));
 
+#ifdef ENABLE_AGS_SUPPORT
+    // Get AGS Settings
+    AGSGetDisplayInfo(&m_settings);
+
+    if (m_bIsHDRAvailableOnPrimary)
+        onHDRButton->setText("Full Screen with HDR");
+    else
+        onHDRButton->setText("Full Screen");
+#endif
 
 }
 
@@ -489,6 +502,16 @@ bool cpMainComponents::saveAsProjectFile()
     return true;
 }
 
+bool cpMainComponents::saveImageFile()
+{
+    if (m_projectview)
+    {
+        m_projectview->saveImageAs();
+        setCurrentFile(m_projectview->m_curProjectFilePathName);
+    }
+    return true;
+}
+
 void cpMainComponents::settings()
 {
     if (m_showAppSettingsDialog)
@@ -621,6 +644,14 @@ void cpMainComponents::createActions()
         connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAsProjectFile()));
     }
 
+    saveImageAct = new QAction(QIcon(""), tr("&Save image as..."), this);
+    if (saveImageAct)
+    {
+        saveImageAct->setStatusTip(tr("Save image as ..."));
+        connect(saveImageAct, SIGNAL(triggered()), this, SLOT(saveImageFile()));
+        saveImageAct->setEnabled(false);
+    }
+
     
     for (int i = 0; i < MaxRecentFiles; ++i) {
         recentFileActs[i] = new QAction(this);
@@ -659,7 +690,7 @@ void cpMainComponents::createActions()
     {
         compressAct->setStatusTip(tr("Compress all selected items"));
         connect(compressAct, SIGNAL(triggered()), m_projectview, SLOT(OnStartCompression()));
-        compressAct->setEnabled(false);
+        compressAct->setEnabled(true); //enabled by default
     }
 
     imagediffAct = new QAction(QIcon(":/CompressonatorGUI/Images/imagediff.png"), tr("&View Image Diff"), this);
@@ -676,8 +707,17 @@ void cpMainComponents::createActions()
     {
         MIPGenAct->setStatusTip(tr("Generate MIP maps on current source image"));
         connect(MIPGenAct, SIGNAL(triggered()), this, SLOT(genMIPMaps()));
-        MIPGenAct->setEnabled(false);
+        MIPGenAct->setEnabled(true);
     }
+
+#ifdef ENABLE_AGS_SUPPORT
+    onHDRButton = new QPushButton("Full Screen", this);
+    if (onHDRButton)
+    {
+        onHDRButton->setStatusTip(tr("Sets Full screen on or off , If available HDR is turned on in Full Screen"));
+        connect(onHDRButton, SIGNAL(released()), this, SLOT(handleHDRon()));
+    }
+#endif
 
 #ifdef USE_MAIN_IMAVEVIEW_TOOLBAR
     imageview_zoomInAct    = new QAction(QIcon(":/CompressonatorGUI/Images/ZoomIn.png"), tr("&Zoom into Image "), this);
@@ -749,11 +789,10 @@ void cpMainComponents::createActions()
     }
 }
 
-void cpMainComponents::onGenerateMIPMap(int nMinSize)
+void cpMainComponents::onGenerateMIPMap(int nMinSize, QTreeWidgetItem *item)
 {
     if (!m_projectview) return;
 
-    QTreeWidgetItem *item = m_projectview->GetCurrentItem(TREETYPE_IMAGEFILE_DATA);
     if (item)
     {
         QVariant v = item->data(1, Qt::UserRole);
@@ -768,7 +807,7 @@ void cpMainComponents::onGenerateMIPMap(int nMinSize)
                         m_CompressStatusDialog->onClearText();
                         m_CompressStatusDialog->showOutput();
                     }
-                    PrintInfo("Mipmap generation is not supported for compressed image.");
+                    PrintInfo("Mipmap generation is not supported for compressed image."); 
                     return;
                 }
     }
@@ -832,7 +871,9 @@ void cpMainComponents::onGenerateMIPMap(int nMinSize)
                 else
                 {
                     if (m_CompressStatusDialog)
+                    {
                         m_CompressStatusDialog->appendText("No MIP levels generated: Please select a level lower than current image size");
+                    }
                 }
             }
             delete plugin_Filter;
@@ -847,6 +888,7 @@ void cpMainComponents::genMIPMaps()
         QTreeWidgetItem *item = m_projectview->GetCurrentItem(TREETYPE_IMAGEFILE_DATA);
         if (item)
         {
+            QString   Setting = item->text(0);
             QVariant v = item->data(1, Qt::UserRole);
             C_Source_Image *data = v.value<C_Source_Image *>();
             if (data)
@@ -863,6 +905,7 @@ void cpMainComponents::genMIPMaps()
                     data->m_MipImages->mipset->m_nMipLevels = 1;
                 }
 
+                m_genmips->m_mipsitem = item;
                 m_genmips->setMipLevelDisplay(data->m_Width, data->m_Height);
                 m_genmips->show();
 
@@ -880,9 +923,179 @@ void cpMainComponents::genMIPMaps()
                 //    msgBox.exec();
                 //}
             }
+            else
+            {
+                if (m_projectview)
+                {
+                    QTreeWidgetItemIterator it(m_projectview->m_projectTreeView);
+                    QString   Setting = (*it)->text(0);
+                    QTreeWidgetItem * item = NULL;
+                    ++it; //skip add image node
+                    if (!(*it))
+                    {
+                        m_projectview->m_CompressStatusDialog->appendText("Please add the image file that you would like to generate mip map with.");
+                        m_projectview->m_CompressStatusDialog->show();
+                        return;
+                    }
+                    while (*it) 
+                    {
+                        QVariant v = (*it)->data(1, Qt::UserRole);
+                        QString   Setting = (*it)->text(0);
+                        int levelType = v.toInt();
+                        //if (levelType == TREETYPE_IMAGEFILE_DATA)
+                        //{
+                            C_Source_Image *data = v.value<C_Source_Image *>();
+                            if (data)
+                            {
+                                // regenrate mip map
+                                if (data->m_MipImages->mipset->m_nMipLevels > 1 || data->m_MipImages->Image_list.count()>1)
+                                {
+                                    int n = data->m_MipImages->Image_list.count();
+                                    for (int i = 1; i < n; i++)
+                                    {
+                                        data->m_MipImages->Image_list.removeLast();
+                                    }
+
+                                    data->m_MipImages->mipset->m_nMipLevels = 1;
+                                }
+
+                                m_genmips->m_mipsitem = (*it);
+                                m_genmips->setMipLevelDisplay(data->m_Width, data->m_Height);
+                                m_genmips->show();
+                            }
+                        //}
+                        if (*it)
+                            ++it;
+                        else
+                            break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (m_projectview)
+            {
+                m_projectview->m_CompressStatusDialog->appendText("Please add the image file that you would like to generate mip map with.");
+                m_projectview->m_CompressStatusDialog->show();
+            }
         }
     }
 }
+
+#ifdef ENABLE_AGS_SUPPORT
+//--------------------------------------------------------------------------------------
+void cpMainComponents::AGSGetDisplayInfo(AGSDisplaySettings *settings)
+{
+
+    int displayIndex = 0;
+    DISPLAY_DEVICEA displayDevice;
+    displayDevice.cb = sizeof(displayDevice);
+    while (EnumDisplayDevicesA(0, displayIndex, &displayDevice, 0))
+    {
+        displayIndex++;
+    }
+
+    AGSGPUInfo gpuInfo;
+
+    AGSConfiguration config = {};
+    config.crossfireMode = AGS_CROSSFIRE_MODE_EXPLICIT_AFR;
+
+    if (agsInit(&m_agsContext, &config, &gpuInfo) == AGS_SUCCESS)
+    {
+        for (int gpuIndex = 0; gpuIndex < gpuInfo.numDevices; gpuIndex++)
+        {
+            const AGSDeviceInfo& device = gpuInfo.devices[gpuIndex];
+            for (int i = 0; i < device.numDisplays; i++)
+            {
+                const AGSDisplayInfo& display = device.displays[i];
+                if (display.displayFlags & AGS_DISPLAYFLAG_PRIMARY_DISPLAY && display.displayFlags & AGS_DISPLAYFLAG_HDR10)
+                {
+
+                    settings->chromaticityRedX = display.chromaticityRedX;               ///< Red display primary X coord
+                    settings->chromaticityRedY = display.chromaticityRedY;               ///< Red display primary Y coord
+
+                    settings->chromaticityGreenX = display.chromaticityGreenX;             ///< Green display primary X coord
+                    settings->chromaticityGreenY = display.chromaticityGreenY;             ///< Green display primary Y coord
+
+                    settings->chromaticityBlueX = display.chromaticityBlueX;              ///< Blue display primary X coord
+                    settings->chromaticityBlueY = display.chromaticityBlueY;              ///< Blue display primary Y coord
+
+                    settings->chromaticityWhitePointX = display.chromaticityWhitePointX;        ///< White point X coord
+                    settings->chromaticityWhitePointY = display.chromaticityWhitePointY;        ///< White point Y coord
+
+                    settings->minLuminance = display.minLuminance;                   ///< The minimum scene luminance in nits
+                    settings->maxLuminance = display.maxLuminance;                   ///< The maximum scene luminance in nits
+
+                    settings->maxContentLightLevel;           ///< The maximum content light level in nits (MaxCLL)
+                    settings->maxFrameAverageLightLevel;
+                    m_DeviceIndex = gpuIndex;
+                    m_DisplayIndex = i;
+                    m_bIsHDRAvailableOnPrimary = true;
+                }
+            }
+        }
+    }
+}
+
+bool cpMainComponents::AGSSetDisplay(AGSDisplaySettings *settings)
+{
+    if (AGS_SUCCESS == agsSetDisplayMode(m_agsContext, m_DeviceIndex, m_DisplayIndex, settings))
+    {
+        statusBar()->showMessage(tr("HDR enabled."));
+        return true;
+    }
+    else
+    {
+        statusBar()->showMessage(tr("Set HDR fail."));
+        return false;
+    }
+}
+//---------------------------------------------------------------------------------
+
+
+void cpMainComponents::handleHDRon()
+{
+    if (!m_bIsFullScreenModeOn)
+    {
+        this->showFullScreen();
+        m_bIsFullScreenModeOn = true;
+        onHDRButton->setText("Normal Screen");
+    }
+    else
+    { 
+        this->showNormal();
+        if (m_bIsHDRAvailableOnPrimary)
+            onHDRButton->setText("Full Screen with HDR");
+        else
+            onHDRButton->setText("Full Screen");
+        m_bIsFullScreenModeOn = false;
+    }
+
+    // This part of the code could also be another button!
+    // that is enabled if HDR is available on the primary display
+    if (m_bIsHDRAvailableOnPrimary)
+    {
+        if (m_bIsFullScreenModeOn)
+        {
+            // HDR On
+            m_settings.mode = AGSDisplaySettings::Mode_scRGB;
+            if (AGSSetDisplay(&m_settings))
+            {
+            }
+        }
+        else
+        {
+            // HDR Off
+            m_settings.mode = AGSDisplaySettings::Mode_SDR;
+            if (AGSSetDisplay(&m_settings))
+            {
+            }
+        }
+    }
+
+}
+#endif
 
 void cpMainComponents::setCurrentFile(const QString &fileName)
 {
@@ -954,6 +1167,7 @@ void cpMainComponents::createMenus()
         if (openAct) fileMenu->addAction(openAct);
         if (saveAct) fileMenu->addAction(saveAct);
         if (saveAsAct) fileMenu->addAction(saveAsAct);
+        if (saveImageAct) fileMenu->addAction(saveImageAct);
         fileMenu->addSeparator();
         if (openImageFileAct) fileMenu->addAction(openImageFileAct);
         if (saveToBatchFileAct) fileMenu->addAction(saveToBatchFileAct);
@@ -1021,6 +1235,9 @@ void cpMainComponents::createToolBars()
         if (compressAct) CompressionToolBar->addAction(compressAct);
         if (imagediffAct) CompressionToolBar->addAction(imagediffAct);
         if (MIPGenAct) CompressionToolBar->addAction(MIPGenAct);
+#ifdef ENABLE_AGS_SUPPORT
+        if (onHDRButton) CompressionToolBar->addWidget(onHDRButton);
+#endif
     }
 
 #ifdef USE_MAIN_IMAVEVIEW_TOOLBAR
@@ -1209,11 +1426,11 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
         if (!item) return;
 
         emit OnImageLoadStart();
-        if (compressAct)
-        {
-            isComp = compressAct->isEnabled();
-            compressAct->setEnabled(false);
-        }
+        //if (compressAct)
+        //{
+        //    isComp = compressAct->isEnabled();
+        //    compressAct->setEnabled(true);
+        //}
 
         if (imagediffAct)
         {
@@ -1319,9 +1536,22 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
                             m_filedata->m_FileSizeStr = QString().number((double)m_filedata->m_FileSize / 1024, 'f', 1) + " KB";
                         else
                             m_filedata->m_FileSizeStr = QString().number(m_filedata->m_FileSize) + " Bytes";
+
+                    // Try to get the root node 
+                    // for this compressed image view
+                    CMipImages *OrigImages = NULL;
+                    QTreeWidgetItem *parent = item->parent();
+                    if (parent)
+                    {
+                        QVariant v = parent->data(1, Qt::UserRole);
+                        C_Source_Image *imagedata = v.value<C_Source_Image *>();
+                        if (imagedata)
+                            OrigImages = imagedata->m_MipImages;
+                    }
+
                     // Create a new view image
                     ImageType = " Image file";
-                    m_imageview = new cpImageView(fileName, ImageType, m_parent, m_filedata->m_MipImages, setting);
+                    m_imageview = new cpImageView(fileName, ImageType, m_parent, m_filedata->m_MipImages, setting, OrigImages);
                 }
             }
             else
@@ -1338,7 +1568,7 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
                     if (m_filedata->m_MipImages->Image_list.count() > 1)
                         setting->generateMips = true;
 
-                    m_imageview = new cpImageView(fileName, ImageType, m_parent, m_filedata->m_MipImages, setting);
+                    m_imageview = new cpImageView(fileName, ImageType, m_parent, m_filedata->m_MipImages, setting, NULL);
 
                     setting->generateMips = false;
                 }
@@ -1384,14 +1614,16 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
           // do some message 
     }
 
-
     emit OnImageLoadDone();
-    if (compressAct)
-        compressAct->setEnabled(isComp);
+    //if (compressAct)
+    //    compressAct->setEnabled(isComp);
     if (imagediffAct)
         imagediffAct->setEnabled(isComp);
     if (deleteImageAct)
         deleteImageAct->setEnabled(isDel);
+    if (saveImageAct)
+        saveImageAct->setEnabled(true);
+
     hideProgressBusy("Ready");
 }
 
@@ -1404,11 +1636,11 @@ void cpMainComponents::AddImageDiff(C_Destination_Options *destination)
         bool isComp = true, isDel = true;
 
         emit OnImageLoadStart();
-        if (compressAct)
-        {
-            isComp = compressAct->isEnabled();
-            compressAct->setEnabled(false);
-        }
+        //if (compressAct)
+        //{
+        //    isComp = compressAct->isEnabled();
+        //    compressAct->setEnabled(false);
+        //}
 
         if (imagediffAct)
         {
@@ -1472,8 +1704,8 @@ void cpMainComponents::AddImageDiff(C_Destination_Options *destination)
 
         emit OnImageLoadDone();
 
-        if (compressAct)
-            compressAct->setEnabled(isComp);
+        //if (compressAct)
+        //    compressAct->setEnabled(isComp);
         if (imagediffAct)
             imagediffAct->setEnabled(isComp);
         if (deleteImageAct)
@@ -1535,6 +1767,8 @@ cpMainComponents::~cpMainComponents()
 
 void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
 {
+    if (!item) return;
+
     //int setting = 1;
     QString CompProjectName = "New";
 
@@ -1546,7 +1780,7 @@ void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
     QTreeWidgetItem *parent = item->parent();
     if (parent)
     {
-        // Varify its root
+        // Verify its root
         QVariant v = parent->data(0, Qt::UserRole);
         int ParentlevelType = v.toInt();
         if (ParentlevelType == TREETYPE_IMAGEFILE_DATA)
@@ -1568,17 +1802,43 @@ void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
             if (m_imagefile->m_extnum <= parentcount)
                     m_imagefile->m_extnum = parentcount;
 
-            //setting = m_imagefile->m_extnum++;
             m_setcompressoptions->m_extnum = m_imagefile->m_extnum++;
             m_setcompressoptions->m_data.m_Width  = m_imagefile->m_Width;
             m_setcompressoptions->m_data.m_Height = m_imagefile->m_Height;
         }
     }
+    else if (!parent)
+    {
+        // Verify item itself
+        QVariant v = item->data(0, Qt::UserRole);
+        int itemlevelType = v.toInt();
+        if (itemlevelType == TREETYPE_IMAGEFILE_DATA)
+        {
+            parent = item;
+            QVariant v = parent->data(1, Qt::UserRole);
+            C_Source_Image *m_imagefile = v.value<C_Source_Image *>();
+            QFileInfo fileinfo(m_imagefile->m_Name);
+            CompProjectName = fileinfo.baseName();
+            m_setcompressoptions->m_data.m_sourceFileNamePath = m_imagefile->m_Full_Path;
+            m_setcompressoptions->m_data.m_SourceImageSize = m_imagefile->m_ImageSize;
+            m_setcompressoptions->m_data.m_SourceIscompressedFormat = CompressedFormat(m_imagefile->m_Format);
+
+            // Used to append to name - for unique name
+            // There is still chances of duplucate names, but it will not effect
+            // compression unless target file is also of the same name as any other child 
+            // compression settings
+            int parentcount = parent->childCount();
+
+            if (m_imagefile->m_extnum <= parentcount)
+                m_imagefile->m_extnum = parentcount;
+
+            m_setcompressoptions->m_extnum = m_imagefile->m_extnum++;
+            m_setcompressoptions->m_data.m_Width = m_imagefile->m_Width;
+            m_setcompressoptions->m_data.m_Height = m_imagefile->m_Height;
+        }
+    }
 
     m_setcompressoptions->m_data.m_compname = CompProjectName;
-    //m_setcompressoptions->m_data.m_compname.append("_");
-    //m_setcompressoptions->m_data.m_compname.append(QString::number(setting));
-
 
     m_setcompressoptions->m_data.m_editing = false;
     m_setcompressoptions->m_item = item;                    
@@ -1598,8 +1858,8 @@ void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
 
 void cpMainComponents::onAddedCompressSettingNode()
 {
-    if (compressAct)
-        compressAct->setEnabled(true);
+    //if (compressAct)
+    //    compressAct->setEnabled(true);
     m_setcompressoptions->m_destFilePath = m_setcompressoptions->m_DestinationFolder->text();
 }
 
@@ -1793,8 +2053,8 @@ void cpMainComponents::onSourceImage(int childCount)
         MIPGenAct->setEnabled(true);
     if (deleteImageAct)
         deleteImageAct->setEnabled(true);
-    if (compressAct)
-        compressAct->setEnabled(childCount > 1);
+    //if (compressAct)
+    //    compressAct->setEnabled(childCount > 1);
 
     if (saveToBatchFileAct)
     {
@@ -1811,8 +2071,8 @@ void cpMainComponents::onProjectLoaded(int childCount)
         saveToBatchFileAct->setEnabled(childCount > 1);
     }
 
-    if (compressAct)
-        compressAct->setEnabled(childCount > 1);
+    //if (compressAct)
+    //    compressAct->setEnabled(childCount >= 1);
 
     if (imagediffAct)
         imagediffAct->setEnabled(false);
@@ -1830,8 +2090,8 @@ void cpMainComponents::onDecompressImage()
         MIPGenAct->setEnabled(false);
     if (deleteImageAct)
         deleteImageAct->setEnabled(true);
-    if (compressAct)
-        compressAct->setEnabled(true);
+    //if (compressAct)
+    //    compressAct->setEnabled(true);
 
     if (saveToBatchFileAct)
     {

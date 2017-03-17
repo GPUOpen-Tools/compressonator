@@ -122,6 +122,9 @@ GLenum GPU_OpenGL::MIP2OLG_Format(const CMP_Texture* pSourceTexture)
     case CMP_FORMAT_BC6H:
         m_GLnum = GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT;
         break;
+    case CMP_FORMAT_BC6H_SF:
+        m_GLnum = GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT;
+        break;
     case CMP_FORMAT_BC7:
         m_GLnum = GL_COMPRESSED_RGBA_BPTC_UNORM;
         break;
@@ -236,7 +239,7 @@ CMP_ERROR WINAPI GPU_OpenGL::Decompress(
 
    if (majVer < 3 || (majVer < 3 && minVer < 2))
    {
-       PrintStatusLine("Error: OpenGL 3.2 and up cannot be detected.\n");
+       PrintInfo("Error: OpenGL 3.2 and up cannot be detected.\n");
        fprintf(stderr, "Error: OpenGL 3.2 and up cannot be detected.\n" );
        return CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB;
    }
@@ -272,7 +275,12 @@ CMP_ERROR WINAPI GPU_OpenGL::Decompress(
         if (pSourceTexture->format == CMP_FORMAT_ETC_RGB || pSourceTexture->format == CMP_FORMAT_ETC2_RGB)
             glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_BGRA_EXT, GL_UNSIGNED_BYTE, pDestTexture->pData);
         else
-            glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_RGBA, GL_UNSIGNED_BYTE, pDestTexture->pData);
+        {
+            if(pDestTexture->format ==  CMP_FORMAT_ARGB_16F)
+                glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_RGBA, GL_HALF_FLOAT, pDestTexture->pData);
+            else
+                glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_RGBA, GL_UNSIGNED_BYTE, pDestTexture->pData);
+        }
     }
 
     // free the texture

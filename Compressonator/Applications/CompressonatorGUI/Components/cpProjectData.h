@@ -37,7 +37,7 @@
 #include "cpImageLoader.h"
 #include "ATIFormats.h"
 #include "TextureIO.h"
-
+#include "Common.h"
 
 #define    TREETYPE_ADD_IMAGE_NODE               0
 #define    TREETYPE_IMAGEFILE_DATA_NODE          1      
@@ -398,7 +398,6 @@ signals:
 #define CHANNEL_WEIGHTING_CLASS_NAME      "Channel Weighting"
 #define DXT1_ALPHA_CLASS_NAME             "DXT1 Alpha"
 #define ASTC_BLOCKRATE_CLASS_NAME         "ASTC BlockRate"
-#define DECOMP_OPTION_CLASS_NAME          "GPU Decompress Options"
 
 #define DESTINATION_IMAGE_NAME            "Name"
 #define DESTINATION_IMAGE_FILESIZE        "File Size"
@@ -470,6 +469,7 @@ public:
         BC4,
         BC5,
         BC6H,
+        BC6H_SF,
         BC7,
         ASTC,
         ATC_RGB,
@@ -491,6 +491,11 @@ public:
         ETC_RGB,
         ETC2_RGB,
         ARGB_8888,
+        ARGB_16F,
+        ARGB_32F,
+#ifdef USE_GT
+        GT,
+#endif
         //RGB_888,
         //RG_8,
         //R_8,
@@ -498,10 +503,8 @@ public:
         //ARGB_16,
         //RG_16,
         //R_16,
-        //ARGB_16F,
         //RG_16F,
         //R_16F,
-        ARGB_32F,
         //RG_32F,
         //R_32F,
     };
@@ -515,6 +518,7 @@ public:
     void init()
     {
         m_MipImages = NULL;
+        m_OriginalMipImages = NULL;
 
         m_FileSize = 0;
         m_Width = 0;
@@ -652,6 +656,10 @@ public:
     bool         m_SourceIscompressedFormat;
     long         m_SourceImageSize;
 
+    // Use this as  Read Only property. It points to the original Image used for this destination setting
+    // so dont delete its ref using this class. Parent class will clean it up
+    CMipImages  *m_OriginalMipImages;
+
 signals:
     void compressionChanged(QVariant &);
     void qualityChanged(QVariant &);
@@ -764,71 +772,124 @@ public:
 // APPLICATION DATA
 // =======================================================
 #ifdef USE_COMPUTE
-#define APP_compress_image_using                        "Compress images using"
+#define APP_compress_image_using                        "Encode with"
 #endif
-#define APP_Decompress_image_views_using                "View compressed images using"
+#define APP_Decompress_image_views_using                "Decode with"
 #define APP_Reload_image_views_on_selection             "Reload image views on selection"
 #define APP_Load_recent_project_on_startup              "Load recent project on startup"
 #define APP_Close_all_image_views_prior_to_process      "Close all image views prior to process"
-#define APP_GPU_Decompress                              "GPU Decompress"
 
-class C_GPU_Decompress_Options : public QObject
+//class C_GPU_Decompress_Options : public QObject
+//{
+//
+//    Q_OBJECT
+//        Q_ENUMS(DecompressAPI)
+//        Q_PROPERTY(DecompressAPI GPU_Decompress  READ getGPUDecompress     WRITE setGPUDecompress NOTIFY GPUDecompressChanged)
+//
+//public:
+//    
+//    enum DecompressAPI {
+//        OpenGL,
+//        DirectX,
+//        Vulkan
+//    };
+//
+//    C_GPU_Decompress_Options()
+//    {
+//        m_gpudecomp = OpenGL;
+//    }
+//
+//    void setGPUDecompress(DecompressAPI decodewith)
+//    {
+//        m_gpudecomp = decodewith;
+//        emit GPUDecompressChanged((QVariant &)decodewith);
+//    }
+//
+//    DecompressAPI getGPUDecompress() const
+//    {
+//        return m_gpudecomp;
+//    }
+//
+//    DecompressAPI m_gpudecomp;
+//
+//signals:
+//    void GPUDecompressChanged(QVariant &);
+//};
+//
+//class C_GPU_Compress_Options : public C_GPU_Decompress_Options
+//{
+//
+//    Q_OBJECT
+//        Q_ENUMS(CompressAPI)
+//        Q_PROPERTY(CompressAPI GPU_Compress  READ getGPUCompress     WRITE setGPUCompress NOTIFY GPUCompressChanged)
+//
+//public:
+//
+//    // Note:
+//    // Keep order of list as its ref is saved in CompressSettings.ini
+//    // we should change the save to use string name instead of indexes to the enum
+//    // GPU_Compress=1
+//    // change to 
+//    // GPU_Compress=OpenCL 
+//    //
+//    // Note this must also match Compressonator.h definition CMP_Compute_type
+//    enum CompressAPI {
+//        OpenCL,
+//        DirectX,
+//        Vulkan
+//    };
+//
+//    C_GPU_Compress_Options()
+//    {
+//        m_gpucomp = OpenCL;
+//    }
+//
+//    void setGPUCompress(CompressAPI encodewith)
+//    {
+//        m_gpucomp = encodewith;
+//        emit GPUCompressChanged((QVariant &)encodewith);
+//    }
+//
+//    CompressAPI getGPUCompress() const
+//    {
+//        return m_gpucomp;
+//    }
+//
+//    CompressAPI m_gpucomp;
+//
+//signals:
+//    void GPUCompressChanged(QVariant &);
+//};
+
+class C_Application_Options :public QObject
 {
-
     Q_OBJECT
-        Q_ENUMS(DecompressAPI)
-        Q_PROPERTY(DecompressAPI GPU_Decompress  READ getGPUDecompress     WRITE setGPUDecompress NOTIFY GPUDecompressChanged)
-
-public:
-    
-    enum DecompressAPI {
-        OpenGL,
-        DirectX,
-        Vulkan
-    };
-
-    C_GPU_Decompress_Options()
-    {
-        m_gpudecomp = OpenGL;
-    }
-
-    void setGPUDecompress(DecompressAPI decodewith)
-    {
-        m_gpudecomp = decodewith;
-        emit GPUDecompressChanged((QVariant &)decodewith);
-    }
-
-    DecompressAPI getGPUDecompress() const
-    {
-        return m_gpudecomp;
-    }
-
-    DecompressAPI m_gpudecomp;
-
-signals:
-    void GPUDecompressChanged(QVariant &);
-};
-
-
-class C_Application_Options :public C_GPU_Decompress_Options
-{
-    Q_OBJECT
-        Q_ENUMS(ImageEncodeDecodeWith)
+        Q_ENUMS(ImageEncodeWith)
+        Q_ENUMS(ImageDecodeWith)
 #ifdef USE_COMPUTE
-		Q_PROPERTY(ImageEncodeDecodeWith  Compress_images_using                   READ getImageEncode         WRITE setImageEncode NOTIFY ImageEncodeChanged)
+        Q_PROPERTY(ImageEncodeWith  Encode_with                   READ getImageEncode             WRITE setImageEncode NOTIFY ImageEncodeChanged)
 #endif
-        Q_PROPERTY(ImageEncodeDecodeWith  View_compressed_images_using            READ getImageViewDecode     WRITE setImageViewDecode NOTIFY ImageViewDecodeChanged)
+        Q_PROPERTY(ImageDecodeWith  Decode_with            READ getImageViewDecode         WRITE setImageViewDecode NOTIFY ImageViewDecodeChanged)
         Q_PROPERTY(bool             Reload_image_views_on_selection         READ getUseNewImageViews        WRITE setUseNewImageViews)
         Q_PROPERTY(bool             Close_all_image_views_prior_to_process  READ getCloseAllImageViews      WRITE setCloseAllImageViews)
         Q_PROPERTY(bool             Load_recent_project_on_startup          READ getLoadRecentFile          WRITE setLoadRecentFile)
 
 public:
-    
-    enum ImageEncodeDecodeWith {
+    // Keep order of list as its ref is saved in CompressSettings.ini
+    // we should change the save to use string name instead of indexes to the enum
+    enum class ImageEncodeWith {
         CPU,
-        GPU,
+        GPU_OpenCL,
+        GPU_DirectX,
+        GPU_Vulkan
     };
 
+    enum class ImageDecodeWith {
+        CPU,
+        GPU_OpenGL,
+        GPU_DirectX,
+        GPU_Vulkan
+    };
     // Flags how image views are used, True deletes the old view and creates a new one
     // every time user clicks on an image item on the Project View, else it will
     // load the image once and cashe the image views, Default is True
@@ -838,34 +899,37 @@ public:
     
     C_Application_Options()
     {
-        m_ImageViewDecode    = ImageEncodeDecodeWith::CPU;
+        m_ImageViewDecode    = ImageDecodeWith::CPU;
+#ifdef USE_COMPUTE
+        m_ImageEncode        = ImageEncodeWith::CPU;
+#endif
         m_loadRecentFile     = false;
         m_useNewImageViews   = true;
         m_refreshCurrentView = false;
         m_closeAllDocuments  = true;
     }
 
-    void setImageViewDecode(ImageEncodeDecodeWith decodewith)
+    void setImageViewDecode(ImageDecodeWith decodewith)
     {
         m_ImageViewDecode = decodewith;
         emit ImageViewDecodeChanged((QVariant &)decodewith);
     }
 
-	ImageEncodeDecodeWith getImageViewDecode() const
+    ImageDecodeWith getImageViewDecode() const
     {
         return m_ImageViewDecode;
     }
 #ifdef USE_COMPUTE
-	void setImageEncode(ImageEncodeDecodeWith encodewith)
-	{
-		m_ImageEncode = encodewith;
-		emit ImageEncodeChanged((QVariant &)encodewith);
-	}
+    void setImageEncode(ImageEncodeWith encodewith)
+    {
+        m_ImageEncode = encodewith;
+        emit ImageEncodeChanged((QVariant &)encodewith);
+    }
 
-	ImageEncodeDecodeWith getImageEncode() const
-	{
-		return m_ImageEncode;
-	}
+    ImageEncodeWith getImageEncode() const
+    {
+        return m_ImageEncode;
+    }
 #endif
     void setCloseAllImageViews(bool recent)
     {
@@ -897,9 +961,9 @@ public:
         return m_useNewImageViews;
     }
 
-	ImageEncodeDecodeWith m_ImageViewDecode;
+    ImageDecodeWith m_ImageViewDecode;
 #ifdef USE_COMPUTE
-	ImageEncodeDecodeWith m_ImageEncode;
+    ImageEncodeWith m_ImageEncode;
 #endif
     bool            m_closeAllDocuments;
     bool            m_loadRecentFile;
@@ -908,7 +972,8 @@ public:
 signals:
     void ImageViewDecodeChanged(QVariant &);
 #ifdef USE_COMPUTE
-	void ImageEncodeChanged(QVariant &);
+signals :
+    void ImageEncodeChanged(QVariant &);
 #endif
 
 };

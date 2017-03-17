@@ -31,6 +31,8 @@
 
 acImageView::~acImageView()
 {
+    if (m_imageloader)
+        delete m_imageloader;
 }
 
 // ---------------------------------------------------------------------------
@@ -44,8 +46,9 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** i
 {
     Q_UNUSED(parent);
     Q_UNUSED(image);
-    
+
     m_MipImages = MipImages;
+    m_imageloader = new CImageLoader();
 
     m_layout = new QGridLayout(this);
     m_layout->setSpacing(0);
@@ -60,6 +63,12 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** i
 
     m_navVisible        = false;
     m_isDiffView        = false;
+    m_currentMiplevel   = 0;
+#ifdef _DEBUG
+    m_debugMode         = false;
+    m_debugFormat       = "";
+#endif
+
     m_imageOrientation  = 0;
     m_ImageScale        = 100;
     m_MouseHandDown     = false;
@@ -232,7 +241,8 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** i
             }
 
             //===============================
-            // TopMost Layer: Mouse
+            // TopMost Layer: Mouse cursor
+            // with color blocks
             //===============================
             m_linex = new QGraphicsLineItem();
             m_graphicsScene->addItem(m_linex);
@@ -248,6 +258,11 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** i
 
             m_linex->hide();
             m_liney->hide();
+
+            m_rectBlocks = new QGraphicsRectItem(0,0, m_graphicsScene->cursorBlockX, m_graphicsScene->cursorBlockY);
+            m_graphicsScene->addItem(m_rectBlocks);
+            m_rectBlocks->setPen(pen);
+            m_rectBlocks->hide();
 
             //=============================
             // Set Visable items
@@ -299,6 +314,7 @@ void acImageView::showVirtualCursor()
 {
     m_linex->show();
     m_liney->show();
+    m_rectBlocks->show();
 #ifdef ENABLE_NAVIGATION
     m_navigateButton->hide();
 #endif
@@ -309,6 +325,7 @@ void acImageView::hideVirtualCursor()
 {
     m_linex->hide();
     m_liney->hide();
+    m_rectBlocks->hide();
 #ifdef ENABLE_NAVIGATION
     m_navigateButton->show();
 #endif
@@ -329,66 +346,152 @@ void acImageView::showTableView(bool display)
     }
 }
 
+#ifdef _DEBUG
+void acImageView::onToggleDebugChanged(int index)
+{
+    switch (index)
+    {
+    case 0:
+        m_debugMode = false;
+        m_debugFormat = "";
+        if (m_graphicsScene)
+        {
+            m_graphicsScene->isDebug = false;
+        }
+        break;
+    case 1: //BC6H
+        m_debugMode = true;
+        m_debugFormat = "BC6H";
+        if (m_graphicsScene)
+        {
+            m_graphicsScene->isDebug = true;
+        }
+        break;
+    case 2: //BC6H_SF
+        m_debugMode = true;
+        m_debugFormat = "BC6H_SF";
+        if (m_graphicsScene)
+        {
+            m_graphicsScene->isDebug = true;
+        }
+        break;
+    case 3: //BC7
+        m_debugMode = true;
+        m_debugFormat = "BC7";
+        if (m_graphicsScene)
+        {
+            m_graphicsScene->isDebug = true;
+        }
+        break;
+    default:
+        m_debugMode = false;
+        m_debugFormat = "";
+        if (m_graphicsScene)
+        {
+            m_graphicsScene->isDebug = false;
+        }
+        break;
+    }
+    
+    
+}
+#endif
+
 
 void acImageView::onVirtualMouseMoveEvent(QPointF *scenePos, QPointF *localPos, int onID)
 {
     if (m_MouseHandDown) return;
+    if (m_MipImages == NULL) return; 
 
     if (scenePos)
     {
         //qDebug() << "*** acImageView::onVirtualMouseMoveEvent  ID   " << m_graphicsScene->ID << " onID " << onID << " sx : " << scenePos->rx() << " sy: " << scenePos->ry();
-
         // Tracking cursor - maps mouse pos from multiple acImageView items
-
-
         // Is the real mouse on the actual image or off the image and out of bounds
-        if ((onID == m_graphicsScene->ID) || (localPos == NULL))
-        {
-            hideVirtualCursor();
-        }
-        else
-        {
-            QPoint imageloc = localPos->toPoint();
-            QRectF boundImage = m_imageItem->boundingRect();
-            QRectF boundScene = m_imageItem->sceneBoundingRect();
-
-            qreal scaleX = 0;
-            if (boundImage.width() > 0)
-                scaleX = boundScene.width() / boundImage.width();
-            
-            qreal scaleY = 0;
-            if (boundImage.height() > 0)
-                scaleY = boundScene.height() / boundImage.height();
-
-            QPointF imagePt = boundScene.topLeft();
-            QPoint point = imagePt.toPoint();
-
-            int X = point.x() + (imageloc.x() * scaleX);
-            int Y = point.y() + (imageloc.y() * scaleY);
-
-            // Draw the Virtual Cursor on screen co-ordinates;
-            showVirtualCursor();
-            m_linex->setPos(X - CURSOR_SIZE, Y);
-            m_liney->setPos(X, Y - CURSOR_SIZE);
-
-            
-            if (m_tableViewitem)
+            if ((onID == m_graphicsScene->ID) || (localPos == NULL))
             {
-                m_tableView->rowAt(imageloc.y());
-                m_tableView->columnAt(imageloc.x());
+                hideVirtualCursor();
+            }
+            else
+            {
+                QPoint imageloc = localPos->toPoint();
+                QRectF boundImage = m_imageItem->boundingRect();
+                QRectF boundScene = m_imageItem->sceneBoundingRect();
+
+                qreal scaleX = 0;
+                if (boundImage.width() > 0)
+                    scaleX = boundScene.width() / boundImage.width();
+
+                qreal scaleY = 0;
+                if (boundImage.height() > 0)
+                    scaleY = boundScene.height() / boundImage.height();
+
+                QPointF imagePt = boundScene.topLeft();
+                QPoint point = imagePt.toPoint();
+
+                int X = point.x() + (imageloc.x() * scaleX);
+                int Y = point.y() + (imageloc.y() * scaleY);
+
+                // Draw the Virtual Cursor on screen co-ordinates;
+                showVirtualCursor();
+                m_linex->setPos(X - CURSOR_SIZE, Y);
+                m_liney->setPos(X, Y - CURSOR_SIZE);
+
+                if (m_tableViewitem)
+                {
+                    m_tableView->rowAt(imageloc.y());
+                    m_tableView->columnAt(imageloc.x());
+                }
+
+                //emit acImageViewVirtualMousePosition(scenePos, localPos, onID);
             }
 
-            emit acImageViewVirtualMousePosition(scenePos, localPos, onID);
-        }
-        
+#ifdef _DEBUG
+            if (m_debugMode)
+            {
+                QPoint imageloc = localPos->toPoint();
+                QRectF boundImage = m_imageItem->boundingRect();
+                QRectF boundScene = m_imageItem->sceneBoundingRect();
+
+                qreal scaleX = 0;
+                if (boundImage.width() > 0)
+                    scaleX = boundScene.width() / boundImage.width();
+
+                qreal scaleY = 0;
+                if (boundImage.height() > 0)
+                    scaleY = boundScene.height() / boundImage.height();
+
+                QPointF imagePt = boundScene.topLeft();
+                QPoint point = imagePt.toPoint();
+
+                int X = point.x() + (imageloc.x() * scaleX);
+                int Y = point.y() + (imageloc.y() * scaleY);
+
+                qreal cursorXsize = 0;
+                qreal cursorYsize = 0;
+
+                cursorXsize = m_graphicsScene->cursorBlockX * scaleX;
+                cursorYsize = m_graphicsScene->cursorBlockY * scaleY;
+
+                // Draw the Virtual Cursor on screen co-ordinates;
+                showVirtualCursor();
+                m_linex->setPos(X - CURSOR_SIZE, Y);
+                m_liney->setPos(X, Y - CURSOR_SIZE);
+
+                m_rectBlocks->setRect(X - (cursorXsize / 2), Y - (cursorYsize / 2), cursorXsize, cursorYsize);
+            }
+#endif
+
     }
 
 }
 
 bool acImageView::IsImageBoundedToView(QPointF *mousePos)
 {
-    QPointF DeltaPos{ 0,0 };
+    UNREFERENCED_PARAMETER(mousePos);
 
+    QPointF DeltaPos{ 0,0 };
+    
     // if (mousePos)
     // {
     //     if ((m_lastMousePos.x() > 0) && (m_lastMousePos.y() > 0))
@@ -433,16 +536,35 @@ void acImageView::onacImageViewMousePosition(QPointF *scenePos, int ID)
     QPointF        localPt;
 
     itemPicked = m_graphicsScene->itemAt(scenePos->rx(), scenePos->ry());
+
     // is mouse inside image view
     if (itemPicked)
     {
-        localPt = itemPicked->mapFromScene((const QPointF &)*scenePos);
-        //qDebug() << "item at rx : " << localPt.rx() << " ry: " << localPt.ry();
-        emit acImageViewMousePosition(scenePos, &localPt, ID);
+            localPt = itemPicked->mapFromScene((const QPointF &)*scenePos);
+            //qDebug() << "item at rx : " << localPt.rx() << " ry: " << localPt.ry();
+
+            if (m_graphicsScene->isDebug)
+            {
+                // napatel
+                int x = qRound(localPt.rx() - 0.5f);
+                if (x < 0) x = 0;
+
+                int y = qRound(localPt.ry() - 0.5f);
+                if (y < 0) y = 0;
+
+                x = (x / m_graphicsScene->cursorBlockX);
+                y = (y / m_graphicsScene->cursorBlockY);
+
+                localPt.setX(qreal(x));
+                localPt.setY(qreal(y));
+            }
+            emit acImageViewMousePosition(scenePos, &localPt, ID);
     }
     else
+    {
+        // mouse is outside of an image view
         emit acImageViewMousePosition(scenePos, NULL, ID);
-
+    }
 
     if (m_MouseHandDown)
     {
@@ -454,7 +576,6 @@ void acImageView::onacImageViewMousePosition(QPointF *scenePos, int ID)
                 m_imageItem->setFlags(QGraphicsItem::ItemIsSelectable);
         }
     }
-
 
 }
 
@@ -611,6 +732,118 @@ void acImageView::onResetImageView()
     // ToDo Reset all action checked ToolButtons back to default state
 }
 
+void acImageView::onExrExposureChanged(double value)
+{
+    // Check!
+    if (!m_imageItem) return;
+    if (m_MipImages)
+        if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
+    if (!m_imageloader) return;
+
+    m_imageloader->exposure = float(value);
+
+    QImage image((m_imageItem->pixmap()).toImage());
+
+    if (m_MipImages->mipset->m_compressed)
+        m_imageloader->loadExrProperties(m_MipImages->decompressedMipSet, m_currentMiplevel, &image);
+    else
+        m_imageloader->loadExrProperties(m_MipImages->mipset, m_currentMiplevel, &image);
+
+    m_imageItem->setPixmap(QPixmap::fromImage(image));
+
+    if (this->m_isDiffView)
+    {
+        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
+        {
+            this->onToggleImageBrightnessUp();
+        }
+    }
+}
+
+void acImageView::onExrDefogChanged(double value)
+{
+    // Check!
+    if (!m_imageItem) return;
+    if (m_MipImages)
+        if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
+    if (!m_imageloader) return;
+
+    m_imageloader->defog = float(value);
+
+    QImage image((m_imageItem->pixmap()).toImage());
+
+    if (m_MipImages->mipset->m_compressed)
+        m_imageloader->loadExrProperties(m_MipImages->decompressedMipSet, m_currentMiplevel, &image);
+    else
+        m_imageloader->loadExrProperties(m_MipImages->mipset, m_currentMiplevel, &image);
+
+    m_imageItem->setPixmap(QPixmap::fromImage(image));
+
+    if (this->m_isDiffView)
+    {
+        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
+        {
+            this->onToggleImageBrightnessUp();
+        }
+    }
+}
+
+void acImageView::onExrKneeLowChanged(double value)
+{
+    // Check!
+    if (!m_imageItem) return;
+    if (m_MipImages)
+        if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
+
+    if (!m_imageloader) return;
+
+    m_imageloader->kneeLow= float(value);
+
+    QImage image((m_imageItem->pixmap()).toImage());
+
+    if (m_MipImages->mipset->m_compressed)
+        m_imageloader->loadExrProperties(m_MipImages->decompressedMipSet, m_currentMiplevel, &image);
+    else
+        m_imageloader->loadExrProperties(m_MipImages->mipset, m_currentMiplevel, &image);
+
+    m_imageItem->setPixmap(QPixmap::fromImage(image));
+
+    if (this->m_isDiffView)
+    {
+        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
+        {
+            this->onToggleImageBrightnessUp();
+        }
+    }
+}
+
+void acImageView::onExrKneeHighChanged(double value)
+{
+    // Check!
+    if (!m_imageItem) return;
+    if (m_MipImages)
+        if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
+    if (!m_imageloader) return;
+
+    m_imageloader->kneeHigh = float(value);
+
+    QImage image((m_imageItem->pixmap()).toImage());
+
+    if (m_MipImages->mipset->m_compressed)
+        m_imageloader->loadExrProperties(m_MipImages->decompressedMipSet, m_currentMiplevel, &image);
+    else
+        m_imageloader->loadExrProperties(m_MipImages->mipset, m_currentMiplevel, &image);
+
+    m_imageItem->setPixmap(QPixmap::fromImage(image));
+
+    if (this->m_isDiffView)
+    {
+        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
+        {
+            this->onToggleImageBrightnessUp();
+        }
+    }
+}
 
 void acImageView::onToggleChannelR()
 {
@@ -951,6 +1184,7 @@ void acImageView::onGridBackground(int enableGrid)
 
 void acImageView::onImageLevelChanged(int MipLevel)
 {
+    m_currentMiplevel = MipLevel;
     if (m_MipImages)
     {
         if (m_MipImages->Image_list.count() > MipLevel)

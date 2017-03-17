@@ -197,8 +197,8 @@ CMP_FORMAT FormatByFileExtension(const char *fname, MipSet *pMipSet)
 
     if (file_extension.compare(".exr") == 0)
     {
-        pMipSet->m_ChannelFormat    = CF_Float32;
-        return CMP_FORMAT_ARGB_32F;
+        pMipSet->m_ChannelFormat    = CF_Float16;
+        return CMP_FORMAT_ARGB_16F;
     }
 
     pMipSet->m_ChannelFormat    = CF_8bit;
@@ -290,6 +290,7 @@ void Format2FourCC(CMP_FORMAT format, MipSet *pMipSet)
         case CMP_FORMAT_GT:                     pMipSet->m_dwFourCC =  FOURCC_GT;                  break;
 
         case CMP_FORMAT_BC6H:                   pMipSet->m_dwFourCC =  FOURCC_DX10;                break;
+        case CMP_FORMAT_BC6H_SF:                pMipSet->m_dwFourCC = FOURCC_DX10;                break;
         case CMP_FORMAT_BC7:                    pMipSet->m_dwFourCC =  FOURCC_DX10;                break;
         case CMP_FORMAT_ASTC:                   pMipSet->m_dwFourCC =  FOURCC_DX10;                break;
 
@@ -327,6 +328,9 @@ CMP_FORMAT GetFormat(MipSet* pMipSet)
                 case TDT_RG:        return CMP_FORMAT_RG_32F;
                 default:            return CMP_FORMAT_ARGB_32F;
             }
+        case CF_Float9995E:
+            return CMP_FORMAT_RGBE_32F;
+            
         case CF_Compressed:         return GetFormat(pMipSet->m_dwFourCC2 ? pMipSet->m_dwFourCC2 : pMipSet->m_dwFourCC);
         case CF_16bit:
             switch(pMipSet->m_TextureDataType)
@@ -418,6 +422,7 @@ bool CompressedFormat(CMP_FORMAT format)
     case CMP_FORMAT_ARGB_16:
     case CMP_FORMAT_RG_16:
     case CMP_FORMAT_R_16:
+    case CMP_FORMAT_RGBE_32F:
     case CMP_FORMAT_ARGB_16F:
     case CMP_FORMAT_RG_16F:
     case CMP_FORMAT_R_16F:
@@ -711,6 +716,7 @@ int AMDSaveMIPSTextureImage(const char * DestFile, MipSet *MipSetIn, bool use_OC
             case CMP_FORMAT_ASTC:
             case CMP_FORMAT_BC7:
             case CMP_FORMAT_BC6H:
+            case CMP_FORMAT_BC6H_SF:
             case CMP_FORMAT_ETC_RGB:
             case CMP_FORMAT_ETC2_RGB:
                 MipSetIn->m_swizzle = true;
@@ -777,6 +783,7 @@ bool FormatSupportsDXTCBase(CMP_FORMAT format)
     case  CMP_FORMAT_BC4                  :
     case  CMP_FORMAT_BC5                  :
     case  CMP_FORMAT_BC6H                 :
+    case  CMP_FORMAT_BC6H_SF              :
     case  CMP_FORMAT_BC7                  :
     case  CMP_FORMAT_DXT1                 :
     case  CMP_FORMAT_DXT3                 :
@@ -793,5 +800,18 @@ bool FormatSupportsDXTCBase(CMP_FORMAT format)
             break;
     }
     return false;
+}
+
+
+CMP_FLOAT F16toF32(CMP_HALF f)
+{
+    half A;
+    A.setBits(f);
+    return((CMP_FLOAT)A);
+}
+
+CMP_HALF F32toF16(CMP_FLOAT f)
+{
+    return(half(f).bits());
 }
 

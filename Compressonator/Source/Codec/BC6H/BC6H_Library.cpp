@@ -25,8 +25,6 @@
 #include "BC6H_definitions.h"
 #include "BC6H_Encode.h"
 #include "BC6H_Decode.h"
-#include "3dquant_vpc.h"
-#include "shake.h"
 #include "Compressonator.h"
 
 

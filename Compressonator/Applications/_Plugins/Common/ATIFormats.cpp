@@ -72,8 +72,12 @@ CMP_FormatDesc g_FormatDesc[] =
    {CMP_FORMAT_ETC_RGB,                 "ETC_RGB"},
    {CMP_FORMAT_ETC2_RGB,                "ETC2_RGB" },
    {CMP_FORMAT_BC6H,                    "BC6H"},
+   {CMP_FORMAT_BC6H_SF,                 "BC6H_SF" },
    {CMP_FORMAT_BC7,                     "BC7"},
    {CMP_FORMAT_ASTC,                    "ASTC"},
+#ifdef USE_GT
+   { CMP_FORMAT_GT,                      "GT" },
+#endif
 };
 
 
