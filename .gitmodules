@@ -1,6 +1,7 @@
 [submodule "Common/Lib/Ext/zlib"]
 	path = Common/Lib/Ext/zlib
 	url = https://github.com/GPUOpen-Tools/common-lib-ext-zlib-1.2.10.git
+	branch = master
 [submodule "Common/Lib/Ext/tinyxml"]
 	path = Common/Lib/Ext/tinyxml
 	url = https://github.com/GPUOpen-Tools/common-lib-ext-tinyxml-2.6.2.git
@@ -16,6 +17,7 @@
 [submodule "Common/Lib/Ext/OpenEXR"]
 	path = Common/Lib/Ext/OpenEXR
 	url = https://github.com/GPUOpen-Tools/common-lib-ext-OpenEXR-2.2.git
+	branch = master
 [submodule "Common/Lib/Ext/OpenCV"]
 	path = Common/Lib/Ext/OpenCV
 	url = https://github.com/GPUOpen-Tools/common-lib-ext-OpenCV-2.49.git
