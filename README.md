@@ -6,10 +6,9 @@ Compressonator DXTn (S3TC)is developed for Microsoft Windows® platform.
 
 For more details goto the Compressonator Wiki: https://github.com/GPUOpen-Tools/Compressonator/wiki 
 
-Recent additions and changes since v2.4 release
+Recent additions and changes
 ------------------------------------------------------
-V2.4 release Dec 16 2016
-
+v2.5 release Mar 20 2017 
 
 Build Instructions for Windows 7 and up
 ------------------------------------------------------
