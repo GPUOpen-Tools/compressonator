@@ -8,7 +8,7 @@ For more details goto the Compressonator Wiki: https://github.com/GPUOpen-Tools/
 
 Recent additions and changes
 ------------------------------------------------------
-v2.5 release Mar 20 2017 
+v2.5 release Mar 20 2017  https://github.com/GPUOpen-Tools/Compressonator/releases
 
 Build Instructions for Windows 7 and up
 ------------------------------------------------------
