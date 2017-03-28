@@ -1,4 +1,4 @@
-# Compressonator
+# Compressonator V2.5 Release (March 20th 2017)
 
 Compressonator is a set of tools to allow artists and developers to more easily create compressed texture image assets and easily visualize the quality impact of various compression technologies.  It consists of a GUI application, a command line application and an SDK for easy integration into a developer tool chain.
 
