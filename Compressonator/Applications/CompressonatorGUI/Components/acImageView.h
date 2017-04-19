@@ -67,6 +67,7 @@ public:
     acCustomGraphicsScene            *m_graphicsScene;        // Scene hosting the image
 
     QImage                           *m_navImage;             // The navigation Image 
+    QLabel                           *m_errMessage;           // Error message on imageview
     acCustomGraphicsNavImageItem     *m_imageItemNav;         // The displayed Graphics item of m_image
     acCustomGraphicsScene            *m_graphicsSceneNav;     // Scene hosting the navigation image
     acCustomGraphicsNavWindow        *m_navWindow;            // Navigation windows inside a navigation image view 

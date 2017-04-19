@@ -119,6 +119,14 @@ public:
     virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
 };
 
+class PluginInterface_Nodes : PluginBase
+{
+public:
+    PluginInterface_Nodes() {}
+    virtual ~PluginInterface_Nodes() {}
+    virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
+};
+
 
 // These type of plugins are used to Analyze images
 class PluginInterface_Analysis : PluginBase
@@ -127,9 +135,9 @@ public:
         PluginInterface_Analysis(){}
         virtual ~PluginInterface_Analysis(){}
         virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
-        virtual int TC_ImageDiff(const char *in1, const char *in2, const char *out, char *resultsFile, void *pluginManager, void **cmipImages) { (void)in1, (void)in2, (void)out, (void)resultsFile; (void)pluginManager; (void*)cmipImages; return 0; };
-        virtual int TC_PSNR_MSE(const char *in1, const char *in2, char *resultsFile, void *pluginManager) { (void)in1, (void)in2, (void)resultsFile; (void)pluginManager; return 0; };
-        virtual int TC_SSIM(const char *in1, const char *in2, char *resultsFile, void *pluginManager) { (void)in1, (void)in2, (void)resultsFile; (void)pluginManager; return 0; };
+        virtual int TC_ImageDiff(const char *in1, const char *in2, const char *out, char *resultsFile, void *pluginManager, void **cmipImages, CMP_Feedback_Proc pFeedbackProc = NULL) { (void)in1, (void)in2, (void)out, (void)resultsFile; (void)pluginManager; (void*)cmipImages; (void)pFeedbackProc; return 0; };
+        virtual int TC_PSNR_MSE(const char *in1, const char *in2, char *resultsFile, void *pluginManager, CMP_Feedback_Proc pFeedbackProc = NULL) { (void)in1, (void)in2, (void)resultsFile; (void)pluginManager; (void)pFeedbackProc; return 0; };
+        virtual int TC_SSIM(const char *in1, const char *in2, char *resultsFile, void *pluginManager, CMP_Feedback_Proc pFeedbackProc = NULL) { (void)in1, (void)in2, (void)resultsFile; (void)pluginManager; (void)pFeedbackProc; return 0; };
 };
 
 
@@ -191,5 +199,6 @@ typedef PluginInterface_Filters*    (*PLUGIN_FACTORYFUNC_FILTERS)();
 typedef PluginInterface_Compute*    (*PLUGIN_FACTORYFUNC_COMPUTE)();
 typedef PluginInterface_Compute2*   (*PLUGIN_FACTORYFUNC_COMPUTE2)();
 typedef PluginInterface_GPUDecode*  (*PLUGIN_FACTORYFUNC_GPUDECODE)();
+typedef PluginInterface_Nodes*      (*PLUGIN_FACTORYFUNC_NODES)();
 
 #endif

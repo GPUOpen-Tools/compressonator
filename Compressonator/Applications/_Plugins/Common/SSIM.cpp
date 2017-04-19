@@ -178,7 +178,7 @@ int GetSSIM(const char* file1, const char *file2, REPORT_DATA *error)
 * Parameters : two IplImage image to be compared
 * this function added based on function above 
 */
-int GetSSIMBYTES(IplImage* imgsrcfile, IplImage* imgcompfile, REPORT_DATA *error)
+int GetSSIMBYTES(IplImage* imgsrcfile, IplImage* imgcompfile, REPORT_DATA *error, CMP_Feedback_Proc pFeedbackProc)
 {
 
 	// default settings
@@ -197,6 +197,7 @@ int GetSSIMBYTES(IplImage* imgsrcfile, IplImage* imgcompfile, REPORT_DATA *error
 	/***************************** INITS **********************************/
 	img1_temp = imgsrcfile;
 	img2_temp = imgcompfile;
+    float fProgress = 0.0;
 
 	if (img1_temp == NULL || img2_temp == NULL)
 		return -1;
@@ -240,6 +241,16 @@ int GetSSIMBYTES(IplImage* imgsrcfile, IplImage* imgcompfile, REPORT_DATA *error
         temp3 = cvCreateImage(size, d, nChan);
 
         ssim_map = cvCreateImage(size, d, nChan);
+
+        // Progress
+        if (pFeedbackProc)
+        {
+            fProgress = 30.0;
+            if (pFeedbackProc(fProgress, NULL, NULL))
+            {
+                return -1; //abort
+            }
+        }
         /*************************** END INITS **********************************/
 
 
@@ -252,6 +263,15 @@ int GetSSIMBYTES(IplImage* imgsrcfile, IplImage* imgcompfile, REPORT_DATA *error
         cvPow(mu2, mu2_sq, 2);
         cvMul(mu1, mu2, mu1_mu2, 1);
 
+        // Progress
+        if (pFeedbackProc)
+        {
+            fProgress = 60.0;
+            if (pFeedbackProc(fProgress, NULL, NULL))
+            {
+                return -1; //abort
+            }
+        }
 
         cvSmooth(img1_sq, sigma1_sq, CV_GAUSSIAN, 11, 11, 1.5);
         cvAddWeighted(sigma1_sq, 1, mu1_sq, -1, 0, sigma1_sq);
@@ -261,6 +281,16 @@ int GetSSIMBYTES(IplImage* imgsrcfile, IplImage* imgcompfile, REPORT_DATA *error
 
         cvSmooth(img1_img2, sigma12, CV_GAUSSIAN, 11, 11, 1.5);
         cvAddWeighted(sigma12, 1, mu1_mu2, -1, 0, sigma12);
+
+        // Progress
+        if (pFeedbackProc)
+        {
+            fProgress = 90.0;
+            if (pFeedbackProc(fProgress, NULL, NULL))
+            {
+                return -1; //abort
+            }
+        }
 
     }
     catch (exception e)
@@ -359,7 +389,15 @@ int GetSSIMBYTES(IplImage* imgsrcfile, IplImage* imgcompfile, REPORT_DATA *error
 	cvReleaseImage(&temp3);
 	cvReleaseImage(&ssim_map);
 
-
+    // Progress
+    if (pFeedbackProc)
+    {
+        fProgress = 100.0;
+        if (pFeedbackProc(fProgress, NULL, NULL))
+        {
+            return -1; //abort
+        }
+    }
 
 	return 0;
 }
@@ -467,10 +505,10 @@ double cov(Mat & m1, Mat & m2, int i, int j, int block_size)
 /**
 * Compute the SSIM between 2 images
 */
-double ssim(Mat & img_src, Mat & img_compressed, int block_size)
+double ssim(Mat & img_src, Mat & img_compressed, int block_size, CMP_Feedback_Proc pFeedbackProc)
 {
     double ssim = 0;
-
+    float fProgress = 0.0;
 //    int nbBlockPerHeight = img_src.rows / block_size;
 //    int nbBlockPerWidth = img_src.cols / block_size;
 
@@ -498,8 +536,15 @@ double ssim(Mat & img_src, Mat & img_compressed, int block_size)
 
         }
         // Progress
-        //if (show_progress)
-        //    cout << "\r>>SSIM [" << (int)((((double)k) / nbBlockPerHeight) * 100) << "%]";
+        if (pFeedbackProc)
+        {
+            fProgress = (((double)k) / nbBlockPerHeight) * 100;
+            if (pFeedbackProc(fProgress, NULL, NULL))
+            {
+                return -1; //abort
+            }
+        }
+
     }
     ssim /= nbBlockPerHeight * nbBlockPerWidth;
 

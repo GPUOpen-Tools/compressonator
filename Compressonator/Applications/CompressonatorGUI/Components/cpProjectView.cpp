@@ -72,7 +72,7 @@ ProjectView::ProjectView(const QString title, CompressStatusDialog *StatusDialog
     m_EnableCheckedItemsView = false;
 
     m_processFromContext = false;
-    //
+
     m_newWidget = new QWidget(parent);
     m_layout    = new QGridLayout(m_newWidget);
     SetupTreeView();
@@ -87,6 +87,10 @@ ProjectView::ProjectView(const QString title, CompressStatusDialog *StatusDialog
     m_curProjectFilePathName.append("/");
     m_curProjectFilePathName.append("NewProject");
     m_curProjectName = "NewProject";
+
+    // For view image diff from selected child file
+    m_curDiffSourceFile = "";
+    m_curDiffDestFile = "";
 
     // Get Qt image read formats
     GetSupportedFileFormats(m_supportedFormats);
@@ -112,6 +116,10 @@ ProjectView::ProjectView(const QString title, CompressStatusDialog *StatusDialog
     m_ImageFileFilter.append(imageList);
 
     connect(&static_processmsghandler, SIGNAL(signalProcessMessage()), this, SLOT(onSignalProcessMessage()));
+
+    // Diff any 2 image file dialog 
+    m_diffImageDialog = new acDiffImage(this);
+    m_diffImageDialog->hide();
 
     // Image loader
     m_imageloader       = new CImageLoader();
@@ -191,7 +199,7 @@ void ProjectView::SetupTreeView()
 #endif
 
     connect(actCompressProjectFiles, SIGNAL(triggered()), this, SLOT(onShowCompressStatus()));
-    connect(actViewImageDiff, SIGNAL(triggered()), this, SLOT(viewImageDiff()));
+    connect(actViewImageDiff, SIGNAL(triggered()), this, SLOT(viewDiffImageFromChild()));
     connect(actRemoveImage, SIGNAL(triggered()), this, SLOT(removeSelectedImage()));
 
     m_contextMenu = new QMenu(m_projectTreeView);
@@ -382,6 +390,10 @@ QTreeWidgetItem * ProjectView::Tree_AddImageFile(QString filePathName, int index
 
     // Add compression setting option under the new item
     Tree_AddCompressFile(treeItem, STR_AddDestinationSetting, false, false, TREETYPE_IMAGEFILE_DATA_NODE, NULL);
+
+    // Add the image to the diff image list if it is not in the list
+    if(!(m_ImagesinProjectTrees.contains(filePathName)))
+        m_ImagesinProjectTrees.append(filePathName);
 
     return treeItem;
 }
@@ -915,6 +927,54 @@ ProjectView::~ProjectView()
         m_newProjectwindow = NULL;
     }
 
+    if (m_diffImageDialog)
+    {
+        delete m_diffImageDialog;
+        m_diffImageDialog = NULL;
+    }
+
+}
+
+void ProjectView::diffImageFiles()
+{
+    if (m_diffImageDialog)
+    {
+        m_diffImageDialog->m_RecentImageDir = m_RecentImageDirOpen;
+        m_diffImageDialog->m_SupportedImageFormat = m_ImageFileFilter;
+
+        m_diffImageDialog->m_file1Name->clear();
+        m_diffImageDialog->m_file1Name->addItem("");
+        m_diffImageDialog->m_file1Name->addItems(m_ImagesinProjectTrees);
+
+        // find the index of the selected diff file from the drop down list
+        int index1 = m_diffImageDialog->m_file1Name->findText(m_curDiffSourceFile);
+        if (index1 != -1)
+        {
+            m_diffImageDialog->m_file1Name->setCurrentIndex(index1);
+        }
+        else
+        {
+            m_diffImageDialog->m_file1Name->setCurrentText(m_curDiffSourceFile);
+        }
+        m_diffImageDialog->m_file2Name->clear();
+        m_diffImageDialog->m_file2Name->addItem("");
+        m_diffImageDialog->m_file2Name->addItems(m_ImagesinProjectTrees);
+        int index2 = m_diffImageDialog->m_file1Name->findText(m_curDiffDestFile);
+        if (index2 != -1)
+        {
+            m_diffImageDialog->m_file2Name->setCurrentIndex(index2);
+        }
+        else
+        {
+            m_diffImageDialog->m_file2Name->setCurrentText(m_curDiffDestFile);
+        }
+
+        m_diffImageDialog->show();
+
+        //reset the diff image file name
+        m_curDiffSourceFile = "";
+        m_curDiffDestFile = "";
+    }
 }
 
 bool ProjectView::OpenImageFile()
@@ -1285,7 +1345,14 @@ void ProjectView::DeleteItemData(QTreeWidgetItem *item)
 
          // Remove any docked views of the file
         if (filePathName.length() > 0)
+        {
+            // Remove the item from the diff image drop down list
+            int temp = m_ImagesinProjectTrees.indexOf(filePathName);
+            if (temp != -1)
+                m_ImagesinProjectTrees.removeAt(temp);
+
             emit DeleteImageView(filePathName);
+        }
 
         // Delete the Data Class
         if (data)
@@ -1313,7 +1380,14 @@ void ProjectView::DeleteItemData(QTreeWidgetItem *item)
 
         // Remove any docked views of the file
         if (filePathName.length() > 0)
+        {
+            // Remove the item from the diff image drop down list
+            int temp = m_ImagesinProjectTrees.indexOf(filePathName);
+            if (temp != -1)
+                m_ImagesinProjectTrees.removeAt(temp);
+
             emit DeleteImageView(filePathName);
+        }
 
     }
     break;
@@ -1418,6 +1492,7 @@ QTreeWidgetItem * ProjectView::DeleteSelectedItemData(QTreeWidgetItem *item, boo
                         {
                             QFile::remove(data->m_destFileNamePath);
                         }
+
                         // Remove the item from the treeview
                         DeleteItemData(child);
                         m_NumItems--;
@@ -2041,7 +2116,7 @@ void ProjectView::onSetNewProject(QString &FilePathName)
 extern int      g_MipLevel;
 extern float    g_fProgress;
 
-bool ProgressCompressionCallback(float fProgress, DWORD_PTR pUser1, DWORD_PTR pUser2)
+bool ProgressCallback(float fProgress, DWORD_PTR pUser1, DWORD_PTR pUser2)
 {
     // Keep Qt responsive
     QApplication::processEvents();
@@ -2776,7 +2851,7 @@ void CompressFiles(
                                         #endif
 
                                         // Do the Compression by loading a new MIP set
-                                        if (ProcessCMDLine(&ProgressCompressionCallback, sourceImageMipSet) == 0)
+                                        if (ProcessCMDLine(&ProgressCallback, sourceImageMipSet) == 0)
                                         {
 
                                             if (g_bAbortCompression)
@@ -2940,6 +3015,38 @@ void ProjectView::compressProjectFiles(QFile *file)
         actRemoveImage->setEnabled(true);
 }
 
+void ProjectView::viewDiffImageFromChild()
+{
+    // Get the active Image view node
+    if (m_CurrentCompressedImageItem)
+    {
+        // view image
+        QVariant v = m_CurrentCompressedImageItem->data(1, Qt::UserRole);
+        C_Destination_Options *m_data = v.value<C_Destination_Options *>();
+        if (m_data)
+        {
+            QFileInfo fileinfo(m_data->m_destFileNamePath);
+            QFile file(m_data->m_destFileNamePath);
+            if (file.exists() && (fileinfo.suffix().length() > 0))
+            {
+                QTreeWidgetItem *parent = m_CurrentCompressedImageItem->parent();
+                QString sourcefile = GetSourceFileNamePath(parent);
+
+                QFileInfo fileinfo(sourcefile);
+                QFile file(sourcefile);
+                if (file.exists() && (fileinfo.suffix().length() > 0))
+                {
+                    m_curDiffSourceFile = sourcefile;
+                    m_curDiffDestFile = m_data->m_destFileNamePath;
+
+                    diffImageFiles();
+                    //emit ViewImageFileDiff(m_data, sourcefile, m_data->m_destFileNamePath);
+                }
+            }
+        }
+    }
+}
+
 void ProjectView::viewImageDiff()
 {
 
@@ -2962,7 +3069,7 @@ void ProjectView::viewImageDiff()
                 QFile file(sourcefile);
                 if (file.exists() && (fileinfo.suffix().length() > 0))
                 {
-                    emit ViewImageFileDiff(m_data);
+                    emit ViewImageFileDiff(m_data, sourcefile, m_data->m_destFileNamePath);
                     // emit ViewImageFileDiff(sourcefile, m_data->m_destFileNamePath);
                 }
             }

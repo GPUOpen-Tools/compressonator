@@ -62,16 +62,16 @@ public:
 		virtual ~Plugin_Canalysis();
 
 		int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
-		int TC_ImageDiff(const char * in1, const char * in2, const char *out, char *resultsFile, void *pluginManager, void **cmipImages);
-        int TC_PSNR_MSE(const char * in1, const char * in2, char *resultsFile, void *pluginManager);
-        int TC_SSIM(const char * in1, const char * in2,  char *resultsFile, void *pluginManager);
+		int TC_ImageDiff(const char * in1, const char * in2, const char *out, char *resultsFile, void *pluginManager, void **cmipImages, CMP_Feedback_Proc pFeedbackProc = NULL);
+        int TC_PSNR_MSE(const char * in1, const char * in2, char *resultsFile, void *pluginManager, CMP_Feedback_Proc pFeedbackProc = NULL);
+        int TC_SSIM(const char * in1, const char * in2,  char *resultsFile, void *pluginManager, CMP_Feedback_Proc pFeedbackProc = NULL);
 
 
 
 private:
         void write(REPORT_DATA data, char *resultsFile, char option);
         void generateBCtestResult(QImage *src, QImage *dest, REPORT_DATA &myReport); //for testing only
-        bool psnr(QImage *src, QImage *dest, REPORT_DATA &myReport);
+        bool psnr(QImage *src, QImage *dest, REPORT_DATA &myReport, CMP_Feedback_Proc pFeedbackProc = NULL);
 		char m_results_path[MAX_PATH];
         string m_srcFile;
         string m_destFile;

@@ -141,11 +141,12 @@ public:
 public slots:
     void AddImageView(QString &fileName, QTreeWidgetItem * item);
 
-    void AddImageDiff(C_Destination_Options *destination);
+    void AddImageDiff(C_Destination_Options *destination, QString &fileName1, QString &fileName2);
     void AddImageCompSettings(QTreeWidgetItem *, C_Destination_Options &m_data);
     void OnDeleteImageView(QString &fileName);
     void OnDeleteImageDiffView(QString &fileName);
     void onProcessing(QString &FilePathName);
+    void imageDiff();
 
     void SetRaised();
     acCustomDockWidget *FindImageView(QString &Title);

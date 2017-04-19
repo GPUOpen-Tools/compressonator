@@ -59,6 +59,7 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** i
     m_graphicsScene     = NULL;
     m_imageItem         = NULL;
     m_imageItemNav      = NULL;
+    m_errMessage        = NULL;
     //Reserved: GPUDecode
 
     m_navVisible        = false;
@@ -95,7 +96,6 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** i
             // We will still have a default image file that is used as a temp
             // The temp file is loaded via resource file ie: ":/CompressonatorGUI/Images/CompressedImageError.png"
             //==========================
-
             m_ImageIndex = 0;
             QImage *image = m_MipImages->Image_list[m_ImageIndex];
             QPixmap pixmap = QPixmap::fromImage(*image);
@@ -141,6 +141,26 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** i
             m_navigateButton->hide();
 #endif
 
+            //==========================
+            // Add Error message to the scene if there is error
+            //==========================
+            if (m_MipImages->errMsg != "")
+            {
+                m_errMessage = new QLabel();
+                if (m_errMessage != NULL)
+                {
+                    QFont font = m_errMessage->font();
+                    font.setBold(true);
+                    font.setItalic(true);
+                    font.setPointSize(size.width() / 40);
+                    m_errMessage->setWordWrap(true);
+                    m_errMessage->setFont(font);
+                    m_errMessage->setFixedSize(size.width(), size.height());
+                    m_errMessage->setText(m_MipImages->errMsg);
+                    m_errMessage->setAlignment(Qt::AlignCenter);
+                    m_graphicsScene->addWidget(m_errMessage);
+                }
+            }
 
             // The widget viewer for all of the items
             m_imageGraphicsView = new acCustomGraphicsView();
@@ -172,7 +192,6 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** i
                 m_defaultYPos_maximum = m_yPos->maximum();
             }
 
-
             // Public : Events from acCustomGraphics 
             connect(m_graphicsScene, SIGNAL(sceneMousePosition(QPointF *, int)), this, SLOT(onacImageViewMousePosition(QPointF *, int)));
             connect(m_imageGraphicsView, SIGNAL(resetImageView()), this, SLOT(onResetImageView()));
@@ -185,8 +204,7 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** i
 #ifdef ENABLE_NAVIGATION
             connect(m_navigateButton, SIGNAL(released()), this, SLOT(onNavigateClicked()));
 #endif
-
-
+            
             //===============================
             // Add a OpenGL Widget if needed
             // to the GraphicsView
@@ -203,8 +221,21 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** i
                     {
                         //Reserved: GPUDecode
                     }
-
                 }
+            }
+          
+            //==========================
+            // Shift the position of the 
+            // added error message
+            //==========================
+            if (m_MipImages->errMsg != "")
+            {
+                QGraphicsItem * m_errItem = m_imageGraphicsView->itemAt(0, 0);
+                if (m_errItem)
+                    m_errItem->moveBy(size.width()/4, size.height()/4);
+
+                if(m_errMessage)
+                    m_imageItem->setVisible(false);
             }
 
             //==========================
@@ -270,9 +301,7 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** i
             m_imageGraphicsView->setVisible(true);
 
             ManageScrollBars();
-
         }
-
     }
 
     setLayout(m_layout);

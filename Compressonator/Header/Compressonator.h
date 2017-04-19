@@ -75,7 +75,7 @@ typedef struct
 
 
 #define AMD_COMPRESS_VERSION_MAJOR 2         ///< The major version number of this release.
-#define AMD_COMPRESS_VERSION_MINOR 5         ///< The minor version number of this release.
+#define AMD_COMPRESS_VERSION_MINOR 6         ///< The minor version number of this release.
 
 
 
@@ -194,6 +194,7 @@ typedef enum
    CMP_ERR_INVALID_DEST_TEXTURE,          ///< The destination texture is invalid.
    CMP_ERR_UNSUPPORTED_SOURCE_FORMAT,     ///< The source format is not a supported format.
    CMP_ERR_UNSUPPORTED_DEST_FORMAT,       ///< The destination format is not a supported format.
+   CMP_ERR_UNSUPPORTED_GPU_ASTC_DECODE,   ///< The gpu hardware is not supported.
    CMP_ERR_SIZE_MISMATCH,                 ///< The source and destination texture sizes do not match.
    CMP_ERR_UNABLE_TO_INIT_CODEC,          ///< Compressonator was unable to initialize the codec needed for conversion.
    CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB,  ///< GPU_Decode Lib was unable to initialize the codec needed for decompression .

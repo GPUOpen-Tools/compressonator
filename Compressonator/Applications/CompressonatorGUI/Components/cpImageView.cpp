@@ -509,44 +509,51 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
     connect(actSaveView, SIGNAL(triggered()), this, SLOT(onSaveViewAs()));
     m_viewContextMenu->addAction(actSaveView);
 
-    // Need to check if MipImages is valid here!!
-    if (m_MipImages)
+    if (Title.contains("File#"))
     {
-        QString gpuView = "";
-        bool useGPUView = false;
-        switch (m_MipImages->m_DecompressedFormat)
+        custTitleBar->setTitle(Title+": "+ filePathName);
+    }
+    else
+    {
+        // Need to check if MipImages is valid here!!
+        if (m_MipImages)
         {
+            QString gpuView = "";
+            bool useGPUView = false;
+            switch (m_MipImages->m_DecompressedFormat)
+            {
             case MIPIMAGE_FORMAT_DECOMPRESSED::Format_CPU:
-                    custTitleBar->setTitle("Compressed Image: CPU View");
-                    break;
+                custTitleBar->setTitle("Compressed Image: CPU View");
+                break;
             case MIPIMAGE_FORMAT_DECOMPRESSED::Format_GPU:
-                    useGPUView = true;
-                    gpuView = "Compressed Image: GPU View ";
-                    break;
+                useGPUView = true;
+                gpuView = "Compressed Image: GPU View ";
+                break;
             default:
             case MIPIMAGE_FORMAT_DECOMPRESSED::Format_NONE:
-                    break;
-        }
+                break;
+            }
 
-        if (useGPUView)
-        {
-            switch (m_MipImages->m_MipImageFormat)
+            if (useGPUView)
             {
-            case MIPIMAGE_FORMAT::Format_OpenGL:
-                gpuView += "using OpenGL";
-                custTitleBar->setTitle(gpuView);
-                break;
-            case MIPIMAGE_FORMAT::Format_DirectX:
-                gpuView += "using DirectX";
-                custTitleBar->setTitle(gpuView);
-                break;
-            case MIPIMAGE_FORMAT::Format_Vulkan:
-                gpuView += "using Vulkan";
-                custTitleBar->setTitle(gpuView);
-                break;
-            default: 
-                custTitleBar->setTitle(gpuView);
-                break;
+                switch (m_MipImages->m_MipImageFormat)
+                {
+                case MIPIMAGE_FORMAT::Format_OpenGL:
+                    gpuView += "using OpenGL";
+                    custTitleBar->setTitle(gpuView);
+                    break;
+                case MIPIMAGE_FORMAT::Format_DirectX:
+                    gpuView += "using DirectX";
+                    custTitleBar->setTitle(gpuView);
+                    break;
+                case MIPIMAGE_FORMAT::Format_Vulkan:
+                    gpuView += "using Vulkan";
+                    custTitleBar->setTitle(gpuView);
+                    break;
+                default:
+                    custTitleBar->setTitle(gpuView);
+                    break;
+                }
             }
         }
     }

@@ -542,12 +542,13 @@ void  Plugin_Canalysis::generateBCtestResult(QImage *src, QImage *dest, REPORT_D
     }
 }
 
-bool Plugin_Canalysis::psnr(QImage *src, QImage *dest, REPORT_DATA &myReport)
+bool Plugin_Canalysis::psnr(QImage *src, QImage *dest, REPORT_DATA &myReport, CMP_Feedback_Proc pFeedbackProc)
 {
     double bMSE = 0, gMSE = 0, rMSE = 0, MSE = 0;
     double MAX = 255.0; // Maximum possible pixel range. For our BMP's, which have 8 bits, it's 255.
     int w = src->width();
     int h = src->height();
+    float fProgress = 0.0;
 
     if (w == 4 && h == 4)
         generateBCtestResult(src, dest, myReport);
@@ -557,6 +558,15 @@ bool Plugin_Canalysis::psnr(QImage *src, QImage *dest, REPORT_DATA &myReport)
             bMSE += pow(qBlue(src->pixel(x, y)) - qBlue(dest->pixel(x, y)), 2.0);
             gMSE += pow(qGreen(src->pixel(x, y)) - qGreen(dest->pixel(x, y)), 2.0);
             rMSE += pow(qRed(src->pixel(x, y)) - qRed(dest->pixel(x, y)), 2.0);
+        }
+
+        if (pFeedbackProc)
+        {
+            fProgress = 100.f * (y * w) / (w * h);
+            if (pFeedbackProc(fProgress, NULL, NULL))
+            {
+                return -1; //abort
+            }
         }
     }
 
@@ -583,7 +593,7 @@ bool Plugin_Canalysis::psnr(QImage *src, QImage *dest, REPORT_DATA &myReport)
 
 
 
-int Plugin_Canalysis::TC_ImageDiff(const char * in1, const char * in2, const char *out, char *resultsFile, void *pluginManager, void **cmipImages)
+int Plugin_Canalysis::TC_ImageDiff(const char * in1, const char * in2, const char *out, char *resultsFile, void *pluginManager, void **cmipImages, CMP_Feedback_Proc pFeedbackProc)
 {
     if (pluginManager == NULL) return -1;
 
@@ -642,7 +652,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1, const char * in2, const cha
     
         if (cmipImages == NULL) //cmdline enable both ssim and psnr
         {
-            bool testpassed = psnr(srcImage, destImage, report.data);
+            bool testpassed = psnr(srcImage, destImage, report.data, pFeedbackProc);
 
             if (!testpassed)
             {
@@ -673,15 +683,15 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1, const char * in2, const cha
             int size = srcimg.rows *srcimg.cols;
 
             int ssimtestpassed = 0;
-            ssimtestpassed = GetSSIMBYTES(&cv_srcimage, &cv_destimage, &report.data);
+            ssimtestpassed = GetSSIMBYTES(&cv_srcimage, &cv_destimage, &report.data, pFeedbackProc);
 
             if (ssimtestpassed == -1)
             {
                 split(srcimg, spl);
                 split(destimg, dpl);
-                report.data.SSIM_Blue = ssim(spl[0], dpl[0], 1);
-                report.data.SSIM_Green = ssim(spl[1], dpl[1], 1);
-                report.data.SSIM_Red = ssim(spl[2], dpl[2], 1);
+                report.data.SSIM_Blue = ssim(spl[0], dpl[0], 1, pFeedbackProc);
+                report.data.SSIM_Green = ssim(spl[1], dpl[1], 1, pFeedbackProc);
+                report.data.SSIM_Red = ssim(spl[2], dpl[2], 1, pFeedbackProc);
                 report.data.SSIM = (report.data.SSIM_Blue + report.data.SSIM_Green + report.data.SSIM_Red) / 3;
             }
 
@@ -697,7 +707,8 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1, const char * in2, const cha
         QColor dest;
         QColor diff;
         int r, g, b, a;
-        
+        float fProgress = 0.0;
+
         for (int y = 0; y < h; y++){
             for (int x = 0; x < w; x++){
                 src = QColor(srcImage->pixel(x, y));
@@ -713,6 +724,15 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1, const char * in2, const cha
                 diff.setBlue(qMin(b, 255));
                 diff.setAlpha(qMin(a, 255));
                 diffImage->setPixel(x, y, diff.rgba());
+            }
+
+            if (pFeedbackProc)
+            {
+                fProgress = 100.f * (y * w) / (w * h);
+                if (pFeedbackProc(fProgress, NULL, NULL))
+                {
+                    return -1; //abort
+                }
             }
         }
     }
@@ -755,7 +775,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1, const char * in2, const cha
         return -1;
 }
 
-int Plugin_Canalysis::TC_PSNR_MSE(const char * in1, const char * in2,  char *resultsFile, void *pluginManager)
+int Plugin_Canalysis::TC_PSNR_MSE(const char * in1, const char * in2,  char *resultsFile, void *pluginManager, CMP_Feedback_Proc pFeedbackProc)
 {
     if (pluginManager == NULL) return -1;
 
@@ -827,7 +847,7 @@ int Plugin_Canalysis::TC_PSNR_MSE(const char * in1, const char * in2,  char *res
     return 0;
 }
 
-int Plugin_Canalysis::TC_SSIM(const char * in1, const char * in2, char *resultsFile, void *pluginManager)
+int Plugin_Canalysis::TC_SSIM(const char * in1, const char * in2, char *resultsFile, void *pluginManager, CMP_Feedback_Proc pFeedbackProc)
 {
     if (pluginManager == NULL) return -1;
 

@@ -373,6 +373,15 @@
     <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_acEXRTool.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
+    <ClCompile Include="..\Components\acDiffImage.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_acDiffImage.cpp">
+      <Filter>Generated Files\Release_MD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_acDiffImage.cpp">
+      <Filter>Generated Files\Release_MD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\_Plugins\Common\ATIFormats.h">
@@ -531,6 +540,9 @@
       <Filter>Components</Filter>
     </CustomBuild>
     <CustomBuild Include="..\Components\acEXRTool.h">
+      <Filter>Components</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\acDiffImage.h">
       <Filter>Components</Filter>
     </CustomBuild>
   </ItemGroup>

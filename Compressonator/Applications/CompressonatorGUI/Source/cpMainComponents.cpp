@@ -194,7 +194,7 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     m_setcompressoptions->hide();
 
     connect(m_projectview, SIGNAL(ViewImageFile(QString &, QTreeWidgetItem *)), this, SLOT(AddImageView(QString &, QTreeWidgetItem *)));
-    connect(m_projectview, SIGNAL(ViewImageFileDiff(C_Destination_Options *)), this, SLOT(AddImageDiff(C_Destination_Options *)));
+    connect(m_projectview, SIGNAL(ViewImageFileDiff(C_Destination_Options *, QString &, QString &)), this, SLOT(AddImageDiff(C_Destination_Options *, QString &, QString &)));
     connect(m_projectview, SIGNAL(DeleteImageView(QString &)), this, SLOT(OnDeleteImageView(QString &)));
     connect(m_projectview, SIGNAL(UpdateData(QObject *)), m_imagePropertyView, SLOT(OnUpdateData(QObject *)));
     connect(m_projectview, SIGNAL(AddCompressSettings(QTreeWidgetItem *)), this, SLOT(OnAddCompressSettings(QTreeWidgetItem *)));
@@ -474,6 +474,14 @@ void cpMainComponents::openImageFile()
     }
 }
 
+void cpMainComponents::imageDiff()
+{
+    if (m_projectview)
+    {
+        m_projectview->diffImageFiles();
+    }
+}
+
 void cpMainComponents::deleteImageFile()
 {
     if (m_projectview)
@@ -697,8 +705,8 @@ void cpMainComponents::createActions()
     if (imagediffAct)
     {
         imagediffAct->setStatusTip(tr("View Image Diff"));
-        connect(imagediffAct, SIGNAL(triggered()), m_projectview, SLOT(viewImageDiff()));
-        imagediffAct->setEnabled(false);
+        connect(imagediffAct, SIGNAL(triggered()), this, SLOT(imageDiff()));
+        imagediffAct->setEnabled(true);
     }
 
 
@@ -1426,16 +1434,6 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
         if (!item) return;
 
         emit OnImageLoadStart();
-        //if (compressAct)
-        //{
-        //    isComp = compressAct->isEnabled();
-        //    compressAct->setEnabled(true);
-        //}
-
-        if (imagediffAct)
-        {
-            imagediffAct->setEnabled(false);
-        }
 
         if (deleteImageAct)
         {
@@ -1615,10 +1613,7 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
     }
 
     emit OnImageLoadDone();
-    //if (compressAct)
-    //    compressAct->setEnabled(isComp);
-    if (imagediffAct)
-        imagediffAct->setEnabled(isComp);
+  
     if (deleteImageAct)
         deleteImageAct->setEnabled(isDel);
     if (saveImageAct)
@@ -1627,7 +1622,7 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
     hideProgressBusy("Ready");
 }
 
-void cpMainComponents::AddImageDiff(C_Destination_Options *destination)
+void cpMainComponents::AddImageDiff(C_Destination_Options *destination, QString &fileName1, QString &fileName2)
 {
     try
     {
@@ -1656,17 +1651,66 @@ void cpMainComponents::AddImageDiff(C_Destination_Options *destination)
 
         showProgressBusy("Loading Image Differance...Please wait");
 
-        QString originalFileName = destination->m_sourceFileNamePath;
-        QString compressedFileName = destination->m_destFileNamePath;
+        QString originalFileName = ""; 
+        QString destFile = "";
+        QString title = "";
 
-        // Find the old image diff and remove it
-        // User may have selected a newer Decompression Option
-        // for the image diff view
-        QString Title = DIFFERENCE_IMAGE_TXT + compressedFileName;
-        OnDeleteImageDiffView(compressedFileName);
+        if (destination == NULL)
+        {
+            QFileInfo fileinfo1(fileName1);
+            QFile file1(fileName1);
+            if (file1.exists() && (fileinfo1.suffix().length() > 0))
+            {
+                originalFileName = fileName1;
+            }
+            else
+            {
+                PrintInfo("Image Diff Error: Image File #1 cannot be found\n");
+                onShowOutput();
+            }
 
-        // Create a new view image
-        m_imageCompare = new CImageCompare(Title, destination, m_parent);
+            QFileInfo fileinfo2(fileName2);
+            QFile file2(fileName2);
+            if (file2.exists() && (fileinfo2.suffix().length() > 0))
+            {
+                destFile = fileName2;
+            }
+            else
+            {
+                PrintInfo("Image Diff Error: Image File #2 cannot be found\n");
+                onShowOutput();
+            }
+
+            title = DIFFERENCE_IMAGE_TXT + originalFileName + " VS " + destFile;
+            OnDeleteImageDiffView(destFile);
+
+            // Create a new view image
+            m_imageCompare = new CImageCompare(title, originalFileName, destFile, false, this);
+        }
+        else
+        {
+            originalFileName = destination->m_sourceFileNamePath;
+            // Find the old image diff and remove it
+            // User may have selected a newer Decompression Option
+            // for the image diff view
+            title = DIFFERENCE_IMAGE_TXT + destination->m_destFileNamePath;
+            OnDeleteImageDiffView(destination->m_destFileNamePath);
+
+            
+            if (QDir(destination->m_decompressedFileNamePath).exists() && (QFile(destination->m_decompressedFileNamePath).size()) > 0)
+            {
+                destFile = destination->m_decompressedFileNamePath;
+            }
+            else
+            {
+                destFile = destination->m_destFileNamePath;
+            }
+
+            // Create a new view image
+            m_imageCompare = new CImageCompare(title, originalFileName, destFile, true, this);
+        }
+        
+       
         CMipImages  *m_diffMips = m_imageCompare->getMdiffMips();
         if (m_diffMips == NULL)
         {
@@ -2028,6 +2072,15 @@ void cpMainComponents::onCompressionDone()
             // like compression time
             if (m_imagePropertyView)
                 m_imagePropertyView->OnUpdateData(m_data);
+
+            // Add the image to the diff image list
+            if (m_projectview)
+            {
+                // Add the image to the diff image list if it is not in the list
+                if (!(m_projectview->m_ImagesinProjectTrees.contains(m_data->m_destFileNamePath)))
+                    m_projectview->m_ImagesinProjectTrees.append(m_data->m_destFileNamePath);
+            }
+
         #ifdef SHOW_DECOMPRESS_IMAGE
             // This can cause issue if image decompresion takes a long time!
             AddImageView(m_data->m_destFileNamePath, item);
@@ -2047,8 +2100,6 @@ void cpMainComponents::onCompressionDone()
 
 void cpMainComponents::onSourceImage(int childCount)
 {
-    if (imagediffAct)
-        imagediffAct->setEnabled(false);
     if (MIPGenAct)
         MIPGenAct->setEnabled(true);
     if (deleteImageAct)
@@ -2071,12 +2122,6 @@ void cpMainComponents::onProjectLoaded(int childCount)
         saveToBatchFileAct->setEnabled(childCount > 1);
     }
 
-    //if (compressAct)
-    //    compressAct->setEnabled(childCount >= 1);
-
-    if (imagediffAct)
-        imagediffAct->setEnabled(false);
-
     if (m_imagePropertyView)
         m_imagePropertyView->OnUpdateData(NULL);
 }
@@ -2090,8 +2135,6 @@ void cpMainComponents::onDecompressImage()
         MIPGenAct->setEnabled(false);
     if (deleteImageAct)
         deleteImageAct->setEnabled(true);
-    //if (compressAct)
-    //    compressAct->setEnabled(true);
 
     if (saveToBatchFileAct)
     {

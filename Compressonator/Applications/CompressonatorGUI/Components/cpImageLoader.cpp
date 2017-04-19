@@ -26,13 +26,12 @@
 #include "cExr.h"
 #include "qdebug.h"
 #include "Textureio.h"
-#include "CmdLine.h"
 
 bool g_useCPUDecode = true;
 MIPIMAGE_FORMAT g_gpudecodeFormat = Format_OpenGL;
 
 extern PluginManager g_pluginManager;
-extern MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, bool useCPU, bool swizzle = false);
+extern MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config* configSetting);
 extern QRgb RgbaToQrgba(struct Imf::Rgba imagePixel);
 extern int    g_OpenGLMajorVersion;
 
@@ -76,6 +75,7 @@ CMipImages::CMipImages()
     m_Error = MIPIMAGE_FORMAT_ERRORS::Format_NoErrors;
     m_DecompressedFormat = MIPIMAGE_FORMAT_DECOMPRESSED::Format_NONE;
     decompressedMipSet = NULL;
+    errMsg = "";
 }
 
 
@@ -324,11 +324,11 @@ CMP_FORMAT CImageLoader::QFormat2MipFormat(QImage::Format qformat)
     return format;
 }
 
-MipSet *CImageLoader::DecompressMipSet(CMipImages *MipImages)
+MipSet *CImageLoader::DecompressMipSet(CMipImages *MipImages, Config *decompConfig)
 {
     MipSet *tmpMipSet             = NULL;
     MipImages->decompressedMipSet = NULL;
-    ;
+    
     if ((MipImages->mipset->m_compressed) || (CompressedFormat(MipImages->mipset->m_format)))
     {
         //=======================================================
@@ -340,7 +340,8 @@ MipSet *CImageLoader::DecompressMipSet(CMipImages *MipImages)
             MipImages->m_DecompressedFormat = MIPIMAGE_FORMAT_DECOMPRESSED::Format_CPU;
 
             // This call decompresses all MIP levels so it should only be called once
-            tmpMipSet = DecompressMIPSet(MipImages->mipset, GPUDecode_INVALID, true);
+            decompConfig->useCPU= true;
+            tmpMipSet = DecompressMIPSet(MipImages->mipset, GPUDecode_INVALID, decompConfig);
 
             if (tmpMipSet)
             {
@@ -382,7 +383,8 @@ MipSet *CImageLoader::DecompressMipSet(CMipImages *MipImages)
                 }
 
                 // This call decompresses all MIP levels so it should only be called once
-                tmpMipSet = DecompressMIPSet(MipImages->mipset, decodeWith, false);
+                decompConfig->useCPU = false;
+                tmpMipSet = DecompressMIPSet(MipImages->mipset, decodeWith, decompConfig);
 
                 if (tmpMipSet)
                 {
@@ -864,11 +866,14 @@ CMipImages * CImageLoader::LoadPluginImage(QString filename)
             }
 
             MipSet *tmpMipSet;
-            tmpMipSet = DecompressMipSet(MipImages);
+            Config decompSetting;
+            decompSetting.errMessage = "";
+            tmpMipSet = DecompressMipSet(MipImages, &decompSetting);
 
             if (tmpMipSet == NULL)
             {
-                image  = new QImage(":/CompressonatorGUI/Images/DeCompressImageError.png");
+                MipImages->errMsg = QString::fromStdString(decompSetting.errMessage);
+                image = new QImage(":/CompressonatorGUI/Images/DeCompressImageError.png");
                 usedQT = true;
             }
             else

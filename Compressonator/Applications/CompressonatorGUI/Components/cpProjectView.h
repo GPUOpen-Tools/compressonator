@@ -44,7 +44,8 @@
 #include "objectcontroller.h"
 
 // Progress Bar
-#include <acProgressDlg.h>
+#include "acProgressDlg.h"
+#include "acDiffImage.h"
 #include "cpTreeWidget.h"
 #include "cpImageView.h"
 #include "cpProjectData.h"
@@ -103,16 +104,22 @@ public:
     bool    m_saveProjectChanges;            // Flag if any changes were made to a project file
     bool    m_processFromContext;            // Flag if users click process from context
     QString m_curProjectFilePathName;        // Current Project Full Path and Name
-    QString m_curProjectName;            
+    QString m_curProjectName;   
     void setCurrentProjectName(QString filePathName);    // Set the Member var above using filePathName
 
     QList<QByteArray> m_supportedFormats;   // List of Qt and Plugin file formats
     QString m_ImageFileFilter;              // String version of m_supportedFormats formated for File Dialogs
     
+    QString m_curDiffSourceFile;            //For View image diff from right click context (file#1)
+    QString m_curDiffDestFile;              //For View image diff from right click context (file#2)
+
     CompressStatusDialog *                  m_CompressStatusDialog;
     acProgressDlg*                          m_pProgressDlg;
+    acDiffImage*                            m_diffImageDialog;
     void SetupHeader();
     void SetupTreeView();
+
+    void diffImageFiles();
     bool loadProjectFile(QString fileToLoad);
     bool OpenImageFile();
 
@@ -169,9 +176,9 @@ public:
     QTreeWidgetItem *m_CurrentItem;
 
     cpNewProject *m_newProjectwindow;
-
-
     QElapsedTimer m_elapsedTimer;
+
+    QStringList   m_ImagesinProjectTrees;
 
 Q_SIGNALS:
 
@@ -179,7 +186,7 @@ Q_SIGNALS:
     void ViewImageFile(QString &fileName, QTreeWidgetItem * item);
     void DeleteImageView(QString &fileName);
 
-    void ViewImageFileDiff(C_Destination_Options *m_data);
+    void ViewImageFileDiff(C_Destination_Options *m_data, QString &file1, QString &file2);
 
     void DeleteImageViewDiff(QString &fileName);
 
@@ -225,6 +232,7 @@ void openProjectFile();
 void openNewProjectFile();
 void compressProjectFiles(QFile *file);
 void viewImageDiff();
+void viewDiffImageFromChild();
 void removeSelectedImage();
 void openContainingFolder();
 void copyFullPath();
@@ -245,13 +253,13 @@ public:
     QWidget                 *m_parent;
     cpTreeWidget            *m_projectTreeView;
     QTreeWidgetItem         *m_treeRootItem;            // Root of Tree view Items
-    QString                     m_RecentImageDirOpen;      // Keep track of recent image files opened dir
+    QString                  m_RecentImageDirOpen;      // Keep track of recent image files opened dir
     void keyPressEvent(QKeyEvent * event);
-    bool                      m_bCompressing;           // Set true when we are compressing project items
-    bool                      m_EnableCheckedItemsView; // This flags by default if set to false and enables compression of items
-                                                        //  based on checked flags along with highlited items.
-    int                       m_NumItems;
-    bool                      m_AllItemsSelected;
-    bool                      m_processBusy;
+    bool                     m_bCompressing;           // Set true when we are compressing project items
+    bool                     m_EnableCheckedItemsView; // This flags by default if set to false and enables compression of items
+                                                       //  based on checked flags along with highlited items.
+    int                      m_NumItems;
+    bool                     m_AllItemsSelected;
+    bool                     m_processBusy;
 };
 #endif

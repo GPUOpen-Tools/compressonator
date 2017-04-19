@@ -30,8 +30,9 @@
 #include <QMap>
 
 #include "cpImageCompare.h"
+#include "cpMainComponents.h"
 
-CImageCompare::CImageCompare(const QString title, C_Destination_Options *destination, QMainWindow *parent) : acCustomDockWidget(title, parent)
+CImageCompare::CImageCompare(const QString title, QString file1, QString file2, bool isCompressed, QMainWindow *parent) : acCustomDockWidget(title, parent)
 {
     m_parent = parent;
 
@@ -44,12 +45,14 @@ CImageCompare::CImageCompare(const QString title, C_Destination_Options *destina
 
     // Add this to the class Construtor.....
     m_fileName = title;
+    m_sourceFile = file1;
+    m_destFile = file2;
 
-    QFile f(destination->m_sourceFileNamePath);
+    QFile f(file1);
     QFileInfo fileInfo(f.fileName());
     m_tabName = fileInfo.fileName();
 
-    QFile f2(destination->m_destFileNamePath);
+    QFile f2(file2);
     QFileInfo fileInfo2(f2.fileName());
     m_tabName.append(" with " + fileInfo2.fileName());
     
@@ -113,18 +116,9 @@ CImageCompare::CImageCompare(const QString title, C_Destination_Options *destina
     }
 
     m_MainWindow->addToolBar(m_dockToolBar);
-    
-    m_sourceFile = destination->m_sourceFileNamePath;
-    if (QDir(destination->m_decompressedFileNamePath).exists() && (QFile(destination->m_decompressedFileNamePath).size()) > 0)
-    {
-        m_destFile = destination->m_decompressedFileNamePath;
-    }
-    else
-    {
-        m_destFile = destination->m_destFileNamePath;
-    }
 
     showProgressBusy("Loading Image Difference... This may take some time. Please wait.");
+    showProgressDialog("Loading Image Difference");
 
     m_diffMips=m_imageAnalysis->GenerateDiffImage(m_sourceFile.toStdString().c_str(), m_destFile.toStdString().c_str());
     
@@ -132,7 +126,7 @@ CImageCompare::CImageCompare(const QString title, C_Destination_Options *destina
     {
          m_analyzed = "Image Diff";
 
-        createImageView();
+        createImageView(isCompressed);
         m_setHorizontalView = false;
         setDefaultView();
 
@@ -145,7 +139,38 @@ CImageCompare::CImageCompare(const QString title, C_Destination_Options *destina
         m_newWidget->setLayout(m_layout);
         setWidget(m_newWidget);
     }
+
+    hideProgressDialog();
     hideProgressBusy("Ready");
+}
+
+void CImageCompare::showProgressDialog(QString header)
+{
+    ProjectView *view = NULL;
+    if (m_parent)
+    {
+        view = ((cpMainComponents*)m_parent)->m_projectview;
+        if (view)
+        {
+            view->m_pProgressDlg->SetValue(0);
+            view->m_pProgressDlg->SetHeader(header);
+            view->m_pProgressDlg->SetLabelText("");
+            view->m_pProgressDlg->show();
+        }
+    }
+}
+
+void CImageCompare::hideProgressDialog()
+{
+    ProjectView *view = NULL;
+    if (m_parent)
+    {
+        view = ((cpMainComponents*)m_parent)->m_projectview;
+        if (view)
+        {
+            view->m_pProgressDlg->hide();
+        }
+    }
 }
 
 void CImageCompare::showProgressBusy(QString Message)
@@ -205,12 +230,17 @@ void CImageCompare::emitUpdateData()
 void CImageCompare::runSSIM()
 {
     ssimAnalysis = true;
+    
     showProgressBusy("Running SSIM Analysis... This may take some time. Please Wait.");
+    showProgressDialog("Running SSIM Analysis");
+
     m_imageAnalysis->GenerateSSIMAnalysis(m_sourceFile.toStdString().c_str(), m_destFile.toStdString().c_str());
     if (setAnalysisResultView())
     {
         emitUpdateData();
     }
+
+    hideProgressDialog();
     hideProgressBusy("Ready");
     return;
 }
@@ -218,31 +248,51 @@ void CImageCompare::runSSIM()
 void CImageCompare::runPsnrMse()
 {
     psnrAnalysis = true;
+
     showProgressBusy("Running PSNR and MSE Analysis... This may take some time. Please Wait.");
+    showProgressDialog("Running PSNR and MSE Analysis");
+
     m_imageAnalysis->GeneratePSNRMSEAnalysis(m_sourceFile.toStdString().c_str(), m_destFile.toStdString().c_str());
     if (setAnalysisResultView())
     {
         emitUpdateData();
     }
+
+    hideProgressDialog();
     hideProgressBusy("Ready");
+    
     return;
 }
 
-void CImageCompare::createImageView()
+void CImageCompare::createImageView(bool isCompressedCompare)
 {
     Setting *setting = new Setting;
     setting->onBrightness = false;
-    m_imageviewFile1 = new cpImageView(m_sourceFile, "  Original Image", m_newInnerWidget,NULL, setting);
+
+    QString file1Title = m_sourceFile;
+    QString file2Title = m_destFile;
+    if (isCompressedCompare)
+    {
+        file1Title = "Original";
+        file2Title = "Compressed";
+    }
+    else
+    {
+        file1Title = "File#1";
+        file2Title = "File#2";
+    }
+
+    m_imageviewFile1 = new cpImageView(m_sourceFile, "  "+file1Title+" Image", m_newInnerWidget,NULL, setting);
 
     // Notes: BugFix added change of m_FileName in construct above to prevent main applications FindFile to use these images as 
     // Been found as Main Apps Tabs views 
-    m_imageviewFile1->m_fileName = "Original: " + m_sourceFile;
+    m_imageviewFile1->m_fileName = file1Title+": " + m_sourceFile;
 
     m_imageviewFile1->custTitleBar->setButtonCloseEnabled(false);
     m_imageviewFile1->setFeatures(NoDockWidgetFeatures);
 
-    m_imageviewFile2 = new cpImageView(m_destFile, "  Compressed Image", m_newInnerWidget,NULL, setting);
-    m_imageviewFile2->m_fileName = "Compressed: " + m_destFile;
+    m_imageviewFile2 = new cpImageView(m_destFile, "  "+file2Title+" Image", m_newInnerWidget,NULL, setting);
+    m_imageviewFile2->m_fileName = file2Title+": " + m_destFile;
 
     m_imageviewFile2->custTitleBar->setButtonCloseEnabled(false);
     m_imageviewFile2->setFeatures(NoDockWidgetFeatures);

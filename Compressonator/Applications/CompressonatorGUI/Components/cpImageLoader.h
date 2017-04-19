@@ -25,12 +25,14 @@
 #ifndef _IMAGELOADER_H
 #define _IMAGELOADER_H
 
+#include "cmdLine.h"
 #include "MIPS.h"
 #include "PluginManager.h"
 #include <qstring.h>
 #include <qimage.h>
 #include <qlist.h>
 #include <qfileinfo.h>
+#include <qpainter.h>
 
 enum MIPIMAGE_FORMAT_DECOMPRESSED {
     Format_NONE,
@@ -54,7 +56,6 @@ enum MIPIMAGE_FORMAT_ERRORS {
     Format_NotSupported
 };
 
-
 class CMipImages
 {
 public:
@@ -66,6 +67,7 @@ public:
     MIPIMAGE_FORMAT m_MipImageFormat;
     MIPIMAGE_FORMAT_ERRORS m_Error;
     MIPIMAGE_FORMAT_DECOMPRESSED m_DecompressedFormat;
+    QString errMsg;
     bool MIPS2QtFailed;
     
 };
@@ -84,7 +86,7 @@ public:
     void    UpdateMIPMapImages(CMipImages *MipImages);  // Maps MIP levels to Images
     void    loadExrProperties(MipSet* mipset, int level, QImage *image);
     MipSet *QImage2MIPS(QImage *qimage);            // Converts a QImage to MipSet
-    MipSet *DecompressMipSet(CMipImages *MipImages);
+    MipSet *DecompressMipSet(CMipImages *MipImages, Config *decompConfig);
     void   float2Pixel(float kl, float f, float r, float g, float b, float a, int x, int y, QImage *image);
 
     float kneeLow;

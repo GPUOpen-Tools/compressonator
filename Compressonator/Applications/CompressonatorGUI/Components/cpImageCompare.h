@@ -40,15 +40,18 @@ class CImageCompare : public acCustomDockWidget
     Q_OBJECT
 
 public:
-    CImageCompare(const QString title, C_Destination_Options *destination, QMainWindow *parent);
+    CImageCompare(const QString title, QString file1, QString file2, bool isCompressed, QMainWindow *parent);
     ~CImageCompare();
 
-    void createImageView();
+    void createImageView(bool isCompressedCompare);
     void setDefaultView();
     void setHorizontalView();
     bool setAnalysisResultView();
     void emitUpdateData();
     CMipImages* getMdiffMips();
+
+    void showProgressDialog(QString header);
+    void hideProgressDialog();
 
     void showProgressBusy(QString Message);
     void hideProgressBusy(QString Message);

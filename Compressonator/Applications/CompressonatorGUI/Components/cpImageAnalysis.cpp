@@ -25,6 +25,8 @@
 
 #include "cpImageAnalysis.h"
 
+extern bool ProgressCallback(float fProgress, DWORD_PTR pUser1, DWORD_PTR pUser2);
+
 C_AnalysisData ::~C_AnalysisData()
 {
 }
@@ -80,7 +82,7 @@ CMipImages* C_AnalysisData::GenerateDiffImage(const char *fsource, const char *f
     Plugin_Analysis = reinterpret_cast<Plugin_Canalysis*>(g_pluginManager.GetPlugin("IMAGE", "ANALYSIS"));
     if (Plugin_Analysis)
     {
-        testpassed = Plugin_Analysis->TC_ImageDiff(fsource, fdest, fdiff.c_str(), (char*)results_file.c_str(), &g_pluginManager, (void**)&diffCMipImages);
+        testpassed = Plugin_Analysis->TC_ImageDiff(fsource, fdest, fdiff.c_str(), (char*)results_file.c_str(), &g_pluginManager, (void**)&diffCMipImages, &ProgressCallback);
         
         delete Plugin_Analysis;
         Plugin_Analysis = NULL;
@@ -133,7 +135,7 @@ int C_AnalysisData::GeneratePSNRMSEAnalysis(const char *fsource, const char *fde
     Plugin_Analysis = reinterpret_cast<Plugin_Canalysis*>(g_pluginManager.GetPlugin("IMAGE", "ANALYSIS"));
     if (Plugin_Analysis)
     {
-        testpassed = Plugin_Analysis->TC_PSNR_MSE(fsource, fdest, (char*)results_file.c_str(), &g_pluginManager);
+        testpassed = Plugin_Analysis->TC_PSNR_MSE(fsource, fdest, (char*)results_file.c_str(), &g_pluginManager, &ProgressCallback);
 
         delete Plugin_Analysis;
         Plugin_Analysis = NULL;
@@ -184,7 +186,7 @@ int C_AnalysisData::GenerateSSIMAnalysis(const char *fsource, const char *fdest)
     Plugin_Analysis = reinterpret_cast<Plugin_Canalysis*>(g_pluginManager.GetPlugin("IMAGE", "ANALYSIS"));
     if (Plugin_Analysis)
     {
-        testpassed = Plugin_Analysis->TC_SSIM(fsource, fdest, (char*)results_file.c_str(), &g_pluginManager);
+        testpassed = Plugin_Analysis->TC_SSIM(fsource, fdest, (char*)results_file.c_str(), &g_pluginManager, &ProgressCallback);
 
         delete Plugin_Analysis;
         Plugin_Analysis = NULL;

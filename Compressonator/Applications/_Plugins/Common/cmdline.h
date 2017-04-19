@@ -34,6 +34,12 @@
 
 #include "MIPS.h"
 
+typedef struct {
+    bool swizzle = false;
+    bool useCPU = true;
+    string errMessage = "";
+} Config;
+
 class CCmdLineParamaters
 {
 public:

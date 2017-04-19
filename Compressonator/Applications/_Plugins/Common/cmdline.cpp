@@ -1372,13 +1372,14 @@ bool SVMInitCodec(KernalOptions *options)
 //
 // Used exclusively by the GUI app 
 // ToDo : Remove this code and try to use ProcessCMDLine
-MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, bool useCPU, bool swizzle = false)
+MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *configSetting)
 {
     // validate MipSet is Compressed
     if (!MipSetIn->m_compressed) return NULL;
     if (MipSetIn->m_format == CMP_FORMAT_ASTC && !useCPU)
     {
-        PrintInfo("Decompress Error: ASTC decompressed with GPU is not supported yet. Please view ASTC compressed images using CPU (under Settings->Application Options).\n");
+        configSetting->errMessage = "ASTC decompressed with GPU is not supported yet. Please view ASTC compressed image using CPU (under Settings->Application Options.)\n";
+        PrintInfo("Decompress Error: ASTC decompressed with GPU is not supported yet. Please view ASTC compressed image using CPU (under Settings->Application Options.)\n");
         return NULL;
     }
 
@@ -1407,11 +1408,11 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, bool useCPU
     {
         case CMP_FORMAT_BC6H:
         case CMP_FORMAT_BC6H_SF:
-                MipSetOut->m_format = CMP_FORMAT_ARGB_16F;
-                MipSetOut->m_ChannelFormat = CF_Float16;
+            MipSetOut->m_format = CMP_FORMAT_ARGB_16F;
+            MipSetOut->m_ChannelFormat = CF_Float16;
             break;
         default:
-            MipSetOut->m_format            = CMP_FORMAT_ARGB_8888;
+            MipSetOut->m_format = CMP_FORMAT_ARGB_8888;
             break;
      }
     
@@ -1424,13 +1425,13 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, bool useCPU
             MipSetIn->m_nHeight,
             MipSetIn->m_nDepth))
     {
-            PrintInfo("Memory Error(2): allocating MIPSet Output buffer\n");
-            m_CMIPS.FreeMipSet(MipSetOut);
-            delete MipSetOut;
-            MipSetOut = NULL;
-            return NULL;
+        configSetting->errMessage = "Memory Error(2): allocating MIPSet Output buffer.";
+        PrintInfo("Memory Error(2): allocating MIPSet Output buffer\n");
+        m_CMIPS.FreeMipSet(MipSetOut);
+        delete MipSetOut;
+        MipSetOut = NULL;
+        return NULL;
     }
-
 
     MipLevel* pCmpMipLevel = m_CMIPS.GetMipLevel(MipSetIn, 0);
     int nMaxFaceOrSlice = MaxFacesOrSlices(MipSetIn, 0);
@@ -1438,7 +1439,6 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, bool useCPU
     int nHeight = pCmpMipLevel->m_nHeight;
 
     BYTE* pMipData = m_CMIPS.GetMipLevel(MipSetIn, 0, 0)->m_pbData;
-
 
     for (int nFaceOrSlice = 0; nFaceOrSlice<nMaxFaceOrSlice; nFaceOrSlice++)
     {
@@ -1450,6 +1450,7 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, bool useCPU
                 MipLevel* pInMipLevel = m_CMIPS.GetMipLevel(MipSetIn, nMipLevel, nFaceOrSlice);
                 if (!pInMipLevel)
                 {
+                    configSetting->errMessage = "Memory Error(2): allocating MIPSet Output Cmp level buffer";
                     PrintInfo("Memory Error(2): allocating MIPSet Output Cmp level buffer\n");
                     m_CMIPS.FreeMipSet(MipSetOut);
                     delete MipSetOut;
@@ -1464,6 +1465,7 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, bool useCPU
                 if (!m_CMIPS.AllocateMipLevelData(m_CMIPS.GetMipLevel(MipSetOut, nMipLevel, nFaceOrSlice), nMipWidth,
                     nMipHeight, MipSetOut->m_ChannelFormat, MipSetOut->m_TextureDataType))
                 {
+                    configSetting->errMessage = "Memory Error(2): allocating MIPSet Output level buffer.";
                     PrintInfo("Memory Error(2): allocating MIPSet Output level buffer\n");
                     m_CMIPS.FreeMipSet(MipSetOut);
                     delete MipSetOut;
@@ -1514,6 +1516,7 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, bool useCPU
 
                     if ((IsBadReadPtr(srcTexture.pData, srcTexture.dwDataSize)))
                     {
+                        configSetting->errMessage = "Memory Error(2): Source image cannot be accessed.";
                         PrintInfo("Memory Error(2): Source image\n");
                         m_CMIPS.FreeMipSet(MipSetOut);
                         delete MipSetOut;
@@ -1523,6 +1526,7 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, bool useCPU
 
                     if (/*(srcTexture.dwDataSize > destTexture.dwDataSize) ||*/ (IsBadWritePtr(destTexture.pData, destTexture.dwDataSize)))
                     {
+                        configSetting->errMessage = "Memory Error(2): Destination image must be compatible with source.";
                         PrintInfo("Memory Error(2): Destination image must be compatible with source\n");
                         m_CMIPS.FreeMipSet(MipSetOut);
                         delete MipSetOut;
@@ -1532,11 +1536,12 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, bool useCPU
 
                     // Return values of the CMP_ calls should be checked for failures
                     CMP_ERROR res;
-                    if (useCPU)
+                    if (configSetting->useCPU)
                     {
                         res = CMP_ConvertTexture(&srcTexture, &destTexture, &CompressOptions, NULL, NULL, NULL);
                         if (res != CMP_OK)
                         {
+                            configSetting->errMessage = "Compress Failed with Error " + res;
                             PrintInfo("Compress Failed with Error %d\n", res);
                             m_CMIPS.FreeMipSet(MipSetOut);
                             delete MipSetOut;
@@ -1548,8 +1553,18 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, bool useCPU
                     {
                         CMP_ERROR res;
                         res = CMP_DecompressTexture(&srcTexture, &destTexture, decodeWith);
-                        if (res != CMP_OK)
+                        if (res == CMP_ERR_UNSUPPORTED_GPU_ASTC_DECODE)
                         {
+                            configSetting->errMessage = "Error: ASTC gpu decode only target AMD Vega 10 GPU.\n";
+                            PrintInfo("Error: ASTC gpu decode only target AMD Vega 10 GPU.\n");
+                            m_CMIPS.FreeMipSet(MipSetOut);
+                            delete MipSetOut;
+                            MipSetOut = NULL;
+                            return NULL;
+                        }
+                        else if (res != CMP_OK)
+                        {
+                            configSetting->errMessage = "Decompress Failed with Error " + res;
                             PrintInfo("Decompress Failed with Error %d\n",res);
                             m_CMIPS.FreeMipSet(MipSetOut);
                             delete MipSetOut;
