@@ -1376,7 +1376,7 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *con
 {
     // validate MipSet is Compressed
     if (!MipSetIn->m_compressed) return NULL;
-    if (MipSetIn->m_format == CMP_FORMAT_ASTC && !useCPU)
+    if (MipSetIn->m_format == CMP_FORMAT_ASTC && !(configSetting->useCPU))
     {
         configSetting->errMessage = "ASTC decompressed with GPU is not supported yet. Please view ASTC compressed image using CPU (under Settings->Application Options.)\n";
         PrintInfo("Decompress Error: ASTC decompressed with GPU is not supported yet. Please view ASTC compressed image using CPU (under Settings->Application Options.)\n");
