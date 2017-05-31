@@ -18,7 +18,15 @@ Compressonator V2.6 Upcoming Features
   
 - ASTC codec update
 
-  various improvements in code
+  Various improvements in code for GPU compliance 
+  
+- Make Compatible Feature
+
+  Compress or Transcode LDR/HDR images into any 8 bit per channel compression codecs or images (examples: EXR to BC7, EXR to BMP)
+
+  Compress or Transcode 8 bit per channel images to LDR/HDR images
+  
+  Options are provided to adjust the conversions as needed from channel defaults, such as Exposure, Knee, Defog, etc..
 
 Recent additions and changes
 ------------------------------------------------------
