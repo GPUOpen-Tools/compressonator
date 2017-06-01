@@ -12,9 +12,11 @@ https://github.com/GPUOpen-Tools/Compressonator/releases
 
 Compressonator V2.6 Upcoming Features
 -----------------------------------------------------
-- Improved Image Diff
+- Improved Image Diff Analysis
 
-  Adding ability to compare any two image files either from project tree or external files Image Diff Analysis
+  Adding ability to compare any two image files either from the project tree or external files 
+  
+  [Image Diff Analysis](https://github.com/GPUOpen-Tools/Compressonator/wiki/Image-Diff-Analysis/) 
   
 - ASTC codec update
 
