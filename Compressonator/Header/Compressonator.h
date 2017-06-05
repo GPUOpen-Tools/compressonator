@@ -207,6 +207,11 @@ typedef enum
 #define AMD_MAX_CMD_PARAM   16
 
 #define AMD_CODEC_QUALITY_DEFAULT 0.05      ///< This is the default value set for all Codecs (Gives fast Processing and lowest Quality)
+#define AMD_CODEC_EXPOSURE_DEFAULT 0        ///< This is the default value set for exposure value of hdr/exr input image
+#define AMD_CODEC_DEFOG_DEFAULT    0        ///< This is the default value set for defog value of hdr/exr input image
+#define AMD_CODEC_KNEELOW_DEFAULT  0        ///< This is the default value set for kneelow value of hdr/exr input image
+#define AMD_CODEC_KNEEHIGH_DEFAULT 5        ///< This is the default value set for kneehigh value of hdr/exr input image
+#define AMD_CODEC_GAMMA_DEFAULT    2.2        ///< This is the default value set for gamma value of hdr/exr input image
 
 struct CMP_MAP_BYTES_SET
 {
@@ -273,6 +278,12 @@ typedef struct
                                                 ///<        Options.CmdSet[1].strCommand   = "Quality"\n
                                                 ///<        Options.CmdSet[1].strParameter = "1.0";\n
                                                 ///<        Options.NumCmds = 2;\n
+   double           fInputDefog;                ///< ToneMap properties for float type image send into non float compress algorithm.
+   double           fInputExposure;             ///< ToneMap properties for float type image send into non float compress algorithm.
+   double           fInputKneeLow;              ///< ToneMap properties for float type image send into non float compress algorithm.
+   double           fInputKneeHigh;             ///< ToneMap properties for float type image send into non float compress algorithm.
+   double           fInputGamma;                ///< ToneMap properties for float type image send into non float compress algorithm.
+
 } CMP_CompressOptions;
 
 /// The structure describing a texture.

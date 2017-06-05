@@ -237,12 +237,12 @@ CMP_ERROR WINAPI GPU_OpenGL::Decompress(
     glGetIntegerv(GL_MAJOR_VERSION, &majVer);
     glGetIntegerv(GL_MINOR_VERSION, &minVer);
 
-   if (majVer < 3 || (majVer < 3 && minVer < 2))
-   {
-       PrintInfo("Error: OpenGL 3.2 and up cannot be detected.\n");
-       fprintf(stderr, "Error: OpenGL 3.2 and up cannot be detected.\n" );
-       return CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB;
-   }
+    if (majVer < 3 || (majVer < 3 && minVer < 2))
+    {
+        PrintInfo("Error: OpenGL 3.2 and up cannot be detected.\n");
+        fprintf(stderr, "Error: OpenGL 3.2 and up cannot be detected.\n" );
+        return CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB;
+    }
 
     texture = LoadTexture(pSourceTexture, false);
     if (texture == -1)

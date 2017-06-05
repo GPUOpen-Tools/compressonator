@@ -71,29 +71,38 @@ void acEXRTool::Init(const QString & title, const QString & productName)
     exrKneeHighBox->setSingleStep(0.125);
 
     khLayout->addWidget(khLabel);
-    //exposureLayout->addWidget(exrExposure);
+
     khLayout->addWidget(exrKneeHighBox);
+
+    QHBoxLayout* gammaLayout = new QHBoxLayout;
+    QLabel *gammaLabel = new QLabel(this);
+    gammaLabel->setText("Gamma:");
+    exrGammaBox = new QDoubleSpinBox;
+    exrGammaBox->setDecimals(1);
+    exrGammaBox->setRange(1.0, 2.6);
+    exrGammaBox->setValue(DEFAULT_GAMMA);
+    exrGammaBox->setSingleStep(0.2);
+
+    gammaLayout->addWidget(gammaLabel);
+
+    gammaLayout->addWidget(exrGammaBox);
 
     // Buttons
     m_PBClose = new QPushButton("Close");
-    //QDialogButtonBox* pCloseButtonBox = new QDialogButtonBox(QDialogButtonBox::Close, Qt::Vertical);
+
 
     connect(m_PBClose, SIGNAL(pressed()), this, SLOT(onClose()));
     
     // Left Vertical Layout:
-    //pVerticalLayoutLeft->addStretch(1);
     pVerticalLayout->addLayout(exposureLayout);
-    //pVerticalLayoutLeft->addSpacing(5);
     pVerticalLayout->addLayout(defogLayout);
-    //pVerticalLayoutLeft->addStretch(1);
     pVerticalLayout->addLayout(klLayout);
     pVerticalLayout->addLayout(khLayout);
-    //pVerticalLayoutLeft->addSpacing(5);
+    pVerticalLayout->addLayout(gammaLayout);
     pVerticalLayout->addWidget(m_PBClose, 0, Qt::AlignCenter | Qt::AlignBottom);
     pVerticalLayout->setMargin(10);
 
     // Main Horizontal Layout:
-    //pMainLayout->addLayout(pVerticalLayoutRight);
     pMainLayout->addLayout(pVerticalLayout);
     pMainLayout->setMargin(0);
 

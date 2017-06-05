@@ -29,63 +29,9 @@
 #ifndef _PLUGININTERFACE_H
 #define _PLUGININTERFACE_H
 
-#include "stdafx.h"
-#include "Compressonator.h"
-
-//===========================================================================================
-// START OF: BASIC PLUGIN INTERFACE ----- DO NOT CHANGE CODE BELOW FOR BACKWARD SUPPORT------
-//===========================================================================================
-
-#define TC_API_VERSION_MAJOR 1
-#define TC_API_VERSION_MINOR 4
-
-typedef struct _TC_PluginVersion
-{
-   GUID  guid;
-   DWORD dwAPIVersionMajor;         // Do not load plugin with greater API major version than app
-   DWORD dwAPIVersionMinor;
-   DWORD dwPluginVersionMajor;
-   DWORD dwPluginVersionMinor;
-} TC_PluginVersion;
-
-/// Error codes returned by application & plugin functions.
-/// We should obviously return more meaningful error codes than we currently like.
-typedef enum
-{
-    PE_OK,            ///< No error - success.
-    PE_AlreadyLoaded, ///< The plugin is already loaded. 
-    PE_Unknown,       ///< An error occured.
-} TC_PluginError;
-
-/// Indicates the error level of an error message.
-typedef enum
-{
-    EL_Error,      ///< The error message is for an error.
-    EL_Warning,    ///< The error message is for a warning.
-} TC_ErrorLevel;
-
-#define DECLARE_PLUGIN(x)         extern "C"{__declspec(dllexport) void * makePlugin()   { return new x;}}
-#define SET_PLUGIN_TYPE(x)        extern "C"{__declspec(dllexport) char * getPluginType(){ return x;}}
-#define SET_PLUGIN_NAME(x)        extern "C"{__declspec(dllexport) char * getPluginName(){ return x;}}
-
-class PluginBase 
-{
-public:
-    PluginBase(){}
-    virtual ~PluginBase(){}
-    virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
-};
-
-typedef PluginBase  *(*PLUGIN_FACTORYFUNC)();
-typedef char        *(*PLUGIN_TEXTFUNC)();
-
-//===========================================================================================
-// END OF: BASIC PLUGIN INTERFACE ----- DO NOT CHANGE CODE ABOVE FOR BACKWARD SUPPORT------
-//===========================================================================================
-
+#include "PluginBase.h"
 #include "Texture.h"
 #include "pluginManager.h"
-
 #include "MIPS.h"
 
 typedef DWORD_PTR TC_HANDLE;  ///< Generic Texture API handle
@@ -110,7 +56,6 @@ public:
     virtual int TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *srcTexture) = 0;
 };
 
-
 class PluginInterface_Codec : PluginBase
 {
 public:
@@ -118,15 +63,6 @@ public:
     virtual ~PluginInterface_Codec(){}
     virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
 };
-
-class PluginInterface_Nodes : PluginBase
-{
-public:
-    PluginInterface_Nodes() {}
-    virtual ~PluginInterface_Nodes() {}
-    virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
-};
-
 
 // These type of plugins are used to Analyze images
 class PluginInterface_Analysis : PluginBase
@@ -199,6 +135,4 @@ typedef PluginInterface_Filters*    (*PLUGIN_FACTORYFUNC_FILTERS)();
 typedef PluginInterface_Compute*    (*PLUGIN_FACTORYFUNC_COMPUTE)();
 typedef PluginInterface_Compute2*   (*PLUGIN_FACTORYFUNC_COMPUTE2)();
 typedef PluginInterface_GPUDecode*  (*PLUGIN_FACTORYFUNC_GPUDECODE)();
-typedef PluginInterface_Nodes*      (*PLUGIN_FACTORYFUNC_NODES)();
-
 #endif

@@ -526,10 +526,22 @@ void BC6HBlockEncoder::SwapIndices(int iEndPoints[MAX_SUBSETS][MAX_END_POINTS][M
 /*=================================================================
     Tranforms according to shape precission
 ==================================================================*/
-
-void BC6HBlockEncoder::TransformEndPoints(AMD_BC6H_Format &BC6H_data, int iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int oEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG],int max_subsets, int mode)
+// helper function to check transform overflow
+bool isOverflow(int endpoint, int nbit)
 {
+    int maxRange = pow(2, nbit - 1) - 1;
+    int minRange = -(pow(2, nbit - 1));
 
+    //no overflow
+    if ((endpoint >= minRange) && (endpoint <= maxRange))
+        return false;
+    else //overflow
+        return true;
+}
+
+// Bug in this code : Need to add signed bit to values
+bool BC6HBlockEncoder::TransformEndPoints(AMD_BC6H_Format &BC6H_data, int iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int oEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG],int max_subsets, int mode)
+{
     int Mask;
     if ( ModePartition[mode].transformed)
     {
@@ -538,14 +550,28 @@ void BC6HBlockEncoder::TransformEndPoints(AMD_BC6H_Format &BC6H_data, int iEndPo
         {
             Mask = MASK(ModePartition[mode].nbits);
             oEndPoints[0][0][i] = iEndPoints[0][0][i] & Mask;    // [0][A]
-
+            
             Mask = MASK(ModePartition[mode].prec[i]);
-            oEndPoints[0][1][i] = (iEndPoints[0][1][i]- iEndPoints[0][0][i]) & Mask; // [0][B] - [0][A]
+            oEndPoints[0][1][i] = iEndPoints[0][1][i]- iEndPoints[0][0][i]; // [0][B] - [0][A]
+
+            if (isOverflow(oEndPoints[0][1][i], ModePartition[mode].prec[i]))
+                return false;
+
+            oEndPoints[0][1][i] = (oEndPoints[0][1][i] & Mask);
             
             if (max_subsets > 1)
             {
-                oEndPoints[1][0][i] = (iEndPoints[1][0][i] - iEndPoints[0][0][i]) & Mask; // [1][A] - [0][A]
-                oEndPoints[1][1][i] = (iEndPoints[1][1][i] - iEndPoints[0][0][i]) & Mask; //  [1][B] - [0][A]
+                oEndPoints[1][0][i] = iEndPoints[1][0][i] - iEndPoints[0][0][i];  // [1][A] - [0][A]
+                if (isOverflow(oEndPoints[1][0][i], ModePartition[mode].prec[i]))
+                    return false;
+
+                oEndPoints[1][0][i] = (oEndPoints[1][0][i] & Mask);
+
+                oEndPoints[1][1][i] = iEndPoints[1][1][i] - iEndPoints[0][0][i];  // [1][B] - [0][A]
+                if (isOverflow(oEndPoints[1][1][i], ModePartition[mode].prec[i]))
+                    return false;
+
+                oEndPoints[1][1][i] = (oEndPoints[1][1][i] & Mask);
             }
         }
     }
@@ -567,6 +593,8 @@ void BC6HBlockEncoder::TransformEndPoints(AMD_BC6H_Format &BC6H_data, int iEndPo
             }
         }
     }
+
+    return true;
 }
 
 
@@ -1271,21 +1299,21 @@ float    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data, float  erro
             // unwanted color artifacts.
             // Check if computed channel endpoint have a wide spread between channels if not 
             // scale all the channels to a avarage so that the variance is not noticed at lower bit values
-            if (m_bAverageEndPoint)
-            {
-                AverageEndPoint(best_EndPoints[modes], SrcEndPoints, max_subsets, ModeFitOrder[modes]);
-                QuantizeEndPointToF16Prec(SrcEndPoints, F16EndPoints[modes], max_subsets, ModePartition[ModeFitOrder[modes]].nbits);
-            }
-            else
+            //if (m_bAverageEndPoint)
+            //{
+            //    AverageEndPoint(best_EndPoints[modes], SrcEndPoints, max_subsets, ModeFitOrder[modes]);
+            //    QuantizeEndPointToF16Prec(SrcEndPoints, F16EndPoints[modes], max_subsets, ModePartition[ModeFitOrder[modes]].nbits);
+            //}
+            //else
             {
                 QuantizeEndPointToF16Prec(best_EndPoints[modes], F16EndPoints[modes], max_subsets, ModePartition[ModeFitOrder[modes]].nbits);
             }
 
             // Indices data to save for given mode
             SwapIndices(F16EndPoints[modes], best_Indices[modes], BC6H_data.entryCount, max_subsets, ModeFitOrder[modes], BC6H_data.d_shape_index);
-            TransformEndPoints(BC6H_data, F16EndPoints[modes], quantEndPoints[modes], max_subsets,ModeFitOrder[modes]);
+            bool transformfit = TransformEndPoints(BC6H_data, F16EndPoints[modes], quantEndPoints[modes], max_subsets,ModeFitOrder[modes]);
             fits[modes] = endpts_fit(F16EndPoints[modes], quantEndPoints[modes], ModeFitOrder[modes],max_subsets, m_isSigned);
-            if (fits[modes])
+            if (fits[modes] && transformfit)
             {
                 numfits++;
 
@@ -1309,7 +1337,7 @@ float    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data, float  erro
 
                 // Calculate the error of the new tile vs the old tile data
                 opt_toterr[modes] = CalcShapeError(BC6H_data, uncompressed, best_Indices[modes],true);
-
+                bool transformFit = true;
                 // Save hold this mode fit data if its better than the last one checked.
                 if (opt_toterr[modes] < bestError)
                 {
@@ -1317,11 +1345,14 @@ float    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data, float  erro
                     {
                         QuantizeEndPointToF16Prec(uncompressed, F16EndPoints[modes], max_subsets, ModePartition[ModeFitOrder[modes]].nbits);
                         SwapIndices(F16EndPoints[modes], best_Indices[modes], BC6H_data.entryCount, max_subsets, ModeFitOrder[modes], BC6H_data.d_shape_index);
-                        TransformEndPoints(BC6H_data, F16EndPoints[modes], quantEndPoints[modes], max_subsets, ModeFitOrder[modes]);
+                        transformFit = TransformEndPoints(BC6H_data, F16EndPoints[modes], quantEndPoints[modes], max_subsets, ModeFitOrder[modes]);
                     }
-                    bestError = opt_toterr[modes];
-                    bestFit = modes;
-                    error = bestError;
+                    if (transformFit)
+                    {
+                        bestError = opt_toterr[modes];
+                        bestFit = modes;
+                        error = bestError;
+                    }
                 }
 
             }
@@ -1393,30 +1424,44 @@ float BC6HBlockEncoder::CompressBlock(float in[MAX_SUBSET_SIZE][MAX_DIMENSION_BI
     memset(&BC6H_data, 0, sizeof(AMD_BC6H_Format));
     memset(&best_BC6H_data, 0, sizeof(AMD_BC6H_Format));
 
+    float normalization = 1.0;  // For future use
+
     for (int i = 0; i < BC6H_MAX_SUBSET_SIZE; i++)
     {
+
             // Our Half floats will be restricted to 0x7BFF with a sign components
             // so use 0..0x7BFF and sign bit for the floats
-            if (in[i][0] < 0)
-            {
-                BC6H_data.din[i][0] = -half(abs(in[i][0])).bits();
-            }
-            else
-                BC6H_data.din[i][0] = half(in[i][0]).bits();
 
-            if (in[i][1] < 0)
+            // using if ( < 0.00001) to avoid case of values been -0.0 which is not processed when using if ( < 0)
+            if (in[i][0] < 0.00001)
             {
-                BC6H_data.din[i][1] = -half(abs(in[i][1])).bits();
+                if (m_isSigned)
+                    BC6H_data.din[i][0] = -half(abs(in[i][0] / normalization)).bits();
+                else
+                    BC6H_data.din[i][0] = 0.0;
             }
             else
-                BC6H_data.din[i][1] = half(in[i][1]).bits();
+                BC6H_data.din[i][0] = half(in[i][0] / normalization).bits();
 
-            if (in[i][2] < 0)
+            if (in[i][1] < 0.00001)
             {
-                BC6H_data.din[i][2] = -half(abs(in[i][2])).bits();
+                if (m_isSigned)
+                    BC6H_data.din[i][1] = -half(abs(in[i][1] / normalization)).bits();
+                else
+                    BC6H_data.din[i][1] = 0.0;
             }
             else
-                BC6H_data.din[i][2] = half(in[i][2]).bits();
+                BC6H_data.din[i][1] = half(in[i][1] / normalization).bits();
+
+            if (in[i][2] < 0.00001)
+            {
+                if (m_isSigned)
+                    BC6H_data.din[i][2] = -half(abs(in[i][2] / normalization)).bits();
+                else
+                    BC6H_data.din[i][2] = 0.0;
+            }
+            else
+                BC6H_data.din[i][2] = half(in[i][2] / normalization).bits();
 
             BC6H_data.din[i][3] = 0.0;
 
@@ -1439,6 +1484,7 @@ float BC6HBlockEncoder::CompressBlock(float in[MAX_SUBSET_SIZE][MAX_DIMENSION_BI
         Reserved Feature MONOSHAPE_PATTERNS
         */
     }
+
 
     if (shape_pattern == -1)
     {

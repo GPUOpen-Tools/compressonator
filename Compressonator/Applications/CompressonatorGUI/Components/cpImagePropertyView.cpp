@@ -254,6 +254,58 @@ void CImagePropertyView::OnUpdateData(QObject *data)
             QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propBitrate->propertyManager();
             setMinMaxStep(Manager, m_propBitrate, 0.00, 8.00, 0.01);
         }
+
+        // Set Defog Editing Defaults 
+        m_propDefog = m_theController->getProperty(COMPRESS_OPTIONS_DEFOG);
+        if (m_propDefog)
+        {
+            m_propDefog->setToolTip(STR_DEFOG_SETTING_HINT);
+            m_propDefog->setEnabled(true);
+            // Set  Properties for editing
+            QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propDefog->propertyManager();
+            setMinMaxStep(Manager, m_propDefog, 0.000, 0.010, 0.001);
+        }
+
+        m_propExposure = m_theController->getProperty(COMPRESS_OPTIONS_EXPOSURE);
+        if (m_propExposure)
+        {
+            m_propExposure->setToolTip(STR_EXPOSURE_SETTING_HINT);
+            m_propExposure->setEnabled(true);
+            // Set  Properties for editing
+            QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propExposure->propertyManager();
+            setMinMaxStep(Manager, m_propExposure, -10.000, 10.000, 0.125);
+        }
+
+        m_propKneeLow = m_theController->getProperty(COMPRESS_OPTIONS_KNEELOW);
+        if (m_propKneeLow)
+        {
+            m_propKneeLow->setToolTip(STR_KNEELOW_SETTING_HINT);
+            m_propKneeLow->setEnabled(true);
+            // Set  Properties for editing
+            QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propKneeLow->propertyManager();
+            setMinMaxStep(Manager, m_propKneeLow, -3.00, 3.00, 0.125);
+        }
+
+        m_propKneeHigh = m_theController->getProperty(COMPRESS_OPTIONS_KNEEHIGH);
+        if (m_propKneeHigh)
+        {
+            m_propKneeHigh->setToolTip(STR_KNEEHIGH_SETTING_HINT);
+            m_propKneeHigh->setEnabled(true);
+            // Set  Properties for editing
+            QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propKneeHigh->propertyManager();
+            setMinMaxStep(Manager, m_propKneeHigh, 3.50, 7.50, 0.125);
+        }
+
+        m_propGamma = m_theController->getProperty(COMPRESS_OPTIONS_GAMMA);
+        if (m_propGamma)
+        {
+            m_propGamma->setToolTip(STR_GAMMA_SETTING_HINT);
+            m_propGamma->setEnabled(true);
+            // Set  Properties for editing
+            QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propGamma->propertyManager();
+            setMinMaxStep(Manager, m_propGamma, 1.0, 2.6, 0.2);
+        }
+
         m_propAdaptiveColor = m_theController->getProperty(COMPRESS_OPTIONS_ADAPTIVECOLOR);
         m_propUseAlpha = m_theController->getProperty(COMPRESS_OPTIONS_USEALPHA);
         m_propNoAlpha = m_theController->getProperty(COMPRESS_OPTIONS_NOALPHA);
@@ -261,6 +313,7 @@ void CImagePropertyView::OnUpdateData(QObject *data)
         m_propChannelWeight = m_theController->getProperty(CHANNEL_WEIGHTING_CLASS_NAME);
         m_propDXT1Alpha = m_theController->getProperty(DXT1_ALPHA_CLASS_NAME);
         m_propASTCBlockRate = m_theController->getProperty(ASTC_BLOCKRATE_CLASS_NAME);
+        m_propHDRProperties = m_theController->getProperty(HDR_PROP_CLASS_NAME);
 
         m_holddata = (C_Destination_Options *)data;
         *m_C_Destination_Options << (const C_Destination_Options &)*data;
@@ -271,7 +324,7 @@ void CImagePropertyView::OnUpdateData(QObject *data)
 
         if (controllerisNULL)
         {
-            compressionValueChanged((QVariant &)m_propFormat);
+            compressionValueChanged((QVariant &)(m_C_Destination_Options->m_Compression));
             controllerisNULL = false;
         }
 
@@ -287,6 +340,12 @@ void CImagePropertyView::OnUpdateData(QObject *data)
         connect(m_data, SIGNAL(noAlphaChannel()), this, SLOT(noAlphaChannelValue()));
         connect(m_data, SIGNAL(hasAlphaChannel()), this, SLOT(hasAlphaChannelValue()));
         connect(m_data, SIGNAL(bitrateChanged( QString &, int&, int&)), this, SLOT(bitrateValueChanged(QString &, int&, int&)));
+
+        connect(m_data, SIGNAL(defogChanged(double&)), this, SLOT(defogValueChanged(double&)));
+        connect(m_data, SIGNAL(exposureChanged(double&)), this, SLOT(exposureValueChanged(double&)));
+        connect(m_data, SIGNAL(kneeLowChanged(double&)), this, SLOT(kneelowValueChanged(double&)));
+        connect(m_data, SIGNAL(kneeHighChanged(double&)), this, SLOT(kneehighValueChanged(double&)));
+        connect(m_data, SIGNAL(gammaChanged(double&)), this, SLOT(gammaValueChanged(double&)));
     }
     else
     {
@@ -329,6 +388,7 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
     bool colorWeightOptions = false;
     bool alphaChannelOptions = false;
     bool astcbitrateOptions = false;
+    bool hdrOptions = false;
     C_Destination_Options *Data = (C_Destination_Options *)m_data;
     
     C_Destination_Options::eCompression comp = (C_Destination_Options::eCompression &)value;
@@ -359,6 +419,11 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = true;
         astcbitrateOptions = false;
+        if (Data) {
+            if (Data->m_SourceIsFloatFormat) {
+                hdrOptions = true;
+            }
+        }
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A four component opaque (or 1-bit alpha) compressed texture format for Microsoft DirectX10. DXT1 identical to BC1.  Four bits per pixel.");
@@ -369,6 +434,11 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (Data) {
+            if (Data->m_SourceIsFloatFormat) {
+                hdrOptions = true;
+            }
+        }
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A four component compressed texture format with explicit alpha for Microsoft DirectX10. DXT3 identical to BC2. Eight bits per pixel.");
@@ -379,6 +449,11 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (Data) {
+            if (Data->m_SourceIsFloatFormat) {
+                hdrOptions = true;
+            }
+        }
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A four component compressed texture format with interpolated alpha for Microsoft DirectX10. DXT5 identical to BC3. Eight bits per pixel.");
@@ -388,6 +463,11 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         colorWeightOptions = false;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (Data) {
+            if (Data->m_SourceIsFloatFormat) {
+                hdrOptions = true;
+            }
+        }
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A single component compressed texture format for Microsoft DirectX10. Identical to ATI1N. Four bits per pixel.");
@@ -400,6 +480,11 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         colorWeightOptions = false;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (Data) {
+            if (Data->m_SourceIsFloatFormat) {
+                hdrOptions = true;
+            }
+        }
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A two component compressed texture format for Microsoft DirectX10. BC5 identical to ATI2N. Eight bits per pixel.");
@@ -409,6 +494,11 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         colorWeightOptions = false;
         alphaChannelOptions = false;
         astcbitrateOptions = true;
+        if (Data) {
+            if (Data->m_SourceIsFloatFormat) {
+                hdrOptions = true;
+            }
+        }
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("ASTC (Adaptive Scalable Texture Compression),lossy block-based texture compression developed with ARM.");
@@ -419,6 +509,11 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         colorWeightOptions  = false;
         alphaChannelOptions = false;
         astcbitrateOptions  = false;
+        if (Data) {
+            if (Data->m_SourceIsFloatFormat) {
+                hdrOptions = true;
+            }
+        }
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("The latest block Compression (BC) format designed to support high-quality compression of RGB and RGBA bytes color spaces.");
@@ -428,6 +523,11 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (Data) {
+            if (Data->m_SourceIsFloatFormat) {
+                hdrOptions = true;
+            }
+        }
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A compressed RGB format.");
@@ -437,6 +537,11 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (Data) {
+            if (Data->m_SourceIsFloatFormat) {
+                hdrOptions = true;
+            }
+        }
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A compressed ARGB format with explicit alpha.");
@@ -446,6 +551,11 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (Data) {
+            if (Data->m_SourceIsFloatFormat) {
+                hdrOptions = true;
+            }
+        }
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A compressed ARGB format with interpolated alpha.");
@@ -455,6 +565,11 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (Data) {
+            if (Data->m_SourceIsFloatFormat) {
+                hdrOptions = true;
+            }
+        }
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append(" DXT5 with the red component swizzled into the alpha channel. Eight bits per pixel.");
@@ -464,6 +579,11 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (Data) {
+            if (Data->m_SourceIsFloatFormat) {
+                hdrOptions = true;
+            }
+        }
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("swizzled DXT5 format with the green component swizzled into the alpha channel. Eight bits per pixel.");
@@ -473,6 +593,11 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (Data) {
+            if (Data->m_SourceIsFloatFormat) {
+                hdrOptions = true;
+            }
+        }
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append(" swizzled DXT5 format with the green component swizzled into the alpha channel & the blue component swizzled into the green channel. Eight bits per pixel.");
@@ -482,6 +607,11 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (Data) {
+            if (Data->m_SourceIsFloatFormat) {
+                hdrOptions = true;
+            }
+        }
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("swizzled DXT5 format with the green component swizzled into the alpha channel & the red component swizzled into the green channel. Eight bits per pixel.");
@@ -491,6 +621,11 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (Data) {
+            if (Data->m_SourceIsFloatFormat) {
+                hdrOptions = true;
+            }
+        }
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("swizzled DXT5 format with the blue component swizzled into the alpha channel. Eight bits per pixel.");
@@ -500,6 +635,11 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (Data) {
+            if (Data->m_SourceIsFloatFormat) {
+                hdrOptions = true;
+            }
+        }
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("two-component swizzled DXT5 format with the red component swizzled into the alpha channel & the green component in the green channel. Eight bits per pixel.");
@@ -510,6 +650,11 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         colorWeightOptions = false;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (Data) {
+            if (Data->m_SourceIsFloatFormat) {
+                hdrOptions = true;
+            }
+        }
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("ETC (Ericsson Texture Compression, lossy texture compression developed with Ericsson Research.)");
@@ -519,6 +664,7 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         colorWeightOptions = false;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        hdrOptions = false;
         break;
     }
 
@@ -540,6 +686,16 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
         m_propNoAlpha->setEnabled(alphaChannelOptions);
     if (m_propBitrate)
         m_propBitrate->setEnabled(astcbitrateOptions);
+    if (m_propDefog)
+        m_propDefog->setEnabled(hdrOptions);
+    if (m_propExposure)
+        m_propExposure->setEnabled(hdrOptions);
+    if (m_propKneeLow)
+        m_propKneeLow->setEnabled(hdrOptions);
+    if (m_propKneeHigh)
+        m_propKneeHigh->setEnabled(hdrOptions);
+    if (m_propGamma)
+        m_propGamma->setEnabled(hdrOptions);
 
     if (m_propDXT1Alpha)
     {
@@ -554,6 +710,11 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
     if (m_propChannelWeight)
     {
         m_propChannelWeight->setHidden(!colorWeightOptions);
+    }
+
+    if (m_propHDRProperties)
+    {
+        m_propHDRProperties->setHidden(!hdrOptions);
     }
 
     if (compressedOptions)
@@ -647,6 +808,95 @@ void CImagePropertyView::bitrateValueChanged(QString &actualbitrate, int&xblock,
     m_infotext->append(blockmsg);
 }
 
+//===================================================================
+// Defog value changed
+//===================================================================
+void CImagePropertyView::defogValueChanged(double& defog)
+{
+    QString msg = "";
+    QString blockmsg = "";
+    if (defog < 0.00 || defog > 0.01)
+    {
+        msg = "Invalid input. Not supported. Clamp to valid range";
+        blockmsg = "Defog value should be in range of 0.0000 to 0.0100.";
+    }
+
+    m_infotext->clear();
+    m_infotext->append(msg);
+    m_infotext->append(blockmsg);
+}
+
+//===================================================================
+//exposure value changed
+//===================================================================
+void CImagePropertyView::exposureValueChanged(double& exposure)
+{
+    QString msg = "";
+    QString blockmsg = "";
+    if (exposure < -10.0 || exposure > 10.0)
+    {
+        msg = "Invalid input. Not supported. Clamp to valid range";
+        blockmsg = "Exposure value supported is in range of -10.0 to 10.0.";
+    }
+
+    m_infotext->clear();
+    m_infotext->append(msg);
+    m_infotext->append(blockmsg);
+}
+
+//===================================================================
+// kneelow value changed
+//===================================================================
+void CImagePropertyView::kneelowValueChanged(double& kl)
+{
+    QString msg = "";
+    QString blockmsg = "";
+    if (kl < -3.00 || kl > 3.00)
+    {
+        msg = "Invalid input. Not supported. Clamp to valid range";
+        blockmsg = "Knee Low value should be in range of -3.0 to 3.0.";
+    }
+
+    m_infotext->clear();
+    m_infotext->append(msg);
+    m_infotext->append(blockmsg);
+}
+
+//===================================================================
+// knee high value changed
+//===================================================================
+void CImagePropertyView::kneehighValueChanged(double& kh)
+{
+    QString msg = "";
+    QString blockmsg = "";
+    if (kh < 3.5 || kh > 7.5)
+    {
+        msg = "Invalid input. Not supported. Clamp to valid range";
+        blockmsg = "Knee High value supported is in range of 3.5 to 7.5.";
+    }
+
+    m_infotext->clear();
+    m_infotext->append(msg);
+    m_infotext->append(blockmsg);
+}
+
+//===================================================================
+// gamma value changed
+//===================================================================
+void CImagePropertyView::gammaValueChanged(double& gamma)
+{
+    QString msg = "";
+    QString blockmsg = "";
+    if (gamma < 1.0 || gamma > 2.6)
+    {
+        msg = "Invalid input. Not supported. Clamp to valid range";
+        blockmsg = "Gamma value supported is in range of 1.0 to 2.6.";
+    }
+
+    m_infotext->clear();
+    m_infotext->append(msg);
+    m_infotext->append(blockmsg);
+}
 
 
 // -----------------------------------------------------------

@@ -28,9 +28,9 @@
 #include <Windows.h>
 #include "astc_codec_internals.h"
 #include "softfloat.h"
-#include "arm_stdint.h"
 #include <stdio.h>
 #include <math.h>
+
 typedef unsigned long   DWORD;
 typedef unsigned char   BYTE;
 
@@ -38,9 +38,6 @@ typedef unsigned char   BYTE;
 
 // Size of a compressed block in bytes : 128 bits
 #define ASTC_COMPRESSED_BLOCK_SIZE   16
-
-//How many blocks could be processed at once by every thread
-#define ASTC_MAX_BLOCKS_BATCH_SIZE 256
 
 //How many block candidates would be evaluated for every mode
 #define ASTC_SCB_CANDIDATES 4
@@ -53,10 +50,10 @@ typedef unsigned char   BYTE;
 // ASTC Specification based data
 
 // OpenGL 4.0, table 3.2 (page 162) 
-#define ASTC_GL_COMPRESSED        0x0000
-#define ASTC_GL_UNSIGNED_SHORT  0x1403
-#define ASTC_GL_HALF_FLOAT      0x140B
-#define ASTC_GL_FLOAT           0x1406
+#define ASTC_GL_COMPRESSED          0x0000
+#define ASTC_GL_UNSIGNED_SHORT      0x1403
+#define ASTC_GL_HALF_FLOAT          0x140B
+#define ASTC_GL_FLOAT               0x1406
 
 // Define this to be 1 to allow "illegal" block sizes
 #define DEBUG_ALLOW_ILLEGAL_BLOCK_SIZES 0

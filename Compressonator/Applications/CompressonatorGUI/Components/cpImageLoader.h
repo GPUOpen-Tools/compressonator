@@ -93,6 +93,7 @@ public:
     float kneeHigh;
     float exposure;
     float defog;
+    float gamma;
 
 private:
     void QImageFormatInfo(QImage *image);

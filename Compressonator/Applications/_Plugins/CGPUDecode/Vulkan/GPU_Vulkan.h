@@ -106,7 +106,11 @@ namespace GPU_Decode
         VkFormat colorformat = VK_FORMAT_B8G8R8A8_UNORM;
         // Depth format is selected during Vulkan initialization
         VkFormat depthFormat;
-        // Physical device (GPU) that Vulkan will ise
+        // number of vulkan devices
+        uint32_t gpuCount = 0;
+        // List of available vulkan devices
+        std::vector<VkPhysicalDevice> physicalDevices;
+        // Physical device (GPU) that Vulkan will use
         VkPhysicalDevice physicalDevice;
         // Stores all available memory (type) properties for the physical device
         VkPhysicalDeviceMemoryProperties deviceMemoryProperties;
@@ -147,6 +151,7 @@ namespace GPU_Decode
         VkResult createInstance(bool enableValidation);
         VkResult createDevice(VkDeviceQueueCreateInfo requestedQueues, bool enableValidation);
         bool initVulkan(bool enableValidation);
+        bool isSupportASTC();
         void submitPostPresentBarrier(VkImage image);
         void submitPrePresentBarrier(VkImage image);
         void draw();

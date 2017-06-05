@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2017  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -29,9 +29,11 @@
 #include <float.h>
 #include <math.h>
 #include "ASTC_Encode.h"
-#include "astc_codec_internals.h"
+#include "ASTC_Definitions.h"
 #include "softfloat.h"
-#include "arm_stdint.h"
+
+#include "ASTC_Encode_Kernel.h"
+#include "ASTC_Host.h"
 
 #ifdef ASTC_COMPDEBUGGER
 #include "compclient.h"
@@ -45,30 +47,39 @@ int realign_weights(astc_decode_mode decode_mode, int xdim, int ydim, int zdim, 
 #define SAFE_DELETE(x) if(x) { delete x; x = NULL;}
 #define SAFE_DELETE_ARR(x) if (x) { delete[] x; x = NULL;}
 
-
-double ASTCBlockEncoder::CompressBlock(
-    astc_codec_image *input_image,
+double ASTCBlockEncoder::CompressBlock_kernel(
+    ASTC_Encoder::astc_codec_image *input_image,
     uint8_t *bp,
-    int xdim, 
-    int ydim, 
-    int zdim, 
-    int x, 
-    int y, 
-    int z, 
-    astc_decode_mode decode_mode,
-    const error_weighting_params * ewp
-    )
+    int x,
+    int y,
+    int z,
+    ASTC_Encoder::ASTC_Encode  *ASTCEncode
+)
 {
+    //ASTC_Encoder::imageblock m_pb;
+    ASTC_Encoder::symbolic_compressed_block  scb;
 
-    swizzlepattern swz_encode = { 0, 1, 2, 3 };
-    fetch_imageblock(input_image, &m_pb, xdim, ydim, zdim, x , y, z, swz_encode);
-    
-    compress_symbolic_block(input_image, decode_mode, xdim, ydim, zdim, ewp, &m_pb, &m_scb);
+    //ASTC_Encoder::CGU_UINT pixelcount = ASTCEncode->m_ydim * ASTCEncode->m_xdim;
+    //ASTC_Encoder::fetch_imageblock(input_image, &pb, pixelcount, ASTCEncode);
 
-    m_pcb = symbolic_to_physical(xdim, ydim, zdim, &m_scb);
+    fetch_imageblock_cpu(
+        (const astc_codec_image_cpu *)input_image,
+        (imageblock_cpu *) &m_pb,
+        ASTCEncode->m_xdim,
+        ASTCEncode->m_ydim, 
+        ASTCEncode->m_zdim, 
+        x, 
+        y, 
+        z
+        );
 
-    *(physical_compressed_block *)bp = m_pcb;
+
+    ASTC_Encoder::compress_symbolic_block((ASTC_Encoder::imageblock *)&m_pb, &scb, ASTCEncode);
+    ASTC_Encoder::physical_compressed_block   pcb;
+    pcb = ASTC_Encoder::symbolic_to_physical(&scb, ASTCEncode);
+
+    *(ASTC_Encoder::physical_compressed_block *)bp = pcb;
+
     return 0.0;
 }
-
 

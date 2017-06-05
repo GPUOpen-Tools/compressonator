@@ -39,10 +39,11 @@ CImageLoader::CImageLoader()
 {
     m_CMips = new CMIPS();
     m_pluginManager = &g_pluginManager;
-    kneeLow = 0;
-    kneeHigh = 5;
-    exposure = 0;
-    defog = 0;
+    kneeLow = AMD_CODEC_KNEELOW_DEFAULT;
+    kneeHigh = AMD_CODEC_KNEEHIGH_DEFAULT;
+    exposure = AMD_CODEC_EXPOSURE_DEFAULT;
+    defog = AMD_CODEC_DEFOG_DEFAULT;
+    gamma = AMD_CODEC_GAMMA_DEFAULT;
 }
 
 CImageLoader::CImageLoader(void *plugin)
@@ -636,6 +637,14 @@ void CImageLoader::float2Pixel(float kl, float f ,float r, float g, float b, flo
 {
     BYTE r_b, g_b, b_b, a_b;
 
+    float invGamma, scale;
+    if (gamma < 1.0) {
+        gamma = 2.2;
+    }
+
+    invGamma = 1.0 / gamma;                    //for gamma correction
+    float luminance3f = powf(2, -3.5);         // always assume max intensity is 1 and 3.5f darker for scale later
+    scale = 255.0 * powf(luminance3f, invGamma);
 
     //  1) Compensate for fogging by subtracting defog
     //     from the raw pixel values.
@@ -687,19 +696,19 @@ void CImageLoader::float2Pixel(float kl, float f ,float r, float g, float b, flo
     //  5) Gamma-correct the pixel values, according to the
     //     screen's gamma.  (We assume that the gamma curve
     //     is a simple power function.)
-    r = Imath::Math<float>::pow(r, 0.4545);
-    g = Imath::Math<float>::pow(g, 0.4545);
-    b = Imath::Math<float>::pow(b, 0.4545);
-    a = Imath::Math<float>::pow(a, 2.2);
+    r = Imath::Math<float>::pow(r, invGamma);
+    g = Imath::Math<float>::pow(g, invGamma);
+    b = Imath::Math<float>::pow(b, invGamma);
+    a = Imath::Math<float>::pow(a, gamma);
 
     //  6) Scale the values such that middle gray pixels are
     //     mapped to a frame buffer value that is 3.5 f-stops
     //     below the display's maximum intensity. (84.65 if
     //     the screen's gamma is 2.2)
-    r *= 84.65;
-    g *= 84.65;
-    b *= 84.65;
-    a *= 84.65;
+    r *= scale;
+    g *= scale;
+    b *= scale;
+    a *= scale;
 
     r_b = Imath::clamp<float>(r, 0.f, 255.f);
     g_b = Imath::clamp<float>(g, 0.f, 255.f);
@@ -725,7 +734,7 @@ void CImageLoader::loadExrProperties(MipSet* mipset, int level, QImage *image)
     if (mipset->m_ChannelFormat == CF_Float32)
     {
         float *data = mipLevel->m_pfData;
-        float r, g, b, a;
+        float r = 0, g = 0, b = 0, a = 0;
         //copy pixels into image
         for (int y = 0; y < mipLevel->m_nHeight; y++) {
             for (int x = 0; x < mipLevel->m_nWidth; x++) {
@@ -764,7 +773,7 @@ void CImageLoader::loadExrProperties(MipSet* mipset, int level, QImage *image)
     {
         DWORD dwSize = mipLevel->m_dwLinearSize;
         DWORD* pSrc = mipLevel->m_pdwData;
-        float r, g, b, a;
+        float r = 0, g = 0, b = 0, a = 0;
         union { float f; int32_t i; } fi;
         float Scale = 0.0f;
         for (int y = 0; y < mipLevel->m_nHeight; y++) {

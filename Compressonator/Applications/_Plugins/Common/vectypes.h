@@ -13,8 +13,6 @@
  */ 
 /*----------------------------------------------------------------------------*/ 
 #pragma once
-#ifndef VECTYPES_H
-#define VECTYPES_H
 
 #include <string.h>
 
@@ -9776,7 +9774,6 @@ typedef vtype4 < long >long4;
 typedef vtype2 < ulong > ulong2;
 typedef vtype3 < ulong > ulong3;
 typedef vtype4 < ulong > ulong4;
-typedef vtype4 < uchar > uchar4;
 static inline float2 operator+(float2 p, float2 q)
 {
     return float2(p.x + q.x, p.y + q.y);
@@ -16210,5 +16207,3 @@ static inline ulong4 as_ulong4(ulong4 inp)
 #define wwwy wwwy()
 #define wwwz wwwz()
 #define wwww wwww()
-
-#endif

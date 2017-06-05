@@ -76,6 +76,11 @@ public:
         CompressOptions.nCompressionSpeed   = (CMP_Speed)CMP_Speed_Normal;
         CompressOptions.dwnumThreads        = 8;
         CompressOptions.fquality            = AMD_CODEC_QUALITY_DEFAULT;     // This default value is also ref by code in SDK Compress.cpp 
+        CompressOptions.fInputDefog         = AMD_CODEC_DEFOG_DEFAULT; 
+        CompressOptions.fInputExposure      = AMD_CODEC_EXPOSURE_DEFAULT; 
+        CompressOptions.fInputKneeLow       = AMD_CODEC_KNEELOW_DEFAULT; 
+        CompressOptions.fInputKneeHigh      = AMD_CODEC_KNEEHIGH_DEFAULT; 
+        CompressOptions.fInputGamma         = AMD_CODEC_GAMMA_DEFAULT;
         CompressOptions.dwmodeMask          = 0xCF;     // If you reset this default: seach for comments with dwmodeMask and change the values also
         DestFormat                          = CMP_FORMAT_Unknown;
         SourceFormat                        = CMP_FORMAT_Unknown;

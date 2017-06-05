@@ -208,7 +208,7 @@ CodecBufferType GetCodecBufferType(CMP_FORMAT format)
 //////////////////////////////////////////////////////////////////////
 
 CCodecBuffer::CCodecBuffer(
-                            CMP_BYTE nBlockHeight, CMP_BYTE nBlockWidth, CMP_BYTE nBlockDepth,
+                            CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
                             CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData)
 {
 #ifdef USE_DBGTRACE

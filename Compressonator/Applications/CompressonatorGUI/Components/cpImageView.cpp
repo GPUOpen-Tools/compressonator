@@ -111,13 +111,19 @@ void cpImageView::oncpImageViewMousePosition(QPointF *scenePos, QPointF *localPo
     }
 }
 
+#ifdef _DEBUG
+#include "cExr.h"
+#include "ImfArray.h"
+#include "ImfRgba.h"
+#endif
+
 void cpImageView::keyPressEvent(QKeyEvent *event)
 {
     if (m_acImageView == NULL) return;
     if (m_OriginalMipImages->mipset == NULL) return;
 
 #ifdef _DEBUG
-    if (event->key() == Qt::Key_Space)
+    if (event->key() == Qt::Key_Space || event->key() == Qt::Key_S)
     {
         if (m_acImageView->m_debugMode)
         {
@@ -150,35 +156,49 @@ void cpImageView::keyPressEvent(QKeyEvent *event)
             if (m_acImageView->m_debugFormat == "BC6H" || m_acImageView->m_debugFormat == "BC6H_SF")
             {
                 // Encoder input to fill with data
-                float  in[16][4];
+                CMP_FLOAT in[16][4];
                 float  dec_out[16][4];
                 BYTE   cmp_in[16];
 
                 if (m_OriginalMipImages->mipset->m_ChannelFormat == CF_Float16)
                 {
                     // Get origin data pointer
-                    WORD *data = mipLevel->m_pwData;
+                    CMP_HALF *data = mipLevel->m_phfData;
+                    half* temp = (half*)data;
+                    Array2D<Rgba> pixels(4, 4);
+                    pixels.resizeErase(4, 4);
                     int  d = 0;
                     for (int row = 0; row < 4; row++)
                     {
                         index = (row * row_stride) + start_index;
                         for (int col = 0; col < 4; col++)
-                        {
-                            in[d][0] = data[index];
-                            in[d][1] = data[index + 1];
-                            in[d][2] = data[index + 2];
-                            in[d][3] = data[index + 3];
+                        {  
+                            in[d][0] = (float)temp[index];
+                            pixels[row][col].r.setBits(data[index]);
+                            in[d][1] = (float)temp[index + 1];
+                            pixels[row][col].g.setBits(data[index+1]);
+                            in[d][2] = (float)temp[index + 2];
+                            pixels[row][col].b.setBits(data[index+2]);
+                            in[d][3] = (float)temp[index + 3];
+                            pixels[row][col].a.setBits(data[index+3]);
                             d++;
                             index += 4;
                         }
                     }
                     hasData = true;
+                    if (event->key() == Qt::Key_S)
+                    {
+                        string filename = "exr16f_srcblock_x" + to_string(XBlockNum) +"_y" + to_string(YBlockNum) + ".exr";
+                        Exr::writeRgba(filename, pixels, 4, 4);
+                    }
                 }
                 else
                 if (m_OriginalMipImages->mipset->m_ChannelFormat == CF_Float32)
                 {
                     // Get origin data pointer
                     float *data = mipLevel->m_pfData;
+                    Array2D<Rgba> pixels(4, 4);
+                    pixels.resizeErase(4, 4);
                     int  d = 0;
                     for (int row = 0; row < 4; row++)
                     {
@@ -186,14 +206,23 @@ void cpImageView::keyPressEvent(QKeyEvent *event)
                         for (int col = 0; col < 4; col++)
                         {
                             in[d][0] = data[index];
+                            pixels[row][col].r = data[index];
                             in[d][1] = data[index + 1];
+                            pixels[row][col].g = data[index+1];
                             in[d][2] = data[index + 2];
+                            pixels[row][col].b = data[index+1];
                             in[d][3] = data[index + 3];
+                            pixels[row][col].a = data[index+1];
                             d++;
                             index += 4;
                         }
                     }
                     hasData = true;
+                    if (event->key() == Qt::Key_S)
+                    {
+                        string filename = "exr32f_srcblock_" + to_string(XBlockNum) + "_y" + to_string(YBlockNum) + ".exr";
+                        Exr::writeRgba(filename, pixels, 4, 4);
+                    }
                 }
                 else
                 if (m_OriginalMipImages->mipset->m_ChannelFormat == CF_Compressed)
@@ -823,6 +852,7 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
                 connect(m_ExrProperties->exrDefogBox, SIGNAL(valueChanged(double)), m_acImageView, SLOT(onExrDefogChanged(double)));
                 connect(m_ExrProperties->exrKneeLowBox, SIGNAL(valueChanged(double)), m_acImageView, SLOT(onExrKneeLowChanged(double)));
                 connect(m_ExrProperties->exrKneeHighBox, SIGNAL(valueChanged(double)), m_acImageView, SLOT(onExrKneeHighChanged(double)));
+                connect(m_ExrProperties->exrGammaBox, SIGNAL(valueChanged(double)), m_acImageView, SLOT(onExrGammaChanged(double)));
             }
         }
     }
@@ -921,6 +951,7 @@ void cpImageView::onResetHDR(int value)
         m_ExrProperties->exrDefogBox->setValue(DEFAULT_DEFOG);
         m_ExrProperties->exrKneeLowBox->setValue(DEFAULT_KNEELOW);
         m_ExrProperties->exrKneeHighBox->setValue(DEFAULT_KNEEHIGH);
+        m_ExrProperties->exrGammaBox->setValue(DEFAULT_GAMMA);
     }
 }
 

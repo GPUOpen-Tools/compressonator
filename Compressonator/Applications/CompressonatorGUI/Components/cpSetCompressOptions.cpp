@@ -82,6 +82,11 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget *parent) :
     m_propAdaptiveColor = NULL;
     m_propUseAlpha = NULL;
     m_propNoAlpha =NULL;
+    m_propDefog = NULL;
+    m_propExposure = NULL;
+    m_propKneeLow = NULL;
+    m_propKneeHigh = NULL;
+    m_propGamma = NULL;
     m_propBitrate = NULL;
     isEditing        = false;
     isInit           = false;
@@ -161,6 +166,12 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget *parent) :
     connect(&m_data, SIGNAL(hasAlphaChannel()), this, SLOT(hasAlphaChannelValue()));
     connect(&m_data, SIGNAL(bitrateChanged(QString &, int&, int&)), this, SLOT(bitrateValueChanged(QString &, int&, int&)));
 
+    connect(&m_data, SIGNAL(defogChanged(double&)), this, SLOT(defogValueChanged(double&)));
+    connect(&m_data, SIGNAL(exposureChanged(double&)), this, SLOT(exposureValueChanged(double&)));
+    connect(&m_data, SIGNAL(kneeLowChanged(double&)), this, SLOT(kneelowValueChanged(double&)));
+    connect(&m_data, SIGNAL(kneeHighChanged(double&)), this, SLOT(kneehighValueChanged(double&)));
+    connect(&m_data, SIGNAL(gammaChanged(double&)), this, SLOT(gammaValueChanged(double&)));
+
     m_theController->setObject(&m_data, true);
 
     // Set Editing Defaults 
@@ -173,11 +184,17 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget *parent) :
     m_propAdaptiveColor = m_theController->getProperty(COMPRESS_OPTIONS_ADAPTIVECOLOR);
     m_propUseAlpha = m_theController->getProperty(COMPRESS_OPTIONS_USEALPHA);
     m_propBitrate = m_theController->getProperty(COMPRESS_OPTIONS_BITRATE);
+    m_propDefog = m_theController->getProperty(COMPRESS_OPTIONS_DEFOG);
+    m_propExposure = m_theController->getProperty(COMPRESS_OPTIONS_EXPOSURE);
+    m_propKneeLow = m_theController->getProperty(COMPRESS_OPTIONS_KNEELOW);
+    m_propKneeHigh = m_theController->getProperty(COMPRESS_OPTIONS_KNEEHIGH);
+    m_propGamma = m_theController->getProperty(COMPRESS_OPTIONS_GAMMA);
     m_propNoAlpha = m_theController->getProperty(COMPRESS_OPTIONS_NOALPHA);
     m_propDestImage = m_theController->getProperty(DESTINATION_IMAGE_CLASS_NAME);
     m_propChannelWeight = m_theController->getProperty(CHANNEL_WEIGHTING_CLASS_NAME);
     m_propDXT1Alpha     = m_theController->getProperty(DXT1_ALPHA_CLASS_NAME);
     m_propASTCBlockRate = m_theController->getProperty(ASTC_BLOCKRATE_CLASS_NAME);
+    m_propHDRProperties = m_theController->getProperty(HDR_PROP_CLASS_NAME);
 
     //=================================
     // Text View for help and Hints
@@ -310,6 +327,7 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
     bool colorWeightOptions = false;
     bool alphaChannelOptions = false;
     bool astcbitrateOptions = false;
+    bool hdrOptions = false;
 
     m_fileFormats->clear();
 
@@ -331,6 +349,16 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         m_propNoAlpha->setEnabled(true);
     if (m_propBitrate)
         m_propBitrate->setEnabled(true);
+    if (m_propDefog)
+        m_propDefog->setEnabled(true);
+    if (m_propExposure)
+        m_propExposure->setEnabled(true);
+    if (m_propKneeLow)
+        m_propKneeLow->setEnabled(true);
+    if (m_propKneeHigh)
+        m_propKneeHigh->setEnabled(true);
+    if (m_propGamma)
+        m_propGamma->setEnabled(true);
 
     switch (comp)
     {
@@ -353,6 +381,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = true;
         astcbitrateOptions = false;
+        if (m_data.m_SourceIsFloatFormat) {
+            hdrOptions = true;
+        }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
         m_infotext->clear();
@@ -365,6 +396,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (m_data.m_SourceIsFloatFormat) {
+            hdrOptions = true;
+        }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
         m_infotext->clear();
@@ -377,6 +411,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (m_data.m_SourceIsFloatFormat) {
+            hdrOptions = true;
+        }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
         m_infotext->clear();
@@ -388,6 +425,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         colorWeightOptions = false;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (m_data.m_SourceIsFloatFormat) {
+            hdrOptions = true;
+        }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
         m_infotext->clear();
@@ -402,6 +442,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         colorWeightOptions = false;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (m_data.m_SourceIsFloatFormat) {
+            hdrOptions = true;
+        }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
         m_infotext->clear();
@@ -413,6 +456,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (m_data.m_SourceIsFloatFormat) {
+            hdrOptions = true;
+        }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
         m_infotext->clear();
@@ -424,6 +470,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (m_data.m_SourceIsFloatFormat) {
+            hdrOptions = true;
+        }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
         m_infotext->clear();
@@ -435,6 +484,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (m_data.m_SourceIsFloatFormat) {
+            hdrOptions = true;
+        }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
         m_infotext->clear();
@@ -446,6 +498,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (m_data.m_SourceIsFloatFormat) {
+            hdrOptions = true;
+        }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
         m_infotext->clear();
@@ -457,6 +512,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (m_data.m_SourceIsFloatFormat) {
+            hdrOptions = true;
+        }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
         m_infotext->clear();
@@ -468,6 +526,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (m_data.m_SourceIsFloatFormat) {
+            hdrOptions = true;
+        }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
         m_infotext->clear();
@@ -479,6 +540,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (m_data.m_SourceIsFloatFormat) {
+            hdrOptions = true;
+        }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
         m_infotext->clear();
@@ -490,6 +554,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (m_data.m_SourceIsFloatFormat) {
+            hdrOptions = true;
+        }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
         m_infotext->clear();
@@ -501,6 +568,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         colorWeightOptions = true;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (m_data.m_SourceIsFloatFormat) {
+            hdrOptions = true;
+        }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
         m_infotext->clear();
@@ -512,6 +582,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         colorWeightOptions = false;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (m_data.m_SourceIsFloatFormat) {
+            hdrOptions = true;
+        }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
         m_infotext->clear();
@@ -524,6 +597,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         colorWeightOptions = false;
         alphaChannelOptions = false;
         astcbitrateOptions = false;
+        if (m_data.m_SourceIsFloatFormat) {
+            hdrOptions = true;
+        }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
         m_infotext->clear();
@@ -535,6 +611,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         colorWeightOptions = false;
         alphaChannelOptions = false;
         astcbitrateOptions = true;
+        if (m_data.m_SourceIsFloatFormat) {
+            hdrOptions = true;
+        }
         extension = "KTX";
         m_fileFormats->addItem("ASTC");
         m_fileFormats->addItem("KTX");
@@ -564,6 +643,16 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
             m_propNoAlpha->setEnabled(false);
         if (m_propBitrate)
             m_propBitrate->setEnabled(false);
+        if (m_propDefog)
+            m_propDefog->setEnabled(false);
+        if (m_propExposure)
+            m_propExposure->setEnabled(false);
+        if (m_propKneeLow)
+            m_propKneeLow->setEnabled(false);
+        if (m_propKneeHigh)
+            m_propKneeHigh->setEnabled(false);
+        if (m_propGamma)
+            m_propGamma->setEnabled(false);
 
         break;
     }
@@ -586,6 +675,16 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         m_propNoAlpha->setEnabled(alphaChannelOptions);
     if (m_propBitrate)
         m_propBitrate->setEnabled(astcbitrateOptions);
+    if (m_propDefog)
+        m_propDefog->setEnabled(hdrOptions);
+    if (m_propExposure)
+        m_propExposure->setEnabled(hdrOptions);
+    if (m_propKneeLow)
+        m_propKneeLow->setEnabled(hdrOptions);
+    if (m_propKneeHigh)
+        m_propKneeHigh->setEnabled(hdrOptions);
+    if (m_propGamma)
+        m_propGamma->setEnabled(hdrOptions);
 
     if (m_propDXT1Alpha)
     {
@@ -595,6 +694,11 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
     if (m_propASTCBlockRate)
     {
         m_propASTCBlockRate->setHidden(!astcbitrateOptions);
+    }
+
+    if (m_propHDRProperties)
+    {
+        m_propHDRProperties->setHidden(!hdrOptions);
     }
 
     if (m_propChannelWeight)
@@ -710,6 +814,96 @@ void CSetCompressOptions::bitrateValueChanged(QString &actualbitrate, int&xblock
     m_infotext->append(blockmsg);
 }
 
+//===================================================================
+// Defog value changed
+//===================================================================
+void CSetCompressOptions::defogValueChanged(double& defog)
+{
+    QString msg = "";
+    QString blockmsg = "";
+    if (defog < 0.00 || defog > 0.01)
+    {
+        msg = "Invalid input. Not supported. Clamp to valid range";
+        blockmsg = "Defog value should be in range of 0.0000 to 0.0100.";
+    }
+
+    m_infotext->clear();
+    m_infotext->append(msg);
+    m_infotext->append(blockmsg);
+}
+
+//===================================================================
+//exposure value changed
+//===================================================================
+void CSetCompressOptions::exposureValueChanged(double& exposure)
+{
+    QString msg = "";
+    QString blockmsg = "";
+    if (exposure < -10.0|| exposure > 10.0)
+    {
+        msg = "Invalid input. Not supported. Clamp to valid range";
+        blockmsg = "Exposure value supported is in range of -10.0 to 10.0.";
+    }
+
+    m_infotext->clear();
+    m_infotext->append(msg);
+    m_infotext->append(blockmsg);
+}
+
+//===================================================================
+// kneelow value changed
+//===================================================================
+void CSetCompressOptions::kneelowValueChanged(double& kl)
+{
+    QString msg = "";
+    QString blockmsg = "";
+    if (kl < -3.00 || kl > 3.00)
+    {
+        msg = "Invalid input. Not supported. Clamp to valid range";
+        blockmsg = "Knee Low value should be in range of -3.0 to 3.0.";
+    }
+
+    m_infotext->clear();
+    m_infotext->append(msg);
+    m_infotext->append(blockmsg);
+}
+
+//===================================================================
+// knee high value changed
+//===================================================================
+void CSetCompressOptions::kneehighValueChanged(double& kh)
+{
+    QString msg = "";
+    QString blockmsg = "";
+    if (kh < 3.5 || kh > 7.5)
+    {
+        msg = "Invalid input. Not supported. Clamp to valid range";
+        blockmsg = "Knee High value supported is in range of 3.5 to 7.5.";
+    }
+
+    m_infotext->clear();
+    m_infotext->append(msg);
+    m_infotext->append(blockmsg);
+}
+
+//===================================================================
+// gamma value changed
+//===================================================================
+void CSetCompressOptions::gammaValueChanged(double& gamma)
+{
+    QString msg = "";
+    QString blockmsg = "";
+    if (gamma < 1.0 || gamma > 2.6)
+    {
+        msg = "Invalid input. Not supported. Clamp to valid range";
+        blockmsg = "Gamma value supported is in range of 1.0 to 2.6.";
+    }
+  
+    m_infotext->clear();
+    m_infotext->append(msg);
+    m_infotext->append(blockmsg);
+}
+
 // -----------------------------------------------------------
 // Signaled when items focus has changed on th property view
 // ----------------------------------------
@@ -728,12 +922,37 @@ void CSetCompressOptions::oncurrentItemChanged(QtBrowserItem *item)
         m_infotext->append("Sets destination image format");
     }
     else
-        if (text.compare(COMPRESS_OPTIONS_QUALITY) == 0)
-        {
-            m_infotext->append(tr("Sets destinations image quality"));
-            m_infotext->append(tr("For low values quality will be poor and the time to process the image will be short."));
-            m_infotext->append(tr("Subsequently higher values will increase the quality and processing time"));
-        }
+    if (text.compare(COMPRESS_OPTIONS_QUALITY) == 0)
+    {
+        m_infotext->append(tr("Sets destinations image quality"));
+        m_infotext->append(tr("For low values quality will be poor and the time to process the image will be short."));
+        m_infotext->append(tr("Subsequently higher values will increase the quality and processing time"));
+    }
+    else
+    if (text.compare(COMPRESS_OPTIONS_DEFOG) == 0)
+    {
+        m_infotext->append(tr("Remove \"fog\" from Input Float type Image (range 0.0000 t0 0.0100)."));
+    }
+    else
+    if (text.compare(COMPRESS_OPTIONS_EXPOSURE) == 0)
+    {
+        m_infotext->append(tr("Exposure control for Input Float type Image (-10.0 to 10.0)."));
+    }
+    else
+    if (text.compare(COMPRESS_OPTIONS_KNEELOW) == 0)
+    {
+        m_infotext->append(tr("Pixel values between kneeHigh and kneeLow set the white level of the input image. Knee Low should be in range -3.0 to 3.0."));
+    }
+    else
+    if (text.compare(COMPRESS_OPTIONS_KNEEHIGH) == 0)
+    {
+        m_infotext->append(tr("Pixel values between kneeHigh and kneeLow set the white level of the input image. Knee High should be in range 3.5-7.5."));
+    }
+    else
+    if (text.compare(COMPRESS_OPTIONS_GAMMA) == 0)
+    {
+        m_infotext->append(tr("Gamma correction for Input Float type Image (1.0-2.6)."));
+    }
 }
 
 CSetCompressOptions::~CSetCompressOptions()
@@ -863,6 +1082,51 @@ bool CSetCompressOptions::updateDisplayContent()
         setMinMaxStep(Manager, m_propBitrate, 0.00, 8.00, 0.01);
     }
 
+    if (m_propDefog)
+    {
+        m_propDefog->setToolTip(STR_DEFOG_SETTING_HINT);
+        m_propDefog->setEnabled(true);
+        // Set  Properties for editing
+        QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propDefog->propertyManager();
+        setMinMaxStep(Manager, m_propDefog, 0.000, 0.010, 0.001);
+    }
+
+    if (m_propExposure)
+    {
+        m_propExposure->setToolTip(STR_EXPOSURE_SETTING_HINT);
+        m_propExposure->setEnabled(true);
+        // Set  Properties for editing
+        QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propExposure->propertyManager();
+        setMinMaxStep(Manager, m_propExposure, -10.000, 10.000, 0.125);
+    }
+
+    if (m_propKneeLow)
+    {
+        m_propKneeLow->setToolTip(STR_KNEELOW_SETTING_HINT);
+        m_propKneeLow->setEnabled(true);
+        // Set  Properties for editing
+        QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propKneeLow->propertyManager();
+        setMinMaxStep(Manager, m_propKneeLow, -3.00, 3.00, 0.125);
+    }
+
+    if (m_propKneeHigh)
+    {
+        m_propKneeHigh->setToolTip(STR_KNEEHIGH_SETTING_HINT);
+        m_propKneeHigh->setEnabled(true);
+        // Set  Properties for editing
+        QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propKneeHigh->propertyManager();
+        setMinMaxStep(Manager, m_propKneeHigh, 3.50, 7.50, 0.125);
+    }
+
+    if (m_propGamma)
+    {
+        m_propGamma->setToolTip(STR_GAMMA_SETTING_HINT);
+        m_propGamma->setEnabled(true);
+        // Set  Properties for editing
+        QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propGamma->propertyManager();
+        setMinMaxStep(Manager, m_propGamma, 1.0, 2.6, 0.2);
+    }
+
     if (m_propAlphaThreshold)
     {
         m_propAlphaThreshold->setToolTip(STR_ALPHATHRESHOLD_HINT);
@@ -875,16 +1139,6 @@ bool CSetCompressOptions::updateDisplayContent()
     if (m_propDestImage)
     {
         m_propDestImage->setHidden(true);
-    }
-
-    if (m_propDXT1Alpha)
-    {
-        m_propDXT1Alpha->setHidden(true);
-    }
-
-    if (m_propASTCBlockRate)
-    {
-        m_propASTCBlockRate->setHidden(true);
     }
 
     return true;

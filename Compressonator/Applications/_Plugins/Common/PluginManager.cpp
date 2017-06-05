@@ -42,6 +42,18 @@ void PluginManager::registerStaticPlugin(char *pluginType, char *pluginName, voi
     pluginRegister.push_back(curPlugin);
 }
 
+void PluginManager::registerStaticPlugin(char *pluginType, char *pluginName, char* uuid, void * makePlugin)
+{
+    PluginDetails * curPlugin = new PluginDetails();
+    curPlugin->funcHandle = reinterpret_cast<PLUGIN_FACTORYFUNC>(makePlugin);
+    curPlugin->isStatic = true;
+    curPlugin->setType(pluginType);
+    curPlugin->setName(pluginName);
+    curPlugin->setUUID(uuid);
+
+    pluginRegister.push_back(curPlugin);
+}
+
 void PluginManager::getPluginList(char * SubFolderName)
 {        
     WIN32_FIND_DATAA fd;
@@ -161,9 +173,20 @@ void PluginManager::getPluginList(char * SubFolderName)
 
                         PLUGIN_TEXTFUNC textFunc;
                         textFunc = reinterpret_cast<PLUGIN_TEXTFUNC>(GetProcAddress(dllHandle, "getPluginType"));
-                        curPlugin->setType(textFunc());
+                        if (textFunc)
+                            curPlugin->setType(textFunc());
+
                         textFunc = reinterpret_cast<PLUGIN_TEXTFUNC>(GetProcAddress(dllHandle, "getPluginName"));
-                        curPlugin->setName(textFunc());
+                        if (textFunc)
+                            curPlugin->setName(textFunc());
+                        
+                        textFunc = reinterpret_cast<PLUGIN_TEXTFUNC>(GetProcAddress(dllHandle, "getPluginUUID"));
+                        if (textFunc)
+                            curPlugin->setUUID(textFunc());
+
+                        textFunc = reinterpret_cast<PLUGIN_TEXTFUNC>(GetProcAddress(dllHandle, "getPluginCategory"));
+                        if (textFunc)
+                            curPlugin->setCategory(textFunc());
 
                         pluginRegister.push_back(curPlugin);
                     }
@@ -191,35 +214,47 @@ PluginDetails::~PluginDetails()
 
 void PluginDetails::setFileName(char * nm)
 {
-    strcpy_s(filename,MAX_PLUGIN_STRING,nm);
+    strcpy_s(filename,MAX_PLUGIN_FILENAME_STR,nm);
 }
+
 void PluginDetails::setName(char * nm)
 {
-    strcpy_s(pluginName,MAX_PLUGIN_STRING,nm);
+    strcpy_s(pluginName,MAX_PLUGIN_NAME_STR,nm);
 }
+
+void PluginDetails::setUUID(char * nm)
+{
+    strcpy_s(pluginUUID, MAX_PLUGIN_UUID_STR, nm);
+}
+
 void PluginDetails::setType(char * nm)
 {
-    strcpy_s(pluginType,MAX_PLUGIN_STRING,nm);
+    strcpy_s(pluginType,MAX_PLUGIN_TYPE_STR,nm);
+}
+
+void PluginDetails::setCategory(char * nm)
+{
+    strcpy_s(pluginCategory, MAX_PLUGIN_CATEGORY_STR, nm);
 }
 
 
-PluginBase * PluginDetails::makeNewInstance()
+void * PluginDetails::makeNewInstance()
 {
     if (isStatic)
     {
-        return funcHandle();    
+        return funcHandle();
     }
     else
     {
         if(!dllHandle) dllHandle = LoadLibraryA(filename);
 
         if(dllHandle != NULL) 
-        {                
+        {
             funcHandle = reinterpret_cast<PLUGIN_FACTORYFUNC>(GetProcAddress(dllHandle, "makePlugin"));
             if(funcHandle !=NULL)
             {
-                return funcHandle();            
-            }        
+                return funcHandle();
+            }
         }
     }
     return NULL;

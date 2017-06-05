@@ -35,11 +35,16 @@
 #include <tchar.h>
 #include <vector>
 #include <direct.h>
-#include "PluginInterface.h"
+//#include "PluginInterface.h"
+#include "PluginBase.h"
 
 using namespace std;
 
-#define MAX_PLUGIN_STRING 256
+#define MAX_PLUGIN_FILENAME_STR   512
+#define MAX_PLUGIN_NAME_STR       256
+#define MAX_PLUGIN_UUID_STR       37
+#define MAX_PLUGIN_TYPE_STR       64
+#define MAX_PLUGIN_CATEGORY_STR   64
 
 class PluginDetails
 {
@@ -48,28 +53,40 @@ class PluginDetails
         
         ~PluginDetails();
         
-        PluginBase *makeNewInstance();
+        void *makeNewInstance();
 
         void setFileName(char * nm);
-        char *getName() { return pluginName; }
-        char *getType() { return pluginType; }
-        void setName(char * nm);        
+        char *getName()         { return pluginName; }
+        char *getUUID()         { return pluginUUID; }
+        char *getType()         { return pluginType; }
+        char *getCategory()    { return pluginCategory; }
+
+        void setName(char * nm);  
+        void setUUID(char * nm);
         void setType(char * nm);
+        void setCategory(char * nm);
 
         bool                isStatic;
-        PLUGIN_FACTORYFUNC  funcHandle;        
+        PLUGIN_FACTORYFUNC  funcHandle;
         
     private:
 
         void clearMembers()
         {
-            dllHandle = NULL;
-            isStatic  = false;
+            dllHandle  = NULL;
+            isStatic   = false;
+            filename[0]   = 0;
+            pluginType[0] = 0;
+            pluginName[0] = 0;
+            pluginUUID[0] = 0;
+            pluginCategory[0] = 0;
         }
 
-        char filename[MAX_PLUGIN_STRING];
-        char pluginType[MAX_PLUGIN_STRING];
-        char pluginName[MAX_PLUGIN_STRING];
+        char filename   [MAX_PLUGIN_FILENAME_STR];
+        char pluginType [MAX_PLUGIN_TYPE_STR];
+        char pluginName [MAX_PLUGIN_NAME_STR];
+        char pluginUUID [MAX_PLUGIN_UUID_STR];
+        char pluginCategory[MAX_PLUGIN_CATEGORY_STR];
 
         HINSTANCE           dllHandle;
 
@@ -85,8 +102,9 @@ class PluginManager
         void getPluginList(char * dirPath);
 
         void registerStaticPlugin(char *pluginType, char *pluginName, void *  makePlugin);
+        void registerStaticPlugin(char *pluginType, char *pluginName, char *uuid, void *  makePlugin);
 
-        PluginBase * makeNewPluginInstance(int index)
+        void * makeNewPluginInstance(int index)
         {
             return pluginRegister.at(index)->makeNewInstance();
         }
@@ -100,6 +118,17 @@ class PluginManager
         {
             return pluginRegister.at(index)->getName();
         }
+
+
+        char * getPluginUUID(int index)
+        {
+            return pluginRegister.at(index)->getUUID();
+        }
+
+        char * getPluginCategory(int index)
+        {
+            return pluginRegister.at(index)->getCategory();
+        }
         
         char * getPluginType(int index)
         {
@@ -111,12 +140,23 @@ class PluginManager
             int numPlugins = getNumPlugins();
             for (int i=0; i< numPlugins; i++)
             {
-                //char * Type = getPluginType(i);
-                //char * Name = getPluginName(i);
                 if ( (strcmp(getPluginType(i),type) == 0) && 
                      (strcmp(getPluginName(i),name)   == 0))
                 {
                         return ( (void *)makeNewPluginInstance(i) );
+                }
+            }
+            return (NULL);
+        }
+
+        void *GetPlugin(char *uuid)
+        {
+            int numPlugins = getNumPlugins();
+            for (int i = 0; i< numPlugins; i++)
+            {
+                if (strcmp(getPluginUUID(i), uuid) == 0)
+                {
+                    return ((void *)makeNewPluginInstance(i));
                 }
             }
             return (NULL);

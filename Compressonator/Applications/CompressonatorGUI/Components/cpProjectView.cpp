@@ -501,6 +501,7 @@ void ProjectView::Tree_AddCompressFile(QTreeWidgetItem *ParentItem, QString desc
                 m_data->m_HeightStr = QString().number(m_data->m_Height) + " px";
                 m_data->m_WidthStr  = QString().number(m_data->m_Width)  + " px";
                 m_data->m_SourceIscompressedFormat = CompressedFormat(imagedata->m_Format);
+                m_data->m_SourceIsFloatFormat = FloatFormat(imagedata->m_Format);
                 m_data->m_OriginalMipImages = imagedata->m_MipImages;
 
             }
@@ -2184,6 +2185,7 @@ void ProjectView::AddSettingtoEmptyTree()
                             temp->m_setcompressoptions->m_data.m_sourceFileNamePath = m_imagefile->m_Full_Path;
                             temp->m_setcompressoptions->m_data.m_SourceImageSize = m_imagefile->m_ImageSize;
                             temp->m_setcompressoptions->m_data.m_SourceIscompressedFormat = CompressedFormat(m_imagefile->m_Format);
+                            temp->m_setcompressoptions->m_data.m_SourceIsFloatFormat = FloatFormat(m_imagefile->m_Format);
                             temp->m_setcompressoptions->m_item = Imageitem;
                             temp->m_setcompressoptions->isNoSetting = true;   
                             break;
@@ -2251,6 +2253,7 @@ void ProjectView::AddSettingtoEmptyTree()
                                 temp->m_setcompressoptions->m_data.m_sourceFileNamePath = m_imagefile->m_Full_Path;
                                 temp->m_setcompressoptions->m_data.m_SourceImageSize = m_imagefile->m_ImageSize;
                                 temp->m_setcompressoptions->m_data.m_SourceIscompressedFormat = CompressedFormat(m_imagefile->m_Format);
+                                temp->m_setcompressoptions->m_data.m_SourceIsFloatFormat = FloatFormat(m_imagefile->m_Format);
         
                                 int count = Imageitem->childCount();
         
@@ -2771,7 +2774,8 @@ void CompressFiles(
                                     if (data->m_Bitrate != setDefaultOptions.m_Bitrate)
                                     {
                                         // User Msg
-                                        QString value = data->m_correctBitrate;
+                                        //QString value = data->m_correctBitrate;
+                                        QString value = data->m_Bitrate;
                                         msgCommandLine.append(" -BlockRate ");
                                         msgCommandLine.append(value);
                                         msgCommandLine.append(" ");
@@ -2789,6 +2793,118 @@ void CompressFiles(
                                         argv.push_back(argvVec.back().data());
                                     }
                                 }
+
+                                // ==========================================
+                                // Input HDR Settings for Float->Byte process
+                                // ==========================================
+                                if (data->m_SourceIsFloatFormat && !(FloatFormat(cmp_format)))
+                                {
+                                    if (data->m_Defog != setDefaultOptions.m_Defog)
+                                    {
+                                        // User Msg
+                                        QString value = QString::number(data->m_Defog, 'f', 4);
+                                        msgCommandLine.append(" -InDefog ");
+                                        msgCommandLine.append(value);
+                                        msgCommandLine.append(" ");
+
+                                        // User Setting Text
+                                        string sdefog = "-InDefog";
+                                        argvVec.push_back(CharArray(sdefog.begin(), sdefog.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+
+                                        // User Setting Value
+                                        sdefog = value.toStdString(); //  std::to_string(data->m_Quality);
+                                        argvVec.push_back(CharArray(sdefog.begin(), sdefog.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+                                    }
+
+                                    if (data->m_Exposure != setDefaultOptions.m_Exposure)
+                                    {
+                                        // User Msg
+                                        QString value = QString::number(data->m_Exposure, 'f', 4);
+                                        msgCommandLine.append(" -InExposure ");
+                                        msgCommandLine.append(value);
+                                        msgCommandLine.append(" ");
+
+                                        // User Setting Text
+                                        string sexposure = "-InExposure";
+                                        argvVec.push_back(CharArray(sexposure.begin(), sexposure.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+
+                                        // User Setting Value
+                                        sexposure = value.toStdString(); //  std::to_string(data->m_Quality);
+                                        argvVec.push_back(CharArray(sexposure.begin(), sexposure.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+                                    }
+
+                                    if (data->m_KneeLow != setDefaultOptions.m_KneeLow)
+                                    {
+                                        // User Msg
+                                        QString value = QString::number(data->m_KneeLow, 'f', 4);
+                                        msgCommandLine.append(" -InKneeLow ");
+                                        msgCommandLine.append(value);
+                                        msgCommandLine.append(" ");
+
+                                        // User Setting Text
+                                        string skneelow = "-InKneeLow";
+                                        argvVec.push_back(CharArray(skneelow.begin(), skneelow.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+
+                                        // User Setting Value
+                                        skneelow = value.toStdString(); //  std::to_string(data->m_Quality);
+                                        argvVec.push_back(CharArray(skneelow.begin(), skneelow.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+                                    }
+
+                                    if (data->m_KneeHigh != setDefaultOptions.m_KneeHigh)
+                                    {
+                                        // User Msg
+                                        QString value = QString::number(data->m_KneeHigh, 'f', 4);
+                                        msgCommandLine.append(" -InKneeHigh ");
+                                        msgCommandLine.append(value);
+                                        msgCommandLine.append(" ");
+
+                                        // User Setting Text
+                                        string skneehigh = "-InKneeHigh";
+                                        argvVec.push_back(CharArray(skneehigh.begin(), skneehigh.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+
+                                        // User Setting Value
+                                        skneehigh = value.toStdString(); //  std::to_string(data->m_Quality);
+                                        argvVec.push_back(CharArray(skneehigh.begin(), skneehigh.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+                                    }
+
+                                    if (data->m_Gamma != setDefaultOptions.m_Gamma)
+                                    {
+                                        // User Msg
+                                        QString value = QString::number(data->m_Gamma, 'f', 4);
+                                        msgCommandLine.append(" -Gamma ");
+                                        msgCommandLine.append(value);
+                                        msgCommandLine.append(" ");
+
+                                        // User Setting Text
+                                        string sgamma = "-Gamma";
+                                        argvVec.push_back(CharArray(sgamma.begin(), sgamma.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+
+                                        // User Setting Value
+                                        sgamma = value.toStdString(); //  std::to_string(data->m_Quality);
+                                        argvVec.push_back(CharArray(sgamma.begin(), sgamma.end()));
+                                        argvVec.back().push_back(0); // Terminate String
+                                        argv.push_back(argvVec.back().data());
+                                    }
+                                }
+
 
                                 //===========================
                                 // Exporting to Batch file

@@ -38,6 +38,11 @@
 
 extern CodecType GetCodecType(CMP_FORMAT format);
 extern CMP_ERROR GetError(CodecError err);
+#ifdef ENABLE_MAKE_COMPATIBLE_API
+extern bool IsFloatFormat(CMP_FORMAT InFormat);
+extern CMP_ERROR Byte2Float(CMP_HALF* hfBlock, CMP_BYTE* cBlock, CMP_DWORD dwBlockSize);
+extern CMP_ERROR Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, CMP_Texture* srcTexture, CMP_FORMAT destFormat, const CMP_CompressOptions* pOptions);
+#endif
 extern CMP_ERROR CheckTexture(const CMP_Texture* pTexture, bool bSource);
 extern CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2, CodecType destType);
 extern CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2, CodecType destType);
@@ -421,6 +426,42 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
     assert(!IsBadWritePtr(pDestTexture->pData, pDestTexture->dwDataSize));
 #endif // !WIN32 && !_WIN64
 
+#ifdef ENABLE_MAKE_COMPATIBLE_API
+    bool srcFloat = IsFloatFormat(pSourceTexture->format);
+    bool destFloat = IsFloatFormat(pDestTexture->format);
+    
+    bool newBuffer = false;
+    if (srcFloat && !destFloat)
+    {
+        CMP_DWORD size = pSourceTexture->dwWidth * pSourceTexture->dwHeight;
+        CMP_FLOAT*pfData = new CMP_FLOAT[pSourceTexture->dwDataSize] ;
+        
+        memcpy(pfData, pSourceTexture->pData, pSourceTexture->dwDataSize);
+    
+        CMP_BYTE *byteData = new CMP_BYTE[size * 4];
+    
+        Float2Byte(byteData, pfData, pSourceTexture, pDestTexture->format, pOptions);
+    
+        delete[] pfData;
+        pSourceTexture->pData = byteData;
+     
+        pSourceTexture->format = CMP_FORMAT_ARGB_8888;
+        pSourceTexture->dwDataSize = size * 4;
+        newBuffer = true;
+    }
+
+    else if (!srcFloat && destFloat)
+    {
+        CMP_DWORD size = pSourceTexture->dwWidth * pSourceTexture->dwHeight;
+        CMP_BYTE *pbData = pSourceTexture->pData;
+        CMP_HALF *hfloatData = new CMP_HALF[size * 4];
+        Byte2Float(hfloatData, pbData, size * 4);
+        pSourceTexture->pData = (CMP_BYTE*)hfloatData;
+        pSourceTexture->format = CMP_FORMAT_ARGB_16F;
+        pSourceTexture->dwDataSize = size * 4 * 2;
+        newBuffer = true;
+    }
+#endif
     tc_err = CheckTexture(pDestTexture, false);
     if(tc_err != CMP_OK)
         return tc_err;
@@ -497,12 +538,26 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
             )
         {
             tc_err = ThreadedCompressTexture(pSourceTexture, pDestTexture, pOptions, pFeedbackProc, pUser1, pUser2, destType);
+#ifdef ENABLE_MAKE_COMPATIBLE_API
+            if (pSourceTexture->pData && newBuffer)
+            {
+                free(pSourceTexture->pData);
+                pSourceTexture->pData = NULL;
+            }
+#endif
             return tc_err;
          }
         else
 #endif // THREADED_COMPRESS
         {
             tc_err =  CompressTexture(pSourceTexture, pDestTexture, pOptions, pFeedbackProc, pUser1, pUser2, destType);
+#ifdef ENABLE_MAKE_COMPATIBLE_API
+            if (pSourceTexture->pData && newBuffer)
+            {
+                free(pSourceTexture->pData);
+                pSourceTexture->pData = NULL;
+            }
+#endif
             return tc_err;
         }
     }
@@ -513,8 +568,17 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
 
         CCodec* pCodec = CreateCodec(srcType);
         assert(pCodec);
-        if(pCodec == NULL)
+        if (pCodec == NULL)
+        {
+#ifdef ENABLE_MAKE_COMPATIBLE_API
+            if (pSourceTexture->pData && newBuffer)
+            {
+                free(pSourceTexture->pData);
+                pSourceTexture->pData = NULL;
+            }
+#endif
             return CMP_ERR_UNABLE_TO_INIT_CODEC;
+        }
 
         CodecBufferType destBufferType = GetCodecBufferType(pDestTexture->format);
 
@@ -536,6 +600,13 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
             SAFE_DELETE(pCodec);
             SAFE_DELETE(pSrcBuffer);
             SAFE_DELETE(pDestBuffer);
+#ifdef ENABLE_MAKE_COMPATIBLE_API
+            if (pSourceTexture->pData && newBuffer)
+            {
+                free(pSourceTexture->pData);
+                pSourceTexture->pData = NULL;
+            }
+#endif
             return CMP_ERR_GENERIC;
         }
 
@@ -556,6 +627,13 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
         SAFE_DELETE(pSrcBuffer);
         SAFE_DELETE(pDestBuffer);
 
+#ifdef ENABLE_MAKE_COMPATIBLE_API
+        if (pSourceTexture->pData && newBuffer)
+        {
+            free(pSourceTexture->pData);
+            pSourceTexture->pData = NULL;
+        }
+#endif
         return GetError(err1);
     }
     else // Decompressing & then compressing
@@ -570,6 +648,13 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
         {
             SAFE_DELETE(pCodecIn);
             SAFE_DELETE(pCodecOut);
+#ifdef ENABLE_MAKE_COMPATIBLE_API
+            if (pSourceTexture->pData && newBuffer)
+            {
+                free(pSourceTexture->pData);
+                pSourceTexture->pData = NULL;
+            }
+#endif
             return CMP_ERR_UNABLE_TO_INIT_CODEC;
         }
 
@@ -593,6 +678,13 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
             SAFE_DELETE(pSrcBuffer);
             SAFE_DELETE(pTempBuffer);
             SAFE_DELETE(pDestBuffer);
+#ifdef ENABLE_MAKE_COMPATIBLE_API
+            if (pSourceTexture->pData && newBuffer)
+            {
+                free(pSourceTexture->pData);
+                pSourceTexture->pData = NULL;
+            }
+#endif
             return CMP_ERR_GENERIC;
         }
 
@@ -604,6 +696,13 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
         }
         RESTORE_FP_EXCEPTIONS;
 
+#ifdef ENABLE_MAKE_COMPATIBLE_API
+        if (pSourceTexture->pData && newBuffer)
+        {
+            free(pSourceTexture->pData);
+            pSourceTexture->pData = NULL;
+        }
+#endif
         return GetError(err2);
     }
 }

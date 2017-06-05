@@ -91,6 +91,7 @@ int             AMDSaveMIPSTextureImage(const char *DestFile, MipSet *CMips, boo
 QRgb            floatToQrgba(float r, float g, float b, float a);
 
 bool            CompressedFormat(CMP_FORMAT format);
+bool            FloatFormat(CMP_FORMAT format);
 
 void            astc_find_closest_blockdim_2d(float target_bitrate, int *x, int *y, int consider_illegal);
 void            astc_find_closest_blockxy_2d(int *x, int *y, int consider_illegal);

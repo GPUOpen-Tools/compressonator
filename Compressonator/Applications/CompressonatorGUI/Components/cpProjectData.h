@@ -91,8 +91,182 @@ signals:
 
 };
 #endif
+class C_Input_HDR_Image_Properties : public QObject
+{
 
-class C_ASTC_BlockRate : public QObject
+    Q_OBJECT
+        Q_PROPERTY(double    Defog      READ getDefog       WRITE setDefog      NOTIFY defogChanged)
+        Q_PROPERTY(double    Exposure   READ getExposure    WRITE setExposure   NOTIFY exposureChanged)
+        Q_PROPERTY(double    KneeLow    READ getKneeLow     WRITE setKneeLow    NOTIFY kneeLowChanged)
+        Q_PROPERTY(double    KneeHigh   READ getKneeHigh    WRITE setKneeHigh   NOTIFY kneeHighChanged)
+        Q_PROPERTY(double    Gamma      READ getGamma       WRITE setGamma      NOTIFY gammaChanged)
+
+public:
+
+    C_Input_HDR_Image_Properties()
+    {
+        m_Defog    = AMD_CODEC_DEFOG_DEFAULT;
+        m_Exposure = AMD_CODEC_EXPOSURE_DEFAULT;
+        m_KneeLow  = AMD_CODEC_KNEELOW_DEFAULT;
+        m_KneeHigh = AMD_CODEC_KNEEHIGH_DEFAULT;
+        m_Gamma    = AMD_CODEC_GAMMA_DEFAULT;
+    }
+
+    void setDefog(double defog)
+    {
+        if (m_Defog == defog)
+            return;
+
+        if (defog < 0.000) {
+            m_Defog = 0.0000;
+        }
+        else if (defog > 0.0100) {
+            m_Defog = 0.0100;
+        }
+
+        if (m_Defog != defog)
+        {
+            m_Defog = defog;
+            m_data_has_been_changed = true;
+            emit dataChanged();
+        }
+
+        emit defogChanged(m_Defog);
+    }
+
+    void setExposure(double exposure)
+    {
+        if (m_Exposure == exposure)
+            return;
+
+        if (exposure < -10.0) {
+            m_Exposure = -10.0;
+        }
+        else if (exposure > 10.0) {
+            m_Exposure = 10.0;
+        }
+
+        if (m_Exposure != exposure)
+        {
+            m_Exposure = exposure;
+            m_data_has_been_changed = true;
+            emit dataChanged();
+        }
+
+        emit exposureChanged(m_Exposure);
+    }
+
+    void setKneeLow(double kl)
+    {
+        if (m_KneeLow == kl)
+            return;
+
+        if (kl < -3.0) {
+            m_KneeLow = -3.00;
+        }
+        else if (kl > 3.0) {
+            m_KneeLow = 3.00;
+        }
+
+        if (m_KneeLow != kl)
+        {
+            m_KneeLow = kl;
+            m_data_has_been_changed = true;
+            emit dataChanged();
+        }
+
+        emit kneeLowChanged(m_KneeLow);
+    }
+
+
+    void setKneeHigh(double kh)
+    {
+        if (m_KneeHigh == kh)
+            return;
+
+        if (kh < 3.50) {
+            m_KneeHigh = 3.50;
+        }
+        else if (kh > 7.50) {
+            m_KneeHigh = 7.50;
+        }
+
+        if (m_KneeHigh != kh)
+        {
+            m_KneeHigh = kh;
+            m_data_has_been_changed = true;
+            emit dataChanged();
+        }
+
+        emit kneeHighChanged(m_KneeHigh);
+    }
+
+    void setGamma(double gamma)
+    {
+        if (m_Gamma == gamma)
+            return;
+
+        if (gamma < 1.0) {
+            m_Gamma = 1.0;
+        }
+        else if (gamma > 2.6) {
+            m_Gamma = 2.6;
+        }
+
+        if (m_Gamma != gamma)
+        {
+            m_Gamma = gamma;
+            m_data_has_been_changed = true;
+            emit dataChanged();
+        }
+
+        emit gammaChanged(m_Gamma);
+    }
+
+    double getDefog() const
+    {
+        return m_Defog;
+    }
+
+    double getExposure() const
+    {
+        return m_Exposure;
+    }
+
+    double getKneeLow() const
+    {
+        return m_KneeLow;
+    }
+
+    double getKneeHigh() const
+    {
+        return m_KneeHigh;
+    }
+
+    double getGamma() const
+    {
+        return m_Gamma;
+    }
+
+    double m_Defog;
+    double m_Exposure;
+    double m_KneeLow;
+    double m_KneeHigh;
+    double m_Gamma;
+    bool m_data_has_been_changed;
+
+signals:
+    void defogChanged(double&);
+    void exposureChanged(double&);
+    void kneeLowChanged(double&);
+    void kneeHighChanged(double&);
+    void gammaChanged(double&);
+    void dataChanged();
+};
+
+class C_ASTC_BlockRate : 
+    public C_Input_HDR_Image_Properties
+    //public QObject
 {
    
     Q_OBJECT
@@ -398,6 +572,7 @@ signals:
 #define CHANNEL_WEIGHTING_CLASS_NAME      "Channel Weighting"
 #define DXT1_ALPHA_CLASS_NAME             "DXT1 Alpha"
 #define ASTC_BLOCKRATE_CLASS_NAME         "ASTC BlockRate"
+#define HDR_PROP_CLASS_NAME               "Input HDR Image Properties"
 
 #define DESTINATION_IMAGE_NAME            "Name"
 #define DESTINATION_IMAGE_FILESIZE        "File Size"
@@ -453,6 +628,13 @@ public:
 #define COMPRESS_OPTIONS_USEALPHA  "Use Alpha"
 #define COMPRESS_OPTIONS_NOALPHA  "No Alpha"
 #define COMPRESS_OPTIONS_BITRATE  "Bitrate"
+
+//HDR image input properties
+#define COMPRESS_OPTIONS_DEFOG  "Defog"
+#define COMPRESS_OPTIONS_EXPOSURE  "Exposure"
+#define COMPRESS_OPTIONS_KNEELOW  "KneeLow"
+#define COMPRESS_OPTIONS_KNEEHIGH  "KneeHigh"
+#define COMPRESS_OPTIONS_GAMMA "Gamma"
 
 class C_Destination_Options : public C_Destination_Image
 {
@@ -538,6 +720,7 @@ public:
         m_data_has_been_changed = false;    // Set if any data has changed value
         //m_settoUseOnlyBC6 = false;
         m_SourceIscompressedFormat = false;     // Flag indicating source is compressed format
+        m_SourceIsFloatFormat = false;
         m_SourceImageSize = 0;
         setNoAlpha(true);
     }
@@ -654,6 +837,7 @@ public:
     bool         m_isselected;
     //bool         m_settoUseOnlyBC6;
     bool         m_SourceIscompressedFormat;
+    bool         m_SourceIsFloatFormat;
     long         m_SourceImageSize;
 
     // Use this as  Read Only property. It points to the original Image used for this destination setting
@@ -683,17 +867,20 @@ private:
         }
 
         // Assign none property data used by the class
-        ds.m_compname               = obj.m_compname;
-        ds.m_destFileNamePath       = obj.m_destFileNamePath;
-        ds.m_editing                = obj.m_editing;
-        ds.m_sourceFileNamePath     = obj.m_sourceFileNamePath;
-        ds.m_iscompressedFormat     = obj.m_iscompressedFormat;
-        ds.m_data_has_been_changed  = obj.m_data_has_been_changed;
-        ds.m_SourceImageSize        = obj.m_SourceImageSize;
-        ds.X_RED                    = obj.X_RED;
-        ds.Y_GREEN                  = obj.Y_GREEN;
-        ds.Z_BLUE                   = obj.Z_BLUE;
-        ds.Threshold                = obj.Threshold;
+        ds.m_Compression              = obj.m_Compression;
+        ds.m_compname                 = obj.m_compname;
+        ds.m_destFileNamePath         = obj.m_destFileNamePath;
+        ds.m_editing                  = obj.m_editing;
+        ds.m_sourceFileNamePath       = obj.m_sourceFileNamePath;
+        ds.m_iscompressedFormat       = obj.m_iscompressedFormat;
+        ds.m_SourceIscompressedFormat = obj.m_SourceIscompressedFormat;
+        ds.m_SourceIsFloatFormat      = obj.m_SourceIsFloatFormat;
+        ds.m_data_has_been_changed    = obj.m_data_has_been_changed;
+        ds.m_SourceImageSize          = obj.m_SourceImageSize;
+        ds.X_RED                      = obj.X_RED;
+        ds.Y_GREEN                    = obj.Y_GREEN;
+        ds.Z_BLUE                     = obj.Z_BLUE;
+        ds.Threshold                  = obj.Threshold;
 
         return ds;
     }
@@ -993,6 +1180,12 @@ signals :
 #define STR_ALPHATHRESHOLD_HINT        "Alpha Threshold Range 1 to 255. Default is 128"
 
 #define STR_BITRATE_SETTING_HINT        "The maximum ASTC bitrate allowed is 8.00. The closest bitrate will be determined. Default is 8.00(4x4)"
+
+#define STR_DEFOG_SETTING_HINT        "The defog range supported is 0.000  to 0.100. Default is 0."
+#define STR_EXPOSURE_SETTING_HINT        "The exposure range supported is -10 to 10. Default is 0."
+#define STR_KNEELOW_SETTING_HINT        "The kneelow range supported is -3.0 to 3.0. Default is 0."
+#define STR_KNEEHIGH_SETTING_HINT        "The kneehigh range supported is 3.5 to 7.5. Default is 5."
+#define STR_GAMMA_SETTING_HINT        "The gamma range supported is 1 to 2.6. Default is 2.2."
 
 #define UNKNOWN_IMAGE                    " Unknown"
 #define IMAGE_TYPE_PLUGIN                "IMAGE"

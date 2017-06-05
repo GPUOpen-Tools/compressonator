@@ -16,6 +16,7 @@
 #define DEFAULT_DEFOG    0
 #define DEFAULT_KNEELOW  0
 #define DEFAULT_KNEEHIGH 5
+#define DEFAULT_GAMMA    2.2
 
 class acEXRTool : public QDialog
 {
@@ -30,10 +31,7 @@ public:
     QDoubleSpinBox *exrDefogBox;
     QDoubleSpinBox *exrKneeLowBox;
     QDoubleSpinBox *exrKneeHighBox;
-    //QSlider *exrExposure;
-    //QSlider *exrDefog;
-    //QSlider *exrKneeLow;
-    //QSlider *exrKneeHigh;
+    QDoubleSpinBox *exrGammaBox;
 
 public slots:
     void onClose();

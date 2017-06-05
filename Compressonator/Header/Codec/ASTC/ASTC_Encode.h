@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2014-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2014-2017  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 //
@@ -28,6 +28,9 @@
 #include <float.h>
 #include "ASTC_definitions.h"
 
+#include "Common_Kernel.h"
+#include "ASTC_Encode_Kernel.h"
+
 class ASTCBlockEncoder
 {
 public:
@@ -42,18 +45,14 @@ public:
     };
 
     // This routine compresses a block and returns the RMS error
-    double CompressBlock(
-        astc_codec_image *input_image,
+    double CompressBlock_kernel(
+        ASTC_Encoder::astc_codec_image *input_image,
         uint8_t *bp,
-        int xdim,
-        int ydim,
-        int zdim,
         int x,
         int y,
         int z,
-        astc_decode_mode decode_mode,
-        const error_weighting_params * ewp
-        );
+        ASTC_Encoder::ASTC_Encode  *ASTCEncode
+    );
 
 private:
     imageblock                  m_pb;

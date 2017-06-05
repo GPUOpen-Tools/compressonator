@@ -87,12 +87,6 @@
     <Filter Include="Source Files\Codec\ASTC">
       <UniqueIdentifier>{5b1bb7fd-2503-4734-9890-dd35e8267dc7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Codec\ASTC\ARM">
-      <UniqueIdentifier>{fe9259a1-9caa-4eba-9d7b-2d2e978a6b01}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Codec\ASTC\ARM">
-      <UniqueIdentifier>{9f5a7e0f-4526-4087-bcb6-c71a83bd22cb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Codec\ETC\etcpack">
       <UniqueIdentifier>{345a7045-ad74-48d1-87be-fcec3b9af93c}</UniqueIdentifier>
     </Filter>
@@ -178,81 +172,6 @@
     </ClCompile>
     <ClCompile Include="..\Source\Codec\ASTC\Codec_ASTC.cpp">
       <Filter>Source Files\Codec\ASTC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Header\Codec\ASTC\ARM\stb_image.c">
-      <Filter>Header Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_averages_and_directions.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_block_sizes2.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_color_quantize.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_color_unquantize.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_compress_symbolic.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_compute_variance.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_decompress_symbolic.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_encoding_choice_error.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_find_best_partitioning.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_ideal_endpoints_and_weights.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_image_load_store.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_integer_sequence.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_kmeans_partitioning.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_ktx_dds.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_partition_tables.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_percentile_tables.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_pick_best_endpoint_format.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_quantization.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_stb_tga.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_symbolic_physical.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_weight_align.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_weight_quant_xfer_tables.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\mathlib.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\softfloat.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Codec\ATI\Codec_ATI1N.cpp">
       <Filter>Source Files\Codec\ATI</Filter>
@@ -434,6 +353,12 @@
     <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_RGB9995EF.cpp">
       <Filter>Source Files\Codec\Buffer</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Codec\ASTC\ASTC_Encode_Kernel.cpp">
+      <Filter>Source Files\Codec\ASTC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Codec\ASTC\ASTC_Host.cpp">
+      <Filter>Source Files\Codec\ASTC</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\Source\Codec\DXTC\dxtc_v11_compress_64.asm">
@@ -458,18 +383,6 @@
     </ClInclude>
     <ClInclude Include="..\Header\Codec\ASTC\Codec_ASTC.h">
       <Filter>Header Files\Codec\ASTC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\Codec\ASTC\ARM\astc_codec_internals.h">
-      <Filter>Header Files\Codec\ASTC\ARM</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\Codec\ASTC\ARM\mathlib.h">
-      <Filter>Header Files\Codec\ASTC\ARM</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\Codec\ASTC\ARM\softfloat.h">
-      <Filter>Header Files\Codec\ASTC\ARM</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\Codec\ASTC\ARM\vectypes.h">
-      <Filter>Header Files\Codec\ASTC\ARM</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Compressonator.h">
       <Filter>Header Files</Filter>
@@ -713,6 +626,12 @@
     </ClInclude>
     <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_RGB9995EF.h">
       <Filter>Header Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Codec\ASTC\ASTC_Encode_Kernel.h">
+      <Filter>Header Files\Codec\ASTC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Codec\ASTC\ASTC_Host.h">
+      <Filter>Header Files\Codec\ASTC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

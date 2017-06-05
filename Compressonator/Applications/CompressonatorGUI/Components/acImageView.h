@@ -129,6 +129,7 @@ public slots:
     void onExrDefogChanged(double value);                     // exr defog
     void onExrKneeLowChanged(double value);                   // exr knee low
     void onExrKneeHighChanged(double value);                  // exr knee high
+    void onExrGammaChanged(double value);                     // exr gamma
     void onToggleChannelR();                                  // Channel Red
     void onToggleChannelG();                                  // Channel Green
     void onToggleChannelB();                                  // Channel Blue

@@ -874,6 +874,35 @@ void acImageView::onExrKneeHighChanged(double value)
     }
 }
 
+void acImageView::onExrGammaChanged(double value)
+{
+    // Check!
+    if (!m_imageItem) return;
+    if (m_MipImages)
+        if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
+
+    if (!m_imageloader) return;
+
+    m_imageloader->gamma = float(value);
+
+    QImage image((m_imageItem->pixmap()).toImage());
+
+    if (m_MipImages->mipset->m_compressed)
+        m_imageloader->loadExrProperties(m_MipImages->decompressedMipSet, m_currentMiplevel, &image);
+    else
+        m_imageloader->loadExrProperties(m_MipImages->mipset, m_currentMiplevel, &image);
+
+    m_imageItem->setPixmap(QPixmap::fromImage(image));
+
+    if (this->m_isDiffView)
+    {
+        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
+        {
+            this->onToggleImageBrightnessUp();
+        }
+    }
+}
+
 void acImageView::onToggleChannelR()
 {
     // Check!

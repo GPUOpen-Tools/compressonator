@@ -96,11 +96,18 @@ public:
     QtProperty         *m_propUseAlpha;
     QtProperty         *m_propNoAlpha;
     QtProperty         *m_propBitrate;
+    QtProperty         *m_propDefog;
+    QtProperty         *m_propExposure;
+    QtProperty         *m_propKneeLow;
+    QtProperty         *m_propKneeHigh;
+    QtProperty         *m_propGamma;
 
     // Property class that changed based on compression format
     QtProperty         *m_propChannelWeight;
     QtProperty         *m_propDXT1Alpha;
     QtProperty         *m_propASTCBlockRate;
+    QtProperty         *m_propHDRProperties;
+
 
 public slots:
     void OnUpdateData(QObject *data);
@@ -119,6 +126,11 @@ public slots:
     void bluewValueChanged(QVariant &value);
     void thresholdValueChanged(QVariant &value);
     void bitrateValueChanged(QString &actualbitrate, int&xblock, int&yblock);
+    void defogValueChanged(double& defog);
+    void exposureValueChanged(double& exposure);
+    void kneelowValueChanged(double& kneelow);
+    void kneehighValueChanged(double& kneehigh);
+    void gammaValueChanged(double& gamma);
     void oncurrentItemChanged(QtBrowserItem *);
     void onImageLoadStart();
     void onImageLoadDone();

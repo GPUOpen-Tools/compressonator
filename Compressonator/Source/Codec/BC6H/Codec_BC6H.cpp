@@ -149,7 +149,7 @@ bool CCodec_BC6H::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
         }
     }
     else
-        if (strcmp(pszParamName, "Exposure") == 0)
+        if (strcmp(pszParamName, "OutputExposure") == 0)
         {
             m_Exposure = std::stof(sValue);
         }
@@ -186,7 +186,7 @@ bool CCodec_BC6H::SetParameter(const CMP_CHAR* pszParamName, CODECFLOAT fValue)
     if(strcmp(pszParamName, "Quality") == 0)
         m_Quality = fValue;
     else
-    if (strcmp(pszParamName, "Exposure") == 0)
+    if (strcmp(pszParamName, "OutputExposure") == 0)
          m_Exposure = fValue;
     else
         return CCodec_DXTC::SetParameter(pszParamName, fValue);

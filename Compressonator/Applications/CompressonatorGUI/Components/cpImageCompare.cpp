@@ -43,6 +43,11 @@ CImageCompare::CImageCompare(const QString title, QString file1, QString file2, 
         custTitleBar->setTitle(title);
     }
 
+    m_imageviewFile1 = nullptr;
+    m_imageviewDiff  = nullptr;
+    m_imageviewFile2 = nullptr;
+
+
     // Add this to the class Construtor.....
     m_fileName = title;
     m_sourceFile = file1;
@@ -378,7 +383,7 @@ void CImageCompare::setHorizontalView()
 //
 bool CImageCompare::setAnalysisResultView()
 {
-    if (m_analyzed.length() < 1 || m_imageviewFile1 == NULL || m_imageviewFile2 == NULL || m_imageviewDiff==NULL)
+    if (m_analyzed.length() < 1 || m_imageviewFile1 == nullptr || m_imageviewFile2 == nullptr || m_imageviewDiff== nullptr)
     {
         return false;
     }

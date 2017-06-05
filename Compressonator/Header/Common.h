@@ -46,8 +46,7 @@ using namespace std;
 //#define BC6H_DEBUG_TO_RESULTS_TXT                   //  Generates a Results.txt file on exe working directory; MultiThreading is turned off for debuging to text file
 //#define BC6H_DECODE_DEBUG                           //  Enables debug info on decoder
 
-//#define MAKE_FORMAT_COMPATIBLE                      //  Byte<->Float to make all source and dest compatible
-//#define RGBM_BC7                                    //  Using RGBM+BC7 for HDR lightmap compression, need to uncomment MAKE_FORMAT_COMPATIBLE as well to use this
+#define ENABLE_MAKE_COMPATIBLE_API                    //  Byte<->Float to make all source and dest compatible
 //#define USE_GT
 
 // V2.4 / V2.5 features and changes
@@ -58,6 +57,5 @@ using namespace std;
 // #define SUPPORT_ETC_ALPHA                          // for ATC_RGB output enable A
 // #define SHOW_PROCESS_MEMORY                        // display available CPU process memory
 // #define USE_COMPUTE                                 // Enable compute code for compression
-
 
 #endif // !COMMON_H

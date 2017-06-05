@@ -201,7 +201,6 @@ bool GPU_Vulkan::initVulkan(bool enableValidation)
     }
 
     // Physical device
-    uint32_t gpuCount = 0;
     // Get number of available physical devices
     err = vkEnumeratePhysicalDevices(instance, &gpuCount, nullptr);
     if (err)
@@ -212,14 +211,13 @@ bool GPU_Vulkan::initVulkan(bool enableValidation)
     assert(gpuCount > 0);
 
     // Enumerate devices
-    std::vector<VkPhysicalDevice> physicalDevices(gpuCount);
+    physicalDevices.resize(gpuCount);
     err = vkEnumeratePhysicalDevices(instance, &gpuCount, physicalDevices.data());
     if (err)
     {
       vkTools::exitFatal("Could not enumerate phyiscal devices : \n" + vkTools::errorString(err), "Vulkan not Supported!");
       return false;
     }
-
 
     // use the first physical device reported, 
     // change the vector index if you have multiple Vulkan devices and want to use another one
@@ -1841,6 +1839,17 @@ void GPU_Vulkan::write(const CMP_Texture* pDestTexture) {
     vkFreeMemory(device, mappableMemory, NULL);
 }
 
+bool GPU_Vulkan::isSupportASTC() 
+{
+    VkPhysicalDeviceFeatures deviceFeature;
+    vkGetPhysicalDeviceFeatures(physicalDevice, &deviceFeature);
+
+    if (deviceFeature.textureCompressionASTC_LDR == VK_FALSE)
+        return false;
+    else
+        return true;
+}
+
 //--------------------------------------------------------------------------------------
 #pragma warning( suppress : 6262 )
 
@@ -1856,6 +1865,16 @@ CMP_ERROR WINAPI GPU_Vulkan::Decompress(
 
     if (!initVulkan(m_tenableValidation)) return CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB;
 
+    // Check for device feature for ASTC decode only
+    if (pSourceTexture->format == CMP_FORMAT_ASTC)
+    {
+        if (!isSupportASTC())
+        {
+            m_initOk = false;
+            return CMP_ERR_UNSUPPORTED_GPU_ASTC_DECODE;
+        }
+    }
+
     swapChain.initSurface(hInstance, m_hWnd, pDestTexture->format);
 
     cmp_res = prepare(pSourceTexture);
@@ -1865,6 +1884,8 @@ CMP_ERROR WINAPI GPU_Vulkan::Decompress(
         swapChain.cleanup();
         return (cmp_res);
     }
+
+   
 
 #ifdef SHOW_WINDOW
     // Activate the window -- for debug view purpose

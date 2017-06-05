@@ -1088,7 +1088,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half\half.cpp" />
-    <ClCompile Include="..\Header\Codec\ASTC\ARM\stb_image.c" />
+    <ClCompile Include="..\Source\Codec\ASTC\ASTC_Encode_Kernel.cpp" />
+    <ClCompile Include="..\Source\Codec\ASTC\ASTC_Host.cpp" />
     <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_RGB9995EF.cpp" />
     <ClCompile Include="..\Source\Codec\ETC\Codec_ETC2.cpp" />
     <ClCompile Include="..\Source\Codec\ETC\Codec_ETC2_RGB.cpp" />
@@ -1103,30 +1104,6 @@
     <ClCompile Include="..\Source\Codec\GT\Codec_GT.cpp" />
     <ClCompile Include="..\Source\Codec\GT\GT_Decode.cpp" />
     <ClCompile Include="..\Source\Codec\GT\GT_Encode.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_averages_and_directions.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_block_sizes2.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_color_quantize.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_color_unquantize.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_compress_symbolic.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_compute_variance.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_decompress_symbolic.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_encoding_choice_error.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_find_best_partitioning.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_ideal_endpoints_and_weights.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_image_load_store.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_integer_sequence.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_kmeans_partitioning.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_ktx_dds.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_partition_tables.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_percentile_tables.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_pick_best_endpoint_format.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_quantization.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_stb_tga.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_symbolic_physical.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_weight_align.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\astc_weight_quant_xfer_tables.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\mathlib.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ARM\softfloat.cpp" />
     <ClCompile Include="..\Source\Codec\ASTC\ASTC_Decode.cpp" />
     <ClCompile Include="..\Source\Codec\ASTC\ASTC_Encode.cpp" />
     <ClCompile Include="..\Source\Codec\ASTC\ASTC_Library.cpp" />
@@ -1198,15 +1175,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half\half.h" />
+    <ClInclude Include="..\Header\Codec\ASTC\ASTC_Encode_Kernel.h" />
+    <ClInclude Include="..\Header\Codec\ASTC\ASTC_Host.h" />
     <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_RGB9995EF.h" />
     <ClInclude Include="..\Header\Codec\ETC\Codec_ETC2.h" />
     <ClInclude Include="..\Header\Codec\ETC\Codec_ETC2_RGB.h" />
     <ClInclude Include="..\Header\Compressonator.h" />
     <ClInclude Include="..\Header\Compressonator_Documentation.h" />
-    <ClInclude Include="..\Header\Codec\ASTC\ARM\astc_codec_internals.h" />
-    <ClInclude Include="..\Header\Codec\ASTC\ARM\mathlib.h" />
-    <ClInclude Include="..\Header\Codec\ASTC\ARM\softfloat.h" />
-    <ClInclude Include="..\Header\Codec\ASTC\ARM\vectypes.h" />
     <ClInclude Include="..\Header\Codec\ASTC\ASTC_Decode.h" />
     <ClInclude Include="..\Header\Codec\ASTC\ASTC_Definitions.h" />
     <ClInclude Include="..\Header\Codec\ASTC\ASTC_Encode.h" />

@@ -31,16 +31,6 @@
 #include "ASTC_library.h"
 #include "ASTC_Definitions.h"
 
-#ifdef USE_OPENCL
-#include <CL\cl.h>
-
-#ifndef CL_VERSION_1_2
-#error OpenCL 1.2 or higher is needed
-#endif
-
-#endif
-
-
 class CCodec_ASTC : public CCodec_DXTC
 {
 public:
@@ -57,17 +47,6 @@ public:
 
 private:
 
-#ifdef USE_OPENCL
-    // OpenCL objects
-    cl_platform_id  m_opencl_platform;
-    cl_device_id    m_opencl_device;
-    cl_int          m_user_selected_plat_index; // if < 0 OpenCL platform will be choosen automaticaly
-    cl_int          m_user_selected_dev_index;  // if < 0 OpenCL device will be choosen automaticaly
-    cl_program      m_opencl_program;
-    cl_context      m_opencl_context;
-    BOOL            m_OCLInitialized;
-#endif
-
     // ASTC User configurable variables
     WORD    m_NumThreads;    
     char    m_BlockRate[64];
@@ -77,14 +56,10 @@ private:
     WORD     m_NumEncodingThreads;
     bool     m_AbortRequested;
 
-    int m_xdim, m_ydim, m_zdim;        // Is now implamented and set by user
-    float m_target_bitrate;
+    int m_xdim, m_ydim, m_zdim;        // Is now implamented and set by user ( defined in g_ASTCEncode )
+    float m_target_bitrate;            // defined in g_ASTCEncode 
 
-    astc_decode_mode m_decode_mode;
-    error_weighting_params m_ewp;
-    int batch_size;
-
-    // ASTC Encoders and decoders: for encoding use the interfaces below
+                                       // ASTC Encoders and decoders: for encoding use the interfaces below
     ASTCBlockDecoder*    m_decoder;
     ASTCBlockEncoder*    m_encoder[MAX_ASTC_THREADS];
 
@@ -99,15 +74,10 @@ private:
         int zdim,
         int x,
         int y,
-        int z,
-        astc_decode_mode decode_mode,
-        const error_weighting_params * ewp);
+        int z);
 
     CodecError      FinishASTCEncoding();
     CodecError      InitializeASTCLibrary();
-    CodecError      InitializeOCL();
-    void            ReleaseOCL();
-    void            InitializeASTCSettingsForSetBlockSize();
 
     // Encoder interfaces
     void find_closest_blockdim_2d(float target_bitrate, int *x, int *y, int consider_illegal);

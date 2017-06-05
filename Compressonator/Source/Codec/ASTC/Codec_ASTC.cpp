@@ -35,27 +35,12 @@
 #include "ASTC\Codec_ASTC.h"
 #include "ASTC\ASTC_library.h"
 
-#include "ASTC\ARM\arm_stdint.h"
 #include "ASTC\ARM\astc_codec_internals.h"
 #include "process.h"
 
-#ifdef ASTC_USE_OPENCL
-#include "OCL_Common.h"
-#endif
-
-#ifdef DEBUG_PRINT_DIAGNOSTICS
-    int print_diagnostics = 0;
-#endif
-
-int progress_counter_divider = 1;
-
-int rgb_force_use_of_hdr = 0;
-int alpha_force_use_of_hdr = 0;
-int perform_srgb_transform = 0;
-
 #ifdef ASTC_COMPDEBUGGER
 #include "CompClient.h"
-extern     CompViewerClient g_CompClient;
+extern    CompViewerClient g_CompClient;
 #endif
 
 //======================================================================================
@@ -94,222 +79,13 @@ CCodec_ASTC::CCodec_ASTC() : CCodec_DXTC(CT_ASTC)
     m_NumThreads            = 8;
     m_NumEncodingThreads    = m_NumThreads;
     m_EncodingThreadHandle  = NULL;
-
-#ifdef USE_OPENCL
-    m_OCLInitialized            = false;
-    m_user_selected_plat_index  = -1;
-    m_user_selected_dev_index   = -1;
-    m_opencl_context            = NULL;
-    m_opencl_program            = NULL;
-#endif
-
-    batch_size                  = ASTC_MAX_BLOCKS_BATCH_SIZE;
-
-    m_xdim                      = 4;
-    m_ydim                      = 4;
-    m_zdim                      = 1;
-    m_decode_mode               = DECODE_HDR;
-    m_decoder                   = NULL;
+    m_xdim                  = 4;
+    m_ydim                  = 4;
+    m_zdim                  = 1;
+    m_decoder               = NULL;
+    m_Quality               = 0.05;
 }
 
-
-void CCodec_ASTC::InitializeASTCSettingsForSetBlockSize()
-{
-    m_target_bitrate = 0;
-
-    int xdim_2d = m_xdim;
-    int ydim_2d = m_ydim;
-    int xdim_3d = m_xdim;
-    int ydim_3d = m_ydim;
-    int zdim_3d = m_zdim;
-
-    float log10_texels_2d = 0.0f;
-    float log10_texels_3d = 0.0f;
-
-    log10_texels_2d = log((float)(xdim_2d * ydim_2d)) / log(10.0f);
-    log10_texels_3d = log((float)(xdim_3d * ydim_3d * zdim_3d)) / log(10.0f);
-
-    int plimit_autoset = -1;
-    int plimit_user_specified = -1;
-    int plimit_set_by_user = 0;
-
-    float dblimit_autoset_2d = 0.0;
-    float dblimit_autoset_3d = 0.0;
-    float dblimit_user_specified = 0.0;
-    int dblimit_set_by_user = 0;
-
-    float oplimit_autoset = 0.0;
-    float oplimit_user_specified = 0.0;
-    int oplimit_set_by_user = 0;
-
-    float mincorrel_autoset = 0.0;
-    float mincorrel_user_specified = 0.0;
-    int mincorrel_set_by_user = 0;
-
-    float bmc_user_specified = 0.0;
-    float bmc_autoset = 0.0;
-    int bmc_set_by_user = 0;
-
-    int maxiters_user_specified = 0;
-    int maxiters_autoset = 0;
-    int maxiters_set_by_user = 0;
-
-    // Codec Speed Setting Defaults based on Quality Settings
-    //mincorrel_autoset = m_Quality;
-    //bmc_autoset = (int)(m_Quality * 100);
-
-    if (m_Quality < 0.2)
-    {
-        // Very Fast
-        plimit_autoset = 1;
-        oplimit_autoset = 1.0;
-        dblimit_autoset_2d = MAX(70 - 35 * log10_texels_2d, 53 - 19 * log10_texels_2d);
-        dblimit_autoset_3d = MAX(70 - 35 * log10_texels_3d, 53 - 19 * log10_texels_3d);
-        bmc_autoset = 5;
-        mincorrel_autoset = m_Quality;
-        maxiters_autoset = 1;
-    }
-    else
-    if (m_Quality < 0.5)
-    {
-        // Medium speed setting
-        plimit_autoset = 2;
-        oplimit_autoset = 1.0;
-        mincorrel_autoset = m_Quality;
-        dblimit_autoset_2d = MAX(85 - 35 * log10_texels_2d, 63 - 19 * log10_texels_2d);
-        dblimit_autoset_2d = MAX(85 - 35 * log10_texels_3d, 63 - 19 * log10_texels_3d);
-        bmc_autoset = 15;
-        maxiters_autoset = 1;
-    }
-    else
-    if (m_Quality < 0.8)
-    {
-        // Thorough
-        plimit_autoset = 15;
-        oplimit_autoset = 1.0;
-        mincorrel_autoset = 0.5;
-        dblimit_autoset_2d = MAX(85 - 35 * log10_texels_2d, 63 - 19 * log10_texels_2d);
-        dblimit_autoset_2d = MAX(85 - 35 * log10_texels_3d, 63 - 19 * log10_texels_3d);
-        bmc_autoset = 25;
-        maxiters_autoset = 1;
-    }
-    else
-        {
-            // Exhaustive
-            plimit_autoset = 10;
-            oplimit_autoset = 1.0;
-            mincorrel_autoset = 0.5;
-            dblimit_autoset_2d = MAX(85 - 35 * log10_texels_2d, 63 - 19 * log10_texels_2d);
-            dblimit_autoset_2d = MAX(85 - 35 * log10_texels_3d, 63 - 19 * log10_texels_3d);
-            bmc_autoset = 50;
-            maxiters_autoset = 1;
-        }
-
-
-//        else
-//            if (m_Quality < 0.6)
-//            {
-//                // Medium speed setting
-//                plimit_autoset = 25;
-//                oplimit_autoset = 1.2f;
-//                mincorrel_autoset = 0.75f;
-//                dblimit_autoset_2d = MAX(95 - 35 * log10_texels_2d, 70 - 19 * log10_texels_2d);
-//                dblimit_autoset_3d = MAX(95 - 35 * log10_texels_3d, 70 - 19 * log10_texels_3d);
-//                bmc_autoset = 75;
-//                maxiters_autoset = 2;
-//            }
-//            else
-//                if (m_Quality < 0.8)
-//                {
-//                    // Thorough
-//                    plimit_autoset = 100;
-//                    oplimit_autoset = 2.5f;
-//                    mincorrel_autoset = 0.95f;
-//                    dblimit_autoset_2d = MAX(105 - 35 * log10_texels_2d, 77 - 19 * log10_texels_2d);
-//                    dblimit_autoset_3d = MAX(105 - 35 * log10_texels_3d, 77 - 19 * log10_texels_3d);
-//                    bmc_autoset = 95;
-//                    maxiters_autoset = 4;
-//                }
-//                else
-//                {
-//                    // Exhaustive
-//                    plimit_autoset = PARTITION_COUNT;
-//                    oplimit_autoset = 1000.0f;
-//                    mincorrel_autoset = 0.99f;
-//                    dblimit_autoset_2d = 999.0f;
-//                    dblimit_autoset_3d = 999.0f;
-//                    bmc_autoset = 100;
-//                    maxiters_autoset = 4;
-//                }
-
-    float texel_avg_error_limit_2d = 0.0f;
-    float texel_avg_error_limit_3d = 0.0f;
-
-    int partitions_to_test = plimit_set_by_user ? plimit_user_specified : plimit_autoset;
-    float dblimit_2d = dblimit_set_by_user ? dblimit_user_specified : dblimit_autoset_2d;
-    float dblimit_3d = dblimit_set_by_user ? dblimit_user_specified : dblimit_autoset_3d;
-    float oplimit = oplimit_set_by_user ? oplimit_user_specified : oplimit_autoset;
-    float mincorrel = mincorrel_set_by_user ? mincorrel_user_specified : mincorrel_autoset;
-
-    m_ewp.rgb_power = 1.0f;
-    m_ewp.alpha_power = 1.0f;
-    m_ewp.rgb_base_weight = 1.0f;
-    m_ewp.alpha_base_weight = 1.0f;
-    m_ewp.rgb_mean_weight = 0.0f;
-    m_ewp.rgb_stdev_weight = 0.0f;
-    m_ewp.alpha_mean_weight = 0.0f;
-    m_ewp.alpha_stdev_weight = 0.0f;
-
-    m_ewp.rgb_mean_and_stdev_mixing = 0.0f;
-    m_ewp.mean_stdev_radius = 0;
-    m_ewp.enable_rgb_scale_with_alpha = 0;
-    m_ewp.alpha_radius = 0;
-
-    m_ewp.block_artifact_suppression = 0.0f;
-    m_ewp.rgba_weights[0] = 1.0f;
-    m_ewp.rgba_weights[1] = 1.0f;
-    m_ewp.rgba_weights[2] = 1.0f;
-    m_ewp.rgba_weights[3] = 1.0f;
-    m_ewp.ra_normal_angular_scale = 0;
-    
-    int maxiters = maxiters_set_by_user ? maxiters_user_specified : maxiters_autoset;
-    m_ewp.max_refinement_iters = maxiters;
-
-    m_ewp.block_mode_cutoff = (bmc_set_by_user ? bmc_user_specified : bmc_autoset) / 100.0f;
-
-    if (rgb_force_use_of_hdr == 0)
-    {
-        texel_avg_error_limit_2d = pow(0.1f, dblimit_2d * 0.1f) * 65535.0f * 65535.0f;
-        texel_avg_error_limit_3d = pow(0.1f, dblimit_3d * 0.1f) * 65535.0f * 65535.0f;
-    }
-    else
-    {
-        texel_avg_error_limit_2d = 0.0f;
-        texel_avg_error_limit_3d = 0.0f;
-    }
-    m_ewp.partition_1_to_2_limit = oplimit;
-    m_ewp.lowest_correlation_cutoff = mincorrel;
-
-    if (partitions_to_test < 1)
-        partitions_to_test = 1;
-    else if (partitions_to_test > PARTITION_COUNT)
-        partitions_to_test = PARTITION_COUNT;
-    m_ewp.partition_search_limit = partitions_to_test;
-
-    // Specifying the error weight of a color component as 0 is not allowed.
-    // If weights are 0, then they are instead set to a small positive value.
-
-    float max_color_component_weight = MAX(MAX(m_ewp.rgba_weights[0], m_ewp.rgba_weights[1]), MAX(m_ewp.rgba_weights[2], m_ewp.rgba_weights[3]));
-    m_ewp.rgba_weights[0] = MAX(m_ewp.rgba_weights[0], max_color_component_weight / 1000.0f);
-    m_ewp.rgba_weights[1] = MAX(m_ewp.rgba_weights[1], max_color_component_weight / 1000.0f);
-    m_ewp.rgba_weights[2] = MAX(m_ewp.rgba_weights[2], max_color_component_weight / 1000.0f);
-    m_ewp.rgba_weights[3] = MAX(m_ewp.rgba_weights[3], max_color_component_weight / 1000.0f);
-
-    // Allocate arrays for image data and load results.
-    m_ewp.texel_avg_error_limit = texel_avg_error_limit_2d;
-
-    expand_block_artifact_suppression(m_xdim, m_ydim, m_zdim, &m_ewp);
-}
 
 CCodec_ASTC::~CCodec_ASTC()
 {
@@ -386,23 +162,6 @@ CCodec_ASTC::~CCodec_ASTC()
 
         m_LibraryInitialized = false;
     }
-}
-
-void CCodec_ASTC::ReleaseOCL()
-{
-#ifdef ASTC_USE_OPENCL
-#endif
-}
-
-CodecError CCodec_ASTC::InitializeOCL()
-{
-#ifdef ASTC_USE_OPENCL
-    if (!m_OCLInitialized)
-    {
-        m_OCLInitialized = true;
-    }
-#endif
-    return CE_OK;
 }
 
 
@@ -572,6 +331,10 @@ bool CCodec_ASTC::SetParameter(const CMP_CHAR* pszParamName, CODECFLOAT fValue)
 // it should set the exit flag in the parameters to allow the tread to quit
 //
 
+#include "ASTC_Host.h"
+ASTC_Encoder::ASTC_Encode  g_ASTCEncode;
+
+
 unsigned int    _stdcall ASTCThreadProcEncode(void* param)
 {
     ASTCEncodeThreadParam *tp = (ASTCEncodeThreadParam*)param;
@@ -580,18 +343,18 @@ unsigned int    _stdcall ASTCThreadProcEncode(void* param)
     {
         if (tp->run == TRUE)
         {
-            tp->encoder->CompressBlock(
-                tp->input_image,
+            g_ASTCEncode.m_xdim = tp->xdim;
+            g_ASTCEncode.m_ydim = tp->ydim;
+            g_ASTCEncode.m_zdim = tp->zdim;
+
+            tp->encoder->CompressBlock_kernel(
+                (ASTC_Encoder::astc_codec_image *)tp->input_image,
                 tp->bp,
-                tp->xdim,
-                tp->ydim,
-                tp->zdim,
                 tp->x,
                 tp->y,
                 tp->z,
-                tp->decode_mode,
-                tp->ewp
-            );
+                &g_ASTCEncode);
+
             tp->run = FALSE;
         }
         Sleep(0);
@@ -600,15 +363,21 @@ unsigned int    _stdcall ASTCThreadProcEncode(void* param)
     return 0;
 }
 
+
 CodecError CCodec_ASTC::InitializeASTCLibrary()
 {
     if (!m_LibraryInitialized)
     {
-
-        //====================== From ASTC main app code ================================
-        // initialization routines
-        prepare_angular_tables();               // ARM - ASTC code
-        build_quantization_mode_table();        // ARM - ASTC code
+        g_ASTCEncode.m_decode_mode              = ASTC_Encoder::DECODE_HDR;
+        g_ASTCEncode.m_rgb_force_use_of_hdr     = 0;
+        g_ASTCEncode.m_alpha_force_use_of_hdr   = 0;
+        g_ASTCEncode.m_perform_srgb_transform   = 0;
+        g_ASTCEncode.m_Quality                  = (float)m_Quality;
+        g_ASTCEncode.m_target_bitrate           = m_target_bitrate;
+        g_ASTCEncode.m_xdim = m_xdim;
+        g_ASTCEncode.m_ydim = m_ydim;
+        g_ASTCEncode.m_zdim = m_zdim;
+        ASTC_Encoder::init_ASTC(&g_ASTCEncode);
 
         //====================== Threads
         for (DWORD i = 0; i < MAX_ASTC_THREADS; i++)
@@ -719,9 +488,7 @@ CodecError CCodec_ASTC::EncodeASTCBlock(
     int zdim,
     int x,
     int y,
-    int z,
-    astc_decode_mode decode_mode,
-    const error_weighting_params * ewp)
+    int z)
 {
     if (m_Use_MultiThreading)
     {
@@ -760,25 +527,22 @@ CodecError CCodec_ASTC::EncodeASTCBlock(
         g_EncodeParameterStorage[threadIndex].x = x;
         g_EncodeParameterStorage[threadIndex].y = y;
         g_EncodeParameterStorage[threadIndex].z = z;
-        g_EncodeParameterStorage[threadIndex].decode_mode = decode_mode;
-        g_EncodeParameterStorage[threadIndex].ewp = ewp;
-
         // Tell the thread to start working
         g_EncodeParameterStorage[threadIndex].run = TRUE;
     }
     else
     {
-        m_encoder[0]->CompressBlock(
-            input_image,
-            bp,
-            xdim,
-            ydim,
-            zdim,
+        g_ASTCEncode.m_xdim = xdim;
+        g_ASTCEncode.m_ydim = ydim;
+        g_ASTCEncode.m_zdim = zdim;
+
+        m_encoder[0]->CompressBlock_kernel(
+            (ASTC_Encoder::astc_codec_image *)input_image, 
+            bp, 
             x,
             y,
             z,
-            decode_mode,
-            ewp);
+            &g_ASTCEncode);
     }
     return CE_OK;
 }
@@ -837,13 +601,15 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
 {
     m_AbortRequested = false;
 
+    int xsize = bufferIn.GetWidth();
+    int ysize = bufferIn.GetHeight();
+    int zsize = 1; //todo: add depth to support 3d textures
+    m_xdim = bufferOut.GetBlockWidth();
+    m_ydim = bufferOut.GetBlockHeight();
+    m_zdim = 1;
+
     CodecError err = InitializeASTCLibrary();
     if (err != CE_OK) return err;
-
-#ifdef ASTC_USE_OPENCL
-    err = InitializeOCL();
-    if (err != CE_OK) return err;
-#endif
 
 #ifdef ASTC_COMPDEBUGGER
     CompViewerClient    g_CompClient;
@@ -863,10 +629,6 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
     DbgTrace(("OUT: BufferType %d ChannelCount %d ChannelDepth %d", bufferOut.GetBufferType(), bufferOut.GetChannelCount(), bufferOut.GetChannelDepth()));
     DbgTrace(("   : Height %d Width %d Pitch %d isFloat %d", bufferOut.GetHeight(), bufferOut.GetWidth(), bufferOut.GetWidth(), bufferOut.IsFloat()));
 #endif;
-
-    int xsize = bufferIn.GetWidth();
-    int ysize = bufferIn.GetHeight();
-    int zsize = 1; //todo: add depth to support 3d textures
 
 
     int bitness = 0; //todo: replace astc_codec_image with bufferIn and rewrite fetch_imageblock()
@@ -905,12 +667,10 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
     if (bitness != 8)
         assert("Unsupported type of input buffer");
 
-    astc_codec_image *input_image = allocate_image(bitness, xsize, ysize, zsize, 0);
+    astc_codec_image_cpu *input_image = allocate_image_cpu(bitness, xsize, ysize, zsize, 0);
 
     if (!input_image)
         assert("Unable to allocate image buffer");
-
-    InitializeASTCSettingsForSetBlockSize();
 
     // Loop through the original input image and setup compression threads for each 
     // block to encode  we will load the buffer to pass to ASTC code as 8 bit 4x4 blocks
@@ -940,17 +700,13 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
     int zdim = m_zdim;
     uint8_t *bufferOutput = bufferOut.GetData();
 
-#ifdef USE_ARM_CODE
-    astc_decode_mode decode_mode = m_decode_mode;
-    const error_weighting_params *ewp = &m_ewp;
-#endif
-
     // Common ARM and Compressonator Code
     int x, y, z, i;
     int xblocks = (xsize + xdim - 1) / xdim;
     int yblocks = (ysize + ydim - 1) / ydim;
     int zblocks = (zsize + zdim - 1) / zdim;
     float TotalBlocks = (float) (yblocks * xblocks);
+    int processingBlock = 0;
 
     for (z = 0; z < zblocks; z++)
     {
@@ -960,12 +716,13 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
             {
                 int offset = ((z * yblocks + y) * xblocks + x) * 16;
                 uint8_t *bp = bufferOutput + offset;
-                EncodeASTCBlock(input_image, bp, xdim, ydim, zdim, x * xdim, y * ydim, z * zdim, decode_mode, ewp);
+                EncodeASTCBlock((astc_codec_image *)input_image, bp, xdim, ydim, zdim, x * xdim, y * ydim, z * zdim);
+                processingBlock++;
             }
 
             if (pFeedbackProc)
             {
-                float fProgress = 100.f * ((float)(y * yblocks) / TotalBlocks);
+                float fProgress = 100.f * ((float)(processingBlock) / TotalBlocks);
                 if (pFeedbackProc(fProgress, pUser1, pUser2))
                 {
                     result = CE_Aborted;
@@ -981,7 +738,7 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
     if (result != CE_Aborted)
         result = EncodeResult;
 
-    destroy_image(input_image);
+    destroy_image_cpu(input_image);
 
 #ifdef ASTC_COMPDEBUGGER
     g_CompClient.disconnect();
@@ -995,6 +752,10 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
 //
 CodecError CCodec_ASTC::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
 {
+    m_xdim = bufferIn.GetBlockWidth();
+    m_ydim = bufferIn.GetBlockHeight();
+    m_zdim = 1;
+
     CodecError err = InitializeASTCLibrary();
     if (err != CE_OK) return err;
 

@@ -106,11 +106,19 @@ private:
     QtProperty                  *m_propBitrate;
     QtProperty                  *m_propFormat;
 
+    // Options for input HDR image properties
+    QtProperty                  *m_propDefog;
+    QtProperty                  *m_propExposure;
+    QtProperty                  *m_propKneeLow;
+    QtProperty                  *m_propKneeHigh;
+    QtProperty                  *m_propGamma;
+
     // Property class that changed based on compression format
     QtProperty                  *m_propDestImage;
     QtProperty                  *m_propChannelWeight;
     QtProperty                  *m_propDXT1Alpha;
     QtProperty                  *m_propASTCBlockRate;
+    QtProperty                  *m_propHDRProperties;
 
     
 signals:
@@ -134,6 +142,11 @@ public Q_SLOTS:
 
     void    qualityValueChanged(QVariant &value);
     void    bitrateValueChanged(QString &actualbitrate, int&xblock, int&yblock);
+    void    defogValueChanged(double& defog);
+    void    exposureValueChanged(double& exposure);
+    void    kneelowValueChanged(double& kneelow);
+    void    kneehighValueChanged(double& kneehigh);
+    void    gammaValueChanged(double& gamma);
     void    oncurrentItemChanged(QtBrowserItem *);
 
 

@@ -1648,6 +1648,11 @@ void cpMainComponents::AddImageDiff(C_Destination_Options *destination, QString 
             deleteImageAct->setEnabled(false);
         }
 
+        if (m_CompressStatusDialog)
+        {
+            m_CompressStatusDialog->onClearText();
+            m_CompressStatusDialog->showOutput();
+        }
 
         showProgressBusy("Loading Image Differance...Please wait");
 
@@ -1748,8 +1753,6 @@ void cpMainComponents::AddImageDiff(C_Destination_Options *destination, QString 
 
         emit OnImageLoadDone();
 
-        //if (compressAct)
-        //    compressAct->setEnabled(isComp);
         if (imagediffAct)
             imagediffAct->setEnabled(isComp);
         if (deleteImageAct)
@@ -1818,8 +1821,6 @@ void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
 
     m_setcompressoptions->m_data.init();
 
-    emit m_setcompressoptions->m_data.compressionChanged((QVariant &)m_setcompressoptions->m_data.m_Compression);
-
     // Obtain the Parent and its data
     QTreeWidgetItem *parent = item->parent();
     if (parent)
@@ -1836,6 +1837,7 @@ void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
             m_setcompressoptions->m_data.m_sourceFileNamePath = m_imagefile->m_Full_Path;
             m_setcompressoptions->m_data.m_SourceImageSize    = m_imagefile->m_ImageSize;
             m_setcompressoptions->m_data.m_SourceIscompressedFormat = CompressedFormat(m_imagefile->m_Format);
+            m_setcompressoptions->m_data.m_SourceIsFloatFormat = FloatFormat(m_imagefile->m_Format);
 
             // Used to append to name - for unique name
             // There is still chances of duplucate names, but it will not effect
@@ -1866,6 +1868,7 @@ void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
             m_setcompressoptions->m_data.m_sourceFileNamePath = m_imagefile->m_Full_Path;
             m_setcompressoptions->m_data.m_SourceImageSize = m_imagefile->m_ImageSize;
             m_setcompressoptions->m_data.m_SourceIscompressedFormat = CompressedFormat(m_imagefile->m_Format);
+            m_setcompressoptions->m_data.m_SourceIsFloatFormat = FloatFormat(m_imagefile->m_Format);
 
             // Used to append to name - for unique name
             // There is still chances of duplucate names, but it will not effect
@@ -1886,6 +1889,8 @@ void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
 
     m_setcompressoptions->m_data.m_editing = false;
     m_setcompressoptions->m_item = item;                    
+
+    emit m_setcompressoptions->m_data.compressionChanged((QVariant &)m_setcompressoptions->m_data.m_Compression);
 
     if (m_setcompressoptions->updateDisplayContent())
     {
