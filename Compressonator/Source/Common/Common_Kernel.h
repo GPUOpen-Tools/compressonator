@@ -25,8 +25,8 @@
 // THE SOFTWARE.
 //
 //
-//  File Name:   Codec_ASTC.cpp
-//  Description: implementation of the CCodec_ASTC class
+//  File Name:   Common_Kernel.h
+//  Description: common options used to set parameter for compress format
 //
 //////////////////////////////////////////////////////////////////////////////
 
