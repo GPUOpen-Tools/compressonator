@@ -648,90 +648,93 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1, const char * in2, const cha
             return -1;
         }
 
-        diffImage = new QImage(w, h, QImage::Format_ARGB32);
-    
         if (cmipImages == NULL) //cmdline enable both ssim and psnr
         {
-            bool testpassed = psnr(srcImage, destImage, report.data, pFeedbackProc);
-
-            if (!testpassed)
+            if ((strcmp(resultsFile, "") != 0))
             {
-                printf("Error: Images analysis fail\n");
-                return -1;
-            }
+                bool testpassed = psnr(srcImage, destImage, report.data, pFeedbackProc);
 
-
-            cv::Mat srcimg = QtOcv::image2Mat(*srcImage);
-            cv::Mat destimg = QtOcv::image2Mat(*destImage);
-
-            IplImage cv_srcimage;
-            IplImage cv_destimage;
-
-            cv_srcimage = srcimg;
-            cv_destimage = destimg;
-
-            if (!&cv_srcimage || !&cv_destimage)
-            {
-                printf("Error: Images fail to allocate for ssim analysis\n");
-                return -1;
-            }
-            //#ifdef _DEBUG
-            //        cvSaveImage("source.bmp", &cv_srcimage);
-            //        cvSaveImage("dest.bmp", &cv_destimage);
-            //#endif
-
-            int size = srcimg.rows *srcimg.cols;
-
-            int ssimtestpassed = 0;
-            ssimtestpassed = GetSSIMBYTES(&cv_srcimage, &cv_destimage, &report.data, pFeedbackProc);
-
-            if (ssimtestpassed == -1)
-            {
-                split(srcimg, spl);
-                split(destimg, dpl);
-                report.data.SSIM_Blue = ssim(spl[0], dpl[0], 1, pFeedbackProc);
-                report.data.SSIM_Green = ssim(spl[1], dpl[1], 1, pFeedbackProc);
-                report.data.SSIM_Red = ssim(spl[2], dpl[2], 1, pFeedbackProc);
-                report.data.SSIM = (report.data.SSIM_Blue + report.data.SSIM_Green + report.data.SSIM_Red) / 3;
-            }
-
-            srcimg.release();
-            destimg.release();
-
-
-            write(report.data, resultsFile, 'a');
-            //cout << report;
-        }
-
-        QColor src;
-        QColor dest;
-        QColor diff;
-        int r, g, b, a;
-        float fProgress = 0.0;
-
-        for (int y = 0; y < h; y++){
-            for (int x = 0; x < w; x++){
-                src = QColor(srcImage->pixel(x, y));
-                dest = QColor(destImage->pixel(x, y));
-                
-                r = qAbs(src.red() - dest.red());
-                g = qAbs(src.green() - dest.green()) ;
-                b = qAbs(src.blue() - dest.blue()) ;
-                a = qAbs(src.alpha() - dest.alpha()) ;
-
-                diff.setRed(qMin(r,255));
-                diff.setGreen(qMin(g, 255));
-                diff.setBlue(qMin(b, 255));
-                diff.setAlpha(qMin(a, 255));
-                diffImage->setPixel(x, y, diff.rgba());
-            }
-
-            if (pFeedbackProc)
-            {
-                fProgress = 100.f * (y * w) / (w * h);
-                if (pFeedbackProc(fProgress, NULL, NULL))
+                if (!testpassed)
                 {
-                    return -1; //abort
+                    printf("Error: Images analysis fail\n");
+                    return -1;
+                }
+
+
+                cv::Mat srcimg = QtOcv::image2Mat(*srcImage);
+                cv::Mat destimg = QtOcv::image2Mat(*destImage);
+
+                IplImage cv_srcimage;
+                IplImage cv_destimage;
+
+                cv_srcimage = srcimg;
+                cv_destimage = destimg;
+
+                if (!&cv_srcimage || !&cv_destimage)
+                {
+                    printf("Error: Images fail to allocate for ssim analysis\n");
+                    return -1;
+                }
+                //#ifdef _DEBUG
+                //        cvSaveImage("source.bmp", &cv_srcimage);
+                //        cvSaveImage("dest.bmp", &cv_destimage);
+                //#endif
+
+                int size = srcimg.rows *srcimg.cols;
+
+                int ssimtestpassed = 0;
+                ssimtestpassed = GetSSIMBYTES(&cv_srcimage, &cv_destimage, &report.data, pFeedbackProc);
+
+                if (ssimtestpassed == -1)
+                {
+                    split(srcimg, spl);
+                    split(destimg, dpl);
+                    report.data.SSIM_Blue = ssim(spl[0], dpl[0], 1, pFeedbackProc);
+                    report.data.SSIM_Green = ssim(spl[1], dpl[1], 1, pFeedbackProc);
+                    report.data.SSIM_Red = ssim(spl[2], dpl[2], 1, pFeedbackProc);
+                    report.data.SSIM = (report.data.SSIM_Blue + report.data.SSIM_Green + report.data.SSIM_Red) / 3;
+                }
+
+                srcimg.release();
+                destimg.release();
+
+                write(report.data, resultsFile, 'a');
+            }
+        }
+        
+        if ((strcmp(out, "") != 0))
+        {
+            diffImage = new QImage(w, h, QImage::Format_ARGB32);
+            QColor src;
+            QColor dest;
+            QColor diff;
+            int r, g, b, a;
+            float fProgress = 0.0;
+
+            for (int y = 0; y < h; y++) {
+                for (int x = 0; x < w; x++) {
+                    src = QColor(srcImage->pixel(x, y));
+                    dest = QColor(destImage->pixel(x, y));
+
+                    r = qAbs(src.red() - dest.red());
+                    g = qAbs(src.green() - dest.green());
+                    b = qAbs(src.blue() - dest.blue());
+                    a = qAbs(src.alpha() - dest.alpha());
+
+                    diff.setRed(qMin(r, 255));
+                    diff.setGreen(qMin(g, 255));
+                    diff.setBlue(qMin(b, 255));
+                    diff.setAlpha(qMin(a, 255));
+                    diffImage->setPixel(x, y, diff.rgba());
+                }
+
+                if (pFeedbackProc)
+                {
+                    fProgress = 100.f * (y * w) / (w * h);
+                    if (pFeedbackProc(fProgress, NULL, NULL))
+                    {
+                        return -1; //abort
+                    }
                 }
             }
         }
@@ -748,9 +751,9 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1, const char * in2, const cha
         {
             QFile::remove(out);
         }
-        
+
         bool saved = diffImage->save(out);
-        
+
         if (saved && cmipImages != NULL) //gui
         {
             m_MipDiffImages = m_imageloader->LoadPluginImage(out);
@@ -763,14 +766,72 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1, const char * in2, const cha
         }
         else if (saved && cmipImages == NULL)  //cmdline version pass in null
         {
-		    QFile::remove(out);
+            if ((strcmp(out, "") == 0))
+            {
+                QFile::remove(out);
+            }
             return 0;
+        }
+        else if (!saved && cmipImages != NULL) //gui- saved fail due to admin right
+        {
+            if ((strcmp(out, "") == 0)) {
+                return 0;
+            }
+            else {
+                QString appLocalPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+                QString redirectOut = appLocalPath + "/diff.bmp";
+                redirectOut.replace("CompressonatorCLI", "Compressonator");
+                saved = diffImage->save(redirectOut);
+                if (saved)
+                {
+                    printf("User does not have admin right to the saved path. Diff image has been redirect saved to %s\n", redirectOut.toStdString().c_str());
+                    m_MipDiffImages = m_imageloader->LoadPluginImage(redirectOut);
+                    if (m_MipDiffImages)
+                    {
+                        QFile::remove(redirectOut);
+                        *cmipImages = m_MipDiffImages;
+                        return 0;
+                    }
+                    return -1;
+                }
+                else
+                {
+                    printf("Error: Image(s) saved failed. Please run the app as admin.\n");
+                    return -1;
+                }
+            }
+        }
+        else if (!saved && cmipImages == NULL)  //cmdline version pass in null- saved fail due to admin right
+        {
+            if ((strcmp(out, "") == 0)){
+                return 0;
+            }
+            else {
+                QString appLocalPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+                QString redirectOut = appLocalPath + "/diff.bmp";
+                redirectOut.replace("CompressonatorCLI", "Compressonator");
+                saved = diffImage->save(redirectOut);
+                if (saved)
+                {
+                    printf("User does not have admin right to the saved path. Diff image has been redirect saved to %s\n", redirectOut.toStdString().c_str());
+                    return 0;
+                }
+                else
+                {
+                    printf("Error: Image(s) saved failed. Please run the app as admin.\n");
+                    return -1;
+                }
+            }
+            
         }
         else //failed to save image diff
         {
+            printf("Error: Image(s) diff saved/write failed. Please try run the app as admin.\n");
             return -1;
         }
     }
+    else if ((strcmp(out, "") == 0))
+        return 0;
     else
         return -1;
 }

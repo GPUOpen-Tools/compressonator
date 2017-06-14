@@ -34,6 +34,7 @@
 
 #ifdef USE_QT_IMAGELOAD
 #include <QtCore/QCoreApplication>
+#include <QtCore/qstandardpaths.h>
 #include <QtCore/qstring.h>
 #include <QtCore/qlist.h>
 #include <QtCore/qfileinfo.h>

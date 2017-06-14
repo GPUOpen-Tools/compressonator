@@ -714,6 +714,10 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
         connect(imageview_ToggleChannelA, SIGNAL(triggered()), m_acImageView, SLOT(onToggleChannelA()));
     }
 
+    //always enable brightness icons in gui and cursor indicates original RGBA data
+    this->m_useOriginalImageCursor = true;
+    setting->onBrightness = true;
+
     if (setting->onBrightness)
     {
         imageview_ImageBrightnessUp = new QAction(QIcon(":/CompressonatorGUI/Images/brightnessup.png"), tr("Increase Image Brightness"), this);

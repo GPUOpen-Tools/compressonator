@@ -67,6 +67,8 @@ public:
         noswizzle               = false;
         doswizzle               = false;
         doDecompress            = false;
+        analysis                = false;
+        diffImage               = false;
         BlockWidth              = 4;
         BlockHeight             = 4;
         BlockDepth              = 1;
@@ -104,7 +106,8 @@ public:
     bool                        noswizzle;              //
     bool                        doswizzle;              //
     bool                        silent;                 //
-    bool                        analysis;               // run alaysis
+    bool                        analysis;               // run analysis
+    bool                        diffImage;              // generate diff image
     bool                        showperformance;        //
     bool                        noprogressinfo;         //
     bool                        use_noMipMaps;          //  use of image loads based on Open CV Components in place of raw image plugins for write to file

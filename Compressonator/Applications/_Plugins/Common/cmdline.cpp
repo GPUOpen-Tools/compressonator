@@ -206,6 +206,11 @@ void PrintUsage()
     printf("-ModeMask <value>            Mode to set BC7 to encode blocks using any of 8\n");
     printf("                             different block modes in order to obtain the\n");
     printf("                             highest quality\n");
+    printf("-Analysis <image1> <image2>  Generate analysis metric like SSIM, PSNR values \n");
+    printf("                             between 2 images with same size. Analysis_Result.xml file will be generated.\n");
+    printf("\n\n");
+    printf("-diff_image <image1> <image2> Generate difference between 2 images with same size \n");
+    printf("                              A .bmp file will be generated. Please use compressonator GUI to increase the contrast to view the diff pixels.\n");
     printf("\n\n");
     printf("Output options:\n\n");
     printf("-silent                      Disable print messages\n");
@@ -334,9 +339,15 @@ bool ProcessSingleFlags(const  char *strCommand)
         isset = true;
     }
     else
-    if ((strcmp(strCommand, "-analysis") == 0))
+    if ((strcmp(strCommand, "-analysis") == 0) || (strcmp(strCommand, "-Analysis") == 0))
     {
         g_CmdPrams.analysis = true;
+        isset = true;
+    }
+    else
+    if ((strcmp(strCommand, "-diff_image") == 0))
+    {
+        g_CmdPrams.diffImage = true;
         isset = true;
     }
 #ifdef USE_COMPUTE
@@ -1048,6 +1059,7 @@ bool KeepSwizzle(CMP_FORMAT destformat)
     return false;
 }
 
+//cmdline only
 bool GenerateAnalysis(std::string SourceFile, std::string DestFile)
 {
     if (!(boost::filesystem::exists(SourceFile)))
@@ -1067,16 +1079,23 @@ bool GenerateAnalysis(std::string SourceFile, std::string DestFile)
     Plugin_Analysis = reinterpret_cast<PluginInterface_Analysis *>(g_pluginManager.GetPlugin("IMAGE", "ANALYSIS"));
     if (Plugin_Analysis)
     {
-        g_CmdPrams.DiffFile = DestFile;
-        int lastindex = g_CmdPrams.DiffFile.find_last_of(".");
-        g_CmdPrams.DiffFile = g_CmdPrams.DiffFile.substr(0, lastindex);
-        g_CmdPrams.DiffFile.append("_diff.bmp");
+        if (g_CmdPrams.diffImage) {
+            g_CmdPrams.DiffFile = DestFile;
+            int lastindex = g_CmdPrams.DiffFile.find_last_of(".");
+            g_CmdPrams.DiffFile = g_CmdPrams.DiffFile.substr(0, lastindex);
+            g_CmdPrams.DiffFile.append("_diff.bmp");
+        }
+        else {
+            g_CmdPrams.DiffFile = "";
+        }
 
         string results_file = "";
-        results_file = DestFile;
-        int index = results_file.find_last_of("/");
-        results_file = results_file.substr(0, (index+1));
-        results_file.append("Analysis_Result.xml");
+        if (g_CmdPrams.analysis) {
+            results_file = DestFile;
+            int index = results_file.find_last_of("/");
+            results_file = results_file.substr(0, (index + 1));
+            results_file.append("Analysis_Result.xml");
+        }
 
         testpassed = Plugin_Analysis->TC_ImageDiff(SourceFile.c_str(), DestFile.c_str(), g_CmdPrams.DiffFile.c_str(), (char*)results_file.c_str(), &g_pluginManager, NULL);
         delete Plugin_Analysis;
@@ -1331,7 +1350,7 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *con
                         }
                         else if (res != CMP_OK)
                         {
-                            configSetting->errMessage = "Decompress Failed with Error " + res;
+                            configSetting->errMessage = "Decompress Failed. Texture format not supported. Please view the compressed images using other options (CPU) (under Settings->Application Options).";
                             PrintInfo("Decompress Failed with Error %d\n",res);
                             m_CMIPS.FreeMipSet(MipSetOut);
                             delete MipSetOut;
@@ -1413,7 +1432,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
             PrintStatusLine = &LocalPrintF;
 
         
-        if (g_CmdPrams.analysis)
+        if (g_CmdPrams.analysis || g_CmdPrams.diffImage)
         {
             if (!(GenerateAnalysis(g_CmdPrams.SourceFile, g_CmdPrams.DestFile)))
             {
