@@ -65,6 +65,11 @@ CMIPS*              g_CMIPS;                                // Global MIPS funct
 #endif
 
 
+bool ProgressCallback(float fProgress, DWORD_PTR pUser1, DWORD_PTR pUser2)
+{
+   return CompressionCallback(fProgress, pUser1, pUser2);
+}
+
 int main(int argc,  char* argv[])
 {
 #ifdef USE_QT_IMAGELOAD

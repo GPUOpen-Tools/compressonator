@@ -255,11 +255,11 @@ public:
     QTreeWidgetItem         *m_treeRootItem;            // Root of Tree view Items
     QString                  m_RecentImageDirOpen;      // Keep track of recent image files opened dir
     void keyPressEvent(QKeyEvent * event);
-    bool                     m_bCompressing;           // Set true when we are compressing project items
     bool                     m_EnableCheckedItemsView; // This flags by default if set to false and enables compression of items
                                                        //  based on checked flags along with highlited items.
     int                      m_NumItems;
     bool                     m_AllItemsSelected;
     bool                     m_processBusy;
+
 };
 #endif

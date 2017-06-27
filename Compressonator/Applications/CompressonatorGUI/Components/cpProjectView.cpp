@@ -33,17 +33,13 @@
 #define STR_AddDestinationSetting "Add destination settings..."
 
 
-extern bool        g_bAbortCompression;
 extern C_Application_Options::ImageEncodeWith encodewith;
 bool g_useCPUEncode = true;
 static signalProcessMsgHandler static_processmsghandler;
 extern void GetSupportedFileFormats(QList<QByteArray> &g_supportedFormats);
 extern PluginManager g_pluginManager;
 
-void OnCancel()
-{
-    g_bAbortCompression = true;
-}
+
 
 ProjectView::ProjectView(const QString title, CompressStatusDialog *StatusDialog, QWidget *parent)
 {
@@ -66,7 +62,7 @@ ProjectView::ProjectView(const QString title, CompressStatusDialog *StatusDialog
 
     // Tracks what Compressed Image Tree Item has been clicked on
     m_CurrentCompressedImageItem = NULL;
-    m_bCompressing = false;
+    g_bCompressing = false;
 
     // Enables diplay of checked box next to items
     m_EnableCheckedItemsView = false;
@@ -125,7 +121,6 @@ ProjectView::ProjectView(const QString title, CompressStatusDialog *StatusDialog
     m_imageloader       = new CImageLoader();
     m_newProjectwindow  = new cpNewProject();
     connect(m_newProjectwindow, SIGNAL(OnSetNewProject(QString &)), this, SLOT(onSetNewProject(QString &)));
-
 }
 
 void ProjectView::SetupTreeView()
@@ -217,19 +212,9 @@ void ProjectView::SetupTreeView()
     m_contextMenu->addAction(actViewImageDiff);
     m_contextMenu->addAction(actSeperator);
     m_contextMenu->addAction(actRemoveImage);
-    
-    // Progress Dialog During Compression
-    m_pProgressDlg = new acProgressDlg();
-    m_pProgressDlg->setParent(this);
-    m_pProgressDlg->setWindowFlags(Qt::FramelessWindowHint|Qt::Window);
-    m_pProgressDlg->ShowCancelButton(true, &OnCancel);
-    m_pProgressDlg->SetHeader("");
-    m_pProgressDlg->SetLabelText("");
-    m_pProgressDlg->SetRange(0, 100);
-    m_pProgressDlg->hide();
-
-
+   
 }
+
 
 void ProjectView::onDroppedImageItem(QString &filePathName, int index)
 {
@@ -716,7 +701,7 @@ void ProjectView::onCustomContextMenu(const QPoint &point)
 // This gets call many times (for all qDebug messages and printf's)
 void ProjectView::OnGlobalMessage(const char *msg)
 {
-    if (m_CompressStatusDialog && m_bCompressing)
+    if (m_CompressStatusDialog && g_bCompressing)
     {
         m_CompressStatusDialog->appendText(msg);
     }
@@ -916,6 +901,8 @@ void ProjectView::OnStartCompression()
 
 ProjectView::~ProjectView()
 {
+    g_bAbortCompression = true;
+
     if (m_imageloader)
     {
         delete m_imageloader;
@@ -1078,9 +1065,11 @@ void ProjectView::onTree_ItemClicked(QTreeWidgetItem * item, int column)
         // view image
         QVariant v = item->data(1, Qt::UserRole);
         C_Source_Image *m_data = v.value<C_Source_Image *>();
-        QString text = m_data->m_Full_Path;
-
-        emit ViewImageFile(text, item);
+        if (m_data)
+        {
+            QString text = m_data->m_Full_Path;
+            emit ViewImageFile(text, item);
+        }
 
 
         // Update the image poperty view for the item clicked
@@ -1259,7 +1248,7 @@ void ProjectView::clearProjectTreeView()
 
 void ProjectView::keyPressEvent(QKeyEvent * event)
 {
-    if ((event->key() == Qt::Key_Delete) && (!m_bCompressing))
+    if ((event->key() == Qt::Key_Delete) && (!g_bCompressing))
     {
         // handle the key press, perhaps giving the item text a default value
         UserDeleteItems();
@@ -2064,7 +2053,7 @@ void ProjectView::openProjectFile()
 
 void ProjectView::removeSelectedImage()
 {
-    if (!m_bCompressing)
+    if (!g_bCompressing)
         UserDeleteItems();
 }
 
@@ -2141,9 +2130,9 @@ bool ProgressCallback(float fProgress, DWORD_PTR pUser1, DWORD_PTR pUser2)
 
 void ProjectView::onSignalProcessMessage()
 {
-    if (m_pProgressDlg)
+    if (g_pProgressDlg)
     {
-        m_pProgressDlg->SetValue(g_fProgress);
+        g_pProgressDlg->SetValue(g_fProgress);
     }
 }
 
@@ -2160,8 +2149,6 @@ void ProjectView::AddSettingtoEmptyTree()
         QVariant v = (*it)->data(0, Qt::UserRole);
         int levelType = v.toInt();
         childcount = (*it)->childCount();
-        int miplevels = 0;
-
 
         if (levelType == TREETYPE_IMAGEFILE_DATA)
         {
@@ -2230,8 +2217,6 @@ void ProjectView::AddSettingtoEmptyTree()
             QVariant v = (*it)->data(0, Qt::UserRole);
             int levelType = v.toInt();
             childcount = (*it)->childCount();
-            int miplevels = 0;
-        
         
             if (levelType == TREETYPE_IMAGEFILE_DATA)
             {
@@ -2298,15 +2283,18 @@ void CompressFiles(
     ProjectView          *ProjectView
     )
 {
+
     C_Destination_Options setDefaultOptions;
 
 
     ProjectView->m_CompressStatusDialog->showOutput();
 
-    ProjectView->m_pProgressDlg->SetValue(0);
-    ProjectView->m_pProgressDlg->SetHeader("Processing");
-    ProjectView->m_pProgressDlg->SetLabelText("");
-    ProjectView->m_pProgressDlg->show();
+    if (g_pProgressDlg == NULL) return;
+
+    g_pProgressDlg->SetValue(0);
+    g_pProgressDlg->SetHeader("Processing");
+    g_pProgressDlg->SetLabelText("");
+    g_pProgressDlg->show();
 
     // Use STD vectors to hold argv ** and keep the data in scope
     typedef std::vector<char> CharArray;
@@ -2314,7 +2302,7 @@ void CompressFiles(
     ArgumentVector argvVec;
     std::vector<char *> argv;
 
-    ProjectView->m_bCompressing = true;
+    g_bCompressing = true;
 
     int NumberOfItemCompressed = 0;
     int NumberOfItemCompressedFailed = 0;
@@ -2440,13 +2428,15 @@ void CompressFiles(
                                     dir.mkpath(".");
                                 }
 
-                                ProjectView->m_pProgressDlg->SetValue(0);
+
+                                msgCommandLine = "<b>Processing: ";
+                                msgCommandLine.append(data->m_compname);
+                                msgCommandLine.append("<\b>");
+                                g_pProgressDlg->SetLabelText(msgCommandLine);
+                                g_pProgressDlg->SetValue(0);
 
                                 if (ProjectView->m_CompressStatusDialog)
                                 {
-                                    msgCommandLine = "<b>Processing: ";
-                                    msgCommandLine.append(data->m_compname);
-                                    msgCommandLine.append("<\b>");
                                     ProjectView->m_CompressStatusDialog->appendText(msgCommandLine);
                                 }
 
@@ -2933,7 +2923,7 @@ void CompressFiles(
                                     ProjectView->m_CompressStatusDialog->appendText(msgCommandLine);
                                     QString msg = "File: " + data->m_compname;
 
-                                    ProjectView->m_pProgressDlg->SetLabelText(msg);
+                                    g_pProgressDlg->SetLabelText(msg);
 
                                     emit ProjectView->OnProcessing(data->m_destFileNamePath);
                                     // Pass over the command line params
@@ -3026,7 +3016,7 @@ void CompressFiles(
 
                                     }
 
-                                    ProjectView->m_pProgressDlg->SetValue(0);
+                                    g_pProgressDlg->SetValue(0);
 
                                     argvVec.clear();
                                     argv.clear();
@@ -3055,7 +3045,7 @@ void CompressFiles(
 
     }
 
-    ProjectView->m_bCompressing = false;
+    g_bCompressing = false;
     ProjectView->m_processFromContext = false;
 
     if (ProjectView->m_CompressStatusDialog && (file == NULL) && (!g_bAbortCompression))
@@ -3096,9 +3086,9 @@ void CompressFiles(
         }
     }
 
-    ProjectView->m_pProgressDlg->hide();
+    g_pProgressDlg->hide();
 
-    ProjectView->m_bCompressing = false;
+    g_bCompressing = false;
     g_bAbortCompression = false;
 
 }
@@ -3108,7 +3098,7 @@ void ProjectView::compressProjectFiles(QFile *file)
 {
     if (m_CompressStatusDialog == NULL) return;
 
-    if (m_pProgressDlg == NULL) return;
+    if (g_pProgressDlg == NULL) return;
 
     g_bAbortCompression = false;
 

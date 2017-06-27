@@ -21,6 +21,7 @@
 //
 //=====================================================================
 
+#include "qapplication.h"
 #include "cpImageLoader.h"
 #include <ImfArray.h>
 #include "cExr.h"
@@ -31,7 +32,7 @@ bool g_useCPUDecode = true;
 MIPIMAGE_FORMAT g_gpudecodeFormat = Format_OpenGL;
 
 extern PluginManager g_pluginManager;
-extern MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config* configSetting);
+extern MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config* configSetting, CMP_Feedback_Proc pFeedbackProc);
 extern QRgb RgbaToQrgba(struct Imf::Rgba imagePixel);
 extern int    g_OpenGLMajorVersion;
 
@@ -42,8 +43,8 @@ CImageLoader::CImageLoader()
     kneeLow = AMD_CODEC_KNEELOW_DEFAULT;
     kneeHigh = AMD_CODEC_KNEEHIGH_DEFAULT;
     exposure = AMD_CODEC_EXPOSURE_DEFAULT;
-    defog = AMD_CODEC_DEFOG_DEFAULT;
-    gamma = AMD_CODEC_GAMMA_DEFAULT;
+    defog = (float)AMD_CODEC_DEFOG_DEFAULT;
+    gamma = (float)AMD_CODEC_GAMMA_DEFAULT;
 }
 
 CImageLoader::CImageLoader(void *plugin)
@@ -325,7 +326,7 @@ CMP_FORMAT CImageLoader::QFormat2MipFormat(QImage::Format qformat)
     return format;
 }
 
-MipSet *CImageLoader::DecompressMipSet(CMipImages *MipImages, Config *decompConfig)
+MipSet *CImageLoader::LoaderDecompressMipSet(CMipImages *MipImages, Config *decompConfig)
 {
     MipSet *tmpMipSet             = NULL;
     MipImages->decompressedMipSet = NULL;
@@ -342,7 +343,7 @@ MipSet *CImageLoader::DecompressMipSet(CMipImages *MipImages, Config *decompConf
 
             // This call decompresses all MIP levels so it should only be called once
             decompConfig->useCPU= true;
-            tmpMipSet = DecompressMIPSet(MipImages->mipset, GPUDecode_INVALID, decompConfig);
+            tmpMipSet = DecompressMIPSet(MipImages->mipset, GPUDecode_INVALID, decompConfig, &ProgressCallback);
 
             if (tmpMipSet)
             {
@@ -385,7 +386,7 @@ MipSet *CImageLoader::DecompressMipSet(CMipImages *MipImages, Config *decompConf
 
                 // This call decompresses all MIP levels so it should only be called once
                 decompConfig->useCPU = false;
-                tmpMipSet = DecompressMIPSet(MipImages->mipset, decodeWith, decompConfig);
+                tmpMipSet = DecompressMIPSet(MipImages->mipset, decodeWith, decompConfig,&ProgressCallback);
 
                 if (tmpMipSet)
                 {
@@ -638,8 +639,8 @@ void CImageLoader::float2Pixel(float kl, float f ,float r, float g, float b, flo
     BYTE r_b, g_b, b_b, a_b;
 
     float invGamma, scale;
-    if (gamma < 1.0) {
-        gamma = 2.2;
+    if (gamma < 1.0f) {
+        gamma = 2.2f;
     }
 
     invGamma = 1.0 / gamma;                    //for gamma correction
@@ -649,7 +650,7 @@ void CImageLoader::float2Pixel(float kl, float f ,float r, float g, float b, flo
     //  1) Compensate for fogging by subtracting defog
     //     from the raw pixel values.
     // We assume a defog of 0
-    if (defog > 0.0)
+    if (defog > 0.0f)
     {
         r = r - defog;
         g = g - defog;
@@ -748,6 +749,9 @@ void CImageLoader::loadExrProperties(MipSet* mipset, int level, QImage *image)
                 data++;
                 float2Pixel(kl, f, r, g, b, a, x, y, image);
             }
+
+            if ((y % 10) == 0)
+                QApplication::processEvents();
         }
     }
     else if (mipset->m_ChannelFormat == CF_Float16)
@@ -767,6 +771,9 @@ void CImageLoader::loadExrProperties(MipSet* mipset, int level, QImage *image)
                 data++;
                 float2Pixel(kl, f,F16toF32(r), F16toF32(g), F16toF32(b), F16toF32(a), x, y, image);
             }
+
+            if ((y % 10) == 0)
+                QApplication::processEvents();
         }
     }
     else if (mipset->m_ChannelFormat == CF_Float9995E)
@@ -794,6 +801,8 @@ void CImageLoader::loadExrProperties(MipSet* mipset, int level, QImage *image)
                 a = 1.0f;
                 float2Pixel(kl, f, r, g, b, a, x, y, image);
             }
+            if ((y % 10) == 0)
+                QApplication::processEvents();
         }
     }
     else return;
@@ -877,7 +886,7 @@ CMipImages * CImageLoader::LoadPluginImage(QString filename)
             MipSet *tmpMipSet;
             Config decompSetting;
             decompSetting.errMessage = "";
-            tmpMipSet = DecompressMipSet(MipImages, &decompSetting);
+            tmpMipSet = LoaderDecompressMipSet(MipImages, &decompSetting);
 
             if (tmpMipSet == NULL)
             {

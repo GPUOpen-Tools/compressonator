@@ -30,7 +30,16 @@ int g_OpenGLMinorVersion = 0;
 
 #define STR_WELCOME_PAGE    "Welcome Page"
 
-C_Application_Options         g_Application_Options;
+C_Application_Options          g_Application_Options;
+acProgressDlg                 *g_pProgressDlg = NULL;
+bool                           g_bCompressing = false;  // Set true when we are compressing project items
+
+// Hooked onto Progress Dialog.
+void OnCancel()
+{
+    g_bAbortCompression = true;
+}
+
 
 //=========================================================
 cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
@@ -301,6 +310,17 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
         onHDRButton->setText("Full Screen");
 #endif
 
+    // Adding a global Progress Dialog,
+    // This replaces the one defined in ProjectView
+    // Progress Dialog During Compression
+    g_pProgressDlg = new acProgressDlg(this);
+    g_pProgressDlg->setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
+    g_pProgressDlg->ShowCancelButton(true, &OnCancel);
+    g_pProgressDlg->SetHeader("");
+    g_pProgressDlg->SetLabelText("");
+    g_pProgressDlg->SetRange(0, 100);
+    g_pProgressDlg->hide();
+
 }
 
 void cpMainComponents::SetProjectWindowTitle()
@@ -423,6 +443,21 @@ void cpMainComponents::OnWelcomePageButtonClick(QString &Request, QString &Msg)
 
 void cpMainComponents::closeEvent(QCloseEvent *event)
 {
+    if (g_bCompressing)
+    {
+        g_bAbortCompression = true;
+        // loop until all compression codecs abort
+        int maxwait = 3000; // > 3 seconds
+        while (g_bCompressing)
+        {
+            Sleep(1);
+            maxwait--;
+            if (maxwait == 0) break;
+            QApplication::processEvents();
+        }
+    }
+    CMP_ShutdownDecompessLibrary();
+
     if (m_projectview)
     {
         if (!m_projectview->userSaveProjectAndContinue())
@@ -435,6 +470,7 @@ void cpMainComponents::closeEvent(QCloseEvent *event)
     }
 
    writeSettings();
+   
    qApp->quit();
    event->accept();
 }
@@ -1809,6 +1845,7 @@ void cpMainComponents::SetRaised()
 
 cpMainComponents::~cpMainComponents()
 {
+    g_bAbortCompression = true;
     CMP_ShutdownDecompessLibrary();
 }
 

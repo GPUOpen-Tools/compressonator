@@ -538,7 +538,7 @@ double ssim(Mat & img_src, Mat & img_compressed, int block_size, CMP_Feedback_Pr
         // Progress
         if (pFeedbackProc)
         {
-            fProgress = (((double)k) / nbBlockPerHeight) * 100;
+            fProgress = (float)(((double)k) / nbBlockPerHeight) * 100;
             if (pFeedbackProc(fProgress, NULL, NULL))
             {
                 return -1; //abort

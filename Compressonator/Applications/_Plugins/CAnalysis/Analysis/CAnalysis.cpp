@@ -565,7 +565,8 @@ bool Plugin_Canalysis::psnr(QImage *src, QImage *dest, REPORT_DATA &myReport, CM
             fProgress = 100.f * (y * w) / (w * h);
             if (pFeedbackProc(fProgress, NULL, NULL))
             {
-                return -1; //abort
+                printf("Analysis canceled!\n");
+                return false; //abort
             }
         }
     }
@@ -733,6 +734,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1, const char * in2, const cha
                     fProgress = 100.f * (y * w) / (w * h);
                     if (pFeedbackProc(fProgress, NULL, NULL))
                     {
+                        printf("Analysis canceled!\n");
                         return -1; //abort
                     }
                 }

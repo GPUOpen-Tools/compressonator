@@ -37,6 +37,7 @@
 #include "cpImageCompare.h"
 #include "cpCompressStatus.h"
 #include "acaboutdlg.h"
+#include "acProgressDlg.h"
 #include "cmdline.h"
 
 #include <QTimer>
@@ -273,5 +274,10 @@ Q_SIGNALS:
     void OnImageLoadDone();
 
 };
+
+
+extern acProgressDlg    *g_pProgressDlg;
+extern bool              g_bAbortCompression;
+extern bool              g_bCompressing;
 
 #endif // CPMAINCOMPONENTS_H

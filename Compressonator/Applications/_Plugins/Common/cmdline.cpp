@@ -1152,7 +1152,7 @@ bool SVMInitCodec(KernalOptions *options)
 //
 // Used exclusively by the GUI app 
 // ToDo : Remove this code and try to use ProcessCMDLine
-MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *configSetting)
+MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *configSetting, CMP_Feedback_Proc pFeedbackProc)
 {
     // validate MipSet is Compressed
     if (!MipSetIn->m_compressed) return NULL;
@@ -1324,7 +1324,7 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *con
                     CMP_ERROR res;
                     if (configSetting->useCPU)
                     {
-                        res = CMP_ConvertTexture(&srcTexture, &destTexture, &CompressOptions, NULL, NULL, NULL);
+                        res = CMP_ConvertTexture(&srcTexture, &destTexture, &CompressOptions, pFeedbackProc, NULL, NULL);
                         if (res != CMP_OK)
                         {
                             configSetting->errMessage = "Compress Failed with Error " + res;

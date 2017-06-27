@@ -393,10 +393,10 @@ unsigned int floatToQrgba(float r, float g, float b, float a)
     //
     // Step 5) Gamma-correct the pixel values, assuming that the
     //     screen's gamma is 0.4545 (or 1/2.2).
-    r = Imath::Math<float>::pow(r, 0.4545);
-    g = Imath::Math<float>::pow(g, 0.4545);
-    b = Imath::Math<float>::pow(b, 0.4545);
-    a = Imath::Math<float>::pow(a, 0.4545);
+    r = Imath::Math<float>::pow(r, 0.4545f);
+    g = Imath::Math<float>::pow(g, 0.4545f);
+    b = Imath::Math<float>::pow(b, 0.4545f);
+    a = Imath::Math<float>::pow(a, 0.4545f);
 
     // Step  6) Scale the values such that pixels middle gray
     //     pixels are mapped to 84.66 (or 3.5 f-stops below

@@ -124,6 +124,8 @@ CImageCompare::CImageCompare(const QString title, QString file1, QString file2, 
 
     showProgressBusy("Loading Image Difference... This may take some time. Please wait.");
     showProgressDialog("Loading Image Difference");
+    if (g_pProgressDlg)
+        g_pProgressDlg->SetLabelText("Generating Image(s): Process may cycle a few times...");
 
     m_diffMips=m_imageAnalysis->GenerateDiffImage(m_sourceFile.toStdString().c_str(), m_destFile.toStdString().c_str());
     
@@ -131,6 +133,8 @@ CImageCompare::CImageCompare(const QString title, QString file1, QString file2, 
     {
          m_analyzed = "Image Diff";
 
+         if (g_pProgressDlg)
+             g_pProgressDlg->SetLabelText("Processing Image View");
         createImageView(isCompressed);
         m_setHorizontalView = false;
         setDefaultView();
@@ -151,31 +155,19 @@ CImageCompare::CImageCompare(const QString title, QString file1, QString file2, 
 
 void CImageCompare::showProgressDialog(QString header)
 {
-    ProjectView *view = NULL;
-    if (m_parent)
+    if (g_pProgressDlg)
     {
-        view = ((cpMainComponents*)m_parent)->m_projectview;
-        if (view)
-        {
-            view->m_pProgressDlg->SetValue(0);
-            view->m_pProgressDlg->SetHeader(header);
-            view->m_pProgressDlg->SetLabelText("");
-            view->m_pProgressDlg->show();
-        }
+        g_pProgressDlg->SetValue(0);
+        g_pProgressDlg->SetHeader(header);
+        g_pProgressDlg->SetLabelText("");
+        g_pProgressDlg->show();
     }
 }
 
 void CImageCompare::hideProgressDialog()
 {
-    ProjectView *view = NULL;
-    if (m_parent)
-    {
-        view = ((cpMainComponents*)m_parent)->m_projectview;
-        if (view)
-        {
-            view->m_pProgressDlg->hide();
-        }
-    }
+    if (g_pProgressDlg)
+        g_pProgressDlg->hide();
 }
 
 void CImageCompare::showProgressBusy(QString Message)
@@ -490,6 +482,6 @@ CImageCompare::~CImageCompare()
 
 void CImageCompare::paintEvent(QPaintEvent * event)
 {
-//    Q_UNUSED(event);
+    Q_UNUSED(event);
 //    emit UpdateData(m_imageAnalysis);
 }

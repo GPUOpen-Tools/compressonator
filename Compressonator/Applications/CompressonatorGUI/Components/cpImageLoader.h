@@ -86,7 +86,7 @@ public:
     void    UpdateMIPMapImages(CMipImages *MipImages);  // Maps MIP levels to Images
     void    loadExrProperties(MipSet* mipset, int level, QImage *image);
     MipSet *QImage2MIPS(QImage *qimage);            // Converts a QImage to MipSet
-    MipSet *DecompressMipSet(CMipImages *MipImages, Config *decompConfig);
+    MipSet *LoaderDecompressMipSet(CMipImages *MipImages, Config *decompConfig);
     void   float2Pixel(float kl, float f, float r, float g, float b, float a, int x, int y, QImage *image);
 
     float kneeLow;
@@ -111,5 +111,5 @@ private:
 
 
 extern float half_conv_float(unsigned short in);
-
+extern bool ProgressCallback(float fProgress, DWORD_PTR pUser1, DWORD_PTR pUser2);
 #endif
