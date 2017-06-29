@@ -30,7 +30,7 @@ Compressonator V2.6 Upcoming Features
   
   Options are provided to adjust the conversions as needed from channel defaults, such as Exposure, Knee, Defog, etc..
   
-  [Adaptive Channel Formatting] (https://github.com/GPUOpen-Tools/Compressonator/wiki/Adaptive-Channel-Formatting)
+  [Adaptive Channel Formatting](https://github.com/GPUOpen-Tools/Compressonator/wiki/Adaptive-Channel-Formatting/)
 
 Recent additions and changes
 ------------------------------------------------------
