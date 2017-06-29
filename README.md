@@ -22,7 +22,7 @@ Compressonator V2.6 Upcoming Features
 
   Various improvements in code for GPU compliance 
   
-- Make Compatible Feature
+- Adaptive Channel Formatting
 
   Compress or Transcode LDR/HDR images into any 8 bit per channel compression codecs or images (examples: EXR to BC7, EXR to BMP)
 
