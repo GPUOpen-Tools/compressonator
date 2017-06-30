@@ -10,31 +10,15 @@ Get Prebuilt Binaries and Installer here:
 -----------------------------------------------------
 https://github.com/GPUOpen-Tools/Compressonator/releases
 
-Compressonator V2.6 Upcoming Features
+Compressonator V2.7 Upcomming Features
 -----------------------------------------------------
-- Improved Image Diff Analysis
-
-  Adding ability to compare any two image files either from the project tree or external files 
-  
-  [Image Diff Analysis](https://github.com/GPUOpen-Tools/Compressonator/wiki/Image-Diff-Analysis/) 
-  
-- ASTC codec update
-
-  Various improvements in code for GPU compliance 
-  
 - Adaptive Channel Formatting
-
-  Compress or Transcode LDR/HDR images into any 8 bit per channel compression codecs or images (examples: EXR to BC7, EXR to BMP)
-
-  Compress or Transcode 8 bit per channel images to LDR/HDR images
-  
-  Options are provided to adjust the conversions as needed from channel defaults, such as Exposure, Knee, Defog, etc..
-  
-  [Adaptive Channel Formatting](https://github.com/GPUOpen-Tools/Compressonator/wiki/Adaptive-Channel-Formatting/)
+  * Image resampling for 8 bit channel to float 16 or float 32 bits per channel
+  * RGBE channel transcodes
 
 Recent additions and changes
 ------------------------------------------------------
-v2.5 release Mar 20 2017  https://github.com/GPUOpen-Tools/Compressonator/releases
+v2.6 release June 30 2017  https://github.com/GPUOpen-Tools/Compressonator/releases
 
 Build Instructions for Windows 7 and up
 ------------------------------------------------------
