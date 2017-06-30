@@ -18,7 +18,7 @@ Compressonator V2.7 Upcomming Features
 
 Recent additions and changes
 ------------------------------------------------------
-v2.6 release June 30 2017  https://github.com/GPUOpen-Tools/Compressonator/releases
+v2.6 release June 30 2017 (pending...) https://github.com/GPUOpen-Tools/Compressonator/releases
 
 Build Instructions for Windows 7 and up
 ------------------------------------------------------
