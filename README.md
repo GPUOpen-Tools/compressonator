@@ -20,6 +20,18 @@ Recent additions and changes
 ------------------------------------------------------
 v2.6 release June 30 2017 https://github.com/GPUOpen-Tools/Compressonator/releases
 
+* **Improved Image Diff**
+  * Adding ability to compare any two image files either from project tree or external files
+
+* **ASTC codec update**
+  * Various improvements in code
+
+* **Adaptive Channel Formatting**
+  * Compress or Transcode LDR/HDR images into any 8 bit per channel compression codecs or images
+  * Compress or Transcode 8 bit per channel images to LDR/HDR images
+  * Options are provided to adjust the conversions as needed from channel defaults, such as Exposure, Knee, Defog, etc..
+
+
 Build Instructions for Windows 7 and up
 ------------------------------------------------------
 
