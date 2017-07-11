@@ -112,7 +112,7 @@ int main(int argc,  char* argv[])
         if (
             (!ParseParams(argc, argv)) ||
             (g_CmdPrams.SourceFile.length() == 0) ||
-            (g_CmdPrams.DestFile.length() == 0)   
+            (!g_CmdPrams.imageprops && (g_CmdPrams.DestFile.length() == 0))
             )
         {
             return (-1);

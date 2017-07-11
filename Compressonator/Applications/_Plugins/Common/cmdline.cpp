@@ -212,6 +212,8 @@ void PrintUsage()
     printf("-diff_image <image1> <image2> Generate difference between 2 images with same size \n");
     printf("                              A .bmp file will be generated. Please use compressonator GUI to increase the contrast to view the diff pixels.\n");
     printf("\n\n");
+    printf("-imageprops <image>           Print image properties of image files specifies. \n");
+    printf("\n\n");
     printf("Output options:\n\n");
     printf("-silent                      Disable print messages\n");
     printf("-performance                 Shows various performance stats\n");
@@ -350,6 +352,12 @@ bool ProcessSingleFlags(const  char *strCommand)
         g_CmdPrams.diffImage = true;
         isset = true;
     }
+    else
+    if ((strcmp(strCommand, "-imageprops") == 0))
+    {
+        g_CmdPrams.imageprops = true;
+        isset = true;
+    }
 #ifdef USE_COMPUTE
     else
     if ((strcmp(strCommand, "-UseGPUCompress") == 0))
@@ -381,19 +389,21 @@ bool ProcessCMDLineOptions(const  char *strCommand, const char *strParameter)
         // We are doing an early capture to get some dimensions for ASTC file Save
         if (strcmp(strCommand, "-BlockRate") == 0)
         {
-
-            if (strchr(strParameter, '.') != NULL)
-            {
-                float m_target_bitrate = static_cast < float >(atof(strParameter));
-                astc_find_closest_blockdim_2d(m_target_bitrate, &g_CmdPrams.BlockWidth, &g_CmdPrams.BlockHeight, 0);
-            }
-            else
+            if (strchr(strParameter, 'x') != NULL)
             {
                 int dimensions = sscanf(strParameter, "%dx%dx", &g_CmdPrams.BlockWidth, &g_CmdPrams.BlockHeight);
                 if (dimensions < 2) throw "Command Parameter is invalid";
-                else{
+                else {
                     astc_find_closest_blockxy_2d(&g_CmdPrams.BlockWidth, &g_CmdPrams.BlockHeight, 0);
                 }
+            }
+            else
+            {
+                float m_target_bitrate = static_cast < float >(atof(strParameter));
+                if (m_target_bitrate > 0)
+                    astc_find_closest_blockdim_2d(m_target_bitrate, &g_CmdPrams.BlockWidth, &g_CmdPrams.BlockHeight, 0);
+                else
+                    throw "Command Parameter is invalid";
             }
         }
         else
@@ -1113,6 +1123,78 @@ bool GenerateAnalysis(std::string SourceFile, std::string DestFile)
     return true;
 }
 
+//cmdline only: print image properties (i.e. image name, path, file size, image size, image width, height, miplevel and format)
+bool GenerateImageProps(std::string ImageFile)
+{
+    if (!(boost::filesystem::exists(ImageFile)))
+    {
+        PrintInfo("Error: Image File is not found.\n");
+        return false;
+    }
+
+    // file name
+    PrintInfo("File Name: %s\n", ImageFile.c_str());
+
+    // full path
+    boost::filesystem::path p(ImageFile);
+    boost::filesystem::path fullpath = boost::filesystem::absolute(p);
+    PrintInfo("File Full Path: %s\n", fullpath.generic_string().c_str());
+
+    // file size
+    uintmax_t filesize = boost::filesystem::file_size(ImageFile);
+
+    if (filesize > 1024000) {
+        filesize /= 1024000;
+        PrintInfo("File Size: %ju MB\n", filesize);
+    }
+    else if (filesize > 1024) {
+        filesize /= 1024;
+        PrintInfo("File Size: %ju KB\n", filesize);
+    }
+    else {
+        PrintInfo("File Size: %ju Bytes\n", filesize);
+    }
+    
+    // load image into mipset
+    if (AMDLoadMIPSTextureImage(ImageFile.c_str(), &g_MipSetIn, g_CmdPrams.use_OCV) != 0)
+    {
+        PrintInfo("Error: reading image, data type not supported.\n");
+        return -1;
+    }
+
+    if (&g_MipSetIn) {
+        //image size
+        
+        CMIPS CMips;
+        MipLevel* pInMipLevel = CMips.GetMipLevel(&g_MipSetIn, 0, 0);
+        uintmax_t imagesize = pInMipLevel->m_dwLinearSize;
+
+        if (imagesize > 1024000) {
+            imagesize /= 1024000;
+            PrintInfo("Image Size: %ju MB\n", imagesize);
+        }
+        else if (imagesize > 1024) {
+            imagesize /= 1024;
+            PrintInfo("Image Size: %ju KB\n", imagesize);
+        }
+        else {
+            PrintInfo("Image Size: %ju Bytes\n", imagesize);
+        }
+
+        //width, height
+        PrintInfo("Image Width: %u px\n", g_MipSetIn.m_nWidth);
+        PrintInfo("Image Height: %u px\n", g_MipSetIn.m_nHeight);
+
+        //miplevel, format
+        int miplevel = g_MipSetIn.m_nMipLevels;
+
+        PrintInfo("Mip Levels: %u\n", miplevel);
+        PrintInfo("Format: %s\n", GetFormatDesc(g_MipSetIn.m_format));
+    }
+
+    return true;
+}
+
 void LocalPrintF(char *buff)
 {
     printf(buff);
@@ -1437,6 +1519,16 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
             if (!(GenerateAnalysis(g_CmdPrams.SourceFile, g_CmdPrams.DestFile)))
             {
                 PrintInfo("Error: Image Analysis Failed\n");
+                return -1;
+            }
+            return 0;
+        }
+
+        if (g_CmdPrams.imageprops)
+        {
+            if (!(GenerateImageProps(g_CmdPrams.SourceFile)))
+            {
+                PrintInfo("Error: Failed to retrieve image properties\n");
                 return -1;
             }
             return 0;

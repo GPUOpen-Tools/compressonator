@@ -106,8 +106,9 @@ public:
     bool                        noswizzle;              //
     bool                        doswizzle;              //
     bool                        silent;                 //
-    bool                        analysis;               // run analysis
-    bool                        diffImage;              // generate diff image
+    bool                        analysis;               //  run analysis
+    bool                        diffImage;              //  generate diff image
+    bool                        imageprops;             //  print image properties (i.e. image name, path, file size, image size, image width, height, miplevel and format)
     bool                        showperformance;        //
     bool                        noprogressinfo;         //
     bool                        use_noMipMaps;          //  use of image loads based on Open CV Components in place of raw image plugins for write to file
