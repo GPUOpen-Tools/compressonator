@@ -246,7 +246,6 @@ CCodec_BC6H::~CCodec_BC6H()
         {
             std::thread& curThread = m_EncodingThreadHandle[i];
 
-            curThread.detach();
             curThread = std::thread();
         }
 

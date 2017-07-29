@@ -176,7 +176,6 @@ CCodec_GT::~CCodec_GT()
         {
             std::thread& curThread = m_EncodingThreadHandle[i];
 
-            curThread.detach();
             curThread = std::thread();
         }
 

@@ -703,7 +703,7 @@ CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture
         if(err == CE_OK)
             err = threadData.m_errorCode;
 
-        ahThread[dwThread].detach();
+        ahThread[dwThread] = std::thread();
     }
 
     return GetError(err);
