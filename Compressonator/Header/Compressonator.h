@@ -27,15 +27,16 @@
 #ifndef H_COMPRESS
 #define H_COMPRESS
 
-#include <Windows.h>
 #include "Common.h"
 
-typedef unsigned long       CMP_DWORD;         ///< A 32-bit unsigned integer format.
-typedef unsigned short      CMP_WORD;          ///< A 16-bit unsigned integer format.
-typedef unsigned char       CMP_BYTE;          ///< An 8-bit unsigned integer format.
+typedef CMP::DWORD          CMP_DWORD;         ///< A 32-bit unsigned integer format.
+typedef CMP::WORD           CMP_WORD;          ///< A 16-bit unsigned integer format.
+typedef CMP::BYTE           CMP_BYTE;          ///< An 8-bit unsigned integer format.
 typedef char                CMP_CHAR;          ///< An 8-bit signed   char    format.
 typedef float               CMP_FLOAT;         ///< A 32-bit signed   float   format.
 typedef short               CMP_HALF;          ///< A 16-bit Half format.
+typedef CMP::BOOL           CMP_BOOL;          ///< A 32-bit integer boolean format.
+typedef CMP::DWORD_PTR      CMP_DWORD_PTR;
 
 // CMP_HALF and CMP_FLOAT
 //bit-layout for a half number, h:
@@ -232,18 +233,18 @@ typedef struct
 typedef struct
 {
    CMP_DWORD         dwSize;                    ///< The size of this structure.
-   BOOL              bUseChannelWeighting;      ///< Use channel weightings. With swizzled formats the weighting applies to the data within the specified channel not the channel itself.
+   CMP_BOOL         bUseChannelWeighting;      ///< Use channel weightings. With swizzled formats the weighting applies to the data within the specified channel not the channel itself.
                                                 ///< channel weigthing is not implemented for BC6H and BC7
    double            fWeightingRed;             ///<    The weighting of the Red or X Channel. 
    double            fWeightingGreen;           ///<    The weighting of the Green or Y Channel. 
    double            fWeightingBlue;            ///<    The weighting of the Blue or Z Channel. 
-   BOOL              bUseAdaptiveWeighting;     ///<    Adapt weighting on a per-block basis. 
-   BOOL              bDXT1UseAlpha;             ///< Encode single-bit alpha data. Only valid when compressing to DXT1 & BC1.
-   BOOL              bUseGPUDecompress;         ///< Use GPU to decompress. Decode API can be changed by specified in DecodeWith parameter. Default is OpenGL.
-   BOOL              bUseGPUCompress;           ///< Use GPU to compress. Encode API can be changed by specified in EncodeWith parameter. Default is OpenCL.
+   CMP_BOOL          bUseAdaptiveWeighting;     ///<    Adapt weighting on a per-block basis. 
+   CMP_BOOL          bDXT1UseAlpha;             ///< Encode single-bit alpha data. Only valid when compressing to DXT1 & BC1.
+   CMP_BOOL          bUseGPUDecompress;         ///< Use GPU to decompress. Decode API can be changed by specified in DecodeWith parameter. Default is OpenGL.
+   CMP_BOOL          bUseGPUCompress;           ///< Use GPU to compress. Encode API can be changed by specified in EncodeWith parameter. Default is OpenCL.
    CMP_BYTE          nAlphaThreshold;           ///< The alpha threshold to use when compressing to DXT1 & BC1 with bDXT1UseAlpha. Texels with an alpha value less than the threshold are treated as transparent.
                                                 ///< Note: When nCompressionSpeed is not set to Normal AphaThreshold is ignored for DXT1 & BC1
-   BOOL              bDisableMultiThreading;    ///< Disable multi-threading of the compression. This will slow the compression but can be useful if you're managing threads in your application.
+   CMP_BOOL          bDisableMultiThreading;    ///< Disable multi-threading of the compression. This will slow the compression but can be useful if you're managing threads in your application.
                                                 ///< if set BC7 dwnumThreads will default to 1 during encoding and then return back to its original value when done.
    CMP_Speed         nCompressionSpeed;         ///< The trade-off between compression speed & quality.
                                                 ///< Notes: 
@@ -255,12 +256,12 @@ typedef struct
    CMP_DWORD         dwnumThreads;              ///< Number of threads to initialize for BC7 encoding (Max up to 128). Default set to 8, 
    double            fquality;                  ///< Quality of encoding. This value ranges between 0.0 and 1.0. Default set to 0.05
                                                 ///< setting fquality above 0.0 gives the fastest, lowest quality encoding, 1.0 is the slowest, highest quality encoding. Default set to a low value of 0.05
-   BOOL              brestrictColour;           ///< This setting is a quality tuning setting for BC7 which may be necessary for convenience in some applications. Default set to false
+   CMP_BOOL          brestrictColour;           ///< This setting is a quality tuning setting for BC7 which may be necessary for convenience in some applications. Default set to false
                                                 ///< if  set and the block does not need alpha it instructs the code not to use modes that have combined colour + alpha - this
                                                 ///< avoids the possibility that the encoder might choose an alpha other than 1.0 (due to parity) and cause something to
                                                 ///< become accidentally slightly transparent (it's possible that when encoding 3-component texture applications will assume that
                                                 ///< the 4th component can safely be assumed to be 1.0 all the time.)
-   BOOL              brestrictAlpha;            ///< This setting is a quality tuning setting for BC7 which may be necessary for some textures. Default set to false,
+   CMP_BOOL          brestrictAlpha;            ///< This setting is a quality tuning setting for BC7 which may be necessary for some textures. Default set to false,
                                                 ///< if set it will also apply restriction to blocks with alpha to avoid issues with punch-through or thresholded alpha encoding
    CMP_DWORD         dwmodeMask;                ///< Mode to set BC7 to encode blocks using any of 8 different block modes in order to obtain the highest quality. Default set to 0xCF, (Skips Color components with separate alpha component)
                                                 ///< You can combine the bits to test for which modes produce the best image quality. 
@@ -423,7 +424,7 @@ extern "C" {
     // Note: For BC6H quality and modeMask are reserved for future release
     // 
     BC_ERROR CMP_API CMP_CreateBC6HEncoder(CMP_BC6H_BLOCK_PARAMETERS user_settings, BC6HBlockEncoder** encoder);
-    BC_ERROR CMP_API CMP_CreateBC7Encoder (double quality, BOOL restrictColour, BOOL restrictAlpha, CMP_DWORD modeMask, double performance, BC7BlockEncoder** encoder);
+    BC_ERROR CMP_API CMP_CreateBC7Encoder (double quality, CMP_BOOL restrictColour, CMP_BOOL restrictAlpha, CMP_DWORD modeMask, double performance, BC7BlockEncoder** encoder);
 
     // CMP_EncodeBC7Block()  - Enqueue a single BC7  block to the library for encoding
     // CMP_EncodeBC6HBlock() - Enqueue a single BC6H block to the library for encoding
@@ -439,8 +440,8 @@ extern "C" {
     // Pixel data in the block should be arranged in row-major order.
     // the 4th component should be set to 0, since Alpha is not supported in BC6H 
     //
-    BC_ERROR CMP_API CMP_EncodeBC7Block(BC7BlockEncoder* encoder, double in[BC_BLOCK_PIXELS][BC_COMPONENT_COUNT], BYTE* out);
-    BC_ERROR CMP_API CMP_EncodeBC6HBlock(BC6HBlockEncoder* encoder, CMP_FLOAT  in[BC_BLOCK_PIXELS][BC_COMPONENT_COUNT], BYTE* out);
+    BC_ERROR CMP_API CMP_EncodeBC7Block(BC7BlockEncoder* encoder, double in[BC_BLOCK_PIXELS][BC_COMPONENT_COUNT], CMP_BYTE* out);
+    BC_ERROR CMP_API CMP_EncodeBC6HBlock(BC6HBlockEncoder* encoder, CMP_FLOAT  in[BC_BLOCK_PIXELS][BC_COMPONENT_COUNT], CMP_BYTE* out);
 
     //
     // CMP_DecodeBC6HBlock() - Decode a BC6H block to an uncompressed output
@@ -449,8 +450,8 @@ extern "C" {
     // This function takes a pointer to an encoded BC block as input, decodes it and writes out the result
     //
     //
-    BC_ERROR CMP_API CMP_DecodeBC6HBlock(BYTE* in, CMP_FLOAT  out[BC_BLOCK_PIXELS][BC_COMPONENT_COUNT]);
-    BC_ERROR CMP_API CMP_DecodeBC7Block(BYTE* in, double out[BC_BLOCK_PIXELS][BC_COMPONENT_COUNT]);
+    BC_ERROR CMP_API CMP_DecodeBC6HBlock(CMP_BYTE* in, CMP_FLOAT  out[BC_BLOCK_PIXELS][BC_COMPONENT_COUNT]);
+    BC_ERROR CMP_API CMP_DecodeBC7Block(CMP_BYTE* in, double out[BC_BLOCK_PIXELS][BC_COMPONENT_COUNT]);
 
     //
     // CMP_DestroyBC6HEncoder() - Deletes a previously allocated encoder object
@@ -468,7 +469,7 @@ extern "C" {
    /// \param[in] pUser1 User data as passed to CMP_ConvertTexture.
    /// \param[in] pUser2 User data as passed to CMP_ConvertTexture.
    /// \return non-NULL(true) value to abort conversion
-   typedef bool (CMP_API * CMP_Feedback_Proc)(float fProgress, DWORD_PTR pUser1, DWORD_PTR pUser2);
+   typedef bool (CMP_API * CMP_Feedback_Proc)(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2);
 
    /// Calculates the required buffer size for the specified texture
    /// \param[in] pTexture A pointer to the texture.
@@ -487,7 +488,7 @@ extern "C" {
    CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, 
                                         CMP_Texture* pDestTexture,
                                         const CMP_CompressOptions* pOptions,
-                                        CMP_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2);
+                                        CMP_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2);
 
 #ifdef __cplusplus
 };

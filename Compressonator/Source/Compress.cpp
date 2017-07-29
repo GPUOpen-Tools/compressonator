@@ -30,8 +30,9 @@
         
 #include "Compressonator.h"
 #include "Compress.h"
-#include <tchar.h>
 #include <assert.h>    
+
+#include <algorithm>
 
 CodecType GetCodecType(CMP_FORMAT format)
 {
@@ -268,7 +269,7 @@ CMP_ERROR Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, CMP_Texture* srcTextu
                     }
                 }
 
-                BYTE r_b, g_b, b_b, a_b;
+                CMP_BYTE r_b, g_b, b_b, a_b;
 
 
                 //  1) Compensate for fogging by subtracting defog
@@ -408,7 +409,7 @@ CMP_ERROR CheckTexture(const CMP_Texture* pTexture, bool bSource)
 
 
 
-CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2, CodecType destType)
+CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2, CodecType destType)
 {
     // Compressing
     CCodec* pCodec = CreateCodec(destType);
@@ -538,12 +539,14 @@ public:
     CCodecBuffer* m_pSrcBuffer;
     CCodecBuffer* m_pDestBuffer;
     CMP_Feedback_Proc m_pFeedbackProc;
-    DWORD_PTR m_pUser1;
-    DWORD_PTR m_pUser2;
+    CMP_DWORD_PTR m_pUser1;
+    CMP_DWORD_PTR m_pUser2;
+    CodecError m_errorCode;
 };
 
 CATICompressThreadData::CATICompressThreadData() : m_pCodec(NULL), m_pSrcBuffer(NULL), m_pDestBuffer(NULL), 
-                                                   m_pFeedbackProc(NULL), m_pUser1(NULL), m_pUser2(NULL)
+                                                   m_pFeedbackProc(NULL), m_pUser1(NULL), m_pUser2(NULL),
+                                                   m_errorCode( CE_OK )
 {
 }
 
@@ -554,32 +557,32 @@ CATICompressThreadData::~CATICompressThreadData()
     SAFE_DELETE(m_pDestBuffer);
 }
 
-DWORD WINAPI ThreadedCompressProc(LPVOID lpParameter)
+void ThreadedCompressProc(void *lpParameter)
 {
     CATICompressThreadData *pThreadData = (CATICompressThreadData*) lpParameter;
     DISABLE_FP_EXCEPTIONS;
     CodecError err = pThreadData->m_pCodec->Compress(*pThreadData->m_pSrcBuffer, *pThreadData->m_pDestBuffer, pThreadData->m_pFeedbackProc, pThreadData->m_pUser1, pThreadData->m_pUser2);
     RESTORE_FP_EXCEPTIONS;
-    return err;
+    pThreadData->m_errorCode = err;
 }
 
-CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2, CodecType destType)
+CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2, CodecType destType)
 {
     // Note function should not be called for the following Codecs....
     if (destType == CT_BC7)  return CMP_ABORTED; 
     if (destType == CT_GT)   return CMP_ABORTED;
     if (destType == CT_ASTC) return CMP_ABORTED; 
 
-    DWORD dwMaxThreadCount = min(f_dwProcessorCount, MAX_THREADS);
-    DWORD dwLinesRemaining = pDestTexture->dwHeight;
+    CMP_DWORD dwMaxThreadCount = min(f_dwProcessorCount, MAX_THREADS);
+    CMP_DWORD dwLinesRemaining = pDestTexture->dwHeight;
     CMP_BYTE* pSourceData = pSourceTexture->pData;
     CMP_BYTE* pDestData = pDestTexture->pData;
 
     CATICompressThreadData aThreadData[MAX_THREADS];
-    HANDLE ahThread[MAX_THREADS];
+    std::thread ahThread[MAX_THREADS];
 
-    DWORD dwThreadCount = 0;
-    for(DWORD dwThread = 0; dwThread < dwMaxThreadCount; dwThread++)
+    CMP_DWORD dwThreadCount = 0;
+    for(CMP_DWORD dwThread = 0; dwThread < dwMaxThreadCount; dwThread++)
     {
         CATICompressThreadData& threadData = aThreadData[dwThread];
 
@@ -648,11 +651,11 @@ CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture
 
         CodecBufferType srcBufferType = GetCodecBufferType(pSourceTexture->format);
 
-        DWORD dwThreadsRemaining = dwMaxThreadCount - dwThread;
-        DWORD dwHeight = 0;
+        CMP_DWORD dwThreadsRemaining = dwMaxThreadCount - dwThread;
+        CMP_DWORD dwHeight = 0;
         if(dwThreadsRemaining > 1)
         {
-            DWORD dwBlockHeight = threadData.m_pCodec->GetBlockHeight();
+            CMP_DWORD dwBlockHeight = threadData.m_pCodec->GetBlockHeight();
             dwHeight = dwLinesRemaining / dwThreadsRemaining;
             dwHeight = min(((dwHeight + dwBlockHeight - 1) / dwBlockHeight) * dwBlockHeight, dwLinesRemaining); // Round by block height
             dwLinesRemaining -= dwHeight;
@@ -681,22 +684,26 @@ CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture
             threadData.m_pUser1 = pUser1;
             threadData.m_pUser2 = pUser2;
 
-            DWORD dwThreadID;
-            ahThread[dwThreadCount++] = CreateThread(NULL, 0, ThreadedCompressProc, &threadData, 0, &dwThreadID);
+            ahThread[dwThreadCount++] = std::thread(ThreadedCompressProc, &threadData);
         }
     }
 
-    WaitForMultipleObjects(dwThreadCount, ahThread, true, INFINITE);
+    for ( CMP_DWORD dwThread = 0; dwThread < dwThreadCount; dwThread++ )
+    {
+        std::thread& curThread = ahThread[dwThread];
+
+        curThread.join();
+    }
 
     CodecError err = CE_OK;
-    for(DWORD dwThread = 0; dwThread < dwThreadCount; dwThread++)
+    for(CMP_DWORD dwThread = 0; dwThread < dwThreadCount; dwThread++)
     {
-        DWORD dwExitCode;
+        CATICompressThreadData& threadData = aThreadData[dwThread];
 
-        if(err == CE_OK && GetExitCodeThread(ahThread[dwThread], &dwExitCode))
-            err = (CodecError) dwExitCode;
+        if(err == CE_OK)
+            err = threadData.m_errorCode;
 
-        CloseHandle(ahThread[dwThread]);
+        ahThread[dwThread].detach();
     }
 
     return GetError(err);

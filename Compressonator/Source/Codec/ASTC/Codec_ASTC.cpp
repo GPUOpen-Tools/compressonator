@@ -32,11 +32,12 @@
 #pragma warning(disable:4996)   // This function or variable may be unsafe
 
 #include "Common.h"
-#include "ASTC\Codec_ASTC.h"
-#include "ASTC\ASTC_library.h"
+#include "ASTC/Codec_ASTC.h"
+#include "ASTC/ASTC_Library.h"
 
-#include "ASTC\ARM\astc_codec_internals.h"
-#include "process.h"
+#include "ASTC/ARM/astc_codec_internals.h"
+
+#include <chrono>
 
 #ifdef ASTC_COMPDEBUGGER
 #include "CompClient.h"
@@ -62,8 +63,8 @@ struct ASTCEncodeThreadParam
     astc_decode_mode decode_mode;
     const error_weighting_params * ewp;
 
-    volatile BOOL      run;
-    volatile BOOL      exit;
+    volatile CMP_BOOL      run;
+    volatile CMP_BOOL      exit;
 };
 
 static ASTCEncodeThreadParam *g_EncodeParameterStorage = NULL;
@@ -120,21 +121,22 @@ CCodec_ASTC::~CCodec_ASTC()
             // Now wait for all threads to have exited
             if (m_LiveThreads > 0)
             {
-                WaitForMultipleObjects(m_LiveThreads,
-                    m_EncodingThreadHandle,
-                    true,
-                    INFINITE);
+                for ( CMP_DWORD dwThread = 0; dwThread < m_LiveThreads; dwThread++ )
+                {
+                    std::thread& curThread = m_EncodingThreadHandle[dwThread];
+
+                    curThread.join();
+                }
             }
 
         } // MultiThreading
 
-        for (int i = 0; i < m_LiveThreads; i++)
+        for (unsigned int i = 0; i < m_LiveThreads; i++)
         {
-            if (m_EncodingThreadHandle[i])
-            {
-                CloseHandle(m_EncodingThreadHandle[i]);
-            }
-            m_EncodingThreadHandle[i] = 0;
+            std::thread& curThread = m_EncodingThreadHandle[i];
+
+            curThread.detach();
+            curThread = std::thread();
         }
 
         delete[] m_EncodingThreadHandle;
@@ -335,7 +337,7 @@ bool CCodec_ASTC::SetParameter(const CMP_CHAR* pszParamName, CODECFLOAT fValue)
 ASTC_Encoder::ASTC_Encode  g_ASTCEncode;
 
 
-unsigned int    _stdcall ASTCThreadProcEncode(void* param)
+unsigned int ASTCThreadProcEncode(void* param)
 {
     ASTCEncodeThreadParam *tp = (ASTCEncodeThreadParam*)param;
 
@@ -357,7 +359,10 @@ unsigned int    _stdcall ASTCThreadProcEncode(void* param)
 
             tp->run = FALSE;
         }
-        Sleep(0);
+
+        using namespace chrono;
+
+        std::this_thread::sleep_for( 0ms );
     }
 
     return 0;
@@ -380,7 +385,7 @@ CodecError CCodec_ASTC::InitializeASTCLibrary()
         ASTC_Encoder::init_ASTC(&g_ASTCEncode);
 
         //====================== Threads
-        for (DWORD i = 0; i < MAX_ASTC_THREADS; i++)
+        for (CMP_DWORD i = 0; i < MAX_ASTC_THREADS; i++)
         {
             m_encoder[i] = NULL;
         }
@@ -388,7 +393,7 @@ CodecError CCodec_ASTC::InitializeASTCLibrary()
         // Create threaded encoder instances
         m_LiveThreads = 0;
         m_LastThread = 0;
-        m_NumEncodingThreads = min(m_NumThreads, MAX_ASTC_THREADS);
+        m_NumEncodingThreads = min(m_NumThreads, (decltype(m_NumThreads))MAX_ASTC_THREADS);
         if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1;
         m_Use_MultiThreading = m_NumEncodingThreads > 1;
 
@@ -398,7 +403,7 @@ CodecError CCodec_ASTC::InitializeASTCLibrary()
             return CE_Unknown;
         }
 
-        m_EncodingThreadHandle = new HANDLE[m_NumEncodingThreads];
+        m_EncodingThreadHandle = new std::thread[m_NumEncodingThreads];
         if (!m_EncodingThreadHandle)
         {
             delete[] g_EncodeParameterStorage;
@@ -407,7 +412,7 @@ CodecError CCodec_ASTC::InitializeASTCLibrary()
             return CE_Unknown;
         }
 
-        DWORD   i;
+        CMP_DWORD   i;
 
         for (i = 0; i < m_NumEncodingThreads; i++)
         {
@@ -425,7 +430,7 @@ CodecError CCodec_ASTC::InitializeASTCLibrary()
                 delete[] m_EncodingThreadHandle;
                 m_EncodingThreadHandle = NULL;
 
-                for (DWORD j = 0; j<i; j++)
+                for (CMP_DWORD j = 0; j<i; j++)
                 {
                     delete m_encoder[j];
                     m_encoder[j] = NULL;
@@ -440,26 +445,21 @@ CodecError CCodec_ASTC::InitializeASTCLibrary()
 
         }
 
-        // Create the encoding threads in the suspended state
+        // Create the encoding threads
         for (i = 0; i<m_NumEncodingThreads; i++)
         {
-            m_EncodingThreadHandle[i] = (HANDLE)_beginthreadex(NULL,
-                0,
+            // Initialize thread parameters.
+            g_EncodeParameterStorage[i].encoder = m_encoder[i];
+            // Inform the thread that at the moment it doesn't have any work to do
+            // but that it should wait for some and not exit
+            g_EncodeParameterStorage[i].run = FALSE;
+            g_EncodeParameterStorage[i].exit = FALSE;
+
+            m_EncodingThreadHandle[i] = std::thread(
                 ASTCThreadProcEncode,
-                (void*)&g_EncodeParameterStorage[i],
-                CREATE_SUSPENDED,
-                NULL);
-            if (m_EncodingThreadHandle[i])
-            {
-                g_EncodeParameterStorage[i].encoder = m_encoder[i];
-                // Inform the thread that at the moment it doesn't have any work to do
-                // but that it should wait for some and not exit
-                g_EncodeParameterStorage[i].run = FALSE;
-                g_EncodeParameterStorage[i].exit = FALSE;
-                // Start the thread and have it wait for work
-                ResumeThread(m_EncodingThreadHandle[i]);
-                m_LiveThreads++;
-            }
+                (void*)&g_EncodeParameterStorage[i]
+            );
+            m_LiveThreads++;
         }
 
         // Create single decoder instance
@@ -467,7 +467,7 @@ CodecError CCodec_ASTC::InitializeASTCLibrary()
 
         if (!m_decoder)
         {
-            for (DWORD j = 0; j<m_NumEncodingThreads; j++)
+            for (CMP_DWORD j = 0; j<m_NumEncodingThreads; j++)
             {
                 delete m_encoder[j];
                 m_encoder[j] = NULL;
@@ -492,10 +492,10 @@ CodecError CCodec_ASTC::EncodeASTCBlock(
 {
     if (m_Use_MultiThreading)
     {
-        WORD   threadIndex;
+        CMP_WORD   threadIndex;
 
         // Loop and look for an available thread
-        BOOL found = FALSE;
+        CMP_BOOL found = FALSE;
         threadIndex = m_LastThread;
         while (found == FALSE)
         {
@@ -563,13 +563,15 @@ CodecError CCodec_ASTC::FinishASTCEncoding(void)
     if (m_Use_MultiThreading)
     {
         // Wait for all the live threads to finish any current work
-        for (DWORD i = 0; i < m_LiveThreads; i++)
+        for (CMP_DWORD i = 0; i < m_LiveThreads; i++)
         {
             // If a thread is in the running state then we need to wait for it to finish
             // its work from the producer
             while (g_EncodeParameterStorage[i].run == TRUE)
             {
-                Sleep(1);
+                using namespace chrono;
+
+                std::this_thread::sleep_for( 1ms );
             }
         }
     }
@@ -591,13 +593,13 @@ struct encode_astc_image_info
     volatile int *threads_completed;
     const astc_codec_image *input_image;
     Codec_Feedback_Proc pFeedbackProc;
-    DWORD_PTR pUser1;
-    DWORD_PTR pUser2;
+    CMP_DWORD_PTR pUser1;
+    CMP_DWORD_PTR pUser2;
 };
 
 #define USE_ARM_CODE
 
-CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     m_AbortRequested = false;
 
@@ -690,7 +692,7 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
         }
     }
 
-    m_NumEncodingThreads = min(m_NumThreads, MAX_ASTC_THREADS);
+    m_NumEncodingThreads = min(m_NumThreads, (decltype(m_NumThreads))MAX_ASTC_THREADS);
     if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1;
 
 // Common ARM and AMD Code
@@ -750,7 +752,7 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
 // notes:
 // Slow CPU based decompression : Should look into also using HW based decompression with this interface
 //
-CodecError CCodec_ASTC::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+CodecError CCodec_ASTC::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     m_xdim = bufferIn.GetBlockWidth();
     m_ydim = bufferIn.GetBlockHeight();

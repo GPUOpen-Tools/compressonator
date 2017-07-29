@@ -44,7 +44,7 @@ CCodec_DXT3::~CCodec_DXT3()
 {
 }
 
-CodecError CCodec_DXT3::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+CodecError CCodec_DXT3::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
 #ifndef _WIN64  //todo: add sse2 feature for win64
     if(m_nCompressionSpeed == CMP_Speed_SuperFast && m_bUseSSE2)
@@ -93,7 +93,7 @@ CodecError CCodec_DXT3::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
     return CE_OK;
 }
 
-CodecError CCodec_DXT3::Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+CodecError CCodec_DXT3::Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
@@ -125,7 +125,7 @@ CodecError CCodec_DXT3::Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& buff
     return CE_OK;
 }
 
-CodecError CCodec_DXT3::Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+CodecError CCodec_DXT3::Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
@@ -157,7 +157,7 @@ CodecError CCodec_DXT3::Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer&
     return CE_OK;
 }
 
-CodecError CCodec_DXT3::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+CodecError CCodec_DXT3::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());

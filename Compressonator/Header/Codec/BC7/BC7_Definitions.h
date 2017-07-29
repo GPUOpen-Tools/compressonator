@@ -25,10 +25,15 @@
 #define _BC7_DEFINITIONS_H_
 
 #include "3dquant_constants.h"
-#include <Windows.h>
 
-typedef unsigned long   DWORD;
-typedef unsigned char   BYTE;
+#include <cstdint>
+
+typedef std::uint8_t BYTE;
+typedef std::uint32_t DWORD;
+typedef std::int32_t BOOL;
+
+#define TRUE 1
+#define FALSE 0
 
 // Largest possible size for an individual subset
 #define MAX_SUBSET_SIZE         16
@@ -100,11 +105,6 @@ typedef struct
 
 extern BTI bti[NUM_BLOCK_TYPES];
 
-#ifndef min
-
-#define min(a,b) ((a) < (b) ? (a) : (b))
-#define max(a,b) ((a) > (b) ? (a) : (b))
-
-#endif
+#include "MathMacros.h"
 
 #endif

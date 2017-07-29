@@ -22,20 +22,20 @@
 // THE SOFTWARE.
 //
 
-#include "ASTC\ASTC_definitions.h"
-#include "ASTC\ASTC_Encode.h"
-#include "ASTC\ASTC_Decode.h"
+#include "ASTC/ASTC_Definitions.h"
+#include "ASTC/ASTC_Encode.h"
+#include "ASTC/ASTC_Decode.h"
 #include "Compressonator.h"
 
 
-extern BOOL    g_LibraryInitialized;
+extern CMP_BOOL g_LibraryInitialized;
 static ASTCBlockDecoder  g_Decoder;
 
 // Need to remove these calls 
 int astc_codec_unlink(const char *filename)
 {
-    BOOL res = DeleteFileA(filename);
-    return (res ? 0 : -1);
+    int res = remove(filename);
+    return res;
 }
 
 void astc_codec_internal_error(const char *filename, int linenum)

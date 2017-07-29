@@ -46,7 +46,7 @@ CCodec_ATC_RGBA_Interpolated::~CCodec_ATC_RGBA_Interpolated()
 
 }
 
-CodecError CCodec_ATC_RGBA_Interpolated::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+CodecError CCodec_ATC_RGBA_Interpolated::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
@@ -78,7 +78,7 @@ CodecError CCodec_ATC_RGBA_Interpolated::Compress(CCodecBuffer& bufferIn, CCodec
     return CE_OK;
 }
 
-CodecError CCodec_ATC_RGBA_Interpolated::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+CodecError CCodec_ATC_RGBA_Interpolated::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());

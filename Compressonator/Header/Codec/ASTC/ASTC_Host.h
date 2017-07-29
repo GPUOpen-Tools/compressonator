@@ -37,13 +37,12 @@
 #include <stdio.h>      /* printf */
 #include <math.h>       /* floor */
 #include <algorithm>    // std::max
+#include <cstdint>
 
 using namespace std;
 
 namespace ASTC_Encoder
 {
-#define M_PI 3.14159265358979323846264338
-
     __constant float percentile_table_4x4[2048] = {
         1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f,
         1.0000f, 1.0000f, 1.0000f, 0.8661f, 1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f, 1.0000f,

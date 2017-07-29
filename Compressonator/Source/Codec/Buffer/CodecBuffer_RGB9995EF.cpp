@@ -35,7 +35,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 const int nChannelCount = 4;
-const int nPixelSize = nChannelCount * sizeof(byte);
+const int nPixelSize = nChannelCount * sizeof(char);
 
 CCodecBuffer_RGB9995EF::CCodecBuffer_RGB9995EF(
     CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
@@ -166,7 +166,7 @@ bool CCodecBuffer_RGB9995EF::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w,
     CMP_DWORD i, j;
     for(j = 0; j < h && (y + j) < GetHeight(); j++)
     {
-        DWORD* pData = (DWORD*)(GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
+        CMP_DWORD* pData = (CMP_DWORD*)(GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
         R9G9B9E5 pTemp;
 
         pTemp.rm = ((*pData) & 0x000001ff);

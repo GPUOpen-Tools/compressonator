@@ -23,7 +23,6 @@
 #ifndef _COMPCLIENT_H_INCLUDED_
 #define _COMPCLIENT_H_INCLUDED_
 
-#include <windows.h>
 #include <atlstr.h>
 #include <strsafe.h>
 

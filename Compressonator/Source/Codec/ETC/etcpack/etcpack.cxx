@@ -45,7 +45,6 @@
 //// (C) Ericsson AB 2005-2013. All Rights Reserved.
 //// 
 
-#include "windows.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -53,6 +52,8 @@
 #include <time.h>
 #include <sys/timeb.h>
 #include "etcimage.h"
+
+#define UNREFERENCED_PARAMETER(x)   ((void)x)
 
 // Typedefs
 typedef unsigned char uint8;
@@ -15992,7 +15993,7 @@ void compressFile(char *srcfile,char *dstfile)
     uint8 *srcimg;
     int width,height;
     int extendedwidth, extendedheight;
-    struct _timeb tstruct;
+    timeb tstruct;
     int tstart;
     int tstop;
     // 0: compress from .any to .pkm with SPEED_FAST, METRIC_NONPERCEPTUAL, ETC 
@@ -16070,11 +16071,11 @@ void compressFile(char *srcfile,char *dstfile)
             printf("Compressing...\n");
 
             tstart=time(NULL);
-            _ftime( &tstruct );
+            ftime( &tstruct );
             tstart=tstart*1000+tstruct.millitm;
             compressImageFile(srcimg,alphaimg,width,height,dstfile,extendedwidth, extendedheight);            
             tstop = time(NULL);
-            _ftime( &tstruct );
+            ftime( &tstruct );
             tstop = tstop*1000+tstruct.millitm;
             printf( "It took %u milliseconds to compress:\n", tstop - tstart);
             calculatePSNRfile(dstfile,srcimg,alphaimg);

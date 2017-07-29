@@ -92,7 +92,7 @@ bool CCodecBuffer_RGBA2101010::ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, C
         CMP_DWORD* pData = (CMP_DWORD*) (GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
         for(i = 0; i < dwWidth; i++)
         {
-            DWORD dwData = *pData++;
+            CMP_DWORD dwData = *pData++;
             if(b10Bit)
                 block[(j * w) + i] = CONVERT_10BIT_TO_WORD(static_cast<CMP_WORD>(((dwData) >> dwChannelOffset) & dwChannelMask));
             else

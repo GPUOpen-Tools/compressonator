@@ -25,7 +25,7 @@
 #define _GT_ENCODE_H_
 
 #include <float.h>
-#include "GT_definitions.h"
+#include "GT_Definitions.h"
 
 
 class GTBlockEncoder

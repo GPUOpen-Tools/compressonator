@@ -29,7 +29,8 @@
 #pragma warning(disable:4100)    // Ignore warnings of unreferenced formal parameters
 #include "Common.h"
 #include "Codec_GT.h"
-#include "process.h"
+
+#include <chrono>
 
 
 //======================================================================================
@@ -52,7 +53,7 @@ struct GTEncodeThreadParam
 // it should set the exit flag in the parameters to allow the tread to quit
 //
 
-unsigned int    _stdcall GTThreadProcEncode(void* param)
+unsigned int GTThreadProcEncode(void* param)
 {
     GTEncodeThreadParam *tp = (GTEncodeThreadParam*)param;
 
@@ -63,7 +64,10 @@ unsigned int    _stdcall GTThreadProcEncode(void* param)
             tp->encoder->CompressBlock(tp->in, tp->out);
             tp->run = FALSE;
         }
-        Sleep(0);
+        
+        using namespace chrono;
+
+        std::this_thread::sleep_for( 0ms );
     }
 
     return 0;
@@ -158,21 +162,22 @@ CCodec_GT::~CCodec_GT()
             // Now wait for all threads to have exited
             if(m_LiveThreads > 0)
             {
-                WaitForMultipleObjects(m_LiveThreads,
-                                       m_EncodingThreadHandle,
-                                       true,
-                                       INFINITE);
+                for ( DWORD dwThread = 0; dwThread < m_LiveThreads; dwThread++ )
+                {
+                    std::thread& curThread = m_EncodingThreadHandle[dwThread];
+
+                    curThread.join();
+                }
             }
 
         } // MultiThreading
 
-        for(int i=0; i < m_LiveThreads; i++)
+        for (unsigned int i = 0; i < m_LiveThreads; i++)
         {
-            if(m_EncodingThreadHandle[i])
-            {
-                CloseHandle(m_EncodingThreadHandle[i]);
-            }
-            m_EncodingThreadHandle[i] = 0;
+            std::thread& curThread = m_EncodingThreadHandle[i];
+
+            curThread.detach();
+            curThread = std::thread();
         }
 
         delete[] m_EncodingThreadHandle;
@@ -226,7 +231,7 @@ CodecError CCodec_GT::InitializeGTLibrary()
             return CE_Unknown;
         }
 
-        m_EncodingThreadHandle = new HANDLE[m_NumEncodingThreads];
+        m_EncodingThreadHandle = new std::thread[m_NumEncodingThreads];
         if(!m_EncodingThreadHandle)
         {
             delete[] g_EncodeParameterStorage;
@@ -268,27 +273,22 @@ CodecError CCodec_GT::InitializeGTLibrary()
 
         }
 
-        // Create the encoding threads in the suspended state
-        for(i=0; i<m_NumEncodingThreads; i++)
+        // Create the encoding threads
+        for (i = 0; i<m_NumEncodingThreads; i++)
         {
-            m_EncodingThreadHandle[i] = (HANDLE)_beginthreadex(NULL,
-                                               0,
+            // Initialize thread parameters.
+            g_EncodeParameterStorage[i].encoder = m_encoder[i];
+            // Inform the thread that at the moment it doesn't have any work to do
+            // but that it should wait for some and not exit
+            g_EncodeParameterStorage[i].run = FALSE;
+            g_EncodeParameterStorage[i].exit = FALSE;
+
+            m_EncodingThreadHandle[i] = std::thread(
                 GTThreadProcEncode,
-                                               (void*)&g_EncodeParameterStorage[i],
-                                               CREATE_SUSPENDED,
-                                               NULL);
-            if(m_EncodingThreadHandle[i])
-            {
-                g_EncodeParameterStorage[i].encoder = m_encoder[i];
-                // Inform the thread that at the moment it doesn't have any work to do
-                // but that it should wait for some and not exit
-                g_EncodeParameterStorage[i].run = FALSE;
-                g_EncodeParameterStorage[i].exit = FALSE;
-                // Start the thread and have it wait for work
-                ResumeThread(m_EncodingThreadHandle[i]);
-                m_LiveThreads++;
-            }
-         }
+                (void*)&g_EncodeParameterStorage[i]
+            );
+            m_LiveThreads++;
+        }
 
 
         // Create single decoder instance
@@ -383,14 +383,16 @@ if (m_Use_MultiThreading)
         // its work from the producer
         while(g_EncodeParameterStorage[i].run == TRUE)
         {
-            Sleep(1);
+            using namespace chrono;
+
+            std::this_thread::sleep_for( 1ms );
         }
     }
 }
 return CE_OK;
 }
 
-CodecError CCodec_GT::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+CodecError CCodec_GT::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     assert(bufferIn.GetWidth()    == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
@@ -519,7 +521,7 @@ CodecError CCodec_GT::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, 
 }
 
 
-CodecError CCodec_GT::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+CodecError CCodec_GT::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
@@ -593,13 +595,13 @@ CodecError CCodec_GT::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
 }
 
 // Not implemented
-CodecError CCodec_GT::Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+CodecError CCodec_GT::Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     return CE_OK;
 }
 
 // Not implemented
-CodecError CCodec_GT::Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+CodecError CCodec_GT::Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
    return CE_OK;
 }

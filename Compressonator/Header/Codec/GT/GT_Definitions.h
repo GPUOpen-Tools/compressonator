@@ -24,10 +24,16 @@
 #ifndef _GT_DEFINITIONS_H_
 #define _GT_DEFINITIONS_H_
 
-#include <Windows.h>
+#include <cstdint>
 
-typedef unsigned long   DWORD;
-typedef unsigned char   BYTE;
+typedef std::uint8_t BYTE;
+typedef std::uint16_t WORD;
+typedef std::uint32_t DWORD;
+typedef std::int32_t LONG;
+typedef std::int32_t BOOL;
+
+#define TRUE 1
+#define FALSE 0
 
 #define MAX_GT_THREADS 128
 
@@ -41,12 +47,5 @@ typedef unsigned char   BYTE;
 #define MAX_SUBSET_SIZE  16
 
 #define MAX_DIMENSION_BIG 4
-
-#ifndef min
-
-#define min(a,b) ((a) < (b) ? (a) : (b))
-#define max(a,b) ((a) > (b) ? (a) : (b))
-
-#endif
 
 #endif

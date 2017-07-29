@@ -113,7 +113,6 @@
 // Possibly test if 3 colour blocks would generate better results in some cases (done, not
 // apparent in most test images)
 
-#include <Windows.h>
 #include <math.h>
 #include <assert.h>
 #include <string.h>
@@ -333,7 +332,7 @@ static void DXTCDecompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
     else v += (0x80>>shift) - (v>>shift);\
 }
 
-void __cdecl DXTCV11CompressExplicitAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
+void DXTCV11CompressExplicitAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
 {
     int i;
     block_dxtc[0] = block_dxtc[1] = 0;
@@ -354,7 +353,7 @@ void __cdecl DXTCV11CompressExplicitAlphaBlock(BYTE block_8[16], DWORD block_dxt
 }
 
 
-#ifndef _WIN64
+#if !defined(_WIN64) && defined(_WIN32) 
 // This compressor can only create opaque, 4-colour blocks
 void DXTCV11CompressBlock(DWORD block_32[16], DWORD block_dxtc[2])
 {
@@ -1766,7 +1765,11 @@ void DXTCV11CompressBlockMinimal(DWORD block_32[16], DWORD block_dxtc[2])
     // done
 }
 
-void __cdecl DXTCV11CompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
+#endif
+
+#ifndef _WIN64
+
+void DXTCV11CompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
 {
     int i;
 

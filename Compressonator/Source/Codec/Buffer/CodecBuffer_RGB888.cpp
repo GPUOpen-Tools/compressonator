@@ -42,7 +42,7 @@ CCodecBuffer_RGB888::CCodecBuffer_RGB888(
     CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData)
     : CCodecBuffer(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData)
 {
-    DWORD dwMinPitch = dwWidth * nPixelSize;
+    CMP_DWORD dwMinPitch = dwWidth * nPixelSize;
     assert((m_dwPitch == 0) || (m_dwPitch >= dwMinPitch));
     
     if(m_dwPitch < dwMinPitch)
@@ -186,7 +186,7 @@ bool CCodecBuffer_RGB888::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CM
 
     CMP_DWORD dwWidth = min(w, (GetWidth() - x));
 
-    DWORD* pdwBlock = (DWORD*) block;
+    CMP_DWORD* pdwBlock = (CMP_DWORD*) block;
     CMP_DWORD i, j;
     for(j = 0; j < h && (y + j) < GetHeight(); j++)
     {
@@ -223,7 +223,7 @@ bool CCodecBuffer_RGB888::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, C
         return false;
 
     CMP_DWORD dwWidth = min(w, (GetWidth() - x));
-    DWORD* pdwBlock = (DWORD*) block;
+    CMP_DWORD* pdwBlock = (CMP_DWORD*) block;
 
     for(CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); j++)
     {

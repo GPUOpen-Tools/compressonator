@@ -36,6 +36,8 @@
 #include <assert.h>
 #include "debug.h"
 
+using namespace CMP;
+
 extern CodecType GetCodecType(CMP_FORMAT format);
 extern CMP_ERROR GetError(CodecError err);
 #ifdef ENABLE_MAKE_COMPATIBLE_API
@@ -421,10 +423,12 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
     if(tc_err != CMP_OK)
         return tc_err;
 
+/*
 #if defined(WIN32) || defined(_WIN64)
     assert(!IsBadReadPtr(pSourceTexture->pData, pSourceTexture->dwDataSize));
     assert(!IsBadWritePtr(pDestTexture->pData, pDestTexture->dwDataSize));
 #endif // !WIN32 && !_WIN64
+*/
 
 #ifdef ENABLE_MAKE_COMPATIBLE_API
     bool srcFloat = IsFloatFormat(pSourceTexture->format);

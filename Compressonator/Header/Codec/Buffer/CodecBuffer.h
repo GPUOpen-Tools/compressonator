@@ -31,6 +31,8 @@
 
 #include "debug.h"
 
+#include "MathMacros.h"
+
 #pragma warning(disable:4244)
 #include "half.h"
 #pragma warning(default:4244)

@@ -28,8 +28,10 @@
 #include "Codec_DXTC.h"
 #include "ASTC_Encode.h"
 #include "ASTC_Decode.h"
-#include "ASTC_library.h"
+#include "ASTC_Library.h"
 #include "ASTC_Definitions.h"
+
+#include <thread>
 
 class CCodec_ASTC : public CCodec_DXTC
 {
@@ -42,19 +44,19 @@ public:
     virtual bool SetParameter(const CMP_CHAR* /*pszParamName*/, CODECFLOAT /*fValue*/);
 
     // Required interfaces
-    virtual CodecError Compress             (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, DWORD_PTR pUser1 = NULL, DWORD_PTR pUser2 = NULL);
-    virtual CodecError Decompress           (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, DWORD_PTR pUser1 = NULL, DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress             (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Decompress           (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
 
 private:
 
     // ASTC User configurable variables
-    WORD    m_NumThreads;    
-    char    m_BlockRate[64];
+    CMP_WORD    m_NumThreads;    
+    char        m_BlockRate[64];
 
     // ASTC Internal status 
-    BOOL     m_LibraryInitialized;
-    WORD     m_NumEncodingThreads;
-    bool     m_AbortRequested;
+    CMP_BOOL    m_LibraryInitialized;
+    CMP_WORD    m_NumEncodingThreads;
+    bool        m_AbortRequested;
 
     int m_xdim, m_ydim, m_zdim;        // Is now implamented and set by user ( defined in g_ASTCEncode )
     float m_target_bitrate;            // defined in g_ASTCEncode 
@@ -64,7 +66,7 @@ private:
     ASTCBlockEncoder*    m_encoder[MAX_ASTC_THREADS];
 
     // Encoder interfaces
-    HANDLE*         m_EncodingThreadHandle;
+    std::thread         *m_EncodingThreadHandle;
 
     CodecError      EncodeASTCBlock(
         astc_codec_image *input_image,
@@ -85,9 +87,9 @@ private:
     void find_closest_blockxy_2d(int *x, int *y, int consider_illegal);
 
     // Internal status 
-    BOOL     m_Use_MultiThreading;
-    WORD     m_LiveThreads;
-    WORD     m_LastThread;
+    CMP_BOOL    m_Use_MultiThreading;
+    CMP_WORD    m_LiveThreads;
+    CMP_WORD    m_LastThread;
 
     // Speed and Quality
     double  m_Quality;

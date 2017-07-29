@@ -32,7 +32,9 @@
 #include "Codec_DXTC.h"
 #include "BC7_Encode.h"
 #include "BC7_Decode.h"
-#include "BC7_library.h"
+#include "BC7_Library.h"
+
+#include <thread>
 
 class CCodec_BC7 : public CCodec_DXTC  
 {
@@ -45,38 +47,38 @@ public:
     virtual bool SetParameter(const CMP_CHAR* /*pszParamName*/, CODECFLOAT /*fValue*/);
 
     // Required interfaces
-    virtual CodecError Compress             (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, DWORD_PTR pUser1 = NULL, DWORD_PTR pUser2 = NULL);
-    virtual CodecError Compress_Fast        (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, DWORD_PTR pUser1 = NULL, DWORD_PTR pUser2 = NULL);
-    virtual CodecError Compress_SuperFast   (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, DWORD_PTR pUser1 = NULL, DWORD_PTR pUser2 = NULL);
-    virtual CodecError Decompress           (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, DWORD_PTR pUser1 = NULL, DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress             (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress_Fast        (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress_SuperFast   (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Decompress           (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
 
 
 private:
     // BC7 User configurable variables
-    DWORD   m_ModeMask;
-    double  m_Quality;
-    double  m_Performance;
-    BOOL    m_ColourRestrict;
-    BOOL    m_AlphaRestrict;
-    WORD    m_NumThreads;    
-    BOOL    m_ImageNeedsAlpha;
+    CMP_DWORD   m_ModeMask;
+    double      m_Quality;
+    double      m_Performance;
+    CMP_BOOL    m_ColourRestrict;
+    CMP_BOOL    m_AlphaRestrict;
+    CMP_WORD    m_NumThreads;    
+    CMP_BOOL    m_ImageNeedsAlpha;
 
 
     // BC7 Internal status 
-    BOOL     m_LibraryInitialized;
-    BOOL     m_Use_MultiThreading;
-    WORD     m_NumEncodingThreads;
-    WORD     m_LiveThreads;
-    WORD     m_LastThread;
+    CMP_BOOL     m_LibraryInitialized;
+    CMP_BOOL     m_Use_MultiThreading;
+    CMP_WORD     m_NumEncodingThreads;
+    CMP_WORD     m_LiveThreads;
+    CMP_WORD     m_LastThread;
 
     // BC7 Encoders and decoders: for encding use the interfaces below
-    HANDLE*                m_EncodingThreadHandle;
+    std::thread*        m_EncodingThreadHandle;
     BC7BlockEncoder*    m_encoder[MAX_BC7_THREADS];
     BC7BlockDecoder*    m_decoder;
 
     // Encoder interfaces
     CodecError    InitializeBC7Library();
-    CodecError    EncodeBC7Block(double  in[BC7_BLOCK_PIXELS][MAX_DIMENSION_BIG],BYTE *out);
+    CodecError    EncodeBC7Block(double  in[BC7_BLOCK_PIXELS][MAX_DIMENSION_BIG],CMP_BYTE *out);
     CodecError    FinishBC7Encoding(void);
 };
 

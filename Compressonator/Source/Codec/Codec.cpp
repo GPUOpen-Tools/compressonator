@@ -48,7 +48,7 @@
 #include "Codec_ETC2_RGB.h"
 #include "Codec_BC6H.h"
 #include "Codec_BC7.h"
-#include "ASTC\Codec_ASTC.h"
+#include "ASTC/Codec_ASTC.h"
 #include "Codec_GT.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -90,22 +90,54 @@ bool CCodec::GetParameter(const CMP_CHAR* /*pszParamName*/, CODECFLOAT& /*fValue
     return false;
 }
 
+// Taken from https://stackoverflow.com/questions/6121792/how-to-check-if-a-cpu-supports-the-sse3-instruction-set
+#ifdef _WIN32
+
+#include <intrin.h>
+
+//  Windows
+#define cpuid(info, x)    __cpuidex(info, x, 0)
+
+#else
+
+//  GCC Intrinsics
+#include <cpuid.h>
+void cpuid(int info[4], int InfoType){
+    __cpuid_count(InfoType, 0, info[0], info[1], info[2], info[3]);
+}
+
+#endif
+
 bool SupportsSSE()
 {
 #if defined(USE_SSE)
-    return IsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE) ? true : false;
-#else
-    return false;
+    int info[4];
+    cpuid(info, 0);
+
+    int nIds = info[0];
+
+    if (nIds >= 1)
+    {
+        return ( (info[3] & ((int)1 << 25)) != 0 );
+    }
 #endif
+    return false;
 }
 
 bool SupportsSSE2()
 {
-#if defined(USE_SSE2)
-    return IsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE) ? true : false;
-#else
-    return false;
+#if defined(USE_SSE2) && defined(_WIN32)
+    int info[4];
+    cpuid(info, 0);
+
+    int nIds = info[0];
+
+    if (nIds >= 1)
+    {
+        return ( (info[3] & ((int)1 << 26)) != 0 );
+    }
 #endif
+    return false;
 }
 
 CCodec* CreateCodec(CodecType nCodecType)

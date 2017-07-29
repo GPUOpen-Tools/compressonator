@@ -32,7 +32,6 @@
 #ifndef _BC7_LIBRARY_H_
 #define _BC7_LIBRARY_H_
 
-//#include <windows.h>
 //#include "..\AMD_Compress.h"
 #include "3dquant_vpc.h"
 #include "shake.h"

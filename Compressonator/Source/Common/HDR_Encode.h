@@ -31,7 +31,6 @@
 //////////////////////////////////////////////////////////////////////////////
 
 
-#include "Windows.h"
 #include "half.h"
 
 namespace HDR_Encode
@@ -51,7 +50,7 @@ static int g_aWeights3[] = { 0, 9, 18, 27, 37, 46, 55, 64 };                    
 static int g_aWeights4[] = { 0, 4, 9, 13, 17, 21, 26, 30, 34, 38, 43, 47, 51, 55, 60, 64 }; // 4 bit color indices
 
 extern float lerpf(float a, float b, int i, int denom);
-extern inline int NBits(_In_ int n, _In_ bool bIsSigned);
+extern inline int NBits(int n, bool bIsSigned);
 extern int QuantizeToInt(short value, int prec, bool signedfloat16, float exposure);
 extern int Unquantize(int comp, unsigned char uBitsPerComp, bool bSigned);
 

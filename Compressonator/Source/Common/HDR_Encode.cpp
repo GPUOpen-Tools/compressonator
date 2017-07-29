@@ -32,6 +32,7 @@
 #include <assert.h>
 #include <math.h>
 #include <float.h>
+#include <cstdlib>
 
 namespace HDR_Encode
 {
@@ -40,7 +41,7 @@ namespace HDR_Encode
 
 //==============================================================================================
 // return # of bits needed to store n. handle signed or unsigned cases properly
-inline int NBits(_In_ int n, _In_ bool bIsSigned)
+inline int NBits(int n, bool bIsSigned)
 {
     int nb;
     if (n == 0)

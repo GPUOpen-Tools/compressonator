@@ -37,7 +37,7 @@
 #include "HDR_Encode.h"
 #include "BC6H_Definitions.h"
 #include "BC6H_Encode.h"
-#include "BC6H_Utils.h"
+#include "BC6H_utils.h"
 
 using namespace HDR_Encode;
 
@@ -497,8 +497,8 @@ void BC6HBlockEncoder::QuantizeEndPointToF16Prec(float EndPoints[MAX_SUBSETS][MA
 void BC6HBlockEncoder::SwapIndices(int iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int iIndices[3][BC6H_MAX_SUBSET_SIZE], int  entryCount[BC6H_MAX_SUBSETS], int max_subsets, int mode, int shape_pattern)
 {
     
-    UINT uNumIndices    = 1 << ModePartition[mode].IndexPrec;
-    UINT uHighIndexBit    = uNumIndices >> 1;
+    unsigned int uNumIndices    = 1 << ModePartition[mode].IndexPrec;
+    unsigned int uHighIndexBit    = uNumIndices >> 1;
     
     for(int subset = 0; subset < max_subsets; ++subset)
     {

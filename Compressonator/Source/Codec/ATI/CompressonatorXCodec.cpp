@@ -30,6 +30,10 @@
 
 #include "Common.h"
 
+using namespace CMP;
+
+#include <algorithm>
+
 #ifdef USE_SSE
 #include <xmmintrin.h>
 #include <emmintrin.h>
@@ -754,8 +758,8 @@ CODECFLOAT Refine(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
     // First Red
     CODECFLOAT bstC0 = InpRmp0[RC][0];
     CODECFLOAT bstC1 = InpRmp0[RC][1];
-    int nRefineStart = 0 - (min(nRefineSteps, 8));
-    int nRefineEnd = min(nRefineSteps, 8);
+    int nRefineStart = 0 - (min(nRefineSteps, (CMP_BYTE)8));
+    int nRefineEnd = min(nRefineSteps, (CMP_BYTE)8);
     for(int i = nRefineStart; i <= nRefineEnd; i++)
     {
         for(int j = nRefineStart; j <= nRefineEnd; j++)
@@ -964,8 +968,8 @@ CODECFLOAT Refine3D(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
         return bestE;
 
     // Jitter endpoints in each direction
-    int nRefineStart = 0 - (min(nRefineSteps, 8));
-    int nRefineEnd = min(nRefineSteps, 8);
+    int nRefineStart = 0 - (min(nRefineSteps, (CMP_BYTE)8));
+    int nRefineEnd = min(nRefineSteps, (CMP_BYTE)8);
     for(int nJitterG0 = nRefineStart; nJitterG0 <= nRefineEnd; nJitterG0++)
     {
         InpRmp[GC][0] = min(max(InpRmp0[GC][0] + nJitterG0 * Fctrs[GC], 0.f), 255.f);
@@ -1107,8 +1111,8 @@ CODECFLOAT RefineSSE2(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
     // First Red
     CODECFLOAT bstC0 = InpRmp0[RC][0];
     CODECFLOAT bstC1 = InpRmp0[RC][1];
-    int nRefineStart = 0 - (min(nRefineSteps, 8));
-    int nRefineEnd = min(nRefineSteps, 8);
+    int nRefineStart = 0 - (min(nRefineSteps, (CMP_BYTE)8));
+    int nRefineEnd = min(nRefineSteps, (CMP_BYTE)8);
     int nRampLoops = (dwNumPoints + 3) / 4;
 
     for(int i = nRefineStart; i <= nRefineEnd; i++)
@@ -1520,8 +1524,8 @@ static CODECFLOAT Refine3DSSE2(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINT
         return bestE;
 
     // Jitter endpoints in each direction
-    int nRefineStart = 0 - (min(nRefineSteps, 8));
-    int nRefineEnd = min(nRefineSteps, 8);
+    int nRefineStart = 0 - (min(nRefineSteps, (CMP_BYTE)8));
+    int nRefineEnd = min(nRefineSteps, (CMP_BYTE)8);
     int nRampLoops = (dwNumPoints + 3) / 4;
 
     for(int nJitterG0 = nRefineStart; nJitterG0 <= nRefineEnd; nJitterG0++)
@@ -1714,6 +1718,8 @@ void CompressRGBBlockXSSE2(CODECFLOAT _RsltRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
     int SIMDFac = 128 / (sizeof(CODECFLOAT) * 8);
     int NbrCycls = (_UniqClrs + SIMDFac - 1) / SIMDFac;
 
+    bool isDONE = false;
+
     if(_UniqClrs <= 2)
     {
        for(j = 0; j < 3; j++)
@@ -1721,186 +1727,190 @@ void CompressRGBBlockXSSE2(CODECFLOAT _RsltRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
             rsltC[j][0] = _BlkIn[0][j];
             rsltC[j][1] = _BlkIn[_UniqClrs - 1][j];
        }
-       goto DONE;
+       isDONE = true;
     }
 
-    bool bSmall = true;
-
-    //the first approximation of the line along which we are going to find a ramp
-    FindAxis(BlkSh, LineDir0, Mdl, &bSmall, Blk, _Rpt, 3, _UniqClrs);
-
-    // all are very small
-    if(bSmall)
+    if ( !isDONE )
     {
-        for(j = 0; j < 3; j++)
+        bool bSmall = true;
+
+        //the first approximation of the line along which we are going to find a ramp
+        FindAxis(BlkSh, LineDir0, Mdl, &bSmall, Blk, _Rpt, 3, _UniqClrs);
+
+        // all are very small
+        if(bSmall)
         {
-            rsltC[j][0] = _BlkIn[0][j];
-            rsltC[j][1] = _BlkIn[_UniqClrs - 1][j];
-        }
-        goto DONE;
-    }
-
-    //SKIP_FIND_AXIS :
-
-    CODECFLOAT  ErrG = 10000000.f;
-    //SRCH :
-    CODECFLOAT PrjBnd[NUM_ENDPOINTS];
-    ALIGN_16 CODECFLOAT PreMRep[BLOCK_SIZE];
-
-    for(j =0; j < 3; j++)
-        LineDir[j] = LineDir0[j];
-
-    // the search loop to find a more precise line along which we are going to find a ramp
-    for(;;)
-    {
-        // From Foley & Van Dam: Closest point of approach of a line (P + v) to a point (R) is
-        //                            P + ((R-P).v) / (v.v))v
-        // The distance along v is therefore (R-P).v / (v.v)
-        // (v.v) is 1 if v is a unit vector.
-        //
-        PrjBnd[0] = 1000.;
-        PrjBnd[1] = -1000.;
-        for(i = 0; i < BLOCK_SIZE; i++)
-            Prj0[i] = Prj[i] = PrjErr[i] = PreMRep[i] = 0.f;
-
-        // project all points on the current line
-        for(i = 0; i < _UniqClrs; i++)
-        {
-            Prj0[i] = Prj[i] = BlkSh[i][0] * LineDir[0] + BlkSh[i][1] * LineDir[1] + BlkSh[i][2] * LineDir[2];
-
-            PrjErr[i] = (BlkSh[i][0] - LineDir[0] * Prj[i]) * (BlkSh[i][0] - LineDir[0] * Prj[i])
-                + (BlkSh[i][1] - LineDir[1] * Prj[i]) * (BlkSh[i][1] - LineDir[1] * Prj[i])
-                + (BlkSh[i][2] - LineDir[2] * Prj[i]) * (BlkSh[i][2] - LineDir[2] * Prj[i]);
-
-            PrjBnd[0] = min(PrjBnd[0], Prj[i]);
-            PrjBnd[1] = max(PrjBnd[1], Prj[i]);
-        }
-
-        //  find (sub) optimal ramp on the line
-        CODECFLOAT Scl[NUM_ENDPOINTS];
-        Scl[0] = PrjBnd[0] - (PrjBnd[1] - PrjBnd[0]) * 0.125f;;
-        Scl[1] = PrjBnd[1] + (PrjBnd[1] - PrjBnd[0]) * 0.125f;;
-
-        const CODECFLOAT Scl2 = (Scl[1] - Scl[0]) * (Scl[1] - Scl[0]);
-        const CODECFLOAT overScl = 1.f/(Scl[1] - Scl[0]);
-        for(i = 0; i < _UniqClrs; i++)
-        {
-            Prj[i] = (Prj[i] - Scl[0]) * overScl;
-            PreMRep[i] = _Rpt[i] * Scl2;
-        }
-
-        for(k = 0; k <2; k++)
-            PrjBnd[k] = (PrjBnd[k] - Scl[0]) * overScl;
-
-        CODECFLOAT Err = MAX_ERROR;
-
-        static const CODECFLOAT stp = 0.025f;
-        const CODECFLOAT lS = (PrjBnd[0] - 2.f * stp > 0.f) ?  PrjBnd[0] - 2.f * stp : 0.f;
-        const CODECFLOAT hE = (PrjBnd[1] + 2.f * stp < 1.f) ?  PrjBnd[1] + 2.f * stp : 1.f;
-
-        // loop searching for the (sub) optimal ramp
-        CODECFLOAT Pos[NUM_ENDPOINTS];
-        CODECFLOAT lP, hP;
-        int l, h;
-        for(l = 0, lP = lS; l < 8; l++, lP += stp)
-        {
-            for(h = 0, hP = hE; h < 8; h++, hP -= stp)
+            for(j = 0; j < 3; j++)
             {
-                CODECFLOAT err = Err;
-                err = RampSrchWSS2E(Prj, PrjErr, PreMRep, 0.f, lP, hP, _UniqClrs, dwNumPoints);
-                if(err < Err)
+                rsltC[j][0] = _BlkIn[0][j];
+                rsltC[j][1] = _BlkIn[_UniqClrs - 1][j];
+            }
+            isDONE = true;
+        }
+    }
+
+    if ( !isDONE )
+    {
+        //SKIP_FIND_AXIS :
+
+        CODECFLOAT  ErrG = 10000000.f;
+        //SRCH :
+        CODECFLOAT PrjBnd[NUM_ENDPOINTS];
+        ALIGN_16 CODECFLOAT PreMRep[BLOCK_SIZE];
+
+        for(j =0; j < 3; j++)
+            LineDir[j] = LineDir0[j];
+
+        // the search loop to find a more precise line along which we are going to find a ramp
+        for(;;)
+        {
+            // From Foley & Van Dam: Closest point of approach of a line (P + v) to a point (R) is
+            //                            P + ((R-P).v) / (v.v))v
+            // The distance along v is therefore (R-P).v / (v.v)
+            // (v.v) is 1 if v is a unit vector.
+            //
+            PrjBnd[0] = 1000.;
+            PrjBnd[1] = -1000.;
+            for(i = 0; i < BLOCK_SIZE; i++)
+                Prj0[i] = Prj[i] = PrjErr[i] = PreMRep[i] = 0.f;
+
+            // project all points on the current line
+            for(i = 0; i < _UniqClrs; i++)
+            {
+                Prj0[i] = Prj[i] = BlkSh[i][0] * LineDir[0] + BlkSh[i][1] * LineDir[1] + BlkSh[i][2] * LineDir[2];
+
+                PrjErr[i] = (BlkSh[i][0] - LineDir[0] * Prj[i]) * (BlkSh[i][0] - LineDir[0] * Prj[i])
+                    + (BlkSh[i][1] - LineDir[1] * Prj[i]) * (BlkSh[i][1] - LineDir[1] * Prj[i])
+                    + (BlkSh[i][2] - LineDir[2] * Prj[i]) * (BlkSh[i][2] - LineDir[2] * Prj[i]);
+
+                PrjBnd[0] = min(PrjBnd[0], Prj[i]);
+                PrjBnd[1] = max(PrjBnd[1], Prj[i]);
+            }
+
+            //  find (sub) optimal ramp on the line
+            CODECFLOAT Scl[NUM_ENDPOINTS];
+            Scl[0] = PrjBnd[0] - (PrjBnd[1] - PrjBnd[0]) * 0.125f;;
+            Scl[1] = PrjBnd[1] + (PrjBnd[1] - PrjBnd[0]) * 0.125f;;
+
+            const CODECFLOAT Scl2 = (Scl[1] - Scl[0]) * (Scl[1] - Scl[0]);
+            const CODECFLOAT overScl = 1.f/(Scl[1] - Scl[0]);
+            for(i = 0; i < _UniqClrs; i++)
+            {
+                Prj[i] = (Prj[i] - Scl[0]) * overScl;
+                PreMRep[i] = _Rpt[i] * Scl2;
+            }
+
+            for(k = 0; k <2; k++)
+                PrjBnd[k] = (PrjBnd[k] - Scl[0]) * overScl;
+
+            CODECFLOAT Err = MAX_ERROR;
+
+            static const CODECFLOAT stp = 0.025f;
+            const CODECFLOAT lS = (PrjBnd[0] - 2.f * stp > 0.f) ?  PrjBnd[0] - 2.f * stp : 0.f;
+            const CODECFLOAT hE = (PrjBnd[1] + 2.f * stp < 1.f) ?  PrjBnd[1] + 2.f * stp : 1.f;
+
+            // loop searching for the (sub) optimal ramp
+            CODECFLOAT Pos[NUM_ENDPOINTS];
+            CODECFLOAT lP, hP;
+            int l, h;
+            for(l = 0, lP = lS; l < 8; l++, lP += stp)
+            {
+                for(h = 0, hP = hE; h < 8; h++, hP -= stp)
                 {
-                    Err = err;
-                    Pos[0] = lP;
-                    Pos[1] = hP;
+                    CODECFLOAT err = Err;
+                    err = RampSrchWSS2E(Prj, PrjErr, PreMRep, 0.f, lP, hP, _UniqClrs, dwNumPoints);
+                    if(err < Err)
+                    {
+                        Err = err;
+                        Pos[0] = lP;
+                        Pos[1] = hP;
+                    }
                 }
             }
-        }
 
-        for(k = 0; k < 2; k++)
-            Pos[k] = Pos[k] * (Scl[1] - Scl[0])+ Scl[0];
+            for(k = 0; k < 2; k++)
+                Pos[k] = Pos[k] * (Scl[1] - Scl[0])+ Scl[0];
 
-        // are we moving somewhere ?
-        if(Err + 0.001 < ErrG)
-        {
-            // yes
-            ErrG = Err;
-            LineDirG[0] =  LineDir[0];
-            LineDirG[1] =  LineDir[1];
-            LineDirG[2] =  LineDir[2];
-            PosG[0] = Pos[0];
-            PosG[1] = Pos[1];
-
-            // indexes
+            // are we moving somewhere ?
+            if(Err + 0.001 < ErrG)
             {
-                CODECFLOAT indxAvrg;
-                CODECFLOAT step = (Pos[1] - Pos[0]) / (CODECFLOAT)(dwNumPoints - 1);
-                CODECFLOAT rstep = (CODECFLOAT)1.0f / step;
-                CODECFLOAT overBlkTp = 1.f/  (CODECFLOAT)(dwNumPoints - 1) ;  
+                // yes
+                ErrG = Err;
+                LineDirG[0] =  LineDir[0];
+                LineDirG[1] =  LineDir[1];
+                LineDirG[2] =  LineDir[2];
+                PosG[0] = Pos[0];
+                PosG[1] = Pos[1];
 
-                indxAvrg = (CODECFLOAT)(dwNumPoints - 1) / 2.f; 
+                // indexes
+                {
+                    CODECFLOAT indxAvrg;
+                    CODECFLOAT step = (Pos[1] - Pos[0]) / (CODECFLOAT)(dwNumPoints - 1);
+                    CODECFLOAT rstep = (CODECFLOAT)1.0f / step;
+                    CODECFLOAT overBlkTp = 1.f/  (CODECFLOAT)(dwNumPoints - 1) ;  
+
+                    indxAvrg = (CODECFLOAT)(dwNumPoints - 1) / 2.f; 
                 
-                // then find 16 dim "index" vector
-                for(i=0; i < NbrCycls; i++)
-                {
-                    // (float)(int)(b - _min_ex) * rstep)
-                    __m128 v =    _mm_cvtepi32_ps(
-                                _mm_cvtps_epi32(
-                                _mm_mul_ps(
-                                _mm_sub_ps(
-                                _mm_load_ps(&Prj0[SIMDFac * i]),
-                                _mm_set_ps1(Pos[0])),
-                                _mm_set_ps1(rstep))));
-                    // min(max(v, 0.f), (dwNumPoints - 1))
-                    v = _mm_min_ps(_mm_max_ps(v, _mm_setzero_ps()), _mm_set_ps1((CODECFLOAT)(dwNumPoints - 1)));
+                    // then find 16 dim "index" vector
+                    for(i=0; i < NbrCycls; i++)
+                    {
+                        // (float)(int)(b - _min_ex) * rstep)
+                        __m128 v =    _mm_cvtepi32_ps(
+                                    _mm_cvtps_epi32(
+                                    _mm_mul_ps(
+                                    _mm_sub_ps(
+                                    _mm_load_ps(&Prj0[SIMDFac * i]),
+                                    _mm_set_ps1(Pos[0])),
+                                    _mm_set_ps1(rstep))));
+                        // min(max(v, 0.f), (dwNumPoints - 1))
+                        v = _mm_min_ps(_mm_max_ps(v, _mm_setzero_ps()), _mm_set_ps1((CODECFLOAT)(dwNumPoints - 1)));
 
-                    v = _mm_mul_ps(_mm_set_ps1(overBlkTp),_mm_sub_ps(v,_mm_set_ps1(indxAvrg)));
+                        v = _mm_mul_ps(_mm_set_ps1(overBlkTp),_mm_sub_ps(v,_mm_set_ps1(indxAvrg)));
 
-                    _mm_store_ps(&RmpIndxs[SIMDFac * i], v);
+                        _mm_store_ps(&RmpIndxs[SIMDFac * i], v);
+                    }
                 }
-            }
 
-            {
-                CODECFLOAT Crs[3], Len, Len2;
+                {
+                    CODECFLOAT Crs[3], Len, Len2;
             
-                for(i = 0, Crs[0] = Crs[1] = Crs[2] = Len = 0.f; i < _UniqClrs; i++)
-                {
-                    CODECFLOAT PreMlt = RmpIndxs[i] * _Rpt[i];
-                    Len += RmpIndxs[i] * PreMlt;
-                    for(j = 0; j < 3; j++)
-                        Crs[j] += BlkSh[i][j] * PreMlt;
-                }
+                    for(i = 0, Crs[0] = Crs[1] = Crs[2] = Len = 0.f; i < _UniqClrs; i++)
+                    {
+                        CODECFLOAT PreMlt = RmpIndxs[i] * _Rpt[i];
+                        Len += RmpIndxs[i] * PreMlt;
+                        for(j = 0; j < 3; j++)
+                            Crs[j] += BlkSh[i][j] * PreMlt;
+                    }
 
-                LineDir[0] = LineDir[1] = LineDir[2] = 0.f;
-                if(Len > 0.f)
-                {
-                    LineDir[0] = Crs[0]/ Len;
-                    LineDir[1] = Crs[1]/ Len;
-                    LineDir[2] = Crs[2]/ Len;
+                    LineDir[0] = LineDir[1] = LineDir[2] = 0.f;
+                    if(Len > 0.f)
+                    {
+                        LineDir[0] = Crs[0]/ Len;
+                        LineDir[1] = Crs[1]/ Len;
+                        LineDir[2] = Crs[2]/ Len;
 
-                    Len2 = LineDir[0] * LineDir[0] + LineDir[1] * LineDir[1] + LineDir[2] * LineDir[2];
-                    Len2 = sqrt(Len2);
+                        Len2 = LineDir[0] * LineDir[0] + LineDir[1] * LineDir[1] + LineDir[2] * LineDir[2];
+                        Len2 = sqrt(Len2);
 
-                    LineDir[0] /= Len2;
-                    LineDir[1] /= Len2;
-                    LineDir[2] /= Len2;
+                        LineDir[0] /= Len2;
+                        LineDir[1] /= Len2;
+                        LineDir[2] /= Len2;
+                    }
                 }
             }
-        }
-        else
-        {
-    // No, we could not find anything better.
-    // Drop dead.
-            break;
-        }
-    } 
+            else
+            {
+// No, we could not find anything better.
+// Drop dead.
+                break;
+            }
+        } 
 
 // inverse transform
-    for(k = 0; k < 2; k++)
-        for(j = 0; j <3; j++)
-            rsltC[j][k] = (PosG[k] * LineDirG[j]  + Mdl[j]) * 255.f;
-
-DONE:
+        for(k = 0; k < 2; k++)
+            for(j = 0; j <3; j++)
+                rsltC[j][k] = (PosG[k] * LineDirG[j]  + Mdl[j]) * 255.f;
+    }
 // We've dealt with almost (mathematical) unrestricted full precision realm.
 // Now back to the dirty digital world.
 
@@ -1946,6 +1956,8 @@ static void CompressRGBBlockX(CODECFLOAT _RsltRmpPnts[NUM_CHANNELS][NUM_ENDPOINT
         for(j = 0; j < 3; j++)
             Blk[i][j] = _BlkIn[i][j] / 255.f;
 
+    bool isDONE = false;
+
 // as usual if not more then 2 different colors, we've done 
     if(_UniqClrs <= 2)
     {
@@ -1954,31 +1966,38 @@ static void CompressRGBBlockX(CODECFLOAT _RsltRmpPnts[NUM_CHANNELS][NUM_ENDPOINT
             rsltC[j][0] = _BlkIn[0][j];
             rsltC[j][1] = _BlkIn[_UniqClrs - 1][j];
        }
-       goto DONE;
+       isDONE = true;
     }
 
+    if ( !isDONE )
+    {
 //    This is our first attempt to find an axis we will go along.
 //    The cumulation is done to find a line minimizing the MSE from the input 3D points.
-    bool bSmall = true;
-    FindAxis(BlkSh, LineDir0, Mdl, &bSmall, Blk, _Rpt, 3, _UniqClrs);
+        bool bSmall = true;
+        FindAxis(BlkSh, LineDir0, Mdl, &bSmall, Blk, _Rpt, 3, _UniqClrs);
 
 //    While trying to find the axis we found that the diameter of the input set is quite small.
 //    Do not bother.
-    if(bSmall)
-    {
-        for(j = 0; j < 3; j++)
+        if(bSmall)
         {
-            rsltC[j][0] = _BlkIn[0][j];
-            rsltC[j][1] = _BlkIn[_UniqClrs - 1][j];
+            for(j = 0; j < 3; j++)
+            {
+                rsltC[j][0] = _BlkIn[0][j];
+                rsltC[j][1] = _BlkIn[_UniqClrs - 1][j];
+            }
+            isDONE = true;
         }
-        goto DONE;
     }
 
-    CODECFLOAT ErrG = 10000000.f;
-    CODECFLOAT PrjBnd[NUM_ENDPOINTS];
-    ALIGN_16 CODECFLOAT PreMRep[MAX_BLOCK];
-    for(j =0; j < 3; j++)
-        LineDir[j] = LineDir0[j];
+    // GCC is being an awful being when it comes to goto-jumps.
+    // So please bear with this.
+    if ( !isDONE )
+    {
+        CODECFLOAT ErrG = 10000000.f;
+        CODECFLOAT PrjBnd[NUM_ENDPOINTS];
+        ALIGN_16 CODECFLOAT PreMRep[MAX_BLOCK];
+        for(j =0; j < 3; j++)
+            LineDir[j] = LineDir0[j];
 
 //    Here is the main loop.
 //    1. Project input set on the axis in consideration.
@@ -1999,168 +2018,168 @@ static void CompressRGBBlockX(CODECFLOAT _RsltRmpPnts[NUM_CHANNELS][NUM_ENDPOINT
 
 //    Solution is 
 
-//    Ai = (D . Ci) / (D . D); . - is a dot product.
+    //    Ai = (D . Ci) / (D . D); . - is a dot product.
 
 //    in 3 dim space Ai(s) represent a line direction, along which
 //    we again try to find (sub)optimal quantizer.
 
 //    That's what our for(;;) loop is about.
-    for(;;)
-    {
-        //  1. Project input set on the axis in consideration.
-        // From Foley & Van Dam: Closest point of approach of a line (P + v) to a point (R) is
-        //                            P + ((R-P).v) / (v.v))v
-        // The distance along v is therefore (R-P).v / (v.v)
-        // (v.v) is 1 if v is a unit vector.
-        //
-        PrjBnd[0] = 1000.;
-        PrjBnd[1] = -1000.;
-        for(i = 0; i < MAX_BLOCK; i++)
-            Prj0[i] = Prj[i] = PrjErr[i] = PreMRep[i] = 0.f;
-
-        for(i = 0; i < _UniqClrs; i++)
+        for(;;)
         {
-            Prj0[i] = Prj[i] = BlkSh[i][0] * LineDir[0] + BlkSh[i][1] * LineDir[1] + BlkSh[i][2] * LineDir[2];
+            //  1. Project input set on the axis in consideration.
+            // From Foley & Van Dam: Closest point of approach of a line (P + v) to a point (R) is
+            //                            P + ((R-P).v) / (v.v))v
+            // The distance along v is therefore (R-P).v / (v.v)
+            // (v.v) is 1 if v is a unit vector.
+            //
+            PrjBnd[0] = 1000.;
+            PrjBnd[1] = -1000.;
+            for(i = 0; i < MAX_BLOCK; i++)
+                Prj0[i] = Prj[i] = PrjErr[i] = PreMRep[i] = 0.f;
 
-            PrjErr[i] = (BlkSh[i][0] - LineDir[0] * Prj[i]) * (BlkSh[i][0] - LineDir[0] * Prj[i])
-                + (BlkSh[i][1] - LineDir[1] * Prj[i]) * (BlkSh[i][1] - LineDir[1] * Prj[i])
-                + (BlkSh[i][2] - LineDir[2] * Prj[i]) * (BlkSh[i][2] - LineDir[2] * Prj[i]);
-
-            PrjBnd[0] = min(PrjBnd[0], Prj[i]);
-            PrjBnd[1] = max(PrjBnd[1], Prj[i]);
-        }
-
-        //  2. Run 1 dimensional search (see scalar case) to find an (sub) optimal pair of end points.
-
-        // min and max of the search interval
-        CODECFLOAT Scl[NUM_ENDPOINTS];
-        Scl[0] = PrjBnd[0] - (PrjBnd[1] - PrjBnd[0]) * 0.125f;;
-        Scl[1] = PrjBnd[1] + (PrjBnd[1] - PrjBnd[0]) * 0.125f;;
-
-        // compute scaling factor to scale down the search interval to [0.,1] 
-        const CODECFLOAT Scl2 = (Scl[1] - Scl[0]) * (Scl[1] - Scl[0]);
-        const CODECFLOAT overScl = 1.f/(Scl[1] - Scl[0]);
-
-        for(i = 0; i < _UniqClrs; i++)
-        {
-            // scale them
-            Prj[i] = (Prj[i] - Scl[0]) * overScl;
-            // premultiply the scale squire to plug into error computation later
-            PreMRep[i] = _Rpt[i] * Scl2;
-        }
-
-        // scale first approximation of end points
-        for(k = 0; k <2; k++)
-            PrjBnd[k] = (PrjBnd[k] - Scl[0]) * overScl;
-
-        CODECFLOAT Err = MAX_ERROR;
-
-        // search step
-        static const CODECFLOAT stp = 0.025f;
-
-        // low Start/End; high Start/End
-        const CODECFLOAT lS = (PrjBnd[0] - 2.f * stp > 0.f) ?  PrjBnd[0] - 2.f * stp : 0.f;
-        const CODECFLOAT hE = (PrjBnd[1] + 2.f * stp < 1.f) ?  PrjBnd[1] + 2.f * stp : 1.f;
-
-        // find the best endpoints 
-        CODECFLOAT Pos[NUM_ENDPOINTS];
-        CODECFLOAT lP, hP;
-        int l, h;
-        for(l = 0, lP = lS; l < 8; l++, lP += stp)
-        {
-            for(h = 0, hP = hE; h < 8; h++, hP -= stp)
+            for(i = 0; i < _UniqClrs; i++)
             {
-                CODECFLOAT err = Err;
-                // compute an error for the current pair of end points.
-                err = RampSrchW(Prj, PrjErr, PreMRep, err, lP, hP, _UniqClrs, dwNumPoints);
+                Prj0[i] = Prj[i] = BlkSh[i][0] * LineDir[0] + BlkSh[i][1] * LineDir[1] + BlkSh[i][2] * LineDir[2];
 
-                if(err < Err)
+                PrjErr[i] = (BlkSh[i][0] - LineDir[0] * Prj[i]) * (BlkSh[i][0] - LineDir[0] * Prj[i])
+                    + (BlkSh[i][1] - LineDir[1] * Prj[i]) * (BlkSh[i][1] - LineDir[1] * Prj[i])
+                    + (BlkSh[i][2] - LineDir[2] * Prj[i]) * (BlkSh[i][2] - LineDir[2] * Prj[i]);
+
+                PrjBnd[0] = min(PrjBnd[0], Prj[i]);
+                PrjBnd[1] = max(PrjBnd[1], Prj[i]);
+            }
+
+            //  2. Run 1 dimensional search (see scalar case) to find an (sub) optimal pair of end points.
+
+            // min and max of the search interval
+            CODECFLOAT Scl[NUM_ENDPOINTS];
+            Scl[0] = PrjBnd[0] - (PrjBnd[1] - PrjBnd[0]) * 0.125f;;
+            Scl[1] = PrjBnd[1] + (PrjBnd[1] - PrjBnd[0]) * 0.125f;;
+
+            // compute scaling factor to scale down the search interval to [0.,1] 
+            const CODECFLOAT Scl2 = (Scl[1] - Scl[0]) * (Scl[1] - Scl[0]);
+            const CODECFLOAT overScl = 1.f/(Scl[1] - Scl[0]);
+
+            for(i = 0; i < _UniqClrs; i++)
+            {
+                // scale them
+                Prj[i] = (Prj[i] - Scl[0]) * overScl;
+                // premultiply the scale squire to plug into error computation later
+                PreMRep[i] = _Rpt[i] * Scl2;
+            }
+
+            // scale first approximation of end points
+            for(k = 0; k <2; k++)
+                PrjBnd[k] = (PrjBnd[k] - Scl[0]) * overScl;
+
+            CODECFLOAT Err = MAX_ERROR;
+
+            // search step
+            static const CODECFLOAT stp = 0.025f;
+
+            // low Start/End; high Start/End
+            const CODECFLOAT lS = (PrjBnd[0] - 2.f * stp > 0.f) ?  PrjBnd[0] - 2.f * stp : 0.f;
+            const CODECFLOAT hE = (PrjBnd[1] + 2.f * stp < 1.f) ?  PrjBnd[1] + 2.f * stp : 1.f;
+
+            // find the best endpoints 
+            CODECFLOAT Pos[NUM_ENDPOINTS];
+            CODECFLOAT lP, hP;
+            int l, h;
+            for(l = 0, lP = lS; l < 8; l++, lP += stp)
+            {
+                for(h = 0, hP = hE; h < 8; h++, hP -= stp)
                 {
-                    // save better result
-                    Err = err;
-                    Pos[0] = lP;
-                    Pos[1] = hP;
+                    CODECFLOAT err = Err;
+                    // compute an error for the current pair of end points.
+                    err = RampSrchW(Prj, PrjErr, PreMRep, err, lP, hP, _UniqClrs, dwNumPoints);
+
+                    if(err < Err)
+                    {
+                        // save better result
+                        Err = err;
+                        Pos[0] = lP;
+                        Pos[1] = hP;
+                    }
                 }
             }
-        }
 
-        // inverse the scaling
-        for(k = 0; k < 2; k++)
-            Pos[k] = Pos[k] * (Scl[1] - Scl[0])+ Scl[0];
+            // inverse the scaling
+            for(k = 0; k < 2; k++)
+                Pos[k] = Pos[k] * (Scl[1] - Scl[0])+ Scl[0];
 
-        // did we find somthing better from the previous run?
-        if(Err + 0.001 < ErrG)
-        {
-            // yes, remember it
-            ErrG = Err;
-            LineDirG[0] =  LineDir[0];
-            LineDirG[1] =  LineDir[1];
-            LineDirG[2] =  LineDir[2];
-            PosG[0] = Pos[0];
-            PosG[1] = Pos[1];
-            //  3. Compute the vector of indexes (or clusters) for the current approximate ramp.
-            // indexes
-            const CODECFLOAT step = (Pos[1] - Pos[0]) / (CODECFLOAT)(dwNumPoints - 1);
-            const CODECFLOAT step_h = step * (CODECFLOAT)0.5;
-            const CODECFLOAT rstep = (CODECFLOAT)1.0f / step;
-            const CODECFLOAT overBlkTp = 1.f/  (CODECFLOAT)(dwNumPoints - 1) ;  
-
-            // here the index vector is computed, 
-            // shifted and normalized
-            CODECFLOAT indxAvrg = (CODECFLOAT)(dwNumPoints - 1) / 2.f; 
-
-            for(i=0; i < _UniqClrs; i++)
+            // did we find somthing better from the previous run?
+            if(Err + 0.001 < ErrG)
             {
-                CODECFLOAT del;
-                //int n = (int)((b - _min_ex + (step*0.5f)) * rstep);
-                if((del = Prj0[i] - Pos[0]) <= 0)
-                    RmpIndxs[i] = 0.f;
-                else if(Prj0[i] -  Pos[1] >= 0)
-                    RmpIndxs[i] = (CODECFLOAT)(dwNumPoints - 1);
-                else
-                    RmpIndxs[i] = floor((del + step_h) * rstep);
-                // shift and normalization
-                RmpIndxs[i] = (RmpIndxs[i] - indxAvrg) * overBlkTp;
-            }
+                // yes, remember it
+                ErrG = Err;
+                LineDirG[0] =  LineDir[0];
+                LineDirG[1] =  LineDir[1];
+                LineDirG[2] =  LineDir[2];
+                PosG[0] = Pos[0];
+                PosG[1] = Pos[1];
+                //  3. Compute the vector of indexes (or clusters) for the current approximate ramp.
+                // indexes
+                const CODECFLOAT step = (Pos[1] - Pos[0]) / (CODECFLOAT)(dwNumPoints - 1);
+                const CODECFLOAT step_h = step * (CODECFLOAT)0.5;
+                const CODECFLOAT rstep = (CODECFLOAT)1.0f / step;
+                const CODECFLOAT overBlkTp = 1.f/  (CODECFLOAT)(dwNumPoints - 1) ;  
 
-            //  4. Present our color channels as 3 16DIM vectors.
-            //  5. Find closest aproximation of each of 16DIM color vector with the pojection of the 16DIM index vector.
-            CODECFLOAT Crs[3], Len, Len2;
-            for(i = 0, Crs[0] = Crs[1] = Crs[2] = Len = 0.f; i < _UniqClrs; i++)
-            {
-                const CODECFLOAT PreMlt = RmpIndxs[i] * _Rpt[i];
-                Len += RmpIndxs[i] * PreMlt;
-                for(j = 0; j < 3; j++)
-                    Crs[j] += BlkSh[i][j] * PreMlt;
-            }
+                // here the index vector is computed, 
+                // shifted and normalized
+                CODECFLOAT indxAvrg = (CODECFLOAT)(dwNumPoints - 1) / 2.f; 
 
-            LineDir[0] = LineDir[1] = LineDir[2] = 0.f;
-            if(Len > 0.f)
-            {
-                LineDir[0] = Crs[0]/ Len;
-                LineDir[1] = Crs[1]/ Len;
-                LineDir[2] = Crs[2]/ Len;
+                for(i=0; i < _UniqClrs; i++)
+                {
+                    CODECFLOAT del;
+                    //int n = (int)((b - _min_ex + (step*0.5f)) * rstep);
+                    if((del = Prj0[i] - Pos[0]) <= 0)
+                        RmpIndxs[i] = 0.f;
+                    else if(Prj0[i] -  Pos[1] >= 0)
+                        RmpIndxs[i] = (CODECFLOAT)(dwNumPoints - 1);
+                    else
+                        RmpIndxs[i] = floor((del + step_h) * rstep);
+                    // shift and normalization
+                    RmpIndxs[i] = (RmpIndxs[i] - indxAvrg) * overBlkTp;
+                }
 
-                //  6. Plug the projections as a new directional vector for the axis.
-                //  7. Goto 1.
-                Len2 = LineDir[0] * LineDir[0] + LineDir[1] * LineDir[1] + LineDir[2] * LineDir[2];
-                Len2 = sqrt(Len2);
+                //  4. Present our color channels as 3 16DIM vectors.
+                //  5. Find closest aproximation of each of 16DIM color vector with the pojection of the 16DIM index vector.
+                CODECFLOAT Crs[3], Len, Len2;
+                for(i = 0, Crs[0] = Crs[1] = Crs[2] = Len = 0.f; i < _UniqClrs; i++)
+                {
+                    const CODECFLOAT PreMlt = RmpIndxs[i] * _Rpt[i];
+                    Len += RmpIndxs[i] * PreMlt;
+                    for(j = 0; j < 3; j++)
+                        Crs[j] += BlkSh[i][j] * PreMlt;
+                }
 
-                LineDir[0] /= Len2;
-                LineDir[1] /= Len2;
-                LineDir[2] /= Len2;
-            }
+                LineDir[0] = LineDir[1] = LineDir[2] = 0.f;
+                if(Len > 0.f)
+                {
+                    LineDir[0] = Crs[0]/ Len;
+                    LineDir[1] = Crs[1]/ Len;
+                    LineDir[2] = Crs[2]/ Len;
+
+                    //  6. Plug the projections as a new directional vector for the axis.
+                    //  7. Goto 1.
+                    Len2 = LineDir[0] * LineDir[0] + LineDir[1] * LineDir[1] + LineDir[2] * LineDir[2];
+                    Len2 = sqrt(Len2);
+
+                    LineDir[0] /= Len2;
+                    LineDir[1] /= Len2;
+                    LineDir[2] /= Len2;
+                }
+            } 
+            else // We was not able to find anything better.  Drop dead.
+                break;
         } 
-        else // We was not able to find anything better.  Drop dead.
-            break;
-    } 
 
 // inverse transform to find end-points of 3-color ramp
-     for(k = 0; k < 2; k++)
-         for(j = 0; j < 3; j++)
-             rsltC[j][k] = (PosG[k] * LineDirG[j]  + Mdl[j]) * 255.f;
+         for(k = 0; k < 2; k++)
+             for(j = 0; j < 3; j++)
+                 rsltC[j][k] = (PosG[k] * LineDirG[j]  + Mdl[j]) * 255.f;
+    }
 
-DONE:
 // We've dealt with (almost) unrestricted full precision realm.
 // Now back to the dirty digital world.
 
@@ -2726,6 +2745,8 @@ static CODECFLOAT CompBlock1(CODECFLOAT _RmpPnts[NUM_ENDPOINTS], CODECFLOAT _Blk
     DWORD dwUniqueValues = 0;
     afUniqueValues[0] = 0.f;
 
+    bool requiresCalculation = true;
+
     if(bFixedRampPoints)
     {
         for(int i = 0; i < _Nmbr; i++)
@@ -2769,7 +2790,7 @@ static CODECFLOAT CompBlock1(CODECFLOAT _RmpPnts[NUM_ENDPOINTS], CODECFLOAT _Blk
             }
 
             fMaxError = 0.f;
-            goto DONE;
+            requiresCalculation = false;
         }
     }
     else
@@ -2795,66 +2816,70 @@ static CODECFLOAT CompBlock1(CODECFLOAT _RmpPnts[NUM_ENDPOINTS], CODECFLOAT _Blk
             else
                 Ramp[1] = floor(afUniqueValues[1] * (IntFctr - 1) + 0.5f);
             fMaxError = 0.f;
-            goto DONE;
+            requiresCalculation = false;
         }
     }
 
-    CODECFLOAT min_ex  = afUniqueValues[0];
-    CODECFLOAT max_ex  = afUniqueValues[dwUniqueValues - 1];
-    CODECFLOAT min_bnd = 0, max_bnd = 1.;
-    CODECFLOAT min_r = min_ex, max_r = max_ex;
-    CODECFLOAT gbl_l = 0, gbl_r = 0;
-    CODECFLOAT cntr = (min_r + max_r)/2;
-
-    CODECFLOAT gbl_err = MAX_ERROR;
-    // Trying to avoid unnecessary calculations. Heuristics: after some analisis it appears 
-    // that in integer case, if the input interval not more then 48 we won't get much better
-
-    if(_INT_GRID && max_ex - min_ex <= 48.f / IntFctr)
-        goto REFINE;
-
-    // Search.
-    // 1. take the vicinities of both low and high bound of the input interval.
-    // 2. setup some search step
-    // 3. find the new low and high bound which provides an (sub) optimal (infinite precision) clusterization.
-    CODECFLOAT gbl_llb = (min_bnd >  min_r - GBL_SCH_EXT) ? min_bnd : min_r - GBL_SCH_EXT;
-    CODECFLOAT gbl_rrb = (max_bnd <  max_r + GBL_SCH_EXT) ? max_bnd : max_r + GBL_SCH_EXT;
-    CODECFLOAT gbl_lrb = (cntr <  min_r + GBL_SCH_EXT) ? cntr : min_r + GBL_SCH_EXT;
-    CODECFLOAT gbl_rlb = (cntr >  max_r - GBL_SCH_EXT) ? cntr : max_r - GBL_SCH_EXT;
-    for(CODECFLOAT step_l = gbl_llb; step_l < gbl_lrb ; step_l+= GBL_SCH_STEP)
+    if ( requiresCalculation )
     {
-        for(CODECFLOAT step_r = gbl_rrb; gbl_rlb <= step_r; step_r-=GBL_SCH_STEP)
+        CODECFLOAT min_ex  = afUniqueValues[0];
+        CODECFLOAT max_ex  = afUniqueValues[dwUniqueValues - 1];
+        CODECFLOAT min_bnd = 0, max_bnd = 1.;
+        CODECFLOAT min_r = min_ex, max_r = max_ex;
+        CODECFLOAT gbl_l = 0, gbl_r = 0;
+        CODECFLOAT cntr = (min_r + max_r)/2;
+
+        CODECFLOAT gbl_err = MAX_ERROR;
+        // Trying to avoid unnecessary calculations. Heuristics: after some analisis it appears 
+        // that in integer case, if the input interval not more then 48 we won't get much better
+
+        bool wantsSearch = !( _INT_GRID && max_ex - min_ex <= 48.f / IntFctr );
+
+        if ( wantsSearch )
         {
-            CODECFLOAT sch_err;
-#ifdef USE_SSE
-            if(_bUseSSE2)
-                sch_err = RmpSrch1SSE2(afUniqueValues, afValueRepeats, gbl_err, step_l, step_r, dwUniqueValues, dwNumPoints);
-            else
-#endif // USE_SSE
-                sch_err = RmpSrch1(afUniqueValues, afValueRepeats, gbl_err, step_l, step_r, dwUniqueValues, dwNumPoints);
-            if(sch_err < gbl_err)
+            // Search.
+            // 1. take the vicinities of both low and high bound of the input interval.
+            // 2. setup some search step
+            // 3. find the new low and high bound which provides an (sub) optimal (infinite precision) clusterization.
+            CODECFLOAT gbl_llb = (min_bnd >  min_r - GBL_SCH_EXT) ? min_bnd : min_r - GBL_SCH_EXT;
+            CODECFLOAT gbl_rrb = (max_bnd <  max_r + GBL_SCH_EXT) ? max_bnd : max_r + GBL_SCH_EXT;
+            CODECFLOAT gbl_lrb = (cntr <  min_r + GBL_SCH_EXT) ? cntr : min_r + GBL_SCH_EXT;
+            CODECFLOAT gbl_rlb = (cntr >  max_r - GBL_SCH_EXT) ? cntr : max_r - GBL_SCH_EXT;
+            for(CODECFLOAT step_l = gbl_llb; step_l < gbl_lrb ; step_l+= GBL_SCH_STEP)
             {
-                gbl_err = sch_err;
-                gbl_l = step_l;
-                gbl_r = step_r;
+                for(CODECFLOAT step_r = gbl_rrb; gbl_rlb <= step_r; step_r-=GBL_SCH_STEP)
+                {
+                    CODECFLOAT sch_err;
+#ifdef USE_SSE
+                    if(_bUseSSE2)
+                        sch_err = RmpSrch1SSE2(afUniqueValues, afValueRepeats, gbl_err, step_l, step_r, dwUniqueValues, dwNumPoints);
+                    else
+#endif // USE_SSE
+                        sch_err = RmpSrch1(afUniqueValues, afValueRepeats, gbl_err, step_l, step_r, dwUniqueValues, dwNumPoints);
+                    if(sch_err < gbl_err)
+                    {
+                        gbl_err = sch_err;
+                        gbl_l = step_l;
+                        gbl_r = step_r;
+                    }
+                }
             }
+
+            min_r = gbl_l;
+            max_r = gbl_r;
         }
-    }
 
-    min_r = gbl_l;
-    max_r = gbl_r;
-REFINE:
-    // This is a refinement call. The function tries to make several small stretches or squashes to 
-    // minimize quantization error.
-    CODECFLOAT m_step = LCL_SCH_STEP/ IntFctr;
-    fMaxError = Refine1(afUniqueValues, afValueRepeats, gbl_err, min_r, max_r, m_step, min_bnd, max_bnd, dwUniqueValues, 
-                    dwNumPoints, _bUseSSE2);
+        // This is a refinement call. The function tries to make several small stretches or squashes to 
+        // minimize quantization error.
+        CODECFLOAT m_step = LCL_SCH_STEP/ IntFctr;
+        fMaxError = Refine1(afUniqueValues, afValueRepeats, gbl_err, min_r, max_r, m_step, min_bnd, max_bnd, dwUniqueValues, 
+                        dwNumPoints, _bUseSSE2);
 
-    min_ex = min_r;
-    max_ex = max_r;
+        min_ex = min_r;
+        max_ex = max_r;
 
-    max_ex *= (IntFctr - 1);
-    min_ex *= (IntFctr - 1);
+        max_ex *= (IntFctr - 1);
+        min_ex *= (IntFctr - 1);
 /*
 this one is tricky. for the float or high fractional precision ramp it tries to avoid
 for the ramp to be collapsed into one integer number after rounding.
@@ -2864,24 +2889,24 @@ they may collapse into the same integer.
 So we try to run the same refinement procedure but with starting position on the integer grid
 and step equal 1.
 */
-    if(!_INT_GRID && max_ex - min_ex > 0. && floor(min_ex + 0.5f) == floor(max_ex + 0.5f))
-    {
-        m_step = 1.;
-        gbl_err = MAX_ERROR;
-        for(DWORD i = 0; i < dwUniqueValues; i++)
-            afUniqueValues[i] *= (IntFctr - 1);
+        if(!_INT_GRID && max_ex - min_ex > 0. && floor(min_ex + 0.5f) == floor(max_ex + 0.5f))
+        {
+            m_step = 1.;
+            gbl_err = MAX_ERROR;
+            for(DWORD i = 0; i < dwUniqueValues; i++)
+                afUniqueValues[i] *= (IntFctr - 1);
 
-        max_ex = min_ex = floor(min_ex + 0.5f);
+            max_ex = min_ex = floor(min_ex + 0.5f);
 
-        gbl_err = Refine1(afUniqueValues, afValueRepeats, gbl_err, min_ex, max_ex, m_step, 0.f, 255.f, dwUniqueValues, dwNumPoints, _bUseSSE2);
+            gbl_err = Refine1(afUniqueValues, afValueRepeats, gbl_err, min_ex, max_ex, m_step, 0.f, 255.f, dwUniqueValues, dwNumPoints, _bUseSSE2);
 
-        fMaxError = gbl_err;
+            fMaxError = gbl_err;
 
+        }
+        Ramp[1] = floor(max_ex + 0.5f);
+        Ramp[0] = floor(min_ex + 0.5f);
     }
-    Ramp[1] = floor(max_ex + 0.5f);
-    Ramp[0] = floor(min_ex + 0.5f);
 
-DONE:
     // Ensure that the two endpoints are not the same
     // This is legal but serves no need & can break some optimizations in the compressor
     if(Ramp[0] == Ramp[1])

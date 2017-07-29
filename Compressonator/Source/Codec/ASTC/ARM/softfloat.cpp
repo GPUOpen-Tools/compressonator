@@ -129,7 +129,7 @@ sf32 sf16_to_sf32(sf16 inp)
 		with just 1 table lookup, 2 shifts and 1 add. 
 	*/
 
-	static const int32_t tbl[64] =
+	static const uint32_t tbl[64] =
 	{
 		INT32_C(0x80000000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000),
 		INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000),
@@ -141,7 +141,7 @@ sf32 sf16_to_sf32(sf16 inp)
 		INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x80070000)
 	};
 
-	int32_t res = tbl[inpx >> 10];
+	int32_t res = (int32_t)tbl[inpx >> 10];
 	res += inpx;
 
 	/* the normal cases: the MSB of 'res' is not set. */

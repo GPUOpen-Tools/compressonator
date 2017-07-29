@@ -25,7 +25,9 @@
 #define _BC7_ENCODE_H_
 
 #include <float.h>
-#include "BC7_definitions.h"
+#include "BC7_Definitions.h"
+
+
 
 // Threshold quality below which we will always run fast quality and shaking
 // Self note: User should be able to set this?

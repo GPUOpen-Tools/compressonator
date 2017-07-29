@@ -22,7 +22,7 @@
 // THE SOFTWARE.
 //
 
-#include "bc7_partitions.h"
+#include "BC7_Partitions.h"
 
 //
 // Verified to match the final definitions as detailedin the OpenGL BPTC spec

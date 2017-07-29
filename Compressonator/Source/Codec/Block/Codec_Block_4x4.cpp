@@ -61,7 +61,7 @@ bool CCodec_Block_4x4::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sVal
       if(strcmp(pszParamName, "UseSSE") == 0)
         m_bUseSSE2 = (std::stoi(sValue) > 0)  ? SupportsSSE() : false;    
     else
-      return __super::SetParameter(pszParamName, sValue);
+      return CCodec_Block::SetParameter(pszParamName, sValue);
     return true;
 }
 
@@ -72,7 +72,7 @@ bool CCodec_Block_4x4::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwVa
     else if(strcmp(pszParamName, "UseSSE") == 0)
         m_bUseSSE2 = dwValue ? SupportsSSE() : false;
     else
-        return __super::SetParameter(pszParamName, dwValue);
+        return CCodec_Block::SetParameter(pszParamName, dwValue);
     return true;
 }
 
@@ -83,17 +83,17 @@ bool CCodec_Block_4x4::GetParameter(const CMP_CHAR* pszParamName, CMP_DWORD& dwV
     if(strcmp(pszParamName, "UseSSE") == 0)
         dwValue = m_bUseSSE;
     else
-        return __super::SetParameter(pszParamName, dwValue);
+        return CCodec_Block::SetParameter(pszParamName, dwValue);
     return true;
 }
 
 bool CCodec_Block_4x4::SetParameter(const CMP_CHAR* pszParamName, CODECFLOAT fValue)
 {
-    return __super::SetParameter(pszParamName, fValue);
+    return CCodec_Block::SetParameter(pszParamName, fValue);
 }
 
 bool CCodec_Block_4x4::GetParameter(const CMP_CHAR* pszParamName, CODECFLOAT& fValue)
 {
-    return __super::GetParameter(pszParamName, fValue);
+    return CCodec_Block::GetParameter(pszParamName, fValue);
 }
 

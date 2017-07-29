@@ -25,7 +25,7 @@
 //
 
 #include "Common.h"
-#include "ASTC\ASTC_Decode.h"
+#include "ASTC/ASTC_Decode.h"
 #include "ASTC_Host.h"
 
 // //using namespace ASTC_Encoder;

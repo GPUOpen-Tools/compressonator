@@ -29,7 +29,7 @@
 #include "Common.h"
 #include "3dquant_constants.h"
 #include "3dquant_vpc.h"
-#include "bc7_definitions.h"
+#include "BC7_Definitions.h"
 #include "debug.h"
 
 #ifdef    BC7_DEBUG_TO_RESULTS_TXT

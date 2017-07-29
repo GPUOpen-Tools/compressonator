@@ -179,7 +179,7 @@ bool CCodecBuffer_RGBA8888::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, 
     if(x >= GetWidth() || y >= GetHeight())
         return false;
 
-    DWORD* pdwBlock = (DWORD*) block;
+    CMP_DWORD* pdwBlock = (CMP_DWORD*) block;
     if (w==4 && h==4 && (x+w)<=GetWidth() && (y+h)<=GetHeight())
     {
         // Fastpath for the key case to alleviate the drag this code puts on the really fast DXTC
@@ -238,7 +238,7 @@ bool CCodecBuffer_RGBA8888::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w,
         return false;
 
     CMP_DWORD dwWidth = min(w, (GetWidth() - x));
-    DWORD* pdwBlock = (DWORD*) block;
+    CMP_DWORD* pdwBlock = (CMP_DWORD*) block;
 
     for(CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); j++)
     {

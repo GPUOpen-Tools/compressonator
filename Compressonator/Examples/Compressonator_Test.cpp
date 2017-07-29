@@ -23,14 +23,11 @@
 //
 
 #include <stdio.h>
-#include <tchar.h>
 #include <assert.h>
 #include <string>
 #include <math.h>
 #include <float.h>
 
-#include "ddraw.h"
-#include "d3d9types.h"
 #include "Compressonator.h"
 
 // The Helper code is provided to load Textures from a DDS file (Support Images and Compressed formats supported by DX9)
@@ -96,32 +93,32 @@ bool g_bAbortCompression = false;   // If set true current compression will abor
 //---------------------------------------------------------------------------
 // Sample loop back code called for each compression block been processed
 //---------------------------------------------------------------------------
-bool CompressionCallback(float fProgress, DWORD_PTR pUser1, DWORD_PTR pUser2)
+bool CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     UNREFERENCED_PARAMETER(pUser1);
     UNREFERENCED_PARAMETER(pUser2);
-    printf(_T("\rCompression progress = %2.0f"), fProgress);
+    printf("\rCompression progress = %2.0f", fProgress);
     return g_bAbortCompression;
 }
 
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, const char* argv[])
 {
     if (argc < 5)
     {
-        _tprintf(_T("Compressonator_Test SourceFile DestFile Format Quality\n"));
+        printf("Compressonator_Test SourceFile DestFile Format Quality\n");
         return 0;
     }
 
     // Note: No error checking is done on user arguments, so all parameters must be correct in this example
     // (files must exist, values correct format, etc..)
-    TCHAR*     pszSourceFile = argv[1];
-    TCHAR*     pszDestFile   = argv[2];
+    const char*     pszSourceFile = argv[1];
+    const char*     pszDestFile   = argv[2];
     CMP_FORMAT destFormat    = ParseFormat(argv[3]);
     float      fQuality      = std::stof(argv[4]);
 
     if (destFormat == CMP_FORMAT_Unknown)
     {
-        _tprintf(_T("Unsupported destination format\n"));
+        printf("Unsupported destination format\n");
         return 0;
     }
 
@@ -129,7 +126,7 @@ int _tmain(int argc, _TCHAR* argv[])
     CMP_Texture srcTexture;
     if (!LoadDDSFile(pszSourceFile, srcTexture))
     {
-        _tprintf(_T("Error loading source file!\n"));
+        printf("Error loading source file!\n");
         return 0;
     }
 
@@ -148,12 +145,12 @@ int _tmain(int argc, _TCHAR* argv[])
     options.dwSize = sizeof(options);
 
     // Option 1 of setting compression options - Prefered Method
-    sprintf_s(options.CmdSet[0].strCommand, "Quality");
-    sprintf_s(options.CmdSet[0].strParameter, "%s", argv[4]);  // Use user specified Quality (lower values increases performance)
-    sprintf_s(options.CmdSet[1].strCommand, "ModeMask");
-    sprintf_s(options.CmdSet[1].strParameter, "207");          // 0xCF
-    sprintf_s(options.CmdSet[2].strCommand, "NumThreads");     // Use Multi Threading for fast performance
-    sprintf_s(options.CmdSet[2].strParameter, "8");
+    snprintf(options.CmdSet[0].strCommand, sizeof(AMD_CMD_SET::strCommand), "Quality");
+    snprintf(options.CmdSet[0].strParameter, sizeof(AMD_CMD_SET::strParameter), "%s", argv[4]);  // Use user specified Quality (lower values increases performance)
+    snprintf(options.CmdSet[1].strCommand, sizeof(AMD_CMD_SET::strCommand), "ModeMask");
+    snprintf(options.CmdSet[1].strParameter, sizeof(AMD_CMD_SET::strParameter), "207");          // 0xCF
+    snprintf(options.CmdSet[2].strCommand, sizeof(AMD_CMD_SET::strCommand), "NumThreads");     // Use Multi Threading for fast performance
+    snprintf(options.CmdSet[2].strParameter, sizeof(AMD_CMD_SET::strParameter), "8");
     options.NumCmds = 3;
 
     // Option 2 of setting compression options - For backward compatibility  (will be removed in future releases)
@@ -169,7 +166,7 @@ int _tmain(int argc, _TCHAR* argv[])
     {
         if (srcTexture.pData)  free(srcTexture.pData);
         if (destTexture.pData) free(destTexture.pData);
-        printf(_T("Compression returned an error %d\n"), cmp_status);
+        printf("Compression returned an error %d\n", cmp_status);
         return 0;
     }
 
@@ -182,7 +179,7 @@ int _tmain(int argc, _TCHAR* argv[])
         // Step 1: Initialize the Codec: Need to call it only once, repeated calls will return BC_ERROR_LIBRARY_ALREADY_INITIALIZED
         if (CMP_InitializeBCLibrary() != BC_ERROR_NONE)
         {
-            _tprintf(_T("BC Codec already initialized!\n"));
+            printf("BC Codec already initialized!\n");
         }
 
         // Step 2: Create a BC7 Encoder
@@ -198,8 +195,8 @@ int _tmain(int argc, _TCHAR* argv[])
         const CMP_DWORD dwBlocksY = ((srcTexture.dwHeight + 3) >> 2);
         const CMP_DWORD dwBlocksXY = dwBlocksX*dwBlocksY;
         
-        DWORD dstIndex  = 0;    // Destination block index
-        DWORD srcIndex  = 0;    // Source block index
+        CMP_DWORD dstIndex  = 0;    // Destination block index
+        CMP_DWORD srcIndex  = 0;    // Source block index
 
         // Step 4: Process the blocks
         for (CMP_DWORD j = 0; j < dwBlocksY; j++)
@@ -226,7 +223,7 @@ int _tmain(int argc, _TCHAR* argv[])
                 cmp_status = CMP_EncodeBC7Block(BC7Encoder, blockToEncode, (destTexture.pData + dstIndex));
                 if (cmp_status != CMP_OK)
                 {
-                    printf(_T("Compression error at block X = %d Block Y = %d \n"), i,j);
+                    printf("Compression error at block X = %d Block Y = %d \n", i,j);
                     i = dwBlocksX;
                     j = dwBlocksY;
                 }
@@ -234,7 +231,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
                 // Show Progress
                 float fProgress = 100.f * (j * dwBlocksX) / dwBlocksXY;
-                printf(_T("\rCompression progress = %2.0f"), fProgress);
+                printf("\rCompression progress = %2.0f", fProgress);
             }
         }
 

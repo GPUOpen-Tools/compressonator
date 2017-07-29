@@ -29,7 +29,7 @@
 #include "3dquant_constants.h"
 #include "3dquant_vpc.h"
 #include "shake.h"
-#include "bc7_utils.h"
+#include "BC7_utils.h"
 #include "debug.h"
 
 #define LOG_CL_BASE 2
