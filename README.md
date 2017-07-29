@@ -3,6 +3,7 @@
 Compressonator is a set of tools to allow artists and developers to more easily create compressed texture image assets and easily visualize the quality impact of various compression technologies.  It consists of a GUI application, a command line application and an SDK for easy integration into a developer tool chain.
 
 Compressonator DXTn (S3TC)is developed for Microsoft Windows® platform.
+Building for Linux is possible aswell, partially.
 
 For more details goto the Compressonator Wiki: https://github.com/GPUOpen-Tools/Compressonator/wiki 
 
@@ -50,6 +51,18 @@ The directory of your workspace should be as follows
 It is also recommended that you install and configure Visual Studio Qt5 Package extension from MSDN Visual Studio Gallery, and set in Qt Options dialog, Qt Default Version name V5.7 and path to default download path C:\Qt\5.7\msvc2015_64\bin\
 
 https://visualstudiogallery.msdn.microsoft.com/c89ff880-8509-47a4-a262-e4fa07168408 
+
+
+Build Instructions for Linux
+------------------------------------------------------
+
+To build the static Compressonator library or the command line interface you need to have the latest GCC toolchain installed (tested with 6.3.0 on WSL).
+
+There are makefiles prepared for you.
+* static library: makefile location "Compressonator/Linux", output in "Compressonator/Build/Linux/libcompressonator.a"
+* CLI: makefile location "Compressonator/Examples/Linux", output in "Compressonator/Build/Linux/Example/cmpcli"
+
+Example command for the CLI: ./cmpcli src.dds out.dds ATC_RGB 1
 
 -------------------------------------
 
