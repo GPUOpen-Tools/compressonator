@@ -31,6 +31,7 @@
 #include "shake.h"
 #include "bc7_utils.h"
 #include "debug.h"
+#include "bc7_encode.h"
 
 #define LOG_CL_BASE 2
 #define BIT_BASE 5
@@ -38,10 +39,8 @@
 #define LOG_CL_RANGE 5
 #define BIT_RANGE 9
 
-
 #define CLT(cl)   (cl-LOG_CL_BASE)
 #define BTT(bits) (bits-BIT_BASE)
-
 
 int npv_nd[][2*MAX_DIMENSION_BIG]={
     {}, // 0 - for alingment        
@@ -50,9 +49,6 @@ int npv_nd[][2*MAX_DIMENSION_BIG]={
     {1,2,4,8,16,32}, //3
     {1,2,4}          //4
 };
-
-
-
 
 // Reworking these tables
 // Since endpoints can be flipped for the encoding (reclaims an index bit) this means
@@ -244,7 +240,11 @@ int expand_ (int bits, int v) {
     return (  v << (8-bits) | v >> (2* bits - 8)); 
 }
 
-void init_ramps (void) {
+static bool ramp_init = false;
+
+void init_ramps (void) 
+{
+    if (ramp_init) return;
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif
@@ -327,8 +327,9 @@ void init_ramps (void) {
                                     sp_err[CLT(clog)][BTT(bits)][j][o1][o2][i]=k*k;
                                 }
                             }
-}
 
+    ramp_init = true;
+}
 
 // finds "floor in the set" if exists, otherwise returns min
 inline int ep_find_floor( double v, int bits, int use_par, int odd)
@@ -366,7 +367,6 @@ inline int ep_find_near( double v, int bits, int use_par, int odd)
         return p1;
 }
 
-
 inline void mean_d (double d[][DIMENSION], double mean[DIMENSION], int n) {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -382,7 +382,6 @@ inline void mean_d (double d[][DIMENSION], double mean[DIMENSION], int n) {
         mean[j] /=(double) n;
 }
 
-
 inline void mean_d_d (double d[][MAX_DIMENSION_BIG], double mean[MAX_DIMENSION_BIG], int n, int dimension) {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -397,7 +396,6 @@ inline void mean_d_d (double d[][MAX_DIMENSION_BIG], double mean[MAX_DIMENSION_B
     for(j=0;j< dimension;j++)
         mean[j] /=(double) n;
 }
-
 
 inline int cluster_mean_d (double d[][DIMENSION],  double mean[][DIMENSION], int index[],int i_comp[],int i_cnt[], int n) {
 #ifdef USE_DBGTRACE
@@ -428,8 +426,6 @@ inline int cluster_mean_d (double d[][DIMENSION],  double mean[][DIMENSION], int
     return k;
 }
 
-
-
 inline int cluster_mean_d_d (double d[][MAX_DIMENSION_BIG],  double mean[][MAX_DIMENSION_BIG], int index[],int i_comp[],int i_cnt[], int n, int dimension) {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -459,8 +455,6 @@ inline int cluster_mean_d_d (double d[][MAX_DIMENSION_BIG],  double mean[][MAX_D
     return k;
 }
 
-
-
 inline int all_same (double d[][DIMENSION],  int n) {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -474,7 +468,6 @@ inline int all_same (double d[][DIMENSION],  int n) {
 
     return(same);
 }
-
 
 inline int all_same_d (double d[][MAX_DIMENSION_BIG],  int n, int dimension){
 #ifdef USE_DBGTRACE
@@ -490,7 +483,6 @@ inline int all_same_d (double d[][MAX_DIMENSION_BIG],  int n, int dimension){
     return(same);
 }
 
-
 inline int max_i (int a[], int n) {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -501,6 +493,7 @@ inline int max_i (int a[], int n) {
         m = m > a[i] ? m : a[i];
     return (m);
 }
+
 void index_collapse_ (int index[], int numEntries)
 {
     int k;
@@ -528,15 +521,13 @@ void index_collapse_ (int index[], int numEntries)
         index[k] = (index[k]- mi)/D; 
 }
 
-
-
 //
 // New version that will take varying dimension
 //
 //
 //
 
-double quant_single_point_d
+double BC7BlockEncoder::quant_single_point_d
 ( 
     double data[MAX_ENTRIES][MAX_DIMENSION_BIG], 
     int numEntries, int index[MAX_ENTRIES],
@@ -686,13 +677,13 @@ double quant_single_point_d
         index[i]=idx_1;
         for (j=0;j<dimension;j++) 
         {
-            out[i][j]=ramp[CLT(clog)][BTT(bits[j])][epo_1[0][j]][epo_1[1][j]][idx_1];
+           out[i][j]=ramp[CLT(clog)][BTT(bits[j])][epo_1[0][j]][epo_1[1][j]][idx_1];
         }
     }
     return err_1 * numEntries;
 }
 
-double ep_shaker_2_d( 
+double BC7BlockEncoder::ep_shaker_2_d(
     double data[MAX_ENTRIES][MAX_DIMENSION_BIG], 
     int numEntries, 
     int index_[MAX_ENTRIES],
@@ -1047,7 +1038,7 @@ double ep_shaker_2_d(
 
 
 
-double ep_shaker_d( 
+double BC7BlockEncoder::ep_shaker_d(
     double data[MAX_ENTRIES][MAX_DIMENSION_BIG], 
     int numEntries, 
     int index_[MAX_ENTRIES],

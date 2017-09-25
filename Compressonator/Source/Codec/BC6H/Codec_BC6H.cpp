@@ -46,15 +46,6 @@ extern     CompViewerClient g_CompClient;
 #define USE_MULTITHREADING  1
 
 
-struct BC6HEncodeThreadParam
-{
-    BC6HBlockEncoder    *encoder;
-    float    in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
-    BYTE    *out;
-    volatile BOOL    run;
-    volatile BOOL    exit;
-};
-
 //
 // Thread procedure for encoding a block
 //
@@ -67,7 +58,7 @@ unsigned int    _stdcall BC6HThreadProcEncode(void* param)
 {
     BC6HEncodeThreadParam *tp = (BC6HEncodeThreadParam*)param;
 
-    while(tp->exit == FALSE)
+    while(tp->exit == FALSE) 
     {
         if(tp->run == TRUE)
         {
@@ -76,15 +67,10 @@ unsigned int    _stdcall BC6HThreadProcEncode(void* param)
         }
         Sleep(0);
     }
-
     return 0;
 }
 
-
-static BC6HEncodeThreadParam *g_BC6EncodeParameterStorage = NULL;
 int    g_block= 0; // Keep track of current encoder block!
-
-
 
 //////////////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -113,7 +99,6 @@ CCodec_BC6H::CCodec_BC6H(CodecType codecType) : CCodec_DXTC(codecType)
     m_LastThread            = 0;
     m_CodecType             = codecType;
 }
-
 
 bool CCodec_BC6H::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
 {
@@ -159,7 +144,6 @@ bool CCodec_BC6H::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
     return true;
 }
 
-
 bool CCodec_BC6H::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue)
 {
     if(strcmp(pszParamName, "ModeMask") == 0)
@@ -193,7 +177,6 @@ bool CCodec_BC6H::SetParameter(const CMP_CHAR* pszParamName, CODECFLOAT fValue)
     return true;
 }
 
-
 CCodec_BC6H::~CCodec_BC6H()
 {
     if (m_LibraryInitialized)
@@ -214,15 +197,15 @@ CCodec_BC6H::~CCodec_BC6H()
 #pragma warning(disable:4127) //warning C4127: conditional expression is constant
                 while(1)
                 {
-                    if (g_BC6EncodeParameterStorage == NULL) break;
-                    if(g_BC6EncodeParameterStorage[i].run != TRUE)
+                    if (m_EncodeParameterStorage == NULL) break;
+                    if(m_EncodeParameterStorage[i].run != TRUE)
                     {
                         break;
                     }
                 }
 #pragma warning(pop)
                 // Signal to the thread that it can exit
-                g_BC6EncodeParameterStorage[i].exit = TRUE;
+                m_EncodeParameterStorage[i].exit = TRUE;
             }
 
             // Now wait for all threads to have exited
@@ -248,8 +231,9 @@ CCodec_BC6H::~CCodec_BC6H()
         delete[] m_EncodingThreadHandle;
         m_EncodingThreadHandle = NULL;
 
-        delete[] g_BC6EncodeParameterStorage;
-        g_BC6EncodeParameterStorage = NULL;
+        if (m_EncodeParameterStorage)
+            delete[] m_EncodeParameterStorage;
+        m_EncodeParameterStorage = NULL;
 
         
         for(int i=0; i < m_NumEncodingThreads; i++)
@@ -271,8 +255,6 @@ CCodec_BC6H::~CCodec_BC6H()
     }
 }
 
-
-
 CodecError CCodec_BC6H::CInitializeBC6HLibrary()
 {
     if (!m_LibraryInitialized)
@@ -289,20 +271,20 @@ CodecError CCodec_BC6H::CInitializeBC6HLibrary()
         if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1; 
         m_Use_MultiThreading = m_NumEncodingThreads > 1;
 
-        g_BC6EncodeParameterStorage = new BC6HEncodeThreadParam[m_NumEncodingThreads];
-        if(!g_BC6EncodeParameterStorage)
+        m_EncodeParameterStorage = new BC6HEncodeThreadParam[m_NumEncodingThreads];
+        if(!m_EncodeParameterStorage)
         {
             return CE_Unknown;
         }
 
         for (int i=0; i<m_NumEncodingThreads; i++)
-            g_BC6EncodeParameterStorage[i].run = false;
+            m_EncodeParameterStorage[i].run = false;
 
         m_EncodingThreadHandle = new HANDLE[m_NumEncodingThreads];
         if(!m_EncodingThreadHandle)
         {
-            delete[] g_BC6EncodeParameterStorage;
-            g_BC6EncodeParameterStorage = NULL;
+            delete[] m_EncodeParameterStorage;
+            m_EncodeParameterStorage = NULL;
 
             return CE_Unknown;
         }
@@ -323,9 +305,9 @@ CodecError CCodec_BC6H::CInitializeBC6HLibrary()
             // Cleanup if problem!
             if(!m_encoder[i])
             {
-
-                delete[] g_BC6EncodeParameterStorage;
-                g_BC6EncodeParameterStorage = NULL;
+                if (m_EncodeParameterStorage)
+                    delete[] m_EncodeParameterStorage;
+                m_EncodeParameterStorage = NULL;
 
                 delete[] m_EncodingThreadHandle;
                 m_EncodingThreadHandle = NULL;
@@ -350,16 +332,16 @@ CodecError CCodec_BC6H::CInitializeBC6HLibrary()
             m_EncodingThreadHandle[i] = (HANDLE)_beginthreadex(NULL,
                                                0,
                                                BC6HThreadProcEncode,
-                                               (void*)&g_BC6EncodeParameterStorage[i],
+                                               (void*)&m_EncodeParameterStorage[i],
                                                CREATE_SUSPENDED,
                                                NULL);
             if(m_EncodingThreadHandle[i])
             {
-                g_BC6EncodeParameterStorage[i].encoder = m_encoder[i];
+                m_EncodeParameterStorage[i].encoder = m_encoder[i];
                 // Inform the thread that at the moment it doesn't have any work to do
                 // but that it should wait for some and not exit
-                g_BC6EncodeParameterStorage[i].run = FALSE;
-                g_BC6EncodeParameterStorage[i].exit = FALSE;
+                m_EncodeParameterStorage[i].run = FALSE;
+                m_EncodeParameterStorage[i].exit = FALSE;
                 // Start the thread and have it wait for work
                 ResumeThread(m_EncodingThreadHandle[i]);
                 m_LiveThreads++;
@@ -384,7 +366,6 @@ CodecError CCodec_BC6H::CInitializeBC6HLibrary()
     return CE_OK;
 }
 
-
 CodecError CCodec_BC6H::CEncodeBC6HBlock(float  in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
                                          BYTE  *out)
 {
@@ -404,7 +385,7 @@ if (m_Use_MultiThreading)
     threadIndex = m_LastThread;
     while (found == FALSE)
     {
-        if(g_BC6EncodeParameterStorage[threadIndex].run == FALSE)
+        if(m_EncodeParameterStorage[threadIndex].run == FALSE)
         {
             found = TRUE;
             break;
@@ -421,23 +402,23 @@ if (m_Use_MultiThreading)
     m_LastThread = threadIndex;
 
     // Copy the input data into the thread storage
-    memcpy(g_BC6EncodeParameterStorage[threadIndex].in,
+    memcpy(m_EncodeParameterStorage[threadIndex].in,
            in,
            MAX_SUBSET_SIZE * MAX_DIMENSION_BIG * sizeof(float));
 
     // Set the output pointer for the thread to the provided location
-    g_BC6EncodeParameterStorage[threadIndex].out = out;
+    m_EncodeParameterStorage[threadIndex].out = out;
 
     // Tell the thread to start working
-    g_BC6EncodeParameterStorage[threadIndex].run = TRUE;
+    m_EncodeParameterStorage[threadIndex].run = TRUE;
 }
 else 
 {
         // Copy the input data into the thread storage
-        memcpy(g_BC6EncodeParameterStorage[0].in, in, BC6H_MAX_SUBSET_SIZE * MAX_DIMENSION_BIG * sizeof(float));
+        memcpy(m_EncodeParameterStorage[0].in, in, BC6H_MAX_SUBSET_SIZE * MAX_DIMENSION_BIG * sizeof(float));
         // Set the output pointer for the thread to write
-        g_BC6EncodeParameterStorage[0].out = out;
-        m_encoder[0]->CompressBlock(g_BC6EncodeParameterStorage[0].in,g_BC6EncodeParameterStorage[0].out);
+        m_EncodeParameterStorage[0].out = out;
+        m_encoder[0]->CompressBlock(m_EncodeParameterStorage[0].in, m_EncodeParameterStorage[0].out);
 }
     return CE_OK;
 }
@@ -456,7 +437,7 @@ if (m_Use_MultiThreading)
     {
         // If a thread is in the running state then we need to wait for it to finish
         // its work from the producer
-        while(g_BC6EncodeParameterStorage[i].run == TRUE)
+        while(m_EncodeParameterStorage[i].run == TRUE)
         {
             Sleep(1);
         }
@@ -626,7 +607,6 @@ CodecError CCodec_BC6H::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
         
     return CFinishBC6HEncoding();
 }
-
 
 CodecError CCodec_BC6H::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
 {

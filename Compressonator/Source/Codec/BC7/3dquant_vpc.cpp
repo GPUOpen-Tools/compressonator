@@ -32,6 +32,9 @@
 #include "bc7_definitions.h"
 #include "debug.h"
 
+#include <mutex>
+
+
 #ifdef    BC7_DEBUG_TO_RESULTS_TXT
 FILE *fp;
 #endif
@@ -54,20 +57,22 @@ static int trcnts[MAX_CLUSTERS][MAX_ENTRIES_QUANT_TRACE];
 #define USE_TRACE_WITH_DYNAMIC_MEM
 
 #ifdef USE_TRACE_WITH_DYNAMIC_MEM
-    int*    amd_codes[MAX_CLUSTERS][MAX_ENTRIES_QUANT_TRACE];
-    TRACE*    amd_trs[MAX_CLUSTERS][MAX_ENTRIES_QUANT_TRACE];
+    int*        amd_codes[MAX_CLUSTERS][MAX_ENTRIES_QUANT_TRACE] = {};
+    TRACE*      amd_trs[MAX_CLUSTERS][MAX_ENTRIES_QUANT_TRACE]   = {};
 #else
-    TRACE    amd_trs[MAX_CLUSTERS][MAX_ENTRIES_QUANT_TRACE][MAX_TRACE];
-    int        amd_codes[MAX_CLUSTERS][MAX_ENTRIES_QUANT_TRACE][MAX_TRACE];  // was static
+    TRACE       amd_trs[MAX_CLUSTERS][MAX_ENTRIES_QUANT_TRACE][MAX_TRACE];
+    int         amd_codes[MAX_CLUSTERS][MAX_ENTRIES_QUANT_TRACE][MAX_TRACE];  // was static
 #endif
 
-
-static bool g_Quant_init = false;
+static int g_Quant_init = 0;
 void traceBuilder (int numEntries, int numClusters,struct TRACE tr [], int code[], int *trcnt );
+
 
 void Quant_Init(void)
 {
-    if (g_Quant_init == true) return;
+    if (g_Quant_init > 0) return;
+    if (amd_codes[0][0])  return;
+
     for ( int numClusters = 0; numClusters < MAX_CLUSTERS; numClusters++ )
     {
         for ( int numEntries = 0; numEntries < MAX_ENTRIES_QUANT_TRACE; numEntries++ )
@@ -87,27 +92,43 @@ void Quant_Init(void)
                             trcnts[numClusters]+(numEntries)); 
         }
     }
-    g_Quant_init = true;
+    g_Quant_init++;
 }
 
 void Quant_DeInit(void)
 {
-    if (g_Quant_init == false) return;
-    
-    #ifdef USE_TRACE_WITH_DYNAMIC_MEM
-    for ( int i = 0; i < MAX_CLUSTERS; i++ )
+    if (g_Quant_init > 0)
     {
-        for ( int j = 0; j < MAX_ENTRIES_QUANT_TRACE; j++ )
-        {
-            if (amd_trs[ i ][ j ])
-                delete[] amd_trs[ i ][ j ];
-            if (amd_codes[ i ][ j ])
-                delete[] amd_codes[ i ][ j ];
-        }
+        g_Quant_init--;
     }
-    #endif
+    else
+    {
+        if (amd_codes[0][0] == nullptr)  return;
+        
+        delete[] amd_codes[0][0];
+        amd_codes[0][0] = nullptr;
+        
+        delete amd_trs[0][0];
+        amd_trs[0][0] = nullptr;
 
-    g_Quant_init = false;
+#ifdef USE_TRACE_WITH_DYNAMIC_MEM
+        for (int i = 1; i < MAX_CLUSTERS; i++)
+        {
+            for (int j = 1; j < MAX_ENTRIES_QUANT_TRACE; j++)
+            {
+                if (amd_codes[i][j])
+                {
+                    delete[] amd_codes[i][j];
+                }
+                if (amd_trs[i][j])
+                {
+                    delete[] amd_trs[i][j];
+                }
+            }
+        }
+#endif
+    }
+
 }
 
 //=========================================================================================
@@ -167,7 +188,6 @@ void covariance(double data[][DIMENSION], int numEntries, double cov[DIMENSION][
             cov[i][j] = cov[j][i];
 }
  
-
 void covariance_d(double data[][MAX_DIMENSION_BIG], int numEntries, double cov[MAX_DIMENSION_BIG][MAX_DIMENSION_BIG], int dimension)
 {
 #ifdef USE_DBGTRACE
@@ -212,7 +232,6 @@ void centerInPlace(double data[][DIMENSION], int numEntries, double mean[DIMENSI
         }
 }
 
-
 void centerInPlace_d(double data[][MAX_DIMENSION_BIG], int numEntries, double mean[MAX_DIMENSION_BIG], int dimension)
 {
 #ifdef USE_DBGTRACE
@@ -237,8 +256,6 @@ void centerInPlace_d(double data[][MAX_DIMENSION_BIG], int numEntries, double me
             data[k][i]-=mean[i];
     }
 }
-
-
 
 void project(double data[][DIMENSION], int numEntries, double vector[DIMENSION], double projection[MAX_ENTRIES]) 
 {
@@ -273,8 +290,6 @@ void project_d(double data[][MAX_DIMENSION_BIG], int numEntries, double vector[M
         }
     }
 }
-
-
 
 void eigenVector(double cov[DIMENSION][DIMENSION], double vector[DIMENSION]) 
 {
@@ -361,9 +376,6 @@ void eigenVector(double cov[DIMENSION][DIMENSION], double vector[DIMENSION])
     for(i=0;i<DIMENSION;i++) 
         vector[i]/=t;
 }
-
-
-
 
 void eigenVector_d(double cov[MAX_DIMENSION_BIG][MAX_DIMENSION_BIG], double vector[MAX_DIMENSION_BIG], int dimension)
 {
@@ -456,7 +468,6 @@ void eigenVector_d(double cov[MAX_DIMENSION_BIG][MAX_DIMENSION_BIG], double vect
     for(i=0;i<dimension;i++) 
         vector[i]/=t;
 }
-
 
 double partition2(double data[][DIMENSION], int numEntries,int index[])
 {
@@ -735,7 +746,6 @@ double totalError(double data[MAX_ENTRIES][DIMENSION],double data2[MAX_ENTRIES][
            t+= (data[i][j]-data2[i][j])*(data[i][j]-data2[i][j]);
     return t;
 };
-
 
 double totalError_d(double data[MAX_ENTRIES][MAX_DIMENSION_BIG],double data2[MAX_ENTRIES][MAX_DIMENSION_BIG],int numEntries, int dimension)
 {
@@ -1135,7 +1145,6 @@ void quantTrace(double data[MAX_ENTRIES_QUANT_TRACE][DIMENSION],int numEntries, 
     }
 }
 
-
 void quantTrace_d(double data[MAX_ENTRIES_QUANT_TRACE][MAX_DIMENSION_BIG],int numEntries, int numClusters, int index[MAX_ENTRIES_QUANT_TRACE],int dimension)
 {
 #ifdef USE_DBGTRACE
@@ -1367,7 +1376,6 @@ void quant_AnD_Shell(double* v_, int k, int n, int *idx) {
         idx[i]-=mi;
 }
 
-
 double optQuantTrace(
     double data[MAX_ENTRIES][DIMENSION], 
     int numEntries, int numClusters, int index_[MAX_ENTRIES],
@@ -1513,7 +1521,6 @@ double optQuantTrace(
   
     return totalError(data,out,numEntries);
 }
-
 
 double optQuantTrace_d(
     double data[MAX_ENTRIES][MAX_DIMENSION_BIG], 
@@ -1832,7 +1839,6 @@ void traceBuilder (int numEntries, int numClusters,struct TRACE tr [], int code[
     *trcnt=c;
 }
 
-
 double optQuantAnD(
     double data[MAX_ENTRIES][DIMENSION], 
     int numEntries, int numClusters, int index[MAX_ENTRIES],
@@ -2000,7 +2006,6 @@ double optQuantAnD(
 
     return totalError(data,out,numEntries);
 }
-
 
 double optQuantAnD_d(
     double data[MAX_ENTRIES][MAX_DIMENSION_BIG], 

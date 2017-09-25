@@ -27,6 +27,8 @@
 #include <float.h>
 #include "BC7_definitions.h"
 
+#include <mutex>
+
 // Threshold quality below which we will always run fast quality and shaking
 // Self note: User should be able to set this?
 extern double g_qFAST_THRESHOLD;
@@ -107,6 +109,43 @@ public:
                          BYTE   out[COMPRESSED_BLOCK_SIZE]);
 
 private:
+    double quant_single_point_d(
+        double data[MAX_ENTRIES][MAX_DIMENSION_BIG],
+        int numEntries, int index[MAX_ENTRIES],
+        double out[MAX_ENTRIES][MAX_DIMENSION_BIG],
+        int epo_1[2][MAX_DIMENSION_BIG],
+        int Mi_,                // last cluster
+        int bits[3],            // including parity
+        int type,
+        int dimension
+    );
+
+    double ep_shaker_2_d(
+        double data[MAX_ENTRIES][MAX_DIMENSION_BIG],
+        int numEntries,
+        int index_[MAX_ENTRIES],
+        double out[MAX_ENTRIES][MAX_DIMENSION_BIG],
+        int epo_code[2][MAX_DIMENSION_BIG],
+        int size,
+        int Mi_,             // last cluster
+        int bits,            // total for all channels
+                             // defined by total numbe of bits and dimensioin
+        int dimension,
+        double epo[2][MAX_DIMENSION_BIG]
+
+    );
+
+    double ep_shaker_d(
+        double data[MAX_ENTRIES][MAX_DIMENSION_BIG],
+        int numEntries,
+        int index_[MAX_ENTRIES],
+        double out[MAX_ENTRIES][MAX_DIMENSION_BIG],
+        int epo_code[2][MAX_DIMENSION_BIG],
+        int Mi_,                // last cluster
+        int bits[3],            // including parity
+        qt type,
+        int dimension
+    );
 
     void    BlockSetup(DWORD blockMode);
     void    EncodeSingleIndexBlock(DWORD blockMode,

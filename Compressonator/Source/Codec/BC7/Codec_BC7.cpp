@@ -41,14 +41,7 @@ extern     CompViewerClient g_CompClient;
 //======================================================================================
 #define USE_MULTITHREADING  1
 
-struct BC7EncodeThreadParam
-{
-    BC7BlockEncoder    *encoder;
-    double    in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
-    BYTE    *out;
-    volatile BOOL    run;
-    volatile BOOL    exit;
-};
+
 
 //
 // Thread procedure for encoding a block
@@ -61,7 +54,7 @@ struct BC7EncodeThreadParam
 unsigned int    _stdcall BC7ThreadProcEncode(void* param)
 {
     BC7EncodeThreadParam *tp = (BC7EncodeThreadParam*)param;
-
+    
     while(tp->exit == FALSE)
     {
         if(tp->run == TRUE)
@@ -71,13 +64,9 @@ unsigned int    _stdcall BC7ThreadProcEncode(void* param)
         }
         Sleep(0);
     }
-
+    
     return 0;
 }
-
-
-static BC7EncodeThreadParam *g_EncodeParameterStorage = NULL;
-
 
 //////////////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -209,14 +198,14 @@ CCodec_BC7::~CCodec_BC7()
 #pragma warning(disable:4127) //warning C4127: conditional expression is constant
                 while(1)
                 {
-                    if(g_EncodeParameterStorage[i].run != TRUE)
+                    if(m_EncodeParameterStorage[i].run != TRUE)
                     {
                         break;
                     }
                 }
 #pragma warning(pop)
                 // Signal to the thread that it can exit
-                g_EncodeParameterStorage[i].exit = TRUE;
+                m_EncodeParameterStorage[i].exit = TRUE;
             }
 
             // Now wait for all threads to have exited
@@ -242,8 +231,9 @@ CCodec_BC7::~CCodec_BC7()
         delete[] m_EncodingThreadHandle;
         m_EncodingThreadHandle = NULL;
 
-        delete[] g_EncodeParameterStorage;
-        g_EncodeParameterStorage = NULL;
+        if (m_EncodeParameterStorage)
+            delete[] m_EncodeParameterStorage;
+        m_EncodeParameterStorage = NULL;
 
         
         for(int i=0; i < m_NumEncodingThreads; i++)
@@ -291,8 +281,8 @@ CodecError CCodec_BC7::InitializeBC7Library()
         if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1; 
         m_Use_MultiThreading = m_NumEncodingThreads > 1;
 
-        g_EncodeParameterStorage = new BC7EncodeThreadParam[m_NumEncodingThreads];
-        if(!g_EncodeParameterStorage)
+        m_EncodeParameterStorage = new BC7EncodeThreadParam[m_NumEncodingThreads];
+        if(!m_EncodeParameterStorage)
         {
             return CE_Unknown;
         }
@@ -300,8 +290,8 @@ CodecError CCodec_BC7::InitializeBC7Library()
         m_EncodingThreadHandle = new HANDLE[m_NumEncodingThreads];
         if(!m_EncodingThreadHandle)
         {
-            delete[] g_EncodeParameterStorage;
-            g_EncodeParameterStorage = NULL;
+            delete[] m_EncodeParameterStorage;
+            m_EncodeParameterStorage = NULL;
 
             return CE_Unknown;
         }
@@ -323,8 +313,8 @@ CodecError CCodec_BC7::InitializeBC7Library()
             if(!m_encoder[i])
             {
 
-                delete[] g_EncodeParameterStorage;
-                g_EncodeParameterStorage = NULL;
+                delete[] m_EncodeParameterStorage;
+                m_EncodeParameterStorage = NULL;
 
                 delete[] m_EncodingThreadHandle;
                 m_EncodingThreadHandle = NULL;
@@ -350,16 +340,16 @@ CodecError CCodec_BC7::InitializeBC7Library()
             m_EncodingThreadHandle[i] = (HANDLE)_beginthreadex(NULL,
                                                0,
                                                BC7ThreadProcEncode,
-                                               (void*)&g_EncodeParameterStorage[i],
+                                               (void*)&m_EncodeParameterStorage[i],
                                                CREATE_SUSPENDED,
                                                NULL);
             if(m_EncodingThreadHandle[i])
             {
-                g_EncodeParameterStorage[i].encoder = m_encoder[i];
+                m_EncodeParameterStorage[i].encoder = m_encoder[i];
                 // Inform the thread that at the moment it doesn't have any work to do
                 // but that it should wait for some and not exit
-                g_EncodeParameterStorage[i].run = FALSE;
-                g_EncodeParameterStorage[i].exit = FALSE;
+                m_EncodeParameterStorage[i].run = FALSE;
+                m_EncodeParameterStorage[i].exit = FALSE;
                 // Start the thread and have it wait for work
                 ResumeThread(m_EncodingThreadHandle[i]);
                 m_LiveThreads++;
@@ -405,10 +395,10 @@ if (m_Use_MultiThreading)
     while (found == FALSE)
     {
 
-        if (g_EncodeParameterStorage == NULL)
+        if (m_EncodeParameterStorage == NULL)
             return CE_Unknown;
 
-        if(g_EncodeParameterStorage[threadIndex].run == FALSE)
+        if(m_EncodeParameterStorage[threadIndex].run == FALSE)
         {
             found = TRUE;
             break;
@@ -425,23 +415,23 @@ if (m_Use_MultiThreading)
     m_LastThread = threadIndex;
 
     // Copy the input data into the thread storage
-    memcpy(g_EncodeParameterStorage[threadIndex].in,
+    memcpy(m_EncodeParameterStorage[threadIndex].in,
            in,
            MAX_SUBSET_SIZE * MAX_DIMENSION_BIG * sizeof(double));
 
     // Set the output pointer for the thread to the provided location
-    g_EncodeParameterStorage[threadIndex].out = out;
+    m_EncodeParameterStorage[threadIndex].out = out;
 
     // Tell the thread to start working
-    g_EncodeParameterStorage[threadIndex].run = TRUE;
+    m_EncodeParameterStorage[threadIndex].run = TRUE;
 }
 else 
 {
         // Copy the input data into the thread storage
-        memcpy(g_EncodeParameterStorage[0].in, in, MAX_SUBSET_SIZE * MAX_DIMENSION_BIG * sizeof(double));
+        memcpy(m_EncodeParameterStorage[0].in, in, MAX_SUBSET_SIZE * MAX_DIMENSION_BIG * sizeof(double));
         // Set the output pointer for the thread to write
-        g_EncodeParameterStorage[0].out = out;
-        m_encoder[0]->CompressBlock(g_EncodeParameterStorage[0].in,g_EncodeParameterStorage[0].out);
+        m_EncodeParameterStorage[0].out = out;
+        m_encoder[0]->CompressBlock(m_EncodeParameterStorage[0].in, m_EncodeParameterStorage[0].out);
 }
     return CE_OK;
 }
@@ -453,23 +443,23 @@ CodecError CCodec_BC7::FinishBC7Encoding(void)
         return CE_Unknown;
     }
 
-    if (!g_EncodeParameterStorage)
+    if (!m_EncodeParameterStorage)
     {
         return CE_Unknown;
     }
 
 if (m_Use_MultiThreading)
 {
-    // Wait for all the live threads to finish any current work
-    for(DWORD i=0; i < m_LiveThreads; i++)
-    {
-        // If a thread is in the running state then we need to wait for it to finish
-        // its work from the producer
-        while(g_EncodeParameterStorage[i].run == TRUE)
+        // Wait for all the live threads to finish any current work
+        for (DWORD i = 0; i < m_LiveThreads; i++)
         {
-            Sleep(1);
+            // If a thread is in the running state then we need to wait for it to finish
+            // its work from the producer
+            while (m_EncodeParameterStorage[i].run == TRUE)
+            {
+                Sleep(1);
+            }
         }
-    }
 }
 return CE_OK;
 }

@@ -34,6 +34,15 @@
 #include "BC6H_Decode.h"
 #include "BC6H_library.h"
 
+struct BC6HEncodeThreadParam
+{
+    BC6HBlockEncoder    *encoder;
+    float    in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
+    BYTE    *out;
+    volatile BOOL    run;
+    volatile BOOL    exit;
+};
+
 class CCodec_BC6H : public CCodec_DXTC  
 {
 public:
@@ -52,8 +61,10 @@ public:
 
 
 private:
+    BC6HEncodeThreadParam *m_EncodeParameterStorage;
+
     // BC6H User configurable variables
-    CMP_WORD     m_ModeMask;
+    CMP_WORD        m_ModeMask;
     double          m_Quality;
     WORD            m_NumThreads;    
     bool            m_bIsSigned;

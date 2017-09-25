@@ -34,6 +34,15 @@
 #include "BC7_Decode.h"
 #include "BC7_library.h"
 
+struct BC7EncodeThreadParam
+{
+    BC7BlockEncoder    *encoder;
+    double    in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
+    BYTE    *out;
+    volatile BOOL    run;
+    volatile BOOL    exit;
+};
+
 class CCodec_BC7 : public CCodec_DXTC  
 {
 public:
@@ -52,6 +61,8 @@ public:
 
 
 private:
+    BC7EncodeThreadParam *m_EncodeParameterStorage;
+
     // BC7 User configurable variables
     DWORD   m_ModeMask;
     double  m_Quality;
