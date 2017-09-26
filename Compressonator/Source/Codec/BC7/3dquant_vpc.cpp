@@ -108,6 +108,7 @@ void Quant_DeInit(void)
     }
     else
     {
+        g_Quant_init = 0; // Reset in case user called Quant_DeInit too many times without matching Quant_Init
         if (amd_codes[0][0] == nullptr)  return;
         
         delete[] amd_codes[0][0];
