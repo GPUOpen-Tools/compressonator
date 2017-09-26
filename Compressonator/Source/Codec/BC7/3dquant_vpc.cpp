@@ -70,7 +70,11 @@ void traceBuilder (int numEntries, int numClusters,struct TRACE tr [], int code[
 
 void Quant_Init(void)
 {
-    if (g_Quant_init > 0) return;
+    if (g_Quant_init > 0)
+    {
+        g_Quant_init++;
+        return;
+    }
     if (amd_codes[0][0])  return;
 
     for ( int numClusters = 0; numClusters < MAX_CLUSTERS; numClusters++ )
@@ -97,9 +101,10 @@ void Quant_Init(void)
 
 void Quant_DeInit(void)
 {
+    g_Quant_init--;
     if (g_Quant_init > 0)
     {
-        g_Quant_init--;
+        return;
     }
     else
     {
