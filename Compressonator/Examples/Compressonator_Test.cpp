@@ -304,14 +304,14 @@ int _tmain(int argc, _TCHAR* argv[])
         // this only needs to be called once.
         // Do a simmilar operation if format is BC6H
         //---------------------------------------------------------------------------------------------------
-        if (destTexture.format == CMP_FORMAT_BC7)
-        {
-            // Initialize the Codec: Need to call it only once, repeated calls will return BC_ERROR_LIBRARY_ALREADY_INITIALIZED
-            if (CMP_InitializeBCLibrary() != BC_ERROR_NONE)
-            {
-                std::printf("BC Codec already initialized!\n");
-            }
-        }
+        // if (destTexture.format == CMP_FORMAT_BC7)
+        // {
+        //     // Initialize the Codec: Need to call it only once, repeated calls will return BC_ERROR_LIBRARY_ALREADY_INITIALIZED
+        //     if (CMP_InitializeBCLibrary() != BC_ERROR_NONE)
+        //     {
+        //         std::printf("BC Codec already initialized!\n");
+        //     }
+        // }
 
 
         // Use CMP_ConvertTexture as Lambda function
@@ -340,10 +340,10 @@ int _tmain(int argc, _TCHAR* argv[])
         //------------------------
         // Free up the BC7 Encoder
         //------------------------
-        if (destTexture.format == CMP_FORMAT_BC7)
-        {
-            CMP_ShutdownBCLibrary();
-        }
+        //if (destTexture.format == CMP_FORMAT_BC7)
+        //{
+        //    CMP_ShutdownBCLibrary();
+        //}
 
     } 
     catch (const std::exception& ex)

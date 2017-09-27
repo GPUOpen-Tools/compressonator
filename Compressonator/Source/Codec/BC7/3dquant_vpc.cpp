@@ -67,6 +67,7 @@ static int trcnts[MAX_CLUSTERS][MAX_ENTRIES_QUANT_TRACE];
 static int g_Quant_init = 0;
 void traceBuilder (int numEntries, int numClusters,struct TRACE tr [], int code[], int *trcnt );
 
+std::mutex mtx;
 
 void Quant_Init(void)
 {
@@ -76,6 +77,8 @@ void Quant_Init(void)
         return;
     }
     if (amd_codes[0][0])  return;
+    
+    mtx.lock();
 
     for ( int numClusters = 0; numClusters < MAX_CLUSTERS; numClusters++ )
     {
@@ -96,7 +99,11 @@ void Quant_Init(void)
                             trcnts[numClusters]+(numEntries)); 
         }
     }
+    
     g_Quant_init++;
+
+    mtx.unlock();
+
 }
 
 void Quant_DeInit(void)
@@ -111,13 +118,13 @@ void Quant_DeInit(void)
         g_Quant_init = 0; // Reset in case user called Quant_DeInit too many times without matching Quant_Init
         if (amd_codes[0][0] == nullptr)  return;
         
+#ifdef USE_TRACE_WITH_DYNAMIC_MEM
         delete[] amd_codes[0][0];
         amd_codes[0][0] = nullptr;
-        
+
         delete amd_trs[0][0];
         amd_trs[0][0] = nullptr;
 
-#ifdef USE_TRACE_WITH_DYNAMIC_MEM
         for (int i = 1; i < MAX_CLUSTERS; i++)
         {
             for (int j = 1; j < MAX_ENTRIES_QUANT_TRACE; j++)
