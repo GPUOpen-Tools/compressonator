@@ -430,20 +430,23 @@ CodecError CCodec_BC6H::CFinishBC6HEncoding(void)
         return CE_Unknown;
     }
 
-if (m_Use_MultiThreading)
-{
-    // Wait for all the live threads to finish any current work
-    for(DWORD i=0; i < m_LiveThreads; i++)
+    if (m_EncodeParameterStorage)
     {
-        // If a thread is in the running state then we need to wait for it to finish
-        // its work from the producer
-        while(m_EncodeParameterStorage[i].run == TRUE)
+        if (m_Use_MultiThreading)
         {
-            Sleep(1);
+            // Wait for all the live threads to finish any current work
+            for (DWORD i = 0; i < m_LiveThreads; i++)
+            {
+                // If a thread is in the running state then we need to wait for it to finish
+                // its work from the producer
+                while (m_EncodeParameterStorage[i].run == TRUE)
+                {
+                    Sleep(1);
+                }
+            }
         }
     }
-}
-return CE_OK;
+    return CE_OK;
 }
 
 #ifdef BC6H_DEBUG_TO_RESULTS_TXT
