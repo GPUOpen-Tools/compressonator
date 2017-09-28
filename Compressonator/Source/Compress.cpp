@@ -471,11 +471,19 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
                 break;
         case CT_ASTC:
                 pCodec->SetParameter("Quality", (CODECFLOAT)pOptions->fquality);
+                if (!pOptions->bDisableMultiThreading)
+                    pCodec->SetParameter("NumThreads", (CMP_DWORD)pOptions->dwnumThreads);
+                else
+                    pCodec->SetParameter("NumThreads", (CMP_DWORD)1);
                 break;
         case CT_GT:
         case CT_BC6H:
         case CT_BC6H_SF:
                 pCodec->SetParameter("Quality", (CODECFLOAT)pOptions->fquality);
+                if (!pOptions->bDisableMultiThreading)
+                    pCodec->SetParameter("NumThreads", (CMP_DWORD)pOptions->dwnumThreads);
+                else
+                    pCodec->SetParameter("NumThreads", (CMP_DWORD)1);
 #ifdef _DEBUG
                 // napatel : remove this after
                 // pCodec->SetParameter("NumThreads", (CMP_DWORD)1);
