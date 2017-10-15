@@ -12,9 +12,12 @@ https://github.com/GPUOpen-Tools/Compressonator/releases
 
 Compressonator V2.7 Upcomming Features
 -----------------------------------------------------
-- Adaptive Channel Formatting
-  * Image resampling for 8 bit channel to float 16 or float 32 bits per channel
-  * RGBE channel transcodes
+* **Preview of 3D Model viewer and asset compression**
+  * Compare compressed models with original
+  * View 3D Models with DX12 using glTF file format
+  * Compress model images
+  
+
 
 Recent additions and changes
 ------------------------------------------------------
