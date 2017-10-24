@@ -148,9 +148,9 @@ If building in Debug_MD configuration, please make sure the working directory is
 
 The GUI tool has dependencies on Qt(V5.7 and up) - These file are copied  to the Compressonator.exe folder when the project solution builds and run "CopyFiles.bat".
 
-
+-----------------------------------------------------------
 Build Instructions for Linux Ubuntu 16.04 or 14.04 (For command line tool only)
-------------------------------------------------------
+-----------------------------------------------------------
 
 **Note**: For all build, Do NOT move the shell/batch scripts provided (run in the same folder (Compressonator/Applications/CompressonatorCLI/Make/))
 
