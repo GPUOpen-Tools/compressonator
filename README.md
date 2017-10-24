@@ -12,9 +12,13 @@ https://github.com/GPUOpen-Tools/Compressonator/releases
 
 Compressonator V2.7 Upcomming Features
 -----------------------------------------------------
+* **Linux and Mac support**
+  * updated builds to use cmake and scripts
+
 * **Preview of 3D Model viewer and asset compression**
   * Compare compressed models with original
   * View 3D Models with DX12 using glTF file format
+  * Realtime 3D Model diff views
   * Compress model images
   
 
