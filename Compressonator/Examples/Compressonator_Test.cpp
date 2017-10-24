@@ -23,14 +23,11 @@
 //
 
 #include <stdio.h>
-#include <tchar.h>
 #include <assert.h>
 #include <string>
 #include <math.h>
 #include <float.h>
 
-#include "ddraw.h"
-#include "d3d9types.h"
 #include "Compressonator.h"
 
 // The Helper code is provided to load Textures from a DDS file (Support Images and Compressed formats supported by DX9)
@@ -44,8 +41,8 @@
 // EXAMPLE2 is using high level SDK API's optimized with MultiThreading for processing multiple images
 // EXAMPLE3 is an example of low level API that give access to compression blocks (4x4) for BC6H and BC7
  
-//#define USE_EXAMPLE1
-#define USE_EXAMPLE2
+#define USE_EXAMPLE1
+//#define USE_EXAMPLE2
 //#define USE_EXAMPLE3
 
 #ifdef USE_EXAMPLE2
@@ -101,6 +98,7 @@
 
 #endif
 
+#ifdef _WIN32
 #include <time.h>
 double timeStampsec()
 {
@@ -112,40 +110,46 @@ double timeStampsec()
     QueryPerformanceCounter(&now);
     return now.QuadPart / double(frequency.QuadPart);
 }
-
+#endif
 bool g_bAbortCompression = false;   // If set true current compression will abort
 
 //---------------------------------------------------------------------------
 // Sample loop back code called for each compression block been processed
 //---------------------------------------------------------------------------
-bool CompressionCallback(float fProgress, DWORD_PTR pUser1, DWORD_PTR pUser2)
+bool CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     UNREFERENCED_PARAMETER(pUser1);
     UNREFERENCED_PARAMETER(pUser2);
+
     std::printf("\rCompression progress = %2.0f", fProgress);
+
     return g_bAbortCompression;
 }
 
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, const char* argv[])
 {
+    #ifdef _WIN32
     double start_time = timeStampsec();
-
+    #endif
     if (argc < 5)
     {
         std::printf("Compressonator_Test SourceFile DestFile Format Quality\n");
+
         return 0;
     }
 
     // Note: No error checking is done on user arguments, so all parameters must be correct in this example
     // (files must exist, values correct format, etc..)
-    TCHAR*     pszSourceFile = argv[1];
-    TCHAR*     pszDestFile   = argv[2];
+    const char*     pszSourceFile = argv[1];
+    const char*     pszDestFile   = argv[2];
     CMP_FORMAT destFormat    = ParseFormat(argv[3]);
     float      fQuality      = std::stof(argv[4]);
 
     if (destFormat == CMP_FORMAT_Unknown)
     {
+
         std::printf("Unsupported destination format\n");
+
         return 0;
     }
 
@@ -154,6 +158,7 @@ int _tmain(int argc, _TCHAR* argv[])
     if (!LoadDDSFile(pszSourceFile, srcTexture))
     {
         std::printf("Error loading source file!\n");
+
         return 0;
     }
 
@@ -172,12 +177,12 @@ int _tmain(int argc, _TCHAR* argv[])
     options.dwSize = sizeof(options);
 
     // Option 1 of setting compression options - Prefered Method
-    sprintf_s(options.CmdSet[0].strCommand, "Quality");
-    sprintf_s(options.CmdSet[0].strParameter, "%s", argv[4]);  // Use user specified Quality (lower values increases performance)
-    sprintf_s(options.CmdSet[1].strCommand, "ModeMask");
-    sprintf_s(options.CmdSet[1].strParameter, "207");          // 0xCF
-    sprintf_s(options.CmdSet[2].strCommand, "NumThreads");     // Use Multi Threading for fast performance
-    sprintf_s(options.CmdSet[2].strParameter, "8");
+    snprintf(options.CmdSet[0].strCommand, sizeof(AMD_CMD_SET::strCommand), "Quality");
+    snprintf(options.CmdSet[0].strParameter, sizeof(AMD_CMD_SET::strParameter), "%s", argv[4]);  // Use user specified Quality (lower values increases performance)
+    snprintf(options.CmdSet[1].strCommand, sizeof(AMD_CMD_SET::strCommand), "ModeMask");
+    snprintf(options.CmdSet[1].strParameter, sizeof(AMD_CMD_SET::strParameter), "207");          // 0xCF
+    snprintf(options.CmdSet[2].strCommand, sizeof(AMD_CMD_SET::strCommand), "NumThreads");     // Use Multi Threading for fast performance
+    snprintf(options.CmdSet[2].strParameter, sizeof(AMD_CMD_SET::strParameter), "8");
     options.NumCmds = 3;
 
 #ifdef USE_EXAMPLE1
@@ -206,8 +211,8 @@ int _tmain(int argc, _TCHAR* argv[])
     }
 
     // Note: No error checking is done on user arguments, so all parameters must be correct in this example
-    TCHAR*     pszSourceFile2 = argv[5];
-    TCHAR*     pszDestFile2 = argv[6];
+    const char*     pszSourceFile2 = argv[5];
+    const char*     pszDestFile2 = argv[6];
     CMP_FORMAT destFormat2 = ParseFormat(argv[7]);
     float      fQuality2 = std::stof(argv[8]);
 
@@ -238,12 +243,12 @@ int _tmain(int argc, _TCHAR* argv[])
     options2.dwSize = sizeof(options2);
 
     // Option 1 of setting compression options - Prefered Method
-    sprintf_s(options2.CmdSet[0].strCommand, "Quality");
-    sprintf_s(options2.CmdSet[0].strParameter, "%s", argv[8]);  // Use user specified Quality (lower values increases performance)
-    sprintf_s(options2.CmdSet[1].strCommand, "ModeMask");
-    sprintf_s(options2.CmdSet[1].strParameter, "207");          // 0xCF
-    sprintf_s(options2.CmdSet[2].strCommand, "NumThreads");     // Use Multi Threading for fast performance
-    sprintf_s(options2.CmdSet[2].strParameter, "8");
+    sprintf(options2.CmdSet[0].strCommand, "Quality");
+    sprintf(options2.CmdSet[0].strParameter, "%s", argv[8]);  // Use user specified Quality (lower values increases performance)
+    sprintf(options2.CmdSet[1].strCommand, "ModeMask");
+    sprintf(options2.CmdSet[1].strParameter, "207");          // 0xCF
+    sprintf(options2.CmdSet[2].strCommand, "NumThreads");     // Use Multi Threading for fast performance
+    sprintf(options2.CmdSet[2].strParameter, "8");
     options2.NumCmds = 3;
 
 
@@ -255,7 +260,7 @@ int _tmain(int argc, _TCHAR* argv[])
         return 0;
     }
 
-    TCHAR*     pszSourceFile3 = argv[9];
+    const char*     pszSourceFile3 = argv[9];
     CMP_FORMAT destFormat3 = ParseFormat(argv[10]);
     float      fQuality3 = std::stof(argv[11]);
 
@@ -267,7 +272,7 @@ int _tmain(int argc, _TCHAR* argv[])
     // Load the 3rd source texture
     if (!LoadDDSFile(pszSourceFile3, srcTexture3))
     {
-        std::printf("Error loading source file!\n");
+        std::printf("Load source file failed %d\n", cmp_status3);
         return 0;
     }
 
@@ -287,12 +292,12 @@ int _tmain(int argc, _TCHAR* argv[])
     options3.dwSize = sizeof(options3);
 
     // Option 1 of setting compression options - Prefered Method
-    sprintf_s(options3.CmdSet[0].strCommand, "Quality");
-    sprintf_s(options3.CmdSet[0].strParameter, "%s", argv[11]);  // Use user specified Quality (lower values increases performance)
-    sprintf_s(options3.CmdSet[1].strCommand, "ModeMask");
-    sprintf_s(options3.CmdSet[1].strParameter, "207");          // 0xCF
-    sprintf_s(options3.CmdSet[2].strCommand, "NumThreads");     // Use Multi Threading for fast performance
-    sprintf_s(options3.CmdSet[2].strParameter, "8");
+    sprintf(options3.CmdSet[0].strCommand, "Quality");
+    sprintf(options3.CmdSet[0].strParameter, "%s", argv[11]);  // Use user specified Quality (lower values increases performance)
+    sprintf(options3.CmdSet[1].strCommand, "ModeMask");
+    sprintf(options3.CmdSet[1].strParameter, "207");          // 0xCF
+    sprintf(options3.CmdSet[2].strCommand, "NumThreads");     // Use Multi Threading for fast performance
+    sprintf(options3.CmdSet[2].strParameter, "8");
     options3.NumCmds = 3;
 #endif
 
@@ -367,7 +372,7 @@ int _tmain(int argc, _TCHAR* argv[])
                 str.append("results");
                 str.append(std::to_string(i + 10).c_str());
                 str.append(".dds");
-                SaveDDSFile((TCHAR *)str.c_str(), destTexture3[i]);
+                SaveDDSFile(str.c_str(), destTexture3[i]);
        }
     }
 #endif
@@ -393,7 +398,7 @@ int _tmain(int argc, _TCHAR* argv[])
 #endif
 
 #ifdef USE_EXAMPLE3
-    BC_ERROR   cmp_status;
+    CMP_ERROR   cmp_status;
 
     // Example 2 : Using Low level Block Access code valid only for BC6H and BC7
     if (destTexture.format == CMP_FORMAT_BC7)
@@ -418,8 +423,8 @@ int _tmain(int argc, _TCHAR* argv[])
         const CMP_DWORD dwBlocksY = ((srcTexture.dwHeight + 3) >> 2);
         const CMP_DWORD dwBlocksXY = dwBlocksX*dwBlocksY;
         
-        DWORD dstIndex  = 0;    // Destination block index
-        DWORD srcIndex  = 0;    // Source block index
+        CMP_DWORD dstIndex  = 0;    // Destination block index
+        CMP_DWORD srcIndex  = 0;    // Source block index
 
         // Step 4: Process the blocks
         for (CMP_DWORD j = 0; j < dwBlocksY; j++)
@@ -454,7 +459,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
                 // Show Progress
                 float fProgress = 100.f * (j * dwBlocksX) / dwBlocksXY;
+
                 std::printf("\rCompression progress = %2.0f", fProgress);
+
             }
         }
 
@@ -471,7 +478,8 @@ int _tmain(int argc, _TCHAR* argv[])
     if (srcTexture.pData)  free(srcTexture.pData);
     if (destTexture.pData) free(destTexture.pData);
 #endif
-
+   #ifdef _WIN32
    std::printf("\nProcessed in %.3f seconds\n", timeStampsec() - start_time);
+   #endif
    return 0;
 }
