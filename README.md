@@ -17,9 +17,9 @@ Compressonator V2.7 Upcomming Features
   * updated  [builds](https://github.com/GPUOpen-Tools/Compressonator#build-instructions-for-linux-compressonatorcli-command-line-application) to use cmake and scripts
 
 * **Preview of 3D Model viewer and asset compression**
-  * Compare compressed model textures with original
   * View 3D Models with DX12 using glTF v2.0 file format https://www.khronos.org/gltf
   * Realtime 3D Model diff views
+  * Compare compressed model textures with original
   * Compress model images
   
 
