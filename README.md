@@ -13,7 +13,7 @@ https://github.com/GPUOpen-Tools/Compressonator/releases
 Compressonator V2.7 Upcomming Features
 -----------------------------------------------------
 * **Linux and Mac support**
-  * updated builds to use cmake and scripts
+  * updated  [builds](https://github.com/GPUOpen-Tools/Compressonator#build-instructions-for-linux-ubuntu-1604-or-1404-for-command-line-tool-only) to use cmake and scripts
 
 * **Preview of 3D Model viewer and asset compression**
   * Compare compressed models with original
@@ -152,7 +152,7 @@ The GUI tool has dependencies on Qt(V5.7 and up) - These file are copied  to the
 Build Instructions for Linux Ubuntu 16.04 or 14.04 (For command line tool only)
 -----------------------------------------------------------
 
-**Note**: For all build, Do NOT move the shell/batch scripts provided (run in the same folder (Compressonator/Applications/CompressonatorCLI/Make/))
+**Note**: For all unix build with this scripts, Do NOT move the shell/batch scripts provided (run in the same folder (Compressonator/Applications/CompressonatorCLI/Make/))
 
 For Ubuntu build (****only v14.04LTS and v16.04LTS build tested, WSL is tested as well):
 
@@ -166,3 +166,5 @@ run initsetup_ubuntu.sh to install the required packages for command line app:
 - Boost at least 1.59 (filesystem and system lib)
    
 run buildCLI_ubuntu_cmake.sh to build (or rebuild) all the dependencies libraries with CompressonatorCLI executable generated in the same folder
+
+**Note**: For more details on unix build, please refer to [readme.txt](https://github.com/GPUOpen-Tools/Compressonator/blob/master/Compressonator/Applications/CompressonatorCLI/Make/readme.txt)
