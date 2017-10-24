@@ -61,7 +61,6 @@ public:
     virtual CodecError Compress_SuperFast   (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL,  CMP_DWORD_PTR pUser1 = NULL,  CMP_DWORD_PTR pUser2 = NULL);
     virtual CodecError Decompress           (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL,  CMP_DWORD_PTR pUser1 = NULL,  CMP_DWORD_PTR pUser2 = NULL);
 
-
 private:
     BC6HEncodeThreadParam *m_EncodeParameterStorage;
 

@@ -27,6 +27,7 @@
 #include <float.h>
 #include "BC7_Definitions.h"
 
+
 #include <mutex>
 
 // Threshold quality below which we will always run fast quality and shaking

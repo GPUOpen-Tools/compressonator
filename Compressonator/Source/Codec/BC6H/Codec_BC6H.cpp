@@ -348,7 +348,6 @@ CodecError CCodec_BC6H::CInitializeBC6HLibrary()
             m_LiveThreads++;
         }
 
-
         // Create single decoder instance
         m_decoder = new BC6HBlockDecoder();
         if(!m_decoder)

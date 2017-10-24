@@ -3,6 +3,7 @@
 Compressonator is a set of tools to allow artists and developers to more easily create compressed texture image assets and easily visualize the quality impact of various compression technologies.  It consists of a GUI application, a command line application and an SDK for easy integration into a developer tool chain.
 
 Compressonator DXTn (S3TC)is developed for Microsoft Windows® platform.
+Building for Linux is possible aswell, partially.
 
 For more details goto the Compressonator Wiki: https://github.com/GPUOpen-Tools/Compressonator/wiki 
 
@@ -13,7 +14,7 @@ https://github.com/GPUOpen-Tools/Compressonator/releases
 Compressonator V2.7 Upcomming Features
 -----------------------------------------------------
 * **Linux and Mac support**
-  * updated  [builds](https://github.com/GPUOpen-Tools/Compressonator#build-instructions-for-linux-ubuntu-1604-or-1404-for-command-line-tool-only) to use cmake and scripts
+  * updated  [builds](https://github.com/GPUOpen-Tools/Compressonator#build-instructions-for-linux-compressonatorcli-command-line-application) to use cmake and scripts
 
 * **Preview of 3D Model viewer and asset compression**
   * Compare compressed models with original
@@ -57,10 +58,6 @@ The directory of your workspace should be as follows
 It is also recommended that you install and configure Visual Studio Qt5 Package extension from MSDN Visual Studio Gallery, and set in Qt Options dialog, Qt Default Version name V5.7 and path to default download path C:\Qt\5.7\msvc2015_64\bin\
 
 https://visualstudiogallery.msdn.microsoft.com/c89ff880-8509-47a4-a262-e4fa07168408 
-
--------------------------------------
-
-
 
 
 Build Applications using Batch Files
@@ -149,7 +146,7 @@ If building in Debug_MD configuration, please make sure the working directory is
 The GUI tool has dependencies on Qt(V5.7 and up) - These file are copied  to the Compressonator.exe folder when the project solution builds and run "CopyFiles.bat".
 
 -----------------------------------------------------------
-Build Instructions for Linux Ubuntu 16.04 or 14.04 (For command line tool only)
+Build Instructions for Linux CompressonatorCLI command line application
 -----------------------------------------------------------
 
 **Note**: For all unix build with this scripts, Do NOT move the shell/batch scripts provided (run in the same folder (Compressonator/Applications/CompressonatorCLI/Make/))
@@ -168,3 +165,18 @@ run initsetup_ubuntu.sh to install the required packages for command line app:
 run buildCLI_ubuntu_cmake.sh to build (or rebuild) all the dependencies libraries with CompressonatorCLI executable generated in the same folder
 
 **Note**: For more details on unix build, please refer to [readme.txt](https://github.com/GPUOpen-Tools/Compressonator/blob/master/Compressonator/Applications/CompressonatorCLI/Make/readme.txt)
+
+
+Build Instructions for Linux Example command line application
+------------------------------------------------------
+
+To build the static Compressonator library or the Example command line applicatio under folder "Compressonator\Examples" you need to have the latest GCC **v6.3.0** toolchain installed (tested with 6.3.0 on WSL).
+
+There are makefiles prepared for you.
+* static library: makefile location "Compressonator/Make/ExampleMake/", output in "Compressonator/Build/Linux/libcompressonator.a"
+* Example CLI: makefile location "Compressonator/Examples/Make", output in "Compressonator/Build/Linux/Example/cmpcli"
+
+Example only take dds file as input. For more file format input, please try build CompressonatorCLI.
+Usage for the Example CLI: ./cmpcli src.dds out.dds ATC_RGB 1
+
+-------------------------------------

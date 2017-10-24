@@ -422,12 +422,6 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
     if(tc_err != CMP_OK)
         return tc_err;
 
-//#ifdef _WIN32
-//    assert(!IsBadReadPtr(pSourceTexture->pData, pSourceTexture->dwDataSize));
-//    assert(!IsBadWritePtr(pDestTexture->pData, pDestTexture->dwDataSize));
-//#endif 
-
-
 #ifdef ENABLE_MAKE_COMPATIBLE_API
     bool srcFloat = IsFloatFormat(pSourceTexture->format);
     bool destFloat = IsFloatFormat(pDestTexture->format);

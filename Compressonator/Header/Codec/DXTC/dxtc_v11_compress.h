@@ -46,7 +46,6 @@ void __cdecl DXTCV11CompressBlockSSE2(DWORD *block_32, DWORD *block_dxtc);
 #endif
 #endif
 
-
 void DXTCV11CompressBlockSSEMinimal(DWORD *block_32, DWORD *block_dxtc);
 void DXTCV11CompressBlockMinimal(DWORD block_32[16], DWORD block_dxtc[2]);
      
@@ -54,6 +53,7 @@ void DXTCV11CompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2]);
 void DXTCV11CompressExplicitAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2]);
 
 #ifdef _WIN32
+
 #ifndef DISABLE_TESTCODE
 #if defined(_WIN64) || defined(__linux__)
 void DXTCV11CompressExplicitAlphaBlockMMX(BYTE block_8[16], DWORD block_dxtc[2]);
