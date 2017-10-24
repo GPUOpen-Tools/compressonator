@@ -13,54 +13,54 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Common\MIPS.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Common\TC_PluginInternal.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Common\UtilFuncs.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\CVulkan.cpp">
+    <ClCompile Include="../../../../../Source/GPU_Decode/GPU_DecodeBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\Source\GPU_Decode\GPU_DecodeBase.cpp">
+    <ClCompile Include="../GPU_Vulkan.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="../../../Common/MIPS.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\GPU_Vulkan.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="../../../Common/TC_PluginInternal.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\vulkantools.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="../../../Common/UtilFuncs.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\vulkandebug.cpp">
+    <ClCompile Include="../vulkandebug.cpp">
+      <Filter>Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="../vulkantools.cpp">
+      <Filter>Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="../CVulkan.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Common\MIPS.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\TC_PluginAPI.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\TC_PluginInternal.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\UtilFuncs.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CVulkan.h">
+    <ClInclude Include="../GPU_Vulkan.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\GPU_Vulkan.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="../../../Common/MIPS.h">
+      <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\vulkantools.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="../../../Common/TC_PluginAPI.h">
+      <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\vulkandebug.h">
+    <ClInclude Include="../../../Common/TC_PluginInternal.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="../../../Common/UtilFuncs.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="../vulkandebug.h">
+      <Filter>Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="../vulkantools.h">
+      <Filter>Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="../CVulkan.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

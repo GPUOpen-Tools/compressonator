@@ -1,3 +1,5 @@
+#ifdef _WIN32
+#ifndef DISABLE_TESTCODE
 #include <windows.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -140,3 +142,5 @@ void dbgPrintGUID(int debugLevel, const GUID *pGuid)
 }
 
 /// @TODO   Need mechanism to read from registry, the keys above and update the table when the function is called
+#endif
+#endif

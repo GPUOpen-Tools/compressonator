@@ -756,6 +756,13 @@ void acImageView::onResetImageView()
 
         onFitInWindow();
 
+        if (this->m_isDiffView)
+        {
+            for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
+            {
+                this->onToggleImageBrightnessUp();
+            }
+        }
     }
 
     // ToDo Reset all action checked ToolButtons back to default state

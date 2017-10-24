@@ -48,7 +48,7 @@ public:
                                         CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
                                         CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0) const;
 
-    virtual DWORD GetBlockHeight() {return 4;};
+    virtual CMP_DWORD GetBlockHeight() {return 4;};
 
 protected:
     bool m_bUseSSE;

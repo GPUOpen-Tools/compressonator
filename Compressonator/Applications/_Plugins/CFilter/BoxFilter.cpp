@@ -33,7 +33,9 @@
 #include "MIPS.h"
 #include "Compressonator.h"
 #include "Texture.h"
-
+#ifndef _WIN32
+#include "TextureIO.h"
+#endif
 CMIPS *CMips;
 
 #ifdef BUILD_AS_PLUGIN_DLL
@@ -66,7 +68,9 @@ int Plugin_BoxFilter::TC_PluginSetSharedIO(void* Shared)
 int Plugin_BoxFilter::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
 { 
     //MessageBox(0,"TC_PluginGetVersion","Plugin_WIC",MB_OK);  
+#ifdef _WIN32
     pPluginVersion->guid                    = g_GUID;
+#endif
     pPluginVersion->dwAPIVersionMajor        = TC_API_VERSION_MAJOR;
     pPluginVersion->dwAPIVersionMinor        = TC_API_VERSION_MINOR;
     pPluginVersion->dwPluginVersionMajor    = TC_PLUGIN_VERSION_MAJOR;
@@ -217,7 +221,7 @@ void GenerateMipLevel(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, MipLev
                         c4 = *pSrc2;
                     }
                     for(int i=0; i<4 ;i++)
-                        c1.rgba[i] = static_cast<BYTE>((c1.rgba[i] + c2.rgba[i] + c3.rgba[i] + c4.rgba[i]+2)/4);
+                        c1.rgba[i] = static_cast<CMP_BYTE>((c1.rgba[i] + c2.rgba[i] + c3.rgba[i] + c4.rgba[i]+2)/4);
                     *pDst++= c1;
                 }
             }
@@ -268,7 +272,7 @@ void GenerateMipLevel(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, MipLev
                     }
                     for(int i=0; i<4; i++)
                     {
-                        c1.rgba[i] = static_cast<BYTE>(((int)c1.rgba[i] + c2.rgba[i] + c3.rgba[i] + c4.rgba[i] + c5.rgba[i] + c6.rgba[i] + c7.rgba[i] + c8.rgba[i]+4)/8);
+                        c1.rgba[i] = static_cast<CMP_BYTE>(((int)c1.rgba[i] + c2.rgba[i] + c3.rgba[i] + c4.rgba[i] + c5.rgba[i] + c6.rgba[i] + c7.rgba[i] + c8.rgba[i]+4)/8);
                     }
                     *pDst++= c1;
                 }

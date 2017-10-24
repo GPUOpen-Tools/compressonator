@@ -98,14 +98,14 @@ void CCodec_DXT5_xRBG::ReadBlock(CCodecBuffer& buffer, CMP_DWORD x, CMP_DWORD y,
     CMP_BYTE dwTempBlock[BLOCK_SIZE_4X4X4];
     buffer.ReadBlockRGBA(x, y, 4, 4, dwTempBlock);
     for(CMP_DWORD i = 0; i < BLOCK_SIZE_4X4; i++)
-        ((DWORD*)block)[i] = SWIZZLE_RGBA_xRBG(((DWORD*)dwTempBlock)[i]);
+        ((CMP_DWORD*)block)[i] = SWIZZLE_RGBA_xRBG(((CMP_DWORD*)dwTempBlock)[i]);
 }
 
 void CCodec_DXT5_xRBG::WriteBlock(CCodecBuffer& buffer, CMP_DWORD x, CMP_DWORD y, CMP_BYTE block[BLOCK_SIZE_4X4X4])
 {
     CMP_BYTE dwTempBlock[BLOCK_SIZE_4X4X4];
     for(CMP_DWORD i = 0; i < BLOCK_SIZE_4X4; i++)
-        ((DWORD*)dwTempBlock)[i] = SWIZZLE_xRBG_RGBA(((DWORD*)block)[i]);
+        ((CMP_DWORD*)dwTempBlock)[i] = SWIZZLE_xRBG_RGBA(((CMP_DWORD*)block)[i]);
     buffer.WriteBlockRGBA(x, y, 4, 4, dwTempBlock);
 }
 

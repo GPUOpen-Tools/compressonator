@@ -21,7 +21,9 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#ifdef _WIN32
 #include <Windows.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -130,29 +132,36 @@ typedef enum
    CF_2101010     = 5,  ///< 10-bit integer data in the color channels & 2-bit integer data in the alpha channel.
    CF_32bit       = 6,  ///< 32-bit integer data.
    CF_Float9995E  = 7,  ///< 32-bit partial precision float.
+   CF_YUV_420     = 8,  ///< YUV Chroma formats 
+   CF_YUV_422     = 9,  ///< YUV Chroma formats
+   CF_YUV_444     = 10, ///< YUV Chroma formats
+   CF_YUV_4444    = 11, ///< YUV Chroma formats
 } ChannelFormat;
 
 /// The type of data the texture represents.
 typedef enum
 {
-   TDT_XRGB       = 0,  ///< An RGB texture padded to DWORD width.
-   TDT_ARGB       = 1,  ///< An ARGB texture.
+   TDT_XRGB       = 0,  ///< An RGB texture padded to DWORD width. 
+   TDT_ARGB       = 1,  ///< An ARGB texture. 
    TDT_NORMAL_MAP = 2,  ///< A normal map.
    TDT_R          = 3,  ///< A single component texture.
    TDT_RG         = 4,  ///< A two component texture.
+   TDT_YUV_SD     = 5,  ///< An YUB Standard Definition texture. 
+   TDT_YUV_HD     = 6,  ///< An YUB High Definition texture. 
 } TextureDataType;
 
 /// The type of the texture.
 typedef enum
 {
-   TT_2D             = 0,  ///< A regular 2D texture.
+   TT_2D             = 0,  ///< A regular 2D texture. data stored linearly (rgba,rgba,...rgba)
    TT_CubeMap        = 1,  ///< A cubemap texture.
    TT_VolumeTexture  = 2,  ///< A volume texture.
+   TT__2D_Block      = 3,  ///< 2D texture data stored as [Height][Width] blocks as individual channels using cmp_rgb_t or cmp_yuv_t
 } TextureType;
 
 #define   MS_FLAG_Default                0x0000
-#define   MS_FLAG_AlphaPremult            0x0001
-#define   MS_FLAG_DisableMipMapping        0x0002
+#define   MS_FLAG_AlphaPremult           0x0001
+#define   MS_FLAG_DisableMipMapping      0x0002
 
 typedef enum
 {
@@ -183,8 +192,8 @@ typedef enum
 /// \link MipSet \endlink
 typedef struct
 {
-   int         m_nWidth;         ///< Width of the data in pixels.
-   int         m_nHeight;        ///< Height of the data in pixels.
+   int             m_nWidth;         ///< Width of the data in pixels.
+   int             m_nHeight;        ///< Height of the data in pixels.
    CMP_DWORD       m_dwLinearSize;   ///< Size of the data in bytes.
    union
    {    
@@ -198,6 +207,30 @@ typedef struct
 } MipLevel;
 
 typedef MipLevel* MipLevelTable; ///< A pointer to a set of MipLevels.
+
+
+typedef struct cmp_yuv_s {
+    CMP_BYTE **y;
+    CMP_BYTE **u;
+    CMP_BYTE **v;
+    CMP_BYTE **a;
+    CMP_BYTE **m;
+} cmp_yuv_t;
+
+typedef struct cmp_rgb_s {
+    CMP_BYTE **r;
+    CMP_BYTE **g;
+    CMP_BYTE **b;
+    CMP_BYTE **a;
+    CMP_BYTE **m;
+} cmp_rgb_t;
+
+// Data struct used for casting m_pReservedData ref
+typedef union mapset_data_u
+{
+    cmp_rgb_t rgb;
+    cmp_yuv_t yuv;
+} mapset_data_t;
 
 /// Each texture and all its mip-map levels are encapsulated in a MipSet.
 /// \remarks
@@ -216,9 +249,9 @@ typedef struct
    TextureDataType   m_TextureDataType;   ///< An indication of the type of data that the texture contains. A texture with just RGB values would use TDT_XRGB, while a texture that also uses the alpha channel would use TDT_ARGB.
    TextureType       m_TextureType;       ///< Indicates whether the texture is 2D, a cube map, or a volume texture. Used to determine how to treat MipLevels, among other things.
    unsigned int      m_Flags;             ///< Flags that for this mip-map set.
-   CMP_BYTE              m_CubeFaceMask;      ///< A mask of MS_CubeFace values indicating which cube-map faces are present.
-   CMP_DWORD             m_dwFourCC;          ///< The FourCC for this mip-map set. 0 if the mip-map set is uncompressed. Generated using MAKEFOURCC (defined in the Platform SDK or DX SDK).
-   CMP_DWORD             m_dwFourCC2;         ///< An extra FourCC used by The Compressonator internally. Our DDS plugin saves/loads m_dwFourCC2 from pDDSD->ddpfPixelFormat.dwPrivateFormatBitCount (since it's not really used by anything else) whether or not it is 0. Generated using MAKEFOURCC (defined in the Platform SDK or DX SDK). The FourCC2 field is currently used to allow differentiation between the various swizzled DXT5 formats. These formats must have a FourCC of DXT5 to be supported by the DirectX runtime but The Compressonator needs to know the swizzled FourCC to correctly display the texture. 
+   CMP_BYTE          m_CubeFaceMask;      ///< A mask of MS_CubeFace values indicating which cube-map faces are present.
+   CMP_DWORD         m_dwFourCC;          ///< The FourCC for this mip-map set. 0 if the mip-map set is uncompressed. Generated using MAKEFOURCC (defined in the Platform SDK or DX SDK).
+   CMP_DWORD         m_dwFourCC2;         ///< An extra FourCC used by The Compressonator internally. Our DDS plugin saves/loads m_dwFourCC2 from pDDSD->ddpfPixelFormat.dwPrivateFormatBitCount (since it's not really used by anything else) whether or not it is 0. Generated using MAKEFOURCC (defined in the Platform SDK or DX SDK). The FourCC2 field is currently used to allow differentiation between the various swizzled DXT5 formats. These formats must have a FourCC of DXT5 to be supported by the DirectX runtime but The Compressonator needs to know the swizzled FourCC to correctly display the texture. 
    int               m_nMaxMipLevels;     ///< Set by The Compressonator when you call TC_AppAllocateMipSet based on the width, height, depth, and textureType values passed in. Is really the maximum number of mip-map levels possible for that texture including the topmost mip-map level if you integer divide width height and depth by 2, rounding down but never falling below 1 until all three of them are 1. So a 5x10 2D texture would have a m_nMaxMipLevels of 4 (5x10 -> 2x5 -> 1x2 -> 1x1).
    int               m_nMipLevels;        ///< The number of mip-map levels in the mip-map set that actually have data. Always less than or equal to m_nMaxMipLevels. Set to 0 after TC_AppAllocateMipSet.
    int               m_nWidth;            ///< Width in pixels of the topmost mip-map level of the mip-map set. Initialized by TC_AppAllocateMipSet.
@@ -232,6 +265,7 @@ typedef struct
    int               m_nBlockHeight;      ///< Height in pixels of the Compression Block that is to be processed default for ASTC is 4
    int               m_nBlockDepth;       ///< Depth in pixels of the Compression Block that is to be processed default for ASTC is 1
    MipLevelTable*    m_pMipLevelTable;    ///< This is an implementation dependent way of storing the MipLevels that this mip-map set contains. Do not depend on it, use TC_AppGetMipLevel to access a mip-map set's MipLevels.
+   void*             m_pReservedData;     ///< Pointer to reserved data types
 } MipSet;
 
 CMP_DWORD GetChannelSize(ChannelFormat channelFormat);       //< \internal

@@ -40,7 +40,7 @@
     <ProjectName>GPUDecode_Vulkan</ProjectName>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)/Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
@@ -81,56 +81,56 @@
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="$(VCTargetsPath)/Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
@@ -170,7 +170,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\..\Common\Lib\Ext\Vulkan\1.0.21.1\SDK\Include;..\..\..\Common;..\..\..\..\..\Header;..\..\..\..\..\Header\GPU_Decode;..\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include;../../../Common;../../../../../Header;../../../../../Header/GPU_Decode;../</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -180,7 +180,7 @@
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\Lib\Ext\Vulkan\1.0.21.1\SDK\Bin32;..\..\..\..\..\..\CommonCommon\Lib\AMD\APPSDK\3-0\lib\x86;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../../../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Bin32;../../../../../../CommonCommon/Lib/AMD/APPSDK/3-0/lib/x86;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
@@ -193,7 +193,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\..\Common\Lib\Ext\Vulkan\1.0.21.1\SDK\Include;..\..\..\Common;..\..\..\..\..\Header;..\..\..\..\..\Header\GPU_Decode;..\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include;../../../Common;../../../../../Header;../../../../../Header/GPU_Decode;../</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -203,7 +203,7 @@
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\Lib\Ext\Vulkan\1.0.21.1\SDK\Bin32;..\..\..\..\..\..\CommonCommon\Lib\AMD\APPSDK\3-0\lib\x86;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../../../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Bin32;../../../../../../CommonCommon/Lib/AMD/APPSDK/3-0/lib/x86;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -215,7 +215,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\..\Common\Lib\Ext\Vulkan\1.0.21.1\SDK\Include;..\..\..\Common;..\..\..\..\..\Header;..\..\..\..\..\Header\GPU_Decode;..\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include;../../../Common;../../../../../Header;../../../../../Header/GPU_Decode;../</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -224,7 +224,7 @@
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\Lib\Ext\Vulkan\1.0.21.1\SDK\Bin;..\..\..\..\..\..\CommonCommon\Lib\AMD\APPSDK\3-0\lib\x86_64;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../../../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Bin;../../../../../../CommonCommon/Lib/AMD/APPSDK/3-0/lib/x86_64;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
@@ -236,7 +236,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\..\Common\Lib\Ext\Vulkan\1.0.21.1\SDK\Include;..\..\..\Common;..\..\..\..\..\Header;..\..\..\..\..\Header\GPU_Decode;..\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include;../../../Common;../../../../../Header;../../../../../Header/GPU_Decode;../</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -245,7 +245,7 @@
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\Lib\Ext\Vulkan\1.0.21.1\SDK\Bin;..\..\..\..\..\..\CommonCommon\Lib\AMD\APPSDK\3-0\lib\x86_64;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../../../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Bin;../../../../../../CommonCommon/Lib/AMD/APPSDK/3-0/lib/x86_64;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -260,7 +260,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\..\Common\Lib\Ext\Vulkan\1.0.21.1\SDK\Include;..\..\..\Common;..\..\..\..\..\Header;..\..\..\..\..\Header\GPU_Decode;..\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include;../../../Common;../../../../../Header;../../../../../Header/GPU_Decode;../</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -272,7 +272,7 @@
       <TargetMachine>MachineX86</TargetMachine>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\Lib\Ext\Vulkan\1.0.21.1\SDK\Bin32;..\..\..\..\..\..\CommonCommon\Lib\AMD\APPSDK\3-0\lib\x86;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../../../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Bin32;../../../../../../CommonCommon/Lib/AMD/APPSDK/3-0/lib/x86;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
@@ -287,7 +287,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\..\Common\Lib\Ext\Vulkan\1.0.21.1\SDK\Include;..\..\..\Common;..\..\..\..\..\Header;..\..\..\..\..\Header\GPU_Decode;..\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include;../../../Common;../../../../../Header;../../../../../Header/GPU_Decode;../</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -299,7 +299,7 @@
       <TargetMachine>MachineX86</TargetMachine>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\Lib\Ext\Vulkan\1.0.21.1\SDK\Bin32;..\..\..\..\..\..\CommonCommon\Lib\AMD\APPSDK\3-0\lib\x86;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../../../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Bin32;../../../../../../CommonCommon/Lib/AMD/APPSDK/3-0/lib/x86;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -314,7 +314,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\..\Common\Lib\Ext\Vulkan\1.0.21.1\SDK\Include;..\..\..\Common;..\..\..\..\..\Header;..\..\..\..\..\Header\GPU_Decode;..\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include;../../../Common;../../../../../Header;../../../../../Header/GPU_Decode;../</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -325,7 +325,7 @@
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\Lib\Ext\Vulkan\1.0.21.1\SDK\Bin;..\..\..\..\..\..\CommonCommon\Lib\AMD\APPSDK\3-0\lib\x86_64;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../../../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Bin;../../../../../../CommonCommon/Lib/AMD/APPSDK/3-0/lib/x86_64;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
@@ -340,7 +340,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\..\Common\Lib\Ext\Vulkan\1.0.21.1\SDK\Include;..\..\..\Common;..\..\..\..\..\Header;..\..\..\..\..\Header\GPU_Decode;..\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include;../../../Common;../../../../../Header;../../../../../Header/GPU_Decode;../</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -351,30 +351,30 @@
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\Lib\Ext\Vulkan\1.0.21.1\SDK\Bin;..\..\..\..\..\..\CommonCommon\Lib\AMD\APPSDK\3-0\lib\x86_64;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../../../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Bin;../../../../../../CommonCommon/Lib/AMD/APPSDK/3-0/lib/x86_64;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\Source\GPU_Decode\GPU_DecodeBase.cpp" />
-    <ClCompile Include="..\..\..\Common\MIPS.cpp" />
-    <ClCompile Include="..\..\..\Common\TC_PluginInternal.cpp" />
-    <ClCompile Include="..\..\..\Common\UtilFuncs.cpp" />
-    <ClCompile Include="..\CVulkan.cpp" />
-    <ClCompile Include="..\GPU_Vulkan.cpp" />
-    <ClCompile Include="..\vulkandebug.cpp" />
-    <ClCompile Include="..\vulkantools.cpp" />
+    <ClCompile Include="../../../../../Source/GPU_Decode/GPU_DecodeBase.cpp" />
+    <ClCompile Include="../../../Common/MIPS.cpp" />
+    <ClCompile Include="../../../Common/TC_PluginInternal.cpp" />
+    <ClCompile Include="../../../Common/UtilFuncs.cpp" />
+    <ClCompile Include="../CVulkan.cpp" />
+    <ClCompile Include="../GPU_Vulkan.cpp" />
+    <ClCompile Include="../vulkandebug.cpp" />
+    <ClCompile Include="../vulkantools.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Common\MIPS.h" />
-    <ClInclude Include="..\..\..\Common\TC_PluginAPI.h" />
-    <ClInclude Include="..\..\..\Common\TC_PluginInternal.h" />
-    <ClInclude Include="..\..\..\Common\UtilFuncs.h" />
-    <ClInclude Include="..\CVulkan.h" />
-    <ClInclude Include="..\GPU_Vulkan.h" />
-    <ClInclude Include="..\vulkandebug.h" />
-    <ClInclude Include="..\vulkantools.h" />
+    <ClInclude Include="../../../Common/MIPS.h" />
+    <ClInclude Include="../../../Common/TC_PluginAPI.h" />
+    <ClInclude Include="../../../Common/TC_PluginInternal.h" />
+    <ClInclude Include="../../../Common/UtilFuncs.h" />
+    <ClInclude Include="../CVulkan.h" />
+    <ClInclude Include="../GPU_Vulkan.h" />
+    <ClInclude Include="../vulkandebug.h" />
+    <ClInclude Include="../vulkantools.h" />
   </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Import Project="$(VCTargetsPath)/Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>

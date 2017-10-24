@@ -5,10 +5,6 @@
       <UniqueIdentifier>{eef987de-c4d9-41e5-8a52-379ac257cfe7}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{a36dea49-9cab-4618-90a4-1057ad5db582}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
-    </Filter>
     <Filter Include="Common">
       <UniqueIdentifier>{58a56801-babd-4bed-9169-b541d4c6144b}</UniqueIdentifier>
     </Filter>
@@ -18,70 +14,70 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Common\MIPS.cpp">
+    <ClCompile Include="../../../Common/ATIFormats.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\PluginManager.cpp">
+    <ClCompile Include="../../../Common/cExr.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\TextureIO.cpp">
+    <ClCompile Include="../../../Common/cmdline.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\cmdline.cpp">
+    <ClCompile Include="../../../../CompressonatorGUI/Components/cpImageLoader.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\ATIFormats.cpp">
+    <ClCompile Include="../../../../CompressonatorGUI/Common/cvmatandqimage.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\SSIM.cpp">
+    <ClCompile Include="../../../../../../Common/lib/ext/OpenEXR/ilmbase-2.2.0/Half/half.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\CAnalysis.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Common\cExr.cpp">
+    <ClCompile Include="../../../Common/MIPS.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\CompressonatorGUI\Common\cvmatandqimage.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="../../../Common/PluginManager.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\CompressonatorGUI\Components\cpImageLoader.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="../../../Common/SSIM.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\Common\lib\ext\OpenEXR\ilmbase-2.2.0\Half\half.cpp">
+    <ClCompile Include="../../../Common/TextureIO.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="../CAnalysis.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Common\MIPS.h">
+    <ClInclude Include="../../../Common/MIPS.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\PluginManager.h">
+    <ClInclude Include="../../../Common/PluginManager.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\TextureIO.h">
+    <ClInclude Include="../../../Common/SSIM.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\cmdline.h">
+    <ClInclude Include="../../../Common/TextureIO.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\ATIFormats.h">
+    <ClInclude Include="../../../Common/cmdline.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\SSIM.h">
+    <ClInclude Include="../../../Common/cExr.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\CAnalysis.h">
+    <ClInclude Include="../../../../CompressonatorGUI/Components/cpImageLoader.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="../../../../CompressonatorGUI/Common/cvmatandqimage.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="../../../Common/ATIFormats.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="../CAnalysis.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\cExr.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\CompressonatorGUI\Common\cvmatandqimage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\CompressonatorGUI\Components\cpImageLoader.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -55,7 +55,8 @@ void PluginManager::registerStaticPlugin(char *pluginType, char *pluginName, cha
 }
 
 void PluginManager::getPluginList(char * SubFolderName)
-{        
+{      
+#ifdef _WIN32  
     WIN32_FIND_DATAA fd;
     char fname[MAX_PATH];
 
@@ -199,7 +200,8 @@ void PluginManager::getPluginList(char * SubFolderName)
             if (dllHandle != NULL) FreeLibrary(dllHandle);
         }
     } while (FindNextFileA(hFind, &fd));
-    FindClose(hFind); 
+    FindClose(hFind);
+#endif 
 }
 
 
@@ -207,34 +209,55 @@ void PluginManager::getPluginList(char * SubFolderName)
 
 PluginDetails::~PluginDetails()
 {
+#ifdef _WIN32
     if(dllHandle) FreeLibrary(dllHandle);
-
+#endif
     clearMembers();
 }
 
 void PluginDetails::setFileName(char * nm)
 {
+#ifdef _WIN32
     strcpy_s(filename,MAX_PLUGIN_FILENAME_STR,nm);
+#else
+    strcpy(filename,nm);
+#endif
 }
 
 void PluginDetails::setName(char * nm)
 {
+#ifdef _WIN32
     strcpy_s(pluginName,MAX_PLUGIN_NAME_STR,nm);
+#else
+    strcpy(pluginName,nm);
+#endif
 }
 
 void PluginDetails::setUUID(char * nm)
 {
+#ifdef _WIN32
     strcpy_s(pluginUUID, MAX_PLUGIN_UUID_STR, nm);
+#else
+    strcpy(pluginUUID, nm);
+#endif
 }
 
 void PluginDetails::setType(char * nm)
 {
+#ifdef _WIN32
     strcpy_s(pluginType,MAX_PLUGIN_TYPE_STR,nm);
+#else
+    strcpy(pluginType,nm);
+#endif
 }
 
 void PluginDetails::setCategory(char * nm)
 {
+#ifdef _WIN32
     strcpy_s(pluginCategory, MAX_PLUGIN_CATEGORY_STR, nm);
+#else
+    strcpy(pluginCategory, nm);
+#endif
 }
 
 
@@ -246,6 +269,7 @@ void * PluginDetails::makeNewInstance()
     }
     else
     {
+#ifdef _WIN32
         if(!dllHandle) dllHandle = LoadLibraryA(filename);
 
         if(dllHandle != NULL) 
@@ -256,6 +280,7 @@ void * PluginDetails::makeNewInstance()
                 return funcHandle();
             }
         }
+#endif
     }
     return NULL;
 }

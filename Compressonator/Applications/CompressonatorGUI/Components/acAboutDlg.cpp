@@ -14,19 +14,7 @@ void CHelpAboutDialog::Init(const QString & title, const QString & productName)
 {
     // Set the dialog title:
     setWindowTitle(title);
-    QImageReader icon(":/CompressonatorGUI/Resources/appicon.ico");
-    QImage result = icon.read();
-
-    for (int i = 0; i < icon.imageCount(); ++i) {
-        icon.jumpToImage(i);
-        QImage image = icon.read();
-        if (image.size() == QSize(64, 64)) {
-            result = image;
-            break;
-        }
-    }
-    const QPixmap iconPix = QPixmap::fromImage(result);
-    setWindowIcon(QIcon(iconPix));
+    setWindowIcon(QIcon(":/CompressonatorGUI/Images/acompress-256.png"));
 
     // Set window flags (minimize / maximize / close buttons):
     Qt::WindowFlags flags = windowFlags();
@@ -48,7 +36,7 @@ void CHelpAboutDialog::Init(const QString & title, const QString & productName)
     QString helpAboutString = "Compressonator<br>";
     helpAboutString.append(version);
 
-    QString copyRightCaption = "<p> &copy; 2016 Advanced Micro Devices, Inc. All Rights Reserved.</p>";
+    QString copyRightCaption = "<p> &copy; 2017 Advanced Micro Devices, Inc. All Rights Reserved.</p>";
     // Create the QLabels from the strings:
     QLabel* pHelpAboutStringAsStaticText = new QLabel(helpAboutString);
     QLabel* pCopyRightCaptionAsStaticText = new QLabel(copyRightCaption);

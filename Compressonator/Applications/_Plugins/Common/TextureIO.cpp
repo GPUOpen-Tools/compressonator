@@ -37,7 +37,12 @@
 
 #ifdef USE_QT_IMAGELOAD
 #include <QtCore/QCoreApplication>
-#include <QtGUI/qimage.h>
+#include <QtGui/qimage.h>
+
+#ifndef _WIN32
+#include <fcntl.h>    /* For O_RDWR */
+#include <unistd.h>   /* For open(), creat() */
+#endif
 
 #ifdef _DEBUG
 #pragma comment(lib,"Qt5Cored.lib")
@@ -137,7 +142,7 @@ int MaxFacesOrSlices(const MipSet* pMipSet, int nMipLevel)
     return 0;    //nMipLevel was too high
 }
 
-bool DeCompressionCallback(float fProgress, DWORD_PTR pUser1, DWORD_PTR pUser2)
+bool DeCompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
    UNREFERENCED_PARAMETER(pUser1);
    UNREFERENCED_PARAMETER(pUser2);
@@ -207,7 +212,7 @@ CMP_FORMAT FormatByFileExtension(const char *fname, MipSet *pMipSet)
 
 
 
-CMP_FORMAT GetFormat(DWORD dwFourCC)
+CMP_FORMAT GetFormat(CMP_DWORD dwFourCC)
 {
     switch(dwFourCC)
     {
@@ -301,7 +306,7 @@ void Format2FourCC(CMP_FORMAT format, MipSet *pMipSet)
 
 CMP_FORMAT GetFormat(MipSet* pMipSet)
 {
-    ASSERT(pMipSet);
+    assert(pMipSet);
     if(pMipSet == NULL)
         return CMP_FORMAT_Unknown;
 
@@ -354,59 +359,6 @@ CMP_FORMAT GetFormat(MipSet* pMipSet)
         default:        
             return CMP_FORMAT_Unknown;
     }
-}
-
-
-
-#ifdef USE_QT_IMAGELOAD
-
-/* conversion from the ILM Half
-* format into the normal 32 bit pixel format. Refer to http://www.openexr.com/using.html
-* on each steps regarding how to display your image
-*/
-unsigned int floatToQrgba(float r, float g, float b, float a)
-{
-    // step 3) Values, which are now 1.0, are called "middle gray".
-    //     If defog and exposure are both set to 0.0, then
-    //     middle gray corresponds to a raw pixel value of 0.18.
-    //     In step 6, middle gray values will be mapped to an
-    //     intensity 3.5 f-stops below the display's maximum
-    //     intensity.
-
-    // step 4) Apply a knee function.  The knee function has two
-    //     parameters, kneeLow and kneeHigh.  Pixel values
-    //     below 2^kneeLow are not changed by the knee
-    //     function.  Pixel values above kneeLow are lowered
-    //     according to a logarithmic curve, such that the
-    //     value 2^kneeHigh is mapped to 2^3.5 (in step 6,
-    //     this value will be mapped to the display's
-    //     maximum intensity).
-    //     kneeLow = 0.0 (2^0.0 => 1); kneeHigh = 5.0 (2^5 =>32)
-    if (r > 1.0)
-        r = 1.0 + Imath::Math<float>::log((r - 1.0) * 0.184874 + 1) / 0.184874;
-    if (g > 1.0)
-        g = 1.0 + Imath::Math<float>::log((g - 1.0) * 0.184874 + 1) / 0.184874;
-    if (b > 1.0)
-        b = 1.0 + Imath::Math<float>::log((b - 1.0) * 0.184874 + 1) / 0.184874;
-    if (a > 1.0)
-        a = 1.0 + Imath::Math<float>::log((a - 1.0) * 0.184874 + 1) / 0.184874;
-    //
-    // Step 5) Gamma-correct the pixel values, assuming that the
-    //     screen's gamma is 0.4545 (or 1/2.2).
-    r = Imath::Math<float>::pow(r, 0.4545f);
-    g = Imath::Math<float>::pow(g, 0.4545f);
-    b = Imath::Math<float>::pow(b, 0.4545f);
-    a = Imath::Math<float>::pow(a, 0.4545f);
-
-    // Step  6) Scale the values such that pixels middle gray
-    //     pixels are mapped to 84.66 (or 3.5 f-stops below
-    //     the display's maximum intensity).
-    //
-    // Step 7) Clamp the values to [0, 255].
-    return qRgba((unsigned char)(Imath::clamp(r * 84.66f, 0.f, 255.f)),
-        (unsigned char)(Imath::clamp(g * 84.66f, 0.f, 255.f)),
-        (unsigned char)(Imath::clamp(b * 84.66f, 0.f, 255.f)),
-        (unsigned char)(Imath::clamp(a * 84.66f, 0.f, 255.f)));
 }
 
 
@@ -471,6 +423,56 @@ bool CompressedFormat(CMP_FORMAT format)
     return true;
 }
 
+#ifdef USE_QT_IMAGELOAD
+
+/* conversion from the ILM Half
+* format into the normal 32 bit pixel format. Refer to http://www.openexr.com/using.html
+* on each steps regarding how to display your image
+*/
+unsigned int floatToQrgba(float r, float g, float b, float a)
+{
+    // step 3) Values, which are now 1.0, are called "middle gray".
+    //     If defog and exposure are both set to 0.0, then
+    //     middle gray corresponds to a raw pixel value of 0.18.
+    //     In step 6, middle gray values will be mapped to an
+    //     intensity 3.5 f-stops below the display's maximum
+    //     intensity.
+
+    // step 4) Apply a knee function.  The knee function has two
+    //     parameters, kneeLow and kneeHigh.  Pixel values
+    //     below 2^kneeLow are not changed by the knee
+    //     function.  Pixel values above kneeLow are lowered
+    //     according to a logarithmic curve, such that the
+    //     value 2^kneeHigh is mapped to 2^3.5 (in step 6,
+    //     this value will be mapped to the display's
+    //     maximum intensity).
+    //     kneeLow = 0.0 (2^0.0 => 1); kneeHigh = 5.0 (2^5 =>32)
+    if (r > 1.0)
+        r = 1.0 + Imath::Math<float>::log((r - 1.0) * 0.184874 + 1) / 0.184874;
+    if (g > 1.0)
+        g = 1.0 + Imath::Math<float>::log((g - 1.0) * 0.184874 + 1) / 0.184874;
+    if (b > 1.0)
+        b = 1.0 + Imath::Math<float>::log((b - 1.0) * 0.184874 + 1) / 0.184874;
+    if (a > 1.0)
+        a = 1.0 + Imath::Math<float>::log((a - 1.0) * 0.184874 + 1) / 0.184874;
+    //
+    // Step 5) Gamma-correct the pixel values, assuming that the
+    //     screen's gamma is 0.4545 (or 1/2.2).
+    r = Imath::Math<float>::pow(r, 0.4545f);
+    g = Imath::Math<float>::pow(g, 0.4545f);
+    b = Imath::Math<float>::pow(b, 0.4545f);
+    a = Imath::Math<float>::pow(a, 0.4545f);
+
+    // Step  6) Scale the values such that pixels middle gray
+    //     pixels are mapped to 84.66 (or 3.5 f-stops below
+    //     the display's maximum intensity).
+    //
+    // Step 7) Clamp the values to [0, 255].
+    return qRgba((unsigned char)(Imath::clamp(r * 84.66f, 0.f, 255.f)),
+        (unsigned char)(Imath::clamp(g * 84.66f, 0.f, 255.f)),
+        (unsigned char)(Imath::clamp(b * 84.66f, 0.f, 255.f)),
+        (unsigned char)(Imath::clamp(a * 84.66f, 0.f, 255.f)));
+}
 
 QImage::Format MipFormat2QFormat(MipSet *mipset)
 {
@@ -509,7 +511,8 @@ int QImage2MIPS(QImage *qimage, CMIPS *m_CMips, MipSet *pMipSet)
     // Check supported format
     if (!((format == QImage::Format_ARGB32) ||
         (format   == QImage::Format_ARGB32_Premultiplied) || 
-        (format   == QImage::Format_RGB32)))
+        (format   == QImage::Format_RGB32) ||
+        (format == QImage::Format_Mono)))
     {
         return -1;
     }
@@ -538,7 +541,7 @@ int QImage2MIPS(QImage *qimage, CMIPS *m_CMips, MipSet *pMipSet)
     m_CMips->AllocateMipLevelData(mipLevel, pMipSet->m_nWidth, pMipSet->m_nHeight, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType);
 
     // We have allocated a data buffer to fill get its referance
-    BYTE* pData = (BYTE*)(mipLevel->m_pbData);
+    CMP_BYTE* pData = (CMP_BYTE*)(mipLevel->m_pbData);
     QRgb qRGB;
     int i = 0;
 
@@ -597,7 +600,7 @@ QImage *MIPS2QImage(CMIPS *m_CMips, MipSet *mipset, int level)
         )
     {
         // We have allocated a data buffer to fill get its referance
-        BYTE* pData = mipLevel->m_pbData;
+        CMP_BYTE* pData = mipLevel->m_pbData;
         if (pData == NULL)  return NULL;
 
         // We dont support the conversion 
@@ -611,7 +614,7 @@ QImage *MIPS2QImage(CMIPS *m_CMips, MipSet *mipset, int level)
         if (image == NULL) return nullptr;
 
         // Initialize the buffer
-        BYTE R, G, B, A;
+        CMP_BYTE R, G, B, A;
         int i = 0;
 
 
@@ -657,22 +660,371 @@ QImage *MIPS2QImage(CMIPS *m_CMips, MipSet *mipset, int level)
 }
 #endif
 
+//
+// Used exclusively by the GUI app 
+// ToDo : Remove this code and try to use ProcessCMDLine
+MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *configSetting, CMP_Feedback_Proc pFeedbackProc)
+{
+    // validate MipSet is Compressed
+    if (!MipSetIn->m_compressed) return NULL;
+    if (MipSetIn->m_format == CMP_FORMAT_ASTC && !(configSetting->useCPU) && decodeWith == CMP_GPUDecode::GPUDecode_DIRECTX)
+    {
+        configSetting->errMessage = "ASTC format does not supported by DirectX API. Please view ASTC compressed images using other options (CPU or Vulkan) (under Settings->Application Options).";
+        PrintInfo("Decompress Error: ASTC format does not supported by DirectX API. Please view ASTC compressed images using CPU or GPU_Vulkan (under Settings->Application Options).\n");
+        return NULL;
+    }
+    else if (MipSetIn->m_format == CMP_FORMAT_ASTC && !(configSetting->useCPU) && decodeWith == CMP_GPUDecode::GPUDecode_OPENGL)
+    {
+        configSetting->errMessage = "Decode ASTC with OpenGL is not supported. Please view ASTC compressed images using other options (CPU or Vulkan) (under Settings->Application Options).";
+        PrintInfo("Decompress Error: Decode ASTC with OpenGL is not supported. Please view ASTC compressed images using CPU or GPU_Vulkan (under Settings->Application Options).\n");
+        return NULL;
+    }
+
+    // Compress Options
+    bool silent = true;
+    CMP_CompressOptions    CompressOptions;
+    memset(&CompressOptions, 0, sizeof(CMP_CompressOptions));
+    CompressOptions.dwnumThreads = 8;
+    CMIPS m_CMIPS;
+
+    MipSet    *MipSetOut = new MipSet();
+    memset(MipSetOut, 0, sizeof(MipSet));
+
+    MipSetOut->m_TextureDataType = TDT_ARGB;
+    MipSetOut->m_swizzle = false;
+    MipSetOut->m_CubeFaceMask = MipSetIn->m_CubeFaceMask;
+    MipSetOut->m_Flags = MipSetIn->m_Flags;
+    MipSetOut->m_nDepth = MipSetIn->m_nDepth;
+    MipSetOut->m_nMaxMipLevels = MipSetIn->m_nMaxMipLevels;
+    MipSetOut->m_nHeight = MipSetIn->m_nHeight;
+    MipSetOut->m_nWidth = MipSetIn->m_nWidth;
+
+    // BMP is saved as CMP_FORMAT_ARGB_8888
+    // EXR is saved as CMP_FORMAT_ARGB_16F
+    switch (MipSetIn->m_format)
+    {
+    case CMP_FORMAT_BC6H:
+    case CMP_FORMAT_BC6H_SF:
+        MipSetOut->m_format = CMP_FORMAT_ARGB_16F;
+        MipSetOut->m_ChannelFormat = CF_Float16;
+        break;
+    default:
+        MipSetOut->m_format = CMP_FORMAT_ARGB_8888;
+        break;
+    }
+
+    // Allocate output MipSet
+    if (!m_CMIPS.AllocateMipSet(MipSetOut,
+        MipSetOut->m_ChannelFormat,
+        MipSetOut->m_TextureDataType,
+        MipSetIn->m_TextureType,
+        MipSetIn->m_nWidth,
+        MipSetIn->m_nHeight,
+        MipSetIn->m_nDepth))
+    {
+        configSetting->errMessage = "Memory Error(2): allocating MIPSet Output buffer.";
+        PrintInfo("Memory Error(2): allocating MIPSet Output buffer\n");
+        m_CMIPS.FreeMipSet(MipSetOut);
+        delete MipSetOut;
+        MipSetOut = NULL;
+        return NULL;
+    }
+
+    MipLevel* pCmpMipLevel = m_CMIPS.GetMipLevel(MipSetIn, 0);
+    int nMaxFaceOrSlice = MaxFacesOrSlices(MipSetIn, 0);
+    int nWidth = pCmpMipLevel->m_nWidth;
+    int nHeight = pCmpMipLevel->m_nHeight;
+
+    CMP_BYTE* pMipData = m_CMIPS.GetMipLevel(MipSetIn, 0, 0)->m_pbData;
+
+    for (int nFaceOrSlice = 0; nFaceOrSlice<nMaxFaceOrSlice; nFaceOrSlice++)
+    {
+        int nMipWidth = nWidth;
+        int nMipHeight = nHeight;
+
+        for (int nMipLevel = 0; nMipLevel<MipSetIn->m_nMipLevels; nMipLevel++)
+        {
+            MipLevel* pInMipLevel = m_CMIPS.GetMipLevel(MipSetIn, nMipLevel, nFaceOrSlice);
+            if (!pInMipLevel)
+            {
+                configSetting->errMessage = "Memory Error(2): allocating MIPSet Output Cmp level buffer";
+                PrintInfo("Memory Error(2): allocating MIPSet Output Cmp level buffer\n");
+                m_CMIPS.FreeMipSet(MipSetOut);
+                delete MipSetOut;
+                MipSetOut = NULL;
+                return NULL;
+            }
+
+            // Valid Mip Level ?
+            if (pInMipLevel->m_pbData)
+                pMipData = pInMipLevel->m_pbData;
+
+            if (!m_CMIPS.AllocateMipLevelData(m_CMIPS.GetMipLevel(MipSetOut, nMipLevel, nFaceOrSlice), nMipWidth,
+                nMipHeight, MipSetOut->m_ChannelFormat, MipSetOut->m_TextureDataType))
+            {
+                configSetting->errMessage = "Memory Error(2): allocating MIPSet Output level buffer.";
+                PrintInfo("Memory Error(2): allocating MIPSet Output level buffer\n");
+                m_CMIPS.FreeMipSet(MipSetOut);
+                delete MipSetOut;
+                MipSetOut = NULL;
+                return NULL;
+            }
+
+            //----------------------------
+            // Compressed source 
+            //-----------------------------
+            CMP_Texture srcTexture;
+            srcTexture.dwSize = sizeof(srcTexture);
+            srcTexture.dwWidth = nMipWidth;
+            srcTexture.dwHeight = nMipHeight;
+            srcTexture.dwPitch = 0;
+            srcTexture.nBlockWidth = MipSetIn->m_nBlockWidth;
+            srcTexture.nBlockHeight = MipSetIn->m_nBlockHeight;
+            srcTexture.nBlockDepth = MipSetIn->m_nBlockDepth;
+            srcTexture.format = MipSetIn->m_format;
+            srcTexture.dwDataSize = CMP_CalculateBufferSize(&srcTexture);
+            srcTexture.pData = pMipData;
+
+            //-----------------------------
+            // Uncompressed Destination
+            //-----------------------------
+            CMP_Texture destTexture;
+            destTexture.dwSize = sizeof(destTexture);
+            destTexture.dwWidth = nMipWidth;
+            destTexture.dwHeight = nMipHeight;
+            destTexture.dwPitch = 0;
+            destTexture.nBlockWidth = MipSetOut->m_nBlockWidth;
+            destTexture.nBlockHeight = MipSetOut->m_nBlockHeight;
+            destTexture.nBlockDepth = MipSetOut->m_nBlockDepth;
+            destTexture.format = MipSetOut->m_format;
+            destTexture.dwDataSize = CMP_CalculateBufferSize(&destTexture);
+            destTexture.pData = m_CMIPS.GetMipLevel(MipSetOut, nMipLevel, nFaceOrSlice)->m_pbData;
+
+            if (!silent)
+            {
+                if ((nMipLevel > 1) || (nFaceOrSlice > 1))
+                    PrintInfo("\rProcessing destination MipLevel %2d FaceOrSlice %2d", nMipLevel + 1, nFaceOrSlice);
+                else
+                    PrintInfo("\rProcessing destination    ");
+            }
+
+            try
+            {
+#ifdef _WIN32
+                if ((IsBadReadPtr(srcTexture.pData, srcTexture.dwDataSize)))
+                {
+                    configSetting->errMessage = "Memory Error(2): Source image cannot be accessed.";
+                    PrintInfo("Memory Error(2): Source image\n");
+                    m_CMIPS.FreeMipSet(MipSetOut);
+                    delete MipSetOut;
+                    MipSetOut = NULL;
+                    return NULL;
+                }
+
+                if (/*(srcTexture.dwDataSize > destTexture.dwDataSize) ||*/ (IsBadWritePtr(destTexture.pData, destTexture.dwDataSize)))
+                {
+                    configSetting->errMessage = "Memory Error(2): Destination image must be compatible with source.";
+                    PrintInfo("Memory Error(2): Destination image must be compatible with source\n");
+                    m_CMIPS.FreeMipSet(MipSetOut);
+                    delete MipSetOut;
+                    MipSetOut = NULL;
+                    return NULL;
+                }
+
+#else
+                int nullfd = open("/dev/random", O_WRONLY);
+                if (write(nullfd, srcTexture.pData, srcTexture.dwDataSize) < 0)
+                {
+                    configSetting->errMessage = "Memory Error(2): Source image cannot be accessed.";
+                    PrintInfo("Memory Error(2): Source image\n");
+                    m_CMIPS.FreeMipSet(MipSetOut);
+                    delete MipSetOut;
+                    MipSetOut = NULL;
+                    return NULL;
+                }
+                close(nullfd);
+                nullfd = open("/dev/random", O_WRONLY);
+                if (write(nullfd, destTexture.pData, destTexture.dwDataSize) < 0)
+                {
+                    configSetting->errMessage = "Memory Error(2): Destination image must be compatible with source.";
+                    PrintInfo("Memory Error(2): Destination image must be compatible with source\n");
+                    m_CMIPS.FreeMipSet(MipSetOut);
+                    delete MipSetOut;
+                    MipSetOut = NULL;
+                    return NULL;
+                }
+                close(nullfd);
+#endif
+
+                // Return values of the CMP_ calls should be checked for failures
+                CMP_ERROR res;
+                if (configSetting->useCPU)
+                {
+                    res = CMP_ConvertTexture(&srcTexture, &destTexture, &CompressOptions, pFeedbackProc, NULL, NULL);
+                    if (res != CMP_OK)
+                    {
+                        configSetting->errMessage = "Compress Failed with Error " + res;
+                        PrintInfo("Compress Failed with Error %d\n", res);
+                        m_CMIPS.FreeMipSet(MipSetOut);
+                        delete MipSetOut;
+                        MipSetOut = NULL;
+                        return NULL;
+                    }
+                }
+                else
+                {
+#ifdef _WIN32
+#ifndef DISABLE_TESTCODE
+                    CMP_ERROR res;
+                    res = CMP_DecompressTexture(&srcTexture, &destTexture, decodeWith);
+                    if (res == CMP_ERR_UNSUPPORTED_GPU_ASTC_DECODE)
+                    {
+                        configSetting->errMessage = "Error: ASTC compressed texture is not supported by the GPU device.\n";
+                        PrintInfo("Error: ASTC compressed texture is not supported by the GPU device.\n");
+                        m_CMIPS.FreeMipSet(MipSetOut);
+                        delete MipSetOut;
+                        MipSetOut = NULL;
+                        return NULL;
+                    }
+                    else if (res != CMP_OK)
+                    {
+                        configSetting->errMessage = "Decompress Failed. Texture format not supported. Please view the compressed images using other options (CPU) (under Settings->Application Options).";
+                        PrintInfo("Decompress Failed with Error %d\n", res);
+                        m_CMIPS.FreeMipSet(MipSetOut);
+                        delete MipSetOut;
+                        MipSetOut = NULL;
+                        return NULL;
+                    }
+#endif
+#else
+                    PrintInfo("GPU Decompress is not supported in linux yet.\n");
+                    m_CMIPS.FreeMipSet(MipSetOut);
+                    delete MipSetOut;
+                    MipSetOut = NULL;
+                    return NULL;
+#endif
+                }
 
 
-int AMDLoadMIPSTextureImage(const char *SourceFile, MipSet *MipSetIn, bool use_OCV)
+            }
+            catch (std::exception& e)
+            {
+                PrintInfo(e.what());
+                m_CMIPS.FreeMipSet(MipSetOut);
+                delete MipSetOut;
+                MipSetOut = NULL;
+                return NULL;
+            }
+
+            pMipData += srcTexture.dwDataSize;
+
+            nMipWidth = (nMipWidth>1) ? (nMipWidth >> 1) : 1;
+            nMipHeight = (nMipHeight>1) ? (nMipHeight >> 1) : 1;
+        }
+    }
+
+    MipSetOut->m_nMipLevels = MipSetIn->m_nMipLevels;
+
+    return MipSetOut;
+}
+
+void swap_Bytes(CMP_BYTE *src, int width, int height, int offset)
+{
+    int  i, j;
+    CMP_BYTE b;
+
+    for (i = 0; i<height; i++) {
+        for (j = 0; j<width; j++) {
+            b = *src;         // hold 1st byte
+            *src = *(src + 2);     // move 1st to offsetrd 
+            *(src + 2) = b;            // save offset to 1st 
+            src = src + offset;   // move to next set of bytes
+        }
+    }
+
+}
+
+void SwizzleMipMap(MipSet *pMipSet)
+{
+    CMP_DWORD dwWidth;
+    CMP_DWORD dwHeight;
+    CMP_BYTE     *pData;
+
+    for (int nMipLevel = 0; nMipLevel<pMipSet->m_nMipLevels; nMipLevel++)
+    {
+        for (int nFaceOrSlice = 0; nFaceOrSlice<MaxFacesOrSlices(pMipSet, nMipLevel); nFaceOrSlice++)
+        {
+            //=====================
+            // Uncompressed source
+            //======================
+            MipLevel* pInMipLevel = g_CMIPS->GetMipLevel(pMipSet, nMipLevel, nFaceOrSlice);
+            dwWidth = pInMipLevel->m_nWidth;
+            dwHeight = pInMipLevel->m_nHeight;
+            pData = pInMipLevel->m_pbData;
+
+            // Swizzle to RGBA format when compressing from uncompressed DDS file! This is a Patch for now.
+            // may want to try this patch on other file types BMP & PNG to move swizzle out to main code.
+            switch (pMipSet->m_TextureDataType)
+            {
+            case TDT_ARGB: swap_Bytes(pInMipLevel->m_pbData, dwWidth, dwHeight, 4); break;
+            case TDT_XRGB: swap_Bytes(pInMipLevel->m_pbData, dwWidth, dwHeight, 3); break;
+            default: break;
+            }
+        }
+    }
+
+}
+
+// Determine if RGB channel to BGA can be done or skipped
+// for special cases of compressed formats.
+
+bool KeepSwizzle(CMP_FORMAT destformat)
+{
+    // determin of the swizzle flag needs to be turned on!
+    switch (destformat)
+    {
+    case CMP_FORMAT_BC4:
+    case CMP_FORMAT_ATI1N:        // same as BC4    
+    case CMP_FORMAT_ATI2N:        // same as BC4    
+    case CMP_FORMAT_BC5:
+    case CMP_FORMAT_ATI2N_XY:    // same as BC5    
+    case CMP_FORMAT_ATI2N_DXT5:    // same as BC5    
+    case CMP_FORMAT_BC1:
+    case CMP_FORMAT_DXT1:        // same as BC1     
+    case CMP_FORMAT_BC2:
+    case CMP_FORMAT_DXT3:        // same as BC2     
+    case CMP_FORMAT_BC3:
+    case CMP_FORMAT_DXT5:        // same as BC3     
+    case CMP_FORMAT_ATC_RGB:
+    case CMP_FORMAT_ATC_RGBA_Explicit:
+    case CMP_FORMAT_ATC_RGBA_Interpolated:
+        return true;
+        break;
+    default:
+        break;
+    }
+
+    return false;
+}
+
+int AMDLoadMIPSTextureImage(const char *SourceFile, MipSet *MipSetIn, bool use_OCV, void *pluginManager)
 { 
+    if (pluginManager == NULL)
+        return -1;
+
     string file_extension  = boost::filesystem::extension(SourceFile);
     boost::algorithm::to_upper(file_extension); 
     boost::erase_all(file_extension,".");
 
     PluginInterface_Image *plugin_Image;
 
+    PluginManager* plugin_Manager = (PluginManager*)pluginManager;
     if (use_OCV)
     {
-        plugin_Image = reinterpret_cast<PluginInterface_Image *>(g_pluginManager.GetPlugin("IMAGE","OCV"));
+        plugin_Image = reinterpret_cast<PluginInterface_Image *>(plugin_Manager->GetPlugin("IMAGE","OCV"));
     }
     else
-        plugin_Image = reinterpret_cast<PluginInterface_Image *>(g_pluginManager.GetPlugin("IMAGE",(char *)file_extension.c_str()));
+        plugin_Image = reinterpret_cast<PluginInterface_Image *>(plugin_Manager->GetPlugin("IMAGE",(char *)file_extension.c_str()));
 
     // do the load
     if (plugin_Image)
@@ -790,7 +1142,10 @@ int AMDSaveMIPSTextureImage(const char * DestFile, MipSet *MipSetIn, bool use_OC
             return -1;
     }
 #else
+    if (!filesaved)
+    {
         return -1;
+    }
 #endif
 
     return 0;

@@ -24,21 +24,19 @@
 #ifndef _CMDLINE_H_
 #define _CMDLINE_H_
 
+#ifdef _WIN32
 #include <windows.h>
-#include <string>
 #include <tchar.h>
+#endif
+
+#include <string>
+
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include "Compressonator.h"
-#include "GPU_Decode\GPU_Decode.h"
+#include "GPU_Decode/GPU_Decode.h"
 
 #include "MIPS.h"
-
-typedef struct {
-    bool swizzle = false;
-    bool useCPU = true;
-    string errMessage = "";
-} Config;
 
 class CCmdLineParamaters
 {
@@ -97,8 +95,8 @@ public:
     CMP_FORMAT               SourceFormat;           //
     CMP_FORMAT               DestFormat;             //
     CMP_CompressOptions      CompressOptions;        //
-    DWORD                       dwWidth;                //
-    DWORD                       dwHeight;               //
+    CMP_DWORD                       dwWidth;                //
+    CMP_DWORD                       dwHeight;               //
     double                      conversion_fDuration;   // Total Performance time
     int                         MipsLevel;              //
     int                         nMinSize;               //
@@ -121,17 +119,12 @@ public:
     int                         BlockDepth;             // Depth  (zdim)in pixels of the Compression Block that is to be processed default for ASTC is 1
 };
 
-
 extern void PrintInfo(const char* Format, ... );
-extern void PrintUsage();
 extern bool ParseParams(int argc, CMP_CHAR* argv[]);
 extern int  ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *userMips);
 extern      CCmdLineParamaters g_CmdPrams;
 extern int  GetNumberOfCores(wchar_t *envp[ ]);
 extern bool SouceAndDestCompatible(CCmdLineParamaters g_CmdPrams);
-extern void SwizzleMipMap(MipSet *pMipSet);
-extern bool KeepSwizzle(CMP_FORMAT destformat);
-
 extern int  DecompressCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *userMips);
 
 #endif

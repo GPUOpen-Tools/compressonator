@@ -46,7 +46,7 @@ CCodec_ATI2N_DXT5::~CCodec_ATI2N_DXT5()
 
 }
 
-CodecError CCodec_ATI2N_DXT5::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+CodecError CCodec_ATI2N_DXT5::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
@@ -70,7 +70,7 @@ CodecError CCodec_ATI2N_DXT5::Compress(CCodecBuffer& bufferIn, CCodecBuffer& buf
                 CMP_BYTE tempBlock[BLOCK_SIZE_4X4X4];
                 bufferIn.ReadBlockRGBA(i*4, j*4, 4, 4, tempBlock);
                 for(CMP_DWORD k = 0; k < BLOCK_SIZE_4X4; k++)
-                    ((DWORD*) srcBlock)[k] = SWIZZLE_RGBA_xGxR(((DWORD*) tempBlock)[k]);
+                    ((CMP_DWORD*) srcBlock)[k] = SWIZZLE_RGBA_xGxR(((CMP_DWORD*) tempBlock)[k]);
                 CompressRGBABlock(srcBlock, compressedBlock);
             }
             else
@@ -101,7 +101,7 @@ CodecError CCodec_ATI2N_DXT5::Compress(CCodecBuffer& bufferIn, CCodecBuffer& buf
     return CE_OK;
 }
 
-CodecError CCodec_ATI2N_DXT5::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+CodecError CCodec_ATI2N_DXT5::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());

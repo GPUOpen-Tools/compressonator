@@ -30,6 +30,10 @@
 
 #define MAX_MIPLEVEL_SUPPORTED 10
 
+
+#define MIPSET_PIN_DATA_ID     "69AEBDB3-5F67-436D-82C2-724FDC4972DA"
+
+
 extern void(*PrintStatusLine)(char *);
 extern void PrintInfo(const char* Format, ...);
 class CMIPS
@@ -45,7 +49,7 @@ class CMIPS
     bool AllocateAllMipLevels(MipLevelTable* pMipLevelTable, TextureType /*textureType*/, int nLevelsToAllocate);
     bool AllocateMipSet(MipSet* pMipSet, ChannelFormat channelFormat, TextureDataType textureDataType, TextureType textureType, int nWidth, int nHeight, int nDepth);
     bool AllocateMipLevelData(MipLevel* pMipLevel, int nWidth, int nHeight, ChannelFormat channelFormat, TextureDataType textureDataType);
-    bool AllocateCompressedMipLevelData(MipLevel* pMipLevel, int nWidth, int nHeight, DWORD dwSize);
+    bool AllocateCompressedMipLevelData(MipLevel* pMipLevel, int nWidth, int nHeight, CMP_DWORD dwSize);
 
     void FreeMipSet(MipSet* pMipSet);
 

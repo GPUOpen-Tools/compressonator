@@ -29,9 +29,12 @@
 #	include <assert.h>
 #	define ASSERT assert
 #endif // !ASSERT
+
+#ifdef _WIN32
 #include <shlwapi.h>
 #include <ShObjIdl.h>
 #include <tchar.h>
+#endif
 
 #include "UtilFuncs.h"
 
@@ -52,7 +55,7 @@ void SwizzleBytes(void* src, unsigned long numBytes)
 	for(i=0; i< numBytes; i++)
 		pSrc[i] = tmp[i];
 }
-
+#ifdef _WIN32
 typedef struct 
 {
 	TCHAR* pszName;
@@ -92,6 +95,7 @@ HWND FindTopLevelWindow(TCHAR* pszName)
 
 	return ftlwData.hWnd;
 }
+#endif
 
 #ifdef __AFX_H__
 CString GetDirectory(const CString& strPath)
@@ -144,7 +148,7 @@ CString RemoveExtension(const CString& strFilename)
 		return strFilename.Left(nIndex);
 }
 
-BOOL FileExists(const CString& strFilename)
+bool FileExists(const CString& strFilename)
 {
 	if(strFilename.IsEmpty())
 		return FALSE;
@@ -160,7 +164,7 @@ BOOL FileExists(const CString& strFilename)
 	return FALSE;
 }
 
-BOOL DirectoryExists(const CString& strDirectory)
+bool DirectoryExists(const CString& strDirectory)
 {
 	if(strDirectory.IsEmpty())
 		return FALSE;
@@ -181,7 +185,7 @@ BOOL IsFullPath(const CString& strPath)
 	return DirectoryExists(GetDirectory(strPath));
 }
 
-static const TCHAR* f_pszInvalidNames[] = 
+static const char* f_pszInvalidNames[] = 
 {
 	_T("CON"),
 	_T("PRN"),
@@ -330,6 +334,7 @@ void GetComboText(const CComboBox& combo, CString& rString)
 		combo.GetWindowText(rString);
 }
 
+#ifdef _WIN32
 int GetUsableTitleWidth(HWND hWnd)
 {
 	if(hWnd == NULL)
@@ -359,4 +364,5 @@ int GetUsableTitleWidth(HWND hWnd)
 
 	return nWidth;
 }
+#endif
 #endif // __AFX_H__

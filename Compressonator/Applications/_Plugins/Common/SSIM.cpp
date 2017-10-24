@@ -9,16 +9,17 @@
  * @see http://creativecommons.org/licenses/publicdomain/
  * The original work may be under copyrights. 
  */
+#ifdef _WIN32
 #include <Windows.h>
+#endif
 #include <iostream>
 #include <stdio.h>
-#include "opencv2\highgui\highgui.hpp"
-#include "opencv\cv.h"
 #include "TestReport.h"
 
+#include <opencv/cv.h>
 #include <opencv2/core/core.hpp>        // Basic OpenCV structures (cv::Mat, Scalar)
 #include <opencv2/imgproc/imgproc.hpp>  // Gaussian Blur
-#include <opencv2/highgui/highgui.hpp>  // OpenCV window I/O
+#include <opencv2/highgui/highgui.hpp>  
 
 
 using namespace std;
@@ -470,11 +471,8 @@ double sigma(Mat & m, int i, int j, int block_size)
 
     multiply(m_tmp, m_tmp, m_squared);
 
-    // E(x)
     double avg = mean(m_tmp)[0];
-    // E(x²)
     double avg_2 = mean(m_squared)[0];
-
 
     sd = sqrt(abs(avg_2 - avg * avg));
 

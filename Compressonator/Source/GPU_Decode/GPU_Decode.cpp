@@ -24,6 +24,8 @@
 //
 //=====================================================================
 
+#ifdef _WIN32
+#ifndef DISABLE_TESTCODE
 #include "GPU_DecodeBase.h"
 #include "GPU_Decode.h"
 #include "PluginInterface.h"
@@ -111,4 +113,5 @@ CMP_ERROR CMP_API CMP_DecompressTexture(
 
     return CMP_OK;
 }
-
+#endif
+#endif

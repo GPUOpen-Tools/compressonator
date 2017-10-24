@@ -24,7 +24,7 @@
 #ifndef _BC7_UTILS_H_
 #define _BC7_UTILS_H_
 
-#include "bc7_definitions.h"
+#include "BC7_Definitions.h"
 
 extern void    WriteBit(BYTE   *base,
                  int  offset,

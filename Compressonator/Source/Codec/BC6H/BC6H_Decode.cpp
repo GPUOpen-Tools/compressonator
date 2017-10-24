@@ -28,11 +28,11 @@
 //
 #include <assert.h>
 #include "debug.h"
-#include "common.h"
+#include "Common.h"
 #include "HDR_Encode.h"
 #include "BC6H_Definitions.h"
 #include "BC6H_Decode.h"
-#include "BC6H_Utils.h"
+#include "BC6H_utils.h"
 #include "BC6H_Decode.h"
 
 #include <bitset>

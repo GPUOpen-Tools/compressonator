@@ -132,14 +132,14 @@ sf32 sf16_to_sf32(sf16 inp)
 
     static const int32_t tbl[64] =
     {
-        INT32_C(0x80000000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000),
-        INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000),
-        INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000),
-        INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x1C000), INT32_C(0x80038000),
-        INT32_C(0x80038000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000),
-        INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000),
-        INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000),
-        INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x54000), INT32_C(0x80070000)
+        INT32_C(static_cast<int32_t>(0x80000000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)),
+        INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)),
+        INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)),
+        INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x1C000)), INT32_C(static_cast<int32_t>(0x80038000)),
+        INT32_C(static_cast<int32_t>(0x80038000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)),
+        INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)),
+        INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)),
+        INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x54000)), INT32_C(static_cast<int32_t>(0x80070000))
     };
 
     int32_t res = tbl[inpx >> 10];

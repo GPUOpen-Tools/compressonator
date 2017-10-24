@@ -21,7 +21,11 @@
 // THE SOFTWARE.
 //
 
+
+#ifdef _WIN32
 #include "stdafx.h"
+#endif
+
 #include <stdio.h>
 #include "cKTX.h"
 
@@ -32,6 +36,9 @@
 #include "MIPS.h"
 
 #include "softfloat.h"
+#ifndef _WIN32
+#include "TextureIO.h"
+#endif
 
 // Feature is been removed as of Aug 2016
 // #define CMP_Texture_IO_SUPPORTED
@@ -75,7 +82,9 @@ int Plugin_KTX::TC_PluginSetSharedIO(void* Shared)
 
 int Plugin_KTX::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
 { 
+#ifdef _WIN32
     pPluginVersion->guid                    = g_GUID;
+#endif
     pPluginVersion->dwAPIVersionMajor        = TC_API_VERSION_MAJOR;
     pPluginVersion->dwAPIVersionMinor        = TC_API_VERSION_MINOR;
     pPluginVersion->dwPluginVersionMajor    = TC_PLUGIN_VERSION_MAJOR;
@@ -83,13 +92,15 @@ int Plugin_KTX::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
     return 0;
 }
 
-int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture)
+int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *srcTexture)
 {
+#ifdef _WIN32
 #ifdef CMP_Texture_IO_SUPPORTED
     assert(pszFilename);
 
     FILE* pFile = NULL;
-    if (_tfopen_s(&pFile, pszFilename, _T("rb")) != 0 || pFile == NULL)
+    pFile = fopen(&pFile, pszFilename, ("rb")) ;
+    if (pFile == NULL)
     {
         return -1;
     }
@@ -296,7 +307,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, CMP_Texture *
     }
 
     //load image size
-    UINT imageByteCount = 0;
+    unsigned int imageByteCount = 0;
     if (fread((void*)&imageByteCount, 1, 4, pFile) != 4)
     {
         fclose(pFile);
@@ -304,7 +315,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, CMP_Texture *
     }
 
     //read image data
-    const UINT bytesRead = fread(srcTexture->pData, 1, imageByteCount, pFile);
+    const unsigned int bytesRead = fread(srcTexture->pData, 1, imageByteCount, pFile);
     if (bytesRead != imageByteCount)
     {
         fclose(pFile);
@@ -313,11 +324,13 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, CMP_Texture *
     fclose(pFile);
     return 0;
 #endif
+#endif
     return -1;
 }
 
-int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture)
+int Plugin_KTX::TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *srcTexture)
 {
+#ifdef _WIN32
 #ifdef CMP_Texture_IO_SUPPORTED
     assert(pszFilename);
 
@@ -332,9 +345,9 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, CMP_Texture *
     KTX_texture_info textureinfo;
     KTX_image_info* inputMip = new KTX_image_info();
 
-    UINT pDataLen = 0;
-    BYTE* pData = NULL;
-    BOOLEAN isCompressed = false;
+    unsigned int pDataLen = 0;
+    CMP_BYTE* pData = NULL;
+    bool isCompressed = false;
 
     //todo: textureinfo.numberOfFaces = 6; reserved for cubemap
     textureinfo.numberOfFaces = 1;
@@ -534,6 +547,7 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, CMP_Texture *
     }
     fclose(pFile);
     return 0;
+#endif
 #endif
     return -1;
 }
@@ -802,13 +816,14 @@ static void copy_scanline(void *dst, const void *src, int pixels, int method)
     };
 }
 
-int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipSet)
+int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSet)
 {
     FILE* pFile = NULL;
-    if (_tfopen_s(&pFile, pszFilename, _T("rb")) != 0 || pFile == NULL)
+    pFile = fopen(pszFilename, ("rb"));
+    if (pFile == NULL)
     {
         if (KTX_CMips)
-            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) opening file = %s \n"), EL_Error, IDS_ERROR_FILE_OPEN, pszFilename);
+            KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) opening file = %s \n"), EL_Error, IDS_ERROR_FILE_OPEN, pszFilename);
         return -1;
     }
 
@@ -818,7 +833,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
     if (fread(&fheader, sizeof(KTX_header), 1, pFile) != 1)
     {
         if (KTX_CMips)
-            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) invalid KTX header. Filename = %s \n"), EL_Error, IDS_ERROR_NOT_KTX, pszFilename);
+            KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) invalid KTX header. Filename = %s \n"), EL_Error, IDS_ERROR_NOT_KTX, pszFilename);
         fclose(pFile);
         return -1;
     }
@@ -826,7 +841,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
     if (_ktxCheckHeader(&fheader, &texinfo) != KTX_SUCCESS)
     {
         if (KTX_CMips)
-            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) invalid KTX header. Filename = %s \n"), EL_Error, IDS_ERROR_NOT_KTX, pszFilename);
+            KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) invalid KTX header. Filename = %s \n"), EL_Error, IDS_ERROR_NOT_KTX, pszFilename);
         fclose(pFile);
         return -1;
     }
@@ -1011,7 +1026,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
             break;
            default:
                if (KTX_CMips)
-                   KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) unsupported GL format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
+                   KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) unsupported GL format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
               fclose(pFile);
               return -1;
         }
@@ -1130,7 +1145,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
             break;
         default:
             if (KTX_CMips)
-                KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) unsupported GL format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
+                KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) unsupported GL format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
             fclose(pFile);
             return -1;
         }
@@ -1140,7 +1155,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
     if (fheader.numberOfArrayElements != 0)
     {
         if (KTX_CMips)
-            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) array textures not supported %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.numberOfArrayElements);
+            KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) array textures not supported %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.numberOfArrayElements);
         fclose(pFile);
         return -1;
     }
@@ -1162,7 +1177,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
     if (pFile == NULL)
     {
         if (KTX_CMips)
-            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) loading file = %s "), EL_Error, IDS_ERROR_FILE_OPEN, pszFilename);
+            KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) loading file = %s "), EL_Error, IDS_ERROR_FILE_OPEN, pszFilename);
         return -1;
     }
 
@@ -1171,7 +1186,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
     if (fseek(pFile, imageSizeOffset, SEEK_SET))
     {
         if (KTX_CMips)
-            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) Seek past key/vals in KTX compressed bitmap file failed. Format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
+            KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) Seek past key/vals in KTX compressed bitmap file failed. Format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
         fclose(pFile);
         return -1;
     }
@@ -1183,11 +1198,11 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
     for (int nMipLevel = 0; nMipLevel < fheader.numberOfMipmapLevels; nMipLevel++)
     {
         //load image size
-        UINT imageByteCount = 0;
+        unsigned int imageByteCount = 0;
         if (fread((void*)&imageByteCount, 1, 4, pFile) != 4)
         {
             if (KTX_CMips)
-                KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) Read image size failed. Format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
+                KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) Read image size failed. Format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
             fclose(pFile);
             return -1;
         }
@@ -1199,14 +1214,14 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
         else
             KTX_CMips->AllocateMipLevelData(pMipLevel, w, h, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType);
 
-        BYTE* pData = (BYTE*)(pMipLevel)->m_pbData;
+        CMP_BYTE* pData = (CMP_BYTE*)(pMipLevel)->m_pbData;
         //KTX_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize = imageByteCount;
         //read image data
-        const UINT bytesRead = fread(pData, 1, imageByteCount, pFile);
+        const unsigned int bytesRead = fread(pData, 1, imageByteCount, pFile);
         if (bytesRead != imageByteCount)
         {
             if (KTX_CMips)
-                KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) Read image data failed. Format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
+                KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) Read image data failed. Format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
             fclose(pFile);
             return -1;
         }
@@ -1223,7 +1238,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
     return 0;
 }
 
-int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipSet)
+int Plugin_KTX::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSet)
 {
     assert(pszFilename);
     assert(pMipSet);
@@ -1233,7 +1248,7 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
     if (pFile == NULL)
     {
         if (KTX_CMips)
-            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) saving file = %s "), EL_Error, IDS_ERROR_FILE_OPEN, pszFilename);
+            KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) saving file = %s "), EL_Error, IDS_ERROR_FILE_OPEN, pszFilename);
         return -1;
     }
 
@@ -1241,9 +1256,9 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
     KTX_texture_info textureinfo;
     KTX_image_info* inputMip = new KTX_image_info[pMipSet->m_nMipLevels];
 
-    UINT pDataLen = 0;
-    BYTE* pData = NULL;
-    BOOLEAN isCompressed = false;
+    unsigned pDataLen = 0;
+    CMP_BYTE* pData = NULL;
+    bool isCompressed = false;
 
     if (pMipSet->m_TextureType == TT_CubeMap)
         textureinfo.numberOfFaces = 6;
@@ -1256,14 +1271,14 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
     if (pMipSet->m_pMipLevelTable == NULL)
     {
         if (KTX_CMips)
-            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) saving file = %s "), EL_Error, IDS_ERROR_ALLOCATEMIPSET, pszFilename);
+            KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) saving file = %s "), EL_Error, IDS_ERROR_ALLOCATEMIPSET, pszFilename);
         return -1;
     }
 
     if (KTX_CMips->GetMipLevel(pMipSet, 0) == NULL)
     {
         if (KTX_CMips)
-            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) saving file = %s "), EL_Error, IDS_ERROR_ALLOCATEMIPSET, pszFilename);
+            KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) saving file = %s "), EL_Error, IDS_ERROR_ALLOCATEMIPSET, pszFilename);
         return -1;
     }
 
@@ -1551,12 +1566,11 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
     }
     else {
         if (KTX_CMips)
-            KTX_CMips->PrintError(_T("Error(%d): KTX Plugin ID(%d) saving file = %s "), EL_Error, IDS_ERROR_FILE_OPEN, pszFilename);
+            KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) saving file = %s "), EL_Error, IDS_ERROR_FILE_OPEN, pszFilename);
         fclose(pFile);
         return -1;
     }
 
-    fclose(pFile);
     return 0;
 }
 

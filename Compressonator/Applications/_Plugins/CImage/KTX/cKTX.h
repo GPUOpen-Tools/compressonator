@@ -30,8 +30,12 @@
 #include "ktxint.h"
 
 // {737CE1F6-F448-499E-B8B5-585F9A22893C}
+#ifdef _WIN32
 static const GUID g_GUID = 
 { 0x737ce1f6, 0xf448, 0x499e, { 0xb8, 0xb5, 0x58, 0x5f, 0x9a, 0x22, 0x89, 0x3c } };
+#else
+static const GUID g_GUID = {0};
+#endif
 
 #define TC_PLUGIN_VERSION_MAJOR    1
 #define TC_PLUGIN_VERSION_MINOR    0
@@ -44,10 +48,10 @@ class Plugin_KTX : public PluginInterface_Image
 
         int TC_PluginSetSharedIO(void* Shared);
         int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
-        int TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipSet);
-        int TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipSet);
-        int TC_PluginFileLoadTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture);
-        int TC_PluginFileSaveTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture);
+        int TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSet);
+        int TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSet);
+        int TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *srcTexture);
+        int TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *srcTexture);
 
 };
 

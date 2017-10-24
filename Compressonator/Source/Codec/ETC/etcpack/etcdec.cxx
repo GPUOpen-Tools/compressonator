@@ -165,9 +165,10 @@ submitted to the exclusive jurisdiction of the Swedish Courts.
 //// (C) Ericsson AB 2005-2013. All Rights Reserved.
 //// 
 
-#include "windows.h"
 #include <stdio.h>
 #include <stdlib.h>
+
+#define UNREFERENCED_PARAMETER(x)   ((void)x)
 
 // Typedefs
 typedef unsigned char uint8;

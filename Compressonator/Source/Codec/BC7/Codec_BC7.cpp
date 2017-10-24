@@ -29,9 +29,8 @@
 #pragma warning(disable:4100)    // Ignore warnings of unreferenced formal parameters
 #include "Common.h"
 #include "Codec_BC7.h"
-#include "BC7_library.h"
-#include "process.h"
-
+#include "BC7_Library.h"
+#include <chrono>
 
 #ifdef BC7_COMPDEBUGGER
 #include "CompClient.h"
@@ -51,7 +50,7 @@ extern     CompViewerClient g_CompClient;
 // it should set the exit flag in the parameters to allow the tread to quit
 //
 
-unsigned int    _stdcall BC7ThreadProcEncode(void* param)
+unsigned int BC7ThreadProcEncode(void* param)
 {
     BC7EncodeThreadParam *tp = (BC7EncodeThreadParam*)param;
     
@@ -62,7 +61,10 @@ unsigned int    _stdcall BC7ThreadProcEncode(void* param)
             tp->encoder->CompressBlock(tp->in, tp->out);
             tp->run = FALSE;
         }
-        Sleep(0);
+
+        using namespace chrono;
+
+        std::this_thread::sleep_for(0ms);
     }
     
     return 0;
@@ -209,26 +211,26 @@ CCodec_BC7::~CCodec_BC7()
             }
 
             // Now wait for all threads to have exited
-            if(m_LiveThreads > 0)
+            if (m_LiveThreads > 0)
             {
-                WaitForMultipleObjects(m_LiveThreads,
-                                       m_EncodingThreadHandle,
-                                       true,
-                                       INFINITE);
+                for (DWORD dwThread = 0; dwThread < m_LiveThreads; dwThread++)
+                {
+                    std::thread& curThread = m_EncodingThreadHandle[dwThread];
+
+                    curThread.join();
+                }
             }
 
+            for (unsigned int i = 0; i < m_LiveThreads; i++)
+            {
+                std::thread& curThread = m_EncodingThreadHandle[i];
+            
+                curThread = std::thread();
+            }
+
+            delete[] m_EncodingThreadHandle;
         } // MultiThreading
 
-        for(int i=0; i < m_LiveThreads; i++)
-        {
-            if(m_EncodingThreadHandle[i])
-            {
-                CloseHandle(m_EncodingThreadHandle[i]);
-            }
-            m_EncodingThreadHandle[i] = 0;
-        }
-
-        delete[] m_EncodingThreadHandle;
         m_EncodingThreadHandle = NULL;
 
         if (m_EncodeParameterStorage)
@@ -287,7 +289,7 @@ CodecError CCodec_BC7::InitializeBC7Library()
             return CE_Unknown;
         }
 
-        m_EncodingThreadHandle = new HANDLE[m_NumEncodingThreads];
+        m_EncodingThreadHandle = new std::thread[m_NumEncodingThreads];
         if(!m_EncodingThreadHandle)
         {
             delete[] m_EncodeParameterStorage;
@@ -334,28 +336,22 @@ CodecError CCodec_BC7::InitializeBC7Library()
 
         }
 
-        // Create the encoding threads in the suspended state
-        for(i=0; i<m_NumEncodingThreads; i++)
+        // Create the encoding threads
+        for (i = 0; i<m_NumEncodingThreads; i++)
         {
-            m_EncodingThreadHandle[i] = (HANDLE)_beginthreadex(NULL,
-                                               0,
-                                               BC7ThreadProcEncode,
-                                               (void*)&m_EncodeParameterStorage[i],
-                                               CREATE_SUSPENDED,
-                                               NULL);
-            if(m_EncodingThreadHandle[i])
-            {
-                m_EncodeParameterStorage[i].encoder = m_encoder[i];
-                // Inform the thread that at the moment it doesn't have any work to do
-                // but that it should wait for some and not exit
-                m_EncodeParameterStorage[i].run = FALSE;
-                m_EncodeParameterStorage[i].exit = FALSE;
-                // Start the thread and have it wait for work
-                ResumeThread(m_EncodingThreadHandle[i]);
-                m_LiveThreads++;
-            }
-         }
+            // Initialize thread parameters.
+            m_EncodeParameterStorage[i].encoder = m_encoder[i];
+            // Inform the thread that at the moment it doesn't have any work to do
+            // but that it should wait for some and not exit
+            m_EncodeParameterStorage[i].run = FALSE;
+            m_EncodeParameterStorage[i].exit = FALSE;
 
+            m_EncodingThreadHandle[i] = std::thread(
+                BC7ThreadProcEncode,
+                (void*)&m_EncodeParameterStorage[i]
+            );
+            m_LiveThreads++;
+        }
 
         // Create single decoder instance
         m_decoder = new BC7BlockDecoder();
@@ -380,7 +376,7 @@ CodecError CCodec_BC7::EncodeBC7Block(double  in[BC7_BLOCK_PIXELS][MAX_DIMENSION
 {
 if (m_Use_MultiThreading)
 {
-    WORD   threadIndex;
+    CMP_WORD   threadIndex;
 
     if((!m_LibraryInitialized) ||
         (!in) ||
@@ -390,7 +386,7 @@ if (m_Use_MultiThreading)
     }
 
     // Loop and look for an available thread
-    BOOL found = FALSE;
+    CMP_BOOL found = FALSE;
     threadIndex = m_LastThread;
     while (found == FALSE)
     {
@@ -450,21 +446,23 @@ CodecError CCodec_BC7::FinishBC7Encoding(void)
 
 if (m_Use_MultiThreading)
 {
-        // Wait for all the live threads to finish any current work
-        for (DWORD i = 0; i < m_LiveThreads; i++)
+    // Wait for all the live threads to finish any current work
+    for (DWORD i = 0; i < m_LiveThreads; i++)
+    {
+        using namespace chrono;
+
+        // If a thread is in the running state then we need to wait for it to finish
+        // its work from the producer
+        while (m_EncodeParameterStorage[i].run == TRUE)
         {
-            // If a thread is in the running state then we need to wait for it to finish
-            // its work from the producer
-            while (m_EncodeParameterStorage[i].run == TRUE)
-            {
-                Sleep(1);
-            }
+            std::this_thread::sleep_for(1ms);
         }
+    }
 }
 return CE_OK;
 }
 
-CodecError CCodec_BC7::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+CodecError CCodec_BC7::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     assert(bufferIn.GetWidth()    == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
@@ -593,7 +591,7 @@ CodecError CCodec_BC7::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut,
 }
 
 
-CodecError CCodec_BC7::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+CodecError CCodec_BC7::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
@@ -667,13 +665,13 @@ CodecError CCodec_BC7::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOu
 }
 
 // Not implemented
-CodecError CCodec_BC7::Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+CodecError CCodec_BC7::Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     return CE_OK;
 }
 
 // Not implemented
-CodecError CCodec_BC7::Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+CodecError CCodec_BC7::Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
    return CE_OK;
 }

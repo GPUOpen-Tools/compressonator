@@ -36,6 +36,8 @@
 #include <assert.h>
 #include "debug.h"
 
+using namespace CMP;
+
 extern CodecType GetCodecType(CMP_FORMAT format);
 extern CMP_ERROR GetError(CodecError err);
 #ifdef ENABLE_MAKE_COMPATIBLE_API
@@ -44,8 +46,8 @@ extern CMP_ERROR Byte2Float(CMP_HALF* hfBlock, CMP_BYTE* cBlock, CMP_DWORD dwBlo
 extern CMP_ERROR Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, CMP_Texture* srcTexture, CMP_FORMAT destFormat, const CMP_CompressOptions* pOptions);
 #endif
 extern CMP_ERROR CheckTexture(const CMP_Texture* pTexture, bool bSource);
-extern CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2, CodecType destType);
-extern CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2, CodecType destType);
+extern CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2, CodecType destType);
+extern CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2, CodecType destType);
 
 #ifdef _LOCAL_DEBUG
 char    DbgTracer::buff[MAX_DBGBUFF_SIZE];
@@ -411,8 +413,7 @@ void CMP_PrepareCMPSourceForIMG_Destination(CMP_Texture* pDstTexture, CMP_FORMAT
 }
 #endif
 
-
-CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(("-------> pSourceTexture [%x] pDestTexture [%x] pOptions [%x]",pSourceTexture, pDestTexture, pOptions));
@@ -421,10 +422,11 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
     if(tc_err != CMP_OK)
         return tc_err;
 
-#if defined(WIN32) || defined(_WIN64)
-    assert(!IsBadReadPtr(pSourceTexture->pData, pSourceTexture->dwDataSize));
-    assert(!IsBadWritePtr(pDestTexture->pData, pDestTexture->dwDataSize));
-#endif // !WIN32 && !_WIN64
+//#ifdef _WIN32
+//    assert(!IsBadReadPtr(pSourceTexture->pData, pSourceTexture->dwDataSize));
+//    assert(!IsBadWritePtr(pDestTexture->pData, pDestTexture->dwDataSize));
+//#endif 
+
 
 #ifdef ENABLE_MAKE_COMPATIBLE_API
     bool srcFloat = IsFloatFormat(pSourceTexture->format);

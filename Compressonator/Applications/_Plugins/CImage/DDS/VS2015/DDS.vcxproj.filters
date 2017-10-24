@@ -10,57 +10,57 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\DDS.cpp">
+    <ClCompile Include="../DDS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\DDS_DX10.cpp">
+    <ClCompile Include="../DDS_DX10.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\DDS_File.cpp">
+    <ClCompile Include="../DDS_File.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\DDS_Helpers.cpp">
+    <ClCompile Include="../DDS_Helpers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\stdafx.cpp">
+    <ClCompile Include="../stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\MIPS.cpp">
+    <ClCompile Include="../../../Common/MIPS.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\TC_PluginInternal.cpp">
+    <ClCompile Include="../../../Common/TC_PluginInternal.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\UtilFuncs.cpp">
+    <ClCompile Include="../../../Common/UtilFuncs.cpp">
       <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\DDS.h">
+    <ClInclude Include="../DDS.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\DDS_DX10.h">
+    <ClInclude Include="../DDS_DX10.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\DDS_File.h">
+    <ClInclude Include="../DDS_File.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\DDS_Helpers.h">
+    <ClInclude Include="../DDS_Helpers.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\stdafx.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\MIPS.h">
+    <ClInclude Include="../../../Common/MIPS.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\TC_PluginAPI.h">
+    <ClInclude Include="../stdafx.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\TC_PluginInternal.h">
+    <ClInclude Include="../../../Common/TC_PluginAPI.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\UtilFuncs.h">
+    <ClInclude Include="../../../Common/TC_PluginInternal.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="../../../Common/UtilFuncs.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>

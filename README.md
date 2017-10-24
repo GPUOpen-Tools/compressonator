@@ -144,3 +144,21 @@ If building in Debug_MD configuration, please make sure the working directory is
 
 The GUI tool has dependencies on Qt(V5.7 and up) - These file are copied  to the Compressonator.exe folder when the project solution builds and run "CopyFiles.bat".
 
+
+Build Instructions for Linux Ubuntu 16.04 or 14.04 (For command line tool only)
+------------------------------------------------------
+
+**Note**: For all build, Do NOT move the shell/batch scripts provided (run in the same folder (Compressonator/Applications/CompressonatorCLI/Make/))
+
+For Ubuntu build (****only v14.04LTS and v16.04LTS build tested, WSL is tested as well):
+
+run initsetup_ubuntu.sh to install the required packages for command line app:
+- cmake at least 2.8.12
+- gcc-6 and g++-6 (v6.3.0) 
+- glew and opengl (libglew-dev libegl1-mesa-dev)
+- qt5 at least 5.5.1
+- openexr v2.2
+- opencv v2.49
+- Boost at least 1.59 (filesystem and system lib)
+   
+run buildCLI_ubuntu_cmake.sh to build (or rebuild) all the dependencies libraries with CompressonatorCLI executable generated in the same folder

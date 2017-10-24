@@ -27,7 +27,6 @@
 #ifndef COMPRESS_H
 #define COMPRESS_H
 
-#include <Windows.h>
 #include "Codec.h"
 #include "float.h"
 
@@ -42,7 +41,7 @@
         _controlfp(nCurrentFP, _MCW_EM);
     #else // >= 1400
     #define DISABLE_FP_EXCEPTIONS \
-        UINT nCurrentFP = 0; \
+        unsigned int nCurrentFP = 0; \
         _controlfp_s(&nCurrentFP, FP_EXCEPTION_MASK, _MCW_EM);
     #define RESTORE_FP_EXCEPTIONS \
         _controlfp_s(NULL, nCurrentFP, _MCW_EM);
@@ -60,15 +59,15 @@ was #define THREADED_COMPRESS
 #define THREADED_COMPRESS 
 
 #ifdef THREADED_COMPRESS
-#define MAX_THREADS 64
-static DWORD GetProcessorCount()
+#include <thread>
+
+#define MAX_THREADS 64u
+static CMP_DWORD GetProcessorCount()
 {
-    SYSTEM_INFO systemInfo;
-    GetSystemInfo(&systemInfo);
-    return systemInfo.dwNumberOfProcessors;
+    return std::thread::hardware_concurrency();
 }
 
-const DWORD f_dwProcessorCount = GetProcessorCount();
+const CMP_DWORD f_dwProcessorCount = GetProcessorCount();
 #endif
 
 #endif // !COMPRESS_H

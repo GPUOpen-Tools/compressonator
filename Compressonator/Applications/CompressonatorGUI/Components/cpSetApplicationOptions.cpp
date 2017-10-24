@@ -58,8 +58,9 @@ m_parent(parent)
     }
 
     connect(&g_Application_Options, SIGNAL(ImageViewDecodeChanged(QVariant &)), this, SLOT(onImageViewDecodeChanged(QVariant &)));
+#ifdef USE_COMPUTE
     connect(&g_Application_Options, SIGNAL(ImageEncodeChanged(QVariant &)), this, SLOT(onImageEncodeChanged(QVariant &)));
-
+#endif
     m_theController->setObject(&g_Application_Options, true);
     m_layoutV->addWidget(m_theController);
 
@@ -181,6 +182,12 @@ void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem *item)
         m_infotext->append("<b>Close all image views prior to processing</b>");
         m_infotext->append("This will free up system memory, to avoid out of memory issues when processing large files");
     }
+    else if (text.compare(APP_Mouse_click_on_Project_icon_to_view_image) == 0)
+    {
+        m_infotext->append("<b>Mouse click on Project icon to view image</b>");
+        m_infotext->append("Mouse click on \"Project\" tree icons will display a image view, clicking on the items text will update the \"Properties\" page only");
+    }
+
 
 }
 

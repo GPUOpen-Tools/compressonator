@@ -134,7 +134,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "KHR/khrplatform.h"
 #define KTX_OPENGL 1
 #if KTX_OPENGL
-
+    #ifndef _WIN32
+      #define KTX_USE_GETPROC 1
+    #endif
 	#ifdef _WIN32
 	  #include <windows.h>
 	  #include <GL/glew.h>

@@ -54,7 +54,7 @@ CodecError CCodec_ETC::CompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP
     Color888_t srcRGB[4][4];
     for(int y = 0; y < 4; y++)
     {
-        for(DWORD x = 0; x < 4; x++)
+        for(CMP_DWORD x = 0; x < 4; x++)
         {
             srcRGB[x][y].red = rgbBlock[(x*16) + (y*4) + RGBA8888_CHANNEL_R];
             srcRGB[x][y].green = rgbBlock[(x*16) + (y*4) + RGBA8888_CHANNEL_G];
@@ -79,9 +79,9 @@ void CCodec_ETC::DecompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWO
 
     atiDecodeRGBBlockETC((unsigned char *) &destRGB, uiCompressedBlockHi, uiCompressedBlockLo);
 
-    for(DWORD y = 0; y < 4; y++)
+    for(CMP_DWORD y = 0; y < 4; y++)
     {
-        for(DWORD x = 0; x < 4; x++)
+        for(CMP_DWORD x = 0; x < 4; x++)
         {
             rgbBlock[(x*16) + (y*4) + RGBA8888_CHANNEL_R] = destRGB[x][y].red;
             rgbBlock[(x*16) + (y*4) + RGBA8888_CHANNEL_G] = destRGB[x][y].green;
@@ -95,7 +95,7 @@ CodecError CCodec_ETC::CompressRGBABlock_ExplicitAlpha(CMP_BYTE rgbaBlock[BLOCK_
 {
     CMP_BYTE alphaBlock[BLOCK_SIZE_4X4];
     for(CMP_DWORD i = 0; i < 16; i++)
-        alphaBlock[i] = static_cast<CMP_BYTE>(((DWORD*)rgbaBlock)[i] >> RGBA8888_OFFSET_A);
+        alphaBlock[i] = static_cast<CMP_BYTE>(((CMP_DWORD*)rgbaBlock)[i] >> RGBA8888_OFFSET_A);
 
     CodecError err = CompressExplicitAlphaBlock(alphaBlock, &compressedBlock[ATC_OFFSET_ALPHA]);
     if(err != CE_OK)
@@ -112,14 +112,14 @@ void CCodec_ETC::DecompressRGBABlock_ExplicitAlpha(CMP_BYTE rgbaBlock[BLOCK_SIZE
     DecompressRGBBlock(rgbaBlock, &compressedBlock[ATC_OFFSET_RGB]);
 
     for(CMP_DWORD i = 0; i < 16; i++)
-        ((DWORD*)rgbaBlock)[i] = (alphaBlock[i] << RGBA8888_OFFSET_A) | (((DWORD*)rgbaBlock)[i] & ~(BYTE_MASK << RGBA8888_OFFSET_A));
+        ((CMP_DWORD*)rgbaBlock)[i] = (alphaBlock[i] << RGBA8888_OFFSET_A) | (((CMP_DWORD*)rgbaBlock)[i] & ~(BYTE_MASK << RGBA8888_OFFSET_A));
 }
 
 CodecError CCodec_ETC::CompressRGBABlock_InterpolatedAlpha(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[4])
 {
     CMP_BYTE alphaBlock[BLOCK_SIZE_4X4];
     for(CMP_DWORD i = 0; i < 16; i++)
-        alphaBlock[i] = static_cast<CMP_BYTE>(((DWORD*)rgbaBlock)[i] >> RGBA8888_OFFSET_A);
+        alphaBlock[i] = static_cast<CMP_BYTE>(((CMP_DWORD*)rgbaBlock)[i] >> RGBA8888_OFFSET_A);
 
     CodecError err = CompressInterpolatedAlphaBlock(alphaBlock, &compressedBlock[ATC_OFFSET_ALPHA]);
     if(err != CE_OK)
@@ -136,7 +136,7 @@ void CCodec_ETC::DecompressRGBABlock_InterpolatedAlpha(CMP_BYTE rgbaBlock[BLOCK_
     DecompressRGBBlock(rgbaBlock, &compressedBlock[ATC_OFFSET_RGB]);
 
     for(CMP_DWORD i = 0; i < 16; i++)
-        ((DWORD*)rgbaBlock)[i] = (alphaBlock[i] << RGBA8888_OFFSET_A) | (((DWORD*)rgbaBlock)[i] & ~(BYTE_MASK << RGBA8888_OFFSET_A));
+        ((CMP_DWORD*)rgbaBlock)[i] = (alphaBlock[i] << RGBA8888_OFFSET_A) | (((CMP_DWORD*)rgbaBlock)[i] & ~(BYTE_MASK << RGBA8888_OFFSET_A));
 }
 
 #define EXPLICIT_ALPHA_PIXEL_MASK 0xf
@@ -168,8 +168,8 @@ void CCodec_ETC::DecompressExplicitAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4
 
 CodecError CCodec_ETC::CompressInterpolatedAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2])
 {
-    BYTE nEndpoints[2][2];
-    BYTE nIndices[2][BLOCK_SIZE_4X4];
+    CMP_BYTE nEndpoints[2][2];
+    CMP_BYTE nIndices[2][BLOCK_SIZE_4X4];
     float fError8 = CompBlock1X(alphaBlock, BLOCK_SIZE_4X4, nEndpoints[0], nIndices[0], 8, false, m_bUseSSE2, 8, 0, true);
     float fError6 = (fError8 == 0.f) ? FLT_MAX : CompBlock1X(alphaBlock, BLOCK_SIZE_4X4, nEndpoints[1], nIndices[1], 6, true, m_bUseSSE2, 8, 0, true);
     if(fError8 <= fError6)
@@ -180,7 +180,7 @@ CodecError CCodec_ETC::CompressInterpolatedAlphaBlock(CMP_BYTE alphaBlock[BLOCK_
     return CE_OK;
 }
 
-void CCodec_ETC::EncodeAlphaBlock(CMP_DWORD compressedBlock[2], BYTE nEndpoints[2], BYTE nIndices[BLOCK_SIZE_4X4])
+void CCodec_ETC::EncodeAlphaBlock(CMP_DWORD compressedBlock[2], CMP_BYTE nEndpoints[2], CMP_BYTE nIndices[BLOCK_SIZE_4X4])
 {
     compressedBlock[0] = ((int)nEndpoints[0]) | (((int)nEndpoints[1])<<8);
     compressedBlock[1] = 0;

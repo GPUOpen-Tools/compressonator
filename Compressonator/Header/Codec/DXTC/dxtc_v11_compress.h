@@ -28,27 +28,40 @@
 //    Public Functions
 //
 
+#include <stdint.h>
+
+typedef uint8_t BYTE;
+typedef uint16_t WORD;
+typedef uint32_t DWORD;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void __cdecl DXTCV11CompressBlockSSE(DWORD *block_32, DWORD *block_dxtc);
+void DXTCV11CompressBlockSSE(DWORD *block_32, DWORD *block_dxtc);
+
+#ifdef _WIN32
+#ifndef DISABLE_TESTCODE
 void __cdecl DXTCV11CompressBlockSSE2(DWORD *block_32, DWORD *block_dxtc);
+#endif
+#endif
 
 
-void __cdecl  DXTCV11CompressBlockSSEMinimal(DWORD *block_32, DWORD *block_dxtc);
-void __cdecl  DXTCV11CompressBlockMinimal(DWORD block_32[16], DWORD block_dxtc[2]);
+void DXTCV11CompressBlockSSEMinimal(DWORD *block_32, DWORD *block_dxtc);
+void DXTCV11CompressBlockMinimal(DWORD block_32[16], DWORD block_dxtc[2]);
+     
+void DXTCV11CompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2]);
+void DXTCV11CompressExplicitAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2]);
 
-void __cdecl DXTCV11CompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2]);
-void __cdecl DXTCV11CompressExplicitAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2]);
-
-
-#ifdef _WIN64
-void __cdecl DXTCV11CompressExplicitAlphaBlockMMX(BYTE block_8[16], DWORD block_dxtc[2]);
+#ifdef _WIN32
+#ifndef DISABLE_TESTCODE
+#if defined(_WIN64) || defined(__linux__)
+void DXTCV11CompressExplicitAlphaBlockMMX(BYTE block_8[16], DWORD block_dxtc[2]);
 #else
 void __fastcall DXTCV11CompressExplicitAlphaBlockMMX(BYTE block_8[16], DWORD block_dxtc[2]);
 #endif // !_WIN64
+#endif
+#endif //_WIN32
 
 #ifdef __cplusplus
 };

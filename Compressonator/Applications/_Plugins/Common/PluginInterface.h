@@ -31,16 +31,19 @@
 
 #include "PluginBase.h"
 #include "Texture.h"
-#include "pluginManager.h"
+#include "PluginManager.h"
 #include "MIPS.h"
 
-typedef DWORD_PTR TC_HANDLE;  ///< Generic Texture API handle
+typedef CMP_DWORD_PTR TC_HANDLE;  ///< Generic Texture API handle
 typedef TC_HANDLE HFILETYPE;  ///< Handle to a FileType.
 typedef TC_HANDLE HCODEC;     ///< Handle to a Codec.
 typedef TC_HANDLE HMIPPER;    ///< Handle to a Mipper.
 typedef TC_HANDLE HVIEWTYPE;  ///< \internal Handle to a ViewType.
 typedef TC_HANDLE HVIEW;      ///< \internal Handle to a View.
 
+#ifndef _WIN32
+typedef CMP_DWORD WNDPROC;
+#endif
 
 class PluginInterface_Image : PluginBase
 {
@@ -127,6 +130,18 @@ public:
 };
 
 
+class PluginInterface_3DModel : PluginBase
+{
+public:
+    PluginInterface_3DModel() {}
+    virtual ~PluginInterface_3DModel() {}
+    virtual int  TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
+    virtual int  CreateView(const char* pszFilename, CMP_LONG Width, CMP_LONG Height, void *HWND, void *pluginManager, void *msghandler, const char* pszFilename2 = NULL, CMP_Feedback_Proc pFeedbackProc = NULL) = 0;
+    virtual void CloseView()    = 0;
+    virtual bool RenderView()   = 0;
+    virtual void processMSG(void *message) = 0;
+};
+
 // Feature driven classes based on Base Plugin interface
 typedef PluginInterface_Codec*      (*PLUGIN_FACTORYFUNC_CODEC)();
 typedef PluginInterface_Image*      (*PLUGIN_FACTORYFUNC_IMAGE)();
@@ -135,4 +150,5 @@ typedef PluginInterface_Filters*    (*PLUGIN_FACTORYFUNC_FILTERS)();
 typedef PluginInterface_Compute*    (*PLUGIN_FACTORYFUNC_COMPUTE)();
 typedef PluginInterface_Compute2*   (*PLUGIN_FACTORYFUNC_COMPUTE2)();
 typedef PluginInterface_GPUDecode*  (*PLUGIN_FACTORYFUNC_GPUDECODE)();
+typedef PluginInterface_3DModel*    (*PLUGIN_FACTORYFUNC_3DMODEL)();
 #endif

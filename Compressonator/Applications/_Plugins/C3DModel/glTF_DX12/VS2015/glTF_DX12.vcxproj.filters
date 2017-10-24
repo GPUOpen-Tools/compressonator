@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{eef987de-c4d9-41e5-8a52-379ac257cfe7}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{58a56801-babd-4bed-9169-b541d4c6144b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{9971db28-de70-4870-89b0-9cc42696fe97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="d3dx12">
+      <UniqueIdentifier>{c217dc5d-7a6f-490d-a3c5-4cd11834c2ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AmdUtil">
+      <UniqueIdentifier>{c3bb155e-22c9-4fc0-a99f-660b9b494b53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AmdUtil\Source FIles">
+      <UniqueIdentifier>{e00fe23f-7091-4629-8309-e76f90ab52a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AmdUtil\Header Files">
+      <UniqueIdentifier>{978a135d-14ec-497b-88fd-50afad6068fc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Common\MIPS.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\TC_PluginInternal.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\UtilFuncs.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glTF_DX12.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\imgui\imgui_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AmdUtil\Camera.cpp">
+      <Filter>AmdUtil\Source FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AmdUtil\CommandListRingDX12.cpp">
+      <Filter>AmdUtil\Source FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AmdUtil\DynamicBufferRingDX12.cpp">
+      <Filter>AmdUtil\Source FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AmdUtil\Error.cpp">
+      <Filter>AmdUtil\Source FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AmdUtil\FenceDX12.cpp">
+      <Filter>AmdUtil\Source FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AmdUtil\glTF.cpp">
+      <Filter>AmdUtil\Source FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AmdUtil\GPUTimerDX12.cpp">
+      <Filter>AmdUtil\Source FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AmdUtil\ImguiDX12.cpp">
+      <Filter>AmdUtil\Source FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AmdUtil\KeyboardMouse.cpp">
+      <Filter>AmdUtil\Source FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AmdUtil\Misc.cpp">
+      <Filter>AmdUtil\Source FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AmdUtil\ResourceViewHeapsDX12.cpp">
+      <Filter>AmdUtil\Source FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AmdUtil\Ring.cpp">
+      <Filter>AmdUtil\Source FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AmdUtil\StaticConstantBufferPoolDX12.cpp">
+      <Filter>AmdUtil\Source FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AmdUtil\SwapChainDX12.cpp">
+      <Filter>AmdUtil\Source FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AmdUtil\Texture.cpp">
+      <Filter>AmdUtil\Source FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AmdUtil\UploadHeapDX12.cpp">
+      <Filter>AmdUtil\Source FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AmdUtil\StaticBufferPoolDX12.cpp">
+      <Filter>AmdUtil\Source FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glTF_DX12Device.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glTF_DX12Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\PluginManager.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\TextureIO.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half\half.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Common\MIPS.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\TC_PluginAPI.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\TC_PluginInternal.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\UtilFuncs.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\glTF_DX12.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\imgui\imconfig.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\imgui\imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\imgui\imgui_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\imgui\stb_rect_pack.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\imgui\stb_textedit.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\d3dx12\d3dx12.h">
+      <Filter>d3dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stdafx.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AmdUtil\CommandListRingDX12.h">
+      <Filter>AmdUtil\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AmdUtil\DynamicBufferRingDX12.h">
+      <Filter>AmdUtil\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AmdUtil\FenceDX12.h">
+      <Filter>AmdUtil\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AmdUtil\Error.h">
+      <Filter>AmdUtil\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AmdUtil\glTF.h">
+      <Filter>AmdUtil\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AmdUtil\GPUTimerDX12.h">
+      <Filter>AmdUtil\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AmdUtil\ImguiDX12.h">
+      <Filter>AmdUtil\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AmdUtil\KeyboardMouse.h">
+      <Filter>AmdUtil\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AmdUtil\Misc.h">
+      <Filter>AmdUtil\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AmdUtil\ResourceViewHeapsDX12.h">
+      <Filter>AmdUtil\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AmdUtil\Ring.h">
+      <Filter>AmdUtil\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AmdUtil\SwapChainDX12.h">
+      <Filter>AmdUtil\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AmdUtil\targetver.h">
+      <Filter>AmdUtil\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AmdUtil\Texture.h">
+      <Filter>AmdUtil\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AmdUtil\UploadHeapDX12.h">
+      <Filter>AmdUtil\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AmdUtil\Camera.h">
+      <Filter>AmdUtil\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AmdUtil\StaticConstantBufferPoolDX12.h">
+      <Filter>AmdUtil\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AmdUtil\StaticBufferPoolDX12.h">
+      <Filter>AmdUtil\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\glTF_DX12Device.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\glTF_DX12Renderer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\PluginInterface.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AmdUtil\FrameworkWindows.h">
+      <Filter>AmdUtil\Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\CopyFiles.bat">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

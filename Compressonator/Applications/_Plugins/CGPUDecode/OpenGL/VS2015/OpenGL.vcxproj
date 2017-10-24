@@ -40,7 +40,7 @@
     <ProjectName>GPUDecode_OpenGL</ProjectName>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)/Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
@@ -81,56 +81,56 @@
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="$(VCTargetsPath)/Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
@@ -170,7 +170,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Header\;..\..\..\..\..\Header\GPU_Decode;..\..\..\Common;..\..\..\..\..\Header\;..\..\..\..\..\Header\GPU_Decode;..\..\..\Common;..\;..\..\..\..\..\..\Common\Lib\Ext\glew\1.9.0\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../Header/;../../../../../Header/GPU_Decode;../../../Common;../../../../../Header/;../../../../../Header/GPU_Decode;../../../Common;../;../../../../../../Common/Lib/Ext/glew/1.9.0/include/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -179,7 +179,7 @@
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../../../../Common/lib/ext/glew/1.9.0/lib/x86</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
@@ -192,7 +192,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Header\;..\..\..\..\..\Header\GPU_Decode;..\..\..\Common;..\..\..\..\..\Header\;..\..\..\..\..\Header\GPU_Decode;..\..\..\Common;..\;..\..\..\..\..\..\Common\Lib\Ext\glew\1.9.0\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../Header/;../../../../../Header/GPU_Decode;../../../Common;../../../../../Header/;../../../../../Header/GPU_Decode;../../../Common;../;../../../../../../Common/Lib/Ext/glew/1.9.0/include/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -201,7 +201,7 @@
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../../../../Common/lib/ext/glew/1.9.0/lib/x86</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -213,7 +213,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Header\;..\..\..\..\..\Header\GPU_Decode;..\..\..\Common;..\..\..\..\..\Header\;..\..\..\..\..\Header\GPU_Decode;..\..\..\Common;..\;..\..\..\..\..\..\Common\Lib\Ext\glew\1.9.0\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../Header/;../../../../../Header/GPU_Decode;../../../Common;../../../../../Header/;../../../../../Header/GPU_Decode;../../../Common;../;../../../../../../Common/Lib/Ext/glew/1.9.0/include/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -221,7 +221,7 @@
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
-      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../../../../Common/lib/ext/glew/1.9.0/lib/x64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
@@ -233,7 +233,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Header\;..\..\..\..\..\Header\GPU_Decode;..\..\..\Common;..\..\..\..\..\Header\;..\..\..\..\..\Header\GPU_Decode;..\..\..\Common;..\;..\..\..\..\..\..\Common\Lib\Ext\glew\1.9.0\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../Header/;../../../../../Header/GPU_Decode;../../../Common;../../../../../Header/;../../../../../Header/GPU_Decode;../../../Common;../;../../../../../../Common/Lib/Ext/glew/1.9.0/include/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -241,7 +241,7 @@
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
-      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../../../../Common/lib/ext/glew/1.9.0/lib/x64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -256,7 +256,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Header\;..\..\..\..\..\Header\GPU_Decode;..\..\..\Common;..\..\..\..\..\Header\;..\..\..\..\..\Header\GPU_Decode;..\..\..\Common;..\;..\..\..\..\..\..\Common\Lib\Ext\glew\1.9.0\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../Header/;../../../../../Header/GPU_Decode;../../../Common;../../../../../Header/;../../../../../Header/GPU_Decode;../../../Common;../;../../../../../../Common/Lib/Ext/glew/1.9.0/include/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -267,7 +267,7 @@
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../../../../Common/lib/ext/glew/1.9.0/lib/x86</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
@@ -282,7 +282,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Header\;..\..\..\..\..\Header\GPU_Decode;..\..\..\Common;..\..\..\..\..\Header\;..\..\..\..\..\Header\GPU_Decode;..\..\..\Common;..\;..\..\..\..\..\..\Common\Lib\Ext\glew\1.9.0\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../Header/;../../../../../Header/GPU_Decode;../../../Common;../../../../../Header/;../../../../../Header/GPU_Decode;../../../Common;../;../../../../../../Common/Lib/Ext/glew/1.9.0/include/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -293,7 +293,7 @@
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../../../../Common/lib/ext/glew/1.9.0/lib/x86</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -308,7 +308,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Header\;..\..\..\..\..\Header\GPU_Decode;..\..\..\Common;..\..\..\..\..\Header\;..\..\..\..\..\Header\GPU_Decode;..\..\..\Common;..\;..\..\..\..\..\..\Common\Lib\Ext\glew\1.9.0\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../Header/;../../../../../Header/GPU_Decode;../../../Common;../../../../../Header/;../../../../../Header/GPU_Decode;../../../Common;../;../../../../../../Common/Lib/Ext/glew/1.9.0/include/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -318,7 +318,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../../../../Common/lib/ext/glew/1.9.0/lib/x64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
@@ -333,7 +333,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\..\..\Header\;..\..\..\..\..\Header\GPU_Decode;..\..\..\Common;..\..\..\..\..\Header\;..\..\..\..\..\Header\GPU_Decode;..\..\..\Common;..\;..\..\..\..\..\..\Common\Lib\Ext\glew\1.9.0\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../Header/;../../../../../Header/GPU_Decode;../../../Common;../../../../../Header/;../../../../../Header/GPU_Decode;../../../Common;../;../../../../../../Common/Lib/Ext/glew/1.9.0/include/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -343,27 +343,27 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../../../../Common/lib/ext/glew/1.9.0/lib/x64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\Source\GPU_Decode\GPU_DecodeBase.cpp" />
-    <ClCompile Include="..\..\..\Common\MIPS.cpp" />
-    <ClCompile Include="..\..\..\Common\TC_PluginInternal.cpp" />
-    <ClCompile Include="..\..\..\Common\UtilFuncs.cpp" />
-    <ClCompile Include="..\COpenGL.cpp" />
-    <ClCompile Include="..\GPU_OpenGL.cpp" />
+    <ClCompile Include="../../../../../Source/GPU_Decode/GPU_DecodeBase.cpp" />
+    <ClCompile Include="../../../Common/MIPS.cpp" />
+    <ClCompile Include="../../../Common/TC_PluginInternal.cpp" />
+    <ClCompile Include="../../../Common/UtilFuncs.cpp" />
+    <ClCompile Include="../COpenGL.cpp" />
+    <ClCompile Include="../GPU_OpenGL.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Common\MIPS.h" />
-    <ClInclude Include="..\..\..\Common\TC_PluginAPI.h" />
-    <ClInclude Include="..\..\..\Common\TC_PluginInternal.h" />
-    <ClInclude Include="..\..\..\Common\UtilFuncs.h" />
-    <ClInclude Include="..\COpenGL.h" />
-    <ClInclude Include="..\GPU_OpenGL.h" />
-    <ClInclude Include="..\shader.h" />
+    <ClInclude Include="../../../Common/MIPS.h" />
+    <ClInclude Include="../../../Common/TC_PluginAPI.h" />
+    <ClInclude Include="../../../Common/TC_PluginInternal.h" />
+    <ClInclude Include="../../../Common/UtilFuncs.h" />
+    <ClInclude Include="../COpenGL.h" />
+    <ClInclude Include="../GPU_OpenGL.h" />
+    <ClInclude Include="../shader.h" />
   </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Import Project="$(VCTargetsPath)/Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>

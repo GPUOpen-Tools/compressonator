@@ -25,7 +25,6 @@
 
 #include <stdarg.h>
 #include <stdio.h>
-#include <windows.h>
 
 #ifdef _LOCAL_DEBUG
 

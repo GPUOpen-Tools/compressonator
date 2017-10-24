@@ -39,11 +39,13 @@
 
 typedef struct _TC_PluginVersion
 {
+#ifdef _WIN32
    GUID  guid;
-   DWORD dwAPIVersionMajor;         // Do not load plugin with greater API major version than app
-   DWORD dwAPIVersionMinor;
-   DWORD dwPluginVersionMajor;
-   DWORD dwPluginVersionMinor;
+#endif
+   CMP_DWORD dwAPIVersionMajor;         // Do not load plugin with greater API major version than app
+   CMP_DWORD dwAPIVersionMinor;
+   CMP_DWORD dwPluginVersionMajor;
+   CMP_DWORD dwPluginVersionMinor;
 } TC_PluginVersion;
 
 /// Error codes returned by application & plugin functions.

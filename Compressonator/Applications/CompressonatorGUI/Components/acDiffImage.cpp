@@ -9,6 +9,8 @@ acDiffImage::acDiffImage(QWidget *parent)
 
 void acDiffImage::Init(const QString & title, const QString & productName)
 {
+    Q_UNUSED(productName)
+
     // Set the dialog title:
     setWindowTitle(title);
     resize(400,120);

@@ -55,9 +55,11 @@
 #include "cpNewProject.h"
 #include "TextureIO.h"
 
+// JSon 
+#include "json\json.h"
 
 
-#define    MAX_PROJECTVIEW_COLUMNS               2     // Project view has 2 columns to view
+#define    MAX_PROJECTVIEW_COLUMNS               3     // Project view columns to view
 
 
 #define     DIFFERENCE_IMAGE_TXT "Difference:"
@@ -129,9 +131,15 @@ public:
     QString GetSourceFileNamePath(QTreeWidgetItem *item);
     QString GetDestinationFileNamePath(QTreeWidgetItem *item);
 
+    void showProgressDialog(QString header);
+    void hideProgressDialog();
+
     void Tree_AddRootNode();
-    QTreeWidgetItem *Tree_AddImageFile(QString filePathName, int index, C_Source_Image **m_dataout);
+    QTreeWidgetItem *Tree_AddImageFile(QString filePathName, int index, C_Source_Info **m_dataout);
     void Tree_AddCompressFile(QTreeWidgetItem *parent, QString description, bool checkable, bool checked, int levelType, C_Destination_Options *m_data);
+    void Tree_Add3DModelImageFiles(QTreeWidgetItem *ParentItem, QString filePathName, bool checkable, bool checked, int levelType, CMP_Feedback_Proc pFeedbackProc = NULL);
+    void Tree_Add3DSubModelFile(QTreeWidgetItem *ParentItem, QString filePathName);
+
     void AddSettingtoEmptyTree();
 
     // Changes the Icon for the item if file exists or not return true if file exists
@@ -166,6 +174,7 @@ public:
     QAction *actCompressProjectFiles;
     QAction *actSeperator;
     QAction *actViewImageDiff;
+    QAction *actView3DModelDiff;
     QAction *actRemoveImage;
 
     // Tracks Compressed image items user has clicked on in project view, Null if not on item
@@ -178,7 +187,8 @@ public:
     cpNewProject *m_newProjectwindow;
     QElapsedTimer m_elapsedTimer;
 
-    QStringList   m_ImagesinProjectTrees;
+    QStringList     m_ImagesinProjectTrees;
+    bool            m_clicked_onIcon;           // User clicked on the ICON of a treeview item
 
 Q_SIGNALS:
 
@@ -187,6 +197,7 @@ Q_SIGNALS:
     void DeleteImageView(QString &fileName);
 
     void ViewImageFileDiff(C_Destination_Options *m_data, QString &file1, QString &file2);
+    void View3DModelFileDiff(C_3D_Source_Info *m_data, QString &file1, QString &file2);
 
     void DeleteImageViewDiff(QString &fileName);
 
@@ -233,13 +244,14 @@ void openNewProjectFile();
 void compressProjectFiles(QFile *file);
 void viewImageDiff();
 void viewDiffImageFromChild();
+void viewDiff3DModelFromChild();
 void removeSelectedImage();
 void openContainingFolder();
 void copyFullPath();
 
 void onCustomContextMenu(const QPoint &point);
 
-void onTreeMousePress(QMouseEvent  *event);
+void onTreeMousePress(QMouseEvent  *event, bool onIcon);
 void onTreeKeyPress(QKeyEvent  *event);
 
 void onImageLoadStart();

@@ -31,8 +31,13 @@
 #include "TC_PluginInternal.h"
 #include "MIPS.h"
 
+#ifdef _WIN32
 #include "ddraw.h"
 #include "d3d9types.h"
+#else
+#include "TextureIO.h"
+#endif
+
 #include "MIPS.h"
 #include "Compressonator.h"
 #include "DDS.h"
@@ -297,8 +302,8 @@ TC_PluginError SaveDDS_RGB888(FILE* pFile, const MipSet* pMipSet)
     {
         for(int nMipLevel = 0 ; nMipLevel < pMipSet->m_nMipLevels ; nMipLevel++)
         {
-            BYTE* pData = DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData;
-            BYTE* pEnd = pData + DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_dwLinearSize;
+            CMP_BYTE* pData = DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData;
+            CMP_BYTE* pEnd = pData + DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_dwLinearSize;
             while(pData < pEnd)
             {
                 fwrite(pData, 3, 1, pFile);
@@ -336,8 +341,8 @@ TC_PluginError SaveDDS_ARGB8888(FILE* pFile, const MipSet* pMipSet)
     for(int nSlice = 0; nSlice < nSlices; nSlice++)
         for(int nMipLevel = 0 ; nMipLevel < pMipSet->m_nMipLevels ; nMipLevel++)
         {
-                BYTE* pbData = DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData;
-                BYTE temp;
+                CMP_BYTE* pbData = DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData;
+                CMP_BYTE temp;
                 int i = 0;
                 int height = DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_nHeight;
                 int width = DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_nWidth;

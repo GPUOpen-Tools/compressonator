@@ -31,8 +31,11 @@
 #include "TC_PluginInternal.h"
 #include "MIPS.h"
 
+#ifdef _WIN32
 #include "ddraw.h"
 #include "d3d9types.h"
+#endif
+
 #include "MIPS.h"
 #include "Compressonator.h"
 #include "DDS.h"
@@ -42,7 +45,7 @@
 
 
 CMIPS *DDS_CMips = NULL;
-const TCHAR* g_pszFilename;
+const char* g_pszFilename;
 
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_DDS)
@@ -54,6 +57,7 @@ void *make_Plugin_DDS() { return new Plugin_DDS; }
 
 Plugin_DDS::Plugin_DDS()
 { 
+#ifdef _WIN32
     HRESULT hr;
     // Initialize COM (needed for WIC)
     if( FAILED( hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED) ) )
@@ -61,6 +65,7 @@ Plugin_DDS::Plugin_DDS()
         if (DDS_CMips)
             DDS_CMips->PrintError("Failed to initialize COM (%08X)\n", hr);
     } 
+#endif
 }
 
 Plugin_DDS::~Plugin_DDS()
@@ -79,7 +84,9 @@ int Plugin_DDS::TC_PluginSetSharedIO(void *Shared)
 
 int Plugin_DDS::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
 { 
+#ifdef _WIN32
     pPluginVersion->guid                    = g_GUID;
+#endif
     pPluginVersion->dwAPIVersionMajor        = TC_API_VERSION_MAJOR;
     pPluginVersion->dwAPIVersionMinor        = TC_API_VERSION_MINOR;
     pPluginVersion->dwPluginVersionMajor    = TC_PLUGIN_VERSION_MAJOR;
@@ -87,7 +94,7 @@ int Plugin_DDS::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
     return 0;
 }
 
-int Plugin_DDS::TC_PluginFileLoadTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture)
+int Plugin_DDS::TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *srcTexture)
 {
 #ifdef USE_DIRECTXTEX
     // Open DDS file for decompression
@@ -117,8 +124,9 @@ int Plugin_DDS::TC_PluginFileLoadTexture(const TCHAR* pszFilename, CMP_Texture *
     return 0;
 }
 
-int Plugin_DDS::TC_PluginFileSaveTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture)
+int Plugin_DDS::TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *srcTexture)
 {
+#ifdef _WIN32
     HRESULT hr = S_OK;
 #ifdef USE_DIRECTXTEX
     Image img;
@@ -149,9 +157,13 @@ int Plugin_DDS::TC_PluginFileSaveTexture(const TCHAR* pszFilename, CMP_Texture *
         hr = -1;
 #endif
     return hr==S_OK?0:-1; // np: need to fix this : make all pligins return long type!
+#else
+    return 0;
+#endif
+
 }
 
-int Plugin_DDS::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipSet)
+int Plugin_DDS::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSet)
 {
 
 #ifdef USE_DIRECTXTEX
@@ -191,14 +203,15 @@ int Plugin_DDS::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
 
    g_pszFilename = pszFilename;
    FILE* pFile = NULL;
-   if(_tfopen_s(&pFile, pszFilename, _T("rb")) != 0 || pFile == NULL)
+   pFile = fopen(pszFilename, ("rb"));
+   if(pFile == NULL)
     {
         DDS_CMips->PrintError("Error [%x]: DDS Plugin Failed to load texture file %s\n",IDS_ERROR_FILE_OPEN,pszFilename);
         return PE_Unknown;
     }
 
-    DWORD dwFileHeader;
-    fread(&dwFileHeader ,sizeof(DWORD), 1, pFile);
+    CMP_DWORD dwFileHeader;
+    fread(&dwFileHeader ,sizeof(CMP_DWORD), 1, pFile);
     if(dwFileHeader != DDS_HEADER)
     {
         fclose(pFile);
@@ -275,7 +288,7 @@ int Plugin_DDS::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
 #endif
 }
 
-int Plugin_DDS::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipSet)
+int Plugin_DDS::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSet)
 {
    assert(pszFilename);
    assert(pMipSet);
@@ -296,13 +309,13 @@ int Plugin_DDS::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
    assert(pMipSet);
 
    FILE* pFile = NULL;
-   if(_tfopen_s(&pFile, pszFilename, _T("wb")) != 0 || pFile == NULL)
+   pFile = fopen( pszFilename, ("wb"));
+   if(pFile == NULL)
     {
-        Error(PLUGIN_NAME, EL_Error, IDS_ERROR_FILE_OPEN, pszFilename);
         return PE_Unknown;
     }
 
-    fwrite(&DDS_HEADER ,sizeof(DWORD), 1, pFile);
+    fwrite(&DDS_HEADER ,sizeof(CMP_DWORD), 1, pFile);
 
     if(pMipSet->m_dwFourCC == FOURCC_G8)
         return SaveDDS_G8(pFile, pMipSet);

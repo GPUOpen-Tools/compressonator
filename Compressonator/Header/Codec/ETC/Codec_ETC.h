@@ -53,7 +53,7 @@ protected:
     void DecompressExplicitAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]);
     void DecompressInterpolatedAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]);
 
-    void EncodeAlphaBlock(CMP_DWORD compressedBlock[2], BYTE nEndpoints[2], BYTE nIndices[BLOCK_SIZE_4X4]);
+    void EncodeAlphaBlock(CMP_DWORD compressedBlock[2], CMP_BYTE nEndpoints[2], CMP_BYTE nIndices[BLOCK_SIZE_4X4]);
     void GetCompressedAlphaRamp(CMP_BYTE alpha[8], CMP_DWORD compressedBlock[2]);
 };
 #endif // !defined(_Codec_ETC_H_INCLUDED_)

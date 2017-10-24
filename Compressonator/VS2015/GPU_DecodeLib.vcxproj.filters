@@ -9,22 +9,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\GPU_Decode\GPU_Decode.cpp">
+    <ClCompile Include="../Source/GPU_Decode/GPU_Decode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\GPU_Decode\GPU_DecodeBase.cpp">
+    <ClCompile Include="../Source/GPU_Decode/GPU_DecodeBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Applications\_Plugins\Common\PluginInterface.h">
+    <ClInclude Include="../Header/GPU_Decode/GPU_Decode.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="../Header/GPU_Decode/GPU_DecodeBase.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="../Applications/_Plugins/Common/PluginInterface.h">
       <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\GPU_Decode\GPU_Decode.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\GPU_Decode\GPU_DecodeBase.h">
-      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -135,7 +135,9 @@ int Plugin_EXR::TC_PluginSetSharedIO(void* Shared)
 int Plugin_EXR::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
 { 
     //MessageBox(0,"TC_PluginGetVersion","Plugin_EXR",MB_OK);  
+#ifdef _WIN32
     pPluginVersion->guid                    = g_GUID;
+#endif
     pPluginVersion->dwAPIVersionMajor        = TC_API_VERSION_MAJOR;
     pPluginVersion->dwAPIVersionMinor        = TC_API_VERSION_MINOR;
     pPluginVersion->dwPluginVersionMajor    = TC_PLUGIN_VERSION_MAJOR;
@@ -143,7 +145,7 @@ int Plugin_EXR::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
     return 0;
 }
 
-int Plugin_EXR::TC_PluginFileLoadTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture)
+int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *srcTexture)
 {
 
     if (!boost::filesystem::exists( pszFilename )) return -1;
@@ -169,7 +171,7 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const TCHAR* pszFilename, CMP_Texture *
     return 0;
 }
 
-int Plugin_EXR::TC_PluginFileSaveTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture)
+int Plugin_EXR::TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *srcTexture)
 {
     int  image_width    = srcTexture->dwWidth;
     int  image_height    = srcTexture->dwHeight;
@@ -281,7 +283,7 @@ loadImage(const char fileName[],
         pMipSet->m_dwFourCC2 = 0;
         pMipSet->m_nMipLevels = 1;
 
-        BYTE *MipData = EXR_CMips->GetMipLevel(pMipSet, 0)->m_pbData;
+        CMP_BYTE *MipData = EXR_CMips->GetMipLevel(pMipSet, 0)->m_pbData;
 
         memcpy(MipData, srcTexture.pData, srcTexture.dwDataSize);
 
@@ -1118,7 +1120,7 @@ loadDeepTileImage(MultiPartInputFile &inmaster,
 
 }
 
-int Plugin_EXR::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipSet)
+int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSet)
 {
     if (!boost::filesystem::exists( pszFilename )) return -1;
 
@@ -1148,8 +1150,8 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
         if (!file.isComplete())
             return PE_Unknown;
 
-        DWORD dwWidth = file.levelWidth(0);
-        DWORD dwHeight = file.levelHeight(0);
+        CMP_DWORD dwWidth = file.levelWidth(0);
+        CMP_DWORD dwHeight = file.levelHeight(0);
 
         if (!EXR_CMips->AllocateMipSet(pMipSet, CF_Float16, TDT_ARGB, TT_2D, dwWidth, dwHeight, 1))
         {
@@ -1264,7 +1266,7 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipS
 
 
 
-int Plugin_EXR::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipSet)
+int Plugin_EXR::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSet)
 {
     if(!TC_PluginFileSupportsFormat(NULL, pMipSet))
     {
@@ -1316,7 +1318,7 @@ int Plugin_EXR::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipS
     return PE_OK;
 }
 
-bool _cdecl TC_PluginFileSupportsFormat(const HFILETYPE, const MipSet* pMipSet)
+bool TC_PluginFileSupportsFormat(const HFILETYPE, const MipSet* pMipSet)
 {
     assert(pMipSet);
     if(pMipSet == NULL)

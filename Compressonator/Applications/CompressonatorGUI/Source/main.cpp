@@ -69,6 +69,14 @@ void GetSupportedFileFormats(QList<QByteArray> &g_supportedFormats)
             if (!g_supportedFormats.contains(fformat))
                 g_supportedFormats.append(fformat);
         }
+        else
+            if (strcmp(g_pluginManager.getPluginType(i), "3DMODEL_DX12") == 0)
+            {
+                QByteArray bArray = g_pluginManager.getPluginName(i);
+                QByteArray fformat = bArray.toUpper();
+                if (!g_supportedFormats.contains(fformat))
+                    g_supportedFormats.append(fformat);
+            }
     }
 
     // Get a list of all Supported file formats from Qt Plugins
@@ -94,20 +102,22 @@ int main(int argc, char **argv)
 
     try
     {
+        QApplication app(argc, argv);
         QString dirPath = QApplication::applicationDirPath();
         QApplication::addLibraryPath(dirPath + "./plugins/platforms/");
         QApplication::addLibraryPath(dirPath + "./plugins/");
-        QApplication app(argc, argv);
 
         app.setWindowIcon(QIcon(":/CompressonatorGUI/Images/acompress-256.png"));
     
         // register the memory allocation failure event handler.
         //std::set_new_handler(appQtApplication::AppMemAllocFailureHandler);
 
-        /// connect the Qt application to the slots that handle the out of memory signals:
+        /*
+        // No longer used : Requires common-src-AMDTApplication/appQtApplication.cpp
+        // connect the Qt application to the slots that handle the out of memory signals:
         QObject::connect(qApp, SIGNAL(AppMemAllocFailureSignal()), qApp, SLOT(OnAppMemAllocFailureSignal()));
-
         QObject::connect(qApp, SIGNAL(ClientMemAllocFailureSignal()), qApp, SLOT(OnClientMemAllocFailureSignal()));
+        */
 
         //------------------------------------------------
         // Bug reporting
@@ -146,9 +156,9 @@ int main(int argc, char **argv)
         QDesktopWidget *desktop = new QDesktopWidget();
         mainComponents.resize(desktop->screenGeometry().width()*PERCENTAGE_OF_MONITOR_WIDTH_FOR_SCREEN, desktop->screenGeometry().height()*PERCENTAGE_OF_MONITOR_HEIGHT_FOR_SCREEN);
         mainComponents.show();
-    
+
         app.setStyleSheet(SEPERATOR_STYLE);
-      return app.exec();
+        return app.exec();
     }
     catch (std::exception &e)
     {

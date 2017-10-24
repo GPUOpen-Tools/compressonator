@@ -38,8 +38,8 @@
 #include <QtCore/qstring.h>
 #include <QtCore/qlist.h>
 #include <QtCore/qfileinfo.h>
-#include <QtGUI/qimage.h>
-#include <QtGUI/qcolor.h>
+#include <QtGui/qimage.h>
+#include <QtGui/qcolor.h>
 #endif
 
 #include "cpImageLoader.h"
@@ -48,10 +48,11 @@
 #include <opencv2/core/core.hpp>     
 #include <opencv2/imgproc/imgproc.hpp>  // Gaussian Blur
 #include <opencv2/highgui/highgui.hpp>  // OpenCV window I/O
-#include <QtMath>
+#include <QtCore/qmath.h>
 
-// {2438C059-CD7B-49AD-A626-FBAE37A059F5}
-static const GUID g_GUID_EXR = { 0x2438c059, 0xcd7b, 0x49ad, { 0xa6, 0x26, 0xfb, 0xae, 0x37, 0xa0, 0x59, 0xf5 } };
+#ifndef _WIN32
+#define MAX_PATH 260
+#endif
 
 #define TC_PLUGIN_VERSION_MAJOR	1
 #define TC_PLUGIN_VERSION_MINOR	0

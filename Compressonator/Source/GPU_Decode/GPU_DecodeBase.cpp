@@ -24,6 +24,8 @@
 //
 //=====================================================================
 
+#ifdef _WIN32
+#ifndef DISABLE_TESTCODE
 #include "Compressonator.h"
 #include "GPU_DecodeBase.h"
 #include "MIPS.h"
@@ -138,5 +140,6 @@ HRESULT RenderWindow::InitWindow(HINSTANCE hInstance, int width, int height,WNDP
 
     return S_OK;
 }
-
+#endif
+#endif
 

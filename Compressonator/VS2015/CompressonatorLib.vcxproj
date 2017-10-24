@@ -72,7 +72,7 @@
     <RootNamespace>CompressonatorLib</RootNamespace>
     <ProjectName>Compressonator</ProjectName>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)/Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -185,105 +185,105 @@
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="$(VCTargetsPath)/Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\Build\VS2015\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
-    <OutDir>..\Build\VS2015\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
-    <OutDir>..\Build\VS2015\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">
-    <OutDir>..\Build\VS2015\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\Build\VS2015\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
-    <OutDir>..\Build\VS2015\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
-    <OutDir>..\Build\VS2015\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
-    <OutDir>..\Build\VS2015\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IntDir>..\Build\VS2015\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
-    <IntDir>..\Build\VS2015\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
-    <IntDir>..\Build\VS2015\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">
-    <IntDir>..\Build\VS2015\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IntDir>..\Build\VS2015\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
-    <IntDir>..\Build\VS2015\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
-    <IntDir>..\Build\VS2015\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
-    <IntDir>..\Build\VS2015\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>$(ProjectName)_MTd</TargetName>
@@ -310,52 +310,52 @@
     <TargetName>$(ProjectName)_MDd_DLL</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\Build\VS2015\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
-    <OutDir>..\Build\VS2015\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
-    <OutDir>..\Build\VS2015\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
-    <OutDir>..\Build\VS2015\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\Build\VS2015\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
-    <OutDir>..\Build\VS2015\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
-    <OutDir>..\Build\VS2015\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
-    <OutDir>..\Build\VS2015\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IntDir>..\Build\VS2015\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
-    <IntDir>..\Build\VS2015\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
-    <IntDir>..\Build\VS2015\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
-    <IntDir>..\Build\VS2015\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IntDir>..\Build\VS2015\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
-    <IntDir>..\Build\VS2015\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
-    <IntDir>..\Build\VS2015\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
-    <IntDir>..\Build\VS2015\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetName>$(ProjectName)_MT</TargetName>
@@ -388,7 +388,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -417,7 +417,7 @@
       </ExportNamedFunctions>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Common\Lib\AMD\APPSDK\3-0\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
@@ -427,7 +427,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -437,7 +437,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>../CompressonatorLib.def</ModuleDefinitionFile>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Common\Lib\AMD\APPSDK\3-0\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CustomBuild>
       <Command>
@@ -466,7 +466,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -495,7 +495,7 @@
       </ExportNamedFunctions>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Common\Lib\AMD\APPSDK\3-0\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">
@@ -505,7 +505,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -515,7 +515,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>../CompressonatorLib.def</ModuleDefinitionFile>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Common\Lib\AMD\APPSDK\3-0\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CustomBuild>
       <Command>
@@ -544,7 +544,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -567,7 +567,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Common\Lib\AMD\APPSDK\3-0\lib\x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
@@ -577,7 +577,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -590,7 +590,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>../CompressonatorLib.def</ModuleDefinitionFile>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Common\Lib\AMD\APPSDK\3-0\lib\x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -608,7 +608,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -632,7 +632,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Common\Lib\AMD\APPSDK\3-0\lib\x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
@@ -642,7 +642,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -655,7 +655,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>../CompressonatorLib.def</ModuleDefinitionFile>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Common\Lib\AMD\APPSDK\3-0\lib\x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -676,7 +676,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -711,7 +711,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Common\Lib\AMD\APPSDK\3-0\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
@@ -724,7 +724,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -739,7 +739,7 @@
       <ImportLibrary>
       </ImportLibrary>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Common\Lib\AMD\APPSDK\3-0\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CustomBuild>
       <Command>
@@ -772,7 +772,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -807,7 +807,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Common\Lib\AMD\APPSDK\3-0\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
@@ -820,7 +820,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -835,7 +835,7 @@
       <ImportLibrary>
       </ImportLibrary>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Common\Lib\AMD\APPSDK\3-0\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CustomBuild>
       <Command>
@@ -867,7 +867,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -890,7 +890,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Common\Lib\AMD\APPSDK\3-0\lib\x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
@@ -902,7 +902,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -917,7 +917,7 @@
       <ImportLibrary>
       </ImportLibrary>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Common\Lib\AMD\APPSDK\3-0\lib\x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -937,7 +937,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -960,7 +960,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Common\Lib\AMD\APPSDK\3-0\lib\x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
@@ -972,7 +972,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Common\Src;..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half;..\..\Common\Lib\AMD\APPSDK\3-0\include;..\Header;..\Header\Codec;..\Header\Codec\BC7;..\Header\Codec\BC6H;..\Header\Codec\ASTC;..\Header\Codec\ASTC\ARM;..\Header\Codec\APC;..\Header\Codec\ATC;..\Header\Codec\ATI;..\Header\Codec\Block;..\Header\Codec\Buffer;..\Header\Codec\DXT;..\Header\Codec\DXTC;..\Header\Codec\ETC;..\Header\Codec\ETC\etcpack;..\Header\Codec\GT;..\Header\Internal;..\Utils;..\Source\Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -987,7 +987,7 @@
       <ImportLibrary>
       </ImportLibrary>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Common\Lib\AMD\APPSDK\3-0\lib\x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -999,7 +999,7 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="..\Source\Codec\DXTC\dxtc_v11_compress_64.asm">
+    <CustomBuild Include="../Source/Codec/DXTC/dxtc_v11_compress_64.asm">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ml64 /Fo "$(IntDir)%(Filename).obj" /c /Cp /Zi "%(FullPath)"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">ml64 /Fo "$(IntDir)%(Filename).obj" /c /Cp /Zi "%(FullPath)"</Command>
@@ -1034,7 +1034,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">true</ExcludedFromBuild>
     </CustomBuild>
-    <CustomBuild Include="..\Source\Codec\DXTC\dxtc_v11_compress_sse2.asm">
+    <CustomBuild Include="../Source/Codec/DXTC/dxtc_v11_compress_sse2.asm">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ml /DX64=0 /W3 /safeseh /Fo "$(IntDir)%(Filename).obj" /c /coff /Cp /Zi "%(FullPath)"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">ml /DX64=0 /W3 /safeseh /Fo "$(IntDir)%(Filename).obj" /c /coff /Cp /Zi "%(FullPath)"</Command>
@@ -1087,186 +1087,186 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half\half.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ASTC_Encode_Kernel.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ASTC_Host.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_RGB9995EF.cpp" />
-    <ClCompile Include="..\Source\Codec\ETC\Codec_ETC2.cpp" />
-    <ClCompile Include="..\Source\Codec\ETC\Codec_ETC2_RGB.cpp" />
-    <ClCompile Include="..\Source\Common\HDR_Encode.cpp" />
-    <ClCompile Include="..\Source\Compressonator.cpp" />
-    <ClCompile Include="..\Source\Codec\ATI\Compressonatori_tc.c" />
-    <ClCompile Include="..\Source\Codec\ATI\CompressonatorXCodec.cpp" />
-    <ClCompile Include="..\Source\Codec\ETC\etc.cpp" />
-    <ClCompile Include="..\Source\Codec\ETC\etcpack\etcdec.cxx" />
-    <ClCompile Include="..\Source\Codec\ETC\etcpack\etcimage.cxx" />
-    <ClCompile Include="..\Source\Codec\ETC\etcpack\etcpack.cxx" />
-    <ClCompile Include="..\Source\Codec\GT\Codec_GT.cpp" />
-    <ClCompile Include="..\Source\Codec\GT\GT_Decode.cpp" />
-    <ClCompile Include="..\Source\Codec\GT\GT_Encode.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ASTC_Decode.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ASTC_Encode.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\ASTC_Library.cpp" />
-    <ClCompile Include="..\Source\Codec\ASTC\Codec_ASTC.cpp" />
-    <ClCompile Include="..\Source\Codec\BC6H\BC6H_Decode.cpp" />
-    <ClCompile Include="..\Source\Codec\BC6H\BC6H_Definitions.cpp" />
-    <ClCompile Include="..\Source\Codec\BC6H\BC6H_Encode.cpp" />
-    <ClCompile Include="..\Source\Codec\BC6H\BC6H_Library.cpp" />
-    <ClCompile Include="..\Source\Codec\BC6H\BC6H_utils.cpp" />
-    <ClCompile Include="..\Source\Codec\BC6H\Codec_BC6H.cpp" />
-    <ClCompile Include="..\Source\Codec\BC7\3dquant_vpc.cpp" />
-    <ClCompile Include="..\Source\Codec\BC7\BC7_Decode.cpp" />
-    <ClCompile Include="..\Source\Codec\BC7\BC7_Definitions.cpp" />
-    <ClCompile Include="..\Source\Codec\BC7\BC7_Encode.cpp" />
-    <ClCompile Include="..\Source\Codec\BC7\BC7_Library.cpp" />
-    <ClCompile Include="..\Source\Codec\BC7\BC7_Partitions.cpp" />
-    <ClCompile Include="..\Source\Codec\BC7\BC7_utils.cpp" />
-    <ClCompile Include="..\Source\Codec\BC7\Codec_BC7.cpp" />
-    <ClCompile Include="..\Source\Codec\BC7\reconstruct.cpp" />
-    <ClCompile Include="..\Source\Codec\BC7\shake.cpp" />
-    <ClCompile Include="..\Source\Codec\Codec.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\Codecbuffer.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_Block.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_R16.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_R16F.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_R32.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_R32F.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_R8.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_RG16.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_RG16F.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_RG32.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_RG32F.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_RG8.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_RGB888.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_RGBA16.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_RGBA16F.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_RGBA2101010.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_RGBA32.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_RGBA32F.cpp" />
-    <ClCompile Include="..\Source\Codec\Buffer\CodecBuffer_RGBA8888.cpp" />
-    <ClCompile Include="..\Source\Codec\ATC\Codec_ATC.cpp" />
-    <ClCompile Include="..\Source\Codec\ATC\Codec_ATC_RGB.cpp" />
-    <ClCompile Include="..\Source\Codec\ATC\Codec_ATC_RGBA_Explicit.cpp" />
-    <ClCompile Include="..\Source\Codec\ATC\Codec_ATC_RGBA_Interpolated.cpp" />
-    <ClCompile Include="..\Source\Codec\ATI\Codec_ATI1N.cpp" />
-    <ClCompile Include="..\Source\Codec\ATI\Codec_ATI2N.cpp" />
-    <ClCompile Include="..\Source\Codec\ATI\Codec_ATI2N_DXT5.cpp" />
-    <ClCompile Include="..\Source\Codec\Block\Codec_Block.cpp" />
-    <ClCompile Include="..\Source\Codec\Block\Codec_Block_4x4.cpp" />
-    <ClCompile Include="..\Source\Codec\Block\Codec_Block_8x8.cpp" />
-    <ClCompile Include="..\Source\Codec\DXT\Codec_DXT1.cpp" />
-    <ClCompile Include="..\Source\Codec\DXT\Codec_DXT3.cpp" />
-    <ClCompile Include="..\Source\Codec\DXT\Codec_DXT5.cpp" />
-    <ClCompile Include="..\Source\Codec\DXT\Codec_DXT5_RBxG.cpp" />
-    <ClCompile Include="..\Source\Codec\DXT\Codec_DXT5_RGxB.cpp" />
-    <ClCompile Include="..\Source\Codec\DXT\Codec_DXT5_RxBG.cpp" />
-    <ClCompile Include="..\Source\Codec\DXT\Codec_DXT5_Swizzled.cpp" />
-    <ClCompile Include="..\Source\Codec\DXT\Codec_DXT5_xGBR.cpp" />
-    <ClCompile Include="..\Source\Codec\DXT\Codec_DXT5_xGxR.cpp" />
-    <ClCompile Include="..\Source\Codec\DXT\Codec_DXT5_xRBG.cpp" />
-    <ClCompile Include="..\Source\Codec\DXTC\Codec_DXTC.cpp" />
-    <ClCompile Include="..\Source\Codec\DXTC\Codec_DXTC_Alpha.cpp" />
-    <ClCompile Include="..\Source\Codec\DXTC\Codec_DXTC_RGBA.cpp" />
-    <ClCompile Include="..\Source\Codec\ETC\Codec_ETC.cpp" />
-    <ClCompile Include="..\Source\Codec\ETC\Codec_ETC_RGB.cpp" />
-    <ClCompile Include="..\Source\Codec\DXTC\dxtc_v11_compress.c" />
-    <ClCompile Include="..\Source\Codec\DXTC\dxtc_v11_compress_asm.c" />
-    <ClCompile Include="..\Source\Compress.cpp" />
+    <ClCompile Include="../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half/half.cpp" />
+    <ClCompile Include="../Source/Codec/ASTC/ASTC_Encode_Kernel.cpp" />
+    <ClCompile Include="../Source/Codec/ASTC/ASTC_Host.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RGB9995EF.cpp" />
+    <ClCompile Include="../Source/Codec/ETC/Codec_ETC2.cpp" />
+    <ClCompile Include="../Source/Codec/ETC/Codec_ETC2_RGB.cpp" />
+    <ClCompile Include="../Source/Common/HDR_Encode.cpp" />
+    <ClCompile Include="../Source/Compressonator.cpp" />
+    <ClCompile Include="../Source/Codec/ATI/Compressonatori_tc.c" />
+    <ClCompile Include="../Source/Codec/ATI/CompressonatorXCodec.cpp" />
+    <ClCompile Include="../Source/Codec/ETC/etc.cpp" />
+    <ClCompile Include="../Source/Codec/ETC/etcpack/etcdec.cxx" />
+    <ClCompile Include="../Source/Codec/ETC/etcpack/etcimage.cxx" />
+    <ClCompile Include="../Source/Codec/ETC/etcpack/etcpack.cxx" />
+    <ClCompile Include="../Source/Codec/GT/Codec_GT.cpp" />
+    <ClCompile Include="../Source/Codec/GT/GT_Decode.cpp" />
+    <ClCompile Include="../Source/Codec/GT/GT_Encode.cpp" />
+    <ClCompile Include="../Source/Codec/ASTC/ASTC_Decode.cpp" />
+    <ClCompile Include="../Source/Codec/ASTC/ASTC_Encode.cpp" />
+    <ClCompile Include="../Source/Codec/ASTC/ASTC_Library.cpp" />
+    <ClCompile Include="../Source/Codec/ASTC/Codec_ASTC.cpp" />
+    <ClCompile Include="../Source/Codec/BC6H/BC6H_Decode.cpp" />
+    <ClCompile Include="../Source/Codec/BC6H/BC6H_Definitions.cpp" />
+    <ClCompile Include="../Source/Codec/BC6H/BC6H_Encode.cpp" />
+    <ClCompile Include="../Source/Codec/BC6H/BC6H_Library.cpp" />
+    <ClCompile Include="../Source/Codec/BC6H/BC6H_utils.cpp" />
+    <ClCompile Include="../Source/Codec/BC6H/Codec_BC6H.cpp" />
+    <ClCompile Include="../Source/Codec/BC7/3dquant_vpc.cpp" />
+    <ClCompile Include="../Source/Codec/BC7/BC7_Decode.cpp" />
+    <ClCompile Include="../Source/Codec/BC7/BC7_Definitions.cpp" />
+    <ClCompile Include="../Source/Codec/BC7/BC7_Encode.cpp" />
+    <ClCompile Include="../Source/Codec/BC7/BC7_Library.cpp" />
+    <ClCompile Include="../Source/Codec/BC7/BC7_Partitions.cpp" />
+    <ClCompile Include="../Source/Codec/BC7/BC7_utils.cpp" />
+    <ClCompile Include="../Source/Codec/BC7/Codec_BC7.cpp" />
+    <ClCompile Include="../Source/Codec/BC7/reconstruct.cpp" />
+    <ClCompile Include="../Source/Codec/BC7/shake.cpp" />
+    <ClCompile Include="../Source/Codec/Codec.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/Codecbuffer.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_Block.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_R16.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_R16F.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_R32.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_R32F.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_R8.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RG16.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RG16F.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RG32.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RG32F.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RG8.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RGB888.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RGBA16.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RGBA16F.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RGBA2101010.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RGBA32.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RGBA32F.cpp" />
+    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RGBA8888.cpp" />
+    <ClCompile Include="../Source/Codec/ATC/Codec_ATC.cpp" />
+    <ClCompile Include="../Source/Codec/ATC/Codec_ATC_RGB.cpp" />
+    <ClCompile Include="../Source/Codec/ATC/Codec_ATC_RGBA_Explicit.cpp" />
+    <ClCompile Include="../Source/Codec/ATC/Codec_ATC_RGBA_Interpolated.cpp" />
+    <ClCompile Include="../Source/Codec/ATI/Codec_ATI1N.cpp" />
+    <ClCompile Include="../Source/Codec/ATI/Codec_ATI2N.cpp" />
+    <ClCompile Include="../Source/Codec/ATI/Codec_ATI2N_DXT5.cpp" />
+    <ClCompile Include="../Source/Codec/Block/Codec_Block.cpp" />
+    <ClCompile Include="../Source/Codec/Block/Codec_Block_4x4.cpp" />
+    <ClCompile Include="../Source/Codec/Block/Codec_Block_8x8.cpp" />
+    <ClCompile Include="../Source/Codec/DXT/Codec_DXT1.cpp" />
+    <ClCompile Include="../Source/Codec/DXT/Codec_DXT3.cpp" />
+    <ClCompile Include="../Source/Codec/DXT/Codec_DXT5.cpp" />
+    <ClCompile Include="../Source/Codec/DXT/Codec_DXT5_RBxG.cpp" />
+    <ClCompile Include="../Source/Codec/DXT/Codec_DXT5_RGxB.cpp" />
+    <ClCompile Include="../Source/Codec/DXT/Codec_DXT5_RxBG.cpp" />
+    <ClCompile Include="../Source/Codec/DXT/Codec_DXT5_Swizzled.cpp" />
+    <ClCompile Include="../Source/Codec/DXT/Codec_DXT5_xGBR.cpp" />
+    <ClCompile Include="../Source/Codec/DXT/Codec_DXT5_xGxR.cpp" />
+    <ClCompile Include="../Source/Codec/DXT/Codec_DXT5_xRBG.cpp" />
+    <ClCompile Include="../Source/Codec/DXTC/Codec_DXTC.cpp" />
+    <ClCompile Include="../Source/Codec/DXTC/Codec_DXTC_Alpha.cpp" />
+    <ClCompile Include="../Source/Codec/DXTC/Codec_DXTC_RGBA.cpp" />
+    <ClCompile Include="../Source/Codec/ETC/Codec_ETC.cpp" />
+    <ClCompile Include="../Source/Codec/ETC/Codec_ETC_RGB.cpp" />
+    <ClCompile Include="../Source/Codec/DXTC/dxtc_v11_compress.c" />
+    <ClCompile Include="../Source/Codec/DXTC/dxtc_v11_compress_asm.c" />
+    <ClCompile Include="../Source/Compress.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half\half.h" />
-    <ClInclude Include="..\Header\Codec\ASTC\ASTC_Encode_Kernel.h" />
-    <ClInclude Include="..\Header\Codec\ASTC\ASTC_Host.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_RGB9995EF.h" />
-    <ClInclude Include="..\Header\Codec\ETC\Codec_ETC2.h" />
-    <ClInclude Include="..\Header\Codec\ETC\Codec_ETC2_RGB.h" />
-    <ClInclude Include="..\Header\Compressonator.h" />
-    <ClInclude Include="..\Header\Compressonator_Documentation.h" />
-    <ClInclude Include="..\Header\Codec\ASTC\ASTC_Decode.h" />
-    <ClInclude Include="..\Header\Codec\ASTC\ASTC_Definitions.h" />
-    <ClInclude Include="..\Header\Codec\ASTC\ASTC_Encode.h" />
-    <ClInclude Include="..\Header\Codec\ASTC\ASTC_Library.h" />
-    <ClInclude Include="..\Header\Codec\ASTC\Codec_ASTC.h" />
-    <ClInclude Include="..\Header\Codec\ATI\CompressonatorXCodec.h" />
-    <ClInclude Include="..\Header\Codec\ATI\Compressonator_tc.h" />
-    <ClInclude Include="..\Header\Codec\BC6H\BC6H_Decode.h" />
-    <ClInclude Include="..\Header\Codec\BC6H\BC6H_Definitions.h" />
-    <ClInclude Include="..\Header\Codec\BC6H\BC6H_Encode.h" />
-    <ClInclude Include="..\Header\Codec\BC6H\BC6H_Library.h" />
-    <ClInclude Include="..\Header\Codec\BC6H\BC6H_utils.h" />
-    <ClInclude Include="..\Header\Codec\BC6H\Codec_BC6H.h" />
-    <ClInclude Include="..\Header\Codec\BC7\3dquant_constants.h" />
-    <ClInclude Include="..\Header\Codec\BC7\3dquant_vpc.h" />
-    <ClInclude Include="..\Header\Codec\BC7\BC7_Decode.h" />
-    <ClInclude Include="..\Header\Codec\BC7\BC7_Definitions.h" />
-    <ClInclude Include="..\Header\Codec\BC7\BC7_Encode.h" />
-    <ClInclude Include="..\Header\Codec\BC7\BC7_Library.h" />
-    <ClInclude Include="..\Header\Codec\BC7\BC7_Partitions.h" />
-    <ClInclude Include="..\Header\Codec\BC7\BC7_utils.h" />
-    <ClInclude Include="..\Header\Codec\BC7\Codec_BC7.h" />
-    <ClInclude Include="..\Header\Codec\BC7\reconstruct.h" />
-    <ClInclude Include="..\Header\Codec\Codec.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_Block.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_R16.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_R16F.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_R32.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_R32F.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_R8.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_RG16.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_RG16F.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_RG32.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_RG32F.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_RG8.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_RGB888.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_RGBA16.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_RGBA16F.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_RGBA2101010.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_RGBA32.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_RGBA32F.h" />
-    <ClInclude Include="..\Header\Codec\Buffer\CodecBuffer_RGBA8888.h" />
-    <ClInclude Include="..\Header\Codec\ATC\Codec_ATC.h" />
-    <ClInclude Include="..\Header\Codec\ATC\Codec_ATC_RGB.h" />
-    <ClInclude Include="..\Header\Codec\ATC\Codec_ATC_RGBA_Explicit.h" />
-    <ClInclude Include="..\Header\Codec\ATC\Codec_ATC_RGBA_Interpolated.h" />
-    <ClInclude Include="..\Header\Codec\ATI\Codec_ATI1N.h" />
-    <ClInclude Include="..\Header\Codec\ATI\Codec_ATI2N.h" />
-    <ClInclude Include="..\Header\Codec\ATI\Codec_ATI2N_DXT5.h" />
-    <ClInclude Include="..\Header\Codec\Block\Codec_Block.h" />
-    <ClInclude Include="..\Header\Codec\Block\Codec_Block_4x4.h" />
-    <ClInclude Include="..\Header\Codec\Block\Codec_Block_8x8.h" />
-    <ClInclude Include="..\Header\Codec\DXT\Codec_DXT1.h" />
-    <ClInclude Include="..\Header\Codec\DXT\Codec_DXT3.h" />
-    <ClInclude Include="..\Header\Codec\DXT\Codec_DXT5.h" />
-    <ClInclude Include="..\Header\Codec\DXT\Codec_DXT5_RBxG.h" />
-    <ClInclude Include="..\Header\Codec\DXT\Codec_DXT5_RGxB.h" />
-    <ClInclude Include="..\Header\Codec\DXT\Codec_DXT5_RxBG.h" />
-    <ClInclude Include="..\Header\Codec\DXT\Codec_DXT5_Swizzled.h" />
-    <ClInclude Include="..\Header\Codec\DXT\Codec_DXT5_xGBR.h" />
-    <ClInclude Include="..\Header\Codec\DXT\Codec_DXT5_xGxR.h" />
-    <ClInclude Include="..\Header\Codec\DXT\Codec_DXT5_xRBG.h" />
-    <ClInclude Include="..\Header\Codec\DXTC\Codec_DXTC.h" />
-    <ClInclude Include="..\Header\Codec\ETC\Codec_ETC.h" />
-    <ClInclude Include="..\Header\Codec\ETC\Codec_ETC_RGB.h" />
-    <ClInclude Include="..\Header\Codec\DXTC\dxtc_v11_compress.h" />
-    <ClInclude Include="..\Header\Codec\ETC\etcpack.h" />
-    <ClInclude Include="..\Header\Codec\ETC\etcpack\etcimage.h" />
-    <ClInclude Include="..\Header\Codec\ETC\etcpack\etcpack_lib.h" />
-    <ClInclude Include="..\Header\Codec\GT\Codec_GT.h" />
-    <ClInclude Include="..\Header\Codec\GT\GT_Decode.h" />
-    <ClInclude Include="..\Header\Codec\GT\GT_Definitions.h" />
-    <ClInclude Include="..\Header\Codec\GT\GT_Encode.h" />
-    <ClInclude Include="..\Header\Common.h" />
-    <ClInclude Include="..\Header\Compress.h" />
-    <ClInclude Include="..\Header\Internal\CompClient.h" />
-    <ClInclude Include="..\Header\Internal\debug.h" />
-    <ClInclude Include="..\Header\Version.h" />
-    <ClInclude Include="..\Source\Common\HDR_Encode.h" />
+    <ClInclude Include="../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half/half.h" />
+    <ClInclude Include="../Header/Codec/ASTC/ASTC_Encode_Kernel.h" />
+    <ClInclude Include="../Header/Codec/ASTC/ASTC_Host.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RGB9995EF.h" />
+    <ClInclude Include="../Header/Codec/ETC/Codec_ETC2.h" />
+    <ClInclude Include="../Header/Codec/ETC/Codec_ETC2_RGB.h" />
+    <ClInclude Include="../Header/Compressonator.h" />
+    <ClInclude Include="../Header/Compressonator_Documentation.h" />
+    <ClInclude Include="../Header/Codec/ASTC/ASTC_Decode.h" />
+    <ClInclude Include="../Header/Codec/ASTC/ASTC_Definitions.h" />
+    <ClInclude Include="../Header/Codec/ASTC/ASTC_Encode.h" />
+    <ClInclude Include="../Header/Codec/ASTC/ASTC_Library.h" />
+    <ClInclude Include="../Header/Codec/ASTC/Codec_ASTC.h" />
+    <ClInclude Include="../Header/Codec/ATI/CompressonatorXCodec.h" />
+    <ClInclude Include="../Header/Codec/ATI/Compressonator_tc.h" />
+    <ClInclude Include="../Header/Codec/BC6H/BC6H_Decode.h" />
+    <ClInclude Include="../Header/Codec/BC6H/BC6H_Definitions.h" />
+    <ClInclude Include="../Header/Codec/BC6H/BC6H_Encode.h" />
+    <ClInclude Include="../Header/Codec/BC6H/BC6H_Library.h" />
+    <ClInclude Include="../Header/Codec/BC6H/BC6H_utils.h" />
+    <ClInclude Include="../Header/Codec/BC6H/Codec_BC6H.h" />
+    <ClInclude Include="../Header/Codec/BC7/3dquant_constants.h" />
+    <ClInclude Include="../Header/Codec/BC7/3dquant_vpc.h" />
+    <ClInclude Include="../Header/Codec/BC7/BC7_Decode.h" />
+    <ClInclude Include="../Header/Codec/BC7/BC7_Definitions.h" />
+    <ClInclude Include="../Header/Codec/BC7/BC7_Encode.h" />
+    <ClInclude Include="../Header/Codec/BC7/BC7_Library.h" />
+    <ClInclude Include="../Header/Codec/BC7/BC7_Partitions.h" />
+    <ClInclude Include="../Header/Codec/BC7/BC7_utils.h" />
+    <ClInclude Include="../Header/Codec/BC7/Codec_BC7.h" />
+    <ClInclude Include="../Header/Codec/BC7/reconstruct.h" />
+    <ClInclude Include="../Header/Codec/Codec.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_Block.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_R16.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_R16F.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_R32.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_R32F.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_R8.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RG16.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RG16F.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RG32.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RG32F.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RG8.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RGB888.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RGBA16.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RGBA16F.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RGBA2101010.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RGBA32.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RGBA32F.h" />
+    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RGBA8888.h" />
+    <ClInclude Include="../Header/Codec/ATC/Codec_ATC.h" />
+    <ClInclude Include="../Header/Codec/ATC/Codec_ATC_RGB.h" />
+    <ClInclude Include="../Header/Codec/ATC/Codec_ATC_RGBA_Explicit.h" />
+    <ClInclude Include="../Header/Codec/ATC/Codec_ATC_RGBA_Interpolated.h" />
+    <ClInclude Include="../Header/Codec/ATI/Codec_ATI1N.h" />
+    <ClInclude Include="../Header/Codec/ATI/Codec_ATI2N.h" />
+    <ClInclude Include="../Header/Codec/ATI/Codec_ATI2N_DXT5.h" />
+    <ClInclude Include="../Header/Codec/Block/Codec_Block.h" />
+    <ClInclude Include="../Header/Codec/Block/Codec_Block_4x4.h" />
+    <ClInclude Include="../Header/Codec/Block/Codec_Block_8x8.h" />
+    <ClInclude Include="../Header/Codec/DXT/Codec_DXT1.h" />
+    <ClInclude Include="../Header/Codec/DXT/Codec_DXT3.h" />
+    <ClInclude Include="../Header/Codec/DXT/Codec_DXT5.h" />
+    <ClInclude Include="../Header/Codec/DXT/Codec_DXT5_RBxG.h" />
+    <ClInclude Include="../Header/Codec/DXT/Codec_DXT5_RGxB.h" />
+    <ClInclude Include="../Header/Codec/DXT/Codec_DXT5_RxBG.h" />
+    <ClInclude Include="../Header/Codec/DXT/Codec_DXT5_Swizzled.h" />
+    <ClInclude Include="../Header/Codec/DXT/Codec_DXT5_xGBR.h" />
+    <ClInclude Include="../Header/Codec/DXT/Codec_DXT5_xGxR.h" />
+    <ClInclude Include="../Header/Codec/DXT/Codec_DXT5_xRBG.h" />
+    <ClInclude Include="../Header/Codec/DXTC/Codec_DXTC.h" />
+    <ClInclude Include="../Header/Codec/ETC/Codec_ETC.h" />
+    <ClInclude Include="../Header/Codec/ETC/Codec_ETC_RGB.h" />
+    <ClInclude Include="../Header/Codec/DXTC/dxtc_v11_compress.h" />
+    <ClInclude Include="../Header/Codec/ETC/etcpack.h" />
+    <ClInclude Include="../Header/Codec/ETC/etcpack/etcimage.h" />
+    <ClInclude Include="../Header/Codec/ETC/etcpack/etcpack_lib.h" />
+    <ClInclude Include="../Header/Codec/GT/Codec_GT.h" />
+    <ClInclude Include="../Header/Codec/GT/GT_Decode.h" />
+    <ClInclude Include="../Header/Codec/GT/GT_Definitions.h" />
+    <ClInclude Include="../Header/Codec/GT/GT_Encode.h" />
+    <ClInclude Include="../Header/Common.h" />
+    <ClInclude Include="../Header/Compress.h" />
+    <ClInclude Include="../Header/Internal/CompClient.h" />
+    <ClInclude Include="../Header/Internal/debug.h" />
+    <ClInclude Include="../Header/Version.h" />
+    <ClInclude Include="../Source/Common/HDR_Encode.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\CompressonatorLib.def" />
+    <None Include="../CompressonatorLib.def" />
   </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Import Project="$(VCTargetsPath)/Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>

@@ -34,7 +34,7 @@
 #define DXTC_OFFSET_ALPHA 0
 #define DXTC_OFFSET_RGB 2
 
-class CCodec_DXTC : public CCodec_Block_4x4  
+class CCodec_DXTC : public CCodec_Block_4x4
 {
 public:
     CCodec_DXTC(CodecType codecType);
@@ -89,7 +89,7 @@ protected:
     CODECFLOAT* CalculateColourWeightings(CMP_BYTE block[BLOCK_SIZE_4X4X4]);
     CODECFLOAT* CalculateColourWeightings(CODECFLOAT block[BLOCK_SIZE_4X4X4]);
 
-    void EncodeAlphaBlock(CMP_DWORD compressedBlock[2], BYTE nEndpoints[2], BYTE nIndices[BLOCK_SIZE_4X4]);
+    void EncodeAlphaBlock(CMP_DWORD compressedBlock[2], CMP_BYTE nEndpoints[2], CMP_BYTE nIndices[BLOCK_SIZE_4X4]);
 
     bool m_bUseChannelWeighting;
     bool m_bUseAdaptiveWeighting;

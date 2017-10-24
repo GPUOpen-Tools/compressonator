@@ -28,8 +28,13 @@
 #include "stdint.h"
 
 // {3C9D75E9-D2CB-43F2-B371-D8D38FC8F306}
+#ifdef _WIN32
 static const GUID g_GUID = 
 { 0x3c9d75e9, 0xd2cb, 0x43f2, { 0xb3, 0x71, 0xd8, 0xd3, 0x8f, 0xc8, 0xf3, 0x6 } };
+#else
+static const GUID g_GUID = 
+{ 0};
+#endif
 
 CMIPS *ASTC_CMips = NULL;
 
@@ -44,10 +49,10 @@ class Plugin_ASTC : public PluginInterface_Image
 
         int TC_PluginSetSharedIO(void* Shared);
         int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
-        int TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipSet);
-        int TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipSet);
-        int TC_PluginFileLoadTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture);
-        int TC_PluginFileSaveTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture);
+        int TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSet);
+        int TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSet);
+        int TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *srcTexture);
+        int TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *srcTexture);
         int m_xdim;
         int m_ydim;
         int m_zdim;

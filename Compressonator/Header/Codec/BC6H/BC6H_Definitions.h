@@ -25,8 +25,19 @@
 #ifndef _BC6H_DEFINITIONS_H_
 #define _BC6H_DEFINITIONS_H_
 
-#include <Windows.h>
 #include "HDR_Encode.h"
+
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
+
+typedef std::uint8_t byte;
+typedef std::uint8_t BYTE;
+typedef std::uint32_t DWORD;
+typedef std::int32_t BOOL;
+
+#define TRUE 1
+#define FALSE 0
 
 #define BC6H_NUM_BLOCK_TYPES            14
 #define BC6H_MAX_PARTITIONS             32

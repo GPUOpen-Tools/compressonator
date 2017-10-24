@@ -37,13 +37,16 @@
 #define TILE_HEIGHT 64
 
 // {2438C059-CD7B-49AD-A626-FBAE37A059F5}
+#ifdef _WIN32
 static const GUID g_GUID = { 0x2438c059, 0xcd7b, 0x49ad, { 0xa6, 0x26, 0xfb, 0xae, 0x37, 0xa0, 0x59, 0xf5 } };
-
+#else
+static const GUID g_GUID = { 0 };
+#endif
 
 #define TC_PLUGIN_VERSION_MAJOR	1
 #define TC_PLUGIN_VERSION_MINOR	0
 
-static const USHORT BMP_HEADER = ((USHORT)(BYTE)('B') | ((USHORT)(BYTE)('M') << 8));
+static const CMP_WORD BMP_HEADER = ((CMP_WORD)(CMP_BYTE)('B') | ((CMP_WORD)(CMP_BYTE)('M') << 8));
 
 class Plugin_EXR : public PluginInterface_Image
 {
@@ -53,10 +56,10 @@ class Plugin_EXR : public PluginInterface_Image
 
 		int TC_PluginSetSharedIO(void* Shared);
 		int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
-		int TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipSet);
-		int TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipSet);
-		int TC_PluginFileLoadTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture);
-		int TC_PluginFileSaveTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture);
+		int TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSet);
+		int TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSet);
+		int TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *srcTexture);
+		int TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *srcTexture);
 
 };
 

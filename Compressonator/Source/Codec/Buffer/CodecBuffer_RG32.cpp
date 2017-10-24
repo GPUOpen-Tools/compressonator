@@ -138,7 +138,7 @@ bool CCodecBuffer_RG32::ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYT
     if(x >= GetWidth() || y >= GetHeight())
         return false;
 
-    memset(dwBlock, 0, w*h*sizeof(DWORD));
+    memset(dwBlock, 0, w*h*sizeof(CMP_DWORD));
 
     return true;
 }
@@ -164,7 +164,7 @@ bool CCodecBuffer_RG32::ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYT
     if(x >= GetWidth() || y >= GetHeight())
         return false;
 
-    memset(dwBlock, 0, w*h*sizeof(DWORD));
+    memset(dwBlock, 0, w*h*sizeof(CMP_DWORD));
 
     return true;
 }
@@ -220,7 +220,7 @@ bool CCodecBuffer_RG32::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_
         CMP_DWORD* pData = (CMP_DWORD*) (GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
         for(i = 0; i < dwWidth; i++)
         {
-            DWORD* pDest = GET_PIXEL(i, j);
+            CMP_DWORD* pDest = GET_PIXEL(i, j);
             memcpy(GET_PIXEL(i, j), pData, nPixelSize);    
             pData += nChannelCount; pDest += 2;
             *pDest++ = 0;

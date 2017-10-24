@@ -28,8 +28,8 @@
 //
 
 #include <math.h>
-#include "bc6h_definitions.h"
-#include "bc6h_utils.h"
+#include "BC6H_Definitions.h"
+#include "BC6H_utils.h"
 
 // from half->float code - just for verification.
 FP32 half_to_float(float Halfin)

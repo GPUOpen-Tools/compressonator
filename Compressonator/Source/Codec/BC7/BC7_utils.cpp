@@ -23,8 +23,8 @@
 //
 
 #include <math.h>
-#include "bc7_definitions.h"
-#include "bc7_utils.h"
+#include "BC7_Definitions.h"
+#include "BC7_utils.h"
 #include "debug.h"
 
 //

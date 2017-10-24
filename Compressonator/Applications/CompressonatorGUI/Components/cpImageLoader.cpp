@@ -21,12 +21,11 @@
 //
 //=====================================================================
 
-#include "qapplication.h"
+#include <QtWidgets/qapplication.h>
 #include "cpImageLoader.h"
 #include <ImfArray.h>
 #include "cExr.h"
-#include "qdebug.h"
-#include "Textureio.h"
+#include <QtCore/qdebug.h>
 
 bool g_useCPUDecode = true;
 MIPIMAGE_FORMAT g_gpudecodeFormat = Format_OpenGL;
@@ -151,7 +150,7 @@ void CImageLoader::QImageFormatInfo(QImage *image)
 
 
 //load ARGB32 Qimage format to Mips
-MipSet *CImageLoader::QImage2MIPS(QImage *qimage)
+MipSet *CImageLoader::QImage2MIPS(QImage *qimage, CMP_Feedback_Proc pFeedbackProc)
 {
     if (qimage == NULL)
     {
@@ -164,7 +163,8 @@ MipSet *CImageLoader::QImage2MIPS(QImage *qimage)
     // Check supported format
     if (!(  (qimage->format() == QImage::Format_ARGB32) || 
             (qimage->format() == QImage::Format_ARGB32_Premultiplied) ||
-            (qimage->format() == QImage::Format_RGB32)))
+            (qimage->format() == QImage::Format_RGB32) ||
+            (qimage->format() == QImage::Format_Mono)))
     {
         return NULL;
     }
@@ -200,7 +200,7 @@ MipSet *CImageLoader::QImage2MIPS(QImage *qimage)
     m_CMips->AllocateMipLevelData(mipLevel, pMipSet->m_nWidth, pMipSet->m_nHeight, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType);
 
     // We have allocated a data buffer to fill get its referance
-    BYTE* pData = (BYTE*)(mipLevel->m_pbData);
+    CMP_BYTE* pData = (CMP_BYTE*)(mipLevel->m_pbData);
 
     QRgb qRGB;
     int i = 0;
@@ -216,9 +216,13 @@ MipSet *CImageLoader::QImage2MIPS(QImage *qimage)
             pData[i] = qAlpha(qRGB);
             i++;
         }
+        if (pFeedbackProc)
+        {
+            float fProgress = 100.f * (y * qimage->width()) / (qimage->width() * qimage->height());
+            if (pFeedbackProc(fProgress, NULL, NULL))
+                return NULL;
+        }
     }
-
-    //pMipSet->m_pcData = cdata; ???
 
     if (pMipSet->m_format == CMP_FORMAT_Unknown)
     {
@@ -293,6 +297,7 @@ CMP_FORMAT CImageLoader::QFormat2MipFormat(QImage::Format qformat)
     // Not Swizzed
     case QImage::Format_ARGB32:
     case QImage::Format_ARGB32_Premultiplied:
+    case QImage::Format_Mono:
         format = CMP_FORMAT_ARGB_8888;
          break;
 
@@ -301,7 +306,6 @@ CMP_FORMAT CImageLoader::QFormat2MipFormat(QImage::Format qformat)
         break;
 
     case QImage::Format_Invalid:
-    case QImage::Format_Mono:
     case QImage::Format_MonoLSB:
     case QImage::Format_Indexed8:
     case QImage::Format_RGB16:
@@ -460,7 +464,7 @@ typedef struct _R9G9B9E5
     _R9G9B9E5& operator= (uint32_t Packed) { v = Packed; return *this; }
 }R9G9B9E5;
 //load data byte in mipset into Qimage ARGB32 format
-QImage *CImageLoader::MIPS2QImage(MipSet *tmpMipSet, int level)
+QImage *CImageLoader::MIPS2QImage(MipSet *tmpMipSet, int level, CMP_Feedback_Proc pFeedbackProc)
 {
     if (tmpMipSet == NULL)
     {
@@ -496,7 +500,7 @@ QImage *CImageLoader::MIPS2QImage(MipSet *tmpMipSet, int level)
                 if (pData == NULL)  return nullptr;
             }
             else {
-                WORD* pData = mipLevel->m_pwData;
+                CMP_WORD* pData = mipLevel->m_pwData;
                 if (pData == NULL)  return nullptr;
             }
 
@@ -527,7 +531,7 @@ QImage *CImageLoader::MIPS2QImage(MipSet *tmpMipSet, int level)
         {
         
             // We have allocated a data buffer to fill get its referance
-            BYTE* pData = mipLevel->m_pbData;
+            CMP_BYTE* pData = mipLevel->m_pbData;
             if (pData == NULL)  return nullptr;
             
             // We dont support the conversion 
@@ -547,7 +551,7 @@ QImage *CImageLoader::MIPS2QImage(MipSet *tmpMipSet, int level)
             QImageFormatInfo(image);
 
             // Initialize the buffer
-            BYTE R, G, B, A;
+            CMP_BYTE R, G, B, A;
             int i = 0;
             for (int y = 0; y < mipLevel->m_nHeight; y++){
                 for (int x = 0; x < mipLevel->m_nWidth; x++)
@@ -564,6 +568,12 @@ QImage *CImageLoader::MIPS2QImage(MipSet *tmpMipSet, int level)
                         A = pData[i];
                     i++;
                     image->setPixel(x, y, qRgba(R, G, B, A));
+                }
+                if (pFeedbackProc)
+                {
+                    float fProgress = 100.f * (y * mipLevel->m_nWidth) / (mipLevel->m_nWidth * mipLevel->m_nHeight);
+                    if (pFeedbackProc(fProgress, NULL, NULL))
+                        return NULL;
                 }
             }
         }
@@ -636,7 +646,7 @@ MipSet * CImageLoader::LoadPluginMIPS(QString filename)
 
 void CImageLoader::float2Pixel(float kl, float f ,float r, float g, float b, float a, int x, int y, QImage *image)
 {
-    BYTE r_b, g_b, b_b, a_b;
+    CMP_BYTE r_b, g_b, b_b, a_b;
 
     float invGamma, scale;
     if (gamma < 1.0f) {
@@ -778,14 +788,14 @@ void CImageLoader::loadExrProperties(MipSet* mipset, int level, QImage *image)
     }
     else if (mipset->m_ChannelFormat == CF_Float9995E)
     {
-        DWORD dwSize = mipLevel->m_dwLinearSize;
-        DWORD* pSrc = mipLevel->m_pdwData;
+        CMP_DWORD dwSize = mipLevel->m_dwLinearSize;
+        CMP_DWORD* pSrc = mipLevel->m_pdwData;
         float r = 0, g = 0, b = 0, a = 0;
         union { float f; int32_t i; } fi;
         float Scale = 0.0f;
         for (int y = 0; y < mipLevel->m_nHeight; y++) {
             for (int x = 0; x < mipLevel->m_nWidth; x++) {
-                DWORD dwSrc = *pSrc++;
+                CMP_DWORD dwSrc = *pSrc++;
                 R9G9B9E5 pTemp;
 
                 pTemp.rm = (dwSrc & 0x000001ff);
@@ -839,7 +849,7 @@ void CImageLoader::UpdateMIPMapImages(CMipImages *MipImages)
 
 
 
-CMipImages * CImageLoader::LoadPluginImage(QString filename)
+CMipImages * CImageLoader::LoadPluginImage(QString filename, CMP_Feedback_Proc pFeedbackProc)
 {
     CMipImages *MipImages;
     QImage     *image = NULL;
@@ -895,7 +905,7 @@ CMipImages * CImageLoader::LoadPluginImage(QString filename)
                 usedQT = true;
             }
             else
-                image = MIPS2QImage(tmpMipSet, 0);
+                image = MIPS2QImage(tmpMipSet, 0, pFeedbackProc);
         }
     }
 
@@ -952,7 +962,7 @@ CMipImages * CImageLoader::LoadPluginImage(QString filename)
 
     if ((MipImages->Image_list.count() > 0) && (MipImages->mipset == NULL))
     {
-        MipImages->mipset = QImage2MIPS(MipImages->Image_list[0]);
+        MipImages->mipset = QImage2MIPS(MipImages->Image_list[0], pFeedbackProc);
     }
 
     //-----------------------------------------

@@ -24,9 +24,9 @@
 //  Email:        gputools.support@amd.com
 //
 
-#include <Windows.h>
 #include "dxtc_v11_compress.h"
 
+#if defined(_WIN32)
 
 // Raises priority of G at expense of B - seems slightly better than no munging
 #define AXIS_MUNGE
@@ -113,10 +113,13 @@ BYTE expandtable[32] =
     0xa0, 0xa2, 0xa8, 0xaa,
 };
 
+#endif //_WIN32
+
+#if !defined(_WIN64) && defined(_WIN32)
+
 #pragma warning( push )
 #pragma warning(disable:4100)
 
-#ifndef _WIN64
 void __declspec(naked) __cdecl DXTCV11CompressBlockSSE(DWORD *block_32, DWORD *block_dxtc)
 {
     // *block_32 *block_dxtc (VS2010) compiler generates warning C4100: unreferenced formal parameter
@@ -680,9 +683,6 @@ void __declspec(naked) __cdecl DXTCV11CompressBlockSSE(DWORD *block_32, DWORD *b
 
 
 }
-#endif // !_WIN64
-
-#ifndef _WIN64
 
 void __declspec(naked) __cdecl DXTCV11CompressBlockSSEMinimal(DWORD *block_32, DWORD *block_dxtc)
 {

@@ -16,6 +16,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include "mathlib.h"
 
@@ -71,31 +72,6 @@ MSVC++ 7.0  _MSC_VER == 1300
 MSVC++ 6.0  _MSC_VER == 1200
 MSVC++ 5.0  _MSC_VER == 1100
 */
-
-// from MSVS 2013 and up  Math.h includes these functions
-#if (_MSC_VER <= 1700)
-float fmax(float p, float q)
-{
-	if (p != p)
-		return q;
-	if (q != q)
-		return p;
-	if (p > q)
-		return p;
-	return q;
-}
-
-float fmin(float p, float q)
-{
-	if (p != p)
-		return q;
-	if (q != q)
-		return p;
-	if (p < q)
-		return p;
-	return q;
-}
-#endif
 
 
 float2 fmax(float2 p, float2 q)

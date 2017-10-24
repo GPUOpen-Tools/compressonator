@@ -28,7 +28,7 @@
 #include "BC7_Definitions.h"
 #include "BC7_Partitions.h"
 #include "BC7_Decode.h"
-#include "BC7_Utils.h"
+#include "BC7_utils.h"
 
 #ifdef USE_BC7_TESTBLOCK
 // This is a block that I dumped out of Microsoft's compressor

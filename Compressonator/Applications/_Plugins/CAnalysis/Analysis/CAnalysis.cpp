@@ -22,10 +22,14 @@
 //
 
 
+
+#ifdef _WIN32
 #include "stdafx.h"
+#endif
 #include <stdio.h>
 #include "CAnalysis.h"
 #include "PluginManager.h"
+#include "TC_PluginInternal.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
@@ -102,7 +106,6 @@ Plugin_Canalysis::~Plugin_Canalysis()
 
 int Plugin_Canalysis::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
 { 
-    pPluginVersion->guid                    = g_GUID_EXR;
     pPluginVersion->dwAPIVersionMajor        = TC_API_VERSION_MAJOR;
     pPluginVersion->dwAPIVersionMinor        = TC_API_VERSION_MINOR;
     pPluginVersion->dwPluginVersionMajor    = TC_PLUGIN_VERSION_MAJOR;

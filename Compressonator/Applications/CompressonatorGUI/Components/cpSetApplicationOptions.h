@@ -53,6 +53,7 @@ public slots:
     void onImageEncodeChanged(QVariant &value);
     void onImageViewDecodeChanged(QVariant &value);
 
+
 private:
     // Common for all
     QWidget                     *m_newWidget;

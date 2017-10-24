@@ -24,7 +24,7 @@
 #ifndef _BC7_PARTITIONS_H_
 #define _BC7_PARTITIONS_H_
 
-#include "bc7_definitions.h"
+#include "BC7_Definitions.h"
 #include "debug.h"
 
 extern DWORD    BC7_PARTITIONS[MAX_SUBSETS][MAX_PARTITIONS][MAX_SUBSET_SIZE];

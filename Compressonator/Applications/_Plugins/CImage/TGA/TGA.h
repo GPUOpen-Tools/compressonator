@@ -7,13 +7,19 @@
 // Windows Header Files:
 // TODO: reference additional headers your program requires here
 #include <assert.h>
+
+#ifdef _WIN32
 #include <tchar.h>
+#endif
 
 #include "PluginInterface.h"
 
 // ---------------- TGA Plugin ------------------------
-
+#ifdef _WIN32
 static const GUID g_GUID = { 0x7603D7F2, 0x7823, 0x4C60, { 0x8B, 0x09, 0xF9, 0xE8, 0xBE, 0xEA, 0xE3, 0xA7 } };
+#else
+static const GUID g_GUID = {0};
+#endif
 
 #define TC_PLUGIN_VERSION_MAJOR    1
 #define TC_PLUGIN_VERSION_MINOR    0
@@ -27,10 +33,10 @@ class Plugin_TGA : public PluginInterface_Image
 
         int TC_PluginSetSharedIO(void* Shared);
         int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
-        int TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipSet);
-        int TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipSet);
-        int TC_PluginFileLoadTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture);
-        int TC_PluginFileSaveTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture);
+        int TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSet);
+        int TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSet);
+        int TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *srcTexture);
+        int TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *srcTexture);
 
 };
 
@@ -38,17 +44,17 @@ extern void *make_Plugin_TGA();
 
 
 // ---------------- TGA Definitions ------------------------
-static const USHORT TGA_HEADER = ((USHORT)(BYTE)('B') | ((USHORT)(BYTE)('M') << 8));
+static const CMP_WORD TGA_HEADER = ((CMP_WORD)(CMP_BYTE)('B') | ((CMP_WORD)(CMP_BYTE)('M') << 8));
 
 #pragma pack(push)
 #pragma pack(1)
 
 typedef struct
 {                                       //Byte    Comments
-    BYTE cIDFieldLength;                //[0]     length of a string located after the header
-    BYTE cColorMapType;                 //[1]     0  -  Image type (Supported)
+    CMP_BYTE cIDFieldLength;                //[0]     length of a string located after the header
+    CMP_BYTE cColorMapType;                 //[1]     0  -  Image type (Supported)
                                         //        1  -  Data type (Not supported)
-    BYTE cImageType;                    //[2]     0  -  No image data included.
+    CMP_BYTE cImageType;                    //[2]     0  -  No image data included.
                                         //        1  -  Uncompressed, color-mapped images.
                                         //        2  -  Uncompressed, RGB images.
                                         //        3  -  Uncompressed, black and white images.
@@ -62,13 +68,13 @@ typedef struct
 
     short nFirstColorMapEntry;            // [3:4]
     short nColorMapLength;                // [5:6]
-    BYTE cColorMapEntrySize;            // [7]
+    CMP_BYTE cColorMapEntrySize;            // [7]
     short nXOrigin;                        // [8:9]    
     short nYOrigin;                        // [10:11]
     short nWidth;                        // [12:13]
     short nHeight;                        // [14:15]
-    BYTE cColorDepth;                    // [16]
-    BYTE cFormatFlags;                    // [17]
+    CMP_BYTE cColorDepth;                    // [16]
+    CMP_BYTE cFormatFlags;                    // [17]
 } TGAHeader;
 
 
@@ -77,14 +83,14 @@ typedef struct
 //  9 = RLE indexed
 //  32 & 33 Other compression, indexed
 
-static const BYTE ImageType_ARGB8888     =  2;        // Raw RGB
-static const BYTE ImageType_G8             =  3;        // Raw greyscale
-static const BYTE ImageType_ARGB8888_RLE = 10;        // RLE RGB
-static const BYTE ImageType_G8_RLE         = 11;        // RLE greyscale
+static const CMP_BYTE ImageType_ARGB8888     =  2;        // Raw RGB
+static const CMP_BYTE ImageType_G8             =  3;        // Raw greyscale
+static const CMP_BYTE ImageType_ARGB8888_RLE = 10;        // RLE RGB
+static const CMP_BYTE ImageType_G8_RLE         = 11;        // RLE greyscale
 
 typedef struct
 {
-    DWORD dwSize;
+    CMP_DWORD dwSize;
 
     bool bRLECompressed;
 }    TGA_FileSaveParams;

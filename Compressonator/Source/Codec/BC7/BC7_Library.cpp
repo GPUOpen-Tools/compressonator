@@ -22,7 +22,7 @@
 // THE SOFTWARE.
 //
 
-#include "BC7_definitions.h"
+#include "BC7_Definitions.h"
 #include "BC7_Encode.h"
 #include "BC7_Decode.h"
 #include "3dquant_vpc.h"
@@ -54,7 +54,7 @@ extern "C" BC_ERROR CMP_InitializeBCLibrary()
 }
 
 
-extern "C" BC_ERROR CMP_CreateBC7Encoder( double quality, BOOL restrictColour, BOOL restrictAlpha, DWORD modeMask, double performance, BC7BlockEncoder** encoder )
+extern "C" BC_ERROR CMP_CreateBC7Encoder( double quality, BOOL restrictColour, BOOL restrictAlpha, CMP_DWORD modeMask, double performance, BC7BlockEncoder** encoder )
 {
     if(!g_LibraryInitialized)
     {

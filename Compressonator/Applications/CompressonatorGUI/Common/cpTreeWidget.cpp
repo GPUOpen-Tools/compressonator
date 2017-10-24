@@ -35,10 +35,30 @@ cpTreeWidget::cpTreeWidget(QWidget *parent)
 {
     m_currentItem = NULL;
     connect(this, SIGNAL(itemSelectionChanged()), this, SLOT(selChanged()));
+    this->setMouseTracking(true);
 }
 
 cpTreeWidget::~cpTreeWidget()
 {
+}
+
+void cpTreeWidget::mouseMoveEvent(QMouseEvent  *event)
+{
+    QTreeWidget::mouseMoveEvent(event);
+    // Determin if ICON is clicked or Text
+    const QPoint mousePosition = event->pos();
+    const QRect itemRectangle = visualItemRect(itemAt(mousePosition));
+    const int iconOffset = itemRectangle.height() - iconSize().height();
+
+    QRect iconRectangle;
+    iconRectangle.setTopLeft(itemRectangle.topLeft() + QPoint(iconOffset, iconOffset));
+    iconRectangle.setWidth(iconSize().width());
+    iconRectangle.setHeight(iconSize().height());
+    bool icon_clicked = false;
+    if (iconRectangle.contains(mousePosition))
+    {
+        // mouse is over icon position
+    }
 }
 
 void cpTreeWidget::selChanged()
@@ -49,12 +69,28 @@ void cpTreeWidget::mousePressEvent(QMouseEvent  *event)
 {
     QTreeWidget::mousePressEvent(event);
 
+    // Determin if ICON is clicked or Text
+    const QPoint clickedPosition = event->pos();
+    const QRect itemRectangle = visualItemRect(itemAt(clickedPosition));
+    const int iconOffset = itemRectangle.height() - iconSize().height();
+
+    QRect iconRectangle;
+    iconRectangle.setTopLeft(itemRectangle.topLeft() + QPoint(iconOffset, iconOffset));
+    iconRectangle.setWidth(iconSize().width());
+    iconRectangle.setHeight(iconSize().height());
+    bool icon_clicked = false;
+    if (iconRectangle.contains(clickedPosition))
+    {
+        //qDebug() << "ICON clicked";
+        icon_clicked = true;
+    }
+
     if (currentItem())
     {
         m_currentItem = currentItem();
     }
 
-    emit event_mousePress(event);
+    emit event_mousePress(event, icon_clicked);
 }
 
 void cpTreeWidget::keyPressEvent(QKeyEvent* event)
@@ -137,6 +173,12 @@ bool cpTreeWidget::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeD
         else
         // check if its an AMD supported image item
         if (g_pluginManager.PluginSupported("IMAGE", (char *)Ext))
+        {
+            emit DroppedImageItem(filePathName, index);
+        }
+        else
+        // check if its an AMD supported image item
+        if (g_pluginManager.PluginSupported("3DMODEL_DX12", (char *)Ext))
         {
             emit DroppedImageItem(filePathName, index);
         }

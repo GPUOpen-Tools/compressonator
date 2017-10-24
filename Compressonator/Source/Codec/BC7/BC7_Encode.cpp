@@ -33,7 +33,7 @@
 #include "BC7_Definitions.h"
 #include "BC7_Partitions.h"
 #include "BC7_Encode.h"
-#include "BC7_Utils.h"
+#include "BC7_utils.h"
 #include "3dquant_vpc.h"
 #include "shake.h"
 #include "debug.h"

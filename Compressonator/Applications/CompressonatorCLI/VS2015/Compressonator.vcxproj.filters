@@ -17,50 +17,56 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\_Plugins\Common\MIPS.cpp">
-      <Filter>Common</Filter>
+    <ClCompile Include="../../_Plugins/Common/ATIFormats.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\_Plugins\Common\PluginManager.cpp">
-      <Filter>Common</Filter>
+    <ClCompile Include="../../_Plugins/Common/cmdline.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\_Plugins\Common\TextureIO.cpp">
-      <Filter>Common</Filter>
+    <ClCompile Include="../../_Plugins/Common/MIPS.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\_Plugins\Common\cmdline.cpp">
-      <Filter>Common</Filter>
+    <ClCompile Include="../../_Plugins/Common/PluginManager.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\_Plugins\Common\ATIFormats.cpp">
-      <Filter>Common</Filter>
+    <ClCompile Include="../../_Plugins/Common/query_timer.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\CompressonatorCLI.cpp">
+    <ClCompile Include="../../_Plugins/Common/TextureIO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="../Source/CompressonatorCLI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Source\AMDCompressCLI_Documentation.h">
+    <ClInclude Include="../Source/AMDCompressCLI_Documentation.h">
       <Filter>Doxygen</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\_Plugins\Common\PluginManager.h">
+    <ClInclude Include="../../_Plugins/Common/ATIFormats.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\_Plugins\Common\PluginInterface.h">
+    <ClInclude Include="../../_Plugins/Common/cmdline.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\_Plugins\Common\MIPS.h">
+    <ClInclude Include="../../_Plugins/Common/MIPS.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\_Plugins\Common\TextureIO.h">
+    <ClInclude Include="../../_Plugins/Common/PluginInterface.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\_Plugins\Common\cmdline.h">
+    <ClInclude Include="../../_Plugins/Common/PluginManager.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\_Plugins\Common\ATIFormats.h">
+    <ClInclude Include="../../_Plugins/Common/query_timer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="../../_Plugins/Common/TextureIO.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\CopyFiles.bat">
+    <None Include="../CopyFiles.bat">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

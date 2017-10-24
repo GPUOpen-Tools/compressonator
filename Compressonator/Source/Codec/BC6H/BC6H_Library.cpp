@@ -21,8 +21,8 @@
 // THE SOFTWARE.
 //
 
-#include "BC7_definitions.h"
-#include "BC6H_definitions.h"
+#include "BC7_Definitions.h"
+#include "BC6H_Definitions.h"
 #include "BC6H_Encode.h"
 #include "BC6H_Decode.h"
 #include "Compressonator.h"

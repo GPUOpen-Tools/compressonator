@@ -25,14 +25,16 @@
 #ifndef _ASTC_DEFINITIONS_H_
 #define _ASTC_DEFINITIONS_H_
 
-#include <Windows.h>
 #include "astc_codec_internals.h"
 #include "softfloat.h"
 #include <stdio.h>
 #include <math.h>
+#include <cstdint>
 
-typedef unsigned long   DWORD;
-typedef unsigned char   BYTE;
+typedef std::uint8_t BYTE;
+
+#define TRUE 1
+#define FALSE 0
 
 // notes: All of these definitions need changing some need to be variable!
 

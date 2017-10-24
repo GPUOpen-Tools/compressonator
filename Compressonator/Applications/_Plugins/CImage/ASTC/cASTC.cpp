@@ -64,8 +64,10 @@ int Plugin_ASTC::TC_PluginSetSharedIO(void* Shared)
 
 int Plugin_ASTC::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
 { 
-    //MessageBox(0,"TC_PluginGetVersion","Plugin_KTX",MB_OK);  
+    //MessageBox(0,"TC_PluginGetVersion","Plugin_KTX",MB_OK); 
+#ifdef _WIN32 
     pPluginVersion->guid                    = g_GUID;
+#endif
     pPluginVersion->dwAPIVersionMajor        = TC_API_VERSION_MAJOR;
     pPluginVersion->dwAPIVersionMinor        = TC_API_VERSION_MINOR;
     pPluginVersion->dwPluginVersionMajor    = TC_PLUGIN_VERSION_MAJOR;
@@ -73,25 +75,26 @@ int Plugin_ASTC::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
     return 0;
 }
 
-int Plugin_ASTC::TC_PluginFileLoadTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture)
+int Plugin_ASTC::TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *srcTexture)
 {
     //MessageBox(0,"TC_PluginFileLoadTexture srcTexture","Plugin_KTX",MB_OK);  
     return 0;
 }
 
-int Plugin_ASTC::TC_PluginFileSaveTexture(const TCHAR* pszFilename, CMP_Texture *srcTexture)
+int Plugin_ASTC::TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *srcTexture)
 {
     //MessageBox(0,"TC_PluginFileSaveTexture srcTexture","Plugin_KTX",MB_OK);  
     return 0;
 }
 
-int Plugin_ASTC::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMipSet)
+int Plugin_ASTC::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSet)
 {
     FILE* pFile = NULL;
-    if(_tfopen_s(&pFile, pszFilename, _T("rb")) != 0 || pFile == NULL)
+    pFile = fopen( pszFilename, "rb");
+    if(pFile == NULL)
     {
         if (ASTC_CMips)
-            ASTC_CMips->PrintError(_T("Error(%d): ASTC Plugin ID(%d) opening file = %s "), EL_Error, IDS_ERROR_FILE_OPEN, pszFilename);
+            ASTC_CMips->PrintError("Error(%d): ASTC Plugin ID(%d) opening file = %s ", EL_Error, IDS_ERROR_FILE_OPEN, pszFilename);
         return -1;
     }
 
@@ -102,7 +105,7 @@ int Plugin_ASTC::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMip
    if(fread(&header, sizeof(astc_header), 1, pFile) != 1)
    {
       if (ASTC_CMips)
-            ASTC_CMips->PrintError(_T("Error(%d): ASTC Plugin ID(%d) invalid ASTC header. Filename = %s "), EL_Error, IDS_ERROR_NOT_ASTC, pszFilename);
+            ASTC_CMips->PrintError("Error(%d): ASTC Plugin ID(%d) invalid ASTC header. Filename = %s ", EL_Error, IDS_ERROR_NOT_ASTC, pszFilename);
       fclose(pFile);
       return -1;
    }
@@ -112,7 +115,7 @@ int Plugin_ASTC::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMip
       if (magicval != MAGIC_FILE_CONSTANT)
     {
       if (ASTC_CMips)
-            ASTC_CMips->PrintError(_T("Error(%d): ASTC Plugin ID(%d) invalid ASTC header constant. Filename = %s "), EL_Error, IDS_ERROR_NOT_ASTC, pszFilename);
+            ASTC_CMips->PrintError("Error(%d): ASTC Plugin ID(%d) invalid ASTC header constant. Filename = %s ", EL_Error, IDS_ERROR_NOT_ASTC, pszFilename);
       fclose(pFile);
       return -1;
     }
@@ -129,7 +132,7 @@ int Plugin_ASTC::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMip
     if (m_xdim < 3 || m_xdim > 12 || m_ydim < 3 || m_ydim > 12 || (m_zdim < 3 && m_zdim != 1) || m_zdim > 12)
     {
         if (ASTC_CMips)
-            ASTC_CMips->PrintError(_T("Error(%d): ASTC Plugin ID(%d) Block size %d %d %d is not supported. Filename = %s "), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, pszFilename,m_xdim, m_ydim, m_zdim);
+            ASTC_CMips->PrintError("Error(%d): ASTC Plugin ID(%d) Block size %d %d %d is not supported. Filename = %s ", EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, pszFilename,m_xdim, m_ydim, m_zdim);
          fclose(pFile);
         return -1;
     }
@@ -177,7 +180,7 @@ int Plugin_ASTC::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMip
         return PE_Unknown;
    }
 
-   BYTE* pData = (BYTE*) (mipLevel->m_pbData);
+   CMP_BYTE* pData = (CMP_BYTE*) (mipLevel->m_pbData);
    pMipSet->m_nMipLevels     = 1;
    int DataSize = mipLevel->m_dwLinearSize;
 
@@ -189,17 +192,18 @@ int Plugin_ASTC::TC_PluginFileLoadTexture(const TCHAR* pszFilename, MipSet* pMip
 }
 
 
-int Plugin_ASTC::TC_PluginFileSaveTexture(const TCHAR* pszFilename, MipSet* pMipSet)
+int Plugin_ASTC::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSet)
 {
     assert(pszFilename);
     assert(pMipSet);
 
 
     FILE* pFile = NULL;
-    if(_tfopen_s(&pFile, pszFilename, _T("wb")) != 0 || pFile == NULL)
+    pFile = fopen(pszFilename, "wb");
+    if(pFile == NULL)
     {
         if (ASTC_CMips)
-            ASTC_CMips->PrintError(_T("Error(%d): ASTC Plugin ID(%d) saving file = %s "), EL_Error, IDS_ERROR_FILE_OPEN, pszFilename);
+            ASTC_CMips->PrintError("Error(%d): ASTC Plugin ID(%d) saving file = %s ", EL_Error, IDS_ERROR_FILE_OPEN, pszFilename);
         return -1;
     }
 

@@ -27,7 +27,10 @@
 //=====================================================================
 
 #include <stdio.h>
+#ifdef _WIN32
 #include <tchar.h>
+#endif
+
 #include "Compressonator.h"
 #include "ATIFormats.h"
 
@@ -81,14 +84,14 @@ CMP_FormatDesc g_FormatDesc[] =
 };
 
 
-DWORD g_dwFormatDescCount = sizeof(g_FormatDesc) / sizeof(g_FormatDesc[0]);
+CMP_DWORD g_dwFormatDescCount = sizeof(g_FormatDesc) / sizeof(g_FormatDesc[0]);
 
 CMP_FORMAT ParseFormat(char* pszFormat)
 {
    if(pszFormat == NULL)
       return CMP_FORMAT_Unknown;
 
-   for(DWORD i = 0; i < g_dwFormatDescCount; i++)
+   for(CMP_DWORD i = 0; i < g_dwFormatDescCount; i++)
       if(strcmp(pszFormat, g_FormatDesc[i].pszFormatDesc) == 0)
          return g_FormatDesc[i].nFormat;
 
@@ -97,7 +100,7 @@ CMP_FORMAT ParseFormat(char* pszFormat)
 
 CMP_CHAR* GetFormatDesc(CMP_FORMAT nFormat)
 {
-   for(DWORD i = 0; i < g_dwFormatDescCount; i++)
+   for(CMP_DWORD i = 0; i < g_dwFormatDescCount; i++)
       if(nFormat == g_FormatDesc[i].nFormat)
          return g_FormatDesc[i].pszFormatDesc;
 

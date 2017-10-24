@@ -75,7 +75,7 @@ typedef enum _CODECError
     CE_Aborted,
 } CodecError;
 
-typedef bool (CMP_API * Codec_Feedback_Proc)(float fProgress, DWORD_PTR pUser1, DWORD_PTR pUser2);
+typedef bool (CMP_API * Codec_Feedback_Proc)(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2);
 
 
 namespace AMD_Compress
@@ -96,14 +96,14 @@ public:
     
     virtual CodecType GetType() const {return m_CodecType;};
 
-    virtual DWORD GetBlockHeight() {return 1;};
+    virtual CMP_DWORD GetBlockHeight() {return 1;};
 
     virtual CCodecBuffer* CreateBuffer(
                                         CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth, 
                                         CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0) const = 0;
 
-    virtual CodecError Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, DWORD_PTR pUser1 = NULL, DWORD_PTR pUser2 = NULL) = 0;
-    virtual CodecError Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, DWORD_PTR pUser1 = NULL, DWORD_PTR pUser2 = NULL) = 0;
+    virtual CodecError Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL) = 0;
+    virtual CodecError Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL) = 0;
 
 protected:
     CodecType m_CodecType;

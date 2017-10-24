@@ -23,9 +23,11 @@
 //
 
 #include "stdafx.h"
+#include <stdarg.h>
 #include <stdio.h>
 #include "MIPS.h"
-
+#include <assert.h>
+#include "TC_PluginInternal.h"
 
 void(*PrintStatusLine)(char *) = NULL;
 
@@ -39,7 +41,7 @@ void PrintInfo(const char* Format, ... )
         char buff[1024];
         // process the arguments into our debug buffer
         va_start(args, Format);
-        vsprintf_s(buff, Format, args);
+        vsprintf(buff, Format, args);
         va_end(args);
         PrintStatusLine(buff);
     }
@@ -56,7 +58,7 @@ MipLevel* CMIPS::GetMipLevel(const MipSet* pMipSet, int nMipLevel,    int nFaceO
 {
     if(!pMipSet)
     {
-        ASSERT(pMipSet);
+        assert(pMipSet);
         return NULL;
     }
 
@@ -72,7 +74,7 @@ MipLevel* CMIPS::GetMipLevel(const MipSet* pMipSet, int nMipLevel,    int nFaceO
 
     if(nMipLevel > pMipSet->m_nMaxMipLevels)
     {
-        ASSERT(nMipLevel <= pMipSet->m_nMaxMipLevels);
+        assert(nMipLevel <= pMipSet->m_nMaxMipLevels);
         return NULL;
     }
     if(nFaceOrSlice < 0)
@@ -92,7 +94,7 @@ MipLevel* CMIPS::GetMipLevel(const MipSet* pMipSet, int nMipLevel,    int nFaceO
     case TT_CubeMap:
         if(nFaceOrSlice >= nDepth)
         {
-            ASSERT(nFaceOrSlice < nDepth);
+            assert(nFaceOrSlice < nDepth);
             return NULL;
         }        
         return (pMipSet->m_pMipLevelTable)[nMipLevel * nDepth + nFaceOrSlice];
@@ -112,7 +114,7 @@ MipLevel* CMIPS::GetMipLevel(const MipSet* pMipSet, int nMipLevel,    int nFaceO
         }
         return NULL;
     default:
-        ASSERT(0);
+        assert(0);
         return NULL;
     }
 }
@@ -120,7 +122,7 @@ MipLevel* CMIPS::GetMipLevel(const MipSet* pMipSet, int nMipLevel,    int nFaceO
 int CMIPS::GetMaxMipLevels(int nWidth, int nHeight, int nDepth)
 {
     int maxMipLevels = 1;
-    ASSERT(nWidth > 0 && nHeight > 0 && nDepth > 0);
+    assert(nWidth > 0 && nHeight > 0 && nDepth > 0);
 
     while (nWidth >= 1 || nHeight >= 1 || nDepth > 1)
     {
@@ -140,7 +142,7 @@ int CMIPS::GetMaxMipLevels(int nWidth, int nHeight, int nDepth)
 bool CMIPS::AllocateMipLevelTable(MipLevelTable** ppMipLevelTable, int nMaxMipLevels, TextureType textureType, int nDepth, int& nLevelsToAllocate)
 {
     //TODO test
-    ASSERT(nDepth > 0);
+    assert(nDepth > 0);
     nLevelsToAllocate = 0;
     //determine # miplevels to allocate based on texture type
     switch(textureType)
@@ -174,7 +176,7 @@ bool CMIPS::AllocateMipLevelTable(MipLevelTable** ppMipLevelTable, int nMaxMipLe
     }
     //allocate the mipLevelTable (buncha pointers to miplevels)
     *ppMipLevelTable = reinterpret_cast<MipLevelTable*>(calloc(nLevelsToAllocate, sizeof(MipLevel*)));
-    ASSERT(*ppMipLevelTable);
+    assert(*ppMipLevelTable);
     return (*ppMipLevelTable != NULL);
 }
 
@@ -186,7 +188,7 @@ bool CMIPS::AllocateAllMipLevels(MipLevelTable* pMipLevelTable, TextureType /*te
     {
         pMipLevelTable[i] = reinterpret_cast<MipLevel*>(calloc(sizeof(MipLevel), 1));
         //make sure it was allocated ok
-        ASSERT(pMipLevelTable[i]);
+        assert(pMipLevelTable[i]);
         if(!pMipLevelTable[i])
         {
             //free previous mipLevels
@@ -207,12 +209,12 @@ bool CMIPS::AllocateAllMipLevels(MipLevelTable* pMipLevelTable, TextureType /*te
 bool CMIPS::AllocateMipSet(MipSet* pMipSet, ChannelFormat channelFormat, TextureDataType textureDataType, TextureType textureType, int nWidth, int nHeight, int nDepth)
 {
     //TODO test
-    ASSERT(pMipSet);
+    assert(pMipSet);
    if (!(nWidth > 0 && nHeight > 0 && nDepth > 0)) return false;
 
     if(pMipSet->m_pMipLevelTable)
     {
-        ASSERT(!pMipSet->m_pMipLevelTable);
+        assert(!pMipSet->m_pMipLevelTable);
         return false;
     }
     //depth only matters for this when its volume texture
@@ -248,10 +250,10 @@ bool CMIPS::AllocateMipSet(MipSet* pMipSet, ChannelFormat channelFormat, Texture
 bool CMIPS::AllocateMipLevelData(MipLevel* pMipLevel, int nWidth, int nHeight, ChannelFormat channelFormat, TextureDataType textureDataType)
 {
     //TODO test
-    ASSERT(pMipLevel);
-    ASSERT(nWidth > 0 && nHeight > 0);
+    assert(pMipLevel);
+    assert(nWidth > 0 && nHeight > 0);
 
-    DWORD dwBitsPerPixel;
+    CMP_DWORD dwBitsPerPixel;
     switch(channelFormat)
     {
         case CF_8bit:
@@ -271,7 +273,7 @@ bool CMIPS::AllocateMipLevelData(MipLevel* pMipLevel, int nWidth, int nHeight, C
             break;
 
         default:
-            ASSERT(0);
+            assert(0);
             return false;
     }
 
@@ -291,31 +293,31 @@ bool CMIPS::AllocateMipLevelData(MipLevel* pMipLevel, int nWidth, int nHeight, C
             break;
 
         default:
-            ASSERT(0);
+            assert(0);
             return false;
     }
 
-    DWORD dwPitch = PAD_BYTE(nWidth, dwBitsPerPixel);
+    CMP_DWORD dwPitch = PAD_BYTE(nWidth, dwBitsPerPixel);
     pMipLevel->m_dwLinearSize = dwPitch * nHeight;
     pMipLevel->m_nWidth = nWidth;
     pMipLevel->m_nHeight = nHeight;
 
-    pMipLevel->m_pbData = reinterpret_cast<BYTE*>(malloc(pMipLevel->m_dwLinearSize));
+    pMipLevel->m_pbData = reinterpret_cast<CMP_BYTE*>(malloc(pMipLevel->m_dwLinearSize));
 
     return (pMipLevel->m_pbData != NULL);
 }
 
-bool CMIPS::AllocateCompressedMipLevelData(MipLevel* pMipLevel, int nWidth, int nHeight, DWORD dwSize)
+bool CMIPS::AllocateCompressedMipLevelData(MipLevel* pMipLevel, int nWidth, int nHeight, CMP_DWORD dwSize)
 {
     //TODO test
-    ASSERT(pMipLevel);
-    ASSERT(nWidth > 0 && nHeight > 0);
+    assert(pMipLevel);
+    assert(nWidth > 0 && nHeight > 0);
 
     pMipLevel->m_dwLinearSize = dwSize;
     pMipLevel->m_nWidth = nWidth;
     pMipLevel->m_nHeight = nHeight;
 
-    pMipLevel->m_pbData = reinterpret_cast<BYTE*>(malloc(pMipLevel->m_dwLinearSize));
+    pMipLevel->m_pbData = reinterpret_cast<CMP_BYTE*>(malloc(pMipLevel->m_dwLinearSize));
 
     return (pMipLevel->m_pbData != NULL);
 }
@@ -324,7 +326,7 @@ void CMIPS::FreeMipSet(MipSet* pMipSet)
 {
     //TODO test
     int nTotalOldMipLevels = 0;
-    ASSERT(pMipSet);
+    assert(pMipSet);
     if(pMipSet)
     {
         if(pMipSet->m_pMipLevelTable)
@@ -351,7 +353,7 @@ void CMIPS::FreeMipSet(MipSet* pMipSet)
                 }
                 break;
             default:
-                ASSERT(0);
+                assert(0);
             }
             //free all miplevels and their data except the one use in gui view
             for(int i=0; i<nTotalOldMipLevels-2 ; i++)
@@ -385,7 +387,7 @@ void CMIPS::PrintError(const char* Format, ... )
     va_list args;
     // process the arguments into our debug buffer
     va_start(args, Format);
-    vsprintf_s(buff,Format,args);
+    vsprintf(buff,Format,args);
     va_end(args);
 
     PrintInfo(buff);

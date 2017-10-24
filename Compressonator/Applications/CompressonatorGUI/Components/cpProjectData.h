@@ -39,11 +39,18 @@
 #include "TextureIO.h"
 #include "Common.h"
 
-#define    TREETYPE_ADD_IMAGE_NODE               0
-#define    TREETYPE_IMAGEFILE_DATA_NODE          1      
-#define    TREETYPE_IMAGEFILE_DATA               2      // items column (1) uses new allocated varient data for C_FileProperties
-#define    TREETYPE_COMPRESSION_DATA             3      // items column (1) uses new allocated varient data for C_CompressOptions
+#define    TREETYPE_Double_Click_here_to_add_files      0      // [+] Double Click here to add files ...
+#define    TREETYPE_Add_destination_setting             1      // [+] Add destination setting ...
+#define    TREETYPE_Add_glTF_destination_settings       2      // Create a new copy of 3D source data node
+#define    TREETYPE_IMAGEFILE_DATA                      3      // items column (1) uses new allocated varient data for C_FileProperties
+#define    TREETYPE_3DMODEL_DATA                        4      // items column (1) uses new allocated varient data for C_FileProperties
+#define    TREETYPE_VIEW_ONLY_NODE                      5      // Autogen data  that is part of a 3D model or Image that is only viewed
+#define    TREETYPE_3DSUBMODEL_DATA                     6      // items column (1) uses new allocated varient data for C_FileProperties
+#define    TREETYPE_COMPRESSION_DATA                    7      // items column (1) uses new allocated varient data for C_CompressOptions
 
+
+#define    TREE_LevelType                               0       // Treeview index of data column variant data storage for TREETYPE_...
+#define    TREE_SourceInfo                              1       // Treeview index of data column variant data storage for Source data
 // =======================================================
 // COMPRESSION DATA
 // =======================================================
@@ -718,11 +725,15 @@ public:
         m_editing = false;
         m_iscompressedFormat = false;       // Flag to indicate the target will be saved as a  compressed file
         m_data_has_been_changed = false;    // Set if any data has changed value
-        //m_settoUseOnlyBC6 = false;
         m_SourceIscompressedFormat = false;     // Flag indicating source is compressed format
         m_SourceIsFloatFormat = false;
         m_SourceImageSize = 0;
         setNoAlpha(true);
+        m_SourceType         = 0;
+        m_modelSource        = "";
+        m_sourceFileNamePath = "";
+        m_sourceFiles.clear();
+        m_srcDelFlags.clear();
     }
 
 
@@ -750,13 +761,6 @@ public:
 
     void setCompression(eCompression Compression)
     {
-        //if (m_settoUseOnlyBC6)
-        //{
-        //    //m_Compression = C_Destination_Options::BC6H;
-        //    emit compressionChanged((QVariant &)Compression);
-        //}
-        //else
-        //{
             if (m_Compression != Compression)
             {
                 m_data_has_been_changed = true;
@@ -769,9 +773,6 @@ public:
 
     eCompression getCompression() const
     {
-        //if (m_settoUseOnlyBC6)
-        //    return C_Destination_Options::BC6H;
-        //else
             return m_Compression;
     }
 
@@ -824,6 +825,10 @@ public:
         return false;
     }
 
+    QString      m_modelSource;
+    QString      m_modelDest;
+    QStringList  m_sourceFiles;
+    QList<bool>  m_srcDelFlags;
     QString      m_compname;
     QString      m_sourceFileNamePath;
     QString      m_destFileNamePath;
@@ -833,12 +838,13 @@ public:
     double       m_Quality;
     bool         m_iscompressedFormat;
     //bool         m_data_has_been_changed;
+
     CMipImages  *m_MipImages;
     bool         m_isselected;
-    //bool         m_settoUseOnlyBC6;
     bool         m_SourceIscompressedFormat;
     bool         m_SourceIsFloatFormat;
     long         m_SourceImageSize;
+    int          m_SourceType;
 
     // Use this as  Read Only property. It points to the original Image used for this destination setting
     // so dont delete its ref using this class. Parent class will clean it up
@@ -867,6 +873,8 @@ private:
         }
 
         // Assign none property data used by the class
+        ds.m_modelSource              = obj.m_modelSource;
+        ds.m_modelDest                = obj.m_modelDest;
         ds.m_Compression              = obj.m_Compression;
         ds.m_compname                 = obj.m_compname;
         ds.m_destFileNamePath         = obj.m_destFileNamePath;
@@ -895,7 +903,7 @@ private:
 // For the Propert View we use _ in string names to indicate a read only field 
 // in the editor
 
-class C_Source_Image: public QObject
+class C_Source_Info : public QObject
 {
 Q_OBJECT
     Q_PROPERTY(QString  _Name       MEMBER m_Name)
@@ -911,7 +919,7 @@ Q_OBJECT
     Q_ENUMS(CMP_FORMAT)
 
 public:
-    C_Source_Image()
+    C_Source_Info()
     {
         m_Name          = "";
         m_Full_Path     = "";
@@ -931,6 +939,7 @@ public:
 
         m_FormatStr = GetFormatDesc(CMP_FORMAT::CMP_FORMAT_Unknown);
         m_Format    = CMP_FORMAT::CMP_FORMAT_Unknown;
+
     }
 
 
@@ -941,6 +950,7 @@ public:
     QString m_FileSizeStr;
     QString m_ImageSizeStr;
     QString m_FormatStr;
+    
 
     CMP_FORMAT m_Format;
     int     m_Width;
@@ -954,6 +964,39 @@ public:
 
 };
 
+class C_3D_Source_Info : public QObject
+{
+    Q_OBJECT
+        Q_PROPERTY(QString  _Name           MEMBER m_Name)
+        Q_PROPERTY(QString  _Full_Path      MEMBER m_Full_Path)
+        Q_PROPERTY(QString  _File_Size      MEMBER m_FileSizeStr)
+        Q_PROPERTY(QString  _Generator      MEMBER m_GeneratorStr)
+        Q_PROPERTY(QString  _Version        MEMBER m_VersionStr)
+
+public:
+    C_3D_Source_Info()
+    {
+        m_Name = "";
+        m_Full_Path = "";
+        m_FileSize = 0;
+        m_GeneratorStr = "Unknown";
+        m_VersionStr   = "Unknown";
+        m_extnum = 0;                           // Used to index new file name
+        m_sourceFiles.clear();
+        m_srcDelFlags.clear();
+    }
+
+    QString m_Name;
+    QString m_Full_Path;
+    QString m_FileSizeStr;
+    QString m_GeneratorStr;
+    QString m_VersionStr;
+    QString m_modelSource;
+    QStringList m_sourceFiles;
+    QList<bool> m_srcDelFlags;
+    int     m_FileSize;
+    int     m_extnum;
+};
 
 // =======================================================
 // APPLICATION DATA
@@ -965,6 +1008,7 @@ public:
 #define APP_Reload_image_views_on_selection             "Reload image views on selection"
 #define APP_Load_recent_project_on_startup              "Load recent project on startup"
 #define APP_Close_all_image_views_prior_to_process      "Close all image views prior to process"
+#define APP_Mouse_click_on_Project_icon_to_view_image   "Mouse click on Project icon to view image"
 
 //class C_GPU_Decompress_Options : public QObject
 //{
@@ -1054,11 +1098,12 @@ class C_Application_Options :public QObject
         Q_ENUMS(ImageEncodeWith)
         Q_ENUMS(ImageDecodeWith)
 #ifdef USE_COMPUTE
-        Q_PROPERTY(ImageEncodeWith  Encode_with                   READ getImageEncode             WRITE setImageEncode NOTIFY ImageEncodeChanged)
+        Q_PROPERTY(ImageEncodeWith  Encode_with                             READ getImageEncode             WRITE setImageEncode NOTIFY ImageEncodeChanged)
 #endif
-        Q_PROPERTY(ImageDecodeWith  Decode_with            READ getImageViewDecode         WRITE setImageViewDecode NOTIFY ImageViewDecodeChanged)
+        Q_PROPERTY(ImageDecodeWith  Decode_with                             READ getImageViewDecode         WRITE setImageViewDecode NOTIFY ImageViewDecodeChanged)
         Q_PROPERTY(bool             Reload_image_views_on_selection         READ getUseNewImageViews        WRITE setUseNewImageViews)
         Q_PROPERTY(bool             Close_all_image_views_prior_to_process  READ getCloseAllImageViews      WRITE setCloseAllImageViews)
+        Q_PROPERTY(bool             Mouse_click_on_icon_to_view_image       READ getclickIconToViewImage    WRITE setclickIconToViewImage)
         Q_PROPERTY(bool             Load_recent_project_on_startup          READ getLoadRecentFile          WRITE setLoadRecentFile)
 
 public:
@@ -1094,6 +1139,7 @@ public:
         m_useNewImageViews   = true;
         m_refreshCurrentView = false;
         m_closeAllDocuments  = true;
+        m_clickIconToViewImage = false;
     }
 
     void setImageViewDecode(ImageDecodeWith decodewith)
@@ -1148,10 +1194,22 @@ public:
         return m_useNewImageViews;
     }
 
+    void setclickIconToViewImage(bool recent)
+    {
+        m_clickIconToViewImage = recent;
+}
+
+    double getclickIconToViewImage() const
+    {
+        return m_clickIconToViewImage;
+    }
+
+
     ImageDecodeWith m_ImageViewDecode;
 #ifdef USE_COMPUTE
     ImageEncodeWith m_ImageEncode;
 #endif
+    bool            m_clickIconToViewImage;
     bool            m_closeAllDocuments;
     bool            m_loadRecentFile;
     bool            m_refreshCurrentView;
@@ -1167,27 +1225,27 @@ signals :
 
 
 #define STR_QUALITY_SETTING_HINT        "Quality Setting Range 0 (Poor)to 1 (High)Default is 0.05"
-#define STR_FORMAT_SETTING_HINT        "Please refer to format description below for more info on compression format"
-#define STR_SETTING_MINIMUM     "minimum"
-#define STR_SETTING_MAXIMUM     "maximum"
-#define STR_SETTING_SINGLESTEP  "singleStep"
+#define STR_FORMAT_SETTING_HINT         "Please refer to format description below for more info on compression format"
+#define STR_SETTING_MINIMUM             "minimum"
+#define STR_SETTING_MAXIMUM             "maximum"
+#define STR_SETTING_SINGLESTEP          "singleStep"
 
 
 #define STR_CHANNELWEIGHTR_SETTING_HINT "Channel Weight Setting Range 0 (Poor)to 1 (High)Default R Weightiing is 0.3086"
 #define STR_CHANNELWEIGHTG_SETTING_HINT "Channel Weight Setting Range 0 (Poor)to 1 (High)Default G Weightiing is 0.6094"
 #define STR_CHANNELWEIGHTB_SETTING_HINT "Channel Weight Setting Range 0 (Poor)to 1 (High)Default B Weightiing is 0.0820"
 
-#define STR_ALPHATHRESHOLD_HINT        "Alpha Threshold Range 1 to 255. Default is 128"
+#define STR_ALPHATHRESHOLD_HINT         "Alpha Threshold Range 1 to 255. Default is 128"
 
 #define STR_BITRATE_SETTING_HINT        "The maximum ASTC bitrate allowed is 8.00. The closest bitrate will be determined. Default is 8.00(4x4)"
 
-#define STR_DEFOG_SETTING_HINT        "The defog range supported is 0.000  to 0.100. Default is 0."
-#define STR_EXPOSURE_SETTING_HINT        "The exposure range supported is -10 to 10. Default is 0."
+#define STR_DEFOG_SETTING_HINT          "The defog range supported is 0.000  to 0.100. Default is 0."
+#define STR_EXPOSURE_SETTING_HINT       "The exposure range supported is -10 to 10. Default is 0."
 #define STR_KNEELOW_SETTING_HINT        "The kneelow range supported is -3.0 to 3.0. Default is 0."
-#define STR_KNEEHIGH_SETTING_HINT        "The kneehigh range supported is 3.5 to 7.5. Default is 5."
-#define STR_GAMMA_SETTING_HINT        "The gamma range supported is 1 to 2.6. Default is 2.2."
+#define STR_KNEEHIGH_SETTING_HINT       "The kneehigh range supported is 3.5 to 7.5. Default is 5."
+#define STR_GAMMA_SETTING_HINT          "The gamma range supported is 1 to 2.6. Default is 2.2."
 
-#define UNKNOWN_IMAGE                    " Unknown"
-#define IMAGE_TYPE_PLUGIN                "IMAGE"
+#define UNKNOWN_IMAGE                   " Unknown"
+#define IMAGE_TYPE_PLUGIN               "IMAGE"
 
 #endif

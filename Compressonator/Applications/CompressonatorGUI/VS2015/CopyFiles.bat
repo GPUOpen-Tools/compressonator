@@ -61,7 +61,7 @@ XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5Qml%_DEBUG%.dll"               %BUILD_OUTDIR
 XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5Network%_DEBUG%.dll"           %BUILD_OUTDIR%
 XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5WebChannel%_DEBUG%.dll"        %BUILD_OUTDIR%
 XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5xml%_DEBUG%.dll"               %BUILD_OUTDIR%
-
+XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5Positioning%_DEBUG%.dll"    %BUILD_OUTDIR%
 
 
 IF NOT EXIST %BUILD_OUTDIR%plugins\platforms mkdir %BUILD_OUTDIR%plugins\platforms
@@ -70,6 +70,7 @@ XCopy /r /d /y "%BUILD_QTDIR%plugins\platforms\qwindows%_DEBUG%.dll" %BUILD_OUTD
 IF NOT EXIST %BUILD_OUTDIR%plugins\imageformats mkdir %BUILD_OUTDIR%plugins\imageformats
 XCopy /r /d /y "%BUILD_QTDIR%plugins\imageformats\qtga%_DEBUG%.dll"  %BUILD_OUTDIR%plugins\imageformats\
 XCopy /r /d /y "%BUILD_QTDIR%plugins\imageformats\qtiff%_DEBUG%.dll" %BUILD_OUTDIR%plugins\imageformats\
+XCopy /r /d /y "%BUILD_QTDIR%plugins\imageformats\qjpeg%_DEBUG%.dll" %BUILD_OUTDIR%plugins\imageformats\
 
 IF NOT EXIST %BUILD_OUTDIR%resources mkdir %BUILD_OUTDIR%resources
 XCopy /s /r /d /y "%BUILD_QTDIR%resources\*" %BUILD_OUTDIR%resources\

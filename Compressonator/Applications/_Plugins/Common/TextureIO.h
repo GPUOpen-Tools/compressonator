@@ -28,28 +28,32 @@
 #ifndef TEXTUREIO_H_
 #define TEXTUREIO_H_
 
-
 #define USE_QT_IMAGELOAD
-
 
 #include "Compressonator.h"
 #include "stdafx.h"
 #include "Texture.h"
 #include "cmdline.h"
 #include "MIPS.h"
-#include <ImfStandardAttributes.h>
-#include <ImathBox.h>
-#include <ImfArray.h>
-#include <imfrgba.h>
+#include "ImfStandardAttributes.h"
+#include "ImathBox.h"
+#include "ImfArray.h"
+#include "ImfRgba.h"
 
 #ifdef USE_QT_IMAGELOAD
-#include "Qrgb.h"
+#include <QtGui/qrgb.h>
 #endif
+
+typedef struct {
+    bool swizzle = false;
+    bool useCPU = true;
+    string errMessage = "";
+} Config;
 
 typedef struct
 {
-    DWORD            dwSize;
-    DWORD            dwFourCC;
+    CMP_DWORD            dwSize;
+    CMP_DWORD            dwFourCC;
     float            fWeightingRed;
     float            fWeightingGreen;
     float            fWeightingBlue;
@@ -70,8 +74,8 @@ typedef struct
    CMP_DWORD         dwnumThreads;
    double            fquality;                
                                             
-   BOOL              brestrictColour;
-   BOOL              brestrictAlpha;
+   bool              brestrictColour;
+   bool              brestrictAlpha;
    CMP_DWORD         dwmodeMask;
 }    ATICompressor_CompressParams;
 
@@ -85,10 +89,14 @@ bool            IsFileExt(const char *fname, const char *fext);
 bool            IsDestinationUnCompressed(const char *fname);
 CMP_FORMAT      FormatByFileExtension(const char *fname, MipSet *pMipSet);
 
-int             AMDLoadMIPSTextureImage(const char *SourceFile, MipSet *CMips, bool use_OCV);
+int             AMDLoadMIPSTextureImage(const char *SourceFile, MipSet *CMips, bool use_OCV, void *pluginManager);
 int             AMDSaveMIPSTextureImage(const char *DestFile, MipSet *CMips, bool use_OCV);
 
+MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *configSetting, CMP_Feedback_Proc pFeedbackProc);
+
+#ifdef USE_QT_IMAGELOAD
 QRgb            floatToQrgba(float r, float g, float b, float a);
+#endif
 
 bool            CompressedFormat(CMP_FORMAT format);
 bool            FloatFormat(CMP_FORMAT format);
@@ -99,6 +107,12 @@ void            astc_find_closest_blockxy_2d(int *x, int *y, int consider_illega
 bool            FormatSupportsQualitySetting(CMP_FORMAT format);
 bool            FormatSupportsDXTCBase(CMP_FORMAT format);
 
+extern void     SwizzleMipMap(MipSet *pMipSet);
+extern bool     KeepSwizzle(CMP_FORMAT destformat);
+
 CMP_FLOAT      F16toF32(CMP_HALF f);
 CMP_HALF    F32toF16(CMP_FLOAT   f);
+#ifndef _WIN32
+int MaxFacesOrSlices(const MipSet* pMipSet, int nMipLevel);
+#endif
 #endif

@@ -68,7 +68,7 @@ Q_SIGNALS:
     void canceled();
 
 private:
-    QLabel* m_pPercentageLabel;
+    QLabel* m_pPercentageLabel = nullptr;
     QLabel* m_pHeaderLabel;
     QLabel* m_pMsgLabel;
     QPushButton* m_pCancelButton;

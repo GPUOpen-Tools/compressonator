@@ -30,11 +30,16 @@
 
 // C RunTime Header Files
 #include <stdlib.h>
+#ifndef __APPLE__
 #include <malloc.h>
+#endif
 #include <memory.h>
+#ifdef _WIN32
 #include <tchar.h>
-#include <vector>
 #include <direct.h>
+#endif
+#include <vector>
+
 //#include "PluginInterface.h"
 #include "PluginBase.h"
 
@@ -73,7 +78,9 @@ class PluginDetails
 
         void clearMembers()
         {
+#ifdef _WIN32
             dllHandle  = NULL;
+#endif
             isStatic   = false;
             filename[0]   = 0;
             pluginType[0] = 0;
@@ -87,8 +94,9 @@ class PluginDetails
         char pluginName [MAX_PLUGIN_NAME_STR];
         char pluginUUID [MAX_PLUGIN_UUID_STR];
         char pluginCategory[MAX_PLUGIN_CATEGORY_STR];
-
+#ifdef _WIN32
         HINSTANCE           dllHandle;
+#endif
 
 };
 

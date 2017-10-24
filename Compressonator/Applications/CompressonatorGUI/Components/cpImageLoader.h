@@ -25,14 +25,15 @@
 #ifndef _IMAGELOADER_H
 #define _IMAGELOADER_H
 
-#include "cmdLine.h"
+#include "cmdline.h"
+#include "TextureIO.h"
 #include "MIPS.h"
 #include "PluginManager.h"
-#include <qstring.h>
-#include <qimage.h>
-#include <qlist.h>
-#include <qfileinfo.h>
-#include <qpainter.h>
+#include <QtCore/qstring.h>
+#include <QtGui/qimage.h>
+#include <QtCore/qlist.h>
+#include <QtCore/qfileinfo.h>
+#include <QtGui/qpainter.h>
 
 enum MIPIMAGE_FORMAT_DECOMPRESSED {
     Format_NONE,
@@ -81,11 +82,11 @@ public:
 
     ~CImageLoader();
     
-    CMipImages *LoadPluginImage(QString filename);      // Creates Image & MIP data 
+    CMipImages *LoadPluginImage(QString filename, CMP_Feedback_Proc pFeedbackProc = NULL);      // Creates Image & MIP data 
     bool    clearMipImages(CMipImages *MipImages);      // Clears (delete) all Image & MIP data
     void    UpdateMIPMapImages(CMipImages *MipImages);  // Maps MIP levels to Images
     void    loadExrProperties(MipSet* mipset, int level, QImage *image);
-    MipSet *QImage2MIPS(QImage *qimage);            // Converts a QImage to MipSet
+    MipSet *QImage2MIPS(QImage *qimage, CMP_Feedback_Proc pFeedbackProc = NULL);            // Converts a QImage to MipSet
     MipSet *LoaderDecompressMipSet(CMipImages *MipImages, Config *decompConfig);
     void   float2Pixel(float kl, float f, float r, float g, float b, float a, int x, int y, QImage *image);
 
@@ -106,10 +107,10 @@ private:
     CMIPS  *m_CMips;
     MipSet *LoadPluginMIPS(QString filename);       // Use AMD PluginManager
    
-    QImage  *MIPS2QImage(MipSet *tmpMipSet, int level); // Converts a MipSet to QImage, Mips level (0 to n) where n <  MipSet::m_nMaxMipLevels
+    QImage  *MIPS2QImage(MipSet *tmpMipSet, int level, CMP_Feedback_Proc pFeedbackProc = NULL); // Converts a MipSet to QImage, Mips level (0 to n) where n <  MipSet::m_nMaxMipLevels
 };
 
 
 extern float half_conv_float(unsigned short in);
-extern bool ProgressCallback(float fProgress, DWORD_PTR pUser1, DWORD_PTR pUser2);
+extern bool ProgressCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2);
 #endif

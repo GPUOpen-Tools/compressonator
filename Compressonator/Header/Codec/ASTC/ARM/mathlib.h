@@ -27,12 +27,6 @@ float cospi(float p);
 
 float nan(int p);
 
-// from MSVS 2013 and up  Math.h includes these functions
-#if (_MSC_VER <= 1700)
-float fmax(float p, float q);
-float fmin(float p, float q);
-#endif
-
 float2 fmax(float2 p, float2 q);
 
 float3 fmax(float3 p, float3 q);

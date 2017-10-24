@@ -93,6 +93,10 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget *parent) :
     isNoSetting      = false;
     m_extnum         = 1;
 
+    m_showDestinationEXTSetting = true;     // Show the FileFormat drop down list (DDS, KTX...)
+    m_showTheControllerSetting  = true;     // Show the FileFormat drop down list (DDS, KTX...)
+    m_showTheInfoTextSetting    = true;     // Show the Info Text
+
     setWindowTitle(title);
     Qt::WindowFlags flags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
     setWindowFlags(flags);
@@ -122,7 +126,8 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget *parent) :
     {
         QByteArray fformat = (*i);
         QString item = fformat;
-        m_AllFileTypes.append(item);
+        if(item != "ASTC")
+            m_AllFileTypes.append(item);
     }
     
     // Default output format
@@ -240,9 +245,23 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget *parent) :
     AddChildItem(parentItem, 0, "Other options", true);
     AddRootItem(0, "Mipmap generation", true);
 #endif
+    QGroupBox *GBSource         = new QGroupBox(tr("Source"));
+    m_VlayoutSource             = new QVBoxLayout(this);
 
+    m_HlayoutSourceName = new QHBoxLayout(this);
+    m_CBSourceFile      = new QComboBox();
+    connect(m_CBSourceFile, SIGNAL(currentIndexChanged(int)), this, SLOT(onSourceNameSelectionChanged(int)));
+
+    m_HlayoutSourceName->addWidget(m_CBSourceFile);
+
+
+    m_VlayoutSource->addLayout(m_HlayoutSourceName);
+    GBSource->setLayout(m_VlayoutSource);
 
     QGroupBox *GBDestinationFile = new QGroupBox(tr("Destination"));
+
+    GBSource->setStyleSheet("QGroupBox { font-weight: bold; } ");
+    GBDestinationFile->setStyleSheet("QGroupBox { font-weight: bold; } ");
 
     m_VlayoutWindow         = new QVBoxLayout(this);
     m_HlayoutName           = new QHBoxLayout(this);
@@ -268,12 +287,15 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget *parent) :
     m_HlayoutButtons->addWidget(m_PBSaveSettings);
     m_HlayoutButtons->addWidget(m_PBCancel);
 
+
+    m_VlayoutWindow->addWidget(GBSource);
+    m_VlayoutWindow->addWidget(GBDestinationFile);
     m_VlayoutWindow->addWidget(m_theController);
     m_VlayoutWindow->addWidget(m_infotext);
-    m_VlayoutWindow->addWidget(GBDestinationFile);
     m_VlayoutWindow->addLayout(m_HlayoutButtons);
 
     setLayout(m_VlayoutWindow);
+
 
 }
 
@@ -295,6 +317,25 @@ bool CSetCompressOptions::updateFileFormat(QFileInfo &fileinfo)
     return false;
 }
 
+void CSetCompressOptions::onSourceNameSelectionChanged(int index)
+{
+    if (index < 0) return;
+    switch (m_data.m_SourceType)
+    {
+        case TREETYPE_3DSUBMODEL_DATA:
+        {
+            QFileInfo fileInfo(m_CBSourceFile->itemText(index));
+            m_LEName->clear();
+            m_data.m_compname = fileInfo.baseName();
+
+            QFileInfo srcfileInfo(m_data.m_modelSource);
+            QString srcPath = srcfileInfo.absolutePath();
+            m_data.m_sourceFileNamePath = srcPath + "/" + m_CBSourceFile->itemText(index);
+            m_LEName->insert(m_data.m_compname + "_" + GetFormatString() + "_" + QString::number(m_extnum));
+        }
+        break;
+    }
+}
 
 //==========================
 // Destination NAME editing
@@ -318,10 +359,31 @@ void CSetCompressOptions::onNameTextChanged(QString text)
 
 void CSetCompressOptions::compressionValueChanged(QVariant &value)
 {
+
+    // Enable or Diable Some of the Dialogs Displayed Widgets
+    // as per callers request
+    if (m_showDestinationEXTSetting)
+        m_fileFormats->show();
+    else
+        m_fileFormats->hide();
+
+    if (m_showTheControllerSetting)
+        m_theController->show();
+    else
+        m_theController->hide();
+
+    if (m_showTheInfoTextSetting)
+        m_infotext->show();
+    else
+        m_infotext->hide();
+
+    // Get the source compression data
     C_Destination_Options::eCompression comp = (C_Destination_Options::eCompression &)value;
+
+    // Backup the original source in case user cancels the dialog or wants to revert settings
     m_data.m_Compression = comp;
-    
-    bool ok = false;
+
+
     QString extension = "DDS";
     bool compressedOptions = false;
     bool colorWeightOptions = false;
@@ -625,6 +687,7 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
     default:
         m_infotext->clear();
         m_fileFormats->addItems(m_AllFileTypes);
+
         if (m_propQuality)
             m_propQuality->setEnabled(false);
         if (m_propChannelWeightingR)
@@ -717,7 +780,33 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
 
     // Update Compression Name
     m_LEName->clear();
-    m_LEName->insert(m_data.m_compname + "_" + GetFormatString() + "_" + QString::number(m_extnum));
+
+    switch(m_data.m_SourceType)
+    {
+        case TREETYPE_3DMODEL_DATA:
+            {
+                // Restrict destination to DDS files
+                m_fileFormats->clear();
+                m_fileFormats->addItem("DDS");
+
+                m_LEName->insert(m_data.m_compname + "_" + QString::number(m_extnum));
+            }
+            break;
+        case TREETYPE_3DSUBMODEL_DATA:
+            {
+                // Restrict destination to DDS files
+                m_fileFormats->clear();
+                m_fileFormats->addItem("DDS");
+                m_LEName->insert(m_data.m_compname + "_" + GetFormatString() + "_" + QString::number(m_extnum));
+            }
+            break;
+        case TREETYPE_IMAGEFILE_DATA:
+        default:
+            {
+                m_LEName->insert(m_data.m_compname + "_" + GetFormatString() + "_" + QString::number(m_extnum));
+            }
+            break;
+    }
 }
 
 
@@ -991,11 +1080,27 @@ bool CSetCompressOptions::updateDisplayContent()
     QFileInfo fi(m_data.m_sourceFileNamePath);
     m_srcext = fi.suffix().toUpper();
 
-    m_data.m_compname = m_data.m_compname + "_" + m_srcext;
-    m_data.m_FileInfoDestinationName = m_data.m_compname;
     // Compression Name
     m_LEName->clear();
-    m_LEName->insert(m_data.m_compname + "_" + GetFormatString()+ "_" + QString::number(m_extnum));
+    switch (m_data.m_SourceType)
+    {
+    case TREETYPE_3DMODEL_DATA:
+    {
+        m_data.m_FileInfoDestinationName = m_data.m_compname;
+        m_LEName->insert(m_data.m_compname + "_" + QString::number(m_extnum));
+    }
+    break;
+    case TREETYPE_3DSUBMODEL_DATA:
+    case TREETYPE_IMAGEFILE_DATA:
+    default:
+    {
+        m_data.m_compname = m_data.m_compname + "_" + m_srcext;
+        m_data.m_FileInfoDestinationName = m_data.m_compname;
+        m_LEName->insert(m_data.m_compname + "_" + GetFormatString() + "_" + QString::number(m_extnum));
+    }
+    break;
+    }
+
 
 
     // Update Property Managed Settings and content view
@@ -1005,15 +1110,15 @@ bool CSetCompressOptions::updateDisplayContent()
     // Destination FileName
     QString FileName;
     QFileInfo fileinfo;
-    if (isInit)
-    {
-        fileinfo.setFile(m_data.m_destFileNamePath);
-        m_DestinationFolder->setText(m_destFilePath);
-        // Destination File Name
-        FileName = fileinfo.baseName();
-        if (FileName.length() <= 0) FileName = m_data.m_compname;
-    }
-    else
+    //if (isInit)
+    //{
+    //    fileinfo.setFile(m_data.m_destFileNamePath);
+    //    m_DestinationFolder->setText(m_destFilePath);
+    //    // Destination File Name
+    //    FileName = fileinfo.baseName();
+    //    if (FileName.length() <= 0) FileName = m_data.m_compname;
+    //}
+    //else
     {
         fileinfo.setFile(m_data.m_sourceFileNamePath);
         FileName = m_data.m_compname;
@@ -1168,14 +1273,21 @@ void CSetCompressOptions::onPBCancel()
     if (parent)
     {
         // Varify its root
-        QVariant v = parent->data(0, Qt::UserRole);
+        QVariant v = parent->data(TREE_LevelType, Qt::UserRole);
         int ParentlevelType = v.toInt();
         if (ParentlevelType == TREETYPE_IMAGEFILE_DATA)
         {
-            QVariant v = parent->data(1, Qt::UserRole);
-            C_Source_Image *m_imagefile = v.value<C_Source_Image *>();
+            QVariant v = parent->data(TREE_SourceInfo, Qt::UserRole);
+            C_Source_Info *m_imagefile = v.value<C_Source_Info *>();
             if (m_imagefile)
                 m_imagefile->m_extnum--;
+        }
+        if (ParentlevelType == TREETYPE_3DMODEL_DATA)
+        {
+            QVariant v = parent->data(TREE_SourceInfo, Qt::UserRole);
+            C_3D_Source_Info *m_sourcefile = v.value<C_3D_Source_Info *>();
+            if (m_sourcefile)
+                m_sourcefile->m_extnum-=2;
         }
     }
 
@@ -1234,13 +1346,20 @@ void CSetCompressOptions::SaveCompressedInfo()
     file.close();
     file.remove();
 
-    if (m_fileFormats->currentIndex() >= 0 && !(ImageExt.isEmpty()))
+    if (m_data.m_SourceType == TREETYPE_3DMODEL_DATA)
     {
-        finalPath.append(".");
-        finalPath.append(ImageExt);
+        finalPath.append(".gltf");
     }
     else
-        finalPath.append(".DDS");
+    {
+        if (m_fileFormats->currentIndex() >= 0 && !(ImageExt.isEmpty()))
+        {
+            finalPath.append(".");
+            finalPath.append(ImageExt);
+        }
+        else
+            finalPath.append(".DDS");
+    }
 
     m_data.m_destFileNamePath = finalPath;
 
@@ -1270,8 +1389,8 @@ void CSetCompressOptions::PBSaveCompressSetting()
 //
 //        while (itr)
 //        {
-//            QVariant v = itr->data(1, Qt::UserRole);
-//            C_Source_Image *m_imagefile = v.value<C_Source_Image *>();
+//            QVariant v = itr->data(TREE_SourceInfo, Qt::UserRole);
+//            C_Source_Info *m_imagefile = v.value<C_Source_Image *>();
 //            QFileInfo fileinfo(m_imagefile->m_Name);
 //            m_data.m_sourceFileNamePath = m_imagefile->m_Full_Path;
 //            m_data.m_SourceImageSize = m_imagefile->m_ImageSize;

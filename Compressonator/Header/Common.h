@@ -25,11 +25,26 @@
 #define COMMON_H
 
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
 #include <math.h>
 #include <float.h>
-#include <tchar.h>
 #include <string>
+#include <stdint.h>
+
+namespace CMP
+{
+
+// Basic types.
+typedef std::uint8_t BYTE;
+typedef std::uint16_t WORD;
+typedef std::uint32_t DWORD;
+typedef std::int32_t LONG;
+typedef std::int32_t BOOL;
+typedef size_t DWORD_PTR;
+typedef unsigned int UINT;
+
+}
 
 #include "Compressonator.h"
 

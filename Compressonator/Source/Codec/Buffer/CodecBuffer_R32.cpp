@@ -138,7 +138,7 @@ bool CCodecBuffer_R32::ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE
     if(x >= GetWidth() || y >= GetHeight())
         return false;
 
-    memset(dwBlock, 0, w*h*sizeof(DWORD));
+    memset(dwBlock, 0, w*h*sizeof(CMP_DWORD));
 
     return true;
 }
@@ -158,7 +158,7 @@ bool CCodecBuffer_R32::ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE
     if(x >= GetWidth() || y >= GetHeight())
         return false;
 
-    memset(dwBlock, 0, w*h*sizeof(DWORD));
+    memset(dwBlock, 0, w*h*sizeof(CMP_DWORD));
 
     return true;
 }
@@ -171,7 +171,7 @@ bool CCodecBuffer_R32::ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE
     if(x >= GetWidth() || y >= GetHeight())
         return false;
 
-    memset(dwBlock, 0, w*h*sizeof(DWORD));
+    memset(dwBlock, 0, w*h*sizeof(CMP_DWORD));
 
     return true;
 }

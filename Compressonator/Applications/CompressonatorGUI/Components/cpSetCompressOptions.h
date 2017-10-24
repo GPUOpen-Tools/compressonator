@@ -62,11 +62,17 @@ public:
     bool isNoSetting;
     int  m_extnum;
 
+    bool m_showDestinationEXTSetting;                       // Dropdown list for DDS, KTX, ...
+    bool m_showTheControllerSetting;                        // Property page for BCn, ETC1 ... 
+    bool m_showTheInfoTextSetting;
+
     QString                      m_destFilePath;
     QTextBrowser                *m_infotext;
     QLineEdit                   *m_DestinationFolder;
     QLineEdit                   *m_LEName;
     QString                      m_srcext;
+    QLineEdit                   *m_LESourceFile;
+    QComboBox                   *m_CBSourceFile;
 
 private:
     // Common for all
@@ -75,6 +81,8 @@ private:
     QHBoxLayout                 *m_HlayoutButtons;
     QVBoxLayout                 *m_VlayoutWindow;
     QVBoxLayout                 *m_VlayoutDestination;
+    QVBoxLayout                 *m_VlayoutSource;
+    QHBoxLayout                 *m_HlayoutSourceName;
     
     QWidget                     *m_newWidget;
     const QString                m_title;
@@ -148,7 +156,7 @@ public Q_SLOTS:
     void    kneehighValueChanged(double& kneehigh);
     void    gammaValueChanged(double& gamma);
     void    oncurrentItemChanged(QtBrowserItem *);
-
+    void    onSourceNameSelectionChanged(int index);
 
 };
 

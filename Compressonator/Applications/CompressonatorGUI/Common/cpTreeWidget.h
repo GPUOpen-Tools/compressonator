@@ -37,27 +37,30 @@
 
 class cpTreeWidget : public QTreeWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	cpTreeWidget(QWidget *parent = 0);
+    cpTreeWidget(QWidget *parent = 0);
     ~cpTreeWidget();
 
-	virtual bool dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData *data, Qt::DropAction action);	
-	QStringList mimeTypes() const;    
-	Qt::DropActions supportedDropActions () const;
-	QTreeWidgetItem *m_currentItem;
+    virtual bool dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData *data, Qt::DropAction action);    
+    QStringList mimeTypes() const;    
+    Qt::DropActions supportedDropActions () const;
+    QTreeWidgetItem *m_currentItem;
 
 private:
+    QString m_currToolTip;
     void keyPressEvent(QKeyEvent* event);
     void mousePressEvent(QMouseEvent  *event);
+    void mouseMoveEvent(QMouseEvent  *event);
+    QVariant data(const QModelIndex & index, int role);
 
 private slots :
         void selChanged();
 signals:
     void DroppedImageItem(QString &filePathName, int index);
-	void event_mousePress(QMouseEvent  *event);
-	void event_keyPress(QKeyEvent *event);
+    void event_mousePress(QMouseEvent  *event, bool onIcon);
+    void event_keyPress(QKeyEvent *event);
 };
 
 

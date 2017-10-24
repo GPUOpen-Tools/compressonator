@@ -18,7 +18,7 @@
 // Copyright (c) 2014-2017  Advanced Micro Devices, Inc. All rights reserved.
 //===========================================================================
 
-#include "common_kernel.h"
+#include "Common_Kernel.h"
 
 
 namespace ASTC_Encoder

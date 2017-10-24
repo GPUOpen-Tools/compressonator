@@ -24,9 +24,9 @@
 ****************************************************************************/
 
 #include "cvmatandqimage.h"
-#include <QImage>
-#include <QSysInfo>
-#include <QDebug>
+#include <QtGui/qimage.h>
+#include <QtCore/qsysinfo.h>
+#include <QtCore/qdebug.h>
 #include <cstring>
 #include "opencv2/core/core.hpp"
 #include "opencv2/imgproc/imgproc.hpp"

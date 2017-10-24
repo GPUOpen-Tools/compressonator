@@ -29,7 +29,7 @@
 #include "Common.h"
 #include "3dquant_constants.h"
 #include "3dquant_vpc.h"
-#include "bc7_definitions.h"
+#include "BC7_Definitions.h"
 #include "debug.h"
 
 #include <mutex>
@@ -60,8 +60,8 @@ static int trcnts[MAX_CLUSTERS][MAX_ENTRIES_QUANT_TRACE];
     int*        amd_codes[MAX_CLUSTERS][MAX_ENTRIES_QUANT_TRACE] = {};
     TRACE*      amd_trs[MAX_CLUSTERS][MAX_ENTRIES_QUANT_TRACE]   = {};
 #else
+    int         amd_codes[MAX_CLUSTERS][MAX_ENTRIES_QUANT_TRACE][MAX_TRACE];
     TRACE       amd_trs[MAX_CLUSTERS][MAX_ENTRIES_QUANT_TRACE][MAX_TRACE];
-    int         amd_codes[MAX_CLUSTERS][MAX_ENTRIES_QUANT_TRACE][MAX_TRACE];  // was static
 #endif
 
 static int g_Quant_init = 0;
@@ -92,24 +92,23 @@ void Quant_Init(void)
                 assert(amd_trs[ numClusters ][ numEntries ]);
             #endif
 
-            traceBuilder (    numEntries+1,  
+            traceBuilder (  numEntries+1,  
                             numClusters+1, 
                             amd_trs[numClusters][numEntries],
                             amd_codes[numClusters][numEntries],
                             trcnts[numClusters]+(numEntries)); 
         }
     }
-    
+
     g_Quant_init++;
 
     mtx.unlock();
-
 }
 
 void Quant_DeInit(void)
 {
     g_Quant_init--;
-    if (g_Quant_init > 0)
+    if (g_Quant_init > 1)
     {
         return;
     }
@@ -117,13 +116,15 @@ void Quant_DeInit(void)
     {
         g_Quant_init = 0; // Reset in case user called Quant_DeInit too many times without matching Quant_Init
         if (amd_codes[0][0] == nullptr)  return;
-        
+
 #ifdef USE_TRACE_WITH_DYNAMIC_MEM
+
         delete[] amd_codes[0][0];
         amd_codes[0][0] = nullptr;
-
+        
         delete amd_trs[0][0];
         amd_trs[0][0] = nullptr;
+
 
         for (int i = 1; i < MAX_CLUSTERS; i++)
         {

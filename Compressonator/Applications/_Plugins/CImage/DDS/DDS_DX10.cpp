@@ -28,13 +28,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+
+#ifdef _WIN32
 #include "ddraw.h"
-#include "TC_PluginAPI.h"
 #include "DXGIFormat.h"                // https://msdn.microsoft.com/en-us/library/windows/desktop/bb173059(v=vs.85).aspx
 #include "D3D10.h"                    // https://msdn.microsoft.com/en-us/library/windows/desktop/bb172411(v=vs.85).aspx
+#endif
+
+#include "TC_PluginAPI.h"
 #include "DDS_DX10.h"
 #include "DDS_Helpers.h"
-#include "version.h"
+#include "Version.h"
 #include "Texture.h"
 
 TC_PluginError LoadDDS_DX10_RGBA_32F(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
@@ -51,17 +55,17 @@ TC_PluginError LoadDDS_DX10_R32(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
 TC_PluginError LoadDDS_DX10_R8G8(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
 TC_PluginError LoadDDS_DX10_R16(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
 TC_PluginError LoadDDS_DX10_R8(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
-TC_PluginError LoadDDS_DX10_FourCC(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet, DWORD dwFourCC);
+TC_PluginError LoadDDS_DX10_FourCC(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet, CMP_DWORD dwFourCC);
 
-
+extern int MaxFacesOrSlices(const MipSet* pMipSet, int nMipLevel);
 
 typedef struct
 {
     DXGI_FORMAT                     dxgiFormat;
     D3D10_RESOURCE_DIMENSION        resourceDimension;
-    UINT                            miscFlag;                   // Used for D3D10_RESOURCE_MISC_FLAG
-    UINT                            arraySize;
-    UINT                            reserved;                   // Currently unused
+    uint32_t                            miscFlag;                   // Used for D3D10_RESOURCE_MISC_FLAG
+    uint32_t                            arraySize;
+    uint32_t                            reserved;                   // Currently unused
 } DDS_HEADER_DDS10;
 
 TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
@@ -228,7 +232,7 @@ TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
         //    break;
         //
         default:
-            ASSERT(0);
+            assert(0);
     }
 
     fclose(pFile);
@@ -340,7 +344,7 @@ TC_PluginError LoadDDS_DX10_R8(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
     return GenericLoadFunction(pFile, pDDSD, pMipSet, extra, CF_8bit, TDT_XRGB, PreLoopRGB8888, LoopR8, PreLoopRGB8888);
 }
 
-TC_PluginError LoadDDS_DX10_FourCC(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet, DWORD /*dwFourCC*/)
+TC_PluginError LoadDDS_DX10_FourCC(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet, CMP_DWORD /*dwFourCC*/)
 {
     void* extra;
     return GenericLoadFunction(pFile, pDDSD, pMipSet, extra, CF_Compressed, TDT_XRGB, PreLoopFourCC, LoopFourCC, PostLoopFourCC);
@@ -383,7 +387,7 @@ bool SetupDDSD10(DDS_HEADER_DDS10& HeaderDDS10, const MipSet* pMipSet)
 {
     memset(&HeaderDDS10, 0, sizeof(HeaderDDS10));
 
-    ASSERT(pMipSet);
+    assert(pMipSet);
     if(pMipSet == NULL)
         return false;
 

@@ -33,6 +33,8 @@
 #include "cpSetApplicationOptions.h"
 #include "cpProjectView.h"
 #include "cpImageView.h"
+#include "cp3DModelView.h"
+#include "cp3DModelCompare.h"
 #include "cpWelcomePage.h"
 #include "cpImageCompare.h"
 #include "cpCompressStatus.h"
@@ -50,6 +52,11 @@
 // #define ENABLE_AGS_SUPPORT
 #ifdef ENABLE_AGS_SUPPORT
 #include <amd_ags.h>
+#ifdef _WIN64
+#pragma comment(lib,"amd_ags_x64.lib")
+#else
+#pragma comment(lib,"amd_ags_x32.lib")
+#endif
 #endif
 
 #define PROJECT_EXTENSION   ".cprj"
@@ -109,8 +116,10 @@ public:
     CSetApplicationOptions  *m_setapplicationoptions;
     ProjectView             *m_projectview;
     cpImageView             *m_imageview;
+    cp3DModelView           *m_3Dmodelview;
     acCustomDockWidget      *m_blankpage;
     CImageCompare           *m_imageCompare;
+    C3DModelCompare         *m_3dModelCompare;
     QDockWidget             *m_activeImageTab;      // Current viewing Image Tab
     QDockWidget             *app_welcomepage;
     QMainWindow             *m_parent;
@@ -143,6 +152,7 @@ public slots:
     void AddImageView(QString &fileName, QTreeWidgetItem * item);
 
     void AddImageDiff(C_Destination_Options *destination, QString &fileName1, QString &fileName2);
+    void Add3DModelDiff(C_3D_Source_Info *destination, QString &fileName1, QString &fileName2);
     void AddImageCompSettings(QTreeWidgetItem *, C_Destination_Options &m_data);
     void OnDeleteImageView(QString &fileName);
     void OnDeleteImageDiffView(QString &fileName);

@@ -26,9 +26,13 @@
 
 #if !defined(_AMD_TEX_UTILSFUNCS_H_INCLUDED_)
 #define _AMD_TEX_UTILSFUNCS_H_INCLUDED_
+
+#ifdef _WIN32
 #include "Windows.h"
 
-void SwizzleBytes(void* src, unsigned long numBytes);
 HWND FindTopLevelWindow(TCHAR* pszName);
+#endif
+void SwizzleBytes(void* src, unsigned long numBytes);
+
 
 #endif // !defined(_AMD_TEX_UTILSFUNCS_H_INCLUDED_)

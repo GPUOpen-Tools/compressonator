@@ -141,7 +141,7 @@ bool CCodec_DXTC::SetParameter(const CMP_CHAR* pszParamName, CODECFLOAT fValue)
     else if(strcmp(pszParamName, "WeightB") == 0)
         m_fChannelWeights[2] = m_fBaseChannelWeights[2] = fValue * fValue;
     else
-        return __super::SetParameter(pszParamName, fValue);
+        return CCodec_Block_4x4::SetParameter(pszParamName, fValue);
     return true;
 }
 
@@ -154,6 +154,6 @@ bool CCodec_DXTC::GetParameter(const CMP_CHAR* pszParamName, CODECFLOAT& fValue)
     else if(strcmp(pszParamName, "WeightB") == 0)
         fValue = sqrt(m_fBaseChannelWeights[2]);
     else
-        return __super::GetParameter(pszParamName, fValue);
+        return CCodec_Block_4x4::GetParameter(pszParamName, fValue);
     return true;
 }

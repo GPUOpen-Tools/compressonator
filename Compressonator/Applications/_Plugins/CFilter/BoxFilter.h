@@ -28,7 +28,11 @@
 #include "PluginInterface.h"
 
 // {3AF62198-7326-48FA-B1FB-1D12A355694D}
+#ifdef _Win32
 static const GUID g_GUID = { 0x3af62198, 0x7326, 0x48fa, { 0xb1, 0xfb, 0x1d, 0x12, 0xa3, 0x55, 0x69, 0x4d } };
+#else
+static const GUID g_GUID = {0};
+#endif
 
 #define TC_PLUGIN_VERSION_MAJOR	1
 #define TC_PLUGIN_VERSION_MINOR	0

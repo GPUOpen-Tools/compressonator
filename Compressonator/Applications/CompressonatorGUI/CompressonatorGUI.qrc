@@ -52,5 +52,6 @@
         <file>Images/ssim.png</file>
         <file>Images/plusSettings.png</file>
         <file>Resources/appicon.ico</file>
+        <file>Images/3Dfile.png</file>
     </qresource>
 </RCC>

@@ -25,14 +25,17 @@
 // THE SOFTWARE.
 //
 
+
 #include "stdafx.h"
 #include "TC_PluginAPI.h"
-#include "version.h"
+#include "Version.h"
 #include <stdio.h>
 
+#ifdef _WIN32
 TC_AppPointers g_AppPointers;
 HPLUGIN g_hThis = NULL;
 HINSTANCE g_hInstance = NULL;
+#endif
 
 //int GetCheckedRadioButton(HWND hwndDlg, int nIDFirstButton, int nIDLastButton)
 //{
@@ -88,9 +91,9 @@ int FaceIndex(const MipSet* pMipSet, MS_CubeFace face)
     return -1;    //indicating error
 }
 
-DWORD MakeFourCC(const TCHAR* pszFourCC)
+CMP_DWORD MakeFourCC(const TCHAR* pszFourCC)
 {
-    DWORD dwFourCC = MAKEFOURCC(' ', ' ', ' ', ' ');
+    CMP_DWORD dwFourCC = MAKEFOURCC(' ', ' ', ' ', ' ');
     if(pszFourCC)
     {
         char* pFourCC = (char*) &dwFourCC;
@@ -104,7 +107,7 @@ DWORD MakeFourCC(const TCHAR* pszFourCC)
 }
 
 #ifdef _AFXDLL
-
+#ifdef _WIN32
 HINSTANCE GetInstance()
 {
     return AfxGetInstanceHandle();
@@ -112,6 +115,7 @@ HINSTANCE GetInstance()
 
 #define MAX_FORMAT_LENGTH 160
 #define MAX_ERROR_LENGTH 240
+
 
 void Error(TCHAR* pszCaption, TC_ErrorLevel errorLevel, UINT nErrorString, ...)
 {
@@ -443,3 +447,5 @@ void TC_AppCheckCommand(HWND hParent, UINT nCommand, BOOL bCheck)
     if(g_AppPointers.pAppCheckCommand)
         g_AppPointers.pAppCheckCommand(g_hThis, hParent, nCommand, bCheck);
 }
+#endif
+

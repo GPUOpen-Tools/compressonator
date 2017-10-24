@@ -13,99 +13,99 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\KTX.cpp">
+    <ClCompile Include="../KTX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\softfloat.cpp">
+    <ClCompile Include="../Lib/swap.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\StdAfx.cpp">
+    <ClCompile Include="../StdAfx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\MIPS.cpp">
+    <ClCompile Include="../Lib/checkheader.c">
+      <Filter>Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="../Lib/hashtable.c">
+      <Filter>Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="../Lib/ktxfilestream.c">
+      <Filter>Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="../Lib/ktxmemstream.c">
+      <Filter>Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="../Lib/errstr.c">
+      <Filter>Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="../Lib/loader.c">
+      <Filter>Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="../../../Common/MIPS.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\TC_PluginInternal.cpp">
+    <ClCompile Include="../../../Common/TC_PluginInternal.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\UtilFuncs.cpp">
+    <ClCompile Include="../../../Common/UtilFuncs.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\Lib\checkheader.c">
+    <ClCompile Include="../Lib/writer.c">
       <Filter>Lib</Filter>
     </ClCompile>
-    <ClCompile Include="..\Lib\errstr.c">
-      <Filter>Lib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Lib\hashtable.c">
-      <Filter>Lib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Lib\ktxfilestream.c">
-      <Filter>Lib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Lib\ktxmemstream.c">
-      <Filter>Lib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Lib\loader.c">
-      <Filter>Lib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Lib\swap.c">
-      <Filter>Lib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Lib\writer.c">
+    <ClCompile Include="../softfloat.cpp">
       <Filter>Lib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\cKTX.h">
+    <ClInclude Include="../Lib/gl_funcptrs.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="../Lib/gles1_funcptrs.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="../Lib/gles2_funcptrs.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="../Lib/gles3_funcptrs.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="../cKTX.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\softfloat.h">
+    <ClInclude Include="../Lib/ktx.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="../Lib/ktxfilestream.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="../Lib/ktxint.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="../Lib/ktxmemstream.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="../Lib/ktxstream.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="../../../Common/TC_PluginInternal.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="../../../Common/TC_PluginAPI.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="../../../Common/MIPS.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="../../../Common/UtilFuncs.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="../StdAfx.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\StdAfx.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\MIPS.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\TC_PluginAPI.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\TC_PluginInternal.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\UtilFuncs.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Lib\gl_funcptrs.h">
+    <ClInclude Include="../Lib/uthash.h">
       <Filter>Lib</Filter>
     </ClInclude>
-    <ClInclude Include="..\Lib\gles1_funcptrs.h">
-      <Filter>Lib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Lib\gles2_funcptrs.h">
-      <Filter>Lib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Lib\gles3_funcptrs.h">
-      <Filter>Lib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Lib\ktx.h">
-      <Filter>Lib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Lib\ktxfilestream.h">
-      <Filter>Lib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Lib\ktxint.h">
-      <Filter>Lib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Lib\ktxmemstream.h">
-      <Filter>Lib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Lib\ktxstream.h">
-      <Filter>Lib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Lib\uthash.h">
+    <ClInclude Include="../softfloat.h">
       <Filter>Lib</Filter>
     </ClInclude>
   </ItemGroup>
