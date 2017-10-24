@@ -18,7 +18,7 @@ Compressonator V2.7 Upcomming Features
 
 * **Preview of 3D Model viewer and asset compression**
   * Compare compressed models with original
-  * View 3D Models with DX12 using glTF file format
+  * View 3D Models with DX12 using glTF v2.0 file format https://www.khronos.org/gltf
   * Realtime 3D Model diff views
   * Compress model images
   
