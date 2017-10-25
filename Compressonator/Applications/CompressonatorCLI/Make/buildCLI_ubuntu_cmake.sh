@@ -1,4 +1,5 @@
 #please make sure all the prerequite packages are installed. You can refer to or run initsetup_ubuntu.sh to install the required package to run this shell script
+set -x
 set -e
 export CC=/usr/bin/gcc-6
 export CXX=/usr/bin/g++-6
