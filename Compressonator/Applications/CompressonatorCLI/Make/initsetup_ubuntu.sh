@@ -14,9 +14,9 @@ if [ $version = "16.04" ];then
 	sudo apt-get install qtdeclarative5-dev
 	#openexr v2.2. is needed else have to build from source
 	wget http://download.savannah.nongnu.org/releases/openexr/ilmbase-2.2.0.tar.gz
-	(tar xvfz ilmbase-2.2.0.tar.gz && cd ilmbase-2.2.0 && sudo cmake -DCMAKE_INSTALL_PREFIX=/usr/local/ilmbase22build/ . && make -j 4 && sudo make install)
+	(tar xvfz ilmbase-2.2.0.tar.gz && cd ilmbase-2.2.0 && sudo cmake -DCMAKE_INSTALL_PREFIX=/usr/local/ilmbase22build/ . && sudo make -j 4 && sudo make install)
 	wget http://download.savannah.nongnu.org/releases/openexr/openexr-2.2.0.tar.gz
-	(tar xvfz openexr-2.2.0.tar.gz && cd openexr-2.2.0 && sudo cmake -DILMBASE_PACKAGE_PREFIX=/usr/local/ilmbase22build/  -DCMAKE_INSTALL_PREFIX=/usr/local/openexr22build/ . && make -j 4 && sudo make install)
+	(tar xvfz openexr-2.2.0.tar.gz && cd openexr-2.2.0 && sudo cmake -DILMBASE_PACKAGE_PREFIX=/usr/local/ilmbase22build/  -DCMAKE_INSTALL_PREFIX=/usr/local/openexr22build/ . && sudo make -j 4 && sudo make install)
 	
 	sudo apt-get install libopencv-dev
 	sudo apt-get install libboost-filesystem-dev
@@ -40,9 +40,9 @@ elif [ $version = "14.04" ];then
 	LD_LIBRARY_PATH=/usr/local/lib
 	export LD_LIBRARY_PATH
 	wget http://download.savannah.nongnu.org/releases/openexr/ilmbase-2.2.0.tar.gz
-	(tar xvfz ilmbase-2.2.0.tar.gz && cd ilmbase-2.2.0 && sudo cmake -DCMAKE_INSTALL_PREFIX=/usr/local/ilmbase22build/ . && make -j 4 && sudo make install)
+	(tar xvfz ilmbase-2.2.0.tar.gz && cd ilmbase-2.2.0 && sudo cmake -DCMAKE_INSTALL_PREFIX=/usr/local/ilmbase22build/ . && sudo make -j 4 && sudo make install)
 	wget http://download.savannah.nongnu.org/releases/openexr/openexr-2.2.0.tar.gz
-	(tar xvfz openexr-2.2.0.tar.gz && cd openexr-2.2.0 && sudo cmake -DILMBASE_PACKAGE_PREFIX=/usr/local/ilmbase22build/  -DCMAKE_INSTALL_PREFIX=/usr/local/openexr22build/ . && make -j 4 && sudo make install)
+	(tar xvfz openexr-2.2.0.tar.gz && cd openexr-2.2.0 && sudo cmake -DILMBASE_PACKAGE_PREFIX=/usr/local/ilmbase22build/  -DCMAKE_INSTALL_PREFIX=/usr/local/openexr22build/ . && sudo make -j 4 && sudo make install)
 	
 	sudo apt-get install libopencv-dev
 	sudo apt-get install libboost-filesystem-dev
