@@ -2,8 +2,7 @@
 
 Compressonator is a set of tools to allow artists and developers to more easily create compressed texture image assets and easily visualize the quality impact of various compression technologies.  It consists of a GUI application, a command line application and an SDK for easy integration into a developer tool chain.
 
-Compressonator DXTn (S3TC)is developed for Microsoft Windows® platform.
-Building for Linux is possible aswell, partially.
+Compressonator supports Microsoft Windows®, Linux and Mac builds.
 
 For more details goto the Compressonator Wiki: https://github.com/GPUOpen-Tools/Compressonator/wiki 
 
