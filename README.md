@@ -10,6 +10,7 @@ Get Prebuilt Binaries and Installer here:
 -----------------------------------------------------
 https://github.com/GPUOpen-Tools/Compressonator/releases
 
+
 Compressonator V2.7 Upcomming Features
 -----------------------------------------------------
 * **Linux and Mac support**
@@ -21,7 +22,29 @@ Compressonator V2.7 Upcomming Features
   * Compare compressed model textures with original
   * Compress model images
   
+Under development 
+----------------------------------------------------
+* Improvements to existing Compression Codecs
 
+* Model Mesh Optimization
+  * 3D triangle mesh optimization that improves on existing mesh preprocessing techniques
+    * Vertex cache optimization
+    * Overdraw optimization
+    * Vertex prefetch cache optimization
+  
+* 3D Model viewer features
+  * Selectable 3D Model views with DX12, Vulkan and OpenGL
+  * Multi GPU Node usage stats
+  * Real time GPU profiler chart with Total GPU Time stats
+  * Animation (on/off)
+  * Glow
+  * Spot lighting 
+  * Shadow maps
+  * Selection of tone mapper ("Timothy", "DX11DSK", "Reinhard", "Uncharted2Tonemap")
+  * Exposure setting (0.0 to 1.0)
+  * iblFactor (0.0 to 2.0)
+  * Show Bounding Boxes
+  * Show Sky dome
 
 Recent additions and changes
 ------------------------------------------------------
@@ -37,6 +60,18 @@ v2.6 release June 30 2017 https://github.com/GPUOpen-Tools/Compressonator/releas
   * Compress or Transcode LDR/HDR images into any 8 bit per channel compression codecs or images
   * Compress or Transcode 8 bit per channel images to LDR/HDR images
   * Options are provided to adjust the conversions as needed from channel defaults, such as Exposure, Knee, Defog, etc..
+  
+  
+Gallery
+-------
+**2D Texture Compression**
+
+![screenshot 1](https://github.com/GPUOpen-Tools/Compressonator/wiki/assets/compressonator_properties_view.jpg)
+
+**glTF Model PBR Texture Compression**
+
+![screenshot 2](https://github.com/GPUOpen-Tools/Compressonator/wiki/assets/glTF_Render_view.png)
+
 
 
 Build Instructions for Windows 7 and up
@@ -57,7 +92,6 @@ The directory of your workspace should be as follows
 It is also recommended that you install and configure Visual Studio Qt5 Package extension from MSDN Visual Studio Gallery, and set in Qt Options dialog, Qt Default Version name V5.7 and path to default download path C:\Qt\5.7\msvc2015_64\bin\
 
 https://visualstudiogallery.msdn.microsoft.com/c89ff880-8509-47a4-a262-e4fa07168408 
-
 
 Build Applications using Batch Files
 ================================================================
