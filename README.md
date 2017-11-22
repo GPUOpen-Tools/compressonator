@@ -18,9 +18,9 @@ Compressonator V2.7 Upcomming Features
 
 * **Preview of 3D Model viewer and asset compression**
   * View 3D Models with DX12 using glTF v2.0 file format https://www.khronos.org/gltf
+  * Compress model textures
+  * Image diff compressed model textures with original
   * Realtime 3D Model diff views
-  * Compare compressed model textures with original
-  * Compress model images
   
 Under development 
 ----------------------------------------------------
@@ -70,7 +70,7 @@ Gallery
 
 **glTF Model PBR Texture Compression**
 
-![screenshot 2](https://github.com/GPUOpen-Tools/Compressonator/wiki/assets/glTF_Render_view.png)
+![screenshot 2](https://github.com/GPUOpen-Tools/Compressonator/wiki/assets/gltfs3a.png)
 
 
 
