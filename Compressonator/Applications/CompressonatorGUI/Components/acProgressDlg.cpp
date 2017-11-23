@@ -112,7 +112,7 @@ void acProgressDlg::Init()
 
 
     Qt::WindowFlags flags = windowFlags();
-    setWindowFlags(flags | Qt::FramelessWindowHint);
+    setWindowFlags(flags | Qt::FramelessWindowHint|Qt::WindowStaysOnTopHint);
 
     m_pCancelButton->setVisible(false);
     m_refreshRateMsec = AC_PROGRESSBAR_REFRESH_RATE_NO_CANCEL;
@@ -158,9 +158,14 @@ void acProgressDlg::SetValue(unsigned int value)
 
         if(m_pPercentageLabel != nullptr && m_pProgressAnimationWidget != nullptr)
         {
+            if (percentageProgress > 0)
+            {
+                QString percentage = "  " + (QString::number(percentageProgress)) + "%  ";
+                m_pPercentageLabel->setText(QApplication::translate("acProgressDlg", percentage.toStdString().c_str(), 0));
+            }
+            else
+                m_pPercentageLabel->setText("");
 
-            QString percentage = "  " + (QString::number(percentageProgress)) + "%  ";
-            m_pPercentageLabel->setText(QApplication::translate("acProgressDlg", percentage.toStdString().c_str(), 0));
             m_currentPercentageProgress = percentageProgress;
 
             m_pProgressAnimationWidget->SetProgressValue(percentageProgress);
@@ -282,6 +287,7 @@ void acProgressDlg::mouseMoveEvent(QMouseEvent* pEvent)
 
 void acProgressDlg::mouseReleaseEvent(QMouseEvent* e)
 {
+    Q_UNUSED(e)
     m_mouseDown = false;
 }
 
@@ -300,6 +306,7 @@ void acProgressDlg::reset()
 {
     m_currentProgress = m_minimum;
     m_currentPercentageProgress = 0;
+    m_cancellationFlag = false;
     show();
 }
 

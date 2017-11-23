@@ -99,6 +99,7 @@ QRgb            floatToQrgba(float r, float g, float b, float a);
 #endif
 
 bool            CompressedFormat(CMP_FORMAT format);
+bool            CompressedFileFormat(string file);
 bool            FloatFormat(CMP_FORMAT format);
 
 void            astc_find_closest_blockdim_2d(float target_bitrate, int *x, int *y, int consider_illegal);

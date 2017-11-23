@@ -161,10 +161,12 @@ MipSet *CImageLoader::QImage2MIPS(QImage *qimage, CMP_Feedback_Proc pFeedbackPro
     // QImageFormatInfo(qimage);
 
     // Check supported format
+    int format = qimage->format();
     if (!(  (qimage->format() == QImage::Format_ARGB32) || 
             (qimage->format() == QImage::Format_ARGB32_Premultiplied) ||
             (qimage->format() == QImage::Format_RGB32) ||
-            (qimage->format() == QImage::Format_Mono)))
+            (qimage->format() == QImage::Format_Mono)  ||
+            (qimage->format() == QImage::Format_Indexed8)))
     {
         return NULL;
     }
@@ -298,6 +300,8 @@ CMP_FORMAT CImageLoader::QFormat2MipFormat(QImage::Format qformat)
     case QImage::Format_ARGB32:
     case QImage::Format_ARGB32_Premultiplied:
     case QImage::Format_Mono:
+    case QImage::Format_MonoLSB:
+    case QImage::Format_Indexed8:
         format = CMP_FORMAT_ARGB_8888;
          break;
 
@@ -306,8 +310,6 @@ CMP_FORMAT CImageLoader::QFormat2MipFormat(QImage::Format qformat)
         break;
 
     case QImage::Format_Invalid:
-    case QImage::Format_MonoLSB:
-    case QImage::Format_Indexed8:
     case QImage::Format_RGB16:
     case QImage::Format_ARGB8565_Premultiplied:
     case QImage::Format_RGB666:

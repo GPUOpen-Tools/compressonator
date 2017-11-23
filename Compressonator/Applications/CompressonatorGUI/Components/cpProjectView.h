@@ -138,7 +138,7 @@ public:
     QTreeWidgetItem *Tree_AddImageFile(QString filePathName, int index, C_Source_Info **m_dataout);
     void Tree_AddCompressFile(QTreeWidgetItem *parent, QString description, bool checkable, bool checked, int levelType, C_Destination_Options *m_data);
     void Tree_Add3DModelImageFiles(QTreeWidgetItem *ParentItem, QString filePathName, bool checkable, bool checked, int levelType, CMP_Feedback_Proc pFeedbackProc = NULL);
-    void Tree_Add3DSubModelFile(QTreeWidgetItem *ParentItem, QString filePathName);
+    void Tree_Add3DSubModelFile(QTreeWidgetItem *ParentItem, QString filePathName, QList<bool>* srcDelFlags);
 
     void AddSettingtoEmptyTree();
 
@@ -163,7 +163,7 @@ public:
     void DeleteAllSeletedItems(bool RemoveFromDisk);
     void clearProjectTreeView();
     void UserDeleteItems();
-    void DeleteItemData(QTreeWidgetItem *item);
+    void DeleteItemData(QTreeWidgetItem *item, bool userdeleted = false);
     QTreeWidgetItem * DeleteSelectedItemData(QTreeWidgetItem *item, bool RemoveFromDisk);
     void SignalUpdateData(QTreeWidgetItem * item, int levelType);
 
@@ -197,7 +197,7 @@ Q_SIGNALS:
     void DeleteImageView(QString &fileName);
 
     void ViewImageFileDiff(C_Destination_Options *m_data, QString &file1, QString &file2);
-    void View3DModelFileDiff(C_3D_Source_Info *m_data, QString &file1, QString &file2);
+    void View3DModelFileDiff(C_3DSubModel_Info *m_data, QString &file1, QString &file2);
 
     void DeleteImageViewDiff(QString &fileName);
 
@@ -218,8 +218,15 @@ Q_SIGNALS:
     // Signal when a project file is loaded
     void OnProjectLoaded(int ChildCount);
 
-    // Signal when a compressed item node in tree has been added
+    // Signal when a compressed item node is added to tree view
     void OnAddedCompressSettingNode();
+
+    // Signal when a image source item node is added to tree view
+    void OnAddedImageSourceNode();
+
+    // Signals to main app to enable or disable tool bar actions
+    // when user clicks on a project view item
+    void OnSetToolBarActions(int islevelType);
 
 public slots:
 

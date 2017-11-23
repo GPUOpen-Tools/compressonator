@@ -30,7 +30,6 @@
 #include "Common.h"
 #include "Codec_BC7.h"
 #include "BC7_Library.h"
-
 #include <chrono>
 
 #ifdef BC7_COMPDEBUGGER
@@ -341,7 +340,6 @@ CodecError CCodec_BC7::InitializeBC7Library()
         for (i = 0; i<m_NumEncodingThreads; i++)
         {
             // Initialize thread parameters.
-
             m_EncodeParameterStorage[i].encoder = m_encoder[i];
             // Inform the thread that at the moment it doesn't have any work to do
             // but that it should wait for some and not exit

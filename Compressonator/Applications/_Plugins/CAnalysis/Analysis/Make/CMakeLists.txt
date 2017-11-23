@@ -43,6 +43,7 @@ endif()
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     message("Finding Package Boost and Opencv. if not found, for Ubuntu, run initsetup_ubuntu.sh to install. for mac, run initsetup_mac.sh to install. ")
     list(APPEND CMP_INCLUDE_DIRS "/usr/local/include/OpenEXR/")
+    list(APPEND CMP_INCLUDE_DIRS "/usr/include/OpenEXR/")
     #build Openexr 2.2 from cmake
     if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         list(APPEND CMP_INCLUDE_DIRS "/usr/local/ilmbase22build/include/OpenEXR/")

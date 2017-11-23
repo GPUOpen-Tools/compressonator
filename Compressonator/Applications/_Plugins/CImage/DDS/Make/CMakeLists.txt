@@ -22,6 +22,7 @@ list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../")
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     list(APPEND CMP_INCLUDE_DIRS "/usr/local/include/OpenEXR/")
+    list(APPEND CMP_INCLUDE_DIRS "/usr/include/OpenEXR/")
     #build openexr from cmake
     if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         list(APPEND CMP_INCLUDE_DIRS "/usr/local/ilmbase22build/include/OpenEXR/")

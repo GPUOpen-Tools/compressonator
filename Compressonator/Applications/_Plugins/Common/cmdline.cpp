@@ -55,6 +55,25 @@
 
 CCmdLineParamaters g_CmdPrams;
 
+
+string DefaultDestination(string SourceFile, CMP_FORMAT  DestFormat)
+{
+    string DestFile = "";
+    boost::filesystem::path fp(SourceFile);
+    string file_name = fp.stem().string();
+    DestFile.append(file_name);
+    DestFile.append("_");
+    string file_ext = fp.extension().string();
+    file_ext.erase(std::remove(file_ext.begin(), file_ext.end(), '.'), file_ext.end());
+    DestFile.append(file_ext);
+    DestFile.append("_");
+    DestFile.append(GetFormatDesc(DestFormat));
+    DestFile.append(".DDS");
+    return DestFile;
+}
+
+
+
 #ifdef USE_WITH_COMMANDLINE_TOOL
 
 int GetNumberOfCores(wchar_t *envp[ ])
@@ -546,6 +565,11 @@ bool ProcessCMDLineOptions(const  char *strCommand, const char *strParameter)
             }
         }
         else
+        if ((strcmp(strCommand, "-version") == 0) || (strcmp(strCommand, "-v") == 0))
+        {
+            printf("version %d.%d.%d\n", VERSION_MAJOR_MAJOR, VERSION_MAJOR_MINOR,VERSION_MINOR_MAJOR);
+        }
+        else
         {
             if (strlen(strParameter) > 0)
             {
@@ -583,10 +607,16 @@ bool ProcessCMDLineOptions(const  char *strCommand, const char *strParameter)
                 {
                     g_CmdPrams.DestFile = strCommand;
                     string file_extension = boost::filesystem::extension(strCommand);
-                    // User did not supply a destination extension default to KTX
+                    // User did not supply a destination extension default
                     if (file_extension.length() == 0)
                     {
-                        g_CmdPrams.DestFile.append(".DDS");
+                        if (g_CmdPrams.DestFile.length() == 0)
+                        {
+                            g_CmdPrams.DestFile = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.DestFormat);
+                            PrintInfo("Destination Texture file was not supplied: Defaulting to %s\n", g_CmdPrams.DestFile.c_str());
+                        }
+                        else
+                            g_CmdPrams.DestFile.append(".DDS");
                     }
                 }
                 else
@@ -598,7 +628,7 @@ bool ProcessCMDLineOptions(const  char *strCommand, const char *strParameter)
             
     } // Try code
 
-    catch (char *str)
+    catch (const char *str)
     {
         PrintInfo("Option [%s] : %s\n\n",strCommand,str);
         return false;
@@ -675,7 +705,7 @@ bool ParseParams(int argc, CMP_CHAR* argv[])
         } // for loop
 
     }
-    catch (char *str)
+    catch (const char *str)
     {
         PrintInfo("%s\n",str);
         return false;
@@ -897,7 +927,7 @@ bool GenerateImageProps(std::string ImageFile)
     if (AMDLoadMIPSTextureImage(ImageFile.c_str(), &g_MipSetIn, g_CmdPrams.use_OCV, &g_pluginManager) != 0)
     {
         PrintInfo("Error: reading image, data type not supported.\n");
-        return -1;
+        return false;
     }
 
     if (&g_MipSetIn) {

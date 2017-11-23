@@ -63,6 +63,9 @@ extern void *make_Plugin_BMP();
 
 extern bool         CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2);
 extern void         LocalPrintF(char *buff);
+extern string       DefaultDestination(string SourceFile, CMP_FORMAT  DestFormat);
+
+
 
 PluginManager       g_pluginManager;
 bool                g_bAbortCompression = false;
@@ -75,12 +78,12 @@ void AboutCompressonator()
     printf( "------------------------------------------------\n");
     // current build release
     if ((VERSION_MINOR_MAJOR > 0))
-        printf("CompressonatorCLI V%d.%d.%d Copyright AMD 2016\n", VERSION_MAJOR_MAJOR, VERSION_MAJOR_MINOR, VERSION_MINOR_MAJOR);
+        printf("CompressonatorCLI V%d.%d.%d Copyright AMD 2017\n", VERSION_MAJOR_MAJOR, VERSION_MAJOR_MINOR, VERSION_MINOR_MAJOR);
     else
     {
         // Keep track of Customer patches from last release to current
         // This is what is shown when you build the exe outside of the automated Build System (such as Jenkins)
-        printf("CompressonatorCLI V2.5.0  SP1 Copyright AMD 2016 - 2017\n");
+        printf("CompressonatorCLI V2.7.0 Copyright AMD 2017\n");
     }
     printf( "------------------------------------------------\n");
     printf( "\n");
@@ -304,13 +307,23 @@ int main(int argc,  char* argv[])
     //----------------------------------
     if (argc > 1)
     {
-        if (
-            (!ParseParams(argc, argv)) ||
-            (g_CmdPrams.SourceFile.length() == 0) ||
-            (!g_CmdPrams.imageprops && (g_CmdPrams.DestFile.length() == 0))
-            )
+        bool ParseOk = ParseParams(argc, argv);
+        if (!ParseOk)
+            return -1;
+
+        if (g_CmdPrams.SourceFile.length() == 0)
+            return -2;
+
+        if (!g_CmdPrams.imageprops && (g_CmdPrams.DestFile.length() == 0))
         {
-            return (-1);
+            // Try to patch the detination file
+            if ((g_CmdPrams.DestFile.length() == 0) && (g_CmdPrams.SourceFile.length() > 0))
+            {
+                g_CmdPrams.DestFile = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.DestFormat);
+                printf("Destination Texture file was not supplied: Defaulting to %s\n", g_CmdPrams.DestFile.c_str());
+            }
+            else 
+                return (-3);
         }
         
         return ProcessCMDLine(&CompressionCallback,NULL);

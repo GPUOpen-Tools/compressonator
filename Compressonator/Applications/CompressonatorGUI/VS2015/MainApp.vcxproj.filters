@@ -337,9 +337,6 @@
     <ClCompile Include="../Components/cpImageView.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="../Source/cpMainComponents.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="../Components/cpNewProject.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -400,14 +397,8 @@
     <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cp3DModelCompare.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
-    <ClCompile Include="..\Components\cp3DModelDiff.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cp3DModelDiff.cpp">
-      <Filter>Generated Files\Release_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cp3DModelDiff.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
+    <ClCompile Include="../Source/cpMainComponents.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -497,9 +488,6 @@
     <CustomBuild Include="../Components/cpImageView.h">
       <Filter>Components</Filter>
     </CustomBuild>
-    <CustomBuild Include="../Source/cpMainComponents.h">
-      <Filter>Components</Filter>
-    </CustomBuild>
     <CustomBuild Include="../Components/cpNewProject.h">
       <Filter>Components</Filter>
     </CustomBuild>
@@ -575,8 +563,8 @@
     <CustomBuild Include="..\Components\cp3DModelCompare.h">
       <Filter>Components</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\Components\cp3DModelDiff.h">
-      <Filter>Components</Filter>
+    <CustomBuild Include="../Source/cpMainComponents.h">
+      <Filter>Source Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

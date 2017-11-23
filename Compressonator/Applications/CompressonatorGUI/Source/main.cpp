@@ -51,7 +51,8 @@ extern void *make_Plugin_CAnalysis();
 
 PluginManager   g_pluginManager;
 bool            g_bAbortCompression;
-CMIPS*          g_CMIPS;                            // Global MIPS functions shared between app and all IMAGE plugins
+CMIPS*          g_CMIPS;                                // Global MIPS functions shared between app and all IMAGE plugins 
+CMIPS*          g_GUI_CMIPS;                            // Global MIPS functions shared by 3DModels
 
 
 void GetSupportedFileFormats(QList<QByteArray> &g_supportedFormats)
@@ -70,13 +71,21 @@ void GetSupportedFileFormats(QList<QByteArray> &g_supportedFormats)
                 g_supportedFormats.append(fformat);
         }
         else
-            if (strcmp(g_pluginManager.getPluginType(i), "3DMODEL_DX12") == 0)
-            {
-                QByteArray bArray = g_pluginManager.getPluginName(i);
-                QByteArray fformat = bArray.toUpper();
-                if (!g_supportedFormats.contains(fformat))
-                    g_supportedFormats.append(fformat);
-            }
+        if (strcmp(g_pluginManager.getPluginType(i), "3DMODEL_DX12_EX") == 0)
+        {
+            QByteArray bArray = g_pluginManager.getPluginName(i);
+            QByteArray fformat = bArray.toUpper();
+            if (!g_supportedFormats.contains(fformat))
+                g_supportedFormats.append(fformat);
+        }
+        else
+        if (strcmp(g_pluginManager.getPluginType(i), "3DMODEL_OPENGL") == 0)
+        {
+            QByteArray bArray = g_pluginManager.getPluginName(i);
+            QByteArray fformat = bArray.toUpper();
+            if (!g_supportedFormats.contains(fformat))
+                g_supportedFormats.append(fformat);
+        }
     }
 
     // Get a list of all Supported file formats from Qt Plugins
@@ -108,25 +117,12 @@ int main(int argc, char **argv)
         QApplication::addLibraryPath(dirPath + "./plugins/");
 
         app.setWindowIcon(QIcon(":/CompressonatorGUI/Images/acompress-256.png"));
-    
-        // register the memory allocation failure event handler.
-        //std::set_new_handler(appQtApplication::AppMemAllocFailureHandler);
 
-        /*
-        // No longer used : Requires common-src-AMDTApplication/appQtApplication.cpp
-        // connect the Qt application to the slots that handle the out of memory signals:
-        QObject::connect(qApp, SIGNAL(AppMemAllocFailureSignal()), qApp, SLOT(OnAppMemAllocFailureSignal()));
-        QObject::connect(qApp, SIGNAL(ClientMemAllocFailureSignal()), qApp, SLOT(OnClientMemAllocFailureSignal()));
-        */
+        // ==========================
+        // Mip Settings Class
+        // ==========================
+        g_GUI_CMIPS =  new CMIPS;
 
-        //------------------------------------------------
-        // Bug reporting
-        //-------------------------------------------------
-        // QPixmap iconPixMap;
-        // acIconId iconID = AC_ICON_DEBUG_MODE;
-        // Adding Exception Handle
-        // acSetIconInPixmap(iconPixMap, iconID, AC_64x64_ICON);
-    
         const QIcon iconPixMap(":/CompressonatorGUI/Images/compress.png");
         const QString ProductName = "Compressonator";
         //----------------------------------
@@ -158,7 +154,14 @@ int main(int argc, char **argv)
         mainComponents.show();
 
         app.setStyleSheet(SEPERATOR_STYLE);
-        return app.exec();
+
+
+        int ret = app.exec();
+
+        delete g_GUI_CMIPS;
+
+        return ret;
+
     }
     catch (std::exception &e)
     {

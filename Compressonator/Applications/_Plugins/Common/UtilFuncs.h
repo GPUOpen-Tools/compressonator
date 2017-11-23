@@ -29,10 +29,12 @@
 
 #ifdef _WIN32
 #include "Windows.h"
+#include "stdio.h"
 
 HWND FindTopLevelWindow(TCHAR* pszName);
 #endif
-void SwizzleBytes(void* src, unsigned long numBytes);
 
+void SwizzleBytes(void* src, unsigned long numBytes);
+void getFileNameExt(const char *FilePathName, char *fnameExt, int maxbuffsize);
 
 #endif // !defined(_AMD_TEX_UTILSFUNCS_H_INCLUDED_)

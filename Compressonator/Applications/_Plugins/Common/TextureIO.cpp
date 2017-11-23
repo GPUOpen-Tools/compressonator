@@ -423,6 +423,18 @@ bool CompressedFormat(CMP_FORMAT format)
     return true;
 }
 
+bool CompressedFileFormat(string file)
+{
+    string file_extension = boost::filesystem::extension(file);
+    boost::algorithm::to_upper(file_extension);
+    boost::erase_all(file_extension, ".");
+
+    if (file_extension == "BMP")
+        return false;
+    else
+        return true;
+}
+
 #ifdef USE_QT_IMAGELOAD
 
 /* conversion from the ILM Half
@@ -512,7 +524,8 @@ int QImage2MIPS(QImage *qimage, CMIPS *m_CMips, MipSet *pMipSet)
     if (!((format == QImage::Format_ARGB32) ||
         (format   == QImage::Format_ARGB32_Premultiplied) || 
         (format   == QImage::Format_RGB32) ||
-        (format == QImage::Format_Mono)))
+        (format == QImage::Format_Mono) ||
+        (format == QImage::Format_Indexed8)))
     {
         return -1;
     }
@@ -881,6 +894,15 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *con
                     {
                         configSetting->errMessage = "Error: ASTC compressed texture is not supported by the GPU device.\n";
                         PrintInfo("Error: ASTC compressed texture is not supported by the GPU device.\n");
+                        m_CMIPS.FreeMipSet(MipSetOut);
+                        delete MipSetOut;
+                        MipSetOut = NULL;
+                        return NULL;
+                    }
+                    else if (res == CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB)
+                    {
+                        configSetting->errMessage = "Error: Failed to decompress with the API selected. Version is not supported yet. Stay tune for update!\n";
+                        PrintInfo("Error: Failed to decompress with the API selected. Note for Vulkan, only driver version up to 1.5.0 is supported by this app. Please stay tune for update! Thanks.\n");
                         m_CMIPS.FreeMipSet(MipSetOut);
                         delete MipSetOut;
                         MipSetOut = NULL;

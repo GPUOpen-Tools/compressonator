@@ -136,9 +136,11 @@ public:
     PluginInterface_3DModel() {}
     virtual ~PluginInterface_3DModel() {}
     virtual int  TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
+    virtual int  TC_PluginSetSharedIO(void* Shared) = 0;
     virtual int  CreateView(const char* pszFilename, CMP_LONG Width, CMP_LONG Height, void *HWND, void *pluginManager, void *msghandler, const char* pszFilename2 = NULL, CMP_Feedback_Proc pFeedbackProc = NULL) = 0;
     virtual void CloseView()    = 0;
     virtual bool RenderView()   = 0;
+    virtual void ReSizeView(CMP_LONG w, CMP_LONG h) = 0;
     virtual void processMSG(void *message) = 0;
 };
 

@@ -393,4 +393,32 @@ void CMIPS::PrintError(const char* Format, ... )
     PrintInfo(buff);
 }
 
+void CMIPS::Print(const char* Format, ...)
+{
+    if (!PrintLine) return;
+
+    if (m_infolevel & 0x01)
+    {
+        char buff[1024];
+        // define a pointer to save argument list
+        va_list args;
+        // process the arguments into our debug buffer
+        va_start(args, Format);
+        vsprintf(buff, Format, args);
+        va_end(args);
+
+        PrintLine(buff);
+    }
+}
+
+
+void CMIPS::SetProgress(unsigned int value)
+{
+    if (SetProgressValue)
+    {
+        SetProgressValue(value, &m_canceled);
+    }
+}
+
+
 

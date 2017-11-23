@@ -147,16 +147,15 @@ CodecError CCodec_DXTC::CompressExplicitAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZ
 CodecError CCodec_DXTC::CompressExplicitAlphaBlock_Fast(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2])
 {
 #ifdef _WIN32
-
 #ifndef DISABLE_TESTCODE
     DXTCV11CompressExplicitAlphaBlockMMX(alphaBlock, compressedBlock);
 #else
     CompressExplicitAlphaBlock(alphaBlock, compressedBlock);
 #endif
-
 #else
     CompressExplicitAlphaBlock(alphaBlock, compressedBlock);
 #endif
+
     return CE_OK;
 }
 

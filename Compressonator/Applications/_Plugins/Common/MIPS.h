@@ -28,7 +28,7 @@
 #include "stdlib.h"
 #include "TC_PluginAPI.h"
 
-#define MAX_MIPLEVEL_SUPPORTED 10
+#define MAX_MIPLEVEL_SUPPORTED 20
 
 
 #define MIPSET_PIN_DATA_ID     "69AEBDB3-5F67-436D-82C2-724FDC4972DA"
@@ -54,6 +54,15 @@ class CMIPS
     void FreeMipSet(MipSet* pMipSet);
 
     void PrintError(const char* Format, ... );
+
+    // User Configurable Print lines 
+    int m_infolevel = 1;
+    void(*PrintLine)(char *) = nullptr;
+    void Print(const char* Format, ...);
+
+    bool m_canceled = false;
+    void(*SetProgressValue)(unsigned int, bool *canceled) = nullptr;
+    void SetProgress(unsigned int value);
 };
 
 #endif

@@ -27,6 +27,7 @@
 //=====================================================================
 
 #include <stdio.h>
+#include <cctype>
 #ifdef _WIN32
 #include <tchar.h>
 #endif
@@ -54,12 +55,12 @@ CMP_FormatDesc g_FormatDesc[] =
    {CMP_FORMAT_DXT1,                    "DXT1"},
    {CMP_FORMAT_DXT3,                    "DXT3"},
    {CMP_FORMAT_DXT5,                    "DXT5"},
-   {CMP_FORMAT_DXT5_xGBR,               "DXT5_xGBR"},
-   {CMP_FORMAT_DXT5_RxBG,               "DXT5_RxBG"},
-   {CMP_FORMAT_DXT5_RBxG,               "DXT5_RBxG"},
-   {CMP_FORMAT_DXT5_xRBG,               "DXT5_xRBG"},
-   {CMP_FORMAT_DXT5_RGxB,               "DXT5_RGxB"},
-   {CMP_FORMAT_DXT5_xGxR,               "DXT5_xGxR"},
+   {CMP_FORMAT_DXT5_xGBR,               "DXT5_XGBR"},
+   {CMP_FORMAT_DXT5_RxBG,               "DXT5_RXBG"},
+   {CMP_FORMAT_DXT5_RBxG,               "DXT5_RBXG"},
+   {CMP_FORMAT_DXT5_xRBG,               "DXT5_XRBG"},
+   {CMP_FORMAT_DXT5_RGxB,               "DXT5_RGXB"},
+   {CMP_FORMAT_DXT5_xGxR,               "DXT5_XGXR"},
    {CMP_FORMAT_ATI1N,                   "ATI1N"},
    {CMP_FORMAT_ATI2N,                   "ATI2N"},
    {CMP_FORMAT_ATI2N_XY,                "ATI2N_XY"},
@@ -70,8 +71,8 @@ CMP_FormatDesc g_FormatDesc[] =
    {CMP_FORMAT_BC4,                     "BC4"},
    {CMP_FORMAT_BC5,                     "BC5"},
    {CMP_FORMAT_ATC_RGB,                 "ATC_RGB"},
-   {CMP_FORMAT_ATC_RGBA_Explicit,       "ATC_RGBA_Explicit"},
-   {CMP_FORMAT_ATC_RGBA_Interpolated,   "ATC_RGBA_Interpolated"},
+   {CMP_FORMAT_ATC_RGBA_Explicit,       "ATC_RGBA_EXPLICIT"},
+   {CMP_FORMAT_ATC_RGBA_Interpolated,   "ATC_RGBA_INTERPOLATED"},
    {CMP_FORMAT_ETC_RGB,                 "ETC_RGB"},
    {CMP_FORMAT_ETC2_RGB,                "ETC2_RGB" },
    {CMP_FORMAT_BC6H,                    "BC6H"},
@@ -86,14 +87,26 @@ CMP_FormatDesc g_FormatDesc[] =
 
 CMP_DWORD g_dwFormatDescCount = sizeof(g_FormatDesc) / sizeof(g_FormatDesc[0]);
 
-CMP_FORMAT ParseFormat(char* pszFormat)
+CMP_FORMAT ParseFormat(char* pFormat)
 {
-   if(pszFormat == NULL)
+   if(pFormat == NULL)
       return CMP_FORMAT_Unknown;
 
-   for(CMP_DWORD i = 0; i < g_dwFormatDescCount; i++)
-      if(strcmp(pszFormat, g_FormatDesc[i].pszFormatDesc) == 0)
-         return g_FormatDesc[i].nFormat;
+   char pszFormat[128];
+
+   int i = 0;
+   for (char *iter = pFormat; *iter != '\0'; iter++)
+   {
+       if (i < 127)
+           pszFormat[i++] = (char)std::toupper(*iter);
+   }
+
+   pszFormat[i] = '\0';
+   
+   for (CMP_DWORD j = 0; j < g_dwFormatDescCount; j++) {
+       if (strcmp(pszFormat, g_FormatDesc[j].pszFormatDesc) == 0)
+           return g_FormatDesc[j].nFormat;
+   }
 
    return CMP_FORMAT_Unknown;
 }

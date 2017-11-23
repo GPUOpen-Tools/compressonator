@@ -26,7 +26,6 @@
 
 #include <QtWidgets>
 #include "cp3DModelView.h"
-#include "cp3DModelDiff.h"
 
 #ifdef USE_IMGDIFF
 #include "cpImageView.h"
@@ -76,7 +75,7 @@ private:
     cpImageView               *m_imageviewDiff;
     CMipImages                *m_diffMips;
 #else
-    cp3DModelDiff             *m_imageviewDiff;
+    cp3DModelView             *m_imageviewDiff;
 #endif
 
     cp3DModelView             *m_imageviewFile2;

@@ -115,7 +115,10 @@ acDockWidgetTitlebar::acDockWidgetTitlebar(QWidget *parent) : parent(parent)
 
 QString acDockWidgetTitlebar::getTitle()
 {
-    return (m_label->text());
+    if (m_label)
+        return (m_label->text());
+    else
+        return "_BadTitle_";
 }
 
 void acDockWidgetTitlebar::setTitle(QString title)

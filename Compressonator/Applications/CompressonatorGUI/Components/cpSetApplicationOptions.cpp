@@ -61,7 +61,8 @@ m_parent(parent)
 #ifdef USE_COMPUTE
     connect(&g_Application_Options, SIGNAL(ImageEncodeChanged(QVariant &)), this, SLOT(onImageEncodeChanged(QVariant &)));
 #endif
-    m_theController->setObject(&g_Application_Options, true);
+	connect(&g_Application_Options, SIGNAL(GLTFRenderChanged(QVariant &)), this, SLOT(onGLTFRenderChanged(QVariant &)));
+	m_theController->setObject(&g_Application_Options, true);
     m_layoutV->addWidget(m_theController);
 
     m_infotext = new QTextBrowser(this);
@@ -102,6 +103,10 @@ void CSetApplicationOptions::onImageViewDecodeChanged(QVariant &value)
         g_gpudecodeFormat = MIPIMAGE_FORMAT::Format_Vulkan;
     else
         g_gpudecodeFormat = MIPIMAGE_FORMAT::Format_QImage;
+}
+
+void CSetApplicationOptions::onGLTFRenderChanged(QVariant &value)
+{
 }
 
 C_Application_Options::ImageEncodeWith encodewith = C_Application_Options::ImageEncodeWith::GPU_OpenCL;
@@ -182,12 +187,16 @@ void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem *item)
         m_infotext->append("<b>Close all image views prior to processing</b>");
         m_infotext->append("This will free up system memory, to avoid out of memory issues when processing large files");
     }
-    else if (text.compare(APP_Mouse_click_on_Project_icon_to_view_image) == 0)
+    else if (text.compare(APP_Mouse_click_on_icon_to_view_image) == 0)
     {
-        m_infotext->append("<b>Mouse click on Project icon to view image</b>");
-        m_infotext->append("Mouse click on \"Project\" tree icons will display a image view, clicking on the items text will update the \"Properties\" page only");
+        m_infotext->append("<b>Mouse click on icon to view image</b>");
+        m_infotext->append("Mouse click on icons will display a image view, clicking on the items text will update the Properties page only");
     }
-
+    else
+    if (text.compare(APP_Render_Models_with) == 0)
+    {
+        m_infotext->append("<b>Selects how to render 3DModels files</b>");
+    }
 
 }
 
@@ -268,6 +277,13 @@ void CSetApplicationOptions::LoadSettings(QString SettingsFile, QSettings::Forma
                 C_Application_Options::ImageDecodeWith decodeWith = (C_Application_Options::ImageDecodeWith) value;
                 g_Application_Options.setImageViewDecode(decodeWith);
             }
+			else
+			if (name.compare(APP_Render_Models_with) == 0)
+			{
+				int value = var.value<int>();
+				C_Application_Options::RenderModelsWith render = (C_Application_Options::RenderModelsWith) value;
+				g_Application_Options.setGLTFRender(render);
+			}
             else
                 g_Application_Options.metaObject()->property(i).write(&g_Application_Options, var);
         }

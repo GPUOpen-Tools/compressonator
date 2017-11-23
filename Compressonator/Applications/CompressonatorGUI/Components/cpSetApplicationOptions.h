@@ -52,6 +52,7 @@ public slots:
     void oncurrentItemChanged(QtBrowserItem *item);
     void onImageEncodeChanged(QVariant &value);
     void onImageViewDecodeChanged(QVariant &value);
+	void onGLTFRenderChanged(QVariant &value);
 
 
 private:

@@ -78,6 +78,9 @@ Q_SIGNALS:
 };
 
 
+
+
+
 class cpMainComponents : public QMainWindow
 {
     Q_OBJECT
@@ -100,6 +103,8 @@ public:
     void showProgressBusy(QString Message);
     void hideProgressBusy(QString Message);
 
+    void DisplayException(QString msgTitle);
+
 #ifdef ENABLE_AGS_SUPPORT
     void AGSGetDisplayInfo(AGSDisplaySettings *settings);
     bool AGSSetDisplay(AGSDisplaySettings *settings);
@@ -115,15 +120,13 @@ public:
     CSetCompressOptions     *m_setcompressoptions;
     CSetApplicationOptions  *m_setapplicationoptions;
     ProjectView             *m_projectview;
-    cpImageView             *m_imageview;
-    cp3DModelView           *m_3Dmodelview;
     acCustomDockWidget      *m_blankpage;
     CImageCompare           *m_imageCompare;
-    C3DModelCompare         *m_3dModelCompare;
     QDockWidget             *m_activeImageTab;      // Current viewing Image Tab
     QDockWidget             *app_welcomepage;
     QMainWindow             *m_parent;
     QDialog                 *m_frame;               // http://doc.qt.io/qt-4.8/qframe.html
+    bool                     m_appclosing = false; 
 
     enum { MaxRecentFiles = 5 };
     int     m_numRecentFiles;                       // Counts the number of recent files loaded
@@ -149,13 +152,18 @@ public:
 #endif
 
 public slots:
+
+    void onSetToolBarActions(int islevelType);
+
     void AddImageView(QString &fileName, QTreeWidgetItem * item);
 
     void AddImageDiff(C_Destination_Options *destination, QString &fileName1, QString &fileName2);
-    void Add3DModelDiff(C_3D_Source_Info *destination, QString &fileName1, QString &fileName2);
+    void Add3DModelDiff(C_3DSubModel_Info *destination, QString &fileName1, QString &fileName2);
     void AddImageCompSettings(QTreeWidgetItem *, C_Destination_Options &m_data);
     void OnDeleteImageView(QString &fileName);
     void OnDeleteImageDiffView(QString &fileName);
+    void DeleteDock(acCustomDockWidget **dock);
+
     void onProcessing(QString &FilePathName);
     void imageDiff();
 
@@ -210,6 +218,7 @@ private slots:
     void onDecompressImage();
     void onProjectLoaded(int childCount);
     void onAddedCompressSettingNode();
+    void onAddedImageSourceNode();
     void onShowOutput();
     void onShowWelcomePage();
 

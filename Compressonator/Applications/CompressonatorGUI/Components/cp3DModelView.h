@@ -37,7 +37,7 @@ class cp3DModelView : public acCustomDockWidget
     Q_OBJECT
 public:
 
-    cp3DModelView(const QString filePathName, const QString Title, QWidget *parent);
+    cp3DModelView(const QString filePathName, const QString filePathName2, const QString Title, QWidget *parent);
     ~cp3DModelView();
 
 private:
@@ -54,6 +54,7 @@ private:
 
     void paintEvent(QPaintEvent *ev);
     bool eventFilter(QObject *obj, QEvent *ev);
+    void resizeEvent(QResizeEvent *);
 
 Q_SIGNALS:
     void UpdateData(QObject *data);

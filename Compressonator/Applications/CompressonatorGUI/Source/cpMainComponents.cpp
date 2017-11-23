@@ -19,7 +19,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 // 
-//=====================================================================
+//===================================================================== 
 
 #include "cpMainComponents.h"
 #include "Version.h"
@@ -33,12 +33,43 @@ int g_OpenGLMinorVersion = 0;
 C_Application_Options          g_Application_Options;
 acProgressDlg                 *g_pProgressDlg = NULL;
 bool                           g_bCompressing = false;  // Set true when we are compressing project items
+extern CMIPS*                  g_GUI_CMIPS;
 
 // Hooked onto Progress Dialog.
 void OnCancel()
 {
     g_bAbortCompression = true;
 }
+
+// Hooked into g_GUI_CMIPS
+void Print_onProgressDialog(char *str)
+{
+    if (g_pProgressDlg)
+    {
+        if (!g_pProgressDlg->isVisible())
+            g_pProgressDlg->show();
+        QString qstr(str);
+        g_pProgressDlg->SetLabelText(qstr);
+    }
+    QCoreApplication::processEvents();
+}
+
+void Set_onProgressValue(unsigned int value, bool *canceled)
+{
+    if (g_pProgressDlg)
+    {
+        if (!g_pProgressDlg->isVisible())
+            g_pProgressDlg->show();
+         g_pProgressDlg->SetValue(value);
+         if (g_pProgressDlg->WasCanceled())
+         {
+             g_pProgressDlg->reset();
+             *canceled = true;
+         }
+    }
+    QCoreApplication::processEvents();
+}
+
 
 //=========================================================
 cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
@@ -79,6 +110,10 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     isCompressInProgress    = false;
     m_ForceImageRefresh     = false;
 
+    // To test crash dump!
+    // char *p = 0;
+    // *p = 5;
+
 #ifdef ENABLE_AGS_SUPPORT
     onHDRButton = NULL;
     // AGS specific
@@ -105,9 +140,7 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     m_genmips               = NULL;
     m_setcompressoptions    = NULL;
     m_projectview           = NULL;
-    m_imageview             = NULL;
     m_imageCompare          = NULL;
-    m_3Dmodelview           = NULL;
     m_activeImageTab        = NULL;
     app_welcomepage         = NULL;
     m_frame                 = NULL;
@@ -204,14 +237,16 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
 
     connect(m_projectview, SIGNAL(ViewImageFile(QString &, QTreeWidgetItem *)), this, SLOT(AddImageView(QString &, QTreeWidgetItem *)));
     connect(m_projectview, SIGNAL(ViewImageFileDiff(C_Destination_Options *, QString &, QString &)), this, SLOT(AddImageDiff(C_Destination_Options *, QString &, QString &)));
-    connect(m_projectview, SIGNAL(View3DModelFileDiff(C_3D_Source_Info *, QString &, QString &)), this, SLOT(Add3DModelDiff(C_3D_Source_Info *, QString &, QString &)));
+    connect(m_projectview, SIGNAL(View3DModelFileDiff(C_3DSubModel_Info *, QString &, QString &)), this, SLOT(Add3DModelDiff(C_3DSubModel_Info *, QString &, QString &)));
     connect(m_projectview, SIGNAL(DeleteImageView(QString &)), this, SLOT(OnDeleteImageView(QString &)));
     connect(m_projectview, SIGNAL(UpdateData(QObject *)), m_imagePropertyView, SLOT(OnUpdateData(QObject *)));
     connect(m_projectview, SIGNAL(AddCompressSettings(QTreeWidgetItem *)), this, SLOT(OnAddCompressSettings(QTreeWidgetItem *)));
     connect(m_projectview, SIGNAL(EditCompressSettings(QTreeWidgetItem *)), this, SLOT(onEditCompressSettings(QTreeWidgetItem *)));
 
     connect(m_projectview, SIGNAL(OnAddedCompressSettingNode()), this, SLOT(onAddedCompressSettingNode()));
+    connect(m_projectview, SIGNAL(OnAddedImageSourceNode()), this, SLOT(onAddedImageSourceNode()));
 
+    connect(m_projectview, SIGNAL(OnSetToolBarActions(int)), this, SLOT(onSetToolBarActions(int)));
 
     connect(m_projectview, SIGNAL(OnCompressionStart()), this, SLOT(onCompressionStart()));
     connect(m_projectview, SIGNAL(OnCompressionDone()),  this, SLOT(onCompressionDone()));
@@ -315,14 +350,49 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     // This replaces the one defined in ProjectView
     // Progress Dialog During Compression
     g_pProgressDlg = new acProgressDlg(this);
-    g_pProgressDlg->setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
-    g_pProgressDlg->ShowCancelButton(true, &OnCancel);
-    g_pProgressDlg->SetHeader("");
-    g_pProgressDlg->SetLabelText("");
-    g_pProgressDlg->SetRange(0, 100);
-    g_pProgressDlg->hide();
+    if (g_pProgressDlg)
+    {
+        g_pProgressDlg->setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
+        g_pProgressDlg->ShowCancelButton(true, &OnCancel);
+        g_pProgressDlg->SetHeader("");
+        g_pProgressDlg->SetLabelText("");
+        g_pProgressDlg->SetRange(0, 100);
+        g_pProgressDlg->hide();
+
+        // Configure printline to global shared CMIPS
+        if (g_GUI_CMIPS)
+        {
+            g_GUI_CMIPS->PrintLine = Print_onProgressDialog;
+            g_GUI_CMIPS->SetProgressValue = Set_onProgressValue;
+        }
+    }
 
 }
+
+
+// Called when user clicks on a project view item
+void cpMainComponents::onSetToolBarActions(int itemType)
+{
+    // Enable delete button for any project view item
+    if (
+        (itemType == TREETYPE_3DMODEL_DATA) ||
+        (itemType == TREETYPE_3DSUBMODEL_DATA) ||
+        (itemType == TREETYPE_COMPRESSION_DATA) ||
+        (itemType == TREETYPE_IMAGEFILE_DATA) 
+        )
+        deleteImageAct->setEnabled(true);
+    else
+        deleteImageAct->setEnabled(false);
+
+
+    // Enable the Mip Level gen when on a project image item
+    if (itemType == TREETYPE_IMAGEFILE_DATA)
+        MIPGenAct->setEnabled(true);
+    else
+        MIPGenAct->setEnabled(false);
+
+}
+
 
 void cpMainComponents::SetProjectWindowTitle()
 {
@@ -444,6 +514,8 @@ void cpMainComponents::OnWelcomePageButtonClick(QString &Request, QString &Msg)
 
 void cpMainComponents::closeEvent(QCloseEvent *event)
 {
+    m_appclosing = true;
+
     if (g_bCompressing)
     {
         g_bAbortCompression = true;
@@ -464,6 +536,7 @@ void cpMainComponents::closeEvent(QCloseEvent *event)
         if (!m_projectview->userSaveProjectAndContinue())
         {
             event->ignore();
+            m_appclosing = false;
             return;
         }
         setCurrentFile(m_projectview->m_curProjectFilePathName);
@@ -471,7 +544,7 @@ void cpMainComponents::closeEvent(QCloseEvent *event)
     }
 
    writeSettings();
-   
+
    qApp->quit();
    event->accept();
 }
@@ -594,41 +667,34 @@ void cpMainComponents::onShowOutput()
    }
 }
 
+void cpMainComponents::DeleteDock(acCustomDockWidget **dock)
+{
+    if (!(*dock)) return;
+    (*dock)->close(); 
+    delete (*dock);
+    (*dock) = NULL;
+}
+
+// CLoses all Docked Views that have a file_name attached to them
 void cpMainComponents::onCloseAllDocuments()
 {
     QList<acCustomDockWidget *> dockWidgets = m_parent->findChildren<acCustomDockWidget *>();
-    QListIterator<acCustomDockWidget *> iter(dockWidgets);
     acCustomDockWidget *dock;
-    int i = 0;
-    while (iter.hasNext())
+
+    for (int i = 0; i < dockWidgets.size(); i++)
     {
-        dock = iter.next();
-        i++;
+        dock = dockWidgets[i];
         if (dock)
         {
             QString FileName = dock->m_fileName;
             if (FileName.size() > 0)
             {
-                dock->close();
-                if (dock)
+                //skip diff subwindow which are already deleted
+                if (dock->m_type == TREETYPE_DIFFVIEW) 
                 {
-                    if (dock->custTitleBar)
-                    {
-                        // we have a image diff with 3 other sub classes of type acCustomDockWidget
-                        // that will be deleted.
-                        if (dock->custTitleBar->m_close)
-                        {
-                            if (iter.hasNext())
-                                iter.next();
-                            if (iter.hasNext())
-                                iter.next();
-                            if (iter.hasNext())
-                                iter.next();
-                        }
-                    }
-                    delete dock;
-                    dock = NULL;
+                    i += 3;
                 }
+                DeleteDock(&dock);
             }
         }
     }
@@ -731,7 +797,7 @@ void cpMainComponents::createActions()
     {
         compressAct->setStatusTip(tr("Compress all selected items"));
         connect(compressAct, SIGNAL(triggered()), m_projectview, SLOT(OnStartCompression()));
-        compressAct->setEnabled(true); //enabled by default
+        compressAct->setEnabled(false);
     }
 
     imagediffAct = new QAction(QIcon(":/CompressonatorGUI/Images/imagediff.png"), tr("&View Image Diff"), this);
@@ -748,7 +814,7 @@ void cpMainComponents::createActions()
     {
         MIPGenAct->setStatusTip(tr("Generate MIP maps on current source image"));
         connect(MIPGenAct, SIGNAL(triggered()), this, SLOT(genMIPMaps()));
-        MIPGenAct->setEnabled(true);
+        MIPGenAct->setEnabled(false);
     }
 
 #ifdef ENABLE_AGS_SUPPORT
@@ -838,7 +904,8 @@ void cpMainComponents::onGenerateMIPMap(int nMinSize, QTreeWidgetItem *item)
     {
         QVariant v = item->data(TREE_SourceInfo, Qt::UserRole);
         C_Source_Info *data = v.value<C_Source_Info *>();
-    
+        if (data == NULL) return;
+
         if (data->m_MipImages)
             if (data->m_MipImages->mipset)
                 if (data->m_MipImages->mipset->m_compressed)
@@ -1306,19 +1373,24 @@ void cpMainComponents::createStatusBar()
 
 void cpMainComponents::showProgressBusy(QString Message)
 {
-    statusBar()->showMessage(Message);
-    if (qApp)
-        qApp->setOverrideCursor(Qt::BusyCursor);
-    if (m_projectview)
-        m_projectview->m_processBusy = true;
+   if (m_appclosing) return;
+
+   statusBar()->showMessage(Message);
+   if (qApp)
+       qApp->setOverrideCursor(Qt::BusyCursor);
+   if (m_projectview)
+       m_projectview->m_processBusy = true;
 }
 
 void cpMainComponents::hideProgressBusy(QString Message)
 {
+    if (m_appclosing) return;
+
     statusBar()->showMessage(Message);
-    qApp->restoreOverrideCursor();
+    if (qApp)
+        qApp->restoreOverrideCursor();
     if (m_projectview)
-        m_projectview->m_processBusy = false;
+            m_projectview->m_processBusy = false;
 }
 
 void cpMainComponents::readSettings()
@@ -1421,6 +1493,7 @@ void cpMainComponents::AddImageCompSettings(QTreeWidgetItem *item, C_Destination
         QVariant v = item->data(TREE_SourceInfo, Qt::UserRole);
         C_Destination_Options *m_data = v.value<C_Destination_Options *>();
         *m_data << data;
+        if (!m_data) return;
         item->setText(0, m_data->m_compname);
 
         QFileInfo fileinfo(m_data->m_destFileNamePath);
@@ -1452,6 +1525,7 @@ void cpMainComponents::AddImageCompSettings(QTreeWidgetItem *item, C_Destination
         C_Destination_Options *m_data = new C_Destination_Options;
         // copythe new data from comsettings dialog data
         *m_data << data;
+        if (!m_data) return;
 
         // Check who called the [+] add setting 
         QString itemName;
@@ -1472,25 +1546,66 @@ void cpMainComponents::AddImageCompSettings(QTreeWidgetItem *item, C_Destination
                     }
                     bool isCopy = QFile::copy(m_data->m_sourceFileNamePath, m_data->m_destFileNamePath);
                     if (!isCopy) {
-                        QString error = "Error: Create " + (m_data->m_destFileNamePath) + " failed.\n";
+                        QString error = "Error: Create " + (m_data->m_destFileNamePath) + " failed. Please make sure you have write permission to the destination path.\n";
                         PrintInfo(error.toStdString().c_str());
+                        if (m_CompressStatusDialog)
+                        {
+                            m_CompressStatusDialog->showOutput();
+                        }
                         return;
                     }
+
                     QTreeWidgetItem *ParentItem = item->parent();
                     if (ParentItem)
                     {
                         QString itemName = ParentItem->text(0);
-                        m_projectview->Tree_Add3DSubModelFile(ParentItem, DestfilePathName);
+                        m_projectview->Tree_Add3DSubModelFile(ParentItem, DestfilePathName, NULL);
                     }
                     break;
         }
     }
 }
 
+void cpMainComponents::DisplayException(QString msgTitle)
+{
+    if (m_CompressStatusDialog)
+    {
+        m_CompressStatusDialog->showOutput();
+        m_CompressStatusDialog->raise();
+        //QTimer::singleShot(10, this, SLOT(SetRaised()));
+    }
+    // do some message 
+    try
+    {
+        throw;
+    }
+    catch (const std::exception &e)
+    {
+        PrintInfo("%s Error: %s (feature may not be supported!)", msgTitle.toStdString().c_str(), e.what());
+    }
+    catch (...) {
+        PrintInfo("Error: Occured while processing image or model (feature may not be supported!)");
+    }
+}
+
 void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
 {
+    if (!(QFile::exists(fileName)))
+    {
+        if (m_CompressStatusDialog)
+        {
+            m_CompressStatusDialog->showOutput();
+        }
+        QString error = "Error: File " + fileName + " does not exist. Please try remove from Project and add again. \n";
+        PrintInfo(error.toStdString().c_str());
+        return;
+    }
+
     bool isDel = true;
     bool doRefreshCompressView = false;
+    cp3DModelView           *m_3Dmodelview = NULL;
+    cpImageView             *m_imageview = NULL;
+    QString                 ImageType = "";
 
     try
     {
@@ -1513,14 +1628,19 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
         acCustomDockWidget      *dock = NULL;
         C_Destination_Options   *m_compressdata;
 
+        bool DockItemDeleted = false;
+
         if (levelType == TREETYPE_COMPRESSION_DATA)
         {
             QVariant v = item->data(TREE_SourceInfo, Qt::UserRole);
             m_compressdata = v.value<C_Destination_Options *>();
+            if (m_compressdata == NULL) return;
+
             if (m_compressdata->m_data_has_been_changed)
             {
                 // Find the old image and remove it
                 OnDeleteImageView(fileName);
+                DockItemDeleted = true;
                 m_compressdata->m_data_has_been_changed = false;
                 doRefreshCompressView = true;
             }
@@ -1535,10 +1655,14 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
             )
         {
             // Find the old image and remove it
-            OnDeleteImageView(fileName);
+            // flag (DockItemDeleted) is used make sure a Compressed dock item is not scanned twice for delete
+            if (!DockItemDeleted)
+                OnDeleteImageView(fileName);
 
-            if (doRefreshCompressView)
-                m_compressdata->m_data_has_been_changed = false;
+            if (doRefreshCompressView) {
+                if(m_compressdata)
+                    m_compressdata->m_data_has_been_changed = false;
+            }
 
             m_ForceImageRefresh = false;
         }
@@ -1573,8 +1697,7 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
                         // Remove the old tab 
                         if (dock)
                         {
-                            delete dock;
-                            dock = NULL;
+                            DeleteDock(&dock);
                         }
                     }
                 }
@@ -1583,7 +1706,6 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
 
         if (dock == NULL)
         {
-            QString ImageType;
             Setting *setting = new Setting();
             setting->onBrightness = false;
 
@@ -1620,6 +1742,7 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
                     // Create a new view image
                     ImageType = " Image file";
                     m_imageview = new cpImageView(fileName, ImageType, m_parent, m_filedata->m_MipImages, setting, OrigImages);
+                    m_imageview->m_type = TREETYPE_IMAGEFILE_DATA;
                 }
             }
             else
@@ -1638,28 +1761,61 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
                         setting->generateMips = true;
 
                     m_imageview = new cpImageView(fileName, ImageType, m_parent, m_filedata->m_MipImages, setting, NULL);
-
+                    m_imageview->m_type = TREETYPE_IMAGEFILE_DATA;
                     setting->generateMips = false;
                 }
             }
             else
-            if ((levelType == TREETYPE_3DMODEL_DATA)|| (levelType == TREETYPE_3DSUBMODEL_DATA))
+            if ((levelType == TREETYPE_3DMODEL_DATA))
             {
                 m_imageview = NULL;
                 // Get ImageFile Data
                 QVariant v = item->data(TREE_SourceInfo, Qt::UserRole);
-                C_3D_Source_Info *m_filedata = v.value<C_3D_Source_Info *>();
+                C_3DModel_Info *m_filedata = v.value<C_3DModel_Info *>();
 
                 if (m_filedata)
                 {
                     // Create a new view image
-                    ImageType = " 3D Model DX12 Render";
+                    ImageType = " 3D Model Render :";
                     setting->reloadImage = g_Application_Options.m_useNewImageViews;
                     setting->generateMips = false;
-                    m_3Dmodelview = new cp3DModelView(fileName, ImageType, m_parent);
+                    m_3Dmodelview = new cp3DModelView(fileName,"",ImageType, m_parent);
+                    m_3Dmodelview->m_type = TREETYPE_3DMODEL_DATA;
+
                     setting->generateMips = false;
+                    if (m_3Dmodelview->custTitleBar)
+                    {
+                        m_3Dmodelview->custTitleBar->m_close = true;
+                        connect(m_3Dmodelview->custTitleBar, SIGNAL(OnAboutToClose(QString &)), this, SLOT(onAboutToClose(QString &)));
+                    }
                 }
             }
+            else
+            if (levelType == TREETYPE_3DSUBMODEL_DATA)
+            {
+                m_imageview = NULL;
+                // Get ImageFile Data
+                QVariant v = item->data(TREE_SourceInfo, Qt::UserRole);
+                C_3DSubModel_Info *m_filedata = v.value<C_3DSubModel_Info *>();
+
+                if (m_filedata)
+                {
+                    // Create a new view image
+                    ImageType = " 3D Model Render :";
+                    setting->reloadImage = g_Application_Options.m_useNewImageViews;
+                    setting->generateMips = false;
+                    m_3Dmodelview = new cp3DModelView(fileName,"", ImageType, m_parent);
+                    m_3Dmodelview->m_type = TREETYPE_3DSUBMODEL_DATA;
+
+                    setting->generateMips = false;
+                    if (m_3Dmodelview->custTitleBar)
+                    {
+                        m_3Dmodelview->custTitleBar->m_close = true;
+                        connect(m_3Dmodelview->custTitleBar, SIGNAL(OnAboutToClose(QString &)), this, SLOT(onAboutToClose(QString &)));
+                    }
+                }
+            }
+
 
             if (m_imageview)
             {
@@ -1703,13 +1859,7 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
     }
     catch (...)
     {
-        if (m_CompressStatusDialog)
-        {
-            m_CompressStatusDialog->showOutput();
-            m_CompressStatusDialog->raise();
-            //QTimer::singleShot(10, this, SLOT(SetRaised()));
-        }
-          // do some message 
+        DisplayException(ImageType);
     }
 
     emit OnImageLoadDone();
@@ -1719,6 +1869,8 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
     if (saveImageAct)
         saveImageAct->setEnabled(true);
 
+    if (g_pProgressDlg)
+        g_pProgressDlg->hide();
     hideProgressBusy("Ready");
 }
 
@@ -1772,6 +1924,7 @@ void cpMainComponents::AddImageDiff(C_Destination_Options *destination, QString 
             {
                 PrintInfo("Image Diff Error: Image File #1 cannot be found\n");
                 onShowOutput();
+                return;
             }
 
             QFileInfo fileinfo2(fileName2);
@@ -1784,6 +1937,7 @@ void cpMainComponents::AddImageDiff(C_Destination_Options *destination, QString 
             {
                 PrintInfo("Image Diff Error: Image File #2 cannot be found\n");
                 onShowOutput();
+                return;
             }
 
             title = DIFFERENCE_IMAGE_TXT + originalFileName + " VS " + destFile;
@@ -1791,6 +1945,7 @@ void cpMainComponents::AddImageDiff(C_Destination_Options *destination, QString 
 
             // Create a new view image
             m_imageCompare = new CImageCompare(title, originalFileName, destFile, false, this);
+            m_imageCompare->m_type = TREETYPE_DIFFVIEW;
         }
         else
         {
@@ -1813,6 +1968,7 @@ void cpMainComponents::AddImageDiff(C_Destination_Options *destination, QString 
 
             // Create a new view image
             m_imageCompare = new CImageCompare(title, originalFileName, destFile, true, this);
+            m_imageCompare->m_type = TREETYPE_DIFFVIEW;
         }
         
        
@@ -1821,6 +1977,7 @@ void cpMainComponents::AddImageDiff(C_Destination_Options *destination, QString 
         {
             delete m_imageCompare;
             PrintInfo("Image Diff Error: Diff Image cannot be found\n");
+            return;
         }
         else
         {
@@ -1860,14 +2017,15 @@ void cpMainComponents::AddImageDiff(C_Destination_Options *destination, QString 
     }
     catch (...)
     {
-        // Do some message
+        DisplayException("ImageDiff");
     }
 
 }
 
-
-void cpMainComponents::Add3DModelDiff(C_3D_Source_Info *destination, QString &fileName1, QString &fileName2)
+void cpMainComponents::Add3DModelDiff(C_3DSubModel_Info *destination, QString &fileName1, QString &fileName2)
 {
+    Q_UNUSED(destination);
+
     try
     {
         if (isCompressInProgress) return;
@@ -1900,8 +2058,7 @@ void cpMainComponents::Add3DModelDiff(C_3D_Source_Info *destination, QString &fi
         QString title = "";
 
         QFileInfo fileinfo1(fileName1);
-        QFile file1(fileName1);
-        if (file1.exists() && (fileinfo1.suffix().length() > 0))
+        if (QFile::exists(fileName1) && (fileinfo1.suffix().length() > 0))
         {
             originalFileName = fileName1;
         }
@@ -1909,11 +2066,11 @@ void cpMainComponents::Add3DModelDiff(C_3D_Source_Info *destination, QString &fi
         {
             PrintInfo("Image Diff Error: Image File #1 cannot be found\n");
             onShowOutput();
+            return;
         }
 
         QFileInfo fileinfo2(fileName2);
-        QFile file2(fileName2);
-        if (file2.exists() && (fileinfo2.suffix().length() > 0))
+        if (QFile::exists(fileName2) && (fileinfo2.suffix().length() > 0))
         {
             destFile = fileName2;
         }
@@ -1921,13 +2078,15 @@ void cpMainComponents::Add3DModelDiff(C_3D_Source_Info *destination, QString &fi
         {
             PrintInfo("Image Diff Error: Image File #2 cannot be found\n");
             onShowOutput();
+            return;
         }
 
         title = DIFFERENCE_IMAGE_TXT + originalFileName + " VS " + destFile;
         OnDeleteImageDiffView(destFile);
 
         // Create a new view image
-        m_3dModelCompare = new C3DModelCompare(title, fileName1, fileName2, true, this);
+        C3DModelCompare *m_3dModelCompare = new C3DModelCompare(title, fileName1, fileName2, true, this);
+        m_3dModelCompare->m_type = TREETYPE_DIFFVIEW;
 
        // CMipImages  *m_diffMips = m_3dModelCompare->getMdiffMips();
        // if (m_diffMips == NULL)
@@ -1973,11 +2132,10 @@ void cpMainComponents::Add3DModelDiff(C_3D_Source_Info *destination, QString &fi
     }
     catch (...)
     {
-        // Do some message
+        DisplayException("3D Model ImageDiff");
     }
 
 }
-
 
 void cpMainComponents::OnDeleteImageView(QString &fileName)
 {
@@ -1987,13 +2145,22 @@ void cpMainComponents::OnDeleteImageView(QString &fileName)
 
     if (dock)
     {
-        delete dock;
-        dock = NULL;
+        DeleteDock(&dock);
     }
 
     // Also Remove any Image Diff Tabs
     OnDeleteImageDiffView(fileName);
 
+    // Check if we need to disable any buttons from the main app!
+    if (m_projectview)
+    {
+        int ItemsCount;
+        m_projectview->Tree_numSelectedtems(ItemsCount);
+        if (deleteImageAct)
+        {
+            deleteImageAct->setEnabled(ItemsCount > 0);
+        }
+    }
     hideProgressBusy("Ready");
 }
 
@@ -2008,8 +2175,7 @@ void cpMainComponents::OnDeleteImageDiffView(QString &fileName)
 
     if (dock)
     {
-        delete dock;
-        dock = NULL;
+        DeleteDock(&dock);
     }
 
     hideProgressBusy("Ready");
@@ -2049,20 +2215,23 @@ void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
         // Verify its root
         QVariant v = parent->data(TREE_LevelType, Qt::UserRole);
         int itemlevelType = v.toInt();
-        
+        m_setcompressoptions->m_DestinationFolder->setReadOnly(false);
+        m_setcompressoptions->m_PBDestFileFolder->setEnabled(true);
         if (itemlevelType == TREETYPE_IMAGEFILE_DATA)
         {
             QVariant v = parent->data(TREE_SourceInfo, Qt::UserRole);
-            C_Source_Info *m_sourcefile = v.value<C_Source_Info *>();
+            C_Source_Info *m_ImageSourceFile = v.value<C_Source_Info *>();
 
-            QFileInfo fileinfo(m_sourcefile->m_Name);
+            QFileInfo fileinfo(m_ImageSourceFile->m_Name);
             CompProjectName = fileinfo.baseName();
 
             m_setcompressoptions->m_data.init();
-            m_setcompressoptions->m_data.m_sourceFileNamePath       = m_sourcefile->m_Full_Path;
-            m_setcompressoptions->m_data.m_SourceImageSize          = m_sourcefile->m_ImageSize;
-            m_setcompressoptions->m_data.m_SourceIscompressedFormat = CompressedFormat(m_sourcefile->m_Format);
-            m_setcompressoptions->m_data.m_SourceIsFloatFormat      = FloatFormat(m_sourcefile->m_Format);
+            m_setcompressoptions->m_DestinationFolder->setReadOnly(false);
+            m_setcompressoptions->m_PBDestFileFolder->setEnabled(true);
+            m_setcompressoptions->m_data.m_sourceFileNamePath       = m_ImageSourceFile->m_Full_Path;
+            m_setcompressoptions->m_data.m_SourceImageSize          = m_ImageSourceFile->m_ImageSize;
+            m_setcompressoptions->m_data.m_SourceIscompressedFormat = CompressedFormat(m_ImageSourceFile->m_Format);
+            m_setcompressoptions->m_data.m_SourceIsFloatFormat      = FloatFormat(m_ImageSourceFile->m_Format);
 
             // Used to append to name - for unique name
             // There is still chances of duplucate names, but it will not effect
@@ -2070,15 +2239,15 @@ void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
             // compression settings
             int parentcount = parent->childCount();
 
-            if (m_sourcefile->m_extnum <= parentcount)
-                m_sourcefile->m_extnum = parentcount;
+            if (m_ImageSourceFile->m_extnum <= parentcount)
+                m_ImageSourceFile->m_extnum = parentcount;
 
             // Extension Counter Number incriment
-            m_setcompressoptions->m_extnum = m_sourcefile->m_extnum++;
+            m_setcompressoptions->m_extnum = m_ImageSourceFile->m_extnum++;
 
             // Set image target size
-            m_setcompressoptions->m_data.m_Width  = m_sourcefile->m_Width;
-            m_setcompressoptions->m_data.m_Height = m_sourcefile->m_Height;
+            m_setcompressoptions->m_data.m_DstWidth  = m_ImageSourceFile->m_Width;
+            m_setcompressoptions->m_data.m_DstHeight = m_ImageSourceFile->m_Height;
 
             // Set Compression Widgets to enable
             m_setcompressoptions->m_showDestinationEXTSetting = true;
@@ -2097,19 +2266,21 @@ void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
         if (itemlevelType == TREETYPE_3DMODEL_DATA)
         {
             QVariant v = parent->data(TREE_SourceInfo, Qt::UserRole);
-            C_3D_Source_Info *m_sourcefile = v.value<C_3D_Source_Info *>();
+            C_3DModel_Info *m_3DModelSourceFile = v.value<C_3DModel_Info *>();
             
             // Source File Name
-            QFileInfo fileinfo(m_sourcefile->m_Name);
+            QFileInfo fileinfo(m_3DModelSourceFile->m_Name);
             CompProjectName = fileinfo.baseName();
 
             m_setcompressoptions->m_data.init();
-            m_setcompressoptions->m_data.m_sourceFileNamePath = m_sourcefile->m_Full_Path;
+            m_setcompressoptions->m_DestinationFolder->setReadOnly(true);;
+            m_setcompressoptions->m_PBDestFileFolder->setEnabled(false);
+            m_setcompressoptions->m_data.m_sourceFileNamePath = m_3DModelSourceFile->m_Full_Path;
 
-            m_sourcefile->m_extnum++;
+            m_3DModelSourceFile->m_extnum++;
 
             // Extension Counter Number incriment
-            m_setcompressoptions->m_extnum = m_sourcefile->m_extnum++;
+            m_setcompressoptions->m_extnum = m_3DModelSourceFile->m_extnum++;
 
             // List of source files
             if (levelType == TREETYPE_Add_glTF_destination_settings)
@@ -2122,7 +2293,7 @@ void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
                 QFileInfo fi(m_setcompressoptions->m_data.m_sourceFileNamePath);
                 QString name = fi.fileName();
                 m_setcompressoptions->m_CBSourceFile->addItem(name);
-                m_setcompressoptions->m_data.m_modelSource = m_sourcefile->m_modelSource;
+                m_setcompressoptions->m_data.m_modelSource = m_3DModelSourceFile->m_Full_Path;
             }
             else
             {
@@ -2137,18 +2308,46 @@ void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
 
             // copy 3d sub src data from 3d src models
             QVariant v = parent->data(TREE_SourceInfo, Qt::UserRole);
-            C_3D_Source_Info *m_sourcefile = v.value<C_3D_Source_Info *>();
-            if (!m_sourcefile) return;
+            C_3DSubModel_Info *m_3DSubModelSourceFile = v.value<C_3DSubModel_Info *>();
+            if (!m_3DSubModelSourceFile) return;
 
-            // all 3d src del flag set to true -> all gltf src setting added
-            if (!(m_sourcefile->m_srcDelFlags.contains(false))) {
+            if (m_3DSubModelSourceFile->m_Model_Images.isEmpty()) {
+                PrintInfo("Error: There is no texture found in the glTF file.");
+                onShowOutput();
+                return;
+            }
+
+            // Is 3d src del flag set to true 
+            bool canSetValues = false;
+            int defaultIndex = 0;
+            while (defaultIndex < m_3DSubModelSourceFile->m_Model_Images.size())
+            {
+                if (m_3DSubModelSourceFile->m_SubModel_Images[defaultIndex].m_srcDelFlag == false)
+                {
+                    canSetValues = true;
+                    break;
+                }
+                defaultIndex++;
+            }
+
+            if (canSetValues == false) 
+            {
                 PrintInfo("Error: All setting for the textures in the gltf file have been added. \n Note: To add/ modify setting, please add new gltf setting or modify the current setting through properties window.");
                 onShowOutput();
                 return;
             }
 
-            m_setcompressoptions->m_data.m_sourceFiles = m_sourcefile->m_sourceFiles;
-            m_setcompressoptions->m_data.m_srcDelFlags = m_sourcefile->m_srcDelFlags;
+            m_setcompressoptions->m_DestinationFolder->setReadOnly(true);
+            m_setcompressoptions->m_PBDestFileFolder->setEnabled(false);
+            m_setcompressoptions->m_data.m_Model_Images = m_3DSubModelSourceFile->m_Model_Images;
+            m_setcompressoptions->m_data.m_SubModel_Images = m_3DSubModelSourceFile->m_SubModel_Images;
+
+            // Let assume for now that we are using PBR images which all have the same sizes
+            if (m_setcompressoptions->m_data.m_Model_Images.size() > 0)
+            {
+                m_setcompressoptions->m_data.m_DstWidth = m_3DSubModelSourceFile->m_Model_Images[defaultIndex].m_Width;
+                m_setcompressoptions->m_data.m_DstHeight = m_3DSubModelSourceFile->m_Model_Images[defaultIndex].m_Height;
+            }
 
             // Set Compression Widgets to enable
             m_setcompressoptions->m_showDestinationEXTSetting = true;
@@ -2156,130 +2355,49 @@ void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
             m_setcompressoptions->m_showTheInfoTextSetting = true;
           
             m_setcompressoptions->m_CBSourceFile->clear();
-            for (int i = 0; i < m_setcompressoptions->m_data.m_sourceFiles.size(); ++i)
+            for (int i = 0; i < m_setcompressoptions->m_data.m_Model_Images.size(); ++i)
             {
-                QFileInfo fi(m_setcompressoptions->m_data.m_sourceFiles.at(i));
-                QString name = fi.fileName();
                 // check for delete flags
-                if(m_setcompressoptions->m_data.m_srcDelFlags.at(i) == false)
+                if (m_setcompressoptions->m_data.m_SubModel_Images[i].m_srcDelFlag == false)
+                {
+                    QFileInfo fi(m_setcompressoptions->m_data.m_Model_Images[i].m_FilePathName);
+                    QString name = fi.fileName();
                     m_setcompressoptions->m_CBSourceFile->addItem(name);
+                }
             }
 
-            // Default to first entry
-            m_setcompressoptions->m_data.m_sourceFileNamePath = m_sourcefile->m_sourceFiles.at(0);
-            m_setcompressoptions->m_data.m_modelDest = m_sourcefile->m_Full_Path;
-            m_setcompressoptions->m_data.m_modelSource = m_sourcefile->m_modelSource;
+            m_setcompressoptions->m_data.m_modelDest = m_3DSubModelSourceFile->m_Full_Path;
+            m_setcompressoptions->m_data.m_modelSource = m_3DSubModelSourceFile->m_ModelSource_gltf;
+
+            // Default to first entry in the source combolist
+            QString srcPath = "";
+            if (m_setcompressoptions->m_data.m_Model_Images.isEmpty())
+            {
+                QFileInfo srcfileInfo(m_setcompressoptions->m_data.m_modelSource);
+                srcPath = srcfileInfo.absolutePath();
+            }
+            else
+            {
+                QFileInfo srcfileInfo(m_setcompressoptions->m_data.m_Model_Images[defaultIndex].m_FilePathName);
+                srcPath = srcfileInfo.absolutePath();
+            }
+
+            m_setcompressoptions->m_data.m_sourceFileNamePath = srcPath + "/" + m_setcompressoptions->m_CBSourceFile->itemText(0);
 
             QFileInfo fileinfo(m_setcompressoptions->m_data.m_sourceFileNamePath);
             CompProjectName = fileinfo.baseName();
 
             int parentcount = parent->childCount();
-            if (m_sourcefile->m_extnum <= parentcount)
-                m_sourcefile->m_extnum = parentcount;
+            if (m_3DSubModelSourceFile->m_extnum <= parentcount)
+                m_3DSubModelSourceFile->m_extnum = parentcount;
 
             // Extension Counter Number incriment
-            m_setcompressoptions->m_extnum = m_sourcefile->m_extnum++;
+            m_setcompressoptions->m_extnum = m_3DSubModelSourceFile->m_extnum++;
 
         }
 
         m_setcompressoptions->m_data.m_SourceType = itemlevelType;
     }
-
-#ifdef USE_OLD1
-    else 
-    if (!parent)
-    {
-        // Verify item itself
-        QVariant v = item->data(TREE_LevelType, Qt::UserRole);
-        int itemlevelType = v.toInt();
-        m_setcompressoptions->m_data.m_SourceType = itemlevelType;
-        if (itemlevelType == TREETYPE_IMAGEFILE_DATA)
-        {
-            parent = item;
-            QVariant v = parent->data(TREE_SourceInfo, Qt::UserRole);
-            C_Source_Info *m_sourcefile = v.value<C_Source_Info *>();
-            QFileInfo fileinfo(m_sourcefile->m_Name);
-            CompProjectName = fileinfo.baseName();
-            m_setcompressoptions->m_data.m_sourceFileNamePath = m_sourcefile->m_Full_Path;
-            m_setcompressoptions->m_data.m_SourceImageSize = m_sourcefile->m_ImageSize;
-            m_setcompressoptions->m_data.m_SourceIscompressedFormat = CompressedFormat(m_sourcefile->m_Format);
-            m_setcompressoptions->m_data.m_SourceIsFloatFormat = FloatFormat(m_sourcefile->m_Format);
-
-            // Used to append to name - for unique name
-            // There is still chances of duplucate names, but it will not effect
-            // compression unless target file is also of the same name as any other child 
-            // compression settings
-            int parentcount = parent->childCount();
-
-            if (m_sourcefile->m_extnum <= parentcount)
-                m_sourcefile->m_extnum = parentcount;
-
-            m_setcompressoptions->m_extnum = m_sourcefile->m_extnum++;
-            m_setcompressoptions->m_data.m_Width  = m_sourcefile->m_Width;
-            m_setcompressoptions->m_data.m_Height = m_sourcefile->m_Height;
-
-            m_setcompressoptions->m_showDestinationEXTSetting = true;
-            m_setcompressoptions->m_showTheControllerSetting  = true;
-            m_setcompressoptions->m_showTheInfoTextSetting    = true;
-
-            // List of source files
-            m_setcompressoptions->m_sourceFiles.clear();
-        }
-        else
-            if (itemlevelType == TREETYPE_3DSUBMODEL_DATA)
-            {
-                parent = item;
-                QVariant v = parent->data(TREE_SourceInfo, Qt::UserRole);
-                C_3D_Source_Info *m_sourcefile = v.value<C_3D_Source_Info *>();
-                QFileInfo fileinfo(m_sourcefile->m_Name);
-                CompProjectName = fileinfo.baseName();
-                m_setcompressoptions->m_data.m_sourceFileNamePath = m_sourcefile->m_Full_Path;
-                int parentcount = parent->childCount();
-                if (m_sourcefile->m_extnum <= parentcount)
-                    m_sourcefile->m_extnum = parentcount;
-
-                // Extension Counter Number incriment
-                m_setcompressoptions->m_extnum = m_sourcefile->m_extnum++;
-
-                // Set Compression Widgets to enable
-                m_setcompressoptions->m_showDestinationEXTSetting = false;
-                m_setcompressoptions->m_showTheControllerSetting = false;
-                m_setcompressoptions->m_showTheInfoTextSetting = false;
-
-                // List of source files
-                m_setcompressoptions->m_sourceFiles = m_sourcefile->m_sourceFiles;
-            }
-        else
-        if (itemlevelType == TREETYPE_3DMODEL_DATA)
-        {
-            parent = item;
-            QVariant v = parent->data(TREE_SourceInfo, Qt::UserRole);
-            C_3D_Source_Info *m_sourcefile = v.value<C_3D_Source_Info *>();
-            QFileInfo fileinfo(m_sourcefile->m_Name);
-            CompProjectName = fileinfo.baseName();
-            m_setcompressoptions->m_data.m_sourceFileNamePath = m_sourcefile->m_Full_Path;
-            int parentcount = parent->childCount();
-            if (m_sourcefile->m_extnum <= parentcount)
-                m_sourcefile->m_extnum = parentcount;
-
-            // Extension Counter Number incriment
-            m_setcompressoptions->m_extnum = m_sourcefile->m_extnum++;
-
-            // Set Compression Widgets to enable
-            m_setcompressoptions->m_showDestinationEXTSetting   = true;
-            m_setcompressoptions->m_showTheControllerSetting    = true;
-            m_setcompressoptions->m_showTheInfoTextSetting      = true;
-
-            // List of source files
-            m_setcompressoptions->m_sourceFiles = m_sourcefile->m_sourceFiles;
-            // Default to first entry
-            if (m_sourcefile->m_sourceFiles.size() > 0)
-                m_setcompressoptions->m_data.m_sourceFileNamePath = m_sourcefile->m_sourceFiles.at(0);
-            else
-                return;
-        }
-    }
-#endif
 
     m_setcompressoptions->m_data.m_compname = CompProjectName;
 
@@ -2300,10 +2418,16 @@ void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
 
 }
 
+void cpMainComponents::onAddedImageSourceNode()
+{
+    if (compressAct)
+        compressAct->setEnabled(true);
+}
+
 void cpMainComponents::onAddedCompressSettingNode()
 {
-    //if (compressAct)
-    //    compressAct->setEnabled(true);
+    if (compressAct)
+        compressAct->setEnabled(true);
     m_setcompressoptions->m_destFilePath = m_setcompressoptions->m_DestinationFolder->text();
 }
 
@@ -2458,97 +2582,41 @@ void cpMainComponents::onCompressionDone()
 {
     isCompressInProgress = false;
 
-    // Called when compression from Project view is completed.
-    QTreeWidgetItem *item = m_projectview->GetCurrentItem(TREETYPE_COMPRESSION_DATA);
-    if (item)
+    if (m_projectview)
     {
-
-        QTreeWidgetItem *parent = item->parent();
-        if (parent)
+        // check if any items prior to compressing!
+        int ItemsCount;
+        m_projectview->Tree_numSelectedtems(ItemsCount);
+        if (ItemsCount > 0)
         {
-            // Verify its root
-            QVariant v = parent->data(TREE_LevelType, Qt::UserRole);
-            int ParentlevelType = v.toInt();
-            if (ParentlevelType == TREETYPE_3DSUBMODEL_DATA)
+            // Called when compression from Project view is completed.
+            QTreeWidgetItem *item = m_projectview->GetCurrentItem(TREETYPE_COMPRESSION_DATA);
+            if (item)
             {
-                QVariant data = item->data(TREE_SourceInfo, Qt::UserRole);
-                C_Destination_Options *m_data = data.value<C_Destination_Options *>();
+                // view image
+                QVariant v = item->data(TREE_SourceInfo, Qt::UserRole);
+                C_Destination_Options *m_data = v.value<C_Destination_Options *>();
                 if (m_data)
                 {
-                    std::ifstream fstreamsrc(m_data->m_modelSource.toStdString());
-                    if (!fstreamsrc)
+                    // Refresh any changes in current items data
+                    // like compression time
+                    if (m_imagePropertyView)
+                        m_imagePropertyView->OnUpdateData(m_data);
+
+                    // Add the image to the diff image list
+                    if (m_projectview)
                     {
-                        PrintInfo("Error reading gltf source file.");
-                        return;
+                        // Add the image to the diff image list if it is not in the list
+                        if ((!(m_projectview->m_ImagesinProjectTrees.contains(m_data->m_destFileNamePath))) && (!(m_data->m_destFileNamePath.contains(".gltf"))))
+                            m_projectview->m_ImagesinProjectTrees.append(m_data->m_destFileNamePath);
                     }
 
-                    std::ifstream fstreamdest(m_data->m_modelDest.toStdString());
-                    if (!fstreamdest)
-                    {
-                        PrintInfo("Error reading gltf compressed version file.");
-                        return;
-                    }
-
-                    // Load the glTF json text file
-                    nlohmann::json gltfsrc;
-                    fstreamsrc >> gltfsrc;
-                    fstreamsrc.close();
-
-                    nlohmann::json gltfdest;
-                    fstreamdest >> gltfdest;
-                    fstreamdest.close();
-
-                    //image section of gltf file
-                    auto srcimages = gltfsrc["images"];
-
-                    for (unsigned int i = 0; i < srcimages.size(); i++)
-                    {
-                        std::string srcname = srcimages[i]["uri"].get<std::string>();
-                        QFileInfo fileInfo(m_data->m_sourceFileNamePath);
-                        QString filename(fileInfo.fileName());
-                        std::string srcfilename = filename.toStdString();
-                        if (srcname == srcfilename) {
-                            QFileInfo destfileInfo(m_data->m_destFileNamePath);
-                            QString destfilename(destfileInfo.fileName());
-                            gltfdest["images"][i]["uri"] = destfilename.toStdString();
-                        }
-                    }
-
-                    std::ofstream ofstreamdest(m_data->m_modelDest.toStdString(), std::ios_base::out);
-                    if (!ofstreamdest)
-                    {
-                        QString error = "Error opening gltf compressed version file for update: " + m_data->m_modelDest +"." + strerror(errno);
-                        PrintInfo(error.toStdString().c_str());
-                        return;
-                    }
-                    ofstreamdest << gltfdest;
-                    ofstreamdest.close();
+#ifdef SHOW_DECOMPRESS_IMAGE
+                    // This can cause issue if image decompresion takes a long time!
+                    AddImageView(m_data->m_destFileNamePath, item);
+#endif
                 }
             }
-        }
-
-        // view image
-        QVariant v = item->data(TREE_SourceInfo, Qt::UserRole);
-        C_Destination_Options *m_data = v.value<C_Destination_Options *>();
-        if (m_data)
-        {
-            // Refresh any changes in current items data
-            // like compression time
-            if (m_imagePropertyView)
-                m_imagePropertyView->OnUpdateData(m_data);
-
-            // Add the image to the diff image list
-            if (m_projectview)
-            {
-                // Add the image to the diff image list if it is not in the list
-                if (!(m_projectview->m_ImagesinProjectTrees.contains(m_data->m_destFileNamePath)))
-                    m_projectview->m_ImagesinProjectTrees.append(m_data->m_destFileNamePath);
-            }
-
-        #ifdef SHOW_DECOMPRESS_IMAGE
-            // This can cause issue if image decompresion takes a long time!
-            AddImageView(m_data->m_destFileNamePath, item);
-        #endif
         }
     }
 
@@ -2562,6 +2630,7 @@ void cpMainComponents::onCompressionDone()
 
 }
 
+// in future revisions: calls to onSourceImage() should be replaced newer code onSetToolBarActions() 
 void cpMainComponents::onSourceImage(int childCount)
 {
     if (MIPGenAct)
@@ -2648,24 +2717,29 @@ void cpMainComponents::onProcessing(QString &FilePathName)
     // by command line.
 }
 
+// Removes all Docked Views that contains Title 
 void cpMainComponents::onAboutToClose(QString &Title)
 {
     QList<acCustomDockWidget *> dockWidgets = m_parent->findChildren<acCustomDockWidget *>();
-    QListIterator<acCustomDockWidget *> iter(dockWidgets);
     acCustomDockWidget *dock;
-    while (iter.hasNext())
+
+    for (int i = 0; i < dockWidgets.size(); i++)
     {
-        dock = iter.next();
+        dock = dockWidgets[i];
         if (dock)
         {
             QString DockTitle = dock->custTitleBar->getTitle();
             if (DockTitle.compare(Title) == 0)
             {
-                delete dock;
-                dock = NULL;
-                break;
+                //skip diff subwindow which are already deleted
+                if (dock->m_type == TREETYPE_DIFFVIEW)
+                {
+                    i += 3;
+                }
+                DeleteDock(&dock);
             }
         }
     }
+
 }
 

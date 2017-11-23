@@ -92,7 +92,7 @@ void CGenMips::setMipLevelDisplay(int Width, int Height)
         m_MipLevelSizes << level;
 
         m_MipLevels++;
-    } while (Width > 1 || Height > 1);
+    } while (Width > 1 && Height > 1);
 
     QStringList reversedList = m_MipLevelSizes;
     const int levelSize = m_MipLevelSizes.size();
@@ -181,6 +181,13 @@ void CGenMips::valueChanged(QtProperty *property, const QVariant &value)
         return;
     QString id = propertyToId[property];
     
+    if (id == QLatin1String(LOWEST_MIP_LEVELS))
+    {
+        m_MipLevels = value.toInt();
+    }
+
+    if (m_cdata == NULL) return;
+
     if (id == QLatin1String("m_str")) {
         m_cdata->set_str(value.value<QString>());
     }
@@ -195,10 +202,7 @@ void CGenMips::valueChanged(QtProperty *property, const QVariant &value)
     if (id == QLatin1String("PerformFiltering")) {
         m_cdata->set_bDither(value.value<bool>());
     }
-    if (id == QLatin1String(LOWEST_MIP_LEVELS))
-    {
-        m_MipLevels = value.toInt();
-    }
+
 }
 
 
@@ -297,6 +301,8 @@ void CGenMips::SetDefaults()
 
     QScrollArea *GenMipsOptions = new QScrollArea();
     GenMipsOptions->setWidgetResizable(true);
+    GenMipsOptions->setMinimumSize(300,60);
+    m_propertyEditor->setMinimumSize(250, 55);
     GenMipsOptions->setWidget(m_propertyEditor);
 
 

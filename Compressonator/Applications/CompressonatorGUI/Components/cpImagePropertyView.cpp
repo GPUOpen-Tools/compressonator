@@ -152,6 +152,10 @@ void CImagePropertyView::oncurrentItemChanged(QtBrowserItem *item)
 
 void CImagePropertyView::OnUpdateData(QObject *data)
 {
+    m_isEditing_Compress_Options = false;
+    m_PBSave->setEnabled(false);
+    m_PBCancel->setEnabled(false);
+    m_PBCompress->setEnabled(false);
 
     if (data == NULL)
     {
@@ -161,11 +165,7 @@ void CImagePropertyView::OnUpdateData(QObject *data)
 
     QString m_currentClassName = data->metaObject()->className();
     bool controllerisNULL = false;
-    m_isEditing_Compress_Options = false;
 
-    m_PBSave->setEnabled(false);
-    m_PBCancel->setEnabled(false);
-    m_PBCompress->setEnabled(false);
 
     if (m_currentClassName.compare(CLASS_COMPRESS) == 0)
     {

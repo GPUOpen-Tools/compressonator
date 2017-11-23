@@ -141,7 +141,7 @@ MatColorOrder getColorOrderOfRGB32Format()
 cv::Mat image2Mat(const QImage &img, int requiredMatType, MatColorOrder requriedOrder)
 {
     int targetDepth = CV_MAT_DEPTH(requiredMatType);
-    int targetChannels = CV_MAT_CN(requiredMatType);
+    int targetChannels = 4;
     Q_ASSERT(targetChannels==CV_CN_MAX || targetChannels==1 || targetChannels==3 || targetChannels==4);
     Q_ASSERT(targetDepth==CV_8U || targetDepth==CV_16U || targetDepth==CV_32F);
 

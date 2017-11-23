@@ -1069,6 +1069,8 @@ void acImageView::onMirrorHorizontal()
     m_imageItem->m_Mirrored   = true;
     m_imageItem->m_Mirrored_h = true;
     m_imageItem->m_Mirrored_v = false;
+    m_imageItem->m_ImageBrightnessDown = false;
+    m_imageItem->m_ImageBrightnessUp = false;
     m_imageItem->UpdateImage();
     m_imageItem->m_Mirrored = false;
 }
@@ -1086,6 +1088,8 @@ void acImageView::onMirrorVirtical()
     m_imageItem->m_Mirrored = true;
     m_imageItem->m_Mirrored_h = false;
     m_imageItem->m_Mirrored_v = true;
+    m_imageItem->m_ImageBrightnessDown = false;
+    m_imageItem->m_ImageBrightnessUp = false;
     m_imageItem->UpdateImage();
     m_imageItem->m_Mirrored = false;
 }

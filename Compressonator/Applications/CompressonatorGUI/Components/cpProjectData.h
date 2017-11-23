@@ -38,6 +38,8 @@
 #include "ATIFormats.h"
 #include "TextureIO.h"
 #include "Common.h"
+// JSon 
+#include "json\json.h"
 
 #define    TREETYPE_Double_Click_here_to_add_files      0      // [+] Double Click here to add files ...
 #define    TREETYPE_Add_destination_setting             1      // [+] Add destination setting ...
@@ -47,6 +49,7 @@
 #define    TREETYPE_VIEW_ONLY_NODE                      5      // Autogen data  that is part of a 3D model or Image that is only viewed
 #define    TREETYPE_3DSUBMODEL_DATA                     6      // items column (1) uses new allocated varient data for C_FileProperties
 #define    TREETYPE_COMPRESSION_DATA                    7      // items column (1) uses new allocated varient data for C_CompressOptions
+#define    TREETYPE_DIFFVIEW                            8      // no item data, this id is used along with above for identifying docked widgets
 
 
 #define    TREE_LevelType                               0       // Treeview index of data column variant data storage for TREETYPE_...
@@ -476,7 +479,6 @@ signals:
     void hasAlphaChannel();
 };
 
-
 class Channel_Weighting : public DXT1_Alpha
 {
 Q_OBJECT
@@ -574,7 +576,6 @@ signals:
     void bluewChanged(QVariant &);
 };
 
-
 #define DESTINATION_IMAGE_CLASS_NAME      "Destination Image"
 #define CHANNEL_WEIGHTING_CLASS_NAME      "Channel Weighting"
 #define DXT1_ALPHA_CLASS_NAME             "DXT1 Alpha"
@@ -602,8 +603,8 @@ public:
     C_Destination_Image()
     {
         m_FileSize = 0;
-        m_Width = 0;
-        m_Height = 0;
+        m_DstWidth = 0;
+        m_DstHeight = 0;
         m_FileSizeStr   = "";
         m_WidthStr      = "";
         m_HeightStr     = "";
@@ -615,8 +616,8 @@ public:
 
     QString m_FileInfoDestinationName;
     QString m_CompressionRatio;
-    int     m_Width;
-    int     m_Height;
+    int     m_DstWidth;
+    int     m_DstHeight;
     int     m_FileSize;
     double  m_CompressionTime;
     QString m_WidthStr;
@@ -642,6 +643,18 @@ public:
 #define COMPRESS_OPTIONS_KNEELOW  "KneeLow"
 #define COMPRESS_OPTIONS_KNEEHIGH  "KneeHigh"
 #define COMPRESS_OPTIONS_GAMMA "Gamma"
+
+
+struct Model_Image
+{
+    QString m_FilePathName; // Files Path + name + ext
+    bool    m_srcDelFlag;   // Used only by 3DSubModels
+    int     m_Width;        // Width 
+    int     m_Height;       // Height 
+    int     m_FileSize;     // FileSize 
+};
+
+
 
 class C_Destination_Options : public C_Destination_Image
 {
@@ -710,8 +723,8 @@ public:
         m_OriginalMipImages = NULL;
 
         m_FileSize = 0;
-        m_Width = 0;
-        m_Height = 0;
+        m_DstWidth = 0;
+        m_DstHeight = 0;
         m_Compression = C_Destination_Options::BC7;
         //m_Encoding    = No_Encoding;
         m_Quality = AMD_CODEC_QUALITY_DEFAULT;
@@ -732,8 +745,8 @@ public:
         m_SourceType         = 0;
         m_modelSource        = "";
         m_sourceFileNamePath = "";
-        m_sourceFiles.clear();
-        m_srcDelFlags.clear();
+        m_Model_Images.clear();
+        m_SubModel_Images.clear();
     }
 
 
@@ -827,8 +840,8 @@ public:
 
     QString      m_modelSource;
     QString      m_modelDest;
-    QStringList  m_sourceFiles;
-    QList<bool>  m_srcDelFlags;
+    QList<Model_Image> m_Model_Images;
+    QList<Model_Image> m_SubModel_Images;
     QString      m_compname;
     QString      m_sourceFileNamePath;
     QString      m_destFileNamePath;
@@ -837,7 +850,6 @@ public:
     bool         m_editing;
     double       m_Quality;
     bool         m_iscompressedFormat;
-    //bool         m_data_has_been_changed;
 
     CMipImages  *m_MipImages;
     bool         m_isselected;
@@ -893,7 +905,6 @@ private:
         return ds;
     }
 };
-
 
 // =======================================================
 // ORIGINAL IMAGE FILE 
@@ -964,7 +975,7 @@ public:
 
 };
 
-class C_3D_Source_Info : public QObject
+class C_3DSubModel_Info : public QObject
 {
     Q_OBJECT
         Q_PROPERTY(QString  _Name           MEMBER m_Name)
@@ -974,7 +985,7 @@ class C_3D_Source_Info : public QObject
         Q_PROPERTY(QString  _Version        MEMBER m_VersionStr)
 
 public:
-    C_3D_Source_Info()
+    C_3DSubModel_Info()
     {
         m_Name = "";
         m_Full_Path = "";
@@ -982,8 +993,9 @@ public:
         m_GeneratorStr = "Unknown";
         m_VersionStr   = "Unknown";
         m_extnum = 0;                           // Used to index new file name
-        m_sourceFiles.clear();
-        m_srcDelFlags.clear();
+
+        m_Model_Images.clear();
+        m_SubModel_Images.clear();
     }
 
     QString m_Name;
@@ -991,11 +1003,60 @@ public:
     QString m_FileSizeStr;
     QString m_GeneratorStr;
     QString m_VersionStr;
-    QString m_modelSource;
-    QStringList m_sourceFiles;
-    QList<bool> m_srcDelFlags;
+    QString m_ModelSource_gltf;
+
+    QList<Model_Image> m_Model_Images;              // Original 3DModel Images
+    QList<Model_Image> m_SubModel_Images;           // New 3DSubModels Images with new or same location and new compressed names
+
     int     m_FileSize;
     int     m_extnum;
+
+    // copy of the original file in 3D_Source_Info, that has path updated to user selected paths
+    nlohmann::json m_original_gltf;
+
+    // Working copy used to add compression file ref and offsets for mesh data
+    nlohmann::json m_gltf;
+
+};
+
+class C_3DModel_Info : public QObject
+{
+    Q_OBJECT
+        Q_PROPERTY(QString  _Name           MEMBER m_Name)
+        Q_PROPERTY(QString  _Full_Path      MEMBER m_Full_Path)
+        Q_PROPERTY(QString  _File_Size      MEMBER m_FileSizeStr)
+        Q_PROPERTY(QString  _Generator      MEMBER m_GeneratorStr)
+        Q_PROPERTY(QString  _Version        MEMBER m_VersionStr)
+
+public:
+    C_3DModel_Info()
+    {
+        m_Name = "";
+        m_Full_Path = "";
+        m_FileSize = 0;
+        m_GeneratorStr = "Unknown";
+        m_VersionStr = "Unknown";
+        m_extnum = 0;                           // Used to index new file name
+        m_Model_Images.clear();
+
+    }
+
+    QString m_Name;
+    QString m_Full_Path;
+    QString m_FileSizeStr;
+    QString m_GeneratorStr;
+    QString m_VersionStr;
+    QString m_modelSource1;
+
+    QList<Model_Image> m_Model_Images;
+
+    int     m_FileSize;
+    int     m_extnum;
+
+    // Original glTF File info is stored  for referance
+    // and used for copies 
+    nlohmann::json m_gltf;
+
 };
 
 // =======================================================
@@ -1008,7 +1069,8 @@ public:
 #define APP_Reload_image_views_on_selection             "Reload image views on selection"
 #define APP_Load_recent_project_on_startup              "Load recent project on startup"
 #define APP_Close_all_image_views_prior_to_process      "Close all image views prior to process"
-#define APP_Mouse_click_on_Project_icon_to_view_image   "Mouse click on Project icon to view image"
+#define APP_Mouse_click_on_icon_to_view_image           "Mouse click on icon to view image"
+#define APP_Render_Models_with                          "Render Models with"
 
 //class C_GPU_Decompress_Options : public QObject
 //{
@@ -1097,6 +1159,7 @@ class C_Application_Options :public QObject
     Q_OBJECT
         Q_ENUMS(ImageEncodeWith)
         Q_ENUMS(ImageDecodeWith)
+        Q_ENUMS(RenderModelsWith)
 #ifdef USE_COMPUTE
         Q_PROPERTY(ImageEncodeWith  Encode_with                             READ getImageEncode             WRITE setImageEncode NOTIFY ImageEncodeChanged)
 #endif
@@ -1105,7 +1168,7 @@ class C_Application_Options :public QObject
         Q_PROPERTY(bool             Close_all_image_views_prior_to_process  READ getCloseAllImageViews      WRITE setCloseAllImageViews)
         Q_PROPERTY(bool             Mouse_click_on_icon_to_view_image       READ getclickIconToViewImage    WRITE setclickIconToViewImage)
         Q_PROPERTY(bool             Load_recent_project_on_startup          READ getLoadRecentFile          WRITE setLoadRecentFile)
-
+        Q_PROPERTY(RenderModelsWith Render_Models_with                      READ getGLTFRender              WRITE setGLTFRender NOTIFY GLTFRenderChanged)
 public:
     // Keep order of list as its ref is saved in CompressSettings.ini
     // we should change the save to use string name instead of indexes to the enum
@@ -1122,6 +1185,16 @@ public:
         GPU_DirectX,
         GPU_Vulkan
     };
+
+    enum class RenderModelsWith
+    {
+#ifdef USE_GLTF_OPENGL 
+        glTF_OpenGL = 0,
+        glTF_WebGL  = 1,
+#endif
+        glTF_DX12_EX = 2
+    };
+
     // Flags how image views are used, True deletes the old view and creates a new one
     // every time user clicks on an image item on the Project View, else it will
     // load the image once and cashe the image views, Default is True
@@ -1139,7 +1212,12 @@ public:
         m_useNewImageViews   = true;
         m_refreshCurrentView = false;
         m_closeAllDocuments  = true;
-        m_clickIconToViewImage = false;
+        m_clickIconToViewImage = true;
+#ifdef USE_GLTF_OPENGL 
+        m_GLTFRenderWith       = RenderModelsWith::glTF_OpenGL;
+#else
+        m_GLTFRenderWith = RenderModelsWith::glTF_DX12_EX;
+#endif
     }
 
     void setImageViewDecode(ImageDecodeWith decodewith)
@@ -1205,6 +1283,18 @@ public:
     }
 
 
+    void setGLTFRender(RenderModelsWith renderwith)
+    {
+        m_GLTFRenderWith = renderwith;
+        emit GLTFRenderChanged((QVariant &)renderwith);
+    }
+
+    RenderModelsWith getGLTFRender() const
+    {
+        return m_GLTFRenderWith;
+    }
+
+
     ImageDecodeWith m_ImageViewDecode;
 #ifdef USE_COMPUTE
     ImageEncodeWith m_ImageEncode;
@@ -1213,6 +1303,7 @@ public:
     bool            m_closeAllDocuments;
     bool            m_loadRecentFile;
     bool            m_refreshCurrentView;
+    RenderModelsWith m_GLTFRenderWith;
 
 signals:
     void ImageViewDecodeChanged(QVariant &);
@@ -1220,16 +1311,15 @@ signals:
 signals :
     void ImageEncodeChanged(QVariant &);
 #endif
+    void GLTFRenderChanged(QVariant &);
 
 };
-
 
 #define STR_QUALITY_SETTING_HINT        "Quality Setting Range 0 (Poor)to 1 (High)Default is 0.05"
 #define STR_FORMAT_SETTING_HINT         "Please refer to format description below for more info on compression format"
 #define STR_SETTING_MINIMUM             "minimum"
 #define STR_SETTING_MAXIMUM             "maximum"
 #define STR_SETTING_SINGLESTEP          "singleStep"
-
 
 #define STR_CHANNELWEIGHTR_SETTING_HINT "Channel Weight Setting Range 0 (Poor)to 1 (High)Default R Weightiing is 0.3086"
 #define STR_CHANNELWEIGHTG_SETTING_HINT "Channel Weight Setting Range 0 (Poor)to 1 (High)Default G Weightiing is 0.6094"

@@ -1285,7 +1285,7 @@ void CSetCompressOptions::onPBCancel()
         if (ParentlevelType == TREETYPE_3DMODEL_DATA)
         {
             QVariant v = parent->data(TREE_SourceInfo, Qt::UserRole);
-            C_3D_Source_Info *m_sourcefile = v.value<C_3D_Source_Info *>();
+            C_3DModel_Info *m_sourcefile = v.value<C_3DModel_Info *>();
             if (m_sourcefile)
                 m_sourcefile->m_extnum-=2;
         }
@@ -1302,6 +1302,13 @@ void CSetCompressOptions::SaveCompressedInfo()
     else
     {
         m_data.m_compname.append(m_LEName->displayText());
+    }
+
+    if (m_data.m_compname == "") {
+        QMessageBox msgBox;
+        msgBox.setText("Please enter a valid filename. Thanks");
+        msgBox.exec();
+        return;
     }
 
     QString ImageExt = m_fileFormats->currentText();
@@ -1349,6 +1356,7 @@ void CSetCompressOptions::SaveCompressedInfo()
     if (m_data.m_SourceType == TREETYPE_3DMODEL_DATA)
     {
         finalPath.append(".gltf");
+        m_data.m_modelDest = finalPath;
     }
     else
     {

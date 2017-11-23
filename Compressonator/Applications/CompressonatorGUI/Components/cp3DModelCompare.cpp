@@ -210,7 +210,7 @@ bool C3DModelCompare::createImageViews(bool isCompressedCompare)
     if (g_pProgressDlg) {
         g_pProgressDlg->SetLabelText("Loading source model...");
     }
-    m_imageviewFile1 = new cp3DModelView(m_sourceFile, "  "+file1Title+" Model", m_newInnerWidget);
+    m_imageviewFile1 = new cp3DModelView(m_sourceFile, "", "  "+file1Title+" Model", m_newInnerWidget);
     if (m_imageviewFile1 == NULL) return false;
 
     // Notes: BugFix added change of m_FileName in construct above to prevent main applications FindFile to use these images as 
@@ -223,7 +223,7 @@ bool C3DModelCompare::createImageViews(bool isCompressedCompare)
     if (g_pProgressDlg) {
         g_pProgressDlg->SetLabelText("Loading destination model...");
     }
-    m_imageviewFile2 = new cp3DModelView(m_destFile, "  "+file2Title+" Model", m_newInnerWidget);
+    m_imageviewFile2 = new cp3DModelView(m_destFile,"", "  "+file2Title+" Model", m_newInnerWidget);
     if (m_imageviewFile2 == NULL) 
     {
         delete (m_imageviewFile1);
@@ -263,7 +263,7 @@ bool C3DModelCompare::createImageViews(bool isCompressedCompare)
     if (g_pProgressDlg) {
         g_pProgressDlg->SetLabelText("Generating model difference...");
     }
-    m_imageviewDiff = new cp3DModelDiff(m_sourceFile, m_destFile, "3D Model Diff View", m_newInnerWidget);
+    m_imageviewDiff = new cp3DModelView(m_sourceFile, m_destFile, "3D Model Diff View", m_newInnerWidget);
     if (m_imageviewDiff == NULL)
     {
         delete (m_imageviewFile1);
@@ -278,7 +278,6 @@ bool C3DModelCompare::createImageViews(bool isCompressedCompare)
 
     return true;
 }
-
 
 void C3DModelCompare::setDefaultView()
 {
@@ -335,7 +334,6 @@ void C3DModelCompare::setHorizontalView()
     m_setHorizontalView = true;
     return;
 }
-
 
 C3DModelCompare::~C3DModelCompare()
 {

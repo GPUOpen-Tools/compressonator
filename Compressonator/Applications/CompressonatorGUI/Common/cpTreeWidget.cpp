@@ -45,20 +45,20 @@ cpTreeWidget::~cpTreeWidget()
 void cpTreeWidget::mouseMoveEvent(QMouseEvent  *event)
 {
     QTreeWidget::mouseMoveEvent(event);
-    // Determin if ICON is clicked or Text
-    const QPoint mousePosition = event->pos();
-    const QRect itemRectangle = visualItemRect(itemAt(mousePosition));
-    const int iconOffset = itemRectangle.height() - iconSize().height();
-
-    QRect iconRectangle;
-    iconRectangle.setTopLeft(itemRectangle.topLeft() + QPoint(iconOffset, iconOffset));
-    iconRectangle.setWidth(iconSize().width());
-    iconRectangle.setHeight(iconSize().height());
-    bool icon_clicked = false;
-    if (iconRectangle.contains(mousePosition))
-    {
-        // mouse is over icon position
-    }
+    // // Determin if ICON is clicked or Text
+    // const QPoint mousePosition = event->pos();
+    // const QRect itemRectangle = visualItemRect(itemAt(mousePosition));
+    // const int iconOffset = itemRectangle.height() - iconSize().height();
+    // 
+    // QRect iconRectangle;
+    // iconRectangle.setTopLeft(itemRectangle.topLeft() + QPoint(iconOffset, iconOffset));
+    // iconRectangle.setWidth(iconSize().width());
+    // iconRectangle.setHeight(iconSize().height());
+    // bool icon_clicked = false;
+    // if (iconRectangle.contains(mousePosition))
+    // {
+    //     // mouse is over icon position
+    // }
 }
 
 void cpTreeWidget::selChanged()
@@ -177,8 +177,14 @@ bool cpTreeWidget::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeD
             emit DroppedImageItem(filePathName, index);
         }
         else
+        // // check if its an AMD supported image item 
+        if (g_pluginManager.PluginSupported("3DMODEL_DX12_EX", (char *)Ext))
+        {
+            emit DroppedImageItem(filePathName, index);
+        }
+        else
         // check if its an AMD supported image item
-        if (g_pluginManager.PluginSupported("3DMODEL_DX12", (char *)Ext))
+        if (g_pluginManager.PluginSupported("3DMODEL_OPENGL", (char *)Ext))
         {
             emit DroppedImageItem(filePathName, index);
         }

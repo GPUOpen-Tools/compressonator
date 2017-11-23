@@ -70,6 +70,7 @@ QT_BEGIN_NAMESPACE
 template <class PrivateData, class Value>
 static void setSimpleMinimumData(PrivateData *data, const Value &minVal)
 {
+    if (!data) return;
     data->minVal = minVal;
     if (data->maxVal < data->minVal)
         data->maxVal = data->minVal;
@@ -81,6 +82,7 @@ static void setSimpleMinimumData(PrivateData *data, const Value &minVal)
 template <class PrivateData, class Value>
 static void setSimpleMaximumData(PrivateData *data, const Value &maxVal)
 {
+    if (!data) return;
     data->maxVal = maxVal;
     if (data->minVal > data->maxVal)
         data->minVal = data->maxVal;
@@ -92,6 +94,7 @@ static void setSimpleMaximumData(PrivateData *data, const Value &maxVal)
 template <class PrivateData, class Value>
 static void setSizeMinimumData(PrivateData *data, const Value &newMinVal)
 {
+    if (!data) return;
     data->minVal = newMinVal;
     if (data->maxVal.width() < data->minVal.width())
         data->maxVal.setWidth(data->minVal.width());
@@ -107,6 +110,7 @@ static void setSizeMinimumData(PrivateData *data, const Value &newMinVal)
 template <class PrivateData, class Value>
 static void setSizeMaximumData(PrivateData *data, const Value &newMaxVal)
 {
+    if (!data) return;
     data->maxVal = newMaxVal;
     if (data->minVal.width() > data->maxVal.width())
         data->minVal.setWidth(data->maxVal.width());

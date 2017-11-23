@@ -55,6 +55,7 @@ public:
     QWidget                 *m_CentralWidget;
     QString                  m_tabName;
     QString                  m_fileName;
+    int                      m_type = 0;        // Identify what type of docked view it is (Image, 3DModel etc..)
 
 public slots :
     void OntopLevelChanged(bool topLevel);

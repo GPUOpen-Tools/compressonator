@@ -35,6 +35,8 @@
 
 using namespace GPU_Decode;
 
+#define VK_VERSION_MAJOR(version) ((uint32_t)(version) >> 22)
+#define VK_VERSION_MINOR(version) (((uint32_t)(version) >> 12) & 0x3ff)
 // Synchronization semaphores
 struct {
     VkSemaphore presentDone;
@@ -1839,6 +1841,20 @@ void GPU_Vulkan::write(const CMP_Texture* pDestTexture) {
     vkFreeMemory(device, mappableMemory, NULL);
 }
 
+bool GPU_Vulkan::isSupportVersion()
+{
+    VkPhysicalDeviceProperties deviceProperties;
+    vkGetPhysicalDeviceProperties(physicalDevice, &deviceProperties);
+
+    uint32_t driverVersion = deviceProperties.driverVersion;
+    uint32_t major = VK_VERSION_MAJOR(driverVersion);
+    uint32_t minor = VK_VERSION_MINOR(driverVersion);
+    if (major > 1 || minor > 6)
+        return false;
+    else
+        return true;
+}
+
 bool GPU_Vulkan::isSupportASTC() 
 {
     VkPhysicalDeviceFeatures deviceFeature;
@@ -1873,6 +1889,12 @@ CMP_ERROR WINAPI GPU_Vulkan::Decompress(
             m_initOk = false;
             return CMP_ERR_UNSUPPORTED_GPU_ASTC_DECODE;
         }
+    }
+
+    if (!isSupportVersion())
+    {
+        m_initOk = false;
+        return CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB;
     }
 
     swapChain.initSurface(hInstance, m_hWnd, pDestTexture->format);

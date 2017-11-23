@@ -69,6 +69,7 @@ public:
     QString                      m_destFilePath;
     QTextBrowser                *m_infotext;
     QLineEdit                   *m_DestinationFolder;
+    QPushButton                 *m_PBDestFileFolder;
     QLineEdit                   *m_LEName;
     QString                      m_srcext;
     QLineEdit                   *m_LESourceFile;
@@ -90,7 +91,7 @@ private:
     QPushButton                 *m_PBSaveSettings;
     QPushButton                 *m_PBCompress;
     QPushButton                 *m_PBCancel;
-    QPushButton                 *m_PBDestFileFolder;
+    
     QLineEdit                   *m_DestinationFile;
     QComboBox                   *m_CBCompression;
     QComboBox                   *m_fileFormats;

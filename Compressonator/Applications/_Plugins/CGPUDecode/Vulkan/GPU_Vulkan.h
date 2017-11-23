@@ -152,6 +152,7 @@ namespace GPU_Decode
         VkResult createDevice(VkDeviceQueueCreateInfo requestedQueues, bool enableValidation);
         bool initVulkan(bool enableValidation);
         bool isSupportASTC();
+        bool isSupportVersion();
         void submitPostPresentBarrier(VkImage image);
         void submitPrePresentBarrier(VkImage image);
         void draw();
