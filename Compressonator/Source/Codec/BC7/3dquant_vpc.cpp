@@ -119,27 +119,23 @@ void Quant_DeInit(void)
 
 #ifdef USE_TRACE_WITH_DYNAMIC_MEM
 
-        delete[] amd_codes[0][0];
-        amd_codes[0][0] = nullptr;
-        
-        delete amd_trs[0][0];
-        amd_trs[0][0] = nullptr;
-
-
-        for (int i = 1; i < MAX_CLUSTERS; i++)
+        for (int i = 0; i < MAX_CLUSTERS; i++)
         {
-            for (int j = 1; j < MAX_ENTRIES_QUANT_TRACE; j++)
+            for (int j = 0; j < MAX_ENTRIES_QUANT_TRACE; j++)
             {
                 if (amd_codes[i][j])
                 {
                     delete[] amd_codes[i][j];
+                    amd_codes[i][j] = nullptr;
                 }
                 if (amd_trs[i][j])
                 {
                     delete[] amd_trs[i][j];
+                    amd_trs[i][j] = nullptr;
                 }
             }
         }
+
 #endif
     }
 
