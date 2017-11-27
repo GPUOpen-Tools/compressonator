@@ -99,7 +99,7 @@
 #endif
 
 #ifdef _WIN32
-#include <time.h>
+#include <windows.h>
 double timeStampsec()
 {
     static LARGE_INTEGER frequency;
