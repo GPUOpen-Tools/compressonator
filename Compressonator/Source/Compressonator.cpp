@@ -96,7 +96,8 @@ CMP_DWORD CalcBufferSize(CMP_FORMAT format, CMP_DWORD dwWidth, CMP_DWORD dwHeigh
         case CMP_FORMAT_ARGB_8888:
         case CMP_FORMAT_ARGB_2101010:
             return ((dwPitch) ? (dwPitch * dwHeight) : (dwWidth * 4 * dwHeight));
-
+        
+        case CMP_FORMAT_BGR_888:
         case CMP_FORMAT_RGB_888:
             return ((dwPitch) ? (dwPitch * dwHeight) : ((((dwWidth * 3) + 3) >> 2) * 4 * dwHeight));
 
