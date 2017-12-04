@@ -13,6 +13,7 @@ https://github.com/GPUOpen-Tools/Compressonator/releases
 Under development 
 ----------------------------------------------------
 * Improvements to existing Compression Codecs
+  * Fix for R & B channel swizzling
 
 * Model Mesh Optimization
   * 3D triangle mesh optimization that improves on existing mesh preprocessing techniques
@@ -20,7 +21,7 @@ Under development
     * Overdraw optimization
     * Vertex prefetch cache optimization
   
-* 3D Model viewer features
+* 3D Model viewer features and modifications
   * Selectable 3D Model views with DX12, Vulkan and OpenGL
   * Multi GPU Node usage stats
   * Real time GPU profiler chart with Total GPU Time stats
@@ -33,6 +34,17 @@ Under development
   * iblFactor (0.0 to 2.0)
   * Show Bounding Boxes
   * Show Sky dome
+  * Fix Aspect Ratio
+  * Wire mesh views
+ 
+* 3D Model Image Diff viewer 
+  * Selectable animation rates 
+  * Manual mode to flip views
+  * Option to enable or disable Textures rendering
+ 
+  
+ 
+ 
 
 Recent additions and changes
 ------------------------------------------------------
@@ -46,7 +58,14 @@ v2.7 release Nov 23 2017 https://github.com/GPUOpen-Tools/Compressonator/release
   * Compress model textures
   * Image diff compressed model textures with original
   * Realtime 3D Model diff views
-  
+
+## Contributors
+
+Compressonator's GitHub repository (http://github.com/GPUOpen-Tools/Compressonator) is moderated by Advanced Micro Devices, Inc. as part of the GPUOpen initiative.
+
+AMD encourages any and all contributors to submit changes, features, and bug fixes via Git pull requests to this repository.
+
+Users are also encouraged to submit issues and feature requests via the repository's issue tracker.
   
 Gallery
 -------
