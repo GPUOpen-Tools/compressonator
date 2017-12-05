@@ -445,7 +445,7 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *s
     if (!isCompressed)
     {
         textureinfo.glFormat = textureinfo.glBaseInternalFormat = GL_RGBA;
-        textureinfo.glInternalFormat = GL_RGBA;
+        textureinfo.glInternalFormat = GL_RGBA8;
     }
     else
     {
@@ -1053,6 +1053,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
                 pMipSet->m_TextureDataType = TDT_XRGB;
                 break;
             case GL_RGBA:
+            case GL_RGBA8:
                 pMipSet->m_format = CMP_FORMAT_ARGB_8888;
                 pMipSet->m_TextureDataType = TDT_ARGB;
                 break;
@@ -1427,7 +1428,7 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
         if (!isCompressed)
         {
             textureinfo.glFormat = textureinfo.glBaseInternalFormat = GL_RGBA;
-            textureinfo.glInternalFormat = GL_RGBA;
+            textureinfo.glInternalFormat = GL_RGBA8;
         }
         else
         {
