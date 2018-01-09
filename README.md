@@ -79,7 +79,7 @@ Gallery
 
 
 
-Build Instructions for Windows 7 and up
+Build Instructions for Windows 10 and up
 ------------------------------------------------------
 
 To build the applications you will need to have Visual Studio 2015 installed and Qt V5.7 msvc2015 and msvc2015_64 opensource downloaded from [QT website](https://www.qt.io/download-open-source/) .
