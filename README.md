@@ -10,6 +10,15 @@ Get Prebuilt Binaries and Installer here:
 -----------------------------------------------------
 https://github.com/GPUOpen-Tools/Compressonator/releases
 
+
+## Contributors
+
+Compressonator's GitHub repository (http://github.com/GPUOpen-Tools/Compressonator) is moderated by Advanced Micro Devices, Inc. as part of the GPUOpen initiative.
+
+AMD encourages any and all contributors to submit changes, features, and bug fixes via Git pull requests to this repository.
+
+Users are also encouraged to submit issues and feature requests via the repository's issue tracker.
+  
 Under development 
 ----------------------------------------------------
 * Improvements to existing Compression Codecs
@@ -59,14 +68,6 @@ v2.7 release Nov 23 2017 https://github.com/GPUOpen-Tools/Compressonator/release
   * Image diff compressed model textures with original
   * Realtime 3D Model diff views
 
-## Contributors
-
-Compressonator's GitHub repository (http://github.com/GPUOpen-Tools/Compressonator) is moderated by Advanced Micro Devices, Inc. as part of the GPUOpen initiative.
-
-AMD encourages any and all contributors to submit changes, features, and bug fixes via Git pull requests to this repository.
-
-Users are also encouraged to submit issues and feature requests via the repository's issue tracker.
-  
 Gallery
 -------
 **2D Texture Compression**
