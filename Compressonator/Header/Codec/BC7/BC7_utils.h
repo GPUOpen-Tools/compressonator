@@ -33,7 +33,7 @@ extern void    WriteBit(BYTE   *base,
 extern void GetRamp(DWORD endpoint[][MAX_DIMENSION_BIG],
              double ramp[MAX_DIMENSION_BIG][(1<<MAX_INDEX_BITS)],
              DWORD clusters[2],
-             DWORD componentBits[MAX_DIMENSION_BIG]);
+             DWORD componentBits[MAX_DIMENSION_BIG], DWORD precisionBits[2]);
 
 extern const double  rampLerpWeights[5][1<<MAX_INDEX_BITS];
 

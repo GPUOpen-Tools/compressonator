@@ -56,6 +56,7 @@ typedef std::int32_t BOOL;
 // If this define is set then 6-bit weights will be used for the ramp.
 // Otherwise the ramp will use a pure linear interpolation
 #define USE_FINAL_BC7_WEIGHTS   1
+#define USE_HIGH_PRECISION_INTERPOLATION_BC7 1
 
 #define MAX_PARTITIONS_TABLE (1+64+64)
 
@@ -76,7 +77,7 @@ typedef enum
     NO_ALPHA,
     COMBINED_ALPHA,
     SEPARATE_ALPHA
-} BCE;
+} CMP_BCE;
 
 // Endpoint encoding type
 typedef enum
@@ -87,23 +88,23 @@ typedef enum
     THREE_PBIT,
     FOUR_PBIT,
     FIVE_PBIT
-} PBIT; 
+} CMP_PBIT; 
 
 // Descriptor structure for block encodings
 typedef struct
 {
-    BCE     encodingType;           // Type of block
+    CMP_BCE encodingType;           // Type of block
     DWORD   partitionBits;          // Number of bits for partition data
     DWORD   rotationBits;           // Number of bits for component rotation
     DWORD   indexModeBits;          // Number of bits for index selection
     DWORD   scalarBits;             // Number of bits for one scalar endpoint
     DWORD   vectorBits;             // Number of bits for one vector endpoint(excluding P bits)
-    PBIT    pBitType;               // Type of P-bit encoding
+    CMP_PBIT  pBitType;               // Type of P-bit encoding
     DWORD   subsetCount;            // Number of subsets
     DWORD   indexBits[2];           // Number of bits per index in each index set
-} BTI;
+} CMP_BTI;
 
-extern BTI bti[NUM_BLOCK_TYPES];
+extern CMP_BTI bti[NUM_BLOCK_TYPES];
 
 #include "MathMacros.h"
 

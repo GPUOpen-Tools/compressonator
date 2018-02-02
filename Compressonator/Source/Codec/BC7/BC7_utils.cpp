@@ -86,10 +86,26 @@ const double  rampLerpWeights[5][1<<MAX_INDEX_BITS] =
 //
 // Used by BC7_Decode
 
+#ifndef USE_HIGH_PRECISION_INTERPOLATION_BC7
+uint16_t aWeight2[] = { 0, 21, 43, 64 };
+uint16_t aWeight3[] = { 0, 9, 18, 27, 37, 46, 55, 64 };
+uint16_t aWeight4[] = { 0, 4, 9, 13, 17, 21, 26, 30, 34, 38, 43, 47, 51, 55, 60, 64 };
+
+uint8_t interpolate(uint8_t e0, uint8_t e1, uint8_t index, uint8_t indexprecision)
+{
+    if (indexprecision == 2)
+        return (uint8_t)(((64 - aWeight2[index])*uint16_t(e0) + aWeight2[index] * uint16_t(e1) + 32) >> 6);
+    else if (indexprecision == 3)
+        return (uint8_t)(((64 - aWeight3[index])*uint16_t(e0) + aWeight3[index] * uint16_t(e1) + 32) >> 6);
+    else // indexprecision == 4
+        return (uint8_t)(((64 - aWeight4[index])*uint16_t(e0) + aWeight4[index] * uint16_t(e1) + 32) >> 6);
+}
+#endif
+
 void GetRamp(DWORD endpoint[][MAX_DIMENSION_BIG],
              double ramp[MAX_DIMENSION_BIG][(1<<MAX_INDEX_BITS)],
              DWORD clusters[2],
-             DWORD componentBits[MAX_DIMENSION_BIG])
+             DWORD componentBits[MAX_DIMENSION_BIG], DWORD precisionBits[2])
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -130,6 +146,7 @@ void GetRamp(DWORD endpoint[][MAX_DIMENSION_BIG],
     // Generate colours for the RGB ramp
     for(i=0; i < clusters[0]; i++)
     {
+#ifdef USE_HIGH_PRECISION_INTERPOLATION_BC7
         ramp[COMP_RED][i] = floor((ep[0][COMP_RED] * (1.0-rampLerpWeights[rampIndex][i])) +
                                   (ep[1][COMP_RED] * rampLerpWeights[rampIndex][i]) + 0.5);
         ramp[COMP_RED][i] = min(255.0, max(0., ramp[COMP_RED][i]));
@@ -139,6 +156,11 @@ void GetRamp(DWORD endpoint[][MAX_DIMENSION_BIG],
         ramp[COMP_BLUE][i] = floor((ep[0][COMP_BLUE] * (1.0-rampLerpWeights[rampIndex][i])) +
                                   (ep[1][COMP_BLUE] * rampLerpWeights[rampIndex][i]) + 0.5);
         ramp[COMP_BLUE][i] = min(255.0, max(0., ramp[COMP_BLUE][i]));
+#else
+        ramp[COMP_RED][i] = interpolate(ep[0][COMP_RED], ep[1][COMP_RED], rampIndex, precisionBits[0]);
+        ramp[COMP_GREEN][i] = interpolate(ep[0][COMP_GREEN], ep[1][COMP_GREEN], rampIndex, precisionBits[0]);
+        ramp[COMP_BLUE][i] = interpolate(ep[0][COMP_BLUE], ep[1][COMP_BLUE], rampIndex, precisionBits[0]);
+#endif
     }
 
     rampIndex = clusters[1];
@@ -156,9 +178,13 @@ void GetRamp(DWORD endpoint[][MAX_DIMENSION_BIG],
         // Generate alphas
         for(i=0; i < clusters[1]; i++)
         {
+#ifdef USE_HIGH_PRECISION_INTERPOLATION_BC7
             ramp[COMP_ALPHA][i] = floor((ep[0][COMP_ALPHA] * (1.0-rampLerpWeights[rampIndex][i])) +
                                         (ep[1][COMP_ALPHA] * rampLerpWeights[rampIndex][i]) + 0.5);
             ramp[COMP_ALPHA][i] = min(255.0, max(0., ramp[COMP_ALPHA][i]));
+#else
+            ramp[COMP_ALPHA][i] = interpolate(ep[0][COMP_ALPHA], ep[1][COMP_ALPHA], rampIndex, precisionBits[1]);
+#endif
         }
     }
 }

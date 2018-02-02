@@ -92,7 +92,7 @@ void BC7BlockDecoder::DecompressDualIndexBlock(double  out[MAX_SUBSET_SIZE][MAX_
     GetRamp(endpoint,
             ramp,
             clusters,
-            m_componentBits);
+            m_componentBits, bti[m_blockMode].indexBits);
 
     // Extract the indices
     for(i=0;i<2;i++)
@@ -348,7 +348,7 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
         GetRamp(endpoint[i],
                 c[i],
                 clusters,
-                m_componentBits);
+                m_componentBits, bti[m_blockMode].indexBits);
     }
 
     // Generate the block colours.
