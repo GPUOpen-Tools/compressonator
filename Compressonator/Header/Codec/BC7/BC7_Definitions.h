@@ -56,7 +56,10 @@ typedef std::int32_t BOOL;
 // If this define is set then 6-bit weights will be used for the ramp.
 // Otherwise the ramp will use a pure linear interpolation
 #define USE_FINAL_BC7_WEIGHTS   1
-#define USE_HIGH_PRECISION_INTERPOLATION_BC7 1
+
+// If this is defined, ramp calculation is done via math floor and division.
+// Otherwise, ramp calculation is done by bit shifting
+#define USE_HIGH_PRECISION_INTERPOLATION_BC7 
 
 #define MAX_PARTITIONS_TABLE (1+64+64)
 

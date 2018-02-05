@@ -105,7 +105,7 @@ uint8_t interpolate(uint8_t e0, uint8_t e1, uint8_t index, uint8_t indexprecisio
 void GetRamp(DWORD endpoint[][MAX_DIMENSION_BIG],
              double ramp[MAX_DIMENSION_BIG][(1<<MAX_INDEX_BITS)],
              DWORD clusters[2],
-             DWORD componentBits[MAX_DIMENSION_BIG], DWORD precisionBits[2])
+             DWORD componentBits[MAX_DIMENSION_BIG])
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -157,11 +157,12 @@ void GetRamp(DWORD endpoint[][MAX_DIMENSION_BIG],
                                   (ep[1][COMP_BLUE] * rampLerpWeights[rampIndex][i]) + 0.5);
         ramp[COMP_BLUE][i] = min(255.0, max(0., ramp[COMP_BLUE][i]));
 #else
-        ramp[COMP_RED][i] = interpolate(ep[0][COMP_RED], ep[1][COMP_RED], rampIndex, precisionBits[0]);
-        ramp[COMP_GREEN][i] = interpolate(ep[0][COMP_GREEN], ep[1][COMP_GREEN], rampIndex, precisionBits[0]);
-        ramp[COMP_BLUE][i] = interpolate(ep[0][COMP_BLUE], ep[1][COMP_BLUE], rampIndex, precisionBits[0]);
+        ramp[COMP_RED][i] = interpolate(ep[0][COMP_RED], ep[1][COMP_RED], i, rampIndex);
+        ramp[COMP_GREEN][i] = interpolate(ep[0][COMP_GREEN], ep[1][COMP_GREEN], i, rampIndex);
+        ramp[COMP_BLUE][i] = interpolate(ep[0][COMP_BLUE], ep[1][COMP_BLUE], i, rampIndex);
 #endif
     }
+
 
     rampIndex = clusters[1];
     rampIndex = (DWORD)(log((double)rampIndex) / log(2.0));
@@ -175,6 +176,7 @@ void GetRamp(DWORD endpoint[][MAX_DIMENSION_BIG],
     }
     else
     {
+
         // Generate alphas
         for(i=0; i < clusters[1]; i++)
         {
@@ -183,8 +185,9 @@ void GetRamp(DWORD endpoint[][MAX_DIMENSION_BIG],
                                         (ep[1][COMP_ALPHA] * rampLerpWeights[rampIndex][i]) + 0.5);
             ramp[COMP_ALPHA][i] = min(255.0, max(0., ramp[COMP_ALPHA][i]));
 #else
-            ramp[COMP_ALPHA][i] = interpolate(ep[0][COMP_ALPHA], ep[1][COMP_ALPHA], rampIndex, precisionBits[1]);
+            ramp[COMP_ALPHA][i] = interpolate(ep[0][COMP_ALPHA], ep[1][COMP_ALPHA], i, rampIndex);
 #endif
         }
+
     }
 }
