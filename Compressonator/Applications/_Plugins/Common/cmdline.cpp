@@ -1315,8 +1315,9 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
                int DestMipLevel = g_MipSetIn.m_nMipLevels;
 
                if (g_CmdPrams.showperformance)
-		   compress_loopStartTime = timeStampsec();
-                   //QueryPerformanceCounter(&compress_loopStartTime);
+		           compress_loopStartTime = timeStampsec();
+
+               g_MipSetCmp.m_nMipLevels = DestMipLevel;
 
                for(int nMipLevel=0; nMipLevel<DestMipLevel; nMipLevel++)
                {        
@@ -1474,12 +1475,11 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
                                     compress_nIterations++;
 
                     }
-                    g_MipSetCmp.m_nMipLevels++;
+                    
                 }
 
                 if (g_CmdPrams.showperformance)
-		    compress_loopEndTime = timeStampsec();
-                    //QueryPerformanceCounter(&compress_loopEndTime);
+		            compress_loopEndTime = timeStampsec();
 
                 srcFormat    = destFormat;
 

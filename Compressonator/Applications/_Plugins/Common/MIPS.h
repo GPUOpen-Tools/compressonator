@@ -42,13 +42,12 @@ class CMIPS
         CMIPS()  { };
         ~CMIPS() { };
 
-    MipLevel* GetMipLevel(const MipSet* pMipSet, int nMipLevel);
-    MipLevel* GetMipLevel(const MipSet* pMipSet, int nMipLevel, int nFaceOrSlice);
+    MipLevel* GetMipLevel(const MipSet* pMipSet, int nMipLevel, int nFaceOrSlice=0);
     int     GetMaxMipLevels(int nWidth, int nHeight, int nDepth);
-    bool AllocateMipLevelTable(MipLevelTable** ppMipLevelTable, int nMaxMipLevels, TextureType textureType, int nDepth, int& nLevelsToAllocate);
+    bool AllocateMipLevelTable(MipLevelTable** ppMipLevelTable, int nMaxMipLevels, TextureType textureType, int nDepth, int& nLevelsToAllocate, int nFaces=0);
     bool AllocateAllMipLevels(MipLevelTable* pMipLevelTable, TextureType /*textureType*/, int nLevelsToAllocate);
-    bool AllocateMipSet(MipSet* pMipSet, ChannelFormat channelFormat, TextureDataType textureDataType, TextureType textureType, int nWidth, int nHeight, int nDepth);
-    bool AllocateMipLevelData(MipLevel* pMipLevel, int nWidth, int nHeight, ChannelFormat channelFormat, TextureDataType textureDataType);
+    bool AllocateMipSet(MipSet* pMipSet, ChannelFormat channelFormat, TextureDataType textureDataType, TextureType textureType, int nWidth, int nHeight, int nDepth, int nFaces=0);
+    bool AllocateMipLevelData(MipLevel* pMipLevel, int nWidth, int nHeight, ChannelFormat channelFormat, TextureDataType textureDataType, int facedataSize =0);
     bool AllocateCompressedMipLevelData(MipLevel* pMipLevel, int nWidth, int nHeight, CMP_DWORD dwSize);
 
     void FreeMipSet(MipSet* pMipSet);

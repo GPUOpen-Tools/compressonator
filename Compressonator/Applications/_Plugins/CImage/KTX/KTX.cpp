@@ -47,6 +47,8 @@
 #pragma comment(lib, "Glu32.lib")           // Glu 
 #pragma comment(lib, "glew32.lib")          // glew 1.13.0
 
+using namespace std;
+
 CMIPS *KTX_CMips;
 
 #ifdef BUILD_AS_PLUGIN_DLL
@@ -1152,6 +1154,24 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
         }
     }
 
+    switch (texinfo.glTarget) 
+    {
+        case GL_TEXTURE_2D:
+            pMipSet->m_TextureType = TT_2D;
+            break;
+        case GL_TEXTURE_3D:
+            pMipSet->m_TextureType = TT_VolumeTexture;
+            break;
+        case GL_TEXTURE_CUBE_MAP:
+            pMipSet->m_TextureType = TT_CubeMap;
+            break;
+        default:
+            if (KTX_CMips)
+                KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) unsupported texture format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, texinfo.glTarget);
+            fclose(pFile);
+            return -1;
+    }
+
     if (fheader.numberOfMipmapLevels == 0) fheader.numberOfMipmapLevels = 1;
     if (fheader.numberOfArrayElements != 0)
     {
@@ -1161,6 +1181,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
         return -1;
     }
 
+    pMipSet->m_nMipLevels = fheader.numberOfMipmapLevels;
     // Allocate MipSet header
     KTX_CMips->AllocateMipSet(pMipSet,
         pMipSet->m_ChannelFormat,
@@ -1168,9 +1189,8 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
         pMipSet->m_TextureType,
         fheader.pixelWidth,
         fheader.pixelHeight,
-        1);
-    
-    pMipSet->m_nMipLevels = fheader.numberOfMipmapLevels;
+        1,
+        fheader.numberOfFaces);
     
     fclose(pFile);
     pFile = NULL;
@@ -1196,44 +1216,64 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
     int w = pMipSet->m_nWidth;
     int h = pMipSet->m_nHeight;
 
+    unsigned int totalByteRead=0;
+
+    unsigned int faceSize = 0;
+    unsigned int faceSizeRounded = 0;
+    unsigned int numArrayElement = fheader.numberOfArrayElements;
+
     for (int nMipLevel = 0; nMipLevel < fheader.numberOfMipmapLevels; nMipLevel++)
     {
-        //load image size
-        unsigned int imageByteCount = 0;
-        if (fread((void*)&imageByteCount, 1, 4, pFile) != 4)
-        {
-            if (KTX_CMips)
-                KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) Read image size failed. Format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
-            fclose(pFile);
-            return -1;
-        }
-
-        // Determine buffer size and set Mip Set Levels 
-        MipLevel *pMipLevel = KTX_CMips->GetMipLevel(pMipSet, nMipLevel);
-        if (pMipSet->m_compressed)
-            KTX_CMips->AllocateCompressedMipLevelData(pMipLevel, w, h, imageByteCount);
-        else
-            KTX_CMips->AllocateMipLevelData(pMipLevel, w, h, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType);
-
-        CMP_BYTE* pData = (CMP_BYTE*)(pMipLevel)->m_pbData;
-        //KTX_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize = imageByteCount;
-        //read image data
-        const unsigned int bytesRead = fread(pData, 1, imageByteCount, pFile);
-        if (bytesRead != imageByteCount)
-        {
-            if (KTX_CMips)
-                KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) Read image data failed. Format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
-            fclose(pFile);
-            return -1;
-        }
-
         if ((w <= 1) || (h <= 1)) break;
         else
         {
-            w = w >> 1;
-            h = h >> 1;
+            w = max(1, w >> nMipLevel);
+            h = max(1, h >> nMipLevel);
         }
 
+        totalByteRead = fread(&faceSize, 1, sizeof(khronos_uint32_t), pFile);
+        if (totalByteRead == 0) {
+            if (KTX_CMips)
+                KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) Read image data size failed. Format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
+            fclose(pFile);
+            return -1;
+        }
+        if (fheader.endianness == KTX_ENDIAN_REF_REV) {
+            _ktxSwapEndian32(&faceSize, 1);
+        }
+        faceSizeRounded = (faceSize + 3) & ~(khronos_uint32_t)3;
+
+        for (int face = 0; face < fheader.numberOfFaces; ++face)
+        {
+            // Determine buffer size and set Mip Set Levels 
+            MipLevel *pMipLevel = KTX_CMips->GetMipLevel(pMipSet, nMipLevel, face);
+            if (pMipSet->m_compressed)
+                KTX_CMips->AllocateCompressedMipLevelData(pMipLevel, w, h, faceSizeRounded);
+            else
+                KTX_CMips->AllocateMipLevelData(pMipLevel, w, h, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType, faceSizeRounded);
+
+            CMP_BYTE* pData = (CMP_BYTE*)(pMipLevel->m_pbData);
+
+            if (!pData)
+            {
+                if (KTX_CMips)
+                    KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) Read image data failed, Out of Memory. Format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
+                fclose(pFile);
+                return -1;
+            }
+          
+            //read image data
+            const unsigned int bytesRead = fread(pData, 1, faceSizeRounded, pFile);
+
+            if (bytesRead != faceSizeRounded)
+            {
+                if (KTX_CMips)
+                    KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) Read image data failed. Unexpectec EOF. Format %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.glFormat);
+                fclose(pFile);
+                return -1;
+            } 
+        }
+       
     }
 
     return 0;
