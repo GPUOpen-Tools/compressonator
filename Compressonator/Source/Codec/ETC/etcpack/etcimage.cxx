@@ -102,7 +102,7 @@ void removeSpaces(FILE *f1)
 // after that follows RGBRGBRGB...
 //
 // NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
-bool fReadPPM(char *filename, int &width, int &height, unsigned char *&pixels, int targetbitrate)
+bool fReadPPM(const char *filename, int &width, int &height, unsigned char *&pixels, int targetbitrate)
 {
     FILE *f1;
     int maximum;
@@ -259,7 +259,7 @@ bool fWritePPM(const char *filename, int width, int height, unsigned char *pixel
 
 // WritePGM
 // NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
-bool fWritePGM(char *filename, int width, int height, unsigned char *pixels,bool reverse_y, int bitdepth)
+bool fWritePGM(const char *filename, int width, int height, unsigned char *pixels,bool reverse_y, int bitdepth)
 {
    FILE *f;
    f=fopen(filename,"wb");
@@ -298,7 +298,7 @@ bool fWritePGM(char *filename, int width, int height, unsigned char *pixels,bool
  * then follows RGBRGBRGBRGBRGB...
  */
 // NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
-int fReadPGM(char *filename, int &width, int &height, unsigned char *&pixels, int wantedBitDepth)
+int fReadPGM(const char *filename, int &width, int &height, unsigned char *&pixels, int wantedBitDepth)
 {
     FILE *f;
     int colres;
@@ -398,7 +398,7 @@ int fReadPGM(char *filename, int &width, int &height, unsigned char *&pixels, in
 /* writes a .tga file from two arrays --- one RGB array and one alpha-array */
 /* */
 // NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2012. All Rights Reserved.
-bool fWriteTGAfromRGBandA(char *filename, int width, int height, unsigned char *pixelsRGB, unsigned char *pixelsA, bool reverse_y)
+bool fWriteTGAfromRGBandA(const char *filename, int width, int height, unsigned char *pixelsRGB, unsigned char *pixelsA, bool reverse_y)
 {
     FILE *f1;
 
