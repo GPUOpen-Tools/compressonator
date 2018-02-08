@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -50,9 +50,9 @@ typedef unsigned int UINT;
 
 using namespace std;
 
-#define UNREFERENCED_PARAMETER(P)          (P)
+#define UNREFERENCED_PARAMETER(P)          ((void)P)
 
-//#define USE_DBGTRACE                                //  Show messages via Win Debug 
+//#define USE_DBGTRACE                                //  Show messages via Win Debug
 //#define BC7_DEBUG_TO_RESULTS_TXT                    //  Send debug info to a results text file
 //#define DXT5_COMPDEBUGGER                           //  Remote connect data to Comp Debugger views
 //#define BC6H_COMPDEBUGGER                           //  Remote connect data to Comp Debugger views

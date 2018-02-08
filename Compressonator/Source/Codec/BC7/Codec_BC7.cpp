@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -26,7 +26,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
+#ifdef _MSC_VER
 #pragma warning(disable:4100)    // Ignore warnings of unreferenced formal parameters
+#endif //_MSC_VER
 #include "Common.h"
 #include "Codec_BC7.h"
 #include "BC7_Library.h"
@@ -53,7 +55,7 @@ extern     CompViewerClient g_CompClient;
 unsigned int BC7ThreadProcEncode(void* param)
 {
     BC7EncodeThreadParam *tp = (BC7EncodeThreadParam*)param;
-    
+
     while(tp->exit == FALSE)
     {
         if(tp->run == TRUE)
@@ -66,7 +68,7 @@ unsigned int BC7ThreadProcEncode(void* param)
 
         std::this_thread::sleep_for(0ms);
     }
-    
+
     return 0;
 }
 
@@ -196,8 +198,10 @@ CCodec_BC7::~CCodec_BC7()
                 // If we don't wait then there is a race condition here where we have
                 // told the thread to run but it hasn't yet been scheduled - if we set
                 // the exit flag before it runs then its block will not be processed.
+#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable:4127) //warning C4127: conditional expression is constant
+#endif //_MSC_VER
                 while(1)
                 {
                     if(m_EncodeParameterStorage[i].run != TRUE)
@@ -205,7 +209,9 @@ CCodec_BC7::~CCodec_BC7()
                         break;
                     }
                 }
+#ifdef _MSC_VER
 #pragma warning(pop)
+#endif //_MSC_VER
                 // Signal to the thread that it can exit
                 m_EncodeParameterStorage[i].exit = TRUE;
             }
@@ -224,7 +230,7 @@ CCodec_BC7::~CCodec_BC7()
             for (unsigned int i = 0; i < m_LiveThreads; i++)
             {
                 std::thread& curThread = m_EncodingThreadHandle[i];
-            
+
                 curThread = std::thread();
             }
 
@@ -237,7 +243,7 @@ CCodec_BC7::~CCodec_BC7()
             delete[] m_EncodeParameterStorage;
         m_EncodeParameterStorage = NULL;
 
-        
+
         for(int i=0; i < m_NumEncodingThreads; i++)
         {
             if (m_encoder[i])
@@ -280,7 +286,7 @@ CodecError CCodec_BC7::InitializeBC7Library()
         m_LiveThreads = 0;
         m_LastThread  = 0;
         m_NumEncodingThreads = min(m_NumThreads, MAX_BC7_THREADS);
-        if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1; 
+        if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1;
         m_Use_MultiThreading = m_NumEncodingThreads > 1;
 
         m_EncodeParameterStorage = new BC7EncodeThreadParam[m_NumEncodingThreads];
@@ -310,7 +316,7 @@ CodecError CCodec_BC7::InitializeBC7Library()
                                                 m_AlphaRestrict,
                                                 m_Performance);
 
-            
+
             // Cleanup if problem!
             if(!m_encoder[i])
             {
@@ -421,7 +427,7 @@ if (m_Use_MultiThreading)
     // Tell the thread to start working
     m_EncodeParameterStorage[threadIndex].run = TRUE;
 }
-else 
+else
 {
         // Copy the input data into the thread storage
         memcpy(m_EncodeParameterStorage[0].in, in, MAX_SUBSET_SIZE * MAX_DIMENSION_BIG * sizeof(double));
@@ -488,13 +494,13 @@ CodecError CCodec_BC7::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut,
     const CMP_DWORD dwBlocksXY = dwBlocksX*dwBlocksY;
 
 
-    #ifdef USE_DBGTRACE
+#ifdef USE_DBGTRACE
     DbgTrace(("IN : BufferType %d ChannelCount %d ChannelDepth %d",bufferIn.GetBufferType(),bufferIn.GetChannelCount(),bufferIn.GetChannelDepth()));
     DbgTrace(("   : Height %d Width %d Pitch %d isFloat %d",bufferIn.GetHeight(),bufferIn.GetWidth(),bufferIn.GetWidth(),bufferIn.IsFloat()));
 
     DbgTrace(("OUT: BufferType %d ChannelCount %d ChannelDepth %d",bufferOut.GetBufferType(),bufferOut.GetChannelCount(),bufferOut.GetChannelDepth()));
     DbgTrace(("   : Height %d Width %d Pitch %d isFloat %d",bufferOut.GetHeight(),bufferOut.GetWidth(),bufferOut.GetWidth(),bufferOut.IsFloat()));
-    #endif;
+#endif
 
     char            row,col,srcIndex;
 
@@ -545,15 +551,15 @@ CodecError CCodec_BC7::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut,
                 BYTE            out[16];
                 BYTE            in[16];
             } data;
-            
+
             memset(data.in,0,sizeof(data));
-            
+
             union DBLOCKS
             {
                 double            blockToSave[16][4];
                 double            block[64];
             } savedata;
-        
+
             CMP_BYTE destBlock[BLOCK_SIZE_4X4X4];
             memset(savedata.block,0,sizeof(savedata));
             m_decoder->DecompressBlock(savedata.blockToSave,data.in);
@@ -595,10 +601,10 @@ CodecError CCodec_BC7::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOu
 {
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
-    
+
     CodecError err = InitializeBC7Library();
     if (err != CE_OK) return err;
-    
+
     if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
         return CE_Unknown;
 
@@ -624,7 +630,7 @@ CodecError CCodec_BC7::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOu
             } CompData;
 
             CMP_BYTE destBlock[BLOCK_SIZE_4X4X4];
-            
+
             bufferIn.ReadBlock(i*4, j*4, CompData.compressedBlock, 4);
 
             // Encode to the appropriate location in the compressed image

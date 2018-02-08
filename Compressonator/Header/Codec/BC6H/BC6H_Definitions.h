@@ -31,7 +31,6 @@
 #include <cstdlib>
 #include <cstring>
 
-typedef std::uint8_t byte;
 typedef std::uint8_t BYTE;
 typedef std::uint32_t DWORD;
 typedef std::int32_t BOOL;
@@ -271,8 +270,8 @@ struct AMD_BC6H_Format
     
     union
     {
-        byte indices[4][4];            // Indices data after header block
-        byte indices16[16];
+        BYTE indices[4][4];            // Indices data after header block
+        BYTE indices16[16];
     };
 
     float         din[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];   // Original data input
