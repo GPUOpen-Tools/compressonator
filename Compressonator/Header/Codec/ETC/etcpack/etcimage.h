@@ -1,7 +1,7 @@
 //// etcpack v2.74
-//// 
-//// NO WARRANTY 
-//// 
+////
+//// NO WARRANTY
+////
 //// BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE THE PROGRAM IS PROVIDED
 //// "AS IS". ERICSSON MAKES NO REPRESENTATIONS OF ANY KIND, EXTENDS NO
 //// WARRANTIES OR CONDITIONS OF ANY KIND; EITHER EXPRESS, IMPLIED OR
@@ -18,7 +18,7 @@
 //// TO YOUR SOLE RESPONSIBILITY TO MAKE SUCH DETERMINATION AND ACQUIRE
 //// SUCH LICENSES AS MAY BE NECESSARY WITH RESPECT TO PATENTS, COPYRIGHT
 //// AND OTHER INTELLECTUAL PROPERTY OF THIRD PARTIES.
-//// 
+////
 //// FOR THE AVOIDANCE OF DOUBT THE PROGRAM (I) IS NOT LICENSED FOR; (II)
 //// IS NOT DESIGNED FOR OR INTENDED FOR; AND (III) MAY NOT BE USED FOR;
 //// ANY MISSION CRITICAL APPLICATIONS SUCH AS, BUT NOT LIMITED TO
@@ -30,7 +30,7 @@
 //// DAMAGE. YOUR RIGHTS UNDER THIS LICENSE WILL TERMINATE AUTOMATICALLY
 //// AND IMMEDIATELY WITHOUT NOTICE IF YOU FAIL TO COMPLY WITH THIS
 //// PARAGRAPH.
-//// 
+////
 //// IN NO EVENT WILL ERICSSON, BE LIABLE FOR ANY DAMAGES WHATSOEVER,
 //// INCLUDING BUT NOT LIMITED TO PERSONAL INJURY, ANY GENERAL, SPECIAL,
 //// INDIRECT, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF OR IN
@@ -41,23 +41,23 @@
 //// THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS) REGARDLESS OF THE
 //// THEORY OF LIABILITY (CONTRACT, TORT OR OTHERWISE), EVEN IF SUCH HOLDER
 //// OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-//// 
+////
 //// (C) Ericsson AB 2005-2013. All Rights Reserved.
-//// 
+////
 
 #ifndef IMAGE_H
 #define IMAGE_H
 
-bool fReadPPM(char *filename, int &width, int &height, unsigned char *&pixels, int targetbitrate);
-bool fWritePPM(char *filename, int width, int height, unsigned char *pixels, int bitrate, bool reverse_y);
+bool fReadPPM(const char *filename, int &width, int &height, unsigned char *&pixels, int targetbitrate);
+bool fWritePPM(const char *filename, int width, int height, unsigned char *pixels, int bitrate, bool reverse_y);
 
-bool fReadPFM(char *filename, int &width, int &height, float *&pixels);
-bool fWritePFM(char *filename, int width, int height, float *pixels,bool reverse_y);
+bool fReadPFM(const char *filename, int &width, int &height, float *&pixels);
+bool fWritePFM(const char *filename, int width, int height, float *pixels,bool reverse_y);
 // write a grey scale image
-bool fWritePGM(char *filename, int width, int height, unsigned char *pixels,bool reverse_y, int bitdepth);
-int fReadPGM(char *filename, int &width, int &height, unsigned char *&pixels, int wantedBitDepth);
+bool fWritePGM(const char *filename, int width, int height, unsigned char *pixels,bool reverse_y, int bitdepth);
+int fReadPGM(const char *filename, int &width, int &height, unsigned char *&pixels, int wantedBitDepth);
 // write a TGA image with both RGB and alpha
-bool fWriteTGAfromRGBandA(char *filename, int width, int height, unsigned char *pixelsRGB, unsigned char *pixelsA, bool reverse_y);
+bool fWriteTGAfromRGBandA(const char *filename, int width, int height, unsigned char *pixelsRGB, unsigned char *pixelsA, bool reverse_y);
 
 #endif
 

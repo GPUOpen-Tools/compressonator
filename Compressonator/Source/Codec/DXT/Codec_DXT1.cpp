@@ -9,10 +9,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -26,7 +26,9 @@
 //  Description: implementation of the CCodec_DXT1 class
 //
 //////////////////////////////////////////////////////////////////////////////
+#ifdef _MSC_VER
 #pragma warning(disable:4100)
+#endif //_MSC_VER
 
 #include "Common.h"
 #include "Codec_DXT1.h"
@@ -53,7 +55,7 @@ bool CCodec_DXT1::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
         m_bDXT1UseAlpha = (std::stoi(sValue) > 0) ? true : false;
     else if(strcmp(pszParamName, "AlphaThreshold") == 0)
         m_nAlphaThreshold = (CMP_BYTE) (std::stoi(sValue) & 0xFF);
-    else 
+    else
         return CCodec_DXTC::SetParameter(pszParamName, sValue);
     return true;
 }

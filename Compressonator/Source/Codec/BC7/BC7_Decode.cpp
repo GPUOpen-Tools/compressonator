@@ -9,10 +9,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -80,7 +80,7 @@ void BC7BlockDecoder::DecompressDualIndexBlock(double  out[MAX_SUBSET_SIZE][MAX_
     DWORD   blockIndices[2][MAX_SUBSET_SIZE];
 
     DWORD   clusters[2];
-    clusters[0] = 1 << bti[m_blockMode].indexBits[0];       
+    clusters[0] = 1 << bti[m_blockMode].indexBits[0];
     clusters[1] = 1 << bti[m_blockMode].indexBits[1];
     if(m_indexSwap)
     {
@@ -235,7 +235,7 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
     for(component=0; component < MAX_DIMENSION_BIG; component++)
     {
         // loop over subsets
-        for(subset=0; subset<(int)bti[m_blockMode].subsetCount; subset++)
+        for(subset=0; subset<(DWORD)bti[m_blockMode].subsetCount; subset++)
         {
             // Loop over endpoints
             for(ep=0; ep<2; ep++)
@@ -252,7 +252,7 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
     // Now get any parity bits
     if(bti[m_blockMode].pBitType != NO_PBIT)
     {
-        for(subset=0; subset<(int)bti[m_blockMode].subsetCount; subset++)
+        for(subset=0; subset<(DWORD)bti[m_blockMode].subsetCount; subset++)
         {
             DWORD   pBit[2];
             if(bti[m_blockMode].pBitType == ONE_PBIT)
@@ -342,7 +342,7 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
     // Colour Ramps
     double          c[MAX_SUBSETS][MAX_DIMENSION_BIG][1<<MAX_INDEX_BITS];
 
-    for(i=0; i<(int)bti[m_blockMode].subsetCount; i++)
+    for(i=0; i<(DWORD)bti[m_blockMode].subsetCount; i++)
     {
         // Unpack the colours
         GetRamp(endpoint[i],
