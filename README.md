@@ -29,6 +29,13 @@ Under development
     * Vertex cache optimization
     * Overdraw optimization
     * Vertex prefetch cache optimization
+    
+* Model Mesh Compression using draco 
+  * Compresss model for faster download 
+    * Force mesh to be encoded as point cloud for processing
+    * Set quantization bits for POSITION, NORMAL, TEX_CORD and other GENERIC attributes
+    * Fast Decode 
+    * see https://github.com/google/draco for more details on how the compression works
   
 * 3D Model viewer features and modifications
   * Selectable 3D Model views with DX12, Vulkan and OpenGL
