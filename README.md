@@ -36,9 +36,8 @@ Under development for 3.1 release
   * Manual mode to flip views
  
 
-Recent additions and changes
+Recent 3.0 additions and changes
 ------------------------------------------------------
-v3.0 features
 
 * Model Mesh Optimization for obj and gltf 2.0 files
   * 3D triangle mesh optimization that improves on existing mesh preprocessing techniques
@@ -78,13 +77,29 @@ Gallery
 ![screenshot 2](https://github.com/GPUOpen-Tools/Compressonator/wiki/assets/gltfs3a.png)
 
 
+Build Instructions for Compressonator SDK
+-----------------------------------------
+Use the following project files to build binaries as needed for use in your own applications or sdk
 
-Build Instructions for Windows 10 and up
-------------------------------------------------------
+* Texture Compression Codecs: Prebuilt Binaries for Compressonator VS2015 Libs are supplied when using the installer
+\Compressonator\VS2015\CompressonatorLib.sln
 
-To build the applications you will need to have Visual Studio 2015 installed and Qt V5.7 msvc2015 and msvc2015_64 opensource downloaded from [QT website](https://www.qt.io/download-open-source/) .
+This solution will create a build folder that contains DLL and Libs under \Compressonator\Build\VS2015\(configuration)\(platform)\
+example: Compressonator\Build\VS2015\Release_MD\Win32\
 
-**Note**: The solution project assume QT is installed in default path (C:\Qt\5.7). If you use different path, please change the project property accordingly in the  Compressonator_Root.props file. 
+* Mesh Optimization Lib: (Interfaces to this lib will change in future releases)
+\Compressonator\VS2015\CMP_MeshOptimizer
+
+* Mesh Compression  Lib: (Interfaces to this lib will change in future releases)
+\Compressonator\VS2015\CMP_MeshCompressor
+
+
+Build Instructions for Compressonator GUI and CLI applications on Windows 10 and up
+------------------------------------------------------------------------------------
+
+To build the applications you will need to have Visual Studio 2015 installed, Vulkan SDK version 1.0.65.0 from [Vulkan.lunarg website](https://vulkan.lunarg.com/sdk/home), Qt V5.7 msvc2015 and msvc2015_64 opensource downloaded from [QT website](https://www.qt.io/download-open-source/) .
+
+**Note**: Compressonator project solution files assume QT is installed in default path (C:\Qt\Qt5.7.1\5.7). and Vulkan SDK Environment variable (VULKAN_SDK) for path to the source code is set. Users must build the Vulkan SDK binaries prior to building the GUI and CLI applications. If you use different path, please change the project property accordingly in the  Compressonator_Root.props file.
 
 The directory of your workspace should be as follows
 
