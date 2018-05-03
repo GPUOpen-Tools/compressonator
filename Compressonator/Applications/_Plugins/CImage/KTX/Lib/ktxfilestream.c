@@ -5,7 +5,7 @@
  * @file
  * @~English
  *
- * @brief FImplementation of ktxStream for FILE.
+ * @brief Implementation of ktxStream for FILE.
  *
  * @author Maksim Kolesin, Under Development
  * @author Georg Kolling, Imagination Technology

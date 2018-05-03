@@ -161,13 +161,10 @@ void acCustomGraphicsView::mouseReleaseEvent(QMouseEvent *event)
 }
 
 
-
 void acCustomGraphicsView::resizeEvent(QResizeEvent *event)
 {
     emit ResizeEvent(event);
 }
-
-
 
 
 //=========================================
@@ -327,28 +324,24 @@ void acCustomGraphicsScene::drawBackground(QPainter *painter, const QRectF &rect
 // Date:        4/9/2015
 // ---------------------------------------------------------------------------
 
-acCustomGraphicsImageItem::acCustomGraphicsImageItem(QPixmap &PixItem) :QGraphicsPixmapItem(PixItem)
+acCustomGraphicsImageItem::acCustomGraphicsImageItem(QPixmap &ProcessedPixItem, QImage *OriginalImage) :QGraphicsPixmapItem(ProcessedPixItem)
 {
     ID = 0;
-    m_originalPixMap = PixItem;
+    m_ProcessedImage = ProcessedPixItem.toImage();
+    m_refImage       = OriginalImage;
     setDefaults();
-}
-
-void acCustomGraphicsImageItem::setOriginalPixMap(QPixmap &PixItem)
-{
-    m_originalPixMap = PixItem;
 }
 
 
 void acCustomGraphicsImageItem::setDefaults()
 {
     m_alpha = 255;
-    
+
     //====================================================
     // pix = contrast*pix + brightness
     //====================================================
-    m_fBrightness = (BRIGHTNESS_INCRIMENTS * 255) / 100;
-    m_fContast = 1;
+    m_iBrightness = 0;
+    m_fContrast = 1.0f;
 
     m_ChannelR = true;
     m_ChannelG = true;
@@ -360,7 +353,9 @@ void acCustomGraphicsImageItem::setDefaults()
     m_Mirrored_h = true;
     m_Mirrored_v = false;
 
-    m_UseOriginalImage = false;
+    m_ShowPixelDiff = false;
+    m_UseProcessedImage = false;
+    m_ImageBrightness = false;
 }
 
 // ---------------------------------------------------------------------------
@@ -370,190 +365,145 @@ void acCustomGraphicsImageItem::setDefaults()
 // Date(DD/MM/YYYY):   02/11/2015
 // ---------------------------------------------------------------------------
 
-
 void acCustomGraphicsImageItem::UpdateImage()
 {
-    QImage image(m_UseOriginalImage ? m_originalPixMap.toImage() : acCustomGraphicsImageItem::pixmap().toImage());
+    QImage image;
 
-    // Set channel mapping and Alpha
-    for (int x = 0; x < image.width(); x++)
+    if (m_ShowPixelDiff && m_refImage)
     {
-        for (int y = 0; y < image.height(); y++)
+        m_ShowPixelDiff = false; // swich off after first run
+
+        // Pixel Diff
+        QColor src;
+        QColor dest;
+        QColor diff;
+        int r, g, b;
+        image = *m_refImage;
+        int w, h;
+
+        QImage imageOriginal  = *m_refImage;
+        QImage imageProcessed = m_ProcessedImage;
+
+        w = image.width();
+        h = image.height();
+
+        for (int x = 0; x < w; x++)
         {
-            QColor color(image.pixel(x, y));
-            if (m_GrayScale)
+            for (int y = 0; y < h; y++)
             {
-                // Note qGray() actually computes luminosity using the formula (r*11 + g*16 + b*5)/32.
-                int gray = (color.red() + color.green() + color.blue()) / 3;
-                image.setPixel(x, y, qRgb(gray, gray, gray));
-            }
-            else
-            {
-                if (!m_ChannelR)
-                    color.setRed(0);
-                if (!m_ChannelG)
-                    color.setGreen(0);
-                if (!m_ChannelB)
-                    color.setBlue(0);
-                if (m_ChannelA)
-                    color.setAlpha(m_alpha);
-                image.setPixel(x, y, color.rgba());
+                src  = QColor(imageOriginal.pixel(x, y));
+                dest = QColor(imageProcessed.pixel(x, y));
+
+                // g_Application_Options.m_imagediff_contrast min value is 1 max is set to 200
+                r = (qAbs(src.red()   - dest.red())   * g_Application_Options.m_imagediff_contrast);
+                g = (qAbs(src.green() - dest.green()) * g_Application_Options.m_imagediff_contrast);
+                b = (qAbs(src.blue()  - dest.blue())  * g_Application_Options.m_imagediff_contrast);
+
+
+                if (r > 255) r = 255;
+                if (g > 255) g = 255;
+                if (b > 255) b = 255;
+
+                diff.setRed   (r);
+                diff.setGreen (g);
+                diff.setBlue  (b);
+                diff.setAlpha (255);
+
+                image.setPixel(x, y, diff.rgba());
             }
         }
+
     }
-    
-    if (m_InvertImage)
+    else
     {
-        //Changed image.invertPixels(QImage::InvertRgba) to InvertRgb fix the exr invert issue-workaround for now--only exr falls into this if case
-        //the InvertRgba seems not working, bmp and png both call else case InvertRgb, that's why they are working fine
-        if (image.hasAlphaChannel())
-            image.invertPixels(QImage::InvertRgb);
+        if (m_UseProcessedImage)
+            image = m_ProcessedImage;
         else
-            image.invertPixels(QImage::InvertRgb);
+            image = acCustomGraphicsImageItem::pixmap().toImage();
+
+        // Set channel mapping and Alpha
+        for (int x = 0; x < image.width(); x++)
+        {
+            for (int y = 0; y < image.height(); y++)
+            {
+                QColor color(image.pixel(x, y));
+                if (m_GrayScale)
+                {
+                    // Note qGray() actually computes luminosity using the formula (r*11 + g*16 + b*5)/32.
+                    int gray = (color.red() + color.green() + color.blue()) / 3;
+                    image.setPixel(x, y, qRgb(gray, gray, gray));
+                }
+                else
+                {
+                    if (!m_ChannelR)
+                        color.setRed(0);
+                    if (!m_ChannelG)
+                        color.setGreen(0);
+                    if (!m_ChannelB)
+                        color.setBlue(0);
+                    if (m_ChannelA)
+                        color.setAlpha(m_alpha);
+                    image.setPixel(x, y, color.rgba());
+                }
+            }
+        }
+
+        if (m_InvertImage)
+        {
+            //Changed image.invertPixels(QImage::InvertRgba) to InvertRgb fix the exr invert issue-workaround for now--only exr falls into this if case
+            //the InvertRgba seems not working, bmp and png both call else case InvertRgb, that's why they are working fine
+            if (image.hasAlphaChannel())
+                image.invertPixels(QImage::InvertRgb);
+            else
+                image.invertPixels(QImage::InvertRgb);
+        }
+
+        if (m_Mirrored)
+        {
+            // Note the flip from what qt defined!
+            image = image.mirrored(m_Mirrored_v, m_Mirrored_h);
+        }
+
     }
 
-    if (m_Mirrored)
+    if (m_ImageBrightness)
     {
-        // Note the flip from what qt defined!
-        image = image.mirrored(m_Mirrored_v, m_Mirrored_h);
-    }
+        m_ImageBrightness = false;
+        if (m_iBrightness > 100) m_iBrightness = 100;
+        else
+            if (m_iBrightness < -100) m_iBrightness = -100;
 
-    if (m_ImageBrightnessUp)
-    {
-        //---contrast =50
-        //if (r>0)
-        //    r = ((r - 127) * 50 / 100) + 127;
-        //if (g>0)
-        //    g = ((g - 127) * 50 / 100) + 127;
-        //if (b>0)
-        //    b = ((b - 127) * 50 / 100) + 127;
-        //if (a>0)
-        //    a = ((a - 127) * 50 / 100) + 127;
-
-        //---brightness=50
-        //if (r>0)
-        //    r= r + 50 * 255 / 100;
-        //if (g>0)
-        //    g = g + 50 * 255 / 100;
-        //if (b>0)
-        //    b = b + 50 * 255 / 100;
-        //if (a>0)
-        //    a = a + 50 * 255 / 100;
-
-        //---gamma= 50 -- not working
-        //if (r>0)
-        //    r= int(pow(r / 255.0, 100.0 / 50.0) * 255);
-        //if (g>0)
-        //    g = int(pow(g / 255.0, 100.0 / 50.0) * 255);
-        //if (b>0)
-        //    b = int(pow(b / 255.0, 100.0 / 50.0) * 255);
-        //if (a>0)
-        //    a = int(pow(a / 255.0, 100.0 / 50.0) * 255);
         // Set brightness
-        
-        int r, g, b, a;
+        int r, g, b;
         for (int x = 0; x < image.width(); x++)
         {
             for (int y = 0; y < image.height(); y++)
             {
                 QColor color(image.pixel(x, y));
-                r = color.red();
-                g = color.green();
-                b = color.blue();
-                a = color.alpha();
+                r = (color.red()  * m_fContrast) + m_iBrightness;
+                g = (color.green()* m_fContrast) + m_iBrightness;
+                b = (color.blue() * m_fContrast) + m_iBrightness;
 
-                if (r > 0)
-                {
-                    r = (r*m_fContast) + m_fBrightness;
-                }
+                if (r > 255) r = 255;
+                else
+                    if (r < 0) r = 0;
 
-                if (g > 0)
-                {
-                    g = (g*m_fContast) + m_fBrightness;
-                }
+                if (g > 255) g = 255;
+                else
+                    if (g < 0) g = 0;
 
-                if (b > 0)
-                {
-                    b = (b*m_fContast) + m_fBrightness;
-                }
+                if (b > 255) b = 255;
+                else
+                    if (b < 0) b = 0;
 
-                if (a > 0)
-                {
-                    a = (a*m_fContast) + m_fBrightness;
-                }
-    
-                color.setRed(qMin(r,255));
-                color.setGreen(qMin(g, 255));
-                color.setBlue(qMin(b, 255));
-                color.setAlpha(qMin(a, 255));
+                color.setRed(r);
+                color.setGreen(g);
+                color.setBlue(b);
                 image.setPixel(x, y, color.rgba());
+                
             }
         }
     }
-
-    if (m_ImageBrightnessDown)
-    {
-        int r, g, b, a;
-        int pr, pg, pb, pa;
-        for (int x = 0; x < image.width(); x++)
-        {
-            for (int y = 0; y < image.height(); y++)
-            {
-                QColor color(image.pixel(x, y));
-                pr = color.red();
-                pg = color.green();
-                pb = color.blue();
-                pa = color.alpha();
-                r = color.red();
-                g = color.green();
-                b = color.blue();
-                a = color.alpha();
-
-                if (pr > 0)
-                {
-                    r = (r*m_fContast) - m_fBrightness;
-                }
-
-                if (pg > 0)
-                {
-                    g = (g*m_fContast) - m_fBrightness;
-                }
-
-                if (pb > 0)
-                {
-                    b = (b*m_fContast) - m_fBrightness;
-                }
-
-                if (pa > 0)
-                {
-                    a = (a*m_fContast) - m_fBrightness;
-                }
-
-                if (r < 0)
-                    color.setRed(pr);
-                else
-                    color.setRed(r);
-
-                if (g < 0)
-                    color.setGreen(pg);
-                else
-                    color.setGreen(g);
-
-                if (b < 0)
-                    color.setBlue(pb);
-                else
-                    color.setBlue(b);
-
-                if (a < 0)
-                    color.setAlpha(pa);
-                else
-                    color.setAlpha(a);
-            
-                image.setPixel(x, y, color.rgba());
-            }
-        }
-    }
-
 
     // Reset the graphics items view
     setPixmap(QPixmap::fromImage(image));
@@ -569,9 +519,14 @@ void acCustomGraphicsImageItem::UpdateImage()
 
 void acCustomGraphicsImageItem::changeImage(QImage image)
 {
+    m_ProcessedImage = image;
     setPixmap(QPixmap::fromImage(image));
 }
 
+void acCustomGraphicsImageItem::changeImageDiffRef(QImage *imageRef)
+{
+    m_refImage = imageRef;
+}
 
 
 // ---------------------------------------------------------------------------

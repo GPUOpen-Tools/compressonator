@@ -9,10 +9,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -27,11 +27,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifdef _MSC_VER
 #pragma warning(disable:4100)    // Ignore warnings of unreferenced formal parameters
 #pragma warning(disable:4101)    // Ignore warnings of unreferenced local variable
 #pragma warning(disable:4996)   // This function or variable may be unsafe
-#endif //_MSC_VER
 
 #include "Common.h"
 #include "ASTC/Codec_ASTC.h"
@@ -106,10 +104,8 @@ CCodec_ASTC::~CCodec_ASTC()
                 // If we don't wait then there is a race condition here where we have
                 // told the thread to run but it hasn't yet been scheduled - if we set
                 // the exit flag before it runs then its block will not be processed.
-#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable:4127) //warning C4127: conditional expression is constant
-#endif //_MSC_VER
                 while (1)
                 {
                     if (g_EncodeParameterStorage[i].run != TRUE)
@@ -117,9 +113,7 @@ CCodec_ASTC::~CCodec_ASTC()
                         break;
                     }
                 }
-#ifdef _MSC_VER
 #pragma warning(pop)
-#endif //_MSC_VER
                 // Signal to the thread that it can exit
                 g_EncodeParameterStorage[i].exit = TRUE;
             }
@@ -542,8 +536,8 @@ CodecError CCodec_ASTC::EncodeASTCBlock(
         g_ASTCEncode.m_zdim = zdim;
 
         m_encoder[0]->CompressBlock_kernel(
-            (ASTC_Encoder::astc_codec_image *)input_image,
-            bp,
+            (ASTC_Encoder::astc_codec_image *)input_image, 
+            bp, 
             x,
             y,
             z,
@@ -635,7 +629,7 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
 
     DbgTrace(("OUT: BufferType %d ChannelCount %d ChannelDepth %d", bufferOut.GetBufferType(), bufferOut.GetChannelCount(), bufferOut.GetChannelDepth()));
     DbgTrace(("   : Height %d Width %d Pitch %d isFloat %d", bufferOut.GetHeight(), bufferOut.GetWidth(), bufferOut.GetWidth(), bufferOut.IsFloat()));
-#endif
+#endif;
 
 
     int bitness = 0; //todo: replace astc_codec_image with bufferIn and rewrite fetch_imageblock()
@@ -679,7 +673,7 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
     if (!input_image)
         assert("Unable to allocate image buffer");
 
-    // Loop through the original input image and setup compression threads for each
+    // Loop through the original input image and setup compression threads for each 
     // block to encode  we will load the buffer to pass to ASTC code as 8 bit 4x4 blocks
     // the fill in source image. ASTC code will then use the adaptive sizes for process on the input
     BYTE *pData = bufferIn.GetData();
@@ -708,7 +702,7 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
     uint8_t *bufferOutput = bufferOut.GetData();
 
     // Common ARM and Compressonator Code
-    int x, y, z;
+    int x, y, z, i;
     int xblocks = (xsize + xdim - 1) / xdim;
     int yblocks = (ysize + ydim - 1) / ydim;
     int zblocks = (zsize + zdim - 1) / zdim;
@@ -769,7 +763,7 @@ CodecError CCodec_ASTC::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferO
     // Our Compressed data Blocks are always 128 bit long (4x4 blocks)
     const CMP_DWORD imageWidth  = bufferIn.GetWidth();
     const CMP_DWORD imageHeight = bufferIn.GetHeight();
-    const CMP_DWORD imageDepth  = 1;        // unused
+    const CMP_DWORD imageDepth  = 1;
     const BYTE      bitness     = 8;
 
     const CMP_DWORD CompBlockX  = bufferIn.GetBlockWidth();
@@ -779,8 +773,8 @@ CodecError CCodec_ASTC::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferO
 
     const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + (CompBlockX - 1)) / CompBlockX);
     const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight()+ (CompBlockY - 1)) / CompBlockY);
-    const CMP_DWORD dwBlocksZ = 1;          // unused
-    const CMP_DWORD dwBufferInDepth = 1;    // unused
+    const CMP_DWORD dwBlocksZ = 1;
+    const CMP_DWORD dwBufferInDepth = 1;
 
     // Override the current input buffer Pitch size  (Since it will be set according to the Compressed Block Sizes
     // and not to the Compressed Codec data which is for ASTC 16 Bytes per block x Number of blocks per row
@@ -803,7 +797,7 @@ CodecError CCodec_ASTC::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferO
                 float decodedBlock[144][4];            // max 12x12 block size
                 float destBlock[576];                  // max 12x12x4
             } DecData;
-
+    
             union BBLOCKS
             {
                 CMP_DWORD       compressedBlock[4];
@@ -815,23 +809,23 @@ CodecError CCodec_ASTC::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferO
 
             // Encode to the appropriate location in the compressed image
             m_decoder->DecompressBlock(Block_Width, Block_Height, bitness, DecData.decodedBlock,CompData.in);
-
+            
             // Now that we have a decoded block lets copy that data over to the target image buffer
             CMP_DWORD outCol = cmpColX*Block_Width;
             CMP_DWORD outRow = cmpRowY*Block_Height;
             CMP_DWORD outImgRow = outRow;
             CMP_DWORD outImgCol = outCol;
 
-            for (unsigned int row = 0; row < Block_Height; row++)
+            for (int row = 0; row < Block_Height; row++)
             {
                 CMP_DWORD  nextRowCol  = (outRow+row)*dwPitch + (outCol * 4);
                 CMP_BYTE*  pData       = (CMP_BYTE*)(pDataOut + nextRowCol);
                 if ((outImgRow + row) < imageHeight)
                 {
                     outImgCol = outCol;
-                    for (unsigned int col = 0; col < Block_Width; col++)
+                    for (int col = 0; col < Block_Width; col++)
                     {
-                        unsigned int w = outImgCol + col;
+                        int w = outImgCol + col;
                         if (w < imageWidth)
                         {
                             int index = row*Block_Width + col;

@@ -1,7 +1,7 @@
 /* -*- tab-width: 4; -*- */
 /* vi: set sw=2 ts=4: */
 
-/* $Id: 38d57d885272a48bc32e906349cc6b610c1453c0 $ */
+/* $Id: c4b6d4c928f6a816d5bf1d8005ea2e95f663b9c0 $ */
 
 /**
  * @file hashtable.c
@@ -44,7 +44,16 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
+
+// This is to avoid compile warnings. strlen is defined as returning
+// size_t and is used by the uthash macros. This avoids having to
+// make changes to uthash and a bunch of casts in this file. The
+// casts would be required because the key and value lengths in KTX
+// are specified as 4 byte quantities so we can't change _keyAndValue
+// below to use size_t.
+#define strlen(x) ((unsigned int)strlen(x))
 
 #include "uthash.h"
 
@@ -136,7 +145,7 @@ KTX_error_code
 ktxHashTable_AddKVPair(KTX_hash_table This, const char* key, unsigned int valueLen, const void* value)
 {
 	if (This && key && value && valueLen != 0) {
-		int keyLen = strlen(key) + 1;
+		unsigned int keyLen = (unsigned int)strlen(key) + 1;
 		/* key_and_value_t* head = *(key_and_value_t**)This; */
 		key_and_value_t* kv;
 
@@ -302,13 +311,13 @@ ktxHashTable_Deserialize(unsigned int kvdLen, void* pKvd, KTX_hash_table* pHt)
 
 	while (src < (char *)pKvd + kvdLen) {
 		char* key;
-		int keyLen;
+		unsigned int keyLen;
 		void* value;
 		khronos_uint32_t keyAndValueByteSize = *((khronos_uint32_t*)src);
 
 		src += sizeof(keyAndValueByteSize);
 		key = src;
-		keyLen = strlen(key) + 1;
+		keyLen = (unsigned int)strlen(key) + 1;
 		value = key + keyLen;
 
 		ktxHashTable_AddKVPair(kvt, key, keyAndValueByteSize - keyLen, value);

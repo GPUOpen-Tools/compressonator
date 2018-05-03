@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -50,9 +50,9 @@ typedef unsigned int UINT;
 
 using namespace std;
 
-#define UNREFERENCED_PARAMETER(P)          ((void)P)
+#define UNREFERENCED_PARAMETER(P)          (P)
 
-//#define USE_DBGTRACE                                //  Show messages via Win Debug
+//#define USE_DBGTRACE                                //  Show messages via Win Debug 
 //#define BC7_DEBUG_TO_RESULTS_TXT                    //  Send debug info to a results text file
 //#define DXT5_COMPDEBUGGER                           //  Remote connect data to Comp Debugger views
 //#define BC6H_COMPDEBUGGER                           //  Remote connect data to Comp Debugger views
@@ -60,17 +60,32 @@ using namespace std;
 //#define BC6H_NO_OPTIMIZE_ENDPOINTS                  //  Turn off BC6H optimization of endpoints - useful for debugging quantization and mode checking
 //#define BC6H_DEBUG_TO_RESULTS_TXT                   //  Generates a Results.txt file on exe working directory; MultiThreading is turned off for debuging to text file
 //#define BC6H_DECODE_DEBUG                           //  Enables debug info on decoder
+//#define GT_COMPDEBUGGER                             //  Remote connect data to Comp Debugger views
 
 #define ENABLE_MAKE_COMPATIBLE_API                    //  Byte<->Float to make all source and dest compatible
-//#define USE_GT
+// #define USE_GT                                     //  Gradient Texture Compressor patent pending...
 
 // V2.4 / V2.5 features and changes
-#define USE_OLD_SWIZZLE                            //  Remove swizzle flag and abide by CMP_Formats
+#define USE_OLD_SWIZZLE                              //  Remove swizzle flag and abide by CMP_Formats
 
 // To Be enabled in future releases
 // #define ARGB_32_SUPPORT                            // Enables 32bit Float channel formats
 // #define SUPPORT_ETC_ALPHA                          // for ATC_RGB output enable A
 // #define SHOW_PROCESS_MEMORY                        // display available CPU process memory
-// #define USE_COMPUTE                                 // Enable compute code for compression
+// #define USE_COMPUTE                                // Enable compute code for compression
+
+//#define USE_ASSIMP
+//#define USE_3DCONVERT                               // Enable 3D model conversion (glTF<->obj) icon
+//#define USE_3DVIEWALLAPI                              // Enable 3D model view selection list in application setting
+
+// #define USE_BCN_IMAGE_DEBUG                           // Enables Combobox in Image View for low level BCn based block compression in debug mode
+// #define USE_CRN                                    // Enabled .crn file output using CRUNCH encoder
+
+
+// #define USE_FILEIO
+
+// #define USE_GLTF2_CLI                                 // CLI Process gltf files
+// #define USE_GLTF2_DRACO_EXTENSION                     // include Mesh Compression with Draco support in gltf files
+// #define USE_GLTF2_MIPSET                              // Enable Image Transcode & Compression support for GLTF files using TextureIO
 
 #endif // !COMMON_H

@@ -35,12 +35,10 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
  * by Mark Callow and Georg Kolling
  */
 
-#ifndef _KTXFILESTREAM_H_
-#define _KTXFILESTREAM_H_
+#ifndef KTXFILESTREAM_H
+#define KTXFILESTREAM_H
 
-#include "KHR/khrplatform.h"
 #include "ktx.h"
-#include "ktxint.h"
 #include "ktxstream.h"
 
 /*
@@ -48,4 +46,4 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
  */
 KTX_error_code ktxFileInit(struct ktxStream* stream, FILE* file);
 
-#endif /* _KTXFILESTREAM_H_ */
+#endif /* KTXFILESTREAM_H */

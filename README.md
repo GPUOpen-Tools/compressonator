@@ -97,7 +97,7 @@ example: Compressonator\Build\VS2015\Release_MD\Win32\
 Build Instructions for Compressonator GUI and CLI applications on Windows 10 and up
 ------------------------------------------------------------------------------------
 
-To build the applications you will need to have Visual Studio 2015 installed, Vulkan SDK version 1.0.65.0 from [Vulkan.lunarg website](https://vulkan.lunarg.com/sdk/home), Qt V5.7 msvc2015 and msvc2015_64 opensource downloaded from [QT website](https://www.qt.io/download-open-source/) .
+To build the applications you will need to have Visual Studio 2015 installed, Vulkan SDK version 1.0.68.0 from [Vulkan LunarG website](https://vulkan.lunarg.com/sdk/home), glslang.lib and spirv-tools.lib built from the Vulkan SDK installed. Qt V5.7 msvc2015 and msvc2015_64 opensource downloaded from [QT website](https://www.qt.io/download-open-source/) .
 
 **Note**: Compressonator project solution files assume QT is installed in default path (C:\Qt\Qt5.7.1\5.7). and Vulkan SDK Environment variable (VULKAN_SDK) for path to the source code is set. Users must build the Vulkan SDK binaries prior to building the GUI and CLI applications. If you use different path, please change the project property accordingly in the  Compressonator_Root.props file.
 

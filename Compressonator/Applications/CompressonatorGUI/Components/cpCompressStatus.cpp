@@ -29,16 +29,14 @@ CompressStatusDialog::CompressStatusDialog(const QString title, QWidget *parent)
     QDockWidget(parent)
     // acCustomDockWidget(title, parent)
 {
-    m_parent		= parent;
-    m_menu			= NULL;
-    m_btnClearText	= NULL;
-    m_layoutH		= NULL;
-    m_layoutV		= NULL;
-    m_clear			= NULL;
-    m_textBrowser	= NULL;
-
-    m_newWidget = new QWidget(parent);
-    if (!m_newWidget) return;
+    m_parent       = parent;
+    m_menu         = NULL;
+    m_btnClearText = NULL;
+    m_layoutH      = NULL;
+    m_layoutV      = NULL;
+    m_clear        = NULL;
+    m_textBrowser  = NULL;
+    m_newWidget    = NULL;
 
     // if (custTitleBar)
     // {
@@ -62,6 +60,10 @@ CompressStatusDialog::CompressStatusDialog(const QString title, QWidget *parent)
     by defining USE_CLEAR_WIDGET
     */
 #ifdef USE_CLEAR_WIDGET
+
+    m_newWidget = new QWidget(parent);
+    if (!m_newWidget) return;
+
     m_textBrowser->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(m_textBrowser, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(OnshowContextMenu(const QPoint&)));
 
@@ -97,17 +99,13 @@ CompressStatusDialog::CompressStatusDialog(const QString title, QWidget *parent)
     m_newWidget->setLayout(m_layout);
     setWidget(m_newWidget);
 #else
-    
-    m_layoutV = new QVBoxLayout(this);
-    m_layoutV->addWidget(m_textBrowser);
-    m_newWidget->setLayout(m_layoutV);
-
-    setWidget(m_newWidget);
+    setWidget(m_textBrowser);
 #endif
 }
 
 CompressStatusDialog::~CompressStatusDialog()
 {
+     delete m_textBrowser;
 }
 
 

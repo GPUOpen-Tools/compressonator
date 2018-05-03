@@ -9,10 +9,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -74,7 +74,7 @@ void histoStepCnt (int id, int cnt, double step1) {
             stepHisto[i]=stepHisto1[i]=0;
         histoInit=1;
     }
-
+    
     step1 *= 16;
     step1 = step1 <0 ? 0 : step1;
     step1 = step1 >512.*16 ? 512.*16 : step1;
@@ -89,9 +89,9 @@ void printStepHistoI (void) {
     int i,j,k,l;
 
     for (l=0;l<MAX_SUBSETS;l++) {
-        k=0;
+        k=0;         
         printf("[\n");
-        for (i=0;i<512*16/32;i++) {
+        for (i=0;i<512*16/32;i++) { 
             for (j=0;j<32;j++)
                 printf("%d, ",stepHistoI[l][k++]);
             printf("\n");
@@ -108,7 +108,7 @@ void printStepHisto (void) {
     int i,j,k;
     k=0;
     printf("[\n");
-    for (i=0;i<512*16/32;i++) {
+    for (i=0;i<512*16/32;i++) { 
         for (j=0;j<32;j++)
             printf("%d, ",stepHisto[k++]);
         printf("\n");
@@ -116,9 +116,9 @@ void printStepHisto (void) {
 
     printf("]\n");
 
-    k=0;
+    k=0;         
     printf("[\n");
-    for (i=0;i<512*16/32;i++) {
+    for (i=0;i<512*16/32;i++) { 
         for (j=0;j<32;j++)
             printf("%d, ",stepHisto1[k++]);
         printf("\n");
@@ -160,7 +160,7 @@ void index_collapse  // assymtric of x->n-x, but this does not matter below
 
     mi=Mi=index[0];
 
-    for (k=0;k<numEntries;k++) {
+    for (k=0;k<numEntries;k++) { 
         mi = mi < index[k] ? mi : index[k];
         Mi = Mi > index[k] ? Mi : index[k];
     }
@@ -169,16 +169,16 @@ void index_collapse  // assymtric of x->n-x, but this does not matter below
 
     for (d=2;d<=Mi;d++) {
 
-        for (k=0;k<numEntries;k++)
+        for (k=0;k<numEntries;k++)  
             if ((index[k] -mi) % d !=0)
                 break;
 
-        if (k>=numEntries)
+        if (k>=numEntries) 
             D =d;
     }
 
-    for (k=0;k<numEntries;k++)
-        index[k] = (index[k]- mi)/D;
+    for (k=0;k<numEntries;k++)  
+        index[k] = (index[k]- mi)/D; 
 }
 
 void index_expand  // assymtric of x->n-x, but this does not matter below
@@ -192,18 +192,18 @@ void index_expand  // assymtric of x->n-x, but this does not matter below
 
     int Mi=0,mi=max_clusters-1;
 
-    for (k=0;k<numEntries;k++) {
+    for (k=0;k<numEntries;k++) { 
         mi = mi < index[k] ? mi : index[k];
         Mi = Mi > index[k] ? Mi : index[k];
     }
 
 
-    d = Mi-mi == 0 ? 1 : (max_clusters-1)/(Mi-mi);
+    d = Mi-mi == 0 ? 1 : (max_clusters-1)/(Mi-mi); 
 
-    for (k=0;k<numEntries;k++)
-        index[k] = (index[k]-mi)*d;
+    for (k=0;k<numEntries;k++)  
+        index[k] = (index[k]-mi)*d; 
 }
-
+    
 void sHisto (int index[], int numEntries, double step, double step1)
 {
 #ifdef USE_DBGTRACE
@@ -213,32 +213,26 @@ void sHisto (int index[], int numEntries, double step, double step1)
     int k;
     for (k=0;k<numEntries;k++)
         Mi = Mi > index[k] ? Mi : index[k];
-
+       
 
     if (step!=0.)
-    {
         minStep[Mi]  = minStep[Mi] <  step ? minStep[Mi] : step;
-    }
 
         maxStep[Mi]  = maxStep[Mi] >  step ? maxStep[Mi] : step;
 
 
     if (step1!=0.)
-    {
         minStep1[Mi] = minStep1[Mi] < step1 ? minStep1[Mi] : step1;
-    }
 
     if (step1!=0.)
-    {
         maxStep1[Mi] = maxStep1[Mi] > step1 ? maxStep1[Mi] : step1;
-    }
 }
 
 
 
 
-double reconstruct(
-    double data[MAX_ENTRIES][DIMENSION],
+double reconstruct( 
+    double data[MAX_ENTRIES][DIMENSION], 
     int numEntries, int index_[MAX_ENTRIES],
     double out[MAX_ENTRIES][DIMENSION],int ns,
     double direction [DIMENSION],double *step
@@ -251,8 +245,8 @@ double reconstruct(
     int i,j,k;
     double mean[DIMENSION];
     int index[MAX_ENTRIES];
-
-    for (k=0;k<numEntries;k++)
+    
+    for (k=0;k<numEntries;k++) 
         index[k]=index_[k];
 
 // expand/collapse if needed
@@ -263,24 +257,24 @@ double reconstruct(
         index_expand (index, numEntries, MAX_CLUSTERS);
 
     for (j=0;j<DIMENSION;j++) {
-        for (mean[j]=k=0;k<numEntries;k++)
+        for (mean[j]=k=0;k<numEntries;k++) 
             mean[j]+=data[k][j];
         mean[j]/=(double) numEntries;
     }
 
-
-    for (k=0;k<numEntries;k++) {
+    
+    for (k=0;k<numEntries;k++) { 
         s+= index[k];
         t+= index[k]*index[k];
     }
 
-    double q1 =0;
+    double q1 =0; 
 
     for (j=0;j<DIMENSION;j++) {
         direction[j]=0;
-        for (k=0;k<numEntries;k++)
+        for (k=0;k<numEntries;k++) 
             direction[j]+=(data[k][j]-mean[j])*index[k];
-
+        
         q+= direction[j]* direction[j];
         q1 = fabs(direction[j]) > q1 ? fabs(direction[j]) : q1;
 
@@ -291,11 +285,11 @@ double reconstruct(
     t = t - s * s * (double) numEntries;
 
     t = (t == 0 ? 0. : 1/t);
-
+    
     q=sqrt(q);
 
     *step=t*q;
-
+ 
     for (j=0;j<DIMENSION;j++) {
         direction[j]/= (q1 == 0 ? 1:q1) ;
             if (direction[j]>=1.0001)
@@ -305,17 +299,17 @@ double reconstruct(
     if (*step !=0)
         *step*=q1/q;
 
-    for (i=0;i<numEntries;i++)
-            for (j=0;j<DIMENSION;j++)
+    for (i=0;i<numEntries;i++) 
+            for (j=0;j<DIMENSION;j++) 
                 out[i][j]=mean[j]+direction[j]* (*step) *(index[i]-s);
 
     // normalize direction for output
-
+  
     return totalError(data,out,numEntries);
 }
 
-double reconstruct_new(
-    double data[MAX_ENTRIES][DIMENSION],
+double reconstruct_new( 
+    double data[MAX_ENTRIES][DIMENSION], 
     int numEntries, int index[MAX_ENTRIES],
     double out[MAX_ENTRIES][DIMENSION],int ns,
     double direction [DIMENSION],double *step
@@ -335,24 +329,24 @@ double reconstruct_new(
         index_expand (index, numEntries, MAX_CLUSTERS);
 
     for (j=0;j<DIMENSION;j++) {
-        for (mean[j]=k=0;k<numEntries;k++)
+        for (mean[j]=k=0;k<numEntries;k++) 
             mean[j]+=data[k][j];
         mean[j]/=(double) numEntries;
     }
 
-
-    for (k=0;k<numEntries;k++) {
+    
+    for (k=0;k<numEntries;k++) { 
         s+= index[k];
         t+= index[k]*index[k];
     }
 
-    double q1 =0;
+    double q1 =0; 
 
     for (j=0;j<DIMENSION;j++) {
         direction[j]=0;
-        for (k=0;k<numEntries;k++)
+        for (k=0;k<numEntries;k++) 
             direction[j]+=(data[k][j]-mean[j])*index[k];
-
+        
         q+= direction[j]* direction[j];
         q1 = fabs(direction[j]) > q1 ? fabs(direction[j]) : q1;
 
@@ -363,46 +357,46 @@ double reconstruct_new(
     t = t - s * s * (double) numEntries;
 
     t = (t == 0 ? 0. : 1/t);
-
+    
     q=sqrt(q);
 
     *step=t*q;
-
+ 
 
     for (j=0;j<DIMENSION;j++) {
         direction[j]/= (q1 == 0 ? 1:q1) ;
             if (direction[j]>=1.0001)
                 printf("error\n");
     }
-
+    
     double step_l2=*step;
 
     if (*step !=0)
         *step*=q1/q;
 
-    double step_li=*step;
+    double step_li=*step;    
 
     sHisto ( index,  numEntries,  step_l2,  step_li);
-    histoStep (step_l2, step_li);
+    histoStep (step_l2, step_li);    
 
-    for (i=0;i<numEntries;i++)
-            for (j=0;j<DIMENSION;j++)
+    for (i=0;i<numEntries;i++) 
+            for (j=0;j<DIMENSION;j++) 
                 out[i][j]=mean[j]+direction[j]* (*step) *(index[i]-s);
 
     return totalError(data,out,numEntries);
 }
 
 void shake(
-    double data[MAX_ENTRIES][DIMENSION],
+    double data[MAX_ENTRIES][DIMENSION], 
     int numEntries, double idx_mean,
-
+    
     double dir_r[4][DIMENSION],
-    double mean_r[8][DIMENSION],
-    double step_r[2],
+    double mean_r[8][DIMENSION], 
+    double step_r[2], 
 
     int index_r[MAX_ENTRIES],
     double out [MAX_ENTRIES][DIMENSION])
-
+ 
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -423,7 +417,7 @@ void shake(
     for (p=0;p<4;p++)
         for (q=0;q<8;q++)
             for (r=0;r<2;r++) {
-                // generate sequence
+                // generate sequence 
                 for (i=0;i<MAX_CLUSTERS;i++) {
                     t2[i] = 0;
                     for (j=0;j<DIMENSION;j++) {
@@ -435,11 +429,11 @@ void shake(
                 double ea = 0;
 
                 for (i=0; i < numEntries;i++) {
-                    double e = t2[0]+data[i][0]*c[0][0]+data[i][1]*c[0][1]+data[i][2]*c[0][2];
+                    double e = t2[0]+data[i][0]*c[0][0]+data[i][1]*c[0][1]+data[i][2]*c[0][2]; 
                     index_t[i]=0;
 
                     for (k=1;k<MAX_CLUSTERS;k++) {
-                        double t = t2[0]+data[i][0]*c[k][0]+data[i][1]*c[k][1]+data[i][2]*c[k][2];
+                        double t = t2[0]+data[i][0]*c[k][0]+data[i][1]*c[k][1]+data[i][2]*c[k][2]; 
 
                         if (t<e) {
                             index_t[i]=i;
@@ -454,22 +448,22 @@ void shake(
                         index_r[i]=index_t[i];
                 }
             }
-            for (i=0; i <numEntries;i++)
-                for (j=0;j<DIMENSION;j++)
+            for (i=0; i <numEntries;i++) 
+                for (j=0;j<DIMENSION;j++) 
                     out[i][j]=c[index_r[i]][j];
 }
 
 
 void shake_d_s(
-    double data[MAX_ENTRIES][DIMENSION],
+    double data[MAX_ENTRIES][DIMENSION], 
     int numEntries, double idx_mean,
-
+    
     double dir_step_r[2][4][DIMENSION],
-    double mean_r[8][DIMENSION],
+    double mean_r[8][DIMENSION], 
 
     int index_r[MAX_ENTRIES],
     double out [MAX_ENTRIES][DIMENSION])
-
+ 
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -492,7 +486,7 @@ void shake_d_s(
     for (p=0;p<4;p++)
         for (q=0;q<8;q++)
             for (r=0;r<2;r++) {
-                // generate sequence
+                // generate sequence 
                 for (i=0;i<MAX_CLUSTERS_1_16;i++) {
                     t2[i] = 0;
                     for (j=0;j<DIMENSION;j++) {
@@ -508,11 +502,11 @@ void shake_d_s(
                 ea=0;
 
                 for (i=0; i < numEntries;i++) {
-                    double e = t2[0]-data[i][0]*c[0][0]-data[i][1]*c[0][1]-data[i][2]*c[0][2];
+                    double e = t2[0]-data[i][0]*c[0][0]-data[i][1]*c[0][1]-data[i][2]*c[0][2]; 
                     index_t[i]=0;
 
                     for (k=1;k<MAX_CLUSTERS_1_16;k++) {
-                        double t = t2[k]-data[i][0]*c[k][0]-data[i][1]*c[k][1]-data[i][2]*c[k][2];
+                        double t = t2[k]-data[i][0]*c[k][0]-data[i][1]*c[k][1]-data[i][2]*c[k][2]; 
 
                         if (t<e) {
                             index_t[i]=k;
@@ -527,7 +521,7 @@ void shake_d_s(
 
                     for (i1=0; i1 <numEntries;i1++) {
                         index_r[i1]=index_t[i1];
-                        for (j1=0;j1<DIMENSION;j1++)
+                        for (j1=0;j1<DIMENSION;j1++) 
                             out[i1][j1]=c[index_r[i1]][j1];
                     }
 
@@ -537,15 +531,15 @@ void shake_d_s(
 
 
 void shake_d_s_s(
-    double data[MAX_ENTRIES][DIMENSION],
+    double data[MAX_ENTRIES][DIMENSION], 
     int numEntries, int numClusters, double idx_mean,
-
+    
     double dir_step_r[2][4][DIMENSION],
-    double mean_step_r[2][8][DIMENSION],
+    double mean_step_r[2][8][DIMENSION], 
 
     int index_r[MAX_ENTRIES],
     double out [MAX_ENTRIES][DIMENSION])
-
+ 
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -566,7 +560,7 @@ void shake_d_s_s(
     for (p=0;p<4;p++)
         for (q=0;q<8;q++)
             for (r=0;r<2;r++) {
-                // generate sequence
+                // generate sequence 
                 for (i=0;i<numClusters;i++) {
                     t2[i] = 0;
                     for (j=0;j<DIMENSION;j++) {
@@ -581,11 +575,11 @@ void shake_d_s_s(
                 ea=0;
 
                 for (i=0; i < numEntries;i++) {
-                    double e = t2[0]-data[i][0]*c[0][0]-data[i][1]*c[0][1]-data[i][2]*c[0][2];
+                    double e = t2[0]-data[i][0]*c[0][0]-data[i][1]*c[0][1]-data[i][2]*c[0][2]; 
                     index_t[i]=0;
 
                     for (k=1;k<numClusters;k++) {
-                        double t = t2[k]-data[i][0]*c[k][0]-data[i][1]*c[k][1]-data[i][2]*c[k][2];
+                        double t = t2[k]-data[i][0]*c[k][0]-data[i][1]*c[k][1]-data[i][2]*c[k][2]; 
 
                         if (t<e) {
                             index_t[i]=k;
@@ -600,7 +594,7 @@ void shake_d_s_s(
 
                     for (i1=0; i1 <numEntries;i1++) {
                         index_r[i1]=index_t[i1];
-                        for (j1=0;j1<DIMENSION;j1++)
+                        for (j1=0;j1<DIMENSION;j1++) 
                             out[i1][j1]=c[index_r[i1]][j1];
                     }
 
@@ -616,25 +610,25 @@ void mds (
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif
-    int j,k;
+    int j,k; 
     double t=0,s=0,q1=0;
 
     for (j=0;j<DIMENSION;j++) {
-        for (mean[j]=k=0;k<numEntries;k++)
+        for (mean[j]=k=0;k<numEntries;k++) 
             mean[j]+=data[k][j];
         mean[j]/=(double) numEntries;
     }
-
-    for (k=0;k<numEntries;k++) {
+    
+    for (k=0;k<numEntries;k++) { 
         s+= index[k];
         t+= index[k]*index[k];
     }
 
     for (j=0;j<DIMENSION;j++) {
         direction[j]=0;
-        for (k=0;k<numEntries;k++)
+        for (k=0;k<numEntries;k++) 
             direction[j]+=(data[k][j]-mean[j])*index[k];
-
+        
         q1 = fabs(direction[j]) > q1 ? fabs(direction[j]) : q1;
 
     }
@@ -644,7 +638,7 @@ void mds (
     t = (t == 0 ? 0. : 1/t);
 
     *step=t*q1;
-
+ 
     for (j=0;j<DIMENSION;j++) {
         direction[j]/= (q1 == 0 ? 1:q1) ;
             if (direction[j]>=1.0001)
@@ -660,7 +654,7 @@ void mds_d (
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif
-    int i,j,k;
+    int i,j,k; 
     double t=0,s=0,q1=0;
     double cc[MAX_CLUSTERS_BIG][DIMENSION];
     int cnt[MAX_CLUSTERS_BIG];
@@ -668,37 +662,37 @@ void mds_d (
 
     for (i=0;i<MAX_CLUSTERS_BIG;i++){
         cnt[i]=0;
-        for (j=0;j<DIMENSION;j++)
+        for (j=0;j<DIMENSION;j++) 
             cc[i][j]=0;
     }
-
+    
     for (k=0;k<numEntries;k++) {
         cnt[index[k]]++;
         s+= index[k];
         t+= index[k]*index[k];
-        for (j=0;j<DIMENSION;j++)
+        for (j=0;j<DIMENSION;j++) 
             cc[index[k]][j]+=data[k][j];
     }
 
-    for (i=0;i<MAX_CLUSTERS_BIG;i++)
-        if (cnt[i])
+    for (i=0;i<MAX_CLUSTERS_BIG;i++) 
+        if (cnt[i]) 
             for (j=0;j<DIMENSION;j++) {
                 cc[i][j]/=(double)cnt[i];
                 cc[i][j]=floor(cc[i][j]+0.5);    // target discrete color
             }
 
     for (j=0;j<DIMENSION;j++) {
-        for (mean[j]=i=0;i<MAX_CLUSTERS_BIG;i++)
+        for (mean[j]=i=0;i<MAX_CLUSTERS_BIG;i++) 
             mean[j]+=cc[i][j]*(double)cnt[i];
         mean[j]/=(double) numEntries;
     }
-
-
+    
+    
     for (j=0;j<DIMENSION;j++) {
         direction[j]=0;
-        for (i=0;i<MAX_CLUSTERS_BIG;i++)
-            direction[j]+=(cc[i][j]-mean[j])*(double)cnt[i]*(double)i;
-
+        for (i=0;i<MAX_CLUSTERS_BIG;i++) 
+            direction[j]+=(cc[i][j]-mean[j])*(double)cnt[i]*(double)i; 
+        
         q1 = fabs(direction[j]) > q1 ? fabs(direction[j]) : q1;
 
     }
@@ -708,21 +702,21 @@ void mds_d (
     t = (t == 0 ? 0. : 1/t);
 
     *step=t*q1;
-
+ 
     for (j=0;j<DIMENSION;j++) {
         direction[j]/= (q1 == 0 ? 1:q1) ;
             if (direction[j]>=1.0001)
                 printf("error\n");
     }
 }
-
+    
 //mean rounding setup
-// cube model
+// cube model 
 void setMean(
-      double mean[DIMENSION],
-      double mr[8][DIMENSION],
+      double mean[DIMENSION],  
+      double mr[8][DIMENSION], 
       int div
-      )
+      ) 
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -738,7 +732,7 @@ void setMean(
     }
     sdiv = div;
 
-    // bcc*2 and cartesian; starting points for fcc
+    // bcc*2 and cartesian; starting points for fcc 
     mr[4][0]=(mr[0][0]=floor(mean[0]/idiv))+1.;
     if (sdiv==4){ // switch to search in bcc*2
         for (k=0;k<5;k+=4) {
@@ -756,12 +750,12 @@ void setMean(
         mr[4][1]=mr[0][1]=floor(mean[1]/idiv);
         mr[4][2]=mr[0][2]=floor(mean[2]/idiv);
     }
-
+        
     // search in fcc
     for (k=0;k<5;k+=4) {
         if (sdiv==2){
             if ((int) floor(mr[k][0]+mr[k][1]+mr[k][2] +0.5) & 1) {
-                //latice point, leave [0] be,
+                //latice point, leave [0] be, 
                 if (-mr[k][1]+mr[k][2] < -(mean[1]/idiv)+(mean[2]/idiv)){
                     // [-1,1]
                     mr[k][1]--;
@@ -771,13 +765,13 @@ void setMean(
                 if (mr[k][1]+ 1 + mr[k][2] < (mean[1]/idiv)+(mean[2]/idiv))
                     // get to [0,1] and go right
                     mr[k][2]++;
-                else
+                else 
                     // get to [-1,0] and go right
                     mr[k][1]--;
             }
             }
         }
-
+        
 
         if (sdiv==2) {
             mr[1][0] =mr[0][0];
@@ -803,7 +797,7 @@ void setMean(
             mr[7][0] =mr[4][0];
             mr[7][1] =mr[4][1]+1.;
             mr[7][2] =mr[4][2];
-        }
+        } 
         else {
             mr[1][0] =mr[0][0];
             mr[1][1] =mr[0][1]+1.;
@@ -829,13 +823,13 @@ void setMean(
             mr[7][0] =mr[4][0];
             mr[7][1] =mr[4][1]+1.;
             mr[7][2] =mr[4][2]+1.;
-        }
-
+        } 
+    
         if (sdiv==4) // search in bcc*2
             for (k=0;k<8;k++)
-                for (j=1;j<DIMENSION;j++)
+                for (j=1;j<DIMENSION;j++) 
                     mr[k][j]*=2;
-
+    
         for (k=0;k<8;k++)
                 for (j=0;j<DIMENSION;j++) {
                     mr[k][j]*=idiv;
@@ -845,8 +839,8 @@ void setMean(
 
 
 
-double reconstruct_rnd(
-    double data[MAX_ENTRIES][DIMENSION],
+double reconstruct_rnd( 
+    double data[MAX_ENTRIES][DIMENSION], 
     int numEntries, int index_[MAX_ENTRIES],
     double out[MAX_ENTRIES][DIMENSION],int ns,
     double direction [DIMENSION],double *step
@@ -861,7 +855,7 @@ static int code1[NP1][3]=    // step, mean div,diamond
 GOOD
 */
 {
-{7, 1, 2},   {11, 1, 2}, {15, 1, 2}, {19, 1, 4},
+{7, 1, 2},   {11, 1, 2}, {15, 1, 2}, {19, 1, 4}, 
 {24, 1, 4},  {29, 1, 4}, {34, 1, 4}, {40, 1, 4},
 {46, 1, 4}, {53, 1, 4},  {60, 2, 1},
 {67, 2, 1},  {75, 2, 1}, {83, 2, 1}, {92, 2, 2}, {101, 2, 2}, {111, 2, 2}, {122, 2, 2}, {133, 2, 2}, {145, 2, 2}, {158, 2, 2},
@@ -886,7 +880,7 @@ static int code2[NP2][3]=    // step, mean div,diamond
         code = code2;
         dir_limit=dir_limit2;
         np=NP2;
-    }
+    } 
     else {
         code = code1;
         dir_limit=dir_limit1;
@@ -908,20 +902,20 @@ static int code2[NP2][3]=    // step, mean div,diamond
             bd =td;
         }
         printf("Max divider %d \n",bd);
-        for (s=i=0;i<np;i++)
+        for (s=i=0;i<np;i++) 
             s+= bd /(code[i][1]*code[i][1]*code[i][1] * code[i][2]);
         printf("Soft estimate; position capacity (scaled by max divider) %d, direction %d \n",
             s,24*dir_limit*dir_limit+2);
 
-        for (s=i=0;i<np;i++)
+        for (s=i=0;i<np;i++) 
             s+= bd /(code[i][1]*code[i][1]*code[i][1] * code[i][2]) *
             (dir_limit < code[i][0] ? 24*dir_limit*dir_limit+2 : 24*code[i][0]*code[i][0]+2);
 
         printf("Tight estimate, all+divider %d, bits %f;\n sets left total %d, full sets left assuming full directions %d\n",
-            s,log((double)s)/log(2.),
-            (int) floor(pow(2., ceil(log((double)s)/log(2.)))+0.5)-s,
-            ((int) floor(pow(2., ceil(log((double)s)/log(2.)))+0.5)-s) /(24*dir_limit*dir_limit+2 )
-
+            s,log((double)s)/log(2.), 
+            (int) floor(pow(2., ceil(log((double)s)/log(2.)))+0.5)-s,  
+            ((int) floor(pow(2., ceil(log((double)s)/log(2.)))+0.5)-s) /(24*dir_limit*dir_limit+2 )  
+            
             );
         double b =log((double)s)/log(2.)+24;
 
@@ -931,7 +925,7 @@ static int code2[NP2][3]=    // step, mean div,diamond
         }
 
         printf("Tight estimate, TOTAL  %g\n",b);
-
+        
     }
 
 
@@ -968,31 +962,31 @@ static int code2[NP2][3]=    // step, mean div,diamond
     double idx_mean;
     mds_d(data, numEntries, index, mean, &idx_mean, direction , step);
 
-    double step_li=*step;
+    double step_li=*step;    
 
     static double dir_r[4][DIMENSION];
 
     static double dir_step_r[2][4][DIMENSION]; // alternative for dir_r
 
-    static double mean_r[8][DIMENSION];
-    static double mean_step_r[2][8][DIMENSION];
-    static double step_r[2];
+    static double mean_r[8][DIMENSION]; 
+    static double mean_step_r[2][8][DIMENSION]; 
+    static double step_r[2]; 
 
     if (step_li > 200000 ) {// bypass {
         NShakeCnt+=numEntries;
-        for (i=0;i<numEntries;i++)
-                for (j=0;j<DIMENSION;j++)
+        for (i=0;i<numEntries;i++) 
+                for (j=0;j<DIMENSION;j++) 
                     out[i][j]=mean[j]+direction[j]* (*step) *(index[i]-idx_mean);
            return totalError(data,out,numEntries);
     }
 #define STEP_FACTOR 7.
 
-    if (ns==1) {
+    if (ns==1) { 
 
 
 #define STEP_DIV 1.
 #define MEAN_DIV 1.
-        for (j=0;j<DIMENSION;j++)
+        for (j=0;j<DIMENSION;j++) 
             mean_step_r[0][0][j]=mean_step_r[1][0][j]=mean_r[0][j]=floor(mean[j]/MEAN_DIV)*MEAN_DIV;
 
         int ii[3];
@@ -1021,11 +1015,11 @@ static int code2[NP2][3]=    // step, mean div,diamond
             printf("dir mormalizing error");
         }
 
-        for (i=0;i<2;i++)
+        for (i=0;i<2;i++) 
             for (ii[0]=0;ii[0]<2;ii[0]++)
                 for (ii[1]=0;ii[1]<2;ii[1]++)
-                    for (j=0;j<DIMENSION;j++)
-                        dir_step_r[i][ii[0]+2*ii[1]][j] =
+                    for (j=0;j<DIMENSION;j++) 
+                        dir_step_r[i][ii[0]+2*ii[1]][j] = 
                         (j == mc) ? direction[j]*(step_li+i)/STEP_FACTOR : ((floor(direction[j]*(step_li+i))) + (j< mc ? ii[j] : ii[j-1]))/STEP_FACTOR;
                 shake_d_s(data, numEntries, idx_mean,
             dir_step_r, mean_r, index_r, out1 );
@@ -1041,11 +1035,11 @@ static int code2[NP2][3]=    // step, mean div,diamond
         i--;
 
         //"low step"
-        // bcc*2 and cartesian; starting points for fcc
-        for (j=0;j<2;j++)
+        // bcc*2 and cartesian; starting points for fcc 
+        for (j=0;j<2;j++) 
             setMean(mean, mean_step_r[j], code[i+j][1]*code[i+j][1]*code[i+j][1]*code[i+j][2]);
 
-        step_li=code[i][0];
+        step_li=code[i][0];    
 
         double df[2];
 
@@ -1065,11 +1059,11 @@ static int code2[NP2][3]=    // step, mean div,diamond
         }
 
         int ii[3];
-        for (k=0;k<2;k++)
+        for (k=0;k<2;k++) 
             for (ii[0]=0;ii[0]<2;ii[0]++)
                 for (ii[1]=0;ii[1]<2;ii[1]++)
-                    for (j=0;j<DIMENSION;j++)
-                        dir_step_r[k][ii[0]+2*ii[1]][j] =
+                    for (j=0;j<DIMENSION;j++) 
+                        dir_step_r[k][ii[0]+2*ii[1]][j] = 
                         (j == mc) ? direction[j]*(double)code[i+k][0] /STEP_FACTOR:
         (floor(direction[j]*df[k]) + (j< mc ? ii[j] : ii[j-1]) )/df[k]*(double)code[i+k][0]/STEP_FACTOR ;
                 shake_d_s_s(data, numEntries, MAX_CLUSTERS, idx_mean ,
@@ -1090,7 +1084,7 @@ static int code2[NP2][3]=    // step, mean div,diamond
             index[i]=index_r[i];
 
         for (i=0;i<numEntries;i++)
-            for (j=0;j<DIMENSION;j++)
+            for (j=0;j<DIMENSION;j++) 
                 out [i][j]=out1[i][j];
         err=er1;
     }
@@ -1099,8 +1093,8 @@ static int code2[NP2][3]=    // step, mean div,diamond
     return totalError(data,out,numEntries);
 };
 
-double reconstruct_rnd_mean_clip(
-    double data[MAX_ENTRIES][DIMENSION],
+double reconstruct_rnd_mean_clip( 
+    double data[MAX_ENTRIES][DIMENSION], 
     int numEntries, int index_[MAX_ENTRIES],
     double out[MAX_ENTRIES][DIMENSION],int ns,
     double direction [DIMENSION],
@@ -1117,7 +1111,7 @@ static int code1[NP1][3]=    // step, mean div,diamond
 GOOD
 */
 {
-{7, 1, 2},   {11, 1, 2}, {15, 1, 2}, {19, 1, 4},
+{7, 1, 2},   {11, 1, 2}, {15, 1, 2}, {19, 1, 4}, 
 {24, 1, 4},  {29, 1, 4}, {34, 1, 4}, {40, 1, 4},
 {46, 1, 4}, {53, 1, 4},  {60, 2, 1},
 {67, 2, 1},  {75, 2, 1}, {83, 2, 1}, {92, 2, 2}, {101, 2, 2}, {111, 2, 2}, {122, 2, 2}, {133, 2, 2}, {145, 2, 2}, {158, 2, 2},
@@ -1143,7 +1137,7 @@ static int code2[NP2][3]=    // step, mean div,diamond
         code = code2;
         dir_limit=dir_limit2;
         np=NP2;
-    }
+    } 
     else {
         code = code1;
         dir_limit=dir_limit1;
@@ -1165,20 +1159,20 @@ static int code2[NP2][3]=    // step, mean div,diamond
             bd =td;
         }
         printf("Max divider %d \n",bd);
-        for (s=i=0;i<np;i++)
+        for (s=i=0;i<np;i++) 
             s+= bd /(code[i][1]*code[i][1]*code[i][1] * code[i][2]);
         printf("Soft estimate; position capacity (scaled by max divider) %d, direction %d \n",
             s,24*dir_limit*dir_limit+2);
 
-        for (s=i=0;i<np;i++)
+        for (s=i=0;i<np;i++) 
             s+= bd /(code[i][1]*code[i][1]*code[i][1] * code[i][2]) *
             (dir_limit < code[i][0] ? 24*dir_limit*dir_limit+2 : 24*code[i][0]*code[i][0]+2);
 
         printf("Tight estimate, all+divider %d, bits %f;\n sets left total %d, full sets left assuming full directions %d\n",
-            s,log((double)s)/log(2.),
-            (int) floor(pow(2., ceil(log((double)s)/log(2.)))+0.5)-s,
-            ((int) floor(pow(2., ceil(log((double)s)/log(2.)))+0.5)-s) /(24*dir_limit*dir_limit+2 )
-
+            s,log((double)s)/log(2.), 
+            (int) floor(pow(2., ceil(log((double)s)/log(2.)))+0.5)-s,  
+            ((int) floor(pow(2., ceil(log((double)s)/log(2.)))+0.5)-s) /(24*dir_limit*dir_limit+2 )  
+            
             );
         double b =log((double)s)/log(2.)+24;
 
@@ -1188,7 +1182,7 @@ static int code2[NP2][3]=    // step, mean div,diamond
         }
 
         printf("Tight estimate, TOTAL  %g\n",b);
-
+        
     }
 
 
@@ -1226,16 +1220,16 @@ static int code2[NP2][3]=    // step, mean div,diamond
 
     mds(data, numEntries, index, mean, &idx_mean, direction , step);
 
-    double s=0,t=0, q=0, q1 =0;
+    double s=0,t=0, q=0, q1 =0; 
 
     for (j=0;j<DIMENSION;j++) {
-        for (mean[j]=k=0;k<numEntries;k++)
+        for (mean[j]=k=0;k<numEntries;k++) 
             mean[j]+=data[k][j];
         mean[j]/=(double) numEntries;
     }
 
-
-    for (k=0;k<numEntries;k++) {
+    
+    for (k=0;k<numEntries;k++) { 
         s+= index[k];
         t+= index[k]*index[k];
     }
@@ -1243,9 +1237,9 @@ static int code2[NP2][3]=    // step, mean div,diamond
 
     for (j=0;j<DIMENSION;j++) {
         direction[j]=0;
-        for (k=0;k<numEntries;k++)
+        for (k=0;k<numEntries;k++) 
             direction[j]+=(data[k][j]-mean[j])*index[k];
-
+        
         q+= direction[j]* direction[j];
         q1 = fabs(direction[j]) > q1 ? fabs(direction[j]) : q1;
 
@@ -1256,11 +1250,11 @@ static int code2[NP2][3]=    // step, mean div,diamond
     t = t - s * s * (double) numEntries;
 
     t = (t == 0 ? 0. : 1/t);
-
+    
     q=sqrt(q);
 
     *step=t*q;
-
+ 
 
     for (j=0;j<DIMENSION;j++) {
         direction[j]/= (q1 == 0 ? 1:q1) ;
@@ -1271,31 +1265,31 @@ static int code2[NP2][3]=    // step, mean div,diamond
     if (*step !=0)
         *step*=q1/q;
 
-    double step_li=*step;
+    double step_li=*step;    
 
     static double dir_r[4][DIMENSION];
 
     static double dir_step_r[2][4][DIMENSION]; // alternative for dir_r
 
-    static double mean_r[8][DIMENSION];
-    static double mean_step_r[2][8][DIMENSION];
-    static double step_r[2];
+    static double mean_r[8][DIMENSION]; 
+    static double mean_step_r[2][8][DIMENSION]; 
+    static double step_r[2]; 
 
     if (step_li > 200000 ) {// bypass {
         NShakeCnt+=numEntries;
-        for (i=0;i<numEntries;i++)
-                for (j=0;j<DIMENSION;j++)
+        for (i=0;i<numEntries;i++) 
+                for (j=0;j<DIMENSION;j++) 
                     out[i][j]=mean[j]+direction[j]* (*step) *(index[i]-idx_mean);
            return totalError(data,out,numEntries);
     }
 #define STEP_FACTOR 7.
 
-    if (ns==1) {
+    if (ns==1) { 
 
 
 #define STEP_DIV 1.
 #define MEAN_DIV 1.
-        for (j=0;j<DIMENSION;j++)
+        for (j=0;j<DIMENSION;j++) 
             mean_step_r[0][0][j]=mean_step_r[1][0][j]=mean_r[0][j]=floor(mean[j]/MEAN_DIV)*MEAN_DIV;
 
         int ii[3];
@@ -1307,7 +1301,7 @@ static int code2[NP2][3]=    // step, mean div,diamond
                     for (j=0;j<DIMENSION;j++)
                     mean_step_r[0][ii[0]+ii[1]*2+ii[2]*4][j]=mean_step_r[1][ii[0]+ii[1]*2+ii[2]*4][j]=
                         mean_r[ii[0]+ii[1]*2+ii[2]*4][j]=mean_r[0][j]+MEAN_DIV*ii[j] >255 ? 255:mean_r[0][j]+MEAN_DIV*ii[j];
-
+        
         step_li = floor((step_li*STEP_FACTOR - STEP_FACTOR)/STEP_DIV)*STEP_DIV+STEP_FACTOR;
 
         step_li = step_li < STEP_FACTOR ? STEP_FACTOR :step_li;
@@ -1326,11 +1320,11 @@ static int code2[NP2][3]=    // step, mean div,diamond
             printf("dir mormalizing error");
         }
 
-        for (i=0;i<2;i++)
+        for (i=0;i<2;i++) 
             for (ii[0]=0;ii[0]<2;ii[0]++)
                 for (ii[1]=0;ii[1]<2;ii[1]++)
-                    for (j=0;j<DIMENSION;j++)
-                        dir_step_r[i][ii[0]+2*ii[1]][j] =
+                    for (j=0;j<DIMENSION;j++) 
+                        dir_step_r[i][ii[0]+2*ii[1]][j] = 
                         (j == mc) ? direction[j]*(step_li+STEP_DIV*i)/STEP_FACTOR : ((floor(direction[j]*(step_li+STEP_DIV*i))) + (j< mc ? ii[j] : ii[j-1]))/STEP_FACTOR;
         shake_d_s_s(data, numEntries,  MAX_CLUSTERS, idx_mean ,
             dir_step_r, mean_step_r, index_r, out1 );
@@ -1348,7 +1342,7 @@ static int code2[NP2][3]=    // step, mean div,diamond
 
         //"low step"
 
-        // bcc*2 and cartesian; starting points for fcc
+        // bcc*2 and cartesian; starting points for fcc 
         for (j=0;j<2;j++) {
             for (j=0;j<DIMENSION;j++)
                 mean[j]-=in_mean[j];
@@ -1360,7 +1354,7 @@ static int code2[NP2][3]=    // step, mean div,diamond
                     mean_step_r[j][k][j]+=in_mean[j];
         }
 
-        step_li=code[i][0];
+        step_li=code[i][0];    
 
         double df[2];
 
@@ -1381,11 +1375,11 @@ static int code2[NP2][3]=    // step, mean div,diamond
         }
 
         int ii[3];
-        for (k=0;k<2;k++)
+        for (k=0;k<2;k++) 
             for (ii[0]=0;ii[0]<2;ii[0]++)
                 for (ii[1]=0;ii[1]<2;ii[1]++)
-                    for (j=0;j<DIMENSION;j++)
-                        dir_step_r[k][ii[0]+2*ii[1]][j] =
+                    for (j=0;j<DIMENSION;j++) 
+                        dir_step_r[k][ii[0]+2*ii[1]][j] = 
                         (j == mc) ? direction[j]*(double)code[i+k][0] /STEP_FACTOR:
         (floor(direction[j]*df[k]) + (j< mc ? ii[j] : ii[j-1]) )/df[k]*(double)code[i+k][0]/STEP_FACTOR ;
 
@@ -1406,7 +1400,7 @@ static int code2[NP2][3]=    // step, mean div,diamond
             index[i]=index_r[i];
 
         for (i=0;i<numEntries;i++)
-            for (j=0;j<DIMENSION;j++)
+            for (j=0;j<DIMENSION;j++) 
                 out [i][j]=out1[i][j];
         err=er1;
     }
@@ -1424,7 +1418,7 @@ inline int getns(int partition[MAX_ENTRIES], int numEntries) {
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif
-    int i,c;
+    int i,c; 
     int id[MAX_ENTRIES];
 
     for (i=0;i<MAX_SUBSETS; i++)
@@ -1440,9 +1434,9 @@ inline int getns(int partition[MAX_ENTRIES], int numEntries) {
     return (c);
 }
 
-int block_mean_rnd(
-    double data_[MAX_ENTRIES][DIMENSION],
-    int numEntries,
+int block_mean_rnd( 
+    double data_[MAX_ENTRIES][DIMENSION], 
+    int numEntries, 
     int partition[MAX_ENTRIES],
     int ns,
 
@@ -1452,7 +1446,7 @@ int block_mean_rnd(
     double ni[MAX_SUBSETS]  // norm
 
 
-    )
+    ) 
     {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -1460,8 +1454,8 @@ int block_mean_rnd(
         int i,j,k,l;
 
 
-        double n [MAX_SUBSETS];  // number per set
-
+        double n [MAX_SUBSETS];  // number per set    
+    
         if (ns !=3)
             printf("ns problems\n");
 
@@ -1490,7 +1484,7 @@ int block_mean_rnd(
 
         for (i=0;i<ns;i++) {
             for (j=0;j<DIMENSION;j++)
-                if (n[i]!=0)
+                if (n[i]!=0) 
                     mean[i][j]/=(double) n[i];
         }
 
@@ -1506,7 +1500,7 @@ int block_mean_rnd(
         };
 
 
-        for (l=0;l<ns;l++)
+        for (l=0;l<ns;l++) 
             for (i=l+1;i<ns;i++) {
                 if (ni[i] < ni[l]) {
                     double t = ni[l]; ni[l]=ni[i]; ni[i]=t;
@@ -1525,15 +1519,15 @@ int block_mean_rnd(
         return(ni[1] < 16. );
 }
 
-double ep_shaker(
+double ep_shaker( 
 #define EP_CLUMP
 
-    double data[MAX_ENTRIES][DIMENSION],
+    double data[MAX_ENTRIES][DIMENSION], 
     int numEntries, int index_[MAX_ENTRIES],
     double out[MAX_ENTRIES][DIMENSION],int ns,
     double direction [DIMENSION],double *step,
     int lock
-    )
+    ) 
 
 {
 #ifdef USE_DBGTRACE
@@ -1543,7 +1537,7 @@ double ep_shaker(
     int i,j,k;
     double mean[DIMENSION];
     int index[MAX_ENTRIES];
-
+    
     int maxTry=5;
 
     int Mi=0;
@@ -1555,24 +1549,24 @@ double ep_shaker(
     bits= (ns==1?0 :(ns==2?2:4));
 
 
-    for (k=0;k<numEntries;k++)
+    for (k=0;k<numEntries;k++) 
         index[k]=index_[k];
 
-    for (k=0;k<numEntries;k++)
+    for (k=0;k<numEntries;k++) 
         if (index[k]>=Mi_) {
             printf("index error\n");
-            for (i=0;i<numEntries;i++)
+            for (i=0;i<numEntries;i++) 
                 index[i]=0;
             // work-around for constant block quantizer bug
             break;
         }
 
 
-    // run on actually used exreme points
+    // run on actually used exreme points  
     index_collapse (index, numEntries);
 
     int done;
-    int change;
+    int change;  
     int start=1;
     int better;
 
@@ -1587,19 +1581,19 @@ double ep_shaker(
     do{
 
     for (j=0;j<DIMENSION;j++) {
-        for (mean[j]=k=0;k<numEntries;k++)
+        for (mean[j]=k=0;k<numEntries;k++) 
             mean[j]+=data[k][j];
         mean[j]/=(double) numEntries;
     }
+   
 
-
-    if (lock)
+    if (lock) 
         Mi = Mi_-1;
     else
-        for (k=0;k<numEntries;k++)
-            Mi = index[k]>Mi ?  index[k] :Mi;
+        for (k=0;k<numEntries;k++) 
+            Mi = index[k]>Mi ?  index[k] :Mi; 
 
-    for (k=0;k<numEntries;k++) {
+    for (k=0;k<numEntries;k++) { 
         s+= index[k];
         t+= index[k]*index[k];
     }
@@ -1608,9 +1602,9 @@ double ep_shaker(
 
     for (j=0;j<DIMENSION;j++) {
         direction[j]=0;
-        for (k=0;k<numEntries;k++)
+        for (k=0;k<numEntries;k++) 
             direction[j]+=(data[k][j]-mean[j])*index[k];
-
+   
     }
 
     s /= (double) numEntries;
@@ -1631,13 +1625,13 @@ double ep_shaker(
     }
 
     int glue =1;
-    for (j=0;j<DIMENSION;j++)
+    for (j=0;j<DIMENSION;j++) 
         glue = glue && (m[j]==M[j]);
 
     if (glue) {
         if (start ){
-        for (i=0;i<numEntries;i++)
-            for (j=0;j<DIMENSION;j++)
+        for (i=0;i<numEntries;i++) 
+            for (j=0;j<DIMENSION;j++) 
                 out[i][j]=m[j];
         return  totalError(data,out,numEntries);
         }
@@ -1648,17 +1642,17 @@ double ep_shaker(
     double pp[64][DIMENSION];
     double c[MAX_ENTRIES][64][DIMENSION];
 
-    for (i=0;i<=Mi;i++)
+    for (i=0;i<=Mi;i++) 
         for (j=0;j<DIMENSION;j++) {
             pp[i][j] = floor(m[j]+(M[j]-m[j])* (i/ (double) Mi) + 0.5);
             pp[i][j]= pp[i][j] > 0 ? pp[i][j] : 0 ;
             pp[i][j]= pp[i][j] < 255. ? pp[i][j] : 255. ;
         }
 
+    
 
-
-    for (k=0;k<numEntries;k++)
-        for (i=0;i<=Mi;i++)
+    for (k=0;k<numEntries;k++) 
+        for (i=0;i<=Mi;i++) 
             for (j=0;j<DIMENSION;j++) {
                 double t1=(data[k][j]-pp[i][j]);
                 c[k][i][j]=t1*t1;
@@ -1684,8 +1678,8 @@ double ep_shaker(
         ma+=t1;
     }
     mag=ma;
-    for (k=0;k<numEntries;k++) {
-        for (j=0;j<DIMENSION;j++)
+    for (k=0;k<numEntries;k++) { 
+        for (j=0;j<DIMENSION;j++) 
             outg[k][j]=pp[idg[k]][j];
     }
 
@@ -1694,16 +1688,16 @@ double ep_shaker(
     int p,q,r;
 
     for (p=1;p<64;p++) {
-        // Gray code increment bit
+        // Gray code increment bit 
         q=p^(p>>1) ^ (p-1)^((p-1)>>1);
         r=p & (-p);
         if (q != r)
             printf("Gray code problem");
 
-
+        
         int di;
 
-        di =  (ss & q) ? -(1<< bits) : (1<<bits);
+        di =  (ss & q) ? -(1<< bits) : (1<<bits); 
         ss = ss ^ q;
         int i0=0,j0=0;
         if (q >=8) {
@@ -1725,7 +1719,7 @@ double ep_shaker(
 #ifdef EP_CLUMP
             M[j0]= M[j0] > 0 ? M[j0] : 0 ;
             M[j0]= M[j0] < 255. ? M[j0] : 255. ;
-#endif
+#endif        
         }
 
         for (i=0;i<=Mi;i++) {
@@ -1736,7 +1730,7 @@ double ep_shaker(
 
 
 
-        for (k=0;k<numEntries;k++)
+        for (k=0;k<numEntries;k++) 
             for (i=0;i<=Mi;i++) {
                     double t1=(data[k][j0]-pp[i][j0]);
                     c[k][i][j0]=t1*t1;
@@ -1759,14 +1753,14 @@ double ep_shaker(
         }
         if (ma < mag) {
             mag=ma;
-            for (k=0;k<numEntries;k++) {
+            for (k=0;k<numEntries;k++) { 
                 idg[k]=id[k];
                 for (j=0;j<DIMENSION;j++) {
                     outg[k][j]=pp[idg[k]][j];
                     mb[j]=m[j];
                     Mb[j]=M[j];
 
-
+    
                 }
             }
         }
@@ -1774,7 +1768,7 @@ double ep_shaker(
     double nf = totalError(data,outg,numEntries);
 
     change =0;
-    for (k=0;k<numEntries;k++) {
+    for (k=0;k<numEntries;k++) { 
         change = change || (index[k]!=idg[k]);
     }
     if (! start) {
@@ -1784,9 +1778,9 @@ double ep_shaker(
         better =1;
 
     if (better) {
-        for (k=0;k<numEntries;k++) {
+        for (k=0;k<numEntries;k++) { 
             index_[k]=index[k]=idg[k];
-            for (j=0;j<DIMENSION;j++)
+            for (j=0;j<DIMENSION;j++) 
                 out[k][j]=outg[k][j];
         }
             of=nf;
@@ -1803,11 +1797,11 @@ int expand (int bits, int v) {
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif
-    return (  v << (8-bits) | v >> (2* bits - 8));
+    return (  v << (8-bits) | v >> (2* bits - 8)); 
 }
 
 
-void getRndRamp(int bits, double v, int size, double out[], int *parity, int range[2], int ep[] ){
+void getRndRamp(int bits, double v, int size, double out[], int *parity, int range[2], int ep[] ){ 
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif
@@ -1832,7 +1826,7 @@ void getRndRamp(int bits, double v, int size, double out[], int *parity, int ran
     for (i=0;i< size;i++){
         if (m >=0){
             if (m < (1<<bits)) {
-                out[i] = m; // no expansion here, as single point bcc handling is outside
+                out[i] = m; // no expansion here, as single point bcc handling is outside 
                 ep[i]=m;
             }
             else if (range[1] > i){
@@ -1846,7 +1840,7 @@ void getRndRamp(int bits, double v, int size, double out[], int *parity, int ran
     }
 }
 
-void getRndRampN(int bits[DIMENSION], double v[DIMENSION], int size, double out[ MAX_SHAKE_SIZE][DIMENSION], int parity[DIMENSION], int range[2][DIMENSION], int ep[ MAX_SHAKE_SIZE][DIMENSION],int bcc)
+void getRndRampN(int bits[DIMENSION], double v[DIMENSION], int size, double out[ MAX_SHAKE_SIZE][DIMENSION], int parity[DIMENSION], int range[2][DIMENSION], int ep[ MAX_SHAKE_SIZE][DIMENSION],int bcc)  
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -1870,7 +1864,7 @@ void getRndRampN(int bits[DIMENSION], double v[DIMENSION], int size, double out[
                 for (i=0;i<size;i++)
                     ep[i][j]=ep_[j][i];
         }
-    }
+    }        
     else if (size ==1) {// m in range
         for (j=0;j<DIMENSION;j++) {
             range[0][j]=0;
@@ -1881,7 +1875,7 @@ void getRndRampN(int bits[DIMENSION], double v[DIMENSION], int size, double out[
             int ok0=1,ok1=1;
             int p = 0;
 
-                for (j=0;j<DIMENSION;j++)
+                for (j=0;j<DIMENSION;j++) 
                     out_[j][1]=out_[j][0]+1;
                 for (j=0;j<DIMENSION;j++) {
                     // partity 0
@@ -1894,10 +1888,10 @@ void getRndRampN(int bits[DIMENSION], double v[DIMENSION], int size, double out[
 
                         ok1 = ok1 && out_[j][(parity[j] ^ 1) & 1 ]<  ((1<<(bits[j]+bcc)));
                 }
-                if (ok0 && ok1 )
-                    if (t0<t1)
+                if (ok0 && ok1 ) 
+                    if (t0<t1) 
                         p=0;
-                    else
+                    else 
                         p=1;
                 else if (ok0)
                     p=0;
@@ -1916,8 +1910,8 @@ void getRndRampN(int bits[DIMENSION], double v[DIMENSION], int size, double out[
         }
         else {
             for (j=0;j<DIMENSION;j++) {
-                if ( out_[j][0] +1 <  ((1<<(bits[j]))) &&  // bcc == 0
-                    (abs(expand(bits[j]+bcc, (int)(out_[j][0]+1 -v[j]))) <
+                if ( out_[j][0] +1 <  ((1<<(bits[j]))) &&  // bcc == 0 
+                    (abs(expand(bits[j]+bcc, (int)(out_[j][0]+1 -v[j]))) < 
                      abs(expand(bits[j]+bcc, (int)(out_[j][0]   -v[j])))))
                 {
                         out[0][j]=expand(bits[j]+bcc, (int)(out_[j][0]+1));
@@ -1936,9 +1930,9 @@ void getRndRampN(int bits[DIMENSION], double v[DIMENSION], int size, double out[
 }
 
 
-double ep_shaker_2(
+double ep_shaker_2( 
 
-    double data[MAX_ENTRIES][DIMENSION],
+    double data[MAX_ENTRIES][DIMENSION], 
     int numEntries, int index_[MAX_ENTRIES],
     double out[MAX_ENTRIES][DIMENSION],
     int epo_code[2][DIMENSION],
@@ -1946,7 +1940,7 @@ double ep_shaker_2(
     int bcc,
     int nClusters,
     int size
-    )
+    ) 
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -1955,33 +1949,33 @@ double ep_shaker_2(
     int i,j,k;
     double mean[DIMENSION];
     int index[MAX_ENTRIES];
-
+    
     int maxTry=8;
 
     int Mi=0;
 
     int Mi_= nClusters-1; // this is last cluster, not max number 0f clusters
 
-    for (k=0;k<numEntries;k++)
+    for (k=0;k<numEntries;k++) 
         index[k]=index_[k];
 
-    for (k=0;k<numEntries;k++)
+    for (k=0;k<numEntries;k++) 
         if (index[k]> Mi_) {
             printf("index error\n");
-            for (i=0;i<numEntries;i++)
+            for (i=0;i<numEntries;i++) 
                 index[i]=0;
             // work-around for constant block quantizer bug
             break;
         }
-
+    
 
     index_collapse (index, numEntries);
 
     int done;
-    int change;
+    int change;  
     int start=1;
     int better;
-
+    
     double of = 0.0;
     double epo[2][DIMENSION];
     int ep[2][ MAX_SHAKE_SIZE][DIMENSION];
@@ -1993,14 +1987,14 @@ double ep_shaker_2(
     do{
 
         for (j=0;j<DIMENSION;j++) {
-            for (mean[j]=k=0;k<numEntries;k++)
+            for (mean[j]=k=0;k<numEntries;k++) 
                 mean[j]+=data[k][j];
             mean[j]/=(double) numEntries;
         }
+       
 
-
-        for (k=0;k<numEntries;k++)
-            Mi = index[k]>Mi ?  index[k] :Mi;
+        for (k=0;k<numEntries;k++) 
+            Mi = index[k]>Mi ?  index[k] :Mi; 
 
         // shift/scale
 
@@ -2012,7 +2006,7 @@ double ep_shaker_2(
 
 
         if (Mi==0){
-            getRndRampN(bits, mean, 1/* size*/, epo+0, parity[0], range[0], ep[0],bcc) ;
+            getRndRampN(bits, mean, 1/* size*/, epo+0, parity[0], range[0], ep[0],bcc) ; 
             getRndRampN(bits, mean, 1/* size*/, epo+1, parity[1], range[1], ep[1],bcc)  ;
             for (j=0;j<DIMENSION;j++) {
                 epo_code[0][j]=ep[0][0][j];
@@ -2023,11 +2017,11 @@ double ep_shaker_2(
 
         for (q=1;Mi!=0 && q*Mi <= Mi_;q++)
             for (p=q*Mi;p<=Mi_;p++)  {
-                //index * q + p-Mi*q
-
+                //index * q + p-Mi*q 
+            
             int cidx[MAX_ENTRIES];
-
-            for (k=0;k<numEntries;k++)
+            
+            for (k=0;k<numEntries;k++) 
                 cidx[k]=index[k] * q + p-Mi*q;
 
             double im [2][2] = {{0,0},{0,0}};    // matrix /inverse matrix
@@ -2046,15 +2040,15 @@ double ep_shaker_2(
 
             for (k=0;k<numEntries;k++) {
                 cnt[cidx[k]]+=1;
-                for (j=0;j<DIMENSION;j++)
+                for (j=0;j<DIMENSION;j++) 
                     cc[cidx[k]][j]+=data[k][j];
             }
 
             for (i=0;i<=Mi_;i++)
-                for (j=0;j<DIMENSION;j++)
+                for (j=0;j<DIMENSION;j++) 
                     if (cnt[i]!=0)
                         cc[i][j]=floor(cc[i][j]/cnt[i]+0.5); // more or less ideal location
-                    else
+                    else 
                         cc[i][j]=0;
 
                                                          // for cluster centers
@@ -2082,8 +2076,8 @@ double ep_shaker_2(
 
 
                 if (dd==0) {
- //############## degenerate, usually the same index
-                    for (i=0;i<=Mi_;i++)
+ //############## degenerate, usually the same index                    
+                    for (i=0;i<=Mi_;i++) 
                         if (cnt[i]!=0)
                             break;
                 // Make it into ramp
@@ -2107,14 +2101,14 @@ double ep_shaker_2(
                         epa[0][j]=(im[1][0]*rp[0][j]+im[1][1]*rp[1][j])*Mi_;
                         epa[1][j]=(im[0][0]*rp[0][j]+im[0][1]*rp[1][j])*Mi_;
                     }
-                    getRndRampN(bits, epa[0], size, epd[0], parity[0], range[0], ep[0],bcc);
-                    getRndRampN(bits, epa[1], size, epd[1], parity[1], range[1], ep[1],bcc) ;
+                    getRndRampN(bits, epa[0], size, epd[0], parity[0], range[0], ep[0],bcc);  
+                    getRndRampN(bits, epa[1], size, epd[1], parity[1], range[1], ep[1],bcc) ; 
 
                 }
             int best_ep [2][2][2][DIMENSION];// point, parity0,parity1, coordinate
             double e[2][2][DIMENSION]; //  parity0, parity1, coordinate
             int l0,l1;
-
+    
             for (j=0;j<DIMENSION;j++) {
 
                 e[0][0][j] = e[0][1][j] = e[1][0][j] = e[1][1][j] = MAX_ENTRIES*256*256*4.;
@@ -2123,7 +2117,7 @@ double ep_shaker_2(
                     for (l1=range[1][0][j];l1<range[1][1][j];l1++) {
 // ran on points or clusters ??
                         double cv [MAX_CLUSTERS_BIG];
-                        double t=0;
+                        double t=0;                        
                         int i1;
                         for (i1=0;i1<=Mi_;i1++) {
                             cv[i1]=floor( (epd[1][l1][j]*i1+ epd[0][l0][j]*(Mi_-i1))/((double)Mi_)+0.5);
@@ -2133,15 +2127,15 @@ double ep_shaker_2(
                         for (i1=0;i1< numEntries;i1++)
                             t+=(cv[cidx[i1]]-data[i1][j])*(cv[cidx[i1]]-data[i1][j]);
                         if (bcc) {
-                            if (t < e[(parity[0][j] ^ l0)& 1] [(parity[1][j] ^ l1)& 1][j] )
+                            if (t < e[(parity[0][j] ^ l0)& 1] [(parity[1][j] ^ l1)& 1][j] )        
                             {
                                 e[(parity[0][j] ^ l0)& 1] [(parity[1][j] ^ l1)& 1][j] =t;
                                 best_ep[0][(parity[0][j] ^ l0)& 1] [(parity[1][j] ^ l1)& 1][j]=l0;
                                 best_ep[1][(parity[0][j] ^ l0)& 1] [(parity[1][j] ^ l1)& 1][j]=l1;
                             }
-                        }
+                        } 
                         else {
-                            if (t < e[0][0][j])
+                            if (t < e[0][0][j])        
                             {
                                 e[0][0][j] =t;
                                 best_ep[0][0][0][j]=l0;
@@ -2150,13 +2144,13 @@ double ep_shaker_2(
                         }
                     }
             }
-            if (bcc) {
+            if (bcc) { 
                 double t[2][2]={0,0,0,0};
                 double tt;
                 int a,b,a0,b0;
                 for (a=0;a<2;a++)
                     for (b=0;b<2;b++)
-                        for (j=0;j<DIMENSION;j++)
+                        for (j=0;j<DIMENSION;j++) 
                             t[a][b]+=e[a][b][j];
                 a0=b0=0;
                 tt = t[0][0];
@@ -2182,9 +2176,9 @@ double ep_shaker_2(
                     }
                 }
             }
-            else {
+            else { 
                 double t=0;
-                for (j=0;j<DIMENSION;j++)
+                for (j=0;j<DIMENSION;j++) 
                     t+=e[0][0][j];
                 if (t< ee) {
                     ee = t;
@@ -2207,15 +2201,15 @@ double ep_shaker_2(
         double pp[64][DIMENSION];
         double c[MAX_ENTRIES][64][DIMENSION];
 
-        for (i=0;i<=Mi_;i++)
+        for (i=0;i<=Mi_;i++) 
             for (j=0;j<DIMENSION;j++) {
                 pp[i][j] = floor(epo[0][j]+(epo[1][j]-epo[0][j])* (i/ (double) Mi_) + 0.5);
                 pp[i][j]= pp[i][j] > 0 ? pp[i][j] : 0 ;
                 pp[i][j]= pp[i][j] < 255. ? pp[i][j] : 255. ;
         }
 
-        for (k=0;k<numEntries;k++)
-            for (i=0;i<=Mi_;i++)
+        for (k=0;k<numEntries;k++) 
+            for (i=0;i<=Mi_;i++) 
                 for (j=0;j<DIMENSION;j++) {
                     double t=(data[k][j]-pp[i][j]);
                 c[k][i][j]=t*t;
@@ -2240,8 +2234,8 @@ double ep_shaker_2(
             ma+=t;
         }
         mag=ma;
-        for (k=0;k<numEntries;k++) {
-            for (j=0;j<DIMENSION;j++)
+        for (k=0;k<numEntries;k++) { 
+            for (j=0;j<DIMENSION;j++) 
                 outg[k][j]=pp[idg[k]][j];
         }
 
@@ -2250,7 +2244,7 @@ double ep_shaker_2(
         double nf = totalError(data,outg,numEntries);
 
         change =0;
-        for (k=0;k<numEntries;k++) {
+        for (k=0;k<numEntries;k++) { 
             change = change || (index[k] * q0 + p0-Mi*q0!=idg[k]);
         }
         if (! start) {
@@ -2260,9 +2254,9 @@ double ep_shaker_2(
             better =1;
 
         if (better) {
-            for (k=0;k<numEntries;k++) {
+            for (k=0;k<numEntries;k++) { 
                 index_[k]=index[k]=idg[k];
-                for (j=0;j<DIMENSION;j++)
+                for (j=0;j<DIMENSION;j++) 
                     out[k][j]=outg[k][j];
             }
         of=nf;
@@ -2286,11 +2280,11 @@ if (bcc)
 };
 
 
-double ep_shaker_2__(
-    double data[MAX_ENTRIES][DIMENSION],
+double ep_shaker_2__( 
+    double data[MAX_ENTRIES][DIMENSION], 
     int numEntries, int index_[MAX_ENTRIES],
     double out[MAX_ENTRIES][DIMENSION],int ns
-    )
+    ) 
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -2299,7 +2293,7 @@ double ep_shaker_2__(
     int i,j,k;
     double mean[DIMENSION];
     int index[MAX_ENTRIES];
-
+    
     int maxTry=8;
 
     int Mi=0;
@@ -2308,24 +2302,24 @@ double ep_shaker_2__(
     int bits;
 
     bits= (ns==1?0 :(ns==2?2:4));
-
-    for (k=0;k<numEntries;k++)
+    
+    for (k=0;k<numEntries;k++) 
         index[k]=index_[k];
 
-    for (k=0;k<numEntries;k++)
+    for (k=0;k<numEntries;k++) 
         if (index[k]> Mi_) {
             printf("index error\n");
-            for (i=0;i<numEntries;i++)
+            for (i=0;i<numEntries;i++) 
                 index[i]=0;
             // work-around for constant block quantizer bug
             break;
         }
-
+    
 
     index_collapse (index, numEntries);
 
     int done;
-    int change;
+    int change;  
     int start=1;
     int better;
 
@@ -2335,14 +2329,14 @@ double ep_shaker_2__(
     do{
 
         for (j=0;j<DIMENSION;j++) {
-            for (mean[j]=k=0;k<numEntries;k++)
+            for (mean[j]=k=0;k<numEntries;k++) 
                 mean[j]+=data[k][j];
             mean[j]/=(double) numEntries;
         }
+       
 
-
-        for (k=0;k<numEntries;k++)
-            Mi = index[k]>Mi ?  index[k] :Mi;
+        for (k=0;k<numEntries;k++) 
+            Mi = index[k]>Mi ?  index[k] :Mi; 
 
         // shift/scale
 
@@ -2367,11 +2361,11 @@ double ep_shaker_2__(
 
         for (q=1;Mi!=0 && q*Mi <= Mi_;q++)
             for (p=q*Mi;p<=Mi_;p++)  {
-                //index * q + p-Mi*q
-
+                //index * q + p-Mi*q 
+            
             int cidx[MAX_ENTRIES];
-
-            for (k=0;k<numEntries;k++)
+            
+            for (k=0;k<numEntries;k++) 
                 cidx[k]=index[k] * q + p-Mi*q;
 
             double im [2][2] = {{0,0},{0,0}};    // matrix /inverse matrix
@@ -2390,15 +2384,15 @@ double ep_shaker_2__(
 
             for (k=0;k<numEntries;k++) {
                 cnt[cidx[k]]+=1;
-                for (j=0;j<DIMENSION;j++)
+                for (j=0;j<DIMENSION;j++) 
                     cc[cidx[k]][j]+=data[k][j];
             }
 
             for (i=0;i<=Mi_;i++)
-                for (j=0;j<DIMENSION;j++)
+                for (j=0;j<DIMENSION;j++) 
                     if (cnt[i]!=0)
                         cc[i][j]=floor(cc[i][j]/cnt[i]+0.5); // more or less ideal location
-                    else
+                    else 
                         cc[i][j]=0;
 
                                                          // for cluster centers
@@ -2429,8 +2423,8 @@ double ep_shaker_2__(
 
 
                 if (dd==0) {
- //############## degenerate, usually the same index
-                    for (i=0;i<=Mi_;i++)
+ //############## degenerate, usually the same index                    
+                    for (i=0;i<=Mi_;i++) 
                         if (cnt[i]!=0)
                             break;
                 // Make it into ramp
@@ -2464,9 +2458,9 @@ double ep_shaker_2__(
                         }
                     }
 #if 1
-                    for (k=0;k<numEntries;k++) {
+                    for (k=0;k<numEntries;k++) { 
                         index_[k]=index[k]=0;
-                        for (j=0;j<DIMENSION;j++)
+                        for (j=0;j<DIMENSION;j++) 
                             out[k][j]=floor(mean[j] /((double)(1<<bits)))*(1<<bits) + (i-1)*(1<<bits);
                     }
 #endif
@@ -2514,14 +2508,14 @@ double ep_shaker_2__(
             int best_ep [2][DIMENSION];
             double e[DIMENSION];
             int l0,l1;
-
+    
             for (j=0;j<DIMENSION;j++) {
                 e[j] = MAX_ENTRIES*256*256*4.;
                 for (l0=range[0][0][j];l0<range[0][1][j];l0++)
                     for (l1=range[1][0][j];l1<range[1][1][j];l1++) {
 // ran on points or clusters ??
                         double cv [MAX_CLUSTERS_BIG];
-                        double t=0;
+                        double t=0;                        
                         int i1;
                         for (i1=0;i1<=Mi_;i1++) {
                             cv[i1]=floor( (epd[1][l1][j]*i1+ epd[0][l0][j]*(Mi_-i1))/((double)Mi_)+0.5);
@@ -2537,9 +2531,9 @@ double ep_shaker_2__(
                         }
                     }
             }
-            {
+            { 
                 double t=0;
-                for (j=0;j<DIMENSION;j++)
+                for (j=0;j<DIMENSION;j++) 
                     t+=e[j];
                 if (t< ee) {
                     ee = t;
@@ -2561,15 +2555,15 @@ double ep_shaker_2__(
         double pp[64][DIMENSION];
         double c[MAX_ENTRIES][64][DIMENSION];
 
-        for (i=0;i<=Mi_;i++)
+        for (i=0;i<=Mi_;i++) 
             for (j=0;j<DIMENSION;j++) {
                 pp[i][j] = floor(epo[0][j]+(epo[1][j]-epo[0][j])* (i/ (double) Mi_) + 0.5);
                 pp[i][j]= pp[i][j] > 0 ? pp[i][j] : 0 ;
                 pp[i][j]= pp[i][j] < 255. ? pp[i][j] : 255. ;
         }
 
-        for (k=0;k<numEntries;k++)
-            for (i=0;i<=Mi_;i++)
+        for (k=0;k<numEntries;k++) 
+            for (i=0;i<=Mi_;i++) 
                 for (j=0;j<DIMENSION;j++) {
                     double t=(data[k][j]-pp[i][j]);
                 c[k][i][j]=t*t;
@@ -2594,16 +2588,16 @@ double ep_shaker_2__(
             ma+=t;
         }
         mag=ma;
-        for (k=0;k<numEntries;k++) {
-            for (j=0;j<DIMENSION;j++)
+        for (k=0;k<numEntries;k++) { 
+            for (j=0;j<DIMENSION;j++) 
                 outg[k][j]=pp[idg[k]][j];
         }
 
         double nf = totalError(data,outg,numEntries);
 
         change =0;
-        for (k=0;k<numEntries;k++) {
-            change = change || (index[k] * q0 + p0-Mi*q0!=idg[k]);
+        for (k=0;k<numEntries;k++) { 
+            change = change || (index[k] * q0 + p0-Mi*q0!=idg[k]);    
         }
         if (! start) {
             better = nf < of;
@@ -2612,9 +2606,9 @@ double ep_shaker_2__(
             better =1;
 
         if (better) {
-            for (k=0;k<numEntries;k++) {
+            for (k=0;k<numEntries;k++) { 
                 index_[k]=index[k]=idg[k];
-                for (j=0;j<DIMENSION;j++)
+                for (j=0;j<DIMENSION;j++) 
                     out[k][j]=outg[k][j];
             }
         of=nf;
@@ -2624,10 +2618,10 @@ double ep_shaker_2__(
     return totalError(data,out,numEntries);
 }
 
-
+        
 //################################
-double reconstruct_rnd__(
-    double data[MAX_ENTRIES][DIMENSION],
+double reconstruct_rnd__( 
+    double data[MAX_ENTRIES][DIMENSION], 
     int numEntries, int index_[MAX_ENTRIES],
     double out[MAX_ENTRIES][DIMENSION],int ns,
     double direction [DIMENSION],double *step
@@ -2642,7 +2636,7 @@ static int code1[NP1][3]=    // step, mean div,diamond
 GOOD
 */
 {
-{7, 1, 2},   {11, 1, 2}, {15, 1, 2}, {19, 1, 4},
+{7, 1, 2},   {11, 1, 2}, {15, 1, 2}, {19, 1, 4}, 
 {24, 1, 4},  {29, 1, 4}, {34, 1, 4}, {40, 1, 4},
 {46, 1, 4}, {53, 1, 4},  {60, 2, 1},
 {67, 2, 1},  {75, 2, 1}, {83, 2, 1}, {92, 2, 2}, {101, 2, 2}, {111, 2, 2}, {122, 2, 2}, {133, 2, 2}, {145, 2, 2}, {158, 2, 2},
@@ -2670,7 +2664,7 @@ static int code2[NP2][3]=    // step, mean div,diamond
         code = code2;
         dir_limit=dir_limit2;
         np=NP2;
-    }
+    } 
     else {
         code = code1;
         dir_limit=dir_limit1;
@@ -2692,20 +2686,20 @@ static int code2[NP2][3]=    // step, mean div,diamond
             bd =td;
         }
         printf("Max divider %d \n",bd);
-        for (s=i=0;i<np;i++)
+        for (s=i=0;i<np;i++) 
             s+= bd /(code[i][1]*code[i][1]*code[i][1] * code[i][2]);
         printf("Soft estimate; position capacity (scaled by max divider) %d, direction %d \n",
             s,24*dir_limit*dir_limit+2);
 
-        for (s=i=0;i<np;i++)
+        for (s=i=0;i<np;i++) 
             s+= bd /(code[i][1]*code[i][1]*code[i][1] * code[i][2]) *
             (dir_limit < code[i][0] ? 24*dir_limit*dir_limit+2 : 24*code[i][0]*code[i][0]+2);
 
         printf("Tight estimate, all+divider %d, bits %f;\n sets left total %d, full sets left assuming full directions %d\n",
-            s,log((double)s)/log(2.),
-            (int) floor(pow(2., ceil(log((double)s)/log(2.)))+0.5)-s,
-            ((int) floor(pow(2., ceil(log((double)s)/log(2.)))+0.5)-s) /(24*dir_limit*dir_limit+2 )
-
+            s,log((double)s)/log(2.), 
+            (int) floor(pow(2., ceil(log((double)s)/log(2.)))+0.5)-s,  
+            ((int) floor(pow(2., ceil(log((double)s)/log(2.)))+0.5)-s) /(24*dir_limit*dir_limit+2 )  
+            
             );
         double b =log((double)s)/log(2.)+24;
 
@@ -2715,7 +2709,7 @@ static int code2[NP2][3]=    // step, mean div,diamond
         }
 
         printf("Tight estimate, TOTAL  %g\n",b);
-
+        
     }
 
 
@@ -2753,16 +2747,16 @@ static int code2[NP2][3]=    // step, mean div,diamond
 
     mds(data, numEntries, index, mean, &idx_mean, direction , step);
 
-    double s=0,t=0, q=0, q1 =0;
+    double s=0,t=0, q=0, q1 =0; 
 
     for (j=0;j<DIMENSION;j++) {
-        for (mean[j]=k=0;k<numEntries;k++)
+        for (mean[j]=k=0;k<numEntries;k++) 
             mean[j]+=data[k][j];
         mean[j]/=(double) numEntries;
     }
 
-
-    for (k=0;k<numEntries;k++) {
+    
+    for (k=0;k<numEntries;k++) { 
         s+= index[k];
         t+= index[k]*index[k];
     }
@@ -2770,9 +2764,9 @@ static int code2[NP2][3]=    // step, mean div,diamond
 
     for (j=0;j<DIMENSION;j++) {
         direction[j]=0;
-        for (k=0;k<numEntries;k++)
+        for (k=0;k<numEntries;k++) 
             direction[j]+=(data[k][j]-mean[j])*index[k];
-
+        
         q+= direction[j]* direction[j];
         q1 = fabs(direction[j]) > q1 ? fabs(direction[j]) : q1;
 
@@ -2783,11 +2777,11 @@ static int code2[NP2][3]=    // step, mean div,diamond
     t = t - s * s * (double) numEntries;
 
     t = (t == 0 ? 0. : 1/t);
-
+    
     q=sqrt(q);
 
     *step=t*q;
-
+ 
 
     for (j=0;j<DIMENSION;j++) {
         direction[j]/= (q1 == 0 ? 1:q1) ;
@@ -2798,31 +2792,31 @@ static int code2[NP2][3]=    // step, mean div,diamond
     if (*step !=0)
         *step*=q1/q;
 
-    double step_li=*step;
+    double step_li=*step;    
 
     static double dir_r[4][DIMENSION];
 
     static double dir_step_r[2][4][DIMENSION]; // alternative for dir_r
 
-    static double mean_r[8][DIMENSION];
-    static double mean_step_r[2][8][DIMENSION];
-    static double step_r[2];
+    static double mean_r[8][DIMENSION]; 
+    static double mean_step_r[2][8][DIMENSION]; 
+    static double step_r[2]; 
 
     if (step_li > 200000 ) {// bypass {
         NShakeCnt+=numEntries;
-        for (i=0;i<numEntries;i++)
-                for (j=0;j<DIMENSION;j++)
+        for (i=0;i<numEntries;i++) 
+                for (j=0;j<DIMENSION;j++) 
                     out[i][j]=mean[j]+direction[j]* (*step) *(index[i]-idx_mean);
            return totalError(data,out,numEntries);
     }
 #define STEP_FACTOR 7.
 
-    if (ns==1) {
+    if (ns==1) { 
 
 
 #define STEP_DIV 1.
 #define MEAN_DIV 1.
-        for (j=0;j<DIMENSION;j++)
+        for (j=0;j<DIMENSION;j++) 
             mean_step_r[0][0][j]=mean_step_r[1][0][j]=mean_r[0][j]=floor(mean[j]/MEAN_DIV)*MEAN_DIV;
 
         int ii[3];
@@ -2851,11 +2845,11 @@ static int code2[NP2][3]=    // step, mean div,diamond
             printf("dir mormalizing error");
         }
 
-        for (i=0;i<2;i++)
+        for (i=0;i<2;i++) 
             for (ii[0]=0;ii[0]<2;ii[0]++)
                 for (ii[1]=0;ii[1]<2;ii[1]++)
-                    for (j=0;j<DIMENSION;j++)
-                        dir_step_r[i][ii[0]+2*ii[1]][j] =
+                    for (j=0;j<DIMENSION;j++) 
+                        dir_step_r[i][ii[0]+2*ii[1]][j] = 
                         (j == mc) ? direction[j]*(step_li+i)/STEP_FACTOR : ((floor(direction[j]*(step_li+i))) + (j< mc ? ii[j] : ii[j-1]))/STEP_FACTOR;
                 shake_d_s(data, numEntries, idx_mean,
             dir_step_r, mean_r, index_r, out1 );
@@ -2873,11 +2867,11 @@ static int code2[NP2][3]=    // step, mean div,diamond
 
         //"low step"
 
-        // bcc*2 and cartesian; starting points for fcc
-        for (j=0;j<2;j++)
+        // bcc*2 and cartesian; starting points for fcc 
+        for (j=0;j<2;j++) 
             setMean(mean, mean_step_r[j], code[i+j][1]*code[i+j][1]*code[i+j][1]*code[i+j][2]);
 
-        step_li=code[i][0];
+        step_li=code[i][0];    
 
         double df[2];
 
@@ -2898,11 +2892,11 @@ static int code2[NP2][3]=    // step, mean div,diamond
         }
 
         int ii[3];
-        for (k=0;k<2;k++)
+        for (k=0;k<2;k++) 
             for (ii[0]=0;ii[0]<2;ii[0]++)
                 for (ii[1]=0;ii[1]<2;ii[1]++)
-                    for (j=0;j<DIMENSION;j++)
-                        dir_step_r[k][ii[0]+2*ii[1]][j] =
+                    for (j=0;j<DIMENSION;j++) 
+                        dir_step_r[k][ii[0]+2*ii[1]][j] = 
                         (j == mc) ? direction[j]*(double)code[i+k][0] /STEP_FACTOR:
         (floor(direction[j]*df[k]) + (j< mc ? ii[j] : ii[j-1]) )/df[k]*(double)code[i+k][0]/STEP_FACTOR ;
                 shake_d_s_s(data, numEntries, MAX_CLUSTERS, idx_mean ,
@@ -2923,7 +2917,7 @@ static int code2[NP2][3]=    // step, mean div,diamond
             index[i]=index_r[i];
 
         for (i=0;i<numEntries;i++)
-            for (j=0;j<DIMENSION;j++)
+            for (j=0;j<DIMENSION;j++) 
                 out [i][j]=out1[i][j];
         err=er1;
     }

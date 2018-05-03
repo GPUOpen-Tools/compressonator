@@ -9,10 +9,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -39,9 +39,7 @@
 #include "compclient.h"
 #endif
 
-#ifdef _MSC_VER
 #pragma warning(disable:4100)       // Dont show parameter warnings
-#endif //_MSC_VER
 
 void prepare_block_statistics(int xdim, int ydim, int zdim, const imageblock * blk, const error_weight_block * ewb, int *is_normal_map, float *lowest_correl);
 int realign_weights(astc_decode_mode decode_mode, int xdim, int ydim, int zdim, const imageblock * blk, const error_weight_block * ewb, symbolic_compressed_block * scb, uint8_t * weight_set8, uint8_t * plane2_weight_set8);
@@ -68,10 +66,10 @@ double ASTCBlockEncoder::CompressBlock_kernel(
         (const astc_codec_image_cpu *)input_image,
         (imageblock_cpu *) &m_pb,
         ASTCEncode->m_xdim,
-        ASTCEncode->m_ydim,
-        ASTCEncode->m_zdim,
-        x,
-        y,
+        ASTCEncode->m_ydim, 
+        ASTCEncode->m_zdim, 
+        x, 
+        y, 
         z
         );
 

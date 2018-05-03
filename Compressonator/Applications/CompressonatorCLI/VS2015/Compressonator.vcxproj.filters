@@ -29,6 +29,9 @@
     <ClCompile Include="../../_Plugins/Common/PluginManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="../../_Plugins/Common/query_timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="../../_Plugins/Common/TextureIO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -53,6 +56,9 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="../../_Plugins/Common/PluginManager.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="../../_Plugins/Common/query_timer.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="../../_Plugins/Common/TextureIO.h">

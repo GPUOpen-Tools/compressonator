@@ -242,6 +242,9 @@ void ObjectControllerPrivate::addClassProperties(const QMetaObject *inmetaObject
             // Note: Skip class QObject from the property views
             if (className == QLatin1String("QObject")) return;
 
+            // If a class name starts with lowercase "x" then skip it from view!
+            if (className.at(0) == "x") continue;
+
             // Process Class name into a user friendly view
             // Strip prefix C_ and process all _ to spaces
             
@@ -276,8 +279,14 @@ void ObjectControllerPrivate::addClassProperties(const QMetaObject *inmetaObject
                 // qDebug() << "Member Name :" << memberVarName;
 
                 // Note: process the first char if it contains _ then the var is read only and remove the _ char
-                if (memberVarName.at(0) == "_") {
+                if (memberVarName.at(0) == "_")
+                {
                     b_SetEnabled = false;
+                    memberVarName.remove(0, 1);
+                }
+                else
+                if (memberVarName.at(0) == "x") // Special case if first char is x then remove it as its a place holde for tabbing spaces 
+                {
                     memberVarName.remove(0, 1);
                 }
 

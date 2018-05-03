@@ -27,15 +27,15 @@
 #include "BC7_Definitions.h"
 #include "debug.h"
 
-extern DWORD    BC7_PARTITIONS[MAX_SUBSETS][MAX_PARTITIONS][MAX_SUBSET_SIZE];
-extern DWORD    BC7_FIXUPINDICES[MAX_SUBSETS][MAX_PARTITIONS][3];
+extern CMP_DWORD    BC7_PARTITIONS[MAX_SUBSETS][MAX_PARTITIONS][MAX_SUBSET_SIZE];
+extern CMP_DWORD    BC7_FIXUPINDICES[MAX_SUBSETS][MAX_PARTITIONS][3];
 
 
-extern void    Partition(DWORD partition,
+extern void    Partition(CMP_DWORD partition,
                   double in[][MAX_DIMENSION_BIG],
                   double subsets[MAX_SUBSETS][MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-                  DWORD count[MAX_SUBSETS],
-                  DWORD blockType,
+    CMP_DWORD count[MAX_SUBSETS],
+    CMP_DWORD blockType,
                   int   dimension);
 
 

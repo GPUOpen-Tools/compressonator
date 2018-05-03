@@ -1,0 +1,64 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CMP_Math", "CMP_MathLib.vcxproj", "{17CCD4C6-5E35-404C-8613-32775F250A92}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_DLL|Win32 = Debug_DLL|Win32
+		Debug_DLL|x64 = Debug_DLL|x64
+		Debug_MD_DLL|Win32 = Debug_MD_DLL|Win32
+		Debug_MD_DLL|x64 = Debug_MD_DLL|x64
+		Debug_MD|Win32 = Debug_MD|Win32
+		Debug_MD|x64 = Debug_MD|x64
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release_DLL|Win32 = Release_DLL|Win32
+		Release_DLL|x64 = Release_DLL|x64
+		Release_MD_DLL|Win32 = Release_MD_DLL|Win32
+		Release_MD_DLL|x64 = Release_MD_DLL|x64
+		Release_MD|Win32 = Release_MD|Win32
+		Release_MD|x64 = Release_MD|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Debug_DLL|Win32.ActiveCfg = Debug_DLL|Win32
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Debug_DLL|Win32.Build.0 = Debug_DLL|Win32
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Debug_DLL|x64.ActiveCfg = Debug_DLL|x64
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Debug_DLL|x64.Build.0 = Debug_DLL|x64
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Debug_MD_DLL|Win32.ActiveCfg = Debug_MD_DLL|Win32
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Debug_MD_DLL|Win32.Build.0 = Debug_MD_DLL|Win32
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Debug_MD_DLL|x64.ActiveCfg = Debug_MD_DLL|x64
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Debug_MD_DLL|x64.Build.0 = Debug_MD_DLL|x64
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Debug_MD|Win32.ActiveCfg = Debug_MD|Win32
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Debug_MD|Win32.Build.0 = Debug_MD|Win32
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Debug_MD|x64.ActiveCfg = Debug_MD|x64
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Debug_MD|x64.Build.0 = Debug_MD|x64
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Debug|Win32.ActiveCfg = Debug|Win32
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Debug|Win32.Build.0 = Debug|Win32
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Debug|x64.ActiveCfg = Debug|x64
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Debug|x64.Build.0 = Debug|x64
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Release_DLL|Win32.ActiveCfg = Release_DLL|Win32
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Release_DLL|Win32.Build.0 = Release_DLL|Win32
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Release_DLL|x64.ActiveCfg = Release_DLL|x64
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Release_DLL|x64.Build.0 = Release_DLL|x64
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Release_MD_DLL|Win32.ActiveCfg = Release_MD_DLL|Win32
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Release_MD_DLL|Win32.Build.0 = Release_MD_DLL|Win32
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Release_MD_DLL|x64.ActiveCfg = Release_MD_DLL|x64
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Release_MD_DLL|x64.Build.0 = Release_MD_DLL|x64
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Release_MD|Win32.ActiveCfg = Release_MD|Win32
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Release_MD|Win32.Build.0 = Release_MD|Win32
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Release_MD|x64.ActiveCfg = Release_MD|x64
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Release_MD|x64.Build.0 = Release_MD|x64
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Release|Win32.ActiveCfg = Release|Win32
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Release|Win32.Build.0 = Release|Win32
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Release|x64.ActiveCfg = Release|x64
+		{17CCD4C6-5E35-404C-8613-32775F250A92}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

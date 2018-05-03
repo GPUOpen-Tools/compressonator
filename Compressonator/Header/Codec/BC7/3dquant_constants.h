@@ -44,5 +44,5 @@ typedef enum
     SAME_FCC,
     FCC,
     FCC_SAME_BCC,
-} qt; 
+} CMP_qt; 
 #endif 

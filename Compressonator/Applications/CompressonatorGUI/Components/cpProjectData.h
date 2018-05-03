@@ -29,7 +29,7 @@
 //#include "qtpropertymanager.h"
 //#include "qtvariantproperty.h"
 //#include "qtgroupboxpropertybrowser.h"
-//#include "objectcontroller.h"
+#include "objectcontroller.h"
 #include <QtWidgets>
 #include <QtQml\QQmlListProperty>
 #include "PluginManager.h"
@@ -40,23 +40,43 @@
 #include "Common.h"
 // JSon 
 #include "json\json.h"
+// Mesh
+#include "cmp_mesh.h"
+#include "ModelData.h"
 
 #define    TREETYPE_Double_Click_here_to_add_files      0      // [+] Double Click here to add files ...
 #define    TREETYPE_Add_destination_setting             1      // [+] Add destination setting ...
-#define    TREETYPE_Add_glTF_destination_settings       2      // Create a new copy of 3D source data node
+#define    TREETYPE_Add_Model_destination_settings      2      // Create a new copy of 3D source data node
 #define    TREETYPE_IMAGEFILE_DATA                      3      // items column (1) uses new allocated varient data for C_FileProperties
 #define    TREETYPE_3DMODEL_DATA                        4      // items column (1) uses new allocated varient data for C_FileProperties
-#define    TREETYPE_VIEW_ONLY_NODE                      5      // Autogen data  that is part of a 3D model or Image that is only viewed
-#define    TREETYPE_3DSUBMODEL_DATA                     6      // items column (1) uses new allocated varient data for C_FileProperties
-#define    TREETYPE_COMPRESSION_DATA                    7      // items column (1) uses new allocated varient data for C_CompressOptions
-#define    TREETYPE_DIFFVIEW                            8      // no item data, this id is used along with above for identifying docked widgets
+#define    TREETYPE_VIEWIMAGE_ONLY_NODE                 5      // Autogen data  that is part of a 3D  Image that is only viewed
+#define    TREETYPE_VIEWMESH_ONLY_NODE                  6      // Autogen data  that is part of a 3D  Image that is only viewed
+#define    TREETYPE_3DSUBMODEL_DATA                     7      // items column (1) uses new allocated varient data for C_FileProperties
+#define    TREETYPE_COMPRESSION_DATA                    8      // items column (1) uses new allocated varient data for C_CompressOptions
+#define    TREETYPE_MESH_DATA                           9      // Mesh data node contains (Vertices, Index, ...)
+#define    TREETYPE_DIFFVIEW                            10     // no item data, this id is used along with above for identifying docked widgets
 
 
 #define    TREE_LevelType                               0       // Treeview index of data column variant data storage for TREETYPE_...
 #define    TREE_SourceInfo                              1       // Treeview index of data column variant data storage for Source data
+
 // =======================================================
 // COMPRESSION DATA
 // =======================================================
+enum eModelType
+{
+    GLTF,
+    OBJ,
+    DRC
+};
+
+class x_Options_Controller:public QObject
+{
+    Q_OBJECT
+public:
+    ObjectController *m_controller = NULL;
+};
+
 
 #ifdef USECOMPSPEED
 enum eCompression_Speed {
@@ -101,7 +121,7 @@ signals:
 
 };
 #endif
-class C_Input_HDR_Image_Properties : public QObject
+class C_Input_HDR_Image_Properties : public x_Options_Controller
 {
 
     Q_OBJECT
@@ -576,6 +596,12 @@ signals:
     void bluewChanged(QVariant &);
 };
 
+
+
+#define MESH_SETTINGS_CLASS_NAME                    "Mesh Settings"
+#define MESH_OPTIMIZER_SETTING_CLASS_NAME           "Mesh Optimizer Settings"
+#define MESH_COMPRESSION_SETTINGS_CLASS_NAME        "Mesh Compression Settings"
+
 #define DESTINATION_IMAGE_CLASS_NAME      "Destination Image"
 #define CHANNEL_WEIGHTING_CLASS_NAME      "Channel Weighting"
 #define DXT1_ALPHA_CLASS_NAME             "DXT1 Alpha"
@@ -587,9 +613,582 @@ signals:
 #define DESTINATION_IMAGE_NOTPROCESSED    "Not Processed"
 #define DESTINATION_IMAGE_UNKNOWN         "Unknown"
 
+class Mesh_Compression_Settings : public Channel_Weighting
+{
+    Q_OBJECT
+        Q_ENUMS(eMeshCompression)
+        Q_PROPERTY(eMeshCompression Compression_Format   READ  getDo_Mesh_Compression         WRITE setDo_Mesh_Compression)
+        // Reserved for 3.1 release
+        //Q_PROPERTY(bool x____Force_Input_as_Point_Cloud  READ  getForce_Input_as_Point_Cloud  WRITE setForce_Input_as_Point_Cloud)      // -point_cloud forces the input to be encoded as a point 
+        //Q_PROPERTY(bool x____Use_Metadata                READ  getUse_Metadata                WRITE setUse_Metadata)                    //  -mata data use metadata to encode extra information in mesh files.
+        Q_PROPERTY(int  x____Compression_Level           READ  getCompression_Level           WRITE setCompression_Level)                // -cl compression level [0-10], most=10, least=0, default=7.
+        Q_PROPERTY(int  x____Position_Bits               READ  getPosition_Bits               WRITE setPosition_Bits)                   // -qp quantization bits for the position attribute, default=14 max 30
+        Q_PROPERTY(int  x____Tex_Coords_Bits             READ  getTex_Coords_Bits             WRITE setTex_Coords_Bits)                 // -qt quantization bits for the texture coordinate attribute, default=12 max 30, disabled = -1
+        Q_PROPERTY(int  x____Normals_Bits                READ  getNormals_Bits                WRITE setNormals_Bits)                    // -qn uantization bits for the normal vector attribute, default=10. max 30, disabled = -1
+        Q_PROPERTY(int  x____Generic_Bits                READ  getGeneric_Bits                WRITE setGeneric_Bits)                    // -qg quantization bits for any generic attribute, default=8 max 30, disabled = -1
+
+public:
+    enum eMeshCompression
+    {
+        NoComp,
+        Draco
+    };
+
+    Mesh_Compression_Settings()
+    {
+        InitCompSettings();
+    }
+
+    void disable_mesh_compression_settings(bool value) {
+        if (m_controller)
+        {
+            QtProperty *prop = m_controller->getProperty("    Force Input as Point Cloud");
+            if (prop)
+                prop->setHidden(value);
+
+            prop = m_controller->getProperty("    Use Metadata");
+            if (prop)
+                prop->setHidden(value);
+            prop = m_controller->getProperty("    Compression Level");
+            if (prop)
+                prop->setHidden(value);
+            prop = m_controller->getProperty("    Position Bits");
+            if (prop)
+                prop->setHidden(value);
+            prop = m_controller->getProperty("    Tex Coords Bits");
+            if (prop)
+                prop->setHidden(value);
+            prop = m_controller->getProperty("    Normals Bits");
+            if (prop)
+                prop->setHidden(value);
+            prop = m_controller->getProperty("    Generic Bits");
+            if (prop)
+                prop->setHidden(value);
+        }
+    }
+
+    void setDo_Mesh_Compression(eMeshCompression value) {
+        m_Do_Mesh_Compression = value;
+        disable_mesh_compression_settings(value == eMeshCompression::NoComp);
+        emit onMesh_Compression((QVariant &)value);
+    }
+
+    eMeshCompression getDo_Mesh_Compression() { return m_Do_Mesh_Compression; }
+
+    void setForce_Input_as_Point_Cloud(bool value) { m_DracoOptions.is_point_cloud = value; }
+    bool getForce_Input_as_Point_Cloud() { return m_DracoOptions.is_point_cloud; }
+
+    void setUse_Metadata(bool value) { m_DracoOptions.use_metadata = value; }
+    bool getUse_Metadata() { return m_DracoOptions.use_metadata; }
+
+    void setCompression_Level(int value) 
+    {
+        if(value < 0)
+            m_DracoOptions.compression_level = 0; 
+        else if(value > 10)
+            m_DracoOptions.compression_level = 10;
+        else
+            m_DracoOptions.compression_level = value;
+    }
+
+    int  getCompression_Level() { return m_DracoOptions.compression_level; }
+
+    void setPosition_Bits(int value) { 
+        if(value < 1)
+            m_DracoOptions.pos_quantization_bits = 1;
+        else if (value > 30)
+            m_DracoOptions.pos_quantization_bits = 30;
+        else
+            m_DracoOptions.pos_quantization_bits = value; 
+    }
+    int  getPosition_Bits() { return m_DracoOptions.pos_quantization_bits; }
+
+    void setTex_Coords_Bits(int value) 
+    { 
+        if (value < 1)
+            m_DracoOptions.tex_coords_quantization_bits = 1;
+        else if (value > 30)
+            m_DracoOptions.tex_coords_quantization_bits = 30;
+        else
+            m_DracoOptions.tex_coords_quantization_bits = value;
+    }
+
+    int  getTex_Coords_Bits() { return m_DracoOptions.tex_coords_quantization_bits; }
+
+    void setNormals_Bits(int value) 
+    { 
+        if (value < 2)
+            m_DracoOptions.normals_quantization_bits = 2;
+        else if (value > 30)
+            m_DracoOptions.normals_quantization_bits = 30;
+        else
+            m_DracoOptions.normals_quantization_bits = value; 
+    }
+    int  getNormals_Bits() { return m_DracoOptions.normals_quantization_bits; }
+
+
+    void setGeneric_Bits(int value) 
+    { 
+        if (value < 1)
+            m_DracoOptions.generic_quantization_bits = 1;
+        else if (value > 30)
+            m_DracoOptions.generic_quantization_bits = 30;
+        else
+            m_DracoOptions.generic_quantization_bits = value; 
+    }
+
+    int  getGeneric_Bits() { return m_DracoOptions.generic_quantization_bits; }
+
+
+    void InitCompSettings()
+    {
+        m_Do_Mesh_Compression = eMeshCompression::NoComp;
+    }
+
+    eMeshCompression    m_Do_Mesh_Compression;
+
+signals:
+    void onMesh_Compression(QVariant & value);
+private:
+    CMP_DracoOptions    m_DracoOptions;
+};
+
+#ifdef USE_MESHOPTIMIZER
+class Mesh_Optimizer_Settings : public Mesh_Compression_Settings
+{ 
+    Q_OBJECT
+        Q_ENUMS(eMeshOptimization)
+        Q_PROPERTY(eMeshOptimization     Optimization_Format          READ  getDo_Mesh_Optimization     WRITE setDo_Mesh_Optimization)
+        Q_PROPERTY(bool     x____Optimize_Vertex_Cache   READ  getOptimizeVCacheChecked     WRITE setOptimizeVCacheChecked)
+        Q_PROPERTY(int      x________Cache_Size          READ  getCacheSize     WRITE setCacheSize)
+        Q_PROPERTY(bool     x____Optimize_Vertex_FIFO    READ  getOptimizeVCacheFifoChecked     WRITE setOptimizeVCacheFifoChecked)
+        Q_PROPERTY(int      x________FIFO_Cache_Size     READ  getCacheSizeFifo     WRITE setCacheSizeFifo)
+        Q_PROPERTY(bool     x____Optimize_Overdraw       READ  getOptimizeOverdrawChecked     WRITE setOptimizeOverdrawChecked)
+        Q_PROPERTY(double   x________ACMR_Threshold      READ  getACMRThreshold     WRITE setACMRThreshold)
+        Q_PROPERTY(bool     x____Optimize_Vertex_Fetch   READ  getOptimizeVFetchChecked     WRITE setOptimizeVFetchChecked)
+        Q_PROPERTY(bool     x____Simplify_Mesh           READ  getMeshSimplifyChecked     WRITE setMeshSimplifyChecked)
+        Q_PROPERTY(int      x________Level_of_Detail     READ  getLODValue     WRITE setLODValue)
+        // Resereved for 3.1 release
+        //Q_PROPERTY(bool     x____Randomize_Index_Buffer  READ  getRandomIndexBufferChecked     WRITE setRandomIndexBufferChecked)
+public:
+
+    enum eMeshOptimization
+    {
+        NoOpt,
+        AutoOpt,
+        UserOpt
+    };
+
+    Mesh_Optimizer_Settings()
+    {
+        setDo_Mesh_Optimization(AutoOpt);
+        InitOptimizationSettings();
+        hide_mesh_compression_settings(false);
+    }
+
+    void hide_mesh_compression_settings(bool value)
+    {
+        if (m_controller)
+        { 
+            QtProperty *prop = m_controller->getProperty("Mesh Compression Settings");
+            if (prop)
+                prop->setHidden(value);
+        }
+    }
+
+    void disable_mesh_optimization_setting(bool value) 
+    {
+        if (m_controller)
+        {
+            QtProperty *prop = m_controller->getProperty("    Optimize Vertex Cache");
+            if (prop)
+                prop->setHidden(value);
+            prop = m_controller->getProperty("        Cache Size");
+            if (prop)
+                prop->setHidden(value);
+            prop = m_controller->getProperty("    Optimize Vertex FIFO");
+            if (prop)
+                prop->setHidden(value);
+            prop = m_controller->getProperty("        FIFO Cache Size");
+            if (prop)
+                prop->setHidden(value);
+            prop = m_controller->getProperty("    Optimize Overdraw");
+            if (prop)
+                prop->setHidden(value);
+            prop = m_controller->getProperty("        ACMR Threshold");
+            if (prop)
+                prop->setHidden(value);
+            prop = m_controller->getProperty("    Optimize Vertex Fetch");
+            if (prop)
+                prop->setHidden(value);
+            prop = m_controller->getProperty("    Simplify Mesh");
+            if (prop)
+                prop->setHidden(value);
+            prop = m_controller->getProperty("        Level of Detail");
+            if (prop)
+                prop->setHidden(value);
+            prop = m_controller->getProperty("    Randomize Index Buffer");
+            if (prop)
+                prop->setHidden(value);
+        }
+    }
+
+    void setDo_Mesh_Optimization(eMeshOptimization value) {
+        m_Do_Mesh_Optimization = value; 
+        disable_mesh_optimization_setting(value != eMeshOptimization::UserOpt);
+        emit onMesh_Optimization((QVariant &)value);
+    }
+
+    eMeshOptimization getDo_Mesh_Optimization() { return m_Do_Mesh_Optimization; }
+
+
+    void setRandomIndexBufferChecked(bool value) {
+        m_runRandomizeIndexBuffer = value;
+    }
+
+    bool getRandomIndexBufferChecked() {
+        return m_runRandomizeIndexBuffer;
+    }
+
+    void setOptimizeVCacheChecked(bool value)
+    {
+        m_runOptimizeVCache = value;
+        if (m_controller)
+        {
+            QtProperty *prop = m_controller->getProperty("        Cache Size");
+            if (prop)
+                prop->setEnabled(value);
+        }
+    }
+
+    bool getOptimizeVCacheChecked()
+    {
+        return m_runOptimizeVCache;
+    }
+
+    void setCacheSize(int value) 
+    {
+        if(value < 0)
+            m_cacheSize = 1;
+        else
+            m_cacheSize = value;
+    }
+
+    int getCacheSize() {
+        return m_cacheSize;
+    }
+
+    void setOptimizeVCacheFifoChecked(bool value) 
+    {
+        m_runOptimizeVCacheFifo = value;
+        if (m_controller)
+        {
+            QtProperty *prop = m_controller->getProperty("        FIFO Cache Size");
+            if (prop)
+                prop->setEnabled(value);
+        }
+    }
+
+    bool getOptimizeVCacheFifoChecked() {
+        return m_runOptimizeVCacheFifo;
+    }
+
+    void setCacheSizeFifo(int value) {
+        if (value < 0)
+            m_cacheSizeFifo = 1;
+        else
+            m_cacheSizeFifo = value;
+    }
+
+    int getCacheSizeFifo() {
+        return m_cacheSizeFifo;
+    }
+
+    void setOptimizeOverdrawChecked(bool value)
+    {
+        m_runOptimizeOverdraw = value;
+        if (m_controller)
+        {
+            QtProperty *prop = m_controller->getProperty("        ACMR Threshold");
+            if (prop)
+                prop->setEnabled(value);
+        }
+        
+    }
+
+    bool getOptimizeOverdrawChecked()
+    {
+        return m_runOptimizeOverdraw;
+    }
+
+    void setACMRThreshold(int value) {
+        if (value < 1)
+            m_acmrThreshold = 1;
+        else if (value > 3)
+            m_acmrThreshold = 3;
+        else
+            m_acmrThreshold = value;
+    }
+
+    double getACMRThreshold() {
+        return m_acmrThreshold;
+    }
+
+    void setOptimizeVFetchChecked(bool value) {
+        m_runOptimizeVFetch = value;
+    }
+
+    bool getOptimizeVFetchChecked() {
+        return m_runOptimizeVFetch;
+    }
+
+    void setMeshSimplifyChecked(bool value)
+    {
+        m_runMeshSimplify = value;
+        if (m_controller)
+        {
+            QtProperty *prop = m_controller->getProperty("        Level of Detail");
+            if (prop)
+                prop->setEnabled(value);
+        }
+    }
+
+    bool getMeshSimplifyChecked() {
+        return m_runMeshSimplify;
+    }
+
+    void setLODValue(int value) { //LOD = level of details, higher number less triangles drawn
+        if (value < 1)
+            m_levelofDetails = 1;
+        else
+            m_levelofDetails = value;
+    }
+
+    int getLODValue() {
+        return m_levelofDetails;
+    }
+
+    void setMeshData(CMODEL_DATA&  meshData)
+    {
+        m_ModelData = meshData;
+    }
+
+    CMODEL_DATA getMeshData()
+    {
+        return m_ModelData;
+    }
+
+    void InitOptimizationSettings()
+    {
+        m_runRandomizeIndexBuffer = false;
+        m_runOptimizeVCache = true;
+        m_cacheSize = 16;
+        m_runOptimizeVCacheFifo = false;
+        m_cacheSizeFifo = 16;
+        m_runOptimizeOverdraw = true;
+        m_acmrThreshold = 1.05;
+        m_runOptimizeVFetch = true;
+        m_runMeshSimplify = false;
+        m_levelofDetails = 1;
+        m_Do_Mesh_Optimization = eMeshOptimization::AutoOpt;
+    }
+
+    eMeshOptimization  m_Do_Mesh_Optimization;
+
+signals:
+    void onMesh_Optimization(QVariant & value);
+
+private:
+    bool        m_runRandomizeIndexBuffer;
+    bool        m_runOptimizeVCache;
+    int         m_cacheSize;
+    bool        m_runOptimizeVCacheFifo;
+    int         m_cacheSizeFifo;
+    bool        m_runOptimizeOverdraw;
+    double      m_acmrThreshold;
+    bool        m_runOptimizeVFetch;
+    bool        m_runMeshSimplify;
+    int         m_levelofDetails;
+    CMODEL_DATA m_ModelData;
+};
+#else
+class Mesh_Settings : public Mesh_Compression_Settings
+{
+    Q_OBJECT
+        Q_ENUMS(eFaceWinding)
+        Q_ENUMS(eVCacheOptimizer)
+        Q_ENUMS(eOverdrawOptimizer)
+        Q_ENUMS(eTootleAlgorithm)
+        Q_PROPERTY(QString  View_Port  READ getViewpointName    WRITE setViewpointName)
+        Q_PROPERTY(int      Clustering  READ getClustering    WRITE setClustering)
+        Q_PROPERTY(int      Cache_Size  READ getCacheSize     WRITE setCacheSize)
+        Q_PROPERTY(bool     Optimize_VertexMemory    READ getOptimizeVertexMemory     WRITE setOptimizeVertexMemory)
+        Q_PROPERTY(bool     Measure_Overdraw  READ getMeasureOverdraw    WRITE setMeasureOverdraw)
+        Q_PROPERTY(eFaceWinding Face_Winding   READ getFaceWinding WRITE setFaceWinding)
+        Q_PROPERTY(eVCacheOptimizer VCache_Optimizer   READ getVCacheOptimizer WRITE setVCacheOptimizer)
+        Q_PROPERTY(eOverdrawOptimizer Overdraw_Optimizer   READ getOverdrawOptimizer WRITE setOverdrawOptimizer)
+        Q_PROPERTY(eTootleAlgorithm Mesh_Optimize_Algorithm   READ getAlgorithm WRITE setAlgorithm)
+public:
+    /// Enumeration for face winding order
+    enum eFaceWinding
+    {
+        CCW = 1,                ///< Face is ordered counter-clockwise
+        CW = 2                 ///< Face is ordered clockwise
+    };
+
+    /// Enumeration for the algorithm for vertex optimization
+    enum eVCacheOptimizer
+    {
+        VCACHE_AUTO = 1,           ///< If vertex cache size is less than 7, use TSTRIPS algorithm otherwise TIPSY.
+        VCACHE_DIRECT3D = 2,       ///< Use D3DXOptimizeFaces to optimize faces.
+        VCACHE_LSTRIPS = 3,        ///< Build a list like triangle strips to optimize faces.
+        VCACHE_TIPSY = 4           ///< Use TIPSY (the algorithm from SIGGRAPH 2007) to optimize faces.
+    };
+
+    /// Enumeration for the algorithm for overdraw optimization.
+    enum eOverdrawOptimizer
+    {
+        OVERDRAW_AUTO = 1,          ///< Use either Direct3D or raytracing to reorder clusters (depending on the number of clusters).
+        OVERDRAW_DIRECT3D = 2,      ///< Use Direct3D rendering to reorder clusters to optimize overdraw (slow O(N^2)).
+        OVERDRAW_RAYTRACE = 3,      ///< Use CPU raytracing to reorder clusters to optimize overdraw (slow O(N^2)).
+        OVERDRAW_FAST = 4           ///< Use a fast approximation algorithm (from SIGGRAPH 2007) to reorder clusters.
+    };
+
+
+    //=================================================================================================================================
+    /// Enumeration for the choice of test cases for tootle.
+    //=================================================================================================================================
+    enum eTootleAlgorithm
+    {
+        TOOTLE_VCACHE_ONLY = 1,                 // Only perform vertex cache optimization.
+        TOOTLE_CLUSTER_VCACHE_OVERDRAW = 2,     // Call the clustering, optimize vertex cache and overdraw individually.
+        TOOTLE_FAST_VCACHECLUSTER_OVERDRAW = 3, // Call the functions to optimize vertex cache and overdraw individually.  This is using
+                                            //  the algorithm from SIGGRAPH 2007.
+        TOOTLE_OPTIMIZE = 4,                    // Call a single function to optimize vertex cache, cluster and overdraw.
+        TOOTLE_FAST_OPTIMIZE = 5                // Call a single function to optimize vertex cache, cluster and overdraw using
+                                                                                //  a fast algorithm from SIGGRAPH 2007.
+    };
+
+    void setViewpointName(QString vpname) {
+        m_pViewpointName = vpname;
+    }
+
+    QString getViewpointName() {
+        return m_pViewpointName;
+    }
+
+    void setClustering(int value)
+    {
+        m_Clustering = value;
+    }
+
+    int getClustering()
+    {
+        return m_Clustering;
+    }
+
+    void setCacheSize(int value)
+    {
+        m_CacheSize = value;
+    }
+
+    int getCacheSize()
+    {
+        return m_CacheSize;
+    }
+
+    void setFaceWinding(eFaceWinding value)
+    {
+        m_FaceWinding = value;
+    }
+
+    eFaceWinding getFaceWinding()
+    {
+        return m_FaceWinding;
+    }
+
+    void setVCacheOptimizer(eVCacheOptimizer value)
+    {
+        m_VCacheOptimizer = value;
+    }
+
+    eVCacheOptimizer getVCacheOptimizer()
+    {
+        return m_VCacheOptimizer;
+    }
+
+
+    void setOverdrawOptimizer(eOverdrawOptimizer value)
+    {
+        m_OverdrawOptimizer = value;
+    }
+
+    eOverdrawOptimizer getOverdrawOptimizer()
+    {
+        return m_OverdrawOptimizer;
+    }
+
+    void setAlgorithm(eTootleAlgorithm value)
+    {
+        m_OptimizeAlgorithm = value;
+    }
+
+    eTootleAlgorithm getAlgorithm()
+    {
+        return m_OptimizeAlgorithm;
+    }
+
+    void setMeshData(CMODEL_DATA&  meshData)
+    {
+        m_ModelData = meshData;
+    }
+
+    CMODEL_DATA getMeshData()
+    {
+        return m_ModelData;
+    }
+
+    void setMeasureOverdraw(bool value) {
+        m_MeasureOverdraw = value;
+    }
+
+    bool getMeasureOverdraw() {
+        return m_MeasureOverdraw;
+    }
+
+    void setOptimizeVertexMemory(bool value) {
+        m_OptimizeVertexMemory = value;
+    }
+
+    bool getOptimizeVertexMemory() {
+        return m_OptimizeVertexMemory;
+    }
+    
+
+private:
+    QString      m_pViewpointName = "";
+    unsigned int m_Clustering     = 0;
+    unsigned int m_CacheSize      = 14;            // Hardware cache size(12 to 24 are good options).
+    bool         m_OptimizeVertexMemory = false;   // true if you want to optimize vertex memory location, false to skip
+    bool         m_MeasureOverdraw = false;        // true if you want to measure overdraw, false to skip
+    eFaceWinding     m_FaceWinding = eFaceWinding::CCW;
+    eVCacheOptimizer m_VCacheOptimizer = eVCacheOptimizer::VCACHE_AUTO;   // the choice for vertex cache optimization algorithm, it can be either
+                                                    //  TOOTLE_VCACHE_AUTO, TOOTLE_VCACHE_LSTRIPS, TOOTLE_VCACHE_DIRECT3D or
+                                                    //  TOOTLE_VCACHE_TIPSY.
+    eOverdrawOptimizer m_OverdrawOptimizer = eOverdrawOptimizer::OVERDRAW_FAST;
+    eTootleAlgorithm m_OptimizeAlgorithm = eTootleAlgorithm::TOOTLE_OPTIMIZE;
+    CMODEL_DATA  m_ModelData; //original mesh data buffer
+    // todo: destination meshdata
+};
+
+#endif
+
 class C_Destination_Image: 
-    public Channel_Weighting 
-    //public QObject
+#ifdef USE_MESHOPTIMIZER
+    public Mesh_Optimizer_Settings
+#else
+    public Mesh_Settings
+#endif
 {
     Q_OBJECT
         Q_PROPERTY(QString  _Name                MEMBER m_FileInfoDestinationName)
@@ -628,9 +1227,14 @@ public:
 
 #define COMPRESS_OPTIONS_QUALITY  "Quality"
 #define COMPRESS_OPTIONS_FORMAT   "Format"
+#define COMPRESS_OPTIONS_MESH     "Mesh"
 #define COMPRESS_OPTIONS_CHANNEL_WEIGHTING_R  "X RED"
 #define COMPRESS_OPTIONS_CHANNEL_WEIGHTING_G  "Y GREEN"
 #define COMPRESS_OPTIONS_CHANNEL_WEIGHTING_B  "Z BLUE"
+#define COMPRESS_OPTIONS_WIDTH  "Width"
+#define COMPRESS_OPTIONS_HEIGHT  "Height"
+#define COMPRESS_OPTIONS_COMP_RATIO "Compression Ratio"
+#define COMPRESS_OPTIONS_COMP_TIME  "Compression Time"
 #define COMPRESS_OPTIONS_ALPHATHRESHOLD  "Threshold"
 #define COMPRESS_OPTIONS_ADAPTIVECOLOR  "Adaptive"
 #define COMPRESS_OPTIONS_USEALPHA  "Use Alpha"
@@ -645,25 +1249,27 @@ public:
 #define COMPRESS_OPTIONS_GAMMA "Gamma"
 
 
+
 struct Model_Image
 {
     QString m_FilePathName; // Files Path + name + ext
+    bool    m_isImage;      // File is an Image file else File contains Model Mesh Data
     bool    m_srcDelFlag;   // Used only by 3DSubModels
     int     m_Width;        // Width 
     int     m_Height;       // Height 
     int     m_FileSize;     // FileSize 
+    QTreeWidgetItem *child = NULL; // Child node that contains the image data
 };
-
-
 
 class C_Destination_Options : public C_Destination_Image
 {
     Q_OBJECT
         Q_ENUMS(eCompression)
-        Q_PROPERTY(eCompression Format        READ getCompression WRITE setCompression NOTIFY compressionChanged)
-        Q_PROPERTY(double       Quality       READ getQuality     WRITE setQuality NOTIFY qualityChanged)
+        Q_PROPERTY(eCompression     Format        READ getCompression WRITE setCompression NOTIFY compressionChanged)
+        Q_PROPERTY(double           Quality       READ getQuality     WRITE setQuality NOTIFY qualityChanged)
 
 public:
+
     enum eCompression {
         BC1,
         BC2,
@@ -721,7 +1327,7 @@ public:
     {
         m_MipImages = NULL;
         m_OriginalMipImages = NULL;
-
+        m_isModelData = false;
         m_FileSize = 0;
         m_DstWidth = 0;
         m_DstHeight = 0;
@@ -772,6 +1378,16 @@ public:
         }
     }
 
+    void setController(ObjectController *newController)
+    {
+        m_controller = newController;
+    }
+
+    ObjectController *getController()
+    {
+        return m_controller;
+    }
+
     void setCompression(eCompression Compression)
     {
             if (m_Compression != Compression)
@@ -788,7 +1404,6 @@ public:
     {
             return m_Compression;
     }
-
 
     void setQuality(float quality)
     {
@@ -850,6 +1465,7 @@ public:
     bool         m_editing;
     double       m_Quality;
     bool         m_iscompressedFormat;
+    bool         m_isModelData;             // m_compname is ModelData destination name else its a Texture
 
     CMipImages  *m_MipImages;
     bool         m_isselected;
@@ -863,7 +1479,9 @@ public:
     CMipImages  *m_OriginalMipImages;
 
 signals:
+
     void compressionChanged(QVariant &);
+    void meshCompressionChanged(QVariant &);
     void qualityChanged(QVariant &);
 
 private:
@@ -885,8 +1503,10 @@ private:
         }
 
         // Assign none property data used by the class
+        ds.m_controller               = obj.m_controller;
         ds.m_modelSource              = obj.m_modelSource;
         ds.m_modelDest                = obj.m_modelDest;
+		ds.m_isModelData              = obj.m_isModelData;
         ds.m_Compression              = obj.m_Compression;
         ds.m_compname                 = obj.m_compname;
         ds.m_destFileNamePath         = obj.m_destFileNamePath;
@@ -971,11 +1591,62 @@ public:
     int     m_extnum;
     long    m_ImageSize;
     CMipImages *m_MipImages;
-
-
 };
 
-class C_3DSubModel_Info : public QObject
+class C_Mesh_Buffer_Info : public QObject
+{
+        Q_OBJECT
+        Q_PROPERTY(QString  _Name       MEMBER m_Name)
+        Q_PROPERTY(QString  _Full_Path  MEMBER m_Full_Path)
+        Q_PROPERTY(QString  _File_Size  MEMBER m_FileSizeStr)
+
+public:
+    C_Mesh_Buffer_Info()
+    {
+        m_Name = "";
+        m_Full_Path = "";
+        m_FileSize = 0;
+        m_FileSizeStr = "";
+        m_glTF_filePath = "";
+    }
+
+    QString m_Name;
+    QString m_Full_Path;
+    QString m_FileSizeStr;
+    QString m_glTF_filePath;
+    int     m_FileSize;
+};
+
+class C_3DMesh_Statistic : public QObject
+{
+    Q_OBJECT
+        Q_PROPERTY(QString  _Clusters                  MEMBER m_Clusters)
+        Q_PROPERTY(QString  _CacheIn_Out_Ratio         MEMBER m_CacheInOutRatio)
+        Q_PROPERTY(QString  _OverdrawIn_Out_Ratio      MEMBER m_OverdrawInOutRatio)
+        Q_PROPERTY(QString  _OverdrawMaxIn_Out_Ratio   MEMBER m_OverdrawMaxInOutRatio)
+
+public:
+    C_3DMesh_Statistic()
+    {
+        m_Clusters = "";
+        m_CacheInOutRatio = "1x";
+        m_OverdrawInOutRatio = "1x";
+        m_OverdrawMaxInOutRatio = "1x";
+
+    }
+
+    QString m_Clusters;
+    QString m_CacheInOutRatio;
+    QString m_OverdrawInOutRatio;
+    QString m_OverdrawMaxInOutRatio;
+};
+
+class C_3DSubModel_Info : 
+#ifdef USE_MESHOPTIMIZER
+    public QObject
+#else
+    public C_3DMesh_Statistic
+#endif
 {
     Q_OBJECT
         Q_PROPERTY(QString  _Name           MEMBER m_Name)
@@ -1011,6 +1682,10 @@ public:
     int     m_FileSize;
     int     m_extnum;
 
+    CMODEL_DATA  m_ModelData;
+
+    eModelType  ModelType;
+
     // copy of the original file in 3D_Source_Info, that has path updated to user selected paths
     nlohmann::json m_original_gltf;
 
@@ -1029,6 +1704,7 @@ class C_3DModel_Info : public QObject
         Q_PROPERTY(QString  _Version        MEMBER m_VersionStr)
 
 public:
+
     C_3DModel_Info()
     {
         m_Name = "";
@@ -1052,6 +1728,9 @@ public:
 
     int     m_FileSize;
     int     m_extnum;
+    CMODEL_DATA  m_ModelData;
+
+    eModelType  ModelType;
 
     // Original glTF File info is stored  for referance
     // and used for copies 
@@ -1065,12 +1744,15 @@ public:
 #ifdef USE_COMPUTE
 #define APP_compress_image_using                        "Encode with"
 #endif
+#ifdef USE_3DVIEWALLAPI
+#define APP_Render_Models_with                          "Render Models with"
+#endif
 #define APP_Decompress_image_views_using                "Decode with"
 #define APP_Reload_image_views_on_selection             "Reload image views on selection"
 #define APP_Load_recent_project_on_startup              "Load recent project on startup"
 #define APP_Close_all_image_views_prior_to_process      "Close all image views prior to process"
 #define APP_Mouse_click_on_icon_to_view_image           "Mouse click on icon to view image"
-#define APP_Render_Models_with                          "Render Models with"
+#define APP_Set_Image_Diff_Contrast                     "Set Image Diff Contrast"
 
 //class C_GPU_Decompress_Options : public QObject
 //{
@@ -1168,7 +1850,13 @@ class C_Application_Options :public QObject
         Q_PROPERTY(bool             Close_all_image_views_prior_to_process  READ getCloseAllImageViews      WRITE setCloseAllImageViews)
         Q_PROPERTY(bool             Mouse_click_on_icon_to_view_image       READ getclickIconToViewImage    WRITE setclickIconToViewImage)
         Q_PROPERTY(bool             Load_recent_project_on_startup          READ getLoadRecentFile          WRITE setLoadRecentFile)
-        Q_PROPERTY(RenderModelsWith Render_Models_with                      READ getGLTFRender              WRITE setGLTFRender NOTIFY GLTFRenderChanged)
+        Q_PROPERTY(double           Set_Image_Diff_Contrast                 READ getImagediffContrast       WRITE setImagediffContrast)
+#ifdef USE_ASSIMP
+        Q_PROPERTY(bool             Use_assimp						        READ getUseAssimp				WRITE setUseAssimp)
+#endif
+#ifdef USE_3DVIEWALLAPI
+        Q_PROPERTY(RenderModelsWith Render_Models_with                      READ getGLTFRender              WRITE setGLTFRender)
+#endif
 public:
     // Keep order of list as its ref is saved in CompressSettings.ini
     // we should change the save to use string name instead of indexes to the enum
@@ -1188,11 +1876,9 @@ public:
 
     enum class RenderModelsWith
     {
-#ifdef USE_GLTF_OPENGL 
-        glTF_OpenGL = 0,
-        glTF_WebGL  = 1,
-#endif
-        glTF_DX12_EX = 2
+        glTF_DX12_EX = 0,
+        glTF_Vulkan  = 1,
+        glTF_OpenGL  = 2
     };
 
     // Flags how image views are used, True deletes the old view and creates a new one
@@ -1208,16 +1894,19 @@ public:
 #ifdef USE_COMPUTE
         m_ImageEncode        = ImageEncodeWith::CPU;
 #endif
-        m_loadRecentFile     = false;
-        m_useNewImageViews   = true;
-        m_refreshCurrentView = false;
-        m_closeAllDocuments  = true;
-        m_clickIconToViewImage = true;
-#ifdef USE_GLTF_OPENGL 
-        m_GLTFRenderWith       = RenderModelsWith::glTF_OpenGL;
-#else
+        m_loadRecentFile        = false;
+        m_useNewImageViews      = false;
+        m_refreshCurrentView    = false;
+        m_closeAllDocuments     = true;
+        m_clickIconToViewImage  = true;
+        m_useAssimp             = false;
+        m_imagediff_contrast    = 20.0;
+
+//#ifdef USE_GLTF_OPENGL 
+//        m_GLTFRenderWith       = RenderModelsWith::glTF_OpenGL;
+//#else
         m_GLTFRenderWith = RenderModelsWith::glTF_DX12_EX;
-#endif
+//#endif
     }
 
     void setImageViewDecode(ImageDecodeWith decodewith)
@@ -1242,6 +1931,31 @@ public:
         return m_ImageEncode;
     }
 #endif
+
+    void setImagediffContrast(double contrast)
+    {
+        if (contrast > 200) contrast = 200;
+        else
+            if (contrast < 1) contrast = 1;
+        m_imagediff_contrast = contrast;
+    }
+
+    double getImagediffContrast() const
+    {
+        return m_imagediff_contrast;
+    }
+
+
+	void setUseAssimp(bool recent)
+	{
+		m_useAssimp = recent;
+	}
+
+	double getUseAssimp() const
+	{
+		return m_useAssimp;
+	}
+
     void setCloseAllImageViews(bool recent)
     {
         m_closeAllDocuments = recent;
@@ -1282,18 +1996,15 @@ public:
         return m_clickIconToViewImage;
     }
 
-
     void setGLTFRender(RenderModelsWith renderwith)
     {
         m_GLTFRenderWith = renderwith;
-        emit GLTFRenderChanged((QVariant &)renderwith);
     }
 
     RenderModelsWith getGLTFRender() const
     {
         return m_GLTFRenderWith;
     }
-
 
     ImageDecodeWith m_ImageViewDecode;
 #ifdef USE_COMPUTE
@@ -1303,6 +2014,8 @@ public:
     bool            m_closeAllDocuments;
     bool            m_loadRecentFile;
     bool            m_refreshCurrentView;
+	bool            m_useAssimp;
+    double          m_imagediff_contrast;
     RenderModelsWith m_GLTFRenderWith;
 
 signals:
@@ -1311,7 +2024,6 @@ signals:
 signals :
     void ImageEncodeChanged(QVariant &);
 #endif
-    void GLTFRenderChanged(QVariant &);
 
 };
 

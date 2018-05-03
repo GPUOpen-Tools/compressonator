@@ -189,6 +189,14 @@ bool IsDestinationUnCompressed(const char *fname)
     {
         isuncompressed = false;
     }
+#ifdef USE_CRN
+    else
+    if (file_extension.compare(".crn") == 0)
+    {
+        isuncompressed = false;
+    }
+#endif
+
     return isuncompressed;
 }
 
@@ -1213,15 +1221,5 @@ bool FormatSupportsDXTCBase(CMP_FORMAT format)
 }
 
 
-CMP_FLOAT F16toF32(CMP_HALF f)
-{
-    half A;
-    A.setBits(f);
-    return((CMP_FLOAT)A);
-}
 
-CMP_HALF F32toF16(CMP_FLOAT f)
-{
-    return(half(f).bits());
-}
 

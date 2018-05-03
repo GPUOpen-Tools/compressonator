@@ -1,9 +1,6 @@
 [submodule "Common/Lib/Ext/tinyxml"]
 	path = Common/Lib/Ext/tinyxml
 	url = https://github.com/GPUOpen-Tools/common-lib-ext-tinyxml-2.6.2.git
-[submodule "Common/Lib/Ext/Vulkan"]
-	path = Common/Lib/Ext/Vulkan
-	url = https://github.com/GPUOpen-Tools/common-lib-ext-Vulkan-1.0.21.1.git
 [submodule "Common/Lib/Ext/OpenGL"]
 	path = Common/Lib/Ext/OpenGL
 	url = https://github.com/GPUOpen-Tools/common-lib-ext-OpenGL.git

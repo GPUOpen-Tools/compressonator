@@ -9,10 +9,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -29,7 +29,6 @@
 
 
 #include "HDR_Encode.h"
-#include "Common.h"
 #include <assert.h>
 #include <math.h>
 #include <float.h>
@@ -95,7 +94,7 @@ inline int NBits(int n, bool bIsSigned)
 
  int QuantizeToInt(short value, int prec, bool signedfloat16, float exposure)
  {
-     UNREFERENCED_PARAMETER(exposure);
+     (exposure);
 
      if (prec <= 1) return 0;
      bool negvalue = false;
@@ -1134,7 +1133,7 @@ void GetEndPoints(float EndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG
     // Save Min and Max OutB points as EndPoints
     for (int subset = 0; subset<max_subsets; subset++)
     {
-        // We now have points on direction vector(s)
+        // We now have points on direction vector(s) 
         // find the min and max points
         float min = FLT_MAX;
         float max = 0;
@@ -1216,7 +1215,7 @@ void eigenVector_d(float cov[MAX_DIMENSION_BIG][MAX_DIMENSION_BIG], float vector
     // will work for non-zero non-negative matricies only
 
 #define EV_ITERATION_NUMBER 20
-#define EV_SLACK            2        /* additive for exp base 2)*/
+#define EV_SLACK            2        /* additive for exp base 2)*/    
 
 
     int i, j, k, l, m, n, p, q;
@@ -1261,7 +1260,7 @@ void eigenVector_d(float cov[MAX_DIMENSION_BIG][MAX_DIMENSION_BIG], float vector
                     float temp = 0;
                     for (k = 0; k<dimension; k++)
                     {
-                        // Notes:
+                        // Notes: 
                         // This is the most consuming portion of the code and needs optimizing for perfromance
                         temp += c[l][i][k] * c[l][k][j];
                     }
@@ -1422,7 +1421,7 @@ void quant_AnD_Shell(float* v_, int k, int n, int *idx)
             }
         }
 
-        // position which should be in 0
+        // position which should be in 0 
         j = ++j % n;
 
         for (i = j; i < n; i++)
@@ -1474,7 +1473,7 @@ float optQuantAnD_d(
     centerInPlace_d(centered, numEntries, mean, dimension);
     covariance_d(centered, numEntries, cov, dimension);
 
-    // check if they all are the same
+    // check if they all are the same 
 
     t = 0;
     for (j = 0; j<dimension; j++)
@@ -1522,7 +1521,7 @@ float optQuantAnD_d(
                 t = t - s * s * (float)numEntries;
                 //assert(t != 0);
                 t = (t == 0.0f ? 0.0f : 1.0f / t);
-                // We need to requantize
+                // We need to requantize 
 
                 q = sqrtf(q);
                 t *= q;
@@ -1635,7 +1634,7 @@ const float rampLerpWeights[5][16] =
 
 float rampf(int clog, int bits, float p1, float p2, int indexPos)
 {
-    UNREFERENCED_PARAMETER(bits);
+    (bits);
     // (clog+ LOG_CL_BASE) starts from 2 to 4
     return  (float)p1 + rampLerpWeights[clog + LOG_CL_BASE][indexPos] * (p2 - p1);
 }
@@ -1757,7 +1756,7 @@ short par_vectors_nd[2][8][128][2][MAX_DIMENSION_BIG] =
             { { 0,0,0 },{ 0,0,0 } },
             { { 1,1,1 },{ 1,1,1 } }
         },
-    // 3*n+2    BCC          3*n+1        BCC          3*n+1
+    // 3*n+2    BCC          3*n+1        BCC          3*n+1    
         { // BCC
             { { 0,0,0 },{ 0,0,0 } },
             { { 0,0,0 },{ 1,1,1 } },
@@ -1803,7 +1802,7 @@ short par_vectors_nd[2][8][128][2][MAX_DIMENSION_BIG] =
         },
 
 
-    // 3*n+5    Cartesian 3*n+3        FCC          3*n+2            //D^*[6]
+    // 3*n+5    Cartesian 3*n+3        FCC          3*n+2            //D^*[6]  
         {
 
             { { 0,0,0 },{ 0,0,0 } },
@@ -1859,7 +1858,7 @@ short par_vectors_nd[2][8][128][2][MAX_DIMENSION_BIG] =
             { { 0,0,0,0 },{ 0,0,0,0 } },
             { { 1,1,1,1 },{ 1,1,1,1 } }
         },
-    // 3*n+2    BCC          3*n+1        BCC          3*n+1
+    // 3*n+2    BCC          3*n+1        BCC          3*n+1    
         { // BCC
             { { 0,0,0,0 },{ 0,0,0,0 } },
             { { 0,0,0,0 },{ 1,1,1,1 } },
@@ -2001,8 +2000,8 @@ float quant_single_point_d
 #ifdef USE_RAMPS
                         int tf = (int)floorf(data[0][j]);
                         int tc = (int)ceilf(data[0][j]);
-                        // if they are not equal, the same representalbe point is used for
-                        // both of them, as all representable points are integers in the rage
+                        // if they are not equal, the same representalbe point is used for 
+                        // both of them, as all representable points are integers in the rage 
                         if (sperr(tf, CLT(clog), BTT(bits[j]), t1, t2, i) > sperr(tc, CLT(clog), BTT(bits[j]), t1, t2, i))
                             dr[j] = tc;
                         else if (sperr(tf, CLT(clog), BTT(bits[j]), t1, t2, i) < sperr(tc, CLT(clog), BTT(bits[j]), t1, t2, i))
@@ -2254,7 +2253,7 @@ void init_ramps()
     //        for (in_data = 0; in_data<SP_ERRIDX_MAX; in_data++)
     //            for (o1 = 0; o1<2; o1++)
     //                for (o2 = 0; o2<2; o2++)
-    //                    for (i = 0; i<16; i++)
+    //                    for (i = 0; i<16; i++) 
     //                         {
     //                             printf("sp_data[%2d].sp_idx[%2d][%2d][%2d][%2d][%2d][0] = %d\n", in_data,CLT(clog), BTT(bits),o1,o2,i, sp_data[in_data].sp_idx[CLT(clog)][BTT(bits)][o1][o2][i][0]);
     //                             printf("sp_data[%2d].sp_idx[%2d][%2d][%2d][%2d][%2d][1] = %d\n", in_data,CLT(clog), BTT(bits),o1,o2,i, sp_data[in_data].sp_idx[CLT(clog)][BTT(bits)][o1][o2][i][1]);
@@ -2558,7 +2557,7 @@ float ep_shaker_HD(
                         }
                         err_1 = err_0;
 
-                        s1 = s; // epo coding
+                        s1 = s; // epo coding             
                     }
                 }
 
@@ -2738,7 +2737,7 @@ float ep_shaker_2_d(
             return err_o;
         }
 
-        for (q = 1; Mi != 0 && q*Mi <= Mi_; q++) // does not work for single point collapsed index!!!
+        for (q = 1; Mi != 0 && q*Mi <= Mi_; q++) // does not work for single point collapsed index!!! 
             for (p = 0; p <= Mi_ - q*Mi; p++)
             {
                 int cidx[MAX_ENTRIES];
@@ -2895,7 +2894,7 @@ float ep_shaker_2_d(
                             }
                 }
 
-                if (err_1 <= err_0) { // we'd want to get expanded index;
+                if (err_1 <= err_0) { // we'd want to get expanded index; 
                     err_0 = err_1;
                     p0 = p;
                     q0 = q;

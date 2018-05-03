@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -22,7 +22,7 @@
 //
 // BC6H_utils.h Genenral functions and definitions for use in encoder and decoder
 // Revision
-// 0.1    First implementation
+// 0.1    First implementation 
 //////////////////////////////////////////////////////////////////////////////////
 
 #ifndef _BC6H_UTILS_H_
@@ -111,9 +111,7 @@ public:
    int     m_sizeinbytes;
 };
 
-#ifdef _MSC_VER
 #pragma warning(disable:4201)
-#endif //_MSC_VER
 // https://gist.github.com/rygorous/2156668
 union FP32
 {
@@ -126,7 +124,7 @@ union FP32
         uint Sign        : 1;
     };
 };
-
+ 
 union FP16
 {
     unsigned short u;

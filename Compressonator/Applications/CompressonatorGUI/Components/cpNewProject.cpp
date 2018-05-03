@@ -105,6 +105,11 @@ void cpNewProject::keyPressEvent(QKeyEvent *event)
             onPBCancel();
         }
     }
+    //enter is detected as Key_Return
+    if (event->key() == Qt::Key_Return)
+    {
+        this->onPBOk();
+    }
 }
 
 void cpNewProject::GetNewFilePathName(QString OldFilePathName)

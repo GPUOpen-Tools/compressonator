@@ -47,7 +47,7 @@ public:
 #endif
 
     QTreeWidgetItem                *m_item;                // Ref to a project's item when the dialog was called: Must be set if Saving the data int a project tree
-    C_Destination_Options           m_data;                // Our loacal data settings: copy of orignal or default
+    C_Destination_Options           m_DestinationData;    // Our loacal data settings: copy of orignal or default
     C_Destination_Options           m_dataOriginal;        // Original Data prior to Edit
 
     bool updateDisplayContent();                            // Update data to all widgets and vaildate compressable image format support
@@ -74,7 +74,7 @@ public:
     QString                      m_srcext;
     QLineEdit                   *m_LESourceFile;
     QComboBox                   *m_CBSourceFile;
-
+	QGroupBox                   *GBDestinationFile;
 private:
     // Common for all
     QHBoxLayout                 *m_HlayoutName;
@@ -104,7 +104,15 @@ private:
     bool                        changeSelf;
 
     // Options that can change during editing
+#ifdef USE_MESHOPTIMIZER
+    QtProperty                  *m_propMeshOptimizerSettings;
+#else
+    QtProperty                  *m_propMeshSettings;
+#endif
+    QtProperty                  *m_propMeshCompressionSettings;
+    QtProperty                  *m_propFormat;
     QtProperty                  *m_propQuality;
+
     QtProperty                  *m_propChannelWeightingR;
     QtProperty                  *m_propChannelWeightingG;
     QtProperty                  *m_propChannelWeightingB;
@@ -113,7 +121,6 @@ private:
     QtProperty                  *m_propUseAlpha;
     QtProperty                  *m_propNoAlpha;
     QtProperty                  *m_propBitrate;
-    QtProperty                  *m_propFormat;
 
     // Options for input HDR image properties
     QtProperty                  *m_propDefog;

@@ -1,7 +1,7 @@
 /* -*- tab-width: 4; -*- */
 /* vi: set sw=2 ts=4: */
 
-/* $Id: 75ba91467bd9953cfa4bd4000f40e7ea6bf90d85 $ */
+/* $Id: 07d53c927b8cc3343d240d80e5d359afa0e050b7 $ */
 
 /*
 Copyright (c) 2010 The Khronos Group Inc.
@@ -36,24 +36,47 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
  * Author: Mark Callow based on code from Georg Kolling
  */
 
-#ifndef _GL_FUNCPTRS_H_
-#define _GL_FUNCPTRS_H_
+#ifndef GL_FUNCPTRS_H
+#define GL_FUNCPTRS_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define DECLARE_GL_FUNCPTRS
+#if KTX_USE_GETPROC
+  // Not defined in glew.h.
+  typedef void (GL_APIENTRY* PFNGLTEXIMAGE1DPROC) (
+                    GLenum target, GLint level, GLint internalformat,
+                    GLsizei width, GLint border, GLenum format, GLenum type,
+                    const GLvoid *pixels
+                                                  );
+#endif
 
-/* remove this if you use GLEW and already have this */
-extern int GLEW_OES_compressed_ETC1_RGB8_texture;
+extern PFNGLTEXIMAGE1DPROC pfGlTexImage1D;
+extern PFNGLTEXIMAGE3DPROC pfGlTexImage3D;
+extern PFNGLCOMPRESSEDTEXIMAGE1DPROC pfGlCompressedTexImage1D;
+extern PFNGLCOMPRESSEDTEXIMAGE3DPROC pfGlCompressedTexImage3D;
+extern PFNGLGENERATEMIPMAPPROC pfGlGenerateMipmap;
+extern PFNGLGETSTRINGIPROC pfGlGetStringi;
 
-/* and make this macro empty */
-#define DECLARE_GL_EXTGLOBALS \
-	int GLEW_OES_compressed_ETC1_RGB8_texture = 0;
+#define DECLARE_GL_FUNCPTRS \
+    PFNGLTEXIMAGE1DPROC pfGlTexImage1D; \
+    PFNGLTEXIMAGE3DPROC pfGlTexImage3D; \
+    PFNGLCOMPRESSEDTEXIMAGE1DPROC pfGlCompressedTexImage1D; \
+    PFNGLCOMPRESSEDTEXIMAGE3DPROC pfGlCompressedTexImage3D; \
+    PFNGLGENERATEMIPMAPPROC pfGlGenerateMipmap; \
+	PFNGLGETSTRINGIPROC pfGlGetStringi;
 
+#define INITIALIZE_GL_FUNCPTRS \
+    pfGlTexImage1D = glTexImage1D; \
+    pfGlTexImage3D = glTexImage3D; \
+    pfGlCompressedTexImage1D = glCompressedTexImage1D; \
+    pfGlCompressedTexImage3D = glCompressedTexImage3D; \
+    pfGlGenerateMipmap = glGenerateMipmap; \
+	pfGlGetStringi = glGetStringi;
+    
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* GL_FUNCPTRS */
+#endif /* GL_FUNCPTRS_H */

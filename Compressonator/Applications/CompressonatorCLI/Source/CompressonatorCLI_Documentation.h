@@ -12,7 +12,6 @@
   Version:    2.1
 
   Developer:    Navin Patel    
-  Email:        gputools.support@amd.com
 /*==============================================================================*/
 
 /*===================
@@ -98,7 +97,6 @@ AMDCompress CLI Tool
 *************************************************/
 
     /// \page Contact  Contact Details
-    /// email: gputools.support@amd.com \n
     /// website: http://developer.amd.com/tools-and-sdks/graphics-development/
     ///
 

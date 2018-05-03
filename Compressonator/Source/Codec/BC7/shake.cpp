@@ -1046,7 +1046,7 @@ double BC7BlockEncoder::ep_shaker_d(
     int epo_code[2][MAX_DIMENSION_BIG],
     int Mi_,                // last cluster
     int bits[3],            // including parity
-    qt type,
+    CMP_qt type,
     int dimension
     ) 
 {

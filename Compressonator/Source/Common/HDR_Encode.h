@@ -12,10 +12,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -41,7 +41,7 @@ namespace HDR_Encode
 #define MAX_PARTITIONS          64                       // Maximum number of partition types
 #define NUM_BLOCK_TYPES         8                        // Number of block types in the format
 #define COMPRESSED_BLOCK_SIZE   16                       // Size of a compressed block in bytes
-#define MAX_DIMENSION_BIG       4                        // Maximun number of Channels per Texel,
+#define MAX_DIMENSION_BIG       4                        // Maximun number of Channels per Texel,  
                                                          // BC6H uses 3 channels in current encoder, 4th is reserved for future use
 #define F16MAX1                 0x7C00                   // Max 16bit half float value (0x7BFF) + 1
 #define MAX_END_POINTS          2                        // BC6H Maximum number of end point pairs (AB)
@@ -64,16 +64,14 @@ extern  void    Partition(  int       shape,
 // Used by optQuantAnD_d
 #define MAX_ENTRIES                             64
 #define MAX_TRY                                 4000
-#ifndef FLT_MAX_EXP
 #define FLT_MAX_EXP                             128 // DBL_MAX_EXP_ = 1024
-#endif //FLT_MAX_EXP
 #define MAX_PARTITIONS_TABLE                    (1+64+64)
 
 // Out contains all endpoints (out) calaculated for the input shape (data) and pattern (index)
 extern  float optQuantAnD_d(
     float data[MAX_ENTRIES][MAX_DIMENSION_BIG],
-        int numEntries,
-        int numClusters,
+        int numEntries, 
+        int numClusters, 
         int index[MAX_ENTRIES],
     float out[MAX_ENTRIES][MAX_DIMENSION_BIG],
     float direction[MAX_DIMENSION_BIG],

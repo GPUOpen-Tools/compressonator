@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -45,7 +45,7 @@ struct BC7EncodeThreadParam
     volatile CMP_BOOL    exit;
 };
 
-class CCodec_BC7 : public CCodec_DXTC
+class CCodec_BC7 : public CCodec_DXTC  
 {
 public:
     CCodec_BC7();
@@ -56,10 +56,10 @@ public:
     virtual bool SetParameter(const CMP_CHAR* /*pszParamName*/, CODECFLOAT /*fValue*/);
 
     // Required interfaces
-    virtual CodecError Compress             (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = CMP_NULL, CMP_DWORD_PTR pUser2 = CMP_NULL);
-    virtual CodecError Compress_Fast        (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = CMP_NULL, CMP_DWORD_PTR pUser2 = CMP_NULL);
-    virtual CodecError Compress_SuperFast   (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = CMP_NULL, CMP_DWORD_PTR pUser2 = CMP_NULL);
-    virtual CodecError Decompress           (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = CMP_NULL, CMP_DWORD_PTR pUser2 = CMP_NULL);
+    virtual CodecError Compress             (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress_Fast        (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress_SuperFast   (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Decompress           (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
 
 
 private:
@@ -71,11 +71,11 @@ private:
     double  m_Performance;
     CMP_BOOL    m_ColourRestrict;
     CMP_BOOL    m_AlphaRestrict;
-    CMP_WORD    m_NumThreads;
+    CMP_WORD    m_NumThreads;    
     CMP_BOOL    m_ImageNeedsAlpha;
 
 
-    // BC7 Internal status
+    // BC7 Internal status 
     CMP_BOOL     m_LibraryInitialized;
     CMP_BOOL     m_Use_MultiThreading;
     CMP_WORD     m_NumEncodingThreads;

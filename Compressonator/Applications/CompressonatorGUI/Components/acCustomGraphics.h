@@ -33,6 +33,10 @@
 #include <QGraphicsView>
 #include <QGraphicsRectItem>
 #include <QGLWidget>
+#include "cpProjectData.h"
+
+extern C_Application_Options g_Application_Options;
+
 
 // Available Item Types:
 enum acCustomGraphicsTypes
@@ -199,8 +203,7 @@ class acCustomGraphicsImageItem : public QGraphicsPixmapItem
 public:
     int ID;
 
-    acCustomGraphicsImageItem(QPixmap &PixItem);
-    void setOriginalPixMap(QPixmap &PixItem);
+    acCustomGraphicsImageItem(QPixmap &ProcessedPixItem, QImage *OriginalImage);
 
     // Enable the use of qgraphicsitem_cast with this item.
     int type() const
@@ -211,6 +214,7 @@ public:
     void UpdateImage();
     void setDefaults();
     void changeImage(QImage image);
+    void changeImageDiffRef(QImage *imageDiffRef);
 
 
     // Current Image Data Setting 
@@ -223,17 +227,15 @@ public:
     bool m_Mirrored;
     bool m_Mirrored_h;
     bool m_Mirrored_v;
-    bool m_UseOriginalImage;
-    bool m_ImageBrightnessUp;
-    bool m_ImageBrightnessDown;
+    bool m_UseProcessedImage;
+    bool m_ShowPixelDiff;
+    bool m_ImageBrightness;
     int  m_alpha;
-    QPixmap m_originalPixMap;
-    float  m_fBrightness;
-    float  m_fContast;
+    QImage  m_ProcessedImage;
+    QImage  *m_refImage  = NULL;
+    int m_iBrightness;
+    int m_fContrast;
 
 };
-
-#define BRIGHTNESS_INCRIMENTS  5
-
 
 #endif // _ACCUSTOMGRAPHICS_H

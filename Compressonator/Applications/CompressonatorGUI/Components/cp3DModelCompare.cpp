@@ -193,6 +193,8 @@ bool C3DModelCompare::createImageViews(bool isCompressedCompare)
 {
     Setting *setting = new Setting;
     setting->onBrightness = false;
+    setting->fDiffContrast = g_Application_Options.m_imagediff_contrast;
+
 
     QString file1Title = m_sourceFile;
     QString file2Title = m_destFile;
@@ -212,12 +214,17 @@ bool C3DModelCompare::createImageViews(bool isCompressedCompare)
     }
     m_imageviewFile1 = new cp3DModelView(m_sourceFile, "", "  "+file1Title+" Model", m_newInnerWidget);
     if (m_imageviewFile1 == NULL) return false;
+    if (m_imageviewFile1->custTitleBar)
+    {
+        m_imageviewFile1->custTitleBar->setButtonToolBarShow(false);
+        m_imageviewFile1->custTitleBar->setButtonCloseEnabled(false);
+    }
 
     // Notes: BugFix added change of m_FileName in construct above to prevent main applications FindFile to use these images as 
     // Been found as Main Apps Tabs views 
     m_imageviewFile1->m_fileName = file1Title+": " + m_sourceFile;
 
-    m_imageviewFile1->custTitleBar->setButtonCloseEnabled(false);
+
     m_imageviewFile1->setFeatures(NoDockWidgetFeatures);
 
     if (g_pProgressDlg) {
@@ -231,14 +238,19 @@ bool C3DModelCompare::createImageViews(bool isCompressedCompare)
     }
 
     m_imageviewFile2->m_fileName = file2Title+": " + m_destFile;
-    m_imageviewFile2->custTitleBar->setButtonCloseEnabled(false);
+    if (m_imageviewFile2->custTitleBar)
+    {
+        m_imageviewFile2->custTitleBar->setButtonToolBarShow(false);
+        m_imageviewFile2->custTitleBar->setButtonCloseEnabled(false);
+    }
+
     m_imageviewFile2->setFeatures(NoDockWidgetFeatures);
 
 #ifdef USE_IMGDIFF
     setting->onBrightness = true;
     setting->generateDiff = true;
     QString diffFile = QString::fromUtf8(m_analyzed.c_str());
-
+    setting->input_image = eImageViewState::isDiff
     m_imageviewDiff = new cpImageView(diffFile, "  Diff Image", m_newInnerWidget, m_diffMips, setting);
     if (m_imageviewDiff == NULL)
     {
@@ -263,6 +275,7 @@ bool C3DModelCompare::createImageViews(bool isCompressedCompare)
     if (g_pProgressDlg) {
         g_pProgressDlg->SetLabelText("Generating model difference...");
     }
+
     m_imageviewDiff = new cp3DModelView(m_sourceFile, m_destFile, "3D Model Diff View", m_newInnerWidget);
     if (m_imageviewDiff == NULL)
     {
@@ -270,9 +283,13 @@ bool C3DModelCompare::createImageViews(bool isCompressedCompare)
         delete (m_imageviewFile2);
         return false;
     }
-
+    
     m_imageviewDiff->m_fileName = file2Title + ": " + m_destFile;
-    m_imageviewDiff->custTitleBar->setButtonCloseEnabled(false);
+    if (m_imageviewDiff->custTitleBar)
+    {
+        m_imageviewDiff->custTitleBar->setButtonToolBarShow(false);
+        m_imageviewDiff->custTitleBar->setButtonCloseEnabled(false);
+    }
     m_imageviewDiff->setFeatures(NoDockWidgetFeatures);
 #endif
 

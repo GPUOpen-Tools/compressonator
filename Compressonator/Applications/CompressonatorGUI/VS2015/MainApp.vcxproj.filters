@@ -175,12 +175,6 @@
     <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpImagePropertyView.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpImageView.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpImageView.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
     <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpMainComponents.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
@@ -197,12 +191,6 @@
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpProjectData.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpProjectView.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpProjectView.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
     <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpSetApplicationOptions.cpp">
@@ -334,9 +322,6 @@
     <ClCompile Include="../Components/cpImagePropertyView.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="../Components/cpImageView.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="../Components/cpNewProject.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -400,6 +385,45 @@
     <ClCompile Include="../Source/cpMainComponents.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\_Plugins\Common\ModelData.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_ac3DMeshAnalysis.cpp">
+      <Filter>Generated Files\Release_MD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_ac3DMeshAnalysis.cpp">
+      <Filter>Generated Files\Debug_MD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\ac3DMeshAnalysis.cpp">
+      <Filter>AppUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\cp3DModelConvert.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cp3DModelConvert.cpp">
+      <Filter>Generated Files\Release_MD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cp3DModelConvert.cpp">
+      <Filter>Generated Files\Debug_MD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpProjectView.cpp">
+      <Filter>Generated Files\Release_MD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpProjectView.cpp">
+      <Filter>Generated Files\Debug_MD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\cpImageView.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpImageView.cpp">
+      <Filter>Generated Files\Release_MD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpImageView.cpp">
+      <Filter>Generated Files\Debug_MD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\_Plugins\Common\UtilFuncs.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../../../Header/Version.h">
@@ -433,6 +457,12 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="../Common/cvmatandqimage.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\_Plugins\Common\ModelData.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\_Plugins\Common\UtilFuncs.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
@@ -485,16 +515,10 @@
     <CustomBuild Include="../Components/cpImagePropertyView.h">
       <Filter>Components</Filter>
     </CustomBuild>
-    <CustomBuild Include="../Components/cpImageView.h">
-      <Filter>Components</Filter>
-    </CustomBuild>
     <CustomBuild Include="../Components/cpNewProject.h">
       <Filter>Components</Filter>
     </CustomBuild>
     <CustomBuild Include="../Components/cpProjectData.h">
-      <Filter>Components</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/cpProjectView.h">
       <Filter>Components</Filter>
     </CustomBuild>
     <CustomBuild Include="../Components/cpSetApplicationOptions.h">
@@ -565,6 +589,18 @@
     </CustomBuild>
     <CustomBuild Include="../Source/cpMainComponents.h">
       <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\ac3DMeshAnalysis.h">
+      <Filter>AppUtils</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\cp3DModelConvert.h">
+      <Filter>Components</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\cpProjectView.h">
+      <Filter>Components</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\cpImageView.h">
+      <Filter>Components</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

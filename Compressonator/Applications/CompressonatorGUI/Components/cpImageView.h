@@ -48,11 +48,27 @@
 #include "cpImageLoader.h"
 #include "acCustomDockWidget.h"
 
-typedef struct{
-    bool onBrightness;
-    bool reloadImage;
-    bool generateDiff;
-    bool generateMips;
+
+#define TXT_IMAGE_PROCESSED     "Processed"
+#define TXT_IMAGE_ORIGINAL      "Original"
+#define TXT_IMAGE_DIFF          "Diff"
+
+
+enum eImageViewState
+{
+    isProcessed = 0,            // we are viewing the processed image (child of an original image at root of project explorer)
+    isOriginal,                 // Original image as seen at a root node of project explorer
+    isDiff                      // Viewing a image differance from (origin - processed)
+};
+
+typedef struct 
+{
+    bool onBrightness   = false;
+    bool reloadImage    = false;
+    bool generateDiff   = false;
+    bool generateMips   = false;
+    float fDiffContrast = eImageViewState::isOriginal;
+    eImageViewState  input_image;
 } Setting;
 
 class PushButtonAction : public QWidgetAction
@@ -94,10 +110,16 @@ public:
 
     void EnableMipLevelDisplay(int level);
 
+    int  activeview      = 0;
+    bool m_CompressedMipImages;
+    QPointF m_localPos;
+
+    Setting             m_setting;                      // Local copy of settings
+
     CImageLoader        *m_imageLoader;
     acImageView         *m_acImageView;
     QMenu               *m_viewContextMenu;
-    CMipImages          *m_MipImages;
+    CMipImages          *m_processedMipImages;
     CMipImages          *m_OriginalMipImages;            // Read only pointer to original images
     acEXRTool           *m_ExrProperties;                // HDR image properties window
 
@@ -110,7 +132,7 @@ public:
     bool                m_localMipImages;
     bool                m_bOnacScaleChange;
     bool                m_useOriginalImageCursor;
-
+    bool                m_DiffOnOff;
 protected:
     void keyPressEvent(QKeyEvent *event);
 
@@ -122,16 +144,20 @@ public slots:
     void oncpResetImageView();
     void onZoomLevelChanged(int value);
     void onacScaleChange(int value);
-    void onResetHDR(int value);
+    void onResetHDRandDiff(int value);
     void onToolListChanged(int index);
     void onViewCustomContextMenu(const QPoint &point);
     void onSaveViewAs();
+    void onBrightnessLevelChanged(int value);
+    void onToggleViewChanged(int view);
     
 private:
     void showEvent(QShowEvent *);
     void paintEvent(QPaintEvent * event);
-    bool m_originalImage;                                   // True if the image been viewed is the original image
+    void setActionForImageViewStateChange();
+    void closeEvent(QCloseEvent * event);
 
+    eImageViewState m_ImageViewState;
     // Common for all
     QWidget            *m_newWidget;
     QGridLayout        *m_layout;
@@ -143,10 +169,12 @@ private:
     QPushButton        *m_buttonNavigate;
 
     QLabel              *m_labelColorTxt;
+    QLabel              *m_labelTxtView;
     QLabel              *m_labelColorRGBA;
     QLabel              *m_labelPos;
     QWidget             *m_pMyWidget;
     QSpinBox            *m_ZoomLevel;
+    QSpinBox            *m_BrightnessLevel;
 
     QStyle              *Plastique_style;                   // Combobox Style
 
@@ -173,9 +201,11 @@ private:
     QAction             *imageview_ZoomOut;
     QAction             *imageview_ViewImageOriginalSize;
     QAction             *imageview_FitInWindow;
+    QAction             *imageview_ImageDiff;
 #ifdef _DEBUG
     QComboBox           *m_CBimageview_Debug;
 #endif
+    QComboBox           *m_CBimageview_Toggle;
     QComboBox           *m_CBimageview_GridBackground;
     QComboBox           *m_CBimageview_ToolList;
     QComboBox           *m_CBimageview_MipLevel;
@@ -188,6 +218,9 @@ private:
 Q_SIGNALS:
     void UpdateData(QObject *data);
     void OnSetScale(int value);
+
+public slots:
+    void onImageDiff();
 
 };
 

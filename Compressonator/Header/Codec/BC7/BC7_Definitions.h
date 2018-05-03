@@ -24,13 +24,15 @@
 #ifndef _BC7_DEFINITIONS_H_
 #define _BC7_DEFINITIONS_H_
 
+#include "Compressonator.h"
+
 #include "3dquant_constants.h"
 
 #include <cstdint>
 
-typedef std::uint8_t BYTE;
-typedef std::uint32_t DWORD;
-typedef std::int32_t BOOL;
+//typedef std::uint8_t    BYTE;
+//typedef std::uint32_t   DWORD;
+//typedef std::int32_t    BOOL;
 
 #define TRUE 1
 #define FALSE 0
@@ -97,14 +99,14 @@ typedef enum
 typedef struct
 {
     CMP_BCE encodingType;           // Type of block
-    DWORD   partitionBits;          // Number of bits for partition data
-    DWORD   rotationBits;           // Number of bits for component rotation
-    DWORD   indexModeBits;          // Number of bits for index selection
-    DWORD   scalarBits;             // Number of bits for one scalar endpoint
-    DWORD   vectorBits;             // Number of bits for one vector endpoint(excluding P bits)
+    CMP_DWORD   partitionBits;          // Number of bits for partition data
+    CMP_DWORD   rotationBits;           // Number of bits for component rotation
+    CMP_DWORD   indexModeBits;          // Number of bits for index selection
+    CMP_DWORD   scalarBits;             // Number of bits for one scalar endpoint
+    CMP_DWORD   vectorBits;             // Number of bits for one vector endpoint(excluding P bits)
     CMP_PBIT  pBitType;               // Type of P-bit encoding
-    DWORD   subsetCount;            // Number of subsets
-    DWORD   indexBits[2];           // Number of bits per index in each index set
+    CMP_DWORD   subsetCount;            // Number of subsets
+    CMP_DWORD   indexBits[2];           // Number of bits per index in each index set
 } CMP_BTI;
 
 extern CMP_BTI bti[NUM_BLOCK_TYPES];

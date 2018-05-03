@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug_MD|Win32">
+      <Configuration>Debug_MD</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug_MD|x64">
+      <Configuration>Debug_MD</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_MD|Win32">
+      <Configuration>Release_MD</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_MD|x64">
+      <Configuration>Release_MD</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\CopyFiles.bat" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{077EF46E-74ED-4219-B577-2CC3C8003C85}</ProjectGuid>
+    <RootNamespace>CXLCopyScript</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
+    <Import Project="..\..\..\QT_Path.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
+    <Import Project="..\..\..\QT_Path.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
+    <Import Project="..\..\..\QT_Path.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
+    <Import Project="..\..\..\QT_Path.props" />
+  </ImportGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
+    <OutDir>..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
+    <OutDir>..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
+    <OutDir>..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\</IntDir>
+    <TargetName>$(TargetName)</TargetName>
+    <PostBuildEventUseInBuild />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
+    <OutDir>..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\</IntDir>
+    <TargetName>$(TargetName)</TargetName>
+    <PostBuildEventUseInBuild />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
+    <PostBuildEvent>
+      <Command>..\CopyFiles.bat $(SolutionDir)..\..\..\..\Common\Lib\Ext\Qt\5.5\  $(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenCV\2.49\$(Platform)\VS2015\bin\debug  $(OUTDIR) $(SolutionDir) $(SolutionDir)..\..\..\..\Common\Lib\Ext\glew\1.9.0\bin\x86\ $(SolutionDir)..\..\..\..\Common\Lib\Ext\Vulkan\1.0.8.0\SDK\win\Source\lib32\ $(SolutionDir)..\..\..\Compute d </Command>
+      <Message>Copying  component binary files to Debug output directory</Message>
+    </PostBuildEvent>
+    <ClCompile />
+    <Bscmake />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug_MD'">
+    <PostBuildEvent>
+      <Command>..\CopyFiles.bat $(QTDIR_32) $(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenCV\2.49\$(Platform)\VS2015\bin\debug\  $(OUTDIR) $(SolutionDir) $(SolutionDir)..\..\..\..\Common\Lib\Ext\glew\1.9.0\bin\ $(SolutionDir)..\..\..\..\Common\Lib\Ext\Vulkan\1.0.8.0\SDK\win\Source\ $(SolutionDir)..\..\..\Compute $(Platform) d</Command>
+      <Message>Copying  component binary files to Debug output directory</Message>
+    </PostBuildEvent>
+    <ClCompile>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</BrowseInformation>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</BrowseInformation>
+    </ClCompile>
+    <Bscmake>
+      <PreserveSbr Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</PreserveSbr>
+      <PreserveSbr Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</PreserveSbr>
+    </Bscmake>
+    <CustomBuildStep>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
+      </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
+      </Command>
+    </CustomBuildStep>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
+    <PostBuildEvent>
+      <Command>..\CopyFiles.bat $(SolutionDir)..\..\..\..\Common\Lib\Ext\Qt\5.5\  $(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenCV\2.49\$(Platform)\VS2015\bin\release  $(OUTDIR) $(SolutionDir) $(SolutionDir)..\..\..\..\Common\Lib\Ext\glew\1.9.0\bin\x86\ $(SolutionDir)..\..\..\..\Common\Lib\Ext\Vulkan\1.0.8.0\SDK\win\Source\lib32\ $(SolutionDir)..\..\..\Compute</Command>
+      <Message>Copying  component binary files to Release output directory</Message>
+    </PostBuildEvent>
+    <ClCompile />
+    <Bscmake />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release_MD'">
+    <PostBuildEvent>
+      <Command>..\CopyFiles.bat $(QT_DIR) $(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenCV\2.49\$(Platform)\VS2015\bin\release\  $(OUTDIR) $(SolutionDir) $(SolutionDir)..\..\..\..\Common\Lib\Ext\glew\1.9.0\bin\ $(SolutionDir)..\..\..\..\Common\Lib\Ext\Vulkan\1.0.8.0\SDK\win\Source\ $(SolutionDir)..\..\..\Compute $(Platform)   </Command>
+      <Message>Copying  component binary files to Release output directory</Message>
+    </PostBuildEvent>
+    <ClCompile>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">true</BrowseInformation>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">true</BrowseInformation>
+    </ClCompile>
+    <Bscmake>
+      <PreserveSbr Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">true</PreserveSbr>
+      <PreserveSbr Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">true</PreserveSbr>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

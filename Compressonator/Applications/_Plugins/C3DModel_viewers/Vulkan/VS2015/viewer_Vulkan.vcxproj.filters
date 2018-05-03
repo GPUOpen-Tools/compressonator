@@ -1,0 +1,291 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{eef987de-c4d9-41e5-8a52-379ac257cfe7}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{58a56801-babd-4bed-9169-b541d4c6144b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{0165acbd-99d7-4663-ac2e-d29b1bd78be7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{67f962f1-36d7-465f-a3d7-16a80856ac15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gltf">
+      <UniqueIdentifier>{5facd6da-bd74-43f1-a16c-d0f7a9ac6cda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gltf\Vulkan">
+      <UniqueIdentifier>{ac3badc4-a19e-4a10-810b-a4b819609b40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui\Vulkan">
+      <UniqueIdentifier>{2bbc504a-c967-493c-bed0-884746096df5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Common\MIPS.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\TC_PluginInternal.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\UtilFuncs.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\PluginManager.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\TextureIO.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half\half.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\ModelData.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Util\KeyboardMouse.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Util\ResourceViewHeapsVK.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Util\Ring.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Util\ShaderCompilerHelper.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Util\StaticBufferPoolVK.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Util\StaticConstantBufferPoolVK.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Util\stdafx.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Util\SwapChainVK.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Util\ThreadPool.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Util\TriangleVK.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Util\UploadHeapVK.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Util\Camera.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Util\CommandListRingVK.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Util\DeviceVK.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Util\DynamicBufferRingVK.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Util\FrameworkWindows.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Vulkan_main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Vulkan_Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Vulkan_Device.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Util\TextureVK.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\imgui\imgui_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\UserInterface.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\gltf\GltfCommon.cpp">
+      <Filter>gltf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\gltf\glTFHelpers.cpp">
+      <Filter>gltf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\gltf\Misc.cpp">
+      <Filter>gltf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Util\ImguiVK.cpp">
+      <Filter>imgui\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\gltf\Vulkan\glTFHelpers_Vulkan.cpp">
+      <Filter>gltf\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\gltf\Vulkan\GltfPbrVK.cpp">
+      <Filter>gltf\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\gltf\Vulkan\GltfTechnique.cpp">
+      <Filter>gltf\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\gltf\Vulkan\GltfDepthPassVK.cpp">
+      <Filter>gltf\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\gltf\Vulkan\GltfBBoxPassVK.cpp">
+      <Filter>gltf\Vulkan</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\Vulkan_Device.h">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Vulkan_Renderer.h">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Vulkan_main.h">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\CopyFiles.bat">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\MIPS.h">
+      <Filter>Common</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\ModelData.h">
+      <Filter>Common</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\PluginInterface.h">
+      <Filter>Common</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\TC_PluginAPI.h">
+      <Filter>Common</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\TC_PluginInternal.h">
+      <Filter>Common</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\UserInterface.h">
+      <Filter>Common</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\UtilFuncs.h">
+      <Filter>Common</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Util\Camera.h">
+      <Filter>Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Util\CommandListRingVK.h">
+      <Filter>Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Util\DeviceVK.h">
+      <Filter>Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Util\DynamicBufferRingVK.h">
+      <Filter>Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Util\FrameworkWindows.h">
+      <Filter>Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Util\KeyboardMouse.h">
+      <Filter>Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Util\ResourceViewHeapsVK.h">
+      <Filter>Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Util\Ring.h">
+      <Filter>Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Util\ShaderCompilerHelper.h">
+      <Filter>Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Util\StaticBufferPoolVK.h">
+      <Filter>Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Util\StaticConstantBufferPoolVK.h">
+      <Filter>Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Util\stdafx.h">
+      <Filter>Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Util\SwapChainVK.h">
+      <Filter>Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Util\TextureVK.h">
+      <Filter>Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Util\threadpool.h">
+      <Filter>Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Util\TriangleVK.h">
+      <Filter>Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Util\UploadHeapVK.h">
+      <Filter>Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Util\License.txt">
+      <Filter>Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\imgui\imconfig.h">
+      <Filter>imgui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\imgui\imgui.h">
+      <Filter>imgui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\imgui\imgui_internal.h">
+      <Filter>imgui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\imgui\stb_rect_pack.h">
+      <Filter>imgui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\imgui\stb_textedit.h">
+      <Filter>imgui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\imgui\stb_truetype.h">
+      <Filter>imgui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Util\ImguiVK.h">
+      <Filter>imgui\Vulkan</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Common\gltf\GltfCommon.h">
+      <Filter>gltf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\GltfFeatures.h">
+      <Filter>gltf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\glTFHelpers.h">
+      <Filter>gltf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\GltfStructures.h">
+      <Filter>gltf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\Misc.h">
+      <Filter>gltf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\Vulkan\glTFHelpers_Vulkan.h">
+      <Filter>gltf\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\Vulkan\GltfPbrVK.h">
+      <Filter>gltf\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\Vulkan\GltfTechnique.h">
+      <Filter>gltf\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\Vulkan\GltfDepthPassVK.h">
+      <Filter>gltf\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\Vulkan\GltfBBoxPassVK.h">
+      <Filter>gltf\Vulkan</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

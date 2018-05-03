@@ -32,7 +32,6 @@
 #include "objectcontroller.h"
 #include <QtWidgets>
 
-
 class CSetApplicationOptions : public QDialog
 {
     Q_OBJECT
@@ -47,13 +46,14 @@ public:
     QTextBrowser  *m_infotext;
     QtTreePropertyBrowser *m_browser;
 
+signals:
+    void OnAppSettingHide();
+
 public slots:
     void onClose();
     void oncurrentItemChanged(QtBrowserItem *item);
     void onImageEncodeChanged(QVariant &value);
     void onImageViewDecodeChanged(QVariant &value);
-	void onGLTFRenderChanged(QVariant &value);
-
 
 private:
     // Common for all

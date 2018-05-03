@@ -53,5 +53,6 @@
         <file>Images/plusSettings.png</file>
         <file>Resources/appicon.ico</file>
         <file>Images/3Dfile.png</file>
+        <file>Images/3DModelConvert.png</file>
     </qresource>
 </RCC>

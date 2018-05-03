@@ -28,7 +28,6 @@
 
 #define CURSOR_SIZE 12 // pixel per cross hair fin
 
-
 acImageView::~acImageView()
 {
     if (m_imageloader)
@@ -42,13 +41,14 @@ acImageView::~acImageView()
 //              a navigation view default (lower right corner)
 // Date:        13/8/2015
 // ---------------------------------------------------------------------------
-acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** image, CMipImages *MipImages)
+acImageView::acImageView(const QString filePathName, QWidget *parent, CMipImages *OriginalMipImages, CMipImages *MipImages)
 {
     Q_UNUSED(parent);
-    Q_UNUSED(image);
 
-    m_MipImages = MipImages;
-    m_imageloader = new CImageLoader();
+    m_MipImages         = MipImages;
+    m_OriginalMipImages = OriginalMipImages;
+
+    m_imageloader       = new CImageLoader();
 
     m_layout = new QGridLayout(this);
     m_layout->setSpacing(0);
@@ -57,7 +57,7 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** i
     
     m_imageGraphicsView = NULL;
     m_graphicsScene     = NULL;
-    m_imageItem         = NULL;
+    m_imageItem_Processed = NULL;
     m_imageItemNav      = NULL;
     m_errMessage        = NULL;
     //Reserved: GPUDecode
@@ -73,6 +73,7 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** i
     m_imageOrientation  = 0;
     m_ImageScale        = 100;
     m_MouseHandDown     = false;
+    m_appBusy = false;      // Set to true when ImageView is processing data from a prior event.
     
     // Display if we have images
     if (m_MipImages)
@@ -97,13 +98,32 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** i
             // The temp file is loaded via resource file ie: ":/CompressonatorGUI/Images/CompressedImageError.png"
             //==========================
             m_ImageIndex = 0;
-            QImage *image = m_MipImages->Image_list[m_ImageIndex];
-            QPixmap pixmap = QPixmap::fromImage(*image);
-            m_imageItem = new acCustomGraphicsImageItem(pixmap);
-            m_imageItem->ID = m_graphicsScene->ID;
-            m_imageItem->setFlags(QGraphicsItem::ItemIsSelectable);
-            m_graphicsScene->addItem(m_imageItem);
-            m_imageItem->setVisible(true);
+            QImage *image_original = NULL;
+            QPixmap pixmap_original;
+
+            if (m_OriginalMipImages)
+            {
+                image_original = m_OriginalMipImages->Image_list[m_ImageIndex];
+                pixmap_original = QPixmap::fromImage(*image_original);
+                m_imageItem_Original = new acCustomGraphicsImageItem(pixmap_original, NULL);
+                m_imageItem_Original->ID = m_graphicsScene->ID;
+                m_imageItem_Original->setFlags(QGraphicsItem::ItemIsSelectable);
+                m_graphicsScene->addItem(m_imageItem_Original);
+                m_imageItem_Original->setVisible(false);
+            }
+            else
+                m_imageItem_Original = NULL;
+
+
+            QImage *image_processed = m_MipImages->Image_list[m_ImageIndex];
+            QPixmap pixmap_processed = QPixmap::fromImage(*image_processed);
+
+            m_imageItem_Processed = new acCustomGraphicsImageItem(pixmap_processed, image_original);
+            m_imageItem_Processed->ID = m_graphicsScene->ID;
+            m_imageItem_Processed->setFlags(QGraphicsItem::ItemIsSelectable);
+            m_graphicsScene->addItem(m_imageItem_Processed);
+            m_imageItem_Processed->setVisible(true);
+
 
 #ifdef ENABLE_NAVIGATION
             // Copy of the image view item (ToDo->Scale down to fit a smalled size)
@@ -170,7 +190,9 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** i
             m_imageGraphicsView->setFrameShadow(QFrame::Raised);
             m_imageGraphicsView->centerOn(0, 0);
             m_layout->addWidget(m_imageGraphicsView, 0, 0);
-            m_imageGraphicsView->ensureVisible(m_imageItem);
+            m_imageGraphicsView->ensureVisible(m_imageItem_Processed);
+            if (m_imageItem_Original)
+                m_imageGraphicsView->ensureVisible(m_imageItem_Original);
             m_imageGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
             m_imageGraphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
@@ -234,8 +256,12 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** i
                 if (m_errItem)
                     m_errItem->moveBy(size.width()/4, size.height()/4);
 
-                if(m_errMessage)
-                    m_imageItem->setVisible(false);
+                if (m_errMessage)
+                {
+                    m_imageItem_Processed->setVisible(false);
+                    if (m_imageItem_Original)
+                        m_imageItem_Original->setVisible(false);
+                }
             }
 
             //==========================
@@ -245,7 +271,7 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** i
 
             if (m_MipImages->m_Error == MIPIMAGE_FORMAT_ERRORS::Format_NoErrors)
             {
-                QRect ImageSize = image->rect();
+                QRect ImageSize = image_processed->rect();
                 m_myModel = new acTableImageDataModel(ImageSize.height(), ImageSize.width(), this);
 
                 m_tableView = new QTableView(this);
@@ -307,6 +333,30 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, QImage** i
     setLayout(m_layout);
 }
 
+
+int acImageView::getBrightnessLevel()
+{
+    return m_imageItem_Processed->m_iBrightness;
+}
+
+void acImageView::setBrightnessLevel(int brightness)
+{
+    // Check!
+    if (!m_imageItem_Processed) return;
+    if (m_MipImages)
+        if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
+
+    m_imageItem_Processed->m_iBrightness = brightness;
+
+    if (m_appBusy) return;
+    m_appBusy = true;
+    m_imageItem_Processed->m_UseProcessedImage = true;
+    m_imageItem_Processed->m_ImageBrightness = true;
+    m_imageItem_Processed->UpdateImage();
+    m_imageItem_Processed->m_UseProcessedImage = false;
+    m_appBusy = false;
+}
+
 void acImageView::enableNavigation(bool enable)
 {
     Q_UNUSED(enable);
@@ -322,8 +372,6 @@ void acImageView::enableNavigation(bool enable)
     }
 #endif
 }
-
-
 
 // ---------------------------------------------------------------------------
 // Name:        acImageView::onMouseDoubleClickEvent
@@ -349,7 +397,6 @@ void acImageView::showVirtualCursor()
 #endif
 }
 
-
 void acImageView::hideVirtualCursor()
 {
     m_linex->hide();
@@ -360,18 +407,18 @@ void acImageView::hideVirtualCursor()
 #endif
 }
 
-
+// ToDo check for m_imageItem_Original
 void acImageView::showTableView(bool display)
 {
     if (display)
     {
-        m_imageItem->hide();
+        m_imageItem_Processed->hide();
         m_tableViewitem->show();
     }
     else
     {
         m_tableViewitem->hide();
-        m_imageItem->show();
+        m_imageItem_Processed->show();
     }
 }
 
@@ -426,6 +473,66 @@ void acImageView::onToggleDebugChanged(int index)
 }
 #endif
 
+void acImageView::onToggleImageViews(int index)
+{
+    // View Processed
+    if (index == 0)
+    {
+        // Use Current position of Original image to set position of Processed image view
+        MatchImagePosition(1);
+        // if there is error, view is not visible
+        if (m_errMessage)
+        {
+            m_errMessage->setVisible(true);
+            m_imageItem_Processed->setVisible(false);
+            if (m_imageItem_Original)
+                m_imageItem_Original->setVisible(false);
+        }
+        else
+        {
+            // Make Visible the Processed Image and Hide the Original
+            m_imageItem_Processed->setVisible(true);
+            if (m_imageItem_Original)
+                m_imageItem_Original->setVisible(false);
+        }
+    }
+    else
+    {
+        // Use Current position of Processed image to set position of Original image view
+        MatchImagePosition(0);
+
+        // Hide processed view error when view original
+        if (m_errMessage)
+        {
+            m_errMessage->setVisible(false);
+        }
+
+        // Make Visible the Original Image and Hide the Processed
+        m_imageItem_Processed->setVisible(false);
+        if (m_imageItem_Original)
+            m_imageItem_Original->setVisible(true);
+    }
+}
+
+void acImageView::MatchImagePosition(int activeIndex)
+{
+    // Check!
+    if (!m_graphicsScene) return;
+    if (!m_imageItem_Processed) return;
+    if (!m_imageItem_Original) return;
+
+    if (activeIndex == 0)  // Processed Image
+    {
+        QPointF pos = m_imageItem_Processed->pos();   // Current image size and position user is viewing
+        m_imageItem_Original->setPos(pos);
+    }
+    else // We are viewing the Original Image
+    {
+        QPointF pos = m_imageItem_Original->pos();   // Current image size and position user is viewing
+        m_imageItem_Processed->setPos(pos);
+    }
+
+}
 
 void acImageView::onVirtualMouseMoveEvent(QPointF *scenePos, QPointF *localPos, int onID)
 {
@@ -444,8 +551,8 @@ void acImageView::onVirtualMouseMoveEvent(QPointF *scenePos, QPointF *localPos, 
             else
             {
                 QPoint imageloc = localPos->toPoint();
-                QRectF boundImage = m_imageItem->boundingRect();
-                QRectF boundScene = m_imageItem->sceneBoundingRect();
+                QRectF boundImage = m_imageItem_Processed->boundingRect();
+                QRectF boundScene = m_imageItem_Processed->sceneBoundingRect();
 
                 qreal scaleX = 0;
                 if (boundImage.width() > 0)
@@ -472,15 +579,15 @@ void acImageView::onVirtualMouseMoveEvent(QPointF *scenePos, QPointF *localPos, 
                     m_tableView->columnAt(imageloc.x());
                 }
 
-                //emit acImageViewVirtualMousePosition(scenePos, localPos, onID);
+                emit acImageViewVirtualMousePosition(scenePos, localPos, onID);
             }
 
 #ifdef _DEBUG
             if (m_debugMode)
             {
                 QPoint imageloc = localPos->toPoint();
-                QRectF boundImage = m_imageItem->boundingRect();
-                QRectF boundScene = m_imageItem->sceneBoundingRect();
+                QRectF boundImage = m_imageItem_Processed->boundingRect();
+                QRectF boundScene = m_imageItem_Processed->sceneBoundingRect();
 
                 qreal scaleX = 0;
                 if (boundImage.width() > 0)
@@ -530,7 +637,7 @@ bool acImageView::IsImageBoundedToView(QPointF *mousePos)
 
     // Check Image is in bound of View
     QRectF bounds = m_graphicsScene->sceneRect();        // Size of our Scene view
-    QRectF imageBounds = m_imageItem->sceneBoundingRect();   // Current image size and position user is viewing
+    QRectF imageBounds = m_imageItem_Processed->sceneBoundingRect();   // Current image size and position user is viewing
 
     bool bounded = false;
 
@@ -546,7 +653,6 @@ bool acImageView::IsImageBoundedToView(QPointF *mousePos)
 
     return bounded;
 }
-
 
 // ---------------------------------------------------------------------------
 // Name:        acImageView::onMouseDoubleClickEvent
@@ -597,12 +703,20 @@ void acImageView::onacImageViewMousePosition(QPointF *scenePos, int ID)
 
     if (m_MouseHandDown)
     {
-        if (m_imageItem)
+        if (m_imageItem_Processed)
         {
             if (!IsImageBoundedToView(scenePos))
-                m_imageItem->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+            {
+                m_imageItem_Processed->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+                if (m_imageItem_Original)
+                    m_imageItem_Original->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+            }
             else
-                m_imageItem->setFlags(QGraphicsItem::ItemIsSelectable);
+            {
+                m_imageItem_Processed->setFlags(QGraphicsItem::ItemIsSelectable);
+                if (m_imageItem_Original)
+                    m_imageItem_Original->setFlags(QGraphicsItem::ItemIsSelectable);
+            }
         }
     }
 
@@ -632,7 +746,7 @@ void acImageView::resizeEvent(QResizeEvent *e)
     }
 
     // get the image bounding size and use it to center our Image to widget windows
-    if (m_imageItem)
+    if (m_imageItem_Processed)
     {
         centerImage();
     }
@@ -684,7 +798,6 @@ void acImageView::resizeEvent(QResizeEvent *e)
 
 
 }
-
 
 // ---------------------------------------------------------------------------
 // Name:        acImageView::onNavigateClicked
@@ -740,29 +853,39 @@ void acImageView::onResetImageView()
 
 
     // get the image use it to fit it to widget windows
-    if (m_imageItem)
+    if (m_imageItem_Processed)
     {
         // Transformation point
-        m_imageItem->setTransformOriginPoint(0, 0);
+        m_imageItem_Processed->setTransformOriginPoint(0, 0);
+        if (m_imageItem_Original)
+            m_imageItem_Original->setTransformOriginPoint(0, 0);
 
         // Set image properties back to defaults
-        m_imageItem->setDefaults();
-        m_imageItem->m_UseOriginalImage = true;
-        m_imageItem->UpdateImage();
+        m_imageItem_Processed->setDefaults();
+        m_imageItem_Processed->m_UseProcessedImage = true;
+        m_appBusy = true;
+        m_imageItem_Processed->UpdateImage();
+        m_appBusy = false;
+
+        if (m_imageItem_Original)
+        {
+                m_imageItem_Original->setDefaults();
+                m_imageItem_Original->m_UseProcessedImage = true;
+                m_appBusy = true;
+                m_imageItem_Original->UpdateImage();
+                m_appBusy = false;
+        }
+
+
         onViewImageOriginalSize();
 
         m_imageOrientation = 0;
-        m_imageItem->setRotation(0);
+        m_imageItem_Processed->setRotation(0);
+
+        if (m_imageItem_Original)
+            m_imageItem_Original->setRotation(0);
 
         onFitInWindow();
-
-        if (this->m_isDiffView)
-        {
-            for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
-            {
-                this->onToggleImageBrightnessUp();
-            }
-        }
     }
 
     // ToDo Reset all action checked ToolButtons back to default state
@@ -771,63 +894,49 @@ void acImageView::onResetImageView()
 void acImageView::onExrExposureChanged(double value)
 {
     // Check!
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
     if (m_MipImages)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
     if (!m_imageloader) return;
 
     m_imageloader->exposure = float(value);
 
-    QImage image((m_imageItem->pixmap()).toImage());
+    QImage image((m_imageItem_Processed->pixmap()).toImage());
 
     if (m_MipImages->mipset->m_compressed)
         m_imageloader->loadExrProperties(m_MipImages->decompressedMipSet, m_currentMiplevel, &image);
     else
         m_imageloader->loadExrProperties(m_MipImages->mipset, m_currentMiplevel, &image);
 
-    m_imageItem->setPixmap(QPixmap::fromImage(image));
+    m_imageItem_Processed->setPixmap(QPixmap::fromImage(image));
 
-    if (this->m_isDiffView)
-    {
-        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
-        {
-            this->onToggleImageBrightnessUp();
-        }
-    }
 }
 
 void acImageView::onExrDefogChanged(double value)
 {
     // Check!
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
     if (m_MipImages)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
     if (!m_imageloader) return;
 
     m_imageloader->defog = float(value);
 
-    QImage image((m_imageItem->pixmap()).toImage());
+    QImage image((m_imageItem_Processed->pixmap()).toImage());
 
     if (m_MipImages->mipset->m_compressed)
         m_imageloader->loadExrProperties(m_MipImages->decompressedMipSet, m_currentMiplevel, &image);
     else
         m_imageloader->loadExrProperties(m_MipImages->mipset, m_currentMiplevel, &image);
 
-    m_imageItem->setPixmap(QPixmap::fromImage(image));
+    m_imageItem_Processed->setPixmap(QPixmap::fromImage(image));
 
-    if (this->m_isDiffView)
-    {
-        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
-        {
-            this->onToggleImageBrightnessUp();
-        }
-    }
 }
 
 void acImageView::onExrKneeLowChanged(double value)
 {
     // Check!
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
     if (m_MipImages)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
 
@@ -835,56 +944,42 @@ void acImageView::onExrKneeLowChanged(double value)
 
     m_imageloader->kneeLow= float(value);
 
-    QImage image((m_imageItem->pixmap()).toImage());
+    QImage image((m_imageItem_Processed->pixmap()).toImage());
 
     if (m_MipImages->mipset->m_compressed)
         m_imageloader->loadExrProperties(m_MipImages->decompressedMipSet, m_currentMiplevel, &image);
     else
         m_imageloader->loadExrProperties(m_MipImages->mipset, m_currentMiplevel, &image);
 
-    m_imageItem->setPixmap(QPixmap::fromImage(image));
+    m_imageItem_Processed->setPixmap(QPixmap::fromImage(image));
 
-    if (this->m_isDiffView)
-    {
-        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
-        {
-            this->onToggleImageBrightnessUp();
-        }
-    }
 }
 
 void acImageView::onExrKneeHighChanged(double value)
 {
     // Check!
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
     if (m_MipImages)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
     if (!m_imageloader) return;
 
     m_imageloader->kneeHigh = float(value);
 
-    QImage image((m_imageItem->pixmap()).toImage());
+    QImage image((m_imageItem_Processed->pixmap()).toImage());
 
     if (m_MipImages->mipset->m_compressed)
         m_imageloader->loadExrProperties(m_MipImages->decompressedMipSet, m_currentMiplevel, &image);
     else
         m_imageloader->loadExrProperties(m_MipImages->mipset, m_currentMiplevel, &image);
 
-    m_imageItem->setPixmap(QPixmap::fromImage(image));
+    m_imageItem_Processed->setPixmap(QPixmap::fromImage(image));
 
-    if (this->m_isDiffView)
-    {
-        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
-        {
-            this->onToggleImageBrightnessUp();
-        }
-    }
 }
 
 void acImageView::onExrGammaChanged(double value)
 {
     // Check!
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
     if (m_MipImages)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
 
@@ -892,231 +987,237 @@ void acImageView::onExrGammaChanged(double value)
 
     m_imageloader->gamma = float(value);
 
-    QImage image((m_imageItem->pixmap()).toImage());
+    QImage image((m_imageItem_Processed->pixmap()).toImage());
 
     if (m_MipImages->mipset->m_compressed)
         m_imageloader->loadExrProperties(m_MipImages->decompressedMipSet, m_currentMiplevel, &image);
     else
         m_imageloader->loadExrProperties(m_MipImages->mipset, m_currentMiplevel, &image);
 
-    m_imageItem->setPixmap(QPixmap::fromImage(image));
+    m_imageItem_Processed->setPixmap(QPixmap::fromImage(image));
 
-    if (this->m_isDiffView)
-    {
-        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
-        {
-            this->onToggleImageBrightnessUp();
-        }
-    }
 }
 
 void acImageView::onToggleChannelR()
 {
     // Check!
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
     if (m_MipImages)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
 
-    m_imageItem->m_UseOriginalImage = true;
-    m_imageItem->m_ChannelR = !m_imageItem->m_ChannelR;
-    m_imageItem->UpdateImage();
-    m_imageItem->m_UseOriginalImage = false;
+    if (m_appBusy) return;
+    m_appBusy = true;
 
-    if (this->m_isDiffView)
-    {
-        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
-        {
-            this->onToggleImageBrightnessUp();
-        }
-    }
+    m_imageItem_Processed->m_UseProcessedImage = true;
+    m_imageItem_Processed->m_ChannelR = !m_imageItem_Processed->m_ChannelR;
+    m_imageItem_Processed->UpdateImage();
+    m_imageItem_Processed->m_UseProcessedImage = false;
+
+    m_appBusy = false;
+
 }
 
 void acImageView::onToggleChannelG()
 {
     // Check!
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
     if (m_MipImages)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
 
-    m_imageItem->m_UseOriginalImage = true;
-    m_imageItem->m_ChannelG = !m_imageItem->m_ChannelG;
-    m_imageItem->UpdateImage();
-    m_imageItem->m_UseOriginalImage = false;
+    if (m_appBusy) return;
+    m_appBusy = true;
 
-    if (this->m_isDiffView)
-    {
-        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
-        {
-            this->onToggleImageBrightnessUp();
-        }
-    }
+    m_imageItem_Processed->m_UseProcessedImage = true;
+    m_imageItem_Processed->m_ChannelG = !m_imageItem_Processed->m_ChannelG;
+    m_imageItem_Processed->UpdateImage();
+    m_imageItem_Processed->m_UseProcessedImage = false;
+
+    m_appBusy = false;
+
 }
 
 void acImageView::onToggleChannelB()
 {
     // Check!
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
     if (m_MipImages)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
 
-    m_imageItem->m_UseOriginalImage = true;
-    m_imageItem->m_ChannelB = !m_imageItem->m_ChannelB;
-    m_imageItem->UpdateImage();
-    m_imageItem->m_UseOriginalImage = false;
+    if (m_appBusy) return;
+    m_appBusy = true;
 
-    if (this->m_isDiffView)
-    {
-        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
-        {
-            this->onToggleImageBrightnessUp();
-        }
-    }
+    m_imageItem_Processed->m_UseProcessedImage = true;
+    m_imageItem_Processed->m_ChannelB = !m_imageItem_Processed->m_ChannelB;
+    m_imageItem_Processed->UpdateImage();
+    m_imageItem_Processed->m_UseProcessedImage = false;
+
+    m_appBusy = false;
+
 }
 
 void acImageView::onToggleChannelA()
 {
     // Check!
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
     if (m_MipImages)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
 
-    m_imageItem->m_UseOriginalImage = true;
-    m_imageItem->m_ChannelA = !m_imageItem->m_ChannelA;
-    m_imageItem->UpdateImage();
-    m_imageItem->m_UseOriginalImage = false;
+    if (m_appBusy) return;
+    m_appBusy = true;
 
-    if (this->m_isDiffView)
-    {
-        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
-        {
-            this->onToggleImageBrightnessUp();
-        }
-    }
+    m_imageItem_Processed->m_UseProcessedImage = true;
+    m_imageItem_Processed->m_ChannelA = !m_imageItem_Processed->m_ChannelA;
+    m_imageItem_Processed->UpdateImage();
+    m_imageItem_Processed->m_UseProcessedImage = false;
+    
+    m_appBusy = false;
+
 }
 
 void acImageView::onToggleGrayScale()
 {
     // Check!
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
     if (m_MipImages)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
+    if (m_appBusy) return;
+    m_appBusy = true;
 
-    m_imageItem->m_UseOriginalImage = true;
-    m_imageItem->m_GrayScale = !m_imageItem->m_GrayScale;
-    m_imageItem->UpdateImage();
-    m_imageItem->m_UseOriginalImage = false;
+    m_imageItem_Processed->m_UseProcessedImage = true;
+    m_imageItem_Processed->m_GrayScale = !m_imageItem_Processed->m_GrayScale;
+    m_imageItem_Processed->UpdateImage();
+    m_imageItem_Processed->m_UseProcessedImage = false;
+    m_appBusy = false;
 
-    if (this->m_isDiffView)
-    {
-        for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
-        {
-            this->onToggleImageBrightnessUp();
-        }
-    }
-}
-
-
-void acImageView::onToggleImageBrightnessUp()
-{
-    // Check!
-    if (!m_imageItem) return;
-    if (m_MipImages)
-        if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
-
-    m_imageItem->m_ImageBrightnessUp = true;
-    m_imageItem->m_ImageBrightnessDown = false;
-    m_imageItem->UpdateImage();
-    m_imageItem->m_ImageBrightnessUp = false;
-    m_imageItem->m_ImageBrightnessDown = false;
-}
-
-void acImageView::onToggleImageBrightnessDown()
-{
-    // Check!
-    if (!m_imageItem) return;
-    if (m_MipImages)
-        if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
-
-    m_imageItem->m_ImageBrightnessUp = false;
-    m_imageItem->m_ImageBrightnessDown = true;
-    m_imageItem->UpdateImage();
-    m_imageItem->m_ImageBrightnessDown = false;
-    m_imageItem->m_ImageBrightnessUp = false;
 }
 
 void acImageView::onInvertImage()
 {
     // Check!
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
     if (m_MipImages)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
 
-    m_imageItem->m_InvertImage = true;
-    m_imageItem->UpdateImage();
-    m_imageItem->m_InvertImage = false;
+    if (m_appBusy) return;
+    m_appBusy = true;
+
+    m_imageItem_Processed->m_InvertImage = true;
+    m_imageItem_Processed->UpdateImage();
+    m_imageItem_Processed->m_InvertImage = false;
+
+    m_appBusy = false;
+
 }
 
 void acImageView::onMirrorHorizontal()
 {
     // Check!
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
     if (m_MipImages)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
 
-    // Transformation point
-    m_imageItem->setTransformOriginPoint(0, 0);
+    if (m_appBusy) return;
+    m_appBusy = true;
 
-    m_imageItem->m_Mirrored   = true;
-    m_imageItem->m_Mirrored_h = true;
-    m_imageItem->m_Mirrored_v = false;
-    m_imageItem->m_ImageBrightnessDown = false;
-    m_imageItem->m_ImageBrightnessUp = false;
-    m_imageItem->UpdateImage();
-    m_imageItem->m_Mirrored = false;
+
+    // Transformation point
+    m_imageItem_Processed->setTransformOriginPoint(0, 0);
+
+    m_imageItem_Processed->m_Mirrored   = true;
+    m_imageItem_Processed->m_Mirrored_h = true;
+    m_imageItem_Processed->m_Mirrored_v = false;
+    m_imageItem_Processed->m_ImageBrightness = false;
+    m_imageItem_Processed->UpdateImage();
+    m_imageItem_Processed->m_Mirrored = false;
+
+    m_appBusy = false;
+
+    // Transformation point
+    if (m_imageItem_Original)
+    {
+        m_imageItem_Original->setTransformOriginPoint(0, 0);
+        m_imageItem_Original->m_Mirrored = true;
+        m_imageItem_Original->m_Mirrored_h = true;
+        m_imageItem_Original->m_Mirrored_v = false;
+        m_imageItem_Original->m_ImageBrightness = false;
+        m_appBusy = true;
+        m_imageItem_Original->UpdateImage();
+        m_appBusy = false;
+        m_imageItem_Original->m_Mirrored = false;
+    }
+
+
+
 }
 
 void acImageView::onMirrorVirtical()
 {
     // Check!
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
     if (m_MipImages)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
 
-    // Transformation point
-    m_imageItem->setTransformOriginPoint(0, 0);
+    if (m_appBusy) return;
+    m_appBusy = true;
 
-    m_imageItem->m_Mirrored = true;
-    m_imageItem->m_Mirrored_h = false;
-    m_imageItem->m_Mirrored_v = true;
-    m_imageItem->m_ImageBrightnessDown = false;
-    m_imageItem->m_ImageBrightnessUp = false;
-    m_imageItem->UpdateImage();
-    m_imageItem->m_Mirrored = false;
+    // Transformation point
+    m_imageItem_Processed->setTransformOriginPoint(0, 0);
+    m_imageItem_Processed->m_Mirrored = true;
+    m_imageItem_Processed->m_Mirrored_h = false;
+    m_imageItem_Processed->m_Mirrored_v = true;
+    m_imageItem_Processed->m_ImageBrightness = false;
+    m_imageItem_Processed->UpdateImage();
+    m_imageItem_Processed->m_Mirrored = false;
+    m_appBusy = false;
+
+    if (m_imageItem_Original)
+    {
+        m_imageItem_Original->setTransformOriginPoint(0, 0);
+        m_imageItem_Original->m_Mirrored = true;
+        m_imageItem_Original->m_Mirrored_h = false;
+        m_imageItem_Original->m_Mirrored_v = true;
+        m_imageItem_Original->m_ImageBrightness = false;
+        m_appBusy = true;
+        m_imageItem_Original->UpdateImage();
+        m_appBusy = false;
+        m_imageItem_Original->m_Mirrored = false;
+    }
+
+
+
 }
 
 void acImageView::onRotateRight()
 {
     // Check!
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
     if (m_MipImages)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
 
-    QRectF bounds = m_imageItem->boundingRect(); // Images Size bounded within a rectangle
+    QRectF bounds = m_imageItem_Processed->boundingRect(); // Images Size bounded within a rectangle
     qreal x = bounds.width() / 2;
     qreal y = bounds.height() / 2;
-    m_imageItem->setTransformOriginPoint(x, y);
-
     m_imageOrientation +=90;
     if (m_imageOrientation >= 360) m_imageOrientation = 0;
 
-    m_imageItem->setRotation(m_imageOrientation);
+    m_imageItem_Processed->setTransformOriginPoint(x, y);
+    m_imageItem_Processed->setRotation(m_imageOrientation);
+
+    if (m_imageItem_Original)
+    {
+        m_imageItem_Original->setTransformOriginPoint(x, y);
+        m_imageItem_Original->setRotation(m_imageOrientation);
+    }
+
     centerImage();
+
+
 }
 
 void acImageView::onRotateLeft()
 {
     // Check!
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
     if (m_MipImages)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
 
@@ -1124,30 +1225,44 @@ void acImageView::onRotateLeft()
     if (m_imageOrientation < 0) m_imageOrientation = 270;
 
 
-    QRectF bounds = m_imageItem->boundingRect(); // Images Size bounded within a rectangle
+    QRectF bounds = m_imageItem_Processed->boundingRect(); // Images Size bounded within a rectangle
     qreal x = bounds.width() / 2;
     qreal y = bounds.height() / 2;
-    m_imageItem->setTransformOriginPoint(x, y);
-    m_imageItem->setRotation(m_imageOrientation);
+    m_imageItem_Processed->setTransformOriginPoint(x, y);
+    m_imageItem_Processed->setRotation(m_imageOrientation);
+
+    if (m_imageItem_Original)
+    {
+        m_imageItem_Original->setTransformOriginPoint(x, y);
+        m_imageItem_Original->setRotation(m_imageOrientation);
+    }
+
     centerImage();
+
 }
-
-
 
 void acImageView::onViewImageOriginalSize()
 {
     // Check!
     if (!m_graphicsScene) return;
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
     if (m_MipImages)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
 
-    // Transformation point
-    m_imageItem->setTransformOriginPoint(0, 0);
-
     QSize  size = this->size();
-    m_imageItem->m_UseOriginalImage = true;
-    m_imageItem->setScale(1.0);
+
+    m_imageItem_Processed->setTransformOriginPoint(0, 0);
+    m_imageItem_Processed->m_UseProcessedImage = true;
+    m_imageItem_Processed->setScale(1.0);
+
+
+    if (m_imageItem_Original)
+    {
+        m_imageItem_Original->setTransformOriginPoint(0, 0);
+        m_imageItem_Original->m_UseProcessedImage = true;
+        m_imageItem_Original->setScale(1.0);
+    }
+
     m_ImageScale = 100;
     emit  acScaleChanged(m_ImageScale);
 
@@ -1156,27 +1271,52 @@ void acImageView::onViewImageOriginalSize()
     m_imageItemNav->setPos(size.width() - sizeF.width(), size.height() - sizeF.width());
 #endif
 
+
     centerImage();
 
-    m_imageItem->m_UseOriginalImage = false;
+    m_imageItem_Processed->m_UseProcessedImage = false;
+    if (m_imageItem_Original)
+        m_imageItem_Original->m_UseProcessedImage = false;
+
 }
 
-//Reserved: GPUDecode
+void acImageView::onSetPixelDiffView(bool OnOff)
+{
+    // Check!
+    if (!m_graphicsScene) return;
+    if (!m_imageItem_Processed) return;
 
+    if (m_appBusy) return;
+    m_appBusy = true;
+
+    m_imageItem_Processed->m_ShowPixelDiff = OnOff;
+    m_imageItem_Processed->m_UseProcessedImage = true;
+    m_imageItem_Processed->UpdateImage();
+    m_imageItem_Processed->m_UseProcessedImage = false;
+
+    m_appBusy = false;
+
+}
 
 void acImageView::centerImage()
 {
 //#ifdef USE_MOVABLE_IMAGES
     // Check!
     if (!m_graphicsScene) return;
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
 
     QRectF boundsView = m_graphicsScene->sceneRect();   // Size of the view user sees the image in
-    m_imageItem->setTransformOriginPoint(0, 0);         // Transformation point
+    m_imageItem_Processed->setTransformOriginPoint(0, 0);         // Transformation point
 
-    QRectF bounds = m_imageItem->boundingRect();        // Original images size 
-    QRectF offset = m_imageItem->sceneBoundingRect();   // Current image size and position user is viewing
+    QRectF bounds = m_imageItem_Processed->boundingRect();        // Original images size 
+    QRectF offset = m_imageItem_Processed->sceneBoundingRect();   // Current image size and position user is viewing
 
+    // if original item exist use original item for bound and offset
+    if (m_imageItem_Original)
+    {
+        bounds = m_imageItem_Original->boundingRect();
+        offset = m_imageItem_Original->sceneBoundingRect();
+    }
                                                         // Move the images top left  origin corner to screen center
     qreal dx = boundsView.center().x() - offset.x();
     qreal dy = boundsView.center().y() - offset.y();
@@ -1187,24 +1327,37 @@ void acImageView::centerImage()
 
     // translate move the image from it current position by a delta x and delta y
     // so that is viewed in center
-    m_imageItem->translate(dx, dy);
+    
+    m_imageItem_Processed->translate(dx, dy);
 //#endif
+
+    if (m_imageItem_Original)
+    {
+        m_imageItem_Original->setTransformOriginPoint(0, 0);
+        m_imageItem_Original->translate(dx, dy);
+    }
+
 }
 
 void acImageView::onFitInWindow()
 {
     // Check!
     if (!m_graphicsScene) return;
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
     if (m_MipImages)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
 
-    // Transformation point
-    m_imageItem->setTransformOriginPoint(0, 0);
+
 
     // Scale the image to fit scene view 
     QRectF bounds = m_graphicsScene->sceneRect();        // Size of our Scene view
-    QSizeF sizeF  = m_imageItem->boundingRect().size();  // Actual size of the image 
+    QSizeF sizeF  = m_imageItem_Processed->boundingRect().size();  // Actual size of the image 
+
+    // if original exist, use original actual size
+    if (m_imageItem_Original)
+    {
+        sizeF = m_imageItem_Original->boundingRect().size();  // Actual size of the image 
+    }
 
     qreal sceneW = bounds.width();
     qreal sceneH = bounds.height();
@@ -1231,8 +1384,17 @@ void acImageView::onFitInWindow()
 
     m_ImageScale = (int) (scale * 100);
 
-    m_imageItem->setScale(scale);
+    // Transformation point
+    m_imageItem_Processed->setTransformOriginPoint(0, 0);
+    m_imageItem_Processed->setScale(scale);
     
+    if (m_imageItem_Original)
+    {
+        m_imageItem_Original->setTransformOriginPoint(0, 0);
+        m_imageItem_Original->setScale(scale);
+    }
+
+
     emit  acScaleChanged(m_ImageScale);
 
     centerImage();
@@ -1261,26 +1423,51 @@ void acImageView::onImageLevelChanged(int MipLevel)
             m_ImageIndex = MipLevel;
             QImage *image = m_MipImages->Image_list[m_ImageIndex];
             if (image)
-                m_imageItem->changeImage(*image);
+            {
+                m_imageItem_Processed->changeImage(*image);
+            }
+
+            if (m_OriginalMipImages)
+            {
+                if (m_OriginalMipImages->Image_list.count() > MipLevel)
+                {
+                    QImage *image_original = m_OriginalMipImages->Image_list[m_ImageIndex];
+                    if (image_original)
+                    {
+                        m_imageItem_Original->changeImage(*image_original);
+                        m_imageItem_Processed->changeImageDiffRef(image_original);
+                    }
+                }
+            }
+
+
             centerImage();
             onFitInWindow();
         }
     }
 }
 
-
 void acImageView::onMouseHandDown()
 {
     m_MouseHandDown = true;
     m_lastMousePos.setX(0);
     m_lastMousePos.setY(0);
-    if (m_imageItem)
+    if (m_imageItem_Processed)
     {
         if (!IsImageBoundedToView(NULL))
-            m_imageItem->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+            m_imageItem_Processed->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
         else
-            m_imageItem->setFlags(QGraphicsItem::ItemIsSelectable);
+            m_imageItem_Processed->setFlags(QGraphicsItem::ItemIsSelectable);
     }
+
+    if (m_imageItem_Original)
+    {
+        if (!IsImageBoundedToView(NULL))
+            m_imageItem_Original->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+        else
+            m_imageItem_Original->setFlags(QGraphicsItem::ItemIsSelectable);
+    }
+
 
     ManageScrollBars();
 
@@ -1290,18 +1477,18 @@ void acImageView::onMouseHandD()
 {
     m_MouseHandDown = false;
 
-    if (m_imageItem)
-        m_imageItem->setFlags(QGraphicsItem::ItemIsSelectable);
+    if (m_imageItem_Processed)
+        m_imageItem_Processed->setFlags(QGraphicsItem::ItemIsSelectable);
+    if (m_imageItem_Original)
+        m_imageItem_Original->setFlags(QGraphicsItem::ItemIsSelectable);
 
     ManageScrollBars();
 }
 
-
-
 void acImageView::onWheelScaleUp(QPointF &pos)
 {
     // Check!
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
     if (m_MipImages)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
   
@@ -1313,27 +1500,29 @@ void acImageView::onWheelScaleUp(QPointF &pos)
 
     QPointF  localPt;
 
-    localPt = m_imageItem->mapFromScene(pos);
+    localPt = m_imageItem_Processed->mapFromScene(pos);
     qreal scale = m_ImageScale / 100.0;
-    m_imageItem->setScale(scale);
+    m_imageItem_Processed->setScale(scale);
+    if (m_imageItem_Original)
+        m_imageItem_Original->setScale(scale);
 
     QPointF  localPtNew;
-    localPtNew = m_imageItem->mapFromScene(pos);
+    localPtNew = m_imageItem_Processed->mapFromScene(pos);
     
     QPointF  Delta = localPtNew - localPt;
-    m_imageItem->moveBy(Delta.x() * scale, Delta.y() * scale);
-
+    m_imageItem_Processed->moveBy(Delta.x() * scale, Delta.y() * scale);
+    if (m_imageItem_Original)
+        m_imageItem_Original->moveBy(Delta.x() * scale, Delta.y() * scale);
     emit  acScaleChanged(m_ImageScale);
 
     ManageScrollBars();
 }
 
-
 // Zoom Out
 void acImageView::onWheelScaleDown(QPointF &pos)
 {
     // Check!
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
     if (m_MipImages)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
 
@@ -1345,27 +1534,30 @@ void acImageView::onWheelScaleDown(QPointF &pos)
 
     QPointF  localPt;
 
-    localPt = m_imageItem->mapFromScene(pos);
+    localPt = m_imageItem_Processed->mapFromScene(pos);
     qreal scale = m_ImageScale / 100.0;
-    m_imageItem->setScale(scale);
+    m_imageItem_Processed->setScale(scale);
+
+    if (m_imageItem_Original) 
+        m_imageItem_Original->setScale(scale);
 
     QPointF  localPtNew;
-    localPtNew = m_imageItem->mapFromScene(pos);
+    localPtNew = m_imageItem_Processed->mapFromScene(pos);
 
     QPointF  Delta = localPtNew - localPt;
-    m_imageItem->moveBy(Delta.x() * scale, Delta.y() * scale);
-    
+    m_imageItem_Processed->moveBy(Delta.x() * scale, Delta.y() * scale);
+    if (m_imageItem_Original)
+        m_imageItem_Original->moveBy(Delta.x() * scale, Delta.y() * scale);
     emit  acScaleChanged(m_ImageScale);
 
     ManageScrollBars();
 }
 
-
 void acImageView::onSetScale(int value)
 {
 
     if (!m_graphicsScene) return;
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
 
     // Size of our Scene view
     QRectF bounds = m_graphicsScene->sceneRect();        
@@ -1383,18 +1575,22 @@ void acImageView::onSetScale(int value)
             //========================================================
 
             QPointF  localPt;
-            localPt = m_imageItem->mapFromScene(pos);
+            localPt = m_imageItem_Processed->mapFromScene(pos);
 
             m_ImageScale = value;
             qreal scale = m_ImageScale / 100.0;
-            m_imageItem->setScale(scale);
+            m_imageItem_Processed->setScale(scale);
+
+            if (m_imageItem_Original)
+                m_imageItem_Original->setScale(scale);
 
             QPointF  localPtNew;
-            localPtNew = m_imageItem->mapFromScene(pos);
+            localPtNew = m_imageItem_Processed->mapFromScene(pos);
 
             QPointF  Delta = localPtNew - localPt;
-            m_imageItem->moveBy(Delta.x() * scale, Delta.y() * scale);
-
+            m_imageItem_Processed->moveBy(Delta.x() * scale, Delta.y() * scale);
+            if (m_imageItem_Original)
+                m_imageItem_Original->moveBy(Delta.x() * scale, Delta.y() * scale);
         }
     }
     else
@@ -1403,14 +1599,18 @@ void acImageView::onSetScale(int value)
         // Zoom from image Center
         //========================================================
 
-        QRectF offset1 = m_imageItem->sceneBoundingRect();   // Current image size and position user is viewing
+        QRectF offset1 = m_imageItem_Processed->sceneBoundingRect();   // Current image size and position user is viewing
         
         m_ImageScale = value;
-        m_imageItem->setScale(m_ImageScale / 100.0);
-        
-        QRectF offset2 = m_imageItem->sceneBoundingRect();   // New image size and position user is viewing
+        m_imageItem_Processed->setScale(m_ImageScale / 100.0);
+        if (m_imageItem_Original)
+            m_imageItem_Original->setScale(m_ImageScale / 100.0);
+
+        QRectF offset2 = m_imageItem_Processed->sceneBoundingRect();   // New image size and position user is viewing
         QPointF  Delta = offset1.center() - offset2.center();
-        m_imageItem->moveBy(Delta.x(), Delta.y());
+        m_imageItem_Processed->moveBy(Delta.x(), Delta.y());
+        if (m_imageItem_Original)
+            m_imageItem_Original->moveBy(Delta.x(), Delta.y());
 
     }
 
@@ -1418,12 +1618,11 @@ void acImageView::onSetScale(int value)
 
 }
 
-
 void acImageView::ManageScrollBars()
 {
     if (!m_imageGraphicsView) return;
     if (!m_graphicsScene) return;
-    if (!m_imageItem) return;
+    if (!m_imageItem_Processed) return;
 
     if (!m_xPos) return;
     if (!m_yPos) return;
@@ -1435,7 +1634,7 @@ void acImageView::ManageScrollBars()
     QRectF Scenebounds = m_graphicsScene->sceneRect();
 
     // Get the Current location of the Image 
-    QRectF imageoffset = m_imageItem->sceneBoundingRect();
+    QRectF imageoffset = m_imageItem_Processed->sceneBoundingRect();
 
 
    int value;

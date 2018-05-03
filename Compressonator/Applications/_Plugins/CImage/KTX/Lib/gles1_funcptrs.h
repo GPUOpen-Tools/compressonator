@@ -1,7 +1,7 @@
 /* -*- tab-width: 4; -*- */
 /* vi: set sw=2 ts=4: */
 
-/* $Id: 813736feacba1142549e915a1a8cfe27d2deafc4 $ */
+/* $Id: e9ec772d88c4c93ce716eaa4864e8481736bc2bd $ */
 
 /*
 Copyright (c) 2010 The Khronos Group Inc.
@@ -36,8 +36,8 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
  * Author: Mark Callow based on code from Georg Kolling
  */
 
-#ifndef _GLES1_FUNCPTRS_H_
-#define _GLES1_FUNCPTRS_H_
+#ifndef GLES1_FUNCPTRS_H
+#define GLES1_FUNCPTRS_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,31 +49,33 @@ typedef void (GL_APIENTRY* PFNGLTEXIMAGE3DPROC) (GLenum target, GLint level, GLi
 typedef void (GL_APIENTRY* PFNGLCOMPRESSEDTEXIMAGE1DPROC) (GLenum target, GLint level, GLenum internalformat, GLsizei width, GLint border, GLsizei imageSize, const GLvoid *data);
 typedef void (GL_APIENTRY* PFNGLCOMPRESSEDTEXIMAGE3DPROC) (GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const GLvoid *data);
 typedef void (GL_APIENTRY* PFNGLGENERATEMIPMAPPROC) (GLenum target);
+typedef const GLubyte* (GL_APIENTRY* PFNGLGETSTRINGIPROC) (GLenum name, GLuint index);
 
-/* remove these where already defined as functions */
-extern PFNGLTEXIMAGE1DPROC glTexImage1D;
-extern PFNGLTEXIMAGE3DPROC glTexImage3D;
-extern PFNGLCOMPRESSEDTEXIMAGE1DPROC glCompressedTexImage1D;
-extern PFNGLCOMPRESSEDTEXIMAGE3DPROC glCompressedTexImage3D;
-extern PFNGLGENERATEMIPMAPPROC glGenerateMipmap;
+extern PFNGLTEXIMAGE1DPROC pfGlTexImage1D;
+extern PFNGLTEXIMAGE3DPROC pfGlTexImage3D;
+extern PFNGLCOMPRESSEDTEXIMAGE1DPROC pfGlCompressedTexImage1D;
+extern PFNGLCOMPRESSEDTEXIMAGE3DPROC pfGlCompressedTexImage3D;
+extern PFNGLGENERATEMIPMAPPROC pfGlGenerateMipmap;
+extern PFNGLGETSTRINGIPROC pfGlGetStringi;
 
-/* and these */
 #define DECLARE_GL_FUNCPTRS \
-    PFNGLTEXIMAGE1DPROC glTexImage1D = 0; \
-    PFNGLTEXIMAGE3DPROC glTexImage3D = 0; \
-    PFNGLCOMPRESSEDTEXIMAGE1DPROC glCompressedTexImage1D = 0; \
-    PFNGLCOMPRESSEDTEXIMAGE3DPROC glCompressedTexImage3D = 0; \
-    PFNGLGENERATEMIPMAPPROC glGenerateMipmap = 0;
+    PFNGLTEXIMAGE1DPROC pfGlTexImage1D; \
+    PFNGLTEXIMAGE3DPROC pfGlTexImage3D; \
+    PFNGLCOMPRESSEDTEXIMAGE1DPROC pfGlCompressedTexImage1D; \
+    PFNGLCOMPRESSEDTEXIMAGE3DPROC pfGlCompressedTexImage3D; \
+    PFNGLGENERATEMIPMAPPROC pfGlGenerateMipmap; \
+	PFNGLGETSTRINGIPROC pfGlGetStringi;
 
-/* remove this if you use GLEW and already have this */
-extern int GLEW_OES_compressed_ETC1_RGB8_texture;
-
-/* and make this macro empty */
-#define DECLARE_GL_EXTGLOBALS \
-	int GLEW_OES_compressed_ETC1_RGB8_texture = 0;
+#define INITIALIZE_GL_FUNCPTRS \
+    pfGlTexImage1D = 0; \
+    pfGlTexImage3D = 0; \
+    pfGlCompressedTexImage1D = 0; \
+    pfGlCompressedTexImage3D = 0; \
+    pfGlGenerateMipmap = 0; \
+	pfGlGetStringi = 0;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* GLES1_FUNCPTRS */
+#endif /* GLES1_FUNCPTRS_H */

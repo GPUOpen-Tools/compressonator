@@ -35,50 +35,41 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
  * by Mark Callow and Georg Kolling
  */
 
-#ifndef _KTXSTREAM_H_
-#define _KTXSTREAM_H_
+#ifndef KTXSTREAM_H
+#define KTXSTREAM_H
 
 #include "ktx.h"
 
-/* @private is not preventing the typedefs, structs and defines from
- * appearing in the Doxygen output even though EXTRACT_PRIVATE is NO
- * in the config file. To prevent these items appearing I have changed
- * the special comments to ordinary comments, and have set
- * HIDE_UNDOC_MEMBERS = YES in the Doxygen config file.
- *
- * Items declared "static" are omitted, as expected, due to EXTRACT_STATIC
- * being NO, so there is no need to convert those to ordinary comments.
- */
-/*
+/**
  * @private
  * @~English
  * @brief type for a pointer to a stream reading function
  */
 typedef KTX_error_code(*ktxStream_read)(void* dst, const GLsizei count, void* src);
-/*
+/**
  * @private
  * @~English
  * @brief type for a pointer to a stream skipping function
  */
 typedef KTX_error_code(*ktxStream_skip)(const GLsizei count, void* src);
-/*
+/**
  * @private
  * @~English
  * @brief type for a pointer to a stream reading function
  */
 typedef KTX_error_code(*ktxStream_write)(const void *src, const GLsizei size, const GLsizei count, void* dst);
 
-/*
+/**
  * @private
  * @~English
  * @brief KTX stream interface
  */
 struct ktxStream
 {
-	void* src;                              /**< pointer to the stream source */
-	ktxStream_read read;    /**< pointer to function for reading bytes */
-	ktxStream_skip skip;    /**< pointer to function for skipping bytes */
-	ktxStream_write write;  /**< pointer to function for writing bytes */
+	void* src;                 /**< pointer to the stream source */
+	ktxStream_read read;       /**< pointer to function for reading bytes */
+	ktxStream_skip skip;       /**< pointer to function for skipping bytes */
+	ktxStream_write write;     /**< pointer to function for writing bytes */
 };
 
-#endif /* _KTXSTREAM_H_ */
+#endif /* KTXSTREAM_H */

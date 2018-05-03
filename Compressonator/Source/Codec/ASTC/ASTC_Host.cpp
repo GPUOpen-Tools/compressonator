@@ -1814,7 +1814,7 @@ void InitializeASTCSettingsForSetBlockSize(__global ASTC_Encode *ASTCEncode)
         maxiters_autoset = 1;
     }
     else
-        if (ASTCEncode->m_Quality < 0.5)
+        if (ASTCEncode->m_Quality < 0.5) 
         {
             // Medium speed setting
             plimit_autoset = 2;
@@ -3662,7 +3662,7 @@ int compute_value_of_texel_int_cpu(int texel_to_get, const decimation_table_cpu 
 void decompress_symbolic_block_cpu(ASTC_Encoder::astc_decode_mode decode_mode,
 							   int xdim, int ydim, int zdim,   // dimensions of block
 							   int xpos, int ypos, int zpos,   // position of block
-							   symbolic_compressed_block_cpu * scb,
+							   symbolic_compressed_block_cpu * scb, 
                                imageblock_cpu * blk)
 {
 	blk->xpos = xpos;
@@ -3777,9 +3777,7 @@ void decompress_symbolic_block_cpu(ASTC_Encoder::astc_decode_mode decode_mode,
 	int partition_count = scb->partition_count;
 
     if ((partition_count > 5) || (scb->partition_index > 1024))
-    {
         return;
-    }
 
 
 	// get the appropriate block descriptor
@@ -3801,14 +3799,14 @@ void decompress_symbolic_block_cpu(ASTC_Encoder::astc_decode_mode decode_mode,
 
 	for (i = 0; i < partition_count; i++)
 		unpack_color_endpoints_cpu(
-            decode_mode,
-            scb->color_formats[i],
+            decode_mode,				   
+            scb->color_formats[i],		   
             scb->color_quantization_level,
             scb->color_values[i],
-            &(rgb_hdr_endpoint[i]),
-            &(alpha_hdr_endpoint[i]),
-            &(nan_endpoint[i]),
-            &(color_endpoint0[i]),
+            &(rgb_hdr_endpoint[i]), 
+            &(alpha_hdr_endpoint[i]), 
+            &(nan_endpoint[i]), 
+            &(color_endpoint0[i]), 
             &(color_endpoint1[i]));
 
 	// first unquantize the weights
@@ -3851,7 +3849,7 @@ void decompress_symbolic_block_cpu(ASTC_Encoder::astc_decode_mode decode_mode,
 	for (i = 0; i < texels_per_block; i++)
 	{
         ASTC_Encoder::uint8_t partition = g_ASTCEncode.partition_tables[partition_count][scb->partition_index].partition_of_texel[i];
-
+ 
         ASTC_Encoder::ushort4 color = lerp_color_int(decode_mode,
 									   color_endpoint0[partition],
 									   color_endpoint1[partition],
@@ -3873,6 +3871,6 @@ void decompress_symbolic_block_cpu(ASTC_Encoder::astc_decode_mode decode_mode,
 	update_imageblock_flags_cpu(blk, xdim, ydim, zdim);
 }
 
-// End CPU Decoder Code
+// End CPU Decoder Code 
 //-----------------------------------------------
 

@@ -78,12 +78,12 @@ void AboutCompressonator()
     printf( "------------------------------------------------\n");
     // current build release
     if ((VERSION_MINOR_MAJOR > 0))
-        printf("CompressonatorCLI V%d.%d.%d Copyright AMD 2017\n", VERSION_MAJOR_MAJOR, VERSION_MAJOR_MINOR, VERSION_MINOR_MAJOR);
+        printf("CompressonatorCLI V%d.%d.%d Copyright AMD 2018\n", VERSION_MAJOR_MAJOR, VERSION_MAJOR_MINOR, VERSION_MINOR_MAJOR);
     else
     {
         // Keep track of Customer patches from last release to current
         // This is what is shown when you build the exe outside of the automated Build System (such as Jenkins)
-        printf("CompressonatorCLI V2.7.0 Copyright AMD 2017\n");
+        printf("CompressonatorCLI V3.0.0 Copyright AMD 2018\n");
     }
     printf( "------------------------------------------------\n");
     printf( "\n");

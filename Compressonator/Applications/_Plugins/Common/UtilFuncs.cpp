@@ -64,37 +64,37 @@ typedef struct
 
 #define MAX_WINDOW_TEXT 256
 
-BOOL CALLBACK FTLWProc(HWND hwnd, LPARAM lParam)
-{
-    if(hwnd && lParam)
-    {
-        FTLWData* pFTLWData = reinterpret_cast<FTLWData*>(lParam);
-    
-        TCHAR szWindowText[MAX_WINDOW_TEXT];
-        if(GetWindowText(hwnd, szWindowText, MAX_WINDOW_TEXT))
-        {
-            if(_tcsncmp(szWindowText, pFTLWData->pszName, _tcslen(pFTLWData->pszName)) == 0)
-            {
-                pFTLWData->hWnd = hwnd;
-                return FALSE;
-            }
-        }
-    }
-    return TRUE;
-}
+//BOOL CALLBACK FTLWProc(HWND hwnd, LPARAM lParam)
+//{
+//    if(hwnd && lParam)
+//    {
+//        FTLWData* pFTLWData = reinterpret_cast<FTLWData*>(lParam);
+//    
+//        TCHAR szWindowText[MAX_WINDOW_TEXT];
+//        if(GetWindowText(hwnd, szWindowText, MAX_WINDOW_TEXT))
+//        {
+//            if(_tcsncmp(szWindowText, pFTLWData->pszName, _tcslen(pFTLWData->pszName)) == 0)
+//            {
+//                pFTLWData->hWnd = hwnd;
+//                return FALSE;
+//            }
+//        }
+//    }
+//    return TRUE;
+//}
 
-HWND FindTopLevelWindow(TCHAR* pszName)
-{
-    if(pszName == NULL || *pszName == NULL)
-        return NULL;
-
-    FTLWData ftlwData;
-    ftlwData.pszName = pszName;
-    ftlwData.hWnd = NULL;
-    EnumWindows(FTLWProc, reinterpret_cast<LPARAM>(&ftlwData));
-
-    return ftlwData.hWnd;
-}
+//HWND FindTopLevelWindow(TCHAR* pszName)
+//{
+//    if(pszName == NULL || *pszName == NULL)
+//        return NULL;
+//
+//    FTLWData ftlwData;
+//    ftlwData.pszName = pszName;
+//    ftlwData.hWnd = NULL;
+//    EnumWindows(FTLWProc, reinterpret_cast<LPARAM>(&ftlwData));
+//
+//    return ftlwData.hWnd;
+//}
 
 
 void getFileNameExt(const char *FilePathName, char *fnameExt, int maxbuffsize)
@@ -107,6 +107,62 @@ void getFileNameExt(const char *FilePathName, char *fnameExt, int maxbuffsize)
     sprintf_s(fnameExt, maxbuffsize,"%s%s", fname, ext);
 }
 
+bool writeObjFileState(std::string filename, std::string state)
+{
+    std::ofstream file; 
+    try {
+        file.open(filename, std::ios::app);
+        file << state << std::endl;
+        file.close();
+    }
+    catch (...) {
+        return false;
+    }
+
+    return true;
+}
+
+std::string readObjFileState(std::string filename)
+{
+    std::ifstream objfile(filename, std::ios::in);
+
+    if (objfile)
+    {
+        //get file size
+        objfile.seekg(0, objfile.end);
+        std::streamoff length = objfile.tellg();
+        objfile.seekg(0, objfile.beg);
+
+        char c = '\0';
+        std::string lastLine = "";
+        //loop from the end of the file, skip endline and endfile characters
+        //last line suppose consist of 14 characters for cmpcopy of obj
+        for (int i = length - 2; i > 0; i -= CMP_STATENUM)
+        {
+            objfile.seekg(i);
+            //read last line
+            std::getline(objfile, lastLine);
+            if (lastLine == CMP_COPY)
+            {
+                return CMP_COPY;
+            }
+            if (lastLine == CMP_PROCESSED)
+            {
+                return CMP_PROCESSED;
+            }
+            // break out of the loop if last line is passed (14 characters + 2 (EOF and EOL))
+            if (i < length - CMP_STATENUM - 2)
+            {
+                return CMP_ORIGINAL;
+            }
+        }
+    }
+    else
+    {
+        return CMP_FILE_ERROR;
+    }
+
+}
 
 
 #endif

@@ -35,7 +35,8 @@
 #include <qprogressbar.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
-#include <QtWidgets>
+#include <qwidget.h>
+#include <qmenu.h>
 #include "acCustomDockWidget.h"
 
 class CompressStatusDialog : 

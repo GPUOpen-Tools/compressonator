@@ -9,10 +9,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -41,17 +41,17 @@ CodecError CCodec_DXTC::CompressRGBABlock(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], 
     CodecError err = CompressAlphaBlock(alphaBlock, &compressedBlock[DXTC_OFFSET_ALPHA]);
     if(err != CE_OK)
         return err;
-
+    
     return CompressRGBBlock(rgbaBlock, &compressedBlock[DXTC_OFFSET_RGB], pfChannelWeights, false);
 }
 
 void CCodec_DXTC::DecompressRGBABlock(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[4])
 {
     CMP_BYTE alphaBlock[BLOCK_SIZE_4X4];
-
+    
     DecompressAlphaBlock(alphaBlock, &compressedBlock[DXTC_OFFSET_ALPHA]);
     DecompressRGBBlock(rgbaBlock, &compressedBlock[DXTC_OFFSET_RGB], false);
-
+    
     for(CMP_DWORD i = 0; i < 16; i++)
         ((DWORD*)rgbaBlock)[i] = (alphaBlock[i] << RGBA8888_OFFSET_A) | (((DWORD*)rgbaBlock)[i] & ~(BYTE_MASK << RGBA8888_OFFSET_A));
 }
@@ -65,24 +65,24 @@ CodecError CCodec_DXTC::CompressRGBABlock_ExplicitAlpha(CMP_BYTE rgbaBlock[BLOCK
     CodecError err = CompressExplicitAlphaBlock(alphaBlock, &compressedBlock[DXTC_OFFSET_ALPHA]);
     if(err != CE_OK)
         return err;
-
+    
     return CompressRGBBlock(rgbaBlock, &compressedBlock[DXTC_OFFSET_RGB], pfChannelWeights, false);
 }
 
 void CCodec_DXTC::DecompressRGBABlock_ExplicitAlpha(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[4])
 {
     CMP_BYTE alphaBlock[BLOCK_SIZE_4X4];
-
+    
     DecompressExplicitAlphaBlock(alphaBlock, &compressedBlock[DXTC_OFFSET_ALPHA]);
     DecompressRGBBlock(rgbaBlock, &compressedBlock[DXTC_OFFSET_RGB], false);
-
+    
     for(CMP_DWORD i = 0; i < 16; i++)
         ((DWORD*)rgbaBlock)[i] = (alphaBlock[i] << RGBA8888_OFFSET_A) | (((DWORD*)rgbaBlock)[i] & ~(BYTE_MASK << RGBA8888_OFFSET_A));
 }
 
 #define ConstructColour(r, g, b)  (((r) << 11) | ((g) << 5) | (b))
 
-/*
+/* 
 Channel Bits
 */
 #define RG 5
@@ -109,11 +109,11 @@ CodecError CCodec_DXTC::CompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CM
 
         double fError3 = CompRGBBlock((DWORD*)rgbBlock, BLOCK_SIZE_4X4, RG, GG, BG, nEndpoints[0], nIndices[0], 3, m_bUseSSE2, m_b3DRefinement, m_nRefinementSteps, pfChannelWeights, bDXT1UseAlpha, nDXT1AlphaThreshold);
         double fError4 = (fError3 == 0.0) ? FLT_MAX : CompRGBBlock((DWORD*)rgbBlock, BLOCK_SIZE_4X4, RG, GG, BG, nEndpoints[1], nIndices[1], 4, m_bUseSSE2, m_b3DRefinement, m_nRefinementSteps, pfChannelWeights, bDXT1UseAlpha, nDXT1AlphaThreshold);
-
+        
         unsigned int nMethod = (fError3 <= fError4) ? 0 : 1;
         unsigned int c0 = ConstructColour((nEndpoints[nMethod][RC][0] >> (8-RG)), (nEndpoints[nMethod][GC][0] >> (8-GG)), (nEndpoints[nMethod][BC][0] >> (8-BG)));
         unsigned int c1 = ConstructColour((nEndpoints[nMethod][RC][1] >> (8-RG)), (nEndpoints[nMethod][GC][1] >> (8-GG)), (nEndpoints[nMethod][BC][1] >> (8-BG)));
-        if(( nMethod == 1 && c0 <= c1 ) || ( nMethod == 0 && c0 > c1 ))
+        if(nMethod == 1 && c0 <= c1 || nMethod == 0 && c0 > c1)
             compressedBlock[0] = c1 | (c0<<16);
         else
             compressedBlock[0] = c0 | (c1<<16);
@@ -140,7 +140,7 @@ CodecError CCodec_DXTC::CompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CM
         for(int i=0; i<16; i++)
             compressedBlock[1] |= (nIndices[i] << (2*i));
     }
-
+    
     return CE_OK;
 }
 
@@ -162,7 +162,7 @@ CodecError CCodec_DXTC::CompressRGBBlock_SuperFast(CMP_BYTE rgbBlock[BLOCK_SIZE_
 {
     #if defined(USE_SSE2)
 #ifdef _WIN64
-    // todo: fix sse2 asm function
+    // todo: fix sse2 asm function 
     DXTCV11CompressBlockSSE2((DWORD*)rgbBlock, compressedBlock);
 #else
     DXTCV11CompressBlockSSEMinimal((DWORD*)rgbBlock, compressedBlock);
@@ -237,7 +237,7 @@ CodecError CCodec_DXTC::CompressRGBABlock(CODECFLOAT rgbaBlock[BLOCK_SIZE_4X4X4]
     CodecError err = CompressAlphaBlock(alphaBlock, &compressedBlock[DXTC_OFFSET_ALPHA]);
     if(err != CE_OK)
         return err;
-
+    
     return CompressRGBBlock(rgbaBlock, &compressedBlock[DXTC_OFFSET_RGB], pfChannelWeights, false);
 }
 
@@ -278,7 +278,7 @@ CodecError CCodec_DXTC::CompressRGBBlock(CODECFLOAT rgbBlock[BLOCK_SIZE_4X4X4], 
         unsigned int nMethod = (fError3 <= fError4) ? 0 : 1;
         unsigned int c0 = ConstructColour((nEndpoints[nMethod][RC][0] >> (8-RG)), (nEndpoints[nMethod][GC][0] >> (8-GG)), (nEndpoints[nMethod][BC][0] >> (8-BG)));
         unsigned int c1 = ConstructColour((nEndpoints[nMethod][RC][1] >> (8-RG)), (nEndpoints[nMethod][GC][1] >> (8-GG)), (nEndpoints[nMethod][BC][1] >> (8-BG)));
-        if(( nMethod == 1 && c0 <= c1 ) || ( nMethod == 0 && c0 > c1 ))
+        if(nMethod == 1 && c0 <= c1 || nMethod == 0 && c0 > c1)
             compressedBlock[0] = c1 | (c0<<16);
         else
             compressedBlock[0] = c0 | (c1<<16);
@@ -311,10 +311,10 @@ CodecError CCodec_DXTC::CompressRGBBlock(CODECFLOAT rgbBlock[BLOCK_SIZE_4X4X4], 
 void CCodec_DXTC::DecompressRGBABlock(CODECFLOAT rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[4])
 {
     CODECFLOAT alphaBlock[BLOCK_SIZE_4X4];
-
+    
     DecompressAlphaBlock(alphaBlock, &compressedBlock[DXTC_OFFSET_ALPHA]);
     DecompressRGBBlock(rgbaBlock, &compressedBlock[DXTC_OFFSET_RGB], false);
-
+    
     for(CMP_DWORD i = 0; i < 16; i++)
         rgbaBlock[(i * 4) + RGBA32F_OFFSET_A] = alphaBlock[i];
 }
@@ -322,10 +322,10 @@ void CCodec_DXTC::DecompressRGBABlock(CODECFLOAT rgbaBlock[BLOCK_SIZE_4X4X4], CM
 void CCodec_DXTC::DecompressRGBABlock_ExplicitAlpha(CODECFLOAT rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[4])
 {
     CODECFLOAT alphaBlock[BLOCK_SIZE_4X4];
-
+    
     DecompressExplicitAlphaBlock(alphaBlock, &compressedBlock[DXTC_OFFSET_ALPHA]);
     DecompressRGBBlock(rgbaBlock, &compressedBlock[DXTC_OFFSET_RGB], false);
-
+    
     for(CMP_DWORD i = 0; i < 16; i++)
         rgbaBlock[(i * 4) + RGBA32F_OFFSET_A] = alphaBlock[i];
 }
@@ -363,7 +363,7 @@ void CCodec_DXTC::DecompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DW
         g1 = ((n1 & 0x07e0) >> 3);
         b1 = ((n1 & 0x001f) << 3);
     }
-
+    
     // Apply the lower bit replication to give full dynamic range
     r0 += (r0>>5); r1 += (r1>>5);
     g0 += (g0>>6); g1 += (g1>>6);
@@ -604,7 +604,7 @@ CODECFLOAT* CCodec_DXTC::CalculateColourWeightings(CODECFLOAT block[BLOCK_SIZE_4
 
         for(CMP_DWORD k=0; k<BLOCK_SIZE_4X4; k++)
         {
-            block++;
+            *block++;
             medianB += *block++;
             medianG += *block++;
             medianR += *block++;

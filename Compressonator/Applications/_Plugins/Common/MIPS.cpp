@@ -132,7 +132,11 @@ int CMIPS::GetMaxMipLevels(int nWidth, int nHeight, int nDepth)
     return maxMipLevels;
 }
 
-bool CMIPS::AllocateMipLevelTable(MipLevelTable** ppMipLevelTable, int nMaxMipLevels, TextureType textureType, int nDepth, int& nLevelsToAllocate, int nFaces)
+bool CMIPS::AllocateMipLevelTable(MipLevelTable** ppMipLevelTable, int nMaxMipLevels, TextureType textureType, int nDepth, int& nLevelsToAllocate
+#ifdef USE_MIPSET_FACES
+    , int nFaces = 0
+#endif
+)
 {
     //TODO test
     assert(nDepth > 0);
@@ -148,11 +152,19 @@ bool CMIPS::AllocateMipLevelTable(MipLevelTable** ppMipLevelTable, int nMaxMipLe
         }
         break;
     case TT_CubeMap:
+#ifdef USE_MIPSET_FACES
         if(nDepth > 6)
         {
             return false;
         }
         nLevelsToAllocate = nMaxMipLevels * nFaces;
+#else
+        if (nDepth > 6)
+        {
+            return false;
+        }
+        nLevelsToAllocate = nMaxMipLevels * nDepth;
+#endif
         break;
     case TT_VolumeTexture:
         for(int i=0; i < nMaxMipLevels; i++)
@@ -199,7 +211,11 @@ bool CMIPS::AllocateAllMipLevels(MipLevelTable* pMipLevelTable, TextureType /*te
     return true;
 }
 
-bool CMIPS::AllocateMipSet(MipSet* pMipSet, ChannelFormat channelFormat, TextureDataType textureDataType, TextureType textureType, int nWidth, int nHeight, int nDepth, int nFaces)
+bool CMIPS::AllocateMipSet(MipSet* pMipSet, ChannelFormat channelFormat, TextureDataType textureDataType, TextureType textureType, int nWidth, int nHeight, int nDepth
+#ifdef USE_MIPSET_FACES
+    , int nFaces = 0
+#endif
+)
 {
     //TODO test
     assert(pMipSet);
@@ -223,7 +239,11 @@ bool CMIPS::AllocateMipSet(MipSet* pMipSet, ChannelFormat channelFormat, Texture
     pMipSet->m_nHeight = nHeight;
     pMipSet->m_nDepth = nDepth;
     int numLevelsToAllocate;
-    if(!AllocateMipLevelTable(&pMipSet->m_pMipLevelTable, pMipSet->m_nMaxMipLevels, textureType, nDepth, numLevelsToAllocate, nFaces))
+    if(!AllocateMipLevelTable(&pMipSet->m_pMipLevelTable, pMipSet->m_nMaxMipLevels, textureType, nDepth, numLevelsToAllocate
+#ifdef USE_MIPSET_FACES
+        , nFaces
+#endif
+    ))
     {
         //mipleveltable allocation failed
         return false;
@@ -241,12 +261,18 @@ bool CMIPS::AllocateMipSet(MipSet* pMipSet, ChannelFormat channelFormat, Texture
     return true;
 }
 
-bool CMIPS::AllocateMipLevelData(MipLevel* pMipLevel, int nWidth, int nHeight, ChannelFormat channelFormat, TextureDataType textureDataType, int facedataSize)
+bool CMIPS::AllocateMipLevelData(MipLevel* pMipLevel, int nWidth, int nHeight, ChannelFormat channelFormat, TextureDataType textureDataType
+#ifdef USE_MIPSET_FACES
+    , int facedataSize
+#endif
+)
+
 {
     //TODO test
     assert(pMipLevel);
     assert(nWidth > 0 && nHeight > 0);
 
+#ifdef USE_MIPSET_FACES
     if (facedataSize != 0) {  //facedataSize  = number of bytes each faces read from file
         pMipLevel->m_dwLinearSize = facedataSize;
         pMipLevel->m_nWidth = nWidth;
@@ -256,6 +282,7 @@ bool CMIPS::AllocateMipLevelData(MipLevel* pMipLevel, int nWidth, int nHeight, C
 
         return (pMipLevel->m_pbData != NULL);
     }
+#endif
 
     CMP_DWORD dwBitsPerPixel;
     switch(channelFormat)
@@ -383,7 +410,6 @@ void CMIPS::FreeMipSet(MipSet* pMipSet)
     }
 }
 
-
 void CMIPS::PrintError(const char* Format, ... )
 {
     char buff[1024];
@@ -414,7 +440,6 @@ void CMIPS::Print(const char* Format, ...)
         PrintLine(buff);
     }
 }
-
 
 void CMIPS::SetProgress(unsigned int value)
 {

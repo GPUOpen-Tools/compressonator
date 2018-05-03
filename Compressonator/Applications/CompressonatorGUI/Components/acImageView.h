@@ -43,8 +43,6 @@
 #define AC_IMAGE_MAX_ZOOM  9999
 #define AC_IMAGE_MIN_ZOOM  10
 
-#define DEFAULT_BRIGHTNESS_LEVEL 6
-
 // ----------------------------------------------------------------------------------
 // Class Name:          acImageView
 // General Description: This class represent an image item widget that has builtin  
@@ -56,13 +54,15 @@ class acImageView : public QWidget
     Q_OBJECT
 
 public:
-    acImageView(const QString fileName = "", QWidget *parent = 0, QImage** image = NULL, CMipImages *MipImages = NULL);
+    acImageView(const QString fileName = "", QWidget *parent = 0, CMipImages *OriginalMipImages = NULL, CMipImages *MipImages = NULL);
     ~acImageView();
 
     CImageLoader                     *m_imageloader;
 
-    CMipImages                       *m_MipImages;            // The Main Image data
-    acCustomGraphicsImageItem        *m_imageItem;            // The displayed Graphics item of m_image
+    CMipImages                       *m_OriginalMipImages;    // The Original Image data
+    CMipImages                       *m_MipImages;            // The Main Active Display Image data (this can be the original if m_OriginalMipImages is NULL)
+    acCustomGraphicsImageItem        *m_imageItem_Processed;  // The displayed Graphics item of Processed image (Can also be the original if m_OriginalMipImages is NULL)
+    acCustomGraphicsImageItem        *m_imageItem_Original;   // if available! displayed Graphics item of Original Images 
     acCustomGraphicsView             *m_imageGraphicsView;    // View displayed to user
     acCustomGraphicsScene            *m_graphicsScene;        // Scene hosting the image
 
@@ -116,14 +116,22 @@ public:
     void centerImage();
     //Reserved: GPUDecode
     bool IsImageBoundedToView(QPointF *mousePos);
+    void setBrightnessLevel(int brightness);
+    int getBrightnessLevel();
 
 private:
+
+    bool m_appBusy;
     int  m_imageOrientation;                                 // Tracks Image Rotation from 0 - North (upright) to 1 - East 2 - South 3 - West
     bool m_localMipImages;
     int  m_ImageIndex;                                       // QImage[] index
     int  m_currentMiplevel;
+
+    void MatchImagePosition(int activeIndex);
+
 public slots:
     void onVirtualMouseMoveEvent(QPointF *pos, QPointF *localPos, int onID);     //   
+    void onSetPixelDiffView(bool OnOff);                      // Display Image Diff of Original vs Processed 
     void onResetImageView();                                  // 
     void onExrExposureChanged(double value);                  // exr exposure
     void onExrDefogChanged(double value);                     // exr defog
@@ -135,8 +143,6 @@ public slots:
     void onToggleChannelB();                                  // Channel Blue
     void onToggleChannelA();                                  // Channel Alpha
     void onToggleGrayScale();                                 // Gray Scale
-    void onToggleImageBrightnessUp();                         // Increase image Brightness
-    void onToggleImageBrightnessDown();                       // Decrease image Brightness
     void onInvertImage();                                     // Invert Image
     void onMirrorHorizontal();                                // Mirror Image Horizontal
     void onMirrorVirtical();                                  // Mirror Image Virtical
@@ -156,6 +162,8 @@ public slots:
 #ifdef _DEBUG
     void onToggleDebugChanged(int index);
 #endif
+
+    void onToggleImageViews(int index);
 
 private slots:
     void onacImageViewMousePosition(QPointF *pos, int ID);   // connects to SIGNAL graphicsscene::scenemouseposition   

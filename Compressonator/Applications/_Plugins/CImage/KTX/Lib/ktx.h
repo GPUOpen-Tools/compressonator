@@ -1,8 +1,8 @@
 /* -*- tab-width: 4; -*- */
 /* vi: set sw=2 ts=4: */
 
-#ifndef _KTX_H_
-#define _KTX_H_
+#ifndef KTX_H_A55A6F00956F42F3A137C11929827FE1
+#define KTX_H_A55A6F00956F42F3A137C11929827FE1
 
 /**
  * @file
@@ -14,7 +14,7 @@
  * @author Georg Kolling, Imagination Technology
  * @author with modifications by Mark Callow, HI Corporation
  *
- * $Id: 026beff16eeb0b507d918c88ca9fcfcdecc9167d $
+ * $Id: bcd735e6de9f8497c2cf50ced3800ac401c6d049 $
  * $Date$
  *
  * @todo Find a way so that applications do not have to define KTX_OPENGL{,_ES*}
@@ -25,23 +25,31 @@
  * This file copyright (c) 2010 The Khronos Group, Inc.
  */
 
-/**
+/*
 @~English
-@page licensing Licensing
 
 LibKTX contains code
 
-@li (c) 2010 & (c) 2013 The Khronos Group Inc.
+@li (c) 2010 The Khronos Group Inc.
 @li (c) 2008 and (c) 2010 HI Corporation
 @li (c) 2005 Ericsson AB
 @li (c) 2003-2010, Troy D. Hanson
+@li (c) 2015 Mark Callow
 
-A specific copyright is given in each source file.
+The KTX load tests contain code
+
+@li (c) 2013 The Khronos Group Inc.
+@li (c) 2008 and (c) 2010 HI Corporation
+@li (c) 1997-2014 Sam Lantinga
+@li (c) 2015 Mark Callow
 
 @section default Default License
 
 With the exception of the files listed explicitly below, the source
-files are made available under the following BSD-like license.
+files are made available under the following BSD-like license. Most
+files contain this license explicitly. Some files refer to LICENSE.md
+which contains this same text. Such files are licensed under this
+Default License.
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and/or associated documentation files (the
@@ -97,6 +105,12 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
 LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+@section SDL2 include/SDL2/
+
+These files are part of the SDL2 source distributed by the [SDL project]
+(http://libsdl.org) under the terms of the [zlib license]
+(http://www.zlib.net/zlib_license.html).
 */
 
 /**
@@ -116,7 +130,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * The library is open source software. Most of the code is licensed under a
  * modified BSD license. The code for unpacking ETC1, ETC2 and EAC compressed
  * textures has a separate license that restricts it to uses associated with
- * Khronos Group APIs. See @ref licensing for more details.
+ * Khronos Group APIs. See @ref license for more details.
  *
  * See @ref history for the list of changes.
  *
@@ -124,7 +138,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * @author Georg Kolling, <a href="http://www.imgtec.com">Imagination Technology</a>
  * @author Jacob Str&ouml;m, <a href="http://www.ericsson.com">Ericsson AB</a>
  *
- * @version 2.0
+ * @version 2.0.X
  *
  * $Date$
  */
@@ -134,16 +148,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "KHR/khrplatform.h"
 #define KTX_OPENGL 1
 #if KTX_OPENGL
-    #ifndef _WIN32
-      #define KTX_USE_GETPROC 1
-    #endif
+
 	#ifdef _WIN32
 	  #include <windows.h>
-	  #include <GL/glew.h>
-    #elif KTX_USE_GETPROC
+      #undef KTX_USE_GETPROC  /* Must use GETPROC on Windows */
+      #define KTX_USE_GETPROC 1
+    #else
+      #if !defined(KTX_USE_GETPROC)
+        #define KTX_USE_GETPROC 0
+      #endif
+    #endif
+    #if KTX_USE_GETPROC
       #include <GL/glew.h>
     #else
-      #define GLCOREARB_PROTOTYPES
+      #define GL_GLEXT_PROTOTYPES
       #include <GL/glcorearb.h>
 	#endif
 
@@ -159,6 +177,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #elif KTX_OPENGL_ES2
 
+    #define GL_GLEXT_PROTOTYPES
 	#include <GLES2/gl2.h>
 	#include <GLES2/gl2ext.h>
 
@@ -166,8 +185,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #elif KTX_OPENGL_ES3
 
+    #define GL_GLEXT_PROTOTYPES
 	#include <GLES3/gl3.h>
-	#include <GLES3/gl3ext.h>
+	#include <GLES2/gl2ext.h>
 
     #define KTX_GLFUNCPTRS "gles3_funcptrs.h"
 
@@ -429,9 +449,13 @@ ktxHashTable_Deserialize(unsigned int kvdLen, void* kvd, KTX_hash_table* pKvt);
 #endif
 
 /**
-@page history Revision History
+@page history KTX Library Revision History
 
-@section v4 Version XXX
+@section v5 Version 2.0.X
+Changed:
+@li New build system
+
+@section v4 Version 2.0.1
 Added:
 @li CMake build files. Thanks to Pavel Rotjberg for the initial version.
 
@@ -485,4 +509,4 @@ Initial release.
 
 */
 
-#endif /* _KTX_H_ */
+#endif /* KTX_H_A55A6F00956F42F3A137C11929827FE1 */

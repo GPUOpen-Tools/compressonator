@@ -61,10 +61,12 @@ class PluginDetails
         void *makeNewInstance();
 
         void setFileName(char * nm);
+
+        char *getFileName()     { return filename; }
         char *getName()         { return pluginName; }
         char *getUUID()         { return pluginUUID; }
         char *getType()         { return pluginType; }
-        char *getCategory()    { return pluginCategory; }
+        char *getCategory()     { return pluginCategory; }
 
         void setName(char * nm);  
         void setUUID(char * nm);
@@ -72,6 +74,8 @@ class PluginDetails
         void setCategory(char * nm);
 
         bool                isStatic;
+        bool                isRegistered;       // true when all dll interfaces has been registered using LoadLibraryA and GetProcAddress
+
         PLUGIN_FACTORYFUNC  funcHandle;
         
     private:
@@ -82,6 +86,8 @@ class PluginDetails
             dllHandle  = NULL;
 #endif
             isStatic   = false;
+            isRegistered = false;
+
             filename[0]   = 0;
             pluginType[0] = 0;
             pluginName[0] = 0;
@@ -94,6 +100,7 @@ class PluginDetails
         char pluginName [MAX_PLUGIN_NAME_STR];
         char pluginUUID [MAX_PLUGIN_UUID_STR];
         char pluginCategory[MAX_PLUGIN_CATEGORY_STR];
+
 #ifdef _WIN32
         HINSTANCE           dllHandle;
 #endif
@@ -114,6 +121,9 @@ class PluginManager
 
         void * makeNewPluginInstance(int index)
         {
+            if (!pluginRegister.at(index)->isRegistered)
+                getPluginDetails(pluginRegister.at(index));
+
             return pluginRegister.at(index)->makeNewInstance();
         }
         
@@ -124,22 +134,30 @@ class PluginManager
         
         char * getPluginName(int index)
         {
+            if (!pluginRegister.at(index)->isRegistered)
+                getPluginDetails(pluginRegister.at(index));
             return pluginRegister.at(index)->getName();
         }
 
 
         char * getPluginUUID(int index)
         {
+            if (!pluginRegister.at(index)->isRegistered)
+                getPluginDetails(pluginRegister.at(index));
             return pluginRegister.at(index)->getUUID();
         }
 
         char * getPluginCategory(int index)
         {
+            if (!pluginRegister.at(index)->isRegistered)
+                getPluginDetails(pluginRegister.at(index));
             return pluginRegister.at(index)->getCategory();
         }
         
         char * getPluginType(int index)
         {
+            if (!pluginRegister.at(index)->isRegistered)
+                getPluginDetails(pluginRegister.at(index));
             return pluginRegister.at(index)->getType();
         }
 
@@ -148,6 +166,9 @@ class PluginManager
             int numPlugins = getNumPlugins();
             for (int i=0; i< numPlugins; i++)
             {
+                if (!pluginRegister.at(i)->isRegistered)
+                    getPluginDetails(pluginRegister.at(i));
+
                 if ( (strcmp(getPluginType(i),type) == 0) && 
                      (strcmp(getPluginName(i),name)   == 0))
                 {
@@ -162,6 +183,9 @@ class PluginManager
             int numPlugins = getNumPlugins();
             for (int i = 0; i< numPlugins; i++)
             {
+                if (!pluginRegister.at(i)->isRegistered)
+                    getPluginDetails(pluginRegister.at(i));
+
                 if (strcmp(getPluginUUID(i), uuid) == 0)
                 {
                     return ((void *)makeNewPluginInstance(i));
@@ -173,9 +197,14 @@ class PluginManager
 
         bool PluginSupported(char *type, char *name)
         {
+            if (!type) return NULL;
+            if (!name) return NULL;
             int numPlugins = getNumPlugins();
             for (int i = 0; i< numPlugins; i++)
             {
+                if (!pluginRegister.at(i)->isRegistered)
+                    getPluginDetails(pluginRegister.at(i));
+
                 //PrintInfo("Type : %s  Name : %s\n",pluginManager.getPluginType(i),pluginManager.getPluginName(i));
                 if ((strcmp(getPluginType(i), type) == 0) &&
                     (strcmp(getPluginName(i), name) == 0))
@@ -185,6 +214,8 @@ class PluginManager
             }
             return (false);
         }
+
+        void getPluginDetails(PluginDetails *curPlugin);
 
     private:
 

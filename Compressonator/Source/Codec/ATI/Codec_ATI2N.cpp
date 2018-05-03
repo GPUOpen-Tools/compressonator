@@ -9,10 +9,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -22,13 +22,11 @@
 // THE SOFTWARE.
 //
 //
-//  File Name:   Codec_ATI2N.cpp
+//  File Name:   Codec_ATI2N.cpp  
 //  Description: implementation of the CCodec_ATI2N class
 //
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
 #pragma warning(disable:4100)
-#endif //_MSC_VER
 
 #include "Common.h"
 #include "Codec_ATI2N.h"
@@ -174,7 +172,7 @@ CodecError CCodec_ATI2N::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& buffer
 
 
     bool bUseFixed = (!bufferOut.IsFloat() && bufferOut.GetChannelDepth() == 8 && !m_bUseFloat);
-
+    
    CMP_BYTE alphaBlockA[BLOCK_SIZE_4X4];
    CMP_BYTE alphaBlockR[BLOCK_SIZE_4X4];
    CMP_BYTE alphaBlockG[BLOCK_SIZE_4X4];
@@ -188,15 +186,15 @@ CodecError CCodec_ATI2N::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& buffer
    float falphaBlockA[BLOCK_SIZE_4X4];
    memset(falphaBlockA, 255, sizeof(falphaBlockA));
    memset(falphaBlockB, 0, sizeof(falphaBlockB));
-
+   
    CMP_DWORD compressedBlock[4];
-
+   
    for(CMP_DWORD j = 0; j < dwBlocksY; j++)
    {
        for(CMP_DWORD i = 0; i < dwBlocksX; i++)
        {
            bufferIn.ReadBlock(i*4, j*4, compressedBlock, 4);
-
+   
            if(bUseFixed)
            {
                DecompressAlphaBlock(alphaBlockR, &compressedBlock[dwXOffset]);

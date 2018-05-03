@@ -1,7 +1,7 @@
 /* -*- tab-width: 4; -*- */
 /* vi: set sw=2 ts=4: */
 
-/* $Id: 5c28a496fa7703a75b91eb8dd7b1722c2e299741 $ */
+/* $Id: 0afbdd40d2414a4a65d75a5dd9feeacee9e4d547 $ */
 
 /**
  * @internal
@@ -51,11 +51,6 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
 #include "ktx.h"
 #include "ktxint.h"
 
-#include KTX_GLFUNCPTRS
-
-DECLARE_GL_FUNCPTRS
-DECLARE_GL_EXTGLOBALS
-
 /**
  * @internal
  * @~English
@@ -85,14 +80,14 @@ KTX_error_code _ktxCheckHeader(KTX_header* header, KTX_texinfo* texinfo)
 
 	if (header->endianness == KTX_ENDIAN_REF_REV)
 	{
-		/* Convert endianness of header fields if necessary */
+		/* Convert endianness of header fields. */
 		_ktxSwapEndian32(&header->glType, 12);
 
-		if (header->glTypeSize != 1 ||
-			header->glTypeSize != 2 ||
+		if (header->glTypeSize != 1 &&
+			header->glTypeSize != 2 &&
 			header->glTypeSize != 4)
 		{
-			/* Only 8, 16, and 32-bit types supported so far */
+			/* Only 8-, 16-, and 32-bit types supported so far. */
 			return KTX_INVALID_VALUE;
 		}
 	}
@@ -115,7 +110,7 @@ KTX_error_code _ktxCheckHeader(KTX_header* header, KTX_texinfo* texinfo)
 
 	/* Check texture dimensions. KTX files can store 8 types of textures:
 	   1D, 2D, 3D, cube, and array variants of these. There is currently
-	   no GL extension that would accept 3D array or cube array textures. */
+	   no GL extension for 3D array textures. */
 	if ((header->pixelWidth == 0) ||
 		(header->pixelDepth > 0 && header->pixelHeight == 0))
 	{
@@ -155,50 +150,15 @@ KTX_error_code _ktxCheckHeader(KTX_header* header, KTX_texinfo* texinfo)
 		/* numberOfFaces must be either 1 or 6 */
 		return KTX_INVALID_VALUE;
 	}
-
-	/* load as 2D texture if 1D textures are not supported */
-	if (texinfo->textureDimensions == 1 &&
-		((texinfo->compressed && (glCompressedTexImage1D == NULL)) ||
-		 (!texinfo->compressed && (glTexImage1D == NULL))))
-	{
-		texinfo->textureDimensions = 2;
-		texinfo->glTarget = GL_TEXTURE_2D;
-		header->pixelHeight = 1;
-	}
-
-	if (header->numberOfArrayElements > 0)
-	{
-		if (texinfo->glTarget == GL_TEXTURE_1D)
-		{
-			texinfo->glTarget = GL_TEXTURE_1D_ARRAY_EXT;
-		}
-		else if (texinfo->glTarget == GL_TEXTURE_2D)
-		{
-			texinfo->glTarget = GL_TEXTURE_2D_ARRAY_EXT;
-		}
-		else
-		{
-			/* No API for 3D and cube arrays yet */
-			return KTX_UNSUPPORTED_TEXTURE_TYPE;
-		}
-		texinfo->textureDimensions++;
-	}
-
-	/* reject 3D texture if unsupported */
-	if (texinfo->textureDimensions == 3 &&
-		((texinfo->compressed && (glCompressedTexImage3D == NULL)) ||
-		 (!texinfo->compressed && (glTexImage3D == NULL))))
-	{
-		return KTX_UNSUPPORTED_TEXTURE_TYPE;
-	}
-
+    
 	/* Check number of mipmap levels */
 	if (header->numberOfMipmapLevels == 0)
 	{
 		texinfo->generateMipmaps = 1;
 		header->numberOfMipmapLevels = 1;
 	}
-	max_dim = MAX(MAX(header->pixelWidth, header->pixelHeight), header->pixelDepth);
+    /* This test works for arrays too because height or depth will be 0. */
+    max_dim = MAX(MAX(header->pixelWidth, header->pixelHeight), header->pixelDepth);
 	if (max_dim < ((khronos_uint32_t)1 << (header->numberOfMipmapLevels - 1)))
 	{
 		/* Can't have more mip levels than 1 + log2(max(width, height, depth)) */

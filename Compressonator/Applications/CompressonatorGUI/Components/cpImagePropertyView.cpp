@@ -31,26 +31,18 @@ static int msgcnt = 0;
 
 CImagePropertyView::CImagePropertyView(const QString title, QWidget *parent) : 
     QDockWidget(parent)
-    // acCustomDockWidget(title, parent)
 {
-    // if (custTitleBar)
-    // {
-    //     custTitleBar->setTitle(title);
-    //     custTitleBar->setButtonCloseEnabled(false);
-    //     custTitleBar->setButtonToolBarEnabled(false);
-    // }
-    
     setWindowTitle(title);
   
-    m_browser = NULL;
-
+    m_browser     = NULL;
     m_newWidget   = new QWidget(parent);
-    m_layoutV     = new QVBoxLayout(this);
+    m_layoutV     = new QVBoxLayout();
 
     //=======================
     // Object Viewer & Editor
     //=======================
-    m_data = NULL;
+    m_holddata  = NULL;
+    m_data      = NULL;
     m_C_Destination_Options = new C_Destination_Options();
 
     // Create a Object Controller and use a temp data class to populate a view
@@ -62,7 +54,9 @@ CImagePropertyView::CImagePropertyView(const QString title, QWidget *parent) :
         m_browser->setResizeMode(QtTreePropertyBrowser::ResizeToContents); // follow this comment Note#1
         connect(m_browser, SIGNAL(currentItemChanged(QtBrowserItem *)), this, SLOT(oncurrentItemChanged(QtBrowserItem *)));
     }
+
     m_layoutV->addWidget(m_theController);
+    m_C_Destination_Options->m_controller = m_theController;
 
     //Spacer
     QWidget* spacerV = new QWidget(this);
@@ -83,7 +77,7 @@ CImagePropertyView::CImagePropertyView(const QString title, QWidget *parent) :
     //====================
     // Horizontal Buttons
     //=====================
-    m_layoutHButtons = new QHBoxLayout(this);
+    m_layoutHButtons = new QHBoxLayout();
     m_PBSave        = new QPushButton("Save",this);
     m_PBSave->setToolTip("Save changes, this will delete the current image file and its settings");
     m_PBCompress = new QPushButton(COMPRESS_TEXT, this);
@@ -145,6 +139,87 @@ void CImagePropertyView::oncurrentItemChanged(QtBrowserItem *item)
 
 
 
+void CImagePropertyView::Init_C_Destiniation_Data_Controller()
+{
+    if (m_theController == NULL)
+    {
+        return;
+    }
+
+    // Inheritance Map Class layout starts at C_Destination_Options 
+    // Enable Format and Quality only for Images
+    m_propFormat    = m_theController->getProperty(COMPRESS_OPTIONS_FORMAT);
+    if (m_propFormat)
+        m_propFormat->setHidden(true);
+
+    m_propQuality = m_theController->getProperty(COMPRESS_OPTIONS_QUALITY);
+    if (m_propQuality)
+        m_propQuality->setHidden(true);
+
+    // C_Destination_Image - always enabled common to both Mesh and Image Data
+    m_propWidth     = m_theController->getProperty(COMPRESS_OPTIONS_WIDTH);
+    m_propHeight    = m_theController->getProperty(COMPRESS_OPTIONS_HEIGHT);
+    m_propCompRatio = m_theController->getProperty(COMPRESS_OPTIONS_COMP_RATIO);
+    m_propCompTime  = m_theController->getProperty(COMPRESS_OPTIONS_COMP_TIME);
+
+    // Mesh_Optimizer_Settings - default hidden
+    m_propMeshOptimizerSettings = m_theController->getProperty(MESH_OPTIMIZER_SETTING_CLASS_NAME);
+    if (m_propMeshOptimizerSettings)
+    {
+        m_propMeshOptimizerSettings->setHidden(true);
+    }
+
+    // Mesh_Compression_Settings - default hidden
+    m_propMeshCompressionSettings = m_theController->getProperty(MESH_COMPRESSION_SETTINGS_CLASS_NAME);
+    if (m_propMeshCompressionSettings)
+    {
+        m_propMeshCompressionSettings->setHidden(true);
+    }
+
+    // Channel_Weighting - default hidden
+    m_propChannelWeight = m_theController->getProperty(CHANNEL_WEIGHTING_CLASS_NAME);
+    if (m_propChannelWeight)
+    {
+        m_propChannelWeight->setHidden(true);
+        m_propChannelWeightingR = m_theController->getProperty(COMPRESS_OPTIONS_CHANNEL_WEIGHTING_R);
+        m_propChannelWeightingG = m_theController->getProperty(COMPRESS_OPTIONS_CHANNEL_WEIGHTING_G);
+        m_propChannelWeightingB = m_theController->getProperty(COMPRESS_OPTIONS_CHANNEL_WEIGHTING_B);
+    }
+
+    // DXT1_Alpha - default hidden
+    m_propDXT1Alpha = m_theController->getProperty(DXT1_ALPHA_CLASS_NAME);
+    if (m_propDXT1Alpha)
+    {
+        m_propDXT1Alpha->setHidden(true);
+        m_propAlphaThreshold = m_theController->getProperty(COMPRESS_OPTIONS_ALPHATHRESHOLD);
+        m_propAdaptiveColor = m_theController->getProperty(COMPRESS_OPTIONS_ADAPTIVECOLOR);
+        m_propUseAlpha = m_theController->getProperty(COMPRESS_OPTIONS_USEALPHA);
+        m_propNoAlpha = m_theController->getProperty(COMPRESS_OPTIONS_NOALPHA);
+        m_propBitrate = m_theController->getProperty(COMPRESS_OPTIONS_BITRATE);
+    }
+
+    // C_ASTC_BlockRate - default hidden
+    m_propASTCBlockRate = m_theController->getProperty(ASTC_BLOCKRATE_CLASS_NAME);
+    if (m_propASTCBlockRate)
+    {
+        m_propASTCBlockRate->setHidden(true);
+    }
+
+    // C_Input_HDR_Image_Properties - default hidden
+    m_propHDRProperties = m_theController->getProperty(HDR_PROP_CLASS_NAME);
+    if (m_propHDRProperties)
+    {
+        m_propHDRProperties->setHidden(true);
+        m_propDefog = m_theController->getProperty(COMPRESS_OPTIONS_DEFOG);
+        m_propExposure = m_theController->getProperty(COMPRESS_OPTIONS_EXPOSURE);
+        m_propKneeLow = m_theController->getProperty(COMPRESS_OPTIONS_KNEELOW);
+        m_propKneeHigh = m_theController->getProperty(COMPRESS_OPTIONS_KNEEHIGH);
+        m_propGamma = m_theController->getProperty(COMPRESS_OPTIONS_GAMMA);
+    }
+
+
+}
+
 // -----------------------------------------------------------
 // This call may be called too oftern for the same data 
 // Optimize its calls in final production
@@ -157,6 +232,9 @@ void CImagePropertyView::OnUpdateData(QObject *data)
     m_PBCancel->setEnabled(false);
     m_PBCompress->setEnabled(false);
 
+    if (m_theController == NULL)
+        return;
+
     if (data == NULL)
     {
         m_theController->setObject(NULL, true, true);
@@ -166,205 +244,111 @@ void CImagePropertyView::OnUpdateData(QObject *data)
     QString m_currentClassName = data->metaObject()->className();
     bool controllerisNULL = false;
 
-
     if (m_currentClassName.compare(CLASS_COMPRESS) == 0)
     {
-        // Set Editing Defaults 
-        m_propQuality = m_theController->getProperty(COMPRESS_OPTIONS_QUALITY);
-        if (m_propQuality == NULL)
-        {
-            m_theController->setObject(data, true, true);
-            m_propQuality = m_theController->getProperty(COMPRESS_OPTIONS_QUALITY);
-            controllerisNULL = true;
-        }
-
-        if (m_propQuality)
-        {
-            m_propQuality->setToolTip(STR_QUALITY_SETTING_HINT);
-            m_propQuality->setEnabled(true);
-            // Set  Properties for editing
-            QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propQuality->propertyManager();
-            setMinMaxStep(Manager, m_propQuality, 0.0, 1.0, 0.05);
-        }
-
-        // Set Editing Defaults 
-        m_propFormat = m_theController->getProperty(COMPRESS_OPTIONS_FORMAT);
-        if (m_propFormat)
-        {
-            m_propFormat->setToolTip(STR_FORMAT_SETTING_HINT);
-            QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propFormat->propertyManager();
-            if (Manager)
-            {
-                // qDebug() << "Found"; // connect(Manager, SIGNAL(valueChanged(QtProperty *,QVariant &))
-                // QtVariantProperty *prop = Manager->variantProperty(m_propFormat);
-                // qDebug() << "Found Prop";
-            }
-
-        }
-
-        // Set Editing Defaults for Channel Weight
-        m_propChannelWeightingR = m_theController->getProperty(COMPRESS_OPTIONS_CHANNEL_WEIGHTING_R);
-        if (m_propChannelWeightingR)
-        {
-            m_propChannelWeightingR->setToolTip(STR_CHANNELWEIGHTR_SETTING_HINT);
-            m_propChannelWeightingR->setEnabled(true);
-            // Set  Properties for editing
-            QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propChannelWeightingR->propertyManager();
-            setMinMaxStep(Manager, m_propChannelWeightingR, 0.01, 1.0, 0.01);
-        }
-
-        m_propChannelWeightingG = m_theController->getProperty(COMPRESS_OPTIONS_CHANNEL_WEIGHTING_G);
-        if (m_propChannelWeightingG)
-        {
-            m_propChannelWeightingG->setToolTip(STR_CHANNELWEIGHTG_SETTING_HINT);
-            m_propChannelWeightingG->setEnabled(true);
-            // Set  Properties for editing
-            QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propChannelWeightingG->propertyManager();
-            setMinMaxStep(Manager, m_propChannelWeightingG, 0.01, 1.0, 0.01);
-        }
-
-        m_propChannelWeightingB = m_theController->getProperty(COMPRESS_OPTIONS_CHANNEL_WEIGHTING_B);
-        if (m_propChannelWeightingB)
-        {
-            m_propChannelWeightingB->setToolTip(STR_CHANNELWEIGHTB_SETTING_HINT);
-            m_propChannelWeightingB->setEnabled(true);
-            // Set  Properties for editing
-            QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propChannelWeightingB->propertyManager();
-            setMinMaxStep(Manager, m_propChannelWeightingB, 0.01, 1.0, 0.01);
-        }
-
-        // Set Editing Defaults 
-        m_propAlphaThreshold = m_theController->getProperty(COMPRESS_OPTIONS_ALPHATHRESHOLD);
-        if (m_propAlphaThreshold)
-        {
-            m_propAlphaThreshold->setToolTip(STR_ALPHATHRESHOLD_HINT);
-            m_propAlphaThreshold->setEnabled(true);
-            // Set  Properties for editing
-            QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propAlphaThreshold->propertyManager();
-            setMinMaxStep(Manager, m_propAlphaThreshold, 0, 255, 1);
-        }
-
-        // Set Editing Defaults 
-        m_propBitrate = m_theController->getProperty(COMPRESS_OPTIONS_BITRATE);
-        if (m_propBitrate)
-        {
-            m_propBitrate->setToolTip(STR_BITRATE_SETTING_HINT);
-            m_propBitrate->setEnabled(true);
-            // Set  Properties for editing
-            QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propBitrate->propertyManager();
-            setMinMaxStep(Manager, m_propBitrate, 0.00, 8.00, 0.01);
-        }
-
-        // Set Defog Editing Defaults 
-        m_propDefog = m_theController->getProperty(COMPRESS_OPTIONS_DEFOG);
-        if (m_propDefog)
-        {
-            m_propDefog->setToolTip(STR_DEFOG_SETTING_HINT);
-            m_propDefog->setEnabled(true);
-            // Set  Properties for editing
-            QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propDefog->propertyManager();
-            setMinMaxStep(Manager, m_propDefog, 0.000, 0.010, 0.001);
-        }
-
-        m_propExposure = m_theController->getProperty(COMPRESS_OPTIONS_EXPOSURE);
-        if (m_propExposure)
-        {
-            m_propExposure->setToolTip(STR_EXPOSURE_SETTING_HINT);
-            m_propExposure->setEnabled(true);
-            // Set  Properties for editing
-            QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propExposure->propertyManager();
-            setMinMaxStep(Manager, m_propExposure, -10.000, 10.000, 0.125);
-        }
-
-        m_propKneeLow = m_theController->getProperty(COMPRESS_OPTIONS_KNEELOW);
-        if (m_propKneeLow)
-        {
-            m_propKneeLow->setToolTip(STR_KNEELOW_SETTING_HINT);
-            m_propKneeLow->setEnabled(true);
-            // Set  Properties for editing
-            QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propKneeLow->propertyManager();
-            setMinMaxStep(Manager, m_propKneeLow, -3.00, 3.00, 0.125);
-        }
-
-        m_propKneeHigh = m_theController->getProperty(COMPRESS_OPTIONS_KNEEHIGH);
-        if (m_propKneeHigh)
-        {
-            m_propKneeHigh->setToolTip(STR_KNEEHIGH_SETTING_HINT);
-            m_propKneeHigh->setEnabled(true);
-            // Set  Properties for editing
-            QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propKneeHigh->propertyManager();
-            setMinMaxStep(Manager, m_propKneeHigh, 3.50, 7.50, 0.125);
-        }
-
-        m_propGamma = m_theController->getProperty(COMPRESS_OPTIONS_GAMMA);
-        if (m_propGamma)
-        {
-            m_propGamma->setToolTip(STR_GAMMA_SETTING_HINT);
-            m_propGamma->setEnabled(true);
-            // Set  Properties for editing
-            QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propGamma->propertyManager();
-            setMinMaxStep(Manager, m_propGamma, 1.0, 2.6, 0.2);
-        }
-
-        m_propAdaptiveColor = m_theController->getProperty(COMPRESS_OPTIONS_ADAPTIVECOLOR);
-        m_propUseAlpha = m_theController->getProperty(COMPRESS_OPTIONS_USEALPHA);
-        m_propNoAlpha = m_theController->getProperty(COMPRESS_OPTIONS_NOALPHA);
-
-        m_propChannelWeight = m_theController->getProperty(CHANNEL_WEIGHTING_CLASS_NAME);
-        m_propDXT1Alpha = m_theController->getProperty(DXT1_ALPHA_CLASS_NAME);
-        m_propASTCBlockRate = m_theController->getProperty(ASTC_BLOCKRATE_CLASS_NAME);
-        m_propHDRProperties = m_theController->getProperty(HDR_PROP_CLASS_NAME);
+        C_Destination_Options *DestinationOptions = reinterpret_cast<C_Destination_Options *>(data);
 
         m_holddata = (C_Destination_Options *)data;
         *m_C_Destination_Options << (const C_Destination_Options &)*data;
         m_data = m_C_Destination_Options;
-        m_isEditing_Compress_Options = true;
-        m_PBCompress->setEnabled(true);
-        m_PBCompress->setText(COMPRESS_TEXT);
+        m_theController->setObject(m_data, true, true);
 
-        if (controllerisNULL)
+        m_holddata->setController(m_theController);
+        Init_C_Destiniation_Data_Controller();
+
+        //========================
+        // Model Data Settings
+        //========================
+        if (DestinationOptions->m_isModelData)
         {
-            compressionValueChanged((QVariant &)(m_C_Destination_Options->m_Compression));
-            controllerisNULL = false;
+
+            // Hide Some unrelavent Settings
+            if (m_propWidth)
+                m_propWidth->setHidden(true);
+            if (m_propHeight)
+                m_propHeight->setHidden(true);
+            if (m_propCompRatio)
+                m_propCompRatio->setHidden(true);
+            if (m_propCompTime)
+                m_propCompTime->setHidden(true);
+
+
+            if (m_propMeshOptimizerSettings)
+            {
+                m_propMeshOptimizerSettings->setHidden(false);
+                m_holddata->disable_mesh_optimization_setting(DestinationOptions->m_Do_Mesh_Optimization != C_Destination_Options::eMeshOptimization::UserOpt);
+                connect(m_data, SIGNAL(onMesh_Optimization(QVariant &)), this, SLOT(onMesh_Optimization(QVariant &)));
+            }
+
+            if (m_propMeshCompressionSettings)
+            {
+                QFileInfo fi(DestinationOptions->m_modelSource);
+                QString m_modelext = fi.suffix().toUpper();
+                m_propMeshCompressionSettings->setHidden(m_modelext.compare("OBJ") != 0);
+                m_holddata->disable_mesh_compression_settings(DestinationOptions->m_Do_Mesh_Compression == C_Destination_Options::eMeshCompression::NoComp);
+                connect(m_data, SIGNAL(onMesh_Compression(QVariant &)), this, SLOT(onMesh_Compression(QVariant &)));
+            }
         }
 
         //========================
-        // Monitor changes in value
+        // Image Data Settings
         //========================
-        connect(m_data, SIGNAL(compressionChanged(QVariant &)), this, SLOT(compressionValueChanged(QVariant &)));
-        connect(m_data, SIGNAL(qualityChanged(QVariant &)), this, SLOT(qualityValueChanged(QVariant &)));
-        connect(m_data, SIGNAL(redwChanged(QVariant &)), this, SLOT(redwValueChanged(QVariant &)));
-        connect(m_data, SIGNAL(greenwChanged(QVariant &)), this, SLOT(greenwValueChanged(QVariant &)));
-        connect(m_data, SIGNAL(bluewChanged(QVariant &)), this, SLOT(bluewValueChanged(QVariant &)));
-        connect(m_data, SIGNAL(thresholdChanged(QVariant &)), this, SLOT(thresholdValueChanged(QVariant &)));
-        connect(m_data, SIGNAL(noAlphaChannel()), this, SLOT(noAlphaChannelValue()));
-        connect(m_data, SIGNAL(hasAlphaChannel()), this, SLOT(hasAlphaChannelValue()));
-        connect(m_data, SIGNAL(bitrateChanged( QString &, int&, int&)), this, SLOT(bitrateValueChanged(QString &, int&, int&)));
+        else
+        {
+            //calling function to initialize the setting class properly according to compress format
+            compressionValueChanged((QVariant &)(m_C_Destination_Options->m_Compression));
+            controllerisNULL = false;
 
-        connect(m_data, SIGNAL(defogChanged(double&)), this, SLOT(defogValueChanged(double&)));
-        connect(m_data, SIGNAL(exposureChanged(double&)), this, SLOT(exposureValueChanged(double&)));
-        connect(m_data, SIGNAL(kneeLowChanged(double&)), this, SLOT(kneelowValueChanged(double&)));
-        connect(m_data, SIGNAL(kneeHighChanged(double&)), this, SLOT(kneehighValueChanged(double&)));
-        connect(m_data, SIGNAL(gammaChanged(double&)), this, SLOT(gammaValueChanged(double&)));
+            // Show relavent Settings
+            if (m_propFormat)
+                m_propFormat->setHidden(false);
+            if (m_propQuality)
+                m_propQuality->setHidden(false);
+            if (m_propWidth)
+                m_propWidth->setHidden(false);
+            if (m_propHeight)
+                m_propHeight->setHidden(false);
+            if (m_propCompRatio)
+                m_propCompRatio->setHidden(false);
+            if (m_propCompTime)
+                m_propCompTime->setHidden(false);
+
+
+            //========================
+            // Monitor changes in value
+            //========================
+            connect(m_data, SIGNAL(compressionChanged(QVariant &)), this, SLOT(compressionValueChanged(QVariant &)));
+            connect(m_data, SIGNAL(qualityChanged(QVariant &)), this, SLOT(qualityValueChanged(QVariant &)));
+            connect(m_data, SIGNAL(redwChanged(QVariant &)), this, SLOT(redwValueChanged(QVariant &)));
+            connect(m_data, SIGNAL(greenwChanged(QVariant &)), this, SLOT(greenwValueChanged(QVariant &)));
+            connect(m_data, SIGNAL(bluewChanged(QVariant &)), this, SLOT(bluewValueChanged(QVariant &)));
+            connect(m_data, SIGNAL(thresholdChanged(QVariant &)), this, SLOT(thresholdValueChanged(QVariant &)));
+            connect(m_data, SIGNAL(noAlphaChannel()), this, SLOT(noAlphaChannelValue()));
+            connect(m_data, SIGNAL(hasAlphaChannel()), this, SLOT(hasAlphaChannelValue()));
+            connect(m_data, SIGNAL(bitrateChanged(QString &, int&, int&)), this, SLOT(bitrateValueChanged(QString &, int&, int&)));
+            
+            connect(m_data, SIGNAL(defogChanged(double&)), this, SLOT(defogValueChanged(double&)));
+            connect(m_data, SIGNAL(exposureChanged(double&)), this, SLOT(exposureValueChanged(double&)));
+            connect(m_data, SIGNAL(kneeLowChanged(double&)), this, SLOT(kneelowValueChanged(double&)));
+            connect(m_data, SIGNAL(kneeHighChanged(double&)), this, SLOT(kneehighValueChanged(double&)));
+            connect(m_data, SIGNAL(gammaChanged(double&)), this, SLOT(gammaValueChanged(double&)));
+        } // mage Data Settings
+
+        
+        m_PBCompress->setEnabled(true);
+        m_PBCompress->setText(COMPRESS_TEXT);
+        m_isEditing_Compress_Options = true;
+        connect(m_C_Destination_Options, SIGNAL(dataChanged()), this, SLOT(onCompressDataChanged()));
     }
     else
     {
         msgcnt = 0;
         m_data = data;
-    }
-
-    m_theController->setObject(m_data, true, true);
-
-    // This should always be calld after the setObject
-    // since data is alway changed on first display
-    if (m_isEditing_Compress_Options)
-    {
-        connect(m_C_Destination_Options, SIGNAL(dataChanged()), this, SLOT(onCompressDataChanged()));
-        m_C_Destination_Options->m_data_has_been_changed = false;
+        m_isEditing_Compress_Options = false;
+        m_theController->setObject(m_data, true, true);
     }
 
     m_infotext->clear();
-
 }
 
 void CImagePropertyView::noAlphaChannelValue()
@@ -379,96 +363,82 @@ void CImagePropertyView::hasAlphaChannelValue()
         m_propAlphaThreshold->setEnabled(true);
 }
 
+
+void CImagePropertyView::onMesh_Optimization(QVariant &value)
+{
+    if (!m_holddata) return;
+    C_Destination_Options::eMeshOptimization comp = (C_Destination_Options::eMeshOptimization &)value;
+    m_holddata->disable_mesh_optimization_setting(comp != C_Destination_Options::eMeshOptimization::UserOpt);
+}
+
+void CImagePropertyView::onMesh_Compression(QVariant &value)
+{
+    if (!m_holddata) return;
+    C_Destination_Options::eMeshCompression comp = (C_Destination_Options::eMeshCompression &)value;
+    m_holddata->disable_mesh_compression_settings(comp == C_Destination_Options::eMeshCompression::NoComp);
+}
+
+
 //===================================================================
 // Check if compression is been specified 
 //===================================================================
 void CImagePropertyView::compressionValueChanged(QVariant &value)
 {
-    bool compressedOptions = false;
-    bool colorWeightOptions = false;
-    bool alphaChannelOptions = false;
-    bool astcbitrateOptions = false;
-    bool hdrOptions = false;
-    C_Destination_Options *Data = (C_Destination_Options *)m_data;
-    
-    C_Destination_Options::eCompression comp = (C_Destination_Options::eCompression &)value;
+    bool Quality_Settings       = false;
+    bool Channel_Weights        = false;
+    bool DXT1_Alpha             = false;
+    bool ASTC_BlockRate         = false;
+    bool HDR_Image_Properties   = false;
 
+
+    C_Destination_Options *Data = (C_Destination_Options *)m_data;
+    if (Data) {
+        if (Data->m_SourceIsFloatFormat) {
+            HDR_Image_Properties = true;
+        }
+    }
+
+    m_infotext->clear();
+
+    C_Destination_Options::eCompression comp = (C_Destination_Options::eCompression &)value;
     switch (comp)
     {
     case C_Destination_Options::BC6H:
-        compressedOptions   = true;
-        colorWeightOptions  = false;
-        alphaChannelOptions = false;
-        astcbitrateOptions  = false;
-        m_infotext->clear();
+        Quality_Settings = true;
+        HDR_Image_Properties = false;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("Block Compression (BC) format designed to support high-dynamic range (floating point) color spaces. (e.g. .exr extension image file).");
         break;
     case C_Destination_Options::BC6H_SF:
-        compressedOptions = true;
-        colorWeightOptions = false;
-        alphaChannelOptions = false;
-        astcbitrateOptions = false;
-        m_infotext->clear();
+        Quality_Settings = true;
+        HDR_Image_Properties = false;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("Block Compression (BC) format designed to support high-dynamic range (signed floating point) color spaces. (e.g. .exr extension image file).");
         break;
     case C_Destination_Options::BC1:
     case C_Destination_Options::DXT1:
-        compressedOptions = true;
-        colorWeightOptions = true;
-        alphaChannelOptions = true;
-        astcbitrateOptions = false;
-        if (Data) {
-            if (Data->m_SourceIsFloatFormat) {
-                hdrOptions = true;
-            }
-        }
-        m_infotext->clear();
+        Quality_Settings = true;
+        Channel_Weights = true;
+        DXT1_Alpha = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A four component opaque (or 1-bit alpha) compressed texture format for Microsoft DirectX10. DXT1 identical to BC1.  Four bits per pixel.");
         break;
     case C_Destination_Options::BC2:
     case C_Destination_Options::DXT3:
-        compressedOptions = true;
-        colorWeightOptions = true;
-        alphaChannelOptions = false;
-        astcbitrateOptions = false;
-        if (Data) {
-            if (Data->m_SourceIsFloatFormat) {
-                hdrOptions = true;
-            }
-        }
-        m_infotext->clear();
+        Quality_Settings = true;
+        Channel_Weights = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A four component compressed texture format with explicit alpha for Microsoft DirectX10. DXT3 identical to BC2. Eight bits per pixel.");
         break;
     case C_Destination_Options::BC3:
     case C_Destination_Options::DXT5:
-        compressedOptions = true;
-        colorWeightOptions = true;
-        alphaChannelOptions = false;
-        astcbitrateOptions = false;
-        if (Data) {
-            if (Data->m_SourceIsFloatFormat) {
-                hdrOptions = true;
-            }
-        }
-        m_infotext->clear();
+        Quality_Settings = true;
+        Channel_Weights = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A four component compressed texture format with interpolated alpha for Microsoft DirectX10. DXT5 identical to BC3. Eight bits per pixel.");
         break;
     case C_Destination_Options::BC4:
-        compressedOptions = true;
-        colorWeightOptions = false;
-        alphaChannelOptions = false;
-        astcbitrateOptions = false;
-        if (Data) {
-            if (Data->m_SourceIsFloatFormat) {
-                hdrOptions = true;
-            }
-        }
-        m_infotext->clear();
+        Quality_Settings = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A single component compressed texture format for Microsoft DirectX10. Identical to ATI1N. Four bits per pixel.");
         break;
@@ -476,254 +446,116 @@ void CImagePropertyView::compressionValueChanged(QVariant &value)
     case C_Destination_Options::ATI2N:
     case C_Destination_Options::ATI2N_XY:
     case C_Destination_Options::ATI2N_DXT5:
-        compressedOptions = true;
-        colorWeightOptions = false;
-        alphaChannelOptions = false;
-        astcbitrateOptions = false;
-        if (Data) {
-            if (Data->m_SourceIsFloatFormat) {
-                hdrOptions = true;
-            }
-        }
-        m_infotext->clear();
+        Quality_Settings = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A two component compressed texture format for Microsoft DirectX10. BC5 identical to ATI2N. Eight bits per pixel.");
         break;
     case C_Destination_Options::ASTC:
-        compressedOptions = true;
-        colorWeightOptions = false;
-        alphaChannelOptions = false;
-        astcbitrateOptions = true;
-        if (Data) {
-            if (Data->m_SourceIsFloatFormat) {
-                hdrOptions = true;
-            }
-        }
-        m_infotext->clear();
+        Quality_Settings = true;
+        ASTC_BlockRate = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("ASTC (Adaptive Scalable Texture Compression),lossy block-based texture compression developed with ARM.");
-        astcbitrateOptions = true;
         break;
     case C_Destination_Options::BC7:
-        compressedOptions   = true;
-        colorWeightOptions  = false;
-        alphaChannelOptions = false;
-        astcbitrateOptions  = false;
-        if (Data) {
-            if (Data->m_SourceIsFloatFormat) {
-                hdrOptions = true;
-            }
-        }
-        m_infotext->clear();
+        Quality_Settings = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("The latest block Compression (BC) format designed to support high-quality compression of RGB and RGBA bytes color spaces.");
         break;
     case C_Destination_Options::ATC_RGB:
-        compressedOptions = true;
-        colorWeightOptions = true;
-        alphaChannelOptions = false;
-        astcbitrateOptions = false;
-        if (Data) {
-            if (Data->m_SourceIsFloatFormat) {
-                hdrOptions = true;
-            }
-        }
-        m_infotext->clear();
+        Quality_Settings = true;
+        Channel_Weights = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A compressed RGB format.");
         break;
     case C_Destination_Options::ATC_RGBA_Explicit:
-        compressedOptions = true;
-        colorWeightOptions = true;
-        alphaChannelOptions = false;
-        astcbitrateOptions = false;
-        if (Data) {
-            if (Data->m_SourceIsFloatFormat) {
-                hdrOptions = true;
-            }
-        }
-        m_infotext->clear();
+        Quality_Settings = true;
+        Channel_Weights = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A compressed ARGB format with explicit alpha.");
         break;
     case C_Destination_Options::ATC_RGBA_Interpolated:
-        compressedOptions = true;
-        colorWeightOptions = true;
-        alphaChannelOptions = false;
-        astcbitrateOptions = false;
-        if (Data) {
-            if (Data->m_SourceIsFloatFormat) {
-                hdrOptions = true;
-            }
-        }
-        m_infotext->clear();
+        Quality_Settings = true;
+        Channel_Weights = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A compressed ARGB format with interpolated alpha.");
         break;
     case C_Destination_Options::DXT5_xGBR:
-        compressedOptions = true;
-        colorWeightOptions = true;
-        alphaChannelOptions = false;
-        astcbitrateOptions = false;
-        if (Data) {
-            if (Data->m_SourceIsFloatFormat) {
-                hdrOptions = true;
-            }
-        }
-        m_infotext->clear();
+        Quality_Settings = true;
+        Channel_Weights = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append(" DXT5 with the red component swizzled into the alpha channel. Eight bits per pixel.");
         break;
     case C_Destination_Options::DXT5_RxBG:
-        compressedOptions = true;
-        colorWeightOptions = true;
-        alphaChannelOptions = false;
-        astcbitrateOptions = false;
-        if (Data) {
-            if (Data->m_SourceIsFloatFormat) {
-                hdrOptions = true;
-            }
-        }
-        m_infotext->clear();
-        m_infotext->append("<b>Format Description</b>");
-        m_infotext->append("swizzled DXT5 format with the green component swizzled into the alpha channel. Eight bits per pixel.");
-        break;
-    case C_Destination_Options::DXT5_RBxG:
-        compressedOptions = true;
-        colorWeightOptions = true;
-        alphaChannelOptions = false;
-        astcbitrateOptions = false;
-        if (Data) {
-            if (Data->m_SourceIsFloatFormat) {
-                hdrOptions = true;
-            }
-        }
-        m_infotext->clear();
+        Quality_Settings = true;
+        Channel_Weights = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append(" swizzled DXT5 format with the green component swizzled into the alpha channel & the blue component swizzled into the green channel. Eight bits per pixel.");
         break;
     case C_Destination_Options::DXT5_xRBG:
-        compressedOptions = true;
-        colorWeightOptions = true;
-        alphaChannelOptions = false;
-        astcbitrateOptions = false;
-        if (Data) {
-            if (Data->m_SourceIsFloatFormat) {
-                hdrOptions = true;
-            }
-        }
-        m_infotext->clear();
+        Quality_Settings = true;
+        Channel_Weights = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("swizzled DXT5 format with the green component swizzled into the alpha channel & the red component swizzled into the green channel. Eight bits per pixel.");
         break;
     case C_Destination_Options::DXT5_RGxB:
-        compressedOptions = true;
-        colorWeightOptions = true;
-        alphaChannelOptions = false;
-        astcbitrateOptions = false;
-        if (Data) {
-            if (Data->m_SourceIsFloatFormat) {
-                hdrOptions = true;
-            }
-        }
-        m_infotext->clear();
+        Quality_Settings = true;
+        Channel_Weights = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("swizzled DXT5 format with the blue component swizzled into the alpha channel. Eight bits per pixel.");
         break;
     case C_Destination_Options::DXT5_xGxR:
-        compressedOptions = true;
-        colorWeightOptions = true;
-        alphaChannelOptions = false;
-        astcbitrateOptions = false;
-        if (Data) {
-            if (Data->m_SourceIsFloatFormat) {
-                hdrOptions = true;
-            }
-        }
-        m_infotext->clear();
+        Quality_Settings = true;
+        Channel_Weights = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("two-component swizzled DXT5 format with the red component swizzled into the alpha channel & the green component in the green channel. Eight bits per pixel.");
         break;
     case C_Destination_Options::ETC2_RGB:
     case C_Destination_Options::ETC_RGB:
-        compressedOptions = true;
-        colorWeightOptions = false;
-        alphaChannelOptions = false;
-        astcbitrateOptions = false;
-        if (Data) {
-            if (Data->m_SourceIsFloatFormat) {
-                hdrOptions = true;
-            }
-        }
-        m_infotext->clear();
+        Quality_Settings = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("ETC (Ericsson Texture Compression, lossy texture compression developed with Ericsson Research.)");
         break;
-    default:
-        compressedOptions = false;
-        colorWeightOptions = false;
-        alphaChannelOptions = false;
-        astcbitrateOptions = false;
-        hdrOptions = false;
+#ifdef USE_GT
+    case C_Destination_Options::GT:
+        Quality_Settings = true;
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("The latest block Compression (GT) format designed to support high-speed compression");
         break;
+#endif
     }
 
     if (m_propQuality)
-        m_propQuality->setEnabled(compressedOptions);
-    if (m_propChannelWeightingR)
-        m_propChannelWeightingR->setEnabled(colorWeightOptions);
-    if (m_propChannelWeightingG)
-        m_propChannelWeightingG->setEnabled(colorWeightOptions);
-    if (m_propChannelWeightingB)
-        m_propChannelWeightingB->setEnabled(colorWeightOptions);
-    if (m_propAlphaThreshold)
-        m_propAlphaThreshold->setEnabled(alphaChannelOptions);
-    if (m_propAdaptiveColor)
-        m_propAdaptiveColor->setEnabled(colorWeightOptions);
-    if (m_propUseAlpha)
-        m_propUseAlpha->setEnabled(alphaChannelOptions);
-    if (m_propNoAlpha)
-        m_propNoAlpha->setEnabled(alphaChannelOptions);
-    if (m_propBitrate)
-        m_propBitrate->setEnabled(astcbitrateOptions);
-    if (m_propDefog)
-        m_propDefog->setEnabled(hdrOptions);
-    if (m_propExposure)
-        m_propExposure->setEnabled(hdrOptions);
-    if (m_propKneeLow)
-        m_propKneeLow->setEnabled(hdrOptions);
-    if (m_propKneeHigh)
-        m_propKneeHigh->setEnabled(hdrOptions);
-    if (m_propGamma)
-        m_propGamma->setEnabled(hdrOptions);
+    {
+        m_propQuality->setHidden(!Quality_Settings);
+        m_propQuality->setEnabled(Quality_Settings);
+    }
 
     if (m_propDXT1Alpha)
     {
-        m_propDXT1Alpha->setHidden(!alphaChannelOptions);
-    }
-
-    if (m_propASTCBlockRate)
-    {
-        m_propASTCBlockRate->setHidden(!astcbitrateOptions);
+        m_propDXT1Alpha->setHidden(!DXT1_Alpha);
     }
 
     if (m_propChannelWeight)
     {
-        m_propChannelWeight->setHidden(!colorWeightOptions);
+        m_propChannelWeight->setHidden(!Channel_Weights);
+    }
+
+    if (m_propASTCBlockRate)
+    {
+        m_propASTCBlockRate->setHidden(!ASTC_BlockRate);
     }
 
     if (m_propHDRProperties)
     {
-        m_propHDRProperties->setHidden(!hdrOptions);
+        m_propHDRProperties->setHidden(!HDR_Image_Properties);
     }
 
-    if (compressedOptions)
+    if (Quality_Settings)
     {
         m_infotext->append("Destination file will be <b>Compressed</b> when processed");
     }
     else
     {
-        m_infotext->clear();
         m_infotext->append("Destination file will be <b>Transcoded</b> when processed");
     }
 
@@ -966,6 +798,19 @@ void CImagePropertyView::onCompress()
     {
         *m_holddata << *m_C_Destination_Options;
         msgcnt = 0;
+        if (m_holddata)
+        {
+            if (m_holddata->m_isModelData)
+            {
+                if (m_holddata->getDo_Mesh_Optimization() == m_holddata->NoOpt &&
+                    m_holddata->getDo_Mesh_Compression() == m_holddata->NoComp) {
+                    QMessageBox msgBox;
+                    msgBox.setText("No process setting detected: Please select at least one mesh process (Optimize and/or Compress) option.");
+                    msgBox.exec();
+                    return;
+                }
+            }
+        }
 
         m_PBSave->setEnabled(false);
         m_PBCancel->setEnabled(false);

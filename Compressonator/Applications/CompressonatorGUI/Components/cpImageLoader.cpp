@@ -23,6 +23,10 @@
 
 #include <QtWidgets/qapplication.h>
 #include "cpImageLoader.h"
+#include "ImfStandardAttributes.h"
+#include "ImathBox.h"
+#include "ImfArray.h"
+#include "ImfRgba.h"
 #include <ImfArray.h>
 #include "cExr.h"
 #include <QtCore/qdebug.h>
@@ -34,6 +38,20 @@ extern PluginManager g_pluginManager;
 extern MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config* configSetting, CMP_Feedback_Proc pFeedbackProc);
 extern QRgb RgbaToQrgba(struct Imf::Rgba imagePixel);
 extern int    g_OpenGLMajorVersion;
+
+
+CMP_FLOAT F16toF32(CMP_HALF f)
+{
+    half A;
+    A.setBits(f);
+    return((CMP_FLOAT)A);
+}
+
+CMP_HALF F32toF16(CMP_FLOAT f)
+{
+    return(half(f).bits());
+}
+
 
 CImageLoader::CImageLoader()
 {

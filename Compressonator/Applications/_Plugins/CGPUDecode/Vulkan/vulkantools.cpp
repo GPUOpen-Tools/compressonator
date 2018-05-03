@@ -101,6 +101,34 @@ namespace vkTools
         return false;
     }
 
+    void insertImageMemoryBarrier(
+        VkCommandBuffer cmdbuffer,
+        VkImage image,
+        VkAccessFlags srcAccessMask,
+        VkAccessFlags dstAccessMask,
+        VkImageLayout oldImageLayout,
+        VkImageLayout newImageLayout,
+        VkPipelineStageFlags srcStageMask,
+        VkPipelineStageFlags dstStageMask,
+        VkImageSubresourceRange subresourceRange)
+    {
+        VkImageMemoryBarrier imageMemoryBarrier = vkTools::initializers::imageMemoryBarrier();
+        imageMemoryBarrier.srcAccessMask = srcAccessMask;
+        imageMemoryBarrier.dstAccessMask = dstAccessMask;
+        imageMemoryBarrier.oldLayout = oldImageLayout;
+        imageMemoryBarrier.newLayout = newImageLayout;
+        imageMemoryBarrier.image = image;
+        imageMemoryBarrier.subresourceRange = subresourceRange;
+
+        vkCmdPipelineBarrier(
+            cmdbuffer,
+            srcStageMask,
+            dstStageMask,
+            0,
+            0, nullptr,
+            0, nullptr,
+            1, &imageMemoryBarrier);
+    }
     // Create an image memory barrier for changing the layout of
     // an image and put it into an active command buffer
     // See chapter 11.4 "Image Layout" for details
@@ -196,7 +224,7 @@ namespace vkTools
         }
 
 
-        // Put barrier on top
+        // Put barrier on top of pipeline
         VkPipelineStageFlags srcStageFlags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
         VkPipelineStageFlags destStageFlags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 

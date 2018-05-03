@@ -26,14 +26,14 @@
 
 #include "BC7_Definitions.h"
 
-extern void    WriteBit(BYTE   *base,
-                 int  offset,
-                 BYTE   bitVal);
+extern void    WriteBit(CMP_BYTE   *base,
+                    int  offset,
+                    CMP_BYTE   bitVal);
 
-extern void GetRamp(DWORD endpoint[][MAX_DIMENSION_BIG],
-             double ramp[MAX_DIMENSION_BIG][(1<<MAX_INDEX_BITS)],
-             DWORD clusters[2],
-             DWORD componentBits[MAX_DIMENSION_BIG]);
+extern void GetRamp(CMP_DWORD endpoint[][MAX_DIMENSION_BIG],
+                double ramp[MAX_DIMENSION_BIG][(1<<MAX_INDEX_BITS)],
+                CMP_DWORD clusters[2],
+                CMP_DWORD componentBits[MAX_DIMENSION_BIG]);
 
 extern const double  rampLerpWeights[5][1<<MAX_INDEX_BITS];
 

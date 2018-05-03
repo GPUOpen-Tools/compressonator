@@ -37,6 +37,11 @@
 #pragma comment(lib,"TGA.lib")
 #pragma comment(lib,"IMGAnalysis.lib")
 
+#ifdef USE_CRN
+#pragma comment(lib,"CRN.lib")
+#endif
+
+
 extern void *make_Plugin_ASTC();
 extern void *make_Plugin_BoxFilter();
 extern void *make_Plugin_DDS();
@@ -44,6 +49,10 @@ extern void *make_Plugin_EXR();
 extern void *make_Plugin_KTX();
 extern void *make_Plugin_TGA();
 extern void *make_Plugin_CAnalysis();
+
+#ifdef USE_CRN
+extern void *make_Plugin_CRN();
+#endif
 
 #define SEPERATOR_STYLE "QMainWindow::separator { background-color: #d7d6d5; width: 3px; height: 3px; border:none; }"
 #define PERCENTAGE_OF_MONITOR_WIDTH_FOR_SCREEN  0.65
@@ -71,15 +80,7 @@ void GetSupportedFileFormats(QList<QByteArray> &g_supportedFormats)
                 g_supportedFormats.append(fformat);
         }
         else
-        if (strcmp(g_pluginManager.getPluginType(i), "3DMODEL_DX12_EX") == 0)
-        {
-            QByteArray bArray = g_pluginManager.getPluginName(i);
-            QByteArray fformat = bArray.toUpper();
-            if (!g_supportedFormats.contains(fformat))
-                g_supportedFormats.append(fformat);
-        }
-        else
-        if (strcmp(g_pluginManager.getPluginType(i), "3DMODEL_OPENGL") == 0)
+        if (strcmp(g_pluginManager.getPluginType(i), "3DMODEL_LOADER") == 0)
         {
             QByteArray bArray = g_pluginManager.getPluginName(i);
             QByteArray fformat = bArray.toUpper();
@@ -133,6 +134,10 @@ int main(int argc, char **argv)
         g_pluginManager.registerStaticPlugin("IMAGE",  "DDS",       make_Plugin_DDS);
         g_pluginManager.registerStaticPlugin("IMAGE",  "EXR",       make_Plugin_EXR);
         g_pluginManager.registerStaticPlugin("IMAGE",  "KTX",       make_Plugin_KTX);
+
+#ifdef USE_CRN
+        g_pluginManager.registerStaticPlugin("IMAGE", "CRN", make_Plugin_CRN);
+#endif
 
         // TGA is supported by Qt to some extent if it fails we will try to load it using our custom code
         g_pluginManager.registerStaticPlugin("IMAGE",  "TGA",       make_Plugin_TGA);

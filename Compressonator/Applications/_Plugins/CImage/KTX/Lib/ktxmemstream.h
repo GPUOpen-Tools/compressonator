@@ -35,12 +35,10 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
  * by Mark Callow and Georg Kolling
  */
 
-#ifndef _KTXMEMSTREAM_H_
-#define _KTXMEMSTREAM_H_
+#ifndef KTXMEMSTREAM_H
+#define KTXMEMSTREAM_H
 
-#include "KHR/khrplatform.h"
 #include "ktx.h"
-#include "ktxint.h"
 #include "ktxstream.h"
 
 /**
@@ -61,4 +59,4 @@ struct ktxMem
  */
 KTX_error_code ktxMemInit(struct ktxStream* stream, struct ktxMem* mem, const void* bytes, GLsizei size);
 
-#endif /* _KTXMEMSTREAM_H_ */
+#endif /* KTXMEMSTREAM_H */

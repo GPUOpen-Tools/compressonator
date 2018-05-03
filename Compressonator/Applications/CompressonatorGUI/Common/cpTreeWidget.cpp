@@ -177,14 +177,7 @@ bool cpTreeWidget::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeD
             emit DroppedImageItem(filePathName, index);
         }
         else
-        // // check if its an AMD supported image item 
-        if (g_pluginManager.PluginSupported("3DMODEL_DX12_EX", (char *)Ext))
-        {
-            emit DroppedImageItem(filePathName, index);
-        }
-        else
-        // check if its an AMD supported image item
-        if (g_pluginManager.PluginSupported("3DMODEL_OPENGL", (char *)Ext))
+        if (g_pluginManager.PluginSupported("3DMODEL_LOADER", (char *)Ext))
         {
             emit DroppedImageItem(filePathName, index);
         }

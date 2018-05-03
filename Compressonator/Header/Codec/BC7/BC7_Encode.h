@@ -38,11 +38,11 @@ class BC7BlockEncoder
 {
 public:
 
-    BC7BlockEncoder(DWORD validModeMask,
-                    BOOL  imageNeedsAlpha,
+    BC7BlockEncoder(CMP_DWORD validModeMask,
+        CMP_BOOL  imageNeedsAlpha,
                     double quality,
-                    BOOL colourRestrict,
-                    BOOL alphaRestrict,
+        CMP_BOOL colourRestrict,
+        CMP_BOOL alphaRestrict,
                     double performance = 1.0
                     )
                     {
@@ -106,7 +106,7 @@ public:
 
     // This routine compresses a block and returns the RMS error
     double CompressBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-                         BYTE   out[COMPRESSED_BLOCK_SIZE]);
+        CMP_BYTE   out[COMPRESSED_BLOCK_SIZE]);
 
 private:
     double quant_single_point_d(
@@ -143,33 +143,33 @@ private:
         int epo_code[2][MAX_DIMENSION_BIG],
         int Mi_,                // last cluster
         int bits[3],            // including parity
-        qt type,
+        CMP_qt type,
         int dimension
     );
 
-    void    BlockSetup(DWORD blockMode);
-    void    EncodeSingleIndexBlock(DWORD blockMode,
-                                   DWORD partition,
-                                   DWORD colour[MAX_SUBSETS][2],
+    void    BlockSetup(CMP_DWORD blockMode);
+    void    EncodeSingleIndexBlock(CMP_DWORD blockMode,
+        CMP_DWORD partition,
+        CMP_DWORD colour[MAX_SUBSETS][2],
                                    int   indices[MAX_SUBSETS][MAX_SUBSET_SIZE],
-                                   BYTE  block[COMPRESSED_BLOCK_SIZE]);
+        CMP_BYTE  block[COMPRESSED_BLOCK_SIZE]);
 
     // This routine compresses a block to any of the single index modes
     double CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-                                  BYTE   out[COMPRESSED_BLOCK_SIZE],
-                                  DWORD  blockMode);
+        CMP_BYTE   out[COMPRESSED_BLOCK_SIZE],
+        CMP_DWORD  blockMode);
 
-    void EncodeDualIndexBlock(DWORD blockMode,
-                              DWORD indexSelection,
-                              DWORD componentRotation,
+    void EncodeDualIndexBlock(CMP_DWORD blockMode,
+        CMP_DWORD indexSelection,
+        CMP_DWORD componentRotation,
                               int endpoint[2][2][MAX_DIMENSION_BIG],
                               int indices[2][MAX_SUBSET_SIZE],
-                              BYTE   out[COMPRESSED_BLOCK_SIZE]);
+        CMP_BYTE   out[COMPRESSED_BLOCK_SIZE]);
 
     // This routine compresses a block to any of the dual index modes
     double CompressDualIndexBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-                                  BYTE   out[COMPRESSED_BLOCK_SIZE],
-                                  DWORD  blockMode);
+        CMP_BYTE   out[COMPRESSED_BLOCK_SIZE],
+        CMP_DWORD  blockMode);
 
     // Bulky temporary data used during compression of a block
     int     m_storedIndices[MAX_PARTITIONS][MAX_SUBSETS][MAX_SUBSET_SIZE];
@@ -192,15 +192,15 @@ private:
     double m_quality;
     double m_performance;
     double m_errorThreshold;
-    DWORD  m_validModeMask;
-    BOOL   m_imageNeedsAlpha;
-    BOOL   m_colourRestrict;
-    BOOL   m_alphaRestrict;
+    CMP_DWORD  m_validModeMask;
+    CMP_BOOL   m_imageNeedsAlpha;
+    CMP_BOOL   m_colourRestrict;
+    CMP_BOOL   m_alphaRestrict;
 
     // Data for compressing a particular block mode
-    DWORD m_parityBits;
-    DWORD m_clusters[2];
-    DWORD m_componentBits[MAX_DIMENSION_BIG];
+    CMP_DWORD m_parityBits;
+    CMP_DWORD m_clusters[2];
+    CMP_DWORD m_componentBits[MAX_DIMENSION_BIG];
 
     // Error stats
     double m_smallestError;

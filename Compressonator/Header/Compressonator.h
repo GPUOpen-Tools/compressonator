@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -19,7 +19,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
+// 
 /// \file Compressonator.h
 //
 //=====================================================================
@@ -39,15 +39,12 @@ typedef long                CMP_LONG;
 typedef CMP::BOOL           CMP_BOOL;          ///< A 32-bit integer boolean format.
 typedef CMP::DWORD_PTR      CMP_DWORD_PTR;
 
-// Invalid pointer value of CMP_DWORD_PTR (same as NULL, used to prevent compiler warning by GCC)
-#define CMP_NULL 0
-
 // CMP_HALF and CMP_FLOAT
 //bit-layout for a half number, h:
 //
 // CMP_HALF (HALF)
 //    15 (msb)
-//    |
+//    | 
 //    | 14  10
 //    | |   |
 //    | |   | 9        0 (lsb)
@@ -60,9 +57,9 @@ typedef CMP::DWORD_PTR      CMP_DWORD_PTR;
 //
 // CMP_FLOAT
 //    31 (msb)
-//    |
+//    | 
 //    | 30     23
-//    | |      |
+//    | |      | 
 //    | |      | 22                    0 (lsb)
 //    | |      | |                     |
 //    X XXXXXXXX XXXXXXXXXXXXXXXXXXXXXXX
@@ -94,7 +91,7 @@ typedef struct
 /// These enum are all used internally for each version of the SDK the order may change
 /// Typically reordered in alpha betical order per catagory for easy referance
 //  Use the enum by name and not by its value
-//
+// 
 typedef enum
 {
    CMP_FORMAT_Unknown,                    ///< Undefined texture format.
@@ -155,8 +152,8 @@ typedef enum
    CMP_FORMAT_DXT5_xRBG,                  ///<    swizzled DXT5 format with the green component swizzled into the alpha channel & the red component swizzled into the green channel. Eight bits per pixel.
    CMP_FORMAT_DXT5_RGxB,                  ///<    swizzled DXT5 format with the blue component swizzled into the alpha channel. Eight bits per pixel.
    CMP_FORMAT_DXT5_xGxR,                  ///<    two-component swizzled DXT5 format with the red component swizzled into the alpha channel & the green component in the green channel. Eight bits per pixel.
-   CMP_FORMAT_ETC_RGB,                    ///< ETC  (Ericsson Texture Compression)
-   CMP_FORMAT_ETC2_RGB,                   ///< ETC2 (Ericsson Texture Compression)
+   CMP_FORMAT_ETC_RGB,                    ///< ETC  (Ericsson Texture Compression) 
+   CMP_FORMAT_ETC2_RGB,                   ///< ETC2 (Ericsson Texture Compression) 
    CMP_FORMAT_GT,                         ///< GT   (Reserved for a future implementation)
                                           //--------------------------------------------------------------------------------------------------------
    CMP_FORMAT_MAX = CMP_FORMAT_GT
@@ -239,10 +236,10 @@ typedef struct
    CMP_DWORD         dwSize;                    ///< The size of this structure.
    CMP_BOOL         bUseChannelWeighting;      ///< Use channel weightings. With swizzled formats the weighting applies to the data within the specified channel not the channel itself.
                                                 ///< channel weigthing is not implemented for BC6H and BC7
-   double            fWeightingRed;             ///<    The weighting of the Red or X Channel.
-   double            fWeightingGreen;           ///<    The weighting of the Green or Y Channel.
-   double            fWeightingBlue;            ///<    The weighting of the Blue or Z Channel.
-   CMP_BOOL          bUseAdaptiveWeighting;     ///<    Adapt weighting on a per-block basis.
+   double            fWeightingRed;             ///<    The weighting of the Red or X Channel. 
+   double            fWeightingGreen;           ///<    The weighting of the Green or Y Channel. 
+   double            fWeightingBlue;            ///<    The weighting of the Blue or Z Channel. 
+   CMP_BOOL          bUseAdaptiveWeighting;     ///<    Adapt weighting on a per-block basis. 
    CMP_BOOL          bDXT1UseAlpha;             ///< Encode single-bit alpha data. Only valid when compressing to DXT1 & BC1.
    CMP_BOOL          bUseGPUDecompress;         ///< Use GPU to decompress. Decode API can be changed by specified in DecodeWith parameter. Default is OpenGL.
    CMP_BOOL          bUseGPUCompress;           ///< Use GPU to compress. Encode API can be changed by specified in EncodeWith parameter. Default is OpenCL.
@@ -251,13 +248,13 @@ typedef struct
    CMP_BOOL          bDisableMultiThreading;    ///< Disable multi-threading of the compression. This will slow the compression but can be useful if you're managing threads in your application.
                                                 ///< if set BC7 dwnumThreads will default to 1 during encoding and then return back to its original value when done.
    CMP_Speed         nCompressionSpeed;         ///< The trade-off between compression speed & quality.
-                                                ///< Notes:
-                                                ///< 1. This value is ignored for BC6H and BC7 (for BC7 the compression speed depends on fquaility value)
+                                                ///< Notes: 
+                                                ///< 1. This value is ignored for BC6H and BC7 (for BC7 the compression speed depends on fquaility value)  
                                                 ///< 2. For 64 bit DXT1 to DXT5 and BC1 to BC5 nCompressionSpeed is ignored and set to Noramal Speed
                                                 ///< 3. To force the use of nCompressionSpeed setting regarless of Note 2 use fQuality at 0.05
    CMP_GPUDecode     nGPUDecode;                ///< This value is set using DecodeWith argument (OpenGL, DirectX) default is OpenGL
    CMP_Compute_type  nComputeWith;              ///< This value is set using ComputeWith argument (OpenGL, DirectX)  default is OpenCL
-   CMP_DWORD         dwnumThreads;              ///< Number of threads to initialize for BC7 encoding (Max up to 128). Default set to 8,
+   CMP_DWORD         dwnumThreads;              ///< Number of threads to initialize for BC7 encoding (Max up to 128). Default set to 8, 
    double            fquality;                  ///< Quality of encoding. This value ranges between 0.0 and 1.0. Default set to 0.05
                                                 ///< setting fquality above 0.0 gives the fastest, lowest quality encoding, 1.0 is the slowest, highest quality encoding. Default set to a low value of 0.05
    CMP_BOOL          brestrictColour;           ///< This setting is a quality tuning setting for BC7 which may be necessary for convenience in some applications. Default set to false
@@ -268,14 +265,14 @@ typedef struct
    CMP_BOOL          brestrictAlpha;            ///< This setting is a quality tuning setting for BC7 which may be necessary for some textures. Default set to false,
                                                 ///< if set it will also apply restriction to blocks with alpha to avoid issues with punch-through or thresholded alpha encoding
    CMP_DWORD         dwmodeMask;                ///< Mode to set BC7 to encode blocks using any of 8 different block modes in order to obtain the highest quality. Default set to 0xCF, (Skips Color components with separate alpha component)
-                                                ///< You can combine the bits to test for which modes produce the best image quality.
-                                                ///< The mode that produces the best image quality above a set quality level (fquality) is used and subsequent modes set in the mask
-                                                ///< are not tested, this optimizes the performance of the compression versus the required quality.
+                                                ///< You can combine the bits to test for which modes produce the best image quality. 
+                                                ///< The mode that produces the best image quality above a set quality level (fquality) is used and subsequent modes set in the mask 
+                                                ///< are not tested, this optimizes the performance of the compression versus the required quality. 
                                                 ///< If you prefer to check all modes regardless of the quality then set the fquality to a value of 0
    int               NumCmds;                   ///< Count of the number of command value pairs in CmdSet[].  Max value that can be set is AMD_MAX_CMDS = 20 on this release
    AMD_CMD_SET       CmdSet[AMD_MAX_CMDS];      ///< Extended command options that can be set for the specified codec\n
                                                 ///< Example to set the number of threads and quality used for compression\n
-                                                ///<        CMP_CompressOptions Options;\n
+                                                ///<        CMP_CompressOptions Options;\n 
                                                 ///<        memset(Options,0,sizeof(CMP_CompressOptions));\n
                                                 ///<        Options.dwSize = sizeof(CMP_CompressOptions)\n
                                                 ///<        Options.CmdSet[0].strCommand   = "NumThreads"\n
@@ -354,7 +351,7 @@ extern "C" {
     // Must be called before any other library methods are valid
     //
     BC_ERROR CMP_API CMP_InitializeBCLibrary();
-
+    
     //
     // ShutdownBCLibrary - Shutdown the BC6H or BC7 library
     //
@@ -377,7 +374,7 @@ extern "C" {
     // Library must be initialized before calling this function.
     //
     // Arguments and Settings:
-    //
+    //        
     //      quality       - Quality of encoding. This value ranges between 0.0 and 1.0. (Valid only for BC7 in this release) default is 0.01
     //                      0.0 gives the fastest, lowest quality encoding, 1.0 is the slowest, highest quality encoding
     //                      In general even quality level 0.0 will give very good results on the vast majority of images
@@ -409,8 +406,8 @@ extern "C" {
     //                      being pulled away from zero or one by the global minimization of the error. If this flag is specified then the encoder
     //                      will restrict its behaviour so that for blocks which contain an alpha of zero or one then these values should be
     //                      precisely represented
-    //
-    //      modeMask      - This is an advanced option. (Valid only for BC7 in this release)
+    //                      
+    //      modeMask      - This is an advanced option. (Valid only for BC7 in this release) 
     //                      BC7 can encode blocks using any of 8 different block modes in order to obtain the highest quality (for reference of how each
     //                      of these block modes work consult the BC7 specification)
     //                      Under some circumstances it is possible that it might be desired to manipulate the encoder to only produce certain modes
@@ -426,23 +423,23 @@ extern "C" {
     //      isSigned      - For BC6H this flag sets the bit layout, false = UF16 (unsigned float) and true = SF16 (signed float)
     //
     // Note: For BC6H quality and modeMask are reserved for future release
-    //
+    // 
     BC_ERROR CMP_API CMP_CreateBC6HEncoder(CMP_BC6H_BLOCK_PARAMETERS user_settings, BC6HBlockEncoder** encoder);
     BC_ERROR CMP_API CMP_CreateBC7Encoder (double quality, CMP_BOOL restrictColour, CMP_BOOL restrictAlpha, CMP_DWORD modeMask, double performance, BC7BlockEncoder** encoder);
 
     // CMP_EncodeBC7Block()  - Enqueue a single BC7  block to the library for encoding
     // CMP_EncodeBC6HBlock() - Enqueue a single BC6H block to the library for encoding
     //
-    // For BC7:
+    // For BC7: 
     // Input is expected to be a single 16 element block containing 4 components in the range 0.->255.
     // Pixel data in the block should be arranged in row-major order
     // For three-component input images the 4th component (BC7_COMP_ALPHA) should be set to 255 for
     // all pixels to ensure optimal encoding
     //
-    // For BC6H:
+    // For BC6H: 
     // Input is expected to be a single 16 element block containing 4 components in Half-Float format (16bit).
     // Pixel data in the block should be arranged in row-major order.
-    // the 4th component should be set to 0, since Alpha is not supported in BC6H
+    // the 4th component should be set to 0, since Alpha is not supported in BC6H 
     //
     BC_ERROR CMP_API CMP_EncodeBC7Block(BC7BlockEncoder* encoder, double in[BC_BLOCK_PIXELS][BC_COMPONENT_COUNT], CMP_BYTE* out);
     BC_ERROR CMP_API CMP_EncodeBC6HBlock(BC6HBlockEncoder* encoder, CMP_FLOAT  in[BC_BLOCK_PIXELS][BC_COMPONENT_COUNT], CMP_BYTE* out);
@@ -489,7 +486,7 @@ extern "C" {
    /// \param[in] pUser1 User data to pass to the feedback function.
    /// \param[in] pUser2 User data to pass to the feedback function.
    /// \return    CMP_OK if successful, otherwise the error code.
-   CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture,
+   CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, 
                                         CMP_Texture* pDestTexture,
                                         const CMP_CompressOptions* pOptions,
                                         CMP_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2);

@@ -1,0 +1,400 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{eef987de-c4d9-41e5-8a52-379ac257cfe7}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{58a56801-babd-4bed-9169-b541d4c6144b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{9971db28-de70-4870-89b0-9cc42696fe97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DX12Util">
+      <UniqueIdentifier>{0165acbd-99d7-4663-ac2e-d29b1bd78be7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files\Debug">
+      <UniqueIdentifier>{d0bf0183-dc7d-48be-9f5a-0caeb11e4292}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Release">
+      <UniqueIdentifier>{48034484-aa20-4da8-9723-bea956faf202}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Release_MD">
+      <UniqueIdentifier>{c9bddc6f-c3aa-42b3-9961-b75d802cac3f}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Debug_MD">
+      <UniqueIdentifier>{bd7d2e4e-3e50-494a-bbf2-bc8e131ecf53}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="gltf">
+      <UniqueIdentifier>{ab3684be-637b-4790-96d7-84643f801924}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gltf\DX12">
+      <UniqueIdentifier>{40077bef-9809-449f-87ac-083ba061c3f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui\DX12">
+      <UniqueIdentifier>{2933e0f9-5034-4083-bfb5-572ec7b17469}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\model_viewer">
+      <UniqueIdentifier>{02a8479d-cb16-4118-9103-43a7a82dce82}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Common\MIPS.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\TC_PluginInternal.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\UtilFuncs.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\PluginManager.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\TextureIO.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half\half.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glTF_DX12_EX.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glTF_DX12DeviceEx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glTF_DX12RendererEx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\imgui\imgui_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\Bloom.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\BlurPS.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\Camera.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\CommandListRingDX12.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\DrawCube.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\DynamicBufferRingDX12.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\FenceDX12.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\FrameworkWindows.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\GPUTimestampsDX12.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\ImguiDX12.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\KeyboardMouse.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\PostProcCS.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\PostProcPS.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\ResourceViewHeapsDX12.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\Ring.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\SkyDome.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\StaticBufferPoolDX12.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\StaticConstantBufferPoolDX12.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\SwapChainDX12.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\TextureDX12.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\ThreadPool.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\Tonemapping.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DX12Util\UploadHeapDX12.cpp">
+      <Filter>DX12Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\ModelData.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\UserInterface.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\qtimgui\ImGui_DX12Renderer.cpp">
+      <Filter>imgui\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug\moc_ImGui_DX12Renderer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release\moc_ImGui_DX12Renderer.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_ImGui_DX12Renderer.cpp">
+      <Filter>Generated Files\Release_MD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_ImGui_DX12Renderer.cpp">
+      <Filter>Generated Files\Debug_MD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\gltf\Error.cpp">
+      <Filter>gltf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\gltf\GltfCommon.cpp">
+      <Filter>gltf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\gltf\glTFHelpers.cpp">
+      <Filter>gltf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\gltf\Misc.cpp">
+      <Filter>gltf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\gltf\DX12\GltfBBoxPass.cpp">
+      <Filter>gltf\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\gltf\DX12\GltfDepthPass.cpp">
+      <Filter>gltf\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\gltf\DX12\gltfGetFormat_DX12.cpp">
+      <Filter>gltf\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\gltf\DX12\glTFHelpers_DX12.cpp">
+      <Filter>gltf\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\gltf\DX12\GltfPbr.cpp">
+      <Filter>gltf\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\gltf\DX12\GltfTechnique.cpp">
+      <Filter>gltf\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\model_viewer\ModelTexture.cpp">
+      <Filter>Common\model_viewer</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\glTF_DX12DeviceEx.h">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\glTF_DX12RendererEx.h">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\glTF_DX12_EX.h">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\stdafx.h">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\CopyFiles.bat">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\MIPS.h">
+      <Filter>Common</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\ModelData.h">
+      <Filter>Common</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\PluginInterface.h">
+      <Filter>Common</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\TC_PluginAPI.h">
+      <Filter>Common</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\TC_PluginInternal.h">
+      <Filter>Common</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\UserInterface.h">
+      <Filter>Common</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\UtilFuncs.h">
+      <Filter>Common</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\imgui\imconfig.h">
+      <Filter>imgui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\imgui\imgui.h">
+      <Filter>imgui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\imgui\imgui_internal.h">
+      <Filter>imgui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\imgui\stb_rect_pack.h">
+      <Filter>imgui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\imgui\stb_textedit.h">
+      <Filter>imgui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\imgui\stb_truetype.h">
+      <Filter>imgui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\Bloom.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\BlurPS.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\Camera.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\CommandListRingDX12.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\defines.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\DrawCube.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\DynamicBufferRingDX12.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\FenceDX12.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\FrameworkWindows.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\GPUTimestampsDX12.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\ImguiDX12.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\KeyboardMouse.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\PostProcCS.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\PostProcPS.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\ResourceViewHeapsDX12.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\Ring.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\SkyDome.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\StaticBufferPoolDX12.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\StaticConstantBufferPoolDX12.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\SwapChainDX12.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\TextureDX12.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\threadpool.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\Tonemapping.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\DX12Util\UploadHeapDX12.h">
+      <Filter>DX12Util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Common\qtimgui\ImGui_DX12Renderer.h">
+      <Filter>imgui\DX12</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Common\qtimgui\ImGUI_DX12.h">
+      <Filter>imgui\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\defines.h">
+      <Filter>gltf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\Error.h">
+      <Filter>gltf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\GltfCommon.h">
+      <Filter>gltf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\GltfFeatures.h">
+      <Filter>gltf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\glTFHelpers.h">
+      <Filter>gltf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\GltfStructures.h">
+      <Filter>gltf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\Misc.h">
+      <Filter>gltf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\targetver.h">
+      <Filter>gltf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\DX12\GltfBBoxPass.h">
+      <Filter>gltf\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\DX12\GltfDepthPass.h">
+      <Filter>gltf\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\DX12\gltfGetFormat_DX12.h">
+      <Filter>gltf\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\DX12\glTFHelpers_DX12.h">
+      <Filter>gltf\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\DX12\GltfPbr.h">
+      <Filter>gltf\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\gltf\DX12\GltfTechnique.h">
+      <Filter>gltf\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\model_viewer\ModelTexture.h">
+      <Filter>Common\model_viewer</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

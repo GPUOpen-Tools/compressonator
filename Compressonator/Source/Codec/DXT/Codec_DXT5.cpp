@@ -9,10 +9,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -26,9 +26,7 @@
 //  Description: implementation of the CCodec_DXT5 class
 //
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
 #pragma warning(disable:4100)
-#endif //_MSC_VER
 
 #include "Common.h"
 #include "Codec_DXT5.h"
@@ -76,18 +74,18 @@ CodecError CCodec_DXT5::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
         DbgTrace(("-------> Remote Server Connected"));
     }
     #endif
-
+    
     const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
     const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
 
 
-#ifdef DXT5_COMPDEBUGGER
+    #ifdef DXT5_COMPDEBUGGER
     DbgTrace(("IN : BufferType %d ChannelCount %d ChannelDepth %d",bufferIn.GetBufferType(),bufferIn.GetChannelCount(),bufferIn.GetChannelDepth()));
     DbgTrace(("   : Height %d Width %d Pitch %d isFloat %d",bufferIn.GetHeight(),bufferIn.GetWidth(),bufferIn.GetWidth(),bufferIn.IsFloat()));
 
     DbgTrace(("OUT: BufferType %d ChannelCount %d ChannelDepth %d",bufferOut.GetBufferType(),bufferOut.GetChannelCount(),bufferOut.GetChannelDepth()));
     DbgTrace(("   : Height %d Width %d Pitch %d isFloat %d",bufferOut.GetHeight(),bufferOut.GetWidth(),bufferOut.GetWidth(),bufferOut.IsFloat()));
-#endif
+    #endif;
 
 
     bool bUseFixed = (!bufferIn.IsFloat() && bufferIn.GetChannelDepth() == 8 && !m_bUseFloat);
@@ -118,8 +116,8 @@ CodecError CCodec_DXT5::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
             }
 
             bufferOut.WriteBlock(i*4, j*4, compressedBlock, 4);
-
-            #ifdef DXT5_COMPDEBUGGER
+    
+            #ifdef DXT5_COMPDEBUGGER 
                 //g_CompClient.SendData(2,sizeof(compressedBlock),(byte *)&compressedBlock[0]);
             #endif
 

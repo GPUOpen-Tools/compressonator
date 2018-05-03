@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{025fdf03-4a13-4a19-8ff4-a378c9f1df68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{bc1c0ae0-9746-4b3d-b4fb-3b1f4461e721}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tootle">
+      <UniqueIdentifier>{5d47da29-1022-4521-b035-e375230b672e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\JRT">
+      <UniqueIdentifier>{d095ed03-1a65-4a01-a30c-f0615d6b9ff3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="../Applications/_Plugins/Common/PluginInterface.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\aligned_malloc.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\bbox.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\cloud.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\clustering.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\color.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\error.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\feedback.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\fit.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\gdiwindow.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\gdiwm.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\heap.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\matrix.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\mesh.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\option.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\overdraw.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\quaternion.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\scalar.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\soup.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\souptomesh.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\Stripifier.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\Timer.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\tootlelib.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\TootlePCH.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\triorder.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\vector.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\viewpoints.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\window.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_Mesh\TootleRaytracer.h">
+      <Filter>Source Files\Tootle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_Mesh\JRT\JRTBoundingBox.h">
+      <Filter>Source Files\JRT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_Mesh\JRT\JRTCamera.h">
+      <Filter>Source Files\JRT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_Mesh\JRT\JRTCommon.h">
+      <Filter>Source Files\JRT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_Mesh\JRT\JRTCore.h">
+      <Filter>Source Files\JRT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_Mesh\JRT\JRTCoreUtils.h">
+      <Filter>Source Files\JRT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_Mesh\JRT\JRTH2KDTreeBuilder.h">
+      <Filter>Source Files\JRT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_Mesh\JRT\JRTHeuristicKDTreeBuilder.h">
+      <Filter>Source Files\JRT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_Mesh\JRT\JRTKDTree.h">
+      <Filter>Source Files\JRT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_Mesh\JRT\JRTKDTreeBuilder.h">
+      <Filter>Source Files\JRT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_Mesh\JRT\JRTMesh.h">
+      <Filter>Source Files\JRT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_Mesh\JRT\JRTOrthoCamera.h">
+      <Filter>Source Files\JRT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_Mesh\JRT\JRTPPMImage.h">
+      <Filter>Source Files\JRT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_Mesh\JRT\JRTTriangleIntersection.h">
+      <Filter>Source Files\JRT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CMP_Mesh\cmp_mesh.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Source\CMP_Mesh\aligned_malloc.cpp">
+      <Filter>Source Files\Tootle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\clustering.cpp">
+      <Filter>Source Files\Tootle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\error.c">
+      <Filter>Source Files\Tootle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\feedback.cpp">
+      <Filter>Source Files\Tootle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\fit.cpp">
+      <Filter>Source Files\Tootle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\gdiwm.cpp">
+      <Filter>Source Files\Tootle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\heap.c">
+      <Filter>Source Files\Tootle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\overdraw.cpp">
+      <Filter>Source Files\Tootle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\soup.cpp">
+      <Filter>Source Files\Tootle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\souptomesh.cpp">
+      <Filter>Source Files\Tootle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\Stripifier.cpp">
+      <Filter>Source Files\Tootle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\Timer.cpp">
+      <Filter>Source Files\Tootle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\tootlelib.cpp">
+      <Filter>Source Files\Tootle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\triorder.cpp">
+      <Filter>Source Files\Tootle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\TootleRaytracer.cpp">
+      <Filter>Source Files\Tootle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\JRT\JRTBoundingBox.cpp">
+      <Filter>Source Files\JRT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\JRT\JRTCamera.cpp">
+      <Filter>Source Files\JRT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\JRT\JRTCore.cpp">
+      <Filter>Source Files\JRT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\JRT\JRTCoreUtils.cpp">
+      <Filter>Source Files\JRT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\JRT\JRTH2KDTreeBuilder.cpp">
+      <Filter>Source Files\JRT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\JRT\JRTHeuristicKDTreeBuilder.cpp">
+      <Filter>Source Files\JRT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\JRT\JRTKDTree.cpp">
+      <Filter>Source Files\JRT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\JRT\JRTKDTreeBuilder.cpp">
+      <Filter>Source Files\JRT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\JRT\JRTMesh.cpp">
+      <Filter>Source Files\JRT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\JRT\JRTOrthoCamera.cpp">
+      <Filter>Source Files\JRT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\JRT\JRTPPMImage.cpp">
+      <Filter>Source Files\JRT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_Mesh\JRT\JRTTriangleIntersection.cpp">
+      <Filter>Source Files\JRT</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

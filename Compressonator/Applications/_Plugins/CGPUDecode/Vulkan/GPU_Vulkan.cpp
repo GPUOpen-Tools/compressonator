@@ -372,8 +372,6 @@ void GPU_Vulkan::draw()
     err = swapChain.acquireNextImage(semaphores.presentDone, &currentBuffer);
     assert(!err);
 
-    submitPostPresentBarrier(swapChain.buffers[currentBuffer].image);
-
     // Command buffer to be sumitted to the queue
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &drawCmdBuffers[currentBuffer];
@@ -381,8 +379,6 @@ void GPU_Vulkan::draw()
     // Submit to queue
     err = vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
     assert(!err);
-
-    submitPrePresentBarrier(swapChain.buffers[currentBuffer].image);
 
     err = swapChain.queuePresent(queue, currentBuffer, semaphores.renderDone);
     assert(!err);
@@ -438,15 +434,6 @@ void GPU_Vulkan::createCommandBuffers()
             (uint32_t)drawCmdBuffers.size());
 
     VkResult vkRes = vkAllocateCommandBuffers(device, &cmdBufAllocateInfo, drawCmdBuffers.data());
-    assert(!vkRes);
-
-    // Command buffers for submitting present barriers
-    cmdBufAllocateInfo.commandBufferCount = 1;
-    // Pre present
-    vkRes = vkAllocateCommandBuffers(device, &cmdBufAllocateInfo, &prePresentCmdBuffer);
-    assert(!vkRes);
-    // Post present
-    vkRes = vkAllocateCommandBuffers(device, &cmdBufAllocateInfo, &postPresentCmdBuffer);
     assert(!vkRes);
 }
 
@@ -514,7 +501,6 @@ void GPU_Vulkan::setupDepthStencil()
 
     err = vkBindImageMemory(device, depthStencil.image, depthStencil.mem, 0);
     assert(!err);
-    vkTools::setImageLayout(setupCmdBuffer, depthStencil.image, VK_IMAGE_ASPECT_DEPTH_BIT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
     depthStencilView.image = depthStencil.image;
     err = vkCreateImageView(device, &depthStencilView, nullptr, &depthStencil.view);
@@ -530,8 +516,8 @@ void GPU_Vulkan::setupRenderPass()
     attachments[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
     attachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
     attachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-    attachments[0].initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-    attachments[0].finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    attachments[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    attachments[0].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR; 
 
     attachments[1].format = depthFormat;
     attachments[1].samples = VK_SAMPLE_COUNT_1_BIT;
@@ -539,8 +525,8 @@ void GPU_Vulkan::setupRenderPass()
     attachments[1].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
     attachments[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
     attachments[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-    attachments[1].initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-    attachments[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+    attachments[1].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED; 
+    attachments[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;  
 
     VkAttachmentReference colorReference = {};
     colorReference.attachment = 0;
@@ -562,6 +548,25 @@ void GPU_Vulkan::setupRenderPass()
     subpass.preserveAttachmentCount = 0;
     subpass.pPreserveAttachments = NULL;
 
+    // Subpass dependencies for layout transitions
+    std::array<VkSubpassDependency, 2> dependencies;
+
+    dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
+    dependencies[0].dstSubpass = 0;
+    dependencies[0].srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+    dependencies[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependencies[0].srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+    dependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    dependencies[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+
+    dependencies[1].srcSubpass = 0;
+    dependencies[1].dstSubpass = VK_SUBPASS_EXTERNAL;
+    dependencies[1].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependencies[1].dstStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+    dependencies[1].srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    dependencies[1].dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+    dependencies[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+
     VkRenderPassCreateInfo renderPassInfo = {};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
     renderPassInfo.pNext = NULL;
@@ -569,8 +574,8 @@ void GPU_Vulkan::setupRenderPass()
     renderPassInfo.pAttachments = attachments;
     renderPassInfo.subpassCount = 1;
     renderPassInfo.pSubpasses = &subpass;
-    renderPassInfo.dependencyCount = 0;
-    renderPassInfo.pDependencies = NULL;
+    renderPassInfo.dependencyCount = 2;
+    renderPassInfo.pDependencies = dependencies.data();
 
     VkResult err;
 
@@ -1149,7 +1154,7 @@ VkCommandBuffer GPU_Vulkan::createCommandBuffer(VkCommandBufferLevel level, bool
     return cmdBuffer;
 }
 
-void GPU_Vulkan::flushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, bool free)
+void GPU_Vulkan::flushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, bool free = true)
 {
     if (commandBuffer == VK_NULL_HANDLE)
     {
@@ -1163,8 +1168,21 @@ void GPU_Vulkan::flushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffer;
 
-    VK_CHECK_RESULT(vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE));
-    VK_CHECK_RESULT(vkQueueWaitIdle(queue));
+    // Create fence to ensure that the command buffer has finished executing
+    VkFenceCreateInfo fenceInfo = vkTools::initializers::fenceCreateInfo(VK_FLAGS_NONE);
+    VkFence fence;
+    VkResult vkRes = vkCreateFence(device, &fenceInfo, nullptr, &fence);
+    assert(!vkRes);
+
+    // Submit to the queue
+    vkRes = vkQueueSubmit(queue, 1, &submitInfo, fence);
+    assert(!vkRes);
+
+    // Wait for the fence to signal that command buffer has finished executing
+    vkRes = vkWaitForFences(device, 1, &fence, VK_TRUE, DEFAULT_FENCE_TIMEOUT);
+    assert(!vkRes);
+
+    vkDestroyFence(device, fence, nullptr);
 
     if (free)
     {
@@ -1196,16 +1214,12 @@ CMP_ERROR GPU_Vulkan::prepare(const CMP_Texture* pSourceTexture)
     }
 
     createCommandPool();
-    createSetupCommandBuffer();
-    swapChain.create(setupCmdBuffer, &m_width, &m_height);
+    swapChain.create(&m_width, &m_height);
     createCommandBuffers();
     setupDepthStencil();
     setupRenderPass();
     createPipelineCache();
     setupFrameBuffer();
-    flushSetupCommandBuffer();
-    // Recreate setup command buffer for derived class
-    createSetupCommandBuffer();
 
     // Setup vertices for a single uv-mapped quad
 #define dim 1.0f
@@ -1506,8 +1520,6 @@ CMP_ERROR GPU_Vulkan::prepare(const CMP_Texture* pSourceTexture)
 void GPU_Vulkan::destroyCommandBuffers()
 {
     vkFreeCommandBuffers(device, cmdPool, (uint32_t)drawCmdBuffers.size(), drawCmdBuffers.data());
-    vkFreeCommandBuffers(device, cmdPool, 1, &prePresentCmdBuffer);
-    vkFreeCommandBuffers(device, cmdPool, 1, &postPresentCmdBuffer);
 }
 
 void GPU_Vulkan::clean()
@@ -1697,20 +1709,34 @@ void GPU_Vulkan::write(const CMP_Texture* pDestTexture) {
     res = vkBindImageMemory(device, mappableImage, mappableMemory, 0);
     assert(res == VK_SUCCESS);
 
-    VkCommandBufferBeginInfo cmd_buf_info = {};
-    cmd_buf_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    cmd_buf_info.pNext = NULL;
-    cmd_buf_info.flags = 0;
-    cmd_buf_info.pInheritanceInfo = NULL;
+    VkCommandBuffer copyCmd = createCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
-    res = vkBeginCommandBuffer(postPresentCmdBuffer, &cmd_buf_info);
-    set_image_layout( mappableImage, VK_IMAGE_ASPECT_COLOR_BIT,
+    VkImageMemoryBarrier imageMemoryBarrier = vkTools::initializers::imageMemoryBarrier();
+
+    // Transition destination image to transfer destination layout
+    vkTools::insertImageMemoryBarrier(
+        copyCmd,
+        mappableImage,
+        0,
+        VK_ACCESS_TRANSFER_WRITE_BIT,
         VK_IMAGE_LAYOUT_UNDEFINED,
-        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-    
-    set_image_layout(swapChain.buffers[currentBuffer].image,
-        VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-        VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+        VK_PIPELINE_STAGE_TRANSFER_BIT,
+        VK_PIPELINE_STAGE_TRANSFER_BIT,
+        VkImageSubresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 });
+
+    // Transition swapchain image from present to transfer source layout
+    vkTools::insertImageMemoryBarrier(
+        copyCmd,
+        swapChain.buffers[currentBuffer].image,
+        VK_ACCESS_MEMORY_READ_BIT,
+        VK_ACCESS_TRANSFER_READ_BIT,
+        VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+        VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+        VK_PIPELINE_STAGE_TRANSFER_BIT,
+        VK_PIPELINE_STAGE_TRANSFER_BIT,
+        VkImageSubresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 });
+
 
     VkImageCopy copy_region;
     copy_region.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -1731,48 +1757,36 @@ void GPU_Vulkan::write(const CMP_Texture* pDestTexture) {
     copy_region.extent.height = m_height;
     copy_region.extent.depth = 1;
 
-    //Put the copy command into the command buffer 
-    vkCmdCopyImage(postPresentCmdBuffer, swapChain.buffers[currentBuffer].image,
+    //issue copy command
+    vkCmdCopyImage(copyCmd, swapChain.buffers[currentBuffer].image,
         VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, mappableImage,
         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copy_region);
 
-    set_image_layout( mappableImage, VK_IMAGE_ASPECT_COLOR_BIT,
+    // Transition destination image to general layout, which is the required layout for mapping the image memory later on
+    vkTools::insertImageMemoryBarrier(
+        copyCmd,
+        mappableImage,
+        VK_ACCESS_TRANSFER_WRITE_BIT,
+        VK_ACCESS_MEMORY_READ_BIT,
         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-        VK_IMAGE_LAYOUT_GENERAL);
+        VK_IMAGE_LAYOUT_GENERAL,
+        VK_PIPELINE_STAGE_TRANSFER_BIT,
+        VK_PIPELINE_STAGE_TRANSFER_BIT,
+        VkImageSubresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 });
 
-    res = vkEndCommandBuffer(postPresentCmdBuffer);
-    assert(res == VK_SUCCESS);
-    const VkCommandBuffer cmd_bufs[] = { postPresentCmdBuffer };
-    VkFenceCreateInfo fenceInfo;
-    VkFence cmdFence;
-    fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-    fenceInfo.pNext = NULL;
-    fenceInfo.flags = 0;
-    vkCreateFence(device, &fenceInfo, NULL, &cmdFence);
+    // Transition back the swap chain image
+    vkTools::insertImageMemoryBarrier(
+        copyCmd,
+        swapChain.buffers[currentBuffer].image,
+        VK_ACCESS_TRANSFER_READ_BIT,
+        VK_ACCESS_MEMORY_READ_BIT,
+        VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+        VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+        VK_PIPELINE_STAGE_TRANSFER_BIT,
+        VK_PIPELINE_STAGE_TRANSFER_BIT,
+        VkImageSubresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 });
 
-    VkSubmitInfo submit_info[1] = {};
-    submit_info[0].pNext = NULL;
-    submit_info[0].sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    submit_info[0].waitSemaphoreCount = 0;
-    submit_info[0].pWaitSemaphores = NULL;
-    submit_info[0].pWaitDstStageMask = NULL;
-    submit_info[0].commandBufferCount = 1;
-    submit_info[0].pCommandBuffers = cmd_bufs;
-    submit_info[0].signalSemaphoreCount = 0;
-    submit_info[0].pSignalSemaphores = NULL;
-
-    //Queue the command buffer for execution
-    res = vkQueueSubmit(queue, 1, submit_info, cmdFence);
-    assert(res == VK_SUCCESS);
-
-    //Make sure command buffer is finished before mapping
-    do {
-        res =
-            vkWaitForFences(device, 1, &cmdFence, VK_TRUE, FENCE_TIMEOUT);
-    } while (res == VK_TIMEOUT);
-    assert(res == VK_SUCCESS);
-
-    vkDestroyFence(device, cmdFence, NULL);
+    flushCommandBuffer(copyCmd, queue);
 
     VkImageSubresource subres = {};
     subres.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -1837,8 +1851,9 @@ void GPU_Vulkan::write(const CMP_Texture* pDestTexture) {
     }
 
     vkUnmapMemory(device, mappableMemory);
-    vkDestroyImage(device, mappableImage, NULL);
     vkFreeMemory(device, mappableMemory, NULL);
+    vkDestroyImage(device, mappableImage, NULL);
+    
 }
 
 bool GPU_Vulkan::isSupportVersion()
@@ -1889,12 +1904,6 @@ CMP_ERROR WINAPI GPU_Vulkan::Decompress(
             m_initOk = false;
             return CMP_ERR_UNSUPPORTED_GPU_ASTC_DECODE;
         }
-    }
-
-    if (!isSupportVersion())
-    {
-        m_initOk = false;
-        return CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB;
     }
 
     swapChain.initSurface(hInstance, m_hWnd, pDestTexture->format);

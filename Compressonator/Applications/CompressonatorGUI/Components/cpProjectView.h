@@ -46,6 +46,7 @@
 // Progress Bar
 #include "acProgressDlg.h"
 #include "acDiffImage.h"
+#include "ac3DMeshAnalysis.h"
 #include "cpTreeWidget.h"
 #include "cpImageView.h"
 #include "cpProjectData.h"
@@ -54,6 +55,7 @@
 #include "cpImageLoader.h"
 #include "cpNewProject.h"
 #include "TextureIO.h"
+#include "ModelData.h"
 
 // JSon 
 #include "json\json.h"
@@ -62,7 +64,8 @@
 #define    MAX_PROJECTVIEW_COLUMNS               3     // Project view columns to view
 
 
-#define     DIFFERENCE_IMAGE_TXT "Difference:"
+#define     DIFFERENCE_IMAGE_TXT "Difference: "
+#define     DIFFERENCE_IMAGE_VS_TXT " VS "
 
 //
 // This Class is defined as Static 
@@ -118,8 +121,12 @@ public:
     CompressStatusDialog *                  m_CompressStatusDialog;
     acProgressDlg*                          m_pProgressDlg;
     acDiffImage*                            m_diffImageDialog;
+    ac3DMeshAnalysis*                       m_3DMeshAnalysisDlg;
+
     void SetupHeader();
     void SetupTreeView();
+
+    void run3DMeshAnalysis(CMODEL_DATA *meshData, CMODEL_DATA *meshDataOri);
 
     void diffImageFiles();
     bool loadProjectFile(QString fileToLoad);
@@ -137,7 +144,8 @@ public:
     void Tree_AddRootNode();
     QTreeWidgetItem *Tree_AddImageFile(QString filePathName, int index, C_Source_Info **m_dataout);
     void Tree_AddCompressFile(QTreeWidgetItem *parent, QString description, bool checkable, bool checked, int levelType, C_Destination_Options *m_data);
-    void Tree_Add3DModelImageFiles(QTreeWidgetItem *ParentItem, QString filePathName, bool checkable, bool checked, int levelType, CMP_Feedback_Proc pFeedbackProc = NULL);
+    QTreeWidgetItem *Tree_Add3DModelImageFiles(QTreeWidgetItem *ParentItem, QString filePathName, bool checkable, bool checked, int levelType, CMP_Feedback_Proc pFeedbackProc = NULL);
+    QTreeWidgetItem *Tree_Add3DModelMeshFile(QTreeWidgetItem *ParentItem, QString filePathName, QString pfilePathName, bool checkable, bool checked, int levelType, CMP_Feedback_Proc pFeedbackProc = NULL);
     void Tree_Add3DSubModelFile(QTreeWidgetItem *ParentItem, QString filePathName, QList<bool>* srcDelFlags);
 
     void AddSettingtoEmptyTree();
@@ -156,6 +164,8 @@ public:
     int  Tree_numCompresstemsSelected(int &ItemsCount, int &NumCompressedItems);
 
     QTreeWidgetItem *GetCurrentItem(int inLevelType);
+    QTreeWidgetItem *GetCurrentItem();
+
     QTreeWidgetItem *Tree_FindImageItem(QString filePathName, bool inCludeDestination);
     QTreeWidgetItem *ContextMenu_ImageItem;
 
@@ -171,6 +181,7 @@ public:
     QAction *actCopyFullPath;
     QAction *actsaveProjectFile;
     QAction *actopenProjectFile;
+    QAction *actAnalyseMeshData;
     QAction *actCompressProjectFiles;
     QAction *actSeperator;
     QAction *actViewImageDiff;
@@ -250,6 +261,7 @@ void openProjectFile();
 void openNewProjectFile();
 void compressProjectFiles(QFile *file);
 void viewImageDiff();
+void analyseMeshData();
 void viewDiffImageFromChild();
 void viewDiff3DModelFromChild();
 void removeSelectedImage();

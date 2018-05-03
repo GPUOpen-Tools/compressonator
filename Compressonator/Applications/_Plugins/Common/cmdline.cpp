@@ -1497,7 +1497,8 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
 
         if ((!SourceFormatIsCompressed) && (DestinationFormatIsCompressed)
             &&
-            !IsDestinationUnCompressed((const char *)g_CmdPrams.DestFile.c_str())
+            (IsDestinationUnCompressed((const char *)g_CmdPrams.DestFile.c_str()) == false)
+
             )
         {
             //-------------------------------------------------------------
@@ -1509,7 +1510,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
             
             if (AMDSaveMIPSTextureImage(g_CmdPrams.DestFile.c_str(), &g_MipSetCmp, g_CmdPrams.use_OCV_out) != 0)
             {
-                PrintInfo("Error: saving image or format is unsupported\n");
+                PrintInfo("Error: saving image failed, write permission denied or format is unsupported.\n");
                 cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                 return -1;
             }
@@ -1550,10 +1551,9 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
         // Case example: BMP -> BMP with -fd compression flag
         //
         //=====================================================
-        if (    
-            (!SourceFormatIsCompressed) && (DestinationFormatIsCompressed)
-            && 
-            IsDestinationUnCompressed((const char *)g_CmdPrams.DestFile.c_str())
+        if (   
+            (!SourceFormatIsCompressed) && (DestinationFormatIsCompressed) 
+            && (IsDestinationUnCompressed((const char *)g_CmdPrams.DestFile.c_str())==true)
             )
         {
             MidwayDecompress = true;
@@ -1814,7 +1814,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet *p_userMipSetIn)
 
                 if (AMDSaveMIPSTextureImage(g_CmdPrams.DestFile.c_str(), p_MipSetOut, g_CmdPrams.use_OCV_out) != 0)
                 {
-                    PrintInfo(" Error: saving image or destination format is unsupported by Qt\n");
+                    PrintInfo("Error: saving image failed, write permission denied or format is unsupported.\n");
                     cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                     return -1;
                 }

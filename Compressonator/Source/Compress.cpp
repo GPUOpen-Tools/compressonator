@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -27,10 +27,10 @@
 //  Apr 2014    -    Refactored Library
 //                   Code clean to support MSV 2010 and up
 //////////////////////////////////////////////////////////////////////////////
-
+        
 #include "Compressonator.h"
 #include "Compress.h"
-#include <assert.h>
+#include <assert.h>    
 
 #include <algorithm>
 
@@ -79,10 +79,10 @@ CodecType GetCodecType(CMP_FORMAT format)
         case CMP_FORMAT_BC3:                     return CT_DXT5;
         case CMP_FORMAT_BC4:                     return CT_ATI1N;
         case CMP_FORMAT_BC5:                     return CT_ATI2N_XY;
-        case CMP_FORMAT_BC6H:                    return CT_BC6H;
+        case CMP_FORMAT_BC6H:                    return CT_BC6H; 
         case CMP_FORMAT_BC6H_SF:                 return CT_BC6H_SF;
-        case CMP_FORMAT_BC7:                     return CT_BC7;
-        case CMP_FORMAT_ASTC:                    return CT_ASTC;
+        case CMP_FORMAT_BC7:                     return CT_BC7;    
+        case CMP_FORMAT_ASTC:                    return CT_ASTC;    
         case CMP_FORMAT_ATC_RGB:                 return CT_ATC_RGB;
         case CMP_FORMAT_ATC_RGBA_Explicit:       return CT_ATC_RGBA_Explicit;
         case CMP_FORMAT_ATC_RGBA_Interpolated:   return CT_ATC_RGBA_Interpolated;
@@ -131,17 +131,17 @@ bool NeedSwizzle(CMP_FORMAT destformat)
     switch (destformat)
     {
     case CMP_FORMAT_BC4:
-    case CMP_FORMAT_ATI1N:        // same as BC4
-    case CMP_FORMAT_ATI2N:        // same as BC4
+    case CMP_FORMAT_ATI1N:        // same as BC4    
+    case CMP_FORMAT_ATI2N:        // same as BC4    
     case CMP_FORMAT_BC5:
-    case CMP_FORMAT_ATI2N_XY:    // same as BC5
-    case CMP_FORMAT_ATI2N_DXT5:    // same as BC5
+    case CMP_FORMAT_ATI2N_XY:    // same as BC5    
+    case CMP_FORMAT_ATI2N_DXT5:    // same as BC5    
     case CMP_FORMAT_BC1:
-    case CMP_FORMAT_DXT1:        // same as BC1
+    case CMP_FORMAT_DXT1:        // same as BC1     
     case CMP_FORMAT_BC2:
-    case CMP_FORMAT_DXT3:        // same as BC2
+    case CMP_FORMAT_DXT3:        // same as BC2     
     case CMP_FORMAT_BC3:
-    case CMP_FORMAT_DXT5:        // same as BC3
+    case CMP_FORMAT_DXT5:        // same as BC3     
     case CMP_FORMAT_ATC_RGB:
     case CMP_FORMAT_ATC_RGBA_Explicit:
     case CMP_FORMAT_ATC_RGBA_Interpolated:
@@ -330,7 +330,7 @@ CMP_ERROR Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, CMP_Texture* srcTextu
 
                 //  6) Scale the values such that middle gray pixels are
                 //     mapped to a frame buffer value that is 3.5 f-stops
-                //     below the display's maximum intensity.
+                //     below the display's maximum intensity. 
                 r *= scale;
                 g *= scale;
                 b *= scale;
@@ -460,7 +460,7 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
         {
         case CT_BC7:
                 pCodec->SetParameter("MultiThreading", (CMP_DWORD) !pOptions->bDisableMultiThreading);
-
+                
                 if (!pOptions->bDisableMultiThreading)
                     pCodec->SetParameter("NumThreads", (CMP_DWORD) pOptions->dwnumThreads);
                 else
@@ -508,7 +508,7 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
 
     CodecBufferType srcBufferType = GetCodecBufferType(pSourceTexture->format);
 
-    CCodecBuffer* pSrcBuffer  = CreateCodecBuffer(srcBufferType,
+    CCodecBuffer* pSrcBuffer  = CreateCodecBuffer(srcBufferType, 
                                                   pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight, pSourceTexture->nBlockDepth,
                                                   pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData);
     CCodecBuffer* pDestBuffer = pCodec->CreateBuffer(
@@ -553,8 +553,8 @@ public:
     CodecError m_errorCode;
 };
 
-CATICompressThreadData::CATICompressThreadData() : m_pCodec(NULL), m_pSrcBuffer(NULL), m_pDestBuffer(NULL),
-                                                   m_pFeedbackProc(NULL), m_pUser1(CMP_NULL), m_pUser2(CMP_NULL),
+CATICompressThreadData::CATICompressThreadData() : m_pCodec(NULL), m_pSrcBuffer(NULL), m_pDestBuffer(NULL), 
+                                                   m_pFeedbackProc(NULL), m_pUser1(NULL), m_pUser2(NULL),
                                                    m_errorCode( CE_OK )
 {
 }
@@ -578,9 +578,9 @@ void ThreadedCompressProc(void *lpParameter)
 CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2, CodecType destType)
 {
     // Note function should not be called for the following Codecs....
-    if (destType == CT_BC7)  return CMP_ABORTED;
+    if (destType == CT_BC7)  return CMP_ABORTED; 
     if (destType == CT_GT)   return CMP_ABORTED;
-    if (destType == CT_ASTC) return CMP_ABORTED;
+    if (destType == CT_ASTC) return CMP_ABORTED; 
 
     CMP_DWORD dwMaxThreadCount = min(f_dwProcessorCount, MAX_THREADS);
     CMP_DWORD dwLinesRemaining = pDestTexture->dwHeight;
@@ -640,8 +640,8 @@ CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture
 
             switch(destType)
             {
-            case CT_BC6H:
-                    // Reserved
+            case CT_BC6H: 
+                    // Reserved 
                     break;
             }
 
@@ -674,7 +674,7 @@ CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture
 
         if(dwHeight > 0)
         {
-            threadData.m_pSrcBuffer = CreateCodecBuffer(srcBufferType,
+            threadData.m_pSrcBuffer = CreateCodecBuffer(srcBufferType, 
                                                         pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight, pSourceTexture->nBlockDepth,
                                                         pSourceTexture->dwWidth, dwHeight, pSourceTexture->dwPitch, pSourceData);
             threadData.m_pDestBuffer = threadData.m_pCodec->CreateBuffer(

@@ -67,7 +67,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{B439F755-9F29-480A-BB3E-C055C682E796}</ProjectGuid>
+    <ProjectGuid>{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CompressonatorLib</RootNamespace>
     <ProjectName>Compressonator</ProjectName>
@@ -470,6 +470,7 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -1101,9 +1102,6 @@
     <ClCompile Include="../Source/Codec/ETC/etcpack/etcdec.cxx" />
     <ClCompile Include="../Source/Codec/ETC/etcpack/etcimage.cxx" />
     <ClCompile Include="../Source/Codec/ETC/etcpack/etcpack.cxx" />
-    <ClCompile Include="../Source/Codec/GT/Codec_GT.cpp" />
-    <ClCompile Include="../Source/Codec/GT/GT_Decode.cpp" />
-    <ClCompile Include="../Source/Codec/GT/GT_Encode.cpp" />
     <ClCompile Include="../Source/Codec/ASTC/ASTC_Decode.cpp" />
     <ClCompile Include="../Source/Codec/ASTC/ASTC_Encode.cpp" />
     <ClCompile Include="../Source/Codec/ASTC/ASTC_Library.cpp" />
@@ -1172,6 +1170,9 @@
     <ClCompile Include="../Source/Codec/DXTC/dxtc_v11_compress.c" />
     <ClCompile Include="../Source/Codec/DXTC/dxtc_v11_compress_asm.c" />
     <ClCompile Include="../Source/Compress.cpp" />
+    <ClCompile Include="..\Source\Codec\GT\Codec_GT.cpp" />
+    <ClCompile Include="..\Source\Codec\GT\GT_Decode.cpp" />
+    <ClCompile Include="..\Source\Codec\GT\GT_Encode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half/half.h" />
@@ -1252,16 +1253,16 @@
     <ClInclude Include="../Header/Codec/ETC/etcpack.h" />
     <ClInclude Include="../Header/Codec/ETC/etcpack/etcimage.h" />
     <ClInclude Include="../Header/Codec/ETC/etcpack/etcpack_lib.h" />
-    <ClInclude Include="../Header/Codec/GT/Codec_GT.h" />
-    <ClInclude Include="../Header/Codec/GT/GT_Decode.h" />
-    <ClInclude Include="../Header/Codec/GT/GT_Definitions.h" />
-    <ClInclude Include="../Header/Codec/GT/GT_Encode.h" />
     <ClInclude Include="../Header/Common.h" />
     <ClInclude Include="../Header/Compress.h" />
     <ClInclude Include="../Header/Internal/CompClient.h" />
     <ClInclude Include="../Header/Internal/debug.h" />
     <ClInclude Include="../Header/Version.h" />
     <ClInclude Include="../Source/Common/HDR_Encode.h" />
+    <ClInclude Include="..\Header\Codec\GT\Codec_GT.h" />
+    <ClInclude Include="..\Header\Codec\GT\GT_Decode.h" />
+    <ClInclude Include="..\Header\Codec\GT\GT_Definitions.h" />
+    <ClInclude Include="..\Header\Codec\GT\GT_Encode.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="../CompressonatorLib.def" />

@@ -32,17 +32,17 @@
 //
 // Used by BC7_Encode
 
-void    WriteBit(BYTE   *base,
+void    WriteBit(CMP_BYTE   *base,
                  int  offset,
-                 BYTE   bitVal)
+    CMP_BYTE   bitVal)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif
     int byteLocation;
     int remainder;
-    BYTE    val;
-    BYTE   mask;
+    CMP_BYTE    val;
+    CMP_BYTE   mask;
 
     byteLocation = offset/8;
     remainder = offset%8;
@@ -102,16 +102,16 @@ uint8_t interpolate(uint8_t e0, uint8_t e1, uint8_t index, uint8_t indexprecisio
 }
 #endif
 
-void GetRamp(DWORD endpoint[][MAX_DIMENSION_BIG],
+void GetRamp(CMP_DWORD endpoint[][MAX_DIMENSION_BIG],
              double ramp[MAX_DIMENSION_BIG][(1<<MAX_INDEX_BITS)],
-             DWORD clusters[2],
-             DWORD componentBits[MAX_DIMENSION_BIG])
+    CMP_DWORD clusters[2],
+    CMP_DWORD componentBits[MAX_DIMENSION_BIG])
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif
     double ep[2][MAX_DIMENSION_BIG];
-    DWORD i;
+    CMP_DWORD i;
 
     // Expand each endpoint component to 8 bits by shifting the MSB to bit 7
     // and then replicating the high bits to the low bits revealed by
@@ -124,8 +124,8 @@ void GetRamp(DWORD endpoint[][MAX_DIMENSION_BIG],
         {
             ep[0][i] = (double)(endpoint[0][i] << (8 - componentBits[i]));
             ep[1][i] = (double)(endpoint[1][i] << (8 - componentBits[i]));
-            ep[0][i] += (double)((DWORD)ep[0][i] >> componentBits[i]);
-            ep[1][i] += (double)((DWORD)ep[1][i] >> componentBits[i]);
+            ep[0][i] += (double)((CMP_DWORD)ep[0][i] >> componentBits[i]);
+            ep[1][i] += (double)((CMP_DWORD)ep[1][i] >> componentBits[i]);
 
             ep[0][i] = min(255., max(0., ep[0][i]));
             ep[1][i] = min(255., max(0., ep[1][i]));
@@ -139,9 +139,9 @@ void GetRamp(DWORD endpoint[][MAX_DIMENSION_BIG],
         ep[0][COMP_ALPHA] = ep[1][COMP_ALPHA] = 255.;
     }
 
-    DWORD   rampIndex = clusters[0];
+    CMP_DWORD   rampIndex = clusters[0];
 
-    rampIndex = (DWORD)(log((double)rampIndex) / log(2.0));
+    rampIndex = (CMP_DWORD)(log((double)rampIndex) / log(2.0));
 
     // Generate colours for the RGB ramp
     for(i=0; i < clusters[0]; i++)
@@ -165,7 +165,7 @@ void GetRamp(DWORD endpoint[][MAX_DIMENSION_BIG],
 
 
     rampIndex = clusters[1];
-    rampIndex = (DWORD)(log((double)rampIndex) / log(2.0));
+    rampIndex = (CMP_DWORD)(log((double)rampIndex) / log(2.0));
 
     if(!componentBits[COMP_ALPHA])
     {

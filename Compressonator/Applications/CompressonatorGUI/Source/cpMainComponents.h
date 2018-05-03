@@ -41,6 +41,7 @@
 #include "acaboutdlg.h"
 #include "acProgressDlg.h"
 #include "cmdline.h"
+#include "UtilFuncs.h"
 
 #include <QTimer>
 #include "acCustomDockWidget.h"
@@ -49,6 +50,12 @@
 // Common Project Data Types
 #include "cpProjectData.h"
 
+// File Menu
+#include <QMenu>
+
+#ifdef USE_3DCONVERT
+#include "cp3DModelConvert.h"
+#endif
 // #define ENABLE_AGS_SUPPORT
 #ifdef ENABLE_AGS_SUPPORT
 #include <amd_ags.h>
@@ -109,6 +116,9 @@ public:
     void AGSGetDisplayInfo(AGSDisplaySettings *settings);
     bool AGSSetDisplay(AGSDisplaySettings *settings);
 #endif
+#ifdef USE_3DCONVERT
+    CModelConvert           *m_modelConvert;
+#endif
 
     bool                    m_ForceImageRefresh;
     QString                 m_sSettingsFile;
@@ -168,7 +178,7 @@ public slots:
     void imageDiff();
 
     void SetRaised();
-    acCustomDockWidget *FindImageView(QString &Title);
+    acCustomDockWidget *FindImageView(QString &file,bool findDiffs=false);
     void menuItemClicked(QAction* triggeredAction);
 
     // Received when a docked Image View changes visibility
@@ -188,6 +198,9 @@ public slots:
     // Remove Tab Views and update the items icon in project view
     void removeItemTabs(QString *FilePathName);
 
+    // file menu bar
+    void onAboutToShowFileMenu();
+
 protected:
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
 
@@ -205,11 +218,16 @@ private slots:
     void about();
     void browserMsg(const char *msg);
     void OnWelcomePageButtonClick(QString &Request, QString &Msg);
-    void genMIPMaps(); // Dialog
+    
+    void genMIPMaps();      // Dialog
+    void convertModels();   // Dialog
+
 #ifdef ENABLE_AGS_SUPPORT
     void handleHDRon();
 #endif
+
     void onGenerateMIPMap(int nMinSize, QTreeWidgetItem *item); // Generate the MIP levels on selected item(s)
+
     void deleteImageFile();
     void onCompressionDone();
     void onCloseAllDocuments();
@@ -222,13 +240,15 @@ private slots:
     void onShowOutput();
     void onShowWelcomePage();
 
+    void onWriteSettings();
+
 private:
     void createActions();
     void createMenus();
     void createToolBars();
     void createStatusBar();
     void readSettings();
-    void writeSettings();
+
 
     QMenu *fileMenu;
     QMenu *settingsMenu;
@@ -269,7 +289,9 @@ private:
 
     // MIP Generation Action used for toolbar
     QAction *MIPGenAct;
-
+#ifdef USE_3DCONVERT
+    QAction *ConvertModelAct;
+#endif
 
 #ifdef USE_MAIN_IMAVEVIEW_TOOLBAR
     // Image View Actions
@@ -294,6 +316,8 @@ Q_SIGNALS:
 
 };
 
+
+extern QString getFileExt(QString filePathName);
 
 extern acProgressDlg    *g_pProgressDlg;
 extern bool              g_bAbortCompression;

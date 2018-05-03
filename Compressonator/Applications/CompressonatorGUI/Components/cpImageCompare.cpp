@@ -264,7 +264,9 @@ void CImageCompare::runPsnrMse()
 void CImageCompare::createImageView(bool isCompressedCompare)
 {
     Setting *setting = new Setting;
-    setting->onBrightness = false;
+    //setting->onBrightness  = false;
+    setting->fDiffContrast = g_Application_Options.m_imagediff_contrast;
+
 
     QString file1Title = m_sourceFile;
     QString file2Title = m_destFile;
@@ -279,6 +281,7 @@ void CImageCompare::createImageView(bool isCompressedCompare)
         file2Title = "File#2";
     }
 
+    setting->input_image = eImageViewState::isOriginal;
     m_imageviewFile1 = new cpImageView(m_sourceFile, "  "+file1Title+" Image", m_newInnerWidget,NULL, setting);
 
     // Notes: BugFix added change of m_FileName in construct above to prevent main applications FindFile to use these images as 
@@ -287,8 +290,9 @@ void CImageCompare::createImageView(bool isCompressedCompare)
 
     m_imageviewFile1->custTitleBar->setButtonCloseEnabled(false);
     m_imageviewFile1->setFeatures(NoDockWidgetFeatures);
-
+    setting->input_image = eImageViewState::isProcessed;
     m_imageviewFile2 = new cpImageView(m_destFile, "  "+file2Title+" Image", m_newInnerWidget,NULL, setting);
+
     m_imageviewFile2->m_fileName = file2Title+": " + m_destFile;
 
     m_imageviewFile2->custTitleBar->setButtonCloseEnabled(false);
@@ -296,16 +300,15 @@ void CImageCompare::createImageView(bool isCompressedCompare)
 
     setting->onBrightness = true;
     setting->generateDiff = true;
+    setting->input_image = eImageViewState::isDiff;
     QString diffFile = QString::fromUtf8(m_analyzed.c_str());
     m_imageviewDiff = new cpImageView(diffFile, "  Diff Image", m_newInnerWidget, m_diffMips, setting);
+
+
     m_imageviewDiff->m_useOriginalImageCursor = true;
-    m_imageviewDiff->showToobar(true);
+    m_imageviewDiff->showToobar(false);
     m_imageviewDiff->m_acImageView->m_isDiffView = true;
     setting->generateDiff = false;
-    for (int i = 0; i < DEFAULT_BRIGHTNESS_LEVEL; i++)
-    {
-        m_imageviewDiff->m_acImageView->onToggleImageBrightnessUp();
-    }
     m_imageviewDiff->m_fileName = "Diff: " + diffFile;
 
     m_imageviewDiff->custTitleBar->setButtonCloseEnabled(false);

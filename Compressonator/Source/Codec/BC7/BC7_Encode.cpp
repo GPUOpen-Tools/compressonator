@@ -9,10 +9,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -48,7 +48,7 @@
 // Default FQuality is at 0.1 < g_qFAST_THRESHOLD which will cause the SingleIndex compression to start skipping shape blocks
 // during compression
 // if user sets a value above this then all shapes will be used for compression scan for quality
-double g_qFAST_THRESHOLD  = 0.5;
+double g_qFAST_THRESHOLD  = 0.5;    
 
 // This limit is used for DualIndex Block and if fQuality is above this limit then Quantization shaking will always be performed
 // on all indexs
@@ -56,11 +56,11 @@ double g_HIGHQULITY_THRESHOLD = 0.7;
 //
 // For a given block mode this sets up the data needed by the compressor
 //
-// Note that BC7 only uses NO_PBIT, ONE_PBIT and TWO_PBIT encodings
+// Note that BC7 only uses NO_PBIT, ONE_PBIT and TWO_PBIT encodings 
 // for endpoints
 //
 
-void    BC7BlockEncoder::BlockSetup(DWORD blockMode)
+void    BC7BlockEncoder::BlockSetup(CMP_DWORD blockMode)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -122,28 +122,28 @@ void    BC7BlockEncoder::BlockSetup(DWORD blockMode)
 //
 // This function sorts out the bit encoding for the BC7 block and packs everything
 // in the right order for the hardware decoder
-//
+// 
 //
 //
 
-void BC7BlockEncoder::EncodeSingleIndexBlock(DWORD blockMode,
-                                             DWORD partition,
-                                             DWORD colour[MAX_SUBSETS][2],
+void BC7BlockEncoder::EncodeSingleIndexBlock(CMP_DWORD blockMode,
+    CMP_DWORD partition,
+    CMP_DWORD colour[MAX_SUBSETS][2],
                                              int   indices[MAX_SUBSETS][MAX_SUBSET_SIZE],
-                                             //DWORD entryCount[MAX_SUBSETS],
-                                             BYTE  block[COMPRESSED_BLOCK_SIZE])
+                                             //CMP_DWORD entryCount[MAX_SUBSETS],
+    CMP_BYTE  block[COMPRESSED_BLOCK_SIZE])
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif
-    DWORD  i,j,k;
-    DWORD   *partitionTable;
+    CMP_DWORD  i,j,k;
+    CMP_DWORD   *partitionTable;
     int     bitPosition = 0;    // Position the pointer at the LSB
-    BYTE    *basePtr = (BYTE*)block;
-    DWORD   blockIndices[MAX_SUBSET_SIZE];
+    CMP_BYTE    *basePtr = (CMP_BYTE*)block;
+    CMP_DWORD   blockIndices[MAX_SUBSET_SIZE];
 
     // Generate Unary header
-    for(i=0; i < (DWORD)blockMode; i++)
+    for(i=0; i < (int)blockMode; i++)
     {
         WriteBit(basePtr, bitPosition++, 0);
     }
@@ -152,19 +152,19 @@ void BC7BlockEncoder::EncodeSingleIndexBlock(DWORD blockMode,
     // Write partition bits
     for(i=0;i<bti[blockMode].partitionBits; i++)
     {
-        WriteBit(basePtr, bitPosition++, (BYTE)(partition>>i) & 0x1);
+        WriteBit(basePtr, bitPosition++, (CMP_BYTE)(partition>>i) & 0x1);
     }
 
     // Extract the index bits from the partitions
-    partitionTable = (DWORD*)BC7_PARTITIONS[bti[blockMode].subsetCount-1][partition];
+    partitionTable = (CMP_DWORD*)BC7_PARTITIONS[bti[blockMode].subsetCount-1][partition];
 
-    DWORD   idxCount[3] = {0, 0, 0};
+    CMP_DWORD   idxCount[3] = {0, 0, 0};
     bool    flipColours[3] = {false, false, false};
 
-    // Sort out the index set and tag whether we need to flip the
+    // Sort out the index set and tag whether we need to flip the 
     // endpoints to get the correct state in the implicit index bits
     // The implicitly encoded MSB of the fixup index must be 0
-    DWORD   fixup[3] = {0, 0, 0};
+    CMP_DWORD   fixup[3] = {0, 0, 0};
     switch(bti[blockMode].subsetCount)
     {
         case    3:
@@ -182,10 +182,10 @@ void BC7BlockEncoder::EncodeSingleIndexBlock(DWORD blockMode,
     // right state for the implicit MSB of the fixup index
     for(i=0; i < MAX_SUBSET_SIZE; i++)
     {
-        DWORD   p = partitionTable[i];
+        CMP_DWORD   p = partitionTable[i];
         blockIndices[i] = indices[p][idxCount[p]++];
 
-        for(j=0;j<(DWORD)bti[blockMode].subsetCount;j++)
+        for(j=0;j<(int)bti[blockMode].subsetCount;j++)
         {
             if(i==fixup[j])
             {
@@ -199,11 +199,11 @@ void BC7BlockEncoder::EncodeSingleIndexBlock(DWORD blockMode,
 
     // Now we must flip the endpoints where necessary so that the implicitly encoded
     // index bits have the correct state
-    for(i=0;i<(DWORD)bti[blockMode].subsetCount;i++)
+    for(i=0;i<(int)bti[blockMode].subsetCount;i++)
     {
         if(flipColours[i])
         {
-            DWORD   temp;
+            CMP_DWORD   temp;
             temp = colour[i][0];
             colour[i][0] = colour[i][1];
             colour[i][1] = temp;
@@ -213,24 +213,24 @@ void BC7BlockEncoder::EncodeSingleIndexBlock(DWORD blockMode,
     // ...next flip the indices where necessary
     for(i=0; i<MAX_SUBSET_SIZE; i++)
     {
-        DWORD   p = partitionTable[i];
+        CMP_DWORD   p = partitionTable[i];
         if(flipColours[p])
         {
             blockIndices[i] = ((1 << bti[blockMode].indexBits[0]) - 1) - blockIndices[i];
         }
     }
 
-    DWORD   subset, ep, component;
+    CMP_DWORD   subset, ep, component;
 
     // Endpoints are stored in the following order RRRR GGGG BBBB (AAAA) (PPPP)
     // i.e. components are packed together
-    DWORD   unpackedColours[MAX_SUBSETS][2][MAX_DIMENSION_BIG];
-    DWORD   parityBits[MAX_SUBSETS][2];
+    CMP_DWORD   unpackedColours[MAX_SUBSETS][2][MAX_DIMENSION_BIG];
+    CMP_DWORD   parityBits[MAX_SUBSETS][2];
 
     // Unpack the colour values for the subsets
     for(i=0;i<bti[blockMode].subsetCount;i++)
     {
-        DWORD   packedColours[2] = {colour[i][0],
+        CMP_DWORD   packedColours[2] = {colour[i][0],
                                     colour[i][1]};
 
         if(bti[blockMode].pBitType == TWO_PBIT)
@@ -253,7 +253,7 @@ void BC7BlockEncoder::EncodeSingleIndexBlock(DWORD blockMode,
             parityBits[i][1] = 0;
         }
 
-        DWORD   component1;
+        CMP_DWORD   component1;
         for(component1=0;component1<MAX_DIMENSION_BIG;component1++)
         {
             if(m_componentBits[component1])
@@ -270,7 +270,7 @@ void BC7BlockEncoder::EncodeSingleIndexBlock(DWORD blockMode,
     for(component=0; component < MAX_DIMENSION_BIG; component++)
     {
         // loop over subsets
-        for(subset=0; subset<(DWORD)bti[blockMode].subsetCount; subset++)
+        for(subset=0; subset<(int)bti[blockMode].subsetCount; subset++)
         {
             // Loop over endpoints and write colour bits
             for(ep=0; ep<2; ep++)
@@ -280,7 +280,7 @@ void BC7BlockEncoder::EncodeSingleIndexBlock(DWORD blockMode,
                 {
                     WriteBit(basePtr,
                              bitPosition++,
-                             (BYTE)(unpackedColours[subset][ep][component] >> k) & 0x1);
+                             (CMP_BYTE)(unpackedColours[subset][ep][component] >> k) & 0x1);
                 }
             }
         }
@@ -289,7 +289,7 @@ void BC7BlockEncoder::EncodeSingleIndexBlock(DWORD blockMode,
     // Now write parity bits if present
     if(bti[blockMode].pBitType != NO_PBIT)
     {
-        for(subset=0; subset<(DWORD)bti[blockMode].subsetCount; subset++)
+        for(subset=0; subset<(int)bti[blockMode].subsetCount; subset++)
         {
             if(bti[blockMode].pBitType == ONE_PBIT)
             {
@@ -312,20 +312,20 @@ void BC7BlockEncoder::EncodeSingleIndexBlock(DWORD blockMode,
     // Now encode the index bits
     for(i=0; i<MAX_SUBSET_SIZE; i++)
     {
-        DWORD   p = partitionTable[i];
+        CMP_DWORD   p = partitionTable[i];
         // If this is a fixup index then drop the MSB which is implicitly 0
         if(i==fixup[p])
         {
             for(j=0; j<(bti[blockMode].indexBits[0]-1); j++)
             {
-                WriteBit(basePtr, bitPosition++,(BYTE)(blockIndices[i]>>j));
+                WriteBit(basePtr, bitPosition++,(CMP_BYTE)(blockIndices[i]>>j));
             }
         }
         else
         {
             for(j=0;j<bti[blockMode].indexBits[0]; j++)
             {
-                WriteBit(basePtr, bitPosition++,(BYTE)(blockIndices[i]>>j));
+                WriteBit(basePtr, bitPosition++,(CMP_BYTE)(blockIndices[i]>>j));
             }
         }
     }
@@ -353,14 +353,14 @@ void BC7BlockEncoder::EncodeSingleIndexBlock(DWORD blockMode,
 //BYTE BlankBC7Block[16] = { 0x40, 0xC0, 0x1F, 0xF0, 0x07, 0xFC, 0x70, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 double BC7BlockEncoder::CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-                                                 BYTE   out[COMPRESSED_BLOCK_SIZE],
-                                                 DWORD  blockMode)
+    CMP_BYTE   out[COMPRESSED_BLOCK_SIZE],
+    CMP_DWORD  blockMode)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif
-    DWORD   i, k, n;
-    DWORD   dimension;
+    CMP_DWORD   i, k, n;
+    CMP_DWORD   dimension;
 
     // Figure out the effective dimension of this block mode
     if(bti[blockMode].encodingType == NO_ALPHA)
@@ -372,20 +372,20 @@ double BC7BlockEncoder::CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_
         dimension = 4;
     }
 
-    DWORD numPartitionModes = 1 << bti[blockMode].partitionBits;
-    DWORD partitionsToTry = numPartitionModes;
+    CMP_DWORD numPartitionModes = 1 << bti[blockMode].partitionBits;
+    CMP_DWORD partitionsToTry = numPartitionModes;
 
     // Linearly reduce the number of partitions to try as the quality falls below a threshold
-    if(m_quality < g_qFAST_THRESHOLD)
+    if(m_quality < g_qFAST_THRESHOLD) 
     {
-        partitionsToTry = (DWORD)floor((double)(partitionsToTry * m_partitionSearchSize) + 0.5);
-        partitionsToTry = min(numPartitionModes, max(1u, partitionsToTry));
+        partitionsToTry = (CMP_DWORD)floor((double)(partitionsToTry * m_partitionSearchSize) + 0.5);
+        partitionsToTry = min(numPartitionModes, max(1, partitionsToTry));
     }
 
-    DWORD   blockPartition;
+    CMP_DWORD   blockPartition;
     double  partition[MAX_SUBSETS][MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
-    DWORD   entryCount[MAX_SUBSETS];
-    DWORD   subset;
+    CMP_DWORD   entryCount[MAX_SUBSETS];
+    CMP_DWORD   subset;
 
 
 #ifdef    BC7_DEBUG_TO_RESULTS_TXT
@@ -399,7 +399,7 @@ double BC7BlockEncoder::CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_
 #endif
 
 
-    // Loop over the available partitions for the block mode and quantize them
+    // Loop over the available partitions for the block mode and quantize them 
     // to figure out the best candidates for further refinement
     for(blockPartition = 0;
         blockPartition < partitionsToTry;
@@ -450,20 +450,20 @@ double BC7BlockEncoder::CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_
                             {
                                 fprintf(fp,"partition[%2d] = %4.2f, %4.2f, %4.2f\n",row,partition[subset][row][0],partition[subset][row][1],partition[subset][row][2]);
                             }
-
-
+                    
+                    
                             fprintf(fp,"\n");
                             for (int row=0; row<16; row++)
                             {
                                 fprintf(fp,"indices[0][%2d] = %4.2f\n",row,indices[0][row]);
                             }
-
+                    
                             fprintf(fp,"\n");
                             for (int row=0; row<16; row++)
                             {
                                 fprintf(fp,"outB[%2d] = %4.2f, %4.2f, %4.2f\n",row,outB[row][0],outB[row][1],outB[row][2]);
                             }
-
+                    
                             fprintf(fp,"\n");
                             fprintf(fp,"entryCount = %d\n",entryCount[subset]);
                             fprintf(fp,"m_clusters[0] = %d\n",m_clusters[0]);
@@ -471,7 +471,7 @@ double BC7BlockEncoder::CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_
                             fprintf(fp,"step = %4.2f\n",step);
                             fprintf(fp,"dimension = %4.2f\n",dimension);
                             fprintf(fp,"error = %4.2f\n",error);
-                    }
+                    }                
 #endif
                 }
                 else
@@ -496,20 +496,20 @@ double BC7BlockEncoder::CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_
                             {
                                 fprintf(fp,"partition[%2d] = %4.2f, %4.2f, %4.2f\n",row,partition[subset][row][0],partition[subset][row][1],partition[subset][row][2]);
                             }
-
-
+                    
+                    
                             fprintf(fp,"\n");
                             for (int row=0; row<16; row++)
                             {
                                 fprintf(fp,"indices[0][%2d] = %4.2f\n",row,indices[0][row]);
                             }
-
+                    
                             fprintf(fp,"\n");
                             for (int row=0; row<16; row++)
                             {
                                 fprintf(fp,"outB[%2d] = %4.2f, %4.2f, %4.2f\n",row,outB[row][0],outB[row][1],outB[row][2]);
                             }
-
+                    
                             fprintf(fp,"\n");
                             fprintf(fp,"entryCount = %d\n",entryCount[subset]);
                             fprintf(fp,"m_clusters[0] = %d\n",m_clusters[0]);
@@ -519,11 +519,11 @@ double BC7BlockEncoder::CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_
                             fprintf(fp,"error = %4.2f\n",error);
                     }
 #endif
-
+                
                 }
 
                 // Store off the indices for later
-                for(DWORD idx=0; idx < entryCount[subset]; idx++)
+                for(CMP_DWORD idx=0; idx < entryCount[subset]; idx++)
                 {
                     m_storedIndices[blockPartition][subset][idx] = indices[subset][idx];
                 }
@@ -572,8 +572,8 @@ double BC7BlockEncoder::CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_
 
     int     bestEndpoints[MAX_SUBSETS][2][MAX_DIMENSION_BIG];
     int     bestIndices[MAX_SUBSETS][MAX_SUBSET_SIZE];
-    DWORD   bestEntryCount[MAX_SUBSETS];
-    DWORD   bestPartition = 0;
+    CMP_DWORD   bestEntryCount[MAX_SUBSETS];
+    CMP_DWORD   bestPartition = 0;
     double  bestError = DBL_MAX;
 
     // Extensive shaking is most important when the ramp is short, and
@@ -585,11 +585,11 @@ double BC7BlockEncoder::CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_
 
     // shakeSize gives the size of the shake cube (for ep_shaker_2_d)
     // ep_shaker always runs on a 1x1x1 cube on both endpoints
-    DWORD   shakeSize = 8 - (DWORD)floor(1.5 * bti[blockMode].indexBits[0]);
-    shakeSize = max(2u, min((DWORD)floor( shakeSize * m_quality + 0.5), 6));
+    CMP_DWORD   shakeSize = 8 - (CMP_DWORD)floor(1.5 * bti[blockMode].indexBits[0]);
+    shakeSize = max(2, min((CMP_DWORD)floor( shakeSize * m_quality + 0.5), 6));
 
     // Shake attempts indicates how many partitions to try to shake
-    DWORD   numShakeAttempts = max(1, min((DWORD)floor(8 * m_quality + 0.5), partitionsToTry));
+    CMP_DWORD   numShakeAttempts = max(1, min((CMP_DWORD)floor(8 * m_quality + 0.5), partitionsToTry));
 
     // Set up all the parameters for the shakers
     // Must increase shake size if these block endpoints use parity
@@ -653,7 +653,7 @@ double BC7BlockEncoder::CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_
                                                temp_epo_code,
                                                m_clusters[0]-1,
                                                bits,
-                                               (qt)m_parityBits,
+                                               (CMP_qt)m_parityBits,
                                                dimension);
 
                     tempError[1] = ep_shaker_2_d(partition[subset],
@@ -740,12 +740,12 @@ double BC7BlockEncoder::CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_
 
     // Now we have all the data needed to encode the block
     // We need to pack the endpoints prior to encoding
-    DWORD   packedEndpoints[3][2];
+    CMP_DWORD   packedEndpoints[3][2];
     for(subset=0; subset<bti[blockMode].subsetCount; subset++)
     {
         if(bestEntryCount[subset])
         {
-            DWORD   rightAlignment = 0;
+            CMP_DWORD   rightAlignment = 0;
             packedEndpoints[subset][0] = 0;
             packedEndpoints[subset][1] = 0;
 
@@ -786,7 +786,7 @@ double BC7BlockEncoder::CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_
 
 
 
-static DWORD   componentRotations[4][4] =
+static CMP_DWORD   componentRotations[4][4] =
 {
     {COMP_ALPHA, COMP_RED,   COMP_GREEN, COMP_BLUE},
     {COMP_RED,   COMP_ALPHA, COMP_GREEN, COMP_BLUE},
@@ -794,21 +794,21 @@ static DWORD   componentRotations[4][4] =
     {COMP_BLUE,  COMP_RED,   COMP_GREEN, COMP_ALPHA}
 };
 
-void BC7BlockEncoder::EncodeDualIndexBlock(DWORD blockMode,
-                                           DWORD indexSelection,
-                                           DWORD componentRotation,
+void BC7BlockEncoder::EncodeDualIndexBlock(CMP_DWORD blockMode,
+    CMP_DWORD indexSelection,
+    CMP_DWORD componentRotation,
                                            int endpoint[2][2][MAX_DIMENSION_BIG],
                                            int indices[2][MAX_SUBSET_SIZE],
-                                           BYTE   out[COMPRESSED_BLOCK_SIZE])
+    CMP_BYTE   out[COMPRESSED_BLOCK_SIZE])
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif
-    DWORD i,j,k;
+    CMP_DWORD i,j,k;
     int   bitPosition = 0;    // Position the pointer at the LSB
-    BYTE  *basePtr = out;
-    DWORD idxBits[2];
-    BOOL swapIndices;
+    CMP_BYTE  *basePtr = out;
+    CMP_DWORD idxBits[2];
+    CMP_BOOL swapIndices;
 
     // Generate Unary header for this mode
     for(i=0;i<blockMode;i++)
@@ -820,13 +820,13 @@ void BC7BlockEncoder::EncodeDualIndexBlock(DWORD blockMode,
     // Write rotation bits
     for(i=0; i<bti[blockMode].rotationBits; i++)
     {
-        WriteBit(basePtr, bitPosition++, (BYTE)((componentRotation>>i) & 0xff));
+        WriteBit(basePtr, bitPosition++, (CMP_BYTE)((componentRotation>>i) & 0xff));
     }
 
     // Write index selector bits
     for(i=0;i<bti[blockMode].indexModeBits; i++)
     {
-        WriteBit(basePtr, bitPosition++, (BYTE)(indexSelection ? 1: 0));
+        WriteBit(basePtr, bitPosition++, (CMP_BYTE)(indexSelection ? 1: 0));
     }
 
     if(indexSelection)
@@ -874,7 +874,7 @@ void BC7BlockEncoder::EncodeDualIndexBlock(DWORD blockMode,
         {
             for(k=0;k<4;k++)
             {
-                DWORD   temp;
+                CMP_DWORD   temp;
                 temp = endpoint[i][0][k];
                 endpoint[i][0][k] = endpoint[i][1][k];
                 endpoint[i][1][k] = temp;
@@ -882,9 +882,9 @@ void BC7BlockEncoder::EncodeDualIndexBlock(DWORD blockMode,
         }
     }
 
-    DWORD   ep, component;
+    CMP_DWORD   ep, component;
     // Encode the colour and alpha information
-    DWORD   vectorComponentBits = bti[blockMode].vectorBits / 3;
+    CMP_DWORD   vectorComponentBits = bti[blockMode].vectorBits / 3;
 
     // Loop over components
     for(component=0; component < MAX_DIMENSION_BIG; component++)
@@ -897,7 +897,7 @@ void BC7BlockEncoder::EncodeDualIndexBlock(DWORD blockMode,
                 {
                     WriteBit(basePtr,
                             bitPosition++,
-                            (BYTE)((endpoint[0][ep][component] >> k) & 0x1));
+                            (CMP_BYTE)((endpoint[0][ep][component] >> k) & 0x1));
                 }
             }
         }
@@ -909,7 +909,7 @@ void BC7BlockEncoder::EncodeDualIndexBlock(DWORD blockMode,
                 {
                     WriteBit(basePtr,
                              bitPosition++,
-                            (BYTE)((endpoint[1][ep][0] >> j) & 0x1));
+                            (CMP_BYTE)((endpoint[1][ep][0] >> j) & 0x1));
                 }
             }
         }
@@ -918,7 +918,7 @@ void BC7BlockEncoder::EncodeDualIndexBlock(DWORD blockMode,
     // Now encode the index bits
     for(i=0; i<2; i++)
     {
-        DWORD   idxSelect = i;
+        CMP_DWORD   idxSelect = i;
 
         if(swapIndices)
         {
@@ -930,14 +930,14 @@ void BC7BlockEncoder::EncodeDualIndexBlock(DWORD blockMode,
             {
                 for(k=0;k<(idxBits[idxSelect]-1); k++)
                 {
-                    WriteBit(basePtr, bitPosition++,(BYTE)(indices[idxSelect][j]>>k));
+                    WriteBit(basePtr, bitPosition++,(CMP_BYTE)(indices[idxSelect][j]>>k));
                 }
             }
             else
             {
                 for(k=0;k<idxBits[idxSelect]; k++)
                 {
-                    WriteBit(basePtr, bitPosition++,(BYTE)(indices[idxSelect][j]>>k));
+                    WriteBit(basePtr, bitPosition++,(CMP_BYTE)(indices[idxSelect][j]>>k));
                 }
             }
         }
@@ -952,21 +952,21 @@ void BC7BlockEncoder::EncodeDualIndexBlock(DWORD blockMode,
 
 
 double BC7BlockEncoder::CompressDualIndexBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-                                               BYTE   out[COMPRESSED_BLOCK_SIZE],
-                                               DWORD  blockMode)
+    CMP_BYTE   out[COMPRESSED_BLOCK_SIZE],
+    CMP_DWORD  blockMode)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif
-    DWORD   i;
+    CMP_DWORD   i;
     double  cBlock[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
     double  aBlock[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
 
-    DWORD maxRotation = 1 << bti[blockMode].rotationBits;
-    DWORD rotation;
+    CMP_DWORD maxRotation = 1 << bti[blockMode].rotationBits;
+    CMP_DWORD rotation;
 
-    DWORD maxIndexSelection = 1 << bti[blockMode].indexModeBits;
-    DWORD indexSelection;
+    CMP_DWORD maxIndexSelection = 1 << bti[blockMode].indexModeBits;
+    CMP_DWORD indexSelection;
 
     int        indices[2][MAX_SUBSET_SIZE];
     double  outQ[2][MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
@@ -986,14 +986,14 @@ double BC7BlockEncoder::CompressDualIndexBlock(double in[MAX_SUBSET_SIZE][MAX_DI
     fprintf(fp,"m_blockMaxRange =  %4.0f\n",m_blockMaxRange);
     fprintf(fp,"m_quantizerRangeThreshold = %4.0f\n",m_quantizerRangeThreshold);
 #endif
-
+    
     // Go through each possible rotation and selection of indices
-    for(rotation = 0; rotation < maxRotation; rotation++)
+    for(rotation = 0; rotation < maxRotation; rotation++)  
     { // A
 
 
         for(i=0; i<MAX_SUBSET_SIZE; i++)
-        {
+        { 
             cBlock[i][COMP_RED]   = in[i][componentRotations[rotation][1]];
             cBlock[i][COMP_GREEN] = in[i][componentRotations[rotation][2]];
             cBlock[i][COMP_BLUE]  = in[i][componentRotations[rotation][3]];
@@ -1006,14 +1006,14 @@ double BC7BlockEncoder::CompressDualIndexBlock(double in[MAX_SUBSET_SIZE][MAX_DI
 #ifdef    BC7_DEBUG_TO_RESULTS_TXT
         fprintf(fp,"\ncBlock[16][3]\n");
         for(i=0; i<MAX_SUBSET_SIZE; i++)
-        {
+        { 
             fprintf(fp,"%4.0f, %4.0f, %4.0f\n",cBlock[i][COMP_RED],cBlock[i][COMP_GREEN],cBlock[i][COMP_BLUE]);
         }
-
+        
 
         fprintf(fp,"\naBlock[16][3]\n");
         for(i=0; i<MAX_SUBSET_SIZE; i++)
-        {
+        { 
             fprintf(fp,"%4.0f, %4.0f, %4.0f\n",aBlock[i][COMP_RED],aBlock[i][COMP_GREEN],aBlock[i][COMP_BLUE]);
         }
 #endif
@@ -1021,7 +1021,7 @@ double BC7BlockEncoder::CompressDualIndexBlock(double in[MAX_SUBSET_SIZE][MAX_DI
         for(indexSelection = 0; indexSelection < maxIndexSelection; indexSelection++)
         { // B
             quantizerError = 0.;
-
+            
 #ifdef    BC7_DEBUG_TO_RESULTS_TXT
             fprintf(fp,"\n-------------- Quantize the vector block ----------------\n");
 #endif
@@ -1042,26 +1042,26 @@ double BC7BlockEncoder::CompressDualIndexBlock(double in[MAX_SUBSET_SIZE][MAX_DI
                                     direction,
                                     &step,
                                     3);
-
+                
 #ifdef    BC7_DEBUG_TO_RESULTS_TXT
                 fprintf(fp,"\n");
                 for (int row=0; row<16; row++)
                 {
                     fprintf(fp,"indices[0][%2d] = %4.2f\n",row,indices[0][row]);
                 }
-
+                
                 fprintf(fp,"\n");
                 for (int row=0; row<16; row++)
                 {
                     fprintf(fp,"outQ[0][%2d] = %4.2f, %4.2f, %4.2f\n",row,outQ[0][row][0],outQ[0][row][1],outQ[0][row][2]);
                 }
-
+                
                 fprintf(fp,"\n");
                 fprintf(fp,"Direction = %4.2f, %4.2f, %4.2f\n",direction[0],direction[1],direction[2]);
                 fprintf(fp,"step = %4.2f\n",step);
                 fprintf(fp,"quantizerError = %4.2f\n",quantizerError);
 #endif
-
+            
             }
             else
             {
@@ -1086,13 +1086,13 @@ double BC7BlockEncoder::CompressDualIndexBlock(double in[MAX_SUBSET_SIZE][MAX_DI
                 {
                     fprintf(fp,"indices[0][%2d] = %4.2f\n",row,indices[0][row]);
                 }
-
+                
                 fprintf(fp,"\n");
                 for (int row=0; row<16; row++)
                 {
                     fprintf(fp,"outQ[0][%2d] = %4.2f, %4.2f, %4.2f\n",row,outQ[0][row][0],outQ[0][row][1],outQ[0][row][2]);
                 }
-
+                
                 fprintf(fp,"\n");
                 fprintf(fp,"Direction = %4.2f, %4.2f, %4.2f\n",direction[0],direction[1],direction[2]);
                 fprintf(fp,"step = %4.2f\n",step);
@@ -1128,13 +1128,13 @@ double BC7BlockEncoder::CompressDualIndexBlock(double in[MAX_SUBSET_SIZE][MAX_DI
                 {
                     fprintf(fp,"indices[1][%2d] = %4.2f\n",row,indices[1][row]);
                 }
-
+                
                 fprintf(fp,"\n");
                 for (int row=0; row<16; row++)
                 {
                     fprintf(fp,"outQ[1][%2d] = %4.2f, %4.2f, %4.2f\n",row,outQ[1][row][0],outQ[1][row][1],outQ[1][row][2]);
                 }
-
+                
                 fprintf(fp,"\n");
                 fprintf(fp,"Direction = %4.2f, %4.2f, %4.2f\n",direction[0],direction[1],direction[2]);
                 fprintf(fp,"step = %4.2f\n",step);
@@ -1163,13 +1163,13 @@ double BC7BlockEncoder::CompressDualIndexBlock(double in[MAX_SUBSET_SIZE][MAX_DI
                 {
                     fprintf(fp,"indices[1][%2d] = %4.2f\n",row,indices[1][row]);
                 }
-
+                
                 fprintf(fp,"\n");
                 for (int row=0; row<16; row++)
                 {
                     fprintf(fp,"outQ[1][%2d] = %4.2f, %4.2f, %4.2f\n",row,outQ[1][row][0],outQ[1][row][1],outQ[1][row][2]);
                 }
-
+                
                 fprintf(fp,"\n");
                 fprintf(fp,"Direction = %4.2f, %4.2f, %4.2f\n",direction[0],direction[1],direction[2]);
                 fprintf(fp,"step = %4.2f\n",step);
@@ -1185,9 +1185,9 @@ double BC7BlockEncoder::CompressDualIndexBlock(double in[MAX_SUBSET_SIZE][MAX_DI
             if((m_quality > g_HIGHQULITY_THRESHOLD) || (quantizerError <= bestQuantizerError))
             {
                 // Shake size gives the size of the shake cube
-                DWORD   shakeSize;
+                CMP_DWORD   shakeSize;
 
-                shakeSize = max(2, min( (DWORD)(6 * m_quality), 6));
+                shakeSize = max(2, min( (CMP_DWORD)(6 * m_quality), 6));
 
                 int     bits[2][4];
 
@@ -1229,7 +1229,7 @@ double BC7BlockEncoder::CompressDualIndexBlock(double in[MAX_SUBSET_SIZE][MAX_DI
                                 epo_code[0],
                                 (1 << bti[blockMode].indexBits[0 ^ indexSelection])-1,
                                 bits[0],
-                                (qt)0,
+                                (CMP_qt)0,
                                 3);
 
                      overallError += ep_shaker_2_d(cBlock,
@@ -1266,7 +1266,7 @@ double BC7BlockEncoder::CompressDualIndexBlock(double in[MAX_SUBSET_SIZE][MAX_DI
                                 epo_code[1],
                                 (1 << bti[blockMode].indexBits[1 ^ indexSelection])-1,
                                 bits[1],
-                                (qt)0,
+                                (CMP_qt)0,
                                 3);
 
                     overallError += ep_shaker_2_d(aBlock,
@@ -1316,16 +1316,16 @@ double BC7BlockEncoder::CompressDualIndexBlock(double in[MAX_SUBSET_SIZE][MAX_DI
 #include <stdio.h>
 
 double BC7BlockEncoder::CompressBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-                                      BYTE   out[COMPRESSED_BLOCK_SIZE])
+    CMP_BYTE   out[COMPRESSED_BLOCK_SIZE])
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif
-    DWORD   i, j;
-    BOOL    blockNeedsAlpha        = FALSE;
-    BOOL    blockAlphaZeroOne      = FALSE;
-    DWORD   validModeMask          = m_validModeMask;
-    BOOL    encodedBlock           = FALSE;
+    CMP_DWORD   i, j;
+    CMP_BOOL    blockNeedsAlpha        = FALSE;
+    CMP_BOOL    blockAlphaZeroOne      = FALSE;
+    CMP_DWORD   validModeMask          = m_validModeMask;
+    CMP_BOOL    encodedBlock           = FALSE;
 
 #ifdef    BC7_DEBUG_TO_RESULTS_TXT
     fp = fopen("debugdata.txt","w");
@@ -1378,7 +1378,7 @@ double BC7BlockEncoder::CompressBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_B
     fprintf(fp,"m_blockMin[1] = %4.2f\n",m_blockMin[1]);
     fprintf(fp,"m_blockMin[2] = %4.2f\n",m_blockMin[2]);
     fprintf(fp,"m_blockMin[3] = %4.2f\n\n",m_blockMin[3]);
-
+    
     fprintf(fp,"m_blockMax[0] = %4.2f\n",m_blockMax[0]);
     fprintf(fp,"m_blockMax[1] = %4.2f\n",m_blockMax[1]);
     fprintf(fp,"m_blockMax[2] = %4.2f\n",m_blockMax[2]);
@@ -1400,12 +1400,12 @@ double BC7BlockEncoder::CompressBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_B
     fprintf(fp,"m_blockRange[2] = %4.2f\n",m_blockRange[2]);
     fprintf(fp,"m_blockRange[3] = %4.2f\n",m_blockRange[3]);
     fprintf(fp,"m_blockMaxRange = %4.2f\n\n",m_blockMaxRange);
-
+    
     fprintf(fp,"=========================================\n");
 #endif
 
     // Initial loop - go through the block modes and get the ones that are valid
-    for(DWORD blockMode=0; blockMode < NUM_BLOCK_TYPES; blockMode++)
+    for(CMP_DWORD blockMode=0; blockMode < NUM_BLOCK_TYPES; blockMode++)
     {
         // Check if this mode is allowed based on the global settings
         if(!(validModeMask & (1 << blockMode)))
@@ -1450,10 +1450,10 @@ double BC7BlockEncoder::CompressBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_B
 
     // Try all the legal block modes that we flagged
 
-    BYTE    temporaryOutputBlock[COMPRESSED_BLOCK_SIZE];
+    CMP_BYTE    temporaryOutputBlock[COMPRESSED_BLOCK_SIZE];
     double bestError = DBL_MAX;
     double thisError;
-    DWORD bestblockMode=99;
+    CMP_DWORD bestblockMode=99;
 
     // We change the order in which we visit the block modes to try to maximize the chance
     // that we manage to early out as quickly as possible.
@@ -1462,12 +1462,12 @@ double BC7BlockEncoder::CompressBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_B
     // modes are now enumerated earlier, so the first encoding that passes the threshold will
     // tend to pass by a greater margin than if we used a dumb ordering, and thus overall error will
     // be improved)
-    DWORD   blockModeOrder[NUM_BLOCK_TYPES] = {4, 6, 3, 1, 0, 2, 7, 5};
+    CMP_DWORD   blockModeOrder[NUM_BLOCK_TYPES] = {4, 6, 3, 1, 0, 2, 7, 5};
 
-    for(DWORD j1=0; j1 < NUM_BLOCK_TYPES; j1++)
+    for(CMP_DWORD j1=0; j1 < NUM_BLOCK_TYPES; j1++)
     {
-        DWORD blockMode = blockModeOrder[j1];
-        DWORD Mode = 0x0001 << blockMode;
+        CMP_DWORD blockMode = blockModeOrder[j1];
+        CMP_DWORD Mode = 0x0001 << blockMode;
 
         if(!(validModeMask & Mode))
         {
@@ -1476,10 +1476,10 @@ double BC7BlockEncoder::CompressBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_B
 
         // Setup mode parameters for this block
         BlockSetup(blockMode);
-
+        
         if(bti[blockMode].encodingType != SEPARATE_ALPHA)
         {
-
+       
             #ifdef    BC7_DEBUG_TO_RESULTS_TXT
             fprintf(fp,"=================== CompressSingleIndexBlock ======================\n");
             #endif
@@ -1488,11 +1488,11 @@ double BC7BlockEncoder::CompressBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_B
         }
         else
         {
-
+            
             #ifdef    BC7_DEBUG_TO_RESULTS_TXT
             fprintf(fp,"==================  CompressDualIndexBlock =======================\n");
             #endif
-
+       
             thisError = CompressDualIndexBlock(in, temporaryOutputBlock, blockMode);
         }
 

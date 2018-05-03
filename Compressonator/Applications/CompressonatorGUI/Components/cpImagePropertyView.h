@@ -56,7 +56,7 @@ public:
     void evalProperties();
 
 private:
-    ObjectController *m_theController;
+    ObjectController *m_theController = NULL;
     QString m_currentClassName;             // Current Name of object been Displayed
 
     bool    m_isEditing_Compress_Options;   // Flag to indicate we are editing m_C_Destination_Options 
@@ -75,41 +75,57 @@ private:
     void closeEvent(QCloseEvent * event);
 
 public:
-    C_Destination_Options *m_holddata;             // Generic pointer to class objects received for display
-    QObject   *m_data;                          // pointer to class objects been displayed
-    C_Destination_Options *m_C_Destination_Options;   // Temp hold of known objects that can be editied
+    C_Destination_Options *m_holddata = NULL;             // Generic pointer to class objects received for display
+    QObject   *m_data = NULL;                          // pointer to class objects been displayed
+    C_Destination_Options *m_C_Destination_Options = NULL;   // Temp hold of known objects that can be editied
 
-    QtTreePropertyBrowser *m_browser;
+    QtTreePropertyBrowser *m_browser = NULL;
 
     // Common for all
-    QWidget            *m_newWidget;
-    QWidget            *m_parent;
+    QWidget            *m_newWidget = NULL;
+    QWidget            *m_parent = NULL;
 
-    // Options that can change during editing
-    QtProperty         *m_propQuality;
-    QtProperty         *m_propFormat;
-    QtProperty         *m_propChannelWeightingR;
-    QtProperty         *m_propChannelWeightingG;
-    QtProperty         *m_propChannelWeightingB;
-    QtProperty         *m_propAlphaThreshold;
-    QtProperty         *m_propAdaptiveColor;
-    QtProperty         *m_propUseAlpha;
-    QtProperty         *m_propNoAlpha;
-    QtProperty         *m_propBitrate;
-    QtProperty         *m_propDefog;
-    QtProperty         *m_propExposure;
-    QtProperty         *m_propKneeLow;
-    QtProperty         *m_propKneeHigh;
-    QtProperty         *m_propGamma;
+    // Options that can change during editing of C_Destination_Options data type
+    void Init_C_Destiniation_Data_Controller();
+    QtProperty         *m_propQuality = NULL;
+    QtProperty         *m_propFormat = NULL;
+    QtProperty         *m_propChannelWeightingR = NULL;
+    QtProperty         *m_propChannelWeightingG = NULL;
+    QtProperty         *m_propChannelWeightingB = NULL;
+    QtProperty         *m_propAlphaThreshold = NULL;
+    QtProperty         *m_propAdaptiveColor = NULL;
+    QtProperty         *m_propUseAlpha = NULL;
+    QtProperty         *m_propNoAlpha = NULL;
+    QtProperty         *m_propBitrate = NULL;
+    QtProperty         *m_propDefog = NULL;
+    QtProperty         *m_propExposure = NULL;
+    QtProperty         *m_propKneeLow = NULL;
+    QtProperty         *m_propKneeHigh = NULL;
+    QtProperty         *m_propGamma = NULL;
+
+    // Mesh Class info
+#ifdef USE_MESHOPTIMIZER
+    QtProperty         *m_propMeshOptimizerSettings = NULL;
+#else
+    QtProperty         *m_propMeshSettings = NULL;
+#endif
+    QtProperty         *m_propMeshCompressionSettings = NULL;
+
+    QtProperty         *m_propWidth = NULL;
+    QtProperty         *m_propHeight = NULL;
+    QtProperty         *m_propCompRatio = NULL;
+    QtProperty         *m_propCompTime = NULL;
 
     // Property class that changed based on compression format
-    QtProperty         *m_propChannelWeight;
-    QtProperty         *m_propDXT1Alpha;
-    QtProperty         *m_propASTCBlockRate;
-    QtProperty         *m_propHDRProperties;
+    QtProperty         *m_propChannelWeight = NULL;
+    QtProperty         *m_propDXT1Alpha = NULL;
+    QtProperty         *m_propASTCBlockRate = NULL;
+    QtProperty         *m_propHDRProperties = NULL;
 
 
 public slots:
+    void onMesh_Optimization(QVariant &value);
+    void onMesh_Compression(QVariant &value);
     void OnUpdateData(QObject *data);
     void onCancel();
     void onSave();

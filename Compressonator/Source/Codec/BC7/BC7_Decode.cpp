@@ -9,10 +9,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -47,14 +47,14 @@ static BYTE testBlock[] =
 //              and increments the offset
 //
 
-DWORD BC7BlockDecoder::ReadBit(BYTE base[])
+CMP_DWORD BC7BlockDecoder::ReadBit(CMP_BYTE base[])
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif
     int             byteLocation;
     int             remainder;
-    DWORD bit = 0;
+    CMP_DWORD bit = 0;
     byteLocation = m_bitPosition/8;
     remainder = m_bitPosition % 8;
 
@@ -68,23 +68,23 @@ DWORD BC7BlockDecoder::ReadBit(BYTE base[])
 
 
 void BC7BlockDecoder::DecompressDualIndexBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-                                               BYTE   in[COMPRESSED_BLOCK_SIZE],
-                                               DWORD  endpoint[2][MAX_DIMENSION_BIG])
+    CMP_BYTE   in[COMPRESSED_BLOCK_SIZE],
+    CMP_DWORD  endpoint[2][MAX_DIMENSION_BIG])
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif
-     DWORD i, j, k;
+     CMP_DWORD i, j, k;
 
     double  ramp[MAX_DIMENSION_BIG][1<<MAX_INDEX_BITS];
-    DWORD   blockIndices[2][MAX_SUBSET_SIZE];
+    CMP_DWORD   blockIndices[2][MAX_SUBSET_SIZE];
 
-    DWORD   clusters[2];
-    clusters[0] = 1 << bti[m_blockMode].indexBits[0];
+    CMP_DWORD   clusters[2];
+    clusters[0] = 1 << bti[m_blockMode].indexBits[0];       
     clusters[1] = 1 << bti[m_blockMode].indexBits[1];
     if(m_indexSwap)
     {
-        DWORD   temp = clusters[0];
+        CMP_DWORD   temp = clusters[0];
         clusters[0] = clusters[1];
         clusters[1] = temp;
     }
@@ -106,14 +106,14 @@ void BC7BlockDecoder::DecompressDualIndexBlock(double  out[MAX_SUBSET_SIZE][MAX_
                 blockIndices[i][j] &= ~(1 << (bti[m_blockMode].indexBits[i]-1));
                 for(k=0;k<bti[m_blockMode].indexBits[i]-1; k++)
                 {
-                    blockIndices[i][j] |= (DWORD)ReadBit(in) << k;
+                    blockIndices[i][j] |= (CMP_DWORD)ReadBit(in) << k;
                 }
             }
             else
             {
                for(k=0;k<bti[m_blockMode].indexBits[i]; k++)
                {
-                   blockIndices[i][j] |= (DWORD)ReadBit(in) << k;
+                   blockIndices[i][j] |= (CMP_DWORD)ReadBit(in) << k;
                }
             }
         }
@@ -162,16 +162,16 @@ void BC7BlockDecoder::DecompressDualIndexBlock(double  out[MAX_SUBSET_SIZE][MAX_
 
 
 void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-                                      BYTE   in[COMPRESSED_BLOCK_SIZE])
+    CMP_BYTE   in[COMPRESSED_BLOCK_SIZE])
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif
-    DWORD           i,j;
-    DWORD           *partitionTable;
-    DWORD           blockIndices[MAX_SUBSET_SIZE];
+    CMP_DWORD           i,j;
+    CMP_DWORD           *partitionTable;
+    CMP_DWORD           blockIndices[MAX_SUBSET_SIZE];
     // Endpoints
-    DWORD           endpoint[MAX_SUBSETS][2][MAX_DIMENSION_BIG];
+    CMP_DWORD           endpoint[MAX_SUBSETS][2][MAX_DIMENSION_BIG];
 
     m_blockMode = 0;
     m_partition = 0;
@@ -228,14 +228,14 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
         m_componentBits[COMP_BLUE]  = bti[m_blockMode].vectorBits / 3;
     }
 
-    DWORD   subset, ep, component;
+    CMP_DWORD   subset, ep, component;
     // Endpoints are stored in the following order RRRR GGGG BBBB (AAAA) (PPPP)
     // i.e. components are packed together
     // Loop over components
     for(component=0; component < MAX_DIMENSION_BIG; component++)
     {
         // loop over subsets
-        for(subset=0; subset<(DWORD)bti[m_blockMode].subsetCount; subset++)
+        for(subset=0; subset<(int)bti[m_blockMode].subsetCount; subset++)
         {
             // Loop over endpoints
             for(ep=0; ep<2; ep++)
@@ -252,9 +252,9 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
     // Now get any parity bits
     if(bti[m_blockMode].pBitType != NO_PBIT)
     {
-        for(subset=0; subset<(DWORD)bti[m_blockMode].subsetCount; subset++)
+        for(subset=0; subset<(int)bti[m_blockMode].subsetCount; subset++)
         {
-            DWORD   pBit[2];
+            CMP_DWORD   pBit[2];
             if(bti[m_blockMode].pBitType == ONE_PBIT)
             {
                 pBit[0] = ReadBit(in);
@@ -299,7 +299,7 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
         return;
     }
 
-    DWORD   fixup[MAX_SUBSETS] = {0, 0, 0};
+    CMP_DWORD   fixup[MAX_SUBSETS] = {0, 0, 0};
     switch(bti[m_blockMode].subsetCount)
     {
         case    3:
@@ -313,14 +313,14 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
             break;
     }
 
-    partitionTable = (DWORD*)BC7_PARTITIONS[bti[m_blockMode].subsetCount-1][m_partition];
+    partitionTable = (CMP_DWORD*)BC7_PARTITIONS[bti[m_blockMode].subsetCount-1][m_partition];
 
     // Extract index bits
     for(i=0; i < MAX_SUBSET_SIZE; i++)
     {
-        DWORD   p = partitionTable[i];
+        CMP_DWORD   p = partitionTable[i];
         blockIndices[i] = 0;
-        DWORD   bitsToRead = bti[m_blockMode].indexBits[0];
+        CMP_DWORD   bitsToRead = bti[m_blockMode].indexBits[0];
 
         // If this is a fixup index then set the implicit bit
         if(i==fixup[p])
@@ -336,13 +336,13 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
     }
 
     // Get the ramps
-    DWORD   clusters[2];
+    CMP_DWORD   clusters[2];
     clusters[0] = clusters[1] = 1 << bti[m_blockMode].indexBits[0];
 
     // Colour Ramps
     double          c[MAX_SUBSETS][MAX_DIMENSION_BIG][1<<MAX_INDEX_BITS];
 
-    for(i=0; i<(DWORD)bti[m_blockMode].subsetCount; i++)
+    for(i=0; i<(int)bti[m_blockMode].subsetCount; i++)
     {
         // Unpack the colours
         GetRamp(endpoint[i],

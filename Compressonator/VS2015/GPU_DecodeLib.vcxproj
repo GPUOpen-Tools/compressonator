@@ -397,7 +397,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;$(VULKAN_SDK)/Include;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -436,7 +436,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;$(VULKAN_SDK)/Include;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -514,7 +514,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;$(VULKAN_SDK)/Include;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -553,7 +553,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;$(VULKAN_SDK)/Include;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -586,7 +586,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;$(VULKAN_SDK)/Include;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -617,7 +617,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;_WIN64;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Lib/Ext/DirectXTex/v132;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Lib/Ext/DirectXTex/v132;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;$(VULKAN_SDK)/Include;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -640,7 +640,7 @@
     </PreBuildEvent>
     <Lib>
       <AdditionalDependencies>vulkan-1.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Bin;../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/Ext/Vulkan/1.0.68.0/Bin;$(VULKAN_SDK)/Bin;../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
@@ -650,7 +650,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;$(VULKAN_SDK)/Include;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -684,7 +684,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;$(VULKAN_SDK)/Include;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -732,7 +732,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;$(VULKAN_SDK)/Include;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -780,7 +780,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;$(VULKAN_SDK)/Include;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -814,7 +814,7 @@
     </CustomBuildStep>
     <Lib>
       <AdditionalDependencies>vulkan-1.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Bin32;../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/Ext/Vulkan/1.0.68.0/Lib32/;$(VULKAN_SDK)/Lib32;../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
@@ -827,7 +827,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;$(VULKAN_SDK)/Include;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -874,7 +874,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;$(VULKAN_SDK)/Include;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -909,7 +909,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;$(VULKAN_SDK)/Include;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -944,7 +944,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;VK_USE_PLATFORM_WIN32_KHR;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Lib/Ext/DirectXTex/v132;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Lib/Ext/DirectXTex/v132;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;$(VULKAN_SDK)/Include;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -967,7 +967,7 @@
     </PreBuildEvent>
     <Lib>
       <AdditionalDependencies>vulkan-1.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Bin;../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/Ext/Vulkan/1.0.68.0/Lib/;$(VULKAN_SDK)/Lib;../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
@@ -979,7 +979,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;$(VULKAN_SDK)/Include;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>

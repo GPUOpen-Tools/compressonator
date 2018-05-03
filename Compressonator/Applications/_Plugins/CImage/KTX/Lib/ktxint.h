@@ -1,7 +1,7 @@
 /* -*- tab-width: 4; -*- */
 /* vi: set sw=2 ts=4: */
 
-/* $Id: a694f52e03818dfba0de386459aa63031b23d3ea $ */
+/* $Id: 7f8f35be3acc819647c85c65682529b18a792866 $ */
 
 /*
 Copyright (c) 2010 The Khronos Group Inc.
@@ -36,15 +36,15 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
  * Author: Mark Callow from original code by Georg Kolling
  */
 
-#ifndef _KTXINT_H_
-#define _KTXINT_H_
+#ifndef KTXINT_H
+#define KTXINT_H
 
 /* Define this to include the ETC unpack software in the library. */
 #ifndef SUPPORT_SOFTWARE_ETC_UNPACK
   /* Include for all GL versions because have seen OpenGL ES 3
    * implementaions that do not support ETC1 (ARM Mali emulator v1.0)!
    */
-  #define SUPPORT_SOFTWARE_ETC_UNPACK 1
+  #define SUPPORT_SOFTWARE_ETC_UNPACK 0
 #endif
 
 #ifndef SUPPORT_LEGACY_FORMAT_CONVERSION
@@ -174,6 +174,9 @@ extern GLboolean _ktxSupportsSRGB;
 #define GL_TEXTURE_CUBE_MAP             0x8513
 #define GL_TEXTURE_CUBE_MAP_POSITIVE_X  0x8515
 #endif
+#ifndef GL_TEXTURE_CUBE_MAP_ARRAY
+#define GL_TEXTURE_CUBE_MAP_ARRAY       0x9009
+#endif
 /* from GL_EXT_texture_array */
 #ifndef GL_TEXTURE_1D_ARRAY_EXT
 #define GL_TEXTURE_1D_ARRAY_EXT         0x8C18
@@ -196,6 +199,8 @@ extern GLboolean _ktxSupportsSRGB;
 #if !defined(GL_GREEN_INTEGER)
 #define GL_GREEN_INTEGER				0x8D95
 #define GL_BLUE_INTEGER					0x8D96
+#endif
+#if !defined(GL_ALPHA_INTEGER)
 #define GL_ALPHA_INTEGER				0x8D97
 #endif
 #if !defined (GL_BGR_INTEGER)
@@ -291,6 +296,10 @@ typedef unsigned short GLhalf;
 #define GL_CONTEXT_COMPATIBILITY_PROFILE_BIT 0x00000002
 #endif
 
+#ifndef GL_NUM_EXTENSIONS
+#define GL_NUM_EXTENSIONS 0x821D
+#endif
+
 #ifndef MAX
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #endif
@@ -314,14 +323,14 @@ void _ktxSwapEndian32(khronos_uint32_t* pData32, int count);
 /*
  * UncompressETC: uncompresses an ETC compressed texture image
  */
-/*KTX_error_code _ktxUnpackETC(const GLubyte* srcETC, const GLenum srcFormat,
+KTX_error_code _ktxUnpackETC(const GLubyte* srcETC, const GLenum srcFormat,
 							 khronos_uint32_t active_width, khronos_uint32_t active_height,
 							 GLubyte** dstImage,
 							 GLenum* format, GLenum* internalFormat, GLenum* type,
-							 GLint R16Formats, GLboolean supportsSRGB);*/
+							 GLint R16Formats, GLboolean supportsSRGB);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _KTXINT_H_ */
+#endif /* KTXINT_H */

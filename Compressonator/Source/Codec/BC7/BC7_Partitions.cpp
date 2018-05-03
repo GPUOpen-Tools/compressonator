@@ -29,7 +29,7 @@
 //
 
 
-DWORD   BC7_PARTITIONS[MAX_SUBSETS][MAX_PARTITIONS][MAX_SUBSET_SIZE] =
+CMP_DWORD   BC7_PARTITIONS[MAX_SUBSETS][MAX_PARTITIONS][MAX_SUBSET_SIZE] =
 {
     // Single subset partitions for both BC6H abd BC7
     {
@@ -949,7 +949,7 @@ DWORD   BC7_PARTITIONS[MAX_SUBSETS][MAX_PARTITIONS][MAX_SUBSET_SIZE] =
 
 
 
-DWORD  BC7_FIXUPINDICES[MAX_SUBSETS][MAX_PARTITIONS][3] =
+CMP_DWORD  BC7_FIXUPINDICES[MAX_SUBSETS][MAX_PARTITIONS][3] =
 {
     // One subset
     {
@@ -1006,11 +1006,11 @@ DWORD  BC7_FIXUPINDICES[MAX_SUBSETS][MAX_PARTITIONS][3] =
 
 extern FILE *fp;
 
-void    Partition(DWORD partition,
+void    Partition(CMP_DWORD partition,
                   double in[][MAX_DIMENSION_BIG],
                   double subsets[MAX_SUBSETS][MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-                  DWORD count[MAX_SUBSETS],
-                  DWORD blockType,
+    CMP_DWORD count[MAX_SUBSETS],
+    CMP_DWORD blockType,
                   int   dimension)
 {
 #ifdef USE_DBGTRACE
@@ -1018,7 +1018,7 @@ void    Partition(DWORD partition,
 #endif
 
     int   i,j;
-    DWORD   *table = NULL;
+    CMP_DWORD   *table = NULL;
 
     for(i=0;i<MAX_SUBSETS;i++)
     {
@@ -1045,7 +1045,7 @@ void    Partition(DWORD partition,
 
     for(i=0; i<MAX_SUBSET_SIZE; i++)
     {
-        DWORD   subset = table[i];
+        CMP_DWORD   subset = table[i];
         for(j=0; j<dimension; j++)
         {
             subsets[subset][count[subset]][j] = in[i][j];

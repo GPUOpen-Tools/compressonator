@@ -1,0 +1,870 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>{bc1c0ae0-9746-4b3d-b4fb-3b1f4461e721}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draco">
+      <UniqueIdentifier>{448d19be-e195-4a71-bcc3-f54e3a67507b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draco\attributes">
+      <UniqueIdentifier>{7c8fc65a-a992-462b-8d11-77d77072fb82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draco\compression">
+      <UniqueIdentifier>{01ef4d50-4622-4723-a9cb-bd8d01a9bac3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draco\compression\attributes">
+      <UniqueIdentifier>{218a9cb2-77ee-4fdc-a276-f470f810827f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draco\compression\attributes\prediction_schemes">
+      <UniqueIdentifier>{ad5714c6-0f60-4787-880b-662c2b7be1c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draco\compression\config">
+      <UniqueIdentifier>{8d294539-3cc7-417b-a3fd-17065e41d3e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draco\compression\mesh">
+      <UniqueIdentifier>{86de896d-f097-4ed1-9461-d8e0b63b562f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draco\compression\point_cloud">
+      <UniqueIdentifier>{fb6ee09a-510f-4838-a374-131e9a5c0a29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draco\compression\point_cloud\algorithms">
+      <UniqueIdentifier>{fa6e7145-19bb-46a9-9faa-e6ae3d01667e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draco\core">
+      <UniqueIdentifier>{5cb1a615-fcf9-456c-8825-bcac975d0033}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draco\core\bit_coders">
+      <UniqueIdentifier>{c4e34de5-7546-410e-b99d-6d9968b0c519}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draco\mesh">
+      <UniqueIdentifier>{8a17932f-5062-494d-b618-69fa116c0b4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draco\metadata">
+      <UniqueIdentifier>{b4a78ceb-0fe8-4dd8-b4f6-dab6ef7c6649}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draco\point_cloud">
+      <UniqueIdentifier>{f775c18b-41b8-4934-bde1-59c32a424a7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draco\io">
+      <UniqueIdentifier>{cfc7beee-0c66-4977-9c8b-537a9d3f4169}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="../Applications/_Plugins/Common/PluginInterface.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_octahedron_transform.h">
+      <Filter>Draco\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_quantization_transform.h">
+      <Filter>Draco\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_transform.h">
+      <Filter>Draco\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_transform_data.h">
+      <Filter>Draco\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_transform_type.h">
+      <Filter>Draco\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\geometry_attribute.h">
+      <Filter>Draco\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\geometry_indices.h">
+      <Filter>Draco\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\point_attribute.h">
+      <Filter>Draco\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_decoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_encoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_predictor_area.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_predictor_base.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_multi_parallelogram_decoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_multi_parallelogram_encoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_parallelogram_decoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_parallelogram_encoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_parallelogram_shared.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_decoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_encoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_portable_decoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_portable_encoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_portable_predictor.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_decoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_decoder_factory.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_decoder_interface.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_decoding_transform.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_delta_decoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_delta_encoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder_factory.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder_interface.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_encoding_transform.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_factory.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_interface.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_canonicalized_decoding_transform.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_canonicalized_encoding_transform.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_canonicalized_transform_base.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_decoding_transform.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_encoding_transform.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_transform_base.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_wrap_decoding_transform.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_wrap_encoding_transform.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_wrap_transform_base.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_constrained_multi_parallelogram_decoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_constrained_multi_parallelogram_encoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_constrained_multi_parallelogram_shared.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_data.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_decoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_encoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\attributes_decoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\attributes_decoder_interface.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\attributes_encoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\kd_tree_attributes_decoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\kd_tree_attributes_encoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\kd_tree_attributes_shared.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\linear_sequencer.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\mesh_attribute_indices_encoding_data.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\mesh_attribute_indices_encoding_observer.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\mesh_traversal_sequencer.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\normal_compression_utils.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\points_sequencer.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_decoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_decoders_controller.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_encoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_encoders_controller.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_integer_attribute_decoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_integer_attribute_encoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_normal_attribute_decoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_normal_attribute_encoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_quantization_attribute_decoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_quantization_attribute_encoder.h">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\config\compression_shared.h">
+      <Filter>Draco\compression\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\config\decoder_options.h">
+      <Filter>Draco\compression\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\config\draco_options.h">
+      <Filter>Draco\compression\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\config\encoder_options.h">
+      <Filter>Draco\compression\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\config\encoding_features.h">
+      <Filter>Draco\compression\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_decoder.h">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_decoder_helpers.h">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_decoder.h">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_decoder_impl.h">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_decoder_impl_interface.h">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_encoder.h">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_encoder_impl.h">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_encoder_impl_interface.h">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_shared.h">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_traversal_decoder.h">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_traversal_encoder.h">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_traversal_predictive_decoder.h">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_traversal_predictive_encoder.h">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_traversal_valence_decoder.h">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_traversal_valence_encoder.h">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_encoder.h">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_encoder_helpers.h">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_sequential_decoder.h">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_sequential_encoder.h">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\dynamic_integer_points_kd_tree_decoder.h">
+      <Filter>Draco\compression\point_cloud\algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\dynamic_integer_points_kd_tree_encoder.h">
+      <Filter>Draco\compression\point_cloud\algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\float_points_tree_decoder.h">
+      <Filter>Draco\compression\point_cloud\algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\float_points_tree_encoder.h">
+      <Filter>Draco\compression\point_cloud\algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\integer_points_kd_tree_decoder.h">
+      <Filter>Draco\compression\point_cloud\algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\integer_points_kd_tree_encoder.h">
+      <Filter>Draco\compression\point_cloud\algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\point_cloud_compression_method.h">
+      <Filter>Draco\compression\point_cloud\algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\point_cloud_types.h">
+      <Filter>Draco\compression\point_cloud\algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\quantize_points_3.h">
+      <Filter>Draco\compression\point_cloud\algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\queuing_policy.h">
+      <Filter>Draco\compression\point_cloud\algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_decoder.h">
+      <Filter>Draco\compression\point_cloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_encoder.h">
+      <Filter>Draco\compression\point_cloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_kd_tree_decoder.h">
+      <Filter>Draco\compression\point_cloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_kd_tree_encoder.h">
+      <Filter>Draco\compression\point_cloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_sequential_decoder.h">
+      <Filter>Draco\compression\point_cloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_sequential_encoder.h">
+      <Filter>Draco\compression\point_cloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\decode.h">
+      <Filter>Draco\compression</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\encode.h">
+      <Filter>Draco\compression</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\encode_base.h">
+      <Filter>Draco\compression</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\expert_encode.h">
+      <Filter>Draco\compression</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\adaptive_rans_bit_coding_shared.h">
+      <Filter>Draco\core\bit_coders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\adaptive_rans_bit_decoder.h">
+      <Filter>Draco\core\bit_coders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\adaptive_rans_bit_encoder.h">
+      <Filter>Draco\core\bit_coders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\direct_bit_decoder.h">
+      <Filter>Draco\core\bit_coders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\direct_bit_encoder.h">
+      <Filter>Draco\core\bit_coders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\folded_integer_bit_decoder.h">
+      <Filter>Draco\core\bit_coders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\folded_integer_bit_encoder.h">
+      <Filter>Draco\core\bit_coders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\rans_bit_decoder.h">
+      <Filter>Draco\core\bit_coders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\rans_bit_encoder.h">
+      <Filter>Draco\core\bit_coders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\symbol_bit_decoder.h">
+      <Filter>Draco\core\bit_coders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\symbol_bit_encoder.h">
+      <Filter>Draco\core\bit_coders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\varint_decoding.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\varint_encoding.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\vector_d.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\ans.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_utils.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\cycle_timer.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\data_buffer.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\decoder_buffer.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\divide.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\draco_index_type.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\draco_index_type_vector.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\draco_types.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\draco_version.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\encoder_buffer.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\hash_utils.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\macros.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\math_utils.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\options.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\quantization_utils.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\rans_symbol_coding.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\rans_symbol_decoder.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\rans_symbol_encoder.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\shannon_entropy.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\status.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\statusor.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\symbol_coding_utils.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\symbol_decoding.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\symbol_encoding.h">
+      <Filter>Draco\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\mesh_io.h">
+      <Filter>Draco\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\obj_decoder.h">
+      <Filter>Draco\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\obj_encoder.h">
+      <Filter>Draco\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\parser_utils.h">
+      <Filter>Draco\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\ply_decoder.h">
+      <Filter>Draco\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\ply_encoder.h">
+      <Filter>Draco\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\ply_property_reader.h">
+      <Filter>Draco\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\ply_property_writer.h">
+      <Filter>Draco\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\ply_reader.h">
+      <Filter>Draco\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\point_cloud_io.h">
+      <Filter>Draco\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\corner_table.h">
+      <Filter>Draco\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\corner_table_iterators.h">
+      <Filter>Draco\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\corner_table_traversal_processor.h">
+      <Filter>Draco\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\edgebreaker_observer.h">
+      <Filter>Draco\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\edgebreaker_traverser.h">
+      <Filter>Draco\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh.h">
+      <Filter>Draco\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_are_equivalent.h">
+      <Filter>Draco\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_attribute_corner_table.h">
+      <Filter>Draco\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_cleanup.h">
+      <Filter>Draco\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_misc_functions.h">
+      <Filter>Draco\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_stripifier.h">
+      <Filter>Draco\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\prediction_degree_traverser.h">
+      <Filter>Draco\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\triangle_soup_mesh_builder.h">
+      <Filter>Draco\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\metadata\geometry_metadata.h">
+      <Filter>Draco\metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\metadata\metadata.h">
+      <Filter>Draco\metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\metadata\metadata_decoder.h">
+      <Filter>Draco\metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\metadata\metadata_encoder.h">
+      <Filter>Draco\metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\point_cloud\point_cloud.h">
+      <Filter>Draco\point_cloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\point_cloud\point_cloud_builder.h">
+      <Filter>Draco\point_cloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\draco_features.h">
+      <Filter>Draco</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_octahedron_transform.cc">
+      <Filter>Draco\attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_quantization_transform.cc">
+      <Filter>Draco\attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_transform.cc">
+      <Filter>Draco\attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\geometry_attribute.cc">
+      <Filter>Draco\attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\point_attribute.cc">
+      <Filter>Draco\attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder_factory.cc">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\attributes_decoder.cc">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\attributes_encoder.cc">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\kd_tree_attributes_decoder.cc">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\kd_tree_attributes_encoder.cc">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_decoder.cc">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_decoders_controller.cc">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_encoder.cc">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_encoders_controller.cc">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_integer_attribute_decoder.cc">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_integer_attribute_encoder.cc">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_normal_attribute_decoder.cc">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_normal_attribute_encoder.cc">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_quantization_attribute_decoder.cc">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_quantization_attribute_encoder.cc">
+      <Filter>Draco\compression\attributes\prediction_schemes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_decoder.cc">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_decoder.cc">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_decoder_impl.cc">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_encoder.cc">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_encoder_impl.cc">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_encoder.cc">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_sequential_decoder.cc">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_sequential_encoder.cc">
+      <Filter>Draco\compression\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\dynamic_integer_points_kd_tree_decoder.cc">
+      <Filter>Draco\compression\point_cloud\algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\dynamic_integer_points_kd_tree_encoder.cc">
+      <Filter>Draco\compression\point_cloud\algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\float_points_tree_decoder.cc">
+      <Filter>Draco\compression\point_cloud\algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\float_points_tree_encoder.cc">
+      <Filter>Draco\compression\point_cloud\algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\integer_points_kd_tree_decoder.cc">
+      <Filter>Draco\compression\point_cloud\algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\integer_points_kd_tree_encoder.cc">
+      <Filter>Draco\compression\point_cloud\algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_decoder.cc">
+      <Filter>Draco\compression\point_cloud</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_encoder.cc">
+      <Filter>Draco\compression\point_cloud</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_kd_tree_decoder.cc">
+      <Filter>Draco\compression\point_cloud</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_kd_tree_encoder.cc">
+      <Filter>Draco\compression\point_cloud</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_sequential_decoder.cc">
+      <Filter>Draco\compression\point_cloud</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_sequential_encoder.cc">
+      <Filter>Draco\compression\point_cloud</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\decode.cc">
+      <Filter>Draco\compression</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\encode.cc">
+      <Filter>Draco\compression</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\expert_encode.cc">
+      <Filter>Draco\compression</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\adaptive_rans_bit_decoder.cc">
+      <Filter>Draco\core\bit_coders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\adaptive_rans_bit_encoder.cc">
+      <Filter>Draco\core\bit_coders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\direct_bit_decoder.cc">
+      <Filter>Draco\core\bit_coders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\direct_bit_encoder.cc">
+      <Filter>Draco\core\bit_coders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\rans_bit_decoder.cc">
+      <Filter>Draco\core\bit_coders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\rans_bit_encoder.cc">
+      <Filter>Draco\core\bit_coders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\symbol_bit_decoder.cc">
+      <Filter>Draco\core\bit_coders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\symbol_bit_encoder.cc">
+      <Filter>Draco\core\bit_coders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\cycle_timer.cc">
+      <Filter>Draco\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\data_buffer.cc">
+      <Filter>Draco\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\decoder_buffer.cc">
+      <Filter>Draco\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\divide.cc">
+      <Filter>Draco\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\draco_types.cc">
+      <Filter>Draco\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\encoder_buffer.cc">
+      <Filter>Draco\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\hash_utils.cc">
+      <Filter>Draco\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\options.cc">
+      <Filter>Draco\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\quantization_utils.cc">
+      <Filter>Draco\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\shannon_entropy.cc">
+      <Filter>Draco\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\symbol_coding_utils.cc">
+      <Filter>Draco\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\symbol_decoding.cc">
+      <Filter>Draco\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\symbol_encoding.cc">
+      <Filter>Draco\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\mesh_io.cc">
+      <Filter>Draco\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\obj_decoder.cc">
+      <Filter>Draco\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\obj_encoder.cc">
+      <Filter>Draco\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\parser_utils.cc">
+      <Filter>Draco\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\ply_decoder.cc">
+      <Filter>Draco\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\ply_encoder.cc">
+      <Filter>Draco\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\ply_reader.cc">
+      <Filter>Draco\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\point_cloud_io.cc">
+      <Filter>Draco\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\corner_table.cc">
+      <Filter>Draco\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh.cc">
+      <Filter>Draco\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_are_equivalent.cc">
+      <Filter>Draco\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_attribute_corner_table.cc">
+      <Filter>Draco\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_cleanup.cc">
+      <Filter>Draco\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_misc_functions.cc">
+      <Filter>Draco\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_stripifier.cc">
+      <Filter>Draco\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\triangle_soup_mesh_builder.cc">
+      <Filter>Draco\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\metadata\geometry_metadata.cc">
+      <Filter>Draco\metadata</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\metadata\metadata.cc">
+      <Filter>Draco\metadata</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\metadata\metadata_decoder.cc">
+      <Filter>Draco\metadata</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\metadata\metadata_encoder.cc">
+      <Filter>Draco\metadata</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\point_cloud\point_cloud.cc">
+      <Filter>Draco\point_cloud</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\point_cloud\point_cloud_builder.cc">
+      <Filter>Draco\point_cloud</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

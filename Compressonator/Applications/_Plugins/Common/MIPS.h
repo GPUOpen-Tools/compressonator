@@ -33,6 +33,7 @@
 
 #define MIPSET_PIN_DATA_ID     "69AEBDB3-5F67-436D-82C2-724FDC4972DA"
 
+// #define USE_MIPSET_FACES
 
 extern void(*PrintStatusLine)(char *);
 extern void PrintInfo(const char* Format, ...);
@@ -43,11 +44,23 @@ class CMIPS
         ~CMIPS() { };
 
     MipLevel* GetMipLevel(const MipSet* pMipSet, int nMipLevel, int nFaceOrSlice=0);
-    int     GetMaxMipLevels(int nWidth, int nHeight, int nDepth);
-    bool AllocateMipLevelTable(MipLevelTable** ppMipLevelTable, int nMaxMipLevels, TextureType textureType, int nDepth, int& nLevelsToAllocate, int nFaces=0);
+    int  GetMaxMipLevels(int nWidth, int nHeight, int nDepth);
+    bool AllocateMipLevelTable(MipLevelTable** ppMipLevelTable, int nMaxMipLevels, TextureType textureType, int nDepth, int& nLevelsToAllocate
+        #ifdef USE_MIPSET_FACES
+        ,int nFaces=0
+        #endif
+        );
     bool AllocateAllMipLevels(MipLevelTable* pMipLevelTable, TextureType /*textureType*/, int nLevelsToAllocate);
-    bool AllocateMipSet(MipSet* pMipSet, ChannelFormat channelFormat, TextureDataType textureDataType, TextureType textureType, int nWidth, int nHeight, int nDepth, int nFaces=0);
-    bool AllocateMipLevelData(MipLevel* pMipLevel, int nWidth, int nHeight, ChannelFormat channelFormat, TextureDataType textureDataType, int facedataSize =0);
+    bool AllocateMipSet(MipSet* pMipSet, ChannelFormat channelFormat, TextureDataType textureDataType, TextureType textureType, int nWidth, int nHeight, int nDepth
+#ifdef USE_MIPSET_FACES
+        , int nFaces = 0
+#endif
+    );
+    bool AllocateMipLevelData(MipLevel* pMipLevel, int nWidth, int nHeight, ChannelFormat channelFormat, TextureDataType textureDataType
+#ifdef USE_MIPSET_FACES
+        , int facedataSize =0
+#endif
+    );
     bool AllocateCompressedMipLevelData(MipLevel* pMipLevel, int nWidth, int nHeight, CMP_DWORD dwSize);
 
     void FreeMipSet(MipSet* pMipSet);

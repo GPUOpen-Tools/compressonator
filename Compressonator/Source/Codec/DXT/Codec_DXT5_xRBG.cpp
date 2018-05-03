@@ -9,10 +9,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -46,10 +46,8 @@ CCodec_DXT5_xRBG::~CCodec_DXT5_xRBG()
 }
 
 // Disable erroneous C4715 warning
-#ifdef _MSC_VER
 #pragma warning(push)
-#pragma warning(disable:4715)
-#endif //_MSC_VER
+#pragma warning(disable:4715) 
 
 bool CCodec_DXT5_xRBG::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
 {
@@ -93,9 +91,7 @@ bool CCodec_DXT5_xRBG::GetParameter(const CMP_CHAR* pszParamName, CODECFLOAT& fV
 }
 
 // Re-enable erroneous C4715 warning
-#ifdef _MSC_VER
 #pragma warning(pop)
-#endif //_MSC_VER
 
 void CCodec_DXT5_xRBG::ReadBlock(CCodecBuffer& buffer, CMP_DWORD x, CMP_DWORD y, CMP_BYTE block[BLOCK_SIZE_4X4X4])
 {

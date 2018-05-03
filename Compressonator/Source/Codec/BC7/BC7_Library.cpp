@@ -31,7 +31,7 @@
 #include "HDR_Encode.h"
 
 
-BOOL    g_LibraryInitialized = FALSE;
+CMP_BOOL    g_LibraryInitialized = FALSE;
 static BC7BlockDecoder  g_Decoder;
 
 //
@@ -54,7 +54,7 @@ extern "C" BC_ERROR CMP_InitializeBCLibrary()
 }
 
 
-extern "C" BC_ERROR CMP_CreateBC7Encoder( double quality, BOOL restrictColour, BOOL restrictAlpha, CMP_DWORD modeMask, double performance, BC7BlockEncoder** encoder )
+extern "C" BC_ERROR CMP_CreateBC7Encoder( double quality, CMP_BOOL restrictColour, CMP_BOOL restrictAlpha, CMP_DWORD modeMask, double performance, BC7BlockEncoder** encoder )
 {
     if(!g_LibraryInitialized)
     {
@@ -80,7 +80,7 @@ extern "C" BC_ERROR CMP_CreateBC7Encoder( double quality, BOOL restrictColour, B
 //
 //
 //
-extern "C" BC_ERROR CMP_EncodeBC7Block( BC7BlockEncoder* encoder, double  in[BC_BLOCK_PIXELS][MAX_DIMENSION_BIG], BYTE* out )
+extern "C" BC_ERROR CMP_EncodeBC7Block( BC7BlockEncoder* encoder, double  in[BC_BLOCK_PIXELS][MAX_DIMENSION_BIG], CMP_BYTE* out )
 {
     if(!g_LibraryInitialized)
     {
@@ -103,7 +103,7 @@ extern "C" BC_ERROR CMP_EncodeBC7Block( BC7BlockEncoder* encoder, double  in[BC_
 //
 //
 //
-extern "C" BC_ERROR CMP_DecodeBC7Block( BYTE *in, double  out[BC_BLOCK_PIXELS][MAX_DIMENSION_BIG] )
+extern "C" BC_ERROR CMP_DecodeBC7Block(CMP_BYTE *in, double  out[BC_BLOCK_PIXELS][MAX_DIMENSION_BIG] )
 {
     if(!g_LibraryInitialized)
     {

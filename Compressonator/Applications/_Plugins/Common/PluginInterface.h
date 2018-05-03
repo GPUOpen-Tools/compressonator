@@ -137,12 +137,51 @@ public:
     virtual ~PluginInterface_3DModel() {}
     virtual int  TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
     virtual int  TC_PluginSetSharedIO(void* Shared) = 0;
-    virtual int  CreateView(const char* pszFilename, CMP_LONG Width, CMP_LONG Height, void *HWND, void *pluginManager, void *msghandler, const char* pszFilename2 = NULL, CMP_Feedback_Proc pFeedbackProc = NULL) = 0;
+    virtual void *CreateView(void *ModelData, CMP_LONG Width, CMP_LONG Height, void *HWND, void *pluginManager, void *msghandler,CMP_Feedback_Proc pFeedbackProc = NULL) = 0;
+    virtual void *ShowView(void *data) = 0;
     virtual void CloseView()    = 0;
-    virtual bool RenderView()   = 0;
-    virtual void ReSizeView(CMP_LONG w, CMP_LONG h) = 0;
+    virtual bool OnRenderView()   = 0;
+    virtual void OnReSizeView(CMP_LONG w, CMP_LONG h) = 0;
     virtual void processMSG(void *message) = 0;
 };
+
+
+class PluginInterface_3DModel_Loader : PluginBase
+{
+public:
+    PluginInterface_3DModel_Loader() {}
+    virtual ~PluginInterface_3DModel_Loader() {}
+    virtual int  TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
+    virtual int  TC_PluginSetSharedIO(void* Shared) = 0;
+    virtual int  LoadModelData(const char* pszFilename, const char* pszFilename2, void *pluginManager, void *msghandler, CMP_Feedback_Proc pFeedbackProc) = 0;
+    virtual int  SaveModelData(const char* pdstFilename, void* meshData) = 0;
+    virtual void *GetModelData() = 0;
+};
+
+class PluginInterface_Mesh : PluginBase
+{
+public:
+    PluginInterface_Mesh() {}
+    virtual ~PluginInterface_Mesh() {}
+    virtual int  TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
+    virtual int  TC_PluginSetSharedIO(void* Shared) = 0;
+
+    virtual int Init() = 0;
+    virtual void* ProcessMesh(void* data = NULL, void* setting = NULL, void* statsOut = NULL, CMP_Feedback_Proc pFeedbackProc = NULL) = 0;
+    virtual int CleanUp() = 0;
+};
+
+class PluginInterface_WindowViews : PluginBase
+{
+public:
+    PluginInterface_WindowViews() {}
+    virtual ~PluginInterface_WindowViews() {}
+    virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
+    virtual void  ShowWindow(bool Show) = 0;
+    virtual void *CreateView(void *window) = 0;
+    virtual void  DeleteView()  = 0;
+};
+
 
 // Feature driven classes based on Base Plugin interface
 typedef PluginInterface_Codec*      (*PLUGIN_FACTORYFUNC_CODEC)();
@@ -153,4 +192,8 @@ typedef PluginInterface_Compute*    (*PLUGIN_FACTORYFUNC_COMPUTE)();
 typedef PluginInterface_Compute2*   (*PLUGIN_FACTORYFUNC_COMPUTE2)();
 typedef PluginInterface_GPUDecode*  (*PLUGIN_FACTORYFUNC_GPUDECODE)();
 typedef PluginInterface_3DModel*    (*PLUGIN_FACTORYFUNC_3DMODEL)();
+typedef PluginInterface_3DModel_Loader*    (*PLUGIN_FACTORYFUNC_3DMODEL_LOADER)();
+typedef PluginInterface_Mesh*       (*PLUGIN_FACTORYFUNC_MESH)();
+typedef PluginInterface_WindowViews*      (*PLUGIN_FACTORYFUNC_WINDOWVIEWS)();
+
 #endif

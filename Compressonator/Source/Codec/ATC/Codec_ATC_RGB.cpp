@@ -9,10 +9,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -22,13 +22,11 @@
 // THE SOFTWARE.
 //
 //
-//  File Name:   Codec_ATC.cpp
+//  File Name:   Codec_ATC.cpp  
 //  Description: implementation of the CCodec_ATC class
 //
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
 #pragma warning(disable:4100)
-#endif //_MSC_VER
 
 #include "Common.h"
 #include "Codec_ATC_RGB.h"
@@ -52,7 +50,7 @@ CCodec_ATC_RGB::~CCodec_ATC_RGB()
 }
 
 CCodecBuffer* CCodec_ATC_RGB::CreateBuffer(
-    CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
+    CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth, 
     CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData) const
 {
     return CreateCodecBuffer(CBT_4x4Block_4BPP, 4,4,1,dwWidth, dwHeight, dwPitch, pData);

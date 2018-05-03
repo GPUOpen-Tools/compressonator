@@ -30,6 +30,87 @@
 #include "PluginManager.h"
 #include <boost/filesystem.hpp>
 
+#include "Dbghelp.h"
+#pragma comment(lib, "DbgHelp.lib")
+
+bool GetDLLFileExports(LPCSTR szFileName, vector<string> & names)
+{
+    unsigned int nNoOfExports;
+
+    HANDLE hFile;
+    HANDLE hFileMapping;
+    LPVOID lpFileBase;
+    PIMAGE_DOS_HEADER pImg_DOS_Header;
+    PIMAGE_NT_HEADERS pImg_NT_Header;
+    PIMAGE_EXPORT_DIRECTORY pImg_Export_Dir;
+
+    hFile = CreateFileA(szFileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+    if (hFile == INVALID_HANDLE_VALUE)
+        return false;
+
+    hFileMapping = CreateFileMapping(hFile, NULL, PAGE_READONLY, 0, 0, NULL);
+    if (hFileMapping == 0)
+    {
+        CloseHandle(hFile);
+        return false;
+    }
+
+    lpFileBase = MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0);
+    if (lpFileBase == 0)
+    {
+        CloseHandle(hFileMapping);
+        CloseHandle(hFile);
+        return false;
+    }
+
+    pImg_DOS_Header = (PIMAGE_DOS_HEADER)lpFileBase;
+
+    pImg_NT_Header = (PIMAGE_NT_HEADERS)((LONG)pImg_DOS_Header + (LONG)pImg_DOS_Header->e_lfanew);
+
+    if (IsBadReadPtr(pImg_NT_Header, sizeof(IMAGE_NT_HEADERS)) || pImg_NT_Header->Signature != IMAGE_NT_SIGNATURE)
+    {
+        UnmapViewOfFile(lpFileBase);
+        CloseHandle(hFileMapping);
+        CloseHandle(hFile);
+        return false;
+    }
+
+    pImg_Export_Dir = (PIMAGE_EXPORT_DIRECTORY)pImg_NT_Header->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
+    if (!pImg_Export_Dir)
+    {
+        UnmapViewOfFile(lpFileBase);
+        CloseHandle(hFileMapping);
+        CloseHandle(hFile);
+        return false;
+    }
+
+    pImg_Export_Dir = (PIMAGE_EXPORT_DIRECTORY)ImageRvaToVa(pImg_NT_Header, pImg_DOS_Header, (DWORD)pImg_Export_Dir, 0);
+
+    DWORD **ppdwNames = (DWORD **)pImg_Export_Dir->AddressOfNames;
+
+    ppdwNames = (PDWORD*)ImageRvaToVa(pImg_NT_Header, pImg_DOS_Header, (DWORD)ppdwNames, 0);
+    if (!ppdwNames)
+    {
+        UnmapViewOfFile(lpFileBase);
+        CloseHandle(hFileMapping);
+        CloseHandle(hFile);
+        return false;
+    }
+
+    nNoOfExports = pImg_Export_Dir->NumberOfNames;
+
+    for (unsigned i = 0; i < nNoOfExports; i++)
+    {
+        char *szFunc = (PSTR)ImageRvaToVa(pImg_NT_Header, pImg_DOS_Header, (DWORD)*ppdwNames, 0);
+        names.push_back(szFunc);
+        ppdwNames++;
+    }
+
+    UnmapViewOfFile(lpFileBase);
+    CloseHandle(hFileMapping);
+    CloseHandle(hFile);
+    return true;
+};
 
 void PluginManager::registerStaticPlugin(char *pluginType, char *pluginName, void * makePlugin)
 {
@@ -53,6 +134,39 @@ void PluginManager::registerStaticPlugin(char *pluginType, char *pluginName, cha
 
     pluginRegister.push_back(curPlugin);
 }
+
+
+void PluginManager::getPluginDetails(PluginDetails *curPlugin)
+{
+    HINSTANCE dllHandle;
+
+    dllHandle = LoadLibraryA(curPlugin->getFileName());
+
+    if (dllHandle != NULL)
+    {
+        PLUGIN_TEXTFUNC textFunc;
+        textFunc = reinterpret_cast<PLUGIN_TEXTFUNC>(GetProcAddress(dllHandle, "getPluginType"));
+        if (textFunc)
+            curPlugin->setType(textFunc());
+
+        textFunc = reinterpret_cast<PLUGIN_TEXTFUNC>(GetProcAddress(dllHandle, "getPluginName"));
+        if (textFunc)
+            curPlugin->setName(textFunc());
+
+        textFunc = reinterpret_cast<PLUGIN_TEXTFUNC>(GetProcAddress(dllHandle, "getPluginUUID"));
+        if (textFunc)
+            curPlugin->setUUID(textFunc());
+
+        textFunc = reinterpret_cast<PLUGIN_TEXTFUNC>(GetProcAddress(dllHandle, "getPluginCategory"));
+        if (textFunc)
+            curPlugin->setCategory(textFunc());
+        
+        curPlugin->isRegistered = true;
+
+        FreeLibrary(dllHandle);
+    }
+}
+
 
 void PluginManager::getPluginList(char * SubFolderName)
 {      
@@ -154,12 +268,45 @@ void PluginManager::getPluginList(char * SubFolderName)
     do 
     { 
         HINSTANCE dllHandle = NULL;
+        vector<string> names;
+
         try
         {
             if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-            {                    
+            {
                 char fname[MAX_PATH];
                 sprintf_s(fname,"%s\\%s",dirPath,fd.cFileName);
+
+#ifdef USE_NewLoader
+                // Valid only for Windows need one for Linux
+                names.clear();
+                GetDLLFileExports(fname, names);
+
+                if ((names.size() > 3) && (names.size() <= 15))
+                {
+                    bool bmakePlugin   = false;
+                    bool bgetPluginType= false;
+                    bool bgetPluginName= false;
+
+                    for (vector<string>::const_iterator str = names.begin(); str != names.end(); ++str) 
+                    {
+                        if (*str == "makePlugin") bmakePlugin = true;
+                        else
+                            if (*str == "getPluginType") bgetPluginType = true;
+                            else
+                                if (*str == "getPluginName") bgetPluginName = true;
+                    }
+
+                    if (bmakePlugin && bgetPluginType && bgetPluginName)
+                    {
+                        // we have a vaild plugin to register to use when needed save it!
+                        PluginDetails * curPlugin = new PluginDetails();
+                        curPlugin->setFileName(fname);
+                        pluginRegister.push_back(curPlugin);
+                    }
+
+                }
+#else
                 dllHandle = LoadLibraryA(fname);
                 if (dllHandle != NULL) 
                 {
@@ -180,7 +327,7 @@ void PluginManager::getPluginList(char * SubFolderName)
                         textFunc = reinterpret_cast<PLUGIN_TEXTFUNC>(GetProcAddress(dllHandle, "getPluginName"));
                         if (textFunc)
                             curPlugin->setName(textFunc());
-                        
+
                         textFunc = reinterpret_cast<PLUGIN_TEXTFUNC>(GetProcAddress(dllHandle, "getPluginUUID"));
                         if (textFunc)
                             curPlugin->setUUID(textFunc());
@@ -189,17 +336,22 @@ void PluginManager::getPluginList(char * SubFolderName)
                         if (textFunc)
                             curPlugin->setCategory(textFunc());
 
+                        curPlugin->isRegistered = true;
+
                         pluginRegister.push_back(curPlugin);
                     }
                     FreeLibrary(dllHandle);
                 }
+#endif
             }
         }
         catch(...)
         {
-            if (dllHandle != NULL) FreeLibrary(dllHandle);
+            if (dllHandle != NULL) 
+                FreeLibrary(dllHandle);
         }
     } while (FindNextFileA(hFind, &fd));
+
     FindClose(hFind);
 #endif 
 }

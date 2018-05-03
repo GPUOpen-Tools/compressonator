@@ -1,7 +1,7 @@
 /* -*- tab-width: 4; -*- */
 /* vi: set sw=2 ts=4: */
 
-/* $Id: b2ab7bcfcab83b13e5c65b45c006154fe0c68062 $ */
+/* $Id: b7b03494cb4c3d30b64882e8d4b3e44c3221890b $ */
 
 /**
  * @file writer.c
@@ -41,6 +41,10 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
 */
 
+#ifdef _WIN32
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -63,7 +67,7 @@ static KTX_error_code sizeofGLtype(GLenum type, GLuint* size, GLboolean* packed)
  * @brief Write image(s) in a KTX-format to a ktxStream.
  *
  * @param [in] stream           pointer to the ktxStream from which to load.
- * @param [in] textureInfo  pointer to a KTX_image_info structure providing
+ * @param [in] textureInfo  pointer to a KTX_texture_info structure providing
  *                          information about the images to be included in
  *                          the KTX file.
  * @param [in] bytesOfKeyValueData
@@ -150,12 +154,11 @@ ktxWriteKTXS(struct ktxStream *stream, const KTX_texture_info* textureInfo,
 		if (header.glType + header.glFormat != 0) {
 			/* either both or neither of glType & glFormat must be zero */
 			return KTX_INVALID_VALUE;
-        }
-        else {
+		} else {
             compressed = GL_TRUE;
             if (header.glBaseInternalFormat == GL_RED)
                 groupBytes = 1;
-            if (header.glBaseInternalFormat== GL_RG)
+            if (header.glBaseInternalFormat == GL_RG)
                 groupBytes = 2;
             if (header.glBaseInternalFormat == GL_RGB)
                 groupBytes = 3;
@@ -363,7 +366,7 @@ cleanup:
  * @brief Write image(s) in a KTX-formatted stdio FILE stream.
  *
  * @param [in] file         pointer to the FILE stream to write to.
- * @param [in] textureInfo  pointer to a KTX_image_info structure providing
+ * @param [in] textureInfo  pointer to a KTX_texture_info structure providing
  *                          information about the images to be included in
  *                          the KTX file.
  * @param [in] bytesOfKeyValueData
@@ -421,7 +424,7 @@ ktxWriteKTXF(FILE *file, const KTX_texture_info* textureInfo,
  *
  * @param [in] dstname		pointer to a C string that contains the path of
  * 							the file to load.
- * @param [in] textureInfo  pointer to a KTX_image_info structure providing
+ * @param [in] textureInfo  pointer to a KTX_texture_info structure providing
  *                          information about the images to be included in
  *                          the KTX file.
  * @param [in] bytesOfKeyValueData
@@ -463,7 +466,7 @@ ktxWriteKTXN(const char* dstname, const KTX_texture_info* textureInfo,
  * @param [out] bytes        pointer to the output with KTX data. Application
 							is responsible for freeing that memory.
  * @param [out] size         pointer to store size of the memory written.
- * @param [in] textureInfo  pointer to a KTX_image_info structure providing
+ * @param [in] textureInfo  pointer to a KTX_texture_info structure providing
  *                          information about the images to be included in
  *                          the KTX file.
  * @param [in] bytesOfKeyValueData

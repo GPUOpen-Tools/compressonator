@@ -1180,6 +1180,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
         fclose(pFile);
         return -1;
     }
+   
 
     pMipSet->m_nMipLevels = fheader.numberOfMipmapLevels;
     // Allocate MipSet header
@@ -1189,8 +1190,11 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
         pMipSet->m_TextureType,
         fheader.pixelWidth,
         fheader.pixelHeight,
-        1,
-        fheader.numberOfFaces);
+        1
+#ifdef USE_MIPSET_FACES
+        ,fheader.numberOfFaces
+#endif
+    );
     
     fclose(pFile);
     pFile = NULL;
@@ -1250,7 +1254,11 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
             if (pMipSet->m_compressed)
                 KTX_CMips->AllocateCompressedMipLevelData(pMipLevel, w, h, faceSizeRounded);
             else
-                KTX_CMips->AllocateMipLevelData(pMipLevel, w, h, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType, faceSizeRounded);
+                KTX_CMips->AllocateMipLevelData(pMipLevel, w, h, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType
+#ifdef USE_MIPSET_FACES
+                    , faceSizeRounded
+#endif
+                );
 
             CMP_BYTE* pData = (CMP_BYTE*)(pMipLevel->m_pbData);
 

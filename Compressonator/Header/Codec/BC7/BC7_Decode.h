@@ -33,22 +33,22 @@ public:
     ~BC7BlockDecoder(){};
 
     void DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-                         BYTE   in[COMPRESSED_BLOCK_SIZE]);
+        CMP_BYTE   in[COMPRESSED_BLOCK_SIZE]);
 
 private:
 
     void DecompressDualIndexBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-                                  BYTE   in[COMPRESSED_BLOCK_SIZE],
-                                  DWORD  endpoint[2][MAX_DIMENSION_BIG]);
+        CMP_BYTE   in[COMPRESSED_BLOCK_SIZE],
+        CMP_DWORD  endpoint[2][MAX_DIMENSION_BIG]);
 
-    DWORD ReadBit(BYTE base[]);
-    DWORD m_blockMode;
-    DWORD m_partition;
-    DWORD m_rotation;
-    DWORD m_indexSwap;
+    CMP_DWORD ReadBit(CMP_BYTE base[]);
+    CMP_DWORD m_blockMode;
+    CMP_DWORD m_partition;
+    CMP_DWORD m_rotation;
+    CMP_DWORD m_indexSwap;
 
-    DWORD m_bitPosition;
-    DWORD m_componentBits[MAX_DIMENSION_BIG];
+    CMP_DWORD m_bitPosition;
+    CMP_DWORD m_componentBits[MAX_DIMENSION_BIG];
 };
 
 
