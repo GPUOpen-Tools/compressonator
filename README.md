@@ -19,25 +19,38 @@ AMD encourages any and all contributors to submit changes, features, and bug fix
 
 Users are also encouraged to submit issues and feature requests via the repository's issue tracker.
   
-Under development 
+Under development for 3.1 release
 ----------------------------------------------------
 * Improvements to existing Compression Codecs
   * Fix for R & B channel swizzling
+  * updated ETC Codec with support for SRGB, EAC and punchthrough Alpha
+ 
+* Model Mesh Compression 
+  * Support for gltf 2.0 compression extensions (KHR_draco_mesh_compression, ...)
+    
+* Selectable 3D Model viewers
+  * Support for the Vulkan & OpenGL Viewer code introduced in 3.0
+ 
+* 3D Model Image Diff viewer 
+  * Selectable animation rates 
+  * Manual mode to flip views
+ 
 
-* Model Mesh Optimization
+Recent additions and changes
+------------------------------------------------------
+v3.0 features
+
+* Model Mesh Optimization for obj and gltf 2.0 files
   * 3D triangle mesh optimization that improves on existing mesh preprocessing techniques
     * Vertex cache optimization
     * Overdraw optimization
     * Vertex prefetch cache optimization
     
-* Model Mesh Compression using draco 
-  * Compresss model for faster download 
-    * Force mesh to be encoded as point cloud for processing
+* Model Mesh Compression for obj files 
+  * Compresss models for faster download using Draco .drc files
     * Set quantization bits for POSITION, NORMAL, TEX_CORD and other GENERIC attributes
-    * Fast Decode 
-    * see https://github.com/google/draco for more details on how the compression works
   
-* 3D Model viewer features and modifications
+* DX12 3D Model viewer features and modifications
   * Selectable 3D Model views with DX12, Vulkan and OpenGL
   * Multi GPU Node usage stats
   * Real time GPU profiler chart with Total GPU Time stats
@@ -50,30 +63,9 @@ Under development
   * iblFactor (0.0 to 2.0)
   * Show Bounding Boxes
   * Show Sky dome
-  * Fix Aspect Ratio
-  * Wire mesh views
  
-* 3D Model Image Diff viewer 
-  * Selectable animation rates 
-  * Manual mode to flip views
-  * Option to enable or disable Textures rendering
- 
-  
- 
- 
-
-Recent additions and changes
-------------------------------------------------------
-v2.7 release Nov 23 2017 https://github.com/GPUOpen-Tools/Compressonator/releases
-
-* **Linux and Mac support**
-  * updated  [builds](https://github.com/GPUOpen-Tools/Compressonator#build-instructions-for-linux-compressonatorcli-command-line-application) to use cmake and scripts
-
-* **Preview of 3D Model viewer and asset compression**
-  * View 3D Models with DX12 using glTF v2.0 file format https://www.khronos.org/gltf
-  * Compress model textures
-  * Image diff compressed model textures with original
-  * Realtime 3D Model diff views
+* 2D Image viewer update
+  * Switch overlaid views of processed (compressed), Original and or Pixel Image Differance views with simple key stokes (O, P or D) and toggle the views at any time from Origin to Processed or Original to Image Diff using space bar
 
 Gallery
 -------
