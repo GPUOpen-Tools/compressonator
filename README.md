@@ -50,7 +50,6 @@ Recent 3.0 additions and changes
     * Set quantization bits for POSITION, NORMAL, TEX_CORD and other GENERIC attributes
   
 * DX12 3D Model viewer features and modifications
-  * Selectable 3D Model views with DX12, Vulkan and OpenGL
   * Multi GPU Node usage stats
   * Real time GPU profiler chart with Total GPU Time stats
   * Animation (on/off)
@@ -109,7 +108,7 @@ The directory of your workspace should be as follows
 - README.md
 
 
-It is also recommended that you install and configure Visual Studio Qt5 Package extension from MSDN Visual Studio Gallery, and set in Qt Options dialog, Qt Default Version name V5.7 and path to default download path C:\Qt\5.7\msvc2015_64\bin\
+It is also recommended that you install and configure Visual Studio Qt5 Package extension from MSDN Visual Studio Gallery, and set in Qt Options dialog, Qt Default Version name V5.7 and path to default download path C:\Qt\Qt5.7.1\5.7\msvc2015_64\bin\
 
 https://visualstudiogallery.msdn.microsoft.com/c89ff880-8509-47a4-a262-e4fa07168408 
 
