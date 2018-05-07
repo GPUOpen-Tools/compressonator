@@ -4,7 +4,7 @@ Compressonator is a set of tools to allow artists and developers to more easily 
 
 Compressonator supports Microsoft Windows®, Linux and Mac builds.
 
-For more details goto the Compressonator Wiki: https://github.com/GPUOpen-Tools/Compressonator/wiki 
+For more details goto the online Compressonator Documents: http://compressonator.readthedocs.io/en/latest/ 
 
 Get Prebuilt Binaries and Installer here:
 -----------------------------------------------------
@@ -25,6 +25,8 @@ Under development for 3.1 release
   * Fix for R & B channel swizzling
   * updated ETC Codec with support for SRGB, EAC and punchthrough Alpha
  
+* CLI support for Model Mesh Compression and Model Optimization
+
 * Model Mesh Compression 
   * Support for gltf 2.0 compression extensions (KHR_draco_mesh_compression, ...)
     
@@ -69,11 +71,11 @@ Gallery
 -------
 **2D Texture Compression**
 
-![screenshot 1](https://github.com/GPUOpen-Tools/Compressonator/wiki/assets/compressonator_properties_view.jpg)
+![screenshot 1](https://github.com/GPUOpen-Tools/Compressonator/blob/master/docs/source/media/image51.png)
 
 **glTF Model PBR Texture Compression**
 
-![screenshot 2](https://github.com/GPUOpen-Tools/Compressonator/wiki/assets/gltfs3a.png)
+![screenshot 2](https://github.com/GPUOpen-Tools/Compressonator/blob/master/docs/source/media/image96.png)
 
 
 Build Instructions for Compressonator SDK
