@@ -4,7 +4,7 @@ Compressonator is a set of tools to allow artists and developers to more easily 
 
 Compressonator supports Microsoft Windows®, Linux and Mac builds.
 
-For more details goto the Compressonator Wiki: https://github.com/GPUOpen-Tools/Compressonator/wiki 
+For more details goto the online Compressonator Documents: http://compressonator.readthedocs.io/en/latest/ 
 
 Get Prebuilt Binaries and Installer here:
 -----------------------------------------------------
@@ -71,7 +71,7 @@ Gallery
 -------
 **2D Texture Compression**
 
-![screenshot 1](https://github.com/GPUOpen-Tools/Compressonator/wiki/assets/compressonator_properties_view.jpg)
+![screenshot 1](https://github.com/GPUOpen-Tools/Compressonator/blob/master/docs/source/media/image51.png)
 
 **glTF Model PBR Texture Compression**
 
