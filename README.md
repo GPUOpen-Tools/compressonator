@@ -75,7 +75,7 @@ Gallery
 
 **glTF Model PBR Texture Compression**
 
-![screenshot 2](https://github.com/GPUOpen-Tools/Compressonator/wiki/assets/gltfs3a.png)
+![screenshot 2](https://github.com/GPUOpen-Tools/Compressonator/blob/master/docs/source/media/image96.png)
 
 
 Build Instructions for Compressonator SDK
