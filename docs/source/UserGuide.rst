@@ -1,4 +1,4 @@
-+--------------------+-----------------+
+﻿+--------------------+-----------------+
 | Revision History   |
 +====================+=================+
 | Version 3.0        | April 2018      |
@@ -1591,7 +1591,7 @@ Contact and Support
 **Support:**
 `gputo.nosp@m.ols..nosp@m.suppo.nosp@m.rt@a.nosp@m.md.co.nosp@m.m <mk:@MSITStore:C:\Perforce\AMD_Compress\Build\AMDCompressCLI_html\AMDCompressCLI.chm::/d3/d3f/_contact.html>`__
 
-**Contact: **
+**Contact:**
 
 Advanced Micro Devices, Inc.
 
