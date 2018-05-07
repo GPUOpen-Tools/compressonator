@@ -3,3 +3,4 @@
    :caption: Contents:
 
    intro
+   UserGuide
