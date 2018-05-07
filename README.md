@@ -25,6 +25,8 @@ Under development for 3.1 release
   * Fix for R & B channel swizzling
   * updated ETC Codec with support for SRGB, EAC and punchthrough Alpha
  
+* CLI support for Model Mesh Compression and Model Optimization
+
 * Model Mesh Compression 
   * Support for gltf 2.0 compression extensions (KHR_draco_mesh_compression, ...)
     
