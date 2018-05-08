@@ -1,5 +1,5 @@
 ﻿+--------------------+-----------------+
-| Revision History   |
+| Revision History   |                 |
 +====================+=================+
 | Version 3.0        | April 2018      |
 +--------------------+-----------------+
@@ -125,94 +125,111 @@ Application Toolbar
 
 |image1|
 
-+-------------+-------------------------------------------------------------------------------------------------------+
-| |image2|    | Create a new project                                                                                  |
-+=============+=======================================================================================================+
-| |image3|    | Open an existing project file (project files have the extension .cprj)                                |
-+-------------+-------------------------------------------------------------------------------------------------------+
-| |image4|    | Saves any changes to the current project                                                              |
-+-------------+-------------------------------------------------------------------------------------------------------+
-| |image5|    | Open image files to add to the Project Explorer                                                       |
-+-------------+-------------------------------------------------------------------------------------------------------+
-| |image6|    | Open an application settings dialog                                                                   |
-+-------------+-------------------------------------------------------------------------------------------------------+
-| |image7|    | Delete the current selected items on the Project Explorer                                             |
-+-------------+-------------------------------------------------------------------------------------------------------+
-| |image8|    | Starts to process (Compresses, Decompresses or Transcodes) selected images in the Project Explorer.   |
-|             |                                                                                                       |
-|             | If no items are selected it will auto select all items in the project.                                |
-+-------------+-------------------------------------------------------------------------------------------------------+
-| |image9|    | View image difference for a processed image (sub item) with the original image (branch item)          |
-+-------------+-------------------------------------------------------------------------------------------------------+
-| |image10|   | Generates MIP mapping to a specified minimum Mipmap level for original image (branch item)            |
-+-------------+-------------------------------------------------------------------------------------------------------+
++------------------------+-----------------------------------------------------------------------------------------------+
+| |image2|               | Create a new project                                                                          |
++========================+===============================================================================================+
+| |image3|               | Open an existing project file (project files have the extension .cprj)                        |
++------------------------+-----------------------------------------------------------------------------------------------+
+| |image4|               | Saves any changes to the current project                                                      |
++------------------------+-----------------------------------------------------------------------------------------------+
+| |image5|               | Open image files to add to the Project Explorer                                               |
++------------------------+-----------------------------------------------------------------------------------------------+
+| |image6|               | Open an application settings dialog                                                           |
++------------------------+-----------------------------------------------------------------------------------------------+
+| |image7|               | Delete the current selected items on the Project Explorer                                     |
++------------------------+-----------------------------------------------------------------------------------------------+
+| |image8|               | Starts to process (Compresses, Decompresses or Transcodes)                                    |
+|                        |                                                                                               |
+|                        | If no items are selected it will auto select all items in the project.                        |
++------------------------+-----------------------------------------------------------------------------------------------+
+| |image9|               | View image difference for a processed image (sub item) with the original image (branch item)  |
++------------------------+-----------------------------------------------------------------------------------------------+
+| |image10|              | Generates MIP mapping to a specified minimum Mipmap level for original image (branch item)    |
++------------------------+-----------------------------------------------------------------------------------------------+
 
 Image View Toolbar
 ~~~~~~~~~~~~~~~~~~
 
 |image11|
 
-+-------------+------------------------------------------------------------------------------------------------------------------------+
-| |image12|   | Select the background the image is displayed on (default black) |image13|\ |image14|\ |image15|                        |
-+=============+========================================================================================================================+
-| |image16|   | Zoom into or out of the image using a specific scale (100 = original size) Minimum setting is 10 and maximum is 9999   |
-+-------------+------------------------------------------------------------------------------------------------------------------------+
-| |image17|   | Displays the image at its original size                                                                                |
-+-------------+------------------------------------------------------------------------------------------------------------------------+
-| |image18|   | Sets the image display to fit the current view                                                                         |
-+-------------+------------------------------------------------------------------------------------------------------------------------+
-| |image19|   | Restore the original image view to default                                                                             |
-+-------------+------------------------------------------------------------------------------------------------------------------------+
-| |image20|   | Toggles the images Red channel on or off                                                                               |
-+-------------+------------------------------------------------------------------------------------------------------------------------+
-| |image21|   | Toggles the images Green channel on or off                                                                             |
-+-------------+------------------------------------------------------------------------------------------------------------------------+
-| |image22|   | Toggles the Images Blue channel on or off                                                                              |
-+-------------+------------------------------------------------------------------------------------------------------------------------+
-| |image23|   | Toggles the Images Alpha channel on or off                                                                             |
-+-------------+------------------------------------------------------------------------------------------------------------------------+
-| |image24|   | Toggles the image from (Black and White) to Color                                                                      |
-+-------------+------------------------------------------------------------------------------------------------------------------------+
-| |image25|   | Toggles inverting the images colors                                                                                    |
-+-------------+------------------------------------------------------------------------------------------------------------------------+
-| |image26|   | Mirrors the image horizontally                                                                                         |
-+-------------+------------------------------------------------------------------------------------------------------------------------+
-| |image27|   | Mirrors the image vertically                                                                                           |
-+-------------+------------------------------------------------------------------------------------------------------------------------+
-| |image28|   | Rotates the image clockwise by 90 Degrees                                                                              |
-+-------------+------------------------------------------------------------------------------------------------------------------------+
-| |image29|   | Rotates the image counter clockwise by 90 Degrees                                                                      |
-+-------------+------------------------------------------------------------------------------------------------------------------------+
++-----------------------+-------------------------------------------------------------------------------------------------------------+
+| |image12|             | Select the background the image is displayed on (default black) |image13|\ |image14|\ |image15|             |
++=======================+=============================================================================================================+
+| |image16|             | Zoom into or out of the image using a specific scale (100 = original size) Min setting is 10 and Max is 9999|
++-----------------------+-------------------------------------------------------------------------------------------------------------+
+| |image17|             | Displays the image at its original size                                                                     |
++-----------------------+-------------------------------------------------------------------------------------------------------------+
+| |image18|             | Sets the image display to fit the current view                                                              |
++-----------------------+-------------------------------------------------------------------------------------------------------------+
+| |image19|             | Restore the original image view to default                                                                  |
++-----------------------+-------------------------------------------------------------------------------------------------------------+
+| |image20|             | Toggles the images Red channel on or off                                                                    |
++-----------------------+-------------------------------------------------------------------------------------------------------------+
+| |image21|             | Toggles the images Green channel on or off                                                                  |
++-----------------------+-------------------------------------------------------------------------------------------------------------+
+| |image22|             | Toggles the Images Blue channel on or off                                                                   |
++-----------------------+-------------------------------------------------------------------------------------------------------------+
+| |image23|             | Toggles the Images Alpha channel on or off                                                                  |
++-----------------------+-------------------------------------------------------------------------------------------------------------+
+| |image24|             | Toggles the image from (Black and White) to Color                                                           |
++-----------------------+-------------------------------------------------------------------------------------------------------------+
+| |image25|             | Toggles inverting the images colors                                                                         |
++-----------------------+-------------------------------------------------------------------------------------------------------------+
+| |image26|             | Mirrors the image horizontally                                                                              |
++-----------------------+-------------------------------------------------------------------------------------------------------------+
+| |image27|             | Mirrors the image vertically                                                                                |
++-----------------------+-------------------------------------------------------------------------------------------------------------+
+| |image28|             | Rotates the image clockwise by 90 Degrees                                                                   |
++-----------------------+-------------------------------------------------------------------------------------------------------------+
+| |image29|             | Rotates the image counter clockwise by 90 Degrees                                                           |
++-----------------------+-------------------------------------------------------------------------------------------------------------+
 
 Additional Toolbar options will be displayed when viewing certain type
 of images, such as an image diff or images with multiple MIP levels
 
-+-------------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| |image30|   | Increases the brightness of the image                                                                                                          |
-+=============+================================================================================================================================================+
-| |image31|   | Decreases the brightness of the image                                                                                                          |
-+-------------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| |image32|   | Displayed when an image has multiple MIP Mapping (0 = original image). The view of any MIP level and size (as width x height) is selectable.   |
-+-------------+------------------------------------------------------------------------------------------------------------------------------------------------+
++-------------------------------------+---------------------------------------------------------------------------+
+| |image30|                           | Increases the brightness of the image                                     |
+|                                     |                                                                           |
++=====================================+===========================================================================+
+| |image31|                           | Decreases the brightness of the image                                     |
+|                                     |                                                                           |
++-------------------------------------+---------------------------------------------------------------------------+
+| |image32|                           | Displayed when an image has multiple MIP Mapping (0 = original image).    |
+|                                     |                                                                           |
+|                                     | The view of any MIP level and size (as width x height) is selectable.     |
++-------------------------------------+---------------------------------------------------------------------------+
 
 View Image Diff Toolbar
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 |image33|
 
-+-------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| |image34|   | Displays an Image Difference to the left of two stacked images. Original on top and Processed Image at the bottom.                                                                                                                              |
-+=============+=================================================================================================================================================================================================================================================+
-| |image35|   | Organizes three image views (Original Image, Image Difference and Processed Image) in a horizontal line                                                                                                                                         |
-+-------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| |image36|   | The Property View displays Peak Signal Noise Ratio and Mean Square Error for the processed image as compared to the original.                                                                                                                   |
-|             |                                                                                                                                                                                                                                                 |
-|             | **MSE** measures the cumulative squared error between the processed image and original image. (Value of 0 = Original image)                                                                                                                     |
-|             |                                                                                                                                                                                                                                                 |
-|             | **PSNR** measures the peak error in (dB) – (extremely high value = original image)                                                                                                                                                              |
-+-------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| |image37|   | Structural Similarity Index (**SSIM**) measures a perceived quality factor from a scale of 0 (= No similarity) to 1 (= Original image). Each channel of the processed image is indexed with the original and then averaged to a single value.   |
-+-------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++-----------------------------+-----------------------------------------------------------------------------------+
+| |image34|                   | Displays an Image Difference to the left of two stacked images.                   |
+|                             | Original on top and Processed Image at the bottom.                                |
++=============================+===================================================================================+
+| |image35|                   | Organizes three image views (Original Image, Image Difference and Processed Image)|
+|                             |                                                                                   |
+|                             | in a horizontal line                                                              |
++-----------------------------+-----------------------------------------------------------------------------------+
+| |image36|                   | The Property View displays Peak Signal Noise Ratio and Mean Square Error          |
+|                             |                                                                                   |
+|                             | for the processed image as compared to the original.                              |
+|                             |                                                                                   |
+|                             | **MSE** measures the cumulative squared error between the processed image and     |
+|                             |                                                                                   |
+|                             | original image. (Value of 0 = Original image)                                     |
+|                             |                                                                                   |
+|                             | **PSNR** measures the peak error in (dB) – (extremely high value = original image)|
++-----------------------------+-----------------------------------------------------------------------------------+
+| |image37|                   | Structural Similarity Index (**SSIM**) measures a perceived quality factor from a |
+|                             |                                                                                   |
+|                             | scale of 0 (= No similarity) to 1 (= Original image).    |                        |
+|                             |                                                                                   |
+|                             | Each channel of the processed image is indexed with the original and then averaged|
+|                             |                                                                                   |
+|                             | to a single value.                                                                |
++-----------------------------+-----------------------------------------------------------------------------------+
 
 Application Options
 -------------------
@@ -844,9 +861,6 @@ view the image.
 **GPU View using OpenGL**
 
 |image84|
-
-**
-**
 
 **GPU View using DirectX**
 
@@ -1588,23 +1602,16 @@ views <#_Selectable_GPU_or>`__
 Contact and Support
 -------------------
 
-**AMD Compress SDK source**
+**Compressonator SDK source**
 
 **URL:** https://github.com/GPUOpen-Tools/Compressonator
-
-**Support:**
-`gputo.nosp@m.ols..nosp@m.suppo.nosp@m.rt@a.nosp@m.md.co.nosp@m.m <mk:@MSITStore:C:\Perforce\AMD_Compress\Build\AMDCompressCLI_html\AMDCompressCLI.chm::/d3/d3f/_contact.html>`__
 
 **Contact:**
 
 Advanced Micro Devices, Inc.
-
 One AMD Place
-
 P.O. Box 3453
-
 Sunnyvale, CA, 94088-3453
-
 Phone: +1.408.749.4000
 
 |image117|
@@ -1633,16 +1640,16 @@ environmental damage may occur. AMD reserves the right to discontinue or
 make changes to its products at any time without notice.
 
 FOR THE AVOIDANCE OF DOUBT THE PROGRAM (I) IS NOT LICENSED FOR; (II)
-//// IS NOT DESIGNED FOR OR INTENDED FOR; AND (III) MAY NOT BE USED FOR;
-//// ANY MISSION CRITICAL APPLICATIONS SUCH AS, BUT NOT LIMITED TO
-//// OPERATION OF NUCLEAR OR HEALTHCARE COMPUTER SYSTEMS AND/OR NETWORKS,
-//// AIRCRAFT OR TRAIN CONTROL AND/OR COMMUNICATION SYSTEMS OR ANY OTHER
-//// COMPUTER SYSTEMS AND/OR NETWORKS OR CONTROL AND/OR COMMUNICATION
-//// SYSTEMS ALL IN WHICH CASE THE FAILURE OF THE PROGRAM COULD LEAD TO
-//// DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL, MATERIAL OR ENVIRONMENTAL
-//// DAMAGE. YOUR RIGHTS UNDER THIS LICENSE WILL TERMINATE AUTOMATICALLY
-//// AND IMMEDIATELY WITHOUT NOTICE IF YOU FAIL TO COMPLY WITH THIS
-//// PARAGRAPH.
+IS NOT DESIGNED FOR OR INTENDED FOR; AND (III) MAY NOT BE USED FOR;
+ANY MISSION CRITICAL APPLICATIONS SUCH AS, BUT NOT LIMITED TO
+OPERATION OF NUCLEAR OR HEALTHCARE COMPUTER SYSTEMS AND/OR NETWORKS,
+AIRCRAFT OR TRAIN CONTROL AND/OR COMMUNICATION SYSTEMS OR ANY OTHER
+COMPUTER SYSTEMS AND/OR NETWORKS OR CONTROL AND/OR COMMUNICATION
+SYSTEMS ALL IN WHICH CASE THE FAILURE OF THE PROGRAM COULD LEAD TO
+DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL, MATERIAL OR ENVIRONMENTAL
+DAMAGE. YOUR RIGHTS UNDER THIS LICENSE WILL TERMINATE AUTOMATICALLY
+AND IMMEDIATELY WITHOUT NOTICE IF YOU FAIL TO COMPLY WITH THIS
+PARAGRAPH.
 
 
 **Copyright and Trademarks**
@@ -1655,342 +1662,128 @@ Khronos. Other names are for informational purposes only and may be
 trademarks of their respective owners.
 
 .. |image0| image:: media/image10.png
-   :width: 0.15015in
-   :height: 0.16517in
 .. |image1| image:: media/image11.png
-   :width: 3.29167in
-   :height: 0.39583in
 .. |image2| image:: media/image12.png
-   :width: 0.33611in
-   :height: 0.33611in
 .. |image3| image:: media/image13.png
-   :width: 0.33611in
-   :height: 0.33611in
 .. |image4| image:: media/image14.png
-   :width: 0.33611in
-   :height: 0.33611in
 .. |image5| image:: media/image15.png
-   :width: 0.33611in
-   :height: 0.33611in
 .. |image6| image:: media/image16.png
-   :width: 0.33611in
-   :height: 0.33611in
 .. |image7| image:: media/image17.png
-   :width: 0.33611in
-   :height: 0.33611in
 .. |image8| image:: media/image18.png
-   :width: 0.33611in
-   :height: 0.33611in
 .. |image9| image:: media/image19.png
-   :width: 0.33611in
-   :height: 0.33611in
 .. |image10| image:: media/image20.png
-   :width: 0.33611in
-   :height: 0.33611in
 .. |image11| image:: media/image21.png
-   :width: 4.90625in
-   :height: 0.32292in
 .. |image12| image:: media/image22.png
-   :width: 0.93750in
-   :height: 0.27083in
+   :width: 1.50in
+   :height: 1.50in
 .. |image13| image:: media/image23.png
-   :width: 0.81192in
-   :height: 0.84761in
+   :width: 0.71in
+   :height: 0.71in
 .. |image14| image:: media/image24.png
-   :width: 0.82395in
-   :height: 0.85025in
+   :width: 0.71in
+   :height: 0.71in
 .. |image15| image:: media/image25.png
-   :width: 0.75498in
-   :height: 0.83704in
+   :width: 0.7in
+   :height: 0.7in
 .. |image16| image:: media/image26.png
-   :width: 0.86458in
-   :height: 0.23958in
 .. |image17| image:: media/image27.png
-   :width: 0.16806in
-   :height: 0.16806in
 .. |image18| image:: media/image2.png
 .. |image19| image:: media/image5.png
 .. |image20| image:: media/image28.png
-   :width: 0.16806in
-   :height: 0.16806in
 .. |image21| image:: media/image3.png
 .. |image22| image:: media/image29.png
-   :width: 0.16806in
-   :height: 0.16806in
 .. |image23| image:: media/image30.png
-   :width: 0.16806in
-   :height: 0.16806in
 .. |image24| image:: media/image4.png
 .. |image25| image:: media/image31.png
-   :width: 0.16806in
-   :height: 0.16806in
 .. |image26| image:: media/image7.png
 .. |image27| image:: media/image32.png
-   :width: 0.16806in
-   :height: 0.16806in
 .. |image28| image:: media/image8.png
 .. |image29| image:: media/image33.png
-   :width: 0.16806in
-   :height: 0.16806in
 .. |image30| image:: media/image34.png
-   :width: 0.20000in
-   :height: 0.20000in
 .. |image31| image:: media/image6.png
 .. |image32| image:: media/image35.png
-   :width: 1.44792in
-   :height: 0.28125in
 .. |image33| image:: media/image36.png
-   :width: 1.36458in
-   :height: 0.40625in
 .. |image34| image:: media/image37.png
-   :width: 0.33611in
-   :height: 0.33611in
 .. |image35| image:: media/image38.png
-   :width: 0.33611in
-   :height: 0.33611in
 .. |image36| image:: media/image39.png
-   :width: 0.33611in
-   :height: 0.33611in
 .. |image37| image:: media/image40.png
-   :width: 0.33611in
-   :height: 0.33611in
 .. |image38| image:: media/image41.png
-   :width: 0.24219in
-   :height: 0.18328in
 .. |image39| image:: media/image42.png
-   :width: 3.67708in
-   :height: 3.46670in
 .. |image40| image:: media/image43.png
-   :width: 5.26087in
-   :height: 3.74781in
 .. |image41| image:: media/image44.png
-   :width: 2.66667in
-   :height: 2.67553in
 .. |image42| image:: media/image45.png
-   :width: 2.33886in
-   :height: 1.78125in
 .. |image43| image:: media/image46.png
-   :width: 1.39583in
-   :height: 0.36458in
 .. |image44| image:: media/image47.png
-   :width: 2.28125in
-   :height: 0.72917in
 .. |image45| image:: media/image48.png
-   :width: 2.33594in
-   :height: 1.86411in
 .. |image46| image:: media/image49.png
-   :width: 4.77083in
-   :height: 1.95833in
 .. |image47| image:: media/image50.png
-   :width: 2.43750in
-   :height: 0.73958in
 .. |image48| image:: media/image51.png
-   :width: 3.88542in
-   :height: 3.13405in
 .. |image49| image:: media/image48.png
-   :width: 2.33594in
-   :height: 1.86411in
 .. |image50| image:: media/image52.png
-   :width: 1.79780in
-   :height: 1.56522in
 .. |image51| image:: media/image53.png
-   :width: 0.34375in
-   :height: 0.32292in
 .. |image52| image:: media/image54.png
-   :width: 2.28941in
-   :height: 1.15919in
 .. |image53| image:: media/image55.png
-   :width: 2.18750in
-   :height: 1.10760in
 .. |image54| image:: media/image56.png
-   :width: 1.48958in
-   :height: 0.23958in
 .. |image55| image:: media/image57.png
-   :width: 1.50000in
-   :height: 1.63542in
 .. |image56| image:: media/image58.png
-   :width: 6.35162in
-   :height: 3.86458in
 .. |image57| image:: media/image59.png
-   :width: 5.78193in
-   :height: 4.00781in
 .. |image58| image:: media/image60.png
-   :width: 5.22656in
-   :height: 3.72951in
 .. |image59| image:: media/image65.png
-   :width: 2.31250in
-   :height: 0.57292in
 .. |image60| image:: media/image66.png
-   :width: 1.90625in
-   :height: 3.04614in
 .. |image61| image:: media/image67.png
-   :width: 2.25000in
-   :height: 0.91667in
 .. |image62| image:: media/image68.png
-   :width: 3.78125in
-   :height: 1.78125in
 .. |image63| image:: media/image69.png
-   :width: 3.69531in
-   :height: 1.09433in
 .. |image64| image:: media/image70.png
-   :width: 2.56250in
-   :height: 0.88560in
 .. |image65| image:: media/image50.png
-   :width: 2.43750in
-   :height: 0.73958in
 .. |image66| image:: media/image49.png
-   :width: 4.77083in
-   :height: 1.95833in
 .. |image67| image:: media/image71.png
-   :width: 3.65625in
-   :height: 2.85195in
 .. |image68| image:: media/image72.png
-   :width: 3.67969in
-   :height: 2.62571in
 .. |image69| image:: media/image73.png
-   :width: 0.22639in
-   :height: 0.24653in
 .. |image70| image:: media/image74.png
-   :width: 1.92188in
-   :height: 1.49202in
 .. |image71| image:: media/image75.png
-   :width: 5.35156in
-   :height: 3.67234in
 .. |image72| image:: media/image76.png
-   :width: 0.72917in
-   :height: 0.37500in
 .. |image73| image:: media/image77.png
-   :width: 2.08696in
-   :height: 2.48801in
 .. |image74| image:: media/image78.png
-   :width: 2.62500in
-   :height: 3.69767in
 .. |image75| image:: media/image79.png
-   :width: 2.77083in
-   :height: 4.21614in
 .. |image76| image:: media/image80.png
-   :width: 6.48681in
-   :height: 3.72153in
 .. |image77| image:: media/image81.png
-   :width: 3.14583in
-   :height: 1.89583in
 .. |image78| image:: media/image82.png
-   :width: 2.41667in
-   :height: 3.89443in
 .. |image79| image:: media/image83.png
-   :width: 2.41582in
-   :height: 3.89306in
 .. |image80| image:: media/image84.png
-   :width: 0.35417in
-   :height: 0.40625in
 .. |image81| image:: media/image85.png
-   :width: 3.29514in
-   :height: 3.37394in
 .. |image82| image:: media/image86.png
-   :width: 2.70624in
-   :height: 2.83333in
 .. |image83| image:: media/image87.png
-   :width: 4.72642in
-   :height: 2.76162in
 .. |image84| image:: media/image88.png
-   :width: 4.73585in
-   :height: 2.74993in
 .. |image85| image:: media/image89.png
-   :width: 5.17925in
-   :height: 3.28240in
 .. |image86| image:: media/image90.png
-   :width: 5.22400in
-   :height: 3.71711in
 .. |image87| image:: media/image91.png
-   :width: 6.30208in
-   :height: 4.61458in
 .. |image88| image:: media/image92.png
-   :width: 6.01042in
-   :height: 2.68750in
-.. |image89| image:: media/image93.jpeg
-   :width: 3.33333in
-   :height: 3.46875in
+.. |image89| image:: media/image93.png
 .. |image90| image:: media/image94.png
-   :width: 2.59375in
-   :height: 2.33333in
 .. |image91| image:: media/image95.png
-   :width: 3.15625in
-   :height: 3.75000in
 .. |image92| image:: media/image96.png
-   :width: 6.50000in
-   :height: 4.65903in
 .. |image93| image:: media/image97.png
-   :width: 2.93750in
-   :height: 5.52083in
 .. |image94| image:: media/image98.png
-   :width: 2.93750in
-   :height: 5.52083in
 .. |image95| image:: media/image99.png
-   :width: 3.08333in
-   :height: 3.71875in
 .. |image96| image:: media/image100.png
-   :width: 5.62500in
-   :height: 2.98958in
 .. |image97| image:: media/image101.png
-   :width: 0.34375in
-   :height: 0.36458in
 .. |image98| image:: media/image102.png
-   :width: 3.17708in
-   :height: 3.61458in
 .. |image99| image:: media/image103.png
-   :width: 5.52083in
-   :height: 2.43750in
 .. |image100| image:: media/image104.png
-   :width: 3.10417in
-   :height: 3.20833in
 .. |image101| image:: media/image105.png
-   :width: 3.27083in
-   :height: 4.53839in
 .. |image102| image:: media/image106.png
-   :width: 3.34375in
-   :height: 4.82432in
 .. |image103| image:: media/image107.png
-   :width: 3.70072in
-   :height: 4.30208in
 .. |image104| image:: media/image108.png
-   :width: 3.14583in
-   :height: 2.71875in
 .. |image105| image:: media/image109.png
-   :width: 3.77083in
-   :height: 2.84375in
 .. |image106| image:: media/image110.png
-   :width: 5.03125in
-   :height: 1.98958in
 .. |image107| image:: media/image111.png
-   :width: 4.18750in
-   :height: 7.02083in
 .. |image108| image:: media/image112.png
-   :width: 3.62834in
-   :height: 6.08333in
 .. |image109| image:: media/image113.png
-   :width: 3.58333in
-   :height: 6.82795in
 .. |image110| image:: media/image114.png
-   :width: 13.02083in
-   :height: 9.33333in
 .. |image111| image:: media/image115.png
-   :width: 0.89583in
-   :height: 0.31250in
 .. |image112| image:: media/image116.png
-   :width: 0.30208in
-   :height: 0.29167in
 .. |image113| image:: media/image115.png
-   :width: 0.89583in
-   :height: 0.31250in
 .. |image114| image:: media/image117.png
-   :width: 0.21875in
-   :height: 0.27083in
 .. |image115| image:: media/image116.png
-   :width: 0.30208in
-   :height: 0.29167in
 .. |image116| image:: media/image118.png
-   :width: 6.50000in
-   :height: 3.49792in
 .. |image117| image:: media/image119.png
-   :width: 1.18403in
-   :height: 0.45556in
