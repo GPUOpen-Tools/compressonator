@@ -1,4 +1,5 @@
-﻿+--------------------+-----------------+
+﻿
++--------------------+-----------------+
 | Revision History   |                 |
 +====================+=================+
 | Version 3.0        | April 2018      |
@@ -153,7 +154,8 @@ Image View Toolbar
 |image11|
 
 +-----------------------+-------------------------------------------------------------------------------------------------------------+
-| |image12|             | Select the background the image is displayed on (default black) |image13|\ |image14|\ |image15|             |
+| |image12|             | |image13|\ |image14|\ |image15|                                                                             |
+|                       | Select the background the image is displayed on (default black)                                             |
 +=======================+=============================================================================================================+
 | |image16|             | Zoom into or out of the image using a specific scale (100 = original size) Min setting is 10 and Max is 9999|
 +-----------------------+-------------------------------------------------------------------------------------------------------------+
@@ -195,7 +197,6 @@ of images, such as an image diff or images with multiple MIP levels
 |                                     |                                                                           |
 +-------------------------------------+---------------------------------------------------------------------------+
 | |image32|                           | Displayed when an image has multiple MIP Mapping (0 = original image).    |
-|                                     |                                                                           |
 |                                     | The view of any MIP level and size (as width x height) is selectable.     |
 +-------------------------------------+---------------------------------------------------------------------------+
 
@@ -1674,8 +1675,6 @@ trademarks of their respective owners.
 .. |image10| image:: media/image20.png
 .. |image11| image:: media/image21.png
 .. |image12| image:: media/image22.png
-   :width: 1.50in
-   :height: 1.50in
 .. |image13| image:: media/image23.png
    :width: 0.71in
    :height: 0.71in
