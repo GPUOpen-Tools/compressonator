@@ -107,7 +107,7 @@ void getFileNameExt(const char *FilePathName, char *fnameExt, int maxbuffsize)
     sprintf_s(fnameExt, maxbuffsize,"%s%s", fname, ext);
 }
 
-bool writeObjFileState(std::string filename, std::string state)
+bool writeObjFileState(string filename, string state)
 {
     std::ofstream file; 
     try {
@@ -122,7 +122,7 @@ bool writeObjFileState(std::string filename, std::string state)
     return true;
 }
 
-std::string readObjFileState(std::string filename)
+string readObjFileState(string filename)
 {
     std::ifstream objfile(filename, std::ios::in);
 

@@ -30,6 +30,13 @@
 
 #include "tiny_gltf2.h"
 #include "../json/json.h"
+
+#ifndef TINYGLTF_NO_STB_IMAGE
 #include "./stb_image.h"
+#endif
+
+#ifndef TINYGLTF_NO_STB_IMAGE_WRITE
+#include "./stb_image_write.h"
+#endif
 
 #endif

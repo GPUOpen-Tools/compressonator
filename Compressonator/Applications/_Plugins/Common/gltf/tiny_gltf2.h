@@ -31,8 +31,16 @@
 #define TINY_GLTF_H_
 
 
-#define TINYGLTF_NO_STB_IMAGE_WRITE
-#define TINYGLTF_NO_STB_IMAGE
+//#define TINYGLTF_NO_STB_IMAGE_WRITE
+//#define TINYGLTF_NO_STB_IMAGE
+
+#ifndef TINYGLTF_NO_STB_IMAGE_WRITE
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#endif
+
+#ifndef TINYGLTF_NO_STB_IMAGE
+#define STB_IMAGE_IMPLEMENTATION
+#endif
 
 #include <array>
 #include <cassert>
@@ -41,13 +49,13 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "Common.h"
 
-#ifdef USE_DRACO_EXTENSION 
+#ifdef USE_GLTF2_DRACO_EXTENSION 
 #ifdef ERROR
 #undef ERROR
 #endif
 
-#include "Common.h"
 #include "draco/compression/encode.h"
 #include "draco/compression/decode.h"
 #include "draco/io/mesh_io.h"
@@ -83,7 +91,7 @@ namespace tinygltf2 {
 #define TINYGLTF_TEXTURE_WRAP_CLAMP_TO_EDGE (33071)
 #define TINYGLTF_TEXTURE_WRAP_MIRRORED_REPEAT (33648)
 
-    // Redeclarations of the above for technique.parameters.
+	// Redeclarations of the above for technique.parameters.
 #define TINYGLTF_PARAMETER_TYPE_BYTE (5120)
 #define TINYGLTF_PARAMETER_TYPE_UNSIGNED_BYTE (5121)
 #define TINYGLTF_PARAMETER_TYPE_SHORT (5122)
@@ -111,7 +119,7 @@ namespace tinygltf2 {
 
 #define TINYGLTF_PARAMETER_TYPE_SAMPLER_2D (35678)
 
-    // End parameter types
+	// End parameter types
 
 #define TINYGLTF_TYPE_VEC2 (2)
 #define TINYGLTF_TYPE_VEC3 (3)
@@ -216,7 +224,6 @@ namespace tinygltf2 {
 #ifdef __clang__
 #pragma clang diagnostic push
     // Suppress warning for : static Value null_value
-    // https://stackoverflow.com/questions/15708411/how-to-deal-with-global-constructor-warning-in-clang
 #pragma clang diagnostic ignored "-Wexit-time-destructors"
 #pragma clang diagnostic ignored "-Wpadded"
 #endif
@@ -694,15 +701,14 @@ namespace tinygltf2 {
     };
 
 #ifdef USE_GLTF2_DRACO_EXTENSION
-    // draco gemoetry buffer
-    struct DracoData {
+	struct DracoData {
 
-        std::vector<unsigned char> data;   //compressed data
-        std::string uri;
-        double byteLength = -1;
-        double draco_buffer_view = -1;
-        double buffer_id = -1;
-        std::map<std::string, int> draco_attributes;
+		std::vector<unsigned char> data;   //compressed data
+		std::string uri;
+		double byteLength = -1;
+		double draco_buffer_view = -1;
+		double buffer_id = -1;
+		std::map<std::string, int> draco_attributes;
 
     };
 #endif
@@ -855,9 +861,9 @@ namespace tinygltf2 {
         ///
         /// Write glTF to file.
         ///
-        bool WriteGltfSceneToFile(Model *model, const std::string &filename,
-            bool embedImages,
-            bool embedBuffers /*, bool writeBinary*/);
+		bool WriteGltfSceneToFile(Model *model, const std::string &filename, bool decodedDraco = false,
+			bool embedImages = false,
+			bool embedBuffers = false /*, bool writeBinary*/);
 
         ///
         /// Set callback to use for loading image data
@@ -885,7 +891,7 @@ namespace tinygltf2 {
 
         LoadImageDataFunction LoadImageData =
 #ifndef TINYGLTF_NO_STB_IMAGE
-            &tinygltf::LoadImageData;
+            &tinygltf2::LoadImageData;
 #else
             nullptr;
 #endif
@@ -893,7 +899,7 @@ namespace tinygltf2 {
 
         WriteImageDataFunction WriteImageData =
 #ifndef TINYGLTF_NO_STB_IMAGE_WRITE
-            &tinygltf::WriteImageData;
+            &tinygltf2::WriteImageData;
 #else
             nullptr;
 #endif

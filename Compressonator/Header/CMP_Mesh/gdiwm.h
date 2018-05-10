@@ -10,7 +10,9 @@
 * Instead of implementing a window procedure, we implement the interface
 * found in "gdiwindow.h", which is arguably much nicer.
 \* -------------------------------------------------------------------------*/
+#ifdef _WIN32
 #include <windows.h>
+
 
 // forward declaration of window class
 class GDIWindow;
@@ -69,3 +71,5 @@ int GDIWMAddDialog(HWND hDlg);
 LRESULT CALLBACK GDIMsgProc(HWND hWnd, UINT uMsg, UINT wParam, LONG lParam);
 
 #endif // GDIWM_H
+
+#endif

@@ -27,13 +27,14 @@
 #if !defined(_AMD_TEX_UTILSFUNCS_H_INCLUDED_)
 #define _AMD_TEX_UTILSFUNCS_H_INCLUDED_
 
+#include <string>
+
 #ifdef _WIN32
 #include "Windows.h"
 #include "stdio.h"
 #include <iostream>
 #include <fstream>
-#include <string>
-
+using namespace std;
 HWND FindTopLevelWindow(TCHAR* pszName);
 #endif
 

@@ -99,10 +99,10 @@ static void rasterize(OverdrawBuffer* buffer, float v1x, float v1y, float v1z, f
 	// since we rasterize pixels with covered centers, min >0.5 should round up
 	// as for max, due to top-left filling convention we will never rasterize right/bottom edges
 	// so max >= 0.5 should round down
-	int minx = max((min(X1, min(X2, X3)) + 7) >> 4, 0);
-	int maxx = min((max(X1, max(X2, X3)) + 7) >> 4, (int)kViewport);
-	int miny = max((min(Y1, min(Y2, Y3)) + 7) >> 4, 0);
-	int maxy = min((max(Y1, max(Y2, Y3)) + 7) >> 4, (int)kViewport);
+	int minx = meshopt::max((meshopt::min(X1, meshopt::min(X2, X3)) + 7) >> 4, 0);
+	int maxx = meshopt::min((meshopt::max(X1, meshopt::max(X2, X3)) + 7) >> 4, (int)kViewport);
+	int miny = meshopt::max((meshopt::min(Y1, meshopt::min(Y2, Y3)) + 7) >> 4, 0);
+	int maxy = meshopt::min((meshopt::max(Y1, meshopt::max(Y2, Y3)) + 7) >> 4, (int)kViewport);
 
 	// deltas, 28.4 fixed point
 	int DX12 = X1 - X2;
@@ -182,13 +182,13 @@ meshopt_OverdrawStatistics meshopt_analyzeOverdraw(const unsigned int* indices, 
 
 		for (int j = 0; j < 3; ++j)
 		{
-			minv[j] = min(minv[j], v[j]);
-			maxv[j] = max(maxv[j], v[j]);
+			minv[j] = meshopt::min(minv[j], v[j]);
+			maxv[j] = meshopt::max(maxv[j], v[j]);
 		}
 	}
 
 
-	float extent = max(maxv[0] - minv[0], max(maxv[1] - minv[1], maxv[2] - minv[2]));
+	float extent = meshopt::max(maxv[0] - minv[0], meshopt::max(maxv[1] - minv[1], maxv[2] - minv[2]));
 	float scale = max_xyview / extent;  //max_xyview = orthographic viewport max range
 
 	meshopt_Buffer<float> triangles(index_count * 3);

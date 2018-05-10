@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -26,26 +26,20 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifdef _MSC_VER
 #pragma warning(disable:4100)    // Ignore warnings of unreferenced formal parameters
-#endif //_MSC_VER
+
+#ifdef _WIN32
 #include "Common.h"
 #include "Codec_GT.h"
+#include <process.h>
 
-#include <chrono>
-
+#ifdef GT_COMPDEBUGGER
+#include "CompClient.h"
+#endif
 
 //======================================================================================
 #define USE_MULTITHREADING  1
 
-struct GTEncodeThreadParam
-{
-    GTBlockEncoder   *encoder;
-    CMP_BYTE       in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
-    BYTE             *out;
-    volatile BOOL     run;
-    volatile BOOL     exit;
-};
 
 //
 // Thread procedure for encoding a block
@@ -55,21 +49,20 @@ struct GTEncodeThreadParam
 // it should set the exit flag in the parameters to allow the tread to quit
 //
 
-unsigned int GTThreadProcEncode(void* param)
+unsigned int    _stdcall GTThreadProcEncode(void* param)
 {
     GTEncodeThreadParam *tp = (GTEncodeThreadParam*)param;
 
-    while(tp->exit == FALSE)
+    while(tp->exit == false)
     {
-        if(tp->run == TRUE)
+        if(tp->run == true)
         {
             tp->encoder->CompressBlock(tp->in, tp->out);
-            tp->run = FALSE;
+            tp->run = false;
         }
-
         using namespace chrono;
 
-        std::this_thread::sleep_for( 0ms );
+        std::this_thread::sleep_for(0ms);
     }
 
     return 0;
@@ -94,6 +87,10 @@ CCodec_GT::CCodec_GT() : CCodec_DXTC(CT_GT)
     m_LiveThreads          = 0;
     m_LastThread           = 0;
 
+    m_quality              = 0.05f;
+    m_performance          = 0.0f;
+    m_errorThreshold       = 0.0f;
+
 }
 
 
@@ -107,7 +104,16 @@ bool CCodec_GT::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
         m_Use_MultiThreading = m_NumThreads > 1;
     }
     else
-        return CCodec_DXTC::SetParameter(pszParamName, sValue);
+        if (strcmp(pszParamName, "Quality") == 0)
+        {
+            m_quality = std::stof(sValue);
+            if ((m_quality < 0) || (m_quality > 1.0))
+            {
+                return false;
+            }
+        }
+        else
+            return CCodec_DXTC::SetParameter(pszParamName, sValue);
     return true;
 }
 
@@ -127,7 +133,12 @@ bool CCodec_GT::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue)
 
 bool CCodec_GT::SetParameter(const CMP_CHAR* pszParamName, CODECFLOAT fValue)
 {
+    if (strcmp(pszParamName, "Quality") == 0)
+        m_quality = fValue;
+    else
     return CCodec_DXTC::SetParameter(pszParamName, fValue);
+
+    return true;
 }
 
 
@@ -147,28 +158,24 @@ CCodec_GT::~CCodec_GT()
                 // If we don't wait then there is a race condition here where we have
                 // told the thread to run but it hasn't yet been scheduled - if we set
                 // the exit flag before it runs then its block will not be processed.
-#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable:4127) //warning C4127: conditional expression is constant
-#endif //_MSC_VER
-                while(1)
+                while (1)
                 {
-                    if(g_EncodeParameterStorage[i].run != TRUE)
+                    if (m_EncodeParameterStorage[i].run != TRUE)
                     {
                         break;
                     }
                 }
-#ifdef _MSC_VER
 #pragma warning(pop)
-#endif //_MSC_VER
                 // Signal to the thread that it can exit
-                g_EncodeParameterStorage[i].exit = TRUE;
+                m_EncodeParameterStorage[i].exit = TRUE;
             }
 
             // Now wait for all threads to have exited
-            if(m_LiveThreads > 0)
+            if (m_LiveThreads > 0)
             {
-                for ( DWORD dwThread = 0; dwThread < m_LiveThreads; dwThread++ )
+                for (CMP_DWORD dwThread = 0; dwThread < m_LiveThreads; dwThread++)
                 {
                     std::thread& curThread = m_EncodingThreadHandle[dwThread];
 
@@ -176,23 +183,24 @@ CCodec_GT::~CCodec_GT()
                 }
             }
 
+            for (unsigned int i = 0; i < m_LiveThreads; i++)
+            {
+                std::thread& curThread = m_EncodingThreadHandle[i];
+
+                curThread = std::thread();
+            }
+
+
         } // MultiThreading
 
-        for (unsigned int i = 0; i < m_LiveThreads; i++)
-        {
-            std::thread& curThread = m_EncodingThreadHandle[i];
-
-            curThread = std::thread();
-        }
-
-        delete[] m_EncodingThreadHandle;
         m_EncodingThreadHandle = NULL;
 
-        delete[] g_EncodeParameterStorage;
-        g_EncodeParameterStorage = NULL;
+        if (m_EncodeParameterStorage)
+            delete[] m_EncodeParameterStorage;
+        m_EncodeParameterStorage = NULL;
 
 
-        for(int i=0; i < m_NumEncodingThreads; i++)
+        for (int i = 0; i < m_NumEncodingThreads; i++)
         {
             if (m_encoder[i])
             {
@@ -218,7 +226,7 @@ CodecError CCodec_GT::InitializeGTLibrary()
     if (!m_LibraryInitialized)
     {
 
-        for(DWORD i=0; i < MAX_GT_THREADS; i++)
+        for(CMP_DWORD i=0; i < MAX_GT_THREADS; i++)
         {
             m_encoder[i] = NULL;
         }
@@ -227,43 +235,43 @@ CodecError CCodec_GT::InitializeGTLibrary()
         m_LiveThreads = 0;
         m_LastThread  = 0;
         m_NumEncodingThreads = min(m_NumThreads, MAX_GT_THREADS);
-        if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1;
+        if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1; 
         m_Use_MultiThreading = m_NumEncodingThreads > 1;
 
-        g_EncodeParameterStorage = new GTEncodeThreadParam[m_NumEncodingThreads];
-        if(!g_EncodeParameterStorage)
+        m_EncodeParameterStorage = new GTEncodeThreadParam[m_NumEncodingThreads];
+        if (!m_EncodeParameterStorage)
         {
             return CE_Unknown;
         }
 
         m_EncodingThreadHandle = new std::thread[m_NumEncodingThreads];
-        if(!m_EncodingThreadHandle)
+        if (!m_EncodingThreadHandle)
         {
-            delete[] g_EncodeParameterStorage;
-            g_EncodeParameterStorage = NULL;
+            delete[] m_EncodeParameterStorage;
+            m_EncodeParameterStorage = NULL;
 
             return CE_Unknown;
         }
 
-        DWORD   i;
+        CMP_DWORD   i;
 
         for(i=0; i < m_NumEncodingThreads; i++)
         {
-            // Create single encoder instance
-            m_encoder[i] = new GTBlockEncoder();
+            // Create encoder instance
+            m_encoder[i] = new GTBlockEncoder(m_quality, m_performance, m_errorThreshold);
 
-
+            
             // Cleanup if problem!
-            if(!m_encoder[i])
+            if (!m_encoder[i])
             {
 
-                delete[] g_EncodeParameterStorage;
-                g_EncodeParameterStorage = NULL;
+                delete[] m_EncodeParameterStorage;
+                m_EncodeParameterStorage = NULL;
 
                 delete[] m_EncodingThreadHandle;
                 m_EncodingThreadHandle = NULL;
 
-                for(DWORD j=0; j<i; j++)
+                for (CMP_DWORD j = 0; j<i; j++)
                 {
                     delete m_encoder[j];
                     m_encoder[j] = NULL;
@@ -278,19 +286,19 @@ CodecError CCodec_GT::InitializeGTLibrary()
 
         }
 
-        // Create the encoding threads
+        // Create the encoding threads in the suspended state
         for (i = 0; i<m_NumEncodingThreads; i++)
         {
             // Initialize thread parameters.
-            g_EncodeParameterStorage[i].encoder = m_encoder[i];
+            m_EncodeParameterStorage[i].encoder = m_encoder[i];
             // Inform the thread that at the moment it doesn't have any work to do
             // but that it should wait for some and not exit
-            g_EncodeParameterStorage[i].run = FALSE;
-            g_EncodeParameterStorage[i].exit = FALSE;
+            m_EncodeParameterStorage[i].run = FALSE;
+            m_EncodeParameterStorage[i].exit = FALSE;
 
             m_EncodingThreadHandle[i] = std::thread(
                 GTThreadProcEncode,
-                (void*)&g_EncodeParameterStorage[i]
+                (void*)&m_EncodeParameterStorage[i]
             );
             m_LiveThreads++;
         }
@@ -300,7 +308,7 @@ CodecError CCodec_GT::InitializeGTLibrary()
         m_decoder = new GTBlockDecoder();
         if(!m_decoder)
         {
-            for(DWORD j=0; j<m_NumEncodingThreads; j++)
+            for (CMP_DWORD j = 0; j<m_NumEncodingThreads; j++)
             {
                 delete m_encoder[j];
                 m_encoder[j] = NULL;
@@ -314,22 +322,28 @@ CodecError CCodec_GT::InitializeGTLibrary()
 }
 
 
-CodecError CCodec_GT::EncodeGTBlock(CMP_BYTE  in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG], BYTE    *out)
+CodecError CCodec_GT::EncodeGTBlock(
+#ifdef USE_GT_HDR
+    CMP_FLOAT  in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG], 
+#else
+    CMP_BYTE   in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
+#endif
+    CMP_BYTE    *out)
 {
 if (m_Use_MultiThreading)
 {
-    WORD   threadIndex;
+    CMP_WORD   threadIndex;
 
     // Loop and look for an available thread
-    BOOL found = FALSE;
+    CMP_BOOL found = FALSE;
     threadIndex = m_LastThread;
     while (found == FALSE)
     {
 
-        if (g_EncodeParameterStorage == NULL)
+        if (m_EncodeParameterStorage == NULL)
             return CE_Unknown;
 
-        if(g_EncodeParameterStorage[threadIndex].run == FALSE)
+        if(m_EncodeParameterStorage[threadIndex].run == FALSE)
         {
             found = TRUE;
             break;
@@ -346,23 +360,27 @@ if (m_Use_MultiThreading)
     m_LastThread = threadIndex;
 
     // Copy the input data into the thread storage
-    memcpy(g_EncodeParameterStorage[threadIndex].in,
+    memcpy(m_EncodeParameterStorage[threadIndex].in,
            in,
            16 * 4);
 
     // Set the output pointer for the thread to the provided location
-    g_EncodeParameterStorage[threadIndex].out = out;
+    m_EncodeParameterStorage[threadIndex].out = out;
 
     // Tell the thread to start working
-    g_EncodeParameterStorage[threadIndex].run = TRUE;
+    m_EncodeParameterStorage[threadIndex].run = TRUE;
 }
-else
+else 
 {
         // Copy the input data into the thread storage
-        memcpy(g_EncodeParameterStorage[0].in, in, MAX_SUBSET_SIZE * MAX_DIMENSION_BIG * sizeof(double));
+#ifdef USE_GT_HDR
+        memcpy(m_EncodeParameterStorage[0].in, in, MAX_SUBSET_SIZE * MAX_DIMENSION_BIG * sizeof(CMP_FLOAT));
+#else
+        memcpy(m_EncodeParameterStorage[0].in, in, MAX_SUBSET_SIZE * MAX_DIMENSION_BIG * sizeof(CMP_BYTE));
+#endif
         // Set the output pointer for the thread to write
-        g_EncodeParameterStorage[0].out = out;
-        m_encoder[0]->CompressBlock(g_EncodeParameterStorage[0].in,g_EncodeParameterStorage[0].out);
+        m_EncodeParameterStorage[0].out = out;
+        m_encoder[0]->CompressBlock(m_EncodeParameterStorage[0].in,m_EncodeParameterStorage[0].out);
 }
     return CE_OK;
 }
@@ -374,7 +392,7 @@ CodecError CCodec_GT::FinishGTEncoding(void)
         return CE_Unknown;
     }
 
-    if (!g_EncodeParameterStorage)
+    if (!m_EncodeParameterStorage)
     {
         return CE_Unknown;
     }
@@ -382,20 +400,22 @@ CodecError CCodec_GT::FinishGTEncoding(void)
 if (m_Use_MultiThreading)
 {
     // Wait for all the live threads to finish any current work
-    for(DWORD i=0; i < m_LiveThreads; i++)
+    for(CMP_DWORD i=0; i < m_LiveThreads; i++)
     {
+
         // If a thread is in the running state then we need to wait for it to finish
         // its work from the producer
-        while(g_EncodeParameterStorage[i].run == TRUE)
+        while (m_EncodeParameterStorage[i].run == TRUE)
         {
-            using namespace chrono;
-
-            std::this_thread::sleep_for( 1ms );
+            std::this_thread::sleep_for(1ms);
         }
     }
 }
 return CE_OK;
 }
+
+
+
 
 CodecError CCodec_GT::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
@@ -423,13 +443,13 @@ CodecError CCodec_GT::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, 
     const CMP_DWORD dwBlocksXY = dwBlocksX*dwBlocksY;
 
 
-#ifdef USE_DBGTRACE
+    #ifdef USE_DBGTRACE
     DbgTrace(("IN : BufferType %d ChannelCount %d ChannelDepth %d",bufferIn.GetBufferType(),bufferIn.GetChannelCount(),bufferIn.GetChannelDepth()));
     DbgTrace(("   : Height %d Width %d Pitch %d isFloat %d",bufferIn.GetHeight(),bufferIn.GetWidth(),bufferIn.GetWidth(),bufferIn.IsFloat()));
 
     DbgTrace(("OUT: BufferType %d ChannelCount %d ChannelDepth %d",bufferOut.GetBufferType(),bufferOut.GetChannelCount(),bufferOut.GetChannelDepth()));
     DbgTrace(("   : Height %d Width %d Pitch %d isFloat %d",bufferOut.GetHeight(),bufferOut.GetWidth(),bufferOut.GetWidth(),bufferOut.IsFloat()));
-#endif
+    #endif;
 
     char            row,col,srcIndex;
 
@@ -439,15 +459,20 @@ CodecError CCodec_GT::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, 
     CMP_BYTE*    pInBuffer;
     pInBuffer    =  bufferIn.GetData();
 
-    DWORD block = 0;
+    CMP_DWORD block = 0;
 
     for(CMP_DWORD j = 0; j < dwBlocksY; j++)
     {
 
         for(CMP_DWORD i = 0; i < dwBlocksX; i++)
         {
-            BYTE blockToEncode[BLOCK_SIZE_4X4][CHANNEL_SIZE_ARGB];
+#ifdef USE_GT_HDR
+            CMP_FLOAT blockToEncode[BLOCK_SIZE_4X4][CHANNEL_SIZE_ARGB];
+            CMP_FLOAT srcBlock[BLOCK_SIZE_4X4X4];
+#else
+            CMP_BYTE blockToEncode[BLOCK_SIZE_4X4][CHANNEL_SIZE_ARGB];
             CMP_BYTE srcBlock[BLOCK_SIZE_4X4X4];
+#endif
 
             memset(srcBlock,0,sizeof(srcBlock));
             bufferIn.ReadBlockRGBA(i*4, j*4, 4, 4, srcBlock);
@@ -477,25 +502,26 @@ CodecError CCodec_GT::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, 
             union BBLOCKS
             {
                 CMP_DWORD    compressedBlock[4];
-                BYTE            out[16];
-                BYTE            in[16];
+                CMP_BYTE            out[16];
+                CMP_BYTE            in[16];
             } data;
-
+            
             memset(data.in,0,sizeof(data));
-
+            
             union DBLOCKS
             {
                 double            blockToSave[16][4];
                 double            block[64];
+                CMP_BYTE          Bblock[16][4];
             } savedata;
-
+        
             CMP_BYTE destBlock[BLOCK_SIZE_4X4X4];
             memset(savedata.block,0,sizeof(savedata));
-            m_decoder->DecompressBlock(savedata.blockToSave,data.in);
+            m_decoder->DecompressBlock(savedata.Bblock,data.in);
 
             for (row=0; row<64; row++)
             {
-                destBlock[row] = (BYTE)savedata.block[row];
+                destBlock[row] = (CMP_BYTE)savedata.block[row];
             }
             g_CompClient.SendData(3,sizeof(destBlock),destBlock);
             #endif
@@ -530,10 +556,10 @@ CodecError CCodec_GT::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
 {
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
-
+    
     CodecError err = InitializeGTLibrary();
     if (err != CE_OK) return err;
-
+    
     if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
         return CE_Unknown;
 
@@ -545,36 +571,64 @@ CodecError CCodec_GT::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
     {
         for(CMP_DWORD i = 0; i < dwBlocksX; i++)
         {
+
+#ifdef USE_GT_HDR
             union FBLOCKS
             {
-                BYTE decodedBlock[16][4];
-                BYTE destBlock[BLOCK_SIZE_4X4X4];
+                float decodedBlock[16][4];
+                float destBlock[BLOCK_SIZE_4X4X4];
             } DecData;
+#else
+            union FBLOCKS
+            {
+                CMP_BYTE decodedBlock[16][4];
+                CMP_BYTE destBlock[BLOCK_SIZE_4X4X4];
+            } DecData;
+#endif
 
             union BBLOCKS
             {
-                CMP_DWORD    compressedBlock[4];
-                BYTE            out[16];
-                BYTE            in[16];
+                CMP_DWORD       compressedBlock[4];
+                CMP_BYTE            out[16];
+                CMP_BYTE            in[16];
             } CompData;
 
+#ifdef USE_GT_HDR
+            CMP_FLOAT destBlock[BLOCK_SIZE_4X4X4];
+#else
             CMP_BYTE destBlock[BLOCK_SIZE_4X4X4];
-
+#endif
+            
             bufferIn.ReadBlock(i*4, j*4, CompData.compressedBlock, 4);
 
             // Encode to the appropriate location in the compressed image
             m_decoder->DecompressBlock(DecData.decodedBlock,CompData.in);
 
             // Create the block for decoding
+#ifdef USE_GT_HDR
+            float R, G, B, A;
+#endif
+
             int srcIndex = 0;
             for(int row=0; row < BLOCK_SIZE_4; row++)
             {
                 for(int col=0; col<BLOCK_SIZE_4; col++)
                 {
+#ifdef USE_GT_HDR
+                    R = (CMP_FLOAT)DecData.decodedBlock[row*BLOCK_SIZE_4 + col][BC6H_COMP_RED];
+                    G = (CMP_FLOAT)DecData.decodedBlock[row*BLOCK_SIZE_4 + col][BC6H_COMP_GREEN];
+                    B = (CMP_FLOAT)DecData.decodedBlock[row*BLOCK_SIZE_4 + col][BC6H_COMP_BLUE];
+                    A = (CMP_FLOAT)DecData.decodedBlock[row*BLOCK_SIZE_4 + col][BC6H_COMP_ALPHA];
+                    destBlock[srcIndex]     = R;
+                    destBlock[srcIndex + 1] = G;
+                    destBlock[srcIndex + 2] = B;
+                    destBlock[srcIndex + 3] = A;
+#else
                     destBlock[srcIndex]   = (CMP_BYTE)DecData.decodedBlock[row*BLOCK_SIZE_4+col][BC_COMP_RED];
                     destBlock[srcIndex+1] = (CMP_BYTE)DecData.decodedBlock[row*BLOCK_SIZE_4+col][BC_COMP_GREEN];
                     destBlock[srcIndex+2] = (CMP_BYTE)DecData.decodedBlock[row*BLOCK_SIZE_4+col][BC_COMP_BLUE];
                     destBlock[srcIndex+3] = (CMP_BYTE)DecData.decodedBlock[row*BLOCK_SIZE_4+col][BC_COMP_ALPHA];
+#endif
                     srcIndex+=4;
                 }
             }
@@ -588,9 +642,6 @@ CodecError CCodec_GT::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
             float fProgress = 100.f * (j * dwBlocksX) / dwBlocksXY;
             if (pFeedbackProc(fProgress, pUser1, pUser2))
             {
-#ifdef GT_COMPDEBUGGER
-                g_CompClient.disconnect();
-#endif
                 return CE_Aborted;
             }
         }
@@ -610,3 +661,4 @@ CodecError CCodec_GT::Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer& b
 {
    return CE_OK;
 }
+#endif

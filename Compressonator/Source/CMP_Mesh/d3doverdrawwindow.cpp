@@ -3,10 +3,12 @@
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
+
 #include "TootlePCH.h"
 #include "d3doverdrawwindow.h"
 #include "fit.h"
 
+#ifdef _WIN32
 typedef struct _VERTEX
 {
     float x, y, z;
@@ -985,3 +987,5 @@ FitClusters(void)
         m_fClusterSize.push_back(fSize);
     }
 }
+
+#endif

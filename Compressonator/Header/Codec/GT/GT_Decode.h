@@ -32,8 +32,11 @@ public:
     GTBlockDecoder(){};
     ~GTBlockDecoder(){};
 
-    void DecompressBlock(BYTE   out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-                         BYTE   in[COMPRESSED_BLOCK_SIZE]);
+    void DecompressBlock(
+        CMP_BYTE   out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
+        CMP_BYTE   in[COMPRESSED_BLOCK_SIZE]
+    );
+
 };
 
 

@@ -4,7 +4,7 @@
 /// \file
 ****************************************************************************************/
 #include "TootlePCH.h"
-
+#ifdef _WIN32
 #include "gdiwm.h"
 #include "d3dwm.h"
 #include "d3dwindow.h"
@@ -153,3 +153,4 @@ LRESULT CALLBACK D3DMsgProc(HWND hWnd, UINT uMsg, UINT wParam, LONG lParam)
     // Let the superclass window procedure handle the event
     return GDIMsgProc(hWnd, uMsg, wParam, lParam);
 }
+#endif

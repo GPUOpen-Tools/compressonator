@@ -6,6 +6,10 @@
 #include <assert.h>
 #include "TootlePCH.h"
 
+#ifndef _WIN32
+    #define _SOFTWARE_ONLY_VERSION
+#endif
+
 #ifndef _SOFTWARE_ONLY_VERSION
     #include "gdiwm.h"
     #include "d3dwm.h"

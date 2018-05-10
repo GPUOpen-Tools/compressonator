@@ -49,7 +49,10 @@
 #include "Codec_BC6H.h"
 #include "Codec_BC7.h"
 #include "ASTC/Codec_ASTC.h"
+
+#ifdef _WIN32  //GT only enabled for win build now
 #include "Codec_GT.h"
+#endif
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -169,7 +172,9 @@ CCodec* CreateCodec(CodecType nCodecType)
         case CT_BC6H_SF:                    return new CCodec_BC6H(CT_BC6H_SF);
         case CT_BC7:                        return new CCodec_BC7;
         case CT_ASTC:                       return new CCodec_ASTC;
+#ifdef _WIN32
         case CT_GT:                         return new CCodec_GT;
+#endif
         case CT_Unknown:
         default:
             assert(0);
@@ -239,6 +244,7 @@ CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHe
             dwHeight = ((dwHeight + nBlockHeight - 1) / nBlockHeight) * 4;
             buffsize = dwWidth * dwHeight; 
             break;
+#ifdef _WIN32
         case CT_GT:
             // Aug 1: Added increas in buffer size so that its divisable by 4
             dwWidth = ((dwWidth + 3) / 4) * 4;
@@ -246,6 +252,7 @@ CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHe
             buffsize = dwWidth * dwHeight;
             if (buffsize < (4*4)) buffsize = 4*4;
             break;
+#endif
         default:
             return 0;
     }

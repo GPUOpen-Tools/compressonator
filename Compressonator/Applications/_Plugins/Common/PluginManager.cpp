@@ -30,6 +30,7 @@
 #include "PluginManager.h"
 #include <boost/filesystem.hpp>
 
+#ifdef USE_NewLoader
 #include "Dbghelp.h"
 #pragma comment(lib, "DbgHelp.lib")
 
@@ -111,6 +112,7 @@ bool GetDLLFileExports(LPCSTR szFileName, vector<string> & names)
     CloseHandle(hFile);
     return true;
 };
+#endif
 
 void PluginManager::registerStaticPlugin(char *pluginType, char *pluginName, void * makePlugin)
 {
@@ -138,6 +140,7 @@ void PluginManager::registerStaticPlugin(char *pluginType, char *pluginName, cha
 
 void PluginManager::getPluginDetails(PluginDetails *curPlugin)
 {
+#ifdef _WIN32 
     HINSTANCE dllHandle;
 
     dllHandle = LoadLibraryA(curPlugin->getFileName());
@@ -165,6 +168,7 @@ void PluginManager::getPluginDetails(PluginDetails *curPlugin)
 
         FreeLibrary(dllHandle);
     }
+#endif
 }
 
 

@@ -12,7 +12,7 @@
 #include "JRTCore.h"
 
 #ifdef _LINUX
-    #include "../aligned_malloc.h"
+    #include "../../Header/CMP_Mesh/aligned_malloc.h"
     #define _aligned_malloc aligned_malloc
     #define _aligned_free aligned_free
 #endif

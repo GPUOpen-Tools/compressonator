@@ -6,6 +6,10 @@ add_definitions(-DDISABLE_TESTCODE)
 
 endif()
 
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+add_definitions(-D_LINUX)
+endif()
+
 file(GLOB_RECURSE CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../Source/*.cpp")
 file(GLOB_RECURSE CMP_SOURCES2 "${CMAKE_CURRENT_SOURCE_DIR}/../Source/*.c")
 file(GLOB_RECURSE CMP_SOURCES3 "${CMAKE_CURRENT_SOURCE_DIR}/../Source/*.cxx")
@@ -36,6 +40,7 @@ endforeach()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     list(APPEND CMP_INCLUDE_DIRS "/usr/local/include/OpenEXR/")
+    list(APPEND CMP_INCLUDE_DIRS "/usr/include/OpenEXR/")
     #build Openexr 2.2 from cmake
     if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         list(APPEND CMP_INCLUDE_DIRS "/usr/local/ilmbase22build/include/OpenEXR/")

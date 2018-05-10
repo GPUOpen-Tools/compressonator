@@ -5,6 +5,7 @@
 ****************************************************************************************/
 #include "TootlePCH.h"
 #include <cstdio>
+#ifdef _WIN32
 #include "gdiwm.h"
 #include "gdiwindow.h"
 
@@ -348,3 +349,4 @@ void GDIWMMainLoop(void)
         if (msg.message == WM_QUIT) { return; }
     }
 }
+#endif

@@ -5,7 +5,7 @@
 ****************************************************************************************/
 #ifndef D3DWM_H
 #define D3DWM_H
-
+#ifdef _WIN32
 #include <d3d9.h>
 
 #ifdef _DX11_1_
@@ -26,3 +26,4 @@ int D3DWMDestroyWindow(D3DWindow* window);
 int D3DWMClose(void);
 
 #endif // D3DWM_H
+#endif

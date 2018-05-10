@@ -5,6 +5,7 @@
 ****************************************************************************************/
 #ifndef D3DWINDOW_H
 #define D3DWINDOW_H
+#ifdef _WIN32
 
 #include "d3dwm.h"
 #include "gdiwindow.h"
@@ -41,4 +42,5 @@ protected:
     LPDIRECT3DDEVICE9 d3d;
 };
 
+#endif
 #endif // D3DWINDOW_H

@@ -9,6 +9,11 @@ set(VERSION_PATCH 0)
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 add_definitions(-DDISABLE_TESTCODE)
 endif()
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+add_definitions(-D_LINUX)
+endif()
+
 #uncomment below to rebuild all the dependency libraries from cmake
 #if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 #add_custom_target(

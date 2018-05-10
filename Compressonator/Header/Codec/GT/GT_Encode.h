@@ -32,8 +32,14 @@ class GTBlockEncoder
 {
 public:
 
-    GTBlockEncoder()
+    GTBlockEncoder(
+        double quality,
+        double performance,
+        double errorThreshold)
     {
+        m_quality = quality;
+        m_performance    = performance;
+        m_errorThreshold = errorThreshold;
     };
 
 
@@ -46,7 +52,10 @@ public:
     };
 
     // This routine compresses a block and returns the RMS error
-    double CompressBlock(CMP_BYTE in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],  BYTE out[COMPRESSED_BLOCK_SIZE]);
+    double CompressBlock(
+        CMP_BYTE  in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
+        CMP_BYTE      out[COMPRESSED_BLOCK_SIZE]
+    );
 
 private:
 

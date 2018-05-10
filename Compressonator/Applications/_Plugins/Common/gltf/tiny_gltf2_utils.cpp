@@ -75,14 +75,6 @@
 #endif
 #endif
 
-#ifndef TINYGLTF_NO_STB_IMAGE
-#include "./stb_image.h"
-#endif
-
-#ifndef TINYGLTF_NO_STB_IMAGE_WRITE
-#include "./stb_image_write.h"
-#endif
-
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -102,6 +94,7 @@
 #endif
 
 using nlohmann::json;
+#define FILE_SPLIT_PATH "/\\" 
 
 #ifdef __APPLE__
 #include "TargetConditionals.h"
@@ -115,7 +108,7 @@ using nlohmann::json;
 namespace tinygltf2 {
 
 #ifdef USE_GLTF2_DRACO_EXTENSION
-    std::unique_ptr<draco::Mesh> draco_mesh = nullptr;  //decompressed data
+    std::unique_ptr<draco::Mesh> draco_mesh = nullptr;  //decompressed draco geometry data
 #endif
 
     static void swap4(unsigned int *val) {
@@ -238,15 +231,15 @@ namespace tinygltf2 {
         return "";
     }
 
-    static std::string GetBaseDir(const std::string &filepath) {
-        if (filepath.find_last_of("/\\") != std::string::npos)
-            return filepath.substr(0, filepath.find_last_of("/\\"));
+    static std::string GetBaseDir(const std::string &srcfileDirpath) {
+        if (srcfileDirpath.find_last_of(FILE_SPLIT_PATH) != std::string::npos)
+            return srcfileDirpath.substr(0, srcfileDirpath.find_last_of(FILE_SPLIT_PATH));
         return "";
     }
 
-    // https://stackoverflow.com/questions/8520560/get-a-file-name-from-a-path
-    static std::string GetBaseFilename(const std::string &filepath) {
-        return filepath.substr(filepath.find_last_of("/\\") + 1);
+    static std::string GetFileName(const std::string &srcfileNamepath) {
+		int pos = srcfileNamepath.find_last_of(FILE_SPLIT_PATH);
+        return srcfileNamepath.substr(pos + 1);
     }
 
     std::string base64_encode(unsigned char const *, unsigned int len);
@@ -612,12 +605,13 @@ namespace tinygltf2 {
         bool embedImages,
         WriteImageDataFunction *WriteImageData = nullptr,
         void *user_data = nullptr) {
-        std::string filename;
+        
+		std::string filename;
         std::string ext;
 
         // If image have uri. Use it it as a filename
         if (image.uri.size()) {
-            filename = GetBaseFilename(image.uri);
+            filename = GetFileName(image.uri);
             ext = GetFilePathExtension(filename);
 
         }
@@ -681,7 +675,8 @@ namespace tinygltf2 {
     static bool DecodeDataURI(std::vector<unsigned char> *out,
         std::string &mime_type, const std::string &in,
         size_t reqBytes, bool checkSize) {
-        std::string header = "data:application/octet-stream;base64,";
+        
+		std::string header = "data:application/octet-stream;base64,";
         std::string data;
         if (in.find(header) == 0) {
             data = base64_decode(in.substr(header.size()));  // cut mime string.
@@ -853,6 +848,12 @@ namespace tinygltf2 {
         const std::string &property,
         const bool required,
         const std::string &parent_node = "") {
+#ifdef USE_GLTF2_DRACO_EXTENSION 
+		if (parent_node == "Accessor" && property == "bufferView" && !required)
+		{
+			return true;
+		}
+#endif
         json::const_iterator it = o.find(property);
         if (it == o.end()) {
             if (required) {
@@ -887,6 +888,7 @@ namespace tinygltf2 {
         const json &o, const std::string &property,
         bool required,
         const std::string &parent_node = "") {
+
         json::const_iterator it = o.find(property);
         if (it == o.end()) {
             if (required) {
@@ -939,6 +941,7 @@ namespace tinygltf2 {
         std::string *ret, std::string *err, const json &o,
         const std::string &property, bool required,
         const std::string &parent_node = std::string()) {
+
         json::const_iterator it = o.find(property);
         if (it == o.end()) {
             if (required) {
@@ -975,6 +978,7 @@ namespace tinygltf2 {
         std::string *err, const json &o,
         const std::string &property, bool required,
         const std::string &parent = "") {
+
         json::const_iterator it = o.find(property);
         if (it == o.end()) {
             if (required) {
@@ -1026,6 +1030,7 @@ namespace tinygltf2 {
     static bool ParseJSONProperty(std::map<std::string, double> *ret,
         std::string *err, const json &o,
         const std::string &property, bool required) {
+
         json::const_iterator it = o.find(property);
         if (it == o.end()) {
             if (required) {
@@ -1060,6 +1065,7 @@ namespace tinygltf2 {
     static bool ParseParameterProperty(Parameter *param, std::string *err,
         const json &o,
         const std::string &prop, bool required) {
+
         double num_val;
 
         // A parameter value can either be a string or an array of either a boolean or
@@ -1138,6 +1144,7 @@ namespace tinygltf2 {
         const std::string &basedir,
         LoadImageDataFunction *LoadImageData = nullptr,
         void *user_data = nullptr) {
+
         // A glTF image must either reference a bufferView or an image uri
 
         // schema says oneOf [`bufferView`, `uri`]
@@ -1355,134 +1362,135 @@ namespace tinygltf2 {
     }
 
 #ifdef USE_GLTF2_DRACO_EXTENSION
-    static bool ParseDracoBuffer(DracoData *dbuffer, std::string *err, const json &o,
-        const std::string &basedir, bool is_binary = false,
-        const unsigned char *bin_data = nullptr,
-        size_t bin_size = 0) {
+	static bool ParseDracoBuffer(DracoData *dbuffer, std::string *err, const json &o,
+		const std::string &basedir, bool is_binary = false,
+		const unsigned char *bin_data = nullptr,
+		size_t bin_size = 0) {
 
-        if (!ParseNumberProperty(&(dbuffer->byteLength), err, o, "byteLength", true, "buffers")) {
-            return false;
-        }
+		if (!ParseNumberProperty(&(dbuffer->byteLength), err, o, "byteLength", true, "buffers")) {
+			return false;
+		}
 
-        //only support external bin for gltf-draco
-        dbuffer->uri.clear();
-        ParseStringProperty(&dbuffer->uri, err, o, "uri", false, "buffers");
+		//only support external bin for gltf-draco
+		dbuffer->uri.clear();
+		ParseStringProperty(&dbuffer->uri, err, o, "uri", false, "buffers");
 
-        // having an empty uri for a non embedded image should not be valid
-        if (!is_binary && dbuffer->uri.empty()) {
-            if (err) {
-                (*err) += "'uri' is missing from non binary glTF file buffer.\n";
-            }
-        }
+		// having an empty uri for a non embedded image should not be valid
+		if (!is_binary && dbuffer->uri.empty()) {
+			if (err) {
+				(*err) += "'uri' is missing from non binary glTF file buffer.\n";
+			}
+		}
 
-        json::const_iterator type = o.find("type");
-        if (type != o.end()) {
-            if (type.value().is_string()) {
-                const std::string &ty = type.value();
-                if (ty.compare("arraybuffer") == 0) {
-                    // buffer.type = "arraybuffer";
-                }
-            }
-        }
+		json::const_iterator type = o.find("type");
+		if (type != o.end()) {
+			if (type.value().is_string()) {
+				const std::string &ty = type.value();
+				if (ty.compare("arraybuffer") == 0) {
+					// buffer.type = "arraybuffer";
+				}
+			}
+		}
 
-        size_t bytes = static_cast<size_t>(dbuffer->byteLength);
-        if (is_binary) {
-            // Still binary glTF accepts external dataURI. First try external resources.
+		size_t bytes = static_cast<size_t>(dbuffer->byteLength);
+		if (is_binary) {
+			// Still binary glTF accepts external dataURI. First try external resources.
 
-            if (!dbuffer->uri.empty()) {
-                // External .bin file.
-                LoadExternalFile(&dbuffer->data, err, dbuffer->uri, basedir, bytes, true);
-            }
-            else {
-                // load data from (embedded) binary data
+			if (!dbuffer->uri.empty()) {
+				// External .bin file.
+				LoadExternalFile(&dbuffer->data, err, dbuffer->uri, basedir, bytes, true);
+			}
+			else {
+				// load data from (embedded) binary data
 
-                if ((bin_size == 0) || (bin_data == nullptr)) {
-                    if (err) {
-                        (*err) += "Invalid binary data in `Buffer'.\n";
-                    }
-                    return false;
-                }
+				if ((bin_size == 0) || (bin_data == nullptr)) {
+					if (err) {
+						(*err) += "Invalid binary data in `Buffer'.\n";
+					}
+					return false;
+				}
 
-                if (dbuffer->byteLength > bin_size) {
-                    if (err) {
-                        std::stringstream ss;
-                        ss << "Invalid `byteLength'. Must be equal or less than binary size: "
-                            "`byteLength' = "
-                            << dbuffer->byteLength << ", binary size = " << bin_size << std::endl;
-                        (*err) += ss.str();
-                    }
-                    return false;
-                }
+				if (dbuffer->byteLength > bin_size) {
+					if (err) {
+						std::stringstream ss;
+						ss << "Invalid `byteLength'. Must be equal or less than binary size: "
+							"`byteLength' = "
+							<< dbuffer->byteLength << ", binary size = " << bin_size << std::endl;
+						(*err) += ss.str();
+					}
+					return false;
+				}
 
-                // Read buffer data
-                dbuffer->data.resize(static_cast<size_t>(dbuffer->byteLength));
-                memcpy(&(dbuffer->data.at(0)), bin_data, static_cast<size_t>(dbuffer->byteLength));
-            }
+				// Read buffer data
+				dbuffer->data.resize(static_cast<size_t>(dbuffer->byteLength));
+				memcpy(&(dbuffer->data.at(0)), bin_data, static_cast<size_t>(dbuffer->byteLength));
+			}
 
-        }
-        else {
-            if (IsDataURI(dbuffer->uri)) {
-                std::string mime_type;
-                if (!DecodeDataURI(&dbuffer->data, mime_type, dbuffer->uri, bytes, true)) {
-                    if (err) {
-                        (*err) += "Failed to decode 'uri' : " + dbuffer->uri + " in Buffer\n";
-                    }
-                    return false;
-                }
-            }
-            else {
-                // Assume external .bin file.
-                if (!LoadExternalFile(&dbuffer->data, err, dbuffer->uri, basedir, bytes,
-                    true)) {
-                    return false;
-                }
-            }
+		}
+		else {
+			if (IsDataURI(dbuffer->uri)) {
+				std::string mime_type;
+				if (!DecodeDataURI(&dbuffer->data, mime_type, dbuffer->uri, bytes, true)) {
+					if (err) {
+						(*err) += "Failed to decode 'uri' : " + dbuffer->uri + " in Buffer\n";
+					}
+					return false;
+				}
+			}
+			else {
+				// Assume external .bin file.
+				if (!LoadExternalFile(&dbuffer->data, err, dbuffer->uri, basedir, bytes,
+					true)) {
+					return false;
+				}
+			}
 
-            // Create a draco decoding buffer. Note that no data is copied in this step.
-            draco::DecoderBuffer dracobuffer;
-            dracobuffer.Init((char*)dbuffer->data[0], dbuffer->data.size());
-            auto type_statusor = draco::Decoder::GetEncodedGeometryType(&dracobuffer);
-            if (!type_statusor.ok())
-            {
-                printf("Failed loading the input mesh: %s", type_statusor.status().error_msg());
-                return false;
-            }
+			// Create a draco decoding buffer. Note that no data is copied in this step.
+			draco::DecoderBuffer dracobuffer;
+			dracobuffer.Init((const char *)dbuffer->data.data(), dbuffer->data.size());
+			auto type_statusor = draco::Decoder::GetEncodedGeometryType(&dracobuffer);
+			if (!type_statusor.ok())
+			{
+				printf("Failed loading the input mesh: %s\n", type_statusor.status().error_msg());
+				return false;
+			}
 
-            const draco::EncodedGeometryType geom_type = type_statusor.value();
-            if (geom_type == draco::TRIANGULAR_MESH)
-            {
-                printf("Decode Mesh From Buffer");
+			const draco::EncodedGeometryType geom_type = type_statusor.value();
+			if (geom_type == draco::TRIANGULAR_MESH)
+			{
+				printf("Decode Mesh From Buffer\n");
 
-                draco::Decoder decoder;
-                auto statusor = decoder.DecodeMeshFromBuffer(&dracobuffer);
-                if (!statusor.ok())
-                {
-                    printf("Failed loading the input mesh: %s", statusor.status().error_msg());
-                    return false;
-                }
+				draco::Decoder decoder;
 
-                draco_mesh = std::move(statusor).value();
+				auto statusor = decoder.DecodeMeshFromBuffer(&dracobuffer);
+				if (!statusor.ok())
+				{
+					printf("Failed loading the input mesh: %s\n", statusor.status().error_msg());
+					return false;
+				}
 
-            }
-            else if (geom_type == draco::POINT_CLOUD)
-            {
-                printf("Decode Point Cloud From Buffer");
-                // Failed to decode it as mesh, so let's try to decode it as a point cloud.
-                draco::Decoder decoder;
-                auto statusor = decoder.DecodePointCloudFromBuffer(&dracobuffer);
-                if (!statusor.ok())
-                {
-                    printf("Failed loading the input mesh: %s", statusor.status().error_msg());
-                }
-                else {
-                    printf("Decode Point Cloud From Buffer is on-going. not supported yet.");
-                }
+				draco_mesh = std::move(statusor).value();
 
-                //return false for now as point cloud not supported yet.
-                return false;
-            }
-        }
-        return true;
+			}
+			else if (geom_type == draco::POINT_CLOUD)
+			{
+				printf("Decode Point Cloud From Buffer\n");
+				// Failed to decode it as mesh, so let's try to decode it as a point cloud.
+				draco::Decoder decoder;
+				auto statusor = decoder.DecodePointCloudFromBuffer(&dracobuffer);
+				if (!statusor.ok())
+				{
+					printf("Failed loading the input mesh: %s\n", statusor.status().error_msg());
+				}
+				else {
+					printf("Decode Point Cloud From Buffer is on-going. not supported yet.\n");
+				}
+
+				//return false for now as point cloud not supported yet.
+				return false;
+	        }
+	    }
+		return true;
     }
 #endif
 
@@ -2239,6 +2247,9 @@ namespace tinygltf2 {
         model->extensionsRequired.clear();
         model->extensions.clear();
         model->defaultScene = -1;
+#ifdef USE_GLTF2_DRACO_EXTENSION
+		model->dracomeshes.clear();
+#endif
 
         // 1. Parse Asset
         {
@@ -2265,11 +2276,12 @@ namespace tinygltf2 {
                     model->extensionsUsed.push_back(root[i].get<std::string>());
                 }
             }
-
+#ifdef USE_GLTF2_DRACO_EXTENSION
             if (model->extensionsUsed.size() > 0)
                 isBufferViewrequired = false;
             else
                 isBufferViewrequired = true;
+#endif
         }
 
         {
@@ -2280,11 +2292,12 @@ namespace tinygltf2 {
                     model->extensionsRequired.push_back(root[i].get<std::string>());
                 }
             }
-
+#ifdef USE_GLTF2_DRACO_EXTENSION
             if (model->extensionsRequired.size() > 0)
                 isBufferViewrequired = false;
             else
                 isBufferViewrequired = true;
+#endif
         }
 
 #ifdef USE_GLTF2_DRACO_EXTENSION
@@ -2293,112 +2306,119 @@ namespace tinygltf2 {
         else
             use_draco_ = false;
 
-        // if use draco is true, parse draco buffer view first
-        if (use_draco_) {
+		// if use draco is true, parse draco buffer view first
+		if (use_draco_) {
 
-            json::const_iterator rootIt = v.find("meshes");
-            if ((rootIt != v.end()) && rootIt.value().is_array()) {
-                const json &root = rootIt.value();
-                DracoData dracodata;
-                json::const_iterator it(root.begin());
-                json::const_iterator itEnd(root.end());
-                for (; it != itEnd; ++it) {
-                    if (!it.value().is_object()) {
-                        if (err) {
-                            (*err) += "`meshes' does not contain an JSON object.";
-                        }
-                        return false;
-                    }
+			json::const_iterator rootIt = v.find("meshes");
+			DracoData dracodata;
 
-                    const json obj = it->get<json>();
-                    json::const_iterator primObject = obj.find("primitives");
+			if ((rootIt != v.end()) && rootIt.value().is_array()) {
+				const json &root = rootIt.value();
 
-                    if ((primObject != obj.end()) && primObject.value().is_array()) {
-                        for (json::const_iterator i = primObject.value().begin();
-                            i != primObject.value().end(); i++) {
-                            const json extobj = i.value();
-                            json::const_iterator itext = extobj.find("extensions");
-                            if (itext != extobj.end()) {
-                                json::const_iterator khrext = itext->get<json>().find("KHR_draco_mesh_compression");
-                                // parse KHR_draco_mesh_compression extension
-                                const json khrobj = itext->get<json>();
-                                if ((khrext.value().is_array())) {
+				json::const_iterator it(root.begin());
+				json::const_iterator itEnd(root.end());
+				for (; it != itEnd; ++it) {
+					if (!it.value().is_object()) {
+						if (err) {
+							(*err) += "`meshes' does not contain an JSON object.";
+						}
+						return false;
+					}
+					const json jsonMesh = it->get<json>();
+					json::const_iterator primObject = jsonMesh.find("primitives");
+					if ((primObject != jsonMesh.end()) && primObject.value().is_array()) {
+						for (json::const_iterator i = primObject.value().begin();
+							i != primObject.value().end(); i++) {
+							const json jsonPrim = i.value();
+							json::const_iterator itExt = jsonPrim.find("extensions");
+							if (itExt != jsonPrim.end()) {
+								if (itExt.value().is_object()) {
+									const json &values_object = itExt.value();
 
+									json::const_iterator itVal(values_object.begin());
+									json::const_iterator itValEnd(values_object.end());
+									for (; itVal != itValEnd; itVal++) {
+										if (itVal.key() == "KHR_draco_mesh_compression") {
+											if (itVal.value().is_object()) {
+												const json &khrvalues_object = itVal.value();
 
-                                    const json &jarray = khrext.value();
+												json::const_iterator itkhrVal(khrvalues_object.begin());
+												json::const_iterator itkhrValEnd(khrvalues_object.end());
+												for (; itkhrVal != itkhrValEnd; itkhrVal++) {
+													if (!ParseNumberProperty(&(dracodata.draco_buffer_view), err, khrvalues_object, "bufferView", true, "KHR_draco_mesh_compression")) {
+														return false;
+													}
+												}
+												if (!ParseStringIntProperty(&dracodata.draco_attributes, err, khrvalues_object, "attributes",
+													true, "KHR_draco_mesh_compression")) {
+													return false;
+												}
 
-                                    if (!ParseNumberProperty(&(dracodata.draco_buffer_view), err, jarray, "bufferView", true, "KHR_draco_mesh_compression")) {
-                                        return false;
-                                    }
-
-                                    //if there is draco bufferview
-                                    if (dracodata.draco_buffer_view > -1) {
-                                        json::const_iterator bufferView = v.find("bufferViews");
-                                        if ((bufferView != v.end()) && bufferView.value().is_object()) {
-                                            json::const_iterator it(bufferView.value().begin());
-                                            json::const_iterator itEnd(bufferView.value().end());
-                                            int id = 0;
-                                            for (; it != itEnd; ++it) {
-                                                //parse on the bufferview id 's buffer id
-                                                if (id == dracodata.draco_buffer_view) {
-                                                    if (!ParseNumberProperty(&(dracodata.buffer_id), err, bufferView.value(), "buffer", true, "bufferViews")) {
-                                                        return false;
-                                                    }
-                                                }
-                                                id++;
-                                            }
-                                        }
-                                    }
-
-                                    if (!ParseStringIntProperty(&dracodata.draco_attributes, err, jarray, "attributes",
-                                        true, "KHR_draco_mesh_compression")) {
-                                        return false;
-                                    }
-
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                }
-
-                //if there is draco buffer id, then parse and decode the buffer
-                if (dracodata.buffer_id > -1)
-                {
-                    draco_id = dracodata.buffer_id;
-                    int id = 0; //id
-                    json::const_iterator rootIt = v.find("buffers");
-                    if ((rootIt != v.end()) && rootIt.value().is_array()) {
-                        const json &root = rootIt.value();
-
-                        json::const_iterator it(root.begin());
-                        json::const_iterator itEnd(root.end());
-                        for (; it != itEnd; it++) {
-                            if (!it.value().is_object()) {
-                                if (err) {
-                                    (*err) += "`buffers' does not contain an JSON object.";
-                                }
-                                return false;
-                            }
-
-                            //parse only draco buffer
-                            if (id == draco_id)
-                            {
-                                if (!ParseDracoBuffer(&dracodata, err, it->get<json>(), base_dir, is_binary_,
-                                    bin_data_, bin_size_)) {
-                                    return false;
-                                }
-                            }
-                            id++;
-                        }
-                        model->dracomeshes.push_back(dracodata);
-                    }
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 
 
-                }
-            }
-        }
+			}
+
+			//if there is draco bufferview
+			if (dracodata.draco_buffer_view > -1) {
+				json::const_iterator bufferView = v.find("bufferViews");
+				if ((bufferView != v.end()) && bufferView.value().is_array()) {
+					int id = 0;
+					for (json::const_iterator itbufv = bufferView.value().begin();
+						itbufv != bufferView.value().end(); itbufv++) {
+						const json jsonBufV = itbufv.value();
+						//parse on the bufferview id 's buffer id
+						if (id == dracodata.draco_buffer_view) {
+							if (!ParseNumberProperty(&(dracodata.buffer_id), err, jsonBufV, "buffer", true, "bufferViews")) {
+								return false;
+							}
+						}
+						id++;
+					}
+				}
+			}
+
+			//if there is draco buffer id, then parse and decode the buffer
+			if (dracodata.buffer_id > -1)
+			{
+				draco_id = dracodata.buffer_id;
+				int id = 0; //id
+				json::const_iterator rootIt = v.find("buffers");
+				if ((rootIt != v.end()) && rootIt.value().is_array()) {
+					const json &root = rootIt.value();
+
+					json::const_iterator it(root.begin());
+					json::const_iterator itEnd(root.end());
+					for (; it != itEnd; it++) {
+						if (!it.value().is_object()) {
+							if (err) {
+								(*err) += "`buffers' does not contain an JSON object.";
+							}
+							return false;
+						}
+
+						//parse only draco buffer
+						if (id == draco_id)
+						{
+							if (!ParseDracoBuffer(&dracodata, err, it->get<json>(), base_dir, is_binary_,
+								bin_data_, bin_size_)) {
+								return false;
+							}
+						}
+						id++;
+					}
+					model->dracomeshes.push_back(dracodata);
+				}
+			}
+		}
 #endif
 
         // 3. Parse Buffer
@@ -2445,6 +2465,7 @@ namespace tinygltf2 {
 
                 json::const_iterator it(root.begin());
                 json::const_iterator itEnd(root.end());
+				int i = 0;
                 for (; it != itEnd; it++) {
                     if (!it.value().is_object()) {
                         if (err) {
@@ -2452,12 +2473,21 @@ namespace tinygltf2 {
                         }
                         return false;
                     }
+
+#ifdef USE_GLTF2_DRACO_EXTENSION
+					//skip parse draco bufferview
+					if (i == draco_id) {
+						continue;
+					}
+#endif
+
                     BufferView bufferView;
                     if (!ParseBufferView(&bufferView, err, it->get<json>())) {
                         return false;
                     }
 
                     model->bufferViews.push_back(bufferView);
+					i++;
                 }
             }
         }
@@ -3489,227 +3519,451 @@ namespace tinygltf2 {
         gltfFile << content << std::endl;
     }
 
-    bool TinyGLTF::WriteGltfSceneToFile(Model *model, const std::string &filename,
-        bool embedImages = false,
-        bool embedBuffers = false
-    /*, bool writeBinary*/)
-    {
-        json output;
+	bool TinyGLTF::WriteGltfSceneToFile(Model *model, const std::string &filename, bool decodedDraco,
+		bool embedImages,
+		bool embedBuffers
 
-        // ACCESSORS
-        json accessors;
-        for (unsigned int i = 0; i < model->accessors.size(); ++i) {
-            json accessor;
-            SerializeGltfAccessor(model->accessors[i], accessor);
-            accessors.push_back(accessor);
-        }
-        output["accessors"] = accessors;
+	/*, bool writeBinary*/) {
+		json output;
 
-        // ANIMATIONS
-        if (model->animations.size()) {
-            json animations;
-            for (unsigned int i = 0; i < model->animations.size(); ++i) {
-                if (model->animations[i].channels.size()) {
-                    json animation;
-                    SerializeGltfAnimation(model->animations[i], animation);
-                    animations.push_back(animation);
-                }
-            }
-            output["animations"] = animations;
-        }
+		//draco
+		if (decodedDraco) {
+			// ACCESSORS
+			json accessors;
+			std::string type;
+			int count = 0;
+			int i = 0;
+			for (auto& x : model->dracomeshes[0].draco_attributes) {
+				json accessor;
+				accessor["bufferView"] = i;
+				accessor["componentType"] = 5126;
+				int id = x.second;
+				count = draco_mesh->GetAttributeByUniqueId(id)->size();//draco_mesh->GetAttributeByUniqueId(id)->indices_map_size();//
+				accessor["count"] = count;
 
-        // ASSET
-        json asset;
-        SerializeGltfAsset(model->asset, asset);
-        output["asset"] = asset;
+				//type is hardcoded to support as below
+				//todo : fix texcoord_0 to just texcoord
+				if (x.first == "TEXCOORD_0") {
+					type = "VEC2";
+				}
+				else if (x.first == "NORMAL") {
+					type = "VEC3";
+				}
+				else if (x.first == "TANGENT") {
+					type = "VEC4";
+				}
+				else if (x.first == "POSITION") {
+					type = "VEC3";
+					int oriattri_id = model->meshes[0].primitives[0].attributes[x.first];
 
-        std::string binFilename = GetBaseFilename(filename);
-        std::string ext = ".bin";
-        std::string::size_type pos = binFilename.rfind('.', binFilename.length());
+					SerializeNumberArrayProperty<double>("min", model->accessors[oriattri_id].minValues, accessor);
+					SerializeNumberArrayProperty<double>("max", model->accessors[oriattri_id].maxValues, accessor);
+				}
+				accessor["type"] = type;
+				accessors.push_back(accessor);
 
-        if (pos != std::string::npos) {
-            binFilename = binFilename.substr(0, pos) + ext;
-        }
-        else {
-            binFilename = binFilename + ".bin";
-        }
-        std::string baseDir = GetBaseDir(filename);
-        if (baseDir.empty()) {
-            baseDir = "./";
-        }
+				//to do: find primitive with draco extension then update the attribute id respectively
+				//now just assume single mesh and single primitive is the draco mesh
+				model->meshes[0].primitives[0].attributes[x.first] = i;
+				i++;
+			}
 
-        std::string binSaveFilePath = JoinPath(baseDir, binFilename);
+			//index
+			json accessor;
+			accessor["bufferView"] = i;
+			accessor["componentType"] = 5125;
 
-        // BUFFERS (We expect only one buffer here)
-        json buffers;
-        for (unsigned int i = 0; i < model->buffers.size(); ++i) {
-            json buffer;
-            if (embedBuffers) {
-                SerializeGltfBuffer(model->buffers[i], buffer);
-            }
-            else {
-                SerializeGltfBuffer(model->buffers[i], buffer, binSaveFilePath,
-                    binFilename);
-            }
-            buffers.push_back(buffer);
-        }
-        output["buffers"] = buffers;
+			count = draco_mesh->num_faces() * 3;
+			accessor["count"] = count;
+			type = "SCALAR";
+			accessor["type"] = type;
+			accessors.push_back(accessor);
+			//to do: find primitive with draco extension then update the index id respectively
+			//now just assume single mesh and single primitive is the draco mesh
+			model->meshes[0].primitives[0].indices = i;
+			output["accessors"] = accessors;
+		}
+		else {
 
-        // BUFFERVIEWS
-        json bufferViews;
-        for (unsigned int i = 0; i < model->bufferViews.size(); ++i) {
-            json bufferView;
-            SerializeGltfBufferView(model->bufferViews[i], bufferView);
-            bufferViews.push_back(bufferView);
-        }
-        output["bufferViews"] = bufferViews;
+			// ACCESSORS
+			json accessors;
+			for (unsigned int i = 0; i < model->accessors.size(); ++i) {
+				json accessor;
+				SerializeGltfAccessor(model->accessors[i], accessor);
+				accessors.push_back(accessor);
+			}
+			output["accessors"] = accessors;
+		}
 
-        // Extensions used
-        if (model->extensionsUsed.size()) {
-            SerializeStringArrayProperty("extensionsUsed", model->extensionsUsed,
-                output);
-        }
+		// ANIMATIONS
+		if (model->animations.size()) {
+			json animations;
+			for (unsigned int i = 0; i < model->animations.size(); ++i) {
+				if (model->animations[i].channels.size()) {
+					json animation;
+					SerializeGltfAnimation(model->animations[i], animation);
+					animations.push_back(animation);
+				}
+			}
+			output["animations"] = animations;
+		}
 
-        // Extensions required
-        if (model->extensionsRequired.size()) {
-            SerializeStringArrayProperty("extensionsRequired",
-                model->extensionsRequired, output);
-        }
+		// ASSET
+		json asset;
+		SerializeGltfAsset(model->asset, asset);
+		output["asset"] = asset;
 
-        // IMAGES
-        if (model->images.size()) {
-            json images;
-            for (unsigned int i = 0; i < model->images.size(); ++i) {
-                json image;
+		std::string binFilename = GetFileName(filename);
+		std::string ext = ".bin";
+		std::string::size_type pos = binFilename.rfind('.', binFilename.length());
 
-                UpdateImageObject(model->images[i], baseDir, int(i), embedImages,
-                    &this->WriteImageData, &this->write_image_user_data_);
-                SerializeGltfImage(model->images[i], image);
-                images.push_back(image);
-            }
-            output["images"] = images;
-        }
+		if (pos != std::string::npos) {
+			binFilename = binFilename.substr(0, pos) + ext;
+		}
+		else {
+			binFilename = binFilename + ".bin";
+		}
+		std::string baseDir = GetBaseDir(filename);
+		if (baseDir.empty()) {
+			baseDir = "./";
+		}
 
-        // MATERIALS
-        if (model->materials.size()) {
-            json materials;
-            for (unsigned int i = 0; i < model->materials.size(); ++i) {
-                json material;
-                SerializeGltfMaterial(model->materials[i], material);
-                materials.push_back(material);
-            }
-            output["materials"] = materials;
-        }
+		std::string binSaveFilePath = JoinPath(baseDir, binFilename);
 
-        // MESHES
-        if (model->meshes.size()) {
-            json meshes;
-            for (unsigned int i = 0; i < model->meshes.size(); ++i) {
-                json mesh;
-                SerializeGltfMesh(model->meshes[i], mesh);
-                meshes.push_back(mesh);
-            }
-            output["meshes"] = meshes;
-        }
+		// BUFFERS and BUFFERVIEWS (We expect only one buffer here)
 
-        // NODES
-        if (model->nodes.size()) {
-            json nodes;
-            for (unsigned int i = 0; i < model->nodes.size(); ++i) {
-                json node;
-                SerializeGltfNode(model->nodes[i], node);
-                nodes.push_back(node);
-            }
-            output["nodes"] = nodes;
-        }
+		if (decodedDraco) {
 
-        // SCENE
-        if (model->defaultScene > -1) {
-            SerializeNumberProperty<int>("scene", model->defaultScene, output);
-        }
+			// BUFFERVIEWS
+			json bufferViews;
+			int byteLength = 0;
+			int byteOffset = 0;
+			std::vector<char> tempdata;
+			std::vector<char> data;
+			for (auto& x : model->dracomeshes[0].draco_attributes) {
+				json bufferView;
+				int id = x.second;
+				const draco::PointAttribute *const att = draco_mesh->GetAttributeByUniqueId(id);
+				if (x.first == "TEXCOORD_0") {
+					std::array<float, 2> value;
 
-        // SCENES
-        if (model->scenes.size()) {
-            json scenes;
-            for (unsigned int i = 0; i < model->scenes.size(); ++i) {
-                json currentScene;
-                SerializeGltfScene(model->scenes[i], currentScene);
-                scenes.push_back(currentScene);
-            }
-            output["scenes"] = scenes;
-        }
+					for (draco::AttributeValueIndex i(0); i < att->size(); ++i) {
+						if (!att->ConvertValue<float, 2>(i, &value[0]))
+							return false;
+						char *pFloat = reinterpret_cast<char *>(&value);
+						data.insert(data.end(), pFloat, pFloat + 8);
+					}
 
-        // SKINS
-        if (model->skins.size()) {
-            json skins;
-            for (unsigned int i = 0; i < model->skins.size(); ++i) {
-                json skin;
-                SerializeGltfSkin(model->skins[i], skin);
-                skins.push_back(skin);
-            }
-            output["skins"] = skins;
-        }
+				}
+				else if (x.first == "NORMAL") {
+					std::array<float, 3> value;
 
-        // TEXTURES
-        if (model->textures.size()) {
-            json textures;
-            for (unsigned int i = 0; i < model->textures.size(); ++i) {
-                json texture;
-                SerializeGltfTexture(model->textures[i], texture);
-                textures.push_back(texture);
-            }
-            output["textures"] = textures;
-        }
+					for (draco::AttributeValueIndex i(0); i < att->size(); ++i) {
+						if (!att->ConvertValue<float, 3>(i, &value[0]))
+							return false;
+						char *pFloat = reinterpret_cast<char *>(&value);
+						data.insert(data.end(), pFloat, pFloat + 12);
+					}
+				}
+				else if (x.first == "TANGENT") {
+					std::array<float, 4> value;
 
-        // SAMPLERS
-        if (model->samplers.size()) {
-            json samplers;
-            for (unsigned int i = 0; i < model->samplers.size(); ++i) {
-                json sampler;
-                SerializeGltfSampler(model->samplers[i], sampler);
-                samplers.push_back(sampler);
-            }
-            output["samplers"] = samplers;
-        }
+					for (draco::AttributeValueIndex i(0); i < att->size(); ++i) {
+						if (!att->ConvertValue<float, 4>(i, &value[0]))
+							return false;
+						char *pFloat = reinterpret_cast<char *>(&value);
+						data.insert(data.end(), pFloat, pFloat + 16);
+					}
+				}
+				else if (x.first == "POSITION") {
+					std::array<float, 3> value;
+					for (draco::AttributeValueIndex i(0); i < att->size(); ++i) {
+						if (!att->ConvertValue<float, 3>(i, &value[0]))
+							return false;
+						char *pFloat = reinterpret_cast<char *>(&value);
+						data.insert(data.end(), pFloat, pFloat + 12);
+					}
+				}
 
-        // CAMERAS
-        if (model->cameras.size()) {
-            json cameras;
-            for (unsigned int i = 0; i < model->cameras.size(); ++i) {
-                json camera;
-                SerializeGltfCamera(model->cameras[i], camera);
-                cameras.push_back(camera);
-            }
-            output["cameras"] = cameras;
-        }
+				byteLength = draco_mesh->GetAttributeByUniqueId(id)->buffer()->data_size();
 
-        // EXTENSIONS
-        SerializeExtensionMap(model->extensions, output);
+				//code to be deleted once verify/debug
+				//int idxmapsz = draco_mesh->GetAttributeByUniqueId(id)->indices_map_size();
+				//
+				//int dimension = 0;
+				//int formatsz = 0;
+				//if (x.first == "TEXCOORD_0") {
+				//  dimension = 2;
+				//  formatsz = 4;
+				//}
+				//else if (x.first == "NORMAL") {
+				//  dimension = 3;
+				//  formatsz = 4;
+				//}
+				//else if (x.first == "TANGENT") {
+				//  dimension = 4;
+				//  formatsz = 4;
+				//}
+				//else if (x.first == "POSITION") {
+				//  dimension = 3;
+				//  formatsz = 4;
+				//}
+				//
+				//byteLength = idxmapsz * dimension * formatsz;
+				//
+				//for (int i = 0; i < idxmapsz; i++) {
+				//  //draco::AttributeValueIndex idx = draco_mesh->GetAttributeByUniqueId(id)->mapped_index((draco::PointIndex)i);
+				//  tempdata.clear();
+				//  tempdata.resize(dimension * formatsz);
+				//  //tempfidx = fbufdata;
+				//  //for (int j = 0; j < dimension; j++) {
+				//  //uint32_t temp = tempfidx[idx.value()];
+				//  //uint32_t *pointtemp= nullptr;
+				//
+				//  draco_mesh->GetAttributeByUniqueId(id)->GetMappedValue((draco::PointIndex)i, &tempdata[0]);
+				//
+				//  //unsigned char ctemp = temp;
+				//  //data.push_back(ctemp);
+				//  //ctemp = temp >> 8;
+				//  //data.push_back(ctemp);
+				//  //ctemp = temp >> 16;
+				//  //data.push_back(ctemp);
+				//  //ctemp = temp >> 24;
+				//  //data.push_back(ctemp);
+				//  //tempfidx++;
+				//  //}
+				//
+				//  data.insert(data.end(), tempdata.begin(), tempdata.end());
+				//}
 
-        // LIGHTS as KHR_lights_cmn
-        if (model->lights.size()) {
-            json lights;
-            for (unsigned int i = 0; i < model->lights.size(); ++i) {
-                json light;
-                SerializeGltfLight(model->lights[i], light);
-                lights.push_back(light);
-            }
-            json khr_lights_cmn;
-            khr_lights_cmn["lights"] = lights;
-            json ext_j;
+				bufferView["buffer"] = 0;
+				bufferView["byteLength"] = byteLength;
+				bufferView["byteOffset"] = byteOffset;
+				byteOffset += byteLength;
+				bufferViews.push_back(bufferView);
+			}
 
-            if (output.find("extensions") != output.end()) {
-                ext_j = output["extensions"];
-            }
+			//index bufferviews
+			json bufferView;
+			bufferView["buffer"] = 0;
+			int vertid = model->dracomeshes[0].draco_attributes["POSITION"];
+			byteLength = draco_mesh->num_faces() * 3 * 4;//draco_mesh->GetAttributeByUniqueId(vertid)->indices_map_size() ;
+			std::vector<char> tempc;
+			for (draco::FaceIndex i(0); i < draco_mesh->num_faces(); ++i) {
 
-            ext_j["KHR_lights_cmn"] = khr_lights_cmn;
 
-            output["extensions"] = ext_j;
-        }
+				for (int j = 0; j < 3; ++j) {
+					int vertid = model->dracomeshes[0].draco_attributes["POSITION"];
+					const draco::PointIndex vert_index = draco_mesh->face(i)[j];
+					uint32_t temp = draco_mesh->GetAttributeByUniqueId(vertid)->mapped_index(vert_index).value();
+					tempc.clear();
+					tempc.resize(4);
+					memcpy(&tempc[0], &temp, 4);
+					data.insert(data.end(), tempc.begin(), tempc.end());
+				}
+			}
 
-        WriteGltfFile(filename, output.dump());
-        return true;
-    }
+
+			bufferView["byteOffset"] = byteOffset;
+			bufferView["byteLength"] = byteLength;
+			byteOffset += (byteLength);
+			bufferViews.push_back(bufferView);
+			output["bufferViews"] = bufferViews;
+
+			//BUFFERS (only works for one buffer)
+			json buffers;
+	
+			json buffer;
+
+			std::ofstream outputbin(binSaveFilePath.c_str(), std::ofstream::binary);
+			outputbin.write(reinterpret_cast<const char *>(&data[0]),
+				std::streamsize(data.size()));
+			outputbin.close();
+
+			buffer["uri"] = binFilename;
+			buffer["byteLength"] = byteOffset;
+			buffers.push_back(buffer);
+			//}
+			output["buffers"] = buffers;
+		}
+		else {
+			json buffers;
+			for (unsigned int i = 0; i < model->buffers.size(); ++i) {
+				json buffer;
+				if (embedBuffers) {
+					SerializeGltfBuffer(model->buffers[i], buffer);
+				}
+				else {
+					SerializeGltfBuffer(model->buffers[i], buffer, binSaveFilePath,
+						binFilename);
+				}
+				buffers.push_back(buffer);
+			}
+			output["buffers"] = buffers;
+
+
+			// BUFFERVIEWS
+			json bufferViews;
+			for (unsigned int i = 0; i < model->bufferViews.size(); ++i) {
+				json bufferView;
+				SerializeGltfBufferView(model->bufferViews[i], bufferView);
+				bufferViews.push_back(bufferView);
+			}
+			output["bufferViews"] = bufferViews;
+		}
+
+
+
+		if (!decodedDraco)
+		{
+			// Extensions used
+			if (model->extensionsUsed.size()) {
+				SerializeStringArrayProperty("extensionsUsed", model->extensionsUsed,
+					output);
+			}
+
+			// Extensions required
+			if (model->extensionsRequired.size()) {
+				SerializeStringArrayProperty("extensionsRequired",
+					model->extensionsRequired, output);
+			}
+		}
+
+		// IMAGES
+		if (model->images.size()) {
+			json images;
+			for (unsigned int i = 0; i < model->images.size(); ++i) {
+				json image;
+
+				UpdateImageObject(model->images[i], baseDir, int(i), embedImages,
+					&this->WriteImageData, &this->write_image_user_data_);
+				SerializeGltfImage(model->images[i], image);
+				images.push_back(image);
+			}
+			output["images"] = images;
+		}
+
+		// MATERIALS
+
+		if (model->materials.size()) {
+			json materials;
+			for (unsigned int i = 0; i < model->materials.size(); ++i) {
+				json material;
+				SerializeGltfMaterial(model->materials[i], material);
+				materials.push_back(material);
+			}
+			output["materials"] = materials;
+		}
+
+		// MESHES
+		if (model->meshes.size()) {
+			json meshes;
+			for (unsigned int i = 0; i < model->meshes.size(); ++i) {
+				json mesh;
+				SerializeGltfMesh(model->meshes[i], mesh);
+				meshes.push_back(mesh);
+			}
+			output["meshes"] = meshes;
+		}
+
+		// NODES
+		if (model->nodes.size()) {
+			json nodes;
+			for (unsigned int i = 0; i < model->nodes.size(); ++i) {
+				json node;
+				SerializeGltfNode(model->nodes[i], node);
+				nodes.push_back(node);
+			}
+			output["nodes"] = nodes;
+		}
+
+		// SCENE
+		if (model->defaultScene > -1) {
+			SerializeNumberProperty<int>("scene", model->defaultScene, output);
+		}
+
+		// SCENES
+		if (model->scenes.size()) {
+			json scenes;
+			for (unsigned int i = 0; i < model->scenes.size(); ++i) {
+				json currentScene;
+				SerializeGltfScene(model->scenes[i], currentScene);
+				scenes.push_back(currentScene);
+			}
+			output["scenes"] = scenes;
+		}
+
+		// SKINS
+		if (model->skins.size()) {
+			json skins;
+			for (unsigned int i = 0; i < model->skins.size(); ++i) {
+				json skin;
+				SerializeGltfSkin(model->skins[i], skin);
+				skins.push_back(skin);
+			}
+			output["skins"] = skins;
+		}
+
+		// TEXTURES
+		if (model->textures.size()) {
+			json textures;
+			for (unsigned int i = 0; i < model->textures.size(); ++i) {
+				json texture;
+				SerializeGltfTexture(model->textures[i], texture);
+				textures.push_back(texture);
+			}
+			output["textures"] = textures;
+		}
+
+		// SAMPLERS
+		if (model->samplers.size()) {
+			json samplers;
+			for (unsigned int i = 0; i < model->samplers.size(); ++i) {
+				json sampler;
+				SerializeGltfSampler(model->samplers[i], sampler);
+				samplers.push_back(sampler);
+			}
+			output["samplers"] = samplers;
+		}
+
+		// CAMERAS
+		if (model->cameras.size()) {
+			json cameras;
+			for (unsigned int i = 0; i < model->cameras.size(); ++i) {
+				json camera;
+				SerializeGltfCamera(model->cameras[i], camera);
+				cameras.push_back(camera);
+			}
+			output["cameras"] = cameras;
+		}
+
+		// EXTENSIONS
+		SerializeExtensionMap(model->extensions, output);
+
+		// LIGHTS as KHR_lights_cmn
+		if (model->lights.size()) {
+			json lights;
+			for (unsigned int i = 0; i < model->lights.size(); ++i) {
+				json light;
+				SerializeGltfLight(model->lights[i], light);
+				lights.push_back(light);
+			}
+			json khr_lights_cmn;
+			khr_lights_cmn["lights"] = lights;
+			json ext_j;
+
+			if (output.find("extensions") != output.end()) {
+				ext_j = output["extensions"];
+			}
+
+			ext_j["KHR_lights_cmn"] = khr_lights_cmn;
+
+			output["extensions"] = ext_j;
+		}
+
+		WriteGltfFile(filename, output.dump());
+		return true;
+	}
 
 }  // namespace tinygltf2
 

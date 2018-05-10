@@ -7,6 +7,10 @@
 #include "overdraw.h"
 #include "soup.h"
 
+#ifndef _WIN32
+ #define _SOFTWARE_ONLY_VERSION 
+#endif
+
 #ifndef _SOFTWARE_ONLY_VERSION
     #include "d3doverdrawwindow.h"
     #include "d3dwm.h"
