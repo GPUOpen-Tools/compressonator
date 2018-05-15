@@ -21,6 +21,8 @@ Users are also encouraged to submit issues and feature requests via the reposito
   
 Under development for 3.1 release
 ----------------------------------------------------
+* Radeon Powered Compression with Compute and Packed Math Libraries for CPU and GPU
+
 * Improvements to existing Compression Codecs
   * Fix for R & B channel swizzling
   * updated ETC Codec with support for SRGB, EAC and punchthrough Alpha
@@ -28,10 +30,10 @@ Under development for 3.1 release
 * CLI support for Model Mesh Compression and Model Optimization
 
 * Model Mesh Compression 
-  * Support for gltf 2.0 compression extensions (KHR_draco_mesh_compression, ...)
+  * Support for GLTF 2.0 compression extensions (KHR_draco_mesh_compression, ...)
     
 * Selectable 3D Model viewers
-  * Support for the Vulkan & OpenGL Viewer code introduced in 3.0
+  * Support for the Vulkan® and OpenGL® Viewer code introduced in 3.0
  
 * 3D Model Image Diff viewer 
   * Selectable animation rates 
@@ -41,17 +43,17 @@ Under development for 3.1 release
 Recent 3.0 additions and changes
 ------------------------------------------------------
 
-* Model Mesh Optimization for obj and gltf 2.0 files
+* Model Mesh Optimization for OBJ and GLTF 2.0 files
   * 3D triangle mesh optimization that improves on existing mesh preprocessing techniques
     * Vertex cache optimization
     * Overdraw optimization
     * Vertex prefetch cache optimization
     
-* Model Mesh Compression for obj files 
+* Model Mesh Compression for OBJ files 
   * Compresss models for faster download using Draco .drc files
     * Set quantization bits for POSITION, NORMAL, TEX_CORD and other GENERIC attributes
   
-* DX12 3D Model viewer features and modifications
+* DirectX® 12 3D Model viewer features and modifications
   * Multi GPU Node usage stats
   * Real time GPU profiler chart with Total GPU Time stats
   * Animation (on/off)
