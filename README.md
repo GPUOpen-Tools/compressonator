@@ -10,7 +10,7 @@ Get Prebuilt Binaries and Installer here:
 -----------------------------------------------------
 https://github.com/GPUOpen-Tools/Compressonator/releases
 
-To build the source follow the instructions in http://compressonator.readthedocs.io/en/latest/build_from_source/build_instructions.html
+To build the source files follow the instructions in http://compressonator.readthedocs.io/en/latest/build_from_source/build_instructions.html
 
 ## Contributors
 
@@ -76,7 +76,7 @@ Gallery
 
 ![screenshot 1](https://github.com/GPUOpen-Tools/Compressonator/blob/master/docs/source/gui_tool/user_guide/media/image51.png)
 
-**glTF Model PBR Texture Compression**
+**GLTF 2.0 Model PBR Texture Compression**
 
 ![screenshot 2](https://github.com/GPUOpen-Tools/Compressonator/blob/master/docs/source/gui_tool/user_guide/media/image96.png)
 
