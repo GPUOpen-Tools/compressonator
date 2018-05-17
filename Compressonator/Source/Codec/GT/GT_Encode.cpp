@@ -17,14 +17,13 @@
 // SSE Implementation
 #include <immintrin.h>
 
-double GTBlockEncoder::CompressBlock(CMP_BYTE in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG], BYTE out[COMPRESSED_BLOCK_SIZE])
+double GTBlockEncoder::CompressBlock(CMP_BYTE in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG], CMP_BYTE out[COMPRESSED_BLOCK_SIZE])
 {
     // Reserved for new code
     return (0);
 }
 
-void  GTCompressBlockSSE(DWORD *block_32, DWORD *block_dxtc)
+void  GTCompressBlockSSE(CMP_DWORD *block_32, CMP_DWORD *block_dxtc)
 {
 
 }
-
