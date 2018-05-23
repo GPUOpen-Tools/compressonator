@@ -4,7 +4,9 @@ Build from GitHub Sources
 Compressonator comes with pre-built binaries for all of our stable releases: https://github.com/GPUOpen-Tools/Compressonator/releases 
 which includes command line tools, GUI and binaries for use in developer applications.
 
-The following build instructions are provided for developers interested in building the latest sources available on GitHub https://github.com/GPUOpen-Tools/Compressonator
+The following build instructions are provided for developers interested in building the latest sources available on GitHub https://github.com/GPUOpen-Tools/Compressonator or from the source code downloaded from the releases page. 
+
+**Note**: Git submodule contents in Compressonator/Common/Lib folder will not be automatically included in downloaded source code. You can either navigate to all the "url" listed in https://github.com/GPUOpen-Tools/Compressonator/blob/master/.gitmodules and download zip from each of the url and extract them into the Compressonator/Common/Lib folder OR if you have Git installed in your system, run the Git command "git clone --recursive https://github.com/GPUOpen-Tools/Compressonator.git" to get all the source code including the submodules contents.
 
 
 Build Instructions for Compressonator SDK Libs
