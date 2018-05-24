@@ -43,7 +43,7 @@ echo --4
 set PATH=%MSBUILDDIR%;%PATH%
 echo --5
 echo -----------------------------------------------------------------------------
-echo Get MSBUILD prop path for VS2010
+echo Get MSBUILD prop path
 echo -----------------------------------------------------------------------------
 reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\12.0" /v MSBuildToolsRoot > nul 2>&1
 if ERRORLEVEL 1 goto MSBuildTest2
@@ -52,9 +52,9 @@ for /f "skip=2 tokens=2,*" %%A in ('reg.exe query "HKLM\SOFTWARE\Microsoft\MSBui
 echo --2
 set PATH=%MSBUILDROOT%\Microsoft.Cpp\v4.0\;%PATH%
 echo -----------------------------------------------------------------------------
-echo Set MSBUILD prop path for VS2012, VS2013, VS2015 
+echo Set MSBUILD prop path for VS2015 
 echo -----------------------------------------------------------------------------
-set PATH=%MSBUILDROOT%\Microsoft.Cpp\v4.0\V110\;%MSBUILDROOT%\Microsoft.Cpp\v4.0\V120\;%MSBUILDROOT%\Microsoft.Cpp\v4.0\V140\;%PATH%
+set PATH=C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE;C:\Program Files (x86)\MSBuild\14.0\Bin;C:\Program Files\CMake\bin;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin;%MSBUILDROOT%\Microsoft.Cpp\v4.0\V140\;%PATH%
 echo --1
 PATH >> %OUTPUT_LOG%
 echo --2
@@ -97,11 +97,11 @@ echo VS2015 Build CompressonatorCLI Exe
 echo ------------------------------------------------------------
 cd %COMPRESSONATOR_ROOT%\Applications\CompressonatorCLI\VS2015
 ::
-set Building="STEP  a2:  VS2015 Build CompressonatorCLI Win32:Release -----------------------"
+set Building="STEP  a2:  VS2015 Build CompressonatorCLI x64:Release -----------------------"
 echo --1
 echo %Building%  >> %OUTPUT_LOG%
 echo --2
-MSBUILD VS2015.sln /p:Configuration=release_md  /t:rebuild  /p:Platform=win32  /p:VCTargetsPath="%MSBUILDROOT%\Microsoft.Cpp\v4.0\V140/" >> %OUTPUT_LOG%
+msbuild /m:6 /t:rebuild /p:Configuration=Release_MD /p:Platform=x64   "VS2015.sln" >> %OUTPUT_LOG%
 IF %ERRORLEVEL% GTR 0 goto Error
 ::
 Goto Done
