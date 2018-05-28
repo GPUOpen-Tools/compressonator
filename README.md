@@ -7,7 +7,7 @@ Compressonator supports Microsoft Windows®, Linux and Mac builds.
 For more details goto the online Compressonator Documents: http://compressonator.readthedocs.io/en/latest/ 
 
 Get Prebuilt Binaries and Installer here:
------------------------------------------------------
+-----------------------------------------
 https://github.com/GPUOpen-Tools/Compressonator/releases
 
 To build the source files follow the instructions in http://compressonator.readthedocs.io/en/latest/build_from_source/build_instructions.html
@@ -54,7 +54,7 @@ Recent 3.0 additions and changes
   * Compresss models for faster download using Draco .drc files
     * Set quantization bits for POSITION, NORMAL, TEX_CORD and other GENERIC attributes
   
-* DirectX® 12 3D Model viewer features and modifications
+* DirectX� 12 3D Model viewer features and modifications
   * Multi GPU Node usage stats
   * Real time GPU profiler chart with Total GPU Time stats
   * Animation (on/off)
