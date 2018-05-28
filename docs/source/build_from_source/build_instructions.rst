@@ -4,7 +4,9 @@ Build from GitHub Sources
 Compressonator comes with pre-built binaries for all of our stable releases: https://github.com/GPUOpen-Tools/Compressonator/releases 
 which includes command line tools, GUI and binaries for use in developer applications.
 
-The following build instructions are provided for developers interested in building the latest sources available on GitHub https://github.com/GPUOpen-Tools/Compressonator
+The following build instructions are provided for developers interested in building the latest sources available on GitHub https://github.com/GPUOpen-Tools/Compressonator or from the source code downloaded from the releases page. 
+
+**Note**: Git submodule contents in Compressonator/Common/Lib folder will not be automatically included in downloaded source code. You can either navigate to all the "url" listed in https://github.com/GPUOpen-Tools/Compressonator/blob/master/.gitmodules and download zip from each of the url and extract them into the Compressonator/Common/Lib folder OR if you have Git installed in your system, run the Git command "git clone --recursive https://github.com/GPUOpen-Tools/Compressonator.git" to get all the source code including the submodules contents.
 
 
 Build Instructions for Compressonator SDK Libs
@@ -34,7 +36,7 @@ Mesh Compression  Lib
 Build Instructions for Compressonator GUI and CLI applications on Windows 10 and up
 ===================================================================================
 
-To build the applications you will need to have Visual Studio 2015 installed, Vulkan SDK version 1.0.68.0 from [Vulkan LunarG website](https://vulkan.lunarg.com/sdk/home), glslang.lib and spirv-tools.lib built from the Vulkan SDK installed. Qt V5.7 msvc2015 and msvc2015_64 opensource downloaded from [QT website](https://www.qt.io/download-open-source/) .
+To build the applications you will need to have Visual Studio 2015 installed, Vulkan SDK version 1.0.68.0 from [Vulkan LunarG website](https://vulkan.lunarg.com/sdk/home), glslang.lib and spirv-tools.lib built from the Vulkan SDK installed. Qt V5.7 msvc2015 and msvc2015_64 opensource downloaded from [QT website](https://download.qt.io/official_releases/qt/5.7/5.7.1/) .
 
 **Note**: Compressonator GUI project solution files assume QT is installed in default path (C:/Qt/Qt5.7.1/5.7). and Vulkan SDK Environment variable (VULKAN_SDK) for path to the source code is set. Users must build the Vulkan SDK binaries prior to building the GUI and CLI applications. If you use different path, please change the project property accordingly in the  Compressonator_Root.props file.
 

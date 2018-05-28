@@ -1,22 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug_DLL|Win32">
-      <Configuration>Debug_DLL</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug_DLL|x64">
-      <Configuration>Debug_DLL</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug_MD_DLL|Win32">
-      <Configuration>Debug_MD_DLL</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug_MD_DLL|x64">
-      <Configuration>Debug_MD_DLL</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug_MD|Win32">
       <Configuration>Debug_MD</Configuration>
       <Platform>Win32</Platform>
@@ -25,44 +9,12 @@
       <Configuration>Debug_MD</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release_DLL|Win32">
-      <Configuration>Release_DLL</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release_DLL|x64">
-      <Configuration>Release_DLL</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release_MD_DLL|Win32">
-      <Configuration>Release_MD_DLL</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release_MD_DLL|x64">
-      <Configuration>Release_MD_DLL</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Release_MD|Win32">
       <Configuration>Release_MD</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release_MD|x64">
       <Configuration>Release_MD</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
@@ -86,43 +38,8 @@
     <ProjectName>CMP_Math</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>MultiByte</CharacterSet>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
-    <PlatformToolset>v140</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>MultiByte</CharacterSet>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
-    <PlatformToolset>v140</PlatformToolset>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>MultiByte</CharacterSet>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
-    <PlatformToolset>v140</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>MultiByte</CharacterSet>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
-    <PlatformToolset>v140</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>MultiByte</CharacterSet>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
-    <PlatformToolset>v140</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -135,50 +52,8 @@
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>MultiByte</CharacterSet>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
-    <PlatformToolset>v140</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
@@ -191,287 +66,58 @@
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
-  </PropertyGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
     <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
     <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
     <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
     <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <TargetName>$(ProjectName)_MTd</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
-    <TargetName>$(ProjectName)_MTd_DLL</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
     <TargetName>$(ProjectName)_MDd</TargetName>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">
-    <TargetName>$(ProjectName)_MDd_DLL</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>$(ProjectName)_MTd</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
-    <TargetName>$(ProjectName)_MTd_DLL</TargetName>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
     <TargetName>$(ProjectName)_MDd</TargetName>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
-    <TargetName>$(ProjectName)_MDd_DLL</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
     <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
     <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
     <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
     <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <TargetName>$(ProjectName)_MT</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
-    <TargetName>$(ProjectName)_MT_DLL</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
     <TargetName>$(ProjectName)_MD</TargetName>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
-    <TargetName>$(ProjectName)_MD_DLL</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>$(ProjectName)_MT</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
-    <TargetName>$(ProjectName)_MT_DLL</TargetName>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
     <TargetName>$(ProjectName)_MD</TargetName>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
-    <TargetName>$(ProjectName)_MD_DLL</TargetName>
-  </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <MinimalRebuild>false</MinimalRebuild>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-    <CustomBuild>
-      <Command>
-      </Command>
-    </CustomBuild>
-    <PreBuildEvent>
-      <Command>
-      </Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>
-      </Message>
-    </PreBuildEvent>
-    <Lib />
-    <Lib>
-      <ModuleDefinitionFile>
-      </ModuleDefinitionFile>
-      <ExportNamedFunctions>
-      </ExportNamedFunctions>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Lib>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
-    <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <MinimalRebuild>false</MinimalRebuild>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ModuleDefinitionFile>../GPU_DecodeLib.def</ModuleDefinitionFile>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
-    <CustomBuild>
-      <Command>
-      </Command>
-    </CustomBuild>
-    <PreBuildEvent>
-      <Command>
-      </Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>
-      </Message>
-    </PreBuildEvent>
-    <Lib />
-    <Lib>
-      <ModuleDefinitionFile>
-      </ModuleDefinitionFile>
-      <ExportNamedFunctions>
-      </ExportNamedFunctions>
-    </Lib>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
     <ClCompile>
       <PrecompiledHeader>
@@ -506,113 +152,9 @@
       </ModuleDefinitionFile>
       <ExportNamedFunctions>
       </ExportNamedFunctions>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(VULKAN_SDK)/Lib32;../../Common/Lib/Ext/Vulkan/1.0.68.0/Lib32;../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">
-    <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <MinimalRebuild>false</MinimalRebuild>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ModuleDefinitionFile>../GPU_DecodeLib.def</ModuleDefinitionFile>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
-    <CustomBuild>
-      <Command>
-      </Command>
-    </CustomBuild>
-    <PreBuildEvent>
-      <Command>
-      </Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>
-      </Message>
-    </PreBuildEvent>
-    <Lib />
-    <Lib>
-      <ModuleDefinitionFile>
-      </ModuleDefinitionFile>
-      <ExportNamedFunctions>
-      </ExportNamedFunctions>
-    </Lib>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <ProgramDataBaseFileName>
-      </ProgramDataBaseFileName>
-      <MinimalRebuild>false</MinimalRebuild>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-    <PreBuildEvent>
-      <Command>
-      </Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>
-      </Message>
-    </PreBuildEvent>
-    <Lib>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Lib>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
-    <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <ProgramDataBaseFileName>
-      </ProgramDataBaseFileName>
-      <MinimalRebuild>false</MinimalRebuild>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ModuleDefinitionFile>../GPU_DecodeLib.def</ModuleDefinitionFile>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
-    <PreBuildEvent>
-      <Command>
-      </Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>
-      </Message>
-    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
     <ClCompile>
@@ -644,135 +186,8 @@
     </PreBuildEvent>
     <Lib>
       <AdditionalDependencies>vulkan-1.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Bin;../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(VULKAN_SDK)/Lib;../../Common/Lib/Ext/Vulkan/1.0.68.0/Lib;../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
-    <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>
-      </ProgramDataBaseFileName>
-      <MinimalRebuild>false</MinimalRebuild>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ModuleDefinitionFile>../GPU_DecodeLib.def</ModuleDefinitionFile>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
-    <PreBuildEvent>
-      <Command>
-      </Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>
-      </Message>
-    </PreBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <Optimization>Full</Optimization>
-      <FunctionLevelLinking>
-      </FunctionLevelLinking>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <StringPooling>true</StringPooling>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <ProgramDataBaseFileName>$(OutDir)$(ProjectName)_MT.pdb</ProgramDataBaseFileName>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
-    <CustomBuild>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuild>
-    <PreBuildEvent>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
-    </PreBuildEvent>
-    <CustomBuildStep>
-      <Command>
-      </Command>
-    </CustomBuildStep>
-    <CustomBuildStep>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
-    <Lib>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Lib>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
-    <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <Optimization>Full</Optimization>
-      <FunctionLevelLinking>
-      </FunctionLevelLinking>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <StringPooling>true</StringPooling>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <ProgramDataBaseFileName>$(OutDir)$(ProjectName)_MT_DLL.pdb</ProgramDataBaseFileName>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <ModuleDefinitionFile>../GPU_DecodeLib.def</ModuleDefinitionFile>
-      <ImportLibrary>
-      </ImportLibrary>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
-    <CustomBuild>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuild>
-    <PreBuildEvent>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
-    </PreBuildEvent>
-    <CustomBuildStep>
-      <Command>
-      </Command>
-    </CustomBuildStep>
-    <CustomBuildStep>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
     <ClCompile>
@@ -818,126 +233,8 @@
     </CustomBuildStep>
     <Lib>
       <AdditionalDependencies>vulkan-1.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/Ext/Vulkan/1.0.68.0/Lib32;../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(VULKAN_SDK)/Lib32;../../Common/Lib/Ext/Vulkan/1.0.68.0/Lib32;../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
-    <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <Optimization>Full</Optimization>
-      <FunctionLevelLinking>
-      </FunctionLevelLinking>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <StringPooling>true</StringPooling>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <ProgramDataBaseFileName>$(OutDir)$(ProjectName)_MD_DLL.pdb</ProgramDataBaseFileName>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <ModuleDefinitionFile>../GPU_DecodeLib.def</ModuleDefinitionFile>
-      <ImportLibrary>
-      </ImportLibrary>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
-    <CustomBuild>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuild>
-    <PreBuildEvent>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
-    </PreBuildEvent>
-    <CustomBuildStep>
-      <Command>
-      </Command>
-    </CustomBuildStep>
-    <CustomBuildStep>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <StringPooling>true</StringPooling>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <ProgramDataBaseFileName>$(OutDir)$(ProjectName)_MT.pdb</ProgramDataBaseFileName>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
-    <PreBuildEvent>
-      <Command>
-      </Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>
-      </Message>
-    </PreBuildEvent>
-    <Lib>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Lib>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <StringPooling>true</StringPooling>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <ProgramDataBaseFileName>$(OutDir)$(ProjectName)_MT_DLL.pdb</ProgramDataBaseFileName>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <ModuleDefinitionFile>../GPU_DecodeLib.def</ModuleDefinitionFile>
-      <ImportLibrary>
-      </ImportLibrary>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
-    <PreBuildEvent>
-      <Command>
-      </Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>
-      </Message>
-    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
     <ClCompile>
@@ -971,43 +268,8 @@
     </PreBuildEvent>
     <Lib>
       <AdditionalDependencies>vulkan-1.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/Ext/Vulkan/1.0.68.0/Lib;../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(VULKAN_SDK)/Lib;../../Common/Lib/Ext/Vulkan/1.0.68.0/Lib;../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <StringPooling>true</StringPooling>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <ProgramDataBaseFileName>$(OutDir)$(ProjectName)_MD_DLL.pdb</ProgramDataBaseFileName>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <ModuleDefinitionFile>../GPU_DecodeLib.def</ModuleDefinitionFile>
-      <ImportLibrary>
-      </ImportLibrary>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
-    <PreBuildEvent>
-      <Command>
-      </Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>
-      </Message>
-    </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

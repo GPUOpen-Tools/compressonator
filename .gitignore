@@ -1,3 +1,11 @@
-Compressonator/Build
-Compressonator/Examples/VS2015/.vs
-Compressonator/VS2015/.vs
+Compressonator/Build/*
+Compressonator/Applications/_Plugins/C3DModel_viewers/glTF_DX12_EX/GeneratedFiles/*
+Compressonator/Applications/_Plugins/C3DModel_viewers/glTF_OpenGL/GeneratedFiles/*
+Compressonator/Applications/CompressonatorGUI/GeneratedFiles/Release_MD/*
+Compressonator/Applications/CompressonatorGUI/GeneratedFiles/Debug_MD/*
+Compressonator/Applications/CompressonatorGUI/GeneratedFiles/qrc_CompressonatorGUI.cpp
+*vcxproj.user
+*.vs
+*.log
+*.VC.db
+*.VC.VC.opendb

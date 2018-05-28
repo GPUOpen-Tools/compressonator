@@ -11,8 +11,8 @@
 #include "GT_Definitions.h"
 #include "GT_Decode.h"
 
-void GTBlockDecoder::DecompressBlock(BYTE  out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-    BYTE  in[COMPRESSED_BLOCK_SIZE])
+void GTBlockDecoder::DecompressBlock(CMP_BYTE  out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
+    CMP_BYTE  in[COMPRESSED_BLOCK_SIZE])
 {
     // Reserved for new code
 }

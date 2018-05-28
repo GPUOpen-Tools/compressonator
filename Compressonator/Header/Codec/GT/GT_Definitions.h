@@ -24,13 +24,8 @@
 #ifndef _GT_DEFINITIONS_H_
 #define _GT_DEFINITIONS_H_
 
-#include <cstdint>
-
-typedef std::uint8_t BYTE;
-typedef std::uint16_t WORD;
-typedef std::uint32_t DWORD;
-typedef std::int32_t LONG;
-typedef std::int32_t BOOL;
+#include "Common.h"
+// #define USE_GT_HDR
 
 #define TRUE 1
 #define FALSE 0
@@ -47,5 +42,12 @@ typedef std::int32_t BOOL;
 #define MAX_SUBSET_SIZE  16
 
 #define MAX_DIMENSION_BIG 4
+
+#ifndef min
+
+#define min(a,b) ((a) < (b) ? (a) : (b))
+#define max(a,b) ((a) > (b) ? (a) : (b))
+
+#endif
 
 #endif

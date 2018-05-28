@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -35,6 +35,19 @@
 
 #include <thread>
 
+struct GTEncodeThreadParam
+{
+    GTBlockEncoder   *encoder;
+#ifdef USE_GT_HDR
+    CMP_FLOAT         in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
+#else
+    CMP_BYTE          in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
+#endif
+    CMP_BYTE             *out;
+    volatile CMP_BOOL    run;
+    volatile CMP_BOOL    exit;
+};
+
 class CCodec_GT : public CCodec_DXTC
 {
 public:
@@ -46,31 +59,47 @@ public:
     virtual bool SetParameter(const CMP_CHAR* /*pszParamName*/, CODECFLOAT /*fValue*/);
 
     // Required interfaces
-    virtual CodecError Compress             (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = CMP_NULL, CMP_DWORD_PTR pUser2 = CMP_NULL);
-    virtual CodecError Compress_Fast        (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = CMP_NULL, CMP_DWORD_PTR pUser2 = CMP_NULL);
-    virtual CodecError Compress_SuperFast   (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = CMP_NULL, CMP_DWORD_PTR pUser2 = CMP_NULL);
-    virtual CodecError Decompress           (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = CMP_NULL, CMP_DWORD_PTR pUser2 = CMP_NULL);
+    virtual CodecError Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
 
 
 private:
-    // GT User configurable variables
-    WORD    m_NumThreads;
 
-    // GT Internal status
-    BOOL     m_LibraryInitialized;
-    BOOL     m_Use_MultiThreading;
-    WORD     m_NumEncodingThreads;
-    WORD     m_LiveThreads;
-    WORD     m_LastThread;
+    GTEncodeThreadParam *m_EncodeParameterStorage;
+
+    // NGT Quality level
+    double m_quality;
+    double m_performance;
+    double m_errorThreshold;
+
+    // GT User configurable variables
+    CMP_WORD    m_NumThreads;
+
+    // GT Internal status 
+    CMP_BOOL     m_LibraryInitialized;
+    CMP_BOOL     m_Use_MultiThreading;
+    CMP_WORD     m_NumEncodingThreads;
+    CMP_WORD     m_LiveThreads;
+    CMP_WORD     m_LastThread;
 
     // GT Encoders and decoders: for encding use the interfaces below
-    std::thread*       m_EncodingThreadHandle;
+    std::thread*        m_EncodingThreadHandle;
     GTBlockEncoder*    m_encoder[128];
     GTBlockDecoder*    m_decoder;
 
     // Encoder interfaces
     CodecError    InitializeGTLibrary();
-    CodecError    EncodeGTBlock(CMP_BYTE  in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],BYTE *out);
+    CodecError    EncodeGTBlock(
+#ifdef USE_GT_HDR
+        CMP_FLOAT  in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
+        CMP_FLOAT *out
+#else
+        CMP_BYTE   in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
+        CMP_BYTE   *out
+#endif
+    );
     CodecError    FinishGTEncoding(void);
 };
 

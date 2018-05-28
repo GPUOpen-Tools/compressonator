@@ -20,7 +20,7 @@ AMD encourages any and all contributors to submit changes, features, and bug fix
 
 Users are also encouraged to submit issues and feature requests via the repository's issue tracker.
   
-Under development for 3.1 release
+Under development 
 ----------------------------------------------------
 * Radeon Powered Compression with Compute and Packed Math Libraries for CPU and GPU
 

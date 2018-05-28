@@ -217,7 +217,6 @@
     <ClCompile Include="../../_Plugins/Common/cmdline.cpp" />
     <ClCompile Include="../../_Plugins/Common/MIPS.cpp" />
     <ClCompile Include="../../_Plugins/Common/PluginManager.cpp" />
-    <ClCompile Include="../../_Plugins/Common/query_timer.cpp" />
     <ClCompile Include="../../_Plugins/Common/TextureIO.cpp" />
     <ClCompile Include="../Source/CompressonatorCLI.cpp" />
   </ItemGroup>
