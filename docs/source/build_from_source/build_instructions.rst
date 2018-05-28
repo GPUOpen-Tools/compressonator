@@ -36,7 +36,13 @@ Mesh Compression  Lib
 Build Instructions for Compressonator GUI and CLI applications on Windows 10 and up
 ===================================================================================
 
-To build the applications you will need to have Visual Studio 2015 installed, Vulkan SDK version 1.0.68.0 from [Vulkan LunarG website](https://vulkan.lunarg.com/sdk/home), glslang.lib and spirv-tools.lib built from the Vulkan SDK installed. Qt V5.7 msvc2015 and msvc2015_64 opensource downloaded from [QT website](https://download.qt.io/official_releases/qt/5.7/5.7.1/) .
+To build the applications you will need to have Visual Studio 2015 installed, Vulkan SDK version 1.0.68.0 from [Vulkan LunarG website](https://vulkan.lunarg.com/sdk/home).
+
+After Vulkan SDK installed, you will need to build glslang.lib and spirv-tools.lib from the Vulkan SDK installed using the CMakeList.txt scripts provided in the default installation path C:\VulkanSDK\1.0.68.0\glslang and C:\VulkanSDK\1.0.68.0\spirv-tools folders (via cmake tools https://cmake.org/download/). 
+
+Note: Compressonator GUI project expects glslang.lib and spirv-tools.lib are built in the cmake build path C:\VulkanSDK\1.0.68.0\<glslang or spirv-tools>\<VS2015_x64 or VS2015>\glslang\<Release or Debug>\ folders. 
+
+Qt V5.7 msvc2015 or/and msvc2015_64 opensource downloaded from [QT website](https://download.qt.io/official_releases/qt/5.7/5.7.1/) .
 
 **Note**: Compressonator GUI project solution files assume QT is installed in default path (C:/Qt/Qt5.7.1/5.7). and Vulkan SDK Environment variable (VULKAN_SDK) for path to the source code is set. Users must build the Vulkan SDK binaries prior to building the GUI and CLI applications. If you use different path, please change the project property accordingly in the  Compressonator_Root.props file.
 
