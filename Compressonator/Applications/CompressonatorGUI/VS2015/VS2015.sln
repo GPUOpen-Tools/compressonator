@@ -139,6 +139,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ModelViewer_Vulkan", "..\..\_Plugins\C3DModel_viewers\Vulkan\VS2015\viewer_Vulkan.vcxproj", "{E5615E66-7E8F-46C2-8E26-CC8546915A27}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C} = {9EE67DB2-4AD8-4B9A-AE58-2E536412033C}
+		{17CCD4C6-5E35-404C-8613-32775F250A92} = {17CCD4C6-5E35-404C-8613-32775F250A92}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ModelViewer_OpenGL", "..\..\_Plugins\C3DModel_viewers\glTF_OpenGL\VS2015\glTF_OpenGL.vcxproj", "{1565B9EC-358E-46FF-924D-7BD31D1798CF}"

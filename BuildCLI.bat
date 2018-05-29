@@ -28,16 +28,16 @@ echo ---------------------------------------------------------------------------
 set OUTPUT_LOG=%BatchDir%\output.log
 
 echo -----------------------------------------------------------------------------
-echo Check for MSBUILD existence based on Version 12.0 (MSBUILD SDK installs)
+echo Check for MSBUILD existence based on Version 14.0 (MSBUILD SDK installs)
 echo -----------------------------------------------------------------------------
-set Building="Check Missing MSBUILD v12 -----------------------"
+set Building="Check Missing MSBUILD v14 -----------------------"
 echo --1
 echo %Building%  >> %OUTPUT_LOG%
 echo --2
-reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\12.0" /v MSBuildToolsPath > nul 2>&1
+reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\14.0" /v MSBuildToolsPath > nul 2>&1
 if ERRORLEVEL 1 goto MSBuildTest2
 echo --3
-for /f "skip=2 tokens=2,*" %%A in ('reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\12.0" /v MSBuildToolsPath') do SET MSBUILDDIR=%%B
+for /f "skip=2 tokens=2,*" %%A in ('reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\14.0" /v MSBuildToolsPath') do SET MSBUILDDIR=%%B
 IF NOT EXIST "%MSBUILDDIR%msbuild.exe" goto MSBuildTest2
 echo --4
 set PATH=%MSBUILDDIR%;%PATH%
@@ -45,10 +45,10 @@ echo --5
 echo -----------------------------------------------------------------------------
 echo Get MSBUILD prop path
 echo -----------------------------------------------------------------------------
-reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\12.0" /v MSBuildToolsRoot > nul 2>&1
+reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\14.0" /v MSBuildToolsRoot > nul 2>&1
 if ERRORLEVEL 1 goto MSBuildTest2
 echo --1
-for /f "skip=2 tokens=2,*" %%A in ('reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\12.0" /v MSBuildToolsRoot') do SET MSBUILDROOT=%%B
+for /f "skip=2 tokens=2,*" %%A in ('reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\14.0" /v MSBuildToolsRoot') do SET MSBUILDROOT=%%B
 echo --2
 set PATH=%MSBUILDROOT%\Microsoft.Cpp\v4.0\;%PATH%
 echo -----------------------------------------------------------------------------

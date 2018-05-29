@@ -24,6 +24,55 @@
     <Compressonator_ZLIB>$(SolutionDir)..\..\..\..\Common\Lib\Ext\zlib\zlib-1.2.10\</Compressonator_ZLIB>
     <Compressonator_FLTK>$(SolutionDir)..\..\..\..\Common\Lib\Ext\Fltk\1.3.4\</Compressonator_FLTK>
     <Compressonator_AGS>$(SolutionDir)..\..\..\Libs\ags\</Compressonator_AGS>
+    <Compressonator_VULKAN>$(SolutionDir)..\..\..\..\Common\Lib\Ext\Vulkan\1.0.68.0\</Compressonator_VULKAN>   
+
+    <!--===============================================-->
+    <!--Define properties fo GLSLANG libs release_md 64bit -->
+    <!--===============================================-->
+  
+    <Compressonator_GLSLANG Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">$(VULKAN_SDK)\glslang\VS2015_64\glslang\Release</Compressonator_GLSLANG>
+    <Compressonator_GLSLANG_OSDEPEN Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" >$(VULKAN_SDK)\glslang\VS2015_64\glslang\OSDependent\Windows\Release</Compressonator_GLSLANG_OSDEPEN>
+    <Compressonator_GLSLANG_HLSL Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" >$(VULKAN_SDK)\glslang\VS2015_64\hlsl\Release</Compressonator_GLSLANG_HLSL>
+    <Compressonator_GLSLANG_SPIRV Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" >$(VULKAN_SDK)\glslang\VS2015_64\SPIRV\Release</Compressonator_GLSLANG_SPIRV>
+    <Compressonator_GLSLANG_OGLCOMPILER Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" >$(VULKAN_SDK)\glslang\VS2015_64\OGLCompilersDLL\Release</Compressonator_GLSLANG_OGLCOMPILER>
+    <Compressonator_GLSLANG_SRC_OPT Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" >$(VULKAN_SDK)\spirv-tools\VS2015_64\source\opt\Release</Compressonator_GLSLANG_SRC_OPT>
+    <Compressonator_GLSLANG_SRC Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" >$(VULKAN_SDK)\spirv-tools\VS2015_64\source\Release</Compressonator_GLSLANG_SRC>
+
+    <!--===============================================-->
+    <!--Define properties fo GLSLANG libs debug_md 64bit -->
+    <!--===============================================-->
+    <Compressonator_GLSLANG Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" >$(VULKAN_SDK)\glslang\VS2015_64\glslang\Debug</Compressonator_GLSLANG>
+    <Compressonator_GLSLANG_OSDEPEN Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" >$(VULKAN_SDK)\glslang\VS2015_64\glslang\OSDependent\Windows\Debug</Compressonator_GLSLANG_OSDEPEN>
+    <Compressonator_GLSLANG_HLSL Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" >$(VULKAN_SDK)\glslang\VS2015_64\hlsl\Debug</Compressonator_GLSLANG_HLSL>
+    <Compressonator_GLSLANG_SPIRV Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">$(VULKAN_SDK)\glslang\VS2015_64\SPIRV\Debug</Compressonator_GLSLANG_SPIRV>
+    <Compressonator_GLSLANG_OGLCOMPILER Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" >$(VULKAN_SDK)\glslang\VS2015_64\OGLCompilersDLL\Debug</Compressonator_GLSLANG_OGLCOMPILER>
+    <Compressonator_GLSLANG_SRC_OPT Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" >$(VULKAN_SDK)\spirv-tools\VS2015_64\source\opt\Debug</Compressonator_GLSLANG_SRC_OPT>
+    <Compressonator_GLSLANG_SRC Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" >$(VULKAN_SDK)\spirv-tools\VS2015_64\source\Debug</Compressonator_GLSLANG_SRC>
+
+    <!--===============================================-->
+    <!--Define properties fo GLSLANG libs release_md 32bit -->
+    <!--===============================================-->
+  
+    <Compressonator_GLSLANG Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">$(VULKAN_SDK)\glslang\VS2015\glslang\Release</Compressonator_GLSLANG>
+    <Compressonator_GLSLANG_OSDEPEN Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" >$(VULKAN_SDK)\glslang\VS2015\glslang\OSDependent\Windows\Release</Compressonator_GLSLANG_OSDEPEN>
+    <Compressonator_GLSLANG_HLSL Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" >$(VULKAN_SDK)\glslang\VS2015\hlsl\Release</Compressonator_GLSLANG_HLSL>
+    <Compressonator_GLSLANG_SPIRV Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" >$(VULKAN_SDK)\glslang\VS2015\SPIRV\Release</Compressonator_GLSLANG_SPIRV>
+    <Compressonator_GLSLANG_OGLCOMPILER Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" >$(VULKAN_SDK)\glslang\VS2015\OGLCompilersDLL\Release</Compressonator_GLSLANG_OGLCOMPILER>
+    <Compressonator_GLSLANG_SRC_OPT Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" >$(VULKAN_SDK)\spirv-tools\VS2015\source\opt\Release</Compressonator_GLSLANG_SRC_OPT>
+    <Compressonator_GLSLANG_SRC Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">$(VULKAN_SDK)\spirv-tools\VS2015\source\Release</Compressonator_GLSLANG_SRC>
+
+    <!--===============================================-->
+    <!--Define properties fo GLSLANG libs debug_md 32bit -->
+    <!--===============================================-->
+    <Compressonator_GLSLANG Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" >$(VULKAN_SDK)\glslang\VS2015\glslang\Debug</Compressonator_GLSLANG>
+    <Compressonator_GLSLANG_OSDEPEN Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" >$(VULKAN_SDK)\glslang\VS2015\glslang\OSDependent\Windows\Debug</Compressonator_GLSLANG_OSDEPEN>
+    <Compressonator_GLSLANG_HLSL Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" >$(VULKAN_SDK)\glslang\VS2015\hlsl\Debug</Compressonator_GLSLANG_HLSL>
+    <Compressonator_GLSLANG_SPIRV Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" >$(VULKAN_SDK)\glslang\VS2015\SPIRV\Debug</Compressonator_GLSLANG_SPIRV>
+    <Compressonator_GLSLANG_OGLCOMPILER Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" >$(VULKAN_SDK)\glslang\VS2015\OGLCompilersDLL\Debug</Compressonator_GLSLANG_OGLCOMPILER>
+    <Compressonator_GLSLANG_SRC_OPT Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" >$(VULKAN_SDK)\spirv-tools\VS2015\source\opt\Debug</Compressonator_GLSLANG_SRC_OPT>
+    <Compressonator_GLSLANG_SRC Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" >$(VULKAN_SDK)\spirv-tools\VS2015\source\Debug</Compressonator_GLSLANG_SRC>
+    
+    
 
     <DebugSuffix Condition="'$(Configuration)'=='Debug_MD'">d</DebugSuffix>
     <DebugSuffix Condition="'$(Configuration)'=='Release_MD'"></DebugSuffix>
