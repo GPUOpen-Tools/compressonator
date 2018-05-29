@@ -7,7 +7,7 @@ Compressonator supports Microsoft WindowsÂ®, Linux and Mac builds.
 For more details goto the online Compressonator Documents: http://compressonator.readthedocs.io/en/latest/ 
 
 Get Prebuilt Binaries and Installer here:
------------------------------------------
+---------------------------------------------------
 https://github.com/GPUOpen-Tools/Compressonator/releases
 
 To build the source files follow the instructions in http://compressonator.readthedocs.io/en/latest/build_from_source/build_instructions.html
