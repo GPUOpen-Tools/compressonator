@@ -2,7 +2,7 @@
 
 Compressonator is a set of tools to allow artists and developers to more easily create compressed texture assets or model mesh optimizations and easily visualize the quality impact of various compression and rendering technologies.  It consists of a GUI application, a command line application and an SDK for easy integration into a developer tool chain.
 
-Compressonator supports Microsoft Windows®, Linux and Mac builds.
+Compressonator supports Microsoft WindowsÂ®, Linux and Mac builds.
 
 For more details goto the online Compressonator Documents: http://compressonator.readthedocs.io/en/latest/ 
 
@@ -54,7 +54,7 @@ Recent 3.0 additions and changes
   * Compresss models for faster download using Draco .drc files
     * Set quantization bits for POSITION, NORMAL, TEX_CORD and other GENERIC attributes
   
-* DirectX� 12 3D Model viewer features and modifications
+* DirectX® 12 3D Model viewer features and modifications
   * Multi GPU Node usage stats
   * Real time GPU profiler chart with Total GPU Time stats
   * Animation (on/off)
