@@ -24,6 +24,10 @@ Under development
 ----------------------------------------------------
 * Radeon Powered Compression with Compute and Packed Math Libraries for CPU and GPU
 
+  Feature info for optimal performance on Ryzen™ with Radeon™ RX Vega Graphics:
+  * SenseMI  https://www.amd.com/en/technologies/sense-mi
+  * Desktop PC Zen Core  https://www.amd.com/en/technologies/zen-core
+
 * Improvements to existing Compression Codecs
   * Fix for R & B channel swizzling
   * updated ETC Codec with support for SRGB, EAC and punchthrough Alpha
