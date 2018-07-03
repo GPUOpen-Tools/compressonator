@@ -45,6 +45,11 @@ Under development
   * Manual mode to flip views
  
 
+Source Code changes since 3.0 release
+------------------------------------------------------
+Pending...
+
+
 Recent 3.0 additions and changes
 ------------------------------------------------------
 
