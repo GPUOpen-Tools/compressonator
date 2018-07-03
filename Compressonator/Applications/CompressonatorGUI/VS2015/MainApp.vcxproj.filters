@@ -50,6 +50,9 @@
     <Filter Include="Components">
       <UniqueIdentifier>{2438a2cc-a411-40a3-bfe4-2d864e8634d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Gltf">
+      <UniqueIdentifier>{903eebd8-c8ec-478c-85a7-70334aa380f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="../Source/main.cpp">
@@ -424,6 +427,9 @@
     <ClCompile Include="..\..\_Plugins\Common\UtilFuncs.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\_Plugins\Common\gltf\tiny_gltf2_utils.cpp">
+      <Filter>Common\Gltf</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../../../Header/Version.h">
@@ -464,6 +470,12 @@
     </ClInclude>
     <ClInclude Include="..\..\_Plugins\Common\UtilFuncs.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\_Plugins\Common\gltf\tiny_gltf2.h">
+      <Filter>Common\Gltf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\_Plugins\Common\gltf\tiny_gltf2_utils.h">
+      <Filter>Common\Gltf</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

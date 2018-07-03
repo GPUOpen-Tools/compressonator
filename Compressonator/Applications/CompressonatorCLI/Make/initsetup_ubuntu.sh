@@ -1,7 +1,21 @@
 #run the following command to install prerequisite to build CompressonatorCLI for unix then only run buildCLI_unix.sh
 version=`lsb_release --release | cut -f2`
 
-if [ $version = "16.04" ];then
+if [ $version = "18.04" ];then
+	echo "You have Ubuntu 18.04"
+	sudo apt-get install cmake
+	sudo apt-get install libglew-dev libegl1-mesa-dev
+	sudo apt-get install qtdeclarative5-dev
+	#openexr v2.2. is needed else have to build from source
+	wget http://download.savannah.nongnu.org/releases/openexr/ilmbase-2.2.0.tar.gz
+	(tar xvfz ilmbase-2.2.0.tar.gz && cd ilmbase-2.2.0 && sudo cmake -DCMAKE_INSTALL_PREFIX=/usr/local/ilmbase22build/ . && sudo make -j 4 && sudo make install)
+	wget http://download.savannah.nongnu.org/releases/openexr/openexr-2.2.0.tar.gz
+	(tar xvfz openexr-2.2.0.tar.gz && cd openexr-2.2.0 && sudo cmake -DILMBASE_PACKAGE_PREFIX=/usr/local/ilmbase22build/  -DCMAKE_INSTALL_PREFIX=/usr/local/openexr22build/ . && sudo make -j 4 && sudo make install)
+	
+	sudo apt-get install libopencv-dev
+	sudo apt-get install libboost-filesystem-dev
+	sudo apt-get install libboost-system-dev
+elif [ $version = "16.04" ];then
 	echo "You have Ubuntu 16.04"
 	sudo apt-get install cmake
 	#need gcc-6 and g++-6 for the build

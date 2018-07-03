@@ -1,16 +1,16 @@
 //
 // AMDCompressCLI.cpp
 //
-// 
+//
 // Contact Info: Navin Patel @ AMD.com
 //
 // Initial version - Nov 2014
 // Updated code to share with GUI - Sep 19 2015
 //
 // Code is based on the following Libs
-// Standard Library             Ref:http://www.cplusplus.com/reference/ 
-// Standard Template Library Ref:http://en.cppreference.com/w/cpp 
-// 
+// Standard Library             Ref:http://www.cplusplus.com/reference/
+// Standard Template Library Ref:http://en.cppreference.com/w/cpp
+//
 
 #ifdef _DEBUG
 //#include <vld.h>   Enable to check for code leaks
@@ -33,49 +33,45 @@
 #include <QtCore/qdebug.h>
 #endif
 // Our Static Plugin Interfaces
-#pragma comment(lib,"ASTC.lib")
-#pragma comment(lib,"BoxFilter.lib")
-#pragma comment(lib,"DDS.lib")
-#pragma comment(lib,"EXR.lib")
-#pragma comment(lib,"KTX.lib")
-#pragma comment(lib,"TGA.lib")
-#pragma comment(lib,"IMGAnalysis.lib")
+#pragma comment(lib, "ASTC.lib")
+#pragma comment(lib, "BoxFilter.lib")
+#pragma comment(lib, "DDS.lib")
+#pragma comment(lib, "EXR.lib")
+#pragma comment(lib, "KTX.lib")
+#pragma comment(lib, "TGA.lib")
+#pragma comment(lib, "IMGAnalysis.lib")
 
-extern void *make_Plugin_ASTC();
-extern void *make_Plugin_BoxFilter();
-extern void *make_Plugin_DDS();
-extern void *make_Plugin_EXR();
-extern void *make_Plugin_TGA();
-extern void *make_Plugin_KTX();
+extern void* make_Plugin_ASTC();
+extern void* make_Plugin_BoxFilter();
+extern void* make_Plugin_DDS();
+extern void* make_Plugin_EXR();
+extern void* make_Plugin_TGA();
+extern void* make_Plugin_KTX();
 #ifndef __APPLE__
-extern void *make_Plugin_CAnalysis();
+extern void* make_Plugin_CAnalysis();
 #endif
 
 #ifdef USE_AMD_PNG
-#pragma comment(lib,"PNG.lib")
-extern void *make_Plugin_PNG();
+#pragma comment(lib, "PNG.lib")
+extern void* make_Plugin_PNG();
 #endif
 
 #ifdef USE_AMD_BMP
-#pragma comment(lib,"BMP.lib")
-extern void *make_Plugin_BMP();
+#pragma comment(lib, "BMP.lib")
+extern void* make_Plugin_BMP();
 #endif
 
-extern bool         CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2);
-extern void         LocalPrintF(char *buff);
-extern string       DefaultDestination(string SourceFile, CMP_FORMAT  DestFormat);
+extern bool   CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2);
+extern void   LocalPrintF(char* buff);
+extern string DefaultDestination(string SourceFile, CMP_FORMAT DestFormat);
 
-
-
-PluginManager       g_pluginManager;
-bool                g_bAbortCompression = false;
-CMIPS*              g_CMIPS;                                // Global MIPS functions shared between app and all IMAGE plugins
-
-
+PluginManager g_pluginManager;
+bool          g_bAbortCompression = false;
+CMIPS*        g_CMIPS;  // Global MIPS functions shared between app and all IMAGE plugins
 
 void AboutCompressonator()
 {
-    printf( "------------------------------------------------\n");
+    printf("------------------------------------------------\n");
     // current build release
     if ((VERSION_MINOR_MAJOR > 0))
         printf("CompressonatorCLI V%d.%d.%d Copyright AMD 2018\n", VERSION_MAJOR_MAJOR, VERSION_MAJOR_MINOR, VERSION_MINOR_MAJOR);
@@ -85,14 +81,14 @@ void AboutCompressonator()
         // This is what is shown when you build the exe outside of the automated Build System (such as Jenkins)
         printf("CompressonatorCLI V3.0.0 Copyright AMD 2018\n");
     }
-    printf( "------------------------------------------------\n");
-    printf( "\n");
+    printf("------------------------------------------------\n");
+    printf("\n");
 }
 
 void PrintUsage()
 {
     AboutCompressonator();
-    
+
     printf("Usage: CompressonatorCLI.exe [options] SourceFile DestFile\n\n");
     printf("MipMap options:\n\n");
     printf("-nomipmap                 Turns off Mipmap generation\n");
@@ -126,6 +122,14 @@ void PrintUsage()
     printf("                     Default is OpenGL, UseGPUDecompress is implied when\n");
     printf("                     this option is set\n");
 #endif
+#ifdef USE_MESH_DRACO_EXTENSION
+    printf("-draco           Enable draco compression. (only support glTF file now)\n");
+    printf("-dracolvl        Draco compression level (0-10), default=5 , -draco has to be enabled.\n");
+    printf("-qpos            Draco quantization bits for position attribute (0-30), default=14. -draco has to be enabled.\n");
+    printf("-qtexc           Draco quantization bits for texture coordinates attribute (0-30), default=10. -draco has to be enabled.\n");
+    printf("-qnorm           Draco quantization bits for normal attribute (0-30), default=10. -draco has to be enabled.\n");
+    printf("-qgen            Draco quantization bits for generic attribute (0-30), default=8. -draco has to be enabled.\n");
+#endif
     printf("-doswizzle           Swizzle the source images Red and Blue channels\n");
     printf("\n");
     printf("The following is a list of channel formats\n");
@@ -156,7 +160,7 @@ void PrintUsage()
     printf("               technique as DXT5 alpha. Designed for compression object\n");
     printf("               space normal maps. Eight bits per pixel\n");
     printf("ATI2N_XY       Two component compression format using the same technique\n");
-    printf("               as DXT5 alpha. The same as ATI2N but with the channels swizzled.\n"); 
+    printf("               as DXT5 alpha. The same as ATI2N but with the channels swizzled.\n");
     printf("               Eight bits per pixel\n");
     printf("ATI2N_DXT5     An ATI2N like format using DXT5. Intended for use on GPUs that\n");
     printf("               do not natively support ATI2N. Eight bits per pixel\n");
@@ -210,9 +214,9 @@ void PrintUsage()
     printf("                             values of 4,5,6,8,10 or 12 from 4x4 to 12x12\n");
     printf("-DXT1UseAlpha <value>        Encode single-bit alpha data.\n");
     printf("                             Only valid when compressing to DXT1 & BC1\n");
-    printf("-OutputExposure <value>      BC6 only: Sets the resulting exposure of compressed Images\n");
-    printf("                             default is 0.95, lower values produce darker images,\n");
-    printf("                             higher values produce brighter images\n");
+    //printf("-OutputExposure <value>      BC6 only: Sets the resulting exposure of compressed Images\n");
+    //printf("                             default is 0.95, lower values produce darker images,\n");
+    //printf("                             higher values produce brighter images\n");
     printf("-CompressionSpeed <value>    The trade-off between compression speed & quality\n");
     printf("                             This setting is not used in BC6H and BC7\n");
     printf("-Signed <value>              Used for BC6H only, Default BC6H format disables\n");
@@ -231,11 +235,32 @@ void PrintUsage()
     printf("-ModeMask <value>            Mode to set BC7 to encode blocks using any of 8\n");
     printf("                             different block modes in order to obtain the\n");
     printf("                             highest quality\n");
+#ifdef USE_3DMESH_OPTIMIZE
+    printf("-optVCacheSize <value>        Enable vertices optimization with hardware cache size in the value specified. \n");
+    printf(
+        "                              (Value should be in range 1- no limit as it allows users to simulate hardware cache size to find the most "
+        "optimum size).\n");
+    printf("                              By default, mesh vertices optimization is enabled with cache size = 16. \n");
+    printf("-optVCacheFIFOSize <value>    Enable vertices optimization with hardware cache size(FIFO replacement policy) in the value specified. \n");
+    printf(
+        "                              (Value should be in range 1- no limit as it allows users to simulate hardware cache size to find the most "
+        "optimum size).\n");
+    printf("                              By default, mesh vertices optimization with FIFO cache is disabled. \n");
+    printf("-optOverdrawACMRThres <value> Enable overdraw optimization with ACMR (average cache miss ratio) threshold value specified. \n");
+    printf("                              (Value range 1.00 - 3.00) - default is enabled with ACMR value = 1.05 (i.e. 5 percent worse).\n");
+    printf("-optVFetch  <value>           Enable vertices fetch optimization. (Valus is either 0 to disable or 1 to enable.) \n");
+    printf("-simplifyMeshLOD <value>      Enable mesh simplification with the LOD (level of details) in the value specified. \n");
+    printf(
+        "                              (Value should be in range 1- no limit as it allows users to simplify the mesh until the level they desired "
+        "for experiment purpose. Higher level means less triangles drawn, less details.)\n");
+#endif
     printf("-Analysis <image1> <image2>  Generate analysis metric like SSIM, PSNR values \n");
     printf("                             between 2 images with same size. Analysis_Result.xml file will be generated.\n");
     printf("\n\n");
     printf("-diff_image <image1> <image2> Generate difference between 2 images with same size \n");
-    printf("                              A .bmp file will be generated. Please use compressonator GUI to increase the contrast to view the diff pixels.\n");
+    printf(
+        "                              A .bmp file will be generated. Please use compressonator GUI to increase the contrast to view the diff "
+        "pixels.\n");
     printf("\n\n");
     printf("-imageprops <image>           Print image properties of image files specifies. \n");
     printf("\n\n");
@@ -257,28 +282,48 @@ void PrintUsage()
     printf("CompressonatorCLI.exe  -UseGPUDecompress result.dds image.bmp\n\n");
     printf("Example compression with decompressed result (Useful for qualitative analysis):\n\n");
     printf("CompressonatorCLI.exe -fd BC7  image.bmp result.bmp\n");
-    printf("CompressonatorCLI.exe -fd BC6H image.exr result.exr\n");
+    printf("CompressonatorCLI.exe -fd BC6H image.exr result.exr\n\n");
+#ifdef USE_MESH_DRACO_EXTENSION
+    printf("Example draco compression usage (support glTF file only):\n\n");
+    printf("Using default quantization bits settings:\n");
+    printf("CompressonatorCLI.exe -draco source.gltf dest.gltf\n");
+    printf("Specifies quantization bits settings:\n");
+    printf("CompressonatorCLI.exe -draco -dracolvl 7 -qpos 12 -qtexc 8 -qnorm 8 source.gltf dest.gltf\n\n");
+    printf("Example draco decompression usage (support glTF file only):\n\n");
+    printf("CompressonatorCLI.exe source.gltf dest.gltf\n");
+#endif
+#ifdef USE_3DMESH_OPTIMIZE
+    printf("\n\n");
+    printf("Example mesh optimization usage(support glTF and OBJ file only):\n");
+    printf(
+        "Using default settings : Optimize vertices with cache size = 16; Optimize overdraw with ACMR Threshold = 1.05; Optimize vertices fetch. "
+        "\n\n");
+    printf("CompressonatorCLI.exe - meshopt source.gltf dest.gltf\n");
+    printf("CompressonatorCLI.exe - meshopt source.obj dest.obj\n\n");
+    printf("Specifies settings :\n\n");
+    printf("CompressonatorCLI.exe - meshopt - optVCacheSize  32 - optOverdrawACMRThres  1.03 - optVFetch 0 source.gltf dest.gltf\n");
+#endif
 }
 
 bool ProgressCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
-   return CompressionCallback(fProgress, pUser1, pUser2);
+    return CompressionCallback(fProgress, pUser1, pUser2);
 }
 
-int main(int argc,  char* argv[])
+int main(int argc, char* argv[])
 {
 #ifdef USE_QT_IMAGELOAD
     QCoreApplication app(argc, argv);
 #endif
 
-    g_pluginManager.registerStaticPlugin("IMAGE","ASTC", (void*)make_Plugin_ASTC);
-    g_pluginManager.registerStaticPlugin("IMAGE","DDS", (void*)make_Plugin_DDS);
-    g_pluginManager.registerStaticPlugin("IMAGE","EXR", (void*)make_Plugin_EXR);
-    g_pluginManager.registerStaticPlugin("IMAGE","TGA", (void*)make_Plugin_TGA);  // Use for load only, Qt will be used for Save
-    g_pluginManager.registerStaticPlugin("IMAGE","KTX", (void*)make_Plugin_KTX);
-    #ifndef __APPLE__
-    g_pluginManager.registerStaticPlugin("IMAGE", "ANALYSIS", (void*)make_Plugin_CAnalysis);  
-    #endif
+    g_pluginManager.registerStaticPlugin("IMAGE", "ASTC", (void*)make_Plugin_ASTC);
+    g_pluginManager.registerStaticPlugin("IMAGE", "DDS", (void*)make_Plugin_DDS);
+    g_pluginManager.registerStaticPlugin("IMAGE", "EXR", (void*)make_Plugin_EXR);
+    g_pluginManager.registerStaticPlugin("IMAGE", "TGA", (void*)make_Plugin_TGA);  // Use for load only, Qt will be used for Save
+    g_pluginManager.registerStaticPlugin("IMAGE", "KTX", (void*)make_Plugin_KTX);
+#ifndef __APPLE__
+    g_pluginManager.registerStaticPlugin("IMAGE", "ANALYSIS", (void*)make_Plugin_CAnalysis);
+#endif
 
 #ifdef USE_AMD_PNG
     g_pluginManager.registerStaticPlugin("IMAGE", "PNG", (void*)make_Plugin_PNG);
@@ -288,9 +333,8 @@ int main(int argc,  char* argv[])
     g_pluginManager.registerStaticPlugin("IMAGE", "BMP", (void*)make_Plugin_BMP);
 #endif
 
-    g_pluginManager.registerStaticPlugin("FILTERS","BOXFILTER", (void*)make_Plugin_BoxFilter);
+    g_pluginManager.registerStaticPlugin("FILTERS", "BOXFILTER", (void*)make_Plugin_BoxFilter);
     g_pluginManager.getPluginList("\\Plugins");
-
 
 #ifdef USE_QT_IMAGELOAD
     QString dirPath = QCoreApplication::applicationDirPath();
@@ -303,7 +347,7 @@ int main(int argc,  char* argv[])
         PrintStatusLine = &LocalPrintF;
 
     //----------------------------------
-    // Process user command line parameters 
+    // Process user command line parameters
     //----------------------------------
     if (argc > 1)
     {
@@ -322,18 +366,15 @@ int main(int argc,  char* argv[])
                 g_CmdPrams.DestFile = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.DestFormat);
                 printf("Destination Texture file was not supplied: Defaulting to %s\n", g_CmdPrams.DestFile.c_str());
             }
-            else 
+            else
                 return (-3);
         }
-        
-        return ProcessCMDLine(&CompressionCallback,NULL);
 
+        return ProcessCMDLine(&CompressionCallback, NULL);
     }
     else
     {
-        PrintUsage();  
+        PrintUsage();
         return 0;
     }
 }
-
-

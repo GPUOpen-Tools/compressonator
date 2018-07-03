@@ -84,9 +84,11 @@ public:
     int   Load(std::string path, std::string filename, CMIPS *cmips = NULL);
     int   Save(std::string path, std::string filename, CMIPS *cmips = NULL);
     void  Unload();
+#ifdef _WIN32
     void  SetAnimationTime(int animationIndex, float time);
-    void  TransformNodes(NodeMatrixPostTransform *pNodesOut, DWORD *pCount);
-    DWORD GetNodeCount() { return (DWORD)m_nodes.size(); }
+    void  TransformNodes(NodeMatrixPostTransform *pNodesOut, CMP_DWORD *pCount);
+#endif
+    CMP_DWORD GetNodeCount() { return (CMP_DWORD)m_nodes.size(); }
     bool  fileExists(const char* fileName);
     bool  GetBufferData(std::string attriName, nlohmann::json::object_t accessor, nlohmann::json::array_t bufferViews, char * buffer, int index);
     bool  SetBufferData(std::string attriName, nlohmann::json::object_t accessor, nlohmann::json::array_t bufferViews, char * buffer, int index);

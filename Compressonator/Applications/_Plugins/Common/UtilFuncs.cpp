@@ -34,6 +34,7 @@
 #include <shlwapi.h>
 #include <ShObjIdl.h>
 #include <tchar.h>
+using namespace std;
 #endif
 
 #include "UtilFuncs.h"
@@ -107,7 +108,7 @@ void getFileNameExt(const char *FilePathName, char *fnameExt, int maxbuffsize)
     sprintf_s(fnameExt, maxbuffsize,"%s%s", fname, ext);
 }
 
-bool writeObjFileState(string filename, string state)
+bool writeObjFileState(std::string filename, std::string state)
 {
     std::ofstream file; 
     try {

@@ -106,7 +106,7 @@
       <FloatingPointModel>Precise</FloatingPointModel>
       <OpenMPSupport>
       </OpenMPSupport>
-      <AdditionalIncludeDirectories>./;$(Compressonator_RootDev)/Compute/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Source/GPU_Decode;$(Compressonator_RootDev)/Header/GPU_Decode/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Applications/_Plugins/CImage/BMP/;$(Compressonator_RootDev)/Header/Codec/ASTC/ARM/;$(Compressonator_RootDev)/Header/Codec/ASTC/;$(Compressonator_APPSDK)/include/;$(Compressonator_GLEW)/include/;$(Compressonator_BOOST)/;$(Compressonator_BOOST)/Include/shared/;$(Compressonator_BOOST)/Include/um/;$(Compressonator_BOOST)/Include/winrt/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_QT)/include/;$(Compressonator_QT)/include/QtGui/;$(Compressonator_QT)/include/QtCore/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/Applications/_Plugins/Common/json/;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/Tootle/;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/mesh_optimizer/;$(Compressonator_RootDev)/Applications/_Plugins/Common/gltf/;./;$(Compressonator_RootDev)/Compute/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Source/GPU_Decode;$(Compressonator_RootDev)/Header/GPU_Decode/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Applications/_Plugins/CImage/BMP/;$(Compressonator_RootDev)/Header/Codec/ASTC/ARM/;$(Compressonator_RootDev)/Header/Codec/ASTC/;$(Compressonator_APPSDK)/include/;$(Compressonator_GLEW)/include/;$(Compressonator_BOOST)/;$(Compressonator_BOOST)/Include/shared/;$(Compressonator_BOOST)/Include/um/;$(Compressonator_BOOST)/Include/winrt/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_QT)/include/;$(Compressonator_QT)/include/QtGui/;$(Compressonator_QT)/include/QtCore/;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/;$(Compressonator_RootDev)/Source/CMP_MeshCompressor/Draco/src</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -116,11 +116,11 @@
       </DelayLoadDLLs>
       <LargeAddressAware>true</LargeAddressAware>
       <AdditionalLibraryDirectories>$(OutDir)/Plugins;$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform);$(Compressonator_QT)/lib;$(Compressonator_GLEW)/lib/$(ShortPlatform);$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_ZLIB)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/$(Platform)/;$(Compressonator_BOOST)/lib/VC14/$(ShortPlatform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Compressonator_MD$(DebugSuffix).lib;GPU_Decode_MD$(DebugSuffix).lib;user32.lib;ole32.lib;glew32.lib;d3d11.lib;Gdi32.lib;opengl32.lib;IlmImfd.lib;Iexd.lib;halfd.lib;Imathd.lib;IexMathd.lib</AdditionalDependencies>
+      <AdditionalDependencies>Compressonator_MD$(DebugSuffix).lib;GPU_Decode_MD$(DebugSuffix).lib;user32.lib;ole32.lib;glew32.lib;d3d11.lib;Gdi32.lib;CMP_MeshCompressor_MD$(DebugSuffix).lib;opengl32.lib;IlmImfd.lib;Iexd.lib;halfd.lib;Imathd.lib;IexMathd.lib;CMP_MeshCompressor_MD$(DebugSuffix).lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>../CopyFiles.bat $(Compressonator_QT) $(Compressonator_OPENCV)\$(Platform)\$(SolutionName)\bin\$(DebugRelease)\ $(OUTDIR) $(Compressonator_RootDev) $(Compressonator_GLEW)\bin\$(ShortPlatform) $(Compressonator_VULKANDLL) $(DebugSuffix)</Command>
+      <Command>../CopyFiles.bat $(Compressonator_QT) $(Compressonator_OPENCV)\$(Platform)\$(SolutionName)\bin\$(DebugRelease)\ $(OUTDIR) $(Compressonator_RootDev) $(Compressonator_GLEW)\bin\$(ShortPlatform) $(Compressonator_VULKAN) $(DebugSuffix)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
@@ -133,7 +133,7 @@
       <FloatingPointModel>Precise</FloatingPointModel>
       <OpenMPSupport>
       </OpenMPSupport>
-      <AdditionalIncludeDirectories>./;$(Compressonator_RootDev)/Compute/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Source/GPU_Decode;$(Compressonator_RootDev)/Header/GPU_Decode/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Applications/_Plugins/CImage/BMP/;$(Compressonator_RootDev)/Header/Codec/ASTC/ARM/;$(Compressonator_RootDev)/Header/Codec/ASTC/;$(Compressonator_APPSDK)/include/;$(Compressonator_GLEW)/include/;$(Compressonator_BOOST)/;$(Compressonator_BOOST)/Include/shared/;$(Compressonator_BOOST)/Include/um/;$(Compressonator_BOOST)/Include/winrt/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_QT)/include/;$(Compressonator_QT)/include/QtGui/;$(Compressonator_QT)/include/QtCore/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/Applications/_Plugins/Common/json/;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/Tootle/;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/mesh_optimizer/;$(Compressonator_RootDev)/Applications/_Plugins/Common/gltf/;./;$(Compressonator_RootDev)/Compute/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Source/GPU_Decode;$(Compressonator_RootDev)/Header/GPU_Decode/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Applications/_Plugins/CImage/BMP/;$(Compressonator_RootDev)/Header/Codec/ASTC/ARM/;$(Compressonator_RootDev)/Header/Codec/ASTC/;$(Compressonator_APPSDK)/include/;$(Compressonator_GLEW)/include/;$(Compressonator_BOOST)/;$(Compressonator_BOOST)/Include/shared/;$(Compressonator_BOOST)/Include/um/;$(Compressonator_BOOST)/Include/winrt/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_QT)/include/;$(Compressonator_QT)/include/QtGui/;$(Compressonator_QT)/include/QtCore/;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/;$(Compressonator_RootDev)/Source/CMP_MeshCompressor/Draco/src</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -143,10 +143,10 @@
       </DelayLoadDLLs>
       <LargeAddressAware>true</LargeAddressAware>
       <AdditionalLibraryDirectories>$(OutDir)/Plugins;$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform);$(Compressonator_QT)/lib;$(Compressonator_GLEW)/lib/$(ShortPlatform);$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_ZLIB)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/$(Platform)/;$(Compressonator_BOOST)/lib/VC14/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Compressonator_MD$(DebugSuffix).lib;GPU_Decode_MD$(DebugSuffix).lib;user32.lib;ole32.lib;glew32.lib;d3d11.lib;Gdi32.lib;IlmImfd.lib;Iexd.lib;halfd.lib;Imathd.lib;IexMathd.lib</AdditionalDependencies>
+      <AdditionalDependencies>Compressonator_MD$(DebugSuffix).lib;GPU_Decode_MD$(DebugSuffix).lib;user32.lib;ole32.lib;glew32.lib;d3d11.lib;Gdi32.lib;CMP_MeshCompressor_MD$(DebugSuffix).lib;IlmImfd.lib;Iexd.lib;halfd.lib;Imathd.lib;IexMathd.lib;CMP_MeshCompressor_MD$(DebugSuffix).lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>../CopyFiles.bat $(Compressonator_QT) $(Compressonator_OPENCV)\$(Platform)\$(SolutionName)\bin\$(DebugRelease)\ $(OUTDIR) $(Compressonator_RootDev) $(Compressonator_GLEW)\bin\$(ShortPlatform) $(Compressonator_VULKANDLL) $(DebugSuffix)</Command>
+      <Command>../CopyFiles.bat $(Compressonator_QT) $(Compressonator_OPENCV)\$(Platform)\$(SolutionName)\bin\$(DebugRelease)\ $(OUTDIR) $(Compressonator_RootDev) $(Compressonator_GLEW)\bin\$(ShortPlatform) $(Compressonator_VULKAN) $(DebugSuffix)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
@@ -160,7 +160,7 @@
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
       <OpenMPSupport>true</OpenMPSupport>
-      <AdditionalIncludeDirectories>./;$(Compressonator_RootDev)/Compute/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Source/GPU_Decode;$(Compressonator_RootDev)/Header/GPU_Decode/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Applications/_Plugins/CImage/BMP/;$(Compressonator_RootDev)/Header/Codec/ASTC/ARM/;$(Compressonator_RootDev)/Header/Codec/ASTC/;$(Compressonator_APPSDK)/include/;$(Compressonator_GLEW)/include/;$(Compressonator_BOOST)/;$(Compressonator_BOOST)/Include/shared/;$(Compressonator_BOOST)/Include/um/;$(Compressonator_BOOST)/Include/winrt/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_QT)/include/;$(Compressonator_QT)/include/QtGui/;$(Compressonator_QT)/include/QtCore/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/Applications/_Plugins/Common/json/;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/Tootle/;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/mesh_optimizer/;$(Compressonator_RootDev)/Applications/_Plugins/Common/gltf/;./;$(Compressonator_RootDev)/Compute/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Source/GPU_Decode;$(Compressonator_RootDev)/Header/GPU_Decode/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Applications/_Plugins/CImage/BMP/;$(Compressonator_RootDev)/Header/Codec/ASTC/ARM/;$(Compressonator_RootDev)/Header/Codec/ASTC/;$(Compressonator_APPSDK)/include/;$(Compressonator_GLEW)/include/;$(Compressonator_BOOST)/;$(Compressonator_BOOST)/Include/shared/;$(Compressonator_BOOST)/Include/um/;$(Compressonator_BOOST)/Include/winrt/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_QT)/include/;$(Compressonator_QT)/include/QtGui/;$(Compressonator_QT)/include/QtCore/;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/;$(Compressonator_RootDev)/Source/CMP_MeshCompressor/Draco/src</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -171,7 +171,7 @@
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <LargeAddressAware>true</LargeAddressAware>
       <AdditionalLibraryDirectories>$(OutDir)/Plugins;$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform);$(Compressonator_QT)/lib;$(Compressonator_GLEW)/lib/$(ShortPlatform);$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_ZLIB)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/$(Platform)/;$(Compressonator_BOOST)/lib/VC14/$(ShortPlatform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Compressonator_MD$(DebugSuffix).lib;GPU_Decode_MD$(DebugSuffix).lib;user32.lib;ole32.lib;glew32.lib;d3d11.lib;Gdi32.lib;IlmImf.lib;Iex.lib;half.lib;Imath.lib;IexMath.lib</AdditionalDependencies>
+      <AdditionalDependencies>Compressonator_MD$(DebugSuffix).lib;GPU_Decode_MD$(DebugSuffix).lib;user32.lib;ole32.lib;glew32.lib;d3d11.lib;Gdi32.lib;CMP_MeshCompressor_MD$(DebugSuffix).lib;IlmImf.lib;Iex.lib;half.lib;Imath.lib;IexMath.lib;CMP_MeshCompressor_MD$(DebugSuffix).lib</AdditionalDependencies>
       <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <CustomBuildStep>
@@ -195,7 +195,7 @@
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
       <OpenMPSupport>true</OpenMPSupport>
-      <AdditionalIncludeDirectories>./;$(Compressonator_RootDev)/Compute/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Source/GPU_Decode;$(Compressonator_RootDev)/Header/GPU_Decode/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Applications/_Plugins/CImage/BMP/;$(Compressonator_RootDev)/Header/Codec/ASTC/ARM/;$(Compressonator_RootDev)/Header/Codec/ASTC/;$(Compressonator_APPSDK)/include/;$(Compressonator_GLEW)/include/;$(Compressonator_BOOST)/;$(Compressonator_BOOST)/Include/shared/;$(Compressonator_BOOST)/Include/um/;$(Compressonator_BOOST)/Include/winrt/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_QT)/include/;$(Compressonator_QT)/include/QtGui/;$(Compressonator_QT)/include/QtCore/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/Applications/_Plugins/Common/json/;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/Tootle/;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/mesh_optimizer/;$(Compressonator_RootDev)/Applications/_Plugins/Common/gltf/;./;$(Compressonator_RootDev)/Compute/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Source/GPU_Decode;$(Compressonator_RootDev)/Header/GPU_Decode/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Applications/_Plugins/CImage/BMP/;$(Compressonator_RootDev)/Header/Codec/ASTC/ARM/;$(Compressonator_RootDev)/Header/Codec/ASTC/;$(Compressonator_APPSDK)/include/;$(Compressonator_GLEW)/include/;$(Compressonator_BOOST)/;$(Compressonator_BOOST)/Include/shared/;$(Compressonator_BOOST)/Include/um/;$(Compressonator_BOOST)/Include/winrt/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_QT)/include/;$(Compressonator_QT)/include/QtGui/;$(Compressonator_QT)/include/QtCore/;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/;$(Compressonator_RootDev)/Source/CMP_MeshCompressor/Draco/src</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -206,7 +206,7 @@
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <LargeAddressAware>true</LargeAddressAware>
       <AdditionalLibraryDirectories>$(OutDir)/Plugins;$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform);$(Compressonator_QT)/lib;$(Compressonator_GLEW)/lib/$(ShortPlatform);$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_ZLIB)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/$(Platform)/;$(Compressonator_BOOST)/lib/VC14/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Compressonator_MD$(DebugSuffix).lib;GPU_Decode_MD$(DebugSuffix).lib;user32.lib;ole32.lib;glew32.lib;d3d11.lib;Gdi32.lib;IlmImf.lib;Iex.lib;half.lib;Imath.lib;IexMath.lib</AdditionalDependencies>
+      <AdditionalDependencies>Compressonator_MD$(DebugSuffix).lib;GPU_Decode_MD$(DebugSuffix).lib;user32.lib;ole32.lib;glew32.lib;d3d11.lib;Gdi32.lib;CMP_MeshCompressor_MD$(DebugSuffix).lib;IlmImf.lib;Iex.lib;half.lib;Imath.lib;IexMath.lib;CMP_MeshCompressor_MD$(DebugSuffix).lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>../CopyFiles.bat $(Compressonator_QT) $(Compressonator_OPENCV)\$(Platform)\$(SolutionName)\bin\$(DebugRelease)\ $(OUTDIR) $(Compressonator_RootDev) $(Compressonator_GLEW)\bin\$(ShortPlatform) $(Compressonator_VULKANDLL) $(DebugSuffix)</Command>
@@ -219,6 +219,8 @@
     <ClCompile Include="../../_Plugins/Common/PluginManager.cpp" />
     <ClCompile Include="../../_Plugins/Common/TextureIO.cpp" />
     <ClCompile Include="../Source/CompressonatorCLI.cpp" />
+    <ClCompile Include="..\..\_Plugins\Common\gltf\tiny_gltf2_utils.cpp" />
+    <ClCompile Include="..\..\_Plugins\Common\ModelData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../../_Plugins/Common/ATIFormats.h" />
@@ -226,9 +228,11 @@
     <ClInclude Include="../../_Plugins/Common/MIPS.h" />
     <ClInclude Include="../../_Plugins/Common/PluginInterface.h" />
     <ClInclude Include="../../_Plugins/Common/PluginManager.h" />
-    <ClInclude Include="../../_Plugins/Common/query_timer.h" />
     <ClInclude Include="../../_Plugins/Common/TextureIO.h" />
     <ClInclude Include="../Source/AMDCompressCLI_Documentation.h" />
+    <ClInclude Include="..\..\_Plugins\Common\gltf\tiny_gltf2.h" />
+    <ClInclude Include="..\..\_Plugins\Common\gltf\tiny_gltf2_utils.h" />
+    <ClInclude Include="..\..\_Plugins\Common\ModelData.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="../CopyFiles.bat" />

@@ -22,7 +22,7 @@
 
 void GltfTechnique::Draw(VkCommandBuffer cmd_buf)
 {
-    DWORD dwNodesVisible;
+    CMP_DWORD dwNodesVisible;
     std::vector<NodeMatrixPostTransform> nodes(m_pGLTFData->GetNodeCount());
     m_pGLTFData->TransformNodes(nodes.data(), &dwNodesVisible);
 

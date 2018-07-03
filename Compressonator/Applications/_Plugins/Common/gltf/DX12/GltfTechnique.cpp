@@ -22,7 +22,7 @@
 
 void GltfTechnique::Draw(ID3D12GraphicsCommandList* pCommandList)
 {
-    DWORD dwNodesVisible;
+    CMP_DWORD dwNodesVisible;
 
     std::vector<NodeMatrixPostTransform> nodes(m_pGLTFData->GetNodeCount());
     if (nodes.size() == 0) return;

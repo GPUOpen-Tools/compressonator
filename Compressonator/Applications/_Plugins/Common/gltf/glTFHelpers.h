@@ -18,7 +18,8 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "..\json\json.h"
+#include "../json/json.h"
+#include "GltfStructures.h"
 
 using json = nlohmann::json;
 
@@ -32,5 +33,5 @@ float GetElementFloat(json::object_t root, char *path, float pDefault);
 int GetElementInt(json::object_t root, char *path, int pDefault);
 bool GetElementBoolean(json::object_t &root, char *path, bool pDefault);
 json::array_t GetElementJsonArray(json::object_t root, char *path, json::array_t pDefault);
-void SplitGltfAttribute(std::string attribute, std::string *semanticName, DWORD *semanticIndex);
+void SplitGltfAttribute(std::string attribute, std::string *semanticName, unsigned int*semanticIndex);
 

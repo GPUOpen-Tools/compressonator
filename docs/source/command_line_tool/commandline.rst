@@ -177,10 +177,6 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 |-DXT1UseAlpha <value>        |Encode single-bit alpha data.                             |
 |                             |Only valid when compressing to DXT1 & BC1                 |
 +-----------------------------+----------------------------------------------------------+
-|-OutputExposure <value>      |BC6 only: Sets the resulting exposure of compressed Images|
-|                             |default is 0.95, lower values produce darker images,      |
-|                             |higher values produce brighter images                     |
-+-----------------------------+----------------------------------------------------------+
 |-CompressionSpeed <value>    |The trade-off between compression speed & quality         |
 |                             |This setting is not used in BC6H and BC7                  |
 +-----------------------------+----------------------------------------------------------+
@@ -252,6 +248,52 @@ Example compression with decompressed result (Useful for qualitative analysis)
 ------------------------------------------------------------------------------
 CompressonatorCLI.exe -fd BC7  image.bmp result.bmp |br|
 CompressonatorCLI.exe -fd BC6H image.exr result.exr
+
+
+Example mesh compression usage (support glTF and obj file only)
+---------------------------------------------------------------
+Using default quantization bits settings as mentioned above:
+CompressonatorCLI.exe -draco source.gltf dest.gltf
+
+Specifies quantization bits settings:
+CompressonatorCLI.exe -draco -dracolvl 7 -qpos 12 -qtexc 8 -qnorm 8 source.gltf dest.gltf
+
+CLI mesh compression with draco settings include:
+
+-dracolvl <value> → compression level (value range 0-10: higher mean more compressed) - default 7
+
+-qpos <value> → quantization bits value for position (value range 0-32) - default 14
+
+-qtexc <value> → quantization bits value for texture coordinates (value range 0-32) - default 12
+
+-qnorm <value> → quantization bits value for normal (value range 0-32) - default 10
+
+
+Example mesh decompression usage (support glTF and obj file only)
+-----------------------------------------------------------------
+CompressonatorCLI.exe source.gltf dest.gltf
+
+
+Example mesh optimization usage (support glTF and obj file only)
+----------------------------------------------------------------
+Using default settings: Optimize vertices with cache size= 16; Optimize overdraw with ACMR Threshold= 1.05; Optimize vertices fetch.
+CompressonatorCLI.exe -meshopt source.gltf dest.gltf
+CompressonatorCLI.exe -meshopt source.obj dest.obj
+
+Specifies settings:
+CompressonatorCLI.exe -meshopt -optVCacheSize  32 -optOverdrawACMRThres  1.03 -optVFetch 0 source.gltf dest.gltf
+
+CLI mesh optimization include settings: 
+
+-optVCacheSize  <value> → optimize vertices with hardware cache size in the value specified  (value range 1- no limit as it allows users to simulate hardware cache size to find the most optimum size)- default is enabled with cache size = 16
+
+-optVCacheFIFOSize  <value> → optimize vertices with hardware FIFO cache size in the value specified (value range 1- no limit as it allows users to simulate hardware cache size to find the most optimum size) - default is disabled
+
+-optOverdrawACMRThres  <value> → optimize overdraw with ACMR (average cache miss ratio) threshold value specified (value range 1-3) - default is enabled with ACMR value = 1.05 (i.e. 5% worse)
+
+-optVFetch <boolean value> → optimize vertices fetch . boolean value 0 - disabled, 1-enabled. -default is enabled. 
+
+-simplifyMeshLOD <value> → simplify mesh using LOD (Level of Details) value specified.(value range 1- no limit as it allows users to simplify the mesh until the level they desired. Higher level means less triangles drawn, less details.)
 
 .. |br| raw:: html
 

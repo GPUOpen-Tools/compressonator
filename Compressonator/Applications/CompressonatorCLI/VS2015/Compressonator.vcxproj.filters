@@ -15,6 +15,9 @@
     <Filter Include="Common">
       <UniqueIdentifier>{3cf1fbb7-6364-4b47-a108-154e5ed0c531}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gltf">
+      <UniqueIdentifier>{c98fb0c6-5e55-499d-b16c-2a1f3bb567cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="../../_Plugins/Common/ATIFormats.cpp">
@@ -33,6 +36,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="../Source/CompressonatorCLI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\_Plugins\Common\gltf\tiny_gltf2_utils.cpp">
+      <Filter>gltf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\_Plugins\Common\ModelData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -55,10 +64,16 @@
     <ClInclude Include="../../_Plugins/Common/PluginManager.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="../../_Plugins/Common/query_timer.h">
+    <ClInclude Include="../../_Plugins/Common/TextureIO.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="../../_Plugins/Common/TextureIO.h">
+    <ClInclude Include="..\..\_Plugins\Common\gltf\tiny_gltf2.h">
+      <Filter>gltf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\_Plugins\Common\gltf\tiny_gltf2_utils.h">
+      <Filter>gltf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\_Plugins\Common\ModelData.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>

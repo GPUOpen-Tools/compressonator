@@ -7,10 +7,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -36,44 +36,41 @@
 #define HIDE_VIEW_OPTIONS "Hide View Options"
 #define SHOW_VIEW_OPTIONS "Show View Options"
 
-
 //
-// This Class is defined as Static 
+// This Class is defined as Static
 // to enable message handling via emit signals calls from static & global functions
-// 
+//
 class winMsgHandler : public QObject
 {
     Q_OBJECT
 
-public:
-    winMsgHandler() { };
+   public:
+    winMsgHandler(){};
 
-Q_SIGNALS:
-    void  signalMessage(MSG &msg);
+   Q_SIGNALS:
+    void signalMessage(MSG& msg);
 };
 
-
-class cpRenderWindow: public QWidget
+class cpRenderWindow : public QWidget
 {
     Q_OBJECT
-public:
+   public:
+    bool m_showViewOptions;
+    WId  m_wid;
+    bool m_usingWindowProc;
 
-    bool                             m_showViewOptions;
-    WId                             m_wid;
-    bool                            m_usingWindowProc;
-
-    cpRenderWindow() 
-    { 
-        m_plugin    = NULL; 
-        m_viewOpen  = false;
-        m_wid       = 0L;
+    cpRenderWindow()
+    {
+        m_plugin          = NULL;
+        m_viewOpen        = false;
+        m_wid             = 0L;
         m_usingWindowProc = false;
         qApp->installEventFilter(this);
     }
 
-    void setplugin(PluginInterface_3DModel *plugin)
+    void setplugin(PluginInterface_3DModel* plugin)
     {
-        m_plugin    = plugin;
+        m_plugin = plugin;
     }
 
     void setView(bool viewOpen)
@@ -85,68 +82,68 @@ public:
     {
         m_hwnd = hwnd;
     }
-    
+
     void setXRotation(int angle);
     void setYRotation(int angle);
     void setZRotation(int angle);
 
-public slots:
-    void localMessage(MSG &msg);
+   public slots:
+    void localMessage(MSG& msg);
 
-private:
-    bool nativeEvent(const QByteArray & eventType, void * message, long * result);
+   private:
+    bool nativeEvent(const QByteArray& eventType, void* message, long* result);
 
-    void paintEvent(QPaintEvent *ev);
-    bool eventFilter(QObject *obj, QEvent *ev);
-    void resizeEvent(QResizeEvent *);
+    void paintEvent(QPaintEvent* ev);
+    bool eventFilter(QObject* obj, QEvent* ev);
+    void resizeEvent(QResizeEvent*);
 
-    HWND                             m_hwnd;     // Handle to the window created for rendering the glTF views
-    PluginInterface_3DModel         *m_plugin;
-    bool                             m_viewOpen;
-
+    HWND                     m_hwnd;  // Handle to the window created for rendering the glTF views
+    PluginInterface_3DModel* m_plugin;
+    bool                     m_viewOpen;
 };
 
 class cp3DModelView : public acCustomDockWidget
 {
     Q_OBJECT
-public:
-    int                m_showViewOptions;
-    cp3DModelView(const QString filePathName, const QString filePathName2, const QString Title, QWidget *parent);
+   public:
+    int m_showViewOptions;
+    cp3DModelView(const QString filePathName, const QString filePathName2, const QString Title, QWidget* parent);
     ~cp3DModelView();
     void Clean3DModelView();
+    bool isGLTFDracoFile(std::string filename);
+    bool decompressglTFfile(std::string srcFile, std::string tempdstFile);
 
-private:
-    HWND                m_hwnd;     // Handle to the window created for rendering the glTF views
+   private:
+    HWND m_hwnd;  // Handle to the window created for rendering the glTF views
 
     // Common for all
-    QWidget            *m_newWidget;
+    QWidget* m_newWidget;
 
-    QWidget            *m_renderViewQt;
+    QWidget* m_renderViewQt;
 
-    cpRenderWindow     *m_renderview;
-    QGridLayout        *m_layout;
-    QWidget            *m_parent;
-    QStatusBar         *m_statusBar;
-    bool                m_viewOpen;
+    cpRenderWindow* m_renderview;
+    QGridLayout*    m_layout;
+    QWidget*        m_parent;
+    QStatusBar*     m_statusBar;
+    bool            m_viewOpen;
 
     // ToolBar
-    QToolBar           *m_toolBar;
-    QPushButton        *m_OptionsButton;
+    QToolBar*    m_toolBar;
+    QPushButton* m_OptionsButton;
 
+    PluginInterface_3DModel*        m_plugin;
+    PluginInterface_3DModel_Loader* m_plugin_loader;
+    bool                            m_isviewingDX12;
 
-    PluginInterface_3DModel         *m_plugin;
-    PluginInterface_3DModel_Loader  *m_plugin_loader;
-    bool                             m_isviewingDX12;
-
-Q_SIGNALS:
-    void UpdateData(QObject *data);
+   Q_SIGNALS:
+    void UpdateData(QObject* data);
     void OnSetScale(int value);
 
-public slots:
-    void OnToolBarClicked();        // Hook into the CustomeWidgets TitleBars On Tool Button Clicked events
-    void OnShowOptions();           // Toggles Overlayed Display Options in 3D Model Viewers
+   public slots:
+    void OnToolBarClicked();  // Hook into the CustomeWidgets TitleBars On Tool Button Clicked events
+    void OnShowOptions();     // Toggles Overlayed Display Options in 3D Model Viewers
 };
 
 extern PluginManager g_pluginManager;
 
-#endif // _3DMODELVIEW_H
+#endif  // _3DMODELVIEW_H

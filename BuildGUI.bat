@@ -117,7 +117,7 @@ echo ------------------------------------------------------------   >> %OUTPUT_L
 cd %BatchDir%
 
 echo "BUILD FAILED"
-exit /b %ERRORLEVEL%
+exit 1
 :Done
 :: ---------------------------------------------------
 :: Build DONE return to original start folder  

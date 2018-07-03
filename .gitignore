@@ -1,11 +1,14 @@
+*.pdb
 Compressonator/Build/*
 Compressonator/Applications/_Plugins/C3DModel_viewers/glTF_DX12_EX/GeneratedFiles/*
 Compressonator/Applications/_Plugins/C3DModel_viewers/glTF_OpenGL/GeneratedFiles/*
 Compressonator/Applications/CompressonatorGUI/GeneratedFiles/Release_MD/*
 Compressonator/Applications/CompressonatorGUI/GeneratedFiles/Debug_MD/*
 Compressonator/Applications/CompressonatorGUI/GeneratedFiles/qrc_CompressonatorGUI.cpp
+Compressonator/Applications/CompressonatorCLI/Make/buildCLI_linux_package.sh
 *vcxproj.user
 *.vs
 *.log
 *.VC.db
 *.VC.VC.opendb
+*.pdb

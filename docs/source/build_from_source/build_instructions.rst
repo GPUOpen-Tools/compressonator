@@ -16,8 +16,7 @@ Use the following project files to build binaries as needed for use in your own 
 
 Texture Compression Codecs 
 --------------------------
-Prebuilt Binaries for Compressonator VS2015 Libs are supplied when using the installer
-"/Compressonator/VS2015/CompressonatorLib.sln"
+Prebuilt Binaries for Compressonator VS2015 Libs are supplied when using the installer in https://github.com/GPUOpen-Tools/Compressonator/releases OR you can build from "/Compressonator/VS2015/CompressonatorLib.sln"
 
 This solution will create a build folder that contains DLL and Libs under \Compressonator\Build\VS2015\(configuration)\(platform)\
 example: Compressonator/Build/VS2015/Release_MD/Win32\
@@ -36,44 +35,49 @@ Mesh Compression  Lib
 Build Instructions for Compressonator GUI and CLI applications on Windows 10 and up
 ===================================================================================
 
-To build the applications you will need to have Visual Studio 2015 installed, Vulkan SDK version 1.0.68.0 from [Vulkan LunarG website](https://vulkan.lunarg.com/sdk/home).
+1. To build the applications you will need to have Visual Studio 2015 installed, Vulkan SDK version 1.0.68.0 from [Vulkan LunarG website](https://vulkan.lunarg.com/sdk/home). Only Vulkan SDK version 1.0.68.0 is tested in the build.
 
-After Vulkan SDK installed, you will need to build glslang.lib, SPIRV.lib, HLSL.lib, OGLCompiler.lib, OSDependent.lib, SPVRemapper.lib, SPIRV-Tools-opt.lib, SPIRV-Tools.lib from the Vulkan SDK installed using all the CMakeList.txt scripts provided in the default installation path C:\VulkanSDK\1.0.68.0\glslang and C:\VulkanSDK\1.0.68.0\spirv-tools folders. 
-To build these libs, first download cmake tools from https://cmake.org/download/) , set the environment PATH to include <cmake_install_path>\bin  which contains cmake.exe. You will need to download python 2.7 as well (from https://www.python.org/downloads/) for glslang and spirv-tools build later. 
-Then, copy and paste the following commands (these commands are for x64bit build, for 32bit build, change the build folder name from VS2015_64 to VS2015) in a window batch file, save the batch file in the default installation path C:\VulkanSDK\1.0.68.0\glslang and run the batch file.
+2. After Vulkan SDK installed, you will need to build glslang.lib, SPIRV.lib, HLSL.lib, OGLCompiler.lib, OSDependent.lib, SPVRemapper.lib, SPIRV-Tools-opt.lib, SPIRV-Tools.lib from the Vulkan SDK installed using all the CMakeList.txt scripts provided in the default installation path C:\\VulkanSDK\\1.0.68.0\\glslang and C:\\VulkanSDK\\1.0.68.0\\spirv-tools folders. 
+
+3. To build the Vulkan-related libs in step 2, first download cmake tools from https://cmake.org/download/) , set the environment PATH to include <cmake_install_path>\\bin  which contains cmake.exe. You will need to download python 2.7 as well (from https://www.python.org/downloads/) for glslang and spirv-tools build later. 
+
+4. Then, copy and paste the following commands (these commands are for x64bit build, for 32bit build, change the build folder name from VS2015_64 to VS2015) in a window batch file, save the batch file in the default installation path C:\\VulkanSDK\\1.0.68.0\\glslang and run the batch file.
 
 set CurrDir=%CD%
+
 for %%* in (.) do set CurrDirName=%%~nx*
+
 IF EXIST %CurrDir%\VS2015_64 (rmdir VS2015_64 /s /q)
+
 mkdir VS2015_64
+
 cd VS2015_64
-cmake -G "Visual Studio 14 2015 Win64" ..\..\%CurrDirName%
+
+cmake -G "Visual Studio 14 2015 Win64" ..\\..\\%CurrDirName%
+
 cd %CurrDir%
 
-After the batch file run success (make sure there is no cmake errors or missing dependencies), open the glslang.sln file in the VS2015_64 folder with Microsoft Visual Studio 2015 and build the solution in Debug or Release mode (for Compressonator Debug_MD or Release_MD).
+5. After the batch file run success (make sure there is no cmake errors or missing dependencies), open the glslang.sln file in the VS2015_64 folder with Microsoft Visual Studio 2015 and build the solution in Debug or Release mode (for Compressonator Debug_MD or Release_MD).
 
-Repeat creating the same batch file in the default installation path C:\VulkanSDK\1.0.68.0\spirv-tools and run the batch file in the path and then build the spirv-tools.sln file in the VS2015_x64 or VS2015 folder.
+6. Repeat creating the same batch file in the default installation path C:\\VulkanSDK\\1.0.68.0\\spirv-tools and run the batch file in the path and then build the spirv-tools.sln file in the VS2015_64 or VS2015 folder.
 
-**Note**: Compressonator GUI project expects these glslang libs and spirv-tools libs are built in the C:\VulkanSDK\1.0.68.0\<glslang or spirv-tools>\<VS2015_x64 or VS2015> subfolders. If you have a different libs output paths, please remember to update all the paths macros "Compressonator_GLSLANG_" accordingly in the Compressonator/Compressonator_Root.props file.
+**Note**: Compressonator GUI project expects these glslang libs and spirv-tools libs are built in the C:\\VulkanSDK\\1.0.68.0\\<glslang or spirv-tools>\\<VS2015_64 or VS2015> subfolders. If you have a different libs output paths, please remember to update all the paths macros "Compressonator_GLSLANG_" accordingly in the Compressonator/Compressonator_Root.props file.
 
-Qt V5.7 msvc2015 or/and msvc2015_64 opensource downloaded from [QT website](https://download.qt.io/official_releases/qt/5.7/5.7.1/) .
+7. The build will also requires QT V5.7 msvc2015 or/and msvc2015_64 opensource downloaded from [QT website](https://download.qt.io/official_releases/qt/5.7/5.7.1/) .
+
+8. It is also recommended that you install and configure Visual Studio Qt5 Package extension from MSDN Visual Studio Gallery https://visualstudiogallery.msdn.microsoft.com/c89ff880-8509-47a4-a262-e4fa07168408 , and set in Qt Options dialog, Qt Default Version name V5.7 and path to default download path C:\\Qt\\Qt5.7.1\\5.7\\msvc2015_64\\bin\\
 
 **Note**: Compressonator GUI project solution files assume QT is installed in default path (C:/Qt/Qt5.7.1/5.7). and Vulkan SDK Environment variable (VULKAN_SDK) for path to the source code is set. Users must build the Vulkan SDK binaries prior to building the GUI and CLI applications. If you use different path, please change the project property accordingly in the  Compressonator_Root.props file.
 
-Also Compressonator Applications are using the Windows SDK version 10.0.15063.0. You can either install the required version of Windows SDK or change the SDK version to any Window 10 version in the project property pages or by right-clicking the solution and selecting "Retarget solution".
+9. Also Compressonator Applications are using the Windows SDK version 10.0.15063.0. You can either install the required version of Windows SDK or change the SDK version to any Window 10 version in the project property pages or by right-clicking the solution and selecting "Retarget solution".
 
-The directory of your workspace should be as follows
+10. The directory of your workspace should be as follows
 
 - Common
 - Compressonator
 - docs
 - LICENSE
 - README.md
-
-
-It is also recommended that you install and configure Visual Studio Qt5 Package extension from MSDN Visual Studio Gallery, and set in Qt Options dialog, Qt Default Version name V5.7 and path to default download path C:\Qt\Qt5.7.1\5.7\msvc2015_64\bin\
-
-https://visualstudiogallery.msdn.microsoft.com/c89ff880-8509-47a4-a262-e4fa07168408 
 
 using Batch Files
 -----------------

@@ -27,7 +27,7 @@ set (CMP_INCLUDE_DIRS "")
 # Qt5 include path - users install required
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-message("Finding Package Qt5 (Qt5Core and Qt5Gui). if not found, for Ubuntu, run initsetup_ubuntu.sh to install. For mac,  run initsetup_mac.sh to install. For window, please make sure install qt5.7 and add the bin path (i.e. C:/Qt/5.7/msvc2015_64/bin) to your environment PATH.")
+message("Finding Package Qt5 (Qt5Core and Qt5Gui). if not found, for Ubuntu, run initsetup_ubuntu.sh to install. For mac,  run initsetup_mac.sh to install. For window, please make sure install qt5.7 and add the bin path (i.e. C:/Qt/5.7/msvc2015_64/bin) to your environment PATH.")  
 
 find_package(Qt5Core)
 if(Qt5Core_FOUND)
@@ -77,19 +77,35 @@ list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/
 list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../../Header/")
 list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../../Header/Codec/ASTC/ARM/")
 list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../../Header/Codec/ASTC/")
+list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/CMP_MeshCompressor/Draco/src/")
+list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/CMP_MeshOptimizer/")
+list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/gltf/")
+list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/json/")
+list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/CMesh/mesh_optimizer/")
+list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/CMesh/Tootle/")
 
 list(REMOVE_DUPLICATES CMP_INCLUDE_DIRS)
 include_directories(${CMP_INCLUDE_DIRS})
 
 set (CMP_SOURCES1 "")
+set (CMP_MESHOPT_SRC "")
+file(GLOB_RECURSE CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/*.cc")
+file(GLOB_RECURSE CMP_MESHOPT_SRC "${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/CMP_MeshOptimizer/*cpp")
 list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/ATIFormats.cpp")
 list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/cmdline.cpp")
 list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/MIPS.cpp")
 list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/PluginManager.cpp")
 list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/TextureIO.cpp")
+list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/gltf/GltfCommon.cpp")
+list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/gltf/tiny_gltf2_utils.cpp")
+list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/gltf/glTFHelpers.cpp")
+list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/json/json.h")
+list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/UtilFuncs.cpp")
+list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/ModelData.cpp")
 list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../Source/CompressonatorCLI.cpp")
 
-add_executable(CompressonatorCLI ${CMP_SOURCES1})
+
+add_executable(CompressonatorCLI ${CMP_SOURCES1} ${CMP_MESHOPT_SRC})
 
 # (ubuntu only)uncomment below to rebuild all the dependency libraries from cmake 
 #if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")

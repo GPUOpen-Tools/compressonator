@@ -144,7 +144,7 @@ bool GltfDepthPass::OnCreate(
             {
                 // the glTF attributes name may end in a number, DX12 doest like this and if this is the case we need to split the attribute name from the number
                 //
-                DWORD semanticIndex = 0;
+                CMP_DWORD semanticIndex = 0;
                 std::string semanticName;
                 SplitGltfAttribute(it.key(), &semanticName, &semanticIndex);
 

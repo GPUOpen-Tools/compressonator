@@ -24,7 +24,7 @@
 // UtilFuncs.h : header file for utility functions
 //
 
-#if !defined(_AMD_TEX_UTILSFUNCS_H_INCLUDED_)
+#ifndef _AMD_TEX_UTILSFUNCS_H_INCLUDED_
 #define _AMD_TEX_UTILSFUNCS_H_INCLUDED_
 
 #include <string>

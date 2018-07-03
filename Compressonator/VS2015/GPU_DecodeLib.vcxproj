@@ -640,7 +640,7 @@
     </PreBuildEvent>
     <Lib>
       <AdditionalDependencies>vulkan-1.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/Ext/Vulkan/1.0.68.0/Bin;$(VULKAN_SDK)/Bin;../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Common/Lib/Ext/Vulkan/1.0.68.0/Bin;$(VULKAN_SDK)/Lib;../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
