@@ -31,11 +31,6 @@ Under development
 * Improvements to existing Compression Codecs
   * Fix for R & B channel swizzling
   * updated ETC Codec with support for SRGB, EAC and punchthrough Alpha
- 
-* CLI support for Model Mesh Compression and Model Optimization
-
-* Model Mesh Compression 
-  * Support for GLTF 2.0 compression extensions (KHR_draco_mesh_compression, ...)
     
 * Selectable 3D Model viewers
   * Support for the Vulkan® and OpenGL® Viewer code introduced in 3.0
@@ -47,7 +42,11 @@ Under development
 
 Source Code changes since 3.0 release
 ------------------------------------------------------
-Pending...
+
+* CLI support for Model Mesh Compression and Model Optimization
+
+* Model Mesh Compression 
+  * Support for GLTF 2.0 compression extensions (KHR_draco_mesh_compression)
 
 
 Recent 3.0 additions and changes
