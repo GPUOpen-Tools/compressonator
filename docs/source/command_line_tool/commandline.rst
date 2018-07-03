@@ -110,8 +110,10 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 |                       |alpha.  Eight bits per pixel                               |
 +-----------------------+-----------------------------------------------------------+
 |BC4                    |Single component compressed texture format for Microsoft   |
+|                       |DXGI_FORMAT_BC4_UNORM.                                     |
 +-----------------------+-----------------------------------------------------------+
 |BC5                    |Two component compressed texture format for Microsoft      |
+|                       |DXGI_FORMAT_BC5_UNORM.                                     |
 +-----------------------+-----------------------------------------------------------+
 |BC6H                   |High-Dynamic Range  compression format                     |
 +-----------------------+-----------------------------------------------------------+
