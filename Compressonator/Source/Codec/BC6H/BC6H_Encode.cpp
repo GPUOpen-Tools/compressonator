@@ -558,7 +558,14 @@ bool BC6HBlockEncoder::TransformEndPoints(AMD_BC6H_Format &BC6H_data, int iEndPo
                 return false;
 
             oEndPoints[0][1][i] = (oEndPoints[0][1][i] & Mask);
-            
+
+            //redo the check for sign overflow for one region case
+            if (max_subsets <= 1)
+            {
+                if (isOverflow(oEndPoints[0][1][i], ModePartition[mode].prec[i]))
+                    return false;
+            }
+
             if (max_subsets > 1)
             {
                 oEndPoints[1][0][i] = iEndPoints[1][0][i] - iEndPoints[0][0][i];  // [1][A] - [0][A]
