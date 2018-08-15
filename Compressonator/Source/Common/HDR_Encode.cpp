@@ -62,69 +62,70 @@ inline int NBits(int n, bool bIsSigned)
 }
 
 
- float F16toF32(float f)
- {
-     half A;
-     A.setBits(f);
-     return((float)A);
- }
+float F16toF32(float f)
+{
+    half A;
+    A.setBits(f);
+    return((float)A);
+}
 
- float F32toF16(float f)
- {
-     return(half(f).bits());
- }
+float F32toF16(float f)
+{
+    return(half(f).bits());
+}
 
 
- float lerpf(float a, float b, int i, int denom)
- {
-     assert(denom == 3 || denom == 7 || denom == 15);
-     assert(i >= 0 && i <= denom);
+float lerpf(float a, float b, int i, int denom)
+{
+    assert(denom == 3 || denom == 7 || denom == 15);
+    assert(i >= 0 && i <= denom);
 
-     int *weights = NULL;
+    int *weights = NULL;
 
-     switch (denom)
-     {
-     case 3:     denom *= 5; i *= 5;    // fall through to case 15
-     case 7:     weights = g_aWeights3; break;
-     case 15:    weights = g_aWeights4; break;
-     default:    assert(0);
-     }
-     return (a*weights[denom - i] + b*weights[i]) / 64.0f;
- }
+    switch (denom)
+    {
+    case 3:     denom *= 5; i *= 5;    // fall through to case 15
+    case 7:     weights = g_aWeights3; break;
+    case 15:    weights = g_aWeights4; break;
+    default:    assert(0);
+    }
+    return (a*weights[denom - i] + b*weights[i]) / 64.0f;
+}
 
- int QuantizeToInt(short value, int prec, bool signedfloat16, float exposure)
- {
-     (exposure);
+int QuantizeToInt(short value, int prec, bool signedfloat16, float exposure)
+{
+    (exposure);
 
-     if (prec <= 1) return 0;
-     bool negvalue = false;
+    if (prec <= 1) return 0;
+    bool negvalue = false;
 
-     // move data to use extra bits for processing
-     int ivalue = value;
+    // move data to use extra bits for processing
+    int ivalue = value;
 
-     if (signedfloat16)
-     {
-         if (value < 0)
-         {
-             negvalue = true;
-             value = -value;
-         }
-         prec--;
-     }
-     else
-     {
-         // clamp -ve
-         if (value < 0)
-             value = 0;
-     }
+    if (signedfloat16)
+    {
+        if (value < 0)
+        {
+            negvalue = true;
+            value = -value;
+        }
+        prec--;
+    }
+    else
+    {
+        // clamp -ve
+        if (value < 0)
+            value = 0;
+    }
 
-     int iQuantized;
-     int bias = (prec > 10) ? ((1 << (prec - 1)) - 1) : 0;
+    int iQuantized;
+    int bias = (prec > 10 && prec != 16) ? ((1 << (prec - 11)) - 1) : 0;
+    bias = (prec == 16) ? 15 : bias;
 
-     iQuantized = ((ivalue << prec) + bias) / F16MAX1;
+    iQuantized = ((ivalue << prec) + bias) / F16MAX1;
 
-     return (negvalue ? -iQuantized : iQuantized);
- }
+    return (negvalue ? -iQuantized : iQuantized);
+}
 
  int Unquantize(int comp, unsigned char uBitsPerComp, bool bSigned)
  {

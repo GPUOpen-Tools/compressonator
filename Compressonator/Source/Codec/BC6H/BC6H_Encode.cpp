@@ -702,44 +702,70 @@ void palitizeEndPointsF(AMD_BC6H_Format &BC6H_data, float fEndPoints[MAX_SUBSETS
     }
 }
 
-float CalcShapeError(AMD_BC6H_Format &BC6H_data, float fEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int shape_indices[MAX_SUBSETS][MAX_SUBSET_SIZE], bool SkipPallet)
+float CalcOneRegionEndPtsError(AMD_BC6H_Format &BC6H_data, float fEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int shape_indices[MAX_SUBSETS][MAX_SUBSET_SIZE])
 {
     float error = 0;
-    int sub0index = 0;
-    int sub1index = 0;
+
     int region = (BC6H_data.region - 1);
-    int index;
+
+    for (int i = 0; i < BC6H_MAX_SUBSET_SIZE; i++)
+    {
+        for (int m = 0; m < MAX_END_POINTS; m++)
+        {
+            for (int n = 0; n < NCHANNELS; n++)
+            {
+                float calencpts = fEndPoints[0][m][n] + (abs(fEndPoints[0][m][n] - fEndPoints[0][m][n]) * (shape_indices[0][i] / 15));
+                error += abs(BC6H_data.din[i][n] - calencpts);
+            }
+        }
+    }
+
+    return error;
+}
+
+float CalcShapeError(AMD_BC6H_Format &BC6H_data, float fEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], bool SkipPallet)
+{
+    float error = 0;
+    int maxPallet;
+    int region = (BC6H_data.region - 1);
+
+    if (region == 0)
+        maxPallet = 16;
+    else
+        maxPallet = 8;
 
     if (!SkipPallet)
         palitizeEndPointsF(BC6H_data, fEndPoints);
-
-    float  NewShape[BC6H_MAX_SUBSET_SIZE][3];
 
     for (int i = 0; i < BC6H_MAX_SUBSET_SIZE; i++)
     {
         // subset 0 or subset 1
         if (PARTITIONS[region][BC6H_data.d_shape_index][i])
         {
-            index = shape_indices[1][sub1index];
-            NewShape[i][0] = BC6H_data.Paletef[1][index].x;
-            NewShape[i][1] = BC6H_data.Paletef[1][index].y;
-            NewShape[i][2] = BC6H_data.Paletef[1][index].z;
-            sub1index++;
+
+            // For two shape regions max Pallet is 8
+            for (int j = 0; j < maxPallet; j++)
+            {
+                // Calculate error from original
+                error += abs(BC6H_data.din[i][0] - BC6H_data.Paletef[1][j].x) +
+                    abs(BC6H_data.din[i][1] - BC6H_data.Paletef[1][j].y) +
+                    abs(BC6H_data.din[i][2] - BC6H_data.Paletef[1][j].z);
+          
+            }
+
         }
         else
         {
-            index = shape_indices[0][sub0index];
-            NewShape[i][0] = BC6H_data.Paletef[0][index].x;
-            NewShape[i][1] = BC6H_data.Paletef[0][index].y;
-            NewShape[i][2] = BC6H_data.Paletef[0][index].z;
-            sub0index++;
+
+            for (int j = 0; j < maxPallet; j++)
+            {
+                // Calculate error from original
+                error += abs(BC6H_data.din[i][0] - BC6H_data.Paletef[0][j].x) +
+                    abs(BC6H_data.din[i][1] - BC6H_data.Paletef[0][j].y) +
+                    abs(BC6H_data.din[i][2] - BC6H_data.Paletef[0][j].z);
+              
+            }
         }
-
-        // Calculate error from original
-        error += abs(BC6H_data.din[i][0] - NewShape[i][0]) +
-                 abs(BC6H_data.din[i][1] - NewShape[i][1]) +
-                 abs(BC6H_data.din[i][2] - NewShape[i][2]);
-
     }
 
     return error;
@@ -1280,8 +1306,11 @@ float    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data, float  erro
     bool    fits[15];
     memset(fits,0,sizeof(fits));
 
-    int     bestFit = 0;
-    float  bestError = FLT_MAX;
+    int bestFit = 0;
+    int bestEndpointMode = 0;
+    float bestError = FLT_MAX;
+    float bestEndpointsErr = FLT_MAX;
+    float endPointErr = 0;
 
     // Try Optimization for the Mode
     float       best_EndPoints[MAX_BC6H_PARTITIONS + 1][MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];
@@ -1343,7 +1372,18 @@ float    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data, float  erro
                     ReIndexShapef(BC6H_data, best_Indices[modes]);
 
                 // Calculate the error of the new tile vs the old tile data
-                opt_toterr[modes] = CalcShapeError(BC6H_data, uncompressed, best_Indices[modes],true);
+                opt_toterr[modes] = CalcShapeError(BC6H_data, uncompressed, true);
+
+                if (BC6H_data.region == 1)
+                {
+                    endPointErr = CalcOneRegionEndPtsError(BC6H_data, uncompressed, best_Indices[modes]);
+                    if (endPointErr < bestEndpointsErr)
+                    {
+                        bestEndpointsErr = endPointErr;
+                        bestEndpointMode = modes;
+                    }
+                }
+				
                 bool transformFit = true;
                 // Save hold this mode fit data if its better than the last one checked.
                 if (opt_toterr[modes] < bestError)
@@ -1356,8 +1396,15 @@ float    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data, float  erro
                     }
                     if (transformFit)
                     {
-                        bestError = opt_toterr[modes];
-                        bestFit = modes;
+                        if (BC6H_data.region == 1) 
+                        {
+                            bestFit = (modes == bestEndpointMode) ? modes: ((modes<bestEndpointMode)? modes:bestEndpointMode);
+                        }
+                        else
+                        {
+                            bestFit = modes;
+                        }
+                        bestError = opt_toterr[bestFit];
                         error = bestError;
                     }
                 }
