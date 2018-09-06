@@ -43,7 +43,7 @@ namespace HDR_Encode
 #define COMPRESSED_BLOCK_SIZE   16                       // Size of a compressed block in bytes
 #define MAX_DIMENSION_BIG       4                        // Maximun number of Channels per Texel,  
                                                          // BC6H uses 3 channels in current encoder, 4th is reserved for future use
-#define F16MAX1                 0x7C00                   // Max 16bit half float value (0x7BFF) + 1
+#define F16HMAX                 0x7bff                   // Max 16bit half float value (0x7BFF)
 #define MAX_END_POINTS          2                        // BC6H Maximum number of end point pairs (AB)
 
 static int g_aWeights3[] = { 0, 9, 18, 27, 37, 46, 55, 64 };                                // 3 bit color Indices

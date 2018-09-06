@@ -452,22 +452,22 @@ static bool endpts_fit(const int orig[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION
 void BC6HBlockEncoder::clampF16Max(float EndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG])
 {
     for(int region=0; region<2; region++)
-    for(int ab = 0; ab<2; ab++)
-    for (int rgb=0; rgb<3; rgb++)
-    {
-        if (m_isSigned)
-        {
-            if (EndPoints[region][ab][rgb] < -F16MAX) EndPoints[region][ab][rgb] = -F16MAX;
-            else if (EndPoints[region][ab][rgb] > F16MAX) EndPoints[region][ab][rgb] = F16MAX;
-        }
-        else
-        {
-            if (EndPoints[region][ab][rgb] < 0.0) EndPoints[region][ab][rgb] = 0;
-            else if (EndPoints[region][ab][rgb] > F16MAX) EndPoints[region][ab][rgb] = F16MAX;
-        }
-        // Zero region
-        // if ((EndPoints[region][ab][rgb] > -0.01) && ((EndPoints[region][ab][rgb] < 0.01))) EndPoints[region][ab][rgb] = 0.0;
-    }
+        for(int ab = 0; ab<2; ab++)
+            for (int rgb=0; rgb<3; rgb++)
+            {
+                if (m_isSigned)
+                {
+                    if (EndPoints[region][ab][rgb] < -F16MAX) EndPoints[region][ab][rgb] = -F16MAX;
+                    else if (EndPoints[region][ab][rgb] > F16MAX) EndPoints[region][ab][rgb] = F16MAX;
+                }
+                else
+                {
+                    if (EndPoints[region][ab][rgb] < 0.0) EndPoints[region][ab][rgb] = 0;
+                    else if (EndPoints[region][ab][rgb] > F16MAX) EndPoints[region][ab][rgb] = F16MAX;
+                }
+                // Zero region
+                // if ((EndPoints[region][ab][rgb] > -0.01) && ((EndPoints[region][ab][rgb] < 0.01))) EndPoints[region][ab][rgb] = 0.0;
+            }
 }
 
 /*=================================================================
@@ -652,7 +652,6 @@ void BC6HBlockEncoder::SaveCompressedBlockData( AMD_BC6H_Format &BC6H_data,
 void palitizeEndPointsF(AMD_BC6H_Format &BC6H_data, float fEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG])
 {
     // scale endpoints
-    int    r, g, b;            // really need a IntVec3...
     float  Ar,Ag,Ab, Br,Bg,Bb;
 
 
@@ -846,7 +845,7 @@ float    BC6HBlockEncoder::FindBestPattern(AMD_BC6H_Format &BC6H_data,
     // All one zone shapes gave 4 bits per color, max index value < 16
     int        Index_BitSize = TwoRegionShapes ? 8 : 16;
     int     max_subsets = TwoRegionShapes ? 2 : 1;
-    float  direction[MAX_DIMENSION_BIG];
+    float  direction[NCHANNELS];
     float  step;
 
     BC6H_data.region    = (unsigned short)max_subsets;
@@ -1262,7 +1261,7 @@ void BC6HBlockEncoder::AverageEndPoint(float EndPoints[MAX_SUBSETS][MAX_END_POIN
 // The order can be rearranged to set which modes gets processed first
 // for now it is set in order.
 //================================================
-static int ModeFitOrder[MAX_BC6H_PARTITIONS+1] = 
+static int ModeFitOrder[MAX_BC6H_MODES +1] =
                        {
                        0,                //0: N/A
                                          // ----  2 region lower bits ---
@@ -1294,14 +1293,14 @@ float    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data, float  erro
     float SrcEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];                  // temp endpoints used during calculations
 
     // Quantize the EndPoints 
-    int F16EndPoints[MAX_BC6H_PARTITIONS + 1][MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];                    // temp endpoints used during calculations
-    int quantEndPoints[MAX_BC6H_PARTITIONS + 1][MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];                    // endpoints to save for a given mode
+    int F16EndPoints[MAX_BC6H_MODES + 1][MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];                    // temp endpoints used during calculations
+    int quantEndPoints[MAX_BC6H_MODES + 1][MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];                    // endpoints to save for a given mode
 
     // ModePartition[] starts from 1 to 14
     // If we have a shape pattern set the loop to check modes from 1 to 10 else from 11 to 14
     // of the ModePartition table
     int     min_mode = (BC6H_data.region == 2)?1:11; 
-    int     max_mode = (BC6H_data.region == 2)?MAX_TWOREGION_PARTITIONS:MAX_BC6H_PARTITIONS;
+    int     max_mode = (BC6H_data.region == 2)?MAX_TWOREGION_MODES: MAX_BC6H_MODES;
 
     bool    fits[15];
     memset(fits,0,sizeof(fits));
@@ -1313,9 +1312,9 @@ float    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data, float  erro
     float endPointErr = 0;
 
     // Try Optimization for the Mode
-    float       best_EndPoints[MAX_BC6H_PARTITIONS + 1][MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];
-    int         best_Indices[MAX_BC6H_PARTITIONS + 1][MAX_SUBSETS][MAX_SUBSET_SIZE];
-    float      opt_toterr[MAX_BC6H_PARTITIONS + 1];
+    float       best_EndPoints[MAX_BC6H_MODES + 1][MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];
+    int         best_Indices[MAX_BC6H_MODES + 1][MAX_SUBSETS][MAX_SUBSET_SIZE];
+    float       opt_toterr[MAX_BC6H_MODES + 1] = { 0 };
 
     // for debugging
     memset(opt_toterr, 0, sizeof(opt_toterr));
@@ -1468,15 +1467,13 @@ float BC6HBlockEncoder::CompressBlock(float in[MAX_SUBSET_SIZE][MAX_DIMENSION_BI
 #endif
 
     float    bestError = FLT_MAX;
-    int       bestShape = 0;
-    float    Error = 0;
-    int       shape_pattern = -1;            // init to no shapes found
+    float    error = FLT_MAX;
+    int      bestShape = 0;
+    int      shape_pattern = -1;            // init to no shapes found
 
     AMD_BC6H_Format            BC6H_data;
-    AMD_BC6H_Format            best_BC6H_data;
 
     memset(&BC6H_data, 0, sizeof(AMD_BC6H_Format));
-    memset(&best_BC6H_data, 0, sizeof(AMD_BC6H_Format));
 
     float normalization = 1.0;  // For future use
 
@@ -1539,43 +1536,55 @@ float BC6HBlockEncoder::CompressBlock(float in[MAX_SUBSET_SIZE][MAX_DIMENSION_BI
         */
     }
 
-
-    if (shape_pattern == -1)
+    // run through no partition first
+    error = FindBestPattern(BC6H_data,false,0);
+    if (error < bestError)
     {
-        Error = FindBestPattern(BC6H_data,false,0);
-        
-        // Save our first value
-        if (Error < bestError)
-        {
-                bestError = Error + 1E-24;
-                bestShape = -1;
-                memcpy(&best_BC6H_data,&BC6H_data,sizeof(BC6H_data));
-        }
+        bestError = error;
+        bestShape = -1;
+        memcpy(BC6H_data.cur_best_shape_indices, BC6H_data.shape_indices, sizeof(BC6H_data.shape_indices));
+        memcpy(BC6H_data.cur_best_partition, BC6H_data.partition, sizeof(BC6H_data.partition));
+        memcpy(BC6H_data.cur_best_fEndPoints, BC6H_data.fEndPoints, sizeof(BC6H_data.fEndPoints));
+        BC6H_data.d_shape_index = bestShape;
+    }
     
-        // now run through all two regions shapes to find the best pattern
-        for (int shape=0; shape<32; shape++)
+    // now run through all two regions shapes to find the best pattern
+    for (int shape=0; shape < MAX_BC6H_PARTITIONS; shape++)
+    {
+        error = FindBestPattern(BC6H_data,true,shape);
+        if (error < bestError)
         {
-            Error = FindBestPattern(BC6H_data,true,shape);
-            if (Error <= bestError)
+            bestError = error;
+            bestShape = shape;
+
+            memcpy(BC6H_data.cur_best_shape_indices, BC6H_data.shape_indices, sizeof(BC6H_data.shape_indices));
+            memcpy(BC6H_data.cur_best_partition, BC6H_data.partition, sizeof(BC6H_data.partition));
+            memcpy(BC6H_data.cur_best_fEndPoints, BC6H_data.fEndPoints, sizeof(BC6H_data.fEndPoints));
+            BC6H_data.d_shape_index = bestShape;
+        }
+        else
+        {
+            if (bestShape != -1)
             {
-                bestError = Error + 1E-24;
-                bestShape = shape;
-                shape_pattern = shape; // for debugging
-                memcpy(&best_BC6H_data,&BC6H_data,sizeof(BC6H_data));
+                BC6H_data.d_shape_index = bestShape;
+                memcpy(BC6H_data.shape_indices, BC6H_data.cur_best_shape_indices, sizeof(BC6H_data.shape_indices));
+                memcpy(BC6H_data.partition, BC6H_data.cur_best_partition, sizeof(BC6H_data.partition));
+                memcpy(BC6H_data.fEndPoints, BC6H_data.cur_best_fEndPoints, sizeof(BC6H_data.fEndPoints));
             }
         }
     }
 
 
+
     // Optimize the result for encoding
-    bestError = EncodePattern(best_BC6H_data,bestError);
+    bestError = EncodePattern(BC6H_data,bestError);
 
 
     // used for debugging modes, set the value you want to debug with
-    if (best_BC6H_data.m_mode != 0) 
+    if (BC6H_data.m_mode != 0) 
     {
         // do final encoding and save to output block
-        SaveDataBlock(best_BC6H_data, out);
+        SaveDataBlock(BC6H_data, out);
     }
     else
         memcpy(out, Cmp_Red_Block, 16);

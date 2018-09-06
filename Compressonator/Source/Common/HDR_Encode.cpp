@@ -122,7 +122,7 @@ int QuantizeToInt(short value, int prec, bool signedfloat16, float exposure)
     int bias = (prec > 10 && prec != 16) ? ((1 << (prec - 11)) - 1) : 0;
     bias = (prec == 16) ? 15 : bias;
 
-    iQuantized = ((ivalue << prec) + bias) / F16MAX1;
+    iQuantized = ((ivalue << prec) + bias) / (F16HMAX + 1);
 
     return (negvalue ? -iQuantized : iQuantized);
 }
@@ -1136,7 +1136,7 @@ void GetEndPoints(float EndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG
     {
         // We now have points on direction vector(s) 
         // find the min and max points
-        float min = FLT_MAX;
+        float min = HALF_MAX;
         float max = 0;
         float val;
         int mini = 0;

@@ -60,8 +60,9 @@ typedef std::int32_t BOOL;
 #define BC6H_WEIGHT_SHIFT               6        // Using shift operator (Multipler or divider by 64)
 #define BC6H_WEIGHT_ROUND               32       // take care of round up errors
 #define BC6H_OFFSET_MAG                 31       // This offsets the colors from the actual line by a factor mag/32 or mag/64
-#define MAX_TWOREGION_PARTITIONS        10
-#define MAX_BC6H_PARTITIONS             14
+#define MAX_TWOREGION_MODES             10
+#define MAX_BC6H_MODES                  14
+#define MAX_BC6H_PARTITIONS             32
 #define HIGH_INDEX_BIT                  4
 #define ONE_REGION_INDEX_OFFSET         65        // bit location to start saving color index values for single region shape
 #define TWO_REGION_INDEX_OFFSET         82        // bit location to start saving color index values for two region shapes
@@ -156,7 +157,7 @@ struct ModePartitions
     int lowestPrec;         // Step size of each precesion incriment
 };
 
-static ModePartitions ModePartition[MAX_BC6H_PARTITIONS+1] =
+static ModePartitions ModePartition[MAX_BC6H_MODES +1] =
 {
     0,    0,0,0,        0,    0,    0,    0,     0,   // Mode = Invaild
 
@@ -288,9 +289,12 @@ struct AMD_BC6H_Format
 
     int           index;               // for debugging
     float         fEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];
+    float         cur_best_fEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];
     int           shape_indices[MAX_SUBSETS][MAX_SUBSET_SIZE];
+    int           cur_best_shape_indices[MAX_SUBSETS][MAX_SUBSET_SIZE];
     int           entryCount[MAX_SUBSETS];
     float         partition[MAX_SUBSETS][MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
+    float         cur_best_partition[MAX_SUBSETS][MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
     bool          optimized;           // were end points optimized during final encoding
 };
 
