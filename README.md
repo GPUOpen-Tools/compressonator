@@ -50,6 +50,9 @@ Source Code changes since 3.0 release
   
 * BC6H improvements
   * Improved quality for light map textures
+  * Fix BC6H delta endpoints bit overflow with signed in single region
+  * Add endpoints error checking for BC6H one region modes
+  
 
 
 Recent 3.0 additions and changes
