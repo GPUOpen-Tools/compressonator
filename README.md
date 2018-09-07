@@ -47,6 +47,9 @@ Source Code changes since 3.0 release
 
 * Model Mesh Compression 
   * Support for GLTF 2.0 compression extensions (KHR_draco_mesh_compression)
+  
+* BC6H improvements
+  * Improved quality for light map textures
 
 
 Recent 3.0 additions and changes
