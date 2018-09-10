@@ -10,7 +10,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 add_definitions(-DDISABLE_TESTCODE)
 endif()
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 add_definitions(-D_LINUX)
 endif()
 
@@ -209,7 +209,3 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
     target_link_libraries(CompressonatorCLI ${CMP_LIBS} Qt5::Core Qt5::Gui Qt5::Widgets) 
 endif()
-
-
-
-
