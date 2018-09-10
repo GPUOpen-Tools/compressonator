@@ -6,7 +6,7 @@ add_definitions(-DDISABLE_TESTCODE)
 
 endif()
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 add_definitions(-D_LINUX)
 endif()
 
@@ -53,5 +53,3 @@ list(REMOVE_DUPLICATES CMP_INCLUDE_DIRS)
 include_directories(${CMP_INCLUDE_DIRS})
 
 add_library(Compressonator STATIC ${CMP_SOURCES1})
-
-

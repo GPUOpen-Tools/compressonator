@@ -11,8 +11,8 @@ export CXX=/usr/local/bin/g++-7
 brew install glew
 echo 'export PATH="$(brew --prefix glew)/bin:$PATH"' >> ~/.bashrc
 
-brew install qt@5.7
-echo 'export PATH="$(brew --prefix qt@5.7)/bin:$PATH"' >> ~/.bashrc
+brew install qt@5.5
+echo 'export PATH="$(brew --prefix qt@5.5)/bin:$PATH"' >> ~/.bashrc
 
 #openexr v2.2. is needed else have to build from source
 #brew install openexr
