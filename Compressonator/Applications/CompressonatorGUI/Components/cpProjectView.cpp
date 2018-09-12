@@ -314,18 +314,24 @@ void ProjectView::setCurrentProjectName(QString filePathName)
         filename = fileInfo2.completeBaseName();
     }
 
-    if (fileInfo.isWritable())
-    {
-        m_curProjectFilePathName = filePathName;
-    }
-    else
+    QFile file;
+    file.setFileName(filePathName);
+    bool isWritable = file.open(QIODevice::ReadWrite);
+
+    if (!isWritable)
     {
         QFileInfo fileInfo(m_curProjectFilePathName);
         m_curProjectFilePathName = fileInfo.dir().path();
         m_curProjectFilePathName.append(QDir::separator());
         m_curProjectFilePathName.append(filename);
-        m_curProjectFilePathName.replace("/", "\\");
+        m_curProjectFilePathName.replace("/", "\\"); 
     }
+    else
+    {
+        m_curProjectFilePathName = filePathName;
+    }
+
+    file.close();
 
     m_curProjectName = filename;
 
