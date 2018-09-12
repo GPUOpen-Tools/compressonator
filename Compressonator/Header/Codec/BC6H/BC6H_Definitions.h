@@ -293,6 +293,7 @@ struct AMD_BC6H_Format
     int           shape_indices[MAX_SUBSETS][MAX_SUBSET_SIZE];
     int           cur_best_shape_indices[MAX_SUBSETS][MAX_SUBSET_SIZE];
     int           entryCount[MAX_SUBSETS];
+    int           cur_best_entryCount[MAX_SUBSETS];
     float         partition[MAX_SUBSETS][MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
     float         cur_best_partition[MAX_SUBSETS][MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
     bool          optimized;           // were end points optimized during final encoding
