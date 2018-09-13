@@ -724,8 +724,9 @@ float CalcOneRegionEndPtsError(AMD_BC6H_Format &BC6H_data, float fEndPoints[MAX_
 
 float CalcShapeError(AMD_BC6H_Format &BC6H_data, float fEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], bool SkipPallet)
 {
-    float error = 0;
     int maxPallet;
+    int subset = 0;
+    float totalError = 0.0f;
     int region = (BC6H_data.region - 1);
 
     if (region == 0)
@@ -736,34 +737,42 @@ float CalcShapeError(AMD_BC6H_Format &BC6H_data, float fEndPoints[MAX_SUBSETS][M
     if (!SkipPallet)
         palitizeEndPointsF(BC6H_data, fEndPoints);
 
-    for (int i = 0; i < maxPallet; i++)
+    for (int i = 0; i < MAX_SUBSET_SIZE; i++)
     {
+        float error = 0.0f;
+        float bestError = 0.0f;
+
         if (region == 0)
         {
-            // Calculate error from original
-            error += abs(BC6H_data.din[i][0] - BC6H_data.Paletef[0][i].x) +
-                abs(BC6H_data.din[i][1] - BC6H_data.Paletef[0][i].y) +
-                abs(BC6H_data.din[i][2] - BC6H_data.Paletef[0][i].z);
+            subset = 0;
         }
         else
         {
-            // Calculate error from original
-            // subset 0 or subset 1
-            if (PARTITIONS[region][BC6H_data.d_shape_index][i])
-            {
-                error += abs(BC6H_data.din[i][0] - BC6H_data.Paletef[1][i].x) +
-                    abs(BC6H_data.din[i][1] - BC6H_data.Paletef[1][i].y) +
-                    abs(BC6H_data.din[i][2] - BC6H_data.Paletef[1][i].z);
-            }
-            else {
-                error += abs(BC6H_data.din[i][0] - BC6H_data.Paletef[0][i].x) +
-                    abs(BC6H_data.din[i][1] - BC6H_data.Paletef[0][i].y) +
-                    abs(BC6H_data.din[i][2] - BC6H_data.Paletef[0][i].z);
-            }
+            //subset 0 or subset 1
+            subset = PARTITIONS[region][BC6H_data.d_shape_index][i];
         }
+
+        // initialize bestError to the difference for first data
+        bestError = abs(BC6H_data.din[i][0] - BC6H_data.Paletef[subset][0].x) +
+            abs(BC6H_data.din[i][1] - BC6H_data.Paletef[subset][0].y) +
+            abs(BC6H_data.din[i][2] - BC6H_data.Paletef[subset][0].z);
+
+        // loop through the rest of the data until find the best error 
+        for (int j = 1; j < maxPallet && bestError > 0; j++)
+        {
+            error = abs(BC6H_data.din[i][0] - BC6H_data.Paletef[subset][j].x) +
+                abs(BC6H_data.din[i][1] - BC6H_data.Paletef[subset][j].y) +
+                abs(BC6H_data.din[i][2] - BC6H_data.Paletef[subset][j].z);
+
+            if (error <= bestError)
+                bestError = error;
+            else
+                break;
+        }
+        totalError += bestError;
     }
 
-    return error;
+    return totalError;
 }
 
 void ReIndexShapef(AMD_BC6H_Format &BC6H_data, int shape_indices[BC6H_MAX_SUBSETS][MAX_SUBSET_SIZE])
