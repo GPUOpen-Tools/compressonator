@@ -17,9 +17,9 @@ echo Save Start folder at Perforce ROOT or subfolder AMD_Compress
 echo ------------------------------------------------------------------------------
 set BatchDir=%CD%
 echo --1
-IF EXIST %BatchDir%\Compressonator     (set COMPRESSONATOR_ROOT=%CD%\Compressonator)
-IF EXIST %BatchDir%\Common             (set COMMON_ROOT=%CD%\Common)
-IF [%COMPRESSONATOR_ROOT%]==[]         (set COMPRESSONATOR_ROOT=%CD%)
+IF EXIST %BatchDir%\Compressonator     (set COMPRESSONATOR_ROOT=%BatchDir%\Compressonator)
+IF EXIST %BatchDir%\Common             (set COMMON_ROOT=%BatchDir%\Common)
+IF [%COMPRESSONATOR_ROOT%]==[]         (set COMPRESSONATOR_ROOT=%BatchDir%)
 echo --2
 
 echo -------------------------------------------------------------------------------
@@ -34,11 +34,14 @@ set Building="Check Missing MSBUILD v14 -----------------------"
 echo --1
 echo %Building%  >> %OUTPUT_LOG%
 echo --2
+set msbuildFound="false"
 reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\14.0" /v MSBuildToolsPath > nul 2>&1
-if ERRORLEVEL 1 goto MSBuildTest2
+set regStatus=%ERRORLEVEL%
+if "%regStatus%" == "1" goto MSBuildTest2
 echo --3
 for /f "skip=2 tokens=2,*" %%A in ('reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\14.0" /v MSBuildToolsPath') do SET MSBUILDDIR=%%B
 IF NOT EXIST "%MSBUILDDIR%msbuild.exe" goto MSBuildTest2
+set msbuildFound="true"
 echo --4
 set PATH=%MSBUILDDIR%;%PATH%
 echo --5
@@ -46,7 +49,8 @@ echo ---------------------------------------------------------------------------
 echo Get MSBUILD prop path
 echo -----------------------------------------------------------------------------
 reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\14.0" /v MSBuildToolsRoot > nul 2>&1
-if ERRORLEVEL 1 goto MSBuildTest2
+set regStatus=%ERRORLEVEL%
+if "%regStatus%" == "1" goto MSBuildTest2
 echo --1
 for /f "skip=2 tokens=2,*" %%A in ('reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\14.0" /v MSBuildToolsRoot') do SET MSBUILDROOT=%%B
 echo --2
@@ -69,11 +73,13 @@ echo --2
 echo %Building%  >> %OUTPUT_LOG%
 echo --3
 reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\4.0" /v MSBuildToolsPath > nul 2>&1
-if ERRORLEVEL 1 goto Error
+set regStatus=%ERRORLEVEL%
+if "%regStatus%" == "1" goto Error
 echo --4
 for /f "skip=2 tokens=2,*" %%A in ('reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\4.0" /v MSBuildToolsPath') do SET MSBUILDDIR=%%B
 echo --5
 IF NOT EXIST "%MSBUILDDIR%msbuild.exe" goto Error
+msbuildFound="true"
 echo --6
 set PATH=%MSBUILDDIR%;%PATH%
 ::--------------------------------------------------------------------
@@ -102,8 +108,8 @@ echo --1
 echo %Building%  >> %OUTPUT_LOG%
 echo --2
 msbuild /m:6 /t:rebuild /p:Configuration=Release_MD /p:Platform=x64   "VS2015.sln" >> %OUTPUT_LOG%
-
-IF %ERRORLEVEL% GTR 0 goto Error
+set buildStatus=%ERRORLEVEL%
+IF %buildStatus% GTR 0 goto Error
 
 ::
 Goto Done
@@ -111,13 +117,15 @@ Goto Done
 ::
 echo -----------------------------------------------------------    >> %OUTPUT_LOG%
 echo ***** !!Build Failed!! for %Building%                          >> %OUTPUT_LOG%
-echo ***** MSBuild Exit Error = %errorlevel%                        >> %OUTPUT_LOG%
+echo ***** Registry Check Exit Status = %regStatus%                 >> %OUTPUT_LOG%
+echo ***** MSBuild Existence Check Status = %msbuildFound%          >> %OUTPUT_LOG%
+echo ***** MSBuild Exit Error = %buildStatus%                       >> %OUTPUT_LOG%
 echo ------------------------------------------------------------   >> %OUTPUT_LOG%
 ::
 cd %BatchDir%
 
 echo "BUILD FAILED"
-exit 1
+exit /b 1
 :Done
 :: ---------------------------------------------------
 :: Build DONE return to original start folder  
