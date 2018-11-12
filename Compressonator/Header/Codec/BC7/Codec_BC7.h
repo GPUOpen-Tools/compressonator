@@ -33,8 +33,17 @@
 #include "BC7_Encode.h"
 #include "BC7_Decode.h"
 #include "BC7_Library.h"
-
 #include <thread>
+
+// #define USE_THREADED_CALLBACKS  // This is experimental code to improve compression performance!
+#ifdef USE_THREADED_CALLBACKS
+typedef struct
+{
+    float progress;
+    bool  abort;
+}CMP_PROGRESS_THREAD;
+#endif
+
 
 struct BC7EncodeThreadParam
 {
@@ -91,6 +100,16 @@ private:
     CodecError    InitializeBC7Library();
     CodecError    EncodeBC7Block(double  in[BC7_BLOCK_PIXELS][MAX_DIMENSION_BIG],CMP_BYTE *out);
     CodecError    FinishBC7Encoding(void);
+
+    static void Run();
+
+#ifdef USE_THREADED_CALLBACKS
+public:
+    static CMP_PROGRESS_THREAD  m_progress;
+    static Codec_Feedback_Proc  m_user_pFeedbackProc;
+    static CMP_DWORD_PTR        m_pUser1;
+    static CMP_DWORD_PTR        m_pUser2;
+#endif
 };
 
 #endif // !defined(_CODEC_DXT5_H_INCLUDED_)

@@ -67,17 +67,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="../Compressonator_Test.cpp" />
-    <ClCompile Include="../Compressonator_Test_Helpers.cpp" />
+    <ClCompile Include="SDK_Example2.cpp" />
+    <ClCompile Include="DDS_Helpers.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="../Compressonator_Test_Helpers.h" />
+    <ClInclude Include="DDS_Helpers.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B06F1D70-67F1-4491-B479-1B98175768E6}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Sample</RootNamespace>
-    <ProjectName>CMPTest</ProjectName>
+    <ProjectName>Example2</ProjectName>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.Default.props" />
@@ -244,83 +244,83 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>
     </LinkIncremental>
-    <OutDir>../../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-    <IntDir>../../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <OutDir>./$(Configuration)/</OutDir>
+    <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
     <LinkIncremental />
-    <OutDir>../../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-    <IntDir>../../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <OutDir>./$(Configuration)/</OutDir>
+    <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-    <IntDir>../../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <OutDir>./$(Configuration)/</OutDir>
+    <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-    <IntDir>../../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <OutDir>./$(Configuration)/</OutDir>
+    <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-    <IntDir>../../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <OutDir>./$(Configuration)/</OutDir>
+    <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-    <IntDir>../../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <OutDir>./$(Configuration)/</OutDir>
+    <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-    <IntDir>../../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <OutDir>./$(Configuration)/</OutDir>
+    <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-    <IntDir>../../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <OutDir>./$(Configuration)/</OutDir>
+    <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-    <IntDir>../../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <OutDir>./$(Configuration)/</OutDir>
+    <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-    <IntDir>../../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <OutDir>./$(Configuration)/</OutDir>
+    <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-    <IntDir>../../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <OutDir>./$(Configuration)/</OutDir>
+    <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-    <IntDir>../../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <OutDir>./$(Configuration)/</OutDir>
+    <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-    <IntDir>../../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <OutDir>./$(Configuration)/</OutDir>
+    <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-    <IntDir>../../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <OutDir>./$(Configuration)/</OutDir>
+    <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-    <IntDir>../../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <OutDir>./$(Configuration)/</OutDir>
+    <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
-    <IntDir>../../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <OutDir>./$(Configuration)/</OutDir>
+    <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -328,14 +328,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>BUILD_MTd;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(COMPRESSONATOR_ROOT)/SDK/include/;../../SDK/Include;../../include;../../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../Lib/VS2015/x86;../../Build/VS2015/$(Configuration)/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/Lib/VS2015/x86;$(COMPRESSONATOR_ROOT)/Build/VS2015/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -347,14 +347,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>BUILD_MDd;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(COMPRESSONATOR_ROOT)/SDK/include/;../../SDK/Include;../../include;../../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../Lib/VS2015/x86;../../Build/VS2015/$(Configuration)/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/Lib/VS2015/x86;$(COMPRESSONATOR_ROOT)/Build/VS2015/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -367,13 +367,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>BUILD_MTd;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(COMPRESSONATOR_ROOT)/SDK/include/;../../SDK/Include;../../include;../../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../Lib/VS2015/x64;../../Build/VS2015/$(Configuration)/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/Lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/Build/VS2015/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -387,13 +387,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>BUILD_MDd;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(COMPRESSONATOR_ROOT)/SDK/include/;../../SDK/Include;../../include;../../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../Lib/VS2015/x64;../../Build/VS2015/$(Configuration)/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/Lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/Build/VS2015/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -410,7 +410,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MT;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(COMPRESSONATOR_ROOT)/SDK/include/;../../SDK/Include;../../include;../../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -418,7 +418,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../Lib/VS2015/x86;../../Build/VS2015/$(Configuration)/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/Lib/VS2015/x86;$(COMPRESSONATOR_ROOT)/Build/VS2015/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -431,7 +431,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MT_DLL;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(COMPRESSONATOR_ROOT)/SDK/include/;../../SDK/Include;../../include;../../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -439,7 +439,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../Lib/VS2015/x86;../../Build/VS2015/$(Configuration)/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/Lib/VS2015/x86;$(COMPRESSONATOR_ROOT)/Build/VS2015/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -452,7 +452,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MTd_DLL;WIN32;_CONSOLE;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(COMPRESSONATOR_ROOT)/SDK/include/;../../SDK/Include;../../include;../../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -460,7 +460,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../Lib/VS2015/x86;../../Build/VS2015/$(Configuration)/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/Lib/VS2015/x86;$(COMPRESSONATOR_ROOT)/Build/VS2015/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -473,7 +473,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MD;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(COMPRESSONATOR_ROOT)/SDK/include/;../../SDK/Include;../../include;../../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -481,7 +481,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../Lib/VS2015/x86;../../Build/VS2015/$(Configuration)/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/Lib/VS2015/x86;$(COMPRESSONATOR_ROOT)/Build/VS2015/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -494,7 +494,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MD_DLL;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(COMPRESSONATOR_ROOT)/SDK/include/;../../SDK/Include;../../include;../../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -502,7 +502,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../Lib/VS2015/x86;../../Build/VS2015/$(Configuration)/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/Lib/VS2015/x86;$(COMPRESSONATOR_ROOT)/Build/VS2015/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -515,7 +515,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MDd_DLL;WIN32;_CONSOLE;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(COMPRESSONATOR_ROOT)/SDK/include/;../../SDK/Include;../../include;../../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -523,7 +523,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../Lib/VS2015/x86;../../Build/VS2015/$(Configuration)/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/Lib/VS2015/x86;$(COMPRESSONATOR_ROOT)/Build/VS2015/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -536,7 +536,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MT;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(COMPRESSONATOR_ROOT)/SDK/include/;../../SDK/Include;../../include;../../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -544,7 +544,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../Lib/VS2015/x64;../../Build/VS2015/$(Configuration)/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/Lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/Build/VS2015/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -561,7 +561,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MT_DLL;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(COMPRESSONATOR_ROOT)/SDK/include/;../../SDK/Include;../../include;../../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -569,7 +569,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../Lib/VS2015/x64;../../Build/VS2015/$(Configuration)/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/Lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/Build/VS2015/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -586,7 +586,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MTd_DLL;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(COMPRESSONATOR_ROOT)/SDK/include/;../../SDK/Include;../../include;../../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -594,7 +594,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../Lib/VS2015/x64;../../Build/VS2015/$(Configuration)/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/Lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/Build/VS2015/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -611,7 +611,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MD;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(COMPRESSONATOR_ROOT)/SDK/include/;../../SDK/Include;../../include;../../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -619,7 +619,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../Lib/VS2015/x64;../../Build/VS2015/$(Configuration)/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/Lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/Build/VS2015/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>COMPRESSONATOR_MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -636,7 +636,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MD_DLL;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(COMPRESSONATOR_ROOT)/SDK/include/;../../SDK/Include;../../include;../../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -644,7 +644,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../Lib/VS2015/x64;../../Build/VS2015/$(Configuration)/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/Lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/Build/VS2015/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -661,7 +661,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MDd_DLL;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(COMPRESSONATOR_ROOT)/SDK/include/;../../SDK/Include;../../include;../../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -669,7 +669,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../Lib/VS2015/x64;../../Build/VS2015/$(Configuration)/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/Lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/Build/VS2015/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>

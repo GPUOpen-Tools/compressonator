@@ -30,6 +30,18 @@
 #include "BC7_Decode.h"
 #include "BC7_utils.h"
 
+
+
+// Enable this to print info about the decoded blocks
+// #define PRINT_DECODE_INFO
+
+#ifdef USE_FILEIO
+#include <stdio.h>
+extern FILE * bc7_File;
+#endif
+
+
+
 #ifdef USE_BC7_TESTBLOCK
 // This is a block that I dumped out of Microsoft's compressor
 // as a sanity check for the decoder
@@ -164,6 +176,11 @@ void BC7BlockDecoder::DecompressDualIndexBlock(double  out[MAX_SUBSET_SIZE][MAX_
 void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
     CMP_BYTE   in[COMPRESSED_BLOCK_SIZE])
 {
+
+#ifdef PRINT_DECODE_INFO
+    FILE *gt_File_decode = fopen("decode_patterns.txt", "a");
+#endif
+
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif
@@ -205,6 +222,8 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
     {
         m_partition |= ReadBit(in) << i;
     }
+
+
 
     if(bti[m_blockMode].encodingType == NO_ALPHA)
     {
@@ -249,6 +268,7 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
         }
     }
 
+
     // Now get any parity bits
     if(bti[m_blockMode].pBitType != NO_PBIT)
     {
@@ -292,7 +312,7 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
         }
     }
 
-    // If this block has two independent sets of indices then punt it to that decoder
+    // If this block has two independent sets of indices then put it to that decoder
     if(bti[m_blockMode].encodingType == SEPARATE_ALPHA)
     {
         DecompressDualIndexBlock(out, in, endpoint[0]);
@@ -335,9 +355,58 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
         }
     }
 
+
+
+#ifdef USE_FILEIO
+    if (bc7_File)
+    {
+        fprintf(bc7_File, "Subset %d Partition %2d\n", bti[m_blockMode].subsetCount - 1, m_partition);
+        fprintf(bc7_File, "[%d,%d,%d,%d]\n", partitionTable[0], partitionTable[1],partitionTable[2], partitionTable[3]);
+        fprintf(bc7_File, "[%d,%d,%d,%d]\n", partitionTable[4], partitionTable[5], partitionTable[6], partitionTable[7]);
+        fprintf(bc7_File, "[%d,%d,%d,%d]\n", partitionTable[8], partitionTable[9], partitionTable[10], partitionTable[11]);
+        fprintf(bc7_File, "[%d,%d,%d,%d]\n", partitionTable[12], partitionTable[13], partitionTable[14], partitionTable[15]);
+    }
+#endif
+
     // Get the ramps
     CMP_DWORD   clusters[2];
     clusters[0] = clusters[1] = 1 << bti[m_blockMode].indexBits[0];
+
+
+#ifdef USE_FILEIO
+    float epoints[2][MAX_DIMENSION_BIG];
+    if (bc7_File)
+    {
+        fprintf(bc7_File, "End Points ");
+        for (i = 0; i < (int)bti[m_blockMode].subsetCount; i++)
+        {
+            DecodeEndPoints(endpoint[i],
+                m_componentBits,
+                epoints);
+            fprintf(bc7_File, "(R %3.f G %3.f B %3.f) to (R %3.f G %3.f B %3.f), ",
+                i,
+                epoints[0][0], epoints[0][1], epoints[0][2],
+                epoints[1][0], epoints[1][1], epoints[1][2]);
+        }
+        fprintf(bc7_File, "\n");
+    }
+#endif
+
+#ifdef PRINT_DECODE_INFO
+    fprintf(gt_File_decode, "BC7.[%3d] Part.%3d: ", bti[m_blockMode].subsetCount - 1, m_partition);
+    float epoints[2][MAX_DIMENSION_BIG];
+    for (i = 0; i < (int)bti[m_blockMode].subsetCount; i++)
+    {
+        DecodeEndPoints(endpoint[i],
+            m_componentBits,
+            epoints);
+        fprintf(gt_File_decode, "[(%3.f,%3.f,%3.f),(%3.f,%3.f,%3.f)], ",
+            i,
+            epoints[0][0], epoints[0][1], epoints[0][2],
+            epoints[1][0], epoints[1][1], epoints[1][2]);
+    }
+    fprintf(gt_File_decode, " Index = ");
+#endif
 
     // Colour Ramps
     double          c[MAX_SUBSETS][MAX_DIMENSION_BIG][1<<MAX_INDEX_BITS];
@@ -356,7 +425,20 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
     {
         for(j=0; j < MAX_DIMENSION_BIG; j++)
         {
+#ifdef PRINT_DECODE_INFO
+            // fprintf(gt_File_decode, "%2d,", c[i]);
+#endif
             out[i][j] = c[partitionTable[i]][j][blockIndices[i]];
         }
     }
+
+#ifdef PRINT_DECODE_INFO
+    fprintf(gt_File_decode, "\n");
+    fprintf(gt_File_decode, "[%d,%d,%d,%d]\n", partitionTable[0], partitionTable[1], partitionTable[2], partitionTable[3]);
+    fprintf(gt_File_decode, "[%d,%d,%d,%d]\n", partitionTable[4], partitionTable[5], partitionTable[6], partitionTable[7]);
+    fprintf(gt_File_decode, "[%d,%d,%d,%d]\n", partitionTable[8], partitionTable[9], partitionTable[10], partitionTable[11]);
+    fprintf(gt_File_decode, "[%d,%d,%d,%d]\n", partitionTable[12], partitionTable[13], partitionTable[14], partitionTable[15]);
+    fclose(gt_File_decode);
+#endif
+
 }

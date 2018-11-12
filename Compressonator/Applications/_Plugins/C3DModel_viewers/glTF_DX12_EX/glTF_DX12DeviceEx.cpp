@@ -30,6 +30,7 @@
 #include "glTF_DX12RendererEx.h"
 #endif
 
+static int BackBuffer = 1;
 
 glTF_DX12DeviceEx::glTF_DX12DeviceEx(GLTFCommon gltfLoader[MAX_NUM_OF_NODES], DWORD width, DWORD height, void *pluginManager, void *msghandler, QWidget *parent) : FrameworkWindows(width, height)
 {
@@ -150,6 +151,14 @@ int glTF_DX12DeviceEx::OnCreate(HWND hWnd)
     m_state.light.UpdateCamera(3.67f + 3.14159f, 0.58f, 3.0f);
 #endif
 
+    // This is used to allow user to flip between two rendered views in a controlled maner
+    // by default if two models are loaded each model will be displayed one after another
+    // after 2 renders, setting this to true enables the flip else it will only render
+    // the model that was viewed last!
+    m_AllowImageFrameFlip = true;
+    m_TimeSinceLastFlip = 0.0f;
+    m_flipState = RENDER_FLIP_2FRAMES;
+
     return 0;
 }
 
@@ -233,6 +242,31 @@ bool glTF_DX12DeviceEx::OnEvent(MSG msg)
 
     switch (msg.message)
     {
+
+    case WM_KEYDOWN:
+        {
+        int key   = (int)(msg.lParam);
+        int state = (int)(msg.wParam);
+
+        if (state == 1)
+        {
+            m_flipState = key;
+            // When changing view states default to Original View first
+            BackBuffer  = 1;
+            m_curr_Node = 0;
+        }
+        else
+        if (state == 2)  // if maual flip is on this will toggle views
+        {
+            if (m_flipState == RENDER_FLIP_MANUAL)
+            {
+                m_AllowImageFrameFlip = true;
+                BackBuffer  = 1;
+                m_curr_Node = (key > 0)?1:0;
+            }
+        }
+        return true;
+        }
     case WM_COMMAND:
         {
         int show = (int)(msg.lParam);
@@ -319,10 +353,38 @@ void glTF_DX12DeviceEx::OnResize(DWORD width, DWORD height)
 //--------------------------------------------------------------------------------------
 
 
+void glTF_DX12DeviceEx::processDiffRenderFlip()
+{
+    if (m_flipState == RENDER_FLIP_2FRAMES)
+    {
+        BackBuffer++;
+        // Flip to new image if loaded after 2 buffer render calls
+        if ((DWORD)BackBuffer > m_dwNumberOfBackBuffers)
+        {
+            BackBuffer = 1;
+            m_curr_Node++;
+            if (m_curr_Node >= m_max_Nodes_loaded) m_curr_Node = 0;
+        }
+    }
+    else
+    if (m_flipState == RENDER_FLIP_MANUAL)
+    {
+        if (m_AllowImageFrameFlip)
+        {
+            m_AllowImageFrameFlip = false;
+            if (m_dwNumberOfBackBuffers > 1)
+            {
+                if (m_curr_Node >= m_max_Nodes_loaded) m_curr_Node = 0;
+            }
+        }
+    }
+
+}
+
 
 void glTF_DX12DeviceEx::OnRender()
 {
-    static int BackBuffer = 1;
+
 
     // Get timings
     //
@@ -424,14 +486,8 @@ void glTF_DX12DeviceEx::OnRender()
     m_SwapChain.Present();
 #endif
 
-    BackBuffer++;
-    // Flip to new image if loaded after 2 buffer render calls
-    if ((DWORD) BackBuffer > m_dwNumberOfBackBuffers)
-    {
-        BackBuffer = 1;
-        m_curr_Node++;
-        if (m_curr_Node >= m_max_Nodes_loaded) m_curr_Node = 0;
-    }
+    processDiffRenderFlip();
+
 
 }
 

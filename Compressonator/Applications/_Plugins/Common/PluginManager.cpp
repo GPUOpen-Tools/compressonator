@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2018 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -20,15 +20,36 @@
 // THE SOFTWARE.
 //
 /// \file PluginManager.cpp
-/// \version 2.20
-//
+/// \version 3.1
+/// \brief Declares the interface to the Compressonator & ArchitectMF SDK
 //=====================================================================
 
 #include "stdafx.h"
 #include "string.h"
 #include "PluginInterface.h"
 #include "PluginManager.h"
-#include <boost/filesystem.hpp>
+
+static bool CMP_FileExists(const std::string& abs_filename)
+{
+    bool ret = false;
+#ifdef _WIN32
+    FILE*   fp;
+    errno_t err = fopen_s(&fp, abs_filename.c_str(), "rb");
+    if (err != 0)
+    {
+        return false;
+    }
+#else
+    FILE* fp = fopen(abs_filename.c_str(), "rb");
+#endif
+    if (fp)
+    {
+        ret = true;
+        fclose(fp);
+    }
+
+    return ret;
+}
 
 #ifdef USE_NewLoader
 #include "Dbghelp.h"
@@ -114,6 +135,20 @@ bool GetDLLFileExports(LPCSTR szFileName, vector<string> & names)
 };
 #endif
 
+
+
+PluginManager::PluginManager()
+{ 
+    m_pluginlistset = false; 
+}
+
+PluginManager::~PluginManager() 
+{ 
+    clearPluginList(); 
+}
+
+
+
 void PluginManager::registerStaticPlugin(char *pluginType, char *pluginName, void * makePlugin)
 {
     PluginDetails * curPlugin = new PluginDetails();
@@ -171,9 +206,26 @@ void PluginManager::getPluginDetails(PluginDetails *curPlugin)
 #endif
 }
 
+void PluginManager::clearPluginList()
+{
+    for (unsigned int i = 0; i < pluginRegister.size(); i++)
+    {
+        delete pluginRegister.at(i);
+        pluginRegister.at(i) = NULL;
+    }    
+    pluginRegister.clear();
+}
 
 void PluginManager::getPluginList(char * SubFolderName)
-{      
+{
+    // Check for prior setting, if set clear for new one
+    if (m_pluginlistset)
+    {
+        clearPluginList();
+    }
+    else
+        m_pluginlistset = true;
+
 #ifdef _WIN32  
     WIN32_FIND_DATAA fd;
     char fname[MAX_PATH];
@@ -187,10 +239,19 @@ void PluginManager::getPluginList(char * SubFolderName)
 
     // v2.1 change - to check if path exists in PATH or AMDCOMPRESS_PLUGINS is set
     // else use current exe directory
-    char *pPath = getenv ("AMDCOMPRESS_PLUGINS") + '\0';
-    if (pPath)
+    char *pPath;
+    size_t len;
+
+#ifdef _WIN32
+    _dupenv_s(&pPath, &len, "AMDCOMPRESS_PLUGINS");
+#else
+     pPath = getenv ("AMDCOMPRESS_PLUGINS") + '\0';
+     len = strlen(pPath);
+#endif
+
+    if (len > 0)
     {
-        sprintf_s(dirPath,"%s",pPath);
+        snprintf(dirPath,260,"%s",pPath + '\0');
     }
     else 
     {
@@ -203,9 +264,9 @@ void PluginManager::getPluginList(char * SubFolderName)
         pathsize = GetModuleFileNameA(hModule, dirPath, MAX_PATH);
         if (pathsize > 0)
         {
-            char *appName = (strrchr(dirPath, '\\') + 1);
-            int pathLen = strlen(dirPath);
-            int appNameLen = strlen(appName);
+            char *appName  = (strrchr(dirPath, '\\') + 1);
+            int pathLen    = (int)strlen(dirPath);
+            int appNameLen = (int)strlen(appName);
 
             // Null terminate the dirPath so that FileName is removed
             pathLen = pathLen - appNameLen;
@@ -218,7 +279,7 @@ void PluginManager::getPluginList(char * SubFolderName)
 
             strcat_s(dirPath, SubFolderName);
 
-            sprintf_s(fname, "%s\\*.dll",dirPath);
+            snprintf(fname,260, "%s\\*.dll",dirPath);
 
 
             HANDLE hFind = FindFirstFileA(fname, &fd);
@@ -233,8 +294,13 @@ void PluginManager::getPluginList(char * SubFolderName)
 
         if (!pathFound)
         {
-            char *pPath = getenv("PATH");
-            if (pPath)
+#ifdef _WIN32
+            _dupenv_s(&pPath, &len, "PATH");
+#else
+            pPath = getenv("PATH");
+            len = strlen(pPath);
+#endif
+            if (len > 0)
             {
                 std::string s = pPath;
                 std::string delimiter = ";";
@@ -242,10 +308,10 @@ void PluginManager::getPluginList(char * SubFolderName)
                 std::string token;
                 while ((pos = s.find(delimiter)) != std::string::npos) {
                     token = s.substr(0, pos);
-                    sprintf(dirPath, "%s\\compressonatorCLI.exe", token.c_str());
-                    if (boost::filesystem::exists(dirPath))
+                    snprintf(dirPath, 260, "%s\\compressonatorCLI.exe", token.c_str());
+                    if (CMP_FileExists(dirPath))
                     {
-                        sprintf(dirPath, "%s", token.c_str());
+                        snprintf(dirPath,260, "%s", token.c_str());
                         strcat_s(dirPath, SubFolderName);
                         pathFound = true;
                         break;
@@ -256,9 +322,12 @@ void PluginManager::getPluginList(char * SubFolderName)
         }
     }
 
-
+#ifdef _WIN32
     strcpy_s(fname,dirPath);
-    size_t len=strlen(fname);
+#else
+    strcpy(fname, dirPath);
+#endif
+    len=strlen(fname);
     if(fname[len-1]=='/' || fname[len-1]=='\\')    strcat_s(fname,"*.dll");
     else strcat_s(fname,"\\*.dll");
     HANDLE hFind = FindFirstFileA(fname, &fd); 
@@ -278,8 +347,7 @@ void PluginManager::getPluginList(char * SubFolderName)
         {
             if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
             {
-                char fname[MAX_PATH];
-                sprintf_s(fname,"%s\\%s",dirPath,fd.cFileName);
+                snprintf(fname, MAX_PATH,"%s\\%s",dirPath,fd.cFileName);
 
 #ifdef USE_NewLoader
                 // Valid only for Windows need one for Linux
@@ -360,6 +428,115 @@ void PluginManager::getPluginList(char * SubFolderName)
 #endif 
 }
 
+void * PluginManager::makeNewPluginInstance(int index)
+{
+    if (!pluginRegister.at(index)->isRegistered)
+        getPluginDetails(pluginRegister.at(index));
+
+    return pluginRegister.at(index)->makeNewInstance();
+}
+
+int PluginManager::getNumPlugins()
+{
+    return int(pluginRegister.size());
+}
+
+char * PluginManager::getPluginName(int index)
+{
+    if (!pluginRegister.at(index)->isRegistered)
+        getPluginDetails(pluginRegister.at(index));
+    return pluginRegister.at(index)->getName();
+}
+
+char * PluginManager::getPluginUUID(int index)
+{
+    if (!pluginRegister.at(index)->isRegistered)
+        getPluginDetails(pluginRegister.at(index));
+    return pluginRegister.at(index)->getUUID();
+}
+
+char * PluginManager::getPluginCategory(int index)
+{
+    if (!pluginRegister.at(index)->isRegistered)
+        getPluginDetails(pluginRegister.at(index));
+    return pluginRegister.at(index)->getCategory();
+}
+
+char * PluginManager::getPluginType(int index)
+{
+    if (!pluginRegister.at(index)->isRegistered)
+        getPluginDetails(pluginRegister.at(index));
+    return pluginRegister.at(index)->getType();
+}
+
+void *PluginManager::GetPlugin(char *type, char *name)
+{
+    if (!m_pluginlistset)
+    {
+        getPluginList(DEFAULT_PLUGINLIST_DIR);
+    }
+
+    int numPlugins = getNumPlugins();
+    for (int i=0; i< numPlugins; i++)
+    {
+        if (!pluginRegister.at(i)->isRegistered)
+            getPluginDetails(pluginRegister.at(i));
+
+        if ( (strcmp(getPluginType(i),type) == 0) && 
+             (strcmp(getPluginName(i),name)   == 0))
+        {
+                return ( (void *)makeNewPluginInstance(i) );
+        }
+    }
+    return (NULL);
+}
+
+void *PluginManager::GetPlugin(char *uuid)
+{
+    if (!m_pluginlistset)
+    {
+        getPluginList(DEFAULT_PLUGINLIST_DIR);
+    }
+
+    int numPlugins = getNumPlugins();
+    for (int i = 0; i< numPlugins; i++)
+    {
+        if (!pluginRegister.at(i)->isRegistered)
+            getPluginDetails(pluginRegister.at(i));
+
+        if (strcmp(getPluginUUID(i), uuid) == 0)
+        {
+            return ((void *)makeNewPluginInstance(i));
+        }
+    }
+    return (NULL);
+}
+
+
+bool PluginManager::PluginSupported(char *type, char *name)
+{
+    if (!type) return NULL;
+    if (!name) return NULL;
+    if (!m_pluginlistset)
+    {
+        getPluginList(DEFAULT_PLUGINLIST_DIR);
+    }
+
+    int numPlugins = getNumPlugins();
+    for (int i = 0; i< numPlugins; i++)
+    {
+        if (!pluginRegister.at(i)->isRegistered)
+            getPluginDetails(pluginRegister.at(i));
+
+        //PrintInfo("Type : %s  Name : %s\n",pluginManager.getPluginType(i),pluginManager.getPluginName(i));
+        if ((strcmp(getPluginType(i), type) == 0) &&
+            (strcmp(getPluginName(i), name) == 0))
+        {
+            return (true);
+        }
+    }
+    return (false);
+}
 
 //----------------------------------------------
 
@@ -440,4 +617,8 @@ void * PluginDetails::makeNewInstance()
     }
     return NULL;
 }
+
+
+
+
 

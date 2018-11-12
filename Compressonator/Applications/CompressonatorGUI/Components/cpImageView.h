@@ -124,11 +124,15 @@ public:
     acEXRTool           *m_ExrProperties;                // HDR image properties window
 
     QAction             *actSaveView;
+    QAction             *actSaveBlockView;
 
     QSize               m_imageSize;
     int                 ID;
     int                 XBlockNum;
     int                 YBlockNum;
+    int                 m_source_BlockXPos;
+    int                 m_source_BlockYPos;
+
     bool                m_localMipImages;
     bool                m_bOnacScaleChange;
     bool                m_useOriginalImageCursor;
@@ -148,6 +152,7 @@ public slots:
     void onToolListChanged(int index);
     void onViewCustomContextMenu(const QPoint &point);
     void onSaveViewAs();
+    void onSaveBlockView();
     void onBrightnessLevelChanged(int value);
     void onToggleViewChanged(int view);
     
@@ -156,6 +161,8 @@ private:
     void paintEvent(QPaintEvent * event);
     void setActionForImageViewStateChange();
     void closeEvent(QCloseEvent * event);
+    void getSupportedImageFormats();
+    void GetSourceBlock(int BlockX, int BlockY,string filename);
 
     eImageViewState m_ImageViewState;
     // Common for all
@@ -172,6 +179,7 @@ private:
     QLabel              *m_labelTxtView;
     QLabel              *m_labelColorRGBA;
     QLabel              *m_labelPos;
+    QLabel              *m_labelBlockPos;
     QWidget             *m_pMyWidget;
     QSpinBox            *m_ZoomLevel;
     QSpinBox            *m_BrightnessLevel;
@@ -179,6 +187,7 @@ private:
     QStyle              *Plastique_style;                   // Combobox Style
 
     QPixmap             *m_pixmap;
+    QString             m_QtImageFilter;
 
     int                 m_MipLevels;
     bool                m_FitOnShow;                        // Flaged used to to indicate a fit image into view when widget is shown

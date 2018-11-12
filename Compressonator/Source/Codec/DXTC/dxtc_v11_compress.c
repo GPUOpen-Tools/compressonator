@@ -352,6 +352,7 @@ void DXTCV11CompressExplicitAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
     }
 }
 
+/**************
 
 #if !defined(_WIN64) && defined(_WIN32) 
 // This compressor can only create opaque, 4-colour blocks
@@ -1766,6 +1767,8 @@ void DXTCV11CompressBlockMinimal(DWORD block_32[16], DWORD block_dxtc[2])
 }
 
 #endif
+
+***************/
 
 #ifndef _WIN64
 

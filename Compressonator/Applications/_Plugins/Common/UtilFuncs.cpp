@@ -105,7 +105,7 @@ void getFileNameExt(const char *FilePathName, char *fnameExt, int maxbuffsize)
     char ext[_MAX_EXT];
     char fname[_MAX_FNAME];
     _splitpath_s(FilePathName, drive, _MAX_DRIVE, dir, _MAX_DIR, fname, _MAX_FNAME, ext, _MAX_EXT);
-    sprintf_s(fnameExt, maxbuffsize,"%s%s", fname, ext);
+    snprintf(fnameExt, maxbuffsize,"%s%s", fname, ext);
 }
 
 bool writeObjFileState(std::string filename, std::string state)
@@ -134,11 +134,11 @@ string readObjFileState(string filename)
         std::streamoff length = objfile.tellg();
         objfile.seekg(0, objfile.beg);
 
-        char c = '\0';
+        // char c = '\0';
         std::string lastLine = "";
         //loop from the end of the file, skip endline and endfile characters
         //last line suppose consist of 14 characters for cmpcopy of obj
-        for (int i = length - 2; i > 0; i -= CMP_STATENUM)
+        for (int i = (int)length - 2; i > 0; i -= (int)CMP_STATENUM)
         {
             objfile.seekg(i);
             //read last line
@@ -158,11 +158,8 @@ string readObjFileState(string filename)
             }
         }
     }
-    else
-    {
-        return CMP_FILE_ERROR;
-    }
 
+    return CMP_FILE_ERROR;
 }
 
 

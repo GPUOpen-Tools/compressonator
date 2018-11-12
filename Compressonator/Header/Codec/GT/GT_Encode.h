@@ -1,6 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
-// Copyright (c) 2004-2006 ATI Technologies Inc.
+// Copyright (c) 2014-2018  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,6 +19,11 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+//
+//
+//  File Name:   GT_Encode.h
+//
+//////////////////////////////////////////////////////////////////////////////
 
 #ifndef _GT_ENCODE_H_
 #define _GT_ENCODE_H_
@@ -27,43 +31,28 @@
 #include <float.h>
 #include "GT_Definitions.h"
 
-
-class GTBlockEncoder
+class GTCBlockEncoder
 {
 public:
 
-    GTBlockEncoder(
-        double quality,
-        double performance,
-        double errorThreshold)
+    GTCBlockEncoder(
+        double quality
+        )
     {
-        m_quality = quality;
-        m_performance    = performance;
-        m_errorThreshold = errorThreshold;
+        m_quality = (float)quality;
     };
 
-
-    ~GTBlockEncoder()
-    {
-#ifdef USE_DBGTRACE
-                DbgTrace(("Smallest Error %f\n", (float)m_smallestError));
-                DbgTrace(("Largest Error %f\n", (float)m_largestError));
-#endif
-    };
+    ~GTCBlockEncoder()    {    };
 
     // This routine compresses a block and returns the RMS error
     double CompressBlock(
-        CMP_BYTE  in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-        CMP_BYTE      out[COMPRESSED_BLOCK_SIZE]
+        CMP_BYTE  *in,
+        CMP_BYTE  out[COMPRESSED_BLOCK_SIZE]
     );
 
 private:
-
     // Global data setup at initialisation time
-    double m_quality;
-    double m_performance;
-    double m_errorThreshold;
+    float m_quality;
 };
-
 
 #endif

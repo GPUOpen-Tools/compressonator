@@ -62,7 +62,7 @@ void DebugString(TCHAR* pszString, ...);
 #ifdef _WIN32
 HINSTANCE GetInstance();
 typedef UINT_PTR (CALLBACK *LPTCHOOKPROC) (HWND, UINT, WPARAM, LPARAM);
-int MaxFacesOrSlices(const MipSet* pMipSet, int nMipLevel);    //Returns maximum number of faces or slices present at a mip level, 0 if error
+// int MaxFacesOrSlices(const MipSet* pMipSet, int nMipLevel);    //Returns maximum number of faces or slices present at a mip level, 0 if error
 #else
 typedef CMP_DWORD LPTCHOOKPROC;
 typedef unsigned int UINT;

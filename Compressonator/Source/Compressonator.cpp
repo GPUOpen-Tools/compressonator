@@ -233,6 +233,11 @@ void CMP_PrepareSourceForCMP_Destination(CMP_Texture* pTexture, CMP_FORMAT  Dest
         case CMP_FORMAT_GT:
         case CMP_FORMAT_ETC_RGB:
         case CMP_FORMAT_ETC2_RGB:
+        case CMP_FORMAT_ETC2_SRGB:
+        case CMP_FORMAT_ETC2_RGBA:
+        case CMP_FORMAT_ETC2_RGBA1:
+        case CMP_FORMAT_ETC2_SRGBA:
+        case CMP_FORMAT_ETC2_SRGBA1:
         {
             newSrcFormat = CMP_FORMAT_RGBA_8888;
             CMP_Map_Bytes(pData, dwWidth, dwHeight, { 2, 1, 0, 3 },4);
@@ -277,6 +282,11 @@ void CMP_PrepareSourceForCMP_Destination(CMP_Texture* pTexture, CMP_FORMAT  Dest
         case CMP_FORMAT_BC7:
         case CMP_FORMAT_ETC_RGB:
         case CMP_FORMAT_ETC2_RGB:
+        case CMP_FORMAT_ETC2_SRGB:
+        case CMP_FORMAT_ETC2_RGBA:
+        case CMP_FORMAT_ETC2_RGBA1:
+        case CMP_FORMAT_ETC2_SRGBA:
+        case CMP_FORMAT_ETC2_SRGBA1:
         case CMP_FORMAT_GT:
         {
             // format is correct
@@ -320,6 +330,11 @@ void CMP_PrepareSourceForCMP_Destination(CMP_Texture* pTexture, CMP_FORMAT  Dest
         case CMP_FORMAT_BC7:
         case CMP_FORMAT_ETC_RGB:
         case CMP_FORMAT_ETC2_RGB:
+        case CMP_FORMAT_ETC2_SRGB:
+        case CMP_FORMAT_ETC2_RGBA:
+        case CMP_FORMAT_ETC2_RGBA1:
+        case CMP_FORMAT_ETC2_SRGBA:
+        case CMP_FORMAT_ETC2_SRGBA1:
         case CMP_FORMAT_GT:
         {
             newSrcFormat = CMP_FORMAT_RGBA_8888;
@@ -398,6 +413,11 @@ void CMP_PrepareCMPSourceForIMG_Destination(CMP_Texture* pDstTexture, CMP_FORMAT
     case CMP_FORMAT_GT:
     case CMP_FORMAT_ETC_RGB:
     case CMP_FORMAT_ETC2_RGB:
+    case CMP_FORMAT_ETC2_SRGB:
+    case CMP_FORMAT_ETC2_RGBA:
+    case CMP_FORMAT_ETC2_RGBA1:
+    case CMP_FORMAT_ETC2_SRGBA:
+    case CMP_FORMAT_ETC2_SRGBA1:
     {
         switch (newDstFormat)
         {
@@ -531,7 +551,10 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
             && (destType != CT_BC7)
             && (destType != CT_BC6H)
             && (destType != CT_BC6H_SF)
-            && (destType != CT_GT)
+            && (destType != CT_GTC)
+#ifdef USE_GTC_HDR
+            && (destType != CT_GTCH)
+#endif
             )
         {
             tc_err = ThreadedCompressTexture(pSourceTexture, pDestTexture, pOptions, pFeedbackProc, pUser1, pUser2, destType);
@@ -582,6 +605,8 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
         CCodecBuffer* pSrcBuffer = pCodec->CreateBuffer(pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight, pSourceTexture->nBlockDepth,
                                                         pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData);
 
+
+
         pDestTexture->nBlockWidth  = pSourceTexture->nBlockWidth;
         pDestTexture->nBlockHeight = pSourceTexture->nBlockHeight;
         pDestTexture->nBlockDepth  = pSourceTexture->nBlockDepth;
@@ -590,8 +615,9 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
                                                       pDestTexture->nBlockWidth, pDestTexture->nBlockHeight, pDestTexture->nBlockDepth,
                                                       pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData);
 
-        assert(pSrcBuffer);
-        assert(pDestBuffer);
+        // assert(pDestBuffer);
+        // assert(pSrcBuffer);
+
         if(pSrcBuffer == NULL || pDestBuffer == NULL)
         {
             SAFE_DELETE(pCodec);
@@ -612,6 +638,7 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
         pSrcBuffer->SetBlockHeight(pSourceTexture->nBlockHeight);
         pSrcBuffer->SetBlockWidth (pSourceTexture->nBlockWidth );
         pSrcBuffer->SetBlockDepth (pSourceTexture->nBlockDepth );
+        pSrcBuffer->SetFormat(pSourceTexture->format);
 
         CodecError err1 = pCodec->Decompress(*pSrcBuffer, *pDestBuffer, pFeedbackProc, pUser1, pUser2);
         RESTORE_FP_EXCEPTIONS;

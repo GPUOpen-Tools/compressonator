@@ -20,29 +20,32 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="../../_Plugins/Common/ATIFormats.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="../../_Plugins/Common/cmdline.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="../../_Plugins/Common/MIPS.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="../../_Plugins/Common/PluginManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="../../_Plugins/Common/TextureIO.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="../Source/CompressonatorCLI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\_Plugins\Common\gltf\tiny_gltf2_utils.cpp">
       <Filter>gltf</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\_Plugins\Common\CMP_FileIO.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="../../_Plugins/Common/cmdline.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="../../_Plugins/Common/MIPS.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="../../_Plugins/Common/PluginManager.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="../../_Plugins/Common/TextureIO.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\_Plugins\Common\ModelData.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="../../_Plugins/Common/ATIFormats.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -74,6 +77,9 @@
       <Filter>gltf</Filter>
     </ClInclude>
     <ClInclude Include="..\..\_Plugins\Common\ModelData.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\_Plugins\Common\CMP_FileIO.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>

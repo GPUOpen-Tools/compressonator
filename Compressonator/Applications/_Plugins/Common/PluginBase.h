@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2018 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,8 +21,8 @@
 // THE SOFTWARE.
 //
 /// \file PluginInterface.h
-/// \version 2.50
-/// \brief Declares the interface to the AMDCompress library.
+/// \version 3.1
+/// \brief Declares the interface to the Compressonator & ArchitectMF SDK
 //
 //=====================================================================
 

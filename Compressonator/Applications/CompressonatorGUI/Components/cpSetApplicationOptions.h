@@ -52,7 +52,9 @@ signals:
 public slots:
     void onClose();
     void oncurrentItemChanged(QtBrowserItem *item);
+#ifdef USE_COMPUTE
     void onImageEncodeChanged(QVariant &value);
+#endif
     void onImageViewDecodeChanged(QVariant &value);
 
 private:

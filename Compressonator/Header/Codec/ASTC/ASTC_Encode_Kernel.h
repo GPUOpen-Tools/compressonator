@@ -18,8 +18,53 @@
 // Copyright (c) 2014-2017  Advanced Micro Devices, Inc. All rights reserved.
 //===========================================================================
 
-#include "Common_Kernel.h"
+#ifdef __OPENCL_VERSION__
+// map to OpenCL definitions
+typedef uchar4 auchar4;
+typedef float3 afloat3;
 
+#else
+// when running kernel as cpu c++
+#define __kernel 
+#define __global
+#define __constant          const
+#define __local             const
+
+#include "stdio.h"
+#include <math.h> 
+#include <algorithm>    // std::max
+
+using namespace std;
+
+struct Vec4uc
+{
+    Vec4uc() {};
+    Vec4uc(unsigned char s) : x(s), y(s), z(s), w(s) {}
+    Vec4uc(unsigned char x, unsigned char y, unsigned char z, unsigned char w) : x(x), y(y), z(z), w(w) {}
+
+    unsigned char x, y, z, w;
+
+    inline Vec4uc operator*(unsigned char s) const { return Vec4uc(x*s, y*s, z*s, w*s); }
+    inline Vec4uc operator^(const Vec4uc& a) const { return Vec4uc(x ^ a.x, y ^ a.y, z ^ a.z, w ^ a.w); }
+    inline Vec4uc operator&(const Vec4uc& a) const { return Vec4uc(x & a.x, y & a.y, z & a.z, w & a.w); }
+    inline bool operator==(const Vec4uc& a) const { return (x == a.x && y == a.y && z == a.z && w == a.w); }
+    inline Vec4uc operator+(const Vec4uc& a) const { return Vec4uc(x + a.x, y + a.y, z + a.z, w + a.w); }
+};
+
+struct afloat3
+{
+    afloat3() { x = 0; y = 0; z = 0; };
+    afloat3(float s) : x(s), y(s), z(s) {}
+    afloat3(float x, float y, float z) : x(x), y(y), z(z) {}
+    float x, y, z;
+
+    inline afloat3 operator*(float s) const { return afloat3(x*s, y*s, z*s); }
+    inline float operator*(const afloat3& a) const { return ((x*a.x) + (y*a.y) + (z*a.z)); }
+    inline afloat3 operator+(const afloat3& a) const { return afloat3(x + a.x, y + a.y, z + a.z); }
+    inline afloat3 operator-(const afloat3& a) const { return afloat3(x - a.x, y - a.y, z - a.z); }
+};
+
+#endif
 
 namespace ASTC_Encoder
 {
@@ -190,7 +235,7 @@ typedef struct
 typedef struct
 {
 #ifndef __OPENCL_VERSION__
-    auchar4 
+    Vec4uc
 #else
     uchar4
 #endif

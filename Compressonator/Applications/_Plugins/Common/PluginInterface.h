@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2018 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,8 +21,8 @@
 // THE SOFTWARE.
 //
 /// \file PluginInterface.h
-/// \version 2.50
-/// \brief Declares the interface to the AMDCompress library.
+/// \version 3.1
+/// \brief Declares the interface to the Compressonator & ArchitectMF SDK
 //
 //=====================================================================
 
@@ -74,11 +74,22 @@ public:
         PluginInterface_Analysis(){}
         virtual ~PluginInterface_Analysis(){}
         virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
-        virtual int TC_ImageDiff(const char *in1, const char *in2, const char *out, char *resultsFile, void *pluginManager, void **cmipImages, CMP_Feedback_Proc pFeedbackProc = NULL) { (void)in1, (void)in2, (void)out, (void)resultsFile; (void)pluginManager; (void*)cmipImages; (void)pFeedbackProc; return 0; };
+        virtual int TC_ImageDiff(const char *in1, const char *in2, const char *out, char *resultsFile, void *usrAnalysisData, void *pluginManager, void **cmipImages, CMP_Feedback_Proc pFeedbackProc = NULL) { (void)in1, (void)in2, (void)out, (void)resultsFile; (void) usrAnalysisData; (void)pluginManager;  (void*)cmipImages; (void)pFeedbackProc;  return 0; };
         virtual int TC_PSNR_MSE(const char *in1, const char *in2, char *resultsFile, void *pluginManager, CMP_Feedback_Proc pFeedbackProc = NULL) { (void)in1, (void)in2, (void)resultsFile; (void)pluginManager; (void)pFeedbackProc; return 0; };
         virtual int TC_SSIM(const char *in1, const char *in2, char *resultsFile, void *pluginManager, CMP_Feedback_Proc pFeedbackProc = NULL) { (void)in1, (void)in2, (void)resultsFile; (void)pluginManager; (void)pFeedbackProc; return 0; };
 };
 
+
+// These type of plugins are used transcode compress texture to another compressed format
+class PluginInterface_CMPTranscode : PluginBase
+{
+public:
+    PluginInterface_CMPTranscode() {}
+    virtual ~PluginInterface_CMPTranscode() {}
+    virtual int         TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
+    virtual int         TC_PluginSetSharedIO(void* Shared) = 0;
+    virtual CMP_ERROR   TC_Trancode(MipSet  *srcTexture, MipSet  *destTexture) = 0;
+};
 
 // These type of plugins are used to Generate or transform images
 class PluginInterface_Filters : PluginBase
@@ -98,19 +109,22 @@ public:
     PluginInterface_Compute() {}
     virtual ~PluginInterface_Compute() {}
     virtual int     TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
-    virtual int     TC_Init(CMP_Texture *srcTexture, void  *kernel_options) = 0;
-    virtual char    *TC_ComputeSourceFile() = 0;
+    virtual int     TC_PluginSetSharedIO(void* Shared) = 0;
+    virtual void*   TC_Create() = 0;
+    virtual void    TC_Destroy(void* codec) = 0;
+    virtual int     TC_Init(MipSet *srcTexture, void  *kernel_options) = 0;
+    virtual char *  TC_ComputeSourceFile(unsigned int     Compute_type) = 0;
 };
 
-// These type of plugins are used to Decompress Images using GPU
 class PluginInterface_Compute2 : PluginBase
 {
 public:
     PluginInterface_Compute2() {}
     virtual ~PluginInterface_Compute2() {}
     virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
-    virtual int TC_Init(CMP_Texture *srcTexture, void  *kernel_options) = 0;
-    virtual CMP_ERROR TC_Compress(char *source_file, void  *kernel_options, CMP_Texture &SrcTexture, CMP_Texture &destTexture) = 0;
+    virtual int  TC_PluginSetSharedIO(void* Shared) = 0;
+    virtual int TC_Init(void  *kernel_options) = 0;
+    virtual CMP_ERROR TC_Compress(void  *kernel_options, MipSet  &SrcTexture, MipSet  &destTexture,CMP_Feedback_Proc pFeedbackProc = NULL) = 0;
     virtual void TC_SetComputeOptions(void *options) = 0;
     virtual char *TC_ComputeSourceFile() = 0;
     virtual int TC_Close() = 0;
@@ -183,17 +197,34 @@ public:
 };
 
 
-// Feature driven classes based on Base Plugin interface
-typedef PluginInterface_Codec*      (*PLUGIN_FACTORYFUNC_CODEC)();
-typedef PluginInterface_Image*      (*PLUGIN_FACTORYFUNC_IMAGE)();
-typedef PluginInterface_Analysis*   (*PLUGIN_FACTORYFUNC_ANALYSIS)();
-typedef PluginInterface_Filters*    (*PLUGIN_FACTORYFUNC_FILTERS)();
-typedef PluginInterface_Compute*    (*PLUGIN_FACTORYFUNC_COMPUTE)();
-typedef PluginInterface_Compute2*   (*PLUGIN_FACTORYFUNC_COMPUTE2)();
-typedef PluginInterface_GPUDecode*  (*PLUGIN_FACTORYFUNC_GPUDECODE)();
-typedef PluginInterface_3DModel*    (*PLUGIN_FACTORYFUNC_3DMODEL)();
-typedef PluginInterface_3DModel_Loader*    (*PLUGIN_FACTORYFUNC_3DMODEL_LOADER)();
-typedef PluginInterface_Mesh*       (*PLUGIN_FACTORYFUNC_MESH)();
-typedef PluginInterface_WindowViews*      (*PLUGIN_FACTORYFUNC_WINDOWVIEWS)();
+//High Performance Compute codec interface
+class HPC_Compress
+{
+public:
+    HPC_Compress() 
+    {
+        m_srcWidth  = 0; 
+        m_srcHeight = 0; 
+        m_xdim      = 4;
+        m_ydim      = 4;
+        m_zdim      = 1;
+        m_quality   = 0.05f;
+    };
+    ~HPC_Compress() {};
+    virtual int Compress(int xBlock, int yBlock, void *in, void *out) = 0;
+    virtual int Compress(void *in, void *out, void *blockoptions) = 0;
+    virtual int Decompress(int xBlock, int yBlock, void *in, void *out) = 0;
+    virtual int Decompress(void *in, void *out) = 0;
+
+    // Original image size
+    int     m_srcWidth;
+    int     m_srcHeight;
+    // Source block dimensions to compress
+    int     m_xdim;
+    int     m_ydim;
+    int     m_zdim;
+    // Compression quality to apply during compression
+    float   m_quality;
+};
 
 #endif

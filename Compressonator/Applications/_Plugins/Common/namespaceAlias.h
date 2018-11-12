@@ -34,9 +34,13 @@
 #ifndef NAMESPACEALIAS_H_
 #define NAMESPACEALIAS_H_
 
+#pragma warning( push )
+#pragma warning(disable:4100)
+#pragma warning(disable:4800)
 #include "ImfNamespace.h"
 #include "ImathNamespace.h"
 #include "IexNamespace.h"
+#pragma warning( pop )
 
 namespace IMF   = OPENEXR_IMF_NAMESPACE;
 namespace IMATH = IMATH_NAMESPACE;

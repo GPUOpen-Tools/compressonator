@@ -8,6 +8,8 @@ acEXRTool::acEXRTool(QWidget *parent)
 
 void acEXRTool::Init(const QString & title, const QString & productName)
 {
+    Q_UNUSED(productName)
+
     // Set the dialog title:
     setWindowTitle(title);
     resize(300,150);

@@ -51,35 +51,29 @@ using namespace std;
 #define MAX_PLUGIN_TYPE_STR       64
 #define MAX_PLUGIN_CATEGORY_STR   64
 
+#define DEFAULT_PLUGINLIST_DIR    "./plugins"
+
 class PluginDetails
 {
-    public:
+ public:
         PluginDetails() { clearMembers(); }
-        
         ~PluginDetails();
         
         void *makeNewInstance();
-
         void setFileName(char * nm);
-
         char *getFileName()     { return filename; }
         char *getName()         { return pluginName; }
         char *getUUID()         { return pluginUUID; }
         char *getType()         { return pluginType; }
         char *getCategory()     { return pluginCategory; }
-
         void setName(char * nm);  
         void setUUID(char * nm);
         void setType(char * nm);
         void setCategory(char * nm);
-
         bool                isStatic;
         bool                isRegistered;       // true when all dll interfaces has been registered using LoadLibraryA and GetProcAddress
-
         PLUGIN_FACTORYFUNC  funcHandle;
-        
-    private:
-
+private:
         void clearMembers()
         {
 #ifdef _WIN32
@@ -107,128 +101,29 @@ class PluginDetails
 
 };
 
-
 class PluginManager
 {
-    public:
-        PluginManager(){}
-        ~PluginManager() { clearPluginList(); }
-
-        void getPluginList(char * dirPath);
-
-        void registerStaticPlugin(char *pluginType, char *pluginName, void *  makePlugin);
-        void registerStaticPlugin(char *pluginType, char *pluginName, char *uuid, void *  makePlugin);
-
-        void * makeNewPluginInstance(int index)
-        {
-            if (!pluginRegister.at(index)->isRegistered)
-                getPluginDetails(pluginRegister.at(index));
-
-            return pluginRegister.at(index)->makeNewInstance();
-        }
-        
-        int getNumPlugins()
-        {
-            return int(pluginRegister.size());
-        }
-        
-        char * getPluginName(int index)
-        {
-            if (!pluginRegister.at(index)->isRegistered)
-                getPluginDetails(pluginRegister.at(index));
-            return pluginRegister.at(index)->getName();
-        }
-
-
-        char * getPluginUUID(int index)
-        {
-            if (!pluginRegister.at(index)->isRegistered)
-                getPluginDetails(pluginRegister.at(index));
-            return pluginRegister.at(index)->getUUID();
-        }
-
-        char * getPluginCategory(int index)
-        {
-            if (!pluginRegister.at(index)->isRegistered)
-                getPluginDetails(pluginRegister.at(index));
-            return pluginRegister.at(index)->getCategory();
-        }
-        
-        char * getPluginType(int index)
-        {
-            if (!pluginRegister.at(index)->isRegistered)
-                getPluginDetails(pluginRegister.at(index));
-            return pluginRegister.at(index)->getType();
-        }
-
-        void *GetPlugin(char *type, char *name)
-        {
-            int numPlugins = getNumPlugins();
-            for (int i=0; i< numPlugins; i++)
-            {
-                if (!pluginRegister.at(i)->isRegistered)
-                    getPluginDetails(pluginRegister.at(i));
-
-                if ( (strcmp(getPluginType(i),type) == 0) && 
-                     (strcmp(getPluginName(i),name)   == 0))
-                {
-                        return ( (void *)makeNewPluginInstance(i) );
-                }
-            }
-            return (NULL);
-        }
-
-        void *GetPlugin(char *uuid)
-        {
-            int numPlugins = getNumPlugins();
-            for (int i = 0; i< numPlugins; i++)
-            {
-                if (!pluginRegister.at(i)->isRegistered)
-                    getPluginDetails(pluginRegister.at(i));
-
-                if (strcmp(getPluginUUID(i), uuid) == 0)
-                {
-                    return ((void *)makeNewPluginInstance(i));
-                }
-            }
-            return (NULL);
-        }
-
-
-        bool PluginSupported(char *type, char *name)
-        {
-            if (!type) return NULL;
-            if (!name) return NULL;
-            int numPlugins = getNumPlugins();
-            for (int i = 0; i< numPlugins; i++)
-            {
-                if (!pluginRegister.at(i)->isRegistered)
-                    getPluginDetails(pluginRegister.at(i));
-
-                //PrintInfo("Type : %s  Name : %s\n",pluginManager.getPluginType(i),pluginManager.getPluginName(i));
-                if ((strcmp(getPluginType(i), type) == 0) &&
-                    (strcmp(getPluginName(i), name) == 0))
-                {
-                    return (true);
-                }
-            }
-            return (false);
-        }
-
-        void getPluginDetails(PluginDetails *curPlugin);
-
-    private:
-
-        void clearPluginList()
-        {
-            for (unsigned int i = 0; i < pluginRegister.size(); i++)
-            {
-                delete pluginRegister.at(i);
-                pluginRegister.at(i) = NULL;
-            }    
-            pluginRegister.clear();
-        }
-        vector<PluginDetails*> pluginRegister;
+public:
+    PluginManager();
+    ~PluginManager();
+    void getPluginList(char * dirPath);
+    void registerStaticPlugin(char *pluginType, char *pluginName, void *  makePlugin);
+    void registerStaticPlugin(char *pluginType, char *pluginName, char *uuid, void *  makePlugin);
+    bool PluginSupported(char *type, char *name);
+    void getPluginDetails(PluginDetails *curPlugin);
+    int  getNumPlugins();
+    void *makeNewPluginInstance(int index);
+    char *getPluginName(int index);
+    char *getPluginUUID(int index);
+    char *getPluginCategory(int index);
+    char *getPluginType(int index);
+    void *GetPlugin(char *type, char *name);
+    void *GetPlugin(char *uuid);
+private:
+    bool m_pluginlistset;
+    char m_pluginfolder [MAX_PLUGIN_FILENAME_STR];
+    void clearPluginList();
+    vector<PluginDetails*> pluginRegister;
 };
 
 #endif

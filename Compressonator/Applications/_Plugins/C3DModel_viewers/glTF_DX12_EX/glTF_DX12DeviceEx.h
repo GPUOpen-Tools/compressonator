@@ -36,6 +36,9 @@
 
 #define MAX_NUM_OF_NODES    2
 
+#define RENDER_FLIP_2FRAMES   0
+#define RENDER_FLIP_MANUAL    1
+
 class glTF_DX12RenderEx;
 class GLTFCommon;
 
@@ -77,6 +80,9 @@ public:
     glTF_DX12DeviceEx(GLTFCommon m_gltfLoader[MAX_NUM_OF_NODES], DWORD width, DWORD height, void *pluginManager, void *msghandler, QWidget *parent);
 
 private:
+
+    void processDiffRenderFlip();
+
     QWidget             *m_parent;
 
     // imGUI
@@ -113,4 +119,9 @@ private:
     float                 m_time;             // The elapsed time since the previous frame.
     double                m_deltaTime;        // The elapsed time since the previous frame.
     double                m_lastFrameTime;
+
+    float                 m_TimeSinceLastFlip;
+    bool                  m_AllowImageFrameFlip;
+    int                   m_flipState;              // 0: after 2 frames, 1: manual, 2: After a timeout
+
 };

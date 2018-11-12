@@ -35,10 +35,16 @@
 #include "Texture.h"
 #include "cmdline.h"
 #include "MIPS.h"
+
+#pragma warning( push )
+#pragma warning(disable:4100)
+#pragma warning(disable:4800)
+
 #include "ImfStandardAttributes.h"
 #include "ImathBox.h"
 #include "ImfArray.h"
 #include "ImfRgba.h"
+#pragma warning( pop )
 
 #ifdef USE_QT_IMAGELOAD
 #include <QtGui/qrgb.h>
@@ -79,6 +85,25 @@ typedef struct
    CMP_DWORD         dwmodeMask;
 }    ATICompressor_CompressParams;
 
+typedef struct _R9G9B9E5
+{
+    union
+    {
+        struct
+        {
+            uint32_t rm : 9; // r-mantissa
+            uint32_t gm : 9; // g-mantissa
+            uint32_t bm : 9; // b-mantissa
+            uint32_t e : 5; // shared exponent
+        };
+        uint32_t v;
+    };
+
+    operator uint32_t () const { return v; }
+
+    _R9G9B9E5& operator= (const _R9G9B9E5& floatrgb9e5) { v = floatrgb9e5.v; return *this; }
+    _R9G9B9E5& operator= (uint32_t Packed) { v = Packed; return *this; }
+}R9G9B9E5;
 
 CMP_FORMAT      GetFormat(MipSet* pMipSet);
 void            Format2FourCC(CMP_FORMAT format, MipSet *pMipSet);
@@ -90,7 +115,7 @@ bool            IsDestinationUnCompressed(const char *fname);
 CMP_FORMAT      FormatByFileExtension(const char *fname, MipSet *pMipSet);
 
 int             AMDLoadMIPSTextureImage(const char *SourceFile, MipSet *CMips, bool use_OCV, void *pluginManager);
-int             AMDSaveMIPSTextureImage(const char *DestFile, MipSet *CMips, bool use_OCV);
+int             AMDSaveMIPSTextureImage(const char *DestFile, MipSet *CMips, bool use_OCV, CMP_CompressOptions option);
 
 MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *configSetting, CMP_Feedback_Proc pFeedbackProc);
 
@@ -111,9 +136,7 @@ bool            FormatSupportsDXTCBase(CMP_FORMAT format);
 extern void     SwizzleMipMap(MipSet *pMipSet);
 extern bool     KeepSwizzle(CMP_FORMAT destformat);
 
-CMP_FLOAT      F16toF32(CMP_HALF f);
+CMP_FLOAT   F16toF32(CMP_HALF f);
 CMP_HALF    F32toF16(CMP_FLOAT   f);
-#ifndef _WIN32
-int MaxFacesOrSlices(const MipSet* pMipSet, int nMipLevel);
-#endif
+
 #endif

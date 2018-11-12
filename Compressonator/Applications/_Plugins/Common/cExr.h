@@ -27,14 +27,23 @@
 #include "namespaceAlias.h"
 
 #include "stdafx.h"
+
+#pragma warning( push )
+#pragma warning(disable:4100)
+#pragma warning(disable:4800)
+
 #include "ImfArray.h"
 #include "ImfRgba.h"
 #include <ImfRgbaFile.h>
 #include <ImfArray.h>
 #include <ImathBox.h>
+#pragma warning( pop )
+
 #include <string.h>
 
 #include "Compressonator.h"
+
+#include "CMP_FileIO.h"
 
 using namespace IMF;
 using namespace IMATH;

@@ -10,49 +10,55 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\EXR.cpp">
+    <ClCompile Include="../EXR.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Common\MIPS.cpp">
+    <ClCompile Include="../../../Common/TC_PluginInternal.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\TC_PluginInternal.cpp">
+    <ClCompile Include="../../../Common/MIPS.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\UtilFuncs.cpp">
+    <ClCompile Include="../stdafx.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\cExr.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="../../../Common/UtilFuncs.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="../../../Common/cExr.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\CMP_FileIO.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\EXR.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\stdafx.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\MIPS.h">
+    <ClInclude Include="../../../Common/cExr.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\TC_PluginAPI.h">
+    <ClInclude Include="../EXR.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\TC_PluginInternal.h">
+    <ClInclude Include="../../../Common/MIPS.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\UtilFuncs.h">
+    <ClInclude Include="../../../Common/namespaceAlias.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\cExr.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="../stdafx.h">
+      <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\namespaceAlias.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="../../../Common/TC_PluginAPI.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="../../../Common/TC_PluginInternal.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="../../../Common/UtilFuncs.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\CMP_FileIO.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

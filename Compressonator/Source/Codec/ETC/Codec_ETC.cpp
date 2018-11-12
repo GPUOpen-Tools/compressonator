@@ -30,7 +30,6 @@
 #include "Common.h"
 #include "Codec_ETC.h"
 #include "Compressonator_tc.h"
-#include "etcpack.h"
 #include "CompressonatorXCodec.h"
 
 //////////////////////////////////////////////////////////////////////////////
@@ -40,6 +39,9 @@
 CCodec_ETC::CCodec_ETC(CodecType codecType) :
 CCodec_Block_4x4(codecType)
 {
+#ifdef USE_ETCPACK
+    readCompressParams();
+#endif
 }
 
 CCodec_ETC::~CCodec_ETC()
@@ -47,7 +49,6 @@ CCodec_ETC::~CCodec_ETC()
 
 }
 
-#define SWIZZLE_DWORD(i) ((((i >> 24) & BYTE_MASK)) | (((i >> 16) & BYTE_MASK) << 8) | (((i >> 8) & BYTE_MASK) << 16) | ((i & BYTE_MASK) << 24))
 
 CodecError CCodec_ETC::CompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2])
 {
@@ -63,7 +64,14 @@ CodecError CCodec_ETC::CompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP
     }
 
     unsigned int uiCompressedBlockHi, uiCompressedBlockLo;
-    atiEncodeRGBBlockETC((unsigned char *) &srcRGB, &uiCompressedBlockHi, &uiCompressedBlockLo);
+    unsigned char tmp[4 * 4 * 3];                // Required just by "fast" ETC function
+
+#ifdef USE_ETCPACK
+    compressBlockDiffFlipFastPerceptual((uint8 *)&srcRGB, (uint8 *)tmp, 4, 4, 0, 0, uiCompressedBlockHi, uiCompressedBlockLo);
+#else
+    cmp_compressBlockETC2FastPerceptual((uint8 *)&srcRGB, (uint8 *)tmp, uiCompressedBlockHi, uiCompressedBlockLo);
+#endif
+
     compressedBlock[0] = SWIZZLE_DWORD(uiCompressedBlockHi);
     compressedBlock[1] = SWIZZLE_DWORD(uiCompressedBlockLo);
 
@@ -77,7 +85,12 @@ void CCodec_ETC::DecompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWO
     unsigned int uiCompressedBlockHi = SWIZZLE_DWORD(compressedBlock[0]);
     unsigned int uiCompressedBlockLo = SWIZZLE_DWORD(compressedBlock[1]);
 
-    atiDecodeRGBBlockETC((unsigned char *) &destRGB, uiCompressedBlockHi, uiCompressedBlockLo);
+#ifdef USE_ETCPACK
+    decompressBlockDiffFlip(uiCompressedBlockHi, uiCompressedBlockLo, (uint8*)destRGB, 4, 4, 0, 0);
+#else
+    cmp_decompressBlockETC2c(uiCompressedBlockHi, uiCompressedBlockLo, (uint8*)destRGB);
+#endif
+
 
     for(CMP_DWORD y = 0; y < 4; y++)
     {

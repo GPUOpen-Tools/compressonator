@@ -43,24 +43,34 @@ namespace GPU_Decode
     class RenderWindow
     {
     public:
-        RenderWindow() {};
+        RenderWindow(char *windowType)
+        {
+            m_hInstance = 0; // GetModuleHandle(NULL);
+            // sprintf(m_strWindowName, "%s_%x_%s", str_WindowName, m_hInstance,windowType);
+            // sprintf(m_strWindowClassName, "%s_%x_%s", str_WindowsClassName, m_hInstance, windowType);
+            m_hDC = 0;
+            m_hRC = 0;
+            m_hWnd = nullptr;
+        };
         virtual ~RenderWindow() {};
 
-        HDC         m_hDC = 0;
-        HGLRC       m_hRC = 0;
-        HWND        m_hWnd = nullptr;
-        HINSTANCE hInstance = GetModuleHandle(NULL);
-
-        HRESULT InitWindow(HINSTANCE hInstance, int width, int height, WNDPROC callback =NULL);
-        void    EnableWindowContext(HWND hWnd, HDC * hDC, HGLRC * hRC);
-        void    DisableWindowContext(HWND hWnd, HDC hDC, HGLRC hRC);
+        HDC         m_hDC;
+        HGLRC       m_hRC;
+        HWND        m_hWnd;
+        HINSTANCE   m_hInstance;
+        char        m_windowType[128];
+        char        m_strWindowName[128];
+        char        m_strWindowClassName[128];
+        HRESULT     InitWindow(int width, int height, WNDPROC callback =NULL);
+        void        EnableWindowContext(HWND hWnd, HDC * hDC, HGLRC * hRC);
+        void        DisableWindowContext(HWND hWnd, HDC hDC, HGLRC hRC);
 
     };
 
     class TextureControl: public RenderWindow
     {
     public:
-        TextureControl() {};
+        TextureControl(char *windowType):RenderWindow(windowType) {};
         virtual ~TextureControl() {};
 
         virtual CMP_ERROR WINAPI Decompress(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture) const = 0;

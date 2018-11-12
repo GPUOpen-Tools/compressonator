@@ -294,7 +294,7 @@ signals:
     void dataChanged();
 };
 
-class C_ASTC_BlockRate : 
+class C_Codec_Block: 
     public C_Input_HDR_Image_Properties
     //public QObject
 {
@@ -304,7 +304,7 @@ class C_ASTC_BlockRate :
 
 public:
 
-    C_ASTC_BlockRate()
+    C_Codec_Block()
     {
         m_Bitrate = "8.00";
         m_correctBitrate = "8.00";
@@ -403,7 +403,7 @@ signals:
 
 class DXT1_Alpha :
     //public Compression_Speed
-    public C_ASTC_BlockRate
+    public C_Codec_Block
     //public QObject
 {
 Q_OBJECT
@@ -605,7 +605,7 @@ signals:
 #define DESTINATION_IMAGE_CLASS_NAME      "Destination Image"
 #define CHANNEL_WEIGHTING_CLASS_NAME      "Channel Weighting"
 #define DXT1_ALPHA_CLASS_NAME             "DXT1 Alpha"
-#define ASTC_BLOCKRATE_CLASS_NAME         "ASTC BlockRate"
+#define CODEC_BLOCK_CLASS_NAME            "Codec Block"
 #define HDR_PROP_CLASS_NAME               "Input HDR Image Properties"
 
 #define DESTINATION_IMAGE_NAME            "Name"
@@ -618,14 +618,16 @@ class Mesh_Compression_Settings : public Channel_Weighting
     Q_OBJECT
         Q_ENUMS(eMeshCompression)
         Q_PROPERTY(eMeshCompression Compression_Format   READ  getDo_Mesh_Compression         WRITE setDo_Mesh_Compression)
-        // Reserved for 3.1 release
+        // Reserved 
         //Q_PROPERTY(bool x____Force_Input_as_Point_Cloud  READ  getForce_Input_as_Point_Cloud  WRITE setForce_Input_as_Point_Cloud)      // -point_cloud forces the input to be encoded as a point 
         //Q_PROPERTY(bool x____Use_Metadata                READ  getUse_Metadata                WRITE setUse_Metadata)                    //  -mata data use metadata to encode extra information in mesh files.
+#ifdef USE_MESH_DRACO_SETTING 
         Q_PROPERTY(int  x____Compression_Level           READ  getCompression_Level           WRITE setCompression_Level)                // -cl compression level [0-10], most=10, least=0, default=7.
         Q_PROPERTY(int  x____Position_Bits               READ  getPosition_Bits               WRITE setPosition_Bits)                   // -qp quantization bits for the position attribute, default=14 max 30
         Q_PROPERTY(int  x____Tex_Coords_Bits             READ  getTex_Coords_Bits             WRITE setTex_Coords_Bits)                 // -qt quantization bits for the texture coordinate attribute, default=12 max 30, disabled = -1
         Q_PROPERTY(int  x____Normals_Bits                READ  getNormals_Bits                WRITE setNormals_Bits)                    // -qn uantization bits for the normal vector attribute, default=10. max 30, disabled = -1
         Q_PROPERTY(int  x____Generic_Bits                READ  getGeneric_Bits                WRITE setGeneric_Bits)                    // -qg quantization bits for any generic attribute, default=8 max 30, disabled = -1
+#endif
 
 public:
     enum eMeshCompression
@@ -1271,6 +1273,12 @@ class C_Destination_Options : public C_Destination_Image
 public:
 
     enum eCompression {
+#ifdef USE_GTC
+        GTC,
+#endif
+#ifdef USE_GTC_HDR
+        GTCH,
+#endif
         BC1,
         BC2,
         BC3,
@@ -1279,6 +1287,15 @@ public:
         BC6H,
         BC6H_SF,
         BC7,
+        ETC_RGB,
+        ETC2_RGB,
+        ETC2_RGBA,
+        ETC2_RGBA1,
+#ifdef ENABLE_USER_ETC2S_FORMATS
+        ETC2_SRGB,
+        ETC2_SRGBA,
+        ETC2_SRGBA1,
+#endif
         ASTC,
         ATC_RGB,
         ATC_RGBA_Explicit,
@@ -1296,14 +1313,9 @@ public:
         DXT5_xRBG,
         DXT5_RGxB,
         DXT5_xGxR,
-        ETC_RGB,
-        ETC2_RGB,
         ARGB_8888,
         ARGB_16F,
         ARGB_32F,
-#ifdef USE_GT
-        GT,
-#endif
         //RGB_888,
         //RG_8,
         //R_8,
@@ -1839,10 +1851,10 @@ public:
 class C_Application_Options :public QObject
 {
     Q_OBJECT
-        Q_ENUMS(ImageEncodeWith)
         Q_ENUMS(ImageDecodeWith)
         Q_ENUMS(RenderModelsWith)
 #ifdef USE_COMPUTE
+        Q_ENUMS(ImageEncodeWith)
         Q_PROPERTY(ImageEncodeWith  Encode_with                             READ getImageEncode             WRITE setImageEncode NOTIFY ImageEncodeChanged)
 #endif
         Q_PROPERTY(ImageDecodeWith  Decode_with                             READ getImageViewDecode         WRITE setImageViewDecode NOTIFY ImageViewDecodeChanged)
@@ -1858,15 +1870,19 @@ class C_Application_Options :public QObject
         Q_PROPERTY(RenderModelsWith Render_Models_with                      READ getGLTFRender              WRITE setGLTFRender)
 #endif
 public:
+#ifdef USE_COMPUTE
     // Keep order of list as its ref is saved in CompressSettings.ini
     // we should change the save to use string name instead of indexes to the enum
     enum class ImageEncodeWith {
         CPU,
+        CPU_HPC,
         GPU_OpenCL,
-        GPU_DirectX,
-        GPU_Vulkan
+#ifdef ENABLE_V3x_CODE
+        GPU_Vulkan,
+        GPU_DirectX
+#endif
     };
-
+#endif
     enum class ImageDecodeWith {
         CPU,
         GPU_OpenGL,
@@ -2039,7 +2055,7 @@ signals :
 
 #define STR_ALPHATHRESHOLD_HINT         "Alpha Threshold Range 1 to 255. Default is 128"
 
-#define STR_BITRATE_SETTING_HINT        "The maximum ASTC bitrate allowed is 8.00. The closest bitrate will be determined. Default is 8.00(4x4)"
+#define STR_BITRATE_SETTING_HINT        "The maximum bitrate allowed is 8.00. The closest bitrate will be determined. Default is 8.00(4x4)"
 
 #define STR_DEFOG_SETTING_HINT          "The defog range supported is 0.000  to 0.100. Default is 0."
 #define STR_EXPOSURE_SETTING_HINT       "The exposure range supported is -10 to 10. Default is 0."

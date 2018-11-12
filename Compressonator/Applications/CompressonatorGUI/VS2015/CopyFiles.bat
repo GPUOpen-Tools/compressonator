@@ -8,11 +8,11 @@ set BUILD_AGSDIR=%7
 set _DEBUG=%8
 
 echo ---------------------------------------
-echo QT      : [%BUILD_QTDIR%]
-echo OPENCV  : [%BUILD_OPENCV_DIR%]
-echo OUTPUT  : [%BUILD_OUTDIR%]
-echo SOLUTION: [%BUILD_SOLUTIONDIR%]
-echo DBG/REL : [%_DEBUG%]
+echo QT                 : [%BUILD_QTDIR%]
+echo OPENCV             : [%BUILD_OPENCV_DIR%]
+echo OUTPUT             : [%BUILD_OUTDIR%]
+echo SOLUTION           : [%BUILD_SOLUTIONDIR%]
+echo DBG/REL            : [%_DEBUG%]
 echo ---------------------------------------
 
 echo on
@@ -40,7 +40,7 @@ XCopy /r /d /y "%BUILD_GLEWDIR%glew32.dll"                               %BUILD_
 XCopy /r /d /y "%BUILD_SOLUTIONDIR%..\..\..\Applications\_Plugins\CGPUDecode\Vulkan\VK_ComputeShader\texture.vert.spv"       %BUILD_OUTDIR%
 XCopy /r /d /y "%BUILD_SOLUTIONDIR%..\..\..\Applications\_Plugins\CGPUDecode\Vulkan\VK_ComputeShader\texture.frag.spv"       %BUILD_OUTDIR%
 
-XCopy /r /d /y "%COMPUTE%\*.*"                                           %BUILD_OUTDIR%\Compute\
+REM XCopy /r /d /y "%COMPUTE%\*.*"                                           %BUILD_OUTDIR%\Compute\
 
 IF NOT EXIST %BUILD_OUTDIR%plugins mkdir %BUILD_OUTDIR%plugins 
 IF NOT EXIST %BUILD_OUTDIR%WelcomePage mkdir %BUILD_OUTDIR%WelcomePage 
@@ -82,18 +82,6 @@ XCopy /r /d /y "%BUILD_QTDIR%translations\qtwebengine_en.qm" %BUILD_OUTDIR%trans
 
 IF NOT EXIST %BUILD_OUTDIR%translations\qtwebengine_locales mkdir %BUILD_OUTDIR%translations\qtwebengine_locales
 XCopy /s /r /d /y "%BUILD_QTDIR%translations\qtwebengine_locales\en-US.pak" %BUILD_OUTDIR%translations\qtwebengine_locales\
-
-REM IF "%PLATFORM%" == "Win32" goto :copy32ags
-REM IF "%PLATFORM%" == "x64" goto :copy64ags
-
-REM :copy32ags
-REM XCopy /r /d /y "%BUILD_AGSDIR%\amd_ags_x86.dll"               %BUILD_OUTDIR%
-REM goto :copyend
-
-REM :copy64ags
-REM XCopy /r /d /y "%BUILD_AGSDIR%\amd_ags_x64.dll"               %BUILD_OUTDIR%
-
-REM :copyend
 
 echo "Dependencies copied done"
 

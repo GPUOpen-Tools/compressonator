@@ -26,6 +26,7 @@
 // Revision
 // 0.1    First implementation 
 //
+
 #include <assert.h>
 #include "debug.h"
 #include "Common.h"
@@ -34,13 +35,9 @@
 #include "BC6H_Decode.h"
 #include "BC6H_utils.h"
 #include "BC6H_Decode.h"
-
 #include <bitset>
 #include <stddef.h>
 
-#pragma warning(disable:4244)
-#include "half.h"
-#pragma warning(default:4244)
 
 
 #ifdef BC6H_DECODE_DEBUG

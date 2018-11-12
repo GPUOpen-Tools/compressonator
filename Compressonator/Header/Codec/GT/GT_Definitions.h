@@ -1,6 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
-// Copyright (c) 2004-2006 ATI Technologies Inc.
+// Copyright (c) 2014-2018  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,12 +19,16 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+//
+//
+//  File Name:   GT_Definitions.h
+//
+//////////////////////////////////////////////////////////////////////////////
 
 #ifndef _GT_DEFINITIONS_H_
 #define _GT_DEFINITIONS_H_
 
 #include "Common.h"
-// #define USE_GT_HDR
 
 #define TRUE 1
 #define FALSE 0
@@ -35,19 +38,31 @@
 // Size of a compressed block in bytes
 #define COMPRESSED_BLOCK_SIZE   16
 
-// If this define is set then 6-bit weights will be used for the ramp.
-// Otherwise the ramp will use a pure linear interpolation
-#define USE_FINAL_GT_WEIGHTS   1
-
 #define MAX_SUBSET_SIZE  16
 
 #define MAX_DIMENSION_BIG 4
 
 #ifndef min
-
+#ifdef _WIN32
 #define min(a,b) ((a) < (b) ? (a) : (b))
 #define max(a,b) ((a) > (b) ? (a) : (b))
+#endif
+#endif
+
+typedef struct
+{
+    // Original image size
+    int     m_srcWidth;
+    int     m_srcHeight;
+    // Source block dimensions to compress
+    int     m_xdim;
+    int     m_ydim;
+    int     m_zdim;
+    // Compression quality to apply during compression
+    float   m_quality;
+} GTC_Encode;
 
 #endif
 
-#endif
+
+

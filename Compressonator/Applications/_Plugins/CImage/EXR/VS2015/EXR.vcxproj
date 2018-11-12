@@ -412,6 +412,7 @@
     <ClCompile Include="../../../Common/UtilFuncs.cpp" />
     <ClCompile Include="../EXR.cpp" />
     <ClCompile Include="../stdafx.cpp" />
+    <ClCompile Include="..\..\..\Common\CMP_FileIO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../../../Common/cExr.h" />
@@ -422,6 +423,7 @@
     <ClInclude Include="../../../Common/UtilFuncs.h" />
     <ClInclude Include="../EXR.h" />
     <ClInclude Include="../stdafx.h" />
+    <ClInclude Include="..\..\..\Common\CMP_FileIO.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

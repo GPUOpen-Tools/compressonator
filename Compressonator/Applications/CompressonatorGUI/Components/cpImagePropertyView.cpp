@@ -195,11 +195,11 @@ void CImagePropertyView::Init_C_Destiniation_Data_Controller()
         m_propBitrate        = m_theController->getProperty(COMPRESS_OPTIONS_BITRATE);
     }
 
-    // C_ASTC_BlockRate - default hidden
-    m_propASTCBlockRate = m_theController->getProperty(ASTC_BLOCKRATE_CLASS_NAME);
-    if (m_propASTCBlockRate)
+    // C_CODEC_BlockRate - default hidden
+    m_propCodecBlockRate = m_theController->getProperty(CODEC_BLOCK_CLASS_NAME);
+    if (m_propCodecBlockRate)
     {
-        m_propASTCBlockRate->setHidden(true);
+        m_propCodecBlockRate->setHidden(true);
     }
 
     // C_Input_HDR_Image_Properties - default hidden
@@ -380,7 +380,7 @@ void CImagePropertyView::compressionValueChanged(QVariant& value)
     bool Quality_Settings     = false;
     bool Channel_Weights      = false;
     bool DXT1_Alpha           = false;
-    bool ASTC_BlockRate       = false;
+    bool Codec_BlockRate      = false;
     bool HDR_Image_Properties = false;
 
     C_Destination_Options* Data = (C_Destination_Options*)m_data;
@@ -453,8 +453,8 @@ void CImagePropertyView::compressionValueChanged(QVariant& value)
         m_infotext->append("A two component compressed texture format for Microsoft DirectX10. BC5 identical to ATI2N. Eight bits per pixel.");
         break;
     case C_Destination_Options::ASTC:
-        Quality_Settings = true;
-        ASTC_BlockRate   = true;
+        Quality_Settings  = true;
+        Codec_BlockRate   = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("ASTC (Adaptive Scalable Texture Compression),lossy block-based texture compression developed with ARM.");
         break;
@@ -524,11 +524,19 @@ void CImagePropertyView::compressionValueChanged(QVariant& value)
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("ETC (Ericsson Texture Compression, lossy texture compression developed with Ericsson Research.)");
         break;
-#ifdef USE_GT
-    case C_Destination_Options::GT:
+#ifdef USE_GTC
+    case C_Destination_Options::GTC:
+        Quality_Settings  = true;
+        Codec_BlockRate   = true;
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("The latest block Compression (GTC) format designed to support high-speed compression");
+        break;
+#endif
+#ifdef USE_GTC_HDR
+    case C_Destination_Options::GTCH:
         Quality_Settings = true;
         m_infotext->append("<b>Format Description</b>");
-        m_infotext->append("The latest block Compression (GT) format designed to support high-speed compression");
+        m_infotext->append("The latest block Compression (GTCH) format designed to support high-speed compression");
         break;
 #endif
     }
@@ -549,9 +557,9 @@ void CImagePropertyView::compressionValueChanged(QVariant& value)
         m_propChannelWeight->setHidden(!Channel_Weights);
     }
 
-    if (m_propASTCBlockRate)
+    if (m_propCodecBlockRate)
     {
-        m_propASTCBlockRate->setHidden(!ASTC_BlockRate);
+        m_propCodecBlockRate->setHidden(!Codec_BlockRate);
     }
 
     if (m_propHDRProperties)

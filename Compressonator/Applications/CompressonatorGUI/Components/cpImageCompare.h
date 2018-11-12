@@ -34,6 +34,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include "acCustomDockWidget.h"
 #include "cpProjectData.h"
+#include "CMP_FileIO.h"
 
 class CImageCompare : public acCustomDockWidget
 {

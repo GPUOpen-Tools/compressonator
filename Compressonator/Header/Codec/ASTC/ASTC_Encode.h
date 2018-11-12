@@ -27,8 +27,6 @@
 
 #include <float.h>
 #include "ASTC_Definitions.h"
-
-#include "Common_Kernel.h"
 #include "ASTC_Encode_Kernel.h"
 
 class ASTCBlockEncoder

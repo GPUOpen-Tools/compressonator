@@ -1,5 +1,6 @@
-/* stb_image - v2.08 - public domain image loader - http://nothings.org/stb_image.h
-no warranty implied; use at your own risk
+/* 
+These libraries are in the public domain. You can do anything you want with them. 
+You have no legal obligation to do anything else, although I appreciate attribution.
 
 Do this:
 #define STB_IMAGE_IMPLEMENTATION

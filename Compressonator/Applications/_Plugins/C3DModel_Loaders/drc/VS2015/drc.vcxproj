@@ -264,7 +264,7 @@
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86_64/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Compressonator_MDd.lib;GPU_Decode_MDd.lib;CMP_MeshCompressor_MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Compressonator_MDd.lib;GPU_Decode_MDd.lib;CMP_MeshCompressor_MDd.lib;CMP_MeshOptimizer_MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>../CopyFiles.bat $(OUTDIR) $(ProjectDir)</Command>

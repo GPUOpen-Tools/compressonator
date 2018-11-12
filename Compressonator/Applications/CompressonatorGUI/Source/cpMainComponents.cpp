@@ -314,12 +314,12 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
 
     // Set some global setting 
     #ifdef  ENABLED_USER_GPUVIEW
-    g_useCPUDecode = (g_Application_Options.m_ImageViewDecode == g_Application_Options.ImageDecodeWith::CPU);
+    g_useCPUDecode = (g_Application_Options.m_ImageViewDecode == C_Application_Options::ImageDecodeWith::CPU);
     #else
     g_useCPUDecode = true;
     #endif
 #ifdef USE_COMPUTE
-    g_useCPUEncode = g_Application_Options.m_ImageEncode == g_Application_Options.ImageEncodeWith::CPU;
+    g_useCPUEncode = g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::CPU;
 #endif
     setUnifiedTitleAndToolBarOnMac(true);
 
@@ -1515,6 +1515,7 @@ void cpMainComponents::readSettings()
     {
         m_setapplicationoptions->LoadSettings(m_sSettingsFile, QSettings::IniFormat);
     }
+    m_projectview->m_curProjectFilePathName = settings.value("ProjectPath").toString();
 }
 
 void cpMainComponents::onWriteSettings()
@@ -1526,6 +1527,7 @@ void cpMainComponents::onWriteSettings()
     {
         m_setapplicationoptions->SaveSettings(m_sSettingsFile, QSettings::IniFormat);
     }
+    settings.setValue("ProjectPath",m_projectview->m_curProjectFilePathName);
 
 }
 
@@ -1554,7 +1556,7 @@ acCustomDockWidget *cpMainComponents::FindImageView(QString &file,bool findDiffs
         dock = iter.next();
         QString dock_fileName = dock->m_fileName;
         int res = file.compare(dock_fileName);
-        if (res == 0) 
+        if ((res == 0) && (!findDiffs)) 
         {
             return dock;
         }
@@ -1562,12 +1564,11 @@ acCustomDockWidget *cpMainComponents::FindImageView(QString &file,bool findDiffs
         {
             if (findDiffs)
             {
-                if (dock_fileName.contains(file + DIFFERENCE_IMAGE_VS_TXT))
+                if (dock_fileName.contains(DIFFERENCE_IMAGE_VS_TXT))
                 {
                     return dock;
                 }
             }
-
         }
     }
 
@@ -1861,7 +1862,7 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
         else
         {
             // Make sure we are not not already viewing this image file
-            dock = FindImageView(fileName);
+            dock = FindImageView(fileName,false);
         }
 
         if (dock) {
@@ -2172,6 +2173,18 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
     }
     catch (...)
     {
+        if (m_imageview)
+        {
+            delete m_imageview;
+            m_imageview = nullptr;
+        }
+
+        if (m_3Dmodelview)
+        {
+            delete m_3Dmodelview;
+            m_3Dmodelview = nullptr;
+        }
+
         DisplayException(ImageType);
     }
 
@@ -2467,7 +2480,7 @@ void cpMainComponents::OnDeleteImageView(QString &fileName)
 {
     showProgressBusy("Removing Image view ... Please wait");
     // Make sure we are not not already viewing this image file
-    acCustomDockWidget *dock = (acCustomDockWidget *)FindImageView(fileName);
+    acCustomDockWidget *dock = (acCustomDockWidget *)FindImageView(fileName,false);
 
     if (dock)
     {
@@ -2497,9 +2510,13 @@ void cpMainComponents::OnDeleteImageDiffView(QString &fileName)
     // Make sure we are not not already viewing this image file
     acCustomDockWidget *dock = (acCustomDockWidget *) FindImageView(fileName,true);
 
+    // Vaid pointer else NULL
     if (dock)
     {
-        DeleteDock(&dock);
+        // Only delete a valid assigned DiffView type
+        //printf("Delete Image Diff Dock %d\n",dock->m_type);
+        if (dock->m_type == TREETYPE_DIFFVIEW)
+                DeleteDock(&dock);
     }
 
     hideProgressBusy("Ready");

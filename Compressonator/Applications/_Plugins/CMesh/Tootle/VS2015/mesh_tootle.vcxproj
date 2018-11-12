@@ -383,7 +383,7 @@
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86_64/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Compressonator_MD.lib;GPU_Decode_MD.lib;CMP_Math_MD.lib;CMP_Mesh_MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Compressonator_MD.lib;GPU_Decode_MD.lib;CMP_Mesh_MD.lib;CMP_Math_MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>../CopyFiles.bat $(OUTDIR) $(ProjectDir)</Command>

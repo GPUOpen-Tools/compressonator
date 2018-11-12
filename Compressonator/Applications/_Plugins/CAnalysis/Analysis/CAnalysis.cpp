@@ -92,11 +92,11 @@ Plugin_Canalysis::~Plugin_Canalysis()
 { 
     if (m_MipSrcImages)
     {
-        m_imageloader->clearMipImages(m_MipSrcImages);
+        m_imageloader->clearMipImages(&m_MipSrcImages);
     }
     if (m_MipDestImages)
     {
-        m_imageloader->clearMipImages(m_MipDestImages);
+        m_imageloader->clearMipImages(&m_MipDestImages);
     }
     if (m_imageloader)
     {
@@ -135,7 +135,7 @@ void Plugin_Canalysis::write(REPORT_DATA data, char *resultsFile, char option)
         diffNodeName.append(diffName);
     }
 
-    if ((boost::filesystem::exists(resultsFile)))
+    if ((CMP_FileExists(resultsFile)))
     {
 
         std::ifstream input(resultsFile);
@@ -276,7 +276,7 @@ void Plugin_Canalysis::write(REPORT_DATA data, char *resultsFile, char option)
     string toleranceFile = result.generic_string().substr(0, lastindex + 1);
     toleranceFile.append("analysis_tolerance.xml");
 
-    if ((boost::filesystem::exists(toleranceFile)))
+    if ((CMP_FileExists(toleranceFile)))
     {
         ptree pt_tolerance;
         try {
@@ -307,7 +307,7 @@ void Plugin_Canalysis::write(REPORT_DATA data, char *resultsFile, char option)
         }
     }
     //analysis against golden.xml (gold reference) and reporting result
-    if ((boost::filesystem::exists(goldFile)))
+    if ((CMP_FileExists(goldFile)))
     {
         try {
             std::ifstream inputgold(goldFile);
@@ -597,9 +597,18 @@ bool Plugin_Canalysis::psnr(QImage *src, QImage *dest, REPORT_DATA &myReport, CM
 
 
 
-int Plugin_Canalysis::TC_ImageDiff(const char * in1, const char * in2, const char *out, char *resultsFile, void *pluginManager, void **cmipImages, CMP_Feedback_Proc pFeedbackProc)
+int Plugin_Canalysis::TC_ImageDiff(const char * in1, 
+                                   const char * in2, 
+                                   const char *out, 
+                                   char *resultsFile, 
+                                   void *usrAnalysisData, 
+                                   void *pluginManager, 
+                                   void **cmipImages, 
+                                   CMP_Feedback_Proc pFeedbackProc)
 {
     if (pluginManager == NULL) return -1;
+
+    CMP_ANALYSIS_DATA *analysisData = (CMP_ANALYSIS_DATA *) usrAnalysisData;
 
     MY_REPORT_DATA report;
 
@@ -654,7 +663,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1, const char * in2, const cha
 
         if (cmipImages == NULL) //cmdline enable both ssim and psnr
         {
-            if ((strcmp(resultsFile, "") != 0))
+
             {
                 bool testpassed = psnr(srcImage, destImage, report.data, pFeedbackProc);
 
@@ -688,6 +697,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1, const char * in2, const cha
 
                 int ssimtestpassed = 0;
                 ssimtestpassed = GetSSIMBYTES(&cv_srcimage, &cv_destimage, &report.data, pFeedbackProc);
+                //ssimtestpassed = getMatSSIM(&cv_srcimage, &cv_destimage, &report.data, pFeedbackProc);
 
                 if (ssimtestpassed == -1)
                 {
@@ -702,9 +712,25 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1, const char * in2, const cha
                 srcimg.release();
                 destimg.release();
 
-                write(report.data, resultsFile, 'a');
+                // If we have a report file write to it
+                if ((strcmp(resultsFile, "") != 0))
+                        write(report.data, resultsFile, 'a');
+
+                if (analysisData)
+                {
+                    analysisData->SSIM       = report.data.SSIM;
+                    analysisData->SSIM_Red   = report.data.SSIM_Red;
+                    analysisData->SSIM_Green = report.data.SSIM_Green;
+                    analysisData->SSIM_Blue  = report.data.SSIM_Blue;
+                    analysisData->PSNR       = report.data.PSNR;
+                    analysisData->PSNR_Red   = report.data.PSNR_Red;
+                    analysisData->PSNR_Green = report.data.PSNR_Green;
+                    analysisData->PSNR_Blue  = report.data.PSNR_Blue;
+                    analysisData->MSE        = report.data.MSE;
+
+                }
             }
-        }
+        } //
         
         if ((strcmp(out, "") != 0))
         {
@@ -752,7 +778,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1, const char * in2, const cha
 
     if (diffImage != NULL)
     {
-        if ((boost::filesystem::exists(out)))
+        if ((CMP_FileExists(out)))
         {
             QFile::remove(out);
         }
@@ -902,7 +928,7 @@ int Plugin_Canalysis::TC_PSNR_MSE(const char * in1, const char * in2,  char *res
         }
 
         write(report.data, resultsFile,'p');
-        cout << report;
+        //cout << report;
     }
     else
     {
@@ -1000,7 +1026,7 @@ int Plugin_Canalysis::TC_SSIM(const char * in1, const char * in2, char *resultsF
         destimg.release();
 
         write(report.data, resultsFile,'s');
-        cout << report;
+        // cout << report;
     }
     else
     {

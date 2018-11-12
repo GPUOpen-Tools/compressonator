@@ -58,7 +58,7 @@ void GltfTechnique::CreateGeometry(tfAccessor indexBuffer, std::vector<tfAccesso
 
     // load those buffers into the GPU
     pPrimitive->m_VBV.resize(vertexBuffers.size());
-    for (int i = 0; i < vertexBuffers.size(); i++)
+    for (unsigned int i = 0; i < vertexBuffers.size(); i++)
     {
         tfAccessor *pVertexAccessor = &vertexBuffers[i];
 

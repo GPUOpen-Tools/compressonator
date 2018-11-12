@@ -43,7 +43,7 @@ void GltfDepthPass::OnCreate(
     ResourceViewHeapsVK *pHeaps,
     DynamicBufferRingVK *pDynamicBufferRing,
     StaticBufferPoolVK *pStaticBufferPool,
-    GLTFCommon *pGLTFData)
+    GLTFCommon *pGLTFData, void *pluginManager, void *msghandler)
 {
     m_pDevice = pDevice;
     m_pGLTFData = pGLTFData;
@@ -55,17 +55,16 @@ void GltfDepthPass::OnCreate(
 
     // Load Textures (A cache should take care of deduplication) 
     //    
-    json::array_t images = j3["images"];
-    m_textures.resize(images.size());
-    for (unsigned int i = 0; i<images.size(); i++)
+    auto images = j3["images"];
+    if (images.size() > 0)
     {
-        std::string filename = images[i]["uri"];
+        m_textures.resize(images.size());
+        for (unsigned int i = 0; i<images.size(); i++)
+        {
+            std::string filename = images[i]["uri"];
 
-        filename[filename.size() - 3] = 'd';
-        filename[filename.size() - 2] = 'd';
-        filename[filename.size() - 1] = 's';
-
-        INT32 result = m_textures[i].InitFromFile(pDevice, pUploadHeap, (pGLTFData->m_path + filename).c_str());
+            INT32 result = m_textures[i].InitFromFile(pDevice, pUploadHeap, (pGLTFData->m_path + filename).c_str(), pluginManager, msghandler);
+        }
     }
     pUploadHeap->FlushAndFinish();
 
@@ -91,9 +90,11 @@ void GltfDepthPass::OnCreate(
     // Create materials (in a depth pass materials are still needed to handle non opaque textures
     //
     std::vector<DepthMaterial *> materialsData;
-    json::array_t materials = j3["materials"];
-    json::array_t textures = j3["textures"];
-    for (unsigned int i = 0; i < materials.size(); i++)
+    auto materials = j3["materials"];
+    auto textures = j3["textures"];
+    if ((materials.size() > 0) && (textures.size() > 0))
+    {
+        for (unsigned int i = 0; i < materials.size(); i++)
     {
         json::object_t material = materials[i];
 
@@ -151,12 +152,13 @@ void GltfDepthPass::OnCreate(
             }
         }
     }
+    }
 
     // Load Meshes
     //
-    json::array_t accessors = j3["accessors"];
-    json::array_t bufferViews = j3["bufferViews"];
-    json::array_t meshes = j3["meshes"];
+    auto accessors = j3["accessors"];
+    auto bufferViews = j3["bufferViews"];
+    auto meshes = j3["meshes"];
     m_meshes.resize(meshes.size());
     for (unsigned int i = 0; i < meshes.size(); i++)
     {
@@ -177,8 +179,8 @@ void GltfDepthPass::OnCreate(
             //
             tfAccessor indexBuffer;
             {
-                json::object_t indicesAccessor = accessors[primitive["indices"].get<int>()];
-                GetBufferDetails(&indicesAccessor, &bufferViews, &pGLTFData->buffersData, &indexBuffer);
+                auto indicesAccessor = accessors[primitive["indices"].get<int>()];
+                GetBufferDetails(indicesAccessor,bufferViews, pGLTFData->buffersData, &indexBuffer);
             }
 
             // Get input layout from glTF attributes
@@ -212,11 +214,11 @@ void GltfDepthPass::OnCreate(
 
                 semanticNames[cnt] = it.key();
 
-                json::object_t  accessor = accessors[it.value().get<int>()];
+                auto  accessor = accessors[it.value().get<int>()];
 
                 // Get VB accessors
                 //
-                GetBufferDetails(&accessor, &bufferViews, &pGLTFData->buffersData, &vertexBuffers[cnt]);
+                GetBufferDetails(accessor,bufferViews, pGLTFData->buffersData, &vertexBuffers[cnt]);
 
                 // Create Input Layout
                 //

@@ -421,10 +421,10 @@ void MeshObjLoader::BuildFinalVertices( const std::vector<ObjVertex3D>& vertices
 
     int count = 0;
     unsigned int i;
-    unsigned int vsize = vertices.size();
-    unsigned int nsize = normals.size();
-    unsigned int tsize = texCoords.size();
-    int progressFreq = faces.size() / 20;
+    unsigned int vsize = (unsigned int)vertices.size();
+    unsigned int nsize = (unsigned int)normals.size();
+    unsigned int tsize = (unsigned int)texCoords.size();
+    int progressFreq = (unsigned int)faces.size() / 20;
 
     for (i = 0; i < faces.size(); i++)
     {

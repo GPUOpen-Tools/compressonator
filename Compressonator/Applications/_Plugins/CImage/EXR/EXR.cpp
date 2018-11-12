@@ -64,6 +64,10 @@ IMath.lib;Half.lib;IlmImf.lib;IlmThread.lib;Iex.lib;zlibstatic_d.lib;
 
 #include <string> 
 #include "cExr.h"
+
+#pragma warning( push )
+#pragma warning(disable:4100)
+#pragma warning(disable:4800)
 #include <ImfTiledRgbaFile.h>
 #include <ImfHeader.h>
 #include <ImfMultiPartInputFile.h>
@@ -77,6 +81,9 @@ IMath.lib;Half.lib;IlmImf.lib;IlmThread.lib;Iex.lib;zlibstatic_d.lib;
 #include <ImfCompositeDeepScanLine.h>
 #include <ImfPixelType.h>
 #include <ImathFun.h>
+#pragma warning( pop )
+
+
 #include "Compressonator.h"
 
 // File system
@@ -148,7 +155,7 @@ int Plugin_EXR::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
 int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *srcTexture)
 {
 
-    if (!boost::filesystem::exists( pszFilename )) return -1;
+    if (!CMP_FileExists( pszFilename )) return -1;
 
     int width, height;
     string inf = pszFilename;
@@ -353,6 +360,8 @@ loadImage(const char fileName[],
             cerr << e.what() << endl;
         }
     }
+
+    return PE_OK;
 }
 
 int
@@ -482,6 +491,8 @@ loadTiledImage(const char fileName[],
         }
 
     }
+
+    return PE_OK;
 }
 
 
@@ -537,6 +548,8 @@ loadPreviewImage(const char fileName[],
         if (!allocateMipSet(pixels, pMipSet, w, h))
             return PE_Unknown;
     }
+
+    return PE_OK;
 }
 
 int
@@ -615,6 +628,9 @@ loadImageChannel(const char fileName[],
         
         return PE_Unknown;
     }
+
+    return PE_OK;
+
 }
 
 int
@@ -723,6 +739,9 @@ loadTiledImageChannel(const char fileName[],
         pixels.resizeErase(1);
         header.dataWindow() = Box2i(V2i(0, 0), V2i(0, 0));
     }
+
+    return PE_OK;
+
 }
 
 int
@@ -927,6 +946,9 @@ loadDeepScanlineImage(MultiPartInputFile &inmaster,
 
     if (!allocateMipSet(pixels, pMipSet, dw, dh))
         return PE_Unknown;
+
+    return PE_OK;
+
 }
 
 
@@ -1081,7 +1103,7 @@ loadDeepTileImage(MultiPartInputFile &inmaster,
             pixels[i].g = dataG[i][0];
             pixels[i].b = dataB[i][0];
 
-            for (int s = 1; s<sampleCount[i]; s++)
+            for (unsigned int s = 1; s<sampleCount[i]; s++)
             {
                 if (a >= 1.f)
                     break;
@@ -1118,98 +1140,107 @@ loadDeepTileImage(MultiPartInputFile &inmaster,
     if (!allocateMipSet(pixels, pMipSet, dw, dh))
         return PE_Unknown;
 
+    return PE_OK;
+
 }
 
 int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSet)
 {
-    if (!boost::filesystem::exists( pszFilename )) return -1;
+    if (!CMP_FileExists( pszFilename )) return -1;
 
     // uncomment the flag below to disable EXR mipmap loading / load only level 0
     // pMipSet->m_Flags |= MS_FLAG_DisableMipMapping;
     
     bool isTile = false;
+    
+    int miplevels = 1;
     try
     {
-        RgbaInputFile fileInfo(pszFilename);
-        isTile = Imf::isTiled(fileInfo.version());
-    }
-    catch (std::exception& e)
-    {
-        if (EXR_CMips)
-            EXR_CMips->PrintError(e.what());
-        return PE_Unknown;
-    }
-
-    pMipSet->m_format = CMP_FORMAT_ARGB_16F;
-
-    //handle mipmap exr load using Tile File
-    if (((isTile)) && (!(pMipSet->m_Flags & MS_FLAG_DisableMipMapping)))
-    {
         TiledRgbaInputFile file(pszFilename);
-
         if (!file.isComplete())
             return PE_Unknown;
 
-        CMP_DWORD dwWidth = file.levelWidth(0);
-        CMP_DWORD dwHeight = file.levelHeight(0);
+        // get mip level data from file, first get the number of mip levels stored
+        miplevels = (file.levelMode() == MIPMAP_LEVELS) ? file.numLevels() : 1;
 
-        if (!EXR_CMips->AllocateMipSet(pMipSet, CF_Float16, TDT_ARGB, TT_2D, dwWidth, dwHeight, 1))
+        if (miplevels > 1)
+            isTile = true;
+
+        pMipSet->m_format = CMP_FORMAT_ARGB_16F;
+        
+        //handle mipmap exr load using Tile File
+        if (((isTile)) && (!(pMipSet->m_Flags & MS_FLAG_DisableMipMapping)))
         {
-            return PE_Unknown;
-        }
-
-        pMipSet->m_dwFourCC = 0;
-        pMipSet->m_dwFourCC2 = 0;
-        pMipSet->m_nMipLevels = (file.levelMode() == MIPMAP_LEVELS) ? file.numLevels() : 1;
-
-        for (int i = 0; i < pMipSet->m_nMipLevels; i++)
-        {
-            if (!file.isValidLevel(i, i))
+            CMP_DWORD dwWidth = file.levelWidth(0);
+            CMP_DWORD dwHeight = file.levelHeight(0);
+        
+            if (!EXR_CMips->AllocateMipSet(pMipSet, CF_Float16, TDT_ARGB, TT_2D, dwWidth, dwHeight, 1))
             {
-                pMipSet->m_nMipLevels = i;
-                break;
-            }
-
-            dwWidth = file.levelWidth(i);
-            dwHeight = file.levelHeight(i);
-            Array2D<Rgba> pixels(dwHeight, dwWidth);
-            pixels.resizeErase(dwHeight, dwWidth);
-
-            file.setFrameBuffer(pixels[0], 1, dwWidth);
-            file.readTiles(0, file.numXTiles(i) - 1, 0, file.numYTiles(i) - 1, i);
-
-            // Allocate the permanent buffer and unpack the bitmap data into it
-            if (!EXR_CMips->AllocateMipLevelData(EXR_CMips->GetMipLevel(pMipSet, i), dwWidth, dwHeight, CF_Float16, pMipSet->m_TextureDataType))
                 return PE_Unknown;
-
-            Rgba2Texture(pixels, (CMP_HALF* )EXR_CMips->GetMipLevel(pMipSet, i)->m_pbData, dwWidth, dwHeight);
+            }
+        
+            pMipSet->m_dwFourCC = 0;
+            pMipSet->m_dwFourCC2 = 0;
+        
+            // if the mip levels stored in file is bigger then what we can handle reset the levels
+            // to match ours 
+            if (miplevels > pMipSet->m_nMaxMipLevels ) 
+                pMipSet->m_nMipLevels  = pMipSet->m_nMaxMipLevels;
+            else 
+                pMipSet->m_nMipLevels  = miplevels;
+        
+            // No get the mip level data.
+            for (int i = 0; i < pMipSet->m_nMipLevels; i++)
+            {
+                if (!file.isValidLevel(i, i))
+                {
+                    pMipSet->m_nMipLevels = i;
+                    break;
+                }
+        
+                dwWidth = file.levelWidth(i);
+                dwHeight = file.levelHeight(i);
+                Array2D<Rgba> pixels(dwHeight, dwWidth);
+                pixels.resizeErase(dwHeight, dwWidth);
+        
+                file.setFrameBuffer(pixels[0], 1, dwWidth);
+                file.readTiles(0, file.numXTiles(i) - 1, 0, file.numYTiles(i) - 1, i);
+        
+                // Allocate the permanent buffer and unpack the bitmap data into it
+                if (!EXR_CMips->AllocateMipLevelData(EXR_CMips->GetMipLevel(pMipSet, i), dwWidth, dwHeight, CF_Float16, pMipSet->m_TextureDataType))
+                    return PE_Unknown;
+        
+                Rgba2Texture(pixels, (CMP_HALF* )EXR_CMips->GetMipLevel(pMipSet, i)->m_pbData, dwWidth, dwHeight);
+            }
+            return PE_OK;
+        } // Tiled file
+    }
+    catch (...)
+    {
+        try
+        {
+            int numparts = 0;
+            MultiPartInputFile *infile = new MultiPartInputFile(pszFilename);
+            numparts = infile->parts();
+            delete infile;
         }
-        return PE_OK;
-    } // Tiled file
+        catch (IEX_NAMESPACE::BaseExc &e)
+        {
+            if (EXR_CMips)
+                EXR_CMips->PrintError(e.what());
+            return PE_Unknown;
+        }  
+    }
 
     //for non mipmap load
     const char *channel = 0;
     const char *layer = 0;
-    int numparts = 0;
-
-    try
-    {
-        MultiPartInputFile *infile = new MultiPartInputFile(pszFilename);
-        numparts = infile->parts();
-        delete infile;
-    }
-    catch (IEX_NAMESPACE::BaseExc &e)
-    {
-        cerr << "\n" << "ERROR:" << endl;
-        cerr << e.what() << endl;
-        return PE_Unknown;
-    }
-
+   
     Header header;
     Array<Rgba>pixels;
     Array<float*>zbuff;
     Array<unsigned int> sampleCount;
-    bool                deepComp;
+    bool                deepComp = false;
     bool preview = false;
     int zsize =0;
 
@@ -1263,8 +1294,6 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
     }
     return PE_OK;
 }
-
-
 
 int Plugin_EXR::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSet)
 {

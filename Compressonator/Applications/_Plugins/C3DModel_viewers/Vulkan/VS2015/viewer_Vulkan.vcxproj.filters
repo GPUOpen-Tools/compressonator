@@ -23,6 +23,9 @@
     <Filter Include="imgui\Vulkan">
       <UniqueIdentifier>{2bbc504a-c967-493c-bed0-884746096df5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\model_viewer">
+      <UniqueIdentifier>{20291b36-2b88-452b-8655-d85a27daf112}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Common\MIPS.cpp">
@@ -144,6 +147,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Common\gltf\Vulkan\GltfBBoxPassVK.cpp">
       <Filter>gltf\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\model_viewer\ModelTexture.cpp">
+      <Filter>Common\model_viewer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -286,6 +292,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Common\gltf\Vulkan\GltfBBoxPassVK.h">
       <Filter>gltf\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\model_viewer\ModelTexture.h">
+      <Filter>Common\model_viewer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

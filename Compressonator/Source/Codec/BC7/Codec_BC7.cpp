@@ -44,9 +44,14 @@
 
 
 //======================================================================================
-#define USE_MULTITHREADING  1
-
-
+#ifdef USE_FILEIO
+#include <stdio.h>
+FILE * bc7_File = NULL;
+int bc7_blockcount = 0;
+int bc7_total_MSE = 0;
+#else
+#define USE_MULTITHREADING 
+#endif
 
 //
 // Thread procedure for encoding a block
@@ -285,7 +290,7 @@ CodecError CCodec_BC7::InitializeBC7Library()
         // Create threaded encoder instances
         m_LiveThreads = 0;
         m_LastThread  = 0;
-        m_NumEncodingThreads = min(m_NumThreads, MAX_BC7_THREADS);
+        m_NumEncodingThreads = (CMP_WORD)min(m_NumThreads, MAX_BC7_THREADS);
         if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1; 
         m_Use_MultiThreading = m_NumEncodingThreads > 1;
 
@@ -380,6 +385,10 @@ CodecError CCodec_BC7::InitializeBC7Library()
 CodecError CCodec_BC7::EncodeBC7Block(double  in[BC7_BLOCK_PIXELS][MAX_DIMENSION_BIG],
     CMP_BYTE    *out)
 {
+#ifndef USE_MULTITHREADING
+    m_Use_MultiThreading = false;
+#endif
+
 if (m_Use_MultiThreading)
 {
     CMP_WORD   threadIndex;
@@ -468,6 +477,38 @@ if (m_Use_MultiThreading)
 return CE_OK;
 }
 
+
+#ifdef USE_THREADED_CALLBACKS
+//#include <atomic>
+//std::atomic<bool> cmp_bc7_end_process(false);
+//std::atomic<bool> cmp_bc7_progress_update(false);
+bool cmp_bc7_progress_update(false);
+
+CMP_PROGRESS_THREAD CCodec_BC7::m_progress           = {0.0f,false};
+Codec_Feedback_Proc CCodec_BC7::m_user_pFeedbackProc = nullptr;
+CMP_DWORD_PTR       CCodec_BC7::m_pUser1             = NULL;
+CMP_DWORD_PTR       CCodec_BC7::m_pUser2             = NULL;
+
+// Used by a none-blocking thread while compresion is in progress!
+void CCodec_BC7::Run()
+{
+    // printf("Block:");
+    // char ch = getchar();
+    while (!m_progress.abort)
+    {
+       if (cmp_bc7_progress_update)
+       {
+          cmp_bc7_progress_update = false;
+          if (m_user_pFeedbackProc)
+          {
+             m_progress.abort = m_user_pFeedbackProc(m_progress.progress,CCodec_BC7::m_pUser1,CCodec_BC7::m_pUser2);
+          }
+       }
+    }
+}
+#endif
+
+
 CodecError CCodec_BC7::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     assert(bufferIn.GetWidth()    == bufferOut.GetWidth());
@@ -478,6 +519,24 @@ CodecError CCodec_BC7::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut,
 
     CodecError err = InitializeBC7Library();
     if (err != CE_OK) return err;
+
+#ifdef USE_THREADED_CALLBACKS
+    // Create a progress thread that will track 
+    // the current progress of encoding 100% = done
+
+    m_user_pFeedbackProc            = pFeedbackProc;
+    m_pUser1                        = pUser1;
+    m_pUser2                        = pUser2;
+    cmp_bc7_progress_update         = false;
+    m_progress.abort                = false;
+    m_progress.progress             = 0.0f;
+
+    // Spawn a progress thread
+    std::thread *cmp_progress  = new  std::thread(CCodec_BC7::Run); // cmp_bc7_progress);
+#else
+     float progress;
+     float old_progress = FLT_MAX;
+#endif
 
 #ifdef BC7_COMPDEBUGGER
     CompViewerClient    CompClient;
@@ -493,8 +552,9 @@ CodecError CCodec_BC7::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut,
 
     const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
     const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
-    const CMP_DWORD dwBlocksXY = dwBlocksX*dwBlocksY;
-
+    const CMP_FLOAT fBlocksXY = dwBlocksX*dwBlocksY;
+    int lineAtPercent = (dwBlocksY * 0.01);
+    if (lineAtPercent <= 0)  lineAtPercent = 1;
 
     #ifdef USE_DBGTRACE
     DbgTrace(("IN : BufferType %d ChannelCount %d ChannelDepth %d",bufferIn.GetBufferType(),bufferIn.GetChannelCount(),bufferIn.GetChannelDepth()));
@@ -512,13 +572,24 @@ CodecError CCodec_BC7::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut,
     CMP_BYTE*    pInBuffer;
     pInBuffer    =  bufferIn.GetData();
 
-    CMP_DWORD block = 0;
+#ifdef USE_FILEIO
+    bc7_File = fopen("bc7_report.txt", "w");
+    bc7_blockcount = 0;
+    bc7_total_MSE = 0;
+#endif
 
+    CMP_DWORD block = 0;
     for(CMP_DWORD j = 0; j < dwBlocksY; j++)
     {
 
         for(CMP_DWORD i = 0; i < dwBlocksX; i++)
         {
+
+#ifdef USE_FILEIO
+            if (bc7_File)
+                fprintf(bc7_File, "\nBlock:%4d x=%3d y=%3d\n", bc7_blockcount++, i, j);
+#endif
+
             double blockToEncode[BLOCK_SIZE_4X4][CHANNEL_SIZE_ARGB];
             CMP_BYTE srcBlock[BLOCK_SIZE_4X4X4];
 
@@ -578,32 +649,111 @@ CodecError CCodec_BC7::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut,
                 CompClient.SendData(2, sizeof(destBlock), destBlock);
             }
 #endif
+#ifdef USE_FILEIO
+            // Analysis
+            double        blockToSave[16][4];
+            CMP_BYTE      cmp[16];
+            memcpy(cmp, pOutBuffer + block, 16);
 
+            m_decoder->DecompressBlock(blockToSave, cmp);
+
+            double bMSE = 0, gMSE = 0, rMSE = 0;
+            int    MSE = 0, PSNR = 0;
+
+            for (int y = 0; y < 16; y++) {
+                bMSE += pow(blockToSave[y][2] - blockToEncode[y][2], 2.0);
+                gMSE += pow(blockToSave[y][1] - blockToEncode[y][1], 2.0);
+                rMSE += pow(blockToSave[y][0] - blockToEncode[y][0], 2.0);
+            }
+
+            bMSE *= (1.0 / 16);
+            gMSE *= (1.0 / 16);
+            rMSE *= (1.0 / 16);
+            MSE = int((bMSE + gMSE + rMSE) / 3);
+
+            if (MSE == 0)
+            {
+                if (bc7_File)
+                    fprintf(bc7_File, "MSE 000 PSNR ---\n", MSE);
+            }
+            else
+            {
+                bc7_total_MSE += MSE;
+                PSNR = (int)(20 * log10(pow(2.0, 8.0) - 1) - 10 * log10(MSE));
+                if (bc7_File)
+                    fprintf(bc7_File, "MSE %3d PSNR %3d\n", MSE, PSNR);
+            }
+#endif
             block += 16;
         }
 
-        if(pFeedbackProc)
+#ifdef USE_THREADED_CALLBACKS
+        if(m_user_pFeedbackProc)
         {
-            float fProgress = 100.f * (j * dwBlocksX) / dwBlocksXY;
-            if(pFeedbackProc(fProgress, pUser1, pUser2))
+             m_progress.progress = 100.f * (j * dwBlocksX) / dwBlocksXY;
+            // Inform progress thread to update user feedback
+            cmp_bc7_progress_update = true;
+            
+            // Check if user abort the process
+            if (m_progress.abort)
             {
+                cmp_progress->detach();
+                delete cmp_progress;
                 #ifdef BC7_COMPDEBUGGER
                     CompClient.disconnect();
                 #endif
                 FinishBC7Encoding();
                 return CE_Aborted;
             }
+         }
+#else
+        if (pFeedbackProc)
+        {
+            if ((j % lineAtPercent) == 0)
+            {
+                progress = (j * dwBlocksX) / fBlocksXY;
+                if (progress != old_progress)
+                {
+                    old_progress = progress;
+                    if (pFeedbackProc(progress * 100.0f,pUser1,pUser2))
+                    {
+                        #ifdef BC7_COMPDEBUGGER
+                            CompClient.disconnect();
+                        #endif
+                        FinishBC7Encoding();
+                        return CE_Aborted;
+                    }
+                }
+            }
         }
-
+#endif
     }
 
-
+#ifdef USE_FILEIO
+    if (bc7_File)
+    {
+        if (bc7_blockcount == 0) bc7_blockcount = 1;
+        fprintf(bc7_File, "Total MSE %6d AVG_MSE %6d\n\n", bc7_total_MSE, bc7_total_MSE / bc7_blockcount);
+        fclose(bc7_File);
+        bc7_File = NULL;
+    }
+#endif
     #ifdef BC7_COMPDEBUGGER
     CompClient.disconnect();
     m_Use_MultiThreading = hold_UseMultitheading;
     #endif
 
-    return FinishBC7Encoding();
+#ifdef USE_THREADED_CALLBACKS
+    // Close progress thread Loop
+    m_progress.abort = true; 
+    cmp_progress->detach();
+    delete cmp_progress;
+#endif
+
+    // Close up remaining compression blocks
+    CodecError cError = FinishBC7Encoding();
+
+    return cError;
 }
 
 
@@ -620,7 +770,7 @@ CodecError CCodec_BC7::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOu
 
     const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
     const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
-    const CMP_DWORD dwBlocksXY = dwBlocksX*dwBlocksY;
+    const CMP_FLOAT fBlocksXY = dwBlocksX*dwBlocksY;
 
     for(CMP_DWORD j = 0; j < dwBlocksY; j++)
     {
@@ -666,7 +816,7 @@ CodecError CCodec_BC7::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOu
 
         if (pFeedbackProc)
         {
-            float fProgress = 100.f * (j * dwBlocksX) / dwBlocksXY;
+            float fProgress = 100.f * (j * dwBlocksX) / fBlocksXY;
             if (pFeedbackProc(fProgress, pUser1, pUser2))
             {
                 return CE_Aborted;

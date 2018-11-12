@@ -528,7 +528,17 @@ DXGI_FORMAT CMP2DXGIFormat(CMP_FORMAT cmp_format)
     case CMP_FORMAT_DXT5_xGxR:
     case CMP_FORMAT_ETC_RGB:
     case CMP_FORMAT_ETC2_RGB:
-    case CMP_FORMAT_GT:
+    case CMP_FORMAT_ETC2_SRGB:
+    case CMP_FORMAT_ETC2_RGBA:
+    case CMP_FORMAT_ETC2_RGBA1:
+    case CMP_FORMAT_ETC2_SRGBA:
+    case CMP_FORMAT_ETC2_SRGBA1:
+#ifdef USE_GTC
+    case CMP_FORMAT_GTC:
+#endif
+#ifdef USE_GTC_HDR
+    case CMP_FORMAT_GTCH:
+#endif
         // -----------------------------------
     case CMP_FORMAT_Unknown:
     default:
@@ -562,12 +572,12 @@ INT32 TextureDX12::InitFromFile(ID3D12Device* pDevice, UploadHeapDX12* pUploadHe
 
        DDS_HEADER_INFO dx10header =
        {
-           pMipSet->m_nWidth,//header->dwWidth,
-           pMipSet->m_nHeight, //header->dwHeight,
-           1,//header->dwDepth ? header->dwDepth : 1,
-           arraySize,
-           pMipSet->m_nMipLevels,
-           dxgiFormat
+           (UINT32)pMipSet->m_nWidth,//header->dwWidth,
+           (UINT32)pMipSet->m_nHeight, //header->dwHeight,
+           (UINT32)1,//header->dwDepth ? header->dwDepth : 1,
+           (UINT32)arraySize,
+           (UINT32)pMipSet->m_nMipLevels,
+           (UINT32)dxgiFormat
        };
 
        m_header = dx10header;

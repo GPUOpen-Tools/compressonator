@@ -197,7 +197,7 @@ void glTF_OGLDevice::DrawPlane()
 {
     float MinPos = -20.0f;
     float MaxPos = 20.0f;
-    float MajorGridSteps = 0.1;
+    float MajorGridSteps = 0.1f;
 
 
     m_world.setToIdentity();
@@ -208,7 +208,7 @@ void glTF_OGLDevice::DrawPlane()
     m_world.rotate(-m_yRot / 16.0f, 0, 1, 0);            // Along Y
     m_world.rotate(m_zRot / 16.0f, 0, 0, 1);            // Along Z
 
-    glColor3f(0.3, 0.3, 0.3);
+    glColor3f(0.3f, 0.3f, 0.3f);
 
     glBegin(GL_LINES);
     for (GLfloat i = MinPos; i <= MaxPos; i += MajorGridSteps)
@@ -314,7 +314,7 @@ void glTF_OGLDevice::initializeGL()
     glEnable(GL_CULL_FACE);
     glShadeModel(GL_SMOOTH);
 
-	int numVertices = m_meshdata.m_basemesh.vertices.size();
+	int numVertices = (int)m_meshdata.m_basemesh.vertices.size();
 
 	bool isCW = true;
 	for (int i = 0; i < numVertices; i++)

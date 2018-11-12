@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include "Compressonator.h"
-#include "Compressonator_Test_Helpers.h"
+#include "DDS_Helpers.h"
 
 using namespace CMP;
 

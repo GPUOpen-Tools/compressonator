@@ -107,9 +107,32 @@ void GetSupportedFileFormats(QList<QByteArray> &g_supportedFormats)
 
 }
 
+//----------------------------------------------------------
+// Compressonator Lib compute codec override
+//----------------------------------------------------------
+PluginInterface_Compute     *g_plugin_ComputeGTC = NULL;
+HPC_Compress                *g_CompressGTCCodec = NULL;
+extern void(*GTC_DecompressBlock)(void *out, void *in);
+extern void(*GTC_CompressBlock)(void * srcblock, void *dest, void *blockoptions);
+
+
+void g_GTC_DecompressBlock(void *in, void *out)
+{
+if (g_CompressGTCCodec)
+    g_CompressGTCCodec->Decompress(in, out);
+}
+
+void g_GTC_CompressBlock(void *in, void *out, void *blockoptions)
+{
+    if (g_CompressGTCCodec)
+    {
+        g_CompressGTCCodec->Compress(in, out, blockoptions);
+    }
+}
+
+
 int main(int argc, char **argv)
 {
-
     try
     {
         QApplication app(argc, argv);
@@ -123,6 +146,7 @@ int main(int argc, char **argv)
         // Mip Settings Class
         // ==========================
         g_GUI_CMIPS =  new CMIPS;
+        g_CMIPS     = new CMIPS;
 
         const QIcon iconPixMap(":/CompressonatorGUI/Images/compress.png");
         const QString ProductName = "Compressonator";
@@ -147,7 +171,29 @@ int main(int argc, char **argv)
     
         g_pluginManager.getPluginList("/plugins");
         g_bAbortCompression = false;
-    
+
+        //---------------------------------------
+        // attempt to load compute GTC Codec
+        //---------------------------------------
+        g_plugin_ComputeGTC = reinterpret_cast<PluginInterface_Compute *>(g_pluginManager.GetPlugin("COMPUTE", "GTC"));
+        // Found GTC Codec
+        if (g_plugin_ComputeGTC)
+        {
+            //-------------------------------
+            // create the compression  Codec
+            //-------------------------------
+            g_CompressGTCCodec = (HPC_Compress*)g_plugin_ComputeGTC->TC_Create();
+
+            //------------------------------------------------------------
+            // Assign compressonator lib GTC codec to Compute GTC Codec
+            //------------------------------------------------------------
+            if (g_CompressGTCCodec)
+            {
+                GTC_CompressBlock   = g_GTC_CompressBlock;
+                GTC_DecompressBlock = g_GTC_DecompressBlock;
+            }
+        }
+
         cpMainComponents mainComponents(NULL,NULL);
 
 #ifdef MSG_HANDLER
@@ -164,6 +210,17 @@ int main(int argc, char **argv)
         int ret = app.exec();
 
         delete g_GUI_CMIPS;
+        delete g_CMIPS;
+
+        //------------------------------------------
+        // Cleanup the compute GTC compression Codec
+        //------------------------------------------
+        if (g_plugin_ComputeGTC)
+        {
+            if (g_CompressGTCCodec)
+                g_plugin_ComputeGTC->TC_Destroy(g_CompressGTCCodec);
+            delete  g_plugin_ComputeGTC;
+        }
 
         return ret;
 

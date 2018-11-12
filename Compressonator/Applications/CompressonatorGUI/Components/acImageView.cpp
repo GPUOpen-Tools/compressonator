@@ -28,6 +28,8 @@
 
 #define CURSOR_SIZE 12 // pixel per cross hair fin
 
+extern void loadExrProperties(CMIPS *m_CMips, MipSet* mipset, int level, QImage *image, CMP_CompressOptions option);
+
 acImageView::~acImageView()
 {
     if (m_imageloader)
@@ -899,14 +901,14 @@ void acImageView::onExrExposureChanged(double value)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
     if (!m_imageloader) return;
 
-    m_imageloader->exposure = float(value);
+    m_imageloader->m_options.fInputExposure = float(value);
 
     QImage image((m_imageItem_Processed->pixmap()).toImage());
 
     if (m_MipImages->mipset->m_compressed)
-        m_imageloader->loadExrProperties(m_MipImages->decompressedMipSet, m_currentMiplevel, &image);
+        loadExrProperties(m_imageloader->getCMips(), m_MipImages->decompressedMipSet, m_currentMiplevel, &image, m_imageloader->m_options);
     else
-        m_imageloader->loadExrProperties(m_MipImages->mipset, m_currentMiplevel, &image);
+        loadExrProperties(m_imageloader->getCMips(), m_MipImages->mipset, m_currentMiplevel, &image, m_imageloader->m_options);
 
     m_imageItem_Processed->setPixmap(QPixmap::fromImage(image));
 
@@ -920,14 +922,14 @@ void acImageView::onExrDefogChanged(double value)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
     if (!m_imageloader) return;
 
-    m_imageloader->defog = float(value);
+    m_imageloader->m_options.fInputDefog = float(value);
 
     QImage image((m_imageItem_Processed->pixmap()).toImage());
 
     if (m_MipImages->mipset->m_compressed)
-        m_imageloader->loadExrProperties(m_MipImages->decompressedMipSet, m_currentMiplevel, &image);
+        loadExrProperties(m_imageloader->getCMips(), m_MipImages->decompressedMipSet, m_currentMiplevel, &image, m_imageloader->m_options);
     else
-        m_imageloader->loadExrProperties(m_MipImages->mipset, m_currentMiplevel, &image);
+        loadExrProperties(m_imageloader->getCMips(), m_MipImages->mipset, m_currentMiplevel, &image, m_imageloader->m_options);
 
     m_imageItem_Processed->setPixmap(QPixmap::fromImage(image));
 
@@ -942,14 +944,14 @@ void acImageView::onExrKneeLowChanged(double value)
 
     if (!m_imageloader) return;
 
-    m_imageloader->kneeLow= float(value);
+    m_imageloader->m_options.fInputKneeLow= float(value);
 
     QImage image((m_imageItem_Processed->pixmap()).toImage());
 
     if (m_MipImages->mipset->m_compressed)
-        m_imageloader->loadExrProperties(m_MipImages->decompressedMipSet, m_currentMiplevel, &image);
+        loadExrProperties(m_imageloader->getCMips(), m_MipImages->decompressedMipSet, m_currentMiplevel, &image, m_imageloader->m_options);
     else
-        m_imageloader->loadExrProperties(m_MipImages->mipset, m_currentMiplevel, &image);
+        loadExrProperties(m_imageloader->getCMips(), m_MipImages->mipset, m_currentMiplevel, &image, m_imageloader->m_options);
 
     m_imageItem_Processed->setPixmap(QPixmap::fromImage(image));
 
@@ -963,14 +965,14 @@ void acImageView::onExrKneeHighChanged(double value)
         if (m_MipImages->m_Error != MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) return;
     if (!m_imageloader) return;
 
-    m_imageloader->kneeHigh = float(value);
+    m_imageloader->m_options.fInputKneeHigh = float(value);
 
     QImage image((m_imageItem_Processed->pixmap()).toImage());
 
     if (m_MipImages->mipset->m_compressed)
-        m_imageloader->loadExrProperties(m_MipImages->decompressedMipSet, m_currentMiplevel, &image);
+        loadExrProperties(m_imageloader->getCMips(), m_MipImages->decompressedMipSet, m_currentMiplevel, &image, m_imageloader->m_options);
     else
-        m_imageloader->loadExrProperties(m_MipImages->mipset, m_currentMiplevel, &image);
+        loadExrProperties(m_imageloader->getCMips(), m_MipImages->mipset, m_currentMiplevel, &image, m_imageloader->m_options);
 
     m_imageItem_Processed->setPixmap(QPixmap::fromImage(image));
 
@@ -985,14 +987,14 @@ void acImageView::onExrGammaChanged(double value)
 
     if (!m_imageloader) return;
 
-    m_imageloader->gamma = float(value);
+    m_imageloader->m_options.fInputGamma = float(value);
 
     QImage image((m_imageItem_Processed->pixmap()).toImage());
 
     if (m_MipImages->mipset->m_compressed)
-        m_imageloader->loadExrProperties(m_MipImages->decompressedMipSet, m_currentMiplevel, &image);
+        loadExrProperties(m_imageloader->getCMips(), m_MipImages->decompressedMipSet, m_currentMiplevel, &image, m_imageloader->m_options);
     else
-        m_imageloader->loadExrProperties(m_MipImages->mipset, m_currentMiplevel, &image);
+        loadExrProperties(m_imageloader->getCMips(), m_MipImages->mipset, m_currentMiplevel, &image, m_imageloader->m_options);
 
     m_imageItem_Processed->setPixmap(QPixmap::fromImage(image));
 

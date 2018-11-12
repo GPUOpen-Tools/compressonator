@@ -61,11 +61,10 @@ inline int NBits(int n, bool bIsSigned)
     }
 }
 
-
 float F16toF32(float f)
 {
     half A;
-    A.setBits(f);
+    A.setBits((unsigned short)f);
     return((float)A);
 }
 
@@ -98,10 +97,10 @@ int QuantizeToInt(short value, int prec, bool signedfloat16, float exposure)
 
     if (prec <= 1) return 0;
     bool negvalue = false;
-
+    
     // move data to use extra bits for processing
     int ivalue = value;
-
+    
     if (signedfloat16)
     {
         if (value < 0)
@@ -117,7 +116,7 @@ int QuantizeToInt(short value, int prec, bool signedfloat16, float exposure)
         if (value < 0)
             value = 0;
     }
-
+    
     int iQuantized;
     int bias = (prec > 10 && prec != 16) ? ((1 << (prec - 11)) - 1) : 0;
     bias = (prec == 16) ? 15 : bias;
@@ -1161,7 +1160,7 @@ void GetEndPoints(float EndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG
         // Is round best for this !
         for (int c = 0; c < MAX_DIMENSION_BIG; c++)
         {
-                EndPoints[subset][0][c] = outB[subset][mini][c];
+            EndPoints[subset][0][c] = outB[subset][mini][c];
         }
 
         for (int c = 0; c < MAX_DIMENSION_BIG; c++)
@@ -2100,7 +2099,10 @@ for (i = 0; i< numEntries; i++)
 #ifndef USE_NEWRAMP
         out[i][j] = ramp[p1][p2][p3][p4][p5];
 #else
+#pragma warning( push )
+#pragma warning(disable:4244)
         out[i][j] = (int)rampf(p1, p2, p3, p4, p5);
+#pragma warning( pop )
 #endif
     }
 }

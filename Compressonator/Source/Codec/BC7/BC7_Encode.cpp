@@ -42,6 +42,10 @@
 #include "compclient.h"
 #endif
 
+#ifdef USE_FILEIO
+#include <stdio.h>
+extern FILE * bc7_File;
+#endif
 
 // Threshold quality below which we will always run fast quality and shaking
 // Selfnote: User should be able to set this?
@@ -797,10 +801,11 @@ static CMP_DWORD   componentRotations[4][4] =
 void BC7BlockEncoder::EncodeDualIndexBlock(CMP_DWORD blockMode,
     CMP_DWORD indexSelection,
     CMP_DWORD componentRotation,
-                                           int endpoint[2][2][MAX_DIMENSION_BIG],
-                                           int indices[2][MAX_SUBSET_SIZE],
+    int endpoint[2][2][MAX_DIMENSION_BIG],
+    int indices[2][MAX_SUBSET_SIZE],
     CMP_BYTE   out[COMPRESSED_BLOCK_SIZE])
 {
+
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif

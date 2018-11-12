@@ -273,6 +273,7 @@ void acProgressDlg::ConnectCancelEvents()
 
 void acProgressDlg::mousePressEvent(QMouseEvent* e)
 {
+    Q_UNUSED(e);
     m_mouseDown = true;
 }
 

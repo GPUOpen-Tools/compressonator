@@ -7,13 +7,13 @@ set BUILD_VULKANDIR=%6
 set _DEBUG=%7
 
 echo ---------------------------------------
-echo QT      : [%BUILD_QTDIR%]
-echo OPENCV  : [%BUILD_OPENCV_DIR%]
-echo OUTPUT  : [%BUILD_OUTDIR%]
-echo ROOT    : [%BUILD_ROOT%]
-echo GLEW    : [%BUILD_GLEWDIR%]
-echo VULKAN  : [%BUILD_VULKANDIR%]
-echo DEBUG   : [%_DEBUG%]
+echo QT                 : [%BUILD_QTDIR%]
+echo OPENCV             : [%BUILD_OPENCV_DIR%]
+echo OUTPUT             : [%BUILD_OUTDIR%]
+echo ROOT               : [%BUILD_ROOT%]
+echo GLEW               : [%BUILD_GLEWDIR%]
+echo VULKAN             : [%BUILD_VULKANDIR%]
+echo DEBUG              : [%_DEBUG%]
 echo ---------------------------------------
 
 echo on
@@ -27,8 +27,8 @@ XCopy /r /d /y "%BUILD_OPENCV_DIR%opencv_highgui249%_DEBUG%.dll"         %BUILD_
 XCopy /r /d /y "%BUILD_ROOT%\Applications\_Plugins\CGPUDecode\Vulkan\VK_ComputeShader\texture.vert.spv"       %BUILD_OUTDIR%
 XCopy /r /d /y "%BUILD_ROOT%\Applications\_Plugins\CGPUDecode\Vulkan\VK_ComputeShader\texture.frag.spv"       %BUILD_OUTDIR%
 
-IF NOT EXIST %BUILD_OUTDIR%Compute mkdir %BUILD_OUTDIR%Compute 
-XCopy /r /d /y "%BUILD_ROOT%\Compute\*.*"                                               %BUILD_OUTDIR%\Compute\
+REM IF NOT EXIST %BUILD_OUTDIR%Compute mkdir %BUILD_OUTDIR%Compute 
+REM XCopy /r /d /y "%BUILD_ROOT%\Compute\*.*"                                               %BUILD_OUTDIR%\Compute\
 
 IF NOT EXIST %BUILD_OUTDIR%plugins mkdir %BUILD_OUTDIR%plugins 
 
@@ -40,6 +40,7 @@ IF NOT EXIST %BUILD_OUTDIR%plugins\imageformats mkdir %BUILD_OUTDIR%plugins\imag
 
 XCopy /r /d /y "%BUILD_QTDIR%\plugins\imageformats\qtga%_DEBUG%.dll"  %BUILD_OUTDIR%plugins\imageformats\
 XCopy /r /d /y "%BUILD_QTDIR%\plugins\imageformats\qtiff%_DEBUG%.dll" %BUILD_OUTDIR%plugins\imageformats\
+XCopy /r /d /y "%BUILD_QTDIR%plugins\imageformats\qjpeg%_DEBUG%.dll" %BUILD_OUTDIR%plugins\imageformats\
 
 IF NOT EXIST %BUILD_OUTDIR%plugins\platforms mkdir %BUILD_OUTDIR%plugins\platforms
 

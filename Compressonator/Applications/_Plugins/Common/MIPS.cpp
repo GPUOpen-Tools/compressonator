@@ -41,11 +41,34 @@ void PrintInfo(const char* Format, ... )
         char buff[1024];
         // process the arguments into our debug buffer
         va_start(args, Format);
-        vsprintf(buff, Format, args);
+        vsnprintf(buff, 1024, Format, args);
         va_end(args);
         PrintStatusLine(buff);
     }
 }
+
+int MaxFacesOrSlices(const MipSet* pMipSet, int nMipLevel)
+{
+    if (!pMipSet)
+        return 0;
+
+    if (pMipSet->m_nDepth < 1)
+        return 0;
+
+    if (pMipSet->m_TextureType == TT_2D || pMipSet->m_TextureType == TT_CubeMap)
+        return pMipSet->m_nDepth;
+
+    int nMaxSlices = pMipSet->m_nDepth;
+    for (int i = 0; i<pMipSet->m_nMipLevels; i++)
+    {
+        if (i == nMipLevel)
+            return nMaxSlices;
+
+        nMaxSlices = nMaxSlices>1 ? nMaxSlices >> 1 : 1;    //div by 2, min of 1
+    }
+    return 0;    //nMipLevel was too high
+}
+
 
 MipLevel* CMIPS::GetMipLevel(const MipSet* pMipSet, int nMipLevel,    int nFaceOrSlice)
 {
@@ -112,9 +135,13 @@ MipLevel* CMIPS::GetMipLevel(const MipSet* pMipSet, int nMipLevel,    int nFaceO
     }
 }
 
+// Mip Levels are coded as follows
+// 1 is original size 2 = 1/2 size 3 = 1/4 size etc...
+// this value is based on arrays been MipMap[maxMipLevels]
 int CMIPS::GetMaxMipLevels(int nWidth, int nHeight, int nDepth)
 {
-    int maxMipLevels = 1;
+    int maxMipLevels = 0;
+
     assert(nWidth > 0 && nHeight > 0 && nDepth > 0);
 
     while (nWidth >= 1 || nHeight >= 1 || nDepth > 1)
@@ -123,18 +150,19 @@ int CMIPS::GetMaxMipLevels(int nWidth, int nHeight, int nDepth)
 
         if (nWidth == 1 || nHeight == 1)
             break;
+
         //div by 2
-        nWidth = nWidth>1 ? nWidth>>1 : 1;
+        nWidth  = nWidth >1 ? nWidth >>1 : 1;
         nHeight = nHeight>1 ? nHeight>>1 : 1;
-        nDepth = nDepth>1 ? nDepth>>1 : 1;
- 
+        nDepth  = nDepth >1 ? nDepth >>1 : 1;
     }
+
     return maxMipLevels;
 }
 
 bool CMIPS::AllocateMipLevelTable(MipLevelTable** ppMipLevelTable, int nMaxMipLevels, TextureType textureType, int nDepth, int& nLevelsToAllocate
 #ifdef USE_MIPSET_FACES
-    , int nFaces = 0
+    , int nFaces
 #endif
 )
 {
@@ -213,7 +241,7 @@ bool CMIPS::AllocateAllMipLevels(MipLevelTable* pMipLevelTable, TextureType /*te
 
 bool CMIPS::AllocateMipSet(MipSet* pMipSet, ChannelFormat channelFormat, TextureDataType textureDataType, TextureType textureType, int nWidth, int nHeight, int nDepth
 #ifdef USE_MIPSET_FACES
-    , int nFaces = 0
+    , int nFaces
 #endif
 )
 {
@@ -228,8 +256,10 @@ bool CMIPS::AllocateMipSet(MipSet* pMipSet, ChannelFormat channelFormat, Texture
     }
     //depth only matters for this when its volume texture
     pMipSet->m_nMaxMipLevels = GetMaxMipLevels(nWidth, nHeight, textureType==TT_VolumeTexture ? nDepth : 1);
+
     if(pMipSet->m_nMipLevels > pMipSet->m_nMaxMipLevels || pMipSet->m_nMipLevels < 0)
         pMipSet->m_nMipLevels = 0;
+
     pMipSet->m_ChannelFormat = channelFormat;
     pMipSet->m_TextureDataType = textureDataType;
     pMipSet->m_TextureType = textureType;
@@ -417,7 +447,7 @@ void CMIPS::PrintError(const char* Format, ... )
     va_list args;
     // process the arguments into our debug buffer
     va_start(args, Format);
-    vsprintf(buff,Format,args);
+    vsnprintf(buff,1024,Format,args);
     va_end(args);
 
     PrintInfo(buff);
@@ -434,7 +464,7 @@ void CMIPS::Print(const char* Format, ...)
         va_list args;
         // process the arguments into our debug buffer
         va_start(args, Format);
-        vsprintf(buff, Format, args);
+        vsnprintf(buff, 1024, Format, args);
         va_end(args);
 
         PrintLine(buff);
@@ -450,4 +480,61 @@ void CMIPS::SetProgress(unsigned int value)
 }
 
 
+bool CMIPS::AllocateDestBuffer(MipSet *SourceTexture, CMP_FORMAT format, MipSet *DestTexture)
+{
+    CMIPS cMips;
+    MipLevel* pInMipLevel   = cMips.GetMipLevel(SourceTexture, 0);
+    SourceTexture->dwWidth       = pInMipLevel->m_nWidth;
+    SourceTexture->dwHeight      = pInMipLevel->m_nHeight;
+    SourceTexture->dwDataSize    = pInMipLevel->m_dwLinearSize;
+    SourceTexture->pData         = pInMipLevel->m_pbData;
+    SourceTexture->m_swizzle      = false;
+
+    memset(DestTexture, 0, sizeof(MipSet));
+    DestTexture->m_Flags = MS_FLAG_Default;
+
+    //----------------------------------------------------------------
+    // Allocate the compression buffer and miplevel tables
+    //----------------------------------------------------------------
+    DestTexture->m_nHeight       = SourceTexture->m_nHeight;
+    DestTexture->m_nWidth        = SourceTexture->m_nWidth;
+    DestTexture->dwWidth         = pInMipLevel->m_nWidth;
+    DestTexture->dwHeight        = pInMipLevel->m_nHeight;
+    DestTexture->m_ChannelFormat = CF_Compressed;
+    DestTexture->m_format        = format;
+    DestTexture->m_dwFourCC      = FOURCC_DX10;
+    DestTexture->m_nBlockHeight  = 4;
+    DestTexture->m_nBlockWidth   = 4;
+    DestTexture->m_nMaxMipLevels = SourceTexture->m_nMaxMipLevels;
+    DestTexture->m_nMipLevels    = 1;
+    if (!cMips.AllocateMipSet(DestTexture, CF_8bit, TDT_ARGB, TT_2D, SourceTexture->m_nWidth, SourceTexture->m_nHeight, 1))
+    {
+        // std::printf("Memory Error(1): allocating MIPSet Compression buffer\n");
+        return false;
+    }
+
+    //----------------------------------------------------------------
+    // Access the data table for mip level 0 (full texture width and height)
+    //----------------------------------------------------------------
+    MipLevel* pOutMipLevel = cMips.GetMipLevel(DestTexture, 0);
+
+    //----------------------------------------------------------------
+    // Calculate the target compressed block buffer size (4 bytes x 4 bytes)
+    //----------------------------------------------------------------
+    unsigned int Width  = ((SourceTexture->m_nWidth  + 3) / 4) * 4;
+    unsigned int Height = ((SourceTexture->m_nHeight + 3) / 4) * 4;
+    DestTexture->dwDataSize  = Width * Height;
+
+    //----------------------------------------------------------------
+    // Allocate memory for the mip level 0
+    //----------------------------------------------------------------
+    if (!cMips.AllocateCompressedMipLevelData(pOutMipLevel, DestTexture->dwWidth, DestTexture->dwHeight, DestTexture->dwDataSize))
+    {
+        //std::printf("Memory Error(1): allocating MIPSet compression level data buffer\n");
+        return false;
+    }
+
+    DestTexture->pData            = pOutMipLevel->m_pbData;
+    return true;
+}
 

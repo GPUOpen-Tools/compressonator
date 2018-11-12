@@ -324,7 +324,7 @@ void GenerateMipLevelF(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, MipLe
                         memcpy(c4, pSrc2, sizeof(c4));
                     }
                     for (int i = 0; i<4; i++)
-                        *pDst++ = (c1[i] + c2[i] + c3[i] + c4[i]) / 4.f;
+                        *pDst++ = (c1[i] + c2[i] + c3[i] + c4[i]) / T(4.f);
                 }
             }
         }
@@ -373,7 +373,7 @@ void GenerateMipLevelF(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, MipLe
                         memcpy(c8, pOtherSrc2, sizeof(c8));
                     }
                     for (int i = 0; i<4; i++)
-                        *pDst++ = (c1[i] + c2[i] + c3[i] + c4[i] + c5[i] + c6[i] + c7[i] + c8[i]) / 8.f;
+                        *pDst++ = (c1[i] + c2[i] + c3[i] + c4[i] + c5[i] + c6[i] + c7[i] + c8[i]) / T(8.f);
                 }
             }
         }

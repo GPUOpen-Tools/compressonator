@@ -88,9 +88,16 @@ void RenderWindow::DisableWindowContext(HWND hWnd, HDC hDC, HGLRC hRC)
     ReleaseDC(hWnd, hDC);
 }
 
-HRESULT RenderWindow::InitWindow(HINSTANCE hInstance, int width, int height,WNDPROC callback)
+HRESULT RenderWindow::InitWindow(int width, int height,WNDPROC callback)
 {
-    if (!FindWindowA(str_WindowsClassName, str_WindowName))
+    if (m_hInstance == 0)
+    {
+        m_hInstance = GetModuleHandle(NULL);
+        sprintf(m_strWindowName, "%s_%x_%d_%d", str_WindowName, m_hInstance,width,height);
+        sprintf(m_strWindowClassName, "%s_%x_%d_%d", str_WindowsClassName, m_hInstance, width, height);
+    }
+
+    if (!FindWindowA(m_strWindowClassName, m_strWindowName))
     {
         // Register class
         WNDCLASSEX wcex;
@@ -102,18 +109,18 @@ HRESULT RenderWindow::InitWindow(HINSTANCE hInstance, int width, int height,WNDP
             wcex.lpfnWndProc = WndProc2;
         wcex.cbClsExtra = 0;
         wcex.cbWndExtra = 0;
-        wcex.hInstance = hInstance;
+        wcex.hInstance = m_hInstance;
         wcex.hIcon = LoadIcon(NULL, IDI_APPLICATION);;
         wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
         wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
         wcex.lpszMenuName = nullptr;
-        wcex.lpszClassName = str_WindowsClassName;
+        wcex.lpszClassName = m_strWindowClassName;
         wcex.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
-
 
         if (!RegisterClassEx(&wcex))
         {
             PrintInfo("Error: RegisterClass failed.\n");
+            fprintf(stderr, "[OpenGL Decode] Error: CreateWindow Failed.\n");
             return E_FAIL;
         }
     }
@@ -121,20 +128,21 @@ HRESULT RenderWindow::InitWindow(HINSTANCE hInstance, int width, int height,WNDP
     // Create window
     m_hWnd = CreateWindowEx(
                            WS_EX_APPWINDOW,
-                           str_WindowsClassName, 
-                           str_WindowName, 
+                           m_strWindowClassName, 
+                           m_strWindowName,
                            WS_POPUP,// WS_OVERLAPPEDWINDOW,
                            0, 0, 
                            width,
                            height,
                            nullptr, 
                            nullptr, 
-                           hInstance,
+                           m_hInstance,
                            nullptr);
 
     if (!m_hWnd)
     {
         PrintInfo("Error: CreateWindow Failed.\n");
+        fprintf(stderr, "[OpenGL Decode] Error: CreateWindow Failed.\n");
         return E_FAIL;
     }
 

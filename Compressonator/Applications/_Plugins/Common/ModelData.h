@@ -47,14 +47,14 @@ struct CMP_DracoOptions
     CMP_DracoOptions()
     {
         is_point_cloud = false;
-        pos_quantization_bits = 14;
-        tex_coords_quantization_bits = 12;
+        pos_quantization_bits = CMP_MESH_POS_BITS;
+        tex_coords_quantization_bits = CMP_MESH_TEXC_BITS;
         tex_coords_deleted = false;
-        normals_quantization_bits = 10;
+        normals_quantization_bits = CMP_MESH_NORMAL_BITS;
         normals_deleted = false;
-        generic_quantization_bits = 8;
+        generic_quantization_bits = CMP_MESH_GENERIC_BITS;
         generic_deleted = false;
-        compression_level = 7;
+        compression_level = CMP_MESH_COMP_LEVEL;
         use_metadata = false;
         m_bDecode = false;
         m_bLoadedMesh = true;

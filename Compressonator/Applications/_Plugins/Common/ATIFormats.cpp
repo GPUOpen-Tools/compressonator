@@ -75,12 +75,22 @@ CMP_FormatDesc g_FormatDesc[] =
    {CMP_FORMAT_ATC_RGBA_Interpolated,   "ATC_RGBA_INTERPOLATED"},
    {CMP_FORMAT_ETC_RGB,                 "ETC_RGB"},
    {CMP_FORMAT_ETC2_RGB,                "ETC2_RGB" },
+   {CMP_FORMAT_ETC2_RGBA,               "ETC2_RGBA" },
+   {CMP_FORMAT_ETC2_RGBA1,              "ETC2_RGBA1" },
+#ifdef ENABLE_USER_ETC2S_FORMATS
+   {CMP_FORMAT_ETC2_SRGB,               "ETC2_SRGB" },
+   {CMP_FORMAT_ETC2_SRGBA,              "ETC2_SRGBA" },
+   {CMP_FORMAT_ETC2_SRGBA1,             "ETC2_SRGBA1" },
+#endif
    {CMP_FORMAT_BC6H,                    "BC6H"},
    {CMP_FORMAT_BC6H_SF,                 "BC6H_SF" },
    {CMP_FORMAT_BC7,                     "BC7"},
    {CMP_FORMAT_ASTC,                    "ASTC"},
-#ifdef USE_GT
-   { CMP_FORMAT_GT,                      "GT" },
+#ifdef USE_GTC
+   { CMP_FORMAT_GTC,                    "GTC" },
+#endif
+#ifdef USE_GTC_HDR
+   { CMP_FORMAT_GTCH,                   "GTCH" },
 #endif
 };
 

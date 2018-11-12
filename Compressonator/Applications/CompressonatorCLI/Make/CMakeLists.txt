@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.8)
 
-project (CompressonatorCLI)
+project (CompressonatorCLI-bin)
 
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 0)
@@ -10,7 +10,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 add_definitions(-DDISABLE_TESTCODE)
 endif()
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 add_definitions(-D_LINUX)
 endif()
 
@@ -75,10 +75,12 @@ endif()
 
 list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/")
 list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../../Header/")
+list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../../Header/Compute_Lib")
 list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../../Header/Codec/ASTC/ARM/")
 list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../../Header/Codec/ASTC/")
 list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/CMP_MeshCompressor/Draco/src/")
 list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/CMP_MeshOptimizer/")
+list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../../Compute/")
 list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/gltf/")
 list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/json/")
 list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/CMesh/mesh_optimizer/")
@@ -94,6 +96,7 @@ file(GLOB_RECURSE CMP_MESHOPT_SRC "${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/C
 list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/ATIFormats.cpp")
 list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/cmdline.cpp")
 list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/MIPS.cpp")
+list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/CMP_FileIO.cpp")
 list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/PluginManager.cpp")
 list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/TextureIO.cpp")
 list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/gltf/GltfCommon.cpp")
@@ -105,11 +108,11 @@ list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../_Plugins/Common/Mod
 list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../Source/CompressonatorCLI.cpp")
 
 
-add_executable(CompressonatorCLI ${CMP_SOURCES1} ${CMP_MESHOPT_SRC})
+add_executable(CompressonatorCLI-bin ${CMP_SOURCES1} ${CMP_MESHOPT_SRC})
 
 # (ubuntu only)uncomment below to rebuild all the dependency libraries from cmake 
 #if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-#add_dependencies(CompressonatorCLI dependencyLibs)
+#add_dependencies(CompressonatorCLI-bin dependencyLibs)
 #endif()
 
 
@@ -172,7 +175,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "Darwi
         message(FATAL_ERROR "Package glew are required, but not found. In Unix, run initsetup_unix.sh to install the prerequisite libs.")
     endif()
 
-    target_link_libraries(CompressonatorCLI ${CMP_LIBS} Qt5::Core Qt5::Gui) 
+    target_link_libraries(CompressonatorCLI-bin ${CMP_LIBS} Qt5::Core Qt5::Gui) 
 
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
@@ -207,5 +210,9 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
     find_package(Qt5Widgets)
 
-    target_link_libraries(CompressonatorCLI ${CMP_LIBS} Qt5::Core Qt5::Gui Qt5::Widgets) 
+    target_link_libraries(CompressonatorCLI-bin ${CMP_LIBS} Qt5::Core Qt5::Gui Qt5::Widgets) 
 endif()
+
+
+
+

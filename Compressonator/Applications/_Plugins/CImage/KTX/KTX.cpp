@@ -40,9 +40,6 @@
 #include "TextureIO.h"
 #endif
 
-// Feature is been removed as of Aug 2016
-// #define CMP_Texture_IO_SUPPORTED
-
 #pragma comment(lib, "opengl32.lib")        // Open GL
 #pragma comment(lib, "Glu32.lib")           // Glu 
 #pragma comment(lib, "glew32.lib")          // glew 1.13.0
@@ -96,461 +93,11 @@ int Plugin_KTX::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
 
 int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *srcTexture)
 {
-#ifdef _WIN32
-#ifdef CMP_Texture_IO_SUPPORTED
-    assert(pszFilename);
-
-    FILE* pFile = NULL;
-    pFile = fopen(&pFile, pszFilename, ("rb")) ;
-    if (pFile == NULL)
-    {
-        return -1;
-    }
-
-    //using libktx
-    KTX_header fheader;
-    KTX_texinfo texinfo;
-    if (fread(&fheader, sizeof(KTX_header), 1, pFile) != 1)
-    {
-        fclose(pFile);
-        return -1;
-    }
-
-    if (_ktxCheckHeader(&fheader, &texinfo) != KTX_SUCCESS)
-    {
-        fclose(pFile);
-        return -1;
-    }
-
-    memset(srcTexture, 0, sizeof(*srcTexture));
-    srcTexture->dwSize = sizeof(*srcTexture);
-    srcTexture->dwWidth = fheader.pixelWidth;
-    srcTexture->dwHeight = fheader.pixelHeight;
-    srcTexture->dwPitch = 0;
-
-    if (texinfo.compressed)
-    {
-        srcTexture->nBlockHeight = 4;
-        srcTexture->nBlockWidth = 4;
-        srcTexture->nBlockDepth = 1;
-
-        //todo: add in texture data type; 1D, 2D etc, please refer to load texture mipset
-        switch (fheader.glInternalFormat)
-        {
-        case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
-            srcTexture->format = CMP_FORMAT_BC1;
-            break;
-        case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-            srcTexture->format = CMP_FORMAT_BC1;
-            break;
-        case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-            srcTexture->format = CMP_FORMAT_BC2;
-            break;
-        case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
-            srcTexture->format = CMP_FORMAT_BC3;
-            break;
-        case RGB_BP_UNorm:
-            srcTexture->format = CMP_FORMAT_BC7;
-            break;
-        case R_ATI1N_UNorm:
-            srcTexture->format = CMP_FORMAT_ATI1N;
-            break;
-        case R_ATI1N_SNorm:
-            srcTexture->format = CMP_FORMAT_ATI2N;
-            break;
-        case RG_ATI2N_UNorm:
-            srcTexture->format = CMP_FORMAT_ATI2N_XY;
-            break;
-        case RG_ATI2N_SNorm:
-            srcTexture->format = CMP_FORMAT_ATI2N_DXT5;
-            break;
-        case RGB_BP_UNSIGNED_FLOAT:
-            srcTexture->format = CMP_FORMAT_BC6H;
-            break;
-        case RGB_BP_SIGNED_FLOAT:
-            srcTexture->format = CMP_FORMAT_BC6H;
-            break;
-        case ATC_RGB_AMD:
-            srcTexture->format = CMP_FORMAT_ATC_RGB;
-            break;
-        case ATC_RGBA_EXPLICIT_ALPHA_AMD:
-            srcTexture->format = CMP_FORMAT_ATC_RGBA_Explicit;
-            break;
-        case ATC_RGBA_INTERPOLATED_ALPHA_AMD:
-            srcTexture->format = CMP_FORMAT_ATC_RGBA_Interpolated;
-            break;
-        case GL_COMPRESSED_RGBA_ASTC_4x4_KHR:
-            srcTexture->format = CMP_FORMAT_ASTC;
-            srcTexture->nBlockWidth = 4;
-            srcTexture->nBlockHeight = 4;
-            break;
-        case GL_COMPRESSED_RGBA_ASTC_5x4_KHR:
-            srcTexture->format = CMP_FORMAT_ASTC;
-            srcTexture->nBlockWidth = 5;
-            srcTexture->nBlockHeight = 4;
-            break;
-        case GL_COMPRESSED_RGBA_ASTC_5x5_KHR:
-            srcTexture->format = CMP_FORMAT_ASTC;
-            srcTexture->nBlockWidth = 5;
-            srcTexture->nBlockHeight = 5;
-            break;
-        case GL_COMPRESSED_RGBA_ASTC_6x5_KHR:
-            srcTexture->format = CMP_FORMAT_ASTC;
-            srcTexture->nBlockWidth = 6;
-            srcTexture->nBlockHeight = 5;
-            break;
-        case GL_COMPRESSED_RGBA_ASTC_6x6_KHR:
-            srcTexture->format = CMP_FORMAT_ASTC;
-            srcTexture->nBlockWidth = 6;
-            srcTexture->nBlockHeight = 6;
-            break;
-        case GL_COMPRESSED_RGBA_ASTC_8x5_KHR:
-            srcTexture->format = CMP_FORMAT_ASTC;
-            srcTexture->nBlockWidth = 8;
-            srcTexture->nBlockHeight = 5;
-            break;
-        case GL_COMPRESSED_RGBA_ASTC_8x6_KHR:
-            srcTexture->format = CMP_FORMAT_ASTC;
-            srcTexture->nBlockWidth = 8;
-            srcTexture->nBlockHeight = 6;
-            break;
-        case GL_COMPRESSED_RGBA_ASTC_10x5_KHR:
-            srcTexture->format = CMP_FORMAT_ASTC;
-            srcTexture->nBlockWidth = 10;
-            srcTexture->nBlockHeight = 5;
-            break;
-        case GL_COMPRESSED_RGBA_ASTC_10x6_KHR:
-            srcTexture->format = CMP_FORMAT_ASTC;
-            srcTexture->nBlockWidth = 10;
-            srcTexture->nBlockHeight = 6;
-            break;
-        case GL_COMPRESSED_RGBA_ASTC_8x8_KHR:
-            srcTexture->format = CMP_FORMAT_ASTC;
-            srcTexture->nBlockWidth = 8;
-            srcTexture->nBlockHeight = 8;
-            break;
-        case GL_COMPRESSED_RGBA_ASTC_10x8_KHR:
-            srcTexture->format = CMP_FORMAT_ASTC;
-            srcTexture->nBlockWidth = 10;
-            srcTexture->nBlockHeight = 8;
-            break;
-        case GL_COMPRESSED_RGBA_ASTC_10x10_KHR:
-            srcTexture->format = CMP_FORMAT_ASTC;
-            srcTexture->nBlockWidth = 10;
-            srcTexture->nBlockHeight = 10;
-            break;
-        case GL_COMPRESSED_RGBA_ASTC_12x10_KHR:
-            srcTexture->format = CMP_FORMAT_ASTC;
-            srcTexture->nBlockWidth = 12;
-            srcTexture->nBlockHeight = 10;
-            break;
-        case GL_COMPRESSED_RGBA_ASTC_12x12_KHR:
-            srcTexture->format = CMP_FORMAT_ASTC;
-            srcTexture->nBlockWidth = 12;
-            srcTexture->nBlockHeight = 12;
-            break;
-        case ETC1_RGB8_OES:
-            srcTexture->format = CMP_FORMAT_ETC_RGB;
-            break;
-        case GL_COMPRESSED_RGB8_ETC2:
-            srcTexture->format = CMP_FORMAT_ETC2_RGB;
-            break;
-        case COMPRESSED_FORMAT_DXT5_RxBG:
-            srcTexture->format = CMP_FORMAT_DXT5_RxBG;
-            break;
-        case COMPRESSED_FORMAT_DXT5_RBxG:
-            srcTexture->format = CMP_FORMAT_DXT5_RBxG;
-            break;
-        case COMPRESSED_FORMAT_DXT5_xRBG:
-            srcTexture->format = CMP_FORMAT_DXT5_xRBG;
-            break;
-        case COMPRESSED_FORMAT_DXT5_RGxB:
-            srcTexture->format = CMP_FORMAT_DXT5_RGxB;
-            break;
-        case COMPRESSED_FORMAT_DXT5_xGxR:
-            srcTexture->format = CMP_FORMAT_DXT5_xGxR;
-            break;
-        default:
-            fclose(pFile);
-            return -1;
-        }
-    }
-    else
-    {
-        switch (fheader.glType)
-        {
-        case GL_UNSIGNED_BYTE:
-            srcTexture->format = CMP_FORMAT_ARGB_8888;
-            break;
-        default:
-            fclose(pFile);
-            return -1;
-        }
-    }
-
-    srcTexture->dwDataSize = CMP_CalculateBufferSize(srcTexture);
-    srcTexture->pData = (CMP_BYTE*)malloc(srcTexture->dwDataSize);
-    
-
-    fclose(pFile);
-    pFile = NULL;
-    pFile = fopen(pszFilename, "rb");
-    if (pFile == NULL)
-    {
-        return -1;
-    }
-
-    //skip key value data
-    int imageSizeOffset = sizeof(KTX_header) + fheader.bytesOfKeyValueData;
-    if (fseek(pFile, imageSizeOffset, SEEK_SET))
-    {
-        fclose(pFile);
-        return -1;
-    }
-
-    //load image size
-    unsigned int imageByteCount = 0;
-    if (fread((void*)&imageByteCount, 1, 4, pFile) != 4)
-    {
-        fclose(pFile);
-        return -1;
-    }
-
-    //read image data
-    const unsigned int bytesRead = fread(srcTexture->pData, 1, imageByteCount, pFile);
-    if (bytesRead != imageByteCount)
-    {
-        fclose(pFile);
-        return -1;
-    }
-    fclose(pFile);
-    return 0;
-#endif
-#endif
     return -1;
 }
 
 int Plugin_KTX::TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *srcTexture)
 {
-#ifdef _WIN32
-#ifdef CMP_Texture_IO_SUPPORTED
-    assert(pszFilename);
-
-    FILE* pFile = NULL;
-    pFile = fopen(pszFilename, "wb");
-    if (pFile == NULL)
-    {
-        return -1;
-    }
-
-    //using libktx
-    KTX_texture_info textureinfo;
-    KTX_image_info* inputMip = new KTX_image_info();
-
-    unsigned int pDataLen = 0;
-    CMP_BYTE* pData = NULL;
-    bool isCompressed = false;
-
-    //todo: textureinfo.numberOfFaces = 6; reserved for cubemap
-    textureinfo.numberOfFaces = 1;
-
-    //todo: array textures
-    textureinfo.numberOfArrayElements = 0;
-
-    inputMip->data = srcTexture->pData;
-    int w = srcTexture->dwWidth;
-    int h = srcTexture->dwHeight;
-
-    switch (srcTexture->format)
-    {
-        //uncompressed format case
-    case CMP_FORMAT_ARGB_8888:
-    case CMP_FORMAT_RGB_888:
-    case CMP_FORMAT_RG_8:
-    case CMP_FORMAT_R_8:
-        isCompressed = false;
-        textureinfo.glType = GL_UNSIGNED_BYTE;
-        textureinfo.glTypeSize = 1;
-        break;
-    case  CMP_FORMAT_ARGB_2101010:
-        textureinfo.glType = GL_UNSIGNED_INT_2_10_10_10_REV;
-        textureinfo.glTypeSize = 1;
-        break;
-    case  CMP_FORMAT_ARGB_16:
-        textureinfo.glType = GL_UNSIGNED_SHORT;
-        textureinfo.glTypeSize = 2;
-        break;
-    case  CMP_FORMAT_RG_16:
-        textureinfo.glType = GL_UNSIGNED_SHORT;
-        textureinfo.glTypeSize = 2;
-        break;
-    case  CMP_FORMAT_R_16:
-        textureinfo.glType = GL_UNSIGNED_SHORT;
-        textureinfo.glTypeSize = 2;
-        break;
-    case  CMP_FORMAT_ARGB_16F:
-    case  CMP_FORMAT_RG_16F:
-    case  CMP_FORMAT_R_16F:
-        textureinfo.glType = GL_HALF_FLOAT;
-        textureinfo.glTypeSize = 1;
-        break;
-    case  CMP_FORMAT_ARGB_32F:
-    case  CMP_FORMAT_RGB_32F:
-    case  CMP_FORMAT_RG_32F:
-    case  CMP_FORMAT_R_32F:
-        textureinfo.glType = GL_FLOAT;
-        textureinfo.glTypeSize = 1;
-        break;
-        //compressed format case
-    case  CMP_FORMAT_ATI1N:
-    case  CMP_FORMAT_ATI2N:
-    case  CMP_FORMAT_ATI2N_XY:
-    case  CMP_FORMAT_ATI2N_DXT5:
-    case  CMP_FORMAT_ATC_RGB:
-    case  CMP_FORMAT_ATC_RGBA_Explicit:
-    case  CMP_FORMAT_ATC_RGBA_Interpolated:
-    case  CMP_FORMAT_BC1:
-    case  CMP_FORMAT_BC2:
-    case  CMP_FORMAT_BC3:
-    case  CMP_FORMAT_BC4:
-    case  CMP_FORMAT_BC5:
-    case  CMP_FORMAT_BC6H:
-    case  CMP_FORMAT_BC7:
-    case  CMP_FORMAT_DXT1:
-    case  CMP_FORMAT_DXT3:
-    case  CMP_FORMAT_DXT5:
-    case  CMP_FORMAT_DXT5_xGBR:
-    case  CMP_FORMAT_DXT5_RxBG:
-    case  CMP_FORMAT_DXT5_RBxG:
-    case  CMP_FORMAT_DXT5_xRBG:
-    case  CMP_FORMAT_DXT5_RGxB:
-    case  CMP_FORMAT_DXT5_xGxR:
-    case  CMP_FORMAT_ETC_RGB:
-    case  CMP_FORMAT_ETC2_RGB:
-    case  CMP_FORMAT_ASTC:
-    case  CMP_FORMAT_GT:
-        isCompressed = true;
-        textureinfo.glType = 0;
-        textureinfo.glTypeSize = 1;
-        textureinfo.glFormat = 0;
-        break;
-        //default case
-    default:
-        isCompressed = false;
-        textureinfo.glType = GL_UNSIGNED_BYTE;
-        textureinfo.glTypeSize = 1;
-        break;
-    }
-
-    //todo:check for texture type: RGBA, XRGB etc, refer to save mipset
-    inputMip->size = srcTexture->dwDataSize;
-    if (!isCompressed)
-    {
-        textureinfo.glFormat = textureinfo.glBaseInternalFormat = GL_RGBA;
-        textureinfo.glInternalFormat = GL_RGBA8;
-    }
-    else
-    {
-        textureinfo.glBaseInternalFormat = GL_RGBA;
-        switch (srcTexture->format)
-        {
-        case CMP_FORMAT_BC1:
-        case CMP_FORMAT_DXT1:
-            textureinfo.glInternalFormat = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-            break;
-        case CMP_FORMAT_BC2:
-        case CMP_FORMAT_DXT3:
-            textureinfo.glInternalFormat = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-            break;
-        case CMP_FORMAT_BC3:
-        case CMP_FORMAT_DXT5:
-            textureinfo.glInternalFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-            break;
-        case CMP_FORMAT_BC7:
-            textureinfo.glInternalFormat = RGB_BP_UNorm;
-            break;
-        case  CMP_FORMAT_ATI1N:
-            textureinfo.glInternalFormat = R_ATI1N_UNorm;
-            break;
-        case  CMP_FORMAT_ATI2N:
-            textureinfo.glInternalFormat = R_ATI1N_SNorm;
-            break;
-        case  CMP_FORMAT_ATI2N_XY:
-            textureinfo.glInternalFormat = RG_ATI2N_UNorm;
-            break;
-        case  CMP_FORMAT_ATI2N_DXT5:
-            textureinfo.glInternalFormat = RG_ATI2N_SNorm;
-            break;
-        case  CMP_FORMAT_ATC_RGB:
-            textureinfo.glInternalFormat = ATC_RGB_AMD;
-            break;
-        case  CMP_FORMAT_ATC_RGBA_Explicit:
-            textureinfo.glInternalFormat = ATC_RGBA_EXPLICIT_ALPHA_AMD;
-            break;
-        case  CMP_FORMAT_ATC_RGBA_Interpolated:
-            textureinfo.glInternalFormat = ATC_RGBA_INTERPOLATED_ALPHA_AMD;
-            break;
-        case  CMP_FORMAT_BC4:
-            textureinfo.glInternalFormat = COMPRESSED_RED_RGTC1;
-            break;
-        case  CMP_FORMAT_BC5:
-            textureinfo.glInternalFormat = COMPRESSED_RG_RGTC2;
-            break;
-        case  CMP_FORMAT_BC6H:
-            textureinfo.glInternalFormat = RGB_BP_UNSIGNED_FLOAT;
-            break;
-        case CMP_FORMAT_ETC_RGB:
-            textureinfo.glInternalFormat = ETC1_RGB8_OES;
-            break;
-        case CMP_FORMAT_ETC2_RGB:
-            textureinfo.glInternalFormat = GL_COMPRESSED_RGB8_ETC2;
-            break;
-        case CMP_FORMAT_DXT5_xGBR:
-            textureinfo.glInternalFormat = COMPRESSED_FORMAT_DXT5_xGBR;
-            break;
-        case CMP_FORMAT_DXT5_RxBG:
-            textureinfo.glInternalFormat = COMPRESSED_FORMAT_DXT5_RxBG;
-            break;
-        case CMP_FORMAT_DXT5_RBxG:
-            textureinfo.glInternalFormat = COMPRESSED_FORMAT_DXT5_RBxG;
-            break;
-        case CMP_FORMAT_DXT5_xRBG:
-            textureinfo.glInternalFormat = COMPRESSED_FORMAT_DXT5_xRBG;
-            break;
-        case CMP_FORMAT_DXT5_RGxB:
-            textureinfo.glInternalFormat = COMPRESSED_FORMAT_DXT5_RGxB;
-            break;
-        case CMP_FORMAT_DXT5_xGxR:
-            textureinfo.glInternalFormat = COMPRESSED_FORMAT_DXT5_xGxR;
-            break;
-        }
-    }
-  
-    textureinfo.pixelWidth = srcTexture->dwWidth;
-    textureinfo.pixelHeight = srcTexture->dwHeight;
-    textureinfo.pixelDepth = 0; //for 1D, 2D and cube texture , depth =0;
-
-                                //1D 
-    if (srcTexture->dwHeight == 1 && pData != NULL) {
-        delete(pData);
-        pData = NULL;
-        pDataLen = 0;
-    }
-
-    textureinfo.numberOfMipmapLevels = 1;
-
-    KTX_error_code save = ktxWriteKTXF(pFile, &textureinfo, pDataLen, pData, 1, inputMip);
-    if (save == KTX_SUCCESS) {
-        fclose(pFile);
-    }
-    else {
-        fclose(pFile);
-        return -1;
-    }
-    fclose(pFile);
-    return 0;
-#endif
-#endif
     return -1;
 }
 
@@ -1006,6 +553,26 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
             pMipSet->m_format = CMP_FORMAT_ETC2_RGB;
             pMipSet->m_TextureDataType = TDT_ARGB;
             break;
+        case GL_COMPRESSED_SRGB8_ETC2:
+            pMipSet->m_format = CMP_FORMAT_ETC2_SRGB;
+            pMipSet->m_TextureDataType = TDT_ARGB;
+            break;
+        case GL_COMPRESSED_RGBA8_ETC2_EAC:
+            pMipSet->m_format = CMP_FORMAT_ETC2_RGBA;
+            pMipSet->m_TextureDataType = TDT_ARGB;
+            break;
+        case GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2:
+            pMipSet->m_format = CMP_FORMAT_ETC2_RGBA1;
+            pMipSet->m_TextureDataType = TDT_ARGB;
+            break;
+        case GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC:
+            pMipSet->m_format = CMP_FORMAT_ETC2_SRGBA;
+            pMipSet->m_TextureDataType = TDT_ARGB;
+            break;
+        case GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2:
+            pMipSet->m_format = CMP_FORMAT_ETC2_SRGBA1;
+            pMipSet->m_TextureDataType = TDT_ARGB;
+            break;
         case COMPRESSED_FORMAT_DXT5_RxBG :
             pMipSet->m_format = CMP_FORMAT_DXT5_RxBG;
             pMipSet->m_TextureDataType = TDT_ARGB;
@@ -1195,7 +762,12 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
         ,fheader.numberOfFaces
 #endif
     );
-    
+
+    if (pMipSet->m_nMipLevels > pMipSet->m_nMaxMipLevels)
+    {
+        pMipSet->m_nMipLevels = pMipSet->m_nMaxMipLevels;
+    }
+
     fclose(pFile);
     pFile = NULL;
     pFile = fopen(pszFilename, "rb");
@@ -1228,12 +800,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
 
     for (int nMipLevel = 0; nMipLevel < fheader.numberOfMipmapLevels; nMipLevel++)
     {
-        if ((w <= 1) || (h <= 1)) break;
-        else
-        {
-            w = max(1, w >> nMipLevel);
-            h = max(1, h >> nMipLevel);
-        }
+        if ((w <= 0) || (h <= 0)) break;
 
         totalByteRead = fread(&faceSize, 1, sizeof(khronos_uint32_t), pFile);
         if (totalByteRead == 0) {
@@ -1260,6 +827,65 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
 #endif
                 );
 
+            // handle padded KTX data
+            // store size to be read at this miplevel to check with face size in KTX file
+
+            int sizeTobeRead = 0;
+            int numChannel = 0;
+            int bytesPerChannel = 0;
+
+            if (pMipSet->m_compressed)
+            {
+                sizeTobeRead = faceSizeRounded;
+            }
+            else 
+            {
+                switch (pMipSet->m_TextureDataType)
+                {
+                case TDT_XRGB:
+                    numChannel = 3;
+                    break;
+                case TDT_ARGB:
+                case TDT_NORMAL_MAP:
+                    numChannel = 4;
+                    break;
+
+                case TDT_R:
+                    numChannel = 1;
+                    break;
+
+                case TDT_RG:
+                    numChannel = 2;
+                    break;
+
+                default:
+                    return -1;
+                }
+
+                switch (pMipSet->m_ChannelFormat)
+                {
+                case CF_8bit:
+                case CF_2101010:
+                case CF_Float9995E:
+                    bytesPerChannel = 1;
+                    break;
+
+                case CF_16bit:
+                case CF_Float16:
+                    bytesPerChannel = 2;
+                    break;
+
+                case CF_32bit:
+                case CF_Float32:
+                    bytesPerChannel = 4;
+                    break;
+
+                default:
+                    return -1;
+                }
+
+                sizeTobeRead = w * h * numChannel * bytesPerChannel;
+            }
             CMP_BYTE* pData = (CMP_BYTE*)(pMipLevel->m_pbData);
 
             if (!pData)
@@ -1269,9 +895,35 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
                 fclose(pFile);
                 return -1;
             }
-          
+
             //read image data
-            const unsigned int bytesRead = fread(pData, 1, faceSizeRounded, pFile);
+            unsigned int bytesRead = 0;
+            //size to be read has to be same as face size, else padding is done in the KTX file
+            if (sizeTobeRead == faceSizeRounded)
+            {
+                bytesRead = fread(pData, 1, faceSizeRounded, pFile);
+            }
+            else if(faceSizeRounded > sizeTobeRead) // padding in KTX file
+            {
+                std::vector<CMP_BYTE> pTempData;
+                pTempData.resize(faceSizeRounded);
+                bytesRead = fread(pTempData.data(), 1, faceSizeRounded, pFile);
+                int paddedBytes = faceSizeRounded - sizeTobeRead;
+
+                int n = 0;
+                for (int i = 0; i < pTempData.size(); i++)
+                {
+                    for (int w_i = 0; w_i < w; w_i++)
+                    {
+                        for (int j = 0; j < numChannel*bytesPerChannel; j++)
+                        {
+                            pData[n++] = pTempData[i++];
+                        }
+                    }
+                    //skip padded bytes
+                    i += (paddedBytes / h)-1;
+                }
+            }
 
             if (bytesRead != faceSizeRounded)
             {
@@ -1281,7 +933,9 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
                 return -1;
             } 
         }
-       
+        // next miplevel width and height
+        w = max(0, w >> 1);
+        h = max(0, h >> 1);
     }
 
     return 0;
@@ -1409,8 +1063,18 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
     case  CMP_FORMAT_DXT5_xGxR :               
     case  CMP_FORMAT_ETC_RGB :                 
     case  CMP_FORMAT_ETC2_RGB:
+    case  CMP_FORMAT_ETC2_SRGB:
+    case  CMP_FORMAT_ETC2_RGBA:
+    case  CMP_FORMAT_ETC2_RGBA1:
+    case  CMP_FORMAT_ETC2_SRGBA:
+    case  CMP_FORMAT_ETC2_SRGBA1:
     case  CMP_FORMAT_ASTC :
-    case  CMP_FORMAT_GT:
+#ifdef USE_GTC
+    case  CMP_FORMAT_GTC:
+#endif
+#ifdef USE_GTC_HDR
+    case  CMP_FORMAT_GTCH:
+#endif
         isCompressed            = true;
         textureinfo.glType      = 0;
         textureinfo.glTypeSize  = 1;
@@ -1463,11 +1127,31 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
         }
         else
         {
-            textureinfo.glBaseInternalFormat = GL_RGB;
-            if (pMipSet->m_format == CMP_FORMAT_BC1 || pMipSet->m_format == CMP_FORMAT_DXT1)
-                textureinfo.glInternalFormat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
-            else
-                textureinfo.glInternalFormat = GL_RGB; //other compressed format not found in qtangle header
+          
+            switch (pMipSet->m_format)
+            {
+                case CMP_FORMAT_BC1 :
+                case CMP_FORMAT_DXT1:
+                    textureinfo.glBaseInternalFormat = GL_RGB;
+                    textureinfo.glInternalFormat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+                    break;
+                case CMP_FORMAT_ETC_RGB:
+                    textureinfo.glBaseInternalFormat = GL_RGB;
+                    textureinfo.glInternalFormat = ETC1_RGB8_OES;
+                    break;
+                case CMP_FORMAT_ETC2_RGB:
+                    textureinfo.glBaseInternalFormat = GL_RGB;
+                    textureinfo.glInternalFormat = GL_COMPRESSED_RGB8_ETC2;
+                    break;
+                case CMP_FORMAT_ETC2_SRGB:
+                    textureinfo.glBaseInternalFormat = GL_SRGB;
+                    textureinfo.glInternalFormat = GL_COMPRESSED_SRGB8_ETC2;
+                    break;
+                default:
+                    textureinfo.glBaseInternalFormat = GL_RGB;
+                    textureinfo.glInternalFormat = GL_RGB; //other compressed format not found in qtangle header
+                    break;
+            }
         }
     }
     break;
@@ -1568,6 +1252,23 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
                 break;
             case CMP_FORMAT_ETC2_RGB:
                 textureinfo.glInternalFormat = GL_COMPRESSED_RGB8_ETC2;
+                break;
+            case CMP_FORMAT_ETC2_SRGB:
+                textureinfo.glInternalFormat = GL_COMPRESSED_SRGB8_ETC2;
+                break;
+            case CMP_FORMAT_ETC2_RGBA:
+                textureinfo.glInternalFormat = GL_COMPRESSED_RGBA8_ETC2_EAC;
+                break;
+            case CMP_FORMAT_ETC2_RGBA1:
+                textureinfo.glInternalFormat = GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2;
+                break;
+            case CMP_FORMAT_ETC2_SRGBA:
+                textureinfo.glBaseInternalFormat = GL_SRGB8_ALPHA8;
+                textureinfo.glInternalFormat = GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC;
+                break;
+            case CMP_FORMAT_ETC2_SRGBA1:
+                textureinfo.glBaseInternalFormat = GL_SRGB8_ALPHA8;
+                textureinfo.glInternalFormat = GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2;
                 break;
             case CMP_FORMAT_DXT5_xGBR:
                 textureinfo.glInternalFormat = COMPRESSED_FORMAT_DXT5_xGBR;

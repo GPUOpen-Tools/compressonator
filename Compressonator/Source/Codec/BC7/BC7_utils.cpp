@@ -102,6 +102,42 @@ uint8_t interpolate(uint8_t e0, uint8_t e1, uint8_t index, uint8_t indexprecisio
 }
 #endif
 
+void DecodeEndPoints(CMP_DWORD endpoint[][MAX_DIMENSION_BIG],
+    CMP_DWORD componentBits[MAX_DIMENSION_BIG],
+    float ep[][MAX_DIMENSION_BIG])
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+    CMP_DWORD i;
+
+    // Expand each endpoint component to 8 bits by shifting the MSB to bit 7
+    // and then replicating the high bits to the low bits revealed by
+    // the shift
+    for (i = 0; i < MAX_DIMENSION_BIG; i++)
+    {
+        ep[0][i] = 0.;
+        ep[1][i] = 0.;
+        if (componentBits[i])
+        {
+            ep[0][i]  = (float)(endpoint[0][i] << (8 - componentBits[i]));
+            ep[1][i]  = (float)(endpoint[1][i] << (8 - componentBits[i]));
+            ep[0][i] += (float)((CMP_DWORD)ep[0][i] >> componentBits[i]);
+            ep[1][i] += (float)((CMP_DWORD)ep[1][i] >> componentBits[i]);
+
+            ep[0][i] = (float)min(255., max(0., ep[0][i]));
+            ep[1][i] = (float)min(255., max(0., ep[1][i]));
+        }
+    }
+
+    // If this block type has no explicit alpha channel
+    // then make sure alpha is 1.0 for all points on the ramp
+    if (!componentBits[COMP_ALPHA])
+    {
+        ep[0][COMP_ALPHA] = ep[1][COMP_ALPHA] = 255.;
+    }
+}
+
 void GetRamp(CMP_DWORD endpoint[][MAX_DIMENSION_BIG],
              double ramp[MAX_DIMENSION_BIG][(1<<MAX_INDEX_BITS)],
     CMP_DWORD clusters[2],

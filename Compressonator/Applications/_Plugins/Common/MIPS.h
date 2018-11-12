@@ -37,6 +37,8 @@
 
 extern void(*PrintStatusLine)(char *);
 extern void PrintInfo(const char* Format, ...);
+extern int MaxFacesOrSlices(const MipSet* pMipSet, int nMipLevel);
+
 class CMIPS
 {
     public: 
@@ -75,6 +77,8 @@ class CMIPS
     bool m_canceled = false;
     void(*SetProgressValue)(unsigned int, bool *canceled) = nullptr;
     void SetProgress(unsigned int value);
+
+    bool AllocateDestBuffer(MipSet *SourceTexture, CMP_FORMAT format, MipSet *DestTexture);
 };
 
 #endif

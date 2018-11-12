@@ -23,20 +23,21 @@
 #include "UploadHeapVK.h"
 #include "DXGIFormat.h"
 
-// #define USE_CMP_LOAD
-
 #include "Compressonator.h"
 #include "GPU_Decode\GPU_Decode.h"
 #include "..\..\..\Common\Texture.h"
 #include "..\..\..\Common\PluginInterface.h"
 #include "TextureIO.h"
 
+#include "ModelTexture.h"
+
+#define USE_CMP_LOAD
 extern CMIPS *VK_CMips;
 
 // This class provides functionality to create a 2D-texture from a .DDS file.
 // Note that this sample can only load DDS files!
 
-class Texture
+class Texture : public ModelTexture
 {
 public:
     Texture();
@@ -44,8 +45,7 @@ public:
     virtual void            OnDestroy();
 
     // load file into heap
-    INT32   InitFromFile(DeviceVK* pDevice, UploadHeapVK* pUploadHeap, const WCHAR *szFilename, void *pluginManager, void *msghandler);
-    INT32   InitFromFile(DeviceVK *pDevice, UploadHeapVK* pUploadHeap, const char *pFilename); // OLD change to use above
+    INT32   InitFromFile(DeviceVK *pDevice, UploadHeapVK* pUploadHeap, const char *pFilename, void *pluginManager, void *msghandler);
     INT32   InitDepthStencil(DeviceVK *pDevice, UINT width, UINT height);
 
     VkImage Resource()
@@ -57,8 +57,8 @@ public:
     void CreateDSV(DWORD index, VkImageView *pView);
     VkFormat GetFormatVK() { return m_format; }
 
-    DWORD GetWidth()  { return m_header.width;  }
-    DWORD GetHeight() { return m_header.height; }
+    DWORD GetWidth() { if (pMipSet) return pMipSet->m_nWidth; else return 0; }
+    DWORD GetHeight() { if (pMipSet) return pMipSet->m_nHeight; else return 0; }
 
 private:
 
@@ -67,9 +67,6 @@ private:
     VkFormat         m_format;
     VkImage          m_pTexture2D;
 
-#ifdef USE_CMP_LOAD
-    MipSet *pMipSet;
-#endif
 
     struct DDS_PIXELFORMAT
     {
@@ -110,8 +107,9 @@ private:
         UINT32           mipMapCount;
         UINT32           format;
     };
-
+#ifndef USE_CMP_LOAD
     DDS_HEADER_INFO         m_header;
+#endif
 
     void                    PatchFmt24To32Bit(unsigned char *pDst, unsigned char *pSrc, UINT32 pixelCount);
     UINT32                  GetDxGiFormat(DDS_PIXELFORMAT pixelFmt) const;

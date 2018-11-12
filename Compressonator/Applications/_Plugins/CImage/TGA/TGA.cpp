@@ -236,10 +236,10 @@ TC_PluginError LoadTGA_ARGB8888(FILE* pFile, MipSet* pMipSet, TGAHeader& Header)
         nIncrement = -1;
     }
 
-    char nBlue ;
-    char nGreen;
-    char nRed  ;
-    char nAlpha;
+    CMP_BYTE nBlue ;
+    CMP_BYTE nGreen;
+    CMP_BYTE nRed  ;
+    CMP_BYTE nAlpha;
 
     for(int j = nStart; j != nEnd; j+= nIncrement)
     {
@@ -252,6 +252,8 @@ TC_PluginError LoadTGA_ARGB8888(FILE* pFile, MipSet* pMipSet, TGAHeader& Header)
             nGreen = *pTempPtr++;
             nRed   = *pTempPtr++;
             nAlpha = *pTempPtr++;
+
+            // printf("{%d,%d,%d,%d}\n", nRed, nGreen, nBlue, nAlpha);
 
             *pData++ = nRed;
             *pData++ = nGreen;
@@ -318,10 +320,10 @@ TC_PluginError LoadTGA_ARGB8888_RLE(FILE* pFile, MipSet* pMipSet, TGAHeader& Hea
             if(nLength & 0x80)
             {
                 int nRepeat = nLength - 0x7f;
-                char nBlue = *pTempPtr++;
-                char nGreen = *pTempPtr++;
-                char nRed = *pTempPtr++;
-                char nAlpha = *pTempPtr++;
+                CMP_BYTE nBlue = *pTempPtr++;
+                CMP_BYTE nGreen = *pTempPtr++;
+                CMP_BYTE nRed = *pTempPtr++;
+                CMP_BYTE nAlpha = *pTempPtr++;
 
                 while(nRepeat && nColumn < pMipSet->m_nWidth)
                 {
@@ -339,10 +341,10 @@ TC_PluginError LoadTGA_ARGB8888_RLE(FILE* pFile, MipSet* pMipSet, TGAHeader& Hea
                 int nRepeat = nLength+1;
                 while(nRepeat && nColumn < pMipSet->m_nWidth)
                 {
-                    char nBlue = *pTempPtr++;
-                    char nGreen = *pTempPtr++;
-                    char nRed = *pTempPtr++;
-                    char nAlpha = *pTempPtr++;
+                    CMP_BYTE nBlue = *pTempPtr++;
+                    CMP_BYTE nGreen = *pTempPtr++;
+                    CMP_BYTE nRed = *pTempPtr++;
+                    CMP_BYTE nAlpha = *pTempPtr++;
                     *pData++ = nRed;
                     *pData++ = nGreen;
                     *pData++ = nBlue;
@@ -394,9 +396,9 @@ TC_PluginError LoadTGA_RGB888(FILE* pFile, MipSet* pMipSet, TGAHeader& Header)
         nIncrement = -1;
     }
 
-    char nBlue;
-    char nGreen;
-    char nRed;
+    CMP_BYTE nBlue;
+    CMP_BYTE nGreen;
+    CMP_BYTE nRed;
 
     for(int j = nStart; j != nEnd; j+= nIncrement)
     {
@@ -476,9 +478,9 @@ TC_PluginError LoadTGA_RGB888_RLE(FILE* pFile, MipSet* pMipSet, TGAHeader& Heade
 
             if(nLength & 0x80)
             {
-                char nBlue  = *pTempPtr++;
-                char nGreen = *pTempPtr++;
-                char nRed   = *pTempPtr++;
+                CMP_BYTE nBlue  = *pTempPtr++;
+                CMP_BYTE nGreen = *pTempPtr++;
+                CMP_BYTE nRed   = *pTempPtr++;
                 while(nRepeat && nColumn < pMipSet->m_nWidth)
                 {
                     *pData++ = nRed;
@@ -493,9 +495,9 @@ TC_PluginError LoadTGA_RGB888_RLE(FILE* pFile, MipSet* pMipSet, TGAHeader& Heade
             {
                 while(nRepeat && nColumn < pMipSet->m_nWidth)
                 {
-                    char nBlue  = *pTempPtr++;
-                    char nGreen = *pTempPtr++;
-                    char nRed   = *pTempPtr++;
+                    CMP_BYTE nBlue  = *pTempPtr++;
+                    CMP_BYTE nGreen = *pTempPtr++;
+                    CMP_BYTE nRed   = *pTempPtr++;
                     *pData++    = nRed;
                     *pData++    = nGreen;
                     *pData++    = nBlue;
@@ -731,11 +733,16 @@ TC_PluginError SaveRLE(FILE* pFile, const MipSet* pMipSet, int nSize, int nOffse
     return PE_OK;
 }
 
+//--------------------------------------------------------
+// Source mipset should now always be RGBA
+// Code using the pMipSet->m_swizzle should be reviewed
+//--------------------------------------------------------
+
 TC_PluginError SaveTGA_ARGB8888(FILE* pFile, const MipSet* pMipSet)
 {
     CMP_DWORD dwPitch = pMipSet->m_nWidth * 4;
 
-    if (pMipSet->m_swizzle)
+    //if (pMipSet->m_swizzle)
     {
         CMP_BYTE RGBA[4];
         for (int j = pMipSet->m_nHeight - 1; j >= 0; j--)
@@ -751,14 +758,14 @@ TC_PluginError SaveTGA_ARGB8888(FILE* pFile, const MipSet* pMipSet)
             }
         }
     }
-    else
-    {
-        for (int j = pMipSet->m_nHeight - 1; j >= 0; j--)
-        {
-            CMP_BYTE* pData = (CMP_BYTE*)(TGA_CMips->GetMipLevel(pMipSet, 0)->m_pbData + (j * dwPitch));
-            fwrite(pData, dwPitch, 1, pFile);
-        }
-    }
+    //else
+    //{
+    //    for (int j = pMipSet->m_nHeight - 1; j >= 0; j--)
+    //    {
+    //        CMP_BYTE* pData = (CMP_BYTE*)(TGA_CMips->GetMipLevel(pMipSet, 0)->m_pbData + (j * dwPitch));
+    //        fwrite(pData, dwPitch, 1, pFile);
+    //    }
+    //}
 
     fclose(pFile);
 

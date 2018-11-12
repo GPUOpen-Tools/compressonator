@@ -77,7 +77,7 @@ int Plugin_ModelLoader_drc::LoadModelData(const char* pszFilename, const char* p
     m_mesh                      = nullptr;
     bool              dracofile = (strcmp(pszFilename, "OBJ") != 0);
     draco::DracoTimer timer;
-    CMP_DracoOptions* DracoOptions = (CMP_DracoOptions*)pluginManager;
+    CMP_DracoOptions* DracoOptions = (CMP_DracoOptions*)(msghandler);
 
     if (!dracofile)
     {
@@ -190,7 +190,7 @@ int Plugin_ModelLoader_drc::LoadModelData(const char* pszFilename, const char* p
         file_size = input_file.tellg() - file_size;
         input_file.seekg(0, std::ios::beg);
 
-        std::vector<char> data(file_size);
+        std::vector<char> data((unsigned int)file_size);
         input_file.read(data.data(), file_size);
 
         if (data.empty())
@@ -272,6 +272,11 @@ int Plugin_ModelLoader_drc::LoadModelData(const char* pszFilename, const char* p
         {
             draco::ObjEncoder obj_encoder;
             std::string       output = DracoOptions->output;
+            if (output == "")
+            {
+                output = string(pszFilename) + ".obj";
+            }
+
             if (!obj_encoder.EncodeToFile(*m_mesh, output))
             {
                 if (g_CMIPS)
@@ -280,7 +285,7 @@ int Plugin_ModelLoader_drc::LoadModelData(const char* pszFilename, const char* p
             }
 
             clock_t        start              = clock();
-            PluginManager* localpluginManager = (PluginManager*)pluginManager;
+            PluginManager* localpluginManager = (PluginManager*)(pluginManager);
             if (localpluginManager)
             {
                 PluginInterface_3DModel_Loader* plugin_loader =
@@ -316,7 +321,7 @@ int Plugin_ModelLoader_drc::LoadModelData(const char* pszFilename, const char* p
     }
 
     if (m_ModelData)
-        m_ModelData->m_LoadTime = loadTime + timer.GetInMs();
+        m_ModelData->m_LoadTime = loadTime + (unsigned long)timer.GetInMs();
 
     return result;
 }

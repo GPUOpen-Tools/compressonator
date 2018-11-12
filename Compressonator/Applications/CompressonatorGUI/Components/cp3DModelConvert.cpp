@@ -130,6 +130,7 @@ void CModelConvert::dragEnterEvent(QDragEnterEvent *event)
 
 void CModelConvert::dropEvent(QDropEvent *event)
 {
+    Q_UNUSED(event);
     qDebug() << "drop received!";
 }
 

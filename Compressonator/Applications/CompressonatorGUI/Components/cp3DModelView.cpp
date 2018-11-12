@@ -136,6 +136,8 @@ void cpRenderWindow::resizeEvent(QResizeEvent* event)
 
 void cpRenderWindow::paintEvent(QPaintEvent* ev)
 {
+    (void)ev;
+
     if (m_plugin && m_viewOpen)
     {
         m_viewOpen = m_plugin->OnRenderView();
@@ -177,6 +179,49 @@ void cpRenderWindow::setZRotation(int angle)
     }
 }
 
+
+void cpRenderWindow::SetManualRenderFlip(int mode)
+{
+    if (m_plugin)
+    {
+        MSG msg = { 0 };
+        msg.hwnd = m_hwnd;
+        msg.message = WM_KEYDOWN;
+        m_manual3DViewFlipMode = mode;
+        msg.wParam = 1;     // Signal that we want to set a Manual Mode setting
+        msg.lParam = mode;
+        m_plugin->processMSG(&msg);
+    }
+}
+
+// Keypressed event for the Qt render window
+void cpRenderWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (m_plugin)
+    {
+        // Process key press if 3D model view is in manual mode
+        if (m_manual3DViewFlipMode == 1)
+        {
+            //printf("%x ", event->key());
+            MSG msg = { 0 };
+            msg.hwnd = m_hwnd;
+            msg.message = WM_KEYDOWN;
+            // Tracks user flip mode, always starts with original then flips
+            // for now we only have two rendered models overlaid in one view.
+            if (event->key() == QT_KEY_SPACE)
+            {
+                m_viewingOriginalModel = m_viewingOriginalModel ? false : true;
+                msg.wParam = 2;  // Signal we want to flip view
+                msg.lParam = m_viewingOriginalModel ? 0 : 1;
+                m_plugin->processMSG(&msg);
+                emit signalModelKeyPressed(event->key());
+            }
+        }
+    }
+}
+
+// This event handler has "Global" scope and is triggered throughout the app
+// Mouse events, paint .. are filtered for the active Rendered Windows
 bool cpRenderWindow::eventFilter(QObject* obj, QEvent* ev)
 {
     // pass the event on to the parent class if events cannot be handled by this class
@@ -184,13 +229,13 @@ bool cpRenderWindow::eventFilter(QObject* obj, QEvent* ev)
         return QObject::eventFilter(obj, ev);
     if (!m_plugin)
         return QObject::eventFilter(obj, ev);
-    ;
+
     if (!m_viewOpen)
         return QObject::eventFilter(obj, ev);
-    ;
 
     static bool LeftButtonPressed  = false;
     static bool RightButtonPressed = false;
+
 
     if (ev->type() == QEvent::MouseMove)
     {
@@ -311,15 +356,6 @@ bool cpRenderWindow::eventFilter(QObject* obj, QEvent* ev)
 
         m_plugin->processMSG(&msg);
     }
-    else if (ev->type() == QEvent::KeyPress)
-    {
-        if (m_usingWindowProc)
-            return QObject::eventFilter(obj, ev);
-        MSG msg       = {0};
-        msg.hwnd      = m_hwnd;
-        QKeyEvent* ke = (QKeyEvent*)ev;
-        m_plugin->processMSG(&msg);
-    }
     else if (ev->type() == QEvent::Paint)
     {
     }
@@ -339,14 +375,6 @@ void cpRenderWindow::localMessage(MSG& msg)
 
     switch (msg.message)
     {
-    case WM_KEYDOWN:
-        switch (msg.wParam)
-        {
-        default:
-            // Process displayable characters.
-            break;
-        }
-        break;
     case WM_RBUTTONDOWN:
     case WM_RBUTTONUP:
     case WM_LBUTTONDOWN:
@@ -447,6 +475,14 @@ cp3DModelView::~cp3DModelView()
     Clean3DModelView();
 }
 
+void cp3DModelView::setManualViewFlip(int mode)
+{
+    if (m_renderview)
+    {
+        m_renderview->SetManualRenderFlip(mode);
+    }
+}
+
 void cp3DModelView::OnToolBarClicked()
 {
     if (m_toolBar->isVisible())
@@ -466,83 +502,18 @@ void cp3DModelView::OnShowOptions()
     m_plugin->processMSG(&msg);
 }
 
-bool cp3DModelView::isGLTFDracoFile(std::string filename)
+// This is only signaled when we are viewing a 3D model diff
+void cp3DModelView::OnModelViewKeyPressed(int key)
 {
-    nlohmann::json j3;
-    std::ifstream  f(filename);
-    if (!f)
+    if (!m_renderview) return;
+    if (!custTitleBar) return;
+    if (key == QT_KEY_SPACE)
     {
-        return false;
+        if (m_renderview->m_viewingOriginalModel)
+            custTitleBar->setTitle("3D Model Diff View: Original");
+        else
+            custTitleBar->setTitle("3D Model Diff View: Processed");
     }
-
-    f >> j3;
-
-    auto extrequired = j3["extensionsRequired"];
-
-    for (int i = 0; i < extrequired.size(); i++)
-    {
-        std::string extname = extrequired[i].get<std::string>();
-        if (extname.find("KHR_draco_mesh_compression") != string::npos)
-        {
-            return true;
-        }
-    }
-
-    auto extused = j3["extensionsUsed"];
-
-    for (int j = 0; j < extused.size(); j++)
-    {
-        std::string extnameused = extused[j].get<std::string>();
-        if (extnameused.find("KHR_draco_mesh_compression") != string::npos)
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool cp3DModelView::decompressglTFfile(std::string srcFile, std::string tempdstFile)
-{
-    std::string         err;
-    tinygltf2::Model    model;
-    tinygltf2::TinyGLTF loader;
-    tinygltf2::TinyGLTF saver;
-    bool                ret = loader.LoadASCIIFromFile(&model, &err, srcFile, g_CmdPrams.use_Draco_Encode);
-    if (!err.empty())
-    {
-        PrintInfo("Error processing gltf source:[%s] file [%s]\n", srcFile.c_str(), err.c_str());
-        return false;
-    }
-    if (!ret)
-    {
-        PrintInfo("Failed in decoding glTF file : [%s].\n", srcFile.c_str());
-        return false;
-    }
-
-    bool is_draco_src = false;
-#ifdef USE_MESH_DRACO_EXTENSION
-    if (model.dracomeshes.size() > 0)
-    {
-        is_draco_src = true;
-    }
-#endif
-    err.clear();
-
-    ret = saver.WriteGltfSceneToFile(&model, &err, tempdstFile, g_CmdPrams.CompressOptions, is_draco_src, g_CmdPrams.use_Draco_Encode);
-
-    if (!err.empty())
-    {
-        PrintInfo("Error processing gltf destination:[%s] file [%s]\n", tempdstFile.c_str(), err.c_str());
-        return false;
-    }
-    if (!ret)
-    {
-        PrintInfo("Failed to save temporary decoded glTF file %s\n", tempdstFile.c_str());
-        return false;
-    }
-
-    return true;
 }
 
 cp3DModelView::cp3DModelView(const QString filePathName, const QString filePathName2, const QString Title, QWidget* parent) :
@@ -584,14 +555,17 @@ cp3DModelView::cp3DModelView(const QString filePathName, const QString filePathN
     m_toolBar->setMaximumHeight(25);
 
     m_showViewOptions = false;
-    m_OptionsButton   = new QPushButton(!m_showViewOptions ? SHOW_VIEW_OPTIONS : HIDE_VIEW_OPTIONS);
-    if (m_OptionsButton)
+    if (g_Application_Options.m_GLTFRenderWith !=  C_Application_Options::RenderModelsWith::glTF_Vulkan)
     {
-        m_OptionsButton->setStatusTip(tr("Toggle Display Options"));
-        connect(m_OptionsButton, SIGNAL(released()), this, SLOT(OnShowOptions()));
-    }
+        m_OptionsButton   = new QPushButton(!m_showViewOptions ? SHOW_VIEW_OPTIONS : HIDE_VIEW_OPTIONS);
+        if (m_OptionsButton)
+        {
+            m_OptionsButton->setStatusTip(tr("Toggle Display Options"));
+            connect(m_OptionsButton, SIGNAL(released()), this, SLOT(OnShowOptions()));
+        }
 
-    m_toolBar->addWidget(m_OptionsButton);
+        m_toolBar->addWidget(m_OptionsButton);
+    }
 
     m_toolBar->hide();
 
@@ -650,7 +624,8 @@ cp3DModelView::cp3DModelView(const QString filePathName, const QString filePathN
         {
             m_isviewingDX12 = false;
 #ifdef USE_3DVIEWALLAPI
-            if (g_Application_Options.getGLTFRender() == C_Application_Options::RenderModelsWith::glTF_DX12_EX)
+            if (g_Application_Options.getGLTFRender() == C_Application_Options::RenderModelsWith::glTF_DX12_EX ||
+                g_Application_Options.getGLTFRender() == C_Application_Options::RenderModelsWith::glTF_Vulkan)
 #endif
                 g_Application_Options.setGLTFRender(C_Application_Options::RenderModelsWith::glTF_OpenGL);
         }
@@ -673,9 +648,17 @@ cp3DModelView::cp3DModelView(const QString filePathName, const QString filePathN
             {
                 std::size_t dotPos      = srcglTFfile1.rfind('.');
                 std::string tempdstFile = srcglTFfile1.substr(0, dotPos) + "_tmpdecoded.glTF";
-                if (!decompressglTFfile(srcglTFfile1, tempdstFile))
+                if (!decompressglTFfile(srcglTFfile1, tempdstFile, g_CmdPrams.use_Draco_Encode, g_CmdPrams.CompressOptions))
                 {
-                    PrintInfo("Error: Decoding glTF file [%s] failed.\n", srcglTFfile1);
+                    if (mainComponents)
+                    {
+                        if (mainComponents->m_CompressStatusDialog)
+                        {
+                            mainComponents->m_CompressStatusDialog->showOutput();
+                            mainComponents->m_CompressStatusDialog->raise();
+                        }
+                    }
+                    PrintInfo("Error: Decoding glTF file [%s] failed. Only single \"meshes\" decode support for now.\n", srcglTFfile1.c_str());
                     return;
                 }
 
@@ -686,9 +669,17 @@ cp3DModelView::cp3DModelView(const QString filePathName, const QString filePathN
             {
                 std::size_t dotPos      = srcglTFfile2.rfind('.');
                 std::string tempdstFile = srcglTFfile2.substr(0, dotPos) + "_tmpdecoded.glTF";
-                if (!decompressglTFfile(srcglTFfile2, tempdstFile))
+                if (!decompressglTFfile(srcglTFfile2, tempdstFile, g_CmdPrams.use_Draco_Encode, g_CmdPrams.CompressOptions))
                 {
-                    PrintInfo("Error: Decoding glTF file [%s] failed.\n", srcglTFfile2);
+                    if (mainComponents)
+                    {
+                        if (mainComponents->m_CompressStatusDialog)
+                        {
+                            mainComponents->m_CompressStatusDialog->showOutput();
+                            mainComponents->m_CompressStatusDialog->raise();
+                        }
+                    }
+                    PrintInfo("Error: Decoding glTF file [%s] failed. Only single \"meshes\" decode support for now.\n", srcglTFfile2.c_str());
                     return;
                 }
 
@@ -818,6 +809,7 @@ cp3DModelView::cp3DModelView(const QString filePathName, const QString filePathN
                         {
                             connect(&static_winMsgHandler, SIGNAL(signalMessage(MSG&)), m_renderview, SLOT(localMessage(MSG&)));
                             m_renderview->m_usingWindowProc = true;
+                            connect(m_renderview, SIGNAL(signalModelKeyPressed(int)), this, SLOT(OnModelViewKeyPressed(int)));
 
                             HWND hwnd = reinterpret_cast<HWND>(wid);
                             if (m_plugin->ShowView(hwnd) != NULL)
@@ -864,12 +856,30 @@ cp3DModelView::cp3DModelView(const QString filePathName, const QString filePathN
                         return;
                     }
 
+                    connect(m_renderview, SIGNAL(signalModelKeyPressed(int)), this, SLOT(OnModelViewKeyPressed(int)));
+
+
                     m_renderview->setplugin(m_plugin);
                     m_hwnd = reinterpret_cast<HWND>(m_renderview->winId());
                     m_renderview->setHwnd(m_hwnd);
+                    try
+                    {
+                        result =
+                            m_plugin->CreateView(data, parent->width(), parent->height(), m_renderview, &g_pluginManager, msgHandler, &ProgressCallback);
 
-                    result =
-                        m_plugin->CreateView(data, parent->width(), parent->height(), m_renderview, &g_pluginManager, msgHandler, &ProgressCallback);
+                    }
+                    catch (...)
+                    {
+                        if (m_renderview)
+                        {
+                            delete m_renderview;
+                            m_renderview = nullptr;
+                        }
+                        if (m_plugin) {
+                            m_plugin->CloseView();
+                        }
+                        throw;
+                    }
 
                     m_viewOpen = true;
                     m_renderview->setView(true);

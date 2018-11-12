@@ -46,7 +46,8 @@ enum MIPIMAGE_FORMAT {
     Format_QImage,
     Format_OpenGL,
     Format_DirectX,
-    Format_Vulkan
+    Format_Vulkan,
+    Format_CPU_HPC
 };
 
 
@@ -83,32 +84,22 @@ public:
     ~CImageLoader();
     
     CMipImages *LoadPluginImage(QString filename, CMP_Feedback_Proc pFeedbackProc = NULL);      // Creates Image & MIP data 
-    bool    clearMipImages(CMipImages *MipImages);      // Clears (delete) all Image & MIP data
+    bool    clearMipImages(CMipImages **MipImages);      // Clears (delete) all Image & MIP data
     void    UpdateMIPMapImages(CMipImages *MipImages);  // Maps MIP levels to Images
-    void    loadExrProperties(MipSet* mipset, int level, QImage *image);
     MipSet *QImage2MIPS(QImage *qimage, CMP_Feedback_Proc pFeedbackProc = NULL);            // Converts a QImage to MipSet
     MipSet *LoaderDecompressMipSet(CMipImages *MipImages, Config *decompConfig);
-    void   float2Pixel(float kl, float f, float r, float g, float b, float a, int x, int y, QImage *image);
-
-    float kneeLow;
-    float kneeHigh;
-    float exposure;
-    float defog;
-    float gamma;
+    CMIPS *getCMips() { return m_CMips; };
+    CMP_CompressOptions m_options; //options for hdr loading(kneelow, kneehigh, defog and exposure)
 
 private:
     void QImageFormatInfo(QImage *image);
-
-    QImage::Format  MipFormat2QFormat(MipSet *mipset);
     CMP_FORMAT   QFormat2MipFormat(QImage::Format qformat);
 
     PluginManager *m_pluginManager;
 
     CMIPS  *m_CMips;
     MipSet *LoadPluginMIPS(QString filename);       // Use AMD PluginManager
-   
-    QImage  *MIPS2QImage(MipSet *tmpMipSet, int level, CMP_Feedback_Proc pFeedbackProc = NULL); // Converts a MipSet to QImage, Mips level (0 to n) where n <  MipSet::m_nMaxMipLevels
-};
+   };
 
 
 extern float half_conv_float(unsigned short in);

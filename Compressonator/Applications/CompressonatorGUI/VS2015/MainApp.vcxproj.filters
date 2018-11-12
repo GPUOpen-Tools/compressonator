@@ -430,6 +430,9 @@
     <ClCompile Include="..\..\_Plugins\Common\gltf\tiny_gltf2_utils.cpp">
       <Filter>Common\Gltf</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\_Plugins\Common\CMP_FileIO.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../../../Header/Version.h">
@@ -476,6 +479,9 @@
     </ClInclude>
     <ClInclude Include="..\..\_Plugins\Common\gltf\tiny_gltf2_utils.h">
       <Filter>Common\Gltf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\_Plugins\Common\CMP_FileIO.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

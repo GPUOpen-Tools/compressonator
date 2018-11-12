@@ -209,22 +209,29 @@ public:
         else
         {
             // iterate over the list of available surface format and
-            // check for the presence of VK_FORMAT_B8G8R8A8_UNORM
-            bool found_R8G8B8A8_UNORM = false;
+            // check for the presence of VK_FORMAT
+            bool found_format = false;
             for (auto&& surfaceFormat : surfaceFormats)
             {
-                if (surfaceFormat.format == VK_FORMAT_R8G8B8A8_UNORM)
+                if (surfaceFormat.format == VK_FORMAT_R8G8B8A8_UNORM && cmp_format != CMP_FORMAT_ARGB_16F)
                 {
                     colorFormat = surfaceFormat.format;
                     colorSpace = surfaceFormat.colorSpace;
-                    found_R8G8B8A8_UNORM = true;
+                    found_format = true;
+                    break;
+                }
+                else if (surfaceFormat.format == VK_FORMAT_R16G16B16A16_SFLOAT && cmp_format == CMP_FORMAT_ARGB_16F)
+                {
+                    colorFormat = surfaceFormat.format;
+                    colorSpace = surfaceFormat.colorSpace;
+                    found_format = true;
                     break;
                 }
             }
 
-            // in case VK_FORMAT_R8G8B8A8_UNORM is not available
+            // in case VK_FORMAT is not available
             // select the first available color format
-            if (!found_R8G8B8A8_UNORM)
+            if (!found_format)
             {
                 colorFormat = surfaceFormats[0].format;
                 colorSpace = surfaceFormats[0].colorSpace;

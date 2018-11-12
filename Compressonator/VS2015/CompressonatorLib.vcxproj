@@ -388,7 +388,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -417,7 +417,7 @@
       </ExportNamedFunctions>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/VS2015/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
@@ -427,7 +427,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -437,7 +437,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>../CompressonatorLib.def</ModuleDefinitionFile>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/VS2015/Debug/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CustomBuild>
       <Command>
@@ -466,7 +466,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -496,7 +496,7 @@
       </ExportNamedFunctions>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/VS2015/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">
@@ -506,7 +506,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -516,7 +516,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>../CompressonatorLib.def</ModuleDefinitionFile>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/VS2015/Debug_MD/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CustomBuild>
       <Command>
@@ -545,7 +545,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -568,7 +568,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/VS2015/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
@@ -578,7 +578,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -591,7 +591,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>../CompressonatorLib.def</ModuleDefinitionFile>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/VS2015/Debug/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -609,7 +609,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -633,7 +633,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/VS2015/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
@@ -643,7 +643,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -656,7 +656,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>../CompressonatorLib.def</ModuleDefinitionFile>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/VS2015/Debug_MD/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -677,7 +677,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -712,7 +712,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/VS2015/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
@@ -725,7 +725,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -740,7 +740,7 @@
       <ImportLibrary>
       </ImportLibrary>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/VS2015/Release/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CustomBuild>
       <Command>
@@ -773,7 +773,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -808,7 +808,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/VS2015/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
@@ -821,7 +821,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -836,7 +836,7 @@
       <ImportLibrary>
       </ImportLibrary>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/VS2015/Release_MD/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CustomBuild>
       <Command>
@@ -868,7 +868,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -891,7 +891,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/VS2015/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
@@ -903,7 +903,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -918,7 +918,7 @@
       <ImportLibrary>
       </ImportLibrary>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/VS2015/Release/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -938,7 +938,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -961,7 +961,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/VS2015/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
@@ -973,7 +973,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Header/CMP_Math;../../Common/Src;../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half;../../Common/Lib/AMD/APPSDK/3-0/include;../Header;../Header/Codec;../Header/Codec/BC7;../Header/Codec/BC6H;../Header/Codec/ASTC;../Header/Codec/ASTC/ARM;../Header/Codec/APC;../Header/Codec/ATC;../Header/Codec/ATI;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -988,7 +988,7 @@
       <ImportLibrary>
       </ImportLibrary>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/VS2015/Release_MD/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -1098,7 +1098,6 @@
     <ClCompile Include="../Source/Compressonator.cpp" />
     <ClCompile Include="../Source/Codec/ATI/Compressonatori_tc.c" />
     <ClCompile Include="../Source/Codec/ATI/CompressonatorXCodec.cpp" />
-    <ClCompile Include="../Source/Codec/ETC/etc.cpp" />
     <ClCompile Include="../Source/Codec/ETC/etcpack/etcdec.cxx" />
     <ClCompile Include="../Source/Codec/ETC/etcpack/etcimage.cxx" />
     <ClCompile Include="../Source/Codec/ETC/etcpack/etcpack.cxx" />
@@ -1170,6 +1169,8 @@
     <ClCompile Include="../Source/Codec/DXTC/dxtc_v11_compress.c" />
     <ClCompile Include="../Source/Codec/DXTC/dxtc_v11_compress_asm.c" />
     <ClCompile Include="../Source/Compress.cpp" />
+    <ClCompile Include="..\Source\Codec\ETC\Codec_ETC2_RGBA.cpp" />
+    <ClCompile Include="..\Source\Codec\ETC\Codec_ETC2_RGBA1.cpp" />
     <ClCompile Include="..\Source\Codec\GT\Codec_GT.cpp" />
     <ClCompile Include="..\Source\Codec\GT\GT_Decode.cpp" />
     <ClCompile Include="..\Source\Codec\GT\GT_Encode.cpp" />
@@ -1259,9 +1260,10 @@
     <ClInclude Include="../Header/Internal/debug.h" />
     <ClInclude Include="../Header/Version.h" />
     <ClInclude Include="../Source/Common/HDR_Encode.h" />
+    <ClInclude Include="..\Header\Codec\ETC\Codec_ETC2_RGBA.h" />
+    <ClInclude Include="..\Header\Codec\ETC\Codec_ETC2_RGBA1.h" />
     <ClInclude Include="..\Header\Codec\GT\Codec_GT.h" />
     <ClInclude Include="..\Header\Codec\GT\GT_Decode.h" />
-    <ClInclude Include="..\Header\Codec\GT\GT_Definitions.h" />
     <ClInclude Include="..\Header\Codec\GT\GT_Encode.h" />
   </ItemGroup>
   <ItemGroup>

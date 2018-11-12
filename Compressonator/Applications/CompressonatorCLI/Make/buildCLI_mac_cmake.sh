@@ -33,12 +33,6 @@ rm -f ../../_Plugins/CImage/KTX/Make/cmake_install.cmake
 rm -f ../../_Plugins/CImage/KTX/Make/Makefile
 (cd ../../_Plugins/CImage/KTX/Make/ && cmake -G Unix\ Makefiles && make)
 
-if [ $? -ne 0 ]; then
-    echo If you\'re receiving glcorearb.h missing error you can try downloading by running:
-    echo sudo wget -P /usr/local/include/GL http://www.opengl.org/registry/api/GL/glcorearb.h
-    exit
-fi
-
 rm -f ../../_Plugins/CFilter/Make/CMakeCache.txt 
 rm -f -r ../../_Plugins/CFilter/Make/CMakeFiles
 rm -f ../../_Plugins/CFilter/Make/cmake_install.cmake

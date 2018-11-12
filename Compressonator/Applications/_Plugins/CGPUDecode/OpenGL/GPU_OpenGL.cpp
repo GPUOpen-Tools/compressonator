@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2016    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2016-2018    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -34,7 +34,7 @@
 
 using namespace GPU_Decode;
 
-GPU_OpenGL::GPU_OpenGL(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback)
+GPU_OpenGL::GPU_OpenGL(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback):RenderWindow("OpenGL")
 {
     //set default width and height if is 0
     if (Width <= 0)
@@ -42,15 +42,17 @@ GPU_OpenGL::GPU_OpenGL(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback)
     if (Height <= 0)
         Height = 480;
 
-    if (FAILED(InitWindow(hInstance, Width, Height, callback)))
+    if (FAILED(InitWindow(Width, Height, callback)))
+    {
+        fprintf(stderr, "Failed to initialize Window. Please make sure GLEW is downloaded.\n");
         assert(0);
+    }
 
     EnableWindowContext(m_hWnd, &m_hDC, &m_hRC);
 }
 
 GPU_OpenGL::~GPU_OpenGL()
 {
-
 }
 
 //====================================================================================
@@ -90,6 +92,7 @@ void GPU_OpenGL::GLRender()
     //for debug when showwindow is enable
     SwapBuffers(m_hDC);
 #endif
+
 }
 
 GLenum GPU_OpenGL::MIP2OLG_Format(const CMP_Texture* pSourceTexture)
@@ -131,6 +134,21 @@ GLenum GPU_OpenGL::MIP2OLG_Format(const CMP_Texture* pSourceTexture)
     case CMP_FORMAT_ETC_RGB:
     case CMP_FORMAT_ETC2_RGB:
         m_GLnum = GL_COMPRESSED_RGB8_ETC2;
+        break;
+    case CMP_FORMAT_ETC2_SRGB:
+        m_GLnum = GL_COMPRESSED_SRGB8_ETC2;
+        break;
+    case CMP_FORMAT_ETC2_RGBA:
+        m_GLnum = GL_COMPRESSED_RGBA8_ETC2_EAC;
+        break;
+    case CMP_FORMAT_ETC2_RGBA1:
+        m_GLnum = GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2;
+        break;
+    case CMP_FORMAT_ETC2_SRGBA:
+        m_GLnum = GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC;
+         break;
+    case CMP_FORMAT_ETC2_SRGBA1:
+        m_GLnum = GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2;
         break;
     case CMP_FORMAT_ASTC:  
         if ((pSourceTexture->nBlockWidth == 4) && (pSourceTexture->nBlockHeight == 4))
@@ -232,8 +250,10 @@ CMP_ERROR WINAPI GPU_OpenGL::Decompress(
     CMP_Texture* pDestTexture
 )
 {
+
     GLint majVer = 0;
     GLint minVer = 0;
+
     glGetIntegerv(GL_MAJOR_VERSION, &majVer);
     glGetIntegerv(GL_MINOR_VERSION, &minVer);
 
@@ -257,10 +277,12 @@ CMP_ERROR WINAPI GPU_OpenGL::Decompress(
     //  Wait in Main message loop, until render is complete
     //  then exit
     MSG msg = { 0 };
+    int loopcount = 0;
     while (WM_QUIT != msg.message)
     {
-        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE) && (loopcount < 100))
         {
+            loopcount++;
             TranslateMessage(&msg);
         }
         else
@@ -272,8 +294,18 @@ CMP_ERROR WINAPI GPU_OpenGL::Decompress(
 
     if (pDestTexture)
     {
-        if (pSourceTexture->format == CMP_FORMAT_ETC_RGB || pSourceTexture->format == CMP_FORMAT_ETC2_RGB)
+        if (pSourceTexture->format == CMP_FORMAT_ETC_RGB ||
+            pSourceTexture->format == CMP_FORMAT_ETC2_RGB ||
+            pSourceTexture->format == CMP_FORMAT_ETC2_RGBA ||
+            pSourceTexture->format == CMP_FORMAT_ETC2_RGBA1 
+            )
             glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_BGRA_EXT, GL_UNSIGNED_BYTE, pDestTexture->pData);
+        else
+        if (pSourceTexture->format == CMP_FORMAT_ETC2_SRGB ||
+            pSourceTexture->format == CMP_FORMAT_ETC2_SRGBA ||
+            pSourceTexture->format == CMP_FORMAT_ETC2_SRGBA1
+            )
+            glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_BGRA_EXT, GL_BYTE, pDestTexture->pData);
         else
         {
             if(pDestTexture->format ==  CMP_FORMAT_ARGB_16F)

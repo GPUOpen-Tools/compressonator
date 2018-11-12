@@ -96,6 +96,8 @@ void astc_find_closest_blockdim_2d(float target_bitrate, int *x, int *y, int con
 
 void astc_find_closest_blockxy_2d(int *x, int *y, int consider_illegal)
 {
+    (void)consider_illegal;
+
     int blockdims[6] = { 4, 5, 6, 8, 10, 12 };
 
     bool exists_x = std::find(std::begin(blockdims), std::end(blockdims), (*x)) != std::end(blockdims);
@@ -120,28 +122,6 @@ void astc_find_closest_blockxy_2d(int *x, int *y, int consider_illegal)
   
 }
 
-int MaxFacesOrSlices(const MipSet* pMipSet, int nMipLevel)
-{
-    if(!pMipSet)
-        return 0;
-
-    if(pMipSet->m_nDepth < 1)
-        return 0;
-
-    if(pMipSet->m_TextureType == TT_2D || pMipSet->m_TextureType == TT_CubeMap)
-        return pMipSet->m_nDepth;
-
-    int nMaxSlices = pMipSet->m_nDepth;
-    for(int i=0; i<pMipSet->m_nMipLevels; i++)
-    {
-        if(i == nMipLevel)
-            return nMaxSlices;
-
-        nMaxSlices = nMaxSlices>1 ? nMaxSlices>>1 : 1;    //div by 2, min of 1
-    }
-    return 0;    //nMipLevel was too high
-}
-
 bool DeCompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
    UNREFERENCED_PARAMETER(pUser1);
@@ -151,18 +131,6 @@ bool DeCompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR 
    if (fProgress > Progress) Progress = fProgress;
    PrintInfo("\rDeCompression progress = %2.0f",Progress);
    return g_bAbortCompression;
-}
-
-
-bool IsFileExt(const char *fname, const char *fext)
-{
-    string file_extension  = boost::filesystem::extension(fname);
-    boost::algorithm::to_lower(file_extension); 
-    if (file_extension.compare(fext) == 0)
-    {
-        return true;
-    }
-    return false;
 }
 
 bool IsDestinationUnCompressed(const char *fname)
@@ -200,7 +168,6 @@ bool IsDestinationUnCompressed(const char *fname)
     return isuncompressed;
 }
 
-
 CMP_FORMAT FormatByFileExtension(const char *fname, MipSet *pMipSet)
 {
     string file_extension  = boost::filesystem::extension(fname);
@@ -217,8 +184,6 @@ CMP_FORMAT FormatByFileExtension(const char *fname, MipSet *pMipSet)
     pMipSet->m_ChannelFormat    = CF_8bit;
     return CMP_FORMAT_ARGB_8888;
 }
-
-
 
 CMP_FORMAT GetFormat(CMP_DWORD dwFourCC)
 {
@@ -253,11 +218,20 @@ CMP_FORMAT GetFormat(CMP_DWORD dwFourCC)
         case FOURCC_ATC_RGBA_INTERP:    return CMP_FORMAT_ATC_RGBA_Interpolated;
         case FOURCC_ETC_RGB:            return CMP_FORMAT_ETC_RGB;
         case FOURCC_ETC2_RGB:           return CMP_FORMAT_ETC2_RGB;
+        case FOURCC_ETC2_SRGB:          return CMP_FORMAT_ETC2_SRGB;
+        case FOURCC_ETC2_RGBA:          return CMP_FORMAT_ETC2_RGBA;
+        case FOURCC_ETC2_RGBA1:         return CMP_FORMAT_ETC2_RGBA1;
+        case FOURCC_ETC2_SRGBA:         return CMP_FORMAT_ETC2_SRGBA;
+        case FOURCC_ETC2_SRGBA1:        return CMP_FORMAT_ETC2_SRGBA1;
         case FOURCC_BC6H:               return CMP_FORMAT_BC6H;
         case FOURCC_BC7:                return CMP_FORMAT_BC7;
         case FOURCC_ASTC:               return CMP_FORMAT_ASTC;
-        case FOURCC_GT:                 return CMP_FORMAT_GT;
-
+#ifdef USE_GTC
+        case FOURCC_GTC:                return CMP_FORMAT_GTC;
+#endif
+#ifdef USE_GTC_HDR
+        case FOURCC_GTCH:               return CMP_FORMAT_GTCH;
+#endif
 
         default: 
             return CMP_FORMAT_Unknown;
@@ -295,17 +269,26 @@ void Format2FourCC(CMP_FORMAT format, MipSet *pMipSet)
         case CMP_FORMAT_DXT5_xGxR:              pMipSet->m_dwFourCC =  FOURCC_DXT5_xGxR;           break;
 
         case CMP_FORMAT_ATC_RGB:                pMipSet->m_dwFourCC = FOURCC_ATC_RGB;             break;
-        case CMP_FORMAT_ATC_RGBA_Explicit:      pMipSet->m_dwFourCC =  FOURCC_ATC_RGBA_EXPLICIT;   break;
-        case CMP_FORMAT_ATC_RGBA_Interpolated:  pMipSet->m_dwFourCC =  FOURCC_ATC_RGBA_INTERP;     break;
+        case CMP_FORMAT_ATC_RGBA_Explicit:      pMipSet->m_dwFourCC = FOURCC_ATC_RGBA_EXPLICIT;   break;
+        case CMP_FORMAT_ATC_RGBA_Interpolated:  pMipSet->m_dwFourCC = FOURCC_ATC_RGBA_INTERP;     break;
 
-        case CMP_FORMAT_ETC_RGB:                pMipSet->m_dwFourCC =  FOURCC_ETC_RGB;             break;
-        case CMP_FORMAT_ETC2_RGB:               pMipSet->m_dwFourCC =  FOURCC_ETC2_RGB;            break;
-        case CMP_FORMAT_GT:                     pMipSet->m_dwFourCC =  FOURCC_GT;                  break;
-
-        case CMP_FORMAT_BC6H:                   pMipSet->m_dwFourCC =  FOURCC_DX10;                break;
+        case CMP_FORMAT_ETC_RGB:                pMipSet->m_dwFourCC = FOURCC_ETC_RGB;             break;
+        case CMP_FORMAT_ETC2_RGB:               pMipSet->m_dwFourCC = FOURCC_ETC2_RGB;            break;
+        case CMP_FORMAT_ETC2_SRGB:              pMipSet->m_dwFourCC = FOURCC_ETC2_SRGB;           break;
+        case CMP_FORMAT_ETC2_RGBA:              pMipSet->m_dwFourCC = FOURCC_ETC2_RGBA;           break;
+        case CMP_FORMAT_ETC2_RGBA1:             pMipSet->m_dwFourCC = FOURCC_ETC2_RGBA1;          break;
+        case CMP_FORMAT_ETC2_SRGBA:             pMipSet->m_dwFourCC = FOURCC_ETC2_SRGBA;          break;
+        case CMP_FORMAT_ETC2_SRGBA1:            pMipSet->m_dwFourCC = FOURCC_ETC2_SRGBA1;         break;
+#ifdef USE_GTC
+        case CMP_FORMAT_GTC:                    pMipSet->m_dwFourCC = FOURCC_GTC;                 break;
+#endif
+#ifdef USE_GTC_HDR
+        case CMP_FORMAT_GTCH:                   pMipSet->m_dwFourCC = FOURCC_GTCH;                break;
+#endif
+        case CMP_FORMAT_BC6H:                   pMipSet->m_dwFourCC =  FOURCC_DX10;               break;
         case CMP_FORMAT_BC6H_SF:                pMipSet->m_dwFourCC = FOURCC_DX10;                break;
-        case CMP_FORMAT_BC7:                    pMipSet->m_dwFourCC =  FOURCC_DX10;                break;
-        case CMP_FORMAT_ASTC:                   pMipSet->m_dwFourCC =  FOURCC_DX10;                break;
+        case CMP_FORMAT_BC7:                    pMipSet->m_dwFourCC =  FOURCC_DX10;               break;
+        case CMP_FORMAT_ASTC:                   pMipSet->m_dwFourCC =  FOURCC_DX10;               break;
 
         default:
                                                    pMipSet->m_dwFourCC =  FOURCC_DX10;
@@ -506,6 +489,7 @@ QImage::Format MipFormat2QFormat(MipSet *mipset)
     case CF_8bit: {format = QImage::Format_ARGB32; break; }
     case CF_Float16: {format = QImage::Format_ARGB32; break; }
     case CF_Float32: {format = QImage::Format_ARGB32; break; }
+    case CF_Float9995E: {format = QImage::Format_ARGB32; break; }
     case CF_Compressed: {break; }
     case CF_16bit: {break; }
     case CF_2101010: {break; }
@@ -605,62 +589,325 @@ int QImage2MIPS(QImage *qimage, CMIPS *m_CMips, MipSet *pMipSet)
 }
 
 //load data byte in mipset into Qimage ARGB32 format
-QImage *MIPS2QImage(CMIPS *m_CMips, MipSet *mipset, int level)
+inline float knee(double x, double f)
 {
-    if (mipset == NULL) return NULL;
-    if (mipset->m_compressed) return NULL;
+    return float(Imath::Math<double>::log(x * f + 1.f) / f);
+}
 
+float findKneeF(float x, float y)
+{
+    float f0 = 0;
+    float f1 = 1.f;
+
+    while (knee(x, f1) > y) {
+        f0 = f1;
+        f1 = f1 * 2.f;
+    }
+
+    for (int i = 0; i < 30; ++i) {
+        const float f2 = (f0 + f1) / 2.f;
+        const float y2 = knee(x, f2);
+
+        if (y2 < y) {
+            f1 = f2;
+        }
+        else {
+            f0 = f2;
+        }
+    }
+
+    return (f0 + f1) / 2.f;
+}
+
+CMP_FLOAT F16toF32(CMP_HALF f)
+{
+    half A;
+    A.setBits(f);
+    return((CMP_FLOAT)A);
+}
+
+CMP_HALF F32toF16(CMP_FLOAT f)
+{
+    return(half(f).bits());
+}
+
+void float2Pixel(float kl, float f, float r, float g, float b, float a, int x, int y, QImage *image, CMP_CompressOptions option)
+{
+    CMP_BYTE r_b, g_b, b_b, a_b;
+
+    float invGamma, scale;
+    if (option.fInputGamma < 1.0f) {
+        option.fInputGamma = 2.2f;
+    }
+
+    invGamma = 1.0 / option.fInputGamma;                    //for gamma correction
+    float luminance3f = powf(2, -3.5);         // always assume max intensity is 1 and 3.5f darker for scale later
+    scale = 255.0 * powf(luminance3f, invGamma);
+
+    //  1) Compensate for fogging by subtracting defog
+    //     from the raw pixel values.
+    // We assume a defog of 0
+    if (option.fInputDefog > 0.0f)
+    {
+        r = r - option.fInputDefog;
+        g = g - option.fInputDefog;
+        b = b - option.fInputDefog;
+        a = a - option.fInputDefog;
+    }
+
+    //  2) Multiply the defogged pixel values by
+    //     2^(exposure + 2.47393).
+    const float exposeScale = Imath::Math<float>::pow(2, option.fInputExposure + 2.47393f);
+    r = r * exposeScale;
+    g = g * exposeScale;
+    b = b * exposeScale;
+    a = a * exposeScale;
+
+    //  3) Values that are now 1.0 are called "middle gray".
+    //     If defog and exposure are both set to 0.0, then
+    //     middle gray corresponds to a raw pixel value of 0.18.
+    //     In step 6, middle gray values will be mapped to an
+    //     intensity 3.5 f-stops below the display's maximum
+    //     intensity.
+
+    //  4) Apply a knee function.  The knee function has two
+    //     parameters, kneeLow and kneeHigh.  Pixel values
+    //     below 2^kneeLow are not changed by the knee
+    //     function.  Pixel values above kneeLow are lowered
+    //     according to a logarithmic curve, such that the
+    //     value 2^kneeHigh is mapped to 2^3.5.  (In step 6,
+    //     this value will be mapped to the the display's
+    //     maximum intensity.)
+    if (r > kl) {
+        r = kl + knee(r - kl, f);
+    }
+    if (g > kl) {
+        g = kl + knee(g - kl, f);
+    }
+    if (b > kl) {
+        b = kl + knee(b - kl, f);
+    }
+    if (a > kl) {
+        a = kl + knee(a - kl, f);
+    }
+
+    //  5) Gamma-correct the pixel values, according to the
+    //     screen's gamma.  (We assume that the gamma curve
+    //     is a simple power function.)
+    r = Imath::Math<float>::pow(r, invGamma);
+    g = Imath::Math<float>::pow(g, invGamma);
+    b = Imath::Math<float>::pow(b, invGamma);
+    a = Imath::Math<float>::pow(a, option.fInputGamma);
+
+    //  6) Scale the values such that middle gray pixels are
+    //     mapped to a frame buffer value that is 3.5 f-stops
+    //     below the display's maximum intensity. (84.65 if
+    //     the screen's gamma is 2.2)
+    r *= scale;
+    g *= scale;
+    b *= scale;
+    a *= scale;
+
+    r_b = Imath::clamp<float>(r, 0.f, 255.f);
+    g_b = Imath::clamp<float>(g, 0.f, 255.f);
+    b_b = Imath::clamp<float>(b, 0.f, 255.f);
+    a_b = Imath::clamp<float>(a, 0.f, 255.f);
+
+    image->setPixel(x, y, qRgba(r_b, g_b, b_b, a_b));
+}
+
+//
+// load Exr Image Properties
+//
+
+void loadExrProperties(CMIPS *m_CMips, MipSet* mipset, int level, QImage *image, CMP_CompressOptions option)
+{
     MipLevel* mipLevel = m_CMips->GetMipLevel(mipset, level);
-    if (!mipLevel) return NULL;
+    if (mipLevel->m_pbData == NULL) return;
 
-    QImage *image = NULL;
+    float kl = Imath::Math<float>::pow(2.f, option.fInputKneeLow);
+    float f = findKneeF(Imath::Math<float>::pow(2.f, option.fInputKneeHigh) - kl, Imath::Math<float>::pow(2.f, 3.5f) - kl);
+
+    if (mipset->m_ChannelFormat == CF_Float32)
+    {
+        float *data = mipLevel->m_pfData;
+        float r = 0, g = 0, b = 0, a = 0;
+        //copy pixels into image
+        for (int y = 0; y < mipLevel->m_nHeight; y++) {
+            for (int x = 0; x < mipLevel->m_nWidth; x++) {
+                r = *data;
+                data++;
+                g = *data;
+                data++;
+                b = *data;
+                data++;
+                a = *data;
+                data++;
+                float2Pixel(kl, f, r, g, b, a, x, y, image, option);
+            }
+
+            //if ((y % 10) == 0)
+            //    QApplication::processEvents();
+        }
+    }
+    else if (mipset->m_ChannelFormat == CF_Float16)
+    {
+        CMP_HALF *data = mipLevel->m_phfData;
+        CMP_HALF r, g, b, a;
+        //copy pixels into image
+        for (int y = 0; y < mipLevel->m_nHeight; y++) {
+            for (int x = 0; x < mipLevel->m_nWidth; x++) {
+                r = *data;
+                data++;
+                g = *data;
+                data++;
+                b = *data;
+                data++;
+                a = *data;
+                data++;
+                float2Pixel(kl, f, F16toF32(r), F16toF32(g), F16toF32(b), F16toF32(a), x, y, image, option);
+            }
+
+            //if ((y % 10) == 0)
+            //    QApplication::processEvents();
+        }
+    }
+    else if (mipset->m_ChannelFormat == CF_Float9995E)
+    {
+        //CMP_DWORD dwSize = mipLevel->m_dwLinearSize;
+        CMP_DWORD* pSrc = mipLevel->m_pdwData;
+        float r = 0, g = 0, b = 0, a = 0;
+        union { float f; int32_t i; } fi;
+        float Scale = 0.0f;
+        for (int y = 0; y < mipLevel->m_nHeight; y++) {
+            for (int x = 0; x < mipLevel->m_nWidth; x++) {
+                CMP_DWORD dwSrc = *pSrc++;
+                R9G9B9E5 pTemp;
+
+                pTemp.rm = (dwSrc & 0x000001ff);
+                pTemp.gm = (dwSrc & 0x0003fe00) >> 9;
+                pTemp.bm = (dwSrc & 0x07fc0000) >> 18;
+                pTemp.e = (dwSrc & 0xf8000000) >> 27;
+
+                fi.i = 0x33800000 + (pTemp.e << 23);
+                Scale = fi.f;
+                r = Scale * float(pTemp.rm);
+                g = Scale * float(pTemp.gm);
+                b = Scale * float(pTemp.bm);
+                a = 1.0f;
+                float2Pixel(kl, f, r, g, b, a, x, y, image, option);
+            }
+            //if ((y % 10) == 0)
+            //    QApplication::processEvents();
+        }
+    }
+    else return;
+
+}
+
+//load data byte in mipset into Qimage ARGB32 format
+QImage* MIPS2QImage(CMIPS *m_CMips, MipSet *tmpMipSet, int level, CMP_CompressOptions option, CMP_Feedback_Proc pFeedbackProc=nullptr)
+{
+    if (tmpMipSet == NULL)
+    {
+        QImage* image = new QImage(":/CompressonatorGUI/Images/CompressedImageError.png");
+        return image;
+    }
+
+    MipLevel* mipLevel = m_CMips->GetMipLevel(tmpMipSet, level);
+    if (!mipLevel)
+    {
+        return nullptr;
+    }
+
+    QImage *image;
 
     if (
-        (mipset->m_TextureDataType == TDT_ARGB) ||
-        (mipset->m_TextureDataType == TDT_XRGB)
+        (tmpMipSet->m_TextureDataType == TDT_ARGB) ||
+        (tmpMipSet->m_TextureDataType == TDT_XRGB)
         )
     {
-        // We have allocated a data buffer to fill get its referance
-        CMP_BYTE* pData = mipLevel->m_pbData;
-        if (pData == NULL)  return NULL;
 
-        // We dont support the conversion 
-        if (MipFormat2QFormat(mipset) == QImage::Format_Invalid)
+        if ((tmpMipSet->m_ChannelFormat == CF_Float32) || (tmpMipSet->m_ChannelFormat == CF_Float16))
         {
-            return NULL;
-        }
-
-        // Allocates a uninitialized buffer of specified size and format
-        image = new QImage(mipLevel->m_nWidth, mipLevel->m_nHeight, MipFormat2QFormat(mipset));
-        if (image == NULL) return nullptr;
-
-        // Initialize the buffer
-        CMP_BYTE R, G, B, A;
-        int i = 0;
-
-
-        if (mipset->m_swizzle)
-        {
-            for (int y = 0; y < mipLevel->m_nHeight; y++)
+            if (tmpMipSet->m_ChannelFormat == CF_Float32)
             {
-                for (int x = 0; x < mipLevel->m_nWidth; x++)
-                {
-                    B = pData[i];
-                    i++;
-                    G = pData[i];
-                    i++;
-                    R = pData[i];
-                    i++;
-                    A = pData[i];;
-                    i++;
-                    image->setPixel(x, y, qRgba(R, G, B, A));
-                }
+                float* pData = mipLevel->m_pfData;
+                if (pData == NULL)  return nullptr;
             }
+            else
+                if (tmpMipSet->m_ChannelFormat == CF_Float16)
+                {
+                    CMP_HALF* pData = mipLevel->m_phfData;
+                    if (pData == NULL)  return nullptr;
+                }
+                else {
+                    CMP_WORD* pData = mipLevel->m_pwData;
+                    if (pData == NULL)  return nullptr;
+                }
+
+                image = new QImage(mipLevel->m_nWidth, mipLevel->m_nHeight, MipFormat2QFormat(tmpMipSet));
+                if (image == NULL)
+                {
+                    image = new QImage(":/CompressonatorGUI/Images/OutOfMemoryError.png");
+                    return nullptr;
+                }
+
+                loadExrProperties(m_CMips, tmpMipSet, level, image, option);
+        }
+        else if (tmpMipSet->m_ChannelFormat == CF_Float9995E)
+        {
+
+            float* pData = mipLevel->m_pfData;
+            if (pData == NULL)  return nullptr;
+
+            image = new QImage(mipLevel->m_nWidth, mipLevel->m_nHeight, MipFormat2QFormat(tmpMipSet));
+            if (image == NULL)
+            {
+                image = new QImage(":/CompressonatorGUI/Images/OutOfMemoryError.png");
+                return nullptr;
+            }
+            loadExrProperties(m_CMips, tmpMipSet, level, image, option);
         }
         else
         {
-            for (int y = 0; y < mipLevel->m_nHeight; y++)
+
+            // We have allocated a data buffer to fill get its referance
+            CMP_BYTE* pData = mipLevel->m_pbData;
+            if (pData == NULL)  return nullptr;
+
+            // We dont support the conversion 
+            if (MipFormat2QFormat(tmpMipSet) == QImage::Format_Invalid)
             {
+                return nullptr;
+            }
+
+            // Allocates a uninitialized buffer of specified size and format
+            image = new QImage(mipLevel->m_nWidth, mipLevel->m_nHeight, MipFormat2QFormat(tmpMipSet));
+            if (image == NULL)
+            {
+                image = new QImage(":/CompressonatorGUI/Images/OutOfMemoryError.png");
+                return nullptr;
+            }
+
+            //QImageFormatInfo(image);
+
+            bool isRGBA = (tmpMipSet->m_TextureDataType == TDT_ARGB) ? true : false;
+            bool isFixedAlpha = false;
+
+            // BC4 only Red channel is valid. All other channels are set equal to that channels value
+            // Compressonator decoder also set Alpha to the red channel value!
+            // The Alpha should be set to 255 if viewing in GUI!
+            if (tmpMipSet->m_isDeCompressed == CMP_FORMAT_ATI1N)
+            {
+                isFixedAlpha = true;
+            }
+
+
+            // Initialize the buffer
+            CMP_BYTE R, G, B, A;
+            int i = 0;
+            for (int y = 0; y < mipLevel->m_nHeight; y++) {
                 for (int x = 0; x < mipLevel->m_nWidth; x++)
                 {
                     R = pData[i];
@@ -669,16 +916,31 @@ QImage *MIPS2QImage(CMIPS *m_CMips, MipSet *mipset, int level)
                     i++;
                     B = pData[i];
                     i++;
-                    A = pData[i];;
-                    i++;
+                    if (isRGBA)
+                    {
+                        if (isFixedAlpha)
+                            A = 255;
+                        else
+                            A = pData[i];
+                        i++;
+                    }
+                    else
+                        A = 255;
                     image->setPixel(x, y, qRgba(R, G, B, A));
+                }
+                if (pFeedbackProc)
+                {
+                    float fProgress = 100.f * (y * mipLevel->m_nWidth) / (mipLevel->m_nWidth * mipLevel->m_nHeight);
+                    if (pFeedbackProc(fProgress, NULL, NULL))
+                        return NULL;
                 }
             }
         }
     }
- 
+
     return image;
 }
+
 #endif
 
 //
@@ -724,6 +986,9 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *con
     // EXR is saved as CMP_FORMAT_ARGB_16F
     switch (MipSetIn->m_format)
     {
+#ifdef USE_GTC_HDR
+    case CMP_FORMAT_GTCH:
+#endif
     case CMP_FORMAT_BC6H:
     case CMP_FORMAT_BC6H_SF:
         MipSetOut->m_format = CMP_FORMAT_ARGB_16F;
@@ -909,7 +1174,7 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *con
                     }
                     else if (res == CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB)
                     {
-                        configSetting->errMessage = "Error: Failed to decompress with the API selected. Version is not supported yet. Stay tune for update!\n";
+                        configSetting->errMessage = "Error: Failed to decompress with the API selected. Version is not supported. Stay tune for update!\n";
                         PrintInfo("Error: Failed to decompress with the API selected. Note for Vulkan, only driver version up to 1.5.0 is supported by this app. Please stay tune for update! Thanks.\n");
                         m_CMIPS.FreeMipSet(MipSetOut);
                         delete MipSetOut;
@@ -1098,7 +1363,7 @@ int AMDLoadMIPSTextureImage(const char *SourceFile, MipSet *MipSetIn, bool use_O
     return 0;
 }
 
-int AMDSaveMIPSTextureImage(const char * DestFile, MipSet *MipSetIn, bool use_OCV)
+int AMDSaveMIPSTextureImage(const char * DestFile, MipSet *MipSetIn, bool use_OCV, CMP_CompressOptions option)
 {
     bool filesaved = false;
     CMIPS m_CMIPS;
@@ -1137,6 +1402,11 @@ int AMDSaveMIPSTextureImage(const char * DestFile, MipSet *MipSetIn, bool use_OC
                 MipSetIn->m_swizzle = true;
                 break;
             }
+
+            if ((MipSetIn->m_ChannelFormat == CF_Float32) || (MipSetIn->m_ChannelFormat == CF_Float16))
+            {
+                PrintInfo("\nError: TGA plugin does not support floating point data saving yet. Please use other file extension (i.e. dds).\n");
+            }
         }
 
         if (plugin_Image->TC_PluginFileSaveTexture(DestFile, MipSetIn) == 0)
@@ -1155,7 +1425,7 @@ int AMDSaveMIPSTextureImage(const char * DestFile, MipSet *MipSetIn, bool use_OC
     if (!filesaved)
     {
         // Try Qt based filesave!
-        QImage *qimage = MIPS2QImage(&m_CMIPS, MipSetIn, 0);
+        QImage *qimage = MIPS2QImage(&m_CMIPS, MipSetIn, 0, option, nullptr);
 
         if (qimage)
         {
@@ -1212,6 +1482,12 @@ bool FormatSupportsDXTCBase(CMP_FORMAT format)
     case  CMP_FORMAT_DXT5_xRBG            :
     case  CMP_FORMAT_DXT5_RGxB            :
     case  CMP_FORMAT_DXT5_xGxR            :
+#ifdef USE_GTC
+    case  CMP_FORMAT_GTC                  :
+#endif
+#ifdef USE_GTC_HDR
+    case  CMP_FORMAT_GTCH                 :
+#endif
             return (true);
     break;
     default:

@@ -30,27 +30,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-
-#include "Common_KernelDef.h"
-
-typedef struct
-{
-    int  m_src_width;
-    int  m_src_height;
-    int  m_width_in_blocks;
-    int  m_height_in_blocks;
-} Source_Info;
-
-struct KernalOptions
-{
-    unsigned int     size;          // Size of data 
-    unsigned int     Compute_type;  // Compute Type : default is OpenCL
-    unsigned int     data_type;     // Codec Format
-    unsigned int     use_code;      // Determines what compiler definition path is used defulat is USE_OPTIMIZED_CODE_0
-    void *data;                     // data to pass down from CPU to kernel
-    void *dataSVM;                  // data allocated as Shared by CPU and GPU (used only when code is running in 64bit and devices support SVM)
-};
-
 #ifdef __OPENCL_VERSION__
 // map to OpenCL definitions
 typedef uchar4 auchar4;
@@ -69,19 +48,19 @@ typedef float3 afloat3;
 
 using namespace std;
 
-struct auchar4
+struct Vec4uc
 {
-    auchar4() {};
-    auchar4(unsigned char s) : x(s), y(s), z(s), w(s) {}
-    auchar4(unsigned char x, unsigned char y, unsigned char z, unsigned char w) : x(x), y(y), z(z), w(w) {}
+    Vec4uc() {};
+    Vec4uc(unsigned char s) : x(s), y(s), z(s), w(s) {}
+    Vec4uc(unsigned char x, unsigned char y, unsigned char z, unsigned char w) : x(x), y(y), z(z), w(w) {}
 
     unsigned char x, y, z, w;
 
-    inline auchar4 operator*(unsigned char s) const { return auchar4(x*s, y*s, z*s, w*s); }
-    inline auchar4 operator^(const auchar4& a) const { return auchar4(x ^ a.x, y ^ a.y, z ^ a.z, w ^ a.w); }
-    inline auchar4 operator&(const auchar4& a) const { return auchar4(x & a.x, y & a.y, z & a.z, w & a.w); }
-    inline bool operator==(const auchar4& a) const { return (x == a.x && y == a.y && z == a.z && w == a.w); }
-    inline auchar4 operator+(const auchar4& a) const { return auchar4(x + a.x, y + a.y, z + a.z, w + a.w); }
+    inline Vec4uc operator*(unsigned char s) const { return Vec4uc(x*s, y*s, z*s, w*s); }
+    inline Vec4uc operator^(const Vec4uc& a) const { return Vec4uc(x ^ a.x, y ^ a.y, z ^ a.z, w ^ a.w); }
+    inline Vec4uc operator&(const Vec4uc& a) const { return Vec4uc(x & a.x, y & a.y, z & a.z, w & a.w); }
+    inline bool operator==(const Vec4uc& a) const { return (x == a.x && y == a.y && z == a.z && w == a.w); }
+    inline Vec4uc operator+(const Vec4uc& a) const { return Vec4uc(x + a.x, y + a.y, z + a.z, w + a.w); }
 };
 
 struct afloat3

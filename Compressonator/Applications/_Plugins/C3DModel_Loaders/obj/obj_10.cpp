@@ -21,6 +21,8 @@
 // THE SOFTWARE.
 //
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #define WIN32_LEAN_AND_MEAN        // Exclude rarely-used stuff from Windows headers
 // Windows Header Files:
 #ifdef _WIN32
@@ -177,8 +179,8 @@ static CMP_Mesh parseObj(const char* path, CMIPS *cmips, CMP_Feedback_Proc pFeed
         return CMP_Mesh();
     }
 
-	if (cmips)
-		cmips->Print("OBJ: Triangulate");
+    if (cmips)
+        cmips->Print("OBJ: Triangulate");
     objTriangulate(file);
 
 
@@ -187,7 +189,7 @@ static CMP_Mesh parseObj(const char* path, CMIPS *cmips, CMP_Feedback_Proc pFeed
 
     size_t total_indices = file.f.size() / 3;
     size_t  fsize = file.f.size();
-    int perf = fsize / 100;
+    int perf = (int)fsize / 100;
 
     for (size_t i = 0; i < fsize; i += 3)
     {
@@ -254,11 +256,11 @@ static CMP_Mesh parseObj(const char* path, CMIPS *cmips, CMP_Feedback_Proc pFeed
     std::vector<Vertex> vertices;
     vertices.reserve(total_indices);
 
-	size_t  fsize = file.f.size();
-	int perf = fsize / 100;
+    size_t  fsize = file.f.size();
+    int perf = fsize / 100;
 
-	if (cmips)
-		cmips->Print("OBJ: Processing...");
+    if (cmips)
+        cmips->Print("OBJ: Processing...");
     for (size_t i = 0; i < fsize; i += 3)
     {
         int vi = file.f[i + 0];
@@ -365,8 +367,8 @@ int Plugin_obj_Loader::SaveModelData(const char* pdstFilename, void* meshData) {
     }
 
     CMP_Mesh* modelData = (CMP_Mesh*)meshData;
-    int nVCount = modelData->vertices.size();
-    int nICount = modelData->indices.size();
+    int nVCount = (int)modelData->vertices.size();
+    int nICount = (int)modelData->indices.size();
 
     bool hasVN = false; //has vertex normal
     bool hasVT = false; // has texcoordinate
@@ -423,17 +425,17 @@ int Plugin_obj_Loader::SaveModelData(const char* pdstFilename, void* meshData) {
     {
         g_CMIPS->Print("Writing faces...");
     }
-    for (unsigned int k = 0; k < nICount; k += 3)
+    for (int k = 0; k < nICount; k += 3)
     {
         outputFileStream << "f ";
         for (int j = 0; j < 3; j++)
         {
-			if (hasVN)
-			{
-				outputFileStream << modelData->indices[k + j] + 1 <<"//" << modelData->indices[k + j] + 1 << " ";
-			}
-			else
-				outputFileStream << modelData->indices[k + j] + 1 << " "; 
+            if (hasVN)
+            {
+                outputFileStream << modelData->indices[k + j] + 1 <<"//" << modelData->indices[k + j] + 1 << " ";
+            }
+            else
+                outputFileStream << modelData->indices[k + j] + 1 << " "; 
         }
         outputFileStream << std::endl;
     }

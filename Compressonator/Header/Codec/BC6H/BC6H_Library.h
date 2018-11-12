@@ -40,11 +40,8 @@
 // Number of image components
 #define BC6H_COMPONENT_COUNT 4
 
-// Number of bytes in a BC6H Block
-#define BC6H_BLOCK_BYTES    (4*4)
-
 // Number of pixels in a BC6H block
-#define BC6H_BLOCK_PIXELS   BC6H_BLOCK_BYTES
+#define BC6H_BLOCK_PIXELS   16
 
 typedef enum _BC6H_ERROR
 {

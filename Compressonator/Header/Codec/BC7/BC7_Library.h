@@ -41,11 +41,8 @@
 // Number of image components
 #define BC7_COMPONENT_COUNT 4
 
-// Number of bytes in a BC7 Block
-#define BC7_BLOCK_BYTES    (4*4)
-
 // Number of pixels in a BC7 block
-#define BC7_BLOCK_PIXELS   BC7_BLOCK_BYTES
+#define BC7_BLOCK_PIXELS   16
 
 
 extern void Quant_DeInit();

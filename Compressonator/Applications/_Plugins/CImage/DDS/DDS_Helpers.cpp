@@ -126,13 +126,13 @@ TC_PluginError GenericLoadFunction(FILE*& pFile, DDSD2*& pDDSD, MipSet*& pMipSet
         pDDSD->dwWidth, pDDSD->dwHeight, pMipSet->m_nDepth))
         return PE_Unknown;
 
-    if(pDDSD->dwFlags & DDSD_MIPMAPCOUNT)
-        pMipSet->m_nMipLevels = pDDSD->dwMipMapCount;
-    else
-        pMipSet->m_nMipLevels = pDDSD->dwMipMapCount;
+    pMipSet->m_nMipLevels = pDDSD->dwMipMapCount;
 
     if(pMipSet->m_nMipLevels < 1)
         pMipSet->m_nMipLevels = 1;
+    else
+    if(pMipSet->m_nMipLevels > pMipSet->m_nMaxMipLevels)
+        pMipSet->m_nMipLevels = pMipSet->m_nMaxMipLevels;
 
     err = fnPreLoop(pFile, pDDSD, pMipSet, extra);
     if(err != PE_OK)

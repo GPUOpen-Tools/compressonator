@@ -105,8 +105,14 @@ extern "C" {
 #define FOURCC_BC6H                    MAKEFOURCC('B', 'C', '6', 'H')
 #define FOURCC_BC7                     MAKEFOURCC('B', 'C', '7', 'x')
 #define FOURCC_ASTC                    MAKEFOURCC('A', 'S', 'T', 'C')
-#define FOURCC_GT                      MAKEFOURCC('G', 'T', '1', 'x')
-#define FOURCC_ETC2_RGB                MAKEFOURCC('E', 'T', 'C', '2')
+#define FOURCC_GTC                     MAKEFOURCC('G', 'T', 'C', 'x')
+#define FOURCC_GTCH                    MAKEFOURCC('G', 'T', 'H', 'x')
+#define FOURCC_ETC2_RGB                MAKEFOURCC('E', 'T', 'C', '2')       // GL_COMPRESSED_RGB8_ETC2
+#define FOURCC_ETC2_SRGB               MAKEFOURCC('E', 'T', 'C', 'S')       // None standard ref
+#define FOURCC_ETC2_RGBA               MAKEFOURCC('E', 'T', 'C', 'A')       // GL_COMPRESSED_RGBA8_ETC2_EAC
+#define FOURCC_ETC2_RGBA1              MAKEFOURCC('E', 'T', 'C', 'P')       // GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2
+#define FOURCC_ETC2_SRGBA              MAKEFOURCC('E', 'T', 'C', 'T')       // None standard ref
+#define FOURCC_ETC2_SRGBA1             MAKEFOURCC('E', 'T', 'C', 'U')       // None standard ref
 
 /*
  * FOURCC codes for DX compressed-texture pixel formats
@@ -264,6 +270,14 @@ typedef struct
    int               m_nBlockWidth;       ///< Width in pixels of the Compression Block that is to be processed default for ASTC is 4 
    int               m_nBlockHeight;      ///< Height in pixels of the Compression Block that is to be processed default for ASTC is 4
    int               m_nBlockDepth;       ///< Depth in pixels of the Compression Block that is to be processed default for ASTC is 1
+
+   // These values change when processing MipLevels
+   CMP_DWORD         dwWidth;             ///< Width of the current active miplevel. if toplevel mipmap then value is same as m_nWidth
+   CMP_DWORD         dwHeight;            ///< Height of the current active miplevel. if toplevel mipmap then value is same as m_nHeight
+   CMP_DWORD         dwDataSize;          ///< Size of the current active miplevel allocated texture data.
+   CMP_BYTE*         pData;               ///< Pointer to the current active miplevel texture data: used in MipLevelTable
+
+   // Structure to hold all mip levels
    MipLevelTable*    m_pMipLevelTable;    ///< This is an implementation dependent way of storing the MipLevels that this mip-map set contains. Do not depend on it, use TC_AppGetMipLevel to access a mip-map set's MipLevels.
    void*             m_pReservedData;     ///< Pointer to reserved data types
 } MipSet;

@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2014-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2014-2018  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,13 +20,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-//  File Name:   Codec_GT.cpp
-//  Description: implementation of the CCodec_GT class
+//
+//  File Name:   Codec_GT.h
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef _CODEC_GT_H_INCLUDED_
-#define _CODEC_GT_H_INCLUDED_
+#ifndef _CODEC_GTC_H_INCLUDED_
+#define _CODEC_GTC_H_INCLUDED_
 
 #include "Compressonator.h"
 #include "Codec_DXTC.h"
@@ -35,44 +35,46 @@
 
 #include <thread>
 
-struct GTEncodeThreadParam
+extern GTC_Encode g_GTCEncode;
+
+struct GTCEncodeThreadParam
 {
-    GTBlockEncoder   *encoder;
-#ifdef USE_GT_HDR
-    CMP_FLOAT         in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
-#else
-    CMP_BYTE          in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
-#endif
+    GTCBlockEncoder      *encoder;
+    // Max storage buffer for blocks size = 8x8x4
+    CMP_BYTE             in[256];
     CMP_BYTE             *out;
     volatile CMP_BOOL    run;
     volatile CMP_BOOL    exit;
 };
 
-class CCodec_GT : public CCodec_DXTC
+class CCodec_GTC : public CCodec_DXTC
 {
 public:
-    CCodec_GT();
-    ~CCodec_GT();
+    CCodec_GTC();
+    ~CCodec_GTC();
 
     virtual bool SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue);
     virtual bool SetParameter(const CMP_CHAR* /*pszParamName*/, CMP_DWORD /*dwValue*/);
     virtual bool SetParameter(const CMP_CHAR* /*pszParamName*/, CODECFLOAT /*fValue*/);
 
     // Required interfaces
-    virtual CodecError Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress             (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress_Fast        (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress_SuperFast   (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Decompress           (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
 
 
 private:
 
-    GTEncodeThreadParam *m_EncodeParameterStorage;
+    GTCEncodeThreadParam *m_EncodeParameterStorage;
 
-    // NGT Quality level
-    double m_quality;
-    double m_performance;
-    double m_errorThreshold;
+    // GTC Quality level
+    float m_quality;
+
+    // source block dimentions (typically 4x4x1) 
+    int m_xdim;
+    int m_ydim;
+    int m_zdim;
 
     // GT User configurable variables
     CMP_WORD    m_NumThreads;
@@ -86,21 +88,16 @@ private:
 
     // GT Encoders and decoders: for encding use the interfaces below
     std::thread*        m_EncodingThreadHandle;
-    GTBlockEncoder*    m_encoder[128];
-    GTBlockDecoder*    m_decoder;
+    GTCBlockEncoder*    m_encoder[128];
+    GTCBlockDecoder*    m_decoder;
 
     // Encoder interfaces
-    CodecError    InitializeGTLibrary();
-    CodecError    EncodeGTBlock(
-#ifdef USE_GT_HDR
-        CMP_FLOAT  in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-        CMP_FLOAT *out
-#else
-        CMP_BYTE   in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
+    CodecError    InitializeGTCLibrary();
+    CodecError    EncodeGTCBlock(
+        CMP_BYTE   *in, //[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
         CMP_BYTE   *out
-#endif
     );
-    CodecError    FinishGTEncoding(void);
+    CodecError    FinishGTCEncoding(void);
 };
 
 #endif // !defined(_CODEC_DXT5_H_INCLUDED_)

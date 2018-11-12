@@ -133,7 +133,7 @@ private:
     QtProperty                  *m_propDestImage;
     QtProperty                  *m_propChannelWeight;
     QtProperty                  *m_propDXT1Alpha;
-    QtProperty                  *m_propASTCBlockRate;
+    QtProperty                  *m_propCodecBlockRate;
     QtProperty                  *m_propHDRProperties;
 
     

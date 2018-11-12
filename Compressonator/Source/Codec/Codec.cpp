@@ -46,12 +46,17 @@
 #include "Codec_ATC_RGBA_Interpolated.h"
 #include "Codec_ETC_RGB.h"
 #include "Codec_ETC2_RGB.h"
+#include "Codec_ETC2_RGBA.h"
+#include "Codec_ETC2_RGBA1.h"
 #include "Codec_BC6H.h"
 #include "Codec_BC7.h"
 #include "ASTC/Codec_ASTC.h"
 
 #ifdef _WIN32  //GT only enabled for win build now
 #include "Codec_GT.h"
+#ifdef USE_GTC_HDR
+#include "Codec_GTCH.h"
+#endif
 #endif
 
 //////////////////////////////////////////////////////////////////////
@@ -184,18 +189,28 @@ CCodec* CreateCodec(CodecType nCodecType)
     case CT_ETC_RGB:
         return new CCodec_ETC_RGB;
     case CT_ETC2_RGB:
-        return new CCodec_ETC2_RGB;
+    case CT_ETC2_SRGB:
+         return new CCodec_ETC2_RGB(nCodecType);
+    case CT_ETC2_RGBA:
+    case CT_ETC2_SRGBA:
+          return new CCodec_ETC2_RGBA(nCodecType);
+    case CT_ETC2_RGBA1:
+    case CT_ETC2_SRGBA1:
+        return new CCodec_ETC2_RGBA1(nCodecType);
     case CT_BC6H:
-        return new CCodec_BC6H(CT_BC6H);
     case CT_BC6H_SF:
-        return new CCodec_BC6H(CT_BC6H_SF);
+        return new CCodec_BC6H(nCodecType);
     case CT_BC7:
         return new CCodec_BC7;
     case CT_ASTC:
         return new CCodec_ASTC;
 #ifdef _WIN32
-    case CT_GT:
-        return new CCodec_GT;
+    case CT_GTC:
+        return new CCodec_GTC;
+#ifdef USE_GTC_HDR
+    case CT_GTCH:
+        return new CCodec_GTCH;
+#endif
 #endif
     case CT_Unknown:
     default:
@@ -215,11 +230,15 @@ CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHe
 
     switch (nCodecType)
     {
+    // Block size is 4x4 and 64 bits per block
     case CT_DXT1:
     case CT_ATI1N:
     case CT_ATC_RGB:
     case CT_ETC_RGB:
     case CT_ETC2_RGB:
+    case CT_ETC2_SRGB:
+    case CT_ETC2_RGBA1:
+    case CT_ETC2_SRGBA1:
         dwChannels       = 1;
         dwBitsPerChannel = 4;
         dwWidth          = ((dwWidth + 3) / 4) * 4;
@@ -227,6 +246,22 @@ CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHe
         buffsize         = (dwWidth * dwHeight * dwChannels * dwBitsPerChannel) / 8;
         break;
 
+    // Block size is 4x4 and 128 bits per block
+    case CT_ETC2_RGBA:
+    case CT_ETC2_SRGBA:
+        // dwChannels = 2;
+        // dwBitsPerChannel = 4;
+        // dwWidth = ((dwWidth + 3) / 4) * 4;
+        // dwHeight = ((dwHeight + 3) / 4) * 4;
+        // buffsize = (dwWidth * dwHeight * dwChannels * dwBitsPerChannel) / 8;
+        dwWidth = ((dwWidth + 3) / 4) * 4;
+        dwHeight = ((dwHeight + 3) / 4) * 4;
+        buffsize = dwWidth * dwHeight;
+        if (buffsize < BC_BLOCK_PIXELS)
+            buffsize = BC_BLOCK_PIXELS;
+        break;
+
+    // Block size is 4x4 and 128 bits per block
     case CT_DXT3:
     case CT_DXT5:
     case CT_DXT5_xGBR:
@@ -246,31 +281,35 @@ CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHe
         dwHeight         = ((dwHeight + 3) / 4) * 4;
         buffsize         = (dwWidth * dwHeight * dwChannels * dwBitsPerChannel) / 8;
         break;
+
+    // Block size is 4x4 and 128 bits per block
     case CT_BC6H:
     case CT_BC6H_SF:
         dwWidth  = ((dwWidth + 3) / 4) * 4;
         dwHeight = ((dwHeight + 3) / 4) * 4;
         buffsize = dwWidth * dwHeight;
-        if (buffsize < BC6H_BLOCK_BYTES)
-            buffsize = BC6H_BLOCK_BYTES;
+        if (buffsize < BC6H_BLOCK_PIXELS)
+            buffsize = BC6H_BLOCK_PIXELS;
         break;
+
+    // Block size is 4x4 and 128 bits per block
     case CT_BC7:
-        // Fix: July 25 2014 was 4x larger than it should be
-        // Aug 1: Added increas in buffer size so that its divisable by 4
         dwWidth  = ((dwWidth + 3) / 4) * 4;
         dwHeight = ((dwHeight + 3) / 4) * 4;
         buffsize = dwWidth * dwHeight;
-        if (buffsize < BC7_BLOCK_BYTES)
-            buffsize = BC7_BLOCK_BYTES;
+        if (buffsize < BC7_BLOCK_PIXELS)
+            buffsize = BC7_BLOCK_PIXELS;
         break;
+
+    // Block size ranges from 4x4 to 12x12 and 128 bits per block
     case CT_ASTC:
         dwWidth  = ((dwWidth + nBlockWidth - 1) / nBlockWidth) * 4;
         dwHeight = ((dwHeight + nBlockHeight - 1) / nBlockHeight) * 4;
         buffsize = dwWidth * dwHeight;
         break;
 #ifdef _WIN32
-    case CT_GT:
-        // Aug 1: Added increas in buffer size so that its divisable by 4
+    // Block size is 4x4 and 128 bits per block. in future releases its will vary in Block Sizes and bits per block may change to 256
+    case CT_GTC:
         dwWidth  = ((dwWidth + 3) / 4) * 4;
         dwHeight = ((dwHeight + 3) / 4) * 4;
         buffsize = dwWidth * dwHeight;

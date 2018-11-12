@@ -39,6 +39,9 @@ using namespace DirectX;
 
 namespace GPU_Decode
 {
+
+    #define MAX_ERR_STR 128
+
     class GPU_DirectX : public RenderWindow
     {
     public:
@@ -72,6 +75,12 @@ namespace GPU_Decode
         UINT                        m_iMaxIndex;
         UINT                        m_iIndices;
         ID3D11Resource*             m_pResource;
+
+        uint32_t    m_width;
+        uint32_t    m_height;
+
+        char m_err_str[MAX_ERR_STR];
+        char *hResultErr(HRESULT hr);
 
         HRESULT InitDevice(const TexMetadata& mdata, CMP_FORMAT cmp_format);
         DXGI_FORMAT CMP2DXGIFormat(CMP_FORMAT cmp_format);

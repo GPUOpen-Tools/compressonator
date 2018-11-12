@@ -60,30 +60,27 @@
 class Plugin_Canalysis : public PluginInterface_Analysis
 {
 public: 
-		Plugin_Canalysis();
-		virtual ~Plugin_Canalysis();
-
-		int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
-		int TC_ImageDiff(const char * in1, const char * in2, const char *out, char *resultsFile, void *pluginManager, void **cmipImages, CMP_Feedback_Proc pFeedbackProc = NULL);
+        Plugin_Canalysis();
+        virtual ~Plugin_Canalysis();
+        int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
+        int TC_ImageDiff(const char * in1, const char * in2, const char *out, char *resultsFile, void *usrAnalysisData, void *pluginManager, void **cmipImages, CMP_Feedback_Proc pFeedbackProc = NULL);
         int TC_PSNR_MSE(const char * in1, const char * in2, char *resultsFile, void *pluginManager, CMP_Feedback_Proc pFeedbackProc = NULL);
         int TC_SSIM(const char * in1, const char * in2,  char *resultsFile, void *pluginManager, CMP_Feedback_Proc pFeedbackProc = NULL);
-
-
 
 private:
         void write(REPORT_DATA data, char *resultsFile, char option);
         void generateBCtestResult(QImage *src, QImage *dest, REPORT_DATA &myReport); //for testing only
         bool psnr(QImage *src, QImage *dest, REPORT_DATA &myReport, CMP_Feedback_Proc pFeedbackProc = NULL);
-		char m_results_path[MAX_PATH];
+        char m_results_path[MAX_PATH];
         string m_srcFile;
         string m_destFile;
-		double m_rmse, m_psnr, m_mabse;
+        double m_rmse, m_psnr, m_mabse;
         double tolerance_mse, tolerance_psnr, tolerance_psnrb, tolerance_psnrg, tolerance_psnrr;
         double tolerance_ssim, tolerance_ssimb, tolerance_ssimg, tolerance_ssimr;
-		PluginManager *m_pluginManager;
-		CImageLoader                     *m_imageloader;
-		CMipImages                       *m_MipSrcImages;
-		CMipImages                       *m_MipDestImages;
+        PluginManager *m_pluginManager;
+        CImageLoader                     *m_imageloader;
+        CMipImages                       *m_MipSrcImages;
+        CMipImages                       *m_MipDestImages;
         CMipImages                       *m_MipDiffImages;
         CMP_FORMAT                        m_Compressformat;
 };

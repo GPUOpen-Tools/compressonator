@@ -47,7 +47,7 @@ AMDCompress CLI Tool
 /// The command line tool supports a variety of image formats and compression formats.\n
 //  Input or output image formats can be changed by adding into or removing plugins stored in a subdirectory called plugins.
 ///
-/// Texture compression formats are always available in AMDCompressCLI.exe.\n
+/// Texture compression formats are always available in CompressonatorCLI.exe.\n
 /// See Formats section for more details on what compression is available for this version of the AMD compress tools.
 ///
 ///
@@ -90,15 +90,6 @@ AMDCompress CLI Tool
     /// \li    Added support for Khronos Texture(.KTX) output formats for OpenGL ES 2 and up\n
     /// \li    Added.ASTC output file format\n
     ///\n
-
-
-/************************************************
-*                INFO
-*************************************************/
-
-    /// \page Contact  Contact Details
-    /// website: http://developer.amd.com/tools-and-sdks/graphics-development/
-    ///
 
 
 /************************************************

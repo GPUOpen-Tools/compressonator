@@ -310,7 +310,7 @@ VkResult VKCompile(VkDevice device, ShaderSourceType sourceType, const VkShaderS
     std::ofstream out("shaderCode_"+ shaderSuffix +".txt");
     out << shaderCode;
     out.close();
-    
+
     std::vector<unsigned int> spirv;
     pShader->sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     pShader->pNext = NULL;
@@ -326,7 +326,13 @@ VkResult VKCompile(VkDevice device, ShaderSourceType sourceType, const VkShaderS
         case SST_HLSL: retVal = HLSLtoSPV(shader_type, shaderCode.c_str(), pEntryPoint, spirv); break;
         case SST_GLSL: retVal = GLSLtoSPV(shader_type, shaderCode.c_str(), pEntryPoint, spirv); break;
     }
-    assert(retVal);
+
+    // Continue even if shader build fails!!
+    // Check console out for error messages
+    if (!retVal)
+    {
+        return VK_SUCCESS;
+    }
     
     std::ofstream OutFile;
     OutFile.open("shaderSpirv_" + shaderSuffix + ".bin", std::ios::out | std::ios::binary);
@@ -379,7 +385,8 @@ VkResult VKCompileFromFile(VkDevice device, ShaderSourceType sourceType, const V
         std::ifstream file(pFilename);
         std::string shader((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
         res = VKCompile(device, sourceType, shader_type, shader.c_str(), pEntryPoint, defines, pShader);
-        s_shaderCache[hash] = *pShader;
+        if (res == VK_SUCCESS)
+            s_shaderCache[hash] = *pShader;
     }
 
     return res;

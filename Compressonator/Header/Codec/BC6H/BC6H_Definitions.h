@@ -49,6 +49,7 @@ typedef std::int32_t BOOL;
 #define NCHANNELS                       3
 #define NINDICES                        16
 #define MAXENDPOINTS                    2
+#define F16NEGPREC_LIMIT_VAL            -2048.0f //f16 negative precision limit value
 #define F16MAX                          0x7bff
 #define F16S_MASK                       0x8000   // f16 sign mask
 #define F16EM_MASK                      0x7fff   // f16 exp & mantissa mask

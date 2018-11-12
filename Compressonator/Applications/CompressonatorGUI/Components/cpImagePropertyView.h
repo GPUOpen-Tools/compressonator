@@ -119,7 +119,7 @@ public:
     // Property class that changed based on compression format
     QtProperty         *m_propChannelWeight = NULL;
     QtProperty         *m_propDXT1Alpha = NULL;
-    QtProperty         *m_propASTCBlockRate = NULL;
+    QtProperty         *m_propCodecBlockRate = NULL;
     QtProperty         *m_propHDRProperties = NULL;
 
 

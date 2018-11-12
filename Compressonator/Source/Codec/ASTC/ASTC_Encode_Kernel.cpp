@@ -2311,8 +2311,8 @@ void compute_ideal_quantized_weights_for_decimation_table(
                                                                        weight_to_perturb,
                                                                        (flt_weight_next_up - flt_weight_val), (flt_weight_next_down - flt_weight_val), &error_change_up, &error_change_down);
 
-                int new_weight_val;
-                float flt_new_weight_val;
+                int new_weight_val = 0;
+                float flt_new_weight_val = 0;
                 if (weight_val != weight_next_up && error_change_up < 0.0f)
                 {
                     do_quant_mod = 1;

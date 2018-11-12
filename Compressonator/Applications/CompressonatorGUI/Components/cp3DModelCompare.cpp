@@ -47,6 +47,7 @@ C3DModelCompare::C3DModelCompare(const QString title, QString file1, QString fil
     m_imageviewDiff  = nullptr;
     m_imageviewFile2 = nullptr;
 
+    m_manualModelViewFlip = 0;
 
     // Add this to the class Construtor.....
     m_fileName = title;
@@ -83,6 +84,14 @@ C3DModelCompare::C3DModelCompare(const QString title, QString file1, QString fil
     m_dockToolBar   = new QToolBar(tr("dockToolbar"));
     m_dockToolBar->setObjectName("dockImageViewToolBar");
 
+    m_CBManual_renderView = new QComboBox(this);
+    m_CBManual_renderView->setToolTip("Manaul View: Enables 3D render view flips using spacebar, Auto View cycles original and processed every 2 frames");
+    m_CBManual_renderView->addItem(tr("Auto View"));
+    m_CBManual_renderView->addItem(tr("Manual View"));
+    connect(m_CBManual_renderView, SIGNAL(currentIndexChanged(int)), this, SLOT(onManual_renderView(int)));
+
+    m_dockToolBar->addWidget(m_CBManual_renderView);
+
     hlayoutAct      = new QAction(QIcon(":/CompressonatorGUI/Images/horizontal.png"), tr("&Change to horizontal view"), this);
     orilayoutAct    = new QAction(QIcon(":/CompressonatorGUI/Images/orilayout.png"), tr("&Change to default view"), this);
     orilayoutAct->setDisabled(true);
@@ -95,7 +104,7 @@ C3DModelCompare::C3DModelCompare(const QString title, QString file1, QString fil
 
     m_dockToolBar->addWidget(spacer);
 
-     if (hlayoutAct)
+    if (hlayoutAct)
     {
         m_dockToolBar->addAction(hlayoutAct);
         connect(hlayoutAct, SIGNAL(triggered()), this, SLOT(changeLayout()));
@@ -167,6 +176,22 @@ void C3DModelCompare::hideProgressBusy(QString Message)
     qApp->restoreOverrideCursor();
 }
 
+void C3DModelCompare::onManual_renderView(int mode)
+{
+    if (m_imageviewDiff)
+    {
+        m_imageviewDiff->setManualViewFlip(mode);
+        m_manualModelViewFlip = mode;
+        if (m_imageviewDiff->custTitleBar)
+        {
+            if (mode == 0)
+                m_imageviewDiff->custTitleBar->setTitle("3D Model Diff");
+            else 
+                m_imageviewDiff->custTitleBar->setTitle("3D Model Diff: Original");
+        }
+    }
+}
+
 void C3DModelCompare::changeLayout()
 {
     setHorizontalView();
@@ -201,7 +226,7 @@ bool C3DModelCompare::createImageViews(bool isCompressedCompare)
     if (isCompressedCompare)
     {
         file1Title = "Original";
-        file2Title = "Compressed";
+        file2Title = "Processed";
     }
     else
     {
@@ -287,6 +312,7 @@ bool C3DModelCompare::createImageViews(bool isCompressedCompare)
     m_imageviewDiff->m_fileName = file2Title + ": " + m_destFile;
     if (m_imageviewDiff->custTitleBar)
     {
+        m_imageviewDiff->custTitleBar->setTitle("3D Model Diff View");
         m_imageviewDiff->custTitleBar->setButtonToolBarShow(false);
         m_imageviewDiff->custTitleBar->setButtonCloseEnabled(false);
     }
@@ -358,7 +384,7 @@ C3DModelCompare::~C3DModelCompare()
     if (m_diffMips)
     {
         CImageLoader ImageLoader;
-        ImageLoader.clearMipImages(m_diffMips);
+        ImageLoader.clearMipImages(&m_diffMips);
     }
 
     if (m_imageAnalysis)

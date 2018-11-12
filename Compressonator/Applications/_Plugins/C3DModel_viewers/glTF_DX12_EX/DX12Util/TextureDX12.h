@@ -22,8 +22,6 @@
 #include "ResourceViewHeapsDX12.h"
 #include "UploadHeapDX12.h"
 
-#define USE_CMP_LOAD
-
 #include "Compressonator.h"
 #include "GPU_Decode\GPU_Decode.h"
 #include "..\..\..\Common\Texture.h"

@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2014-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2014-2018  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -38,8 +38,15 @@
 #endif
 
 //======================================================================================
-#define USE_MULTITHREADING  1
+// #define USE_PRINTF
+// #define USE_NOMULTITHREADING 
 
+#ifdef USE_FILEIO
+    #include <stdio.h>
+    FILE * gt_File = NULL;
+    int gt_blockcount = 0;
+    int gt_total_MSE = 0;
+#endif
 
 //
 // Thread procedure for encoding a block
@@ -49,13 +56,13 @@
 // it should set the exit flag in the parameters to allow the tread to quit
 //
 
-unsigned int    _stdcall GTThreadProcEncode(void* param)
+unsigned int    _stdcall GTCThreadProcEncode(void* param)
 {
-    GTEncodeThreadParam *tp = (GTEncodeThreadParam*)param;
+    GTCEncodeThreadParam *tp = (GTCEncodeThreadParam*)param;
 
-    while(tp->exit == false)
+    while(tp->exit == FALSE)
     {
-        if(tp->run == true)
+        if(tp->run == TRUE)
         {
             tp->encoder->CompressBlock(tp->in, tp->out);
             tp->run = false;
@@ -69,32 +76,29 @@ unsigned int    _stdcall GTThreadProcEncode(void* param)
 }
 
 
-static GTEncodeThreadParam *g_EncodeParameterStorage = NULL;
+static GTCEncodeThreadParam *g_EncodeParameterStorage = NULL;
 
 
 //////////////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////////////
 
-CCodec_GT::CCodec_GT() : CCodec_DXTC(CT_GT)
+CCodec_GTC::CCodec_GTC() : CCodec_DXTC(CT_GTC)
 {
     m_LibraryInitialized   = false;
 
-    m_Use_MultiThreading   = true;
-    m_NumThreads           = 8;
+    m_Use_MultiThreading = true;
+    m_NumThreads = 8;
     m_NumEncodingThreads   = m_NumThreads;
     m_EncodingThreadHandle = NULL;
     m_LiveThreads          = 0;
     m_LastThread           = 0;
 
-    m_quality              = 0.05f;
-    m_performance          = 0.0f;
-    m_errorThreshold       = 0.0f;
-
+    m_quality = 0.05f;
 }
 
 
-bool CCodec_GT::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
+bool CCodec_GTC::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
 {
     if (sValue == NULL) return false;
 
@@ -113,13 +117,13 @@ bool CCodec_GT::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
             }
         }
         else
-            return CCodec_DXTC::SetParameter(pszParamName, sValue);
+        return CCodec_DXTC::SetParameter(pszParamName, sValue);
     return true;
 }
 
 
 
-bool CCodec_GT::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue)
+bool CCodec_GTC::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue)
 {
     if(strcmp(pszParamName, "NumThreads") == 0)
     {
@@ -131,18 +135,18 @@ bool CCodec_GT::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue)
     return true;
 }
 
-bool CCodec_GT::SetParameter(const CMP_CHAR* pszParamName, CODECFLOAT fValue)
+bool CCodec_GTC::SetParameter(const CMP_CHAR* pszParamName, CODECFLOAT fValue)
 {
     if (strcmp(pszParamName, "Quality") == 0)
         m_quality = fValue;
     else
-    return CCodec_DXTC::SetParameter(pszParamName, fValue);
+        return CCodec_DXTC::SetParameter(pszParamName, fValue);
 
     return true;
 }
 
 
-CCodec_GT::~CCodec_GT()
+CCodec_GTC::~CCodec_GTC()
 {
     if (m_LibraryInitialized)
     {
@@ -221,7 +225,7 @@ CCodec_GT::~CCodec_GT()
 
 
 
-CodecError CCodec_GT::InitializeGTLibrary()
+CodecError CCodec_GTC::InitializeGTCLibrary()
 {
     if (!m_LibraryInitialized)
     {
@@ -238,7 +242,7 @@ CodecError CCodec_GT::InitializeGTLibrary()
         if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1; 
         m_Use_MultiThreading = m_NumEncodingThreads > 1;
 
-        m_EncodeParameterStorage = new GTEncodeThreadParam[m_NumEncodingThreads];
+        m_EncodeParameterStorage = new GTCEncodeThreadParam[m_NumEncodingThreads];
         if (!m_EncodeParameterStorage)
         {
             return CE_Unknown;
@@ -257,8 +261,8 @@ CodecError CCodec_GT::InitializeGTLibrary()
 
         for(i=0; i < m_NumEncodingThreads; i++)
         {
-            // Create encoder instance
-            m_encoder[i] = new GTBlockEncoder(m_quality, m_performance, m_errorThreshold);
+            // Create single encoder instance
+            m_encoder[i] = new GTCBlockEncoder(m_quality);
 
             
             // Cleanup if problem!
@@ -297,7 +301,7 @@ CodecError CCodec_GT::InitializeGTLibrary()
             m_EncodeParameterStorage[i].exit = FALSE;
 
             m_EncodingThreadHandle[i] = std::thread(
-                GTThreadProcEncode,
+                GTCThreadProcEncode,
                 (void*)&m_EncodeParameterStorage[i]
             );
             m_LiveThreads++;
@@ -305,7 +309,7 @@ CodecError CCodec_GT::InitializeGTLibrary()
 
 
         // Create single decoder instance
-        m_decoder = new GTBlockDecoder();
+        m_decoder = new GTCBlockDecoder();
         if(!m_decoder)
         {
             for (CMP_DWORD j = 0; j<m_NumEncodingThreads; j++)
@@ -322,14 +326,12 @@ CodecError CCodec_GT::InitializeGTLibrary()
 }
 
 
-CodecError CCodec_GT::EncodeGTBlock(
-#ifdef USE_GT_HDR
-    CMP_FLOAT  in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG], 
-#else
-    CMP_BYTE   in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-#endif
-    CMP_BYTE    *out)
+CodecError CCodec_GTC::EncodeGTCBlock(CMP_BYTE *in,  CMP_BYTE *out)
 {
+#ifdef USE_NOMULTITHREADING
+    m_Use_MultiThreading = false;
+#endif
+
 if (m_Use_MultiThreading)
 {
     CMP_WORD   threadIndex;
@@ -360,9 +362,7 @@ if (m_Use_MultiThreading)
     m_LastThread = threadIndex;
 
     // Copy the input data into the thread storage
-    memcpy(m_EncodeParameterStorage[threadIndex].in,
-           in,
-           16 * 4);
+    memcpy(m_EncodeParameterStorage[threadIndex].in,in,m_xdim * m_ydim * 4 * sizeof(CMP_BYTE));
 
     // Set the output pointer for the thread to the provided location
     m_EncodeParameterStorage[threadIndex].out = out;
@@ -373,11 +373,8 @@ if (m_Use_MultiThreading)
 else 
 {
         // Copy the input data into the thread storage
-#ifdef USE_GT_HDR
-        memcpy(m_EncodeParameterStorage[0].in, in, MAX_SUBSET_SIZE * MAX_DIMENSION_BIG * sizeof(CMP_FLOAT));
-#else
-        memcpy(m_EncodeParameterStorage[0].in, in, MAX_SUBSET_SIZE * MAX_DIMENSION_BIG * sizeof(CMP_BYTE));
-#endif
+        memcpy(m_EncodeParameterStorage[0].in, in, m_xdim * m_ydim * 4  * sizeof(CMP_BYTE));
+
         // Set the output pointer for the thread to write
         m_EncodeParameterStorage[0].out = out;
         m_encoder[0]->CompressBlock(m_EncodeParameterStorage[0].in,m_EncodeParameterStorage[0].out);
@@ -385,7 +382,7 @@ else
     return CE_OK;
 }
 
-CodecError CCodec_GT::FinishGTEncoding(void)
+CodecError CCodec_GTC::FinishGTCEncoding(void)
 {
     if(!m_LibraryInitialized)
     {
@@ -414,177 +411,217 @@ if (m_Use_MultiThreading)
 return CE_OK;
 }
 
-
-
-
-CodecError CCodec_GT::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
+CodecError CCodec_GTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
-    assert(bufferIn.GetWidth()    == bufferOut.GetWidth());
-    assert(bufferIn.GetHeight() == bufferOut.GetHeight());
-
-    if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
-        return CE_Unknown;
-
-    CodecError err = InitializeGTLibrary();
+    CodecError err = InitializeGTCLibrary();
     if (err != CE_OK) return err;
 
-#ifdef GT_COMPDEBUGGER
-    CompViewerClient    g_CompClient;
-    if (g_CompClient.connect())
+    // Source image size
+    int xsize = bufferIn.GetWidth();
+    int ysize = bufferIn.GetHeight();
+    int zsize = 1; //todo: add depth to support 3d textures
+
+    // Block sizes to partition the source data into for compression
+    m_xdim = bufferOut.GetBlockWidth();
+    m_ydim = bufferOut.GetBlockHeight();
+    m_zdim = 1;
+
+    CodecError result = CE_OK;
+    int xdim = m_xdim;
+    int ydim = m_ydim;
+    int zdim = m_zdim;
+
+    g_GTCEncode.m_xdim = m_xdim;
+    g_GTCEncode.m_ydim = m_ydim;
+    g_GTCEncode.m_zdim = m_zdim;
+
+    uint8_t *bufferOutput = bufferOut.GetData();
+
+    int x, y, z, i;
+    int xblocks = (xsize + m_xdim - 1) / m_xdim;
+    int yblocks = (ysize + m_ydim - 1) / m_ydim;
+    int zblocks = (zsize + m_zdim - 1) / m_zdim;
+    int offset;
+    int processingBlock = 0;
+
+    float TotalBlocks = (float)(yblocks * xblocks);
+
+    CMP_BYTE *blockToEncode;
+    CMP_BYTE *srcBlock = (CMP_BYTE *)malloc(xdim*ydim * 4);
+
+    for (z = 0; z < zblocks; z++)
     {
-        #ifdef USE_DBGTRACE
-        DbgTrace(("-------> Remote Server Connected"));
-        #endif
-    }
-#endif
-
-    const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
-    const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
-    const CMP_DWORD dwBlocksXY = dwBlocksX*dwBlocksY;
-
-
-    #ifdef USE_DBGTRACE
-    DbgTrace(("IN : BufferType %d ChannelCount %d ChannelDepth %d",bufferIn.GetBufferType(),bufferIn.GetChannelCount(),bufferIn.GetChannelDepth()));
-    DbgTrace(("   : Height %d Width %d Pitch %d isFloat %d",bufferIn.GetHeight(),bufferIn.GetWidth(),bufferIn.GetWidth(),bufferIn.IsFloat()));
-
-    DbgTrace(("OUT: BufferType %d ChannelCount %d ChannelDepth %d",bufferOut.GetBufferType(),bufferOut.GetChannelCount(),bufferOut.GetChannelDepth()));
-    DbgTrace(("   : Height %d Width %d Pitch %d isFloat %d",bufferOut.GetHeight(),bufferOut.GetWidth(),bufferOut.GetWidth(),bufferOut.IsFloat()));
-    #endif;
-
-    char            row,col,srcIndex;
-
-    CMP_BYTE    *pOutBuffer;
-    pOutBuffer    = bufferOut.GetData();
-
-    CMP_BYTE*    pInBuffer;
-    pInBuffer    =  bufferIn.GetData();
-
-    CMP_DWORD block = 0;
-
-    for(CMP_DWORD j = 0; j < dwBlocksY; j++)
-    {
-
-        for(CMP_DWORD i = 0; i < dwBlocksX; i++)
+        for (y = 0; y < yblocks; y++)
         {
-#ifdef USE_GT_HDR
-            CMP_FLOAT blockToEncode[BLOCK_SIZE_4X4][CHANNEL_SIZE_ARGB];
-            CMP_FLOAT srcBlock[BLOCK_SIZE_4X4X4];
-#else
-            CMP_BYTE blockToEncode[BLOCK_SIZE_4X4][CHANNEL_SIZE_ARGB];
-            CMP_BYTE srcBlock[BLOCK_SIZE_4X4X4];
-#endif
-
-            memset(srcBlock,0,sizeof(srcBlock));
-            bufferIn.ReadBlockRGBA(i*4, j*4, 4, 4, srcBlock);
-
-            #ifdef GT_COMPDEBUGGER
-            g_CompClient.SendData(1,sizeof(srcBlock),srcBlock);
-            #endif
-
-            // Create the block for encoding
-            srcIndex = 0;
-            for(row=0; row < BLOCK_SIZE_4; row++)
+            for (x = 0; x < xblocks; x++)
             {
-                for(col=0; col < BLOCK_SIZE_4; col++)
+                processingBlock++;
+
+                // Output block size for GTC is fixed at 16 bytes
+                offset = ((z * yblocks + y) * xblocks + x) * 16;
+                uint8_t *bp = bufferOutput + offset;
+                memset(srcBlock, 0, sizeof(srcBlock));
+                bufferIn.ReadBlockRGBA(x * m_xdim, y * m_ydim, m_xdim, m_ydim, srcBlock);
+
+                EncodeGTCBlock(srcBlock, bp);
+            }
+
+            if (pFeedbackProc)
+            {
+                if ((processingBlock % 10) == 0)
                 {
-                    blockToEncode[row*BLOCK_SIZE_4+col][BC_COMP_RED]        = srcBlock[srcIndex];
-                    blockToEncode[row*BLOCK_SIZE_4+col][BC_COMP_GREEN]      = srcBlock[srcIndex+1];
-                    blockToEncode[row*BLOCK_SIZE_4+col][BC_COMP_BLUE]       = srcBlock[srcIndex+2];
-                    blockToEncode[row*BLOCK_SIZE_4+col][BC_COMP_ALPHA]      = srcBlock[srcIndex+3];
-                    srcIndex+=4;
+                    float fProgress = 100.f * ((float)(processingBlock) / TotalBlocks);
+                    if (pFeedbackProc(fProgress, pUser1, pUser2))
+                    {
+                        result = CE_Aborted;
+                        break;
+                    }
                 }
             }
 
-            EncodeGTBlock(blockToEncode,pOutBuffer+block);
-            block += 16;
+        }
+    }
 
-            #ifdef GT_COMPDEBUGGER // Checks decompression it should match or be close to source
+    free(srcBlock);
+
+    CodecError EncodeResult = FinishGTCEncoding();
+
+    if (result != CE_Aborted)
+        result = EncodeResult;
+
+    return result;
+}
+
+#ifdef USE_FILEIO_DECODE
+FILE * gt_File_Decode = NULL;
+char ModesUsed[CMP_MAXGTMODES+1];
+#endif
+
+CodecError CCodec_GTC::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
+{
+    CodecError err = InitializeGTCLibrary();
+    if (err != CE_OK) return err;
+
+    m_xdim = bufferIn.GetBlockWidth();
+    m_ydim = bufferIn.GetBlockHeight();
+    m_zdim = 1;
+
+    if (m_xdim == 0) m_xdim = 4;
+    if (m_ydim == 0) m_ydim = 4;
+
+    // Our Compressed data Blocks are always 128 bit long (4x4 blocks)
+    const CMP_DWORD imageWidth = bufferIn.GetWidth();
+    const CMP_DWORD imageHeight = bufferIn.GetHeight();
+    const CMP_DWORD imageDepth = 1;
+    const CMP_BYTE  bitness = 8;
+
+    const CMP_DWORD CompBlockX   = m_xdim;
+    const CMP_DWORD CompBlockY   = m_ydim;
+    CMP_BYTE  Block_Width        = m_xdim;
+    CMP_BYTE  Block_Height       = m_ydim;
+
+    const CMP_DWORD dwBlocksX   = ((bufferIn.GetWidth() + (CompBlockX - 1)) / CompBlockX);
+    const CMP_DWORD dwBlocksY   = ((bufferIn.GetHeight() + (CompBlockY - 1)) / CompBlockY);
+    const CMP_DWORD dwBlocksZ   = 1;
+    const CMP_DWORD dwBufferInDepth = 1;
+
+    // Override the current input buffer Pitch size  (Since it will be set according to the Compressed Block Sizes
+    // and not to the Compressed Codec data which is for GTC 16 Bytes per block x Number of blocks per row
+    bufferIn.SetPitch(16 * dwBlocksX);
+
+    // Output data size Pitch
+    CMP_DWORD  dwPitch = bufferOut.GetPitch();
+
+    // Output Buffer
+    CMP_BYTE *pDataOut = bufferOut.GetData();
+
+
+    const CMP_DWORD dwBlocksXY = dwBlocksX*dwBlocksY;
+
+    for (CMP_DWORD cmpRowY = 0; cmpRowY < dwBlocksY; cmpRowY++)        // Compressed images row = height
+    {
+        for (CMP_DWORD cmpColX = 0; cmpColX < dwBlocksX; cmpColX++)    // Compressed images Col = width
+        {
+            union FBLOCKS
+            {
+                CMP_BYTE decodedBlock[144][4];            // max 12x12 block size
+                CMP_BYTE destBlock[576];                  // max 12x12x4
+            } DecData;
+
             union BBLOCKS
             {
-                CMP_DWORD    compressedBlock[4];
+                CMP_DWORD           compressedBlock[4];
                 CMP_BYTE            out[16];
                 CMP_BYTE            in[16];
-            } data;
-            
-            memset(data.in,0,sizeof(data));
-            
-            union DBLOCKS
-            {
-                double            blockToSave[16][4];
-                double            block[64];
-                CMP_BYTE          Bblock[16][4];
-            } savedata;
-        
-            CMP_BYTE destBlock[BLOCK_SIZE_4X4X4];
-            memset(savedata.block,0,sizeof(savedata));
-            m_decoder->DecompressBlock(savedata.Bblock,data.in);
+            } CompData;
 
-            for (row=0; row<64; row++)
+            bufferIn.ReadBlock(cmpColX * 4, cmpRowY * 4, CompData.compressedBlock, 4);
+
+            // Encode to the appropriate location in the compressed image
+            m_decoder->DecompressBlock(DecData.decodedBlock, CompData.in);
+
+            // Now that we have a decoded block lets copy that data over to the target image buffer
+            CMP_DWORD outCol = cmpColX*Block_Width;
+            CMP_DWORD outRow = cmpRowY*Block_Height;
+            CMP_DWORD outImgRow = outRow;
+            CMP_DWORD outImgCol = outCol;
+
+            for (int row = 0; row < Block_Height; row++)
             {
-                destBlock[row] = (CMP_BYTE)savedata.block[row];
+                CMP_DWORD  nextRowCol = (outRow + row)*dwPitch + (outCol * 4);
+                CMP_BYTE*  pData = (CMP_BYTE*)(pDataOut + nextRowCol);
+                if ((outImgRow + row) < imageHeight)
+                {
+                    outImgCol = outCol;
+                    for (int col = 0; col < Block_Width; col++)
+                    {
+                        CMP_DWORD w = outImgCol + col;
+                        if (w < imageWidth)
+                        {
+                            int index = row*Block_Width + col;
+                            *pData++ = (CMP_BYTE)DecData.decodedBlock[index][BC_COMP_RED];
+                            *pData++ = (CMP_BYTE)DecData.decodedBlock[index][BC_COMP_GREEN];
+                            *pData++ = (CMP_BYTE)DecData.decodedBlock[index][BC_COMP_BLUE];
+                            *pData++ = (CMP_BYTE)DecData.decodedBlock[index][BC_COMP_ALPHA];
+                        }
+                        else break;
+                    }
+                }
             }
-            g_CompClient.SendData(3,sizeof(destBlock),destBlock);
-            #endif
-
         }
 
-        if(pFeedbackProc)
+        if (pFeedbackProc)
         {
-            float fProgress = 100.f * (j * dwBlocksX) / dwBlocksXY;
-            if(pFeedbackProc(fProgress, pUser1, pUser2))
+            float fProgress = 100.f * (cmpRowY * dwBlocksX) / dwBlocksXY;
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
             {
-                #ifdef GT_COMPDEBUGGER
-                    g_CompClient.disconnect();
-                #endif
-                FinishGTEncoding();
                 return CE_Aborted;
             }
         }
-
     }
 
 
-    #ifdef GT_COMPDEBUGGER
-    g_CompClient.disconnect();
-    #endif
-
-    return FinishGTEncoding();
-}
-
-
-CodecError CCodec_GT::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
-{
-    assert(bufferIn.GetWidth() == bufferOut.GetWidth());
-    assert(bufferIn.GetHeight() == bufferOut.GetHeight());
-    
-    CodecError err = InitializeGTLibrary();
-    if (err != CE_OK) return err;
-    
-    if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
-        return CE_Unknown;
+/**
 
     const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
     const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
     const CMP_DWORD dwBlocksXY = dwBlocksX*dwBlocksY;
+
+#ifdef USE_FILEIO_DECODE
+    gt_File_Decode = fopen("gt_report_decode.txt","w");
+    memset(ModesUsed,'.',CMP_MAXGTMODES);
+#endif
 
     for(CMP_DWORD j = 0; j < dwBlocksY; j++)
     {
         for(CMP_DWORD i = 0; i < dwBlocksX; i++)
         {
 
-#ifdef USE_GT_HDR
-            union FBLOCKS
-            {
-                float decodedBlock[16][4];
-                float destBlock[BLOCK_SIZE_4X4X4];
-            } DecData;
-#else
             union FBLOCKS
             {
                 CMP_BYTE decodedBlock[16][4];
                 CMP_BYTE destBlock[BLOCK_SIZE_4X4X4];
             } DecData;
-#endif
 
             union BBLOCKS
             {
@@ -593,42 +630,35 @@ CodecError CCodec_GT::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
                 CMP_BYTE            in[16];
             } CompData;
 
-#ifdef USE_GT_HDR
-            CMP_FLOAT destBlock[BLOCK_SIZE_4X4X4];
-#else
             CMP_BYTE destBlock[BLOCK_SIZE_4X4X4];
+
+
+#ifdef USE_FILEIO_DECODE
+            // Mode Used
+            int mode = CompData.in[CMP_GT_MODE];
+            if (mode > CMP_MAXGTMODES)
+            {
+                printf("Err mode = %d\n",mode);
+            }
+            else
+            ModesUsed[mode] = 'x';
 #endif
-            
+
             bufferIn.ReadBlock(i*4, j*4, CompData.compressedBlock, 4);
 
             // Encode to the appropriate location in the compressed image
             m_decoder->DecompressBlock(DecData.decodedBlock,CompData.in);
 
             // Create the block for decoding
-#ifdef USE_GT_HDR
-            float R, G, B, A;
-#endif
-
             int srcIndex = 0;
             for(int row=0; row < BLOCK_SIZE_4; row++)
             {
                 for(int col=0; col<BLOCK_SIZE_4; col++)
                 {
-#ifdef USE_GT_HDR
-                    R = (CMP_FLOAT)DecData.decodedBlock[row*BLOCK_SIZE_4 + col][BC6H_COMP_RED];
-                    G = (CMP_FLOAT)DecData.decodedBlock[row*BLOCK_SIZE_4 + col][BC6H_COMP_GREEN];
-                    B = (CMP_FLOAT)DecData.decodedBlock[row*BLOCK_SIZE_4 + col][BC6H_COMP_BLUE];
-                    A = (CMP_FLOAT)DecData.decodedBlock[row*BLOCK_SIZE_4 + col][BC6H_COMP_ALPHA];
-                    destBlock[srcIndex]     = R;
-                    destBlock[srcIndex + 1] = G;
-                    destBlock[srcIndex + 2] = B;
-                    destBlock[srcIndex + 3] = A;
-#else
                     destBlock[srcIndex]   = (CMP_BYTE)DecData.decodedBlock[row*BLOCK_SIZE_4+col][BC_COMP_RED];
                     destBlock[srcIndex+1] = (CMP_BYTE)DecData.decodedBlock[row*BLOCK_SIZE_4+col][BC_COMP_GREEN];
                     destBlock[srcIndex+2] = (CMP_BYTE)DecData.decodedBlock[row*BLOCK_SIZE_4+col][BC_COMP_BLUE];
                     destBlock[srcIndex+3] = (CMP_BYTE)DecData.decodedBlock[row*BLOCK_SIZE_4+col][BC_COMP_ALPHA];
-#endif
                     srcIndex+=4;
                 }
             }
@@ -645,19 +675,58 @@ CodecError CCodec_GT::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
                 return CE_Aborted;
             }
         }
-
     }
+
+#ifdef USE_FILEIO_DECODE
+    if (gt_File_Decode)
+    {
+        fprintf(gt_File_Decode, "Modes\n");
+        int lf=0;
+        for (int i=0; i<=CMP_MAXGTMODES; i++)
+        {
+            if (ModesUsed[i] =='x')
+            {
+                lf++;
+                fprintf(gt_File_Decode,"%3d,",i);
+                if (lf == 10) {
+                    fprintf(gt_File_Decode,"\n");
+                    lf = 0;
+                }
+            }
+        }
+        fprintf(gt_File_Decode, "\nModes Not used\n");
+        lf = 0;
+        for (int i = 0; i <= CMP_MAXGTMODES; i++)
+        {
+            if (ModesUsed[i] == '.')
+            {
+                lf++;
+                fprintf(gt_File_Decode, "%3d,", i);
+                if (lf == 10) {
+                    fprintf(gt_File_Decode, "\n");
+                    lf = 0;
+                }
+            }
+        }
+
+        fprintf(gt_File_Decode, "\nDone\n");
+        fclose(gt_File_Decode);
+        gt_File_Decode = NULL;
+    }
+#endif
+******************************************/
+
     return CE_OK;
 }
 
 // Not implemented
-CodecError CCodec_GT::Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
+CodecError CCodec_GTC::Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     return CE_OK;
 }
 
 // Not implemented
-CodecError CCodec_GT::Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
+CodecError CCodec_GTC::Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
    return CE_OK;
 }

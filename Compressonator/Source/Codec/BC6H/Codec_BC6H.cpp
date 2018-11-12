@@ -85,7 +85,7 @@ CCodec_BC6H::CCodec_BC6H(CodecType codecType) : CCodec_DXTC(codecType)
     // user definable setting
     m_Exposure           = 1.0;
     m_ModeMask           = 0xFFFF;
-    m_Quality            = AMD_CODEC_QUALITY_DEFAULT;
+    m_Quality            = (float)AMD_CODEC_QUALITY_DEFAULT;
     m_Use_MultiThreading = true;
     m_NumThreads         = 8;
     if (codecType == CT_BC6H)
@@ -111,10 +111,6 @@ bool CCodec_BC6H::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
     if (strcmp(pszParamName, "ModeMask") == 0)
     {
         m_ModeMask = std::stoi(sValue) & 0xFFFF;
-    }
-    else if (strcmp(pszParamName, "Signed") == 0)
-    {
-        m_bIsSigned = (bool)(std::stoi(sValue) > 0);
     }
     else if (strcmp(pszParamName, "PatternRec") == 0)
     {
@@ -148,8 +144,6 @@ bool CCodec_BC6H::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue)
 {
     if (strcmp(pszParamName, "ModeMask") == 0)
         m_ModeMask = (CMP_BYTE)dwValue & 0xFF;
-    else if (strcmp(pszParamName, "Signed") == 0)
-        m_bIsSigned = (bool)(dwValue > 0);
     else if (strcmp(pszParamName, "PatternRec") == 0)
         m_UsePatternRec = (bool)(dwValue > 0);
     else if (strcmp(pszParamName, "NumThreads") == 0)
@@ -178,39 +172,62 @@ CCodec_BC6H::~CCodec_BC6H()
 {
     if (m_LibraryInitialized)
     {
-        // Tell all the live threads that they can exit when they have finished any current work
-        for (int i = 0; i < m_LiveThreads; i++)
+        if (m_Use_MultiThreading)
         {
-            // If a thread is in the running state then we need to wait for it to finish
-            // any queued work from the producer before we can tell it to exit.
-            //
-            // If we don't wait then there is a race condition here where we have
-            // told the thread to run but it hasn't yet been scheduled - if we set
-            // the exit flag before it runs then its block will not be processed.
+            // Tell all the live threads that they can exit when they have finished any current work
+            for (int i = 0; i < m_LiveThreads; i++)
+            {
+                // If a thread is in the running state then we need to wait for it to finish
+                // any queued work from the producer before we can tell it to exit.
+                //
+                // If we don't wait then there is a race condition here where we have
+                // told the thread to run but it hasn't yet been scheduled - if we set
+                // the exit flag before it runs then its block will not be processed.
 #pragma warning(push)
 #pragma warning(disable : 4127)  //warning C4127: conditional expression is constant
-            while (1)
-            {
-                if (m_EncodeParameterStorage == NULL)
-                    break;
-                if (m_EncodeParameterStorage[i].run != TRUE)
+                while (1)
                 {
-                    break;
+                    if (m_EncodeParameterStorage == NULL)
+                        break;
+                    if (m_EncodeParameterStorage[i].run != TRUE)
+                    {
+                        break;
+                    }
+                }
+#pragma warning(pop)
+                // Signal to the thread that it can exit
+                m_EncodeParameterStorage[i].exit = TRUE;
+            }
+
+            // Now wait for all threads to have exited
+            if (m_LiveThreads > 0)
+            {
+                for (DWORD dwThread = 0; dwThread < m_LiveThreads; dwThread++)
+                {
+                    std::thread& curThread = m_EncodingThreadHandle[dwThread];
+
+                    curThread.join();
                 }
             }
-#pragma warning(pop)
-            // Signal to the thread that it can exit
-            m_EncodeParameterStorage[i].exit = TRUE;
-        }
 
-        for (DWORD dwThread = 0; dwThread < m_LiveThreads; dwThread++)
+            for (unsigned int i = 0; i < m_LiveThreads; i++)
+            {
+                std::thread& curThread = m_EncodingThreadHandle[i];
+
+                curThread = std::thread();
+            }
+
+            delete[] m_EncodingThreadHandle;
+
+        }  // MultiThreading
+        else
         {
-            std::thread& curThread = m_EncodingThreadHandle[dwThread];
-
-            curThread.join();
+            // detach thread and delete
+            std::thread& curThread = m_EncodingThreadHandle[0];
+            curThread.detach();
+            delete[] m_EncodingThreadHandle;
         }
 
-        delete[] m_EncodingThreadHandle;
         m_EncodingThreadHandle = NULL;
 
         if (m_EncodeParameterStorage)
@@ -248,7 +265,7 @@ CodecError CCodec_BC6H::CInitializeBC6HLibrary()
         // Create threaded encoder instances
         m_LiveThreads        = 0;
         m_LastThread         = 0;
-        m_NumEncodingThreads = min(m_NumThreads, BC6H_MAX_THREADS);
+        m_NumEncodingThreads = (CMP_WORD)min(m_NumThreads, BC6H_MAX_THREADS);
         if (m_NumEncodingThreads == 0)
             m_NumEncodingThreads = 1;
         m_Use_MultiThreading = m_NumEncodingThreads > 1;
@@ -261,6 +278,7 @@ CodecError CCodec_BC6H::CInitializeBC6HLibrary()
 
         for (int i = 0; i < m_NumEncodingThreads; i++)
             m_EncodeParameterStorage[i].run = false;
+
 
         m_EncodingThreadHandle = new std::thread[m_NumEncodingThreads];
         if (!m_EncodingThreadHandle)
@@ -476,6 +494,12 @@ CodecError CCodec_BC6H::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
     FILE* bc6file = fopen("Test.bc6", "wb");
 #endif
 
+    int lineAtPercent = (dwBlocksY * 0.01);
+     if (lineAtPercent <= 0)  lineAtPercent = 1;
+    float fBlockXY = dwBlocksX * dwBlocksY;
+    float fProgress;
+    float old_fProgress = FLT_MAX;
+
     for (CMP_DWORD j = 0; j < dwBlocksY; j++)
     {
         for (CMP_DWORD i = 0; i < dwBlocksX; i++)
@@ -541,14 +565,21 @@ CodecError CCodec_BC6H::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
 
             if (pFeedbackProc)
             {
-                float fProgress = 100.f * (j * dwBlocksX) / (dwBlocksX * dwBlocksY);
-                if (pFeedbackProc(fProgress, pUser1, pUser2))
+                if ((j % lineAtPercent) == 0)
                 {
-#ifdef _BC6H_COMPDEBUGGER
-                    g_CompClient.disconnect();
-#endif
-                    CFinishBC6HEncoding();
-                    return CE_Aborted;
+                    fProgress = (j * dwBlocksX) / fBlockXY;
+                    if (fProgress != old_fProgress)
+                    {
+                        old_fProgress = fProgress;
+                        if (pFeedbackProc(fProgress * 100.0f, pUser1, pUser2))
+                        {
+                            #ifdef _BC6H_COMPDEBUGGER
+                            g_CompClient.disconnect();
+                            #endif
+                            CFinishBC6HEncoding();
+                            return CE_Aborted;
+                        }
+                    }
                 }
             }
         }

@@ -1,6 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
-// Copyright (c) 2004-2006 ATI Technologies Inc.
+// Copyright (c) 2014-2018  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,21 +19,26 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+//
+//
+//  File Name:   GT_Decode.h
+//
+//////////////////////////////////////////////////////////////////////////////
 
 #ifndef _GT_DECODE_H_
 #define _GT_DECODE_H_
 
 #include "GT_Definitions.h"
 
-class GTBlockDecoder
+class GTCBlockDecoder
 {
 public:
-    GTBlockDecoder(){};
-    ~GTBlockDecoder(){};
+    GTCBlockDecoder(){};
+    ~GTCBlockDecoder(){};
 
     void DecompressBlock(
         CMP_BYTE   out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-        CMP_BYTE   in[COMPRESSED_BLOCK_SIZE]
+        CMP_BYTE   cmp[COMPRESSED_BLOCK_SIZE]
     );
 
 };

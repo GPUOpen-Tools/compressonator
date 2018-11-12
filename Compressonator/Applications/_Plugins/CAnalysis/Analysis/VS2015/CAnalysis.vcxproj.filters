@@ -26,9 +26,6 @@
     <ClCompile Include="../../../../CompressonatorGUI/Components/cpImageLoader.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="../../../../CompressonatorGUI/Common/cvmatandqimage.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="../../../../../../Common/lib/ext/OpenEXR/ilmbase-2.2.0/Half/half.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -46,6 +43,9 @@
     </ClCompile>
     <ClCompile Include="../CAnalysis.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\CompressonatorGUI\Common\cvmatandqimage.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -70,14 +70,14 @@
     <ClInclude Include="../../../../CompressonatorGUI/Components/cpImageLoader.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="../../../../CompressonatorGUI/Common/cvmatandqimage.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="../../../Common/ATIFormats.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="../CAnalysis.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\CompressonatorGUI\Common\cvmatandqimage.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

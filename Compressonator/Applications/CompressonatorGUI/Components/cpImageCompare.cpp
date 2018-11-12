@@ -32,6 +32,7 @@
 #include "cpImageCompare.h"
 #include "cpMainComponents.h"
 
+
 CImageCompare::CImageCompare(const QString title, QString file1, QString file2, bool isCompressed, QMainWindow *parent) : acCustomDockWidget(title, parent)
 {
     m_parent = parent;
@@ -128,7 +129,7 @@ CImageCompare::CImageCompare(const QString title, QString file1, QString file2, 
         g_pProgressDlg->SetLabelText("Generating Image(s): Process may cycle a few times...");
 
     m_diffMips=m_imageAnalysis->GenerateDiffImage(m_sourceFile.toStdString().c_str(), m_destFile.toStdString().c_str());
-    
+
     if (m_diffMips != NULL )
     {
          m_analyzed = "Image Diff";
@@ -220,7 +221,7 @@ void CImageCompare::emitUpdateData()
     else if (ssimAnalysis && psnrAnalysis)
         emit UpdateData(m_allAnalysis);
     else
-        emit UpdateData(NULL);
+        emit UpdateData(nullptr);
     return;
 }
 
@@ -263,6 +264,8 @@ void CImageCompare::runPsnrMse()
 
 void CImageCompare::createImageView(bool isCompressedCompare)
 {
+    if (m_sourceFile.length() == 0) return;
+
     Setting *setting = new Setting;
     //setting->onBrightness  = false;
     setting->fDiffContrast = g_Application_Options.m_imagediff_contrast;
@@ -282,7 +285,7 @@ void CImageCompare::createImageView(bool isCompressedCompare)
     }
 
     setting->input_image = eImageViewState::isOriginal;
-    m_imageviewFile1 = new cpImageView(m_sourceFile, "  "+file1Title+" Image", m_newInnerWidget,NULL, setting);
+    m_imageviewFile1 = new cpImageView(m_sourceFile, "  "+file1Title+" Image", m_newInnerWidget,nullptr, setting);
 
     // Notes: BugFix added change of m_FileName in construct above to prevent main applications FindFile to use these images as 
     // Been found as Main Apps Tabs views 
@@ -291,7 +294,7 @@ void CImageCompare::createImageView(bool isCompressedCompare)
     m_imageviewFile1->custTitleBar->setButtonCloseEnabled(false);
     m_imageviewFile1->setFeatures(NoDockWidgetFeatures);
     setting->input_image = eImageViewState::isProcessed;
-    m_imageviewFile2 = new cpImageView(m_destFile, "  "+file2Title+" Image", m_newInnerWidget,NULL, setting);
+    m_imageviewFile2 = new cpImageView(m_destFile, "  "+file2Title+" Image", m_newInnerWidget,nullptr, setting);
 
     m_imageviewFile2->m_fileName = file2Title+": " + m_destFile;
 
@@ -302,8 +305,8 @@ void CImageCompare::createImageView(bool isCompressedCompare)
     setting->generateDiff = true;
     setting->input_image = eImageViewState::isDiff;
     QString diffFile = QString::fromUtf8(m_analyzed.c_str());
-    m_imageviewDiff = new cpImageView(diffFile, "  Diff Image", m_newInnerWidget, m_diffMips, setting);
 
+    m_imageviewDiff = new cpImageView(diffFile, "  Diff Image", m_newInnerWidget, m_diffMips, setting);
 
     m_imageviewDiff->m_useOriginalImageCursor = true;
     m_imageviewDiff->showToobar(false);
@@ -383,11 +386,11 @@ bool CImageCompare::setAnalysisResultView()
         return false;
     }
 
-    int index = m_destFile.toStdString().find_last_of(".");
+    int index = (int)m_destFile.toStdString().find_last_of(".");
     string m_analyzedResult = m_destFile.toStdString().substr(0, index);
     m_analyzedResult.append("_analysis.xml");
 
-    if ((boost::filesystem::exists(m_analyzedResult)))
+    if ((CMP_FileExists(m_analyzedResult)))
     {
         // populate tree structure pt
         using boost::property_tree::ptree;
@@ -441,45 +444,45 @@ bool CImageCompare::setAnalysisResultView()
 
 CImageCompare::~CImageCompare()
 {
-    if (m_diffMips)
+    if ((m_diffMips != NULL) && (m_imageviewDiff != nullptr))
     {
         CImageLoader ImageLoader;
-        ImageLoader.clearMipImages(m_diffMips);
+        ImageLoader.clearMipImages(&m_diffMips);
     }
     if (m_imageAnalysis)
     {
         delete m_imageAnalysis;
-        m_imageAnalysis = NULL;
+        m_imageAnalysis = nullptr;
     }
     if (m_ssimAnalysis)
     {
         delete m_ssimAnalysis;
-        m_ssimAnalysis = NULL;
+        m_ssimAnalysis = nullptr;
     }
     if (m_psnrAnalysis)
     {
         delete m_psnrAnalysis;
-        m_psnrAnalysis = NULL;
+        m_psnrAnalysis = nullptr;
     }
     if (m_allAnalysis)
     {
         delete m_allAnalysis;
-        m_allAnalysis = NULL;
+        m_allAnalysis = nullptr;
     }
     if (m_imageviewFile1)
     {
         delete m_imageviewFile1;
-        m_imageviewFile1 = NULL;
+        m_imageviewFile1 = nullptr;
     }
     if (m_imageviewFile2)
     {
         delete m_imageviewFile2;
-        m_imageviewFile2 = NULL;
+        m_imageviewFile2 = nullptr;
     }
     if (m_imageviewDiff)
     {
         delete m_imageviewDiff;
-        m_imageviewDiff = NULL;
+        m_imageviewDiff = nullptr;
     }
 }
 

@@ -58,7 +58,8 @@ public:
     void hideProgressBusy(QString Message);
 
 private:
-    bool                       m_setHorizontalView;
+    bool                      m_setHorizontalView;
+    int                       m_manualModelViewFlip;
 
     QWidget                   *m_newWidget;
     QWidget                   *m_newInnerWidget;
@@ -90,10 +91,12 @@ private:
     QToolBar                  *m_dockToolBar;
     QAction                   *hlayoutAct;
     QAction                   *orilayoutAct;
+    QComboBox                  *m_CBManual_renderView;
 
 public slots:
     void changeLayout();
     void resetLayout();
+    void onManual_renderView(int mode);
 
 Q_SIGNALS:
     void UpdateData(QObject *data);

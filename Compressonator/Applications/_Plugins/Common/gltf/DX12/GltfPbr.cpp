@@ -106,11 +106,32 @@ bool GltfPbr::OnCreate(
         json::array_t zeroes = { 0.0, 0.0, 0.0, 0.0 };
         tfmat->emissiveFactor  = (XMVECTOR) GetVector(GetElementJsonArray(material, "emissiveFactor", zeroes));
         tfmat->baseColorFactor = (XMVECTOR) GetVector(GetElementJsonArray(material, "pbrMetallicRoughness/baseColorFactor", ones));
-        tfmat->metallicFactor = GetElementFloat(material, "pbrMetallicRoughness/metallicFactor", 1.0);
-        tfmat->roughnessFactor = GetElementFloat(material, "pbrMetallicRoughness/roughnessFactor", 1.0);
+        try {
+            tfmat->metallicFactor = GetElementFloat(material, "pbrMetallicRoughness/metallicFactor", 1.0);
+        }
+        catch (json::exception& e)
+        {
+            tfmat->metallicFactor = (GetElementJsonArray(material, "pbrMetallicRoughness/metallicFactor", ones))[0];
+        }
+        try {
+            tfmat->roughnessFactor = GetElementFloat(material, "pbrMetallicRoughness/roughnessFactor", 1.0);
+        }
+        catch (json::exception& e)
+        {
+            tfmat->roughnessFactor = (GetElementJsonArray(material, "pbrMetallicRoughness/roughnessFactor", ones))[0];
+        }
 
         tfmat->m_defines["DEF_alphaMode_" + GetElementString(material, "alphaMode", "OPAQUE")] = 1;
-        tfmat->m_defines["DEF_alphaCutoff"] = std::to_string(GetElementFloat(material, "alphaCutoff", 1.0));
+
+        float alphaCutOff = 0.0f;
+        try {
+            alphaCutOff = GetElementFloat(material, "alphaCutoff", 1.0);
+        }
+        catch (json::exception& e)
+        {
+            alphaCutOff = (GetElementJsonArray(material, "alphaCutoff", ones))[0];
+        }
+        tfmat->m_defines["DEF_alphaCutoff"] = std::to_string(alphaCutOff);
 
         // load glTF 2.0 material's textures (if present) and create descriptor set
         //
@@ -216,7 +237,8 @@ bool GltfPbr::OnCreate(
             //
             tfAccessor indexBuffer;
             {
-                json::object_t indicesAccessor = accessors[primitives[p]["indices"].get<int>()];
+                int indicesID = primitives[p]["indices"].get<int>();
+                json::object_t indicesAccessor = accessors[indicesID];
                 GetBufferDetails(indicesAccessor, bufferViews, pGLTFData->buffersData, &indexBuffer);
             }
 

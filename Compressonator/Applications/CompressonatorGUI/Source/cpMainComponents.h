@@ -138,7 +138,7 @@ public:
     QDialog                 *m_frame;               // http://doc.qt.io/qt-4.8/qframe.html
     bool                     m_appclosing = false; 
 
-    enum { MaxRecentFiles = 5 };
+    enum { MaxRecentFiles = 10 };
     int     m_numRecentFiles;                       // Counts the number of recent files loaded
     QAction *recentFileActs[MaxRecentFiles];
     QAction *separatorAct;

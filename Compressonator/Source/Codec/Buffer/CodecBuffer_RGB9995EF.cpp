@@ -129,6 +129,8 @@ bool CCodecBuffer_RGB9995EF::WriteBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CM
     return true;
 }
 
+#pragma warning( push )
+#pragma warning( disable : 4201)
 typedef struct _R9G9B9E5
 {
     union
@@ -148,6 +150,8 @@ typedef struct _R9G9B9E5
     _R9G9B9E5& operator= (const _R9G9B9E5& floatrgb9e5) { v = floatrgb9e5.v; return *this; }
     _R9G9B9E5& operator= (uint32_t Packed) { v = Packed; return *this; }
 }R9G9B9E5;
+
+#pragma warning( pop )
 
 #define GET_PIXEL(i, j) &block[(((j * w) + i) * 4)]
 bool CCodecBuffer_RGB9995EF::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, float block[])

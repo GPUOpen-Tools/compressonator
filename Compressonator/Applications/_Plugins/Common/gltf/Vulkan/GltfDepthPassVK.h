@@ -71,7 +71,7 @@ public:
         ResourceViewHeapsVK *pHeaps,
         DynamicBufferRingVK *pDynamicBufferRing,
         StaticBufferPoolVK *pStaticBufferPool,
-        GLTFCommon *pGLTFData);
+        GLTFCommon *pGLTFData, void *pluginManager, void *msghandler);
 
     void OnDestroy();
     GltfDepthPass::per_batch *SetPerBatchConstants();

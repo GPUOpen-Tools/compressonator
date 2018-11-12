@@ -41,7 +41,7 @@ void MeshData::LoadData(const CMP_Mesh& l_mesh)
     // assign new mesh 
     m_basemesh = l_mesh;
 
-    int numVertices = l_mesh.vertices.size();
+    int numVertices = (int)l_mesh.vertices.size();
 
     for (int i = 0; i < numVertices; i++)
     {
@@ -50,7 +50,7 @@ void MeshData::LoadData(const CMP_Mesh& l_mesh)
     }
 
     // Set index data
-    int numIndices = l_mesh.indices.size();
+    int numIndices = (int)l_mesh.indices.size();
     m_indexData.resize(numIndices);             // Face Index data 3 ints
     for (int i = 0; i < numIndices; i++)
     {
@@ -84,7 +84,7 @@ void MeshData::LoadIndex(const CMP_Mesh& l_mesh)
     m_indexData.clear();
     m_indexCount = 0;
 
-    int numIndices = l_mesh.indices.size();
+    int numIndices = (int)l_mesh.indices.size();
     m_indexData.resize(numIndices);             // Face Index data 3 ints
     for (int i = 0; i < numIndices; i++)
     {

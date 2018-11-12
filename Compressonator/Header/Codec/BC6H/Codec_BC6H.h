@@ -67,11 +67,11 @@ private:
 
     // BC6H User configurable variables
     CMP_WORD        m_ModeMask;
-    double          m_Quality;
+    float           m_Quality;
     CMP_WORD        m_NumThreads;    
     bool            m_bIsSigned;
     bool            m_UsePatternRec;
-    double          m_Exposure;
+    float           m_Exposure;
 
     // BC6H Internal status 
     CMP_BOOL        m_LibraryInitialized;

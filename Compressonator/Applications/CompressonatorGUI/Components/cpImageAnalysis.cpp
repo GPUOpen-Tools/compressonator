@@ -70,19 +70,19 @@ CMipImages* C_AnalysisData::GenerateDiffImage(const char *fsource, const char *f
     //}
     Plugin_Canalysis *Plugin_Analysis;
     fdiff = file_path.string();
-    int lastindex = fdiff.find_last_of(".");
+    int lastindex = (int)fdiff.find_last_of(".");
     fdiff = fdiff.substr(0, lastindex);
     fdiff.append("_diff.bmp");
 
     results_file = file_path.string();
-    int index = results_file.find_last_of(".");
+    int index = (int)results_file.find_last_of(".");
     results_file = results_file.substr(0, index);
     results_file.append("_analysis.xml");
 
     Plugin_Analysis = reinterpret_cast<Plugin_Canalysis*>(g_pluginManager.GetPlugin("IMAGE", "ANALYSIS"));
     if (Plugin_Analysis)
     {
-        testpassed = Plugin_Analysis->TC_ImageDiff(fsource, fdest, fdiff.c_str(), (char*)results_file.c_str(), &g_pluginManager, (void**)&diffCMipImages, &ProgressCallback);
+        testpassed = Plugin_Analysis->TC_ImageDiff(fsource, fdest, fdiff.c_str(), (char*)results_file.c_str(), NULL, &g_pluginManager, (void**)&diffCMipImages, &ProgressCallback);
         
         delete Plugin_Analysis;
         Plugin_Analysis = NULL;
@@ -128,7 +128,7 @@ int C_AnalysisData::GeneratePSNRMSEAnalysis(const char *fsource, const char *fde
     Plugin_Canalysis *Plugin_Analysis;
 
     results_file = file_path.string();
-    int index = results_file.find_last_of(".");
+    int index = (int)results_file.find_last_of(".");
     results_file = results_file.substr(0, index);
     results_file.append("_analysis.xml");
 
@@ -179,7 +179,7 @@ int C_AnalysisData::GenerateSSIMAnalysis(const char *fsource, const char *fdest)
     Plugin_Canalysis *Plugin_Analysis;
 
     results_file = file_path.string();
-    int index = results_file.find_last_of(".");
+    int index = (int)results_file.find_last_of(".");
     results_file = results_file.substr(0, index);
     results_file.append("_analysis.xml");
 

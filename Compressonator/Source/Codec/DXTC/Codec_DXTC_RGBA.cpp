@@ -32,6 +32,9 @@
 #include "CompressonatorXCodec.h"
 #include "dxtc_v11_compress.h"
 
+// #define PRINT_DECODE_INFO
+
+
 CodecError CCodec_DXTC::CompressRGBABlock(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[4], CODECFLOAT* pfChannelWeights)
 {
     CMP_BYTE alphaBlock[BLOCK_SIZE_4X4];
@@ -372,14 +375,31 @@ void CCodec_DXTC::DecompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DW
     CMP_DWORD c0 = 0xff000000 | (r0<<16) | (g0<<8) | b0;
     CMP_DWORD c1 = 0xff000000 | (r1<<16) | (g1<<8) | b1;
 
+#ifdef PRINT_DECODE_INFO
+    FILE *gt_File_decode = fopen("decode_patterns.txt", "a");
+#endif
+
     if(!bDXT1 || n0 > n1)
     {
+
+#ifdef PRINT_DECODE_INFO
+        fprintf(gt_File_decode, "BC1               : C0(%3d,%3d,%3d) C1(%3d,%3d,%3d) A0[%3d,%3d:%3d] B0[%3d:%3d:%3d] index = ",
+            r0, g0, b0, r1, g1, b1,
+            ((2 * r0 + r1 + 1) / 3), ((2 * g0 + g1 + 1) / 3), ((2 * b0 + b1 + 1) / 3),
+            ((2 * r1 + r0 + 1) / 3), ((2 * g1 + g0 + 1) / 3), ((2 * b1 + b0 + 1) / 3)
+        );
+#endif
+
         CMP_DWORD c2 = 0xff000000 | (((2*r0+r1+1)/3)<<16) | (((2*g0+g1+1)/3)<<8) | (((2*b0+b1+1)/3));
         CMP_DWORD c3 = 0xff000000 | (((2*r1+r0+1)/3)<<16) | (((2*g1+g0+1)/3)<<8) | (((2*b1+b0+1)/3));
 
         for(int i=0; i<16; i++)
         {
-            switch((compressedBlock[1]>>(2*i)) & 3)
+            int index = (compressedBlock[1] >> (2 * i)) & 3;
+#ifdef PRINT_DECODE_INFO
+            fprintf(gt_File_decode, "%2d,", index);
+#endif
+            switch(index)
             {
             case 0:
                 ((DWORD*)rgbBlock)[i] = c0;
@@ -398,12 +418,23 @@ void CCodec_DXTC::DecompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DW
     }
     else
     {
+
+#ifdef PRINT_DECODE_INFO
+        fprintf(gt_File_decode, "BC1T..............: C0(%3d,%3d,%3d) C1(%3d,%3d,%3d) A0[%3d,%3d,%3d]                 index = ",
+            r0, g0, b0, r1, g1, b1,
+            ((r0 + r1) / 2), ((g0 + g1) / 2),((b0 + b1) / 2)
+        );
+#endif
         // Transparent decode
         CMP_DWORD c2 = 0xff000000 | (((r0+r1)/2)<<16) | (((g0+g1)/2)<<8) | (((b0+b1)/2));
 
         for(int i=0; i<16; i++)
         {
-            switch((compressedBlock[1]>>(2*i)) & 3)
+            int index = (compressedBlock[1] >> (2 * i)) & 3;
+#ifdef PRINT_DECODE_INFO
+            fprintf(gt_File_decode, "%2d,", index);
+#endif
+            switch(index)
             {
                 case 0:
                     ((DWORD*)rgbBlock)[i] = c0;
@@ -420,6 +451,10 @@ void CCodec_DXTC::DecompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DW
             }
         }
     }
+#ifdef PRINT_DECODE_INFO
+    fprintf(gt_File_decode, "\n");
+    fclose(gt_File_decode);
+#endif
 }
 
 //
@@ -464,6 +499,10 @@ void CCodec_DXTC::DecompressRGBBlock(CODECFLOAT rgbBlock[BLOCK_SIZE_4X4X4], CMP_
     g0 += (g0>>6); g1 += (g1>>6);
     b0 += (b0>>5); b1 += (b1>>5);
 
+#ifdef PRINT_DECODE_INFO
+    FILE *gt_File_decode = fopen("decode_patterns.txt", "a");
+#endif
+
     CODECFLOAT c0[4], c1[4], c2[4], c3[4];
     c0[RGBA32F_OFFSET_A] = 1.0;
     c0[RGBA32F_OFFSET_R] = CONVERT_BYTE_TO_FLOAT(r0);
@@ -477,6 +516,13 @@ void CCodec_DXTC::DecompressRGBBlock(CODECFLOAT rgbBlock[BLOCK_SIZE_4X4X4], CMP_
 
     if(!bDXT1 || n0 > n1)
     {
+#ifdef PRINT_DECODE_INFO
+        fprintf(gt_File_decode, "BC1A              : C0(%3d,%3d,%3d) C1(%3d,%3d,%3d)                                 index = ",
+            r0, g0, b0, r1, g1, b1
+        );
+#endif
+
+
         c2[RGBA32F_OFFSET_A] = 1.0;
         c2[RGBA32F_OFFSET_R] = ((2*c0[RGBA32F_OFFSET_R]+c1[RGBA32F_OFFSET_R])/3);
         c2[RGBA32F_OFFSET_G] = ((2*c0[RGBA32F_OFFSET_G]+c1[RGBA32F_OFFSET_G])/3);
@@ -489,7 +535,12 @@ void CCodec_DXTC::DecompressRGBBlock(CODECFLOAT rgbBlock[BLOCK_SIZE_4X4X4], CMP_
 
         for(int i=0; i<16; i++)
         {
-            switch((compressedBlock[1]>>(2*i)) & 3)
+
+            int index = (compressedBlock[1] >> (2 * i)) & 3;
+#ifdef PRINT_DECODE_INFO
+            fprintf(gt_File_decode, "%2d,", index);
+#endif
+            switch(index)
             {
             case 0:
                 memcpy(&rgbBlock[i*4], c0, 4 * sizeof(CODECFLOAT));
@@ -508,6 +559,13 @@ void CCodec_DXTC::DecompressRGBBlock(CODECFLOAT rgbBlock[BLOCK_SIZE_4X4X4], CMP_
     }
     else
     {
+
+#ifdef PRINT_DECODE_INFO
+        fprintf(gt_File_decode, "BC1AT             : C0(%3d,%3d,%3d) C1(%3d,%3d,%3d)                                 index = ",
+            r0, g0, b0, r1, g1, b1
+        );
+#endif
+
         // Transparent decode
         c2[RGBA32F_OFFSET_A] = 1.0;
         c2[RGBA32F_OFFSET_R] = ((c0[RGBA32F_OFFSET_R]+c1[RGBA32F_OFFSET_R])/2);
@@ -521,7 +579,13 @@ void CCodec_DXTC::DecompressRGBBlock(CODECFLOAT rgbBlock[BLOCK_SIZE_4X4X4], CMP_
 
         for(int i=0; i<16; i++)
         {
-            switch((compressedBlock[1]>>(2*i)) & 3)
+
+            int index = (compressedBlock[1] >> (2 * i)) & 3;
+#ifdef PRINT_DECODE_INFO
+            fprintf(gt_File_decode, "%2d,", index);
+#endif
+
+            switch(index)
             {
                 case 0:
                     memcpy(&rgbBlock[i*4], c0, 4 * sizeof(CODECFLOAT));
@@ -538,6 +602,10 @@ void CCodec_DXTC::DecompressRGBBlock(CODECFLOAT rgbBlock[BLOCK_SIZE_4X4X4], CMP_
             }
         }
     }
+#ifdef PRINT_DECODE_INFO
+    fprintf(gt_File_decode, "\n");
+    fclose(gt_File_decode);
+#endif
 }
 
 CODECFLOAT* CCodec_DXTC::CalculateColourWeightings(CMP_BYTE block[BLOCK_SIZE_4X4X4])

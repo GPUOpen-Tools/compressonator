@@ -60,11 +60,19 @@ typedef enum _CodecType
     CT_ETC_RGBA_Interpolated,
 #endif // SUPPORT_ETC_ALPHA
     CT_ETC2_RGB,
+    CT_ETC2_SRGB,
+    CT_ETC2_RGBA,
+    CT_ETC2_RGBA1,
+    CT_ETC2_SRGBA,
+    CT_ETC2_SRGBA1,
     CT_BC6H,
     CT_BC6H_SF,
     CT_BC7,
     CT_ASTC,
-    CT_GT,
+    CT_GTC,
+#ifdef USE_GTC_HDR
+    CT_GTCH,
+#endif
     CODECS_AMD_INTERNAL
 } CodecType;
 

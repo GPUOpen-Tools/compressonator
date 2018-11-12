@@ -26,7 +26,6 @@
 #ifndef _ASTC_HOST_H
 #define _ASTC_HOST_H
 
-//#include "Common_Kernel.h"
 #include "ASTC_Encode_Kernel.h"
 #include "vectypes.h"
 

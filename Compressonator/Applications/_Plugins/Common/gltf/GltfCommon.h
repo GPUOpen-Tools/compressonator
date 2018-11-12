@@ -104,6 +104,6 @@ private:
 };
 
 void GetBufferDetails(nlohmann::json::object_t  accessor   , nlohmann::json::array_t bufferViews  , std::vector<char *> buffers,   tfAccessor *pAccessor);
-void GetBufferDetails(nlohmann::json::object_t *pInAccessor, nlohmann::json::array_t *pBufferViews, std::vector<char *> *pBuffers, tfAccessor *pAccessor);
+//void GetBufferDetails(nlohmann::json::object_t *pInAccessor, nlohmann::json::array_t *pBufferViews, std::vector<char *> *pBuffers, tfAccessor *pAccessor);
 
 #endif

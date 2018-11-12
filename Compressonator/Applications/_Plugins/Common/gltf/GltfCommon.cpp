@@ -26,9 +26,11 @@
 
 void GetBufferDetails(json::object_t accessor, json::array_t bufferViews, std::vector<char*> buffers, tfAccessor* pAccessor)
 {
-    auto bufferView = bufferViews[accessor["bufferView"].get<int>()];
+    int bufferViewID = accessor["bufferView"].get<int>();
+    auto bufferView = bufferViews[bufferViewID];
 
-    char* buffer = buffers[bufferView["buffer"].get<int>()];
+    int bufferID = bufferView["buffer"].get<int>();
+    char* buffer = buffers[bufferID];
 
     CMP_DWORD offset = 0;
     if (bufferView.count("byteOffset") > 0)
@@ -60,41 +62,41 @@ void GetBufferDetails(json::object_t accessor, json::array_t bufferViews, std::v
     pAccessor->m_type      = accessor["componentType"];
 }
 
-void GetBufferDetails(json::object_t* pInAccessor, json::array_t* pBufferViews, std::vector<char*>* pBuffers, tfAccessor* pAccessor)
-{
-    json::object_t bufferView = pBufferViews->at(pInAccessor->at("bufferView").get<int>());
-
-    char* buffer = pBuffers->at(bufferView["buffer"].get<int>());
-
-    CMP_DWORD offset = 0;
-    if (bufferView.count("byteOffset") > 0)
-        offset += bufferView["byteOffset"].get<int>();
-    ;
-
-    int byteLength = bufferView["byteLength"];
-
-    if (pInAccessor->count("byteOffset") > 0)
-    {
-        CMP_DWORD byteOffset = pInAccessor->at("byteOffset").get<int>();
-        offset += byteOffset;
-        byteLength -= byteOffset;
-    }
-
-    CMP_DWORD strideInBytes = 0;
-    //if (bufferView.find("byteStride") != bufferView.end())
-    //    strideInBytes += bufferView["byteStride"];
-
-    CMP_DWORD dwDimensions = GetDimensions(pInAccessor->at("type").get<std::string>());
-    CMP_DWORD dwFormatSize = GetFormatSize(pInAccessor->at("componentType"));
-
-    strideInBytes += dwDimensions * dwFormatSize;
-
-    pAccessor->m_data      = &buffer[offset];
-    pAccessor->m_stride    = strideInBytes;
-    pAccessor->m_count     = pInAccessor->at("count").get<CMP_DWORD>();
-    pAccessor->m_dimension = dwDimensions;
-    pAccessor->m_type      = pInAccessor->at("componentType");
-}
+// void GetBufferDetails(json::object_t* pInAccessor, json::array_t* pBufferViews, std::vector<char*>* pBuffers, tfAccessor* pAccessor)
+// {
+//     json::object_t bufferView = pBufferViews->at(pInAccessor->at("bufferView").get<int>());
+// 
+//     char* buffer = pBuffers->at(bufferView["buffer"].get<int>());
+// 
+//     CMP_DWORD offset = 0;
+//     if (bufferView.count("byteOffset") > 0)
+//         offset += bufferView["byteOffset"].get<int>();
+//     ;
+// 
+//     int byteLength = bufferView["byteLength"];
+// 
+//     if (pInAccessor->count("byteOffset") > 0)
+//     {
+//         CMP_DWORD byteOffset = pInAccessor->at("byteOffset").get<int>();
+//         offset += byteOffset;
+//         byteLength -= byteOffset;
+//     }
+// 
+//     CMP_DWORD strideInBytes = 0;
+//     //if (bufferView.find("byteStride") != bufferView.end())
+//     //    strideInBytes += bufferView["byteStride"];
+// 
+//     CMP_DWORD dwDimensions = GetDimensions(pInAccessor->at("type").get<std::string>());
+//     CMP_DWORD dwFormatSize = GetFormatSize(pInAccessor->at("componentType"));
+// 
+//     strideInBytes += dwDimensions * dwFormatSize;
+// 
+//     pAccessor->m_data      = &buffer[offset];
+//     pAccessor->m_stride    = strideInBytes;
+//     pAccessor->m_count     = pInAccessor->at("count").get<CMP_DWORD>();
+//     pAccessor->m_dimension = dwDimensions;
+//     pAccessor->m_type      = pInAccessor->at("componentType");
+// }
 
 bool GLTFCommon::GetBufferData(std::string attriName, nlohmann::json::object_t accessor, nlohmann::json::array_t bufferViews, char* buffer, int index)
 {
@@ -479,7 +481,7 @@ int GLTFCommon::Save(std::string path, std::string filename, CMIPS* cmips)
         if (name.find(".bin") != string::npos)
         {
             std::size_t dotPos = filename.rfind('.');
-        std:
+//        std:
             string dstBinFile           = filename.substr(0, dotPos) + ".bin";
             j3temp["buffers"][i]["uri"] = dstBinFile;
             std::ofstream ff(path + dstBinFile, std::ios::out | std::ios::binary);
@@ -591,7 +593,7 @@ int GLTFCommon::Load(std::string path, std::string filename, CMIPS* cmips)
     float maxy      = 0.0f;
     bool  getBuffer = false;
     int   primInd   = 0;  //primitive index
-    int   meshSize  = meshes.size();
+    int   meshSize  = (int)meshes.size();
     m_meshBufferData.m_meshData.resize(meshSize);  //set default size to multiple meshes with 1 attribute
     for (unsigned int i = 0; i < meshes.size(); i++)
     {
@@ -600,7 +602,7 @@ int GLTFCommon::Load(std::string path, std::string filename, CMIPS* cmips)
         tfmesh->m_pPrimitives.resize(primitives.size());
         if (primitives.size() > 1)
         {  //resize the mesh buffer if there are multiple attributes
-            meshSize += primitives.size() - 1;
+            meshSize += (int)primitives.size() - 1;
             m_meshBufferData.m_meshData.resize(meshSize);
         }
         for (unsigned int p = 0; p < primitives.size(); p++)

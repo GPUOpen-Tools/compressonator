@@ -142,7 +142,7 @@ int Vulkan_Device::OnCreate(HWND hWnd)
         // Create a instance of the renderer and initialize it, we need to do that for each GPU
         m_Node[curr_Node] = new Vulkan_Renderer(this);
         m_Node[curr_Node]->OnCreate(&m_device);
-        m_Node[curr_Node]->OnCreateWindowSizeDependentResources(&m_swapChain, m_Width, m_Height);
+        m_Node[curr_Node]->OnCreateWindowSizeDependentResources(&m_swapChain, m_Width-100, m_Height-100);
 
         // Load scene data from system memory into all the GPUs (done once per GPU)
         m_Node[curr_Node]->LoadScene(m_gltfLoader[curr_Node], m_pluginManager, m_msghandler);

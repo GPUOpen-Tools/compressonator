@@ -91,7 +91,8 @@ struct {
 } pipelines;
 
 VkClearColorValue defaultClearColor = { { 0.025f, 0.025f, 0.025f, 1.0f } };
-GPU_Vulkan::GPU_Vulkan(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback)
+
+GPU_Vulkan::GPU_Vulkan(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback):RenderWindow("Vulkan")
 {
     m_initOk = false;
     //set default width and height if is 0
@@ -103,8 +104,11 @@ GPU_Vulkan::GPU_Vulkan(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback)
 
     m_descriptorPool = VK_NULL_HANDLE;
 
-    if (FAILED(InitWindow(hInstance, Width, Height, callback)))
+    if (FAILED(InitWindow(Width, Height, callback)))
+    {
+        fprintf(stderr, "[Vulkan] Failed to initialize Window. Please make sure Vulkan SDK is available.\n");
         assert(0);
+    }
 
     EnableWindowContext(m_hWnd, &m_hDC, &m_hRC);
 }
@@ -198,6 +202,7 @@ bool GPU_Vulkan::initVulkan(bool enableValidation)
     err = createInstance(enableValidation);
     if (err)
     {
+      fprintf(stderr, "\nCould not create Vulkan instance : %s Vulkan not Supported!\n",vkTools::errorString(err));
       vkTools::exitFatal("Could not create Vulkan instance : \n" + vkTools::errorString(err), "Vulkan not Supported!");
       return false;
     }
@@ -205,19 +210,24 @@ bool GPU_Vulkan::initVulkan(bool enableValidation)
     // Physical device
     // Get number of available physical devices
     err = vkEnumeratePhysicalDevices(instance, &gpuCount, nullptr);
-    if (err)
+    if (err != VK_SUCCESS)
     {
+        fprintf(stderr, "\n[Vulkan Error] Could not get Vulkan devices: %s\n", vkTools::errorString(err));
         return false;
     }
+
+    if (gpuCount == 0)
+        fprintf(stderr, "\n[Vulkan Error] no GPU available\n");
 
     assert(gpuCount > 0);
 
     // Enumerate devices
     physicalDevices.resize(gpuCount);
     err = vkEnumeratePhysicalDevices(instance, &gpuCount, physicalDevices.data());
-    if (err)
+    if (err != VK_SUCCESS)
     {
-      vkTools::exitFatal("Could not enumerate phyiscal devices : \n" + vkTools::errorString(err), "Vulkan not Supported!");
+        fprintf(stderr, "\n[Vulkan Error] Could not enumerate phyiscal devices: %s\n", vkTools::errorString(err));
+        vkTools::exitFatal("Could not enumerate phyiscal devices : \n" + vkTools::errorString(err), "Vulkan not Supported!");
       return false;
     }
 
@@ -229,6 +239,10 @@ bool GPU_Vulkan::initVulkan(bool enableValidation)
     uint32_t graphicsQueueIndex = 0;
     uint32_t queueCount;
     vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueCount, NULL);
+
+    if (queueCount == 0)
+        fprintf(stderr, "\n[Vulkan Error] queueCount = 0\n");
+
     assert(queueCount >= 1);
 
     std::vector<VkQueueFamilyProperties> queueProps;
@@ -240,6 +254,9 @@ bool GPU_Vulkan::initVulkan(bool enableValidation)
         if (queueProps[graphicsQueueIndex].queueFlags & VK_QUEUE_GRAPHICS_BIT)
             break;
     }
+
+    if (graphicsQueueIndex > queueCount)
+        fprintf(stderr, "\n[Vulkan Error] graphicsQueueIndex > queueCount\n");
     assert(graphicsQueueIndex < queueCount);
 
     // Vulkan device
@@ -251,7 +268,11 @@ bool GPU_Vulkan::initVulkan(bool enableValidation)
     queueCreateInfo.pQueuePriorities = queuePriorities.data();
 
     err = createDevice(queueCreateInfo, enableValidation);
-    assert(!err);
+    if (err != VK_SUCCESS)
+    {
+        fprintf(stderr, "\n[Vulkan Error] Could not createDevice: %s\n", vkTools::errorString(err));
+        return false;
+    }
 
     // Gather physical device memory properties
     vkGetPhysicalDeviceMemoryProperties(physicalDevice, &deviceMemoryProperties);
@@ -261,6 +282,8 @@ bool GPU_Vulkan::initVulkan(bool enableValidation)
 
     // Find a suitable depth format
     VkBool32 validDepthFormat = vkTools::getSupportedDepthFormat(physicalDevice, &depthFormat);
+    if (validDepthFormat == 0)
+        fprintf(stderr, "\n[Vulkan Error] validDepthFormat = 0\n");
     assert(validDepthFormat);
 
     swapChain.connect(instance, physicalDevice, device);
@@ -270,11 +293,20 @@ bool GPU_Vulkan::initVulkan(bool enableValidation)
     // Create a semaphore used to synchronize image presentation
     // Ensures that the image is displayed before we start submitting new commands to the queu
     err = vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &semaphores.presentDone);
-    assert(!err);
+    if (err != VK_SUCCESS)
+    {
+        fprintf(stderr, "\n[Vulkan Error] vkCreateSemaphore present: %s\n", vkTools::errorString(err));
+        return false;
+    }
+
     // Create a semaphore used to synchronize command submission
     // Ensures that the image is not presented until all commands have been sumbitted and executed
     err = vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &semaphores.renderDone);
-    assert(!err);
+    if (err != VK_SUCCESS)
+    {
+        fprintf(stderr, "\n[Vulkan Error] vkCreateSemaphore render: %s\n", vkTools::errorString(err));
+        return false;
+    }
 
     // Set up submit info structure
     // Semaphores will stay the same during application lifetime
@@ -295,6 +327,8 @@ void GPU_Vulkan::submitPostPresentBarrier(VkImage image)
     VkCommandBufferBeginInfo cmdBufInfo = vkTools::initializers::commandBufferBeginInfo();
 
     VkResult vkRes = vkBeginCommandBuffer(postPresentCmdBuffer, &cmdBufInfo);
+    if (vkRes != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkBeginCommandBuffer = %d\n", vkRes);
     assert(!vkRes);
 
     VkImageMemoryBarrier postPresentBarrier = vkTools::initializers::imageMemoryBarrier();
@@ -317,6 +351,8 @@ void GPU_Vulkan::submitPostPresentBarrier(VkImage image)
         1, &postPresentBarrier);
 
     vkRes = vkEndCommandBuffer(postPresentCmdBuffer);
+    if (vkRes != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkEndCommandBuffer = %d\n", vkRes);
     assert(!vkRes);
 
     VkSubmitInfo submitInfo = vkTools::initializers::submitInfo();
@@ -324,6 +360,8 @@ void GPU_Vulkan::submitPostPresentBarrier(VkImage image)
     submitInfo.pCommandBuffers = &postPresentCmdBuffer;
 
     vkRes = vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
+    if (vkRes != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkQueueSubmit = %d\n", vkRes);
     assert(!vkRes);
 }
 
@@ -332,6 +370,8 @@ void GPU_Vulkan::submitPrePresentBarrier(VkImage image)
     VkCommandBufferBeginInfo cmdBufInfo = vkTools::initializers::commandBufferBeginInfo();
 
     VkResult vkRes = vkBeginCommandBuffer(prePresentCmdBuffer, &cmdBufInfo);
+    if (vkRes != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkBeginCommandBuffer = %d\n", vkRes);
     assert(!vkRes);
 
     VkImageMemoryBarrier prePresentBarrier = vkTools::initializers::imageMemoryBarrier();
@@ -354,6 +394,8 @@ void GPU_Vulkan::submitPrePresentBarrier(VkImage image)
         1, &prePresentBarrier);
 
     vkRes = vkEndCommandBuffer(prePresentCmdBuffer);
+    if (vkRes != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkEndCommandBuffer = %d\n", vkRes);
     assert(!vkRes);
 
     VkSubmitInfo submitInfo = vkTools::initializers::submitInfo();
@@ -361,6 +403,8 @@ void GPU_Vulkan::submitPrePresentBarrier(VkImage image)
     submitInfo.pCommandBuffers = &prePresentCmdBuffer;
 
     vkRes = vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
+    if (vkRes != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkQueueSubmit = %d\n", vkRes);
     assert(!vkRes);
 }
 
@@ -370,6 +414,8 @@ void GPU_Vulkan::draw()
 
     // Get next image in the swap chain (back/front buffer)
     err = swapChain.acquireNextImage(semaphores.presentDone, &currentBuffer);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] acquireNextImage = %d\n", err);
     assert(!err);
 
     // Command buffer to be sumitted to the queue
@@ -378,12 +424,18 @@ void GPU_Vulkan::draw()
 
     // Submit to queue
     err = vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkQueueSubmit = %d\n", err);
     assert(!err);
 
     err = swapChain.queuePresent(queue, currentBuffer, semaphores.renderDone);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] queuePresent = %d\n", err);
     assert(!err);
 
     err = vkQueueWaitIdle(queue);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkQueueWaitIdle = %d\n", err);
     assert(!err);
 }
 
@@ -394,6 +446,8 @@ void GPU_Vulkan::createCommandPool()
     cmdPoolInfo.queueFamilyIndex = swapChain.queueNodeIndex;
     cmdPoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
     VkResult vkRes = vkCreateCommandPool(device, &cmdPoolInfo, nullptr, &cmdPool);
+    if (vkRes != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkQueueWaitIdle = %d\n", vkRes);
     assert(!vkRes);
 }
 
@@ -412,12 +466,18 @@ void GPU_Vulkan::createSetupCommandBuffer()
             1);
 
     VkResult vkRes = vkAllocateCommandBuffers(device, &cmdBufAllocateInfo, &setupCmdBuffer);
+    if (vkRes != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkAllocateCommandBuffers = %d\n", vkRes);
+
     assert(!vkRes);
 
     VkCommandBufferBeginInfo cmdBufInfo = {};
     cmdBufInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
     vkRes = vkBeginCommandBuffer(setupCmdBuffer, &cmdBufInfo);
+    if (vkRes != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkBeginCommandBuffer = %d\n", vkRes);
+
     assert(!vkRes);
 }
 
@@ -434,6 +494,8 @@ void GPU_Vulkan::createCommandBuffers()
             (uint32_t)drawCmdBuffers.size());
 
     VkResult vkRes = vkAllocateCommandBuffers(device, &cmdBufAllocateInfo, drawCmdBuffers.data());
+    if (vkRes != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkAllocateCommandBuffers = %d\n", vkRes);
     assert(!vkRes);
 }
 
@@ -492,18 +554,26 @@ void GPU_Vulkan::setupDepthStencil()
     VkResult err;
 
     err = vkCreateImage(device, &image, nullptr, &depthStencil.image);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkCreateImage = %d\n", err);
     assert(!err);
     vkGetImageMemoryRequirements(device, depthStencil.image, &memReqs);
     mem_alloc.allocationSize = memReqs.size;
     getMemoryType(memReqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &mem_alloc.memoryTypeIndex);
     err = vkAllocateMemory(device, &mem_alloc, nullptr, &depthStencil.mem);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkAllocateMemory = %d\n", err);
     assert(!err);
 
     err = vkBindImageMemory(device, depthStencil.image, depthStencil.mem, 0);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkBindImageMemory = %d\n", err);
     assert(!err);
 
     depthStencilView.image = depthStencil.image;
     err = vkCreateImageView(device, &depthStencilView, nullptr, &depthStencil.view);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkCreateImageView = %d\n", err);
     assert(!err);
 }
 
@@ -580,6 +650,8 @@ void GPU_Vulkan::setupRenderPass()
     VkResult err;
 
     err = vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkCreateRenderPass = %d\n", err);
     assert(!err);
 }
 
@@ -588,6 +660,8 @@ void GPU_Vulkan::createPipelineCache()
     VkPipelineCacheCreateInfo pipelineCacheCreateInfo = {};
     pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
     VkResult err = vkCreatePipelineCache(device, &pipelineCacheCreateInfo, nullptr, &pipelineCache);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkCreatePipelineCache = %d\n", err);
     assert(!err);
 }
 
@@ -614,6 +688,8 @@ void GPU_Vulkan::setupFrameBuffer()
     {
         attachments[0] = swapChain.buffers[i].view;
         VkResult err = vkCreateFramebuffer(device, &frameBufferCreateInfo, nullptr, &frameBuffers[i]);
+        if (err != VK_SUCCESS)
+            fprintf(stderr, "\n[Vulkan Error] vkCreateFramebuffer = %d\n", err);
         assert(!err);
     }
 }
@@ -626,6 +702,8 @@ void GPU_Vulkan::flushSetupCommandBuffer()
         return;
 
     err = vkEndCommandBuffer(setupCmdBuffer);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkEndCommandBuffer = %d\n", err);
     assert(!err);
 
     VkSubmitInfo submitInfo = {};
@@ -634,9 +712,13 @@ void GPU_Vulkan::flushSetupCommandBuffer()
     submitInfo.pCommandBuffers = &setupCmdBuffer;
 
     err = vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkQueueSubmit = %d\n", err);
     assert(!err);
 
     err = vkQueueWaitIdle(queue);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkQueueWaitIdle = %d\n", err);
     assert(!err);
 
     vkFreeCommandBuffers(device, cmdPool, 1, &setupCmdBuffer);
@@ -655,21 +737,29 @@ VkBool32 GPU_Vulkan::createBuffer(
     VkBufferCreateInfo bufferCreateInfo = vkTools::initializers::bufferCreateInfo(usage, size);
 
     VkResult err = vkCreateBuffer(device, &bufferCreateInfo, nullptr, buffer);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkCreateBuffer = %d\n", err);
     assert(!err);
     vkGetBufferMemoryRequirements(device, *buffer, &memReqs);
     memAlloc.allocationSize = memReqs.size;
     getMemoryType(memReqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, &memAlloc.memoryTypeIndex);
     err = vkAllocateMemory(device, &memAlloc, nullptr, memory);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkAllocateMemory = %d\n", err);
     assert(!err);
     if (data != nullptr)
     {
         void *mapped;
         err = vkMapMemory(device, *memory, 0, size, 0, &mapped);
+        if (err != VK_SUCCESS)
+            fprintf(stderr, "\n[Vulkan Error] vkMapMemory = %d\n", err);
         assert(!err);
         memcpy(mapped, data,(std::size_t) size);
         vkUnmapMemory(device, *memory);
     }
     err = vkBindBufferMemory(device, *buffer, *memory, 0);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkBindBufferMemory = %d\n", err);
     assert(!err);
     return true;
 }
@@ -695,6 +785,8 @@ void GPU_Vulkan::updateUniformBuffers()
     // Vertex shader- use default
     uint8_t *pData;
     VkResult err = vkMapMemory(device, uniformDataVS.memory, 0, sizeof(uboVS), 0, (void **)&pData);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkMapMemory = %d\n", err);
     assert(!err);
     memcpy(pData, &uboVS, sizeof(uboVS));
     vkUnmapMemory(device, uniformDataVS.memory);
@@ -861,6 +953,21 @@ VkFormat GPU_Vulkan::MIP2VK_Format(const CMP_Texture* pSourceTexture)
     case CMP_FORMAT_ETC_RGB:
     case CMP_FORMAT_ETC2_RGB:
         m_VKnum = VK_FORMAT_ETC2_R8G8B8_UNORM_BLOCK;
+        break;
+    case CMP_FORMAT_ETC2_SRGB:
+        m_VKnum = VK_FORMAT_ETC2_R8G8B8_SRGB_BLOCK;
+        break;
+    case CMP_FORMAT_ETC2_RGBA:
+        m_VKnum = VK_FORMAT_ETC2_R8G8B8A8_UNORM_BLOCK;
+        break;
+    case CMP_FORMAT_ETC2_RGBA1:
+        m_VKnum = VK_FORMAT_ETC2_R8G8B8A1_UNORM_BLOCK;
+        break;
+    case CMP_FORMAT_ETC2_SRGBA:
+        m_VKnum = VK_FORMAT_ETC2_R8G8B8A8_SRGB_BLOCK;
+        break;
+    case CMP_FORMAT_ETC2_SRGBA1:
+        m_VKnum = VK_FORMAT_ETC2_R8G8B8A1_SRGB_BLOCK;
         break;
     case CMP_FORMAT_ASTC:
         if ((pSourceTexture->nBlockWidth == 4) && (pSourceTexture->nBlockHeight == 4))
@@ -1172,14 +1279,20 @@ void GPU_Vulkan::flushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue
     VkFenceCreateInfo fenceInfo = vkTools::initializers::fenceCreateInfo(VK_FLAGS_NONE);
     VkFence fence;
     VkResult vkRes = vkCreateFence(device, &fenceInfo, nullptr, &fence);
+    if (vkRes != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkCreateFence = %d\n", vkRes);
     assert(!vkRes);
 
     // Submit to the queue
     vkRes = vkQueueSubmit(queue, 1, &submitInfo, fence);
+    if (vkRes != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkQueueSubmit = %d\n", vkRes);
     assert(!vkRes);
 
     // Wait for the fence to signal that command buffer has finished executing
     vkRes = vkWaitForFences(device, 1, &fence, VK_TRUE, DEFAULT_FENCE_TIMEOUT);
+    if (vkRes != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkWaitForFences = %d\n", vkRes);
     assert(!vkRes);
 
     vkDestroyFence(device, fence, nullptr);
@@ -1199,6 +1312,8 @@ VkPipelineShaderStageCreateInfo GPU_Vulkan::loadShader(const char * fileName, Vk
     shaderStage.stage = stage;
     shaderStage.module = vkTools::loadShader(fileName, device, stage);
     shaderStage.pName = "main"; 
+    if (shaderStage.module == NULL)
+        fprintf(stderr, "\n[Vulkan Error] shaderStage.module is NULL\n");
     assert(shaderStage.module != NULL);
     shaderModules.push_back(shaderStage.module);
     return shaderStage;
@@ -1240,7 +1355,7 @@ CMP_ERROR GPU_Vulkan::prepare(const CMP_Texture* pSourceTexture)
 
     // Setup indices
     std::vector<uint32_t> indexBuffer = { 0,1,2, 2,3,0 };
-    indices.count = indexBuffer.size();
+    indices.count = (int)indexBuffer.size();
 
     createBuffer(
         VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
@@ -1277,9 +1392,9 @@ CMP_ERROR GPU_Vulkan::prepare(const CMP_Texture* pSourceTexture)
             sizeof(float) * 3);
 
     vertices.inputState = vkTools::initializers::pipelineVertexInputStateCreateInfo();
-    vertices.inputState.vertexBindingDescriptionCount = vertices.bindingDescriptions.size();
+    vertices.inputState.vertexBindingDescriptionCount = (uint32_t) vertices.bindingDescriptions.size();
     vertices.inputState.pVertexBindingDescriptions = vertices.bindingDescriptions.data();
-    vertices.inputState.vertexAttributeDescriptionCount = vertices.attributeDescriptions.size();
+    vertices.inputState.vertexAttributeDescriptionCount = (uint32_t)vertices.attributeDescriptions.size();
     vertices.inputState.pVertexAttributeDescriptions = vertices.attributeDescriptions.data();
 
     // Vertex shader uniform buffer block
@@ -1318,9 +1433,12 @@ CMP_ERROR GPU_Vulkan::prepare(const CMP_Texture* pSourceTexture)
     VkDescriptorSetLayoutCreateInfo descriptorLayout =
         vkTools::initializers::descriptorSetLayoutCreateInfo(
             setLayoutBindings.data(),
-            setLayoutBindings.size());
+            (uint32_t)setLayoutBindings.size());
 
     VkResult err = vkCreateDescriptorSetLayout(device, &descriptorLayout, nullptr, &descriptorSetLayout);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkCreateDescriptorSetLayout = %d\n", err);
+
     assert(!err);
 
     VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo =
@@ -1329,6 +1447,8 @@ CMP_ERROR GPU_Vulkan::prepare(const CMP_Texture* pSourceTexture)
             1);
 
     err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, nullptr, &pipelineLayout);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkCreatePipelineLayout = %d\n", err);
     assert(!err);
 
     // preparePipelines
@@ -1376,8 +1496,8 @@ CMP_ERROR GPU_Vulkan::prepare(const CMP_Texture* pSourceTexture)
     VkPipelineDynamicStateCreateInfo dynamicState =
         vkTools::initializers::pipelineDynamicStateCreateInfo(
             dynamicStateEnables.data(),
-            dynamicStateEnables.size(),
-            0);
+            (uint32_t)dynamicStateEnables.size(),
+            (uint32_t)0);
 
     // Load shaders
     std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages;
@@ -1399,10 +1519,12 @@ CMP_ERROR GPU_Vulkan::prepare(const CMP_Texture* pSourceTexture)
     pipelineCreateInfo.pViewportState = &viewportState;
     pipelineCreateInfo.pDepthStencilState = &depthStencilState;
     pipelineCreateInfo.pDynamicState = &dynamicState;
-    pipelineCreateInfo.stageCount = shaderStages.size();
+    pipelineCreateInfo.stageCount = (uint32_t)shaderStages.size();
     pipelineCreateInfo.pStages = shaderStages.data();
 
     err = vkCreateGraphicsPipelines(device, pipelineCache, 1, &pipelineCreateInfo, nullptr, &pipelines.solid);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkCreateGraphicsPipelines = %d\n", err);
     assert(!err);
 
     //setupDescriptorPool
@@ -1415,11 +1537,13 @@ CMP_ERROR GPU_Vulkan::prepare(const CMP_Texture* pSourceTexture)
 
     VkDescriptorPoolCreateInfo descriptorPoolInfo =
         vkTools::initializers::descriptorPoolCreateInfo(
-            poolSizes.size(),
+        (uint32_t)poolSizes.size(),
             poolSizes.data(),
-            2);
+            (uint32_t)2);
 
     VkResult vkRes = vkCreateDescriptorPool(device, &descriptorPoolInfo, nullptr, &m_descriptorPool);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkCreateDescriptorPool = %d\n", err);
     assert(!vkRes);
 
     //setupDescriptorSet
@@ -1430,6 +1554,8 @@ CMP_ERROR GPU_Vulkan::prepare(const CMP_Texture* pSourceTexture)
             1);
 
     vkRes = vkAllocateDescriptorSets(device, &allocInfo, &descriptorSet);
+    if (err != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkAllocateDescriptorSets = %d\n", err);
     assert(!vkRes);
 
     // Image descriptor for the color map texture
@@ -1455,7 +1581,7 @@ CMP_ERROR GPU_Vulkan::prepare(const CMP_Texture* pSourceTexture)
             &texDescriptor)
     };
 
-    vkUpdateDescriptorSets(device, writeDescriptorSets.size(), writeDescriptorSets.data(), 0, NULL);
+    vkUpdateDescriptorSets(device, (uint32_t)writeDescriptorSets.size(), writeDescriptorSets.data(), 0, NULL);
 
     //buildCommandBuffers
     VkCommandBufferBeginInfo cmdBufInfo = vkTools::initializers::commandBufferBeginInfo();
@@ -1479,6 +1605,8 @@ CMP_ERROR GPU_Vulkan::prepare(const CMP_Texture* pSourceTexture)
         renderPassBeginInfo.framebuffer = frameBuffers[i];
 
         err = vkBeginCommandBuffer(drawCmdBuffers[i], &cmdBufInfo);
+        if (err != VK_SUCCESS)
+            fprintf(stderr, "\n[Vulkan Error] vkBeginCommandBuffer = %d\n", err);
         assert(!err);
 
         vkCmdBeginRenderPass(drawCmdBuffers[i], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
@@ -1509,6 +1637,8 @@ CMP_ERROR GPU_Vulkan::prepare(const CMP_Texture* pSourceTexture)
         vkCmdEndRenderPass(drawCmdBuffers[i]);
 
         err = vkEndCommandBuffer(drawCmdBuffers[i]);
+        if (err != VK_SUCCESS)
+            fprintf(stderr, "\n[Vulkan Error] vkEndCommandBuffer = %d\n", err);
         assert(!err);
     }
 
@@ -1590,7 +1720,11 @@ void GPU_Vulkan::set_image_layout( VkImage image,
     VkImageLayout new_image_layout) {
     /* DEPENDS on info.cmd and info.queue initialized */
 
+    if (postPresentCmdBuffer == VK_NULL_HANDLE)
+        fprintf(stderr, "\n[Vulkan Error] postPresentCmdBuffer = VK_NULL_HANDLE\n");
     assert(postPresentCmdBuffer != VK_NULL_HANDLE);
+    if (queue == VK_NULL_HANDLE)
+        fprintf(stderr, "\n[Vulkan Error] queue = VK_NULL_HANDLE\n");
     assert(queue != VK_NULL_HANDLE);
 
     VkImageMemoryBarrier image_memory_barrier = {};
@@ -1687,6 +1821,8 @@ void GPU_Vulkan::write(const CMP_Texture* pDestTexture) {
 
     //Create a mappable image 
     res = vkCreateImage(device, &image_create_info, NULL, &mappableImage);
+    if (res != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkCreateImage = %d\n", res);
     assert(res == VK_SUCCESS);
 
     VkMemoryRequirements mem_reqs;
@@ -1699,14 +1835,19 @@ void GPU_Vulkan::write(const CMP_Texture* pDestTexture) {
         mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
         VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
         &mem_alloc.memoryTypeIndex);
+
     assert(pass && "No mappable, coherent memory");
 
     //allocate memory
     res = vkAllocateMemory(device, &mem_alloc, NULL, &(mappableMemory));
+    if (res != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkAllocateMemory = %d\n", res);
     assert(res == VK_SUCCESS);
 
     //bind memory
     res = vkBindImageMemory(device, mappableImage, mappableMemory, 0);
+    if (res != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkBindImageMemory = %d\n", res);
     assert(res == VK_SUCCESS);
 
     VkCommandBuffer copyCmd = createCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
@@ -1798,6 +1939,8 @@ void GPU_Vulkan::write(const CMP_Texture* pDestTexture) {
 
     char *ptr;
     res = vkMapMemory(device, mappableMemory, 0, pDestTexture->dwDataSize, 0, (void **)&ptr); // mem_reqs.size, 0,(void **)&ptr);
+    if (res != VK_SUCCESS)
+        fprintf(stderr, "\n[Vulkan Error] vkMapMemory = %d\n", res);
     assert(res == VK_SUCCESS);
 
     ptr += sr_layout.offset;
@@ -1906,7 +2049,7 @@ CMP_ERROR WINAPI GPU_Vulkan::Decompress(
         }
     }
 
-    swapChain.initSurface(hInstance, m_hWnd, pDestTexture->format);
+    swapChain.initSurface(m_hInstance, m_hWnd, pDestTexture->format);
 
     cmp_res = prepare(pSourceTexture);
 

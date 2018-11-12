@@ -65,7 +65,7 @@ public:
  
              // process the arguments into our debug buffer
             va_start(args, Format);
-            vsprintf_s(buff,Format,args);
+            vsnprintf(buff, MAX_DBGBUFF_SIZE,Format,args);
             va_end(args);
 
             // print debug message

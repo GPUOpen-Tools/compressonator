@@ -79,7 +79,7 @@ void AboutCompressonator()
     {
         // Keep track of Customer patches from last release to current
         // This is what is shown when you build the exe outside of the automated Build System (such as Jenkins)
-        printf("CompressonatorCLI V3.0.0 Copyright AMD 2018\n");
+        printf("CompressonatorCLI V3.1.0 Copyright AMD 2018\n");
     }
     printf("------------------------------------------------\n");
     printf("\n");
@@ -107,28 +107,19 @@ void PrintUsage()
     printf("                     set to ARGB_8888 or ARGB_32F\n");
 #ifdef _WIN32
 #ifdef USE_COMPUTE
-    printf("-UseGPUCompress      By default compression is done using CPU\n");
-    printf("                     when set, OpenCL will be used by default, this can be \n");
-    printf("                     changed to DirectX using EcodeWith setting\n");
-    printf("-EncodeWith          Sets OpenCL or DirectX for GPU compress\n");
-    printf("                     Default is OpenCL, UseGPUCompress is implied when\n");
-    printf("                     this option is set\n");
+    printf("-EncodeWith          Compression with HPC or OpenCL\n");
 #endif
-
-    printf("-UseGPUDecompress    By default decompression is done using CPU\n");
-    printf("                     when set OpenGL will be used by default, this can be \n");
-    printf("                     changed to DirectX or Vulkan using DecodeWith setting\n");
-    printf("-DecodeWith          Sets OpenGL, DirectX or Vulkan for GPU decompress\n");
-    printf("                     Default is OpenGL, UseGPUDecompress is implied when\n");
-    printf("                     this option is set\n");
+    printf("-DecodeWith          GPU based decompression using OpenGL, DirectX or Vulkan\n");
 #endif
 #ifdef USE_MESH_DRACO_EXTENSION
-    printf("-draco           Enable draco compression. (only support glTF file now)\n");
+    printf("-draco           Enable draco compression. (only support glTF files)\n");
+#ifdef USE_MESH_DRACO_SETTING 
     printf("-dracolvl        Draco compression level (0-10), default=5 , -draco has to be enabled.\n");
     printf("-qpos            Draco quantization bits for position attribute (0-30), default=14. -draco has to be enabled.\n");
     printf("-qtexc           Draco quantization bits for texture coordinates attribute (0-30), default=10. -draco has to be enabled.\n");
     printf("-qnorm           Draco quantization bits for normal attribute (0-30), default=10. -draco has to be enabled.\n");
     printf("-qgen            Draco quantization bits for generic attribute (0-30), default=8. -draco has to be enabled.\n");
+#endif
 #endif
     printf("-doswizzle           Swizzle the source images Red and Blue channels\n");
     printf("\n");
@@ -197,6 +188,16 @@ void PrintUsage()
     printf("               green channel. Eight bits per pixel\n");
     printf("ETC_RGB        Ericsson Texture Compression - Compressed RGB format.\n");
     printf("ETC2_RGB       Ericsson Texture Compression - Compressed RGB format.\n");
+    printf("ETC2_RGBA      Ericsson Texture Compression - Compressed RGB with 8 bit Alpha.\n");
+    printf("ETC2_RGBA1     Ericsson Texture Compression - Compressed RGB with 1 bit Alpha.\n");
+#ifdef USE_GTC
+    printf("GTC            Compressed RGB 8:8:8 format \n");
+    printf("               This is a preview version for evaluation: subject to changes\n");
+#endif
+#ifdef USE_GTC_HDR
+    printf("GTCH           High-Dynamic Range  RGB compression format\n");
+    printf("               This is a preview version for evaluation: subject to changes\n");
+#endif
     printf("\n");
     printf("<codec options>: Reference  documentation for range of values\n\n");
     printf("-UseChannelWeighting <value> Use channel weightings\n");
@@ -219,10 +220,6 @@ void PrintUsage()
     //printf("                             higher values produce brighter images\n");
     printf("-CompressionSpeed <value>    The trade-off between compression speed & quality\n");
     printf("                             This setting is not used in BC6H and BC7\n");
-    printf("-Signed <value>              Used for BC6H only, Default BC6H format disables\n");
-    printf("                             use of a sign bit in the 16-bit floating point\n");
-    printf("                             channels, with a value set to 1 BC6H format will\n");
-    printf("                             use a sign bit\n");
     printf("-NumThreads <value>          Number of threads to initialize for ASTC,BC6H,BC7\n");
     printf("                             encoding (Max up to 128). Default set to 8\n");
     printf("-Quality <value>             Sets quality of encoding for BC7\n");
@@ -261,6 +258,9 @@ void PrintUsage()
     printf(
         "                              A .bmp file will be generated. Please use compressonator GUI to increase the contrast to view the diff "
         "pixels.\n");
+    printf("-log                         Logs process information to a process_results.txt file containing\n");
+    printf("                             file info, performance data, SSIM, PSNR and MSE. \n");
+    printf("-logfile <filename>          Logs process information to a user defined text file\n");
     printf("\n\n");
     printf("-imageprops <image>           Print image properties of image files specifies. \n");
     printf("\n\n");
@@ -284,13 +284,18 @@ void PrintUsage()
     printf("CompressonatorCLI.exe -fd BC7  image.bmp result.bmp\n");
     printf("CompressonatorCLI.exe -fd BC6H image.exr result.exr\n\n");
 #ifdef USE_MESH_DRACO_EXTENSION
-    printf("Example draco compression usage (support glTF file only):\n\n");
-    printf("Using default quantization bits settings:\n");
+    printf("Example draco compression usage (support glTF and OBJ file only):\n\n");
     printf("CompressonatorCLI.exe -draco source.gltf dest.gltf\n");
+    printf("CompressonatorCLI.exe -draco source.obj dest.drc\n");
+    printf("Note: only .obj file produces compressed .drc file. glTF does not produce .drc compressed file.\n");
+    printf("Note: You can specify .obj as compressed file format as well, but a new .drc file will be created for this case.\n\n");
+#ifdef USE_MESH_DRACO_SETTING 
     printf("Specifies quantization bits settings:\n");
     printf("CompressonatorCLI.exe -draco -dracolvl 7 -qpos 12 -qtexc 8 -qnorm 8 source.gltf dest.gltf\n\n");
-    printf("Example draco decompression usage (support glTF file only):\n\n");
+#endif
+    printf("Example draco decompression usage (support glTF and drc file only):\n\n");
     printf("CompressonatorCLI.exe source.gltf dest.gltf\n");
+    printf("CompressonatorCLI.exe source.drc dest.obj\n");
 #endif
 #ifdef USE_3DMESH_OPTIMIZE
     printf("\n\n");
@@ -298,10 +303,10 @@ void PrintUsage()
     printf(
         "Using default settings : Optimize vertices with cache size = 16; Optimize overdraw with ACMR Threshold = 1.05; Optimize vertices fetch. "
         "\n\n");
-    printf("CompressonatorCLI.exe - meshopt source.gltf dest.gltf\n");
-    printf("CompressonatorCLI.exe - meshopt source.obj dest.obj\n\n");
+    printf("CompressonatorCLI.exe -meshopt source.gltf dest.gltf\n");
+    printf("CompressonatorCLI.exe -meshopt source.obj dest.obj\n\n");
     printf("Specifies settings :\n\n");
-    printf("CompressonatorCLI.exe - meshopt - optVCacheSize  32 - optOverdrawACMRThres  1.03 - optVFetch 0 source.gltf dest.gltf\n");
+    printf("CompressonatorCLI.exe -meshopt -optVCacheSize  32 -optOverdrawACMRThres  1.03 -optVFetch 0 source.gltf dest.gltf\n");
 #endif
 }
 
@@ -310,11 +315,38 @@ bool ProgressCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser
     return CompressionCallback(fProgress, pUser1, pUser2);
 }
 
+
+
+//----------------------------------------------------------
+// Compressonator Lib compute codec override
+//----------------------------------------------------------
+#ifdef USE_GTC
+PluginInterface_Compute *g_plugin_ComputeGTC = NULL;
+HPC_Compress  *g_CompressGTCCodec = NULL;
+extern void(*GTC_DecompressBlock)(void *out, void *in);
+extern void(*GTC_CompressBlock)(void * srcblock, void *dest, void *blockoptions);
+
+void g_GTC_DecompressBlock(void *in, void *out)
+{
+    if (g_CompressGTCCodec)
+        g_CompressGTCCodec->Decompress(in, out);
+}
+
+void g_GTC_CompressBlock(void *in, void *out, void *blockoptions)
+{
+    if (g_CompressGTCCodec)
+        g_CompressGTCCodec->Compress(in, out, blockoptions);
+}
+#endif
+
+
 int main(int argc, char* argv[])
 {
 #ifdef USE_QT_IMAGELOAD
     QCoreApplication app(argc, argv);
 #endif
+
+    g_CMIPS = new CMIPS;
 
     g_pluginManager.registerStaticPlugin("IMAGE", "ASTC", (void*)make_Plugin_ASTC);
     g_pluginManager.registerStaticPlugin("IMAGE", "DDS", (void*)make_Plugin_DDS);
@@ -353,10 +385,16 @@ int main(int argc, char* argv[])
     {
         bool ParseOk = ParseParams(argc, argv);
         if (!ParseOk)
+        {
+            delete g_CMIPS;
             return -1;
+        }
 
         if (g_CmdPrams.SourceFile.length() == 0)
+        {
+            delete g_CMIPS;
             return -2;
+        }
 
         if (!g_CmdPrams.imageprops && (g_CmdPrams.DestFile.length() == 0))
         {
@@ -367,14 +405,58 @@ int main(int argc, char* argv[])
                 printf("Destination Texture file was not supplied: Defaulting to %s\n", g_CmdPrams.DestFile.c_str());
             }
             else
+            {
+                delete g_CMIPS;
                 return (-3);
+            }
         }
 
-        return ProcessCMDLine(&CompressionCallback, NULL);
+#ifdef USE_GTC
+        //---------------------------------------
+        // attempt to load GTC Codec
+        //---------------------------------------
+        g_plugin_ComputeGTC = reinterpret_cast<PluginInterface_Compute *>(g_pluginManager.GetPlugin("COMPUTE", "GTC"));
+        // Found GTC Codec
+        if (g_plugin_ComputeGTC)
+        {
+            //-------------------------------
+            // create the compression  Codec
+            //-------------------------------
+            g_CompressGTCCodec = (HPC_Compress*)g_plugin_ComputeGTC->TC_Create();
+
+            //------------------------------------------------------------
+            // Assign compressonator lib GTC codec to Compute GTC Codec
+            //------------------------------------------------------------
+            if (g_CompressGTCCodec)
+            {
+                GTC_CompressBlock = g_GTC_CompressBlock;
+                GTC_DecompressBlock = g_GTC_DecompressBlock;
+            }
+        }
+#endif
+
+        int ret = ProcessCMDLine(&CompressionCallback, NULL);
+
+        delete g_CMIPS;
+
+#ifdef USE_GTC
+        //------------------------------------------
+        // Cleanup the compute GTC compression Codec
+        //------------------------------------------
+        if (g_plugin_ComputeGTC)
+        {
+            if (g_CompressGTCCodec)
+                g_plugin_ComputeGTC->TC_Destroy(g_CompressGTCCodec);
+            delete  g_plugin_ComputeGTC;
+        }
+#endif
+
+        return ret;
     }
     else
     {
         PrintUsage();
+        delete g_CMIPS;
         return 0;
     }
 }

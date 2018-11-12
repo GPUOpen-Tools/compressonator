@@ -20,7 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="../../../../../../Common/lib/ext/OpenEXR/ilmbase-2.2.0/Half/half.cpp" />
-    <ClCompile Include="../../../../CompressonatorGUI/Common/cvmatandqimage.cpp" />
     <ClCompile Include="../../../../CompressonatorGUI/Components/cpImageLoader.cpp" />
     <ClCompile Include="../../../Common/ATIFormats.cpp" />
     <ClCompile Include="../../../Common/cExr.cpp" />
@@ -30,9 +29,9 @@
     <ClCompile Include="../../../Common/SSIM.cpp" />
     <ClCompile Include="../../../Common/TextureIO.cpp" />
     <ClCompile Include="../CAnalysis.cpp" />
+    <ClCompile Include="..\..\..\..\CompressonatorGUI\Common\cvmatandqimage.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="../../../../CompressonatorGUI/Common/cvmatandqimage.h" />
     <ClInclude Include="../../../../CompressonatorGUI/Components/cpImageLoader.h" />
     <ClInclude Include="../../../Common/ATIFormats.h" />
     <ClInclude Include="../../../Common/cExr.h" />
@@ -42,6 +41,7 @@
     <ClInclude Include="../../../Common/SSIM.h" />
     <ClInclude Include="../../../Common/TextureIO.h" />
     <ClInclude Include="../CAnalysis.h" />
+    <ClInclude Include="..\..\..\..\CompressonatorGUI\Common\cvmatandqimage.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{51581D29-8097-49A6-A692-0C16D56B5D9A}</ProjectGuid>
@@ -161,7 +161,7 @@
       <PreserveSbr>true</PreserveSbr>
     </Bscmake>
     <Lib>
-      <AdditionalDependencies>opencv_core249d.lib;opencv_highgui249d.lib;opencv_imgproc249d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>../../../../../../Common/Lib/Ext/OpenCV/2.49/win32/VS2015/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -200,7 +200,7 @@
       <PreserveSbr>true</PreserveSbr>
     </Bscmake>
     <Lib>
-      <AdditionalDependencies>opencv_core249d.lib;opencv_highgui249d.lib;opencv_imgproc249d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>../../../../../../Common/Lib/Ext/OpenCV/2.49/x64/VS2015/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -242,7 +242,7 @@
     </PostBuildEvent>
     <Lib>
       <AdditionalLibraryDirectories>../../../../../../Common/Lib/Ext/OpenCV/2.49/win32/VS2015/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_core249.lib;opencv_highgui249.lib;opencv_imgproc249.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -280,7 +280,7 @@
     </PostBuildEvent>
     <Lib>
       <AdditionalLibraryDirectories>../../../../../../Common/Lib/Ext/OpenCV/2.49/x64/VS2015/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_core249.lib;opencv_highgui249.lib;opencv_imgproc249.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>

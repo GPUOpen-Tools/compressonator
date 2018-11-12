@@ -88,8 +88,18 @@ CodecType GetCodecType(CMP_FORMAT format)
         case CMP_FORMAT_ATC_RGBA_Interpolated:   return CT_ATC_RGBA_Interpolated;
         case CMP_FORMAT_ETC_RGB:                 return CT_ETC_RGB;
         case CMP_FORMAT_ETC2_RGB:                return CT_ETC2_RGB;
-        case CMP_FORMAT_GT:                      return CT_GT;
-        default: assert(0);                            return CT_Unknown;
+        case CMP_FORMAT_ETC2_SRGB:               return CT_ETC2_SRGB;
+        case CMP_FORMAT_ETC2_RGBA:               return CT_ETC2_RGBA;
+        case CMP_FORMAT_ETC2_RGBA1:              return CT_ETC2_RGBA1;
+        case CMP_FORMAT_ETC2_SRGBA:              return CT_ETC2_SRGBA;
+        case CMP_FORMAT_ETC2_SRGBA1:             return CT_ETC2_SRGBA1;
+#ifdef USE_GTC
+        case CMP_FORMAT_GTC:                     return CT_GTC;
+#endif
+#ifdef USE_GTC_HDR
+        case CMP_FORMAT_GTCH:                    return CT_GTCH;
+#endif
+        default: assert(0);                      return CT_Unknown;
     }
 }
 #ifdef ENABLE_MAKE_COMPATIBLE_API
@@ -114,6 +124,9 @@ bool IsFloatFormat(CMP_FORMAT InFormat)
     case CMP_FORMAT_BC6H:
     case CMP_FORMAT_BC6H_SF:
     case CMP_FORMAT_RGBE_32F:
+#ifdef USE_GTC_HDR
+    case  CMP_FORMAT_GTCH:
+#endif
     {
         return true;
     }
@@ -220,11 +233,11 @@ CMP_ERROR Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, CMP_Texture* srcTextu
         float f = findKneeValue(powf(2.f, pOptions->fInputKneeHigh) - kl, powf(2.f, 3.5f) - kl);
         float luminance3f = powf(2, -3.5);         // always assume max intensity is 1 and 3.5f darker for scale later
         float invGamma = 1/ pOptions->fInputGamma; //for gamma correction
-        float scale = 255.0 * powf(luminance3f, invGamma);
+        float scale = (float)255.0 * powf(luminance3f, invGamma);
         int i = 0;
         bool needSwizzle = NeedSwizzle(destFormat);
-        for (int y = 0; y < srcTexture->dwHeight; y++) {
-            for (int x = 0; x < srcTexture->dwWidth; x++) {
+        for (unsigned int y = 0; y < srcTexture->dwHeight; y++) {
+            for (unsigned int x = 0; x < srcTexture->dwWidth; x++) {
                 if (srcTexture->format == CMP_FORMAT_ARGB_16F) {
                     if (needSwizzle) {
                         b = (float)(*hfData);
@@ -336,10 +349,10 @@ CMP_ERROR Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, CMP_Texture* srcTextu
                 b *= scale;
                 a *= scale;
 
-                r_b = clamp(r, 0.f, 255.f);
-                g_b = clamp(g, 0.f, 255.f);
-                b_b = clamp(b, 0.f, 255.f);
-                a_b = clamp(a, 0.f, 255.f);
+                r_b = (CMP_BYTE)clamp(r, 0.f, 255.f);
+                g_b = (CMP_BYTE)clamp(g, 0.f, 255.f);
+                b_b = (CMP_BYTE)clamp(b, 0.f, 255.f);
+                a_b = (CMP_BYTE)clamp(a, 0.f, 255.f);
                 cBlock[i] = r_b;
                 i++;
                 cBlock[i] = g_b;
@@ -478,7 +491,10 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
                 else
                     pCodec->SetParameter("NumThreads", (CMP_DWORD)1);
                 break;
-        case CT_GT:
+        case CT_GTC:
+#ifdef USE_GTC_HDR
+        case CT_GTCH:
+#endif
         case CT_BC6H:
         case CT_BC6H_SF:
                 pCodec->SetParameter("Quality", (CODECFLOAT)pOptions->fquality);
@@ -578,14 +594,26 @@ void ThreadedCompressProc(void *lpParameter)
 CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2, CodecType destType)
 {
     // Note function should not be called for the following Codecs....
-    if (destType == CT_BC7)  return CMP_ABORTED; 
-    if (destType == CT_GT)   return CMP_ABORTED;
-    if (destType == CT_ASTC) return CMP_ABORTED; 
+    if (destType == CT_BC7)   return CMP_ABORTED; 
+    if (destType == CT_GTC)   return CMP_ABORTED;
+#ifdef USE_GTC_HDR
+    if (destType == CT_GTCH)  return CMP_ABORTED;
+#endif
+    if (destType == CT_ASTC)  return CMP_ABORTED;
 
     CMP_DWORD dwMaxThreadCount = min(f_dwProcessorCount, MAX_THREADS);
     CMP_DWORD dwLinesRemaining = pDestTexture->dwHeight;
     CMP_BYTE* pSourceData = pSourceTexture->pData;
     CMP_BYTE* pDestData = pDestTexture->pData;
+
+
+#ifdef _DEBUG
+    if (
+        (pDestTexture->format == CMP_FORMAT_ETC2_RGBA) ||
+        (pDestTexture->format == CMP_FORMAT_ETC2_RGBA1)
+        )
+         dwMaxThreadCount = 1;
+#endif
 
     CATICompressThreadData aThreadData[MAX_THREADS];
     std::thread ahThread[MAX_THREADS];

@@ -29,7 +29,6 @@
 #include <assert.h>
 #include "debug.h"
 #include "BC6H_Encode.h"
-#include "half.h"
 #include <float.h>
 #include <stdio.h>
 #include <math.h>
@@ -404,7 +403,7 @@ static void decompress_endpts(const int in[MAX_SUBSETS][MAX_END_POINTS][MAX_DIME
     {
         for (int i=0; i<3; ++i)
         {
-            R_0(out) = issigned ? SIGN_EXTEND(R_0(in),ModePartition[mode].IndexPrec) : R_0(in);
+            R_0(out) = issigned ? SIGN_EXTEND(R_0(in),ModePartition[mode].nbits) : R_0(in);
             int t;
             t = SIGN_EXTEND(R_1(in), ModePartition[mode].prec[i]);
             t = (t + R_0(in)) & MASK(ModePartition[mode].nbits);
@@ -513,7 +512,7 @@ void BC6HBlockEncoder::SwapIndices(int iEndPoints[MAX_SUBSETS][MAX_END_POINTS][M
             swap(iEndPoints[subset][0][1], iEndPoints[subset][1][1]);
             swap(iEndPoints[subset][0][2], iEndPoints[subset][1][2]);
 
-            for(size_t j = 0; j < entryCount[subset]; ++j)
+            for(size_t j = 0; j < (size_t)entryCount[subset]; ++j)
             {
                 iIndices[subset][j] = uNumIndices - 1 - iIndices[subset][j] ;
             }
@@ -527,16 +526,46 @@ void BC6HBlockEncoder::SwapIndices(int iEndPoints[MAX_SUBSETS][MAX_END_POINTS][M
     Tranforms according to shape precission
 ==================================================================*/
 // helper function to check transform overflow
-bool isOverflow(int endpoint, int nbit)
+bool isOverflow(int endpoint, int nbit, bool bIsSigned)
 {
-    int maxRange = pow(2, nbit - 1) - 1;
-    int minRange = -(pow(2, nbit - 1));
+    if (bIsSigned)
+    {
+        int nbRequired; //bits required for the encode
+        int nb;
+        if (endpoint == 0)
+        {
+            return false; // no overflow
+        }
+        else if (endpoint > 0)
+        {
+            for (nb = 0; endpoint; ++nb, endpoint >>= 1);
+            nbRequired = nb + (bIsSigned ? 1 : 0);
+            if (nbRequired > nbit) //overflow
+                return true;
+        }
+        else //negative endpoints
+        {
+            if (!bIsSigned) return true;
 
-    //no overflow
-    if ((endpoint >= minRange) && (endpoint <= maxRange))
+            for (nb = 0; endpoint < -1; ++nb, endpoint >>= 1);
+            nbRequired = nb + 1;
+            if (nbRequired > nbit) //overflow
+                return true;
+        }
+
         return false;
-    else //overflow
-        return true;
+    }
+    else 
+    {
+        int maxRange = (int)pow(2, nbit - 1) - 1;
+        int minRange = (int)-(pow(2, nbit - 1));
+
+        //no overflow
+        if ((endpoint >= minRange) && (endpoint <= maxRange))
+            return false;
+        else //overflow
+            return true;
+    }
 }
 
 // Bug in this code : Need to add signed bit to values
@@ -554,7 +583,7 @@ bool BC6HBlockEncoder::TransformEndPoints(AMD_BC6H_Format &BC6H_data, int iEndPo
             Mask = MASK(ModePartition[mode].prec[i]);
             oEndPoints[0][1][i] = iEndPoints[0][1][i]- iEndPoints[0][0][i]; // [0][B] - [0][A]
 
-            if (isOverflow(oEndPoints[0][1][i], ModePartition[mode].prec[i]))
+            if (isOverflow(oEndPoints[0][1][i], ModePartition[mode].prec[i], BC6H_data.issigned))
                 return false;
 
             oEndPoints[0][1][i] = (oEndPoints[0][1][i] & Mask);
@@ -562,20 +591,20 @@ bool BC6HBlockEncoder::TransformEndPoints(AMD_BC6H_Format &BC6H_data, int iEndPo
             //redo the check for sign overflow for one region case
             if (max_subsets <= 1)
             {
-                if (isOverflow(oEndPoints[0][1][i], ModePartition[mode].prec[i]))
+                if (isOverflow(oEndPoints[0][1][i], ModePartition[mode].prec[i], BC6H_data.issigned))
                     return false;
             }
 
             if (max_subsets > 1)
             {
                 oEndPoints[1][0][i] = iEndPoints[1][0][i] - iEndPoints[0][0][i];  // [1][A] - [0][A]
-                if (isOverflow(oEndPoints[1][0][i], ModePartition[mode].prec[i]))
+                if (isOverflow(oEndPoints[1][0][i], ModePartition[mode].prec[i], BC6H_data.issigned))
                     return false;
 
                 oEndPoints[1][0][i] = (oEndPoints[1][0][i] & Mask);
 
                 oEndPoints[1][1][i] = iEndPoints[1][1][i] - iEndPoints[0][0][i];  // [1][B] - [0][A]
-                if (isOverflow(oEndPoints[1][1][i], ModePartition[mode].prec[i]))
+                if (isOverflow(oEndPoints[1][1][i], ModePartition[mode].prec[i], BC6H_data.issigned))
                     return false;
 
                 oEndPoints[1][1][i] = (oEndPoints[1][1][i] & Mask);
@@ -737,7 +766,7 @@ float CalcShapeError(AMD_BC6H_Format &BC6H_data, float fEndPoints[MAX_SUBSETS][M
     if (!SkipPallet)
         palitizeEndPointsF(BC6H_data, fEndPoints);
 
-    for (int i = 0; i < MAX_SUBSET_SIZE; i++)
+    for (int i =0; i < MAX_SUBSET_SIZE; i++)
     {
         float error = 0.0f;
         float bestError = 0.0f;
@@ -820,7 +849,7 @@ void ReIndexShapef(AMD_BC6H_Format &BC6H_data, int shape_indices[BC6H_MAX_SUBSET
             // This is shared for one or two shape regions max Pallet either 16 or 8
             bestError = FLT_MAX;
             bestIndex = 0;
-
+           
             for (int j = 0; j < MaxPallet; j++)
             {
                 // Calculate error from original
@@ -902,12 +931,12 @@ float    BC6HBlockEncoder::FindBestPattern(AMD_BC6H_Format &BC6H_data,
     if ((max_subsets > 1) && (m_quality > 0.80))
     {
         int     tempIndices[MAX_SUBSET_SIZE];
-        int     temp_epo_code[2][2][MAX_DIMENSION_BIG];
+        // int     temp_epo_code[2][2][MAX_DIMENSION_BIG];
         int     bits[3] = { 8,8,8 };     // Channel index bit size
 
-        float   epo[2][MAX_DIMENSION_BIG];
+        // float   epo[2][MAX_DIMENSION_BIG];
         int     epo_code[MAX_SUBSETS][2][MAX_DIMENSION_BIG];
-        int     shakeSize = 8;
+        // int     shakeSize = 8;
 
         error[1] = 0.0;
         for (int subset = 0; subset < max_subsets; subset++)
@@ -957,8 +986,8 @@ float    BC6HBlockEncoder::FindBestPattern(AMD_BC6H_Format &BC6H_data,
             {
                 for (int k = 0; k < MAX_DIMENSION_BIG; k++)
                 {
-                    BC6H_data.fEndPoints[subset][0][k] = epo_code[subset][0][k];
-                    BC6H_data.fEndPoints[subset][1][k] = epo_code[subset][1][k];
+                    BC6H_data.fEndPoints[subset][0][k] = (float)epo_code[subset][0][k];
+                    BC6H_data.fEndPoints[subset][1][k] = (float)epo_code[subset][1][k];
                 }
             }
         }
@@ -1008,12 +1037,12 @@ void decompress_endpoints1(AMD_BC6H_Format& bc6h_format, int oEndPoints[MAX_SUBS
                 out[0][1][i] = SIGN_EXTEND(t, ModePartition[mode].nbits);
 
                 // Unquantize all points to nbits
-                out[0][0][i] = Unquantize(out[0][0][i], ModePartition[mode].nbits, false);
-                out[0][1][i] = Unquantize(out[0][1][i], ModePartition[mode].nbits, false);
+                out[0][0][i] = Unquantize(out[0][0][i], (unsigned char)ModePartition[mode].nbits, true);
+                out[0][1][i] = Unquantize(out[0][1][i], (unsigned char)ModePartition[mode].nbits, true);
                 
                 // F16 format
-                outf[0][0][i] = finish_unquantizeF16(out[0][0][i], false);
-                outf[0][1][i] = finish_unquantizeF16(out[0][1][i], false);
+                outf[0][0][i] = (float)finish_unquantizeF16(out[0][0][i], true);
+                outf[0][1][i] = (float)finish_unquantizeF16(out[0][1][i], true);
             }
         }
         else
@@ -1024,12 +1053,12 @@ void decompress_endpoints1(AMD_BC6H_Format& bc6h_format, int oEndPoints[MAX_SUBS
                 out[0][1][i] = SIGN_EXTEND(oEndPoints[0][1][i], ModePartition[mode].prec[i]);
 
                 // Unquantize all points to nbits
-                out[0][0][i] = Unquantize(out[0][0][i], ModePartition[mode].nbits, false);
-                out[0][1][i] = Unquantize(out[0][1][i], ModePartition[mode].nbits, false);
+                out[0][0][i] = Unquantize(out[0][0][i], (unsigned char)ModePartition[mode].nbits, true);
+                out[0][1][i] = Unquantize(out[0][1][i], (unsigned char)ModePartition[mode].nbits, true);
                 
                 // F16 format
-                outf[0][0][i] = finish_unquantizeF16(out[0][0][i],false);
-                outf[0][1][i] = finish_unquantizeF16(out[0][1][i],false);
+                outf[0][0][i] = (float)finish_unquantizeF16(out[0][0][i], true);
+                outf[0][1][i] = (float)finish_unquantizeF16(out[0][1][i], true);
             }
         }
 
@@ -1045,12 +1074,12 @@ void decompress_endpoints1(AMD_BC6H_Format& bc6h_format, int oEndPoints[MAX_SUBS
                 out[0][1][i] = (t + oEndPoints[0][0][i]) & MASK(ModePartition[mode].nbits);
 
                 // Unquantize all points to nbits
-                out[0][0][i] = Unquantize(out[0][0][i], ModePartition[mode].nbits, false);
-                out[0][1][i] = Unquantize(out[0][1][i], ModePartition[mode].nbits, false);
+                out[0][0][i] = Unquantize(out[0][0][i], (unsigned char)ModePartition[mode].nbits, false);
+                out[0][1][i] = Unquantize(out[0][1][i], (unsigned char)ModePartition[mode].nbits, false);
                 
                 // F16 format
-                outf[0][0][i] = finish_unquantizeF16(out[0][0][i], false);
-                outf[0][1][i] = finish_unquantizeF16(out[0][1][i], false);
+                outf[0][0][i] = (float)finish_unquantizeF16(out[0][0][i], false);
+                outf[0][1][i] = (float)finish_unquantizeF16(out[0][1][i], false);
             }
         }
         else
@@ -1061,12 +1090,12 @@ void decompress_endpoints1(AMD_BC6H_Format& bc6h_format, int oEndPoints[MAX_SUBS
                 out[0][1][i] = oEndPoints[0][1][i];
 
                 // Unquantize all points to nbits
-                out[0][0][i] = Unquantize(out[0][0][i], ModePartition[mode].nbits, false);
-                out[0][1][i] = Unquantize(out[0][1][i], ModePartition[mode].nbits, false);
+                out[0][0][i] = Unquantize(out[0][0][i], (unsigned char)ModePartition[mode].nbits, false);
+                out[0][1][i] = Unquantize(out[0][1][i], (unsigned char)ModePartition[mode].nbits, false);
                 
                 // F16 format
-                outf[0][0][i] = finish_unquantizeF16(out[0][0][i], false);
-                outf[0][1][i] = finish_unquantizeF16(out[0][1][i], false);
+                outf[0][0][i] = (float)finish_unquantizeF16(out[0][0][i], false);
+                outf[0][1][i] = (float)finish_unquantizeF16(out[0][1][i], false);
             }
         }
     }
@@ -1100,16 +1129,16 @@ void decompress_endpoints2(AMD_BC6H_Format& bc6h_format, int oEndPoints[MAX_SUBS
                 out[1][1][i] = SIGN_EXTEND(t, ModePartition[mode].nbits);
 
                 // Unquantize all points to nbits 
-                out[0][0][i] = Unquantize(out[0][0][i], ModePartition[mode].nbits, true);
-                out[0][1][i] = Unquantize(out[0][1][i], ModePartition[mode].nbits, true);
-                out[1][0][i] = Unquantize(out[1][0][i], ModePartition[mode].nbits, true);
-                out[1][1][i] = Unquantize(out[1][1][i], ModePartition[mode].nbits, true);
+                out[0][0][i] = Unquantize(out[0][0][i], (unsigned char)ModePartition[mode].nbits, true);
+                out[0][1][i] = Unquantize(out[0][1][i], (unsigned char)ModePartition[mode].nbits, true);
+                out[1][0][i] = Unquantize(out[1][0][i], (unsigned char)ModePartition[mode].nbits, true);
+                out[1][1][i] = Unquantize(out[1][1][i], (unsigned char)ModePartition[mode].nbits, true);
 
                 // F16 format
-                outf[0][0][i] = finish_unquantizeF16(out[0][0][i], true);
-                outf[0][1][i] = finish_unquantizeF16(out[0][1][i], true);
-                outf[1][0][i] = finish_unquantizeF16(out[1][0][i], true);
-                outf[1][1][i] = finish_unquantizeF16(out[1][1][i], true);
+                outf[0][0][i] = (float)finish_unquantizeF16(out[0][0][i], true);
+                outf[0][1][i] = (float)finish_unquantizeF16(out[0][1][i], true);
+                outf[1][0][i] = (float)finish_unquantizeF16(out[1][0][i], true);
+                outf[1][1][i] = (float)finish_unquantizeF16(out[1][1][i], true);
 
             }
         }
@@ -1123,16 +1152,16 @@ void decompress_endpoints2(AMD_BC6H_Format& bc6h_format, int oEndPoints[MAX_SUBS
                 out[1][1][i] = SIGN_EXTEND(oEndPoints[1][1][i], ModePartition[mode].prec[i]);
 
                 // Unquantize all points to nbits
-                out[0][0][i] = Unquantize(out[0][0][i], ModePartition[mode].nbits, false);
-                out[0][1][i] = Unquantize(out[0][1][i], ModePartition[mode].nbits, false);
-                out[1][0][i] = Unquantize(out[1][0][i], ModePartition[mode].nbits, false);
-                out[1][1][i] = Unquantize(out[1][1][i], ModePartition[mode].nbits, false);
+                out[0][0][i] = Unquantize(out[0][0][i], (unsigned char)ModePartition[mode].nbits, true);
+                out[0][1][i] = Unquantize(out[0][1][i], (unsigned char)ModePartition[mode].nbits, true);
+                out[1][0][i] = Unquantize(out[1][0][i], (unsigned char)ModePartition[mode].nbits, true);
+                out[1][1][i] = Unquantize(out[1][1][i], (unsigned char)ModePartition[mode].nbits, true);
                 
                 // nbits to F16 format
-                outf[0][0][i] = finish_unquantizeF16(out[0][0][i], false);
-                outf[0][1][i] = finish_unquantizeF16(out[0][1][i], false);
-                outf[1][0][i] = finish_unquantizeF16(out[1][0][i], false);
-                outf[1][1][i] = finish_unquantizeF16(out[1][1][i], false);
+                outf[0][0][i] = (float)finish_unquantizeF16(out[0][0][i], true);
+                outf[0][1][i] = (float)finish_unquantizeF16(out[0][1][i], true);
+                outf[1][0][i] = (float)finish_unquantizeF16(out[1][0][i], true);
+                outf[1][1][i] = (float)finish_unquantizeF16(out[1][1][i], true);
             }
         }
 
@@ -1154,16 +1183,16 @@ void decompress_endpoints2(AMD_BC6H_Format& bc6h_format, int oEndPoints[MAX_SUBS
                 out[1][1][i] = (t + oEndPoints[0][0][i]) & MASK(ModePartition[mode].nbits);
 
                 // Unquantize all points to nbits
-                out[0][0][i] = Unquantize(out[0][0][i], ModePartition[mode].nbits, false);
-                out[0][1][i] = Unquantize(out[0][1][i], ModePartition[mode].nbits, false);
-                out[1][0][i] = Unquantize(out[1][0][i], ModePartition[mode].nbits, false);
-                out[1][1][i] = Unquantize(out[1][1][i], ModePartition[mode].nbits, false);
+                out[0][0][i] = Unquantize(out[0][0][i], (unsigned char)ModePartition[mode].nbits, false);
+                out[0][1][i] = Unquantize(out[0][1][i], (unsigned char)ModePartition[mode].nbits, false);
+                out[1][0][i] = Unquantize(out[1][0][i], (unsigned char)ModePartition[mode].nbits, false);
+                out[1][1][i] = Unquantize(out[1][1][i], (unsigned char)ModePartition[mode].nbits, false);
                 
                 // nbits to F16 format
-                outf[0][0][i] = finish_unquantizeF16(out[0][0][i], false);
-                outf[0][1][i] = finish_unquantizeF16(out[0][1][i], false);
-                outf[1][0][i] = finish_unquantizeF16(out[1][0][i], false);
-                outf[1][1][i] = finish_unquantizeF16(out[1][1][i], false);
+                outf[0][0][i] = (float)finish_unquantizeF16(out[0][0][i], false);
+                outf[0][1][i] = (float)finish_unquantizeF16(out[0][1][i], false);
+                outf[1][0][i] = (float)finish_unquantizeF16(out[1][0][i], false);
+                outf[1][1][i] = (float)finish_unquantizeF16(out[1][1][i], false);
 
             }
         }
@@ -1177,16 +1206,16 @@ void decompress_endpoints2(AMD_BC6H_Format& bc6h_format, int oEndPoints[MAX_SUBS
                 out[1][1][i] = oEndPoints[1][1][i];
 
                 // Unquantize all points to nbits
-                out[0][0][i] = Unquantize(out[0][0][i], ModePartition[mode].nbits, false);
-                out[0][1][i] = Unquantize(out[0][1][i], ModePartition[mode].nbits, false);
-                out[1][0][i] = Unquantize(out[1][0][i], ModePartition[mode].nbits, false);
-                out[1][1][i] = Unquantize(out[1][1][i], ModePartition[mode].nbits, false);
+                out[0][0][i] = Unquantize(out[0][0][i], (unsigned char) ModePartition[mode].nbits, false);
+                out[0][1][i] = Unquantize(out[0][1][i], (unsigned char) ModePartition[mode].nbits, false);
+                out[1][0][i] = Unquantize(out[1][0][i], (unsigned char) ModePartition[mode].nbits, false);
+                out[1][1][i] = Unquantize(out[1][1][i], (unsigned char) ModePartition[mode].nbits, false);
 
                 // nbits to F16 format
-                outf[0][0][i] = finish_unquantizeF16(out[0][0][i], false);
-                outf[0][1][i] = finish_unquantizeF16(out[0][1][i], false);
-                outf[1][0][i] = finish_unquantizeF16(out[1][0][i], false);
-                outf[1][1][i] = finish_unquantizeF16(out[1][1][i], false);
+                outf[0][0][i] = (float) finish_unquantizeF16(out[0][0][i], false);
+                outf[0][1][i] = (float) finish_unquantizeF16(out[0][1][i], false);
+                outf[1][0][i] = (float) finish_unquantizeF16(out[1][0][i], false);
+                outf[1][1][i] = (float) finish_unquantizeF16(out[1][1][i], false);
             }
         }
     }
@@ -1214,7 +1243,7 @@ void BC6HBlockEncoder::AverageEndPoint(float EndPoints[MAX_SUBSETS][MAX_END_POIN
     float avr;
 
     // determin differance level based on lowest precision of the mode
-    m_DiffLevel = ModePartition[mode].lowestPrec;
+    m_DiffLevel = (float)ModePartition[mode].lowestPrec;
 
     for (int subset = 0; subset < max_subsets; ++subset)
     {
@@ -1297,7 +1326,7 @@ float    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data, float  erro
     // and a set of colors on the line equally spaced (indexedcolors)
     // Lets assign indices
 
-    float SrcEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];                  // temp endpoints used during calculations
+    //float SrcEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];                  // temp endpoints used during calculations
 
     // Quantize the EndPoints 
     int F16EndPoints[MAX_BC6H_MODES + 1][MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];                    // temp endpoints used during calculations
@@ -1321,7 +1350,7 @@ float    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data, float  erro
     // Try Optimization for the Mode
     float       best_EndPoints[MAX_BC6H_MODES + 1][MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];
     int         best_Indices[MAX_BC6H_MODES + 1][MAX_SUBSETS][MAX_SUBSET_SIZE];
-    float       opt_toterr[MAX_BC6H_MODES + 1] = { 0 };
+    float       opt_toterr[MAX_BC6H_MODES + 1];
 
     // for debugging
     memset(opt_toterr, 0, sizeof(opt_toterr));
@@ -1389,7 +1418,7 @@ float    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data, float  erro
                         bestEndpointMode = modes;
                     }
                 }
-				
+
                 bool transformFit = true;
                 // Save hold this mode fit data if its better than the last one checked.
                 if (opt_toterr[modes] < bestError)
@@ -1479,6 +1508,7 @@ float BC6HBlockEncoder::CompressBlock(float in[MAX_SUBSET_SIZE][MAX_DIMENSION_BI
     int      shape_pattern = -1;            // init to no shapes found
 
     AMD_BC6H_Format            BC6H_data;
+
     memset(&BC6H_data, 0, sizeof(AMD_BC6H_Format));
 
     float normalization = 1.0;  // For future use
@@ -1486,52 +1516,68 @@ float BC6HBlockEncoder::CompressBlock(float in[MAX_SUBSET_SIZE][MAX_DIMENSION_BI
     for (int i = 0; i < BC6H_MAX_SUBSET_SIZE; i++)
     {
 
-            // Our Half floats will be restricted to 0x7BFF with a sign components
-            // so use 0..0x7BFF and sign bit for the floats
+        // Our Half floats will be restricted to 0x7BFF with a sign components
+        // so use 0..0x7BFF and sign bit for the floats
 
-            // using if ( < 0.00001) to avoid case of values been -0.0 which is not processed when using if ( < 0)
-            if (in[i][0] < 0.00001)
+        // using if ( < 0.00001) to avoid case of values been -0.0 which is not processed when using if ( < 0)
+        if (in[i][0] < 0.00001 || isnan(in[i][0]))
+        {
+            if (m_isSigned)
             {
-                if (m_isSigned)
-                    BC6H_data.din[i][0] = -half(abs(in[i][0] / normalization)).bits();
-                else
-                    BC6H_data.din[i][0] = 0.0;
+                BC6H_data.din[i][0] = (isnan(in[i][0]))? F16NEGPREC_LIMIT_VAL : -half(abs(in[i][0] / normalization)).bits();
+                if (BC6H_data.din[i][0] < F16NEGPREC_LIMIT_VAL) {
+                    BC6H_data.din[i][0] = F16NEGPREC_LIMIT_VAL;
+                }
             }
             else
-                BC6H_data.din[i][0] = half(in[i][0] / normalization).bits();
+                BC6H_data.din[i][0] = 0.0;
+        }
+        else
+            BC6H_data.din[i][0] = half(in[i][0] / normalization).bits();
 
-            if (in[i][1] < 0.00001)
+        if (in[i][1] < 0.00001 || isnan(in[i][1]))
+        {
+            if (m_isSigned)
             {
-                if (m_isSigned)
-                    BC6H_data.din[i][1] = -half(abs(in[i][1] / normalization)).bits();
-                else
-                    BC6H_data.din[i][1] = 0.0;
+                BC6H_data.din[i][1] = (isnan(in[i][1])) ? F16NEGPREC_LIMIT_VAL : -half(abs(in[i][1] / normalization)).bits();
+                if (BC6H_data.din[i][1] < F16NEGPREC_LIMIT_VAL) {
+                    BC6H_data.din[i][1] = F16NEGPREC_LIMIT_VAL;
+                }
             }
             else
-                BC6H_data.din[i][1] = half(in[i][1] / normalization).bits();
+                BC6H_data.din[i][1] = 0.0;
+        }
+        else
+            BC6H_data.din[i][1] = half(in[i][1] / normalization).bits();
 
-            if (in[i][2] < 0.00001)
+        if (in[i][2] < 0.00001 || isnan(in[i][2]))
+        {
+            if (m_isSigned)
             {
-                if (m_isSigned)
-                    BC6H_data.din[i][2] = -half(abs(in[i][2] / normalization)).bits();
-                else
-                    BC6H_data.din[i][2] = 0.0;
+                BC6H_data.din[i][2] = (isnan(in[i][2])) ? F16NEGPREC_LIMIT_VAL : -half(abs(in[i][2] / normalization)).bits();
+                if (BC6H_data.din[i][2] < F16NEGPREC_LIMIT_VAL) {
+                    BC6H_data.din[i][2] = F16NEGPREC_LIMIT_VAL;
+                }
             }
             else
-                BC6H_data.din[i][2] = half(in[i][2] / normalization).bits();
+                BC6H_data.din[i][2] = 0.0;
+        }
+        else
+            BC6H_data.din[i][2] = half(in[i][2] / normalization).bits();
 
-            BC6H_data.din[i][3] = 0.0;
+        BC6H_data.din[i][3] = 0.0;
 
     }
 
+     BC6H_data.issigned = m_isSigned;
 #ifdef DEBUG_A_BLOCK
     // Used for debugging blocks!
     for (int i = 0; i < BC6H_MAX_SUBSET_SIZE; i++)
     {
-            BC6H_data.din[i][0] = Testdin[i][0];
-            BC6H_data.din[i][1] = Testdin[i][1];
-            BC6H_data.din[i][2] = Testdin[i][2];
-            BC6H_data.din[i][3] = Testdin[i][3];
+        BC6H_data.din[i][0] = Testdin[i][0];
+        BC6H_data.din[i][1] = Testdin[i][1];
+        BC6H_data.din[i][2] = Testdin[i][2];
+        BC6H_data.din[i][3] = Testdin[i][3];
     }
 #endif
 
@@ -1543,7 +1589,7 @@ float BC6HBlockEncoder::CompressBlock(float in[MAX_SUBSET_SIZE][MAX_DIMENSION_BI
     }
 
     // run through no partition first
-    error = FindBestPattern(BC6H_data,false,0);
+    error = FindBestPattern(BC6H_data, false, 0);
     if (error < bestError)
     {
         bestError = error;
@@ -1556,14 +1602,14 @@ float BC6HBlockEncoder::CompressBlock(float in[MAX_SUBSET_SIZE][MAX_DIMENSION_BI
     }
 
     // now run through all two regions shapes to find the best pattern
-    for (int shape=0; shape < MAX_BC6H_PARTITIONS; shape++)
+    for (int shape = 0; shape < MAX_BC6H_PARTITIONS; shape++)
     {
-        error = FindBestPattern(BC6H_data,true,shape);
+        error = FindBestPattern(BC6H_data, true, shape);
         if (error < bestError)
         {
             bestError = error;
             bestShape = shape;
-    
+
             memcpy(BC6H_data.cur_best_shape_indices, BC6H_data.shape_indices, sizeof(BC6H_data.shape_indices));
             memcpy(BC6H_data.cur_best_partition, BC6H_data.partition, sizeof(BC6H_data.partition));
             memcpy(BC6H_data.cur_best_fEndPoints, BC6H_data.fEndPoints, sizeof(BC6H_data.fEndPoints));
@@ -1583,28 +1629,27 @@ float BC6HBlockEncoder::CompressBlock(float in[MAX_SUBSET_SIZE][MAX_DIMENSION_BI
         }
     }
 
-
     // Optimize the result for encoding
     bestError = EncodePattern(BC6H_data, bestError);
 
     // used for debugging modes, set the value you want to debug with
-    if (BC6H_data.m_mode != 0) 
+    if (BC6H_data.m_mode != 0)
     {
         // do final encoding and save to output block
         SaveDataBlock(BC6H_data, out);
     }
     else
         memcpy(out, Cmp_Red_Block, 16);
-        
+
     // do final encoding and save to output block
     // SaveDataBlock(best_BC6H_data,out);
 
-    #ifdef DEBUG_PATTERNS
+#ifdef DEBUG_PATTERNS
     if (fi)
         fclose(fi);
-    #endif
+#endif
 
     g_block++;
 
-    return (float) bestError;
+    return (float)bestError;
 }

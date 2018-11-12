@@ -33,9 +33,10 @@
 
 #include "MathMacros.h"
 
+#pragma warning( push )
 #pragma warning(disable:4244)
 #include "half.h"
-#pragma warning(default:4244)
+#pragma warning( pop )
 
 typedef enum _CodecBufferType
 {
@@ -230,6 +231,12 @@ public:
         m_dwPitch = dwPitch;
         };
 
+    inline const void SetFormat(CMP_FORMAT dwFormat) {
+        m_dwFormat = dwFormat;
+    };
+
+    inline const CMP_FORMAT GetFormat() const { return m_dwFormat;};
+
     inline const CMP_BYTE GetBlockWidth()  const { return m_nBlockWidth; };
     inline const CMP_BYTE GetBlockHeight() const { return m_nBlockHeight; };
     inline const CMP_BYTE GetBlockDepth()  const { return m_nBlockDepth; };
@@ -370,6 +377,7 @@ protected:
     CMP_DWORD m_dwHeight;       // Final Image Height 
     CMP_DWORD m_dwDepth;        // Final Image Depth  
     CMP_DWORD m_dwPitch;
+    CMP_FORMAT m_dwFormat;
 
     CMP_BYTE m_nBlockWidth;     // DeCompression Block Sizes (Default is 4x4x1)
     CMP_BYTE m_nBlockHeight;    //

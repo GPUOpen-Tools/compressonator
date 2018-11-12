@@ -35,6 +35,10 @@ extern void GetRamp(CMP_DWORD endpoint[][MAX_DIMENSION_BIG],
                 CMP_DWORD clusters[2],
                 CMP_DWORD componentBits[MAX_DIMENSION_BIG]);
 
+extern void DecodeEndPoints(CMP_DWORD endpoint[][MAX_DIMENSION_BIG],
+                CMP_DWORD componentBits[MAX_DIMENSION_BIG],
+                float ep[][MAX_DIMENSION_BIG]);
+
 extern const double  rampLerpWeights[5][1<<MAX_INDEX_BITS];
 
 #endif

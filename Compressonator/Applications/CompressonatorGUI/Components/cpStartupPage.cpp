@@ -38,6 +38,7 @@ afWebPage::afWebPage(QObject* pParent) : QWebEnginePage(pParent)
 
 void afWebPage::javaScriptConsoleMessage(JavaScriptConsoleMessageLevel level, const QString& message, int lineNumber, const QString& sourceID)
 {
+    (void)(level);
     (void)(sourceID);
     (void)(lineNumber);
 
@@ -61,6 +62,9 @@ void afWebPage::javaScriptConsoleMessage(JavaScriptConsoleMessageLevel level, co
 
 bool afWebPage::acceptNavigationRequest(const QUrl &url, NavigationType type, bool isMainFrame)
 {
+    (void)url;
+    (void)isMainFrame;
+
     bool retVal = true;
 
     // Do not allow navigation clicks:
@@ -189,7 +193,7 @@ bool cpStartupPage::BuildRecentlyOpenedProjectsTable(QString& htmlText, QVector<
     QString appName;
 
     int numberOfRecentProjects = (int)recentlyUsedProjectsNames.size();
-    int projectsForDisplayNumber = std::min(numberOfRecentProjects, 5);
+    int projectsForDisplayNumber = std::min(numberOfRecentProjects, 10);
     if (0 < projectsForDisplayNumber)
     {
         for (int i = 0; i < projectsForDisplayNumber; i++)

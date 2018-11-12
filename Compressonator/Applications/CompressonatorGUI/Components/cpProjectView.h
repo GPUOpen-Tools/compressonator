@@ -60,12 +60,14 @@
 // JSon 
 #include "json\json.h"
 
+#include "CMP_FileIO.h"
+
 
 #define    MAX_PROJECTVIEW_COLUMNS               3     // Project view columns to view
 
 
 #define     DIFFERENCE_IMAGE_TXT "Difference: "
-#define     DIFFERENCE_IMAGE_VS_TXT " VS "
+#define     DIFFERENCE_IMAGE_VS_TXT " _VS_ "
 
 //
 // This Class is defined as Static 

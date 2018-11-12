@@ -83,11 +83,7 @@ void GltfPbrVK::OnCreate(
     {
         std::string filename = images[i]["uri"];
 
-        filename[filename.size() - 3] = 'd';
-        filename[filename.size() - 2] = 'd';
-        filename[filename.size() - 1] = 's';
-
-        INT32 result = m_textures[i].InitFromFile(pDevice, pUploadHeap, (pGLTFData->m_path + filename).c_str());
+        INT32 result = m_textures[i].InitFromFile(pDevice, pUploadHeap, (pGLTFData->m_path + filename).c_str(), pluginManager, msghandler);
     }
     pUploadHeap->FlushAndFinish();
 
@@ -291,8 +287,8 @@ void GltfPbrVK::OnCreate(
             //
             tfAccessor indexBuffer;
             {
-                json::object_t indicesAccessor = accessors[primitive["indices"].get<int>()];
-                GetBufferDetails(&indicesAccessor, &bufferViews, &pGLTFData->buffersData, &indexBuffer);
+                auto indicesAccessor = accessors[primitive["indices"].get<int>()];
+                GetBufferDetails(indicesAccessor, bufferViews, pGLTFData->buffersData, &indexBuffer);
             }
 
             // Get input layout
@@ -321,12 +317,12 @@ void GltfPbrVK::OnCreate(
 
                 semanticNames[index] = it.key();    //  semanticNames.push_back(semanticName);
 
-                json::object_t  accessor = accessors[it.value().get<int>()];
+                auto  accessor = accessors[it.value().get<int>()];
 
                 // Get VB accessors
                 //
                 //................................................................................Index -> layout.size()
-                GetBufferDetails(&accessor, &bufferViews, &pGLTFData->buffersData, &vertexBuffers[index]);
+                GetBufferDetails(accessor, bufferViews, pGLTFData->buffersData, &vertexBuffers[index]);
 
                 // Code is specific to VK here -------------
                 // Create Input Layout

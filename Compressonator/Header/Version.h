@@ -7,10 +7,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -37,9 +37,9 @@
 #define VERSION_MAJOR_MINOR 1
 #define VERSION_MINOR_MAJOR 0
 #define VERSION_MINOR_MINOR 0
-#define VERSION VERSION_MAJOR_MAJOR, VERSION_MAJOR_MINOR, VERSION_MINOR_MAJOR, VERSION_MINOR_MINOR
+#define VERSION VERSION_MAJOR_MAJOR,VERSION_MAJOR_MINOR,VERSION_MINOR_MAJOR,VERSION_MINOR_MINOR
 #define VERSION_TEXT "3, 1, 00 0\0"
 #define VERSION_TEXT_SHORT "3.1"
 #define COMPRESSONATOR_TEXT "COMPRESSONATOR"
 
-#endif  // _VERSION_H_INCLUDED_
+#endif // _VERSION_H_INCLUDED_

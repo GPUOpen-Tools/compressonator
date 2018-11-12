@@ -12,6 +12,8 @@ CHelpAboutDialog::CHelpAboutDialog(QWidget *parent)
 
 void CHelpAboutDialog::Init(const QString & title, const QString & productName)
 {
+    Q_UNUSED(productName);
+
     // Set the dialog title:
     setWindowTitle(title);
     setWindowIcon(QIcon(":/CompressonatorGUI/Images/acompress-256.png"));
@@ -26,11 +28,11 @@ void CHelpAboutDialog::Init(const QString & title, const QString & productName)
     pMainLayout->setSizeConstraint(QLayout::SetFixedSize);
 
     QVBoxLayout* pVerticalLayoutLeft = new QVBoxLayout;
-    QString version = QString("%1.%2.%3.%4").arg(
+    QString version = QString("%1.%2.%3").arg(
         QString::number(VERSION_MAJOR_MAJOR),
         QString::number(VERSION_MAJOR_MINOR),
-        QString::number(VERSION_MINOR_MAJOR),
-        QString::number(0)
+        QString::number(VERSION_MINOR_MAJOR)
+        //QString::number(0)
     );
     // Set the Help about string:
     QString helpAboutString = "Compressonator<br>";

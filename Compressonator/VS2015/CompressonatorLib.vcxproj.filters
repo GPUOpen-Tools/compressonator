@@ -329,12 +329,6 @@
     <ClCompile Include="../Source/Codec/DXTC/dxtc_v11_compress_asm.c">
       <Filter>Source Files\Codec\DXTC</Filter>
     </ClCompile>
-    <ClCompile Include="../Source/Codec/ETC/etcpack/etcdec.cxx">
-      <Filter>Source Files\Codec\ETC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ETC/etc.cpp">
-      <Filter>Source Files\Codec\ETC</Filter>
-    </ClCompile>
     <ClCompile Include="../Source/Codec/ETC/etcpack/etcimage.cxx">
       <Filter>Source Files\Codec\ETC\etcpack</Filter>
     </ClCompile>
@@ -358,6 +352,15 @@
     </ClCompile>
     <ClCompile Include="..\Source\Codec\GT\GT_Encode.cpp">
       <Filter>Source Files\Codec\GT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Codec\ETC\Codec_ETC2_RGBA.cpp">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Codec\ETC\Codec_ETC2_RGBA1.cpp">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="../Source/Codec/ETC/etcpack/etcdec.cxx">
+      <Filter>Source Files\Codec\ETC\etcpack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -627,11 +630,14 @@
     <ClInclude Include="..\Header\Codec\GT\GT_Decode.h">
       <Filter>Header Files\Codec\GT</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\Codec\GT\GT_Definitions.h">
-      <Filter>Header Files\Codec\GT</Filter>
-    </ClInclude>
     <ClInclude Include="..\Header\Codec\GT\GT_Encode.h">
       <Filter>Header Files\Codec\GT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Codec\ETC\Codec_ETC2_RGBA.h">
+      <Filter>Header Files\Codec\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Codec\ETC\Codec_ETC2_RGBA1.h">
+      <Filter>Header Files\Codec\ETC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

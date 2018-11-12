@@ -56,8 +56,20 @@ struct CBArrayControl
 
 //--------------------------------------------------------------------------------------
 
+
+char *GPU_DirectX::hResultErr(HRESULT hr)
+{
+   FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM,
+       NULL, hr,
+       MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+       m_err_str,
+       MAX_ERR_STR,
+       NULL );
+   return(m_err_str);
+}
+
 //---------------------------------------------------------------------------------
-GPU_DirectX::GPU_DirectX(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback)
+GPU_DirectX::GPU_DirectX(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback):RenderWindow("DirectX")
 {
     m_driverType = D3D_DRIVER_TYPE_NULL;
     m_featureLevel = D3D_FEATURE_LEVEL_11_0;
@@ -87,8 +99,16 @@ GPU_DirectX::GPU_DirectX(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback)
     if (Height <= 0)
         Height = 480;
 
-    if (FAILED(InitWindow(hInstance, Width, Height, callback)))
+    // Allign data 
+    m_width  = ((Width  + 3) / 4) * 4;
+    m_height = ((Height + 3) / 4) * 4;
+
+    HRESULT hr = InitWindow(Width, Height, callback);
+    if (FAILED(hr))
+    {
+        fprintf(stderr, "[DirectX] Failed InitWindow: %s\n",hResultErr(hr));
         assert(0);
+    }
 
     EnableWindowContext(m_hWnd, &m_hDC, &m_hRC);
 }
@@ -99,14 +119,18 @@ GPU_DirectX::~GPU_DirectX()
 }
 
 
+
+
 //--------------------------------------------------------------------------------------
+
+
 HRESULT GPU_DirectX::InitDevice(const TexMetadata& mdata, CMP_FORMAT cmp_format)
 {
     HRESULT hr = S_OK;
 
     RECT rc;
     GetClientRect(m_hWnd, &rc);
-    UINT width = rc.right - rc.left;
+    UINT width  = rc.right - rc.left;
     UINT height = rc.bottom - rc.top;
 
     UINT createDeviceFlags = 0;
@@ -156,23 +180,32 @@ HRESULT GPU_DirectX::InitDevice(const TexMetadata& mdata, CMP_FORMAT cmp_format)
             break;
     }
     if (FAILED(hr))
-        return hr;
+    {
+       fprintf(stderr, "[DirectX] Failed D3D11CreateDeviceAndSwapChain: %s\n",hResultErr(hr));
+       return hr;
+    }
 
     // Create a render target view
     ID3D11Texture2D* pBackBuffer = nullptr;
     hr = m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
     if (FAILED(hr))
+    {
+        fprintf(stderr, "[DirectX] Failed GetBuffer: %s\n",hResultErr(hr));
         return hr;
+    }
 
     hr = m_pd3dDevice->CreateRenderTargetView(pBackBuffer, nullptr, &m_pRenderTargetView);
     pBackBuffer->Release();
     if (FAILED(hr))
+    {
+        fprintf(stderr, "[DirectX] Failed CreateRenderTargetView: %s\n",hResultErr(hr));
         return hr;
+    }
 
     // Create depth stencil texture
     D3D11_TEXTURE2D_DESC descDepth;
     ZeroMemory(&descDepth, sizeof(descDepth));
-    descDepth.Width = width;
+    descDepth.Width  = width;
     descDepth.Height = height;
     descDepth.MipLevels = 1;
     descDepth.ArraySize = 1;
@@ -185,7 +218,10 @@ HRESULT GPU_DirectX::InitDevice(const TexMetadata& mdata, CMP_FORMAT cmp_format)
     descDepth.MiscFlags = 0;
     hr = m_pd3dDevice->CreateTexture2D(&descDepth, nullptr, &m_pDepthStencil);
     if (FAILED(hr))
+    {
+        fprintf(stderr, "[DirectX] Failed CreateTexture2D: %s\n",hResultErr(hr));
         return hr;
+    }
 
     // Create the depth stencil view
     D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
@@ -195,7 +231,10 @@ HRESULT GPU_DirectX::InitDevice(const TexMetadata& mdata, CMP_FORMAT cmp_format)
     descDSV.Texture2D.MipSlice = 0;
     hr = m_pd3dDevice->CreateDepthStencilView(m_pDepthStencil, &descDSV, &m_pDepthStencilView);
     if (FAILED(hr))
+    {
+        fprintf(stderr, "[DirectX] Failed CreateDepthStencilView: %s\n",hResultErr(hr));
         return hr;
+    }
 
     m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 
@@ -212,7 +251,10 @@ HRESULT GPU_DirectX::InitDevice(const TexMetadata& mdata, CMP_FORMAT cmp_format)
     // Create the vertex shader
     hr = m_pd3dDevice->CreateVertexShader(g_VS, sizeof(g_VS), nullptr, &m_pVertexShader);
     if (FAILED(hr))
+    {
+        fprintf(stderr, "[DirectX] Failed CreateVertexShader: %s\n",hResultErr(hr));
         return hr;
+    }
 
     // Define the input layout
     D3D11_INPUT_ELEMENT_DESC layout[] =
@@ -225,7 +267,10 @@ HRESULT GPU_DirectX::InitDevice(const TexMetadata& mdata, CMP_FORMAT cmp_format)
     // Create the input layout
     hr = m_pd3dDevice->CreateInputLayout(layout, numElements, g_VS, sizeof(g_VS), &m_pVertexLayout);
     if (FAILED(hr))
+    {
+        fprintf(stderr, "[DirectX] Failed CreateInputLayout: %s\n",hResultErr(hr));
         return hr;
+    }
 
     // Set the input layout
     m_pImmediateContext->IASetInputLayout(m_pVertexLayout);
@@ -284,7 +329,8 @@ HRESULT GPU_DirectX::InitDevice(const TexMetadata& mdata, CMP_FORMAT cmp_format)
     default:
         return E_FAIL;
     }
-
+    if (!(pshader && pshader_size > 0))
+        fprintf(stderr, "[DirectX12] No shader available");
     assert(pshader && pshader_size > 0);
 
     // Create the pixel shader
@@ -378,7 +424,10 @@ HRESULT GPU_DirectX::InitDevice(const TexMetadata& mdata, CMP_FORMAT cmp_format)
     bd.CPUAccessFlags = 0;
     hr = m_pd3dDevice->CreateBuffer(&bd, &InitData, &m_pVertexBuffer);
     if (FAILED(hr))
+    {
+        fprintf(stderr, "[DirectX] Failed CreateBuffer 1 : %s\n",hResultErr(hr));
         return hr;
+    }
 
     // Set vertex buffer
     UINT stride = sizeof(SimpleVertex);
@@ -425,7 +474,10 @@ HRESULT GPU_DirectX::InitDevice(const TexMetadata& mdata, CMP_FORMAT cmp_format)
     bd.CPUAccessFlags = 0;
     hr = m_pd3dDevice->CreateBuffer(&bd, &InitData, &m_pIndexBuffer);
     if (FAILED(hr))
+    {
+        fprintf(stderr, "[DirectX] Failed CreateBuffer 2 : %s\n",hResultErr(hr));
         return hr;
+    }
 
     // Set index buffer
     m_pImmediateContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
@@ -440,7 +492,10 @@ HRESULT GPU_DirectX::InitDevice(const TexMetadata& mdata, CMP_FORMAT cmp_format)
     bd.CPUAccessFlags = 0;
     hr = m_pd3dDevice->CreateBuffer(&bd, nullptr, &m_pCBArrayControl);
     if (FAILED(hr))
+    {
+        fprintf(stderr, "[DirectX] Failed CreateBuffer 3 : %s\n",hResultErr(hr));
         return hr;
+    }
 
     // Create the state objects
     D3D11_SAMPLER_DESC sampDesc;
@@ -473,7 +528,10 @@ HRESULT GPU_DirectX::InitDevice(const TexMetadata& mdata, CMP_FORMAT cmp_format)
     };
     hr = m_pd3dDevice->CreateBlendState(&dsc, &m_AlphaBlendState);
     if (FAILED(hr))
+    {
+        fprintf(stderr, "[DirectX] Failed CreateBlendState: %s\n",hResultErr(hr));
         return hr;
+    }
 
     return S_OK;
 }
@@ -582,8 +640,15 @@ DXGI_FORMAT GPU_DirectX::CMP2DXGIFormat(CMP_FORMAT cmp_format)
     case CMP_FORMAT_DXT5_xGxR:
     case CMP_FORMAT_ETC_RGB:
     case CMP_FORMAT_ETC2_RGB:
-    case CMP_FORMAT_GT:
-    // -----------------------------------
+    case CMP_FORMAT_ETC2_RGBA:
+    case CMP_FORMAT_ETC2_RGBA1:
+#ifdef USE_GTC
+    case CMP_FORMAT_GTC:
+#endif
+#ifdef USE_GTC_HDR
+    case CMP_FORMAT_GTCH:
+#endif
+        // -----------------------------------
     case CMP_FORMAT_Unknown:
     default:
         dxgi_format = DXGI_FORMAT_UNKNOWN;
@@ -606,8 +671,8 @@ CMP_ERROR WINAPI GPU_DirectX::Decompress(
     TexMetadata mdata;
 
     memset(&mdata, 0, sizeof(TexMetadata));
-    mdata.height    = pSourceTexture->dwHeight;
-    mdata.width     = pSourceTexture->dwWidth;
+    mdata.height= m_height; // pSourceTexture->dwHeight;
+    mdata.width = m_width; // pSourceTexture->dwWidth;
     mdata.depth = 1;
     mdata.arraySize = 1;
     mdata.mipLevels = 1;
@@ -682,13 +747,12 @@ CMP_ERROR WINAPI GPU_DirectX::Decompress(
     // Set size to 4 pixel boundaries
     // Should check format is compressed for none compressed cases
     // where 4 pixel bound is not required.
-    srcImage.width             = ((pSourceTexture->dwWidth  + 3) / 4) * 4;
-    srcImage.height            = ((pSourceTexture->dwHeight + 3) / 4) * 4;
-    srcImage.format            = mdata.format;
-    srcImage.pixels            = pSourceTexture->pData;
+    srcImage.width              = m_width; // pSourceTexture->dwWidth;//((pSourceTexture->dwWidth  + 3) / 4) * 4;
+    srcImage.height             = m_height;// pSourceTexture->dwHeight;//((pSourceTexture->dwHeight + 3) / 4) * 4;
+    srcImage.format             = mdata.format;
+    srcImage.pixels             = pSourceTexture->pData;
 
     ComputePitch(mdata.format, srcImage.width, srcImage.height, srcImage.rowPitch, srcImage.slicePitch, 0);
-
 
     hr = CreateShaderResourceView(m_pd3dDevice, &srcImage, 1, mdata, &m_pSRV);
     if (FAILED(hr))
@@ -726,8 +790,10 @@ CMP_ERROR WINAPI GPU_DirectX::Decompress(
     size_t pxsize    = sratchimage.GetPixelsSize();
 
     // Check the size matches our output
-    if (pxsize == pDestTexture->dwDataSize)
+    if (pxsize >= pDestTexture->dwDataSize)
     {
+        //pDestTexture->dwWidth  = m_width;
+        //pDestTexture->dwHeight = m_height;
         uint8_t *pxdata = sratchimage.GetPixels();
         memcpy(pDestTexture->pData, pxdata, pDestTexture->dwDataSize);
     }

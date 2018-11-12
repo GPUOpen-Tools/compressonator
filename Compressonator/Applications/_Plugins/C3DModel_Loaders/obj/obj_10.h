@@ -20,8 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#ifndef _PLUGIN_IMAGE_BMP_H
-#define _PLUGIN_IMAGE_BMP_H
+#ifndef _PLUGIN_IMAGE_OBJ10_H
+#define _PLUGIN_IMAGE_OBJ10_H
 
 #include "stdafx.h"
 #include "PluginInterface.h"

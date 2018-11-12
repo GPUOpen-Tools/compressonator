@@ -54,10 +54,12 @@ class winMsgHandler : public QObject
 class cpRenderWindow : public QWidget
 {
     Q_OBJECT
-   public:
+
+public:
     bool m_showViewOptions;
     WId  m_wid;
     bool m_usingWindowProc;
+    bool m_viewingOriginalModel;
 
     cpRenderWindow()
     {
@@ -65,6 +67,9 @@ class cpRenderWindow : public QWidget
         m_viewOpen        = false;
         m_wid             = 0L;
         m_usingWindowProc = false;
+        m_manual3DViewFlipMode = 0;
+        m_viewingOriginalModel = true;
+        this->setFocusPolicy(Qt::ClickFocus);
         qApp->installEventFilter(this);
     }
 
@@ -87,6 +92,12 @@ class cpRenderWindow : public QWidget
     void setYRotation(int angle);
     void setZRotation(int angle);
 
+    // Effective only when watching a 3DModel Diff
+    void SetManualRenderFlip(int mode);
+
+Q_SIGNALS:
+    void signalModelKeyPressed(int key);
+
    public slots:
     void localMessage(MSG& msg);
 
@@ -96,10 +107,12 @@ class cpRenderWindow : public QWidget
     void paintEvent(QPaintEvent* ev);
     bool eventFilter(QObject* obj, QEvent* ev);
     void resizeEvent(QResizeEvent*);
+    void  keyPressEvent(QKeyEvent *event);
 
     HWND                     m_hwnd;  // Handle to the window created for rendering the glTF views
     PluginInterface_3DModel* m_plugin;
     bool                     m_viewOpen;
+    int                      m_manual3DViewFlipMode;
 };
 
 class cp3DModelView : public acCustomDockWidget
@@ -110,10 +123,9 @@ class cp3DModelView : public acCustomDockWidget
     cp3DModelView(const QString filePathName, const QString filePathName2, const QString Title, QWidget* parent);
     ~cp3DModelView();
     void Clean3DModelView();
-    bool isGLTFDracoFile(std::string filename);
-    bool decompressglTFfile(std::string srcFile, std::string tempdstFile);
+    void setManualViewFlip(int mode);
 
-   private:
+private:
     HWND m_hwnd;  // Handle to the window created for rendering the glTF views
 
     // Common for all
@@ -142,6 +154,7 @@ class cp3DModelView : public acCustomDockWidget
    public slots:
     void OnToolBarClicked();  // Hook into the CustomeWidgets TitleBars On Tool Button Clicked events
     void OnShowOptions();     // Toggles Overlayed Display Options in 3D Model Viewers
+    void OnModelViewKeyPressed(int key);
 };
 
 extern PluginManager g_pluginManager;

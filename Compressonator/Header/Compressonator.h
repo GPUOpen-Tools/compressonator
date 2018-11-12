@@ -39,6 +39,24 @@ typedef long           CMP_LONG;
 typedef CMP::BOOL      CMP_BOOL;  ///< A 32-bit integer boolean format.
 typedef CMP::DWORD_PTR CMP_DWORD_PTR;
 
+
+typedef struct
+{
+    double    SSIM;            // Structural Similarity Index: Average of RGB Channels
+    double    SSIM_Red;
+    double    SSIM_Green;
+    double    SSIM_Blue;
+
+    double    PSNR;            // Peak Signal to Noise Ratio: Average of RGB Channels
+    double    PSNR_Red;
+    double    PSNR_Green;
+    double    PSNR_Blue;
+
+    double    MSE;             // Mean Square Error
+
+} CMP_ANALYSIS_DATA;
+
+
 // CMP_HALF and CMP_FLOAT
 //bit-layout for a half number, h:
 //
@@ -148,11 +166,21 @@ typedef enum
     CMP_FORMAT_DXT5_xRBG,  ///<    swizzled DXT5 format with the green component swizzled into the alpha channel & the red component swizzled into the green channel. Eight bits per pixel.
     CMP_FORMAT_DXT5_RGxB,  ///<    swizzled DXT5 format with the blue component swizzled into the alpha channel. Eight bits per pixel.
     CMP_FORMAT_DXT5_xGxR,  ///<    two-component swizzled DXT5 format with the red component swizzled into the alpha channel & the green component in the green channel. Eight bits per pixel.
-    CMP_FORMAT_ETC_RGB,    ///< ETC  (Ericsson Texture Compression)
-    CMP_FORMAT_ETC2_RGB,   ///< ETC2 (Ericsson Texture Compression)
-    CMP_FORMAT_GT,         ///< GT   (Reserved for a future implementation)
-                           //--------------------------------------------------------------------------------------------------------
-    CMP_FORMAT_MAX = CMP_FORMAT_GT
+    CMP_FORMAT_ETC_RGB,    ///< ETC   GL_COMPRESSED_RGB8_ETC2  backward compatible
+    CMP_FORMAT_ETC2_RGB,   ///< ETC2  GL_COMPRESSED_RGB8_ETC2
+    CMP_FORMAT_ETC2_SRGB,  ///< ETC2  GL_COMPRESSED_SRGB8_ETC2
+    CMP_FORMAT_ETC2_RGBA,  ///< ETC2  GL_COMPRESSED_RGBA8_ETC2_EAC
+    CMP_FORMAT_ETC2_RGBA1, ///< ETC2  GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2
+    CMP_FORMAT_ETC2_SRGBA, ///< ETC2  GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC
+    CMP_FORMAT_ETC2_SRGBA1,///< ETC2  GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2
+#ifdef USE_GTC
+    CMP_FORMAT_GTC,        ///< GTC   Fast Gradient Texture Compressor: max 8 bits per channel
+#endif
+#ifdef USE_GTC_HDR
+    CMP_FORMAT_GTCH,       ///< GTCH  Fast Gradient Texture Compressor: max FP16 per channel
+    CMP_FORMAT_MAX = CMP_FORMAT_GTCH
+#endif
+    CMP_FORMAT_MAX = CMP_FORMAT_ETC2_SRGBA1
 } CMP_FORMAT;
 
 /// An enum selecting the speed vs. quality trade-off.
@@ -166,7 +194,7 @@ typedef enum
 /// An enum selecting the different GPU driver types.
 typedef enum
 {
-    GPUDecode_OPENGL = 0,  ///< Use OpenGL   to decode Textures
+    GPUDecode_OPENGL = 0,  ///< Use OpenGL   to decode Textures (default)
     GPUDecode_DIRECTX,     ///< Use DirectX  to decode Textures
     GPUDecode_VULKAN,      ///< Use Vulkan  to decode Textures
     GPUDecode_INVALID
@@ -175,10 +203,12 @@ typedef enum
 /// An enum selecting the different GPU driver types.
 typedef enum
 {
-    Compute_OPENCL = 0,  ///< Use OpenCL  to compress Textures
-    Compute_DIRECTX,     ///< Use DirectX to compress Textures
-    Compute_VULKAN,      ///< Use Vulkan  SPIR-V to compress Textures
-    Compute_OPENGL,      ///< Use OpenGL  Shader code to compress Textures
+    Compute_CPU_HPC = 0,                 ///< Use CPU High Performance Compute to compress textures, full support (default)
+    Compute_OPENCL,                      ///< Use OpenCL  to compress textures, full support
+#ifdef    ENABLE_V3x_CODE
+    Compute_VULKAN,                      ///< Use Vulkan  SPIR-V to compress textures, full support
+    Compute_DIRECTX,                     ///< Use DirectX to compress textures, minimal codec support
+#endif
     Compute_INVALID
 } CMP_Compute_type;
 
@@ -203,25 +233,25 @@ typedef enum
 #define AMD_MAX_CMD_STR 32
 #define AMD_MAX_CMD_PARAM 16
 
-#define AMD_CODEC_QUALITY_DEFAULT 0.05  ///< This is the default value set for all Codecs (Gives fast Processing and lowest Quality)
-#define AMD_CODEC_EXPOSURE_DEFAULT 0    ///< This is the default value set for exposure value of hdr/exr input image
-#define AMD_CODEC_DEFOG_DEFAULT 0       ///< This is the default value set for defog value of hdr/exr input image
-#define AMD_CODEC_KNEELOW_DEFAULT 0     ///< This is the default value set for kneelow value of hdr/exr input image
-#define AMD_CODEC_KNEEHIGH_DEFAULT 5    ///< This is the default value set for kneehigh value of hdr/exr input image
-#define AMD_CODEC_GAMMA_DEFAULT 2.2     ///< This is the default value set for gamma value of hdr/exr input image
+#define AMD_CODEC_QUALITY_DEFAULT 0.05f  ///< This is the default value set for all Codecs (Gives fast Processing and lowest Quality)
+#define AMD_CODEC_EXPOSURE_DEFAULT 0     ///< This is the default value set for exposure value of hdr/exr input image
+#define AMD_CODEC_DEFOG_DEFAULT 0        ///< This is the default value set for defog value of hdr/exr input image
+#define AMD_CODEC_KNEELOW_DEFAULT 0      ///< This is the default value set for kneelow value of hdr/exr input image
+#define AMD_CODEC_KNEEHIGH_DEFAULT 5     ///< This is the default value set for kneehigh value of hdr/exr input image
+#define AMD_CODEC_GAMMA_DEFAULT 2.2f     ///< This is the default value set for gamma value of hdr/exr input image
 
-#define CMP_MESH_COMP_LEVEL 7
-#define CMP_MESH_POS_BITS 14
-#define CMP_MESH_TEXC_BITS 12
-#define CMP_MESH_NORMAL_BITS 10
-#define CMP_MESH_GENERIC_BITS 8
+#define CMP_MESH_COMP_LEVEL 7         ///< This is the default value set for draco compress level for mesh compression
+#define CMP_MESH_POS_BITS 14          ///< This is the default value set for draco position quantization bits for mesh compression
+#define CMP_MESH_TEXC_BITS 12         ///< This is the default value set for draco texture coordinate quantization bits for mesh compression
+#define CMP_MESH_NORMAL_BITS 10       ///< This is the default value set for draco normal quantization bits for mesh compression
+#define CMP_MESH_GENERIC_BITS 8       ///< This is the default value set for draco generic quantization bits for mesh compression
 
 #ifdef USE_3DMESH_OPTIMIZE
-#define CMP_MESH_VCACHE_SIZE_DEFAULT 16      ///< This is the default value set for vertices cache size for mesh optimization
-#define CMP_MESH_VCACHEFIFO_SIZE_DEFAULT 0   ///< This is the default value set for vertices FIFO cache size for mesh optimization
-#define CMP_MESH_OVERDRAW_ACMR_DEFAULT 1.05  ///< This is the default value set for ACMR(average cache miss ratio) for mesh overdraw optimization
-#define CMP_MESH_SIMPLIFYMESH_LOD_DEFAULT 0  ///< This is the default value set for LOD(level of details) for mesh simplication.
-#define CMP_MESH_OPTVFETCH_DEFAULT 1         ///< This is the default boolean value set for vertices fetch mesh optimization.
+#define CMP_MESH_VCACHE_SIZE_DEFAULT 16       ///< This is the default value set for vertices cache size for mesh optimization
+#define CMP_MESH_VCACHEFIFO_SIZE_DEFAULT 0    ///< This is the default value set for vertices FIFO cache size for mesh optimization
+#define CMP_MESH_OVERDRAW_ACMR_DEFAULT 1.05f  ///< This is the default value set for ACMR(average cache miss ratio) for mesh overdraw optimization
+#define CMP_MESH_SIMPLIFYMESH_LOD_DEFAULT 0   ///< This is the default value set for LOD(level of details) for mesh simplication.
+#define CMP_MESH_OPTVFETCH_DEFAULT 1          ///< This is the default boolean value set for vertices fetch mesh optimization.
 #endif
 
 struct CMP_MAP_BYTES_SET
@@ -246,9 +276,9 @@ typedef struct
     CMP_BOOL
     bUseChannelWeighting;  ///< Use channel weightings. With swizzled formats the weighting applies to the data within the specified channel not the channel itself.
                            ///< channel weigthing is not implemented for BC6H and BC7
-    double   fWeightingRed;          ///<    The weighting of the Red or X Channel.
-    double   fWeightingGreen;        ///<    The weighting of the Green or Y Channel.
-    double   fWeightingBlue;         ///<    The weighting of the Blue or Z Channel.
+    float   fWeightingRed;          ///<    The weighting of the Red or X Channel.
+    float   fWeightingGreen;        ///<    The weighting of the Green or Y Channel.
+    float   fWeightingBlue;         ///<    The weighting of the Blue or Z Channel.
     CMP_BOOL bUseAdaptiveWeighting;  ///<    Adapt weighting on a per-block basis.
     CMP_BOOL bDXT1UseAlpha;          ///< Encode single-bit alpha data. Only valid when compressing to DXT1 & BC1.
     CMP_BOOL bUseGPUDecompress;      ///< Use GPU to decompress. Decode API can be changed by specified in DecodeWith parameter. Default is OpenGL.
@@ -267,7 +297,7 @@ typedef struct
     CMP_GPUDecode    nGPUDecode;    ///< This value is set using DecodeWith argument (OpenGL, DirectX) default is OpenGL
     CMP_Compute_type nComputeWith;  ///< This value is set using ComputeWith argument (OpenGL, DirectX)  default is OpenCL
     CMP_DWORD        dwnumThreads;  ///< Number of threads to initialize for BC7 encoding (Max up to 128). Default set to 8,
-    double           fquality;      ///< Quality of encoding. This value ranges between 0.0 and 1.0. Default set to 0.05
+    float           fquality;      ///< Quality of encoding. This value ranges between 0.0 and 1.0. Default set to 0.05
         ///< setting fquality above 0.0 gives the fastest, lowest quality encoding, 1.0 is the slowest, highest quality encoding. Default set to a low value of 0.05
     CMP_BOOL
     brestrictColour;  ///< This setting is a quality tuning setting for BC7 which may be necessary for convenience in some applications. Default set to false
@@ -294,11 +324,11 @@ typedef struct
                                        ///<        Options.CmdSet[1].strCommand   = "Quality"\n
                                        ///<        Options.CmdSet[1].strParameter = "1.0";\n
                                        ///<        Options.NumCmds = 2;\n
-    double fInputDefog;                ///< ToneMap properties for float type image send into non float compress algorithm.
-    double fInputExposure;             ///< ToneMap properties for float type image send into non float compress algorithm.
-    double fInputKneeLow;              ///< ToneMap properties for float type image send into non float compress algorithm.
-    double fInputKneeHigh;             ///< ToneMap properties for float type image send into non float compress algorithm.
-    double fInputGamma;                ///< ToneMap properties for float type image send into non float compress algorithm.
+    float fInputDefog;                ///< ToneMap properties for float type image send into non float compress algorithm.
+    float fInputExposure;             ///< ToneMap properties for float type image send into non float compress algorithm.
+    float fInputKneeLow;              ///< ToneMap properties for float type image send into non float compress algorithm.
+    float fInputKneeHigh;             ///< ToneMap properties for float type image send into non float compress algorithm.
+    float fInputGamma;                ///< ToneMap properties for float type image send into non float compress algorithm.
 
     int iCmpLevel;     ///< draco setting: compression level (range 0-10: higher mean more compressed) - default 7
     int iPosBits;      ///< draco setting: quantization bits for position - default 14
@@ -309,7 +339,7 @@ typedef struct
 #ifdef USE_3DMESH_OPTIMIZE
     int iVcacheSize;  ///< For mesh vertices optimization, hardware vertex cache size. (value range 1- no limit as it allows users to simulate hardware cache size to find the most optimum size)- default is enabled with cache size = 16
     int iVcacheFIFOSize;  ///< For mesh vertices optimization, hardware vertex cache size. (value range 1- no limit as it allows users to simulate hardware cache size to find the most optimum size)- default is disabled.
-    double
+    float
          fOverdrawACMR;  ///< For mesh overdraw optimization,  optimize overdraw with ACMR (average cache miss ratio) threshold value specified (value range 1-3) - default is enabled with ACMR value = 1.05 (i.e. 5% worse)
     int  iSimplifyLOD;  ///< simplify mesh using LOD (Level of Details) value specified.(value range 1- no limit as it allows users to simplify the mesh until the level they desired. Higher level means less triangles drawn, less details.)
     bool bVertexFetch;  ///< optimize vertices fetch . boolean value 0 - disabled, 1-enabled. -default is enabled.
@@ -388,9 +418,9 @@ extern "C"
     typedef struct
     {
         CMP_WORD dwMask;          // User can enable or disable specific modes default is 0xFFFF
-        double   fExposure;       // Sets the image lighter (using larger values) or darker (using lower values) default is 0.95
+        float   fExposure;       // Sets the image lighter (using larger values) or darker (using lower values) default is 0.95
         bool     bIsSigned;       // Specify if half floats are signed or unsigned BC6H_UF16 or BC6H_SF16
-        double   fQuality;        // Reserved: not used in BC6H at this time
+        float   fQuality;        // Reserved: not used in BC6H at this time
         bool     bUsePatternRec;  // Reserved: for new algorithm to use mono pattern shape matching based on two pixel planes
     } CMP_BC6H_BLOCK_PARAMETERS;
 

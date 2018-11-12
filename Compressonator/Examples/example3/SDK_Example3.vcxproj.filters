@@ -7,15 +7,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="../Compressonator_Test.cpp">
+    <ClCompile Include="DDS_Helpers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="../Compressonator_Test_Helpers.cpp">
+    <ClCompile Include="SDK_Example3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="../Compressonator_Test_Helpers.h">
+    <ClInclude Include="DDS_Helpers.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

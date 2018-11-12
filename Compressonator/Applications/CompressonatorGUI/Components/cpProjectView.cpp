@@ -46,7 +46,7 @@
 #define STR_AddDestinationSetting "Add destination settings..."
 #define STR_AddModelDestinationSetting "Add model destination settings..."
 
-extern C_Application_Options::ImageEncodeWith encodewith;
+//extern C_Application_Options::ImageEncodeWith encodewith;
 bool                                          g_useCPUEncode = true;
 static signalProcessMsgHandler                static_processmsghandler;
 extern void                                   GetSupportedFileFormats(QList<QByteArray>& g_supportedFormats);
@@ -55,6 +55,7 @@ extern int                                    g_MipLevel;
 extern float                                  g_fProgress;
 extern C_Application_Options                  g_Application_Options;
 extern CMIPS*                                 g_GUI_CMIPS;
+extern double timeStampsec();
 
 int levelType(QTreeWidgetItem* it)
 {
@@ -138,7 +139,7 @@ void UpdateDestglTFWithFile(QString modelSource, QString modelDest, QString file
     if (!updated)
     {
         auto srcmesh = gltfsrc["buffers"];
-        for (int i = 0; i < srcmesh.size(); i++)
+        for (unsigned int i = 0; i < srcmesh.size(); i++)
         {
             std::string srcname = srcmesh[i]["uri"].get<std::string>();
 
@@ -518,7 +519,7 @@ bool ProjectView::saveImageAs()
                 plugin_Image = reinterpret_cast<PluginInterface_Image*>(g_pluginManager.GetPlugin("IMAGE", "DDS"));
                 imgFileName.append(".dds");
 
-                if (AMDSaveMIPSTextureImage(filePathName.toStdString().c_str(), data->m_MipImages->mipset, false) != 0)
+                if (AMDSaveMIPSTextureImage(filePathName.toStdString().c_str(), data->m_MipImages->mipset, false, g_CmdPrams.CompressOptions) != 0)
                 {
                     if (m_CompressStatusDialog)
                     {
@@ -929,7 +930,7 @@ void ProjectView::DeleteItemData(QTreeWidgetItem* item, bool userdeleted)
         if (m_imageloader)
         {
             if (data)
-                m_imageloader->clearMipImages(data->m_MipImages);
+                m_imageloader->clearMipImages(&data->m_MipImages);
         }
 
         // Remove any docked views of the file
@@ -1038,7 +1039,7 @@ void ProjectView::DeleteItemData(QTreeWidgetItem* item, bool userdeleted)
 
         // Remove the MIP Image data
         if (m_imageloader)
-            m_imageloader->clearMipImages(data->m_MipImages);
+            m_imageloader->clearMipImages(&data->m_MipImages);
 
         if (data)
         {
@@ -1088,16 +1089,15 @@ void ProjectView::DeleteItemData(QTreeWidgetItem* item, bool userdeleted)
 
 QTreeWidgetItem* ProjectView::GetCurrentItem(int inLevelType)
 {
+    // check if new items exit to process 
+    int topCount = m_projectTreeView->topLevelItemCount();
+    if (topCount == 1)
+        return NULL;
+
     //use tree
     QTreeWidgetItem* item = m_projectTreeView->currentItem();
     if (!item)
         return NULL;
-
-    //else use current
-    if (m_CurrentItem)
-    {
-        return m_CurrentItem;
-    }
 
     QVariant v         = item->data(TREE_LevelType, Qt::UserRole);
     int      levelType = v.toInt();
@@ -1107,6 +1107,12 @@ QTreeWidgetItem* ProjectView::GetCurrentItem(int inLevelType)
     {
         return (item);
     }
+
+    if (m_CurrentItem)
+    {
+        return m_CurrentItem;
+    }
+
     return (NULL);
 }
 
@@ -2550,7 +2556,7 @@ void ProjectView::openProjectFile()
     if (!userSaveProjectAndContinue())
         return;
 
-    QString filename = QFileDialog::getOpenFileName(this, tr("Open project files"), ".", tr("Project files (*.cprj)"));
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open project files"), m_curProjectFilePathName, tr("Project files (*.cprj)"));
     if (filename.length() > 0)
         loadProjectFile(filename);
 }
@@ -2823,6 +2829,22 @@ void ProjectView::analyseMeshData()
                     int         result;
                     std::string filename = m_data->m_Full_Path.toStdString();
 
+                    if (strcmp(c_ext, "GLTF") == 0)
+                    {
+                        if (isGLTFDracoFile(filename))
+                        {
+                            std::size_t dotPos = filename.rfind('.');
+                            std::string tempdstFile = filename.substr(0, dotPos) + "_tmpdecoded.glTF";
+                            if (!decompressglTFfile(filename, tempdstFile, g_CmdPrams.use_Draco_Encode, g_CmdPrams.CompressOptions))
+                            {
+                                PrintInfo("Error: Decoding glTF file [%s] failed.\n", filename.c_str());
+                                return;
+                            }
+
+                            filename = tempdstFile;
+                        }
+                    }
+
                     if (result = m_plugin_loader->LoadModelData(filename.c_str(), "", &g_pluginManager, msgHandler, &ProgressCallback) != 0)
                     {
                         if (result != 0)
@@ -2882,6 +2904,23 @@ void ProjectView::analyseMeshData()
                 {
                     m_subplugin_loader->TC_PluginSetSharedIO(g_GUI_CMIPS);
                     std::string filename = m_data->m_Full_Path.toStdString();
+
+                    if (strcmp(c_ext, "GLTF") == 0)
+                    {
+                        if (isGLTFDracoFile(filename))
+                        {
+                            std::size_t dotPos = filename.rfind('.');
+                            std::string tempdstFile = filename.substr(0, dotPos) + "_tmpdecoded.glTF";
+                            if (!decompressglTFfile(filename, tempdstFile, g_CmdPrams.use_Draco_Encode, g_CmdPrams.CompressOptions))
+                            {
+                                PrintInfo("Error: Decoding glTF file [%s] failed.\n", filename.c_str());
+                                return;
+                            }
+
+                            filename = tempdstFile;
+                        }
+                    }
+
                     int         result;
                     if (result = m_subplugin_loader->LoadModelData(filename.c_str(), "", &g_pluginManager, msgHandler, &ProgressCallback) != 0)
                     {
@@ -2934,6 +2973,23 @@ void ProjectView::analyseMeshData()
                         {
                             m_plugin_loader->TC_PluginSetSharedIO(g_GUI_CMIPS);
                             std::string filename = parentdata->m_Full_Path.toStdString();
+
+                            if (strcmp(c_ext, "GLTF") == 0)
+                            {
+                                if (isGLTFDracoFile(filename))
+                                {
+                                    std::size_t dotPos = filename.rfind('.');
+                                    std::string tempdstFile = filename.substr(0, dotPos) + "_tmpdecoded.glTF";
+                                    if (!decompressglTFfile(filename, tempdstFile, g_CmdPrams.use_Draco_Encode, g_CmdPrams.CompressOptions))
+                                    {
+                                        PrintInfo("Error: Decoding glTF file [%s] failed.\n", filename.c_str());
+                                        return;
+                                    }
+
+                                    filename = tempdstFile;
+                                }
+                            }
+
                             int         result;
                             if (result = m_plugin_loader->LoadModelData(filename.c_str(), "", &g_pluginManager, msgHandler, &ProgressCallback) != 0)
                             {
@@ -3773,7 +3829,7 @@ void ProjectView::Tree_Add3DSubModelFile(QTreeWidgetItem* ParentItem, QString fi
 
         if (srcDelFlags != NULL)
         {
-            int indexStart = buffers.size();
+            int indexStart = (int)buffers.size();
             if (srcDelFlags->size() <= (m_data->m_Model_Images.size() - indexStart))
             {
                 for (int i = 0; i < srcDelFlags->size(); i++)
@@ -3955,6 +4011,8 @@ QTreeWidgetItem* ProjectView::Tree_Add3DModelMeshFile(QTreeWidgetItem* ParentIte
     Q_UNUSED(checkable)
     Q_UNUSED(checked)
     Q_UNUSED(levelType)
+    Q_UNUSED(pFeedbackProc)
+
     if (ParentItem == NULL)
         return NULL;
 
@@ -4541,6 +4599,9 @@ void ProjectView::onTree_ItemClicked(QTreeWidgetItem* item, int column)
             emit    ViewImageFile(text, item);
         }
 
+        Tree_selectAllChildItems(item);
+
+
         // Update the image poperty view for the item clicked
         SignalUpdateData(item, islevelType);
     }
@@ -4643,6 +4704,7 @@ void ProjectView::onTree_ItemClicked(QTreeWidgetItem* item, int column)
                 QString text = m_data->m_Full_Path;
                 emit    ViewImageFile(text, item);
             }
+            Tree_selectAllChildItems(item);
             // Update the image poperty view for the item clicked
             SignalUpdateData(item, islevelType);
         }
@@ -4927,7 +4989,8 @@ void ProjectView::onCustomContextMenu(const QPoint& point)
                     QFileInfo fileinfo(m_data->m_Full_Path);
                     QFile     file(m_data->m_Full_Path);
                     bool      fileexist = file.exists();
-                    if (m_data->ModelType == eModelType::GLTF)
+                    if ((m_data->ModelType == eModelType::GLTF) && 
+                        (g_Application_Options.m_GLTFRenderWith !=  C_Application_Options::RenderModelsWith::glTF_Vulkan))
                     {
                         actView3DModelDiff->setVisible(fileexist);
                         actView3DModelDiff->setEnabled(fileexist);
@@ -5230,44 +5293,74 @@ bool processItem(QFile* file, ProjectView* ProjectView, QString FilePathName, in
                     argvVec.back().push_back(0);  // Terminate String
                     argv.push_back(argvVec.back().data());
                 }
+                else
+                {
+                    // do some check!
+                }
 
                 ////using GPU to compress
-                if (!g_useCPUEncode)
+                if ((!g_useCPUEncode) && (key))
                 {
                     string format = key;
-                    if (format == "BC1" || format == "DXT1" || format == "BC7" || format == "BC6H")
+                    if (
+#ifdef USE_GTC
+                        format == "GTC" ||
+#endif
+#ifdef USE_GTC_HDR
+                        format == "GTCH" ||
+#endif
+                        format == "BC1" ||
+                        format == "DXT1" ||
+                        format == "BC7" ||
+#ifdef ENABLE_V3x_CODE
+                        format == "ASTC" ||
+#endif
+                        format == "BC6H")
                     {
                         string usegpu;
                         msgCommandLine.append(" -EncodeWith ");
                         usegpu = "-EncodeWith";
                         argvVec.push_back(CharArray(usegpu.begin(), usegpu.end()));
-                        argvVec.back().push_back(0);  // Terminate String
+                        argvVec.back().push_back(0); // Terminate String
                         argv.push_back(argvVec.back().data());
-
-                        if (encodewith == C_Application_Options::ImageEncodeWith::GPU_OpenCL)
+#ifdef USE_COMPUTE
+                        if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::CPU_HPC)
+                        {
+                            msgCommandLine.append(" HPC ");
+                            usegpu = "HPC";
+                            argvVec.push_back(CharArray(usegpu.begin(), usegpu.end()));
+                            argvVec.back().push_back(0); // Terminate String
+                            argv.push_back(argvVec.back().data());
+                        }
+                        else if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_OpenCL)
                         {
                             msgCommandLine.append(" OpenCL ");
                             usegpu = "OpenCL";
                             argvVec.push_back(CharArray(usegpu.begin(), usegpu.end()));
-                            argvVec.back().push_back(0);  // Terminate String
+                            argvVec.back().push_back(0); // Terminate String
                             argv.push_back(argvVec.back().data());
                         }
-                        else if (encodewith == C_Application_Options::ImageEncodeWith::GPU_Vulkan)
+#else
+                        g_useCPUEncode = true;
+#endif
+#ifdef ENABLE_V3x_CODE
+                        else if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_Vulkan)
                         {
                             msgCommandLine.append(" Vulkan ");
                             usegpu = "Vulkan";
                             argvVec.push_back(CharArray(usegpu.begin(), usegpu.end()));
-                            argvVec.back().push_back(0);  // Terminate String
+                            argvVec.back().push_back(0); // Terminate String
                             argv.push_back(argvVec.back().data());
                         }
-                        else if (encodewith == C_Application_Options::ImageEncodeWith::GPU_DirectX)
+                        else if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_DirectX)
                         {
                             msgCommandLine.append(" DirectX ");
                             usegpu = "DirectX";
                             argvVec.push_back(CharArray(usegpu.begin(), usegpu.end()));
-                            argvVec.back().push_back(0);  // Terminate String
+                            argvVec.back().push_back(0); // Terminate String
                             argv.push_back(argvVec.back().data());
                         }
+#endif
                     }
                     else
                     {
@@ -5488,9 +5581,14 @@ bool processItem(QFile* file, ProjectView* ProjectView, QString FilePathName, in
                 }
 
                 // ====================================
-                // ASTC Settings
+                // Bitrate Settings
                 // ====================================
-                if (cmp_format == CMP_FORMAT_ASTC)
+                if ((cmp_format == CMP_FORMAT_ASTC)
+#ifdef USE_GTC
+                    ||
+                    (cmp_format == CMP_FORMAT_GTC)
+#endif
+                    )
                 {
                     if (data->m_Bitrate != setDefaultOptions.m_Bitrate)
                     {
@@ -5657,7 +5755,7 @@ bool processItem(QFile* file, ProjectView* ProjectView, QString FilePathName, in
 
                     emit ProjectView->OnProcessing(data->m_destFileNamePath);
                     // Pass over the command line params
-                    if (ParseParams(argv.size(), (CMP_CHAR**)argv.data()))
+                    if (ParseParams((int)argv.size(), (CMP_CHAR**)argv.data()))
                     {
                         // Overriding some Command Line Features
                         g_CmdPrams.showperformance      = true;
@@ -5772,6 +5870,7 @@ void replaceExt(string& s, const string& newExt)
     }
 }
 
+
 void CompressFiles(QFile* file, ProjectView* ProjectView)
 {
     struct Image_Data
@@ -5810,6 +5909,9 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
     // QTreeWidgetItem *it_IMAGEFILE;
     // QTreeWidgetItem *it_3DMODEL;
     // QTreeWidgetItem *it_3DSUBMODEL;
+
+
+    double conversion_loopStartTime = timeStampsec();
 
     while (*it)
     {
@@ -6145,7 +6247,7 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                                         if (subModel_data)
                                                         {
                                                             subModel_data->m_ModelData.m_meshData.resize(optimized->size());
-                                                            for (int i = 0; i < optimized->size(); i++)
+                                                            for (unsigned int i = 0; i < optimized->size(); i++)
                                                             {
                                                                 subModel_data->m_ModelData.m_meshData[i].vertices = (*optimized)[i].vertices;
                                                                 subModel_data->m_ModelData.m_meshData[i].indices  = (*optimized)[i].indices;
@@ -6155,7 +6257,7 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                                         //create a new copy of bin (with user specified name) and update the new .bin file to submodel (gltf case only)
                                                         if (strcmp(c_ext, "GLTF") == 0)
                                                         {
-                                                            std::ifstream f(ModelDestination.toStdString().data());
+                                                            std::ifstream f(ModelSource.toStdString().data());
                                                             if (!f)
                                                             {
                                                                 if (ProjectView->m_CompressStatusDialog)
@@ -6401,7 +6503,7 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                         if (bMeshOptimized)
                                         {
                                             srcFile = ModelDestination.toStdString();
-                                            if (!(boost::filesystem::exists(srcFile)))
+                                            if (!(CMP_FileExists(srcFile)))
                                             {
                                                 if (ProjectView->m_CompressStatusDialog)
                                                     ProjectView->m_CompressStatusDialog->appendText("Error: Source Model Mesh File is not found.\n");
@@ -6568,7 +6670,7 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                                     }
 
                                                     int result;
-                                                    if (result = m_plugin_loader_drc->LoadModelData("OBJ", NULL, &DracoOptions, msgHandler,
+                                                    if (result = m_plugin_loader_drc->LoadModelData("OBJ", NULL, &g_pluginManager, &DracoOptions,
                                                                                                     &ProgressCallback) != 0)
                                                     {
                                                         if (result != 0)
@@ -6706,8 +6808,14 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                 ProjectView->m_CompressStatusDialog->appendText("<b>Compression was canceled!</b>");
             else
             {
-                QString Msg;
-                Msg.append("====== <b>Compress: ");
+                QString MsgDuration;
+                MsgDuration = "Processed in ";
+                double duration= timeStampsec() - conversion_loopStartTime;
+                MsgDuration.append(QString::number(duration,'g',3));
+                MsgDuration.append(" seconds");
+                ProjectView->m_CompressStatusDialog->appendText(MsgDuration);
+
+                QString Msg = "====== <b>Compress: ";
                 Msg.append(QString::number(NumberOfItemCompressed));
                 Msg.append(" succeeded, ");
                 Msg.append(QString::number(NumberOfItemCompressedFailed));
@@ -6720,6 +6828,8 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                 //}
                 Msg.append("<\b> ======");
                 ProjectView->m_CompressStatusDialog->appendText(Msg);
+
+
             }
         }
     }

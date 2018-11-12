@@ -104,23 +104,24 @@ void CSetApplicationOptions::onImageViewDecodeChanged(QVariant &value)
         g_gpudecodeFormat = MIPIMAGE_FORMAT::Format_QImage;
 }
 
-C_Application_Options::ImageEncodeWith encodewith = C_Application_Options::ImageEncodeWith::GPU_OpenCL;
+#ifdef USE_COMPUTE
 void CSetApplicationOptions::onImageEncodeChanged(QVariant &value)
 {
-    encodewith = (C_Application_Options::ImageEncodeWith &)value;
+    g_Application_Options.m_ImageEncode = (C_Application_Options::ImageEncodeWith &)value;
 
-    if (encodewith == C_Application_Options::ImageEncodeWith::CPU)
+    if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::CPU)
         g_useCPUEncode = true;
     else 
         g_useCPUEncode = false;
 
 }
+#endif
 
 void CSetApplicationOptions::onClose()
 {
-    g_useCPUDecode = (g_Application_Options.m_ImageViewDecode == g_Application_Options.ImageDecodeWith::CPU);
+    g_useCPUDecode = (g_Application_Options.m_ImageViewDecode == C_Application_Options::ImageDecodeWith::CPU);
 #ifdef USE_COMPUTE
-    g_useCPUEncode = (g_Application_Options.m_ImageEncode == g_Application_Options.ImageEncodeWith::CPU);
+    g_useCPUEncode = (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::CPU);
 #endif
     emit OnAppSettingHide();
     close();
@@ -207,9 +208,9 @@ void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem *item)
 void CSetApplicationOptions::UpdateViewData()
 {
     m_theController->setObject(&g_Application_Options, true, true);
-    g_useCPUDecode = g_Application_Options.m_ImageViewDecode == g_Application_Options.ImageDecodeWith::CPU;
+    g_useCPUDecode = g_Application_Options.m_ImageViewDecode == C_Application_Options::ImageDecodeWith::CPU;
 #ifdef USE_COMPUTE
-    g_useCPUEncode = g_Application_Options.m_ImageEncode == g_Application_Options.ImageEncodeWith::CPU;
+    g_useCPUEncode = g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::CPU;
 #endif
 }
 

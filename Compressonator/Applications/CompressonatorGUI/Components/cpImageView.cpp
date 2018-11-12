@@ -59,6 +59,7 @@ void cpImageView::oncpImageViewMousePosition(QPointF *scenePos, QPointF *localPo
         switch (m_ImageViewState)
         {
             case eImageViewState::isOriginal:
+                {
                 //m_labelTxtView->setText("Original");
                 if (m_acImageView->m_imageItem_Original)
                 {
@@ -69,7 +70,42 @@ void cpImageView::oncpImageViewMousePosition(QPointF *scenePos, QPointF *localPo
                     if (m_acImageView->m_imageItem_Processed)
                         color = m_acImageView->m_imageItem_Processed->pixmap().toImage().pixel(localPos->rx(), localPos->ry());
                 }
-                Txt.sprintf(" RGBA (%3d,%3d,%3d,%3d)", color.red(), color.green(), color.blue(), color.alpha());
+
+                bool dispDefault = true;
+
+                // New feature for debugging code that uses alpha channel
+                // if (m_OriginalMipImages && m_CMips)
+                // {
+                // if (m_OriginalMipImages->mipset)
+                // {
+                //     MipLevel* mipLevel = m_CMips->GetMipLevel(m_OriginalMipImages->mipset, 0);
+                //     if (mipLevel)
+                //     {
+                //         CMP_BYTE* pData = mipLevel->m_pbData;
+                //         if (pData)
+                //         {
+                //             if ((y < mipLevel->m_nHeight) && ( x< mipLevel->m_nWidth))
+                //             {
+                //                 int pixoffset =  (y*mipLevel->m_nWidth) + x;
+                //                // For Channel data RGBA 8:8:8:8 in mipset
+                //                 if (m_OriginalMipImages->mipset->m_ChannelFormat == CF_8bit)
+                //                 {
+                //                     if ((mipLevel->m_dwLinearSize > 3) && (pixoffset < mipLevel->m_dwLinearSize-3))
+                //                     {
+                //                         dispDefault = false;
+                //                         Txt.sprintf("Source RGBA (%3d,%3d,%3d,%3d)  Rendered (%3d,%3d,%3d,%3d) ", 
+                //                                   pData[pixoffset], pData[pixoffset+1], pData[pixoffset+2], pData[pixoffset+3],
+                //                                   color.red(), color.green(), color.blue(), color.alpha());
+                //                     }
+                //                 }
+                //             }
+                //          }
+                //       }
+                //    }
+                // }
+                if (dispDefault)
+                    Txt.sprintf(" Rendered RGBA (%3d,%3d,%3d,%3d)", color.red(), color.green(), color.blue(), color.alpha());
+                }
                 break;
             case eImageViewState::isDiff:
                 m_labelTxtView->setText(TXT_IMAGE_DIFF);
@@ -121,10 +157,18 @@ void cpImageView::oncpImageViewMousePosition(QPointF *scenePos, QPointF *localPo
         }
 #endif
 #endif
-            
         Txt2 = QString::number(x) + "," +QString::number(y) + " px";
         m_labelPos->setText(Txt2);
-        
+
+        if(x == 0) x = 1;
+        if(y == 0) y = 1;
+        m_source_BlockXPos = (x-1)/4;
+        m_source_BlockYPos = (y-1)/4;
+
+        Txt2 = QString::number(m_source_BlockXPos) + "," + QString::number( m_source_BlockYPos) + " (4x4)";
+
+        m_labelBlockPos->setText(Txt2);
+
         QPalette palette;
         palette.setColor(QPalette::Background, color);
         palette.setColor(QPalette::WindowText, color);
@@ -133,6 +177,7 @@ void cpImageView::oncpImageViewMousePosition(QPointF *scenePos, QPointF *localPo
     else
     {
        m_labelPos->setText("");
+       m_labelBlockPos->setText("");
        m_labelColorTxt->setText("");
        QPalette palette;
        palette.setColor(QPalette::Background, Qt::black);
@@ -141,11 +186,9 @@ void cpImageView::oncpImageViewMousePosition(QPointF *scenePos, QPointF *localPo
     }
 }
 
-#ifdef _DEBUG
 #include "cExr.h"
 #include "ImfArray.h"
 #include "ImfRgba.h"
-#endif
 
 void cpImageView::onImageDiff()
 {
@@ -190,6 +233,43 @@ void cpImageView::onImageDiff()
 void cpImageView::keyPressEvent(QKeyEvent *event)
 {
     if (m_acImageView == NULL) return;
+
+#ifndef _LINUX
+    //------------------------------------------------------------------------------------
+    // Feature enabled to allow user to copy an image view onto window system clipboard
+    // This is only available through keyboard entry using:
+    // Ctrl+C to copy the viewed image (Scaled accroding to zoom setting)
+    // Alt+C to copy using the original image size
+    // in both cases aspect ratio is maintained.
+    //------------------------------------------------------------------------------------
+    if (event->key() == Qt::Key_C)
+    {
+         bool CTRL_key = event->modifiers() & Qt::ControlModifier;
+         bool ALT_key  = event->modifiers() & Qt::AltModifier;
+         if (CTRL_key || ALT_key)
+         {
+             if (!m_acImageView->m_imageItem_Processed) return;
+
+             // Copy Scaled image size
+             if (CTRL_key)
+             {
+                int w = m_acImageView->m_imageItem_Processed->pixmap().width();
+                int h = m_acImageView->m_imageItem_Processed->pixmap().height();
+                qreal scale = m_acImageView->m_imageItem_Processed->scale(); // same value as m_ZoomLevel->value() / 100.0f
+                w = int(w * scale);
+                h = int(h * scale);
+                QPixmap pixmap = m_acImageView->m_imageItem_Processed->pixmap().scaled(w,h,Qt::KeepAspectRatio);
+                QApplication::clipboard()->setPixmap(pixmap, QClipboard::Clipboard);
+             }
+             else // Copy Original Size
+             {
+                QPixmap pixmap = m_acImageView->m_imageItem_Processed->pixmap();
+                QApplication::clipboard()->setPixmap(pixmap, QClipboard::Clipboard);
+             }
+         }
+    }
+#endif
+
     if (m_OriginalMipImages->mipset == NULL) return;
     if (!m_CBimageview_Toggle) return;
 
@@ -217,7 +297,7 @@ void cpImageView::keyPressEvent(QKeyEvent *event)
             m_ImageViewState = eImageViewState::isProcessed;
         }
         else
-            if (event->key() == Qt::Key_O) // View Original Image (Index 1)
+        if (event->key() == Qt::Key_O) // View Original Image (Index 1)
             {
                 activeview = 1;
                 m_CBimageview_Toggle->setCurrentIndex(1);
@@ -227,15 +307,15 @@ void cpImageView::keyPressEvent(QKeyEvent *event)
                 oncpImageViewMousePosition(0, &m_localPos, 0);
                 m_ImageViewState = eImageViewState::isOriginal;
             }
-            else
-                if (event->key() == Qt::Key_Space || event->key() == Qt::Key_S)
-                {
-                    if (activeview == 0)
+        else
+        if (event->key() == Qt::Key_Space || event->key() == Qt::Key_S)
+        {
+            if (activeview == 0)
                     {
                         activeview = 1;         // Original
                         m_ImageViewState = eImageViewState::isOriginal;
                     }
-                    else
+            else
                     {
                         activeview = 0;         // Processed or "Processed Diff" view
                         if (m_DiffOnOff)
@@ -244,13 +324,16 @@ void cpImageView::keyPressEvent(QKeyEvent *event)
                             m_ImageViewState = eImageViewState::isProcessed;
 
                     }
-                    m_CBimageview_Toggle->setCurrentIndex(activeview);
-                    if (m_acImageView)
-                        m_acImageView->onToggleImageViews(activeview);
-                    oncpImageViewMousePosition(0, &m_localPos, 0);
-                }
+            m_CBimageview_Toggle->setCurrentIndex(activeview);
+            if (m_acImageView)
+                m_acImageView->onToggleImageViews(activeview);
+            oncpImageViewMousePosition(0, &m_localPos, 0);
+        }
+
     }
 
+// This feature can be enabled in Debug Mode and allows users to breakpoint into various
+// codecs at the lowest block level of encoding.
 #ifdef USE_BCN_IMAGE_DEBUG
 #ifdef _DEBUG
     if (event->key() == Qt::Key_F1)
@@ -464,6 +547,120 @@ void cpImageView::keyPressEvent(QKeyEvent *event)
     return;
 }
 
+
+void cpImageView::GetSourceBlock(int BlockX, int BlockY,string filename)
+{
+    if (!m_CMips) return;
+    if (!m_OriginalMipImages) return;
+
+    // Compressed source files not supported.
+    if (m_OriginalMipImages->mipset->m_ChannelFormat == CF_Compressed)
+        return;
+
+    MipLevel   *mipLevel = m_CMips->GetMipLevel(m_OriginalMipImages->mipset, 0);
+    if (!mipLevel) return;
+
+    if (m_acImageView->m_graphicsScene->cursorBlockX != 4) return;
+    if (m_acImageView->m_graphicsScene->cursorBlockY != 4) return;
+
+#define CHANNEL_SIZE 4  // 4 channels RGBA
+#define XBLOCK_SIZE 4   // 4 pixels
+#define YBLOCK_SIZE 4   // 4 pixels
+
+    // Calc data stride for each row index = width * num channels
+    int  row_stride = m_OriginalMipImages->mipset->m_nWidth * CHANNEL_SIZE;
+
+    // Start position of the first pixel to save in the 4x4 block
+    int start_index = (BlockX*XBLOCK_SIZE*CHANNEL_SIZE) + (BlockY*row_stride*YBLOCK_SIZE);
+
+    // Incrimental start pixel index from (row,col = 0) position of each 4x4 block
+    int index;
+
+    if (m_OriginalMipImages->mipset->m_ChannelFormat == CF_Float16)
+    {
+        // Encoder input to fill with data
+        CMP_FLOAT in[16][4];
+        // Get origin data pointer
+        CMP_HALF *data = mipLevel->m_phfData;
+        half* temp = (half*)data;
+        Array2D<Rgba> pixels(4, 4);
+        pixels.resizeErase(4, 4);
+        int  d = 0;
+        for (int row = 0; row < 4; row++)
+        {
+            index = (row * row_stride) + start_index;
+            for (int col = 0; col < 4; col++)
+            {  
+                in[d][0] = (float)temp[index];
+                pixels[row][col].r.setBits(data[index]);
+                in[d][1] = (float)temp[index + 1];
+                pixels[row][col].g.setBits(data[index+1]);
+                in[d][2] = (float)temp[index + 2];
+                pixels[row][col].b.setBits(data[index+2]);
+                in[d][3] = (float)temp[index + 3];
+                pixels[row][col].a.setBits(data[index+3]);
+                d++;
+                index += 4;
+            }
+        }
+        Exr::writeRgba(filename, pixels, 4, 4);
+    }
+    else
+    if (m_OriginalMipImages->mipset->m_ChannelFormat == CF_Float32)
+    {
+        // Encoder input to fill with data
+        CMP_FLOAT in[16][4];
+        // Get origin data pointer
+        float *data = mipLevel->m_pfData;
+        Array2D<Rgba> pixels(4, 4);
+        pixels.resizeErase(4, 4);
+        int  d = 0;
+        for (int row = 0; row < 4; row++)
+          {
+              index = (row * row_stride) + start_index;
+              for (int col = 0; col < 4; col++)
+              {
+                  in[d][0] = data[index];
+                  pixels[row][col].r = data[index];
+                  in[d][1] = data[index + 1];
+                  pixels[row][col].g = data[index+1];
+                  in[d][2] = data[index + 2];
+                  pixels[row][col].b = data[index+1];
+                  in[d][3] = data[index + 3];
+                  pixels[row][col].a = data[index+1];
+                  d++;
+                  index += 4;
+              }
+          }
+        Exr::writeRgba(filename, pixels, 4, 4);
+    } // else CF_Float3
+    else
+    {
+         QColor color;
+         QPixmap pixmap(4,4);
+         QImage image = pixmap.toImage();
+
+         BYTE *data = mipLevel->m_pbData;
+         int  d = 0;
+         for (int h = 0; h < 4; h++)
+           {
+               index = (h * row_stride) + start_index;
+               for (int w = 0; w < 4; w++)
+               {
+                   color.setRed   (data[index]    );
+                   color.setGreen (data[index + 1]);
+                   color.setBlue  (data[index + 2]);
+                   color.setAlpha (data[index + 3]);
+                   image.setPixel(w, h, color.rgba());
+                   d++;
+                   index += 4;
+               }
+           }
+         image.save(filename.c_str());
+    }
+
+}
+
 void cpImageView::EnableMipLevelDisplay(int level)
 {
     if (level <= 1) return;
@@ -487,7 +684,7 @@ cpImageView::~cpImageView()
     if (m_localMipImages)
     {
         if (m_processedMipImages)
-            m_imageLoader->clearMipImages(m_processedMipImages);
+            m_imageLoader->clearMipImages(&m_processedMipImages);
         delete m_imageLoader;
         m_imageLoader = NULL;
     }
@@ -603,6 +800,7 @@ void cpImageView::InitData()
     m_labelColorTxt                         = NULL;
     m_labelColorRGBA                        = NULL;
     m_labelPos                              = NULL;
+    m_labelBlockPos                         = NULL;
     m_pMyWidget                             = NULL;
     m_pixmap                                = NULL;
     imageview_ResetImageView                = NULL;
@@ -631,6 +829,8 @@ void cpImageView::InitData()
     m_useOriginalImageCursor                = false;
     XBlockNum                               = 1;
     YBlockNum                               = 1;
+    m_source_BlockXPos                      = 1;
+    m_source_BlockYPos                      = 1;
     m_DiffOnOff                             = false;
     m_ImageViewState                        = eImageViewState::isProcessed;
 }
@@ -648,6 +848,8 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
     m_CMips = new CMIPS();
     Plastique_style = QStyleFactory::create("Plastique");
     
+    getSupportedImageFormats();
+
     if (MipImages)
     {
         if (setting->reloadImage && !setting->generateDiff && !setting->generateMips)
@@ -741,9 +943,14 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
     // Image View Context Menu Item
     m_acImageView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(m_acImageView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(onViewCustomContextMenu(const QPoint &)));
+    
     actSaveView = new QAction("Save View as...", this);
     connect(actSaveView, SIGNAL(triggered()), this, SLOT(onSaveViewAs()));
     m_viewContextMenu->addAction(actSaveView);
+
+    actSaveBlockView = new QAction(" ", this); // Text for this action item is auto set prior to context menu view
+   connect(actSaveBlockView, SIGNAL(triggered()), this, SLOT(onSaveBlockView()));
+    m_viewContextMenu->addAction(actSaveBlockView);
 
     if (Title.contains("File#"))
     {
@@ -1010,7 +1217,7 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
             {
                 if (processedImage_miplevel_max > num)
                 {
-                    QString mipLevelList = QString::number(num);
+                    QString mipLevelList = QString::number(num+1);
                     QImage *image = m_processedMipImages->Image_list[num];
                     mipLevelList.append(QString(" ("));
                     mipLevelList.append(QString::number(image->width()));
@@ -1149,6 +1356,10 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
     m_labelPos->setText("");
     m_labelPos->setAlignment(Qt::AlignLeft);
 
+    m_labelBlockPos = new QLabel(this);
+    m_labelBlockPos->setText("");
+    m_labelBlockPos->setAlignment(Qt::AlignLeft);
+
     m_labelTxtView = new QLabel(this);
     switch (setting->input_image)
     {
@@ -1182,8 +1393,8 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
     m_statusBar->addPermanentWidget(m_labelTxtView,10);
     m_statusBar->addPermanentWidget(m_labelColorTxt,40);
     m_statusBar->addPermanentWidget(m_labelPos, 40);
+    m_statusBar->addPermanentWidget(m_labelBlockPos, 20);
 
-       
     m_layout = new QGridLayout(m_newWidget);
 
     m_layout->setSpacing(0);
@@ -1302,18 +1513,230 @@ void cpImageView::onToolListChanged(int index)
 
 void cpImageView::onViewCustomContextMenu(const QPoint &point)
 {
+    if (actSaveBlockView) 
+    {
+       QString strSaveBlock;
+       strSaveBlock.sprintf("Save Source Block (%d,%d) as",m_source_BlockXPos,m_source_BlockYPos);
+       actSaveBlockView->setText(strSaveBlock);
+    }
     m_viewContextMenu->exec(m_acImageView->mapToGlobal(point));
 }
 
 void cpImageView::onSaveViewAs()
 {
-    if (m_acImageView)
+    if (m_acImageView && actSaveBlockView)
     {
-        QString filePathName = QFileDialog::getSaveFileName(this, tr("Save Image View as"), "ImageView", tr("Image View files (*.bmp)"));
-        if (filePathName.length() == 0) return;
-        QPixmap pixmap = m_acImageView->m_imageItem_Processed->pixmap();
-        QImage img = pixmap.toImage();
-        img.save(filePathName);
+        QString ImageFilter;
+        ImageFilter = m_QtImageFilter;
+        bool hasFloatData = false;
+
+        // Add EXR if source is HDR
+        if (m_processedMipImages)
+        {
+            if ((m_processedMipImages->mipset->m_ChannelFormat == CF_Float16) || (m_processedMipImages->mipset->m_ChannelFormat == CF_Float32))
+            {
+                ImageFilter.insert(ImageFilter.length() - 1, "*.exr;");
+            }
+        }
+  
+        if (!hasFloatData)
+                ImageFilter.insert(ImageFilter.length() - 1, "*.bmp;");
+ 
+        QFileInfo fileInfo(m_fileName);
+        QDir dir(fileInfo.absoluteDir());
+        QString SuggetedFileNamePath;
+        SuggetedFileNamePath = dir.absolutePath();
+        SuggetedFileNamePath.append("/");
+        SuggetedFileNamePath.append(fileInfo.baseName());
+
+        // Set suggested file target type
+        if (hasFloatData)
+        {
+            SuggetedFileNamePath.append("_view.dds");
+        }
+        else
+            SuggetedFileNamePath.append("_view.bmp");
+
+        std::string ext;
+        QString filePathName;
+        bool done = false;
+        do
+        {
+            filePathName = QFileDialog::getSaveFileName(this, tr("Save Image View as"), SuggetedFileNamePath,ImageFilter);
+            if (filePathName.length() == 0) return;
+            ext = CMP_GetFilePathExtension(filePathName.toStdString());
+            transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+            string  supported_ExtListings = ImageFilter.toStdString();
+            if (supported_ExtListings.find(ext) != std::string::npos)
+            {
+                done = true;
+            }
+            else
+            {
+               if (QMessageBox::question(this, "Save Image View", "File extension is not supported try again?", QMessageBox::Yes | QMessageBox::No) == QMessageBox::No)
+                    return;
+            }
+
+        }
+        while (!done);
+
+        // get file extension to choose for Qt file or Compressonator File save using .dds,.ktx or .exr plugins
+        if (    (ext.compare("exr") == 0)
+            ||  (ext.compare("dds") == 0)
+            ||  (ext.compare("ktx") == 0)
+            )
+        {
+            int mipLevel = 0;
+            if (m_CBimageview_MipLevel)
+            {
+                mipLevel = m_CBimageview_MipLevel->currentIndex();
+            }
+            
+            if (m_processedMipImages && hasFloatData)
+            {
+                if (mipLevel > 0)
+                {
+                    MipLevel* pInMipLevel = m_CMips->GetMipLevel(m_processedMipImages->mipset, mipLevel);
+
+                    if (pInMipLevel == NULL)
+                    {
+                        PrintInfo("Error: MipLevel Data failed to retrieved.");
+                        return;
+                    }
+
+                    // Create a temporary mipset for saving the miplevel data
+                    MipSet *pMipLevelMipSet;
+                    pMipLevelMipSet = new MipSet();
+                    if (pMipLevelMipSet == NULL)
+                    {
+                        PrintInfo("Error: Failed to allocate mipset for saving.");
+                        return;
+                    }
+                    memset(pMipLevelMipSet, 0, sizeof(MipSet));
+
+                    // Set the channel formats and mip levels
+                    pMipLevelMipSet->m_ChannelFormat = m_processedMipImages->mipset->m_ChannelFormat;
+                    pMipLevelMipSet->m_TextureDataType = m_processedMipImages->mipset->m_TextureDataType;
+                    pMipLevelMipSet->m_dwFourCC = m_processedMipImages->mipset->m_dwFourCC;
+                    pMipLevelMipSet->m_dwFourCC2 = m_processedMipImages->mipset->m_dwFourCC2;
+                    pMipLevelMipSet->m_TextureType = m_processedMipImages->mipset->m_TextureType;
+                    pMipLevelMipSet->m_nWidth = m_processedMipImages->Image_list[mipLevel]->width();
+                    pMipLevelMipSet->m_nHeight = m_processedMipImages->Image_list[mipLevel]->height();
+
+                    // Allocate default MipSet header
+                    m_CMips->AllocateMipSet(pMipLevelMipSet,
+                        pMipLevelMipSet->m_ChannelFormat,
+                        pMipLevelMipSet->m_TextureDataType,
+                        pMipLevelMipSet->m_TextureType,
+                        m_processedMipImages->Image_list[mipLevel]->width(),
+                        m_processedMipImages->Image_list[mipLevel]->height(),
+                        1);
+
+                    // Determin buffer size and set Mip Set Levels we want to use for now
+                    MipLevel *mipLevelInfo = m_CMips->GetMipLevel(pMipLevelMipSet, 0);
+                    pMipLevelMipSet->m_nMipLevels = 1;
+                    m_CMips->AllocateMipLevelData(mipLevelInfo, pMipLevelMipSet->m_nWidth, pMipLevelMipSet->m_nHeight, pMipLevelMipSet->m_ChannelFormat, pMipLevelMipSet->m_TextureDataType);
+
+                    // We have allocated a data buffer to fill get its referance
+                    mipLevelInfo->m_pbData = pInMipLevel->m_pbData;
+                    AMDSaveMIPSTextureImage(filePathName.toStdString().c_str(), pMipLevelMipSet, false, g_CmdPrams.CompressOptions);
+
+                    // delete the temporary mipset used for saving
+                    delete pMipLevelMipSet;
+                }
+                else
+                    AMDSaveMIPSTextureImage(filePathName.toStdString().c_str(), m_processedMipImages->mipset, false, g_CmdPrams.CompressOptions);
+            }
+            else
+            {
+                if (m_OriginalMipImages)
+                {
+                    AMDSaveMIPSTextureImage(filePathName.toStdString().c_str(), m_OriginalMipImages->mipset, false, g_CmdPrams.CompressOptions);
+                }
+                    
+            }
+        }
+        else
+        {
+            QPixmap pixmap = m_acImageView->m_imageItem_Processed->pixmap();
+            QImage img = pixmap.toImage();
+            img.save(filePathName);
+        }
+    }
+}
+
+void cpImageView::getSupportedImageFormats()
+{
+   m_QtImageFilter = "Images (";
+
+#ifdef USE_SaveViewAs_ALL_FILE_FORMATS
+   // Get a list of all Supported file formats from Qt Plugins
+   QList<QByteArray> QtFormats = QImageReader::supportedImageFormats();
+  
+   // Upppercase List
+   QList<QByteArray>::Iterator i;
+   for (i = QtFormats.begin(); i != QtFormats.end(); ++i)
+   {
+       QByteArray fformat = (*i);
+       fformat = fformat.toUpper();
+       m_QtImageFilter.append("*.");
+       m_QtImageFilter.append(fformat);
+       m_QtImageFilter.append(";");
+   }
+
+   // Add DDS and KTX
+   m_QtImageFilter.append("*.dds;*.ktx;");
+#else
+   m_QtImageFilter.append("*.dds;");
+#endif
+   m_QtImageFilter.append(")");
+}
+
+void cpImageView::onSaveBlockView()
+{
+    if (m_acImageView && m_OriginalMipImages)
+    {
+
+        QString ImageFilter;
+
+        if ((m_OriginalMipImages->mipset->m_ChannelFormat == CF_Float16)||(m_OriginalMipImages->mipset->m_ChannelFormat == CF_Float32))
+            ImageFilter = "Image files (*.exr)";
+        else
+            ImageFilter = "Image files (*.bmp)";;
+
+
+        QFileInfo fileInfo(m_fileName);
+        QDir dir(fileInfo.absoluteDir());
+        QString SuggetedFileNamePath;
+        SuggetedFileNamePath = dir.absolutePath();
+        SuggetedFileNamePath.append("/");
+        SuggetedFileNamePath.append(fileInfo.baseName());
+        SuggetedFileNamePath.append("_" + QString::number(m_source_BlockXPos) + "_" + QString::number(m_source_BlockYPos));
+
+        std::string ext;
+        QString filePathName;
+        bool done = false;
+        do
+        {
+            filePathName = QFileDialog::getSaveFileName(this, tr("Save Block Image as"), SuggetedFileNamePath, ImageFilter);
+            if (filePathName.length() == 0) return;
+            ext = CMP_GetFilePathExtension(filePathName.toStdString());
+            transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+            string  supported_ExtListings = ImageFilter.toStdString();
+            if (supported_ExtListings.find(ext) != std::string::npos)
+            {
+                done = true;
+            }
+            else
+            {
+               if (QMessageBox::question(this, "Save Block Image", "File extension is not supported try again?", QMessageBox::Yes | QMessageBox::No) == QMessageBox::No)
+                    return;
+            }
+        }
+        while (!done);
+
+        // Create the 4x4 image block from MipSet data and save to file
+        GetSourceBlock(m_source_BlockXPos,m_source_BlockYPos,filePathName.toStdString());
     }
 }
 

@@ -478,7 +478,9 @@ void Vulkan_Renderer::LoadScene(GLTFCommon *gltfData, void *pluginManager, void 
         &m_Heaps,
         &m_ConstantBufferRing,
         &m_StaticBufferPool,
-        gltfData
+        gltfData,
+        pluginManager,
+        msghandler
     );
 
     m_gltfPBR = new GltfPbrVK();

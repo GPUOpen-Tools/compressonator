@@ -129,20 +129,23 @@ CCodec_ASTC::~CCodec_ASTC()
                 }
             }
 
+            for (unsigned int i = 0; i < m_LiveThreads; i++)
+            {
+                std::thread& curThread = m_EncodingThreadHandle[i];
+
+                curThread = std::thread();
+            }
+
+            delete[] m_EncodingThreadHandle;
         } // MultiThreading
 
-        for (unsigned int i = 0; i < m_LiveThreads; i++)
-        {
-            std::thread& curThread = m_EncodingThreadHandle[i];
-
-            curThread = std::thread();
-        }
-
-        delete[] m_EncodingThreadHandle;
         m_EncodingThreadHandle = NULL;
 
-        delete[] g_EncodeParameterStorage;
-        g_EncodeParameterStorage = NULL;
+        if (g_EncodeParameterStorage)
+        {
+            delete[] g_EncodeParameterStorage;
+            g_EncodeParameterStorage = NULL;
+        }
 
 
         for (int i = 0; i < m_NumEncodingThreads; i++)
@@ -825,7 +828,7 @@ CodecError CCodec_ASTC::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferO
                     outImgCol = outCol;
                     for (int col = 0; col < Block_Width; col++)
                     {
-                        int w = outImgCol + col;
+                        CMP_DWORD w = outImgCol + col;
                         if (w < imageWidth)
                         {
                             int index = row*Block_Width + col;
