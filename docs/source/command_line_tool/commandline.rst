@@ -1,7 +1,5 @@
-Command Line Options
+﻿Command Line Options
 ====================
-This document will be updated during V3.1 development
-
 Usage CompressonatorCLI.exe [options] SourceFile DestFile
 
 +------------------------+----------------------------------------------+
@@ -110,10 +108,8 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 |                       |alpha.  Eight bits per pixel                               |
 +-----------------------+-----------------------------------------------------------+
 |BC4                    |Single component compressed texture format for Microsoft   |
-|                       |DXGI_FORMAT_BC4_UNORM.                                     |
 +-----------------------+-----------------------------------------------------------+
 |BC5                    |Two component compressed texture format for Microsoft      |
-|                       |DXGI_FORMAT_BC5_UNORM.                                     |
 +-----------------------+-----------------------------------------------------------+
 |BC6H                   |High-Dynamic Range  compression format                     |
 +-----------------------+-----------------------------------------------------------+
@@ -151,7 +147,11 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 +-----------------------+-----------------------------------------------------------+
 |ETC_RGB                |Ericsson Texture Compression - Compressed RGB format.      |
 +-----------------------+-----------------------------------------------------------+
-|ETC2_RGB               |Ericsson Texture Compression - Compressed RGB format.      |
+|ETC2_RGB               |Ericsson Texture Compression 2 - RGB format                |
++-----------------------+-----------------------------------------------------------+
+|ETC2_RGBA              |RGB with 8 bit alpha 	                                    |
++-----------------------+-----------------------------------------------------------+
+|ETC2_RGBA1             |RGB with 1 bit alpha                                       |
 +-----------------------+-----------------------------------------------------------+
 
 +-----------------------------+----------------------------------------------------------+
@@ -215,6 +215,16 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 +-----------------------------+----------------------------------------------------------+
 |-imageprops <image>          |Print image properties of image files specifies.          |
 +-----------------------------+----------------------------------------------------------+
+|-log                         |Logs process information to a process_results.txt file    |
+|                             |containing file info, performance data,SSIM,PSNR and MSE. |
++-----------------------------+----------------------------------------------------------+
+|-log <filename>              |Logs process information to a user defined text file      |
++-----------------------------+----------------------------------------------------------+
+|-ff  <ext>,<ext>,...,<ext>   |File filters used for processing a list of image files    |
+|                             |with specified extensions in a given directory folder     |
+|                             |supported <ext> are any of the following combinations:    |
+|                             |DDS,KTX,TGA,EXR,PNG,BMP,HDR,JPG,TIFF,PPM                  |
++-----------------------------+----------------------------------------------------------+
 
 
 +-----------------------------+----------------------------------------------------------+
@@ -242,61 +252,106 @@ Example decompression from compressed image using CPU
 CompressonatorCLI.exe  result.dds image.bmp
 
 
-Example decompression from compressed image using GPU
------------------------------------------------------
-CompressonatorCLI.exe  -UseGPUDecompress result.dds image.bmp
+Compression followed by Decompression
+-------------------------------------
+(Useful for qualitative analysis)
 
-Example compression with decompressed result (Useful for qualitative analysis)
-------------------------------------------------------------------------------
-CompressonatorCLI.exe -fd BC7  image.bmp result.bmp |br|
-CompressonatorCLI.exe -fd BC6H image.exr result.exr
+CompressonatorCLI.exe -fd BC7  image.bmp result.bmp
 
 
-Example mesh compression usage (support glTF and obj file only)
----------------------------------------------------------------
-Using default quantization bits settings as mentioned above:
+GPU based decompression 
+------------------------
+CompressonatorCLI.exe  -DecodeWith OpenGL result.dds image.bmp
+
+
+Mesh Compression
+----------------
+(support glTF and obj file only)
+
+Mesh compression using only default quantization bits settings as mentioned above:
 CompressonatorCLI.exe -draco source.gltf dest.gltf
 
-Specifies quantization bits settings:
-CompressonatorCLI.exe -draco -dracolvl 7 -qpos 12 -qtexc 8 -qnorm 8 source.gltf dest.gltf
+CLI mesh compression is performed with google Draco library with settings:
+compression level as 7, 
+quantization bits for position as 14, 
+quantization bits value for texture coordinates as 12,
+quantization bits value for normal as 10.
 
-CLI mesh compression with draco settings include:
+Mesh Decompression
+------------------
+(support glTF and obj file only)
 
--dracolvl <value> → compression level (value range 0-10: higher mean more compressed) - default 7
-
--qpos <value> → quantization bits value for position (value range 0-32) - default 14
-
--qtexc <value> → quantization bits value for texture coordinates (value range 0-32) - default 12
-
--qnorm <value> → quantization bits value for normal (value range 0-32) - default 10
-
-
-Example mesh decompression usage (support glTF and obj file only)
------------------------------------------------------------------
 CompressonatorCLI.exe source.gltf dest.gltf
 
 
-Example mesh optimization usage (support glTF and obj file only)
-----------------------------------------------------------------
-Using default settings: Optimize vertices with cache size= 16; Optimize overdraw with ACMR Threshold= 1.05; Optimize vertices fetch.
+Mesh Optimization
+-----------------
+(support glTF and obj file only)
+
+Using default settings:|br|
+Optimize vertices with cache size= 16; Optimize overdraw with ACMR Threshold= 1.05; Optimize vertices fetch.|br|
+
 CompressonatorCLI.exe -meshopt source.gltf dest.gltf
 CompressonatorCLI.exe -meshopt source.obj dest.obj
 
-Specifies settings:
+Specifies settings:|br|
 CompressonatorCLI.exe -meshopt -optVCacheSize  32 -optOverdrawACMRThres  1.03 -optVFetch 0 source.gltf dest.gltf
 
-CLI mesh optimization include settings: 
+CLI mesh optimization include settings:
 
--optVCacheSize  <value> → optimize vertices with hardware cache size in the value specified  (value range 1- no limit as it allows users to simulate hardware cache size to find the most optimum size)- default is enabled with cache size = 16
++-------------------------------+---------------------------------------------------------------------------------------+
+|-optVCacheSize <value>         | optimize vertices with hardware cache size in the value specified                     |
+|                               | Default is enabled with cache size = 16                                               |
++-------------------------------+---------------------------------------------------------------------------------------+
+|-optVCacheFIFOSize <value>     | optimize vertices with hardware FIFO cache size in the value specified                |
+|                               | Default is disabled                                                                   |
++-------------------------------+---------------------------------------------------------------------------------------+
+|-optOverdrawACMRThres <value>  | optimize overdraw with ACMR (average cache miss ratio) threshold value                |
+|                               | specified (value range 1-3) default is enabled with ACMR                              |
+|                               | value = 1.05 (i.e. 5% worse)                                                          |
++-------------------------------+---------------------------------------------------------------------------------------+
+|-optVFetch <boolean value>     | optimize vertices fetch . boolean value 0 - disabled, 1-enabled. -default is enabled. |
++-------------------------------+---------------------------------------------------------------------------------------+
+|-simplifyMeshLOD <value>       | simplify mesh using LOD (Level of Details) value specified.                           |
+|                               | (value range 1- no limit as it allows users to simplify the mesh until the level      |
+|                               | they desired. Higher level means less triangles drawn, less details.)                 |
++-------------------------------+---------------------------------------------------------------------------------------+
 
--optVCacheFIFOSize  <value> → optimize vertices with hardware FIFO cache size in the value specified (value range 1- no limit as it allows users to simulate hardware cache size to find the most optimum size) - default is disabled
 
--optOverdrawACMRThres  <value> → optimize overdraw with ACMR (average cache miss ratio) threshold value specified (value range 1-3) - default is enabled with ACMR value = 1.05 (i.e. 5% worse)
+Test Analysis Logging Features and File Filters
+-----------------------------------------------
+(Windows OS only)
 
--optVFetch <boolean value> → optimize vertices fetch . boolean value 0 - disabled, 1-enabled. -default is enabled. 
 
--simplifyMeshLOD <value> → simplify mesh using LOD (Level of Details) value specified.(value range 1- no limit as it allows users to simplify the mesh until the level they desired. Higher level means less triangles drawn, less details.)
+CLI will generate an output "process_results.txt" when -log is added to the compression command line options, users can change the default log file using the command -logfile, the log captures details of the source and destination files along with statistical data on performance and quality.
 
+Example:
+
+|image127|
+
+Generates a "process_results.txt"  file with content:
+
+|image128|
+
+Multiple processes will append results to this file with a dash line separator. The option is valid only for compressing images and not for 3D models or image transcoding.
+
+
+The new CLI also support processing image files from a folder, without the need to specify a file name. Using a file filter, specific files types can also be selected for compression as needed.
+
+Examples:
+
+|image129|
+
+Processes all image file with BC7 Compression into results folder
+
+|image130|
+
+Processes only images with extension bmp, png and exr.  Notice that BC7 compression is been applied to HDR images, this is an automatic Adaptive Channel Format feature (ACF) that transcodes the image half float channels to byte prior to processing.
+
+.. |image127| image:: ../gui_tool/user_guide/media/image127.png
+.. |image128| image:: ../gui_tool/user_guide/media/image128.png
+.. |image129| image:: ../gui_tool/user_guide/media/image129.png
+.. |image130| image:: ../gui_tool/user_guide/media/image130.png
 .. |br| raw:: html
 
    <br />

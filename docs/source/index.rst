@@ -1,4 +1,4 @@
-Compressonator
+﻿Compressonator
 ==============
 **Compressonator SDK source URL:** 
 https://github.com/GPUOpen-Tools/Compressonator
@@ -23,7 +23,7 @@ Compressonator supports Microsoft Windows®, Linux and Mac builds.
    gui_tool/index
    build_from_source/index
    analysis/index
-   tutorials/index
+   revisions
    support/contact
    support/license
   

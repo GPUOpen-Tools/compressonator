@@ -1,26 +1,30 @@
 Mesh Compression
 ================
 
-To use glTF draco mesh compresssion or decompression, please include the headers and source file below in your application:
+To use glTF draco mesh compresssion or decompression, please include the headers and source files below in your application:
 
-Compressonator\Header\Compressonator.h
-Compressonator\Header\Common.h
-Compressonator\Header\Version.h
-Compressonator\Applications\_Plugins\Common\json\json.h
-Compressonator\Applications\_Plugins\Common\gltf\tiny_gltf2.h
-Compressonator\Applications\_Plugins\Common\gltf\tiny_gltf2_utils.h
-Compressonator\Applications\_Plugins\Common\gltf\tiny_gltf2_utils.cpp
+`Compressonator\\Header\\Compressonator.h <https://github.com/GPUOpen-Tools/Compressonator/blob/master/Compressonator/Header/Compressonator.h>`_
+`Compressonator\\Header\\Common.h <https://github.com/GPUOpen-Tools/Compressonator/blob/master/Compressonator/Header/Common.h>`_
+`Compressonator\\Header\\Version.h <https://github.com/GPUOpen-Tools/Compressonator/blob/master/Compressonator/Header/Version.h>`_
+`Compressonator\\Applications\\_Plugins\\Common\\json\\json.h <https://github.com/GPUOpen-Tools/Compressonator/blob/master/Compressonator/Applications/_Plugins/Common/json/json.h>`_
+`Compressonator\\Applications\\_Plugins\\Common\\gltf\\tiny_gltf2.h <https://github.com/GPUOpen-Tools/Compressonator/blob/master/Compressonator/Applications/_Plugins/Common/gltf/tiny_gltf2.h>`_
+`Compressonator\\Applications\\_Plugins\\Common\\gltf\\tiny_gltf2_utils.h <https://github.com/GPUOpen-Tools/Compressonator/blob/master/Compressonator/Applications/_Plugins/Common/gltf/tiny_gltf2_utils.h>`_
+`Compressonator\\Applications\\_Plugins\\Common\\gltf\\tiny_gltf2_utils.cpp <https://github.com/GPUOpen-Tools/Compressonator/blob/master/Compressonator/Applications/_Plugins/Common/gltf/tiny_gltf2_utils.cpp>`_
 
 and set the draco directory as shown below as your include directory, also include the library 
-CMP_MeshCompressor_MD.lib 
-Compressonator\Source\CMP_MeshCompressor\Draco\src\
+
+**CMP_MeshCompressor_MD.lib** (which you can build this lib from CMP_MeshCompressor.vcxproj (in Debug_MD/Release_MD configuration) located `here <https://github.com/GPUOpen-Tools/Compressonator/tree/master/Compressonator/VS2015>`_ .)
+`Compressonator\\Source\\CMP_MeshCompressor\\Draco\\src\\ <https://github.com/GPUOpen-Tools/Compressonator/tree/master/Compressonator/Source/CMP_MeshCompressor/Draco/src/draco>`_
+
 in your application.
 
 Then, you can use the mesh compression/decompression provided in Compressonator by adding the following lines:
-	
-	//========================================
-	// Mesh Compression and Decompression
-	//========================================
+
+.. code-block:: c
+
+    //========================================
+    // Mesh Compression and Decompression
+    //========================================
     std::string         src_file = "source.gltf";       //input source glTF file
     std::string         dst_file = "destination.gltf";  //output destination glTF file
     std::string         err;                            //error messages
@@ -41,6 +45,7 @@ Then, you can use the mesh compression/decompression provided in Compressonator 
     err.clear();
 
     CMP_CompressOptions CompressOptions;
+    // it is recommended to use only default settings, other settings may result in corrupt in resource like texture.
     CompressOptions.iCmpLevel    = CMP_MESH_COMP_LEVEL;    //setting: compression level (range 0-10: higher mean more compressed) - default 7
     CompressOptions.iPosBits     = CMP_MESH_POS_BITS;      //setting: quantization bits for position - default 14
     CompressOptions.iTexCBits    = CMP_MESH_TEXC_BITS;     //setting: quantization bits for texture coordinates - default 12
@@ -53,49 +58,51 @@ Then, you can use the mesh compression/decompression provided in Compressonator 
         printf("write success");
     else
         printf("write fail: %s", err);
-	//==========================================
-	// end of Mesh Compression and Decompression
-	//==========================================
+    //==========================================
+    // end of Mesh Compression and Decompression
+    //==========================================
 
 Helper function
-================	
+---------------
 
-//Utility function to check for glTF draco compressed file
-bool isGLTFCompressedFile(std::string filename)
-{
-    nlohmann::json j3;
-    std::ifstream  f(filename);
-    if (!f)
+.. code-block:: c
+
+    //Utility function to check for glTF draco compressed file
+    bool isGLTFCompressedFile(std::string filename)
     {
+        nlohmann::json j3;
+        std::ifstream  f(filename);
+        if (!f)
+        {
+            return false;
+        }
+    
+        f >> j3;
+    
+        auto extrequired = j3["extensionsRequired"];
+    
+        for (int i = 0; i < extrequired.size(); i++)
+        {
+            std::string extname = extrequired[i].get<std::string>();
+            if (extname.find("KHR_draco_mesh_compression") != string::npos)
+            {
+                return true;
+            }
+        }
+    
+        auto extused = j3["extensionsUsed"];
+    
+        for (int j = 0; j < extused.size(); j++)
+        {
+            std::string extnameused = extused[j].get<std::string>();
+            if (extnameused.find("KHR_draco_mesh_compression") != string::npos)
+            {
+                return true;
+            }
+        }
+    
         return false;
     }
-
-    f >> j3;
-
-    auto extrequired = j3["extensionsRequired"];
-
-    for (int i = 0; i < extrequired.size(); i++)
-    {
-        std::string extname = extrequired[i].get<std::string>();
-        if (extname.find("KHR_draco_mesh_compression") != string::npos)
-        {
-            return true;
-        }
-    }
-
-    auto extused = j3["extensionsUsed"];
-
-    for (int j = 0; j < extused.size(); j++)
-    {
-        std::string extnameused = extused[j].get<std::string>();
-        if (extnameused.find("KHR_draco_mesh_compression") != string::npos)
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
 
 	
 .. toctree::

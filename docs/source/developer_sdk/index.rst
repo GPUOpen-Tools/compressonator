@@ -8,6 +8,3 @@ Developer SDK
    codecs/index
    mesh_optimization/index
    mesh_compression/index
-   transcoding/index
-   radeon_powered_compression/index
-   
