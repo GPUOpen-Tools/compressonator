@@ -79,7 +79,7 @@ free(destTexture.pData);
 ## Compressonator CLI
 Command line application that can be batch processed and supports:
 
-- Texture Compression, Decompression, Format Trancoding.
+- Texture Compression, Decompression, Format Transcoding.
 - 3D Model Optimization and Mesh Compression.
 - Performance and Analysis Logs such as SSIM, MSE, PSNR, MIP Maps, Image Differences, etc. ...
 
