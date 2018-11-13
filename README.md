@@ -77,8 +77,11 @@ free(destTexture.pData);
 ```
 
 ## Compressonator CLI
-- Supports Textures, 3D Model Optimization and Mesh Compression
-- Performance and Analysis Logs such as SSIM, MSE, PSNR, MIP Maps, Image Differances, ...
+Command line application that can be batch processed and supports:
+
+- Texture Compression, Decompression, Format Trancoding.
+- 3D Model Optimization and Mesh Compression.
+- Performance and Analysis Logs such as SSIM, MSE, PSNR, MIP Maps, Image Differences, etc. ...
 
 ![screenshot cli1](https://github.com/GPUOpen-Tools/Compressonator/blob/master/docs/source/gui_tool/user_guide/media/image129.png)
 
@@ -88,8 +91,10 @@ free(destTexture.pData);
 
 
 ## Compressonator GUI
-- Image Processing: MIP Maps, Differances, Analysis, etc ...
-- Supports Textures, 3D model optimization and mesh compression
+Comprehensive graphical application that can be used to visualize Images and 3D Models, with support for:
+
+- Image Processing: MIP Maps, Differences, Analysis, etc. ...
+- 3D Model Optimization and Mesh Compression.
 
 ![screenshot 1](https://github.com/GPUOpen-Tools/Compressonator/blob/master/docs/source/gui_tool/user_guide/media/image51.png)
 
