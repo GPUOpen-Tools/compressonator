@@ -15,7 +15,7 @@ To build the source files follow the instructions in http://compressonator.readt
 
 ## Compressonator SDK
 
-Compressonator SDK’s supported codecs includes BC1-BC7/DXTC, ETC1, ETC2, ASTC, ATC, ATI1N, ATI2N, available in a single library.
+Compressonator SDK supported codecs includes BC1-BC7/DXTC, ETC1, ETC2, ASTC, ATC, ATI1N, ATI2N, all available in a single library.
 
 A simple thread safe interface can compress, decompress and transcode any image as required
 
@@ -77,8 +77,8 @@ free(destTexture.pData);
 ```
 
 ## Compressonator CLI
-Supports Textures, 3D Model Optimization and Mesh Compression
-Performance and Analysis Logs: SSIM, PSNR MIP Maps, Image Differances, ...
+- Supports Textures, 3D Model Optimization and Mesh Compression
+- Performance and Analysis Logs such as SSIM, MSE, PSNR, MIP Maps, Image Differances, ...
 
 ![screenshot cli1](https://github.com/GPUOpen-Tools/Compressonator/blob/master/docs/source/gui_tool/user_guide/media/image129.png)
 
@@ -88,8 +88,8 @@ Performance and Analysis Logs: SSIM, PSNR MIP Maps, Image Differances, ...
 
 
 ## Compressonator GUI
-Image Processing: MIP Maps, Differances, Analysis, etc ...
-Supports Textures, 3D model optimization and mesh compression
+- Image Processing: MIP Maps, Differances, Analysis, etc ...
+- Supports Textures, 3D model optimization and mesh compression
 
 ![screenshot 1](https://github.com/GPUOpen-Tools/Compressonator/blob/master/docs/source/gui_tool/user_guide/media/image51.png)
 
