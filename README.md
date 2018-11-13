@@ -94,6 +94,7 @@ Command line application that can be batch processed and supports:
 Comprehensive graphical application that can be used to visualize Images and 3D Models, with support for:
 
 - Image Processing: MIP Maps, Differences, Analysis, etc. ...
+- Texture Compression, Decompression, Format Transcoding.
 - 3D Model Optimization and Mesh Compression.
 
 ![screenshot 1](https://github.com/GPUOpen-Tools/Compressonator/blob/master/docs/source/gui_tool/user_guide/media/image51.png)
