@@ -22,6 +22,7 @@
 //===================================================================== 
 
 #include "cpMainComponents.h"
+#include "tiny_gltf2_utils.h"
 #include "Version.h"
 
 static signalMsgHandler static_msghandler;
@@ -99,7 +100,7 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     openAct                 = NULL;
     saveAct                 = NULL;
     saveAsAct               = NULL;
-    saveImageAct           = NULL;
+    saveImageAct            = NULL;
     openImageFileAct        = NULL;
     exportAct               = NULL;
     exitAct                 = NULL;
@@ -2011,6 +2012,18 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
             else
             if ((levelType == TREETYPE_3DMODEL_DATA))
             {
+                if (g_Application_Options.getGLTFRender() == C_Application_Options::RenderModelsWith::glTF_Vulkan)
+                {
+                    // V3.1 does not support models with no textures
+                     if (!hasGLTFTextures(fileName.toStdString()))
+                     {
+                        QMessageBox::warning(this, "Vulkan Model Render",
+                                            "Preview version : Support models with textures only",
+                                            QMessageBox::Ok);
+                        throw "";
+                    }
+                }
+
                 m_imageview = NULL;
                 // Get ImageFile Data
                 QVariant v = item->data(TREE_SourceInfo, Qt::UserRole);
@@ -2036,6 +2049,19 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
             else
             if (levelType == TREETYPE_3DSUBMODEL_DATA)
             {
+
+                if (g_Application_Options.getGLTFRender() == C_Application_Options::RenderModelsWith::glTF_Vulkan)
+                {
+                    // V3.1 does not support models with no textures
+                     if (!hasGLTFTextures(fileName.toStdString()))
+                     {
+                        QMessageBox::warning(this, "Vulkan Model Render",
+                                            "Preview version : Support models with textures only",
+                                            QMessageBox::Ok);
+                        throw "";
+                    }
+                }
+
                 m_imageview = NULL;
                 // Get ImageFile Data
                 QVariant v = item->data(TREE_SourceInfo, Qt::UserRole);
@@ -2061,6 +2087,19 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
             else
             if (levelType == TREETYPE_VIEWMESH_ONLY_NODE)
             {
+
+                if (g_Application_Options.getGLTFRender() == C_Application_Options::RenderModelsWith::glTF_Vulkan)
+                {
+                    // V3.1 does not support models with no textures
+                     if (!hasGLTFTextures(fileName.toStdString()))
+                     {
+                        QMessageBox::warning(this, "Vulkan Model Render",
+                                            "Preview version : Support models with textures only",
+                                            QMessageBox::Ok);
+                        throw "";
+                    }
+                }
+
                 m_imageview = NULL;
                 // Get ImageFile Data
                 QVariant v = item->data(TREE_SourceInfo, Qt::UserRole);
@@ -2086,6 +2125,19 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
             else
             if (levelType == TREETYPE_MESH_DATA)
             {
+
+                if (g_Application_Options.getGLTFRender() == C_Application_Options::RenderModelsWith::glTF_Vulkan)
+                {
+                    // V3.1 does not support models with no textures
+                     if (!hasGLTFTextures(fileName.toStdString()))
+                     {
+                        QMessageBox::warning(this, "Vulkan Model Render",
+                                            "This version of the render support models with textures only",
+                                             QMessageBox::Ok);
+                        throw "";
+                    }
+                }
+
                 m_imageview = NULL;
                 // Get ImageFile Data
                 QVariant v = item->data(TREE_SourceInfo, Qt::UserRole);

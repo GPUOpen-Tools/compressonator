@@ -4853,6 +4853,24 @@ namespace tinygltf2
 }  // namespace tinygltf2
 
 
+bool hasGLTFTextures(std::string filename)
+{
+    nlohmann::json j3;
+    std::ifstream  f(filename);
+    if (!f)
+    {
+        return false;
+    }
+
+    f >> j3;
+
+    auto textures = j3["textures"];
+
+    return textures.size() > 0;
+}
+
+
+
 bool isGLTFDracoFile(std::string filename)
 {
     nlohmann::json j3;
@@ -4888,6 +4906,7 @@ bool isGLTFDracoFile(std::string filename)
 
     return false;
 }
+
 
 bool decompressglTFfile(std::string srcFile, std::string tempdstFile, bool useDracoEncode, CMP_CompressOptions& option)
 {

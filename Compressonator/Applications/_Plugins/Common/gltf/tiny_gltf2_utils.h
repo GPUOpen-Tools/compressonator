@@ -38,6 +38,9 @@
 #ifndef TINYGLTF_NO_STB_IMAGE_WRITE
 #include "./stb_image_write.h"
 #endif
+
 bool isGLTFDracoFile(std::string filename);
+bool hasGLTFTextures(std::string filename);
 bool decompressglTFfile(std::string srcFile, std::string tempdstFile, bool useDracoEncode, CMP_CompressOptions& option);
+
 #endif
