@@ -24,6 +24,9 @@ A simple thread safe interface can compress, decompress and transcode any image 
 **Usage**
 
 ```c++
+#include "Compressonator.h"
+...
+
 //==========================
 // Load Source Texture
 //==========================
@@ -32,7 +35,7 @@ CMP_Texture srcTexture;
 // you can also initialize the source CMP_Texture the same way as initialize destination CMP_Texture
 if (!LoadDDSFile(pszSourceFile, srcTexture))
 {
-...
+  ...
 }
 
 //===================================
@@ -45,7 +48,7 @@ destTexture.dwHeight   = srcTexture.dwHeight;
 destTexture.dwPitch    = 0;
 destTexture.format     = CMP_FORMAT_BC6H;
 destTexture.dwDataSize = CMP_CalculateBufferSize(&destTexture);
-destTexture.pData = (CMP_BYTE*)malloc(destTexture.dwDataSize);
+destTexture.pData      = (CMP_BYTE*)malloc(destTexture.dwDataSize);
 
 //==========================
 // Set Compression Options
@@ -62,14 +65,16 @@ CMP_ERROR   cmp_status;
 cmp_status = CMP_ConvertTexture(&srcTexture, &destTexture, &options, &CompressionCallback, NULL, NULL);
 if (cmp_status != CMP_OK)
 {
-...
+  ...
 }
 
 //==========================
 // Save Compressed Testure
 //==========================
-if (cmp_status == CMP_OK)
-    SaveDDSFile(pszDestFile, destTexture);
+if (!SaveDDSFile(pszDestFile, destTexture))
+{
+  ...
+}
 
 free(srcTexture.pData);
 free(destTexture.pData);
@@ -81,7 +86,8 @@ Command line application that can be batch processed and supports:
 
 - Texture Compression, Decompression, Format Transcoding.
 - 3D Model Optimization and Mesh Compression.
-- Performance and Analysis Logs such as SSIM, MSE, PSNR, MIP Maps, Image Differences, etc. ...
+- Performance and Analysis Logs such as SSIM, MSE, PSNR.
+- MIP Maps, Image Differences, etc. ...
 
 ![screenshot cli1](https://github.com/GPUOpen-Tools/Compressonator/blob/master/docs/source/gui_tool/user_guide/media/image129.png)
 
@@ -93,13 +99,14 @@ Command line application that can be batch processed and supports:
 ## Compressonator GUI
 Comprehensive graphical application that can be used to visualize Images and 3D Models, with support for:
 
-- Image Processing: MIP Maps, Differences, Analysis, etc. ...
 - Texture Compression, Decompression, Format Transcoding.
 - 3D Model Optimization and Mesh Compression.
+- Multiple Image and 3D Model Views.
+- MIP Maps, Differences, Analysis, etc. ...
 
 ![screenshot 1](https://github.com/GPUOpen-Tools/Compressonator/blob/master/docs/source/gui_tool/user_guide/media/image51.png)
 
-**GLTF 2.0 Model PBR Texture Compression**
+**glTF 2.0 Model Render View**
 
 ![screenshot 2](https://github.com/GPUOpen-Tools/Compressonator/blob/master/docs/source/gui_tool/user_guide/media/image96.png)
 
