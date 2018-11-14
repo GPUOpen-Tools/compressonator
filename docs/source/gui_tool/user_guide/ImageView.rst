@@ -39,14 +39,14 @@ BC7 Compressed Image View of Ruby\_bmp1.dds file
 
 Users can capture viewed images to file using context menu “Save View as” or keyboard keys Ctrl C (displayed image), Alt C (original source image) to save to Windows Clipboard.
 
-	|image131|
-	Image view context menu (enabled by right mouse button click)	
+    |image131|
+    Image view context menu (enabled by right mouse button click)	
 
 Cursor positions in block increments is also displayed, users can now save any block to file using "Save Source Block … as" where … is the current cursor location translated to a block position.
 
-	|image121|
+    |image121|
 
-	Image view status bar showing cursors block position
+    Image view status bar showing cursors block position
 
 This feature is useful in capturing the source texture blocks that was used for generating compressed blocks that exhibit decompressed image artifacts or poor quality. Depending on the source, a 4x4 block image is saved to either BMP or EXR file formats, which can later be used for repeated analysis.
 

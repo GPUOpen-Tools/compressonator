@@ -12,6 +12,8 @@ The Main Window
    ProjectExplorer
    MessageOutput
 
+|image9|
+
 Detaching Windows from the Application
 --------------------------------------
 
@@ -91,4 +93,4 @@ batch file:
 
 \`
 
-.. |image0| image:: media/image10.png
+.. |image9| image:: media/image9.png
