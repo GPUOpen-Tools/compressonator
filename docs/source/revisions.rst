@@ -1,6 +1,9 @@
 ﻿Revision History
 ----------------
 
+For the latest documentation, please refer to:  http://compressonator.readthedocs.io/en/latest/
+
+
 V3.1
 ~~~~
 November 2018
@@ -52,8 +55,8 @@ November 2018
 
 **Known issues and limitations** 
 
-        After uninstalling the SDK or CLI, Windows short cuts for the tools folder references are not removed. When selecting them in the start menu Windows will prompt for removal.
-        Vulkan Model Viewer, the code is a preview alpha version. It may cause GUI crash with models that have no textures.
+        - After uninstalling the SDK or CLI, Windows short cuts for the tools folder references are not removed. When selecting them in the start menu Windows will prompt for removal.
+        - Vulkan Model Viewer, the code is a preview alpha version, it may cause GUI instability with various models!
 
 
 
