@@ -71,10 +71,7 @@ if (cmp_status != CMP_OK)
 //==========================
 // Save Compressed Testure
 //==========================
-if (!SaveDDSFile(pszDestFile, destTexture))
-{
-  ...
-}
+SaveDDSFile(pszDestFile, destTexture))
 
 free(srcTexture.pData);
 free(destTexture.pData);
