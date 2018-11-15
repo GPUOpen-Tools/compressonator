@@ -39,7 +39,7 @@ November 2018
 
 -  **3D Model**        
         
-        **Model Mesh Compression:** Additional support for gltf 2.0 compression extensions (KHR_draco_mesh_compression) is added to `CLI <command_line_tool/commandline.html#example-mesh-decompression-usage-support-gltf-and-obj-file-only>`__ and `GUI <gui_tool/user_guide/UserGuide.html#d-mesh-optimization-and-or-mesh-compression>`__ 
+        **Model Mesh Compression:** Additional support for gltf 2.0 compression extensions (KHR_draco_mesh_compression) is added to `CLI <command_line_tool/commandline.html#mesh-compression>`__ and `GUI <gui_tool/user_guide/3DModelCompression.html#d-mesh-optimization-and-or-mesh-compression>`__ 
 
         **Selectable 3D Model Viewers:** Support for the Vulkan Viewer code introduced in 3.0 can now be set in GUI application settings, this is an alpha version and not expected  to work for all glTF models, feature for this viewer compared to DX12 has been limited.
 

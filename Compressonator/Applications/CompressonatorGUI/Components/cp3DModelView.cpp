@@ -720,8 +720,24 @@ cp3DModelView::cp3DModelView(const QString filePathName, const QString filePathN
                 }
             }
             else
-                result = m_plugin_loader->LoadModelData(srcglTFfile1.c_str(), srcglTFfile2.size() > 0 ? srcglTFfile2.c_str() : "", &g_pluginManager,
-                                                        msgHandler, &ProgressCallback);
+            {
+                if (strcmp(c_ext, "DRC") == 0)
+                {
+                    CMP_DracoOptions DracoOptions;
+                    DracoOptions.output = "";
+                    result = m_plugin_loader->LoadModelData(srcglTFfile1.c_str(),
+                                                        srcglTFfile2.size() > 0 ? srcglTFfile2.c_str() : "", &g_pluginManager,
+                                                        &DracoOptions, 
+                                                        &ProgressCallback);
+                }
+                else 
+                {
+                    result = m_plugin_loader->LoadModelData(srcglTFfile1.c_str(),
+                                                        srcglTFfile2.size() > 0 ? srcglTFfile2.c_str() : "", &g_pluginManager,
+                                                        msgHandler, 
+                                                        &ProgressCallback);
+                }
+            }
 
             if (result != 0)
             {

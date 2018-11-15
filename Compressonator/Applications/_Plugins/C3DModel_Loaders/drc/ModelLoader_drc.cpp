@@ -64,7 +64,7 @@ void* Plugin_ModelLoader_drc::GetModelData()
         return (void*)m_pc.get();
 }
 
-int Plugin_ModelLoader_drc::LoadModelData(const char* pszFilename, const char* pszFilename2, void* pluginManager, void* msghandler,
+int Plugin_ModelLoader_drc::LoadModelData(const char* pszFilename, const char* pszFilename2, void* pluginManager, void* inDracoOptions,
                                           CMP_Feedback_Proc pFeedbackProc)
 {
     if (!pluginManager)
@@ -77,7 +77,7 @@ int Plugin_ModelLoader_drc::LoadModelData(const char* pszFilename, const char* p
     m_mesh                      = nullptr;
     bool              dracofile = (strcmp(pszFilename, "OBJ") != 0);
     draco::DracoTimer timer;
-    CMP_DracoOptions* DracoOptions = (CMP_DracoOptions*)(msghandler);
+    CMP_DracoOptions* DracoOptions = (CMP_DracoOptions*)(inDracoOptions);
 
     if (!dracofile)
     {
@@ -271,11 +271,12 @@ int Plugin_ModelLoader_drc::LoadModelData(const char* pszFilename, const char* p
         if (dracofile)
         {
             draco::ObjEncoder obj_encoder;
-            std::string       output = DracoOptions->output;
-            if (output == "")
-            {
+            std::string       output;
+            //std::string       output = DracoOptions->output;
+            //if (output == "")
+            //{
                 output = string(pszFilename) + ".obj";
-            }
+            //}
 
             if (!obj_encoder.EncodeToFile(*m_mesh, output))
             {
@@ -288,11 +289,11 @@ int Plugin_ModelLoader_drc::LoadModelData(const char* pszFilename, const char* p
             PluginManager* localpluginManager = (PluginManager*)(pluginManager);
             if (localpluginManager)
             {
-                PluginInterface_3DModel_Loader* plugin_loader =
+                PluginInterface_3DModel_Loader* plugin_loader_obj =
                     reinterpret_cast<PluginInterface_3DModel_Loader*>(localpluginManager->GetPlugin("3DMODEL_LOADER", "OBJ"));
-                if (plugin_loader)
+                if (plugin_loader_obj)
                 {
-                    int result = plugin_loader->LoadModelData(output.c_str(), NULL, &pluginManager, msghandler, pFeedbackProc);
+                    int result = plugin_loader_obj->LoadModelData(output.c_str(), NULL, &pluginManager, NULL, pFeedbackProc);
                     if (result != 0)
                     {
                         throw("Error Loading Model Data");
@@ -300,7 +301,7 @@ int Plugin_ModelLoader_drc::LoadModelData(const char* pszFilename, const char* p
                     clock_t elapsed = clock() - start;
                     loadTime        = elapsed / (CLOCKS_PER_SEC / 1000);
 
-                    m_ModelData = (CMODEL_DATA*)plugin_loader->GetModelData();
+                    m_ModelData = (CMODEL_DATA*)plugin_loader_obj->GetModelData();
                     if (!m_ModelData)
                     {
                         if (g_CMIPS)

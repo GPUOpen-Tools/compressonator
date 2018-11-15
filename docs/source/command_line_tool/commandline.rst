@@ -3,20 +3,20 @@
 Usage CompressonatorCLI.exe [options] SourceFile DestFile
 
 +------------------------+----------------------------------------------+
-|Mip Map options:        |                                              |
+|Mip Map Options:        |                                              |
 +========================+==============================================+
 |-nomipmap               | Turns off Mipmap generation                  |
 +------------------------+----------------------------------------------+
-|-mipsize    <size>      | The size in pixels used to determine         |
+|-\mipsize    <size>     | The size in pixels used to determine         |
 |                        | how many mip levels to generate              |
 +------------------------+----------------------------------------------+
-|-miplevels  <Level>     | Sets Mips Level for output,                  |
+|-\miplevels  <Level>    | Sets Mips Level for output,                  |
 |                        | (mipSize overides this option): default is 1 |
 +------------------------+----------------------------------------------+
 
 
 +---------------------+------------------------------------------------------------+
-|Compression options  |                                                            |
+|Compression Options  |                                                            |
 +=====================+============================================================+
 | -fs <format>        | Optionally specifies the source texture format to use      |
 +---------------------+------------------------------------------------------------+
@@ -41,7 +41,7 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 +---------------------+------------------------------------------------------------+
 
 +-----------------------+----------------------------------------------------------+
-|channel formats        |                                                          |
+|Channel Formats        |                                                          |
 +=======================+==========================================================+
 |ARGB_16                |ARGB format with 16-bit fixed channels                    |
 +-----------------------+----------------------------------------------------------+
@@ -74,7 +74,7 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 +-----------------------+----------------------------------------------------------+
 
 +-----------------------+-----------------------------------------------------------+
-|compression formats    |                                                           |
+|Compression Formats    |                                                           |
 +=======================+===========================================================+
 |ASTC                   |Adaptive Scalable Texture Compression                      |
 +-----------------------+-----------------------------------------------------------+
@@ -155,7 +155,7 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 +-----------------------+-----------------------------------------------------------+
 
 +-----------------------------+----------------------------------------------------------+
-|codec options                |Reference developer SDK documentation for range of values |
+|Codec Options                |Reference developer SDK documentation for range of values |
 +=============================+==========================================================+
 |-UseChannelWeighting <value> |Use channel weightings                                    |
 +-----------------------------+----------------------------------------------------------+
@@ -220,7 +220,7 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 +-----------------------------+----------------------------------------------------------+
 |-log <filename>              |Logs process information to a user defined text file      |
 +-----------------------------+----------------------------------------------------------+
-|-ff  <ext>,<ext>,...,<ext>   |File filters used for processing a list of image files    |
+|-\f\f  <ext><ext>,...,<ext>  |File filters used for processing a list of image files    |
 |                             |with specified extensions in a given directory folder     |
 |                             |supported <ext> are any of the following combinations:    |
 |                             |DDS,KTX,TGA,EXR,PNG,BMP,HDR,JPG,TIFF,PPM                  |
@@ -228,7 +228,7 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 
 
 +-----------------------------+----------------------------------------------------------+
-|Output options               |                                                          |
+|Output Options               |                                                          |
 +=============================+==========================================================+
 |-silent                      |Disable print messages                                    |
 +-----------------------------+----------------------------------------------------------+
@@ -238,64 +238,71 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 +-----------------------------+----------------------------------------------------------+
 
 
-Example compression
+Example Compression
 -------------------
-CompressonatorCLI.exe -fd ASTC image.bmp result.astc |br|
-CompressonatorCLI.exe -fd ASTC -BlockRate 0.8 image.bmp result.astc  |br|
-CompressonatorCLI.exe -fd ASTC -BlockRate 12x12 image.bmp result.astc |br|
-CompressonatorCLI.exe -fd BC7  image.bmp result.dds |br|
-CompressonatorCLI.exe -fd BC7  -NumTheads 16 image.bmp result.dds |br|
-CompressonatorCLI.exe -fd BC6H image.exr result.dds |br|
+`CompressonatorCLI.exe -fd ASTC image.bmp result.astc` |br|
+`CompressonatorCLI.exe -fd ASTC -BlockRate 0.8 image.bmp result.astc`  |br|
+`CompressonatorCLI.exe -fd ASTC -BlockRate 12x12 image.bmp result.astc` |br|
+`CompressonatorCLI.exe -fd BC7  image.bmp result.dds` |br|
+`CompressonatorCLI.exe -fd BC7  -NumTheads 16 image.bmp result.dds` |br|
+`CompressonatorCLI.exe -fd BC6H image.exr result.dds` |br|
 
 Example decompression from compressed image using CPU
 -----------------------------------------------------
-CompressonatorCLI.exe  result.dds image.bmp
+`CompressonatorCLI.exe  result.dds image.bmp`
 
 
-Compression followed by Decompression
+Compression Followed by Decompression
 -------------------------------------
 (Useful for qualitative analysis)
 
-CompressonatorCLI.exe -fd BC7  image.bmp result.bmp
+`CompressonatorCLI.exe -fd BC7  image.bmp result.bmp`
 
 
-GPU based decompression 
+GPU Based Decompression 
 ------------------------
-CompressonatorCLI.exe  -DecodeWith OpenGL result.dds image.bmp
+`CompressonatorCLI.exe  -DecodeWith OpenGL result.dds image.bmp`
 
 
 Mesh Compression
 ----------------
 (support glTF and obj file only)
 
-Mesh compression using only default quantization bits settings as mentioned above:
-CompressonatorCLI.exe -draco source.gltf dest.gltf
+The following mesh compression uses default quantization bits with Google Draco library settings 
+(These default settings are currently not programmable):
 
-CLI mesh compression is performed with google Draco library with settings:
-compression level as 7, 
-quantization bits for position as 14, 
-quantization bits value for texture coordinates as 12,
-quantization bits value for normal as 10.
+- Compression level = 7.
+
+- Quantization bits for position = 14.
+
+- Quantization bits value for texture coordinates = 12.
+
+- quantization bits value for normal = 10.
+
+
+`CompressonatorCLI.exe -draco source.gltf dest.gltf`
+
 
 Mesh Decompression
 ------------------
 (support glTF and obj file only)
 
-CompressonatorCLI.exe source.gltf dest.gltf
+`CompressonatorCLI.exe source.gltf dest.gltf`
 
 
 Mesh Optimization
 -----------------
 (support glTF and obj file only)
 
-Using default settings:|br|
-Optimize vertices with cache size= 16; Optimize overdraw with ACMR Threshold= 1.05; Optimize vertices fetch.|br|
+The following uses default settings that optimizes vertices with cache size = 16, overdraw with ACMR Threshold = 1.05 and vertices fetch. |br|
 
-CompressonatorCLI.exe -meshopt source.gltf dest.gltf
-CompressonatorCLI.exe -meshopt source.obj dest.obj
+`CompressonatorCLI.exe -meshopt source.gltf dest.gltf`
 
-Specifies settings:|br|
-CompressonatorCLI.exe -meshopt -optVCacheSize  32 -optOverdrawACMRThres  1.03 -optVFetch 0 source.gltf dest.gltf
+`CompressonatorCLI.exe -meshopt source.obj dest.obj`
+
+Specifies settings:
+
+`CompressonatorCLI.exe -meshopt -optVCacheSize  32 -optOverdrawACMRThres  1.03 -optVFetch 0 source.gltf dest.gltf`
 
 CLI mesh optimization include settings:
 

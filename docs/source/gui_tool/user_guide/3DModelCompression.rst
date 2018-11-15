@@ -255,42 +255,8 @@ Mesh Compression Settings for Draco selection
 
 When selected it will perform mesh compression using
 `Draco <https://opensource.google.com/projects/draco>`__ encoder lib.
-For Compressonator V3.0 this option is only available for obj files
 
 |image103|
-
-Compression Level
-^^^^^^^^^^^^^^^^^
-
-This is in range of 0-10. Higher number produces more compressed
-(smaller) mesh. Default is set to 7.
-
-Position Bits
-^^^^^^^^^^^^^
-
-Quantization bits used for vertices positions attribute. Default is set
-to 14.
-
-Tex Coords Bits
-^^^^^^^^^^^^^^^
-
-Quantization bits used for texture coordinate attribute. Default is set
-to 12.
-
-Normal Bits
-^^^^^^^^^^^
-
-Quantization bits used for normal vector attribute. Default is set to
-10.
-
-Generic Bits
-^^^^^^^^^^^^
-
-Quantization bits used for the other generic attribute. Default is set
-to 8.
-
-Selecting “NoOpt” will turn off Mesh Optimization and “NoComp” will turn
-off Mesh Compression.
 
 Click “Save” after completing the mesh optimizer and/or mesh compression
 settings. You will see a 3\ :sup:`rd` level destination settings node
@@ -310,7 +276,7 @@ Analyzing Mesh
 --------------
 
 Mesh analysis can be performed on the original model file as well as the
-resulted model file (1:sup:`st` and 2\ :sup:`nd` level items in the tree
+resulted model file ( 1\ :sup:`st` and 2\ :sup:`nd` level items in the tree
 view of Project Explorer). Only .gltf and .obj files are supported for
 mesh analysis.
 
@@ -370,12 +336,12 @@ to 256.
 
 After done setting the desired mesh analysis settings, click “Run Mesh
 Analysis”, if you run mesh analysis from the source model file
-(1:sup:`st` level tree item), the window will be updated with text
+(1\ :sup:`st` level tree item), the window will be updated with text
 output as shown below:
 
 |image108|
 
-If you run mesh analysis from the resulted model file (2:sup:`nd` level
+If you run mesh analysis from the resulted model file (2\ :sup:`nd` level
 tree item), the window is updated with both resulted model file analysis
 result as well as the original model file analysis result as shown
 below:
