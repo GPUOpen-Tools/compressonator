@@ -78,6 +78,15 @@ free(destTexture.pData);
 
 ```
 
+
+Processing of BC7 and BC6H 4x4 pixel blocks is also provided in the SDK:
+
+`CMP_EncodeBC7Block(BC7BlockEncoder* encoder  , double in[BC_BLOCK_PIXELS][BC_COMPONENT_COUNT], CMP_BYTE* out);`
+`CMP_EncodeBC6HBlock(BC6HBlockEncoder* encoder, CMP_FLOAT  in[BC_BLOCK_PIXELS][BC_COMPONENT_COUNT], CMP_BYTE* out);`
+
+*Reference example3 for details on using BC6H*
+
+
 ## Compressonator CLI
 Command line application that can be batch processed and supports:
 
