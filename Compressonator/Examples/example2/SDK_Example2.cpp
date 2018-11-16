@@ -129,13 +129,13 @@ int main(int argc, const char* argv[])
 
     for (int i = 0; i<MXT; i++)
     {
-        destTexture[0].dwSize     = sizeof(destTexture);
-        destTexture[0].dwWidth    = srcTexture.dwWidth;
-        destTexture[0].dwHeight   = srcTexture.dwHeight;
-        destTexture[0].dwPitch    = 0;
-        destTexture[0].format     = destFormat[i];
-        destTexture[0].dwDataSize = CMP_CalculateBufferSize(&destTexture[i]);
-        destTexture[0].pData = (CMP_BYTE*)malloc(destTexture[0].dwDataSize);
+        destTexture[i].dwSize     = sizeof(destTexture[i]);
+        destTexture[i].dwWidth    = srcTexture.dwWidth;
+        destTexture[i].dwHeight   = srcTexture.dwHeight;
+        destTexture[i].dwPitch    = 0;
+        destTexture[i].format     = destFormat[i];
+        destTexture[i].dwDataSize = CMP_CalculateBufferSize(&destTexture[i]);
+        destTexture[i].pData = (CMP_BYTE*)malloc(destTexture[i].dwDataSize);
     }
 
     //=======================================
@@ -195,11 +195,6 @@ int main(int argc, const char* argv[])
    #ifdef _WIN32
    std::printf("\nProcessed in %.3f seconds\n", timeStampsec() - start_time);
    #endif
-
-   // Clean up memory used for textures
-   free(srcTexture.pData);
-   for (int i = 0; i < MXT; i++)
-        free(destTexture[i].pData);
 
    return 0;
 }

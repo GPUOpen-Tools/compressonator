@@ -86,12 +86,13 @@ int main(int argc, const char* argv[])
     #endif
     if (argc < 4)
     {
-        std::printf("Compressonator_Test SourceFile DestFile Quality\n");
+        std::printf("Example3 SourceFile DestFile Quality\n");
         std::printf("This example shows how to compress a single image\n");
         std::printf("to a BC7 compression format using single threaded low level\n");
         std::printf("compression blocks access with a quality setting\n");
-        std::printf("usage: Example3.exe ruby.dds ruby_bc7.dds 0.05\n");
-        std::printf("this will generate a compressed ruby file in BC7 format\n");
+        std::printf("** NOTE ** sample image Width and Height must be divisable by 4\n\n");
+        std::printf("usage: Example3.exe sample.dds sample_bc7.dds 0.05\n");
+        std::printf("this will generate a compressed file in BC7 format\n");
         return 0;
     }
 
