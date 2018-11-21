@@ -17,13 +17,19 @@ To build the source files follow the instructions in http://compressonator.readt
 
 Compressonator SDK supported codecs includes BC1-BC7/DXTC, ETC1, ETC2, ASTC, ATC, ATI1N, ATI2N, all available in a single library.
 
+With the new SDK installation, several example applications with source code are provided that demonstrate how easy it is to add texture compression to your own applications using either "High Level" or "Block Level" APIs.
+
 A simple thread safe interface can compress, decompress and transcode any image as required
 
 `CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture,...);`
 
-**Usage**
+**For Example:**
 
 ```c++
+
+// To use Compressonator's portable "C" interfaces, just include
+// a single header file and Compresonator.lib into  your projects
+
 #include "Compressonator.h"
 ...
 
