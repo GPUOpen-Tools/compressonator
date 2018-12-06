@@ -183,21 +183,9 @@ CMP_GPUDecode DecodeWith(const char* strParameter)
 CMP_Compute_type EncodeWith(const char* strParameter)
 {
    if (strcmp(strParameter, "HPC") == 0)
-        return Compute_CPU_HPC;
-   else if (strcmp(strParameter, "CL") == 0)
-       return Compute_OPENCL;
-   else if (strcmp(strParameter, "OpenCL") == 0)
-       return Compute_OPENCL;
-#ifdef    ENABLE_V3x_CODE
-    else if (strcmp(strParameter, "VK") == 0)
-        return Compute_VULKAN;
-    else if (strcmp(strParameter, "Vulkan") == 0)
-        return Compute_VULKAN;
-    else if (strcmp(strParameter, "DX") == 0)
-        return Compute_DIRECTX;
-    else if (strcmp(strParameter, "DirectX") == 0)
-        return Compute_DIRECTX;
-#endif
+        return CMP_HPC;
+   else if (strcmp(strParameter, "GPU") == 0)
+       return CMP_GPU;
     else
         return Compute_INVALID;
 }
@@ -569,7 +557,7 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
             g_CmdPrams.CompressOptions.bVertexFetch = bool(value);
         }
 #endif
-#ifdef USE_COMPUTE
+#ifdef USE_CMP_SDK
         else if (strcmp(strCommand, "-EncodeWith") == 0)
         {
             if (strlen(strParameter) == 0)
@@ -1757,7 +1745,7 @@ void LocalPrintF(char* buff)
     printf(buff);
 }
 
-#ifdef USE_COMPUTE
+#ifdef USE_CMP_SDK
 #include "Common_KernelDef.h"
 #include "Compute_Lib/Compute_Base.h"
 
@@ -2072,7 +2060,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
             memcpy(&g_MipSetIn, p_userMipSetIn, sizeof(MipSet));
             // Data in DXTn Files are expected to be in BGRA as input to CMP_ConvertTexture
             // Data in ASTC BC6 BC7 etc - expect data to be RGBA as input to CMP_ConvertTexture
-            g_MipSetIn.m_swizzle        = KeepSwizzle(destFormat);
+            //g_MipSetIn.m_swizzle        = KeepSwizzle(destFormat);
             g_MipSetIn.m_pMipLevelTable = p_userMipSetIn->m_pMipLevelTable;
 
             Delete_gMipSetIn = false;
@@ -2085,8 +2073,8 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
             // INPUT IMAGE Swizzling options for DXT formats
             // ===============================================
 #ifdef USE_SWIZZLE
-            if (!g_CmdPrams.CompressOptions.bUseGPUCompress)
-                g_MipSetIn.m_swizzle = KeepSwizzle(destFormat);
+            //if (!g_CmdPrams.CompressOptions.bUseGPUCompress)
+            //    g_MipSetIn.m_swizzle = KeepSwizzle(destFormat);
 #endif
 
             // Flag to image loader that data is going to be compressed
@@ -2183,8 +2171,8 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
 #ifdef USE_SWIZZLE
             if (g_MipSetIn.m_swizzle && !g_CmdPrams.CompressOptions.bUseGPUCompress)
             {
-                SwizzleMipMap(&g_MipSetIn);
-                SwizzledMipSetIn = true;
+                //SwizzleMipMap(&g_MipSetIn);
+                //SwizzledMipSetIn = true;
             }
 #endif
         }
@@ -2348,7 +2336,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
                     //========================
                     // Process ConvertTexture
                     //========================
-#ifdef USE_COMPUTE
+#ifdef USE_CMP_SDK
                         if (g_CmdPrams.CompressOptions.bUseGPUCompress)
                         {
                             g_CmdPrams.format_support_gpu = true;
@@ -2448,9 +2436,9 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
 
                             if (!g_CmdPrams.format_support_gpu)
                             {
-                                g_MipSetIn.m_swizzle = KeepSwizzle(destFormat);
-                                if (g_MipSetIn.m_swizzle)
-                                    SwizzleMipMap(&g_MipSetIn);
+                                //g_MipSetIn.m_swizzle = KeepSwizzle(destFormat);
+                                //if (g_MipSetIn.m_swizzle)
+                                //    SwizzleMipMap(&g_MipSetIn);
                                 if (CMP_ConvertTexture(&srcTexture, &destTexture, &g_CmdPrams.CompressOptions, pFeedbackProc, NULL, NULL) != CMP_OK)
                                 {
                                     PrintInfo("Error in compressing destination texture\n");
@@ -2793,8 +2781,8 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
             // ===============================================
             // INPUT IMAGE Swizzling options for DXT formats
             // ===============================================
-            if (!use_GPUDecode)
-                g_MipSetOut.m_swizzle = KeepSwizzle(srcFormat);
+            //if (!use_GPUDecode)
+            //    g_MipSetOut.m_swizzle = KeepSwizzle(srcFormat);
 
             //-----------------------
             // User swizzle overrides
@@ -3090,20 +3078,12 @@ void ProcessResults(CCmdLineParamaters &prams, CMP_ANALYSIS_DATA &analysisData)
 
             switch (prams.CompressOptions.nComputeWith)
             {
-#ifdef USE_COMPUTE
-            case Compute_CPU_HPC:                      // Use CPU High Performance Compute to compress textures, full support
+#ifdef USE_CMP_SDK
+            case CMP_HPC:                      // Use CPU High Performance Compute to compress textures, full support
                 encodewith.append("HPC");
                 break;
-            case Compute_OPENCL:                      // Use OpenCL  to compress textures, full support
-                encodewith.append("OpenCL");
-                break;
-#endif
-#ifdef    ENABLE_V3x_CODE
-            case Compute_DIRECTX:                      // Use DirectX to compress textures, minimal codec support
-                encodewith.append("DirectX");
-                break;
-            case Compute_VULKAN:                      // Use Vulkan  SPIR-V to compress textures, full support
-                encodewith.append("Vulkan");
+            case CMP_GPU:                      // Use GPU to compress textures, full support
+                encodewith.append("GPU");
                 break;
 #endif
             case Compute_INVALID:
