@@ -15,6 +15,8 @@ To build the source files follow the instructions in http://compressonator.readt
 
 ## Compressonator SDK
 
+** NOTE: The master SDK source has a DXTC swizzle fix, make sure any applications using source (v3.1 and older) are adjusted accordingly, BC6H and BC7 are not affected by this change, for details ref: Closed Issue #59** 
+
 Compressonator SDK supported codecs includes BC1-BC7/DXTC, ETC1, ETC2, ASTC, ATC, ATI1N, ATI2N, all available in a single library.
 
 With the new SDK installation, several example applications with source code are provided that demonstrate how easy it is to add texture compression to your own applications using either "High Level" or "Block Level" APIs.
