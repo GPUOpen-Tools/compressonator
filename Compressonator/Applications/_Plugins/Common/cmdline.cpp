@@ -182,11 +182,13 @@ CMP_GPUDecode DecodeWith(const char* strParameter)
 
 CMP_Compute_type EncodeWith(const char* strParameter)
 {
+#ifdef USE_CMP_SDK
    if (strcmp(strParameter, "HPC") == 0)
         return CMP_HPC;
    else if (strcmp(strParameter, "GPU") == 0)
        return CMP_GPU;
     else
+#endif
         return Compute_INVALID;
 }
 
