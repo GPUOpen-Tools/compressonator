@@ -687,6 +687,18 @@ CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture
         }
 
         CodecBufferType srcBufferType = GetCodecBufferType(pSourceTexture->format);
+        if (NeedSwizzle(pDestTexture->format))
+        {
+            bool swizzleSrcBuffer = true;
+            switch (srcBufferType)
+            {
+            case CBT_BGRA8888:
+            case CBT_BGR888:
+                swizzleSrcBuffer = false;
+                break;
+            }
+            threadData.m_pCodec->SetParameter("SwizzleChannels", swizzleSrcBuffer ? (CMP_DWORD)1 : (CMP_DWORD)0);
+        }
 
         CMP_DWORD dwThreadsRemaining = dwMaxThreadCount - dwThread;
         CMP_DWORD dwHeight = 0;
