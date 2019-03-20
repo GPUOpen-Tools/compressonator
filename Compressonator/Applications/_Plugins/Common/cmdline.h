@@ -124,6 +124,7 @@ class CCmdLineParamaters
     std::string         DiffFile;              // Diff image file name
     std::string         DecompressFile;        //
     std::string         FileFilter;            //
+    std::string         FileOutExt;            // Usage with dest dir or unsupported file
     std::string         LogProcessResultsFile; //
     CMP_FORMAT          SourceFormat;          //
     CMP_FORMAT          DestFormat;            //

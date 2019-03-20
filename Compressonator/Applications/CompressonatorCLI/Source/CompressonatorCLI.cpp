@@ -63,7 +63,7 @@ extern void* make_Plugin_BMP();
 
 extern bool   CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2);
 extern void   LocalPrintF(char* buff);
-extern string DefaultDestination(string SourceFile, CMP_FORMAT DestFormat);
+extern string DefaultDestination(string SourceFile, CMP_FORMAT DestFormat, string DestFileExt);
 
 PluginManager g_pluginManager;
 bool          g_bAbortCompression = false;
@@ -275,6 +275,7 @@ void PrintUsage()
     printf("CompressonatorCLI.exe -fd ASTC -BlockRate 12x12 image.bmp result.astc\n");
     printf("CompressonatorCLI.exe -fd BC7  image.bmp result.dds \n");
     printf("CompressonatorCLI.exe -fd BC7  -NumTheads 16 image.bmp result.dds\n");
+    printf("CompressonatorCLI.exe -fd BC7 -ff PNG -fx KTX ./source_dir/ ./dist_dir/\n");
     printf("CompressonatorCLI.exe -fd BC6H image.exr result.dds\n\n");
     printf("Example decompression from compressed image using CPU:\n\n");
     printf("CompressonatorCLI.exe  result.dds image.bmp\n\n");
@@ -401,7 +402,7 @@ int main(int argc, char* argv[])
             // Try to patch the detination file
             if ((g_CmdPrams.DestFile.length() == 0) && (g_CmdPrams.SourceFile.length() > 0))
             {
-                g_CmdPrams.DestFile = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.DestFormat);
+                g_CmdPrams.DestFile = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.DestFormat, g_CmdPrams.FileOutExt);
                 printf("Destination Texture file was not supplied: Defaulting to %s\n", g_CmdPrams.DestFile.c_str());
             }
             else
