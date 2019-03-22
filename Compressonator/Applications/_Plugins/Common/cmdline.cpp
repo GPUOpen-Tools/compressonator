@@ -83,7 +83,7 @@ using namespace tinygltf2;
 
 CCmdLineParamaters g_CmdPrams;
 
-string DefaultDestination(string SourceFile, CMP_FORMAT DestFormat)
+string DefaultDestination(string SourceFile, CMP_FORMAT DestFormat, string DestFileExt)
 {
     string                  DestFile = "";
     boost::filesystem::path fp(SourceFile);
@@ -95,10 +95,16 @@ string DefaultDestination(string SourceFile, CMP_FORMAT DestFormat)
     DestFile.append(file_ext);
     DestFile.append("_");
     DestFile.append(GetFormatDesc(DestFormat));
-    if (DestFormat == CMP_FORMAT_ASTC)
-        DestFile.append(".astc");
-    else
-        DestFile.append(".dds");
+
+	if (DestFileExt.find('.') != std::string::npos) {
+		DestFile.append(DestFileExt);
+	}
+	else {
+		if (DestFormat == CMP_FORMAT_ASTC)
+			DestFile.append(".astc");
+		else
+			DestFile.append(".dds");
+	}
 
     return DestFile;
 }
@@ -678,28 +684,43 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
                 throw "unknown format specified";
             }
         }
-        else if (strcmp(strCommand, "-ff") == 0)        // FileFilter used for collecting list of source files in a given Dir
+        else if ((strcmp(strCommand, "-ff") == 0)  ||  // FileFilter used for collecting list of source files in a given source Dir
+			(strcmp(strCommand, "-fx") == 0))		   //and FileOutExt used for file output extension at given output Dir
         {
             if (strlen(strParameter) == 0)
             {
                 throw "no file filter specified";
             }
 
-            // Save file filter in lower case
-            g_CmdPrams.FileFilter = strParameter;
-            std::transform(g_CmdPrams.FileFilter.begin(), g_CmdPrams.FileFilter.end(), g_CmdPrams.FileFilter.begin(), ::toupper);
+			std::string filterParameter = strParameter;
+			std::transform(filterParameter.begin(), filterParameter.end(), filterParameter.begin(), ::toupper);
 
-            string  supported_ExtListings = {"DDS,KTX,TGA,EXR,PNG,BMP,HDR,JPG,TIFF,PPM"};
-            istringstream ff(g_CmdPrams.FileFilter);
-            string sff;    
-            while (getline(ff, sff, ',')) {
-                    if (supported_ExtListings.find(sff) == std::string::npos)
-                    {
-                        char err[128];
-                        sprintf(err,"[%s] file filter is not supported",sff.c_str());
-                        throw (err);
-                    }
-            }
+			string  supported_ExtListings = { "DDS,KTX,TGA,EXR,PNG,BMP,HDR,JPG,TIFF,PPM" };
+
+			istringstream ff(filterParameter);
+			string sff;
+			int filter_num = 0;
+			while (getline(ff, sff, ',')) {
+				filter_num++;
+				if (supported_ExtListings.find(sff) == std::string::npos)
+				{
+					char err[128];
+					sprintf(err, "[%s] file filter is not supported", sff.c_str());
+					throw (err);
+				}
+				else if (filter_num > 1 && strcmp(strCommand, "-fx") == 0) {
+					char err[128];
+					sprintf(err, "Only one file extension for output file.");
+					throw (err);
+				}
+			}
+
+			if (strcmp(strCommand, "-ff") == 0) {
+				g_CmdPrams.FileFilter = filterParameter;
+			}else if (strcmp(strCommand, "-fx") == 0) {
+				std::transform(filterParameter.begin(), filterParameter.end(), filterParameter.begin(), ::tolower); //change to lower
+				g_CmdPrams.FileOutExt = "."+filterParameter; //add dot
+			}
 
         }
         else if (strcmp(strCommand, "-fd") == 0)
@@ -873,7 +894,7 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
                         {
                             if (g_CmdPrams.DestFile.length() == 0)
                             {
-                                g_CmdPrams.DestFile = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.DestFormat);
+                                g_CmdPrams.DestFile = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.DestFormat, g_CmdPrams.FileOutExt);
                                 PrintInfo("Destination texture file was not supplied: Defaulting to %s\n", g_CmdPrams.DestFile.c_str());
                             }
                             else
@@ -911,7 +932,7 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
                         g_CmdPrams.DestDir = directory;
                         std::string destFileName;
                         //since  DestFile is empty we need to create one from the source file
-                        destFileName = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.DestFormat);
+                        destFileName = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.DestFormat, g_CmdPrams.FileOutExt);
                         g_CmdPrams.DestFile = directory + "\\" + destFileName;
                     }
                 }
@@ -3006,7 +3027,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
         g_CmdPrams.SourceFileList.erase(g_CmdPrams.SourceFileList.begin());
 
         std::string destFileName;
-        destFileName = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.DestFormat);
+        destFileName = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.DestFormat, g_CmdPrams.FileOutExt);
         g_CmdPrams.DestFile = g_CmdPrams.DestDir + "\\" + destFileName;
     }
     else
