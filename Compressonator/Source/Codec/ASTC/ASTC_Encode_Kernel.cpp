@@ -702,10 +702,10 @@ float prepare_error_weight_block(
                         avg.xyz = favg3 * mixing + avg.xyz * (1.0f - mixing);
                         variance.xyz = favg3 * mixing + variance.xyz * (1.0f - mixing);
 
-                        float4 stdev = {sqrt(max(variance.x, 0.0f)),
-                                        sqrt(max(variance.y, 0.0f)),
-                                        sqrt(max(variance.z, 0.0f)),
-                                        sqrt(max(variance.w, 0.0f))};
+                        float4 stdev = {(float)sqrt(max(variance.x, 0.0f)),
+                                        (float)sqrt(max(variance.y, 0.0f)),
+                                        (float)sqrt(max(variance.z, 0.0f)),
+                                        (float)sqrt(max(variance.w, 0.0f))};
 
                         avg.xyz = avg.xyz * ASTCEncode->m_ewp.rgb_mean_weight;
                         avg.w = avg.w * ASTCEncode->m_ewp.alpha_mean_weight;
