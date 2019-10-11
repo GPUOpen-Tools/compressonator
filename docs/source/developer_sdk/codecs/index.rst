@@ -85,7 +85,7 @@ Example projects have been provided `here <https://github.com/GPUOpen-Tools/Comp
 
 * example1 demonstrates simple SDK API usage as shown above. 
 * example2 demonstrates how to use the SDK API in multihreaded environment.
-* exmaple3 demonstrates how to use the block level SDK API.
+* example3 demonstrates how to use the block level SDK API.
 
 These examples are also distributed through Compressonator SDK installer in the `release <https://github.com/GPUOpen-Tools/Compressonator/releases>`_ page.
 
