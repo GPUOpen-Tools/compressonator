@@ -2,9 +2,6 @@ set(INCLUDE_DIRS
     "."
     "../../Common/"
     "../../../../Header/"
-    "${PROJECT_SOURCE_DIR}/Common/Lib/Ext/DirectXTex/v132/"
-    "${PROJECT_SOURCE_DIR}/Common/Lib/Ext/Boost/boost_1_59_0/"
-    "${PROJECT_SOURCE_DIR}/Common/Lib/Ext/OpenEXR/openexr-2.2.0/VS2015/x64/include/OpenEXR/"
 )
 
 set(SOURCES
