@@ -1,3 +1,6 @@
+
+** NOTE ** <b>The directory structure of the master branch is been updated for next release. Current build scripts will not work until after this update</b>.
+
 # Compressonator
 
 Compressonator is a set of tools to allow artists and developers to more easily create compressed texture assets or model mesh optimizations and easily visualize the quality impact of various compression and rendering technologies.  It consists of a GUI application, a command line application and an SDK for easy integration into a developer tool chain.
