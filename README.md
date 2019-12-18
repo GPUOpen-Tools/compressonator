@@ -1,5 +1,5 @@
 
-** NOTE ** <b>The directory structure of the master branch is been updated for next release. Current build scripts will not work until after this update</b>.
+> ** NOTE ** <b>The directory structure of the master branch is been updated for next release. Current build scripts will not work until after this update</b>
 
 # Compressonator
 
@@ -15,10 +15,17 @@ https://github.com/GPUOpen-Tools/Compressonator/releases
 
 To build the source files follow the instructions in http://compressonator.readthedocs.io/en/latest/build_from_source/build_instructions.html
 
+## Compressonator Core
+
+Doumenation updates pending
+
+## Compressonator Framework
+
+Doumenation updates pending
 
 ## Compressonator SDK
 
-** NOTE: The master SDK source has a DXTC swizzle fix, make sure any applications using source (v3.1 and older) are adjusted accordingly, BC6H and BC7 are not affected by this change, for details ref: Closed Issue #59** 
+Doumenation updates pending
 
 Compressonator SDK supported codecs includes BC1-BC7/DXTC, ETC1, ETC2, ASTC, ATC, ATI1N, ATI2N, all available in a single library.
 
