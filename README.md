@@ -17,15 +17,15 @@ To build the source files follow the instructions in http://compressonator.readt
 
 ## Compressonator Core
 
-Doumenation updates pending
+Documentation updates pending 
 
 ## Compressonator Framework
 
-Doumenation updates pending
+Documentation updates pending 
 
 ## Compressonator SDK
 
-Doumenation updates pending
+Documentation updates pending 
 
 Compressonator SDK supported codecs includes BC1-BC7/DXTC, ETC1, ETC2, ASTC, ATC, ATI1N, ATI2N, all available in a single library.
 
