@@ -17,19 +17,10 @@
     <ClCompile Include="../../../Common/ATIFormats.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="../../../Common/cExr.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="../../../Common/cmdline.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="../../../../CompressonatorGUI/Components/cpImageLoader.cpp">
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="../../../../../../Common/lib/ext/OpenEXR/ilmbase-2.2.0/Half/half.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="../../../Common/MIPS.cpp">
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="../../../Common/PluginManager.cpp">
@@ -49,9 +40,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="../../../Common/MIPS.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="../../../Common/PluginManager.h">
       <Filter>Common</Filter>
     </ClInclude>
@@ -59,12 +47,6 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="../../../Common/TextureIO.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="../../../Common/cmdline.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="../../../Common/cExr.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="../../../../CompressonatorGUI/Components/cpImageLoader.h">

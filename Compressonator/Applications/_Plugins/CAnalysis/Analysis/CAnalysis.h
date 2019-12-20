@@ -24,11 +24,16 @@
 #ifndef _Plugin_Canalysis_H
 #define _Plugin_Canalysis_H
 
+#define USE_OPENCV
+
 #include <string>
 #include "PluginInterface.h"
-#include "MIPS.h"
+#include "Compressonator.h"
 #include "PluginManager.h"
+
+#ifdef USE_OPENCV
 #include "cvmatandqimage.h"
+#endif
 
 #define USE_QT_IMAGELOAD
 
@@ -45,9 +50,14 @@
 #include "cpImageLoader.h"
 #include "TextureIO.h"
 #include "SSIM.h"
-#include <opencv2/core/core.hpp>     
+
+#ifdef USE_OPENCV
+#include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>  // Gaussian Blur
 #include <opencv2/highgui/highgui.hpp>  // OpenCV window I/O
+#endif
+
+
 #include <QtCore/qmath.h>
 
 #ifndef _WIN32
@@ -70,14 +80,17 @@ public:
 private:
         void write(REPORT_DATA data, char *resultsFile, char option);
         void generateBCtestResult(QImage *src, QImage *dest, REPORT_DATA &myReport); //for testing only
-        bool psnr(QImage *src, QImage *dest, REPORT_DATA &myReport, CMP_Feedback_Proc pFeedbackProc = NULL);
+
+#ifdef USE_OPENCV
+        bool psnr(QImage *src, Mat srcimg, QImage *dest, Mat destimg, REPORT_DATA &myReport, CMP_Feedback_Proc pFeedbackProc = NULL);
+#endif
         char m_results_path[MAX_PATH];
         string m_srcFile;
         string m_destFile;
         double m_rmse, m_psnr, m_mabse;
         double tolerance_mse, tolerance_psnr, tolerance_psnrb, tolerance_psnrg, tolerance_psnrr;
         double tolerance_ssim, tolerance_ssimb, tolerance_ssimg, tolerance_ssimr;
-        PluginManager *m_pluginManager;
+        PluginManager                    *m_pluginManager;
         CImageLoader                     *m_imageloader;
         CMipImages                       *m_MipSrcImages;
         CMipImages                       *m_MipDestImages;

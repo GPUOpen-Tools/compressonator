@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug_MD|Win32">
       <Configuration>Debug_MD</Configuration>
@@ -22,9 +22,6 @@
     <ClCompile Include="../../../../../../Common/lib/ext/OpenEXR/ilmbase-2.2.0/Half/half.cpp" />
     <ClCompile Include="../../../../CompressonatorGUI/Components/cpImageLoader.cpp" />
     <ClCompile Include="../../../Common/ATIFormats.cpp" />
-    <ClCompile Include="../../../Common/cExr.cpp" />
-    <ClCompile Include="../../../Common/cmdline.cpp" />
-    <ClCompile Include="../../../Common/MIPS.cpp" />
     <ClCompile Include="../../../Common/PluginManager.cpp" />
     <ClCompile Include="../../../Common/SSIM.cpp" />
     <ClCompile Include="../../../Common/TextureIO.cpp" />
@@ -34,9 +31,6 @@
   <ItemGroup>
     <ClInclude Include="../../../../CompressonatorGUI/Components/cpImageLoader.h" />
     <ClInclude Include="../../../Common/ATIFormats.h" />
-    <ClInclude Include="../../../Common/cExr.h" />
-    <ClInclude Include="../../../Common/cmdline.h" />
-    <ClInclude Include="../../../Common/MIPS.h" />
     <ClInclude Include="../../../Common/PluginManager.h" />
     <ClInclude Include="../../../Common/SSIM.h" />
     <ClInclude Include="../../../Common/TextureIO.h" />
@@ -92,16 +86,16 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">false</LinkIncremental>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
@@ -139,7 +133,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/Applications/_Plugins/CMesh/Tootle/;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/mesh_optimizer/;$(Compressonator_RootDev)/Applications/_Plugins/Common/gltf/;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/;../../../../../Compute;../../../../../../Common/Lib/AMD/APPSDK/3-0/include;../../../../CompressonatorGUI/Common;../../../../CompressonatorGUI/Components;../../../../../Header;../../../../../Header/Codec/ASTC/ARM;../../../../CImage/EXR;../../../../_Plugins/Common;$(Compressonator_RootDev)/Source/CMP_MeshCompressor/Draco/src;$(Compressonator_OPENCV)/include;$(Compressonator_BOOST)/;$(Compressonator_QT)/include;$(Compressonator_QT)/include/QtCore;$(Compressonator_QT)/include/QtWidgets;$(Compressonator_QT)/include/QtGui;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/Tootle/;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/mesh_optimizer/;$(Compressonator_RootDev)/Applications/_Plugins/Common/gltf/;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/;../../../../../Compute;../../../../../../Common/Lib/AMD/APPSDK/3-0/include;../../../../CompressonatorGUI/Common;../../../../CompressonatorGUI/Components;../../../../../Applications/_Libs/GPU_Decode;../../../../../Header/Codec/ASTC/ARM;../../../../../Header/CMP_Math;../../../../CImage/EXR;../../../../_Plugins/Common;$(Compressonator_RootDev)/Source/CMP_MeshCompressor/Draco/src;$(Compressonator_OPENCV)/include;$(Compressonator_BOOST)/;$(Compressonator_QT)/include;$(Compressonator_QT)/include/QtCore;$(Compressonator_QT)/include/QtWidgets;$(Compressonator_QT)/include/QtGui;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
@@ -179,7 +173,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/Applications/_Plugins/CMesh/Tootle/;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/mesh_optimizer/;$(Compressonator_RootDev)/Applications/_Plugins/Common/gltf/;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/;../../../../../Compute;../../../../../../Common/Lib/AMD/APPSDK/3-0/include;../../../../CompressonatorGUI/Common;../../../../CompressonatorGUI/Components;../../../../../Header;../../../../../Header/Codec/ASTC/ARM;../../../../CImage/EXR;../../../../_Plugins/Common;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/;$(Compressonator_RootDev)/Source/CMP_MeshCompressor/Draco/src;$(Compressonator_OPENCV)/include;$(Compressonator_BOOST)/;$(Compressonator_QT)/include;$(Compressonator_QT)/include/QtCore;$(Compressonator_QT)/include/QtWidgets;$(Compressonator_QT)/include/QtGui;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/Tootle/;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/mesh_optimizer/;$(Compressonator_RootDev)/Applications/_Plugins/Common/gltf/;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/;../../../../../Compute;../../../../../../Common/Lib/AMD/APPSDK/3-0/include;../../../../CompressonatorGUI/Common;../../../../CompressonatorGUI/Components;../../../../../Applications/_Libs/GPU_Decode;../../../../../Header/Codec/ASTC/ARM;../../../../../Header/CMP_Math;../../../../CImage/EXR;../../../../_Plugins/Common;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/;$(Compressonator_RootDev)/Source/CMP_MeshCompressor/Draco/src;$(Compressonator_OPENCV)/include;$(Compressonator_BOOST)/;$(Compressonator_QT)/include;$(Compressonator_QT)/include/QtCore;$(Compressonator_QT)/include/QtWidgets;$(Compressonator_QT)/include/QtGui;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
@@ -221,7 +215,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/Applications/_Plugins/CMesh/Tootle/;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/mesh_optimizer/;$(Compressonator_RootDev)/Applications/_Plugins/Common/gltf/;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/;../../../../../Compute;../../../../../../Common/Lib/AMD/APPSDK/3-0/include;../../../../CompressonatorGUI/Common;../../../../CompressonatorGUI/Components;../../../../../Header;../../../../../Header/Codec/ASTC/ARM;../../../../CImage/EXR;../../../../_Plugins/Common;$(Compressonator_RootDev)/Source/CMP_MeshCompressor/Draco/src;$(Compressonator_OPENCV)/include;$(Compressonator_BOOST)/;$(Compressonator_QT)/include;$(Compressonator_QT)/include/QtCore;$(Compressonator_QT)/include/QtWidgets;$(Compressonator_QT)/include/QtGui;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/Tootle/;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/mesh_optimizer/;$(Compressonator_RootDev)/Applications/_Plugins/Common/gltf/;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/;../../../../../Compute;../../../../../../Common/Lib/AMD/APPSDK/3-0/include;../../../../CompressonatorGUI/Common;../../../../CompressonatorGUI/Components;../../../../../Applications/_Libs/GPU_Decode;../../../../../Header/Codec/ASTC/ARM;../../../../../Header/CMP_Math;../../../../CImage/EXR;../../../../_Plugins/Common;$(Compressonator_RootDev)/Source/CMP_MeshCompressor/Draco/src;$(Compressonator_OPENCV)/include;$(Compressonator_BOOST)/;$(Compressonator_QT)/include;$(Compressonator_QT)/include/QtCore;$(Compressonator_QT)/include/QtWidgets;$(Compressonator_QT)/include/QtGui;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -260,7 +254,8 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/Applications/_Plugins/CMesh/Tootle/;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/mesh_optimizer/;$(Compressonator_RootDev)/Applications/_Plugins/Common/gltf/;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/;../../../../../Compute;../../../../../../Common/Lib/AMD/APPSDK/3-0/include;../../../../CompressonatorGUI/Common;../../../../CompressonatorGUI/Components;../../../../../Header;../../../../../Header/Codec/ASTC/ARM;../../../../CImage/EXR;../../../../_Plugins/Common;$(Compressonator_RootDev)/Source/CMP_MeshCompressor/Draco/src;$(Compressonator_OPENCV)/include;$(Compressonator_BOOST)/;$(Compressonator_QT)/include;$(Compressonator_QT)/include/QtCore;$(Compressonator_QT)/include/QtWidgets;$(Compressonator_QT)/include/QtGui;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/Tootle/;$(Compressonator_RootDev)/Applications/_Plugins/CMesh/mesh_optimizer/;$(Compressonator_RootDev)/Applications/_Plugins/Common/gltf/;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/;../../../../../Compute;../../../../../../Common/Lib/AMD/APPSDK/3-0/include;../../../../CompressonatorGUI/Common;../../../../CompressonatorGUI/Components;../../../../../Applications/_Libs/GPU_Decode;../../../../../Header/Codec/ASTC/ARM;../../../../../Header/CMP_Math;../../../../CImage/EXR;../../../../_Plugins/Common;$(Compressonator_RootDev)/Source/CMP_MeshCompressor/Draco/src;$(Compressonator_OPENCV)/include;$(Compressonator_BOOST)/;$(Compressonator_QT)/include;$(Compressonator_QT)/include/QtCore;$(Compressonator_QT)/include/QtWidgets;$(Compressonator_QT)/include/QtGui;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -285,6 +280,9 @@
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
     </ProjectReference>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -21,11 +21,11 @@
 // THE SOFTWARE.
 //
 
-
-
+// Windows Header Files:
 #ifdef _WIN32
-#include "stdafx.h"
+#include <windows.h>
 #endif
+
 #include <stdio.h>
 #include "CAnalysis.h"
 #include "PluginManager.h"
@@ -34,7 +34,6 @@
 #include <stdio.h>
 #include <assert.h>
 #include "Compressonator.h"
-#include "cExr.h"
 
 // File system
 #include <boost/filesystem.hpp>
@@ -46,21 +45,33 @@
 #include <boost/property_tree/ptree.hpp> 
 #include <boost/foreach.hpp> 
 
-// for EXR support
-using namespace Imf;
-using namespace Imath;
-
 using namespace std;
 
 #ifdef _DEBUG
-#pragma comment(lib,"Qt5Cored.lib")
-#pragma comment(lib,"Qt5Guid.lib")
-#pragma comment(lib, "Qt5Widgetsd.lib")
+    #define CMP_EXTERNAL_LibExt    "d.lib"
 #else
-#pragma comment(lib,"Qt5Core.lib")
-#pragma comment(lib,"Qt5Gui.lib")
-#pragma comment(lib, "Qt5Widgets.lib")
+    #define CMP_EXTERNAL_LibExt    ".lib"
 #endif
+
+#ifdef USE_OPENCV
+#define OpenCV_core_Lib     "opencv_core" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
+#define OpenCV_highgui_Lib  "opencv_highgui" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
+#define OpenCV_imgproc_Lib  "opencv_imgproc" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
+
+#pragma comment(lib,OpenCV_core_Lib)
+#pragma comment(lib,OpenCV_highgui_Lib)
+#pragma comment(lib,OpenCV_imgproc_Lib)
+#endif
+
+
+#define Qt5_core_Lib        "Qt5Core" CMP_EXTERNAL_LibExt
+#define Qt5_guid_Lib        "Qt5Gui" CMP_EXTERNAL_LibExt
+#define Qt5_widgets_Lib     "Qt5Widgets" CMP_EXTERNAL_LibExt
+
+#pragma comment(lib,Qt5_core_Lib)
+#pragma comment(lib,Qt5_guid_Lib)
+#pragma comment(lib,Qt5_widgets_Lib)
+
 
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_Canalysis)
@@ -72,8 +83,6 @@ void *make_Plugin_CAnalysis() { return new Plugin_Canalysis; }
 
 #define TEST_TOLERANCE 5 //for 4x4 test block omly
 
-vector<Mat>                       spl;
-vector<Mat>                       dpl;
 Plugin_Canalysis::Plugin_Canalysis()
 { 
     //default tolerance values
@@ -86,22 +95,24 @@ Plugin_Canalysis::Plugin_Canalysis()
     tolerance_ssimb   = 0.9995; 
     tolerance_ssimg   = 0.9995;
     tolerance_ssimr   = 0.9995;
+
+    m_imageloader     = NULL;
+    m_MipSrcImages    = NULL;
+    m_MipDestImages   = NULL;
+    m_MipDiffImages   = NULL;
+
 }
 
 Plugin_Canalysis::~Plugin_Canalysis()
 { 
     if (m_MipSrcImages)
-    {
         m_imageloader->clearMipImages(&m_MipSrcImages);
-    }
+
     if (m_MipDestImages)
-    {
         m_imageloader->clearMipImages(&m_MipDestImages);
-    }
+
     if (m_imageloader)
-    {
         delete m_imageloader;
-    }
 }
 
 int Plugin_Canalysis::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
@@ -113,6 +124,14 @@ int Plugin_Canalysis::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
     return 0;
 }
 
+string f2Str(float data, int prec)
+{
+    std::string s(16, '\0');
+    char pstr[6] = "%.xf";
+    pstr[2] = 48+(prec%10); // prec is limited from 0..9
+    std::snprintf(&s[0], s.size(), pstr, data);
+    return s;
+}
 
 void Plugin_Canalysis::write(REPORT_DATA data, char *resultsFile, char option)
 {
@@ -148,47 +167,47 @@ void Plugin_Canalysis::write(REPORT_DATA data, char *resultsFile, char option)
             {
                 if (option == 's') //ssim
                 {
-                    v.second.put("SSIM", data.SSIM);
-                    v.second.put("SSIM_BLUE", data.SSIM_Blue);
-                    v.second.put("SSIM_GREEN", data.SSIM_Green);
-                    v.second.put("SSIM_RED", data.SSIM_Red);
+                    v.second.put("SSIM"         , f2Str(data.SSIM,      4).c_str());
+                    v.second.put("SSIM_BLUE"    , f2Str(data.SSIM_Blue, 4).c_str());
+                    v.second.put("SSIM_GREEN"   , f2Str(data.SSIM_Green,4).c_str());
+                    v.second.put("SSIM_RED"     , f2Str(data.SSIM_Red,  4).c_str());
                     nodeExist = true;
                 }
                 else if (option == 'p') //psnr
                 {
-                    v.second.put("MSE", data.MSE);
-                    v.second.put("PSNR", data.PSNR);
-                    v.second.put("PSNR_BLUE", data.PSNR_Blue);
-                    v.second.put("PSNR_GREEN", data.PSNR_Green);
-                    v.second.put("PSNR_RED", data.PSNR_Red);
+                    v.second.put("MSE"          , f2Str(data.MSE, 1).c_str());
+                    v.second.put("PSNR"         , f2Str(data.PSNR, 1).c_str());
+                    v.second.put("PSNR_BLUE"    , f2Str(data.PSNR_Blue, 1).c_str());
+                    v.second.put("PSNR_GREEN"   , f2Str(data.PSNR_Green, 1).c_str());
+                    v.second.put("PSNR_RED"     , f2Str(data.PSNR_Red, 1).c_str());
                     nodeExist = true;
                 }
                 else 
                 {
-                    v.second.put("MSE", data.MSE);
-                    v.second.put("SSIM", data.SSIM);
-                    v.second.put("SSIM_BLUE", data.SSIM_Blue);
-                    v.second.put("SSIM_GREEN", data.SSIM_Green);
-                    v.second.put("SSIM_RED", data.SSIM_Red);
-                    v.second.put("PSNR", data.PSNR);
-                    v.second.put("PSNR_BLUE", data.PSNR_Blue);
-                    v.second.put("PSNR_GREEN", data.PSNR_Green);
-                    v.second.put("PSNR_RED", data.PSNR_Red);
+                    v.second.put("MSE"          , f2Str(data.MSE, 1).c_str());
+                    v.second.put("SSIM"         , f2Str(data.SSIM,      4).c_str());
+                    v.second.put("SSIM_BLUE"    , f2Str(data.SSIM_Blue, 4).c_str());
+                    v.second.put("SSIM_GREEN"   , f2Str(data.SSIM_Green,4).c_str());
+                    v.second.put("SSIM_RED"     , f2Str(data.SSIM_Red,  4).c_str());
+                    v.second.put("PSNR"         , f2Str(data.PSNR, 1).c_str());
+                    v.second.put("PSNR_BLUE"    , f2Str(data.PSNR_Blue, 1).c_str());
+                    v.second.put("PSNR_GREEN"   , f2Str(data.PSNR_Green, 1).c_str());
+                    v.second.put("PSNR_RED"     , f2Str(data.PSNR_Red, 1).c_str());
                     nodeExist = true;
                     break;
                 }
             }
             else if (v.first == diffName) //cmdline, node exist
             {
-                v.second.put("MSE", data.MSE);
-                v.second.put("SSIM", data.SSIM);
-                v.second.put("SSIM_BLUE", data.SSIM_Blue);
-                v.second.put("SSIM_GREEN", data.SSIM_Green);
-                v.second.put("SSIM_RED", data.SSIM_Red);
-                v.second.put("PSNR", data.PSNR);
-                v.second.put("PSNR_BLUE", data.PSNR_Blue);
-                v.second.put("PSNR_GREEN", data.PSNR_Green);
-                v.second.put("PSNR_RED", data.PSNR_Red);
+                v.second.put("MSE"          , f2Str(data.MSE, 1).c_str());
+                v.second.put("SSIM"         , f2Str(data.SSIM,4).c_str());
+                v.second.put("SSIM_BLUE"    , f2Str(data.SSIM_Blue, 4).c_str());
+                v.second.put("SSIM_GREEN"   , f2Str(data.SSIM_Green, 4).c_str());
+                v.second.put("SSIM_RED"     , f2Str(data.SSIM_Red, 4).c_str());
+                v.second.put("PSNR"         , f2Str(data.PSNR, 1).c_str());
+                v.second.put("PSNR_BLUE"    , f2Str(data.PSNR_Blue, 1).c_str());
+                v.second.put("PSNR_GREEN"   , f2Str(data.PSNR_Green, 1).c_str());
+                v.second.put("PSNR_RED"     , f2Str(data.PSNR_Red, 1).c_str());
                 if (data.srcdecodePattern[0]!='\0')
                     v.second.put("FAIL_SRCDECODEPATTERN", data.srcdecodePattern);
                 else
@@ -206,15 +225,15 @@ void Plugin_Canalysis::write(REPORT_DATA data, char *resultsFile, char option)
         if (!nodeExist) //cmdline, node not exist
         {
             ptree & node = pt.add(diffNodeName, "");
-            node.add("MSE", data.MSE);
-            node.add("SSIM", data.SSIM);
-            node.add("SSIM_BLUE", data.SSIM_Blue);
-            node.add("SSIM_GREEN", data.SSIM_Green);
-            node.add("SSIM_RED", data.SSIM_Red);
-            node.add("PSNR", data.PSNR);
-            node.add("PSNR_BLUE", data.PSNR_Blue);
-            node.add("PSNR_GREEN", data.PSNR_Green);
-            node.add("PSNR_RED", data.PSNR_Red);
+            node.add("MSE"          , f2Str(data.MSE, 1).c_str());
+            node.add("SSIM"         , f2Str(data.SSIM,4).c_str());
+            node.add("SSIM_BLUE"    , f2Str(data.SSIM_Blue, 4).c_str());
+            node.add("SSIM_GREEN"   , f2Str(data.SSIM_Green, 4).c_str());
+            node.add("SSIM_RED"     , f2Str(data.SSIM_Red, 4).c_str());
+            node.add("PSNR"         , f2Str(data.PSNR, 1).c_str());
+            node.add("PSNR_BLUE"    , f2Str(data.PSNR_Blue, 1).c_str());
+            node.add("PSNR_GREEN"   , f2Str(data.PSNR_Green, 1).c_str());
+            node.add("PSNR_RED"     , f2Str(data.PSNR_Red, 1).c_str());
             if (data.srcdecodePattern[0] != '\0')
                 node.add("FAIL_SRCDECODEPATTERN", data.srcdecodePattern);
            
@@ -227,28 +246,28 @@ void Plugin_Canalysis::write(REPORT_DATA data, char *resultsFile, char option)
         if (option == 's' || option == 'p')  //only gui will have option ssim or psnr
         {
             ptree & node = pt.add("ANALYSIS.DATA", "");
-            node.add("MSE", data.MSE);
-            node.add("SSIM", data.SSIM);
-            node.add("SSIM_BLUE", data.SSIM_Blue);
-            node.add("SSIM_GREEN", data.SSIM_Green);
-            node.add("SSIM_RED", data.SSIM_Red);
-            node.add("PSNR", data.PSNR);
-            node.add("PSNR_BLUE", data.PSNR_Blue);
-            node.add("PSNR_GREEN", data.PSNR_Green);
-            node.add("PSNR_RED", data.PSNR_Red);
+            node.add("MSE"          , f2Str(data.MSE, 1).c_str());
+            node.add("SSIM"         , f2Str(data.SSIM,4).c_str());
+            node.add("SSIM_BLUE"    , f2Str(data.SSIM_Blue, 4).c_str());
+            node.add("SSIM_GREEN"   , f2Str(data.SSIM_Green, 4).c_str());
+            node.add("SSIM_RED"     , f2Str(data.SSIM_Red, 4).c_str());
+            node.add("PSNR"         , f2Str(data.PSNR, 1).c_str());
+            node.add("PSNR_BLUE"    , f2Str(data.PSNR_Blue, 1).c_str());
+            node.add("PSNR_GREEN"   , f2Str(data.PSNR_Green, 1).c_str());
+            node.add("PSNR_RED"     , f2Str(data.PSNR_Red, 1).c_str());
         }
         else //cmdline
         {
             ptree & node = pt.add(diffNodeName, "");
-            node.add("MSE", data.MSE);
-            node.add("SSIM", data.SSIM);
-            node.add("SSIM_BLUE", data.SSIM_Blue);
-            node.add("SSIM_GREEN", data.SSIM_Green);
-            node.add("SSIM_RED", data.SSIM_Red);
-            node.add("PSNR", data.PSNR);
-            node.add("PSNR_BLUE", data.PSNR_Blue);
-            node.add("PSNR_GREEN", data.PSNR_Green);
-            node.add("PSNR_RED", data.PSNR_Red);
+            node.add("MSE"          , f2Str(data.MSE, 1).c_str());
+            node.add("SSIM"         , f2Str(data.SSIM,4).c_str());
+            node.add("SSIM_BLUE"    , f2Str(data.SSIM_Blue, 4).c_str());
+            node.add("SSIM_GREEN"   , f2Str(data.SSIM_Green, 4).c_str());
+            node.add("SSIM_RED"     , f2Str(data.SSIM_Red, 4).c_str());
+            node.add("PSNR"         , f2Str(data.PSNR, 1).c_str());
+            node.add("PSNR_BLUE"    , f2Str(data.PSNR_Blue, 1).c_str());
+            node.add("PSNR_GREEN"   , f2Str(data.PSNR_Green, 1).c_str());
+            node.add("PSNR_RED"     , f2Str(data.PSNR_Red, 1).c_str());
             if (data.srcdecodePattern[0] != '\0')
                 node.add("FAIL_SRCDECODEPATTERN", data.srcdecodePattern);
 
@@ -269,7 +288,7 @@ void Plugin_Canalysis::write(REPORT_DATA data, char *resultsFile, char option)
 
 
     boost::filesystem::path result(resultsFile);
-    int lastindex = result.generic_string().find_last_of("/");
+    int lastindex = (int)result.generic_string().find_last_of("/");
     string goldFile = result.generic_string().substr(0, lastindex + 1);
     goldFile.append("golden.xml");
 
@@ -545,7 +564,8 @@ void  Plugin_Canalysis::generateBCtestResult(QImage *src, QImage *dest, REPORT_D
     }
 }
 
-bool Plugin_Canalysis::psnr(QImage *src, QImage *dest, REPORT_DATA &myReport, CMP_Feedback_Proc pFeedbackProc)
+#ifdef USE_OPENCV
+bool Plugin_Canalysis::psnr(QImage *src, Mat srcimg, QImage *dest, Mat destimg, REPORT_DATA &myReport, CMP_Feedback_Proc pFeedbackProc)
 {
     double bMSE = 0, gMSE = 0, rMSE = 0, MSE = 0;
     double MAX = 255.0; // Maximum possible pixel range. For our BMP's, which have 8 bits, it's 255.
@@ -574,11 +594,18 @@ bool Plugin_Canalysis::psnr(QImage *src, QImage *dest, REPORT_DATA &myReport, CM
         }
     }
 
+
+    //------------------- Code needs validation
+    // double mse;
+    // double psnr;
+    // getMSE_PSNR( srcimg, destimg, mse, psnr);
+    //-------------------
+
     bMSE *= (1.0 / (w*h));
     gMSE *= (1.0 / (w*h));
     rMSE *= (1.0 / (w*h));
 
-    myReport.MSE = (bMSE + gMSE + rMSE) / 3;
+    myReport.MSE =(bMSE + gMSE + rMSE) / 3;
     myReport.PSNR_Blue = -1;
     myReport.PSNR_Green = -1;
     myReport.PSNR_Red = -1;
@@ -594,8 +621,7 @@ bool Plugin_Canalysis::psnr(QImage *src, QImage *dest, REPORT_DATA &myReport, CM
 
     return (myReport.PSNR != -1);
 }
-
-
+#endif
 
 int Plugin_Canalysis::TC_ImageDiff(const char * in1, 
                                    const char * in2, 
@@ -612,28 +638,44 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
 
     MY_REPORT_DATA report;
 
-    m_imageloader = new CImageLoader(pluginManager);
-    QImage* srcImage=NULL;
+    if (m_imageloader == NULL)
+        m_imageloader = new CImageLoader(pluginManager);
+
+
+    QImage* srcImage  = NULL;
     QImage* destImage = NULL;
     QImage* diffImage = NULL;
+
     if (m_imageloader)
     {
-        m_MipSrcImages = m_imageloader->LoadPluginImage(QString::fromUtf8(in1));
+
+        if (m_MipSrcImages)
+            m_imageloader->clearMipImages(&m_MipSrcImages);
+        if (m_MipDestImages)
+            m_imageloader->clearMipImages(&m_MipDestImages);
+
+        m_MipSrcImages  = m_imageloader->LoadPluginImage(QString::fromUtf8(in1));
         m_MipDestImages = m_imageloader->LoadPluginImage(QString::fromUtf8(in2));
     }
 
     if (m_MipSrcImages != NULL && m_MipDestImages != NULL)
-    {    
-        if (m_MipSrcImages->Image_list.count() >0)
-            srcImage = m_MipSrcImages->Image_list[0];
+    {
+        // Analysis is only on top MipLevel and first cubemap face!
+        // Need to update the code to handle all faces of cubemaps
+        if (m_MipSrcImages->QImage_list[0].count() >0)
+        {
+            srcImage = m_MipSrcImages->QImage_list[0][0];
+        }
         else
         {
             printf("Error: Source Image cannot be loaded\n");
             return -1;
         }
 
-        if (m_MipDestImages->Image_list.count() >0)
-            destImage = m_MipDestImages->Image_list[0];
+        if (m_MipDestImages->QImage_list[0].count() >0)
+        {
+            destImage = m_MipDestImages->QImage_list[0][0];
+        }
         else
         {
             printf("Error: Dest Image cannot be loaded\n");
@@ -664,74 +706,55 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
         if (cmipImages == NULL) //cmdline enable both ssim and psnr
         {
 
-            {
-                bool testpassed = psnr(srcImage, destImage, report.data, pFeedbackProc);
+#ifdef USE_OPENCV
+           cv::Mat srcimg  = QtOcv::image2Mat(*srcImage);
+           cv::Mat destimg = QtOcv::image2Mat(*destImage);
+           if (!&srcimg || !&destimg)
+           {
+               printf("Error: Images fail to allocate for ssim analysis\n");
+               return -1;
+           }
 
-                if (!testpassed)
-                {
-                    printf("Error: Images analysis fail\n");
-                    return -1;
-                }
+           bool testpassed = psnr(srcImage, srcimg, destImage, destimg, report.data);
+           if (!testpassed)
+           {
+               printf("Error: Images analysis fail\n");
+               return -1;
+           }
+
+           Scalar SSIM = getSSIM(srcimg, destimg, pFeedbackProc);
+
+           srcimg.release();
+           destimg.release();
+
+           report.data.SSIM_Blue   = SSIM.val[0];
+           report.data.SSIM_Green  = SSIM.val[1];
+           report.data.SSIM_Red    = SSIM.val[2];
+#endif
+
+           report.data.SSIM = (report.data.SSIM_Blue + report.data.SSIM_Green + report.data.SSIM_Red) / 3;
 
 
-                cv::Mat srcimg = QtOcv::image2Mat(*srcImage);
-                cv::Mat destimg = QtOcv::image2Mat(*destImage);
 
-                IplImage cv_srcimage;
-                IplImage cv_destimage;
+           // If we have a report file write to it
+           if ((strcmp(resultsFile, "") != 0))
+                   write(report.data, resultsFile, 'a');
 
-                cv_srcimage = srcimg;
-                cv_destimage = destimg;
+           if (analysisData)
+           {
+               analysisData->SSIM       = report.data.SSIM;
+               analysisData->SSIM_Red   = report.data.SSIM_Red;
+               analysisData->SSIM_Green = report.data.SSIM_Green;
+               analysisData->SSIM_Blue  = report.data.SSIM_Blue;
+               analysisData->PSNR       = report.data.PSNR;
+               analysisData->PSNR_Red   = report.data.PSNR_Red;
+               analysisData->PSNR_Green = report.data.PSNR_Green;
+               analysisData->PSNR_Blue  = report.data.PSNR_Blue;
+               analysisData->MSE        = report.data.MSE;
 
-                if (!&cv_srcimage || !&cv_destimage)
-                {
-                    printf("Error: Images fail to allocate for ssim analysis\n");
-                    return -1;
-                }
-                //#ifdef _DEBUG
-                //        cvSaveImage("source.bmp", &cv_srcimage);
-                //        cvSaveImage("dest.bmp", &cv_destimage);
-                //#endif
-
-                int size = srcimg.rows *srcimg.cols;
-
-                int ssimtestpassed = 0;
-                ssimtestpassed = GetSSIMBYTES(&cv_srcimage, &cv_destimage, &report.data, pFeedbackProc);
-                //ssimtestpassed = getMatSSIM(&cv_srcimage, &cv_destimage, &report.data, pFeedbackProc);
-
-                if (ssimtestpassed == -1)
-                {
-                    split(srcimg, spl);
-                    split(destimg, dpl);
-                    report.data.SSIM_Blue = ssim(spl[0], dpl[0], 1, pFeedbackProc);
-                    report.data.SSIM_Green = ssim(spl[1], dpl[1], 1, pFeedbackProc);
-                    report.data.SSIM_Red = ssim(spl[2], dpl[2], 1, pFeedbackProc);
-                    report.data.SSIM = (report.data.SSIM_Blue + report.data.SSIM_Green + report.data.SSIM_Red) / 3;
-                }
-
-                srcimg.release();
-                destimg.release();
-
-                // If we have a report file write to it
-                if ((strcmp(resultsFile, "") != 0))
-                        write(report.data, resultsFile, 'a');
-
-                if (analysisData)
-                {
-                    analysisData->SSIM       = report.data.SSIM;
-                    analysisData->SSIM_Red   = report.data.SSIM_Red;
-                    analysisData->SSIM_Green = report.data.SSIM_Green;
-                    analysisData->SSIM_Blue  = report.data.SSIM_Blue;
-                    analysisData->PSNR       = report.data.PSNR;
-                    analysisData->PSNR_Red   = report.data.PSNR_Red;
-                    analysisData->PSNR_Green = report.data.PSNR_Green;
-                    analysisData->PSNR_Blue  = report.data.PSNR_Blue;
-                    analysisData->MSE        = report.data.MSE;
-
-                }
-            }
+           }
         } //
-        
+
         if ((strcmp(out, "") != 0))
         {
             diffImage = new QImage(w, h, QImage::Format_ARGB32);
@@ -776,6 +799,9 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
         return -1;
     }
 
+    //-------------------
+    // Process Image Diff
+    //-------------------
     if (diffImage != NULL)
     {
         if ((CMP_FileExists(out)))
@@ -787,6 +813,10 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
 
         if (saved && cmipImages != NULL) //gui
         {
+            delete diffImage;
+            if (m_MipDiffImages)
+                m_imageloader->clearMipImages(&m_MipDiffImages);
+
             m_MipDiffImages = m_imageloader->LoadPluginImage(out);
             if (m_MipDiffImages)
             {
@@ -794,9 +824,14 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
                 *cmipImages = m_MipDiffImages;
                 return 0;
             }
+            else
+            {
+                return -1;
+            }
         }
         else if (saved && cmipImages == NULL)  //cmdline version pass in null
         {
+            delete diffImage;
             if ((strcmp(out, "") == 0))
             {
                 QFile::remove(out);
@@ -805,6 +840,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
         }
         else if (!saved && cmipImages != NULL) //gui- saved fail due to admin right
         {
+            delete diffImage;
             if ((strcmp(out, "") == 0)) {
                 return 0;
             }
@@ -815,6 +851,9 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
                 saved = diffImage->save(redirectOut);
                 if (saved)
                 {
+                    if (m_MipDiffImages)
+                        m_imageloader->clearMipImages(&m_MipDiffImages);
+
                     printf("User does not have admin right to the saved path. Diff image has been redirect saved to %s\n", redirectOut.toStdString().c_str());
                     m_MipDiffImages = m_imageloader->LoadPluginImage(redirectOut);
                     if (m_MipDiffImages)
@@ -834,7 +873,9 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
         }
         else if (!saved && cmipImages == NULL)  //cmdline version pass in null- saved fail due to admin right
         {
-            if ((strcmp(out, "") == 0)){
+            if ((strcmp(out, "") == 0))
+            {
+                delete diffImage;
                 return 0;
             }
             else {
@@ -842,6 +883,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
                 QString redirectOut = appLocalPath + "/diff.bmp";
                 redirectOut.replace("CompressonatorCLI", "Compressonator");
                 saved = diffImage->save(redirectOut);
+                delete diffImage;
                 if (saved)
                 {
                     printf("User does not have admin right to the saved path. Diff image has been redirect saved to %s\n", redirectOut.toStdString().c_str());
@@ -873,28 +915,30 @@ int Plugin_Canalysis::TC_PSNR_MSE(const char * in1, const char * in2,  char *res
 
     MY_REPORT_DATA report;
 
-    m_imageloader = new CImageLoader(pluginManager);
+    if (m_imageloader == NULL)
+        m_imageloader = new CImageLoader(pluginManager);
+
     QImage* srcImage = NULL;
     QImage* destImage = NULL;
-    QImage* diffImage = NULL;
+
     if (m_imageloader)
     {
-        m_MipSrcImages = m_imageloader->LoadPluginImage(QString::fromUtf8(in1));
+        m_MipSrcImages  = m_imageloader->LoadPluginImage(QString::fromUtf8(in1));
         m_MipDestImages = m_imageloader->LoadPluginImage(QString::fromUtf8(in2));
     }
 
     if (m_MipSrcImages != NULL && m_MipDestImages != NULL)
     {
-        if (m_MipSrcImages->Image_list.count() >0)
-            srcImage = m_MipSrcImages->Image_list[0];
+        if (m_MipSrcImages->QImage_list[0].count() >0)
+            srcImage = m_MipSrcImages->QImage_list[0][0];
         else
         {
             printf("Error: Source Image cannot be loaded\n");
             return -1;
         }
 
-        if (m_MipDestImages->Image_list.count() >0)
-            destImage = m_MipDestImages->Image_list[0];
+        if (m_MipDestImages->QImage_list[0].count() >0)
+            destImage = m_MipDestImages->QImage_list[0][0];
         else
         {
             printf("Error: Dest Image cannot be loaded\n");
@@ -918,9 +962,17 @@ int Plugin_Canalysis::TC_PSNR_MSE(const char * in1, const char * in2,  char *res
             printf("Error: Both images must be same size\n");
             return -1;
         }
-       
-        bool testpassed = psnr(srcImage, destImage, report.data);
 
+#ifdef USE_OPENCV
+        cv::Mat srcimg  = QtOcv::image2Mat(*srcImage);
+        cv::Mat destimg = QtOcv::image2Mat(*destImage);
+        if (!&srcimg || !&destimg)
+        {
+            printf("Error: Images fail to allocate for ssim analysis\n");
+            return -1;
+        }
+
+        bool testpassed = psnr(srcImage, srcimg, destImage, destimg, report.data);
         if (!testpassed)
         {
             printf("Error: Images analysis fail\n");
@@ -928,6 +980,7 @@ int Plugin_Canalysis::TC_PSNR_MSE(const char * in1, const char * in2,  char *res
         }
 
         write(report.data, resultsFile,'p');
+#endif
         //cout << report;
     }
     else
@@ -945,28 +998,36 @@ int Plugin_Canalysis::TC_SSIM(const char * in1, const char * in2, char *resultsF
 
     MY_REPORT_DATA report;
 
-    m_imageloader = new CImageLoader(pluginManager);
+    if (m_imageloader == NULL)
+        m_imageloader = new CImageLoader(pluginManager);
+
     QImage* srcImage = NULL;
     QImage* destImage = NULL;
-    QImage* diffImage = NULL;
+
     if (m_imageloader)
     {
-        m_MipSrcImages = m_imageloader->LoadPluginImage(QString::fromUtf8(in1));
+        if (m_MipSrcImages)
+            m_imageloader->clearMipImages(&m_MipSrcImages);
+
+        if (m_MipDestImages)
+            m_imageloader->clearMipImages(&m_MipDestImages);
+
+        m_MipSrcImages  = m_imageloader->LoadPluginImage(QString::fromUtf8(in1));
         m_MipDestImages = m_imageloader->LoadPluginImage(QString::fromUtf8(in2));
     }
 
     if (m_MipSrcImages != NULL && m_MipDestImages != NULL)
     {
-        if (m_MipSrcImages->Image_list.count() >0)
-            srcImage = m_MipSrcImages->Image_list[0];
+        if (m_MipSrcImages->QImage_list[0].count() >0)
+            srcImage = m_MipSrcImages->QImage_list[0][0];
         else
         {
             printf("Error: Source Image cannot be loaded\n");
             return -1;
         }
 
-        if (m_MipDestImages->Image_list.count() >0)
-            destImage = m_MipDestImages->Image_list[0];
+        if (m_MipDestImages->QImage_list[0].count() >0)
+            destImage = m_MipDestImages->QImage_list[0][0];
         else
         {
             printf("Error: Dest Image cannot be loaded\n");
@@ -991,42 +1052,32 @@ int Plugin_Canalysis::TC_SSIM(const char * in1, const char * in2, char *resultsF
             return -1;
         }
 
-
-        cv::Mat srcimg = QtOcv::image2Mat(*srcImage);
+#ifdef USE_OPENCV
+        cv::Mat srcimg  = QtOcv::image2Mat(*srcImage);
         cv::Mat destimg = QtOcv::image2Mat(*destImage);
 
-        IplImage cv_srcimage;
-        IplImage cv_destimage;
-
-        cv_srcimage = srcimg;
-        cv_destimage = destimg;
-
-        if (!&cv_srcimage || !&cv_destimage)
+        if (!&srcimg || !&destimg)
         {
             printf("Error: Images fail to allocate for ssim analysis\n");
             return -1;
         }
 
-        //int size = srcimg.rows *srcimg.cols;
-
-        int ssimtestpassed = 0;
-        ssimtestpassed = GetSSIMBYTES(&cv_srcimage, &cv_destimage, &report.data);
-
-        if (ssimtestpassed == -1)
-        {
-            split(srcimg, spl);
-            split(destimg, dpl);
-            report.data.SSIM_Blue = ssim(spl[0], dpl[0], 1);
-            report.data.SSIM_Green = ssim(spl[1], dpl[1], 1);
-            report.data.SSIM_Red = ssim(spl[2], dpl[2], 1);
-            report.data.SSIM = (report.data.SSIM_Blue + report.data.SSIM_Green + report.data.SSIM_Red) / 3;
-        }
+        Scalar SSIM = getSSIM(srcimg, destimg, pFeedbackProc);
 
         srcimg.release();
         destimg.release();
 
+        report.data.SSIM_Blue   = SSIM.val[0];
+        report.data.SSIM_Green  = SSIM.val[1];
+        report.data.SSIM_Red    = SSIM.val[2];
+#endif
+
+        report.data.SSIM = (report.data.SSIM_Blue + report.data.SSIM_Green + report.data.SSIM_Red) / 3;
+
+
+
         write(report.data, resultsFile,'s');
-        // cout << report;
+
     }
     else
     {
