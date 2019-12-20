@@ -1,0 +1,9 @@
+// This file is used to set Visual Studio Custom Build Options for BC7_Encode
+//---------------------------------------------------------------------------
+// Platform x64 Command Line
+// $(ProjectDir)../../../../../Utils/ispc  -O2 "$(ProjectDir)../%(Filename).cpp" -o "$(TargetDir)%(Filename).obj" -h "$(ProjectDir)../%(Filename)_spmd.h" --target=sse2,sse4,avx,avx2 --opt=fast-math  --arch=x86-64  
+// Platform Win32:Command Line
+// $(ProjectDir)../../../../../Utils/ispc -O2 "$(ProjectDir)../%(Filename).cpp" -o "$(TargetDir)%(Filename).obj" -h "$(ProjectDir)../%(Filename)_spmd.h" --arch=x86 --target=sse2,sse4,avx,avx2 --opt=fast-math
+// Outputs
+// $(TargetDir)%(Filename).obj;$(TargetDir)%(Filename)_sse2.obj;$(TargetDir)%(Filename)_sse4.obj;$(TargetDir)%(Filename)_avx.obj;$(TargetDir)%(Filename)_avx2.obj;
+ 
