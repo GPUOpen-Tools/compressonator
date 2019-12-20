@@ -25,9 +25,9 @@
 #include "cmdline.h"
 
 #ifdef USE_MESHOPTIMIZER
-#include "..\..\_Plugins\CMesh\mesh_optimizer\mesh_optimizer.h"
+#include "../../_Plugins/CMesh/mesh_optimizer/mesh_optimizer.h"
 #else
-#include "..\..\_Plugins\CMesh\Tootle\mesh_tootle.h"
+#include "../../_Plugins/CMesh/Tootle/mesh_tootle.h"
 #endif
 #include "cpMainComponents.h"
 
@@ -35,7 +35,7 @@
 #include <assimp/Exporter.hpp>
 #endif
 
-#include "..\..\_Plugins\Common\gltf\GltfCommon.h"
+#include "../../_Plugins/Common/gltf/GltfCommon.h"
 #include "tiny_gltf2.h"
 #include "tiny_gltf2_utils.h"
 

@@ -23,7 +23,7 @@
 
 #include "cp3DModelView.h"
 #include "cpMainComponents.h"
-#include "..\..\_Plugins\Common\gltf\GltfCommon.h"
+#include "../../_Plugins/Common/gltf/GltfCommon.h"
 #include "tiny_gltf2.h"
 #include "tiny_gltf2_utils.h"
 //----------------------------------------
