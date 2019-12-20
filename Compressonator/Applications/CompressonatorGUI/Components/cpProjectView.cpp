@@ -3536,7 +3536,7 @@ QTreeWidgetItem* ProjectView::Tree_AddImageFile(QString filePathName, int index,
         std::ifstream fstream(filePathName.toStdString());
         if (!fstream)
         {
-            return false;
+            return nullptr;
         }
 
         showProgressDialog("Loading Model Data");
