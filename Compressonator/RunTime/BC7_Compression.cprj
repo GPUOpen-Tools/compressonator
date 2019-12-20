@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PROJECT>
-  <Image File="./Images/Boat.png">
-    <Compression Setting="Boat_1" Enabled="False">
-      <Destination>./Images/Boat_1.DDS</Destination>
-      <fd>BC7</fd>
-    </Compression>
-  </Image>
   <Image File="./Images/Ruby.bmp">
     <Compression Setting="Ruby_bmp_1" Enabled="False">
       <Destination>./Images/Ruby_bmp_1.DDS</Destination>

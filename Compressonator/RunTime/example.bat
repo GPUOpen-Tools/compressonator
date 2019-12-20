@@ -1,21 +1,5 @@
 IF NOT EXIST .\results mkdir .\results
 
-REM -------------------
-REM * BC7 Compression *
-REM -------------------
-
-REM Example  1a: PNG to Compressed DDS (BC7)
-CompressonatorCLI -fd BC7 -Quality 0.01 .\images\boat.png  .\results\1a_boat.dds
-
-REM Example  1b: Compressed DDS (BC7) to uncompressed PNG  	
-CompressonatorCLI .\results\1a_boat.dds   .\results\1b_boat.png 
-
-REM Example  1c: Compress a PNG with BC7 and save to a uncompressed BMP
-CompressonatorCLI -fd BC7 -Quality 0.01 .\images\boat.png  .\results\1c_boat.bmp
-
-REM Example  1d: Change PNG to a BMP format
-CompressonatorCLI -fd ARGB_8888  .\images\boat.png  .\results\1d_boat.bmp
-
 REM ---------------------------
 REM * MIP MAP BC7 Compression *
 REM ---------------------------
