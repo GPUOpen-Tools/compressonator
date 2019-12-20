@@ -2,6 +2,14 @@ cmake_minimum_required(VERSION 3.10)
 
 project(Compressonator)
 
+find_package(Threads REQUIRED)
+
+if (UNIX)
+  # OpenEXRConfig.cmake is broken on Linux, use PkgConfig
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(OpenEXR REQUIRED OpenEXR)
+endif()
+
 add_subdirectory(CMP_Framework)
 add_subdirectory(CMP_CompressonatorLib)
 add_subdirectory(Applications/_Plugins/CImage/ASTC)
