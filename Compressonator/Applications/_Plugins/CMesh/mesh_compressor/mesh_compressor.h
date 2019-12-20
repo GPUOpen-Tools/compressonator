@@ -42,7 +42,6 @@
 #include "TC_PluginAPI.h"
 #include "TC_PluginInternal.h"
 #include "Compressonator.h"
-#include "MIPS.h"
 #include "ModelData.h"
 
 using namespace draco;

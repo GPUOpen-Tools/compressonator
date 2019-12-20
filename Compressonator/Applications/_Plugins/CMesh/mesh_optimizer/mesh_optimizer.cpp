@@ -58,7 +58,7 @@ Plugin_Mesh_Optimizer::Plugin_Mesh_Optimizer()
     m_settings.bSimplifyMesh = false;
     m_settings.nCacheSize = 16;
     m_settings.nlevelofDetails = 5;
-    m_settings.nOverdrawACMRthreshold = 1.05;
+    m_settings.nOverdrawACMRthreshold = 1.05f;
 }
 
 Plugin_Mesh_Optimizer::~Plugin_Mesh_Optimizer()
@@ -255,7 +255,7 @@ void optRandomShuffle(CMP_Mesh& mesh)
 
 void optCache(CMP_Mesh& mesh)
 {
-    meshopt_optimizeVertexCache(&mesh.indices[0], &mesh.indices[0], mesh.indices.size(), mesh.vertices.size());
+    meshopt_optimizeVertexCache(&mesh.indices[0], &mesh.indices[0], mesh.indices.size(), mesh.vertices.size(),16);
 }
 
 void optCacheFifo(CMP_Mesh& mesh)
@@ -279,7 +279,7 @@ void optFetch(CMP_Mesh& mesh)
 void optComplete(CMP_Mesh& mesh)
 {
     // vertex cache optimization should go first as it provides data for overdraw
-    meshopt_optimizeVertexCache(&mesh.indices[0], &mesh.indices[0], mesh.indices.size(), mesh.vertices.size());
+    meshopt_optimizeVertexCache(&mesh.indices[0], &mesh.indices[0], mesh.indices.size(), mesh.vertices.size(),16);
 
     // reorder indices for overdraw, balancing overdraw and vertex cache efficiency
     const float kThreshold = 1.05f; // allow up to 5% worse ACMR to get more reordering opportunities for overdraw
@@ -334,7 +334,7 @@ void optCompleteSimplify(CMP_Mesh& mesh)
     {
         std::vector<unsigned int>& lod = lods[i];
 
-        meshopt_optimizeVertexCache(&lod[0], &lod[0], lod.size(), mesh.vertices.size());
+        meshopt_optimizeVertexCache(&lod[0], &lod[0], lod.size(), mesh.vertices.size(),16);
         meshopt_optimizeOverdraw(&lod[0], &lod[0], lod.size(), &mesh.vertices[0].px, mesh.vertices.size(), sizeof(Vertex), 1.0f);
     }
 
@@ -350,7 +350,7 @@ void optCompleteSimplify(CMP_Mesh& mesh)
 
     size_t total_index_count = 0;
 
-    for (int i = lod_count - 1; i >= 0; --i)
+    for (size_t i = lod_count - 1; i >= 0; --i)
     {
         lod_index_offsets[i] = total_index_count;
         lod_index_counts[i] = lods[i].size();

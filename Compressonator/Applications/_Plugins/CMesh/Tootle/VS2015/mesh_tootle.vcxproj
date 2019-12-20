@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug_MD|Win32">
       <Configuration>Debug_MD</Configuration>
@@ -44,12 +44,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -64,12 +64,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -86,6 +86,7 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\..\..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -93,6 +94,7 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\..\..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -100,6 +102,7 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\..\..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -107,6 +110,7 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\..\..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -115,26 +119,26 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
@@ -174,7 +178,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_QT)/include/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_BOOST)/;..\;..\AMDUtil;..\..\..\common\d3dx12;..\..\..\Common;..\..\..\..\..\Header;$(DXSDK_DIR)Include;..\..\..\..\..\Header\CMP_Math;..\..\..\..\..\Header\CMP_Mesh;../../../../../Applications/_Plugins/C3DModel_Loaders/obj;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_QT)/include/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_BOOST)/;..\;..\AMDUtil;..\..\..\common\d3dx12;..\..\..\Common;$(DXSDK_DIR)Include;..\..\..\..\..\Applications\_Libs\CMP_Math;..\..\..\..\..\Applications\_Libs\CMP_Mesh;../../../../../Applications/_Plugins/C3DModel_Loaders/obj;$(Compressonator_RootDev)Applications\_Libs\CMP_MeshOptimizer;..\..\..\..\..\Applications\_Libs\GPU_Decode</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -183,8 +187,8 @@
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>CMP_Math_MTd.lib;CMP_Mesh_MTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_FrameWork_MD$(DebugSuffix).lib;CMP_Math_MTd.lib;CMP_Mesh_MTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>../CopyFiles.bat $(OUTDIR) $(ProjectDir)</Command>
@@ -201,7 +205,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_QT)/include/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_BOOST)/;..\;..\AMDUtil;..\..\..\common\d3dx12;..\..\..\Common;..\..\..\..\..\Header;$(DXSDK_DIR)Include;..\..\..\..\..\Header\CMP_Math;..\..\..\..\..\Header\CMP_Mesh;../../../../../Applications/_Plugins/C3DModel_Loaders/obj;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_QT)/include/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_BOOST)/;..\;..\AMDUtil;..\..\..\common\d3dx12;..\..\..\Common;$(DXSDK_DIR)Include;..\..\..\..\..\Applications\_Libs\CMP_Math;..\..\..\..\..\Applications\_Libs\CMP_Mesh;../../../../../Applications/_Plugins/C3DModel_Loaders/obj;$(Compressonator_RootDev)Applications\_Libs\CMP_MeshOptimizer;..\..\..\..\..\Applications\_Libs\GPU_Decode</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -210,8 +214,8 @@
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Compressonator_MDd.lib;GPU_Decode_MDd.lib;CMP_Math_MDd.lib;CMP_Mesh_MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_FrameWork_MD$(DebugSuffix).lib;Compressonator_MDd.lib;GPU_Decode_MDd.lib;CMP_Math_MDd.lib;CMP_Mesh_MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>../CopyFiles.bat $(OUTDIR) $(ProjectDir)</Command>
@@ -227,7 +231,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_QT)/include/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_BOOST)/;..\;..\AMDUtil;..\..\..\common\d3dx12;..\..\..\Common;..\..\..\..\..\Header;$(DXSDK_DIR)Include;..\..\..\..\..\Header\CMP_Math;..\..\..\..\..\Header\CMP_Mesh;../../../../../Applications/_Plugins/C3DModel_Loaders/obj;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_QT)/include/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_BOOST)/;..\;..\AMDUtil;..\..\..\common\d3dx12;..\..\..\Common;$(DXSDK_DIR)Include;..\..\..\..\..\Applications\_Libs\CMP_Math;..\..\..\..\..\Applications\_Libs\CMP_Mesh;../../../../../Applications/_Plugins/C3DModel_Loaders/obj;$(Compressonator_RootDev)Applications\_Libs\CMP_MeshOptimizer;..\..\..\..\..\Applications\_Libs\GPU_Decode</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -235,8 +239,8 @@
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
-      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>CMP_Math_MTd.lib;CMP_Mesh_MTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_FrameWork_MD$(DebugSuffix).lib;CMP_Math_MTd.lib;CMP_Mesh_MTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>../CopyFiles.bat $(OUTDIR) $(ProjectDir)</Command>
@@ -252,7 +256,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_QT)/include/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_BOOST)/;..\;..\AMDUtil;..\..\..\common\d3dx12;..\..\..\Common;..\..\..\..\..\Header;$(DXSDK_DIR)Include;..\..\..\..\..\Header\CMP_Math;..\..\..\..\..\Header\CMP_Mesh;../../../../../Applications/_Plugins/C3DModel_Loaders/obj;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_QT)/include/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_BOOST)/;..\;..\AMDUtil;..\..\..\common\d3dx12;..\..\..\Common;$(DXSDK_DIR)Include;..\..\..\..\..\Applications\_Libs\CMP_Math;..\..\..\..\..\Applications\_Libs\CMP_Mesh;../../../../../Applications/_Plugins/C3DModel_Loaders/obj;$(Compressonator_RootDev)Applications\_Libs\CMP_MeshOptimizer;..\..\..\..\..\Applications\_Libs\GPU_Decode</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -260,8 +264,8 @@
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
-      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86_64/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Compressonator_MDd.lib;GPU_Decode_MDd.lib;CMP_Math_MDd.lib;CMP_Mesh_MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86_64/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_FrameWork_MD$(DebugSuffix).lib;Compressonator_MDd.lib;GPU_Decode_MDd.lib;CMP_Math_MDd.lib;CMP_Mesh_MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>../CopyFiles.bat $(OUTDIR) $(ProjectDir)</Command>
@@ -280,7 +284,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_QT)/include/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_BOOST)/;..\;..\AMDUtil;..\..\..\common\d3dx12;..\..\..\Common;..\..\..\..\..\Header;$(DXSDK_DIR)Include;..\..\..\..\..\Header\CMP_Math;..\..\..\..\..\Header\CMP_Mesh;../../../../../Applications/_Plugins/C3DModel_Loaders/obj;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_QT)/include/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_BOOST)/;..\;..\AMDUtil;..\..\..\common\d3dx12;..\..\..\Common;$(DXSDK_DIR)Include;..\..\..\..\..\Applications\_Libs\CMP_Math;..\..\..\..\..\Applications\_Libs\CMP_Mesh;../../../../../Applications/_Plugins/C3DModel_Loaders/obj;$(Compressonator_RootDev)Applications\_Libs\CMP_MeshOptimizer;..\..\..\..\..\Applications\_Libs\GPU_Decode</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -291,8 +295,8 @@
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>CMP_Math_MT.lib;CMP_Mesh_MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_FrameWork_MD$(DebugSuffix).lib;CMP_Math_MT.lib;CMP_Mesh_MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>../CopyFiles.bat $(OUTDIR) $(ProjectDir)</Command>
@@ -311,7 +315,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_QT)/include/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_BOOST)/;..\;..\AMDUtil;..\..\..\common\d3dx12;..\..\..\Common;..\..\..\..\..\Header;$(DXSDK_DIR)Include;..\..\..\..\..\Header\CMP_Math;..\..\..\..\..\Header\CMP_Mesh;../../../../../Applications/_Plugins/C3DModel_Loaders/obj;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_QT)/include/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_BOOST)/;..\;..\AMDUtil;..\..\..\common\d3dx12;..\..\..\Common;$(DXSDK_DIR)Include;..\..\..\..\..\Applications\_Libs\CMP_Math;..\..\..\..\..\Applications\_Libs\CMP_Mesh;../../../../../Applications/_Plugins/C3DModel_Loaders/obj;$(Compressonator_RootDev)Applications\_Libs\CMP_MeshOptimizer;..\..\..\..\..\Applications\_Libs\GPU_Decode</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -322,8 +326,8 @@
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Compressonator_MD.lib;GPU_Decode_MD.lib;CMP_Math_MD.lib;CMP_Mesh_MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_FrameWork_MD$(DebugSuffix).lib;Compressonator_MD.lib;GPU_Decode_MD.lib;CMP_Math_MD.lib;CMP_Mesh_MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>../CopyFiles.bat $(OUTDIR) $(ProjectDir)</Command>
@@ -342,7 +346,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_QT)/include/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_BOOST)/;..\;..\AMDUtil;..\..\..\common\d3dx12;..\..\..\Common;..\..\..\..\..\Header;$(DXSDK_DIR)Include;..\..\..\..\..\Header\CMP_Math;..\..\..\..\..\Header\CMP_Mesh;../../../../../Applications/_Plugins/C3DModel_Loaders/obj;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_QT)/include/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_BOOST)/;..\;..\AMDUtil;..\..\..\common\d3dx12;..\..\..\Common;$(DXSDK_DIR)Include;..\..\..\..\..\Applications\_Libs\CMP_Math;..\..\..\..\..\Applications\_Libs\CMP_Mesh;../../../../../Applications/_Plugins/C3DModel_Loaders/obj;$(Compressonator_RootDev)Applications\_Libs\CMP_MeshOptimizer;..\..\..\..\..\Applications\_Libs\GPU_Decode</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -352,8 +356,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>CMP_Math_MT.lib;CMP_Mesh_MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_FrameWork_MD$(DebugSuffix).lib;CMP_Math_MT.lib;CMP_Mesh_MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>../CopyFiles.bat $(OUTDIR) $(ProjectDir)</Command>
@@ -372,7 +376,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_QT)/include/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_BOOST)/;..\;..\AMDUtil;..\..\..\common\d3dx12;..\..\..\Common;..\..\..\..\..\Header;$(DXSDK_DIR)Include;..\..\..\..\..\Header\CMP_Math;..\..\..\..\..\Header\CMP_Mesh;../../../../../Applications/_Plugins/C3DModel_Loaders/obj;$(Compressonator_RootDev)/Source/CMP_MeshOptimizer/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_QT)/include/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_BOOST)/;..\;..\AMDUtil;..\..\..\common\d3dx12;..\..\..\Common;$(DXSDK_DIR)Include;..\..\..\..\..\Applications\_Libs\CMP_Math;..\..\..\..\..\Applications\_Libs\CMP_Mesh;../../../../../Applications/_Plugins/C3DModel_Loaders/obj;$(Compressonator_RootDev)Applications\_Libs\CMP_MeshOptimizer;..\..\..\..\..\Applications\_Libs\GPU_Decode</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -382,8 +386,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86_64/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Compressonator_MD.lib;GPU_Decode_MD.lib;CMP_Mesh_MD.lib;CMP_Math_MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86_64/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_FrameWork_MD$(DebugSuffix).lib;Compressonator_MD.lib;GPU_Decode_MD.lib;CMP_Mesh_MD.lib;CMP_Math_MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>../CopyFiles.bat $(OUTDIR) $(ProjectDir)</Command>
@@ -392,7 +396,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half\half.cpp" />
-    <ClCompile Include="..\..\..\Common\MIPS.cpp" />
     <ClCompile Include="..\..\..\Common\ModelData.cpp" />
     <ClCompile Include="..\..\..\Common\PluginManager.cpp" />
     <ClCompile Include="..\..\..\Common\TC_PluginInternal.cpp" />
@@ -402,7 +405,6 @@
     <ClCompile Include="..\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Common\MIPS.h" />
     <ClInclude Include="..\..\..\Common\ModelData.h" />
     <ClInclude Include="..\..\..\Common\PluginInterface.h" />
     <ClInclude Include="..\..\..\Common\TC_PluginAPI.h" />
