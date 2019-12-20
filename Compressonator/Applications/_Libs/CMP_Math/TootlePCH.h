@@ -13,8 +13,9 @@
     #endif
 #endif
 
-
+#ifndef _SOFTWARE_ONLY_VERSION
 #define _SOFTWARE_ONLY_VERSION          // Do not use DirectX SDK 
+#endif // !_SOFTWARE_ONLY_VERSION
 
 #ifdef _LINUX
     #define __cdecl
