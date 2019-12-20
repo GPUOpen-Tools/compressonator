@@ -1,5 +1,5 @@
 
-> ** NOTE ** <b>The directory structure of the master branch is been updated for next release. Current build scripts will not work until after this update</b>
+> ** NOTE ** <b>Source updated to v3.2, release binary updates pending</b>
 
 # Compressonator
 
