@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2019 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -22,16 +22,17 @@
 //=====================================================================
 
 #include <QApplication>
+
+#include "Compressonator.h"
+#include "Common.h"
 #include "cpMainComponents.h"
 #include "PluginManager.h"
-#include "mips.h"
+
 
 #define MSG_HANDLER
 
 // Our Static Plugin Interfaces
 #pragma comment(lib,"ASTC.lib")
-#pragma comment(lib,"BoxFilter.lib")
-#pragma comment(lib,"DDS.lib")
 #pragma comment(lib,"EXR.lib")
 #pragma comment(lib,"KTX.lib")
 #pragma comment(lib,"TGA.lib")
@@ -43,8 +44,6 @@
 
 
 extern void *make_Plugin_ASTC();
-extern void *make_Plugin_BoxFilter();
-extern void *make_Plugin_DDS();
 extern void *make_Plugin_EXR();
 extern void *make_Plugin_KTX();
 extern void *make_Plugin_TGA();
@@ -54,11 +53,14 @@ extern void *make_Plugin_CAnalysis();
 extern void *make_Plugin_CRN();
 #endif
 
+// Setup Static Host Pluging Libs
+extern void CMP_RegisterHostPlugins();
+
 #define SEPERATOR_STYLE "QMainWindow::separator { background-color: #d7d6d5; width: 3px; height: 3px; border:none; }"
 #define PERCENTAGE_OF_MONITOR_WIDTH_FOR_SCREEN  0.65
 #define PERCENTAGE_OF_MONITOR_HEIGHT_FOR_SCREEN 0.8
 
-PluginManager   g_pluginManager;
+extern PluginManager   g_pluginManager;
 bool            g_bAbortCompression;
 CMIPS*          g_CMIPS;                                // Global MIPS functions shared between app and all IMAGE plugins 
 CMIPS*          g_GUI_CMIPS;                            // Global MIPS functions shared by 3DModels
@@ -108,31 +110,61 @@ void GetSupportedFileFormats(QList<QByteArray> &g_supportedFormats)
 }
 
 //----------------------------------------------------------
-// Compressonator Lib compute codec override
+// Compressonator Lib codec overrides
 //----------------------------------------------------------
-PluginInterface_Compute     *g_plugin_ComputeGTC = NULL;
-HPC_Compress                *g_CompressGTCCodec = NULL;
+
+//----------------- GTC: Run Time Encoder ------------------
+#ifdef USE_GTC
+PluginInterface_Encoder     *g_plugin_EncoderGTC   = NULL;
+CMP_Encoder                 *g_Codec_GTC = NULL;
 extern void(*GTC_DecompressBlock)(void *out, void *in);
 extern void(*GTC_CompressBlock)(void * srcblock, void *dest, void *blockoptions);
-
-
 void g_GTC_DecompressBlock(void *in, void *out)
 {
-if (g_CompressGTCCodec)
-    g_CompressGTCCodec->Decompress(in, out);
+if (g_Codec_GTC)
+    g_Codec_GTC->DecompressBlock(in, out);
 }
 
 void g_GTC_CompressBlock(void *in, void *out, void *blockoptions)
 {
-    if (g_CompressGTCCodec)
+    if (g_Codec_GTC)
     {
-        g_CompressGTCCodec->Compress(in, out, blockoptions);
+        g_Codec_GTC->CompressBlock(in, out, blockoptions);
     }
 }
+#endif
+
+//----------------- BASIS: Run Time Encoder ------------------
+#ifdef USE_BASIS
+PluginInterface_Encoder     *g_plugin_EncoderBASIS = NULL;
+CMP_Encoder                 *g_Codec_BASIS = NULL;
+extern int(*BASIS_CompressTexture)(void * in, void *out, void *blockoptions);
+extern int(*BASIS_DecompressTexture)(void * in, void *out, void *blockoptions);
+
+int g_BASIS_CompressTexture(void *in, void *out, void *blockoptions)
+{
+    if (g_Codec_BASIS)
+    {
+        return g_Codec_BASIS->CompressTexture(in, out, blockoptions);
+    }
+    return 0;
+}
+
+int g_BASIS_DecompressTexture(void *in, void *out, void *blockoptions)
+{
+    if (g_Codec_BASIS)
+    {
+        return g_Codec_BASIS->DecompressTexture(in, out, blockoptions);
+    }
+    return 0;
+}
+#endif
 
 
 int main(int argc, char **argv)
 {
+
+
     try
     {
         QApplication app(argc, argv);
@@ -150,12 +182,11 @@ int main(int argc, char **argv)
 
         const QIcon iconPixMap(":/CompressonatorGUI/Images/compress.png");
         const QString ProductName = "Compressonator";
+
         //----------------------------------
         // Load plugin List for processing
         //----------------------------------
-    
         g_pluginManager.registerStaticPlugin("IMAGE",  "ASTC",      make_Plugin_ASTC);
-        g_pluginManager.registerStaticPlugin("IMAGE",  "DDS",       make_Plugin_DDS);
         g_pluginManager.registerStaticPlugin("IMAGE",  "EXR",       make_Plugin_EXR);
         g_pluginManager.registerStaticPlugin("IMAGE",  "KTX",       make_Plugin_KTX);
 
@@ -165,34 +196,57 @@ int main(int argc, char **argv)
 
         // TGA is supported by Qt to some extent if it fails we will try to load it using our custom code
         g_pluginManager.registerStaticPlugin("IMAGE",  "TGA",       make_Plugin_TGA);
-
-        g_pluginManager.registerStaticPlugin("FILTER", "BOXFILTER", make_Plugin_BoxFilter);
         g_pluginManager.registerStaticPlugin("IMAGE", "ANALYSIS",   make_Plugin_CAnalysis);
-    
-        g_pluginManager.getPluginList("/plugins");
+
+        g_pluginManager.getPluginList("/plugins",true);
+        CMP_RegisterHostPlugins();
         g_bAbortCompression = false;
 
         //---------------------------------------
         // attempt to load compute GTC Codec
         //---------------------------------------
-        g_plugin_ComputeGTC = reinterpret_cast<PluginInterface_Compute *>(g_pluginManager.GetPlugin("COMPUTE", "GTC"));
+#ifdef USE_GTC
+        g_plugin_EncoderGTC = reinterpret_cast<PluginInterface_Encoder *>(g_pluginManager.GetPlugin("ENCODER", "GTC"));
         // Found GTC Codec
-        if (g_plugin_ComputeGTC)
+        if (g_plugin_EncoderGTC)
         {
             //-------------------------------
             // create the compression  Codec
             //-------------------------------
-            g_CompressGTCCodec = (HPC_Compress*)g_plugin_ComputeGTC->TC_Create();
+            g_Codec_GTC = (CMP_Encoder*)g_plugin_EncoderGTC->TC_Create();
 
             //------------------------------------------------------------
             // Assign compressonator lib GTC codec to Compute GTC Codec
             //------------------------------------------------------------
-            if (g_CompressGTCCodec)
+            if (g_Codec_GTC)
             {
                 GTC_CompressBlock   = g_GTC_CompressBlock;
                 GTC_DecompressBlock = g_GTC_DecompressBlock;
             }
         }
+#endif
+
+#ifdef USE_BASIS
+        //---------------------------------------
+        // attempt to load compute BASIS Codec
+        //---------------------------------------
+        g_plugin_EncoderBASIS = reinterpret_cast<PluginInterface_Encoder *>(g_pluginManager.GetPlugin("ENCODER", "BASIS"));
+        // Found BASIS Codec
+        if (g_plugin_EncoderBASIS)
+        {
+            //-------------------------------
+            // create the compression  Codec
+            //-------------------------------
+            g_Codec_BASIS = (CMP_Encoder*)g_plugin_EncoderBASIS->TC_Create();
+
+            // ToDo: Assignment to new encoder interfaces
+            if (g_Codec_BASIS)
+            {
+                BASIS_CompressTexture   = g_BASIS_CompressTexture;
+                BASIS_DecompressTexture = g_BASIS_DecompressTexture;
+            }
+        }
+#endif
 
         cpMainComponents mainComponents(NULL,NULL);
 
@@ -206,21 +260,34 @@ int main(int argc, char **argv)
 
         app.setStyleSheet(SEPERATOR_STYLE);
 
-
         int ret = app.exec();
 
         delete g_GUI_CMIPS;
         delete g_CMIPS;
 
+#ifdef USE_GTC
         //------------------------------------------
         // Cleanup the compute GTC compression Codec
         //------------------------------------------
-        if (g_plugin_ComputeGTC)
+        if (g_plugin_EncoderGTC)
         {
-            if (g_CompressGTCCodec)
-                g_plugin_ComputeGTC->TC_Destroy(g_CompressGTCCodec);
-            delete  g_plugin_ComputeGTC;
+            if (g_Codec_GTC)
+                g_plugin_EncoderGTC->TC_Destroy(g_Codec_GTC);
+            delete  g_plugin_EncoderGTC;
         }
+#endif
+
+#ifdef USE_BASIS
+        //------------------------------------------
+        // Cleanup the compute compression Codec
+        //------------------------------------------
+        if (g_plugin_EncoderBASIS)
+        {
+            if (g_Codec_BASIS)
+                g_plugin_EncoderBASIS->TC_Destroy(g_Codec_BASIS);
+            delete  g_plugin_EncoderBASIS;
+        }
+#endif
 
         return ret;
 

@@ -24,7 +24,6 @@
 #ifndef _SETAPPLICATIONOPTIONS_H
 #define _SETAPPLICATIONOPTIONS_H
 
-
 #include "cpProjectData.h"
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
@@ -52,10 +51,11 @@ signals:
 public slots:
     void onClose();
     void oncurrentItemChanged(QtBrowserItem *item);
-#ifdef USE_COMPUTE
+//#ifdef USE_CMP_SDK
     void onImageEncodeChanged(QVariant &value);
-#endif
+//#endif
     void onImageViewDecodeChanged(QVariant &value);
+    void onLogResultsChanged(QVariant &value);
 
 private:
     // Common for all
@@ -67,6 +67,7 @@ private:
     QPushButton                 *m_PBClose;
     ObjectController            *m_theController;
     QtProperty                  *m_propAppOptions;
+    QtProperty                  *m_propAnalysisTable;
 };
 
 extern C_Application_Options g_Application_Options;

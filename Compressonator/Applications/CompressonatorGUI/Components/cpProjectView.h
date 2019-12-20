@@ -102,6 +102,18 @@ public:
 };
 
 
+class AnalysisTableWidget : public QTableWidget
+{
+public:
+    AnalysisTableWidget();
+    void AddResults(QString processPath, QString processName,  QString Time, QString psnr, QString ssim);
+    void AddResults(string  processPath, QString processName,  double  Time, double  psnr, double  ssim);
+    void ClearResults();
+protected:
+    void keyPressEvent(QKeyEvent *event);
+};
+
+
 class ProjectView : public QDockWidget
 {
     Q_OBJECT
@@ -202,6 +214,8 @@ public:
 
     QStringList     m_ImagesinProjectTrees;
     bool            m_clicked_onIcon;           // User clicked on the ICON of a treeview item
+
+    AnalysisTableWidget    m_analysisTable;
 
 Q_SIGNALS:
 

@@ -25,15 +25,20 @@
 #ifndef _IMAGELOADER_H
 #define _IMAGELOADER_H
 
-#include "cmdline.h"
-#include "TextureIO.h"
-#include "MIPS.h"
-#include "PluginManager.h"
 #include <QtCore/qstring.h>
 #include <QtGui/qimage.h>
 #include <QtCore/qlist.h>
 #include <QtCore/qfileinfo.h>
 #include <QtGui/qpainter.h>
+#include "stdlib.h"
+
+#include "Compressonator.h"
+#include "Common.h"
+#include "cmdline.h"
+#include "TextureIO.h"
+#include "PluginManager.h"
+#include "TC_PluginAPI.h"
+
 
 enum MIPIMAGE_FORMAT_DECOMPRESSED {
     Format_NONE,
@@ -62,7 +67,10 @@ class CMipImages
 {
 public:
     CMipImages();
-    QList<QImage *> Image_list;
+    QList<QImage *> QImage_list[CMP_MIPSET_MAX_DEPTHS];         // This is a QImage list mapping of the mipset. Its contains a list of 
+                                            // Frames (CubeMaps 0..CMP_MIPSET_MAX_DEPTHS-1) and MipLevel (0..MaxMipLevel) Images
+                                            // for 2D type textures its set to [0][0..MaxMipLevels]
+                                            //     Cubemap textures [0..CMP_MIPSET_MAX_DEPTHS-1][0..MaxMipLevels]
     MipSet *mipset;
     MipSet *decompressedMipSet; 
 

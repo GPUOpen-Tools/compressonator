@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2019 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -89,8 +89,7 @@ cpStartupPage::cpStartupPage(QWidget * parent) : QWebEngineView(parent)
 
     afWebPage* pPage = new afWebPage(this);
     setPage(pPage);
-    bool rc = connect(pPage, SIGNAL(PageButtonClick(QString &, QString &)), this, SLOT(onPageButtonClick(QString &, QString &)));
-    assert(rc);
+    connect(pPage, SIGNAL(PageButtonClick(QString &, QString &)), this, SLOT(onPageButtonClick(QString &, QString &)));
 
     // Hide context menu:
     setContextMenuPolicy(Qt::NoContextMenu);

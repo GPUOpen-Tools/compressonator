@@ -20,8 +20,8 @@
 // THE SOFTWARE.
 //
 //=====================================================================
-
 #include "cpSetCompressOptions.h"
+#include "cpMainComponents.h"
 
 #include <QScrollArea>
 #include <QGridLayout>
@@ -34,7 +34,8 @@
 #include "qtbuttonpropertybrowser.h"
 #include "qtgroupboxpropertybrowser.h"
 
-#include "cpMainComponents.h"
+#include "common.h"
+
 #define DROPDOWN_FILEEXT_WIDTH  60
 
 
@@ -128,6 +129,9 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget *parent) :
         QByteArray fformat = (*i);
         QString item = fformat;
         if ((item != "ASTC")&&
+#ifdef USE_BASIS
+            (item != "BASIS")&&
+#endif
             (item != "OBJ") &&
             (item != "DRC") &&
             (item != "GLTF"))
@@ -732,19 +736,21 @@ void CSetCompressOptions::compressionValueChanged(QVariant &value)
         m_infotext->append("The latest block Compression (GTC) format designed to support super fast compression of RGB LDR color spaces.");
         break;
 #endif
-#ifdef USE_GTC_HDR
-    case C_Destination_Options::GTCH:
+#ifdef USE_BASIS
+    case C_Destination_Options::BASIS:
         compressedOptions = true;
         colorWeightOptions = false;
         alphaChannelOptions = false;
-        codecBlockOptions = true;
+        codecBlockOptions = false;
         if (m_DestinationData.m_SourceIsFloatFormat) {
             hdrOptions = true;
         }
-        m_fileFormats->addItem("DDS");
+        extension = "BASIS";
+        m_fileFormats->addItem("BASIS");
+        m_fileFormats->addItem("KTX");
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
-        m_infotext->append("The latest block Compression (GTCH) format designed to support super fast compression of  RGB HDR color spaces.");
+        m_infotext->append("The latest block Compression (BASIS) format designed to support CTTF and Transcoding.");
         break;
 #endif
     case C_Destination_Options::ETC_RGB:
@@ -1392,7 +1398,7 @@ bool CSetCompressOptions::updateDisplayContent()
         m_propQuality->setEnabled(true);
         // Set  Properties for editing
         QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propQuality->propertyManager();
-        setMinMaxStep(Manager, m_propQuality, 0.0, 1.0, 0.05);
+        setMinMaxStep(Manager, m_propQuality, 0.0, 1.0, 0.01);
     }
 
     if (m_propFormat)
@@ -1660,7 +1666,9 @@ void CSetCompressOptions::SaveCompressedInfo()
             }
         }
         else
+        {
             finalPath.append(".DDS");
+        }
     }
 
     m_DestinationData.m_destFileNamePath = finalPath;

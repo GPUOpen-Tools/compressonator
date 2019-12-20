@@ -21,9 +21,12 @@
 // 
 //===================================================================== 
 
+#include "Compressonator.h"
+#include "Common.h"
 #include "cpMainComponents.h"
 #include "tiny_gltf2_utils.h"
 #include "Version.h"
+
 
 static signalMsgHandler static_msghandler;
 int g_OpenGLMajorVersion = 0;
@@ -172,7 +175,7 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     if (m_showAppSettingsDialog)
     {
         m_setapplicationoptions = new CSetApplicationOptions("Application Settings", this);
-
+        m_setapplicationoptions->resize(600, 500);
         connect(m_setapplicationoptions, SIGNAL(OnAppSettingHide()), this, SLOT(onWriteSettings()));
         m_setapplicationoptions->hide();
     }
@@ -319,7 +322,7 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     #else
     g_useCPUDecode = true;
     #endif
-#ifdef USE_COMPUTE
+#ifdef USE_CMP_SDK 
     g_useCPUEncode = g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::CPU;
 #endif
     setUnifiedTitleAndToolBarOnMac(true);
@@ -540,6 +543,11 @@ void cpMainComponents::OnWelcomePageButtonClick(QString &Request, QString &Msg)
     if (Request.compare("show_help") == 0)
     {
         OpenCHMFile(COMPRESSONATOR_USER_GUIDE);
+    }
+    else
+    if (Request.compare("show_newfeatures") == 0)
+    {
+        OpenCHMFile(COMPRESSONATOR_NEWFEATURES_GUIDE);
     }
 }
 
@@ -933,6 +941,15 @@ void cpMainComponents::createActions()
         aboutAct->setStatusTip(tr("About Compressonator"));
         connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
     }
+
+
+    newFeaturesAct = new QAction(tr("New Features ..."), this);
+    if (newFeaturesAct)
+    {
+        newFeaturesAct->setStatusTip(tr("New Features Guide"));
+        connect(newFeaturesAct, SIGNAL(triggered()), this, SLOT(newFeaturesGuide()));
+    }
+
 }
 
 
@@ -963,70 +980,64 @@ void cpMainComponents::onGenerateMIPMap(int nMinSize, QTreeWidgetItem *item)
    
     if (nMinSize <= 0) nMinSize = 1;
 
-    PluginInterface_Filters *plugin_Filter;
-    plugin_Filter = reinterpret_cast<PluginInterface_Filters *>(g_pluginManager.GetPlugin("FILTER", "BOXFILTER"));
-    if (plugin_Filter)
+    if (item)
     {
-        if (item)
+        QVariant v = item->data(TREE_SourceInfo, Qt::UserRole);
+        C_Source_Info *data = v.value<C_Source_Info *>();
+        if (data)
         {
-            QVariant v = item->data(TREE_SourceInfo, Qt::UserRole);
-            C_Source_Info *data = v.value<C_Source_Info *>();
-            if (data)
+            if (m_CompressStatusDialog)
+            {
+                m_CompressStatusDialog->onClearText();
+                m_CompressStatusDialog->showOutput();
+            }
+
+            // Quick Check to see if lowest level is lower then current image size
+            int min = data->m_Width;
+            if (min > data->m_Height) min = data->m_Height;
+            if (nMinSize < min)
+            {
+
+                if (data->m_MipImages)
+                    if (data->m_MipImages->mipset)
+                    {
+                        if (m_CompressStatusDialog)
+                        {
+                            m_CompressStatusDialog->onClearText();
+                            m_CompressStatusDialog->show();
+                        }
+
+                        // Generate the MIP levels using Compressonator SDK
+                        CMP_GenerateMIPLevels((CMP_MipSet *)data->m_MipImages->mipset, nMinSize);
+
+                        // Create Image views for the levels
+                        CImageLoader ImageLoader;
+                        ImageLoader.UpdateMIPMapImages(data->m_MipImages);
+
+                        if (m_CompressStatusDialog)
+                        {
+                            QString msg = "<b>Generated : ";
+                            msg.append(QString::number(data->m_MipImages->mipset->m_nMipLevels));
+                            msg.append(" MIP level(s)</b>");
+                            msg.append(" with a minimum size set to ");
+                            msg.append(QString::number(nMinSize));
+                            msg.append(" px");
+                            m_CompressStatusDialog->appendText(msg);
+                            m_ForceImageRefresh = true;
+                        }
+
+                        m_projectview->SignalUpdateData(item, TREETYPE_IMAGEFILE_DATA);
+                        m_projectview->m_clicked_onIcon = true;
+                        m_projectview->onTree_ItemClicked(item, 0);
+                    }
+            }
+            else
             {
                 if (m_CompressStatusDialog)
                 {
-                    m_CompressStatusDialog->onClearText();
-                    m_CompressStatusDialog->showOutput();
-                }
-
-                // Quick Check to see if lowest level is lower then current image size
-                int min = data->m_Width;
-                if (min > data->m_Height) min = data->m_Height;
-                if (nMinSize < min)
-                {
-
-                    if (data->m_MipImages)
-                        if (data->m_MipImages->mipset)
-                        {
-                            if (m_CompressStatusDialog)
-                            {
-                                m_CompressStatusDialog->onClearText();
-                                m_CompressStatusDialog->show();
-                            }
-
-                            // Generate the MIP levels
-                            plugin_Filter->TC_GenerateMIPLevels(data->m_MipImages->mipset, nMinSize);
-
-                            // Create Image views for the levels
-                            CImageLoader ImageLoader;
-                            ImageLoader.UpdateMIPMapImages(data->m_MipImages);
-
-                            if (m_CompressStatusDialog)
-                            {
-                                QString msg = "<b>Generated : ";
-                                msg.append(QString::number(data->m_MipImages->mipset->m_nMipLevels));
-                                msg.append(" MIP level(s)</b>");
-                                msg.append(" with a minimum size set to ");
-                                msg.append(QString::number(nMinSize));
-                                msg.append(" px");
-                                m_CompressStatusDialog->appendText(msg);
-                                m_ForceImageRefresh = true;
-                            }
-
-                            m_projectview->SignalUpdateData(item, TREETYPE_IMAGEFILE_DATA);
-                            m_projectview->m_clicked_onIcon = true;
-                            m_projectview->onTree_ItemClicked(item, 0);
-                        }
-                }
-                else
-                {
-                    if (m_CompressStatusDialog)
-                    {
-                        m_CompressStatusDialog->appendText("No MIP levels generated: Please select a level lower than current image size");
-                    }
+                    m_CompressStatusDialog->appendText("No MIP levels generated: Please select a level lower than current image size");
                 }
             }
-            delete plugin_Filter;
         }
     }
 }
@@ -1044,12 +1055,12 @@ void cpMainComponents::genMIPMaps()
             if (data)
             {
                 // regenrate mip map
-                if (data->m_MipImages->mipset->m_nMipLevels > 1 || data->m_MipImages->Image_list.count()>1)
+                if (data->m_MipImages->mipset->m_nMipLevels > 1 || data->m_MipImages->QImage_list[0].count()>1)
                 {
-                    int n = data->m_MipImages->Image_list.count();
+                    int n = data->m_MipImages->QImage_list[0].count();
                     for (int i = 1; i < n; i++)
                     {
-                        data->m_MipImages->Image_list.removeLast();
+                        data->m_MipImages->QImage_list[0].removeLast();
                     }
 
                     data->m_MipImages->mipset->m_nMipLevels = 1;
@@ -1096,12 +1107,12 @@ void cpMainComponents::genMIPMaps()
                             if (data)
                             {
                                 // regenrate mip map
-                                if (data->m_MipImages->mipset->m_nMipLevels > 1 || data->m_MipImages->Image_list.count()>1)
+                                if (data->m_MipImages->mipset->m_nMipLevels > 1 || data->m_MipImages->QImage_list[0].count()>1)
                                 {
-                                    int n = data->m_MipImages->Image_list.count();
+                                    int n = data->m_MipImages->QImage_list[0].count();
                                     for (int i = 1; i < n; i++)
                                     {
-                                        data->m_MipImages->Image_list.removeLast();
+                                        data->m_MipImages->QImage_list[0].removeLast();
                                     }
 
                                     data->m_MipImages->mipset->m_nMipLevels = 1;
@@ -1820,7 +1831,7 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
         int levelType = v.toInt();
 
         acCustomDockWidget      *dock = NULL;
-        C_Destination_Options   *m_compressdata;
+        C_Destination_Options   *m_compressdata = NULL;
 
         bool DockItemDeleted = false;
 
@@ -2001,7 +2012,7 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
                     // Create a new view image
                     ImageType = "Original Image file ";
                     setting->reloadImage = g_Application_Options.m_useNewImageViews;
-                    if (m_filedata->m_MipImages->Image_list.count() > 1)
+                    if (m_filedata->m_MipImages->QImage_list[0].count() > 1)
                         setting->generateMips = true;
                     setting->input_image = eImageViewState::isOriginal;
                     m_imageview = new cpImageView(fileName, ImageType, m_parent, m_filedata->m_MipImages, setting, NULL);
@@ -3148,6 +3159,12 @@ void cpMainComponents::OpenCHMFile(QString fileName)
 void cpMainComponents::userGuide()
 {
     OpenCHMFile(COMPRESSONATOR_USER_GUIDE);
+}
+
+
+void cpMainComponents::newFeaturesGuide()
+{
+    OpenCHMFile(COMPRESSONATOR_NEWFEATURES_GUIDE);
 }
 
 void cpMainComponents::gettingStarted()

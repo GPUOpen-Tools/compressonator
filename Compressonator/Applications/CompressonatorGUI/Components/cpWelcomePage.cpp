@@ -85,6 +85,8 @@ void CWelcomePage::onWebPageButtonClick(QString &Request, QString &Msg)
     else
     if (Request.compare("show_help") == 0) requestContinueToApp = true;
     else
+    if (Request.compare("show_newfeatures") == 0) requestContinueToApp = true;
+    else
     if (Request.compare("show_website") == 0)
     {
         QDesktopServices::openUrl(QUrl(COMPRESSONATOR_HOME));

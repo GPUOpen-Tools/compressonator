@@ -38,7 +38,7 @@ void CHelpAboutDialog::Init(const QString & title, const QString & productName)
     QString helpAboutString = "Compressonator<br>";
     helpAboutString.append(version);
 
-    QString copyRightCaption = "<p> &copy; 2018 Advanced Micro Devices, Inc. All Rights Reserved.</p>";
+    QString copyRightCaption = "<p> &copy; 2019 Advanced Micro Devices, Inc. All Rights Reserved.</p>";
     // Create the QLabels from the strings:
     QLabel* pHelpAboutStringAsStaticText = new QLabel(helpAboutString);
     QLabel* pCopyRightCaptionAsStaticText = new QLabel(copyRightCaption);
@@ -64,8 +64,8 @@ void CHelpAboutDialog::Init(const QString & title, const QString & productName)
     // Add the OK button:
     QDialogButtonBox* pOKButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok, Qt::Vertical);
 
-    bool rc = connect(pOKButtonBox, SIGNAL(accepted()), this, SLOT(accept()));
-    assert(rc);
+    connect(pOKButtonBox, SIGNAL(accepted()), this, SLOT(accept()));
+
     // Left Vertical Layout:
     pVerticalLayoutLeft->addStretch(1);
     pVerticalLayoutLeft->addWidget(pHelpAboutStringAsStaticText, 0, Qt::AlignCenter | Qt::AlignBottom);

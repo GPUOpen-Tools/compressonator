@@ -26,8 +26,7 @@
 #ifndef _CPCOMPRESSSTATUS_H
 #define _CPCOMPRESSSTATUS_H
 
-#include "MIPS.h"
-#include "PluginManager.h"
+
 #include <qstring.h>
 #include <qimage.h>
 #include <qfileinfo.h>
@@ -37,6 +36,10 @@
 #include <qlayout.h>
 #include <qwidget.h>
 #include <qmenu.h>
+
+#include "Compressonator.h"
+#include "Common.h"
+#include "PluginManager.h"
 #include "acCustomDockWidget.h"
 
 class CompressStatusDialog : 

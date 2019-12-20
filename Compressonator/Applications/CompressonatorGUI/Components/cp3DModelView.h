@@ -29,9 +29,10 @@
 #include <QFile>
 #include <qtimer.h>
 
+#include "Compressonator.h"
+#include "Common.h"
 #include "acCustomDockWidget.h"
 #include "PluginInterface.h"
-#include "Common.h"
 
 #define HIDE_VIEW_OPTIONS "Hide View Options"
 #define SHOW_VIEW_OPTIONS "Show View Options"

@@ -53,6 +53,12 @@
     <Filter Include="Common\Gltf">
       <UniqueIdentifier>{903eebd8-c8ec-478c-85a7-70334aa380f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="WelcomePage">
+      <UniqueIdentifier>{687a7479-de1c-4785-9c58-be3ec4d738fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SampleProjects">
+      <UniqueIdentifier>{c1480cb9-1599-48d4-b7ad-5d54befe0946}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="../Source/main.cpp">
@@ -298,9 +304,6 @@
     <ClCompile Include="../Components/acTableImageDataModel.cpp">
       <Filter>AppUtils</Filter>
     </ClCompile>
-    <ClCompile Include="../../_Plugins/Common/MIPS.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="../../_Plugins/Common/cmdline.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -439,9 +442,6 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="../../_Plugins/Common/TextureIO.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="../../_Plugins/Common/MIPS.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="../../_Plugins/Common/cmdline.h">
@@ -755,6 +755,18 @@
   <ItemGroup>
     <None Include="CopyFiles.bat">
       <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\WelcomePage\style.css">
+      <Filter>WelcomePage</Filter>
+    </None>
+    <None Include="..\WelcomePage\Welcome.html">
+      <Filter>WelcomePage</Filter>
+    </None>
+    <None Include="..\..\..\RunTime\BC6H_Compression.cprj">
+      <Filter>SampleProjects</Filter>
+    </None>
+    <None Include="..\..\..\RunTime\BC7_Compression.cprj">
+      <Filter>SampleProjects</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

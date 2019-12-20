@@ -214,6 +214,7 @@ private slots:
     bool saveImageFile();
     void settings();
     void userGuide();
+    void newFeaturesGuide();
     void gettingStarted();
     void about();
     void browserMsg(const char *msg);
@@ -269,6 +270,7 @@ private:
     QAction *saveImageAct;
     QAction *exitAct;
     QAction *userGuideAct;
+    QAction *newFeaturesAct;
     QAction *gettingStartedAct;
     QAction *aboutAct;
     QAction *settingsAct;

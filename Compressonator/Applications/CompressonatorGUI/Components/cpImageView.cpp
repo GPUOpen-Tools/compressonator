@@ -74,37 +74,41 @@ void cpImageView::oncpImageViewMousePosition(QPointF *scenePos, QPointF *localPo
                 bool dispDefault = true;
 
                 // New feature for debugging code that uses alpha channel
-                // if (m_OriginalMipImages && m_CMips)
-                // {
-                // if (m_OriginalMipImages->mipset)
-                // {
-                //     MipLevel* mipLevel = m_CMips->GetMipLevel(m_OriginalMipImages->mipset, 0);
-                //     if (mipLevel)
-                //     {
-                //         CMP_BYTE* pData = mipLevel->m_pbData;
-                //         if (pData)
-                //         {
-                //             if ((y < mipLevel->m_nHeight) && ( x< mipLevel->m_nWidth))
-                //             {
-                //                 int pixoffset =  (y*mipLevel->m_nWidth) + x;
-                //                // For Channel data RGBA 8:8:8:8 in mipset
-                //                 if (m_OriginalMipImages->mipset->m_ChannelFormat == CF_8bit)
-                //                 {
-                //                     if ((mipLevel->m_dwLinearSize > 3) && (pixoffset < mipLevel->m_dwLinearSize-3))
-                //                     {
-                //                         dispDefault = false;
-                //                         Txt.sprintf("Source RGBA (%3d,%3d,%3d,%3d)  Rendered (%3d,%3d,%3d,%3d) ", 
-                //                                   pData[pixoffset], pData[pixoffset+1], pData[pixoffset+2], pData[pixoffset+3],
-                //                                   color.red(), color.green(), color.blue(), color.alpha());
-                //                     }
-                //                 }
-                //             }
-                //          }
-                //       }
-                //    }
-                // }
+                if (m_OriginalMipImages && m_CMips)
+                {
+                if (m_OriginalMipImages->mipset)
+                {
+                    MipLevel* mipLevel = m_CMips->GetMipLevel(m_OriginalMipImages->mipset, m_DepthLevel);
+                    if (mipLevel)
+                    {
+                        CMP_BYTE* pData = mipLevel->m_pbData;
+                        if (pData)
+                        {
+                            if ((y < mipLevel->m_nHeight) && ( x< mipLevel->m_nWidth))
+                            {
+                               // For Channel data RGBA 8:8:8:8 in mipset
+                                if (m_OriginalMipImages->mipset->m_ChannelFormat == CF_8bit)
+                                {
+                                    CMP_DWORD pixoffset = 0;
+                                    if ((x > 0) && (y > 0))
+                                        pixoffset =  (y-1)*mipLevel->m_nWidth*4 + (x-1)*4;
+                                    if ((mipLevel->m_dwLinearSize > 3) && (pixoffset < mipLevel->m_dwLinearSize-3))
+                                    {
+                                        dispDefault = false;
+                                        Txt.sprintf("RGBA Source (%3d,%3d,%3d,%3d) ",
+                                                   pData[pixoffset], pData[pixoffset+1], pData[pixoffset+2], pData[pixoffset+3]);
+                                                  // Rendered (%3d,%3d,%3d,%3d) ", 
+                                                  //color.red(), color.green(), color.blue(), color.alpha());
+                                    }
+                                }
+                            }
+                         }
+                      }
+                   }
+                }
+
                 if (dispDefault)
-                    Txt.sprintf(" Rendered RGBA (%3d,%3d,%3d,%3d)", color.red(), color.green(), color.blue(), color.alpha());
+                    Txt.sprintf(" RGBA Rendered (%3d,%3d,%3d,%3d)", color.red(), color.green(), color.blue(), color.alpha());
                 }
                 break;
             case eImageViewState::isDiff:
@@ -340,7 +344,7 @@ void cpImageView::keyPressEvent(QKeyEvent *event)
     {
         if (m_acImageView->m_debugMode)
         {
-            MipLevel   *mipLevel = m_CMips->GetMipLevel(m_OriginalMipImages->mipset, 0);
+            MipLevel   *mipLevel = m_CMips->GetMipLevel(m_OriginalMipImages->mipset, m_DepthLevel);
             
             if (!mipLevel) return;
 
@@ -376,8 +380,8 @@ void cpImageView::keyPressEvent(QKeyEvent *event)
                 if (m_OriginalMipImages->mipset->m_ChannelFormat == CF_Float16)
                 {
                     // Get origin data pointer
-                    CMP_HALF *data = mipLevel->m_phfData;
-                    half* temp = (half*)data;
+                    CMP_HALFSHORT *data = mipLevel->m_phfsData;
+                    CMP_HALF* temp = (CMP_HALF*)data;
                     Array2D<Rgba> pixels(4, 4);
                     pixels.resizeErase(4, 4);
                     int  d = 0;
@@ -557,7 +561,7 @@ void cpImageView::GetSourceBlock(int BlockX, int BlockY,string filename)
     if (m_OriginalMipImages->mipset->m_ChannelFormat == CF_Compressed)
         return;
 
-    MipLevel   *mipLevel = m_CMips->GetMipLevel(m_OriginalMipImages->mipset, 0);
+    MipLevel   *mipLevel = m_CMips->GetMipLevel(m_OriginalMipImages->mipset, m_DepthLevel);
     if (!mipLevel) return;
 
     if (m_acImageView->m_graphicsScene->cursorBlockX != 4) return;
@@ -581,8 +585,8 @@ void cpImageView::GetSourceBlock(int BlockX, int BlockY,string filename)
         // Encoder input to fill with data
         CMP_FLOAT in[16][4];
         // Get origin data pointer
-        CMP_HALF *data = mipLevel->m_phfData;
-        half* temp = (half*)data;
+        CMP_HALFSHORT *data = mipLevel->m_phfsData;
+        CMP_HALF* temp = (CMP_HALF*)data;
         Array2D<Rgba> pixels(4, 4);
         pixels.resizeErase(4, 4);
         int  d = 0;
@@ -672,6 +676,19 @@ void cpImageView::EnableMipLevelDisplay(int level)
     m_CBimageview_MipLevel->setEnabled(true);
     m_MipLevels = level;
 }
+
+void cpImageView::EnableDepthLevelDisplay(int level)
+{
+    if (level < 0) return;
+
+    for (int num = 0; num < level; num++)
+    {
+        m_CBimageview_DepthLevel->addItem("Frames : " + QString::number(num));
+    }
+    m_CBimageview_DepthLevel->setEnabled(true);
+    m_DepthLevel = level;
+}
+
 
 cpImageView::~cpImageView()
 {
@@ -785,6 +802,8 @@ void cpImageView::InitData()
     ID = 0;
     m_localMipImages                        = false;
     m_MipLevels                             = 0;
+    m_DepthLevel                            = 0;
+    m_MaxDepthLevel                         = 1;
     m_FitOnShow                             = true;
     m_imageLoader                           = NULL;
     m_acImageView                           = NULL;
@@ -822,6 +841,7 @@ void cpImageView::InitData()
     m_CBimageview_GridBackground            = NULL;
     m_CBimageview_ToolList                  = NULL;
     m_CBimageview_MipLevel                  = NULL;
+    m_CBimageview_DepthLevel                = NULL;
     m_CBimage_DecompressUsing               = NULL;
     m_ExrProperties                         = NULL;
     m_OriginalMipImages                     = NULL;
@@ -844,7 +864,8 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
     m_fileName  = filePathName;
     m_setting   = *setting;
     m_localMipImages = false;           // Flags if we used our own MipImage and not from parameter
-    m_CBimageview_MipLevel = NULL;
+    m_CBimageview_MipLevel   = NULL;
+    m_CBimageview_DepthLevel = NULL;
     m_CMips = new CMIPS();
     Plastique_style = QStyleFactory::create("Plastique");
     
@@ -881,7 +902,14 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
 
     if (CompressedMipImages)
     {
-        m_CompressedMipImages = true;
+        if (CompressedMipImages->mipset)
+        {
+            m_CompressedMipImages = CompressedMipImages->mipset->m_compressed;
+        }
+        else
+        {
+            m_CompressedMipImages = true;
+        }
         m_OriginalMipImages = CompressedMipImages;
         m_ImageViewState = eImageViewState::isProcessed;
     }
@@ -920,23 +948,32 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
         if (m_processedMipImages->mipset)
         {
             m_MipLevels = m_processedMipImages->mipset->m_nMipLevels;
+            m_MaxDepthLevel = m_processedMipImages->mipset->m_nDepth;
             // check levels with number of images to view
             //if (m_processedMipImages->m_MipImageFormat == MIPIMAGE_FORMAT::Format_QImage)
             //{
-                int count = m_processedMipImages->Image_list.count();
+                int count = m_processedMipImages->QImage_list[0].count();
                 if (count <= 1)
+                {
                     m_MipLevels = 0;
+                }
             //}
         }
 
     }
     else
+    {
         m_MipLevels = 0;
+        m_DepthLevel= 0;
+    }
 
     //================================
     // Image/Texture Viewer Component
     //================================
-    m_acImageView = new acImageView(filePathName, this, CompressedMipImages?m_OriginalMipImages:NULL, m_processedMipImages);
+    if (m_CompressedMipImages)
+        m_acImageView = new acImageView(filePathName, this, NULL, m_processedMipImages);
+    else
+        m_acImageView = new acImageView(filePathName, this, m_OriginalMipImages, m_processedMipImages);
 
     m_viewContextMenu = new QMenu(m_acImageView);
 
@@ -1004,7 +1041,7 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
     if (m_acImageView->m_graphicsScene)
     {
         ID = m_acImageView->m_graphicsScene->ID;
-        m_imageSize = m_acImageView->m_MipImages->Image_list.first()->size();
+        m_imageSize = m_acImageView->m_MipImages->QImage_list[0].first()->size();
         m_acImageView->enableNavigation(true);
 
         connect(m_acImageView, SIGNAL(acImageViewMousePosition(QPointF *, QPointF *, int)), this, SLOT(oncpImageViewMousePosition(QPointF *, QPointF *, int)));
@@ -1188,6 +1225,24 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
         connect(imageview_RotateLeft, SIGNAL(triggered()), m_acImageView, SLOT(onRotateLeft()));
     }
 
+    if (m_MaxDepthLevel > 1)
+    {
+        m_toolBar->addSeparator();
+        QLabel *MDepthLevelLabel = new QLabel(this);
+        MDepthLevelLabel->setText("Frame:");
+        m_toolBar->addWidget(MDepthLevelLabel);
+        m_CBimageview_DepthLevel = new QComboBox(this);
+
+        for (int num = 0; num < m_MaxDepthLevel; num++)
+        {
+             QString depthLevelList = QString::number(num+1);
+             m_CBimageview_DepthLevel->addItem(depthLevelList);
+        }
+
+        connect(m_CBimageview_DepthLevel, SIGNAL(currentIndexChanged(int)), m_acImageView, SLOT(onImageDepthChanged(int)));
+        m_toolBar->addWidget(m_CBimageview_DepthLevel);
+    }
+
     if (m_MipLevels > 0)
     {
         m_toolBar->addSeparator();
@@ -1197,17 +1252,17 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
 
         m_CBimageview_MipLevel = new QComboBox(this);
 
-        int processedImage_miplevel_max = m_processedMipImages->Image_list.count();
+        int processedImage_miplevel_max = m_processedMipImages->QImage_list[0].count();
         // check if we have miplevels in Original Image if its available match its level with the processed
         if (m_OriginalMipImages && (setting->input_image == eImageViewState::isProcessed))
         {
-            if (m_OriginalMipImages->Image_list.count() < processedImage_miplevel_max)
+            if (m_OriginalMipImages->QImage_list[0].count() < processedImage_miplevel_max)
             {
                 QMessageBox msgBox;
                 QMessageBox::warning(this, "MipLevel", 
                 "Original image MipMap Levels do not match the Processed image levels.\nLevels will be limited, retry by regenerating original image mip levels",
                 QMessageBox::Ok);
-                processedImage_miplevel_max = m_OriginalMipImages->Image_list.count();
+                processedImage_miplevel_max = m_OriginalMipImages->QImage_list[0].count();
             }
         }
 
@@ -1218,7 +1273,7 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
                 if (processedImage_miplevel_max > num)
                 {
                     QString mipLevelList = QString::number(num+1);
-                    QImage *image = m_processedMipImages->Image_list[num];
+                    QImage *image = m_processedMipImages->QImage_list[0][num];
                     mipLevelList.append(QString(" ("));
                     mipLevelList.append(QString::number(image->width()));
                     mipLevelList.append(QString("x"));
@@ -1230,7 +1285,7 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
         }
 
         //m_CBimageview_MipLevel->setStyleSheet("QComboBox { border: 1px solid gray; border - radius: 3px; padding: 1px 18px 1px 3px; min - width: 6em; }");
-        connect(m_CBimageview_MipLevel, SIGNAL(currentIndexChanged(int)), m_acImageView, SLOT(onImageLevelChanged(int)));
+        connect(m_CBimageview_MipLevel, SIGNAL(currentIndexChanged(int)), m_acImageView, SLOT(onImageMipLevelChanged(int)));
         connect(m_CBimageview_MipLevel, SIGNAL(currentIndexChanged(int)), this, SLOT(onResetHDRandDiff(int)));
         m_toolBar->addWidget(m_CBimageview_MipLevel);
 
@@ -1591,12 +1646,18 @@ void cpImageView::onSaveViewAs()
             {
                 mipLevel = m_CBimageview_MipLevel->currentIndex();
             }
-            
+
+            int depthLevel = 0;
+            if (m_CBimageview_DepthLevel)
+            {
+                depthLevel = m_CBimageview_DepthLevel->currentIndex();
+            }
+
             if (m_processedMipImages && hasFloatData)
             {
                 if (mipLevel > 0)
                 {
-                    MipLevel* pInMipLevel = m_CMips->GetMipLevel(m_processedMipImages->mipset, mipLevel);
+                    MipLevel* pInMipLevel = m_CMips->GetMipLevel(m_processedMipImages->mipset, mipLevel,depthLevel);
 
                     if (pInMipLevel == NULL)
                     {
@@ -1620,20 +1681,22 @@ void cpImageView::onSaveViewAs()
                     pMipLevelMipSet->m_dwFourCC = m_processedMipImages->mipset->m_dwFourCC;
                     pMipLevelMipSet->m_dwFourCC2 = m_processedMipImages->mipset->m_dwFourCC2;
                     pMipLevelMipSet->m_TextureType = m_processedMipImages->mipset->m_TextureType;
-                    pMipLevelMipSet->m_nWidth = m_processedMipImages->Image_list[mipLevel]->width();
-                    pMipLevelMipSet->m_nHeight = m_processedMipImages->Image_list[mipLevel]->height();
+                    pMipLevelMipSet->m_nWidth = m_processedMipImages->QImage_list[0][mipLevel]->width();
+                    pMipLevelMipSet->m_nHeight = m_processedMipImages->QImage_list[0][mipLevel]->height();
+                    pMipLevelMipSet->m_nDepth  = m_processedMipImages->mipset->m_nDepth;                    // depthsupport
+                    if (pMipLevelMipSet->m_nDepth == 0) pMipLevelMipSet->m_nDepth = 1;
 
                     // Allocate default MipSet header
                     m_CMips->AllocateMipSet(pMipLevelMipSet,
                         pMipLevelMipSet->m_ChannelFormat,
                         pMipLevelMipSet->m_TextureDataType,
                         pMipLevelMipSet->m_TextureType,
-                        m_processedMipImages->Image_list[mipLevel]->width(),
-                        m_processedMipImages->Image_list[mipLevel]->height(),
-                        1);
+                        m_processedMipImages->QImage_list[0][mipLevel]->width(),
+                        m_processedMipImages->QImage_list[0][mipLevel]->height(),
+                        pMipLevelMipSet->m_nDepth);
 
                     // Determin buffer size and set Mip Set Levels we want to use for now
-                    MipLevel *mipLevelInfo = m_CMips->GetMipLevel(pMipLevelMipSet, 0);
+                    MipLevel *mipLevelInfo = m_CMips->GetMipLevel(pMipLevelMipSet,mipLevel,depthLevel);
                     pMipLevelMipSet->m_nMipLevels = 1;
                     m_CMips->AllocateMipLevelData(mipLevelInfo, pMipLevelMipSet->m_nWidth, pMipLevelMipSet->m_nHeight, pMipLevelMipSet->m_ChannelFormat, pMipLevelMipSet->m_TextureDataType);
 
@@ -1653,7 +1716,6 @@ void cpImageView::onSaveViewAs()
                 {
                     AMDSaveMIPSTextureImage(filePathName.toStdString().c_str(), m_OriginalMipImages->mipset, false, g_CmdPrams.CompressOptions);
                 }
-                    
             }
         }
         else
@@ -1777,6 +1839,21 @@ void cpImageView::paintEvent(QPaintEvent * event)
                 if (m_MipLevels != m_processedMipImages->mipset->m_nMipLevels)
                 {
                     EnableMipLevelDisplay(m_processedMipImages->mipset->m_nMipLevels);
+                }
+            }
+        }
+    }
+
+    if (m_CBimageview_DepthLevel)
+    {
+        if ((m_processedMipImages) && (m_CBimageview_DepthLevel->isEnabled() == false))
+        {
+            // need to find root cause of 0xFEEEFEEE
+            if ((m_processedMipImages->mipset) && (m_processedMipImages->mipset != (void*)0xFEEEFEEE))
+            {
+                if (m_MaxDepthLevel != m_processedMipImages->mipset->m_nDepth)
+                {
+                    EnableDepthLevelDisplay(m_processedMipImages->mipset->m_nDepth);
                 }
             }
         }

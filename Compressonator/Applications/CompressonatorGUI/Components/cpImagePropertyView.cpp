@@ -532,11 +532,11 @@ void CImagePropertyView::compressionValueChanged(QVariant& value)
         m_infotext->append("The latest block Compression (GTC) format designed to support high-speed compression");
         break;
 #endif
-#ifdef USE_GTC_HDR
-    case C_Destination_Options::GTCH:
+#ifdef USE_BASIS
+    case C_Destination_Options::BASIS:
         Quality_Settings = true;
         m_infotext->append("<b>Format Description</b>");
-        m_infotext->append("The latest block Compression (GTCH) format designed to support high-speed compression");
+        m_infotext->append("The latest block Compression format designed to support high-speed compression");
         break;
 #endif
     }

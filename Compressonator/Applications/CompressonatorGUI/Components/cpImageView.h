@@ -109,6 +109,7 @@ public:
     void showToobarButton(bool show);
 
     void EnableMipLevelDisplay(int level);
+    void EnableDepthLevelDisplay(int level);
 
     int  activeview      = 0;
     bool m_CompressedMipImages;
@@ -190,6 +191,8 @@ private:
     QString             m_QtImageFilter;
 
     int                 m_MipLevels;
+    int                 m_MaxDepthLevel;                    // 1..CMP_MIPSET_MAX_DEPTHS
+    int                 m_DepthLevel;                       // depthsupport
     bool                m_FitOnShow;                        // Flaged used to to indicate a fit image into view when widget is shown
 
     // Image View Actions
@@ -218,6 +221,7 @@ private:
     QComboBox           *m_CBimageview_GridBackground;
     QComboBox           *m_CBimageview_ToolList;
     QComboBox           *m_CBimageview_MipLevel;
+    QComboBox           *m_CBimageview_DepthLevel;
     QComboBox           *m_CBimage_DecompressUsing;
 
     acVirtualMouseHub    m_customMouse;

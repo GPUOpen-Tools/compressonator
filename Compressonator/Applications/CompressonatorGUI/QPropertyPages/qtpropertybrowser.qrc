@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/navigate.png</file>
+        <file>images/open.png</file>
+        <file>images/PinDown.png</file>
+        <file>images/PinRight.png</file>
+        <file>images/save.png</file>
+        <file>images/blueStone.png</file>
+        <file>images/greenStone.png</file>
+        <file>images/redStone.png</file>
+        <file>images/circle.png</file>
+        <file>images/folder.png</file>
+    </qresource>
+</RCC>

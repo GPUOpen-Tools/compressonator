@@ -124,7 +124,9 @@ private:
     bool m_appBusy;
     int  m_imageOrientation;                                 // Tracks Image Rotation from 0 - North (upright) to 1 - East 2 - South 3 - West
     bool m_localMipImages;
-    int  m_ImageIndex;                                       // QImage[] index
+    int  m_ImageIndex;                                       // QImage[][index]
+    int  m_DepthIndex;                                       // QImage[depth][]
+
     int  m_currentMiplevel;
 
     void MatchImagePosition(int activeIndex);
@@ -151,7 +153,8 @@ public slots:
     void onViewImageOriginalSize();                           // Image Original Size
     void onFitInWindow();                                     // Image Original Size
     void onGridBackground(int enable);                        // Display a backround image
-    void onImageLevelChanged(int MipLevel);                   // Switch between QImage[] - On Compressonator its MipLevels
+    void onImageMipLevelChanged(int MipLevel);                   // Switch between QImage[] - On Compressonator its MipLevels
+    void onImageDepthChanged(int DepthLevel);                 // Switch between different Image faces of a cubemap
     void onMouseHandDown();                                   // Signaled when user pressed Left Mouse Key Down and Moving cursor
     void onMouseHandD();                                      // Signaled when user releases Left Mouse Key Down and Mouse Cursor was down
     void onWheelScaleUp(QPointF &pos);                        // Zoom Image In   

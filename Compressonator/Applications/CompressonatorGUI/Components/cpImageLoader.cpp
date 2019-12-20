@@ -21,8 +21,8 @@
 //
 //=====================================================================
 
+
 #include <QtWidgets/qapplication.h>
-#include "cpImageLoader.h"
 
 #pragma warning( push )
 #pragma warning(disable:4100)
@@ -34,8 +34,12 @@
 #include <ImfArray.h>
 #pragma warning( pop )
 
-#include "cExr.h"
 #include <QtCore/qdebug.h>
+
+#include "Compressonator.h"
+#include "Common.h"
+#include "cpImageLoader.h"
+#include "cExr.h"
 
 bool g_useCPUDecode = true;
 MIPIMAGE_FORMAT g_gpudecodeFormat = Format_OpenGL;
@@ -44,7 +48,7 @@ extern PluginManager g_pluginManager;
 extern MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config* configSetting, CMP_Feedback_Proc pFeedbackProc);
 extern QRgb RgbaToQrgba(struct Imf::Rgba imagePixel);
 extern int    g_OpenGLMajorVersion;
-extern QImage* MIPS2QImage(CMIPS *m_CMips, MipSet *tmpMipSet, int level, CMP_CompressOptions option, CMP_Feedback_Proc pFeedbackProc);
+extern QImage* MIPS2QImage(CMIPS *m_CMips, MipSet *tmpMipSet, int MipMaplevel, int Depthlevel, CMP_CompressOptions option, CMP_Feedback_Proc pFeedbackProc);
 
 CImageLoader::CImageLoader()
 {
@@ -77,7 +81,8 @@ CMipImages::CMipImages()
 {
     // Init pointers
     mipset = NULL;
-    Image_list.clear();
+    for (int ii=0; ii<CMP_MIPSET_MAX_DEPTHS; ii++)
+        QImage_list[ii].clear();                             // depthsupport
     MIPS2QtFailed = false;
     m_MipImageFormat = MIPIMAGE_FORMAT::Format_QImage;
     m_Error = MIPIMAGE_FORMAT_ERRORS::Format_NoErrors;
@@ -96,9 +101,13 @@ bool CImageLoader::clearMipImages(CMipImages **MipImages)
     {
         //if (MipImages->m_MipImageFormat == MIPIMAGE_FORMAT::Format_QImage)
         //{
-            for (int i = 0; i < (*MipImages)->Image_list.count(); i++)
+        int depthMax = 1;
+        if ((*MipImages)->mipset) depthMax =(*MipImages)->mipset->m_nDepth;
+        for (int ii=0; ii<depthMax; ii++)
+        {
+            for (int i = 0; i < (*MipImages)->QImage_list[ii].count(); i++)
             {
-                QImage *image = (*MipImages)->Image_list[i];
+                QImage *image = (*MipImages)->QImage_list[ii][i];
                 if (image)
                 {
                     delete image;
@@ -106,7 +115,8 @@ bool CImageLoader::clearMipImages(CMipImages **MipImages)
                 }
             }
 
-            (*MipImages)->Image_list.clear();
+            (*MipImages)->QImage_list[ii].clear();
+        }
         //}
 
         if ((*MipImages)->mipset)
@@ -192,6 +202,7 @@ MipSet *CImageLoader::QImage2MIPS(QImage *qimage, CMP_Feedback_Proc pFeedbackPro
     pMipSet->m_dwFourCC         = 0;
     pMipSet->m_dwFourCC2        = 0;
     pMipSet->m_TextureType      = TT_2D;
+    pMipSet->m_nDepth           = 1;                // depthsupport
 
 
     // Allocate default MipSet header
@@ -201,7 +212,7 @@ MipSet *CImageLoader::QImage2MIPS(QImage *qimage, CMP_Feedback_Proc pFeedbackPro
                             pMipSet->m_TextureType,
                             qimage->width(), 
                             qimage->height(), 
-                            1);
+                            pMipSet->m_nDepth);
     
     // Determin buffer size and set Mip Set Levels we want to use for now
     MipLevel *mipLevel = m_CMips->GetMipLevel(pMipSet, 0);
@@ -342,10 +353,10 @@ MipSet *CImageLoader::LoaderDecompressMipSet(CMipImages *MipImages, Config *deco
                 //---------------------------
                 // swizzle Decompressed Data!
                 //---------------------------
-                if (KeepSwizzle(MipImages->mipset->m_format))
-                {
-                    SwizzleMipMap(tmpMipSet);
-                }
+                //if (KeepSwizzle(MipImages->mipset->m_format))
+                //{
+                //    SwizzleMipMap(tmpMipSet);
+                //}
 
                 tmpMipSet->m_isDeCompressed = MipImages->mipset->m_format != CMP_FORMAT_Unknown? MipImages->mipset->m_format:CMP_FORMAT_MAX;
                 MipImages->m_MipImageFormat = MIPIMAGE_FORMAT::Format_QImage;
@@ -470,21 +481,49 @@ void CImageLoader::UpdateMIPMapImages(CMipImages *MipImages)
     if (!MipImages->mipset) return;
     QImage *image;
 
-    // Note  MipImages->Image_list.count() = 1 to start with
+    // Note  MipImages->QImage_list[0].count() = 1 to start with
     // which is the orginal image size
+    int depthMax;
 
-    if (MipImages->Image_list.count() < MipImages->mipset->m_nMipLevels)
+    if (MipImages->decompressedMipSet) 
+        depthMax = MipImages->decompressedMipSet->m_nDepth;
+    else
+        depthMax = MipImages->mipset->m_nDepth;
+
+    for (int depth=0; depth<depthMax; depth++)
     {
-        for (int i = 1; i < MipImages->mipset->m_nMipLevels; i++)
+        int count = MipImages->QImage_list[depth].count();
+        // first depth image is always loaded, but remaining image depths
+        // may not have been converted : check prior to generating any MipMap levels
+        if ((count == 0) && (depth > 0))
         {
-            if (MipImages->decompressedMipSet)
-                image = MIPS2QImage(m_CMips, MipImages->decompressedMipSet, i, m_options, &ProgressCallback);
-            else
-                image = MIPS2QImage(m_CMips, MipImages->mipset, i, m_options, &ProgressCallback);
-
+           if (MipImages->decompressedMipSet)
+               image = MIPS2QImage(m_CMips, MipImages->decompressedMipSet, 0, depth, m_options, &ProgressCallback);
+           else
+               image = MIPS2QImage(m_CMips, MipImages->mipset, 0, depth, m_options, &ProgressCallback);
             if (image)
             {
-                MipImages->Image_list.append(image);
+                    MipImages->QImage_list[depth].append(image);
+            }
+            else
+            {
+                // report error to use!
+            }
+        }
+
+        if (count < MipImages->mipset->m_nMipLevels)
+        {
+            for (int i = 1; i < MipImages->mipset->m_nMipLevels; i++)
+            {
+                if (MipImages->decompressedMipSet)
+                    image = MIPS2QImage(m_CMips, MipImages->decompressedMipSet, i, depth, m_options, &ProgressCallback);
+                else
+                    image = MIPS2QImage(m_CMips, MipImages->mipset, i,depth, m_options, &ProgressCallback);
+
+                if (image)
+                {
+                    MipImages->QImage_list[depth].append(image);
+                }
             }
         }
     }
@@ -548,7 +587,7 @@ CMipImages * CImageLoader::LoadPluginImage(QString filename, CMP_Feedback_Proc p
                 usedQT = true;
             }
             else
-                image = MIPS2QImage(m_CMips, tmpMipSet, 0, m_options, pFeedbackProc);
+                image = MIPS2QImage(m_CMips, tmpMipSet, 0, 0, m_options, pFeedbackProc);
         }
     }
 
@@ -574,7 +613,7 @@ CMipImages * CImageLoader::LoadPluginImage(QString filename, CMP_Feedback_Proc p
         QImage::Format  format = image->format();
         if (format != QImage::Format_Invalid)
         {
-            MipImages->Image_list.append(image);
+            MipImages->QImage_list[0].append(image);
 
             if (MipImages->mipset)
             {
@@ -603,18 +642,18 @@ CMipImages * CImageLoader::LoadPluginImage(QString filename, CMP_Feedback_Proc p
     // Failed to create a MipSet and we have a QImage, convert the QImage to a MIP set
     //---------------------------------------------------------------------------------
 
-    if ((MipImages->Image_list.count() > 0) && (MipImages->mipset == NULL))
+    if ((MipImages->QImage_list[0].count() > 0) && (MipImages->mipset == NULL))
     {
-        MipImages->mipset = QImage2MIPS(MipImages->Image_list[0], pFeedbackProc);
+        MipImages->mipset = QImage2MIPS(MipImages->QImage_list[0][0], pFeedbackProc);
     }
 
-    //-----------------------------------------
-    // Update the images for all MIP levels
-    //-----------------------------------------
+    //----------------------------------------------
+    // Update the images for all MIP levels & Depths
+    //-----------------------------------------------
 
     if (MipImages->mipset)
     {
-        if (MipImages->mipset->m_nMipLevels > 1)
+        if (MipImages->mipset->m_nMipLevels > 1 || MipImages->mipset->m_nDepth > 1)
             UpdateMIPMapImages(MipImages);
     }
 
@@ -623,14 +662,14 @@ CMipImages * CImageLoader::LoadPluginImage(QString filename, CMP_Feedback_Proc p
     // Error : Both Qt and AMD failed to load an Image
     //-----------------------------------------------------
 
-    if ((MipImages->mipset == NULL) && (MipImages->Image_list.count() == 0))
+    if ((MipImages->mipset == NULL) && (MipImages->QImage_list[0].count() == 0))
     {
         MipImages->m_Error = MIPIMAGE_FORMAT_ERRORS::Format_NotSupported;
         // we have a bug to fix!!
         QImage *image = new QImage(":/CompressonatorGUI/Images/notsupportedImage.png");
         if (image)
         {
-            MipImages->Image_list.append(image);
+            MipImages->QImage_list[0].append(image);
             MipImages->m_MipImageFormat = MIPIMAGE_FORMAT::Format_QImage;
         }
     }

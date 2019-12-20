@@ -34,6 +34,43 @@
 namespace QtOcv {
 namespace {
 
+#if (CV_VERSION_EPOCH == 2)
+    #define CMP_BGRA2RGBA   CV_BGRA2RGBA
+    #define CMP_RGB2GRAY    CV_RGB2GRAY
+    #define CMP_BGRA2GRAY   CV_BGRA2GRAY
+    #define CMP_RGBA2GRAY   CV_RGBA2GRAY
+    #define CMP_GRAY2BGR    CV_GRAY2BGR
+    #define CMP_GRAY2RGB    CV_GRAY2RGB
+    #define CMP_GRAY2RGBA   CV_GRAY2RGBA
+    #define CMP_RGB2BGR     CV_RGB2BGR
+    #define CMP_BGRA2BGR    CV_BGRA2BGR
+    #define CMP_BGRA2RGB    CV_BGRA2RGB
+    #define CMP_RGBA2BGR    CV_RGBA2BGR
+    #define CMP_RGBA2RGB    CV_RGBA2RGB
+    #define CMP_GRAY2BGRA   CV_GRAY2BGRA
+    #define CMP_RGB2RGBA    CV_RGB2RGBA
+    #define CMP_RGB2BGRA    CV_RGB2BGRA
+    #define CMP_BGR2RGB     CV_BGR2RGB
+
+#else // OpenCV v4 definitions
+    #define CMP_BGRA2RGBA   cv::COLOR_BGRA2RGBA
+    #define CMP_RGB2GRAY    cv::COLOR_RGB2GRAY
+    #define CMP_BGRA2GRAY   cv::COLOR_BGRA2GRAY
+    #define CMP_RGBA2GRAY   cv::COLOR_RGBA2GRAY
+    #define CMP_GRAY2BGR    cv::COLOR_GRAY2BGR
+    #define CMP_GRAY2RGB    cv::COLOR_GRAY2RGB
+    #define CMP_GRAY2RGBA   cv::COLOR_GRAY2RGBA
+    #define CMP_RGB2BGR     cv::COLOR_RGB2BGR
+    #define CMP_BGRA2BGR    cv::COLOR_BGRA2BGR
+    #define CMP_BGRA2RGB    cv::COLOR_BGRA2RGB
+    #define CMP_RGBA2BGR    cv::COLOR_RGBA2BGR
+    #define CMP_RGBA2RGB    cv::COLOR_RGBA2RGB
+    #define CMP_GRAY2BGRA   cv::COLOR_GRAY2BGRA
+    #define CMP_RGB2RGBA    cv::COLOR_RGB2RGBA
+    #define CMP_RGB2BGRA    cv::COLOR_RGB2BGRA
+    #define CMP_BGR2RGB     cv::COLOR_BGR2RGB
+#endif
+
 /*ARGB <==> BGRA
  */
 cv::Mat argb2bgra(const cv::Mat &mat)
@@ -71,7 +108,7 @@ cv::Mat adjustChannelsOrder(const cv::Mat &srcMat, MatColorOrder srcOrder, MatCo
         cv::mixChannels(&srcMat, 1, &desMat, 1, from_to, 4);
     } else {
         //BGRA <==> RBGA
-        cv::cvtColor(srcMat, desMat, CV_BGRA2RGBA);
+        cv::cvtColor(srcMat, desMat, CMP_BGRA2RGBA);
     }
     return desMat;
 }
@@ -163,22 +200,22 @@ cv::Mat image2Mat(const QImage &img, int requiredMatType, MatColorOrder requried
     switch(targetChannels) {
     case 1:
         if (mat0.channels() == 3) {
-            cv::cvtColor(mat0, mat_adjustCn, CV_RGB2GRAY);
+            cv::cvtColor(mat0, mat_adjustCn, CMP_RGB2GRAY);
         } else if (mat0.channels() == 4) {
             if (srcOrder == MCO_BGRA)
-                cv::cvtColor(mat0, mat_adjustCn, CV_BGRA2GRAY);
+                cv::cvtColor(mat0, mat_adjustCn, CMP_BGRA2GRAY);
             else if (srcOrder == MCO_RGBA)
-                cv::cvtColor(mat0, mat_adjustCn, CV_RGBA2GRAY);
+                cv::cvtColor(mat0, mat_adjustCn, CMP_RGBA2GRAY);
             else//MCO_ARGB
-                cv::cvtColor(argb2bgra(mat0), mat_adjustCn, CV_BGRA2GRAY);
+                cv::cvtColor(argb2bgra(mat0), mat_adjustCn, CMP_BGRA2GRAY);
         }
         break;
     case 3:
         if (mat0.channels() == 1) {
-            cv::cvtColor(mat0, mat_adjustCn, requriedOrder == MCO_BGR ? CV_GRAY2BGR : CV_GRAY2RGB);
+            cv::cvtColor(mat0, mat_adjustCn, requriedOrder == MCO_BGR ? CMP_GRAY2BGR : CMP_GRAY2RGB);
         } else if (mat0.channels() == 3) {
             if (requriedOrder != srcOrder)
-                cv::cvtColor(mat0, mat_adjustCn, CV_RGB2BGR);
+                cv::cvtColor(mat0, mat_adjustCn, CMP_RGB2BGR);
         } else if (mat0.channels() == 4) {
             if (srcOrder == MCO_ARGB) {
                 mat_adjustCn = cv::Mat(mat0.rows, mat0.cols, CV_MAKE_TYPE(mat0.type(), 3));
@@ -186,9 +223,9 @@ cv::Mat image2Mat(const QImage &img, int requiredMatType, MatColorOrder requried
                 int ARGB2BGR[] = {1,2, 2,1, 3,0};
                 cv::mixChannels(&mat0, 1, &mat_adjustCn, 1, requriedOrder == MCO_BGR ? ARGB2BGR : ARGB2RGB, 3);
             } else if (srcOrder == MCO_BGRA) {
-                cv::cvtColor(mat0, mat_adjustCn, requriedOrder == MCO_BGR ? CV_BGRA2BGR : CV_BGRA2RGB);
+                cv::cvtColor(mat0, mat_adjustCn, requriedOrder == MCO_BGR ? CMP_BGRA2BGR : CMP_BGRA2RGB);
             } else {//RGBA
-                cv::cvtColor(mat0, mat_adjustCn, requriedOrder == MCO_BGR ? CV_RGBA2BGR : CV_RGBA2RGB);
+                cv::cvtColor(mat0, mat_adjustCn, requriedOrder == MCO_BGR ? CMP_RGBA2BGR : CMP_RGBA2RGB);
             }
         }
         break;
@@ -201,9 +238,9 @@ cv::Mat image2Mat(const QImage &img, int requiredMatType, MatColorOrder requried
                 int from_to[] = {0,0, 1,1, 1,2, 1,3};
                 cv::mixChannels(in, 2, &mat_adjustCn, 1, from_to, 4);
             } else if (requriedOrder == MCO_RGBA) {
-                cv::cvtColor(mat0, mat_adjustCn, CV_GRAY2RGBA);
+                cv::cvtColor(mat0, mat_adjustCn, CMP_GRAY2RGBA);
             } else {//MCO_BGRA
-                cv::cvtColor(mat0, mat_adjustCn, CV_GRAY2BGRA);
+                cv::cvtColor(mat0, mat_adjustCn, CMP_GRAY2BGRA);
             }
         } else if (mat0.channels() == 3) {
             if (requriedOrder == MCO_ARGB) {
@@ -213,9 +250,9 @@ cv::Mat image2Mat(const QImage &img, int requiredMatType, MatColorOrder requried
                 int from_to[] = {0,0, 1,1, 2,2, 3,3};
                 cv::mixChannels(in, 2, &mat_adjustCn, 1, from_to, 4);
             } else if (requriedOrder == MCO_RGBA) {
-                cv::cvtColor(mat0, mat_adjustCn, CV_RGB2RGBA);
+                cv::cvtColor(mat0, mat_adjustCn, CMP_RGB2RGBA);
             } else {//MCO_BGRA
-                cv::cvtColor(mat0, mat_adjustCn, CV_RGB2BGRA);
+                cv::cvtColor(mat0, mat_adjustCn, CMP_RGB2BGRA);
             }
         } else if (mat0.channels() == 4) {
             if (srcOrder != requriedOrder)
@@ -264,11 +301,11 @@ QImage mat2Image(const cv::Mat &mat, MatColorOrder order, QImage::Format formatH
 #if QT_VERSION >= 0x040400
         format = QImage::Format_RGB888;
         if (order == MCO_BGR)
-            cv::cvtColor(mat, mat_adjustCn, CV_BGR2RGB);
+            cv::cvtColor(mat, mat_adjustCn, CMP_BGR2RGB);
 #else
         format = QImage::Format_RGB32;
         cv::Mat mat_tmp;
-        cv::cvtColor(mat, mat_tmp, order == MCO_BGR ? CV_BGR2BGRA : CV_RGB2BGRA);
+        cv::cvtColor(mat, mat_tmp, order == MCO_BGR ? CV_BGR2BGRA : CMP_RGB2BGRA);
 #if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
         mat_adjustCn = mat_tmp;
 #else

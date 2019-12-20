@@ -17,17 +17,13 @@ echo ---------------------------------------
 
 echo on
 
-XCopy /r /d /y "%BUILD_SOLUTIONDIR%..\..\..\Documents\UserGuide.chm"       %BUILD_OUTDIR%
-XCopy /r /d /y "%BUILD_SOLUTIONDIR%..\..\..\Documents\GettingStarted.chm"  %BUILD_OUTDIR%
-
 IF NOT EXIST %BUILD_OUTDIR%Projects mkdir %BUILD_OUTDIR%Projects
 XCopy /r /d /y "%BUILD_SOLUTIONDIR%..\..\..\RunTime\BC7_Compression.cprj"  %BUILD_OUTDIR%Projects\
 XCopy /r /d /y "%BUILD_SOLUTIONDIR%..\..\..\RunTime\BC6H_Compression.cprj" %BUILD_OUTDIR%Projects\
 
 IF NOT EXIST %BUILD_OUTDIR%Images   mkdir %BUILD_OUTDIR%Images
 XCopy /r /d /y "%BUILD_SOLUTIONDIR%..\..\..\RunTime\images\Balls.exr"  %BUILD_OUTDIR%Images\
-XCopy /r /d /y "%BUILD_SOLUTIONDIR%..\..\..\RunTime\images\Boat.png"   %BUILD_OUTDIR%Images\
-XCopy /r /d /y "%BUILD_SOLUTIONDIR%..\..\..\RunTime\images\Ruby2.bmp"  %BUILD_OUTDIR%Images\
+XCopy /r /d /y "%BUILD_SOLUTIONDIR%..\..\..\RunTime\images\Ruby.bmp"  %BUILD_OUTDIR%Images\
 
 XCopy /r /d /y .\qt.conf %BUILD_OUTDIR%
 

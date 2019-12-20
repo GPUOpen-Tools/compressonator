@@ -67,6 +67,7 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, CMipImages
     m_navVisible        = false;
     m_isDiffView        = false;
     m_currentMiplevel   = 0;
+    m_DepthIndex        = 0;
 #ifdef _DEBUG
     m_debugMode         = false;
     m_debugFormat       = "";
@@ -80,8 +81,8 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, CMipImages
     // Display if we have images
     if (m_MipImages)
     {
-            
-        if (m_MipImages->Image_list.count() > 0) 
+        for (int ii=0; ii<CMP_MIPSET_MAX_DEPTHS; ii++)
+        if (m_MipImages->QImage_list[ii].count() > 0) 
         {
             // The scene is at 0,0 and set to the size of this display widget
             m_graphicsScene = new acCustomGraphicsScene(this);
@@ -105,7 +106,7 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, CMipImages
 
             if (m_OriginalMipImages)
             {
-                image_original = m_OriginalMipImages->Image_list[m_ImageIndex];
+                image_original = m_OriginalMipImages->QImage_list[m_DepthIndex][m_ImageIndex];
                 pixmap_original = QPixmap::fromImage(*image_original);
                 m_imageItem_Original = new acCustomGraphicsImageItem(pixmap_original, NULL);
                 m_imageItem_Original->ID = m_graphicsScene->ID;
@@ -117,7 +118,7 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, CMipImages
                 m_imageItem_Original = NULL;
 
 
-            QImage *image_processed = m_MipImages->Image_list[m_ImageIndex];
+            QImage *image_processed = m_MipImages->QImage_list[m_DepthIndex][m_ImageIndex];
             QPixmap pixmap_processed = QPixmap::fromImage(*image_processed);
 
             m_imageItem_Processed = new acCustomGraphicsImageItem(pixmap_processed, image_original);
@@ -1415,15 +1416,15 @@ void acImageView::onGridBackground(int enableGrid)
 
 }
 
-void acImageView::onImageLevelChanged(int MipLevel)
+void acImageView::onImageMipLevelChanged(int MipLevel)
 {
     m_currentMiplevel = MipLevel;
     if (m_MipImages)
     {
-        if (m_MipImages->Image_list.count() > MipLevel)
+        if (m_MipImages->QImage_list[m_DepthIndex].count() > MipLevel)
         {
             m_ImageIndex = MipLevel;
-            QImage *image = m_MipImages->Image_list[m_ImageIndex];
+            QImage *image = m_MipImages->QImage_list[m_DepthIndex][m_ImageIndex];
             if (image)
             {
                 m_imageItem_Processed->changeImage(*image);
@@ -1431,9 +1432,9 @@ void acImageView::onImageLevelChanged(int MipLevel)
 
             if (m_OriginalMipImages)
             {
-                if (m_OriginalMipImages->Image_list.count() > MipLevel)
+                if (m_OriginalMipImages->QImage_list[m_DepthIndex].count() > MipLevel)
                 {
-                    QImage *image_original = m_OriginalMipImages->Image_list[m_ImageIndex];
+                    QImage *image_original = m_OriginalMipImages->QImage_list[m_DepthIndex][m_ImageIndex];
                     if (image_original)
                     {
                         m_imageItem_Original->changeImage(*image_original);
@@ -1448,6 +1449,33 @@ void acImageView::onImageLevelChanged(int MipLevel)
         }
     }
 }
+
+void acImageView::onImageDepthChanged(int DepthLevel)
+{
+    if (DepthLevel >= CMP_MIPSET_MAX_DEPTHS) DepthLevel = CMP_MIPSET_MAX_DEPTHS-1;
+    if (m_MipImages)
+    {
+            m_DepthIndex = DepthLevel;
+            QImage *image = m_MipImages->QImage_list[DepthLevel][m_ImageIndex];
+            if (image)
+            {
+                m_imageItem_Processed->changeImage(*image);
+            }
+
+            if (m_OriginalMipImages)
+            {
+                QImage *image_original = m_OriginalMipImages->QImage_list[DepthLevel][m_ImageIndex];
+                if (image_original)
+                {
+                    m_imageItem_Original->changeImage(*image_original);
+                    m_imageItem_Processed->changeImageDiffRef(image_original);
+                }
+            }
+            centerImage();
+            onFitInWindow();
+    }
+}
+
 
 void acImageView::onMouseHandDown()
 {

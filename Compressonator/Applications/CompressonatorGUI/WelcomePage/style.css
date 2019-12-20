@@ -1,7 +1,7 @@
 html,
 body {
     font-family: helvetica, arial, sans-serif;
-    font-size: 10pt;
+    font-size: 12pt;
     color: black;
     margin: 0;
     padding: 0;
@@ -79,6 +79,7 @@ ul#links li a {
   color: white;
   margin: 0;
   padding: 4px;
+ font-size: 125%;
 }
 
 

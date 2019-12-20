@@ -71,7 +71,7 @@ WId createNativeWindowView(const QString& name, int width, int height)
     windowClass.lpfnWndProc   = WindowProc;
     windowClass.hInstance     = GetModuleHandle(NULL);
     windowClass.hCursor       = LoadCursor(NULL, IDC_ARROW);
-    windowClass.lpszClassName = L"WindowClass1";
+    windowClass.lpszClassName = TEXT("WindowClass1");
     RegisterClassEx(&windowClass);
 
     RECT windowRect = {0, 0, width, height};
@@ -92,8 +92,8 @@ WId createNativeWindowView(const QString& name, int width, int height)
     //          NULL);
 
     HWND hwnd = CreateWindowEx(NULL,
-                               L"WindowClass1",  // name of the window class
-                               L"Native Window", WS_OVERLAPPEDWINDOW, 100, 100, width, height,
+                               TEXT("WindowClass1"),  // name of the window class
+                               TEXT("Native Window"), WS_OVERLAPPEDWINDOW, 100, 100, width, height,
                                NULL,                   // we have no parent window, NULL
                                NULL,                   // we aren't using menus, NULL
                                windowClass.hInstance,  // application handle
@@ -615,9 +615,9 @@ cp3DModelView::cp3DModelView(const QString filePathName, const QString filePathN
         if (((strcmp(c_ext, "GLTF") == 0) || (strcmp(c_ext, "BIN") == 0)))
         {
             m_isviewingDX12 = true;
-#ifdef USE_3DVIEWALLAPI
+//#ifdef USE_3DVIEWALLAPI
             if (g_Application_Options.getGLTFRender() == C_Application_Options::RenderModelsWith::glTF_OpenGL)
-#endif
+//#endif
                 g_Application_Options.setGLTFRender(C_Application_Options::RenderModelsWith::glTF_DX12_EX);
         }
         else

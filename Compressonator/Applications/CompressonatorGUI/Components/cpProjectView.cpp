@@ -392,6 +392,8 @@ void ProjectView::SignalUpdateData(QTreeWidgetItem* item, int levelType)
                 {
                     if (imagedata->m_MipImages->mipset->m_nMipLevels >= 1)
                         imagedata->m_Mip_Levels = imagedata->m_MipImages->mipset->m_nMipLevels;
+                    imagedata->m_Depth = imagedata->m_MipImages->mipset->m_nDepth;                      // depthsupport
+                    imagedata->m_TextureType    = imagedata->m_MipImages->mipset->m_TextureType;        // depthsupport
                 }
             }
             emit UpdateData(imagedata);
@@ -3306,7 +3308,10 @@ QTreeWidgetItem* ProjectView::Tree_AddImageFile(QString filePathName, int index,
     // file not found!
     if (!SourceFile.exists())
     {
-        PrintInfo("Error: SourceFile %s not found.\n", filePathName.toLatin1());
+        if (filePathName.length() > 3) 
+            PrintInfo("Error: SourceFile %s not found.\n", filePathName.toLatin1());
+        else
+            PrintInfo("Error: SourceFile not found.\n");
         return NULL;
     }
 
@@ -3422,12 +3427,19 @@ QTreeWidgetItem* ProjectView::Tree_AddImageFile(QString filePathName, int index,
                 if (m_data->m_MipImages->mipset->m_nMipLevels > 1)
                     m_data->m_Mip_Levels = m_data->m_MipImages->mipset->m_nMipLevels - 1;
 
+                // Interal data use
                 m_data->m_Height    = m_data->m_MipImages->mipset->m_nHeight;
                 m_data->m_Width     = m_data->m_MipImages->mipset->m_nWidth;
-                m_data->m_HeightStr = QString().number(m_data->m_Height) + " px";
-                m_data->m_WidthStr  = QString().number(m_data->m_Width) + " px";
-                m_data->m_FormatStr = GetFormatDesc(m_data->m_MipImages->mipset->m_format);
+                m_data->m_Depth     = m_data->m_MipImages->mipset->m_nDepth;            // depthsupport
+                m_data->m_TextureType = m_data->m_MipImages->mipset->m_TextureType;     // depthsupport
                 m_data->m_Format    = m_data->m_MipImages->mipset->m_format;
+
+                // User interface
+                m_data->m_HeightStr = QString().number(m_data->m_MipImages->mipset->m_nHeight) + " px";
+                m_data->m_WidthStr  = QString().number(m_data->m_MipImages->mipset->m_nWidth) + " px";
+                m_data->m_DepthStr  = QString().number(m_data->m_MipImages->mipset->m_nDepth);                  // depthsupport
+                m_data->m_FormatStr = GetFormatDesc(m_data->m_MipImages->mipset->m_format);
+                m_data->m_TextureTypeStr = GetTextureTypeDesc((CMP_TextureType) m_data->m_MipImages->mipset->m_TextureType); // depthsupport
 
                 CMIPS     CMips;
                 MipLevel* pInMipLevel = CMips.GetMipLevel(m_data->m_MipImages->mipset, 0, 0);
@@ -5139,8 +5151,26 @@ void ProjectView::onDroppedImageItem(QString& filePathName, int index)
 //       TREETYPE_COMPRESSION_DATA
 /*=====================================================*/
 
-bool processItem(QFile* file, ProjectView* ProjectView, QString FilePathName, int miplevels, MipSet* sourceImageMipSet, int& NumberOfItemCompressed,
-                 int& NumberOfItemCompressedFailed, int& NumberOfItemsSkipped, QTreeWidgetItemIterator it)
+
+struct TAnalysisData
+{
+    int    processCount;
+    double processTime;
+    double SSIM_Total;
+    double PSNR_Total;
+};
+
+
+bool processItem(QFile* file, 
+                 ProjectView* ProjectView, 
+                 QString FilePathName, 
+                 int miplevels, 
+                 MipSet* sourceImageMipSet, 
+                 int& NumberOfItemCompressed,
+                 int& NumberOfItemCompressedFailed, 
+                 int& NumberOfItemsSkipped, 
+                 TAnalysisData &m_AnalaysisData,
+                 QTreeWidgetItemIterator it)
 {
     // Use STD vectors to hold argv ** and keep the data in scope
     typedef std::vector<char>      CharArray;
@@ -5274,7 +5304,7 @@ bool processItem(QFile* file, ProjectView* ProjectView, QString FilePathName, in
                 int       indexCompression    = meta.indexOfEnumerator("eCompression");
                 QMetaEnum metaEnumCompression = meta.enumerator(indexCompression);
                 key                           = metaEnumCompression.valueToKey(data->m_Compression);
-                CMP_FORMAT cmp_format         = ParseFormat((CMP_CHAR*)key);
+                CMP_FORMAT cmp_format         = CMP_ParseFormat((char*)key);
 
                 //"fd" = key
                 if (key != NULL)
@@ -5306,15 +5336,19 @@ bool processItem(QFile* file, ProjectView* ProjectView, QString FilePathName, in
 #ifdef USE_GTC
                         format == "GTC" ||
 #endif
-#ifdef USE_GTC_HDR
-                        format == "GTCH" ||
+#ifdef USE_BASIS
+                        format == "BASIS" ||
 #endif
-                        format == "BC1" ||
-                        format == "DXT1" ||
-                        format == "BC7" ||
-#ifdef ENABLE_V3x_CODE
-                        format == "ASTC" ||
-#endif
+                        format == "BC1"   ||
+                        format == "BC2"   ||
+                        format == "BC3"   ||
+                        format == "BC4"   ||
+                        format == "BC5"   ||
+                        format == "BC7"   ||
+                        format == "DXT1"  ||
+                        format == "DXT3"  ||
+                        format == "DXT5"  ||
+                        format == "BC6H_SF"  ||
                         format == "BC6H")
                     {
                         string usegpu;
@@ -5323,8 +5357,7 @@ bool processItem(QFile* file, ProjectView* ProjectView, QString FilePathName, in
                         argvVec.push_back(CharArray(usegpu.begin(), usegpu.end()));
                         argvVec.back().push_back(0); // Terminate String
                         argv.push_back(argvVec.back().data());
-#ifdef USE_COMPUTE
-                        if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::CPU_HPC)
+                        if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::HPC)
                         {
                             msgCommandLine.append(" HPC ");
                             usegpu = "HPC";
@@ -5332,30 +5365,27 @@ bool processItem(QFile* file, ProjectView* ProjectView, QString FilePathName, in
                             argvVec.back().push_back(0); // Terminate String
                             argv.push_back(argvVec.back().data());
                         }
+#ifdef USE_GPUEncoders
                         else if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_OpenCL)
                         {
-                            msgCommandLine.append(" OpenCL ");
-                            usegpu = "OpenCL";
+                            msgCommandLine.append(" OCL ");
+                            usegpu = "OCL";
                             argvVec.push_back(CharArray(usegpu.begin(), usegpu.end()));
                             argvVec.back().push_back(0); // Terminate String
                             argv.push_back(argvVec.back().data());
                         }
-#else
-                        g_useCPUEncode = true;
-#endif
-#ifdef ENABLE_V3x_CODE
-                        else if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_Vulkan)
-                        {
-                            msgCommandLine.append(" Vulkan ");
-                            usegpu = "Vulkan";
-                            argvVec.push_back(CharArray(usegpu.begin(), usegpu.end()));
-                            argvVec.back().push_back(0); // Terminate String
-                            argv.push_back(argvVec.back().data());
-                        }
+                        //else if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::VLK)
+                        //{
+                        //    msgCommandLine.append(" VLK ");
+                        //    usegpu = "VLK";
+                        //    argvVec.push_back(CharArray(usegpu.begin(), usegpu.end()));
+                        //    argvVec.back().push_back(0); // Terminate String
+                        //    argv.push_back(argvVec.back().data());
+                        //}
                         else if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_DirectX)
                         {
-                            msgCommandLine.append(" DirectX ");
-                            usegpu = "DirectX";
+                            msgCommandLine.append(" DXC ");
+                            usegpu = "DXC";
                             argvVec.push_back(CharArray(usegpu.begin(), usegpu.end()));
                             argvVec.back().push_back(0); // Terminate String
                             argv.push_back(argvVec.back().data());
@@ -5411,6 +5441,19 @@ bool processItem(QFile* file, ProjectView* ProjectView, QString FilePathName, in
                         argvVec.back().push_back(0);  // Terminate String
                         argv.push_back(argvVec.back().data());
                     }
+                }
+
+
+                //=====================================================
+                // User set Number of threads that is not default 8
+                //=====================================================
+                if (g_Application_Options.m_threads != 0)
+                {
+                        // Display Msg to user on the process message pannel
+                        QString value = QString::number(g_Application_Options.m_threads);
+                        msgCommandLine.append(" -NumThreads ");
+                        msgCommandLine.append(value);
+                        msgCommandLine.append(" ");
                 }
 
                 if (FormatSupportsDXTCBase(cmp_format))
@@ -5757,11 +5800,23 @@ bool processItem(QFile* file, ProjectView* ProjectView, QString FilePathName, in
                     // Pass over the command line params
                     if (ParseParams((int)argv.size(), (CMP_CHAR**)argv.data()))
                     {
-                        // Overriding some Command Line Features
+                        // Overriding Some Command Line Features for GUI app!
                         g_CmdPrams.showperformance      = true;
                         g_CmdPrams.conversion_fDuration = 0;
-
                         g_CmdPrams.doDecompress = false;
+                        g_CmdPrams.CompressOptions.dwnumThreads = g_Application_Options.m_threads;
+
+                        if (g_Application_Options.m_logresults)
+                        {
+                            g_CmdPrams.logresults        = true;
+                            g_CmdPrams.logresultsToFile  = false;
+                            g_CmdPrams.SSIM = 0;
+                        }
+                        else
+                        {
+                            g_CmdPrams.logresults        = false;
+                            g_CmdPrams.logresultsToFile  = false;
+                        }
 
                         // Do the Compression by loading a new MIP set
                         if (ProcessCMDLine(&ProgressCallback, sourceImageMipSet) == 0)
@@ -5770,14 +5825,13 @@ bool processItem(QFile* file, ProjectView* ProjectView, QString FilePathName, in
                             {
                                 Imageitem->setIcon(0, QIcon(QStringLiteral(":/CompressonatorGUI/Images/smallGrayStone.png")));
                                 g_pProgressDlg->SetValue(0);
-
                                 argvVec.clear();
                                 argv.clear();
                                 return false;
                             }
                             else
                                 // Success in compression
-                                if (ProjectView->Tree_updateCompressIcon(Imageitem, data->m_destFileNamePath, true))
+                            if (ProjectView->Tree_updateCompressIcon(Imageitem, data->m_destFileNamePath, true))
                             {
                                 // Destination File Size
                                 QFile fileInfo(data->m_destFileNamePath);
@@ -5812,6 +5866,18 @@ bool processItem(QFile* file, ProjectView* ProjectView, QString FilePathName, in
 
                                 NumberOfItemCompressed++;
                                 g_pProgressDlg->SetValue(0);
+
+                                if (g_Application_Options.m_logresults && (g_CmdPrams.SSIM > 0.0F))
+                                {
+                                    m_AnalaysisData.processCount++;
+                                    m_AnalaysisData.SSIM_Total  += g_CmdPrams.SSIM;
+                                    m_AnalaysisData.PSNR_Total  += g_CmdPrams.PSNR;
+                                    m_AnalaysisData.processTime += g_CmdPrams.compress_fDuration;
+                                    if (g_Application_Options.m_analysisResultTable)
+                                    {
+                                            ProjectView->m_analysisTable.AddResults(g_CmdPrams.DestFile,data->m_compname,g_CmdPrams.compress_fDuration,g_CmdPrams.PSNR,g_CmdPrams.SSIM);
+                                    }
+                                }
 
                                 argvVec.clear();
                                 argv.clear();
@@ -5870,6 +5936,75 @@ void replaceExt(string& s, const string& newExt)
     }
 }
 
+AnalysisTableWidget::AnalysisTableWidget()
+{
+    Qt::WindowFlags flags = windowFlags();
+    setWindowFlags(flags |Qt::WindowStaysOnTopHint); // can use Qt::WindowTitleHint to remove close button
+    setWindowTitle("Analysis");
+    setStyleSheet("QHeaderView::section { background-color:lightgrey;}"); // font: bold 14px
+    setColumnCount(5);
+    QStringList header;
+    header << "Full Path"<<"File Name"<<"TIME" << "PSNR"<<"SSIM";
+    setHorizontalHeaderLabels(header);
+    setColumnWidth(0,150); // Path
+    setColumnWidth(1,150); // Filename
+    setColumnWidth(2,50);  // Time
+    setColumnWidth(3,50);  // PSNR
+    setColumnWidth(4,50);  // SSIM
+    setMinimumWidth(490);
+}
+
+void AnalysisTableWidget::keyPressEvent(QKeyEvent *event)
+{
+    // selected cells
+    if(!selectedIndexes().isEmpty())
+    {
+        if(event->matches(QKeySequence::Copy))
+        {
+                QString text;
+                QItemSelectionRange range = selectionModel()->selection().first();
+                for (auto i = range.top(); i <= range.bottom(); ++i)
+                {
+                    QStringList rowContents;
+                    for (auto j = range.left(); j <= range.right(); ++j)
+                        rowContents << model()->index(i,j).data().toString();
+                    text += rowContents.join("\t");
+                    text += "\n";
+                }
+                QApplication::clipboard()->setText(text);
+        }
+         else
+            QTableView::keyPressEvent(event);
+    }
+}
+
+void AnalysisTableWidget::AddResults(QString processPath, QString processName, QString Time, QString psnr, QString ssim)
+{
+    int rowCount = this->rowCount();
+    this->insertRow(rowCount);
+    setItem(rowCount,0,new QTableWidgetItem(processPath));
+    setItem(rowCount,1,new QTableWidgetItem(processName));
+    setItem(rowCount,2,new QTableWidgetItem(Time));
+    setItem(rowCount,3,new QTableWidgetItem(psnr));
+    setItem(rowCount,4,new QTableWidgetItem(ssim));
+}
+
+void AnalysisTableWidget::AddResults(string processPath, QString processName, double Time, double psnr, double ssim)
+{
+    int rowCount = this->rowCount();
+    this->insertRow(rowCount);
+    setItem(rowCount,0,new QTableWidgetItem(QString(processPath.c_str())));
+    setItem(rowCount,1,new QTableWidgetItem(processName));
+    setItem(rowCount,2,new QTableWidgetItem(QString::number(Time,'g',3)));
+    setItem(rowCount,3,new QTableWidgetItem(QString::number(psnr,'g',3)));
+    setItem(rowCount,4,new QTableWidgetItem(QString::number(ssim,'g',4)));
+}
+
+
+void AnalysisTableWidget::ClearResults()
+{
+   this->setRowCount(0);
+}
 
 void CompressFiles(QFile* file, ProjectView* ProjectView)
 {
@@ -5878,6 +6013,18 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
         QString                 FilePathName;
         QTreeWidgetItemIterator it;
     };
+
+    TAnalysisData m_AnalaysisData = {0};
+
+    if (g_Application_Options.m_analysisResultTable && g_Application_Options.m_logresults )
+    {
+        ProjectView->m_analysisTable.ClearResults();
+        ProjectView->m_analysisTable.show();
+    }
+    else
+    {
+        ProjectView->m_analysisTable.hide();
+    }
 
     ProjectView->m_CompressStatusDialog->showOutput();
 
@@ -5964,7 +6111,7 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                 if (levelType(*it) == TREETYPE_COMPRESSION_DATA)
                 {
                     processItem(file, ProjectView, FilePathName, miplevels, sourceImageMipSet, NumberOfItemCompressed, NumberOfItemCompressedFailed,
-                                NumberOfItemsSkipped, it);
+                                NumberOfItemsSkipped, m_AnalaysisData,it);
                 }
             }
         }
@@ -6053,8 +6200,15 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                                 }
                                             }
 
-                                            if (processItem(file, ProjectView, FilePathName, miplevels, sourceImageMipSet, NumberOfItemCompressed,
-                                                            NumberOfItemCompressedFailed, NumberOfItemsSkipped, it))
+                                            if (processItem(file, ProjectView, 
+                                                            FilePathName, 
+                                                            miplevels, 
+                                                            sourceImageMipSet, 
+                                                            NumberOfItemCompressed,
+                                                            NumberOfItemCompressedFailed, 
+                                                            NumberOfItemsSkipped, 
+                                                            m_AnalaysisData,
+                                                            it))
                                             {
                                                 UpdateDestglTFAfterProcess((*it));
                                             }
@@ -6826,6 +6980,25 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                 //    Msg.append(QString::number(NumberOfItemsSkipped));
                 //    Msg.append(" skipped ");
                 //}
+
+                if (g_Application_Options.m_logresults && (m_AnalaysisData.processCount > 0))
+                {
+                   QString time =  QString::number(m_AnalaysisData.processTime/m_AnalaysisData.processCount,'g',3);
+                   QString psnr =  QString::number(m_AnalaysisData.PSNR_Total/m_AnalaysisData.processCount,'g',3);
+                   QString ssim =  QString::number(m_AnalaysisData.SSIM_Total/m_AnalaysisData.processCount,'g',4);
+                   Msg.append(", Time ");
+                   Msg.append(time);
+                   Msg.append(", PSNR ");
+                   Msg.append(psnr);
+                   Msg.append(", SSIM ");
+                   Msg.append(ssim);
+                   if (g_Application_Options.m_analysisResultTable)
+                   {
+                        ProjectView->m_analysisTable.AddResults("","Average",time,psnr,ssim);
+                        ProjectView->m_analysisTable.show();
+                   }
+                }
+
                 Msg.append("<\b> ======");
                 ProjectView->m_CompressStatusDialog->appendText(Msg);
 
@@ -6861,7 +7034,6 @@ void ProjectView::compressProjectFiles(QFile* file)
         actRemoveImage->setEnabled(false);
 
     CompressFiles(file, this);
-
     emit OnCompressionDone();
 
     if (actAnalyseMeshData)

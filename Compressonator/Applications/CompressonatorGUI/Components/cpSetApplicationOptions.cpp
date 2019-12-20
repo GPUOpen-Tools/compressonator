@@ -22,7 +22,6 @@
 //=====================================================================
 
 #include "cpSetApplicationOptions.h"
-
 #include <QScrollArea>
 #include <QGridLayout>
 #include <QLabel>
@@ -43,6 +42,8 @@ m_parent(parent)
     Qt::WindowFlags flags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
     setWindowFlags(flags);
 
+    m_propAnalysisTable = NULL;
+
     // Widget to be placed onto this DockWidget
 
     m_theController = new ObjectController(this, true);
@@ -58,7 +59,8 @@ m_parent(parent)
     }
 
     connect(&g_Application_Options, SIGNAL(ImageViewDecodeChanged(QVariant &)), this, SLOT(onImageViewDecodeChanged(QVariant &)));
-#ifdef USE_COMPUTE
+    connect(&g_Application_Options, SIGNAL(LogResultsChanged(QVariant &)), this, SLOT(onLogResultsChanged(QVariant &)));
+#ifdef USE_CMP_SDK
     connect(&g_Application_Options, SIGNAL(ImageEncodeChanged(QVariant &)), this, SLOT(onImageEncodeChanged(QVariant &)));
 #endif
     m_theController->setObject(&g_Application_Options, true);
@@ -104,7 +106,7 @@ void CSetApplicationOptions::onImageViewDecodeChanged(QVariant &value)
         g_gpudecodeFormat = MIPIMAGE_FORMAT::Format_QImage;
 }
 
-#ifdef USE_COMPUTE
+#ifdef USE_CMP_SDK
 void CSetApplicationOptions::onImageEncodeChanged(QVariant &value)
 {
     g_Application_Options.m_ImageEncode = (C_Application_Options::ImageEncodeWith &)value;
@@ -117,10 +119,19 @@ void CSetApplicationOptions::onImageEncodeChanged(QVariant &value)
 }
 #endif
 
+void CSetApplicationOptions::onLogResultsChanged(QVariant &value)
+{
+    m_propAnalysisTable = m_theController->getProperty(APP_Show_Analysis_Results_Table);
+    if (m_propAnalysisTable)
+    {
+       m_propAnalysisTable->setEnabled((bool &)value);
+    }
+}
+
 void CSetApplicationOptions::onClose()
 {
     g_useCPUDecode = (g_Application_Options.m_ImageViewDecode == C_Application_Options::ImageDecodeWith::CPU);
-#ifdef USE_COMPUTE
+#ifdef USE_CMP_SDK
     g_useCPUEncode = (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::CPU);
 #endif
     emit OnAppSettingHide();
@@ -158,13 +169,14 @@ void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem *item)
         m_infotext->append("For ETCn, GPU Decompress with DirectX is not supported");
         m_infotext->append("For HDR image view, decode with OpenGL is not supported. It may appear darker.");
     }
-#ifdef USE_COMPUTE    
+#ifdef USE_CMP_SDK    
     if (text.compare(APP_compress_image_using) == 0)
     {
         m_infotext->append("<b>Compressed image</b>");
-        m_infotext->append("For compressed images this option selects how images are compressed either with CPU or GPU.");
+        m_infotext->append("For compressed images this option selects how images are compressed either with CPU or HPC.");
+        m_infotext->append("HPC runs codecs optimized for vector extensions and SPMD processing on CPU.");
         m_infotext->append("<b>Note:</b>");
-        m_infotext->append("Only BC1, BC7 format are supported with GPU Compress, if you choose other format under GPU Compress, they will be compressed with CPU.");
+        m_infotext->append("Only BC1 to BC7 format are supported with HPC Compress, if you choose other format under HPC Compress, they will be compressed with generalized CPU instructions");
     }
 
     else
@@ -194,14 +206,35 @@ void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem *item)
         m_infotext->append("<b>Set Image Diff Contrast</b>");
         m_infotext->append("Sets the contrast of pixels for image view diff, default is 20.0 using 1.0 returns pixels to original diff contrast, min is 1 max is 200");
     }
+    else if (text.compare(APP_Set_Number_of_Threads) == 0)
+    {
+        m_infotext->append("<b>Set Number of Threads</b>");
+        m_infotext->append("Sets the number of threads to use for texture compression, max is 128 threads distributed over multiple cores");
+        m_infotext->append("Default 0 sets auto detection, where the total threads = number of processor cores, if auto detection fails default = 8");
+        int processors = CMP_NumberOfProcessors();
+        char buff[128];
+        sprintf(buff,"Max number of processors [%d]",processors);
+        m_infotext->append(buff);
+        m_infotext->append("<b>Restart the application for the new settings to take effect<b>");
+    }
+    else if (text.compare(APP_Show_MSE_PSNR_SSIM_Results) == 0)
+    {
+        m_infotext->append("<b>Show MSE, PSNR and SSIM_Results</b>");
+        m_infotext->append("Show these values after processing compressed images");
+    }
+    else if (text.compare(APP_Show_Analysis_Results_Table) == 0)
+    {
+        m_infotext->append("<b>Show Analysis Results Table</b>");
+        m_infotext->append("Show all Process Times, PSNR and SSIM results for compressed images in a table view");
+    }
 
-#ifdef USE_3DVIEWALLAPI
+//#ifdef USE_3DVIEWALLAPI
     else
     if (text.compare(APP_Render_Models_with) == 0)
     {
         m_infotext->append("<b>Selects how to render 3DModels files</b>");
     }
-#endif
+//#endif
 
 }
 
@@ -209,7 +242,7 @@ void CSetApplicationOptions::UpdateViewData()
 {
     m_theController->setObject(&g_Application_Options, true, true);
     g_useCPUDecode = g_Application_Options.m_ImageViewDecode == C_Application_Options::ImageDecodeWith::CPU;
-#ifdef USE_COMPUTE
+#ifdef USE_CMP_SDK
     g_useCPUEncode = g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::CPU;
 #endif
 }
@@ -268,7 +301,7 @@ void CSetApplicationOptions::LoadSettings(QString SettingsFile, QSettings::Forma
             var = g_Application_Options.metaObject()->property(i).read(&g_Application_Options);
             var = settings.value(name, var);
             name.replace(QString("_"), QString(" "));
-#ifdef USE_COMPUTE
+#ifdef USE_CMP_SDK
             if (name.compare(APP_compress_image_using) == 0)
             {
                 int value = var.value<int>();
@@ -282,7 +315,7 @@ void CSetApplicationOptions::LoadSettings(QString SettingsFile, QSettings::Forma
                 C_Application_Options::ImageDecodeWith decodeWith = (C_Application_Options::ImageDecodeWith) value;
                 g_Application_Options.setImageViewDecode(decodeWith);
             }
-#ifdef USE_3DVIEWALLAPI
+//#ifdef USE_3DVIEWALLAPI
             else
             if (name.compare(APP_Render_Models_with) == 0)
             {
@@ -290,7 +323,7 @@ void CSetApplicationOptions::LoadSettings(QString SettingsFile, QSettings::Forma
                 C_Application_Options::RenderModelsWith render = (C_Application_Options::RenderModelsWith) value;
                 g_Application_Options.setGLTFRender(render);
             }
-#endif
+//#endif
             else
                 g_Application_Options.metaObject()->property(i).write(&g_Application_Options, var);
         }

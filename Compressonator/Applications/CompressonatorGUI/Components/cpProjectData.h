@@ -25,7 +25,6 @@
 #define CPPROJECTDATA_H
 
 // #define ENABLED_USER_GPUVIEW
-
 //#include "qtpropertymanager.h"
 //#include "qtvariantproperty.h"
 //#include "qtgroupboxpropertybrowser.h"
@@ -33,7 +32,6 @@
 #include <QtWidgets>
 #include <QtQml\QQmlListProperty>
 #include "PluginManager.h"
-#include "Compressonator.h"
 #include "cpImageLoader.h"
 #include "ATIFormats.h"
 #include "TextureIO.h"
@@ -43,6 +41,8 @@
 // Mesh
 #include "cmp_mesh.h"
 #include "ModelData.h"
+
+
 
 #define    TREETYPE_Double_Click_here_to_add_files      0      // [+] Double Click here to add files ...
 #define    TREETYPE_Add_destination_setting             1      // [+] Add destination setting ...
@@ -1273,11 +1273,11 @@ class C_Destination_Options : public C_Destination_Image
 public:
 
     enum eCompression {
+#ifdef USE_BASIS
+        BASIS,
+#endif
 #ifdef USE_GTC
         GTC,
-#endif
-#ifdef USE_GTC_HDR
-        GTCH,
 #endif
         BC1,
         BC2,
@@ -1447,10 +1447,10 @@ public:
         {
         case BC4:
         case ATI1N:        // same as BC4    
-        case ATI2N:        // same as BC4    
         case BC5:
-        case ATI2N_XY:    // same as BC5    
-        case ATI2N_DXT5:    // same as BC5    
+        case ATI2N:         // same as BC5
+        case ATI2N_XY:      // same as BC5 Channels are swizzled
+        case ATI2N_DXT5:    // same as BC5 
         case BC1:
         case BC2:
         case DXT3:        // same as BC2     
@@ -1549,14 +1549,16 @@ private:
 class C_Source_Info : public QObject
 {
 Q_OBJECT
-    Q_PROPERTY(QString  _Name       MEMBER m_Name)
-    Q_PROPERTY(QString  _Full_Path  MEMBER m_Full_Path)
-    Q_PROPERTY(QString  _File_Size  MEMBER m_FileSizeStr)
-    Q_PROPERTY(QString  _Image_Size MEMBER m_ImageSizeStr)
-    Q_PROPERTY(QString  _Width      MEMBER m_WidthStr)
-    Q_PROPERTY(QString  _Height     MEMBER m_HeightStr)
-    Q_PROPERTY(int      _Mip_Levels MEMBER m_Mip_Levels)
-    Q_PROPERTY(QString  _Format     MEMBER m_FormatStr)
+    Q_PROPERTY(QString  _Name           MEMBER m_Name)
+    Q_PROPERTY(QString  _Full_Path      MEMBER m_Full_Path)
+    Q_PROPERTY(QString  _File_Size      MEMBER m_FileSizeStr)
+    Q_PROPERTY(QString  _Image_Size     MEMBER m_ImageSizeStr)
+    Q_PROPERTY(QString  _Width          MEMBER m_WidthStr)
+    Q_PROPERTY(QString  _Height         MEMBER m_HeightStr)
+    Q_PROPERTY(QString  _Depth          MEMBER m_DepthStr)
+    Q_PROPERTY(int      _Mip_Levels     MEMBER m_Mip_Levels)
+    Q_PROPERTY(QString  _Format         MEMBER m_FormatStr)
+    Q_PROPERTY(QString  _Texture_Type   MEMBER m_TextureTypeStr)
 
 
     Q_ENUMS(CMP_FORMAT)
@@ -1570,18 +1572,21 @@ public:
         m_FileSize      = 0;
         m_Width         = 0;
         m_Height        = 0;
+        m_Depth         = 0;
         m_FileSizeStr   = "";
         m_ImageSizeStr  = "";
         m_WidthStr      = "";
         m_HeightStr     = "";
+        m_DepthStr      = "";
         m_Mip_Levels    = 0;
 
         // Used to index new file name
         m_extnum = 0;
         m_MipImages = NULL;
 
-        m_FormatStr = GetFormatDesc(CMP_FORMAT::CMP_FORMAT_Unknown);
-        m_Format    = CMP_FORMAT::CMP_FORMAT_Unknown;
+        m_FormatStr         = GetFormatDesc(CMP_FORMAT::CMP_FORMAT_Unknown);
+        m_TextureTypeStr    = GetTextureTypeDesc(CMP_TextureType::TT_Unknown);
+        m_Format            = CMP_FORMAT::CMP_FORMAT_Unknown;
 
     }
 
@@ -1590,14 +1595,18 @@ public:
     QString m_Full_Path;
     QString m_WidthStr;
     QString m_HeightStr;
+    QString m_DepthStr;                 // depthsupport
     QString m_FileSizeStr;
     QString m_ImageSizeStr;
+    QString m_TextureTypeStr;           // depthsupport
     QString m_FormatStr;
     
 
-    CMP_FORMAT m_Format;
+    CMP_FORMAT  m_Format;
+    TextureType m_TextureType;      // depthsupport
     int     m_Width;
     int     m_Height;
+    int     m_Depth;
     int     m_FileSize;
     int     m_Mip_Levels;
     int     m_extnum;
@@ -1753,136 +1762,59 @@ public:
 // =======================================================
 // APPLICATION DATA
 // =======================================================
-#ifdef USE_COMPUTE
+//#ifdef USE_CMP_SDK 
 #define APP_compress_image_using                        "Encode with"
-#endif
-#ifdef USE_3DVIEWALLAPI
+//#endif
+//#ifdef USE_3DVIEWALLAPI
 #define APP_Render_Models_with                          "Render Models with"
-#endif
+//#endif
 #define APP_Decompress_image_views_using                "Decode with"
 #define APP_Reload_image_views_on_selection             "Reload image views on selection"
 #define APP_Load_recent_project_on_startup              "Load recent project on startup"
 #define APP_Close_all_image_views_prior_to_process      "Close all image views prior to process"
 #define APP_Mouse_click_on_icon_to_view_image           "Mouse click on icon to view image"
 #define APP_Set_Image_Diff_Contrast                     "Set Image Diff Contrast"
-
-//class C_GPU_Decompress_Options : public QObject
-//{
-//
-//    Q_OBJECT
-//        Q_ENUMS(DecompressAPI)
-//        Q_PROPERTY(DecompressAPI GPU_Decompress  READ getGPUDecompress     WRITE setGPUDecompress NOTIFY GPUDecompressChanged)
-//
-//public:
-//    
-//    enum DecompressAPI {
-//        OpenGL,
-//        DirectX,
-//        Vulkan
-//    };
-//
-//    C_GPU_Decompress_Options()
-//    {
-//        m_gpudecomp = OpenGL;
-//    }
-//
-//    void setGPUDecompress(DecompressAPI decodewith)
-//    {
-//        m_gpudecomp = decodewith;
-//        emit GPUDecompressChanged((QVariant &)decodewith);
-//    }
-//
-//    DecompressAPI getGPUDecompress() const
-//    {
-//        return m_gpudecomp;
-//    }
-//
-//    DecompressAPI m_gpudecomp;
-//
-//signals:
-//    void GPUDecompressChanged(QVariant &);
-//};
-//
-//class C_GPU_Compress_Options : public C_GPU_Decompress_Options
-//{
-//
-//    Q_OBJECT
-//        Q_ENUMS(CompressAPI)
-//        Q_PROPERTY(CompressAPI GPU_Compress  READ getGPUCompress     WRITE setGPUCompress NOTIFY GPUCompressChanged)
-//
-//public:
-//
-//    // Note:
-//    // Keep order of list as its ref is saved in CompressSettings.ini
-//    // we should change the save to use string name instead of indexes to the enum
-//    // GPU_Compress=1
-//    // change to 
-//    // GPU_Compress=OpenCL 
-//    //
-//    // Note this must also match Compressonator.h definition CMP_Compute_type
-//    enum CompressAPI {
-//        OpenCL,
-//        DirectX,
-//        Vulkan
-//    };
-//
-//    C_GPU_Compress_Options()
-//    {
-//        m_gpucomp = OpenCL;
-//    }
-//
-//    void setGPUCompress(CompressAPI encodewith)
-//    {
-//        m_gpucomp = encodewith;
-//        emit GPUCompressChanged((QVariant &)encodewith);
-//    }
-//
-//    CompressAPI getGPUCompress() const
-//    {
-//        return m_gpucomp;
-//    }
-//
-//    CompressAPI m_gpucomp;
-//
-//signals:
-//    void GPUCompressChanged(QVariant &);
-//};
+#define APP_Set_Number_of_Threads                       "Set Number of Threads"
+#define APP_Show_MSE_PSNR_SSIM_Results                  "Show MSE PSNR SSIM Results"
+#define APP_Show_Analysis_Results_Table                 "Show Analysis Results Table"
 
 class C_Application_Options :public QObject
 {
     Q_OBJECT
         Q_ENUMS(ImageDecodeWith)
         Q_ENUMS(RenderModelsWith)
-#ifdef USE_COMPUTE
+//#ifdef USE_CMP_SDK
         Q_ENUMS(ImageEncodeWith)
         Q_PROPERTY(ImageEncodeWith  Encode_with                             READ getImageEncode             WRITE setImageEncode NOTIFY ImageEncodeChanged)
-#endif
+//#endif
         Q_PROPERTY(ImageDecodeWith  Decode_with                             READ getImageViewDecode         WRITE setImageViewDecode NOTIFY ImageViewDecodeChanged)
         Q_PROPERTY(bool             Reload_image_views_on_selection         READ getUseNewImageViews        WRITE setUseNewImageViews)
         Q_PROPERTY(bool             Close_all_image_views_prior_to_process  READ getCloseAllImageViews      WRITE setCloseAllImageViews)
         Q_PROPERTY(bool             Mouse_click_on_icon_to_view_image       READ getclickIconToViewImage    WRITE setclickIconToViewImage)
         Q_PROPERTY(bool             Load_recent_project_on_startup          READ getLoadRecentFile          WRITE setLoadRecentFile)
         Q_PROPERTY(double           Set_Image_Diff_Contrast                 READ getImagediffContrast       WRITE setImagediffContrast)
+        Q_PROPERTY(int              Set_Number_of_Threads                   READ getThreads                 WRITE setThreads)
 #ifdef USE_ASSIMP
-        Q_PROPERTY(bool             Use_assimp						        READ getUseAssimp				WRITE setUseAssimp)
+        Q_PROPERTY(bool             Use_assimp                              READ getUseAssimp               WRITE setUseAssimp)
 #endif
-#ifdef USE_3DVIEWALLAPI
+//#ifdef USE_3DVIEWALLAPI
         Q_PROPERTY(RenderModelsWith Render_Models_with                      READ getGLTFRender              WRITE setGLTFRender)
-#endif
+//#endif
+        Q_PROPERTY(bool             Show_MSE_PSNR_SSIM_Results              READ getLogResults              WRITE setLogResults NOTIFY LogResultsChanged)
+        Q_PROPERTY(bool             Show_Analysis_Results_Table             READ getAnalysisResultTable     WRITE setAnalysisResultTable)
 public:
-#ifdef USE_COMPUTE
     // Keep order of list as its ref is saved in CompressSettings.ini
     // we should change the save to use string name instead of indexes to the enum
     enum class ImageEncodeWith {
         CPU,
-        CPU_HPC,
+        HPC,
+#ifdef USE_GPUEncoders
+        GPU_DirectX,
         GPU_OpenCL,
-#ifdef ENABLE_V3x_CODE
         GPU_Vulkan,
-        GPU_DirectX
 #endif
     };
-#endif
+
     enum class ImageDecodeWith {
         CPU,
         GPU_OpenGL,
@@ -1907,16 +1839,20 @@ public:
     C_Application_Options()
     {
         m_ImageViewDecode    = ImageDecodeWith::CPU;
-#ifdef USE_COMPUTE
+//#ifdef USE_CMP_SDK
         m_ImageEncode        = ImageEncodeWith::CPU;
-#endif
+//#endif
         m_loadRecentFile        = false;
         m_useNewImageViews      = false;
         m_refreshCurrentView    = false;
         m_closeAllDocuments     = true;
         m_clickIconToViewImage  = true;
         m_useAssimp             = false;
+        m_logresults            = false;
+        m_analysisResultTable   = false;
         m_imagediff_contrast    = 20.0;
+        m_threads               = CMP_NumberOfProcessors();
+        if (m_threads < 2) m_threads = 8;
 
 //#ifdef USE_GLTF_OPENGL 
 //        m_GLTFRenderWith       = RenderModelsWith::glTF_OpenGL;
@@ -1935,7 +1871,7 @@ public:
     {
         return m_ImageViewDecode;
     }
-#ifdef USE_COMPUTE
+//#ifdef USE_CMP_SDK
     void setImageEncode(ImageEncodeWith encodewith)
     {
         m_ImageEncode = encodewith;
@@ -1946,7 +1882,7 @@ public:
     {
         return m_ImageEncode;
     }
-#endif
+//#endif
 
     void setImagediffContrast(double contrast)
     {
@@ -1956,11 +1892,23 @@ public:
         m_imagediff_contrast = contrast;
     }
 
+    void setThreads(int threads)
+    {
+        if (threads >  128) threads = 128;
+        else
+        if (threads < 0) threads = 0;
+        m_threads = threads;
+    }
+
     double getImagediffContrast() const
     {
         return m_imagediff_contrast;
     }
 
+    int getThreads() const
+    {
+        return m_threads;
+    }
 
 	void setUseAssimp(bool recent)
 	{
@@ -1987,9 +1935,30 @@ public:
         m_loadRecentFile = recent;
     }
 
-    double getLoadRecentFile() const
+    bool getLoadRecentFile() const
     {
         return m_loadRecentFile;
+    }
+
+    void setLogResults(bool recent)
+    {
+        m_logresults = recent;
+        emit LogResultsChanged((QVariant &)recent);
+    }
+
+    bool getLogResults() const
+    {
+        return m_logresults;
+    }
+
+    double getAnalysisResultTable() const
+    {
+        return m_analysisResultTable;
+    }
+
+    void setAnalysisResultTable(bool recent)
+    {
+        m_analysisResultTable = recent;
     }
 
     void setUseNewImageViews(bool recent)
@@ -2023,23 +1992,26 @@ public:
     }
 
     ImageDecodeWith m_ImageViewDecode;
-#ifdef USE_COMPUTE
+//#ifdef USE_CMP_SDK
     ImageEncodeWith m_ImageEncode;
-#endif
+//#endif
     bool            m_clickIconToViewImage;
     bool            m_closeAllDocuments;
     bool            m_loadRecentFile;
     bool            m_refreshCurrentView;
-	bool            m_useAssimp;
+    bool            m_useAssimp;
     double          m_imagediff_contrast;
+    int             m_threads;
+    bool            m_logresults;
+    bool            m_analysisResultTable;
     RenderModelsWith m_GLTFRenderWith;
 
 signals:
     void ImageViewDecodeChanged(QVariant &);
-#ifdef USE_COMPUTE
-signals :
+    void LogResultsChanged(QVariant &);
+//#ifdef USE_CMP_SDK
     void ImageEncodeChanged(QVariant &);
-#endif
+//#endif
 
 };
 

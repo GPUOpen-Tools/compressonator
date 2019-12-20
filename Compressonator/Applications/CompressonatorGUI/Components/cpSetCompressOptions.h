@@ -31,6 +31,7 @@
 #include <QtWidgets>
 #include "PluginManager.h"
 #include "Compressonator.h"
+#include "Common.h"
 #include "cpProjectData.h"
 
 class CSetCompressOptions : public QDialog
