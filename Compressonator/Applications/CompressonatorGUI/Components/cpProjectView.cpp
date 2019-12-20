@@ -3471,6 +3471,7 @@ QTreeWidgetItem* ProjectView::Tree_AddImageFile(QString filePathName, int index,
     }
     else
     {
+#ifdef _WIN32
         if (g_Application_Options.getGLTFRender() == C_Application_Options::RenderModelsWith::glTF_DX12_EX)
         {
             typedef LONG NTSTATUS, *PNTSTATUS;
@@ -3506,7 +3507,7 @@ QTreeWidgetItem* ProjectView::Tree_AddImageFile(QString filePathName, int index,
                 return NULL;
             }
         }
-
+#endif
         treeItem->setText(2, "...");
         treeItem->setToolTip(2, "show model image files");
 
