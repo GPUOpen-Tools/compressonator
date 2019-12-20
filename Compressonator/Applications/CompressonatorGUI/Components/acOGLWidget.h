@@ -7,8 +7,8 @@
 
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
-#include "AMDCompress.h"
-#include "MIPS.h"
+//#include "AMDCompress.h"
+//#include "MIPS.h"
 #include "PluginManager.h"
 #include <QWidget>
 #include <GL/glut.h>
@@ -37,8 +37,10 @@ public:
     explicit acOGLWidget(QWidget *parent = 0);
     virtual ~acOGLWidget();
 
+#if 0
     GLenum  MIP2OLG_Format(MipSet *m_MipSet);
     bool loadMIPImage(MipSet *m_MipSet, CMIPS *cMips, int MIPLevel);
+#endif
     void drawOffscreen();  //not in used- just for testing
 
     // OpenGL Version
