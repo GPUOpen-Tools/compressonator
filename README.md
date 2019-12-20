@@ -1,6 +1,4 @@
 
-> ** NOTE ** <b>Source updated to v3.2, release binary updates pending</b>
-
 # Compressonator
 
 Compressonator is a set of tools to allow artists and developers to more easily create compressed texture assets or model mesh optimizations and easily visualize the quality impact of various compression and rendering technologies.  It consists of a GUI application, a command line application and an SDK for easy integration into a developer tool chain.
@@ -16,16 +14,119 @@ https://github.com/GPUOpen-Tools/Compressonator/releases
 To build the source files follow the instructions in http://compressonator.readthedocs.io/en/latest/build_from_source/build_instructions.html
 
 ## Compressonator Core
+Provides block level API access to updated performance and quality driven BCn codecs. The library is designed to be a small self-contained, cross-platform, and linkable library for user applications.
 
-Documentation updates pending 
+Example usage is shown as below to compress and decompress a single 4x4 image block using BC1 encoder
+
+```c++
+
+// To use Compressonator Core "C" interfaces, just include
+// a single header file and CMP_Core lib into  your projects
+
+#include "CMP_Core.h"
+
+// Compress a sample image shape0 which is a 4x4 RGBA_8888 block.
+// Users can use a pointer to any sized image buffers to reference
+// a 4x4 block by supplying a stride offset for the next row.
+// Optional BC1 settings is set to null in this example
+
+unsigned char shape0_RGBA[64] = { filled with image source data as RGBA ...};
+
+// cmpBuffer is a byte array of 8 byte to hold the compressed results.
+unsigned char cmpBuffer[8]   = { 0 };
+
+// Compress the source into cmpBuffer
+CompressBlockBC1(shape0_RGBA, 16, cmpBuffer,null);
+
+// Example to decompress comBuffer back to a RGBA_8888 4x4 image block
+unsigned char imgBuffer[64] = { 0 };
+DecompressBlockBC1(cmpBuffer,imgBuffer,null)
+
+```
 
 ## Compressonator Framework
 
-Documentation updates pending 
+Includes Compressonator core with interfaces for multi-threading, mipmap generation, file access of images and HPC pipeline interfaces.
+
+**Example Mip Level Processing**
+
+```c++
+
+// To use Compressonator Framework "C" interfaces, just include
+// a single header file and CMP_Framework lib into  your projects
+
+#include "CMP_Framework.h"
+
+//---------------
+// Load the image
+//---------------
+CMP_MipSet MipSetIn;
+memset(&MipSetIn, 0, sizeof(CMP_MipSet));
+cmp_status = CMP_LoadTexture(pszSourceFile, &MipSetIn);
+if (cmp_status != CMP_OK) {
+    std::printf("Error %d: Loading source file!\n",cmp_status);
+    return -1;
+}
+
+//----------------------------------------------------------------------
+// generate mipmap level for the source image, if not already generated
+//----------------------------------------------------------------------
+
+if (MipSetIn.m_nMipLevels <= 1)
+{
+    CMP_INT requestLevel = 10; // Request 10 miplevels for the source image
+
+    //------------------------------------------------------------------------
+    // Checks what the minimum image size will be for the requested mip levels
+    // if the request is too large, a adjusted minimum size will be returns
+    //------------------------------------------------------------------------
+    CMP_INT nMinSize = CMP_CalcMinMipSize(MipSetIn.m_nHeight, MipSetIn.m_nWidth, 10);
+
+    //--------------------------------------------------------------
+    // now that the minimum size is known, generate the miplevels
+    // users can set any requested minumum size to use. The correct
+    // miplevels will be set acordingly.
+    //--------------------------------------------------------------
+    CMP_GenerateMIPLevels(&MipSetIn, nMinSize);
+}
+
+//==========================
+// Set Compression Options
+//==========================
+KernalOptions   kernel_options;
+memset(&kernel_options, 0, sizeof(KernalOptions));
+
+kernel_options.format   = destFormat;   // Set the format to process
+kernel_options.fquality = fQuality;     // Set the quality of the result
+kernel_options.threads  = 0;            // Auto setting
+
+//--------------------------------------------------------------
+// Setup a results buffer for the processed file,
+// the content will be set after the source texture is processed
+// in the call to CMP_ConvertMipTexture()
+//--------------------------------------------------------------
+CMP_MipSet MipSetCmp;
+memset(&MipSetCmp, 0, sizeof(CMP_MipSet));
+
+//===============================================
+// Compress the texture using Compressonator Lib
+//===============================================
+cmp_status = CMP_ProcessTexture(&MipSetIn, &MipSetCmp, kernel_options, CompressionCallback);
+if (cmp_status != CMP_OK) {
+  ...
+}
+
+//----------------------------------------------------------------
+// Save the result into a DDS file
+//----------------------------------------------------------------
+cmp_status = CMP_SaveTexture(pszDestFile, &MipSetCmp);
+
+CMP_FreeMipSet(&MipSetIn);
+CMP_FreeMipSet(&MipSetCmp);
+
+```
 
 ## Compressonator SDK
-
-Documentation updates pending 
 
 Compressonator SDK supported codecs includes BC1-BC7/DXTC, ETC1, ETC2, ASTC, ATC, ATI1N, ATI2N, all available in a single library.
 
@@ -95,14 +196,6 @@ free(srcTexture.pData);
 free(destTexture.pData);
 
 ```
-
-
-Processing of BC7 and BC6H 4x4 pixel blocks is also provided in the SDK:
-
-`CMP_EncodeBC7Block(BC7BlockEncoder* encoder  , double in[BC_BLOCK_PIXELS][BC_COMPONENT_COUNT], CMP_BYTE* out);`
-`CMP_EncodeBC6HBlock(BC6HBlockEncoder* encoder, CMP_FLOAT  in[BC_BLOCK_PIXELS][BC_COMPONENT_COUNT], CMP_BYTE* out);`
-
-*Reference example3 for details on using BC7*
 
 
 ## Compressonator CLI
