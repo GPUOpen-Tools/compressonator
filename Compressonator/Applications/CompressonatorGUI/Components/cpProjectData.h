@@ -30,7 +30,7 @@
 //#include "qtgroupboxpropertybrowser.h"
 #include "objectcontroller.h"
 #include <QtWidgets>
-#include <QtQml\QQmlListProperty>
+#include <QQmlListProperty>
 #include "PluginManager.h"
 #include "cpImageLoader.h"
 #include "ATIFormats.h"
