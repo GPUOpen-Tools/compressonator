@@ -21,7 +21,10 @@
 // THE SOFTWARE.
 //
 
-#include "stdafx.h"
+// Windows Header Files:
+#ifdef _WIN32
+#include <windows.h>
+#endif
 #include "cExr.h"
 
 float half_conv_float(unsigned short in) 
@@ -80,9 +83,9 @@ void Exr::writeRgba(const string outf, const Array2D<Rgba> &pix, int w, int h)
     file.writePixels (h);
 }
 
-void Rgba2Texture(Array2D<Rgba> &pixels, CMP_HALF* data, int w, int h)
+void Rgba2Texture(Array2D<Rgba> &pixels, CMP_HALFSHORT* data, int w, int h)
 {
-    // Save the Half Data format value into CMP_HALF bit format for processing later
+    // Save the Half Data format value into CMP_HALFSHORT bit format for processing later
     for (int y = 0; y < h; ++y)
     {
         for (int x = 0; x < w; ++x)
@@ -99,7 +102,7 @@ void Rgba2Texture(Array2D<Rgba> &pixels, CMP_HALF* data, int w, int h)
     }
 }
 
-void Texture2Rgba(CMP_HALF* data, Array2D<Rgba> &pixels, int w, int h, CMP_FORMAT isDeCompressed)
+void Texture2Rgba(CMP_HALFSHORT* data, Array2D<Rgba> &pixels, int w, int h, CMP_FORMAT isDeCompressed)
 {
 
     if (isDeCompressed != CMP_FORMAT_Unknown)

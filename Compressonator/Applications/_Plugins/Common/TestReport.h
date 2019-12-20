@@ -25,18 +25,18 @@ typedef struct
     float    MeanAbsError;
 
     // Test results
-    double    MSE;             // Mean Square Error    
+    float    MSE;             // Mean Square Error    
     float     RMSError;        //< Root Mean Square Error
 
-    double    SSIM;
-    double    SSIM_Red;
-    double    SSIM_Green;
-    double    SSIM_Blue;
+    float    SSIM;
+    float    SSIM_Red;
+    float    SSIM_Green;
+    float    SSIM_Blue;
 
-    double    PSNR;
-    double    PSNR_Red;
-    double    PSNR_Green;
-    double    PSNR_Blue;
+    float    PSNR;
+    float    PSNR_Red;
+    float    PSNR_Green;
+    float    PSNR_Blue;
 
     char srcdecodePattern[17];
     char destdecodePattern[17];
@@ -44,12 +44,12 @@ typedef struct
     float    encodeTime;        
 
     // Pass Conditions
-    double    pMSE;            // Mean Square Error    
-    float     pRMSError;        //< Root Mean Square Error
-    double    pSSIM_Red;
-    double    pSSIM_Green;
-    double    pSSIM_Blue;
-    double    pPSNR;
+    float    pMSE;            // Mean Square Error    
+    float    pRMSError;        //< Root Mean Square Error
+    float    pSSIM_Red;
+    float    pSSIM_Green;
+    float    pSSIM_Blue;
+    float    pPSNR;
     float    pencodeTime;    
 
     // SQL data
@@ -59,7 +59,7 @@ typedef struct
     // BC7 options
     int            nCompressionSpeed;    
     int            dwnumThreads;        
-    double        fquality;            
+    float          fquality;            
     int            brestrictColour;    
     int            brestrictAlpha;        
     unsigned long    dwmodeMask;        

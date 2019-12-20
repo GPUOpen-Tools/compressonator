@@ -35,15 +35,21 @@
 #if !defined(_AMD_TA_INTERNAL_H_INCLUDED_)
 #define _AMD_TA_INTERNAL_H_INCLUDED_
 
+// Windows Header Files:
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
-#include "stdafx.h"
+#include "Compressonator.h"
+#include "Common.h"
+#include "TC_PluginAPI.h"
 
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
 
-#define TC_API_VERSION_MAJOR 1
-#define TC_API_VERSION_MINOR 4
+// #define TC_API_VERSION_MAJOR 1
+// #define TC_API_VERSION_MINOR 4
 
 #ifndef assert
 #define assert ASSERT

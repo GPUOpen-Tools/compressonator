@@ -19,12 +19,11 @@
 #ifndef GLTFCOMMOM_H
 #define GLTFCOMMOM_H
 
+#include "Compressonator.h"
+#include "Common.h"
 #include "../json/json.h"
-
 #include "GltfFeatures.h"
-#include "MIPS.h"
 #include "GltfStructures.h"
-
 #include "ModelData.h"
 
 #ifdef USE_TINYGLTF2

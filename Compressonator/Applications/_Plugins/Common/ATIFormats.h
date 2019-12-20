@@ -30,15 +30,32 @@
 #define _AMDFORMATS_H_
 
 #include "Compressonator.h"
+#include "Common.h"
+#include "Texture.h"
+
 
 typedef struct
 {
     CMP_FORMAT nFormat;
-    CMP_CHAR* pszFormatDesc;
+    const CMP_CHAR* pszFormatDesc;
 } CMP_FormatDesc; 
 
+typedef struct
+{
+    CMP_TextureType nTextureType;
+    CMP_CHAR*       pszTextureTypeDesc;
+} CMP_TextureTypeDesc; 
 
-CMP_FORMAT ParseFormat(CMP_CHAR* pszFormat);
-CMP_CHAR*  GetFormatDesc(CMP_FORMAT nFormat);
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+    CMP_FORMAT CMP_API CMP_ParseFormat(char* pFormat);
+    void       CMP_API CMP_Format2FourCC(CMP_FORMAT format, MipSet *pMipSet);
+#ifdef __cplusplus
+};
+#endif
+
+const CMP_CHAR*  GetFormatDesc(CMP_FORMAT nFormat);
+CMP_CHAR*  GetTextureTypeDesc(CMP_TextureType nTextureType);
 #endif

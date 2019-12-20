@@ -22,7 +22,11 @@
 // THE SOFTWARE.
 //
 
-#include "stdafx.h"
+// Windows Header Files:
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 #include <stdarg.h>
 #include <stdio.h>
 #include "ModelData.h"

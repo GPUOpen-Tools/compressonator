@@ -1,16 +1,35 @@
-//=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
-//=====================================================================
+//=============================================================================
+// Copyright 2019 (c), Advanced Micro Devices, Inc. All rights reserved.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files(the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions :
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//================================================================================
 
+#if _MSC_VER > 1000
 #pragma once
-#include "TestReport.h"
+#endif // _MSC_VER > 1000
 
+#include "TestReport.h"
 #include <opencv2/opencv.hpp>
 
+using namespace std;
 using namespace cv;
 
-int GetSSIM(const char* file1, const char *file2, REPORT_DATA *error);
-int GetSSIMBYTES(IplImage* imgsrcfile, IplImage* imgcompfile, REPORT_DATA *error, CMP_Feedback_Proc pFeedbackProc = NULL);
-double ssim(Mat & img_src, Mat & img_compressed, int block_size, CMP_Feedback_Proc pFeedbackProc = NULL);
-Scalar getMatSSIM(const Mat& i1, const Mat& i2, REPORT_DATA *error);
+void getMSE_PSNR( const Mat& I1, const Mat& I2, double  &mse, double &psnr);
+Scalar getSSIM( const Mat& i1, const Mat& i2, CMP_Feedback_Proc pFeedbackProc);
 

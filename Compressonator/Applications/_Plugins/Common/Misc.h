@@ -19,6 +19,9 @@
 
 #pragma once
 
-double MillisecondsNow();
+#ifdef _WIN32
+#include <Windows.h>
+#endif
 
+double MillisecondsNow();
 SIZE_T Align(SIZE_T uOffset, SIZE_T uAlign);

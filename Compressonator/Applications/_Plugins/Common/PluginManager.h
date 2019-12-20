@@ -87,6 +87,8 @@ private:
             pluginName[0] = 0;
             pluginUUID[0] = 0;
             pluginCategory[0] = 0;
+
+            funcHandle = NULL;
         }
 
         char filename   [MAX_PLUGIN_FILENAME_STR];
@@ -106,7 +108,7 @@ class PluginManager
 public:
     PluginManager();
     ~PluginManager();
-    void getPluginList(char * dirPath);
+    void getPluginList(char * dirPath, bool append = false);
     void registerStaticPlugin(char *pluginType, char *pluginName, void *  makePlugin);
     void registerStaticPlugin(char *pluginType, char *pluginName, char *uuid, void *  makePlugin);
     bool PluginSupported(char *type, char *name);
@@ -117,8 +119,9 @@ public:
     char *getPluginUUID(int index);
     char *getPluginCategory(int index);
     char *getPluginType(int index);
-    void *GetPlugin(char *type, char *name);
+    void *GetPlugin(char *type, const char *name);
     void *GetPlugin(char *uuid);
+    bool RemovePlugin(char *type, char *name);
 private:
     bool m_pluginlistset;
     char m_pluginfolder [MAX_PLUGIN_FILENAME_STR];

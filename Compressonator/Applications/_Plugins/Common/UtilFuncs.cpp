@@ -24,13 +24,14 @@
 // UtilFuncs.cpp : Source file for utility functions
 //
 
-#include "stdafx.h"
 #ifndef ASSERT
 #    include <assert.h>
 #    define ASSERT assert
 #endif // !ASSERT
 
 #ifdef _WIN32
+// Windows Header Files:
+#include <windows.h>
 #include <shlwapi.h>
 #include <ShObjIdl.h>
 #include <tchar.h>
@@ -57,6 +58,36 @@ void SwizzleBytes(void* src, unsigned long numBytes)
         pSrc[i] = tmp[i];
 }
 #ifdef _WIN32
+
+static float HalfToFloat(uint16_t h)
+{
+    union FP32
+    {
+        uint32_t    u;
+        float       f;
+        struct
+        {
+            unsigned Mantissa : 23;
+            unsigned Exponent : 8;
+            unsigned Sign : 1;
+        };
+    };
+
+    static const FP32 magic      = { (254 - 15) << 23 };
+    static const FP32 was_infnan = { (127 + 16) << 23 };
+
+    FP32 o;
+    o.u = (h & 0x7fff) << 13;       // exponent/mantissa bits
+    o.f *= magic.f;                 // exponent adjust
+    if (o.f >= was_infnan.f)        // check Inf/NaN
+        o.u |= 255 << 23;
+    o.u |= (h & 0x8000) << 16;      // sign bit
+    return o.f;
+}
+
+
+
+
 typedef struct 
 {
     TCHAR* pszName;

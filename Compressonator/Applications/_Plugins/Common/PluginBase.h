@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016-2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2019 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,9 +29,16 @@
 #ifndef _PLUGINBASE_H
 #define _PLUGINBASE_H
 
-#include "stdafx.h"
 #include "Compressonator.h"
+#include "Common.h"
 #include <memory>
+
+#ifdef _WIN32
+#include <Windows.h>
+#else
+typedef int  HWND;
+typedef int* GUID;
+#endif
 
 //===========================================================================================
 // START OF: BASIC PLUGIN INTERFACE ----- DO NOT CHANGE CODE BELOW FOR BACKWARD SUPPORT------
@@ -39,9 +46,7 @@
 
 typedef struct _TC_PluginVersion
 {
-#ifdef _WIN32
    GUID  guid;
-#endif
    CMP_DWORD dwAPIVersionMajor;         // Do not load plugin with greater API major version than app
    CMP_DWORD dwAPIVersionMinor;
    CMP_DWORD dwPluginVersionMajor;

@@ -26,7 +26,11 @@
 
 #include "namespaceAlias.h"
 
-#include "stdafx.h"
+// Windows Header Files:
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 
 #pragma warning( push )
 #pragma warning(disable:4100)
@@ -42,6 +46,8 @@
 #include <string.h>
 
 #include "Compressonator.h"
+#include "Common.h"
+
 
 #include "CMP_FileIO.h"
 
@@ -63,8 +69,8 @@ public:
 	static void writeRgba(const string outf, const Array2D<Rgba> &pix, int w, int h);
 };
 
-extern void Rgba2Texture(Array2D<Rgba> &pixels, CMP_HALF *data, int w, int h);
-extern void Texture2Rgba(CMP_HALF* data, Array2D<Rgba> &pixels, int w, int h, CMP_FORMAT isDeCompressed);
+extern void Rgba2Texture(Array2D<Rgba> &pixels, CMP_HALFSHORT *data, int w, int h);
+extern void Texture2Rgba(CMP_HALFSHORT* data, Array2D<Rgba> &pixels, int w, int h, CMP_FORMAT isDeCompressed);
 extern float half_conv_float(unsigned short in);
 
 #endif

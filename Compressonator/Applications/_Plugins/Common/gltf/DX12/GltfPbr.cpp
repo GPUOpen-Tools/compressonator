@@ -111,6 +111,7 @@ bool GltfPbr::OnCreate(
         }
         catch (json::exception& e)
         {
+            UNREFERENCED_PARAMETER(e);
             tfmat->metallicFactor = (GetElementJsonArray(material, "pbrMetallicRoughness/metallicFactor", ones))[0];
         }
         try {
@@ -118,6 +119,7 @@ bool GltfPbr::OnCreate(
         }
         catch (json::exception& e)
         {
+            UNREFERENCED_PARAMETER(e);
             tfmat->roughnessFactor = (GetElementJsonArray(material, "pbrMetallicRoughness/roughnessFactor", ones))[0];
         }
 
@@ -129,6 +131,7 @@ bool GltfPbr::OnCreate(
         }
         catch (json::exception& e)
         {
+            UNREFERENCED_PARAMETER(e);
             alphaCutOff = (GetElementJsonArray(material, "alphaCutoff", ones))[0];
         }
         tfmat->m_defines["DEF_alphaCutoff"] = std::to_string(alphaCutOff);

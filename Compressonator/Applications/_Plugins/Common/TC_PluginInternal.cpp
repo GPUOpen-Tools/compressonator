@@ -26,7 +26,6 @@
 //
 
 
-#include "stdafx.h"
 #include "TC_PluginAPI.h"
 #include "Version.h"
 #include <stdio.h>
@@ -93,7 +92,7 @@ int FaceIndex(const MipSet* pMipSet, MS_CubeFace face)
 
 CMP_DWORD MakeFourCC(const TCHAR* pszFourCC)
 {
-    CMP_DWORD dwFourCC = MAKEFOURCC(' ', ' ', ' ', ' ');
+    CMP_DWORD dwFourCC = CMP_MAKEFOURCC(' ', ' ', ' ', ' ');
     if(pszFourCC)
     {
         char* pFourCC = (char*) &dwFourCC;

@@ -17,7 +17,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
+// Windows Header Files:
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 #include "GltfCommon.h"
 #include "glTFHelpers.h"
 

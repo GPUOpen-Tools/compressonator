@@ -24,7 +24,11 @@
 /// \brief Declares the interface to the Compressonator & ArchitectMF SDK
 //=====================================================================
 
-#include "stdafx.h"
+// Windows Header Files:
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 #include "string.h"
 #include "PluginInterface.h"
 #include "PluginManager.h"
@@ -216,12 +220,15 @@ void PluginManager::clearPluginList()
     pluginRegister.clear();
 }
 
-void PluginManager::getPluginList(char * SubFolderName)
+void PluginManager::getPluginList(char * SubFolderName, bool append)
 {
     // Check for prior setting, if set clear for new one
     if (m_pluginlistset)
     {
-        clearPluginList();
+        if (!append)
+            clearPluginList();
+        else
+            return;
     }
     else
         m_pluginlistset = true;
@@ -469,7 +476,7 @@ char * PluginManager::getPluginType(int index)
     return pluginRegister.at(index)->getType();
 }
 
-void *PluginManager::GetPlugin(char *type, char *name)
+void *PluginManager::GetPlugin(char *type, const char *name)
 {
     if (!m_pluginlistset)
     {
@@ -489,6 +496,29 @@ void *PluginManager::GetPlugin(char *type, char *name)
         }
     }
     return (NULL);
+}
+
+bool PluginManager::RemovePlugin(char *type, char *name)
+{
+    if (!m_pluginlistset)
+    {
+        getPluginList(DEFAULT_PLUGINLIST_DIR);
+    }
+
+    int numPlugins = getNumPlugins();
+    for (int i=0; i< numPlugins; i++)
+    {
+        if (!pluginRegister.at(i)->isRegistered)
+            getPluginDetails(pluginRegister.at(i));
+
+        if ( (strcmp(getPluginType(i),type) == 0) && 
+             (strcmp(getPluginName(i),name)   == 0))
+        {
+            delete pluginRegister.at(i);
+            return true;
+        }
+    }
+    return (false);
 }
 
 void *PluginManager::GetPlugin(char *uuid)

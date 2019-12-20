@@ -29,10 +29,15 @@
 #ifndef _PLUGININTERFACE_H
 #define _PLUGININTERFACE_H
 
+#include "Compressonator.h"
+#include "Common.h"
+
 #include "PluginBase.h"
 #include "Texture.h"
 #include "PluginManager.h"
-#include "MIPS.h"
+
+#define TC_API_VERSION_MAJOR 1
+#define TC_API_VERSION_MINOR 4
 
 typedef CMP_DWORD_PTR TC_HANDLE;  ///< Generic Texture API handle
 typedef TC_HANDLE HFILETYPE;  ///< Handle to a FileType.
@@ -103,24 +108,26 @@ public:
 
 
 // These type of plugins are used for Compute
-class PluginInterface_Compute : PluginBase
+class PluginInterface_Encoder : PluginBase
 {
 public:
-    PluginInterface_Compute() {}
-    virtual ~PluginInterface_Compute() {}
+    PluginInterface_Encoder() {}
+    virtual ~PluginInterface_Encoder() {}
     virtual int     TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
     virtual int     TC_PluginSetSharedIO(void* Shared) = 0;
     virtual void*   TC_Create() = 0;
     virtual void    TC_Destroy(void* codec) = 0;
-    virtual int     TC_Init(MipSet *srcTexture, void  *kernel_options) = 0;
+    virtual int     TC_Init(void* kernel_options) = 0;
     virtual char *  TC_ComputeSourceFile(unsigned int     Compute_type) = 0;
+    virtual void    TC_Start() = 0;
+    virtual void    TC_End() =0;
 };
 
-class PluginInterface_Compute2 : PluginBase
+class PluginInterface_Pipeline : PluginBase
 {
 public:
-    PluginInterface_Compute2() {}
-    virtual ~PluginInterface_Compute2() {}
+    PluginInterface_Pipeline() {}
+    virtual ~PluginInterface_Pipeline() {}
     virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
     virtual int  TC_PluginSetSharedIO(void* Shared) = 0;
     virtual int TC_Init(void  *kernel_options) = 0;
@@ -198,33 +205,46 @@ public:
 
 
 //High Performance Compute codec interface
-class HPC_Compress
+class CMP_Encoder
 {
 public:
-    HPC_Compress() 
+    CMP_Encoder() 
     {
         m_srcWidth  = 0; 
-        m_srcHeight = 0; 
+        m_srcHeight = 0;
+        m_srcStride = 0;
+        m_dstStride = 0;
         m_xdim      = 4;
         m_ydim      = 4;
         m_zdim      = 1;
         m_quality   = 0.05f;
     };
-    ~HPC_Compress() {};
-    virtual int Compress(int xBlock, int yBlock, void *in, void *out) = 0;
-    virtual int Compress(void *in, void *out, void *blockoptions) = 0;
-    virtual int Decompress(int xBlock, int yBlock, void *in, void *out) = 0;
-    virtual int Decompress(void *in, void *out) = 0;
+    ~CMP_Encoder() {};
+
+    // Block Level Processing
+    virtual int CompressBlock(unsigned int xBlock, unsigned int yBlock, void *in, void *out) = 0;
+    virtual int CompressBlock(void *in, void *out, void *blockoptions) = 0;
+    virtual int DecompressBlock(unsigned int xBlock, unsigned int yBlock, void *in, void *out) = 0;
+    virtual int DecompressBlock(void *in, void *out) = 0;
+
+    // Full Texture Processing
+    virtual int CompressTexture(void *in, void *out,void *processOptions) = 0;
+    virtual int DecompressTexture(void *in, void *out,void *processOptions) = 0;
 
     // Original image size
-    int     m_srcWidth;
-    int     m_srcHeight;
+    unsigned int     m_srcWidth;
+    unsigned int     m_srcHeight;
+
+    // image strides
+    unsigned int     m_srcStride;
+    unsigned int     m_dstStride;
+
     // Source block dimensions to compress
-    int     m_xdim;
-    int     m_ydim;
-    int     m_zdim;
+    unsigned int     m_xdim;
+    unsigned int     m_ydim;
+    unsigned int     m_zdim;
     // Compression quality to apply during compression
-    float   m_quality;
+    float            m_quality;
 };
 
 #endif

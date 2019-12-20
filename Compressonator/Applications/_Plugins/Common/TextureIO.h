@@ -1,6 +1,6 @@
 //=====================================================================
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2019 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -30,20 +30,16 @@
 
 #define USE_QT_IMAGELOAD
 
+#include <cmath>
+
 #include "Compressonator.h"
-#include "stdafx.h"
+#include "Common.h"
 #include "Texture.h"
 #include "cmdline.h"
-#include "MIPS.h"
 
 #pragma warning( push )
 #pragma warning(disable:4100)
 #pragma warning(disable:4800)
-
-#include "ImfStandardAttributes.h"
-#include "ImathBox.h"
-#include "ImfArray.h"
-#include "ImfRgba.h"
 #pragma warning( pop )
 
 #ifdef USE_QT_IMAGELOAD
@@ -89,7 +85,7 @@ typedef struct _R9G9B9E5
 {
     union
     {
-        struct
+        struct 
         {
             uint32_t rm : 9; // r-mantissa
             uint32_t gm : 9; // g-mantissa
@@ -106,7 +102,7 @@ typedef struct _R9G9B9E5
 }R9G9B9E5;
 
 CMP_FORMAT      GetFormat(MipSet* pMipSet);
-void            Format2FourCC(CMP_FORMAT format, MipSet *pMipSet);
+
 
 extern  CMIPS *g_CMIPS;
 
@@ -136,7 +132,9 @@ bool            FormatSupportsDXTCBase(CMP_FORMAT format);
 extern void     SwizzleMipMap(MipSet *pMipSet);
 extern bool     KeepSwizzle(CMP_FORMAT destformat);
 
-CMP_FLOAT   F16toF32(CMP_HALF f);
-CMP_HALF    F32toF16(CMP_FLOAT   f);
+CMP_FLOAT       F16toF32(CMP_HALFSHORT f);
+CMP_HALFSHORT   F32toF16(CMP_FLOAT   f);
 
+
+extern std::string GetFileExtension(std::string file, CMP_BOOL incDot, CMP_BOOL upperCase);
 #endif

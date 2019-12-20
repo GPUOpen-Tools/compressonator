@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2019 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -31,13 +31,13 @@
 
 #include <string>
 
+//#ifdef USE_BOOST
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
+//#endif
 #include "Compressonator.h"
-#include "GPU_Decode/GPU_Decode.h"
-
-#include "MIPS.h"
-
+#include "Common.h"
+#include "GPU_Decode.h"
 #include "CMP_FileIO.h"
 
 
@@ -83,11 +83,12 @@ class CCmdLineParamaters
         decompress_fDuration = 0;
         compute_setup_fDuration = 0;
         logresults           = false;
-        format_support_gpu   = false;
+        logresultsToFile     = true;
+        CompressOptions.format_support_gpu   = false;
         memset(&CompressOptions, 0, sizeof(CompressOptions));
         CompressOptions.dwSize            = sizeof(CompressOptions);
         CompressOptions.nCompressionSpeed = (CMP_Speed)CMP_Speed_Normal;
-        CompressOptions.dwnumThreads      = 8;
+        CompressOptions.dwnumThreads      = 0;
 
         CompressOptions.iCmpLevel    = CMP_MESH_COMP_LEVEL;
         CompressOptions.iPosBits     = CMP_MESH_POS_BITS;
@@ -110,8 +111,8 @@ class CCmdLineParamaters
         CompressOptions.fInputKneeHigh = AMD_CODEC_KNEEHIGH_DEFAULT;
         CompressOptions.fInputGamma    = AMD_CODEC_GAMMA_DEFAULT;
         CompressOptions.dwmodeMask     = 0xCF;  // If you reset this default: seach for comments with dwmodeMask and change the values also
-        DestFormat                     = CMP_FORMAT_Unknown;
-        SourceFormat                   = CMP_FORMAT_Unknown;
+        CompressOptions.DestFormat     = CMP_FORMAT_Unknown;
+        CompressOptions.SourceFormat   = CMP_FORMAT_Unknown;
 
         LogProcessResultsFile.assign(LOG_PROCESS_RESULTS_FILE);
     }
@@ -126,8 +127,6 @@ class CCmdLineParamaters
     std::string         FileFilter;            //
     std::string         FileOutExt;            // Usage with dest dir or unsupported file
     std::string         LogProcessResultsFile; //
-    CMP_FORMAT          SourceFormat;          //
-    CMP_FORMAT          DestFormat;            //
     CMP_CompressOptions CompressOptions;       //
     CMP_DWORD           dwWidth;               // Source Width
     CMP_DWORD           dwHeight;              // Source Height
@@ -142,6 +141,7 @@ class CCmdLineParamaters
     bool                analysis;              //  run analysis
     bool                diffImage;             //  generate diff image
     bool                logresults;            //  appended performance and analysis data to a processed file on each run
+    bool                logresultsToFile;      //  write perfromance data to file if logresults is set, default is true 
     bool imageprops;        //  print image properties (i.e. image name, path, file size, image size, image width, height, miplevel and format)
     bool showperformance;   //
     bool noprogressinfo;    //
@@ -160,7 +160,11 @@ class CCmdLineParamaters
     int compress_nIterations;
     int decompress_nIterations;
     double compute_setup_fDuration;
-    bool format_support_gpu;
+
+    // Analysis data
+    double    SSIM;            // Structural Similarity Index: Average of RGB Channels
+    double    PSNR;            // Peak Signal to Noise Ratio: Average of RGB Channels
+    double    MSE;             // Mean Square Error
 };
 
 extern void               PrintInfo(const char* Format, ...);

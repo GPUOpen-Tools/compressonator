@@ -94,8 +94,8 @@ typedef CMP_DWORD WNDPROC;
 #endif
 ///\def MAKEFOURCC(ch0, ch1, ch2, ch3)
 /// Utility macro for defining a FourCC code.
-#ifndef MAKEFOURCC
-#define MAKEFOURCC(ch0, ch1, ch2, ch3)                              \
+#ifndef C_MAKEFOURCC
+#define C_MAKEFOURCC(ch0, ch1, ch2, ch3)                              \
    ((CMP_DWORD)(CMP_BYTE)(ch0) | ((CMP_DWORD)(CMP_BYTE)(ch1) << 8) |   \
    ((CMP_DWORD)(CMP_BYTE)(ch2) << 16) | ((CMP_DWORD)(CMP_BYTE)(ch3) << 24 ))
 #endif
@@ -303,7 +303,7 @@ TC_PluginError TC_PluginFileSaveTexture(const HFILETYPE hFileType, const TCHAR* 
 /// 
 ///    switch(pMipSet->m_dwFourCC)
 ///    {
-///    case MAKEFOURCC('P', '8', ' ', ' '):
+///    case CMP_MAKEFOURCC('P', '8', ' ', ' '):
 ///       return TRUE;
 ///    }
 /// 
@@ -361,7 +361,7 @@ bool TC_PluginFileSupportsMipLevels(const HFILETYPE hFileType, const int nMipLev
 /// }
 /// \endcode
 /// \sa \link FilePlugins \endlink, \link FileSaveDialogProc \endlink, FileSaveParams
-bool TC_PluginFileGetFileSaveParametersDialog(const HFILETYPE hFileType, LPTSTR* ppTemplate, FileSaveDialogProc* ppfnDialogProc, TC_FileSaveParams* pFileSaveParams);
+//bool TC_PluginFileGetFileSaveParametersDialog(const HFILETYPE hFileType, LPTSTR* ppTemplate, FileSaveDialogProc* ppfnDialogProc, TC_FileSaveParams* pFileSaveParams);
 
 //Codec plugin functions
 /// This function is called by The Compressonator after a compressed texture is loaded and after compression (for the purpose of comparing the original and compressed versions).
@@ -383,19 +383,19 @@ bool TC_PluginFileGetFileSaveParametersDialog(const HFILETYPE hFileType, LPTSTR*
 /// 
 ///     switch(pMipSetIn->m_dwFourCC)
 ///     {
-///         case FOURCC_P1:
+///         case CMP_FOURCC_P1:
 ///             return Decompress_P1(pMipSetIn, pMipSetOut);
 ///             break;
 /// 
-///         case FOURCC_P2:
+///         case CMP_FOURCC_P2:
 ///             return Decompress_P2(pMipSetIn, pMipSetOut);
 ///             break;
 /// 
-///         case FOURCC_P4:
+///         case CMP_FOURCC_P4:
 ///             return Decompress_P4(pMipSetIn, pMipSetOut);
 ///             break;
 /// 
-///         case FOURCC_P8:
+///         case CMP_FOURCC_P8:
 ///             return Decompress_P8(pMipSetIn, pMipSetOut);
 ///             break;
 /// 
@@ -479,7 +479,7 @@ bool TC_PluginCodecSupportsFormat(const HCODEC hCodec, const MipSet* pMipSet);
 /// }
 /// \endcode
 /// \sa \link CodecPlugins \endlink, CompressDialogProc, TC_CompressParams
-bool TC_PluginCodecGetCompressParametersDialog(const HCODEC hCodec, LPTSTR* ppTemplate, CompressDialogProc* ppfnDialogProc, TC_CompressParams* pCompressParams);
+//bool TC_PluginCodecGetCompressParametersDialog(const HCODEC hCodec, LPTSTR* ppTemplate, CompressDialogProc* ppfnDialogProc, TC_CompressParams* pCompressParams);
 
 //Mip plugin functions
 
@@ -522,7 +522,7 @@ TC_PluginError TC_PluginMipGenerateMipLevels(const HMIPPER hMipper, MipSet* pMip
 /// }
 /// \endcode
 /// \sa \link MipperPlugins \endlink, GenerateMipsDialogProc, TC_GenerateMipsParams
-bool TC_PluginMipGetGenerateMipLevelsParametersDialog(const HMIPPER hMipper, LPTSTR* ppTemplate, GenerateMipsDialogProc* ppfnDialogProc, TC_GenerateMipsParams* pGenerateMipsParams);
+//bool TC_PluginMipGetGenerateMipLevelsParametersDialog(const HMIPPER hMipper, LPTSTR* ppTemplate, GenerateMipsDialogProc* ppfnDialogProc, TC_GenerateMipsParams* pGenerateMipsParams);
 
 /// Called by The Compressonator to determine if this plugin can generate mipmaps based on the format of pMipSet.
 /// \param[in] hMipper A HMIPPER as returned to this plugin when by TC_AppRegisterMipGenerator. Can be used to determine between multiple mippers registered by the same plugin.
@@ -717,7 +717,7 @@ void TC_AppUnregisterFileType(HFILETYPE hFileType);
 /// \par Example:
 /// The following example is from a Codec Plugin's TC_PluginLoad function. It registers the P8 FourCC such that textures going to or from P8 can go through this plugin (through a call to the plugin's TC_PluginCodecCompressTexture and TC_PluginCodecDecompressTexture, respectively). If the returned HCODEC is NULL then the plugin returns PE_Unknown (indicating failure).
 /// \code
-/// DWORD dwFourCCs[] = {MAKEFOURCC('P', '8', ' ', ' '), 0};
+/// DWORD dwFourCCs[] = {CMP_MAKEFOURCC('P', '8', ' ', ' '), 0};
 /// ASSERT(g_Codec==NULL);
 /// g_Codec = TC_AppRegisterCodec("Palettised Texture Compression", &dwFourCCs[0], false);
 /// if(g_Codec == NULL)

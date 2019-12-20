@@ -2728,10 +2728,10 @@ namespace tinygltf2
                             {
                                 draco_id = (int)dracodata.buffer_id;
                                 int                  id = 0;  //id
-                                json::const_iterator rootIt = v.find("buffers");
-                                if ((rootIt != v.end()) && rootIt.value().is_array())
+                                json::const_iterator rootIt2 = v.find("buffers");
+                                if ((rootIt2 != v.end()) && rootIt2.value().is_array())
                                 {
-                                    const json& root = rootIt.value();
+                                    const json& root = rootIt2.value();
 
                                     json::const_iterator it(root.begin());
                                     json::const_iterator itEnd(root.end());
@@ -3363,7 +3363,7 @@ namespace tinygltf2
                             return false;
                         }
 
-                        draco::DataType data_type;
+                        draco::DataType data_type = draco::DataType::DT_INT8;
                         switch (attr_comp_type)
                         {
                         case TINYGLTF_COMPONENT_TYPE_BYTE:
@@ -4606,7 +4606,7 @@ namespace tinygltf2
                             return false;
                         }
                         offset = size;
-                        size += dracoBuffer.size();
+                        size += (int)dracoBuffer.size();
                         model->buffers[i].data.insert(model->buffers[i].data.end(), dracoBuffer.data(), dracoBuffer.data() + dracoBuffer.size());
                         bufferView["byteOffset"] = offset;
                         bufferView["buffer"] = 0;

@@ -1,4 +1,6 @@
 /*
+
+------------------------- SSIM --------------------------------------
  * The equivalent of Zhou Wang's SSIM matlab code using OpenCV.
  * from http://www.cns.nyu.edu/~zwang/files/research/ssim/index.html
  * The measure is described in :
@@ -7,558 +9,152 @@
  *
  * This implementation is under the public domain.
  * @see http://creativecommons.org/licenses/publicdomain/
- * The original work may be under copyrights. 
- */
-#ifdef _WIN32
-#include <Windows.h>
-#endif
-#include <iostream>
-#include <stdio.h>
-#include "TestReport.h"
 
+--------------------------- OPENCV -----------------------------------
+                          License Agreement
+               For Open Source Computer Vision Library
+                       (3-clause BSD License)
+
+Copyright (C) 2000-2019, Intel Corporation, all rights reserved.
+Copyright (C) 2009-2011, Willow Garage Inc., all rights reserved.
+Copyright (C) 2009-2016, NVIDIA Corporation, all rights reserved.
+Copyright (C) 2010-2013, Advanced Micro Devices, Inc., all rights reserved.
+Copyright (C) 2015-2016, OpenCV Foundation, all rights reserved.
+Copyright (C) 2015-2016, Itseez Inc., all rights reserved.
+Third party copyrights are property of their respective owners.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+  * Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+
+  * Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+
+  * Neither the names of the copyright holders nor the names of the contributors
+    may be used to endorse or promote products derived from this software
+    without specific prior written permission.
+
+This software is provided by the copyright holders and contributors "as is" and
+any express or implied warranties, including, but not limited to, the implied
+warranties of merchantability and fitness for a particular purpose are disclaimed.
+In no event shall copyright holders or contributors be liable for any direct,
+indirect, incidental, special, exemplary, or consequential damages
+(including, but not limited to, procurement of substitute goods or services;
+loss of use, data, or profits; or business interruption) however caused
+and on any theory of liability, whether in contract, strict liability,
+or tort (including negligence or otherwise) arising in any way out of
+the use of this software, even if advised of the possibility of such damage.
+
+=============================================================================
+ Copyright 2019 (c), Advanced Micro Devices, Inc. All rights reserved.
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files(the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions :
+ 
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+========================================================================================
+*/
+
+#include "TestReport.h"
 #include "SSIM.h"
 
-
-void CMP_cvSmooth(
-    IplImage *src,
-    IplImage *dst,
-    int param1,
-    int param2,
-    double param3
-)
+void getMSE_PSNR( const Mat& I1, const Mat& I2, double  &mse, double &psnr)
 {
-    //GaussianBlur((InputArray)src, (OutputArray)dst, Size(param1, param2), param3);
-    cvSmooth(src, dst, CV_GAUSSIAN, param1, param2, param3);
-}
+    Mat s1;
+    absdiff(I1, I2, s1);       // |I1 - I2|
+    s1.convertTo(s1, CV_32F);  // cannot make a square on 8 bits
+    s1 = s1.mul(s1);           // |I1 - I2|^2
 
+    Scalar s = sum(s1);         // sum elements per channel
 
-using namespace std;
-using namespace cv;
+    double sse = s.val[0] + s.val[1] + s.val[2]; // sum channels
 
-/*
- * Parameters : complete path to the two image to be compared
- * The file format must be supported by your OpenCV build
- */
-int GetSSIM(const char* file1, const char *file2, REPORT_DATA *error)
-{
-
-    // default settings
-    double C1 = 6.5025, C2 = 58.5225;
-
-    IplImage
-        *img1=NULL, *img2=NULL, *img1_img2=NULL,
-        *img1_temp=NULL, *img2_temp=NULL,
-        *img1_sq=NULL, *img2_sq=NULL,
-        *mu1=NULL, *mu2=NULL,
-        *mu1_sq=NULL, *mu2_sq=NULL, *mu1_mu2=NULL,
-        *sigma1_sq=NULL, *sigma2_sq=NULL, *sigma12=NULL,
-        *ssim_map=NULL, *temp1=NULL, *temp2=NULL, *temp3=NULL;
-
-    /***************************** INITS **********************************/
-    img1_temp = cvLoadImage(file1);
-    img2_temp = cvLoadImage(file2);
-
-    if(img1_temp==NULL || img2_temp==NULL)
-        return -1;
-
-    int x=img1_temp->width, y=img1_temp->height;
-    int nChan=img1_temp->nChannels, d=IPL_DEPTH_32F;
-    CvSize size = cvSize(x, y);
-
-    img1 = cvCreateImage( size, d, nChan);
-    img2 = cvCreateImage( size, d, nChan);
-
-    cvConvert(img1_temp, img1);
-    cvConvert(img2_temp, img2);
-    cvReleaseImage(&img1_temp);
-    cvReleaseImage(&img2_temp);
-
-    
-    img1_sq = cvCreateImage( size, d, nChan);
-    img2_sq = cvCreateImage( size, d, nChan);
-    img1_img2 = cvCreateImage( size, d, nChan);
-    
-    cvPow( img1, img1_sq, 2 );
-    cvPow( img2, img2_sq, 2 );
-    cvMul( img1, img2, img1_img2, 1 );
-
-    mu1 = cvCreateImage( size, d, nChan);
-    mu2 = cvCreateImage( size, d, nChan);
-
-    mu1_sq = cvCreateImage( size, d, nChan);
-    mu2_sq = cvCreateImage( size, d, nChan);
-    mu1_mu2 = cvCreateImage( size, d, nChan);
-    
-
-    sigma1_sq = cvCreateImage( size, d, nChan);
-    sigma2_sq = cvCreateImage( size, d, nChan);
-    sigma12 = cvCreateImage( size, d, nChan);
-
-    temp1 = cvCreateImage( size, d, nChan);
-    temp2 = cvCreateImage( size, d, nChan);
-    temp3 = cvCreateImage( size, d, nChan);
-
-    ssim_map = cvCreateImage( size, d, nChan);
-    /*************************** END INITS **********************************/
-
-
-    //////////////////////////////////////////////////////////////////////////
-    // PRELIMINARY COMPUTING
-    CMP_cvSmooth( img1, mu1, 11, 11, 1.5 );
-    CMP_cvSmooth( img2, mu2, 11, 11, 1.5 );
-
-    cvPow( mu1, mu1_sq, 2 );
-    cvPow( mu2, mu2_sq, 2 );
-    cvMul( mu1, mu2, mu1_mu2, 1 );
-
-
-    CMP_cvSmooth( img1_sq, sigma1_sq, 11, 11, 1.5 );
-    cvAddWeighted( sigma1_sq, 1, mu1_sq, -1, 0, sigma1_sq );
-    
-    CMP_cvSmooth( img2_sq, sigma2_sq, 11, 11, 1.5 );
-    cvAddWeighted( sigma2_sq, 1, mu2_sq, -1, 0, sigma2_sq );
-
-    CMP_cvSmooth( img1_img2, sigma12, 11, 11, 1.5 );
-    cvAddWeighted( sigma12, 1, mu1_mu2, -1, 0, sigma12 );
-    
-
-    //////////////////////////////////////////////////////////////////////////
-    // FORMULA
-
-    // (2*mu1_mu2 + C1)
-    cvScale( mu1_mu2, temp1, 2 );
-    cvAddS( temp1, cvScalarAll(C1), temp1 );
-
-    // (2*sigma12 + C2)
-    cvScale( sigma12, temp2, 2 );
-    cvAddS( temp2, cvScalarAll(C2), temp2 );
-
-    // ((2*mu1_mu2 + C1).*(2*sigma12 + C2))
-    cvMul( temp1, temp2, temp3, 1 );
-
-    // (mu1_sq + mu2_sq + C1)
-    cvAdd( mu1_sq, mu2_sq, temp1 );
-    cvAddS( temp1, cvScalarAll(C1), temp1 );
-
-    // (sigma1_sq + sigma2_sq + C2)
-    cvAdd( sigma1_sq, sigma2_sq, temp2 );
-    cvAddS( temp2, cvScalarAll(C2), temp2 );
-
-    // ((mu1_sq + mu2_sq + C1).*(sigma1_sq + sigma2_sq + C2))
-    cvMul( temp1, temp2, temp1, 1 );
-
-    // ((2*mu1_mu2 + C1).*(2*sigma12 + C2))./((mu1_sq + mu2_sq + C1).*(sigma1_sq + sigma2_sq + C2))
-    cvDiv( temp3, temp1, ssim_map, 1 );
-
-
-    CvScalar index_scalar = cvAvg( ssim_map );
-    
-    // through observation, there is approximately 
-    // 1% error max with the original matlab program
-
-    error->SSIM_Red        = index_scalar.val[0];
-    error->SSIM_Green    = index_scalar.val[1];
-    error->SSIM_Blue    = index_scalar.val[2];
-    error->SSIM            = (index_scalar.val[2] + index_scalar.val[1] + index_scalar.val[0]) / 3;
-
-    cvReleaseImage(&img1);
-    cvReleaseImage(&img2);
-    cvReleaseImage(&img1_sq);
-    cvReleaseImage(&img2_sq);
-    cvReleaseImage(&img1_img2);
-    cvReleaseImage(&mu1);
-    cvReleaseImage(&mu2);
-    cvReleaseImage(&mu1_sq);
-    cvReleaseImage(&mu2_sq);
-    cvReleaseImage(&mu1_mu2);
-    cvReleaseImage(&sigma1_sq);
-    cvReleaseImage(&sigma2_sq);
-    cvReleaseImage(&sigma12);
-    cvReleaseImage(&temp1);
-    cvReleaseImage(&temp2);
-    cvReleaseImage(&temp3);
-    cvReleaseImage(&ssim_map);
-
-
-
-    return 0;
-}
-
-/*
-* Parameters : two IplImage image to be compared
-* this function added based on function above 
-*/
-int GetSSIMBYTES(IplImage* imgsrcfile, IplImage* imgcompfile, REPORT_DATA *error, CMP_Feedback_Proc pFeedbackProc)
-{
-
-    // default settings
-    double C1 = 6.5025, C2 = 58.5225;
-
-    IplImage
-        *img1 = NULL, *img2 = NULL, *img1_img2 = NULL,
-        *img1_temp = NULL, *img2_temp = NULL,
-        *img1_sq = NULL, *img2_sq = NULL,
-        *mu1 = NULL, *mu2 = NULL,
-        *mu1_sq = NULL, *mu2_sq = NULL, *mu1_mu2 = NULL,
-        *sigma1_sq = NULL, *sigma2_sq = NULL, *sigma12 = NULL,
-        *ssim_map = NULL, *temp1 = NULL, *temp2 = NULL, *temp3 = NULL;
-
-
-    /***************************** INITS **********************************/
-    img1_temp = imgsrcfile;
-    img2_temp = imgcompfile;
-    float fProgress = 0.0;
-
-    if (img1_temp == NULL || img2_temp == NULL)
-        return -1;
-
-    int x = img1_temp->width, y = img1_temp->height;
-    int nChan = img1_temp->nChannels, d = IPL_DEPTH_32F;
-    CvSize size = cvSize(x, y);
-
-    try {
-        img1 = cvCreateImage(size, d, nChan);
-        img2 = cvCreateImage(size, d, nChan);
-
-        cvConvert(img1_temp, img1);
-        cvConvert(img2_temp, img2);
-        //cvReleaseImage(&img1_temp);
-        //cvReleaseImage(&img2_temp);
-
-
-        img1_sq = cvCreateImage(size, d, nChan);
-        img2_sq = cvCreateImage(size, d, nChan);
-        img1_img2 = cvCreateImage(size, d, nChan);
-
-        cvPow(img1, img1_sq, 2);
-        cvPow(img2, img2_sq, 2);
-        cvMul(img1, img2, img1_img2, 1);
-
-        mu1 = cvCreateImage(size, d, nChan);
-        mu2 = cvCreateImage(size, d, nChan);
-
-        mu1_sq = cvCreateImage(size, d, nChan);
-        mu2_sq = cvCreateImage(size, d, nChan);
-        mu1_mu2 = cvCreateImage(size, d, nChan);
-
-
-        sigma1_sq = cvCreateImage(size, d, nChan);
-        sigma2_sq = cvCreateImage(size, d, nChan);
-        sigma12 = cvCreateImage(size, d, nChan);
-
-        temp1 = cvCreateImage(size, d, nChan);
-        temp2 = cvCreateImage(size, d, nChan);
-        temp3 = cvCreateImage(size, d, nChan);
-
-        ssim_map = cvCreateImage(size, d, nChan);
-
-        // Progress
-        if (pFeedbackProc)
-        {
-            fProgress = 30.0;
-            if (pFeedbackProc(fProgress, NULL, NULL))
-            {
-                return -1; //abort
-            }
-        }
-        /*************************** END INITS **********************************/
-
-
-        //////////////////////////////////////////////////////////////////////////
-        // PRELIMINARY COMPUTING
-        CMP_cvSmooth(img1, mu1, 11, 11, 1.5);
-        CMP_cvSmooth(img2, mu2, 11, 11, 1.5);
-
-        cvPow(mu1, mu1_sq, 2);
-        cvPow(mu2, mu2_sq, 2);
-        cvMul(mu1, mu2, mu1_mu2, 1);
-
-        // Progress
-        if (pFeedbackProc)
-        {
-            fProgress = 60.0;
-            if (pFeedbackProc(fProgress, NULL, NULL))
-            {
-                return -1; //abort
-            }
-        }
-
-        CMP_cvSmooth(img1_sq, sigma1_sq, 11, 11, 1.5);
-        cvAddWeighted(sigma1_sq, 1, mu1_sq, -1, 0, sigma1_sq);
-
-        CMP_cvSmooth(img2_sq, sigma2_sq, 11, 11, 1.5);
-        cvAddWeighted(sigma2_sq, 1, mu2_sq, -1, 0, sigma2_sq);
-
-        CMP_cvSmooth(img1_img2, sigma12, 11, 11, 1.5);
-        cvAddWeighted(sigma12, 1, mu1_mu2, -1, 0, sigma12);
-
-        // Progress
-        if (pFeedbackProc)
-        {
-            fProgress = 90.0;
-            if (pFeedbackProc(fProgress, NULL, NULL))
-            {
-                return -1; //abort
-            }
-        }
-
-    }
-    catch (exception e)
+    if( sse <= 1e-10) // for small values return zero
     {
-        if(&img1)
-            cvReleaseImage(&img1);
-        if(&img2)
-            cvReleaseImage(&img2);
-        if(&img1_sq)
-            cvReleaseImage(&img1_sq);
-        if(&img2_sq)
-            cvReleaseImage(&img2_sq);
-        if (&img1_img2)
-            cvReleaseImage(&img1_img2);
-        if (&mu1)
-            cvReleaseImage(&mu1);
-        if (&mu2)
-            cvReleaseImage(&mu2);
-        if (&mu1_sq)
-            cvReleaseImage(&mu1_sq);
-        if (&mu2_sq)
-            cvReleaseImage(&mu2_sq);
-        if (&mu1_mu2)
-            cvReleaseImage(&mu1_mu2);
-        if (&sigma1_sq)
-            cvReleaseImage(&sigma1_sq);
-        if (&sigma2_sq)
-            cvReleaseImage(&sigma2_sq);
-        if (&sigma12)
-            cvReleaseImage(&sigma12);
-        if (&temp1)
-            cvReleaseImage(&temp1);
-        if (&temp2)
-            cvReleaseImage(&temp2);
-        if (&temp3)
-            cvReleaseImage(&temp3);
-        if (&ssim_map)
-            cvReleaseImage(&ssim_map);
-
-        return -1;
+        mse     = 0;
+        psnr    = 0;
     }
-    //////////////////////////////////////////////////////////////////////////
-    // FORMULA
+    else
+    {
+        mse     = sse /(double)(I1.channels() * I1.total());
+        psnr    = 10.0*log10((255*255)/mse);
+    }
+}
 
-    // (2*mu1_mu2 + C1)
-    cvScale(mu1_mu2, temp1, 2);
-    cvAddS(temp1, cvScalarAll(C1), temp1);
+Scalar getSSIM( const Mat& i1, const Mat& i2, CMP_Feedback_Proc pFeedbackProc)
+{
+    const double C1 = 6.5025, C2 = 58.5225;
+    /***************************** INITS **********************************/
+    int d     = CV_32F;
 
-    // (2*sigma12 + C2)
-    cvScale(sigma12, temp2, 2);
-    cvAddS(temp2, cvScalarAll(C2), temp2);
+    Mat I1, I2;
+    i1.convertTo(I1, d);           // cannot calculate on one byte large values
+    i2.convertTo(I2, d);
 
-    // ((2*mu1_mu2 + C1).*(2*sigma12 + C2))
-    cvMul(temp1, temp2, temp3, 1);
+    Mat I2_2   = I2.mul(I2);        // I2^2
+    Mat I1_2   = I1.mul(I1);        // I1^2
+    Mat I1_I2  = I1.mul(I2);        // I1 * I2
 
-    // (mu1_sq + mu2_sq + C1)
-    cvAdd(mu1_sq, mu2_sq, temp1);
-    cvAddS(temp1, cvScalarAll(C1), temp1);
-
-    // (sigma1_sq + sigma2_sq + C2)
-    cvAdd(sigma1_sq, sigma2_sq, temp2);
-    cvAddS(temp2, cvScalarAll(C2), temp2);
-
-    // ((mu1_sq + mu2_sq + C1).*(sigma1_sq + sigma2_sq + C2))
-    cvMul(temp1, temp2, temp1, 1);
-
-    // ((2*mu1_mu2 + C1).*(2*sigma12 + C2))./((mu1_sq + mu2_sq + C1).*(sigma1_sq + sigma2_sq + C2))
-    cvDiv(temp3, temp1, ssim_map, 1);
-
-
-    CvScalar index_scalar = cvAvg(ssim_map);
-
-    // through observation, there is approximately 
-    // 1% error max with the original matlab program
-
-    error->SSIM_Blue = index_scalar.val[0];
-    error->SSIM_Green = index_scalar.val[1];
-    error->SSIM_Red = index_scalar.val[2];
-    error->SSIM = (index_scalar.val[2] + index_scalar.val[1] + index_scalar.val[0]) / 3;
-
-    cvReleaseImage(&img1);
-    cvReleaseImage(&img2);
-    cvReleaseImage(&img1_sq);
-    cvReleaseImage(&img2_sq);
-    cvReleaseImage(&img1_img2);
-    cvReleaseImage(&mu1);
-    cvReleaseImage(&mu2);
-    cvReleaseImage(&mu1_sq);
-    cvReleaseImage(&mu2_sq);
-    cvReleaseImage(&mu1_mu2);
-    cvReleaseImage(&sigma1_sq);
-    cvReleaseImage(&sigma2_sq);
-    cvReleaseImage(&sigma12);
-    cvReleaseImage(&temp1);
-    cvReleaseImage(&temp2);
-    cvReleaseImage(&temp3);
-    cvReleaseImage(&ssim_map);
 
     // Progress
     if (pFeedbackProc)
     {
-        fProgress = 100.0;
-        if (pFeedbackProc(fProgress, NULL, NULL))
-        {
+        if (pFeedbackProc(50.0, NULL, NULL))
             return -1; //abort
-        }
     }
 
-    return 0;
+    /*************************** END INITS **********************************/
+
+    Mat mu1, mu2;   // PRELIMINARY COMPUTING
+    GaussianBlur(I1, mu1, Size(11, 11), 1.5);
+    GaussianBlur(I2, mu2, Size(11, 11), 1.5);
+
+    Mat mu1_2   =   mu1.mul(mu1);
+    Mat mu2_2   =   mu2.mul(mu2);
+    Mat mu1_mu2 =   mu1.mul(mu2);
+
+    Mat sigma1_2, sigma2_2, sigma12;
+
+    GaussianBlur(I1_2, sigma1_2, Size(11, 11), 1.5);
+    sigma1_2 -= mu1_2;
+
+    GaussianBlur(I2_2, sigma2_2, Size(11, 11), 1.5);
+    sigma2_2 -= mu2_2;
+
+    GaussianBlur(I1_I2, sigma12, Size(11, 11), 1.5);
+    sigma12 -= mu1_mu2;
+
+    ///////////////////////////////// FORMULA ////////////////////////////////
+    Mat t1, t2, t3;
+
+    t1 = 2 * mu1_mu2 + C1;
+    t2 = 2 * sigma12 + C2;
+    t3 = t1.mul(t2);              // t3 = ((2*mu1_mu2 + C1).*(2*sigma12 + C2))
+
+    t1 = mu1_2 + mu2_2 + C1;
+    t2 = sigma1_2 + sigma2_2 + C2;
+    t1 = t1.mul(t2);               // t1 =((mu1_2 + mu2_2 + C1).*(sigma1_2 + sigma2_2 + C2))
+
+    Mat ssim_map;
+    divide(t3, t1, ssim_map);      // ssim_map =  t3./t1;
+
+    Scalar mssim = mean( ssim_map ); // mssim = average of ssim map
+    return mssim;
 }
 
-//reserved for compute mssim
-Scalar getMatSSIM( const Mat& i1, const Mat& i2, REPORT_DATA *error)
-{
- const double C1 = 6.5025, C2 = 58.5225;
- /***************************** INITS **********************************/
- int d     = CV_32F;
-
- Mat I1, I2;
- i1.convertTo(I1, d);           // cannot calculate on one byte large values
- i2.convertTo(I2, d);
-
- Mat I2_2   = I2.mul(I2);        // I2^2
- Mat I1_2   = I1.mul(I1);        // I1^2
- Mat I1_I2  = I1.mul(I2);        // I1 * I2
-
- /***********************PRELIMINARY COMPUTING ******************************/
-
- Mat mu1, mu2;   //
- GaussianBlur(I1, mu1, Size(11, 11), 1.5);
- GaussianBlur(I2, mu2, Size(11, 11), 1.5);
-
- Mat mu1_2   =   mu1.mul(mu1);
- Mat mu2_2   =   mu2.mul(mu2);
- Mat mu1_mu2 =   mu1.mul(mu2);
-
- Mat sigma1_2, sigma2_2, sigma12;
-
- GaussianBlur(I1_2, sigma1_2, Size(11, 11), 1.5);
- sigma1_2 -= mu1_2;
-
- GaussianBlur(I2_2, sigma2_2, Size(11, 11), 1.5);
- sigma2_2 -= mu2_2;
-
- GaussianBlur(I1_I2, sigma12, Size(11, 11), 1.5);
- sigma12 -= mu1_mu2;
-
- ///////////////////////////////// FORMULA ////////////////////////////////
- Mat t1, t2, t3;
-
- t1 = 2 * mu1_mu2 + C1;
- t2 = 2 * sigma12 + C2;
- t3 = t1.mul(t2);              // t3 = ((2*mu1_mu2 + C1).*(2*sigma12 + C2))
-
- t1 = mu1_2 + mu2_2 + C1;
- t2 = sigma1_2 + sigma2_2 + C2;
- t1 = t1.mul(t2);               // t1 =((mu1_2 + mu2_2 + C1).*(sigma1_2 + sigma2_2 + C2))
-
- Mat ssim_map;
- divide(t3, t1, ssim_map);      // ssim_map =  t3./t1;
-
- Scalar mssim = mean( ssim_map ); // mssim = average of ssim map
- return mssim;
-}
-
-#define C1 (float) (0.01 * 255 * 0.01  * 255)
-#define C2 (float) (0.03 * 255 * 0.03  * 255)
-
-
-// sigma on block_size
-double sigma(Mat & m, int i, int j, int block_size)
-{
-    double sd = 0;
-
-    Mat m_tmp = m(Range(i, i + block_size), Range(j, j + block_size));
-    Mat m_squared(block_size, block_size, CV_8U);
-
-    multiply(m_tmp, m_tmp, m_squared);
-
-    double avg = mean(m_tmp)[0];
-    double avg_2 = mean(m_squared)[0];
-
-    sd = sqrt(abs(avg_2 - avg * avg));
-
-    return sd;
-}
-
-// Covariance
-double cov(Mat & m1, Mat & m2, int i, int j, int block_size)
-{
-    Mat m3 = Mat::zeros(block_size, block_size, m1.depth());
-    Mat m1_tmp = m1(Range(i, i + block_size), Range(j, j + block_size));
-    Mat m2_tmp = m2(Range(i, i + block_size), Range(j, j + block_size));
-
-
-    multiply(m1_tmp, m2_tmp, m3);
-
-    double avg_ro = mean(m3)[0]; // E(XY)
-    double avg_r = mean(m1_tmp)[0]; // E(X)
-    double avg_o = mean(m2_tmp)[0]; // E(Y)
-
-
-    double sd_ro = avg_ro - avg_o * avg_r; // E(XY) - E(X)E(Y)
-
-    return sd_ro;
-}
-
-/**
-* Compute the SSIM between 2 images
-*/
-double ssim(Mat & img_src, Mat & img_compressed, int block_size, CMP_Feedback_Proc pFeedbackProc)
-{
-    double ssim = 0;
-    float fProgress = 0.0;
-//    int nbBlockPerHeight = img_src.rows / block_size;
-//    int nbBlockPerWidth = img_src.cols / block_size;
-
-    int nbBlockPerHeight = img_src.rows ;
-    int nbBlockPerWidth = img_src.cols;
-
-    for (int k = 0; k < nbBlockPerHeight; k++)
-    {
-        for (int l = 0; l < nbBlockPerWidth; l++)
-        {
-           
-            double avg_o = mean(img_src(Range(k, k + block_size), Range(l, l + block_size)))[0];
-            if (isnan(avg_o)) avg_o = 0;
-            double avg_r = mean(img_compressed(Range(k, k + block_size), Range(l, l + block_size)))[0];
-            if (isnan(avg_r)) avg_r = 0;
-            double sigma_o = sigma(img_src, k, l, block_size);  //m,n
-            if (isnan(sigma_o)) sigma_o = 0;
-            double sigma_r = sigma(img_compressed, k, l, block_size);  //m,n
-            if (isnan(sigma_r)) sigma_r = 0;
-            double sigma_ro = cov(img_src, img_compressed, k, l, block_size);  //m,n
-            if (isnan(sigma_ro)) sigma_ro = 0;
-           
-            ssim += ((2 * avg_o * avg_r + C1) * (2 * sigma_ro + C2)) / ((avg_o * avg_o + avg_r * avg_r + C1) * (sigma_o * sigma_o + sigma_r * sigma_r + C2));
-      
-
-        }
-        // Progress
-        if (pFeedbackProc)
-        {
-            fProgress = (float)(((double)k) / nbBlockPerHeight) * 100;
-            if (pFeedbackProc(fProgress, NULL, NULL))
-            {
-                return -1; //abort
-            }
-        }
-
-    }
-    ssim /= nbBlockPerHeight * nbBlockPerWidth;
-
-    //if (show_progress)
-    //{
-    //    cout << "\r>>SSIM [100%]" << endl;
-    //    cout << "SSIM : " << ssim << endl;
-    //}
-
-    return abs(ssim);
-}

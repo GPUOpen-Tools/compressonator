@@ -47,6 +47,8 @@
 #include <map>
 #include <string>
 #include <vector>
+
+#include "Compressonator.h"
 #include "Common.h"
 
 #ifdef USE_MESH_DRACO_EXTENSION

@@ -21,6 +21,7 @@
 #define MODELTEXTURE_E467CD76_2A95_402D_B989_A39D10E969E1_H
 
 #include "Compressonator.h"
+#include "Common.h"
 #include "Texture.h"
 #include "PluginInterface.h"
 #include "TextureIO.h"
