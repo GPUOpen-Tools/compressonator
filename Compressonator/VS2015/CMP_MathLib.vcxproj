@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug_DLL|Win32">
       <Configuration>Debug_DLL</Configuration>
@@ -68,22 +68,30 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../Applications/_Plugins/Common/PluginInterface.h" />
-    <ClInclude Include="..\Header\CMP_Math\JML.h" />
-    <ClInclude Include="..\Header\CMP_Math\JMLFuncs.h" />
-    <ClInclude Include="..\Header\CMP_Math\JMLMatrix.h" />
-    <ClInclude Include="..\Header\CMP_Math\JMLScalar.h" />
-    <ClInclude Include="..\Header\CMP_Math\JMLSSEVec.h" />
-    <ClInclude Include="..\Header\CMP_Math\JMLVec2.h" />
-    <ClInclude Include="..\Header\CMP_Math\JMLVec3.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\cmp_math_common.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\cmp_math_cpuid.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\JML.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\JMLFuncs.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\JMLMatrix.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\JMLScalar.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\JMLSSEVec.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\JMLVec2.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\JMLVec3.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\JRTCommon.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\TootlePCH.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\CMP_Math\JMLFuncs.cpp" />
+    <ClCompile Include="..\Applications\_Libs\CMP_Math\cmp_math_common.cpp" />
+    <ClCompile Include="..\Applications\_Libs\CMP_Math\cmp_math_cpuid.cpp" />
+    <ClCompile Include="..\Applications\_Libs\CMP_Math\JMLFuncs.cpp" />
+    <ClCompile Include="..\Applications\_Libs\CMP_Math\kernel_math.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6B59AE3F-DE64-485C-990F-041349971B0F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>GPU_DecodeLib</RootNamespace>
     <ProjectName>CMP_Math</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -203,100 +211,116 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>$(ProjectName)_MTd</TargetName>
@@ -323,52 +347,52 @@
     <TargetName>$(ProjectName)_MDd_DLL</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetName>$(ProjectName)_MT</TargetName>
@@ -401,7 +425,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -440,7 +464,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -479,7 +503,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -518,7 +542,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -557,7 +581,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -590,7 +614,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -621,7 +645,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;_WIN64;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -655,7 +679,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -689,7 +713,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -737,7 +761,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -785,7 +809,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -833,7 +857,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -880,7 +904,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -915,7 +939,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -950,12 +974,13 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;VK_USE_PLATFORM_WIN32_KHR;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ProgramDataBaseFileName>$(OutDir)$(ProjectName)_MD.pdb</ProgramDataBaseFileName>
       <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
+      <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -976,6 +1001,9 @@
       </AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
     <ClCompile>
@@ -986,7 +1014,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Header/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>

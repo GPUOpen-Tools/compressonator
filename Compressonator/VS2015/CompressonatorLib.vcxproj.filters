@@ -5,51 +5,11 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Header Files\Codec">
-      <UniqueIdentifier>{f3763746-a8a2-4040-ab88-520b2b958637}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Codec">
       <UniqueIdentifier>{34ad20f6-5fcf-4706-9e5f-be1b677ef279}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\External Codec">
-      <UniqueIdentifier>{f4e1c779-5b75-430f-8db9-2275c7f85fb0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\External Codec">
-      <UniqueIdentifier>{514cdeda-66eb-4c3d-b8b4-96ab9b1665fc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Doxygen">
-      <UniqueIdentifier>{93fea10b-e09e-4a4b-9d8e-15660f42cd21}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Codec\BC7">
-      <UniqueIdentifier>{504c8910-3335-4bf4-aaf0-cd9f93191f77}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Codec\BC7">
       <UniqueIdentifier>{e5179435-255e-40e5-bcaf-c3df71664551}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Internal">
-      <UniqueIdentifier>{4705f501-4453-469d-a4fe-99e569b9ecb7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Codec\ATC">
-      <UniqueIdentifier>{bb401374-b20d-4a9e-aa48-7f85daf83f07}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Codec\ATI">
-      <UniqueIdentifier>{4343b97c-5679-4754-b6b5-9f3782bbd465}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Codec\DXT">
-      <UniqueIdentifier>{b30f5fb7-c659-4b79-9ebf-10874c7d39bf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Codec\Buffer">
-      <UniqueIdentifier>{025710c7-362d-4156-86c0-f9d8b56e76f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Codec\ETC">
-      <UniqueIdentifier>{75bc7927-4f41-4703-ad11-d3db7bc2743d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Codec\Block">
-      <UniqueIdentifier>{ed821ac5-8954-4813-b8bc-4c0308c7fce2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Codec\ATC">
       <UniqueIdentifier>{739efece-cac2-4a2e-976a-30123383f35b}</UniqueIdentifier>
@@ -69,32 +29,17 @@
     <Filter Include="Source Files\Codec\ETC">
       <UniqueIdentifier>{8e624935-0c46-4cc2-9c38-a81e04330225}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Codec\DXTC">
-      <UniqueIdentifier>{0a382c49-1743-495a-b28c-3e536960fd02}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Codec\DXTC">
       <UniqueIdentifier>{9b83cbb7-cb47-435a-8647-322bd5586772}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Codec\BC6H">
-      <UniqueIdentifier>{cb2a741f-9674-49e1-9a8a-971f78e4fa0f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Codec\BC6H">
       <UniqueIdentifier>{2d3ed901-7ce8-4b4e-bae5-61e35fa72ac8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Codec\ASTC">
-      <UniqueIdentifier>{4090f1f6-bb39-4965-87a8-4333f1f5c498}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Codec\ASTC">
       <UniqueIdentifier>{5b1bb7fd-2503-4734-9890-dd35e8267dc7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Codec\ETC\etcpack">
-      <UniqueIdentifier>{345a7045-ad74-48d1-87be-fcec3b9af93c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Codec\ETC\etcpack">
       <UniqueIdentifier>{495864e7-9c02-4468-a604-32b7dcba6eed}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Codec\GT">
-      <UniqueIdentifier>{bed0299a-6c54-41e3-88e9-1a6e2d37f659}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Codec\GT">
       <UniqueIdentifier>{ba2a928f-426a-4ae3-8f30-bb0dc3222858}</UniqueIdentifier>
@@ -102,547 +47,626 @@
     <Filter Include="Common">
       <UniqueIdentifier>{1f288b42-e7e4-4dd1-84b6-328fe90c42de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Codec\BASIS">
+      <UniqueIdentifier>{6f58aef5-f313-4608-b77c-346ebd280c52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\half">
+      <UniqueIdentifier>{8bbe94e3-4f74-4da4-8a1a-95043aa1f6bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Codec\ASTC\ARM">
+      <UniqueIdentifier>{f7e04bfc-b0b1-48d1-afdd-1cc317690046}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="../Source/Compressonator.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\CMP_Framework\Common\half\half.cpp">
+      <Filter>Common\half</Filter>
     </ClCompile>
-    <ClCompile Include="../Source/Codec/Codec.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Compress.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ASTC/ASTC_Decode.cpp">
-      <Filter>Source Files\Codec\ASTC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ASTC/ASTC_Encode.cpp">
-      <Filter>Source Files\Codec\ASTC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ASTC/ASTC_Encode_Kernel.cpp">
-      <Filter>Source Files\Codec\ASTC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ASTC/ASTC_Host.cpp">
-      <Filter>Source Files\Codec\ASTC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ASTC/ASTC_Library.cpp">
-      <Filter>Source Files\Codec\ASTC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/BC6H/BC6H_Decode.cpp">
-      <Filter>Source Files\Codec\BC6H</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/BC6H/BC6H_Definitions.cpp">
-      <Filter>Source Files\Codec\BC6H</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/BC6H/BC6H_Encode.cpp">
-      <Filter>Source Files\Codec\BC6H</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/BC6H/BC6H_Library.cpp">
-      <Filter>Source Files\Codec\BC6H</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/BC6H/BC6H_utils.cpp">
-      <Filter>Source Files\Codec\BC6H</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/BC7/BC7_Decode.cpp">
-      <Filter>Source Files\Codec\BC7</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/BC7/BC7_Definitions.cpp">
-      <Filter>Source Files\Codec\BC7</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/BC7/BC7_Encode.cpp">
-      <Filter>Source Files\Codec\BC7</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/BC7/BC7_Library.cpp">
-      <Filter>Source Files\Codec\BC7</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/BC7/BC7_Partitions.cpp">
-      <Filter>Source Files\Codec\BC7</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/BC7/BC7_utils.cpp">
-      <Filter>Source Files\Codec\BC7</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ASTC/Codec_ASTC.cpp">
-      <Filter>Source Files\Codec\ASTC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/BC6H/Codec_BC6H.cpp">
-      <Filter>Source Files\Codec\BC6H</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Block/Codec_Block.cpp">
-      <Filter>Source Files\Codec\Block</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Block/Codec_Block_4x4.cpp">
-      <Filter>Source Files\Codec\Block</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Block/Codec_Block_8x8.cpp">
-      <Filter>Source Files\Codec\Block</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/BC7/3dquant_vpc.cpp">
-      <Filter>Source Files\Codec\BC7</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/BC7/Codec_BC7.cpp">
-      <Filter>Source Files\Codec\BC7</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/BC7/shake.cpp">
-      <Filter>Source Files\Codec\BC7</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/BC7/reconstruct.cpp">
-      <Filter>Source Files\Codec\BC7</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ATC/Codec_ATC.cpp">
-      <Filter>Source Files\Codec\ATC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ATC/Codec_ATC_RGB.cpp">
-      <Filter>Source Files\Codec\ATC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ATC/Codec_ATC_RGBA_Explicit.cpp">
-      <Filter>Source Files\Codec\ATC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ATC/Codec_ATC_RGBA_Interpolated.cpp">
-      <Filter>Source Files\Codec\ATC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ATI/Codec_ATI1N.cpp">
-      <Filter>Source Files\Codec\ATI</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ATI/Codec_ATI2N.cpp">
-      <Filter>Source Files\Codec\ATI</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ATI/Codec_ATI2N_DXT5.cpp">
-      <Filter>Source Files\Codec\ATI</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/DXT/Codec_DXT1.cpp">
-      <Filter>Source Files\Codec\DXT</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/DXT/Codec_DXT3.cpp">
-      <Filter>Source Files\Codec\DXT</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/DXT/Codec_DXT5.cpp">
-      <Filter>Source Files\Codec\DXT</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/DXT/Codec_DXT5_RBxG.cpp">
-      <Filter>Source Files\Codec\DXT</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/DXT/Codec_DXT5_RGxB.cpp">
-      <Filter>Source Files\Codec\DXT</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/DXT/Codec_DXT5_RxBG.cpp">
-      <Filter>Source Files\Codec\DXT</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/DXT/Codec_DXT5_Swizzled.cpp">
-      <Filter>Source Files\Codec\DXT</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/DXT/Codec_DXT5_xGBR.cpp">
-      <Filter>Source Files\Codec\DXT</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/DXT/Codec_DXT5_xGxR.cpp">
-      <Filter>Source Files\Codec\DXT</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/DXT/Codec_DXT5_xRBG.cpp">
-      <Filter>Source Files\Codec\DXT</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/DXTC/Codec_DXTC.cpp">
-      <Filter>Source Files\Codec\DXTC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/DXTC/Codec_DXTC_Alpha.cpp">
-      <Filter>Source Files\Codec\DXTC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/DXTC/Codec_DXTC_RGBA.cpp">
-      <Filter>Source Files\Codec\DXTC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ETC/Codec_ETC.cpp">
-      <Filter>Source Files\Codec\ETC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ETC/Codec_ETC_RGB.cpp">
-      <Filter>Source Files\Codec\ETC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ETC/Codec_ETC2.cpp">
-      <Filter>Source Files\Codec\ETC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ETC/Codec_ETC2_RGB.cpp">
-      <Filter>Source Files\Codec\ETC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/Codecbuffer.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_Block.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_R8.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_R16.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_R16F.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_R32.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_R32F.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RG8.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RG16.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RG16F.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RG32.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RG32F.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RGB888.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RGB9995EF.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RGBA16.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RGBA16F.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RGBA32.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RGBA32F.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RGBA8888.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/Buffer/CodecBuffer_RGBA2101010.cpp">
-      <Filter>Source Files\Codec\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ATI/Compressonatori_tc.c">
-      <Filter>Source Files\Codec\ATI</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/DXTC/dxtc_v11_compress.c">
-      <Filter>Source Files\Codec\DXTC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/DXTC/dxtc_v11_compress_asm.c">
-      <Filter>Source Files\Codec\DXTC</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ETC/etcpack/etcimage.cxx">
-      <Filter>Source Files\Codec\ETC\etcpack</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/Codec/ETC/etcpack/etcpack.cxx">
-      <Filter>Source Files\Codec\ETC\etcpack</Filter>
-    </ClCompile>
-    <ClCompile Include="../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half/half.cpp">
+    <ClCompile Include="..\CMP_Framework\Common\CMP_BoxFilter.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="../Source/Common/HDR_Encode.cpp">
+    <ClCompile Include="..\CMP_Framework\Common\CMP_MIPS.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="../Source/Codec/ATI/CompressonatorXCodec.cpp">
+    <ClCompile Include="..\CMP_Framework\Common\HDR_Encode.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\Common\ATIFormats.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Compress.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Compressonator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Common\Codec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ASTC\ARM\mathlib.cpp">
+      <Filter>Source Files\Codec\ASTC\ARM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ASTC\ARM\softfloat.cpp">
+      <Filter>Source Files\Codec\ASTC\ARM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ASTC\ASTC_Decode.cpp">
+      <Filter>Source Files\Codec\ASTC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ASTC\ASTC_Encode.cpp">
+      <Filter>Source Files\Codec\ASTC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ASTC\ASTC_Encode_Kernel.cpp">
+      <Filter>Source Files\Codec\ASTC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ASTC\ASTC_Host.cpp">
+      <Filter>Source Files\Codec\ASTC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ASTC\ASTC_Library.cpp">
+      <Filter>Source Files\Codec\ASTC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ASTC\Codec_ASTC.cpp">
+      <Filter>Source Files\Codec\ASTC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ATC\Codec_ATC.cpp">
+      <Filter>Source Files\Codec\ATC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ATC\Codec_ATC_RGB.cpp">
+      <Filter>Source Files\Codec\ATC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ATC\Codec_ATC_RGBA_Explicit.cpp">
+      <Filter>Source Files\Codec\ATC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ATC\Codec_ATC_RGBA_Interpolated.cpp">
+      <Filter>Source Files\Codec\ATC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ATI\Codec_ATI_TC.cpp">
       <Filter>Source Files\Codec\ATI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Codec\GT\Codec_GT.cpp">
-      <Filter>Source Files\Codec\GT</Filter>
+    <ClCompile Include="..\CMP_CompressonatorLib\ATI\Codec_ATI1N.cpp">
+      <Filter>Source Files\Codec\ATI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Codec\GT\GT_Decode.cpp">
-      <Filter>Source Files\Codec\GT</Filter>
+    <ClCompile Include="..\CMP_CompressonatorLib\ATI\Codec_ATI2N.cpp">
+      <Filter>Source Files\Codec\ATI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Codec\GT\GT_Encode.cpp">
-      <Filter>Source Files\Codec\GT</Filter>
+    <ClCompile Include="..\CMP_CompressonatorLib\ATI\Codec_ATI2N_DXT5.cpp">
+      <Filter>Source Files\Codec\ATI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Codec\ETC\Codec_ETC2_RGBA.cpp">
-      <Filter>Source Files\Codec\ETC</Filter>
+    <ClCompile Include="..\CMP_CompressonatorLib\ATI\Compressonatori_tc.c">
+      <Filter>Source Files\Codec\ATI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Codec\ETC\Codec_ETC2_RGBA1.cpp">
-      <Filter>Source Files\Codec\ETC</Filter>
+    <ClCompile Include="..\CMP_CompressonatorLib\ATI\CompressonatorXCodec.cpp">
+      <Filter>Source Files\Codec\ATI</Filter>
     </ClCompile>
-    <ClCompile Include="../Source/Codec/ETC/etcpack/etcdec.cxx">
+    <ClCompile Include="..\CMP_CompressonatorLib\BASIS\Codec_BASIS.cpp">
+      <Filter>Source Files\Codec\BASIS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\BC6H\BC6H_Decode.cpp">
+      <Filter>Source Files\Codec\BC6H</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\BC6H\BC6H_Definitions.cpp">
+      <Filter>Source Files\Codec\BC6H</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\BC6H\BC6H_Encode.cpp">
+      <Filter>Source Files\Codec\BC6H</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\BC6H\BC6H_Library.cpp">
+      <Filter>Source Files\Codec\BC6H</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\BC6H\BC6H_utils.cpp">
+      <Filter>Source Files\Codec\BC6H</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\BC6H\Codec_BC6H.cpp">
+      <Filter>Source Files\Codec\BC6H</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\BC7\3dquant_vpc.cpp">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\BC7\BC7_Decode.cpp">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\BC7\BC7_Definitions.cpp">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\BC7\BC7_Encode.cpp">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\BC7\BC7_Library.cpp">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\BC7\BC7_Partitions.cpp">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\BC7\BC7_utils.cpp">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\BC7\Codec_BC7.cpp">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\BC7\reconstruct.cpp">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\BC7\shake.cpp">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Block\Codec_Block.cpp">
+      <Filter>Source Files\Codec\Block</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Block\Codec_Block_4x4.cpp">
+      <Filter>Source Files\Codec\Block</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Block\Codec_Block_8x8.cpp">
+      <Filter>Source Files\Codec\Block</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RG16.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RG16F.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RG32.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RG32F.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGB888.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGB9995EF.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGBA16.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGBA16F.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGBA32.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGBA32F.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGBA8888.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGBA2101010.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\Codecbuffer.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_Block.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_R8.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_R16.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_R16F.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_R32.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_R32F.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RG8.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\DXT\Codec_DXT1.cpp">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\DXT\Codec_DXT3.cpp">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\DXT\Codec_DXT5.cpp">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\DXT\Codec_DXT5_RBxG.cpp">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\DXT\Codec_DXT5_RGxB.cpp">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\DXT\Codec_DXT5_RxBG.cpp">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\DXT\Codec_DXT5_Swizzled.cpp">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\DXT\Codec_DXT5_xGBR.cpp">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\DXT\Codec_DXT5_xGxR.cpp">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\DXT\Codec_DXT5_xRBG.cpp">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\DXTC\Codec_DXTC.cpp">
+      <Filter>Source Files\Codec\DXTC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\DXTC\Codec_DXTC_Alpha.cpp">
+      <Filter>Source Files\Codec\DXTC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\DXTC\Codec_DXTC_RGBA.cpp">
+      <Filter>Source Files\Codec\DXTC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\DXTC\dxtc_v11_compress.c">
+      <Filter>Source Files\Codec\DXTC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\DXTC\dxtc_v11_compress_asm.c">
+      <Filter>Source Files\Codec\DXTC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ETC\etcpack\etcdec.cxx">
       <Filter>Source Files\Codec\ETC\etcpack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ETC\etcpack\etcimage.cxx">
+      <Filter>Source Files\Codec\ETC\etcpack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ETC\etcpack\etcpack.cxx">
+      <Filter>Source Files\Codec\ETC\etcpack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ETC\Codec_ETC.cpp">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ETC\Codec_ETC_RGB.cpp">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ETC\Codec_ETC_RGBA_Explicit.cpp">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ETC\Codec_ETC_RGBA_Interpolated.cpp">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ETC\Codec_ETC2.cpp">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ETC\Codec_ETC2_RGB.cpp">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ETC\Codec_ETC2_RGBA.cpp">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\ETC\Codec_ETC2_RGBA1.cpp">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\GT\Codec_GT.cpp">
+      <Filter>Source Files\Codec\GT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\GT\GT_Decode.cpp">
+      <Filter>Source Files\Codec\GT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\GT\GT_Encode.cpp">
+      <Filter>Source Files\Codec\GT</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="../Source/Codec/DXTC/dxtc_v11_compress_64.asm">
+    <ClInclude Include="..\CMP_Framework\Common\half\eLut.h">
+      <Filter>Common\half</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Framework\Common\half\half.h">
+      <Filter>Common\half</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Framework\Common\half\halfExport.h">
+      <Filter>Common\half</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Framework\Common\half\halfFunction.h">
+      <Filter>Common\half</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Framework\Common\half\halfLimits.h">
+      <Filter>Common\half</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Framework\Common\half\toFloat.h">
+      <Filter>Common\half</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Framework\Common\CMP_BoxFilter.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Framework\Common\CMP_MIPS.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Framework\Common\HDR_Encode.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\Common\ATIFormats.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Common.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Version.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Compressonator.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Common\Codec.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Common\CommonTypes.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Common\Compress.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Common\debug.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ARM\astc_codec_internals.h">
+      <Filter>Source Files\Codec\ASTC\ARM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ARM\mathlib.h">
+      <Filter>Source Files\Codec\ASTC\ARM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ARM\softfloat.h">
+      <Filter>Source Files\Codec\ASTC\ARM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ARM\vectypes.h">
+      <Filter>Source Files\Codec\ASTC\ARM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ASTC_Decode.h">
+      <Filter>Source Files\Codec\ASTC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ASTC_Definitions.h">
+      <Filter>Source Files\Codec\ASTC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ASTC_Encode.h">
+      <Filter>Source Files\Codec\ASTC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ASTC_Encode_Kernel.h">
+      <Filter>Source Files\Codec\ASTC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ASTC_Host.h">
+      <Filter>Source Files\Codec\ASTC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ASTC_Library.h">
+      <Filter>Source Files\Codec\ASTC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\Codec_ASTC.h">
+      <Filter>Source Files\Codec\ASTC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ATC\Codec_ATC.h">
+      <Filter>Source Files\Codec\ATC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ATC\Codec_ATC_RGB.h">
+      <Filter>Source Files\Codec\ATC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ATC\Codec_ATC_RGBA_Explicit.h">
+      <Filter>Source Files\Codec\ATC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ATC\Codec_ATC_RGBA_Interpolated.h">
+      <Filter>Source Files\Codec\ATC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ATI\Codec_ATI1N.h">
+      <Filter>Source Files\Codec\ATI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ATI\Codec_ATI2N.h">
+      <Filter>Source Files\Codec\ATI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ATI\Codec_ATI2N_DXT5.h">
+      <Filter>Source Files\Codec\ATI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ATI\Compressonator_tc.h">
+      <Filter>Source Files\Codec\ATI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ATI\CompressonatorXCodec.h">
+      <Filter>Source Files\Codec\ATI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\BASIS\Codec_BASIS.h">
+      <Filter>Source Files\Codec\BASIS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\BC6H\BC6H_Decode.h">
+      <Filter>Source Files\Codec\BC6H</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\BC6H\BC6H_Definitions.h">
+      <Filter>Source Files\Codec\BC6H</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\BC6H\BC6H_Encode.h">
+      <Filter>Source Files\Codec\BC6H</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\BC6H\BC6H_Library.h">
+      <Filter>Source Files\Codec\BC6H</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\BC6H\BC6H_utils.h">
+      <Filter>Source Files\Codec\BC6H</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\BC6H\Codec_BC6H.h">
+      <Filter>Source Files\Codec\BC6H</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\BC7\3dquant_constants.h">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\BC7\3dquant_vpc.h">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\BC7\BC7_Decode.h">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\BC7\BC7_Definitions.h">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\BC7\BC7_Encode.h">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\BC7\BC7_Library.h">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\BC7\BC7_Partitions.h">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\BC7\BC7_utils.h">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\BC7\Codec_BC7.h">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\BC7\reconstruct.h">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\BC7\shake.h">
+      <Filter>Source Files\Codec\BC7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Block\Codec_Block.h">
+      <Filter>Source Files\Codec\Block</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Block\Codec_Block_4x4.h">
+      <Filter>Source Files\Codec\Block</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Block\Codec_Block_8x8.h">
+      <Filter>Source Files\Codec\Block</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RG8.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RG16.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RG16F.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RG32.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RG32F.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGB888.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGB9995EF.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGBA16.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGBA16F.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGBA32.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGBA32F.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGBA8888.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGBA2101010.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_Block.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_R8.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_R16.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_R16F.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_R32.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_R32F.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\DXT\Codec_DXT1.h">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\DXT\Codec_DXT3.h">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\DXT\Codec_DXT5.h">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\DXT\Codec_DXT5_RBxG.h">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\DXT\Codec_DXT5_RGxB.h">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\DXT\Codec_DXT5_RxBG.h">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\DXT\Codec_DXT5_Swizzled.h">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\DXT\Codec_DXT5_xGBR.h">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\DXT\Codec_DXT5_xGxR.h">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\DXT\Codec_DXT5_xRBG.h">
+      <Filter>Source Files\Codec\DXT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\DXTC\Codec_DXTC.h">
       <Filter>Source Files\Codec\DXTC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\DXTC\dxtc_v11_compress.h">
+      <Filter>Source Files\Codec\DXTC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ETC\etcpack\etcimage.h">
+      <Filter>Source Files\Codec\ETC\etcpack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ETC\etcpack\etcpack_lib.h">
+      <Filter>Source Files\Codec\ETC\etcpack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ETC\Codec_ETC.h">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ETC\Codec_ETC_RGB.h">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ETC\Codec_ETC_RGBA_Explicit.h">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ETC\Codec_ETC_RGBA_Interpolated.h">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ETC\Codec_ETC2.h">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ETC\Codec_ETC2_RGB.h">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ETC\Codec_ETC2_RGBA.h">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ETC\Codec_ETC2_RGBA1.h">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\ETC\etcpack.h">
+      <Filter>Source Files\Codec\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\GT\Codec_GT.h">
+      <Filter>Source Files\Codec\GT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\GT\GT_Decode.h">
+      <Filter>Source Files\Codec\GT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\GT\GT_Definitions.h">
+      <Filter>Source Files\Codec\GT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\GT\GT_Encode.h">
+      <Filter>Source Files\Codec\GT</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\CMP_CompressonatorLib\DXTC\dxtc_v11_compress_64.asm">
+      <Filter>Source Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="../Source/Codec/DXTC/dxtc_v11_compress_sse2.asm">
-      <Filter>Source Files\Codec\DXTC</Filter>
-    </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="../Header/Compressonator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Codec.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Compress.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/BC6H/BC6H_Decode.h">
-      <Filter>Header Files\Codec\BC6H</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/BC6H/BC6H_Definitions.h">
-      <Filter>Header Files\Codec\BC6H</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/BC6H/BC6H_Encode.h">
-      <Filter>Header Files\Codec\BC6H</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/BC6H/BC6H_Library.h">
-      <Filter>Header Files\Codec\BC6H</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/BC6H/BC6H_utils.h">
-      <Filter>Header Files\Codec\BC6H</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ASTC/ASTC_Decode.h">
-      <Filter>Header Files\Codec\ASTC</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ASTC/ASTC_Definitions.h">
-      <Filter>Header Files\Codec\ASTC</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ASTC/ASTC_Encode.h">
-      <Filter>Header Files\Codec\ASTC</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ASTC/ASTC_Encode_Kernel.h">
-      <Filter>Header Files\Codec\ASTC</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ASTC/ASTC_Host.h">
-      <Filter>Header Files\Codec\ASTC</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ASTC/ASTC_Library.h">
-      <Filter>Header Files\Codec\ASTC</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/BC7/BC7_Decode.h">
-      <Filter>Header Files\Codec\BC7</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/BC7/BC7_Definitions.h">
-      <Filter>Header Files\Codec\BC7</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/BC7/BC7_Encode.h">
-      <Filter>Header Files\Codec\BC7</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/BC7/BC7_Library.h">
-      <Filter>Header Files\Codec\BC7</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/BC7/BC7_Partitions.h">
-      <Filter>Header Files\Codec\BC7</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/BC7/BC7_utils.h">
-      <Filter>Header Files\Codec\BC7</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ASTC/Codec_ASTC.h">
-      <Filter>Header Files\Codec\ASTC</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ATC/Codec_ATC.h">
-      <Filter>Header Files\Codec\ATC</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ATC/Codec_ATC_RGB.h">
-      <Filter>Header Files\Codec\ATC</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ATC/Codec_ATC_RGBA_Explicit.h">
-      <Filter>Header Files\Codec\ATC</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ATC/Codec_ATC_RGBA_Interpolated.h">
-      <Filter>Header Files\Codec\ATC</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ATI/Codec_ATI1N.h">
-      <Filter>Header Files\Codec\ATI</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ATI/Codec_ATI2N.h">
-      <Filter>Header Files\Codec\ATI</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ATI/Codec_ATI2N_DXT5.h">
-      <Filter>Header Files\Codec\ATI</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/BC6H/Codec_BC6H.h">
-      <Filter>Header Files\Codec\BC6H</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/BC7/Codec_BC7.h">
-      <Filter>Header Files\Codec\BC7</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Block/Codec_Block.h">
-      <Filter>Header Files\Codec\Block</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Block/Codec_Block_4x4.h">
-      <Filter>Header Files\Codec\Block</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Block/Codec_Block_8x8.h">
-      <Filter>Header Files\Codec\Block</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/DXT/Codec_DXT5_xRBG.h">
-      <Filter>Header Files\Codec\DXT</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/DXT/Codec_DXT1.h">
-      <Filter>Header Files\Codec\DXT</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/DXT/Codec_DXT3.h">
-      <Filter>Header Files\Codec\DXT</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/DXT/Codec_DXT5.h">
-      <Filter>Header Files\Codec\DXT</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/DXT/Codec_DXT5_RBxG.h">
-      <Filter>Header Files\Codec\DXT</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/DXT/Codec_DXT5_RGxB.h">
-      <Filter>Header Files\Codec\DXT</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/DXT/Codec_DXT5_RxBG.h">
-      <Filter>Header Files\Codec\DXT</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/DXT/Codec_DXT5_Swizzled.h">
-      <Filter>Header Files\Codec\DXT</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/DXT/Codec_DXT5_xGBR.h">
-      <Filter>Header Files\Codec\DXT</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/DXT/Codec_DXT5_xGxR.h">
-      <Filter>Header Files\Codec\DXT</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/DXTC/Codec_DXTC.h">
-      <Filter>Header Files\Codec\DXTC</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ETC/Codec_ETC.h">
-      <Filter>Header Files\Codec\ETC</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ETC/Codec_ETC_RGB.h">
-      <Filter>Header Files\Codec\ETC</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ETC/Codec_ETC2.h">
-      <Filter>Header Files\Codec\ETC</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ETC/Codec_ETC2_RGB.h">
-      <Filter>Header Files\Codec\ETC</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_Block.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_R8.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_R16.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_R16F.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_R32.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_R32F.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RG8.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RG16.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RG16F.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RG32.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RG32F.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RGB888.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RGB9995EF.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RGBA16.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RGBA16F.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RGBA32.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RGBA32F.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RGBA8888.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/Buffer/CodecBuffer_RGBA2101010.h">
-      <Filter>Header Files\Codec\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/BC7/3dquant_constants.h">
-      <Filter>Header Files\Codec\BC7</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/BC7/3dquant_vpc.h">
-      <Filter>Header Files\Codec\BC7</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Internal/CompClient.h">
-      <Filter>Header Files\Internal</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ATI/Compressonator_tc.h">
-      <Filter>Header Files\Codec\ATI</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ATI/CompressonatorXCodec.h">
-      <Filter>Header Files\Codec\ATI</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Internal/debug.h">
-      <Filter>Header Files\Internal</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ETC/etcpack/etcimage.h">
-      <Filter>Header Files\Codec\ETC\etcpack</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ETC/etcpack.h">
-      <Filter>Header Files\Codec\ETC\etcpack</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/ETC/etcpack/etcpack_lib.h">
-      <Filter>Header Files\Codec\ETC\etcpack</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/DXTC/dxtc_v11_compress.h">
-      <Filter>Header Files\Codec\DXTC</Filter>
-    </ClInclude>
-    <ClInclude Include="../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/Half/half.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Compressonator_Documentation.h">
-      <Filter>Doxygen</Filter>
-    </ClInclude>
-    <ClInclude Include="../Source/Common/HDR_Encode.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Version.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Codec/BC7/reconstruct.h">
-      <Filter>Header Files\Codec\BC7</Filter>
-    </ClInclude>
-    <ClInclude Include="../Header/Common.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\Codec\GT\Codec_GT.h">
-      <Filter>Header Files\Codec\GT</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\Codec\GT\GT_Decode.h">
-      <Filter>Header Files\Codec\GT</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\Codec\GT\GT_Encode.h">
-      <Filter>Header Files\Codec\GT</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\Codec\ETC\Codec_ETC2_RGBA.h">
-      <Filter>Header Files\Codec\ETC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\Codec\ETC\Codec_ETC2_RGBA1.h">
-      <Filter>Header Files\Codec\ETC</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="../CompressonatorLib.def">
+    <CustomBuild Include="..\CMP_CompressonatorLib\DXTC\dxtc_v11_compress_sse2.asm">
       <Filter>Source Files</Filter>
-    </None>
+    </CustomBuild>
   </ItemGroup>
 </Project>

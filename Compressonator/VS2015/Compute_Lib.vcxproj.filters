@@ -1,0 +1,273 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{025fdf03-4a13-4a19-8ff4-a378c9f1df68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{eece4f5e-0a63-4635-b7d4-8602fad232d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CMP_Math">
+      <UniqueIdentifier>{797a2620-c81d-4260-bc4c-3ffcade40661}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CMP_Core">
+      <UniqueIdentifier>{40753c8d-32e5-4634-b138-df0ae7706f1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\half">
+      <UniqueIdentifier>{630bb0a1-d411-4aeb-837c-59e6d7a4152f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StaticPlugins">
+      <UniqueIdentifier>{edf65de1-3db6-4f0e-831d-821b562f9a12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StaticPlugins\Encoders">
+      <UniqueIdentifier>{fa95a2e9-ad46-4d4c-9976-4850a8aa9dcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StaticPlugins\ImageIO">
+      <UniqueIdentifier>{a8f382f4-48b5-44de-a0e3-c02d05ef5b1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StaticPlugins\Pipeline">
+      <UniqueIdentifier>{5a5f1ab6-4179-454d-8b73-2493b31a7044}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StaticPlugins\ImageIO\DDS">
+      <UniqueIdentifier>{150b3352-0815-41fc-ac4a-87d26d5e077b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StaticPlugins\Pipeline\HPC">
+      <UniqueIdentifier>{ee6b13f8-9d25-4422-9aab-0145a3fefced}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="../Applications/_Plugins/Common/PluginInterface.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\Common\TC_PluginAPI.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\Common\TC_PluginInternal.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\Common\UtilFuncs.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\Common\PluginManager.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\Common\PluginBase.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\Common\ATIFormats.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\CImage\DDS\DDS.h">
+      <Filter>StaticPlugins\ImageIO\DDS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\CImage\DDS\DDS_DX10.h">
+      <Filter>StaticPlugins\ImageIO\DDS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\CImage\DDS\DDS_File.h">
+      <Filter>StaticPlugins\ImageIO\DDS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\CImage\DDS\DDS_Helpers.h">
+      <Filter>StaticPlugins\ImageIO\DDS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\Common\stb_image.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\CCMP_Encode\HPC\CCPU_HPC.h">
+      <Filter>StaticPlugins\Pipeline\HPC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\CCMP_Encode\HPC\cmp_hpc.h">
+      <Filter>StaticPlugins\Pipeline\HPC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\CCMP_Encode\HPC\Compute_CPU_HPC.h">
+      <Filter>StaticPlugins\Pipeline\HPC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\Common\query_timer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Framework\Common\half\eLut.h">
+      <Filter>Common\half</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Framework\Common\half\half.h">
+      <Filter>Common\half</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Framework\Common\half\halfExport.h">
+      <Filter>Common\half</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Framework\Common\half\halfFunction.h">
+      <Filter>Common\half</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Framework\Common\half\halfLimits.h">
+      <Filter>Common\half</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Framework\Common\half\toFloat.h">
+      <Filter>Common\half</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Framework\Common\CMP_BoxFilter.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Framework\Common\CMP_MIPS.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\shaders\BC1_Encode_kernel.h">
+      <Filter>CMP_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\shaders\BC2_Encode_kernel.h">
+      <Filter>CMP_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\shaders\BC3_Encode_kernel.h">
+      <Filter>CMP_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\shaders\BC4_Encode_kernel.h">
+      <Filter>CMP_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\shaders\BC5_Encode_kernel.h">
+      <Filter>CMP_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\shaders\BC6_Encode_kernel.h">
+      <Filter>CMP_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\shaders\BC7_Encode_Kernel.h">
+      <Filter>CMP_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\shaders\BCn_Common_Kernel.h">
+      <Filter>CMP_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Framework\Compute_Base.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\CCMP_SDK\BC1\BC1.h">
+      <Filter>StaticPlugins\Encoders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\CCMP_SDK\BC2\BC2.h">
+      <Filter>StaticPlugins\Encoders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\CCMP_SDK\BC3\BC3.h">
+      <Filter>StaticPlugins\Encoders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\CCMP_SDK\BC4\BC4.h">
+      <Filter>StaticPlugins\Encoders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\CCMP_SDK\BC5\BC5.h">
+      <Filter>StaticPlugins\Encoders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\CCMP_SDK\BC6\BC6H.h">
+      <Filter>StaticPlugins\Encoders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\CCMP_SDK\BC7\BC7.h">
+      <Filter>StaticPlugins\Encoders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\cmp_math_common.h">
+      <Filter>CMP_Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\cmp_math_cpuid.h">
+      <Filter>CMP_Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\source\CMP_Core.h">
+      <Filter>CMP_Core</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Applications\_Plugins\Common\TC_PluginInternal.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\Common\UtilFuncs.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\Common\PluginManager.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\Common\ATIFormats.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\CImage\DDS\DDS.cpp">
+      <Filter>StaticPlugins\ImageIO\DDS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\CImage\DDS\DDS_DX10.cpp">
+      <Filter>StaticPlugins\ImageIO\DDS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\CImage\DDS\DDS_File.cpp">
+      <Filter>StaticPlugins\ImageIO\DDS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\CImage\DDS\DDS_Helpers.cpp">
+      <Filter>StaticPlugins\ImageIO\DDS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\CCMP_Encode\HPC\CCPU_HPC.cpp">
+      <Filter>StaticPlugins\Pipeline\HPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\CCMP_Encode\HPC\cmp_hpc.cpp">
+      <Filter>StaticPlugins\Pipeline\HPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\CCMP_Encode\HPC\Compute_CPU_HPC.cpp">
+      <Filter>StaticPlugins\Pipeline\HPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\Common\query_timer.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_Framework\Common\half\half.cpp">
+      <Filter>Common\half</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_Framework\Common\CMP_BoxFilter.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_Framework\Common\CMP_MIPS.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_Core\shaders\BC1_Encode_kernel.cpp">
+      <Filter>CMP_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_Core\shaders\BC2_Encode_kernel.cpp">
+      <Filter>CMP_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_Core\shaders\BC3_Encode_kernel.cpp">
+      <Filter>CMP_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_Core\shaders\BC4_Encode_kernel.cpp">
+      <Filter>CMP_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_Core\shaders\BC5_Encode_kernel.cpp">
+      <Filter>CMP_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_Core\shaders\BC6_Encode_kernel.cpp">
+      <Filter>CMP_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_Core\shaders\BC7_Encode_Kernel.cpp">
+      <Filter>CMP_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_Framework\Compute_Base.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\CCMP_SDK\BC1\BC1.cpp">
+      <Filter>StaticPlugins\Encoders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\CCMP_SDK\BC2\BC2.cpp">
+      <Filter>StaticPlugins\Encoders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\CCMP_SDK\BC3\BC3.cpp">
+      <Filter>StaticPlugins\Encoders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\CCMP_SDK\BC4\BC4.cpp">
+      <Filter>StaticPlugins\Encoders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\CCMP_SDK\BC5\BC5.cpp">
+      <Filter>StaticPlugins\Encoders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\CCMP_SDK\BC6\BC6H.cpp">
+      <Filter>StaticPlugins\Encoders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\CCMP_SDK\BC7\BC7.cpp">
+      <Filter>StaticPlugins\Encoders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Libs\CMP_Math\cmp_math_common.cpp">
+      <Filter>CMP_Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Libs\CMP_Math\cmp_math_cpuid.cpp">
+      <Filter>CMP_Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Libs\CMP_Math\kernel_math.cpp">
+      <Filter>CMP_Math</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\CMP_Core\shaders\CopyFiles.bat" />
+  </ItemGroup>
+</Project>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug_DLL|Win32">
       <Configuration>Debug_DLL</Configuration>
@@ -68,284 +68,289 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../Applications/_Plugins/Common/PluginInterface.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_octahedron_transform.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_quantization_transform.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_transform.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_transform_data.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_transform_type.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\geometry_attribute.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\geometry_indices.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\point_attribute.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\attributes_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\attributes_decoder_interface.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\attributes_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\kd_tree_attributes_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\kd_tree_attributes_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\kd_tree_attributes_shared.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\linear_sequencer.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\mesh_attribute_indices_encoding_data.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\mesh_attribute_indices_encoding_observer.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\mesh_traversal_sequencer.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\normal_compression_utils.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\points_sequencer.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_constrained_multi_parallelogram_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_constrained_multi_parallelogram_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_constrained_multi_parallelogram_shared.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_data.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_predictor_area.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_predictor_base.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_multi_parallelogram_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_multi_parallelogram_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_parallelogram_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_parallelogram_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_parallelogram_shared.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_portable_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_portable_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_portable_predictor.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_decoder_factory.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_decoder_interface.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_decoding_transform.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_delta_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_delta_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder_factory.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder_interface.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_encoding_transform.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_factory.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_interface.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_canonicalized_decoding_transform.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_canonicalized_encoding_transform.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_canonicalized_transform_base.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_decoding_transform.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_encoding_transform.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_transform_base.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_wrap_decoding_transform.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_wrap_encoding_transform.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_wrap_transform_base.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_decoders_controller.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_encoders_controller.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_integer_attribute_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_integer_attribute_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_normal_attribute_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_normal_attribute_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_quantization_attribute_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_quantization_attribute_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\config\compression_shared.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\config\decoder_options.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\config\draco_options.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\config\encoder_options.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\config\encoding_features.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\decode.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\encode.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\encode_base.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\expert_encode.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_decoder_helpers.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_decoder_impl.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_decoder_impl_interface.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_encoder_impl.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_encoder_impl_interface.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_shared.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_traversal_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_traversal_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_traversal_predictive_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_traversal_predictive_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_traversal_valence_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_traversal_valence_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_encoder_helpers.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_sequential_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_sequential_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\dynamic_integer_points_kd_tree_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\dynamic_integer_points_kd_tree_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\float_points_tree_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\float_points_tree_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\integer_points_kd_tree_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\integer_points_kd_tree_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\point_cloud_compression_method.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\point_cloud_types.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\quantize_points_3.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\queuing_policy.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_kd_tree_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_kd_tree_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_sequential_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_sequential_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\ans.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\adaptive_rans_bit_coding_shared.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\adaptive_rans_bit_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\adaptive_rans_bit_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\direct_bit_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\direct_bit_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\folded_integer_bit_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\folded_integer_bit_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\rans_bit_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\rans_bit_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\symbol_bit_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\symbol_bit_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_utils.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\cycle_timer.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\data_buffer.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\decoder_buffer.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\divide.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\draco_index_type.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\draco_index_type_vector.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\draco_types.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\draco_version.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\encoder_buffer.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\hash_utils.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\macros.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\math_utils.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\options.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\quantization_utils.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\rans_symbol_coding.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\rans_symbol_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\rans_symbol_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\shannon_entropy.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\status.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\statusor.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\symbol_coding_utils.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\symbol_decoding.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\symbol_encoding.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\varint_decoding.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\varint_encoding.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\vector_d.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_octahedron_transform.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_quantization_transform.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_transform.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_transform_data.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_transform_type.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\attributes\geometry_attribute.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\attributes\geometry_indices.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\attributes\point_attribute.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\attributes_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\attributes_decoder_interface.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\attributes_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\kd_tree_attributes_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\kd_tree_attributes_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\kd_tree_attributes_shared.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\linear_sequencer.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\mesh_attribute_indices_encoding_data.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\mesh_attribute_indices_encoding_observer.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\mesh_traversal_sequencer.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\normal_compression_utils.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\points_sequencer.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\point_d_vector.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_constrained_multi_parallelogram_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_constrained_multi_parallelogram_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_constrained_multi_parallelogram_shared.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_data.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_predictor_area.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_predictor_base.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_multi_parallelogram_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_multi_parallelogram_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_parallelogram_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_parallelogram_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_parallelogram_shared.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_portable_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_portable_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_portable_predictor.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_decoder_factory.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_decoder_interface.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_decoding_transform.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_delta_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_delta_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder_factory.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder_interface.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_encoding_transform.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_factory.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_interface.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_canonicalized_decoding_transform.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_canonicalized_encoding_transform.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_canonicalized_transform_base.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_decoding_transform.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_encoding_transform.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_transform_base.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_wrap_decoding_transform.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_wrap_encoding_transform.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_wrap_transform_base.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_decoders_controller.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_encoders_controller.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_integer_attribute_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_integer_attribute_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_normal_attribute_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_normal_attribute_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_quantization_attribute_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_quantization_attribute_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\config\compression_shared.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\config\decoder_options.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\config\draco_options.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\config\encoder_options.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\config\encoding_features.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\decode.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\encode.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\encode_base.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\expert_encode.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_decoder_helpers.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_decoder_impl.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_decoder_impl_interface.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_encoder_impl.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_encoder_impl_interface.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_shared.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_traversal_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_traversal_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_traversal_predictive_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_traversal_predictive_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_traversal_valence_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_traversal_valence_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_encoder_helpers.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_sequential_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_sequential_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\dynamic_integer_points_kd_tree_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\dynamic_integer_points_kd_tree_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\float_points_tree_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\float_points_tree_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\integer_points_kd_tree_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\integer_points_kd_tree_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\point_cloud_compression_method.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\point_cloud_types.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\quantize_points_3.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\queuing_policy.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_kd_tree_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_kd_tree_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_sequential_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_sequential_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\ans.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\adaptive_rans_bit_coding_shared.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\adaptive_rans_bit_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\adaptive_rans_bit_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\direct_bit_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\direct_bit_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\folded_integer_bit_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\folded_integer_bit_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\rans_bit_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\rans_bit_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\symbol_bit_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\symbol_bit_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_utils.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\cycle_timer.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\data_buffer.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\decoder_buffer.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\divide.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\draco_index_type.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\draco_index_type_vector.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\draco_types.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\draco_version.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\encoder_buffer.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\hash_utils.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\macros.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\math_utils.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\options.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\quantization_utils.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\rans_symbol_coding.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\rans_symbol_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\rans_symbol_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\shannon_entropy.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\status.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\statusor.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\symbol_coding_utils.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\symbol_decoding.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\symbol_encoding.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\varint_decoding.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\varint_encoding.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\vector_d.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\io\mesh_io.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\io\obj_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\io\obj_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\io\parser_utils.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\io\ply_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\io\ply_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\io\ply_property_reader.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\io\ply_property_writer.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\io\ply_reader.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\io\point_cloud_io.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\corner_table.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\corner_table_indices.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\corner_table_iterators.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\corner_table_traversal_processor.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\edgebreaker_observer.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\edgebreaker_traverser.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\mesh.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_are_equivalent.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_attribute_corner_table.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_cleanup.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_indices.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_misc_functions.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_stripifier.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\prediction_degree_traverser.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\triangle_soup_mesh_builder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\valence_cache.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\metadata\geometry_metadata.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\metadata\metadata.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\metadata\metadata_decoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\metadata\metadata_encoder.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\point_cloud\point_cloud.h" />
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\point_cloud\point_cloud_builder.h" />
     <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\draco_features.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\mesh_io.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\obj_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\obj_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\parser_utils.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\ply_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\ply_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\ply_property_reader.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\ply_property_writer.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\ply_reader.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\point_cloud_io.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\corner_table.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\corner_table_iterators.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\corner_table_traversal_processor.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\edgebreaker_observer.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\edgebreaker_traverser.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_are_equivalent.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_attribute_corner_table.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_cleanup.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_misc_functions.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_stripifier.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\prediction_degree_traverser.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\triangle_soup_mesh_builder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\metadata\geometry_metadata.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\metadata\metadata.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\metadata\metadata_decoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\metadata\metadata_encoder.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\point_cloud\point_cloud.h" />
-    <ClInclude Include="..\Source\CMP_MeshCompressor\Draco\src\draco\point_cloud\point_cloud_builder.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_octahedron_transform.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_quantization_transform.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_transform.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\geometry_attribute.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\attributes\point_attribute.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\attributes_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\attributes_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\kd_tree_attributes_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\kd_tree_attributes_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder_factory.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_decoders_controller.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_encoders_controller.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_integer_attribute_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_integer_attribute_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_normal_attribute_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_normal_attribute_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_quantization_attribute_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_quantization_attribute_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\decode.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\encode.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\expert_encode.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_decoder_impl.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_encoder_impl.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_sequential_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_sequential_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\dynamic_integer_points_kd_tree_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\dynamic_integer_points_kd_tree_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\float_points_tree_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\float_points_tree_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\integer_points_kd_tree_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\integer_points_kd_tree_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_kd_tree_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_kd_tree_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_sequential_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_sequential_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\adaptive_rans_bit_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\adaptive_rans_bit_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\direct_bit_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\direct_bit_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\rans_bit_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\rans_bit_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\symbol_bit_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\symbol_bit_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\cycle_timer.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\data_buffer.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\decoder_buffer.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\divide.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\draco_types.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\encoder_buffer.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\hash_utils.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\options.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\quantization_utils.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\shannon_entropy.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\symbol_coding_utils.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\symbol_decoding.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\core\symbol_encoding.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\mesh_io.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\obj_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\obj_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\parser_utils.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\ply_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\ply_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\ply_reader.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\io\point_cloud_io.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\corner_table.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_are_equivalent.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_attribute_corner_table.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_cleanup.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_misc_functions.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_stripifier.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\mesh\triangle_soup_mesh_builder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\metadata\geometry_metadata.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\metadata\metadata.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\metadata\metadata_decoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\metadata\metadata_encoder.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\point_cloud\point_cloud.cc" />
-    <ClCompile Include="..\Source\CMP_MeshCompressor\Draco\src\draco\point_cloud\point_cloud_builder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_octahedron_transform.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_quantization_transform.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\attributes\attribute_transform.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\attributes\geometry_attribute.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\attributes\point_attribute.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\attributes_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\attributes_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\kd_tree_attributes_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\kd_tree_attributes_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder_factory.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_decoders_controller.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_attribute_encoders_controller.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_integer_attribute_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_integer_attribute_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_normal_attribute_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_normal_attribute_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_quantization_attribute_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\attributes\sequential_quantization_attribute_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\decode.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\encode.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\expert_encode.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_decoder_impl.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_edgebreaker_encoder_impl.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_sequential_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\mesh\mesh_sequential_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\dynamic_integer_points_kd_tree_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\dynamic_integer_points_kd_tree_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\float_points_tree_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\float_points_tree_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\integer_points_kd_tree_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\algorithms\integer_points_kd_tree_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_kd_tree_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_kd_tree_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_sequential_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\compression\point_cloud\point_cloud_sequential_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\adaptive_rans_bit_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\adaptive_rans_bit_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\direct_bit_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\direct_bit_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\rans_bit_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\rans_bit_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\symbol_bit_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\bit_coders\symbol_bit_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\cycle_timer.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\data_buffer.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\decoder_buffer.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\divide.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\draco_types.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\encoder_buffer.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\hash_utils.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\options.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\quantization_utils.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\shannon_entropy.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\symbol_coding_utils.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\symbol_decoding.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\core\symbol_encoding.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\io\mesh_io.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\io\obj_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\io\obj_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\io\parser_utils.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\io\ply_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\io\ply_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\io\ply_reader.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\io\point_cloud_io.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\corner_table.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\mesh.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_are_equivalent.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_attribute_corner_table.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_cleanup.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_misc_functions.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\mesh_stripifier.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\mesh\triangle_soup_mesh_builder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\metadata\geometry_metadata.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\metadata\metadata.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\metadata\metadata_decoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\metadata\metadata_encoder.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\point_cloud\point_cloud.cc" />
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshCompressor\Draco\src\draco\point_cloud\point_cloud_builder.cc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7C0BBA01-021D-4B42-9070-00FA9B635167}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CMP_MeshOptimizer</RootNamespace>
     <ProjectName>CMP_MeshCompressor</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -465,100 +470,116 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>$(ProjectName)_MTd</TargetName>
@@ -585,52 +606,52 @@
     <TargetName>$(ProjectName)_MDd_DLL</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetName>$(ProjectName)_MT</TargetName>
@@ -663,7 +684,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../source/CMP_MeshCompressor/Draco/src;../Header/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -702,7 +723,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../source/CMP_MeshCompressor/Draco/src;../Header/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -741,7 +762,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../source/CMP_MeshCompressor/Draco/src;../Header/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -780,7 +801,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../source/CMP_MeshCompressor/Draco/src;../Header/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -819,7 +840,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../source/CMP_MeshCompressor/Draco/src;../Header/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -852,7 +873,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../source/CMP_MeshCompressor/Draco/src;../Header/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -880,10 +901,10 @@
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;_WIN64;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../source/CMP_MeshCompressor/Draco/src;../Header/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -917,7 +938,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../source/CMP_MeshCompressor/Draco/src;../Header/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -951,7 +972,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../source/CMP_MeshCompressor/Draco/src;../Header/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -999,7 +1020,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../source/CMP_MeshCompressor/Draco/src;../Header/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -1047,7 +1068,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../source/CMP_MeshCompressor/Draco/src;../Header/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -1095,7 +1116,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../source/CMP_MeshCompressor/Draco/src;../Header/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -1142,7 +1163,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../source/CMP_MeshCompressor/Draco/src;../Header/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -1177,7 +1198,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../source/CMP_MeshCompressor/Draco/src;../Header/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -1205,19 +1226,20 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
     <ClCompile>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;VK_USE_PLATFORM_WIN32_KHR;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../source/CMP_MeshCompressor/Draco/src;../Header/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ProgramDataBaseFileName>$(OutDir)$(ProjectName)_MD.pdb</ProgramDataBaseFileName>
       <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
+      <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -1238,6 +1260,9 @@
       </AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
     <ClCompile>
@@ -1248,7 +1273,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../source/CMP_MeshCompressor/Draco/src;../Header/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>

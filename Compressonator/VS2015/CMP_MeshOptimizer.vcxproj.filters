@@ -12,39 +12,39 @@
     <ClInclude Include="../Applications/_Plugins/Common/PluginInterface.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\CMP_MeshOptimizer\meshoptimizer.h">
+    <ClInclude Include="..\Applications\_Libs\CMP_MeshOptimizer\meshoptimizer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\CMP_MeshOptimizer\indexcodec.cpp">
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshOptimizer\indexcodec.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\CMP_MeshOptimizer\indexgenerator.cpp">
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshOptimizer\indexgenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\CMP_MeshOptimizer\overdrawanalyzer.cpp">
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshOptimizer\overdrawanalyzer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\CMP_MeshOptimizer\overdrawoptimizer.cpp">
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshOptimizer\overdrawoptimizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\CMP_MeshOptimizer\simplifier.cpp">
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshOptimizer\simplifier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\CMP_MeshOptimizer\stripifier.cpp">
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshOptimizer\stripifier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\CMP_MeshOptimizer\vcacheanalyzer.cpp">
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshOptimizer\vcacheanalyzer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\CMP_MeshOptimizer\vcacheoptimizer.cpp">
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshOptimizer\vcacheoptimizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\CMP_MeshOptimizer\vfetchanalyzer.cpp">
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshOptimizer\vfetchanalyzer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\CMP_MeshOptimizer\vfetchoptimizer.cpp">
+    <ClCompile Include="..\Applications\_Libs\CMP_MeshOptimizer\vfetchoptimizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

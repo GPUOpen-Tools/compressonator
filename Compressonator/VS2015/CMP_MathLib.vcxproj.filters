@@ -7,35 +7,59 @@
     <Filter Include="JML">
       <UniqueIdentifier>{f6570828-6077-4079-85ab-f141f1a833b7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{a2332209-25ab-40cd-a3cd-6e2fafe86949}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../Applications/_Plugins/Common/PluginInterface.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\CMP_Math\JML.h">
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\cmp_math_common.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\cmp_math_cpuid.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\TootlePCH.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\JML.h">
       <Filter>JML</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\CMP_Math\JMLFuncs.h">
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\JMLFuncs.h">
       <Filter>JML</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\CMP_Math\JMLMatrix.h">
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\JMLMatrix.h">
       <Filter>JML</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\CMP_Math\JMLScalar.h">
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\JMLScalar.h">
       <Filter>JML</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\CMP_Math\JMLSSEVec.h">
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\JMLSSEVec.h">
       <Filter>JML</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\CMP_Math\JMLVec2.h">
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\JMLVec2.h">
       <Filter>JML</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\CMP_Math\JMLVec3.h">
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\JMLVec3.h">
+      <Filter>JML</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\JRTCommon.h">
       <Filter>JML</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\CMP_Math\JMLFuncs.cpp">
+    <ClCompile Include="..\Applications\_Libs\CMP_Math\cmp_math_common.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Libs\CMP_Math\cmp_math_cpuid.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Libs\CMP_Math\kernel_math.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Libs\CMP_Math\JMLFuncs.cpp">
       <Filter>JML</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug_DLL|Win32">
       <Configuration>Debug_DLL</Configuration>
@@ -67,19 +67,20 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="../Source/GPU_Decode/GPU_Decode.cpp" />
-    <ClCompile Include="../Source/GPU_Decode/GPU_DecodeBase.cpp" />
+    <ClInclude Include="../Applications/_Plugins/Common/PluginInterface.h" />
+    <ClInclude Include="..\Applications\_Libs\GPU_Decode\GPU_Decode.h" />
+    <ClInclude Include="..\Applications\_Libs\GPU_Decode\GPU_DecodeBase.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="../Applications/_Plugins/Common/PluginInterface.h" />
-    <ClInclude Include="../Header/GPU_Decode/GPU_Decode.h" />
-    <ClInclude Include="../Header/GPU_Decode/GPU_DecodeBase.h" />
+    <ClCompile Include="..\Applications\_Libs\GPU_Decode\GPU_Decode.cpp" />
+    <ClCompile Include="..\Applications\_Libs\GPU_Decode\GPU_DecodeBase.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{17CCD4C6-5E35-404C-8613-32775F250A92}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>GPU_DecodeLib</RootNamespace>
     <ProjectName>GPU_Decode</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -199,100 +200,116 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)/Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Compressonator_Root.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>$(ProjectName)_MTd</TargetName>
@@ -319,52 +336,52 @@
     <TargetName>$(ProjectName)_MDd_DLL</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
-    <OutDir>../Build/VS2015/$(Configuration)/$(Platform)/</OutDir>
+    <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
-    <IntDir>../Build/VS2015/Temp/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir>..\Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetName>$(ProjectName)_MT</TargetName>
@@ -617,7 +634,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;_WIN64;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Lib/Ext/DirectXTex/v132;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;$(VULKAN_SDK)/Include;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../CMP_Framework;../CMP_Framework/Common/half;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../../Common/Lib/Ext/DirectXTex/v132;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;$(VULKAN_SDK)/Include;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -944,12 +961,13 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;VK_USE_PLATFORM_WIN32_KHR;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../Common/Lib/Ext/DirectXTex/v132;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;$(VULKAN_SDK)/Include;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../CMP_Framework;../CMP_Framework/Common/half;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;$(VULKAN_SDK)/Include;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ProgramDataBaseFileName>$(OutDir)$(ProjectName)_MD.pdb</ProgramDataBaseFileName>
       <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
+      <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -969,6 +987,9 @@
       <AdditionalDependencies>vulkan-1.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../Common/Lib/Ext/Vulkan/1.0.68.0/Lib/;$(VULKAN_SDK)/Lib;../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
     <ClCompile>
