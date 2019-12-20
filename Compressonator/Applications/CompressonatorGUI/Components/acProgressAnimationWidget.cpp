@@ -6,7 +6,7 @@
 ///
 //==================================================================================
 
-#include <acProgressAnimationWidget.h>
+#include "acProgressAnimationWidget.h"
 //#include <acColours.h>
 
 #include <QtWidgets>
