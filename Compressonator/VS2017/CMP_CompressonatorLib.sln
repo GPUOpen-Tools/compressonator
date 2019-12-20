@@ -1,0 +1,67 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.852
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Compressonator", "CMP_CompressonatorLib.vcxproj", "{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_DLL|Win32 = Debug_DLL|Win32
+		Debug_DLL|x64 = Debug_DLL|x64
+		Debug_MD_DLL|Win32 = Debug_MD_DLL|Win32
+		Debug_MD_DLL|x64 = Debug_MD_DLL|x64
+		Debug_MD|Win32 = Debug_MD|Win32
+		Debug_MD|x64 = Debug_MD|x64
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release_DLL|Win32 = Release_DLL|Win32
+		Release_DLL|x64 = Release_DLL|x64
+		Release_MD_DLL|Win32 = Release_MD_DLL|Win32
+		Release_MD_DLL|x64 = Release_MD_DLL|x64
+		Release_MD|Win32 = Release_MD|Win32
+		Release_MD|x64 = Release_MD|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Debug_DLL|Win32.ActiveCfg = Debug_DLL|Win32
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Debug_DLL|Win32.Build.0 = Debug_DLL|Win32
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Debug_DLL|x64.ActiveCfg = Debug_DLL|x64
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Debug_DLL|x64.Build.0 = Debug_DLL|x64
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Debug_MD_DLL|Win32.ActiveCfg = Debug_MD_DLL|Win32
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Debug_MD_DLL|Win32.Build.0 = Debug_MD_DLL|Win32
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Debug_MD_DLL|x64.ActiveCfg = Debug_MD_DLL|x64
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Debug_MD_DLL|x64.Build.0 = Debug_MD_DLL|x64
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Debug_MD|Win32.ActiveCfg = Debug_MD|Win32
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Debug_MD|Win32.Build.0 = Debug_MD|Win32
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Debug_MD|x64.ActiveCfg = Debug_MD|x64
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Debug_MD|x64.Build.0 = Debug_MD|x64
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Debug|Win32.Build.0 = Debug|Win32
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Debug|x64.ActiveCfg = Debug|x64
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Debug|x64.Build.0 = Debug|x64
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Release_DLL|Win32.ActiveCfg = Release_DLL|Win32
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Release_DLL|Win32.Build.0 = Release_DLL|Win32
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Release_DLL|x64.ActiveCfg = Release_DLL|x64
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Release_DLL|x64.Build.0 = Release_DLL|x64
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Release_MD_DLL|Win32.ActiveCfg = Release_MD_DLL|Win32
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Release_MD_DLL|Win32.Build.0 = Release_MD_DLL|Win32
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Release_MD_DLL|x64.ActiveCfg = Release_MD_DLL|x64
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Release_MD_DLL|x64.Build.0 = Release_MD_DLL|x64
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Release_MD|Win32.ActiveCfg = Release_MD|Win32
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Release_MD|Win32.Build.0 = Release_MD|Win32
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Release_MD|x64.ActiveCfg = Release_MD|x64
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Release_MD|x64.Build.0 = Release_MD|x64
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Release|Win32.ActiveCfg = Release|Win32
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Release|Win32.Build.0 = Release|Win32
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Release|x64.ActiveCfg = Release|x64
+		{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {45177860-E25E-4CB5-B0B6-7D297D54F1C5}
+	EndGlobalSection
+EndGlobal

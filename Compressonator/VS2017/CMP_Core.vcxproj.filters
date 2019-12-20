@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="source">
+      <UniqueIdentifier>{fdea98a3-eea1-4cb3-baf6-61016ccfe06a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BCn">
+      <UniqueIdentifier>{50dab8c4-84bc-4404-8a3f-88d224ebe15b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\CMP_Core\shaders\CopyFiles.bat" />
+    <None Include="..\CMP_Core\CMP_Core.def">
+      <Filter>source</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\CMP_Core\shaders\BC1_Encode_kernel.cpp">
+      <Filter>BCn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_Core\shaders\BC7_Encode_Kernel.cpp">
+      <Filter>BCn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_Core\shaders\BC2_Encode_kernel.cpp">
+      <Filter>BCn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_Core\shaders\BC3_Encode_kernel.cpp">
+      <Filter>BCn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_Core\shaders\BC4_Encode_kernel.cpp">
+      <Filter>BCn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_Core\shaders\BC5_Encode_kernel.cpp">
+      <Filter>BCn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_Core\shaders\BC6_Encode_kernel.cpp">
+      <Filter>BCn</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\CMP_Core\shaders\BC1_Encode_kernel.h">
+      <Filter>BCn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\source\CMP_Core.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\source\cmp_math_vec4.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\shaders\BC7_Encode_Kernel.h">
+      <Filter>BCn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\shaders\BC2_Encode_kernel.h">
+      <Filter>BCn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\shaders\BC3_Encode_kernel.h">
+      <Filter>BCn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\shaders\BC4_Encode_kernel.h">
+      <Filter>BCn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\shaders\BC5_Encode_kernel.h">
+      <Filter>BCn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\shaders\BC6_Encode_kernel.h">
+      <Filter>BCn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\shaders\Common_Def.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\shaders\BCn_Common_Kernel.h">
+      <Filter>BCn</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
