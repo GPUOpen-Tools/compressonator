@@ -1,7 +1,6 @@
 ﻿Compressonator
 ==============
-**Compressonator SDK source URL:** 
-https://github.com/GPUOpen-Tools/Compressonator
+**Compressonator SDK source** URL: https://github.com/GPUOpen-Tools/Compressonator
 
 Compressonator is a set of tools to allow artists and developers to more easily work with compressed assets and easily visualize the quality impact of various compression technologies.  It consists of a GUI application, a command line application and an SDK for easy integration into a developer toolchain.
 
@@ -26,4 +25,5 @@ Compressonator supports Microsoft Windows®, Linux and Mac builds.
    revisions
    support/contact
    support/license
-  
+   bibliography
+

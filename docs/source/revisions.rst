@@ -3,6 +3,58 @@
 
 For the latest documentation, please refer to:  http://compressonator.readthedocs.io/en/latest/
 
+V3.2
+~~~~
+December 2019
+
+**Features**
+
+-  `New Libraries <developer_sdk/index.html>`__
+
+	Several new libraries are now provided with the SDK. 
+
+	`Compressonator Core <developer_sdk/cmp_core/index.html>`__
+	Provides block level API access to updated performance and quality driven BCn codecs.
+
+	`Compressonator Framework <developer_sdk/cmp_framework/index.html>`__
+	Includes Compressonator core with interfaces for multi-threading, mipmap generation, file access of images and HPC pipeline interfaces. (SPMD & GPU support is not enabled in this release)
+
+	`Compressonator SDK <developer_sdk/cmp_compressonator/index.html>`__
+	Has been updated to support Cube Maps, MIP Map generation. External link requirement for Open EXR has been removed.
+
+
+-  `Cube Map Support <gui_tool/user_guide/UserGuide.html#cube-maps>`__
+
+	This release previews cube map support for images that are limited to RGBA_8888 format and RGBA_F16. Support for other formats will be provided in the next major update.
+
+-  `Analysis Views <analysis/index.html#analysis-views>`__
+
+	A analysis table view and results output are provided for users to view test analysis results for Performance, PSNR and SSIM analysis during and after processing of image textures.
+
+
+**Known issues and limitations** 
+
+-  HPC BC7 codec on Linux platforms shows block artifacts.
+
+-  HDR Cube maps (Format ARGB_16F) files have issues in the GUI view, only the first frame and MIP Level is displayed.
+
+-  Cube map only supports a limited set of texture types (RGBA_8888 and RGBA_F16), additional format will be added in future release.
+
+-  Cube maps with .KTX as destination format is not supported. 
+
+-  When transcoding signed floats with BC6H HPC on unsigned RGBA_8888 data the images will appear distorted.
+
+-  CreateCodecBuffer (nCodecBufferType) case needs to create new codec buffers for CBT_RGBA8888, CBT_BGRA8888 and CBT_ARGB8888. The fix has been patched in this release.
+
+-  In GUI, ATI2N decode with CPU is swizzled. Decode views with GPU_OpenGL, GPU_DirectX and GPU_Vulkan are correct.
+
+-  MSE calculations are based on RGB channels only, alpha channel is not included. New MSE calculations based on MipSet data format for RGBA channels will be used in next release.
+
+**Notes** 
+
+-  BC5 codec uses ATI2N_XY (Red & Green) channel format  if you prefer Green & Red for BC5 please use ATI2N format for encoding.
+-  In GUI, BC4 decode views using CPU is gray scaled based on Red channel. Next release will only use Red channel views to match GPU views.
+
 
 V3.1
 ~~~~
@@ -266,11 +318,11 @@ July 2016
 
 **Features**
 
-`ETC2 codec for RGB textures <gui_tool/user_guide/UserGuide.html#etc2>`__
+`ETC2 codec for RGB textures <gui_tool/user_guide/TextureCompression.html#etc2>`__
 
 -  Compatible with OpenGL’s GL\_COMPRESSED\_RGB8\_ETC2 API
 
-`ASTC <gui_tool/user_guide/UserGuide.html#astc>`__ compression & decompression of various block sizes
+`ASTC <gui_tool/user_guide/TextureCompression.html#astc>`__ compression & decompression of various block sizes
 from 4x4 to 12x12
 
 -  Supported through OpenGL APIs

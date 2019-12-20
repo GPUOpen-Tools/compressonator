@@ -14,7 +14,7 @@ In your code, link in the built libraries and include the header file `mesh_opti
 * void* statsOut and CMP_Feedback_Proc pFeedbackProc are reserved for statistic output and progress feedbacks, they are optional input and can be nullptr.
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 8
    :name: toc-developer_sdk-mesh_optimization
    
 

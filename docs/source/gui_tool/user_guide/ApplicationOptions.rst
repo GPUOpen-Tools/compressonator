@@ -9,6 +9,15 @@ the Settings – Set Application Options menu
 
 Application Settings Window
 
+Encode with
+~~~~~~~~~~~
+For compressed images this option selects how images are compressed either with CPU or HPC.
+HPC runs codecs optimized for vector extensions and SPMD processing on CPU.
+
+*Note*
+Only BC1 to BC7 format are supported with HPC Compress, if you choose other format under HPC Compress, they will be compressed with generalized CPU instructions
+
+
 Decode with
 ~~~~~~~~~~~
 
@@ -28,6 +37,7 @@ viewing an image from the Project Explorer. Advantage of switching this
 mode, is that for large compressed images the image view takes
 considerable time to decompress and not necessary if the compressed file
 content has not changed.
+
 
 Close all Image Views Prior to Process
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -55,4 +65,39 @@ files list from the file menu.
 
 .. |image38| image:: media/image41.png
 .. |image39| image:: media/image42.png
+
+
+Set Image Diff Contrast
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Sets the contrast of pixels for image view diff, using 1.0 returns pixels to original diff contrast, min is 1 max is 200
+
+Set Number of Threads
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Sets the number of threads to use for texture compression, max is 128 threads distributed over multiple cores
+Default 0 sets auto detection, where the total threads = number of processor cores, if auto detection fails default = 8
+
+When selecting this option users can also view what the host processor has available and is shown in square brackets as illustrated below:
+
+Max number of processors [8]
+
+The GUI application must be restarted in order for the new settings to take effect
+
+
+Render Models with
+~~~~~~~~~~~~~~~~~~
+
+Selects how to render 3D Model files using OpenGL for Obj and DirectX or Vulkan for GLTF files.
+
+Show MSE PSNR SSIM Results
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The output windows will display these values after processing a image, when all processing is done an average summary of all of the results will be displayed.
+
+Show Analysis Results Table
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Shows all Process Times, PSNR and SSIM results for compressed images in a table view. 
+
 

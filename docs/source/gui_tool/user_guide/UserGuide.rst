@@ -30,11 +30,24 @@ view as shown below
 
 |image56|
 
+
 Image View of Ruby BMP file at Mip Level 3
 
 You can always re-generate MIP map for the same image by repeating the
 all the steps mentioned in this section.
 
+
+
+Cube Maps
+---------
+Cube Maps can be compressed with or without MIP Levels. Only a limited set of texture types (RGBA_8888 and RGBA_F16) are currently supported in DDS and KTX file formats. Compressing, Generating MIP Levels and Viewing Cube Maps uses the same process as image textures. Just place the file onto the Project Explorer and process them as required.
+
+A new notation is used for the cube faces labeled as “Frames” for each cube face. For cube mapped files maximum frames is set to 6. Support for volumetric texture files is been reviewed and the frames limit will be expanded as needed.
+
+When textures are added to the Project Explorer, the properties view will now display the type of texture as either a 2D or Cube Map, The Depth field is used for the frames size, the Depth field will also be used to indicate the z component of a 3D image (These notations may change in future revisions).
+
+
+|cubemaps_image1|
 
 
 View Image Difference
@@ -88,5 +101,7 @@ the Property View
 .. |image128| image:: media/image128.png
 .. |image129| image:: media/image129.png
 .. |image130| image:: media/image130.png
+.. |cubemaps_image1| image:: media/cubemaps.png
+
 
 

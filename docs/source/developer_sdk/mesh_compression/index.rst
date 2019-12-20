@@ -106,7 +106,7 @@ Helper function
 
 	
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 8
    :name: toc-developer_sdk-mesh_compression
   
    

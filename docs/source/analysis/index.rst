@@ -1,7 +1,7 @@
-Analysis
+﻿Analysis
 ========
 
-CompressonatorCLI application provides options for analysis and comparison between original and processed images.
+Compressonator CLI and GUI applications provides options for analysis and comparison between original and processed images.
 
 Test Analysis Log Features And File Filters
 -------------------------------------------
@@ -92,3 +92,41 @@ For example: ``CompressonatorCLI.exe -imageprops Boat.png``
 
 This option will print file name, path, size, image width, height, mip levels and format.
 
+
+Analysis Views
+--------------
+
+A new table view is provided for users to view test analysis results for performance, PSNR and SSIM analysis during and after processing of image textures. Previously in v3.1 user would have to run "Image Difference Views" on each processed texture to view PSNR and SSIM results, which ends up been very time consuming for large number of images. An amalgamated results view is now available for users to collect and review results for processed images.
+To enable this feature, select the "Show MSR PSNR SSIM Results" and optionally "Show Analysis Results Table" in the "Applications Settings" menu as shown:
+
+|analysis_image1|
+
+**Show MSR PSNR SSIM Results**
+
+Enables the analysis results feature. Each processed item will display a MSE, PSNR and SSIM as it is been processed on the output window. A summary of the average processing time PSNR and SSIM is displayed once all processing is completed (MSR average results is not collected as its already included in the PSNR calculations).
+It also enables the "Show Analysis Results Table" for selection. This selection is active only when "Show MSR PSNR SSIM Results" is enabled, else the table will not be shown after processing
+
+|analysis_image2|
+
+**Show Analysis Results Table**
+Displays this table after any image is been processed (TIME is in Seconds, PSRN is in dB and SSIM is an index in range of 0...1)
+
+|analysis_image3|
+
+When processing images the table view will be displayed and can be used to gather results and analysis data for reports, by simply selecting the required rows and columns in the table then copy (Ctrl+C) and pasting (Ctrl+V) the table view. 
+
+**Please note the following**
+
+	- The table view is re-sizable by mouse clicking on and dragging the table edges and dividers. 
+	- The resized view and table position are not saved and is reset when the GUI application is restarted.
+	- Table Header labels are not copied.
+	- Table content is cleared when any of the image textures are been reprocessed. 
+	- When enabled, the table will remain as a topmost windows view.
+	- During processing the table content is been updated.
+	- When deselecting the analysis table view from the "Applications Settings" menu, the table will still remain visible, it is cleared only when a image is been processed.
+
+
+
+.. |analysis_image1| image:: media/CMP_v3.2_Run_Time_Analysis.png
+.. |analysis_image2| image:: media/CMP_v3.2_Analysis_Output.png
+.. |analysis_image3| image:: media/CMP_v3.2_Analysis_Table.png

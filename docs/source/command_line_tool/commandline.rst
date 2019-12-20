@@ -33,6 +33,8 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 |                     | when set OpenGL will be used by default, this can be       |
 |                     | changed to DirectX or Vulkan using DecodeWith setting      |
 +---------------------+------------------------------------------------------------+
+| -EncodeWith         | Compression with CPU or HPC                                |
++---------------------+------------------------------------------------------------+
 | -DecodeWith         | Sets OpenGL, DirectX or Vulkan for GPU decompress          |
 |                     | Default is OpenGL, UseGPUDecompress is implied when        |
 |                     | this option is set                                         |
@@ -188,7 +190,7 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 |                             |use a sign bit                                            |
 +-----------------------------+----------------------------------------------------------+
 |-NumThreads <value>          |Number of threads to initialize for ASTC,BC6H,BC7         |
-|                             |encoding (Max up to 128). Default set to 8                |
+|                             |encoding (Max up to 128). Default set to 0 (Auto)         |
 +-----------------------------+----------------------------------------------------------+
 |-Quality <value>             |Sets quality of encoding for BC7                          |
 +-----------------------------+----------------------------------------------------------+
@@ -240,6 +242,7 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 
 Example Compression
 -------------------
+`CompressonatorCLI.exe -fd BC7  -EncodeWith HPC image.bmp result.dds` |br|
 `CompressonatorCLI.exe -fd ASTC image.bmp result.astc` |br|
 `CompressonatorCLI.exe -fd ASTC -BlockRate 0.8 image.bmp result.astc`  |br|
 `CompressonatorCLI.exe -fd ASTC -BlockRate 12x12 image.bmp result.astc` |br|
