@@ -40,7 +40,7 @@
 #include <time.h>
 #include "TC_PluginAPI.h"
 #include "TC_PluginInternal.h"
-#include "MIPS.h"
+
 #include "Compressonator.h"
 #include "UtilFuncs.h"
 

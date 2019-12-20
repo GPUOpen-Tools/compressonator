@@ -10,9 +10,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Common\MIPS.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Common\TC_PluginInternal.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -25,9 +22,6 @@
     <ClCompile Include="..\..\..\Common\TextureIO.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half\half.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Common\ModelData.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -36,9 +30,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Common\MIPS.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Common\TC_PluginAPI.h">
       <Filter>Common</Filter>
     </ClInclude>

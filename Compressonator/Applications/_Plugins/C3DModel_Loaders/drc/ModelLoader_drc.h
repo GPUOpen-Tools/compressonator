@@ -23,6 +23,7 @@
 #include "draco/core/cycle_timer.h"
 #pragma warning( pop ) 
 
+#include "Compressonator.h"
 #include "PluginInterface.h"
 #include "ModelData.h"
 

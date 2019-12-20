@@ -36,7 +36,6 @@
 #include <stdlib.h>
 #include "TC_PluginAPI.h"
 #include "TC_PluginInternal.h"
-#include "MIPS.h"
 #include "Compressonator.h"
 
 #include <iostream>

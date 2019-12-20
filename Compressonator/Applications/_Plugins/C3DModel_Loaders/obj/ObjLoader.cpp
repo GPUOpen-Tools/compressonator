@@ -491,5 +491,5 @@ void ObjLoader::getFileNameExt(const char *FilePathName, char *fnameExt, int max
     char ext[_MAX_EXT];
     char fname[_MAX_FNAME];
     _splitpath_s(FilePathName, drive, _MAX_DRIVE, dir, _MAX_DIR, fname, _MAX_FNAME, ext, _MAX_EXT);
-    sprintf_s(fnameExt, maxbuffsize, "%s%s", fname, ext);
+    snprintf(fnameExt, maxbuffsize, "%s%s", fname, ext);
 }
