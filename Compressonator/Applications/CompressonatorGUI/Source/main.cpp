@@ -252,7 +252,7 @@ int main(int argc, char **argv)
 
 #ifdef MSG_HANDLER
         PrintStatusLine = &mainComponents.PrintStatus;
-        qInstallMsgHandler(mainComponents.msgHandler);
+        qInstallMessageHandler((QtMessageHandler) mainComponents.msgHandler);
 #endif
         QDesktopWidget *desktop = new QDesktopWidget();
         mainComponents.resize(desktop->screenGeometry().width()*PERCENTAGE_OF_MONITOR_WIDTH_FOR_SCREEN, desktop->screenGeometry().height()*PERCENTAGE_OF_MONITOR_HEIGHT_FOR_SCREEN);
