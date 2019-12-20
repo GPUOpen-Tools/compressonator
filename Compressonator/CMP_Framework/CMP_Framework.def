@@ -1,0 +1,21 @@
+; Compute_lib def : Declares the module parameters for the DLL.
+
+EXPORTS
+CMP_CalcMinMipSize
+CMP_GenerateMIPLevels
+CMP_CreateCompressMipSet
+CMP_ParseFormat
+CMP_CreateComputeLibrary
+CMP_DestroyComputeLibrary
+CMP_CompressTexture
+CMP_SetComputeOptions
+CMP_ProcessTexture
+CMP_CreateBlockEncoder
+CMP_DestroyBlockEncoder
+CMP_CompressBlock
+CMP_CompressBlockXY
+CMP_GetMipLevel
+CMP_FreeMipSet
+CMP_LoadTexture
+CMP_SaveTexture
+CMP_NumberOfProcessors

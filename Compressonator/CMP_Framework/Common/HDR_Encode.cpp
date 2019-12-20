@@ -61,19 +61,6 @@ inline int NBits(int n, bool bIsSigned)
     }
 }
 
-float F16toF32(float f)
-{
-    half A;
-    A.setBits((unsigned short)f);
-    return((float)A);
-}
-
-float F32toF16(float f)
-{
-    return(half(f).bits());
-}
-
-
 float lerpf(float a, float b, int i, int denom)
 {
     assert(denom == 3 || denom == 7 || denom == 15);
@@ -1135,7 +1122,7 @@ void GetEndPoints(float EndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG
     {
         // We now have points on direction vector(s) 
         // find the min and max points
-        float min = HALF_MAX;
+        float min = FLT_MAX;
         float max = 0;
         float val;
         int mini = 0;
@@ -1226,7 +1213,7 @@ void eigenVector_d(float cov[MAX_DIMENSION_BIG][MAX_DIMENSION_BIG], float vector
         for (j = 0; j<dimension; j++)
             c[0][i][j] = cov[i][j];
 
-    p = (int)floorf(log((FLT_MAX_EXP - EV_SLACK) / ceilf(logf((float)dimension) / logf(2.0f))) / logf(2.0f));
+    p = (int)floorf(logf((FLT_MAX_EXP - EV_SLACK) / ceilf(logf((float)dimension) / logf(2.0f))) / logf(2.0f));
 
     //assert(p>0);
 

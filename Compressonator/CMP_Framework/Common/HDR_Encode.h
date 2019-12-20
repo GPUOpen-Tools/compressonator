@@ -30,11 +30,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#pragma warning( push )
-#pragma warning(disable:4244)
-#include "half.h"
-#pragma warning( pop )
-
 namespace HDR_Encode
 {
 #define MAX_SUBSET_SIZE         16                       // Largest possible size for an individual subset
