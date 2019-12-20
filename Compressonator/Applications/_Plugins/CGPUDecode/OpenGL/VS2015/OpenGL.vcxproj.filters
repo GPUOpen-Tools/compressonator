@@ -13,14 +13,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="../../../../../Source/GPU_Decode/GPU_DecodeBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="../GPU_OpenGL.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="../../../Common/MIPS.cpp">
-      <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="../../../Common/TC_PluginInternal.cpp">
       <Filter>Common</Filter>
@@ -31,13 +25,13 @@
     <ClCompile Include="../COpenGL.cpp">
       <Filter>OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\_Libs\GPU_Decode\GPU_DecodeBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../shader.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="../../../Common/MIPS.h">
-      <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="../../../Common/TC_PluginAPI.h">
       <Filter>Common</Filter>

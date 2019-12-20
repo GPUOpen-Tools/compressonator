@@ -645,8 +645,8 @@ DXGI_FORMAT GPU_DirectX::CMP2DXGIFormat(CMP_FORMAT cmp_format)
 #ifdef USE_GTC
     case CMP_FORMAT_GTC:
 #endif
-#ifdef USE_GTC_HDR
-    case CMP_FORMAT_GTCH:
+#ifdef USE_BASIS
+    case CMP_FORMAT_BASIS:
 #endif
         // -----------------------------------
     case CMP_FORMAT_Unknown:

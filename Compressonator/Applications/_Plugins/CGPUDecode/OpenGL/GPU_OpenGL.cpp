@@ -24,9 +24,13 @@
 //=====================================================================
 
 #include "GPU_OpenGL.h"
-#include "MIPS.h"
+#include "Common.h"
+#include "Compressonator.h"
+
 #include <stdio.h>
 #include "GPU_Decode.h"
+
+#include <assert.h>
 
 #pragma comment(lib, "opengl32.lib")        // Open GL
 #pragma comment(lib, "Glu32.lib")           // Glu 

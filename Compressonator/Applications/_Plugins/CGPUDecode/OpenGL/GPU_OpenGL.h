@@ -28,7 +28,7 @@
 
 #include "GPU_DecodeBase.h"
 #include "GPU_Decode.h"
-#include "MIPS.h"
+#include "Compressonator.h"
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glu.h>

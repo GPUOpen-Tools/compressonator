@@ -13,9 +13,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="../../../../../Source/GPU_Decode/GPU_DecodeBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="../GPU_DirectX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -43,9 +40,6 @@
     <ClCompile Include="../CDirectX.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="../../../Common/MIPS.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="../../../Common/TC_PluginInternal.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -60,6 +54,9 @@
     </ClCompile>
     <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/BC4BC5.cpp">
       <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\_Libs\GPU_Decode\GPU_DecodeBase.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -80,9 +77,6 @@
     </ClInclude>
     <ClInclude Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/BC.h">
       <Filter>DirectX</Filter>
-    </ClInclude>
-    <ClInclude Include="../../../Common/MIPS.h">
-      <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="../../../Common/TC_PluginAPI.h">
       <Filter>Common</Filter>
