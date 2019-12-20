@@ -22,7 +22,9 @@
 // THE SOFTWARE.
 //
 
+
 #pragma once
+
 
 #include "TC_PluginAPI.h"
 #include "DDS_File.h"

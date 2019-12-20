@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug_MD|Win32">
       <Configuration>Debug_MD</Configuration>
@@ -38,6 +38,7 @@
     <ProjectGuid>{E19A9BE7-2E54-4475-B484-03434E03A7DB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <ProjectName>EXR</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -118,26 +119,26 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">../../../../../Build/$(SolutionName)/$(Configuration)/$(Platform)/plugins/</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">../../../../../Build/$(SolutionName)/Temp/$(Configuration)/$(Platform)/$(ProjectName)/plugins/</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
@@ -177,7 +178,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Header/Codec/;(Compressonator_OPENEXR)/config/;$(Compressonator_BOOST)/;$(Compressonator_DIRECTX)/Include/shared/;$(Compressonator_DIRECTX)Include/um/;$(Compressonator_DIRECTX)winrt/;%(AdditionalIncludeDirectories);$(Compressonator_OPENEXR)/IlmImf/;$(Compressonator_OPENEXR)/config.windows/;$(Compressonator_ILMBASE)/config/;$(Compressonator_ILMBASE)/config.windows/;$(Compressonator_ILMBASE)/Iex/;$(Compressonator_ILMBASE)/Imath/;$(Compressonator_ILMBASE)/half/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Header/Codec/;(Compressonator_OPENEXR)/config/;$(Compressonator_BOOST)/;$(Compressonator_DIRECTX)/Include/shared/;$(Compressonator_DIRECTX)Include/um/;$(Compressonator_DIRECTX)winrt/;%(AdditionalIncludeDirectories);$(Compressonator_OPENEXR)/IlmImf/;$(Compressonator_OPENEXR)/config.windows/;$(Compressonator_ILMBASE)/config/;$(Compressonator_ILMBASE)/config.windows/;$(Compressonator_ILMBASE)/Iex/;$(Compressonator_ILMBASE)/Imath/;$(Compressonator_ILMBASE)/half/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -200,7 +201,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Header/Codec/;$(Compressonator_BOOST)/;$(Compressonator_DIRECTX)/Include/shared/;$(Compressonator_DIRECTX)Include/um/;$(Compressonator_DIRECTX)winrt/;$(AMDCOMPRESS_ROOT)/SDK/include;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Header/Codec/;$(Compressonator_BOOST)/;$(Compressonator_DIRECTX)/Include/shared/;$(Compressonator_DIRECTX)Include/um/;$(Compressonator_DIRECTX)winrt/;$(AMDCOMPRESS_ROOT)/SDK/include;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
@@ -226,7 +227,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Header/Codec/;$(Compressonator_OPENEXR)/config/;$(Compressonator_BOOST)/;$(Compressonator_DIRECTX)/Include/shared/;$(Compressonator_DIRECTX)Include/um/;$(Compressonator_DIRECTX)winrt/;$(AMDCOMPRESS_ROOT)/SDK/include;$(Compressonator_OPENEXR)/IlmImf/;$(Compressonator_OPENEXR)/config.windows/;$(Compressonator_ILMBASE)/config/;$(Compressonator_ILMBASE)/config.windows/;$(Compressonator_ILMBASE)/Iex/;$(Compressonator_ILMBASE)/Imath/;$(Compressonator_ILMBASE)/half/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Header/Codec/;$(Compressonator_OPENEXR)/config/;$(Compressonator_BOOST)/;$(Compressonator_DIRECTX)/Include/shared/;$(Compressonator_DIRECTX)Include/um/;$(Compressonator_DIRECTX)winrt/;$(AMDCOMPRESS_ROOT)/SDK/include;$(Compressonator_OPENEXR)/IlmImf/;$(Compressonator_OPENEXR)/config.windows/;$(Compressonator_ILMBASE)/config/;$(Compressonator_ILMBASE)/config.windows/;$(Compressonator_ILMBASE)/Iex/;$(Compressonator_ILMBASE)/Imath/;$(Compressonator_ILMBASE)/half/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -251,7 +252,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Header/Codec/;$(Compressonator_BOOST)/;$(Compressonator_DIRECTX)/Include/shared/;$(Compressonator_DIRECTX)Include/um/;$(Compressonator_DIRECTX)winrt/;$(AMDCOMPRESS_ROOT)/SDK/include;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Header/Codec/;$(Compressonator_BOOST)/;$(Compressonator_DIRECTX)/Include/shared/;$(Compressonator_DIRECTX)Include/um/;$(Compressonator_DIRECTX)winrt/;$(AMDCOMPRESS_ROOT)/SDK/include;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -279,7 +280,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Header/Codec/;(Compressonator_OPENEXR)/config/;$(Compressonator_BOOST)/;$(Compressonator_DIRECTX)/Include/shared/;$(Compressonator_DIRECTX)Include/um/;$(Compressonator_DIRECTX)winrt/;%(AdditionalIncludeDirectories);$(Compressonator_OPENEXR)/IlmImf/;$(Compressonator_OPENEXR)/config.windows/;$(Compressonator_ILMBASE)/config/;$(Compressonator_ILMBASE)/config.windows/;$(Compressonator_ILMBASE)/Iex/;$(Compressonator_ILMBASE)/Imath/;$(Compressonator_ILMBASE)/half/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Header/Codec/;(Compressonator_OPENEXR)/config/;$(Compressonator_BOOST)/;$(Compressonator_DIRECTX)/Include/shared/;$(Compressonator_DIRECTX)Include/um/;$(Compressonator_DIRECTX)winrt/;%(AdditionalIncludeDirectories);$(Compressonator_OPENEXR)/IlmImf/;$(Compressonator_OPENEXR)/config.windows/;$(Compressonator_ILMBASE)/config/;$(Compressonator_ILMBASE)/config.windows/;$(Compressonator_ILMBASE)/Iex/;$(Compressonator_ILMBASE)/Imath/;$(Compressonator_ILMBASE)/half/</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
@@ -311,7 +312,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Header/Codec/;$(Compressonator_BOOST)/;$(Compressonator_DIRECTX)/Include/shared/;$(Compressonator_DIRECTX)Include/um/;$(Compressonator_DIRECTX)winrt/;$(AMDCOMPRESS_ROOT)/SDK/include;%(AdditionalIncludeDirectories);$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Header/Codec/;$(Compressonator_BOOST)/;$(Compressonator_DIRECTX)/Include/shared/;$(Compressonator_DIRECTX)Include/um/;$(Compressonator_DIRECTX)winrt/;$(AMDCOMPRESS_ROOT)/SDK/include;%(AdditionalIncludeDirectories);$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
@@ -345,7 +346,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Header/Codec/;$(Compressonator_OPENEXR)/config/;$(Compressonator_BOOST)/;$(Compressonator_DIRECTX)/Include/shared/;$(Compressonator_DIRECTX)Include/um/;$(Compressonator_DIRECTX)winrt/;$(AMDCOMPRESS_ROOT)/SDK/include;$(Compressonator_OPENEXR)/IlmImf/;$(Compressonator_OPENEXR)/config.windows/;$(Compressonator_ILMBASE)/config/;$(Compressonator_ILMBASE)/config.windows/;$(Compressonator_ILMBASE)/Iex/;$(Compressonator_ILMBASE)/Imath/;$(Compressonator_ILMBASE)/half/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Header/Codec/;$(Compressonator_OPENEXR)/config/;$(Compressonator_BOOST)/;$(Compressonator_DIRECTX)/Include/shared/;$(Compressonator_DIRECTX)Include/um/;$(Compressonator_DIRECTX)winrt/;$(AMDCOMPRESS_ROOT)/SDK/include;$(Compressonator_OPENEXR)/IlmImf/;$(Compressonator_OPENEXR)/config.windows/;$(Compressonator_ILMBASE)/config/;$(Compressonator_ILMBASE)/config.windows/;$(Compressonator_ILMBASE)/Iex/;$(Compressonator_ILMBASE)/Imath/;$(Compressonator_ILMBASE)/half/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
       <IntrinsicFunctions>true</IntrinsicFunctions>
     </ClCompile>
@@ -382,7 +383,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Header/Codec/;$(Compressonator_BOOST)/;$(Compressonator_DIRECTX)/Include/shared/;$(Compressonator_DIRECTX)Include/um/;$(Compressonator_DIRECTX)winrt/;$(AMDCOMPRESS_ROOT)/SDK/include;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Header/;$(Compressonator_RootDev)/Header/Codec/;$(Compressonator_BOOST)/;$(Compressonator_DIRECTX)/Include/shared/;$(Compressonator_DIRECTX)Include/um/;$(Compressonator_DIRECTX)winrt/;$(AMDCOMPRESS_ROOT)/SDK/include;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/include/OpenEXR/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/include/OpenEXR/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
       <IntrinsicFunctions>true</IntrinsicFunctions>
     </ClCompile>
@@ -407,22 +408,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="../../../Common/cExr.cpp" />
-    <ClCompile Include="../../../Common/MIPS.cpp" />
     <ClCompile Include="../../../Common/TC_PluginInternal.cpp" />
     <ClCompile Include="../../../Common/UtilFuncs.cpp" />
     <ClCompile Include="../EXR.cpp" />
-    <ClCompile Include="../stdafx.cpp" />
     <ClCompile Include="..\..\..\Common\CMP_FileIO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../../../Common/cExr.h" />
-    <ClInclude Include="../../../Common/MIPS.h" />
     <ClInclude Include="../../../Common/namespaceAlias.h" />
     <ClInclude Include="../../../Common/TC_PluginAPI.h" />
     <ClInclude Include="../../../Common/TC_PluginInternal.h" />
     <ClInclude Include="../../../Common/UtilFuncs.h" />
     <ClInclude Include="../EXR.h" />
-    <ClInclude Include="../stdafx.h" />
     <ClInclude Include="..\..\..\Common\CMP_FileIO.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.targets" />

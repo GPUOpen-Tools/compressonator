@@ -16,12 +16,6 @@
     <ClCompile Include="../KTX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="../Lib/swap.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="../StdAfx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="../Lib/checkheader.c">
       <Filter>Lib</Filter>
     </ClCompile>
@@ -40,9 +34,6 @@
     <ClCompile Include="../Lib/loader.c">
       <Filter>Lib</Filter>
     </ClCompile>
-    <ClCompile Include="../../../Common/MIPS.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="../../../Common/TC_PluginInternal.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -52,8 +43,11 @@
     <ClCompile Include="../Lib/writer.c">
       <Filter>Lib</Filter>
     </ClCompile>
-    <ClCompile Include="../softfloat.cpp">
+    <ClCompile Include="../Lib/swap.c">
       <Filter>Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="../softfloat.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -93,20 +87,14 @@
     <ClInclude Include="../../../Common/TC_PluginAPI.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="../../../Common/MIPS.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="../../../Common/UtilFuncs.h">
       <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="../StdAfx.h">
-      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="../Lib/uthash.h">
       <Filter>Lib</Filter>
     </ClInclude>
     <ClInclude Include="../softfloat.h">
-      <Filter>Lib</Filter>
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

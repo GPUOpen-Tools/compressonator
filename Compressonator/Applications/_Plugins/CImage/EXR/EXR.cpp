@@ -53,14 +53,19 @@ $(OutDir);
 IMath.lib;Half.lib;IlmImf.lib;IlmThread.lib;Iex.lib;zlibstatic_d.lib;
 */
 
-#include "stdafx.h"
+// Windows Header Files:
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 #include <stdio.h>
 #include "EXR.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "TC_PluginAPI.h"
 #include "TC_PluginInternal.h"
-#include "MIPS.h"
+
+#include "Common.h"
 
 #include <string> 
 #include "cExr.h"
@@ -84,7 +89,7 @@ IMath.lib;Half.lib;IlmImf.lib;IlmThread.lib;Iex.lib;zlibstatic_d.lib;
 #pragma warning( pop )
 
 
-#include "Compressonator.h"
+#include "Common.h"
 
 // File system
 #include <boost/filesystem.hpp>
@@ -171,10 +176,10 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *s
     srcTexture->dwHeight          = height;
     srcTexture->dwPitch           = 0;
     srcTexture->format            = CMP_FORMAT_ARGB_16F;
-    srcTexture->dwDataSize        = 4*width*height*sizeof(CMP_HALF);
+    srcTexture->dwDataSize        = 4*width*height*sizeof(CMP_HALFSHORT);
     srcTexture->pData             = (CMP_BYTE*) malloc(srcTexture->dwDataSize);
 
-    Rgba2Texture(pixels,(CMP_HALF *)srcTexture->pData,width,height);
+    Rgba2Texture(pixels,(CMP_HALFSHORT *)srcTexture->pData,width,height);
     return 0;
 }
 
@@ -184,7 +189,7 @@ int Plugin_EXR::TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *s
     int  image_height    = srcTexture->dwHeight;
     Array2D<Rgba> pixels (image_height,image_width);
     string sFile = pszFilename;
-    Texture2Rgba((CMP_HALF *)srcTexture->pData, pixels, image_width, image_height, CMP_FORMAT_Unknown);
+    Texture2Rgba((CMP_HALFSHORT *)srcTexture->pData, pixels, image_width, image_height, CMP_FORMAT_Unknown);
     Exr::writeRgba(sFile,pixels,image_width,image_height);
     return 0;
 }
@@ -195,7 +200,7 @@ int Plugin_EXR::TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *s
 bool allocateMipSet(Array<Rgba> &pixels, MipSet* pMipSet, int w, int h)
 {
 
-    if (!EXR_CMips->AllocateMipSet(pMipSet, CF_Float16, TDT_ARGB, TT_2D, w, h, 1))
+    if (!EXR_CMips->AllocateMipSet(pMipSet, CF_Float16, TDT_ARGB, TT_2D, w, h, 1)) // depthsupport, what should nDepth be set as here?
     {
         if (EXR_CMips)
             EXR_CMips->PrintError("Error(0): EXR Plugin ID(5)\n");
@@ -215,7 +220,7 @@ bool allocateMipSet(Array<Rgba> &pixels, MipSet* pMipSet, int w, int h)
     pMipSet->m_dwFourCC2 = 0;
     pMipSet->m_nMipLevels = 1;
     int i = 0;
-    CMP_HALF *MipData = EXR_CMips->GetMipLevel(pMipSet, 0)->m_phfData;
+    CMP_HALFSHORT *MipData = EXR_CMips->GetMipLevel(pMipSet, 0)->m_phfsData;
 
     // Save the Half Data format value into a Float for processing later
     for (int y = 0; y < h; ++y)
@@ -264,13 +269,13 @@ loadImage(const char fileName[],
         srcTexture.dwHeight = height;
         srcTexture.dwPitch = 0;
         srcTexture.format = CMP_FORMAT_ARGB_16F;
-        srcTexture.dwDataSize = 4 * width*height * sizeof(CMP_HALF);
+        srcTexture.dwDataSize = 4 * width*height * sizeof(CMP_HALFSHORT);
         srcTexture.pData = (CMP_BYTE*)malloc(srcTexture.dwDataSize);
 
-        Rgba2Texture(pixels, (CMP_HALF*)srcTexture.pData, width, height);
+        Rgba2Texture(pixels, (CMP_HALFSHORT*)srcTexture.pData, width, height);
 
 
-        if (!EXR_CMips->AllocateMipSet(pMipSet, CF_Float16, TDT_ARGB, TT_2D, width, height, 1))
+        if (!EXR_CMips->AllocateMipSet(pMipSet, CF_Float16, TDT_ARGB, TT_2D, width, height, 1)) // depthsupport, what should nDepth be set as here?
         {
             if (EXR_CMips)
                 EXR_CMips->PrintError("Error(0): EXR Plugin ID(5)\n");
@@ -575,9 +580,9 @@ loadImageChannel(const char fileName[],
 
         for (int i = 0; i < dw * dh; ++i)
         {
-            pixels[i].r = half::qNan();
-            pixels[i].g = half::qNan();
-            pixels[i].b = half::qNan();
+            pixels[i].r = CMP_HALF::qNan();
+            pixels[i].g = CMP_HALF::qNan();
+            pixels[i].b = CMP_HALF::qNan();
         }
         FrameBuffer fb;
 
@@ -668,9 +673,9 @@ loadTiledImageChannel(const char fileName[],
 
         for (int i = 0; i < dw * dh; ++i)
         {
-            pixels[i].r = half::qNan();
-            pixels[i].g = half::qNan();
-            pixels[i].b = half::qNan();
+            pixels[i].r = CMP_HALF::qNan();
+            pixels[i].g = CMP_HALF::qNan();
+            pixels[i].b = CMP_HALF::qNan();
         }
 
         FrameBuffer fb;
@@ -766,12 +771,12 @@ loadDeepScanlineImage(MultiPartInputFile &inmaster,
     pixels.resizeErase(dw * dh);
     memset(pixels, 0, (dw * dh) * (sizeof(Rgba)));
 
-    Array< half* > dataR;
-    Array< half* > dataG;
-    Array< half* > dataB;
+    Array< CMP_HALF* > dataR;
+    Array< CMP_HALF* > dataG;
+    Array< CMP_HALF* > dataB;
 
     Array< float* > zback;
-    Array< half* > alpha;
+    Array< CMP_HALF* > alpha;
 
     zsize = dw * dh;
     zbuff.resizeErase(zsize);
@@ -832,31 +837,31 @@ loadDeepScanlineImage(MultiPartInputFile &inmaster,
         fb.insert("R",
             DeepSlice(HALF,
             (char *)(&dataR[0] - dx - dy * dw),
-                sizeof(half *) * 1,
-                sizeof(half *) * dw,
-                sizeof(half) * 1));
+                sizeof(CMP_HALF *) * 1,
+                sizeof(CMP_HALF *) * dw,
+                sizeof(CMP_HALF) * 1));
 
         fb.insert("G",
             DeepSlice(HALF,
             (char *)(&dataG[0] - dx - dy * dw),
-                sizeof(half *) * 1,
-                sizeof(half *) * dw,
-                sizeof(half) * 1));
+                sizeof(CMP_HALF *) * 1,
+                sizeof(CMP_HALF *) * dw,
+                sizeof(CMP_HALF) * 1));
 
         fb.insert("B",
             DeepSlice(HALF,
             (char *)(&dataB[0] - dx - dy * dw),
-                sizeof(half *) * 1,
-                sizeof(half *) * dw,
-                sizeof(half) * 1));
+                sizeof(CMP_HALF *) * 1,
+                sizeof(CMP_HALF *) * dw,
+                sizeof(CMP_HALF) * 1));
     }
 
     fb.insert("A",
         DeepSlice(HALF,
         (char *)(&alpha[0] - dx - dy * dw),
-            sizeof(half *) * 1,    // xStride for pointer array
-            sizeof(half *) * dw,   // yStride for pointer array
-            sizeof(half) * 1,      // stride for z data sample
+            sizeof(CMP_HALF *) * 1,    // xStride for pointer array
+            sizeof(CMP_HALF *) * dw,   // yStride for pointer array
+            sizeof(CMP_HALF) * 1,      // stride for z data sample
             1, 1,                   // xSampling, ySampling
             1.0));                  // fillValue
 
@@ -868,12 +873,12 @@ loadDeepScanlineImage(MultiPartInputFile &inmaster,
     {
         zbuff[i] = new float[sampleCount[i]];
         zback[i] = new float[sampleCount[i]];
-        alpha[i] = new half[sampleCount[i]];
+        alpha[i] = new CMP_HALF[sampleCount[i]];
         if (rgbflag)
         {
-            dataR[i] = new half[sampleCount[i]];
-            dataG[i] = new half[sampleCount[i]];
-            dataB[i] = new half[sampleCount[i]];
+            dataR[i] = new CMP_HALF[sampleCount[i]];
+            dataG[i] = new CMP_HALF[sampleCount[i]];
+            dataB[i] = new CMP_HALF[sampleCount[i]];
         }
     }
 
@@ -974,12 +979,12 @@ loadDeepTileImage(MultiPartInputFile &inmaster,
     pixels.resizeErase(dw * dh);
     memset(pixels, 0, (dw * dh) * (sizeof(Rgba)));
 
-    Array< half* > dataR;
-    Array< half* > dataG;
-    Array< half* > dataB;
+    Array< CMP_HALF* > dataR;
+    Array< CMP_HALF* > dataG;
+    Array< CMP_HALF* > dataB;
 
     Array< float* > zback;
-    Array< half* > alpha;
+    Array< CMP_HALF* > alpha;
 
     zsize = dw * dh;
     zbuff.resizeErase(zsize);
@@ -1040,23 +1045,23 @@ loadDeepTileImage(MultiPartInputFile &inmaster,
         fb.insert("R",
             DeepSlice(HALF,
             (char *)(&dataR[0] - dx - dy * dw),
-                sizeof(half *) * 1,
-                sizeof(half *) * dw,
-                sizeof(half) * 1));
+                sizeof(CMP_HALF *) * 1,
+                sizeof(CMP_HALF *) * dw,
+                sizeof(CMP_HALF) * 1));
 
         fb.insert("G",
             DeepSlice(HALF,
             (char *)(&dataG[0] - dx - dy * dw),
-                sizeof(half *) * 1,
-                sizeof(half *) * dw,
-                sizeof(half) * 1));
+                sizeof(CMP_HALF *) * 1,
+                sizeof(CMP_HALF *) * dw,
+                sizeof(CMP_HALF) * 1));
 
         fb.insert("B",
             DeepSlice(HALF,
             (char *)(&dataB[0] - dx - dy * dw),
-                sizeof(half *) * 1,
-                sizeof(half *) * dw,
-                sizeof(half) * 1));
+                sizeof(CMP_HALF *) * 1,
+                sizeof(CMP_HALF *) * dw,
+                sizeof(CMP_HALF) * 1));
 
 
     }
@@ -1064,9 +1069,9 @@ loadDeepTileImage(MultiPartInputFile &inmaster,
     fb.insert("A",
         DeepSlice(HALF,
         (char *)(&alpha[0] - dx - dy * dw),
-            sizeof(half *) * 1,    // xStride for pointer array
-            sizeof(half *) * dw,   // yStride for pointer array
-            sizeof(half) * 1,      // stride for z data sample
+            sizeof(CMP_HALF *) * 1,    // xStride for pointer array
+            sizeof(CMP_HALF *) * dw,   // yStride for pointer array
+            sizeof(CMP_HALF) * 1,      // stride for z data sample
             1, 1,                   // xSampling, ySampling
             1.0));                  // fillValue
 
@@ -1081,12 +1086,12 @@ loadDeepTileImage(MultiPartInputFile &inmaster,
     {
         zbuff[i] = new float[sampleCount[i]];
         zback[i] = new float[sampleCount[i]];
-        alpha[i] = new half[sampleCount[i]];
+        alpha[i] = new CMP_HALF[sampleCount[i]];
         if (rgbflag)
         {
-            dataR[i] = new half[sampleCount[i]];
-            dataG[i] = new half[sampleCount[i]];
-            dataB[i] = new half[sampleCount[i]];
+            dataR[i] = new CMP_HALF[sampleCount[i]];
+            dataG[i] = new CMP_HALF[sampleCount[i]];
+            dataB[i] = new CMP_HALF[sampleCount[i]];
         }
     }
 
@@ -1174,7 +1179,7 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
             CMP_DWORD dwWidth = file.levelWidth(0);
             CMP_DWORD dwHeight = file.levelHeight(0);
         
-            if (!EXR_CMips->AllocateMipSet(pMipSet, CF_Float16, TDT_ARGB, TT_2D, dwWidth, dwHeight, 1))
+            if (!EXR_CMips->AllocateMipSet(pMipSet, CF_Float16, TDT_ARGB, TT_2D, dwWidth, dwHeight, 1)) // depthsupport, what should nDepth be set as here?
             {
                 return PE_Unknown;
             }
@@ -1210,7 +1215,7 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
                 if (!EXR_CMips->AllocateMipLevelData(EXR_CMips->GetMipLevel(pMipSet, i), dwWidth, dwHeight, CF_Float16, pMipSet->m_TextureDataType))
                     return PE_Unknown;
         
-                Rgba2Texture(pixels, (CMP_HALF* )EXR_CMips->GetMipLevel(pMipSet, i)->m_pbData, dwWidth, dwHeight);
+                Rgba2Texture(pixels, (CMP_HALFSHORT* )EXR_CMips->GetMipLevel(pMipSet, i)->m_pbData, dwWidth, dwHeight);
             }
             return PE_OK;
         } // Tiled file
@@ -1316,7 +1321,7 @@ int Plugin_EXR::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
         pixels.resizeErase(image_height, image_width);
         string sFile = pszFilename;
 
-        CMP_HALF *data = EXR_CMips->GetMipLevel(pMipSet, 0)->m_phfData;
+        CMP_HALFSHORT *data = EXR_CMips->GetMipLevel(pMipSet, 0)->m_phfsData;
 
         Texture2Rgba(data, pixels, image_width, image_height, pMipSet->m_isDeCompressed);
 
@@ -1330,7 +1335,7 @@ int Plugin_EXR::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
         {
             Array2D<Rgba> pixels(file.levelHeight(i), file.levelWidth(i));
             pixels.resizeErase(file.levelHeight(i), file.levelWidth(i));
-            CMP_HALF *data = EXR_CMips->GetMipLevel(pMipSet, i)->m_phfData;
+            CMP_HALFSHORT *data = EXR_CMips->GetMipLevel(pMipSet, i)->m_phfsData;
 
             if(data)
             {

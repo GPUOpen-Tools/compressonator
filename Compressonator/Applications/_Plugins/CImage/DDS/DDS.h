@@ -25,14 +25,6 @@
 #ifndef _DDS_H
 #define _DDS_H
 
-// This is a directive to enable the use of DirectX Texture Lib
-//#define USE_DIRECTXTEX
-
-#ifdef USE_DIRECTXTEX
-#include <initguid.h>
-#include "DirectXTex.h"
-#endif
-
 #include "PluginInterface.h"
 
 #ifdef _WIN32

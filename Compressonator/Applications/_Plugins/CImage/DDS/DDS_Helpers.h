@@ -24,7 +24,9 @@
 
 // DDS.h : Defines the entry point for the DLL application.
 
+
 #pragma once
+
 
 #include "TC_PluginAPI.h"
 #include "Texture.h"

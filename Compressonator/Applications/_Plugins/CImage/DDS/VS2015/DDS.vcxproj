@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug_MD|Win32">
       <Configuration>Debug_MD</Configuration>
@@ -38,6 +38,7 @@
     <ProjectGuid>{0671333B-4D11-43EE-BBEE-9F96E54DACAE}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <ProjectName>DDS</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -317,7 +318,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>../../../../../Common/Lib/Ext/DirectXTex/DirectXTex/;../../../../../../Common/Lib/Ext/DirectX-SDK/8.0/Include/shared;../../../../../../Common/Lib/Ext/DirectX-SDK/8.0/Include/um;../../../../../../Common/Lib/Ext/DirectX-SDK/8.0/Include/winrt;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header;../../../../../../Common/Lib/Ext/DirectXTex/DirectXTex/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../../Common/Lib/Ext/DirectX-SDK/8.0/Include/shared;../../../../../../Common/Lib/Ext/DirectX-SDK/8.0/Include/um;../../../../../../Common/Lib/Ext/DirectX-SDK/8.0/Include/winrt;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -343,7 +344,8 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>../../../../../Common/Lib/Ext/DirectXTex/DirectXTex/;../../../../../../Common/Lib/Ext/DirectX-SDK/8.0/Include/shared;../../../../../../Common/Lib/Ext/DirectX-SDK/8.0/Include/um;../../../../../../Common/Lib/Ext/DirectX-SDK/8.0/Include/winrt;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header;../../../../../../Common/Lib/Ext/DirectXTex/DirectXTex/;$(AMDCOMPRESS_ROOT)/SDK/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header;$(AMDCOMPRESS_ROOT)/SDK/include</AdditionalIncludeDirectories>
+      <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -356,19 +358,19 @@
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <AdditionalLibraryDirectories>../../../../../Common/Lib/Ext/DirectXTex/DirectXTex/x64/$(Configuration)/;../../../../../Common/Lib/Ext/OpenEXR/v1.4.0/lib_mt/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
     </Link>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="../../../Common/MIPS.cpp" />
     <ClCompile Include="../../../Common/TC_PluginInternal.cpp" />
     <ClCompile Include="../../../Common/UtilFuncs.cpp" />
     <ClCompile Include="../DDS.cpp" />
     <ClCompile Include="../DDS_DX10.cpp" />
     <ClCompile Include="../DDS_File.cpp" />
     <ClCompile Include="../DDS_Helpers.cpp" />
-    <ClCompile Include="../stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="../../../Common/MIPS.h" />
     <ClInclude Include="../../../Common/TC_PluginAPI.h" />
     <ClInclude Include="../../../Common/TC_PluginInternal.h" />
     <ClInclude Include="../../../Common/UtilFuncs.h" />
@@ -376,7 +378,6 @@
     <ClInclude Include="../DDS_DX10.h" />
     <ClInclude Include="../DDS_File.h" />
     <ClInclude Include="../DDS_Helpers.h" />
-    <ClInclude Include="../stdafx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

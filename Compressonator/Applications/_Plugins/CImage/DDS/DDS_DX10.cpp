@@ -24,17 +24,26 @@
 
 // DDS.cpp : Defines the entry point for the DLL application.
 
-#include "stdafx.h"
+
+#pragma once
+
+// Windows Header Files:
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 
 #ifdef _WIN32
 #include "ddraw.h"
-#include "DXGIFormat.h"                // https://msdn.microsoft.com/en-us/library/windows/desktop/bb173059(v=vs.85).aspx
-#include "D3D10.h"                    // https://msdn.microsoft.com/en-us/library/windows/desktop/bb172411(v=vs.85).aspx
+#include "DXGIFormat.h"
+#include "D3D10.h"     
 #endif
 
+#include "Common.h"
+#include "Compressonator.h"
 #include "TC_PluginAPI.h"
 #include "DDS_DX10.h"
 #include "DDS_Helpers.h"
@@ -57,7 +66,7 @@ TC_PluginError LoadDDS_DX10_R16(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
 TC_PluginError LoadDDS_DX10_R8(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
 TC_PluginError LoadDDS_DX10_FourCC(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet, CMP_DWORD dwFourCC);
 
-extern int MaxFacesOrSlices(const MipSet* pMipSet, int nMipLevel);
+extern int CMP_MaxFacesOrSlices(const MipSet* pMipSet, int nMipLevel);
 
 typedef struct
 {
@@ -170,7 +179,7 @@ TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
         case DXGI_FORMAT_BC1_UNORM_SRGB:    
             pMipSet->m_compressed = true;
             pMipSet->m_format     = CMP_FORMAT_BC1;
-            err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, FOURCC_BC1);
+            err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, CMP_FOURCC_BC1);
             break;
 
         case DXGI_FORMAT_BC2_TYPELESS:    
@@ -178,7 +187,7 @@ TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
         case DXGI_FORMAT_BC2_UNORM_SRGB:    
             pMipSet->m_compressed = true;
             pMipSet->m_format     = CMP_FORMAT_BC2;
-            err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, FOURCC_BC2);
+            err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, CMP_FOURCC_BC2);
             break;
 
         case DXGI_FORMAT_BC3_TYPELESS:    
@@ -186,7 +195,7 @@ TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
         case DXGI_FORMAT_BC3_UNORM_SRGB:    
             pMipSet->m_compressed = true;
             pMipSet->m_format     = CMP_FORMAT_BC3;
-            err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, FOURCC_BC3);
+            err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, CMP_FOURCC_BC3);
             break;
 
         case DXGI_FORMAT_BC4_TYPELESS:    
@@ -194,26 +203,26 @@ TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
         case DXGI_FORMAT_BC4_SNORM:    
             pMipSet->m_compressed = true;
             pMipSet->m_format     = CMP_FORMAT_BC4;
-            err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, FOURCC_BC4);
+            err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, CMP_FOURCC_BC4);
             break;
 
         case DXGI_FORMAT_BC5_TYPELESS:    
         case DXGI_FORMAT_BC5_UNORM:    
         case DXGI_FORMAT_BC5_SNORM:    
             pMipSet->m_compressed = true;
-            err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, FOURCC_BC5);
+            err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, CMP_FOURCC_BC5);
             break;
 
         case DXGI_FORMAT_BC6H_TYPELESS:    
         case DXGI_FORMAT_BC6H_UF16:  
             pMipSet->m_compressed = true;
             pMipSet->m_format = CMP_FORMAT_BC6H;
-            err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, FOURCC_DX10);
+            err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, CMP_FOURCC_DX10);
             break;
         case DXGI_FORMAT_BC6H_SF16:    
             pMipSet->m_compressed = true;
             pMipSet->m_format     = CMP_FORMAT_BC6H_SF;
-            err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, FOURCC_DX10);
+            err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, CMP_FOURCC_DX10);
             break;
 
         case DXGI_FORMAT_BC7_TYPELESS:    
@@ -221,13 +230,13 @@ TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
         case DXGI_FORMAT_BC7_UNORM_SRGB:    
             pMipSet->m_compressed = true;
             pMipSet->m_format     = CMP_FORMAT_BC7;
-            err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, FOURCC_DX10);
+            err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, CMP_FOURCC_DX10);
             break;
 
         // case DXGI_FORMAT_???:    
         //    pMipSet->m_compressed = true;
         //    pMipSet->m_format     = CMP_FORMAT_ASTC;
-        //    err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, FOURCC_DX10);
+        //    err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, CMP_FOURCC_DX10);
         //    pMipSet->m_swizzle    = ???;
         //    break;
         //
@@ -353,7 +362,7 @@ TC_PluginError LoadDDS_DX10_FourCC(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet, C
 DXGI_FORMAT GetDXGIFormat(const MipSet* pMipSet)
 {
 
-    if (pMipSet->m_dwFourCC == FOURCC_DX10)
+    if (pMipSet->m_dwFourCC == CMP_FOURCC_DX10)
     {
         switch (pMipSet->m_format)
         {
@@ -371,14 +380,14 @@ DXGI_FORMAT GetDXGIFormat(const MipSet* pMipSet)
     else
     switch(pMipSet->m_dwFourCC) // legacy dont add anything here use above
     {
-        case FOURCC_BC1:     return DXGI_FORMAT_BC1_UNORM;
-        case FOURCC_BC2:     return DXGI_FORMAT_BC2_UNORM;
-        case FOURCC_BC3:     return DXGI_FORMAT_BC3_UNORM;
-        case FOURCC_BC4:     return DXGI_FORMAT_BC4_UNORM;
-        case FOURCC_BC4S:    return DXGI_FORMAT_BC4_SNORM;
-        case FOURCC_BC4U:    return DXGI_FORMAT_BC4_UNORM;
-        case FOURCC_BC5:     return DXGI_FORMAT_BC5_UNORM;
-        case FOURCC_BC5S:    return DXGI_FORMAT_BC5_SNORM;
+        case CMP_FOURCC_BC1:     return DXGI_FORMAT_BC1_UNORM;
+        case CMP_FOURCC_BC2:     return DXGI_FORMAT_BC2_UNORM;
+        case CMP_FOURCC_BC3:     return DXGI_FORMAT_BC3_UNORM;
+        case CMP_FOURCC_BC4:     return DXGI_FORMAT_BC4_UNORM;
+        case CMP_FOURCC_BC4S:    return DXGI_FORMAT_BC4_SNORM;
+        case CMP_FOURCC_BC4U:    return DXGI_FORMAT_BC4_UNORM;
+        case CMP_FOURCC_BC5:     return DXGI_FORMAT_BC5_UNORM;
+        case CMP_FOURCC_BC5S:    return DXGI_FORMAT_BC5_SNORM;
     }
     return DXGI_FORMAT_UNKNOWN;
 }
@@ -431,7 +440,7 @@ TC_PluginError SaveDDS_DX10(FILE* pFile, const MipSet* pMipSet)
 //    if(pMipSet->m_Flags & MS_AlphaPremult)
 //        ddsd2.ddpfPixelFormat.dwFlags |= DDPF_ALPHAPREMULT;
 
-    ddsd2.ddpfPixelFormat.dwFourCC = MAKEFOURCC('D', 'X', '1', '0');
+    ddsd2.ddpfPixelFormat.dwFourCC = CMP_MAKEFOURCC('D', 'X', '1', '0');
 
     switch (pMipSet->m_format)
     {
@@ -453,7 +462,7 @@ TC_PluginError SaveDDS_DX10(FILE* pFile, const MipSet* pMipSet)
 
     fwrite(&HeaderDDS10, sizeof(HeaderDDS10), 1, pFile);
 
-    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
+    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : CMP_MaxFacesOrSlices(pMipSet, 0);
     for(int nSlice = 0; nSlice < nSlices; nSlice++)
         for(int nMipLevel = 0 ; nMipLevel < pMipSet->m_nMipLevels ; nMipLevel++)
             fwrite(DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData, DDS_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize, 1, pFile);

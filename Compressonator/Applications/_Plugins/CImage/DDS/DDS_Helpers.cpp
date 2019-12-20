@@ -25,21 +25,18 @@
 // DDS_Helpers.cpp : Defines the entry point for the DLL application.
 //
 
-#include "stdafx.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <limits>
-//#include "ddraw.h"
-//#include "d3d9types.h"
+
 #include "DDS.h"
 #include "DDS_File.h"
 #include "DDS_Helpers.h"
 #include "TC_PluginAPI.h"
 #include "Version.h"
-#include "MIPS.h"
 
-extern int MaxFacesOrSlices(const MipSet* pMipSet, int nMipLevel);
+extern int CMP_MaxFacesOrSlices(const MipSet* pMipSet, int nMipLevel);
 typedef TC_PluginError (PreLoopFunction)(FILE*& pFile, DDSD2*& pDDSD, MipSet*& pMipSet, void*& extra);
 typedef TC_PluginError (LoopFunction)(FILE*& pFile, DDSD2*& pDDSD, MipSet*& pMipSet, void*& extra, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
 typedef TC_PluginError (PostLoopFunction)(FILE*& pFile, DDSD2*& pDDSD, MipSet*& pMipSet, void*& extra);
@@ -57,7 +54,7 @@ bool IsD3D10Format(const MipSet* pMipSet)
     if(!pMipSet)
         return false;
 
-    if (pMipSet->m_dwFourCC == FOURCC_DX10)
+    if (pMipSet->m_dwFourCC == CMP_FOURCC_DX10)
          return true;
     else
         return false;
@@ -165,7 +162,7 @@ TC_PluginError GenericLoadFunction(FILE*& pFile, DDSD2*& pDDSD, MipSet*& pMipSet
             dwHeight = pDDSD->dwHeight;
             for(int nMipLevel = 0; nMipLevel < pMipSet->m_nMipLevels; nMipLevel++)
             {
-                int nMaxSlices = MaxFacesOrSlices(pMipSet, nMipLevel);
+                int nMaxSlices = CMP_MaxFacesOrSlices(pMipSet, nMipLevel);
                 for(int nSlice=0; nSlice<nMaxSlices; nSlice++)
                 {
                     err = fnLoop(pFile, pDDSD, pMipSet, extra, nMipLevel, nSlice, dwWidth, dwHeight);
@@ -215,7 +212,7 @@ TC_PluginError PostLoopDefault(FILE*&, DDSD2*&, MipSet*&, void*&)
 
 TC_PluginError PreLoopFourCC(FILE*& pFile, DDSD2*& pDDSD, MipSet*& pMipSet, void*& extra)
 {
-    if(pDDSD->ddpfPixelFormat.dwFourCC == FOURCC_DXT1 && !(pDDSD->ddpfPixelFormat.dwFlags & DDPF_ALPHAPIXELS))
+    if(pDDSD->ddpfPixelFormat.dwFourCC == CMP_FOURCC_DXT1 && !(pDDSD->ddpfPixelFormat.dwFlags & DDPF_ALPHAPIXELS))
         pMipSet->m_TextureDataType = TDT_XRGB;
     else
         pMipSet->m_TextureDataType = TDT_ARGB;
@@ -264,7 +261,8 @@ TC_PluginError PreLoopFourCC(FILE*& pFile, DDSD2*& pDDSD, MipSet*& pMipSet, void
             return PE_Unknown;
     }
     //make a DWORD, then cast to void*
-    extra = (void*) static_cast<CMP_DWORD_PTR>(((nSize * 8) / dwPixels));
+    CMP_DWORD block = ((nSize * 8) / dwPixels);
+    extra = (void*) reinterpret_cast<CMP_DWORD_PTR>(&block);
 
     return PE_OK;
 }
@@ -438,6 +436,7 @@ TC_PluginError LoopRGB8888(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*& extra
         {
             return PE_Unknown;
         }
+        CMP_BYTE  alpha;
         CMP_BYTE* pData = pMipLevel->m_pbData;
         CMP_DWORD* pTempPtr = (CMP_DWORD*)pARGB8888Struct->pMemory;
         CMP_DWORD* pEnd = (CMP_DWORD*)pARGB8888Struct->pMemory + (pMipLevel->m_dwLinearSize / 4);
@@ -446,7 +445,9 @@ TC_PluginError LoopRGB8888(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*& extra
             *pData++ = static_cast<CMP_BYTE> ((*pTempPtr & pARGB8888Struct->nRMask) >> pARGB8888Struct->nRShift);
             *pData++ = static_cast<CMP_BYTE> ((*pTempPtr & pARGB8888Struct->nGMask) >> pARGB8888Struct->nGShift);
             *pData++ = static_cast<CMP_BYTE> ((*pTempPtr & pARGB8888Struct->nBMask) >> pARGB8888Struct->nBShift);
-            *pData++ = static_cast<CMP_BYTE> ((*pTempPtr & 0xFF000000) >> 24);    //take alpha whether or not its used
+            //take alpha whether or if its not used set it to a default 255
+            alpha = static_cast<CMP_BYTE> ((*pTempPtr & 0xFF000000) >> 24);
+            *pData++ = (pMipSet->m_TextureDataType == TDT_ARGB?alpha:255);
             pTempPtr++;
         }
     }
@@ -632,7 +633,7 @@ TC_PluginError PostLoopABGR16F(FILE*&, DDSD2*&, MipSet*&, void*&)
 
 TC_PluginError PreLoopG8(FILE*&, DDSD2*&, MipSet*& pMipSet, void*&)
 {
-    pMipSet->m_dwFourCC = FOURCC_G8;
+    pMipSet->m_dwFourCC = CMP_FOURCC_G8;
     pMipSet->m_dwFourCC2 = 0;
     return PE_OK;
 }
@@ -660,7 +661,7 @@ TC_PluginError PostLoopG8(FILE*&, DDSD2*&, MipSet*&, void*&)
 
 TC_PluginError PreLoopAG8(FILE*&, DDSD2*&, MipSet*& pMipSet, void*&)
 {
-    pMipSet->m_dwFourCC = FOURCC_AG8;
+    pMipSet->m_dwFourCC = CMP_FOURCC_AG8;
     pMipSet->m_dwFourCC2 = 0;
     return PE_OK;
 }
@@ -688,7 +689,7 @@ TC_PluginError PostLoopAG8(FILE*&, DDSD2*&, MipSet*&, void*&)
 
 TC_PluginError PreLoopG16(FILE*&, DDSD2*&, MipSet*& pMipSet, void*&)
 {
-    pMipSet->m_dwFourCC = FOURCC_G16;
+    pMipSet->m_dwFourCC = CMP_FOURCC_G16;
     pMipSet->m_dwFourCC2 = 0;
     return PE_OK;
 }
@@ -716,7 +717,7 @@ TC_PluginError PostLoopG16(FILE*&, DDSD2*&, MipSet*&, void*&)
 
 TC_PluginError PreLoopA8(FILE*&, DDSD2*&, MipSet*& pMipSet, void*&)
 {
-    pMipSet->m_dwFourCC = FOURCC_A8;
+    pMipSet->m_dwFourCC = CMP_FOURCC_A8;
     pMipSet->m_dwFourCC2 = 0;
     return PE_OK;
 }

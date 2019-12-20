@@ -22,24 +22,29 @@
 // THE SOFTWARE.
 //
 
-#include "stdafx.h"
+#pragma once
+
+
+// Windows Header Files:
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 #include <stdio.h>
 
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "Common.h"
+#include "Compressonator.h"
 #include "TC_PluginAPI.h"
 #include "TC_PluginInternal.h"
-#include "MIPS.h"
 
 #ifdef _WIN32
 #include "ddraw.h"
 #include "d3d9types.h"
-#else
-#include "TextureIO.h"
 #endif
 
-#include "MIPS.h"
-#include "Compressonator.h"
 #include "DDS.h"
 #include "DDS_File.h"
 #include "DDS_Helpers.h"
@@ -76,7 +81,10 @@ TC_PluginError LoadDDS_RGB8888(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet, bool 
     ARGB8888Struct* pARGB8888Struct = (ARGB8888Struct*)calloc(sizeof(ARGB8888Struct), 1);
     void* extra = pARGB8888Struct;
 
-    pMipSet->m_format = CMP_FORMAT_ARGB_8888; //  added AMD_ format definition
+    //if (pDDSD->ddpfPixelFormat.dwFlags & DDPF_RGB)
+    //    pMipSet->m_format = CMP_FORMAT_ABGR_8888; 
+    //else
+        pMipSet->m_format = CMP_FORMAT_ARGB_8888;
 
 /*
     if(pDDSD->dwFlags & DDSD_PIXELFORMAT)
@@ -141,6 +149,7 @@ TC_PluginError LoadDDS_RGB8888(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet, bool 
         }
         pARGB8888Struct->nBShift = shift;
     }
+
     pMipSet->m_TextureDataType = bAlpha ? TDT_ARGB : TDT_XRGB;
 
     TC_PluginError err = GenericLoadFunction(pFile, pDDSD, pMipSet, extra, CF_8bit, pMipSet->m_TextureDataType, 
@@ -297,7 +306,7 @@ TC_PluginError SaveDDS_RGB888(FILE* pFile, const MipSet* pMipSet)
     // Write the data    
     fwrite(&ddsd2, sizeof(DDSD2), 1, pFile);
 
-    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
+    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : CMP_MaxFacesOrSlices(pMipSet, 0);
     for(int nSlice = 0; nSlice < nSlices; nSlice++)
     {
         for(int nMipLevel = 0 ; nMipLevel < pMipSet->m_nMipLevels ; nMipLevel++)
@@ -337,7 +346,7 @@ TC_PluginError SaveDDS_ARGB8888(FILE* pFile, const MipSet* pMipSet)
     // Write the data    
     fwrite(&ddsd2, sizeof(DDSD2), 1, pFile);
 
-    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
+    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : CMP_MaxFacesOrSlices(pMipSet, 0);
     for(int nSlice = 0; nSlice < nSlices; nSlice++)
         for(int nMipLevel = 0 ; nMipLevel < pMipSet->m_nMipLevels ; nMipLevel++)
         {
@@ -382,7 +391,7 @@ TC_PluginError SaveDDS_ARGB2101010(FILE* pFile, const MipSet* pMipSet)
     // Write the data    
     fwrite(&ddsd2, sizeof(DDSD2), 1, pFile);
 
-    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
+    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : CMP_MaxFacesOrSlices(pMipSet, 0);
     for(int nSlice = 0; nSlice < nSlices; nSlice++)
         for(int nMipLevel = 0 ; nMipLevel < pMipSet->m_nMipLevels ; nMipLevel++)
             if (pMipSet->m_swizzle)
@@ -413,7 +422,7 @@ TC_PluginError SaveDDS_ABGR16(FILE* pFile, const MipSet* pMipSet)
     // Write the data    
     fwrite(&ddsd2, sizeof(DDSD2), 1, pFile);
 
-    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
+    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : CMP_MaxFacesOrSlices(pMipSet, 0);
     for(int nSlice = 0; nSlice < nSlices; nSlice++)
         for(int nMipLevel = 0 ; nMipLevel < pMipSet->m_nMipLevels ; nMipLevel++)
             fwrite(DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData, DDS_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize, 1, pFile);
@@ -439,7 +448,7 @@ TC_PluginError SaveDDS_R16(FILE* pFile, const MipSet* pMipSet)
     // Write the data    
     fwrite(&ddsd2, sizeof(DDSD2), 1, pFile);
 
-    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
+    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : CMP_MaxFacesOrSlices(pMipSet, 0);
     for(int nSlice = 0; nSlice < nSlices; nSlice++)
         for(int nMipLevel = 0 ; nMipLevel < pMipSet->m_nMipLevels ; nMipLevel++)
             fwrite(DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData, DDS_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize, 1, pFile);
@@ -465,7 +474,7 @@ TC_PluginError SaveDDS_RG16(FILE* pFile, const MipSet* pMipSet)
     // Write the data    
     fwrite(&ddsd2, sizeof(DDSD2), 1, pFile);
 
-    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
+    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : CMP_MaxFacesOrSlices(pMipSet, 0);
     for(int nSlice = 0; nSlice < nSlices; nSlice++)
         for(int nMipLevel = 0 ; nMipLevel < pMipSet->m_nMipLevels ; nMipLevel++)
             fwrite(DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData, DDS_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize, 1, pFile);
@@ -491,7 +500,7 @@ TC_PluginError SaveDDS_ABGR16F(FILE* pFile, const MipSet* pMipSet)
     // Write the data    
     fwrite(&ddsd2, sizeof(DDSD2), 1, pFile);
 
-    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
+    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : CMP_MaxFacesOrSlices(pMipSet, 0);
     for(int nSlice = 0; nSlice < nSlices; nSlice++)
         for(int nMipLevel = 0 ; nMipLevel < pMipSet->m_nMipLevels ; nMipLevel++)
             fwrite(DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData, DDS_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize, 1, pFile);
@@ -517,7 +526,7 @@ TC_PluginError SaveDDS_R16F(FILE* pFile, const MipSet* pMipSet)
     // Write the data    
     fwrite(&ddsd2, sizeof(DDSD2), 1, pFile);
 
-    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
+    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : CMP_MaxFacesOrSlices(pMipSet, 0);
     for(int nSlice = 0; nSlice < nSlices; nSlice++)
         for(int nMipLevel = 0 ; nMipLevel < pMipSet->m_nMipLevels ; nMipLevel++)
             fwrite(DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData, DDS_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize, 1, pFile);
@@ -543,7 +552,7 @@ TC_PluginError SaveDDS_RG16F(FILE* pFile, const MipSet* pMipSet)
     // Write the data    
     fwrite(&ddsd2, sizeof(DDSD2), 1, pFile);
 
-    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
+    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : CMP_MaxFacesOrSlices(pMipSet, 0);
     for(int nSlice = 0; nSlice < nSlices; nSlice++)
         for(int nMipLevel = 0 ; nMipLevel < pMipSet->m_nMipLevels ; nMipLevel++)
             fwrite(DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData, DDS_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize, 1, pFile);
@@ -569,7 +578,7 @@ TC_PluginError SaveDDS_ABGR32F(FILE* pFile, const MipSet* pMipSet)
     // Write the data    
     fwrite(&ddsd2, sizeof(DDSD2), 1, pFile);
 
-    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
+    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : CMP_MaxFacesOrSlices(pMipSet, 0);
     for(int nSlice = 0; nSlice < nSlices; nSlice++)
         for(int nMipLevel = 0 ; nMipLevel < pMipSet->m_nMipLevels ; nMipLevel++)
             fwrite(DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData, DDS_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize, 1, pFile);
@@ -595,7 +604,7 @@ TC_PluginError SaveDDS_R32F(FILE* pFile, const MipSet* pMipSet)
     // Write the data    
     fwrite(&ddsd2, sizeof(DDSD2), 1, pFile);
 
-    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
+    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : CMP_MaxFacesOrSlices(pMipSet, 0);
     for(int nSlice = 0; nSlice < nSlices; nSlice++)
         for(int nMipLevel = 0 ; nMipLevel < pMipSet->m_nMipLevels ; nMipLevel++)
             fwrite(DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData, DDS_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize, 1, pFile);
@@ -621,7 +630,7 @@ TC_PluginError SaveDDS_RG32F(FILE* pFile, const MipSet* pMipSet)
     // Write the data    
     fwrite(&ddsd2, sizeof(DDSD2), 1, pFile);
 
-    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
+    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : CMP_MaxFacesOrSlices(pMipSet, 0);
     for(int nSlice = 0; nSlice < nSlices; nSlice++)
         for(int nMipLevel = 0 ; nMipLevel < pMipSet->m_nMipLevels ; nMipLevel++)
             fwrite(DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData, DDS_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize, 1, pFile);
@@ -650,7 +659,7 @@ TC_PluginError SaveDDS_FourCC(FILE* pFile, const MipSet* pMipSet)
     // Write the data    
     fwrite(&ddsd2, sizeof(DDSD2), 1, pFile);
 
-    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
+    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : CMP_MaxFacesOrSlices(pMipSet, 0);
     for(int nSlice = 0; nSlice < nSlices; nSlice++)
         for(int nMipLevel = 0 ; nMipLevel < pMipSet->m_nMipLevels ; nMipLevel++)
             fwrite(DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData, DDS_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize, 1, pFile);
@@ -676,7 +685,7 @@ TC_PluginError SaveDDS_G8(FILE* pFile, const MipSet* pMipSet)
     // Write the data    
     fwrite(&ddsd2, sizeof(DDSD2), 1, pFile);
 
-    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
+    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : CMP_MaxFacesOrSlices(pMipSet, 0);
     for(int nSlice = 0; nSlice < nSlices; nSlice++)
         for(int nMipLevel = 0 ; nMipLevel < pMipSet->m_nMipLevels ; nMipLevel++)
             fwrite(DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData, DDS_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize, 1, pFile);
@@ -702,7 +711,7 @@ TC_PluginError SaveDDS_A8(FILE* pFile, const MipSet* pMipSet)
     // Write the data    
     fwrite(&ddsd2, sizeof(DDSD2), 1, pFile);
 
-    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
+    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : CMP_MaxFacesOrSlices(pMipSet, 0);
     for(int nSlice = 0; nSlice < nSlices; nSlice++)
         for(int nMipLevel = 0 ; nMipLevel < pMipSet->m_nMipLevels ; nMipLevel++)
             fwrite(DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData, DDS_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize, 1, pFile);

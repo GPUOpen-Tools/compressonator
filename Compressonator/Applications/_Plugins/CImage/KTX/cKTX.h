@@ -176,7 +176,7 @@ enum scanline_copy_method
 #define ATC_RGBA_EXPLICIT_ALPHA_AMD                     0x8C93
 #define ATC_RGBA_INTERPOLATED_ALPHA_AMD                 0x87EE
 #define COMPRESSED_RED_RGTC1                            0x8DBB    //bc4
-#define COMPRESSED_RG_RGTC2                             0x8DBD    //bc5
+#define COMPRESSED_RG_RGTC2                             0x8DBD    //bc5 ATI2_XY
 #define ETC1_RGB8_OES                                   0x8D64
 #define COMPRESSED_FORMAT_DXT5_xGBR                     0x83F3
 #define COMPRESSED_FORMAT_DXT5_RxBG                     0x83F4

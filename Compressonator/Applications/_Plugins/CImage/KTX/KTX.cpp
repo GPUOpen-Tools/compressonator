@@ -21,10 +21,11 @@
 // THE SOFTWARE.
 //
 
-
+// Windows Header Files:
 #ifdef _WIN32
-#include "stdafx.h"
+#include <windows.h>
 #endif
+
 
 #include <stdio.h>
 #include "cKTX.h"
@@ -33,12 +34,9 @@
 #include <stdlib.h>
 #include "TC_PluginAPI.h"
 #include "TC_PluginInternal.h"
-#include "MIPS.h"
+#include "Common.h"
 
 #include "softfloat.h"
-#ifndef _WIN32
-#include "TextureIO.h"
-#endif
 
 #pragma comment(lib, "opengl32.lib")        // Open GL
 #pragma comment(lib, "Glu32.lib")           // Glu 
@@ -750,6 +748,11 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
    
 
     pMipSet->m_nMipLevels = fheader.numberOfMipmapLevels;
+    if (fheader.numberOfFaces < 1) fheader.numberOfFaces = 1; // depthsupport
+    pMipSet->m_nDepth     = fheader.numberOfFaces;
+    pMipSet->dwWidth      = fheader.pixelWidth;
+    pMipSet->dwHeight     = fheader.pixelHeight;
+
     // Allocate MipSet header
     KTX_CMips->AllocateMipSet(pMipSet,
         pMipSet->m_ChannelFormat,
@@ -757,10 +760,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
         pMipSet->m_TextureType,
         fheader.pixelWidth,
         fheader.pixelHeight,
-        1
-#ifdef USE_MIPSET_FACES
-        ,fheader.numberOfFaces
-#endif
+        pMipSet->m_nDepth               // depthsupport
     );
 
     if (pMipSet->m_nMipLevels > pMipSet->m_nMaxMipLevels)
@@ -821,11 +821,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
             if (pMipSet->m_compressed)
                 KTX_CMips->AllocateCompressedMipLevelData(pMipLevel, w, h, faceSizeRounded);
             else
-                KTX_CMips->AllocateMipLevelData(pMipLevel, w, h, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType
-#ifdef USE_MIPSET_FACES
-                    , faceSizeRounded
-#endif
-                );
+                KTX_CMips->AllocateMipLevelData(pMipLevel, w, h, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType);
 
             // handle padded KTX data
             // store size to be read at this miplevel to check with face size in KTX file
@@ -985,7 +981,7 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
         return -1;
     }
 
-    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : MaxFacesOrSlices(pMipSet, 0);
+    int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : CMP_MaxFacesOrSlices(pMipSet, 0);
     
     for (int nSlice = 0; nSlice < nSlices; nSlice++)
     {
@@ -1072,8 +1068,8 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
 #ifdef USE_GTC
     case  CMP_FORMAT_GTC:
 #endif
-#ifdef USE_GTC_HDR
-    case  CMP_FORMAT_GTCH:
+#ifdef USE_BASIS
+    case  CMP_FORMAT_BASIS:
 #endif
         isCompressed            = true;
         textureinfo.glType      = 0;

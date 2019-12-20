@@ -388,15 +388,15 @@ typedef enum _D3DFORMAT
     D3DFMT_V16U16               = 64,
     D3DFMT_A2W10V10U10          = 67,
 
-    D3DFMT_UYVY                 = MAKEFOURCC('U', 'Y', 'V', 'Y'),
-    D3DFMT_R8G8_B8G8            = MAKEFOURCC('R', 'G', 'B', 'G'),
-    D3DFMT_YUY2                 = MAKEFOURCC('Y', 'U', 'Y', '2'),
-    D3DFMT_G8R8_G8B8            = MAKEFOURCC('G', 'R', 'G', 'B'),
-    D3DFMT_DXT1                 = MAKEFOURCC('D', 'X', 'T', '1'),
-    D3DFMT_DXT2                 = MAKEFOURCC('D', 'X', 'T', '2'),
-    D3DFMT_DXT3                 = MAKEFOURCC('D', 'X', 'T', '3'),
-    D3DFMT_DXT4                 = MAKEFOURCC('D', 'X', 'T', '4'),
-    D3DFMT_DXT5                 = MAKEFOURCC('D', 'X', 'T', '5'),
+    D3DFMT_UYVY                 = CMP_MAKEFOURCC('U', 'Y', 'V', 'Y'),
+    D3DFMT_R8G8_B8G8            = CMP_MAKEFOURCC('R', 'G', 'B', 'G'),
+    D3DFMT_YUY2                 = CMP_MAKEFOURCC('Y', 'U', 'Y', '2'),
+    D3DFMT_G8R8_G8B8            = CMP_MAKEFOURCC('G', 'R', 'G', 'B'),
+    D3DFMT_DXT1                 = CMP_MAKEFOURCC('D', 'X', 'T', '1'),
+    D3DFMT_DXT2                 = CMP_MAKEFOURCC('D', 'X', 'T', '2'),
+    D3DFMT_DXT3                 = CMP_MAKEFOURCC('D', 'X', 'T', '3'),
+    D3DFMT_DXT4                 = CMP_MAKEFOURCC('D', 'X', 'T', '4'),
+    D3DFMT_DXT5                 = CMP_MAKEFOURCC('D', 'X', 'T', '5'),
 
     D3DFMT_D16_LOCKABLE         = 70,
     D3DFMT_D32                  = 71,
@@ -417,7 +417,7 @@ typedef enum _D3DFORMAT
 
     D3DFMT_Q16W16V16U16         =110,
 
-    D3DFMT_MULTI2_ARGB8         = MAKEFOURCC('M','E','T','1'),
+    D3DFMT_MULTI2_ARGB8         = CMP_MAKEFOURCC('M','E','T','1'),
 
     // Floating point surface formats
 
@@ -504,7 +504,7 @@ typedef struct _DDSD2
 #define MAX_FORMAT_LENGTH 160
 #define MAX_ERROR_LENGTH 240
 
-static const CMP_DWORD DDS_HEADER = MAKEFOURCC('D', 'D', 'S', ' ');
+static const CMP_DWORD DDS_HEADER = CMP_MAKEFOURCC('D', 'D', 'S', ' ');
 
 TC_PluginError LoadDDS_ABGR32F(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
 TC_PluginError LoadDDS_ABGR16F(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);

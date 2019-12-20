@@ -23,9 +23,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "Common.h"
+#include "Compressonator.h"
+
 #include "TC_PluginAPI.h"
 #include "TC_PluginInternal.h"
-#include "MIPS.h"
 
 #include "cASTC.h"
 

@@ -1,9 +1,9 @@
-//#include "stdafx.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "TC_PluginAPI.h"
 #include "TC_PluginInternal.h"
-#include "MIPS.h"
+#include "Compressonator.h"
 #include "TGA.h"
 
 CMIPS *TGA_CMips;
@@ -78,6 +78,13 @@ int Plugin_TGA::TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *s
 
 int Plugin_TGA::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSet)
 {
+   CMP_CMIPS lCMips;
+   if (!TGA_CMips)
+   {
+       TGA_CMips = &lCMips;
+   }
+   else
+       TGA_CMips->PrintError(("Test"));
 
    // ATI code
    FILE* pFile = NULL;
@@ -103,7 +110,7 @@ int Plugin_TGA::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
     if(header.cIDFieldLength)
         fseek(pFile, header.cIDFieldLength, SEEK_CUR);
 
-    if(!TGA_CMips->AllocateMipSet(pMipSet, CF_8bit, TDT_ARGB, TT_2D, header.nWidth, header.nHeight, 1))
+    if(!TGA_CMips->AllocateMipSet(pMipSet, CF_8bit, TDT_ARGB, TT_2D, header.nWidth, header.nHeight, 1))     // depthsupport, what should nDepth be set as here?
     {
         fclose(pFile);
         return PE_Unknown;
@@ -135,6 +142,11 @@ int Plugin_TGA::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
 
 int Plugin_TGA::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSet)
 {
+   CMP_CMIPS lCMips;
+   if (!TGA_CMips)
+   {
+       TGA_CMips = &lCMips;
+   }
     assert(pszFilename);
     assert(pMipSet);
 
@@ -151,7 +163,7 @@ int Plugin_TGA::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
     memset(&header, 0, sizeof(header));
     switch(pMipSet->m_dwFourCC)
     {
-        case MAKEFOURCC('G', '8', ' ', ' '):
+        case CMP_MAKEFOURCC('G', '8', ' ', ' '):
             header.cImageType = ImageType_G8_RLE; 
             header.cColorDepth = 8;
             break;
@@ -521,7 +533,7 @@ TC_PluginError LoadTGA_G8(FILE* pFile, MipSet* pMipSet, TGAHeader& Header)
 
     pMipSet->m_ChannelFormat        = CF_Compressed;
     pMipSet->m_TextureDataType      = TDT_XRGB;
-    pMipSet->m_dwFourCC             = MAKEFOURCC('G', '8', ' ', ' ');
+    pMipSet->m_dwFourCC             = CMP_MAKEFOURCC('G', '8', ' ', ' ');
     pMipSet->m_dwFourCC2            = 0;
     pMipSet->m_nMipLevels           = 1;
 
