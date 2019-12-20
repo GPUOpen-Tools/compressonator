@@ -606,6 +606,7 @@ signals:
 #define DESTINATION_IMAGE_CLASS_NAME      "Destination Image"
 #define CHANNEL_WEIGHTING_CLASS_NAME      "Channel Weighting"
 #define DXT1_ALPHA_CLASS_NAME             "DXT1 Alpha"
+#define ASTC_BLOCKRATE_CLASS_NAME         "ASTC Block Rate"
 #define CODEC_BLOCK_CLASS_NAME            "Codec Block"
 #define HDR_PROP_CLASS_NAME               "Input HDR Image Properties"
 
@@ -1328,6 +1329,7 @@ public:
         //R_16F,
         //RG_32F,
         //R_32F,
+        MESH_DATA
     };
 
     C_Destination_Options()
