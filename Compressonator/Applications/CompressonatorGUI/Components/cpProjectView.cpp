@@ -2822,7 +2822,7 @@ void ProjectView::analyseMeshData()
                 cpMainComponents* mainComponents = NULL;
                 mainComponents                   = (cpMainComponents*)m_parent;
                 if (mainComponents)
-                    msgHandler = mainComponents->PrintStatus;
+                    msgHandler = (void*) mainComponents->PrintStatus;
 
                 if (m_plugin_loader)
                 {
@@ -2900,7 +2900,7 @@ void ProjectView::analyseMeshData()
                 cpMainComponents* mainComponents = NULL;
                 mainComponents                   = (cpMainComponents*)m_parent;
                 if (mainComponents)
-                    msgHandler = mainComponents->PrintStatus;
+                    msgHandler = (void*) mainComponents->PrintStatus;
 
                 if (m_subplugin_loader)
                 {
@@ -2969,7 +2969,7 @@ void ProjectView::analyseMeshData()
                         cpMainComponents* mainComponents = NULL;
                         mainComponents                   = (cpMainComponents*)m_parent;
                         if (mainComponents)
-                            msgHandler = mainComponents->PrintStatus;
+                            msgHandler = (void*) mainComponents->PrintStatus;
 
                         if (m_plugin_loader)
                         {
@@ -6336,7 +6336,7 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                                     cpMainComponents* mainComponents = NULL;
                                                     mainComponents                   = (cpMainComponents*)ProjectView->m_parent;
                                                     if (mainComponents)
-                                                        msgHandler = mainComponents->PrintStatus;
+                                                        msgHandler = (void*) mainComponents->PrintStatus;
                                                 }
 
                                                 int result;
@@ -6821,7 +6821,7 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                                         cpMainComponents* mainComponents = NULL;
                                                         mainComponents                   = (cpMainComponents*)ProjectView->m_parent;
                                                         if (mainComponents)
-                                                            msgHandler = mainComponents->PrintStatus;
+                                                            msgHandler = (void*) mainComponents->PrintStatus;
                                                     }
 
                                                     int result;
