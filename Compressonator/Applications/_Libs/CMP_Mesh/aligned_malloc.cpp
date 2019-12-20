@@ -111,22 +111,22 @@ void* aligned_malloc(size_t bytes, size_t alignment)
 //
 // \return void
 //=================================================================================================================================
-void PrintList()
-{
-    node* addressEntry;
-
-    fprintf(stderr, "List = ");
-
-    for (addressEntry = s_addressList;
-         addressEntry != NULL;
-         addressEntry = addressEntry->next)
-    {
-        fprintf(stderr, "(o = %p, a = %p), ",
-                addressEntry->original, addressEntry->aligned);
-    }
-
-    fprintf(stderr, "\n");
-}
+// void PrintList()
+// {
+//     node* addressEntry;
+// 
+//     fprintf(stderr, "List = ");
+// 
+//     for (addressEntry = s_addressList;
+//          addressEntry != NULL;
+//          addressEntry = addressEntry->next)
+//     {
+//         fprintf(stderr, "(o = %p, a = %p), ",
+//                 addressEntry->original, addressEntry->aligned);
+//     }
+// 
+//     fprintf(stderr, "\n");
+// }
 
 //=================================================================================================================================
 // Free the allocated memory by aligned_malloc function call.

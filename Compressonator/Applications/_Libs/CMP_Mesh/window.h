@@ -31,13 +31,15 @@ public:
     // Called when computer is idle.
     virtual void Idle(void) { ; }
     // Called when canvas is reshaped.
-    virtual void Reshape(int w, int h) { this->w = w; this->h = h; }
+    virtual void Reshape(int rw, int rh) { this->w = rw; this->h = rh; }
     // called when mouse moves
     virtual void Motion(int x, int y, int modifier)
     { (void) x; (void) y; (void) modifier; }
     // Called when mouse button is pressed or released
     virtual void Button(int button, int state, int x, int y, int modifier)
-    { (void) button; (void) state; (void) x; (void) y; }
+    {
+        (void)button; (void)state; (void)x; (void)y; (void) modifier;
+    }
     // Called when key is pressed
     virtual void Keyboard(unsigned char c, int x, int y)
     { (void) c; (void) x; (void) y; }

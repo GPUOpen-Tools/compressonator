@@ -78,12 +78,12 @@ HWND GDIWMCreateWindow(const char* name, GDIWindow* window)
     return hWnd;
 }
 
-void GDIWMResizeWindow(GDIWindow* window, int width, int height)
+void GDIWMResizeWindow(GDIWindow* window, int rwidth, int rheight)
 {
     RECT r;
     GetWindowRect(window->GetHandle(), &r);
-    r.right = r.left + width;
-    r.bottom = r.top + height;
+    r.right = r.left + rwidth;
+    r.bottom = r.top + rheight;
     AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, false);
     MoveWindow(window->GetHandle(), r.left, r.top, r.right - r.left,
                r.bottom - r.top, FALSE);
