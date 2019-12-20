@@ -2,7 +2,7 @@
 // Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 
-#include "acoglwidget.h"
+#include "acOGLWidget.h"
 #include <math.h>
 #include "qopengltexture.h"
 

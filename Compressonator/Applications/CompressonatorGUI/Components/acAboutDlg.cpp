@@ -1,4 +1,4 @@
-#include "acaboutdlg.h"
+#include "acAboutDlg.h"
 #include "Version.h"
 
 #define AC_STR_HelpAboutWebPage "http://gpuopen.com/gaming-product/compressonator/"
