@@ -3192,8 +3192,8 @@ void ProjectView::SetupTreeView()
     // Hide the tree view header and allow first column to stretch
     QHeaderView* Header = m_projectTreeView->header();
 
-    Header->setResizeMode(0, QHeaderView::ResizeToContents);
-    Header->setResizeMode(2, QHeaderView::Fixed);
+    Header->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    Header->setSectionResizeMode(2, QHeaderView::Fixed);
     Header->setSectionsMovable(false);
     Header->hide();
 
