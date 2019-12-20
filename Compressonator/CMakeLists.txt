@@ -5,7 +5,7 @@ project(Compressonator)
 find_package(Threads REQUIRED)
 find_package(Boost COMPONENTS system filesystem)
 find_package(OpenCV REQUIRED)
-find_package(Qt5 COMPONENTS Gui REQUIRED)
+find_package(Qt5 COMPONENTS Gui Widgets OpenGL Qml WebEngineWidgets Xml REQUIRED)
 
 if (OpenCV_FOUND)
 else()
@@ -23,10 +23,24 @@ else()
 endif()
 
 if (UNIX)
-  # OpenEXRConfig.cmake is broken on Linux, use PkgConfig
   find_package(PkgConfig REQUIRED)
+
+  # OpenEXRConfig.cmake is broken on Linux, use PkgConfig
+  # find_package(OpenEXR REQUIRED)
   pkg_check_modules(OpenEXR REQUIRED OpenEXR)
+
+  # Draco cmake find scripts are also broken (looks for src/ path in install directory)
+  # find_package(Draco REQUIRED)
+  pkg_check_modules(draco REQUIRED draco)
 endif()
+
+#gltf code needs _LINUX define
+if (UNIX)
+  add_definitions(-D_LINUX)
+endif()
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
 add_subdirectory(CMP_Framework)
 add_subdirectory(CMP_CompressonatorLib)
@@ -35,7 +49,11 @@ add_subdirectory(Applications/_Plugins/CImage/EXR)
 add_subdirectory(Applications/_Plugins/CImage/KTX)
 add_subdirectory(Applications/_Plugins/CImage/TGA)
 add_subdirectory(Applications/_Plugins/CAnalysis/Analysis)
+add_subdirectory(Applications/_Plugins/Common)
 add_subdirectory(Applications/_Libs/CMP_MeshCompressor)
+add_subdirectory(Applications/_Libs/CMP_MeshOptimizer)
+add_subdirectory(Applications/_Libs/GPU_Decode)
 add_subdirectory(Applications/CompressonatorCLI)
+add_subdirectory(Applications/CompressonatorGUI)
 
 add_dependencies(CompressonatorCLI-bin Compressonator CMP_Framework ASTC EXR KTX TGA Analysis CMP_MeshCompressor)
