@@ -1,0 +1,8 @@
+*.cmake
+Makefile
+CMakeFiles/
+CompressonatorCLI-bin
+*.a
+CMakeCache.txt
+CMP_GUI_Common_autogen/
+CMP_GUI_Components_autogen/
