@@ -18,6 +18,9 @@
     <Filter Include="gltf">
       <UniqueIdentifier>{c98fb0c6-5e55-499d-b16c-2a1f3bb567cd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\WindowsOnly">
+      <UniqueIdentifier>{e3ffc89c-ff16-4a2c-97fa-0a6cfae0f59e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="../Source/CompressonatorCLI.cpp">
@@ -32,9 +35,6 @@
     <ClCompile Include="../../_Plugins/Common/cmdline.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="../../_Plugins/Common/MIPS.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="../../_Plugins/Common/PluginManager.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -47,18 +47,15 @@
     <ClCompile Include="../../_Plugins/Common/ATIFormats.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="../../_Plugins/Common/query_timer.cpp">
+      <Filter>Common\WindowsOnly</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="../Source/AMDCompressCLI_Documentation.h">
-      <Filter>Doxygen</Filter>
-    </ClInclude>
     <ClInclude Include="../../_Plugins/Common/ATIFormats.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="../../_Plugins/Common/cmdline.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="../../_Plugins/Common/MIPS.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="../../_Plugins/Common/PluginInterface.h">
@@ -81,6 +78,12 @@
     </ClInclude>
     <ClInclude Include="..\..\_Plugins\Common\CMP_FileIO.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="../../_Plugins/Common/query_timer.h">
+      <Filter>Common\WindowsOnly</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\CompressonatorCLI_Documentation.h">
+      <Filter>Doxygen</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

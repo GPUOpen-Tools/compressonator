@@ -1,18 +1,28 @@
 #ifndef AMDCOMPRESS_DOC_H
 #define AMDCOMPRESS_DOC_H
 
-/*==============================================================================
-  Advanced Micro Devices, Inc.
-
-  File Name:   AMDCompressCLI_Documentation.h
-  Description: A library to compress/decompress textures
-
-  Copyright (c) 2007 to 2015 Advanced Micro Devices, Inc.
-
-  Version:    2.1
-
-  Developer:    Navin Patel    
-/*==============================================================================*/
+//=====================================================================
+// Copyright 2019 (c), Advanced Micro Devices, Inc. All rights reserved.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files(the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions :
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+//=====================================================================
 
 /*===================
 AMDCompress CLI Tool
@@ -417,90 +427,6 @@ AMDCompress CLI Tool
     /// Ericsson Texture Compression - a compressed RGB format.
     ///
 
-
-/************************************************
-*                License Agreement
-*************************************************/
-
-/// \page License_Page Library Software License Agreement
-/// 
-/// IMPORTANT-READ CAREFULLY: DO NOT INSTALL, COPY OR USE THE LICENSED MATERIALS (AS DEFINED BELOW), OR ANY PORTION THEREOF, (COLLECTIVELY "LICENSED MATERIALS") UNTIL YOU HAVE CAREFULLY READ AND AGREED TO THE FOLLOWING TERMS AND CONDITIONS. THIS IS A LEGAL AGREEMET ("AGREEMENT") BETWEEN YOU (EITHER AN INDIVIDUAL OR AN ENTITY") ("YOU") AND ADVANCED MICRO DEVICES, INC. ("AMD").
-/// 
-/// IF YOU DO NOT AGREE TO THE TERMS OF THIS AGREEMENT, DO NOT INSTALL, COPY OR USE THIS SOFTWARE. BY INSTALLING, COPYING OR USING THE LICENSED MATERIALS YOU AGREE TO THE TERMS AND CONDITIONS OF THIS AGREEMENT. 
-/// 
-/// 1. DEFINITIONS.
-///  
-/// 1.1     "Derivative Works" means any work, revision, modification or adaptation made to or derived from the Sample Code in whole or in part. 
-/// 
-/// 1.2    "Documentation" means documentation, associated, included, or provided in connection with the Licensed Materials, or any portion thereof, including but not limited to information provided online, electronically, or as install scripts.
-/// 
-/// 1.3    "Free Software License" means an open source or other license that requires, as a condition of use, modification or distribution, that any resulting software must be (a) disclosed or distributed in source code form; (b) licensed for the purpose of making derivative works; or (c) redistributable at no charge. 
-/// 
-/// 1.4    "Intellectual Property Rights" means all copyrights, trademarks, trade secrets, patents, mask works, and all related, similar, or other intellectual property rights recognized in any jurisdiction worldwide, including all applications and registrations with respect thereto. 
-/// 
-/// 1.5    "Licensed Materials" means the Software Development Kits(s) identified in Exhibit A, which is attached hereto and incorporated by reference, including (a) Documentation; (b) Sample Code; (c) tools and utilities; and (d) Libraries.
-/// 
-/// 1.6    "Licensed Purpose" means using the Licensed Materials solely for texture image compression, decompression and formatting. 
-/// 
-/// 1.7    "Licensee Software" means any software developed or modified by You using the Licensed Materials, and which may include any Libraries and/or Derivative Works.
-/// 
-/// 1.8    "Libraries" means library files in the Licensed Materials that may be statically or dynamically linked into Licensee Software for the Licensed Purpose.  
-/// 
-/// 1.9    "Object Code" means the machine readable form of the Licensed Software (as opposed to the human readable form of computer programming code) created by or for You by compiling the Source Code, or as delivered by AMD, including the object code version of any Derivative Work.
-/// 
-/// 1.10    "Sample Code" means the header files and Source Code identified within the Licensed Materials as sample code.
-/// 
-/// 1.11    "Source Code" means computer programming code in the human readable form and related system level documentation, including all associated comments, symbols and any procedural code such as job control language. 
-/// 
-/// 2.        LICENSE.  Subject to the terms and conditions of this Agreement, AMD hereby grants You a non-exclusive, royalty-free, revocable, non-transferable, non-assignable limited copyright license solely for the Licensed Purpose, to:
-/// 
-///     a)    install, use and copy the Licensed Materials internally at Your site(s); 
-///     b)    create Derivative Works solely for internal use; and 
-///     c)    distribute and sublicense the Object Code of the Sample Code, Derivative Works and Libraries as incorporated in Licensee Software to customers and end users (collectively, "Distribution Channel") subject to an end user license agreement that meets the requirements in Section 3 herein. 
-/// 
-/// 3.        END USER LICENSE AGREEMENT. Distribution of the Licensee Software by You and Your Distribution Channel will be pursuant to an enforceable end user license agreement ("End User License Agreement") with terms and conditions that at a minimum are substantially similar to those set forth in Sections 4, 15, 16 and 17 herein and the following provisions: (a) Licensee Software may not be transferred or duplicated (except for reasonable backup); (b) Licensee Software may not be reverse engineered, disassembled or de-compiled; (c) all warranties must be disclaimed and AMD's liability must be limited as set forth in Section 11 herein; (d) the end user must comply fully with all relevant export laws and regulations of the United States and other applicable export and import laws; (e) the end user must be notified that the Licensee Software is subject to a restricted license and can only be used for the Licensed Purpose; and (f) AMD is a third party beneficiary of all End User License Agreements.  
-/// 
-/// 4.    RESTRICTIONS.  Except for the limited copyright license expressly granted in Section 2 herein, You have no other rights in the Licensed Materials, whether express, implied, arising by estoppel or otherwise.  Further restrictions regarding Your use of the Licensed Materials are set forth below.  Except as expressly authorized herein, You may not:     
-/// 
-/// a)    distribute, publish, display, sublicense, assign or otherwise transfer the Licensed Materials (except when built into the Licensee Software);
-/// b)    decompile, reverse engineer, disassemble or otherwise reduce the Licensed Materials in Object Code to a human-perceivable form (except as expressly allowed by applicable law but then only to the limited extent of such law); 
-/// c)    alter or remove any copyright, trademark or patent notice(s) in the Licensed Materials;
-/// d)    use the Licensed Materials to: (i) develop inventions directly derived from Confidential Information to seek patent protection; (ii) assist in the analysis of Your patents and patent applications; or (iii) modify Your existing patents or patent applications; or
-/// e)    use the Licensed Materials in way that requires that the Licensed Materials or any portion thereof be licensed under a Free Software License.
-/// 
-/// 5.    THIRD PARTY MATERIALS.  Together with the Licensed Materials, AMD may include third party technologies (e.g. third party libraries) for which You must obtain licenses from parties other than AMD.  You agree that AMD has not obtained or conveyed to You, and that You shall be responsible for obtaining, Intellectual Property Rights to use and/or distribute the applicable, underlying Intellectual Property Rights related to the third party technologies.  These third party technologies are not licensed as part of the Licensed Materials and are not licensed under this Agreement.  
-/// 
-/// 6.    NOTICE REGARDING STANDARDS.  AMD does not provide a license or sublicense to any Intellectual Property Rights relating to any standards, such as, including but not limited to any audio and/or video codec technologies such as MPEG-2, MPEG-3, MPEG-4; AVC/H.264; VC-1; and MP3 (collectively, the "Media Technologies"). For clarity, You will pay any royalties due for such third party technologies, which may include the Media Technologies that are owed as a result of AMD providing the Licensed Materials to You.  
-/// 
-/// 7.    OTHER AMD SOFTWARE COMPONENTS.  The Licensed Materials may be accompanied by AMD software components (e.g. libraries, sample code) which are licensed to You under the terms and conditions of their respective licenses located in the directory with the software component.
-/// 
-/// 8.    OWNERSHIP.  The Licensed Materials including all Intellectual Property Rights therein are and remain the sole and exclusive property of AMD or its licensors, and You shall have no right, title or interest therein except as expressly set forth in this Agreement.
-/// 
-/// 9.    FEEDBACK.  You have no obligation to give AMD any suggestions, comments or other feedback ("Feedback") relating to the Licensed Materials.  However, AMD may use and include any Feedback that it receives from You to improve the Licensed Materials or other AMD products, software and technologies.  Accordingly, for any Feedback You provide to AMD, You grant AMD and its affiliates and subsidiaries a worldwide, non-exclusive, irrevocable, royalty-free, fully paid up, perpetual license to, directly or indirectly, use, reproduce, license, sublicense, distribute, make, have made, sell and otherwise commercialize the Feedback in the Licensed Materials or other AMD products, software and technologies.  You further agree not to provide any Feedback that (a) You know is subject to any Intellectual Property Rights of any third party or (b) is subject to license terms which seek to require any products incorporating or derived from such Feedback, or other AMD Intellectual Property, to be licensed to or otherwise shared with any third party.
-/// 
-/// 10.    SUPPORT AND UPDATES.  AMD is under no obligation to provide any kind of support under this Agreement.  AMD may, in its sole discretion, provide to You updates to the Licensed Materials, and such updates will be covered as Licensed Materials under this Agreement.  
-/// 
-/// 11.    WARRANTY DISCLAIMER, LIMITATION OF LIABILITY AND INDEMNIFICATION.
-/// 11.1     Disclaimer OF Warranty. THE LICENSED MATERIALS ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND.  AMD DISCLAIMS ALL WARRANTIES, EXPRESS, IMPLIED, OR STATUTORY, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, NON-INFRINGEMENT, THAT THE LICENSED MATERIALS WILL RUN UNINTERRUPTED OR ERROR-FREE OR THOSE ARISING FROM CUSTOM OF TRADE OR COURSE OF USAGE.  THE ENTIRE RISK ASSOCIATED WITH THE USE OF THE LICENSED MATERIALS IS ASSUMED BY YOU.  Some jurisdictions do not allow the exclusion of implied warranties, so the above exclusion may not apply to You. 
-/// 
-/// 11.2    Limitation of Liability.  AMD AND ITS LICENSORS WILL NOT, UNDER ANY CIRCUMSTANCES BE LIABLE TO YOU FOR ANY PUNITIVE, DIRECT, INCIDENTAL, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES ARISING FROM USE OF THE LICENSED MATERIALS OR THIS AGREEMENT EVEN IF AMD AND ITS LICENSORS HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.  In no event shall AMD's total liability to You for all damages, losses, and causes of action (whether in contract, tort (including negligence) or otherwise) exceed the amount of $100 USD.  
-/// 
-/// 11.3    Indemnification.  You agree to defend, indemnify and hold harmless AMD and its licensors, and any of their directors, officers, employees, affiliates or agents from and against any and all loss, damage, liability and other expenses (including reasonable attorneys' fees), resulting from a) Your use, distribution or sublicense of the Licensed Materials, b)  violation of the terms and conditions of this Agreement by You or any sublicensee, or c) for failure by You to obtain and comply with third party licenses that may be required pursuant to Sections 5, 6 and 7 herein.  
-/// 
-/// 12.    CONFIDENTIALITY. You shall protect the Licensed Materials and any information related thereto (collectively, "Confidential Information") by using the same degree of care, but no less than a reasonable degree of care, to prevent the unauthorized use, dissemination or publication of the Confidential Information as You use to protect your own confidential information of a like nature.  You shall not disclose any Confidential Information disclosed hereunder to any third party and shall limit disclosure of Confidential Information to only those of its employees and contractors with a need to know and who are bound by confidentiality obligations with You at least as restrictive as those contained in this Agreement.  You shall be responsible for your employees and contractors adherence to the terms of this Agreement.  You may disclose Confidential Information in accordance with a judicial or other governmental order, provided that You either (a) give AMD reasonable notice prior to such disclosure to allow AMD a reasonable opportunity to seek a protective order or equivalent or (b) obtain written assurance from the applicable judicial or governmental entity that it will afford the Confidential Information the highest level of protection afforded under applicable law or regulation. 
-/// 
-/// 13.    TERMINATION AND SURVIVAL. AMD may terminate the Agreement immediately upon the breach by You or any sublicensee of any of the terms of the Agreement. You may terminate the Agreement upon written notice to AMD and destruction of the Licensed Materials You accessed hereunder.  The termination of this Agreement shall: (i) immediately result in the termination of all rights granted by You to distribute the Licensed Materials and Derivative Works through multiple tiers of distribution under Section 2; and (ii) have no effect on any sublicenses previously granted by You to end users under Section 2(c) and which are compliant with all terms and conditions of this Agreement, which sublicenses shall survive in accordance with their terms. Upon termination or expiration of this Agreement, You will cease using and destroy or return to AMD all copies of the Confidential Information, including but not limited to the Licensed Materials. Upon termination or expiration of this Agreement, all provisions survive except for Section 2.
-/// 
-/// 14.    EXPORT RESTRICTIONS.  You shall adhere to all applicable U.S., European, and other export laws, including but not limited to the U.S. Export Administration Regulations ("EAR") (15 C.F.R Sections 730-774), and E.U. Council Regulation (EC) No 428/2009 of 5 May 2009.  Further, pursuant to Section 740.6 of the EAR, You hereby certify that, except pursuant to a license granted by the United States Department of Commerce Bureau of Industry and Security or as otherwise permitted pursuant to a License Exception under the EAR, You will not (1) export, re-export or release to a national of a country in Country Groups D:1, E:1 or E:2 any restricted technology, software, or source code it receives from AMD, or (2) export to Country Groups D:1, E:1 or E:2 the direct product of such technology or software, if such foreign produced direct product is subject to national security controls as identified on the Commerce Control List (currently found in Supplement 1 to Part 774 of EAR).  For the most current Country Group listings, or for additional information about the EAR or Your obligations under those regulations, please refer to the U.S. Bureau of Industry and Security's website at http://www.bis.doc.gov/.  
-/// 
-/// 15.    GOVERNMENT END USERS. The Licensed Materials are provided with "RESTRICTED RIGHTS."  Use, duplication or disclosure by the Government is subject to restrictions as set forth in FAR 52.227-14 and DFAR 252.227-7013, et seq., or its successor.  Use of the Licensed Materials by the Government constitutes acknowledgment of AMD's proprietary rights in it.
-///  
-/// 16.    GOVERNING LAW.  This Agreement is made under and shall be construed according to the laws of the State of Texas, excluding conflicts of law rules.  Each party submits to the jurisdiction of the state and federal courts of Travis County and the Western District of Texas for the purposes of this Agreement.  You acknowledge that Your breach of this Agreement may cause irreparable damage and You agree that AMD shall be entitled to seek injunctive relief under this Agreement, as well as such further relief as may be granted by a court of competent jurisdiction.
-/// 
-/// 17.     GENERAL PROVISIONS.  You may not assign this Agreement without the prior written consent of AMD and any assignment without such consent will be null and void.  This Agreement may be executed in multiple counterparts, each of which shall constitute a signed original.  Any facsimile or electronic image of this Agreement or writing referenced herein shall be valid and acceptable for all purposes as if it were an original.  The Parties do not intend that any agency or partnership relationship be created between them by this Agreement.  Each provision of this Agreement shall be interpreted in such a manner as to be effective and valid under applicable law.  However, in the event that any provision of this Agreement becomes or is declared unenforceable by any court of competent jurisdiction, such provision shall be deemed deleted and the remainder of this Agreement shall remain in full force and effect.  
-/// 
-/// 18.     ENTIRE AGREEMENT.  This Agreement sets forth the entire agreement and understanding between the Parties with respect to the Licensed Materials and supersedes and merges all prior oral and written agreements, discussions and understandings between them regarding the subject matter of this Agreement.  No waiver or modification of any provision of this Agreement shall be binding unless made in writing and signed by an authorized representative of each Party.
-/// 
 
 #endif
 

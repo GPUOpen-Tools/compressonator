@@ -1,23 +1,29 @@
+//=====================================================================
+// Copyright 2019 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
-// AMDCompressCLI.cpp
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files(the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions :
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 //
-//
-// Contact Info: Navin Patel @ AMD.com
-//
-// Initial version - Nov 2014
-// Updated code to share with GUI - Sep 19 2015
-//
-// Code is based on the following Libs
-// Standard Library             Ref:http://www.cplusplus.com/reference/
-// Standard Template Library Ref:http://en.cppreference.com/w/cpp
-//
-
+//=====================================================================
+ 
 #ifdef _DEBUG
 //#include <vld.h>   Enable to check for code leaks
 #endif
-
-// #define USE_AMD_BMP
-// #define USE_AMD_PNG
 
 #ifdef _WIN32
 #include <windows.h>
@@ -34,16 +40,12 @@
 #endif
 // Our Static Plugin Interfaces
 #pragma comment(lib, "ASTC.lib")
-#pragma comment(lib, "BoxFilter.lib")
-#pragma comment(lib, "DDS.lib")
 #pragma comment(lib, "EXR.lib")
 #pragma comment(lib, "KTX.lib")
 #pragma comment(lib, "TGA.lib")
 #pragma comment(lib, "IMGAnalysis.lib")
 
 extern void* make_Plugin_ASTC();
-extern void* make_Plugin_BoxFilter();
-extern void* make_Plugin_DDS();
 extern void* make_Plugin_EXR();
 extern void* make_Plugin_TGA();
 extern void* make_Plugin_KTX();
@@ -51,21 +53,14 @@ extern void* make_Plugin_KTX();
 extern void* make_Plugin_CAnalysis();
 #endif
 
-#ifdef USE_AMD_PNG
-#pragma comment(lib, "PNG.lib")
-extern void* make_Plugin_PNG();
-#endif
-
-#ifdef USE_AMD_BMP
-#pragma comment(lib, "BMP.lib")
-extern void* make_Plugin_BMP();
-#endif
+// Setup Static Host Pluging Libs
+extern void CMP_RegisterHostPlugins();
 
 extern bool   CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2);
 extern void   LocalPrintF(char* buff);
 extern string DefaultDestination(string SourceFile, CMP_FORMAT DestFormat, string DestFileExt);
 
-PluginManager g_pluginManager;
+extern PluginManager g_pluginManager;
 bool          g_bAbortCompression = false;
 CMIPS*        g_CMIPS;  // Global MIPS functions shared between app and all IMAGE plugins
 
@@ -73,13 +68,13 @@ void AboutCompressonator()
 {
     printf("------------------------------------------------\n");
     // current build release
-    if ((VERSION_MINOR_MAJOR > 0))
-        printf("CompressonatorCLI V%d.%d.%d Copyright AMD 2018\n", VERSION_MAJOR_MAJOR, VERSION_MAJOR_MINOR, VERSION_MINOR_MAJOR);
+    if (VERSION_MINOR_MAJOR)
+        printf("CompressonatorCLI V%d.%d.%d Copyright AMD 2019\n", VERSION_MAJOR_MAJOR, VERSION_MAJOR_MINOR, VERSION_MINOR_MAJOR);
     else
     {
         // Keep track of Customer patches from last release to current
         // This is what is shown when you build the exe outside of the automated Build System (such as Jenkins)
-        printf("CompressonatorCLI V3.1.0 Copyright AMD 2018\n");
+        printf("CompressonatorCLI V3.2.0 Copyright AMD 2019\n");
     }
     printf("------------------------------------------------\n");
     printf("\n");
@@ -105,20 +100,18 @@ void PrintUsage()
     printf("                     be compatible \n");
     printf("                     with the sources format,decompress formats are typically\n");
     printf("                     set to ARGB_8888 or ARGB_32F\n");
+    printf("-EncodeWith          Compression with CPU or HPC\n");
 #ifdef _WIN32
-#ifdef USE_COMPUTE
-    printf("-EncodeWith          Compression with HPC or OpenCL\n");
-#endif
     printf("-DecodeWith          GPU based decompression using OpenGL, DirectX or Vulkan\n");
 #endif
 #ifdef USE_MESH_DRACO_EXTENSION
-    printf("-draco           Enable draco compression. (only support glTF files)\n");
+    printf("-draco               Enable draco compression. (only support glTF files)\n");
 #ifdef USE_MESH_DRACO_SETTING 
-    printf("-dracolvl        Draco compression level (0-10), default=5 , -draco has to be enabled.\n");
-    printf("-qpos            Draco quantization bits for position attribute (0-30), default=14. -draco has to be enabled.\n");
-    printf("-qtexc           Draco quantization bits for texture coordinates attribute (0-30), default=10. -draco has to be enabled.\n");
-    printf("-qnorm           Draco quantization bits for normal attribute (0-30), default=10. -draco has to be enabled.\n");
-    printf("-qgen            Draco quantization bits for generic attribute (0-30), default=8. -draco has to be enabled.\n");
+    printf("-dracolvl            Draco compression level (0-10), default=5 , -draco has to be enabled.\n");
+    printf("-qpos                Draco quantization bits for position attribute (0-30), default=14. -draco has to be enabled.\n");
+    printf("-qtexc               Draco quantization bits for texture coordinates attribute (0-30), default=10. -draco has to be enabled.\n");
+    printf("-qnorm               Draco quantization bits for normal attribute (0-30), default=10. -draco has to be enabled.\n");
+    printf("-qgen                Draco quantization bits for generic attribute (0-30), default=8. -draco has to be enabled.\n");
 #endif
 #endif
     printf("-doswizzle           Swizzle the source images Red and Blue channels\n");
@@ -194,10 +187,6 @@ void PrintUsage()
     printf("GTC            Compressed RGB 8:8:8 format \n");
     printf("               This is a preview version for evaluation: subject to changes\n");
 #endif
-#ifdef USE_GTC_HDR
-    printf("GTCH           High-Dynamic Range  RGB compression format\n");
-    printf("               This is a preview version for evaluation: subject to changes\n");
-#endif
     printf("\n");
     printf("<codec options>: Reference  documentation for range of values\n\n");
     printf("-UseChannelWeighting <value> Use channel weightings\n");
@@ -215,9 +204,6 @@ void PrintUsage()
     printf("                             values of 4,5,6,8,10 or 12 from 4x4 to 12x12\n");
     printf("-DXT1UseAlpha <value>        Encode single-bit alpha data.\n");
     printf("                             Only valid when compressing to DXT1 & BC1\n");
-    //printf("-OutputExposure <value>      BC6 only: Sets the resulting exposure of compressed Images\n");
-    //printf("                             default is 0.95, lower values produce darker images,\n");
-    //printf("                             higher values produce brighter images\n");
     printf("-CompressionSpeed <value>    The trade-off between compression speed & quality\n");
     printf("                             This setting is not used in BC6H and BC7\n");
     printf("-NumThreads <value>          Number of threads to initialize for ASTC,BC6H,BC7\n");
@@ -274,16 +260,15 @@ void PrintUsage()
     printf("CompressonatorCLI.exe -fd ASTC -BlockRate 0.8 image.bmp result.astc\n");
     printf("CompressonatorCLI.exe -fd ASTC -BlockRate 12x12 image.bmp result.astc\n");
     printf("CompressonatorCLI.exe -fd BC7  image.bmp result.dds \n");
+    printf("CompressonatorCLI.exe -fd BC7  image.bmp result.bmp\n");
     printf("CompressonatorCLI.exe -fd BC7  -NumTheads 16 image.bmp result.dds\n");
-    printf("CompressonatorCLI.exe -fd BC7 -ff PNG -fx KTX ./source_dir/ ./dist_dir/\n");
-    printf("CompressonatorCLI.exe -fd BC6H image.exr result.dds\n\n");
+    printf("CompressonatorCLI.exe -fd BC7  -ff PNG -fx KTX ./source_dir/ ./dist_dir/\n");
+    printf("CompressonatorCLI.exe -fd BC6H image.exr result.exr\n\n");
     printf("Example decompression from compressed image using CPU:\n\n");
     printf("CompressonatorCLI.exe  result.dds image.bmp\n\n");
     printf("Example decompression from compressed image using GPU:\n\n");
     printf("CompressonatorCLI.exe  -UseGPUDecompress result.dds image.bmp\n\n");
     printf("Example compression with decompressed result (Useful for qualitative analysis):\n\n");
-    printf("CompressonatorCLI.exe -fd BC7  image.bmp result.bmp\n");
-    printf("CompressonatorCLI.exe -fd BC6H image.exr result.exr\n\n");
 #ifdef USE_MESH_DRACO_EXTENSION
     printf("Example draco compression usage (support glTF and OBJ file only):\n\n");
     printf("CompressonatorCLI.exe -draco source.gltf dest.gltf\n");
@@ -318,26 +303,75 @@ bool ProgressCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser
 
 
 
-//----------------------------------------------------------
-// Compressonator Lib compute codec override
-//----------------------------------------------------------
-#ifdef USE_GTC
-PluginInterface_Compute *g_plugin_ComputeGTC = NULL;
-HPC_Compress  *g_CompressGTCCodec = NULL;
+//---------------------------------------------
+// Resrved for future releases::compute codecs 
+//---------------------------------------------
+PluginInterface_Encoder *g_plugin_EncoderGTC = NULL;
+CMP_Encoder  *g_Codec_GTC = NULL;
+
 extern void(*GTC_DecompressBlock)(void *out, void *in);
 extern void(*GTC_CompressBlock)(void * srcblock, void *dest, void *blockoptions);
 
 void g_GTC_DecompressBlock(void *in, void *out)
 {
-    if (g_CompressGTCCodec)
-        g_CompressGTCCodec->Decompress(in, out);
+    if (g_Codec_GTC)
+        g_Codec_GTC->DecompressBlock(in, out);
 }
 
 void g_GTC_CompressBlock(void *in, void *out, void *blockoptions)
 {
-    if (g_CompressGTCCodec)
-        g_CompressGTCCodec->Compress(in, out, blockoptions);
+    if (g_Codec_GTC)
+        g_Codec_GTC->CompressBlock(in, out, blockoptions);
 }
+
+
+//----------------- BASIS: Run Time Encoder ------------------
+#ifdef USE_BASIS
+PluginInterface_Encoder     *g_plugin_EncoderBASIS = NULL;
+CMP_Encoder                 *g_Codec_BASIS = NULL;
+extern int(*BASIS_CompressTexture)(void * in, void *out, void *blockoptions);
+extern int(*BASIS_DecompressTexture)(void * in, void *out, void *blockoptions);
+
+int g_BASIS_CompressTexture(void *in, void *out, void *blockoptions)
+{
+    if (g_Codec_BASIS)
+    {
+        return g_Codec_BASIS->CompressTexture(in, out, blockoptions);
+    }
+    return 0;
+}
+
+int g_BASIS_DecompressTexture(void *in, void *out, void *blockoptions)
+{
+    if (g_Codec_BASIS)
+    {
+        return g_Codec_BASIS->DecompressTexture(in, out, blockoptions);
+    }
+    return 0;
+}
+
+#endif
+
+
+//----------------- APC: Run Time Encoder ------------------
+#ifdef USE_APC
+PluginInterface_Encoder *g_plugin_EncoderAPC = NULL;
+CMP_Encoder  *g_Codec_APC = NULL;
+extern void(*APC_DecompressBlock)(void *out, void *in);
+extern void(*APC_CompressBlock)(void * srcblock, void *dest, void *blockoptions);
+
+void g_APC_DecompressBlock(void *in, void *out)
+{
+    if (g_Codec_APC)
+        g_Codec_APC->DecompressBlock(in, out);
+}
+
+void g_APC_CompressBlock(void *in, void *out, void *blockoptions)
+{
+    if (g_Codec_APC)
+        g_Codec_APC->CompressBlock(in, out, blockoptions);
+}
+
 #endif
 
 
@@ -349,25 +383,15 @@ int main(int argc, char* argv[])
 
     g_CMIPS = new CMIPS;
 
-    g_pluginManager.registerStaticPlugin("IMAGE", "ASTC", (void*)make_Plugin_ASTC);
-    g_pluginManager.registerStaticPlugin("IMAGE", "DDS", (void*)make_Plugin_DDS);
+    g_pluginManager.registerStaticPlugin("IMAGE", "ASTC",(void*)make_Plugin_ASTC);
     g_pluginManager.registerStaticPlugin("IMAGE", "EXR", (void*)make_Plugin_EXR);
     g_pluginManager.registerStaticPlugin("IMAGE", "TGA", (void*)make_Plugin_TGA);  // Use for load only, Qt will be used for Save
     g_pluginManager.registerStaticPlugin("IMAGE", "KTX", (void*)make_Plugin_KTX);
 #ifndef __APPLE__
     g_pluginManager.registerStaticPlugin("IMAGE", "ANALYSIS", (void*)make_Plugin_CAnalysis);
 #endif
-
-#ifdef USE_AMD_PNG
-    g_pluginManager.registerStaticPlugin("IMAGE", "PNG", (void*)make_Plugin_PNG);
-#endif
-
-#ifdef USE_AMD_BMP
-    g_pluginManager.registerStaticPlugin("IMAGE", "BMP", (void*)make_Plugin_BMP);
-#endif
-
-    g_pluginManager.registerStaticPlugin("FILTERS", "BOXFILTER", (void*)make_Plugin_BoxFilter);
     g_pluginManager.getPluginList("\\Plugins");
+    CMP_RegisterHostPlugins();
 
 #ifdef USE_QT_IMAGELOAD
     QString dirPath = QCoreApplication::applicationDirPath();
@@ -402,7 +426,7 @@ int main(int argc, char* argv[])
             // Try to patch the detination file
             if ((g_CmdPrams.DestFile.length() == 0) && (g_CmdPrams.SourceFile.length() > 0))
             {
-                g_CmdPrams.DestFile = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.DestFormat, g_CmdPrams.FileOutExt);
+                g_CmdPrams.DestFile = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.CompressOptions.DestFormat, g_CmdPrams.FileOutExt);
                 printf("Destination Texture file was not supplied: Defaulting to %s\n", g_CmdPrams.DestFile.c_str());
             }
             else
@@ -416,22 +440,64 @@ int main(int argc, char* argv[])
         //---------------------------------------
         // attempt to load GTC Codec
         //---------------------------------------
-        g_plugin_ComputeGTC = reinterpret_cast<PluginInterface_Compute *>(g_pluginManager.GetPlugin("COMPUTE", "GTC"));
+        g_plugin_EncoderGTC = reinterpret_cast<PluginInterface_Encoder *>(g_pluginManager.GetPlugin("ENCODER", "GTC"));
         // Found GTC Codec
-        if (g_plugin_ComputeGTC)
+        if (g_plugin_EncoderGTC)
         {
             //-------------------------------
             // create the compression  Codec
             //-------------------------------
-            g_CompressGTCCodec = (HPC_Compress*)g_plugin_ComputeGTC->TC_Create();
+            g_Codec_GTC = (CMP_Encoder*)g_plugin_EncoderGTC->TC_Create();
 
             //------------------------------------------------------------
             // Assign compressonator lib GTC codec to Compute GTC Codec
             //------------------------------------------------------------
-            if (g_CompressGTCCodec)
+            if (g_Codec_GTC)
             {
                 GTC_CompressBlock = g_GTC_CompressBlock;
                 GTC_DecompressBlock = g_GTC_DecompressBlock;
+            }
+        }
+#endif
+
+#ifdef USE_BASIS
+        //---------------------------------------
+        // attempt to load compute BASIS Codec
+        //---------------------------------------
+        g_plugin_EncoderBASIS = reinterpret_cast<PluginInterface_Encoder *>(g_pluginManager.GetPlugin("ENCODER", "BASIS"));
+        // Found BASIS Codec
+        if (g_plugin_EncoderBASIS)
+        {
+            //-------------------------------
+            // create the compression  Codec
+            //-------------------------------
+            g_Codec_BASIS = (CMP_Encoder*)g_plugin_EncoderBASIS->TC_Create();
+
+            // ToDo: Assignment to new encoder interfaces
+            if (g_Codec_BASIS)
+            {
+                BASIS_CompressTexture   = g_BASIS_CompressTexture;
+                BASIS_DecompressTexture = g_BASIS_DecompressTexture;
+            }
+        }
+#endif
+
+#ifdef USE_APC
+        g_plugin_EncoderAPC = reinterpret_cast<PluginInterface_Encoder *>(g_pluginManager.GetPlugin("ENCODER", "APC"));
+        if (g_plugin_EncoderAPC)
+        {
+            //-------------------------------
+            // create the compression  Codec
+            //-------------------------------
+            g_Codec_APC = (CMP_Encoder*)g_plugin_EncoderAPC->TC_Create();
+
+            //------------------------------------------------------------
+            // Assign compressonator lib APC codec to Compute APC Codec
+            //------------------------------------------------------------
+            if (g_Codec_APC)
+            {
+                APC_CompressBlock   = g_APC_CompressBlock;
+                APC_DecompressBlock = g_APC_DecompressBlock;
             }
         }
 #endif
@@ -444,11 +510,33 @@ int main(int argc, char* argv[])
         //------------------------------------------
         // Cleanup the compute GTC compression Codec
         //------------------------------------------
-        if (g_plugin_ComputeGTC)
+        if (g_plugin_EncoderGTC)
         {
-            if (g_CompressGTCCodec)
-                g_plugin_ComputeGTC->TC_Destroy(g_CompressGTCCodec);
-            delete  g_plugin_ComputeGTC;
+            if (g_Codec_GTC)
+                g_plugin_EncoderGTC->TC_Destroy(g_Codec_GTC);
+            delete  g_plugin_EncoderGTC;
+        }
+#endif
+#ifdef USE_BASIS
+        //------------------------------------------
+        // Cleanup the compute GTC compression Codec
+        //------------------------------------------
+        if (g_plugin_EncoderBASIS)
+        {
+            if (g_Codec_BASIS)
+                g_plugin_EncoderBASIS->TC_Destroy(g_Codec_BASIS);
+            delete  g_plugin_EncoderBASIS;
+        }
+#endif
+#ifdef USE_APC
+        //------------------------------------------
+        // Cleanup the compute GTC compression Codec
+        //------------------------------------------
+        if (g_plugin_EncoderAPC)
+        {
+            if (g_Codec_APC)
+                g_plugin_EncoderAPC->TC_Destroy(g_Codec_APC);
+            delete  g_plugin_EncoderAPC;
         }
 #endif
 
