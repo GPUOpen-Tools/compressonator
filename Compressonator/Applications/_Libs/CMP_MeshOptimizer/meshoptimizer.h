@@ -6,6 +6,9 @@
  *
  * This library is distributed under the MIT License. See notice at the end of this file.
  */
+#ifndef MESHOPTIMIZER_H
+#define MESHOPTIMIZER_H
+
 #pragma once
 
 #include <assert.h>
@@ -53,7 +56,7 @@ MESHOPTIMIZER_API void meshopt_remapIndexBuffer(unsigned int* destination, const
  *
  * destination must contain enough space for the resulting index buffer (index_count elements)
  */
-MESHOPTIMIZER_API void meshopt_optimizeVertexCache(unsigned int* destination, const unsigned int* indices, size_t index_count, size_t vertex_count, unsigned int cache_size = 16);
+MESHOPTIMIZER_API void meshopt_optimizeVertexCache(unsigned int* destination, const unsigned int* indices, size_t index_count, size_t vertex_count, unsigned int cache_size);
 
 /**
  * Vertex transform cache optimizer for FIFO caches
@@ -527,3 +530,5 @@ public:
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
+
+#endif
