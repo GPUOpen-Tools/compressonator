@@ -3,7 +3,11 @@ cmake_minimum_required (VERSION 2.8)
 project (BoxFilter)
 
 set (CMP_INCLUDE_DIRS "")
-list (APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../../../Header")
+list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../../../CMP_CompressonatorLib")
+list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../../../CMP_CompressonatorLib/Common/")
+list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../../../CMP_Framework/Common/half")
+
+
 list (APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../")
 list (APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../Common/")
 
@@ -40,6 +44,8 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../Common/Lib/Ext/OpenEXR/ilmbase-2.2.0/VS2015/x64/include/OpenEXR/")
 endif()
 
+list(APPEND CMP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../../../_Libs/GPU_Decode/")
+    
 list(REMOVE_DUPLICATES CMP_INCLUDE_DIRS)
 
 include_directories(${CMP_INCLUDE_DIRS})
@@ -48,8 +54,6 @@ add_definitions(-DAPPLICATION_PLUGIN)
 
 set (CMP_SOURCES1 "")
 list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../BoxFilter.cpp")
-list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../stdafx.cpp")
-list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../Common/MIPS.cpp")
 list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../Common/TC_PluginInternal.cpp")
 list (APPEND CMP_SOURCES1 "${CMAKE_CURRENT_SOURCE_DIR}/../../Common/UtilFuncs.cpp")
 

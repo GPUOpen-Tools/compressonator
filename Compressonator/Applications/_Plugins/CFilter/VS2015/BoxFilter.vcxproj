@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug_MD|Win32">
       <Configuration>Debug_MD</Configuration>
@@ -38,6 +38,7 @@
     <ProjectGuid>{411CD7F5-D04B-456A-8B30-631170C7445A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <ProjectName>BoxFilter</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -358,19 +359,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="../../Common/MIPS.cpp" />
     <ClCompile Include="../../Common/TC_PluginInternal.cpp" />
     <ClCompile Include="../../Common/UtilFuncs.cpp" />
     <ClCompile Include="../BoxFilter.cpp" />
-    <ClCompile Include="../stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="../../Common/MIPS.h" />
     <ClInclude Include="../../Common/TC_PluginAPI.h" />
     <ClInclude Include="../../Common/TC_PluginInternal.h" />
     <ClInclude Include="../../Common/UtilFuncs.h" />
     <ClInclude Include="../BoxFilter.h" />
-    <ClInclude Include="../stdafx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

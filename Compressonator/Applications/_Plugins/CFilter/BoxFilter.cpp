@@ -22,7 +22,11 @@
 // THE SOFTWARE.
 //
 
-#include "stdafx.h"
+// Windows Header Files:
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 #include <stdio.h>
 #include "BoxFilter.h"
 
@@ -30,7 +34,6 @@
 #include <stdlib.h>
 #include "TC_PluginAPI.h"
 #include "TC_PluginInternal.h"
-#include "MIPS.h"
 #include "Compressonator.h"
 #include "Texture.h"
 #ifndef _WIN32
@@ -94,7 +97,7 @@ int Plugin_BoxFilter::TC_GenerateMIPLevels(MipSet *pMipSet, int nMinSize)
         nWidth = max(nWidth >> 1, 1);
         nHeight = max(nHeight >> 1, 1);
         int nCurMipLevel = pMipSet->m_nMipLevels;
-        int maxFacesOrSlices = max((pMipSet->m_TextureType == TT_VolumeTexture) ? (MaxFacesOrSlices(pMipSet, nCurMipLevel-1)>>1) : MaxFacesOrSlices(pMipSet, nCurMipLevel-1), 1);
+        int maxFacesOrSlices = max((pMipSet->m_TextureType == TT_VolumeTexture) ? (CMP_MaxFacesOrSlices(pMipSet, nCurMipLevel-1)>>1) : CMP_MaxFacesOrSlices(pMipSet, nCurMipLevel-1), 1);
         for(int nFaceOrSlice=0; nFaceOrSlice<maxFacesOrSlices; nFaceOrSlice++)
         {
             MipLevel* pThisMipLevel = CMips->GetMipLevel(pMipSet, nCurMipLevel, nFaceOrSlice);
@@ -125,13 +128,13 @@ int Plugin_BoxFilter::TC_GenerateMIPLevels(MipSet *pMipSet, int nMinSize)
                 if(pMipSet->m_ChannelFormat == CF_8bit)
                     GenerateMipLevel(pThisMipLevel, tempMipOne);
                 else if (pMipSet->m_ChannelFormat == CF_Float16)
-                    GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_phfData, tempMipOne->m_phfData);
+                    GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_phfsData, tempMipOne->m_phfsData);
                 else if(pMipSet->m_ChannelFormat == CF_Float32)
                     GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_pfData, tempMipOne->m_pfData);
             }
             else
             {
-                if(MaxFacesOrSlices(pMipSet, nCurMipLevel-1) > 1)
+                if(CMP_MaxFacesOrSlices(pMipSet, nCurMipLevel-1) > 1)
                 {
                     MipLevel *tempMipOne = CMips->GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice * 2);
                     MipLevel *tempMipTwo = CMips->GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice * 2 + 1);
@@ -139,7 +142,7 @@ int Plugin_BoxFilter::TC_GenerateMIPLevels(MipSet *pMipSet, int nMinSize)
                     if(pMipSet->m_ChannelFormat == CF_8bit)
                         GenerateMipLevel(pThisMipLevel, tempMipOne, tempMipTwo);
                     else if (pMipSet->m_ChannelFormat == CF_Float16)
-                        GenerateMipLevelF(pThisMipLevel, tempMipOne, tempMipTwo, pThisMipLevel->m_phfData, tempMipOne->m_phfData, tempMipTwo->m_phfData);
+                        GenerateMipLevelF(pThisMipLevel, tempMipOne, tempMipTwo, pThisMipLevel->m_phfsData, tempMipOne->m_phfsData, tempMipTwo->m_phfsData);
                     else if(pMipSet->m_ChannelFormat == CF_Float32)
                         GenerateMipLevelF(pThisMipLevel, tempMipOne, tempMipTwo, pThisMipLevel->m_pfData, tempMipOne->m_pfData, tempMipTwo->m_pfData);
                 }
@@ -149,7 +152,7 @@ int Plugin_BoxFilter::TC_GenerateMIPLevels(MipSet *pMipSet, int nMinSize)
                     if(pMipSet->m_ChannelFormat == CF_8bit)
                         GenerateMipLevel(pThisMipLevel, tempMipOne);
                     else if (pMipSet->m_ChannelFormat == CF_Float16)
-                        GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_phfData, tempMipOne->m_phfData);
+                        GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_phfsData, tempMipOne->m_phfsData);
                     else if(pMipSet->m_ChannelFormat == CF_Float32)
                         GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_pfData, tempMipOne->m_pfData);
                 }
