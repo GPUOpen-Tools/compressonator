@@ -26,9 +26,10 @@
 
 #ifdef _WIN32
 #ifndef DISABLE_TESTCODE
+#include "Common.h"
 #include "Compressonator.h"
 #include "GPU_DecodeBase.h"
-#include "MIPS.h"
+
 
 using namespace GPU_Decode;
 
@@ -93,8 +94,8 @@ HRESULT RenderWindow::InitWindow(int width, int height,WNDPROC callback)
     if (m_hInstance == 0)
     {
         m_hInstance = GetModuleHandle(NULL);
-        sprintf(m_strWindowName, "%s_%x_%d_%d", str_WindowName, m_hInstance,width,height);
-        sprintf(m_strWindowClassName, "%s_%x_%d_%d", str_WindowsClassName, m_hInstance, width, height);
+        snprintf(m_strWindowName, sizeof(m_strWindowName),"%s_%x_%d_%d", str_WindowName, (int)m_hInstance,width,height);
+        snprintf(m_strWindowClassName,sizeof(m_strWindowClassName), "%s_%x_%d_%d", str_WindowsClassName, (int)m_hInstance, width, height);
     }
 
     if (!FindWindowA(m_strWindowClassName, m_strWindowName))
