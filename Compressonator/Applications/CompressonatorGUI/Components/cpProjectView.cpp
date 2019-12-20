@@ -22,6 +22,10 @@
 //=====================================================================
 
 #include "cpProjectView.h"
+
+#include <chrono>
+#include <thread>
+
 #include "cmdline.h"
 
 #ifdef USE_MESHOPTIMIZER
@@ -102,7 +106,7 @@ void UpdateDestglTFWithFile(QString modelSource, QString modelDest, QString file
     fstreamdest.close();
 
     // Did the OS really close the file in time for us to write too again!
-    Sleep(100);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     //image section of gltf file
     auto         srcimages = gltfsrc["images"];

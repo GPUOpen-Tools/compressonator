@@ -21,6 +21,9 @@
 // 
 //===================================================================== 
 
+#include <chrono>
+#include <thread>
+
 #include "Compressonator.h"
 #include "Common.h"
 #include "cpMainComponents.h"
@@ -562,7 +565,7 @@ void cpMainComponents::closeEvent(QCloseEvent *event)
         int maxwait = 3000; // > 3 seconds
         while (g_bCompressing)
         {
-            Sleep(1);
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
             maxwait--;
             if (maxwait == 0) break;
             QApplication::processEvents();
