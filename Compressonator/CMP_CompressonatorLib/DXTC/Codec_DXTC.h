@@ -96,6 +96,7 @@ protected:
     bool m_bUseFloat;
     bool m_b3DRefinement;
     bool m_bSwizzleChannels;
+
     CMP_BYTE m_nRefinementSteps;
     CMP_Speed m_nCompressionSpeed;
 

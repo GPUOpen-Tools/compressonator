@@ -53,6 +53,9 @@
 #include <sys/timeb.h>
 #include "etcimage.h"
 
+#pragma warning(disable:4701)
+#pragma warning(disable:4703)
+
 #define UNREFERENCED_PARAMETER(x)   ((void)x)
 
 // Typedefs

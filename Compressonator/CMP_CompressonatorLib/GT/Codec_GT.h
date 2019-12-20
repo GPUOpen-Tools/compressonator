@@ -82,7 +82,7 @@ private:
     // GT Internal status 
     CMP_BOOL     m_LibraryInitialized;
     CMP_BOOL     m_Use_MultiThreading;
-    CMP_WORD     m_NumEncodingThreads;
+    CMP_INT      m_NumEncodingThreads;
     CMP_WORD     m_LiveThreads;
     CMP_WORD     m_LastThread;
 

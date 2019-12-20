@@ -28,7 +28,7 @@
 #include "Compressonator.h"
 
 
-extern BOOL    g_LibraryInitialized;
+extern bool    g_LibraryInitialized;
 
 static BC6HBlockDecoder  g_Decoder;
 

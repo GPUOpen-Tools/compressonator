@@ -129,10 +129,12 @@ CodecError CCodec_ATI2N_DXT5::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& b
                 CMP_BYTE destBlock[BLOCK_SIZE_4X4X4];
                 for(CMP_DWORD k = 0; k < BLOCK_SIZE_4X4; k++)
                 {
-                    destBlock[(k * 4) + RGBA8888_CHANNEL_R] = tempBlock[(k* 4) + RGBA8888_CHANNEL_A];
-                    destBlock[(k * 4) + RGBA8888_CHANNEL_G] = tempBlock[(k* 4) + RGBA8888_CHANNEL_G];
-                    destBlock[(k * 4) + RGBA8888_CHANNEL_B] = 0;
-                    destBlock[(k * 4) + RGBA8888_CHANNEL_A] = 0xff;
+                   // Bug Work Arround: This codec buffer is BGRA -> we expect data to be RGBA, the codec buffer is configured
+                   // for BGRA and we want output as RGBA...
+                    destBlock[(k * 4) + 0] = tempBlock[(k* 4) + 3];
+                    destBlock[(k * 4) + 1] = tempBlock[(k* 4) + 1];
+                    destBlock[(k * 4) + 2] = 0;
+                    destBlock[(k * 4) + 3] = 0xff;
                 }
 
                 bufferOut.WriteBlockRGBA(i*4, j*4, 4, 4, destBlock);

@@ -2734,7 +2734,7 @@ static CODECFLOAT CompBlock1(CODECFLOAT _RmpPnts[NUM_ENDPOINTS], CODECFLOAT _Blk
 
 // For each unique value we compute the number of it appearances.
     CODECFLOAT fBlk[MAX_BLOCK];
-    memcpy(fBlk, _Blk, _Nmbr * sizeof(CODECFLOAT)); 
+    std::memcpy(fBlk, _Blk, _Nmbr * sizeof(CODECFLOAT)); 
 
     // sort the input
     qsort((void *)fBlk, (size_t)_Nmbr, sizeof(CODECFLOAT), QSortFCmp);

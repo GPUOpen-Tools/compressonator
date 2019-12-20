@@ -248,7 +248,8 @@ void init_ramps (void)
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif
-    int clog,bits;
+    int clog1;
+    int bits;
     int p1;
     int p2;
     int i,j;
@@ -259,72 +260,72 @@ void init_ramps (void)
             ep_d[BTT(bits)][p1]=(double) expand_(bits,p1);
 
 
-    for (clog=LOG_CL_BASE;clog<LOG_CL_RANGE;clog++)
+    for (clog1=LOG_CL_BASE;clog1<LOG_CL_RANGE;clog1++)
         for (bits=BIT_BASE;bits<BIT_RANGE;bits++) 
             for (p1=0;p1<(1<<bits);p1++)
                 for (p2=0;p2<(1<<bits);p2++) {
-                    for (i=0; i<(1<<clog);i++)
-                        ramp[CLT(clog)][BTT(bits)][p1][p2][i] = 
+                    for (i=0; i<(1<<clog1);i++)
+                        ramp[CLT(clog1)][BTT(bits)][p1][p2][i] = 
                         floor( 
-                        (double) ep_d[BTT(bits)][p1] + rampLerpWeights[clog][i] * (double)((ep_d[BTT(bits)][p2]- ep_d[BTT(bits)][p1]))
+                        (double) ep_d[BTT(bits)][p1] + rampLerpWeights[clog1][i] * (double)((ep_d[BTT(bits)][p2]- ep_d[BTT(bits)][p1]))
                         +0.5);
 
 #ifdef GIG_TABLE
                     double v;
                     int vi;
                     for (vi=0;vi<256;vi++)
-                        for (i=0; i<(1<<clog);i++)
-                            ramp_err[CLT(clog)][BTT(bits)][p1][p2][vi][i] = 
-                            (ramp[CLT(clog)][BTT(bits)][p1][p2][i]-(double) vi) *
-                            (ramp[CLT(clog)][BTT(bits)][p1][p2][i]-(double) vi);
+                        for (i=0; i<(1<<clog1);i++)
+                            ramp_err[CLT(clog1)][BTT(bits)][p1][p2][vi][i] = 
+                            (ramp[CLT(clog1)][BTT(bits)][p1][p2][i]-(double) vi) *
+                            (ramp[CLT(clog1)][BTT(bits)][p1][p2][i]-(double) vi);
 #endif
                 }
 
 
     //-----------------------------------------------------------------------------
 
-    for (clog=LOG_CL_BASE;clog<LOG_CL_RANGE;clog++)
+    for (clog1=LOG_CL_BASE;clog1<LOG_CL_RANGE;clog1++)
         for (bits=BIT_BASE;bits<BIT_RANGE;bits++) 
             for(j=0;j<256;j++)
                 for (o1=0;o1<2;o1++)
                     for (o2=0;o2<2;o2++)
                         for(i=0;i<16;i++) {
-                            sp_idx[CLT(clog)][BTT(bits)][j][o1][o2][i][0]=-1;
-                            sp_err[CLT(clog)][BTT(bits)][j][o1][o2][i]=DBL_MAX;
+                            sp_idx[CLT(clog1)][BTT(bits)][j][o1][o2][i][0]=-1;
+                            sp_err[CLT(clog1)][BTT(bits)][j][o1][o2][i]=DBL_MAX;
                         }
 
-    for (clog=LOG_CL_BASE;clog<LOG_CL_RANGE;clog++)
+    for (clog1=LOG_CL_BASE;clog1<LOG_CL_RANGE;clog1++)
         for (bits=BIT_BASE;bits<BIT_RANGE;bits++) 
             for (p1=0;p1<(1<<bits);p1++)
                 for (p2=0;p2<(1<<bits);p2++)
-                    for (i=0; i<(1<<clog);i++) {
-                        sp_idx[CLT(clog)][BTT(bits)][(int) ramp[CLT(clog)][BTT(bits)][p1][p2][i]][p1 & 0x1][p2 & 0x1][i][0]=p1;
-                        sp_idx[CLT(clog)][BTT(bits)][(int) ramp[CLT(clog)][BTT(bits)][p1][p2][i]][p1 & 0x1][p2 & 0x1][i][1]=p2;
-                        sp_err[CLT(clog)][BTT(bits)][(int) ramp[CLT(clog)][BTT(bits)][p1][p2][i]][p1 & 0x1][p2 & 0x1][i]=0.;
+                    for (i=0; i<(1<<clog1);i++) {
+                        sp_idx[CLT(clog1)][BTT(bits)][(int) ramp[CLT(clog1)][BTT(bits)][p1][p2][i]][p1 & 0x1][p2 & 0x1][i][0]=p1;
+                        sp_idx[CLT(clog1)][BTT(bits)][(int) ramp[CLT(clog1)][BTT(bits)][p1][p2][i]][p1 & 0x1][p2 & 0x1][i][1]=p2;
+                        sp_err[CLT(clog1)][BTT(bits)][(int) ramp[CLT(clog1)][BTT(bits)][p1][p2][i]][p1 & 0x1][p2 & 0x1][i]=0.;
                     }
 
-    for (clog=LOG_CL_BASE;clog<LOG_CL_RANGE;clog++)
+    for (clog1=LOG_CL_BASE;clog1<LOG_CL_RANGE;clog1++)
         for (bits=BIT_BASE;bits<BIT_RANGE;bits++) 
             for(j=0;j<256;j++)
                 for (o1=0;o1<2;o1++)
                     for (o2=0;o2<2;o2++)
-                        for(i=0;i<(1<<clog);i++)
-                            if (sp_idx[CLT(clog)][BTT(bits)][j][o1][o2][i][0]<0) {
+                        for(i=0;i<(1<<clog1);i++)
+                            if (sp_idx[CLT(clog1)][BTT(bits)][j][o1][o2][i][0]<0) {
                                 int k;
                                 for (k=1;k<256;k++)
-                                    if ( (j-k >= 0 && sp_err[CLT(clog)][BTT(bits)][j-k][o1][o2][i]==0) ||
-                                         (j+k < 256 && sp_err[CLT(clog)][BTT(bits)][j+k][o1][o2][i]==0) )
+                                    if ( (j-k >= 0 && sp_err[CLT(clog1)][BTT(bits)][j-k][o1][o2][i]==0) ||
+                                         (j+k < 256 && sp_err[CLT(clog1)][BTT(bits)][j+k][o1][o2][i]==0) )
                                          break;
                                  {
-                                    if ( (j-k >= 0 && sp_err[CLT(clog)][BTT(bits)][j-k][o1][o2][i]==0)) {
-                                        sp_idx[CLT(clog)][BTT(bits)][j][o1][o2][i][0]=sp_idx[CLT(clog)][BTT(bits)][j-k][o1][o2][i][0];
-                                        sp_idx[CLT(clog)][BTT(bits)][j][o1][o2][i][1]=sp_idx[CLT(clog)][BTT(bits)][j-k][o1][o2][i][1];
+                                    if ( (j-k >= 0 && sp_err[CLT(clog1)][BTT(bits)][j-k][o1][o2][i]==0)) {
+                                        sp_idx[CLT(clog1)][BTT(bits)][j][o1][o2][i][0]=sp_idx[CLT(clog1)][BTT(bits)][j-k][o1][o2][i][0];
+                                        sp_idx[CLT(clog1)][BTT(bits)][j][o1][o2][i][1]=sp_idx[CLT(clog1)][BTT(bits)][j-k][o1][o2][i][1];
                                     }
-                                    else if ((j+k < 256 && sp_err[CLT(clog)][BTT(bits)][j+k][o1][o2][i]==0)){
-                                        sp_idx[CLT(clog)][BTT(bits)][j][o1][o2][i][0]=sp_idx[CLT(clog)][BTT(bits)][j+k][o1][o2][i][0];
-                                        sp_idx[CLT(clog)][BTT(bits)][j][o1][o2][i][1]=sp_idx[CLT(clog)][BTT(bits)][j+k][o1][o2][i][1];
+                                    else if ((j+k < 256 && sp_err[CLT(clog1)][BTT(bits)][j+k][o1][o2][i]==0)){
+                                        sp_idx[CLT(clog1)][BTT(bits)][j][o1][o2][i][0]=sp_idx[CLT(clog1)][BTT(bits)][j+k][o1][o2][i][0];
+                                        sp_idx[CLT(clog1)][BTT(bits)][j][o1][o2][i][1]=sp_idx[CLT(clog1)][BTT(bits)][j+k][o1][o2][i][1];
                                     }
-                                    sp_err[CLT(clog)][BTT(bits)][j][o1][o2][i]=k*k;
+                                    sp_err[CLT(clog1)][BTT(bits)][j][o1][o2][i]=k*k;
                                 }
                             }
 
@@ -427,9 +428,6 @@ inline int cluster_mean_d (double d[][DIMENSION],  double mean[][DIMENSION], int
 }
 
 inline int cluster_mean_d_d (double d[][MAX_DIMENSION_BIG],  double mean[][MAX_DIMENSION_BIG], int index[],int i_comp[],int i_cnt[], int n, int dimension) {
-#ifdef USE_DBGTRACE
-    DbgTrace(());
-#endif
     // unused index values are underfined
     int i,j,k;
     assert(n!=0);
@@ -470,9 +468,6 @@ inline int all_same (double d[][DIMENSION],  int n) {
 }
 
 inline int all_same_d (double d[][MAX_DIMENSION_BIG],  int n, int dimension){
-#ifdef USE_DBGTRACE
-    DbgTrace(());
-#endif
     assert(n>0);
     int i,j;
     int same = 1;
@@ -480,13 +475,14 @@ inline int all_same_d (double d[][MAX_DIMENSION_BIG],  int n, int dimension){
         for(j=0;j< dimension;j++)
             same = same && (d[0][j] ==d[i][j]);
 
+#ifdef USE_DBGTRACE
+    DbgTrace(("[%d]",same));
+#endif
+
     return(same);
 }
 
 inline int max_i (int a[], int n) {
-#ifdef USE_DBGTRACE
-    DbgTrace(());
-#endif
     assert(n>0);
     int i,m=a[0];
     for(i=0;i< n;i++)
@@ -496,6 +492,9 @@ inline int max_i (int a[], int n) {
 
 void index_collapse_ (int index[], int numEntries)
 {
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
     int k;
     int d,D;
     int mi;
@@ -555,11 +554,11 @@ double BC7BlockEncoder::quant_single_point_d
 
     int use_par =(type !=0);
 
-    int clog=0;
+    int clog2=0;
     i = Mi_+1;
     while (i>>=1) 
-        clog++;
-    assert((1<<clog)== Mi_+1);
+        clog2++;
+    assert((1<<clog2)== Mi_+1);
         
     int pn;
     int (*pv)[MAX_DIMENSION_BIG];
@@ -594,7 +593,7 @@ double BC7BlockEncoder::quant_single_point_d
             int dr_0[MAX_DIMENSION_BIG];
             double tr;
             
-            for (i=0; i< (1<<clog);i++)
+            for (i=0; i< (1<<clog2);i++)
             {
                 double t=0; 
                 int t1o[MAX_DIMENSION_BIG],t2o[MAX_DIMENSION_BIG];
@@ -614,19 +613,19 @@ double BC7BlockEncoder::quant_single_point_d
 
                             assert(tf >=0 && tc <=255.);
 
-                            if (  sp_err[CLT(clog)][BTT(bits[j])][tf][t1][t2][i]
-                                > sp_err[CLT(clog)][BTT(bits[j])][tc][t1][t2][i]) 
+                            if (  sp_err[CLT(clog2)][BTT(bits[j])][tf][t1][t2][i]
+                                > sp_err[CLT(clog2)][BTT(bits[j])][tc][t1][t2][i]) 
                                 // if they are not equal, the same representalbe point is used for 
                                 // both of them, as all representable points are integers in the rage 
                                 dr[j]=tc;
-                            else if (sp_err[CLT(clog)][BTT(bits[j])][ tf ][t1][t2][i]
-                                   < sp_err[CLT(clog)][BTT(bits[j])][ tc ][t1][t2][i]) 
+                            else if (sp_err[CLT(clog2)][BTT(bits[j])][ tf ][t1][t2][i]
+                                   < sp_err[CLT(clog2)][BTT(bits[j])][ tc ][t1][t2][i]) 
                                 dr[j]=tf;
                             else 
                                 dr[j]=(int)floor(data[0][j]+0.5);
 
-                            tr = sp_err[CLT(clog)][BTT(bits[j])][dr[j]][t1][t2][i] + 
-                                 2*sqrt(sp_err[CLT(clog)][BTT(bits[j])][dr[j]][t1][t2][i]) * fabs((double)dr[j]-data[0][j])+
+                            tr = sp_err[CLT(clog2)][BTT(bits[j])][dr[j]][t1][t2][i] + 
+                                 2*sqrt(sp_err[CLT(clog2)][BTT(bits[j])][dr[j]][t1][t2][i]) * fabs((double)dr[j]-data[0][j])+
                                  (dr[j]-data[0][j])* (dr[j]-data[0][j]);
 
                             if (tr < t_)
@@ -647,8 +646,8 @@ double BC7BlockEncoder::quant_single_point_d
                     idx=i;
                     for (j=0;j<dimension;j++)
                     {
-                        epo_0[0][j]=sp_idx[CLT(clog)][BTT(bits[j])][ dr_0[j]][t1o[j]][t2o[j]][i][0];
-                        epo_0[1][j]=sp_idx[CLT(clog)][BTT(bits[j])][ dr_0[j]][t1o[j]][t2o[j]][i][1];
+                        epo_0[0][j]=sp_idx[CLT(clog2)][BTT(bits[j])][ dr_0[j]][t1o[j]][t2o[j]][i][0];
+                        epo_0[1][j]=sp_idx[CLT(clog2)][BTT(bits[j])][ dr_0[j]][t1o[j]][t2o[j]][i][1];
                     }
                     err_0=t;
                 }
@@ -677,7 +676,7 @@ double BC7BlockEncoder::quant_single_point_d
         index[i]=idx_1;
         for (j=0;j<dimension;j++) 
         {
-           out[i][j]=ramp[CLT(clog)][BTT(bits[j])][epo_1[0][j]][epo_1[1][j]][idx_1];
+           out[i][j]=ramp[CLT(clog2)][BTT(bits[j])][epo_1[0][j]][epo_1[1][j]][idx_1];
         }
     }
     return err_1 * numEntries;
@@ -699,7 +698,7 @@ double BC7BlockEncoder::ep_shaker_2_d(
     ) 
 {
 #ifdef USE_DBGTRACE
-    DbgTrace(());
+    DbgTrace(("<-------------------->"));
 #endif
     int i,j,k;
     
@@ -717,12 +716,12 @@ double BC7BlockEncoder::ep_shaker_2_d(
 //###############################
 //
 
-    int clog=0;
+    int clog3=0;
     i = Mi_+1;
     while (i>>=1) 
-        clog++;
+        clog3++;
 
-    assert((1<<clog)== Mi_+1);
+    assert((1<<clog3)== Mi_+1);
 
     double mean[MAX_DIMENSION_BIG];
     int index[MAX_ENTRIES];
@@ -759,6 +758,10 @@ double BC7BlockEncoder::ep_shaker_2_d(
         
         double err_0 = DBL_MAX;
 
+#ifdef USE_DBGTRACE
+        DbgTrace(("Mi [%2d] numEntries [%2d]",Mi,numEntries));
+#endif
+
         if (Mi==0)
         {
             double t;
@@ -790,8 +793,8 @@ double BC7BlockEncoder::ep_shaker_2_d(
 
             for(j=0;j<dimension;j++)
             {
-                epo[0][j]= ramp[CLT(clog)][BTT(max_bits[j])][epo_code[0][j]][epo_code[1][j]][0];
-                epo[1][j]= ramp[CLT(clog)][BTT(max_bits[j])][epo_code[0][j]][epo_code[1][j]][(1<<clog)-1];
+                epo[0][j]= ramp[CLT(clog3)][BTT(max_bits[j])][epo_code[0][j]][epo_code[1][j]][0];
+                epo[1][j]= ramp[CLT(clog3)][BTT(max_bits[j])][epo_code[0][j]][epo_code[1][j]][(1<<clog3)-1];
             }
 
             return err_o;
@@ -801,6 +804,8 @@ double BC7BlockEncoder::ep_shaker_2_d(
 //          if it did collaps should we just check if it's better and get out ?
 
         assert(Mi <= Mi_);
+
+        int cluster_mean_calls = 0;
 
         for (q=1; Mi!=0 && q*Mi <= Mi_; q++) // does not work for single point collapsed index!!! 
             for (p=0;p<=Mi_-q*Mi;p++)
@@ -826,6 +831,7 @@ double BC7BlockEncoder::ep_shaker_2_d(
                 int i_comp[MAX_CLUSTERS_BIG];   // compacted index
                 int ncl;                        // number of unique indexes
 
+                cluster_mean_calls++; // used for debugging code: Remove when optimizing
                 ncl=cluster_mean_d_d (data,  cc, cidx, i_comp, i_cnt, numEntries, dimension); // unrounded
 
                 // round
@@ -880,7 +886,7 @@ double BC7BlockEncoder::ep_shaker_2_d(
 
             for (j=0;j<dimension;j++)
             {
-                double  (*rb) [256][16] =ramp[CLT(clog)][BTT(max_bits[j])];
+                double  (*rb) [256][16] =ramp[CLT(clog3)][BTT(max_bits[j])];
 
                 int pp[2]={0,0};
                 int rr = (use_par ? 2:1);
@@ -960,6 +966,12 @@ double BC7BlockEncoder::ep_shaker_2_d(
                 }
             }
         }
+
+
+#ifdef USE_DBGTRACE
+        DbgTrace(("cluster_mean_d_d [%2d] q[%d] p[%d]",cluster_mean_calls,q,p));
+#endif
+
         // requantize
         double *r[MAX_DIMENSION_BIG];
         int idg[MAX_ENTRIES];
@@ -967,7 +979,7 @@ double BC7BlockEncoder::ep_shaker_2_d(
         double err_r=0;
 
         for (j=0;j<dimension;j++) 
-            r[j]= ramp[CLT(clog)][BTT(max_bits[j])][epo_0[0][j]][epo_0[1][j]];
+            r[j]= ramp[CLT(clog3)][BTT(max_bits[j])][epo_0[0][j]][epo_0[1][j]];
 
         for (i=0;i<numEntries;i++)
         {
@@ -975,7 +987,7 @@ double BC7BlockEncoder::ep_shaker_2_d(
             int        ci = 0;
             double    *d=data[i];
 
-            for(j=0; j < (1<<clog); j++)
+            for(j=0; j < (1<<clog3); j++)
             {
                 double t_=0.;
 
@@ -1028,8 +1040,8 @@ double BC7BlockEncoder::ep_shaker_2_d(
 
     for(j=0;j<dimension;j++)
     {
-        epo[0][j]= ramp[CLT(clog)][BTT(max_bits[j])][epo_code[0][j]][epo_code[1][j]][0];
-        epo[1][j]= ramp[CLT(clog)][BTT(max_bits[j])][epo_code[0][j]][epo_code[1][j]][(1<<clog)-1];
+        epo[0][j]= ramp[CLT(clog3)][BTT(max_bits[j])][epo_code[0][j]][epo_code[1][j]][0];
+        epo[1][j]= ramp[CLT(clog3)][BTT(max_bits[j])][epo_code[0][j]][epo_code[1][j]][(1<<clog3)-1];
     }
 
     return err_o;
@@ -1058,12 +1070,12 @@ double BC7BlockEncoder::ep_shaker_d(
     
     int use_par =(type == BCC || type == SAME_PAR);
     int bcc = (type == BCC);
-    int clog=0;
+    int clog4=0;
     i = Mi_+1;
     while (i>>=1) 
-        clog++;
+        clog4++;
 
-    assert((1<<clog)== Mi_+1);
+    assert((1<<clog4)== Mi_+1);
 
     //###########################
 
@@ -1132,6 +1144,8 @@ double BC7BlockEncoder::ep_shaker_d(
 //          set stuff for  collapsed index shake (if needed)??
 //            if it did collaps should we just check if it's better and get out ?
 
+        int cluster_mean_calls = 0;
+
         for (q=1; Mi!=0 && q*Mi <= Mi_; q++) // does not work for single point collapsed index!!!
         {
             for (p=0;p<=Mi_-q*Mi;p++)
@@ -1158,6 +1172,7 @@ double BC7BlockEncoder::ep_shaker_d(
                     int i_comp[MAX_CLUSTERS_BIG];   // compacted index
                     int ncl;                        // number of unique indexes
 
+                    cluster_mean_calls++; // used for debugging code: Remove when optimizing
                     ncl=cluster_mean_d_d (data,  cc, cidx, i_comp, i_cnt, numEntries, dimension); // unrounded
 
                     // round
@@ -1235,7 +1250,7 @@ double BC7BlockEncoder::ep_shaker_d(
                         double ce[MAX_ENTRIES][MAX_CLUSTERS_BIG][MAX_DIMENSION_BIG];
 
                         for (j=0;j<dimension;j++) 
-                            r[j]= ramp[CLT(clog)][BTT(bits[j])][epi[0][j][0]][epi[1][j][0]];
+                            r[j]= ramp[CLT(clog4)][BTT(bits[j])][epi[0][j][0]][epi[1][j][0]];
 
                         double err_0 = 0;
                         double out_0[MAX_ENTRIES][MAX_DIMENSION_BIG];
@@ -1245,7 +1260,7 @@ double BC7BlockEncoder::ep_shaker_d(
                         for(i=0;i<numEntries;i++)
                         {
                             double *d=data[i];
-                            for(j=0;j<(1<<clog);j++)
+                            for(j=0;j<(1<<clog4);j++)
                                 for(k=0;k<dimension;k++)
                                     ce[i][j][k] = (r[k][j]-d[k])*(r[k][j]-d[k]);
                         }
@@ -1273,7 +1288,7 @@ double BC7BlockEncoder::ep_shaker_d(
                                 }
                             }
                             s = s ^ g;
-                            r[j0]= ramp[CLT(clog)][BTT(bits[j0])][epi[0][j0][ei0]][epi[1][j0][ei1]];
+                            r[j0]= ramp[CLT(clog4)][BTT(bits[j0])][epi[0][j0][ei0]][epi[1][j0][ei1]];
 
                             err_0 = 0;
 
@@ -1283,7 +1298,7 @@ double BC7BlockEncoder::ep_shaker_d(
                                 int    ci = 0;
                                 double cmin = DBL_MAX;
 
-                                for(j=0;j<(1<<clog);j++)
+                                for(j=0;j<(1<<clog4);j++)
                                 {
                                     double t_ = 0.;
                                     ce[i][j][j0] = (r[j0][j]-d[j0])*(r[j0][j]-d[j0]);
@@ -1356,6 +1371,11 @@ double BC7BlockEncoder::ep_shaker_d(
                 }
             }
         }
+
+#ifdef USE_DBGTRACE
+    DbgTrace(("cluster_mean_d_d [%2d]",cluster_mean_calls));
+#endif
+
 
         // change/better
         change =0;

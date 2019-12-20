@@ -59,6 +59,7 @@ CodecError CCodec_ATC_RGBA_Explicit::Compress(CCodecBuffer& bufferIn, CCodecBuff
 
     CMP_BYTE srcBlock[BLOCK_SIZE_4X4X4];
     CMP_DWORD compressedBlock[4];
+    bufferIn.m_bSwizzle = false; // Processing RGBA_8888
     for(CMP_DWORD j = 0; j < dwBlocksY; j++)
     {
         for(CMP_DWORD i = 0; i < dwBlocksX; i++)

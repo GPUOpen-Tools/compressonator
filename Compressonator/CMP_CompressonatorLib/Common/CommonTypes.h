@@ -109,7 +109,7 @@ typedef enum
     CMP_FORMAT_BC2,  ///< A four component compressed texture format with explicit alpha for Microsoft DirectX10. Identical to DXT3. Eight bits per pixel.
     CMP_FORMAT_BC3,  ///< A four component compressed texture format with interpolated alpha for Microsoft DirectX10. Identical to DXT5. Eight bits per pixel.
     CMP_FORMAT_BC4,        ///< A single component compressed texture format for Microsoft DirectX10. Identical to ATI1N. Four bits per pixel.
-    CMP_FORMAT_BC5,        ///< A two component compressed texture format for Microsoft DirectX10. Identical to ATI2N_XY. Eight bits per pixel.
+    CMP_FORMAT_BC5,        ///< A two component compressed texture format for Microsoft DirectX10. Identical to ATI2N_XY.(Red&Green) Eight bits per pixel.
     CMP_FORMAT_BC6H,       ///< BC6H compressed texture format (UF)
     CMP_FORMAT_BC6H_SF,    ///< BC6H compressed texture format (SF)
     CMP_FORMAT_BC7,        ///< BC7  compressed texture format

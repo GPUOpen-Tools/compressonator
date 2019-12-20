@@ -39,12 +39,11 @@
 FILE *fp;
 #endif
 
-#define EPSILON        0.000001
-#define MAX_TRY        20
-#define DBL_MAX_EXP 1024
+#define EPSILON         0.000001
+#define MAX_TRY         20
 #undef  TRACE
 
-#define MAX_TRACE    250000
+#define MAX_TRACE       250000
 
 struct TRACE          
 {
@@ -149,11 +148,12 @@ void sugar(void){
 #endif
 };
 
+// called many times Optimize this call!
 inline int a_compare( const void *arg1, const void *arg2 )
 {
-#ifdef USE_DBGTRACE
-    DbgTrace(());
-#endif
+// #ifdef USE_DBGTRACE
+//     DbgTrace(());
+// #endif
     if (((a* )arg1)->d-((a* )arg2)->d > 0 ) return 1;
     if (((a* )arg1)->d-((a* )arg2)->d < 0 ) return -1;
     return 0;
@@ -164,9 +164,6 @@ inline int a_compare( const void *arg1, const void *arg2 )
 //
 void sortProjection(double projection[MAX_ENTRIES], int order[MAX_ENTRIES], int numEntries) 
 {
-#ifdef USE_DBGTRACE
-    DbgTrace(());
-#endif
     int i;
     a what[MAX_ENTRIES+MAX_PARTITIONS_TABLE];
          
@@ -285,9 +282,6 @@ void project(double data[][DIMENSION], int numEntries, double vector[DIMENSION],
 
 void project_d(double data[][MAX_DIMENSION_BIG], int numEntries, double vector[MAX_DIMENSION_BIG], double projection[MAX_ENTRIES], int dimension)
 {
-#ifdef USE_DBGTRACE
-    DbgTrace(());
-#endif
     // assume that vector is normalized already
     int i,k;
 
@@ -482,7 +476,7 @@ void eigenVector_d(double cov[MAX_DIMENSION_BIG][MAX_DIMENSION_BIG], double vect
 double partition2(double data[][DIMENSION], int numEntries,int index[])
 {
 #ifdef USE_DBGTRACE
-    DbgTrace(());
+    DbgTrace(("-> get_partition_subset() is not implemented data is global"));
 #endif
     int i,j,k;
     double cov[2][DIMENSION][DIMENSION];
@@ -759,15 +753,15 @@ double totalError(double data[MAX_ENTRIES][DIMENSION],double data2[MAX_ENTRIES][
 
 double totalError_d(double data[MAX_ENTRIES][MAX_DIMENSION_BIG],double data2[MAX_ENTRIES][MAX_DIMENSION_BIG],int numEntries, int dimension)
 {
-#ifdef USE_DBGTRACE
-    DbgTrace(());
-#endif
     int i,j;
     double t=0;
     for (i=0;i<numEntries;i++) 
        for (j=0;j<dimension;j++) 
            t+= (data[i][j]-data2[i][j])*(data[i][j]-data2[i][j]);
 
+#ifdef USE_DBGTRACE
+    DbgTrace(( "[%3.3f]",t));
+#endif
     return t;
 };
 
@@ -1296,9 +1290,6 @@ void quantTrace_d(double data[MAX_ENTRIES_QUANT_TRACE][MAX_DIMENSION_BIG],int nu
 }
 
 void quant_AnD_Shell(double* v_, int k, int n, int *idx) { 
-#ifdef USE_DBGTRACE
-    DbgTrace(());
-#endif
 
     // input:
     //
@@ -1719,9 +1710,9 @@ void traceBuilder (int numEntries, int numClusters,struct TRACE tr [], int code[
         if (abs(j[p]-k[p]) >1 )  {
 
 #ifdef USE_DBGTRACE
-        DbgTrace(("Driving trace generation error\n"));
+        DbgTrace(("Driving trace generation error"));
         for (p=0;p<numClusters-1;p++) 
-            DbgTrace(("%d %d %d\n",k[p],j[p],n));
+            DbgTrace(("%d %d %d",k[p],j[p],n));
 #endif
         return;
         }
@@ -1749,13 +1740,13 @@ void traceBuilder (int numEntries, int numClusters,struct TRACE tr [], int code[
             int i1,cc=0; for(i1=0;i1<numClusters;i1++) cc += i1*i1*h[i1]; 
     #ifdef USE_DBGTRACE
             if (cc !=q2)
-                DbgTrace(("1 - q2 %d %d\n", cc,q2));
+                DbgTrace(("1 - q2 %d %d", cc,q2));
     #endif
             }; 
 
     #ifdef USE_DBGTRACE
             if (ci <0 || ci>=numEntries || cn <1 || cn >= numClusters || h[cn] < 0 || h[cn-1]>= numEntries)
-                DbgTrace(("tre1 %d %d %d %d %d  %d \n",ci,cn,numEntries,numClusters,h[cn],h[cn-1])); 
+                DbgTrace(("tre1 %d %d %d %d %d  %d",ci,cn,numEntries,numClusters,h[cn],h[cn-1])); 
     #endif
 
             cd |=  (1<<k[p]);
@@ -1802,13 +1793,13 @@ void traceBuilder (int numEntries, int numClusters,struct TRACE tr [], int code[
 
 #ifdef USE_DBGTRACE
         if (cc !=q2)
-            DbgTrace(("2- q2 %d %d\n", cc,q2));
+            DbgTrace(("2- q2 %d %d", cc,q2));
 #endif
         }; 
 
 #ifdef USE_DBGTRACE
         if (ci <0 || ci>=numEntries ||  cn >= numClusters-1 || h[cn] < 0 || h[cn+1]>= numEntries)
-            DbgTrace(("tre2 %d %d %d %d %d  %d \n",ci,cn,numEntries,numClusters,h[cn],h[cn+1])); 
+            DbgTrace(("tre2 %d %d %d %d %d  %d",ci,cn,numEntries,numClusters,h[cn],h[cn+1])); 
 #endif
 
 
@@ -1898,7 +1889,7 @@ double optQuantAnD(
     eigenVector(cov, direction);    
     project(centered, numEntries, direction, projected); 
 
-    
+    int quant_AnD_Shell_Calls = 0;
 
     for (i=0;i<maxTry;i++) {
             int done =0;
@@ -1969,9 +1960,15 @@ double optQuantAnD(
             }
         }
    
+        quant_AnD_Shell_Calls++;
         quant_AnD_Shell(projected,  numClusters,numEntries, index);  
     
     }
+
+#ifdef USE_DBGTRACE
+    DbgTrace(("->quant_AnD_Shell [%2d]",quant_AnD_Shell_Calls));
+#endif
+
     s=t=0;
     
     double q=0;
@@ -2025,6 +2022,9 @@ double optQuantAnD_d(
     int dimension
     )
 {
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
     int index_[MAX_ENTRIES];
 
     int maxTry=MAX_TRY*10;
@@ -2068,6 +2068,8 @@ double optQuantAnD_d(
 
     eigenVector_d(cov, direction, dimension);    
     project_d(centered, numEntries, direction, projected, dimension); 
+
+    int quant_AnD_Shell_Calls = 0;
 
     for (i=0;i<maxTry;i++)
     {
@@ -2148,8 +2150,15 @@ double optQuantAnD_d(
             }
         }
    
+        quant_AnD_Shell_Calls++;
+
         quant_AnD_Shell(projected,  numClusters,numEntries, index);  
     }
+
+#ifdef USE_DBGTRACE
+    DbgTrace(("->quant_AnD_Shell [%2d]",quant_AnD_Shell_Calls));
+#endif
+
     s=t=0;
     
     double q=0;

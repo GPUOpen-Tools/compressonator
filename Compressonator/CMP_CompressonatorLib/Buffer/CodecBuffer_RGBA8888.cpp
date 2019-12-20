@@ -39,8 +39,8 @@ const int nPixelSize = nChannelCount * sizeof(CMP_BYTE);
 
 CCodecBuffer_RGBA8888::CCodecBuffer_RGBA8888(
                                             CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-                                            CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData)
-                                            : CCodecBuffer(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData)
+                                            CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData,CMP_DWORD dwDataSize)
+                                            : CCodecBuffer(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize)
 {
     assert((m_dwPitch == 0) || (m_dwPitch >= GetWidth() * nPixelSize));
     if(m_dwPitch <= GetWidth() * nPixelSize)
@@ -184,25 +184,52 @@ bool CCodecBuffer_RGBA8888::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, 
     {
         // Fastpath for the key case to alleviate the drag this code puts on the really fast DXTC
         CMP_DWORD* pData = (CMP_DWORD*) (GetData() + (y * m_dwPitch) + (x * sizeof(CMP_DWORD)));
-        pdwBlock[0]  = pData[0];
-        pdwBlock[1]  = pData[1];
-        pdwBlock[2]  = pData[2];
-        pdwBlock[3]  = pData[3];
-        pData += (m_dwPitch>>2);
-        pdwBlock[4]  = pData[0];
-        pdwBlock[5]  = pData[1];
-        pdwBlock[6]  = pData[2];
-        pdwBlock[7]  = pData[3];
-        pData += (m_dwPitch>>2);
-        pdwBlock[8]  = pData[0];
-        pdwBlock[9]  = pData[1];
-        pdwBlock[10] = pData[2];
-        pdwBlock[11] = pData[3];
-        pData += (m_dwPitch>>2);
-        pdwBlock[12] = pData[0];
-        pdwBlock[13] = pData[1];
-        pdwBlock[14] = pData[2];
-        pdwBlock[15] = pData[3];
+
+        // The source is RGBA8888 and the codec reqiures a BGRA8888 
+        if (m_bSwizzle)
+        {
+            pdwBlock[0]  = SWIZZLE_RGBA_BGRA(pData[0]);
+            pdwBlock[1]  = SWIZZLE_RGBA_BGRA(pData[1]);
+            pdwBlock[2]  = SWIZZLE_RGBA_BGRA(pData[2]);
+            pdwBlock[3]  = SWIZZLE_RGBA_BGRA(pData[3]);
+            pData += (m_dwPitch>>2);
+            pdwBlock[4]  = SWIZZLE_RGBA_BGRA(pData[0]);
+            pdwBlock[5]  = SWIZZLE_RGBA_BGRA(pData[1]);
+            pdwBlock[6]  = SWIZZLE_RGBA_BGRA(pData[2]);
+            pdwBlock[7]  = SWIZZLE_RGBA_BGRA(pData[3]);
+            pData += (m_dwPitch>>2);
+            pdwBlock[8]  = SWIZZLE_RGBA_BGRA(pData[0]);
+            pdwBlock[9]  = SWIZZLE_RGBA_BGRA(pData[1]);
+            pdwBlock[10] = SWIZZLE_RGBA_BGRA(pData[2]);
+            pdwBlock[11] = SWIZZLE_RGBA_BGRA(pData[3]);
+            pData += (m_dwPitch>>2);
+            pdwBlock[12] = SWIZZLE_RGBA_BGRA(pData[0]);
+            pdwBlock[13] = SWIZZLE_RGBA_BGRA(pData[1]);
+            pdwBlock[14] = SWIZZLE_RGBA_BGRA(pData[2]);
+            pdwBlock[15] = SWIZZLE_RGBA_BGRA(pData[3]);
+        }
+        else
+        {
+            pdwBlock[0]  = pData[0];
+            pdwBlock[1]  = pData[1];
+            pdwBlock[2]  = pData[2];
+            pdwBlock[3]  = pData[3];
+            pData += (m_dwPitch>>2);
+            pdwBlock[4]  = pData[0];
+            pdwBlock[5]  = pData[1];
+            pdwBlock[6]  = pData[2];
+            pdwBlock[7]  = pData[3];
+            pData += (m_dwPitch>>2);
+            pdwBlock[8]  = pData[0];
+            pdwBlock[9]  = pData[1];
+            pdwBlock[10] = pData[2];
+            pdwBlock[11] = pData[3];
+            pData += (m_dwPitch>>2);
+            pdwBlock[12] = pData[0];
+            pdwBlock[13] = pData[1];
+            pdwBlock[14] = pData[2];
+            pdwBlock[15] = pData[3];
+        }
     }
     else
     {
@@ -211,8 +238,20 @@ bool CCodecBuffer_RGBA8888::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, 
         for(j = 0; j < h && (y + j) < GetHeight(); j++)
         {
             CMP_DWORD* pData = (CMP_DWORD*) (GetData() + ((y + j) * m_dwPitch) + (x * sizeof(CMP_DWORD)));
-            for(i = 0; i < dwWidth; i++)
-                pdwBlock[(j * w) + i] = *pData++;
+            if (m_bSwizzle)
+            {
+                for(i = 0; i < dwWidth; i++)
+                {
+                    pdwBlock[(j * w) + i] = SWIZZLE_RGBA_BGRA(*pData++);
+                }
+            }
+            else
+            {
+                for(i = 0; i < dwWidth; i++)
+                {
+                    pdwBlock[(j * w) + i] = *pData++;
+                }
+            }
 
             // Pad block with previous values if necessary
             if(i < w)

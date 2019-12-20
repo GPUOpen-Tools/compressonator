@@ -48,9 +48,10 @@ CCodec_Block_4x4::~CCodec_Block_4x4()
 
 CCodecBuffer* CCodec_Block_4x4::CreateBuffer(
                                             CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-                                            CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData) const
+                                            CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData,
+                                            CMP_DWORD dwDataSize) const
 {
-    return CreateCodecBuffer(CBT_4x4Block_8BPP, nBlockWidth, nBlockHeight, nBlockDepth,dwWidth, dwHeight, dwPitch, pData);
+    return CreateCodecBuffer(CBT_4x4Block_8BPP, nBlockWidth, nBlockHeight, nBlockDepth,dwWidth, dwHeight, dwPitch, pData,dwDataSize);
 }
 
 bool CCodec_Block_4x4::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)

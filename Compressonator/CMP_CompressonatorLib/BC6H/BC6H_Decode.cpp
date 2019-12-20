@@ -38,7 +38,9 @@
 #include <bitset>
 #include <stddef.h>
 
-
+#ifdef TEST_CMP_CORE_DECODER
+#include "CMP_Core.h"
+#endif
 
 #ifdef BC6H_DECODE_DEBUG
 int  g_dblock = 0;
@@ -642,26 +644,26 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
                 bc6h_format.tBits[C_GREEN]  = 4;
                 bc6h_format.tBits[C_BLUE]   = 4;
                 bc6h_format.rw = header.getvalue(5,10) |                // 16:   rw[9:0] 
-                                 (header.getvalue(39, 1) << 15) |		//       rw[15]
-								 (header.getvalue(40, 1) << 14) |		//       rw[14]
-								 (header.getvalue(41, 1) << 13) |		//       rw[13]
-								 (header.getvalue(42, 1) << 12) |		//       rw[12]
-								 (header.getvalue(43, 1) << 11) |		//       rw[11]
-								 (header.getvalue(44, 1) << 10);        //       rw[10]
+                                 (header.getvalue(39, 1) << 15) |       //       rw[15]
+                                 (header.getvalue(40, 1) << 14) |       //       rw[14]
+                                 (header.getvalue(41, 1) << 13) |       //       rw[13]
+                                 (header.getvalue(42, 1) << 12) |       //       rw[12]
+                                 (header.getvalue(43, 1) << 11) |       //       rw[11]
+                                 (header.getvalue(44, 1) << 10);        //       rw[10]
                 bc6h_format.gw = header.getvalue(15,10) |               // 16:   gw[9:0]
-                                 (header.getvalue(49, 1) << 15) |		//       gw[15]
-								 (header.getvalue(50, 1) << 14) |		//       gw[14]
-								 (header.getvalue(51, 1) << 13) |		//       gw[13]
-								 (header.getvalue(52, 1) << 12) |		//       gw[12]
-								 (header.getvalue(53, 1) << 11) |		//       gw[11]
-								 (header.getvalue(54, 1) << 10);        //       gw[10]
+                                 (header.getvalue(49, 1) << 15) |       //       gw[15]
+                                 (header.getvalue(50, 1) << 14) |       //       gw[14]
+                                 (header.getvalue(51, 1) << 13) |       //       gw[13]
+                                 (header.getvalue(52, 1) << 12) |       //       gw[12]
+                                 (header.getvalue(53, 1) << 11) |       //       gw[11]
+                                 (header.getvalue(54, 1) << 10);        //       gw[10]
                 bc6h_format.bw = header.getvalue(25,10) |               // 16:   bw[9:0]
-                                 (header.getvalue(59, 1) << 15) |		//       bw[15]
-								 (header.getvalue(60, 1) << 14) |		//       bw[14]
-								 (header.getvalue(61, 1) << 13) |		//       bw[13]
-								 (header.getvalue(62, 1) << 12) |		//       bw[12]
-								 (header.getvalue(63, 1) << 11) |		//       bw[11]
-								 (header.getvalue(64, 1) << 10);        //       bw[10]
+                                 (header.getvalue(59, 1) << 15) |       //       bw[15]
+                                 (header.getvalue(60, 1) << 14) |       //       bw[14]
+                                 (header.getvalue(61, 1) << 13) |       //       bw[13]
+                                 (header.getvalue(62, 1) << 12) |       //       bw[12]
+                                 (header.getvalue(63, 1) << 11) |       //       bw[11]
+                                 (header.getvalue(64, 1) << 10);        //       bw[10]
                 bc6h_format.rx = header.getvalue(35,4);                 // 4:    rx[3:0]
                 bc6h_format.gx = header.getvalue(45,4);                 // 4:    gx[3:0]
                 bc6h_format.bx = header.getvalue(55,4);                 // 4:    bx[3:0]
@@ -728,6 +730,30 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
 
 void BC6HBlockDecoder::DecompressBlock( float out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],BYTE in[COMPRESSED_BLOCK_SIZE])
 {
+    // Compressed input
+    // printf("BC6 in: ");
+    // for (int px=0; px<16; px++) {
+    //     printf("%x,",in[px]);
+    // }
+    // printf("\n");
+
+#ifdef TEST_CMP_CORE_DECODER
+     unsigned short imgout[48];
+     DecompressBlockBC6(in,imgout);
+     CMP_HALF rgba[4];
+     int count = 0;
+     for (int px=0; px<16; px++) {
+             rgba[0].setBits(imgout[count++]);
+             rgba[1].setBits(imgout[count++]);
+             rgba[2].setBits(imgout[count++]);
+             out[px][0] = (float)rgba[0];
+             out[px][1] = (float)rgba[1];
+             out[px][2] = (float)rgba[2];
+             out[px][3] = 1.0f;
+     }
+     return;
+#endif
+
     // now determine the mode type and extract the coded endpoints data 
     AMD_BC6H_Format bc6h_format = extract_format(in);
     if (!bc6signed)
@@ -752,7 +778,7 @@ void BC6HBlockDecoder::DecompressBlock( float out[MAX_SUBSET_SIZE][MAX_DIMENSION
     
     BC6H_Vec3 data;
     int indexPos=0;
-    half rgb[3];
+    CMP_HALF rgb[3];
 
     // Note first 32 BC6H_PARTIONS is shared with BC6H
     // Partitioning is always arranged such that index 0 is always in subset 0 of BC6H_PARTIONS array 

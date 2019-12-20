@@ -1,13 +1,6 @@
 ;===============================================================================
 ; Copyright (c) 2004-2006 ATI Technologies Inc.
 ;===============================================================================
-;
-;  Email:        gputools.support@amd.com
-;
-; dxtc_v11_compress_sse2.asm : A high-performance, reasonable quality DXTC compressor
-;
-; Written by Dave Oldcorn of V11 for AMD
-;
 ; Assemble with:
 ; ml   /DX64=0 /W3 /Fo $(OutDir)\$(InputName).obj /c /coff /Cp /Zi $(InputPath)
 ; ml64 /DX64=1 /W3 /Fo $(OutDir)\$(InputName).obj /c /Cp /Zi $(InputPath)

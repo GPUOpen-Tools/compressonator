@@ -50,10 +50,10 @@ CCodec_ATC_RGB::~CCodec_ATC_RGB()
 }
 
 CCodecBuffer* CCodec_ATC_RGB::CreateBuffer(
-    CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth, 
-    CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData) const
+    CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
+    CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData,CMP_DWORD dwDataSize) const
 {
-    return CreateCodecBuffer(CBT_4x4Block_4BPP, 4,4,1,dwWidth, dwHeight, dwPitch, pData);
+    return CreateCodecBuffer(CBT_4x4Block_4BPP, 4,4,1,dwWidth, dwHeight, dwPitch, pData,dwDataSize);
 }
 
 CodecError CCodec_ATC_RGB::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
@@ -69,6 +69,9 @@ CodecError CCodec_ATC_RGB::Compress(CCodecBuffer& bufferIn, CCodecBuffer& buffer
 
     CMP_BYTE srcBlock[BLOCK_SIZE_4X4X4];
     CMP_DWORD compressedBlock[2];
+
+    bufferIn.m_bSwizzle = false; // Processing RGBA_8888
+
     for(CMP_DWORD j = 0; j < dwBlocksY; j++)
     {
         for(CMP_DWORD i = 0; i < dwBlocksX; i++)

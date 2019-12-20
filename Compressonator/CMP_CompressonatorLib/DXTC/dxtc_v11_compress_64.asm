@@ -1,9 +1,7 @@
 ;===============================================================================
 ; Copyright (c) 2004-2006 ATI Technologies Inc.
 ;===============================================================================
-;
-;  Email:        gputools.support@amd.com
-;
+
 
 AXIS_MUNGE                equ 1
 PROGRESSIVE_REFINEMENT    equ 1

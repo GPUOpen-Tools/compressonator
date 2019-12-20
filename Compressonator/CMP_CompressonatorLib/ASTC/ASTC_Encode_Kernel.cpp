@@ -11167,23 +11167,18 @@ physical_compressed_block symbolic_to_physical(symbolic_compressed_block * sc, _
 //---------------------
 // ASTC use with OpenCL
 //---------------------
-#if defined(__OPENCL_VERSION__) || defined(USE_COMPUTE)
-__kernel void compress(
-    int groupOffset,
+#if defined(__OPENCL_VERSION__) || defined(USE_CMP_SDK)
+__kernel void CMP_GPUEncoder(
 __global unsigned char      *p_source_pixels,
 __global unsigned char      *p_encoded_blocks,
 __global Source_Info        *SourceInfo,
 __global ASTC_Encode        *ASTCEncode
-#ifndef __OPENCL_VERSION__
-   ,CGU_UINT pixel_block_x
-   ,CGU_UINT pixel_block_y
-#endif
 )
 {
    //=================================
    // Get the Thread workspace 
    //=================================
-   #ifdef __OPENCL_VERSION__
+   #ifdef ASPM_GPU
        int pixel_block_x = get_global_id(0);
        int pixel_block_y = get_global_id(1);
    #else

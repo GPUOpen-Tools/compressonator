@@ -58,9 +58,9 @@ CodecError CCodec_ATC::CompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP
     {
         for(DWORD x = 0; x < 4; x++)
         {
-            srcRGB[x][y].red = rgbBlock[(x*16) + (y*4) + RGBA8888_CHANNEL_R];
-            srcRGB[x][y].green = rgbBlock[(x*16) + (y*4) + RGBA8888_CHANNEL_G];
-            srcRGB[x][y].blue = rgbBlock[(x*16) + (y*4) + RGBA8888_CHANNEL_B];
+            srcRGB[x][y].red    = rgbBlock[(x*16) + (y*4) + ATC_RGBA8888_CHANNEL_R]; 
+            srcRGB[x][y].green  = rgbBlock[(x*16) + (y*4) + ATC_RGBA8888_CHANNEL_G];
+            srcRGB[x][y].blue   = rgbBlock[(x*16) + (y*4) + ATC_RGBA8888_CHANNEL_B];
 
         }
     }
@@ -84,9 +84,9 @@ void CCodec_ATC::DecompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWO
     {
         for(DWORD x = 0; x < 4; x++)
         {
-            rgbBlock[(x*16) + (y*4) + RGBA8888_CHANNEL_R] = destRGB[x][y].red;
-            rgbBlock[(x*16) + (y*4) + RGBA8888_CHANNEL_G] = destRGB[x][y].green;
-            rgbBlock[(x*16) + (y*4) + RGBA8888_CHANNEL_B] = destRGB[x][y].blue;
+            rgbBlock[(x*16) + (y*4) + ATC_RGBA8888_CHANNEL_R] = destRGB[x][y].red;
+            rgbBlock[(x*16) + (y*4) + ATC_RGBA8888_CHANNEL_G] = destRGB[x][y].green;
+            rgbBlock[(x*16) + (y*4) + ATC_RGBA8888_CHANNEL_B] = destRGB[x][y].blue;
         }
     }
 }
@@ -95,7 +95,7 @@ CodecError CCodec_ATC::CompressRGBABlock_ExplicitAlpha(CMP_BYTE rgbaBlock[BLOCK_
 {
     CMP_BYTE alphaBlock[BLOCK_SIZE_4X4];
     for(CMP_DWORD i = 0; i < 16; i++)
-        alphaBlock[i] = static_cast<CMP_BYTE>(((DWORD*)rgbaBlock)[i] >> RGBA8888_OFFSET_A);
+        alphaBlock[i] = static_cast<CMP_BYTE>(((DWORD*)rgbaBlock)[i] >> ATC_RGBA8888_OFFSET_A);
 
     CodecError err = CompressExplicitAlphaBlock(alphaBlock, &compressedBlock[ATC_OFFSET_ALPHA]);
     if(err != CE_OK)
@@ -112,14 +112,14 @@ void CCodec_ATC::DecompressRGBABlock_ExplicitAlpha(CMP_BYTE rgbaBlock[BLOCK_SIZE
     DecompressRGBBlock(rgbaBlock, &compressedBlock[ATC_OFFSET_RGB]);
 
     for(CMP_DWORD i = 0; i < 16; i++)
-        ((DWORD*)rgbaBlock)[i] = (alphaBlock[i] << RGBA8888_OFFSET_A) | (((DWORD*)rgbaBlock)[i] & ~(BYTE_MASK << RGBA8888_OFFSET_A));
+        ((DWORD*)rgbaBlock)[i] = (alphaBlock[i] << ATC_RGBA8888_OFFSET_A) | (((DWORD*)rgbaBlock)[i] & ~(BYTE_MASK << ATC_RGBA8888_OFFSET_A));
 }
 
 CodecError CCodec_ATC::CompressRGBABlock_InterpolatedAlpha(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[4])
 {
     CMP_BYTE alphaBlock[BLOCK_SIZE_4X4];
     for(CMP_DWORD i = 0; i < 16; i++)
-        alphaBlock[i] = static_cast<CMP_BYTE>(((DWORD*)rgbaBlock)[i] >> RGBA8888_OFFSET_A);
+        alphaBlock[i] = static_cast<CMP_BYTE>(((DWORD*)rgbaBlock)[i] >> ATC_RGBA8888_OFFSET_A);
 
     CodecError err = CompressInterpolatedAlphaBlock(alphaBlock, &compressedBlock[ATC_OFFSET_ALPHA]);
     if(err != CE_OK)
@@ -136,7 +136,7 @@ void CCodec_ATC::DecompressRGBABlock_InterpolatedAlpha(CMP_BYTE rgbaBlock[BLOCK_
     DecompressRGBBlock(rgbaBlock, &compressedBlock[ATC_OFFSET_RGB]);
 
     for(CMP_DWORD i = 0; i < 16; i++)
-        ((DWORD*)rgbaBlock)[i] = (alphaBlock[i] << RGBA8888_OFFSET_A) | (((DWORD*)rgbaBlock)[i] & ~(BYTE_MASK << RGBA8888_OFFSET_A));
+        ((DWORD*)rgbaBlock)[i] = (alphaBlock[i] << ATC_RGBA8888_OFFSET_A) | (((DWORD*)rgbaBlock)[i] & ~(BYTE_MASK << ATC_RGBA8888_OFFSET_A));
 }
 
 #define EXPLICIT_ALPHA_PIXEL_MASK 0xf

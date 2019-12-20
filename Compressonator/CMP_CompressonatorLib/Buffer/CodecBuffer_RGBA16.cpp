@@ -39,8 +39,8 @@ const int nPixelSize = nChannelCount * sizeof(CMP_WORD);
 
 CCodecBuffer_RGBA16::CCodecBuffer_RGBA16(
     CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-    CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData)
-    : CCodecBuffer(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData)
+    CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData,CMP_DWORD dwDataSize)
+    : CCodecBuffer(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize)
 {
     assert((m_dwPitch == 0) || (m_dwPitch >= GetWidth() * nPixelSize));
     if(m_dwPitch <= GetWidth() * nPixelSize)

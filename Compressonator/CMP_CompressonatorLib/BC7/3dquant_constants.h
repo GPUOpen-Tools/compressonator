@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-//  Email:        gputools.support@amd.com
-//
 
 #ifndef _3DQUANT_CONSTANTS_H_
 #define _3DQUANT_CONSTANTS_H_

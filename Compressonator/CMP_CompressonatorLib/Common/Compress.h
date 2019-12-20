@@ -70,4 +70,7 @@ static CMP_DWORD GetProcessorCount()
 const CMP_DWORD f_dwProcessorCount = GetProcessorCount();
 #endif
 
+
+
+
 #endif // !COMPRESS_H

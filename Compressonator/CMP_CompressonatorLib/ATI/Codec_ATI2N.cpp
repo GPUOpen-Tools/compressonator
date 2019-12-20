@@ -31,6 +31,10 @@
 #include "Common.h"
 #include "Codec_ATI2N.h"
 
+#ifdef TEST_CMP_CORE_DECODER
+#include "CMP_Core.h"
+#endif
+
 //////////////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////////////
@@ -74,8 +78,8 @@ CodecError CCodec_ATI2N::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOu
             {
                 CMP_BYTE cAlphaBlock[BLOCK_SIZE_4X4];
 
-                if (m_bSwizzleChannels)
-                    bufferIn.ReadBlockB(i*4, j*4, 4, 4, cAlphaBlock);
+                if (bufferIn.m_bSwizzle)
+                    bufferIn.ReadBlockB(i*4, j*4, 4, 4, cAlphaBlock);  // <=?? this is actually reading the red channel
                 else
                     bufferIn.ReadBlockR(i * 4, j * 4, 4, 4, cAlphaBlock);
 
@@ -88,7 +92,7 @@ CodecError CCodec_ATI2N::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOu
             {
                 float fAlphaBlock[BLOCK_SIZE_4X4];
 
-                if (m_bSwizzleChannels)
+                if (bufferIn.m_bSwizzle)
                   bufferIn.ReadBlockB(i * 4, j * 4, 4, 4, fAlphaBlock);
                 else
                   bufferIn.ReadBlockR(i*4, j*4, 4, 4, fAlphaBlock);
@@ -132,7 +136,7 @@ CodecError CCodec_ATI2N::Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& buf
         {
             CMP_BYTE cAlphaBlock[BLOCK_SIZE_4X4];
 
-            if (m_bSwizzleChannels)
+            if (bufferIn.m_bSwizzle)
                 bufferIn.ReadBlockB(i * 4, j * 4, 4, 4, cAlphaBlock);
             else
                 bufferIn.ReadBlockR(i*4, j*4, 4, 4, cAlphaBlock);
@@ -197,20 +201,30 @@ CodecError CCodec_ATI2N::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& buffer
    
            if(bUseFixed)
            {
-               DecompressAlphaBlock(alphaBlockR, &compressedBlock[dwXOffset]);
-               DecompressAlphaBlock(alphaBlockG, &compressedBlock[dwYOffset]);
-               bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, alphaBlockR);
-               bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, alphaBlockG);
-               bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, alphaBlockB);
-               bufferOut.WriteBlockA(i * 4, j * 4, 4, 4, alphaBlockA);
+               #ifdef TEST_CMP_CORE_DECODER
+                   DecompressBlockBC5((CMP_BYTE *)&compressedBlock[dwXOffset],alphaBlockR,alphaBlockG);
+                   bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, alphaBlockR);
+                   bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, alphaBlockG);
+                   bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, alphaBlockB);
+                   bufferOut.WriteBlockA(i * 4, j * 4, 4, 4, alphaBlockA);
+               #else
+                   DecompressAlphaBlock(alphaBlockR, &compressedBlock[dwXOffset]);
+                   DecompressAlphaBlock(alphaBlockG, &compressedBlock[dwYOffset]);
+                   bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, alphaBlockR);
+                   bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, alphaBlockG);
+                   bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, alphaBlockB);
+                   bufferOut.WriteBlockA(i * 4, j * 4, 4, 4, alphaBlockA);
+               #endif
            }
            else
            {
                DecompressAlphaBlock(falphaBlockR, &compressedBlock[dwXOffset]);
                DecompressAlphaBlock(falphaBlockG, &compressedBlock[dwYOffset]);
-               bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, falphaBlockR);
-               bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, falphaBlockG);
+               // Bug Work Arround: This codec buffer is BGRA -> we expect data to be RGBA, the codec buffer is configured
+               // for BGRA and we want output as RGBA...
                bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, falphaBlockB);
+               bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, falphaBlockG);
+               bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, falphaBlockR);
                bufferOut.WriteBlockA(i * 4, j * 4, 4, 4, falphaBlockA);
            }
        }

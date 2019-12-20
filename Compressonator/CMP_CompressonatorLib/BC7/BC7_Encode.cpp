@@ -138,7 +138,7 @@ void BC7BlockEncoder::EncodeSingleIndexBlock(CMP_DWORD blockMode,
     CMP_BYTE  block[COMPRESSED_BLOCK_SIZE])
 {
 #ifdef USE_DBGTRACE
-    DbgTrace(());
+    DbgTrace(("-> WriteBit()"));
 #endif
     CMP_DWORD  i,j,k;
     CMP_DWORD   *partitionTable;
@@ -342,6 +342,15 @@ void BC7BlockEncoder::EncodeSingleIndexBlock(CMP_DWORD blockMode,
 #endif
         return;
     }
+
+#ifdef USE_DBGTRACE
+    DbgTrace(("OUTPUT [%2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x]",
+        block[ 0],block[ 1],block[ 2],block[ 3],
+        block[ 4],block[ 5],block[ 6],block[ 7],
+        block[ 8],block[ 9],block[10],block[11],
+        block[12],block[13],block[14],block[15]));
+#endif
+
 }
 
 
@@ -352,16 +361,17 @@ void BC7BlockEncoder::EncodeSingleIndexBlock(CMP_DWORD blockMode,
 //
 //
 //
-
 // For debugging this is a no color 4x4 BC7 block
 //BYTE BlankBC7Block[16] = { 0x40, 0xC0, 0x1F, 0xF0, 0x07, 0xFC, 0x70, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-double BC7BlockEncoder::CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-    CMP_BYTE   out[COMPRESSED_BLOCK_SIZE],
-    CMP_DWORD  blockMode)
+
+double BC7BlockEncoder::CompressSingleIndexBlock(
+    double      in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
+    CMP_BYTE    out[COMPRESSED_BLOCK_SIZE],
+    CMP_DWORD   blockMode)
 {
 #ifdef USE_DBGTRACE
-    DbgTrace(());
+    DbgTrace(("<---------CompressSingleIndexBlock----------->"));
 #endif
     CMP_DWORD   i, k, n;
     CMP_DWORD   dimension;
@@ -387,7 +397,7 @@ double BC7BlockEncoder::CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_
     }
 
     CMP_DWORD   blockPartition;
-    double  partition[MAX_SUBSETS][MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
+    double      partition[MAX_SUBSETS][MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
     CMP_DWORD   entryCount[MAX_SUBSETS];
     CMP_DWORD   subset;
 
@@ -402,6 +412,16 @@ double BC7BlockEncoder::CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_
     fprintf(fp,"m_clusters[0] = %d\n",m_clusters[0]);
 #endif
 
+#ifdef USE_DBGTRACE
+    DbgTrace(("blockMode [%d] numPartitionModes [%d] partitionsToTry [%2d]",
+        blockMode,
+        numPartitionModes,
+        partitionsToTry));
+    DbgTrace((" m_blockMaxRange [%2d] m_quantizerRangeThreshold [%4.0f] m_clusters[0] = %d",
+        m_blockMaxRange,
+        m_quantizerRangeThreshold,
+        m_clusters[0]));
+#endif
 
     // Loop over the available partitions for the block mode and quantize them 
     // to figure out the best candidates for further refinement
@@ -432,7 +452,6 @@ double BC7BlockEncoder::CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_
                 if((m_clusters[0] > 8) ||
                    (m_blockMaxRange <= m_quantizerRangeThreshold))
                 {
-
 
 #ifdef    BC7_DEBUG_TO_RESULTS_TXT
                     fprintf(fp,"\noptQuantAnD_d\n");
@@ -603,6 +622,15 @@ double BC7BlockEncoder::CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_
         shakeSize += 2;
     }
 
+#ifdef USE_DBGTRACE
+    DbgTrace(("%2d numPartitionModes %2d SearchSize %3.3f shakeSize %2d numShakeAttempts %2d\n",
+     partitionsToTry,
+     numPartitionModes,
+     m_partitionSearchSize,
+     shakeSize,
+     numShakeAttempts));
+#endif
+
     // Now do the endpoint shaking
     for(i=0; i < numShakeAttempts; i++)
     {
@@ -649,7 +677,6 @@ double BC7BlockEncoder::CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_
                     {
                         tempIndices[k] = m_storedIndices[blockPartition][subset][k];
                     }
-
                     tempError[0] = ep_shaker_d(partition[subset],
                                                entryCount[subset],
                                                tempIndices,
@@ -788,8 +815,6 @@ double BC7BlockEncoder::CompressSingleIndexBlock(double in[MAX_SUBSET_SIZE][MAX_
     return bestError;
 }
 
-
-
 static CMP_DWORD   componentRotations[4][4] =
 {
     {COMP_ALPHA, COMP_RED,   COMP_GREEN, COMP_BLUE},
@@ -807,7 +832,7 @@ void BC7BlockEncoder::EncodeDualIndexBlock(CMP_DWORD blockMode,
 {
 
 #ifdef USE_DBGTRACE
-    DbgTrace(());
+    DbgTrace(("-> WriteBit()"));
 #endif
     CMP_DWORD i,j,k;
     int   bitPosition = 0;    // Position the pointer at the LSB
@@ -953,6 +978,15 @@ void BC7BlockEncoder::EncodeDualIndexBlock(CMP_DWORD blockMode,
     {
         return;
     }
+
+#ifdef USE_DBGTRACE
+    DbgTrace(("OUTPUT [%2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x]",
+        out[ 0],out[ 1],out[ 2],out[ 3],
+        out[ 4],out[ 5],out[ 6],out[ 7],
+        out[ 8],out[ 9],out[10],out[11],
+        out[12],out[13],out[14],out[15]));
+#endif
+
 }
 
 
@@ -961,7 +995,7 @@ double BC7BlockEncoder::CompressDualIndexBlock(double in[MAX_SUBSET_SIZE][MAX_DI
     CMP_DWORD  blockMode)
 {
 #ifdef USE_DBGTRACE
-    DbgTrace(());
+    DbgTrace(("<---------CompressDualIndexBlock----------->"));
 #endif
     CMP_DWORD   i;
     double  cBlock[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
@@ -1323,6 +1357,7 @@ double BC7BlockEncoder::CompressDualIndexBlock(double in[MAX_SUBSET_SIZE][MAX_DI
 double BC7BlockEncoder::CompressBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
     CMP_BYTE   out[COMPRESSED_BLOCK_SIZE])
 {
+
 #ifdef USE_DBGTRACE
     DbgTrace(());
 #endif
@@ -1409,6 +1444,7 @@ double BC7BlockEncoder::CompressBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_B
     fprintf(fp,"=========================================\n");
 #endif
 
+
     // Initial loop - go through the block modes and get the ones that are valid
     for(CMP_DWORD blockMode=0; blockMode < NUM_BLOCK_TYPES; blockMode++)
     {
@@ -1453,6 +1489,9 @@ double BC7BlockEncoder::CompressBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_B
 
     assert(validModeMask != 0);
 
+#ifdef USE_DBGTRACE
+    DbgTrace(("validModeMask [%x]",validModeMask));
+#endif
     // Try all the legal block modes that we flagged
 
     CMP_BYTE    temporaryOutputBlock[COMPRESSED_BLOCK_SIZE];
@@ -1469,6 +1508,10 @@ double BC7BlockEncoder::CompressBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_B
     // be improved)
     CMP_DWORD   blockModeOrder[NUM_BLOCK_TYPES] = {4, 6, 3, 1, 0, 2, 7, 5};
 
+    // used for debugging and mode tests
+    //                76543210
+    // validModeMask = 0b00100000;
+
     for(CMP_DWORD j1=0; j1 < NUM_BLOCK_TYPES; j1++)
     {
         CMP_DWORD blockMode = blockModeOrder[j1];
@@ -1479,6 +1522,7 @@ double BC7BlockEncoder::CompressBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_B
             continue;
         }
 
+        // CPU:HPC #1
         // Setup mode parameters for this block
         BlockSetup(blockMode);
         

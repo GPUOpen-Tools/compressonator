@@ -52,7 +52,8 @@
 
 CCodecBuffer* CreateCodecBuffer(CodecBufferType nCodecBufferType, 
                                 CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-                                CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData)
+                                CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData,
+                                CMP_DWORD dwDataSize)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(("nCodecBufferType %d dwWidth %d dwHeight %d dwPitch %d pData [%x]",nCodecBufferType,dwWidth, dwHeight, dwPitch, pData));  
@@ -62,51 +63,51 @@ CCodecBuffer* CreateCodecBuffer(CodecBufferType nCodecBufferType,
         case CBT_RGBA8888:
         case CBT_BGRA8888:
         case CBT_ARGB8888:
-            return new CCodecBuffer_RGBA8888(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RGBA8888(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
         case CBT_RGB888:
-            return new CCodecBuffer_RGB888(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RGB888(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
         case CBT_RG8:
-            return new CCodecBuffer_RG8(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RG8(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
         case CBT_R8:
-            return new CCodecBuffer_R8(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_R8(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
         case CBT_RGBA2101010:
-            return new CCodecBuffer_RGBA2101010(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RGBA2101010(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
         case CBT_RGBA16:
-            return new CCodecBuffer_RGBA16(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RGBA16(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
         case CBT_RG16:
-            return new CCodecBuffer_RG16(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RG16(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
         case CBT_R16:
-            return new CCodecBuffer_R16(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_R16(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
         case CBT_RGBA16F:
-            return new CCodecBuffer_RGBA16F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RGBA16F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
         case CBT_RG16F:
-            return new CCodecBuffer_RG16F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RG16F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
         case CBT_R16F:
-            return new CCodecBuffer_R16F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_R16F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
         case CBT_RGBA32:
-            return new CCodecBuffer_RGBA32(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RGBA32(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
         case CBT_RG32:
-            return new CCodecBuffer_RG32(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RG32(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
         case CBT_R32:
-            return new CCodecBuffer_R32(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_R32(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
         case CBT_RGBA32F:
-            return new CCodecBuffer_RGBA32F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RGBA32F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
         case CBT_RG32F:
-            return new CCodecBuffer_RG32F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RG32F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
         case CBT_R32F:
-            return new CCodecBuffer_R32F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_R32F(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
         case CBT_RGBE32F:
-            return new CCodecBuffer_RGB9995EF(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_RGB9995EF(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
         case CBT_4x4Block_2BPP:
         case CBT_4x4Block_4BPP:
         case CBT_4x4Block_8BPP:
         case CBT_4x4Block_16BPP:
-            return new CCodecBuffer_Block(nCodecBufferType, nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_Block(nCodecBufferType, nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
         case CBT_8x8Block_2BPP:
         case CBT_8x8Block_4BPP:
         case CBT_8x8Block_8BPP:
         case CBT_8x8Block_16BPP:
-            return new CCodecBuffer_Block(nCodecBufferType, nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+            return new CCodecBuffer_Block(nCodecBufferType, nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
 
         case CBT_Unknown:
         default:
@@ -209,7 +210,7 @@ CodecBufferType GetCodecBufferType(CMP_FORMAT format)
 
 CCodecBuffer::CCodecBuffer(
                             CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-                            CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData)
+                            CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData,CMP_DWORD dwDataSize)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(("dwWidth %d,dwHeight %d,dwPitch %d pData [%x]",dwWidth,dwHeight,dwPitch,pData));  
@@ -218,14 +219,16 @@ CCodecBuffer::CCodecBuffer(
     m_dwHeight = dwHeight;
     m_dwPitch  = dwPitch;
 
-    m_nBlockWidth = nBlockWidth;
-    m_nBlockHeight= nBlockHeight;
-    m_nBlockDepth = nBlockDepth;
+    m_nBlockWidth = nBlockWidth <4?4:nBlockWidth;
+    m_nBlockHeight= nBlockHeight<4?4:nBlockHeight;
+    m_nBlockDepth = nBlockDepth <1?1:nBlockDepth;
 
-    m_pData = pData;
-    m_bUserAllocedData = (pData != NULL);
+    m_pData             = pData;
+    m_bUserAllocedData  = (pData != NULL);
+    m_DataSize          = dwDataSize;
 
     m_bPerformingConversion = false;
+    m_bSwizzle = false;
 }
 
 CCodecBuffer::~CCodecBuffer()
@@ -295,7 +298,7 @@ bool CCodecBuffer::ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
 
         ATTEMPT_BLOCK_READ(cBlock, R, double);
         ATTEMPT_BLOCK_READ(cBlock, R, float);
-        ATTEMPT_BLOCK_READ(cBlock, R, half);
+        ATTEMPT_BLOCK_READ(cBlock, R, CMP_HALF);
         ATTEMPT_BLOCK_READ(cBlock, R, CMP_DWORD);
         ATTEMPT_BLOCK_READ(cBlock, R, CMP_WORD);
 
@@ -323,7 +326,7 @@ bool CCodecBuffer::ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
 
         ATTEMPT_BLOCK_READ(cBlock, G, double);
         ATTEMPT_BLOCK_READ(cBlock, G, float);
-        ATTEMPT_BLOCK_READ(cBlock, G, half);
+        ATTEMPT_BLOCK_READ(cBlock, G, CMP_HALF);
         ATTEMPT_BLOCK_READ(cBlock, G, CMP_DWORD);
         ATTEMPT_BLOCK_READ(cBlock, G, CMP_WORD);
 
@@ -351,7 +354,7 @@ bool CCodecBuffer::ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
 
         ATTEMPT_BLOCK_READ(cBlock, B, double);
         ATTEMPT_BLOCK_READ(cBlock, B, float);
-        ATTEMPT_BLOCK_READ(cBlock, B, half);
+        ATTEMPT_BLOCK_READ(cBlock, B, CMP_HALF);
         ATTEMPT_BLOCK_READ(cBlock, B, CMP_DWORD);
         ATTEMPT_BLOCK_READ(cBlock, B, CMP_WORD);
 
@@ -379,7 +382,7 @@ bool CCodecBuffer::ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
 
         ATTEMPT_BLOCK_READ(cBlock, A, double);
         ATTEMPT_BLOCK_READ(cBlock, A, float);
-        ATTEMPT_BLOCK_READ(cBlock, A, half);
+        ATTEMPT_BLOCK_READ(cBlock, A, CMP_HALF);
         ATTEMPT_BLOCK_READ(cBlock, A, CMP_DWORD);
         ATTEMPT_BLOCK_READ(cBlock, A, CMP_WORD);
 
@@ -407,7 +410,7 @@ bool CCodecBuffer::ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
 
         ATTEMPT_BLOCK_READ(wBlock, R, double);
         ATTEMPT_BLOCK_READ(wBlock, R, float);
-        ATTEMPT_BLOCK_READ(wBlock, R, half);
+        ATTEMPT_BLOCK_READ(wBlock, R, CMP_HALF);
         ATTEMPT_BLOCK_READ(wBlock, R, CMP_DWORD);
         ATTEMPT_BLOCK_READ(wBlock, R, CMP_BYTE);
 
@@ -435,7 +438,7 @@ bool CCodecBuffer::ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
 
         ATTEMPT_BLOCK_READ(wBlock, G, double);
         ATTEMPT_BLOCK_READ(wBlock, G, float);
-        ATTEMPT_BLOCK_READ(wBlock, G, half);
+        ATTEMPT_BLOCK_READ(wBlock, G, CMP_HALF);
         ATTEMPT_BLOCK_READ(wBlock, G, CMP_DWORD);
         ATTEMPT_BLOCK_READ(wBlock, G, CMP_BYTE);
 
@@ -463,7 +466,7 @@ bool CCodecBuffer::ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
 
         ATTEMPT_BLOCK_READ(wBlock, B, double);
         ATTEMPT_BLOCK_READ(wBlock, B, float);
-        ATTEMPT_BLOCK_READ(wBlock, B, half);
+        ATTEMPT_BLOCK_READ(wBlock, B, CMP_HALF);
         ATTEMPT_BLOCK_READ(wBlock, B, CMP_DWORD);
         ATTEMPT_BLOCK_READ(wBlock, B, CMP_BYTE);
 
@@ -491,7 +494,7 @@ bool CCodecBuffer::ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
 
         ATTEMPT_BLOCK_READ(wBlock, A, double);
         ATTEMPT_BLOCK_READ(wBlock, A, float);
-        ATTEMPT_BLOCK_READ(wBlock, A, half);
+        ATTEMPT_BLOCK_READ(wBlock, A, CMP_HALF);
         ATTEMPT_BLOCK_READ(wBlock, A, CMP_DWORD);
         ATTEMPT_BLOCK_READ(wBlock, A, CMP_BYTE);
 
@@ -519,7 +522,7 @@ bool CCodecBuffer::ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
 
         ATTEMPT_BLOCK_READ(dwBlock, R, double);
         ATTEMPT_BLOCK_READ(dwBlock, R, float);
-        ATTEMPT_BLOCK_READ(dwBlock, R, half);
+        ATTEMPT_BLOCK_READ(dwBlock, R, CMP_HALF);
         ATTEMPT_BLOCK_READ(dwBlock, R, CMP_WORD);
         ATTEMPT_BLOCK_READ(dwBlock, R, CMP_BYTE);
 
@@ -547,7 +550,7 @@ bool CCodecBuffer::ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
 
         ATTEMPT_BLOCK_READ(dwBlock, G, double);
         ATTEMPT_BLOCK_READ(dwBlock, G, float);
-        ATTEMPT_BLOCK_READ(dwBlock, G, half);
+        ATTEMPT_BLOCK_READ(dwBlock, G, CMP_HALF);
         ATTEMPT_BLOCK_READ(dwBlock, G, CMP_WORD);
         ATTEMPT_BLOCK_READ(dwBlock, G, CMP_BYTE);
 
@@ -575,7 +578,7 @@ bool CCodecBuffer::ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
 
         ATTEMPT_BLOCK_READ(dwBlock, B, double);
         ATTEMPT_BLOCK_READ(dwBlock, B, float);
-        ATTEMPT_BLOCK_READ(dwBlock, B, half);
+        ATTEMPT_BLOCK_READ(dwBlock, B, CMP_HALF);
         ATTEMPT_BLOCK_READ(dwBlock, B, CMP_WORD);
         ATTEMPT_BLOCK_READ(dwBlock, B, CMP_BYTE);
 
@@ -603,7 +606,7 @@ bool CCodecBuffer::ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
 
         ATTEMPT_BLOCK_READ(dwBlock, A, double);
         ATTEMPT_BLOCK_READ(dwBlock, A, float);
-        ATTEMPT_BLOCK_READ(dwBlock, A, half);
+        ATTEMPT_BLOCK_READ(dwBlock, A, CMP_HALF);
         ATTEMPT_BLOCK_READ(dwBlock, A, CMP_WORD);
         ATTEMPT_BLOCK_READ(dwBlock, A, CMP_BYTE);
 
@@ -613,7 +616,7 @@ bool CCodecBuffer::ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
     }
 }
 
-bool CCodecBuffer::ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[])
+bool CCodecBuffer::ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[])
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -641,7 +644,7 @@ bool CCodecBuffer::ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
     }
 }
 
-bool CCodecBuffer::ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[])
+bool CCodecBuffer::ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[])
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -669,7 +672,7 @@ bool CCodecBuffer::ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
     }
 }
 
-bool CCodecBuffer::ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[])
+bool CCodecBuffer::ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[])
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -697,7 +700,7 @@ bool CCodecBuffer::ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
     }
 }
 
-bool CCodecBuffer::ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[])
+bool CCodecBuffer::ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[])
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -742,7 +745,7 @@ bool CCodecBuffer::ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
         m_bPerformingConversion = true;
 
         ATTEMPT_BLOCK_READ(fBlock, R, double);
-        ATTEMPT_BLOCK_READ(fBlock, R, half);
+        ATTEMPT_BLOCK_READ(fBlock, R, CMP_HALF);
         ATTEMPT_BLOCK_READ(fBlock, R, CMP_DWORD);
         ATTEMPT_BLOCK_READ(fBlock, R, CMP_WORD);
         ATTEMPT_BLOCK_READ(fBlock, R, CMP_BYTE);
@@ -770,7 +773,7 @@ bool CCodecBuffer::ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
         m_bPerformingConversion = true;
 
         ATTEMPT_BLOCK_READ(fBlock, G, double);
-        ATTEMPT_BLOCK_READ(fBlock, G, half);
+        ATTEMPT_BLOCK_READ(fBlock, G, CMP_HALF);
         ATTEMPT_BLOCK_READ(fBlock, G, CMP_DWORD);
         ATTEMPT_BLOCK_READ(fBlock, G, CMP_WORD);
         ATTEMPT_BLOCK_READ(fBlock, G, CMP_BYTE);
@@ -798,7 +801,7 @@ bool CCodecBuffer::ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
         m_bPerformingConversion = true;
 
         ATTEMPT_BLOCK_READ(fBlock, B, double);
-        ATTEMPT_BLOCK_READ(fBlock, B, half);
+        ATTEMPT_BLOCK_READ(fBlock, B, CMP_HALF);
         ATTEMPT_BLOCK_READ(fBlock, B, CMP_DWORD);
         ATTEMPT_BLOCK_READ(fBlock, B, CMP_WORD);
         ATTEMPT_BLOCK_READ(fBlock, B, CMP_BYTE);
@@ -826,7 +829,7 @@ bool CCodecBuffer::ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
         m_bPerformingConversion = true;
 
         ATTEMPT_BLOCK_READ(fBlock, A, double);
-        ATTEMPT_BLOCK_READ(fBlock, A, half);
+        ATTEMPT_BLOCK_READ(fBlock, A, CMP_HALF);
         ATTEMPT_BLOCK_READ(fBlock, A, CMP_DWORD);
         ATTEMPT_BLOCK_READ(fBlock, A, CMP_WORD);
         ATTEMPT_BLOCK_READ(fBlock, A, CMP_BYTE);
@@ -854,7 +857,7 @@ bool CCodecBuffer::ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
         m_bPerformingConversion = true;
 
         ATTEMPT_BLOCK_READ(dBlock, R, float);
-        ATTEMPT_BLOCK_READ(dBlock, R, half);
+        ATTEMPT_BLOCK_READ(dBlock, R, CMP_HALF);
         ATTEMPT_BLOCK_READ(dBlock, R, CMP_DWORD);
         ATTEMPT_BLOCK_READ(dBlock, R, CMP_WORD);
         ATTEMPT_BLOCK_READ(dBlock, R, CMP_BYTE);
@@ -882,7 +885,7 @@ bool CCodecBuffer::ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
         m_bPerformingConversion = true;
 
         ATTEMPT_BLOCK_READ(dBlock, G, float);
-        ATTEMPT_BLOCK_READ(dBlock, G, half);
+        ATTEMPT_BLOCK_READ(dBlock, G, CMP_HALF);
         ATTEMPT_BLOCK_READ(dBlock, G, CMP_DWORD);
         ATTEMPT_BLOCK_READ(dBlock, G, CMP_WORD);
         ATTEMPT_BLOCK_READ(dBlock, G, CMP_BYTE);
@@ -910,7 +913,7 @@ bool CCodecBuffer::ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
         m_bPerformingConversion = true;
 
         ATTEMPT_BLOCK_READ(dBlock, B, float);
-        ATTEMPT_BLOCK_READ(dBlock, B, half);
+        ATTEMPT_BLOCK_READ(dBlock, B, CMP_HALF);
         ATTEMPT_BLOCK_READ(dBlock, B, CMP_DWORD);
         ATTEMPT_BLOCK_READ(dBlock, B, CMP_WORD);
         ATTEMPT_BLOCK_READ(dBlock, B, CMP_BYTE);
@@ -938,7 +941,7 @@ bool CCodecBuffer::ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
         m_bPerformingConversion = true;
 
         ATTEMPT_BLOCK_READ(dBlock, A, float);
-        ATTEMPT_BLOCK_READ(dBlock, A, half);
+        ATTEMPT_BLOCK_READ(dBlock, A, CMP_HALF);
         ATTEMPT_BLOCK_READ(dBlock, A, CMP_DWORD);
         ATTEMPT_BLOCK_READ(dBlock, A, CMP_WORD);
         ATTEMPT_BLOCK_READ(dBlock, A, CMP_BYTE);
@@ -980,7 +983,7 @@ bool CCodecBuffer::WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
         ATTEMPT_BLOCK_WRITE(cBlock, R, CMP_WORD);
         ATTEMPT_BLOCK_WRITE(cBlock, R, double);
         ATTEMPT_BLOCK_WRITE(cBlock, R, float);
-        ATTEMPT_BLOCK_WRITE(cBlock, R, half);
+        ATTEMPT_BLOCK_WRITE(cBlock, R, CMP_HALF);
 
         assert(0);
         m_bPerformingConversion = false;
@@ -1008,7 +1011,7 @@ bool CCodecBuffer::WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
         ATTEMPT_BLOCK_WRITE(cBlock, G, CMP_WORD);
         ATTEMPT_BLOCK_WRITE(cBlock, G, double);
         ATTEMPT_BLOCK_WRITE(cBlock, G, float);
-        ATTEMPT_BLOCK_WRITE(cBlock, G, half);
+        ATTEMPT_BLOCK_WRITE(cBlock, G, CMP_HALF);
 
         assert(0);
         m_bPerformingConversion = false;
@@ -1036,7 +1039,7 @@ bool CCodecBuffer::WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
         ATTEMPT_BLOCK_WRITE(cBlock, B, CMP_WORD);
         ATTEMPT_BLOCK_WRITE(cBlock, B, double);
         ATTEMPT_BLOCK_WRITE(cBlock, B, float);
-        ATTEMPT_BLOCK_WRITE(cBlock, B, half);
+        ATTEMPT_BLOCK_WRITE(cBlock, B, CMP_HALF);
 
         assert(0);
         m_bPerformingConversion = false;
@@ -1064,7 +1067,7 @@ bool CCodecBuffer::WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
         ATTEMPT_BLOCK_WRITE(cBlock, A, CMP_WORD);
         ATTEMPT_BLOCK_WRITE(cBlock, A, double);
         ATTEMPT_BLOCK_WRITE(cBlock, A, float);
-        ATTEMPT_BLOCK_WRITE(cBlock, A, half);
+        ATTEMPT_BLOCK_WRITE(cBlock, A, CMP_HALF);
 
         assert(0);
         m_bPerformingConversion = false;
@@ -1091,7 +1094,7 @@ bool CCodecBuffer::WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
         ATTEMPT_BLOCK_WRITE(wBlock, R, CMP_DWORD);
         ATTEMPT_BLOCK_WRITE(wBlock, R, double);
         ATTEMPT_BLOCK_WRITE(wBlock, R, float);
-        ATTEMPT_BLOCK_WRITE(wBlock, R, half);
+        ATTEMPT_BLOCK_WRITE(wBlock, R, CMP_HALF);
         ATTEMPT_BLOCK_WRITE(wBlock, R, CMP_BYTE);
 
         assert(0);
@@ -1119,7 +1122,7 @@ bool CCodecBuffer::WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
         ATTEMPT_BLOCK_WRITE(wBlock, G, CMP_DWORD);
         ATTEMPT_BLOCK_WRITE(wBlock, G, double);
         ATTEMPT_BLOCK_WRITE(wBlock, G, float);
-        ATTEMPT_BLOCK_WRITE(wBlock, G, half);
+        ATTEMPT_BLOCK_WRITE(wBlock, G, CMP_HALF);
         ATTEMPT_BLOCK_WRITE(wBlock, G, CMP_BYTE);
 
         assert(0);
@@ -1147,7 +1150,7 @@ bool CCodecBuffer::WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
         ATTEMPT_BLOCK_WRITE(wBlock, B, CMP_DWORD);
         ATTEMPT_BLOCK_WRITE(wBlock, B, double);
         ATTEMPT_BLOCK_WRITE(wBlock, B, float);
-        ATTEMPT_BLOCK_WRITE(wBlock, B, half);
+        ATTEMPT_BLOCK_WRITE(wBlock, B, CMP_HALF);
         ATTEMPT_BLOCK_WRITE(wBlock, B, CMP_BYTE);
 
         assert(0);
@@ -1175,7 +1178,7 @@ bool CCodecBuffer::WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
         ATTEMPT_BLOCK_WRITE(wBlock, A, CMP_DWORD);
         ATTEMPT_BLOCK_WRITE(wBlock, A, double);
         ATTEMPT_BLOCK_WRITE(wBlock, A, float);
-        ATTEMPT_BLOCK_WRITE(wBlock, A, half);
+        ATTEMPT_BLOCK_WRITE(wBlock, A, CMP_HALF);
         ATTEMPT_BLOCK_WRITE(wBlock, A, CMP_BYTE);
 
         assert(0);
@@ -1202,7 +1205,7 @@ bool CCodecBuffer::WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
 
         ATTEMPT_BLOCK_WRITE(dwBlock, R, double);
         ATTEMPT_BLOCK_WRITE(dwBlock, R, float);
-        ATTEMPT_BLOCK_WRITE(dwBlock, R, half);
+        ATTEMPT_BLOCK_WRITE(dwBlock, R, CMP_HALF);
         ATTEMPT_BLOCK_WRITE(dwBlock, R, CMP_WORD);
         ATTEMPT_BLOCK_WRITE(dwBlock, R, CMP_BYTE);
 
@@ -1230,7 +1233,7 @@ bool CCodecBuffer::WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
 
         ATTEMPT_BLOCK_WRITE(dwBlock, G, double);
         ATTEMPT_BLOCK_WRITE(dwBlock, G, float);
-        ATTEMPT_BLOCK_WRITE(dwBlock, G, half);
+        ATTEMPT_BLOCK_WRITE(dwBlock, G, CMP_HALF);
         ATTEMPT_BLOCK_WRITE(dwBlock, G, CMP_WORD);
         ATTEMPT_BLOCK_WRITE(dwBlock, G, CMP_BYTE);
 
@@ -1258,7 +1261,7 @@ bool CCodecBuffer::WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
 
         ATTEMPT_BLOCK_WRITE(dwBlock, B, double);
         ATTEMPT_BLOCK_WRITE(dwBlock, B, float);
-        ATTEMPT_BLOCK_WRITE(dwBlock, B, half);
+        ATTEMPT_BLOCK_WRITE(dwBlock, B, CMP_HALF);
         ATTEMPT_BLOCK_WRITE(dwBlock, B, CMP_WORD);
         ATTEMPT_BLOCK_WRITE(dwBlock, B, CMP_BYTE);
 
@@ -1286,7 +1289,7 @@ bool CCodecBuffer::WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
 
         ATTEMPT_BLOCK_WRITE(dwBlock, A, double);
         ATTEMPT_BLOCK_WRITE(dwBlock, A, float);
-        ATTEMPT_BLOCK_WRITE(dwBlock, A, half);
+        ATTEMPT_BLOCK_WRITE(dwBlock, A, CMP_HALF);
         ATTEMPT_BLOCK_WRITE(dwBlock, A, CMP_WORD);
         ATTEMPT_BLOCK_WRITE(dwBlock, A, CMP_BYTE);
 
@@ -1296,7 +1299,7 @@ bool CCodecBuffer::WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
     }
 }
 
-bool CCodecBuffer::WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[])
+bool CCodecBuffer::WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[])
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -1324,7 +1327,7 @@ bool CCodecBuffer::WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
     }
 }
 
-bool CCodecBuffer::WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[])
+bool CCodecBuffer::WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[])
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -1352,7 +1355,7 @@ bool CCodecBuffer::WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
     }
 }
 
-bool CCodecBuffer::WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[])
+bool CCodecBuffer::WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[])
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -1380,7 +1383,7 @@ bool CCodecBuffer::WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
     }
 }
 
-bool CCodecBuffer::WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[])
+bool CCodecBuffer::WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[])
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -1425,7 +1428,7 @@ bool CCodecBuffer::WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
         m_bPerformingConversion = true;
 
         ATTEMPT_BLOCK_WRITE(fBlock, R, double);
-        ATTEMPT_BLOCK_WRITE(fBlock, R, half);
+        ATTEMPT_BLOCK_WRITE(fBlock, R, CMP_HALF);
         ATTEMPT_BLOCK_WRITE(fBlock, R, CMP_DWORD);
         ATTEMPT_BLOCK_WRITE(fBlock, R, CMP_WORD);
         ATTEMPT_BLOCK_WRITE(fBlock, R, CMP_BYTE);
@@ -1453,7 +1456,7 @@ bool CCodecBuffer::WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
         m_bPerformingConversion = true;
 
         ATTEMPT_BLOCK_WRITE(fBlock, G, double);
-        ATTEMPT_BLOCK_WRITE(fBlock, G, half);
+        ATTEMPT_BLOCK_WRITE(fBlock, G, CMP_HALF);
         ATTEMPT_BLOCK_WRITE(fBlock, G, CMP_DWORD);
         ATTEMPT_BLOCK_WRITE(fBlock, G, CMP_WORD);
         ATTEMPT_BLOCK_WRITE(fBlock, G, CMP_BYTE);
@@ -1481,7 +1484,7 @@ bool CCodecBuffer::WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
         m_bPerformingConversion = true;
 
         ATTEMPT_BLOCK_WRITE(fBlock, B, double);
-        ATTEMPT_BLOCK_WRITE(fBlock, B, half);
+        ATTEMPT_BLOCK_WRITE(fBlock, B, CMP_HALF);
         ATTEMPT_BLOCK_WRITE(fBlock, B, CMP_DWORD);
         ATTEMPT_BLOCK_WRITE(fBlock, B, CMP_WORD);
         ATTEMPT_BLOCK_WRITE(fBlock, B, CMP_BYTE);
@@ -1509,7 +1512,7 @@ bool CCodecBuffer::WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
         m_bPerformingConversion = true;
 
         ATTEMPT_BLOCK_WRITE(fBlock, A, double);
-        ATTEMPT_BLOCK_WRITE(fBlock, A, half);
+        ATTEMPT_BLOCK_WRITE(fBlock, A, CMP_HALF);
         ATTEMPT_BLOCK_WRITE(fBlock, A, CMP_DWORD);
         ATTEMPT_BLOCK_WRITE(fBlock, A, CMP_WORD);
         ATTEMPT_BLOCK_WRITE(fBlock, A, CMP_BYTE);
@@ -1537,7 +1540,7 @@ bool CCodecBuffer::WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
         m_bPerformingConversion = true;
 
         ATTEMPT_BLOCK_WRITE(dBlock, R, float);
-        ATTEMPT_BLOCK_WRITE(dBlock, R, half);
+        ATTEMPT_BLOCK_WRITE(dBlock, R, CMP_HALF);
         ATTEMPT_BLOCK_WRITE(dBlock, R, CMP_DWORD);
         ATTEMPT_BLOCK_WRITE(dBlock, R, CMP_WORD);
         ATTEMPT_BLOCK_WRITE(dBlock, R, CMP_BYTE);
@@ -1565,7 +1568,7 @@ bool CCodecBuffer::WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
         m_bPerformingConversion = true;
 
         ATTEMPT_BLOCK_WRITE(dBlock, G, float);
-        ATTEMPT_BLOCK_WRITE(dBlock, G, half);
+        ATTEMPT_BLOCK_WRITE(dBlock, G, CMP_HALF);
         ATTEMPT_BLOCK_WRITE(dBlock, G, CMP_DWORD);
         ATTEMPT_BLOCK_WRITE(dBlock, G, CMP_WORD);
         ATTEMPT_BLOCK_WRITE(dBlock, G, CMP_BYTE);
@@ -1593,7 +1596,7 @@ bool CCodecBuffer::WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
         m_bPerformingConversion = true;
 
         ATTEMPT_BLOCK_WRITE(dBlock, B, float);
-        ATTEMPT_BLOCK_WRITE(dBlock, B, half);
+        ATTEMPT_BLOCK_WRITE(dBlock, B, CMP_HALF);
         ATTEMPT_BLOCK_WRITE(dBlock, B, CMP_DWORD);
         ATTEMPT_BLOCK_WRITE(dBlock, B, CMP_WORD);
         ATTEMPT_BLOCK_WRITE(dBlock, B, CMP_BYTE);
@@ -1621,7 +1624,7 @@ bool CCodecBuffer::WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
         m_bPerformingConversion = true;
 
         ATTEMPT_BLOCK_WRITE(dBlock, A, float);
-        ATTEMPT_BLOCK_WRITE(dBlock, A, half);
+        ATTEMPT_BLOCK_WRITE(dBlock, A, CMP_HALF);
         ATTEMPT_BLOCK_WRITE(dBlock, A, CMP_DWORD);
         ATTEMPT_BLOCK_WRITE(dBlock, A, CMP_WORD);
         ATTEMPT_BLOCK_WRITE(dBlock, A, CMP_BYTE);
@@ -1684,7 +1687,7 @@ bool CCodecBuffer::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE
             return true;
         }
 
-        half hBlock[MAX_BLOCK*4];
+        CMP_HALF hBlock[MAX_BLOCK*4];
         ConvertBlock(hBlock, cBlock, w*h*4);
         SwizzleBlock(hBlock, w*h);
         if(WriteBlockRGBA(x, y, w, h, hBlock))
@@ -1733,7 +1736,7 @@ bool CCodecBuffer::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE 
             return true;
         }
 
-        half hBlock[MAX_BLOCK*4];
+        CMP_HALF hBlock[MAX_BLOCK*4];
         if(ReadBlockRGBA(x, y, w, h, hBlock))
         {
             SwizzleBlock(hBlock, w*h);
@@ -1798,7 +1801,7 @@ bool CCodecBuffer::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE
             return true;
         }
 
-        half hBlock[MAX_BLOCK*4];
+        CMP_HALF hBlock[MAX_BLOCK*4];
         ConvertBlock(hBlock, dwBlock, w*h*4);
         if(WriteBlockRGBA(x, y, w, h, hBlock))
         {
@@ -1853,7 +1856,7 @@ bool CCodecBuffer::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE 
             return true;
         }
 
-        half hBlock[MAX_BLOCK*4];
+        CMP_HALF hBlock[MAX_BLOCK*4];
         if(ReadBlockRGBA(x, y, w, h, hBlock))
         {
             ConvertBlock(dwBlock, hBlock, w*h*4);
@@ -1916,7 +1919,7 @@ bool CCodecBuffer::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE
             return true;
         }
 
-        half hBlock[MAX_BLOCK*4];
+        CMP_HALF hBlock[MAX_BLOCK*4];
         ConvertBlock(hBlock, wBlock, w*h*4);
         if(WriteBlockRGBA(x, y, w, h, hBlock))
         {
@@ -1971,7 +1974,7 @@ bool CCodecBuffer::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE 
             return true;
         }
 
-        half hBlock[MAX_BLOCK*4];
+        CMP_HALF hBlock[MAX_BLOCK*4];
         if(ReadBlockRGBA(x, y, w, h, hBlock))
         {
             ConvertBlock(wBlock, hBlock, w*h*4);
@@ -1994,7 +1997,7 @@ bool CCodecBuffer::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE 
     }
 }
 
-bool CCodecBuffer::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[])
+bool CCodecBuffer::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[])
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -2049,7 +2052,7 @@ bool CCodecBuffer::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE
     }
 }
 
-bool CCodecBuffer::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[])
+bool CCodecBuffer::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[])
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -2128,7 +2131,7 @@ bool CCodecBuffer::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE
             return true;
         }
 
-        half hBlock[MAX_BLOCK*4];
+        CMP_HALF hBlock[MAX_BLOCK*4];
         ConvertBlock(hBlock, fBlock, w*h*4);
         if(WriteBlockRGBA(x, y, w, h, hBlock))
         {
@@ -2183,7 +2186,7 @@ bool CCodecBuffer::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE 
             return true;
         }
 
-        half hBlock[MAX_BLOCK*4];
+        CMP_HALF hBlock[MAX_BLOCK*4];
         if(ReadBlockRGBA(x, y, w, h, hBlock))
         {
             ConvertBlock(fBlock, hBlock, w*h*4);
@@ -2238,7 +2241,7 @@ bool CCodecBuffer::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE
             return true;
         }
 
-        half hBlock[MAX_BLOCK*4];
+        CMP_HALF hBlock[MAX_BLOCK*4];
         ConvertBlock(hBlock, dBlock, w*h*4);
         if(WriteBlockRGBA(x, y, w, h, hBlock))
         {
@@ -2293,7 +2296,7 @@ bool CCodecBuffer::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE 
             return true;
         }
 
-        half hBlock[MAX_BLOCK*4];
+        CMP_HALF hBlock[MAX_BLOCK*4];
         if(ReadBlockRGBA(x, y, w, h, hBlock))
         {
             ConvertBlock(dBlock, hBlock, w*h*4);
@@ -2358,7 +2361,7 @@ void CCodecBuffer::ConvertBlock(double dBlock[], float fBlock[], CMP_DWORD dwBlo
     }
 }
 
-void CCodecBuffer::ConvertBlock(double dBlock[], half hBlock[], CMP_DWORD dwBlockSize)
+void CCodecBuffer::ConvertBlock(double dBlock[], CMP_HALF hBlock[], CMP_DWORD dwBlockSize)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -2438,7 +2441,7 @@ void CCodecBuffer::ConvertBlock(float fBlock[], double dBlock[], CMP_DWORD dwBlo
     }
 }
 
-void CCodecBuffer::ConvertBlock(float fBlock[], half hBlock[], CMP_DWORD dwBlockSize)
+void CCodecBuffer::ConvertBlock(float fBlock[], CMP_HALF hBlock[], CMP_DWORD dwBlockSize)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -2502,7 +2505,7 @@ void CCodecBuffer::ConvertBlock(float fBlock[], CMP_BYTE cBlock[], CMP_DWORD dwB
     }
 }
 
-void CCodecBuffer::ConvertBlock(half hBlock[], double dBlock[], CMP_DWORD dwBlockSize)
+void CCodecBuffer::ConvertBlock(CMP_HALF hBlock[], double dBlock[], CMP_DWORD dwBlockSize)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -2518,7 +2521,7 @@ void CCodecBuffer::ConvertBlock(half hBlock[], double dBlock[], CMP_DWORD dwBloc
     }
 }
 
-void CCodecBuffer::ConvertBlock(half hBlock[], float fBlock[], CMP_DWORD dwBlockSize)
+void CCodecBuffer::ConvertBlock(CMP_HALF hBlock[], float fBlock[], CMP_DWORD dwBlockSize)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -2534,7 +2537,7 @@ void CCodecBuffer::ConvertBlock(half hBlock[], float fBlock[], CMP_DWORD dwBlock
     }
 }
 
-void CCodecBuffer::ConvertBlock(half hBlock[], CMP_DWORD dwBlock[], CMP_DWORD dwBlockSize)
+void CCodecBuffer::ConvertBlock(CMP_HALF hBlock[], CMP_DWORD dwBlock[], CMP_DWORD dwBlockSize)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -2550,7 +2553,7 @@ void CCodecBuffer::ConvertBlock(half hBlock[], CMP_DWORD dwBlock[], CMP_DWORD dw
     }
 }
 
-void CCodecBuffer::ConvertBlock(half hBlock[], CMP_WORD wBlock[], CMP_DWORD dwBlockSize)
+void CCodecBuffer::ConvertBlock(CMP_HALF hBlock[], CMP_WORD wBlock[], CMP_DWORD dwBlockSize)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -2566,7 +2569,7 @@ void CCodecBuffer::ConvertBlock(half hBlock[], CMP_WORD wBlock[], CMP_DWORD dwBl
     }
 }
 
-void CCodecBuffer::ConvertBlock(half hBlock[], CMP_BYTE cBlock[], CMP_DWORD dwBlockSize)
+void CCodecBuffer::ConvertBlock(CMP_HALF hBlock[], CMP_BYTE cBlock[], CMP_DWORD dwBlockSize)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -2614,7 +2617,7 @@ void CCodecBuffer::ConvertBlock(CMP_DWORD dwBlock[], float fBlock[], CMP_DWORD d
     }
 }
 
-void CCodecBuffer::ConvertBlock(CMP_DWORD dwBlock[], half hBlock[], CMP_DWORD dwBlockSize)
+void CCodecBuffer::ConvertBlock(CMP_DWORD dwBlock[], CMP_HALF hBlock[], CMP_DWORD dwBlockSize)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -2694,7 +2697,7 @@ void CCodecBuffer::ConvertBlock(CMP_WORD wBlock[], float fBlock[], CMP_DWORD dwB
     }
 }
 
-void CCodecBuffer::ConvertBlock(CMP_WORD wBlock[], half hBlock[], CMP_DWORD dwBlockSize)
+void CCodecBuffer::ConvertBlock(CMP_WORD wBlock[], CMP_HALF hBlock[], CMP_DWORD dwBlockSize)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -2774,7 +2777,7 @@ void CCodecBuffer::ConvertBlock(CMP_BYTE cBlock[], float fBlock[], CMP_DWORD dwB
     }
 }
 
-void CCodecBuffer::ConvertBlock(CMP_BYTE cBlock[], half hBlock[], CMP_DWORD dwBlockSize)
+void CCodecBuffer::ConvertBlock(CMP_BYTE cBlock[], CMP_HALF hBlock[], CMP_DWORD dwBlockSize)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -2848,7 +2851,7 @@ void CCodecBuffer::SwizzleBlock(float fBlock[], CMP_DWORD dwBlockSize)
             SWAP_FLOATS(fBlock[(i* 4)], fBlock[(i* 4) + 2]);
 }
 
-void CCodecBuffer::SwizzleBlock(half hBlock[], CMP_DWORD dwBlockSize)
+void CCodecBuffer::SwizzleBlock(CMP_HALF hBlock[], CMP_DWORD dwBlockSize)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(());

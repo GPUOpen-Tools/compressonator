@@ -32,10 +32,13 @@
 #pragma warning(disable:4996)   // This function or variable may be unsafe
 
 #include "Common.h"
+#include "Compressonator.h"
+
 #include "ASTC/Codec_ASTC.h"
 #include "ASTC/ASTC_Library.h"
 
 #include "ASTC/ARM/astc_codec_internals.h"
+#include "debug.h"
 
 #include <chrono>
 
@@ -46,6 +49,9 @@ extern    CompViewerClient g_CompClient;
 
 //======================================================================================
 #define USE_MULTITHREADING  1
+
+// Gets the total numver of active processor cores on the running host system
+extern CMP_INT CMP_GetNumberOfProcessors();
 
 struct ASTCEncodeThreadParam
 {
@@ -77,8 +83,8 @@ CCodec_ASTC::CCodec_ASTC() : CCodec_DXTC(CT_ASTC)
 {
     m_LibraryInitialized    = false;
     m_AbortRequested        = false;
-    m_NumThreads            = 8;
-    m_NumEncodingThreads    = m_NumThreads;
+    m_NumThreads            = 0;
+    m_NumEncodingThreads    = 0; // new auto setting to use max processors * 2 threads
     m_EncodingThreadHandle  = NULL;
     m_xdim                  = 4;
     m_ydim                  = 4;
@@ -396,8 +402,15 @@ CodecError CCodec_ASTC::InitializeASTCLibrary()
         m_LiveThreads = 0;
         m_LastThread = 0;
         m_NumEncodingThreads = min(m_NumThreads, (decltype(m_NumThreads))MAX_ASTC_THREADS);
-        if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1;
-        m_Use_MultiThreading = m_NumEncodingThreads > 1;
+        if (m_NumEncodingThreads == 0)
+        {
+            m_NumEncodingThreads = CMP_GetNumberOfProcessors();
+            if (m_NumEncodingThreads <= 2)
+                m_NumEncodingThreads = 8; // fallback to a default!
+            if (m_NumEncodingThreads > 128)
+                m_NumEncodingThreads = 128;
+        }
+        m_Use_MultiThreading = (m_NumEncodingThreads != 1);
 
         g_EncodeParameterStorage = new ASTCEncodeThreadParam[m_NumEncodingThreads];
         if (!g_EncodeParameterStorage)
@@ -414,7 +427,7 @@ CodecError CCodec_ASTC::InitializeASTCLibrary()
             return CE_Unknown;
         }
 
-        CMP_DWORD   i;
+        CMP_INT   i;
 
         for (i = 0; i < m_NumEncodingThreads; i++)
         {
@@ -432,7 +445,7 @@ CodecError CCodec_ASTC::InitializeASTCLibrary()
                 delete[] m_EncodingThreadHandle;
                 m_EncodingThreadHandle = NULL;
 
-                for (CMP_DWORD j = 0; j<i; j++)
+                for (CMP_INT j = 0; j<i; j++)
                 {
                     delete m_encoder[j];
                     m_encoder[j] = NULL;
@@ -442,7 +455,7 @@ CodecError CCodec_ASTC::InitializeASTCLibrary()
             }
 
 #ifdef USE_DBGTRACE
-            DbgTrace(("Encoder[%d]:ModeMask %X, Quality %f\n", i, m_ModeMask, m_Quality));
+            //DbgTrace(("Encoder[%d]:ModeMask %X, Quality %f", i, m_ModeMask, m_Quality));
 #endif
 
         }
@@ -469,7 +482,7 @@ CodecError CCodec_ASTC::InitializeASTCLibrary()
 
         if (!m_decoder)
         {
-            for (CMP_DWORD j = 0; j<m_NumEncodingThreads; j++)
+            for (CMP_INT j = 0; j<m_NumEncodingThreads; j++)
             {
                 delete m_encoder[j];
                 m_encoder[j] = NULL;
@@ -620,7 +633,7 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
     if (g_CompClient.connect())
     {
         #ifdef USE_DBGTRACE
-            DbgTrace(("-------> Remote Server Connected"));
+            DbgTrace(("-------> Remote Server Connected\n"));
         #endif
     }
 #endif
@@ -695,7 +708,15 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
     }
 
     m_NumEncodingThreads = min(m_NumThreads, (decltype(m_NumThreads))MAX_ASTC_THREADS);
-    if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1;
+    if (m_NumEncodingThreads == 0)
+    {
+        m_NumEncodingThreads = CMP_GetNumberOfProcessors();
+        if (m_NumEncodingThreads <= 2)
+            m_NumEncodingThreads = 8; // fallback to a default!
+            if (m_NumEncodingThreads > 128)
+                m_NumEncodingThreads = 128;
+
+    }
 
 // Common ARM and AMD Code
     CodecError result = CE_OK;

@@ -54,8 +54,8 @@
 
 #ifdef _WIN32  //GT only enabled for win build now
 #include "Codec_GT.h"
-#ifdef USE_GTC_HDR
-#include "Codec_GTCH.h"
+#ifdef USE_BASIS
+#include "Codec_BASIS.h"
 #endif
 #endif
 
@@ -207,9 +207,9 @@ CCodec* CreateCodec(CodecType nCodecType)
 #ifdef _WIN32
     case CT_GTC:
         return new CCodec_GTC;
-#ifdef USE_GTC_HDR
-    case CT_GTCH:
-        return new CCodec_GTCH;
+#ifdef USE_BASIS
+     case CT_BASIS:
+         return new CCodec_BASIS;
 #endif
 #endif
     case CT_Unknown:
@@ -316,6 +316,16 @@ CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHe
         if (buffsize < (4 * 4))
             buffsize = 4 * 4;
         break;
+#ifdef USE_BASIS
+    // Block size is 4x4 and 128 bits per block, needs conformation!!
+    case CT_BASIS:
+        dwWidth  = ((dwWidth + 3) / 4) * 4;
+        dwHeight = ((dwHeight + 3) / 4) * 4;
+        buffsize = dwWidth * dwHeight;
+        if (buffsize < (4 * 4))
+            buffsize = 4 * 4;
+        break;
+#endif
 #endif
     default:
         return 0;

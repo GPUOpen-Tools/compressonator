@@ -36,7 +36,7 @@ class CCodecBuffer_Block : public CCodecBuffer
 public:
     CCodecBuffer_Block( CodecBufferType nCodecBufferType, 
                         CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-                        CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0);
+                        CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0,CMP_DWORD dwDataSize = 0);
 
     virtual ~CCodecBuffer_Block();
 

@@ -55,7 +55,7 @@ private:
 
     // ASTC Internal status 
     CMP_BOOL    m_LibraryInitialized;
-    CMP_WORD    m_NumEncodingThreads;
+    CMP_INT     m_NumEncodingThreads;
     bool        m_AbortRequested;
 
     int m_xdim, m_ydim, m_zdim;        // Is now implamented and set by user ( defined in g_ASTCEncode )

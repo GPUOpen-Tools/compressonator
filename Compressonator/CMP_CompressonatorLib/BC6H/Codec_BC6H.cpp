@@ -46,6 +46,9 @@ extern CompViewerClient g_CompClient;
 //======================================================================================
 #define USE_MULTITHREADING 1
 
+// Gets the total numver of active processor cores on the running host system
+extern CMP_INT CMP_GetNumberOfProcessors();
+
 //
 // Thread procedure for encoding a block
 //
@@ -87,7 +90,7 @@ CCodec_BC6H::CCodec_BC6H(CodecType codecType) : CCodec_DXTC(codecType)
     m_ModeMask           = 0xFFFF;
     m_Quality            = (float)AMD_CODEC_QUALITY_DEFAULT;
     m_Use_MultiThreading = true;
-    m_NumThreads         = 8;
+    m_NumThreads         = 0;
     if (codecType == CT_BC6H)
         m_bIsSigned = false;
     else
@@ -96,7 +99,7 @@ CCodec_BC6H::CCodec_BC6H(CodecType codecType) : CCodec_DXTC(codecType)
 
     // Internal setting
     m_LibraryInitialized   = false;
-    m_NumEncodingThreads   = 1;
+    m_NumEncodingThreads   = 0; // new auto setting to use max processors * 2 threads
     m_EncodingThreadHandle = NULL;
     m_LiveThreads          = 0;
     m_LastThread           = 0;
@@ -119,7 +122,7 @@ bool CCodec_BC6H::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
     else if (strcmp(pszParamName, "NumThreads") == 0)
     {
         m_NumThreads         = (CMP_BYTE)std::stoi(sValue);
-        m_Use_MultiThreading = m_NumThreads > 1;
+        m_Use_MultiThreading = m_NumThreads != 1;
     }
     else if (strcmp(pszParamName, "Quality") == 0)
     {
@@ -149,7 +152,7 @@ bool CCodec_BC6H::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue)
     else if (strcmp(pszParamName, "NumThreads") == 0)
     {
         m_NumThreads         = (CMP_BYTE)dwValue;
-        m_Use_MultiThreading = m_NumThreads > 1;
+        m_Use_MultiThreading = m_NumThreads != 1;
     }
     else
         return CCodec_DXTC::SetParameter(pszParamName, dwValue);
@@ -265,10 +268,17 @@ CodecError CCodec_BC6H::CInitializeBC6HLibrary()
         // Create threaded encoder instances
         m_LiveThreads        = 0;
         m_LastThread         = 0;
-        m_NumEncodingThreads = (CMP_WORD)min(m_NumThreads, BC6H_MAX_THREADS);
+        m_NumEncodingThreads = min(m_NumThreads, BC6H_MAX_THREADS);
         if (m_NumEncodingThreads == 0)
-            m_NumEncodingThreads = 1;
-        m_Use_MultiThreading = m_NumEncodingThreads > 1;
+        {
+            m_NumEncodingThreads = CMP_GetNumberOfProcessors();
+            if (m_NumEncodingThreads <= 2)
+                m_NumEncodingThreads = 8; // fallback to a default!
+            if (m_NumEncodingThreads > 128)
+                m_NumEncodingThreads = 128;
+
+        }
+        m_Use_MultiThreading = (m_NumEncodingThreads != 1);
 
         m_EncodeParameterStorage = new BC6HEncodeThreadParam[m_NumEncodingThreads];
         if (!m_EncodeParameterStorage)
@@ -327,7 +337,7 @@ CodecError CCodec_BC6H::CInitializeBC6HLibrary()
         }
 
         // Create the encoding threads
-        for (unsigned int i = 0; i < m_NumEncodingThreads; i++)
+        for (CMP_INT i = 0; i < m_NumEncodingThreads; i++)
         {
             // Initialize thread parameters.
             m_EncodeParameterStorage[i].encoder = m_encoder[i];
@@ -344,7 +354,7 @@ CodecError CCodec_BC6H::CInitializeBC6HLibrary()
         m_decoder = new BC6HBlockDecoder();
         if (!m_decoder)
         {
-            for (DWORD j = 0; j < m_NumEncodingThreads; j++)
+            for (CMP_INT j = 0; j < m_NumEncodingThreads; j++)
             {
                 delete m_encoder[j];
                 m_encoder[j] = NULL;
@@ -369,7 +379,7 @@ CodecError CCodec_BC6H::CEncodeBC6HBlock(float in[MAX_SUBSET_SIZE][MAX_DIMENSION
         }
 
         // Loop and look for an available thread
-        BOOL found  = FALSE;
+        bool found  = FALSE;
         threadIndex = m_LastThread;
         while (found == FALSE)
         {
@@ -494,9 +504,9 @@ CodecError CCodec_BC6H::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
     FILE* bc6file = fopen("Test.bc6", "wb");
 #endif
 
-    int lineAtPercent = (dwBlocksY * 0.01);
+    int lineAtPercent = (int)(dwBlocksY * 0.01F);
      if (lineAtPercent <= 0)  lineAtPercent = 1;
-    float fBlockXY = dwBlocksX * dwBlocksY;
+    float fBlockXY = (float)(dwBlocksX * dwBlocksY);
     float fProgress;
     float old_fProgress = FLT_MAX;
 
@@ -601,7 +611,7 @@ CodecError CCodec_BC6H::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
 
     if (pFeedbackProc)
     {
-        float fProgress = 100.f;
+        fProgress = 100.f;
         pFeedbackProc(fProgress, pUser1, pUser2);
     }
 

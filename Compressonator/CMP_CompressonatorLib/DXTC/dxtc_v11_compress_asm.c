@@ -1,4 +1,5 @@
 //===============================================================================
+// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -20,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-//
-//  Email:        gputools.support@amd.com
 //
 
 #include "dxtc_v11_compress.h"

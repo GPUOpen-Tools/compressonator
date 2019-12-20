@@ -29,7 +29,13 @@
 #pragma warning(disable:4100)
 
 #include "Common.h"
+#include "Compressonator.h"
 #include "Codec_DXT1.h"
+
+#ifdef TEST_CMP_CORE_DECODER
+#include "CMP_Core.h"
+#endif
+
 
 //////////////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -82,9 +88,9 @@ bool CCodec_DXT1::GetParameter(const CMP_CHAR* pszParamName, CMP_DWORD& dwValue)
 
 CCodecBuffer* CCodec_DXT1::CreateBuffer(
                                         CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-                                        CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData) const
+                                        CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData,CMP_DWORD dwDataSize) const
 {
-    return CreateCodecBuffer(CBT_4x4Block_4BPP, nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData);
+    return CreateCodecBuffer(CBT_4x4Block_4BPP, nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
 }
 
 CodecError CCodec_DXT1::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
@@ -200,6 +206,7 @@ CodecError CCodec_DXT1::Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer&
     return CE_OK;
 }
 
+
 CodecError CCodec_DXT1::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
 {
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
@@ -223,7 +230,11 @@ CodecError CCodec_DXT1::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferO
             if(bUseFixed)
             {
                 CMP_BYTE destBlock[BLOCK_SIZE_4X4X4];
-                DecompressRGBBlock(destBlock, compressedBlock, true);
+                #ifdef TEST_CMP_CORE_DECODER
+                    DecompressBlockBC1((CMP_BYTE *)compressedBlock,destBlock);
+                #else
+                    DecompressRGBBlock(destBlock, compressedBlock, true);
+                #endif
                 bufferOut.WriteBlockRGBA(i*4, j*4, 4, 4, destBlock);
             }
             else

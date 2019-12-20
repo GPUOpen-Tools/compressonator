@@ -27,12 +27,31 @@
 //  Apr 2014    -    Refactored Library
 //                   Code clean to support MSV 2010 and up
 //////////////////////////////////////////////////////////////////////////////
-        
+
+#include "Common.h"
 #include "Compressonator.h"
 #include "Compress.h"
-#include <assert.h>    
-
+#include <assert.h>
 #include <algorithm>
+
+#ifdef _WIN32
+#include "windows.h"
+#include "sysinfoapi.h"
+#endif
+
+CMP_INT CMP_GetNumberOfProcessors()
+{
+#ifndef _WIN32
+//    return sysconf(_SC_NPROCESSORS_ONLN);
+    return std::thread::hardware_concurrency();
+#else
+    // Figure out how many cores there are on this machine
+    SYSTEM_INFO sysinfo;
+    GetSystemInfo(&sysinfo);
+    return (sysinfo.dwNumberOfProcessors);
+#endif
+}
+
 
 CodecType GetCodecType(CMP_FORMAT format)
 {
@@ -78,11 +97,11 @@ CodecType GetCodecType(CMP_FORMAT format)
         case CMP_FORMAT_BC2:                     return CT_DXT3;
         case CMP_FORMAT_BC3:                     return CT_DXT5;
         case CMP_FORMAT_BC4:                     return CT_ATI1N;
-        case CMP_FORMAT_BC5:                     return CT_ATI2N_XY;
+        case CMP_FORMAT_BC5:                     return CT_ATI2N_XY;    // Red & Green channels
         case CMP_FORMAT_BC6H:                    return CT_BC6H; 
         case CMP_FORMAT_BC6H_SF:                 return CT_BC6H_SF;
-        case CMP_FORMAT_BC7:                     return CT_BC7;    
-        case CMP_FORMAT_ASTC:                    return CT_ASTC;    
+        case CMP_FORMAT_BC7:                     return CT_BC7;
+        case CMP_FORMAT_ASTC:                    return CT_ASTC;
         case CMP_FORMAT_ATC_RGB:                 return CT_ATC_RGB;
         case CMP_FORMAT_ATC_RGBA_Explicit:       return CT_ATC_RGBA_Explicit;
         case CMP_FORMAT_ATC_RGBA_Interpolated:   return CT_ATC_RGBA_Interpolated;
@@ -93,13 +112,11 @@ CodecType GetCodecType(CMP_FORMAT format)
         case CMP_FORMAT_ETC2_RGBA1:              return CT_ETC2_RGBA1;
         case CMP_FORMAT_ETC2_SRGBA:              return CT_ETC2_SRGBA;
         case CMP_FORMAT_ETC2_SRGBA1:             return CT_ETC2_SRGBA1;
-#ifdef USE_GTC
         case CMP_FORMAT_GTC:                     return CT_GTC;
+#ifdef USE_BASIS
+        case CMP_FORMAT_BASIS:                  return CT_BASIS;
 #endif
-#ifdef USE_GTC_HDR
-        case CMP_FORMAT_GTCH:                    return CT_GTCH;
-#endif
-        default: assert(0);                      return CT_Unknown;
+        default:                                return CT_Unknown;
     }
 }
 #ifdef ENABLE_MAKE_COMPATIBLE_API
@@ -124,9 +141,6 @@ bool IsFloatFormat(CMP_FORMAT InFormat)
     case CMP_FORMAT_BC6H:
     case CMP_FORMAT_BC6H_SF:
     case CMP_FORMAT_RGBE_32F:
-#ifdef USE_GTC_HDR
-    case  CMP_FORMAT_GTCH:
-#endif
     {
         return true;
     }
@@ -145,10 +159,10 @@ bool NeedSwizzle(CMP_FORMAT destformat)
     {
     case CMP_FORMAT_BC4:
     case CMP_FORMAT_ATI1N:        // same as BC4    
-    case CMP_FORMAT_ATI2N:        // same as BC4    
     case CMP_FORMAT_BC5:
-    case CMP_FORMAT_ATI2N_XY:    // same as BC5    
-    case CMP_FORMAT_ATI2N_DXT5:    // same as BC5    
+    case CMP_FORMAT_ATI2N:       // Green & Red Channels
+    case CMP_FORMAT_ATI2N_XY:    // same as ATI2N  with XY = Red & Green channels
+    case CMP_FORMAT_ATI2N_DXT5:  // same as BC5
     case CMP_FORMAT_BC1:
     case CMP_FORMAT_DXT1:        // same as BC1     
     case CMP_FORMAT_BC2:
@@ -202,21 +216,22 @@ float findKneeValue(float x, float y)
     return (f0 + f1) / 2.f;
 }
 
-CMP_ERROR Byte2Float(CMP_HALF* hfBlock, CMP_BYTE* cBlock, CMP_DWORD dwBlockSize)
+CMP_ERROR Byte2HalfShort(CMP_HALFSHORT* hfsBlock, CMP_BYTE* cBlock, CMP_DWORD dwcBlockSize)
 {
-    assert(hfBlock);
+    assert(hfsBlock);
     assert(cBlock);
-    assert(dwBlockSize);
-    if (hfBlock && cBlock && dwBlockSize)
+    assert(dwcBlockSize);
+    if (hfsBlock && cBlock && dwcBlockSize)
     {
-        for (CMP_DWORD i = 0; i < dwBlockSize; i++)
+        for (CMP_DWORD i = 0; i < dwcBlockSize; i++)
         {
-            hfBlock[i] = half(float(cBlock[i] / 255.0f)).bits();
+            hfsBlock[i] = CMP_HALF(float(cBlock[i] / 255.0f)).bits();
         }
     }
 
     return CMP_OK;
 }
+
 
 CMP_ERROR Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, CMP_Texture* srcTexture, CMP_FORMAT destFormat, const CMP_CompressOptions* pOptions)
 {
@@ -226,7 +241,7 @@ CMP_ERROR Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, CMP_Texture* srcTextu
 
     if (cBlock && fBlock)
     {
-        half* hfData = (half*)fBlock;
+        CMP_HALF* hfData = (CMP_HALF*)fBlock;
         float r = 0, g = 0, b = 0, a = 0;
 
         float kl = powf(2.f, pOptions->fInputKneeLow);
@@ -421,9 +436,7 @@ CMP_ERROR CheckTexture(const CMP_Texture* pTexture, bool bSource)
     return CMP_OK;
 }
 
-
-
-CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2, CodecType destType)
+CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, CodecType destType)
 {
     // Compressing
     CCodec* pCodec = CreateCodec(destType);
@@ -431,6 +444,7 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
     if(pCodec == NULL)
         return CMP_ERR_UNABLE_TO_INIT_CODEC;
 
+    CMP_BOOL swizzleSrcBuffer = false;
 
     // Have we got valid options ?
     if(pOptions && pOptions->dwSize == sizeof(CMP_CompressOptions))
@@ -484,6 +498,9 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
                 pCodec->SetParameter("AlphaRestrict", (CMP_DWORD) pOptions->brestrictAlpha);
                 pCodec->SetParameter("Quality", (CODECFLOAT) pOptions->fquality);
                 break;
+#ifdef USE_BASIS
+        case CT_BASIS:
+#endif
         case CT_ASTC:
                 pCodec->SetParameter("Quality", (CODECFLOAT)pOptions->fquality);
                 if (!pOptions->bDisableMultiThreading)
@@ -492,9 +509,6 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
                     pCodec->SetParameter("NumThreads", (CMP_DWORD)1);
                 break;
         case CT_GTC:
-#ifdef USE_GTC_HDR
-        case CT_GTCH:
-#endif
         case CT_BC6H:
         case CT_BC6H_SF:
                 pCodec->SetParameter("Quality", (CODECFLOAT)pOptions->fquality);
@@ -518,18 +532,33 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
                 pCodec->SetParameter(pOptions->CmdSet[i].strCommand, (CMP_CHAR*)pOptions->CmdSet[i].strParameter);
         }
 
-
-
+        // GPUOpen issue # 59 fix
+        CodecBufferType srcBufferType = GetCodecBufferType(pSourceTexture->format);
+        if (NeedSwizzle(pDestTexture->format))
+        {
+            switch (srcBufferType)
+            {
+            case CBT_BGRA8888:
+            case CBT_BGR888:
+                swizzleSrcBuffer = false;
+                break;
+            default:
+                swizzleSrcBuffer = true;
+                break;
+            }
+        }
     }
 
     CodecBufferType srcBufferType = GetCodecBufferType(pSourceTexture->format);
 
     CCodecBuffer* pSrcBuffer  = CreateCodecBuffer(srcBufferType, 
                                                   pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight, pSourceTexture->nBlockDepth,
-                                                  pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData);
+                                                  pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData,
+                                                  pSourceTexture->dwDataSize);
     CCodecBuffer* pDestBuffer = pCodec->CreateBuffer(
                                                   pDestTexture->nBlockWidth, pDestTexture->nBlockHeight, pDestTexture->nBlockDepth,
-                                                  pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData);
+                                                  pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData,
+                                                  pDestTexture->dwDataSize);
 
     assert(pSrcBuffer);
     assert(pDestBuffer);
@@ -541,8 +570,10 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
         return CMP_ERR_GENERIC;
     }
 
+    // GPUOpen issue # 59 and #67 fix
+    pSrcBuffer->m_bSwizzle = swizzleSrcBuffer;
     DISABLE_FP_EXCEPTIONS;
-    CodecError err = pCodec->Compress(*pSrcBuffer, *pDestBuffer, pFeedbackProc, pUser1, pUser2);
+    CodecError err = pCodec->Compress(*pSrcBuffer, *pDestBuffer, pFeedbackProc);
     RESTORE_FP_EXCEPTIONS;
 
     SAFE_DELETE(pCodec);
@@ -564,13 +595,11 @@ public:
     CCodecBuffer* m_pSrcBuffer;
     CCodecBuffer* m_pDestBuffer;
     CMP_Feedback_Proc m_pFeedbackProc;
-    CMP_DWORD_PTR m_pUser1;
-    CMP_DWORD_PTR m_pUser2;
     CodecError m_errorCode;
 };
 
 CATICompressThreadData::CATICompressThreadData() : m_pCodec(NULL), m_pSrcBuffer(NULL), m_pDestBuffer(NULL), 
-                                                   m_pFeedbackProc(NULL), m_pUser1(NULL), m_pUser2(NULL),
+                                                   m_pFeedbackProc(NULL),
                                                    m_errorCode( CE_OK )
 {
 }
@@ -586,18 +615,18 @@ void ThreadedCompressProc(void *lpParameter)
 {
     CATICompressThreadData *pThreadData = (CATICompressThreadData*) lpParameter;
     DISABLE_FP_EXCEPTIONS;
-    CodecError err = pThreadData->m_pCodec->Compress(*pThreadData->m_pSrcBuffer, *pThreadData->m_pDestBuffer, pThreadData->m_pFeedbackProc, pThreadData->m_pUser1, pThreadData->m_pUser2);
+    CodecError err = pThreadData->m_pCodec->Compress(*pThreadData->m_pSrcBuffer, *pThreadData->m_pDestBuffer, pThreadData->m_pFeedbackProc);
     RESTORE_FP_EXCEPTIONS;
     pThreadData->m_errorCode = err;
 }
 
-CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2, CodecType destType)
+CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, CodecType destType)
 {
     // Note function should not be called for the following Codecs....
-    if (destType == CT_BC7)   return CMP_ABORTED; 
-    if (destType == CT_GTC)   return CMP_ABORTED;
-#ifdef USE_GTC_HDR
-    if (destType == CT_GTCH)  return CMP_ABORTED;
+    if (destType == CT_BC7)     return CMP_ABORTED; 
+    if (destType == CT_GTC)     return CMP_ABORTED;
+#ifdef USE_BASIS
+    if (destType == CT_BASIS)   return CMP_ABORTED;
 #endif
     if (destType == CT_ASTC)  return CMP_ABORTED;
 
@@ -605,7 +634,7 @@ CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture
     CMP_DWORD dwLinesRemaining = pDestTexture->dwHeight;
     CMP_BYTE* pSourceData = pSourceTexture->pData;
     CMP_BYTE* pDestData = pDestTexture->pData;
-
+    CMP_BOOL swizzleSrcBuffer = false;
 
 #ifdef _DEBUG
     if (
@@ -687,17 +716,20 @@ CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture
         }
 
         CodecBufferType srcBufferType = GetCodecBufferType(pSourceTexture->format);
+
+        // GPUOpen issue # 59 fix
         if (NeedSwizzle(pDestTexture->format))
         {
-            bool swizzleSrcBuffer = true;
             switch (srcBufferType)
             {
             case CBT_BGRA8888:
             case CBT_BGR888:
                 swizzleSrcBuffer = false;
                 break;
+            default:
+                swizzleSrcBuffer = true;
+                break;
             }
-            threadData.m_pCodec->SetParameter("SwizzleChannels", swizzleSrcBuffer ? (CMP_DWORD)1 : (CMP_DWORD)0);
         }
 
         CMP_DWORD dwThreadsRemaining = dwMaxThreadCount - dwThread;
@@ -716,10 +748,12 @@ CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture
         {
             threadData.m_pSrcBuffer = CreateCodecBuffer(srcBufferType, 
                                                         pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight, pSourceTexture->nBlockDepth,
-                                                        pSourceTexture->dwWidth, dwHeight, pSourceTexture->dwPitch, pSourceData);
+                                                        pSourceTexture->dwWidth, dwHeight, pSourceTexture->dwPitch, pSourceData,
+                                                        pSourceTexture->dwDataSize);
             threadData.m_pDestBuffer = threadData.m_pCodec->CreateBuffer(
                                                         pDestTexture->nBlockWidth, pDestTexture->nBlockHeight, pDestTexture->nBlockDepth,
-                                                        pDestTexture->dwWidth, dwHeight, pDestTexture->dwPitch, pDestData);
+                                                        pDestTexture->dwWidth, dwHeight, pDestTexture->dwPitch, pDestData,
+                                                        pDestTexture->dwDataSize);
 
             pSourceData += CalcBufferSize(pSourceTexture->format, pSourceTexture->dwWidth, dwHeight, pSourceTexture->dwPitch, pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight);
             pDestData += CalcBufferSize(destType, pDestTexture->dwWidth, dwHeight, pDestTexture->nBlockWidth, pDestTexture->nBlockHeight);
@@ -729,9 +763,8 @@ CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture
             if(threadData.m_pSrcBuffer == NULL || threadData.m_pDestBuffer == NULL)
                 return CMP_ERR_GENERIC;
 
+            threadData.m_pSrcBuffer->m_bSwizzle = swizzleSrcBuffer;
             threadData.m_pFeedbackProc = pFeedbackProc;
-            threadData.m_pUser1 = pUser1;
-            threadData.m_pUser2 = pUser2;
 
             ahThread[dwThreadCount++] = std::thread(ThreadedCompressProc, &threadData);
         }

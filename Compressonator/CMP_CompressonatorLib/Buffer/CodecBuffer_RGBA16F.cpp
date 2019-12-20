@@ -34,17 +34,19 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////////////
 
-const int nChannelCount = 4;
-const int nPixelSize = nChannelCount * sizeof(half);
+#define RGBA16F_nChannelCount  4
+#define RGBA16F_nPixelSize     8
 
 CCodecBuffer_RGBA16F::CCodecBuffer_RGBA16F(
                                             CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-                                            CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData)
-                                            : CCodecBuffer(nBlockWidth, nBlockHeight, nBlockDepth,dwWidth, dwHeight, dwPitch, pData)
+                                            CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData,CMP_DWORD dwDataSize)
+                                            : CCodecBuffer(nBlockWidth, nBlockHeight, nBlockDepth,dwWidth, dwHeight, dwPitch, pData,dwDataSize)
 {
-    assert((m_dwPitch == 0) || (m_dwPitch >= GetWidth() * nPixelSize));
-    if(m_dwPitch <= GetWidth() * nPixelSize)
-        m_dwPitch = GetWidth() * nPixelSize;
+    if (m_dwPitch == 0) printf("");
+    int gw= GetWidth() * RGBA16F_nPixelSize;
+    //assert((m_dwPitch == 0) || (m_dwPitch >= GetWidth() * RGBA16F_nPixelSize));
+    if(m_dwPitch <= GetWidth() * RGBA16F_nPixelSize)
+        m_dwPitch = GetWidth() * RGBA16F_nPixelSize;
 
     if(m_pData == NULL)
     {
@@ -69,13 +71,13 @@ void CCodecBuffer_RGBA16F::Copy(CCodecBuffer& srcBuffer)
     {
         for(CMP_DWORD i = 0; i < dwBlocksX; i++)
         {
-            half block[BLOCK_SIZE_4X4X4];
+            CMP_HALF block[BLOCK_SIZE_4X4X4];
             srcBuffer.ReadBlockRGBA(i*4, j*4, 4, 4, block);
             WriteBlockRGBA(i*4, j*4, 4, 4, block);
         }
     }
 }
-bool CCodecBuffer_RGBA16F::ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[], CMP_DWORD dwChannelIndex)
+bool CCodecBuffer_RGBA16F::ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[], CMP_DWORD dwChannelIndex)
 {
     assert(x < GetWidth());
     assert(y < GetHeight());
@@ -88,11 +90,11 @@ bool CCodecBuffer_RGBA16F::ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_B
     CMP_DWORD i,j;
     for(j = 0; j < h && (y + j) < GetHeight(); j++)
     {
-        half* pData = (half*) (GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
+        CMP_HALF* pData = (CMP_HALF*) (GetData() + ((y + j) * m_dwPitch) + (x * RGBA16F_nPixelSize));
         for(i = 0; i < dwWidth; i++)
         {
             block[(j * w) + i] = pData[dwChannelIndex];
-            pData += nChannelCount;
+            pData += RGBA16F_nChannelCount;
         }
 
         // Pad line with previous values if necessary
@@ -107,7 +109,7 @@ bool CCodecBuffer_RGBA16F::ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_B
     return true;
 }
 
-bool CCodecBuffer_RGBA16F::WriteBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[], CMP_DWORD dwChannelIndex)
+bool CCodecBuffer_RGBA16F::WriteBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[], CMP_DWORD dwChannelIndex)
 {
     assert(x < GetWidth());
     assert(y < GetHeight());
@@ -119,58 +121,58 @@ bool CCodecBuffer_RGBA16F::WriteBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_
 
     for(CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); j++)
     {
-        half* pData = (half*) (GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
+        CMP_HALF* pData = (CMP_HALF*) (GetData() + ((y + j) * m_dwPitch) + (x * RGBA16F_nPixelSize));
         for(CMP_DWORD i = 0; i < dwWidth; i++)
         {
             pData[dwChannelIndex] = block[(j * w) + i]; 
-            pData += nChannelCount;
+            pData += RGBA16F_nChannelCount;
         }
     }
     return true;
 }
 
-bool CCodecBuffer_RGBA16F::ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[])
+bool CCodecBuffer_RGBA16F::ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[])
 {
     return ReadBlock(x, y, w, h, block, CHANNEL_INDEX_A);
 }
 
-bool CCodecBuffer_RGBA16F::ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[])
+bool CCodecBuffer_RGBA16F::ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[])
 {
     return ReadBlock(x, y, w, h, block, CHANNEL_INDEX_R);
 }
 
-bool CCodecBuffer_RGBA16F::ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[])
+bool CCodecBuffer_RGBA16F::ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[])
 {
     return ReadBlock(x, y, w, h, block, CHANNEL_INDEX_G);
 }
 
-bool CCodecBuffer_RGBA16F::ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[])
+bool CCodecBuffer_RGBA16F::ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[])
 {
     return ReadBlock(x, y, w, h, block, CHANNEL_INDEX_B);
 }
 
-bool CCodecBuffer_RGBA16F::WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[])
+bool CCodecBuffer_RGBA16F::WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[])
 {
     return WriteBlock(x, y, w, h, block, CHANNEL_INDEX_A);
 }
 
-bool CCodecBuffer_RGBA16F::WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[])
+bool CCodecBuffer_RGBA16F::WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[])
 {
     return WriteBlock(x, y, w, h, block, CHANNEL_INDEX_R);
 }
 
-bool CCodecBuffer_RGBA16F::WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[])
+bool CCodecBuffer_RGBA16F::WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[])
 {
     return WriteBlock(x, y, w, h, block, CHANNEL_INDEX_G);
 }
 
-bool CCodecBuffer_RGBA16F::WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[])
+bool CCodecBuffer_RGBA16F::WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[])
 {
     return WriteBlock(x, y, w, h, block, CHANNEL_INDEX_B);
 }
 
-#define GET_PIXEL(i, j) &block[(((j * w) + i) * nChannelCount)]
-bool CCodecBuffer_RGBA16F::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[])
+#define GET_PIXEL(i, j) &block[(((j * w) + i) * RGBA16F_nChannelCount)]
+bool CCodecBuffer_RGBA16F::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[])
 {
     assert(x < GetWidth());
     assert(y < GetHeight());
@@ -185,16 +187,16 @@ bool CCodecBuffer_RGBA16F::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, C
     CMP_DWORD i,j;
     for(j = 0; j < h && (y + j) < GetHeight(); j++)
     {
-        half* pData = (half*) (GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
+        CMP_HALF* pData = (CMP_HALF*) (GetData() + ((y + j) * m_dwPitch) + (x * RGBA16F_nPixelSize));
         for(i = 0; i < dwWidth; i++)
         {
-            memcpy(GET_PIXEL(i, j), pData, nPixelSize);    
-            pData += nChannelCount;
+            memcpy(GET_PIXEL(i, j), pData, RGBA16F_nPixelSize);    
+            pData += RGBA16F_nChannelCount;
         }
 
         // Pad line with previous values if necessary
         if(i < w)
-            PadLine(i, w, 4, &block[j * w * nChannelCount]);
+            PadLine(i, w, 4, &block[j * w * RGBA16F_nChannelCount]);
     }
 
     // Pad block with previous values if necessary
@@ -203,7 +205,7 @@ bool CCodecBuffer_RGBA16F::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, C
     return true;
 }
 
-bool CCodecBuffer_RGBA16F::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[])
+bool CCodecBuffer_RGBA16F::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[])
 {
     assert(x < GetWidth());
     assert(y < GetHeight());
@@ -217,8 +219,8 @@ bool CCodecBuffer_RGBA16F::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, 
 
     for(CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); j++)
     {
-        half* pData = (half*) (GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
-        memcpy(pData, GET_PIXEL(0, j), dwWidth * nPixelSize);
+        CMP_HALF* pData = (CMP_HALF*) (GetData() + ((y + j) * m_dwPitch) + (x * RGBA16F_nPixelSize));
+        memcpy(pData, GET_PIXEL(0, j), dwWidth * RGBA16F_nPixelSize);
     }
     return true;
 }

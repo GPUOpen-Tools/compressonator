@@ -31,6 +31,10 @@
 #include "Common.h"
 #include "Codec_DXT3.h"
 
+#ifdef TEST_CMP_CORE_DECODER
+#include "CMP_Core.h"
+#endif
+
 //////////////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////////////
@@ -180,7 +184,11 @@ CodecError CCodec_DXT3::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferO
             if(bUseFixed)
             {
                 CMP_BYTE destBlock[BLOCK_SIZE_4X4X4];
-                DecompressRGBABlock_ExplicitAlpha(destBlock, compressedBlock);
+                #ifdef TEST_CMP_CORE_DECODER
+                    DecompressBlockBC2((CMP_BYTE *)compressedBlock,destBlock);
+                #else
+                    DecompressRGBABlock_ExplicitAlpha(destBlock, compressedBlock);
+                #endif
                 bufferOut.WriteBlockRGBA(i*4, j*4, 4, 4, destBlock);
             }
             else

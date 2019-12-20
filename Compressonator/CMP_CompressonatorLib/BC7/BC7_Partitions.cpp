@@ -1013,9 +1013,6 @@ void    Partition(CMP_DWORD partition,
     CMP_DWORD blockType,
                   int   dimension)
 {
-#ifdef USE_DBGTRACE
-	DbgTrace(());
-#endif
 
     int   i,j;
     CMP_DWORD   *table = NULL;
@@ -1025,16 +1022,24 @@ void    Partition(CMP_DWORD partition,
         count[i] = 0;
     }
 
+    int insubset = 0,inpart;
+
     switch(bti[blockType].subsetCount)
     {
         case    0:
         case    1:
+            insubset = 0;
+            inpart   = 0;
             table = &(BC7_PARTITIONS[0][0][0]);
             break;
         case    2:
+            insubset = 1;
+            inpart   = partition;
             table = &(BC7_PARTITIONS[1][partition][0]);
             break;
         case    3:
+            insubset = 2;
+            inpart   = partition;
             table = &(BC7_PARTITIONS[2][partition][0]);
             break;
         default:
@@ -1042,6 +1047,10 @@ void    Partition(CMP_DWORD partition,
     }
 
 	if (table == NULL) return; // Nothing to do!!
+
+#ifdef USE_DBGTRACE
+    DbgTrace(("insubset [%d] inpart [%2d]",insubset,inpart));
+#endif
 
     for(i=0; i<MAX_SUBSET_SIZE; i++)
     {

@@ -111,33 +111,6 @@ public:
    int     m_sizeinbytes;
 };
 
-#pragma warning(disable:4201)
-// https://gist.github.com/rygorous/2156668
-union FP32
-{
-    uint u;
-    float f;
-    struct
-    {
-        uint Mantissa    : 23;
-        uint Exponent    : 8;
-        uint Sign        : 1;
-    };
-};
- 
-union FP16
-{
-    unsigned short u;
-    struct
-    {
-        uint Mantissa    : 10;
-        uint Exponent    : 5;
-        uint Sign        : 1;
-    };
-};
-
-extern FP32 half_to_float(float Halfin);
-
 extern void ViewData(unsigned char data[]);
 
 extern void    BC6H_WriteBit(BYTE   *base,

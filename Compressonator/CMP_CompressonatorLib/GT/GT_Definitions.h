@@ -25,8 +25,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef _GT_DEFINITIONS_H_
-#define _GT_DEFINITIONS_H_
+#ifndef _GTC_DEFINITIONS_H_
+#define _GTC_DEFINITIONS_H_
 
 #include "Common.h"
 

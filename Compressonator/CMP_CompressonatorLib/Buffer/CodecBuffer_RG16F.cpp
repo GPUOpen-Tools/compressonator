@@ -35,12 +35,12 @@
 //////////////////////////////////////////////////////////////////////////////
 
 const int nChannelCount = 2;
-const int nPixelSize = nChannelCount * sizeof(half);
+const int nPixelSize = nChannelCount * sizeof(CMP_HALF);
 
 CCodecBuffer_RG16F::CCodecBuffer_RG16F(
     CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-    CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData)
-    : CCodecBuffer(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData)
+    CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData,CMP_DWORD dwDataSize)
+    : CCodecBuffer(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize)
 {
     assert((m_dwPitch == 0) || (m_dwPitch >= GetWidth() * nPixelSize));
     if(m_dwPitch <= GetWidth() * nPixelSize)
@@ -69,13 +69,13 @@ void CCodecBuffer_RG16F::Copy(CCodecBuffer& srcBuffer)
     {
         for(CMP_DWORD i = 0; i < dwBlocksX; i++)
         {
-            half block[BLOCK_SIZE_4X4X4];
+            CMP_HALF block[BLOCK_SIZE_4X4X4];
             srcBuffer.ReadBlockRGBA(i*4, j*4, 4, 4, block);
             WriteBlockRGBA(i*4, j*4, 4, 4, block);
         }
     }
 }
-bool CCodecBuffer_RG16F::ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[], CMP_DWORD dwChannelIndex)
+bool CCodecBuffer_RG16F::ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[], CMP_DWORD dwChannelIndex)
 {
     assert(x < GetWidth());
     assert(y < GetHeight());
@@ -88,7 +88,7 @@ bool CCodecBuffer_RG16F::ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYT
     CMP_DWORD i,j;
     for(j = 0; j < h && (y + j) < GetHeight(); j++)
     {
-        half* pData = (half*) (GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
+        CMP_HALF* pData = (CMP_HALF*) (GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
         for(i = 0; i < dwWidth; i++)
         {
             block[(j * w) + i] = pData[dwChannelIndex];
@@ -107,7 +107,7 @@ bool CCodecBuffer_RG16F::ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYT
     return true;
 }
 
-bool CCodecBuffer_RG16F::WriteBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[], CMP_DWORD dwChannelIndex)
+bool CCodecBuffer_RG16F::WriteBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[], CMP_DWORD dwChannelIndex)
 {
     assert(x < GetWidth());
     assert(y < GetHeight());
@@ -119,7 +119,7 @@ bool CCodecBuffer_RG16F::WriteBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BY
 
     for(CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); j++)
     {
-        half* pData = (half*) (GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
+        CMP_HALF* pData = (CMP_HALF*) (GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
         for(CMP_DWORD i = 0; i < dwWidth; i++)
         {
             pData[dwChannelIndex] = block[(j * w) + i]; 
@@ -129,7 +129,7 @@ bool CCodecBuffer_RG16F::WriteBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BY
     return true;
 }
 
-bool CCodecBuffer_RG16F::ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[])
+bool CCodecBuffer_RG16F::ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[])
 {
     assert(x < GetWidth());
     assert(y < GetHeight());
@@ -137,22 +137,22 @@ bool CCodecBuffer_RG16F::ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BY
     if(x >= GetWidth() || y >= GetHeight())
         return false;
 
-    memset(block, 0, w*h*sizeof(half));
+    memset(block, 0, w*h*sizeof(CMP_HALF));
 
     return true;
 }
 
-bool CCodecBuffer_RG16F::ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[])
+bool CCodecBuffer_RG16F::ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[])
 {
     return ReadBlock(x, y, w, h, block, CHANNEL_INDEX_R);
 }
 
-bool CCodecBuffer_RG16F::ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[])
+bool CCodecBuffer_RG16F::ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[])
 {
     return ReadBlock(x, y, w, h, block, CHANNEL_INDEX_G);
 }
 
-bool CCodecBuffer_RG16F::ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[])
+bool CCodecBuffer_RG16F::ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[])
 {
     assert(x < GetWidth());
     assert(y < GetHeight());
@@ -160,12 +160,12 @@ bool CCodecBuffer_RG16F::ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BY
     if(x >= GetWidth() || y >= GetHeight())
         return false;
 
-    memset(block, 0, w*h*sizeof(half));
+    memset(block, 0, w*h*sizeof(CMP_HALF));
 
     return true;
 }
 
-bool CCodecBuffer_RG16F::WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE /*w*/, CMP_BYTE /*h*/, half /*block*/[])
+bool CCodecBuffer_RG16F::WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE /*w*/, CMP_BYTE /*h*/, CMP_HALF /*block*/[])
 {
     assert(x < GetWidth());
     assert(y < GetHeight());
@@ -176,17 +176,17 @@ bool CCodecBuffer_RG16F::WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE /*w*/, C
     return true;
 }
 
-bool CCodecBuffer_RG16F::WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[])
+bool CCodecBuffer_RG16F::WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[])
 {
     return WriteBlock(x, y, w, h, block, CHANNEL_INDEX_R);
 }
 
-bool CCodecBuffer_RG16F::WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[])
+bool CCodecBuffer_RG16F::WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[])
 {
     return WriteBlock(x, y, w, h, block, CHANNEL_INDEX_G);
 }
 
-bool CCodecBuffer_RG16F::WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE /*w*/, CMP_BYTE /*h*/, half /*block*/[])
+bool CCodecBuffer_RG16F::WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE /*w*/, CMP_BYTE /*h*/, CMP_HALF /*block*/[])
 {
     assert(x < GetWidth());
     assert(y < GetHeight());
@@ -198,7 +198,7 @@ bool CCodecBuffer_RG16F::WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE /*w*/, C
 }
 
 #define GET_PIXEL(i, j) &block[(((j * w) + i) * 4)]
-bool CCodecBuffer_RG16F::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[])
+bool CCodecBuffer_RG16F::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[])
 {
     assert(x < GetWidth());
     assert(y < GetHeight());
@@ -213,10 +213,10 @@ bool CCodecBuffer_RG16F::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP
     CMP_DWORD i, j;
     for(j = 0; j < h && (y + j) < GetHeight(); j++)
     {
-        half* pData = (half*) (GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
+        CMP_HALF* pData = (CMP_HALF*) (GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
         for(i = 0; i < dwWidth; i++)
         {
-            half* pDest = GET_PIXEL(i, j);
+            CMP_HALF* pDest = GET_PIXEL(i, j);
             memcpy(GET_PIXEL(i, j), pData, nPixelSize);    
             pData += nChannelCount; pDest += 2;
             *pDest++ = 0.0f;
@@ -234,7 +234,7 @@ bool CCodecBuffer_RG16F::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP
     return true;
 }
 
-bool CCodecBuffer_RG16F::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half block[])
+bool CCodecBuffer_RG16F::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF block[])
 {
     assert(x < GetWidth());
     assert(y < GetHeight());
@@ -248,7 +248,7 @@ bool CCodecBuffer_RG16F::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CM
 
     for(CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); j++)
     {
-        half* pData = (half*) (GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
+        CMP_HALF* pData = (CMP_HALF*) (GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
         for(CMP_DWORD i = 0; i < dwWidth; i++)
         {
             memcpy(pData, GET_PIXEL(i, j), nPixelSize);

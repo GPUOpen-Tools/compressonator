@@ -31,6 +31,10 @@
 #include "Common.h"
 #include "Codec_DXT5.h"
 
+#ifdef TEST_CMP_CORE_DECODER
+#include "CMP_Core.h"
+#endif
+
 #ifdef DXT5_COMPDEBUGGER
 #include "debug.h"
 #include "CompClient.h"
@@ -234,7 +238,11 @@ CodecError CCodec_DXT5::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferO
             if(bUseFixed)
             {
                 CMP_BYTE destBlock[BLOCK_SIZE_4X4X4];
-                DecompressRGBABlock(destBlock, compressedBlock);
+                #ifdef TEST_CMP_CORE_DECODER
+                    DecompressBlockBC3((CMP_BYTE *)compressedBlock,destBlock);
+                #else
+                    DecompressRGBABlock(destBlock, compressedBlock);
+                #endif
                 bufferOut.WriteBlockRGBA(i*4, j*4, 4, 4, destBlock);
             }
             else

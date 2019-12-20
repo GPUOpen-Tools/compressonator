@@ -34,7 +34,6 @@
 typedef std::uint8_t byte;
 typedef std::uint8_t BYTE;
 typedef std::uint32_t DWORD;
-typedef std::int32_t BOOL;
 
 #define TRUE 1
 #define FALSE 0
@@ -257,7 +256,7 @@ struct AMD_BC6H_Format
 {
     unsigned short region;             // one or two
     unsigned short m_mode;             // m
-    unsigned short d_shape_index;      // d
+    int d_shape_index;                 // d
     int rw;                            // endpt[0].A[0]
     int rx;                            // endpt[0].B[0]
     int ry;                            // endpt[1].A[0]
@@ -280,8 +279,8 @@ struct AMD_BC6H_Format
     float         din[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];   // Original data input
     END_Points    EC[MAXENDPOINTS];    // compressed endpoints expressed as endpt[0].A[] and endpt[1].B[]
     END_Points    E[MAXENDPOINTS];     // decompressed endpoints 
-    BOOL          issigned;            // Format is 16 bit signed floating point 
-    BOOL          istransformed;       // region two: all modes = true except mode=10
+    bool          issigned;            // Format is 16 bit signed floating point 
+    bool          istransformed;       // region two: all modes = true except mode=10
     short         wBits;               // number of bits for the root endpoint
     short         tBits[NCHANNELS];    // number of bits used for the transformed endpoints
     int           format;              // floating point format are we using for decompression

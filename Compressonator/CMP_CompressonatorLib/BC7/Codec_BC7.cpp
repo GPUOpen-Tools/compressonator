@@ -49,9 +49,10 @@
 FILE * bc7_File = NULL;
 int bc7_blockcount = 0;
 int bc7_total_MSE = 0;
-#else
-#define USE_MULTITHREADING 
 #endif
+
+// Gets the total numver of active processor cores on the running host system
+extern CMP_INT CMP_GetNumberOfProcessors();
 
 //
 // Thread procedure for encoding a block
@@ -96,8 +97,8 @@ CCodec_BC7::CCodec_BC7() : CCodec_DXTC(CT_BC7)
     m_ColourRestrict       = FALSE;
     m_AlphaRestrict        = FALSE;
     m_ImageNeedsAlpha      = TRUE;
-    m_NumThreads           = 8;
 
+    m_NumThreads           = 0;
     m_NumEncodingThreads   = m_NumThreads;
     m_EncodingThreadHandle = NULL;
     m_LiveThreads          = 0;
@@ -113,22 +114,23 @@ bool CCodec_BC7::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
     if (strcmp(pszParamName, "ModeMask") == 0)
     {
         m_ModeMask = (CMP_BYTE)std::stoi(sValue) & 0xFF;
-        if (m_ModeMask <= 0) m_ModeMask = 0xCF;
+        if (m_ModeMask <= 0) m_ModeMask = 0xFF;
     }
     else
     if(strcmp(pszParamName, "ColourRestrict") == 0)
-        m_ColourRestrict    = (CMP_BOOL) std::stoi(sValue) > 0;
+        m_ColourRestrict    = std::stoi(sValue) > 0 ?TRUE:FALSE;
     else
     if(strcmp(pszParamName, "AlphaRestrict") == 0)
-        m_AlphaRestrict        = (CMP_BOOL) std::stoi(sValue) > 0;
+        m_AlphaRestrict        = std::stoi(sValue) > 0?TRUE:FALSE;
     else
     if(strcmp(pszParamName, "ImageNeedsAlpha") == 0)
-        m_ImageNeedsAlpha     = (CMP_BOOL) std::stoi(sValue) > 0;
+        m_ImageNeedsAlpha     = std::stoi(sValue) > 0?TRUE:FALSE;
     else
     if(strcmp(pszParamName, "NumThreads") == 0)
     {
         m_NumThreads = (CMP_BYTE) std::stoi(sValue) & 0xFF;
-        m_Use_MultiThreading = m_NumThreads > 1;
+        m_Use_MultiThreading = m_NumThreads != 1;
+        //printf("BC7 CPU set threads = %d\n",m_NumThreads);
     }
     if(strcmp(pszParamName, "Quality") == 0)
     {
@@ -160,18 +162,18 @@ bool CCodec_BC7::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue)
         m_ModeMask            = (CMP_BYTE) dwValue & 0xFF;
     else
     if(strcmp(pszParamName, "ColourRestrict") == 0)
-        m_ColourRestrict    = (CMP_BOOL) dwValue & 1;
+        m_ColourRestrict    = (dwValue & 1)?TRUE:FALSE;
     else
     if(strcmp(pszParamName, "AlphaRestrict") == 0)
-        m_AlphaRestrict        = (CMP_BOOL) dwValue & 1;
+        m_AlphaRestrict        =  (dwValue & 1)?TRUE:FALSE;
     else
     if(strcmp(pszParamName, "ImageNeedsAlpha") == 0)
-        m_ImageNeedsAlpha     = (CMP_BOOL) dwValue & 1;
+        m_ImageNeedsAlpha     = (dwValue & 1)?TRUE:FALSE;
     else
     if(strcmp(pszParamName, "NumThreads") == 0)
     {
         m_NumThreads = (CMP_BYTE) dwValue;
-        m_Use_MultiThreading = m_NumThreads > 1;
+        m_Use_MultiThreading = (m_NumThreads != 1)?TRUE:FALSE;
     }
     else
         return CCodec_DXTC::SetParameter(pszParamName, dwValue);
@@ -195,7 +197,6 @@ CCodec_BC7::~CCodec_BC7()
 {
     if (m_LibraryInitialized)
     {
-
         if (m_Use_MultiThreading)
         {
             // Tell all the live threads that they can exit when they have finished any current work
@@ -248,7 +249,6 @@ CCodec_BC7::~CCodec_BC7()
             delete[] m_EncodeParameterStorage;
         m_EncodeParameterStorage = NULL;
 
-        
         for(int i=0; i < m_NumEncodingThreads; i++)
         {
             if (m_encoder[i])
@@ -290,9 +290,18 @@ CodecError CCodec_BC7::InitializeBC7Library()
         // Create threaded encoder instances
         m_LiveThreads = 0;
         m_LastThread  = 0;
-        m_NumEncodingThreads = (CMP_WORD)min(m_NumThreads, MAX_BC7_THREADS);
-        if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1; 
-        m_Use_MultiThreading = m_NumEncodingThreads > 1;
+        //printf("BC7 CPU Num user threads = %d\n",m_NumEncodingThreads);
+        m_NumEncodingThreads = min(m_NumThreads, MAX_BC7_THREADS);
+        if (m_NumEncodingThreads == 0)
+        {
+            m_NumEncodingThreads = CMP_GetNumberOfProcessors();
+            if (m_NumEncodingThreads <= 2)
+                m_NumEncodingThreads = 8; // fallback to a default!
+            if (m_NumEncodingThreads > 128)
+                m_NumEncodingThreads = 128;
+
+        }
+        m_Use_MultiThreading = (m_NumEncodingThreads != 1);
 
         m_EncodeParameterStorage = new BC7EncodeThreadParam[m_NumEncodingThreads];
         if(!m_EncodeParameterStorage)
@@ -309,8 +318,8 @@ CodecError CCodec_BC7::InitializeBC7Library()
             return CE_Unknown;
         }
 
-        CMP_DWORD   i;
-
+        CMP_INT   i;
+        //printf("BC7 CPU Num threads used = %d\n",m_NumEncodingThreads);
         for(i=0; i < m_NumEncodingThreads; i++)
         {
             // Create single encoder instance
@@ -332,7 +341,7 @@ CodecError CCodec_BC7::InitializeBC7Library()
                 delete[] m_EncodingThreadHandle;
                 m_EncodingThreadHandle = NULL;
 
-                for(CMP_DWORD j=0; j<i; j++)
+                for(CMP_INT j=0; j<i; j++)
                 {
                     delete m_encoder[j];
                     m_encoder[j] = NULL;
@@ -342,7 +351,7 @@ CodecError CCodec_BC7::InitializeBC7Library()
             }
 
             #ifdef USE_DBGTRACE
-            DbgTrace(("Encoder[%d]:ModeMask %X, Quality %f\n",i,m_ModeMask,m_Quality));
+            DbgTrace(("Encoder[%d]:ModeMask %X, Quality %f",i,m_ModeMask,m_Quality));
             #endif
 
         }
@@ -368,7 +377,7 @@ CodecError CCodec_BC7::InitializeBC7Library()
         m_decoder = new BC7BlockDecoder();
         if(!m_decoder)
         {
-            for(CMP_DWORD j=0; j<m_NumEncodingThreads; j++)
+            for(CMP_INT j=0; j<m_NumEncodingThreads; j++)
             {
                 delete m_encoder[j];
                 m_encoder[j] = NULL;
@@ -385,7 +394,7 @@ CodecError CCodec_BC7::InitializeBC7Library()
 CodecError CCodec_BC7::EncodeBC7Block(double  in[BC7_BLOCK_PIXELS][MAX_DIMENSION_BIG],
     CMP_BYTE    *out)
 {
-#ifndef USE_MULTITHREADING
+#ifdef USE_SINGLETHREADING
     m_Use_MultiThreading = false;
 #endif
 
@@ -426,7 +435,7 @@ if (m_Use_MultiThreading)
     m_LastThread = threadIndex;
 
     // Copy the input data into the thread storage
-    memcpy(m_EncodeParameterStorage[threadIndex].in,
+    std::memcpy(m_EncodeParameterStorage[threadIndex].in,
            in,
            MAX_SUBSET_SIZE * MAX_DIMENSION_BIG * sizeof(double));
 
@@ -438,8 +447,9 @@ if (m_Use_MultiThreading)
 }
 else 
 {
+    //printf("BC7 CPU Single Threaded\n");
         // Copy the input data into the thread storage
-        memcpy(m_EncodeParameterStorage[0].in, in, MAX_SUBSET_SIZE * MAX_DIMENSION_BIG * sizeof(double));
+        std::memcpy(m_EncodeParameterStorage[0].in, in, MAX_SUBSET_SIZE * MAX_DIMENSION_BIG * sizeof(double));
         // Set the output pointer for the thread to write
         m_EncodeParameterStorage[0].out = out;
         m_encoder[0]->CompressBlock(m_EncodeParameterStorage[0].in, m_EncodeParameterStorage[0].out);
@@ -461,6 +471,7 @@ CodecError CCodec_BC7::FinishBC7Encoding(void)
 
 if (m_Use_MultiThreading)
 {
+
     // Wait for all the live threads to finish any current work
     for (CMP_DWORD i = 0; i < m_LiveThreads; i++)
     {
@@ -552,11 +563,12 @@ CodecError CCodec_BC7::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut,
 
     const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
     const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
-    const CMP_FLOAT fBlocksXY = dwBlocksX*dwBlocksY;
-    int lineAtPercent = (dwBlocksY * 0.01);
+    const CMP_FLOAT fBlocksXY = (CMP_FLOAT)(dwBlocksX*dwBlocksY);
+    int lineAtPercent = (int)(dwBlocksY * 0.01F);
     if (lineAtPercent <= 0)  lineAtPercent = 1;
 
     #ifdef USE_DBGTRACE
+    DbgTrace(("***********-----------START-------------***********"));
     DbgTrace(("IN : BufferType %d ChannelCount %d ChannelDepth %d",bufferIn.GetBufferType(),bufferIn.GetChannelCount(),bufferIn.GetChannelDepth()));
     DbgTrace(("   : Height %d Width %d Pitch %d isFloat %d",bufferIn.GetHeight(),bufferIn.GetWidth(),bufferIn.GetWidth(),bufferIn.IsFloat()));
 
@@ -590,6 +602,10 @@ CodecError CCodec_BC7::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut,
                 fprintf(bc7_File, "\nBlock:%4d x=%3d y=%3d\n", bc7_blockcount++, i, j);
 #endif
 
+#ifdef USE_DBGTRACE
+    DbgTrace(("--------------  Block: x=%3d y=%3d ---------------", i, j));
+#endif
+
             double blockToEncode[BLOCK_SIZE_4X4][CHANNEL_SIZE_ARGB];
             CMP_BYTE srcBlock[BLOCK_SIZE_4X4X4];
 
@@ -617,6 +633,7 @@ CodecError CCodec_BC7::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut,
                 }
             }
 
+           // printf("[i %3d, j%3d]\n",i,j);
             EncodeBC7Block(blockToEncode, pOutBuffer + block);
 
 #ifdef BC7_COMPDEBUGGER // Checks decompression it should match or be close to source
@@ -749,9 +766,12 @@ CodecError CCodec_BC7::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut,
     cmp_progress->detach();
     delete cmp_progress;
 #endif
-
     // Close up remaining compression blocks
     CodecError cError = FinishBC7Encoding();
+
+    #ifdef USE_DBGTRACE
+    DbgTrace(("###########-----------DONE -------------###########"));
+    #endif
 
     return cError;
 }
@@ -770,7 +790,7 @@ CodecError CCodec_BC7::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOu
 
     const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
     const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
-    const CMP_FLOAT fBlocksXY = dwBlocksX*dwBlocksY;
+    const CMP_FLOAT fBlocksXY = (CMP_FLOAT)(dwBlocksX*dwBlocksY);
 
     for(CMP_DWORD j = 0; j < dwBlocksY; j++)
     {

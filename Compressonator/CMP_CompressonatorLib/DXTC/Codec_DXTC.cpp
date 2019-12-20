@@ -47,6 +47,7 @@ CCodec_DXTC::CCodec_DXTC(CodecType codecType)
     m_nRefinementSteps = 1;
     m_nCompressionSpeed = CMP_Speed_SuperFast;
     m_bSwizzleChannels = false;
+
 }
 
 CCodec_DXTC::~CCodec_DXTC()
@@ -68,8 +69,6 @@ bool CCodec_DXTC::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
         m_bUseFloat = std::stoi(sValue) > 0 ? true: false;
     else if(strcmp(pszParamName, "CompressionSpeed") == 0)
         m_nCompressionSpeed = (CMP_Speed) std::stoi(sValue);
-    else if (strcmp(pszParamName, "SwizzleChannels") == 0)
-        m_bSwizzleChannels = std::stoi(sValue) > 0 ? true: false;
     else
     if(strcmp(pszParamName, "WeightR") == 0)
     {

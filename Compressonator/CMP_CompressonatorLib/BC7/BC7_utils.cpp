@@ -32,13 +32,14 @@
 //
 // Used by BC7_Encode
 
+// Called many times optimize bit writes
 void    WriteBit(CMP_BYTE   *base,
                  int  offset,
     CMP_BYTE   bitVal)
 {
-#ifdef USE_DBGTRACE
-    DbgTrace(());
-#endif
+// #ifdef USE_DBGTRACE
+//     DbgTrace(());
+// #endif
     int byteLocation;
     int remainder;
     CMP_BYTE    val;

@@ -100,11 +100,6 @@ CodecError CCodec_DXTC::CompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CM
 
     int RC = 2, GC = 1, BC = 0;
 
-    if (m_bSwizzleChannels)
-    {
-        RC = 0;  GC = 1; BC = 2;
-    }
-
     if(bDXT1 && m_nCompressionSpeed == CMP_Speed_Normal)
     {
         CMP_BYTE nEndpoints[2][3][2];
@@ -265,11 +260,6 @@ CodecError CCodec_DXTC::CompressRGBBlock(CODECFLOAT rgbBlock[BLOCK_SIZE_4X4X4], 
 
     int RC = 2, GC = 1, BC = 0;
 
-    if (m_bSwizzleChannels)
-    {
-        RC = 0;  GC = 1; BC = 2;
-    }
-
     if(bDXT1)
     {
         CMP_BYTE nEndpoints[2][3][2];
@@ -335,6 +325,7 @@ void CCodec_DXTC::DecompressRGBABlock_ExplicitAlpha(CODECFLOAT rgbaBlock[BLOCK_S
 
 // This function decompresses a DXT colour block
 // The block is decompressed to 8 bits per channel
+// The return data is rgbBlock[BLOCK_SIZE_4X4X4] = [RGBA,RGBA,...]
 void CCodec_DXTC::DecompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2], bool bDXT1)
 {
     CMP_DWORD n0 = compressedBlock[0] & 0xffff;
@@ -346,59 +337,32 @@ void CCodec_DXTC::DecompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DW
     CMP_DWORD g1;
     CMP_DWORD b1;
 
-    if (m_bSwizzleChannels)
-    {
-        b0 = ((n0 & 0xf800) >> 8);
-        g0 = ((n0 & 0x07e0) >> 3);
-        r0 = ((n0 & 0x001f) << 3);
+    // Decode RGB bits
+    r0 = ((n0 & 0xf800) >> 8);
+    g0 = ((n0 & 0x07e0) >> 3);
+    b0 = ((n0 & 0x001f) << 3);
 
-        b1 = ((n1 & 0xf800) >> 8);
-        g1 = ((n1 & 0x07e0) >> 3);
-        r1 = ((n1 & 0x001f) << 3);
-    }
-    else
-    {
-        r0 = ((n0 & 0xf800) >> 8);
-        g0 = ((n0 & 0x07e0) >> 3);
-        b0 = ((n0 & 0x001f) << 3);
+    r1 = ((n1 & 0xf800) >> 8);
+    g1 = ((n1 & 0x07e0) >> 3);
+    b1 = ((n1 & 0x001f) << 3);
 
-        r1 = ((n1 & 0xf800) >> 8);
-        g1 = ((n1 & 0x07e0) >> 3);
-        b1 = ((n1 & 0x001f) << 3);
-    }
-    
     // Apply the lower bit replication to give full dynamic range
     r0 += (r0>>5); r1 += (r1>>5);
     g0 += (g0>>6); g1 += (g1>>6);
     b0 += (b0>>5); b1 += (b1>>5);
 
-    CMP_DWORD c0 = 0xff000000 | (r0<<16) | (g0<<8) | b0;
-    CMP_DWORD c1 = 0xff000000 | (r1<<16) | (g1<<8) | b1;
-
-#ifdef PRINT_DECODE_INFO
-    FILE *gt_File_decode = fopen("decode_patterns.txt", "a");
-#endif
+    // Save the pixel in ABGR
+    CMP_DWORD c0 = 0xff000000 | (b0<<16) | (g0<<8) | r0;
+    CMP_DWORD c1 = 0xff000000 | (b1<<16) | (g1<<8) | r1;
 
     if(!bDXT1 || n0 > n1)
     {
-
-#ifdef PRINT_DECODE_INFO
-        fprintf(gt_File_decode, "BC1               : C0(%3d,%3d,%3d) C1(%3d,%3d,%3d) A0[%3d,%3d:%3d] B0[%3d:%3d:%3d] index = ",
-            r0, g0, b0, r1, g1, b1,
-            ((2 * r0 + r1 + 1) / 3), ((2 * g0 + g1 + 1) / 3), ((2 * b0 + b1 + 1) / 3),
-            ((2 * r1 + r0 + 1) / 3), ((2 * g1 + g0 + 1) / 3), ((2 * b1 + b0 + 1) / 3)
-        );
-#endif
-
-        CMP_DWORD c2 = 0xff000000 | (((2*r0+r1+1)/3)<<16) | (((2*g0+g1+1)/3)<<8) | (((2*b0+b1+1)/3));
-        CMP_DWORD c3 = 0xff000000 | (((2*r1+r0+1)/3)<<16) | (((2*g1+g0+1)/3)<<8) | (((2*b1+b0+1)/3));
+        CMP_DWORD c2 = 0xff000000 | (((2*b0+b1+1)/3)<<16) | (((2*g0+g1+1)/3)<<8) | (((2*r0+r1+1)/3));
+        CMP_DWORD c3 = 0xff000000 | (((2*b1+b0+1)/3)<<16) | (((2*g1+g0+1)/3)<<8) | (((2*r1+r0+1)/3));
 
         for(int i=0; i<16; i++)
         {
             int index = (compressedBlock[1] >> (2 * i)) & 3;
-#ifdef PRINT_DECODE_INFO
-            fprintf(gt_File_decode, "%2d,", index);
-#endif
             switch(index)
             {
             case 0:
@@ -418,22 +382,12 @@ void CCodec_DXTC::DecompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DW
     }
     else
     {
-
-#ifdef PRINT_DECODE_INFO
-        fprintf(gt_File_decode, "BC1T..............: C0(%3d,%3d,%3d) C1(%3d,%3d,%3d) A0[%3d,%3d,%3d]                 index = ",
-            r0, g0, b0, r1, g1, b1,
-            ((r0 + r1) / 2), ((g0 + g1) / 2),((b0 + b1) / 2)
-        );
-#endif
         // Transparent decode
-        CMP_DWORD c2 = 0xff000000 | (((r0+r1)/2)<<16) | (((g0+g1)/2)<<8) | (((b0+b1)/2));
+        CMP_DWORD c2 = 0xff000000 | (((b0+b1)/2)<<16) | (((g0+g1)/2)<<8) | (((r0+r1)/2));
 
         for(int i=0; i<16; i++)
         {
             int index = (compressedBlock[1] >> (2 * i)) & 3;
-#ifdef PRINT_DECODE_INFO
-            fprintf(gt_File_decode, "%2d,", index);
-#endif
             switch(index)
             {
                 case 0:
@@ -451,10 +405,6 @@ void CCodec_DXTC::DecompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DW
             }
         }
     }
-#ifdef PRINT_DECODE_INFO
-    fprintf(gt_File_decode, "\n");
-    fclose(gt_File_decode);
-#endif
 }
 
 //
@@ -472,27 +422,13 @@ void CCodec_DXTC::DecompressRGBBlock(CODECFLOAT rgbBlock[BLOCK_SIZE_4X4X4], CMP_
     CMP_DWORD g1;
     CMP_DWORD b1;
 
-    if (m_bSwizzleChannels)
-    {
-        b0 = ((n0 & 0xf800) >> 8);
-        g0 = ((n0 & 0x07e0) >> 3);
-        r0 = ((n0 & 0x001f) << 3);
+    r0 = ((n0 & 0xf800) >> 8);
+    g0 = ((n0 & 0x07e0) >> 3);
+    b0 = ((n0 & 0x001f) << 3);
 
-        b1 = ((n1 & 0xf800) >> 8);
-        g1 = ((n1 & 0x07e0) >> 3);
-        r1 = ((n1 & 0x001f) << 3);
-    }
-    else
-    {
-        r0 = ((n0 & 0xf800) >> 8);
-        g0 = ((n0 & 0x07e0) >> 3);
-        b0 = ((n0 & 0x001f) << 3);
-
-        r1 = ((n1 & 0xf800) >> 8);
-        g1 = ((n1 & 0x07e0) >> 3);
-        b1 = ((n1 & 0x001f) << 3);
-    }
-
+    r1 = ((n1 & 0xf800) >> 8);
+    g1 = ((n1 & 0x07e0) >> 3);
+    b1 = ((n1 & 0x001f) << 3);
 
     // Apply the lower bit replication to give full dynamic range
     r0 += (r0>>5); r1 += (r1>>5);

@@ -32,6 +32,7 @@
 #include "Common.h"
 #include "Codec_GT.h"
 #include <process.h>
+#include "debug.h"
 
 #ifdef GT_COMPDEBUGGER
 #include "CompClient.h"
@@ -47,6 +48,10 @@
     int gt_blockcount = 0;
     int gt_total_MSE = 0;
 #endif
+
+// Gets the total numver of active processor cores on the running host system
+extern CMP_INT CMP_GetNumberOfProcessors();
+
 
 //
 // Thread procedure for encoding a block
@@ -87,12 +92,12 @@ CCodec_GTC::CCodec_GTC() : CCodec_DXTC(CT_GTC)
 {
     m_LibraryInitialized   = false;
 
-    m_Use_MultiThreading = true;
-    m_NumThreads = 8;
-    m_NumEncodingThreads   = m_NumThreads;
-    m_EncodingThreadHandle = NULL;
-    m_LiveThreads          = 0;
-    m_LastThread           = 0;
+    m_Use_MultiThreading    = true;
+    m_NumThreads            = 0;
+    m_NumEncodingThreads    = 0;
+    m_EncodingThreadHandle  = NULL;
+    m_LiveThreads           = 0;
+    m_LastThread            = 0;
 
     m_quality = 0.05f;
 }
@@ -105,7 +110,7 @@ bool CCodec_GTC::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
     if(strcmp(pszParamName, "NumThreads") == 0)
     {
         m_NumThreads = (CMP_BYTE) std::stoi(sValue) & 0xFF;
-        m_Use_MultiThreading = m_NumThreads > 1;
+        m_Use_MultiThreading = m_NumThreads != 1;
     }
     else
         if (strcmp(pszParamName, "Quality") == 0)
@@ -128,7 +133,7 @@ bool CCodec_GTC::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue)
     if(strcmp(pszParamName, "NumThreads") == 0)
     {
         m_NumThreads = (CMP_BYTE) dwValue;
-        m_Use_MultiThreading = m_NumThreads > 1;
+        m_Use_MultiThreading = m_NumThreads != 1;
     }
     else
         return CCodec_DXTC::SetParameter(pszParamName, dwValue);
@@ -239,8 +244,16 @@ CodecError CCodec_GTC::InitializeGTCLibrary()
         m_LiveThreads = 0;
         m_LastThread  = 0;
         m_NumEncodingThreads = min(m_NumThreads, MAX_GT_THREADS);
-        if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1; 
-        m_Use_MultiThreading = m_NumEncodingThreads > 1;
+        if (m_NumEncodingThreads == 0)
+        {
+            m_NumEncodingThreads = CMP_GetNumberOfProcessors();
+            if (m_NumEncodingThreads <= 2)
+                m_NumEncodingThreads = 8; // fallback to a default!
+            if (m_NumEncodingThreads > 128)
+                m_NumEncodingThreads = 128;
+
+        }
+        m_Use_MultiThreading = (m_NumEncodingThreads != 1);
 
         m_EncodeParameterStorage = new GTCEncodeThreadParam[m_NumEncodingThreads];
         if (!m_EncodeParameterStorage)
@@ -257,7 +270,7 @@ CodecError CCodec_GTC::InitializeGTCLibrary()
             return CE_Unknown;
         }
 
-        CMP_DWORD   i;
+        CMP_INT   i;
 
         for(i=0; i < m_NumEncodingThreads; i++)
         {
@@ -275,7 +288,7 @@ CodecError CCodec_GTC::InitializeGTCLibrary()
                 delete[] m_EncodingThreadHandle;
                 m_EncodingThreadHandle = NULL;
 
-                for (CMP_DWORD j = 0; j<i; j++)
+                for (CMP_INT j = 0; j<i; j++)
                 {
                     delete m_encoder[j];
                     m_encoder[j] = NULL;
@@ -285,7 +298,7 @@ CodecError CCodec_GTC::InitializeGTCLibrary()
             }
 
             #ifdef USE_DBGTRACE
-            DbgTrace(("Encoder[%d]:ModeMask %X, Quality %f\n",i,m_ModeMask,m_Quality));
+            //DbgTrace(("Encoder[%d]:ModeMask %X, Quality %f",i,m_ModeMask,m_Quality));
             #endif
 
         }
@@ -312,7 +325,7 @@ CodecError CCodec_GTC::InitializeGTCLibrary()
         m_decoder = new GTCBlockDecoder();
         if(!m_decoder)
         {
-            for (CMP_DWORD j = 0; j<m_NumEncodingThreads; j++)
+            for (CMP_INT j = 0; j<m_NumEncodingThreads; j++)
             {
                 delete m_encoder[j];
                 m_encoder[j] = NULL;
@@ -429,7 +442,6 @@ CodecError CCodec_GTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut,
     CodecError result = CE_OK;
     int xdim = m_xdim;
     int ydim = m_ydim;
-    int zdim = m_zdim;
 
     g_GTCEncode.m_xdim = m_xdim;
     g_GTCEncode.m_ydim = m_ydim;
@@ -437,7 +449,7 @@ CodecError CCodec_GTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut,
 
     uint8_t *bufferOutput = bufferOut.GetData();
 
-    int x, y, z, i;
+    int x, y, z;
     int xblocks = (xsize + m_xdim - 1) / m_xdim;
     int yblocks = (ysize + m_ydim - 1) / m_ydim;
     int zblocks = (zsize + m_zdim - 1) / m_zdim;
@@ -446,7 +458,6 @@ CodecError CCodec_GTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut,
 
     float TotalBlocks = (float)(yblocks * xblocks);
 
-    CMP_BYTE *blockToEncode;
     CMP_BYTE *srcBlock = (CMP_BYTE *)malloc(xdim*ydim * 4);
 
     for (z = 0; z < zblocks; z++)
@@ -461,7 +472,7 @@ CodecError CCodec_GTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut,
                 offset = ((z * yblocks + y) * xblocks + x) * 16;
                 uint8_t *bp = bufferOutput + offset;
                 memset(srcBlock, 0, sizeof(srcBlock));
-                bufferIn.ReadBlockRGBA(x * m_xdim, y * m_ydim, m_xdim, m_ydim, srcBlock);
+                bufferIn.ReadBlockRGBA(x * m_xdim, y * m_ydim, (CMP_BYTE)m_xdim, (CMP_BYTE)m_ydim, srcBlock);
 
                 EncodeGTCBlock(srcBlock, bp);
             }
@@ -517,8 +528,8 @@ CodecError CCodec_GTC::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOu
 
     const CMP_DWORD CompBlockX   = m_xdim;
     const CMP_DWORD CompBlockY   = m_ydim;
-    CMP_BYTE  Block_Width        = m_xdim;
-    CMP_BYTE  Block_Height       = m_ydim;
+    CMP_BYTE  Block_Width        = (CMP_BYTE)m_xdim;
+    CMP_BYTE  Block_Height       = (CMP_BYTE)m_ydim;
 
     const CMP_DWORD dwBlocksX   = ((bufferIn.GetWidth() + (CompBlockX - 1)) / CompBlockX);
     const CMP_DWORD dwBlocksY   = ((bufferIn.GetHeight() + (CompBlockY - 1)) / CompBlockY);

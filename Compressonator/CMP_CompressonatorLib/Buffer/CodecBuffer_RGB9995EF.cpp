@@ -39,8 +39,8 @@ const int nPixelSize = nChannelCount * sizeof(char);
 
 CCodecBuffer_RGB9995EF::CCodecBuffer_RGB9995EF(
     CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-    CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData)
-    : CCodecBuffer(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData)
+    CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData,CMP_DWORD dwDataSize)
+    : CCodecBuffer(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize)
 {
     assert((m_dwPitch == 0) || (m_dwPitch >= GetWidth() * nPixelSize));
     if(m_dwPitch <= GetWidth() * nPixelSize)
@@ -88,7 +88,7 @@ bool CCodecBuffer_RGB9995EF::ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP
     CMP_DWORD i,j;
     for(j = 0; j < h && (y + j) < GetHeight(); j++)
     {
-        half* pData = (half*) (GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
+        CMP_HALF* pData = (CMP_HALF*) (GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
         for(i = 0; i < dwWidth; i++)
         {
             block[(j * w) + i] = pData[dwChannelIndex];
@@ -119,7 +119,7 @@ bool CCodecBuffer_RGB9995EF::WriteBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CM
 
     for (CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); j++)
     {
-        half* pData = (half*)(GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
+        CMP_HALF* pData = (CMP_HALF*)(GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
         for (CMP_DWORD i = 0; i < dwWidth; i++)
         {
             pData[dwChannelIndex] = block[(j * w) + i];

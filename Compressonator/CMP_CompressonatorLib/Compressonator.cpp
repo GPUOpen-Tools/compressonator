@@ -31,8 +31,10 @@
 //                  Code clean to support MSV 2010 and up
 //////////////////////////////////////////////////////////////////////////////
 
+#include "Common.h"
 #include "Compressonator.h"  // User shared: Keep priviate code out of this header
 #include "Compress.h"
+#include "CMP_MIPS.h"
 #include <assert.h>
 #include "debug.h"
 
@@ -42,12 +44,12 @@ extern CodecType GetCodecType(CMP_FORMAT format);
 extern CMP_ERROR GetError(CodecError err);
 #ifdef ENABLE_MAKE_COMPATIBLE_API
 extern bool IsFloatFormat(CMP_FORMAT InFormat);
-extern CMP_ERROR Byte2Float(CMP_HALF* hfBlock, CMP_BYTE* cBlock, CMP_DWORD dwBlockSize);
+extern CMP_ERROR Byte2HalfShort(CMP_HALFSHORT* hfsBlock, CMP_BYTE* cBlock, CMP_DWORD dwBlockSize);
 extern CMP_ERROR Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, CMP_Texture* srcTexture, CMP_FORMAT destFormat, const CMP_CompressOptions* pOptions);
 #endif
 extern CMP_ERROR CheckTexture(const CMP_Texture* pTexture, bool bSource);
-extern CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2, CodecType destType);
-extern CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2, CodecType destType);
+extern CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc,CodecType destType);
+extern CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, CodecType destType);
 
 #ifdef _LOCAL_DEBUG
 char    DbgTracer::buff[MAX_DBGBUFF_SIZE];
@@ -434,7 +436,7 @@ void CMP_PrepareCMPSourceForIMG_Destination(CMP_Texture* pDstTexture, CMP_FORMAT
 }
 #endif
 
-CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
+CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc)
 {
 #ifdef USE_DBGTRACE
     DbgTrace(("-------> pSourceTexture [%x] pDestTexture [%x] pOptions [%x]",pSourceTexture, pDestTexture, pOptions));
@@ -471,11 +473,12 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
     {
         CMP_DWORD size = pSourceTexture->dwWidth * pSourceTexture->dwHeight;
         CMP_BYTE *pbData = pSourceTexture->pData;
-        CMP_HALF *hfloatData = new CMP_HALF[size * 4];
-        Byte2Float(hfloatData, pbData, size * 4);
-        pSourceTexture->pData = (CMP_BYTE*)hfloatData;
+        CMP_HALFSHORT *hfloatSData = new CMP_HALFSHORT[size * 4];   // wxh*4 channels of type half
+        Byte2HalfShort(hfloatSData, pbData, size * 4);
+        pSourceTexture->pData = (CMP_BYTE*)hfloatSData;
         pSourceTexture->format = CMP_FORMAT_ARGB_16F;
-        pSourceTexture->dwDataSize = size * 4 * 2;
+        pSourceTexture->dwDataSize = size * 4 * sizeof(CMP_HALFSHORT);
+        pSourceTexture->dwPitch = pSourceTexture->dwWidth * 4 * sizeof(CMP_HALFSHORT);
         newBuffer = true;
     }
 #endif
@@ -508,14 +511,16 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
 
             CCodecBuffer* pSrcBuffer = CreateCodecBuffer(srcBufferType, 
                                                          pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight, pSourceTexture->nBlockDepth,
-                                                         pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData);
+                                                         pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData,
+                                                         pSourceTexture->dwDataSize);
             assert(pSrcBuffer);
             if(!pSrcBuffer)
                 return CMP_ERR_GENERIC;
 
             CCodecBuffer* pDestBuffer = CreateCodecBuffer(destBufferType, 
                                                          pDestTexture->nBlockWidth, pDestTexture->nBlockHeight, pDestTexture->nBlockDepth,
-                                                         pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData);
+                                                         pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData,
+                                                         pDestTexture->dwDataSize);
             assert(pDestBuffer);
             if(!pDestBuffer)
             {
@@ -540,6 +545,10 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
         CMP_PrepareSourceForCMP_Destination(pSourceTexture, pDestTexture->format);
 #endif
 
+       CMP_BOOL bMultithread = true;
+       if (!pOptions->bDisableMultiThreading && (pOptions->dwnumThreads == 1))
+           bMultithread = false;
+
 #ifdef THREADED_COMPRESS
         // Note: 
         // BC7/BC6H has issues with this setting - we already set multithreading via numThreads so
@@ -547,17 +556,18 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
         // if the use has set DiableMultiThreading then numThreads will be set to 1 (regradless of its original value)
         if(
             ((!pOptions || !pOptions->bDisableMultiThreading) && f_dwProcessorCount > 1) 
+            && (bMultithread)
             && (destType != CT_ASTC)
             && (destType != CT_BC7)
             && (destType != CT_BC6H)
             && (destType != CT_BC6H_SF)
             && (destType != CT_GTC)
-#ifdef USE_GTC_HDR
-            && (destType != CT_GTCH)
+#ifdef USE_BASIS
+            && (destType != CT_BASIS)
 #endif
             )
         {
-            tc_err = ThreadedCompressTexture(pSourceTexture, pDestTexture, pOptions, pFeedbackProc, pUser1, pUser2, destType);
+            tc_err = ThreadedCompressTexture(pSourceTexture, pDestTexture, pOptions, pFeedbackProc,destType);
 #ifdef ENABLE_MAKE_COMPATIBLE_API
             if (pSourceTexture->pData && newBuffer)
             {
@@ -570,7 +580,7 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
         else
 #endif // THREADED_COMPRESS
         {
-            tc_err =  CompressTexture(pSourceTexture, pDestTexture, pOptions, pFeedbackProc, pUser1, pUser2, destType);
+            tc_err =  CompressTexture(pSourceTexture, pDestTexture, pOptions, pFeedbackProc, destType);
 #ifdef ENABLE_MAKE_COMPATIBLE_API
             if (pSourceTexture->pData && newBuffer)
             {
@@ -603,7 +613,9 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
         CodecBufferType destBufferType = GetCodecBufferType(pDestTexture->format);
 
         CCodecBuffer* pSrcBuffer = pCodec->CreateBuffer(pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight, pSourceTexture->nBlockDepth,
-                                                        pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData);
+                                                        pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, 
+                                                        pSourceTexture->pData,
+                                                        pSourceTexture->dwDataSize);
 
 
 
@@ -613,7 +625,8 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
 
         CCodecBuffer* pDestBuffer = CreateCodecBuffer(destBufferType, 
                                                       pDestTexture->nBlockWidth, pDestTexture->nBlockHeight, pDestTexture->nBlockDepth,
-                                                      pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData);
+                                                      pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData,
+                                                      pDestTexture->dwDataSize);
 
         // assert(pDestBuffer);
         // assert(pSrcBuffer);
@@ -639,8 +652,9 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
         pSrcBuffer->SetBlockWidth (pSourceTexture->nBlockWidth );
         pSrcBuffer->SetBlockDepth (pSourceTexture->nBlockDepth );
         pSrcBuffer->SetFormat(pSourceTexture->format);
+        pSrcBuffer->SetTranscodeFormat(pSourceTexture->transcodeFormat);
 
-        CodecError err1 = pCodec->Decompress(*pSrcBuffer, *pDestBuffer, pFeedbackProc, pUser1, pUser2);
+        CodecError err1 = pCodec->Decompress(*pSrcBuffer, *pDestBuffer, pFeedbackProc);
         RESTORE_FP_EXCEPTIONS;
 
 #ifndef  USE_OLD_SWIZZLE
@@ -684,13 +698,15 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
 
         CCodecBuffer* pSrcBuffer = pCodecIn->CreateBuffer(
                                                       pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight, pSourceTexture->nBlockDepth,
-                                                      pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData);
+                                                      pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData,
+                                                      pSourceTexture->dwDataSize);
         CCodecBuffer* pTempBuffer = CreateCodecBuffer(CBT_RGBA32F,
                                                       pDestTexture->nBlockWidth, pDestTexture->nBlockHeight, pDestTexture->nBlockDepth,
                                                       pDestTexture->dwWidth, pDestTexture->dwHeight);
         CCodecBuffer* pDestBuffer = pCodecOut->CreateBuffer(
                                                       pDestTexture->nBlockWidth, pDestTexture->nBlockHeight, pDestTexture->nBlockDepth,
-                                                      pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData);
+                                                      pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData,
+                                                      pDestTexture->dwDataSize);
 
         assert(pSrcBuffer);
         assert(pTempBuffer);
@@ -713,10 +729,10 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
         }
 
         DISABLE_FP_EXCEPTIONS;
-        CodecError err2 = pCodecIn->Decompress(*pSrcBuffer, *pTempBuffer, pFeedbackProc, pUser1, pUser2);
+        CodecError err2 = pCodecIn->Decompress(*pSrcBuffer, *pTempBuffer, pFeedbackProc);
         if(err2 == CE_OK)
         {
-            err2 = pCodecOut->Compress(*pTempBuffer, *pDestBuffer, pFeedbackProc, pUser1, pUser2);
+            err2 = pCodecOut->Compress(*pTempBuffer, *pDestBuffer, pFeedbackProc);
         }
         RESTORE_FP_EXCEPTIONS;
 
@@ -730,3 +746,203 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
         return GetError(err2);
     }
 }
+
+CMP_ERROR CMP_API CMP_ConvertMipTexture(CMP_MipSet* p_MipSetIn, CMP_MipSet* p_MipSetOut, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc) {
+    assert(p_MipSetIn);
+    assert(p_MipSetOut);
+    assert(pOptions);
+
+    CMP_CMIPS CMips;
+
+    // --------------------------------
+    // Setup Compressed Mip Set Traget
+    // --------------------------------
+    //if (GetCodecType(pOptions->DestFormat) == CT_Unknown) return CMP_ERR_UNKNOWN_DESTINATION_FORMAT;
+
+    // -------------
+    // Output
+    // -------------
+    memset(p_MipSetOut, 0, sizeof(CMP_MipSet));
+    p_MipSetOut->m_Flags = MS_FLAG_Default;
+    p_MipSetOut->m_format = pOptions->DestFormat;
+    p_MipSetOut->m_nHeight = p_MipSetIn->m_nHeight;
+    p_MipSetOut->m_nWidth = p_MipSetIn->m_nWidth;
+    CMP_Format2FourCC(pOptions->DestFormat, p_MipSetOut);
+
+    // Default compression block size if not set!
+    p_MipSetIn->m_nBlockWidth = (p_MipSetIn->m_nBlockWidth == 0) ? 4 : p_MipSetIn->m_nBlockWidth;
+    p_MipSetIn->m_nBlockHeight = (p_MipSetIn->m_nBlockHeight == 0) ? 4 : p_MipSetIn->m_nBlockHeight;
+    p_MipSetIn->m_nDepth = (p_MipSetIn->m_nDepth < 1) ? 1 : p_MipSetIn->m_nDepth;
+
+    // Allocate compression data
+    p_MipSetOut->m_nMipLevels = 1;  // this is overwriiten depending on input.
+    p_MipSetOut->m_ChannelFormat = CF_Compressed;
+    p_MipSetOut->m_nMaxMipLevels = p_MipSetIn->m_nMaxMipLevels;
+    p_MipSetOut->m_nBlockWidth = p_MipSetIn->m_nBlockWidth;
+    p_MipSetOut->m_nBlockHeight = p_MipSetIn->m_nBlockHeight;
+    p_MipSetOut->m_nDepth = p_MipSetIn->m_nDepth;
+    p_MipSetOut->m_TextureType = p_MipSetIn->m_TextureType;
+
+    //=====================================================
+    // Case Uncompressed Source to Compressed Destination
+    //=====================================================
+    CMP_Texture srcTexture;
+    srcTexture.dwSize = sizeof(srcTexture);
+
+#ifdef USE_BASIS
+    if (pOptions->DestFormat == CMP_FORMAT_BASIS) {
+        p_MipSetOut->m_format = CMP_FORMAT_BASIS;
+        p_MipSetOut->m_transcodeFormat = CMP_FORMAT_BC1;
+        p_MipSetOut->m_TextureType = TT_2D;
+        p_MipSetOut->m_TextureDataType = TDT_ARGB;
+        p_MipSetOut->m_ChannelFormat = CF_Compressed;
+        p_MipSetOut->dwDataSize = 0;    // will be set after compression
+        p_MipSetOut->dwWidth = 1;    // Container for 1 linear data buffer
+        p_MipSetOut->dwHeight = 1;    // Container for 1 linear data buffer
+        p_MipSetOut->m_nDepth = 1;
+
+        if (!CMips.AllocateMipSet(p_MipSetOut, p_MipSetOut->m_ChannelFormat, TDT_ARGB, p_MipSetOut->m_TextureType, 1, 1, 1)) {
+            return CMP_ERR_MEM_ALLOC_FOR_MIPSET;
+        }
+
+        //=====================
+        // Uncompressed source
+        //======================
+        CMP_MipLevel* pInMipLevel = CMips.GetMipLevel(p_MipSetIn, 0, 0);
+        srcTexture.dwPitch = 0;
+        srcTexture.nBlockWidth = p_MipSetIn->m_nBlockWidth;
+        srcTexture.nBlockHeight = p_MipSetIn->m_nBlockHeight;
+        srcTexture.nBlockDepth = p_MipSetIn->m_nBlockDepth;
+        srcTexture.format = p_MipSetIn->m_format;
+        srcTexture.dwWidth = p_MipSetIn->m_nWidth;
+        srcTexture.dwHeight = p_MipSetIn->m_nHeight;
+        srcTexture.transcodeFormat = p_MipSetIn->m_transcodeFormat;
+        srcTexture.pData = pInMipLevel->m_pbData;
+        srcTexture.dwWidth = pInMipLevel->m_nWidth;
+        srcTexture.dwHeight = pInMipLevel->m_nHeight;
+        srcTexture.pData = pInMipLevel->m_pbData;
+
+        srcTexture.dwDataSize = CMP_CalculateBufferSize(&srcTexture);
+
+        //========================
+        // Compressed Destination
+        //========================
+        CMP_Texture destTexture;
+        MipLevel* pOutMipLevel = CMips.GetMipLevel(p_MipSetOut, 0, 0);
+        pOutMipLevel->m_pvec8Data = new CMP_VEC8();  // size = 0 before compression, will be set during processing
+        p_MipSetOut->pData = pOutMipLevel->m_pbData;
+
+        destTexture.dwSize = sizeof(destTexture);
+        destTexture.dwWidth = p_MipSetIn->m_nWidth;
+        destTexture.dwHeight = p_MipSetIn->m_nHeight;
+        destTexture.dwPitch = 0;
+        destTexture.nBlockWidth = p_MipSetIn->m_nBlockWidth;
+        destTexture.nBlockHeight = p_MipSetIn->m_nBlockHeight;
+        destTexture.format = pOptions->DestFormat;
+        srcTexture.transcodeFormat = p_MipSetIn->m_transcodeFormat;
+        destTexture.dwDataSize = CMP_CalculateBufferSize(&srcTexture); // This will be reset after compression
+        destTexture.pData = pOutMipLevel->m_pbData;
+
+        //========================
+        // Process ConvertTexture
+        //========================
+        CMP_ERROR cmp_status = CMP_ConvertTexture(&srcTexture, &destTexture, pOptions, pFeedbackProc);
+        if (cmp_status != CMP_OK) {
+            return cmp_status;
+        }
+
+
+    }
+    else
+#endif
+    {
+        if (!CMips.AllocateMipSet(p_MipSetOut, p_MipSetOut->m_ChannelFormat, TDT_ARGB, p_MipSetOut->m_TextureType, p_MipSetIn->m_nWidth, p_MipSetIn->m_nHeight, p_MipSetOut->m_nDepth)) {
+            return CMP_ERR_MEM_ALLOC_FOR_MIPSET;
+        }
+
+        p_MipSetOut->m_nMipLevels = p_MipSetIn->m_nMipLevels;
+
+        for (int nMipLevel = 0; nMipLevel < p_MipSetIn->m_nMipLevels; nMipLevel++) {
+            for (int nFaceOrSlice = 0; nFaceOrSlice < CMP_MaxFacesOrSlices(p_MipSetIn, nMipLevel); nFaceOrSlice++) {
+                //=====================
+                // Uncompressed source
+                //======================
+                CMP_MipLevel* pInMipLevel = CMips.GetMipLevel(p_MipSetIn, nMipLevel, nFaceOrSlice);
+                srcTexture.dwPitch = 0;
+                srcTexture.nBlockWidth = p_MipSetIn->m_nBlockWidth;
+                srcTexture.nBlockHeight = p_MipSetIn->m_nBlockHeight;
+                srcTexture.nBlockDepth = p_MipSetIn->m_nBlockDepth;
+                srcTexture.format = p_MipSetIn->m_format;
+                srcTexture.dwWidth = pInMipLevel->m_nWidth;
+                srcTexture.dwHeight = pInMipLevel->m_nHeight;
+                srcTexture.pData = pInMipLevel->m_pbData;
+                srcTexture.dwDataSize = CMP_CalculateBufferSize(&srcTexture);
+
+                // Temporary settings
+                p_MipSetIn->dwWidth = pInMipLevel->m_nWidth;
+                p_MipSetIn->dwHeight = pInMipLevel->m_nHeight;
+                p_MipSetIn->pData = pInMipLevel->m_pbData;
+                p_MipSetIn->dwDataSize = CMP_CalculateBufferSize(&srcTexture);
+
+                //========================
+                // Compressed Destination
+                //========================
+                CMP_Texture destTexture;
+                destTexture.dwSize = sizeof(destTexture);
+                destTexture.dwWidth = pInMipLevel->m_nWidth;
+                destTexture.dwHeight = pInMipLevel->m_nHeight;
+                destTexture.dwPitch = 0;
+                destTexture.nBlockWidth = p_MipSetIn->m_nBlockWidth;
+                destTexture.nBlockHeight = p_MipSetIn->m_nBlockHeight;
+                destTexture.format = pOptions->DestFormat;
+                destTexture.dwDataSize = CMP_CalculateBufferSize(&destTexture);
+
+                p_MipSetOut->m_format = pOptions->DestFormat;;
+                p_MipSetOut->dwDataSize = CMP_CalculateBufferSize(&destTexture);
+                p_MipSetOut->dwWidth = pInMipLevel->m_nWidth;
+                p_MipSetOut->dwHeight = pInMipLevel->m_nHeight;
+
+                //--------------------------------------
+                // Allocate MipSet for Block Compressors
+                //--------------------------------------
+                CMP_MipLevel* pOutMipLevel = CMips.GetMipLevel(p_MipSetOut, nMipLevel, nFaceOrSlice);
+                if (!CMips.AllocateCompressedMipLevelData(pOutMipLevel, destTexture.dwWidth, destTexture.dwHeight, destTexture.dwDataSize)) {
+                    return CMP_ERR_MEM_ALLOC_FOR_MIPSET;
+                }
+
+                destTexture.pData = pOutMipLevel->m_pbData;
+                p_MipSetOut->pData = pOutMipLevel->m_pbData;
+
+
+                //==========================
+                // User suppiled Print Info
+                //==========================
+                if (pOptions->m_PrintInfoStr)
+                {
+                   char buff[256];
+                   sprintf(buff,"\nSource Texture size = %d Bytes, width = %d px  height = %d px\n", srcTexture.dwDataSize, srcTexture.dwWidth,srcTexture.dwHeight);
+                   pOptions->m_PrintInfoStr(buff);
+                   if (destTexture.dwDataSize > 0)
+                   {
+                       sprintf(buff,"Destination Texture size = %d Bytes   Resulting compression ratio = %2.2f:1\n", destTexture.dwDataSize,srcTexture.dwDataSize / (float)destTexture.dwDataSize);
+                       pOptions->m_PrintInfoStr(buff);
+                   }
+                }
+
+                //========================
+                // Process ConvertTexture
+                //========================
+                CMP_ERROR cmp_status = CMP_ConvertTexture(&srcTexture, &destTexture, pOptions, pFeedbackProc);
+                if (cmp_status != CMP_OK) {
+                    return cmp_status;
+                }
+            }
+        }
+    }
+    if (pFeedbackProc)
+        pFeedbackProc(100, NULL, NULL);
+
+    return CMP_OK;
+}
+
+

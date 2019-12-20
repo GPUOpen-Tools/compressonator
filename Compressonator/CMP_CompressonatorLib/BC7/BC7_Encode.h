@@ -26,6 +26,7 @@
 
 #include <float.h>
 #include "BC7_Definitions.h"
+#include "debug.h"
 
 #include <mutex>
 
@@ -93,14 +94,17 @@ public:
                                 m_partitionSearchSize   = 1.0;                 // use all partitions for best quality
                             }
                         }
+#ifdef USE_DBGTRACE
+                DbgTrace(("shakerRangeThreshold [%3.3f] errorThreshold [%3.3f] partitionSearchSize [%3.3f]",m_shakerRangeThreshold,m_errorThreshold,m_partitionSearchSize));
+#endif
     };
 
 
     ~BC7BlockEncoder()
     {
 #ifdef USE_DBGTRACE
-                DbgTrace(("Smallest Error %f\n", (float)m_smallestError));
-                DbgTrace(("Largest Error %f\n", (float)m_largestError));
+                DbgTrace(("Smallest Error %f", (float)m_smallestError));
+                DbgTrace(("Largest Error %f", (float)m_largestError));
 #endif
     };
 

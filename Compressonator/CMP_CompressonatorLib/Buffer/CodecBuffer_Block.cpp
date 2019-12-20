@@ -36,8 +36,8 @@
 
 CCodecBuffer_Block::CCodecBuffer_Block(CodecBufferType nCodecBufferType, 
                                        CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-                                       CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData)
-: CCodecBuffer(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData), m_nCodecBufferType(nCodecBufferType)
+                                       CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData,CMP_DWORD dwDataSize)
+: CCodecBuffer(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize), m_nCodecBufferType(nCodecBufferType)
 {
     // ToDo: All of these cases all need to be updated from default values 
     // to those passed down! for now we has asjusted the case

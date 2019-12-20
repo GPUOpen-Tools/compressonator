@@ -30,7 +30,11 @@
 #include "BC7_Decode.h"
 #include "BC7_utils.h"
 
+#include "Common.h"
 
+#ifdef TEST_CMP_CORE_DECODER
+#include "CMP_Core.h"
+#endif
 
 // Enable this to print info about the decoded blocks
 // #define PRINT_DECODE_INFO
@@ -176,6 +180,18 @@ void BC7BlockDecoder::DecompressDualIndexBlock(double  out[MAX_SUBSET_SIZE][MAX_
 void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
     CMP_BYTE   in[COMPRESSED_BLOCK_SIZE])
 {
+
+#ifdef TEST_CMP_CORE_DECODER
+        CMP_BYTE imgout[64];
+        DecompressBlockBC7(in,imgout);
+        int count = 0;
+        for (int px=0; px<16; px++)
+            for (int i=0;i < 4; i++) {
+                out[px][i] = (double)imgout[count++];
+            }
+        return;
+#endif
+
 
 #ifdef PRINT_DECODE_INFO
     FILE *gt_File_decode = fopen("decode_patterns.txt", "a");
@@ -440,5 +456,15 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
     fprintf(gt_File_decode, "[%d,%d,%d,%d]\n", partitionTable[12], partitionTable[13], partitionTable[14], partitionTable[15]);
     fclose(gt_File_decode);
 #endif
+
+// unsigned int data[64];
+// int ind = 0;
+// for (int i = 0; i< 16; i++)
+// {
+//     data[ind++] = out[i][0];
+//     data[ind++] = out[i][1];
+//     data[ind++] = out[i][2];
+//     data[ind++] = out[i][3];
+// }
 
 }

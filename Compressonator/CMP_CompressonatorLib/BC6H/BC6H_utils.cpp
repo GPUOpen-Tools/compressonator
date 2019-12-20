@@ -31,28 +31,3 @@
 #include "BC6H_Definitions.h"
 #include "BC6H_utils.h"
 
-// from half->float code - just for verification.
-FP32 half_to_float(float Halfin)
-{
-    static const FP32 magic = { 113 << 23 };
-    static const uint shifted_exp = 0x7c00 << 13; // exponent mask after shift
-    FP32 o;
-    FP16 h;
-    h.u = (unsigned short)Halfin;
- 
-    o.u = (h.u & 0x7fff) << 13;     // exponent/mantissa bits
-    uint exp = shifted_exp & o.u;   // just the exponent
-    o.u += (127 - 15) << 23;        // exponent adjust
- 
-    // handle exponent special cases
-    if (exp == shifted_exp) // Inf/NaN?
-        o.u += (128 - 16) << 23;    // extra exp adjust
-    else if (exp == 0) // Zero/Denormal?
-    {
-        o.u += 1 << 23;             // extra exp adjust
-        o.f -= magic.f;             // renormalize
-    }
- 
-    o.u |= (h.u & 0x8000) << 16;    // sign bit
-    return o;
-}

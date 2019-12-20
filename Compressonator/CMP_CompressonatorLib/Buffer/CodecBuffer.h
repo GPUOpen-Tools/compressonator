@@ -30,13 +30,11 @@
 #define _CODECBUFFER_H_INCLUDED_
 
 #include "debug.h"
-
+#include "Common.h"
+#include "Compressonator.h"
 #include "MathMacros.h"
 
-#pragma warning( push )
-#pragma warning(disable:4244)
-#include "half.h"
-#pragma warning( pop )
+
 
 typedef enum _CodecBufferType
 {
@@ -74,60 +72,80 @@ typedef enum _CodecBufferType
     CBT_8x8Block_32BPP,
 } CodecBufferType;
 
-#define CHANNEL_SIZE_ARGB    4
-#define BLOCK_SIZE_4        4
+#define CHANNEL_SIZE_ARGB       4
+#define BLOCK_SIZE_4            4
 
-#define BLOCK_SIZE_4X4        16
-#define BLOCK_SIZE_4X4X4    64
+#define BLOCK_SIZE_4X4          16
+#define BLOCK_SIZE_4X4X4        64
 
-#define BLOCK_SIZE_8X8        64
-#define BLOCK_SIZE_8X8X4    256
+#define BLOCK_SIZE_8X8          64
+#define BLOCK_SIZE_8X8X4        256
 
-#define RGBA8888_CHANNEL_A    3
-#define RGBA8888_CHANNEL_R    2
-#define RGBA8888_CHANNEL_G    1
-#define RGBA8888_CHANNEL_B    0
+// This is also used in code for ETC ATC it needs to be fixed 
+// and only used in codebuffer IO, The prefix description is not correct
+// it should read BGRA8888_...
+// Codecbuffer.cpp has CCodecBuffer* CreateCodecBuffer() mixes up these into one create buffer
+// new CodecBuffer for BGRA.. should be added. 
+#define RGBA8888_CHANNEL_R      2
+#define RGBA8888_CHANNEL_G      1
+#define RGBA8888_CHANNEL_B      0
+#define RGBA8888_CHANNEL_A      3
 
 #define RGBA8888_OFFSET_A (RGBA8888_CHANNEL_A * 8)
 #define RGBA8888_OFFSET_R (RGBA8888_CHANNEL_R * 8)
 #define RGBA8888_OFFSET_G (RGBA8888_CHANNEL_G * 8)
 #define RGBA8888_OFFSET_B (RGBA8888_CHANNEL_B * 8)
 
+// Patch to correctly use RGBA src and decomp
+#define ATC_RGBA8888_CHANNEL_R      0
+#define ATC_RGBA8888_CHANNEL_G      1
+#define ATC_RGBA8888_CHANNEL_B      2
+#define ATC_RGBA8888_CHANNEL_A      3
+
+#define ATC_RGBA8888_OFFSET_A (ATC_RGBA8888_CHANNEL_A * 8)
+#define ATC_RGBA8888_OFFSET_R (ATC_RGBA8888_CHANNEL_R * 8)
+#define ATC_RGBA8888_OFFSET_G (ATC_RGBA8888_CHANNEL_G * 8)
+#define ATC_RGBA8888_OFFSET_B (ATC_RGBA8888_CHANNEL_B * 8)
+
 #define RGBA2101010_OFFSET_A 30
 #define RGBA2101010_OFFSET_R 20
 #define RGBA2101010_OFFSET_G 10
 #define RGBA2101010_OFFSET_B  0
 
-#define RGBA16_OFFSET_A 3
 #define RGBA16_OFFSET_R 0
 #define RGBA16_OFFSET_G 1
 #define RGBA16_OFFSET_B 2
+#define RGBA16_OFFSET_A 3
 
-#define RGBA16F_OFFSET_A 3
 #define RGBA16F_OFFSET_R 0
 #define RGBA16F_OFFSET_G 1
 #define RGBA16F_OFFSET_B 2
+#define RGBA16F_OFFSET_A 3
 
-#define RGBA32_OFFSET_A 3
 #define RGBA32_OFFSET_R 0
 #define RGBA32_OFFSET_G 1
 #define RGBA32_OFFSET_B 2
+#define RGBA32_OFFSET_A 3
 
-#define RGBA32F_OFFSET_A 3
 #define RGBA32F_OFFSET_R 0
 #define RGBA32F_OFFSET_G 1
 #define RGBA32F_OFFSET_B 2
+#define RGBA32F_OFFSET_A 3
 
 #define TWO_BIT_MASK    0x0003
-#define BYTE_MASK        0x00ff
+#define BYTE_MASK       0x00ff
 #define TEN_BIT_MASK    0x03ff
-#define WORD_MASK        0xffff
+#define WORD_MASK       0xffff
 
 #define MAKE_RGBA8888(r, g, b, a) ((r << RGBA8888_OFFSET_R) | (g << RGBA8888_OFFSET_G) | (b << RGBA8888_OFFSET_B) | (a << RGBA8888_OFFSET_A))
 #define GET_R(i) ((i >> RGBA8888_OFFSET_R) & BYTE_MASK)
 #define GET_G(i) ((i >> RGBA8888_OFFSET_G) & BYTE_MASK)
 #define GET_B(i) ((i >> RGBA8888_OFFSET_B) & BYTE_MASK)
 #define GET_A(i) ((i >> RGBA8888_OFFSET_A) & BYTE_MASK)
+
+// Note: CMP_DWORD AABBGGRR for RGBA8888 CMP_BYTE[4];
+//                                RED   to Blue           BLUE  to Red               GREEN & ALPHA
+#define SWIZZLE_RGBA_BGRA(i) ((i << 16) & 0x00FF0000)|((i >> 16) & 0x000000FF)|(i&0xFF00FF00)
 
 #define SWIZZLE_RGBA_RBxG(i) ((((i >> RGBA8888_OFFSET_R) & BYTE_MASK) << RGBA8888_OFFSET_R) | (((i >> RGBA8888_OFFSET_G) & BYTE_MASK) << RGBA8888_OFFSET_A) | (((i >> RGBA8888_OFFSET_B) & BYTE_MASK) << RGBA8888_OFFSET_G))
 #define SWIZZLE_RBxG_RGBA(i) ((((i >> RGBA8888_OFFSET_R) & BYTE_MASK) << RGBA8888_OFFSET_R) | (((i >> RGBA8888_OFFSET_A) & BYTE_MASK) << RGBA8888_OFFSET_G) | (((i >> RGBA8888_OFFSET_G) & BYTE_MASK) << RGBA8888_OFFSET_B) | (BYTE_MASK << RGBA8888_OFFSET_A))
@@ -171,7 +189,7 @@ typedef enum _CodecBufferType
 
 #define SWAP_DWORDS(a, b) {CMP_DWORD dwTemp = a; a = b; b = dwTemp;}
 #define SWAP_WORDS(a, b) {CMP_WORD wTemp = a; a = b; b = wTemp;}
-#define SWAP_HALFS(a, b) {half fTemp = a; a = b; b = fTemp;}
+#define SWAP_HALFS(a, b) {CMP_HALF fTemp = a; a = b; b = fTemp;}
 #define SWAP_FLOATS(a, b) {float fTemp = a; a = b; b = fTemp;}
 #define SWAP_DOUBLES(a, b) {double dTemp = a; a = b; b = dTemp;}
 
@@ -213,7 +231,8 @@ public:
     CCodecBuffer(
                  CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
                  CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, 
-                 CMP_BYTE* pData = 0);
+                 CMP_BYTE* pData = 0,
+                 CMP_DWORD dwDataSize = 0);
     virtual ~CCodecBuffer();
 
     virtual void Copy(CCodecBuffer& srcBuffer);
@@ -227,15 +246,28 @@ public:
     inline const CMP_DWORD GetHeight() const {return m_dwHeight;};
     inline const CMP_DWORD GetPitch()  const {return m_dwPitch;};
 
-    inline const void SetPitch(CMP_DWORD dwPitch)  { 
+    inline const void SetPitch(CMP_DWORD dwPitch)  
+    { 
         m_dwPitch = dwPitch;
-        };
+    };
 
-    inline const void SetFormat(CMP_FORMAT dwFormat) {
+    inline const void SetFormat(CMP_FORMAT dwFormat) 
+    {
         m_dwFormat = dwFormat;
     };
 
+    inline const void SetTranscodeFormat(CMP_FORMAT Format) 
+    {
+        m_dwTranscodeFormat = Format;
+    };
+
+    inline const void SetDataSize(CMP_DWORD dwDataSize)  
+    { 
+        m_DataSize = dwDataSize;
+    };
+
     inline const CMP_FORMAT GetFormat() const { return m_dwFormat;};
+    inline const CMP_FORMAT GetTranscodeFormat() const { return m_dwTranscodeFormat;};
 
     inline const CMP_BYTE GetBlockWidth()  const { return m_nBlockWidth; };
     inline const CMP_BYTE GetBlockHeight() const { return m_nBlockHeight; };
@@ -244,6 +276,7 @@ public:
     inline const void SetBlockWidth(CMP_BYTE BlockWidth)      { m_nBlockWidth  = BlockWidth;   };
     inline const void SetBlockHeight(CMP_BYTE BlockHeight)    { m_nBlockHeight = BlockHeight;  };
     inline const void SetBlockDepth(CMP_BYTE BlockDepth)      { m_nBlockDepth  = BlockDepth;   };
+
 
 
     virtual bool ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_BYTE cBlock[]);
@@ -266,10 +299,10 @@ public:
     virtual bool ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, float fBlock[]);
     virtual bool ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, float fBlock[]);
 
-    virtual bool ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[]);
-    virtual bool ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[]);
-    virtual bool ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[]);
-    virtual bool ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[]);
+    virtual bool ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[]);
+    virtual bool ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[]);
+    virtual bool ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[]);
+    virtual bool ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[]);
 
     virtual bool ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, double dBlock[]);
     virtual bool ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, double dBlock[]);
@@ -291,10 +324,10 @@ public:
     virtual bool WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_DWORD dwblock[]);
     virtual bool WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_DWORD dwblock[]);
 
-    virtual bool WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[]);
-    virtual bool WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[]);
-    virtual bool WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[]);
-    virtual bool WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[]);
+    virtual bool WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[]);
+    virtual bool WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[]);
+    virtual bool WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[]);
+    virtual bool WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[]);
 
     virtual bool WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, float fBlock[]);
     virtual bool WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, float fBlock[]);
@@ -315,8 +348,8 @@ public:
     virtual bool ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_WORD wBlock[]);
     virtual bool WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_WORD wBlock[]);
 
-    virtual bool ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[]);
-    virtual bool WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, half hBlock[]);
+    virtual bool ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[]);
+    virtual bool WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_HALF hBlock[]);
 
     virtual bool ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, float fBlock[]);
     virtual bool WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, float fBlock[]);
@@ -328,48 +361,51 @@ public:
     virtual bool WriteBlock(CMP_DWORD x, CMP_DWORD y, CMP_DWORD* pBlock, CMP_DWORD dwBlockSize);
 
     inline CMP_BYTE* GetData() const {return m_pData;}; 
+    inline CMP_DWORD GetDataSize() const {return m_DataSize;};
+
+    bool m_bSwizzle;
 
 protected:
 
     void ConvertBlock(double dBlock[], float fBlock[], CMP_DWORD dwBlockSize);
-    void ConvertBlock(double dBlock[], half hBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(double dBlock[], CMP_HALF hBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(double dBlock[], CMP_DWORD dwBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(double dBlock[], CMP_WORD wBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(double dBlock[], CMP_BYTE cBlock[], CMP_DWORD dwBlockSize);
 
     void ConvertBlock(float fBlock[], double dBlock[], CMP_DWORD dwBlockSize);
-    void ConvertBlock(float fBlock[], half hBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(float fBlock[], CMP_HALF hBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(float fBlock[], CMP_DWORD dwBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(float fBlock[], CMP_WORD wBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(float fBlock[], CMP_BYTE cBlock[], CMP_DWORD dwBlockSize);
 
-    void ConvertBlock(half hBlock[], double dBlock[], CMP_DWORD dwBlockSize);
-    void ConvertBlock(half hBlock[], float fBlock[], CMP_DWORD dwBlockSize);
-    void ConvertBlock(half hBlock[], CMP_DWORD dwBlock[], CMP_DWORD dwBlockSize);
-    void ConvertBlock(half hBlock[], CMP_WORD wBlock[], CMP_DWORD dwBlockSize);
-    void ConvertBlock(half hBlock[], CMP_BYTE cBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(CMP_HALF hBlock[], double dBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(CMP_HALF hBlock[], float fBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(CMP_HALF hBlock[], CMP_DWORD dwBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(CMP_HALF hBlock[], CMP_WORD wBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(CMP_HALF hBlock[], CMP_BYTE cBlock[], CMP_DWORD dwBlockSize);
 
     void ConvertBlock(CMP_DWORD dwBlock[], double dBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_DWORD dwBlock[], float fBlock[], CMP_DWORD dwBlockSize);
-    void ConvertBlock(CMP_DWORD dwBlock[], half hBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(CMP_DWORD dwBlock[], CMP_HALF hBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_DWORD dwBlock[], CMP_WORD wBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_DWORD dwBlock[], CMP_BYTE cBlock[], CMP_DWORD dwBlockSize);
 
     void ConvertBlock(CMP_WORD wBlock[], double dBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_WORD wBlock[], float fBlock[], CMP_DWORD dwBlockSize);
-    void ConvertBlock(CMP_WORD wBlock[], half hBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(CMP_WORD wBlock[], CMP_HALF hBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_WORD wBlock[], CMP_DWORD dwBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_WORD wBlock[], CMP_BYTE cBlock[], CMP_DWORD dwBlockSize);
 
     void ConvertBlock(CMP_BYTE cBlock[], double dBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_BYTE cBlock[], float fBlock[], CMP_DWORD dwBlockSize);
-    void ConvertBlock(CMP_BYTE cBlock[], half hBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(CMP_BYTE cBlock[], CMP_HALF hBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_BYTE cBlock[], CMP_DWORD dwBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_BYTE cBlock[], CMP_WORD wBlock[], CMP_DWORD dwBlockSize);
 
     void SwizzleBlock(double dBlock[], CMP_DWORD dwBlockSize);
     void SwizzleBlock(float fBlock[], CMP_DWORD dwBlockSize);
-    void SwizzleBlock(half hBlock[], CMP_DWORD dwBlockSize);
+    void SwizzleBlock(CMP_HALF hBlock[], CMP_DWORD dwBlockSize);
     void SwizzleBlock(CMP_DWORD dwBlock[], CMP_DWORD dwBlockSize);
     void SwizzleBlock(CMP_WORD wBlock[], CMP_DWORD dwBlockSize);
 
@@ -378,6 +414,7 @@ protected:
     CMP_DWORD m_dwDepth;        // Final Image Depth  
     CMP_DWORD m_dwPitch;
     CMP_FORMAT m_dwFormat;
+    CMP_FORMAT m_dwTranscodeFormat;
 
     CMP_BYTE m_nBlockWidth;     // DeCompression Block Sizes (Default is 4x4x1)
     CMP_BYTE m_nBlockHeight;    //
@@ -385,13 +422,16 @@ protected:
 
     bool m_bUserAllocedData;
     CMP_BYTE* m_pData;
+    CMP_DWORD m_DataSize;
 
     bool m_bPerformingConversion;
 };
 
 CCodecBuffer*   CreateCodecBuffer(CodecBufferType nCodecBufferType, 
                                   CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-                                  CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0);
+                                  CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0,
+                                  CMP_DWORD dwDataSize = 0);
+
 CodecBufferType GetCodecBufferType(CMP_FORMAT format);
 
 #endif // !defined(_CODECBUFFER_H_INCLUDED_)
