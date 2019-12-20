@@ -7,10 +7,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -23,10 +23,12 @@
 
 #pragma warning(disable:4996)   // Ignoring 'fopen': This function or variable may be unsafe
 
-#include <stdio.h>
-#include <assert.h>
+
 #include "Compressonator.h"
 #include "DDS_Helpers.h"
+#include <assert.h>
+#include <stdio.h>
+#include <ctype.h>
 
 using namespace CMP;
 
@@ -75,145 +77,138 @@ using namespace CMP;
 #define FOURCC_DXT3  (MAKEFOURCC('D','X','T','3'))
 #define FOURCC_DXT4  (MAKEFOURCC('D','X','T','4'))
 #define FOURCC_DXT5  (MAKEFOURCC('D','X','T','5'))
+#define FOURCC_DX10  (MAKEFOURCC('D','X','1','0'))
 
 
-typedef struct
-{
-   CMP_DWORD dwFourCC;
-   CMP_FORMAT nFormat;
+typedef struct {
+    CMP_DWORD dwFourCC;
+    CMP_FORMAT nFormat;
 } CMP_FourCC;
 
-CMP_FourCC g_FourCCs[] =
-{
-   {FOURCC_DXT1,               CMP_FORMAT_DXT1},
-   {FOURCC_DXT3,               CMP_FORMAT_DXT3},
-   {FOURCC_DXT5,               CMP_FORMAT_DXT5},
-   {FOURCC_DXT5_xGBR,          CMP_FORMAT_DXT5_xGBR},
-   {FOURCC_DXT5_RxBG,          CMP_FORMAT_DXT5_RxBG},
-   {FOURCC_DXT5_RBxG,          CMP_FORMAT_DXT5_RBxG},
-   {FOURCC_DXT5_xRBG,          CMP_FORMAT_DXT5_xRBG},
-   {FOURCC_DXT5_RGxB,          CMP_FORMAT_DXT5_RGxB},
-   {FOURCC_DXT5_xGxR,          CMP_FORMAT_DXT5_xGxR},
-   {FOURCC_DXT5_GXRB,          CMP_FORMAT_DXT5_xRBG},
-   {FOURCC_DXT5_GRXB,          CMP_FORMAT_DXT5_RxBG},
-   {FOURCC_DXT5_RXGB,          CMP_FORMAT_DXT5_xGBR},
-   {FOURCC_DXT5_BRGX,          CMP_FORMAT_DXT5_RGxB},
-   {FOURCC_ATI1N,              CMP_FORMAT_ATI1N},
-   {FOURCC_ATI2N,              CMP_FORMAT_ATI2N},
-   {FOURCC_ATI2N_XY,           CMP_FORMAT_ATI2N_XY},
-   {FOURCC_ATI2N_DXT5,         CMP_FORMAT_ATI2N_DXT5},
-   {FOURCC_BC1,                CMP_FORMAT_BC1},
-   {FOURCC_BC2,                CMP_FORMAT_BC2},
-   {FOURCC_BC3,                CMP_FORMAT_BC3},
-   {FOURCC_BC4,                CMP_FORMAT_BC4},
-   {FOURCC_BC4S,               CMP_FORMAT_BC4},
-   {FOURCC_BC4U,               CMP_FORMAT_BC4},
-   {FOURCC_BC5,                CMP_FORMAT_BC5},
-   {FOURCC_BC5S,               CMP_FORMAT_BC5},
-   {FOURCC_ATC_RGB,            CMP_FORMAT_ATC_RGB},
-   {FOURCC_ATC_RGBA_EXPLICIT,  CMP_FORMAT_ATC_RGBA_Explicit},
-   {FOURCC_ATC_RGBA_INTERP,    CMP_FORMAT_ATC_RGBA_Interpolated},
-   {FOURCC_ETC_RGB,            CMP_FORMAT_ETC_RGB},
+CMP_FourCC g_FourCCs[] = {
+    {FOURCC_DXT1,               CMP_FORMAT_DXT1},
+    {FOURCC_DXT3,               CMP_FORMAT_DXT3},
+    {FOURCC_DXT5,               CMP_FORMAT_DXT5},
+    {FOURCC_DXT5_xGBR,          CMP_FORMAT_DXT5_xGBR},
+    {FOURCC_DXT5_RxBG,          CMP_FORMAT_DXT5_RxBG},
+    {FOURCC_DXT5_RBxG,          CMP_FORMAT_DXT5_RBxG},
+    {FOURCC_DXT5_xRBG,          CMP_FORMAT_DXT5_xRBG},
+    {FOURCC_DXT5_RGxB,          CMP_FORMAT_DXT5_RGxB},
+    {FOURCC_DXT5_xGxR,          CMP_FORMAT_DXT5_xGxR},
+    {FOURCC_DXT5_GXRB,          CMP_FORMAT_DXT5_xRBG},
+    {FOURCC_DXT5_GRXB,          CMP_FORMAT_DXT5_RxBG},
+    {FOURCC_DXT5_RXGB,          CMP_FORMAT_DXT5_xGBR},
+    {FOURCC_DXT5_BRGX,          CMP_FORMAT_DXT5_RGxB},
+    {FOURCC_ATI1N,              CMP_FORMAT_ATI1N},
+    {FOURCC_ATI2N,              CMP_FORMAT_ATI2N},
+    {FOURCC_ATI2N_XY,           CMP_FORMAT_ATI2N_XY},
+    {FOURCC_ATI2N_DXT5,         CMP_FORMAT_ATI2N_DXT5},
+    {FOURCC_BC1,                CMP_FORMAT_BC1},
+    {FOURCC_BC2,                CMP_FORMAT_BC2},
+    {FOURCC_BC3,                CMP_FORMAT_BC3},
+    {FOURCC_BC4,                CMP_FORMAT_BC4},
+    {FOURCC_BC4S,               CMP_FORMAT_BC4},
+    {FOURCC_BC4U,               CMP_FORMAT_BC4},
+    {FOURCC_BC5,                CMP_FORMAT_BC5},
+    {FOURCC_BC5S,               CMP_FORMAT_BC5},
+    {FOURCC_ATC_RGB,            CMP_FORMAT_ATC_RGB},
+    {FOURCC_ATC_RGBA_EXPLICIT,  CMP_FORMAT_ATC_RGBA_Explicit},
+    {FOURCC_ATC_RGBA_INTERP,    CMP_FORMAT_ATC_RGBA_Interpolated},
+    {FOURCC_ETC_RGB,            CMP_FORMAT_ETC_RGB},
 };
 CMP_DWORD g_dwFourCCCount = sizeof(g_FourCCs) / sizeof(g_FourCCs[0]);
 
-CMP_FORMAT GetFormat(CMP_DWORD dwFourCC)
-{
-   for(CMP_DWORD i = 0; i < g_dwFourCCCount; i++)
-      if(g_FourCCs[i].dwFourCC == dwFourCC)
-         return g_FourCCs[i].nFormat;
+CMP_FORMAT GetFormat(CMP_DWORD dwFourCC) {
+    for(CMP_DWORD i = 0; i < g_dwFourCCCount; i++)
+        if(g_FourCCs[i].dwFourCC == dwFourCC)
+            return g_FourCCs[i].nFormat;
 
-   return CMP_FORMAT_Unknown;
+    return CMP_FORMAT_Unknown;
 }
 
-DWORD GetFourCC(CMP_FORMAT nFormat)
-{
-   for(DWORD i = 0; i < g_dwFourCCCount; i++)
-      if(g_FourCCs[i].nFormat == nFormat)
-         return g_FourCCs[i].dwFourCC;
+DWORD GetFourCC(CMP_FORMAT nFormat) {
+    for(DWORD i = 0; i < g_dwFourCCCount; i++)
+        if(g_FourCCs[i].nFormat == nFormat)
+            return g_FourCCs[i].dwFourCC;
 
-   return 0;
+    return 0;
 }
 
-bool IsDXT5SwizzledFormat(CMP_FORMAT nFormat)
-{
-   if(nFormat == CMP_FORMAT_DXT5_xGBR || nFormat == CMP_FORMAT_DXT5_RxBG || nFormat == CMP_FORMAT_DXT5_RBxG ||
-      nFormat == CMP_FORMAT_DXT5_xRBG || nFormat == CMP_FORMAT_DXT5_RGxB || nFormat == CMP_FORMAT_DXT5_xGxR ||
-      nFormat == CMP_FORMAT_ATI2N_DXT5)
-      return true;
-   else
-      return false;
+bool IsDXT5SwizzledFormat(CMP_FORMAT nFormat) {
+    if(nFormat == CMP_FORMAT_DXT5_xGBR || nFormat == CMP_FORMAT_DXT5_RxBG || nFormat == CMP_FORMAT_DXT5_RBxG ||
+            nFormat == CMP_FORMAT_DXT5_xRBG || nFormat == CMP_FORMAT_DXT5_RGxB || nFormat == CMP_FORMAT_DXT5_xGxR ||
+            nFormat == CMP_FORMAT_ATI2N_DXT5)
+        return true;
+    else
+        return false;
 }
 
-typedef struct
-{
-   CMP_FORMAT nFormat;
-   const char* pszFormatDesc;
+typedef struct {
+    CMP_FORMAT nFormat;
+    const char* pszFormatDesc;
 } CMP_FormatDesc;
 
-CMP_FormatDesc g_FormatDesc[] =
-{
-   {CMP_FORMAT_Unknown,                 ("Unknown")},
-   {CMP_FORMAT_ARGB_8888,               ("ARGB_8888")},
-   {CMP_FORMAT_RGB_888,                 ("RGB_888")},
-   {CMP_FORMAT_RG_8,                    ("RG_8")},
-   {CMP_FORMAT_R_8,                     ("R_8")},
-   {CMP_FORMAT_ARGB_2101010,            ("ARGB_2101010")},
-   {CMP_FORMAT_ARGB_16,                 ("ARGB_16")},
-   {CMP_FORMAT_RG_16,                   ("RG_16")},
-   {CMP_FORMAT_R_16,                    ("R_16")},
-   {CMP_FORMAT_ARGB_16F,                ("ARGB_16F")},
-   {CMP_FORMAT_RG_16F,                  ("RG_16F")},
-   {CMP_FORMAT_R_16F,                   ("R_16F")},
-   {CMP_FORMAT_ARGB_32F,                ("ARGB_32F")},
-   {CMP_FORMAT_RG_32F,                  ("RG_32F")},
-   {CMP_FORMAT_R_32F,                   ("R_32F")},
-   {CMP_FORMAT_DXT1,                    ("DXT1")},
-   {CMP_FORMAT_DXT3,                    ("DXT3")},
-   {CMP_FORMAT_DXT5,                    ("DXT5")},
-   {CMP_FORMAT_DXT5_xGBR,               ("DXT5_xGBR")},
-   {CMP_FORMAT_DXT5_RxBG,               ("DXT5_RxBG")},
-   {CMP_FORMAT_DXT5_RBxG,               ("DXT5_RBxG")},
-   {CMP_FORMAT_DXT5_xRBG,               ("DXT5_xRBG")},
-   {CMP_FORMAT_DXT5_RGxB,               ("DXT5_RGxB")},
-   {CMP_FORMAT_DXT5_xGxR,               ("DXT5_xGxR")},
-   {CMP_FORMAT_ATI1N,                   ("ATI1N")},
-   {CMP_FORMAT_ATI2N,                   ("ATI2N")},
-   {CMP_FORMAT_ATI2N_XY,                ("ATI2N_XY")},
-   {CMP_FORMAT_ATI2N_DXT5,              ("ATI2N_DXT5")},
-   {CMP_FORMAT_BC1,                     ("BC1")},
-   {CMP_FORMAT_BC2,                     ("BC2")},
-   {CMP_FORMAT_BC3,                     ("BC3")},
-   {CMP_FORMAT_BC4,                     ("BC4")},
-   {CMP_FORMAT_BC5,                     ("BC5")},
-   {CMP_FORMAT_BC6H,                    ("BC6H") },
-   {CMP_FORMAT_BC7,                     ("BC7") },
-   {CMP_FORMAT_ATC_RGB,                 ("ATC_RGB")},
-   {CMP_FORMAT_ATC_RGBA_Explicit,       ("ATC_RGBA_Explicit")},
-   {CMP_FORMAT_ATC_RGBA_Interpolated,   ("ATC_RGBA_Interpolated")},
-   {CMP_FORMAT_ETC_RGB,                 ("ETC_RGB")},
+CMP_FormatDesc g_DDSFormatDesc[] = {
+    {CMP_FORMAT_Unknown,                 ("Unknown")},
+    {CMP_FORMAT_ARGB_8888,               ("ARGB_8888")},
+    {CMP_FORMAT_BGRA_8888,               ("BGRA_8888")},
+    {CMP_FORMAT_RGBA_8888,               ("RBGA_8888")},
+    {CMP_FORMAT_RGB_888,                 ("RGB_888")},
+    {CMP_FORMAT_BGR_888,                 ("BRG_888")},
+    {CMP_FORMAT_RG_8,                    ("RG_8")},
+    {CMP_FORMAT_R_8,                     ("R_8")},
+    {CMP_FORMAT_ARGB_2101010,            ("ARGB_2101010")},
+    {CMP_FORMAT_ARGB_16,                 ("ARGB_16")},
+    {CMP_FORMAT_RG_16,                   ("RG_16")},
+    {CMP_FORMAT_R_16,                    ("R_16")},
+    {CMP_FORMAT_ARGB_16F,                ("ARGB_16F")},
+    {CMP_FORMAT_RG_16F,                  ("RG_16F")},
+    {CMP_FORMAT_R_16F,                   ("R_16F")},
+    {CMP_FORMAT_ARGB_32F,                ("ARGB_32F")},
+    {CMP_FORMAT_RG_32F,                  ("RG_32F")},
+    {CMP_FORMAT_R_32F,                   ("R_32F")},
+    {CMP_FORMAT_DXT1,                    ("DXT1")},
+    {CMP_FORMAT_DXT3,                    ("DXT3")},
+    {CMP_FORMAT_DXT5,                    ("DXT5")},
+    {CMP_FORMAT_DXT5_xGBR,               ("DXT5_xGBR")},
+    {CMP_FORMAT_DXT5_RxBG,               ("DXT5_RxBG")},
+    {CMP_FORMAT_DXT5_RBxG,               ("DXT5_RBxG")},
+    {CMP_FORMAT_DXT5_xRBG,               ("DXT5_xRBG")},
+    {CMP_FORMAT_DXT5_RGxB,               ("DXT5_RGxB")},
+    {CMP_FORMAT_DXT5_xGxR,               ("DXT5_xGxR")},
+    {CMP_FORMAT_ATI1N,                   ("ATI1N")},
+    {CMP_FORMAT_ATI2N,                   ("ATI2N")},
+    {CMP_FORMAT_ATI2N_XY,                ("ATI2N_XY")},
+    {CMP_FORMAT_ATI2N_DXT5,              ("ATI2N_DXT5")},
+    {CMP_FORMAT_BC1,                     ("BC1")},
+    {CMP_FORMAT_BC2,                     ("BC2")},
+    {CMP_FORMAT_BC3,                     ("BC3")},
+    {CMP_FORMAT_BC4,                     ("BC4")},
+    {CMP_FORMAT_BC5,                     ("BC5")},
+    {CMP_FORMAT_BC6H,                    ("BC6H") },
+    {CMP_FORMAT_BC7,                     ("BC7") },
+    {CMP_FORMAT_ATC_RGB,                 ("ATC_RGB")},
+    {CMP_FORMAT_ATC_RGBA_Explicit,       ("ATC_RGBA_Explicit")},
+    {CMP_FORMAT_ATC_RGBA_Interpolated,   ("ATC_RGBA_Interpolated")},
+    {CMP_FORMAT_ETC_RGB,                 ("ETC_RGB")},
 };
-DWORD g_dwFormatDescCount = sizeof(g_FormatDesc) / sizeof(g_FormatDesc[0]);
 
-static bool stringicmp( const char *left, const char *right )
-{
-    while ( true )
-    {
+DWORD g_dwDDSFormatDescCount = sizeof(g_DDSFormatDesc) / sizeof(g_DDSFormatDesc[0]);
+
+static bool stringicmp( const char *left, const char *right ) {
+    while ( true ) {
         char leftc = *left;
         char rightc = *right;
 
-        if ( !leftc && !rightc )
-        {
+        if ( !leftc && !rightc ) {
             return true;
         }
 
-        if ( !leftc || !rightc )
-        {
+        if ( !leftc || !rightc ) {
             return false;
         }
 
-        if ( toupper( leftc ) != toupper( rightc ) )
-        {
+        if ( toupper( leftc ) != toupper( rightc ) ) {
             return false;
         }
 
@@ -224,46 +219,41 @@ static bool stringicmp( const char *left, const char *right )
     return false;
 }
 
-CMP_FORMAT ParseFormat(const char* pszFormat)
-{
-   if(pszFormat == NULL)
-      return CMP_FORMAT_Unknown;
+CMP_FORMAT ParseFormat(const char* pszFormat) {
+    if(pszFormat == NULL)
+        return CMP_FORMAT_Unknown;
 
-   for(DWORD i = 0; i < g_dwFormatDescCount; i++)
-      if(stringicmp(pszFormat, g_FormatDesc[i].pszFormatDesc))
-         return g_FormatDesc[i].nFormat;
+    for(DWORD i = 0; i < g_dwDDSFormatDescCount; i++)
+        if(stringicmp(pszFormat,g_DDSFormatDesc[i].pszFormatDesc))
+            return g_DDSFormatDesc[i].nFormat;
 
-   return CMP_FORMAT_Unknown;
+    return CMP_FORMAT_Unknown;
 }
 
-const char* GetFormatDesc(CMP_FORMAT nFormat)
-{
-   for(DWORD i = 0; i < g_dwFormatDescCount; i++)
-      if(nFormat == g_FormatDesc[i].nFormat)
-         return g_FormatDesc[i].pszFormatDesc;
+const char* GetFormatDescription(CMP_FORMAT nFormat) {
+    for(DWORD i = 0; i < g_dwDDSFormatDescCount; i++)
+        if(nFormat == g_DDSFormatDesc[i].nFormat)
+            return g_DDSFormatDesc[i].pszFormatDesc;
 
-   return g_FormatDesc[0].pszFormatDesc;
+    return g_DDSFormatDesc[0].pszFormatDesc;
 }
 
-#    define POINTER_64 __ptr64
+#define POINTER_64 __ptr64
 
 #pragma pack(4)
 
-typedef struct _DDCOLORKEY
-{
+typedef struct _DDCOLORKEY {
     DWORD       dwColorSpaceLowValue;   // low boundary of color space that is to
-                                        // be treated as Color Key, inclusive
+    // be treated as Color Key, inclusive
     DWORD       dwColorSpaceHighValue;  // high boundary of color space that is
-                                        // to be treated as Color Key, inclusive
+    // to be treated as Color Key, inclusive
 } DDCOLORKEY;
 
-typedef struct _DDPIXELFORMAT
-{
+typedef struct _DDPIXELFORMAT {
     DWORD       dwSize;                 // size of structure
     DWORD       dwFlags;                // pixel format flags
     DWORD       dwFourCC;               // (FOURCC code)
-    union
-    {
+    union {
         DWORD   dwRGBBitCount;          // how many bits per pixel
         DWORD   dwYUVBitCount;          // how many bits per pixel
         DWORD   dwZBufferBitDepth;      // how many total bits/pixel in z buffer (including any stencil bits)
@@ -271,10 +261,9 @@ typedef struct _DDPIXELFORMAT
         DWORD   dwLuminanceBitCount;    // how many bits per pixel
         DWORD   dwBumpBitCount;         // how many bits per "buxel", total
         DWORD   dwPrivateFormatBitCount;// Bits per pixel of private driver formats. Only valid in texture
-                                        // format list and if DDPF_D3DFORMAT is set
+        // format list and if DDPF_D3DFORMAT is set
     };
-    union
-    {
+    union {
         DWORD   dwRBitMask;             // mask for red bit
         DWORD   dwYBitMask;             // mask for Y bits
         DWORD   dwStencilBitDepth;      // how many stencil bits (note: dwZBufferBitDepth-dwStencilBitDepth is total Z-only bits)
@@ -282,28 +271,24 @@ typedef struct _DDPIXELFORMAT
         DWORD   dwBumpDuBitMask;        // mask for bump map U delta bits
         DWORD   dwOperations;           // DDPF_D3DFORMAT Operations
     };
-    union
-    {
+    union {
         DWORD   dwGBitMask;             // mask for green bits
         DWORD   dwUBitMask;             // mask for U bits
         DWORD   dwZBitMask;             // mask for Z bits
         DWORD   dwBumpDvBitMask;        // mask for bump map V delta bits
-        struct
-        {
+        struct {
             WORD    wFlipMSTypes;       // Multisample methods supported via flip for this D3DFORMAT
             WORD    wBltMSTypes;        // Multisample methods supported via blt for this D3DFORMAT
         } MultiSampleCaps;
 
     };
-    union
-    {
+    union {
         DWORD   dwBBitMask;             // mask for blue bits
         DWORD   dwVBitMask;             // mask for V bits
         DWORD   dwStencilBitMask;       // mask for stencil bits
         DWORD   dwBumpLuminanceBitMask; // mask for luminance in bump map
     };
-    union
-    {
+    union {
         DWORD   dwRGBAlphaBitMask;      // mask for alpha channel
         DWORD   dwYUVAlphaBitMask;      // mask for alpha channel
         DWORD   dwLuminanceAlphaBitMask;// mask for alpha channel
@@ -312,116 +297,130 @@ typedef struct _DDPIXELFORMAT
     };
 } DDPIXELFORMAT;
 
-typedef struct _DDSCAPS2
-{
+typedef struct _DDSCAPS2 {
     DWORD       dwCaps;         // capabilities of surface wanted
     DWORD       dwCaps2;
     DWORD       dwCaps3;
-    union
-    {
+    union {
         DWORD       dwCaps4;
         DWORD       dwVolumeDepth;
     };
 } DDSCAPS2;
 
-typedef struct _DDSURFACEDESC2_64
-{
-   DWORD               dwSize;                 // size of the DDSURFACEDESC structure
-   DWORD               dwFlags;                // determines what fields are valid
-   DWORD               dwHeight;               // height of surface to be created
-   DWORD               dwWidth;                // width of input surface
-   union
-   {
-      LONG            lPitch;                 // distance to start of next line (return value only)
-      DWORD           dwLinearSize;           // Formless late-allocated optimized surface size
-   };
-   union
-   {
-      DWORD           dwBackBufferCount;      // number of back buffers requested
-      DWORD           dwDepth;                // the depth if this is a volume texture
-   };
-   union
-   {
-      DWORD           dwMipMapCount;          // number of mip-map levels requestde
-      // dwZBufferBitDepth removed, use ddpfPixelFormat one instead
-      DWORD           dwRefreshRate;          // refresh rate (used when display mode is described)
-      DWORD           dwSrcVBHandle;          // The source used in VB::Optimize
-   };
-   DWORD               dwAlphaBitDepth;        // depth of alpha buffer requested
-   DWORD               dwReserved;             // reserved
-   DWORD               lpSurface;              // pointer to the associated surface memory
-   union
-   {
-      DDCOLORKEY      ddckCKDestOverlay;      // color key for destination overlay use
-      DWORD           dwEmptyFaceColor;       // Physical color for empty cubemap faces
-   };
-   DDCOLORKEY          ddckCKDestBlt;          // color key for destination blt use
-   DDCOLORKEY          ddckCKSrcOverlay;       // color key for source overlay use
-   DDCOLORKEY          ddckCKSrcBlt;           // color key for source blt use
-   union
-   {
-      DDPIXELFORMAT   ddpfPixelFormat;        // pixel format description of the surface
-      DWORD           dwFVF;                  // vertex format description of vertex buffers
-   };
-   DDSCAPS2            ddsCaps;                // direct draw surface capabilities
-   DWORD               dwTextureStage;         // stage in multitexture cascade
+typedef struct _DDSURFACEDESC2_64 {
+    DWORD               dwSize;                 // size of the DDSURFACEDESC structure
+    DWORD               dwFlags;                // determines what fields are valid
+    DWORD               dwHeight;               // height of surface to be created
+    DWORD               dwWidth;                // width of input surface
+    union {
+        LONG            lPitch;                 // distance to start of next line (return value only)
+        DWORD           dwLinearSize;           // Formless late-allocated optimized surface size
+    };
+    union {
+        DWORD           dwBackBufferCount;      // number of back buffers requested
+        DWORD           dwDepth;                // the depth if this is a volume texture
+    };
+    union {
+        DWORD           dwMipMapCount;          // number of mip-map levels requestde
+        // dwZBufferBitDepth removed, use ddpfPixelFormat one instead
+        DWORD           dwRefreshRate;          // refresh rate (used when display mode is described)
+        DWORD           dwSrcVBHandle;          // The source used in VB::Optimize
+    };
+    DWORD               dwAlphaBitDepth;        // depth of alpha buffer requested
+    DWORD               dwReserved;             // reserved
+    DWORD               lpSurface;              // pointer to the associated surface memory
+    union {
+        DDCOLORKEY      ddckCKDestOverlay;      // color key for destination overlay use
+        DWORD           dwEmptyFaceColor;       // Physical color for empty cubemap faces
+    };
+    DDCOLORKEY          ddckCKDestBlt;          // color key for destination blt use
+    DDCOLORKEY          ddckCKSrcOverlay;       // color key for source overlay use
+    DDCOLORKEY          ddckCKSrcBlt;           // color key for source blt use
+    union {
+        DDPIXELFORMAT   ddpfPixelFormat;        // pixel format description of the surface
+        DWORD           dwFVF;                  // vertex format description of vertex buffers
+    };
+    DDSCAPS2            ddsCaps;                // direct draw surface capabilities
+    DWORD               dwTextureStage;         // stage in multitexture cascade
 } DDSURFACEDESC2;
 
 #define DDSD2 DDSURFACEDESC2
 
 static const DWORD DDS_HEADER = MAKEFOURCC('D', 'D', 'S', ' ');
 
-bool LoadDDSFile(const char* pszFile, CMP_Texture& texture)
-{
-   FILE* pSourceFile = fopen(pszFile, ("rb"));
+bool LoadDDSFile(const char* pszFile, CMP_Texture& texture) {
+    FILE* pSourceFile = fopen(pszFile, ("rb"));
 
-   if (!pSourceFile) return false;
+    if (!pSourceFile) return false;
 
-   DWORD dwFileHeader;
-   fread(&dwFileHeader, sizeof(DWORD), 1, pSourceFile);
-   if(dwFileHeader != DDS_HEADER)
-   {
-      printf("Source file is not a valid DDS.\n");
-      fclose(pSourceFile);
-      return false;
-   }
+    DWORD dwFileHeader;
+    fread(&dwFileHeader, sizeof(DWORD), 1, pSourceFile);
+    if(dwFileHeader != DDS_HEADER) {
+        printf("Source file is not a valid DDS.\n");
+        fclose(pSourceFile);
+        return false;
+    }
 
-   DDSD2 ddsd;
-   fread(&ddsd, sizeof(DDSD2), 1, pSourceFile);
+    DDSD2 ddsd;
+    fread(&ddsd, sizeof(DDSD2), 1, pSourceFile);
 
-   memset(&texture, 0, sizeof(texture));
-   texture.dwSize = sizeof(texture);
-   texture.dwWidth = ddsd.dwWidth;
-   texture.dwHeight = ddsd.dwHeight;
-   texture.dwPitch = ddsd.lPitch;
+    memset(&texture, 0, sizeof(texture));
+    texture.dwSize = sizeof(texture);
+    texture.dwWidth = ddsd.dwWidth;
+    texture.dwHeight = ddsd.dwHeight;
+    texture.dwPitch = ddsd.lPitch;
 
-   if(ddsd.ddpfPixelFormat.dwRGBBitCount==32)
-      texture.format = CMP_FORMAT_ARGB_8888;
-   else if(ddsd.ddpfPixelFormat.dwRGBBitCount==24)
-      texture.format = CMP_FORMAT_RGB_888;
-   else if(GetFormat(ddsd.ddpfPixelFormat.dwPrivateFormatBitCount) != CMP_FORMAT_Unknown)
-      texture.format = GetFormat(ddsd.ddpfPixelFormat.dwPrivateFormatBitCount);
-   else if(GetFormat(ddsd.ddpfPixelFormat.dwFourCC) != CMP_FORMAT_Unknown)
-      texture.format = GetFormat(ddsd.ddpfPixelFormat.dwFourCC);
-   else
-   {
-      printf("Unsupported source format.\n");
-      fclose(pSourceFile);
-      return false;
-   }
+    if(ddsd.ddpfPixelFormat.dwRGBBitCount==32)
+    {
+        // Visual Studio reports as 32bpp RGBA
+        if ((ddsd.ddpfPixelFormat.dwRBitMask         == 0x000000ff)&&
+            (ddsd.ddpfPixelFormat.dwGBitMask         == 0x0000ff00)&&
+            (ddsd.ddpfPixelFormat.dwBBitMask         == 0x00ff0000)&&
+            (ddsd.ddpfPixelFormat.dwRGBAlphaBitMask  == 0xff000000))
+        {
+            texture.format = CMP_FORMAT_RGBA_8888;
+        } 
+        else 
+            // Visual Studio reports as 32bpp BGRA
+        if ((ddsd.ddpfPixelFormat.dwRBitMask        == 0x00ff0000) &&
+            (ddsd.ddpfPixelFormat.dwGBitMask        == 0x0000ff00) &&
+            (ddsd.ddpfPixelFormat.dwBBitMask        == 0x000000ff) &&
+            (ddsd.ddpfPixelFormat.dwRGBAlphaBitMask == 0xff000000))
+        {
+            texture.format = CMP_FORMAT_BGRA_8888;
+        }
+    }
+    else if(ddsd.ddpfPixelFormat.dwRGBBitCount==24)
+    {
+        // assumptions is made here should check all channel locations
+        if (ddsd.ddpfPixelFormat.dwRBitMask == 0xff) {
+            texture.format = CMP_FORMAT_RGB_888;
+        }
+        else {
+            texture.format = CMP_FORMAT_BGR_888;
+        }
+    }
+    else if(GetFormat(ddsd.ddpfPixelFormat.dwPrivateFormatBitCount) != CMP_FORMAT_Unknown)
+        texture.format = GetFormat(ddsd.ddpfPixelFormat.dwPrivateFormatBitCount);
+    else if(GetFormat(ddsd.ddpfPixelFormat.dwFourCC) != CMP_FORMAT_Unknown)
+        texture.format = GetFormat(ddsd.ddpfPixelFormat.dwFourCC);
+    else {
+        printf("Unsupported source format.\n");
+        fclose(pSourceFile);
+        return false;
+    }
 
-   // Init source texture
-   texture.dwDataSize = CMP_CalculateBufferSize(&texture);
-   texture.pData = (CMP_BYTE*) malloc(texture.dwDataSize);
+    // Init source texture
+    texture.dwDataSize = CMP_CalculateBufferSize(&texture);
+    texture.pData = (CMP_BYTE*) malloc(texture.dwDataSize);
 
-   fread(texture.pData, texture.dwDataSize, 1, pSourceFile);
-   fclose(pSourceFile);
+    fread(texture.pData, texture.dwDataSize, 1, pSourceFile);
+    fclose(pSourceFile);
 
-   return true;
+    return true;
 }
 
-enum D3D10_RESOURCE_DIMENSION
-{
+enum D3D10_RESOURCE_DIMENSION {
     D3D10_RESOURCE_DIMENSION_UNKNOWN	= 0,
     D3D10_RESOURCE_DIMENSION_BUFFER	= 1,
     D3D10_RESOURCE_DIMENSION_TEXTURE1D	= 2,
@@ -429,8 +428,7 @@ enum D3D10_RESOURCE_DIMENSION
     D3D10_RESOURCE_DIMENSION_TEXTURE3D	= 4
 };
 
-typedef struct
-{
+typedef struct {
     DWORD                           dxgiFormat;
     D3D10_RESOURCE_DIMENSION        resourceDimension;
     UINT                            miscFlag;                   // Used for D3D10_RESOURCE_MISC_FLAG
@@ -558,8 +556,7 @@ typedef struct
 #define DDPF_BUMPLUMINANCE                      0x00040000l
 #define DDPF_BUMPDUDV                           0x00080000l
 
-typedef enum DXGI_FORMAT
-{
+typedef enum DXGI_FORMAT {
     DXGI_FORMAT_UNKNOWN	                    = 0,
     DXGI_FORMAT_R32G32B32A32_TYPELESS       = 1,
     DXGI_FORMAT_R32G32B32A32_FLOAT          = 2,
@@ -679,8 +676,7 @@ typedef enum DXGI_FORMAT
     DXGI_FORMAT_FORCE_UINT                  = 0xffffffff
 } DXGI_FORMAT;
 
-typedef enum _D3DFORMAT
-{
+typedef enum _D3DFORMAT {
     D3DFMT_UNKNOWN              =  0,
 
     D3DFMT_R8G8B8               = 20,
@@ -761,182 +757,246 @@ typedef enum _D3DFORMAT
     D3DFMT_CxV8U8               = 117,
 } D3DFORMAT;
 
-void SaveDDSFile(const char* pszFile, CMP_Texture& texture)
-{
-   FILE* pFile = fopen(pszFile, ("wb"));
-   if(!pFile)
-      return;
 
-   fwrite(&DDS_HEADER, sizeof(DWORD), 1, pFile);
+void SaveDDSFile(const char* pszFile, CMP_Texture& texture) {
+    FILE* pFile = fopen(pszFile, ("wb"));
+    if(!pFile)
+        return;
 
-   DDSD2 ddsd;
-   memset(&ddsd, 0, sizeof(DDSD2));
+    bool DDSet = false;
 
-   ddsd.dwSize = sizeof(DDSD2);
-   ddsd.dwFlags = DDSD_CAPS|DDSD_WIDTH|DDSD_HEIGHT|DDSD_PIXELFORMAT|DDSD_MIPMAPCOUNT|DDSD_LINEARSIZE;
-   ddsd.dwWidth = texture.dwWidth;
-   ddsd.dwHeight = texture.dwHeight;
-   ddsd.dwMipMapCount = 1;
+    switch (texture.format) {
+    case CMP_FORMAT_BC1:
+    case CMP_FORMAT_BC2:
+    case CMP_FORMAT_BC3:
+    case CMP_FORMAT_BC4:
+    case CMP_FORMAT_BC5: {
+        fwrite(&DDS_HEADER, sizeof(DWORD), 1, pFile);
+        DDSD2 ddsd2;
+        memset(&ddsd2, 0, sizeof(DDSD2));
+        ddsd2.dwSize                   = sizeof(DDSD2);
+        ddsd2.dwWidth                  = texture.dwWidth;
+        ddsd2.dwHeight                 = texture.dwHeight;
+        ddsd2.dwMipMapCount            = 1;
+        ddsd2.dwFlags                  = DDSD_CAPS|DDSD_WIDTH|DDSD_HEIGHT|DDSD_PIXELFORMAT|DDSD_MIPMAPCOUNT;
+        ddsd2.dwFlags                 |= DDSD_LINEARSIZE;
+        ddsd2.dwLinearSize             = texture.dwDataSize;
+        ddsd2.ddpfPixelFormat.dwSize   = sizeof(DDPIXELFORMAT);
+        ddsd2.ddsCaps.dwCaps           = DDSCAPS_TEXTURE|DDSCAPS_COMPLEX|DDSCAPS_MIPMAP;
+        ddsd2.ddpfPixelFormat.dwFlags  = DDPF_FOURCC;
+        ddsd2.ddpfPixelFormat.dwFlags |= DDPF_ALPHAPIXELS;
 
-   ddsd.ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
-   ddsd.ddsCaps.dwCaps = DDSCAPS_TEXTURE|DDSCAPS_COMPLEX|DDSCAPS_MIPMAP;
+        switch (texture.format)
+        {
+            case CMP_FORMAT_BC1:
+                ddsd2.ddpfPixelFormat.dwFourCC = FOURCC_DXT1;
+                break;
+            case CMP_FORMAT_BC2:
+                ddsd2.ddpfPixelFormat.dwFourCC = FOURCC_DXT3;
+                break;
+            case CMP_FORMAT_BC3:
+                ddsd2.ddpfPixelFormat.dwFourCC = FOURCC_DXT5;
+                break;
+            case CMP_FORMAT_BC4:
+                ddsd2.ddpfPixelFormat.dwFourCC = FOURCC_ATI1N;
+                break;
+            case CMP_FORMAT_BC5:
+                ddsd2.ddpfPixelFormat.dwFourCC = FOURCC_ATI2N_XY;
+              break;
+        }
 
-   // Do we have a DX9 support FourCC format
-   ddsd.ddpfPixelFormat.dwFourCC = GetFourCC(texture.format);
-   if(ddsd.ddpfPixelFormat.dwFourCC)
-   {
-      ddsd.dwLinearSize = texture.dwDataSize;
-      ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
-      if(IsDXT5SwizzledFormat(texture.format))
-      {
-         ddsd.ddpfPixelFormat.dwPrivateFormatBitCount = ddsd.ddpfPixelFormat.dwFourCC;
-         ddsd.ddpfPixelFormat.dwFourCC = FOURCC_DXT5;
-      }
+        ddsd2.ddpfPixelFormat.dwPrivateFormatBitCount = 0;
 
-      fwrite(&ddsd, sizeof(DDSD2), 1, pFile);
-      fwrite(texture.pData, texture.dwDataSize, 1, pFile);
-   }
-   else
-   {
-       // Check to save the data using DX10 file format (BC7 is used as an example of what is supported
-       // and can be expanded to include other formats 
+        // Write the data
+        fwrite(&ddsd2, sizeof(DDSD2), 1, pFile);
+        fwrite(texture.pData, texture.dwDataSize, 1, pFile);
+    }
+    break;
+    }
 
-       if (texture.format == CMP_FORMAT_BC7)
-       {
-           ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
-           ddsd.ddpfPixelFormat.dwFourCC = MAKEFOURCC('D', 'X', '1', '0');
-           ddsd.lPitch = texture.dwWidth * 4;
+    if (!DDSet) {
+        fwrite(&DDS_HEADER, sizeof(DWORD), 1, pFile);
 
-           // Write the data    
-           fwrite(&ddsd, sizeof(DDSD2), 1, pFile);
+        DDSD2 ddsd;
+        memset(&ddsd, 0, sizeof(DDSD2));
 
-           DDS_HEADER_DDS10 HeaderDDS10;
-           memset(&HeaderDDS10, 0, sizeof(HeaderDDS10));
+        ddsd.dwSize = sizeof(DDSD2);
+        ddsd.dwFlags = DDSD_CAPS|DDSD_WIDTH|DDSD_HEIGHT|DDSD_PIXELFORMAT|DDSD_MIPMAPCOUNT|DDSD_LINEARSIZE;
+        ddsd.dwWidth = texture.dwWidth;
+        ddsd.dwHeight = texture.dwHeight;
+        ddsd.dwMipMapCount = 1;
 
-           HeaderDDS10.dxgiFormat = DXGI_FORMAT_BC7_UNORM;
-           HeaderDDS10.resourceDimension = D3D10_RESOURCE_DIMENSION_TEXTURE2D;
-           HeaderDDS10.miscFlag = 0;
-           HeaderDDS10.arraySize = 1;
-           HeaderDDS10.reserved = 0;
+        ddsd.ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
+        ddsd.ddsCaps.dwCaps = DDSCAPS_TEXTURE|DDSCAPS_COMPLEX|DDSCAPS_MIPMAP;
 
-           fwrite(&HeaderDDS10, sizeof(HeaderDDS10), 1, pFile);
-           fwrite(texture.pData, texture.dwDataSize, 1, pFile);
-       }
-       else
-       {
-           //-------------------------------------
-           // We can use DX9 file format to save 
-           //-------------------------------------
-           switch (texture.format)
-           {
-           case CMP_FORMAT_ARGB_8888:
-               ddsd.ddpfPixelFormat.dwRBitMask = 0x00ff0000;
-               ddsd.ddpfPixelFormat.dwGBitMask = 0x0000ff00;
-               ddsd.ddpfPixelFormat.dwBBitMask = 0x000000ff;
-               ddsd.lPitch = texture.dwPitch;
-               ddsd.ddpfPixelFormat.dwRGBBitCount = 32;
-               ddsd.ddpfPixelFormat.dwFlags = DDPF_ALPHAPIXELS | DDPF_RGB;
-               ddsd.ddpfPixelFormat.dwRGBAlphaBitMask = 0xff000000;
-               break;
+        // Do we have a DX9 support FourCC format
+        ddsd.ddpfPixelFormat.dwFourCC = GetFourCC(texture.format);
+        if(ddsd.ddpfPixelFormat.dwFourCC) {
+            ddsd.dwLinearSize = texture.dwDataSize;
+            ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
 
-           case CMP_FORMAT_RGB_888:
-               ddsd.ddpfPixelFormat.dwRBitMask = 0x00ff0000;
-               ddsd.ddpfPixelFormat.dwGBitMask = 0x0000ff00;
-               ddsd.ddpfPixelFormat.dwBBitMask = 0x000000ff;
-               ddsd.lPitch = texture.dwPitch;
-               ddsd.ddpfPixelFormat.dwRGBBitCount = 24;
-               ddsd.ddpfPixelFormat.dwFlags = DDPF_RGB;
-               break;
+            // Do we have DXT5 swizzle format
+            if(IsDXT5SwizzledFormat(texture.format)) {
+                ddsd.ddpfPixelFormat.dwPrivateFormatBitCount = ddsd.ddpfPixelFormat.dwFourCC;
+                ddsd.ddpfPixelFormat.dwFourCC = FOURCC_DXT5;
+            }
 
-           case CMP_FORMAT_RG_8:
-               ddsd.ddpfPixelFormat.dwRBitMask = 0x0000ff00;
-               ddsd.ddpfPixelFormat.dwGBitMask = 0x000000ff;
-               ddsd.lPitch = texture.dwPitch;
-               ddsd.ddpfPixelFormat.dwRGBBitCount = 16;
-               ddsd.ddpfPixelFormat.dwFlags = DDPF_ALPHAPIXELS | DDPF_LUMINANCE;
-               ddsd.ddpfPixelFormat.dwRGBAlphaBitMask = 0xff000000;
-               break;
+            fwrite(&ddsd, sizeof(DDSD2), 1, pFile);
+            fwrite(texture.pData, texture.dwDataSize, 1, pFile);
+        } else {
+            // Check to save the data using DX10 file format (BC7 is used as an example of what is supported
+            // and can be expanded to include other formats
 
-           case CMP_FORMAT_R_8:
-               ddsd.ddpfPixelFormat.dwRBitMask = 0x000000ff;
-               ddsd.lPitch = texture.dwPitch;
-               ddsd.ddpfPixelFormat.dwRGBBitCount = 8;
-               ddsd.ddpfPixelFormat.dwFlags = DDPF_LUMINANCE;
-               break;
+            if ((texture.format == CMP_FORMAT_BC7)  ||
+                    (texture.format == CMP_FORMAT_BC6H) ||
+                    (texture.format == CMP_FORMAT_BC6H_SF) ) {
+                ddsd.ddpfPixelFormat.dwFlags  = DDPF_FOURCC;
+                ddsd.ddpfPixelFormat.dwFourCC = MAKEFOURCC('D', 'X', '1', '0');
+                ddsd.lPitch = texture.dwWidth * 4;
 
-           case CMP_FORMAT_ARGB_2101010:
-               ddsd.ddpfPixelFormat.dwRBitMask = 0x000003ff;
-               ddsd.ddpfPixelFormat.dwGBitMask = 0x000ffc00;
-               ddsd.ddpfPixelFormat.dwBBitMask = 0x3ff00000;
-               ddsd.ddpfPixelFormat.dwRGBAlphaBitMask = 0xc0000000;
-               ddsd.lPitch = texture.dwPitch;
-               ddsd.ddpfPixelFormat.dwRGBBitCount = 32;
-               ddsd.ddpfPixelFormat.dwFlags = DDPF_ALPHAPIXELS | DDPF_RGB;
-               break;
+                // Write the data
+                fwrite(&ddsd, sizeof(DDSD2), 1, pFile);
 
-           case CMP_FORMAT_ARGB_16:
-               ddsd.dwLinearSize = texture.dwDataSize;
-               ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC | DDPF_ALPHAPIXELS;
-               ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_A16B16G16R16;
-               break;
+                DDS_HEADER_DDS10 HeaderDDS10;
+                memset(&HeaderDDS10, 0, sizeof(HeaderDDS10));
 
-           case CMP_FORMAT_RG_16:
-               ddsd.dwLinearSize = texture.dwDataSize;
-               ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
-               ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_G16R16;
-               break;
+                if (texture.format == CMP_FORMAT_BC7)
+                    HeaderDDS10.dxgiFormat = DXGI_FORMAT_BC7_UNORM;
+                else if (texture.format == CMP_FORMAT_BC6H)
+                    HeaderDDS10.dxgiFormat = DXGI_FORMAT_BC6H_UF16;
+                else if (texture.format == CMP_FORMAT_BC6H_SF)
+                    HeaderDDS10.dxgiFormat = DXGI_FORMAT_BC6H_SF16;
 
-           case CMP_FORMAT_R_16:
-               ddsd.dwLinearSize = texture.dwDataSize;
-               ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
-               ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_L16;
-               break;
+                HeaderDDS10.resourceDimension = D3D10_RESOURCE_DIMENSION_TEXTURE2D;
+                HeaderDDS10.miscFlag = 0;
+                HeaderDDS10.arraySize = 1;
+                HeaderDDS10.reserved = 0;
 
-           case CMP_FORMAT_ARGB_16F:
-               ddsd.dwLinearSize = texture.dwDataSize;
-               ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC | DDPF_ALPHAPIXELS;
-               ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_A16B16G16R16F;
-               break;
+                fwrite(&HeaderDDS10, sizeof(HeaderDDS10), 1, pFile);
+                fwrite(texture.pData, texture.dwDataSize, 1, pFile);
+            } else {
+                //-------------------------------------
+                // We can use DX9 file format to save
+                //-------------------------------------
+                switch (texture.format) {
+                case CMP_FORMAT_RGBA_8888:
+                    ddsd.ddpfPixelFormat.dwRBitMask         = 0xff000000;
+                    ddsd.ddpfPixelFormat.dwGBitMask         = 0x00ff0000;
+                    ddsd.ddpfPixelFormat.dwBBitMask         = 0x0000ff00;
+                    ddsd.ddpfPixelFormat.dwRGBAlphaBitMask  = 0x000000ff;
+                    ddsd.lPitch = texture.dwPitch;
+                    ddsd.ddpfPixelFormat.dwRGBBitCount = 32;
+                    ddsd.ddpfPixelFormat.dwFlags = DDPF_ALPHAPIXELS | DDPF_RGB;
+                    break;
+                case CMP_FORMAT_ARGB_8888:
+                    ddsd.ddpfPixelFormat.dwRGBAlphaBitMask  = 0xff000000;
+                    ddsd.ddpfPixelFormat.dwRBitMask         = 0x00ff0000;
+                    ddsd.ddpfPixelFormat.dwGBitMask         = 0x0000ff00;
+                    ddsd.ddpfPixelFormat.dwBBitMask         = 0x000000ff;
+                    ddsd.lPitch = texture.dwPitch;
+                    ddsd.ddpfPixelFormat.dwRGBBitCount = 32;
+                    ddsd.ddpfPixelFormat.dwFlags = DDPF_ALPHAPIXELS | DDPF_RGB;
+                    break;
 
-           case CMP_FORMAT_RG_16F:
-               ddsd.dwLinearSize = texture.dwDataSize;
-               ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
-               ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_G16R16F;
-               break;
+                case CMP_FORMAT_RGB_888:
+                    ddsd.ddpfPixelFormat.dwRBitMask = 0x00ff0000;
+                    ddsd.ddpfPixelFormat.dwGBitMask = 0x0000ff00;
+                    ddsd.ddpfPixelFormat.dwBBitMask = 0x000000ff;
+                    ddsd.lPitch = texture.dwPitch;
+                    ddsd.ddpfPixelFormat.dwRGBBitCount = 24;
+                    ddsd.ddpfPixelFormat.dwFlags = DDPF_RGB;
+                    break;
 
-           case CMP_FORMAT_R_16F:
-               ddsd.dwLinearSize = texture.dwDataSize;
-               ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
-               ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_R16F;
-               break;
+                case CMP_FORMAT_RG_8:
+                    ddsd.ddpfPixelFormat.dwRBitMask = 0x0000ff00;
+                    ddsd.ddpfPixelFormat.dwGBitMask = 0x000000ff;
+                    ddsd.lPitch = texture.dwPitch;
+                    ddsd.ddpfPixelFormat.dwRGBBitCount = 16;
+                    ddsd.ddpfPixelFormat.dwFlags = DDPF_ALPHAPIXELS | DDPF_LUMINANCE;
+                    ddsd.ddpfPixelFormat.dwRGBAlphaBitMask = 0xff000000;
+                    break;
 
-           case CMP_FORMAT_ARGB_32F:
-               ddsd.dwLinearSize = texture.dwDataSize;
-               ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC | DDPF_ALPHAPIXELS;
-               ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_A32B32G32R32F;
-               break;
+                case CMP_FORMAT_R_8:
+                    ddsd.ddpfPixelFormat.dwRBitMask = 0x000000ff;
+                    ddsd.lPitch = texture.dwPitch;
+                    ddsd.ddpfPixelFormat.dwRGBBitCount = 8;
+                    ddsd.ddpfPixelFormat.dwFlags = DDPF_LUMINANCE;
+                    break;
 
-           case CMP_FORMAT_RG_32F:
-               ddsd.dwLinearSize = texture.dwDataSize;
-               ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
-               ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_G32R32F;
-               break;
+                case CMP_FORMAT_ARGB_2101010:
+                    ddsd.ddpfPixelFormat.dwRBitMask = 0x000003ff;
+                    ddsd.ddpfPixelFormat.dwGBitMask = 0x000ffc00;
+                    ddsd.ddpfPixelFormat.dwBBitMask = 0x3ff00000;
+                    ddsd.ddpfPixelFormat.dwRGBAlphaBitMask = 0xc0000000;
+                    ddsd.lPitch = texture.dwPitch;
+                    ddsd.ddpfPixelFormat.dwRGBBitCount = 32;
+                    ddsd.ddpfPixelFormat.dwFlags = DDPF_ALPHAPIXELS | DDPF_RGB;
+                    break;
 
-           case CMP_FORMAT_R_32F:
-               ddsd.dwLinearSize = texture.dwDataSize;
-               ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
-               ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_R32F;
-               break;
+                case CMP_FORMAT_ARGB_16:
+                    ddsd.dwLinearSize = texture.dwDataSize;
+                    ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC | DDPF_ALPHAPIXELS;
+                    ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_A16B16G16R16;
+                    break;
 
-           default:
-               assert(0);
-               break;
-           }
+                case CMP_FORMAT_RG_16:
+                    ddsd.dwLinearSize = texture.dwDataSize;
+                    ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
+                    ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_G16R16;
+                    break;
 
-           fwrite(&ddsd, sizeof(DDSD2), 1, pFile);
-           fwrite(texture.pData, texture.dwDataSize, 1, pFile);
-       }
-   }
+                case CMP_FORMAT_R_16:
+                    ddsd.dwLinearSize = texture.dwDataSize;
+                    ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
+                    ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_L16;
+                    break;
 
-   fclose(pFile);
+                case CMP_FORMAT_ARGB_16F:
+                    ddsd.dwLinearSize = texture.dwDataSize;
+                    ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC | DDPF_ALPHAPIXELS;
+                    ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_A16B16G16R16F;
+                    break;
+
+                case CMP_FORMAT_RG_16F:
+                    ddsd.dwLinearSize = texture.dwDataSize;
+                    ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
+                    ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_G16R16F;
+                    break;
+
+                case CMP_FORMAT_R_16F:
+                    ddsd.dwLinearSize = texture.dwDataSize;
+                    ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
+                    ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_R16F;
+                    break;
+
+                case CMP_FORMAT_ARGB_32F:
+                    ddsd.dwLinearSize = texture.dwDataSize;
+                    ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC | DDPF_ALPHAPIXELS;
+                    ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_A32B32G32R32F;
+                    break;
+
+                case CMP_FORMAT_RG_32F:
+                    ddsd.dwLinearSize = texture.dwDataSize;
+                    ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
+                    ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_G32R32F;
+                    break;
+
+                case CMP_FORMAT_R_32F:
+                    ddsd.dwLinearSize = texture.dwDataSize;
+                    ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
+                    ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_R32F;
+                    break;
+
+                default:
+                    assert(0);
+                    break;
+                }
+
+                fwrite(&ddsd, sizeof(DDSD2), 1, pFile);
+                fwrite(texture.pData, texture.dwDataSize, 1, pFile);
+            }
+        }
+    } // DDSet
+
+    fclose(pFile);
 }

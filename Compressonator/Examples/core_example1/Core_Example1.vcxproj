@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug_DLL|Win32">
       <Configuration>Debug_DLL</Configuration>
@@ -67,17 +67,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SDK_Example2.cpp" />
-    <ClCompile Include="DDS_Helpers.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="DDS_Helpers.h" />
+    <ClCompile Include="CoreExample.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B06F1D70-67F1-4491-B479-1B98175768E6}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Sample</RootNamespace>
-    <ProjectName>Example2</ProjectName>
+    <ProjectName>example1</ProjectName>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.Default.props" />
@@ -85,109 +81,109 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -244,82 +240,82 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>
     </LinkIncremental>
-    <OutDir>./$(Configuration)/</OutDir>
+    <OutDir>$(Configuration)/</OutDir>
     <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
     <LinkIncremental />
-    <OutDir>./$(Configuration)/</OutDir>
+    <OutDir>$(Configuration)/</OutDir>
     <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>./$(Configuration)/</OutDir>
+    <OutDir>$(Configuration)/</OutDir>
     <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>./$(Configuration)/</OutDir>
+    <OutDir>$(Configuration)/</OutDir>
     <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>./$(Configuration)/</OutDir>
+    <OutDir>$(Configuration)/</OutDir>
     <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>./$(Configuration)/</OutDir>
+    <OutDir>$(Configuration)/</OutDir>
     <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>./$(Configuration)/</OutDir>
+    <OutDir>$(Configuration)/</OutDir>
     <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>./$(Configuration)/</OutDir>
+    <OutDir>$(Configuration)/</OutDir>
     <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>./$(Configuration)/</OutDir>
+    <OutDir>$(Configuration)/</OutDir>
     <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>./$(Configuration)/</OutDir>
+    <OutDir>$(Configuration)/</OutDir>
     <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>./$(Configuration)/</OutDir>
+    <OutDir>$(Configuration)/</OutDir>
     <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>./$(Configuration)/</OutDir>
+    <OutDir>$(Configuration)/</OutDir>
     <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>./$(Configuration)/</OutDir>
+    <OutDir>$(Configuration)/</OutDir>
     <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>./$(Configuration)/</OutDir>
+    <OutDir>$(Configuration)/</OutDir>
     <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>./$(Configuration)/</OutDir>
+    <OutDir>$(Configuration)/</OutDir>
     <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>./$(Configuration)/</OutDir>
+    <OutDir>$(Configuration)/</OutDir>
     <IntDir>./$(Configuration)/intermediate/</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -328,18 +324,22 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>BUILD_MTd;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CMP_Core/source;../../include;.../../header;../common;$(COMPRESSONATOR_ROOT)/SDK/header/;;../../header/Compute_lib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2017/$(PlatformShortName);../../lib/VS2017/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_Core_MTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
     <ClCompile>
@@ -347,18 +347,22 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>BUILD_MDd;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CMP_Core/source;../../include;.../../header;../common;$(COMPRESSONATOR_ROOT)/SDK/header/;;../../header/Compute_lib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2017/$(PlatformShortName);../../lib/VS2017/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_Core_MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -367,18 +371,23 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>BUILD_MTd;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CMP_Core/source;../../include;.../../header;../common;$(COMPRESSONATOR_ROOT)/SDK/header/;;../../header/Compute_lib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2017/$(PlatformShortName);../../lib/VS2017/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_Core_MTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
-      <IgnoreSpecificDefaultLibraries>LIBCMTD.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
     <ClCompile>
@@ -387,19 +396,24 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>BUILD_MDd;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CMP_Core/source;../../include;.../../header;../common;../../CMP_Core/shaders;$(COMPRESSONATOR_ROOT)/SDK/header/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2017/$(PlatformShortName);../../lib/VS2017/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_Core_MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -410,7 +424,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MT;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CMP_Core/source;../../include;.../../header;../common;$(COMPRESSONATOR_ROOT)/SDK/header/;;../../header/Compute_lib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -418,9 +432,13 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2017/$(PlatformShortName);../../lib/VS2017/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_Core_MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
     <ClCompile>
@@ -431,7 +449,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MT_DLL;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CMP_Core/source;../../include;.../../header;../common;$(COMPRESSONATOR_ROOT)/SDK/header/;;../../header/Compute_lib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -439,9 +457,13 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2017/$(PlatformShortName);../../lib/VS2017/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_Core_MT_DLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
     <ClCompile>
@@ -452,7 +474,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MTd_DLL;WIN32;_CONSOLE;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CMP_Core/source;../../include;.../../header;../common;$(COMPRESSONATOR_ROOT)/SDK/header/;;../../header/Compute_lib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -460,9 +482,13 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2017/$(PlatformShortName);../../lib/VS2017/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_Core_MTd_DLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
     <ClCompile>
@@ -473,7 +499,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MD;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CMP_Core/source;../../include;.../../header;../common;$(COMPRESSONATOR_ROOT)/SDK/header/;;../../header/Compute_lib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -481,9 +507,13 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2017/$(PlatformShortName);../../lib/VS2017/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_Core_MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
     <ClCompile>
@@ -494,7 +524,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MD_DLL;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CMP_Core/source;../../include;.../../header;../common;$(COMPRESSONATOR_ROOT)/SDK/header/;;../../header/Compute_lib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -502,9 +532,13 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2017/$(PlatformShortName);../../lib/VS2017/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_Core_MD_DLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">
     <ClCompile>
@@ -515,7 +549,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MDd_DLL;WIN32;_CONSOLE;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CMP_Core/source;../../include;.../../header;../common;$(COMPRESSONATOR_ROOT)/SDK/header/;;../../header/Compute_lib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -523,9 +557,13 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2017/$(PlatformShortName);../../lib/VS2017/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_Core_MDd_DLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -536,7 +574,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MT;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CMP_Core/source;../../include;.../../header;../common;$(COMPRESSONATOR_ROOT)/SDK/header/;;../../header/Compute_lib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -544,13 +582,17 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2017/$(PlatformShortName);../../lib/VS2017/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_Core_MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
     <ClCompile>
@@ -561,7 +603,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MT_DLL;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CMP_Core/source;../../include;.../../header;../common;$(COMPRESSONATOR_ROOT)/SDK/header/;;../../header/Compute_lib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -569,13 +611,17 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2017/$(PlatformShortName);../../lib/VS2017/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_Core_MT_DLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
     <ClCompile>
@@ -586,7 +632,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MTd_DLL;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CMP_Core/source;../../include;.../../header;../common;$(COMPRESSONATOR_ROOT)/SDK/header/;;../../header/Compute_lib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -594,13 +640,17 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2017/$(PlatformShortName);../../lib/VS2017/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_Core_MTd_DLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
     <ClCompile>
@@ -611,7 +661,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MD;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CMP_Core/source;../../include;.../../header;../common;$(COMPRESSONATOR_ROOT)/SDK/header/;../common;;../../header/Compute_lib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -619,13 +669,17 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>COMPRESSONATOR_MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2017/$(PlatformShortName);../../lib/VS2017/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_Core_MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
     <ClCompile>
@@ -636,7 +690,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MD_DLL;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CMP_Core/source;../../include;.../../header;../common;$(COMPRESSONATOR_ROOT)/SDK/header/;;../../header/Compute_lib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -644,13 +698,17 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2017/$(PlatformShortName);../../lib/VS2017/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_Core_MD_DLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
     <ClCompile>
@@ -661,7 +719,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_MDd_DLL;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../include;$(COMPRESSONATOR_ROOT)/SDK/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CMP_Core/source;../../include;.../../header;../common;$(COMPRESSONATOR_ROOT)/SDK/header/;;../../header/Compute_lib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -669,13 +727,17 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../lib/VS2015/$(Platform);$(COMPRESSONATOR_ROOT)/SDK/lib/VS2015/$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2017/$(PlatformShortName);../../lib/VS2017/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_Core_MDd_DLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
