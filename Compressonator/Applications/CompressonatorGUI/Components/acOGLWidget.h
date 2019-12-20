@@ -11,9 +11,9 @@
 #include "MIPS.h"
 #include "PluginManager.h"
 #include <QWidget>
-#include "glut.h"
-#include <gl/GLU.h>
-#include <gl/GL.h>
+#include <GL/glut.h>
+#include <GL/glu.h>
+#include <GL/gl.h>
 #include <qdebug.h>
 
 #include "acCustomGraphics.h"
