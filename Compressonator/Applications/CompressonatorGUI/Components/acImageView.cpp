@@ -673,7 +673,7 @@ void acImageView::onacImageViewMousePosition(QPointF *scenePos, int ID)
     QGraphicsItem *itemPicked;
     QPointF        localPt;
 
-    itemPicked = m_graphicsScene->itemAt(scenePos->rx(), scenePos->ry());
+    itemPicked = m_graphicsScene->itemAt(scenePos->rx(), scenePos->ry(), QTransform());
 
     // is mouse inside image view
     if (itemPicked)
@@ -1594,7 +1594,7 @@ void acImageView::onSetScale(int value)
     QRectF bounds = m_graphicsScene->sceneRect();        
     QPointF  pos = bounds.center();
 
-    QGraphicsItem * itemPicked = m_graphicsScene->itemAt(pos);
+    QGraphicsItem * itemPicked = m_graphicsScene->itemAt(pos, QTransform());
     // Found an item under the cursor
     if (itemPicked)
     {
