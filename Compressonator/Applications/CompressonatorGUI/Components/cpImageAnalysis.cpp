@@ -25,7 +25,7 @@
 
 #include "cpImageAnalysis.h"
 
-extern bool ProgressCallback(float fProgress, DWORD_PTR pUser1, DWORD_PTR pUser2);
+extern bool ProgressCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2);
 
 C_AnalysisData ::~C_AnalysisData()
 {
