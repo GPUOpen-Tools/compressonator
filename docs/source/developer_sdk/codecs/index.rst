@@ -1,6 +1,6 @@
 Texture Compression and Decompression
 =====================================
-For more details see referance (1)
+For more details see Bibliography Reference (1)
 
 
 BC1 Block (S3TC/DXT1)
