@@ -4779,7 +4779,8 @@ void ProjectView::onTree_ItemClicked(QTreeWidgetItem* item, int column)
                     QFile compfile(m_data->m_destFileNamePath + ".drc");
                     if ((m_data->getDo_Mesh_Compression() == m_data->Draco) && (compfile.exists()))
                     {
-                        emit ViewImageFile(compfile.fileName(), item);
+                        QString fileName = compfile.fileName();
+                        emit ViewImageFile(fileName, item);
                     }
                     else if (file.exists())
                     {

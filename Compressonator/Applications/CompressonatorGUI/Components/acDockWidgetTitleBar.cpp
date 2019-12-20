@@ -136,8 +136,10 @@ void acDockWidgetTitlebar::onClose()
 {
     if (m_parent)
         m_parent->close();
-    if (m_close)
-        emit OnAboutToClose(m_label->text());
+    if (m_close) {
+        QString labelText = m_label->text();
+        emit OnAboutToClose(labelText);
+    }
 }
 
 

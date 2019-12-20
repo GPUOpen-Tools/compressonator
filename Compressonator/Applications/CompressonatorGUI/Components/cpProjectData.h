@@ -368,7 +368,8 @@ public:
                     float bitrateF = float(128.0f / (xblock*yblock));
                     m_Bitrate = bitrate;
                     m_correctBitrate = QString::number(xblock) + "x" + QString::number(yblock);
-                    emit bitrateChanged(QString::number(bitrateF, 'f', 2), xblock, yblock);
+                    QString bitrateFString = QString::number(bitrateF, 'f', 2);
+                    emit bitrateChanged(bitrateFString, xblock, yblock);
                     m_data_has_been_changed = true;
                     emit dataChanged();
                 }
