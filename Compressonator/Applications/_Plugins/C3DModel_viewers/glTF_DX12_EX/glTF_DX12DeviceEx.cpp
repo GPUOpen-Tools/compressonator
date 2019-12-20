@@ -317,7 +317,7 @@ void glTF_DX12DeviceEx::OnResize(DWORD width, DWORD height)
 
 #ifdef ENABLE_RENDER_CODE
     // resize all render views (This can be a single model or more as is the case for ImageDiff views)
-    for (UINT rep = 0; rep < m_max_Nodes_loaded; rep++)
+    for (INT rep = 0; rep < m_max_Nodes_loaded; rep++)
     {
 
         for (UINT i = 0; i < m_nodeCount; i++)

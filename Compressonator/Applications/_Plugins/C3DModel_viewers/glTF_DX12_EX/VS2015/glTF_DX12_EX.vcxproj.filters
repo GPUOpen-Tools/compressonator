@@ -53,9 +53,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Common\MIPS.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Common\TC_PluginInternal.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -231,9 +228,6 @@
     </CustomBuild>
     <CustomBuild Include="..\CopyFiles.bat">
       <Filter>Source Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\Common\MIPS.h">
-      <Filter>Common</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\..\Common\ModelData.h">
       <Filter>Common</Filter>

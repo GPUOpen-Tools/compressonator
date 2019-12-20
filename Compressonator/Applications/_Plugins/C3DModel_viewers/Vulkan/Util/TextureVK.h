@@ -16,6 +16,12 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+//
+// http://go.microsoft.com/fwlink/?LinkId=248926
+// http://go.microsoft.com/fwlink/?LinkId=248929 
 
 #pragma once
 
@@ -24,12 +30,24 @@
 #include "DXGIFormat.h"
 
 #include "Compressonator.h"
-#include "GPU_Decode\GPU_Decode.h"
+#include "GPU_Decode.h"
 #include "..\..\..\Common\Texture.h"
 #include "..\..\..\Common\PluginInterface.h"
 #include "TextureIO.h"
 
 #include "ModelTexture.h"
+
+#define ISBITMASK( r,g,b,a ) ( pixelFmt.bitMaskR == r && pixelFmt.bitMaskG == g && pixelFmt.bitMaskB == b && pixelFmt.bitMaskA == a )
+#define DDS_RGB         0x00000040  // DDPF_RGB
+#define DDS_LUMINANCE   0x00020000  // DDPF_LUMINANCE
+#define DDS_FOURCC      0x00000004  // DDPF_FOURCC
+#ifndef MAKEFOURCC
+#define MAKEFOURCC(ch0, ch1, ch2, ch3)                              \
+                ((uint32_t)(uint8_t)(ch0) | ((uint32_t)(uint8_t)(ch1) << 8) |       \
+                ((uint32_t)(uint8_t)(ch2) << 16) | ((uint32_t)(uint8_t)(ch3) << 24 ))
+#endif /* defined(MAKEFOURCC) */
+
+
 
 #define USE_CMP_LOAD
 extern CMIPS *VK_CMips;

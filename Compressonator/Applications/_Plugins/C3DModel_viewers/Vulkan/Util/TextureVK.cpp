@@ -16,6 +16,12 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+//
+// http://go.microsoft.com/fwlink/?LinkId=248926
+// http://go.microsoft.com/fwlink/?LinkId=248929 
 
 #include "stdafx.h"
 #include "GltfFeatures.h"
@@ -55,54 +61,106 @@ void Texture::OnDestroy()
 
 }
 
-//--------------------------------------------------------------------------------------
-// retrieve the GetDxGiFormat from a DDS_PIXELFORMAT
-// based on http://msdn.microsoft.com/en-us/library/windows/desktop/bb943991(v=vs.85).aspx
-//--------------------------------------------------------------------------------------
 UINT32 Texture::GetDxGiFormat(Texture::DDS_PIXELFORMAT pixelFmt) const
 {
     if(pixelFmt.flags & 0x00000004)   //DDPF_FOURCC
     {
+            if (MAKEFOURCC( 'D', 'X', 'T', '1' ) == pixelFmt.fourCC)
+            {
+                return DXGI_FORMAT_BC1_UNORM;
+            }
+            if (MAKEFOURCC( 'D', 'X', 'T', '3' ) == pixelFmt.fourCC)
+            {
+                return DXGI_FORMAT_BC2_UNORM;
+            }
+            if (MAKEFOURCC( 'D', 'X', 'T', '5' ) == pixelFmt.fourCC)
+            {
+                return DXGI_FORMAT_BC3_UNORM;
+            }
+
+            // While pre-multiplied alpha isn't directly supported by the DXGI formats,
+            // they are basically the same as these BC formats so they can be mapped
+            if (MAKEFOURCC( 'D', 'X', 'T', '2' ) == pixelFmt.fourCC)
+            {
+                return DXGI_FORMAT_BC2_UNORM;
+            }
+            if (MAKEFOURCC( 'D', 'X', 'T', '4' ) == pixelFmt.fourCC)
+            {
+                return DXGI_FORMAT_BC3_UNORM;
+            }
+
+            if (MAKEFOURCC( 'A', 'T', 'I', '1' ) == pixelFmt.fourCC)
+            {
+                return DXGI_FORMAT_BC4_UNORM;
+            }
+            if (MAKEFOURCC( 'B', 'C', '4', 'U' ) == pixelFmt.fourCC)
+            {
+                return DXGI_FORMAT_BC4_UNORM;
+            }
+            if (MAKEFOURCC( 'B', 'C', '4', 'S' ) == pixelFmt.fourCC)
+            {
+                return DXGI_FORMAT_BC4_SNORM;
+            }
+
+            if (MAKEFOURCC( 'A', 'T', 'I', '2' ) == pixelFmt.fourCC)
+            {
+                return DXGI_FORMAT_BC5_UNORM;
+            }
+            if (MAKEFOURCC( 'B', 'C', '5', 'U' ) == pixelFmt.fourCC)
+            {
+                return DXGI_FORMAT_BC5_UNORM;
+            }
+            if (MAKEFOURCC( 'B', 'C', '5', 'S' ) == pixelFmt.fourCC)
+            {
+                return DXGI_FORMAT_BC5_SNORM;
+            }
+
+            // BC6H and BC7 are written using the "DX10" extended header
+
+            if (MAKEFOURCC( 'R', 'G', 'B', 'G' ) == pixelFmt.fourCC)
+            {
+                return DXGI_FORMAT_R8G8_B8G8_UNORM;
+            }
+            if (MAKEFOURCC( 'G', 'R', 'G', 'B' ) == pixelFmt.fourCC)
+            {
+                return DXGI_FORMAT_G8R8_G8B8_UNORM;
+            }
+
+            if (MAKEFOURCC('Y','U','Y','2') == pixelFmt.fourCC)
+            {
+                return DXGI_FORMAT_YUY2;
+            }
+
         // Check for D3DFORMAT enums being set here
         switch(pixelFmt.fourCC)
         {
-        case '1TXD':
-            return DXGI_FORMAT_BC1_UNORM;
-        case '3TXD':
-            return DXGI_FORMAT_BC2_UNORM;
-        case '5TXD':
-            return DXGI_FORMAT_BC3_UNORM;
-        case 'U4CB':
-            return DXGI_FORMAT_BC4_UNORM;
-        case 'A4CB':
-            return DXGI_FORMAT_BC4_SNORM;
-        case '2ITA':
-            return DXGI_FORMAT_BC5_UNORM;
-        case 'S5CB':
-            return DXGI_FORMAT_BC5_SNORM;
-        case 'GBGR':
-            return DXGI_FORMAT_R8G8_B8G8_UNORM;
-        case 'BGRG':
-            return DXGI_FORMAT_G8R8_G8B8_UNORM;
-        case 36:
-            return DXGI_FORMAT_R16G16B16A16_UNORM;
-        case 110:
-            return DXGI_FORMAT_R16G16B16A16_SNORM;
-        case 111:
-            return DXGI_FORMAT_R16_FLOAT;
-        case 112:
-            return DXGI_FORMAT_R16G16_FLOAT;
-        case 113:
-            return DXGI_FORMAT_R16G16B16A16_FLOAT;
-        case 114:
-            return DXGI_FORMAT_R32_FLOAT;
-        case 115:
-            return DXGI_FORMAT_R32G32_FLOAT;
-        case 116:
-            return DXGI_FORMAT_R32G32B32A32_FLOAT;
-        default:
-            return 0;
-        }
+            case 36: // D3DFMT_A16B16G16R16
+                return DXGI_FORMAT_R16G16B16A16_UNORM;
+
+            case 110: // D3DFMT_Q16W16V16U16
+                return DXGI_FORMAT_R16G16B16A16_SNORM;
+
+            case 111: // D3DFMT_R16F
+                return DXGI_FORMAT_R16_FLOAT;
+
+            case 112: // D3DFMT_G16R16F
+                return DXGI_FORMAT_R16G16_FLOAT;
+
+            case 113: // D3DFMT_A16B16G16R16F
+                return DXGI_FORMAT_R16G16B16A16_FLOAT;
+
+            case 114: // D3DFMT_R32F
+                return DXGI_FORMAT_R32_FLOAT;
+
+            case 115: // D3DFMT_G32R32F
+                return DXGI_FORMAT_R32G32_FLOAT;
+
+            case 116: // D3DFMT_A32B32G32R32F
+                return DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+            default:
+                return 0;
+            }
     }
     else
     {
@@ -126,8 +184,69 @@ UINT32 Texture::GetDxGiFormat(Texture::DDS_PIXELFORMAT pixelFmt) const
             default:
                 return 0;
             };
+
+            if (pixelFmt.bitCount == 32)  {
+
+                if (ISBITMASK(0x000000ff,0x0000ff00,0x00ff0000,0xff000000))
+                {
+                    return DXGI_FORMAT_R8G8B8A8_UNORM;
+                }
+
+                if (ISBITMASK(0x00ff0000,0x0000ff00,0x000000ff,0xff000000))
+                {
+                    return DXGI_FORMAT_B8G8R8A8_UNORM;
+                }
+
+                if (ISBITMASK(0x00ff0000,0x0000ff00,0x000000ff,0x00000000))
+                {
+                    return DXGI_FORMAT_B8G8R8X8_UNORM;
+                }
+
+                // No DXGI format maps to ISBITMASK(0x000000ff,0x0000ff00,0x00ff0000,0x00000000) aka D3DFMT_X8B8G8R8
+
+                // Note that many common DDS reader/writers (including D3DX) swap the
+                // the RED/BLUE masks for 10:10:10:2 formats. We assume
+                // below that the 'backwards' header mask is being used since it is most
+                // likely written by D3DX. The more robust solution is to use the 'DX10'
+                // header extension and specify the DXGI_FORMAT_R10G10B10A2_UNORM format directly
+
+                // For 'correct' writers, this should be 0x000003ff,0x000ffc00,0x3ff00000 for RGB data
+                if (ISBITMASK(0x3ff00000,0x000ffc00,0x000003ff,0xc0000000))
+                {
+                    return DXGI_FORMAT_R10G10B10A2_UNORM;
+                }
+
+                // No DXGI format maps to ISBITMASK(0x000003ff,0x000ffc00,0x3ff00000,0xc0000000) aka D3DFMT_A2R10G10B10
+
+                if (ISBITMASK(0x0000ffff,0xffff0000,0x00000000,0x00000000))
+                {
+                    return DXGI_FORMAT_R16G16_UNORM;
+                }
+
+                if (ISBITMASK(0xffffffff,0x00000000,0x00000000,0x00000000))
+                {
+                    // Only 32-bit color channel format in D3D9 was R32F
+                    return DXGI_FORMAT_R32_FLOAT; // D3DX writes this out as a FourCC of 114
+                }
+            }
+
+            if (pixelFmt.bitMaskR == 0xffff)
+                return DXGI_FORMAT_R16G16_UNORM;
+
+            if (pixelFmt.bitMaskR == 0x3ff)
+                return DXGI_FORMAT_R10G10B10A2_UNORM;
+
+            if (pixelFmt.bitMaskR == 0x7c00)
+                return DXGI_FORMAT_B5G5R5A1_UNORM;
+
+            if (pixelFmt.bitMaskR == 0xf800)
+                return DXGI_FORMAT_B5G6R5_UNORM;
+
+            if (pixelFmt.bitMaskR == 0)
+                return DXGI_FORMAT_A8_UNORM;
         }
     }
+    return 0;
 }
 
 bool Texture::isDXT(DXGI_FORMAT format) const
@@ -479,7 +598,7 @@ INT32 Texture::InitFromFile(DeviceVK *pDevice, UploadHeapVK* pUploadHeap, const 
             DWORD width, height, offset;
         } footprints[12];
 
-        for (UINT mip = 0; mip < pMipSet->m_nMipLevels; mip++)
+        for (CMP_INT mip = 0; mip < pMipSet->m_nMipLevels; mip++)
         {
             DWORD dwWidth;
             dwWidth = pMipSet->m_nWidth >> mip;
@@ -499,7 +618,7 @@ INT32 Texture::InitFromFile(DeviceVK *pDevice, UploadHeapVK* pUploadHeap, const 
 
         int offset = 0;
 
-        for (DWORD a = 0; a < pMipSet->m_nDepth; a++)
+        for (CMP_INT a = 0; a < pMipSet->m_nDepth; a++)
         {
             UINT32 mipMapCount = pMipSet->m_nMipLevels;
 
@@ -569,7 +688,7 @@ INT32 Texture::InitFromFile(DeviceVK *pDevice, UploadHeapVK* pUploadHeap, const 
             copy_barrier[0].subresourceRange.layerCount = 1;
             vkCmdPipelineBarrier(pUploadHeap->GetCommandList(), VK_PIPELINE_STAGE_HOST_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, NULL, 0, NULL, 1, copy_barrier);
 
-            for (UINT mip = 0; mip < pMipSet->m_nMipLevels; mip++)
+            for (CMP_INT mip = 0; mip < pMipSet->m_nMipLevels; mip++)
             {
                 VkBufferImageCopy region = {};
                 region.bufferOffset = footprints[mip].offset;

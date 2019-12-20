@@ -23,5 +23,6 @@ IF NOT EXIST %BUILD_OUTDIR%media\envmap mkdir %BUILD_OUTDIR%media\envmap
 XCopy /r /d /y "%BUILD_PROJECTDIR%..\media\envmap\brdf.dds"       %BUILD_OUTDIR%media\envmap\
 XCopy /r /d /y "%BUILD_PROJECTDIR%..\media\envmap\diffuse.dds"       %BUILD_OUTDIR%media\envmap\
 XCopy /r /d /y "%BUILD_PROJECTDIR%..\media\envmap\specular.dds"       %BUILD_OUTDIR%media\envmap\
+XCopy /r /d /y "%BUILD_PROJECTDIR%..\media\envmap\readme.txt"         %BUILD_OUTDIR%media\envmap\
 
 echo "glTF_DX12_EX dependencies copy done"

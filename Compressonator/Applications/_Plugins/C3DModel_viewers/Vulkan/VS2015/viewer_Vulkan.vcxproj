@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug_MD|Win32">
       <Configuration>Debug_MD</Configuration>
@@ -38,18 +38,18 @@
     <ProjectGuid>{E5615E66-7E8F-46C2-8E26-CC8546915A27}</ProjectGuid>
     <Keyword>Qt4VSv1.0</Keyword>
     <ProjectName>ModelViewer_Vulkan</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -64,12 +64,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -119,26 +119,26 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">..\..\..\..\..\Build\$(SolutionName)\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
@@ -178,7 +178,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_QT)\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_BOOST);.\..;.\..\..\..\common\d3dx12;.\..\..\..\Common;.\..\..\..\Common\glTF;.\..\..\..\..\..\Header;.\..\Util;$(Compressonator_VULKAN)\include;$(Compressonator_VULKAN)\glslang;$(VULKAN_SDK)\include;$(VULKAN_SDK)\glslang;$(Compressonator_RootDev)\Source\CMP_MeshOptimizer;.\..\GeneratedFiles\$(ConfigurationName);$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf;$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf\Vulkan;$(Compressonator_RootDev)\Applications\_Plugins\Common\model_viewer</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_QT)\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_BOOST);.\..;.\..\..\..\common\d3dx12;.\..\..\..\Common;.\..\..\..\Common\glTF;$(Compressonator_RootDev)\Applications\_Libs\CMP_MeshOptimizer;$(Compressonator_RootDev)\Applications\_Libs\GPU_Decode;.\..\Util;$(Compressonator_VULKAN)\include;$(Compressonator_VULKAN)\glslang;$(VULKAN_SDK)\include;$(VULKAN_SDK)\glslang;.\..\GeneratedFiles\$(ConfigurationName);$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf;$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf\Vulkan;$(Compressonator_RootDev)\Applications\_Plugins\Common\model_viewer</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -187,8 +187,8 @@
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_FrameWork_MD$(DebugSuffix).lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>../CopyFiles.bat $(OUTDIR) $(ProjectDir)</Command>
@@ -205,7 +205,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_QT)\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_BOOST);.\..;.\..\..\..\common\d3dx12;.\..\..\..\Common;.\..\..\..\Common\glTF;.\..\..\..\..\..\Header;.\..\Util;$(Compressonator_VULKAN)\include;$(Compressonator_VULKAN)\glslang;$(VULKAN_SDK)\include;$(VULKAN_SDK)\glslang;$(Compressonator_RootDev)\Source\CMP_MeshOptimizer;.\..\GeneratedFiles\$(ConfigurationName);$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf;$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf\Vulkan;$(Compressonator_RootDev)\Applications\_Plugins\Common\model_viewer</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_QT)\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_BOOST);.\..;.\..\..\..\common\d3dx12;.\..\..\..\Common;.\..\..\..\Common\glTF;$(Compressonator_RootDev)\Applications\_Libs\CMP_MeshOptimizer;$(Compressonator_RootDev)\Applications\_Libs\GPU_Decode;.\..\Util;$(Compressonator_VULKAN)\include;$(Compressonator_VULKAN)\glslang;$(VULKAN_SDK)\include;$(VULKAN_SDK)\glslang;.\..\GeneratedFiles\$(ConfigurationName);$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf;$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf\Vulkan;$(Compressonator_RootDev)\Applications\_Plugins\Common\model_viewer</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -214,8 +214,8 @@
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;$(Compressonator_VULKAN)\lib32;$(Compressonator_VULKAN)\glslang\VS2015\glslang\Debug\;$(Compressonator_VULKAN)\glslang\VS2015\glslang\OSDependent\Windows\Debug;$(Compressonator_VULKAN)\glslang\VS2015\hlsl\Debug;$(Compressonator_VULKAN)\glslang\VS2015\SPIRV\Debug;$(Compressonator_VULKAN)\glslang\VS2015\OGLCompilersDLL\Debug;$(Compressonator_VULKAN)\spirv-tools\VS2015\source\opt\Debug;$(Compressonator_VULKAN)\spirv-tools\VS2015\source\Debug;$(VULKAN_SDK)\lib32;$(VULKAN_SDK)\glslang\VS2015\glslang\Debug\;$(VULKAN_SDK)\glslang\VS2015\glslang\OSDependent\Windows\Debug;$(VULKAN_SDK)\glslang\VS2015\hlsl\Debug;$(VULKAN_SDK)\glslang\VS2015\SPIRV\Debug;$(VULKAN_SDK)\glslang\VS2015\OGLCompilersDLL\Debug;$(VULKAN_SDK)\spirv-tools\VS2015\source\opt\Debug;$(VULKAN_SDK)\spirv-tools\VS2015\source\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;Qt5Widgetsd.lib;Qt5Cored.lib;Qt5Guid.lib;Compressonator_MDd.lib;GPU_Decode_MDd.lib;vulkan-1.lib;glslangd.lib;SPIRVd.lib;HLSLd.lib;OGLCompilerd.lib;OSDependentd.lib;SPVRemapperd.lib;SPIRV-Tools-opt.lib;SPIRV-Tools.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;$(Compressonator_VULKAN)\lib32;$(Compressonator_VULKAN)\glslang\VS2015\glslang\Debug\;$(Compressonator_VULKAN)\glslang\VS2015\glslang\OSDependent\Windows\Debug;$(Compressonator_VULKAN)\glslang\VS2015\hlsl\Debug;$(Compressonator_VULKAN)\glslang\VS2015\SPIRV\Debug;$(Compressonator_VULKAN)\glslang\VS2015\OGLCompilersDLL\Debug;$(Compressonator_VULKAN)\spirv-tools\VS2015\source\opt\Debug;$(Compressonator_VULKAN)\spirv-tools\VS2015\source\Debug;$(VULKAN_SDK)\lib32;$(VULKAN_SDK)\glslang\VS2015\glslang\Debug\;$(VULKAN_SDK)\glslang\VS2015\glslang\OSDependent\Windows\Debug;$(VULKAN_SDK)\glslang\VS2015\hlsl\Debug;$(VULKAN_SDK)\glslang\VS2015\SPIRV\Debug;$(VULKAN_SDK)\glslang\VS2015\OGLCompilersDLL\Debug;$(VULKAN_SDK)\spirv-tools\VS2015\source\opt\Debug;$(VULKAN_SDK)\spirv-tools\VS2015\source\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_FrameWork_MD$(DebugSuffix).lib;Compressonator_MDd.lib;vulkan-1.lib;Qt5Widgetsd.lib;Qt5Cored.lib;Qt5Guid.lib;Compressonator_MDd.lib;GPU_Decode_MDd.lib;vulkan-1.lib;glslangd.lib;SPIRVd.lib;HLSLd.lib;OGLCompilerd.lib;OSDependentd.lib;SPVRemapperd.lib;SPIRV-Tools-opt.lib;SPIRV-Tools.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>  /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
@@ -232,7 +232,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_QT)\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_BOOST);.\..;.\..\..\..\common\d3dx12;.\..\..\..\Common;.\..\..\..\Common\glTF;.\..\..\..\..\..\Header;.\..\Util;$(Compressonator_VULKAN)\include;$(Compressonator_VULKAN)\glslang;$(VULKAN_SDK)\include;$(VULKAN_SDK)\glslang;$(Compressonator_RootDev)\Source\CMP_MeshOptimizer;.\..\GeneratedFiles\$(ConfigurationName);$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf;$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf\Vulkan;$(Compressonator_RootDev)\Applications\_Plugins\Common\model_viewer</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_QT)\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_BOOST);.\..;.\..\..\..\common\d3dx12;.\..\..\..\Common;.\..\..\..\Common\glTF;$(Compressonator_RootDev)\Applications\_Libs\CMP_MeshOptimizer;$(Compressonator_RootDev)\Applications\_Libs\GPU_Decode;.\..\Util;$(Compressonator_VULKAN)\include;$(Compressonator_VULKAN)\glslang;$(VULKAN_SDK)\include;$(VULKAN_SDK)\glslang;.\..\GeneratedFiles\$(ConfigurationName);$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf;$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf\Vulkan;$(Compressonator_RootDev)\Applications\_Plugins\Common\model_viewer</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -240,8 +240,8 @@
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
-      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_FrameWork_MD$(DebugSuffix).lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>../CopyFiles.bat $(OUTDIR) $(ProjectDir)</Command>
@@ -257,7 +257,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_QT)\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_BOOST);.\..;.\..\..\..\common\d3dx12;.\..\..\..\Common;.\..\..\..\Common\glTF;.\..\..\..\..\..\Header;.\..\Util;$(Compressonator_VULKAN)\include;$(Compressonator_VULKAN)\glslang;$(VULKAN_SDK)\include;$(VULKAN_SDK)\glslang;$(Compressonator_RootDev)\Source\CMP_MeshOptimizer;.\..\GeneratedFiles\$(ConfigurationName);$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf;$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf\Vulkan;$(Compressonator_RootDev)\Applications\_Plugins\Common\model_viewer</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_QT)\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_BOOST);.\..;.\..\..\..\common\d3dx12;.\..\..\..\Common;.\..\..\..\Common\glTF;$(Compressonator_RootDev)\Applications\_Libs\CMP_MeshOptimizer;$(Compressonator_RootDev)\Applications\_Libs\GPU_Decode;.\..\Util;$(Compressonator_VULKAN)\include;$(Compressonator_VULKAN)\glslang;$(VULKAN_SDK)\include;$(VULKAN_SDK)\glslang;.\..\GeneratedFiles\$(ConfigurationName);$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf;$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf\Vulkan;$(Compressonator_RootDev)\Applications\_Plugins\Common\model_viewer</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -265,8 +265,8 @@
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
-      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86_64/;$(Compressonator_VULKAN)\lib;$(Compressonator_VULKAN)\glslang\VS2015_x64\glslang\Debug;$(Compressonator_VULKAN)\glslang\VS2015_x64\glslang\OSDependent\Windows\Debug;$(Compressonator_VULKAN)\glslang\VS2015_x64\hlsl\Debug;$(Compressonator_VULKAN)\glslang\VS2015_x64\SPIRV\Debug;$(Compressonator_VULKAN)\spirv-tools\VS2015_x64\source\opt\Debug;$(Compressonator_VULKAN)\spirv-tools\VS2015_x64\source\Debug;$(Compressonator_VULKAN)\glslang\VS2015_x64\OGLCompilersDLL\Debug;$(VULKAN_SDK)\lib;$(Compressonator_GLSLANG);$(Compressonator_GLSLANG_OSDEPEN);$(Compressonator_GLSLANG_HLSL);$(Compressonator_GLSLANG_SPIRV);$(Compressonator_GLSLANG_SRC_OPT);$(Compressonator_GLSLANG_SRC);$(Compressonator_GLSLANG_OGLCOMPILER);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;Qt5Widgetsd.lib;Qt5Cored.lib;Qt5Guid.lib;Compressonator_MDd.lib;GPU_Decode_MDd.lib;vulkan-1.lib;glslangd.lib;SPIRVd.lib;HLSLd.lib;OGLCompilerd.lib;OSDependentd.lib;SPVRemapperd.lib;SPIRV-Tools-opt.lib;SPIRV-Tools.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86_64/;$(Compressonator_VULKAN)\lib;$(Compressonator_VULKAN)\glslang\VS2015_x64\glslang\Debug;$(Compressonator_VULKAN)\glslang\VS2015_x64\glslang\OSDependent\Windows\Debug;$(Compressonator_VULKAN)\glslang\VS2015_x64\hlsl\Debug;$(Compressonator_VULKAN)\glslang\VS2015_x64\SPIRV\Debug;$(Compressonator_VULKAN)\spirv-tools\VS2015_x64\source\opt\Debug;$(Compressonator_VULKAN)\spirv-tools\VS2015_x64\source\Debug;$(Compressonator_VULKAN)\glslang\VS2015_x64\OGLCompilersDLL\Debug;$(VULKAN_SDK)\lib;$(Compressonator_GLSLANG);$(Compressonator_GLSLANG_OSDEPEN);$(Compressonator_GLSLANG_HLSL);$(Compressonator_GLSLANG_SPIRV);$(Compressonator_GLSLANG_SRC_OPT);$(Compressonator_GLSLANG_SRC);$(Compressonator_GLSLANG_OGLCOMPILER);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_FrameWork_MD$(DebugSuffix).lib;Compressonator_MDd.lib;vulkan-1.lib;Qt5Widgetsd.lib;Qt5Cored.lib;Qt5Guid.lib;Compressonator_MDd.lib;GPU_Decode_MDd.lib;vulkan-1.lib;glslangd.lib;SPIRVd.lib;HLSLd.lib;OGLCompilerd.lib;OSDependentd.lib;SPVRemapperd.lib;SPIRV-Tools-opt.lib;SPIRV-Tools.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>  /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
@@ -286,7 +286,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_QT)\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_BOOST);.\..;.\..\..\..\common\d3dx12;.\..\..\..\Common;.\..\..\..\Common\glTF;.\..\..\..\..\..\Header;.\..\Util;$(Compressonator_VULKAN)\include;$(Compressonator_VULKAN)\glslang;$(VULKAN_SDK)\include;$(VULKAN_SDK)\glslang;$(Compressonator_RootDev)\Source\CMP_MeshOptimizer;.\..\GeneratedFiles\$(ConfigurationName);$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf;$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf\Vulkan;$(Compressonator_RootDev)\Applications\_Plugins\Common\model_viewer</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_QT)\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_BOOST);.\..;.\..\..\..\common\d3dx12;.\..\..\..\Common;.\..\..\..\Common\glTF;$(Compressonator_RootDev)\Applications\_Libs\CMP_MeshOptimizer;$(Compressonator_RootDev)\Applications\_Libs\GPU_Decode;.\..\Util;$(Compressonator_VULKAN)\include;$(Compressonator_VULKAN)\glslang;$(VULKAN_SDK)\include;$(VULKAN_SDK)\glslang;.\..\GeneratedFiles\$(ConfigurationName);$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf;$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf\Vulkan;$(Compressonator_RootDev)\Applications\_Plugins\Common\model_viewer</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -297,8 +297,8 @@
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;$(VK_SDK_PATH)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;$(VK_SDK_PATH)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_FrameWork_MD$(DebugSuffix).lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>../CopyFiles.bat $(OUTDIR) $(ProjectDir)</Command>
@@ -317,7 +317,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_QT)\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_BOOST);.\..;.\..\..\..\common\d3dx12;.\..\..\..\Common;.\..\..\..\Common\glTF;.\..\..\..\..\..\Header;.\..\Util;$(Compressonator_VULKAN)\include;$(Compressonator_VULKAN)\glslang;$(VULKAN_SDK)\include;$(VULKAN_SDK)\glslang;$(Compressonator_RootDev)\Source\CMP_MeshOptimizer;.\..\GeneratedFiles\$(ConfigurationName);$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf;$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf\Vulkan;$(Compressonator_RootDev)\Applications\_Plugins\Common\model_viewer</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_QT)\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_BOOST);.\..;.\..\..\..\common\d3dx12;.\..\..\..\Common;.\..\..\..\Common\glTF;$(Compressonator_RootDev)\Applications\_Libs\CMP_MeshOptimizer;$(Compressonator_RootDev)\Applications\_Libs\GPU_Decode;.\..\Util;$(Compressonator_VULKAN)\include;$(Compressonator_VULKAN)\glslang;$(VULKAN_SDK)\include;$(VULKAN_SDK)\glslang;.\..\GeneratedFiles\$(ConfigurationName);$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf;$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf\Vulkan;$(Compressonator_RootDev)\Applications\_Plugins\Common\model_viewer</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -328,8 +328,8 @@
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;$(Compressonator_VULKAN)\lib32;$(Compressonator_VULKAN)\glslang\VS2015\glslang\Release;$(Compressonator_VULKAN)\glslang\VS2015\glslang\OSDependent\Windows\Release;$(Compressonator_VULKAN)\glslang\VS2015\hlsl\Release;$(Compressonator_VULKAN)\glslang\VS2015\SPIRV\Release;$(Compressonator_VULKAN)\spirv-tools\VS2015\source\opt\Release;$(Compressonator_VULKAN)\spirv-tools\VS2015\source\Release;$(Compressonator_VULKAN)\glslang\VS2015\OGLCompilersDLL\Release;$(VULKAN_SDK)\lib32;$(VULKAN_SDK)\glslang\VS2015\glslang\Release;$(VULKAN_SDK)\glslang\VS2015\glslang\OSDependent\Windows\Release;$(VULKAN_SDK)\glslang\VS2015\hlsl\Release;$(VULKAN_SDK)\glslang\VS2015\SPIRV\Release;$(VULKAN_SDK)\spirv-tools\VS2015\source\opt\Release;$(VULKAN_SDK)\spirv-tools\VS2015\source\Release;$(VULKAN_SDK)\glslang\VS2015\OGLCompilersDLL\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;Qt5Widgets.lib;Qt5Core.lib;Qt5Gui.lib;vulkan-1.lib;glslang.lib;Compressonator_MD.lib;GPU_Decode_MD.lib;SPIRV.lib;HLSL.lib;OGLCompiler.lib;OSDependent.lib;SPVRemapper.lib;SPIRV-Tools-opt.lib;SPIRV-Tools.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;$(Compressonator_VULKAN)\lib32;$(Compressonator_VULKAN)\glslang\VS2015\glslang\Release;$(Compressonator_VULKAN)\glslang\VS2015\glslang\OSDependent\Windows\Release;$(Compressonator_VULKAN)\glslang\VS2015\hlsl\Release;$(Compressonator_VULKAN)\glslang\VS2015\SPIRV\Release;$(Compressonator_VULKAN)\spirv-tools\VS2015\source\opt\Release;$(Compressonator_VULKAN)\spirv-tools\VS2015\source\Release;$(Compressonator_VULKAN)\glslang\VS2015\OGLCompilersDLL\Release;$(VULKAN_SDK)\lib32;$(VULKAN_SDK)\glslang\VS2015\glslang\Release;$(VULKAN_SDK)\glslang\VS2015\glslang\OSDependent\Windows\Release;$(VULKAN_SDK)\glslang\VS2015\hlsl\Release;$(VULKAN_SDK)\glslang\VS2015\SPIRV\Release;$(VULKAN_SDK)\spirv-tools\VS2015\source\opt\Release;$(VULKAN_SDK)\spirv-tools\VS2015\source\Release;$(VULKAN_SDK)\glslang\VS2015\OGLCompilersDLL\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_FrameWork_MD$(DebugSuffix).lib;Compressonator_MD.lib;vulkan-1.lib;Qt5Widgets.lib;Qt5Core.lib;Qt5Gui.lib;vulkan-1.lib;glslang.lib;Compressonator_MD.lib;GPU_Decode_MD.lib;SPIRV.lib;HLSL.lib;OGLCompiler.lib;OSDependent.lib;SPVRemapper.lib;SPIRV-Tools-opt.lib;SPIRV-Tools.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>../CopyFiles.bat $(OUTDIR) $(ProjectDir)</Command>
@@ -348,7 +348,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_QT)\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_BOOST);.\..;.\..\..\..\common\d3dx12;.\..\..\..\Common;.\..\..\..\Common\glTF;.\..\..\..\..\..\Header;.\..\Util;$(Compressonator_VULKAN)\include;$(Compressonator_VULKAN)\glslang;$(VULKAN_SDK)\include;$(VULKAN_SDK)\glslang;$(Compressonator_RootDev)\Source\CMP_MeshOptimizer;.\..\GeneratedFiles\$(ConfigurationName);$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf;$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf\Vulkan;$(Compressonator_RootDev)\Applications\_Plugins\Common\model_viewer</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_QT)\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_BOOST);.\..;.\..\..\..\common\d3dx12;.\..\..\..\Common;.\..\..\..\Common\glTF;$(Compressonator_RootDev)\Applications\_Libs\CMP_MeshOptimizer;$(Compressonator_RootDev)\Applications\_Libs\GPU_Decode;.\..\Util;$(Compressonator_VULKAN)\include;$(Compressonator_VULKAN)\glslang;$(VULKAN_SDK)\include;$(VULKAN_SDK)\glslang;.\..\GeneratedFiles\$(ConfigurationName);$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf;$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf\Vulkan;$(Compressonator_RootDev)\Applications\_Plugins\Common\model_viewer</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -358,8 +358,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;$(VK_SDK_PATH)\lib;$(VK_SDK_PATH)\glslang\build\glslang\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86/;$(VK_SDK_PATH)\lib;$(VK_SDK_PATH)\glslang\build\glslang\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_FrameWork_MD$(DebugSuffix).lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>../CopyFiles.bat $(OUTDIR) $(ProjectDir)</Command>
@@ -378,7 +378,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_QT)\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_BOOST);.\..;.\..\..\..\common\d3dx12;.\..\..\..\Common;.\..\..\..\Common\glTF;.\..\..\..\..\..\Header;.\..\Util;$(Compressonator_VULKAN)\include;$(Compressonator_VULKAN)\glslang;$(VULKAN_SDK)\include;$(VULKAN_SDK)\glslang;$(Compressonator_RootDev)\Source\CMP_MeshOptimizer;.\..\GeneratedFiles\$(ConfigurationName);$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf;$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf\Vulkan;$(Compressonator_RootDev)\Applications\_Plugins\Common\model_viewer</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_QT)\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\OpenEXR;$(Compressonator_BOOST);.\..;.\..\..\..\common\d3dx12;.\..\..\..\Common;.\..\..\..\Common\glTF;$(Compressonator_RootDev)\Applications\_Libs\CMP_MeshOptimizer;$(Compressonator_RootDev)\Applications\_Libs\GPU_Decode;.\..\Util;$(Compressonator_VULKAN)\include;$(Compressonator_VULKAN)\glslang;$(VULKAN_SDK)\include;$(VULKAN_SDK)\glslang;.\..\GeneratedFiles\$(ConfigurationName);$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf;$(Compressonator_RootDev)\Applications\_Plugins\Common\gltf\Vulkan;$(Compressonator_RootDev)\Applications\_Plugins\Common\model_viewer</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -388,8 +388,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86_64/;$(Compressonator_VULKAN)\lib;$(Compressonator_VULKAN)\glslang\VS2015_x64\glslang\Release;$(Compressonator_VULKAN)\glslang\VS2015_x64\glslang\OSDependent\Windows\Release;$(Compressonator_VULKAN)\glslang\VS2015_x64\hlsl\Release;$(Compressonator_VULKAN)\glslang\VS2015_x64\SPIRV\Release;$(Compressonator_VULKAN)\glslang\VS2015_x64\OGLCompilersDLL\Release;$(Compressonator_VULKAN)\spirv-tools\VS2015_x64\source\opt\Release;$(Compressonator_VULKAN)\spirv-tools\VS2015_x64\source\Release;$(VULKAN_SDK)\lib;$(Compressonator_GLSLANG);$(Compressonator_GLSLANG_OSDEPEN);$(Compressonator_GLSLANG_HLSL);$(Compressonator_GLSLANG_SPIRV);$(Compressonator_GLSLANG_SRC_OPT);$(Compressonator_GLSLANG_SRC);$(Compressonator_GLSLANG_OGLCOMPILER);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;Qt5Widgets.lib;Qt5Core.lib;Qt5Gui.lib;glslang.lib;Compressonator_MD.lib;GPU_Decode_MD.lib;SPIRV.lib;HLSL.lib;OGLCompiler.lib;OSDependent.lib;SPVRemapper.lib;SPIRV-Tools-opt.lib;SPIRV-Tools.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(Compressonator_RootDev)/Build/$(Configuration)/$(Platform)/;$(Compressonator_QT)/lib/;$(Compressonator_ILMBASE)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_OPENEXR)/$(SolutionName)/$(Platform)/lib/;$(Compressonator_BOOST)/lib/vc14/x86_64/;$(Compressonator_VULKAN)\lib;$(Compressonator_VULKAN)\glslang\VS2015_x64\glslang\Release;$(Compressonator_VULKAN)\glslang\VS2015_x64\glslang\OSDependent\Windows\Release;$(Compressonator_VULKAN)\glslang\VS2015_x64\hlsl\Release;$(Compressonator_VULKAN)\glslang\VS2015_x64\SPIRV\Release;$(Compressonator_VULKAN)\glslang\VS2015_x64\OGLCompilersDLL\Release;$(Compressonator_VULKAN)\spirv-tools\VS2015_x64\source\opt\Release;$(Compressonator_VULKAN)\spirv-tools\VS2015_x64\source\Release;$(VULKAN_SDK)\lib;$(Compressonator_GLSLANG);$(Compressonator_GLSLANG_OSDEPEN);$(Compressonator_GLSLANG_HLSL);$(Compressonator_GLSLANG_SPIRV);$(Compressonator_GLSLANG_SRC_OPT);$(Compressonator_GLSLANG_SRC);$(Compressonator_GLSLANG_OGLCOMPILER);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CMP_FrameWork_MD$(DebugSuffix).lib;Compressonator_MD.lib;vulkan-1.lib;Qt5Widgets.lib;Qt5Core.lib;Qt5Gui.lib;glslang.lib;Compressonator_MD.lib;GPU_Decode_MD.lib;SPIRV.lib;HLSL.lib;OGLCompiler.lib;OSDependent.lib;SPVRemapper.lib;SPIRV-Tools-opt.lib;SPIRV-Tools.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>../CopyFiles.bat $(OUTDIR) $(ProjectDir)</Command>
@@ -409,7 +409,6 @@
     <ClCompile Include="..\..\..\Common\imgui\imgui.cpp" />
     <ClCompile Include="..\..\..\Common\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\..\..\Common\imgui\imgui_draw.cpp" />
-    <ClCompile Include="..\..\..\Common\MIPS.cpp" />
     <ClCompile Include="..\..\..\Common\ModelData.cpp" />
     <ClCompile Include="..\..\..\Common\model_viewer\ModelTexture.cpp" />
     <ClCompile Include="..\..\..\Common\PluginManager.cpp" />
@@ -731,64 +730,6 @@
       </AdditionalInputs>
     </CustomBuild>
     <CustomBuild Include="..\..\..\Common\imgui\stb_truetype.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Performing Custom Build Tools</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Performing Custom Build Tools</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Performing Custom Build Tools</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Performing Custom Build Tools</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
-      </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">Performing Custom Build Tools</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
-      </Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
-      </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
-      </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">Performing Custom Build Tools</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
-      </Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
-      </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
-      </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">Performing Custom Build Tools</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
-      </Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
-      </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
-      </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">Performing Custom Build Tools</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
-      </Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
-      </AdditionalInputs>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\Common\MIPS.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Performing Custom Build Tools</Message>
