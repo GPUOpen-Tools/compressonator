@@ -1649,73 +1649,73 @@ void QtVariantPropertyManager::setValue(QtProperty *property, const QVariant &va
 
     QtAbstractPropertyManager *manager = internProp->propertyManager();
     if (QtIntPropertyManager *intManager = qobject_cast<QtIntPropertyManager *>(manager)) {
-        intManager->setValue(internProp, qVariantValue<int>(val));
+        intManager->setValue(internProp, val.value<int>());
         return;
     } else if (QtDoublePropertyManager *doubleManager = qobject_cast<QtDoublePropertyManager *>(manager)) {
-        doubleManager->setValue(internProp, qVariantValue<double>(val));
+        doubleManager->setValue(internProp, val.value<double>());
         return;
     } else if (QtBoolPropertyManager *boolManager = qobject_cast<QtBoolPropertyManager *>(manager)) {
-        boolManager->setValue(internProp, qVariantValue<bool>(val));
+        boolManager->setValue(internProp, val.value<bool>());
         return;
     } else if (QtStringPropertyManager *stringManager = qobject_cast<QtStringPropertyManager *>(manager)) {
-        stringManager->setValue(internProp, qVariantValue<QString>(val));
+        stringManager->setValue(internProp, val.value<QString>());
         return;
     } else if (QtDatePropertyManager *dateManager = qobject_cast<QtDatePropertyManager *>(manager)) {
-        dateManager->setValue(internProp, qVariantValue<QDate>(val));
+        dateManager->setValue(internProp, val.value<QDate>());
         return;
     } else if (QtTimePropertyManager *timeManager = qobject_cast<QtTimePropertyManager *>(manager)) {
-        timeManager->setValue(internProp, qVariantValue<QTime>(val));
+        timeManager->setValue(internProp, val.value<QTime>());
         return;
     } else if (QtDateTimePropertyManager *dateTimeManager = qobject_cast<QtDateTimePropertyManager *>(manager)) {
-        dateTimeManager->setValue(internProp, qVariantValue<QDateTime>(val));
+        dateTimeManager->setValue(internProp, val.value<QDateTime>());
         return;
     } else if (QtKeySequencePropertyManager *keySequenceManager = qobject_cast<QtKeySequencePropertyManager *>(manager)) {
-        keySequenceManager->setValue(internProp, qVariantValue<QKeySequence>(val));
+        keySequenceManager->setValue(internProp, val.value<QKeySequence>());
         return;
     } else if (QtCharPropertyManager *charManager = qobject_cast<QtCharPropertyManager *>(manager)) {
-        charManager->setValue(internProp, qVariantValue<QChar>(val));
+        charManager->setValue(internProp, val.value<QChar>());
         return;
     } else if (QtLocalePropertyManager *localeManager = qobject_cast<QtLocalePropertyManager *>(manager)) {
-        localeManager->setValue(internProp, qVariantValue<QLocale>(val));
+        localeManager->setValue(internProp, val.value<QLocale>());
         return;
     } else if (QtPointPropertyManager *pointManager = qobject_cast<QtPointPropertyManager *>(manager)) {
-        pointManager->setValue(internProp, qVariantValue<QPoint>(val));
+        pointManager->setValue(internProp, val.value<QPoint>());
         return;
     } else if (QtPointFPropertyManager *pointFManager = qobject_cast<QtPointFPropertyManager *>(manager)) {
-        pointFManager->setValue(internProp, qVariantValue<QPointF>(val));
+        pointFManager->setValue(internProp, val.value<QPointF>());
         return;
     } else if (QtSizePropertyManager *sizeManager = qobject_cast<QtSizePropertyManager *>(manager)) {
-        sizeManager->setValue(internProp, qVariantValue<QSize>(val));
+        sizeManager->setValue(internProp, val.value<QSize>());
         return;
     } else if (QtSizeFPropertyManager *sizeFManager = qobject_cast<QtSizeFPropertyManager *>(manager)) {
-        sizeFManager->setValue(internProp, qVariantValue<QSizeF>(val));
+        sizeFManager->setValue(internProp, val.value<QSizeF>());
         return;
     } else if (QtRectPropertyManager *rectManager = qobject_cast<QtRectPropertyManager *>(manager)) {
-        rectManager->setValue(internProp, qVariantValue<QRect>(val));
+        rectManager->setValue(internProp, val.value<QRect>());
         return;
     } else if (QtRectFPropertyManager *rectFManager = qobject_cast<QtRectFPropertyManager *>(manager)) {
-        rectFManager->setValue(internProp, qVariantValue<QRectF>(val));
+        rectFManager->setValue(internProp, val.value<QRectF>());
         return;
     } else if (QtColorPropertyManager *colorManager = qobject_cast<QtColorPropertyManager *>(manager)) {
-        colorManager->setValue(internProp, qVariantValue<QColor>(val));
+        colorManager->setValue(internProp, val.value<QColor>());
         return;
     } else if (QtEnumPropertyManager *enumManager = qobject_cast<QtEnumPropertyManager *>(manager)) {
-        enumManager->setValue(internProp, qVariantValue<int>(val));
+        enumManager->setValue(internProp, val.value<int>());
         return;
     } else if (QtSizePolicyPropertyManager *sizePolicyManager =
                qobject_cast<QtSizePolicyPropertyManager *>(manager)) {
-        sizePolicyManager->setValue(internProp, qVariantValue<QSizePolicy>(val));
+        sizePolicyManager->setValue(internProp, val.value<QSizePolicy>());
         return;
     } else if (QtFontPropertyManager *fontManager = qobject_cast<QtFontPropertyManager *>(manager)) {
-        fontManager->setValue(internProp, qVariantValue<QFont>(val));
+        fontManager->setValue(internProp, val.value<QFont>());
         return;
 #ifndef QT_NO_CURSOR
     } else if (QtCursorPropertyManager *cursorManager = qobject_cast<QtCursorPropertyManager *>(manager)) {
-        cursorManager->setValue(internProp, qVariantValue<QCursor>(val));
+        cursorManager->setValue(internProp, val.value<QCursor>());
         return;
 #endif
     } else if (QtFlagPropertyManager *flagManager = qobject_cast<QtFlagPropertyManager *>(manager)) {
-        flagManager->setValue(internProp, qVariantValue<int>(val));
+        flagManager->setValue(internProp, val.value<int>());
         return;
     }
 }
@@ -1753,81 +1753,81 @@ void QtVariantPropertyManager::setAttribute(QtProperty *property,
     QtAbstractPropertyManager *manager = internProp->propertyManager();
     if (QtIntPropertyManager *intManager = qobject_cast<QtIntPropertyManager *>(manager)) {
         if (attribute == d_ptr->m_maximumAttribute)
-            intManager->setMaximum(internProp, qVariantValue<int>(value));
+            intManager->setMaximum(internProp, value.value<int>());
         else if (attribute == d_ptr->m_minimumAttribute)
-            intManager->setMinimum(internProp, qVariantValue<int>(value));
+            intManager->setMinimum(internProp, value.value<int>());
         else if (attribute == d_ptr->m_singleStepAttribute)
-            intManager->setSingleStep(internProp, qVariantValue<int>(value));
+            intManager->setSingleStep(internProp, value.value<int>());
         else if (attribute == d_ptr->m_readOnlyAttribute)
-            intManager->setReadOnly(internProp, qVariantValue<bool>(value));
+            intManager->setReadOnly(internProp, value.value<bool>());
         return;
     } else if (QtDoublePropertyManager *doubleManager = qobject_cast<QtDoublePropertyManager *>(manager)) {
         if (attribute == d_ptr->m_maximumAttribute)
-            doubleManager->setMaximum(internProp, qVariantValue<double>(value));
+            doubleManager->setMaximum(internProp, value.value<double>());
         if (attribute == d_ptr->m_minimumAttribute)
-            doubleManager->setMinimum(internProp, qVariantValue<double>(value));
+            doubleManager->setMinimum(internProp, value.value<double>());
         if (attribute == d_ptr->m_singleStepAttribute)
-            doubleManager->setSingleStep(internProp, qVariantValue<double>(value));
+            doubleManager->setSingleStep(internProp, value.value<double>());
         if (attribute == d_ptr->m_decimalsAttribute)
-            doubleManager->setDecimals(internProp, qVariantValue<int>(value));
+            doubleManager->setDecimals(internProp, value.value<int>());
         if (attribute == d_ptr->m_readOnlyAttribute)
-            doubleManager->setReadOnly(internProp, qVariantValue<bool>(value));
+            doubleManager->setReadOnly(internProp, value.value<bool>());
         return;
     } else if (QtBoolPropertyManager *boolManager = qobject_cast<QtBoolPropertyManager *>(manager)) {
         if (attribute == d_ptr->m_textVisibleAttribute)
-            boolManager->setTextVisible(internProp, qVariantValue<bool>(value));
+            boolManager->setTextVisible(internProp, value.value<bool>());
         return;
     } else if (QtStringPropertyManager *stringManager = qobject_cast<QtStringPropertyManager *>(manager)) {
         if (attribute == d_ptr->m_regExpAttribute)
-            stringManager->setRegExp(internProp, qVariantValue<QRegExp>(value));
+            stringManager->setRegExp(internProp, value.value<QRegExp>());
         if (attribute == d_ptr->m_echoModeAttribute)
-            stringManager->setEchoMode(internProp, (EchoMode)qVariantValue<int>(value));
+            stringManager->setEchoMode(internProp, (EchoMode)value.value<int>());
         if (attribute == d_ptr->m_readOnlyAttribute)
-            stringManager->setReadOnly(internProp, (EchoMode)qVariantValue<bool>(value));
+            stringManager->setReadOnly(internProp, (EchoMode)value.value<bool>());
         return;
     } else if (QtDatePropertyManager *dateManager = qobject_cast<QtDatePropertyManager *>(manager)) {
         if (attribute == d_ptr->m_maximumAttribute)
-            dateManager->setMaximum(internProp, qVariantValue<QDate>(value));
+            dateManager->setMaximum(internProp, value.value<QDate>());
         if (attribute == d_ptr->m_minimumAttribute)
-            dateManager->setMinimum(internProp, qVariantValue<QDate>(value));
+            dateManager->setMinimum(internProp, value.value<QDate>());
         return;
     } else if (QtPointFPropertyManager *pointFManager = qobject_cast<QtPointFPropertyManager *>(manager)) {
         if (attribute == d_ptr->m_decimalsAttribute)
-            pointFManager->setDecimals(internProp, qVariantValue<int>(value));
+            pointFManager->setDecimals(internProp, value.value<int>());
         return;
     } else if (QtSizePropertyManager *sizeManager = qobject_cast<QtSizePropertyManager *>(manager)) {
         if (attribute == d_ptr->m_maximumAttribute)
-            sizeManager->setMaximum(internProp, qVariantValue<QSize>(value));
+            sizeManager->setMaximum(internProp, value.value<QSize>());
         if (attribute == d_ptr->m_minimumAttribute)
-            sizeManager->setMinimum(internProp, qVariantValue<QSize>(value));
+            sizeManager->setMinimum(internProp, value.value<QSize>());
         return;
     } else if (QtSizeFPropertyManager *sizeFManager = qobject_cast<QtSizeFPropertyManager *>(manager)) {
         if (attribute == d_ptr->m_maximumAttribute)
-            sizeFManager->setMaximum(internProp, qVariantValue<QSizeF>(value));
+            sizeFManager->setMaximum(internProp, value.value<QSizeF>());
         if (attribute == d_ptr->m_minimumAttribute)
-            sizeFManager->setMinimum(internProp, qVariantValue<QSizeF>(value));
+            sizeFManager->setMinimum(internProp, value.value<QSizeF>());
         if (attribute == d_ptr->m_decimalsAttribute)
-            sizeFManager->setDecimals(internProp, qVariantValue<int>(value));
+            sizeFManager->setDecimals(internProp, value.value<int>());
         return;
     } else if (QtRectPropertyManager *rectManager = qobject_cast<QtRectPropertyManager *>(manager)) {
         if (attribute == d_ptr->m_constraintAttribute)
-            rectManager->setConstraint(internProp, qVariantValue<QRect>(value));
+            rectManager->setConstraint(internProp, value.value<QRect>());
         return;
     } else if (QtRectFPropertyManager *rectFManager = qobject_cast<QtRectFPropertyManager *>(manager)) {
         if (attribute == d_ptr->m_constraintAttribute)
-            rectFManager->setConstraint(internProp, qVariantValue<QRectF>(value));
+            rectFManager->setConstraint(internProp, value.value<QRectF>());
         if (attribute == d_ptr->m_decimalsAttribute)
-            rectFManager->setDecimals(internProp, qVariantValue<int>(value));
+            rectFManager->setDecimals(internProp, value.value<int>());
         return;
     } else if (QtEnumPropertyManager *enumManager = qobject_cast<QtEnumPropertyManager *>(manager)) {
         if (attribute == d_ptr->m_enumNamesAttribute)
-            enumManager->setEnumNames(internProp, qVariantValue<QStringList>(value));
+            enumManager->setEnumNames(internProp, value.value<QStringList>());
         if (attribute == d_ptr->m_enumIconsAttribute)
-            enumManager->setEnumIcons(internProp, qVariantValue<QtIconMap>(value));
+            enumManager->setEnumIcons(internProp, value.value<QtIconMap>());
         return;
     } else if (QtFlagPropertyManager *flagManager = qobject_cast<QtFlagPropertyManager *>(manager)) {
         if (attribute == d_ptr->m_flagNamesAttribute)
-            flagManager->setFlagNames(internProp, qVariantValue<QStringList>(value));
+            flagManager->setFlagNames(internProp, value.value<QStringList>());
         return;
     }
 }
