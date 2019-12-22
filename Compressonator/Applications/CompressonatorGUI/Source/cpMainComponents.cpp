@@ -571,8 +571,9 @@ void cpMainComponents::closeEvent(QCloseEvent *event)
             QApplication::processEvents();
         }
     }
+#ifdef _WIN32
     CMP_ShutdownDecompessLibrary();
-
+#endif
     if (m_projectview)
     {
         if (!m_projectview->userSaveProjectAndContinue())
@@ -2598,7 +2599,9 @@ void cpMainComponents::SetRaised()
 cpMainComponents::~cpMainComponents()
 {
     g_bAbortCompression = true;
+#ifdef _WIN32
     CMP_ShutdownDecompessLibrary();
+#endif
 }
 
 void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)
