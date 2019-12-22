@@ -76,7 +76,11 @@ void GetSupportedFileFormats(QList<QByteArray> &g_supportedFormats)
         if (strcmp(g_pluginManager.getPluginType(i), "IMAGE") == 0)
         {
             QByteArray bArray = g_pluginManager.getPluginName(i);
+#ifdef _WIN32
             QByteArray fformat = bArray.toUpper();
+#else
+            QByteArray fformat = bArray.toLower();
+#endif
             if (fformat == "ANALYSIS") continue;
             if (!g_supportedFormats.contains(fformat))
                 g_supportedFormats.append(fformat);
@@ -85,7 +89,11 @@ void GetSupportedFileFormats(QList<QByteArray> &g_supportedFormats)
         if (strcmp(g_pluginManager.getPluginType(i), "3DMODEL_LOADER") == 0)
         {
             QByteArray bArray = g_pluginManager.getPluginName(i);
+#ifdef _WIN32
             QByteArray fformat = bArray.toUpper();
+#else
+            QByteArray fformat = bArray.toLower();
+#endif
             if (!g_supportedFormats.contains(fformat))
                 g_supportedFormats.append(fformat);
         }
