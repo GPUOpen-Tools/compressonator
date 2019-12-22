@@ -1728,12 +1728,13 @@ void cpMainComponents::AddImageCompSettings(QTreeWidgetItem *item, C_Destination
                     return;
                 }
 
+#ifdef _WIN32
                 if (m_data->m_destFileNamePath.contains(".obj") || m_data->m_destFileNamePath.contains(".OBJ"))
                 {
                     //write to indicate the state of the file
                     writeObjFileState(m_data->m_destFileNamePath.toStdString(), CMP_COPY);
                 }
-
+#endif
                 QTreeWidgetItem *ParentItem = item->parent();
                 if (ParentItem)
                 {

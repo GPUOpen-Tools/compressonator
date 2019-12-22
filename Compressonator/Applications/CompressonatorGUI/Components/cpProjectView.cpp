@@ -4364,9 +4364,11 @@ bool ProjectView::Tree_updateCompressIcon(QTreeWidgetItem* item, QString FileNam
     //for unprocessed obj setting node
     if (FileNamePath.contains(".obj") || FileNamePath.contains(".OBJ"))
     {
+#ifdef _WIN32
         state = readObjFileState(FileNamePath.toStdString());
         if (state == CMP_FILE_ERROR)
             return result;
+#endif
     }
 
     if (file.exists() && (fileinfo.suffix().length() > 0) && (state != CMP_COPY))
@@ -6529,12 +6531,14 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                                             if (plugin_save->SaveModelData(ModelDestination.toStdString().data(),
                                                                                            &((*optimized)[0])) != -1)
                                                             {
+#ifdef _WIN32
                                                                 if (!(writeObjFileState(ModelDestination.toStdString().data(), CMP_PROCESSED)))
                                                                 {
                                                                     if (ProjectView->m_CompressStatusDialog)
                                                                         ProjectView->m_CompressStatusDialog->appendText(
                                                                             "[Mesh Optimization] Failed to save optimized obj data.");
                                                                 }
+#endif
                                                             }
                                                             else
                                                             {
