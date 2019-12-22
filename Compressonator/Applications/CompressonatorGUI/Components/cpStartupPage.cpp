@@ -131,11 +131,16 @@ bool cpStartupPage::UpdateHTML(QVector<QString>& projectsNames)
     QString htmlText, cssText;
 
     // Complete the welcome HTML file path:
+#ifdef _WIN32
     compWelcomePagePath.append("\\WelcomePage\\");
+#else
+    compWelcomePagePath.append("/WelcomePage/");
+#endif
     compWelcomePagePath.append(fileName);
 
     // Load the file into a QString:
     appDir.append(compWelcomePagePath);
+
     std::string current_locale_text = appDir.toLocal8Bit().constData();
     QFile file(appDir);
     bool rc = file.open(QIODevice::ReadOnly | QIODevice::Text);
