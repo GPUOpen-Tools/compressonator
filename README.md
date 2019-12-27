@@ -78,7 +78,7 @@ if (MipSetIn.m_nMipLevels <= 1)
 
     //------------------------------------------------------------------------
     // Checks what the minimum image size will be for the requested mip levels
-    // if the request is too large, a adjusted minimum size will be returns
+    // if the request is too large, a adjusted minimum size will be returned
     //------------------------------------------------------------------------
     CMP_INT nMinSize = CMP_CalcMinMipSize(MipSetIn.m_nHeight, MipSetIn.m_nWidth, 10);
 
@@ -103,7 +103,7 @@ kernel_options.threads  = 0;            // Auto setting
 //--------------------------------------------------------------
 // Setup a results buffer for the processed file,
 // the content will be set after the source texture is processed
-// in the call to CMP_ConvertMipTexture()
+// in the call to CMP_ProcessTexture()
 //--------------------------------------------------------------
 CMP_MipSet MipSetCmp;
 memset(&MipSetCmp, 0, sizeof(CMP_MipSet));
