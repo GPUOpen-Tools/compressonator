@@ -5413,10 +5413,10 @@ int CMP_CDECL CompressBlockBC7( unsigned char *srcBlock,
 int  CMP_CDECL DecompressBlockBC7(unsigned char cmpBlock[16], unsigned char srcBlock[64],
                               void *options = NULL) {
     BC7_Encode *u_BC7Encode = (BC7_Encode *)options;
+    BC7_Encode       BC7EncodeDefault = { 0 }; // for q = 0.05
     if (u_BC7Encode == NULL)
     {
         // set for q = 1.0
-        BC7_Encode       BC7EncodeDefault = { 0 }; // for q = 0.05
         u_BC7Encode = &BC7EncodeDefault;
         SetDefaultBC7Options(u_BC7Encode);
         init_BC7ramps();

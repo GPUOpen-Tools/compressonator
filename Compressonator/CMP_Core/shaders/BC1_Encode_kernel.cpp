@@ -521,9 +521,9 @@ int CMP_CDECL DecompressBlockBC1( unsigned char cmpBlock[8],
                               CMP_GLOBAL unsigned char srcBlock[64],
                               void *options = NULL) {
     CMP_BC15Options *BC15options = (CMP_BC15Options *)options;
+    CMP_BC15Options BC15optionsDefault;
     if (BC15options == NULL)
     {
-        CMP_BC15Options BC15optionsDefault;
         BC15options     = &BC15optionsDefault;
         SetDefaultBC15Options(BC15options);
     }
