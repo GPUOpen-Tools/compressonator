@@ -48,8 +48,13 @@ class winMsgHandler : public QObject
    public:
     winMsgHandler(){};
 
+#ifdef _WIN32
    Q_SIGNALS:
     void signalMessage(MSG& msg);
+#else
+   Q_SIGNALS:
+    void signalMessage(QString& msg);
+#endif
 };
 
 class cpRenderWindow : public QWidget
@@ -99,8 +104,10 @@ public:
 Q_SIGNALS:
     void signalModelKeyPressed(int key);
 
+#ifdef _WIN32
    public slots:
     void localMessage(MSG& msg);
+#endif
 
    private:
     bool nativeEvent(const QByteArray& eventType, void* message, long* result);

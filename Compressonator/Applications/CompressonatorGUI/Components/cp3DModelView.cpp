@@ -43,6 +43,7 @@ static int g_last_y = {0};
 
 static winMsgHandler static_winMsgHandler;
 
+#ifdef _WIN32
 // this is the main message handler for the calls that uses createNativeWindowView
 // it will emit signals to Qt connected classes via the winMsgHandler
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -110,12 +111,14 @@ WId createNativeWindowView(const QString& name, int width, int height)
 
     return result;
 }
+#endif
 
 bool cpRenderWindow::nativeEvent(const QByteArray& eventType, void* message, long* result)
 {
     Q_UNUSED(result);
     Q_UNUSED(eventType);
 
+#ifdef _WIN32
     MSG* msg = static_cast<MSG*>(message);
     if (msg->message == WM_ACTIVATE)
     {
@@ -123,6 +126,7 @@ bool cpRenderWindow::nativeEvent(const QByteArray& eventType, void* message, lon
     if (msg->message == WM_CREATE)
     {
     }
+#endif
     return false;
 }
 
@@ -182,6 +186,7 @@ void cpRenderWindow::setZRotation(int angle)
 
 void cpRenderWindow::SetManualRenderFlip(int mode)
 {
+#ifdef _WIN32
     if (m_plugin)
     {
         MSG msg = { 0 };
@@ -192,11 +197,13 @@ void cpRenderWindow::SetManualRenderFlip(int mode)
         msg.lParam = mode;
         m_plugin->processMSG(&msg);
     }
+#endif
 }
 
 // Keypressed event for the Qt render window
 void cpRenderWindow::keyPressEvent(QKeyEvent *event)
 {
+#ifdef _WIN32
     if (m_plugin)
     {
         // Process key press if 3D model view is in manual mode
@@ -218,6 +225,7 @@ void cpRenderWindow::keyPressEvent(QKeyEvent *event)
             }
         }
     }
+#endif
 }
 
 // This event handler has "Global" scope and is triggered throughout the app
@@ -232,7 +240,7 @@ bool cpRenderWindow::eventFilter(QObject* obj, QEvent* ev)
 
     if (!m_viewOpen)
         return QObject::eventFilter(obj, ev);
-
+#ifdef _WIN32
     static bool LeftButtonPressed  = false;
     static bool RightButtonPressed = false;
 
@@ -359,10 +367,11 @@ bool cpRenderWindow::eventFilter(QObject* obj, QEvent* ev)
     else if (ev->type() == QEvent::Paint)
     {
     }
-
+#endif
     return QObject::eventFilter(obj, ev);
 }
 
+#ifdef _WIN32
 void cpRenderWindow::localMessage(MSG& msg)
 {
     if (!m_usingWindowProc)
@@ -449,7 +458,7 @@ void cpRenderWindow::localMessage(MSG& msg)
         break;
     }
 }
-
+#endif
 //===========================================================
 
 void cp3DModelView::Clean3DModelView()
@@ -495,11 +504,13 @@ void cp3DModelView::OnShowOptions()
 {
     m_showViewOptions ^= 1;
     m_OptionsButton->setText(!m_showViewOptions ? SHOW_VIEW_OPTIONS : HIDE_VIEW_OPTIONS);
+#ifdef _WIN32
     MSG msg     = {0};
     msg.hwnd    = m_hwnd;
     msg.message = WM_COMMAND;
     msg.lParam  = m_showViewOptions;
     m_plugin->processMSG(&msg);
+#endif
 }
 
 // This is only signaled when we are viewing a 3D model diff
@@ -820,6 +831,7 @@ cp3DModelView::cp3DModelView(const QString filePathName, const QString filePathN
                             return;
                         }
 
+#ifdef _WIN32
                         WId wid = createNativeWindowView("Vulkan Viewer", parent->width(), parent->height());
                         if (wid)
                         {
@@ -852,6 +864,7 @@ cp3DModelView::cp3DModelView(const QString filePathName, const QString filePathN
                             m_viewOpen = false;
                             m_renderview->setView(false);
                         }
+#endif
                     }
                 }
                 else
@@ -876,7 +889,9 @@ cp3DModelView::cp3DModelView(const QString filePathName, const QString filePathN
 
 
                     m_renderview->setplugin(m_plugin);
+#ifdef _WIN32
                     m_hwnd = reinterpret_cast<HWND>(m_renderview->winId());
+#endif
                     m_renderview->setHwnd(m_hwnd);
                     try
                     {
