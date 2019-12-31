@@ -3890,10 +3890,10 @@ int  CMP_CDECL DecompressBlockBC6(unsigned char cmpBlock[16],
                             CGU_UINT16 srcBlock[48],
                             void *options = NULL) {
     BC6H_Encode *BC6HEncode = (BC6H_Encode *)options;
+    BC6H_Encode BC6HEncodeDefault;
 
     if (BC6HEncode == NULL)
     {
-        BC6H_Encode BC6HEncodeDefault;
         BC6HEncode = &BC6HEncodeDefault;
         SetDefaultBC6Options(BC6HEncode);
     }
