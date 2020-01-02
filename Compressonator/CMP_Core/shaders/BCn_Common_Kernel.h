@@ -388,7 +388,7 @@ static CGU_FLOAT ClstrErr(CGU_FLOAT _Blk[MAX_BLOCK][NUM_CHANNELS],
                           CGU_FLOAT _Rpt[MAX_BLOCK],
                           CGU_FLOAT _Rmp[NUM_CHANNELS][MAX_POINTS],
                           int _NmbClrs, int _blcktp, CGU_BOOL _ConstRamp,
-                          CMP_GLOBAL CMP_BC15Options *BC15options) {
+                          CMP_GLOBAL const CMP_BC15Options *BC15options) {
   CGU_FLOAT fError = 0.f;
   int rmp_l = (_ConstRamp) ? 1 : _blcktp;
 
@@ -437,7 +437,7 @@ static CGU_FLOAT Refine3D(CGU_FLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
                           CGU_FLOAT _Blk[MAX_BLOCK][NUM_CHANNELS],
                           CGU_FLOAT _Rpt[MAX_BLOCK], int _NmrClrs,
                           CGU_UINT8 dwNumPoints,
-                          CMP_GLOBAL CMP_BC15Options *BC15options,
+                          CMP_GLOBAL const CMP_BC15Options *BC15options,
                           CGU_UINT8 nRedBits, CGU_UINT8 nGreenBits,
                           CGU_UINT8 nBlueBits, CGU_UINT8 nRefineSteps) {
   ALIGN_16 CGU_FLOAT Rmp[NUM_CHANNELS][MAX_POINTS];
@@ -570,7 +570,7 @@ static CGU_FLOAT Refine(CGU_FLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
                         CGU_FLOAT _Blk[MAX_BLOCK][NUM_CHANNELS],
                         CGU_FLOAT _Rpt[MAX_BLOCK], int _NmrClrs,
                         CGU_UINT8 dwNumPoints,
-                        CMP_GLOBAL CMP_BC15Options *BC15options,
+                        CMP_GLOBAL const CMP_BC15Options *BC15options,
                         CGU_UINT8 nRedBits, CGU_UINT8 nGreenBits,
                         CGU_UINT8 nBlueBits, CGU_UINT8 nRefineSteps) {
   ALIGN_16 CGU_FLOAT Rmp[NUM_CHANNELS][MAX_POINTS];
@@ -796,7 +796,7 @@ static CGU_FLOAT ClstrIntnl(CGU_FLOAT _Blk[MAX_BLOCK][NUM_CHANNELS],
                             CGU_FLOAT _Rmp[NUM_CHANNELS][MAX_POINTS],
                             int dwBlockSize, CGU_UINT8 dwNumPoints,
                             CGU_BOOL _ConstRamp,
-                            CMP_GLOBAL CMP_BC15Options *BC15options,
+                            CMP_GLOBAL const CMP_BC15Options *BC15options,
                             CGU_BOOL _bUseAlpha) {
   CGU_FLOAT Err = 0.f;
   CGU_UINT8 rmp_l = (_ConstRamp) ? 1 : dwNumPoints;
@@ -865,7 +865,7 @@ static CGU_FLOAT ClstrBas(CGU_UINT8 *_Indxs,
                           CGU_FLOAT _Blk[MAX_BLOCK][NUM_CHANNELS],
                           CGU_FLOAT _InpRmp[NUM_CHANNELS][NUM_ENDPOINTS],
                           int dwBlockSize, CGU_UINT8 dwNumPoints,
-                          CMP_GLOBAL CMP_BC15Options *BC15options,
+                          CMP_GLOBAL const CMP_BC15Options *BC15options,
                           CGU_BOOL _bUseAlpha, CGU_UINT8 nRedBits,
                           CGU_UINT8 nGreenBits, CGU_UINT8 nBlueBits) {
   // make ramp endpoints the way they'll going to be decompressed
@@ -892,7 +892,7 @@ Clusterization the way it looks from the DXTC decompressor
 static CGU_FLOAT Clstr(CGU_UINT32 block_32[MAX_BLOCK], CGU_UINT32 dwBlockSize,
                        CGU_UINT8 nEndpoints[3][NUM_ENDPOINTS],
                        CGU_UINT8 *pcIndices, CGU_UINT8 dwNumPoints,
-                       CMP_GLOBAL CMP_BC15Options *BC15options,
+                       CMP_GLOBAL const CMP_BC15Options *BC15options,
                        CGU_BOOL _bUseAlpha, CGU_UINT8 _nAlphaThreshold,
                        CGU_UINT8 nRedBits, CGU_UINT8 nGreenBits,
                        CGU_UINT8 nBlueBits) {
@@ -940,8 +940,8 @@ static CGU_FLOAT Clstr(CGU_UINT32 block_32[MAX_BLOCK], CGU_UINT32 dwBlockSize,
 #if !defined(BC5_ENCODE_KERNEL_H)
 #ifndef ASPM_GPU
 static void DecompressDXTRGB_Internal(CGU_UINT8  rgbBlock[BLOCK_SIZE_4X4X4],
-                                      CGU_UINT32 compressedBlock[2],
-                                      CMP_BC15Options *BC15options) {
+                                      const CGU_UINT32 compressedBlock[2],
+                                      const CMP_BC15Options *BC15options) {
 
   CGU_BOOL bDXT1 = TRUE;
   CGU_UINT32 n0 = compressedBlock[0] & 0xffff;
@@ -1241,7 +1241,7 @@ static void CompressRGBBlockX(
     CGU_FLOAT _RsltRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
     CGU_FLOAT _BlkIn[MAX_BLOCK][NUM_CHANNELS], CGU_FLOAT _Rpt[MAX_BLOCK],
     int _UniqClrs, CGU_UINT8 dwNumPoints, CGU_BOOL b3DRefinement,
-    CGU_UINT8 nRefinementSteps, CMP_GLOBAL CMP_BC15Options *BC15options,
+    CGU_UINT8 nRefinementSteps, CMP_GLOBAL const CMP_BC15Options *BC15options,
     CGU_UINT8 nRedBits, CGU_UINT8 nGreenBits, CGU_UINT8 nBlueBits) {
   ALIGN_16 CGU_FLOAT Prj0[MAX_BLOCK];
   ALIGN_16 CGU_FLOAT Prj[MAX_BLOCK];
@@ -1604,7 +1604,7 @@ static CGU_FLOAT CompRGBBlock(CGU_UINT32 *block_32, CGU_UINT32 dwBlockSize,
                               CGU_UINT8 *pcIndices, CGU_UINT8 dwNumPoints,
                               CGU_BOOL b3DRefinement,
                               CGU_UINT8 nRefinementSteps,
-                              CMP_GLOBAL CMP_BC15Options *BC15options,
+                              CMP_GLOBAL const CMP_BC15Options *BC15options,
                               CGU_BOOL _bUseAlpha, CGU_UINT8 _nAlphaThreshold) {
     ALIGN_16 CGU_FLOAT Rpt[BLOCK_SIZE];
     ALIGN_16 CGU_FLOAT BlkIn[BLOCK_SIZE][NUM_CHANNELS];
@@ -1690,9 +1690,9 @@ static CGU_FLOAT CompRGBBlock(CGU_UINT32 *block_32, CGU_UINT32 dwBlockSize,
 
 #if !defined(BC4_ENCODE_KERNEL_H)
 #if !defined(BC5_ENCODE_KERNEL_H)
-static void CompressRGBBlock(CGU_UINT8 rgbBlock[64],
+static void CompressRGBBlock(const CGU_UINT8 rgbBlock[64],
                              CMP_GLOBAL CGU_UINT32 compressedBlock[2],
-                             CMP_GLOBAL CMP_BC15Options *BC15options,
+                             CMP_GLOBAL const CMP_BC15Options *BC15options,
                              CGU_BOOL bDXT1, CGU_BOOL bDXT1UseAlpha,
                              CGU_UINT8 nDXT1AlphaThreshold) {
   CGU_BOOL m_b3DRefinement = FALSE;
@@ -2211,7 +2211,7 @@ static CGU_FLOAT CompBlock1XF(CGU_FLOAT *_Blk, CGU_UINT32 dwBlockSize,
 
 #if !defined(BC1_ENCODE_KERNEL_H)
 #if !defined(BC2_ENCODE_KERNEL_H)
-static CGU_FLOAT CompBlock1X(CGU_UINT8 *_Blk, CGU_UINT32 dwBlockSize,
+static CGU_FLOAT CompBlock1X(const CGU_UINT8 *_Blk, CGU_UINT32 dwBlockSize,
                              CGU_UINT8 nEndpoints[2], CGU_UINT8 *pcIndices,
                              CGU_UINT8 dwNumPoints, CGU_BOOL bFixedRampPoints,
                              CGU_INT _intPrec, CGU_INT _fracPrec,
@@ -2251,7 +2251,7 @@ static void EncodeAlphaBlock(CMP_GLOBAL CGU_UINT32 compressedBlock[2],
 
 #if !defined(BC1_ENCODE_KERNEL_H)
 #if !defined(BC2_ENCODE_KERNEL_H)
-static CGU_INT32 CompressAlphaBlock(CGU_UINT8 alphaBlock[BLOCK_SIZE_4X4],
+static CGU_INT32 CompressAlphaBlock(const CGU_UINT8 alphaBlock[BLOCK_SIZE_4X4],
                                     CMP_GLOBAL CGU_UINT32 compressedBlock[2]) {
   CGU_UINT8 nEndpoints[2][2];
   CGU_UINT8 nIndices[2][BLOCK_SIZE_4X4];
@@ -2271,7 +2271,7 @@ static CGU_INT32 CompressAlphaBlock(CGU_UINT8 alphaBlock[BLOCK_SIZE_4X4],
 
 #if !defined(BC2_ENCODE_KERNEL_H)
 static void GetCompressedAlphaRamp(CGU_UINT8 alpha[8],
-                                   CGU_UINT32 compressedBlock[2]) {
+                                   const CGU_UINT32 compressedBlock[2]) {
   alpha[0] = (CGU_UINT8)(compressedBlock[0] & 0xff);
   alpha[1] = (CGU_UINT8)((compressedBlock[0] >> 8) & 0xff);
 
@@ -2335,7 +2335,7 @@ static void GetCompressedAlphaRamp(CGU_UINT8 alpha[8],
 
 #if !defined(BC2_ENCODE_KERNEL_H)
 static void DecompressAlphaBlock(CGU_UINT8 alphaBlock[BLOCK_SIZE_4X4],
-                                 CGU_UINT32 compressedBlock[2]) {
+                                 const CGU_UINT32 compressedBlock[2]) {
   CGU_UINT8 alpha[8];
   GetCompressedAlphaRamp(alpha, compressedBlock);
 

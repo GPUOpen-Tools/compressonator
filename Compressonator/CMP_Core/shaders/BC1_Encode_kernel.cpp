@@ -381,9 +381,9 @@ INLINE void store_uint8(CMP_GLOBAL CGU_UINT8 u_dstptr[8], CGU_UINT32 data[2])
 }
 
 void  CompressBlockBC1_Internal(
-    CMP_Vec4uc  srcBlockTemp[16],
+    const CMP_Vec4uc  srcBlockTemp[16],
     CMP_GLOBAL  CGU_UINT32      compressedBlock[2],
-    CMP_GLOBAL  CMP_BC15Options *BC15options)
+    CMP_GLOBAL  const CMP_BC15Options *BC15options)
 {
     CGU_UINT8    blkindex = 0;
     CGU_UINT8    srcindex = 0;
@@ -398,14 +398,15 @@ void  CompressBlockBC1_Internal(
         }
     }
 
-    CalculateColourWeightings(rgbBlock, BC15options);
+    CMP_BC15Options internalOptions = *BC15options;
+    CalculateColourWeightings(rgbBlock, &internalOptions);
 
     CompressRGBBlock(rgbBlock,
                      compressedBlock,
-                     BC15options,
+                     &internalOptions,
                      TRUE,
                      FALSE, 
-                     BC15options->m_nAlphaThreshold);
+                     internalOptions.m_nAlphaThreshold);
 }
 
 //============================================== USER INTERFACES  ========================================================
@@ -481,10 +482,10 @@ int CMP_CDECL SetChannelWeightsBC1(void *options,
     return CGU_CORE_OK;
 }
 
-int CMP_CDECL CompressBlockBC1(unsigned char *srcBlock,
+int CMP_CDECL CompressBlockBC1(const unsigned char *srcBlock,
                                unsigned int srcStrideInBytes,
                                CMP_GLOBAL unsigned char cmpBlock[8],
-                               void *options = NULL) {
+                               const void *options = NULL) {
     CMP_Vec4uc inBlock[16];
 
     //----------------------------------
@@ -506,9 +507,9 @@ int CMP_CDECL CompressBlockBC1(unsigned char *srcBlock,
     }
 
     CMP_BC15Options *BC15options = (CMP_BC15Options *)options;
+    CMP_BC15Options BC15optionsDefault;
     if (BC15options == NULL)
     {
-        CMP_BC15Options BC15optionsDefault;
         BC15options     = &BC15optionsDefault;
         SetDefaultBC15Options(BC15options);
     }
@@ -517,9 +518,9 @@ int CMP_CDECL CompressBlockBC1(unsigned char *srcBlock,
     return CGU_CORE_OK;
 }
 
-int CMP_CDECL DecompressBlockBC1( unsigned char cmpBlock[8], 
-                              CMP_GLOBAL unsigned char srcBlock[64],
-                              void *options = NULL) {
+int CMP_CDECL DecompressBlockBC1(const unsigned char cmpBlock[8], 
+                                 CMP_GLOBAL unsigned char srcBlock[64],
+                                 const void *options = NULL) {
     CMP_BC15Options *BC15options = (CMP_BC15Options *)options;
     CMP_BC15Options BC15optionsDefault;
     if (BC15options == NULL)

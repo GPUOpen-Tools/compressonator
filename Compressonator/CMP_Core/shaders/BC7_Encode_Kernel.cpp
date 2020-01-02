@@ -4872,7 +4872,7 @@ void GetBC7Ramp(CGU_UINT32 endpoint[][MAX_DIMENSION_BIG],
 //              and increments the offset
 //
 
-CGU_UINT32 ReadBit(CGU_UINT8 base[],CGU_UINT32 &m_bitPosition)
+CGU_UINT32 ReadBit(const CGU_UINT8 base[],CGU_UINT32 &m_bitPosition)
 {
     int             byteLocation;
     int             remainder;
@@ -4890,7 +4890,7 @@ CGU_UINT32 ReadBit(CGU_UINT8 base[],CGU_UINT32 &m_bitPosition)
 
 void DecompressDualIndexBlock(
     CGU_UINT8   out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-    CGU_UINT8   in[COMPRESSED_BLOCK_SIZE],
+    const CGU_UINT8   in[COMPRESSED_BLOCK_SIZE],
     CGU_UINT32  endpoint[2][MAX_DIMENSION_BIG],
     CGU_UINT32  &m_bitPosition,
     CGU_UINT32  m_rotation,
@@ -4983,7 +4983,7 @@ void DecompressDualIndexBlock(
 }
 
 
-void DecompressBC7_internal(CGU_UINT8  out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG], CGU_UINT8 in[COMPRESSED_BLOCK_SIZE],BC7_Encode *u_BC7Encode)
+void DecompressBC7_internal(CGU_UINT8  out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG], const CGU_UINT8 in[COMPRESSED_BLOCK_SIZE], const BC7_Encode *u_BC7Encode)
 {
     if (u_BC7Encode) {}
     CGU_UINT32           i, j;
@@ -5334,10 +5334,10 @@ int CMP_CDECL SetAlphaOptionsBC7(void *options, CGU_BOOL imageNeedsAlpha, CGU_BO
     return CGU_CORE_OK;
 }
 
-int CMP_CDECL CompressBlockBC7( unsigned char *srcBlock,
+int CMP_CDECL CompressBlockBC7( const unsigned char *srcBlock,
                                 unsigned int srcStrideInBytes,
                                 CMP_GLOBAL unsigned char cmpBlock[16],
-                                void* options = NULL) 
+                                const void* options = NULL) 
 {
     CMP_Vec4uc inBlock[SOURCE_BLOCK_SIZE];
 
@@ -5361,9 +5361,9 @@ int CMP_CDECL CompressBlockBC7( unsigned char *srcBlock,
 
 
     BC7_Encode *u_BC7Encode = (BC7_Encode *)options;
+    BC7_Encode       BC7EncodeDefault = { 0 };
     if (u_BC7Encode == NULL)
     {
-        BC7_Encode       BC7EncodeDefault = { 0 };
         u_BC7Encode = &BC7EncodeDefault;
         SetDefaultBC7Options(u_BC7Encode);
         init_BC7ramps();
@@ -5410,8 +5410,9 @@ int CMP_CDECL CompressBlockBC7( unsigned char *srcBlock,
     return CGU_CORE_OK;
 }
 
-int  CMP_CDECL DecompressBlockBC7(unsigned char cmpBlock[16], unsigned char srcBlock[64],
-                              void *options = NULL) {
+int  CMP_CDECL DecompressBlockBC7(const unsigned char cmpBlock[16],
+                                  unsigned char srcBlock[64],
+                                  const void *options = NULL) {
     BC7_Encode *u_BC7Encode = (BC7_Encode *)options;
     BC7_Encode       BC7EncodeDefault = { 0 }; // for q = 0.05
     if (u_BC7Encode == NULL)
