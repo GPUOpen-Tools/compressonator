@@ -24,7 +24,7 @@
 
 //============================================== BC2 INTERFACES =======================================================
 
-void DXTCV11CompressExplicitAlphaBlock(CGU_UINT8 block_8[16], CMP_GLOBAL CGU_UINT32 block_dxtc[2])
+void DXTCV11CompressExplicitAlphaBlock(const CGU_UINT8 block_8[16], CMP_GLOBAL CGU_UINT32 block_dxtc[2])
 {
     CGU_UINT8 i;
     block_dxtc[0] = block_dxtc[1] = 0;
@@ -47,13 +47,16 @@ void DXTCV11CompressExplicitAlphaBlock(CGU_UINT8 block_8[16], CMP_GLOBAL CGU_UIN
 #define EXPLICIT_ALPHA_PIXEL_MASK 0xf
 #define EXPLICIT_ALPHA_PIXEL_BPP  4
 
-CGU_INT CompressExplicitAlphaBlock(CGU_UINT8 alphaBlock[BLOCK_SIZE_4X4], CMP_GLOBAL CGU_UINT32 compressedBlock[2])
+CGU_INT CompressExplicitAlphaBlock(const CGU_UINT8 alphaBlock[BLOCK_SIZE_4X4], 
+    CMP_GLOBAL CGU_UINT32 compressedBlock[2])
 {
     DXTCV11CompressExplicitAlphaBlock(alphaBlock, compressedBlock);
     return CGU_CORE_OK;
 }
 
-void  CompressBlockBC2_Internal(CMP_Vec4uc srcBlockTemp[16], CMP_GLOBAL CGU_UINT32 compressedBlock[4], CMP_GLOBAL  CMP_BC15Options *BC15options)
+void  CompressBlockBC2_Internal(const CMP_Vec4uc srcBlockTemp[16],
+                                CMP_GLOBAL CGU_UINT32 compressedBlock[4],
+                                CMP_GLOBAL const CMP_BC15Options *BC15options)
 {
     CGU_UINT8    blkindex = 0;
     CGU_UINT8    srcindex = 0;
@@ -72,13 +75,15 @@ void  CompressBlockBC2_Internal(CMP_Vec4uc srcBlockTemp[16], CMP_GLOBAL CGU_UINT
     for (CGU_INT32 i = 0; i < 16; i++)
         alphaBlock[i] = (CGU_UINT8)(((CGU_INT32*)rgbaBlock)[i] >> RGBA8888_OFFSET_A);
 
-    CalculateColourWeightings(rgbaBlock, BC15options);
+    // Need a copy, as CalculateColourWeightings sets variables in the BC15options
+    CMP_BC15Options internalOptions = *BC15options;
+    CalculateColourWeightings(rgbaBlock, &internalOptions);
 
     CGU_INT err = CompressExplicitAlphaBlock(alphaBlock, &compressedBlock[DXTC_OFFSET_ALPHA]);
     if (err != 0)
         return;
 
-    CompressRGBBlock(rgbaBlock, &compressedBlock[DXTC_OFFSET_RGB], BC15options,FALSE,FALSE,0);
+    CompressRGBBlock(rgbaBlock, &compressedBlock[DXTC_OFFSET_RGB], &internalOptions,FALSE,FALSE,0);
 }
 
 //============================================== USER INTERFACES ========================================================
@@ -137,7 +142,8 @@ int CMP_CDECL SetChannelWeightsBC2(void *options,
 }
 
 // Decompresses an explicit alpha block (DXT3)
-void DecompressExplicitAlphaBlock(CGU_UINT8 alphaBlock[BLOCK_SIZE_4X4], CGU_UINT32 compressedBlock[2])
+void DecompressExplicitAlphaBlock(CGU_UINT8 alphaBlock[BLOCK_SIZE_4X4],
+    const CGU_UINT32 compressedBlock[2])
 {
     for (int i = 0; i < 16; i++)
     {
@@ -147,7 +153,9 @@ void DecompressExplicitAlphaBlock(CGU_UINT8 alphaBlock[BLOCK_SIZE_4X4], CGU_UINT
     }
 }
 
-void DecompressBC2_Internal(CMP_GLOBAL CGU_UINT8 rgbaBlock[BLOCK_SIZE_4X4X4], CGU_UINT32 compressedBlock[4],CMP_BC15Options *BC15options)
+void DecompressBC2_Internal(CMP_GLOBAL CGU_UINT8 rgbaBlock[BLOCK_SIZE_4X4X4],
+    const CGU_UINT32 compressedBlock[4],
+    const CMP_BC15Options *BC15options)
 {
     CGU_UINT8 alphaBlock[BLOCK_SIZE_4X4];
 
@@ -158,10 +166,10 @@ void DecompressBC2_Internal(CMP_GLOBAL CGU_UINT8 rgbaBlock[BLOCK_SIZE_4X4X4], CG
         ((CMP_GLOBAL CGU_UINT32*)rgbaBlock)[i] = (alphaBlock[i] << RGBA8888_OFFSET_A) | (((CMP_GLOBAL CGU_UINT32*)rgbaBlock)[i] & ~(BYTE_MASK << RGBA8888_OFFSET_A));
 }
 
-int CMP_CDECL CompressBlockBC2( unsigned char *srcBlock,
-                                unsigned int srcStrideInBytes,
-                                CMP_GLOBAL unsigned char cmpBlock[16],
-                                CMP_GLOBAL void *options = NULL) {
+int CMP_CDECL CompressBlockBC2(const unsigned char *srcBlock,
+                               unsigned int srcStrideInBytes,
+                               CMP_GLOBAL unsigned char cmpBlock[16],
+                               CMP_GLOBAL const void *options = NULL) {
 
     CMP_Vec4uc inBlock[16];
 
@@ -184,9 +192,9 @@ int CMP_CDECL CompressBlockBC2( unsigned char *srcBlock,
     }
 
     CMP_BC15Options *BC15options = (CMP_BC15Options *)options;
+    CMP_BC15Options BC15optionsDefault;
     if (BC15options == NULL)
     {
-        CMP_BC15Options BC15optionsDefault;
         BC15options = &BC15optionsDefault;
         SetDefaultBC15Options(BC15options);
     }
@@ -194,9 +202,9 @@ int CMP_CDECL CompressBlockBC2( unsigned char *srcBlock,
     return CGU_CORE_OK;
 }
 
-int CMP_CDECL DecompressBlockBC2( unsigned char cmpBlock[16], 
-                              CMP_GLOBAL unsigned char srcBlock[64],
-                              void *options = NULL) {
+int CMP_CDECL DecompressBlockBC2(const unsigned char cmpBlock[16], 
+                                 CMP_GLOBAL unsigned char srcBlock[64],
+                                 const void *options = NULL) {
     CMP_BC15Options *BC15options = (CMP_BC15Options *)options;
     CMP_BC15Options BC15optionsDefault;
     if (BC15options == NULL)

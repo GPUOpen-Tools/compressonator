@@ -24,9 +24,9 @@
 
 //============================================== BC4 INTERFACES =======================================================
 
-void CompressBlockBC4_Internal(CMP_Vec4uc srcBlockTemp[16],
+void CompressBlockBC4_Internal(const CMP_Vec4uc srcBlockTemp[16],
                                CMP_GLOBAL CGU_UINT32 compressedBlock[2],
-                               CMP_GLOBAL CMP_BC15Options *BC15options) {
+                               CMP_GLOBAL const CMP_BC15Options *BC15options) {
   if (BC15options->m_fquality) {
     // Reserved!
   }
@@ -44,8 +44,8 @@ void CompressBlockBC4_Internal(CMP_Vec4uc srcBlockTemp[16],
 }
 
 void DecompressBC4_Internal(CMP_GLOBAL CGU_UINT8 rgbaBlock[64],
-                            CGU_UINT32 compressedBlock[2],
-                            CMP_BC15Options *BC15options) {
+                            const CGU_UINT32 compressedBlock[2],
+                            const CMP_BC15Options *BC15options) {
   if (BC15options) {}
   CGU_UINT8 alphaBlock[BLOCK_SIZE_4X4];
   DecompressAlphaBlock(alphaBlock, compressedBlock);
@@ -63,16 +63,16 @@ void DecompressBC4_Internal(CMP_GLOBAL CGU_UINT8 rgbaBlock[64],
   }
 }
 
-void CompressBlockBC4_SingleChannel(CGU_UINT8 srcBlockTemp[16],
+void CompressBlockBC4_SingleChannel(const CGU_UINT8 srcBlockTemp[16],
                                CMP_GLOBAL CGU_UINT32 compressedBlock[2],
-                               CMP_GLOBAL CMP_BC15Options *BC15options) {
+                               CMP_GLOBAL const CMP_BC15Options *BC15options) {
   if (BC15options) {}
   CompressAlphaBlock(srcBlockTemp, (CMP_GLOBAL CGU_UINT32 *)compressedBlock);
 }
 
 void DecompressBlockBC4_SingleChannel(CGU_UINT8 srcBlockTemp[16],
-                            CGU_UINT32 compressedBlock[2],
-                            CMP_BC15Options *BC15options) {
+                            const CGU_UINT32 compressedBlock[2],
+                            const CMP_BC15Options *BC15options) {
   if (BC15options) {}
   DecompressAlphaBlock(srcBlockTemp, compressedBlock);
 }
@@ -145,9 +145,9 @@ int CMP_CDECL CompressBlockBC4(unsigned char *srcBlock,
     return CGU_CORE_OK;
 }
 
-int CMP_CDECL DecompressBlockBC4(unsigned char cmpBlock[8],
+int CMP_CDECL DecompressBlockBC4(const unsigned char cmpBlock[8],
                             CMP_GLOBAL unsigned char srcBlock[16],
-                            void *options = NULL) {
+                            const void *options = NULL) {
     CMP_BC15Options *BC15options = (CMP_BC15Options *)options;
     CMP_BC15Options BC15optionsDefault;
     if (BC15options == NULL)

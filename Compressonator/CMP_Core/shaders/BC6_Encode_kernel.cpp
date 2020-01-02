@@ -2977,7 +2977,7 @@ CGU_FLOAT  EncodePattern(BC6H_Encode_local *BC6H_data, CGU_FLOAT  error)
 void CompressBlockBC6_Internal(CMP_GLOBAL  unsigned char*outdata, 
                                CGU_UINT32 destIdx,
                                BC6H_Encode_local * BC6HEncode_local,
-                               CMP_GLOBAL BC6H_Encode *BC6HEncode)
+                               CMP_GLOBAL const BC6H_Encode *BC6HEncode)
 {
     //printf("---SRC---\n");
     //CGU_UINT8    blkindex = 0;
@@ -3062,7 +3062,7 @@ void CompressBlockBC6_Internal(CMP_GLOBAL  unsigned char*outdata,
 //======================= DECOMPRESS =========================================
 using namespace std;
 
-static AMD_BC6H_Format extract_format(CGU_UINT8 in[COMPRESSED_BLOCK_SIZE])
+static AMD_BC6H_Format extract_format(const CGU_UINT8 in[COMPRESSED_BLOCK_SIZE])
 {
     AMD_BC6H_Format bc6h_format;
     unsigned short decvalue;
@@ -3739,7 +3739,7 @@ static void extract_compressed_endpoints2(AMD_BC6H_Format& bc6h_format)
     
 }
 
-void  DecompressBC6_Internal(CGU_UINT16 rgbBlock[48], CGU_UINT8 compressedBlock[16],BC6H_Encode *BC6HEncode)
+void  DecompressBC6_Internal(CGU_UINT16 rgbBlock[48], const CGU_UINT8 compressedBlock[16], const BC6H_Encode *BC6HEncode)
 {
     if (BC6HEncode) {}
     CGU_BOOL m_bc6signed = false;
@@ -3837,10 +3837,10 @@ int CMP_CDECL SetMaskBC6(void *options, CGU_UINT32 mask)
     return CGU_CORE_OK;
 }
 
-int CMP_CDECL CompressBlockBC6(CGU_UINT16 *srcBlock,
+int CMP_CDECL CompressBlockBC6(const CGU_UINT16 *srcBlock,
                                unsigned int srcStrideInShorts,
                                CMP_GLOBAL CGU_UINT8 cmpBlock[16],
-                               CMP_GLOBAL void *options = NULL) 
+                               const CMP_GLOBAL void *options = NULL)
 {
 
     CGU_UINT16 inBlock[48];
@@ -3863,10 +3863,10 @@ int CMP_CDECL CompressBlockBC6(CGU_UINT16 *srcBlock,
 
 
     BC6H_Encode *BC6HEncode = (BC6H_Encode *)options;
+    BC6H_Encode BC6HEncodeDefault;
 
     if (BC6HEncode == NULL)
     {
-        BC6H_Encode BC6HEncodeDefault;
         BC6HEncode = &BC6HEncodeDefault;
         SetDefaultBC6Options(BC6HEncode);
     }
@@ -3886,9 +3886,9 @@ int CMP_CDECL CompressBlockBC6(CGU_UINT16 *srcBlock,
     return CGU_CORE_OK;
 }
 
-int  CMP_CDECL DecompressBlockBC6(unsigned char cmpBlock[16],
+int  CMP_CDECL DecompressBlockBC6(const unsigned char cmpBlock[16],
                             CGU_UINT16 srcBlock[48],
-                            void *options = NULL) {
+                            const void *options = NULL) {
     BC6H_Encode *BC6HEncode = (BC6H_Encode *)options;
     BC6H_Encode BC6HEncodeDefault;
 

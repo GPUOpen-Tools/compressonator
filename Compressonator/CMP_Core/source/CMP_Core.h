@@ -120,34 +120,34 @@ int CMP_CDECL SetErrorThresholdBC7(void *options, float minThreshold, float maxT
 // 4 channel Sources, default format RGBA:8888 is processed as a 4x4 block starting at srcBlock location
 // where each row of the block is calculated from srcStride
 //=========================================================================================================
-int CMP_CDECL CompressBlockBC1(unsigned char *srcBlock, unsigned int  srcStrideInBytes, unsigned char cmpBlock[8 ], void *options CMP_DEFAULTNULL);
-int CMP_CDECL CompressBlockBC2(unsigned char *srcBlock, unsigned int  srcStrideInBytes, unsigned char cmpBlock[16], void *options CMP_DEFAULTNULL);
-int CMP_CDECL CompressBlockBC3(unsigned char *srcBlock, unsigned int  srcStrideInBytes, unsigned char cmpBlock[16], void *options CMP_DEFAULTNULL);
-int CMP_CDECL CompressBlockBC7(unsigned char *srcBlock, unsigned int  srcStrideInBytes, unsigned char cmpBlock[16], void *options CMP_DEFAULTNULL);
+int CMP_CDECL CompressBlockBC1(const unsigned char *srcBlock, unsigned int  srcStrideInBytes, unsigned char cmpBlock[8 ], const void *options CMP_DEFAULTNULL);
+int CMP_CDECL CompressBlockBC2(const unsigned char *srcBlock, unsigned int  srcStrideInBytes, unsigned char cmpBlock[16], const void *options CMP_DEFAULTNULL);
+int CMP_CDECL CompressBlockBC3(const unsigned char *srcBlock, unsigned int  srcStrideInBytes, unsigned char cmpBlock[16], const void *options CMP_DEFAULTNULL);
+int CMP_CDECL CompressBlockBC7(const unsigned char *srcBlock, unsigned int  srcStrideInBytes, unsigned char cmpBlock[16], const void *options CMP_DEFAULTNULL);
 
-int CMP_CDECL DecompressBlockBC1(unsigned char cmpBlock[8 ], unsigned char srcBlock[64], void *options CMP_DEFAULTNULL);
-int CMP_CDECL DecompressBlockBC2(unsigned char cmpBlock[16], unsigned char srcBlock[64], void *options CMP_DEFAULTNULL);
-int CMP_CDECL DecompressBlockBC3(unsigned char cmpBlock[16], unsigned char srcBlock[64], void *options CMP_DEFAULTNULL);
-int CMP_CDECL DecompressBlockBC7(unsigned char cmpBlock[16], unsigned char srcBlock[64], void *options CMP_DEFAULTNULL);
+int CMP_CDECL DecompressBlockBC1(const unsigned char cmpBlock[8 ], unsigned char srcBlock[64], const void *options CMP_DEFAULTNULL);
+int CMP_CDECL DecompressBlockBC2(const unsigned char cmpBlock[16], unsigned char srcBlock[64], const void *options CMP_DEFAULTNULL);
+int CMP_CDECL DecompressBlockBC3(const unsigned char cmpBlock[16], unsigned char srcBlock[64], const void *options CMP_DEFAULTNULL);
+int CMP_CDECL DecompressBlockBC7(const unsigned char cmpBlock[16], unsigned char srcBlock[64], const void *options CMP_DEFAULTNULL);
 
 //================================================
 // 1 channel Source 4x4 8 bits per block
 //================================================
-int CMP_CDECL CompressBlockBC4(unsigned char *srcBlock, unsigned int  srcStrideInBytes, unsigned char cmpBlock[8], void *options  CMP_DEFAULTNULL);
-int CMP_CDECL DecompressBlockBC4(unsigned char cmpBlock[8], unsigned char srcBlock[16], void *options  CMP_DEFAULTNULL);
+int CMP_CDECL CompressBlockBC4(const unsigned char *srcBlock, unsigned int  srcStrideInBytes, unsigned char cmpBlock[8], const void *options  CMP_DEFAULTNULL);
+int CMP_CDECL DecompressBlockBC4(const unsigned char cmpBlock[8], unsigned char srcBlock[16], const void *options  CMP_DEFAULTNULL);
 
 //================================================
 // 2 channel Source 2x(4x4 8 bits)
 //================================================
-int CMP_CDECL CompressBlockBC5(unsigned char *srcBlock1, unsigned int srcStrideInBytes1,
-                               unsigned char *srcBlock2, unsigned int srcStrideInBytes2,
-                               unsigned char cmpBlock[16], void *options  CMP_DEFAULTNULL);
-int CMP_CDECL DecompressBlockBC5(unsigned char cmpBlock[16], unsigned char srcBlock1[16], unsigned char srcBlock2[16], void *options  CMP_DEFAULTNULL);
+int CMP_CDECL CompressBlockBC5(const unsigned char *srcBlock1, unsigned int srcStrideInBytes1,
+                               const unsigned char *srcBlock2, unsigned int srcStrideInBytes2,
+                               unsigned char cmpBlock[16], const void *options  CMP_DEFAULTNULL);
+int CMP_CDECL DecompressBlockBC5(const unsigned char cmpBlock[16], unsigned char srcBlock1[16], unsigned char srcBlock2[16], const void *options  CMP_DEFAULTNULL);
 
 //========================================================================================
 // For 3 channel Source  RGB_16, Note srcStride is in unsigned short steps (2 bytes each)
 //========================================================================================
-int CMP_CDECL CompressBlockBC6(unsigned short *srcBlock, unsigned int srcStrideInShorts, unsigned char cmpBlock[16], void *options CMP_DEFAULTNULL);
-int CMP_CDECL DecompressBlockBC6(unsigned char cmpBlock[16], unsigned short srcBlock[48], void *options CMP_DEFAULTNULL);
+int CMP_CDECL CompressBlockBC6(const unsigned short *srcBlock, unsigned int srcStrideInShorts, unsigned char cmpBlock[16], const void *options CMP_DEFAULTNULL);
+int CMP_CDECL DecompressBlockBC6(const unsigned char cmpBlock[16], unsigned short srcBlock[48], const void *options CMP_DEFAULTNULL);
 
 #endif  // CMP_CORE

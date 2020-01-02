@@ -261,7 +261,7 @@ using namespace std;
 class BitHeader
 {
 public:
-    BitHeader(CGU_UINT8 in[], CGU_INT sizeinbytes)
+    BitHeader(const CGU_UINT8 in[], CGU_INT sizeinbytes)
     {
         m_bits.reset();
         m_sizeinbytes = sizeinbytes;
