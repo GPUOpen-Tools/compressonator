@@ -38,10 +38,9 @@ CMP_BC15Options  g_BC3Encode;
 
 #define GPU_BC3_COMPUTEFILE  "./plugins/Compute/BC3_Encode_kernel.cpp"
 
-extern void CompressBlockBC3_Internal(
-    CMP_Vec4uc srcBlockTemp[16],
-    CMP_GLOBAL CGU_UINT32 block_dxtc[4],
-    CMP_GLOBAL  CMP_BC15Options *BC15options);
+extern void CompressBlockBC3_Internal(const CMP_Vec4uc srcBlockTemp[16],
+                               CMP_GLOBAL CGU_UINT32 compressedBlock[4],
+                               CMP_GLOBAL const CMP_BC15Options *BC15options);
 
 Plugin_BC3::Plugin_BC3()
 {

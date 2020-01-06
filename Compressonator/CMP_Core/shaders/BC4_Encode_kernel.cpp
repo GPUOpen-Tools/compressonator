@@ -114,10 +114,10 @@ int CMP_CDECL SetQualityBC4(void *options,
     return CGU_CORE_OK;
 }
 
-int CMP_CDECL CompressBlockBC4(unsigned char *srcBlock,
+int CMP_CDECL CompressBlockBC4(const unsigned char *srcBlock,
                                unsigned int srcStrideInBytes,
                                CMP_GLOBAL unsigned char cmpBlock[8],
-                               void *options = NULL) {
+                               const void *options = NULL) {
 
     unsigned char inBlock[16];
     //----------------------------------

@@ -39,10 +39,9 @@ CMP_BC15Options  g_BC4Encode;
 
 #define GPU_BC4_COMPUTEFILE  "./plugins/Compute/BC4_Encode_kernel.cpp"
 
-extern void CompressBlockBC4_Internal(
-    CMP_Vec4uc srcBlockTemp[16],
-    CMP_GLOBAL CGU_UINT32 compressedBlock[2],
-    CMP_GLOBAL  CMP_BC15Options *BC15options);
+extern void CompressBlockBC4_Internal(const CMP_Vec4uc srcBlockTemp[16],
+                               CMP_GLOBAL CGU_UINT32 compressedBlock[2],
+                               CMP_GLOBAL const CMP_BC15Options *BC15options);
 
 Plugin_BC4::Plugin_BC4()
 {

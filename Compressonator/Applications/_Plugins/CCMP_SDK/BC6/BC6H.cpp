@@ -43,11 +43,10 @@ using namespace BC6H_FILE;
 #define VULKAN_BC6H_COMPUTEFILE   "./plugins/Compute/BC6.spv"
 
 
-extern void CompressBlockBC6_Internal(
-    CMP_GLOBAL  CGU_UINT8* out, 
-    CGU_UINT32 destIdx,
-    BC6H_Encode_local * BC6HEncode_local,
-    CMP_GLOBAL BC6H_Encode *BC6HEncode);
+extern void CompressBlockBC6_Internal(CMP_GLOBAL  unsigned char*outdata, 
+                               CGU_UINT32 destIdx,
+                               BC6H_Encode_local * BC6HEncode_local,
+                               CMP_GLOBAL const BC6H_Encode *BC6HEncode);
 
 Plugin_BC6H::Plugin_BC6H()
 {
