@@ -6657,10 +6657,10 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                         tinygltf2::Model    model;
                                         tinygltf2::TinyGLTF loader;
                                         tinygltf2::TinyGLTF saver;
-
+#ifdef USE_MESH_DRACO_EXTENSION
                                         //clean up draco mesh buffer
                                         model.dracomeshes.clear();
-
+#endif
                                         std::string srcFile = ModelSource.toStdString();
                                         std::string dstFile = ModelDestination.toStdString();
                                         // Check if mesh optimization was done if so then source is optimized file
@@ -6710,12 +6710,12 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                         }
 
                                         bool is_draco_src = false;
-
+#ifdef USE_MESH_DRACO_EXTENSION
                                         if (model.dracomeshes.size() > 0)
                                         {
                                             is_draco_src = true;
                                         }
-
+#endif
                                         err.clear();
 
                                         CMP_CompressOptions CompressOptions;

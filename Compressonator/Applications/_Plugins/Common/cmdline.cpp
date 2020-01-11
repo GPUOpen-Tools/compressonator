@@ -1436,8 +1436,9 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
             TinyGLTF    saver;
 
             //clean up draco mesh buffer
+#ifdef USE_MESH_DRACO_EXTENSION
             model.dracomeshes.clear();
-
+#endif
             std::string srcFile = SourceFile;
             std::string dstFile = DestFile;
             // Check if mesh optimization was done if so then source is optimized file
