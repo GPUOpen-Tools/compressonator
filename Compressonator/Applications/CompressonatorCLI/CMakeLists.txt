@@ -36,7 +36,6 @@ target_include_directories(CompressonatorCLI-bin
                            ../_Plugins/Common/gltf
                            ../_Plugins/CMesh/mesh_optimizer
                            ../_Libs/GPU_Decode
-                           ../_Libs/CMP_MeshCompressor/Draco/src
                            ../_Libs/CMP_MeshOptimizer
                            ../_Libs/CMP_Math
                            ../../CMP_CompressonatorLib
@@ -44,6 +43,7 @@ target_include_directories(CompressonatorCLI-bin
                            ../../CMP_Framework/Common/half
                            ../../CMP_Core/shaders
                            ../../CMP_Core/source
+                           ${draco_INCLUDE_DIRS}
                            ${OpenEXR_INCLUDE_DIRS}
                            ${Qt5Gui_INCLUDE_DIRS})
 
@@ -84,7 +84,8 @@ if (UNIX)
 endif()
 
 list(APPEND CMP_LIBS ${Boost_LIBRARIES}
-                     ${OpenCV_LIBRARIES})
+                     ${OpenCV_LIBRARIES}
+                     ${draco_LIBRARIES})
 
 target_link_libraries(CompressonatorCLI-bin
                       ${CMP_LIBS}

@@ -34,7 +34,15 @@ if (UNIX)
 
   # Draco cmake find scripts are also broken (looks for src/ path in install directory)
   # find_package(Draco REQUIRED)
-  pkg_check_modules(draco REQUIRED draco)
+  pkg_check_modules(draco draco)
+
+  if(draco_FOUND)
+  else()
+    # TODO: To do this properly we require a generated config header from CMake
+    # Which can be done with configure_file.
+    # See: https://cmake.org/cmake/help/latest/command/configure_file.html
+    add_definitions(-DCMAKE_DRACO_NOT_FOUND)
+  endif()
 endif()
 
 #gltf code needs _LINUX define

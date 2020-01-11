@@ -78,8 +78,10 @@ typedef half                 CMP_HALF;   ///< A 16-bit floating point number cla
 #define USE_CMP_SDK                                 // Enable new SDK code for compression
 #define USE_3DVIEWALLAPI                            // Enable 3D model view selection list in application setting
 #define USE_MESH_CLI                                // CLI Process Mesh (only support glTF and OBJ files)
-#define USE_MESH_DRACO_EXTENSION                    // Mesh Compression with Draco support in glTF and OBJ files only
 
+#ifndef CMAKE_DRACO_NOT_FOUND
+  #define USE_MESH_DRACO_EXTENSION                  // Mesh Compression with Draco support in glTF and OBJ files only
+#endif
 // todo: multiple mesh decompression is still under development. Enable define below will generate corrupted view.
 // #define USE_MULTIPLE_MESH_DECODE                 // Enable multiple meshes and amultiple primitives draco decompression
                                                      
