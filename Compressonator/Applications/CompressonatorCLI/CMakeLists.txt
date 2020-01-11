@@ -91,16 +91,8 @@ if (UNIX)
     endif()
 endif()
 
-find_package(Boost COMPONENTS system filesystem) 
-if(Boost_FOUND)
-    list(APPEND CMP_LIBS ${Boost_LIBRARIES})
-endif()
-find_package(OpenCV) 
-if (OpenCV_FOUND)
-    list(APPEND CMP_LIBS ${OpenCV_LIBRARIES})
-else()
-    message(FATAL_ERROR "Package OpenCV are required, but not found. In Unix, run initsetup_unix.sh or sudo apt-get install libopencv-dev to install the libs.")
-endif()
+list(APPEND CMP_LIBS ${Boost_LIBRARIES}
+                     ${OpenCV_LIBRARIES})
 
 target_link_libraries(CompressonatorCLI-bin
                       ${CMP_LIBS}

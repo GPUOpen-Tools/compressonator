@@ -3,6 +3,15 @@ cmake_minimum_required(VERSION 3.10)
 project(Compressonator)
 
 find_package(Threads REQUIRED)
+find_package(Boost COMPONENTS system filesystem)
+find_package(OpenCV REQUIRED)
+
+if (OpenCV_FOUND)
+else()
+    message(FATAL_ERROR "Package OpenCV are required, but not found. "
+            "In Unix, run initsetup_unix.sh or sudo apt-get install "
+            "libopencv-dev to install the libs.")
+endif()
 
 if (UNIX)
   # OpenEXRConfig.cmake is broken on Linux, use PkgConfig
