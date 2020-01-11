@@ -70,14 +70,14 @@ endif()
 
 set (CMP_LIBS "")
 if (UNIX)
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../CMP_CompressonatorLib/libCompressonator.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../CMP_Framework/libCMP_Framework.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/_Libs/CMP_MeshCompressor/libCMP_MeshCompressor.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/_Plugins/CImage/ASTC/libASTC.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/_Plugins/CImage/EXR/libEXR.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/_Plugins/CImage/KTX/libKTX.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/_Plugins/CImage/TGA/libTGA.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/_Plugins/CAnalysis/Analysis/libAnalysis.a")
+    list(APPEND CMP_LIBS Compressonator
+                         CMP_Framework
+                         CMP_MeshCompressor
+                         ASTC
+                         EXR
+                         KTX
+                         TGA
+                         Analysis)
     if(NOT APPLE)
         list(APPEND CMP_LIBS Threads::Threads
                              ${OpenEXR_LIBRARIES})
