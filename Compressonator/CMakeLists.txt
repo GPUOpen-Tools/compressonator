@@ -7,6 +7,9 @@ find_package(Boost COMPONENTS system filesystem)
 find_package(OpenCV REQUIRED)
 find_package(Qt5 COMPONENTS Gui Widgets OpenGL Qml WebEngineWidgets Xml REQUIRED)
 
+# CMake policy CMP0072
+set(OpenGL_GL_PREFERENCE "GLVND")
+
 if (OpenCV_FOUND)
 else()
     message(FATAL_ERROR "Package OpenCV are required, but not found. "
