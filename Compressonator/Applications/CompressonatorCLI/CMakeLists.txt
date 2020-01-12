@@ -94,3 +94,5 @@ target_link_libraries(CompressonatorCLI-bin
                       ${CMP_LIBS}
                       Qt5::Gui
                       )
+
+install(TARGETS CompressonatorCLI-bin)

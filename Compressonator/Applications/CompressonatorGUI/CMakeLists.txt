@@ -46,3 +46,5 @@ target_include_directories(compressonator-gui PRIVATE
   ../_Libs/CMP_Mesh
   ../_Libs/CMP_MeshOptimizer
 )
+
+install(TARGETS compressonator-gui)
