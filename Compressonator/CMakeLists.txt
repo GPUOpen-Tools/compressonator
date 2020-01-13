@@ -5,12 +5,21 @@ project(Compressonator)
 find_package(Threads REQUIRED)
 find_package(Boost COMPONENTS system filesystem)
 find_package(OpenCV REQUIRED)
+find_package(Qt5 COMPONENTS Gui REQUIRED)
 
 if (OpenCV_FOUND)
 else()
     message(FATAL_ERROR "Package OpenCV are required, but not found. "
             "In Unix, run initsetup_unix.sh or sudo apt-get install "
             "libopencv-dev to install the libs.")
+endif()
+
+if (Qt5Gui_FOUND)
+else()
+  message(FATAL_ERROR "Package Qt5 (Qt5Gui) are required, but not found. "
+          "In Unix, run initsetup_unix.sh or sudo apt-get install "
+          "qtdeclarative5-dev. If is window, please make sure install qt and "
+          "add the bin path (i.e. C:\Qt\5.7\msvc2015_64\bin) to environment PATH.")
 endif()
 
 if (UNIX)
