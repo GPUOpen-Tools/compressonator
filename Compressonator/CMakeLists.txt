@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(Compressonator)
 
 find_package(Threads REQUIRED)
-find_package(Boost COMPONENTS system filesystem)
+find_package(Boost COMPONENTS system filesystem REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(Qt5 COMPONENTS Gui Widgets OpenGL Qml WebEngineWidgets Xml REQUIRED)
 
