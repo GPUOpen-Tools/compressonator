@@ -44,7 +44,8 @@ target_include_directories(CompressonatorCLI-bin
                            ../../CMP_Framework/Common/half
                            ../../CMP_Core/shaders
                            ../../CMP_Core/source
-                           ${OpenEXR_INCLUDE_DIRS})
+                           ${OpenEXR_INCLUDE_DIRS}
+                           ${Qt5Gui_INCLUDE_DIRS})
 
 if(APPLE)
 target_include_directories(CompressonatorCLI-bin
@@ -54,11 +55,6 @@ endif()
 
 # Qt5 include path - users install required
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-target_include_directories(CompressonatorCLI-bin
-                           PRIVATE 
-                           "${Qt5Gui_INCLUDE_DIRS}")
-
 
 if (UNIX)
 target_compile_definitions(CompressonatorCLI-bin PRIVATE _LINUX)
