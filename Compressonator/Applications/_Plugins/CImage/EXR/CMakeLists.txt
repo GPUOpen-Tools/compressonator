@@ -18,22 +18,36 @@ target_sources(EXR
                ./EXR.cpp
                )
 
+find_path(ILMBASE_INCLUDE_DIR OpenEXR/half.h)
+find_path(OPENEXR_INCLUDE_DIR OpenEXR/ImfNamespace.h)
+if(ILMBASE_INCLUDE_DIR)
+    target_include_directories(CompressonatorCLI-bin
+                               PRIVATE
+                               ${ILMBASE_INCLUDE_DIR}/OpenEXR
+                               )
+endif()
+if(OPENEXR_INCLUDE_DIR)
+    target_include_directories(CompressonatorCLI-bin
+                               PRIVATE
+                               ${OPENEXR_INCLUDE_DIR}/OpenEXR
+                               )
+endif()
+
 target_include_directories(EXR
                            PRIVATE
                            ../../../../CMP_CompressonatorLib
                            ../../../../CMP_Framework/Common/half
                            ../../Common/
-                           /usr/include/OpenEXR
                            )
 
 if (APPLE)
 target_include_directories(EXR
                            PRIVATE
                            /usr/local/include/OpenEXR/)
-find_package(Boost COMPONENTS system filesystem) 
+find_package(Boost COMPONENTS system filesystem)
 if(Boost_FOUND)
     target_include_directories(EXR
-                               PRIVATE 
+                               PRIVATE
                                ${Boost_INCLUDE_DIRS})
 endif()
 endif()

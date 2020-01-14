@@ -19,8 +19,8 @@ target_sources(Analysis
                ./CAnalysis.cpp
                ./CAnalysis.h
                )
- 
-find_package(OpenCV) 
+
+find_package(OpenCV)
 if (OpenCV_FOUND)
     target_include_directories(Analysis
                                PRIVATE
@@ -35,11 +35,27 @@ set_property(TARGET Analysis PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 find_package(Qt5Gui)
 if(Qt5Gui_FOUND)
 target_include_directories(Analysis
-                           PRIVATE 
+                           PRIVATE
                            "${Qt5Gui_INCLUDE_DIRS}")
 else()
 message(FATAL_ERROR "Package Qt5 (Qt5Gui) are required, but not found. In Unix, run initsetup_unix.sh or sudo apt-get install qtdeclarative5-dev. If is window, please make sure install qt and add the bin path (i.e. C:\Qt\5.7\msvc2015_64\bin) to environment PATH.")
 endif()
+
+find_path(ILMBASE_INCLUDE_DIR OpenEXR/half.h)
+find_path(OPENEXR_INCLUDE_DIR OpenEXR/ImfNamespace.h)
+if(ILMBASE_INCLUDE_DIR)
+    target_include_directories(CompressonatorCLI-bin
+                               PRIVATE
+                               ${ILMBASE_INCLUDE_DIR}/OpenEXR
+                               )
+endif()
+if(OPENEXR_INCLUDE_DIR)
+    target_include_directories(CompressonatorCLI-bin
+                               PRIVATE
+                               ${OPENEXR_INCLUDE_DIR}/OpenEXR
+                               )
+endif()
+
 
 target_include_directories(Analysis
                            PRIVATE
@@ -49,13 +65,13 @@ target_include_directories(Analysis
                            ../../Common/
                            ../../../CompressonatorGUI/Common/
                            ../../../CompressonatorGUI/Components/
-                           /usr/include/OpenEXR
                            )
+
 if(APPLE)
 target_include_directories(Analysis
                            PRIVATE
                            /usr/local/include/OpenEXR/)
-find_package(Boost COMPONENTS system filesystem) 
+find_package(Boost COMPONENTS system filesystem)
 if(Boost_FOUND)
     target_include_directories(Analysis PRIVATE ${Boost_INCLUDE_DIRS})
 endif()

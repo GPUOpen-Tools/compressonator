@@ -46,6 +46,21 @@ target_include_directories(CompressonatorCLI-bin
                            ../../CMP_Core/source
                            /usr/include/OpenEXR)
 
+find_path(ILMBASE_INCLUDE_DIR OpenEXR/half.h)
+find_path(OPENEXR_INCLUDE_DIR OpenEXR/ImfNamespace.h)
+if(ILMBASE_INCLUDE_DIR)
+    target_include_directories(CompressonatorCLI-bin
+                               PRIVATE
+                               ${ILMBASE_INCLUDE_DIR}/OpenEXR
+                               )
+endif()
+if(OPENEXR_INCLUDE_DIR)
+    target_include_directories(CompressonatorCLI-bin
+                               PRIVATE
+                               ${OPENEXR_INCLUDE_DIR}/OpenEXR
+                               )
+endif()
+
 if(APPLE)
 target_include_directories(CompressonatorCLI-bin
                            PRIVATE
@@ -58,7 +73,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 find_package(Qt5Gui)
 if(Qt5Gui_FOUND)
 target_include_directories(CompressonatorCLI-bin
-                           PRIVATE 
+                           PRIVATE
                            "${Qt5Gui_INCLUDE_DIRS}")
 else()
 message(FATAL_ERROR "Package Qt5 (Qt5Gui) are required, but not found. In Unix, run initsetup_unix.sh or sudo apt-get install qtdeclarative5-dev. If is window, please make sure install qt and add the bin path (i.e. C:\Qt\5.7\msvc2015_64\bin) to environment PATH.")
@@ -70,21 +85,30 @@ endif()
 
 set (CMP_LIBS "")
 if (UNIX)
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../CMP_CompressonatorLib/libCompressonator.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../CMP_Framework/libCMP_Framework.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/_Libs/CMP_MeshCompressor/libCMP_MeshCompressor.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/_Plugins/CImage/ASTC/libASTC.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/_Plugins/CImage/EXR/libEXR.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/_Plugins/CImage/KTX/libKTX.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/_Plugins/CImage/TGA/libTGA.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/_Plugins/CAnalysis/Analysis/libAnalysis.a")
+    list(APPEND CMP_LIBS Compressonator)
+    list(APPEND CMP_LIBS CMP_Framework)
+    list(APPEND CMP_LIBS CMP_MeshCompressor)
+    list(APPEND CMP_LIBS ASTC)
+    list(APPEND CMP_LIBS EXR)
+    list(APPEND CMP_LIBS KTX)
+    list(APPEND CMP_LIBS TGA)
+    list(APPEND CMP_LIBS Analysis)
     if(NOT APPLE)
-        list(APPEND CMP_LIBS "/usr/lib/x86_64-linux-gnu/libpthread.so")
-        list(APPEND CMP_LIBS "/usr/lib/x86_64-linux-gnu/libHalf.so")
-        list(APPEND CMP_LIBS "/usr/lib/x86_64-linux-gnu/libImath.so")
-        list(APPEND CMP_LIBS "/usr/lib/x86_64-linux-gnu/libIlmThread.so")
-        list(APPEND CMP_LIBS "/usr/lib/x86_64-linux-gnu/libIex.so")
-        list(APPEND CMP_LIBS "/usr/lib/x86_64-linux-gnu/libIlmImf.so")
+        set(THREADS_PREFER_PTHREAD_FLAG ON)
+        find_package(Threads REQUIRED)
+        list(APPEND CMP_LIBS Threads::Threads)
+
+        find_library(OPENEXR_HALF_LIBRARY libHalf.so)
+        find_library(OPENEXR_IMATH_LIBRARY libIlmThread.so)
+        find_library(OPENEXR_ILMTHREAD_LIBRARY libIex.so)
+        find_library(OPENEXR_IEX_LIBRARY libIex.so)
+        find_library(OPENEXR_ILMIMF_LIBRARY libIlmImf.so)
+
+        list(APPEND CMP_LIBS ${OPENEXR_HALF_LIBRARY})
+        list(APPEND CMP_LIBS ${OPENEXR_IMATH_LIBRARY})
+        list(APPEND CMP_LIBS ${OPENEXR_ILMTHREAD_LIBRARY})
+        list(APPEND CMP_LIBS ${OPENEXR_IEX_LIBRARY})
+        list(APPEND CMP_LIBS ${OPENEXR_ILMIMF_LIBRARY})
     else()
         list(APPEND CMP_LIBS "/usr/lib/libz.dylib")
         list(APPEND CMP_LIBS "/usr/local/lib/libHalf.dylib")
@@ -95,11 +119,11 @@ if (UNIX)
     endif()
 endif()
 
-find_package(Boost COMPONENTS system filesystem) 
+find_package(Boost COMPONENTS system filesystem)
 if(Boost_FOUND)
     list(APPEND CMP_LIBS ${Boost_LIBRARIES})
 endif()
-find_package(OpenCV) 
+find_package(OpenCV)
 if (OpenCV_FOUND)
     list(APPEND CMP_LIBS ${OpenCV_LIBRARIES})
 else()
