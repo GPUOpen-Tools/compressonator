@@ -23,7 +23,7 @@ target_include_directories(EXR
                            ../../../../CMP_CompressonatorLib
                            ../../../../CMP_Framework/Common/half
                            ../../Common/
-                           /usr/include/OpenEXR
+                           ${OpenEXR_INCLUDE_DIRS}
                            )
 
 if (APPLE)

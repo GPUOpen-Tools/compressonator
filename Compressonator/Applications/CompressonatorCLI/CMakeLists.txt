@@ -44,7 +44,7 @@ target_include_directories(CompressonatorCLI-bin
                            ../../CMP_Framework/Common/half
                            ../../CMP_Core/shaders
                            ../../CMP_Core/source
-                           /usr/include/OpenEXR)
+                           ${OpenEXR_INCLUDE_DIRS})
 
 if(APPLE)
 target_include_directories(CompressonatorCLI-bin
