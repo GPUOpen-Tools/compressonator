@@ -49,7 +49,7 @@ target_include_directories(Analysis
                            ../../Common/
                            ../../../CompressonatorGUI/Common/
                            ../../../CompressonatorGUI/Components/
-                           /usr/include/OpenEXR
+                           ${OpenEXR_INCLUDE_DIRS}
                            )
 if(APPLE)
 target_include_directories(Analysis
