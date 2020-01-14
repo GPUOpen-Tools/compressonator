@@ -1827,6 +1827,11 @@ bool GenerateImageProps(std::string ImageFile)
 
 void LocalPrintF(char* buff)
 {
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wformat-security"            // warning : warning: format string is not a string literal
+#elif defined(__GNUC__)
+#pragma GCC diagnostic ignored "-Wformat-security"              // warning : format string is not a string literal (potentially insecure)
+#endif
     printf(buff);
 }
 
