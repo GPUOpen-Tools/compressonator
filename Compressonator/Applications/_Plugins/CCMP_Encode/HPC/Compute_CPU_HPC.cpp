@@ -46,7 +46,7 @@ unsigned int    _stdcall ProcEncode(void* param)
    //printf("Thead Active [%4x]\n",std::this_thread::get_id());
    std::this_thread::sleep_for(0ms);
 
-   while (tp->exit == false)
+   do 
    {
        if (tp->run == true)
        {
@@ -56,7 +56,7 @@ unsigned int    _stdcall ProcEncode(void* param)
 
         using namespace chrono;
         std::this_thread::sleep_for(0ms);
-   }
+   } while (tp->exit == false);
 
    // printf("Thead Closed [%x] run[%d]\n",std::this_thread::get_id(),tp->run?1:0);
    return 0;
