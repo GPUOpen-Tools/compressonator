@@ -1800,61 +1800,65 @@ void InitializeASTCSettingsForSetBlockSize(__global ASTC_Encode *ASTCEncode)
     int     maxiters_autoset    = 0;
 
     // Codec Speed Setting Defaults based on Quality Settings
-    if (ASTCEncode->m_Quality < 0.2)
+    // Codec Speed Setting Defaults based on Quality Settings
+    float QualityScale; // Set quality normalized per process setting with a range of 0.0 to 1.0f
+    if (ASTCEncode->m_Quality < 0.02f)
     {
         // Very Fast
+        oplimit_autoset     = 1.0;
+        mincorrel_autoset   = 0.5;
         plimit_autoset = 1;
-        oplimit_autoset = 1.0;
+        bmc_autoset         = 5.0f;
+        maxiters_autoset    = 1;
         dblimit_autoset_2d = MAX(70 - 35 * log10_texels_2d, 53 - 19 * log10_texels_2d);
-#ifdef ASTC_ENABLE_3D_SUPPORT
-        dblimit_autoset_3d = MAX(70 - 35 * log10_texels_3d, 53 - 19 * log10_texels_3d);
-#endif
-        bmc_autoset = 5;
-        mincorrel_autoset = ASTCEncode->m_Quality;
-        maxiters_autoset = 1;
     }
     else
-        if (ASTCEncode->m_Quality < 0.5) 
+    if (ASTCEncode->m_Quality < 0.05f)
         {
-            // Medium speed setting
-            plimit_autoset = 2;
+        // Fast:
+        QualityScale = ASTCEncode->m_Quality/0.05f;
             oplimit_autoset = 1.0;
-            mincorrel_autoset = ASTCEncode->m_Quality;
+        mincorrel_autoset   = 0.5;
+        plimit_autoset      = 4;
+        bmc_autoset         = 5.0f+(45.0f*QualityScale);  // max 50
+        maxiters_autoset    = 1;
             dblimit_autoset_2d = MAX(85 - 35 * log10_texels_2d, 63 - 19 * log10_texels_2d);
-#ifdef ASTC_ENABLE_3D_SUPPORT
-            dblimit_autoset_2d = MAX(85 - 35 * log10_texels_3d, 63 - 19 * log10_texels_3d);
-#endif
-            bmc_autoset = 15;
-            maxiters_autoset = 1;
+    }
+    else
+    if (ASTCEncode->m_Quality <= 0.20f)
+    {
+        // Medium  set to match near Compressonator BC7 Default Quality 0.05f setting
+        QualityScale = ASTCEncode->m_Quality/0.20f;
+        oplimit_autoset     = 1.2f;
+        mincorrel_autoset   = 0.75f;
+        plimit_autoset      = 15+round(10.0f*QualityScale); // max around 25;
+        bmc_autoset         = 57.0f+(18.0f*QualityScale);  // max 75;
+        maxiters_autoset    = 2;
+        dblimit_autoset_2d  = MAX(95 - 35 * log10_texels_2d, 70 - 19 * log10_texels_2d);
         }
         else
-            if (ASTCEncode->m_Quality < 0.8)
-            {
-                // Thorough
-                plimit_autoset = 15;
-                oplimit_autoset = 1.0;
-                mincorrel_autoset = 0.5;
-                dblimit_autoset_2d = MAX(85 - 35 * log10_texels_2d, 63 - 19 * log10_texels_2d);
-#ifdef ASTC_ENABLE_3D_SUPPORT
-                dblimit_autoset_2d = MAX(85 - 35 * log10_texels_3d, 63 - 19 * log10_texels_3d);
-#endif
-                bmc_autoset = 25;
-                maxiters_autoset = 1;
-            }
-            else
-            {
-                // Exhaustive
-                plimit_autoset = 10;
-                oplimit_autoset = 1.0;
-                mincorrel_autoset = 0.5;
-                dblimit_autoset_2d = MAX(85 - 35 * log10_texels_2d, 63 - 19 * log10_texels_2d);
-#ifdef ASTC_ENABLE_3D_SUPPORT
-                dblimit_autoset_2d = MAX(85 - 35 * log10_texels_3d, 63 - 19 * log10_texels_3d);
-#endif
-                bmc_autoset = 50;
-                maxiters_autoset = 1;
-            }
-
+    if (ASTCEncode->m_Quality <= 0.60f)
+    {
+        // Thorough
+        QualityScale = ASTCEncode->m_Quality/0.60f;
+        oplimit_autoset     = 1.2 + (1.3f*QualityScale); // max 2.5f;
+        mincorrel_autoset   = 0.95f;
+        plimit_autoset      = 25+round(75.0f*QualityScale); // max around 100
+        bmc_autoset         = 75.0f+(25.0f*QualityScale);  // max 95;
+        maxiters_autoset    = 4;
+        dblimit_autoset_2d  = MAX(105 - 35 * log10_texels_2d, 77 - 19 * log10_texels_2d);
+    }
+    else
+    {
+        // Exhaustive
+        QualityScale =  ASTCEncode->m_Quality;
+        oplimit_autoset     = 2.5f+ (997.5f*QualityScale); // max 1000.0f;
+        mincorrel_autoset   = 0.99f;
+        plimit_autoset      = 100 + round(923.0f*QualityScale); // max 1024
+        bmc_autoset         = 95.0f+(5.0f*QualityScale);  // max 100;
+        maxiters_autoset    = 4;
+        dblimit_autoset_2d  = 999.0f;
+    }
 
     int partitions_to_test = plimit_autoset;
     float dblimit_2d = dblimit_autoset_2d;

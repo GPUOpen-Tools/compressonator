@@ -2173,17 +2173,6 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
         CMP_FORMAT srcFormat;
         memset(&g_MipSetIn, 0, sizeof(MipSet));
 
-        //--------------------------------------------
-        // Set user specification for ASTC Block sizes
-        //---------------------------------------------
-        g_MipSetIn.m_nBlockWidth  = g_CmdPrams.BlockWidth;
-        g_MipSetIn.m_nBlockHeight = g_CmdPrams.BlockHeight;
-        g_MipSetIn.m_nBlockDepth  = g_CmdPrams.BlockDepth;
-        if (g_CmdPrams.use_noMipMaps)
-        {
-            g_MipSetIn.m_Flags = MS_FLAG_DisableMipMapping;
-        }
-
         //===========================
         // Set the destination format
         //===========================
@@ -2303,6 +2292,16 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
             }
         }
 
+        //--------------------------------------------
+        // Set user specification for ASTC Block sizes
+        //---------------------------------------------
+        g_MipSetIn.m_nBlockWidth  = g_CmdPrams.BlockWidth;
+        g_MipSetIn.m_nBlockHeight = g_CmdPrams.BlockHeight;
+        g_MipSetIn.m_nBlockDepth  = g_CmdPrams.BlockDepth;
+        if (g_CmdPrams.use_noMipMaps)
+        {
+            g_MipSetIn.m_Flags = MS_FLAG_DisableMipMapping;
+        }
 
         // check if CubeMap is supported in destination file 
         if (g_MipSetIn.m_TextureType ==TT_CubeMap)
