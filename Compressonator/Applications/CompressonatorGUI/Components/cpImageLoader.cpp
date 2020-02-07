@@ -27,10 +27,10 @@
 #pragma warning( push )
 #pragma warning(disable:4100)
 #pragma warning(disable:4800)
-#include "ImfStandardAttributes.h"
-#include "ImathBox.h"
-#include "ImfArray.h"
-#include "ImfRgba.h"
+#include <ImfStandardAttributes.h>
+#include <ImathBox.h>
+#include <ImfArray.h>
+#include <ImfRgba.h>
 #include <ImfArray.h>
 #pragma warning( pop )
 

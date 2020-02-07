@@ -30,14 +30,14 @@
 //#include "qtgroupboxpropertybrowser.h"
 #include "objectcontroller.h"
 #include <QtWidgets>
-#include <QtQml\QQmlListProperty>
+#include <QQmlListProperty>
 #include "PluginManager.h"
 #include "cpImageLoader.h"
 #include "ATIFormats.h"
 #include "TextureIO.h"
 #include "Common.h"
 // JSon 
-#include "json\json.h"
+#include "json/json.h"
 // Mesh
 #include "cmp_mesh.h"
 #include "ModelData.h"
@@ -368,7 +368,8 @@ public:
                     float bitrateF = float(128.0f / (xblock*yblock));
                     m_Bitrate = bitrate;
                     m_correctBitrate = QString::number(xblock) + "x" + QString::number(yblock);
-                    emit bitrateChanged(QString::number(bitrateF, 'f', 2), xblock, yblock);
+                    QString bitrateFString = QString::number(bitrateF, 'f', 2);
+                    emit bitrateChanged(bitrateFString, xblock, yblock);
                     m_data_has_been_changed = true;
                     emit dataChanged();
                 }
@@ -605,6 +606,7 @@ signals:
 #define DESTINATION_IMAGE_CLASS_NAME      "Destination Image"
 #define CHANNEL_WEIGHTING_CLASS_NAME      "Channel Weighting"
 #define DXT1_ALPHA_CLASS_NAME             "DXT1 Alpha"
+#define ASTC_BLOCKRATE_CLASS_NAME         "ASTC Block Rate"
 #define CODEC_BLOCK_CLASS_NAME            "Codec Block"
 #define HDR_PROP_CLASS_NAME               "Input HDR Image Properties"
 
@@ -1327,6 +1329,7 @@ public:
         //R_16F,
         //RG_32F,
         //R_32F,
+        MESH_DATA
     };
 
     C_Destination_Options()

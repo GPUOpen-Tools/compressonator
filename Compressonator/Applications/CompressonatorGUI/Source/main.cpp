@@ -76,7 +76,11 @@ void GetSupportedFileFormats(QList<QByteArray> &g_supportedFormats)
         if (strcmp(g_pluginManager.getPluginType(i), "IMAGE") == 0)
         {
             QByteArray bArray = g_pluginManager.getPluginName(i);
+#ifdef _WIN32
             QByteArray fformat = bArray.toUpper();
+#else
+            QByteArray fformat = bArray.toLower();
+#endif
             if (fformat == "ANALYSIS") continue;
             if (!g_supportedFormats.contains(fformat))
                 g_supportedFormats.append(fformat);
@@ -85,7 +89,11 @@ void GetSupportedFileFormats(QList<QByteArray> &g_supportedFormats)
         if (strcmp(g_pluginManager.getPluginType(i), "3DMODEL_LOADER") == 0)
         {
             QByteArray bArray = g_pluginManager.getPluginName(i);
+#ifdef _WIN32
             QByteArray fformat = bArray.toUpper();
+#else
+            QByteArray fformat = bArray.toLower();
+#endif
             if (!g_supportedFormats.contains(fformat))
                 g_supportedFormats.append(fformat);
         }
@@ -186,17 +194,17 @@ int main(int argc, char **argv)
         //----------------------------------
         // Load plugin List for processing
         //----------------------------------
-        g_pluginManager.registerStaticPlugin("IMAGE",  "ASTC",      make_Plugin_ASTC);
-        g_pluginManager.registerStaticPlugin("IMAGE",  "EXR",       make_Plugin_EXR);
-        g_pluginManager.registerStaticPlugin("IMAGE",  "KTX",       make_Plugin_KTX);
+        g_pluginManager.registerStaticPlugin("IMAGE",  "ASTC",      (void*) make_Plugin_ASTC);
+        g_pluginManager.registerStaticPlugin("IMAGE",  "EXR",       (void*) make_Plugin_EXR);
+        g_pluginManager.registerStaticPlugin("IMAGE",  "KTX",       (void*) make_Plugin_KTX);
 
 #ifdef USE_CRN
         g_pluginManager.registerStaticPlugin("IMAGE", "CRN", make_Plugin_CRN);
 #endif
 
         // TGA is supported by Qt to some extent if it fails we will try to load it using our custom code
-        g_pluginManager.registerStaticPlugin("IMAGE",  "TGA",       make_Plugin_TGA);
-        g_pluginManager.registerStaticPlugin("IMAGE", "ANALYSIS",   make_Plugin_CAnalysis);
+        g_pluginManager.registerStaticPlugin("IMAGE",  "TGA",       (void*) make_Plugin_TGA);
+        g_pluginManager.registerStaticPlugin("IMAGE", "ANALYSIS",   (void*) make_Plugin_CAnalysis);
 
         g_pluginManager.getPluginList("/plugins",true);
         CMP_RegisterHostPlugins();
@@ -252,7 +260,7 @@ int main(int argc, char **argv)
 
 #ifdef MSG_HANDLER
         PrintStatusLine = &mainComponents.PrintStatus;
-        qInstallMsgHandler(mainComponents.msgHandler);
+        qInstallMessageHandler((QtMessageHandler) mainComponents.msgHandler);
 #endif
         QDesktopWidget *desktop = new QDesktopWidget();
         mainComponents.resize(desktop->screenGeometry().width()*PERCENTAGE_OF_MONITOR_WIDTH_FOR_SCREEN, desktop->screenGeometry().height()*PERCENTAGE_OF_MONITOR_HEIGHT_FOR_SCREEN);

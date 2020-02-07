@@ -30,8 +30,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "Darwi
         list(APPEND CMP_INCLUDE_DIR ${Boost_INCLUDE_DIRS}) 
     endif()
     
-    list(APPEND CMP_INCLUDE_DIRS "/usr/local/include/OpenEXR/")
-    list(APPEND CMP_INCLUDE_DIRS "/usr/include/OpenEXR/")
+    list(APPEND CMP_INCLUDE_DIRS ${OpenEXR_INCLUDE_DIRS})
     #build Openexr 2.2 from cmake
     if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         list(APPEND CMP_INCLUDE_DIRS "/usr/local/ilmbase22build/include/OpenEXR/")

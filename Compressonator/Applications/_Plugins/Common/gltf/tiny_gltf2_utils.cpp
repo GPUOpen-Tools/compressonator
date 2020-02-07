@@ -3286,6 +3286,7 @@ namespace tinygltf2
             }
         }
 
+#ifdef USE_MESH_DRACO_EXTENSION
         // Assign buffer to draco::mesh for draco encode case, expect only one buffer for now
         if (use_draco_encode)
         {
@@ -3490,8 +3491,9 @@ namespace tinygltf2
 
                 }
             }
-        }
 
+        }
+#endif
         return true;
     }
 
@@ -3520,10 +3522,11 @@ namespace tinygltf2
             return false;
         }
 
+#ifdef USE_MESH_DRACO_EXTENSION
         // clean up the draco meshes for each load
         draco_en_meshes.clear();
         draco_de_meshes.clear();
-
+#endif
         f.seekg(0, f.end);
         size_t            sz = static_cast<size_t>(f.tellg());
         std::vector<char> buf(sz);
@@ -4019,7 +4022,7 @@ namespace tinygltf2
             {
                 SerializeNumberProperty<int>("material", gltfPrimitive.material, primitive);
             }
-
+#ifdef USE_MESH_DRACO_EXTENSION
             // write extension for draco encode (for now we expect only one primitive for draco encode)
             if (use_draco_encode)
             {
@@ -4090,7 +4093,7 @@ namespace tinygltf2
                 khrcomp["KHR_draco_mesh_compression"] = khrext;
                 primitive["extensions"]               = khrcomp;
             }
-
+#endif
             SerializeNumberProperty<int>("mode", gltfPrimitive.mode, primitive);
 
             // Morph targets
@@ -4286,7 +4289,7 @@ namespace tinygltf2
                                         /*, bool writeBinary*/)
     {
         json output;
-
+#ifdef USE_MESH_DRACO_EXTENSION
         //write the decoded draco buffer to gltf file
         if (decodedDraco)
         {
@@ -4369,6 +4372,7 @@ namespace tinygltf2
             }
         }
         else
+#endif
         {
             // ACCESSORS
             json accessors;
@@ -4428,7 +4432,7 @@ namespace tinygltf2
         }
 
         std::string binSaveFilePath = JoinPath(baseDir, binFilename);
-
+#ifdef USE_MESH_DRACO_EXTENSION
         // BUFFERS and BUFFERVIEWS (Note: We expect only one buffer here)
         if (decodedDraco)
         {
@@ -4624,7 +4628,9 @@ namespace tinygltf2
 
             output["bufferViews"] = bufferViews;
         }
+
         else
+#endif
         {
             json buffers;
             for (unsigned int i = 0; i < model->buffers.size(); ++i)
@@ -4708,6 +4714,7 @@ namespace tinygltf2
         // MESHES
         if (model->meshes.size())
         {
+#ifdef USE_MESH_DRACO_EXTENSION
             if (use_draco_encode)
             {
                 int mesh_num = 0;
@@ -4721,7 +4728,7 @@ namespace tinygltf2
                     return false;
                 }
             }
-
+#endif
             json meshes;
             int mesh_index = 0;
             for (unsigned int i = 0; i < model->meshes.size(); ++i)

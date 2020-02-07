@@ -36,7 +36,6 @@ target_include_directories(CompressonatorCLI-bin
                            ../_Plugins/Common/gltf
                            ../_Plugins/CMesh/mesh_optimizer
                            ../_Libs/GPU_Decode
-                           ../_Libs/CMP_MeshCompressor/Draco/src
                            ../_Libs/CMP_MeshOptimizer
                            ../_Libs/CMP_Math
                            ../../CMP_CompressonatorLib
@@ -44,7 +43,9 @@ target_include_directories(CompressonatorCLI-bin
                            ../../CMP_Framework/Common/half
                            ../../CMP_Core/shaders
                            ../../CMP_Core/source
-                           /usr/include/OpenEXR)
+                           ${draco_INCLUDE_DIRS}
+                           ${OpenEXR_INCLUDE_DIRS}
+                           ${Qt5Gui_INCLUDE_DIRS})
 
 if(APPLE)
 target_include_directories(CompressonatorCLI-bin
@@ -55,36 +56,23 @@ endif()
 # Qt5 include path - users install required
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-find_package(Qt5Gui)
-if(Qt5Gui_FOUND)
-target_include_directories(CompressonatorCLI-bin
-                           PRIVATE 
-                           "${Qt5Gui_INCLUDE_DIRS}")
-else()
-message(FATAL_ERROR "Package Qt5 (Qt5Gui) are required, but not found. In Unix, run initsetup_unix.sh or sudo apt-get install qtdeclarative5-dev. If is window, please make sure install qt and add the bin path (i.e. C:\Qt\5.7\msvc2015_64\bin) to environment PATH.")
-endif()
-
 if (UNIX)
 target_compile_definitions(CompressonatorCLI-bin PRIVATE _LINUX)
 endif()
 
 set (CMP_LIBS "")
 if (UNIX)
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../CMP_CompressonatorLib/libCompressonator.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../CMP_Framework/libCMP_Framework.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/_Libs/CMP_MeshCompressor/libCMP_MeshCompressor.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/_Plugins/CImage/ASTC/libASTC.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/_Plugins/CImage/EXR/libEXR.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/_Plugins/CImage/KTX/libKTX.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/_Plugins/CImage/TGA/libTGA.a")
-    list(APPEND CMP_LIBS "${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/_Plugins/CAnalysis/Analysis/libAnalysis.a")
+    list(APPEND CMP_LIBS Compressonator
+                         CMP_Framework
+                         CMP_MeshCompressor
+                         ASTC
+                         EXR
+                         KTX
+                         TGA
+                         Analysis)
     if(NOT APPLE)
-        list(APPEND CMP_LIBS "/usr/lib/x86_64-linux-gnu/libpthread.so")
-        list(APPEND CMP_LIBS "/usr/lib/x86_64-linux-gnu/libHalf.so")
-        list(APPEND CMP_LIBS "/usr/lib/x86_64-linux-gnu/libImath.so")
-        list(APPEND CMP_LIBS "/usr/lib/x86_64-linux-gnu/libIlmThread.so")
-        list(APPEND CMP_LIBS "/usr/lib/x86_64-linux-gnu/libIex.so")
-        list(APPEND CMP_LIBS "/usr/lib/x86_64-linux-gnu/libIlmImf.so")
+        list(APPEND CMP_LIBS Threads::Threads
+                             ${OpenEXR_LIBRARIES})
     else()
         list(APPEND CMP_LIBS "/usr/lib/libz.dylib")
         list(APPEND CMP_LIBS "/usr/local/lib/libHalf.dylib")
@@ -95,18 +83,13 @@ if (UNIX)
     endif()
 endif()
 
-find_package(Boost COMPONENTS system filesystem) 
-if(Boost_FOUND)
-    list(APPEND CMP_LIBS ${Boost_LIBRARIES})
-endif()
-find_package(OpenCV) 
-if (OpenCV_FOUND)
-    list(APPEND CMP_LIBS ${OpenCV_LIBRARIES})
-else()
-    message(FATAL_ERROR "Package OpenCV are required, but not found. In Unix, run initsetup_unix.sh or sudo apt-get install libopencv-dev to install the libs.")
-endif()
+list(APPEND CMP_LIBS ${Boost_LIBRARIES}
+                     ${OpenCV_LIBRARIES}
+                     ${draco_LIBRARIES})
 
 target_link_libraries(CompressonatorCLI-bin
                       ${CMP_LIBS}
                       Qt5::Gui
                       )
+
+install(TARGETS CompressonatorCLI-bin)

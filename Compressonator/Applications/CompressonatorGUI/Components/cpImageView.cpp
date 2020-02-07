@@ -644,7 +644,7 @@ void cpImageView::GetSourceBlock(int BlockX, int BlockY,string filename)
          QPixmap pixmap(4,4);
          QImage image = pixmap.toImage();
 
-         BYTE *data = mipLevel->m_pbData;
+         CMP_BYTE *data = mipLevel->m_pbData;
          int  d = 0;
          for (int h = 0; h < 4; h++)
            {

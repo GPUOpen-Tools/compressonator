@@ -2,7 +2,7 @@
 // Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 
-#include "acoglwidget.h"
+#include "acOGLWidget.h"
 #include <math.h>
 #include "qopengltexture.h"
 
@@ -32,6 +32,7 @@ acOGLWidget::~acOGLWidget()
     doneCurrent();
 }
 
+#if 0
 GLenum  acOGLWidget::MIP2OLG_Format(MipSet *m_MipSet)
 {
     GLenum m_GLnum;
@@ -48,6 +49,7 @@ GLenum  acOGLWidget::MIP2OLG_Format(MipSet *m_MipSet)
     }
     return m_GLnum;
 }
+
 
 bool  acOGLWidget::loadMIPImage(MipSet *m_MipSet, CMIPS *cMips, int MIPLevel = 0)
 {
@@ -76,6 +78,7 @@ bool  acOGLWidget::loadMIPImage(MipSet *m_MipSet, CMIPS *cMips, int MIPLevel = 0
 
     return true;
 }
+#endif
 
 //not in used- the function below not working 
 //used qopenglwidget grabframebuffer for offscreen render

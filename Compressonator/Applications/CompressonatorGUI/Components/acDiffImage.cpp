@@ -126,7 +126,9 @@ void acDiffImage::onOkDiff()
     if (m_parent != NULL)
     {
         this->hide();
-        emit ((ProjectView*)m_parent)->ViewImageFileDiff(NULL, m_file1Name->currentText(), m_file2Name->currentText());
+        QString fileName1 = m_file1Name->currentText();
+        QString fileName2 = m_file2Name->currentText();
+        emit ((ProjectView*)m_parent)->ViewImageFileDiff(NULL, fileName1, fileName2);
     }
 
     this->hide();

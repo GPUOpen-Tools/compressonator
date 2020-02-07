@@ -38,7 +38,7 @@
 #include "cpWelcomePage.h"
 #include "cpImageCompare.h"
 #include "cpCompressStatus.h"
-#include "acaboutdlg.h"
+#include "acAboutDlg.h"
 #include "acProgressDlg.h"
 #include "cmdline.h"
 #include "UtilFuncs.h"

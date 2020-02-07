@@ -21,6 +21,9 @@
 // 
 //===================================================================== 
 
+#include <chrono>
+#include <thread>
+
 #include "Compressonator.h"
 #include "Common.h"
 #include "cpMainComponents.h"
@@ -562,14 +565,15 @@ void cpMainComponents::closeEvent(QCloseEvent *event)
         int maxwait = 3000; // > 3 seconds
         while (g_bCompressing)
         {
-            Sleep(1);
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
             maxwait--;
             if (maxwait == 0) break;
             QApplication::processEvents();
         }
     }
+#ifdef _WIN32
     CMP_ShutdownDecompessLibrary();
-
+#endif
     if (m_projectview)
     {
         if (!m_projectview->userSaveProjectAndContinue())
@@ -1725,12 +1729,13 @@ void cpMainComponents::AddImageCompSettings(QTreeWidgetItem *item, C_Destination
                     return;
                 }
 
+#ifdef _WIN32
                 if (m_data->m_destFileNamePath.contains(".obj") || m_data->m_destFileNamePath.contains(".OBJ"))
                 {
                     //write to indicate the state of the file
                     writeObjFileState(m_data->m_destFileNamePath.toStdString(), CMP_COPY);
                 }
-
+#endif
                 QTreeWidgetItem *ParentItem = item->parent();
                 if (ParentItem)
                 {
@@ -2594,7 +2599,9 @@ void cpMainComponents::SetRaised()
 cpMainComponents::~cpMainComponents()
 {
     g_bAbortCompression = true;
+#ifdef _WIN32
     CMP_ShutdownDecompessLibrary();
+#endif
 }
 
 void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem *item)

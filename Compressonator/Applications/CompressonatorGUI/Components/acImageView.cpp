@@ -673,7 +673,7 @@ void acImageView::onacImageViewMousePosition(QPointF *scenePos, int ID)
     QGraphicsItem *itemPicked;
     QPointF        localPt;
 
-    itemPicked = m_graphicsScene->itemAt(scenePos->rx(), scenePos->ry());
+    itemPicked = m_graphicsScene->itemAt(scenePos->rx(), scenePos->ry(), QTransform());
 
     // is mouse inside image view
     if (itemPicked)
@@ -1330,14 +1330,15 @@ void acImageView::centerImage()
 
     // translate move the image from it current position by a delta x and delta y
     // so that is viewed in center
-    
-    m_imageItem_Processed->translate(dx, dy);
+    QTransform translation;
+    translation.translate(dx, dy);
+    m_imageItem_Processed->setTransform(translation, true);
 //#endif
 
     if (m_imageItem_Original)
     {
         m_imageItem_Original->setTransformOriginPoint(0, 0);
-        m_imageItem_Original->translate(dx, dy);
+        m_imageItem_Original->setTransform(translation, true);
     }
 
 }
@@ -1593,7 +1594,7 @@ void acImageView::onSetScale(int value)
     QRectF bounds = m_graphicsScene->sceneRect();        
     QPointF  pos = bounds.center();
 
-    QGraphicsItem * itemPicked = m_graphicsScene->itemAt(pos);
+    QGraphicsItem * itemPicked = m_graphicsScene->itemAt(pos, QTransform());
     // Found an item under the cursor
     if (itemPicked)
     {

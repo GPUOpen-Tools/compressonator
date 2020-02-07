@@ -22,12 +22,16 @@
 //=====================================================================
 
 #include "cpProjectView.h"
+
+#include <chrono>
+#include <thread>
+
 #include "cmdline.h"
 
 #ifdef USE_MESHOPTIMIZER
-#include "..\..\_Plugins\CMesh\mesh_optimizer\mesh_optimizer.h"
+#include "../../_Plugins/CMesh/mesh_optimizer/mesh_optimizer.h"
 #else
-#include "..\..\_Plugins\CMesh\Tootle\mesh_tootle.h"
+#include "../../_Plugins/CMesh/Tootle/mesh_tootle.h"
 #endif
 #include "cpMainComponents.h"
 
@@ -35,7 +39,7 @@
 #include <assimp/Exporter.hpp>
 #endif
 
-#include "..\..\_Plugins\Common\gltf\GltfCommon.h"
+#include "../../_Plugins/Common/gltf/GltfCommon.h"
 #include "tiny_gltf2.h"
 #include "tiny_gltf2_utils.h"
 
@@ -102,7 +106,7 @@ void UpdateDestglTFWithFile(QString modelSource, QString modelDest, QString file
     fstreamdest.close();
 
     // Did the OS really close the file in time for us to write too again!
-    Sleep(100);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     //image section of gltf file
     auto         srcimages = gltfsrc["images"];
@@ -2822,7 +2826,7 @@ void ProjectView::analyseMeshData()
                 cpMainComponents* mainComponents = NULL;
                 mainComponents                   = (cpMainComponents*)m_parent;
                 if (mainComponents)
-                    msgHandler = mainComponents->PrintStatus;
+                    msgHandler = (void*) mainComponents->PrintStatus;
 
                 if (m_plugin_loader)
                 {
@@ -2900,7 +2904,7 @@ void ProjectView::analyseMeshData()
                 cpMainComponents* mainComponents = NULL;
                 mainComponents                   = (cpMainComponents*)m_parent;
                 if (mainComponents)
-                    msgHandler = mainComponents->PrintStatus;
+                    msgHandler = (void*) mainComponents->PrintStatus;
 
                 if (m_subplugin_loader)
                 {
@@ -2969,7 +2973,7 @@ void ProjectView::analyseMeshData()
                         cpMainComponents* mainComponents = NULL;
                         mainComponents                   = (cpMainComponents*)m_parent;
                         if (mainComponents)
-                            msgHandler = mainComponents->PrintStatus;
+                            msgHandler = (void*) mainComponents->PrintStatus;
 
                         if (m_plugin_loader)
                         {
@@ -3188,8 +3192,8 @@ void ProjectView::SetupTreeView()
     // Hide the tree view header and allow first column to stretch
     QHeaderView* Header = m_projectTreeView->header();
 
-    Header->setResizeMode(0, QHeaderView::ResizeToContents);
-    Header->setResizeMode(2, QHeaderView::Fixed);
+    Header->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    Header->setSectionResizeMode(2, QHeaderView::Fixed);
     Header->setSectionsMovable(false);
     Header->hide();
 
@@ -3467,6 +3471,7 @@ QTreeWidgetItem* ProjectView::Tree_AddImageFile(QString filePathName, int index,
     }
     else
     {
+#ifdef _WIN32
         if (g_Application_Options.getGLTFRender() == C_Application_Options::RenderModelsWith::glTF_DX12_EX)
         {
             typedef LONG NTSTATUS, *PNTSTATUS;
@@ -3502,7 +3507,7 @@ QTreeWidgetItem* ProjectView::Tree_AddImageFile(QString filePathName, int index,
                 return NULL;
             }
         }
-
+#endif
         treeItem->setText(2, "...");
         treeItem->setToolTip(2, "show model image files");
 
@@ -3532,7 +3537,7 @@ QTreeWidgetItem* ProjectView::Tree_AddImageFile(QString filePathName, int index,
         std::ifstream fstream(filePathName.toStdString());
         if (!fstream)
         {
-            return false;
+            return nullptr;
         }
 
         showProgressDialog("Loading Model Data");
@@ -4360,9 +4365,11 @@ bool ProjectView::Tree_updateCompressIcon(QTreeWidgetItem* item, QString FileNam
     //for unprocessed obj setting node
     if (FileNamePath.contains(".obj") || FileNamePath.contains(".OBJ"))
     {
+#ifdef _WIN32
         state = readObjFileState(FileNamePath.toStdString());
         if (state == CMP_FILE_ERROR)
             return result;
+#endif
     }
 
     if (file.exists() && (fileinfo.suffix().length() > 0) && (state != CMP_COPY))
@@ -4779,7 +4786,8 @@ void ProjectView::onTree_ItemClicked(QTreeWidgetItem* item, int column)
                     QFile compfile(m_data->m_destFileNamePath + ".drc");
                     if ((m_data->getDo_Mesh_Compression() == m_data->Draco) && (compfile.exists()))
                     {
-                        emit ViewImageFile(compfile.fileName(), item);
+                        QString fileName = compfile.fileName();
+                        emit ViewImageFile(fileName, item);
                     }
                     else if (file.exists())
                     {
@@ -6335,7 +6343,7 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                                     cpMainComponents* mainComponents = NULL;
                                                     mainComponents                   = (cpMainComponents*)ProjectView->m_parent;
                                                     if (mainComponents)
-                                                        msgHandler = mainComponents->PrintStatus;
+                                                        msgHandler = (void*) mainComponents->PrintStatus;
                                                 }
 
                                                 int result;
@@ -6524,12 +6532,14 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                                             if (plugin_save->SaveModelData(ModelDestination.toStdString().data(),
                                                                                            &((*optimized)[0])) != -1)
                                                             {
+#ifdef _WIN32
                                                                 if (!(writeObjFileState(ModelDestination.toStdString().data(), CMP_PROCESSED)))
                                                                 {
                                                                     if (ProjectView->m_CompressStatusDialog)
                                                                         ProjectView->m_CompressStatusDialog->appendText(
                                                                             "[Mesh Optimization] Failed to save optimized obj data.");
                                                                 }
+#endif
                                                             }
                                                             else
                                                             {
@@ -6647,10 +6657,10 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                         tinygltf2::Model    model;
                                         tinygltf2::TinyGLTF loader;
                                         tinygltf2::TinyGLTF saver;
-
+#ifdef USE_MESH_DRACO_EXTENSION
                                         //clean up draco mesh buffer
                                         model.dracomeshes.clear();
-
+#endif
                                         std::string srcFile = ModelSource.toStdString();
                                         std::string dstFile = ModelDestination.toStdString();
                                         // Check if mesh optimization was done if so then source is optimized file
@@ -6700,12 +6710,12 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                         }
 
                                         bool is_draco_src = false;
-
+#ifdef USE_MESH_DRACO_EXTENSION
                                         if (model.dracomeshes.size() > 0)
                                         {
                                             is_draco_src = true;
                                         }
-
+#endif
                                         err.clear();
 
                                         CMP_CompressOptions CompressOptions;
@@ -6820,7 +6830,7 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                                         cpMainComponents* mainComponents = NULL;
                                                         mainComponents                   = (cpMainComponents*)ProjectView->m_parent;
                                                         if (mainComponents)
-                                                            msgHandler = mainComponents->PrintStatus;
+                                                            msgHandler = (void*) mainComponents->PrintStatus;
                                                     }
 
                                                     int result;

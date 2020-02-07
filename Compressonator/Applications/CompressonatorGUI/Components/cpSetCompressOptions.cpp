@@ -34,7 +34,7 @@
 #include "qtbuttonpropertybrowser.h"
 #include "qtgroupboxpropertybrowser.h"
 
-#include "common.h"
+#include "Common.h"
 
 #define DROPDOWN_FILEEXT_WIDTH  60
 
