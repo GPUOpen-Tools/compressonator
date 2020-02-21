@@ -4803,7 +4803,7 @@ void GetBC7Ramp(CGU_UINT32 endpoint[][MAX_DIMENSION_BIG],
             ep[1][i] += (CGU_UINT32)(ep[1][i] >> componentBits[i]);
 
             ep[0][i] = min8(255, max8(0, static_cast<CGU_UINT8>(ep[0][i])));
-            ep[1][i] = min8(255, max8(0, static_cast<CGU_INT8>(ep[1][i])));
+            ep[1][i] = min8(255, max8(0, static_cast<CGU_UINT8>(ep[1][i])));
         }
     }
 
@@ -4927,7 +4927,7 @@ void DecompressDualIndexBlock(
             if(j==0)
             {
                 blockIndices[i][j] &= ~(1 << (bti[m_blockMode].indexBits[i]-1));
-                for(k=0;k<static_cast <CGU_UINT8>(bti[m_blockMode].indexBits[i] - 1); k++)
+                for(k=0;k<static_cast <CGU_UINT32>(bti[m_blockMode].indexBits[i] - 1); k++)
                 {
                     blockIndices[i][j] |= (CGU_UINT32)ReadBit(in,m_bitPosition) << k;
                 }
