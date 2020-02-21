@@ -2006,8 +2006,8 @@ void encode_endpoint(CGV_CMPOUT data[16], CGU_INT* uniform pPos, CGV_BYTE block_
          CGV_TYPEINT q = qbits_shifted&15;
          if ((flips_shifted&1)>0) q = (levels-1)-q;
 
-         if (k1==0 && k2==0)   cmp_Write8Bit(data, pPos, bits-1, q);
-         else                  cmp_Write8Bit(data, pPos, bits  , q);
+         if (k1==0 && k2==0)   cmp_Write8Bit(data, pPos, bits - 1, static_cast <CGV_BYTE>(q));
+         else                  cmp_Write8Bit(data, pPos, bits, static_cast<CGV_BYTE>(q));
          qbits_shifted >>= 4;
          flips_shifted >>= 1;
       }
@@ -2236,10 +2236,10 @@ void  Encode_mode4( CGV_CMPOUT     cmp_out[COMPRESSED_BLOCK_SIZE],
     cmp_Write8Bit(cmp_out,&bitPosition,1,1);
 
     // rotation 2 bits
-    cmp_Write8Bit(cmp_out,&bitPosition,2, params->rotated_channel);
+    cmp_Write8Bit(cmp_out, &bitPosition, 2, static_cast <CGV_BYTE> (params->rotated_channel));
 
     // idxMode 1 bit
-    cmp_Write8Bit(cmp_out, &bitPosition, 1, params->idxMode);
+    cmp_Write8Bit(cmp_out, &bitPosition, 1, static_cast <CGV_BYTE> (params->idxMode));
 
     CGU_INT   idxBits[2] = {2,3};
 
@@ -2264,14 +2264,14 @@ void  Encode_mode4( CGV_CMPOUT     cmp_out[COMPRESSED_BLOCK_SIZE],
    // B0 : B1
    for (CGU_INT component=0; component < 3; component++)
    {
-         cmp_Write8Bit(cmp_out,&bitPosition,5,params->color_qendpoint[  component]);
-         cmp_Write8Bit(cmp_out,&bitPosition,5,params->color_qendpoint[4+component]);
+        cmp_Write8Bit(cmp_out, &bitPosition, 5, static_cast<CGV_BYTE> (params->color_qendpoint[component]));
+        cmp_Write8Bit(cmp_out, &bitPosition, 5, static_cast <CGV_BYTE> (params->color_qendpoint[4 + component]));
    }
 
    // alpha endpoints (6 bits each)
    // A0 : A1
-   cmp_Write8Bit(cmp_out,&bitPosition,6,params->alpha_qendpoint[0]);
-   cmp_Write8Bit(cmp_out,&bitPosition,6,params->alpha_qendpoint[4]);
+   cmp_Write8Bit(cmp_out, &bitPosition, 6, static_cast<CGV_BYTE> (params->alpha_qendpoint[0]));
+   cmp_Write8Bit(cmp_out, &bitPosition, 6, static_cast<CGV_BYTE> (params->alpha_qendpoint[4]));
 
     // index 2 bits each  (31 bits total)
     cmp_encode_index(cmp_out, &bitPosition, params->color_index, 2);
@@ -2289,7 +2289,7 @@ void  Encode_mode5( CGV_CMPOUT     cmp_out[COMPRESSED_BLOCK_SIZE],
     cmp_Write8Bit(cmp_out,&bitPosition,1,1);
 
     // Write 2 bit rotation
-    cmp_Write8Bit(cmp_out,&bitPosition,2, params->rotated_channel);
+    cmp_Write8Bit(cmp_out, &bitPosition, 2, static_cast<CGV_BYTE> (params->rotated_channel));
 
     cmp_encode_swap(params->color_qendpoint, 4, params->color_index,2);
     cmp_encode_swap(params->alpha_qendpoint, 4, params->alpha_index,2);
@@ -2300,14 +2300,14 @@ void  Encode_mode5( CGV_CMPOUT     cmp_out[COMPRESSED_BLOCK_SIZE],
    // B0 : B1
    for (CGU_INT component=0; component < 3; component++)
    {
-         cmp_Write8Bit(cmp_out,&bitPosition,7,params->color_qendpoint[  component]);
-         cmp_Write8Bit(cmp_out,&bitPosition,7,params->color_qendpoint[4+component]);
+        cmp_Write8Bit(cmp_out, &bitPosition, 7, static_cast<CGV_BYTE> (params->color_qendpoint[component]));
+        cmp_Write8Bit(cmp_out, &bitPosition, 7, static_cast <CGV_BYTE> (params->color_qendpoint[4 + component]));
    }
 
    // alpha endpoints (8 bits each)
    // A0 : A1
-   cmp_Write8Bit(cmp_out,&bitPosition,8,params->alpha_qendpoint[0]);
-   cmp_Write8Bit(cmp_out,&bitPosition,8,params->alpha_qendpoint[4]);
+   cmp_Write8Bit(cmp_out, &bitPosition, 8, static_cast<CGV_BYTE> (params->alpha_qendpoint[0]));
+   cmp_Write8Bit(cmp_out, &bitPosition, 8, static_cast<CGV_BYTE> (params->alpha_qendpoint[4]));
 
 
    // color index 2 bits each  (31 bits total)
@@ -2332,8 +2332,8 @@ void  Encode_mode6(
     // endpoints
     for (CGU_INT p=0; p<4; p++)
     {
-        cmp_Write8Bit(cmp_out, &bitPosition, 7, epo_code[0+p]>>1);
-        cmp_Write8Bit(cmp_out, &bitPosition, 7, epo_code[4+p]>>1);
+        cmp_Write8Bit(cmp_out, &bitPosition, 7, static_cast<CGV_BYTE> (epo_code[0 + p] >> 1));
+        cmp_Write8Bit(cmp_out, &bitPosition, 7, static_cast<CGV_BYTE> (epo_code[4 + p] >> 1));
     }
 
     // p bits
@@ -2417,7 +2417,7 @@ uniform CMP_GLOBAL    BC7_Encode          u_BC7Encode[])
         GetPartitionSubSet_mode01237(
                   image_subsets,
                   subset_entryCount,
-                  mode_blockPartition,
+                  static_cast<CGV_UINT8>(mode_blockPartition),
                   EncodeState->image_src,
                   blockMode,
                   EncodeState->channels3or4);
@@ -2526,7 +2526,7 @@ uniform CMP_GLOBAL    BC7_Encode          u_BC7Encode[])
                                    tmp_epo_code,
                                    src_image_block,
                                    numEntries,
-                                   EncodeState->clusters,  // Mi_
+                                   static_cast<CGU_INT8>(EncodeState->clusters),  // Mi_
                                    EncodeState->bits,
                                    EncodeState->channels3or4,
                                    u_BC7Encode);
@@ -2735,7 +2735,7 @@ uniform CMP_GLOBAL    BC7_Encode          u_BC7Encode[])
                                              src_color_Block,
                                              SOURCE_BLOCK_SIZE,
                                              EncodeState->numClusters0[idxMode],
-                                             EncodeState->modeBits[0],
+                                             static_cast<CGU_INT8>(EncodeState->modeBits[0]),
                                              3,
                                              u_BC7Encode);
 
@@ -2746,7 +2746,7 @@ uniform CMP_GLOBAL    BC7_Encode          u_BC7Encode[])
                                                src_alpha_Block,
                                                SOURCE_BLOCK_SIZE,
                                                EncodeState->numClusters1[idxMode],
-                                               EncodeState->modeBits[1],
+                                               static_cast<CGU_UINT8>(EncodeState->modeBits[1]),
                                                3,
                                                u_BC7Encode) / 3.0f;
 
@@ -4802,8 +4802,8 @@ void GetBC7Ramp(CGU_UINT32 endpoint[][MAX_DIMENSION_BIG],
             ep[0][i] += (CGU_UINT32)(ep[0][i] >> componentBits[i]);
             ep[1][i] += (CGU_UINT32)(ep[1][i] >> componentBits[i]);
 
-            ep[0][i] = min8(255, max8(0, ep[0][i]));
-            ep[1][i] = min8(255, max8(0, ep[1][i]));
+            ep[0][i] = min8(255, max8(0, static_cast<CGU_UINT8>(ep[0][i])));
+            ep[1][i] = min8(255, max8(0, static_cast<CGU_UINT8>(ep[1][i])));
         }
     }
 
@@ -4927,7 +4927,7 @@ void DecompressDualIndexBlock(
             if(j==0)
             {
                 blockIndices[i][j] &= ~(1 << (bti[m_blockMode].indexBits[i]-1));
-                for(k=0;k<bti[m_blockMode].indexBits[i]-1; k++)
+                for(k=0;k<static_cast <CGU_UINT32>(bti[m_blockMode].indexBits[i] - 1); k++)
                 {
                     blockIndices[i][j] |= (CGU_UINT32)ReadBit(in,m_bitPosition) << k;
                 }
@@ -5377,7 +5377,7 @@ int CMP_CDECL CompressBlockBC7( const unsigned char *srcBlock,
     EncodeState.best_err        = CMP_FLOAT_MAX;
     EncodeState.validModeMask   = u_BC7Encode->validModeMask;
     EncodeState.part_count      = u_BC7Encode->part_count;
-    EncodeState.channels        = u_BC7Encode->channels;
+    EncodeState.channels        = static_cast<CGU_CHANNEL>(u_BC7Encode->channels);
 
     CGU_UINT8 offsetR = 0;
     CGU_UINT8 offsetG = 16;
