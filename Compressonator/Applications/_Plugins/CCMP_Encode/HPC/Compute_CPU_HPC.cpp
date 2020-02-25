@@ -43,8 +43,8 @@ unsigned int    _stdcall ProcEncode(void* param)
 {
    ThreadParam *tp = (ThreadParam*)param;
 
-   tp->run = false;
    //printf("Thead Active [%4x]\n",std::this_thread::get_id());
+   std::this_thread::sleep_for(0ms);
 
    while (tp->exit == false)
    {
