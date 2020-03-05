@@ -26,6 +26,7 @@ target_include_directories(CMP_Core
                            PRIVATE
                            shaders
                            source)
+add_subdirectory(test)
 
 if (UNIX)
 target_compile_definitions(CMP_Core PRIVATE _LINUX ASPM_GPU)
