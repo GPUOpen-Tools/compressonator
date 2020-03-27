@@ -1,5 +1,6 @@
 #include <map>
 #include <array>
+#include <immintrin.h>
 #include "../source/CMP_Core.h"
 // incudes all compressed 4x4 blocks
 #include "BlockConstants.h"
@@ -41,6 +42,17 @@ static const std::map<std::string, std::array<unsigned char, 4>> colorValues{
 	{ "Green_Blue_Full_Alpha" , { 0x0, 0xff, 0xff, 0x0 }}
 };
 
+const std::map<std::string, std::array<float, 3>> colorValuesBC6{
+	{ "Red_Ignore_Alpha", { 1.0f, 0.0f, 0.0f}},
+	{ "Green_Ignore_Alpha" , { 0.0f, 01.0f, 0.0f}},
+	{ "Blue_Ignore_Alpha" , { 0.0f, 0.0f, 1.0f}},
+	{ "White_Ignore_Alpha" , { 1.0f, 1.0f, 1.0f}},
+	{ "Black_Ignore_Alpha" , { 0.0f, 0.0f, 0.0f}},
+	{ "Red_Blue_Ignore_Alpha" , { 1.0f, 0.0f, 1.0f}},
+	{ "Red_Green_Ignore_Alpha" , { 1.0f, 1.0f, 0.0f}},
+	{ "Green_Blue_Ignore_Alpha", { 0.0f, 1.0f, 1.0f }},
+};
+
 //block storage format: [R, G, B, W, Black, RB, RG, GB]. Alpha: 100%, 50%, 0%
 enum ColorEnum {
 	Red, Green, Blue, White, Black, Red_Blue, Red_Green, Green_Blue
@@ -49,37 +61,37 @@ enum AlphaEnum {
 	Ignore_Alpha, Half_Alpha, Full_Alpha
 };
 enum CompEnum {
-	BC1, BC2, BC3
+	BC1, BC2, BC3, BC7, BC6
 };
 
-std::string BlockKeyName(CompEnum compression, ColorEnum color, AlphaEnum alpha)
-{
+std::string BlockKeyName(CompEnum compression, ColorEnum color, AlphaEnum alpha) {
 	std::string result = "";
 	switch (compression) {
-		case BC1:	result += "BC1"; break;
-		case BC2:	result += "BC2"; break;
-		case BC3:	result += "BC3"; break;
+	case BC1:	result += "BC1"; break;
+	case BC2:	result += "BC2"; break;
+	case BC3:	result += "BC3"; break;
+	case BC6:	result += "BC6"; break;
+	case BC7:	result += "BC7"; break;
 	}
 	switch (color) {
-		case Red:			result += "_Red_"; break;
-		case Green:			result += "_Green_"; break;
-		case Blue:			result += "_Blue_"; break;
-		case White:			result += "_White_"; break;
-		case Black:			result += "_Black_"; break;
-		case Red_Blue:		result += "_Red_Blue_"; break;
-		case Red_Green:		result += "_Red_Green_"; break;
-		case Green_Blue:	result += "_Green_Blue_"; break;
+	case Red:			result += "_Red_"; break;
+	case Green:			result += "_Green_"; break;
+	case Blue:			result += "_Blue_"; break;
+	case White:			result += "_White_"; break;
+	case Black:			result += "_Black_"; break;
+	case Red_Blue:		result += "_Red_Blue_"; break;
+	case Red_Green:		result += "_Red_Green_"; break;
+	case Green_Blue:	result += "_Green_Blue_"; break;
 	}
 	switch (alpha) {
-		case Ignore_Alpha:	result += "Ignore_Alpha"; break;
-		case Half_Alpha:	result += "Half_Alpha"; break;
-		case Full_Alpha:	result += "Full_Alpha"; break;
+	case Ignore_Alpha:	result += "Ignore_Alpha"; break;
+	case Half_Alpha:	result += "Half_Alpha"; break;
+	case Full_Alpha:	result += "Full_Alpha"; break;
 	}
 	return result;
 }
 
-void AssignExpectedColorsToBlocks()
-{
+void AssignExpectedColorsToBlocks() {
 	ColorEnum color = Red;
 	CompEnum comp = BC1;
 	AlphaEnum alpha = Ignore_Alpha;
@@ -87,14 +99,30 @@ void AssignExpectedColorsToBlocks()
 		if (i % 24 == 0 && i > 0) {
 			comp = static_cast<CompEnum>(comp + 1);
 		}
+		if (comp == CompEnum::BC6)		//Bc6 blocks are stored in its own blocks map.
+			continue;
+
 		if (i % 8 == 0 && i > 0) {
 			alpha = static_cast<AlphaEnum>((alpha + 1) % 3);
 		}
 		const std::string keyBlocks = BlockKeyName(comp, color, alpha);
 		std::string keyColor = keyBlocks;
+		keyColor.erase(0, 4);
+		auto it = (blocks.find(keyBlocks));
+		it->second.color = ((colorValues.find(keyColor))->second).data();
+		color = static_cast<ColorEnum>((color + 1) % 8);
+	}
+	// BC6 list
+	comp = CompEnum::BC6;
+	for (int i = 0; i < blocksBC6.size(); ++i) {
+		if (i % 8 == 0 && i > 0) {
+			alpha = static_cast<AlphaEnum>((alpha + 1) % 3);
+		}
+		const std::string keyBlocks = BlockKeyName(comp, color, alpha);
+		std::string keyColor = BlockKeyName(comp, color, AlphaEnum::Ignore_Alpha);
 		// string keyColor is in format BCn_color_alpha. To use it as key to access colorValues, delete the BCn_ part.
 		keyColor.erase(0, 4);
-		((blocks.find(keyBlocks))->second).color = ((colorValues.find(keyColor))->second).data();
+		((blocksBC6.find(keyBlocks))->second).color = ((colorValuesBC6.find(keyColor))->second).data();
 		color = static_cast<ColorEnum>((color + 1) % 8);
 	}
 }
@@ -104,7 +132,8 @@ bool ColorMatches(unsigned char* buffer, const unsigned char* expectedColor, boo
 	unsigned char expectedColorBuffer[64];
 	// handle formats that do not support alpha.
 	if (ignoreAlpha) {
-		// if alpha is ignored, BC should set all values to 0. Except the alpha value which can be 0 or 0xff only.
+		// if alpha is ignored, BC should set all values to 0. exept the alpha value which can be 0 or 0xff only.
+		// Since all blocks have the same color, there should always be the same alpha.
 		if (buffer[3] != 0 && buffer[3] != 255) {
 			return false;
 		}
@@ -116,17 +145,37 @@ bool ColorMatches(unsigned char* buffer, const unsigned char* expectedColor, boo
 		// Set alpha value to the alpha value in the first pixel of the decompressed buffer.
 		// The buffer contains only one color, so all pixels should have the same values.
 		expColorWithoutAlpha[3] = buffer[3];
-		
+
 		for (int idx = 0; idx < DECOMPRESSED_BLOCK_SIZE / 4; ++idx) {
 			memcpy(expectedColorBuffer + (idx * 4), expColorWithoutAlpha, 4);
 		}
 		return memcmp(&expectedColorBuffer, buffer, DECOMPRESSED_BLOCK_SIZE) == 0;
 	}
-	
+
 	for (int idx = 0; idx < DECOMPRESSED_BLOCK_SIZE / 4; ++idx) {
 		memcpy(expectedColorBuffer + (idx * 4), expectedColor, 4);
 	}
 	return memcmp(&expectedColorBuffer, buffer, DECOMPRESSED_BLOCK_SIZE) == 0;
+}
+
+bool ColorMatchesBC6(unsigned short* buffer, const float* expectedColor)
+{
+	unsigned short expectedColorBuffer[48];
+	for (int i = 0; i < 16; ++i) {
+		// SF16: 1:5:10	: 1bit signed, 5bit exponent, 10bit mantissa
+		// DecompressBC6 stores decompressed color as SF16
+		// BC6 stores RGB channels only
+		for (int channel = 0; channel < 3; ++channel) {
+			float expColor = expectedColor[channel];
+			// convert float to half-float
+			__m128 val = _mm_load_ps1(&expColor);
+			__m128i half = _mm_cvtps_ph(val, 0);
+			unsigned short expColorSh = _mm_extract_epi32(half, 0);
+
+			expectedColorBuffer[i * 3 + channel] = expColorSh;
+		}
+	}
+	return memcmp(&expectedColorBuffer, buffer, sizeof(expectedColorBuffer)) == 0;
 }
 
 //***************************************************************************************
@@ -136,1008 +185,1681 @@ TEST_CASE("BC1_Red_Ignore_Alpha", "[BC1_Red_Ignore_Alpha]")
 	const auto block = blocks.find("BC1_Red_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Blue_Half_Alpha", "[BC1_Blue_Half_Alpha]")
 {
 	const auto block = blocks.find("BC1_Blue_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_White_Half_Alpha", "[BC1_White_Half_Alpha]")
 {
 	const auto block = blocks.find("BC1_White_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Black_Half_Alpha", "[BC1_Black_Half_Alpha]")
 {
 	const auto block = blocks.find("BC1_Black_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Red_Blue_Half_Alpha", "[BC1_Red_Blue_Half_Alpha]")
 {
 	const auto block = blocks.find("BC1_Red_Blue_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Red_Green_Half_Alpha", "[BC1_Red_Green_Half_Alpha]")
 {
 	const auto block = blocks.find("BC1_Red_Green_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Green_Blue_Half_Alpha", "[BC1_Green_Blue_Half_Alpha]")
 {
 	const auto block = blocks.find("BC1_Green_Blue_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Red_Full_Alpha", "[BC1_Red_Full_Alpha]")
 {
 	const auto block = blocks.find("BC1_Red_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Green_Full_Alpha", "[BC1_Green_Full_Alpha]")
 {
 	const auto block = blocks.find("BC1_Green_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Blue_Full_Alpha", "[BC1_Blue_Full_Alpha]")
 {
 	const auto block = blocks.find("BC1_Blue_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_White_Full_Alpha", "[BC1_White_Full_Alpha]")
 {
 	const auto block = blocks.find("BC1_White_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Green_Ignore_Alpha", "[BC1_Green_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC1_Green_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Black_Full_Alpha", "[BC1_Black_Full_Alpha]")
 {
 	const auto block = blocks.find("BC1_Black_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Red_Blue_Full_Alpha", "[BC1_Red_Blue_Full_Alpha]")
 {
 	const auto block = blocks.find("BC1_Red_Blue_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Red_Green_Full_Alpha", "[BC1_Red_Green_Full_Alpha]")
 {
 	const auto block = blocks.find("BC1_Red_Green_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Green_Blue_Full_Alpha", "[BC1_Green_Blue_Full_Alpha]")
 {
 	const auto block = blocks.find("BC1_Green_Blue_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Blue_Ignore_Alpha", "[BC1_Blue_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC1_Blue_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_White_Ignore_Alpha", "[BC1_White_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC1_White_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Black_Ignore_Alpha", "[BC1_Black_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC1_Black_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Red_Blue_Ignore_Alpha", "[BC1_Red_Blue_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC1_Red_Blue_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Red_Green_Ignore_Alpha", "[BC1_Red_Green_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC1_Red_Green_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Green_Blue_Ignore_Alpha", "[BC1_Green_Blue_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC1_Green_Blue_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Red_Half_Alpha", "[BC1_Red_Half_Alpha]")
 {
 	const auto block = blocks.find("BC1_Red_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC1_Green_Half_Alpha", "[BC1_Green_Half_Alpha]")
 {
 	const auto block = blocks.find("BC1_Green_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC1(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,true));
+	CHECK(ColorMatches(decompBlock, blockColor, true));
 	unsigned char compBlock[8];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC1(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,true));
+	CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
 TEST_CASE("BC2_Red_Ignore_Alpha", "[BC2_Red_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC2_Red_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Blue_Half_Alpha", "[BC2_Blue_Half_Alpha]")
 {
 	const auto block = blocks.find("BC2_Blue_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_White_Half_Alpha", "[BC2_White_Half_Alpha]")
 {
 	const auto block = blocks.find("BC2_White_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Black_Half_Alpha", "[BC2_Black_Half_Alpha]")
 {
 	const auto block = blocks.find("BC2_Black_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Red_Blue_Half_Alpha", "[BC2_Red_Blue_Half_Alpha]")
 {
 	const auto block = blocks.find("BC2_Red_Blue_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Red_Green_Half_Alpha", "[BC2_Red_Green_Half_Alpha]")
 {
 	const auto block = blocks.find("BC2_Red_Green_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Green_Blue_Half_Alpha", "[BC2_Green_Blue_Half_Alpha]")
 {
 	const auto block = blocks.find("BC2_Green_Blue_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Red_Full_Alpha", "[BC2_Red_Full_Alpha]")
 {
 	const auto block = blocks.find("BC2_Red_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Green_Full_Alpha", "[BC2_Green_Full_Alpha]")
 {
 	const auto block = blocks.find("BC2_Green_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Blue_Full_Alpha", "[BC2_Blue_Full_Alpha]")
 {
 	const auto block = blocks.find("BC2_Blue_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_White_Full_Alpha", "[BC2_White_Full_Alpha]")
 {
 	const auto block = blocks.find("BC2_White_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Green_Ignore_Alpha", "[BC2_Green_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC2_Green_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Black_Full_Alpha", "[BC2_Black_Full_Alpha]")
 {
 	const auto block = blocks.find("BC2_Black_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Red_Blue_Full_Alpha", "[BC2_Red_Blue_Full_Alpha]")
 {
 	const auto block = blocks.find("BC2_Red_Blue_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Red_Green_Full_Alpha", "[BC2_Red_Green_Full_Alpha]")
 {
 	const auto block = blocks.find("BC2_Red_Green_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Green_Blue_Full_Alpha", "[BC2_Green_Blue_Full_Alpha]")
 {
 	const auto block = blocks.find("BC2_Green_Blue_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Blue_Ignore_Alpha", "[BC2_Blue_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC2_Blue_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_White_Ignore_Alpha", "[BC2_White_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC2_White_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Black_Ignore_Alpha", "[BC2_Black_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC2_Black_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Red_Blue_Ignore_Alpha", "[BC2_Red_Blue_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC2_Red_Blue_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Red_Green_Ignore_Alpha", "[BC2_Red_Green_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC2_Red_Green_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Green_Blue_Ignore_Alpha", "[BC2_Green_Blue_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC2_Green_Blue_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Red_Half_Alpha", "[BC2_Red_Half_Alpha]")
 {
 	const auto block = blocks.find("BC2_Red_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC2_Green_Half_Alpha", "[BC2_Green_Half_Alpha]")
 {
 	const auto block = blocks.find("BC2_Green_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC2(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC2(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Red_Ignore_Alpha", "[BC3_Red_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC3_Red_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Blue_Half_Alpha", "[BC3_Blue_Half_Alpha]")
 {
 	const auto block = blocks.find("BC3_Blue_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_White_Half_Alpha", "[BC3_White_Half_Alpha]")
 {
 	const auto block = blocks.find("BC3_White_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Black_Half_Alpha", "[BC3_Black_Half_Alpha]")
 {
 	const auto block = blocks.find("BC3_Black_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Red_Blue_Half_Alpha", "[BC3_Red_Blue_Half_Alpha]")
 {
 	const auto block = blocks.find("BC3_Red_Blue_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Red_Green_Half_Alpha", "[BC3_Red_Green_Half_Alpha]")
 {
 	const auto block = blocks.find("BC3_Red_Green_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Green_Blue_Half_Alpha", "[BC3_Green_Blue_Half_Alpha]")
 {
 	const auto block = blocks.find("BC3_Green_Blue_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Red_Full_Alpha", "[BC3_Red_Full_Alpha]")
 {
 	const auto block = blocks.find("BC3_Red_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Green_Full_Alpha", "[BC3_Green_Full_Alpha]")
 {
 	const auto block = blocks.find("BC3_Green_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Blue_Full_Alpha", "[BC3_Blue_Full_Alpha]")
 {
 	const auto block = blocks.find("BC3_Blue_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_White_Full_Alpha", "[BC3_White_Full_Alpha]")
 {
 	const auto block = blocks.find("BC3_White_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Green_Ignore_Alpha", "[BC3_Green_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC3_Green_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Black_Full_Alpha", "[BC3_Black_Full_Alpha]")
 {
 	const auto block = blocks.find("BC3_Black_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Red_Blue_Full_Alpha", "[BC3_Red_Blue_Full_Alpha]")
 {
 	const auto block = blocks.find("BC3_Red_Blue_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Red_Green_Full_Alpha", "[BC3_Red_Green_Full_Alpha]")
 {
 	const auto block = blocks.find("BC3_Red_Green_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Green_Blue_Full_Alpha", "[BC3_Green_Blue_Full_Alpha]")
 {
 	const auto block = blocks.find("BC3_Green_Blue_Full_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Blue_Ignore_Alpha", "[BC3_Blue_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC3_Blue_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_White_Ignore_Alpha", "[BC3_White_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC3_White_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Black_Ignore_Alpha", "[BC3_Black_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC3_Black_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Red_Blue_Ignore_Alpha", "[BC3_Red_Blue_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC3_Red_Blue_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Red_Green_Ignore_Alpha", "[BC3_Red_Green_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC3_Red_Green_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Green_Blue_Ignore_Alpha", "[BC3_Green_Blue_Ignore_Alpha]")
 {
 	const auto block = blocks.find("BC3_Green_Blue_Ignore_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Red_Half_Alpha", "[BC3_Red_Half_Alpha]")
 {
 	const auto block = blocks.find("BC3_Red_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
 TEST_CASE("BC3_Green_Half_Alpha", "[BC3_Green_Half_Alpha]")
 {
 	const auto block = blocks.find("BC3_Green_Half_Alpha")->second;
 	const auto blockData = block.data;
 	const auto blockColor = block.color;
-	unsigned char decompBlock [64];
+	unsigned char decompBlock[64];
 	DecompressBlockBC3(blockData, decompBlock, nullptr);
-	CHECK(ColorMatches(decompBlock, blockColor,false));
+	CHECK(ColorMatches(decompBlock, blockColor, false));
 	unsigned char compBlock[16];
-	unsigned char decompCompBlock [64];
+	unsigned char decompCompBlock[64];
 	CompressBlockBC3(decompBlock, 16, compBlock, nullptr);
 	DecompressBlockBC3(compBlock, decompCompBlock, nullptr);
-	CHECK(ColorMatches(decompCompBlock, blockColor,false));
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
+TEST_CASE("BC6_Red_Ignore_Alpha", "[BC6_Red_Ignore_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Red_Ignore_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Blue_Half_Alpha", "[BC6_Blue_Half_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Blue_Half_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_White_Half_Alpha", "[BC6_White_Half_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_White_Half_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Black_Half_Alpha", "[BC6_Black_Half_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Black_Half_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Red_Blue_Half_Alpha", "[BC6_Red_Blue_Half_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Red_Blue_Half_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Red_Green_Half_Alpha", "[BC6_Red_Green_Half_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Red_Green_Half_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Green_Blue_Half_Alpha", "[BC6_Green_Blue_Half_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Green_Blue_Half_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Red_Full_Alpha", "[BC6_Red_Full_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Red_Full_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Green_Full_Alpha", "[BC6_Green_Full_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Green_Full_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Blue_Full_Alpha", "[BC6_Blue_Full_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Blue_Full_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_White_Full_Alpha", "[BC6_White_Full_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_White_Full_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Green_Ignore_Alpha", "[BC6_Green_Ignore_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Green_Ignore_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Black_Full_Alpha", "[BC6_Black_Full_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Black_Full_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Red_Blue_Full_Alpha", "[BC6_Red_Blue_Full_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Red_Blue_Full_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Red_Green_Full_Alpha", "[BC6_Red_Green_Full_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Red_Green_Full_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Green_Blue_Full_Alpha", "[BC6_Green_Blue_Full_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Green_Blue_Full_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Blue_Ignore_Alpha", "[BC6_Blue_Ignore_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Blue_Ignore_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_White_Ignore_Alpha", "[BC6_White_Ignore_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_White_Ignore_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Black_Ignore_Alpha", "[BC6_Black_Ignore_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Black_Ignore_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Red_Blue_Ignore_Alpha", "[BC6_Red_Blue_Ignore_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Red_Blue_Ignore_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Red_Green_Ignore_Alpha", "[BC6_Red_Green_Ignore_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Red_Green_Ignore_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Green_Blue_Ignore_Alpha", "[BC6_Green_Blue_Ignore_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Green_Blue_Ignore_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Red_Half_Alpha", "[BC6_Red_Half_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Red_Half_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC6_Green_Half_Alpha", "[BC6_Green_Half_Alpha]")
+{
+	const auto block = blocksBC6.find("BC6_Green_Half_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned short decompBlock[64];
+	DecompressBlockBC6(blockData, decompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompBlock, blockColor));
+	unsigned char compBlock[16];
+	unsigned short decompCompBlock[48];
+	CompressBlockBC6(decompBlock, 12, compBlock, nullptr);
+	DecompressBlockBC6(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatchesBC6(decompCompBlock, blockColor));
+}
+TEST_CASE("BC7_Red_Ignore_Alpha", "[BC7_Red_Ignore_Alpha]")
+{
+	const auto block = blocks.find("BC7_Red_Ignore_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Blue_Half_Alpha", "[BC7_Blue_Half_Alpha]")
+{
+	const auto block = blocks.find("BC7_Blue_Half_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_White_Half_Alpha", "[BC7_White_Half_Alpha]")
+{
+	const auto block = blocks.find("BC7_White_Half_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Black_Half_Alpha", "[BC7_Black_Half_Alpha]")
+{
+	const auto block = blocks.find("BC7_Black_Half_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Red_Blue_Half_Alpha", "[BC7_Red_Blue_Half_Alpha]")
+{
+	const auto block = blocks.find("BC7_Red_Blue_Half_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Red_Green_Half_Alpha", "[BC7_Red_Green_Half_Alpha]")
+{
+	const auto block = blocks.find("BC7_Red_Green_Half_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Green_Blue_Half_Alpha", "[BC7_Green_Blue_Half_Alpha]")
+{
+	const auto block = blocks.find("BC7_Green_Blue_Half_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Red_Full_Alpha", "[BC7_Red_Full_Alpha]")
+{
+	const auto block = blocks.find("BC7_Red_Full_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Green_Full_Alpha", "[BC7_Green_Full_Alpha]")
+{
+	const auto block = blocks.find("BC7_Green_Full_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Blue_Full_Alpha", "[BC7_Blue_Full_Alpha]")
+{
+	const auto block = blocks.find("BC7_Blue_Full_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_White_Full_Alpha", "[BC7_White_Full_Alpha]")
+{
+	const auto block = blocks.find("BC7_White_Full_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Green_Ignore_Alpha", "[BC7_Green_Ignore_Alpha]")
+{
+	const auto block = blocks.find("BC7_Green_Ignore_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Black_Full_Alpha", "[BC7_Black_Full_Alpha]")
+{
+	const auto block = blocks.find("BC7_Black_Full_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Red_Blue_Full_Alpha", "[BC7_Red_Blue_Full_Alpha]")
+{
+	const auto block = blocks.find("BC7_Red_Blue_Full_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Red_Green_Full_Alpha", "[BC7_Red_Green_Full_Alpha]")
+{
+	const auto block = blocks.find("BC7_Red_Green_Full_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Green_Blue_Full_Alpha", "[BC7_Green_Blue_Full_Alpha]")
+{
+	const auto block = blocks.find("BC7_Green_Blue_Full_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Blue_Ignore_Alpha", "[BC7_Blue_Ignore_Alpha]")
+{
+	const auto block = blocks.find("BC7_Blue_Ignore_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_White_Ignore_Alpha", "[BC7_White_Ignore_Alpha]")
+{
+	const auto block = blocks.find("BC7_White_Ignore_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Black_Ignore_Alpha", "[BC7_Black_Ignore_Alpha]")
+{
+	const auto block = blocks.find("BC7_Black_Ignore_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Red_Blue_Ignore_Alpha", "[BC7_Red_Blue_Ignore_Alpha]")
+{
+	const auto block = blocks.find("BC7_Red_Blue_Ignore_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Red_Green_Ignore_Alpha", "[BC7_Red_Green_Ignore_Alpha]")
+{
+	const auto block = blocks.find("BC7_Red_Green_Ignore_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Green_Blue_Ignore_Alpha", "[BC7_Green_Blue_Ignore_Alpha]")
+{
+	const auto block = blocks.find("BC7_Green_Blue_Ignore_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Red_Half_Alpha", "[BC7_Red_Half_Alpha]")
+{
+	const auto block = blocks.find("BC7_Red_Half_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+TEST_CASE("BC7_Green_Half_Alpha", "[BC7_Green_Half_Alpha]")
+{
+	const auto block = blocks.find("BC7_Green_Half_Alpha")->second;
+	const auto blockData = block.data;
+	const auto blockColor = block.color;
+	unsigned char decompBlock[64];
+	DecompressBlockBC7(blockData, decompBlock, nullptr);
+	CHECK(ColorMatches(decompBlock, blockColor, false));
+	unsigned char compBlock[16];
+	unsigned char decompCompBlock[64];
+	CompressBlockBC7(decompBlock, 16, compBlock, nullptr);
+	DecompressBlockBC7(compBlock, decompCompBlock, nullptr);
+	CHECK(ColorMatches(decompCompBlock, blockColor, false));
+}
+
 
 //***************************************************************************************
