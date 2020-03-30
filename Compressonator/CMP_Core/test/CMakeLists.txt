@@ -9,5 +9,7 @@ target_sources(Tests
                 CompressonatorTests.cpp
                 CompressonatorTests.h
                 BlockConstants.h
+		../../Applications/_Plugins/Common/UtilFuncs.cpp
+		../../Applications/_Plugins/Common/UtilFuncs.h
                 )
 target_link_libraries(Tests Catch2::Catch2 CMP_Core)

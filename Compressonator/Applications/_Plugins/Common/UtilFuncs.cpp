@@ -59,7 +59,7 @@ void SwizzleBytes(void* src, unsigned long numBytes)
 }
 #ifdef _WIN32
 
-static float HalfToFloat(uint16_t h)
+float HalfToFloat(uint16_t h)
 {
     union FP32
     {
@@ -73,8 +73,8 @@ static float HalfToFloat(uint16_t h)
         };
     };
 
-    static const FP32 magic      = { (254 - 15) << 23 };
-    static const FP32 was_infnan = { (127 + 16) << 23 };
+    const FP32 magic      = { (254 - 15) << 23 };
+    const FP32 was_infnan = { (127 + 16) << 23 };
 
     FP32 o;
     o.u = (h & 0x7fff) << 13;       // exponent/mantissa bits
