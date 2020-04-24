@@ -76,10 +76,11 @@ using namespace tinygltf2;
 #define USE_SWIZZLE
 
 #ifndef _WIN32
+#include <fcntl.h> /* For O_RDWR */
+#include <gltf/stb_image.h>
 #include <stdarg.h>
-#include <fcntl.h>  /* For O_RDWR */
-#include <unistd.h> /* For open(), creat() */
 #include <time.h>
+#include <unistd.h> /* For open(), creat() */
 #endif
 
 #ifdef SHOW_PROCESS_MEMORY
@@ -1572,7 +1573,37 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
                     }
 
                     boost::filesystem::create_directories(imgDestDir);
+                    {
+                        MipSet inMips{};
+                        memset(&inMips, 0, sizeof(CMP_MipSet));
+                        int ret  = AMDLoadMIPSTextureImage((imgSrcDir + input).c_str(), &inMips, false, &g_pluginManager);
 
+                        CMP_MipSet mipSetCmp;
+                        memset(&mipSetCmp, 0, sizeof(CMP_MipSet));
+
+                        KernelOptions   kernel_options;
+                        memset(&kernel_options, 0, sizeof(KernelOptions));
+
+                        kernel_options.format   = g_CmdPrams.CompressOptions.DestFormat;
+                        kernel_options.fquality = g_CmdPrams.CompressOptions.fquality;
+                        kernel_options.threads  = g_CmdPrams.CompressOptions.dwnumThreads;
+
+                        auto cmp_status = CMP_ProcessTexture(&inMips, &mipSetCmp, kernel_options, CompressionCallback);
+                        if (cmp_status != CMP_OK)
+                        {
+                          PrintInfo("Error: Something went wrong while compressing image!\n");
+                          return false;
+                        }
+
+                        ret = AMDSaveMIPSTextureImage(output.c_str(), &mipSetCmp, false, g_CmdPrams.CompressOptions);
+                        if(ret != 0)
+                        {
+                          PrintInfo("Error: Something went wrong while saving compressed image!\n");
+                          return false;
+                        }
+                    }
+
+/*
                     //TODO: wrapper to handle more arguments: mipcount, threadcount, astc block size & quality
                     //TODO: non-hardcoded process name
                     boost::process::child c = boost::process::child("CompressonatorCLI-bin", "-fd", "BC7", imgSrcDir + input, output);
@@ -1583,7 +1614,9 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
                       PrintInfo("Error: Something went wrong while compressing image!\n");
                       return false;
                     }
+*/
                     boost::filesystem::copy(imgSrcDir+input, dstFolder + input);
+
                 }
             }
 
