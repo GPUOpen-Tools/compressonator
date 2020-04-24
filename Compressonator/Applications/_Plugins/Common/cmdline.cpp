@@ -1578,6 +1578,24 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
                         memset(&inMips, 0, sizeof(CMP_MipSet));
                         int ret  = AMDLoadMIPSTextureImage((imgSrcDir + input).c_str(), &inMips, false, &g_pluginManager);
 
+                        if (inMips.m_nMipLevels < g_CmdPrams.MipsLevel)
+                        {
+                          CMP_INT requestLevel = g_CmdPrams.MipsLevel; // Request 10 miplevels for the source image
+
+                          //------------------------------------------------------------------------
+                          // Checks what the minimum image size will be for the requested mip levels
+                          // if the request is too large, a adjusted minimum size will be returned
+                          //------------------------------------------------------------------------
+                          CMP_INT nMinSize = CMP_CalcMinMipSize(inMips.m_nHeight, inMips.m_nWidth, 10);
+
+                          //--------------------------------------------------------------
+                          // now that the minimum size is known, generate the miplevels
+                          // users can set any requested minumum size to use. The correct
+                          // miplevels will be set acordingly.
+                          //--------------------------------------------------------------
+                          CMP_GenerateMIPLevels(&inMips, nMinSize);
+                        }
+
                         CMP_MipSet mipSetCmp;
                         memset(&mipSetCmp, 0, sizeof(CMP_MipSet));
 
