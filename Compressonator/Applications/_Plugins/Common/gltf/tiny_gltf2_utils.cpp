@@ -4790,12 +4790,40 @@ namespace tinygltf2
         // TEXTURES
         if (model->textures.size())
         {
+            unsigned int dds_offset = model->images.size();
+            if(option.DestFormat != CMP_FORMAT_Unknown)
+            {
+                output["extensionsUsed"].push_back("MSFT_texture_dds");
+                PrintInfo("Compressing all images inside gltf\n");
+            }
             json textures;
             for (unsigned int i = 0; i < model->textures.size(); ++i)
             {
-                json texture;
-                SerializeGltfTexture(model->textures[i], texture);
-                textures.push_back(texture);
+                Texture texture = model->textures[i];
+
+                if(option.DestFormat != CMP_FORMAT_Unknown)
+                {
+                    Image image;
+
+                    std::string short_output_path = model->images[i].uri;
+                    short_output_path.replace(short_output_path.rfind('.'), 1, "_");
+                    short_output_path += ".dds";
+                    image.uri = short_output_path;
+
+                    json imageJson;
+                    SerializeGltfImage(image, imageJson);
+                    output["images"].push_back(imageJson);
+
+                    std::map<std::string, Value> map;
+                    map.emplace("source", Value(int(dds_offset+texture.source)));
+
+                    texture.extensions["MSFT_texture_dds"] = Value(map);
+                }
+
+                json textureJson;
+                SerializeGltfTexture(texture, textureJson);
+                std::string contents = textureJson.dump();
+                textures.push_back(textureJson);
             }
             output["textures"] = textures;
         }

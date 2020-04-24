@@ -164,6 +164,8 @@ class CCmdLineParamaters
     int decompress_nIterations;
     double compute_setup_fDuration;
 
+    bool compressImagesFromGLTF;
+
     // Analysis data
     double    SSIM;            // Structural Similarity Index: Average of RGB Channels
     double    PSNR;            // Peak Signal to Noise Ratio: Average of RGB Channels

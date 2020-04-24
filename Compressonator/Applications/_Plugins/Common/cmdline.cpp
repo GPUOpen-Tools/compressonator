@@ -42,6 +42,8 @@
 #pragma warning( pop )
 
 #include <boost/algorithm/string.hpp>
+#include <boost/process.hpp>
+#include <boost/filesystem.hpp>
 
 #ifdef USE_MESH_CLI
 #include "gltf/tiny_gltf2.h"
@@ -87,6 +89,9 @@ using namespace tinygltf2;
 
 CCmdLineParamaters g_CmdPrams;
 
+
+bool fileIsGLTF(string SourceFile);
+
 string DefaultDestination(string SourceFile, CMP_FORMAT DestFormat, string DestFileExt)
 {
     string                  DestFile = "";
@@ -107,6 +112,10 @@ string DefaultDestination(string SourceFile, CMP_FORMAT DestFormat, string DestF
 
     if (DestFileExt.find('.') != std::string::npos) {
         DestFile.append(DestFileExt);
+    }
+    else if(fileIsGLTF(SourceFile))
+    {
+      DestFile.append(".gltf");
     }
 	else {
         if (DestFormat == CMP_FORMAT_ASTC)
@@ -292,6 +301,11 @@ bool ProcessSingleFlags(const char* strCommand)
         isset                     = true;
     }
 #endif
+    else if(strcmp(strCommand, "-compress-gltf-images") == 0)
+    {
+      g_CmdPrams.compressImagesFromGLTF = true;
+      isset = true;
+    }
     else if ((strcmp(strCommand, "-log") == 0))
     {
         g_CmdPrams.logcsvformat      = false;
@@ -1003,7 +1017,11 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
                             std::string destFileName;
                             //since  DestFile is empty we need to create one from the source file
                             destFileName = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.CompressOptions.DestFormat, g_CmdPrams.FileOutExt);
+                            #ifdef _WIN32
                             g_CmdPrams.DestFile = directory + "\\" + destFileName;
+                            #else
+                            g_CmdPrams.DestFile = directory + "/" + destFileName;
+                            #endif
                         }
                         else
                         {
@@ -1504,6 +1522,70 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
             }
 #endif
             err.clear();
+
+            if(g_CmdPrams.compressImagesFromGLTF)
+            {
+                std::string dstFolder = dstFile;
+                auto pos = dstFolder.rfind("\\");
+                if(pos == std::string::npos)
+                {
+                  pos = dstFolder.rfind("/");
+                }
+                if(pos != std::string::npos)
+                {
+                  dstFolder = dstFolder.substr(0,pos+1);
+                }
+                size_t originalImages = model.images.size();
+                for (unsigned i = 0; i < model.images.size(); ++i)
+                {
+                    std::string input = model.images[i].uri;
+                    PrintInfo("Processing '%s'\n", input.c_str());
+                    if(input.empty())
+                    {
+                        PrintInfo("Error: Compressonator can only compress separate images with glTF!\n");
+                        return false;
+                    }
+                    std::string output = dstFolder  + input;
+                    output.replace(output.rfind('.'), 1, "_");
+                    output += ".dds";
+
+                    std::string imgSrcDir = "";
+                    auto pos = srcFile.rfind("\\");
+                    if(pos == std::string::npos)
+                    {
+                        pos = srcFile.rfind("/");
+                    }
+                    if(pos != std::string::npos)
+                    {
+                        imgSrcDir = srcFile.substr(0,pos+1);
+                    }
+
+                    std::string imgDestDir = dstFolder;
+                    pos = output.rfind("\\");
+                    if(pos == std::string::npos)
+                    {
+                      pos = output.rfind("/");
+                    }
+                    if(pos != std::string::npos)
+                    {
+                      imgDestDir = output.substr(0,pos+1);
+                    }
+
+                    boost::filesystem::create_directories(imgDestDir);
+
+                    //TODO: wrapper to handle more arguments: mipcount, threadcount, astc block size & quality
+                    //TODO: non-hardcoded process name
+                    boost::process::child c = boost::process::child("CompressonatorCLI-bin", "-fd", "BC7", imgSrcDir + input, output);
+                    c.wait();
+                    int exit_code = c.exit_code();
+                    if(exit_code != 0)
+                    {
+                      PrintInfo("Error: Something went wrong while compressing image!\n");
+                      return false;
+                    }
+                    boost::filesystem::copy(imgSrcDir+input, dstFolder + input);
+                }
+            }
 
             ret = saver.WriteGltfSceneToFile(&model, &err, dstFile, g_CmdPrams.CompressOptions, is_draco_src, g_CmdPrams.use_Draco_Encode);
 
