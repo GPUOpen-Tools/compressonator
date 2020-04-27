@@ -1578,7 +1578,7 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
                         memset(&inMips, 0, sizeof(CMP_MipSet));
                         int ret  = AMDLoadMIPSTextureImage((imgSrcDir + input).c_str(), &inMips, false, &g_pluginManager);
 
-                        if (inMips.m_nMipLevels < g_CmdPrams.MipsLevel)
+                        if (inMips.m_nMipLevels < g_CmdPrams.MipsLevel && ! g_CmdPrams.use_noMipMaps)
                         {
                           CMP_INT requestLevel = g_CmdPrams.MipsLevel; // Request 10 miplevels for the source image
 
@@ -1605,6 +1605,8 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
                         kernel_options.format   = g_CmdPrams.CompressOptions.DestFormat;
                         kernel_options.fquality = g_CmdPrams.CompressOptions.fquality;
                         kernel_options.threads  = g_CmdPrams.CompressOptions.dwnumThreads;
+                        kernel_options.height   = inMips.dwHeight;
+                        kernel_options.width    = inMips.dwWidth;
 
                         auto cmp_status = CMP_ProcessTexture(&inMips, &mipSetCmp, kernel_options, CompressionCallback);
                         if (cmp_status != CMP_OK)
@@ -1621,18 +1623,6 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
                         }
                     }
 
-/*
-                    //TODO: wrapper to handle more arguments: mipcount, threadcount, astc block size & quality
-                    //TODO: non-hardcoded process name
-                    boost::process::child c = boost::process::child("CompressonatorCLI-bin", "-fd", "BC7", imgSrcDir + input, output);
-                    c.wait();
-                    int exit_code = c.exit_code();
-                    if(exit_code != 0)
-                    {
-                      PrintInfo("Error: Something went wrong while compressing image!\n");
-                      return false;
-                    }
-*/
                     boost::filesystem::copy(imgSrcDir+input, dstFolder + input);
 
                 }
