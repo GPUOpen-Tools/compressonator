@@ -4794,7 +4794,6 @@ namespace tinygltf2
             if(option.DestFormat != CMP_FORMAT_Unknown)
             {
                 output["extensionsUsed"].push_back("MSFT_texture_dds");
-                PrintInfo("Compressing all images inside gltf\n");
             }
             json textures;
             for (unsigned int i = 0; i < model->textures.size(); ++i)

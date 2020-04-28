@@ -42,7 +42,6 @@
 #pragma warning( pop )
 
 #include <boost/algorithm/string.hpp>
-#include <boost/process.hpp>
 #include <boost/filesystem.hpp>
 
 #ifdef USE_MESH_CLI
@@ -113,10 +112,6 @@ string DefaultDestination(string SourceFile, CMP_FORMAT DestFormat, string DestF
 
     if (DestFileExt.find('.') != std::string::npos) {
         DestFile.append(DestFileExt);
-    }
-    else if(fileIsGLTF(SourceFile))
-    {
-      DestFile.append(".gltf");
     }
 	else {
         if (DestFormat == CMP_FORMAT_ASTC)
@@ -1018,11 +1013,7 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
                             std::string destFileName;
                             //since  DestFile is empty we need to create one from the source file
                             destFileName = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.CompressOptions.DestFormat, g_CmdPrams.FileOutExt);
-                            #ifdef _WIN32
                             g_CmdPrams.DestFile = directory + "\\" + destFileName;
-                            #else
-                            g_CmdPrams.DestFile = directory + "/" + destFileName;
-                            #endif
                         }
                         else
                         {
@@ -1530,11 +1521,11 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
                 auto pos = dstFolder.rfind("\\");
                 if(pos == std::string::npos)
                 {
-                  pos = dstFolder.rfind("/");
+                    pos = dstFolder.rfind("/");
                 }
                 if(pos != std::string::npos)
                 {
-                  dstFolder = dstFolder.substr(0,pos+1);
+                    dstFolder = dstFolder.substr(0,pos+1);
                 }
                 size_t originalImages = model.images.size();
                 for (unsigned i = 0; i < model.images.size(); ++i)
@@ -1565,11 +1556,11 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
                     pos = output.rfind("\\");
                     if(pos == std::string::npos)
                     {
-                      pos = output.rfind("/");
+                        pos = output.rfind("/");
                     }
                     if(pos != std::string::npos)
                     {
-                      imgDestDir = output.substr(0,pos+1);
+                        imgDestDir = output.substr(0,pos+1);
                     }
 
                     boost::filesystem::create_directories(imgDestDir);
@@ -1580,19 +1571,8 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
 
                         if (inMips.m_nMipLevels < g_CmdPrams.MipsLevel && ! g_CmdPrams.use_noMipMaps)
                         {
-                          CMP_INT requestLevel = g_CmdPrams.MipsLevel; // Request 10 miplevels for the source image
-
-                          //------------------------------------------------------------------------
-                          // Checks what the minimum image size will be for the requested mip levels
-                          // if the request is too large, a adjusted minimum size will be returned
-                          //------------------------------------------------------------------------
-                          CMP_INT nMinSize = CMP_CalcMinMipSize(inMips.m_nHeight, inMips.m_nWidth, 10);
-
-                          //--------------------------------------------------------------
-                          // now that the minimum size is known, generate the miplevels
-                          // users can set any requested minumum size to use. The correct
-                          // miplevels will be set acordingly.
-                          //--------------------------------------------------------------
+                          CMP_INT requestLevel = g_CmdPrams.MipsLevel;
+                          CMP_INT nMinSize = CMP_CalcMinMipSize(inMips.m_nHeight, inMips.m_nWidth, requestLevel);
                           CMP_GenerateMIPLevels(&inMips, nMinSize);
                         }
 
@@ -1611,19 +1591,23 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
                         auto cmp_status = CMP_ProcessTexture(&inMips, &mipSetCmp, kernel_options, CompressionCallback);
                         if (cmp_status != CMP_OK)
                         {
-                          PrintInfo("Error: Something went wrong while compressing image!\n");
-                          return false;
+                            PrintInfo("Error: Something went wrong while compressing image!\n");
+                            return false;
                         }
 
                         ret = AMDSaveMIPSTextureImage(output.c_str(), &mipSetCmp, false, g_CmdPrams.CompressOptions);
                         if(ret != 0)
                         {
-                          PrintInfo("Error: Something went wrong while saving compressed image!\n");
-                          return false;
+                            PrintInfo("Error: Something went wrong while saving compressed image!\n");
+                            return false;
                         }
                     }
 
-                    boost::filesystem::copy(imgSrcDir+input, dstFolder + input);
+                    if(!boost::filesystem::exists(dstFolder + input))
+                    {
+                        boost::filesystem::copy(imgSrcDir + input,
+                                                dstFolder + input);
+                    }
 
                 }
             }
