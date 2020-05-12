@@ -88,7 +88,7 @@ typedef struct
 
 //}
 
-void cpuid(int cpuInfo[4], int function_id);
+void cmp_cpuid(int cpuInfo[4], int function_id);
 cmp_cpufeatures cmp_get_cpufeatures();
 
 #else

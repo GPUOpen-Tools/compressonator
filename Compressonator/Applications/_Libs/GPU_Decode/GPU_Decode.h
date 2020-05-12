@@ -31,7 +31,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 #ifdef _WIN32
 /// Converts the compressed source texture to the decompressed destination texture
 /// \param[in] pSourceTexture A pointer to the source texture.
@@ -57,7 +56,6 @@ extern "C" {
 //
     CMP_ERROR CMP_API CMP_ShutdownDecompessLibrary();
 #endif
-
 #ifdef __cplusplus
 };
 #endif

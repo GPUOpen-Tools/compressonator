@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2019 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -27,7 +27,7 @@
 
 #ifndef ASPM_GPU
 
-void cpuid(int cpuInfo[4], int function_id)
+void cmp_cpuid(int cpuInfo[4], int function_id)
 {
     // subfunction_id = 0
     #ifdef _WIN32
@@ -51,12 +51,12 @@ cmp_cpufeatures cmp_get_cpufeatures()
     }
 
 #ifndef _LINUX
-    cpuid(cpuInfo,0);
+    cmp_cpuid(cpuInfo,0);
     int nIds = cpuInfo[0];
 
     if (nIds >= 0x00000001)
     {
-        cpuid(cpuInfo, 0x00000001);
+        cmp_cpuid(cpuInfo, 0x00000001);
         cpu.feature[SSP_SSE3]   = (cpuInfo[2] & CMP_CPU_SSE3); 
         cpu.feature[SSP_SSSE3]  = (cpuInfo[2] & CMP_CPU_SSSE3);
         cpu.feature[SSP_SSE4_1] = (cpuInfo[2] & CMP_CPU_SSE41);
@@ -95,11 +95,11 @@ cmp_cpufeatures cmp_get_cpufeatures()
     //
     //}
 
-    cpuid(cpuInfo,0x80000000);
+    cmp_cpuid(cpuInfo,0x80000000);
     maxInfoType = cpuInfo[0];
     if (maxInfoType >= 0x80000001)
     {
-        cpuid(cpuInfo, 0x80000001);
+        cmp_cpuid(cpuInfo, 0x80000001);
         cpu.feature[SSP_SSE4a] = (cpuInfo[2] & CMP_CPU_SSE4a);
         cpu.feature[SSP_SSE5]  = (cpuInfo[2] & CMP_CPU_XOP);
         // (cpuInfo[3] & CMP_CPU_x64);
