@@ -71,5 +71,8 @@
     <ClInclude Include="..\CMP_Core\shaders\BCn_Common_Kernel.h">
       <Filter>BCn</Filter>
     </ClInclude>
+    <ClInclude Include="..\CMP_Core\source\cmp_math_func.h">
+      <Filter>source</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

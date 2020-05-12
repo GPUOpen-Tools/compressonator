@@ -272,6 +272,9 @@
     <ClInclude Include="..\CMP_Framework\CMP_framework.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\CMP_Core\source\cmp_math_func.h">
+      <Filter>CMP_Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\CMP_Core\shaders\CopyFiles.bat" />
