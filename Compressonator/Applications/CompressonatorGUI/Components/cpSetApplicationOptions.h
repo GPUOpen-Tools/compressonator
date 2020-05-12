@@ -51,9 +51,7 @@ signals:
 public slots:
     void onClose();
     void oncurrentItemChanged(QtBrowserItem *item);
-//#ifdef USE_CMP_SDK
     void onImageEncodeChanged(QVariant &value);
-//#endif
     void onImageViewDecodeChanged(QVariant &value);
     void onLogResultsChanged(QVariant &value);
 

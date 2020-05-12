@@ -544,7 +544,14 @@ void CImagePropertyView::compressionValueChanged(QVariant& value)
     if (m_propQuality)
     {
         m_propQuality->setHidden(!Quality_Settings);
-        m_propQuality->setEnabled(Quality_Settings);
+        if (m_C_Destination_Options->m_globalSetting_qualityEnabled)
+        {
+            m_propQuality->setEnabled(false);
+        }
+        else
+        {
+            m_propQuality->setEnabled(Quality_Settings);
+        }
     }
 
     if (m_propDXT1Alpha)

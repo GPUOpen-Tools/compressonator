@@ -1440,7 +1440,10 @@ public:
 
     double getQuality() const
     {
-        return m_Quality;
+        if (m_globalSetting_qualityEnabled)
+            return m_globalSetting_quality;
+        else
+            return m_Quality;
     }
 
     bool doSwizzle()
@@ -1493,6 +1496,11 @@ public:
     // so dont delete its ref using this class. Parent class will clean it up
     CMipImages  *m_OriginalMipImages;
 
+    
+    // Global Setting overrides
+    bool  m_globalSetting_qualityEnabled = false; 
+    float m_globalSetting_quality = 0.0f;
+
 signals:
 
     void compressionChanged(QVariant &);
@@ -1531,6 +1539,8 @@ private:
         ds.m_SourceIscompressedFormat = obj.m_SourceIscompressedFormat;
         ds.m_SourceIsFloatFormat      = obj.m_SourceIsFloatFormat;
         ds.m_data_has_been_changed    = obj.m_data_has_been_changed;
+        ds.m_globalSetting_qualityEnabled = obj.m_globalSetting_qualityEnabled;
+        ds.m_globalSetting_quality    = obj.m_globalSetting_quality;
         ds.m_SourceImageSize          = obj.m_SourceImageSize;
         ds.X_RED                      = obj.X_RED;
         ds.Y_GREEN                    = obj.Y_GREEN;
@@ -1539,6 +1549,7 @@ private:
 
         return ds;
     }
+
 };
 
 // =======================================================
@@ -1615,6 +1626,43 @@ public:
     int     m_extnum;
     long    m_ImageSize;
     CMipImages *m_MipImages;
+};
+
+class C_Global_Process_Settings: public QObject
+{
+        Q_OBJECT
+        Q_PROPERTY(double Set_Quality      READ getQuality   WRITE setQuality)
+
+public:
+    C_Global_Process_Settings()
+    {
+        m_Quality = 0.00;
+    }
+
+    double m_Quality;
+    int    m_enabled;
+
+    void setQuality(double quality)
+    {
+         m_enabled = 1;
+        if (quality > 1.0) quality = 1.0;
+        else
+        if (quality <= 0) 
+        {
+            quality = 0.0;
+            m_enabled = 0;
+        }
+        m_Quality = quality;
+        emit globalPropertyChanged(m_enabled);
+    }
+
+    float getQuality() const
+    {
+        return m_Quality;
+    }
+
+signals:
+    void globalPropertyChanged(int &);
 };
 
 class C_Mesh_Buffer_Info : public QObject
@@ -1765,12 +1813,8 @@ public:
 // =======================================================
 // APPLICATION DATA
 // =======================================================
-//#ifdef USE_CMP_SDK 
 #define APP_compress_image_using                        "Encode with"
-//#endif
-//#ifdef USE_3DVIEWALLAPI
 #define APP_Render_Models_with                          "Render Models with"
-//#endif
 #define APP_Decompress_image_views_using                "Decode with"
 #define APP_Reload_image_views_on_selection             "Reload image views on selection"
 #define APP_Load_recent_project_on_startup              "Load recent project on startup"
@@ -1786,10 +1830,8 @@ class C_Application_Options :public QObject
     Q_OBJECT
         Q_ENUMS(ImageDecodeWith)
         Q_ENUMS(RenderModelsWith)
-//#ifdef USE_CMP_SDK
         Q_ENUMS(ImageEncodeWith)
         Q_PROPERTY(ImageEncodeWith  Encode_with                             READ getImageEncode             WRITE setImageEncode NOTIFY ImageEncodeChanged)
-//#endif
         Q_PROPERTY(ImageDecodeWith  Decode_with                             READ getImageViewDecode         WRITE setImageViewDecode NOTIFY ImageViewDecodeChanged)
         Q_PROPERTY(bool             Reload_image_views_on_selection         READ getUseNewImageViews        WRITE setUseNewImageViews)
         Q_PROPERTY(bool             Close_all_image_views_prior_to_process  READ getCloseAllImageViews      WRITE setCloseAllImageViews)
@@ -1800,9 +1842,7 @@ class C_Application_Options :public QObject
 #ifdef USE_ASSIMP
         Q_PROPERTY(bool             Use_assimp                              READ getUseAssimp               WRITE setUseAssimp)
 #endif
-//#ifdef USE_3DVIEWALLAPI
         Q_PROPERTY(RenderModelsWith Render_Models_with                      READ getGLTFRender              WRITE setGLTFRender)
-//#endif
         Q_PROPERTY(bool             Show_MSE_PSNR_SSIM_Results              READ getLogResults              WRITE setLogResults NOTIFY LogResultsChanged)
         Q_PROPERTY(bool             Show_Analysis_Results_Table             READ getAnalysisResultTable     WRITE setAnalysisResultTable)
 public:
@@ -1811,9 +1851,9 @@ public:
     enum class ImageEncodeWith {
         CPU,
         HPC,
-#ifdef USE_GPUEncoders
         GPU_DirectX,
         GPU_OpenCL,
+#ifdef USE_GPU_PIPELINE_VULKAN
         GPU_Vulkan,
 #endif
     };
@@ -1841,10 +1881,8 @@ public:
     
     C_Application_Options()
     {
-        m_ImageViewDecode    = ImageDecodeWith::CPU;
-//#ifdef USE_CMP_SDK
-        m_ImageEncode        = ImageEncodeWith::CPU;
-//#endif
+        m_ImageViewDecode       = ImageDecodeWith::CPU;
+        m_ImageEncode           = ImageEncodeWith::CPU;
         m_loadRecentFile        = false;
         m_useNewImageViews      = false;
         m_refreshCurrentView    = false;
@@ -1874,7 +1912,7 @@ public:
     {
         return m_ImageViewDecode;
     }
-//#ifdef USE_CMP_SDK
+
     void setImageEncode(ImageEncodeWith encodewith)
     {
         m_ImageEncode = encodewith;
@@ -1885,7 +1923,11 @@ public:
     {
         return m_ImageEncode;
     }
-//#endif
+
+    bool isGPUEncode()
+    {
+        return ((m_ImageEncode == ImageEncodeWith::GPU_DirectX)||(m_ImageEncode == ImageEncodeWith::GPU_OpenCL));
+    }
 
     void setImagediffContrast(double contrast)
     {
@@ -1995,9 +2037,7 @@ public:
     }
 
     ImageDecodeWith m_ImageViewDecode;
-//#ifdef USE_CMP_SDK
     ImageEncodeWith m_ImageEncode;
-//#endif
     bool            m_clickIconToViewImage;
     bool            m_closeAllDocuments;
     bool            m_loadRecentFile;
@@ -2012,10 +2052,7 @@ public:
 signals:
     void ImageViewDecodeChanged(QVariant &);
     void LogResultsChanged(QVariant &);
-//#ifdef USE_CMP_SDK
     void ImageEncodeChanged(QVariant &);
-//#endif
-
 };
 
 #define STR_QUALITY_SETTING_HINT        "Quality Setting Range 0 (Poor)to 1 (High)Default is 0.05"

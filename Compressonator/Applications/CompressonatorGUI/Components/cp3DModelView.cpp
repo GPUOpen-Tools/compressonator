@@ -626,18 +626,14 @@ cp3DModelView::cp3DModelView(const QString filePathName, const QString filePathN
         if (((strcmp(c_ext, "GLTF") == 0) || (strcmp(c_ext, "BIN") == 0)))
         {
             m_isviewingDX12 = true;
-//#ifdef USE_3DVIEWALLAPI
             if (g_Application_Options.getGLTFRender() == C_Application_Options::RenderModelsWith::glTF_OpenGL)
-//#endif
                 g_Application_Options.setGLTFRender(C_Application_Options::RenderModelsWith::glTF_DX12_EX);
         }
         else
         {
             m_isviewingDX12 = false;
-#ifdef USE_3DVIEWALLAPI
             if (g_Application_Options.getGLTFRender() == C_Application_Options::RenderModelsWith::glTF_DX12_EX ||
                 g_Application_Options.getGLTFRender() == C_Application_Options::RenderModelsWith::glTF_Vulkan)
-#endif
                 g_Application_Options.setGLTFRender(C_Application_Options::RenderModelsWith::glTF_OpenGL);
         }
 

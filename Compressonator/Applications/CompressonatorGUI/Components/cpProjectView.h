@@ -106,8 +106,21 @@ class AnalysisTableWidget : public QTableWidget
 {
 public:
     AnalysisTableWidget();
-    void AddResults(QString processPath, QString processName,  QString Time, QString psnr, QString ssim);
-    void AddResults(string  processPath, QString processName,  double  Time, double  psnr, double  ssim);
+
+    void AddAverageResults(QString deviceName,
+                           QString Encoder, 
+                           QString Time, 
+                           QString psnr, 
+                           QString ssim);
+
+    void AddTestResults(string  processPath, 
+                        QString processName,
+                        float  Quality,
+                        double PerfTime,
+                        double MPxPerSec,
+                        double Time, 
+                        double psnr, 
+                        double ssim);
     void ClearResults();
 protected:
     void keyPressEvent(QKeyEvent *event);
@@ -136,6 +149,7 @@ public:
     acProgressDlg*                          m_pProgressDlg;
     acDiffImage*                            m_diffImageDialog;
     ac3DMeshAnalysis*                       m_3DMeshAnalysisDlg;
+    C_Global_Process_Settings               m_globalProcessSetting;
 
     void SetupHeader();
     void SetupTreeView();
@@ -269,6 +283,8 @@ void onSetNewProject(QString &FilePathName);
 void OnStartCompression();
 void OnCloseCompression();
 void onSignalProcessMessage();
+
+void onGlobalPropertyChanged(int &);
 
 void saveProjectFile();
 void saveAsProjectFile();

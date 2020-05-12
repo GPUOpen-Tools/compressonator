@@ -60,9 +60,7 @@ m_parent(parent)
 
     connect(&g_Application_Options, SIGNAL(ImageViewDecodeChanged(QVariant &)), this, SLOT(onImageViewDecodeChanged(QVariant &)));
     connect(&g_Application_Options, SIGNAL(LogResultsChanged(QVariant &)), this, SLOT(onLogResultsChanged(QVariant &)));
-#ifdef USE_CMP_SDK
     connect(&g_Application_Options, SIGNAL(ImageEncodeChanged(QVariant &)), this, SLOT(onImageEncodeChanged(QVariant &)));
-#endif
     m_theController->setObject(&g_Application_Options, true);
     m_layoutV->addWidget(m_theController);
 
@@ -106,7 +104,6 @@ void CSetApplicationOptions::onImageViewDecodeChanged(QVariant &value)
         g_gpudecodeFormat = MIPIMAGE_FORMAT::Format_QImage;
 }
 
-#ifdef USE_CMP_SDK
 void CSetApplicationOptions::onImageEncodeChanged(QVariant &value)
 {
     g_Application_Options.m_ImageEncode = (C_Application_Options::ImageEncodeWith &)value;
@@ -117,7 +114,6 @@ void CSetApplicationOptions::onImageEncodeChanged(QVariant &value)
         g_useCPUEncode = false;
 
 }
-#endif
 
 void CSetApplicationOptions::onLogResultsChanged(QVariant &value)
 {
@@ -131,9 +127,7 @@ void CSetApplicationOptions::onLogResultsChanged(QVariant &value)
 void CSetApplicationOptions::onClose()
 {
     g_useCPUDecode = (g_Application_Options.m_ImageViewDecode == C_Application_Options::ImageDecodeWith::CPU);
-#ifdef USE_CMP_SDK
     g_useCPUEncode = (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::CPU);
-#endif
     emit OnAppSettingHide();
     close();
 }
@@ -169,18 +163,17 @@ void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem *item)
         m_infotext->append("For ETCn, GPU Decompress with DirectX is not supported");
         m_infotext->append("For HDR image view, decode with OpenGL is not supported. It may appear darker.");
     }
-#ifdef USE_CMP_SDK    
     if (text.compare(APP_compress_image_using) == 0)
     {
         m_infotext->append("<b>Compressed image</b>");
-        m_infotext->append("For compressed images this option selects how images are compressed either with CPU or HPC.");
+        m_infotext->append("For compressed images this option selects how images are compressed either with CPU,HPC,GPU_DirectX or GPU_OpenCL.");
         m_infotext->append("HPC runs codecs optimized for vector extensions and SPMD processing on CPU.");
+        m_infotext->append("GPU_ options compiles shaders on first use and takes time to process, subsequent runs will load built shaders");
+        m_infotext->append("if your GPU device has changed since last use, delete all .cmp files in plugins compute folder to rebuild the shaders");
         m_infotext->append("<b>Note:</b>");
-        m_infotext->append("Only BC1 to BC7 format are supported with HPC Compress, if you choose other format under HPC Compress, they will be compressed with generalized CPU instructions");
+        m_infotext->append("Only BC1 to BC7 format are supported for HPC and GPU, if you choose other formats or a shader compile fails on first use, processing with generalized CPU instructions will be used");
     }
-
     else
-#endif
     if (text.compare(APP_Reload_image_views_on_selection) == 0)
     {
         m_infotext->append("<b>Reload image views</b>");
@@ -227,24 +220,18 @@ void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem *item)
         m_infotext->append("<b>Show Analysis Results Table</b>");
         m_infotext->append("Show all Process Times, PSNR and SSIM results for compressed images in a table view");
     }
-
-//#ifdef USE_3DVIEWALLAPI
     else
     if (text.compare(APP_Render_Models_with) == 0)
     {
         m_infotext->append("<b>Selects how to render 3DModels files</b>");
     }
-//#endif
-
 }
 
 void CSetApplicationOptions::UpdateViewData()
 {
     m_theController->setObject(&g_Application_Options, true, true);
     g_useCPUDecode = g_Application_Options.m_ImageViewDecode == C_Application_Options::ImageDecodeWith::CPU;
-#ifdef USE_CMP_SDK
     g_useCPUEncode = g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::CPU;
-#endif
 }
 
 void CSetApplicationOptions::SaveSettings(QString SettingsFile, QSettings::Format Format)
@@ -301,21 +288,18 @@ void CSetApplicationOptions::LoadSettings(QString SettingsFile, QSettings::Forma
             var = g_Application_Options.metaObject()->property(i).read(&g_Application_Options);
             var = settings.value(name, var);
             name.replace(QString("_"), QString(" "));
-#ifdef USE_CMP_SDK
             if (name.compare(APP_compress_image_using) == 0)
             {
                 int value = var.value<int>();
                 C_Application_Options::ImageEncodeWith encode = (C_Application_Options::ImageEncodeWith) value;
                 g_Application_Options.setImageEncode(encode);
             }
-#endif
             if (name.compare(APP_Decompress_image_views_using) == 0)
             {
                 int value = var.value<int>();
                 C_Application_Options::ImageDecodeWith decodeWith = (C_Application_Options::ImageDecodeWith) value;
                 g_Application_Options.setImageViewDecode(decodeWith);
             }
-//#ifdef USE_3DVIEWALLAPI
             else
             if (name.compare(APP_Render_Models_with) == 0)
             {
@@ -323,7 +307,6 @@ void CSetApplicationOptions::LoadSettings(QString SettingsFile, QSettings::Forma
                 C_Application_Options::RenderModelsWith render = (C_Application_Options::RenderModelsWith) value;
                 g_Application_Options.setGLTFRender(render);
             }
-//#endif
             else
                 g_Application_Options.metaObject()->property(i).write(&g_Application_Options, var);
         }

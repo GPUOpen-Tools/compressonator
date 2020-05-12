@@ -63,7 +63,7 @@ m_parent(parent)
 }
 
 
-void CGenMips::setMipLevelDisplay(int Width, int Height)
+void CGenMips::setMipLevelDisplay(int Width, int Height, bool UsingGPU = false)
 {
     m_ImageSize_W = Width;
     m_ImageSize_H = Height;
@@ -84,14 +84,20 @@ void CGenMips::setMipLevelDisplay(int Width, int Height)
         Width = (Width>1) ? (Width >> 1) : 1;
         Height = (Height>1) ? (Height >> 1) : 1;
 
+        if (UsingGPU)
+        {
+            if ((Width % 4)||(Height%4))
+                break;
+        }
+
         QString level;
         level.append(QString::number(Width));
         level.append("x");
         level.append(QString::number(Height));
 
         m_MipLevelSizes << level;
-
         m_MipLevels++;
+
     } while (Width > 1 && Height > 1);
 
     QStringList reversedList = m_MipLevelSizes;
@@ -245,8 +251,6 @@ void CGenMips::SetDefaults()
 
     
     // Data 
-    //https://doc.qt.io/archives/qq/qq18-propertybrowser.html
-
     m_property = variantManager->addProperty(QtVariantPropertyManager::enumTypeId(), LOWEST_MIP_LEVELS);
     m_MipLevelSizes << "";
     m_property->setAttribute("enumNames", m_MipLevelSizes);

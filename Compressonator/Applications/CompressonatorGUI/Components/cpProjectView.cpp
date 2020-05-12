@@ -352,12 +352,24 @@ void ProjectView::SignalUpdateData(QTreeWidgetItem* item, int levelType)
     QVariant v = item->data(TREE_SourceInfo, Qt::UserRole);
     switch (levelType)
     {
+    case TREETYPE_Double_Click_here_to_add_files:
+        emit UpdateData(&m_globalProcessSetting);
+        break;
     case TREETYPE_MESH_DATA:
     case TREETYPE_COMPRESSION_DATA:
     {
         C_Destination_Options* m_data = v.value<C_Destination_Options*>();
         if (m_data)
+        {
+            if (m_globalProcessSetting.m_Quality > 0.0f) {
+               m_data->m_globalSetting_quality = m_globalProcessSetting.m_Quality;
+               m_data->m_globalSetting_qualityEnabled  = true;
+            }
+            else
+               m_data->m_globalSetting_qualityEnabled  = false;
+
             emit UpdateData(m_data);
+        }
     }
     break;
     case TREETYPE_3DMODEL_DATA:
@@ -2826,7 +2838,7 @@ void ProjectView::analyseMeshData()
                 cpMainComponents* mainComponents = NULL;
                 mainComponents                   = (cpMainComponents*)m_parent;
                 if (mainComponents)
-                    msgHandler = (void*) mainComponents->PrintStatus;
+                    msgHandler = (void*)mainComponents->PrintStatus;
 
                 if (m_plugin_loader)
                 {
@@ -2904,7 +2916,7 @@ void ProjectView::analyseMeshData()
                 cpMainComponents* mainComponents = NULL;
                 mainComponents                   = (cpMainComponents*)m_parent;
                 if (mainComponents)
-                    msgHandler = (void*) mainComponents->PrintStatus;
+                    msgHandler = (void*)mainComponents->PrintStatus;
 
                 if (m_subplugin_loader)
                 {
@@ -2973,7 +2985,7 @@ void ProjectView::analyseMeshData()
                         cpMainComponents* mainComponents = NULL;
                         mainComponents                   = (cpMainComponents*)m_parent;
                         if (mainComponents)
-                            msgHandler = (void*) mainComponents->PrintStatus;
+                            msgHandler = (void*)mainComponents->PrintStatus;
 
                         if (m_plugin_loader)
                         {
@@ -3206,6 +3218,8 @@ void ProjectView::SetupTreeView()
     connect(m_projectTreeView, SIGNAL(entered(const QModelIndex&)), this, SLOT(onEntered(const QModelIndex&)));
     connect(m_projectTreeView, SIGNAL(event_mousePress(QMouseEvent*, bool)), this, SLOT(onTreeMousePress(QMouseEvent*, bool)));
     connect(m_projectTreeView, SIGNAL(event_keyPress(QKeyEvent*)), this, SLOT(onTreeKeyPress(QKeyEvent*)));
+
+    connect(&m_globalProcessSetting, SIGNAL(globalPropertyChanged(int &)), this, SLOT(onGlobalPropertyChanged(int &)));
 
     // Top level Root Node
     Tree_AddRootNode();
@@ -4586,6 +4600,7 @@ void ProjectView::onTree_ItemClicked(QTreeWidgetItem* item, int column)
     {
         // Clears of selected items when user clicks on this node
         Tree_clearAllItemsSetected();
+        SignalUpdateData(item, islevelType);
     }
     else if (islevelType == TREETYPE_VIEWMESH_ONLY_NODE)
     {
@@ -5144,6 +5159,25 @@ void ProjectView::onDroppedImageItem(QString& filePathName, int index)
     m_saveProjectChanges = true;
 }
 
+void ProjectView::onGlobalPropertyChanged(int &setting)
+{
+    QTreeWidgetItem *item = this->m_CurrentItem;
+    if (item)
+    {
+        QVariant v         = item->data(TREE_LevelType, Qt::UserRole);
+        int      levelType = v.toInt();
+        if (levelType == TREETYPE_Double_Click_here_to_add_files)
+        {
+            QColor ColorEnabled(128, 128, 0);       // Light Yellow
+            QColor ColorDisabled(255, 255, 255);    // White
+            if (setting > 0)
+                item->setBackgroundColor(0,ColorEnabled);
+            else
+                item->setBackgroundColor(0,ColorDisabled);
+        }
+    }
+}
+
 /*=====================================================*/
 // Project Tree list layout
 //
@@ -5159,7 +5193,6 @@ void ProjectView::onDroppedImageItem(QString& filePathName, int index)
 //       TREETYPE_COMPRESSION_DATA
 /*=====================================================*/
 
-
 struct TAnalysisData
 {
     int    processCount;
@@ -5167,7 +5200,6 @@ struct TAnalysisData
     double SSIM_Total;
     double PSNR_Total;
 };
-
 
 bool processItem(QFile* file, 
                  ProjectView* ProjectView, 
@@ -5204,6 +5236,7 @@ bool processItem(QFile* file,
         argvVec.back().push_back(0);  // Terminate String
         argv.push_back(argvVec.back().data());
 
+        float fqualty_setting = 0.05f;
         QTreeWidgetItem* Imageitem    = (*it);
         QString          Setting      = Imageitem->text(0);
         QVariant         v            = (*it)->data(TREE_LevelType, Qt::UserRole);
@@ -5340,24 +5373,24 @@ bool processItem(QFile* file,
                 if ((!g_useCPUEncode) && (key))
                 {
                     string format = key;
-                    if (
-#ifdef USE_GTC
-                        format == "GTC" ||
-#endif
-#ifdef USE_BASIS
-                        format == "BASIS" ||
-#endif
-                        format == "BC1"   ||
-                        format == "BC2"   ||
-                        format == "BC3"   ||
-                        format == "BC4"   ||
-                        format == "BC5"   ||
-                        format == "BC7"   ||
-                        format == "DXT1"  ||
-                        format == "DXT3"  ||
-                        format == "DXT5"  ||
-                        format == "BC6H_SF"  ||
-                        format == "BC6H")
+//                     if (
+// #ifdef USE_GTC
+//                        format == "GTC" ||
+// #endif
+// #ifdef USE_BASIS
+//                        format == "BASIS" ||
+// #endif
+//                         format == "BC1"   ||
+//                         format == "BC2"   ||
+//                         format == "BC3"   ||
+//                         format == "BC4"   ||
+//                         format == "BC5"   ||
+//                         format == "BC7"   ||
+//                         format == "DXT1"  ||
+//                         format == "DXT3"  ||
+//                         format == "DXT5"  ||
+//                         format == "BC6H_SF"  ||
+//                         format == "BC6H")
                     {
                         string usegpu;
                         msgCommandLine.append(" -EncodeWith ");
@@ -5373,7 +5406,6 @@ bool processItem(QFile* file,
                             argvVec.back().push_back(0); // Terminate String
                             argv.push_back(argvVec.back().data());
                         }
-#ifdef USE_GPUEncoders
                         else if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_OpenCL)
                         {
                             msgCommandLine.append(" OCL ");
@@ -5382,14 +5414,16 @@ bool processItem(QFile* file,
                             argvVec.back().push_back(0); // Terminate String
                             argv.push_back(argvVec.back().data());
                         }
-                        //else if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::VLK)
-                        //{
-                        //    msgCommandLine.append(" VLK ");
-                        //    usegpu = "VLK";
-                        //    argvVec.push_back(CharArray(usegpu.begin(), usegpu.end()));
-                        //    argvVec.back().push_back(0); // Terminate String
-                        //    argv.push_back(argvVec.back().data());
-                        //}
+#ifdef USE_GPU_PIPELINE_VULKAN
+                        else if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::VLK)
+                        {
+                            msgCommandLine.append(" VLK ");
+                            usegpu = "VLK";
+                            argvVec.push_back(CharArray(usegpu.begin(), usegpu.end()));
+                            argvVec.back().push_back(0); // Terminate String
+                            argv.push_back(argvVec.back().data());
+                        }
+#endif
                         else if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_DirectX)
                         {
                             msgCommandLine.append(" DXC ");
@@ -5398,12 +5432,11 @@ bool processItem(QFile* file,
                             argvVec.back().push_back(0); // Terminate String
                             argv.push_back(argvVec.back().data());
                         }
-#endif
                     }
-                    else
-                    {
-                        g_useCPUEncode = true;
-                    }
+                    //else
+                    //{
+                    //    g_useCPUEncode = true;
+                    //}
                 }
 
                 // MipLevels
@@ -5429,10 +5462,15 @@ bool processItem(QFile* file,
                 //=============================
                 if (FormatSupportsQualitySetting(cmp_format))
                 {
-                    if (data->m_Quality != setDefaultOptions.m_Quality)
+                    if ((data->m_Quality != setDefaultOptions.m_Quality)||(ProjectView->m_globalProcessSetting.m_Quality > 0))
                     {
+                        // Override the setting
+                        if (ProjectView->m_globalProcessSetting.m_Quality > 0)
+                            fqualty_setting = ProjectView->m_globalProcessSetting.m_Quality;
+                        else
+                            fqualty_setting = data->m_Quality;
                         // User Msg
-                        QString value = QString::number(data->m_Quality, 'f', 4);
+                        QString value = QString::number(fqualty_setting, 'f', 4);
                         msgCommandLine.append(" -Quality ");
                         msgCommandLine.append(value);
                         msgCommandLine.append(" ");
@@ -5444,7 +5482,7 @@ bool processItem(QFile* file,
                         argv.push_back(argvVec.back().data());
 
                         // User Setting Value
-                        squality = value.toStdString();  //  std::to_string(data->m_Quality);
+                        squality = value.toStdString();
                         argvVec.push_back(CharArray(squality.begin(), squality.end()));
                         argvVec.back().push_back(0);  // Terminate String
                         argv.push_back(argvVec.back().data());
@@ -5469,26 +5507,35 @@ bool processItem(QFile* file,
                     //=============================
                     // Channel Weighting
                     //=============================
-                    if (data->X_RED != setDefaultOptions.X_RED)
+                    int CHRed      = ceil(data->X_RED * 100);
+                    int DefCHRed   = ceil(setDefaultOptions.X_RED * 100);
+                    int CHGreen    = ceil(data->Y_GREEN * 100);
+                    int DefCHGreen = ceil(setDefaultOptions.Y_GREEN * 100);
+                    int CHBlue     = ceil(data->Z_BLUE * 100);
+                    int DefCHBlue  = ceil(setDefaultOptions.Z_BLUE * 100);
+
+                    if ((!useWeightChannel)&&((CHRed != DefCHRed)||(CHGreen != DefCHGreen)||(CHBlue != DefCHBlue)))
+                    {
+                        msgCommandLine.append(" -UseChannelWeighting 1 ");
+                        useWeightChannel = true;
+
+                        // User Setting Text
+                        string suseweighChannel = "-UseChannelWeighting";
+                        argvVec.push_back(CharArray(suseweighChannel.begin(), suseweighChannel.end()));
+                        argvVec.back().push_back(0);  // Terminate String
+                        argv.push_back(argvVec.back().data());
+                        // User Setting Value
+                        suseweighChannel = "1";
+                        argvVec.push_back(CharArray(suseweighChannel.begin(), suseweighChannel.end()));
+                        argvVec.back().push_back(0);  // Terminate String
+                        argv.push_back(argvVec.back().data());
+                    }
+
+
+                    if (CHRed != DefCHRed)
                     {
                         // User Msg
                         QString value = QString::number(data->X_RED, 'f', 4);
-                        if (!useWeightChannel)
-                        {
-                            msgCommandLine.append(" -UseChannelWeighting 1 ");
-                            useWeightChannel = true;
-
-                            // User Setting Text
-                            string suseweighChannel = "-UseChannelWeighting";
-                            argvVec.push_back(CharArray(suseweighChannel.begin(), suseweighChannel.end()));
-                            argvVec.back().push_back(0);  // Terminate String
-                            argv.push_back(argvVec.back().data());
-                            // User Setting Value
-                            suseweighChannel = "1";
-                            argvVec.push_back(CharArray(suseweighChannel.begin(), suseweighChannel.end()));
-                            argvVec.back().push_back(0);  // Terminate String
-                            argv.push_back(argvVec.back().data());
-                        }
 
                         msgCommandLine.append(" -WeightR ");
                         msgCommandLine.append(value);
@@ -5507,26 +5554,10 @@ bool processItem(QFile* file,
                         argv.push_back(argvVec.back().data());
                     }
 
-                    if (data->Y_GREEN != setDefaultOptions.Y_GREEN)
+                    if (CHGreen != DefCHGreen)
                     {
                         // User Msg
                         QString value = QString::number(data->Y_GREEN, 'f', 4);
-                        if (!useWeightChannel)
-                        {
-                            msgCommandLine.append(" -UseChannelWeighting 1 ");
-                            useWeightChannel = true;
-
-                            // User Setting Text
-                            string suseweighChannel = "-UseChannelWeighting";
-                            argvVec.push_back(CharArray(suseweighChannel.begin(), suseweighChannel.end()));
-                            argvVec.back().push_back(0);  // Terminate String
-                            argv.push_back(argvVec.back().data());
-                            // User Setting Value
-                            suseweighChannel = "1";
-                            argvVec.push_back(CharArray(suseweighChannel.begin(), suseweighChannel.end()));
-                            argvVec.back().push_back(0);  // Terminate String
-                            argv.push_back(argvVec.back().data());
-                        }
 
                         msgCommandLine.append(" -WeightG ");
                         msgCommandLine.append(value);
@@ -5545,26 +5576,10 @@ bool processItem(QFile* file,
                         argv.push_back(argvVec.back().data());
                     }
 
-                    if (data->Z_BLUE != setDefaultOptions.Z_BLUE)
+                    if (CHBlue != DefCHBlue)
                     {
                         // User Msg
                         QString value = QString::number(data->Z_BLUE, 'f', 4);
-                        if (!useWeightChannel)
-                        {
-                            msgCommandLine.append(" -UseChannelWeighting 1 ");
-                            useWeightChannel = true;
-
-                            // User Setting Text
-                            string suseweighChannel = "-UseChannelWeighting";
-                            argvVec.push_back(CharArray(suseweighChannel.begin(), suseweighChannel.end()));
-                            argvVec.back().push_back(0);  // Terminate String
-                            argv.push_back(argvVec.back().data());
-                            // User Setting Value
-                            suseweighChannel = "1";
-                            argvVec.push_back(CharArray(suseweighChannel.begin(), suseweighChannel.end()));
-                            argvVec.back().push_back(0);  // Terminate String
-                            argv.push_back(argvVec.back().data());
-                        }
 
                         msgCommandLine.append(" -WeightB ");
                         msgCommandLine.append(value);
@@ -5684,7 +5699,7 @@ bool processItem(QFile* file,
                         argv.push_back(argvVec.back().data());
 
                         // User Setting Value
-                        sdefog = value.toStdString();  //  std::to_string(data->m_Quality);
+                        sdefog = value.toStdString();
                         argvVec.push_back(CharArray(sdefog.begin(), sdefog.end()));
                         argvVec.back().push_back(0);  // Terminate String
                         argv.push_back(argvVec.back().data());
@@ -5705,7 +5720,7 @@ bool processItem(QFile* file,
                         argv.push_back(argvVec.back().data());
 
                         // User Setting Value
-                        sexposure = value.toStdString();  //  std::to_string(data->m_Quality);
+                        sexposure = value.toStdString();
                         argvVec.push_back(CharArray(sexposure.begin(), sexposure.end()));
                         argvVec.back().push_back(0);  // Terminate String
                         argv.push_back(argvVec.back().data());
@@ -5726,7 +5741,7 @@ bool processItem(QFile* file,
                         argv.push_back(argvVec.back().data());
 
                         // User Setting Value
-                        skneelow = value.toStdString();  //  std::to_string(data->m_Quality);
+                        skneelow = value.toStdString();
                         argvVec.push_back(CharArray(skneelow.begin(), skneelow.end()));
                         argvVec.back().push_back(0);  // Terminate String
                         argv.push_back(argvVec.back().data());
@@ -5747,7 +5762,7 @@ bool processItem(QFile* file,
                         argv.push_back(argvVec.back().data());
 
                         // User Setting Value
-                        skneehigh = value.toStdString();  //  std::to_string(data->m_Quality);
+                        skneehigh = value.toStdString();
                         argvVec.push_back(CharArray(skneehigh.begin(), skneehigh.end()));
                         argvVec.back().push_back(0);  // Terminate String
                         argv.push_back(argvVec.back().data());
@@ -5768,7 +5783,7 @@ bool processItem(QFile* file,
                         argv.push_back(argvVec.back().data());
 
                         // User Setting Value
-                        sgamma = value.toStdString();  //  std::to_string(data->m_Quality);
+                        sgamma = value.toStdString();
                         argvVec.push_back(CharArray(sgamma.begin(), sgamma.end()));
                         argvVec.back().push_back(0);  // Terminate String
                         argv.push_back(argvVec.back().data());
@@ -5813,6 +5828,8 @@ bool processItem(QFile* file,
                         g_CmdPrams.conversion_fDuration = 0;
                         g_CmdPrams.doDecompress = false;
                         g_CmdPrams.CompressOptions.dwnumThreads = g_Application_Options.m_threads;
+                        g_CmdPrams.CompressOptions.getPerfStats  = true;
+                        g_CmdPrams.CompressOptions.getDeviceInfo = true;
 
                         if (g_Application_Options.m_logresults)
                         {
@@ -5883,7 +5900,14 @@ bool processItem(QFile* file,
                                     m_AnalaysisData.processTime += g_CmdPrams.compress_fDuration;
                                     if (g_Application_Options.m_analysisResultTable)
                                     {
-                                            ProjectView->m_analysisTable.AddResults(g_CmdPrams.DestFile,data->m_compname,g_CmdPrams.compress_fDuration,g_CmdPrams.PSNR,g_CmdPrams.SSIM);
+                                            ProjectView->m_analysisTable.AddTestResults(g_CmdPrams.DestFile,
+                                                                        data->m_compname,
+                                                                        fqualty_setting,
+                                                                        g_CmdPrams.CompressOptions.perfStats.m_computeShaderElapsedMS,
+                                                                        g_CmdPrams.CompressOptions.perfStats.m_CmpMTxPerSec,
+                                                                        g_CmdPrams.compress_fDuration,
+                                                                        g_CmdPrams.PSNR,
+                                                                        g_CmdPrams.SSIM);
                                     }
                                 }
 
@@ -5950,16 +5974,19 @@ AnalysisTableWidget::AnalysisTableWidget()
     setWindowFlags(flags |Qt::WindowStaysOnTopHint); // can use Qt::WindowTitleHint to remove close button
     setWindowTitle("Analysis");
     setStyleSheet("QHeaderView::section { background-color:lightgrey;}"); // font: bold 14px
-    setColumnCount(5);
+    setColumnCount(8);
     QStringList header;
-    header << "Full Path"<<"File Name"<<"TIME" << "PSNR"<<"SSIM";
+    header << "File Path"<<"File Name"<<"Quality"<<"KPerf(ms)" << "MTx/s" << "Time(s)" << "PSNR(dB)"<<"SSIM";
     setHorizontalHeaderLabels(header);
     setColumnWidth(0,150); // Path
     setColumnWidth(1,150); // Filename
-    setColumnWidth(2,50);  // Time
-    setColumnWidth(3,50);  // PSNR
-    setColumnWidth(4,50);  // SSIM
-    setMinimumWidth(490);
+    setColumnWidth(2,55);  // Quality
+    setColumnWidth(3,64);  // PerfTime
+    setColumnWidth(4,64);  // MTx per sec
+    setColumnWidth(5,64);  // Time 
+    setColumnWidth(6,75);  // PSNR
+    setColumnWidth(7,50);  // SSIM
+    setMinimumWidth(696);
 }
 
 void AnalysisTableWidget::keyPressEvent(QKeyEvent *event)
@@ -5986,26 +6013,61 @@ void AnalysisTableWidget::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void AnalysisTableWidget::AddResults(QString processPath, QString processName, QString Time, QString psnr, QString ssim)
+void AnalysisTableWidget::AddAverageResults(
+    QString deviceName,
+    QString processName,
+    QString Time,
+    QString psnr,
+    QString ssim)
 {
     int rowCount = this->rowCount();
     this->insertRow(rowCount);
-    setItem(rowCount,0,new QTableWidgetItem(processPath));
+    setWindowTitle("Analysis Encode with "+processName+ " "+deviceName);
+    processName = "Average "+processName;
+    setItem(rowCount,0,new QTableWidgetItem(" "));
     setItem(rowCount,1,new QTableWidgetItem(processName));
-    setItem(rowCount,2,new QTableWidgetItem(Time));
-    setItem(rowCount,3,new QTableWidgetItem(psnr));
-    setItem(rowCount,4,new QTableWidgetItem(ssim));
+    setItem(rowCount,2,new QTableWidgetItem(" "));
+    setItem(rowCount,3,new QTableWidgetItem(" "));
+    setItem(rowCount,4,new QTableWidgetItem(" "));
+    setItem(rowCount,5,new QTableWidgetItem(Time));
+    setItem(rowCount,6,new QTableWidgetItem(psnr));
+    setItem(rowCount,7,new QTableWidgetItem(ssim));
 }
 
-void AnalysisTableWidget::AddResults(string processPath, QString processName, double Time, double psnr, double ssim)
+void AnalysisTableWidget::AddTestResults(string processPath,
+                                     QString processName,
+                                     float  Quality,
+                                     double PerfTime,
+                                     double MPxPerSec,
+                                     double Time, 
+                                     double psnr, 
+                                     double ssim)
 {
+    QString str_time;
+    QString str_perftime;
+    QString str_Mpx;
+    QString str_psnr;
+    QString str_ssim;
+    QString str_quality;
+
+
+    str_quality.sprintf("%01.2f",Quality);
+    str_perftime.sprintf("%03.3f",PerfTime*1000);
+    str_Mpx.sprintf("%03.3f",MPxPerSec);
+    str_time.sprintf("%03.3f",Time);
+    str_psnr.sprintf("%03.1f",psnr);
+    str_ssim.sprintf("%01.4f",ssim);
+
     int rowCount = this->rowCount();
     this->insertRow(rowCount);
     setItem(rowCount,0,new QTableWidgetItem(QString(processPath.c_str())));
     setItem(rowCount,1,new QTableWidgetItem(processName));
-    setItem(rowCount,2,new QTableWidgetItem(QString::number(Time,'g',3)));
-    setItem(rowCount,3,new QTableWidgetItem(QString::number(psnr,'g',3)));
-    setItem(rowCount,4,new QTableWidgetItem(QString::number(ssim,'g',4)));
+    setItem(rowCount,2,new QTableWidgetItem(str_quality));
+    setItem(rowCount,3,new QTableWidgetItem(str_perftime));
+    setItem(rowCount,4,new QTableWidgetItem(str_Mpx));
+    setItem(rowCount,5,new QTableWidgetItem(str_time));
+    setItem(rowCount,6,new QTableWidgetItem(str_psnr));
+    setItem(rowCount,7,new QTableWidgetItem(str_ssim));
 }
 
 
@@ -6343,7 +6405,7 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                                     cpMainComponents* mainComponents = NULL;
                                                     mainComponents                   = (cpMainComponents*)ProjectView->m_parent;
                                                     if (mainComponents)
-                                                        msgHandler = (void*) mainComponents->PrintStatus;
+                                                        msgHandler = (void *)mainComponents->PrintStatus;
                                                 }
 
                                                 int result;
@@ -6657,8 +6719,9 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                         tinygltf2::Model    model;
                                         tinygltf2::TinyGLTF loader;
                                         tinygltf2::TinyGLTF saver;
-#ifdef USE_MESH_DRACO_EXTENSION
+
                                         //clean up draco mesh buffer
+#ifdef USE_MESH_DRACO_EXTENSION
                                         model.dracomeshes.clear();
 #endif
                                         std::string srcFile = ModelSource.toStdString();
@@ -6830,7 +6893,7 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                                         cpMainComponents* mainComponents = NULL;
                                                         mainComponents                   = (cpMainComponents*)ProjectView->m_parent;
                                                         if (mainComponents)
-                                                            msgHandler = (void*) mainComponents->PrintStatus;
+                                                            msgHandler = (void *)mainComponents->PrintStatus;
                                                     }
 
                                                     int result;
@@ -6993,18 +7056,50 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
 
                 if (g_Application_Options.m_logresults && (m_AnalaysisData.processCount > 0))
                 {
-                   QString time =  QString::number(m_AnalaysisData.processTime/m_AnalaysisData.processCount,'g',3);
-                   QString psnr =  QString::number(m_AnalaysisData.PSNR_Total/m_AnalaysisData.processCount,'g',3);
-                   QString ssim =  QString::number(m_AnalaysisData.SSIM_Total/m_AnalaysisData.processCount,'g',4);
+                   QString time;
+                   QString psnr;
+                   QString ssim;
+
+                   time.sprintf("%03.3f",(m_AnalaysisData.processTime/m_AnalaysisData.processCount));
+                   psnr.sprintf("%03.1f",(m_AnalaysisData.PSNR_Total/m_AnalaysisData.processCount));
+                   ssim.sprintf("%01.4f",(m_AnalaysisData.SSIM_Total/m_AnalaysisData.processCount));
+
                    Msg.append(", Time ");
                    Msg.append(time);
                    Msg.append(", PSNR ");
                    Msg.append(psnr);
                    Msg.append(", SSIM ");
                    Msg.append(ssim);
+
+                   QString EncodeWith;
+                   QString DeviceName;
+
+                   switch (g_Application_Options.m_ImageEncode)
+                   {
+                       case C_Application_Options::ImageEncodeWith::HPC:
+                            // Check if last encodewith worked on GPU!
+                            if (g_CmdPrams.CompressOptions.format_support_hostEncoder) EncodeWith = "HPC";
+                                else EncodeWith = "CPU, HPC Failed";
+                            break;
+                       case C_Application_Options::ImageEncodeWith::GPU_DirectX:
+                            if (g_CmdPrams.CompressOptions.format_support_hostEncoder) EncodeWith = "DXC";
+                                else EncodeWith = "CPU, DXC Failed";
+                            DeviceName = g_CmdPrams.CompressOptions.deviceInfo.m_deviceName;
+                            break;
+                       case C_Application_Options::ImageEncodeWith::GPU_OpenCL:
+                            if (g_CmdPrams.CompressOptions.format_support_hostEncoder) EncodeWith = "OCL";
+                                else EncodeWith = "CPU, OCL Failed";
+                            DeviceName = g_CmdPrams.CompressOptions.deviceInfo.m_deviceName;
+                            break;
+                       default:
+                            EncodeWith = "CPU";
+                           break;
+                   }
+
+
                    if (g_Application_Options.m_analysisResultTable)
                    {
-                        ProjectView->m_analysisTable.AddResults("","Average",time,psnr,ssim);
+                        ProjectView->m_analysisTable.AddAverageResults(DeviceName,EncodeWith,time,psnr,ssim);
                         ProjectView->m_analysisTable.show();
                    }
                 }

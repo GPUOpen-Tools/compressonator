@@ -1332,13 +1332,13 @@ void acImageView::centerImage()
     // so that is viewed in center
     QTransform translation;
     translation.translate(dx, dy);
-    m_imageItem_Processed->setTransform(translation, true);
+    m_imageItem_Processed->setTransform(translation,true);
 //#endif
 
     if (m_imageItem_Original)
     {
         m_imageItem_Original->setTransformOriginPoint(0, 0);
-        m_imageItem_Original->setTransform(translation, true);
+        m_imageItem_Original->setTransform(translation,true);
     }
 
 }

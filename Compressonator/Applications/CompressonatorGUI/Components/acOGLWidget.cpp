@@ -50,7 +50,6 @@ GLenum  acOGLWidget::MIP2OLG_Format(MipSet *m_MipSet)
     return m_GLnum;
 }
 
-
 bool  acOGLWidget::loadMIPImage(MipSet *m_MipSet, CMIPS *cMips, int MIPLevel = 0)
 {
     // Get First <IP Level

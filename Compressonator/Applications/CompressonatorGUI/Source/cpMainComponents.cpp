@@ -20,7 +20,6 @@
 // THE SOFTWARE.
 // 
 //===================================================================== 
-
 #include <chrono>
 #include <thread>
 
@@ -325,9 +324,7 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     #else
     g_useCPUDecode = true;
     #endif
-#ifdef USE_CMP_SDK 
     g_useCPUEncode = g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::CPU;
-#endif
     setUnifiedTitleAndToolBarOnMac(true);
 
     if (m_showAppSettingsDialog)
@@ -571,9 +568,11 @@ void cpMainComponents::closeEvent(QCloseEvent *event)
             QApplication::processEvents();
         }
     }
+
 #ifdef _WIN32
     CMP_ShutdownDecompessLibrary();
 #endif
+
     if (m_projectview)
     {
         if (!m_projectview->userSaveProjectAndContinue())
@@ -1071,7 +1070,7 @@ void cpMainComponents::genMIPMaps()
                 }
 
                 m_genmips->m_mipsitem = item;
-                m_genmips->setMipLevelDisplay(data->m_Width, data->m_Height);
+                m_genmips->setMipLevelDisplay(data->m_Width, data->m_Height,g_Application_Options.isGPUEncode());
                 m_genmips->show();
 
                 // Generate mipmap only once- no regenerate then uncomment code block below
@@ -1123,7 +1122,7 @@ void cpMainComponents::genMIPMaps()
                                 }
 
                                 m_genmips->m_mipsitem = (*it);
-                                m_genmips->setMipLevelDisplay(data->m_Width, data->m_Height);
+                                m_genmips->setMipLevelDisplay(data->m_Width, data->m_Height,g_Application_Options.isGPUEncode());
                                 m_genmips->show();
                             }
                         //}
@@ -1728,7 +1727,6 @@ void cpMainComponents::AddImageCompSettings(QTreeWidgetItem *item, C_Destination
                     }
                     return;
                 }
-
 #ifdef _WIN32
                 if (m_data->m_destFileNamePath.contains(".obj") || m_data->m_destFileNamePath.contains(".OBJ"))
                 {

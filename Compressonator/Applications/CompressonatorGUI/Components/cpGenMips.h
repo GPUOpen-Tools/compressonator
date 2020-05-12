@@ -82,7 +82,7 @@ public:
     CGenMips(const QString title, QWidget *parent);
     ~CGenMips();
 
-    void setMipLevelDisplay(int Width, int Height);
+    void setMipLevelDisplay(int Width, int Height,bool UsingGPU);
 
     void SetDefaults();
     void evalProperties();
