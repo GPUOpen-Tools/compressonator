@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.852
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CMP_GPU_OCL", "..\Applications\_Plugins\CMP_GPU\OpenCL\VS2017\Compute_OpenCL.vcxproj", "{C5C9003E-9986-431F-B8A0-15BB232ED650}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CMP_GPU_DXC", "..\Applications\_Plugins\CMP_GPU\DirectX\VS2017\Compute_DirectX.vcxproj", "{DF04E80A-23A1-4172-89AA-841E4D376745}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_MD_DLL|Win32 = Debug_MD_DLL|Win32
+		Debug_MD_DLL|x64 = Debug_MD_DLL|x64
+		Debug_MD|Win32 = Debug_MD|Win32
+		Debug_MD|x64 = Debug_MD|x64
+		Release_MD_DLL|Win32 = Release_MD_DLL|Win32
+		Release_MD_DLL|x64 = Release_MD_DLL|x64
+		Release_MD|Win32 = Release_MD|Win32
+		Release_MD|x64 = Release_MD|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C5C9003E-9986-431F-B8A0-15BB232ED650}.Debug_MD_DLL|Win32.ActiveCfg = Debug_MD_DLL|Win32
+		{C5C9003E-9986-431F-B8A0-15BB232ED650}.Debug_MD_DLL|Win32.Build.0 = Debug_MD_DLL|Win32
+		{C5C9003E-9986-431F-B8A0-15BB232ED650}.Debug_MD_DLL|x64.ActiveCfg = Debug_MD_DLL|x64
+		{C5C9003E-9986-431F-B8A0-15BB232ED650}.Debug_MD_DLL|x64.Build.0 = Debug_MD_DLL|x64
+		{C5C9003E-9986-431F-B8A0-15BB232ED650}.Debug_MD|Win32.ActiveCfg = Debug_MD|Win32
+		{C5C9003E-9986-431F-B8A0-15BB232ED650}.Debug_MD|Win32.Build.0 = Debug_MD|Win32
+		{C5C9003E-9986-431F-B8A0-15BB232ED650}.Debug_MD|x64.ActiveCfg = Debug_MD|x64
+		{C5C9003E-9986-431F-B8A0-15BB232ED650}.Debug_MD|x64.Build.0 = Debug_MD|x64
+		{C5C9003E-9986-431F-B8A0-15BB232ED650}.Release_MD_DLL|Win32.ActiveCfg = Release_MD_DLL|Win32
+		{C5C9003E-9986-431F-B8A0-15BB232ED650}.Release_MD_DLL|Win32.Build.0 = Release_MD_DLL|Win32
+		{C5C9003E-9986-431F-B8A0-15BB232ED650}.Release_MD_DLL|x64.ActiveCfg = Release_MD_DLL|x64
+		{C5C9003E-9986-431F-B8A0-15BB232ED650}.Release_MD_DLL|x64.Build.0 = Release_MD_DLL|x64
+		{C5C9003E-9986-431F-B8A0-15BB232ED650}.Release_MD|Win32.ActiveCfg = Release_MD|Win32
+		{C5C9003E-9986-431F-B8A0-15BB232ED650}.Release_MD|Win32.Build.0 = Release_MD|Win32
+		{C5C9003E-9986-431F-B8A0-15BB232ED650}.Release_MD|x64.ActiveCfg = Release_MD|x64
+		{C5C9003E-9986-431F-B8A0-15BB232ED650}.Release_MD|x64.Build.0 = Release_MD|x64
+		{DF04E80A-23A1-4172-89AA-841E4D376745}.Debug_MD_DLL|Win32.ActiveCfg = Debug_MD_DLL|Win32
+		{DF04E80A-23A1-4172-89AA-841E4D376745}.Debug_MD_DLL|Win32.Build.0 = Debug_MD_DLL|Win32
+		{DF04E80A-23A1-4172-89AA-841E4D376745}.Debug_MD_DLL|x64.ActiveCfg = Debug_MD_DLL|x64
+		{DF04E80A-23A1-4172-89AA-841E4D376745}.Debug_MD_DLL|x64.Build.0 = Debug_MD_DLL|x64
+		{DF04E80A-23A1-4172-89AA-841E4D376745}.Debug_MD|Win32.ActiveCfg = Debug_MD|Win32
+		{DF04E80A-23A1-4172-89AA-841E4D376745}.Debug_MD|Win32.Build.0 = Debug_MD|Win32
+		{DF04E80A-23A1-4172-89AA-841E4D376745}.Debug_MD|x64.ActiveCfg = Debug_MD|x64
+		{DF04E80A-23A1-4172-89AA-841E4D376745}.Debug_MD|x64.Build.0 = Debug_MD|x64
+		{DF04E80A-23A1-4172-89AA-841E4D376745}.Release_MD_DLL|Win32.ActiveCfg = Release_MD_DLL|Win32
+		{DF04E80A-23A1-4172-89AA-841E4D376745}.Release_MD_DLL|Win32.Build.0 = Release_MD_DLL|Win32
+		{DF04E80A-23A1-4172-89AA-841E4D376745}.Release_MD_DLL|x64.ActiveCfg = Release_MD_DLL|x64
+		{DF04E80A-23A1-4172-89AA-841E4D376745}.Release_MD_DLL|x64.Build.0 = Release_MD_DLL|x64
+		{DF04E80A-23A1-4172-89AA-841E4D376745}.Release_MD|Win32.ActiveCfg = Release_MD|Win32
+		{DF04E80A-23A1-4172-89AA-841E4D376745}.Release_MD|Win32.Build.0 = Release_MD|Win32
+		{DF04E80A-23A1-4172-89AA-841E4D376745}.Release_MD|x64.ActiveCfg = Release_MD|x64
+		{DF04E80A-23A1-4172-89AA-841E4D376745}.Release_MD|x64.Build.0 = Release_MD|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {45177860-E25E-4CB5-B0B6-7D297D54F1C5}
+	EndGlobalSection
+EndGlobal
