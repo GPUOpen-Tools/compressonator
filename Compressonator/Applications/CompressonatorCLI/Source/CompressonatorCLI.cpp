@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2019 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -69,12 +69,12 @@ void AboutCompressonator()
     printf("------------------------------------------------\n");
     // current build release
     if (VERSION_MINOR_MAJOR)
-        printf("CompressonatorCLI V%d.%d.%d Copyright AMD 2019\n", VERSION_MAJOR_MAJOR, VERSION_MAJOR_MINOR, VERSION_MINOR_MAJOR);
+        printf("CompressonatorCLI V%d.%d.%d Copyright AMD 2020\n", VERSION_MAJOR_MAJOR, VERSION_MAJOR_MINOR, VERSION_MINOR_MAJOR);
     else
     {
         // Keep track of Customer patches from last release to current
         // This is what is shown when you build the exe outside of the automated Build System (such as Jenkins)
-        printf("CompressonatorCLI V3.2.0 Copyright AMD 2019\n");
+        printf("CompressonatorCLI V4.0.0 Copyright AMD 2020\n");
     }
     printf("------------------------------------------------\n");
     printf("\n");
@@ -89,7 +89,7 @@ void PrintUsage()
     printf("-nomipmap                 Turns off Mipmap generation\n");
     printf("-mipsize    <size>        The size in pixels used to determine\n");
     printf("                          how many mip levels to generate\n");
-    printf("-miplevels  <Level>       Sets Mips Level for output,\n");
+    printf("-miplevels  <Level>       Sets Mips Level for output, range is 1 to 20\n");
     printf("                          (mipSize overides this option): default is 1\n");
     printf("Compression options:\n\n");
     printf("-fs <format>    Optionally specifies the source texture format to use\n");
@@ -100,7 +100,7 @@ void PrintUsage()
     printf("                     be compatible \n");
     printf("                     with the sources format,decompress formats are typically\n");
     printf("                     set to ARGB_8888 or ARGB_32F\n");
-    printf("-EncodeWith          Compression with CPU or HPC\n");
+    printf("-EncodeWith          Compression with CPU, HPC, OCL or DXC\n");
 #ifdef _WIN32
     printf("-DecodeWith          GPU based decompression using OpenGL, DirectX or Vulkan\n");
 #endif
@@ -241,12 +241,13 @@ void PrintUsage()
     printf("                             between 2 images with same size. Analysis_Result.xml file will be generated.\n");
     printf("\n\n");
     printf("-diff_image <image1> <image2> Generate difference between 2 images with same size \n");
-    printf(
-        "                              A .bmp file will be generated. Please use compressonator GUI to increase the contrast to view the diff "
-        "pixels.\n");
+    printf("                             A .bmp file will be generated. Please use compressonator GUI to increase the contrast to view the diff pixels.\n");
     printf("-log                         Logs process information to a process_results.txt file containing\n");
     printf("                             file info, performance data, SSIM, PSNR and MSE. \n");
+    printf("-logcsv                      Logs process information to a process_results.csv file containing\n");
+    printf("                             file info, performance data, SSIM, PSNR and MSE. \n");
     printf("-logfile <filename>          Logs process information to a user defined text file\n");
+    printf("-logcsvfile <filename>       Logs process information to a user defined csv  file\n");
     printf("\n\n");
     printf("-imageprops <image>           Print image properties of image files specifies. \n");
     printf("\n\n");
@@ -264,6 +265,9 @@ void PrintUsage()
     printf("CompressonatorCLI.exe -fd BC7  -NumTheads 16 image.bmp result.dds\n");
     printf("CompressonatorCLI.exe -fd BC7  -ff PNG -fx KTX ./source_dir/ ./dist_dir/\n");
     printf("CompressonatorCLI.exe -fd BC6H image.exr result.exr\n\n");
+    printf("Example compression using GPU:\n\n");
+    printf("CompressonatorCLI.exe  -fd BC1 -EncodeWith OCL image.bmp result.dds \n");
+    printf("CompressonatorCLI.exe  -fd BC1 -EncodeWith DXC image.bmp result.dds \n");
     printf("Example decompression from compressed image using CPU:\n\n");
     printf("CompressonatorCLI.exe  result.dds image.bmp\n\n");
     printf("Example decompression from compressed image using GPU:\n\n");
@@ -294,6 +298,7 @@ void PrintUsage()
     printf("Specifies settings :\n\n");
     printf("CompressonatorCLI.exe -meshopt -optVCacheSize  32 -optOverdrawACMRThres  1.03 -optVFetch 0 source.gltf dest.gltf\n");
 #endif
+    printf("For additional help go to Documents folder and type index.htlm\n");
 }
 
 bool ProgressCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
