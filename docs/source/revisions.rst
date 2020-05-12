@@ -39,6 +39,7 @@ May 2020
 
 -  GPU based encoding feature is only available on the Windows platform.
 -  When using GPU Encoding, all source image width and height must be divisible by 4.
+-  BC1, BC2 and BC3 DXC Performance is slow for quality setting > 0.6
 -  CMP_Core for BC1,BC2,BC3,BC4,BC5 is fully functional on both OpenCL and DX11.
 -  CMP_Core BC7 has limited support on OpenCL, in a few cases encoding images causes GPU and CLI application to become unresponsive.
 -  CMP_Core BC6 for OpenCL is not completed.
