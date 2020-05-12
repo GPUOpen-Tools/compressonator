@@ -31,6 +31,8 @@
 #include <vector>
 #include <stddef.h>
 
+#include "UseDefinitions.h"
+
 #ifndef _LINUX
 using namespace std;
 #endif
@@ -179,6 +181,7 @@ typedef enum {
     CMP_ERR_UNABLE_TO_LOAD_ENCODER,        // Unable to load an encode library
     CMP_ERR_NOSHADER_CODE_DEFINED,         // No shader code is available for the requested framework
     CMP_ERR_GPU_DOESNOT_SUPPORT_COMPUTE,   // The GPU device selected does not support compute
+    CMP_ERR_NOPERFSTATS,                    // No Performance Stats are available
     CMP_ERR_GENERIC                        // An unknown error occurred.
 } CMP_ERROR;
 
@@ -188,12 +191,12 @@ typedef enum {
     CMP_UNKNOWN = 0,
     CMP_CPU     = 1,   //Use CPU Only, encoders defined CMP_CPUEncode or Compressonator lib will be used
     CMP_HPC     = 2,   //Use CPU High Performance Compute Encoders with SPMD support defined in CMP_CPUEncode)
-#ifdef USE_GPUEncoders
+//#ifdef USE_GPUEncoders
     CMP_GPU     = 3,   //Use GPU Kernel Encoders to compress textures using Default GPU Framework auto set by the codecs been used
     CMP_GPU_OCL = 4,   //Use GPU Kernel Encoders to compress textures using OpenCL Framework
     CMP_GPU_DXC = 5,   //Use GPU Kernel Encoders to compress textures using DirectX Compute Framework
     CMP_GPU_VLK = 6    //Use GPU Kernel Encoders to compress textures using Vulkan Compute Framework
-#endif
+//#endif
 
 } CMP_Compute_type;
 
@@ -209,6 +212,20 @@ typedef enum CMPComputeExtensions {
     CMP_COMPUTE_MAX_ENUM    = 0x7FFF
 } CMP_ComputeExtensions;
 
+struct KernelPerformanceStats {
+    CMP_FLOAT   m_computeShaderElapsedMS;       // Total Elapsed Shader Time to process all the blocks
+    CMP_INT     m_num_blocks;                   // Number of Texel (Typically 4x4) blocks
+    CMP_FLOAT   m_CmpMTxPerSec;                 // Number of Mega Texels processed per second
+};
+
+struct KernelDeviceInfo {
+    CMP_CHAR      m_deviceName[256];     // Device name (CPU or GPU)
+    CMP_CHAR      m_version[128];        // Kernel pipeline version number (CPU or GPU)
+    CMP_INT       m_maxUCores;           // Max Unit device CPU cores or GPU compute units (CU)
+                                         // AMD GCN::One compute unit combines 64 shader processors 
+                                         // with 4 Texture Mapping units (TMU)
+};
+
 struct KernelOptions {
     CMP_ComputeExtensions   Extensions; // Compute extentions to use, set to 0 if you are not using any extensions
     CMP_DWORD  height;                  // Height of the encoded texture.
@@ -217,6 +234,10 @@ struct KernelOptions {
     CMP_FORMAT format;                  // Encoder codec format to use for processing
     CMP_Compute_type encodeWith;        // Host Type : default is HPC, options are [HPC or GPU]
     CMP_INT    threads;                 // requested number of threads to use (1= single) max is 128 for HPC
+    CMP_BOOL   getPerfStats;            // Set to true if you want to get Performance Stats
+    KernelPerformanceStats  perfStats;  // Data storage for the performance stats obtained from GPU or CPU while running encoder processing
+    CMP_BOOL   getDeviceInfo;           // Set to true if you want to get target Device Info
+    KernelDeviceInfo deviceInfo;        // Data storage for the target device 
 
     //private: data settings: Do not use it will be removed from this interface!
     CMP_UINT   size;                    // Size of *data
@@ -224,7 +245,6 @@ struct KernelOptions {
     void *dataSVM;                      // Data allocated as Shared by CPU and GPU (used only when code is running in 64bit and devices support SVM)
     char *srcfile;                      // Shader source file location
 };
-
 
 
 //======================================== Interfaces used in Compressonator Lib =====================================================
@@ -343,10 +363,16 @@ typedef struct {
 
     CMP_FORMAT SourceFormat;
     CMP_FORMAT DestFormat;
-    CMP_BOOL   format_support_gpu;
+    CMP_BOOL   format_support_hostEncoder;  // Temp setting used while encoding with gpu or hpc plugins
 
     // User Print Info interface 
     CMP_PrintInfoStr m_PrintInfoStr;
+
+    // User Info for Performance Query on GPU or CPU Encoder Processing
+    CMP_BOOL   getPerfStats;            // Set to true if you want to get Performance Stats
+    KernelPerformanceStats  perfStats;  // Data storage for the performance stats obtained from GPU or CPU while running encoder processing
+    CMP_BOOL   getDeviceInfo;           // Set to true if you want to get target device info
+    KernelDeviceInfo deviceInfo;        // Data storage for the performance stats obtained from GPU or CPU while running encoder processing
 
 } CMP_CompressOptions;
 
@@ -465,6 +491,9 @@ typedef struct {
     // Structure to hold all mip levels buffers
     CMP_MipLevelTable* m_pMipLevelTable;   // set by various API for ref, This is an implementation dependent way of storing the MipLevels that this mip-map set contains. Do not depend on it, use TC_AppGetMipLevel to access a mip-map set's MipLevels.
     void*              m_pReservedData;    // Reserved for ArchitectMF ImageLoader
+
+    // Reserved for internal data tracking
+    CMP_INT            m_nIterations;
 } CMP_MipSet;
 
 typedef CMP_MipSet   MipSet;
@@ -732,7 +761,9 @@ CMP_VOID   CMP_API CMP_Format2FourCC(CMP_FORMAT format,   CMP_MipSet *pMipSet);
 CMP_FORMAT CMP_API CMP_ParseFormat(char* pFormat);
 CMP_INT    CMP_API CMP_NumberOfProcessors();
 CMP_VOID   CMP_API CMP_FreeMipSet(CMP_MipSet *MipSetIn);
-CMP_VOID   CMP_API CMP_GetMipLevel(CMP_MipLevel *data, const CMP_MipSet* pMipSet, CMP_INT nMipLevel, CMP_INT nFaceOrSlice);
+CMP_VOID   CMP_API CMP_GetMipLevel(CMP_MipLevel **data, const CMP_MipSet* pMipSet, CMP_INT nMipLevel, CMP_INT nFaceOrSlice);
+CMP_ERROR  CMP_API CMP_GetPerformanceStats(KernelPerformanceStats* pPerfStats);
+CMP_ERROR  CMP_API CMP_GetDeviceInfo(KernelDeviceInfo* pDeviceInfo);
 
 //--------------------------------------------
 // CMP_Compute Lib: Host level interface

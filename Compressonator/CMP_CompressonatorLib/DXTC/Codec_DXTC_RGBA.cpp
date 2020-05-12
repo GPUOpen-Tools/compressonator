@@ -357,8 +357,8 @@ void CCodec_DXTC::DecompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DW
 
     if(!bDXT1 || n0 > n1)
     {
-        CMP_DWORD c2 = 0xff000000 | (((2*b0+b1+1)/3)<<16) | (((2*g0+g1+1)/3)<<8) | (((2*r0+r1+1)/3));
-        CMP_DWORD c3 = 0xff000000 | (((2*b1+b0+1)/3)<<16) | (((2*g1+g0+1)/3)<<8) | (((2*r1+r0+1)/3));
+        CMP_DWORD c2 = 0xff000000 | (((2*b0+b1)/3)<<16) | (((2*g0+g1)/3)<<8) | (((2*r0+r1)/3));
+        CMP_DWORD c3 = 0xff000000 | (((2*b1+b0)/3)<<16) | (((2*g1+g0)/3)<<8) | (((2*r1+r0)/3));
 
         for(int i=0; i<16; i++)
         {

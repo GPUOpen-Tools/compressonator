@@ -144,7 +144,8 @@ CMP_DWORD CalcBufferSize(CMP_FORMAT format, CMP_DWORD dwWidth, CMP_DWORD dwHeigh
     }
 }
 
-#ifndef USE_OLD_SWIZZLE
+// This call is used to swizzle source data content.
+// Use example: CMP_Map_Bytes(pData, dwWidth, dwHeight, { 2, 1, 0, 3 },4);
 void CMP_Map_Bytes(BYTE *src, int width, int height, CMP_MAP_BYTES_SET map, CMP_BYTE offset)
 {
     int  i, j;
@@ -180,8 +181,10 @@ void CMP_Map_Bytes(BYTE *src, int width, int height, CMP_MAP_BYTES_SET map, CMP_
             }
         }
     }
-
 }
+
+
+#ifndef USE_OLD_SWIZZLE
 
 // For now this function will only handle a single case
 // where the source data remains the same size and only RGBA channels
@@ -783,6 +786,8 @@ CMP_ERROR CMP_API CMP_ConvertMipTexture(CMP_MipSet* p_MipSetIn, CMP_MipSet* p_Mi
     p_MipSetOut->m_nDepth = p_MipSetIn->m_nDepth;
     p_MipSetOut->m_TextureType = p_MipSetIn->m_TextureType;
 
+    p_MipSetOut->m_nIterations = 0; // tracks number of processed data miplevels
+
     //=====================================================
     // Case Uncompressed Source to Compressed Destination
     //=====================================================
@@ -936,6 +941,8 @@ CMP_ERROR CMP_API CMP_ConvertMipTexture(CMP_MipSet* p_MipSetIn, CMP_MipSet* p_Mi
                 if (cmp_status != CMP_OK) {
                     return cmp_status;
                 }
+                else
+                    p_MipSetOut->m_nIterations++;
             }
         }
     }

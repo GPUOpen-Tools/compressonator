@@ -11167,7 +11167,7 @@ physical_compressed_block symbolic_to_physical(symbolic_compressed_block * sc, _
 //---------------------
 // ASTC use with OpenCL
 //---------------------
-#if defined(__OPENCL_VERSION__) || defined(USE_CMP_SDK)
+#if defined(__OPENCL_VERSION__)
 __kernel void CMP_GPUEncoder(
 __global unsigned char      *p_source_pixels,
 __global unsigned char      *p_encoded_blocks,

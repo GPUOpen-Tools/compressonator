@@ -250,7 +250,7 @@ CMP_ERROR Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, CMP_Texture* srcTextu
         float invGamma = 1/ pOptions->fInputGamma; //for gamma correction
         float scale = (float)255.0 * powf(luminance3f, invGamma);
         int i = 0;
-        bool needSwizzle = NeedSwizzle(destFormat);
+        bool needSwizzle = false; // NeedSwizzle(destFormat); Bug Fix This is no longer needed for <=BC5 and rel
         for (unsigned int y = 0; y < srcTexture->dwHeight; y++) {
             for (unsigned int x = 0; x < srcTexture->dwWidth; x++) {
                 if (srcTexture->format == CMP_FORMAT_ARGB_16F) {
@@ -264,7 +264,8 @@ CMP_ERROR Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, CMP_Texture* srcTextu
                         a = (float)(*hfData);
                         hfData++;
                     }
-                    else {
+                    else 
+                    {
                         r = (float)(*hfData);
                         hfData++;
                         g = (float)(*hfData);
@@ -286,7 +287,8 @@ CMP_ERROR Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, CMP_Texture* srcTextu
                         a = (float)(*fBlock);
                         fBlock++;
                     }
-                    else {
+                    else
+                    {
                         r = (float)(*fBlock);
                         fBlock++;
                         g = (float)(*fBlock);

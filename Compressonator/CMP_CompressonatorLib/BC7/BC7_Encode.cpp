@@ -1506,7 +1506,7 @@ double BC7BlockEncoder::CompressBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_B
     // modes are now enumerated earlier, so the first encoding that passes the threshold will
     // tend to pass by a greater margin than if we used a dumb ordering, and thus overall error will
     // be improved)
-    CMP_DWORD   blockModeOrder[NUM_BLOCK_TYPES] =  {6, 4, 3, 1, 2, 0, 7, 5 };
+    CMP_DWORD   blockModeOrder[NUM_BLOCK_TYPES] = {6, 4, 3, 1, 0, 2, 7, 5};
 
     // used for debugging and mode tests
     //                76543210

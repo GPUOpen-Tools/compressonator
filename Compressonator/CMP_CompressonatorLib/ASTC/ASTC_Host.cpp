@@ -1799,7 +1799,46 @@ void InitializeASTCSettingsForSetBlockSize(__global ASTC_Encode *ASTCEncode)
     float   bmc_autoset         = 0.0;
     int     maxiters_autoset    = 0;
 
-    // Codec Speed Setting Defaults based on Quality Settings
+
+    /**********************************************************************************
+    ASTC Settingsto review for quality & perfromance, these are the setting found in 
+    astc_main for astcenc sample application command line tool
+    fast
+        plimit_autoset = 4;
+        oplimit_autoset = 1.0;
+        mincorrel_autoset = 0.5;
+        dblimit_autoset_2d = MAX(85 - 35 * log10_texels_2d, 63 - 19 * log10_texels_2d);
+        dblimit_autoset_3d = MAX(85 - 35 * log10_texels_3d, 63 - 19 * log10_texels_3d);
+        bmc_autoset = 50;
+        maxiters_autoset = 1;
+    medium
+        plimit_autoset = 25;
+        oplimit_autoset = 1.2f;
+        mincorrel_autoset = 0.75f;
+        dblimit_autoset_2d = MAX(95 - 35 * log10_texels_2d, 70 - 19 * log10_texels_2d);
+        dblimit_autoset_3d = MAX(95 - 35 * log10_texels_3d, 70 - 19 * log10_texels_3d);
+        bmc_autoset = 75;
+        maxiters_autoset = 2;
+    thorough
+        plimit_autoset = 100;
+        oplimit_autoset = 2.5f;
+        mincorrel_autoset = 0.95f;
+        dblimit_autoset_2d = MAX(105 - 35 * log10_texels_2d, 77 - 19 * log10_texels_2d);
+        dblimit_autoset_3d = MAX(105 - 35 * log10_texels_3d, 77 - 19 * log10_texels_3d);
+        bmc_autoset = 95;
+        maxiters_autoset 
+    exhaustive
+        #define PARTITION_BITS 10
+        #define PARTITION_COUNT (1 << PARTITION_BITS)
+        plimit_autoset = PARTITION_COUNT;
+        oplimit_autoset = 1000.0f;
+        mincorrel_autoset = 0.99f;
+        dblimit_autoset_2d = 999.0f;
+        dblimit_autoset_3d = 999.0f;
+        bmc_autoset = 100;
+        maxiters_autoset = 4;
+    ***************************************************************************************************/
+
     // Codec Speed Setting Defaults based on Quality Settings
     float QualityScale; // Set quality normalized per process setting with a range of 0.0 to 1.0f
     if (ASTCEncode->m_Quality < 0.02f)
@@ -1807,22 +1846,22 @@ void InitializeASTCSettingsForSetBlockSize(__global ASTC_Encode *ASTCEncode)
         // Very Fast
         oplimit_autoset     = 1.0;
         mincorrel_autoset   = 0.5;
-        plimit_autoset = 1;
+        plimit_autoset      = 1;
         bmc_autoset         = 5.0f;
         maxiters_autoset    = 1;
-        dblimit_autoset_2d = MAX(70 - 35 * log10_texels_2d, 53 - 19 * log10_texels_2d);
+        dblimit_autoset_2d  = MAX(70 - 35 * log10_texels_2d, 53 - 19 * log10_texels_2d);
     }
     else
     if (ASTCEncode->m_Quality < 0.05f)
-        {
+    {
         // Fast:
         QualityScale = ASTCEncode->m_Quality/0.05f;
-            oplimit_autoset = 1.0;
+        oplimit_autoset     = 1.0;
         mincorrel_autoset   = 0.5;
         plimit_autoset      = 4;
         bmc_autoset         = 5.0f+(45.0f*QualityScale);  // max 50
         maxiters_autoset    = 1;
-            dblimit_autoset_2d = MAX(85 - 35 * log10_texels_2d, 63 - 19 * log10_texels_2d);
+        dblimit_autoset_2d  = MAX(85 - 35 * log10_texels_2d, 63 - 19 * log10_texels_2d);
     }
     else
     if (ASTCEncode->m_Quality <= 0.20f)
@@ -1835,8 +1874,8 @@ void InitializeASTCSettingsForSetBlockSize(__global ASTC_Encode *ASTCEncode)
         bmc_autoset         = 57.0f+(18.0f*QualityScale);  // max 75;
         maxiters_autoset    = 2;
         dblimit_autoset_2d  = MAX(95 - 35 * log10_texels_2d, 70 - 19 * log10_texels_2d);
-        }
-        else
+    }
+    else
     if (ASTCEncode->m_Quality <= 0.60f)
     {
         // Thorough
