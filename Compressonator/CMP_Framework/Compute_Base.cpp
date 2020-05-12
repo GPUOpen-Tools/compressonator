@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2019    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -109,6 +109,30 @@ CMP_ERROR CMP_API CMP_DestroyComputeLibrary(bool forceclose = false) {
     return CMP_OK;
 }
 
+const CMP_CHAR* GetEncodeWithDesc(CMP_Compute_type nFormat)
+{
+    switch (nFormat)
+    {
+    case CMP_HPC:                      // Use CPU High Performance Compute to compress textures, full support
+        return "HPC";
+        break;
+    case CMP_GPU:                      // Use GPU to compress textures, full support
+        return "GPU";
+        break;
+    case CMP_GPU_OCL:
+        return "OCL";
+        break;
+#ifdef USE_GPU_PIPELINE_VULKAN
+    case CMP_GPU_VLK:
+       return "VLK";
+       break;
+#endif
+    case CMP_GPU_DXC:
+       return "DXC";
+       break;
+    }
+    return "CPU";
+}
 
 //-------------------------
 // Application is "Exiting"
@@ -131,7 +155,7 @@ CMP_ERROR CMP_API CMP_CreateComputeLibrary(MipSet *srcTexture, KernelOptions  *k
     if (plugin_encoder_codec == NULL) {
         plugin_encoder_codec = reinterpret_cast<PluginInterface_Encoder *>(g_pluginManager.GetPlugin("ENCODER", GetFormatDesc(cmp_format)));
         if (plugin_encoder_codec == NULL) {
-            PrintInfo("Failed to load [%s] encoder\n", kernel_options->format);
+            PrintInfo("Format [%s] for [%s] is not supported or failed to load\n", GetFormatDesc(cmp_format),GetEncodeWithDesc(CompType));
             return CMP_ERR_UNABLE_TO_INIT_COMPUTELIB;
         }
         cmp_format_hold = cmp_format;
@@ -168,7 +192,6 @@ CMP_ERROR CMP_API CMP_CreateComputeLibrary(MipSet *srcTexture, KernelOptions  *k
     case CMP_HPC:
         g_ComputeBase = reinterpret_cast<PluginInterface_Pipeline *>(g_pluginManager.GetPlugin("PIPELINE", "HPC"));
         break;
-#ifdef USE_GPUEncoders
     case CMP_GPU:
     case CMP_GPU_OCL:
         g_ComputeBase = reinterpret_cast<PluginInterface_Pipeline *>(g_pluginManager.GetPlugin("PIPELINE", "GPU_OCL"));
@@ -176,6 +199,7 @@ CMP_ERROR CMP_API CMP_CreateComputeLibrary(MipSet *srcTexture, KernelOptions  *k
     case CMP_GPU_DXC:
         g_ComputeBase = reinterpret_cast<PluginInterface_Pipeline *>(g_pluginManager.GetPlugin("PIPELINE", "GPU_DXC"));
         break;
+#ifdef USE_GPU_PIPELINE_VULKAN
     case CMP_GPU_VLK:
         g_ComputeBase = reinterpret_cast<PluginInterface_Pipeline *>(g_pluginManager.GetPlugin("PIPELINE", "GPU_VLK"));
         break;
@@ -204,6 +228,28 @@ CMP_ERROR CMP_API CMP_CreateComputeLibrary(MipSet *srcTexture, KernelOptions  *k
 
     return CMP_OK;
 }
+
+CMP_ERROR  CMP_API CMP_GetPerformanceStats(KernelPerformanceStats* pPerfStats)
+{
+    CMP_ERROR result;
+    if (g_ComputeBase) {
+        result = g_ComputeBase->TC_GetPerformanceStats(pPerfStats);
+        if (result != CMP_OK) return (result);
+    } else return CMP_ABORTED;
+    return CMP_OK;
+}
+
+CMP_ERROR  CMP_API CMP_GetDeviceInfo(KernelDeviceInfo* pDeviceInfo)
+{
+    CMP_ERROR result;
+    if (g_ComputeBase) {
+        result = g_ComputeBase->TC_GetDeviceInfo(pDeviceInfo);
+        if (result != CMP_OK) return (result);
+    } else return CMP_ABORTED;
+    return CMP_OK;
+}
+
+
 
 CMP_ERROR CMP_API CMP_CompressTexture(KernelOptions *options,CMP_MipSet srcMipSet,CMP_MipSet dstMipSet,CMP_Feedback_Proc pFeedback) {
     CMP_ERROR result;
@@ -626,6 +672,14 @@ CMP_ERROR CMP_API CMP_ProcessTexture(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSe
                 return CMP_ERR_FAILED_HOST_SETUP;
             }
 
+
+            // Get Performance Stats
+            if (kernelOptions.getPerfStats)
+            {
+                if (CMP_GetPerformanceStats(&kernelOptions.perfStats) != CMP_OK)
+                    PrintInfo("Warning unable to get compute plugin performance stats\n");
+            }
+
             //===============================================================================
             // Close the Pipeline with option to cache as needed
             //===============================================================================
@@ -695,9 +749,9 @@ void CMP_API CMP_DestroyBlockEncoder( void **block_encoder) {
     delete *block_encoder;
 }
 
-void CMP_API CMP_GetMipLevel(CMP_MipLevel *data, const CMP_MipSet* pMipSet, int nMipLevel, int nFaceOrSlice) {
+void CMP_API CMP_GetMipLevel(CMP_MipLevel **data, const CMP_MipSet* pMipSet, int nMipLevel, int nFaceOrSlice) {
     CMP_CMIPS CMips;
-    data = CMips.GetMipLevel(pMipSet, nMipLevel, nFaceOrSlice);
+    *data = CMips.GetMipLevel(pMipSet, nMipLevel, nFaceOrSlice);
 }
 
 //==============================
@@ -848,7 +902,7 @@ CMP_ERROR CMP_API CMP_SaveTexture(const char * DestFile, CMP_MipSet *MipSetIn) {
     return CMP_OK;
 }
 
-CMP_INT CMP_API CMP_NumberOfProcessors() {
+CMP_INT CMP_API CMP_NumberOfProcessors(void) {
 #ifndef _WIN32
     return sysconf(_SC_NPROCESSORS_ONLN);
 #else

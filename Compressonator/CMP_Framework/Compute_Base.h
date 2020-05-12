@@ -47,15 +47,21 @@ namespace CMP_Compute_Base
         ComputeBase() {};
         virtual ~ComputeBase() {};
 
-        virtual CMP_ERROR  Compress(KernelOptions *Options, MipSet &SrcTexture, MipSet &destTexture,CMP_Feedback_Proc pFeedback) const = 0;
-        virtual void  SetComputeOptions(ComputeOptions *options) const = 0;
+        virtual CMP_ERROR   Compress(KernelOptions *Options, MipSet &SrcTexture, MipSet &destTexture,CMP_Feedback_Proc pFeedback) = 0;
+        virtual void        SetComputeOptions(ComputeOptions *options) = 0;
+        virtual float       GetProcessElapsedTimeMS() = 0;
+        virtual float       GetMTxPerSec() = 0;
+        virtual int         GetBlockSize() = 0;
+        virtual const char* GetDeviceName() = 0;
+        virtual const char* GetVersion() = 0;
+        virtual int         GetMaxUCores() = 0;
 
     private:
     };
 }
 
 
-
+const CMP_CHAR* GetEncodeWithDesc(CMP_Compute_type nFormat);
 
 
 #endif // !COMPUTE_BASE_H
