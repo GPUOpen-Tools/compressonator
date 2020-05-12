@@ -1,6 +1,6 @@
 //=====================================================================
-// Copyright (c) 2019    Advanced Micro Devices, Inc. All rights reserved.
-//
+// Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -106,6 +106,7 @@ CGU_INT expandbits(CGU_INT bits, CGU_INT v)
 }
 
 CMP_EXPORT CGU_INT bc7_isa() {
+#ifndef ASPM_GPU
 #if defined(ISPC_TARGET_SSE2)
     ASPM_PRINT(("SSE2"));
     return 0;
@@ -120,8 +121,9 @@ CMP_EXPORT CGU_INT bc7_isa() {
     return 3;
 #else
     ASPM_PRINT(("CPU"));
-    return -1;
 #endif
+#endif
+    return -1;
 }
 
 CMP_EXPORT void init_BC7ramps()
@@ -528,139 +530,6 @@ void GetProjecedImage(
 
 INLINE CGV_UINT8 get_partition_subset(CGV_INT part_id, CGU_INT maxSubsets, CGV_INT index)
 {
-   CMP_STATIC  uniform CMP_CONSTANT   CGU_UINT32 subset_mask_table[] = {
-        // 2 subset region patterns
-        0x0000CCCCu, // 0   1100 1100 1100 1100  (MSB..LSB)
-        0x00008888u, // 1   1000 1000 1000 1000
-        0x0000EEEEu, // 2   1110 1110 1110 1110
-        0x0000ECC8u, // 3   1110 1100 1100 1000
-        0x0000C880u, // 4   1100 1000 1000 0000
-        0x0000FEECu, // 5   1111 1110 1110 1100
-        0x0000FEC8u, // 6   1111 1110 1100 1000
-        0x0000EC80u, // 7   1110 1100 1000 0000
-        0x0000C800u, // 8   1100 1000 0000 0000
-        0x0000FFECu, // 9   1111 1111 1110 1100
-        0x0000FE80u, // 10  1111 1110 1000 0000
-        0x0000E800u, // 11  1110 1000 0000 0000
-        0x0000FFE8u, // 12  1111 1111 1110 1000
-        0x0000FF00u, // 13  1111 1111 0000 0000
-        0x0000FFF0u, // 14  1111 1111 1111 0000
-        0x0000F000u, // 15  1111 0000 0000 0000
-        0x0000F710u, // 16  1111 0111 0001 0000
-        0x0000008Eu, // 17  0000 0000 1000 1110
-        0x00007100u, // 18  0111 0001 0000 0000
-        0x000008CEu, // 19  0000 1000 1100 1110
-        0x0000008Cu, // 20  0000 0000 1000 1100
-        0x00007310u, // 21  0111 0011 0001 0000
-        0x00003100u, // 22  0011 0001 0000 0000
-        0x00008CCEu, // 23  1000 1100 1100 1110
-        0x0000088Cu, // 24  0000 1000 1000 1100
-        0x00003110u, // 25  0011 0001 0001 0000
-        0x00006666u, // 26  0110 0110 0110 0110
-        0x0000366Cu, // 27  0011 0110 0110 1100
-        0x000017E8u, // 28  0001 0111 1110 1000
-        0x00000FF0u, // 29  0000 1111 1111 0000
-        0x0000718Eu, // 30  0111 0001 1000 1110
-        0x0000399Cu, // 31  0011 1001 1001 1100
-        0x0000AAAAu, // 32  1010 1010 1010 1010
-        0x0000F0F0u, // 33  1111 0000 1111 0000
-        0x00005A5Au, // 34  0101 1010 0101 1010
-        0x000033CCu, // 35  0011 0011 1100 1100
-        0x00003C3Cu, // 36  0011 1100 0011 1100
-        0x000055AAu, // 37  0101 0101 1010 1010
-        0x00009696u, // 38  1001 0110 1001 0110
-        0x0000A55Au, // 39  1010 0101 0101 1010
-        0x000073CEu, // 40  0111 0011 1100 1110
-        0x000013C8u, // 41  0001 0011 1100 1000
-        0x0000324Cu, // 42  0011 0010 0100 1100
-        0x00003BDCu, // 43  0011 1011 1101 1100
-        0x00006996u, // 44  0110 1001 1001 0110
-        0x0000C33Cu, // 45  1100 0011 0011 1100
-        0x00009966u, // 46  1001 1001 0110 0110
-        0x00000660u, // 47  0000 0110 0110 0000
-        0x00000272u, // 48  0000 0010 0111 0010
-        0x000004E4u, // 49  0000 0100 1110 0100
-        0x00004E40u, // 50  0100 1110 0100 0000
-        0x00002720u, // 51  0010 0111 0010 0000
-        0x0000C936u, // 52  1100 1001 0011 0110
-        0x0000936Cu, // 53  1001 0011 0110 1100
-        0x000039C6u, // 54  0011 1001 1100 0110
-        0x0000639Cu, // 55  0110 0011 1001 1100
-        0x00009336u, // 56  1001 0011 0011 0110
-        0x00009CC6u, // 57  1001 1100 1100 0110
-        0x0000817Eu, // 58  1000 0001 0111 1110
-        0x0000E718u, // 59  1110 0111 0001 1000
-        0x0000CCF0u, // 60  1100 1100 1111 0000
-        0x00000FCCu, // 61  0000 1111 1100 1100
-        0x00007744u, // 62  0111 0111 0100 0100
-        0x0000EE22u, // 63  1110 1110 0010 0010
-        // 3 Subset region patterns
-        0xF60008CCu,// 0    1111 0110 0000 0000 : 0000 1000 1100 1100 = 2222122011001100 (MSB...LSB)
-        0x73008CC8u,// 1    0111 0011 0000 0000 : 1000 1100 1100 1000 = 1222112211001000
-        0x3310CC80u,// 2    0011 0011 0001 0000 : 1100 1100 1000 0000 = 1122112210020000
-        0x00CEEC00u,// 3    0000 0000 1100 1110 : 1110 1100 0000 0000 = 1110110022002220
-        0xCC003300u,// 4    1100 1100 0000 0000 : 0011 0011 0000 0000 = 2211221100000000
-        0xCC0000CCu,// 5    1100 1100 0000 0000 : 0000 0000 1100 1100 = 2200220011001100
-        0x00CCFF00u,// 6    0000 0000 1100 1100 : 1111 1111 0000 0000 = 1111111122002200
-        0x3300CCCCu,// 7    0011 0011 0000 0000 : 1100 1100 1100 1100 = 1122112211001100
-        0xF0000F00u,// 8    1111 0000 0000 0000 : 0000 1111 0000 0000 = 2222111100000000
-        0xF0000FF0u,// 9    1111 0000 0000 0000 : 0000 1111 1111 0000 = 2222111111110000
-        0xFF0000F0u,// 10   1111 1111 0000 0000 : 0000 0000 1111 0000 = 2222222211110000
-        0x88884444u,// 11   1000 1000 1000 1000 : 0100 0100 0100 0100 = 2100210021002100
-        0x88886666u,// 12   1000 1000 1000 1000 : 0110 0110 0110 0110 = 2110211021102110
-        0xCCCC2222u,// 13   1100 1100 1100 1100 : 0010 0010 0010 0010 = 2210221022102210
-        0xEC80136Cu,// 14   1110 1100 1000 0000 : 0001 0011 0110 1100 = 2221221121101100
-        0x7310008Cu,// 15   0111 0011 0001 0000 : 0000 0000 1000 1100 = 0222002210021100
-        0xC80036C8u,// 16   1100 1000 0000 0000 : 0011 0110 1100 1000 = 2211211011001000
-        0x310008CEu,// 17   0011 0001 0000 0000 : 0000 1000 1100 1110 = 0022100211001110
-        0xCCC03330u,// 18   1100 1100 1100 0000 : 0011 0011 0011 0000 = 2211221122110000
-        0x0CCCF000u,// 19   0000 1100 1100 1100 : 1111 0000 0000 0000 = 1111220022002200
-        0xEE0000EEu,// 20   1110 1110 0000 0000 : 0000 0000 1110 1110 = 2220222011101110
-        0x77008888u,// 21   0111 0111 0000 0000 : 1000 1000 1000 1000 = 1222122210001000
-        0xCC0022C0u,// 22   1100 1100 0000 0000 : 0010 0010 1100 0000 = 2210221011000000
-        0x33004430u,// 23   0011 0011 0000 0000 : 0100 0100 0011 0000 = 0122012200110000
-        0x00CC0C22u,// 24   0000 0000 1100 1100 : 0000 1100 0010 0010 = 0000110022102210
-        0xFC880344u,// 25   1111 1100 1000 1000 : 0000 0011 0100 0100 = 2222221121002100
-        0x06606996u,// 26   0000 0110 0110 0000 : 0110 1001 1001 0110 = 0110122112210110
-        0x66009960u,// 27   0110 0110 0000 0000 : 1001 1001 0110 0000 = 1221122101100000
-        0xC88C0330u,// 28   1100 1000 1000 1100 : 0000 0011 0011 0000 = 2200201120112200
-        0xF9000066u,// 29   1111 1001 0000 0000 : 0000 0000 0110 0110 = 2222200201100110
-        0x0CC0C22Cu,// 30   0000 1100 1100 0000 : 1100 0010 0010 1100 = 1100221022101100
-        0x73108C00u,// 31   0111 0011 0001 0000 : 1000 1100 0000 0000 = 1222112200020000
-        0xEC801300u,// 32   1110 1100 1000 0000 : 0001 0011 0000 0000 = 2221221120000000
-        0x08CEC400u,// 33   0000 1000 1100 1110 : 1100 0100 0000 0000 = 1100210022002220
-        0xEC80004Cu,// 34   1110 1100 1000 0000 : 0000 0000 0100 1100 = 2220220021001100
-        0x44442222u,// 35   0100 0100 0100 0100 : 0010 0010 0010 0010 = 0210021002100210
-        0x0F0000F0u,// 36   0000 1111 0000 0000 : 0000 0000 1111 0000 = 0000222211110000
-        0x49242492u,// 37   0100 1001 0010 0100 : 0010 0100 1001 0010 = 0210210210210210
-        0x42942942u,// 38   0100 0010 1001 0100 : 0010 1001 0100 0010 = 0210102121020210
-        0x0C30C30Cu,// 39   0000 1100 0011 0000 : 1100 0011 0000 1100 = 1100221100221100
-        0x03C0C03Cu,// 40   0000 0011 1100 0000 : 1100 0000 0011 1100 = 1100002222111100
-        0xFF0000AAu,// 41   1111 1111 0000 0000 : 0000 0000 1010 1010 = 2222222210101010
-        0x5500AA00u,// 42   0101 0101 0000 0000 : 1010 1010 0000 0000 = 1212121200000000
-        0xCCCC3030u,// 43   1100 1100 1100 1100 : 0011 0000 0011 0000 = 2211220022112200
-        0x0C0CC0C0u,// 44   0000 1100 0000 1100 : 1100 0000 1100 0000 = 1100220011002200
-        0x66669090u,// 45   0110 0110 0110 0110 : 1001 0000 1001 0000 = 1221022012210220
-        0x0FF0A00Au,// 46   0000 1111 1111 0000 : 1010 0000 0000 1010 = 1010222222221010
-        0x5550AAA0u,// 47   0101 0101 0101 0000 : 1010 1010 1010 0000 = 1212121212120000
-        0xF0000AAAu,// 48   1111 0000 0000 0000 : 0000 1010 1010 1010 = 2222101010101010
-        0x0E0EE0E0u,// 49   0000 1110 0000 1110 : 1110 0000 1110 0000 = 1110222011102220
-        0x88887070u,// 50   1000 1000 1000 1000 : 0111 0000 0111 0000 = 2111200021112000
-        0x99906660u,// 51   1001 1001 1001 0000 : 0110 0110 0110 0000 = 2112211221120000
-        0xE00E0EE0u,// 52   1110 0000 0000 1110 : 0000 1110 1110 0000 = 2220111011102220
-        0x88880770u,// 53   1000 1000 1000 1000 : 0000 0111 0111 0000 = 2000211121112000
-        0xF0000666u,// 54   1111 0000 0000 0000 : 0000 0110 0110 0110 = 2222011001100110
-        0x99006600u,// 55   1001 1001 0000 0000 : 0110 0110 0000 0000 = 2112211200000000
-        0xFF000066u,// 56   1111 1111 0000 0000 : 0000 0000 0110 0110 = 2222222201100110
-        0xC00C0CC0u,// 57   1100 0000 0000 1100 : 0000 1100 1100 0000 = 2200110011002200
-        0xCCCC0330u,// 58   1100 1100 1100 1100 : 0000 0011 0011 0000 = 2200221122112200
-        0x90006000u,// 59   1001 0000 0000 0000 : 0110 0000 0000 0000 = 2112000000000000
-        0x08088080u,// 60   0000 1000 0000 1000 : 1000 0000 1000 0000 = 1000200010002000
-        0xEEEE1010u,// 61   1110 1110 1110 1110 : 0001 0000 0001 0000 = 2221222022212220
-        0xFFF0000Au,// 62   1111 1111 1111 0000 : 0000 0000 0000 1010 = 2222222222221010
-        0x731008CEu,// 63   0111 0011 0001 0000 : 0000 1000 1100 1110 = 0222102211021110
-        };
-
   if (maxSubsets == 2)
   {
       CGV_UINT32 mask_packed = subset_mask_table[part_id];
@@ -1029,14 +898,6 @@ INLINE CGV_EPOCODE ep_find_floor(
 {
 #ifdef ASPM_GPU // GPU Code 
     CGV_FLOAT rampf = 0.0F;
-    CMP_CONSTANT CGV_EPOCODE rampI[5*SOURCE_BLOCK_SIZE] = {
-    0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 , // 0 bit index
-    0 ,64,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 , // 1 bit index
-    0 ,21,43,64,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 , // 2 bit index
-    0 ,9 ,18,27,37,46,55,64,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 , // 3 bit index
-    0 ,4 ,9 ,13,17,21,26,30,34,38,43,47,51,55,60,64  // 4 bit index
-    };
-
     CGV_EPOCODE e1 = expand_epocode(p1, bits);
     CGV_EPOCODE e2 = expand_epocode(p2,bits);
     CGV_FLOAT ramp = gather_epocode(rampI,clogBC7*16+index)/64.0F;
@@ -1077,21 +938,6 @@ INLINE CGV_EPOCODE ep_find_floor(
 
  INLINE void get_fixuptable(CGV_FIXUPINDEX  fixup[3], CGV_PARTID  part_id)
 {
-   // same as  CMP SDK v3.1 BC7_FIXUPINDEX1 &  BC7_FIXUPINDEX2 for each partition range 0..63
-   // The data is saved as a packed INT = (BC7_FIXUPINDEX1 << 4 + BC7_FIXUPINDEX2)
-   CMP_STATIC uniform __constant  CGV_FIXUPINDEX  FIXUPINDEX[] = {
-       // 2 subset partitions 0..63
-        0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u,
-        0xf0u, 0x20u, 0x80u, 0x20u, 0x20u, 0x80u, 0x80u, 0xf0u, 0x20u, 0x80u, 0x20u, 0x20u, 0x80u, 0x80u, 0x20u, 0x20u,
-        0xf0u, 0xf0u, 0x60u, 0x80u, 0x20u, 0x80u, 0xf0u, 0xf0u, 0x20u, 0x80u, 0x20u, 0x20u, 0x20u, 0xf0u, 0xf0u, 0x60u,
-        0x60u, 0x20u, 0x60u, 0x80u, 0xf0u, 0xf0u, 0x20u, 0x20u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0x20u, 0x20u, 0xf0u,
-        // 3 subset partitions 64..128
-        0x3fu, 0x38u, 0xf8u, 0xf3u, 0x8fu, 0x3fu, 0xf3u, 0xf8u, 0x8fu, 0x8fu, 0x6fu, 0x6fu, 0x6fu, 0x5fu, 0x3fu, 0x38u,
-        0x3fu, 0x38u, 0x8fu, 0xf3u, 0x3fu, 0x38u, 0x6fu, 0xa8u, 0x53u, 0x8fu, 0x86u, 0x6au, 0x8fu, 0x5fu, 0xfau, 0xf8u,
-        0x8fu, 0xf3u, 0x3fu, 0x5au, 0x6au, 0xa8u, 0x89u, 0xfau, 0xf6u, 0x3fu, 0xf8u, 0x5fu, 0xf3u, 0xf6u, 0xf6u, 0xf8u,
-        0x3fu, 0xf3u, 0x5fu, 0x5fu, 0x5fu, 0x8fu, 0x5fu, 0xafu, 0x5fu, 0xafu, 0x8fu, 0xdfu, 0xf3u, 0xcfu, 0x3fu, 0x38u 
-   };
-
    CGV_FIXUPINDEX skip_packed = FIXUPINDEX[part_id];// gather_int2(FIXUPINDEX, part_id);
    fixup[0] = 0;
    fixup[1] = skip_packed>>4;
@@ -1472,27 +1318,29 @@ CGV_ERROR   quant_solid_color(
 
             if (error_t < error_0)
             {
+                // We have a solid color: Use image src if on GPU
                 image_log = iclogBC7;
                 image_idx = image_log;
-                CGU_BOOL srcIsWhite = FALSE;
-                if ((image_src[0] == 255.0f)&&(image_src[1] == 255.0f)&&(image_src[2] == 255.0f)) srcIsWhite = TRUE;
 
+#ifdef ASPM_GPU  // This needs improving 
+                CGV_IMAGE MinC[4] = {255,255,255,255};
+                CGV_IMAGE MaxC[4] = {0,0,0,0};
+                // get min max colors
+                for (CGU_CHANNEL ch=0;ch<channels3or4; ch++) 
+                   for (CGV_ENTRIES k=0;k<numEntries;k++) 
+                   {
+                       if (image_src[k+ch*SOURCE_BLOCK_SIZE] < MinC[ch] ) MinC[ch] = image_src[k+ch*SOURCE_BLOCK_SIZE];
+                       if (image_src[k+ch*SOURCE_BLOCK_SIZE] > MaxC[ch] ) MaxC[ch] = image_src[k+ch*SOURCE_BLOCK_SIZE];
+                   }
                 for (CGU_CHANNEL ch = 0; ch<channels3or4; ch++)
                 {
-#ifdef ASPM_GPU
-                    if (srcIsWhite == TRUE)
-                    {
-                        // Default White block!
-                        epo_0[  ch] = 0x7F;
-                        epo_0[4+ch] = 0x7F;
-                    }
-                    else
-                    {
-                        // Default black block!
-                        epo_0[  ch] = 0;
-                        epo_0[4+ch] = 0;
-                    }
-#else
+                     epo_0[ch]     = MinC[ch];
+                     epo_0[4 + ch] = MaxC[ch];
+                }
+
+#else           // This is good on CPU
+                for (CGU_CHANNEL ch = 0; ch<channels3or4; ch++)
+                {
 #ifdef USE_BC7_SP_ERR_IDX
                     if (BC7EncodeRamps.ramp_init) {
                         CGV_EPOCODE index = (CLT(clogBC7)*4*256*2*2*16*2)+(BTT(bits[ch])*256*2*2*16*2)+(epo_dr_0[ch]*2*2*16*2)+(t1o[ch]*2*16*2)+(t2o[ch]*16*2)+(iclogBC7*2);
@@ -1500,15 +1348,15 @@ CGV_ERROR   quant_solid_color(
                         epo_0[4+ch] = BC7EncodeRamps.sp_idx[index+1]&0xFF;// gather_epocode(u_BC7Encode->sp_idx,index+1)&0xFF;
                     }
                     else {
-                        epo_0[ch] = 0;
+                        epo_0[ch]     = 0;
                         epo_0[4 + ch] = 0;
                     }
 #else
                     epo_0[  ch] = 0;
                     epo_0[4+ch] = 0;
 #endif
-#endif
                 }
+#endif
                 error_0 = error_t;
             }
             //if (error_0 == 0)
@@ -1980,7 +1828,11 @@ INLINE void cmp_encode_swap(CGV_EPOCODE endpoint[], CGU_INT channels, CGV_INDEX 
    {
       cmp_swap_epo(&endpoint[0], &endpoint[channels], channels);
       for (CGU_INT k=0; k<SOURCE_BLOCK_SIZE; k++)
+#ifdef ASPM_GPU
+         block_index[k] = (levels-1) - block_index[k];
+#else
          block_index[k] = CGV_INDEX(levels-1) - block_index[k];
+#endif
    }
 }
 
@@ -1994,6 +1846,7 @@ void cmp_encode_index(CGV_CMPOUT data[16], CGU_INT* uniform pPos, CGV_INDEX bloc
    }
 }
 
+
 void encode_endpoint(CGV_CMPOUT data[16], CGU_INT* uniform pPos, CGV_BYTE block_index[16],  CGU_INT bits, CGV_SHIFT32 flips)
 {
    CGU_INT      levels = 1 << bits;
@@ -2006,8 +1859,8 @@ void encode_endpoint(CGV_CMPOUT data[16], CGU_INT* uniform pPos, CGV_BYTE block_
          CGV_TYPEINT q = qbits_shifted&15;
          if ((flips_shifted&1)>0) q = (levels-1)-q;
 
-         if (k1==0 && k2==0)   cmp_Write8Bit(data, pPos, bits - 1, static_cast <CGV_BYTE>(q));
-         else                  cmp_Write8Bit(data, pPos, bits, static_cast<CGV_BYTE>(q));
+         if (k1==0 && k2==0)   cmp_Write8Bit(data, pPos, bits-1, CMP_STATIC_CAST(CGV_BYTE,q));
+         else                  cmp_Write8Bit(data, pPos, bits  , CMP_STATIC_CAST(CGV_BYTE,q));
          qbits_shifted >>= 4;
          flips_shifted >>= 1;
       }
@@ -2236,10 +2089,10 @@ void  Encode_mode4( CGV_CMPOUT     cmp_out[COMPRESSED_BLOCK_SIZE],
     cmp_Write8Bit(cmp_out,&bitPosition,1,1);
 
     // rotation 2 bits
-    cmp_Write8Bit(cmp_out, &bitPosition, 2, static_cast <CGV_BYTE> (params->rotated_channel));
+    cmp_Write8Bit(cmp_out,&bitPosition,2, CMP_STATIC_CAST(CGV_BYTE,params->rotated_channel));
 
     // idxMode 1 bit
-    cmp_Write8Bit(cmp_out, &bitPosition, 1, static_cast <CGV_BYTE> (params->idxMode));
+    cmp_Write8Bit(cmp_out, &bitPosition, 1,CMP_STATIC_CAST(CGV_BYTE,params->idxMode));
 
     CGU_INT   idxBits[2] = {2,3};
 
@@ -2264,14 +2117,14 @@ void  Encode_mode4( CGV_CMPOUT     cmp_out[COMPRESSED_BLOCK_SIZE],
    // B0 : B1
    for (CGU_INT component=0; component < 3; component++)
    {
-        cmp_Write8Bit(cmp_out, &bitPosition, 5, static_cast<CGV_BYTE> (params->color_qendpoint[component]));
-        cmp_Write8Bit(cmp_out, &bitPosition, 5, static_cast <CGV_BYTE> (params->color_qendpoint[4 + component]));
+         cmp_Write8Bit(cmp_out,&bitPosition,5,CMP_STATIC_CAST(CGV_BYTE,params->color_qendpoint[component]));
+         cmp_Write8Bit(cmp_out,&bitPosition,5,CMP_STATIC_CAST(CGV_BYTE,params->color_qendpoint[4 + component]));
    }
 
    // alpha endpoints (6 bits each)
    // A0 : A1
-   cmp_Write8Bit(cmp_out, &bitPosition, 6, static_cast<CGV_BYTE> (params->alpha_qendpoint[0]));
-   cmp_Write8Bit(cmp_out, &bitPosition, 6, static_cast<CGV_BYTE> (params->alpha_qendpoint[4]));
+   cmp_Write8Bit(cmp_out,&bitPosition,6,CMP_STATIC_CAST(CGV_BYTE,params->alpha_qendpoint[0]));
+   cmp_Write8Bit(cmp_out,&bitPosition,6,CMP_STATIC_CAST(CGV_BYTE,params->alpha_qendpoint[4]));
 
     // index 2 bits each  (31 bits total)
     cmp_encode_index(cmp_out, &bitPosition, params->color_index, 2);
@@ -2289,7 +2142,7 @@ void  Encode_mode5( CGV_CMPOUT     cmp_out[COMPRESSED_BLOCK_SIZE],
     cmp_Write8Bit(cmp_out,&bitPosition,1,1);
 
     // Write 2 bit rotation
-    cmp_Write8Bit(cmp_out, &bitPosition, 2, static_cast<CGV_BYTE> (params->rotated_channel));
+    cmp_Write8Bit(cmp_out,&bitPosition,2, CMP_STATIC_CAST(CGV_BYTE,params->rotated_channel));
 
     cmp_encode_swap(params->color_qendpoint, 4, params->color_index,2);
     cmp_encode_swap(params->alpha_qendpoint, 4, params->alpha_index,2);
@@ -2300,14 +2153,14 @@ void  Encode_mode5( CGV_CMPOUT     cmp_out[COMPRESSED_BLOCK_SIZE],
    // B0 : B1
    for (CGU_INT component=0; component < 3; component++)
    {
-        cmp_Write8Bit(cmp_out, &bitPosition, 7, static_cast<CGV_BYTE> (params->color_qendpoint[component]));
-        cmp_Write8Bit(cmp_out, &bitPosition, 7, static_cast <CGV_BYTE> (params->color_qendpoint[4 + component]));
+         cmp_Write8Bit(cmp_out,&bitPosition,7,CMP_STATIC_CAST(CGV_BYTE,params->color_qendpoint[component]));
+         cmp_Write8Bit(cmp_out,&bitPosition,7,CMP_STATIC_CAST(CGV_BYTE,params->color_qendpoint[4 + component]));
    }
 
    // alpha endpoints (8 bits each)
    // A0 : A1
-   cmp_Write8Bit(cmp_out, &bitPosition, 8, static_cast<CGV_BYTE> (params->alpha_qendpoint[0]));
-   cmp_Write8Bit(cmp_out, &bitPosition, 8, static_cast<CGV_BYTE> (params->alpha_qendpoint[4]));
+   cmp_Write8Bit(cmp_out,&bitPosition,8,CMP_STATIC_CAST(CGV_BYTE,params->alpha_qendpoint[0]));
+   cmp_Write8Bit(cmp_out,&bitPosition,8,CMP_STATIC_CAST(CGV_BYTE,params->alpha_qendpoint[4]));
 
 
    // color index 2 bits each  (31 bits total)
@@ -2332,8 +2185,8 @@ void  Encode_mode6(
     // endpoints
     for (CGU_INT p=0; p<4; p++)
     {
-        cmp_Write8Bit(cmp_out, &bitPosition, 7, static_cast<CGV_BYTE> (epo_code[0 + p] >> 1));
-        cmp_Write8Bit(cmp_out, &bitPosition, 7, static_cast<CGV_BYTE> (epo_code[4 + p] >> 1));
+        cmp_Write8Bit(cmp_out, &bitPosition, 7, CMP_STATIC_CAST(CGV_BYTE,epo_code[0 + p] >> 1));
+        cmp_Write8Bit(cmp_out, &bitPosition, 7, CMP_STATIC_CAST(CGV_BYTE,epo_code[4 + p] >> 1));
     }
 
     // p bits
@@ -2348,7 +2201,7 @@ void  Encode_mode6(
 void  Compress_mode01237(
                     CGU_INT             blockMode,
                     BC7_EncodeState     EncodeState[],
-uniform CMP_GLOBAL    BC7_Encode          u_BC7Encode[])
+uniform CMP_GLOBAL  BC7_Encode          u_BC7Encode[])
 {
     CGV_INDEX       storedBestindex[MAX_PARTITIONS][MAX_SUBSETS][MAX_SUBSET_SIZE];
     CGV_ERROR       storedError[MAX_PARTITIONS];
@@ -2417,7 +2270,7 @@ uniform CMP_GLOBAL    BC7_Encode          u_BC7Encode[])
         GetPartitionSubSet_mode01237(
                   image_subsets,
                   subset_entryCount,
-                  static_cast<CGV_UINT8>(mode_blockPartition),
+                  CMP_STATIC_CAST(CGV_UINT8,mode_blockPartition),
                   EncodeState->image_src,
                   blockMode,
                   EncodeState->channels3or4);
@@ -2526,7 +2379,7 @@ uniform CMP_GLOBAL    BC7_Encode          u_BC7Encode[])
                                    tmp_epo_code,
                                    src_image_block,
                                    numEntries,
-                                   static_cast<CGU_INT8>(EncodeState->clusters),  // Mi_
+                                   CMP_STATIC_CAST(CGU_INT8,EncodeState->clusters),  // Mi_
                                    EncodeState->bits,
                                    EncodeState->channels3or4,
                                    u_BC7Encode);
@@ -2735,7 +2588,7 @@ uniform CMP_GLOBAL    BC7_Encode          u_BC7Encode[])
                                              src_color_Block,
                                              SOURCE_BLOCK_SIZE,
                                              EncodeState->numClusters0[idxMode],
-                                             static_cast<CGU_INT8>(EncodeState->modeBits[0]),
+                                             CMP_STATIC_CAST(CGU_UINT8,EncodeState->modeBits[0]),
                                              3,
                                              u_BC7Encode);
 
@@ -2746,7 +2599,7 @@ uniform CMP_GLOBAL    BC7_Encode          u_BC7Encode[])
                                                src_alpha_Block,
                                                SOURCE_BLOCK_SIZE,
                                                EncodeState->numClusters1[idxMode],
-                                               static_cast<CGU_UINT8>(EncodeState->modeBits[1]),
+                                               CMP_STATIC_CAST(CGU_UINT8,EncodeState->modeBits[1]),
                                                3,
                                                u_BC7Encode) / 3.0f;
 
@@ -4574,6 +4427,7 @@ uniform CMP_GLOBAL    BC7_Encode       u_BC7Encode[])
         CGU_INT      Mode = 0x0001 << blockMode;
         if (!(u_BC7Encode->validModeMask & Mode))
             continue;
+
         switch (blockMode)
         {
         // image processing with no alpha
@@ -4802,8 +4656,8 @@ void GetBC7Ramp(CGU_UINT32 endpoint[][MAX_DIMENSION_BIG],
             ep[0][i] += (CGU_UINT32)(ep[0][i] >> componentBits[i]);
             ep[1][i] += (CGU_UINT32)(ep[1][i] >> componentBits[i]);
 
-            ep[0][i] = min8(255, max8(0, static_cast<CGU_UINT8>(ep[0][i])));
-            ep[1][i] = min8(255, max8(0, static_cast<CGU_UINT8>(ep[1][i])));
+            ep[0][i] = min8(255, max8(0,CMP_STATIC_CAST(CGU_UINT8,ep[0][i])));
+            ep[1][i] = min8(255, max8(0,CMP_STATIC_CAST(CGU_UINT8,ep[1][i])));
         }
     }
 
@@ -4926,7 +4780,7 @@ void DecompressDualIndexBlock(
             // If this is a fixup index then clear the implicit bit
             if(j==0)
             {
-                blockIndices[i][j] &= ~(1 << (bti[m_blockMode].indexBits[i]-1));
+                blockIndices[i][j] &= ~(1 << (bti[m_blockMode].indexBits[i]-1U));
                 for(k=0;k<static_cast <CGU_UINT32>(bti[m_blockMode].indexBits[i] - 1); k++)
                 {
                     blockIndices[i][j] |= (CGU_UINT32)ReadBit(in,m_bitPosition) << k;
@@ -5377,7 +5231,7 @@ int CMP_CDECL CompressBlockBC7( const unsigned char *srcBlock,
     EncodeState.best_err        = CMP_FLOAT_MAX;
     EncodeState.validModeMask   = u_BC7Encode->validModeMask;
     EncodeState.part_count      = u_BC7Encode->part_count;
-    EncodeState.channels        = static_cast<CGU_CHANNEL>(u_BC7Encode->channels);
+    EncodeState.channels        = CMP_STATIC_CAST(CGU_CHANNEL,u_BC7Encode->channels);
 
     CGU_UINT8 offsetR = 0;
     CGU_UINT8 offsetG = 16;
@@ -5410,6 +5264,7 @@ int CMP_CDECL CompressBlockBC7( const unsigned char *srcBlock,
     return CGU_CORE_OK;
 }
 
+
 int  CMP_CDECL DecompressBlockBC7(const unsigned char cmpBlock[16],
                                   unsigned char srcBlock[64],
                                   const void *options = NULL) {
@@ -5429,7 +5284,7 @@ int  CMP_CDECL DecompressBlockBC7(const unsigned char cmpBlock[16],
 #endif
 
 //============================================== OpenCL USER INTERFACE ====================================================
-#ifdef ASPM_GPU
+#ifdef ASPM_OPENCL
 CMP_STATIC CMP_KERNEL void CMP_GPUEncoder(uniform CMP_GLOBAL const  CGU_Vec4uc      ImageSource[],
                                                   CMP_GLOBAL        CGV_CMPOUT      ImageDestination[],
                                           uniform CMP_GLOBAL        Source_Info     SourceInfo[],
@@ -5438,21 +5293,21 @@ CMP_STATIC CMP_KERNEL void CMP_GPUEncoder(uniform CMP_GLOBAL const  CGU_Vec4uc  
     CGU_INT xID=0;
     CGU_INT yID=0;
 
-    xID = get_global_id(0);         // ToDo: Define a size_t 32 bit and 64 bit basd on clGetDeviceInfo
+    xID = get_global_id(0);         // ToDo: Define a size_t 32 bit and 64 bit based on clGetDeviceInfo
     yID = get_global_id(1);
-
     CGU_INT  srcWidth  = SourceInfo->m_src_width;
     CGU_INT  srcHeight = SourceInfo->m_src_height;
     if (xID >= (srcWidth  / BlockX)) return;
     if (yID >= (srcHeight / BlockY)) return;
 
+    //ASPM_PRINT(("[ASPM_OCL] %d %d  size %d\n",xID,yID,sizeof(BC7_Encode)));
+
     CGU_INT     destI = (xID*COMPRESSED_BLOCK_SIZE) + (yID*(srcWidth / BlockX)*COMPRESSED_BLOCK_SIZE);
     CGU_INT     srcindex = 4 * (yID * srcWidth + xID);
     CGU_INT     blkindex = 0;
     BC7_EncodeState EncodeState;
-    varying BC7_EncodeState* uniform state = &EncodeState;
-
-   copy_BC7_Encode_settings(state, BC7Encode);
+    cmp_memsetBC7(&EncodeState,0,sizeof(EncodeState));
+    copy_BC7_Encode_settings(&EncodeState, BC7Encode);
 
     //Check if it is a complete 4X4 block
     if (((xID + 1)*BlockX <= srcWidth) && ((yID + 1)*BlockY <= srcHeight))
@@ -5460,10 +5315,10 @@ CMP_STATIC CMP_KERNEL void CMP_GPUEncoder(uniform CMP_GLOBAL const  CGU_Vec4uc  
         srcWidth = srcWidth - 4;
         for (CGU_INT j = 0; j < 4; j++) {
             for (CGU_INT i = 0; i < 4; i++) {
-                state->image_src[blkindex+0*SOURCE_BLOCK_SIZE] = ImageSource[srcindex].x;
-                state->image_src[blkindex+1*SOURCE_BLOCK_SIZE] = ImageSource[srcindex].y;
-                state->image_src[blkindex+2*SOURCE_BLOCK_SIZE] = ImageSource[srcindex].z;
-                state->image_src[blkindex+3*SOURCE_BLOCK_SIZE] = ImageSource[srcindex].w;
+                EncodeState.image_src[blkindex+0*SOURCE_BLOCK_SIZE] = ImageSource[srcindex].x;
+                EncodeState.image_src[blkindex+1*SOURCE_BLOCK_SIZE] = ImageSource[srcindex].y;
+                EncodeState.image_src[blkindex+2*SOURCE_BLOCK_SIZE] = ImageSource[srcindex].z;
+                EncodeState.image_src[blkindex+3*SOURCE_BLOCK_SIZE] = ImageSource[srcindex].w;
                 blkindex++;
                 srcindex++;
             }
@@ -5471,13 +5326,21 @@ CMP_STATIC CMP_KERNEL void CMP_GPUEncoder(uniform CMP_GLOBAL const  CGU_Vec4uc  
             srcindex += srcWidth;
         }
 
-   copy_BC7_Encode_settings(state, BC7Encode);
-
     BC7_CompressBlock(&EncodeState, BC7Encode);
+
+    // printf("CMP %x %x %x %x %x %x %x",
+    // state->cmp_out[0],
+    // state->cmp_out[1],
+    // state->cmp_out[2],
+    // state->cmp_out[3],
+    // state->cmp_out[4],
+    // state->cmp_out[5],
+    // state->cmp_out[6]
+    // );
 
     for (CGU_INT i=0; i<COMPRESSED_BLOCK_SIZE; i++)
     {
-        ImageDestination[destI+i] = state->cmp_out[i];
+        ImageDestination[destI+i] = EncodeState.cmp_out[i];
     }
 
     }

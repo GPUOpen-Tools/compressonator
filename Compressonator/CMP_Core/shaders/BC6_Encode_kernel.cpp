@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2018    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -29,11 +29,11 @@ void memset(CGU_UINT8 *srcdata, CGU_UINT8 value, CGU_INT size)
         *srcdata++ = value;
 }
 
-void memcpy(CGU_UINT8 *srcdata, CGU_UINT8 *dstdata, CGU_INT size)
+void memcpy(CGU_UINT8 *dstdata, CGU_UINT8 *srcdata, CGU_INT size)
 {
     for (CGU_INT i = 0; i < size; i++)
     {
-        *srcdata = *dstdata;
+        *dstdata = *srcdata;
         srcdata++;
         dstdata++;
     }
@@ -509,7 +509,7 @@ CGU_FLOAT totalError_d(CGU_FLOAT data[MAX_ENTRIES][MAX_DIMENSION_BIG], CGU_FLOAT
 // index, uncentered, in the range 0..k-1
 //
 
-void quant_AnD_Shell(CGU_FLOAT* v_, CGU_INT k, CGU_INT n, CGU_INT *idx)
+void quant_AnD_Shell(CGU_FLOAT* v_, CGU_INT k, CGU_INT n, CGU_INT idx[MAX_ENTRIES])
 {
 #define MAX_BLOCK MAX_ENTRIES
     CGU_INT i, j;
@@ -2530,7 +2530,7 @@ CGU_INT Unquantize(CGU_INT comp, unsigned char uBitsPerComp, CGU_BOOL bSigned)
     return unq;
 }
 
-CGU_INT finish_unquantizeF16(CGU_INT q, CGU_BOOL isSigned)
+CGU_INT finish_unquantizef16(CGU_INT q, CGU_BOOL isSigned)
 {
     // Is it F16 Signed else F16 Unsigned
     if (isSigned)
@@ -2565,8 +2565,8 @@ void decompress_endpoints1(BC6H_Encode_local * bc6h_format, CGU_INT oEndPoints[M
                 out[0][1][i] = (CGU_FLOAT)Unquantize((int)out[0][1][i], (unsigned char)ModePartition[mode].nbits, false);
 
                 // F16 format
-                outf[0][0][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[0][0][i], false);
-                outf[0][1][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[0][1][i], false);
+                outf[0][0][i] = (CGU_FLOAT)finish_unquantizef16((int)out[0][0][i], false);
+                outf[0][1][i] = (CGU_FLOAT)finish_unquantizef16((int)out[0][1][i], false);
             }
         }
         else
@@ -2581,8 +2581,8 @@ void decompress_endpoints1(BC6H_Encode_local * bc6h_format, CGU_INT oEndPoints[M
                 out[0][1][i] = (CGU_FLOAT)Unquantize((int)out[0][1][i], (unsigned char)ModePartition[mode].nbits, false);
 
                 // F16 format
-                outf[0][0][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[0][0][i], false);
-                outf[0][1][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[0][1][i], false);
+                outf[0][0][i] = (CGU_FLOAT)finish_unquantizef16((int)out[0][0][i], false);
+                outf[0][1][i] = (CGU_FLOAT)finish_unquantizef16((int)out[0][1][i], false);
             }
         }
 
@@ -2602,8 +2602,8 @@ void decompress_endpoints1(BC6H_Encode_local * bc6h_format, CGU_INT oEndPoints[M
                 out[0][1][i] = (CGU_FLOAT)Unquantize((int)out[0][1][i], (unsigned char)ModePartition[mode].nbits, false);
 
                 // F16 format
-                outf[0][0][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[0][0][i], false);
-                outf[0][1][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[0][1][i], false);
+                outf[0][0][i] = (CGU_FLOAT)finish_unquantizef16((int)out[0][0][i], false);
+                outf[0][1][i] = (CGU_FLOAT)finish_unquantizef16((int)out[0][1][i], false);
             }
         }
         else
@@ -2618,8 +2618,8 @@ void decompress_endpoints1(BC6H_Encode_local * bc6h_format, CGU_INT oEndPoints[M
                 out[0][1][i] = (CGU_FLOAT)Unquantize((int)out[0][1][i], (unsigned char)ModePartition[mode].nbits, false);
 
                 // F16 format
-                outf[0][0][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[0][0][i], false);
-                outf[0][1][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[0][1][i], false);
+                outf[0][0][i] = (CGU_FLOAT)finish_unquantizef16((int)out[0][0][i], false);
+                outf[0][1][i] = (CGU_FLOAT)finish_unquantizef16((int)out[0][1][i], false);
             }
         }
     }
@@ -2659,10 +2659,10 @@ void decompress_endpoints2(BC6H_Encode_local * bc6h_format, CGU_INT oEndPoints[M
                 out[1][1][i] = (CGU_FLOAT)Unquantize((int)out[1][1][i], (unsigned char)ModePartition[mode].nbits, true);
 
                 // F16 format
-                outf[0][0][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[0][0][i], true);
-                outf[0][1][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[0][1][i], true);
-                outf[1][0][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[1][0][i], true);
-                outf[1][1][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[1][1][i], true);
+                outf[0][0][i] = (CGU_FLOAT)finish_unquantizef16((int)out[0][0][i], true);
+                outf[0][1][i] = (CGU_FLOAT)finish_unquantizef16((int)out[0][1][i], true);
+                outf[1][0][i] = (CGU_FLOAT)finish_unquantizef16((int)out[1][0][i], true);
+                outf[1][1][i] = (CGU_FLOAT)finish_unquantizef16((int)out[1][1][i], true);
 
             }
         }
@@ -2682,10 +2682,10 @@ void decompress_endpoints2(BC6H_Encode_local * bc6h_format, CGU_INT oEndPoints[M
                 out[1][1][i] = (CGU_FLOAT)Unquantize((int)out[1][1][i], (unsigned char)ModePartition[mode].nbits, false);
 
                 // nbits to F16 format
-                outf[0][0][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[0][0][i], false);
-                outf[0][1][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[0][1][i], false);
-                outf[1][0][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[1][0][i], false);
-                outf[1][1][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[1][1][i], false);
+                outf[0][0][i] = (CGU_FLOAT)finish_unquantizef16((int)out[0][0][i], false);
+                outf[0][1][i] = (CGU_FLOAT)finish_unquantizef16((int)out[0][1][i], false);
+                outf[1][0][i] = (CGU_FLOAT)finish_unquantizef16((int)out[1][0][i], false);
+                outf[1][1][i] = (CGU_FLOAT)finish_unquantizef16((int)out[1][1][i], false);
             }
         }
 
@@ -2713,10 +2713,10 @@ void decompress_endpoints2(BC6H_Encode_local * bc6h_format, CGU_INT oEndPoints[M
                 out[1][1][i] = (CGU_FLOAT)Unquantize((int)out[1][1][i], (unsigned char)ModePartition[mode].nbits, false);
 
                 // nbits to F16 format
-                outf[0][0][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[0][0][i], false);
-                outf[0][1][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[0][1][i], false);
-                outf[1][0][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[1][0][i], false);
-                outf[1][1][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[1][1][i], false);
+                outf[0][0][i] = (CGU_FLOAT)finish_unquantizef16((int)out[0][0][i], false);
+                outf[0][1][i] = (CGU_FLOAT)finish_unquantizef16((int)out[0][1][i], false);
+                outf[1][0][i] = (CGU_FLOAT)finish_unquantizef16((int)out[1][0][i], false);
+                outf[1][1][i] = (CGU_FLOAT)finish_unquantizef16((int)out[1][1][i], false);
 
             }
         }
@@ -2736,10 +2736,10 @@ void decompress_endpoints2(BC6H_Encode_local * bc6h_format, CGU_INT oEndPoints[M
                 out[1][1][i] = (CGU_FLOAT)Unquantize((int)out[1][1][i], (unsigned char)ModePartition[mode].nbits, false);
 
                 // nbits to F16 format
-                outf[0][0][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[0][0][i], false);
-                outf[0][1][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[0][1][i], false);
-                outf[1][0][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[1][0][i], false);
-                outf[1][1][i] = (CGU_FLOAT)finish_unquantizeF16((int)out[1][1][i], false);
+                outf[0][0][i] = (CGU_FLOAT)finish_unquantizef16((int)out[0][0][i], false);
+                outf[0][1][i] = (CGU_FLOAT)finish_unquantizef16((int)out[0][1][i], false);
+                outf[1][0][i] = (CGU_FLOAT)finish_unquantizef16((int)out[1][0][i], false);
+                outf[1][1][i] = (CGU_FLOAT)finish_unquantizef16((int)out[1][1][i], false);
             }
         }
     }
@@ -3906,7 +3906,7 @@ int  CMP_CDECL DecompressBlockBC6(const unsigned char cmpBlock[16],
 #endif // !ASPM_GPU
 
 //============================================== OpenCL USER INTERFACE ====================================================
-#ifdef ASPM_GPU
+#ifdef ASPM_OPENCL
 CMP_STATIC CMP_KERNEL void CMP_GPUEncoder(
     CMP_GLOBAL  CGU_UINT8*          p_source_pixels,
     CMP_GLOBAL  CGU_UINT8*          p_encoded_blocks,

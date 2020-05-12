@@ -30,13 +30,15 @@
 #if defined (_LINUX) || defined (_WIN32)
 
 //============================================= VEC2 ==================================================
+template <class T> class vec3;
+
 template<class T>
 class Vec2
 {
 public:
-
     T x;
     T y;
+
 
     // *****************************************
     //     Constructors
@@ -53,7 +55,6 @@ public:
 
     /// Single value constructor.  Sets all components to the given value
     Vec2(const T& v) : x(v), y(v) {};
-
 
     // *****************************************
     //     Conversions/Assignment/Indexing
@@ -92,6 +93,13 @@ public:
     /// Subtraction
     const Vec2<T> operator-(const Vec2<T>& rhs) const { return Vec2<T>(x - rhs.x, y - rhs.y); };
 
+    /// Multiply
+    const Vec2<T> operator*(const Vec2<T>& rhs) const { return Vec2<T>(x * rhs.x, y * rhs.y); };
+
+    /// Divide
+    const Vec2<T> operator/(const Vec2<T>& rhs) const { return Vec2<T>(x / rhs.x, y / rhs.y); };
+
+
     /// Multiply by scalar
     const Vec2<T> operator*(const T& v) const { return Vec2<T>(x * v, y * v); };
 
@@ -113,11 +121,12 @@ public:
 
 };
 
-typedef Vec2<float>  CMP_Vec2f;
-typedef Vec2<float>  CGU_Vec2f;
-typedef Vec2<float>  CGV_Vec2f;
-typedef Vec2<double> CMP_Vec2d;
-typedef Vec2<int>    CMP_Vec2i;
+typedef Vec2<float>           CMP_Vec2f;
+typedef Vec2<float>           CGU_Vec2f;
+typedef Vec2<float>           CGV_Vec2f;
+typedef Vec2<double>          CMP_Vec2d;
+typedef Vec2<int>             CMP_Vec2i;
+typedef Vec2<unsigned int>    CGU_Vec2ui;
 
 //}
 
@@ -133,6 +142,7 @@ public:
     T x;
     T y;
     T z;
+
 
     // *****************************************
     //     Constructors
@@ -180,20 +190,23 @@ public:
     //    Arithmetic
     // *****************************************
 
-    /// Addition
+    /// Addition by vector
     const Vec3<T> operator+(const Vec3<T>& rhs) const { return Vec3<T>(x + rhs.x, y + rhs.y, z + rhs.z); };
 
-    /// Subtraction
+    /// Subtraction by vector
     const Vec3<T> operator-(const Vec3<T>& rhs) const { return Vec3<T>(x - rhs.x, y - rhs.y, z - rhs.z); };
+
+    /// Multiply by vector
+    const Vec3<T> operator*(const Vec3<T>& rhs) const { return Vec3<T>(x * rhs.x, y * rhs.y, z * rhs.z); };
+
+    /// Divide by vector
+    const Vec3<T> operator/(const Vec3<T>& rhs) const { return Vec3<T>(x / rhs.x, y / rhs.y, z / rhs.z); };
 
     /// Multiply by scalar
     const Vec3<T> operator*(const T& v) const { return Vec3<T>(x * v, y * v, z * v); };
 
     /// Divide by scalar
     const Vec3<T> operator/(const T& v) const { return Vec3<T>(x / v, y / v, z / v); };
-
-    /// Divide by vector
-    const Vec3<T> operator/(const Vec3<T>& rhs) const { return Vec3<T>(x / rhs.x, y / rhs.y, z / rhs.z); };
 
     /// Addition in-place
     Vec3<T>& operator+= (const Vec3<T>& rhs) { x += rhs.x; y += rhs.y; z += rhs.z; return *this; };
@@ -208,6 +221,7 @@ public:
     Vec3<T>& operator/= (const T& v) { x /= v; y /= v; z /= v; return *this; };
 };
 
+typedef Vec3<bool>              CGU_Vec3bool;
 typedef Vec3<float>             CGU_Vec3f;
 typedef Vec3<float>             CGV_Vec3f;
 typedef Vec3<unsigned char>     CGU_Vec3uc;
@@ -217,6 +231,7 @@ typedef Vec3<float>             CMP_Vec3f;
 typedef Vec3<double>            CMP_Vec3d;
 typedef Vec3<int>               CMP_Vec3i;
 typedef Vec3<unsigned char>     CMP_Vec3uc;
+typedef Vec3<unsigned int>      CMP_Vec3ui;
 
 //============================================= VEC4 ==================================================
 template<class T>
@@ -275,20 +290,23 @@ public:
     //    Arithmetic
     // *****************************************
 
-    /// Addition
+    /// Addition by vector
     const Vec4<T> operator+(const Vec4<T>& rhs) const { return Vec4<T>(x + rhs.x, y + rhs.y, z + rhs.z, w + rhs.w); };
 
-    /// Subtraction
+    /// Subtraction  by vector
     const Vec4<T> operator-(const Vec4<T>& rhs) const { return Vec4<T>(x - rhs.x, y - rhs.y, z - rhs.z, w - rhs.w); };
+
+    /// Multiply  by vector
+    const Vec4<T> operator*(const Vec4<T>& rhs) const { return Vec4<T>(x * rhs.x, y * rhs.y, z * rhs.z, w * rhs.w); };
+
+    /// Divide by vector
+    const Vec4<T> operator/(const Vec4<T>& rhs) const { return Vec4<T>(x / rhs.x, y / rhs.y, z / rhs.z, w / rhs.w); };
 
     /// Multiply by scalar
     const Vec4<T> operator*(const T& v) const { return Vec4<T>(x * v, y * v, z * v, w * v); };
 
     /// Divide by scalar
     const Vec4<T> operator/(const T& v) const { return Vec4<T>(x / v, y / v, z / v, w / v); };
-
-    /// Divide by vector
-    const Vec4<T> operator/(const Vec4<T>& rhs) const { return Vec4<T>(x / rhs.x, y / rhs.y, z / rhs.z, w / rhs.w); };
 
     /// Addition in-place
     Vec4<T>& operator+= (const Vec4<T>& rhs) { x += rhs.x; y += rhs.y; z += rhs.z; w += rhs.w; return *this; };

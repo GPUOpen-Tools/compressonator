@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2018    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020   Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -32,15 +32,19 @@ void CompressBlockBC4_Internal(const CMP_Vec4uc srcBlockTemp[16],
   }
   CGU_UINT8 blkindex = 0;
   CGU_UINT8 srcindex = 0;
-  CGU_UINT8 alphaBlock[16];
+  CGU_FLOAT alphaBlock[16];
   for (CGU_INT32 j = 0; j < 4; j++) {
     for (CGU_INT32 i = 0; i < 4; i++) {
-      alphaBlock[blkindex++] =
-          (CGU_UINT8)srcBlockTemp[srcindex].x;  // Red channel
+      alphaBlock[blkindex++] = srcBlockTemp[srcindex].x / 255.0f;  // Red channel
       srcindex++;
     }
   }
-  CompressAlphaBlock(alphaBlock, (CMP_GLOBAL CGU_UINT32 *)compressedBlock);
+
+  CGU_Vec2ui cmpBlock;
+
+  cmpBlock = cmp_compressAlphaBlock(alphaBlock,BC15options->m_fquality);
+  compressedBlock[0] = cmpBlock.x;
+  compressedBlock[1] = cmpBlock.y;
 }
 
 void DecompressBC4_Internal(CMP_GLOBAL CGU_UINT8 rgbaBlock[64],
@@ -48,7 +52,7 @@ void DecompressBC4_Internal(CMP_GLOBAL CGU_UINT8 rgbaBlock[64],
                             const CMP_BC15Options *BC15options) {
   if (BC15options) {}
   CGU_UINT8 alphaBlock[BLOCK_SIZE_4X4];
-  DecompressAlphaBlock(alphaBlock, compressedBlock);
+  cmp_decompressAlphaBlock(alphaBlock, compressedBlock);
 
   CGU_UINT8 blkindex = 0;
   CGU_UINT8 srcindex = 0;
@@ -63,18 +67,27 @@ void DecompressBC4_Internal(CMP_GLOBAL CGU_UINT8 rgbaBlock[64],
   }
 }
 
-void CompressBlockBC4_SingleChannel(const CGU_UINT8 srcBlockTemp[16],
+void CompressBlockBC4_SingleChannel(const CGU_UINT8 srcBlockTemp[BLOCK_SIZE_4X4],
                                CMP_GLOBAL CGU_UINT32 compressedBlock[2],
                                CMP_GLOBAL const CMP_BC15Options *BC15options) {
   if (BC15options) {}
-  CompressAlphaBlock(srcBlockTemp, (CMP_GLOBAL CGU_UINT32 *)compressedBlock);
+  CGU_FLOAT  alphaBlock[BLOCK_SIZE_4X4];
+
+  for (CGU_INT32 i = 0; i < BLOCK_SIZE_4X4; i++) alphaBlock[i] = (srcBlockTemp[i] / 255.0f);
+
+  CGU_Vec2ui cmpBlock;
+  cmpBlock = cmp_compressAlphaBlock(alphaBlock,BC15options->m_fquality);
+  compressedBlock[0] = cmpBlock.x;
+  compressedBlock[1] = cmpBlock.y;
+
+
 }
 
 void DecompressBlockBC4_SingleChannel(CGU_UINT8 srcBlockTemp[16],
                             const CGU_UINT32 compressedBlock[2],
                             const CMP_BC15Options *BC15options) {
   if (BC15options) {}
-  DecompressAlphaBlock(srcBlockTemp, compressedBlock);
+  cmp_decompressAlphaBlock(srcBlockTemp, compressedBlock);
 }
 
 //============================================== USER INTERFACES ========================================================
@@ -161,7 +174,7 @@ int CMP_CDECL DecompressBlockBC4(const unsigned char cmpBlock[8],
 #endif
 
 //============================================== OpenCL USER INTERFACE ====================================================
-#ifdef ASPM_GPU
+#ifdef ASPM_OPENCL
 CMP_STATIC CMP_KERNEL void CMP_GPUEncoder(
     CMP_GLOBAL const CMP_Vec4uc *ImageSource,
     CMP_GLOBAL CGU_UINT8 *ImageDestination, CMP_GLOBAL Source_Info *SourceInfo,

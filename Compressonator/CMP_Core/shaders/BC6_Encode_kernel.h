@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2018    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -22,6 +22,8 @@
 //=====================================================================
 #ifndef BC6_ENCODE_KERNEL_H
 #define BC6_ENCODE_KERNEL_H
+
+#pragma warning(disable:4505)  // disable warnings on unreferenced local function has been removed
 
 #include "Common_Def.h"
 
@@ -127,25 +129,25 @@ typedef struct
 
 __constant ModePartitions ModePartition[MAX_BC6H_MODES + 1] =
 {
-   0,    0,0,0,        0,    0,    0,    0,     0,   // Mode = Invaild
+   {0,     {0,0,0},       0,    0,    0,    0,     0},   // Mode = Invaild
 
    // Two region Partition
-   10,   5,5,5,        1,    2,    3,    0x00,  31,    // Mode = 1
-   7,    6,6,6,        1,    2,    3,    0x01,  248,   // Mode = 2
-   11,   5,4,4,        1,    5,    3,    0x02,  15,    // Mode = 3
-   11,   4,5,4,        1,    5,    3,    0x06,  15,    // Mode = 4 
-   11,   4,4,5,        1,    5,    3,    0x0a,  15,    // Mode = 5
-   9,    5,5,5,        1,    5,    3,    0x0e,  62,    // Mode = 6
-   8,    6,5,5,        1,    5,    3,    0x12,  124,   // Mode = 7
-   8,    5,6,5,        1,    5,    3,    0x16,  124,   // Mode = 8
-   8,    5,5,6,        1,    5,    3,    0x1a,  124,   // Mode = 9
-   6,    6,6,6,        0,    5,    3,    0x1e,  496,   // Mode = 10
+   { 10,   {5,5,5},       1,    2,    3,    0x00,  31 },    // Mode = 1
+   { 7,    {6,6,6},       1,    2,    3,    0x01,  248},   // Mode = 2
+   { 11,   {5,4,4},       1,    5,    3,    0x02,  15 },    // Mode = 3
+   { 11,   {4,5,4},       1,    5,    3,    0x06,  15 },    // Mode = 4 
+   { 11,   {4,4,5},       1,    5,    3,    0x0a,  15 },    // Mode = 5
+   { 9,    {5,5,5},       1,    5,    3,    0x0e,  62 },    // Mode = 6
+   { 8,    {6,5,5},       1,    5,    3,    0x12,  124},   // Mode = 7
+   { 8,    {5,6,5},       1,    5,    3,    0x16,  124},   // Mode = 8
+   { 8,    {5,5,6},       1,    5,    3,    0x1a,  124},   // Mode = 9
+   { 6,    {6,6,6},       0,    5,    3,    0x1e,  496},   // Mode = 10
 
    // One region Partition    
-   10,   10,10,10,     0,    5,    4,    0x03,  31,    // Mode = 11
-   11,   9,9,9,        1,    5,    4,    0x07,  15,    // Mode = 12
-   12,   8,8,8,        1,    5,    4,    0x0b,  7,     // Mode = 13
-   16,   4,4,4,        1,    5,    4,    0x0f,  1,     // Mode = 14
+   {10,   {10,10,10},     0,    5,    4,    0x03,  31},    // Mode = 11
+   {11,   {9,9,9   },     1,    5,    4,    0x07,  15},    // Mode = 12
+   {12,   {8,8,8   },     1,    5,    4,    0x0b,  7 },     // Mode = 13
+   {16,   {4,4,4   },     1,    5,    4,    0x0f,  1 }     // Mode = 14
 };
 
 //================================================

@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2018    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -20,70 +20,50 @@
 // THE SOFTWARE.
 //
 //=====================================================================
+
 #include "BC2_Encode_kernel.h"
 
 //============================================== BC2 INTERFACES =======================================================
-
-void DXTCV11CompressExplicitAlphaBlock(const CGU_UINT8 block_8[16], CMP_GLOBAL CGU_UINT32 block_dxtc[2])
-{
-    CGU_UINT8 i;
-    block_dxtc[0] = block_dxtc[1] = 0;
-    for (i = 0; i < 16; i++)
-    {
-        int v = block_8[i];
-        v = (v + 7 - (v >> 4));
-        v >>= 4;
-        if (v < 0)
-            v = 0;
-        if (v > 0xf)
-            v = 0xf;
-        if (i < 8)
-            block_dxtc[0] |= v << (4 * i);
-        else
-            block_dxtc[1] |= v << (4 * (i - 8));
-    }
-}
-
-#define EXPLICIT_ALPHA_PIXEL_MASK 0xf
-#define EXPLICIT_ALPHA_PIXEL_BPP  4
-
-CGU_INT CompressExplicitAlphaBlock(const CGU_UINT8 alphaBlock[BLOCK_SIZE_4X4], 
-    CMP_GLOBAL CGU_UINT32 compressedBlock[2])
-{
-    DXTCV11CompressExplicitAlphaBlock(alphaBlock, compressedBlock);
-    return CGU_CORE_OK;
-}
 
 void  CompressBlockBC2_Internal(const CMP_Vec4uc srcBlockTemp[16],
                                 CMP_GLOBAL CGU_UINT32 compressedBlock[4],
                                 CMP_GLOBAL const CMP_BC15Options *BC15options)
 {
-    CGU_UINT8    blkindex = 0;
-    CGU_UINT8    srcindex = 0;
-    CGU_UINT8    rgbaBlock[64];
-    for (CGU_INT32 j = 0; j < 4; j++) {
-        for (CGU_INT32 i = 0; i < 4; i++) {
-            rgbaBlock[blkindex++] = (CGU_UINT8)srcBlockTemp[srcindex].z;  // B
-            rgbaBlock[blkindex++] = (CGU_UINT8)srcBlockTemp[srcindex].y;  // G
-            rgbaBlock[blkindex++] = (CGU_UINT8)srcBlockTemp[srcindex].x;  // R
-            rgbaBlock[blkindex++] = (CGU_UINT8)srcBlockTemp[srcindex].w;  // A
-            srcindex++;
-        }
+
+    CGU_Vec2ui  cmpBlock;
+    CGU_Vec3f   rgbBlock[16];
+    CGU_FLOAT   BlockA[16];
+
+    for (CGU_INT32 i = 0; i < 16; i++) {
+        rgbBlock[i].x = (CGU_FLOAT)(srcBlockTemp[i].x & 0xFF)/255.0f;   // R
+        rgbBlock[i].y = (CGU_FLOAT)(srcBlockTemp[i].y & 0xFF)/255.0f;   // G
+        rgbBlock[i].z = (CGU_FLOAT)(srcBlockTemp[i].z & 0xFF)/255.0f;   // B
+        BlockA[i]     = (CGU_FLOAT)(srcBlockTemp[i].w & 0xFF)/255.0f;   // A
     }
 
-    CGU_UINT8 alphaBlock[BLOCK_SIZE_4X4];
-    for (CGU_INT32 i = 0; i < 16; i++)
-        alphaBlock[i] = (CGU_UINT8)(((CGU_INT32*)rgbaBlock)[i] >> RGBA8888_OFFSET_A);
+    cmpBlock = cmp_compressExplicitAlphaBlock(BlockA);
+    compressedBlock[DXTC_OFFSET_ALPHA  ] = cmpBlock.x;
+    compressedBlock[DXTC_OFFSET_ALPHA+1] = cmpBlock.y;
 
     // Need a copy, as CalculateColourWeightings sets variables in the BC15options
     CMP_BC15Options internalOptions = *BC15options;
-    CalculateColourWeightings(rgbaBlock, &internalOptions);
+    internalOptions             = CalculateColourWeightings3f(rgbBlock, internalOptions);
+    internalOptions.m_bUseAlpha = false;
+    CGU_Vec3f  channelWeights   = {internalOptions.m_fChannelWeights[0],internalOptions.m_fChannelWeights[1],internalOptions.m_fChannelWeights[2]};
+    CGU_Vec3f MinColor = {0,0,0}, MaxColor={0,0,0};
 
-    CGU_INT err = CompressExplicitAlphaBlock(alphaBlock, &compressedBlock[DXTC_OFFSET_ALPHA]);
-    if (err != 0)
-        return;
+    cmpBlock = CompressBlockBC1_RGBA_Internal(
+                 rgbBlock, 
+                 BlockA,
+                 channelWeights,
+                 0,//internalOptions.m_nAlphaThreshold,
+                 1, //internalOptions.m_nRefinementSteps
+                 internalOptions.m_fquality,
+                 FALSE);
 
-    CompressRGBBlock(rgbaBlock, &compressedBlock[DXTC_OFFSET_RGB], &internalOptions,FALSE,FALSE,0);
+    compressedBlock[DXTC_OFFSET_RGB]   = cmpBlock.x;
+    compressedBlock[DXTC_OFFSET_RGB+1] = cmpBlock.y;
+
 }
 
 //============================================== USER INTERFACES ========================================================
@@ -141,6 +121,9 @@ int CMP_CDECL SetChannelWeightsBC2(void *options,
     return CGU_CORE_OK;
 }
 
+#define EXPLICIT_ALPHA_PIXEL_MASK 0xf
+#define EXPLICIT_ALPHA_PIXEL_BPP  4
+
 // Decompresses an explicit alpha block (DXT3)
 void DecompressExplicitAlphaBlock(CGU_UINT8 alphaBlock[BLOCK_SIZE_4X4],
     const CGU_UINT32 compressedBlock[2])
@@ -160,7 +143,13 @@ void DecompressBC2_Internal(CMP_GLOBAL CGU_UINT8 rgbaBlock[BLOCK_SIZE_4X4X4],
     CGU_UINT8 alphaBlock[BLOCK_SIZE_4X4];
 
     DecompressExplicitAlphaBlock(alphaBlock, &compressedBlock[DXTC_OFFSET_ALPHA]);
-    DecompressDXTRGB_Internal(rgbaBlock, &compressedBlock[DXTC_OFFSET_RGB],BC15options);
+
+
+    CGU_Vec2ui compBlock;
+    compBlock.x = compressedBlock[DXTC_OFFSET_RGB];
+    compBlock.y = compressedBlock[DXTC_OFFSET_RGB+1];
+
+    cmp_decompressDXTRGBA_Internal(rgbaBlock, compBlock,BC15options->m_mapDecodeRGBA);
 
     for (CGU_UINT32 i = 0; i < 16; i++)
         ((CMP_GLOBAL CGU_UINT32*)rgbaBlock)[i] = (alphaBlock[i] << RGBA8888_OFFSET_A) | (((CMP_GLOBAL CGU_UINT32*)rgbaBlock)[i] & ~(BYTE_MASK << RGBA8888_OFFSET_A));
@@ -219,7 +208,7 @@ int CMP_CDECL DecompressBlockBC2(const unsigned char cmpBlock[16],
 #endif
 
 //============================================== OpenCL USER INTERFACE ========================================================
-#ifdef ASPM_GPU
+#ifdef ASPM_OPENCL
 CMP_STATIC CMP_KERNEL void CMP_GPUEncoder(
     CMP_GLOBAL  const CMP_Vec4uc*   ImageSource,
     CMP_GLOBAL  CGU_UINT8*          ImageDestination,

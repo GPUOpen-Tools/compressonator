@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2018    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -26,23 +26,5 @@
 #include "Common_Def.h"
 #include "BCn_Common_Kernel.h"
 
-#define CS_RED(r, g, b)        (r)
-#define CS_GREEN(r, g, b)    (g)
-#define CS_BLUE(r, g, b)    ((b+g)*0.5f)
-#define DCS_RED(r, g, b)    (r)
-#define DCS_GREEN(r, g, b)    (g)
-#define DCS_BLUE(r, g, b)    ((2.0f*b)-g)
-#define BYTEPP 4
-#define BC1CompBlockSize    8
-
-
-#define ROUND_AND_CLAMP(v, shift)    \
-{\
-    if (v < 0) v = 0;\
-    else if (v > 255) v = 255;\
-    else v += (0x80>>shift) - (v>>shift);\
-}
-
-#define POS(x,y) (pos_on_axis[(x)+(y)*4])
 
 #endif
