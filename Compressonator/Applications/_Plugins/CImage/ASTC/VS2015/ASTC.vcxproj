@@ -178,7 +178,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../Header;../../../../../../Common/Lib/Ext/OpenCV/2.49/include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/OpenCV/2.49/include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -201,7 +201,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../Header;../../../../../../Common/Lib/Ext/OpenCV/2.49/include;$(AMDCOMPRESS_ROOT)\SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/OpenCV/2.49/include;$(AMDCOMPRESS_ROOT)\SDK\include</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
@@ -227,7 +227,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../Header;../../../../../../Common/Lib/Ext/OpenCV/2.49/include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/OpenCV/2.49/include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -248,7 +248,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../Header;../../../../../../Common/Lib/Ext/OpenCV/2.49/include;$(AMDCOMPRESS_ROOT)\SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/OpenCV/2.49/include;$(AMDCOMPRESS_ROOT)\SDK\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -272,7 +272,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../Header;../../../../../../Common/Lib/Ext/OpenCV/2.49/include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/OpenCV/2.49/include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -299,7 +299,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../Header;../../../../../../Common/Lib/Ext/OpenCV/2.49/include;$(AMDCOMPRESS_ROOT)\SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/OpenCV/2.49/include;$(AMDCOMPRESS_ROOT)\SDK\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -326,7 +326,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../Header;../../../../../../Common/Lib/Ext/OpenCV/2.49/include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/OpenCV/2.49/include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -352,7 +352,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../Header;../../../../../../Common/Lib/Ext/OpenCV/2.49/include;$(AMDCOMPRESS_ROOT)\SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/OpenCV/2.49/include;$(AMDCOMPRESS_ROOT)\SDK\include</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>

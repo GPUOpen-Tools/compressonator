@@ -652,9 +652,9 @@ DXGI_FORMAT CMP2DXGIFormat(CMP_FORMAT cmp_format)
     case CMP_FORMAT_ETC2_RGBA1:
     case CMP_FORMAT_ETC2_SRGBA:
     case CMP_FORMAT_ETC2_SRGBA1:
-#ifdef USE_GTC
+//#ifdef USE_GTC
     case CMP_FORMAT_GTC:
-#endif
+//#endif
 #ifdef USE_BASIS
     case CMP_FORMAT_BASIS:
 #endif

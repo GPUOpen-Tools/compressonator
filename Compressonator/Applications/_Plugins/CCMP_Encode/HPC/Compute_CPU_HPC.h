@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2019    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -28,23 +28,13 @@
 
 #define __CL_ENABLE_EXCEPTIONS
 
-//#include <CL/opencl.h>
-
 #include "Compressonator.h"
-//#include "crc32.h"
+#include "query_timer.h"
 
 #include <thread>
 #include <atomic>
 
 #define MAX_ENCODER_THREADS 128
-
-//typedef enum _CODECError
-//{
-//    CE_OK = 0,
-//    CE_Unknown,
-//    CE_Aborted,
-//} CodecError;
-
 
 struct ThreadParam
 {
@@ -59,18 +49,34 @@ struct ThreadParam
 
 using namespace CMP_Compute_Base;
 
-class CCPU_HPC :public RenderWindow
+class CCPU_HPC :public ComputeBase
 {
 public:
     CCPU_HPC(void *kerneloptions);
     ~CCPU_HPC();
-    virtual CMP_ERROR   Compress(KernelOptions *Options, MipSet  &SrcTexture, MipSet  &destTexture,CMP_Feedback_Proc pFeedback);
-    virtual void        SetComputeOptions(ComputeOptions *CLOptions);
+    CMP_ERROR   Compress(KernelOptions *Options, MipSet  &SrcTexture, MipSet  &destTexture,CMP_Feedback_Proc pFeedback);
+    void        SetComputeOptions(ComputeOptions *CLOptions);
+    float       GetProcessElapsedTimeMS();
+    float       GetMTxPerSec();
+    int         GetBlockSize();
+    const char* GetDeviceName();
+    const char* GetVersion();
+    int         GetMaxUCores();
 
 private:
     // Encoders
-     CMP_Encoder*  m_encoder[MAX_ENCODER_THREADS];
+    CMP_Encoder*  m_encoder[MAX_ENCODER_THREADS];
 
+    // Performance Info
+    CGU_FLOAT           m_computeShaderElapsedMS;       // Total Elapsed GPU Compute Time to process all the blocks
+    CGU_INT             m_num_blocks;                   // Number of 4x4 pixel blocks
+    CGU_FLOAT           m_CmpMTxPerSec;                 // Number of Texels per second
+    // Device Info
+    std::string          m_deviceName;
+    std::string          m_version;
+    int                  m_maxUCores;
+
+    cmp_cputimer m_cputimer;
     // Thread Code
     ThreadParam*    m_EncodeParameterStorage;
     std::thread*    m_EncodingThreadHandle;
@@ -81,8 +87,8 @@ private:
     void            DeleteEncoderThreadPool();
     void            FinishThreadEncoding();
     CodecError      EncodeThreadBlock(int x, int y, void *in, void *out);
-	bool            m_ThreadCodecInitialized;
-;
+    bool            m_ThreadCodecInitialized;
+
     // Image data
     std::string      m_source_file;
     CMP_FORMAT       m_current_format;

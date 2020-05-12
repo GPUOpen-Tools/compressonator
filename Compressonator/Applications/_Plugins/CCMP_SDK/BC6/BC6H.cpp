@@ -38,9 +38,9 @@ void *make_Plugin_BC6H_SF() { return new Plugin_BC6H; }
 
 using namespace BC6H_FILE;
 
-#define OPENCL_BC6H_COMPUTEFILE   "./plugins/Compute/BC6_Encode_kernel.cpp"
-#define DIRECTX_BC6H_COMPUTEFILE  "./plugins/Compute/BC6_compress"
-#define VULKAN_BC6H_COMPUTEFILE   "./plugins/Compute/BC6.spv"
+#define GPU_OCL_BC6H_COMPUTEFILE    "./plugins/Compute/BC6_Encode_kernel.cpp"
+#define GPU_DXC_BC6H_COMPUTEFILE    "./plugins/Compute/BC6_Encode_kernel.hlsl"
+// ToDo #define VULKAN_BC6H_COMPUTEFILE     "./plugins/Compute/BC6.spv"
 
 
 extern void CompressBlockBC6_Internal(CMP_GLOBAL  unsigned char*outdata, 
@@ -84,15 +84,13 @@ char *Plugin_BC6H::TC_ComputeSourceFile(unsigned int     Compute_type)
     case CMP_Compute_type::CMP_HPC:
         // ToDo : Add features
         break;
-#ifdef USE_GPUEncoders
     case CMP_Compute_type::CMP_GPU:
     case CMP_Compute_type::CMP_GPU_OCL:
-        return(OPENCL_BC6H_COMPUTEFILE);
+        return(GPU_OCL_BC6H_COMPUTEFILE);
     case CMP_Compute_type::CMP_GPU_DXC:
-        return(DIRECTX_BC6H_COMPUTEFILE);
-    case CMP_Compute_type::CMP_GPU_VLK:
-        return(VULKAN_BC6H_COMPUTEFILE);
-#endif
+        return(GPU_DXC_BC6H_COMPUTEFILE);
+//    case CMP_Compute_type::CMP_GPU_VLK:
+//        return(VULKAN_BC6H_COMPUTEFILE);
     }
     return ("");
 }

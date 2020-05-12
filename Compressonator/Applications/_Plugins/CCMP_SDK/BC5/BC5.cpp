@@ -27,6 +27,12 @@
 
 //#define BUILD_AS_PLUGIN_DLL
 
+#ifdef USE_CONVECTION_KERNELS
+#pragma comment(lib, "ConvectionKernels.lib")
+#include "ConvectionKernels.h"
+using namespace cvtt;
+#endif
+
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_BC5)
 SET_PLUGIN_TYPE("ENCODER")
@@ -37,7 +43,8 @@ void *make_Plugin_BC5() { return new Plugin_BC5; }
 
 CMP_BC15Options  g_BC5Encode;
 
-#define GPU_BC5_COMPUTEFILE  "./plugins/Compute/BC5_Encode_kernel.cpp"
+#define GPU_OCL_BC5_COMPUTEFILE         "./plugins/Compute/BC5_Encode_kernel.cpp"
+#define GPU_DXC_BC5_COMPUTEFILE         "./plugins/Compute/BC5_Encode_kernel.hlsl"
 
 extern void CompressBlockBC5_Internal(
     CMP_Vec4uc srcBlockTemp[16],
@@ -84,14 +91,14 @@ char *Plugin_BC5::TC_ComputeSourceFile(CGU_UINT32  Compute_type)
 {
     switch (Compute_type)
     {
-    case CMP_Compute_type::CMP_HPC:
-        // ToDo : Add features
-        break;
-#ifdef USE_GPUEncoders
+        case CMP_Compute_type::CMP_HPC:
+            // ToDo : Add features
+            break;
         case CMP_Compute_type::CMP_GPU:
         case CMP_Compute_type::CMP_GPU_OCL:
-            return(GPU_BC5_COMPUTEFILE);
-#endif
+            return(GPU_OCL_BC5_COMPUTEFILE);
+        case CMP_Compute_type::CMP_GPU_DXC:
+            return(GPU_DXC_BC5_COMPUTEFILE);
     }
     return ("");
 }
@@ -108,6 +115,7 @@ int Plugin_BC5::TC_Init(void  *kernel_options)
     SetDefaultBC15Options(&g_BC5Encode);
     g_BC5Encode.m_src_width = m_KernelOptions->width;
     g_BC5Encode.m_src_height = m_KernelOptions->height;
+    g_BC5Encode.m_fquality   = m_KernelOptions->fquality;
 
     m_KernelOptions->data = &g_BC5Encode;
     m_KernelOptions->size = sizeof(g_BC5Encode);
@@ -143,12 +151,80 @@ int BC5_EncodeClass::CompressBlock(void *srcin, void *cmpout, void *blockoptions
 
 int BC5_EncodeClass::CompressTexture(void *srcin, void *cmpout,void *processOptions)
 {
-    // ToDo: Implement texture level compression
-    if (processOptions == NULL) return -1;
-    if (srcin == NULL) return -1;
-    if (cmpout == NULL) return -1;
-    // MipSet* pSourceTexture  =  reinterpret_cast<MipSet *>(srcin);
-    // MipSet* pDestTexture    =  reinterpret_cast<MipSet *>(cmpout);
+    (cmpout);
+    (processOptions);
+    MipSet* pSourceTexture =  reinterpret_cast<MipSet *>(srcin);
+
+    CMP_DWORD src_height       = pSourceTexture->dwHeight;
+    CMP_DWORD src_width      = pSourceTexture->dwWidth;
+
+    CMP_DWORD width_in_blocks = src_width / 4;
+    CMP_DWORD height_in_blocks = src_height / 4;
+    int stride = src_width * BYTEPP;
+    int blockOffset = 0;
+    int srcidx;
+
+#ifdef USE_CONVECTION_KERNELS
+    PixelBlockU8 pBlocks[8] = {0};
+    CMP_BYTE results[128];  // 8x16
+#endif
+
+    for (CMP_DWORD by = 0; by < height_in_blocks; by++)
+    {
+       for (CMP_DWORD bx = 0; bx < width_in_blocks; bx++)
+       {
+           int srcOffset = (bx*BlockX*BYTEPP) + (by*stride*BYTEPP);
+
+           // Copy src block into Texel
+           blockOffset = 0;
+           for (int i = 0; i < BlockX; i++)
+           {
+               srcidx = i*stride;
+               for (int j = 0; j < BlockY; j++)
+               {
+                   unsigned char R,G,B,A;
+                   R = (pSourceTexture->pData[srcOffset + srcidx++]);  // 
+                   G = (pSourceTexture->pData[srcOffset + srcidx++]);  // 
+                   B = (pSourceTexture->pData[srcOffset + srcidx++]);  // 
+                   A = (pSourceTexture->pData[srcOffset + srcidx++]);  // 
+
+                   //printf("[%2d,%2d] [%2d][%2d] %2d,%2d,%2d,%2d\n",bx,by,numBlocks,blockOffset,R,G,B,A);
+                   #ifdef USE_CONVECTION_KERNELS
+                    pBlocks[numBlocks].m_pixels[blockOffset][0] = R;
+                    pBlocks[numBlocks].m_pixels[blockOffset][1] = G;
+                    pBlocks[numBlocks].m_pixels[blockOffset][2] = B;
+                    pBlocks[numBlocks].m_pixels[blockOffset][3] = A;
+                   #endif
+                   blockOffset++;
+               }
+           }
+
+#ifdef USE_CONVECTION_KERNELS
+           numBlocks++;
+           numBlocksProcessed++;
+
+           // we are at 8 blocks 
+           if ((numBlocks == 8)||( numBlocksProcessed >= maxBlocks))
+           {
+               cvtt::Options options;
+               options.flags = Flags::Default;
+               Kernels::EncodeBC5U(results,pBlocks,options);
+
+               // save results
+               for (int i=0; i< numBlocks; i++)
+               {
+                   for (int j=0;j<16; j++)
+                   {
+                       pdest[j] = results[i*16+j];
+                   }
+                   pdest += 16; // next comp data block to store results
+               }
+               numBlocks = 0;
+           }
+#endif
+
+       }
+    }
     return 0;
 }
 

@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2019    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -26,8 +26,6 @@
 #include "TC_PluginInternal.h"
 #include "Compressonator.h"
 #include "CCPU_HPC.h"
-
-
 
 CMIPS *CMips = NULL;
 
@@ -77,6 +75,33 @@ int Plugin_CCPU_HPC::TC_Init(void  *kernel_options)
         return -1;
     return 0;
 }
+
+CMP_ERROR Plugin_CCPU_HPC::TC_GetPerformanceStats(void* pPerfStats) {
+    CMP_ERROR result = CMP_ERR_NOPERFSTATS;
+    if (m_pComputeBase)
+    {
+       KernelPerformanceStats *PerfStats =  reinterpret_cast<KernelPerformanceStats *>(pPerfStats);
+       PerfStats->m_num_blocks  = m_pComputeBase->GetBlockSize();
+       PerfStats->m_computeShaderElapsedMS = m_pComputeBase->GetProcessElapsedTimeMS();
+       PerfStats->m_CmpMTxPerSec  = m_pComputeBase->GetMTxPerSec();
+       result = CMP_OK;
+    }
+    return result;
+}
+
+CMP_ERROR Plugin_CCPU_HPC::TC_GetDeviceInfo(void* pDeviceInfo) {
+    CMP_ERROR result = CMP_ERR_NOPERFSTATS;
+    if (m_pComputeBase)
+    {
+       KernelDeviceInfo *DeviceInfo =  reinterpret_cast<KernelDeviceInfo *>(pDeviceInfo);
+       snprintf(DeviceInfo->m_deviceName,sizeof(DeviceInfo->m_deviceName),"%s",m_pComputeBase->GetDeviceName());
+       snprintf(DeviceInfo->m_version,sizeof(DeviceInfo->m_version),"%s",m_pComputeBase->GetVersion());
+       DeviceInfo->m_maxUCores      = m_pComputeBase->GetMaxUCores();
+       result = CMP_OK;
+    }
+    return result;
+}
+
 #ifdef ENABLE_MAKE_COMPATIBLE_API
 bool Plugin_CCPU_HPC::IsFloatFormat(CMP_FORMAT InFormat)
 {
@@ -120,7 +145,7 @@ inline float knee(double x, double f)
     return float(log(x * f + 1.f) / f);
 }
 
-float findKneeValueHPC(float x, float y)
+float Plugin_CCPU_HPC::findKneeValueHPC(float x, float y)
 {
     float f0 = 0;
     float f1 = 1.f;
@@ -145,7 +170,6 @@ float findKneeValueHPC(float x, float y)
     return (f0 + f1) / 2.f;
 }
 
-
 CMP_ERROR Plugin_CCPU_HPC::CF_16BitTo8Bit(CMP_WORD* sBlock, CMP_BYTE* cBlock, CMP_DWORD dwBlockSize)
 {
     assert(sBlock);
@@ -161,7 +185,6 @@ CMP_ERROR Plugin_CCPU_HPC::CF_16BitTo8Bit(CMP_WORD* sBlock, CMP_BYTE* cBlock, CM
 
     return CMP_OK;
 }
-
 
 CMP_ERROR Plugin_CCPU_HPC::Byte2HalfShort(CMP_HALFSHORT* hfsBlock, CMP_BYTE* cBlock, CMP_DWORD dwBlockSize)
 {
@@ -197,8 +220,8 @@ CMP_ERROR Plugin_CCPU_HPC::Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, MipS
         float scale = (float)255.0 * powf(luminance3f, invGamma);
         int i = 0;
 
-        for (int y = 0; y < srcTexture.dwHeight; y++) {
-            for (int x = 0; x < srcTexture.dwWidth; x++) {
+        for (unsigned int y = 0; y < srcTexture.dwHeight; y++) {
+            for (unsigned int x = 0; x < srcTexture.dwWidth; x++) {
                 if (srcTexture.m_ChannelFormat == CF_Float16) {
                     r = (float)(*hfData);
                     hfData++;
@@ -310,8 +333,6 @@ CMP_ERROR Plugin_CCPU_HPC::Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, MipS
 
 CMP_ERROR Plugin_CCPU_HPC::TC_Compress(void *Options, MipSet  &SrcTexture, MipSet  &destTexture,CMP_Feedback_Proc pFeedback)
 {
-    //QUERY_PERFORMANCE("CMP HPC         ",CMips);
-
     CMP_ERROR result = CMP_OK;
 
 #ifdef ENABLE_MAKE_COMPATIBLE_API

@@ -83,8 +83,6 @@ int Plugin_TGA::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
    {
        TGA_CMips = &lCMips;
    }
-   else
-       TGA_CMips->PrintError(("Test"));
 
    // ATI code
    FILE* pFile = NULL;

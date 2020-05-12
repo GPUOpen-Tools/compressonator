@@ -101,7 +101,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>BUILD_AS_PLUGIN_DLL;_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;_DEBUG;_WINDOWS;_USRDLL;MESH_OPTIMIZER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\Common;..\..\..\..\..\Applications\_Libs\CMP_MeshOptimizer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_MeshOptimizer/;$(Compressonator_BOOST);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -124,7 +124,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>BUILD_AS_PLUGIN_DLL;_CRT_SECURE_NO_WARNINGS;_DEBUG;_WINDOWS;_USRDLL;MESH_OPTIMIZER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\Common;..\..\..\..\..\Applications\_Libs\CMP_MeshOptimizer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_MeshOptimizer/;$(Compressonator_BOOST);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -149,7 +149,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_AS_PLUGIN_DLL;_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;NDEBUG;_WINDOWS;_USRDLL;MESH_OPTIMIZER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\Common;..\..\..\..\..\Applications\_Libs\CMP_MeshOptimizer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_MeshOptimizer/;$(Compressonator_BOOST);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -176,7 +176,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILD_AS_PLUGIN_DLL;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;_USRDLL;MESH_OPTIMIZER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0;..\..\..\Common;..\..\..\..\..\Applications\_Libs\CMP_MeshOptimizer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_MeshOptimizer/;$(Compressonator_BOOST);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>

@@ -178,7 +178,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header;../../../../../../common/Lib/Ext/zLib/1.2.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/../common/Lib/Ext/zLib/1.2.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile />
       <PrecompiledHeaderOutputFile />
     </ClCompile>
@@ -203,7 +203,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header;../../../../../../common/Lib/Ext/zLib/1.2.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/../common/Lib/Ext/zLib/1.2.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>
@@ -229,7 +229,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header;../../../../../../common/Lib/Ext/zLib/1.2.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/../common/Lib/Ext/zLib/1.2.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -251,7 +251,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header;../../../../../../common/Lib/Ext/zLib/1.2.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/../common/Lib/Ext/zLib/1.2.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -275,7 +275,7 @@
       </FunctionLevelLinking>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header;../../../../../../common/Lib/Ext/zLib/1.2.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/../common/Lib/Ext/zLib/1.2.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -299,7 +299,7 @@
       </FunctionLevelLinking>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header;../../../../../../common/Lib/Ext/zLib/1.2.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/../common/Lib/Ext/zLib/1.2.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -324,7 +324,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header;../../../../../../common/Lib/Ext/zLib/1.2.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/../common/Lib/Ext/zLib/1.2.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -351,7 +351,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header;../../../../../../common/Lib/Ext/zLib/1.2.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/../common/Lib/Ext/zLib/1.2.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>

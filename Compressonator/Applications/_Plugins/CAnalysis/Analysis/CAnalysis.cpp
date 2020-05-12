@@ -100,6 +100,7 @@ Plugin_Canalysis::Plugin_Canalysis()
     m_MipSrcImages    = NULL;
     m_MipDestImages   = NULL;
     m_MipDiffImages   = NULL;
+    m_RGBAChannels    = 0b1111;
 
 }
 
@@ -576,11 +577,24 @@ bool Plugin_Canalysis::psnr(QImage *src, Mat srcimg, QImage *dest, Mat destimg, 
     if (w == 4 && h == 4)
         generateBCtestResult(src, dest, myReport);
 
-    for (int y = 0; y < h; y++){
-        for (int x = 0; x < w; x++){
-            bMSE += pow(qBlue(src->pixel(x, y)) - qBlue(dest->pixel(x, y)), 2.0);
-            gMSE += pow(qGreen(src->pixel(x, y)) - qGreen(dest->pixel(x, y)), 2.0);
-            rMSE += pow(qRed(src->pixel(x, y)) - qRed(dest->pixel(x, y)), 2.0);
+    unsigned char dR,dG,dB;
+    unsigned char sR,sG,sB;
+
+    for (int y = 0; y < h; y++) {
+        for (int x = 0; x < w; x++) {
+
+            sB = qBlue (src->pixel(x, y));
+            sG = qGreen(src->pixel(x, y));
+            sR = qRed  (src->pixel(x, y));
+
+            dB = qBlue (dest->pixel(x, y));
+            dG = qGreen(dest->pixel(x, y));
+            dR = qRed  (dest->pixel(x, y));
+
+            rMSE += pow(sR - dR, 2.0);
+            gMSE += pow(sG - dG, 2.0);
+            bMSE += pow(sB - dB, 2.0);
+
         }
 
         if (pFeedbackProc)
@@ -605,23 +619,93 @@ bool Plugin_Canalysis::psnr(QImage *src, Mat srcimg, QImage *dest, Mat destimg, 
     gMSE *= (1.0 / (w*h));
     rMSE *= (1.0 / (w*h));
 
-    myReport.MSE =(bMSE + gMSE + rMSE) / 3;
-    myReport.PSNR_Blue = -1;
+    myReport.PSNR_Blue  = -1;
     myReport.PSNR_Green = -1;
-    myReport.PSNR_Red = -1;
+    myReport.PSNR_Red   = -1;
 
-    if (bMSE != 0)
-        myReport.PSNR_Blue = 20 * log10(pow(2.0, 8.0) - 1) - 10 * log10(bMSE);
-    if (gMSE != 0)
-        myReport.PSNR_Green = 20 * log10(pow(2.0, 8.0) - 1) - 10 * log10(gMSE);
-    if (rMSE != 0)
-        myReport.PSNR_Red = 20 * log10(pow(2.0, 8.0) - 1) - 10 * log10(rMSE);
-    if (myReport.MSE != 0)
-        myReport.PSNR = 20 * log10(pow(2.0, 8.0) - 1) - 10 * log10(myReport.MSE);
+    switch (m_RGBAChannels)
+    {
+        case 0b0001:
+                    myReport.MSE        = rMSE;
+                    if (rMSE != 0)
+                        myReport.PSNR_Red = 20 * log10(pow(2.0, 8.0) - 1) - 10 * log10(rMSE);
+                    if (myReport.MSE != 0)
+                        myReport.PSNR = 20 * log10(pow(2.0, 8.0) - 1) - 10 * log10(myReport.MSE);
+                    break;
+        case 0b0011:
+                    myReport.MSE        = (gMSE + rMSE) / 2;
+                    if (gMSE != 0)
+                        myReport.PSNR_Green = 20 * log10(pow(2.0, 8.0) - 1) - 10 * log10(gMSE);
+                    if (rMSE != 0)
+                        myReport.PSNR_Red = 20 * log10(pow(2.0, 8.0) - 1) - 10 * log10(rMSE);
+                    if (myReport.MSE != 0)
+                        myReport.PSNR = 20 * log10(pow(2.0, 8.0) - 1) - 10 * log10(myReport.MSE);
+                    break;
+        default:
+                    myReport.MSE        = (bMSE + gMSE + rMSE) / 3;
+                    if (bMSE != 0)
+                        myReport.PSNR_Blue = 20 * log10(pow(2.0, 8.0) - 1) - 10 * log10(bMSE);
+                    if (gMSE != 0)
+                        myReport.PSNR_Green = 20 * log10(pow(2.0, 8.0) - 1) - 10 * log10(gMSE);
+                    if (rMSE != 0)
+                        myReport.PSNR_Red = 20 * log10(pow(2.0, 8.0) - 1) - 10 * log10(rMSE);
+                    if (myReport.MSE != 0)
+                        myReport.PSNR = 20 * log10(pow(2.0, 8.0) - 1) - 10 * log10(myReport.MSE);
+                    break;
+    }
 
     return (myReport.PSNR != -1);
 }
 #endif
+
+void Plugin_Canalysis::setActiveChannels()
+{
+    if (m_MipDestImages)
+    {
+       if (m_MipDestImages->mipset)
+       {
+        switch(m_MipDestImages->mipset->m_format)
+        {
+            case CMP_FORMAT_ATI1N:
+            case CMP_FORMAT_BC4: // All channels are used and equal, Red is used as active channel
+                                 m_RGBAChannels = 0b0001;  // R
+                                 break;
+            case CMP_FORMAT_ATI2N_XY:
+            case CMP_FORMAT_BC5: // Only Red & Green channels active
+                                 m_RGBAChannels = 0b0011;  // ABGR
+                                 break;
+            default:
+                                 m_RGBAChannels = 0b0111;  // BGR , alpha skipped
+                                 break;
+        }
+       }
+    }
+}
+
+
+void Plugin_Canalysis::processSSIMResults()
+{
+   switch (m_RGBAChannels)
+   {
+       case 0b0001:
+           report.data.SSIM_Red    = m_SSIM.val[2];
+           report.data.SSIM = report.data.SSIM_Red;
+           break;
+       case 0b0011:
+           report.data.SSIM_Green  = m_SSIM.val[1];
+           report.data.SSIM_Red    = m_SSIM.val[2];
+           report.data.SSIM = (report.data.SSIM_Green + report.data.SSIM_Red) / 2;
+           break;
+       default:
+           report.data.SSIM_Blue   = m_SSIM.val[0];
+           report.data.SSIM_Green  = m_SSIM.val[1];
+           report.data.SSIM_Red    = m_SSIM.val[2];
+           report.data.SSIM = (report.data.SSIM_Blue + report.data.SSIM_Green + report.data.SSIM_Red) / 3;
+           break;
+   }
+}
+
+
 
 int Plugin_Canalysis::TC_ImageDiff(const char * in1, 
                                    const char * in2, 
@@ -635,8 +719,6 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
     if (pluginManager == NULL) return -1;
 
     CMP_ANALYSIS_DATA *analysisData = (CMP_ANALYSIS_DATA *) usrAnalysisData;
-
-    MY_REPORT_DATA report;
 
     if (m_imageloader == NULL)
         m_imageloader = new CImageLoader(pluginManager);
@@ -660,6 +742,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
 
     if (m_MipSrcImages != NULL && m_MipDestImages != NULL)
     {
+        setActiveChannels();
         // Analysis is only on top MipLevel and first cubemap face!
         // Need to update the code to handle all faces of cubemaps
         if (m_MipSrcImages->QImage_list[0].count() >0)
@@ -722,19 +805,13 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
                return -1;
            }
 
-           Scalar SSIM = getSSIM(srcimg, destimg, pFeedbackProc);
+           m_SSIM = getSSIM(srcimg, destimg, pFeedbackProc);
+           processSSIMResults();
 
            srcimg.release();
            destimg.release();
 
-           report.data.SSIM_Blue   = SSIM.val[0];
-           report.data.SSIM_Green  = SSIM.val[1];
-           report.data.SSIM_Red    = SSIM.val[2];
 #endif
-
-           report.data.SSIM = (report.data.SSIM_Blue + report.data.SSIM_Green + report.data.SSIM_Red) / 3;
-
-
 
            // If we have a report file write to it
            if ((strcmp(resultsFile, "") != 0))
@@ -768,11 +845,23 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
                 for (int x = 0; x < w; x++) {
                     src = QColor(srcImage->pixel(x, y));
                     dest = QColor(destImage->pixel(x, y));
-
-                    r = qAbs(src.red() - dest.red());
-                    g = qAbs(src.green() - dest.green());
-                    b = qAbs(src.blue() - dest.blue());
-                    a = qAbs(src.alpha() - dest.alpha());
+                    r = g = b = a = 0;
+                    switch (m_RGBAChannels)
+                    {
+                        case 0b0001:
+                            r = qAbs(src.red() - dest.red());
+                            break;
+                        case 0b0011:
+                            r = qAbs(src.red() - dest.red());
+                            g = qAbs(src.green() - dest.green());
+                            break;
+                        default:
+                            r = qAbs(src.red() - dest.red());
+                            g = qAbs(src.green() - dest.green());
+                            b = qAbs(src.blue() - dest.blue());
+                            a = qAbs(src.alpha() - dest.alpha());
+                            break;
+                    }
 
                     diff.setRed(qMin(r, 255));
                     diff.setGreen(qMin(g, 255));
@@ -913,8 +1002,6 @@ int Plugin_Canalysis::TC_PSNR_MSE(const char * in1, const char * in2,  char *res
 {
     if (pluginManager == NULL) return -1;
 
-    MY_REPORT_DATA report;
-
     if (m_imageloader == NULL)
         m_imageloader = new CImageLoader(pluginManager);
 
@@ -929,6 +1016,8 @@ int Plugin_Canalysis::TC_PSNR_MSE(const char * in1, const char * in2,  char *res
 
     if (m_MipSrcImages != NULL && m_MipDestImages != NULL)
     {
+        setActiveChannels();
+
         if (m_MipSrcImages->QImage_list[0].count() >0)
             srcImage = m_MipSrcImages->QImage_list[0][0];
         else
@@ -996,8 +1085,6 @@ int Plugin_Canalysis::TC_SSIM(const char * in1, const char * in2, char *resultsF
 {
     if (pluginManager == NULL) return -1;
 
-    MY_REPORT_DATA report;
-
     if (m_imageloader == NULL)
         m_imageloader = new CImageLoader(pluginManager);
 
@@ -1018,6 +1105,7 @@ int Plugin_Canalysis::TC_SSIM(const char * in1, const char * in2, char *resultsF
 
     if (m_MipSrcImages != NULL && m_MipDestImages != NULL)
     {
+        setActiveChannels();
         if (m_MipSrcImages->QImage_list[0].count() >0)
             srcImage = m_MipSrcImages->QImage_list[0][0];
         else
@@ -1052,6 +1140,11 @@ int Plugin_Canalysis::TC_SSIM(const char * in1, const char * in2, char *resultsF
             return -1;
         }
 
+        report.data.SSIM_Blue   = 0;
+        report.data.SSIM_Green  = 0;
+        report.data.SSIM_Red    = 0;
+        report.data.SSIM        = 0;
+
 #ifdef USE_OPENCV
         cv::Mat srcimg  = QtOcv::image2Mat(*srcImage);
         cv::Mat destimg = QtOcv::image2Mat(*destImage);
@@ -1062,20 +1155,13 @@ int Plugin_Canalysis::TC_SSIM(const char * in1, const char * in2, char *resultsF
             return -1;
         }
 
-        Scalar SSIM = getSSIM(srcimg, destimg, pFeedbackProc);
+        m_SSIM = getSSIM(srcimg, destimg, pFeedbackProc);
+        processSSIMResults();
 
         srcimg.release();
         destimg.release();
 
-        report.data.SSIM_Blue   = SSIM.val[0];
-        report.data.SSIM_Green  = SSIM.val[1];
-        report.data.SSIM_Red    = SSIM.val[2];
 #endif
-
-        report.data.SSIM = (report.data.SSIM_Blue + report.data.SSIM_Green + report.data.SSIM_Red) / 3;
-
-
-
         write(report.data, resultsFile,'s');
 
     }

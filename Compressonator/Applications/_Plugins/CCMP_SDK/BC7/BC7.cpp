@@ -35,7 +35,7 @@ SET_PLUGIN_NAME("BC7")
 void *make_Plugin_BC7() { return new Plugin_BC7; }
 #endif
 
-#define GPU_BC7_COMPUTEFILE          "./plugins/Compute/BC7_Encode_kernel.cpp"
+#define GPU_OCL_BC7_COMPUTEFILE      "./plugins/Compute/BC7_Encode_Kernel.cpp"
 #define GPU_DXC_BC7_COMPUTEFILE      "./plugins/Compute/BC7_Encode_kernel.hlsl"
 
 BC7_Encode      g_BC7Encode;
@@ -142,14 +142,11 @@ void Plugin_BC7::TC_Start()
         timerdata[j].sequence = -1;
    }
    sequence=0;
-   //printf("--START--\n");
 };
 
 
 void Plugin_BC7::TC_End() 
 {
-    //printf("--END  --\n");
-    // print results if performance measured
     if (sequence > 0)
         timerSummary();
 }
@@ -174,16 +171,14 @@ char *Plugin_BC7::TC_ComputeSourceFile(unsigned int Compute_type)
 {
     switch (Compute_type)
     {
-    case CMP_Compute_type::CMP_HPC:
-        // ToDo : Add features
-        break;
-#ifdef USE_GPUEncoders
+        case CMP_Compute_type::CMP_HPC:
+            // ToDo : Add features
+            break;
         case CMP_Compute_type::CMP_GPU:
         case CMP_Compute_type::CMP_GPU_OCL:
-            return(GPU_BC7_COMPUTEFILE);
+            return(GPU_OCL_BC7_COMPUTEFILE);
         case CMP_Compute_type::CMP_GPU_DXC:
             return(GPU_DXC_BC7_COMPUTEFILE);
-#endif
     }
     return("");
 }

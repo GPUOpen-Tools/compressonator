@@ -37,7 +37,9 @@ void *make_Plugin_BC2() { return new Plugin_BC2; }
 
 CMP_BC15Options  g_BC2Encode;
 
-#define GPU_BC1_COMPUTEFILE  "./plugins/Compute/BC2_Encode_kernel.cpp"
+#define GPU_OCL_BC2_COMPUTEFILE      "./plugins/Compute/BC2_Encode_kernel.cpp"
+#define GPU_DXC_BC2_COMPUTEFILE      "./plugins/Compute/BC2_Encode_kernel.hlsl"
+
 
 extern void  CompressBlockBC2_Internal(const CMP_Vec4uc srcBlockTemp[16],
                                 CMP_GLOBAL CGU_UINT32 compressedBlock[4],
@@ -83,14 +85,14 @@ char *Plugin_BC2::TC_ComputeSourceFile(CGU_UINT32  Compute_type)
 {
     switch (Compute_type)
     {
-    case CMP_Compute_type::CMP_HPC:
-        // ToDo : Add features
-        break;
-#ifdef USE_GPUEncoders
+        case CMP_Compute_type::CMP_HPC:
+            // ToDo : Add features
+            break;
         case CMP_Compute_type::CMP_GPU:
         case CMP_Compute_type::CMP_GPU_OCL:
-            return(GPU_BC1_COMPUTEFILE);
-#endif
+                    return(GPU_OCL_BC2_COMPUTEFILE);
+        case CMP_Compute_type::CMP_GPU_DXC:
+                    return(GPU_DXC_BC2_COMPUTEFILE);
     }
 
     return ("");
@@ -108,6 +110,7 @@ int Plugin_BC2::TC_Init(void  *kernel_options)
     SetDefaultBC15Options(&g_BC2Encode);
     g_BC2Encode.m_src_width = m_KernelOptions->width;
     g_BC2Encode.m_src_height = m_KernelOptions->height;
+    g_BC2Encode.m_fquality   = m_KernelOptions->fquality;
 
     m_KernelOptions->data = &g_BC2Encode;
     m_KernelOptions->size = sizeof(g_BC2Encode);

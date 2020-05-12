@@ -178,7 +178,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../;../Lib;../../../../../../Common/Lib/Ext/glew/1.9.0/include;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header;$(AMDCOMPRESS_ROOT)/SDK/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Lib;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/../Common/Lib/Ext/glew/1.9.0/include/;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(AMDCOMPRESS_ROOT)/SDK/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -201,7 +201,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../;../Lib;../../../../../../Common/Lib/Ext/glew/1.9.0/include;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header;$(AMDCOMPRESS_ROOT)/SDK/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Lib;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/../Common/Lib/Ext/glew/1.9.0/include/;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(AMDCOMPRESS_ROOT)/SDK/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
@@ -227,7 +227,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../;../Lib;../../../../../../Common/Lib/Ext/glew/1.9.0/include;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header;$(AMDCOMPRESS_ROOT)/SDK/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Lib;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/../Common/Lib/Ext/glew/1.9.0/include/;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(AMDCOMPRESS_ROOT)/SDK/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -249,7 +249,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../;../Lib;../../../../../../Common/Lib/Ext/glew/1.9.0/include;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header;$(AMDCOMPRESS_ROOT)/SDK/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Lib;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/../Common/Lib/Ext/glew/1.9.0/include/;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(AMDCOMPRESS_ROOT)/SDK/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -273,7 +273,7 @@
       </FunctionLevelLinking>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../;../Lib;../../../../../../Common/Lib/Ext/glew/1.9.0/include;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header;$(AMDCOMPRESS_ROOT)/SDK/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Lib;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/../Common/Lib/Ext/glew/1.9.0/include/;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(AMDCOMPRESS_ROOT)/SDK/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -297,7 +297,7 @@
       </FunctionLevelLinking>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../;../Lib;../../../../../../Common/Lib/Ext/glew/1.9.0/include;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header;$(AMDCOMPRESS_ROOT)/SDK/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Lib;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/../Common/Lib/Ext/glew/1.9.0/include/;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(AMDCOMPRESS_ROOT)/SDK/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -322,7 +322,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../;../Lib;../../../../../../Common/Lib/Ext/glew/1.9.0/include;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header;$(AMDCOMPRESS_ROOT)/SDK/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Lib;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/../Common/Lib/Ext/glew/1.9.0/include/;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(AMDCOMPRESS_ROOT)/SDK/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -349,7 +349,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)\CMP_Framework;$(Compressonator_RootDev)\CMP_Framework\Common\half;$(Compressonator_RootDev)\CMP_CompressonatorLib;../;../Lib;../../../../../../Common/Lib/Ext/glew/1.9.0/include;../../../../../Applications/_Plugins/;../../../../../Applications/_Plugins/Common;../../../../../header;$(AMDCOMPRESS_ROOT)/SDK/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Lib;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/../Common/Lib/Ext/glew/1.9.0/include/;$(Compressonator_RootDev)/Applications/_Plugins/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(AMDCOMPRESS_ROOT)/SDK/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>

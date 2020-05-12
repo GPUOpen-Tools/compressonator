@@ -36,11 +36,12 @@ void *make_Plugin_BC3() { return new Plugin_BC3; }
 
 CMP_BC15Options  g_BC3Encode;
 
-#define GPU_BC3_COMPUTEFILE  "./plugins/Compute/BC3_Encode_kernel.cpp"
+#define GPU_OCL_BC3_COMPUTEFILE      "./plugins/Compute/BC3_Encode_kernel.cpp"
+#define GPU_DXC_BC3_COMPUTEFILE      "./plugins/Compute/BC3_Encode_kernel.hlsl"
 
 extern void CompressBlockBC3_Internal(const CMP_Vec4uc srcBlockTemp[16],
                                CMP_GLOBAL CGU_UINT32 compressedBlock[4],
-                               CMP_GLOBAL const CMP_BC15Options *BC15options);
+                               CMP_GLOBAL CMP_BC15Options *BC15options);
 
 Plugin_BC3::Plugin_BC3()
 {
@@ -82,14 +83,14 @@ char *Plugin_BC3::TC_ComputeSourceFile(CGU_UINT32  Compute_type)
 {
     switch (Compute_type)
     {
-    case CMP_Compute_type::CMP_HPC:
-         // ToDo : Add features
-         break;
-#ifdef USE_GPUEncoders
+        case CMP_Compute_type::CMP_HPC:
+             // ToDo : Add features
+             break;
         case CMP_Compute_type::CMP_GPU:
         case CMP_Compute_type::CMP_GPU_OCL:
-            return(GPU_BC3_COMPUTEFILE);
-#endif
+            return(GPU_OCL_BC3_COMPUTEFILE);
+        case CMP_Compute_type::CMP_GPU_DXC:
+            return(GPU_DXC_BC3_COMPUTEFILE);
     }
 
     return ("");
@@ -107,6 +108,7 @@ int Plugin_BC3::TC_Init(void  *kernel_options)
     SetDefaultBC15Options(&g_BC3Encode);
     g_BC3Encode.m_src_width = m_KernelOptions->width;
     g_BC3Encode.m_src_height = m_KernelOptions->height;
+    g_BC3Encode.m_fquality   = m_KernelOptions->fquality;
 
     m_KernelOptions->data = &g_BC3Encode;
     m_KernelOptions->size = sizeof(g_BC3Encode);

@@ -40,6 +40,7 @@
 #include "DDS_DX10.h"
 #include "DDS_Helpers.h"
 
+#define _CRT_SECURE_NO_WARNINGS
 
 CMIPS *DDS_CMips = NULL;
 const char* g_pszFilename;
@@ -94,12 +95,16 @@ int Plugin_DDS::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
 // No longer supported
 int Plugin_DDS::TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *srcTexture)
 {
+    (pszFilename);
+    (srcTexture);
     return 0;
 }
 
 // No longer supported
 int Plugin_DDS::TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *srcTexture)
 {
+    (pszFilename);
+    (srcTexture);
 #ifdef _WIN32
     HRESULT hr = S_OK;
     return hr==S_OK?0:-1; // np: need to fix this : make all pligins return long type!

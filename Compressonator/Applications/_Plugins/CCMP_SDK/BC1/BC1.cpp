@@ -25,7 +25,18 @@
 
 #include "BC1.h"
 
+#ifdef USE_TIMERS
+#include "query_timer.h"
+#endif
+
 //#define BUILD_AS_PLUGIN_DLL
+
+#ifdef USE_CONVECTION_KERNELS
+#pragma comment(lib, "ConvectionKernels.lib")
+#include "ConvectionKernels.h"
+using namespace cvtt;
+#endif
+
 
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_BC1)
@@ -35,14 +46,17 @@ SET_PLUGIN_NAME("BC1")
 void *make_Plugin_BC1() { return new Plugin_BC1; }
 #endif
 
+
+
 CMP_BC15Options  g_BC1Encode;
 
-#define GPU_BC1_COMPUTEFILE  "./plugins/Compute/BC1_Encode_kernel.cpp"
+#define GPU_OCL_BC1_COMPUTEFILE          "./plugins/Compute/BC1_Encode_kernel.cpp"
+#define GPU_DXC_BC1_COMPUTEFILE      "./plugins/Compute/BC1_Encode_kernel.hlsl"
 
 void  CompressBlockBC1_Internal(
     const CMP_Vec4uc  srcBlockTemp[16],
     CMP_GLOBAL  CGU_UINT32      compressedBlock[2],
-    CMP_GLOBAL  const CMP_BC15Options *BC15options);
+    CMP_GLOBAL  CMP_BC15Options *BC15options);
 
 Plugin_BC1::Plugin_BC1()
 {
@@ -84,14 +98,14 @@ char *Plugin_BC1::TC_ComputeSourceFile(CGU_UINT32  Compute_type)
 {
     switch (Compute_type)
     {
-    case CMP_Compute_type::CMP_HPC:
-         // ToDo : Add features
-         break;
-#ifdef USE_GPUEncoders
+        case CMP_Compute_type::CMP_HPC:
+             // ToDo : Add features
+             break;
         case CMP_Compute_type::CMP_GPU:
         case CMP_Compute_type::CMP_GPU_OCL:
-                    return(GPU_BC1_COMPUTEFILE);
-#endif
+                    return(GPU_OCL_BC1_COMPUTEFILE);
+        case CMP_Compute_type::CMP_GPU_DXC:
+                    return(GPU_DXC_BC1_COMPUTEFILE);
     }
     return ("");
 }
@@ -108,6 +122,7 @@ int Plugin_BC1::TC_Init(void  *kernel_options)
     SetDefaultBC15Options(&g_BC1Encode);
     g_BC1Encode.m_src_width  = m_KernelOptions->width;
     g_BC1Encode.m_src_height = m_KernelOptions->height;
+    g_BC1Encode.m_fquality   = m_KernelOptions->fquality;
 
     m_KernelOptions->data = &g_BC1Encode;
     m_KernelOptions->size = sizeof(g_BC1Encode);
@@ -142,13 +157,83 @@ int BC1_EncodeClass::CompressBlock(void *srcin, void *cmpout, void *blockoptions
 
 int BC1_EncodeClass::CompressTexture(void *srcin, void *cmpout,void *processOptions)
 {
-    // ToDo: Implement texture level decompression
-    if (processOptions == NULL) return -1;
+    (processOptions);
     if (srcin == NULL) return -1;
     if (cmpout == NULL) return -1;
 
-    // MipSet* pSourceTexture =  reinterpret_cast<MipSet *>(cmpin);
-    // MipSet* pDestTexture   =  reinterpret_cast<MipSet *>(srcout);
+    MipSet* pSourceTexture =  reinterpret_cast<MipSet *>(srcin);
+
+    CMP_DWORD src_height       = pSourceTexture->dwHeight;
+    CMP_DWORD src_width      = pSourceTexture->dwWidth;
+
+    CMP_DWORD width_in_blocks = src_width / 4;
+    CMP_DWORD height_in_blocks = src_height / 4;
+    int stride = src_width * BYTEPP;
+    int blockOffset = 0;
+    int srcidx;
+
+#ifdef USE_CONVECTION_KERNELS
+    PixelBlockU8 pBlocks[8] = {0};
+    CMP_BYTE results[64]; // 8 x 8 
+#endif
+
+    for (CMP_DWORD by = 0; by < height_in_blocks; by++)
+    {
+       for (CMP_DWORD bx = 0; bx < width_in_blocks; bx++)
+       {
+           int srcOffset = (bx*BlockX*BYTEPP) + (by*stride*BYTEPP);
+
+           // Copy src block into Texel
+           blockOffset = 0;
+           for (CMP_DWORD i = 0; i < BlockX; i++)
+           {
+               srcidx = i*stride;
+               for (CMP_DWORD j = 0; j < BlockY; j++)
+               {
+                   unsigned char R,G,B,A;
+                   R = (pSourceTexture->pData[srcOffset + srcidx++]);
+                   G = (pSourceTexture->pData[srcOffset + srcidx++]);
+                   B = (pSourceTexture->pData[srcOffset + srcidx++]);
+                   A = (pSourceTexture->pData[srcOffset + srcidx++]);
+
+                   //printf("[%2d,%2d] [%2d][%2d] %2d,%2d,%2d,%2d\n",bx,by,numBlocks,blockOffset,R,G,B,A);
+                   #ifdef USE_CONVECTION_KERNELS
+                    pBlocks[numBlocks].m_pixels[blockOffset][0] = R;
+                    pBlocks[numBlocks].m_pixels[blockOffset][1] = G;
+                    pBlocks[numBlocks].m_pixels[blockOffset][2] = B;
+                    pBlocks[numBlocks].m_pixels[blockOffset][3] = A;
+                   #endif
+                   blockOffset++;
+               }
+           }
+
+#ifdef USE_CONVECTION_KERNELS
+           numBlocks++;
+           numBlocksProcessed++;
+
+           // we are at 8 blocks 
+           if ((numBlocks == 8)||( numBlocksProcessed >= maxBlocks))
+           {
+               cvtt::Options options;
+               options.flags = Flags::Default;
+               Kernels::EncodeBC1(results,pBlocks,options);
+
+               // save results
+               for (int i=0; i< numBlocks; i++)
+               {
+                   for (int j=0;j<8; j++)
+                   {
+                       pdest[j] = results[i*8+j];
+                   }
+                   pdest += 8; // next comp data block to store results
+               }
+               numBlocks = 0;
+           }
+#endif
+
+       }
+    }
+
     return 0;
 }
 
@@ -222,7 +307,31 @@ int BC1_EncodeClass::CompressBlock(CGU_UINT32 xBlock, CGU_UINT32 yBlock, void *s
             PadBlock(j, BlockX, BlockY, 4, (CMP_BYTE*)srcData);
     }
 
+#ifdef USE_TIMERS
+static int init = false;
+if (!init)
+{
+    query_timer::initialize();
+    init = true;
+}
+{
+    QUERY_PERFORMANCE("BC1");
+#endif
+
     CompressBlockBC1_Internal(srcData, (CGU_UINT32 *)&compressedBlocks[destI],&g_BC1Encode);
+
+#ifdef USE_TIMERS
+} // Query
+
+static int sum   = 0;
+static int count = 0;
+if (query_timer::m_elapsed_count < 30)
+{
+    sum += (int)query_timer::m_elapsed_count;
+    count++;
+    printf("BC1 %f\n",(CGU_FLOAT)sum/(CGU_FLOAT)count);
+}
+#endif
     return (0);
 }
 

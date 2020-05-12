@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2019    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -26,9 +26,7 @@
 #include "PluginInterface.h"
 #include "CCPU_HPC.h"
 
-#ifdef _WIN32
-#include "query_timer.h"
-#else
+#ifndef _WIN32
 #define _stdcall
 #endif
 
@@ -60,6 +58,36 @@ unsigned int    _stdcall ProcEncode(void* param)
 
    // printf("Thead Closed [%x] run[%d]\n",std::this_thread::get_id(),tp->run?1:0);
    return 0;
+}
+
+float CCPU_HPC::GetProcessElapsedTimeMS()
+{
+    return m_computeShaderElapsedMS;
+}
+
+float CCPU_HPC::GetMTxPerSec()
+{
+    return m_CmpMTxPerSec;
+}
+
+int CCPU_HPC::GetBlockSize() 
+{ 
+    return m_num_blocks;
+}
+
+int   CCPU_HPC::GetMaxUCores() 
+{ 
+    return m_maxUCores;
+}
+
+const char* CCPU_HPC::GetDeviceName()
+{
+    return m_deviceName.c_str();
+}
+
+const char* CCPU_HPC::GetVersion()
+{
+    return m_version.c_str();
 }
 
 CodecError CCPU_HPC::CreateEncoderThreadPool()
@@ -216,20 +244,22 @@ void CCPU_HPC::FinishThreadEncoding()
 
 void CCPU_HPC::Init()
 {
-#ifdef _WIN32
-    query_timer::initialize();
-#endif
+    m_cputimer.initialize();
+
     m_plugin_compute            = NULL;
     m_ThreadCodecInitialized    = false;
     m_current_format            = CMP_FORMAT_Unknown;
+    m_computeShaderElapsedMS    = 0.0f;
+    m_num_blocks                = 0;
+    m_CmpMTxPerSec              = 0.0f;
 
 //printf("HPC Threads input %d\n",m_kernel_options->threads);
     if (m_kernel_options->threads != 1)
     {
-        m_NumEncodingThreads        = m_kernel_options->threads;
+        m_NumEncodingThreads        = (CMP_WORD)m_kernel_options->threads;
         if (m_NumEncodingThreads == 0)
         {
-            m_NumEncodingThreads = CMP_NumberOfProcessors();
+            m_NumEncodingThreads = (CMP_WORD)CMP_NumberOfProcessors();
             if (m_NumEncodingThreads <= 2)
                 m_NumEncodingThreads = 8; // fallback to a default!
             if (m_NumEncodingThreads > 128)
@@ -302,11 +332,16 @@ CMP_ERROR CCPU_HPC::Compress(KernelOptions *Options, MipSet  &SrcTexture, MipSet
 {
     if (m_plugin_compute == NULL) return(CMP_ERR_UNABLE_TO_INIT_COMPUTELIB);
 
-
-#ifdef USE_GTC
-    if (destTexture.m_format == CMP_FORMAT_GTC)
+#if (defined(USE_CONVECTION_KERNELS) || defined(USE_GTC)) 
+    if  (
+        (destTexture.m_format == CMP_FORMAT_GTC)
+#ifdef USE_CONVECTION_KERNELS
+        || (destTexture.m_format == CMP_FORMAT_BC1)
+        || (destTexture.m_format == CMP_FORMAT_BC5)
+#endif
+        )
     {
-        if (Options->fquality == 0.0f)
+        if (Options->fquality == 0.11f)
         {
             CMP_Encoder*  encoder = (CMP_Encoder*)m_plugin_compute->TC_Create();
             if (encoder)
@@ -314,7 +349,7 @@ CMP_ERROR CCPU_HPC::Compress(KernelOptions *Options, MipSet  &SrcTexture, MipSet
                 int res = encoder->CompressTexture(&SrcTexture,&destTexture, nullptr);
                 if (res != 0)
                 {
-                    printf("failed");
+                    // printf("failed");
                 }
                 m_plugin_compute->TC_Destroy(encoder);
                 return(CMP_OK);
@@ -351,7 +386,7 @@ CMP_ERROR CCPU_HPC::Compress(KernelOptions *Options, MipSet  &SrcTexture, MipSet
 
     m_source_file                = Options->srcfile;
 
-    // Update addtion kernel option settings
+    // Update kernel option settings
     m_kernel_options->data       = Options->data;
     m_kernel_options->size       = Options->size;
     m_kernel_options->format     = Options->format;
@@ -386,14 +421,15 @@ CMP_ERROR CCPU_HPC::Compress(KernelOptions *Options, MipSet  &SrcTexture, MipSet
     }
 
     m_psource = (CMP_Vec4uc *)SrcTexture.pData;
-
     m_SourceInfo.m_src_height       = SrcTexture.dwHeight;
     m_SourceInfo.m_src_width        = SrcTexture.dwWidth;
     m_SourceInfo.m_width_in_blocks  = m_width_in_blocks;
     m_SourceInfo.m_height_in_blocks = m_height_in_blocks;
     m_SourceInfo.m_fquality         = Options->fquality;
+    m_num_blocks = m_width_in_blocks * m_height_in_blocks;
 
     {
+        CMP_DOUBLE pFeedbackTimeMS = 0; // Tracks time spent outside of encoder loop
 
       // initialize the Encoder based on num thread set in Init
         CreateEncoderThreadPool();
@@ -410,6 +446,9 @@ CMP_ERROR CCPU_HPC::Compress(KernelOptions *Options, MipSet  &SrcTexture, MipSet
         CMP_INT lineAtPercent = (CMP_INT)(m_padded_height_in_blocks * 0.01f);
         if (lineAtPercent <= 0)  lineAtPercent = 1;
 
+        if (Options->getPerfStats)
+            m_cputimer.Start(0);
+
         m_plugin_compute->TC_Start();
 
         while (y < m_padded_height_in_blocks)
@@ -421,6 +460,8 @@ CMP_ERROR CCPU_HPC::Compress(KernelOptions *Options, MipSet  &SrcTexture, MipSet
             y++;
             if (pFeedback)
             {
+                if (Options->getPerfStats)
+                    m_cputimer.Start(1);
                 if (((y % lineAtPercent) == 0) && (xyblocks > 0))
                 {
                     progress = (x*y)/xyblocks;
@@ -433,6 +474,12 @@ CMP_ERROR CCPU_HPC::Compress(KernelOptions *Options, MipSet  &SrcTexture, MipSet
                         }
                     }
                 }
+
+                if (Options->getPerfStats)
+                {
+                    m_cputimer.Stop(1);
+                    pFeedbackTimeMS += m_cputimer.GetMS(1);
+                }
             }
         }
 
@@ -441,6 +488,22 @@ CMP_ERROR CCPU_HPC::Compress(KernelOptions *Options, MipSet  &SrcTexture, MipSet
 
         // Delete the Encoder Thread Pool
         DeleteEncoderThreadPool();
+
+        if (Options->getPerfStats)
+            m_cputimer.Stop(0);
+
+        // Only collect perf data on topmost miplevel
+        if (Options->getPerfStats && (destTexture.m_nIterations < 1))
+        {
+            m_computeShaderElapsedMS = ((CGU_FLOAT)(m_cputimer.GetMS(0) - pFeedbackTimeMS))/m_num_blocks;
+            if (m_computeShaderElapsedMS > 0)
+            {
+                CMP_FLOAT blocksPerSecond = (1000.0f/m_computeShaderElapsedMS);
+                m_CmpMTxPerSec = (BLOCK_SIZE_4X4 * blocksPerSecond) / 1000000.0f;
+            }
+            else
+                m_CmpMTxPerSec = 0;
+        }
 
         m_plugin_compute->TC_End();
     }

@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2019    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -62,12 +62,15 @@ public:
         CMP_ERROR       TC_Compress(void  *kernel_options, MipSet  &SrcTexture, MipSet  &destTexture,CMP_Feedback_Proc pFeedback);
         void            TC_SetComputeOptions(void *options);
         char            *TC_ComputeSourceFile();
+        CMP_ERROR       TC_GetPerformanceStats(void* pPerfStats);
+        CMP_ERROR       TC_GetDeviceInfo(void* pDeviceInfo);
         int             TC_Close();
 
 private:
         ComputeBase  *m_pComputeBase;
 #ifdef ENABLE_MAKE_COMPATIBLE_API
         bool IsFloatFormat(CMP_FORMAT InFormat);
+        float findKneeValueHPC(float x, float y);
         CMP_ERROR Byte2HalfShort(CMP_HALFSHORT* hfBlock, CMP_BYTE* cBlock, CMP_DWORD dwBlockSize);
         CMP_ERROR Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, MipSet& srcTexture, const CMP_CompressOptions* pOptions);
         CMP_ERROR CF_16BitTo8Bit(CMP_WORD* sBlock, CMP_BYTE* cBlock, CMP_DWORD dwBlockSize);

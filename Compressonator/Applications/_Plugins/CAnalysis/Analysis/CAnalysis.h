@@ -80,8 +80,11 @@ public:
 private:
         void write(REPORT_DATA data, char *resultsFile, char option);
         void generateBCtestResult(QImage *src, QImage *dest, REPORT_DATA &myReport); //for testing only
+        void setActiveChannels();
+        void processSSIMResults();
 
 #ifdef USE_OPENCV
+        Scalar m_SSIM;
         bool psnr(QImage *src, Mat srcimg, QImage *dest, Mat destimg, REPORT_DATA &myReport, CMP_Feedback_Proc pFeedbackProc = NULL);
 #endif
         char m_results_path[MAX_PATH];
@@ -96,6 +99,8 @@ private:
         CMipImages                       *m_MipDestImages;
         CMipImages                       *m_MipDiffImages;
         CMP_FORMAT                        m_Compressformat;
+        unsigned int                      m_RGBAChannels;
+        MY_REPORT_DATA                    report;
 };
 
 #endif

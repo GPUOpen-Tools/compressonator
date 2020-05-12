@@ -108,7 +108,14 @@ void PostProcPS::OnCreate(
             {
                 char *msg = (char *)pError->GetBufferPointer();
                 MessageBoxA(0, msg, "", 0);
+                return;
             }
+            if (pBlobShaderPixel == nullptr)
+            {
+                MessageBoxA(0, "unable to compile blob shader", "", 0);
+                return;
+            }
+
         }
 
         // Create root signature
@@ -202,8 +209,10 @@ void PostProcPS::OnCreate(
 
 void PostProcPS::OnDestroy()
 {
-    m_pPipelineRender->Release();
-    m_pRootSignature->Release();
+    if (m_pPipelineRender)
+        m_pPipelineRender->Release();
+    if (m_pRootSignature)
+        m_pRootSignature->Release();
 }
 
 void PostProcPS::Draw(ID3D12GraphicsCommandList* pCommandList, DWORD dwSRVTableSize, CBV_SRV_UAV *pSRVTable, D3D12_GPU_DESCRIPTOR_HANDLE constantBuffer)
