@@ -48,7 +48,7 @@ DecompressBlockBC1(cmpBuffer,imgBuffer,null)
 
 Includes Compressonator core with interfaces for multi-threading, mipmap generation, file access of images and HPC pipeline interfaces.
 
-**Example Mip Level Processing**
+**Example Mip Level Processing using CPU**
 
 ```c++
 
@@ -109,7 +109,94 @@ CMP_MipSet MipSetCmp;
 memset(&MipSetCmp, 0, sizeof(CMP_MipSet));
 
 //===============================================
-// Compress the texture using Compressonator Lib
+// Compress the texture using Framework Lib
+//===============================================
+cmp_status = CMP_ProcessTexture(&MipSetIn, &MipSetCmp, kernel_options, CompressionCallback);
+if (cmp_status != CMP_OK) {
+  ...
+}
+
+//----------------------------------------------------------------
+// Save the result into a DDS file
+//----------------------------------------------------------------
+cmp_status = CMP_SaveTexture(pszDestFile, &MipSetCmp);
+
+CMP_FreeMipSet(&MipSetIn);
+CMP_FreeMipSet(&MipSetCmp);
+
+```
+
+**Example GPU based processing using OpenCL**
+
+```c++
+
+// See Example 4 source for full details, Note: Only MD x64 build is used for GPU processing
+// SDK files required for application:
+//     CMP_Framework.h
+//     CMP_Framework_xx.lib  For static libs xx is either MD or MDd, 
+//                      When using DLL's make sure the  CMP_Framework_xx_DLL.dll is in exe path
+//
+// File(s) required to run with the built application
+//
+// Using OpenCL (OCL) 
+//     CMP_GPU_OCL_MD_DLL.dll    or CMP_GPU_OCL_MDd_DLL.dll
+//     Encode Kernel files in plugins/compute folder
+//     BC1_Encode_Kernel.cpp
+//     BC1_Encode_Kernel.h
+//     BCn_Common_kernel.h
+//     Common_Def.h
+//
+// Using DirectX (DXC) 
+//     CMP_GPU_DXC_MD_DLL.dll    or CMP_GPU_DXC_MDd_DLL.dll
+//     Encode Kernel files in plugins/compute folder
+//     BC1_Encode_Kernel.hlsl
+//     BCn_Common_kernel.h
+//     Common_Def.h
+
+#include "CMP_Framework.h"
+
+CMP_FORMAT      destFormat = CMP_FORMAT_BC1;
+
+//---------------
+// Load the image
+//---------------
+CMP_MipSet MipSetIn;
+memset(&MipSetIn, 0, sizeof(CMP_MipSet));
+if (CMP_LoadTexture(pszSourceFile, &MipSetIn) != CMP_OK) {
+    std::printf("Error: Loading source file!\n");
+    return -1;
+  } 
+
+ //-----------------------------------------------------
+ // when using GPU: The texture must have width and height as a multiple of 4
+ // Check texture for width and height
+ //-----------------------------------------------------
+ if ((MipSetIn.m_nWidth % 4) > 0 || (MipSetIn.m_nHeight % 4) > 0) {
+    std::printf("Error: Texture width and height must be multiple of 4\n");
+    return -1;
+ }
+    
+//----------------------------------------------------------------------------------------------------------
+// Set the target compression format and the host framework to use
+// For this example OpenCL is been used
+//-----------------------------------------------------------------------------------------------------------
+KernelOptions   kernel_options;
+memset(&kernel_options, 0, sizeof(KernelOptions));
+
+kernel_options.encodeWith = CMP_GPU_OCL;         // Using OpenCL GPU Encoder, can replace with DXC for DirectX
+kernel_options.format     = destFormat;          // Set the format to process
+kernel_options.fquality   = fQuality;            // Set the quality of the result
+
+//--------------------------------------------------------------
+// Setup a results buffer for the processed file,
+// the content will be set after the source texture is processed
+// in the call to CMP_ProcessTexture()
+//--------------------------------------------------------------
+CMP_MipSet MipSetCmp;
+memset(&MipSetCmp, 0, sizeof(CMP_MipSet));
+
+//===============================================
+// Compress the texture using Framework Lib
 //===============================================
 cmp_status = CMP_ProcessTexture(&MipSetIn, &MipSetCmp, kernel_options, CompressionCallback);
 if (cmp_status != CMP_OK) {
