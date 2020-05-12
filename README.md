@@ -130,7 +130,7 @@ CMP_FreeMipSet(&MipSetCmp);
 
 ```c++
 
-// See Example 4 source for full details, Note: Only MD x64 build is used for GPU processing
+// Note: Only MD x64 build is used for GPU processing
 // SDK files required for application:
 //     CMP_Framework.h
 //     CMP_Framework_xx.lib  For static libs xx is either MD or MDd, 
