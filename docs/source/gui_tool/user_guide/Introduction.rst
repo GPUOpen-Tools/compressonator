@@ -1,7 +1,7 @@
 ﻿Application Requirements
 ------------------------
 
--  Application was tested on Windows 7 and Windows 10 platform.
+-  Application was tested on Windows 10 platform.
 
 -  For best performance, a multi core CPU system with the latest AMD
    Graphics card are required.

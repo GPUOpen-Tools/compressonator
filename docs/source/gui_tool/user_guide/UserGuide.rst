@@ -104,4 +104,3 @@ the Property View
 .. |cubemaps_image1| image:: media/cubemaps.png
 
 
-

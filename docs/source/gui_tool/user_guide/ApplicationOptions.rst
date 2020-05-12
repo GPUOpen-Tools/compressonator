@@ -11,11 +11,16 @@ Application Settings Window
 
 Encode with
 ~~~~~~~~~~~
-For compressed images this option selects how images are compressed either with CPU or HPC.
+For compressed images this option selects how images are compressed either with CPU, HPC or 
+with GPU using shaders for OpenCL (OCL) or DirectX Compute (DXC), this option can be selected from the GUI using "Encode With"
 HPC runs codecs optimized for vector extensions and SPMD processing on CPU.
 
 *Note*
 Only BC1 to BC7 format are supported with HPC Compress, if you choose other format under HPC Compress, they will be compressed with generalized CPU instructions
+See latest release notes for details on what GPU codecs are available for encoding with.
+
+
+|EncodeWith|
 
 
 Decode with
@@ -63,8 +68,8 @@ This option off by default, will load the last project you worked on.
 This saves you time selecting it from the welcome page or the recent
 files list from the file menu.
 
-.. |image38| image:: media/image41.png
-.. |image39| image:: media/image42.png
+|image38|
+|image39|
 
 
 Set Image Diff Contrast
@@ -100,4 +105,6 @@ Show Analysis Results Table
 
 Shows all Process Times, PSNR and SSIM results for compressed images in a table view. 
 
-
+.. |image38| image:: media/image41.png
+.. |image39| image:: media/image42.png
+.. |EncodeWith| image:: media/image2020-3-26_14-19-1.png

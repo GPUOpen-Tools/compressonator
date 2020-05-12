@@ -115,6 +115,21 @@ Displays this table after any image is been processed (TIME is in Seconds, PSRN 
 
 When processing images the table view will be displayed and can be used to gather results and analysis data for reports, by simply selecting the required rows and columns in the table then copy (Ctrl+C) and pasting (Ctrl+V) the table view. 
 
+**KPerf(ms)**  (Beta Feature)
+
+This estimates the time it takes to process 1000 (4x4 pixel) blocks, using the current encoder and GPU setup. where Perf(ms) is the time it took to process a single block of 16 pixels in milliseconds.
+
+HPC performance monitoring uses CPU timers. while OCL & DXC uses GPU performance query timers. For CPU based encoding KPerf & MTx is not measured.
+
+**MTx/s** (Beta Feature)
+
+This is a measurement of the time it takes to process 1 Million texels in a second.
+
+**Time(s)**
+
+CPU performance based timing, that measures the overall end to end time it took for the image to be processed. It includes device setup, loading image to GPU, receiving the image from GPU and file IO.
+
+
 **Please note the following**
 
 	- The table view is re-sizable by mouse clicking on and dragging the table edges and dividers. 
@@ -129,4 +144,4 @@ When processing images the table view will be displayed and can be used to gathe
 
 .. |analysis_image1| image:: media/CMP_v3.2_Run_Time_Analysis.png
 .. |analysis_image2| image:: media/CMP_v3.2_Analysis_Output.png
-.. |analysis_image3| image:: media/CMP_v3.2_Analysis_Table.png
+.. |analysis_image3| image:: ../gui_tool/user_guide/media/image2020-3-17_13-43-45.png

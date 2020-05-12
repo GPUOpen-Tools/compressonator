@@ -53,6 +53,18 @@ Converting an image to a different format of similar or like quality
 
 4. Process the destination item
 
+
+Using the Make Compatible Feature
+---------------------------------
+
+With the GPU or CLI tools, users can compress HDR and LDR images using any BCn codec without specific knowledge of the source format. For example, HDR images can only be compressed by BC6 any attempt to use BC1 to BC5 or BC7 will fail compression. Transformations are automatically handled to make the image source format compatible with the encoder when using the CPU or GPU based encoding. 
+
+Compressonator performs auto conversions of FP16 to Byte and Byte to FP16 formats when encoding textures with GPU or CPU encoders. A pre-conversion of the source data is performed into a temporary buffer which is then sent for processing, once the processing is completed the buffer is removed.
+
+To see how this works, try processing an EXR file format image to compress with formats like BC1 to BC5 or BC7 using the "Encode with" option for HPC, GPU_DirectX or GPU_OpenCL
+If you are unfamiliar with how to process textures, check the tutorial on "getting started using sample projects".
+
+
 Decompressing Textures
 ----------------------
 

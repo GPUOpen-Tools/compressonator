@@ -4,6 +4,21 @@ This library supports the following codecs BC1 to BC7, also known as ATI1N, ATI2
 
 The main API call for both compression and decompression is at the block level for each of these codecs.
 
+GPU Shaders 
+-----------
+With OpenCL (OCL) and DirectX (DXC): These API are availble for use in user defined shaders by including BCn_Encode_Kernel.h and Common_Def.h
+
+.. code-block:: c
+
+    CGU_Vec2ui CompressBlockBC1_UNORM( CMP_IN CGU_Vec3f BlockRGB[16], CMP_IN CGU_FLOAT fquality,CGU_BOOL isSRGB)
+    CGU_Vec4ui CompressBlockBC2_UNORM( CMP_IN CGU_Vec3f BlockRGB[16], CMP_IN CGU_FLOAT BlockA[16], CGU_FLOAT fquality, CGU_BOOL isSRGB)
+    CGU_Vec4ui CompressBlockBC3_UNORM( CMP_IN CGU_Vec3f BlockRGB[16], CMP_IN CGU_FLOAT BlockA[16], CGU_FLOAT fquality,CGU_BOOL isSRGB)
+    CGU_Vec2ui CompressBlockBC4_UNORM( CMP_IN CGU_FLOAT Block[16], CGU_FLOAT fquality)
+    CGU_Vec4ui CompressBlockBC5_UNORM( CMP_IN CGU_FLOAT BlockU[16], CMP_IN CGU_FLOAT BlockV[16], CGU_FLOAT fquality)
+
+For OCL addition API is provided under a generic API interface for all BCn encoders: CMP_STATIC CMP_KERNEL void CMP_GPUEncoder(...) see plugin CMP_GPU_OCL for details on how this is used.
+For DXC CMP_Core contains sample HLSL shaders used by the plugin CMP_GPU_DXC
+
 Error Codes
 -----------
 All Core API calls return a int success 0 (CMP_CORE_OK) or error value > 0 (CMP_CORE_ERR) for a more detailed and up to date list look at the file Common_Def.h 
@@ -17,6 +32,21 @@ All Core API calls return a int success 0 (CMP_CORE_OK) or error value > 0 (CMP_
     CGU_CORE_ERR_RANGERED,                    // values for Red   Channel is out of range (too high or too low)
     CGU_CORE_ERR_RANGEGREEN,                  // values for Green Channel is out of range (too high or too low)
     CGU_CORE_ERR_RANGEBLUE,                   // values for Blue  Channel is out of range (too high or too low)
+
+
+Codec Quality Settings
+----------------------
+
+BC1, BC2, and BC3 have discrete quality settings, These settings are available in the following ranges (varying the q setting in these ranges will have no new effects, q is a discrete coarse setting)
+
+.. code-block:: c
+
+    q = 0.0   to 0.01 sets lowest quality and fast compression
+    q = 0.101 to 0.6 sets mid-quality
+    q = 0.601 to 1.0 set the best quality and low performance  
+    BC4 and BC5 have no quality settings, no changes in quality will occur if set.
+    BC6 & BC7 have full q ranges from 0 to 1.0
+
 
 Create and Destroy Options Pointers
 -----------------------------------
@@ -69,9 +99,7 @@ With swizzle formats the weighting applies to the data within the specified chan
 Quality Settings
 ----------------
 
-**Note** Currently setting quality for BC1 to BC5 will not have any effect. These calls are reserved for the next release.
-
-Setting for BC6 and BC7 are available. All values are clamped in the range 0.0 to 1.0, the encoding performance is much slower when quality is set high.
+All values are clamped in the range 0.0 to 1.0, the encoding performance is much slower when quality is set high.
 
 .. code-block:: c
 

@@ -131,7 +131,43 @@ indicating that a file already exists and will be overwritten with the
 new settings. The current release does not check for duplications during
 setting.
 
+Using Codec Quality Settings
+----------------------------
+BC1, BC2, and BC3 have discrete quality settings, These settings are available in the following ranges (varying the q setting in these ranges will have no new effects, q is a discrete coarse setting)
 
+.. code-block:: c
+
+   q = 0.0     to 0.01 sets lowest quality and fast compression
+   q = 0.101 to 0.6 sets mid-quality
+   q = 0.601 to 1,0 set the best quality and low performance  
+   BC4 and BC5 have no quality settings, no changes in quality will occur if set.
+   BC6 & BC7 have full q ranges from 0 to 1.0
+
+
+Setting Global Quality Settings
+-------------------------------
+
+Users can override all individual destination compression settings, using a globally set value before processing
+
+Currently, only the quality settings can be overwritten with a new global setting.
+
+**The process is as follows:**
+
+On the project explorer click on "Double Click Here to add files"
+
+|QualitySetting1|
+
+A new property view will be displayed
+
+|QualitySetting2|
+
+Set a new Quality value to override all existing quality settings for textures in the project explorer, a value of 0 with restore the old values and disable the global settings
+
+|QualitySetting3|
+
+When an override is set the textures will display the new override setting and disable its editing features.
+
+Notice also that the "Double Click Here to add files" background color has also changed to indicate that an override setting is in effect, it will return to a white background if the override settings are turned off.
 
 .. |image40| image:: media/image43.png
 .. |image41| image:: media/image44.png
@@ -145,4 +181,7 @@ setting.
 .. |image59| image:: media/image65.png
 .. |image60| image:: media/image66.png
 .. |image61| image:: media/image67.png
+.. |QualitySetting1| image:: media/GlobalSettings2.png
+.. |QualitySetting2| image:: media/GlobalSettings3.png
+.. |QualitySetting3| image:: media/GlobalSettings5.png
 

@@ -33,7 +33,9 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 |                     | when set OpenGL will be used by default, this can be       |
 |                     | changed to DirectX or Vulkan using DecodeWith setting      |
 +---------------------+------------------------------------------------------------+
-| -EncodeWith         | Compression with CPU or HPC                                |
+| -EncodeWith         | Compression with CPU, HPC, OCL or DXC                      |
+|                     | Default is CPU.                                            |
+|                     | OCL & DXC is only available on Windows Version             |
 +---------------------+------------------------------------------------------------+
 | -DecodeWith         | Sets OpenGL, DirectX or Vulkan for GPU decompress          |
 |                     | Default is OpenGL, UseGPUDecompress is implied when        |
@@ -220,7 +222,12 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 |-log                         |Logs process information to a process_results.txt file    |
 |                             |containing file info, performance data,SSIM,PSNR and MSE. |
 +-----------------------------+----------------------------------------------------------+
+|-logcsv                      |Logs process information to a process_results.csv file    |
+|                             |containing file info, performance data,SSIM,PSNR and MSE. |
++-----------------------------+----------------------------------------------------------+
 |-log <filename>              |Logs process information to a user defined text file      |
++-----------------------------+----------------------------------------------------------+
+|-logcsv <filename>           |Logs process information to a user defined csv file       |
 +-----------------------------+----------------------------------------------------------+
 |-\f\f  <ext><ext>,...,<ext>  |File filters used for processing a list of image files    |
 |                             |with specified extensions in a given directory folder     |
@@ -250,7 +257,13 @@ Example Compression
 `CompressonatorCLI.exe -fd BC7  -NumTheads 16 image.bmp result.dds` |br|
 `CompressonatorCLI.exe -fd BC6H image.exr result.dds` |br|
 
-Example decompression from compressed image using CPU
+Example Compression using GPU
+-----------------------------
+
+`CompressonatorCLI.exe  -fd BC1 -EncodeWith OCL image.bmp result.dds` |br|
+`CompressonatorCLI.exe  -fd BC1 -EncodeWith DXC image.bmp result.dds` |br|
+
+Example Decompression from compressed image using CPU
 -----------------------------------------------------
 `CompressonatorCLI.exe  result.dds image.bmp`
 
@@ -345,8 +358,12 @@ Generates a "process_results.txt"  file with content:
 
 Multiple processes will append results to this file with a dash line separator. The option is valid only for compressing images and not for 3D models or image transcoding.
 
+In addition to the -log and -logfile two  command-line options are avilable to output analysis data into comma-separated file format. use -logcsv or -logcsvfile to generate a .csv file suitable to use in any application that supports viewing these files in a table as shown in this sample:
 
-The new CLI also support processing image files from a folder, without the need to specify a file name. Using a file filter, specific files types can also be selected for compression as needed.
+|imageCSV|
+
+
+The CLI also support processing image files from a folder, without the need to specify a file name. Using a file filter, specific files types can also be selected for compression as needed.
 
 Examples:
 
@@ -362,6 +379,7 @@ Processes only images with extension bmp, png and exr.  Notice that BC7 compress
 .. |image128| image:: ../gui_tool/user_guide/media/image128.png
 .. |image129| image:: ../gui_tool/user_guide/media/image129.png
 .. |image130| image:: ../gui_tool/user_guide/media/image130.png
+.. |imageCSV| image:: ../gui_tool/user_guide/media/image2020-3-17_13-39-6.png
 .. |br| raw:: html
 
    <br />

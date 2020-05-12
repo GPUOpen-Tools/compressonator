@@ -3,6 +3,52 @@
 
 For the latest documentation, please refer to:  http://compressonator.readthedocs.io/en/latest/
 
+V4.0
+~~~~
+May 2020
+
+**Features**
+
+-  `CMP_Core GPU encoding support <developer_sdk/cmp_core/index.html#cmp-core>`__
+
+    Supports GPU based encoding with OpenCL and DX11
+
+-  `Analysis Views <analysis/index.html#analysis-views>`__ 
+
+    (Beta Feature) Displays performance data for GPU and CPU based BC1 to BC7 encoders
+
+-  `CLI Analysis Log File <command_line_tool/commandline.html#test-analysis-logging-features-and-file-filters>`__
+
+    The "process_results.txt" logging includes GPU performance analysis data. csv file format is also available.
+
+-  `Using Codec Quality Settings <developer_sdk/cmp_core/index.html#quality-settings>`__
+
+    Quality settings are available for BC1, BC2 and BC3 encoders.
+
+-  `Setting Global Quality Settings <gui_tool/user_guide/ProjectExplorer.html#setting-global-quality-settings>`__
+
+    Users can override all individual destination compression settings, using a globally set value before processing.
+
+
+-  `Make Compatible Feature <gui_tool/user_guide/TextureCompression.html#using-the-make-compatible-feature>`__
+
+    Compressonator SDK performs auto conversions of FP16 to byte and byte to FP16 formats when encoding textures with GPU or CPU encoders, a pre-conversion of the source data is performed, into a temporary buffer which is then sent for processing, once the processing is completed the buffer is removed.
+
+
+**Known issues and limitations** 
+
+-  GPU based encoding feature is only available on the Windows platform.
+-  When using GPU Encoding, all source image width and height must be divisible by 4.
+-  CMP_Core for BC1,BC2,BC3,BC4,BC5 is fully functional on both OpenCL and DX11.
+-  CMP_Core BC7 has limited support on OpenCL, in a few cases encoding images causes GPU and CLI application to become unresponsive.
+-  CMP_Core BC6 for OpenCL is not completed.
+-  BC6 & BC7 on DX11 uses DirectX Tex shaders, CMP_Core version will be available soon.
+-  GPU shaders for OpenCL and DX11 are compiled at runtime when encoding a texture for the first time, all subsequent runs use compiled shaders.
+-  KPerf(ms) and MTx/s are not measured for Compressonator SDK CPU encoding, only measured for CMP_Core SDK HPC-CPU and GPU encoding.
+-  KPerf(ms) and MTx/s measurements do not match across DXC and OCL pipelines.
+-  If user-requested MIP Map level generation for GPU texture sizes in the GUI and CLI applications are invalid, they will automatically be adjusted to the lowest settable limits.
+-  See v3.2 list for additional issues and limitations.
+
 V3.2
 ~~~~
 December 2019
@@ -11,25 +57,25 @@ December 2019
 
 -  `New Libraries <developer_sdk/index.html>`__
 
-	Several new libraries are now provided with the SDK. 
-
-	`Compressonator Core <developer_sdk/cmp_core/index.html>`__
-	Provides block level API access to updated performance and quality driven BCn codecs.
-
-	`Compressonator Framework <developer_sdk/cmp_framework/index.html>`__
-	Includes Compressonator core with interfaces for multi-threading, mipmap generation, file access of images and HPC pipeline interfaces. (SPMD & GPU support is not enabled in this release)
-
-	`Compressonator SDK <developer_sdk/cmp_compressonator/index.html>`__
-	Has been updated to support Cube Maps, MIP Map generation. External link requirement for Open EXR has been removed.
+    Several new libraries are now provided with the SDK. 
+    
+    `Compressonator Core <developer_sdk/cmp_core/index.html>`__
+    Provides block level API access to updated performance and quality driven BCn codecs.
+    
+    `Compressonator Framework <developer_sdk/cmp_framework/index.html>`__
+    Includes Compressonator core with interfaces for multi-threading, mipmap generation, file access of images and HPC pipeline interfaces. (SPMD & GPU support is not enabled in this release)
+    
+    `Compressonator SDK <developer_sdk/cmp_compressonator/index.html>`__
+    Has been updated to support Cube Maps, MIP Map generation. External link requirement for Open EXR has been removed.
 
 
 -  `Cube Map Support <gui_tool/user_guide/UserGuide.html#cube-maps>`__
 
-	This release previews cube map support for images that are limited to RGBA_8888 format and RGBA_F16. Support for other formats will be provided in the next major update.
+    This release previews cube map support for images that are limited to RGBA_8888 format and RGBA_F16. Support for other formats will be provided in the next major update.
 
 -  `Analysis Views <analysis/index.html#analysis-views>`__
 
-	A analysis table view and results output are provided for users to view test analysis results for Performance, PSNR and SSIM analysis during and after processing of image textures.
+    A analysis table view and results output are provided for users to view test analysis results for Performance, PSNR and SSIM analysis during and after processing of image textures.
 
 
 **Known issues and limitations** 
