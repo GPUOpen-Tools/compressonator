@@ -684,7 +684,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -723,7 +723,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -762,7 +762,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -801,7 +801,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -840,7 +840,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -873,7 +873,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -904,7 +904,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;_WIN64;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -938,7 +938,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -972,7 +972,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -1020,7 +1020,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -1068,7 +1068,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -1116,7 +1116,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -1163,7 +1163,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -1198,7 +1198,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -1233,7 +1233,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;VK_USE_PLATFORM_WIN32_KHR;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.68.0/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -1273,7 +1273,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;_WINDOWS;_SCL_SECURE_NO_WARNINGS;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_MeshCompressor/Draco/src;../Applications/_Libs/CMP_Math;../../Common/Lib/Ext/DirectXTex/v132;../Applications/_Plugins/Common;../../Common/Lib/Ext/glew/1.9.0/include/;../../Common/Lib/Ext/Vulkan/1.0.21.1/SDK/Include/;../../Common/Lib/Ext/OpenGL/Include/GL;../Header/GPU_Decode;../Header;../Header/GPU_Decode/DirectXTex</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>

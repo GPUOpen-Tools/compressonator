@@ -425,7 +425,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -464,7 +464,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -503,7 +503,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -542,7 +542,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -581,7 +581,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -614,7 +614,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -645,7 +645,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;_WIN64;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -679,7 +679,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -713,7 +713,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -761,7 +761,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -809,7 +809,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -857,7 +857,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -904,7 +904,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -939,7 +939,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -974,7 +974,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;VK_USE_PLATFORM_WIN32_KHR;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -1014,7 +1014,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../Header;../Header/GPU_Decode;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../Applications/_Libs/CMP_Math;../Applications/_Plugins/Common;../CMP_Core/shaders;../CMP_Core/source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>

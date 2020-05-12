@@ -87,7 +87,9 @@
     <ClInclude Include="..\CMP_Core\shaders\BC6_Encode_kernel.h" />
     <ClInclude Include="..\CMP_Core\shaders\BC7_Encode_Kernel.h" />
     <ClInclude Include="..\CMP_Core\shaders\BCn_Common_Kernel.h" />
+    <ClInclude Include="..\CMP_Core\shaders\Common_Def.h" />
     <ClInclude Include="..\CMP_Core\source\CMP_Core.h" />
+    <ClInclude Include="..\CMP_Core\source\cmp_math_func.h" />
     <ClInclude Include="..\CMP_Framework\Common\CMP_BoxFilter.h" />
     <ClInclude Include="..\CMP_Framework\Common\CMP_MIPS.h" />
     <ClInclude Include="..\CMP_Framework\Common\half\eLut.h" />
@@ -201,7 +203,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../ConvectionKernels</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -243,7 +245,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;_WIN64;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../ConvectionKernels</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -283,7 +285,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;WIN32;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../ConvectionKernels</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -333,7 +335,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;VK_USE_PLATFORM_WIN32_KHR;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions);GL_GLEXT_PROTOTYPES</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../ConvectionKernels</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>

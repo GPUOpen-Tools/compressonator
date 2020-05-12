@@ -165,6 +165,12 @@
     <ClInclude Include="..\CMP_Core\source\CMP_Core.h">
       <Filter>CMP_Core</Filter>
     </ClInclude>
+    <ClInclude Include="..\CMP_Core\source\cmp_math_func.h">
+      <Filter>CMP_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_Core\shaders\Common_Def.h">
+      <Filter>CMP_Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Applications\_Plugins\Common\TC_PluginInternal.cpp">
