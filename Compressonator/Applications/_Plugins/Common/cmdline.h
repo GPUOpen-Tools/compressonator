@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2019 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -41,7 +41,8 @@
 #include "CMP_FileIO.h"
 
 
-#define LOG_PROCESS_RESULTS_FILE "process_results.txt"
+#define LOG_PROCESS_RESULTS_FILE_TXT "process_results.txt"
+#define LOG_PROCESS_RESULTS_FILE_CSV "process_results.csv"
 
 class CCmdLineParamaters
 {
@@ -82,9 +83,10 @@ class CCmdLineParamaters
         compress_fDuration   = 0;
         decompress_fDuration = 0;
         compute_setup_fDuration = 0;
+        logcsvformat         = false;
         logresults           = false;
         logresultsToFile     = true;
-        CompressOptions.format_support_gpu   = false;
+        CompressOptions.format_support_hostEncoder   = false;
         memset(&CompressOptions, 0, sizeof(CompressOptions));
         CompressOptions.dwSize            = sizeof(CompressOptions);
         CompressOptions.nCompressionSpeed = (CMP_Speed)CMP_Speed_Normal;
@@ -114,7 +116,7 @@ class CCmdLineParamaters
         CompressOptions.DestFormat     = CMP_FORMAT_Unknown;
         CompressOptions.SourceFormat   = CMP_FORMAT_Unknown;
 
-        LogProcessResultsFile.assign(LOG_PROCESS_RESULTS_FILE);
+        LogProcessResultsFile.assign(LOG_PROCESS_RESULTS_FILE_TXT);
     }
 
    public:
@@ -142,6 +144,7 @@ class CCmdLineParamaters
     bool                diffImage;             //  generate diff image
     bool                logresults;            //  appended performance and analysis data to a processed file on each run
     bool                logresultsToFile;      //  write perfromance data to file if logresults is set, default is true 
+    bool                logcsvformat;           //  write perfromance data to file if logresults is set as csv format
     bool imageprops;        //  print image properties (i.e. image name, path, file size, image size, image width, height, miplevel and format)
     bool showperformance;   //
     bool noprogressinfo;    //

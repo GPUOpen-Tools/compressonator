@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2019    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -30,11 +30,16 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <stdio.h>
+typedef LARGE_INTEGER   cmp_timeval;
+#else
+#include <sys/time.h>
+typedef timeval         cmp_timeval;
+#endif
 
 #define ENABLE_QUERY_TIMER
 
 #ifdef ENABLE_QUERY_TIMER
-#define QUERY_PERFORMANCE(label,cmips) query_timer __query_timer_##label__(label,cmips)
+#define QUERY_PERFORMANCE(label) query_timer __query_timer_##label__(label)
 #else
 #define QUERY_PERFORMANCE(label)
 #endif
@@ -46,31 +51,59 @@ struct query_timer
 {
     static void initialize()
     {
+#ifdef _WIN32
         QueryPerformanceFrequency(&m_frequency);
+#endif
     }
 
-    query_timer(char const* p_label,CMIPS *CMips):m_label(p_label), m_cmips(CMips)
+    query_timer(char const* p_label):m_label(p_label)
     {
+#ifdef _WIN32
         QueryPerformanceCounter(&m_start);
+#else
+        gettimeofday(&m_start, NULL);
+#endif
     }
 
     ~query_timer()
     {
+#ifdef _WIN32
         QueryPerformanceCounter(&m_end);
-        m_elapsed_time = (m_end.QuadPart - m_start.QuadPart) / static_cast< double >(m_frequency.QuadPart);
-        if (m_cmips)
-            m_cmips->Print("%s : %3.3f seconds\n", m_label, m_elapsed_time);
-        printf(""); // This Bug need fixing!! (distructor needs to use printf(), could be timing issue!
-
+        m_elapsed_count = static_cast< int >(m_end.QuadPart - m_start.QuadPart);
+#else
+        gettimeofday(&m_end, NULL);
+        const int64_t seconds = (m_end.tv_sec - m_start.tv_sec) * 1000;
+        const int64_t milliseconds = (m_end.tv_usec - m_start.tv_usec) / 1000;
+        m_elapsed_count = seconds + milliseconds;
+#endif
     }
 
-    static LARGE_INTEGER    m_frequency;
-    LARGE_INTEGER           m_start;
-    LARGE_INTEGER           m_end;
-    static double           m_elapsed_time;
-    char const*             m_label;
-    CMIPS*                  m_cmips = NULL;
+    static cmp_timeval    m_frequency;
+    static int            m_elapsed_count;
+    cmp_timeval           m_start;
+    cmp_timeval           m_end;
+    char const*           m_label;
 };
-#endif
+
+#define CMP_TIMER_REFMAX 15     // Max number of timer references used for timing a function call
+
+class cmp_cputimer
+{
+public:
+    void initialize();
+    void Reset(CMP_INT ref);
+    void Start(CMP_INT ref);
+    void Stop(CMP_INT ref);
+    CMP_FLOAT GetMS(CMP_INT ref);
+
+private:
+    float                 m_fcpufrequency;
+    cmp_timeval           m_cpufrequency;
+    cmp_timeval           m_start[CMP_TIMER_REFMAX];
+    cmp_timeval           m_end[CMP_TIMER_REFMAX];
+};
+
+
+
 
 #endif // __QUERY_PERFORMANCE_H

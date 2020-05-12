@@ -128,12 +128,14 @@ class PluginInterface_Pipeline : PluginBase
 public:
     PluginInterface_Pipeline() {}
     virtual ~PluginInterface_Pipeline() {}
-    virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
-    virtual int  TC_PluginSetSharedIO(void* Shared) = 0;
-    virtual int TC_Init(void  *kernel_options) = 0;
-    virtual CMP_ERROR TC_Compress(void  *kernel_options, MipSet  &SrcTexture, MipSet  &destTexture,CMP_Feedback_Proc pFeedbackProc = NULL) = 0;
-    virtual void TC_SetComputeOptions(void *options) = 0;
-    virtual char *TC_ComputeSourceFile() = 0;
+    virtual int         TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
+    virtual int         TC_PluginSetSharedIO(void* Shared) = 0;
+    virtual int         TC_Init(void  *kernel_options) = 0;
+    virtual CMP_ERROR   TC_Compress(void  *kernel_options, MipSet  &SrcTexture, MipSet  &destTexture,CMP_Feedback_Proc pFeedbackProc = NULL) = 0;
+    virtual void        TC_SetComputeOptions(void *options) = 0;
+    virtual char *      TC_ComputeSourceFile() = 0;
+    virtual CMP_ERROR   TC_GetPerformanceStats(void* pPerfStats) = 0;
+    virtual CMP_ERROR   TC_GetDeviceInfo(void* pDeviceInfo) = 0;
     virtual int TC_Close() = 0;
 };
 

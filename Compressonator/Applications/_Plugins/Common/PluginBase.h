@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016-2019 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy

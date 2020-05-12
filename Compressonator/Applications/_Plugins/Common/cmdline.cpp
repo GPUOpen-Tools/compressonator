@@ -212,17 +212,17 @@ CMP_GPUDecode DecodeWith(const char* strParameter)
 CMP_Compute_type EncodeWith(const char* strParameter)
 {
    if (strcmp(strParameter, "CPU") == 0)
-        return CMP_HPC;
+        return CMP_CPU;
    else
    if (strcmp(strParameter, "HPC") == 0)
-        return CMP_CPU;
-#ifdef USE_GPUEncoders
+        return CMP_HPC;
    else if (strcmp(strParameter, "GPU") == 0)
        return CMP_GPU_OCL;
    else if (strcmp(strParameter, "OCL") == 0)
        return CMP_GPU_OCL;
    else if (strcmp(strParameter, "DXC") == 0)
        return CMP_GPU_DXC;
+#ifdef USE_GPU_PIPELINE_VULKAN
    else if (strcmp(strParameter, "VLK") == 0)
        return CMP_GPU_VLK;
 #endif
@@ -294,9 +294,19 @@ bool ProcessSingleFlags(const char* strCommand)
 #endif
     else if ((strcmp(strCommand, "-log") == 0))
     {
+        g_CmdPrams.logcsvformat      = false;
         g_CmdPrams.logresultsToFile  = true;
         g_CmdPrams.logresults        = true;
         isset                        = true;
+        g_CmdPrams.LogProcessResultsFile.assign(LOG_PROCESS_RESULTS_FILE_TXT);
+    }
+    else if ((strcmp(strCommand, "-logcsv") == 0))
+    {
+        g_CmdPrams.logcsvformat      = true;
+        g_CmdPrams.logresultsToFile  = true;
+        g_CmdPrams.logresults        = true;
+        isset                        = true;
+        g_CmdPrams.LogProcessResultsFile.assign(LOG_PROCESS_RESULTS_FILE_CSV);
     }
     else if (strcmp(strCommand, "-UseGPUDecompress") == 0)
     {
@@ -698,6 +708,18 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
             {
                 throw "no log file specified";
             }
+            g_CmdPrams.logcsvformat     = false;
+            g_CmdPrams.logresults       = true;
+            g_CmdPrams.logresultsToFile = true;
+            g_CmdPrams.LogProcessResultsFile.assign((char*)strParameter);
+        }
+        else if (strcmp(strCommand, "-logcsvfile") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
+                throw "no log file specified";
+            }
+            g_CmdPrams.logcsvformat     = true;
             g_CmdPrams.logresults       = true;
             g_CmdPrams.logresultsToFile = true;
             g_CmdPrams.LogProcessResultsFile.assign((char*)strParameter);
@@ -780,6 +802,10 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
             try
             {
                 g_CmdPrams.MipsLevel = boost::lexical_cast<int>(strParameter);
+
+                if ((g_CmdPrams.MipsLevel <= 0) || ((g_CmdPrams.MipsLevel > 20)))
+                    throw "Invalid miplevel value specified, valid range is [1 to 20]";
+
             }
             catch (boost::bad_lexical_cast)
             {
@@ -1828,6 +1854,7 @@ bool GenerateImageProps(std::string ImageFile)
 
 void LocalPrintF(char* buff)
 {
+// Issue #89 Pull Request
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wformat-security"            // warning : warning: format string is not a string literal
 #elif defined(__GNUC__)
@@ -1905,6 +1932,7 @@ CMP_ERROR CMP_ConvertMipTextureCGP(MipSet* pMipSetIn, MipSet* p_MipSetOut, CMP_C
     p_MipSetOut->m_nBlockHeight     = 4;  // - need to fix pMipSetIn m_nBlock settings for this to work
     p_MipSetOut->m_nDepth           = pMipSetIn->m_nDepth;
     p_MipSetOut->m_TextureType      = pMipSetIn->m_TextureType;
+    p_MipSetOut->m_nIterations      = 0;
 
     if (!g_CMIPS->AllocateMipSet(p_MipSetOut, p_MipSetOut->m_ChannelFormat, TDT_ARGB,  p_MipSetOut->m_TextureType, pMipSetIn->m_nWidth, pMipSetIn->m_nHeight, p_MipSetOut->m_nDepth)) // depthsupport, what should nDepth be set as here?
     {
@@ -1917,14 +1945,34 @@ CMP_ERROR CMP_ConvertMipTextureCGP(MipSet* pMipSetIn, MipSet* p_MipSetOut, CMP_C
 
     p_MipSetOut->m_nMipLevels = DestMipLevel;
 
-    for (int nMipLevel = 0; nMipLevel < DestMipLevel; nMipLevel++)
+    CMP_BOOL isGPUEncoding = !((pCompressOptions->nEncodeWith == CMP_Compute_type::CMP_CPU)||(pCompressOptions->nEncodeWith == CMP_Compute_type::CMP_HPC));
+    pCompressOptions->format_support_hostEncoder = isGPUEncoding || (pCompressOptions->nEncodeWith == CMP_Compute_type::CMP_HPC); // HPC Encoder is supported as static plugin
+    CGU_BOOL dataProcessed = false;
+    CGU_BOOL contineProcessing = true;
+
+    for (int nMipLevel = 0; (nMipLevel < DestMipLevel) && contineProcessing; nMipLevel++)
     {
-        for (int nFaceOrSlice = 0; nFaceOrSlice < CMP_MaxFacesOrSlices(pMipSetIn, nMipLevel); nFaceOrSlice++)
+        for (int nFaceOrSlice = 0; (nFaceOrSlice < CMP_MaxFacesOrSlices(pMipSetIn, nMipLevel))&& contineProcessing; nFaceOrSlice++)
         {
+
             //=====================
             // Uncompressed source
             //======================
             MipLevel* pInMipLevel = g_CMIPS->GetMipLevel(pMipSetIn, nMipLevel, nFaceOrSlice);
+
+            //=======================================
+            // For GPU skip non-divisable by 4 pixels
+            //=======================================
+            if (isGPUEncoding && ((pInMipLevel->m_nWidth % 4) || (pInMipLevel->m_nHeight % 4)))
+            {
+                // adjust final output miplevel
+                PrintInfo("GPU Process Warning! MipLevels > %d not processed,  miplevel width or height not divisible by 4!\n",nMipLevel);
+                p_MipSetOut->m_nMipLevels = nMipLevel;
+                contineProcessing = false;
+                continue;
+            }
+
+            dataProcessed           = true;
             srcTexture.dwPitch      = 0;
             srcTexture.nBlockWidth  = pMipSetIn->m_nBlockWidth;
             srcTexture.nBlockHeight = pMipSetIn->m_nBlockHeight;
@@ -1971,75 +2019,111 @@ CMP_ERROR CMP_ConvertMipTextureCGP(MipSet* pMipSetIn, MipSet* p_MipSetOut, CMP_C
             //========================
             // Process ConvertTexture
             //========================
-            pCompressOptions->format_support_gpu = true;
-            KernelOptions   kernel_options;
-            memset(&kernel_options, 0, sizeof(KernelOptions));
-            kernel_options.format       = pCompressOptions->DestFormat;
-            kernel_options.encodeWith   = pCompressOptions->nEncodeWith;
-            kernel_options.fquality     = pCompressOptions->fquality;
-            kernel_options.threads      = pCompressOptions->dwnumThreads;
-
-            //------------------------------------------------
-            // Initializing the Host Framework
-            // if it fails revert to CPU version of the codec
-            //------------------------------------------------
-            do
+            if (pCompressOptions->format_support_hostEncoder)
             {
-                ComputeOptions options;
-                options.force_rebuild = false;   // set this to true if you want the shader source code  to be allways compiled!
-
-                //===============================================================================
-                // Initalize the  Pipeline that will be used for the codec to run on HPC or GPU
-                //===============================================================================
-                if (CMP_CreateComputeLibrary(&g_MipSetIn, &kernel_options, g_CMIPS) != CMP_OK)
+                //------------------------------------------------
+                // Initializing the Host Framework
+                // if it fails revert to CPU version of the codec
+                //------------------------------------------------
+                KernelOptions   kernel_options;
+                memset(&kernel_options, 0, sizeof(KernelOptions));
+                kernel_options.format       = pCompressOptions->DestFormat;
+                kernel_options.encodeWith   = pCompressOptions->nEncodeWith;
+                kernel_options.fquality     = pCompressOptions->fquality;
+                kernel_options.threads      = pCompressOptions->dwnumThreads;
+                kernel_options.getPerfStats = pCompressOptions->getPerfStats;
+                kernel_options.getDeviceInfo= pCompressOptions->getDeviceInfo;
+                do
                 {
-                    PrintInfo("Warning! Failed to init HOST Lib. CPU will be used for compression\n");
-                    pCompressOptions->format_support_gpu = false;
-                    break;
-                }
+                    ComputeOptions options;
+                    options.force_rebuild = false;   // set this to true if you want the shader source code  to be allways compiled!
 
-                // Init Compute Codec info IO
-                if ((g_CMIPS->PrintLine == NULL) && (PrintStatusLine != NULL))
-                {
-                    g_CMIPS->PrintLine = PrintStatusLine;
-                }
+                    //===============================================================================
+                    // Initalize the  Pipeline that will be used for the codec to run on HPC or GPU
+                    //===============================================================================
+                    if (CMP_CreateComputeLibrary(&g_MipSetIn, &kernel_options, g_CMIPS) != CMP_OK)
+                    {
+                        PrintInfo("Warning! CPU will be used for compression\n");
+                        pCompressOptions->format_support_hostEncoder = false;
+                        break;
+                    }
 
-                // Set any addition feature as needed for the Host
-                if (CMP_SetComputeOptions(&options) != CMP_OK)
-                {
-                    PrintInfo("Failed to setup (SPMD or GPU) host options\n");
-                    return CMP_ERR_FAILED_HOST_SETUP;
-                }
+                    // Init Compute Codec info IO
+                    if ((g_CMIPS->PrintLine == NULL) && (PrintStatusLine != NULL))
+                    {
+                        g_CMIPS->PrintLine = PrintStatusLine;
+                    }
 
-                // Do the compression 
-                if (CMP_CompressTexture(&kernel_options, *pMipSetIn, *p_MipSetOut,pFeedbackProc) != CMP_OK)
-                {
-                    PrintInfo("Warning: GPU Shader is not supported or failed to build. CPU will be used\n");
-                    pCompressOptions->format_support_gpu = false;
-                    break;
-                }
+                    // Set any addition feature as needed for the Host
+                    if (CMP_SetComputeOptions(&options) != CMP_OK)
+                    {
+                        PrintInfo("Failed to setup (HPC, SPMD or GPU) host options\n");
+                        return CMP_ERR_FAILED_HOST_SETUP;
+                    }
 
-                //===============================================================================
-                // Close the Pipeline with option to cache as needed
-                //===============================================================================
-                CMP_DestroyComputeLibrary(false);
+                    // Do the compression 
+                    if (CMP_CompressTexture(&kernel_options, *pMipSetIn, *p_MipSetOut,pFeedbackProc) != CMP_OK)
+                    {
+                        PrintInfo("Warning: Target device is not supported or failed to build. CPU will be used\n");
+                        pCompressOptions->format_support_hostEncoder = false;
+                        break;
+                    }
+                    else
+                        p_MipSetOut->m_nIterations++;
 
-            } while (0);
+                    if (kernel_options.getPerfStats)
+                    {
+                        // Get Preformance Stats
+                        if (CMP_GetPerformanceStats(&kernel_options.perfStats) == CMP_OK)
+                        {
+                            pCompressOptions->perfStats = kernel_options.perfStats;
+                        }
+                        else
+                            PrintInfo("Warning: Target device is not supported or failed to build. CPU will be used\n");
+                    }
+
+                    if (kernel_options.getDeviceInfo)
+                    {
+                        // Get Device Info
+                        if (CMP_GetDeviceInfo(&kernel_options.deviceInfo) == CMP_OK)
+                        {
+                            pCompressOptions->deviceInfo = kernel_options.deviceInfo;
+                        }
+                        else
+                            PrintInfo("Warning: Target device is not supported or failed to build. CPU will be used\n");
+                    }
+
+                    //===============================================================================
+                    // Close the Pipeline with option to cache as needed
+                    //===============================================================================
+                    CMP_DestroyComputeLibrary(false);
+
+                } while (0);
+            }
 
             // SPMD/GPU failed run CPU version
-            if (!pCompressOptions->format_support_gpu)
+            if (!pCompressOptions->format_support_hostEncoder)
             {
+                isGPUEncoding = false;
                 if (CMP_ConvertTexture(&srcTexture, &destTexture, pCompressOptions, pFeedbackProc) != CMP_OK)
                 {
                     PrintInfo("Error in compressing destination texture\n");
                     return CMP_ERR_CMP_DESTINATION;
                 }
+                else
+                    p_MipSetOut->m_nIterations++;
             }
         }
     }
 
     if (pFeedbackProc)
         pFeedbackProc(100, NULL, NULL);
+
+    if (isGPUEncoding && !dataProcessed)
+    {
+        PrintInfo("Error source texture is not processed, check source width & height is divisable by 4!\n");
+        return CMP_ERR_CMP_DESTINATION;
+    }
 
     CMP_Format2FourCC(pCompressOptions->DestFormat,p_MipSetOut);
 
@@ -2133,7 +2217,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
     // Initailize stats data and defaults for repeated use in do while()!
     g_CmdPrams.compress_nIterations   = 0;
     g_CmdPrams.decompress_nIterations = 0;
-    g_CmdPrams.CompressOptions.format_support_gpu = false;
+    g_CmdPrams.CompressOptions.format_support_hostEncoder = false;
 
     if ((!fileIsModel(g_CmdPrams.SourceFile)) && (!fileIsModel(g_CmdPrams.DestFile)))
     {
@@ -2236,6 +2320,15 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
                 PrintInfo("Error: destination file type for ASTC must be set to .astc or .ktx\n");
                 return -1;
             }
+
+            //==========================================================
+            // Determine if MIP mapping is set for invalid file formats
+            //==========================================================
+            if ((g_CmdPrams.MipsLevel > 1) && (DestExt.compare("ASTC") == 0))
+            {
+                 PrintInfo("Error: destination file type for ASTC must be set to .ktx for miplevel support\n");
+                 return -1;
+            }
         }
 
 
@@ -2291,6 +2384,16 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
                 PrintInfo("Error: loading source image\n");
                 return -1;
             }
+        }
+
+        //===============================================
+        // Get initial source data sizes, for logging
+        //===============================================
+        {
+            MipLevel* pInMipLevel = g_CMIPS->GetMipLevel(&g_MipSetIn, 0, 0);
+            g_CmdPrams.dwHeight     = pInMipLevel->m_nHeight;
+            g_CmdPrams.dwWidth      = pInMipLevel->m_nWidth;
+            g_CmdPrams.dwDataSize   = pInMipLevel->m_dwLinearSize;
         }
 
         //--------------------------------------------
@@ -2418,12 +2521,31 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
         if (((g_CmdPrams.MipsLevel > 1) && (g_MipSetIn.m_nMipLevels == 1)) && (!g_CmdPrams.use_noMipMaps))
         {
             int nMinSize;
+            // Precheck user setting against image size
+            CMP_INT nHeight     = g_MipSetIn.m_nHeight;
+            CMP_INT nWidth      = g_MipSetIn.m_nWidth;
+            CMP_INT maxLevel    = 1; // count from top level
+            CMP_INT MipsLevel   = g_CmdPrams.MipsLevel;
+            while (MipsLevel > 0) {
+                maxLevel++;
+                nWidth  = CMP_MAX(nWidth >> 1, 1);
+                nHeight = CMP_MAX(nHeight >> 1, 1);
+                if ((nWidth <= 1) || (nHeight <= 1))
+                    break;
+                MipsLevel--;
+            }
 
             // User has two option to specify MIP levels
-            if (g_CmdPrams.nMinSize > 0)
+            if (g_CmdPrams.nMinSize > 0) {
                 nMinSize = g_CmdPrams.nMinSize;
+            }
             else
+            {
+                if (maxLevel < g_CmdPrams.MipsLevel)
+                    PrintInfo("Warning miplevels %d is larger then required, value is autoset to use %d\n", g_CmdPrams.MipsLevel,maxLevel);
                 nMinSize = CMP_CalcMinMipSize(g_MipSetIn.m_nHeight, g_MipSetIn.m_nWidth, g_CmdPrams.MipsLevel);
+            }
+
             CMP_GenerateMIPLevels((CMP_MipSet *)&g_MipSetIn, nMinSize);
         }
 
@@ -2455,6 +2577,8 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
         if ((!SourceFormatIsCompressed) && (DestinationFormatIsCompressed))
         {
             compress_loopStartTime = timeStampsec();
+            g_CmdPrams.CompressOptions.getPerfStats  = true;
+            g_CmdPrams.CompressOptions.getDeviceInfo = true;
 
             //--------------------------------------------
             // V3.1.9000+  new SDK interface using MipSets
@@ -2466,9 +2590,11 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
 #ifdef USE_BASIS
                 && (g_MipSetCmp.m_format != CMP_FORMAT_BASIS)
 #endif
-            ) {
+            ) { // Use HPC, GPU Interfaces
+
+                // Use this for internal CPU verion code tests
                 // KernelOptions   kernel_options;
-                // memset(&kernel_options, 0, sizeof(KernalOptions));
+                // memset(&kernel_options, 0, sizeof(KernelOptions));
                 // 
                 // kernel_options.encodeWith  = (unsigned int)(CMP_HPC);
                 // kernel_options.data_type    = CMP_FORMAT_BC7;
@@ -2476,11 +2602,28 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
                 // kernel_options.threads      = 8;
                 // cmp_status = CMP_ProcessTexture(&g_MipSetIn,&g_MipSetCmp,kernel_options,pFeedbackProc);
 
+                // Save info for -log 
+                if (g_CmdPrams.logresultsToFile)
+                {
+                    MipLevel* pInMipLevel = g_CMIPS->GetMipLevel(&g_MipSetIn, 0, 0);
+                    g_CmdPrams.dwHeight     = pInMipLevel->m_nHeight;
+                    g_CmdPrams.dwWidth      = pInMipLevel->m_nWidth;
+                    g_CmdPrams.dwDataSize   = pInMipLevel->m_dwLinearSize;
+                }
+
+                // Process the texture
                 cmp_status = CMP_ConvertMipTextureCGP(&g_MipSetIn,&g_MipSetCmp,&g_CmdPrams.CompressOptions, pFeedbackProc);
+                g_CmdPrams.compress_nIterations = g_MipSetCmp.m_nIterations;
             }
             else
-            {
+            {   // use Compressonator SDK intercace: This is only CPU based. Check if user set GPU, give warning msg 
+                CMP_BOOL isGPUEncoding = !((g_CmdPrams.CompressOptions.nEncodeWith == CMP_Compute_type::CMP_CPU)||
+                                           (g_CmdPrams.CompressOptions.nEncodeWith == CMP_Compute_type::CMP_UNKNOWN)||
+                                           (g_CmdPrams.CompressOptions.nEncodeWith == CMP_Compute_type::CMP_HPC));
+                if (isGPUEncoding)
+                    PrintInfo("Warning! GPU Encoding with this codec is not supported. CPU will be used for compression\n");
                 cmp_status = CMP_ConvertMipTexture((CMP_MipSet *)&g_MipSetIn, (CMP_MipSet *)&g_MipSetCmp,&g_CmdPrams.CompressOptions, pFeedbackProc);
+                g_CmdPrams.compress_nIterations = g_MipSetCmp.m_nIterations;
             }
 
             if (cmp_status != CMP_OK)
@@ -3077,7 +3220,8 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
             LogToResults(g_CmdPrams,buff);
         }
 
-        LogToResults(g_CmdPrams,"--------------\n");
+        if (!g_CmdPrams.logcsvformat) 
+            LogToResults(g_CmdPrams,"--------------\n");
     }
 
 //printf("--END--\n");
@@ -3114,47 +3258,66 @@ void ProcessResults(CCmdLineParamaters &prams, CMP_ANALYSIS_DATA &analysisData)
     
     #ifdef _WIN32
         FILE*   fp;
-        //errno_t err = 
         fopen_s(&fp, prams.LogProcessResultsFile.c_str(), "a");
     #else
         FILE* fp = fopen(prams.LogProcessResultsFile.c_str(), "a");
     #endif
         if (fp)
         {
-            // Encode with
-            std::string encodewith;
-    
+            // Write Header info
+            if (newfile)
+            {
+                fprintf(fp,"CompressonatorCLI Performance Log v1.1\n\n");
+                fprintf(fp,"Negative values are errors in measurement\n");
+                fprintf(fp,"For images with no errors PSNR=255 MSE=0 and SSIM=1.0\n\n");
+                if (prams.logcsvformat)
+                {
+                    fprintf(fp, "Source,Height,Width,LinearSize(MB),Destination,ProcessedTo,Iteration,Duration(s),Using,Quality,KPerf(ms),MTx/s,MSE,PSNR,SSIM,TotalTime(s)\n");
+                }
+            }
+
+            //
+            // Gather data to print
+            //
+            char buffer[1024];
+            std::string str_source       = prams.SourceFile;
+            std::string str_destination  = prams.DestFile;
+            std::string str_height       ;
+            std::string str_width        ;
+            std::string str_linearsize   ;
+            std::string str_processedto  ;
+            std::string str_compress_nIterations;
+            std::string str_compress_fDuration;
+            std::string str_encodewith   ;
+            std::string str_fquality     ;
+            std::string str_processed_to ;
+            std::string str_perf         ;
+            std::string str_mtx          ;
+            std::string str_mse          ;
+            std::string str_psnr         ;
+            std::string str_ssim         ;
+            std::string str_duration     ;
+
+            // if (prams.compute_setup_fDuration > 0) to remove!
+             // {
+             //    //"Compute Setup: %.3f seconds\n", g_CmdPrams.compute_setup_fDuration
+             // }
+
+            //====================================
+            // EncodeWith option
+            //====================================
             if (prams.CompressOptions.bUseCGCompress)
             {
-                if (!prams.CompressOptions.format_support_gpu)
+                if (prams.CompressOptions.nEncodeWith != CMP_Compute_type::CMP_CPU)
                 {
-                    encodewith.append("*** CPU used in place of ");
+                    if (!prams.CompressOptions.format_support_hostEncoder)
+                    {
+                        str_encodewith.append("[CPU] ");
+                    }
+                    str_encodewith.append(GetEncodeWithDesc(prams.CompressOptions.nEncodeWith));
                 }
-    
-                switch (prams.CompressOptions.nEncodeWith)
-                {
-                case CMP_HPC:                      // Use CPU High Performance Compute to compress textures, full support
-                    encodewith.append("HPC");
-                    break;
-#ifdef USE_GPUEncoders
-                case CMP_GPU:                      // Use GPU to compress textures, full support
-                    encodewith.append("GPU");
-                    break;
-                case CMP_GPU_OCL: 
-                    encodewith.append("OCL");
-                    break;
-                case CMP_GPU_VLK:
-                    encodewith.append("VLK");
-                    break;
-                case CMP_GPU_DXC:
-                    encodewith.append("DXC");
-                    break;
-#endif
-                case CMP_CPU:
-                default:
-                    encodewith.append("CPU");
-                    break;
-                }
+                else str_encodewith.append("[CPU]");
+
             }
             else
             {
@@ -3163,60 +3326,128 @@ void ProcessResults(CCmdLineParamaters &prams, CMP_ANALYSIS_DATA &analysisData)
                     switch(prams.CompressOptions.nGPUDecode)
                     {
                         case GPUDecode_DIRECTX:
-                            encodewith.append("DirectX");
+                            str_encodewith.append("DirectX");
                             break;
                         case GPUDecode_VULKAN :
-                            encodewith.append("Vulkan");
+                            str_encodewith.append("Vulkan");
                             break;
                         case GPUDecode_OPENGL :
                         default:
-                            encodewith.append("OpenGL");
+                            str_encodewith.append("OpenGL");
                             break;
                     }
                 }
                 else
-                    encodewith.append("CPU");
+                    str_encodewith.append("CPU");
             }
-    
-            // Write Header info
-            if (newfile)
-            {
-                fprintf(fp,"CompressonatorCLI Performance Log v1.0\n\n");
-            }
-             fprintf(fp,"Source       : %s, Height %d, Width %d, Size %2.3f MBytes\n", 
-                                                prams.SourceFile.c_str(),
-                                                prams.dwHeight,
-                                                prams.dwWidth,
-                                                (float)prams.dwDataSize / 1024000.0f
-                                                );
-             fprintf(fp,"Destination  : %s\n", prams.DestFile.c_str());
-             fprintf(fp,"Using        : %s\n", encodewith.c_str());
-    
-             fprintf(fp,"Quality      : %.2f\n",g_CmdPrams.CompressOptions.fquality);
-             if (prams.compute_setup_fDuration > 0)
-             {
-                fprintf(fp,"Compute Setup: %.3f seconds\n", g_CmdPrams.compute_setup_fDuration);
-             }
-             fprintf(fp,"Processed to : %-10s with %2i iteration(s) in %.3f seconds\n", GetFormatDesc(prams.CompressOptions.DestFormat), prams.compress_nIterations,prams.compress_fDuration);
-    
-             // Log only compression stats
+
+            //======================================
+            // Source Height , Width , Linear size
+            //======================================
+            snprintf(buffer,1024,"%d",prams.dwHeight);
+            str_height = buffer;
+
+            snprintf(buffer,1024,"%d",prams.dwWidth);
+            str_width = buffer;
+
+            snprintf(buffer,1024,"%2.3f", (float)prams.dwDataSize / 1000000.0f);
+            str_linearsize = buffer;
+
+            //======================================
+            // Processed To info
+            //======================================
+            snprintf(buffer,1024,"%s", GetFormatDesc(prams.CompressOptions.DestFormat));
+            str_processedto  = buffer;
+            snprintf(buffer,1024,"%2i", prams.compress_nIterations);
+            str_compress_nIterations= buffer;
+            snprintf(buffer,1024,"%.3f",prams.compress_fDuration);
+            str_compress_fDuration= buffer;
+            snprintf(buffer,1024,"%.2f",g_CmdPrams.CompressOptions.fquality);
+            str_fquality = buffer;
+
+            //======================================
+            // Performance Data
+            //======================================
+            snprintf(buffer,1024,"%3.3f", prams.CompressOptions.perfStats.m_computeShaderElapsedMS*1000);
+            str_perf = buffer;
+            snprintf(buffer,1024,"%3.3f", prams.CompressOptions.perfStats.m_CmpMTxPerSec);
+            str_mtx = buffer;
+
+
+            //======================================
+            // Quality Data
+            //======================================
              if (analysisData.PSNR <= 0)
              {
                  analysisData.PSNR = 256;
              }
-    
              if (analysisData.SSIM != -1)
              {
-                 fprintf(fp,"MSE          : %.2f\n", analysisData.MSE);
-                 fprintf(fp,"PSNR         : %.1f\n", analysisData.PSNR);
-                 fprintf(fp,"SSIM         : %.4f\n", analysisData.SSIM);
+                 snprintf(buffer,1024,"%.2f", analysisData.MSE);
+                 str_mse = buffer;
+                 snprintf(buffer,1024,"%.1f", analysisData.PSNR);
+                 str_psnr = buffer;
+                 snprintf(buffer,1024,"%.4f", analysisData.SSIM);
+                 str_ssim = buffer;
              }
-             // There was an error in Analysis
-             if (analysisData.SSIM == -2)
-               fprintf(fp,"Analysis data: **Failed to report**\n");
-    
-            fprintf(fp,"Total time   : %.3f seconds\n", prams.conversion_fDuration);
-            fprintf(fp,"\n");
+             else
+             if (analysisData.SSIM == -2) // Failed to process
+             {
+                str_mse  = "-2";
+                str_psnr = "-2";
+                str_ssim = "-2";
+             }
+             else
+             {
+                str_mse  = "-1";
+                str_psnr = "-1";
+                str_ssim = "-1";
+             }
+
+             snprintf(buffer,1024,"%.3f", prams.conversion_fDuration);
+             str_duration = buffer;
+
+            if (prams.logcsvformat)
+            {
+             fprintf(fp,"%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
+                                            str_source.c_str(),
+                                            str_height.c_str(),
+                                            str_width.c_str(),
+                                            str_linearsize.c_str(),
+                                            str_destination.c_str(),
+                                            str_processedto.c_str(),
+                                            str_compress_nIterations.c_str(),
+                                            str_compress_fDuration.c_str(),
+                                            str_encodewith.c_str(),
+                                            str_fquality.c_str(),
+                                            str_perf.c_str(),
+                                            str_mtx.c_str(),
+                                            str_mse .c_str(),
+                                            str_psnr.c_str(),
+                                            str_ssim.c_str(),
+                                            str_duration.c_str());
+            }
+            else
+            {
+             fprintf(fp,"Source       : %s, Height %s, Width %s, Linear size %s MB\n",
+                                            str_source.c_str(),
+                                            str_height.c_str(),
+                                            str_width.c_str(),
+                                            str_linearsize.c_str());
+             fprintf(fp,"Destination  : %s\n", str_destination.c_str());
+             fprintf(fp,"Processed to : %-10s with %s iteration(s) in %s seconds\n", 
+                                            str_processedto.c_str(),
+                                            str_compress_nIterations.c_str(),
+                                            str_compress_fDuration.c_str());
+             fprintf(fp,"Using        : %s\n", str_encodewith.c_str());
+             fprintf(fp,"Quality      : %s\n",str_fquality.c_str());
+             fprintf(fp,"KPerf(ms)    : %s\n", str_perf.c_str());
+             fprintf(fp,"MTx/s        : %s\n", str_mtx.c_str());
+             fprintf(fp,"MSE          : %s\n", str_mse .c_str());
+             fprintf(fp,"PSNR         : %s\n", str_psnr.c_str());
+             fprintf(fp,"SSIM         : %s\n", str_ssim.c_str());
+             fprintf(fp,"Total time(s): %s\n", str_duration.c_str());
+            }
             fclose(fp);
         }
    }
