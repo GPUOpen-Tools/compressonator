@@ -1587,8 +1587,17 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
                         kernel_options.threads  = g_CmdPrams.CompressOptions.dwnumThreads;
                         kernel_options.height   = inMips.dwHeight;
                         kernel_options.width    = inMips.dwWidth;
+                        kernel_options.encodeWith = g_CmdPrams.CompressOptions.nEncodeWith;
 
                         auto cmp_status = CMP_ProcessTexture(&inMips, &mipSetCmp, kernel_options, CompressionCallback);
+                        if (cmp_status == CMP_ERR_FAILED_HOST_SETUP)
+                        {
+                            g_CmdPrams.CompressOptions.nEncodeWith = CMP_Compute_type::CMP_CPU;
+                            kernel_options.encodeWith = g_CmdPrams.CompressOptions.nEncodeWith;
+                            memset(&mipSetCmp, 0, sizeof(CMP_MipSet));
+                            cmp_status = CMP_ProcessTexture(&inMips, &mipSetCmp, kernel_options, CompressionCallback);
+                        }
+
                         if (cmp_status != CMP_OK)
                         {
                             PrintInfo("Error: Something went wrong while compressing image!\n");

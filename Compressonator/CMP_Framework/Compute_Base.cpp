@@ -667,6 +667,7 @@ CMP_ERROR CMP_API CMP_ProcessTexture(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSe
 
             // Do the compression
             if (CMP_CompressTexture(&kernelOptions, *srcMipSet, *dstMipSet,pFeedbackProc) != CMP_OK) {
+                CMips.FreeMipSet(dstMipSet);
                 CMP_DestroyComputeLibrary(false);
                 PrintInfo("Failed to run compute plugin: CPU will be used for compression.\n");
                 return CMP_ERR_FAILED_HOST_SETUP;
