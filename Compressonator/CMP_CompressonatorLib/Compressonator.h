@@ -31,7 +31,7 @@
 #include <vector>
 #include <stddef.h>
 
-#include "UseDefinitions.h"
+#include "../UseDefinitions.h"
 
 #ifndef _LINUX
 using namespace std;
