@@ -1,92 +1,83 @@
 #pragma once
 
-#ifdef _WIN32
-#include <Windows.h>
-#endif
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
+#include <cstring>
 #include <iostream>
-#include <fstream>
-#include "Compressonator.h"
-
-using namespace std;
 
 typedef struct
 {
-    int      DataSize;
+    int DataSize;
 
-    float    TotalError;
-    float    AbsError;       //< Total Absolute Error
-    float    SqError;        //< Total Squared Error
-    float    MeanError;
-    float    MeanAbsError;
+    float TotalError;
+    float AbsError; //< Total Absolute Error
+    float SqError;  //< Total Squared Error
+    float MeanError;
+    float MeanAbsError;
 
     // Test results
-    float    MSE;             // Mean Square Error    
-    float     RMSError;        //< Root Mean Square Error
+    float MSE;      // Mean Square Error
+    float RMSError; //< Root Mean Square Error
 
-    float    SSIM;
-    float    SSIM_Red;
-    float    SSIM_Green;
-    float    SSIM_Blue;
+    float SSIM;
+    float SSIM_Red;
+    float SSIM_Green;
+    float SSIM_Blue;
 
-    float    PSNR;
-    float    PSNR_Red;
-    float    PSNR_Green;
-    float    PSNR_Blue;
+    float PSNR;
+    float PSNR_Red;
+    float PSNR_Green;
+    float PSNR_Blue;
 
     char srcdecodePattern[17];
     char destdecodePattern[17];
 
-    float    encodeTime;        
+    float encodeTime;
 
     // Pass Conditions
-    float    pMSE;            // Mean Square Error    
-    float    pRMSError;        //< Root Mean Square Error
-    float    pSSIM_Red;
-    float    pSSIM_Green;
-    float    pSSIM_Blue;
-    float    pPSNR;
-    float    pencodeTime;    
+    float pMSE;      // Mean Square Error
+    float pRMSError; //< Root Mean Square Error
+    float pSSIM_Red;
+    float pSSIM_Green;
+    float pSSIM_Blue;
+    float pPSNR;
+    float pencodeTime;
 
     // SQL data
-    int        maxcount;        // Maxumiun number of test items in the data base
-    int        test;
+    int maxcount; // Maxumiun number of test items in the data base
+    int test;
 
     // BC7 options
-    int            nCompressionSpeed;    
-    int            dwnumThreads;        
-    float          fquality;            
-    int            brestrictColour;    
-    int            brestrictAlpha;        
-    unsigned long    dwmodeMask;        
+    int nCompressionSpeed;
+    int dwnumThreads;
+    float fquality;
+    int brestrictColour;
+    int brestrictAlpha;
+    unsigned long dwmodeMask;
 
     // Compression Type
-    char  Compression[128];
+    char Compression[128];
 
     // The source file to test on
-    char  SourceFile[128];
-    char  FullSourceFile[128];
-    char  FullTargetBMP[128];
-    char  FullSourceBMP[128];
-    char  FullSourceDDS[128];
-    char ext[128];            // file extension
-    char fname[128];        // just the file name without extension and path
-    char dir[128];            // Typically null! But in some special cases user may define a full path for Source File, overiding configuration defaults
-    char drive[128];        // Typically null!
+    char SourceFile[128];
+    char FullSourceFile[128];
+    char FullTargetBMP[128];
+    char FullSourceBMP[128];
+    char FullSourceDDS[128];
+    char ext[128];   // file extension
+    char fname[128]; // just the file name without extension and path
+    char dir[128];   // Typically null! But in some special cases user may define a full path for Source File, overiding configuration defaults
+    char drive[128]; // Typically null!
 
-}REPORT_DATA;
+} REPORT_DATA;
 
 class MY_REPORT_DATA
 {
 public:
-    MY_REPORT_DATA() {
+    MY_REPORT_DATA()
+    {
         memset(&data, 0, sizeof(REPORT_DATA));
     };
-    friend ostream& operator<<(ostream& os, const MY_REPORT_DATA& dt) {
+    friend std::ostream &operator<<(std::ostream &os, const MY_REPORT_DATA &dt)
+    {
         REPORT_DATA my_data = dt.data;
         //os << "Absolute Error: \t"        << my_data.AbsError << "\n";
         os /*<< "MSE: \t"            */ << my_data.MSE << "\n";

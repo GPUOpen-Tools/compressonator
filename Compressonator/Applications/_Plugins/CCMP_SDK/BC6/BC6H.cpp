@@ -337,6 +337,6 @@ int expandbits_(int bits, int v)
 void init_members(BC6H_Encode * BC6HEncode)
 {
     BC6HEncode->m_quality = 0.05F;
-    BC6HEncode->m_partitionSearchSize = max((1.0F / 16.0F), ((BC6HEncode->m_quality*2.0F) / qFAST_THRESHOLD));
+    BC6HEncode->m_partitionSearchSize = ((std::max))((1.0F / 16.0F), ((BC6HEncode->m_quality*2.0F) / qFAST_THRESHOLD));
 }
 

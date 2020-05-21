@@ -28,14 +28,13 @@
 #include <cstring>
 #include <ctime>
 
-using namespace std;
 
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_Mesh_Compressor)
 SET_PLUGIN_TYPE("MESH_COMPRESSOR")
 SET_PLUGIN_NAME("DRACO")
 #else
-void *Plugin_Mesh_Compressor() { return new Plugin_Mesh_Compressor; }
+void *Plugin_Mesh_Compressor() { return new class Plugin_Mesh_Compressor; }
 #endif
 
 PluginManager          g_pluginManager;

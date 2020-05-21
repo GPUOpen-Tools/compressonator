@@ -30,26 +30,30 @@
 #include "cpWelcomePage.h"
 
 
-CWelcomePage::CWelcomePage(const QString title, QWidget *parent) : acCustomDockWidget(title, parent),
-m_title(title),
-m_parent(parent)
+CWelcomePage::CWelcomePage(const QString title, QWidget *parent)
+    : acCustomDockWidget(title, parent)
+    , m_startUpPage(nullptr)
+    , custTitleBar(nullptr)
+    , m_newWidget(nullptr)
+    , m_layout(nullptr)
+    , m_title(title)
+    , m_parent(parent)
 {
-    custTitleBar= new acDockWidgetTitlebar(this);
+    custTitleBar = new acDockWidgetTitlebar(this);
     custTitleBar->setTitle(title);
     custTitleBar->setButtonToolBarEnabled(false);
     setTitleBarWidget(custTitleBar);
 
     m_newWidget = new QWidget(parent);
-    m_startUpPage = NULL;
     m_startUpPage = new cpStartupPage(this);
 
     connect(m_startUpPage, SIGNAL(PageButtonClick(QString &, QString &)), this, SLOT(onWebPageButtonClick(QString &, QString &)));
 
     m_layout = new QGridLayout(m_newWidget);
-
     m_layout->setSpacing(0);
     m_layout->setMargin(0);
     m_layout->setContentsMargins(0, 0, 0, 0);
+
     if (m_startUpPage)
     {
         m_layout->addWidget(m_startUpPage, 0, 0);

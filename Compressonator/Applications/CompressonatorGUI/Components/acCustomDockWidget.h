@@ -48,7 +48,7 @@ class acCustomDockWidget : public QDockWidget
 {
     Q_OBJECT
 public:
-    acCustomDockWidget(const QString title, QWidget *parent = 0);
+    acCustomDockWidget(const QString title, QWidget *parent = nullptr);
 
     acDockWidgetTitlebar    *custTitleBar;
     QString                  m_CustomTitle;

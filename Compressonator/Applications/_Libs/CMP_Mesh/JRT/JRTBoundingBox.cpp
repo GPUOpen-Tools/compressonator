@@ -330,8 +330,8 @@ bool JRTBoundingBox::TriangleIntersect(const Vec3f* pV1, const Vec3f* pV2, const
             float fP2 = DotProduct(vAxis, vVertices[ 2 ]);
 
             // compute extents of projected triangle
-            float fPMin = std::min(fP0, std::min(fP1, fP2));
-            float fPMax = std::max(fP0, std::max(fP1, fP2));
+            float fPMin = (std::min)(fP0, (std::min)(fP1, fP2));
+            float fPMax = (std::max)(fP0, (std::max)(fP1, fP2));
 
             // compute size of projected box
             float fBoxRadius = 0.0f;

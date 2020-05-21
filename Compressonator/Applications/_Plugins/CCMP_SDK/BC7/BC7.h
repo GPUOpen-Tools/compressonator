@@ -102,8 +102,6 @@ public:
 #include <math.h>       /* floor */
 #include <algorithm>    // std::max
 
-using namespace std;
-
 extern int expandbits(CGU_INT bits, CGU_INT v);
 
 #endif

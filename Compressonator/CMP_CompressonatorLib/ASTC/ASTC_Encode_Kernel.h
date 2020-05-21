@@ -34,7 +34,6 @@ typedef float3 afloat3;
 #include <math.h> 
 #include <algorithm>    // std::max
 
-using namespace std;
 
 struct Vec4uc
 {
@@ -117,7 +116,6 @@ namespace ASTC_Encoder
 #include <stdio.h>      /* printf */
 #include <math.h>       /* floor */
 #include <algorithm>    // std::max
-using namespace std;
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846264338

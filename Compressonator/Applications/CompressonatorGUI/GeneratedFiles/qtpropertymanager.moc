@@ -17,59 +17,66 @@
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
-struct qt_meta_stringdata_QtMetaEnumWrapper_t {
+struct qt_meta_stringdata_QtMetaEnumWrapper_t
+{
     QByteArrayData data[3];
     char stringdata0[45];
 };
-#define QT_MOC_LITERAL(idx, ofs, len) \
+#define QT_MOC_LITERAL(idx, ofs, len)                            \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    qptrdiff(offsetof(qt_meta_stringdata_QtMetaEnumWrapper_t, stringdata0) + ofs \
-        - idx * sizeof(QByteArrayData)) \
-    )
+    qptrdiff(offsetof(qt_meta_stringdata_QtMetaEnumWrapper_t, stringdata0) + ofs - idx * sizeof(QByteArrayData)))
 static const qt_meta_stringdata_QtMetaEnumWrapper_t qt_meta_stringdata_QtMetaEnumWrapper = {
     {
-QT_MOC_LITERAL(0, 0, 17), // "QtMetaEnumWrapper"
-QT_MOC_LITERAL(1, 18, 6), // "policy"
-QT_MOC_LITERAL(2, 25, 19) // "QSizePolicy::Policy"
+        QT_MOC_LITERAL(0, 0, 17), // "QtMetaEnumWrapper"
+        QT_MOC_LITERAL(1, 18, 6), // "policy"
+        QT_MOC_LITERAL(2, 25, 19) // "QSizePolicy::Policy"
 
     },
-    "QtMetaEnumWrapper\0policy\0QSizePolicy::Policy"
-};
+    "QtMetaEnumWrapper\0policy\0QSizePolicy::Policy"};
 #undef QT_MOC_LITERAL
 
 static const uint qt_meta_data_QtMetaEnumWrapper[] = {
 
- // content:
-       7,       // revision
-       0,       // classname
-       0,    0, // classinfo
-       0,    0, // methods
-       1,   14, // properties
-       0,    0, // enums/sets
-       0,    0, // constructors
-       0,       // flags
-       0,       // signalCount
+    // content:
+    7,     // revision
+    0,     // classname
+    0, 0,  // classinfo
+    0, 0,  // methods
+    1, 14, // properties
+    0, 0,  // enums/sets
+    0, 0,  // constructors
+    0,     // flags
+    0,     // signalCount
 
- // properties: name, type, flags
-       1, 0x80000000 | 2, 0x00095009,
+    // properties: name, type, flags
+    1, 0x80000000 | 2, 0x00095009,
 
-       0        // eod
+    0 // eod
 };
 
 void QtMetaEnumWrapper::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
 
 #ifndef QT_NO_PROPERTIES
-    if (_c == QMetaObject::ReadProperty) {
+    if (_c == QMetaObject::ReadProperty)
+    {
         QtMetaEnumWrapper *_t = static_cast<QtMetaEnumWrapper *>(_o);
         Q_UNUSED(_t)
         void *_v = _a[0];
-        switch (_id) {
-        case 0: *reinterpret_cast< QSizePolicy::Policy*>(_v) = _t->policy(); break;
-        default: break;
+        switch (_id)
+        {
+        case 0:
+            *reinterpret_cast<QSizePolicy::Policy *>(_v) = _t->policy();
+            break;
+        default:
+            break;
         }
-    } else if (_c == QMetaObject::WriteProperty) {
-    } else if (_c == QMetaObject::ResetProperty) {
+    }
+    else if (_c == QMetaObject::WriteProperty)
+    {
+    }
+    else if (_c == QMetaObject::ResetProperty)
+    {
     }
 #endif // QT_NO_PROPERTIES
     Q_UNUSED(_o);
@@ -78,16 +85,13 @@ void QtMetaEnumWrapper::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
     Q_UNUSED(_a);
 }
 
-static const QMetaObject * const qt_meta_extradata_QtMetaEnumWrapper[] = {
-        &QSizePolicy::staticMetaObject,
-    Q_NULLPTR
-};
+static const QMetaObject *const qt_meta_extradata_QtMetaEnumWrapper[] = {
+    &QSizePolicy::staticMetaObject,
+    Q_NULLPTR};
 
 const QMetaObject QtMetaEnumWrapper::staticMetaObject = {
-    { &QObject::staticMetaObject, qt_meta_stringdata_QtMetaEnumWrapper.data,
-      qt_meta_data_QtMetaEnumWrapper,  qt_static_metacall, qt_meta_extradata_QtMetaEnumWrapper, Q_NULLPTR}
-};
-
+    {&QObject::staticMetaObject, qt_meta_stringdata_QtMetaEnumWrapper.data,
+     qt_meta_data_QtMetaEnumWrapper, qt_static_metacall, qt_meta_extradata_QtMetaEnumWrapper, Q_NULLPTR}};
 
 const QMetaObject *QtMetaEnumWrapper::metaObject() const
 {
@@ -96,9 +100,10 @@ const QMetaObject *QtMetaEnumWrapper::metaObject() const
 
 void *QtMetaEnumWrapper::qt_metacast(const char *_clname)
 {
-    if (!_clname) return Q_NULLPTR;
+    if (!_clname)
+        return Q_NULLPTR;
     if (!strcmp(_clname, qt_meta_stringdata_QtMetaEnumWrapper.stringdata0))
-        return static_cast<void*>(const_cast< QtMetaEnumWrapper*>(this));
+        return static_cast<void *>(const_cast<QtMetaEnumWrapper *>(this));
     return QObject::qt_metacast(_clname);
 }
 
@@ -107,21 +112,31 @@ int QtMetaEnumWrapper::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     _id = QObject::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
-    
+
 #ifndef QT_NO_PROPERTIES
-   if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
-            || _c == QMetaObject::ResetProperty || _c == QMetaObject::RegisterPropertyMetaType) {
+    if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty || _c == QMetaObject::ResetProperty || _c == QMetaObject::RegisterPropertyMetaType)
+    {
         qt_static_metacall(this, _c, _id, _a);
         _id -= 1;
-    } else if (_c == QMetaObject::QueryPropertyDesignable) {
+    }
+    else if (_c == QMetaObject::QueryPropertyDesignable)
+    {
         _id -= 1;
-    } else if (_c == QMetaObject::QueryPropertyScriptable) {
+    }
+    else if (_c == QMetaObject::QueryPropertyScriptable)
+    {
         _id -= 1;
-    } else if (_c == QMetaObject::QueryPropertyStored) {
+    }
+    else if (_c == QMetaObject::QueryPropertyStored)
+    {
         _id -= 1;
-    } else if (_c == QMetaObject::QueryPropertyEditable) {
+    }
+    else if (_c == QMetaObject::QueryPropertyEditable)
+    {
         _id -= 1;
-    } else if (_c == QMetaObject::QueryPropertyUser) {
+    }
+    else if (_c == QMetaObject::QueryPropertyUser)
+    {
         _id -= 1;
     }
 #endif // QT_NO_PROPERTIES

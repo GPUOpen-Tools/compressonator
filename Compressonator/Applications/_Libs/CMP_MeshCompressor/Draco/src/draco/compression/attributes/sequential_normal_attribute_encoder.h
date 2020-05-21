@@ -24,8 +24,8 @@
 namespace draco {
 
 // Class for encoding normal vectors using an octahedral encoding, see Cigolle
-// et al.'14 “A Survey of Efficient Representations for Independent Unit
-// Vectors”. Compared to the basic quantization encoder, this encoder results
+// et al.'14 "A Survey of Efficient Representations for Independent Unit
+// Vectors". Compared to the basic quantization encoder, this encoder results
 // in a better compression rate under the same accuracy settings. Note that this
 // encoder doesn't preserve the lengths of input vectors, therefore it will not
 // work correctly when the input values are not normalized.

@@ -30,7 +30,6 @@
 
 #include <iostream>
 #include <fstream>
-using namespace std;
 
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_glTF_OpenGL)
@@ -178,9 +177,10 @@ void *Plugin_glTF_OpenGL::CreateView(void *ModelData, CMP_LONG Width, CMP_LONG H
     m_model  = (CMODEL_DATA *)ModelData;
     m_parent = (QWidget *)    userWidget;
 
-    m_glTF_OGLDevice = new glTF_OGLDevice ( m_model, Width, Height,pluginManager, msghandler,m_parent);
+    m_glTF_OGLDevice = new glTF_OGLDevice();
     if (m_glTF_OGLDevice)
     {
+        m_glTF_OGLDevice->init(m_model, Width, Height,pluginManager, msghandler,m_parent);
         m_glTF_OGLDevice->OnCreate();
     }
     else return nullptr;

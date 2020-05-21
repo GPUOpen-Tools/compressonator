@@ -807,7 +807,7 @@ void decompressBlockDiffFlipC(unsigned int block_part1, unsigned int block_part2
                     shift++;
                     index=unscramble[index];
 
-                     r=RED_CHANNEL(img,width,x,y,channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
+                     r = RED_CHANNEL(img, width, x, y, channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
                      g = GREEN_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0, avg_color[1] + compressParams[table][index], 255);
                      b = BLUE_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0,avg_color[2]+compressParams[table][index],255);
                 }
@@ -826,7 +826,7 @@ void decompressBlockDiffFlipC(unsigned int block_part1, unsigned int block_part2
                     shift++;
                     index=unscramble[index];
 
-                     r=RED_CHANNEL(img,width,x,y,channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
+                     r = RED_CHANNEL(img, width, x, y, channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
                      g = GREEN_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0, avg_color[1] + compressParams[table][index], 255);
                      b = BLUE_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0,avg_color[2]+compressParams[table][index],255);
                 }
@@ -863,7 +863,7 @@ void decompressBlockDiffFlipC(unsigned int block_part1, unsigned int block_part2
                     shift++;
                     index=unscramble[index];
 
-                     r=RED_CHANNEL(img,width,x,y,channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
+                     r = RED_CHANNEL(img, width, x, y, channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
                      g = GREEN_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0, avg_color[1] + compressParams[table][index], 255);
                      b = BLUE_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0,avg_color[2]+compressParams[table][index],255);
                 }
@@ -882,7 +882,7 @@ void decompressBlockDiffFlipC(unsigned int block_part1, unsigned int block_part2
                     shift++;
                     index=unscramble[index];
 
-                     r=RED_CHANNEL(img,width,x,y,channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
+                     r = RED_CHANNEL(img, width, x, y, channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
                      g = GREEN_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0, avg_color[1] + compressParams[table][index], 255);
                      b = BLUE_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0,avg_color[2]+compressParams[table][index],255);
                 }
@@ -939,7 +939,7 @@ void decompressBlockDiffFlipC(unsigned int block_part1, unsigned int block_part2
                     shift++;
                     index=unscramble[index];
 
-                     r=RED_CHANNEL(img,width,x,y,channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
+                     r = RED_CHANNEL(img, width, x, y, channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
                      g = GREEN_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0, avg_color[1] + compressParams[table][index], 255);
                      b = BLUE_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0,avg_color[2]+compressParams[table][index],255);
                 }
@@ -958,7 +958,7 @@ void decompressBlockDiffFlipC(unsigned int block_part1, unsigned int block_part2
                     shift++;
                     index=unscramble[index];
 
-                     r=RED_CHANNEL(img,width,x,y,channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
+                     r = RED_CHANNEL(img, width, x, y, channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
                      g = GREEN_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0, avg_color[1] + compressParams[table][index], 255);
                      b = BLUE_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0,avg_color[2]+compressParams[table][index],255);
                 }
@@ -1006,7 +1006,7 @@ void decompressBlockDiffFlipC(unsigned int block_part1, unsigned int block_part2
                     shift++;
                     index=unscramble[index];
 
-                     r=RED_CHANNEL(img,width,x,y,channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
+                     r = RED_CHANNEL(img, width, x, y, channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
                      g = GREEN_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0, avg_color[1] + compressParams[table][index], 255);
                      b = BLUE_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0,avg_color[2]+compressParams[table][index],255);
                 }
@@ -1025,7 +1025,7 @@ void decompressBlockDiffFlipC(unsigned int block_part1, unsigned int block_part2
                     shift++;
                     index=unscramble[index];
 
-                     r=RED_CHANNEL(img,width,x,y,channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
+                     r = RED_CHANNEL(img, width, x, y, channels)  = (uint8)CLAMP(0, avg_color[0] + compressParams[table][index], 255);
                      g = GREEN_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0, avg_color[1] + compressParams[table][index], 255);
                      b = BLUE_CHANNEL(img, width, x, y, channels) = (uint8)CLAMP(0,avg_color[2]+compressParams[table][index],255);
                 }
@@ -1036,7 +1036,7 @@ void decompressBlockDiffFlipC(unsigned int block_part1, unsigned int block_part2
 }
 void decompressBlockDiffFlip(unsigned int block_part1, unsigned int block_part2, uint8 *img, int width, int height, int startx, int starty)
 {
-  decompressBlockDiffFlipC(block_part1, block_part2, img, width, height, startx, starty, 3);
+    decompressBlockDiffFlipC(block_part1, block_part2, img, width, height, startx, starty, 3);
 }
 
 // Decompress an ETC2 RGB block
@@ -1108,7 +1108,7 @@ void decompressBlockETC2c(unsigned int block_part1, unsigned int block_part2, ui
 }
 void decompressBlockETC2(unsigned int block_part1, unsigned int block_part2, uint8 *img, int width, int height, int startx, int starty)
 {
-  decompressBlockETC2c(block_part1, block_part2, img, width, height, startx, starty, 3);
+    decompressBlockETC2c(block_part1, block_part2, img, width, height, startx, starty, 3);
 }
 // Decompress an ETC2 block with punchthrough alpha
 // NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
@@ -1124,24 +1124,24 @@ void decompressBlockDifferentialWithAlphaC(unsigned int block_part1, unsigned in
     int r,g,b;
     int diffbit;
     int flipbit;
-  int channelsA;
+    int channelsA;
 
-  if(channelsRGB == 3)
-  {
-    // We will decode the alpha data to a separate memory area. 
-    channelsA = 1;
-  }
-  else
-  {
-    // We will decode the RGB data and the alpha data to the same memory area, 
-    // interleaved as RGBA. 
-    channelsA = 4;
-    alpha = &img[0+3];
-  }
+    if(channelsRGB == 3)
+    {
+        // We will decode the alpha data to a separate memory area. 
+        channelsA = 1;
+    }
+    else
+    {
+        // We will decode the RGB data and the alpha data to the same memory area, 
+        // interleaved as RGBA. 
+        channelsA = 4;
+        alpha = &img[0+3];
+    }
 
     //the diffbit now encodes whether or not the entire alpha channel is 255.
     diffbit = (GETBITSHIGH(block_part1, 1, 33));
-     flipbit = (GETBITSHIGH(block_part1, 1, 32));
+    flipbit = (GETBITSHIGH(block_part1, 1, 32));
 
     // First decode left part of block.
     enc_color1[0]= GETBITSHIGH(block_part1, 5, 63);
@@ -1277,7 +1277,7 @@ void decompressBlockDifferentialWithAlphaC(unsigned int block_part1, unsigned in
                     mod=0;
                 }
                 
-                r=RED_CHANNEL(img,width,x,y,channelsRGB)  = (uint8)CLAMP(0, avg_color[0] + mod, 255);
+                r = RED_CHANNEL(img, width, x, y, channelsRGB)  = (uint8)CLAMP(0, avg_color[0] + mod, 255);
                 g = GREEN_CHANNEL(img, width, x, y, channelsRGB) = (uint8)CLAMP(0, avg_color[1] + mod, 255);
                 b = BLUE_CHANNEL(img, width, x, y, channelsRGB) = (uint8)CLAMP(0,avg_color[2]+mod,255);
                 if(diffbit==0&&index==1) 
@@ -1312,7 +1312,7 @@ void decompressBlockDifferentialWithAlphaC(unsigned int block_part1, unsigned in
                     mod=0;
                 }
                 
-                r=RED_CHANNEL(img,width,x,y,channelsRGB)  = (uint8)CLAMP(0, avg_color[0] + mod, 255);
+                r = RED_CHANNEL(img, width, x, y, channelsRGB)  = (uint8)CLAMP(0, avg_color[0] + mod, 255);
                 g = GREEN_CHANNEL(img, width, x, y, channelsRGB) = (uint8)CLAMP(0, avg_color[1] + mod, 255);
                 b = BLUE_CHANNEL(img, width, x, y, channelsRGB) = (uint8)CLAMP(0,avg_color[2]+mod,255);
                 if(diffbit==0&&index==1) 
@@ -1333,7 +1333,7 @@ void decompressBlockDifferentialWithAlphaC(unsigned int block_part1, unsigned in
 }
 void decompressBlockDifferentialWithAlpha(unsigned int block_part1, unsigned int block_part2, uint8* img, uint8* alpha, int width, int height, int startx, int starty)
 {
-  decompressBlockDifferentialWithAlphaC(block_part1, block_part2, img, alpha, width, height, startx, starty, 3);
+    decompressBlockDifferentialWithAlphaC(block_part1, block_part2, img, alpha, width, height, startx, starty, 3);
 }
 
 
@@ -1349,20 +1349,20 @@ void decompressBlockTHUMB59TAlphaC(unsigned int block_part1, unsigned int block_
     uint8 paint_colors[4][3];
     uint8 distance;
     uint8 block_mask[4][4];
-  int channelsA;
+    int channelsA;
 
-  if(channelsRGB == 3)
-  {
-    // We will decode the alpha data to a separate memory area. 
-    channelsA = 1;
-  }
-  else
-  {
-    // We will decode the RGB data and the alpha data to the same memory area, 
-    // interleaved as RGBA. 
-    channelsA = 4;
-    alpha = &img[0+3];
-  }
+    if(channelsRGB == 3)
+    {
+        // We will decode the alpha data to a separate memory area. 
+        channelsA = 1;
+    }
+    else
+    {
+        // We will decode the RGB data and the alpha data to the same memory area, 
+        // interleaved as RGBA. 
+        channelsA = 4;
+        alpha = &img[0+3];
+    }
 
     // First decode left part of block.
     colorsRGB444[0][R]= GETBITSHIGH(block_part1, 4, 58);
@@ -1407,7 +1407,7 @@ void decompressBlockTHUMB59TAlphaC(unsigned int block_part1, unsigned int block_
 }
 void decompressBlockTHUMB59TAlpha(unsigned int block_part1, unsigned int block_part2, uint8 *img, uint8* alpha, int width, int height, int startx, int starty)
 {
-  decompressBlockTHUMB59TAlphaC(block_part1, block_part2, img, alpha, width, height, startx, starty, 3);
+    decompressBlockTHUMB59TAlphaC(block_part1, block_part2, img, alpha, width, height, startx, starty, 3);
 }
 
 
@@ -1424,20 +1424,20 @@ void decompressBlockTHUMB58HAlphaC(unsigned int block_part1, unsigned int block_
     uint8 paint_colors[4][3];
     uint8 distance;
     uint8 block_mask[4][4];
-  int channelsA;    
+    int channelsA;    
 
-  if(channelsRGB == 3)
-  {
-    // We will decode the alpha data to a separate memory area. 
-    channelsA = 1;
-  }
-  else
-  {
-    // We will decode the RGB data and the alpha data to the same memory area, 
-    // interleaved as RGBA. 
-    channelsA = 4;
-    alpha = &img[0+3];
-  }
+    if(channelsRGB == 3)
+    {
+        // We will decode the alpha data to a separate memory area. 
+        channelsA = 1;
+    }
+    else
+    {
+        // We will decode the RGB data and the alpha data to the same memory area, 
+        // interleaved as RGBA. 
+        channelsA = 4;
+        alpha = &img[0+3];
+    }
 
     // First decode left part of block.
     colorsRGB444[0][R]= GETBITSHIGH(block_part1, 4, 57);
@@ -1448,7 +1448,7 @@ void decompressBlockTHUMB58HAlphaC(unsigned int block_part1, unsigned int block_
     colorsRGB444[1][G]= GETBITSHIGH(block_part1, 4, 41);
     colorsRGB444[1][B]= GETBITSHIGH(block_part1, 4, 37);
 
-  distance = 0;
+    distance = 0;
     distance = (GETBITSHIGH(block_part1, 2, 33)) << 1;
 
     col0 = GETBITSHIGH(block_part1, 12, 57);
@@ -1493,7 +1493,7 @@ void decompressBlockTHUMB58HAlphaC(unsigned int block_part1, unsigned int block_
 }
 void decompressBlockTHUMB58HAlpha(unsigned int block_part1, unsigned int block_part2, uint8 *img, uint8* alpha, int width, int height, int startx, int starty)
 {
-  decompressBlockTHUMB58HAlphaC(block_part1, block_part2, img, alpha, width, height, startx, starty, 3);
+    decompressBlockTHUMB58HAlphaC(block_part1, block_part2, img, alpha, width, height, startx, starty, 3);
 }
 // Decompression function for ETC2_RGBA1 format.
 // NO WARRANTY --- SEE STATEMENT IN TOP OF FILE (C) Ericsson AB 2005-2013. All Rights Reserved.
@@ -1503,20 +1503,20 @@ void decompressBlockETC21BitAlphaC(unsigned int block_part1, unsigned int block_
     signed char color1[3];
     signed char diff[3];
     signed char red, green, blue;
-  int channelsA;    
+    int channelsA;    
 
-  if(channelsRGB == 3)
-  {
-    // We will decode the alpha data to a separate memory area. 
-    channelsA = 1;
-  }
-  else
-  {
-    // We will decode the RGB data and the alpha data to the same memory area, 
-    // interleaved as RGBA. 
-    channelsA = 4;
-    alphaimg = &img[0+3];
-  }
+    if(channelsRGB == 3)
+    {
+        // We will decode the alpha data to a separate memory area. 
+        channelsA = 1;
+    }
+    else
+    {
+        // We will decode the RGB data and the alpha data to the same memory area, 
+        // interleaved as RGBA. 
+        channelsA = 4;
+        alphaimg = &img[0+3];
+    }
 
     diffbit = (GETBITSHIGH(block_part1, 1, 33));
 
@@ -1699,7 +1699,7 @@ void decompressBlockAlphaC(uint8* data, uint8* img, int width, int height, int i
 }
 void decompressBlockAlpha(uint8* data, uint8* img, int width, int height, int ix, int iy) 
 {
-  decompressBlockAlphaC(data, img, width, height, ix, iy, 1);
+    decompressBlockAlphaC(data, img, width, height, ix, iy, 1);
 }
 
 // Does decompression and then immediately converts from 11 bit signed to a 16-bit format.
@@ -1860,5 +1860,5 @@ void decompressBlockAlpha16bitC(uint8* data, uint8* img, int width, int height, 
 
 void decompressBlockAlpha16bit(uint8* data, uint8* img, int width, int height, int ix, int iy)
 {
-  decompressBlockAlpha16bitC(data, img, width, height, ix, iy, 1);
+    decompressBlockAlpha16bitC(data, img, width, height, ix, iy, 1);
 }

@@ -49,7 +49,7 @@
 typedef struct {
     bool swizzle = false;
     bool useCPU = true;
-    string errMessage = "";
+    std::string errMessage = "";
 } Config;
 
 typedef struct
@@ -120,7 +120,7 @@ QRgb            floatToQrgba(float r, float g, float b, float a);
 #endif
 
 bool            CompressedFormat(CMP_FORMAT format);
-bool            CompressedFileFormat(string file);
+bool            CompressedFileFormat(std::string file);
 bool            FloatFormat(CMP_FORMAT format);
 
 void            astc_find_closest_blockdim_2d(float target_bitrate, int *x, int *y, int consider_illegal);

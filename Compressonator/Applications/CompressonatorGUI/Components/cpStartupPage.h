@@ -69,8 +69,9 @@ class cpStartupPage : public QWebEngineView
 
 public:
 
+    cpStartupPage(QWidget *parent);
     virtual ~cpStartupPage();
-    cpStartupPage(QWidget * parent);
+
     bool UpdateHTML(QVector<QString>& projectsNames);
 
 Q_SIGNALS:

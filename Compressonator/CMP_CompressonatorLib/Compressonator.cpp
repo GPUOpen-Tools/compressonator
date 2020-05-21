@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -25,7 +25,7 @@
 //
 //  Revisions
 //  Feb 2016    -   Fix Parameter processing & Swizzle issue for DXTC Codecs
-//  Jan 2016    -   Added ASTC support - 
+//  Jan 2016    -   Added ASTC support -
 //  Jan 2014    -   Completed support for BC6H and Command line options for new compressonator
 //  Apr 2014    -   Refactored Library
 //                  Code clean to support MSV 2010 and up
@@ -35,8 +35,9 @@
 #include "Compressonator.h"  // User shared: Keep priviate code out of this header
 #include "Compress.h"
 #include "CMP_MIPS.h"
-#include <assert.h>
 #include "debug.h"
+
+#include <cassert>
 
 using namespace CMP;
 
@@ -98,7 +99,7 @@ CMP_DWORD CalcBufferSize(CMP_FORMAT format, CMP_DWORD dwWidth, CMP_DWORD dwHeigh
         case CMP_FORMAT_ARGB_8888:
         case CMP_FORMAT_ARGB_2101010:
             return ((dwPitch) ? (dwPitch * dwHeight) : (dwWidth * 4 * dwHeight));
-        
+
         case CMP_FORMAT_BGR_888:
         case CMP_FORMAT_RGB_888:
             return ((dwPitch) ? (dwPitch * dwHeight) : ((((dwWidth * 3) + 3) >> 2) * 4 * dwHeight));
@@ -188,7 +189,7 @@ void CMP_Map_Bytes(BYTE *src, int width, int height, CMP_MAP_BYTES_SET map, CMP_
 
 // For now this function will only handle a single case
 // where the source data remains the same size and only RGBA channels
-// are swizzled according output compressed formats, 
+// are swizzled according output compressed formats,
 // if source is compressed then no change is performed
 
 void CMP_PrepareSourceForCMP_Destination(CMP_Texture* pTexture, CMP_FORMAT  DestFormat)
@@ -362,7 +363,7 @@ void CMP_PrepareSourceForCMP_Destination(CMP_Texture* pTexture, CMP_FORMAT  Dest
 
 // For now this function will only handle a single case
 // where the source data remains the same size and only RGBA channels
-// are swizzled according output compressed formats, 
+// are swizzled according output compressed formats,
 // if source is compressed then no change is performed
 
 void CMP_PrepareCMPSourceForIMG_Destination(CMP_Texture* pDstTexture, CMP_FORMAT  SrcFormat)
@@ -451,22 +452,22 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
 #ifdef ENABLE_MAKE_COMPATIBLE_API
     bool srcFloat = IsFloatFormat(pSourceTexture->format);
     bool destFloat = IsFloatFormat(pDestTexture->format);
-    
+
     bool newBuffer = false;
     if (srcFloat && !destFloat)
     {
         CMP_DWORD size = pSourceTexture->dwWidth * pSourceTexture->dwHeight;
         CMP_FLOAT*pfData = new CMP_FLOAT[pSourceTexture->dwDataSize] ;
-        
+
         memcpy(pfData, pSourceTexture->pData, pSourceTexture->dwDataSize);
-    
+
         CMP_BYTE *byteData = new CMP_BYTE[size * 4];
-    
+
         Float2Byte(byteData, pfData, pSourceTexture, pDestTexture->format, pOptions);
-    
+
         delete[] pfData;
         pSourceTexture->pData = byteData;
-     
+
         pSourceTexture->format = CMP_FORMAT_ARGB_8888;
         pSourceTexture->dwDataSize = size * 4;
         newBuffer = true;
@@ -512,7 +513,7 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
             CodecBufferType srcBufferType = GetCodecBufferType(pSourceTexture->format);
             CodecBufferType destBufferType = GetCodecBufferType(pDestTexture->format);
 
-            CCodecBuffer* pSrcBuffer = CreateCodecBuffer(srcBufferType, 
+            CCodecBuffer* pSrcBuffer = CreateCodecBuffer(srcBufferType,
                                                          pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight, pSourceTexture->nBlockDepth,
                                                          pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData,
                                                          pSourceTexture->dwDataSize);
@@ -520,7 +521,7 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
             if(!pSrcBuffer)
                 return CMP_ERR_GENERIC;
 
-            CCodecBuffer* pDestBuffer = CreateCodecBuffer(destBufferType, 
+            CCodecBuffer* pDestBuffer = CreateCodecBuffer(destBufferType,
                                                          pDestTexture->nBlockWidth, pDestTexture->nBlockHeight, pDestTexture->nBlockDepth,
                                                          pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData,
                                                          pDestTexture->dwDataSize);
@@ -553,7 +554,7 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
            bMultithread = false;
 
 #ifdef THREADED_COMPRESS
-        // Note: 
+        // Note:
         // BC7/BC6H has issues with this setting - we already set multithreading via numThreads so
         // this call is disabled for BC7/BC6H ASTC Codecs.
         // if the use has set DiableMultiThreading then numThreads will be set to 1 (regradless of its original value)
@@ -626,7 +627,7 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
         pDestTexture->nBlockHeight = pSourceTexture->nBlockHeight;
         pDestTexture->nBlockDepth  = pSourceTexture->nBlockDepth;
 
-        CCodecBuffer* pDestBuffer = CreateCodecBuffer(destBufferType, 
+        CCodecBuffer* pDestBuffer = CreateCodecBuffer(destBufferType,
                                                       pDestTexture->nBlockWidth, pDestTexture->nBlockHeight, pDestTexture->nBlockDepth,
                                                       pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData,
                                                       pDestTexture->dwDataSize);

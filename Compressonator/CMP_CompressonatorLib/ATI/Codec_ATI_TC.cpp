@@ -22,7 +22,6 @@
 // THE SOFTWARE.
 //
 
-//#include "stdafx.h"
 #ifdef SUPPORT_ATI_TC
 #include "Codec_ATI_TC.h"
 

@@ -37,8 +37,9 @@ public:
     CWelcomePage(const QString title, QWidget *parent);
     ~CWelcomePage();
 
-    cpStartupPage                *m_startUpPage;
-    void  GoToAMDHomePage(QVector<QString>& projectsNames);
+    void GoToAMDHomePage(QVector<QString>& projectsNames);
+
+    cpStartupPage           *m_startUpPage;
     acDockWidgetTitlebar    *custTitleBar;
 
 signals:

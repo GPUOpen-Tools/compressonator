@@ -77,7 +77,7 @@ private:
     void createGBAnalyseVFetch();
     void createGBAnalyseOverdraw();
 
-    void runAnalysisDisplayResult(QString filename, vector<CMP_Mesh> meshData, bool runVCache, bool runOverdraw, bool runVFetch);
+    void runAnalysisDisplayResult(QString filename, std::vector<CMP_Mesh> meshData, bool runVCache, bool runOverdraw, bool runVFetch);
 };
 
 #endif // AC3DMESHANALYSIS_H

@@ -3327,7 +3327,7 @@ QTreeWidgetItem* ProjectView::Tree_AddImageFile(QString filePathName, int index,
     if (!SourceFile.exists())
     {
         if (filePathName.length() > 3) 
-            PrintInfo("Error: SourceFile %s not found.\n", filePathName.toLatin1());
+            PrintInfo("Error: SourceFile %s not found.\n", filePathName.toStdString().c_str());
         else
             PrintInfo("Error: SourceFile not found.\n");
         return NULL;
@@ -3336,7 +3336,7 @@ QTreeWidgetItem* ProjectView::Tree_AddImageFile(QString filePathName, int index,
     // Check if item already exist if so just exit
     if (Tree_FindImageItem(filePathName, false))
     {
-        PrintInfo("Error: item already exist in project tree (%s).\n", filePathName.toLatin1());
+        PrintInfo("Error: item already exist in project tree (%s).\n", filePathName.toStdString().c_str());
         return NULL;
     }
 
@@ -3425,7 +3425,7 @@ QTreeWidgetItem* ProjectView::Tree_AddImageFile(QString filePathName, int index,
         else
             m_data->m_FileSizeStr = QString().number(m_data->m_FileSize) + " Bytes";
         // Load the Image File and MIP data!
-        m_data->m_MipImages = m_imageloader->LoadPluginImage(filePathName);
+        m_data->m_MipImages = m_imageloader->LoadPluginImage(filePathName.toStdString());
 
         // Mip levels
         if (m_data->m_MipImages)
@@ -3437,7 +3437,7 @@ QTreeWidgetItem* ProjectView::Tree_AddImageFile(QString filePathName, int index,
                     m_CompressStatusDialog->onClearText();
                     m_CompressStatusDialog->showOutput();
                 }
-                PrintInfo("Add Image Error: %s.\n", (m_data->m_MipImages->errMsg).toStdString().c_str());
+                PrintInfo("Add Image Error: %s.\n", (m_data->m_MipImages->errMsg).c_str());
                 return NULL;
             }
             if (m_data->m_MipImages->mipset)
@@ -3991,7 +3991,7 @@ QTreeWidgetItem* ProjectView::Tree_Add3DModelImageFiles(QTreeWidgetItem* ParentI
         m_data->m_FileSizeStr = QString().number(m_data->m_FileSize) + " Bytes";
 
     // Load the Image File and MIP data!
-    m_data->m_MipImages = m_imageloader->LoadPluginImage(filePathName, pFeedbackProc);
+    m_data->m_MipImages = m_imageloader->LoadPluginImage(filePathName.toStdString(), pFeedbackProc);
 
     // Mip levels
     if (m_data->m_MipImages)
@@ -5225,13 +5225,13 @@ bool processItem(QFile* file,
         argv.clear();
 
         // Push App name string
-        string app = "CompressonatorCLI.exe";
+        std::string app = "CompressonatorCLI.exe";
         argvVec.push_back(CharArray(app.begin(), app.end()));
         argvVec.back().push_back(0);  // Terminate String
         argv.push_back(argvVec.back().data());
 
         // Push string
-        string SourceFile = FilePathName.toStdString();
+        std::string SourceFile = FilePathName.toStdString();
         argvVec.push_back(CharArray(SourceFile.begin(), SourceFile.end()));
         argvVec.back().push_back(0);  // Terminate String
         argv.push_back(argvVec.back().data());
@@ -5284,7 +5284,7 @@ bool processItem(QFile* file,
                 makeFormatExtCompatible(data);
 
                 //"Destination" = data->m_destFileNamePath
-                string    DestinationFile = data->m_destFileNamePath.toStdString();
+                std::string    DestinationFile = data->m_destFileNamePath.toStdString();
                 QString   msgCommandLine;
                 bool      useWeightChannel = false;
                 bool      useAlphaChannel  = false;
@@ -5350,11 +5350,11 @@ bool processItem(QFile* file,
                 //"fd" = key
                 if (key != NULL)
                 {
-                    string format = "-fd";
+                    std::string format = "-fd";
                     argvVec.push_back(CharArray(format.begin(), format.end()));
                     argvVec.back().push_back(0);  // Terminate String
                     argv.push_back(argvVec.back().data());
-                    string formatValue = key;
+                    std::string formatValue = key;
 
                     msgCommandLine.append(" -fd ");
                     msgCommandLine.append(key);
@@ -5372,7 +5372,7 @@ bool processItem(QFile* file,
                 ////using GPU to compress
                 if ((!g_useCPUEncode) && (key))
                 {
-                    string format = key;
+                    std::string format = key;
 //                     if (
 // #ifdef USE_GTC
 //                        format == "GTC" ||
@@ -5392,7 +5392,7 @@ bool processItem(QFile* file,
 //                         format == "BC6H_SF"  ||
 //                         format == "BC6H")
                     {
-                        string usegpu;
+                        std::string usegpu;
                         msgCommandLine.append(" -EncodeWith ");
                         usegpu = "-EncodeWith";
                         argvVec.push_back(CharArray(usegpu.begin(), usegpu.end()));
@@ -5446,7 +5446,7 @@ bool processItem(QFile* file,
                     msgCommandLine.append(QString::number(miplevels - 1));
                     msgCommandLine.append(" ");
 
-                    string smiplevel = "-miplevels";
+                    std::string smiplevel = "-miplevels";
                     argvVec.push_back(CharArray(smiplevel.begin(), smiplevel.end()));
                     argvVec.back().push_back(0);  // Terminate String
                     argv.push_back(argvVec.back().data());
@@ -5476,7 +5476,7 @@ bool processItem(QFile* file,
                         msgCommandLine.append(" ");
 
                         // User Setting Text
-                        string squality = "-Quality";
+                        std::string squality = "-Quality";
                         argvVec.push_back(CharArray(squality.begin(), squality.end()));
                         argvVec.back().push_back(0);  // Terminate String
                         argv.push_back(argvVec.back().data());
@@ -5520,7 +5520,7 @@ bool processItem(QFile* file,
                         useWeightChannel = true;
 
                         // User Setting Text
-                        string suseweighChannel = "-UseChannelWeighting";
+                        std::string suseweighChannel = "-UseChannelWeighting";
                         argvVec.push_back(CharArray(suseweighChannel.begin(), suseweighChannel.end()));
                         argvVec.back().push_back(0);  // Terminate String
                         argv.push_back(argvVec.back().data());
@@ -5542,7 +5542,7 @@ bool processItem(QFile* file,
                         msgCommandLine.append(" ");
 
                         // User Setting Text
-                        string sweightr = "-WeightR";
+                        std::string sweightr = "-WeightR";
                         argvVec.push_back(CharArray(sweightr.begin(), sweightr.end()));
                         argvVec.back().push_back(0);  // Terminate String
                         argv.push_back(argvVec.back().data());
@@ -5564,7 +5564,7 @@ bool processItem(QFile* file,
                         msgCommandLine.append(" ");
 
                         // User Setting Text
-                        string sweightg = "-WeightG";
+                        std::string sweightg = "-WeightG";
                         argvVec.push_back(CharArray(sweightg.begin(), sweightg.end()));
                         argvVec.back().push_back(0);  // Terminate String
                         argv.push_back(argvVec.back().data());
@@ -5586,7 +5586,7 @@ bool processItem(QFile* file,
                         msgCommandLine.append(" ");
 
                         // User Setting Text
-                        string sweightb = "-WeightB";
+                        std::string sweightb = "-WeightB";
                         argvVec.push_back(CharArray(sweightb.begin(), sweightb.end()));
                         argvVec.back().push_back(0);  // Terminate String
                         argv.push_back(argvVec.back().data());
@@ -5614,7 +5614,7 @@ bool processItem(QFile* file,
                             useAlphaChannel = true;
 
                             // User Setting Text
-                            string susealphaChannel = "-DXT1UseAlpha";
+                            std::string susealphaChannel = "-DXT1UseAlpha";
                             argvVec.push_back(CharArray(susealphaChannel.begin(), susealphaChannel.end()));
                             argvVec.back().push_back(0);  // Terminate String
                             argv.push_back(argvVec.back().data());
@@ -5630,7 +5630,7 @@ bool processItem(QFile* file,
                         msgCommandLine.append(" ");
 
                         // User Setting Text
-                        string sthreshold = "-AlphaThreshold";
+                        std::string sthreshold = "-AlphaThreshold";
                         argvVec.push_back(CharArray(sthreshold.begin(), sthreshold.end()));
                         argvVec.back().push_back(0);  // Terminate String
                         argv.push_back(argvVec.back().data());
@@ -5666,7 +5666,7 @@ bool processItem(QFile* file,
                         msgCommandLine.append(" ");
 
                         // User Setting Text
-                        string sbitrate = "-BlockRate";
+                        std::string sbitrate = "-BlockRate";
                         argvVec.push_back(CharArray(sbitrate.begin(), sbitrate.end()));
                         argvVec.back().push_back(0);  // Terminate String
                         argv.push_back(argvVec.back().data());
@@ -5693,7 +5693,7 @@ bool processItem(QFile* file,
                         msgCommandLine.append(" ");
 
                         // User Setting Text
-                        string sdefog = "-InDefog";
+                        std::string sdefog = "-InDefog";
                         argvVec.push_back(CharArray(sdefog.begin(), sdefog.end()));
                         argvVec.back().push_back(0);  // Terminate String
                         argv.push_back(argvVec.back().data());
@@ -5714,7 +5714,7 @@ bool processItem(QFile* file,
                         msgCommandLine.append(" ");
 
                         // User Setting Text
-                        string sexposure = "-InExposure";
+                        std::string sexposure = "-InExposure";
                         argvVec.push_back(CharArray(sexposure.begin(), sexposure.end()));
                         argvVec.back().push_back(0);  // Terminate String
                         argv.push_back(argvVec.back().data());
@@ -5735,7 +5735,7 @@ bool processItem(QFile* file,
                         msgCommandLine.append(" ");
 
                         // User Setting Text
-                        string skneelow = "-InKneeLow";
+                        std::string skneelow = "-InKneeLow";
                         argvVec.push_back(CharArray(skneelow.begin(), skneelow.end()));
                         argvVec.back().push_back(0);  // Terminate String
                         argv.push_back(argvVec.back().data());
@@ -5756,7 +5756,7 @@ bool processItem(QFile* file,
                         msgCommandLine.append(" ");
 
                         // User Setting Text
-                        string skneehigh = "-InKneeHigh";
+                        std::string skneehigh = "-InKneeHigh";
                         argvVec.push_back(CharArray(skneehigh.begin(), skneehigh.end()));
                         argvVec.back().push_back(0);  // Terminate String
                         argv.push_back(argvVec.back().data());
@@ -5777,7 +5777,7 @@ bool processItem(QFile* file,
                         msgCommandLine.append(" ");
 
                         // User Setting Text
-                        string sgamma = "-Gamma";
+                        std::string sgamma = "-Gamma";
                         argvVec.push_back(CharArray(sgamma.begin(), sgamma.end()));
                         argvVec.back().push_back(0);  // Terminate String
                         argv.push_back(argvVec.back().data());
@@ -5958,11 +5958,11 @@ bool processItem(QFile* file,
     }
 }
 
-void replaceExt(string& s, const string& newExt)
+void replaceExt(std::string& s, const std::string& newExt)
 {
-    string::size_type i = s.rfind('.', s.length());
+    std::string::size_type i = s.rfind('.', s.length());
 
-    if (i != string::npos)
+    if (i != std::string::npos)
     {
         s.replace(i + 1, newExt.length(), newExt);
     }
@@ -6034,7 +6034,7 @@ void AnalysisTableWidget::AddAverageResults(
     setItem(rowCount,7,new QTableWidgetItem(ssim));
 }
 
-void AnalysisTableWidget::AddTestResults(string processPath,
+void AnalysisTableWidget::AddTestResults(std::string processPath,
                                      QString processName,
                                      float  Quality,
                                      double PerfTime,
@@ -6199,7 +6199,7 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
 
             QString FilePathName;
             FilePathName = m_data->m_Full_Path;
-            list<Image_Data> image_list;
+            std::list<Image_Data> image_list;
 
             // we have  data in the model to process
             while (childcount > 0)
@@ -6500,7 +6500,7 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                                                  i++)  //for now only support one buffer (one bin file only)
                                                             {
                                                                 std::string name = buffers[i]["uri"].get<std::string>();
-                                                                if (name.find(".bin") != string::npos)
+                                                                if (name.find(".bin") != std::string::npos)
                                                                 {
                                                                     //retrieve original bin file and create a new copy of bin file
                                                                     QFileInfo srcFile(ModelSource);

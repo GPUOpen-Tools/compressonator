@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -31,38 +31,35 @@
 #include <windows.h>
 #endif
 
-
-#pragma warning( push )
-#pragma warning(disable:4100)
-#pragma warning(disable:4800)
+#pragma warning(push)
+#pragma warning(disable : 4100)
+#pragma warning(disable : 4800)
 
 #include "ImfArray.h"
 #include "ImfRgba.h"
-#include <ImfRgbaFile.h>
-#include <ImfArray.h>
 #include <ImathBox.h>
-#pragma warning( pop )
+#include <ImfArray.h>
+#include <ImfRgbaFile.h>
+#pragma warning(pop)
 
 #include <string.h>
 
-#include "Compressonator.h"
 #include "Common.h"
-
-
-#include "CMP_FileIO.h"
+#include "Compressonator.h"
 
 using namespace IMF;
 using namespace IMATH;
-using namespace std;
 
-#pragma warning(disable:4201)
+#include "CMP_FileIO.h"
+
+#pragma warning(disable : 4201)
 typedef unsigned int uint;
 
 class Exr
 {
 public:
-	Exr() {};
-	~Exr() {};
+	Exr(){};
+	~Exr(){};
 
 	static void fileinfo(const string inf, int &width, int &height);
 	static void readRgba(const string inf, Array2D<Rgba> &pix, int &w, int &h);
@@ -70,7 +67,7 @@ public:
 };
 
 extern void Rgba2Texture(Array2D<Rgba> &pixels, CMP_HALFSHORT *data, int w, int h);
-extern void Texture2Rgba(CMP_HALFSHORT* data, Array2D<Rgba> &pixels, int w, int h, CMP_FORMAT isDeCompressed);
+extern void Texture2Rgba(CMP_HALFSHORT *data, Array2D<Rgba> &pixels, int w, int h, CMP_FORMAT isDeCompressed);
 extern float half_conv_float(unsigned short in);
 
 #endif

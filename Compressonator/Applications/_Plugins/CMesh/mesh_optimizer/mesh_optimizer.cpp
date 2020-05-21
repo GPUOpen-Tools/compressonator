@@ -27,8 +27,7 @@
 #include <cstdio>
 #include <cstring>
 #include <ctime>
-
-using namespace std;
+#include <random>
 
 #define min(a,b)            (((a) < (b)) ? (a) : (b))
 
@@ -239,7 +238,9 @@ void optRandomShuffle(CMP_Mesh& mesh)
     for (size_t i = 0; i < faces.size(); ++i)
         faces[i] = static_cast<unsigned int>(i);
 
-    std::random_shuffle(faces.begin(), faces.end());
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(faces.begin(), faces.end(), g);
 
     std::vector<unsigned int> result(mesh.indices.size());
 
@@ -309,7 +310,7 @@ void optCompleteSimplify(CMP_Mesh& mesh)
     // vertex cache optimization should go first as it provides data for overdraw
     
     //std::vector<unsigned int> lods[lod_count];
-    vector<vector<unsigned int>>lods;
+    std::vector<std::vector<unsigned int>>lods;
     lods.resize(lod_count);
 
     lods[0] = mesh.indices;
@@ -343,9 +344,9 @@ void optCompleteSimplify(CMP_Mesh& mesh)
     // putting coarse LODs first makes sure that the vertex range referenced by them is as small as possible
     // some GPUs process the entire range referenced by the index buffer region so doing this optimizes the vertex transform
     // cost for coarse LODs
-    vector<size_t> lod_index_offsets;
+    std::vector<size_t> lod_index_offsets;
     lod_index_offsets.resize(lod_count);
-    vector<size_t> lod_index_counts;
+    std::vector<size_t> lod_index_counts;
     lod_index_counts.resize(lod_count);
 
     size_t total_index_count = 0;

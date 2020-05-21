@@ -9,10 +9,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -32,10 +32,9 @@
 #ifdef _WIN32
 #include "Windows.h"
 #include "stdio.h"
-#include <iostream>
 #include <fstream>
-using namespace std;
-HWND FindTopLevelWindow(TCHAR* pszName);
+#include <iostream>
+HWND FindTopLevelWindow(TCHAR *pszName);
 #endif
 
 #define CMP_STATENUM 14 //14 characters for the state
@@ -44,10 +43,9 @@ HWND FindTopLevelWindow(TCHAR* pszName);
 #define CMP_ORIGINAL ""
 #define CMP_FILE_ERROR "fileIOError"
 
-
-void SwizzleBytes(void* src, unsigned long numBytes);
-#ifdef _WIN32
+void SwizzleBytes(void *src, unsigned long numBytes);
 float HalfToFloat(uint16_t h);
+#ifdef _WIN32
 void getFileNameExt(const char *FilePathName, char *fnameExt, int maxbuffsize);
 bool writeObjFileState(std::string filename, std::string state);
 std::string readObjFileState(std::string filename);

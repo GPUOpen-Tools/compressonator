@@ -26,46 +26,34 @@
 
 #define USE_OPENCV
 
-#include <string>
-#include "PluginInterface.h"
-#include "Compressonator.h"
 #include "PluginManager.h"
+#include "TC_PluginInternal.h"
+#include "CMP_FileIO.h"
 
-#ifdef USE_OPENCV
-#include "cvmatandqimage.h"
-#endif
+#include <TestReport.h>
 
-#define USE_QT_IMAGELOAD
-
-#ifdef USE_QT_IMAGELOAD
-#include <QtCore/QCoreApplication>
-#include <QtCore/qstandardpaths.h>
-#include <QtCore/qstring.h>
-#include <QtCore/qlist.h>
-#include <QtCore/qfileinfo.h>
-#include <QtGui/qimage.h>
-#include <QtGui/qcolor.h>
-#endif
-
-#include "cpImageLoader.h"
-#include "TextureIO.h"
-#include "SSIM.h"
+#include <Compressonator.h>
 
 #ifdef USE_OPENCV
 #include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>  // Gaussian Blur
-#include <opencv2/highgui/highgui.hpp>  // OpenCV window I/O
 #endif
-
-
-#include <QtCore/qmath.h>
 
 #ifndef _WIN32
 #define MAX_PATH 260
+#else
+#include <minwindef.h>
 #endif
+
+#include <string>
 
 #define TC_PLUGIN_VERSION_MAJOR	1
 #define TC_PLUGIN_VERSION_MINOR	0
+
+// Forward Declaration
+class QImage;
+class CImageLoader;
+class CMipImages;
+
 
 class Plugin_Canalysis : public PluginInterface_Analysis
 {
@@ -78,18 +66,18 @@ public:
         int TC_SSIM(const char * in1, const char * in2,  char *resultsFile, void *pluginManager, CMP_Feedback_Proc pFeedbackProc = NULL);
 
 private:
-        void write(REPORT_DATA data, char *resultsFile, char option);
+        void write(const REPORT_DATA& data, char *resultsFile, char option);
         void generateBCtestResult(QImage *src, QImage *dest, REPORT_DATA &myReport); //for testing only
         void setActiveChannels();
         void processSSIMResults();
 
 #ifdef USE_OPENCV
-        Scalar m_SSIM;
-        bool psnr(QImage *src, Mat srcimg, QImage *dest, Mat destimg, REPORT_DATA &myReport, CMP_Feedback_Proc pFeedbackProc = NULL);
+        cv::Scalar m_SSIM;
+        bool psnr(QImage *src, const cv::Mat& srcimg, QImage *dest, const cv::Mat& destimg, REPORT_DATA &myReport, CMP_Feedback_Proc pFeedbackProc = NULL);
 #endif
         char m_results_path[MAX_PATH];
-        string m_srcFile;
-        string m_destFile;
+        std::string m_srcFile;
+        std::string m_destFile;
         double m_rmse, m_psnr, m_mabse;
         double tolerance_mse, tolerance_psnr, tolerance_psnrb, tolerance_psnrg, tolerance_psnrr;
         double tolerance_ssim, tolerance_ssimb, tolerance_ssimg, tolerance_ssimr;

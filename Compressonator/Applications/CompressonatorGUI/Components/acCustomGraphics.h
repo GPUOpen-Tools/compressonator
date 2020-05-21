@@ -113,7 +113,7 @@ Q_OBJECT
 public:
     int ID;
 
-    acCustomGraphicsScene(QObject *parent);
+    acCustomGraphicsScene(QObject *parent=nullptr);
     void gridEnabled(eCustomGraphicsScene_Grids enable);
     bool isGridEnabled();
     bool isDebug;

@@ -5,7 +5,7 @@
 // Major Code based on Header-only tiny glTF 2.0 loader and serializer.
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 - 2017 Syoyo Fujita, Aurélien Chatelain and many
+// Copyright (c) 2015 - 2017 Syoyo Fujita, AurÃ©lien Chatelain and many
 // contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,14 +29,14 @@
 #define TINY_GLTF2_UTILS_H
 
 #include "tiny_gltf2.h"
-#include "json.h"
+#include <json/json.h>
 
 #ifndef TINYGLTF_NO_STB_IMAGE
-#include "./stb_image.h"
+#include "stb_image.h"
 #endif
 
 #ifndef TINYGLTF_NO_STB_IMAGE_WRITE
-#include "./stb_image_write.h"
+#include "stb_image_write.h"
 #endif
 
 bool isGLTFDracoFile(std::string filename);

@@ -90,8 +90,6 @@ void init_quant(BC6H_Encode * BC6HEncode);
 #include <math.h>       /* floor */
 #include <algorithm>    // std::max
 
-using namespace std;
-
 #ifdef REPLACE_CPU_CODE
 // Threshold quality below which we will always run fast quality and shaking
 // Self note: User should be able to set this?

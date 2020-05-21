@@ -387,7 +387,7 @@ bool CImageCompare::setAnalysisResultView()
     }
 
     int index = (int)m_destFile.toStdString().find_last_of(".");
-    string m_analyzedResult = m_destFile.toStdString().substr(0, index);
+    std::string m_analyzedResult = m_destFile.toStdString().substr(0, index);
     m_analyzedResult.append("_analysis.xml");
 
     if ((CMP_FileExists(m_analyzedResult)))

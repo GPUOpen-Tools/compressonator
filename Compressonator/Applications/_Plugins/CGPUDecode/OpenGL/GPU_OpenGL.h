@@ -29,9 +29,6 @@
 #include "GPU_DecodeBase.h"
 #include "GPU_Decode.h"
 #include "Compressonator.h"
-#include <GL/glew.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
 
 namespace GPU_Decode
 {
@@ -46,16 +43,16 @@ namespace GPU_Decode
             CMP_Texture* pDestTexture
             );
 
-        GLenum  MIP2OLG_Format(const CMP_Texture* pSourceTexture);
-        void    GLRender();
+        unsigned int MIP2OLG_Format(const CMP_Texture* pSourceTexture);
+        void GLRender();
 
     private:
-        GLuint texture;
+        unsigned int texture;
         float theta = 0.0f;
         bool b_glewInit = false;
 
-        GLuint  LoadTexture(const CMP_Texture* pSourceTexture, bool wrap);
-        void    FreeTexture(GLuint texture);
+        unsigned int  LoadTexture(const CMP_Texture* pSourceTexture, bool wrap);
+        void    FreeTexture(unsigned int texture);
     };
 }
 

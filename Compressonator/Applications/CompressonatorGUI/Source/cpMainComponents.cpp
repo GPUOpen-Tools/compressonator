@@ -20,14 +20,21 @@
 // THE SOFTWARE.
 // 
 //===================================================================== 
-#include <chrono>
-#include <thread>
+
+#include "cpMainComponents.h"
 
 #include "Compressonator.h"
 #include "Common.h"
 #include "cpMainComponents.h"
 #include "tiny_gltf2_utils.h"
 #include "Version.h"
+
+#include <GPU_Decode.h>
+
+#include <gltf/tiny_gltf2_utils.h>
+
+#include <chrono>
+#include <thread>
 
 
 static signalMsgHandler static_msghandler;
@@ -36,10 +43,10 @@ int g_OpenGLMinorVersion = 0;
 
 #define STR_WELCOME_PAGE    "Welcome Page"
 
-C_Application_Options          g_Application_Options;
-acProgressDlg                 *g_pProgressDlg = NULL;
-bool                           g_bCompressing = false;  // Set true when we are compressing project items
-extern CMIPS*                  g_GUI_CMIPS;
+C_Application_Options       g_Application_Options;
+acProgressDlg*              g_pProgressDlg = NULL;
+bool                        g_bCompressing = false;  // Set true when we are compressing project items
+extern CMIPS*               g_GUI_CMIPS;
 
 // Hooked onto Progress Dialog.
 void OnCancel()
@@ -54,8 +61,8 @@ void Print_onProgressDialog(char *str)
     {
         if (!g_pProgressDlg->isVisible())
             g_pProgressDlg->show();
-        QString qstr(str);
-        g_pProgressDlg->SetLabelText(qstr);
+
+        g_pProgressDlg->SetLabelText(QString(str));
     }
     QCoreApplication::processEvents();
 }
@@ -93,7 +100,7 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     if (parent == NULL)
         m_parent = this;
     else
-        m_parent        = parent;
+        m_parent = parent;
 
     //============================================
     fileMenu                = NULL;
@@ -134,7 +141,7 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     onHDRButton = NULL;
     // AGS specific
     m_bIsHDRAvailableOnPrimary = false;
-    m_bIsFullScreenModeOn   = false;
+    m_bIsFullScreenModeOn = false;
     m_agsContext = nullptr;
     m_DeviceIndex = 0;
     m_DisplayIndex = 0;
@@ -237,11 +244,10 @@ cpMainComponents::cpMainComponents(QDockWidget *root_dock, QMainWindow *parent)
     m_imagePropertyView->resize(300, 290);
     m_parent->addDockWidget(Qt::LeftDockWidgetArea, m_imagePropertyView);
 
-
     m_welcomePage = new CWelcomePage(STR_WELCOME_PAGE, this);
     m_welcomePage->m_fileName = "";
     m_parent->tabifyDockWidget(m_blankpage, m_welcomePage);
-    m_welcomePage->resize(600,400);
+    m_welcomePage->resize(600, 400);
     if (m_welcomePage->custTitleBar)
         m_welcomePage->custTitleBar->setTitle(STR_WELCOME_PAGE);
     m_welcomePage->setAllowedAreas(Qt::RightDockWidgetArea);
@@ -1058,12 +1064,12 @@ void cpMainComponents::genMIPMaps()
             if (data)
             {
                 // regenrate mip map
-                if (data->m_MipImages->mipset->m_nMipLevels > 1 || data->m_MipImages->QImage_list[0].count()>1)
+                if (data->m_MipImages->mipset->m_nMipLevels > 1 || data->m_MipImages->QImage_list[0].size()>1)
                 {
-                    int n = data->m_MipImages->QImage_list[0].count();
+                    int n = data->m_MipImages->QImage_list[0].size();
                     for (int i = 1; i < n; i++)
                     {
-                        data->m_MipImages->QImage_list[0].removeLast();
+                        data->m_MipImages->QImage_list[0].pop_back();
                     }
 
                     data->m_MipImages->mipset->m_nMipLevels = 1;
@@ -1110,12 +1116,12 @@ void cpMainComponents::genMIPMaps()
                             if (data)
                             {
                                 // regenrate mip map
-                                if (data->m_MipImages->mipset->m_nMipLevels > 1 || data->m_MipImages->QImage_list[0].count()>1)
+                                if (data->m_MipImages->mipset->m_nMipLevels > 1 || data->m_MipImages->QImage_list[0].size()>1)
                                 {
-                                    int n = data->m_MipImages->QImage_list[0].count();
+                                    int n = data->m_MipImages->QImage_list[0].size();
                                     for (int i = 1; i < n; i++)
                                     {
-                                        data->m_MipImages->QImage_list[0].removeLast();
+                                        data->m_MipImages->QImage_list[0].pop_back();
                                     }
 
                                     data->m_MipImages->mipset->m_nMipLevels = 1;
@@ -2015,7 +2021,7 @@ void cpMainComponents::AddImageView(QString &fileName, QTreeWidgetItem * item)
                     // Create a new view image
                     ImageType = "Original Image file ";
                     setting->reloadImage = g_Application_Options.m_useNewImageViews;
-                    if (m_filedata->m_MipImages->QImage_list[0].count() > 1)
+                    if (m_filedata->m_MipImages->QImage_list[0].size() > 1)
                         setting->generateMips = true;
                     setting->input_image = eImageViewState::isOriginal;
                     m_imageview = new cpImageView(fileName, ImageType, m_parent, m_filedata->m_MipImages, setting, NULL);

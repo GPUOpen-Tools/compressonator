@@ -259,7 +259,6 @@ typedef struct
 } BC6H_Encode_local;
 
 #ifndef ASPM_GPU
-using namespace std;
 class BitHeader
 {
 public:
@@ -333,7 +332,7 @@ public:
         }
     }
 
-    bitset<128> m_bits;        // 16 bytes max
+    std::bitset<128> m_bits;        // 16 bytes max
     CGU_INT     m_sizeinbytes;
 };
 

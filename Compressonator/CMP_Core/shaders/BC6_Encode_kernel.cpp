@@ -2272,9 +2272,9 @@ void SwapIndices(CGU_INT32 iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION
         if (iIndices[subset][i] & uHighIndexBit)
         {
             // high bit is set, swap the aEndPts and indices for this region
-            swap(iEndPoints[subset][0][0], iEndPoints[subset][1][0]);
-            swap(iEndPoints[subset][0][1], iEndPoints[subset][1][1]);
-            swap(iEndPoints[subset][0][2], iEndPoints[subset][1][2]);
+            std::swap(iEndPoints[subset][0][0], iEndPoints[subset][1][0]);
+            std::swap(iEndPoints[subset][0][1], iEndPoints[subset][1][1]);
+            std::swap(iEndPoints[subset][0][2], iEndPoints[subset][1][2]);
 
             for (size_t j = 0; j < (size_t)entryCount[subset]; ++j)
             {
@@ -3060,7 +3060,6 @@ void CompressBlockBC6_Internal(CMP_GLOBAL  unsigned char*outdata,
 #ifndef ASPM_GPU
 #ifndef ASPM
 //======================= DECOMPRESS =========================================
-using namespace std;
 
 static AMD_BC6H_Format extract_format(const CGU_UINT8 in[COMPRESSED_BLOCK_SIZE])
 {

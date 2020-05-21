@@ -163,7 +163,7 @@ private:
     void setActionForImageViewStateChange();
     void closeEvent(QCloseEvent * event);
     void getSupportedImageFormats();
-    void GetSourceBlock(int BlockX, int BlockY,string filename);
+    void GetSourceBlock(int BlockX, int BlockY, std::string filename);
 
     eImageViewState m_ImageViewState;
     // Common for all

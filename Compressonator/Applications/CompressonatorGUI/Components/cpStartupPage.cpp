@@ -196,7 +196,7 @@ bool cpStartupPage::BuildRecentlyOpenedProjectsTable(QString& htmlText, QVector<
     QString appName;
 
     int numberOfRecentProjects = (int)recentlyUsedProjectsNames.size();
-    int projectsForDisplayNumber = std::min(numberOfRecentProjects, 10);
+    int projectsForDisplayNumber = (std::min)(numberOfRecentProjects, 10);
     if (0 < projectsForDisplayNumber)
     {
         for (int i = 0; i < projectsForDisplayNumber; i++)

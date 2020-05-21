@@ -14,8 +14,8 @@
 //
 // Utilities for converting unit vectors to octahedral coordinates and back.
 // For more details about octahedral coordinates, see for example Cigolle
-// et al.'14 “A Survey of Efficient Representations for Independent Unit
-// Vectors”.
+// et al.'14 "A Survey of Efficient Representations for Independent Unit
+// Vectors".
 //
 // In short this is motivated by an octahedron inscribed into a sphere. The
 // direction of the normal vector can be defined by a point on the octahedron.

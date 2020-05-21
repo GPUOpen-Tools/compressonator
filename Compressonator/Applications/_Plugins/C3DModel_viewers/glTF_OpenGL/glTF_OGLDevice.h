@@ -80,8 +80,10 @@ public:
     PluginManager *m_pluginManager;
     bool DeviceReady = false;
 
-    glTF_OGLDevice(CMODEL_DATA model[MAX_NUM_OF_NODES], DWORD width, DWORD height, void *pluginManager, void *msghandler, QWidget *parent);
+    glTF_OGLDevice();
     ~glTF_OGLDevice();
+
+    void init(CMODEL_DATA model[MAX_NUM_OF_NODES], DWORD width, DWORD height, void* pluginManager, void* msghandler, QWidget* parent);
 
     int OnCreate();
 

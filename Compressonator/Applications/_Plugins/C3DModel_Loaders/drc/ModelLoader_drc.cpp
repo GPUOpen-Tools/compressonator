@@ -275,7 +275,7 @@ int Plugin_ModelLoader_drc::LoadModelData(const char* pszFilename, const char* p
             //std::string       output = DracoOptions->output;
             //if (output == "")
             //{
-                output = string(pszFilename) + ".obj";
+                output = std::string(pszFilename) + ".obj";
             //}
 
             if (!obj_encoder.EncodeToFile(*m_mesh, output))
@@ -405,7 +405,7 @@ int Plugin_ModelLoader_drc::SaveModelData(const char* pdstFilename, void* meshDa
         std::string sfullfilename = pdstFilename;
         std::string sfilename     = sfullfilename.substr(sfullfilename.find_last_of(".") + 1);
 
-        g_CMIPS->Print("Saving Output File %s...", sfilename);
+        g_CMIPS->Print("Saving Output File %s...", sfilename.c_str());
     }
 
     bool encodeMesh = true;

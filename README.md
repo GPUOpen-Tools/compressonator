@@ -293,11 +293,27 @@ Command line application that can be batch processed and supports:
 - Performance and Analysis Logs such as SSIM, MSE, PSNR.
 - MIP Maps, Image Differences, etc. ...
 
-![screenshot cli1](https://github.com/GPUOpen-Tools/Compressonator/blob/master/docs/source/gui_tool/user_guide/media/image129.png)
+```
+C:\>CompressonatorCLI -fd BC7 .\images .results
+```
+```
+C:\>CompressonatorCLI -log -fd BC7 .\images\ruby.png ruby_bc7.dds
+```
+```
+CompressonatorCLI Performace Log v1.0
 
-![screenshot cli2](https://github.com/GPUOpen-Tools/Compressonator/blob/master/docs/source/gui_tool/user_guide/media/image127.png)
+Source        : .\images\ruby.png, Height 416, Wideth 576, Size 0.936 MBytes
+Destination   : ruby_bc7.dds
+Using         : CPU
+Quality       : 0.05
+Processed to  : BC7        with  1 iteration(s) in 1.422 seconds
+MSE           : 0.78
+PSNR          : 49.2
+SSIM          : 0.9978
+Total time    : 1.432 seconds
 
-![screenshot cli3](https://github.com/GPUOpen-Tools/Compressonator/blob/master/docs/source/gui_tool/user_guide/media/image128.png)
+--------------
+```
 
 
 ## Compressonator GUI

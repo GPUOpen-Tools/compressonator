@@ -58,7 +58,7 @@ extern void CMP_RegisterHostPlugins();
 
 extern bool   CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2);
 extern void   LocalPrintF(char* buff);
-extern string DefaultDestination(string SourceFile, CMP_FORMAT DestFormat, string DestFileExt);
+extern std::string DefaultDestination(std::string SourceFile, CMP_FORMAT DestFormat, std::string DestFileExt);
 
 extern PluginManager g_pluginManager;
 bool          g_bAbortCompression = false;

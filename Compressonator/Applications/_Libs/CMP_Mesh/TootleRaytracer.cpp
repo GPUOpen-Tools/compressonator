@@ -62,9 +62,9 @@ bool TootleRaytracer::Init(const float* pVertexPositions, const UINT* pIndices, 
     JRTBoundingBox bb  = m_pMesh->ComputeBoundingBox();
     Vec3f center       = bb.GetCenter();
     Vec3f size         = bb.GetMax() - bb.GetMin();
-    float fLongestSide = std::max(size[0], size[1]);
-    fLongestSide       = 2.0f * std::max(fLongestSide, size[2]);
-    fLongestSide       = std::max(1.0f, fLongestSide);               // make it at least 1
+    float fLongestSide = (std::max)(size[0], size[1]);
+    fLongestSide       = 2.0f * (std::max)(fLongestSide, size[2]);
+    fLongestSide       = (std::max)(1.0f, fLongestSide);               // make it at least 1
 
     for (UINT i = 0; i < nVertices; i++)
     {
@@ -157,7 +157,7 @@ bool TootleRaytracer::MeasureOverdraw(const float* pViewpoints,
 
         if (nPixelHit > 0)
         {
-            fMaxODOut = std::max(fMaxODOut, (float) nPixelDrawn / nPixelHit);
+            fMaxODOut = (std::max)(fMaxODOut, (float) nPixelDrawn / nPixelHit);
         }
 
         pViewpoints += 3;

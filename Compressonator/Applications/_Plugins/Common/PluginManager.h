@@ -7,10 +7,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -43,7 +43,6 @@
 //#include "PluginInterface.h"
 #include "PluginBase.h"
 
-using namespace std;
 
 #define MAX_PLUGIN_FILENAME_STR   512
 #define MAX_PLUGIN_NAME_STR       256
@@ -58,7 +57,7 @@ class PluginDetails
  public:
         PluginDetails() { clearMembers(); }
         ~PluginDetails();
-        
+
         void *makeNewInstance();
         void setFileName(char * nm);
         char *getFileName()     { return filename; }
@@ -66,7 +65,7 @@ class PluginDetails
         char *getUUID()         { return pluginUUID; }
         char *getType()         { return pluginType; }
         char *getCategory()     { return pluginCategory; }
-        void setName(char * nm);  
+        void setName(char * nm);
         void setUUID(char * nm);
         void setType(char * nm);
         void setCategory(char * nm);
@@ -123,10 +122,10 @@ public:
     void *GetPlugin(char *uuid);
     bool RemovePlugin(char *type, char *name);
 private:
-    bool m_pluginlistset;
-    char m_pluginfolder [MAX_PLUGIN_FILENAME_STR];
-    void clearPluginList();
-    vector<PluginDetails*> pluginRegister;
+    bool         m_pluginlistset;
+    char         m_pluginfolder [MAX_PLUGIN_FILENAME_STR];
+    void         clearPluginList();
+    std::vector<PluginDetails*> pluginRegister;
 };
 
 #endif

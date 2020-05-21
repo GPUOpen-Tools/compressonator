@@ -67,7 +67,7 @@ unsigned int    _stdcall GTCHThreadProcEncode(void* param)
             tp->encoder->CompressBlock(tp->in, tp->out);
             tp->run = false;
         }
-        using namespace chrono;
+        using namespace std::chrono;
 
         std::this_thread::sleep_for(0ms);
     }
@@ -403,6 +403,8 @@ CodecError CCodec_GTCH::FinishGTCHEncoding(void)
 
 if (m_Use_MultiThreading)
 {
+    using namespace std::chrono;
+
     // Wait for all the live threads to finish any current work
     for(CMP_DWORD i=0; i < m_LiveThreads; i++)
     {
@@ -450,7 +452,7 @@ CodecError CCodec_GTCH::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
 
     DbgTrace(("OUT: BufferType %d ChannelCount %d ChannelDepth %d",bufferOut.GetBufferType(),bufferOut.GetChannelCount(),bufferOut.GetChannelDepth()));
     DbgTrace(("   : Height %d Width %d Pitch %d isFloat %d",bufferOut.GetHeight(),bufferOut.GetWidth(),bufferOut.GetWidth(),bufferOut.IsFloat()));
-    #endif;
+    #endif
 
     char            row,col,srcIndex;
 

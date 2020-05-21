@@ -72,7 +72,7 @@ unsigned int    _stdcall GTCThreadProcEncode(void* param)
             tp->encoder->CompressBlock(tp->in, tp->out);
             tp->run = false;
         }
-        using namespace chrono;
+        using namespace std::chrono;
 
         std::this_thread::sleep_for(0ms);
     }
@@ -409,6 +409,8 @@ CodecError CCodec_GTC::FinishGTCEncoding(void)
 
 if (m_Use_MultiThreading)
 {
+    using namespace std::chrono;
+
     // Wait for all the live threads to finish any current work
     for(CMP_DWORD i=0; i < m_LiveThreads; i++)
     {

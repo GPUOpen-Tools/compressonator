@@ -142,9 +142,9 @@ void MeshData::calc_bounds(int width, int height, const CMP_Mesh& l_mesh)
     m_centerz = float((m_maxz-m_minz)/2) + m_minz;
 
 
-	m_extentx = std::max(fabsf(m_maxx - m_minx), fabsf(m_maxx));
-	m_extenty = std::max(fabsf(m_maxy - m_miny), fabsf(m_maxy));
-	m_extentz = std::max(fabsf(m_maxz - m_minz), fabsf(m_maxz));
+	m_extentx = (std::max)(fabsf(m_maxx - m_minx), fabsf(m_maxx));
+	m_extenty = (std::max)(fabsf(m_maxy - m_miny), fabsf(m_maxy));
+	m_extentz = (std::max)(fabsf(m_maxz - m_minz), fabsf(m_maxz));
 
     m_scaleh = width > height ? float(width) / float(height) : float(height) / float(width);
 }

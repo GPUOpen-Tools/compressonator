@@ -15,14 +15,14 @@
 // Copyright (c) 2017  Advanced Micro Devices, Inc. All rights reserved
 //=====================================================================
 
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+
 #include "ASTC_Host.h"
 #include "ASTC_Encode_Kernel.h"
 #include "Compressonator.h"
 
-#include <iostream>
-#include <fstream>
-
-using namespace std;
 
 //================================= ASTC CPU HOST CODE  ===========================================
 

@@ -26,14 +26,33 @@
 #include <windows.h>
 #endif
 
-#include <stdio.h>
 #include "CAnalysis.h"
+
+#include "PluginInterface.h"
 #include "PluginManager.h"
-#include "TC_PluginInternal.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
-#include "Compressonator.h"
+#include "SSIM.h"
+#include "TextureIO.h"
+
+#include "cpImageLoader.h"
+
+#ifdef USE_OPENCV
+#include "cvmatandqimage.h"
+#endif
+
+#include <QtCore/QCoreApplication>
+#include <QtCore/qstandardpaths.h>
+#include <QtCore/qstring.h>
+#include <QtCore/qlist.h>
+#include <QtCore/qfileinfo.h>
+#include <QtGui/qcolor.h>
+#include <QtGui/qimage.h>
+#include <QtCore/qmath.h>
+
+#ifdef USE_OPENCV
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>  // Gaussian Blur
+#include <opencv2/highgui/highgui.hpp>  // OpenCV window I/O
+#endif
 
 // File system
 #include <boost/filesystem.hpp>
@@ -44,6 +63,11 @@
 #include <boost/property_tree/xml_parser.hpp> 
 #include <boost/property_tree/ptree.hpp> 
 #include <boost/foreach.hpp> 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
 
 using namespace std;
 
@@ -134,7 +158,7 @@ string f2Str(float data, int prec)
     return s;
 }
 
-void Plugin_Canalysis::write(REPORT_DATA data, char *resultsFile, char option)
+void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char option)
 {
     using boost::property_tree::ptree;
     ptree pt;
@@ -566,7 +590,7 @@ void  Plugin_Canalysis::generateBCtestResult(QImage *src, QImage *dest, REPORT_D
 }
 
 #ifdef USE_OPENCV
-bool Plugin_Canalysis::psnr(QImage *src, Mat srcimg, QImage *dest, Mat destimg, REPORT_DATA &myReport, CMP_Feedback_Proc pFeedbackProc)
+bool Plugin_Canalysis::psnr(QImage *src, const cv::Mat& srcimg, QImage *dest, const cv::Mat& destimg, REPORT_DATA &myReport, CMP_Feedback_Proc pFeedbackProc)
 {
     double bMSE = 0, gMSE = 0, rMSE = 0, MSE = 0;
     double MAX = 255.0; // Maximum possible pixel range. For our BMP's, which have 8 bits, it's 255.
@@ -736,8 +760,8 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
         if (m_MipDestImages)
             m_imageloader->clearMipImages(&m_MipDestImages);
 
-        m_MipSrcImages  = m_imageloader->LoadPluginImage(QString::fromUtf8(in1));
-        m_MipDestImages = m_imageloader->LoadPluginImage(QString::fromUtf8(in2));
+        m_MipSrcImages  = m_imageloader->LoadPluginImage(QString::fromUtf8(in1).toStdString());
+        m_MipDestImages = m_imageloader->LoadPluginImage(QString::fromUtf8(in2).toStdString());
     }
 
     if (m_MipSrcImages != NULL && m_MipDestImages != NULL)
@@ -745,7 +769,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
         setActiveChannels();
         // Analysis is only on top MipLevel and first cubemap face!
         // Need to update the code to handle all faces of cubemaps
-        if (m_MipSrcImages->QImage_list[0].count() >0)
+        if (m_MipSrcImages->QImage_list[0].size() >0)
         {
             srcImage = m_MipSrcImages->QImage_list[0][0];
         }
@@ -755,7 +779,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
             return -1;
         }
 
-        if (m_MipDestImages->QImage_list[0].count() >0)
+        if (m_MipDestImages->QImage_list[0].size() >0)
         {
             destImage = m_MipDestImages->QImage_list[0][0];
         }
@@ -944,7 +968,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
                         m_imageloader->clearMipImages(&m_MipDiffImages);
 
                     printf("User does not have admin right to the saved path. Diff image has been redirect saved to %s\n", redirectOut.toStdString().c_str());
-                    m_MipDiffImages = m_imageloader->LoadPluginImage(redirectOut);
+                    m_MipDiffImages = m_imageloader->LoadPluginImage(redirectOut.toStdString());
                     if (m_MipDiffImages)
                     {
                         QFile::remove(redirectOut);
@@ -1010,15 +1034,15 @@ int Plugin_Canalysis::TC_PSNR_MSE(const char * in1, const char * in2,  char *res
 
     if (m_imageloader)
     {
-        m_MipSrcImages  = m_imageloader->LoadPluginImage(QString::fromUtf8(in1));
-        m_MipDestImages = m_imageloader->LoadPluginImage(QString::fromUtf8(in2));
+        m_MipSrcImages  = m_imageloader->LoadPluginImage(QString::fromUtf8(in1).toStdString());
+        m_MipDestImages = m_imageloader->LoadPluginImage(QString::fromUtf8(in2).toStdString());
     }
 
     if (m_MipSrcImages != NULL && m_MipDestImages != NULL)
     {
         setActiveChannels();
 
-        if (m_MipSrcImages->QImage_list[0].count() >0)
+        if (m_MipSrcImages->QImage_list[0].size() >0)
             srcImage = m_MipSrcImages->QImage_list[0][0];
         else
         {
@@ -1026,7 +1050,7 @@ int Plugin_Canalysis::TC_PSNR_MSE(const char * in1, const char * in2,  char *res
             return -1;
         }
 
-        if (m_MipDestImages->QImage_list[0].count() >0)
+        if (m_MipDestImages->QImage_list[0].size() >0)
             destImage = m_MipDestImages->QImage_list[0][0];
         else
         {
@@ -1099,14 +1123,14 @@ int Plugin_Canalysis::TC_SSIM(const char * in1, const char * in2, char *resultsF
         if (m_MipDestImages)
             m_imageloader->clearMipImages(&m_MipDestImages);
 
-        m_MipSrcImages  = m_imageloader->LoadPluginImage(QString::fromUtf8(in1));
-        m_MipDestImages = m_imageloader->LoadPluginImage(QString::fromUtf8(in2));
+        m_MipSrcImages  = m_imageloader->LoadPluginImage(QString::fromUtf8(in1).toStdString());
+        m_MipDestImages = m_imageloader->LoadPluginImage(QString::fromUtf8(in2).toStdString());
     }
 
     if (m_MipSrcImages != NULL && m_MipDestImages != NULL)
     {
         setActiveChannels();
-        if (m_MipSrcImages->QImage_list[0].count() >0)
+        if (m_MipSrcImages->QImage_list[0].size() >0)
             srcImage = m_MipSrcImages->QImage_list[0][0];
         else
         {
@@ -1114,7 +1138,7 @@ int Plugin_Canalysis::TC_SSIM(const char * in1, const char * in2, char *resultsF
             return -1;
         }
 
-        if (m_MipDestImages->QImage_list[0].count() >0)
+        if (m_MipDestImages->QImage_list[0].size() >0)
             destImage = m_MipDestImages->QImage_list[0][0];
         else
         {

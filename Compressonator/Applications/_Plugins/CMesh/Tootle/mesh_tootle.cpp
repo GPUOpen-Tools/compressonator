@@ -30,7 +30,6 @@
 #include "Timer.h"
 #include <iostream>
 #include <fstream>
-using namespace std;
 
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_Mesh_Tootle)

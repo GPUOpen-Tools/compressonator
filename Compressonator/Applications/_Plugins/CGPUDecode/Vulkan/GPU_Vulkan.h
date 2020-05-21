@@ -41,8 +41,6 @@
 #include <string>
 #include <array>
 
-using namespace std;
-
 #define FENCE_TIMEOUT 100000000
 //---------------------------------------------------------------------------------
 namespace GPU_Decode

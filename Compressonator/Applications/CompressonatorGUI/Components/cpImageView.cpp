@@ -878,7 +878,7 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
             m_imageLoader = new CImageLoader();
             if (m_imageLoader)
             {
-                m_processedMipImages = m_imageLoader->LoadPluginImage(filePathName);
+                m_processedMipImages = m_imageLoader->LoadPluginImage(filePathName.toStdString());
             }
         }
         else
@@ -889,7 +889,7 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
         m_imageLoader = new CImageLoader();
         if (m_imageLoader)
         {
-            m_processedMipImages = m_imageLoader->LoadPluginImage(filePathName);
+            m_processedMipImages = m_imageLoader->LoadPluginImage(filePathName.toStdString());
             m_localMipImages = true;
         }
         else
@@ -952,7 +952,7 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
             // check levels with number of images to view
             //if (m_processedMipImages->m_MipImageFormat == MIPIMAGE_FORMAT::Format_QImage)
             //{
-                int count = m_processedMipImages->QImage_list[0].count();
+                int count = m_processedMipImages->QImage_list[0].size();
                 if (count <= 1)
                 {
                     m_MipLevels = 0;
@@ -1041,7 +1041,7 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
     if (m_acImageView->m_graphicsScene)
     {
         ID = m_acImageView->m_graphicsScene->ID;
-        m_imageSize = m_acImageView->m_MipImages->QImage_list[0].first()->size();
+        m_imageSize = m_acImageView->m_MipImages->QImage_list[0].front()->size();
         m_acImageView->enableNavigation(true);
 
         connect(m_acImageView, SIGNAL(acImageViewMousePosition(QPointF *, QPointF *, int)), this, SLOT(oncpImageViewMousePosition(QPointF *, QPointF *, int)));
@@ -1252,17 +1252,18 @@ cpImageView::cpImageView(const QString filePathName, const QString Title, QWidge
 
         m_CBimageview_MipLevel = new QComboBox(this);
 
-        int processedImage_miplevel_max = m_processedMipImages->QImage_list[0].count();
+        int processedImage_miplevel_max = m_processedMipImages->QImage_list[0].size();
+
         // check if we have miplevels in Original Image if its available match its level with the processed
         if (m_OriginalMipImages && (setting->input_image == eImageViewState::isProcessed))
         {
-            if (m_OriginalMipImages->QImage_list[0].count() < processedImage_miplevel_max)
+            if (m_OriginalMipImages->QImage_list[0].size() < processedImage_miplevel_max)
             {
                 QMessageBox msgBox;
                 QMessageBox::warning(this, "MipLevel", 
                 "Original image MipMap Levels do not match the Processed image levels.\nLevels will be limited, retry by regenerating original image mip levels",
                 QMessageBox::Ok);
-                processedImage_miplevel_max = m_OriginalMipImages->QImage_list[0].count();
+                processedImage_miplevel_max = m_OriginalMipImages->QImage_list[0].size();
             }
         }
 
