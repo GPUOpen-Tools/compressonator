@@ -18,7 +18,7 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "stdafx.h"
+
 #include "ThreadPool.h"
 
 static ThreadPool t;

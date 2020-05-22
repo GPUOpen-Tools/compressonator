@@ -26,11 +26,6 @@
 
 #include "namespaceAlias.h"
 
-// Windows Header Files:
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 #pragma warning(push)
 #pragma warning(disable : 4100)
 #pragma warning(disable : 4800)

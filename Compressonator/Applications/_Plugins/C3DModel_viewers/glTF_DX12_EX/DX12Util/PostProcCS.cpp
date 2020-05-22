@@ -17,13 +17,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
 #include "DynamicBufferRingDX12.h"
 #include "StaticBufferPoolDX12.h"
 #include "UploadHeapDX12.h"
 #include "TextureDX12.h"
 #include "PostProcCS.h"
 
+#include <Error.h>
+
+#include <d3dcompiler.h>
 
 PostProcCS::PostProcCS()
 {

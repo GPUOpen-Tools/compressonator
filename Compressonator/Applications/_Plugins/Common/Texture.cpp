@@ -2,7 +2,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #pragma warning(disable:4244)
 //#include "ImfRgba.h"
 #pragma warning(disable:4244)

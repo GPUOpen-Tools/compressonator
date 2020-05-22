@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <windoes.h>
+
 double MillisecondsNow();
 
 SIZE_T Align(SIZE_T uOffset, SIZE_T uAlign);

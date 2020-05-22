@@ -18,7 +18,11 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "..\json\json.h"
+#include "json/json.h"
+
+#include <vulkan/vulkan.h>
+
+#include <string>
 
 using json = nlohmann::json;
 

@@ -17,7 +17,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
 #include "DynamicBufferRingDX12.h"
 #include "StaticBufferPoolDX12.h"
 #include "UploadHeapDX12.h"
@@ -25,6 +24,10 @@
 #include "PostProcPS.h"
 #include "ThreadPool.h"
 
+#include <Error.h>
+
+#include <d3dx12.h>
+#include <d3dcompiler.h>
 
 void PostProcPS::OnCreate(
     ID3D12Device* pDevice,

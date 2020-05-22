@@ -17,7 +17,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
+
 #include "FrameworkWindows.h"
 
 // LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -26,8 +26,8 @@
 
 static bool bIsFullScreen = false;
 static bool bIsMinimized = false;
-LONG lBorderedStyle = 0;
-LONG lBorderlessStyle = 0;
+int32_t lBorderedStyle = 0;
+int32_t lBorderlessStyle = 0;
 
 // // this is the main message handler for the program
 // LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

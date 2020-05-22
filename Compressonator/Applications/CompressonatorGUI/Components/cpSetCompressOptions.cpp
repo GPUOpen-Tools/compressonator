@@ -36,6 +36,9 @@
 
 #include "Common.h"
 
+#include <chrono>
+#include <thread>
+
 #define DROPDOWN_FILEEXT_WIDTH 60
 
 extern void GetSupportedFileFormats(QList<QByteArray> &g_supportedFormats);
@@ -1590,11 +1593,7 @@ void CSetCompressOptions::SaveCompressedInfo()
             int delayloop = 0;
             while (!CMP_DirExists(finalPath.toStdString().c_str()) && (delayloop < 5))
             {
-#ifdef _WIN32
-                Sleep(100);
-#else
-                usleep(100000);
-#endif
+                std::this_thread::sleep_for(std::chrono::microseconds(100000));
                 delayloop++;
             }
             if (delayloop == 5)

@@ -22,14 +22,16 @@
 #include "UploadHeapDX12.h"
 #include "Camera.h"
 
+#include <wrl.h>
+
 class DrawCube
 {
     struct per_object
     {
-        XMMATRIX mMatrix;
-        XMVECTOR vCenter;
-        XMVECTOR vRadius;
-        XMVECTOR vColor;
+        DirectX::XMMATRIX mMatrix;
+        DirectX::XMVECTOR vCenter;
+        DirectX::XMVECTOR vRadius;
+        DirectX::XMVECTOR vColor;
     };
 
 

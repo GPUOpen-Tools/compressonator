@@ -19,6 +19,12 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+#include <vector>
+
+#include <vulkan/vulkan_core.h>
+
 enum ShaderSourceType
 {
     SST_HLSL,

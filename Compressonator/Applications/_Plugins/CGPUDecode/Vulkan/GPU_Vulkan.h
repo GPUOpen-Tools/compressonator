@@ -31,12 +31,14 @@
 #ifndef H_GPU_VULKAN
 #define H_GPU_VULKAN
 
-#include "GPU_DecodeBase.h"
+#include "vulkanswapchain.hpp"
+#include "vulkandebug.h"
+
+#include <GPU_DecodeBase.h>
 
 #include <vulkan/vulkan.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include "vulkanswapchain.hpp"
-#include "vulkandebug.h"
+
 #include <assert.h>
 #include <string>
 #include <array>
@@ -47,31 +49,31 @@ namespace GPU_Decode
 {
 
     // Macro to check and display Vulkan return results
-#define VK_CHECK_RESULT(f)                                                                                \
-{                                                                                                        \
-    VkResult res = (f);                                                                                    \
-    if (res != VK_SUCCESS)                                                                                \
-    {                                                                                                    \
+#define VK_CHECK_RESULT(f)                                                                                                                  \
+{                                                                                                                                           \
+    VkResult res = (f);                                                                                                                     \
+    if (res != VK_SUCCESS)                                                                                                                  \
+    {                                                                                                                                       \
         std::cout << "Fatal : VkResult is \"" << vkTools::errorString(res) << "\" in " << __FILE__ << " at line " << __LINE__ << std::endl; \
-        return;                                                                        \
-    }                                                                                                    \
+        return;                                                                                                                             \
+    }                                                                                                                                       \
 }
 
     // Macro to check and display Vulkan return results
-#define VK_CHECK_RESULT_ERR_PTR(f)                                                                                \
-{                                                                                                        \
-    VkResult res = (f);                                                                                    \
-    if (res != VK_SUCCESS)                                                                                \
-    {                                                                                                    \
+#define VK_CHECK_RESULT_ERR_PTR(f)                                                                                                          \
+{                                                                                                                                           \
+    VkResult res = (f);                                                                                                                     \
+    if (res != VK_SUCCESS)                                                                                                                  \
+    {                                                                                                                                       \
         std::cout << "Fatal : VkResult is \"" << vkTools::errorString(res) << "\" in " << __FILE__ << " at line " << __LINE__ << std::endl; \
-        return NULL;                                                                        \
-    }                                                                                                    \
+        return NULL;                                                                                                                        \
+    }                                                                                                                                       \
 } 
 
     class GPU_Vulkan : public RenderWindow
     {
     public:
-        GPU_Vulkan(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback);
+        GPU_Vulkan(std::uint32_t Width, std::uint32_t Height, WNDPROC callback);
         ~GPU_Vulkan();
 
         virtual CMP_ERROR WINAPI Decompress(

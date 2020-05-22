@@ -17,13 +17,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
 #include "Error.h"
 
-void ShowErrorMessageBox(HRESULT hr)
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <iostream>
+#endif
+
+void ShowErrorMessageBox(int result)
 {
+    #ifdef _WIN32
     wchar_t err[256];
     memset(err, 0, 256);
-    FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), err, 255, NULL);
+    FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, static_cast<HRESULT>(result), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), err, 255, NULL);
     int msgboxID = MessageBoxW(NULL, err, (LPCWSTR)L"Error", MB_OK);
+    #else
+    std::cerr << "Error " << result << std::endl;
+    #endif
 }

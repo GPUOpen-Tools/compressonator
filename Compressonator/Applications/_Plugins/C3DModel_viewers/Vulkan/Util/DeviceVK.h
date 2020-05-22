@@ -21,6 +21,9 @@
 // THE SOFTWARE.
 //
 #pragma once
+
+#include <vulkan/vulkan.h>
+
 class DeviceVK
 {
 public:

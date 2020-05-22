@@ -23,5 +23,8 @@
 
 #pragma once
 
+#include <dxgiformat.h>
+#include <string>
+
 DXGI_FORMAT GetFormatDX12(std::string str, int id);
 

@@ -17,9 +17,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
+
 #include "StaticBufferPoolVK.h"
 #include "Misc.h"
+
+#include <cassert>
+
 
 void StaticBufferPoolVK::OnCreate(DeviceVK* pDevice, DWORD totalMemSize)
 {

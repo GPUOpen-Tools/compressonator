@@ -21,6 +21,9 @@
 #include "GltfCommon.h"
 #include "GltfTechnique.h"
 
+#include <d3d12.h>
+#include <wrl.h>
+
 // This class takes a GltfCommon class (that holds all the non-GPU specific data) as an input and loads all the GPU specific data
 //
 struct DepthMaterial
@@ -52,7 +55,7 @@ class GltfDepthPass : public GltfTechnique
 public:
     struct per_batch
     {
-        XMMATRIX mViewProj;
+        DirectX::XMMATRIX mViewProj;
     };
 
     bool OnCreate(
@@ -73,7 +76,7 @@ private:
     SAMPLER m_sampler;
     
     D3D12_GPU_DESCRIPTOR_HANDLE m_perBatchDesc;
-    void DrawMesh(ID3D12GraphicsCommandList* pCommandList, int meshIndex, XMMATRIX worldMatrix);
+    void DrawMesh(ID3D12GraphicsCommandList* pCommandList, int meshIndex, DirectX::XMMATRIX worldMatrix);
     bool CreateGeometry(tfAccessor indexBuffer, std::vector<tfAccessor> vertexBuffers, DepthPrimitives *pPrimitive);
     void CreatePipeline(ID3D12Device* pDevice, UINT node, std::vector<std::string> semanticNames, std::vector<D3D12_INPUT_ELEMENT_DESC> layout, DepthPrimitives *pPrimitive);
 };

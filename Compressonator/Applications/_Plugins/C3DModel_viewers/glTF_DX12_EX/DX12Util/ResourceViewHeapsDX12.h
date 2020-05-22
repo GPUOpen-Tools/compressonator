@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <d3d12.h>
+
 // In DX12 resource views are represented by handles(called also Descriptors handles). This handles live in a special type of array 
 // called Descriptor Heap. Placing a few views in contiguously in the same Descriptor Heap allows you 
 // to create a 'table', that is you can reference the whole table with just a offset(into the descriptor heap)

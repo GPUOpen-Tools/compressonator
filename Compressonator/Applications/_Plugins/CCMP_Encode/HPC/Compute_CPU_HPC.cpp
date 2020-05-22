@@ -42,26 +42,29 @@ char    DbgTracer::buff[MAX_DBGBUFF_SIZE];
 char    DbgTracer::PrintBuff[MAX_DBGPPRINTBUFF_SIZE];
 #endif
 
-unsigned int    _stdcall ProcEncode(void* param)
+unsigned int _stdcall ProcEncode(void* param)
 {
-   ThreadParam *tp = (ThreadParam*)param;
+    using namespace std::chrono;
+    ThreadParam *tp = (ThreadParam*)param;
 
    //printf("Thead Active [%4x]\n",std::this_thread::get_id());
    std::this_thread::sleep_for(0ms);
 
-   while (tp->exit == false)
-   {
-       if (tp->run == true)
-       {
-           tp->cmp_encoder->CompressBlock(tp->x,tp->y,tp->in, tp->out);
-           tp->run = false;
-       }
+    using namespace std::chrono;
+
+    while (tp->exit == false)
+    {
+        if (tp->run == true)
+        {
+            tp->cmp_encoder->CompressBlock(tp->x,tp->y,tp->in, tp->out);
+            tp->run = false;
+        }
 
         std::this_thread::sleep_for(0ms);
-   }
+    }
 
-   // printf("Thead Closed [%x] run[%d]\n",std::this_thread::get_id(),tp->run?1:0);
-   return 0;
+    // printf("Thead Closed [%x] run[%d]\n",std::this_thread::get_id(),tp->run?1:0);
+    return 0;
 }
 
 float CCPU_HPC::GetProcessElapsedTimeMS()
@@ -230,6 +233,8 @@ else
 
 void CCPU_HPC::FinishThreadEncoding()
 {
+    using namespace std::chrono;
+    
     // Wait for all the live threads to finish any current work
     for (CMP_DWORD i = 0; i < m_NumEncodingThreads; i++)
     {

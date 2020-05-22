@@ -1,5 +1,5 @@
 // AMD AMDUtils code
-// 
+//
 // Copyright(c) 2017 Advanced Micro Devices, Inc.All rights reserved.
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -19,13 +19,21 @@
 
 #pragma once
 
-void ShowErrorMessageBox(HRESULT hr);
+#ifdef _WIN32
+#include <winerror.h>
+#endif
 
-inline void ThrowIfFailed(HRESULT hr)
+void ShowErrorMessageBox(int result);
+
+inline void ThrowIfFailed(int result)
 {
-    if (FAILED(hr))
+#ifdef _WIN32
+    if (FAILED(result))
+#else
+    if (result != 0)
+#endif
     {
-        ShowErrorMessageBox(hr);
+        ShowErrorMessageBox(result);
         throw 1;
     }
 }

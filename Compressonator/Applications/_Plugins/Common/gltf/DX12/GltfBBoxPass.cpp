@@ -17,9 +17,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
 #include "GltfBBoxPass.h"
 #include "GltfHelpers.h"
+
+#include <Error.h>
+
+#include <DirectXMath.h>
+#include <d3dcompiler.h>
+
+using namespace DirectX;
 
 void GltfBBoxPass::OnCreate(
     ID3D12Device* pDevice,

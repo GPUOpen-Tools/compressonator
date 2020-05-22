@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <d3dx12.h>
+
 //
 // This class shows the most efficient way to upload resources to the GPU memory. 
 // The idea is to create just one upload heap and suballocate memory from it.

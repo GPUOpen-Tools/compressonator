@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include <Compressonator.h>
+
 #include <stdlib.h>
 #include <string>
 #include <fstream>

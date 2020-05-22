@@ -42,7 +42,7 @@ protected:
     ResourceViewHeapsDX12 *m_pResourceViewHeaps;
     StaticBufferPoolDX12 *m_pStaticBufferPool;
 
-    virtual void DrawMesh(ID3D12GraphicsCommandList* pCommandList, int meshIndex, XMMATRIX matrix) = 0;    
+    virtual void DrawMesh(ID3D12GraphicsCommandList* pCommandList, int meshIndex, DirectX::XMMATRIX matrix) = 0;    
 };
 
 

@@ -20,6 +20,9 @@
 #pragma once
 #include <dxgi1_4.h>
 #include <vector>
+#include <d3dx12.h>
+#include <Windows.h>
+
 
 class SwapChainDX12
 {

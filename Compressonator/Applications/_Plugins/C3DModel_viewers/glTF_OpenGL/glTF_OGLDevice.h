@@ -22,7 +22,7 @@
 #include "PluginManager.h"
 #include "Compressonator.h"
 
-#include "QtWidgets/qwidget.h"
+#include <QtWidgets/qwidget.h>
 
 // -- Qt Open GL Support
 #include <qopenglwidget>
@@ -111,6 +111,18 @@ private:
 
     void resizeView(int w, int h);
 
+    void cleanup();
+    void setupVertexAttribs();
+
+    // VSync
+    bool m_bVerticalSync;
+    void VerticalSync(bool enable);
+
+    void SetLighting(void);
+
+    // Full Screen Mode
+    bool m_fullScreen;
+
     // Contains Mesh Data loaded from File
     CMODEL_DATA         *m_model[MAX_NUM_OF_NODES];
 
@@ -144,9 +156,6 @@ private:
     float   m_frameRateMin = FLT_MAX;
     QElapsedTimer m_elapsedTimer;
 
-    void cleanup();
-    void setupVertexAttribs();
-
     bool m_core;
     int m_xRot;
     int m_yRot;
@@ -171,18 +180,10 @@ private:
     QOpenGLBuffer               m_MeshVbo;
     QOpenGLShaderProgram        *m_program;
 
-    // VSync
-    bool m_bVerticalSync;
-    void VerticalSync(bool enable);
-
-    // Full Screen Mode
-    bool m_fullScreen;
-
     // Lighting
     float    m_lightPos_x;
     float    m_lightPos_y;
     float    m_lightPos_z;
-    void SetLighting(void);
 
     // Camera
     float    m_cameraPos[3];

@@ -17,9 +17,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
+
 #include "GPUTimestampsDX12.h"
 
+#include <Error.h>
 
 
 void GPUTimestampsDX12::OnCreate(ID3D12Device* pDevice, DWORD numberOfBackBuffers, UINT node, UINT nodemask)

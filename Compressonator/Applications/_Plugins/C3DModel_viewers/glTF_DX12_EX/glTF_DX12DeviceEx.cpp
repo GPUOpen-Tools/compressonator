@@ -17,11 +17,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
+
 #include "GltfFeatures.h"
 
 #include "glTF_DX12DeviceEx.h"
-#include <DXGIDebug.h>
 
 #include "GltfCommon.h"
 #include "Misc.h"
@@ -29,6 +28,11 @@
 #ifdef ENABLE_RENDER_CODE
 #include "glTF_DX12RendererEx.h"
 #endif
+
+#include <DXGIDebug.h>
+#include <DirectXMath.h>
+
+using namespace DirectX;
 
 static int BackBuffer = 1;
 

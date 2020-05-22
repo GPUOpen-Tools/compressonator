@@ -17,7 +17,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
 #include "ImguiDX12.h"
 
 // DirectX
@@ -25,6 +24,8 @@
 #include <d3dcompiler.h>
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
+
+#include <wrl.h>
 
 // Data
 static HWND                     g_hWnd = 0;

@@ -20,12 +20,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "stdafx.h"
 #include "DynamicBufferRingDX12.h"
 #include "StaticBufferPoolDX12.h"
 #include "UploadHeapDX12.h"
 #include "TextureDX12.h"
 #include "SkyDome.h"
+
+using namespace DirectX;
 
 
 void SkyDome::OnCreate(ID3D12Device* pDevice, UploadHeapDX12* pUploadHeap, DXGI_FORMAT outFormat, ResourceViewHeapsDX12 *pResourceViewHeaps, StaticBufferPoolDX12  *pStaticBufferPool, DynamicBufferRingDX12 *pDynamicBufferRing, UINT sampleDescCount, void *pluginManager, void *msghandler)

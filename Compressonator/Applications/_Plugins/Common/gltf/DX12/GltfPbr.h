@@ -22,6 +22,9 @@
 #include "GltfTechnique.h"
 #include "SkyDome.h"
 
+#include <DirectXMath.h>
+#include <wrl.h>
+
 extern CMIPS *DX12_CMips;
 
 struct PBRMaterial
@@ -30,8 +33,8 @@ struct PBRMaterial
     CBV_SRV_UAV *m_pTexturesTable;
     std::map<std::string, std::string> m_defines;
 
-    XMVECTOR emissiveFactor;
-    XMVECTOR baseColorFactor;
+    DirectX::XMVECTOR emissiveFactor;
+    DirectX::XMVECTOR baseColorFactor;
     float    metallicFactor;
     float    roughnessFactor;
 };
@@ -61,11 +64,11 @@ class GltfPbr : public GltfTechnique
 public:
     struct per_batch
     {
-        XMMATRIX mCameraViewProj;
-        XMVECTOR cameraPos;
-        XMMATRIX mLightViewProj;
-        XMVECTOR lightDirection;
-        XMVECTOR lightColor;
+        DirectX::XMMATRIX mCameraViewProj;
+        DirectX::XMVECTOR cameraPos;
+        DirectX::XMMATRIX mLightViewProj;
+        DirectX::XMVECTOR lightDirection;
+        DirectX::XMVECTOR lightColor;
         float    depthBias;
         float    iblFactor;
     };
@@ -100,7 +103,7 @@ private:
     SAMPLER m_sampler;
 
     D3D12_GPU_DESCRIPTOR_HANDLE m_perBatchDesc;
-    void DrawMesh(ID3D12GraphicsCommandList* pCommandList, int meshIndex, XMMATRIX worldMatrix);
+    void DrawMesh(ID3D12GraphicsCommandList* pCommandList, int meshIndex, DirectX::XMMATRIX worldMatrix);
     void AddTextureIfExists(nlohmann::json::object_t material, nlohmann::json::array_t textures, std::map<std::string, TextureDX12 *> &map, char *texturePath, char *textureName);
     bool CreateGeometry(tfAccessor indexBuffer, std::vector<tfAccessor> vertexBuffers, PBRPrimitives *pPrimitive);
     void CreatePipeline(ID3D12Device* pDevice, UINT node, std::vector<std::string> semanticName, std::vector<D3D12_INPUT_ELEMENT_DESC> layout, PBRPrimitives *pPrimitive);

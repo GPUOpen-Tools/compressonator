@@ -155,9 +155,6 @@
     <ClCompile Include="..\DX12Util\UploadHeapDX12.cpp">
       <Filter>DX12Util</Filter>
     </ClCompile>
-    <ClCompile Include="..\stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Common\ModelData.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -188,9 +185,6 @@
     <ClCompile Include="..\..\..\Common\gltf\glTFHelpers.cpp">
       <Filter>gltf</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\gltf\Misc.cpp">
-      <Filter>gltf</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Common\gltf\DX12\GltfBBoxPass.cpp">
       <Filter>gltf\DX12</Filter>
     </ClCompile>
@@ -212,6 +206,9 @@
     <ClCompile Include="..\..\..\Common\model_viewer\ModelTexture.cpp">
       <Filter>Common\model_viewer</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Common\Misc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\glTF_DX12DeviceEx.h">
@@ -221,9 +218,6 @@
       <Filter>Source Files</Filter>
     </CustomBuild>
     <CustomBuild Include="..\glTF_DX12_EX.h">
-      <Filter>Source Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\stdafx.h">
       <Filter>Source Files</Filter>
     </CustomBuild>
     <CustomBuild Include="..\CopyFiles.bat">
@@ -363,12 +357,6 @@
     <ClInclude Include="..\..\..\Common\gltf\GltfStructures.h">
       <Filter>gltf</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\gltf\Misc.h">
-      <Filter>gltf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\gltf\targetver.h">
-      <Filter>gltf</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Common\gltf\DX12\GltfBBoxPass.h">
       <Filter>gltf\DX12</Filter>
     </ClInclude>
@@ -389,6 +377,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Common\model_viewer\ModelTexture.h">
       <Filter>Common\model_viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Misc.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

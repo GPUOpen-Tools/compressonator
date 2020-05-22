@@ -57,7 +57,9 @@
 #include "PluginManager.h"
 #include "PluginInterface.h"
 
+
 using namespace std;
+
 
 // Global plugin manager instance
 extern PluginManager g_pluginManager;
@@ -1375,7 +1377,6 @@ int AMDLoadMIPSTextureImage(const char *SourceFile, MipSet *MipSetIn, bool use_O
 { 
     if (pluginManager == NULL)
         return -1;
-    string file_extension = GetFileExtension(SourceFile, false, true);
 
     PluginInterface_Image *plugin_Image;
 
@@ -1385,7 +1386,10 @@ int AMDLoadMIPSTextureImage(const char *SourceFile, MipSet *MipSetIn, bool use_O
         plugin_Image = reinterpret_cast<PluginInterface_Image *>(plugin_Manager->GetPlugin("IMAGE","OCV"));
     }
     else
-        plugin_Image = reinterpret_cast<PluginInterface_Image *>(plugin_Manager->GetPlugin("IMAGE",(char *)file_extension.c_str()));
+    {
+        string file_extension = GetFileExtension(SourceFile, false, true);
+        plugin_Image = reinterpret_cast<PluginInterface_Image*>(plugin_Manager->GetPlugin("IMAGE", (char*)file_extension.c_str()));
+    }
 
     // do the load
     if (plugin_Image)

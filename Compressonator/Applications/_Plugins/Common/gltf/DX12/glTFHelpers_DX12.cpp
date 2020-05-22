@@ -17,10 +17,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
 #include "glTFHelpers.h"
 
 #include "glTFHelpers_DX12.h"
+
 
 void CompileMacros(const std::map<std::string, std::string> *pMacros, std::vector<D3D_SHADER_MACRO> *pOut)
 {

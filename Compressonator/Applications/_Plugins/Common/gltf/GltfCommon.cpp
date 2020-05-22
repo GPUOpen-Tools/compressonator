@@ -17,13 +17,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#include "GltfCommon.h"
+
+#include "glTFHelpers.h"
+
 // Windows Header Files:
 #ifdef _WIN32
 #include <windows.h>
 #endif
-
-#include "GltfCommon.h"
-#include "glTFHelpers.h"
 
 #include <iostream>
 #include <fstream>
@@ -796,7 +797,7 @@ int GLTFCommon::Load(std::string path, std::string filename, CMIPS* cmips)
                 tfsmp->m_time.m_stride = 4;
             }
 
-            tfanim->m_duration = max(tfanim->m_duration, *(float*)tfsmp->m_time.Get(tfsmp->m_time.m_count - 1));
+            tfanim->m_duration = (std::max)(tfanim->m_duration, *(float*)tfsmp->m_time.Get(tfsmp->m_time.m_count - 1));
 
             // Get value line
             //

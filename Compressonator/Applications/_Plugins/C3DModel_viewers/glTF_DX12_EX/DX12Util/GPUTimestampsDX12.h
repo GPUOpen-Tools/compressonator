@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <d3dx12.h>
+
 // In DX12 timestamps are written by the GPU into a system memory resource. 
 // Its similar to a 'dynamic' buffer but this time it is the GPU who is writing 
 // and CPU is who is reading. Hence we need a sort of ring buffer to make sure 

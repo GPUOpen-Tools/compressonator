@@ -32,6 +32,7 @@
 #include "PluginInterface.h"
 #include "TC_PluginInternal.h"
 #include "Version.h"
+#include "Misc.h"
 
 #pragma warning( push )
 #pragma warning(disable:4100)
@@ -45,8 +46,8 @@
 #include <boost/filesystem.hpp>
 
 #ifdef USE_MESH_CLI
-#include "gltf/tiny_gltf2.h"
-#include "GltfCommon.h"
+#include <gltf/tiny_gltf2.h>
+#include <gltf/GltfCommon.h>
 #include "ModelData.h"
 #include "UtilFuncs.h"
 

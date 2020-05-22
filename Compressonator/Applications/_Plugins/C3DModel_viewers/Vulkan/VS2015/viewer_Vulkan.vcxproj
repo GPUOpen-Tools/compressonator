@@ -198,7 +198,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>BUILD_AS_PLUGIN_DLL;WIN32;_XM_NO_INTRINSICS_;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;_CRT_SECURE_NO_WARNINGS;_XM_NO_INTRINSICS_;%(PreprocessorDefinitions) VK_USE_PLATFORM_WIN32_KHR;QT_DLL</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;BUILD_AS_PLUGIN_DLL;WIN32;_XM_NO_INTRINSICS_;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;_CRT_SECURE_NO_WARNINGS;_XM_NO_INTRINSICS_;%(PreprocessorDefinitions) VK_USE_PLATFORM_WIN32_KHR;QT_DLL</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -251,7 +251,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>BUILD_AS_PLUGIN_DLL;WIN32;_XM_NO_INTRINSICS_;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;%(PreprocessorDefinitions) VK_USE_PLATFORM_WIN32_KHR;QT_DLL</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;BUILD_AS_PLUGIN_DLL;WIN32;_XM_NO_INTRINSICS_;VK_USE_PLATFORM_WIN32_KHR;_DEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;%(PreprocessorDefinitions) VK_USE_PLATFORM_WIN32_KHR;QT_DLL</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -310,7 +310,7 @@
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <OmitFramePointers>true</OmitFramePointers>
-      <PreprocessorDefinitions>BUILD_AS_PLUGIN_DLL;WIN32;_XM_NO_INTRINSICS_;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions) VK_USE_PLATFORM_WIN32_KHR;QT_DLL</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;BUILD_AS_PLUGIN_DLL;WIN32;_XM_NO_INTRINSICS_;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions) VK_USE_PLATFORM_WIN32_KHR;QT_DLL</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -371,7 +371,7 @@
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <OmitFramePointers>true</OmitFramePointers>
-      <PreprocessorDefinitions>BUILD_AS_PLUGIN_DLL;WIN32;_XM_NO_INTRINSICS_;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;%(PreprocessorDefinitions) VK_USE_PLATFORM_WIN32_KHR;QT_DLL</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;BUILD_AS_PLUGIN_DLL;WIN32;_XM_NO_INTRINSICS_;VK_USE_PLATFORM_WIN32_KHR;NDEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;%(PreprocessorDefinitions) VK_USE_PLATFORM_WIN32_KHR;QT_DLL</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -400,7 +400,7 @@
     <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\Half\half.cpp" />
     <ClCompile Include="..\..\..\Common\gltf\GltfCommon.cpp" />
     <ClCompile Include="..\..\..\Common\gltf\glTFHelpers.cpp" />
-    <ClCompile Include="..\..\..\Common\gltf\Misc.cpp" />
+    <ClCompile Include="..\..\..\Common\Misc.cpp" />
     <ClCompile Include="..\..\..\Common\gltf\Vulkan\GltfBBoxPassVK.cpp" />
     <ClCompile Include="..\..\..\Common\gltf\Vulkan\GltfDepthPassVK.cpp" />
     <ClCompile Include="..\..\..\Common\gltf\Vulkan\glTFHelpers_Vulkan.cpp" />
@@ -431,7 +431,6 @@
     <ClCompile Include="..\Util\ShaderCompilerHelper.cpp" />
     <ClCompile Include="..\Util\StaticBufferPoolVK.cpp" />
     <ClCompile Include="..\Util\StaticConstantBufferPoolVK.cpp" />
-    <ClCompile Include="..\Util\stdafx.cpp" />
     <ClCompile Include="..\Util\SwapChainVK.cpp" />
     <ClCompile Include="..\Util\TextureVK.cpp" />
     <ClCompile Include="..\Util\ThreadPool.cpp" />
@@ -2005,64 +2004,6 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
       </AdditionalInputs>
     </CustomBuild>
-    <CustomBuild Include="..\Util\stdafx.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Performing Custom Build Tools</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Performing Custom Build Tools</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Performing Custom Build Tools</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Performing Custom Build Tools</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
-      </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">Performing Custom Build Tools</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
-      </Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
-      </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
-      </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">Performing Custom Build Tools</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
-      </Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
-      </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
-      </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">Performing Custom Build Tools</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
-      </Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
-      </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
-      </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">Performing Custom Build Tools</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
-      </Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
-      </AdditionalInputs>
-    </CustomBuild>
     <CustomBuild Include="..\Util\SwapChainVK.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </Command>
@@ -2479,7 +2420,7 @@
     <ClInclude Include="..\..\..\Common\gltf\GltfFeatures.h" />
     <ClInclude Include="..\..\..\Common\gltf\glTFHelpers.h" />
     <ClInclude Include="..\..\..\Common\gltf\GltfStructures.h" />
-    <ClInclude Include="..\..\..\Common\gltf\Misc.h" />
+    <ClInclude Include="..\..\..\Common\Misc.h" />
     <ClInclude Include="..\..\..\Common\gltf\Vulkan\GltfBBoxPassVK.h" />
     <ClInclude Include="..\..\..\Common\gltf\Vulkan\GltfDepthPassVK.h" />
     <ClInclude Include="..\..\..\Common\gltf\Vulkan\glTFHelpers_Vulkan.h" />

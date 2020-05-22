@@ -23,7 +23,7 @@
 #ifndef _PLUGIN_IMAGE_BMP_H
 #define _PLUGIN_IMAGE_BMP_H
 
-#include "stdafx.h"
+
 #include "PluginInterface.h"
 #include "glTF_DX12DeviceEx.h"
 

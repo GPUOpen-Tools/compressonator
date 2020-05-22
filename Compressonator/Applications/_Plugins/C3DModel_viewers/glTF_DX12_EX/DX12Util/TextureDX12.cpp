@@ -23,7 +23,7 @@
 // http://go.microsoft.com/fwlink/?LinkId=248926
 // http://go.microsoft.com/fwlink/?LinkId=248929 
 
-#include "stdafx.h"
+
 #include "GltfFeatures.h"
 #include "TextureDX12.h"
 #include "dxgi.h"

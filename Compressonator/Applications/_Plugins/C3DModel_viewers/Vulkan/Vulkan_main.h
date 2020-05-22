@@ -23,11 +23,11 @@
 #ifndef _PLUGIN_IMAGE_BMP_H
 #define _PLUGIN_IMAGE_BMP_H
 
-#include "stdafx.h"
+
 #include "PluginInterface.h"
 #include "Vulkan_Device.h"
 
-#include "QtWidgets/qwidget.h"
+#include <QtWidgets/qwidget.h>
 
 #ifdef _WIN32
 // {3244041C-1A53-4E79-B417-842D5CEF33C0}
