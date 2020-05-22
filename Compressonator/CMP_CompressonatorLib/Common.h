@@ -31,7 +31,6 @@
 #include <string>
 #include <cstring>
 
-#include "UseDefinitions.h"
 #include "Compressonator.h"
 
 using namespace std;

@@ -42,6 +42,7 @@
 #pragma warning( pop )
 
 #include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
 
 #ifdef USE_MESH_CLI
 #include "gltf/tiny_gltf2.h"
@@ -74,10 +75,11 @@ using namespace tinygltf2;
 #define USE_SWIZZLE
 
 #ifndef _WIN32
+#include <fcntl.h> /* For O_RDWR */
+#include <gltf/stb_image.h>
 #include <stdarg.h>
-#include <fcntl.h>  /* For O_RDWR */
-#include <unistd.h> /* For open(), creat() */
 #include <time.h>
+#include <unistd.h> /* For open(), creat() */
 #endif
 
 #ifdef SHOW_PROCESS_MEMORY
@@ -86,6 +88,9 @@ using namespace tinygltf2;
 #endif
 
 CCmdLineParamaters g_CmdPrams;
+
+
+bool fileIsGLTF(string SourceFile);
 
 string DefaultDestination(string SourceFile, CMP_FORMAT DestFormat, string DestFileExt)
 {
@@ -292,6 +297,11 @@ bool ProcessSingleFlags(const char* strCommand)
         isset                     = true;
     }
 #endif
+    else if(strcmp(strCommand, "-compress-gltf-images") == 0)
+    {
+      g_CmdPrams.compressImagesFromGLTF = true;
+      isset = true;
+    }
     else if ((strcmp(strCommand, "-log") == 0))
     {
         g_CmdPrams.logcsvformat      = false;
@@ -1504,6 +1514,112 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
             }
 #endif
             err.clear();
+
+            if(g_CmdPrams.compressImagesFromGLTF)
+            {
+                std::string dstFolder = dstFile;
+                auto pos = dstFolder.rfind("\\");
+                if(pos == std::string::npos)
+                {
+                    pos = dstFolder.rfind("/");
+                }
+                if(pos != std::string::npos)
+                {
+                    dstFolder = dstFolder.substr(0,pos+1);
+                }
+                size_t originalImages = model.images.size();
+                for (unsigned i = 0; i < model.images.size(); ++i)
+                {
+                    std::string input = model.images[i].uri;
+                    PrintInfo("Processing '%s'\n", input.c_str());
+                    if(input.empty())
+                    {
+                        PrintInfo("Error: Compressonator can only compress separate images with glTF!\n");
+                        return false;
+                    }
+                    std::string output = dstFolder  + input;
+                    output.replace(output.rfind('.'), 1, "_");
+                    output += ".dds";
+
+                    std::string imgSrcDir = "";
+                    auto pos = srcFile.rfind("\\");
+                    if(pos == std::string::npos)
+                    {
+                        pos = srcFile.rfind("/");
+                    }
+                    if(pos != std::string::npos)
+                    {
+                        imgSrcDir = srcFile.substr(0,pos+1);
+                    }
+
+                    std::string imgDestDir = dstFolder;
+                    pos = output.rfind("\\");
+                    if(pos == std::string::npos)
+                    {
+                        pos = output.rfind("/");
+                    }
+                    if(pos != std::string::npos)
+                    {
+                        imgDestDir = output.substr(0,pos+1);
+                    }
+
+                    boost::filesystem::create_directories(imgDestDir);
+                    {
+                        MipSet inMips{};
+                        memset(&inMips, 0, sizeof(CMP_MipSet));
+                        int ret  = AMDLoadMIPSTextureImage((imgSrcDir + input).c_str(), &inMips, false, &g_pluginManager);
+
+                        if (inMips.m_nMipLevels < g_CmdPrams.MipsLevel && ! g_CmdPrams.use_noMipMaps)
+                        {
+                          CMP_INT requestLevel = g_CmdPrams.MipsLevel;
+                          CMP_INT nMinSize = CMP_CalcMinMipSize(inMips.m_nHeight, inMips.m_nWidth, requestLevel);
+                          CMP_GenerateMIPLevels(&inMips, nMinSize);
+                        }
+
+                        CMP_MipSet mipSetCmp;
+                        memset(&mipSetCmp, 0, sizeof(CMP_MipSet));
+
+                        KernelOptions   kernel_options;
+                        memset(&kernel_options, 0, sizeof(KernelOptions));
+
+                        kernel_options.format   = g_CmdPrams.CompressOptions.DestFormat;
+                        kernel_options.fquality = g_CmdPrams.CompressOptions.fquality;
+                        kernel_options.threads  = g_CmdPrams.CompressOptions.dwnumThreads;
+                        kernel_options.height   = inMips.dwHeight;
+                        kernel_options.width    = inMips.dwWidth;
+                        kernel_options.encodeWith = g_CmdPrams.CompressOptions.nEncodeWith;
+
+                        auto cmp_status = CMP_ProcessTexture(&inMips, &mipSetCmp, kernel_options, CompressionCallback);
+                        if (cmp_status == CMP_ERR_FAILED_HOST_SETUP)
+                        {
+                            g_CmdPrams.CompressOptions.nEncodeWith = CMP_Compute_type::CMP_CPU;
+                            kernel_options.encodeWith = g_CmdPrams.CompressOptions.nEncodeWith;
+                            memset(&mipSetCmp, 0, sizeof(CMP_MipSet));
+                            cmp_status = CMP_ProcessTexture(&inMips, &mipSetCmp, kernel_options, CompressionCallback);
+                        }
+
+                        if (cmp_status != CMP_OK)
+                        {
+                            PrintInfo("Error: Something went wrong while compressing image!\n");
+                            return false;
+                        }
+
+                        ret = AMDSaveMIPSTextureImage(output.c_str(), &mipSetCmp, false, g_CmdPrams.CompressOptions);
+                        if(ret != 0)
+                        {
+                            PrintInfo("Error: Something went wrong while saving compressed image!\n");
+                            return false;
+                        }
+                    }
+
+                    if(!boost::filesystem::exists(dstFolder + input))
+                    {
+                        boost::filesystem::copy(imgSrcDir + input,
+                                                dstFolder + input);
+                    }
+
+                }
+            }
 
             ret = saver.WriteGltfSceneToFile(&model, &err, dstFile, g_CmdPrams.CompressOptions, is_draco_src, g_CmdPrams.use_Draco_Encode);
 

@@ -116,6 +116,8 @@ class CCmdLineParamaters
         CompressOptions.DestFormat     = CMP_FORMAT_Unknown;
         CompressOptions.SourceFormat   = CMP_FORMAT_Unknown;
 
+        compressImagesFromGLTF = false;
+
         LogProcessResultsFile.assign(LOG_PROCESS_RESULTS_FILE_TXT);
     }
 
@@ -163,6 +165,8 @@ class CCmdLineParamaters
     int compress_nIterations;
     int decompress_nIterations;
     double compute_setup_fDuration;
+
+    bool compressImagesFromGLTF;
 
     // Analysis data
     double    SSIM;            // Structural Similarity Index: Average of RGB Channels
