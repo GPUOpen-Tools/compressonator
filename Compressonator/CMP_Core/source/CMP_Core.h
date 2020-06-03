@@ -97,6 +97,21 @@ int CMP_CDECL SetMaskBC7(void *options, unsigned char mask);
 int CMP_CDECL SetAlphaOptionsBC7(void *options, bool imageNeedsAlpha, bool colourRestrict, bool alphaRestrict);
 int CMP_CDECL SetErrorThresholdBC7(void *options, float minThreshold, float maxThreshold);
 
+// Set if the content is in sRGB color space (true) or linear (false).
+// The default is false.
+int CMP_CDECL SetGammaBC1(void *options, bool sRGB);
+int CMP_CDECL SetGammaBC2(void *options, bool sRGB);
+int CMP_CDECL SetGammaBC3(void *options, bool sRGB);
+int CMP_CDECL SetGammaBC7(void *options, bool sRGB);
+
+// Set if the content is signed (true) or unsigned (false).
+// The default is false.
+// For BC4 and BC5 this determines if the encoded or decoded byte is treated as SNORM or UNORM.
+// For BC6, the encoded or decoded data is always FP16, but affects the clamping of the values UF16 vs SF16.
+int CMP_CDECL SetSignedBC4(void *options, bool snorm);
+int CMP_CDECL SetSignedBC5(void *options, bool snorm);
+int CMP_CDECL SetSignedBC6(void *options, bool sf16);
+
 //======================================================================================================
 // (4x4) Block level 4 channel source CompressBlock and DecompressBlock API for BCn Codecs
 //======================================================================================================

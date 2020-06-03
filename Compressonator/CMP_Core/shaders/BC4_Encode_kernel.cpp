@@ -127,6 +127,15 @@ int CMP_CDECL SetQualityBC4(void *options,
     return CGU_CORE_OK;
 }
 
+int CMP_CDECL SetSignedBC4(void *options,
+                           CGU_BOOL snorm) {
+    if (!options) return CGU_CORE_ERR_INVALIDPTR;
+    CMP_BC15Options *BC15optionsDefault = reinterpret_cast <CMP_BC15Options *>(options);
+    
+    BC15optionsDefault->m_bIsSNORM = snorm;
+    return CGU_CORE_OK;
+}
+
 int CMP_CDECL CompressBlockBC4(const unsigned char *srcBlock,
                                unsigned int srcStrideInBytes,
                                CMP_GLOBAL unsigned char cmpBlock[8],

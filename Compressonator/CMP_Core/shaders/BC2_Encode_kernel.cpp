@@ -121,6 +121,15 @@ int CMP_CDECL SetChannelWeightsBC2(void *options,
     return CGU_CORE_OK;
 }
 
+int CMP_CDECL SetGammaBC2(void *options,
+                          CGU_BOOL sRGB) {
+    if (!options) return CGU_CORE_ERR_INVALIDPTR;
+    CMP_BC15Options *BC15optionsDefault = (CMP_BC15Options *)options;
+
+    BC15optionsDefault->m_bIsSRGB = sRGB;
+    return CGU_CORE_OK;
+}
+
 #define EXPLICIT_ALPHA_PIXEL_MASK 0xf
 #define EXPLICIT_ALPHA_PIXEL_BPP  4
 

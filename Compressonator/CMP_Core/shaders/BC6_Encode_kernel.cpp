@@ -3803,7 +3803,7 @@ int CMP_CDECL CreateOptionsBC6(void **options)
 {
     (*options) = new BC6H_Encode;
     if (!options) return CGU_CORE_ERR_NEWMEM;
-    SetDefaultBC6Options((BC6H_Encode *)options);
+    SetDefaultBC6Options((BC6H_Encode *)(*options));
     return CGU_CORE_OK;
 }
 
@@ -3834,6 +3834,14 @@ int CMP_CDECL SetMaskBC6(void *options, CGU_UINT32 mask)
     if (!options) return CGU_CORE_ERR_INVALIDPTR;
     BC6H_Encode *BC6options = (BC6H_Encode *)options;
     BC6options->m_validModeMask = mask;
+    return CGU_CORE_OK;
+}
+
+int CMP_CDECL SetSignedBC6(void *options, CGU_BOOL sf16)
+{
+    if (!options) return CGU_CORE_ERR_INVALIDPTR;
+    BC6H_Encode *BC6options = (BC6H_Encode *)options;
+    BC6options->m_isSigned = sf16;
     return CGU_CORE_OK;
 }
 

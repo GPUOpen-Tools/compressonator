@@ -202,6 +202,15 @@ int CMP_CDECL SetChannelWeightsBC1(void *options,
     return CGU_CORE_OK;
 }
 
+int CMP_CDECL SetGammaBC1(void *options,
+                          CGU_BOOL sRGB) {
+    if (!options) return CGU_CORE_ERR_INVALIDPTR;
+    CMP_BC15Options *BC15optionsDefault = (CMP_BC15Options *)options;
+
+    BC15optionsDefault->m_bIsSRGB = sRGB;
+    return CGU_CORE_OK;
+}
+
 int CMP_CDECL CompressBlockBC1(const unsigned char *srcBlock,
                                unsigned int srcStrideInBytes,
                                CMP_GLOBAL unsigned char cmpBlock[8],
