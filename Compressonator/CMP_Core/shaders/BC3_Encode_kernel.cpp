@@ -124,6 +124,14 @@ int CMP_CDECL SetChannelWeightsBC3(void *options,
     return CGU_CORE_OK;
 }
 
+int CMP_CDECL SetGammaBC3(void *options,
+                          CGU_BOOL sRGB) {
+    if (!options) return CGU_CORE_ERR_INVALIDPTR;
+    CMP_BC15Options *BC15optionsDefault = (CMP_BC15Options *)options;
+
+    BC15optionsDefault->m_bIsSRGB = sRGB;
+    return CGU_CORE_OK;
+}
 
 void DecompressBC3_Internal(CMP_GLOBAL CGU_UINT8 rgbaBlock[64],
                             const CGU_UINT32 compressedBlock[4],
