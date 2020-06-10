@@ -23,17 +23,9 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
-#define WIN32_LEAN_AND_MEAN        // Exclude rarely-used stuff from Windows headers
-// Windows Header Files:
-#ifdef _WIN32
-#include <windows.h>
-// TODO: reference additional headers your program requires here
-#include <tchar.h>
-#endif
+#include "obj_10.h"
 
 #include <assert.h>
-
-#include "obj_10.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -61,8 +53,6 @@ SET_PLUGIN_NAME("OBJ")
 void *make_Plugin_obj_Loader() { return new Plugin_obj_Loader; }
 #endif
 
-using namespace std;
-#include "stdafx.h"
 #include "Misc.h"
 
 PluginManager          g_pluginManager;

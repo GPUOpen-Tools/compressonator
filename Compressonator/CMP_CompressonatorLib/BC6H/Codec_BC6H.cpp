@@ -69,7 +69,7 @@ unsigned int BC6HThreadProcEncode(void* param)
             tp->run = FALSE;
         }
 
-        using namespace chrono;
+        using namespace std::chrono;
 
         std::this_thread::sleep_for(0ms);
     }
@@ -431,7 +431,7 @@ CodecError CCodec_BC6H::CFinishBC6HEncoding(void)
         // Wait for all the live threads to finish any current work
         for (DWORD i = 0; i < m_LiveThreads; i++)
         {
-            using namespace chrono;
+            using namespace std::chrono;
 
             // If a thread is in the running state then we need to wait for it to finish
             // its work from the producer
@@ -488,7 +488,7 @@ CodecError CCodec_BC6H::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
     DbgTrace(
         ("OUT: BufferType %d ChannelCount %d ChannelDepth %d", bufferOut.GetBufferType(), bufferOut.GetChannelCount(), bufferOut.GetChannelDepth()));
     DbgTrace(("   : Height %d Width %d Pitch %d isFloat %d", bufferOut.GetHeight(), bufferOut.GetWidth(), bufferOut.GetWidth(), bufferOut.IsFloat()));
-#endif;
+#endif
 
     char row, col, srcIndex;
 

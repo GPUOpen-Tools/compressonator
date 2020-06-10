@@ -43,8 +43,8 @@ typedef TC_PluginError (PostLoopFunction)(FILE*& pFile, DDSD2*& pDDSD, MipSet*& 
 TC_PluginError GenericLoadFunction(FILE*& pFile, DDSD2*& pDDSD, MipSet*& pMipSet, void*& extra, ChannelFormat channelFormat, TextureDataType textureDataType, PreLoopFunction fnPreLoop, LoopFunction fnLoop, PostLoopFunction fnPostLoop);
 
 #ifndef _WIN32
-#define _UI32_MAX numeric_limits<uint32_t>::max()
-#define _UI16_MAX numeric_limits<uint16_t>::max()
+#define _UI32_MAX std::numeric_limits<uint32_t>::max()
+#define _UI16_MAX std::numeric_limits<uint16_t>::max()
 #endif
 
 bool IsD3D10Format(const MipSet* pMipSet)

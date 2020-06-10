@@ -74,7 +74,7 @@ unsigned int BC7ThreadProcEncode(void* param)
             tp->run = FALSE;
         }
 
-        using namespace chrono;
+        using namespace std::chrono;
 
         std::this_thread::sleep_for(0ms);
     }
@@ -475,8 +475,8 @@ if (m_Use_MultiThreading)
     // Wait for all the live threads to finish any current work
     for (CMP_DWORD i = 0; i < m_LiveThreads; i++)
     {
-        using namespace chrono;
-
+        using namespace std::chrono;
+        
         // If a thread is in the running state then we need to wait for it to finish
         // its work from the producer
         while (m_EncodeParameterStorage[i].run == TRUE)
@@ -574,7 +574,7 @@ CodecError CCodec_BC7::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut,
 
     DbgTrace(("OUT: BufferType %d ChannelCount %d ChannelDepth %d",bufferOut.GetBufferType(),bufferOut.GetChannelCount(),bufferOut.GetChannelDepth()));
     DbgTrace(("   : Height %d Width %d Pitch %d isFloat %d",bufferOut.GetHeight(),bufferOut.GetWidth(),bufferOut.GetWidth(),bufferOut.IsFloat()));
-    #endif;
+    #endif
 
     char            row,col,srcIndex;
 

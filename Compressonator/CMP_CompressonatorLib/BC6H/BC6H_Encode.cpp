@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -75,7 +75,7 @@ void SaveDataBlock(AMD_BC6H_Format bc6h_format, BYTE out[BC6H_COMPRESSED_BLOCK_S
             header.setvalue(2, 1, bc6h_format.gy, 4);        //        gy[4]
             header.setvalue(3, 1, bc6h_format.by, 4);        //        by[4]
             header.setvalue(4, 1, bc6h_format.bz, 4);        //        bz[4]
-            header.setvalue(5, 10, bc6h_format.rw);          // 10:    rw[9:0] 
+            header.setvalue(5, 10, bc6h_format.rw);          // 10:    rw[9:0]
             header.setvalue(15, 10, bc6h_format.gw);          // 10:    gw[9:0]
             header.setvalue(25, 10, bc6h_format.bw);          // 10:    bw[9:0]
             header.setvalue(35, 5, bc6h_format.rx);          // 5:     rx[4:0]
@@ -97,7 +97,7 @@ void SaveDataBlock(AMD_BC6H_Format bc6h_format, BYTE out[BC6H_COMPRESSED_BLOCK_S
             header.setvalue(2, 1, bc6h_format.gy, 5);        //        gy[5]
             header.setvalue(3, 1, bc6h_format.gz, 4);        //        gz[4]
             header.setvalue(4, 1, bc6h_format.gz, 5);        //        gz[5]
-            header.setvalue(5, 7, bc6h_format.rw);          //        rw[6:0] 
+            header.setvalue(5, 7, bc6h_format.rw);          //        rw[6:0]
             header.setvalue(12, 1, bc6h_format.bz);          //        bz[0]
             header.setvalue(13, 1, bc6h_format.bz, 1);        //        bz[1]
             header.setvalue(14, 1, bc6h_format.by, 4);        //        by[4]
@@ -120,7 +120,7 @@ void SaveDataBlock(AMD_BC6H_Format bc6h_format, BYTE out[BC6H_COMPRESSED_BLOCK_S
             break;
         case 3: // 0x02
             header.setvalue(0, 5, 0x02);
-            header.setvalue(5, 10, bc6h_format.rw);          // 11:    rw[9:0] 
+            header.setvalue(5, 10, bc6h_format.rw);          // 11:    rw[9:0]
             header.setvalue(15, 10, bc6h_format.gw);          // 11:    gw[9:0]
             header.setvalue(25, 10, bc6h_format.bw);          // 11:    bw[9:0]
             header.setvalue(35, 5, bc6h_format.rx);          // 5:     rx[4:0]
@@ -141,7 +141,7 @@ void SaveDataBlock(AMD_BC6H_Format bc6h_format, BYTE out[BC6H_COMPRESSED_BLOCK_S
             break;
         case 4: // 0x06
             header.setvalue(0, 5, 0x06);
-            header.setvalue(5, 10, bc6h_format.rw);          // 11:    rw[9:0] 
+            header.setvalue(5, 10, bc6h_format.rw);          // 11:    rw[9:0]
             header.setvalue(15, 10, bc6h_format.gw);          // 11:    gw[9:0]
             header.setvalue(25, 10, bc6h_format.bw);          // 11:    bw[9:0]
             header.setvalue(35, 4, bc6h_format.rx);          //        rx[3:0]
@@ -164,7 +164,7 @@ void SaveDataBlock(AMD_BC6H_Format bc6h_format, BYTE out[BC6H_COMPRESSED_BLOCK_S
             break;
         case 5: // 0x0A
             header.setvalue(0, 5, 0x0A);
-            header.setvalue(5, 10, bc6h_format.rw);           // 11:   rw[9:0] 
+            header.setvalue(5, 10, bc6h_format.rw);           // 11:   rw[9:0]
             header.setvalue(15, 10, bc6h_format.gw);           // 11:   gw[9:0]
             header.setvalue(25, 10, bc6h_format.bw);           // 11:   bw[9:0]
             header.setvalue(35, 4, bc6h_format.rx);           // 4:    rx[3:0]
@@ -187,7 +187,7 @@ void SaveDataBlock(AMD_BC6H_Format bc6h_format, BYTE out[BC6H_COMPRESSED_BLOCK_S
             break;
         case 6: // 0x0E
             header.setvalue(0, 5, 0x0E);
-            header.setvalue(5, 9, bc6h_format.rw);           // 9:    rw[8:0] 
+            header.setvalue(5, 9, bc6h_format.rw);           // 9:    rw[8:0]
             header.setvalue(14, 1, bc6h_format.by, 4);         //       by[4]
             header.setvalue(15, 9, bc6h_format.gw);           // 9:    gw[8:0]
             header.setvalue(24, 1, bc6h_format.gy, 4);         //       gy[4]
@@ -209,7 +209,7 @@ void SaveDataBlock(AMD_BC6H_Format bc6h_format, BYTE out[BC6H_COMPRESSED_BLOCK_S
             break;
         case 7: // 0x12
             header.setvalue(0, 5, 0x12);
-            header.setvalue(5, 8, bc6h_format.rw);           // 8:    rw[7:0] 
+            header.setvalue(5, 8, bc6h_format.rw);           // 8:    rw[7:0]
             header.setvalue(13, 1, bc6h_format.gz, 4);         //       gz[4]
             header.setvalue(14, 1, bc6h_format.by, 4);         //       by[4]
             header.setvalue(15, 8, bc6h_format.gw);           // 8:    gw[7:0]
@@ -231,7 +231,7 @@ void SaveDataBlock(AMD_BC6H_Format bc6h_format, BYTE out[BC6H_COMPRESSED_BLOCK_S
             break;
         case 8: // 0x16
             header.setvalue(0, 5, 0x16);
-            header.setvalue(5, 8, bc6h_format.rw);            // 8:   rw[7:0] 
+            header.setvalue(5, 8, bc6h_format.rw);            // 8:   rw[7:0]
             header.setvalue(13, 1, bc6h_format.bz);            // 5:   bz[0]
             header.setvalue(14, 1, bc6h_format.by, 4);          //      by[4]
             header.setvalue(15, 8, bc6h_format.gw);            // 8:   gw[7:0]
@@ -255,7 +255,7 @@ void SaveDataBlock(AMD_BC6H_Format bc6h_format, BYTE out[BC6H_COMPRESSED_BLOCK_S
             break;
         case 9: // 0x1A
             header.setvalue(0, 5, 0x1A);
-            header.setvalue(5, 8, bc6h_format.rw);            // 8:   rw[7:0] 
+            header.setvalue(5, 8, bc6h_format.rw);            // 8:   rw[7:0]
             header.setvalue(13, 1, bc6h_format.bz, 1);          //      bz[1]
             header.setvalue(14, 1, bc6h_format.by, 4);          //      by[4]
             header.setvalue(15, 8, bc6h_format.gw);            // 8:   gw[7:0]
@@ -279,7 +279,7 @@ void SaveDataBlock(AMD_BC6H_Format bc6h_format, BYTE out[BC6H_COMPRESSED_BLOCK_S
             break;
         case 10: // 0x1E
             header.setvalue(0, 5, 0x1E);
-            header.setvalue(5, 6, bc6h_format.rw);            // 6:   rw[5:0] 
+            header.setvalue(5, 6, bc6h_format.rw);            // 6:   rw[5:0]
             header.setvalue(11, 1, bc6h_format.gz, 4);          //      gz[4]
             header.setvalue(12, 1, bc6h_format.bz);            // 6:   bz[0]
             header.setvalue(13, 1, bc6h_format.bz, 1);          //      bz[1]
@@ -307,7 +307,7 @@ void SaveDataBlock(AMD_BC6H_Format bc6h_format, BYTE out[BC6H_COMPRESSED_BLOCK_S
             // Single regions Modes
         case 11: // 0x03
             header.setvalue(0, 5, 0x03);
-            header.setvalue(5, 10, bc6h_format.rw);            // 10:   rw[9:0] 
+            header.setvalue(5, 10, bc6h_format.rw);            // 10:   rw[9:0]
             header.setvalue(15, 10, bc6h_format.gw);            // 10:   gw[9:0]
             header.setvalue(25, 10, bc6h_format.bw);            // 10:   bw[9:0]
             header.setvalue(35, 10, bc6h_format.rx);            // 10:   rx[9:0]
@@ -316,7 +316,7 @@ void SaveDataBlock(AMD_BC6H_Format bc6h_format, BYTE out[BC6H_COMPRESSED_BLOCK_S
             break;
         case 12: // 0x07
             header.setvalue(0, 5, 0x07);
-            header.setvalue(5, 10, bc6h_format.rw);            // 11:   rw[9:0] 
+            header.setvalue(5, 10, bc6h_format.rw);            // 11:   rw[9:0]
             header.setvalue(15, 10, bc6h_format.gw);            // 11:   gw[9:0]
             header.setvalue(25, 10, bc6h_format.bw);            // 11:   bw[9:0]
             header.setvalue(35, 9, bc6h_format.rx);            // 9:    rx[8:0]
@@ -328,7 +328,7 @@ void SaveDataBlock(AMD_BC6H_Format bc6h_format, BYTE out[BC6H_COMPRESSED_BLOCK_S
             break;
         case 13: // 0x0B
             header.setvalue(0, 5, 0x0B);
-            header.setvalue(5, 10, bc6h_format.rw);            // 12:   rw[9:0] 
+            header.setvalue(5, 10, bc6h_format.rw);            // 12:   rw[9:0]
             header.setvalue(15, 10, bc6h_format.gw);            // 12:   gw[9:0]
             header.setvalue(25, 10, bc6h_format.bw);            // 12:   bw[9:0]
             header.setvalue(35, 8, bc6h_format.rx);            // 8:    rx[7:0]
@@ -343,7 +343,7 @@ void SaveDataBlock(AMD_BC6H_Format bc6h_format, BYTE out[BC6H_COMPRESSED_BLOCK_S
             break;
         case 14: // 0x0F
             header.setvalue(0, 5, 0x0F);
-            header.setvalue(5, 10, bc6h_format.rw);            // 16:   rw[9:0] 
+            header.setvalue(5, 10, bc6h_format.rw);            // 16:   rw[9:0]
             header.setvalue(15, 10, bc6h_format.gw);            // 16:   gw[9:0]
             header.setvalue(25, 10, bc6h_format.bw);            // 16:   bw[9:0]
             header.setvalue(35, 4, bc6h_format.rx);            //  4:   rx[3:0]
@@ -357,10 +357,10 @@ void SaveDataBlock(AMD_BC6H_Format bc6h_format, BYTE out[BC6H_COMPRESSED_BLOCK_S
             return;
         }
 
-        // Each format in the mode table can be uniquely identified by the mode bits. 
-        // The first ten modes are used for two-region tiles, and the mode bit field 
-        // can be either two or five bits long. These blocks also have fields for 
-        // the compressed color endpoints (72 or 75 bits), the partition (5 bits), 
+        // Each format in the mode table can be uniquely identified by the mode bits.
+        // The first ten modes are used for two-region tiles, and the mode bit field
+        // can be either two or five bits long. These blocks also have fields for
+        // the compressed color endpoints (72 or 75 bits), the partition (5 bits),
         // and the partition indices (46 bits).
 
         if (bc6h_format.m_mode >= MIN_MODE_FOR_ONE_REGION)
@@ -408,11 +408,11 @@ static void decompress_endpts(const int in[MAX_SUBSETS][MAX_END_POINTS][MAX_DIME
             t = SIGN_EXTEND(R_1(in), ModePartition[mode].prec[i]);
             t = (t + R_0(in)) & MASK(ModePartition[mode].nbits);
             R_1(out) = issigned ? SIGN_EXTEND(t,ModePartition[mode].nbits) : t;
-            
+
             t = SIGN_EXTEND(R_2(in), ModePartition[mode].prec[i]);
             t = (t + R_0(in)) & MASK(ModePartition[mode].nbits);
             R_2(out) = issigned ? SIGN_EXTEND(t,ModePartition[mode].nbits) : t;
-            
+
             t = SIGN_EXTEND(R_3(in), ModePartition[mode].prec[i]);
             t = (t + R_0(in)) & MASK(ModePartition[mode].nbits);
             R_3(out) = issigned ? SIGN_EXTEND(t,ModePartition[mode].nbits) : t;
@@ -436,7 +436,7 @@ static bool endpts_fit(const int orig[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION
     int uncompressed[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];
 
     decompress_endpts(compressed, uncompressed, mode, issigned);
-    
+
     for (int j=0; j<max_subsets; ++j)
     for (int i=0; i<3; ++i)
     {
@@ -489,28 +489,28 @@ void BC6HBlockEncoder::QuantizeEndPointToF16Prec(float EndPoints[MAX_SUBSETS][MA
 }
 
 /*=================================================================
-    Swap Indices 
+    Swap Indices
     so that indices at fix up points have higher order bit set to 0
 ==================================================================*/
 
 void BC6HBlockEncoder::SwapIndices(int iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int iIndices[3][BC6H_MAX_SUBSET_SIZE], int  entryCount[BC6H_MAX_SUBSETS], int max_subsets, int mode, int shape_pattern)
 {
-    
+
     unsigned int uNumIndices    = 1 << ModePartition[mode].IndexPrec;
     unsigned int uHighIndexBit    = uNumIndices >> 1;
-    
+
     for(int subset = 0; subset < max_subsets; ++subset)
     {
         // region 0 (subset = 0) The fix-up index for this subset is allways index 0
-        // region 1 (subset = 1) The fix-up index for this subset varies based on the shape 
+        // region 1 (subset = 1) The fix-up index for this subset varies based on the shape
         size_t i = subset?g_Region2FixUp[shape_pattern]:0;
 
         if(iIndices[subset][i] & uHighIndexBit)
         {
             // high bit is set, swap the aEndPts and indices for this region
-            swap(iEndPoints[subset][0][0], iEndPoints[subset][1][0]);
-            swap(iEndPoints[subset][0][1], iEndPoints[subset][1][1]);
-            swap(iEndPoints[subset][0][2], iEndPoints[subset][1][2]);
+            std::swap(iEndPoints[subset][0][0], iEndPoints[subset][1][0]);
+            std::swap(iEndPoints[subset][0][1], iEndPoints[subset][1][1]);
+            std::swap(iEndPoints[subset][0][2], iEndPoints[subset][1][2]);
 
             for(size_t j = 0; j < (size_t)entryCount[subset]; ++j)
             {
@@ -555,7 +555,7 @@ bool isOverflow(int endpoint, int nbit, bool bIsSigned)
 
         return false;
     }
-    else 
+    else
     {
         int maxRange = (int)pow(2, nbit - 1) - 1;
         int minRange = (int)-(pow(2, nbit - 1));
@@ -579,7 +579,7 @@ bool BC6HBlockEncoder::TransformEndPoints(AMD_BC6H_Format &BC6H_data, int iEndPo
         {
             Mask = MASK(ModePartition[mode].nbits);
             oEndPoints[0][0][i] = iEndPoints[0][0][i] & Mask;    // [0][A]
-            
+
             Mask = MASK(ModePartition[mode].prec[i]);
             oEndPoints[0][1][i] = iEndPoints[0][1][i]- iEndPoints[0][0][i]; // [0][B] - [0][A]
 
@@ -634,10 +634,10 @@ bool BC6HBlockEncoder::TransformEndPoints(AMD_BC6H_Format &BC6H_data, int iEndPo
 }
 
 
-void BC6HBlockEncoder::SaveCompressedBlockData( AMD_BC6H_Format &BC6H_data, 
+void BC6HBlockEncoder::SaveCompressedBlockData( AMD_BC6H_Format &BC6H_data,
                                             int oEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG],
-                                            int iIndices[2][BC6H_MAX_SUBSET_SIZE], 
-                                            int max_subsets, 
+                                            int iIndices[2][BC6H_MAX_SUBSET_SIZE],
+                                            int max_subsets,
                                             int mode)
 {
         BC6H_data.m_mode    = (unsigned short)mode;
@@ -668,10 +668,10 @@ void BC6HBlockEncoder::SaveCompressedBlockData( AMD_BC6H_Format &BC6H_data,
         for (int i=0; i<BC6H_MAX_SUBSET_SIZE; i++)
         {
             if (max_subsets > 1)
-                asubset                = PARTITIONS[1][BC6H_data.d_shape_index][i]; // Two region shapes 
+                asubset                = PARTITIONS[1][BC6H_data.d_shape_index][i]; // Two region shapes
             else
-                asubset                = PARTITIONS[0][BC6H_data.d_shape_index][i]; // One region shapes 
-            BC6H_data.indices16[i]    = (byte)iIndices[asubset][pos[asubset]];
+                asubset                = PARTITIONS[0][BC6H_data.d_shape_index][i]; // One region shapes
+            BC6H_data.indices16[i]    = (std::uint8_t)iIndices[asubset][pos[asubset]];
             pos[asubset]++;
         }
 
@@ -784,7 +784,7 @@ float CalcShapeError(AMD_BC6H_Format &BC6H_data, float fEndPoints[MAX_SUBSETS][M
             abs(BC6H_data.din[i][1] - BC6H_data.Paletef[subset][0].y) +
             abs(BC6H_data.din[i][2] - BC6H_data.Paletef[subset][0].z);
 
-        // loop through the rest of the data until find the best error 
+        // loop through the rest of the data until find the best error
         for (int j = 1; j < maxPallet && bestError > 0; j++)
         {
             error = abs(BC6H_data.din[i][0] - BC6H_data.Paletef[subset][j].x) +
@@ -847,7 +847,7 @@ void ReIndexShapef(AMD_BC6H_Format &BC6H_data, int shape_indices[BC6H_MAX_SUBSET
             // This is shared for one or two shape regions max Pallet either 16 or 8
             bestError = FLT_MAX;
             bestIndex = 0;
-           
+
             for (int j = 0; j < MaxPallet; j++)
             {
                 // Calculate error from original
@@ -869,11 +869,11 @@ void ReIndexShapef(AMD_BC6H_Format &BC6H_data, int shape_indices[BC6H_MAX_SUBSET
 }
 
 float    BC6HBlockEncoder::FindBestPattern(AMD_BC6H_Format &BC6H_data,
-                          bool TwoRegionShapes, 
+                          bool TwoRegionShapes,
                           int shape_pattern)
 {
-    // Index bit size for the patterns been used. 
-    // All two zone shapes have 3 bits per color, max index value < 8  
+    // Index bit size for the patterns been used.
+    // All two zone shapes have 3 bits per color, max index value < 8
     // All one zone shapes gave 4 bits per color, max index value < 16
     int        Index_BitSize = TwoRegionShapes ? 8 : 16;
     int     max_subsets = TwoRegionShapes ? 2 : 1;
@@ -906,15 +906,15 @@ float    BC6HBlockEncoder::FindBestPattern(AMD_BC6H_Format &BC6H_data,
     for (int subset = 0; subset < max_subsets; subset++)
     {
         error[0] += optQuantAnD_d(
-            BC6H_data.partition[subset],        // input data 
+            BC6H_data.partition[subset],        // input data
             BC6H_data.entryCount[subset],       // number of input points above (not clear about 1, better to avoid)
             Index_BitSize,                      // number of clusters on the ramp, 8  or 16
             shape_indicesB[0][subset],          // output index, if not all points of the ramp used, 0 may not be assigned
             outB[0][subset],                    // resulting quantization
-            direction,                          // direction vector of the ramp (check normalization) 
-            &step,                              // step size (check normalization) 
+            direction,                          // direction vector of the ramp (check normalization)
+            &step,                              // step size (check normalization)
             3,                                  // number of channels (always 3 = RGB for BC6H)
-            m_quality                           // Quality set number of retry to get good end points 
+            m_quality                           // Quality set number of retry to get good end points
                                                 // Max retries = MAX_TRY = 4000 when Quality is 1.0
                                                 // Min = 0 and default with quality 0.05 is 200 times
             );
@@ -1037,7 +1037,7 @@ void decompress_endpoints1(AMD_BC6H_Format& bc6h_format, int oEndPoints[MAX_SUBS
                 // Unquantize all points to nbits
                 out[0][0][i] = Unquantize(out[0][0][i], (unsigned char)ModePartition[mode].nbits, true);
                 out[0][1][i] = Unquantize(out[0][1][i], (unsigned char)ModePartition[mode].nbits, true);
-                
+
                 // F16 format
                 outf[0][0][i] = (float)finish_unquantizeF16(out[0][0][i], true);
                 outf[0][1][i] = (float)finish_unquantizeF16(out[0][1][i], true);
@@ -1053,7 +1053,7 @@ void decompress_endpoints1(AMD_BC6H_Format& bc6h_format, int oEndPoints[MAX_SUBS
                 // Unquantize all points to nbits
                 out[0][0][i] = Unquantize(out[0][0][i], (unsigned char)ModePartition[mode].nbits, true);
                 out[0][1][i] = Unquantize(out[0][1][i], (unsigned char)ModePartition[mode].nbits, true);
-                
+
                 // F16 format
                 outf[0][0][i] = (float)finish_unquantizeF16(out[0][0][i], true);
                 outf[0][1][i] = (float)finish_unquantizeF16(out[0][1][i], true);
@@ -1074,7 +1074,7 @@ void decompress_endpoints1(AMD_BC6H_Format& bc6h_format, int oEndPoints[MAX_SUBS
                 // Unquantize all points to nbits
                 out[0][0][i] = Unquantize(out[0][0][i], (unsigned char)ModePartition[mode].nbits, false);
                 out[0][1][i] = Unquantize(out[0][1][i], (unsigned char)ModePartition[mode].nbits, false);
-                
+
                 // F16 format
                 outf[0][0][i] = (float)finish_unquantizeF16(out[0][0][i], false);
                 outf[0][1][i] = (float)finish_unquantizeF16(out[0][1][i], false);
@@ -1090,7 +1090,7 @@ void decompress_endpoints1(AMD_BC6H_Format& bc6h_format, int oEndPoints[MAX_SUBS
                 // Unquantize all points to nbits
                 out[0][0][i] = Unquantize(out[0][0][i], (unsigned char)ModePartition[mode].nbits, false);
                 out[0][1][i] = Unquantize(out[0][1][i], (unsigned char)ModePartition[mode].nbits, false);
-                
+
                 // F16 format
                 outf[0][0][i] = (float)finish_unquantizeF16(out[0][0][i], false);
                 outf[0][1][i] = (float)finish_unquantizeF16(out[0][1][i], false);
@@ -1111,22 +1111,22 @@ void decompress_endpoints2(AMD_BC6H_Format& bc6h_format, int oEndPoints[MAX_SUBS
         {
             for (i = 0; i<NCHANNELS; i++)
             {
-                // get the quantized values 
+                // get the quantized values
                 out[0][0][i] = SIGN_EXTEND(oEndPoints[0][0][i], ModePartition[mode].nbits);
 
-                t = SIGN_EXTEND(oEndPoints[0][1][i], ModePartition[mode].prec[i]); 
+                t = SIGN_EXTEND(oEndPoints[0][1][i], ModePartition[mode].prec[i]);
                 t = (t + oEndPoints[0][0][i]) & MASK(ModePartition[mode].nbits);
                 out[0][1][i] = SIGN_EXTEND(t, ModePartition[mode].nbits);
 
-                t = SIGN_EXTEND(oEndPoints[1][0][i], ModePartition[mode].prec[i]); 
+                t = SIGN_EXTEND(oEndPoints[1][0][i], ModePartition[mode].prec[i]);
                 t = (t + oEndPoints[0][0][i]) & MASK(ModePartition[mode].nbits);
                 out[1][0][i] = SIGN_EXTEND(t, ModePartition[mode].nbits);
 
-                t = SIGN_EXTEND(oEndPoints[1][1][i], ModePartition[mode].prec[i]); 
+                t = SIGN_EXTEND(oEndPoints[1][1][i], ModePartition[mode].prec[i]);
                 t = (t + oEndPoints[0][0][i]) & MASK(ModePartition[mode].nbits);
                 out[1][1][i] = SIGN_EXTEND(t, ModePartition[mode].nbits);
 
-                // Unquantize all points to nbits 
+                // Unquantize all points to nbits
                 out[0][0][i] = Unquantize(out[0][0][i], (unsigned char)ModePartition[mode].nbits, true);
                 out[0][1][i] = Unquantize(out[0][1][i], (unsigned char)ModePartition[mode].nbits, true);
                 out[1][0][i] = Unquantize(out[1][0][i], (unsigned char)ModePartition[mode].nbits, true);
@@ -1145,8 +1145,8 @@ void decompress_endpoints2(AMD_BC6H_Format& bc6h_format, int oEndPoints[MAX_SUBS
             for (i = 0; i<NCHANNELS; i++)
             {
                 out[0][0][i] = SIGN_EXTEND(oEndPoints[0][0][i], ModePartition[mode].nbits);
-                out[0][1][i] = SIGN_EXTEND(oEndPoints[0][1][i], ModePartition[mode].prec[i]); 
-                out[1][0][i] = SIGN_EXTEND(oEndPoints[1][0][i], ModePartition[mode].prec[i]); 
+                out[0][1][i] = SIGN_EXTEND(oEndPoints[0][1][i], ModePartition[mode].prec[i]);
+                out[1][0][i] = SIGN_EXTEND(oEndPoints[1][0][i], ModePartition[mode].prec[i]);
                 out[1][1][i] = SIGN_EXTEND(oEndPoints[1][1][i], ModePartition[mode].prec[i]);
 
                 // Unquantize all points to nbits
@@ -1154,7 +1154,7 @@ void decompress_endpoints2(AMD_BC6H_Format& bc6h_format, int oEndPoints[MAX_SUBS
                 out[0][1][i] = Unquantize(out[0][1][i], (unsigned char)ModePartition[mode].nbits, true);
                 out[1][0][i] = Unquantize(out[1][0][i], (unsigned char)ModePartition[mode].nbits, true);
                 out[1][1][i] = Unquantize(out[1][1][i], (unsigned char)ModePartition[mode].nbits, true);
-                
+
                 // nbits to F16 format
                 outf[0][0][i] = (float)finish_unquantizeF16(out[0][0][i], true);
                 outf[0][1][i] = (float)finish_unquantizeF16(out[0][1][i], true);
@@ -1171,10 +1171,10 @@ void decompress_endpoints2(AMD_BC6H_Format& bc6h_format, int oEndPoints[MAX_SUBS
             for (i = 0; i<NCHANNELS; i++)
             {
                 out[0][0][i] = oEndPoints[0][0][i];
-                t = SIGN_EXTEND(oEndPoints[0][1][i], ModePartition[mode].prec[i]); 
+                t = SIGN_EXTEND(oEndPoints[0][1][i], ModePartition[mode].prec[i]);
                 out[0][1][i] = (t + oEndPoints[0][0][i]) & MASK(ModePartition[mode].nbits);
 
-                t = SIGN_EXTEND(oEndPoints[1][0][i], ModePartition[mode].prec[i]); 
+                t = SIGN_EXTEND(oEndPoints[1][0][i], ModePartition[mode].prec[i]);
                 out[1][0][i] = (t + oEndPoints[0][0][i]) & MASK(ModePartition[mode].nbits);
 
                 t = SIGN_EXTEND(oEndPoints[1][1][i], ModePartition[mode].prec[i]);
@@ -1185,7 +1185,7 @@ void decompress_endpoints2(AMD_BC6H_Format& bc6h_format, int oEndPoints[MAX_SUBS
                 out[0][1][i] = Unquantize(out[0][1][i], (unsigned char)ModePartition[mode].nbits, false);
                 out[1][0][i] = Unquantize(out[1][0][i], (unsigned char)ModePartition[mode].nbits, false);
                 out[1][1][i] = Unquantize(out[1][1][i], (unsigned char)ModePartition[mode].nbits, false);
-                
+
                 // nbits to F16 format
                 outf[0][0][i] = (float)finish_unquantizeF16(out[0][0][i], false);
                 outf[0][1][i] = (float)finish_unquantizeF16(out[0][1][i], false);
@@ -1249,7 +1249,7 @@ void BC6HBlockEncoder::AverageEndPoint(float EndPoints[MAX_SUBSETS][MAX_END_POIN
             EndPoints[subset][0][1] +
             EndPoints[subset][0][2]) / 3.0f;
 
-        // determine average diff 
+        // determine average diff
         diff = (abs(EndPoints[subset][0][0] - avr) +
             abs(EndPoints[subset][0][1] - avr) +
             abs(EndPoints[subset][0][2] - avr)) / 3;
@@ -1300,7 +1300,7 @@ static int ModeFitOrder[MAX_BC6H_MODES +1] =
                        0,                //0: N/A
                                          // ----  2 region lower bits ---
                        1,                // 10 5 5 5
-                       2,                // 7  6 6 6 
+                       2,                // 7  6 6 6
                        3,                // 11 5 4 5
                        4,                // 11 4 5 4
                        5,                // 11 4 4 5
@@ -1314,7 +1314,7 @@ static int ModeFitOrder[MAX_BC6H_MODES +1] =
                        12,               // 11 9  9  9
                        13,               // 12 8  8  8
                        14                // 16 4  4  4
-}; 
+};
 
 float    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data, float  error)
 {
@@ -1326,14 +1326,14 @@ float    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data, float  erro
 
     //float SrcEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];                  // temp endpoints used during calculations
 
-    // Quantize the EndPoints 
+    // Quantize the EndPoints
     int F16EndPoints[MAX_BC6H_MODES + 1][MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];                    // temp endpoints used during calculations
     int quantEndPoints[MAX_BC6H_MODES + 1][MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG];                    // endpoints to save for a given mode
 
     // ModePartition[] starts from 1 to 14
     // If we have a shape pattern set the loop to check modes from 1 to 10 else from 11 to 14
     // of the ModePartition table
-    int     min_mode = (BC6H_data.region == 2)?1:11; 
+    int     min_mode = (BC6H_data.region == 2)?1:11;
     int     max_mode = (BC6H_data.region == 2)?MAX_TWOREGION_MODES: MAX_BC6H_MODES;
 
     bool    fits[15];
@@ -1366,7 +1366,7 @@ float    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data, float  erro
             // For some modes the differances between channels can be quite small
             // typically for 6 bits 0..32 an increment of 1 in a channel can cause
             // unwanted color artifacts.
-            // Check if computed channel endpoint have a wide spread between channels if not 
+            // Check if computed channel endpoint have a wide spread between channels if not
             // scale all the channels to a avarage so that the variance is not noticed at lower bit values
             //if (m_bAverageEndPoint)
             //{
@@ -1398,7 +1398,7 @@ float    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data, float  erro
                 // Takes the end points and creates a pallet of colors
                 // based on preset weights along a vector formed by the two end points
                 palitizeEndPointsF(BC6H_data, uncompressed);
-                
+
                 // Once we have the pallet - recalculate the optimal indices using the pallet
                 // and the original image data stored in BC6H_data.din[]
                 if (!m_isSigned)
@@ -1429,7 +1429,7 @@ float    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data, float  erro
                     }
                     if (transformFit)
                     {
-                        if (BC6H_data.region == 1) 
+                        if (BC6H_data.region == 1)
                         {
                             bestFit = (modes == bestEndpointMode) ? modes: ((modes<bestEndpointMode)? modes:bestEndpointMode);
                         }
@@ -1456,7 +1456,7 @@ float    BC6HBlockEncoder::EncodePattern(AMD_BC6H_Format &BC6H_data, float  erro
 }
 
 //==================================================================================
-// CompressBlock 
+// CompressBlock
 // in[]  is half float32 data  [0..1] for unsigned and [-1..+1] for signed
 // it will be converted to 16 bit half CMP_HALFSHORT (short with signed component) for processing
 //

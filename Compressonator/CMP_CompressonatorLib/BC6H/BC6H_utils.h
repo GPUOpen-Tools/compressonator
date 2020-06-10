@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -22,7 +22,7 @@
 //
 // BC6H_utils.h Genenral functions and definitions for use in encoder and decoder
 // Revision
-// 0.1    First implementation 
+// 0.1    First implementation
 //////////////////////////////////////////////////////////////////////////////////
 
 #ifndef _BC6H_UTILS_H_
@@ -32,7 +32,6 @@
 #include <bitset>
 #include <stddef.h>
 
-using namespace std;
 
 class BitHeader
 {
@@ -107,7 +106,7 @@ public:
         }
     }
 
-   bitset<128> m_bits;        // 16 bytes max
+   std::bitset<128> m_bits;        // 16 bytes max
    int     m_sizeinbytes;
 };
 

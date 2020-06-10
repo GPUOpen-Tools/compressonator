@@ -5,7 +5,6 @@
 #ifndef __ACOGLWIDGET_H
 #define __ACOGLWIDGET_H
 
-#include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 //#include "AMDCompress.h"
 //#include "MIPS.h"

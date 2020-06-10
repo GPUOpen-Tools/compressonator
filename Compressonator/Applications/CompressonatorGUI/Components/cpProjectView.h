@@ -113,7 +113,7 @@ public:
                            QString psnr, 
                            QString ssim);
 
-    void AddTestResults(string  processPath, 
+    void AddTestResults(std::string processPath, 
                         QString processName,
                         float  Quality,
                         double PerfTime,

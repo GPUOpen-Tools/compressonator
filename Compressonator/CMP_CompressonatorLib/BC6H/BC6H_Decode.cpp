@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -24,7 +24,7 @@
 // BC6H_Decode.cpp : Decoder for BC6H
 //
 // Revision
-// 0.1    First implementation 
+// 0.1    First implementation
 //
 
 #include <assert.h>
@@ -46,7 +46,7 @@
 int  g_dblock = 0;
 #endif
 
-using namespace std;
+/*using namespace std;*/
 using namespace HDR_Encode;
 
 float dec_red_out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG] = {0};
@@ -75,11 +75,11 @@ void extract_compressed_endpoints2(AMD_BC6H_Format& bc6h_format)
                 t = SIGN_EXTEND(bc6h_format.EC[0].B[i], bc6h_format.tBits[i]); // C_RED
                 t = (t + bc6h_format.EC[0].A[i]) & MASK(bc6h_format.wBits);
                 bc6h_format.E[0].B[i] = SIGN_EXTEND(t,bc6h_format.wBits);
-                
+
                 t = SIGN_EXTEND(bc6h_format.EC[1].A[i], bc6h_format.tBits[i]); //C_GREEN
                 t = (t + bc6h_format.EC[0].A[i]) & MASK(bc6h_format.wBits);
                 bc6h_format.E[1].A[i] = SIGN_EXTEND(t,bc6h_format.wBits);
-                
+
                 t = SIGN_EXTEND(bc6h_format.EC[1].B[i], bc6h_format.tBits[i]); //C_BLUE
                 t = (t + bc6h_format.EC[0].A[i]) & MASK(bc6h_format.wBits);
                 bc6h_format.E[1].B[i] = SIGN_EXTEND(t,bc6h_format.wBits);
@@ -106,10 +106,10 @@ void extract_compressed_endpoints2(AMD_BC6H_Format& bc6h_format)
                 bc6h_format.E[0].A[i] = bc6h_format.EC[0].A[i];
                 t = SIGN_EXTEND(bc6h_format.EC[0].B[i], bc6h_format.tBits[i]); // C_RED
                 bc6h_format.E[0].B[i] = (t + bc6h_format.EC[0].A[i]) & MASK(bc6h_format.wBits);
-                
+
                 t = SIGN_EXTEND(bc6h_format.EC[1].A[i], bc6h_format.tBits[i]); // C_GREEN
                 bc6h_format.E[1].A[i] = (t + bc6h_format.EC[0].A[i]) & MASK(bc6h_format.wBits);
-                
+
                 t = SIGN_EXTEND(bc6h_format.EC[1].B[i], bc6h_format.tBits[i]); //C_BLUE
                 bc6h_format.E[1].B[i] = (t + bc6h_format.EC[0].A[i]) & MASK(bc6h_format.wBits);
             }
@@ -125,7 +125,7 @@ void extract_compressed_endpoints2(AMD_BC6H_Format& bc6h_format)
             }
         }
     }
-    
+
 }
 
 void extract_compressed_endpoints(AMD_BC6H_Format& bc6h_format)
@@ -176,7 +176,7 @@ void extract_compressed_endpoints(AMD_BC6H_Format& bc6h_format)
             }
         }
     }
-    
+
 }
 
 // NV code: Used with modifcations
@@ -192,11 +192,11 @@ int unquantize(AMD_BC6H_Format& bc6h_format, int q, int prec)
         // since we have 16 bits available, let's unquantize this to 16 bits unsigned
         // thus the scale factor is [0-7c00)/[0-10000) = 31/64
         case UNSIGNED_F16:
-            if (prec >= 15) 
+            if (prec >= 15)
                 unq = q;
-            else if (q == 0) 
+            else if (q == 0)
                 unq = 0;
-            else if (q == ((1<<prec)-1)) 
+            else if (q == ((1<<prec)-1))
                 unq = U16MAX;
             else
                 unq = (q * (U16MAX+1) + (U16MAX+1)/2) >> prec;
@@ -233,7 +233,7 @@ int lerp(int a, int b, int i, int denom)
 {
     assert (denom == 3 || denom == 7 || denom == 15);
     assert (i >= 0 && i <= denom);
-    
+
     int shift = 6, *weights = NULL;
 
     switch(denom)
@@ -264,24 +264,24 @@ void generate_palette_quantized(int max, AMD_BC6H_Format& bc6h_format, int regio
     // scale endpoints
     int a, b, c;            // really need a IntVec3...
 
-    a = unquantize(bc6h_format, bc6h_format.E[region].A[0], bc6h_format.wBits); 
+    a = unquantize(bc6h_format, bc6h_format.E[region].A[0], bc6h_format.wBits);
     b = unquantize(bc6h_format, bc6h_format.E[region].B[0], bc6h_format.wBits);
 
-    // interpolate : This part of code is used for debuging data 
+    // interpolate : This part of code is used for debuging data
     for (int i = 0; i < max; i++)
     {
         c = finish_unquantize(bc6h_format, lerp(a, b, i, max-1));
         bc6h_format.Palete[region][i].x = c;
     }
 
-    a = unquantize(bc6h_format, bc6h_format.E[region].A[1], bc6h_format.wBits); 
+    a = unquantize(bc6h_format, bc6h_format.E[region].A[1], bc6h_format.wBits);
     b = unquantize(bc6h_format, bc6h_format.E[region].B[1], bc6h_format.wBits);
 
     // interpolate
     for (int i = 0; i < max; i++)
         bc6h_format.Palete[region][i].y = finish_unquantize(bc6h_format, lerp(a, b, i, max-1));
 
-    a = unquantize(bc6h_format,bc6h_format.E[region].A[2], bc6h_format.wBits); 
+    a = unquantize(bc6h_format,bc6h_format.E[region].A[2], bc6h_format.wBits);
     b = unquantize(bc6h_format,bc6h_format.E[region].B[2], bc6h_format.wBits);
 
     // interpolate
@@ -299,7 +299,7 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
     memset(&bc6h_format,0,sizeof(AMD_BC6H_Format));
 
     // 2 bit mode has Mode bit:2 = 0 and mode bits:1 = 0 or 1
-    // 5 bit mode has Mode bit:2 = 1 
+    // 5 bit mode has Mode bit:2 = 1
     if ((in[0]&0x02) > 0)
     {
         decvalue = (in[0]&0x1F);    // first five bits
@@ -310,7 +310,7 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
     }
 
     BitHeader header(in,16);
-    
+
     switch (decvalue)
     {
     case 0x00:
@@ -319,7 +319,7 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
                 bc6h_format.tBits[C_RED]    = 5;
                 bc6h_format.tBits[C_GREEN]  = 5;
                 bc6h_format.tBits[C_BLUE]   = 5;
-                bc6h_format.rw = header.getvalue(5 ,10);            // 10:   rw[9:0] 
+                bc6h_format.rw = header.getvalue(5 ,10);            // 10:   rw[9:0]
                 bc6h_format.rx = header.getvalue(35,5);             // 5:    rx[4:0]
                 bc6h_format.ry = header.getvalue(65,5);             // 5:    ry[4:0]
                 bc6h_format.rz = header.getvalue(71,5);             // 5:    rz[4:0]
@@ -345,7 +345,7 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
                 bc6h_format.tBits[C_RED]    = 6;
                 bc6h_format.tBits[C_GREEN]  = 6;
                 bc6h_format.tBits[C_BLUE]   = 6;
-                bc6h_format.rw = header.getvalue(5,7);               // 7:    rw[6:0] 
+                bc6h_format.rw = header.getvalue(5,7);               // 7:    rw[6:0]
                 bc6h_format.rx = header.getvalue(35,6);              // 6:    rx[5:0]
                 bc6h_format.ry = header.getvalue(65,6);              // 6:    ry[5:0]
                 bc6h_format.rz = header.getvalue(71,6);              // 6:    rz[5:0]
@@ -375,7 +375,7 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
                 bc6h_format.tBits[C_RED]    = 5;
                 bc6h_format.tBits[C_GREEN]  = 4;
                 bc6h_format.tBits[C_BLUE]   = 4;
-                bc6h_format.rw = header.getvalue(5,10)  |            //11:    rw[9:0] 
+                bc6h_format.rw = header.getvalue(5,10)  |            //11:    rw[9:0]
                                 (header.getvalue(40,1) << 10);       //       rw[10]
                 bc6h_format.rx = header.getvalue(35,5);              // 5:    rx[4:0]
                 bc6h_format.ry = header.getvalue(65,5);              // 5:    ry[4:0]
@@ -400,7 +400,7 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
                 bc6h_format.tBits[C_RED]    = 4;
                 bc6h_format.tBits[C_GREEN]  = 5;
                 bc6h_format.tBits[C_BLUE]   = 4;
-                bc6h_format.rw = header.getvalue(5,10)  |             //11:   rw[9:0] 
+                bc6h_format.rw = header.getvalue(5,10)  |             //11:   rw[9:0]
                                 (header.getvalue(39,1) << 10);        //      rw[10]
                 bc6h_format.rx = header.getvalue(35,4);               //4:    rx[3:0]
                 bc6h_format.ry = header.getvalue(65,4);               //4:    ry[3:0]
@@ -427,7 +427,7 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
                 bc6h_format.tBits[C_RED]    = 4;
                 bc6h_format.tBits[C_GREEN]  = 4;
                 bc6h_format.tBits[C_BLUE]   = 5;
-                bc6h_format.rw = header.getvalue(5,10)  |             //11:   rw[9:0] 
+                bc6h_format.rw = header.getvalue(5,10)  |             //11:   rw[9:0]
                                 (header.getvalue(39,1) << 10);        //      rw[10]
                 bc6h_format.rx = header.getvalue(35,4);               //4:    rx[3:0]
                 bc6h_format.ry = header.getvalue(65,4);               //4:    ry[3:0]
@@ -454,7 +454,7 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
                 bc6h_format.tBits[C_RED]    = 5;
                 bc6h_format.tBits[C_GREEN]  = 5;
                 bc6h_format.tBits[C_BLUE]   = 5;
-                bc6h_format.rw = header.getvalue(5,9);                 //9:   rw[8:0] 
+                bc6h_format.rw = header.getvalue(5,9);                 //9:   rw[8:0]
                 bc6h_format.gw = header.getvalue(15,9);                //9:   gw[8:0]
                 bc6h_format.bw = header.getvalue(25,9);                //9:   bw[8:0]
                 bc6h_format.rx = header.getvalue(35,5);                //5:   rx[4:0]
@@ -480,7 +480,7 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
                 bc6h_format.tBits[C_RED]    = 6;
                 bc6h_format.tBits[C_GREEN]  = 5;
                 bc6h_format.tBits[C_BLUE]   = 5;
-                bc6h_format.rw = header.getvalue(5,8);                 //8:    rw[7:0] 
+                bc6h_format.rw = header.getvalue(5,8);                 //8:    rw[7:0]
                 bc6h_format.gw = header.getvalue(15,8);                //8:    gw[7:0]
                 bc6h_format.bw = header.getvalue(25,8);                //8:    bw[7:0]
                 bc6h_format.rx = header.getvalue(35,6);                //6:    rx[5:0]
@@ -506,7 +506,7 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
                 bc6h_format.tBits[C_RED]    = 5;
                 bc6h_format.tBits[C_GREEN]  = 6;
                 bc6h_format.tBits[C_BLUE]   = 5;
-                bc6h_format.rw = header.getvalue(5,8);                 //8:    rw[7:0] 
+                bc6h_format.rw = header.getvalue(5,8);                 //8:    rw[7:0]
                 bc6h_format.gw = header.getvalue(15,8);                //8:    gw[7:0]
                 bc6h_format.bw = header.getvalue(25,8);                //8:    bw[7:0]
                 bc6h_format.rx = header.getvalue(35,5);                //5:    rx[4:0]
@@ -534,7 +534,7 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
                 bc6h_format.tBits[C_RED]    = 5;
                 bc6h_format.tBits[C_GREEN]  = 5;
                 bc6h_format.tBits[C_BLUE]   = 6;
-                bc6h_format.rw = header.getvalue(5,8);                 //8:    rw[7:0] 
+                bc6h_format.rw = header.getvalue(5,8);                 //8:    rw[7:0]
                 bc6h_format.gw = header.getvalue(15,8);                //8:    gw[7:0]
                 bc6h_format.bw = header.getvalue(25,8);                //8:    bw[7:0]
                 bc6h_format.rx = header.getvalue(35,5);                //5:    rx[4:0]
@@ -563,7 +563,7 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
                 bc6h_format.tBits[C_RED]    = 6;
                 bc6h_format.tBits[C_GREEN]  = 6;
                 bc6h_format.tBits[C_BLUE]   = 6;
-                bc6h_format.rw = header.getvalue(5,6);                 //6:    rw[5:0] 
+                bc6h_format.rw = header.getvalue(5,6);                 //6:    rw[5:0]
                 bc6h_format.gw = header.getvalue(15,6);                //6:    gw[5:0]
                 bc6h_format.bw = header.getvalue(25,6);                //6:    bw[5:0]
                 bc6h_format.rx = header.getvalue(35,6);                //6:    rx[5:0]
@@ -588,14 +588,14 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
                                 (header.getvalue(33,1) << 5);          //      bz[5]
                 break;
 
-    // Single region modes    
+    // Single region modes
     case 0x03:
                 bc6h_format.m_mode            = 11;  // 10:10
                 bc6h_format.wBits             = 10;
                 bc6h_format.tBits[C_RED]      = 10;
                 bc6h_format.tBits[C_GREEN]    = 10;
                 bc6h_format.tBits[C_BLUE]     = 10;
-                bc6h_format.rw = header.getvalue(5,10);             // 10: rw[9:0] 
+                bc6h_format.rw = header.getvalue(5,10);             // 10: rw[9:0]
                 bc6h_format.gw = header.getvalue(15,10);            // 10: gw[9:0]
                 bc6h_format.bw = header.getvalue(25,10);            // 10: bw[9:0]
                 bc6h_format.rx = header.getvalue(35,10);            // 10: rx[9:0]
@@ -608,7 +608,7 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
                 bc6h_format.tBits[C_RED]        = 9;
                 bc6h_format.tBits[C_GREEN]      = 9;
                 bc6h_format.tBits[C_BLUE]       = 9;
-                bc6h_format.rw = header.getvalue(5,10) |               // 10:   rw[9:0] 
+                bc6h_format.rw = header.getvalue(5,10) |               // 10:   rw[9:0]
                                 (header.getvalue(44,1) << 10);         //       rw[10]
                 bc6h_format.gw = header.getvalue(15,10) |              // 10:   gw[9:0]
                                 (header.getvalue(54,1) << 10);         //       gw[10]
@@ -624,7 +624,7 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
                 bc6h_format.tBits[C_RED]        = 8;
                 bc6h_format.tBits[C_GREEN]      = 8;
                 bc6h_format.tBits[C_BLUE]       = 8;
-                bc6h_format.rw = header.getvalue(5, 10) |               // 12:   rw[9:0] 
+                bc6h_format.rw = header.getvalue(5, 10) |               // 12:   rw[9:0]
                                  (header.getvalue(43, 1) << 11) |       //       rw[11]
                                  (header.getvalue(44, 1) << 10);        //       rw[10]
                 bc6h_format.gw = header.getvalue(15, 10) |              // 12:   gw[9:0]
@@ -673,24 +673,24 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
                 return bc6h_format;
     }
 
-    // Each format in the mode table can be uniquely identified by the mode bits. 
-    // The first ten modes are used for two-region tiles, and the mode bit field 
-    // can be either two or five bits long. These blocks also have fields for 
-    // the compressed color endpoints (72 or 75 bits), the partition (5 bits), 
+    // Each format in the mode table can be uniquely identified by the mode bits.
+    // The first ten modes are used for two-region tiles, and the mode bit field
+    // can be either two or five bits long. These blocks also have fields for
+    // the compressed color endpoints (72 or 75 bits), the partition (5 bits),
     // and the partition indices (46 bits).
 
-    if (bc6h_format.m_mode <= 10) 
+    if (bc6h_format.m_mode <= 10)
     {
         bc6h_format.region = BC6_TWO;
         // Get the shape index bits 77 to 81
         bc6h_format.d_shape_index = (unsigned short) header.getvalue(77,5);
-        bc6h_format.istransformed = (bc6h_format.m_mode < 10) ? TRUE : FALSE; 
+        bc6h_format.istransformed = (bc6h_format.m_mode < 10) ? TRUE : FALSE;
     }
-    else 
+    else
     {
         bc6h_format.region           = BC6_ONE;
         bc6h_format.d_shape_index    = 0;
-        bc6h_format.istransformed    = (bc6h_format.m_mode > 11) ? TRUE : FALSE; 
+        bc6h_format.istransformed    = (bc6h_format.m_mode > 11) ? TRUE : FALSE;
     }
 
     // Save the points in a form easy to compute with
@@ -701,24 +701,24 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
     if (bc6h_format.region    == BC6_ONE)
     {
         int startbits = ONE_REGION_INDEX_OFFSET;
-        bc6h_format.indices16[0] = (byte) header.getvalue(startbits,3);
+        bc6h_format.indices16[0] = (std::uint8_t) header.getvalue(startbits,3);
         startbits+=3;
         for (int i=1; i<16; i++)
         {
-            bc6h_format.indices16[i] = (byte) header.getvalue(startbits,4);
+            bc6h_format.indices16[i] = (std::uint8_t) header.getvalue(startbits,4);
             startbits+=4;
         }
     }
     else
     {
-        int startbit = TWO_REGION_INDEX_OFFSET, 
+        int startbit = TWO_REGION_INDEX_OFFSET,
             nbits = 2;
-        bc6h_format.indices16[0 ] = (byte) header.getvalue(startbit,2);
+        bc6h_format.indices16[0 ] = (std::uint8_t) header.getvalue(startbit,2);
         for (int i= 1; i<16; i++)
         {
             startbit += nbits; // offset start bit for next index using prior nbits used
             nbits    = g_indexfixups[bc6h_format.d_shape_index] == i?2:3; // get new number of bit to save index with
-            bc6h_format.indices16[i] = (byte) header.getvalue(startbit,nbits);    
+            bc6h_format.indices16[i] = (std::uint8_t) header.getvalue(startbit,nbits);
         }
 
     }
@@ -730,31 +730,7 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE])
 
 void BC6HBlockDecoder::DecompressBlock( float out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],BYTE in[COMPRESSED_BLOCK_SIZE])
 {
-    // Compressed input
-    // printf("BC6 in: ");
-    // for (int px=0; px<16; px++) {
-    //     printf("%x,",in[px]);
-    // }
-    // printf("\n");
 
-#ifdef TEST_CMP_CORE_DECODER
-     unsigned short imgout[48];
-     DecompressBlockBC6(in,imgout);
-     CMP_HALF rgba[4];
-     int count = 0;
-     for (int px=0; px<16; px++) {
-             rgba[0].setBits(imgout[count++]);
-             rgba[1].setBits(imgout[count++]);
-             rgba[2].setBits(imgout[count++]);
-             out[px][0] = (float)rgba[0];
-             out[px][1] = (float)rgba[1];
-             out[px][2] = (float)rgba[2];
-             out[px][3] = 1.0f;
-     }
-     return;
-#endif
-
-    // now determine the mode type and extract the coded endpoints data 
     AMD_BC6H_Format bc6h_format = extract_format(in);
     if (!bc6signed)
         bc6h_format.format = UNSIGNED_F16;
@@ -775,13 +751,13 @@ void BC6HBlockDecoder::DecompressBlock( float out[MAX_SUBSET_SIZE][MAX_DIMENSION
         }
     }
 
-    
+
     BC6H_Vec3 data;
     int indexPos=0;
     CMP_HALF rgb[3];
 
     // Note first 32 BC6H_PARTIONS is shared with BC6H
-    // Partitioning is always arranged such that index 0 is always in subset 0 of BC6H_PARTIONS array 
+    // Partitioning is always arranged such that index 0 is always in subset 0 of BC6H_PARTIONS array
     // Partition order goes from top-left to bottom-right, moving left to right and then top to bottom.
     for (int block_row = 0; block_row < 4; block_row++)
     for (int block_col = 0; block_col < 4; block_col++)
@@ -796,10 +772,10 @@ void BC6HBlockDecoder::DecompressBlock( float out[MAX_SUBSET_SIZE][MAX_DIMENSION
 
         // Index is validated as ok
         int paleteIndex  = bc6h_format.indices[block_row][block_col];
-        
-        // this result is validated ok for region = BC6_ONE , BC6_TWO To be determined 
+
+        // this result is validated ok for region = BC6_ONE , BC6_TWO To be determined
         data = bc6h_format.Palete[region][paleteIndex];
-    
+
         // Int to Half
         rgb[0].setBits((unsigned short) data.x);
         rgb[1].setBits((unsigned short) data.y);

@@ -18,7 +18,10 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "..\json\json.h"
+#include <json\json.h>
+#include <vector>
+
+#include <d3dcommon.h>
 
 using json = nlohmann::json;
 

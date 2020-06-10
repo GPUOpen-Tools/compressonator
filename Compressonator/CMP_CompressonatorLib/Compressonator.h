@@ -33,10 +33,6 @@
 
 #include "../UseDefinitions.h"
 
-#ifndef _LINUX
-using namespace std;
-#endif
-
 #ifndef ASPM_GPU
 namespace CMP {
 // Basic types.

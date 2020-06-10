@@ -12,8 +12,6 @@
 #include "clustering.h"
 #include "error.h"
 
-using namespace std;
-
 
 //=================================================================================================================================
 //
@@ -47,10 +45,10 @@ static float EdgeCost(Vector3 cn, Vector3 fn)
 
     float c = 1.f - Dot(cn, fn);
     assert(c < BIGFLOAT);
-    return .00001f + max(0.f, c);
+    return .00001f + (std::max)(0.f, c);
 }
 
-static void AddNeibToQueue(priority_queue<QNode, vector<QNode>, greater<QNode> >& q,
+static void AddNeibToQueue(std::priority_queue<QNode, std::vector<QNode>, std::greater<QNode> >& q,
                            Mesh& /*mesh*/, std::vector<int>& fixed, std::vector<float>& cost,
                            std::vector<int>& cluster, std::vector<Vector3>& clusterNormal,
                            int f, int ff, std::vector<Vector3>& tn)
@@ -88,7 +86,7 @@ static int MoveFaces(Mesh& mesh, std::vector<int>& seeds, std::vector<int>& clus
     float fMaxDist = 0.f;
     int distcnt = 0;
 
-    priority_queue<QNode, vector<QNode>, greater<QNode> > q;
+    std::priority_queue<QNode, std::vector<QNode>, std::greater<QNode> > q;
 
     std::vector<int> vis;
     std::vector<float> cost;
@@ -238,7 +236,7 @@ static void MoveSeeds(Mesh& mesh, std::vector<int>& seeds, std::vector<int>& clu
     std::vector<float> cost;
     std::vector<int> visited;
 
-    priority_queue<QNode, vector<QNode>, greater<QNode> > q;
+    std::priority_queue<QNode, std::vector<QNode>, std::greater<QNode> > q;
 
     for (int i = 0; i < static_cast<int>(mesh.t().size()); i++)
     {

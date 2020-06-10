@@ -537,7 +537,7 @@ public:
     void SampleLinear(float time, float *frac, float **pCurr, float **pNext)
     {
         int curr_index = m_time.FindClosestFloatIndex(time);
-        int next_index = min(curr_index + 1, m_time.m_count - 1);
+        int next_index = (std::min)(curr_index + 1, m_time.m_count - 1);
 
         float curr_time = *(float*)m_time.Get(curr_index);
         float next_time = *(float*)m_time.Get(next_index);

@@ -2661,7 +2661,7 @@ namespace tinygltf2
                                         {
                                             if (use_draco_encode)
                                             {
-                                                (*err) = "Error: Source File " + string(str) + " 's buffer is already draco-compressed.";
+                                                (*err) = "Error: Source File " + std::string(str) + " 's buffer is already draco-compressed.";
                                                 return false;
                                             }
                                             if (itVal.value().is_object())
@@ -3304,7 +3304,7 @@ namespace tinygltf2
                         attrIt != model->meshes[m].primitives[n].attributes.end(); ++attrIt)
                     {
                         draco::PointAttribute att;
-                        string                attr_str = attrIt->first;
+                        std::string           attr_str = attrIt->first;
                         int                   attr_id = attrIt->second;
                         int8_t                comp_count = 3;
                         int                   data_count = (int)model->accessors[attr_id].count;
@@ -3347,7 +3347,7 @@ namespace tinygltf2
                         {
                             type = draco::GeometryAttribute::POSITION;
                         }
-                        else if (attr_str.find("TEXCOORD") != string::npos)
+                        else if (attr_str.find("TEXCOORD") != std::string::npos)
                         {
                             type = draco::GeometryAttribute::TEX_COORD;
                         }
@@ -3412,7 +3412,7 @@ namespace tinygltf2
                         for (int ii = 0; ii < data_count; ii++)
                         {
                             //uint8_t*     ptr = &buf[0];
-                            vector<char> temp;
+                            std::vector<char> temp;
                             temp.insert(temp.end(), buf_dataptr, buf_dataptr + (data_stride * comp_count));
                             attPtr->SetAttributeValue(attPtr->mapped_index(draco::PointIndex(ii)), &temp[0]);
                             temp.clear();
@@ -3468,7 +3468,7 @@ namespace tinygltf2
                         }
 
                         draco::Mesh::Face     face;
-                        vector<unsigned char> temp;
+                        std::vector<unsigned char> temp;
                         for (int ii = 0; ii < num_face; ii++)
                         {
                             temp.insert(temp.end(), buf_dataptr, buf_dataptr + data_stride);
@@ -4048,7 +4048,7 @@ namespace tinygltf2
                     {
                         type = draco::GeometryAttribute::POSITION;
                     }
-                    else if (khrattrIt->first.find("TEXCOORD") != string::npos)
+                    else if (khrattrIt->first.find("TEXCOORD") != std::string::npos)
                     {
                         type = draco::GeometryAttribute::TEX_COORD;
                     }
@@ -4325,7 +4325,7 @@ namespace tinygltf2
                     accessor["count"] = count;
 
                     //type is hardcoded to support as below
-                    if (x.first.find("TEXCOORD") != string::npos)
+                    if (x.first.find("TEXCOORD") != std::string::npos)
                     {
                         type = "VEC2";
                     }
@@ -4453,7 +4453,7 @@ namespace tinygltf2
                     int                                dimension = 0;  //SCALAR =1, VEC2=2, VEC3=3, VEC4 =4
                     int                                formatsz = 0;  //format refers to int, float etc.
 
-                    if (x.first.find("TEXCOORD") != string::npos)
+                    if (x.first.find("TEXCOORD") != std::string::npos)
                     {
                         dimension = 2;
                         formatsz = 4;
@@ -4921,7 +4921,7 @@ bool isGLTFDracoFile(std::string filename)
     for (unsigned int i = 0; i < extrequired.size(); i++)
     {
         std::string extname = extrequired[i].get<std::string>();
-        if (extname.find("KHR_draco_mesh_compression") != string::npos)
+        if (extname.find("KHR_draco_mesh_compression") != std::string::npos)
         {
             return true;
         }
@@ -4932,7 +4932,7 @@ bool isGLTFDracoFile(std::string filename)
     for (unsigned int j = 0; j < extused.size(); j++)
     {
         std::string extnameused = extused[j].get<std::string>();
-        if (extnameused.find("KHR_draco_mesh_compression") != string::npos)
+        if (extnameused.find("KHR_draco_mesh_compression") != std::string::npos)
         {
             return true;
         }

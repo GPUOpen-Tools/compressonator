@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -67,7 +67,7 @@ IMath.lib;Half.lib;IlmImf.lib;IlmThread.lib;Iex.lib;zlibstatic_d.lib;
 
 #include "Common.h"
 
-#include <string> 
+#include <string>
 #include "cExr.h"
 
 #pragma warning( push )
@@ -90,11 +90,6 @@ IMath.lib;Half.lib;IlmImf.lib;IlmThread.lib;Iex.lib;zlibstatic_d.lib;
 
 
 #include "Common.h"
-
-// File system
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/path.hpp>
-#include <boost/algorithm/string.hpp> 
 
 CMIPS *EXR_CMips = NULL;
 
@@ -124,13 +119,13 @@ void *make_Plugin_EXR() { return new Plugin_EXR; }
 
 
 Plugin_EXR::Plugin_EXR()
-{ 
-    //MessageBox(0,"Construct","Plugin_EXR",MB_OK);  
+{
+    //MessageBox(0,"Construct","Plugin_EXR",MB_OK);
 }
 
 Plugin_EXR::~Plugin_EXR()
-{ 
-    //MessageBox(0,"Destroy","Plugin_EXR",MB_OK);  
+{
+    //MessageBox(0,"Destroy","Plugin_EXR",MB_OK);
 }
 
 int Plugin_EXR::TC_PluginSetSharedIO(void* Shared)
@@ -145,8 +140,8 @@ int Plugin_EXR::TC_PluginSetSharedIO(void* Shared)
 
 
 int Plugin_EXR::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
-{ 
-    //MessageBox(0,"TC_PluginGetVersion","Plugin_EXR",MB_OK);  
+{
+    //MessageBox(0,"TC_PluginGetVersion","Plugin_EXR",MB_OK);
 #ifdef _WIN32
     pPluginVersion->guid                    = g_GUID;
 #endif
@@ -252,7 +247,7 @@ loadImage(const char fileName[],
     header = in.header();
 
     ChannelList ch = header.channels();
-    
+
     if (ch.findChannel("Y"))
     {
         //load as RGBA using array2D
@@ -354,7 +349,7 @@ loadImage(const char fileName[],
             if (!allocateMipSet(pixels, pMipSet, dw, dh))
                 return PE_Unknown;
         }
-        catch (const exception &e)
+        catch (const std::exception &e)
         {
             //
             // If some of the pixels in the file cannot be read,
@@ -362,7 +357,7 @@ loadImage(const char fileName[],
             // to the caller.
             //
 
-            cerr << e.what() << endl;
+            std::cerr << e.what() << std::endl;
         }
     }
 
@@ -389,9 +384,9 @@ loadTiledImage(const char fileName[],
         pixels.resizeErase(1);
         header.dataWindow() = Box2i(V2i(0, 0), V2i(0, 0));
 
-        cout << "Level (" << lx << ", " << ly << ") does "
+        std::cout << "Level (" << lx << ", " << ly << ") does "
             "not exist in part " << 0 << " of file "
-            << fileName << "." << endl;
+            << fileName << "." << std::endl;
         return PE_Unknown;
     }
     else
@@ -405,7 +400,7 @@ loadTiledImage(const char fileName[],
             //
             // Not handling YCA image right now
             //
-            cout << "Cannot handle YCA image now!" << endl;
+            std::cout << "Cannot handle YCA image now!" << std::endl;
 
             //no data for YCA image
             pixels.resizeErase(1);
@@ -483,7 +478,7 @@ loadTiledImage(const char fileName[],
                 if (!allocateMipSet(pixels, pMipSet, dw, dh))
                     return PE_Unknown;
             }
-            catch (const exception &e)
+            catch (const std::exception &e)
             {
                 //
                 // If some of the tiles in the file cannot be read,
@@ -491,7 +486,7 @@ loadTiledImage(const char fileName[],
                 // to the caller.
                 //
 
-                cerr << e.what() << endl;
+                std::cerr << e.what() << std::endl;
             }
         }
 
@@ -519,7 +514,7 @@ loadPreviewImage(const char fileName[],
         header.displayWindow() = Box2i(V2i(0, 0), V2i(99, 99));
         pixels.resizeErase(1);
 
-        cout << "Part " << 0 << " contains no preview image." << endl;
+        std::cout << "Part " << 0 << " contains no preview image." << std::endl;
 
         return PE_Unknown;
     }
@@ -600,7 +595,7 @@ loadImageChannel(const char fileName[],
         {
             in.readPixels(dataWindow.min.y, dataWindow.max.y);
         }
-        catch (const exception &e)
+        catch (const std::exception &e)
         {
             //
             // If some of the pixels in the file cannot be read,
@@ -608,7 +603,7 @@ loadImageChannel(const char fileName[],
             // to the caller.
             //
 
-            cerr << e.what() << endl;
+            std::cerr << e.what() << std::endl;
         }
 
         for (int i = 0; i < dw * dh; ++i)
@@ -622,15 +617,15 @@ loadImageChannel(const char fileName[],
     }
     else
     {
-        cerr << "Image file \"" << fileName << "\" has no "
-            "channel named \"" << channelName << "\"." << endl;
+        std::cerr << "Image file \"" << fileName << "\" has no "
+            "channel named \"" << channelName << "\"." << std::endl;
 
         //
         //no data for this channel
         //
         pixels.resizeErase(1);
         header.dataWindow() = Box2i(V2i(0, 0), V2i(0, 0));
-        
+
         return PE_Unknown;
     }
 
@@ -651,7 +646,7 @@ loadTiledImageChannel(const char fileName[],
 
     if (!in.isValidLevel(lx, ly))
     {
-       cerr<< "Level (" << lx << ", " << ly << ") does "
+       std::cerr<< "Level (" << lx << ", " << ly << ") does "
             "not exist in file " << fileName << ".";
        return PE_Unknown;
     }
@@ -713,7 +708,7 @@ loadTiledImageChannel(const char fileName[],
                         in.readTile(x, y, lx, ly);
             }
         }
-        catch (const exception &e)
+        catch (const std::exception &e)
         {
             //
             // If some of the tiles in the file cannot be read,
@@ -721,7 +716,7 @@ loadTiledImageChannel(const char fileName[],
             // to the caller.
             //
 
-            cerr << e.what() << endl;
+            std::cerr << e.what() << std::endl;
         }
 
         for (int i = 0; i < dw * dh; ++i)
@@ -735,8 +730,8 @@ loadTiledImageChannel(const char fileName[],
     }
     else
     {
-        cerr << "Image file \"" << fileName << "\" part " << 0 << " "
-            "has no channel named \"" << channelName << "\"." << endl;
+        std::cerr << "Image file \"" << fileName << "\" part " << 0 << " "
+            "has no channel named \"" << channelName << "\"." << std::endl;
 
         //
         //no data for this channel
@@ -1155,9 +1150,9 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
 
     // uncomment the flag below to disable EXR mipmap loading / load only level 0
     // pMipSet->m_Flags |= MS_FLAG_DisableMipMapping;
-    
+
     bool isTile = false;
-    
+
     int miplevels = 1;
     try
     {
@@ -1172,7 +1167,7 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
             isTile = true;
 
         pMipSet->m_format = CMP_FORMAT_ARGB_16F;
-        
+
         //handle mipmap exr load using Tile File
         if (((isTile)) && (!(pMipSet->m_Flags & MS_FLAG_DisableMipMapping)))
         {
@@ -1183,17 +1178,17 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
             {
                 return PE_Unknown;
             }
-        
+
             pMipSet->m_dwFourCC = 0;
             pMipSet->m_dwFourCC2 = 0;
-        
+
             // if the mip levels stored in file is bigger then what we can handle reset the levels
-            // to match ours 
-            if (miplevels > pMipSet->m_nMaxMipLevels ) 
+            // to match ours
+            if (miplevels > pMipSet->m_nMaxMipLevels )
                 pMipSet->m_nMipLevels  = pMipSet->m_nMaxMipLevels;
-            else 
+            else
                 pMipSet->m_nMipLevels  = miplevels;
-        
+
             // No get the mip level data.
             for (int i = 0; i < pMipSet->m_nMipLevels; i++)
             {
@@ -1202,15 +1197,15 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
                     pMipSet->m_nMipLevels = i;
                     break;
                 }
-        
+
                 dwWidth = file.levelWidth(i);
                 dwHeight = file.levelHeight(i);
                 Array2D<Rgba> pixels(dwHeight, dwWidth);
                 pixels.resizeErase(dwHeight, dwWidth);
-        
+
                 file.setFrameBuffer(pixels[0], 1, dwWidth);
                 file.readTiles(0, file.numXTiles(i) - 1, 0, file.numYTiles(i) - 1, i);
-        
+
                 // Allocate the permanent buffer and unpack the bitmap data into it
                 if (!EXR_CMips->AllocateMipLevelData(EXR_CMips->GetMipLevel(pMipSet, i), dwWidth, dwHeight, CF_Float16, pMipSet->m_TextureDataType))
                     return PE_Unknown;
@@ -1234,13 +1229,13 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
             if (EXR_CMips)
                 EXR_CMips->PrintError(e.what());
             return PE_Unknown;
-        }  
+        }
     }
 
     //for non mipmap load
     const char *channel = 0;
     const char *layer = 0;
-   
+
     Header header;
     Array<Rgba>pixels;
     Array<float*>zbuff;
@@ -1312,7 +1307,7 @@ int Plugin_EXR::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
     LevelMode levelMode = (pMipSet->m_nMipLevels > 1) ? MIPMAP_LEVELS : ONE_LEVEL;
 
     // Save Single EXR file
-    if (pMipSet->m_nMipLevels == 1)    
+    if (pMipSet->m_nMipLevels == 1)
     {
 
         int  image_width    = pMipSet->m_nWidth;
@@ -1327,8 +1322,8 @@ int Plugin_EXR::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
 
         Exr::writeRgba(sFile,pixels,image_width,image_height);
     }
-    // Save Muliple MIP levels as TiledRGB 
-    else    
+    // Save Muliple MIP levels as TiledRGB
+    else
     {
         TiledRgbaOutputFile file(pszFilename, pMipSet->m_nWidth, pMipSet->m_nHeight, TILE_WIDTH, TILE_HEIGHT, levelMode, ROUND_DOWN);
         for(int i = 0; i < file.numLevels(); i++)
@@ -1343,7 +1338,7 @@ int Plugin_EXR::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
             }
             else
                 memset(data, 0, EXR_CMips->GetMipLevel(pMipSet, 0)->m_dwLinearSize);
-            
+
             file.setFrameBuffer(pixels[0], 1, file.levelWidth(i));
             file.writeTiles(0, file.numXTiles(i) - 1, 0, file.numYTiles(i) - 1, i);
         }

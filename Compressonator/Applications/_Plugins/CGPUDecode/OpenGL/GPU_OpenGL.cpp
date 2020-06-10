@@ -27,14 +27,23 @@
 #include "Common.h"
 #include "Compressonator.h"
 
+#include <GL/glew.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+
 #include <stdio.h>
 #include "GPU_Decode.h"
 
 #include <assert.h>
 
-#pragma comment(lib, "opengl32.lib")        // Open GL
-#pragma comment(lib, "Glu32.lib")           // Glu 
-#pragma comment(lib, "glew32.lib")          // glew 1.13.0
+#ifdef _WIN32
+#pragma comment(lib, "opengl32.lib")     // Open GL
+#pragma comment(lib, "Glu32.lib")        // Glu 
+#pragma comment(lib, "glew32.lib")       // glew 1.13.0
+#endif
+
+static_assert(sizeof(unsigned int) == sizeof(GLuint), "Inconsistent size for GLuint");
+static_assert(sizeof(unsigned int) == sizeof(GLenum), "Inconsistent size for GLenum");
 
 using namespace GPU_Decode;
 
@@ -99,7 +108,7 @@ void GPU_OpenGL::GLRender()
 
 }
 
-GLenum GPU_OpenGL::MIP2OLG_Format(const CMP_Texture* pSourceTexture)
+unsigned int GPU_OpenGL::MIP2OLG_Format(const CMP_Texture* pSourceTexture)
 {
     GLenum m_GLnum;
     switch (pSourceTexture->format)
@@ -190,17 +199,17 @@ GLenum GPU_OpenGL::MIP2OLG_Format(const CMP_Texture* pSourceTexture)
         m_GLnum = GL_INVALID_ENUM;
         break;
     }
-    return m_GLnum;
+    return static_cast<unsigned int>(m_GLnum);
 }
 
 // load pre-compressed texture
-GLuint GPU_OpenGL::LoadTexture(const CMP_Texture* pSourceTexture, bool wrap)
+unsigned int GPU_OpenGL::LoadTexture(const CMP_Texture* pSourceTexture, bool wrap)
 {
     GLenum m_GLnum = MIP2OLG_Format(pSourceTexture);
     if (m_GLnum == GL_INVALID_ENUM)
     {
         fprintf(stderr, "Unsupported format.\n");
-        return GLuint(-1);
+        return static_cast<unsigned int>(GLuint(-1));
     }
 
     // Initialize GLEW
@@ -242,9 +251,9 @@ GLuint GPU_OpenGL::LoadTexture(const CMP_Texture* pSourceTexture, bool wrap)
 }
 
 // Free Texture
-void GPU_OpenGL::FreeTexture(GLuint texture)
+void GPU_OpenGL::FreeTexture(unsigned int texture)
 {
-    glDeleteTextures(1, &texture);
+    glDeleteTextures(1, static_cast<GLuint*>(&texture));
 }
 
 //=========================================================================================
@@ -322,9 +331,5 @@ CMP_ERROR WINAPI GPU_OpenGL::Decompress(
     // free the texture
     FreeTexture(texture);
 
-  
-
     return CMP_OK; // msg.wParam;
 }
-
-

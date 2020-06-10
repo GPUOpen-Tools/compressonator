@@ -482,11 +482,10 @@ int GLTFCommon::Save(std::string path, std::string filename, CMIPS* cmips)
     {
         std::string name       = buffers[i]["uri"].get<std::string>();
         int         byteLength = buffers[i]["byteLength"].get<int>();
-        if (name.find(".bin") != string::npos)
+        if (name.find(".bin") != std::string::npos)
         {
             std::size_t dotPos = filename.rfind('.');
-//        std:
-            string dstBinFile           = filename.substr(0, dotPos) + ".bin";
+            std::string dstBinFile = filename.substr(0, dotPos) + ".bin";
             j3temp["buffers"][i]["uri"] = dstBinFile;
             std::ofstream ff(path + dstBinFile, std::ios::out | std::ios::binary);
 
@@ -541,7 +540,7 @@ int GLTFCommon::Load(std::string path, std::string filename, CMIPS* cmips)
     for (unsigned int i = 0; i < buffers.size(); i++)
     {
         std::string name = buffers[i]["uri"].get<std::string>();
-        if (name.find(".bin") != string::npos)
+        if (name.find(".bin") != std::string::npos)
         {
             //if (!fileExists(name.c_str()))
             //{

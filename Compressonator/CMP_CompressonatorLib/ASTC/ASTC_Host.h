@@ -38,7 +38,6 @@
 #include <algorithm>    // std::max
 #include <cstdint>
 
-using namespace std;
 
 namespace ASTC_Encoder
 {

@@ -78,8 +78,8 @@ INT32 ModelTexture::LoadImageMipSetFromFile(const WCHAR *pFilename, void *plugin
     {
         // get the ext and load image with amd compressonator image plugin
         char *fileExt;
-        wstring ws(pFilename);
-        string sFilename(ws.begin(), ws.end());
+        std::wstring ws(pFilename);
+        std::string sFilename(ws.begin(), ws.end());
         size_t dot = sFilename.find_last_of('.');
         std::string temp;
 

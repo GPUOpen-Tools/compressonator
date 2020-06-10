@@ -20,17 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-// Windows Header Files:
-#ifdef _WIN32
-#include <windows.h>
-// TODO: reference additional headers your program requires here
-#include <tchar.h>
-#endif
-
-#include <assert.h>
 
 #include "glTF_20.h"
+
+#include <assert.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,8 +42,6 @@ SET_PLUGIN_NAME("GLTF")
 void *make_Plugin_glTF_Loader() { return new Plugin_glTF_Loader; }
 #endif
 
-using namespace std;
-#include "stdafx.h"
 #include "Misc.h"
 
 #ifdef USE_TINYGLTF2

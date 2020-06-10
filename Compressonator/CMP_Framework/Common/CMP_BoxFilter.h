@@ -25,6 +25,8 @@
 #ifndef _CMP_BOX_FILTER_H
 #define _CMP_BOX_FILTER_H
 
+#include <Compressonator.h>
+
 void CMP_GenerateMipLevel(CMP_MipLevel* pCurMipLevel, CMP_MipLevel* pPrevMipLevelOne, CMP_MipLevel* pPrevMipLevelTwo = NULL);
 template <typename T> void CMP_GenerateMipLevelF(CMP_MipLevel* pCurMipLevel, CMP_MipLevel* pPrevMipLevelOne, CMP_MipLevel* pPrevMipLevelTwo = NULL, T* curMipData = NULL, T* prevMip1Data = NULL, T* prevMip2Data = NULL);
 

@@ -28,6 +28,9 @@
 
 #ifndef ASPM_GPU
 
+#include <cmath>
+#include <algorithm>
+
 //============================================================================
 // Core API which have have GPU equivalents, defined here for HPC_CPU usage
 //============================================================================

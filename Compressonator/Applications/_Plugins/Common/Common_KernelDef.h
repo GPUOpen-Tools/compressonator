@@ -36,7 +36,6 @@
 #include <math.h> 
 #include <algorithm>    // std::max
 
-using namespace std;
 // defined when running code on cpu 
 #define __kernel 
 #define __global

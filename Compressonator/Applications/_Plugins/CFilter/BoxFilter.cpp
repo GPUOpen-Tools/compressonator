@@ -22,23 +22,24 @@
 // THE SOFTWARE.
 //
 
+#include "BoxFilter.h"
+
 // Windows Header Files:
 #ifdef _WIN32
 #include <windows.h>
 #endif
 
-#include <stdio.h>
-#include "BoxFilter.h"
+#include <TC_PluginAPI.h>
+#include <TC_PluginInternal.h>
+#include <Compressonator.h>
+#include <Texture.h>
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "TC_PluginAPI.h"
-#include "TC_PluginInternal.h"
-#include "Compressonator.h"
-#include "Texture.h"
 #ifndef _WIN32
 #include "TextureIO.h"
 #endif
+#include <algorithm>
 CMIPS *CMips;
 
 #ifdef BUILD_AS_PLUGIN_DLL
@@ -74,8 +75,8 @@ int Plugin_BoxFilter::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
 #ifdef _WIN32
     pPluginVersion->guid                    = g_GUID;
 #endif
-    pPluginVersion->dwAPIVersionMajor        = TC_API_VERSION_MAJOR;
-    pPluginVersion->dwAPIVersionMinor        = TC_API_VERSION_MINOR;
+    pPluginVersion->dwAPIVersionMajor       = TC_API_VERSION_MAJOR;
+    pPluginVersion->dwAPIVersionMinor       = TC_API_VERSION_MINOR;
     pPluginVersion->dwPluginVersionMajor    = TC_PLUGIN_VERSION_MAJOR;
     pPluginVersion->dwPluginVersionMinor    = TC_PLUGIN_VERSION_MINOR;
     return 0;
@@ -94,10 +95,10 @@ int Plugin_BoxFilter::TC_GenerateMIPLevels(MipSet *pMipSet, int nMinSize)
 
     while(nWidth > nMinSize && nHeight > nMinSize)
     {
-        nWidth = max(nWidth >> 1, 1);
-        nHeight = max(nHeight >> 1, 1);
+        nWidth = (std::max)(nWidth >> 1, 1);
+        nHeight = (std::max)(nHeight >> 1, 1);
         int nCurMipLevel = pMipSet->m_nMipLevels;
-        int maxFacesOrSlices = max((pMipSet->m_TextureType == TT_VolumeTexture) ? (CMP_MaxFacesOrSlices(pMipSet, nCurMipLevel-1)>>1) : CMP_MaxFacesOrSlices(pMipSet, nCurMipLevel-1), 1);
+        int maxFacesOrSlices = (std::max)((pMipSet->m_TextureType == TT_VolumeTexture) ? (CMP_MaxFacesOrSlices(pMipSet, nCurMipLevel-1)>>1) : CMP_MaxFacesOrSlices(pMipSet, nCurMipLevel-1), 1);
         for(int nFaceOrSlice=0; nFaceOrSlice<maxFacesOrSlices; nFaceOrSlice++)
         {
             MipLevel* pThisMipLevel = CMips->GetMipLevel(pMipSet, nCurMipLevel, nFaceOrSlice);

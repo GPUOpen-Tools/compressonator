@@ -26,7 +26,8 @@
 
 #include "acCustomDockWidget.h"
 
-acCustomDockWidget::acCustomDockWidget(const QString title, QWidget *parent) :QDockWidget(title, parent)
+acCustomDockWidget::acCustomDockWidget(const QString title, QWidget *parent)
+    : QDockWidget(title, parent)
 {
     custTitleBar = new acDockWidgetTitlebar(this);
 

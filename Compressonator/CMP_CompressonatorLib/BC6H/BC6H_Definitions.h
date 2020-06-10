@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -31,7 +31,6 @@
 #include <cstdlib>
 #include <cstring>
 
-typedef std::uint8_t byte;
 typedef std::uint8_t BYTE;
 typedef std::uint32_t DWORD;
 
@@ -66,7 +65,7 @@ typedef std::uint32_t DWORD;
 #define HIGH_INDEX_BIT                  4
 #define ONE_REGION_INDEX_OFFSET         65        // bit location to start saving color index values for single region shape
 #define TWO_REGION_INDEX_OFFSET         82        // bit location to start saving color index values for two region shapes
-#define MIN_MODE_FOR_ONE_REGION         11        // Two regions shapes use modes 1..9 and single use 11..14 
+#define MIN_MODE_FOR_ONE_REGION         11        // Two regions shapes use modes 1..9 and single use 11..14
 #define R_0(ep)                         (ep)[0][0][i]
 #define R_1(ep)                         (ep)[0][1][i]
 #define R_2(ep)                         (ep)[1][0][i]
@@ -165,15 +164,15 @@ static ModePartitions ModePartition[MAX_BC6H_MODES +1] =
     10,   5,5,5,        1,    2,    3,    0x00,  31,    // Mode = 1
     7,    6,6,6,        1,    2,    3,    0x01,  248,   // Mode = 2
     11,   5,4,4,        1,    5,    3,    0x02,  15,    // Mode = 3
-    11,   4,5,4,        1,    5,    3,    0x06,  15,    // Mode = 4 
+    11,   4,5,4,        1,    5,    3,    0x06,  15,    // Mode = 4
     11,   4,4,5,        1,    5,    3,    0x0a,  15,    // Mode = 5
     9,    5,5,5,        1,    5,    3,    0x0e,  62,    // Mode = 6
     8,    6,5,5,        1,    5,    3,    0x12,  124,   // Mode = 7
     8,    5,6,5,        1,    5,    3,    0x16,  124,   // Mode = 8
     8,    5,5,6,        1,    5,    3,    0x1a,  124,   // Mode = 9
     6,    6,6,6,        0,    5,    3,    0x1e,  496,   // Mode = 10
-                            
-    // One region Partition    
+
+    // One region Partition
     10,   10,10,10,     0,    5,    4,    0x03,  31,    // Mode = 11
     11,   9,9,9,        1,    5,    4,    0x07,  15,    // Mode = 12
     12,   8,8,8,        1,    5,    4,    0x0b,  7,     // Mode = 13
@@ -191,27 +190,27 @@ static ModePartitions ModePartition[MAX_BC6H_MODES +1] =
 //         2, 8, 8, 15,
 //         2, 8, 2,  2,
 //         8, 8, 2,  2,
-// 
+//
 // The Region2FixUps are for our index[subset = 2][16][3] locations
 // indexed by shape region 2
 static const int g_Region2FixUp[32] =
-{                         
-7 , 3 , 11, 7,            
-3 , 11, 9 , 5,            
-2 , 12, 7 , 3,            
-11, 7 , 11, 3,            
-7 , 1 , 0 , 1,            
-0 , 1 , 0 , 7,            
-0 , 1 , 1 , 0,            
-4 , 4 , 1 , 0,            
+{
+7 , 3 , 11, 7,
+3 , 11, 9 , 5,
+2 , 12, 7 , 3,
+11, 7 , 11, 3,
+7 , 1 , 0 , 1,
+0 , 1 , 0 , 7,
+0 , 1 , 1 , 0,
+4 , 4 , 1 , 0,
 };
 
-// Indexed by all shape regions 
+// Indexed by all shape regions
 // Partition Set Fixups for region 1 note region 0 is always at 0
 // that means normally we use 3 bits to define an index value
 // if its at the fix up location then its one bit less
-static const int g_indexfixups[32] = 
-{   
+static const int g_indexfixups[32] =
+{
 15,15,15,15,
 15,15,15,15,
 15,15,15,15,
@@ -237,8 +236,8 @@ Mode    Partition Indices    Partition    Color Endpoints                       
 5        46 bits                5 bits        72 bits (11.444, 11.444, 11.555)   5 bits (01010)        10
 6        46 bits                5 bits        72 bits (9555, 9555, 9555)         5 bits (01110)        14
 7        46 bits                5 bits        72 bits (8666, 8555, 8555)         5 bits (10010)        18
-8        46 bits                5 bits        72 bits (8555, 8666, 8555)         5 bits (10110)        22    
-9        46 bits                5 bits        72 bits (8555, 8555, 8666)         5 bits (11010)        26    
+8        46 bits                5 bits        72 bits (8555, 8666, 8555)         5 bits (10110)        22
+9        46 bits                5 bits        72 bits (8555, 8555, 8666)         5 bits (11010)        26
 10       46 bits                5 bits        72 bits (6666, 6666, 6666)         5 bits (11110)        30
 11       63 bits                0 bits        60 bits (10.10, 10.10, 10.10)      5 bits (00011)        3
 12       63 bits                0 bits        60 bits (11.9, 11.9, 11.9)         5 bits (00111)        7
@@ -260,7 +259,7 @@ struct AMD_BC6H_Format
     int rw;                            // endpt[0].A[0]
     int rx;                            // endpt[0].B[0]
     int ry;                            // endpt[1].A[0]
-    int rz;                            // endpt[1].B[0] 
+    int rz;                            // endpt[1].B[0]
     int gw;                            // endpt[0].A[1]
     int gx;                            // endpt[0].B[1]
     int gy;                            // endpt[1].A[1]
@@ -269,11 +268,11 @@ struct AMD_BC6H_Format
     int bx;                            // endpt[0].B[2]
     int by;                            // endpt[1].A[2]
     int bz;                            // endpt[1].B[2]
-    
+
     union
     {
-        byte indices[4][4];            // Indices data after header block
-        byte indices16[16];
+        std::uint8_t indices[4][4];            // Indices data after header block
+        std::uint8_t indices16[16];
     };
 
     float         din[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];   // Original data input

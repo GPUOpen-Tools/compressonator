@@ -7,10 +7,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -142,13 +142,13 @@ bool GetDLLFileExports(LPCSTR szFileName, vector<string> & names)
 
 
 PluginManager::PluginManager()
-{ 
-    m_pluginlistset = false; 
+{
+    m_pluginlistset = false;
 }
 
-PluginManager::~PluginManager() 
-{ 
-    clearPluginList(); 
+PluginManager::~PluginManager()
+{
+    clearPluginList();
 }
 
 
@@ -179,7 +179,7 @@ void PluginManager::registerStaticPlugin(char *pluginType, char *pluginName, cha
 
 void PluginManager::getPluginDetails(PluginDetails *curPlugin)
 {
-#ifdef _WIN32 
+#ifdef _WIN32
     HINSTANCE dllHandle;
 
     dllHandle = LoadLibraryA(curPlugin->getFileName());
@@ -202,7 +202,7 @@ void PluginManager::getPluginDetails(PluginDetails *curPlugin)
         textFunc = reinterpret_cast<PLUGIN_TEXTFUNC>(GetProcAddress(dllHandle, "getPluginCategory"));
         if (textFunc)
             curPlugin->setCategory(textFunc());
-        
+
         curPlugin->isRegistered = true;
 
         FreeLibrary(dllHandle);
@@ -216,7 +216,7 @@ void PluginManager::clearPluginList()
     {
         delete pluginRegister.at(i);
         pluginRegister.at(i) = NULL;
-    }    
+    }
     pluginRegister.clear();
 }
 
@@ -233,7 +233,7 @@ void PluginManager::getPluginList(char * SubFolderName, bool append)
     else
         m_pluginlistset = true;
 
-#ifdef _WIN32  
+#ifdef _WIN32
     WIN32_FIND_DATAA fd;
     char fname[MAX_PATH];
 
@@ -260,7 +260,7 @@ void PluginManager::getPluginList(char * SubFolderName, bool append)
     {
         snprintf(dirPath,260,"%s",pPath + '\0');
     }
-    else 
+    else
     {
 
         bool pathFound = false;
@@ -337,18 +337,18 @@ void PluginManager::getPluginList(char * SubFolderName, bool append)
     len=strlen(fname);
     if(fname[len-1]=='/' || fname[len-1]=='\\')    strcat_s(fname,"*.dll");
     else strcat_s(fname,"\\*.dll");
-    HANDLE hFind = FindFirstFileA(fname, &fd); 
+    HANDLE hFind = FindFirstFileA(fname, &fd);
 
-    if (hFind == INVALID_HANDLE_VALUE) 
+    if (hFind == INVALID_HANDLE_VALUE)
     {
         FindClose(hFind);
         return;
     }
 
-    do 
-    { 
+    do
+    {
         HINSTANCE dllHandle = NULL;
-        vector<string> names;
+        std::vector<std::string> names;
 
         try
         {
@@ -367,7 +367,7 @@ void PluginManager::getPluginList(char * SubFolderName, bool append)
                     bool bgetPluginType= false;
                     bool bgetPluginName= false;
 
-                    for (vector<string>::const_iterator str = names.begin(); str != names.end(); ++str) 
+                    for (vector<string>::const_iterator str = names.begin(); str != names.end(); ++str)
                     {
                         if (*str == "makePlugin") bmakePlugin = true;
                         else
@@ -387,13 +387,13 @@ void PluginManager::getPluginList(char * SubFolderName, bool append)
                 }
 #else
                 dllHandle = LoadLibraryA(fname);
-                if (dllHandle != NULL) 
+                if (dllHandle != NULL)
                 {
                     // Is this DLL a plugin for us if so keep its type and name details
                     PLUGIN_FACTORYFUNC funcHandle;
                     funcHandle = reinterpret_cast<PLUGIN_FACTORYFUNC>(GetProcAddress(dllHandle, "makePlugin"));
                     if(funcHandle !=NULL)
-                    {                            
+                    {
                         PluginDetails * curPlugin = new PluginDetails();
                         //printf("new: %s\n", fname);
                         curPlugin->setFileName(fname);
@@ -426,13 +426,13 @@ void PluginManager::getPluginList(char * SubFolderName, bool append)
         }
         catch(...)
         {
-            if (dllHandle != NULL) 
+            if (dllHandle != NULL)
                 FreeLibrary(dllHandle);
         }
     } while (FindNextFileA(hFind, &fd));
 
     FindClose(hFind);
-#endif 
+#endif
 }
 
 void * PluginManager::makeNewPluginInstance(int index)
@@ -445,7 +445,7 @@ void * PluginManager::makeNewPluginInstance(int index)
 
 int PluginManager::getNumPlugins()
 {
-    return int(pluginRegister.size());
+    return static_cast<int>(pluginRegister.size());
 }
 
 char * PluginManager::getPluginName(int index)
@@ -483,13 +483,14 @@ void *PluginManager::GetPlugin(char *type, const char *name)
         getPluginList(DEFAULT_PLUGINLIST_DIR);
     }
 
-    int numPlugins = getNumPlugins();
-    for (int i=0; i< numPlugins; i++)
+    unsigned int numPlugins = getNumPlugins();
+    for (unsigned int i=0; i< numPlugins; i++)
     {
-        if (!pluginRegister.at(i)->isRegistered)
-            getPluginDetails(pluginRegister.at(i));
+        PluginDetails *pPlugin = pluginRegister.at(i);
+        if (!pPlugin->isRegistered)
+            getPluginDetails(pPlugin);
 
-        if ( (strcmp(getPluginType(i),type) == 0) && 
+        if ( (strcmp(getPluginType(i),type) == 0) &&
              (strcmp(getPluginName(i),name)   == 0))
         {
                 return ( (void *)makeNewPluginInstance(i) );
@@ -545,8 +546,8 @@ void *PluginManager::GetPlugin(char *uuid)
 
 bool PluginManager::PluginSupported(char *type, char *name)
 {
-    if (!type) return NULL;
-    if (!name) return NULL;
+    if (!type) return false;
+    if (!name) return false;
     if (!m_pluginlistset)
     {
         getPluginList(DEFAULT_PLUGINLIST_DIR);
@@ -635,7 +636,7 @@ void * PluginDetails::makeNewInstance()
 #ifdef _WIN32
         if(!dllHandle) dllHandle = LoadLibraryA(filename);
 
-        if(dllHandle != NULL) 
+        if(dllHandle != NULL)
         {
             funcHandle = reinterpret_cast<PLUGIN_FACTORYFUNC>(GetProcAddress(dllHandle, "makePlugin"));
             if(funcHandle !=NULL)

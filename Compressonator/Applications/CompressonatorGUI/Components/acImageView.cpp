@@ -82,7 +82,7 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, CMipImages
     if (m_MipImages)
     {
         for (int ii=0; ii<CMP_MIPSET_MAX_DEPTHS; ii++)
-        if (m_MipImages->QImage_list[ii].count() > 0) 
+        if (m_MipImages->QImage_list[ii].size() > 0) 
         {
             // The scene is at 0,0 and set to the size of this display widget
             m_graphicsScene = new acCustomGraphicsScene(this);
@@ -179,7 +179,7 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, CMipImages
                     m_errMessage->setWordWrap(true);
                     m_errMessage->setFont(font);
                     m_errMessage->setFixedSize(size.width(), size.height());
-                    m_errMessage->setText(m_MipImages->errMsg);
+                    m_errMessage->setText(QString::fromStdString(m_MipImages->errMsg));
                     m_errMessage->setAlignment(Qt::AlignCenter);
                     m_graphicsScene->addWidget(m_errMessage);
                 }
@@ -1422,7 +1422,7 @@ void acImageView::onImageMipLevelChanged(int MipLevel)
     m_currentMiplevel = MipLevel;
     if (m_MipImages)
     {
-        if (m_MipImages->QImage_list[m_DepthIndex].count() > MipLevel)
+        if (m_MipImages->QImage_list[m_DepthIndex].size() > MipLevel)
         {
             m_ImageIndex = MipLevel;
             QImage *image = m_MipImages->QImage_list[m_DepthIndex][m_ImageIndex];
@@ -1433,7 +1433,7 @@ void acImageView::onImageMipLevelChanged(int MipLevel)
 
             if (m_OriginalMipImages)
             {
-                if (m_OriginalMipImages->QImage_list[m_DepthIndex].count() > MipLevel)
+                if (m_OriginalMipImages->QImage_list[m_DepthIndex].size() > MipLevel)
                 {
                     QImage *image_original = m_OriginalMipImages->QImage_list[m_DepthIndex][m_ImageIndex];
                     if (image_original)

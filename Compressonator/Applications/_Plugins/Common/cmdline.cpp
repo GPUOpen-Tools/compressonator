@@ -65,7 +65,7 @@ using namespace tinygltf2;
 #endif
 
 #ifdef USE_CMP_TRANSCODE
-#include "CMP_Transcoder\transcoders.h"
+#include "CMP_Transcoder/transcoders.h"
 #endif
 
 
@@ -79,6 +79,7 @@ using namespace tinygltf2;
 #include <gltf/stb_image.h>
 #include <stdarg.h>
 #include <time.h>
+#include <wchar.h>
 #include <unistd.h> /* For open(), creat() */
 #endif
 
@@ -86,6 +87,8 @@ using namespace tinygltf2;
 #include "windows.h"
 #include "psapi.h"
 #endif
+
+using namespace std;
 
 CCmdLineParamaters g_CmdPrams;
 

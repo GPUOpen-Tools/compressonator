@@ -200,9 +200,9 @@ void imageblock_initialize_deriv_from_work_and_orig(imageblock * pb, int pixelco
         // compute derivatives for RGB first
         if (pb->rgb_lns[i])
         {
-            float r = max(fptr[0], 6e-5f);
-            float g = max(fptr[1], 6e-5f);
-            float b = max(fptr[2], 6e-5f);
+            float r = (std::max)(fptr[0], 6e-5f);
+            float g = (std::max)(fptr[1], 6e-5f);
+            float b = (std::max)(fptr[2], 6e-5f);
 
             float rderiv = (float_to_lns(r * 1.05f) - float_to_lns(r)) / (r * 0.05f);
             float gderiv = (float_to_lns(g * 1.05f) - float_to_lns(g)) / (g * 0.05f);
@@ -240,7 +240,7 @@ void imageblock_initialize_deriv_from_work_and_orig(imageblock * pb, int pixelco
         // then compute derivatives for Alpha
         if (pb->alpha_lns[i])
         {
-            float a = max(fptr[3], 6e-5f);
+            float a = (std::max)(fptr[3], 6e-5f);
             float aderiv = (float_to_lns(a * 1.05f) - float_to_lns(a)) / (a * 0.05f);
             // the derivative may not actually take values smaller than 1/32 or larger than 2^25;
             // if it does, we clamp it.
@@ -410,7 +410,7 @@ void fetch_imageblock(
      //         max_alpha = a;
      // }
      // 
-     // float max_rgb = max(max_red, max(max_green, max_blue));
+     // float max_rgb = (std::max)(max_red, (std::max)(max_green, max_blue));
      // printf("max rgb = %2.2f",max_rgb);
      //---------------------------------------------------------------------------
      // use LNS if:
@@ -702,10 +702,10 @@ float prepare_error_weight_block(
                         avg.xyz = favg3 * mixing + avg.xyz * (1.0f - mixing);
                         variance.xyz = favg3 * mixing + variance.xyz * (1.0f - mixing);
 
-                        float4 stdev = {(float)sqrt(max(variance.x, 0.0f)),
-                                        (float)sqrt(max(variance.y, 0.0f)),
-                                        (float)sqrt(max(variance.z, 0.0f)),
-                                        (float)sqrt(max(variance.w, 0.0f))};
+                        float4 stdev = {(float)sqrt((std::max)(variance.x, 0.0f)),
+                                        (float)sqrt((std::max)(variance.y, 0.0f)),
+                                        (float)sqrt((std::max)(variance.z, 0.0f)),
+                                        (float)sqrt((std::max)(variance.w, 0.0f))};
 
                         avg.xyz = avg.xyz * ASTCEncode->m_ewp.rgb_mean_weight;
                         avg.w = avg.w * ASTCEncode->m_ewp.alpha_mean_weight;
@@ -6335,14 +6335,14 @@ int pack_color_endpoints(float4 color0, float4 color1, float4 rgbs_color, float4
 //        printf("color0 %3.3f %3.3f %3.3f  color1 %3.3f %3.3f %3.3f\n", color0.x, color0.y, color0.z, color1.x, color1.y, color1.z);
 
     // we do not support negative colors.
-    color0.x = max(color0.x, 0.0f);
-    color0.y = max(color0.y, 0.0f);
-    color0.z = max(color0.z, 0.0f);
-    color0.w = max(color0.w, 0.0f);
-    color1.x = max(color1.x, 0.0f);
-    color1.y = max(color1.y, 0.0f);
-    color1.z = max(color1.z, 0.0f);
-    color1.w = max(color1.w, 0.0f);
+    color0.x = (std::max)(color0.x, 0.0f);
+    color0.y = (std::max)(color0.y, 0.0f);
+    color0.z = (std::max)(color0.z, 0.0f);
+    color0.w = (std::max)(color0.w, 0.0f);
+    color1.x = (std::max)(color1.x, 0.0f);
+    color1.y = (std::max)(color1.y, 0.0f);
+    color1.z = (std::max)(color1.z, 0.0f);
+    color1.w = (std::max)(color1.w, 0.0f);
 
 
     int retval;
@@ -7935,7 +7935,7 @@ void compress_symbolic_block_fixed_partition_1_plane(
                min_ep.w = ep.w;
      }
  
-    float min_wt_cutoff = (float)min(min(min_ep.x, min_ep.y), min(min_ep.z, min_ep.w));
+    float min_wt_cutoff = (float)(std::min)((std::min)(min_ep.x, min_ep.y), (std::min)(min_ep.z, min_ep.w));
  
     // for each mode, use the angular method to compute a shift.
     float weight_low_value[MAX_WEIGHT_MODES];
@@ -9924,10 +9924,10 @@ void find_best_partitionings(int partition_search_limit, int partition_count,
   
               for (j = 0; j < partition_count; j++)
               {
-                  inverse_color_scalefactors[j].x = 1.0f / max(color_scalefactors[j].x, FLOAT_n7);
-                  inverse_color_scalefactors[j].y = 1.0f / max(color_scalefactors[j].y, FLOAT_n7);
-                  inverse_color_scalefactors[j].z = 1.0f / max(color_scalefactors[j].z, FLOAT_n7);
-                  inverse_color_scalefactors[j].w = 1.0f / max(color_scalefactors[j].w, FLOAT_n7);
+                  inverse_color_scalefactors[j].x = 1.0f / (std::max)(color_scalefactors[j].x, FLOAT_n7);
+                  inverse_color_scalefactors[j].y = 1.0f / (std::max)(color_scalefactors[j].y, FLOAT_n7);
+                  inverse_color_scalefactors[j].z = 1.0f / (std::max)(color_scalefactors[j].z, FLOAT_n7);
+                  inverse_color_scalefactors[j].w = 1.0f / (std::max)(color_scalefactors[j].w, FLOAT_n7);
               }
   
               float4 averages[4];
@@ -10203,10 +10203,10 @@ void find_best_partitionings(int partition_search_limit, int partition_count,
   
               for (j = 0; j < partition_count; j++)
               {
-                  inverse_color_scalefactors[j].x = 1.0f / max(color_scalefactors[j].x, FLOAT_n7);
-                  inverse_color_scalefactors[j].y = 1.0f / max(color_scalefactors[j].y, FLOAT_n7);
-                  inverse_color_scalefactors[j].z = 1.0f / max(color_scalefactors[j].z, FLOAT_n7);
-                  inverse_color_scalefactors[j].w = 1.0f / max(color_scalefactors[j].w, FLOAT_n7);
+                  inverse_color_scalefactors[j].x = 1.0f / (std::max)(color_scalefactors[j].x, FLOAT_n7);
+                  inverse_color_scalefactors[j].y = 1.0f / (std::max)(color_scalefactors[j].y, FLOAT_n7);
+                  inverse_color_scalefactors[j].z = 1.0f / (std::max)(color_scalefactors[j].z, FLOAT_n7);
+                  inverse_color_scalefactors[j].w = 1.0f / (std::max)(color_scalefactors[j].w, FLOAT_n7);
               }
   
               float3 averages[4];
@@ -10764,7 +10764,7 @@ float compress_symbolic_block(
         }
 
 
-        if (partition_count == 2 && !is_normal_map && min(best_errorvals_in_modes[5], best_errorvals_in_modes[6]) > (best_errorvals_in_modes[0] * ASTCEncode->m_ewp.partition_1_to_2_limit))
+        if (partition_count == 2 && !is_normal_map && (std::min)(best_errorvals_in_modes[5], best_errorvals_in_modes[6]) > (best_errorvals_in_modes[0] * ASTCEncode->m_ewp.partition_1_to_2_limit))
         {
             // mean squared error per color component.
             return (error_of_best_block / ASTCEncode->m_texels_per_block);

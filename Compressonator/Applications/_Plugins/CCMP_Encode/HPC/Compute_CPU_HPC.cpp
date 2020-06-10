@@ -26,6 +26,11 @@
 #include "PluginInterface.h"
 #include "CCPU_HPC.h"
 
+#include <chrono>
+#include <thread>
+
+using namespace std::chrono;
+
 #ifndef _WIN32
 #define _stdcall
 #endif
@@ -52,7 +57,6 @@ unsigned int    _stdcall ProcEncode(void* param)
            tp->run = false;
        }
 
-        using namespace chrono;
         std::this_thread::sleep_for(0ms);
    }
 
@@ -229,7 +233,6 @@ void CCPU_HPC::FinishThreadEncoding()
     // Wait for all the live threads to finish any current work
     for (CMP_DWORD i = 0; i < m_NumEncodingThreads; i++)
     {
-       using namespace chrono;
        // If a thread is in the running state then we need to wait for it to finish
        // its work from the producer
        while (m_EncodeParameterStorage[i].run == true)

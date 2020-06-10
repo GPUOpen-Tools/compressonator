@@ -9,10 +9,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -41,6 +41,7 @@
 #include "debug.h"
 
 #include <chrono>
+#include <cstring>
 
 #ifdef ASTC_COMPDEBUGGER
 #include "CompClient.h"
@@ -368,7 +369,7 @@ unsigned int ASTCThreadProcEncode(void* param)
             tp->run = FALSE;
         }
 
-        using namespace chrono;
+        using namespace std::chrono_literals;
 
         std::this_thread::sleep_for( 0ms );
     }
@@ -584,7 +585,7 @@ CodecError CCodec_ASTC::FinishASTCEncoding(void)
             // its work from the producer
             while (g_EncodeParameterStorage[i].run == TRUE)
             {
-                using namespace chrono;
+                using namespace std::chrono;
 
                 std::this_thread::sleep_for( 1ms );
             }
@@ -645,7 +646,7 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
 
     DbgTrace(("OUT: BufferType %d ChannelCount %d ChannelDepth %d", bufferOut.GetBufferType(), bufferOut.GetChannelCount(), bufferOut.GetChannelDepth()));
     DbgTrace(("   : Height %d Width %d Pitch %d isFloat %d", bufferOut.GetHeight(), bufferOut.GetWidth(), bufferOut.GetWidth(), bufferOut.IsFloat()));
-#endif;
+#endif
 
 
     int bitness = 0; //todo: replace astc_codec_image with bufferIn and rewrite fetch_imageblock()

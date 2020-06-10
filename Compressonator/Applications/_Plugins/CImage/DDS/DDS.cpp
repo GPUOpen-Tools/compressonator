@@ -9,10 +9,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -50,24 +50,24 @@ DECLARE_PLUGIN(Plugin_DDS)
 SET_PLUGIN_TYPE("IMAGE")
 SET_PLUGIN_NAME("DDS")
 #else
-void *make_Plugin_DDS() { return new Plugin_DDS; } 
+void *make_Plugin_DDS() { return new Plugin_DDS; }
 #endif
 
 Plugin_DDS::Plugin_DDS()
-{ 
+{
 #ifdef _WIN32
     HRESULT hr;
     // Initialize COM (needed for WIC)
     if( FAILED( hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED) ) )
-    {    
+    {
         if (DDS_CMips)
             DDS_CMips->PrintError("Failed to initialize COM (%08X)\n", hr);
-    } 
+    }
 #endif
 }
 
 Plugin_DDS::~Plugin_DDS()
-{ 
+{
 }
 
 int Plugin_DDS::TC_PluginSetSharedIO(void *Shared)
@@ -81,7 +81,7 @@ int Plugin_DDS::TC_PluginSetSharedIO(void *Shared)
 }
 
 int Plugin_DDS::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
-{ 
+{
 #ifdef _WIN32
     pPluginVersion->guid                    = g_GUID;
 #endif

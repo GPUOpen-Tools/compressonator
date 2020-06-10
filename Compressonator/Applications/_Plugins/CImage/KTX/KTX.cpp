@@ -26,23 +26,21 @@
 #include <windows.h>
 #endif
 
-
-#include <stdio.h>
 #include "cKTX.h"
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "TC_PluginAPI.h"
 #include "TC_PluginInternal.h"
 #include "Common.h"
 
 #include "softfloat.h"
 
+#include <algorithm>
+#include <stdio.h>
+#include <stdlib.h>
+
 #pragma comment(lib, "opengl32.lib")        // Open GL
 #pragma comment(lib, "Glu32.lib")           // Glu 
 #pragma comment(lib, "glew32.lib")          // glew 1.13.0
-
-using namespace std;
 
 CMIPS *KTX_CMips;
 
@@ -930,8 +928,8 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
             } 
         }
         // next miplevel width and height
-        w = max(0, w >> 1);
-        h = max(0, h >> 1);
+        w = ((std::max))(0, (w >> 1));
+        h = ((std::max))(0, (h >> 1));
     }
 
     return 0;

@@ -85,10 +85,10 @@ private:
     C_PSNR_MSE_Analysis        *m_psnrAnalysis;
  
     const QString              m_title;
-    QString                       m_sourceFile;
-    QString                       m_destFile;
-    string                       m_analyzed;
-    CMipImages                  *m_diffMips;
+    QString                    m_sourceFile;
+    QString                    m_destFile;
+    std::string                m_analyzed;
+    CMipImages                *m_diffMips;
     QMainWindow               *m_parent;
     QToolBar                  *m_dockToolBar;
     QAction                   *hlayoutAct;

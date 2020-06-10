@@ -54,6 +54,8 @@
 #include <comdef.h>
 #include <d3dcommon.h>
 
+using namespace std;
+
 #pragma comment( lib, "dxguid.lib") 
 
 #define _CRT_SECURE_NO_WARNINGS

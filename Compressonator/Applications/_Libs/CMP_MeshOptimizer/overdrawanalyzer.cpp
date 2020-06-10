@@ -5,7 +5,8 @@
 #include <float.h>
 #include <string.h>
 #include <vector>
-using namespace std;
+
+
 // This work is based on:
 // Nicolas Capens. Advanced Rasterization. 2004
 namespace meshopt
@@ -24,8 +25,8 @@ struct uint2
 
 struct OverdrawBuffer
 {
-	vector<vector<float2>> z;
-	vector<vector<uint2>> overdraw;
+	std::vector<std::vector<float2>> z;
+	std::vector<std::vector<uint2>> overdraw;
 };
 
 template <typename T>

@@ -237,7 +237,7 @@ void ac3DMeshAnalysis::onAnalysisChecked()
     }
 }
 
-void ac3DMeshAnalysis::runAnalysisDisplayResult(QString filename, vector<CMP_Mesh> meshData, bool runVCache, bool runOverdraw, bool runVFetch) {
+void ac3DMeshAnalysis::runAnalysisDisplayResult(QString filename, std::vector<CMP_Mesh> meshData, bool runVCache, bool runOverdraw, bool runVFetch) {
    
     QFileInfo filenameinfo(filename); //todo: should check for file exist or not
     m_textBrowser->append("==== <b>Analysis Result for " + (filenameinfo.fileName() + " ====").toHtmlEscaped());

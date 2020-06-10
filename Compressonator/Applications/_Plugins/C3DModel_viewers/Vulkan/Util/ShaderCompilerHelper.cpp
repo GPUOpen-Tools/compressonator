@@ -237,8 +237,10 @@ bool HLSLtoSPV(const VkShaderStageFlagBits shader_type, const char *pshader, con
     shaderStrings[0] = pshader;
     shader.setStrings(shaderStrings, 1);
     shader.setEntryPoint(pEntryPoint);
+#ifdef ENABLE_HSLS
     shader.setHlslIoMapping(true);
-    shader.setEnvTarget(glslang::EshTargetSpv, 400);
+#endif
+    shader.setEnvTarget(glslang::EshTargetSpv, glslang::EShTargetSpv_1_5);
 
     if (!shader.parse(&Resources, 100, false, messages)) {
         OutputDebugStringA(shader.getInfoLog());

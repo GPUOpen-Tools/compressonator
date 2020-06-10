@@ -397,7 +397,7 @@ bool COpenCL::load_file()
         // Try loading the Binary file
         //===========================
         FILE* p_file_bin = NULL;
-        string tmp = m_source_file;
+        std::string tmp = m_source_file;
         fopen_result = fopen_s(&p_file_bin, tmp.append(".cmp").c_str(), "rb");
 
         // Found a .cmp file use it

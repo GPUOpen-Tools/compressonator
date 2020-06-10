@@ -172,7 +172,7 @@ void acCustomGraphicsView::resizeEvent(QResizeEvent *event)
 //=========================================
 static int acCustomGraphicsScene_ID = 0;
 
-acCustomGraphicsScene::acCustomGraphicsScene(QObject *parent = 0) : QGraphicsScene(parent)
+acCustomGraphicsScene::acCustomGraphicsScene(QObject *parent) : QGraphicsScene(parent)
 {
     acCustomGraphicsScene_ID++;
     ID = acCustomGraphicsScene_ID;
