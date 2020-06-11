@@ -23,8 +23,8 @@
 
 #include "cpMainComponents.h"
 
-#include "Common.h"
 #include "Compressonator.h"
+#include "Common.h"
 #include "Version.h"
 
 #include <GPU_Decode.h>

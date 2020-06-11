@@ -4,22 +4,27 @@
 //=============================================================================
 
 #include "ModelLoader_drc.h"
+
 #include <time.h>
+
+using namespace draco;
+
 
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_ModelLoader_drc)
 SET_PLUGIN_TYPE("3DMODEL_LOADER")
 SET_PLUGIN_NAME("DRC")
 #else
-void* make_Plugin_ModelLoader_drc()
-{
-    return new Plugin_ModelLoader_drc;
-}
+void* make_Plugin_ModelLoader_drc() { return new Plugin_ModelLoader_drc; }
 #endif
 
-PluginManager g_pluginManager;
-bool          g_bAbortCompression = false;
-CMIPS*        g_CMIPS             = NULL;
+namespace ML_drc 
+{
+    bool          g_bAbortCompression = false;
+    CMIPS*        g_CMIPS             = nullptr;
+}
+
+using namespace ML_drc;
 
 Plugin_ModelLoader_drc::Plugin_ModelLoader_drc()
 {

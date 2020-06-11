@@ -102,7 +102,7 @@ void PostProcPS::OnCreate(
             macros.push_back(D3D_SHADER_MACRO{ NULL, NULL });
 
             WCHAR wpath[1024];
-            wsprintf(wpath, L"%S%S", path.c_str(), filename.c_str());
+            wsprintfW(wpath, L"%S%S", path.c_str(), filename.c_str());
 
             ID3DBlob *pError;
             D3DCompile(vertexShader, strlen(vertexShader), nullptr, macros.data(), nullptr, "mainVS", "vs_5_0", 0, 0, &pBlobShaderVert, &pError);
@@ -118,7 +118,6 @@ void PostProcPS::OnCreate(
                 MessageBoxA(0, "unable to compile blob shader", "", 0);
                 return;
             }
-
         }
 
         // Create root signature

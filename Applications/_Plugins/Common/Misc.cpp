@@ -19,8 +19,14 @@
 
 #include "Misc.h"
 
+#ifndef _WIN32
+#include <chrono>
+static std::chrono::time_point<std::chrono::steady_clock> misc_start = std::chrono::steady_clock::now();
+#endif
+
 double MillisecondsNow()
 {
+    #ifdef _WIN32
     static LARGE_INTEGER s_frequency;
     static BOOL s_use_qpc = QueryPerformanceFrequency(&s_frequency);
     double milliseconds = 0;
@@ -37,8 +43,13 @@ double MillisecondsNow()
     }
 
     return milliseconds;
+    #else
+    std::chrono::duration<double, std::milli> diff = std::chrono::steady_clock::now() - misc_start;
+    return diff.count()
+    #endif
 }
 
+#ifdef _WIN32
 // align uLocation to the next multiple of uAlign
 SIZE_T Align(SIZE_T uOffset, SIZE_T uAlign)
 {
@@ -50,3 +61,4 @@ SIZE_T Align(SIZE_T uOffset, SIZE_T uAlign)
     return ((uOffset + (uAlign - 1)) & ~(uAlign - 1));
 }
 
+#endif

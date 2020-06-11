@@ -38,9 +38,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#pragma comment(lib, "opengl32.lib")        // Open GL
-#pragma comment(lib, "Glu32.lib")           // Glu 
-#pragma comment(lib, "glew32.lib")          // glew 1.13.0
+#ifdef _WIN32
+    #pragma comment(lib, "opengl32.lib")        // Open GL
+    #pragma comment(lib, "Glu32.lib")           // Glu 
+#endif
+
+#if defined(_WIN32) && !defined(NO_LEGACY_BEHAVIOR)
+    #pragma comment(lib, "glew32.lib")      // glew
+#else
+    #ifdef _WIN32
+        #ifdef _DEBUG
+            #pragma comment(lib, "libglew32d.lib")   // glew
+        #else
+            #pragma comment(lib, "libglew32.lib")   // glew
+        #endif
+    #else
+        #pragma comment(lib, "libglew32.lib")   // glew
+    #endif
+#endif
 
 CMIPS *KTX_CMips;
 

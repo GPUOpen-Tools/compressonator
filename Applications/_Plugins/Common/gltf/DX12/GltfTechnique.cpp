@@ -20,6 +20,8 @@
 #include "GltfTechnique.h"
 
 #include <cstdio>
+#include <vector>
+
 
 void GltfTechnique::Draw(ID3D12GraphicsCommandList* pCommandList)
 {

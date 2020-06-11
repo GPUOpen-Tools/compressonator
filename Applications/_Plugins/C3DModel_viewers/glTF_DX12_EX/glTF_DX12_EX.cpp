@@ -45,9 +45,13 @@ void *make_Plugin_glTF_DX12_EX() { return new Plugin_glTF_DX12_EX; }
 #include "glTF_DX12DeviceEx.h"
 
 
-PluginManager          g_pluginManager;
-bool                   g_bAbortCompression = false;
-CMIPS*                 g_CMIPS = NULL;
+namespace ML_gltf_dx12_ex
+{
+    bool                   g_bAbortCompression = false;
+    CMIPS*                 g_CMIPS = nullptr;
+}
+
+using namespace ML_gltf_dx12_ex;
 
 
 //#define _DEBUGMEM
@@ -151,18 +155,6 @@ int Plugin_glTF_DX12_EX::TC_PluginSetSharedIO(void *Shared)
         return 0;
     }
     return 1;
-}
-
-std::wstring s2ws(const std::string& s)
-{
-    int len;
-    int slength = (int)s.length() + 1;
-    len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
-    wchar_t* buf = new wchar_t[len];
-    MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
-    std::wstring r(buf);
-    delete[] buf;
-    return r;
 }
 
 void Plugin_glTF_DX12_EX::processMSG(void *message)

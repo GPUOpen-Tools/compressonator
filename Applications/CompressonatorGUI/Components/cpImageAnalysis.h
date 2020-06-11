@@ -26,13 +26,13 @@
 #ifndef CPIMAGEANALYSIS_H
 #define CPIMAGEANALYSIS_H
 
-#include <QObject>
 #include "PluginManager.h"
 #include "CAnalysis.h"
-#include "cpImageLoader.h"
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/path.hpp>
-#include <boost/algorithm/string.hpp> 
+
+#include <cpImageLoader.h>
+
+#include <QtCore/qobject.h>
+
 
 class C_AnalysisData : public QObject
 {

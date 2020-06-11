@@ -21,10 +21,11 @@
 // THE SOFTWARE.
 //
 
+#include "ToneMapping.h"
+
 #include "DynamicBufferRingDX12.h"
 #include "StaticBufferPoolDX12.h"
 #include "UploadHeapDX12.h"
-#include "ToneMapping.h"
 
 
 void ToneMapping::OnCreate(ID3D12Device* pDevice, UINT node, DXGI_FORMAT outFormat, ResourceViewHeapsDX12 *pResourceViewHeaps, StaticBufferPoolDX12  *pStaticBufferPool, DynamicBufferRingDX12 *pDynamicBufferRing)

@@ -250,7 +250,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;BUILD_AS_PLUGIN_DLL;WIN32;_DEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;QT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_QT_IMAGELOAD;WIN32_LEAN_AND_MEAN;BUILD_AS_PLUGIN_DLL;WIN32;_DEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;QT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -399,6 +399,7 @@
     <ClCompile Include="..\..\..\Common\imgui\imgui.cpp" />
     <ClCompile Include="..\..\..\Common\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\..\..\Common\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\..\..\Common\MipsToQImage.cpp" />
     <ClCompile Include="..\..\..\Common\Misc.cpp" />
     <ClCompile Include="..\..\..\Common\ModelData.cpp" />
     <ClCompile Include="..\..\..\Common\PluginManager.cpp" />
@@ -450,6 +451,7 @@
     <ClInclude Include="..\..\..\Common\imgui\stb_rect_pack.h" />
     <ClInclude Include="..\..\..\Common\imgui\stb_textedit.h" />
     <ClInclude Include="..\..\..\Common\imgui\stb_truetype.h" />
+    <ClInclude Include="..\..\..\Common\MipsToQImage.h" />
     <ClInclude Include="..\..\..\Common\Misc.h" />
     <ClInclude Include="..\..\..\Common\ModelData.h" />
     <ClInclude Include="..\..\..\Common\PluginInterface.h" />

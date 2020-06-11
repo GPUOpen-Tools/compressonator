@@ -1,17 +1,19 @@
-/************************************************************************************//**
+/************************************************************************************/ /**
 // Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
+#include "feedback.h"
+
 #include "TootlePCH.h"
+
+#include "error.h"
+#include "heap.h"
+
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
-
-#include "heap.h"
-#include "feedback.h"
-#include "error.h"
 
 // Arc array
 typedef struct _ARC
@@ -137,14 +139,12 @@ void Output(int v)
     }
 }
 
-
 // helper macro to to test for out of memory.  This makes the code below a bit more compact
 #define CHECK_OUT_OF_MEMORY(p) \
-    if( !p ) \
-    { \
-        return 1; \
-    } \
-
+    if (!p)                    \
+    {                          \
+        return 1;              \
+    }
 
     int feedback(int nVerts, int nArcs, t_edge* graph, int* order)
     {

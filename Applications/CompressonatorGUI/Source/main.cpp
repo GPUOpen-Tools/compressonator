@@ -7,10 +7,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -21,27 +21,36 @@
 //
 //=====================================================================
 
-#include <QApplication>
-
-#include "Compressonator.h"
-#include "Common.h"
 #include "cpMainComponents.h"
+
+#include "Common.h"
+#include "Compressonator.h"
 #include "PluginManager.h"
 
+#include <QApplication>
+
+#include <filesystem>
 
 #define MSG_HANDLER
 
 // Our Static Plugin Interfaces
-#pragma comment(lib,"ASTC.lib")
-#pragma comment(lib,"EXR.lib")
-#pragma comment(lib,"KTX.lib")
-#pragma comment(lib,"TGA.lib")
-#pragma comment(lib,"IMGAnalysis.lib")
-
-#ifdef USE_CRN
-#pragma comment(lib,"CRN.lib")
+#if defined(_WIN32) && !defined(NO_LEGACY_BEHAVIOR)
+#pragma comment(lib, "ASTC.lib")
+#pragma comment(lib, "EXR.lib")
+#pragma comment(lib, "KTX.lib")
+#pragma comment(lib, "TGA.lib")
+#pragma comment(lib, "IMGAnalysis.lib")
+#else
+#pragma comment(lib, "Plugin_CImage_ASTC.lib")
+#pragma comment(lib, "Plugin_CImage_EXR.lib")
+#pragma comment(lib, "Plugin_CImage_KTX.lib")
+#pragma comment(lib, "Plugin_CImage_TGA.lib")
+#pragma comment(lib, "Plugin_CAnalysis.lib")
 #endif
 
+#ifdef USE_CRN
+#pragma comment(lib, "CRN.lib")
+#endif
 
 extern void *make_Plugin_ASTC();
 extern void *make_Plugin_EXR();
@@ -56,22 +65,50 @@ extern void *make_Plugin_CRN();
 // Setup Static Host Pluging Libs
 extern void CMP_RegisterHostPlugins();
 
+#ifdef OPTION_BUILD_SHARED_LIBS
+    #if !OPTION_BUILD_SHARED_LIBS
+        // Plugins that may optionally be dynamic libraries
+        #if OPTION_CMP_DIRECTX
+            extern void *make_Plugin_glTF_DX12_EX();
+            extern void *make_Plugin_GPUDecode_DirectX();
+            extern void* make_Plugin_Mesh_Tootle();
+        #endif
+
+        #if OPTION_CMP_OPENGL
+            extern void *make_Plugin_glTF_OpenGL();
+            extern void *make_Plugin_GPUDecode_OpenGL();
+        #endif
+
+        #if OPTION_CMP_VULKAN
+            extern void *make_Plugin_GPUDecode_Vulkan();
+            extern void *make_Plugin_3DModelViewer_Vulkan();
+        #endif
+
+        extern void *make_Plugin_Mesh_Compressor();
+        extern void *make_Plugin_Mesh_Optimizer();
+
+        #if PLUGIN_MODEL_LOADERS
+            extern void *make_Plugin_glTF_Loader();
+            extern void *make_Plugin_ModelLoader_drc();
+            extern void *make_Plugin_obj_Loader();
+        #endif
+    #endif
+#endif
+
 #define SEPERATOR_STYLE "QMainWindow::separator { background-color: #d7d6d5; width: 3px; height: 3px; border:none; }"
-#define PERCENTAGE_OF_MONITOR_WIDTH_FOR_SCREEN  0.65
+#define PERCENTAGE_OF_MONITOR_WIDTH_FOR_SCREEN 0.65
 #define PERCENTAGE_OF_MONITOR_HEIGHT_FOR_SCREEN 0.8
 
-extern PluginManager   g_pluginManager;
-bool            g_bAbortCompression;
-CMIPS*          g_CMIPS;                                // Global MIPS functions shared between app and all IMAGE plugins 
-CMIPS*          g_GUI_CMIPS;                            // Global MIPS functions shared by 3DModels
-
+extern PluginManager g_pluginManager;
+bool g_bAbortCompression;
+CMIPS *g_CMIPS;     // Global MIPS functions shared between app and all IMAGE plugins
+CMIPS *g_GUI_CMIPS; // Global MIPS functions shared by 3DModels
 
 void GetSupportedFileFormats(QList<QByteArray> &g_supportedFormats)
 {
-
     // Assemble list of supported Image Formats from our plugin
     int numPlugins = g_pluginManager.getNumPlugins();
-    for (int i = 0; i< numPlugins; i++)
+    for (int i = 0; i < numPlugins; i++)
     {
         if (strcmp(g_pluginManager.getPluginType(i), "IMAGE") == 0)
         {
@@ -81,12 +118,12 @@ void GetSupportedFileFormats(QList<QByteArray> &g_supportedFormats)
 #else
             QByteArray fformat = bArray.toLower();
 #endif
-            if (fformat == "ANALYSIS") continue;
+            if (fformat == "ANALYSIS")
+                continue;
             if (!g_supportedFormats.contains(fformat))
                 g_supportedFormats.append(fformat);
         }
-        else
-        if (strcmp(g_pluginManager.getPluginType(i), "3DMODEL_LOADER") == 0)
+        else if (strcmp(g_pluginManager.getPluginType(i), "3DMODEL_LOADER") == 0)
         {
             QByteArray bArray = g_pluginManager.getPluginName(i);
 #ifdef _WIN32
@@ -177,16 +214,24 @@ int main(int argc, char **argv)
     {
         QApplication app(argc, argv);
         QString dirPath = QApplication::applicationDirPath();
+#if __APPLE__
+        std::string contentPath = std::filesystem::path(dirPath.toStdString()) / "../";
+        dirPath = QString(contentPath.c_str());
+        QApplication::addLibraryPath(dirPath + "./PlugIns/platforms/");
+        QApplication::addLibraryPath(dirPath + "./PlugIns/");
+        QApplication::addLibraryPath(dirPath + "./Frameworks/");
+#else
         QApplication::addLibraryPath(dirPath + "./plugins/platforms/");
         QApplication::addLibraryPath(dirPath + "./plugins/");
+#endif
 
         app.setWindowIcon(QIcon(":/CompressonatorGUI/Images/acompress-256.png"));
 
         // ==========================
         // Mip Settings Class
         // ==========================
-        g_GUI_CMIPS =  new CMIPS;
-        g_CMIPS     = new CMIPS;
+        g_GUI_CMIPS = new CMIPS;
+        g_CMIPS = new CMIPS;
 
         const QIcon iconPixMap(":/CompressonatorGUI/Images/compress.png");
         const QString ProductName = "Compressonator";
@@ -194,20 +239,51 @@ int main(int argc, char **argv)
         //----------------------------------
         // Load plugin List for processing
         //----------------------------------
-        g_pluginManager.registerStaticPlugin("IMAGE",  "ASTC",  (void*) make_Plugin_ASTC);
-        g_pluginManager.registerStaticPlugin("IMAGE",  "EXR",   (void*) make_Plugin_EXR);
-        g_pluginManager.registerStaticPlugin("IMAGE",  "KTX",   (void*) make_Plugin_KTX);
+        g_pluginManager.registerStaticPlugin("IMAGE", "ASTC", (void *)make_Plugin_ASTC);
+        g_pluginManager.registerStaticPlugin("IMAGE", "EXR", (void *)make_Plugin_EXR);
+        g_pluginManager.registerStaticPlugin("IMAGE", "KTX", (void *)make_Plugin_KTX);
 
 #ifdef USE_CRN
-        g_pluginManager.registerStaticPlugin("IMAGE", "CRN", make_Plugin_CRN);
+        g_pluginManager.registerStaticPlugin("IMAGE", "CRN", (void *)make_Plugin_CRN);
 #endif
 
         // TGA is supported by Qt to some extent if it fails we will try to load it using our custom code
-        g_pluginManager.registerStaticPlugin("IMAGE",  "TGA",     (void*) make_Plugin_TGA);
-        g_pluginManager.registerStaticPlugin("IMAGE", "ANALYSIS", (void*) make_Plugin_CAnalysis);
+        g_pluginManager.registerStaticPlugin("IMAGE", "TGA", (void *)make_Plugin_TGA);
+        g_pluginManager.registerStaticPlugin("IMAGE", "ANALYSIS", (void *)make_Plugin_CAnalysis);
 
-        g_pluginManager.getPluginList("/plugins",true);
+        g_pluginManager.getPluginList("/plugins", true);
+
         CMP_RegisterHostPlugins();
+
+#ifdef OPTION_BUILD_SHARED_LIBS
+    #if !OPTION_BUILD_SHARED_LIBS
+        #if OPTION_CMP_DIRECTX
+            g_pluginManager.registerStaticPlugin("3DMODEL_VIEWER", "DX12_EX", (void *)make_Plugin_glTF_DX12_EX);
+            g_pluginManager.registerStaticPlugin("GPUDECODE", "DIRECTX", (void *)make_Plugin_GPUDecode_DirectX);
+            g_pluginManager.registerStaticPlugin("MESH_OPTIMIZER", "TOOTLE", (void*)make_Plugin_Mesh_Tootle);
+        #endif
+
+        #if OPTION_CMP_OPENGL
+            g_pluginManager.registerStaticPlugin("3DMODEL_VIEWER", "OPENGL", (void *)make_Plugin_glTF_OpenGL);
+            g_pluginManager.registerStaticPlugin("GPUDECODE", "OPENGL", (void *)make_Plugin_GPUDecode_OpenGL);
+        #endif
+
+        #if OPTION_CMP_VULKAN
+            g_pluginManager.registerStaticPlugin("3DMODEL_VIEWER", "VULKAN", (void *)make_Plugin_3DModelViewer_Vulkan);
+            g_pluginManager.registerStaticPlugin("GPUDECODE", "VULKAN", (void *)make_Plugin_GPUDecode_Vulkan);
+        #endif
+
+        #if PLUGIN_MODEL_LOADERS
+            g_pluginManager.registerStaticPlugin("3DMODEL_LOADER", "DRC", (void *)make_Plugin_ModelLoader_drc);
+            g_pluginManager.registerStaticPlugin("3DMODEL_LOADER", "GLTF", (void*)make_Plugin_glTF_Loader);
+            g_pluginManager.registerStaticPlugin("3DMODEL_LOADER", "OBJ", (void *)make_Plugin_obj_Loader);
+        #endif
+        g_pluginManager.registerStaticPlugin("MESH_COMPRESSOR", "DRACO", (void *)make_Plugin_Mesh_Compressor);
+        g_pluginManager.registerStaticPlugin("MESH_OPTIMIZER", "TOOTLE_MESH", (void *)make_Plugin_Mesh_Optimizer);
+            
+    #endif
+#endif
+
         g_bAbortCompression = false;
 
         //---------------------------------------
@@ -245,25 +321,26 @@ int main(int argc, char **argv)
             //-------------------------------
             // create the compression  Codec
             //-------------------------------
-            g_Codec_BASIS = (CMP_Encoder*)g_plugin_EncoderBASIS->TC_Create();
+            g_Codec_BASIS = (CMP_Encoder *)g_plugin_EncoderBASIS->TC_Create();
 
             // ToDo: Assignment to new encoder interfaces
             if (g_Codec_BASIS)
             {
-                BASIS_CompressTexture   = g_BASIS_CompressTexture;
+                BASIS_CompressTexture = g_BASIS_CompressTexture;
                 BASIS_DecompressTexture = g_BASIS_DecompressTexture;
             }
         }
 #endif
 
-        cpMainComponents mainComponents(NULL,NULL);
+        cpMainComponents mainComponents(nullptr, nullptr);
 
 #ifdef MSG_HANDLER
         PrintStatusLine = &mainComponents.PrintStatus;
-        qInstallMessageHandler((QtMessageHandler) mainComponents.msgHandler);
+        qInstallMessageHandler((QtMessageHandler)mainComponents.msgHandler);
 #endif
         QDesktopWidget *desktop = new QDesktopWidget();
-        mainComponents.resize(desktop->screenGeometry().width()*PERCENTAGE_OF_MONITOR_WIDTH_FOR_SCREEN, desktop->screenGeometry().height()*PERCENTAGE_OF_MONITOR_HEIGHT_FOR_SCREEN);
+        mainComponents.resize(desktop->screenGeometry().width() * PERCENTAGE_OF_MONITOR_WIDTH_FOR_SCREEN,
+                              desktop->screenGeometry().height() * PERCENTAGE_OF_MONITOR_HEIGHT_FOR_SCREEN);
         mainComponents.show();
 
         app.setStyleSheet(SEPERATOR_STYLE);
@@ -281,7 +358,7 @@ int main(int argc, char **argv)
         {
             if (g_Codec_GTC)
                 g_plugin_EncoderGTC->TC_Destroy(g_Codec_GTC);
-            delete  g_plugin_EncoderGTC;
+            delete g_plugin_EncoderGTC;
         }
 #endif
 
@@ -293,12 +370,11 @@ int main(int argc, char **argv)
         {
             if (g_Codec_BASIS)
                 g_plugin_EncoderBASIS->TC_Destroy(g_Codec_BASIS);
-            delete  g_plugin_EncoderBASIS;
+            delete g_plugin_EncoderBASIS;
         }
 #endif
 
         return ret;
-
     }
     catch (std::exception &e)
     {
@@ -308,5 +384,5 @@ int main(int argc, char **argv)
     {
         qDebug() << "Unknown Error";
     }
-    return(-1);
+    return (-1);
 }

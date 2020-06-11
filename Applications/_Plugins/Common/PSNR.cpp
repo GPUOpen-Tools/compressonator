@@ -1,6 +1,10 @@
 
 #include "PSNR.h"
 
+#include <opencv2/core/core.hpp>
+
+using namespace cv;
+
 // OpenCV (Open Source Computer Vision Library: http://opencv.org) is an open-source BSD-licensed library
 // http://docs.opencv.org/doc/tutorials/highgui/video-input-psnr-ssim/video-input-psnr-ssim.html
 // Ref to basic structures of OpenCV http://docs.opencv.org/modules/core/doc/basic_structures.html
@@ -39,17 +43,14 @@ void CalcPSNR(const Mat& I1, const Mat& I2, REPORT_DATA *stats)
 
 int GetPSNR(const char* file1, const char *file2, REPORT_DATA *stats)
 {
-		IplImage *img1 =NULL, *img2 = NULL;
+	cv::Mat img1, img2;
 
-	img1 = cvLoadImage(file1);
-	if (img1 == NULL) return 1;
-	img2 = cvLoadImage(file2);
-	if (img2 == NULL) return 1;
+	img1 = cv::imread(file1);
+	if (img1.empty()) return 1;
+	img2 = cv::imread(file2);
+	if (img2.empty()) return 1;
 
-	Mat mtx1(img1); // convert IplImage1* -> Mat1
-	Mat mtx2(img2); // convert IplImage2* -> Mat2
-
-	CalcPSNR(mtx1,mtx2,stats);
+	CalcPSNR(img1,img2,stats);
 
 	return 0;
 }

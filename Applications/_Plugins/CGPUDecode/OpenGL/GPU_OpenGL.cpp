@@ -36,10 +36,22 @@
 
 #include <assert.h>
 
-#ifdef _WIN32
-#pragma comment(lib, "opengl32.lib")     // Open GL
-#pragma comment(lib, "Glu32.lib")        // Glu 
-#pragma comment(lib, "glew32.lib")       // glew 1.13.0
+#if defined(_WIN32) && !defined(NO_LEGACY_BEHAVIOR)
+    #pragma comment(lib, "opengl32.lib")     // Open GL
+    #pragma comment(lib, "Glu32.lib")        // Glu 
+    #pragma comment(lib, "glew32.lib")       // glew 1.13.0
+#else
+    #ifdef _WIN32
+        #pragma comment(lib, "opengl32.lib")     // Open GL
+        #pragma comment(lib, "Glu32.lib")        // Glu 
+        #ifdef _DEBUG
+            #pragma comment(lib, "libglew32d.lib")   // glew
+        #else
+            #pragma comment(lib, "libglew32.lib")   // glew
+        #endif
+    #else
+        #pragma comment(lib, "libglew32.lib")   // glew
+    #endif
 #endif
 
 static_assert(sizeof(unsigned int) == sizeof(GLuint), "Inconsistent size for GLuint");

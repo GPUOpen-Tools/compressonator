@@ -5,7 +5,7 @@
 // Major Code based on Header-only tiny glTF 2.0 loader and serializer.
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 - 2017 Syoyo Fujita, Aurélien Chatelain and many
+// Copyright (c) 2015 - 2017 Syoyo Fujita, AurÃ©lien Chatelain and many
 // contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,59 +28,43 @@
 
 #include "CMP_FileIO.h"
 
-
-bool CMP_DirExists(const std::string& abs_dir)
-{
-   // works only if dir exists!
-    struct stat s;
-    stat(abs_dir.c_str(),&s);
-    if( stat(abs_dir.c_str(),&s) == 0 ) 
-    {
-        if (s.st_mode & S_IFDIR)
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool CMP_FileExists(const std::string& abs_filename)
-{
-    bool ret = false;
 #ifdef _WIN32
-    FILE*   fp;
-    errno_t err = fopen_s(&fp, abs_filename.c_str(), "rb");
-    if (err != 0)
-    {
-        return false;
-    }
-#else
-    FILE* fp = fopen(abs_filename.c_str(), "rb");
-#endif
-    if (fp)
-    {
-        ret = true;
-        fclose(fp);
-    }
+#include "Windows.h"
+#include <stdio.h>
 
-    return ret;
+#include <direct.h>
+#include <iostream>
+#include <iterator>
+#else
+#include <dirent.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <wordexp.h>
+#endif
+
+#include <algorithm>
+#include <filesystem>
+
+bool CMP_DirExists(const std::string &abs_dir)
+{
+    if (std::filesystem::exists(abs_dir))
+        return std::filesystem::is_directory(abs_dir);
+
+    return (false);
 }
 
+bool CMP_FileExists(const std::string &abs_filename)
+{
+    return std::filesystem::exists(abs_filename);
+}
 
 bool CMP_CreateDir(std::string sPath)
 {
-    int nError;
-#ifdef _WIN32
-      nError = _mkdir(sPath.c_str());
-#else 
-      nError = mkdir(sPath.c_str(),0733);
-#endif
-    return (nError == 0);
+    bool success = std::filesystem::create_directory(std::filesystem::absolute(sPath));
+    return (success);
 }
 
-
-std::string CMP_ExpandFilePath(const std::string& filepath)
+std::string CMP_ExpandFilePath(const std::string &filepath)
 {
 #ifdef _WIN32
     DWORD len = ExpandEnvironmentStringsA(filepath.c_str(), NULL, 0);
@@ -187,8 +171,27 @@ std::string CMP_GetFileName(const std::string& srcfileNamepath)
     return srcfileNamepath.substr(pos + 1);
 }
 
+bool CMP_IsHidden(const std::string &fullpath)
+{
+#ifdef _WIN32
+    bool IsHidden = false;
+    DWORD Result = GetFileAttributesA(fullpath.c_str());
+    if (Result != 0xFFFFFFFF)
+    {
+        IsHidden = !!(Result & FILE_ATTRIBUTE_HIDDEN);
+    }
 
-void CMP_GetDirList(const std::string& directory, std::vector<std::string>& files, std::string filter)
+    return IsHidden;
+#else
+    std::filesystem::path path(fullpath);
+    if (path.filename().string().find(".") == 0)
+        return true;
+
+    return false;
+#endif
+}
+
+void CMP_GetDirList(const std::string &directory, std::vector<std::string> &files, std::string filter)
 {
 #ifdef _WIN32
     WIN32_FIND_DATAA data;
@@ -196,8 +199,10 @@ void CMP_GetDirList(const std::string& directory, std::vector<std::string>& file
     std::string path(directory);
     std::string fullpath;
     path.append("\\*");
-    if ((hFind = FindFirstFileA(path.c_str(), &data)) != INVALID_HANDLE_VALUE) {
-        do {
+    if ((hFind = FindFirstFileA(path.c_str(), &data)) != INVALID_HANDLE_VALUE)
+    {
+        do
+        {
             fullpath = directory;
             fullpath.append("\\");
             fullpath.append(data.cFileName);
@@ -230,35 +235,32 @@ void CMP_GetDirList(const std::string& directory, std::vector<std::string>& file
         FindClose(hFind);
     }
 #else
-    // Note : This sections is under developement !
-    DIR* dirp = opendir(directory.c_str());
-    struct dirent * dp;
-    while ((dp = readdir(dirp)) != NULL) 
+    for (const std::filesystem::directory_entry &entry : std::filesystem::directory_iterator(directory))
     {
-       if (filter.length() > 0)
-       {
-           // add code
-       }
+        if (CMP_IsHidden(entry.path().string()))
+            continue;
+
+        if (filter.length() > 0)
+        {
+            std::string ext = entry.path().extension();
+            std::transform(ext.begin(), ext.end(), ext.begin(), ::toupper);
+            if (filter.find(ext) != std::string::npos)
+                files.push_back(entry.path());
+        }
+        else
+        {
+            files.push_back(entry.path());
+        }
     }
-    closedir(dirp);
 #endif
 }
 
-
-std::string CMP_GetFullPath(std::string  file)
+std::string CMP_GetFullPath(std::string file)
 {
-#ifdef _WIN32
-    char full_path[MAX_PATH];
-    GetFullPathNameA(file.c_str(), MAX_PATH, full_path, NULL);
-    return std::string(full_path);
-#else
-    // Code not validated
-    return realpath(file.c_str(), NULL);
-#endif
+    return std::filesystem::absolute(file).string();
 }
 
-
-CMP_PATHTYPES  CMP_PathType(const char *path)
+CMP_PATHTYPES CMP_PathType(const char *path)
 {
 
 #ifdef _WIN32
@@ -269,29 +271,22 @@ CMP_PATHTYPES  CMP_PathType(const char *path)
         {
             return CMP_PATHTYPES::CMP_PATH_IS_DIR;
         }
-        else
-            if (attrib & FILE_ATTRIBUTE_ARCHIVE)
-            {
-                return CMP_PATHTYPES::CMP_PATH_IS_FILE;
-            }
-    }
-#else
-    // works only if file or dir exists!
-    struct stat s;
-    stat(path, &s);
-    if (stat(path, &s) == 0)
-    {
-        if (s.st_mode & S_IFDIR)
-        {
-            return CMP_PATHTYPES::CMP_PATH_IS_DIR;
-        }
-        else if (s.st_mode & S_IFREG)
+        else if (attrib & FILE_ATTRIBUTE_ARCHIVE)
         {
             return CMP_PATHTYPES::CMP_PATH_IS_FILE;
         }
     }
+#else
+    // works only if file or dir exists!
+    if (std::filesystem::is_directory(path))
+    {
+        return CMP_PATHTYPES::CMP_PATH_IS_DIR;
+    }
+    else if (std::filesystem::is_regular_file(path))
+    {
+        return CMP_PATHTYPES::CMP_PATH_IS_FILE;
+    }
 #endif
-
 
     // a none existant file or dir
     std::string unkn = path;
@@ -323,9 +318,6 @@ CMP_PATHTYPES  CMP_PathType(const char *path)
             return CMP_PATH_IS_FILE;
     }
 
-
-
     return CMP_PATHTYPES::CMP_PATH_IS_UNKNOWN;
 }
-
 

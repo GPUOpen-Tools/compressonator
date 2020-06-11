@@ -27,15 +27,16 @@
 #ifndef H_GPU_DIRECTX
 #define H_GPU_DIRECTX
 
-#include "GPU_DecodeBase.h"
-#include "DirectXTex.h"
+#include <GPU_DecodeBase.h>
+#include <DirectXTex.h>
+
 #include <dxgiformat.h>
 #include <d3d11.h>
 #include <directxmath.h>
 #include <Windows.h>
+
 #include <stdio.h>
 
-using namespace DirectX;
 
 namespace GPU_Decode
 {
@@ -82,7 +83,7 @@ namespace GPU_Decode
         char m_err_str[MAX_ERR_STR];
         char *hResultErr(HRESULT hr);
 
-        HRESULT InitDevice(const TexMetadata& mdata, CMP_FORMAT cmp_format);
+        HRESULT InitDevice(const DirectX::TexMetadata& mdata, CMP_FORMAT cmp_format);
         DXGI_FORMAT CMP2DXGIFormat(CMP_FORMAT cmp_format);
         int CaptureAnImage(HWND hWnd, CMP_Texture* pDestTexture);
         void Render();

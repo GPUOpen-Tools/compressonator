@@ -28,13 +28,13 @@
 #include "ResourceViewHeapsDX12.h"
 #include "UploadHeapDX12.h"
 
-#include "Compressonator.h"
-#include "GPU_Decode.h"
-#include "..\..\..\Common\Texture.h"
-#include "..\..\..\Common\PluginInterface.h"
-#include "TextureIO.h"
+#include <Compressonator.h>
+#include <GPU_Decode.h>
+#include <Texture.h>
+#include <PluginInterface.h>
+#include <TextureIO.h>
 
-#include "ModelTexture.h"
+#include <ModelTexture.h>
 
 #include <d3dx12.h>
 

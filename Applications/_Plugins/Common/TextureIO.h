@@ -28,23 +28,16 @@
 #ifndef TEXTUREIO_H_
 #define TEXTUREIO_H_
 
-#define USE_QT_IMAGELOAD
-
-#include <cmath>
-
 #include "Compressonator.h"
 #include "Common.h"
 #include "Texture.h"
-#include "cmdline.h"
+
+#include <cmath>
 
 #pragma warning( push )
 #pragma warning(disable:4100)
 #pragma warning(disable:4800)
 #pragma warning( pop )
-
-#ifdef USE_QT_IMAGELOAD
-#include <QtGui/qrgb.h>
-#endif
 
 typedef struct {
     bool swizzle = false;
@@ -115,10 +108,6 @@ int             AMDSaveMIPSTextureImage(const char *DestFile, MipSet *CMips, boo
 
 MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *configSetting, CMP_Feedback_Proc pFeedbackProc);
 
-#ifdef USE_QT_IMAGELOAD
-QRgb            floatToQrgba(float r, float g, float b, float a);
-#endif
-
 bool            CompressedFormat(CMP_FORMAT format);
 bool            CompressedFileFormat(std::string file);
 bool            FloatFormat(CMP_FORMAT format);
@@ -136,5 +125,5 @@ CMP_FLOAT       F16toF32(CMP_HALFSHORT f);
 CMP_HALFSHORT   F32toF16(CMP_FLOAT   f);
 
 
-extern std::string GetFileExtension(std::string file, CMP_BOOL incDot, CMP_BOOL upperCase);
+std::string GetFileExtension(std::string file, CMP_BOOL incDot, CMP_BOOL upperCase);
 #endif

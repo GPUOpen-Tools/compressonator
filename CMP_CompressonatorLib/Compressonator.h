@@ -31,7 +31,9 @@
 #include <vector>
 #include <stddef.h>
 
+#ifndef NO_LEGACY_BEHAVIOR
 #include "../UseDefinitions.h"
+#endif
 
 #ifndef ASPM_GPU
 namespace CMP {

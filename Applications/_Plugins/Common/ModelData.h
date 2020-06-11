@@ -28,8 +28,6 @@
 #define USE_TOOTLE
 #define USE_MESHOPTIMIZER
 
-
-#include "stdlib.h"
 #include "TC_PluginAPI.h"
 
 #ifdef USE_MESHOPTIMIZER
@@ -40,6 +38,9 @@
 #ifdef USE_ASSIMP
 #include <assimp/scene.h>
 #endif
+
+#include <stdlib.h>
+
 
 struct CMP_DracoOptions
 {

@@ -7,10 +7,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -23,24 +23,26 @@
 
 #include "cpImageLoader.h"
 
-#include "Compressonator.h"
-#include "Common.h"
-#include "cExr.h"
+#include <cExr.h>
+#include <MipsToQImage.h>
 
 #include <QtWidgets/qapplication.h>
-#include <QtCore/qdebug.h>
-#include <QtCore/qfileinfo.h>
+#include <QtCore/qstring.h>
 #include <QtGui/qimage.h>
+#include <QtCore/qlist.h>
+#include <QtCore/qfileinfo.h>
+#include <QtGui/qpainter.h>
+#include <QtCore/qdebug.h>
 
-#pragma warning( push )
-#pragma warning(disable:4100)
-#pragma warning(disable:4800)
+#pragma warning(push)
+#pragma warning(disable : 4100)
+#pragma warning(disable : 4800)
 #include <ImfStandardAttributes.h>
 #include <ImathBox.h>
 #include <ImfArray.h>
 #include <ImfRgba.h>
 #include <ImfArray.h>
-#pragma warning( pop )
+#pragma warning(pop)
 
 
 bool g_useCPUDecode = true;
@@ -49,8 +51,8 @@ MIPIMAGE_FORMAT g_gpudecodeFormat = Format_OpenGL;
 extern PluginManager g_pluginManager;
 extern MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config* configSetting, CMP_Feedback_Proc pFeedbackProc);
 extern QRgb RgbaToQrgba(struct Imf::Rgba imagePixel);
-extern int    g_OpenGLMajorVersion;
-extern QImage* MIPS2QImage(CMIPS *m_CMips, MipSet *tmpMipSet, int MipMaplevel, int Depthlevel, CMP_CompressOptions option, CMP_Feedback_Proc pFeedbackProc);
+extern int g_OpenGLMajorVersion;
+
 
 // Finds a matching Qt Image format for the Mip Set
 // Qt V5.4 has
@@ -626,11 +628,9 @@ CMipImages *CImageLoader::LoadPluginImage(std::string filename, CMP_Feedback_Pro
                 {
                     MipImages->mipset->m_format = QFormat2MipFormat(format);
                 }
-
             }
             else
                 MipImages->m_MipImageFormat = MIPIMAGE_FORMAT::Format_QImage;
-
         }
         else
         {

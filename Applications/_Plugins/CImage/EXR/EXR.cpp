@@ -98,23 +98,47 @@ DECLARE_PLUGIN(Plugin_EXR)
 SET_PLUGIN_TYPE("IMAGE")
 SET_PLUGIN_NAME("EXR")
 #else
-void *make_Plugin_EXR() { return new Plugin_EXR; } 
+void *make_Plugin_EXR() { return new Plugin_EXR; }
 #endif
 
-#ifdef _DEBUG
-#pragma comment(lib,"zlibstat.lib")
-#pragma comment(lib,"Imathd.lib")
-#pragma comment(lib,"halfd.lib")
-#pragma comment(lib,"IlmImfd.lib")
-#pragma comment(lib,"IlmThreadd.lib")
-#pragma comment(lib,"Iexd.lib")
+#if defined(_WIN32) && !defined(NO_LEGACY_BEHAVIOR)
+    #ifdef _DEBUG
+    #pragma comment(lib,"zlibstaticd.lib")
+    #pragma comment(lib,"Imathd.lib")
+    #pragma comment(lib,"halfd.lib")
+    #pragma comment(lib,"IlmImfd.lib")
+    #pragma comment(lib,"IlmThreadd.lib")
+    #pragma comment(lib,"Iexd.lib")
+    #else
+    #pragma comment(lib,"zlibstatic.lib")
+    #pragma comment(lib,"Imath.lib")
+    #pragma comment(lib,"half.lib")
+    #pragma comment(lib,"IlmImf.lib")
+    #pragma comment(lib,"IlmThread.lib")
+    #pragma comment(lib,"Iex.lib")
+    #endif
 #else
-#pragma comment(lib,"zlibstat.lib")
-#pragma comment(lib,"Imath.lib")
-#pragma comment(lib,"half.lib")
-#pragma comment(lib,"IlmImf.lib")
-#pragma comment(lib,"IlmThread.lib")
-#pragma comment(lib,"Iex.lib")
+    #include <OpenEXRConfig.h>
+    #ifdef _DEBUG
+        #define CMP_EXTERNAL_LibExt    "_d.lib"
+    #else
+        #define CMP_EXTERNAL_LibExt    ".lib"
+    #endif
+
+    #define CMP_VAUX_STR_EXP(__A)  #__A
+    #define CMP_VAUX_STR(__A)      CMP_VAUX_STR_EXP(__A)
+
+    #define OpenEXR_Imath_Lib     "Imath-" CMP_VAUX_STR(OPENEXR_VERSION_MAJOR) "_" CMP_VAUX_STR(OPENEXR_VERSION_MINOR) CMP_EXTERNAL_LibExt
+    #define OpenEXR_half_Lib      "half-" CMP_VAUX_STR(OPENEXR_VERSION_MAJOR) "_" CMP_VAUX_STR(OPENEXR_VERSION_MINOR) CMP_EXTERNAL_LibExt
+    #define OpenEXR_IlmImf_Lib    "IlmImf-" CMP_VAUX_STR(OPENEXR_VERSION_MAJOR) "_" CMP_VAUX_STR(OPENEXR_VERSION_MINOR) CMP_EXTERNAL_LibExt
+    #define OpenEXR_IlmThread_Lib "IlmThread-" CMP_VAUX_STR(OPENEXR_VERSION_MAJOR) "_" CMP_VAUX_STR(OPENEXR_VERSION_MINOR) CMP_EXTERNAL_LibExt
+    #define OpenEXR_Iex_Lib       "Iex-" CMP_VAUX_STR(OPENEXR_VERSION_MAJOR) "_" CMP_VAUX_STR(OPENEXR_VERSION_MINOR) CMP_EXTERNAL_LibExt
+
+    #pragma comment(lib, OpenEXR_Imath_Lib)
+    #pragma comment(lib, OpenEXR_half_Lib)
+    #pragma comment(lib, OpenEXR_IlmImf_Lib)
+    #pragma comment(lib, OpenEXR_IlmThread_Lib)
+    #pragma comment(lib, OpenEXR_Iex_Lib)
 #endif
 
 

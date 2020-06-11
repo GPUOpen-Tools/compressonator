@@ -25,23 +25,20 @@
 
 #include "Compressonator.h"
 #include "PluginInterface.h"
+
 #include "ModelData.h"
 
-using namespace draco;
-
+#define TC_PLUGIN_VERSION_MAJOR    1
+#define TC_PLUGIN_VERSION_MINOR    0
 
 #ifdef _WIN32
 // {FFC9DDE2-1913-4305-A633-B8E9B9CAA895}
-static const GUID g_GUID = 
+static const GUID g_GUID =
 { 0xffc9dde2, 0x1913, 0x4305,{ 0xa6, 0x33, 0xb8, 0xe9, 0xb9, 0xca, 0xa8, 0x95 } };
 #else
 static const GUID g_GUID = { 0 };
 #endif
 
-#define TC_PLUGIN_VERSION_MAJOR    1
-#define TC_PLUGIN_VERSION_MINOR    0
-
-CMIPS *DX12_CMips = NULL;
 
 class Plugin_ModelLoader_drc : public PluginInterface_3DModel_Loader
 {

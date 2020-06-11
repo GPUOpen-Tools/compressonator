@@ -24,6 +24,7 @@
 #include <QtWidgets>
 #include <QNetworkRequest>
 #include <qfileinfo.h>
+#include <filesystem>
 
 // Local
 #include "cpStartupPage.h"
@@ -82,7 +83,8 @@ bool afWebPage::acceptNavigationRequest(const QUrl &url, NavigationType type, bo
 // Author:      Sigal Algranaty
 // Date:        21/2/2012
 // ---------------------------------------------------------------------------
-cpStartupPage::cpStartupPage(QWidget * parent) : QWebEngineView(parent)
+cpStartupPage::cpStartupPage(QWidget *parent)
+    : QWebEngineView(parent)
 {
     // Allow focus in this widget:
     setFocusPolicy(Qt::ClickFocus);
@@ -131,8 +133,10 @@ bool cpStartupPage::UpdateHTML(QVector<QString>& projectsNames)
     QString htmlText, cssText;
 
     // Complete the welcome HTML file path:
-#ifdef _WIN32
+#if defined(_WIN32)
     compWelcomePagePath.append("\\WelcomePage\\");
+#elif defined(__APPLE__)
+    compWelcomePagePath.append("/../Resources/WelcomePage/");
 #else
     compWelcomePagePath.append("/WelcomePage/");
 #endif

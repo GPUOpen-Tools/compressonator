@@ -26,8 +26,6 @@
 #include "ImGui_OpenGLRenderer.h"
 #include "QtWidgets/qwidget.h"
 
-class QWidget;
-
 class QImGUI_OpenGLWidgetWindowWrapper : public QImGUI_OpenGLWindowWrapper
 {
 public:

@@ -24,6 +24,7 @@
 //
 //==============================================================================
 
+#ifndef NO_LEGACY_BEHAVIOR
 // External Libs
 #ifndef USE_BOOST
  #define USE_BOOST                                     //  Enable using Boost code
@@ -97,3 +98,4 @@
 // #define USE_3DCONVERT                             // Enable 3D model conversion (glTF<->obj) icon
 // #define ENABLE_USER_ETC2S_FORMATS                 // Enable users to set these formats in CLI and GUI applications
 
+#endif

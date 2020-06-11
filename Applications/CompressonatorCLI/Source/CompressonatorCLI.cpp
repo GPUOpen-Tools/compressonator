@@ -34,24 +34,35 @@
 #include "TextureIO.h"
 #include "Version.h"
 
+#if defined(WIN32) && !defined(NO_LEGACY_BEHAVIOR)
+#define USE_QT_IMAGELOAD
+#endif
+
 #ifdef USE_QT_IMAGELOAD
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qdebug.h>
 #endif
+
 // Our Static Plugin Interfaces
+#if defined(_WIN32) && !defined(NO_LEGACY_BEHAVIOR)
 #pragma comment(lib, "ASTC.lib")
 #pragma comment(lib, "EXR.lib")
 #pragma comment(lib, "KTX.lib")
 #pragma comment(lib, "TGA.lib")
 #pragma comment(lib, "IMGAnalysis.lib")
+#else
+#pragma comment(lib, "Plugin_CImage_ASTC.lib")
+#pragma comment(lib, "Plugin_CImage_EXR.lib")
+#pragma comment(lib, "Plugin_CImage_KTX.lib")
+#pragma comment(lib, "Plugin_CImage_TGA.lib")
+#pragma comment(lib, "Plugin_CAnalysis.lib")
+#endif
 
 extern void* make_Plugin_ASTC();
 extern void* make_Plugin_EXR();
 extern void* make_Plugin_TGA();
 extern void* make_Plugin_KTX();
-#ifndef __APPLE__
 extern void* make_Plugin_CAnalysis();
-#endif
 
 // Setup Static Host Pluging Libs
 extern void CMP_RegisterHostPlugins();
@@ -279,7 +290,7 @@ void PrintUsage()
     printf("CompressonatorCLI.exe -draco source.obj dest.drc\n");
     printf("Note: only .obj file produces compressed .drc file. glTF does not produce .drc compressed file.\n");
     printf("Note: You can specify .obj as compressed file format as well, but a new .drc file will be created for this case.\n\n");
-#ifdef USE_MESH_DRACO_SETTING 
+#ifdef USE_MESH_DRACO_SETTING
     printf("Specifies quantization bits settings:\n");
     printf("CompressonatorCLI.exe -draco -dracolvl 7 -qpos 12 -qtexc 8 -qnorm 8 source.gltf dest.gltf\n\n");
 #endif
@@ -392,9 +403,7 @@ int main(int argc, char* argv[])
     g_pluginManager.registerStaticPlugin("IMAGE", "EXR", (void*)make_Plugin_EXR);
     g_pluginManager.registerStaticPlugin("IMAGE", "TGA", (void*)make_Plugin_TGA);  // Use for load only, Qt will be used for Save
     g_pluginManager.registerStaticPlugin("IMAGE", "KTX", (void*)make_Plugin_KTX);
-#ifndef __APPLE__
     g_pluginManager.registerStaticPlugin("IMAGE", "ANALYSIS", (void*)make_Plugin_CAnalysis);
-#endif
     g_pluginManager.getPluginList("\\Plugins");
     CMP_RegisterHostPlugins();
 

@@ -20,6 +20,11 @@
 #pragma once
 #include "PostProcPS.h"
 
+#include "DynamicBufferRingDX12.h"
+
+#include <d3d12.h>
+
+
 class ToneMapping
 {
 public:

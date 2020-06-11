@@ -25,8 +25,6 @@
 
 #include <cassert>
 
-#include "PluginInterface.h"
-
 #include "tootlelib.h"
 #ifndef USE_ASSIMP
 #include "ObjLoader.h"      // This should be removed and shared with Compressonator Common!

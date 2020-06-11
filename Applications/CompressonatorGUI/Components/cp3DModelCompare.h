@@ -32,9 +32,6 @@
 #endif
 
 #include "cpImageAnalysis.h"
-#include <boost/foreach.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
 #include "acCustomDockWidget.h"
 #include "cpProjectData.h"
 

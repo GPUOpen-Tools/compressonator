@@ -39,7 +39,11 @@ static const GUID g_GUID = { 0 };
 #define TC_PLUGIN_VERSION_MAJOR    1
 #define TC_PLUGIN_VERSION_MINOR    0
 
-CMIPS *DX12_CMips = NULL;
+namespace cmp_ml_obj {
+    CMIPS *DX12_CMips = NULL;
+}
+
+using namespace cmp_ml_obj;
 
 class Plugin_obj_Loader : public PluginInterface_3DModel_Loader
 {

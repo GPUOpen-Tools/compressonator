@@ -18,11 +18,11 @@
 // THE SOFTWARE.
 
 #pragma once
-#include <Windows.h>
-
 #include "Ring.h"
 
 #include <vulkan/vulkan.h>
+
+#include <cstdint>
 
 
 // Forward Declaration

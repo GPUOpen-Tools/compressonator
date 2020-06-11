@@ -24,28 +24,28 @@
 /// \brief Declares the interface to the Compressonator & ArchitectMF SDK
 //=====================================================================
 
+#include "PluginManager.h"
+#include "PluginInterface.h"
+
 // Windows Header Files:
 #ifdef _WIN32
 #include <windows.h>
 #endif
 
-#include "string.h"
-#include "PluginInterface.h"
-#include "PluginManager.h"
+#include <filesystem>
+#include <string>
 
-static bool CMP_FileExists(const std::string& abs_filename)
+static bool CMP_FileExists(const std::string &abs_filename)
 {
-    bool ret = false;
 #ifdef _WIN32
-    FILE*   fp;
+    bool ret = false;
+    FILE *fp;
     errno_t err = fopen_s(&fp, abs_filename.c_str(), "rb");
     if (err != 0)
     {
         return false;
     }
-#else
-    FILE* fp = fopen(abs_filename.c_str(), "rb");
-#endif
+
     if (fp)
     {
         ret = true;
@@ -53,6 +53,9 @@ static bool CMP_FileExists(const std::string& abs_filename)
     }
 
     return ret;
+#else
+    return std::filesystem::exists(abs_filename);
+#endif
 }
 
 #ifdef USE_NewLoader

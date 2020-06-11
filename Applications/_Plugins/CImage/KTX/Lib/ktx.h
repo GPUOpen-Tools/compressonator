@@ -165,7 +165,11 @@ These files are part of the SDL2 source distributed by the [SDL project]
       #include <GL/glcorearb.h>
 	#endif
 
-	#define GL_APIENTRY APIENTRY
+	#ifdef APIENTRY
+		#define GL_APIENTRY APIENTRY
+	#else
+		#define GL_APIENTRY
+	#endif
     #define KTX_GLFUNCPTRS "gl_funcptrs.h"
 
 #elif KTX_OPENGL_ES1

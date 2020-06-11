@@ -55,9 +55,13 @@ void *make_Plugin_obj_Loader() { return new Plugin_obj_Loader; }
 
 #include "Misc.h"
 
-PluginManager          g_pluginManager;
-bool                   g_bAbortCompression = false;
-CMIPS*                 g_CMIPS = NULL;
+namespace ML_obj 
+{
+    bool                   g_bAbortCompression = false;
+    CMIPS*                 g_CMIPS = nullptr;
+}
+
+using namespace ML_obj;
 
 Plugin_obj_Loader::Plugin_obj_Loader()
 {
@@ -97,59 +101,6 @@ void *Plugin_obj_Loader::GetModelData()
     return data;
 }
 
-
-std::wstring s2ws(const std::string& s)
-{
-    int len;
-    int slength = (int)s.length() + 1;
-    len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
-    wchar_t* buf = new wchar_t[len];
-    MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
-    std::wstring r(buf);
-    delete[] buf;
-    return r;
-}
-
-
-//=================================================================================================================================
-bool LoadViewpoints(const char* pFileName, std::vector<ObjVertex3D>& rViewPoints)
-{
-    assert(pFileName);
-
-    FILE* pFile = fopen(pFileName, "r");
-
-    if (!pFile)
-    {
-        return false;
-    }
-
-    int iSize;
-
-    if (fscanf(pFile, "%i\n", &iSize) != 1)
-    {
-        return false;
-    }
-
-    for (int i = 0; i < iSize; i++)
-    {
-        float x, y, z;
-
-        if (fscanf(pFile, "%f %f %f\n", &x, &y, &z) != 3)
-        {
-            return false;
-        }
-
-        ObjVertex3D vert;
-        vert.x = x;
-        vert.y = y;
-        vert.z = z;
-        rViewPoints.push_back(vert);
-    }
-
-    fclose(pFile);
-
-    return true;
-}
 
 #ifdef USE_MESHOPTIMIZER
 static CMP_Mesh parseObj(const char* path, CMIPS *cmips, CMP_Feedback_Proc pFeedbackProc)

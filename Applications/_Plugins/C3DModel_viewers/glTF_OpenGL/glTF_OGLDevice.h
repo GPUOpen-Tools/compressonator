@@ -25,7 +25,7 @@
 #include <QtWidgets/qwidget.h>
 
 // -- Qt Open GL Support
-#include <qopenglwidget>
+#include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QVector2D>
 #include <QEvent>
@@ -37,13 +37,13 @@
 #include <QElapsedTimer>
 #include <QPainter>
 #include <QOpenGLVertexArrayObject>
-#include <qapplication>
+#include <QApplication>
 
-#include <ImGui_OpenGL.h>
+#include <ImGUI_OpenGL.h>
 #include "imgui/imgui.h"
 
-#include <gl/GLU.h>
-#include <gl/GL.h>
+#include <GL/glu.h>
+#include <GL/gl.h>
 
 #include "ModelData.h"
 #include "Misc.h"

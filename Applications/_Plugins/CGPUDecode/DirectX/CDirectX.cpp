@@ -1,24 +1,28 @@
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "CDirectX.h"
+
 #include "TC_PluginAPI.h"
 #include "TC_PluginInternal.h"
 #include "Compressonator.h"
-#include "CDirectX.h"
+
+#include <GPU_DecodeBase.h>
+
+#include <stdio.h>
+#include <stdlib.h>
 
 CMIPS *CDirectX_CMips;
-
-#define BUILD_AS_PLUGIN_DLL
 
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_CDirectX)
 SET_PLUGIN_TYPE("GPUDECODE")
 SET_PLUGIN_NAME("DIRECTX")
 #else
-void *make_Plugin_GPUDecode_Vulkan() { return new Plugin_CVulkan; }
+void *make_Plugin_GPUDecode_DirectX() { return new Plugin_CDirectX; }
 #endif
 
 #pragma comment(lib,"advapi32.lib")        // for RegCloseKey and other Reg calls ...
+
+using namespace GPU_Decode;
 
 Plugin_CDirectX::Plugin_CDirectX()
 {

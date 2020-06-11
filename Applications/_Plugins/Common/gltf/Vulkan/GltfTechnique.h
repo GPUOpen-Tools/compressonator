@@ -18,20 +18,25 @@
 // THE SOFTWARE.
 #pragma once
 
-#include "GltfCommon.h"
-
-#include "DynamicBufferRingVK.h"
-#include "StaticBufferPoolVK.h"
-#include "Camera.h"
+#include "GltfStructures.h"
 
 #include <glm/mat4x4.hpp>
+
+#include <vulkan/vulkan.h>
+
+#include <vector>
+
+// Forward Declaration
+class DynamicBufferRingVK;
+class StaticBufferPoolVK;
+class GLTFCommon;
 
 // This class takes a GltfCommon class (that holds all the non-GPU specific data) as an input and loads all the GPU specific data
 //
 struct Primitives
 {
     VkIndexType m_indexType;
-    UINT m_NumIndices;
+    uint32_t m_NumIndices;
     VkDescriptorBufferInfo m_IBV;
     std::vector<VkDescriptorBufferInfo> m_VBV;
 };

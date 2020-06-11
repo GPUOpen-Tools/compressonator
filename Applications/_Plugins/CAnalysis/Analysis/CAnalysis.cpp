@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -54,20 +54,12 @@
 #include <opencv2/highgui/highgui.hpp>  // OpenCV window I/O
 #endif
 
-// File system
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/path.hpp>
-#include <boost/algorithm/string.hpp> 
-
-// for XML file processing
-#include <boost/property_tree/xml_parser.hpp> 
-#include <boost/property_tree/ptree.hpp> 
-#include <boost/foreach.hpp> 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <filesystem>
+#include <string>
 
 using namespace std;
 
@@ -154,7 +146,7 @@ int Plugin_Canalysis::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
     return 0;
 }
 
-string f2Str(float data, int prec)
+std::string f2Str(float data, int prec)
 {
     std::string s(16, '\0');
     char pstr[6] = "%.xf";
@@ -375,7 +367,7 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
     std::string goldFile = result.generic_string().substr(0, lastindex + 1);
     goldFile.append("golden.xml");
 
-    string toleranceFile = result.generic_string().substr(0, lastindex + 1);
+    std::string toleranceFile = result.generic_string().substr(0, lastindex + 1);
     toleranceFile.append("analysis_tolerance.xml");
 
     if ((CMP_FileExists(toleranceFile)))
