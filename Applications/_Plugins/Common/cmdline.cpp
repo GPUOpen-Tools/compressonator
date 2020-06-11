@@ -1563,7 +1563,7 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
                         imgDestDir = output.substr(0,pos+1);
                     }
 
-                    boost::filesystem::create_directories(imgDestDir);
+                    std::filesystem::create_directories(imgDestDir);
                     {
                         MipSet inMips{};
                         memset(&inMips, 0, sizeof(CMP_MipSet));
@@ -1612,9 +1612,9 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
                         }
                     }
 
-                    if(!boost::filesystem::exists(dstFolder + input))
+                    if(!std::filesystem::exists(dstFolder + input))
                     {
-                        boost::filesystem::copy(imgSrcDir + input,
+                        std::filesystem::copy(imgSrcDir + input,
                                                 dstFolder + input);
                     }
 

@@ -1,70 +1,103 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 
 project(Compressonator)
 
-find_package(Threads REQUIRED)
-find_package(Boost COMPONENTS system filesystem REQUIRED)
-find_package(OpenCV REQUIRED)
-find_package(Qt5 COMPONENTS Gui Widgets OpenGL Qml WebEngineWidgets Xml REQUIRED)
+enable_testing()
 
-# CMake policy CMP0072
-set(OpenGL_GL_PREFERENCE "GLVND")
+set(CMAKE_CXX_STANDARD 17)
 
-if (OpenCV_FOUND)
+include(cmake/HelperFunctions.cmake)
+
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Supported configuration options" FORCE)
+set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/build-out")
+
+cmp_option(OPTION_CMP_DIRECTX "Use Directx" (CMP_HOST_WINDOWS))
+cmp_option(OPTION_CMP_OPENGL "Use OpenGL" (CMP_HOST_WINDOWS))
+cmp_option(OPTION_CMP_VULKAN "Use Vulkan" (CMP_HOST_WINDOWS))
+cmp_option(OPTION_USE_QT_IMAGELOAD "Use Qt for Image Loading" ON)
+cmp_option(OPTION_DISABLE_TESTCODE "Remove test code" OFF)
+cmp_option(OPTION_BUILD_SHARED_LIBS "Build SHARED, if disabled STATIC is built" (BUILD_SHARED_LIBS))
+cmp_option(OPTION_BUILD_TESTING "Build tests" ON)
+cmp_option(OPTION_BUILD_EXAMPLES "Build examples" OFF)
+cmp_option(NO_LEGACY_BEHAVIOR "Disables any legacy behavior (before CMake migration)" ON)
+
+if (OPTION_BUILD_TESTING)
+    enable_testing()
+endif()
+
+if (OPTION_DISABLE_TESTCODE)
+    add_compile_definitions(DISABLE_TESTCODE=1)
+endif ()
+
+if (OPTION_USE_QT_IMAGELOAD)
+    add_compile_definitions(USE_QT_IMAGELOAD=1)
+endif()
+
+if (OPTION_BUILD_SHARED_LIBS)
+    add_compile_definitions(
+        BUILD_AS_PLUGIN_DLL=1
+        CMP_BUILD_SHARED_LIBS=1
+    )
 else()
-    message(FATAL_ERROR "Package OpenCV are required, but not found. "
-            "In Unix, run initsetup_unix.sh or sudo apt-get install "
-            "libopencv-dev to install the libs.")
+    add_compile_definitions(
+        CMP_BUILD_SHARED_LIBS=0
+    )
 endif()
 
-if (Qt5Gui_FOUND)
-else()
-  message(FATAL_ERROR "Package Qt5 (Qt5Gui) are required, but not found. "
-          "In Unix, run initsetup_unix.sh or sudo apt-get install "
-          "qtdeclarative5-dev. If is window, please make sure install qt and "
-          "add the bin path (i.e. C:\Qt\5.7\msvc2015_64\bin) to environment PATH.")
+if (APPLE OR UNIX)
+    add_compile_definitions(_LINUX=1)
+endif ()
+
+if (NO_LEGACY_BEHAVIOR)
+    add_compile_definitions(NO_LEGACY_BEHAVIOR=1)
 endif()
 
-if (UNIX)
-  find_package(PkgConfig REQUIRED)
+if (CMP_HOST_WINDOWS)
+    # add_compile_definitions(USE_NewLoader=1)
+    add_compile_definitions(WIN32_LEAN_AND_MEAN=1)
+endif ()
 
-  # OpenEXRConfig.cmake is broken on Linux, use PkgConfig
-  # find_package(OpenEXR REQUIRED)
-  pkg_check_modules(OpenEXR REQUIRED OpenEXR)
+# '_DEBUG' is only defined by Visual Studio. Make sure it's definied everywhere
+add_compile_definitions($<$<CONFIG:Debug>:_DEBUG>)
 
-  # Draco cmake find scripts are also broken (looks for src/ path in install directory)
-  # find_package(Draco REQUIRED)
-  pkg_check_modules(draco draco)
+# Additional options
+add_compile_definitions(
+    USE_QTWEBKIT                # Enable Qt Webengine interfaces for GUI welcome page
+    USE_ETCPACK                 # Use ETCPack for ETC2 else use CModel code!
+    USE_MESH_CLI                # CLI Process Mesh (only support glTF and OBJ files)
 
-  if(draco_FOUND)
-  else()
-    # TODO: To do this properly we require a generated config header from CMake
-    # Which can be done with configure_file.
-    # See: https://cmake.org/cmake/help/latest/command/configure_file.html
-    add_definitions(-DCMAKE_DRACO_NOT_FOUND)
-  endif()
+    ENABLE_MAKE_COMPATIBLE_API  # Byte<->Float to make all source and dest compatible
+
+    # V2.4 / V2.5 features and changes
+    USE_OLD_SWIZZLE             # Remove swizzle flag and abide by CMP_Formats
+)
+
+# Disable code signing
+set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED "NO")
+set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "")
+
+if (CMP_HOST_WINDOWS)
+    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 endif()
 
-#gltf code needs _LINUX define
-if (UNIX)
-  add_definitions(-D_LINUX)
+if (NOT CMP_HOST_APPLE)
+    set(CMAKE_INSTALL_RPATH "$ORIGIN")
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 endif()
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
+# Configure Externals, they must be added via 'include' before the applications
+include(External/cmake/DependencyInfo.cmake)
+include(External/CMakeLists.txt)
 
+# add_subdirectory(Compressonator ${CMAKE_BINARY_DIR}/Compressonator)
+
+add_subdirectory(CMP_Core)
 add_subdirectory(CMP_Framework)
 add_subdirectory(CMP_CompressonatorLib)
-add_subdirectory(Applications/_Plugins/CImage/ASTC)
-add_subdirectory(Applications/_Plugins/CImage/EXR)
-add_subdirectory(Applications/_Plugins/CImage/KTX)
-add_subdirectory(Applications/_Plugins/CImage/TGA)
-add_subdirectory(Applications/_Plugins/CAnalysis/Analysis)
-add_subdirectory(Applications/_Plugins/Common)
-add_subdirectory(Applications/_Libs/CMP_MeshCompressor)
-add_subdirectory(Applications/_Libs/CMP_MeshOptimizer)
-add_subdirectory(Applications/_Libs/GPU_Decode)
-add_subdirectory(Applications/CompressonatorCLI)
-add_subdirectory(Applications/CompressonatorGUI)
+add_subdirectory(Applications/_Libs)
+add_subdirectory(Applications/_Plugins)
+add_subdirectory(Applications)
 
-add_dependencies(CompressonatorCLI-bin Compressonator CMP_Framework ASTC EXR KTX TGA Analysis CMP_MeshCompressor)
+if (OPTION_BUILD_EXAMPLES)
+    add_subdirectory(Examples)
+endif()

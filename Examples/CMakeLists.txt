@@ -1,0 +1,9 @@
+
+add_subdirectory(common)
+add_subdirectory(core_example1)
+add_subdirectory(framework_example1)
+add_subdirectory(framework_example2)
+add_subdirectory(framework_example3)
+add_subdirectory(sdk_example1)
+add_subdirectory(sdk_example2)
+add_subdirectory(sdk_example3)

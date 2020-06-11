@@ -1,24 +1,18 @@
-cmake_minimum_required(VERSION 3.10)
 
-add_library(TGA STATIC "")
+add_library(Plugin_CImage_TGA)
 
-target_sources(TGA
-               PRIVATE
-               ../../Common/TC_PluginAPI.h
-               ../../Common/TC_PluginInternal.h
-               ../../Common/TC_PluginInternal.cpp
-               ../../Common/UtilFuncs.h
-               ../../Common/UtilFuncs.cpp
-               ./TGA.cpp
-               ./TGA.h
-               )
+target_sources(Plugin_CImage_TGA PRIVATE
 
-target_include_directories(TGA
-                           PRIVATE
-                           ../../../../CMP_CompressonatorLib
-                           ../../../../CMP_Framework/Common/half
-                           ../../Common/
-                           )
-if (UNIX)
-target_compile_definitions(TGA PRIVATE _LINUX)
-endif()
+	TGA.cpp
+	TGA.h
+)
+
+target_link_libraries(Plugin_CImage_TGA PRIVATE
+
+	CompressonatorLIB
+	CMP_FrameworkLIB
+	Plugin_TCPluginAPI
+	Plugin_Common_UtilFuncs
+)
+
+set_target_properties(Plugin_CImage_TGA PROPERTIES FOLDER ${FOLDER_NAME})

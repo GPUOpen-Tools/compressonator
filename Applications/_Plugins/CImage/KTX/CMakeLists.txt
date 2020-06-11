@@ -1,38 +1,41 @@
-cmake_minimum_required(VERSION 3.10)
 
-add_library(KTX STATIC "")
+add_library(Plugin_CImage_KTX)
 
 file(GLOB_RECURSE KTXLib
-     "./Lib/*.h"
-     "./Lib/*.cpp"
-     "./Lib/*.c"
-     )
-target_sources(KTX
-               PRIVATE
-               ${KTXLib}
-               ./KTX.cpp
-               ./cKTX.h
-               ./softfloat.cpp
-               ./softfloat.h
-               )
+    "./Lib/*.h"
+    "./Lib/*.cpp"
+    "./Lib/*.c"
+)
 
-target_include_directories(KTX
-                           PRIVATE
-                           ../../../../CMP_CompressonatorLib
-                           ../../../../Applications/_Libs/GPU_Decode
-                           ../../../../CMP_Framework/Common/half
-                           ../../Common/
-                           ./Lib/
-                           ./
-                           )
-if (UNIX)
-target_compile_definitions(KTX PRIVATE _LINUX)
-find_package(OpenGL) 
-if (OpenGL_FOUND)
-    if(APPLE)
-        target_include_directories(KTX
-                                   PRIVATE
-                                   /usr/local/include)
-    endif()
+target_sources(Plugin_CImage_KTX PRIVATE
+    ${KTXLib}
+    KTX.cpp
+    cKTX.h
+    softfloat.cpp
+    softfloat.h
+)
+
+target_include_directories(Plugin_CImage_KTX PRIVATE
+
+    ./
+    ./KHR/
+    ./Lib/
+)
+
+target_link_libraries(Plugin_CImage_KTX PRIVATE
+
+    CompressonatorLIB
+    CMP_FrameworkLIB
+    GPU_Decode
+
+    Plugin_TCPluginAPI
+
+    ExtGLEW
+    ExtOpenGL
+)
+
+if (CMP_HOST_APPLE)
+    target_compile_definitions(Plugin_CImage_KTX PUBLIC KTX_USE_GETPROC=1)
 endif()
-endif()
+
+set_target_properties(Plugin_CImage_KTX PROPERTIES FOLDER ${FOLDER_NAME})
