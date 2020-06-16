@@ -24,14 +24,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
+
 #include "TextureVK.h"
 #include "ResourceViewHeapsVK.h"
 #include "UploadHeapVK.h"
 #include "GltfHelpers.h"
 #include "GltfHelpers_Vulkan.h"
 #include "ThreadPool.h"
-#include "glslang\Public\ShaderLang.h"
 #include "ShaderCompilerHelper.h"
 #include "vector"
 #include "GltfPbrVK.h"

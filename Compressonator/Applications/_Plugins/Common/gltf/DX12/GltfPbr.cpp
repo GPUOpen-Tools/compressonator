@@ -17,14 +17,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
-#include "GltfFeatures.h"
 #include "GltfPbr.h"
+
+#include "GltfFeatures.h"
+#include "gltfGetFormat_DX12.h"
+#include "GltfHelpers_DX12.h"
 #include "GltfHelpers.h"
 #include "ThreadPool.h"
 
-#include "gltfGetFormat_DX12.h"
-#include "GltfHelpers_DX12.h"
+#include <Error.h>
+
+#include <d3dcompiler.h>
+#include <d3dx12.h>
+
+#pragma comment(lib, "d3dcompiler.lib")
+#pragma comment(lib, "D3D12.lib")
+
+using namespace DirectX;
 
 void GltfPbr::AddTextureIfExists(json::object_t material, json::array_t textures, std::map<std::string, TextureDX12 *> &map, char *texturePath, char *textureName)
 {
@@ -593,7 +602,7 @@ GltfPbr::per_batch *GltfPbr::SetPerBatchConstants()
     return cbPerBatch;
 }
 
-void GltfPbr::DrawMesh(ID3D12GraphicsCommandList* pCommandList, int meshIndex, XMMATRIX worldMatrix)
+void GltfPbr::DrawMesh(ID3D12GraphicsCommandList* pCommandList, int meshIndex, DirectX::XMMATRIX worldMatrix)
 {
     struct per_object
     {

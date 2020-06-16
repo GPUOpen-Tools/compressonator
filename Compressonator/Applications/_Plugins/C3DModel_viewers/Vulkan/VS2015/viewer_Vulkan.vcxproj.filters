@@ -64,9 +64,6 @@
     <ClCompile Include="..\Util\StaticConstantBufferPoolVK.cpp">
       <Filter>Util</Filter>
     </ClCompile>
-    <ClCompile Include="..\Util\stdafx.cpp">
-      <Filter>Util</Filter>
-    </ClCompile>
     <ClCompile Include="..\Util\SwapChainVK.cpp">
       <Filter>Util</Filter>
     </ClCompile>
@@ -124,9 +121,6 @@
     <ClCompile Include="..\..\..\Common\gltf\glTFHelpers.cpp">
       <Filter>gltf</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\gltf\Misc.cpp">
-      <Filter>gltf</Filter>
-    </ClCompile>
     <ClCompile Include="..\Util\ImguiVK.cpp">
       <Filter>imgui\Vulkan</Filter>
     </ClCompile>
@@ -147,6 +141,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Common\model_viewer\ModelTexture.cpp">
       <Filter>Common\model_viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Misc.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -213,9 +210,6 @@
     <CustomBuild Include="..\Util\StaticConstantBufferPoolVK.h">
       <Filter>Util</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\Util\stdafx.h">
-      <Filter>Util</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\Util\SwapChainVK.h">
       <Filter>Util</Filter>
     </CustomBuild>
@@ -269,9 +263,6 @@
     <ClInclude Include="..\..\..\Common\gltf\GltfStructures.h">
       <Filter>gltf</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\gltf\Misc.h">
-      <Filter>gltf</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Common\gltf\Vulkan\glTFHelpers_Vulkan.h">
       <Filter>gltf\Vulkan</Filter>
     </ClInclude>
@@ -290,5 +281,6 @@
     <ClInclude Include="..\..\..\Common\model_viewer\ModelTexture.h">
       <Filter>Common\model_viewer</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Common\Misc.h" />
   </ItemGroup>
 </Project>

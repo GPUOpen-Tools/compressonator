@@ -31,7 +31,6 @@
 
 #include "Compressonator.h"
 #include "Common.h"
-#include "Texture.h"
 
 
 typedef struct

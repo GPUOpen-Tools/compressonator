@@ -19,31 +19,35 @@
 
 #pragma once
 
+#include <Windows.h>
+
+#include <DirectXMath.h>
+
 // typical camera class
 
 class Camera
 {
 public:
-    void LookAt(XMVECTOR eyePos, XMVECTOR lookAt);
+    void LookAt(DirectX::XMVECTOR eyePos, DirectX::XMVECTOR lookAt);
     void SetFov(float fov, DWORD width, DWORD height);
-    void SetPosition(XMVECTOR eyePos) { m_eyePos = eyePos; }
+    void SetPosition(DirectX::XMVECTOR eyePos) { m_eyePos = eyePos; }
     void UpdateCamera(float roll, float pitch, float distance);
     void UpdateCameraWASD(float roll, float pitch, const bool keyDown[256], double deltaTime);
 
-    XMMATRIX GetView() { return m_View; }
-    XMMATRIX GetViewport() { return m_Viewport; }
-    XMVECTOR GetPosition() { return m_eyePos; }
-    XMVECTOR GetDirection() { return XMVector4Transform(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), XMMatrixTranspose(m_View)); }
-    XMMATRIX GetProjection() { return m_Proj; }
+    DirectX::XMMATRIX GetView() { return m_View; }
+    DirectX::XMMATRIX GetViewport() { return m_Viewport; }
+    DirectX::XMVECTOR GetPosition() { return m_eyePos; }
+    DirectX::XMVECTOR GetDirection() { return DirectX::XMVector4Transform(DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), DirectX::XMMatrixTranspose(m_View)); }
+    DirectX::XMMATRIX GetProjection() { return m_Proj; }
 
     float GetFovH() { return m_fovH; }
     float GetFovV() { return m_fovV; }
 
 private:
-    XMMATRIX            m_View;
-    XMMATRIX            m_Proj;
-    XMMATRIX            m_Viewport;
-    XMVECTOR            m_eyePos;
+    DirectX::XMMATRIX   m_View;
+    DirectX::XMMATRIX   m_Proj;
+    DirectX::XMMATRIX   m_Viewport;
+    DirectX::XMVECTOR   m_eyePos;
     float               m_fovV, m_fovH;
     float               m_aspectRatio;
 };

@@ -22,7 +22,6 @@
 
 #include "DynamicBufferRingVK.h"
 #include "StaticBufferPoolVK.h"
-//#include "TextureDX12.h"
 #include "Camera.h"
 
 // This class takes a GltfCommon class (that holds all the non-GPU specific data) as an input and loads all the GPU specific data

@@ -21,8 +21,12 @@
 // THE SOFTWARE.
 //
 
-#include "stdafx.h"
 #include "DrawCube.h"
+
+#include <Error.h>
+
+#include <d3dx12.h>
+#include <d3dcompiler.h>
 
 
 DrawCube::DrawCube()

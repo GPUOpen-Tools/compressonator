@@ -17,8 +17,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
 #include "Camera.h"
+
+#include <Windows.h>
+
+#include <algorithm>
+
+using namespace DirectX;
+
 
 //--------------------------------------------------------------------------------------
 //

@@ -19,6 +19,11 @@
 
 #pragma once
 
+#include <Windows.h>
+
+#include <cstdint>
+#include <cstddef>
+
 
 // class FrameworkWindows
 // {
@@ -57,19 +62,19 @@ class FrameworkWindows
 {
 protected:
     // sample name
-    LPCWSTR m_Name;
+    wchar_t m_Name;
 
     // viewport metrics
-    LONG m_Width;
-    LONG m_Height;
+    int32_t m_Width;
+    int32_t m_Height;
 
 public:
 
     FrameworkWindows(int width, int height) : m_Width(width), m_Height(height) {};
     virtual ~FrameworkWindows() {}
 
-    LONG GetWidth() { return m_Width; }
-    LONG GetHeight() { return m_Height; }
+    int32_t GetWidth() { return m_Width; }
+    int32_t GetHeight() { return m_Height; }
 
     // Pure virtual functions
 

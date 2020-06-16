@@ -62,10 +62,10 @@
 #pragma warning( disable : 4018)
 #pragma warning( disable : 4005)
 
-#include "draco/compression/encode.h"
-#include "draco/compression/decode.h"
-#include "draco/io/mesh_io.h"
-#include "draco/io/point_cloud_io.h"
+#include <draco/compression/encode.h>
+#include <draco/compression/decode.h>
+#include <draco/io/mesh_io.h>
+#include <draco/io/point_cloud_io.h>
 
 #pragma warning( pop ) 
 #endif

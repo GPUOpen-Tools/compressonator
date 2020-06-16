@@ -31,8 +31,8 @@
 
 #include "Compressonator.h"
 #include "GPU_Decode.h"
-#include "..\..\..\Common\Texture.h"
-#include "..\..\..\Common\PluginInterface.h"
+#include "Texture.h"
+#include "PluginInterface.h"
 #include "TextureIO.h"
 
 #include "ModelTexture.h"

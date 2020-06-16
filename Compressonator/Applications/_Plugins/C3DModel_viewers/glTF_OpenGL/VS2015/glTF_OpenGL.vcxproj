@@ -198,7 +198,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>BUILD_AS_PLUGIN_DLL;WIN32;_DEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;_CRT_SECURE_NO_WARNINGS;QT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;BUILD_AS_PLUGIN_DLL;WIN32;_DEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;_CRT_SECURE_NO_WARNINGS;QT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -250,7 +250,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>BUILD_AS_PLUGIN_DLL;WIN32;_DEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;QT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;BUILD_AS_PLUGIN_DLL;WIN32;_DEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;QT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -308,7 +308,7 @@
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <OmitFramePointers>true</OmitFramePointers>
-      <PreprocessorDefinitions>BUILD_AS_PLUGIN_DLL;WIN32;NDEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;_CRT_SECURE_NO_WARNINGS;QT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;BUILD_AS_PLUGIN_DLL;WIN32;NDEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;_CRT_SECURE_NO_WARNINGS;QT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -369,7 +369,7 @@
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <OmitFramePointers>true</OmitFramePointers>
-      <PreprocessorDefinitions>BUILD_AS_PLUGIN_DLL;WIN32;NDEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;QT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;BUILD_AS_PLUGIN_DLL;WIN32;NDEBUG;_WINDOWS;_USRDLL;APPLICATION_PLUGIN;QT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>

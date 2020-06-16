@@ -26,15 +26,15 @@
 //
 //=====================================================================
 
+#include "ATIFormats.h"
+
 #include <stdio.h>
 #include <cctype>
 #ifdef _WIN32
 #include <tchar.h>
 #endif
 
-#include "Compressonator.h"
-#include "Common.h"
-#include "ATIFormats.h"
+#include "Texture.h"
 
 CMP_TextureTypeDesc g_TextureTypeDesc[] =
 {

@@ -36,6 +36,8 @@
 
 #include "ModelTexture.h"
 
+#include <d3dx12.h>
+
 extern CMIPS *DX12_CMips;
 
 

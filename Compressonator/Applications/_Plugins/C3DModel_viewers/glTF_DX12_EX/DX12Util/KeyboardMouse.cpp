@@ -1,5 +1,5 @@
 // AMD AMDUtils code
-// 
+//
 // Copyright(c) 2017 Advanced Micro Devices, Inc.All rights reserved.
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -17,16 +17,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
-
 #include "KeyboardMouse.h"
 
+#include <cstdlib>
 
-static bool                 m_keyDown[256];
-static int                  m_mouseButton;
-static POINT                m_mouseDelta;
-static int                  m_lastMouseWheelDelta, m_mouseWheelDelta;
-static int Roll  = 0;
+static bool m_keyDown[256];
+static int m_mouseButton;
+static POINT m_mouseDelta;
+static int m_lastMouseWheelDelta, m_mouseWheelDelta;
+static int Roll = 0;
 static int Pitch = 0;
 
 void kbmInit()
@@ -42,7 +41,7 @@ static void inputEvent(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
     case WM_MOUSEMOVE:
     {
-        Roll  = (signed short)(lParam);
+        Roll = (signed short)(lParam);
         Pitch = (signed short)(lParam >> 16);
         break;
     }
@@ -171,13 +170,11 @@ void kbmGetMouseDelta(POINT *pDelta, int *pMouseWheelDelta, int *pMouseButton)
     *pMouseWheelDelta = m_mouseWheelDelta - m_lastMouseWheelDelta;
     // Record current position for next time
     m_lastMouseWheelDelta = m_mouseWheelDelta;
-
 }
-
 
 bool kbmKeyState(int key)
 {
-    if (key < 0 || key>255)
+    if (key < 0 || key > 255)
         return false;
 
     return m_keyDown[key];

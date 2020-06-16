@@ -20,12 +20,14 @@
 #pragma once
 #include "PostProcPS.h"
 
+#include <DirectXMath.h>
+
 class SkyDome
 {
 public:
     void OnCreate(ID3D12Device* pDevice, UploadHeapDX12* pUploadHeap, DXGI_FORMAT outFormat, ResourceViewHeapsDX12 *pResourceViewHeaps, StaticBufferPoolDX12  *pStaticBufferPool, DynamicBufferRingDX12 *pDynamicBufferRing, UINT sampleDescCount, void *pluginManager, void *msghandler);
     void OnDestroy();
-    void Draw(ID3D12GraphicsCommandList* pCommandList, XMMATRIX invViewProj);
+    void Draw(ID3D12GraphicsCommandList* pCommandList, DirectX::XMMATRIX invViewProj);
     void GenerateDiffuseMapFromEnvironmentMap();
 
     TextureDX12 *GetSpecularCubeMap() { return &m_CubeSpecularTexture; }

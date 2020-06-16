@@ -17,13 +17,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
 #include "DynamicBufferRingDX12.h"
 #include "StaticBufferPoolDX12.h"
 #include "UploadHeapDX12.h"
 #include "TextureDX12.h"
 #include "PostProcPS.h"
 #include "BlurPS.h"
+
+#include <DirectXMath.h>
+
+using namespace DirectX;
 
 
 float GaussianWeight(float x)

@@ -24,11 +24,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
+
 #include "SwapChainVK.h"
 #include "Vulkan_Renderer.h"
 #include "Misc.h"
-#include "d3dx12\d3dx12.h"
 
 #ifdef USE_QT10
 

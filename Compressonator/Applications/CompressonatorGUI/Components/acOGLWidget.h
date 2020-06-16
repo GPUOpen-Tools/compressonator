@@ -6,12 +6,20 @@
 #define __ACOGLWIDGET_H
 
 #include <QOpenGLFunctions>
+#include <QOpenGLWidget>
 //#include "AMDCompress.h"
 //#include "MIPS.h"
 #include "PluginManager.h"
 #include <QWidget>
-#include <GL/gl.h>
 #include <qdebug.h>
+
+#if defined(_WIN32)
+#include <gl/GL.h>
+#elif defined(__APPLE__)
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
 
 #include "acCustomGraphics.h"
 

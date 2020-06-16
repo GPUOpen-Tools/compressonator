@@ -17,9 +17,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
-#include "DeviceVK.h"
+
 #include "CommandListRingVK.h"
+
+#include "DeviceVK.h"
+
+#include <windows.h>
 
 
 //--------------------------------------------------------------------------------------

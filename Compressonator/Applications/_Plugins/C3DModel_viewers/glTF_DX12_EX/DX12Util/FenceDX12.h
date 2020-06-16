@@ -18,7 +18,9 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "Error.h"
+
+#include <d3dx12.h>
+
 
 //
 // Just a simple class that automatically increments the fence counter

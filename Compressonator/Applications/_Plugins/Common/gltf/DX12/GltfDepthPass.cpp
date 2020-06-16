@@ -17,7 +17,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
 #include "GltfDepthPass.h"
 #include "GltfHelpers.h"
 #include "ThreadPool.h"
@@ -25,6 +24,12 @@
 
 #include "gltfGetFormat_DX12.h"
 #include "GltfHelpers_DX12.h"
+
+#include <Error.h>
+
+#include <d3dcompiler.h>
+
+using namespace DirectX;
 
 bool GltfDepthPass::OnCreate(
     ID3D12Device* pDevice,

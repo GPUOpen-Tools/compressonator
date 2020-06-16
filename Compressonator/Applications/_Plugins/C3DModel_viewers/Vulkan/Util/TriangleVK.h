@@ -23,6 +23,8 @@
 #include "StaticBufferPoolVK.h"
 #include "camera.h"
 
+#include <vector>
+
 class TriangleVK
 {
     DeviceVK* m_pDevice;

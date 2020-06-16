@@ -17,18 +17,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
 #include "GltfTechnique.h"
+
+#include <cstdio>
 
 void GltfTechnique::Draw(ID3D12GraphicsCommandList* pCommandList)
 {
-    CMP_DWORD dwNodesVisible;
+    uint32_t dwNodesVisible;
 
     std::vector<NodeMatrixPostTransform> nodes(m_pGLTFData->GetNodeCount());
-    if (nodes.size() == 0) return;
+    if (nodes.size() == 0) 
+        return;
     m_pGLTFData->TransformNodes(nodes.data(), &dwNodesVisible);
 
-    for (DWORD i = 0; i < dwNodesVisible; i++)
+    for (uint32_t i = 0; i < dwNodesVisible; i++)
     {
         tfNode *pNode = nodes[i].pN;
         if (pNode != NULL && pNode->meshIndex >= 0)

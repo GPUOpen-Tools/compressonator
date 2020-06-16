@@ -44,8 +44,8 @@
 // This file holds all the structures/classes used to load a glTF model
 //
 
-#include "../json/json.h"
 #include "GltfFeatures.h"
+#include <json/json.h>
 
 #ifdef _WIN32
 #include <DirectXMath.h>            // Find a replacemnt for this so that the GUI is not platform specific! look at using CMP_MATH

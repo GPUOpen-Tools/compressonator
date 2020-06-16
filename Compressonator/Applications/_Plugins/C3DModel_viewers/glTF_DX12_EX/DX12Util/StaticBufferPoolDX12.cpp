@@ -17,9 +17,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
 #include "StaticBufferPoolDX12.h"
 #include "Misc.h"
+
+#include <Error.h>
 
 void StaticBufferPoolDX12::OnCreate(ID3D12Device* pDevice, DWORD totalMemSize, bool bUseVidMem, UINT node, UINT nodemask)
 {

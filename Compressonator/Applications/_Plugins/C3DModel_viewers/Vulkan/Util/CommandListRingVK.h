@@ -18,7 +18,15 @@
 // THE SOFTWARE.
 
 #pragma once
+#include <Windows.h>
+
 #include "Ring.h"
+
+#include <vulkan/vulkan.h>
+
+
+// Forward Declaration
+class DeviceVK;
 
 // This class, on creation allocates a number of command lists. Using a ring buffer
 // these commandLists are recycled when they are no longer used by the GPU. See the 

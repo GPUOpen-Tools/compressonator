@@ -17,12 +17,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
+
 #include "Misc.h"
 #include "GltfPbr.h"
 #include "bloom.h"
 #include "ThreadPool.h"
 #include "glTF_DX12RendererEx.h"
+
+#include <DirectXMath.h>
+
+using namespace DirectX;
 
 //--------------------------------------------------------------------------------------
 //

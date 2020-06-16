@@ -19,6 +19,11 @@
 
 #pragma once
 
+#include <Windows.h>
+
+#include <cstdint>
+#include <cassert>
+
 // This is the typical ring buffer, it is used by resources that will be reused. 
 // For example the command Lists, the 'dynamic' constant buffers, etc..
 //

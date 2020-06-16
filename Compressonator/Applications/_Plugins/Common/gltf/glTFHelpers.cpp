@@ -17,11 +17,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifdef _WIN32
-#include "stdafx.h"
-#endif
-
 #include "glTFHelpers.h"
+
+#ifdef _WIN32
+using namespace DirectX;
+#endif
 
 int GetFormatSize(int id)
 {

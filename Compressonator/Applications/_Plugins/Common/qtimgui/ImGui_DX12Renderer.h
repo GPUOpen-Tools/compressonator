@@ -21,19 +21,31 @@
 // THE SOFTWARE.
 //
 #pragma once
-#include "stdafx.h"
 
-#include "QtGui\qopenglextrafunctions.h"
-#include "QtCore\qobject.h"
-#include "imgui\imgui.h"
-
-#include "ResourceViewHeapsDX12.h"
-#include "DynamicBufferRingDX12.h"
 #include "CommandListRingDX12.h"
+#include "DynamicBufferRingDX12.h"
+#include "ResourceViewHeapsDX12.h"
 #include "UploadHeapDX12.h"
+
+#include "Error.h"
+#include "Defines.h"
+
+#include <imgui/imgui.h>
+
+#include <QtGui/qopenglextrafunctions.h>
+#include <QtCore/qobject.h>
+
 #include <d3dx12.h>
 
+#include <cassert>
+#include <fstream>
+#include <iostream>
+#include <malloc.h>
+#include <map>
 #include <memory>
+#include <string>
+#include <tchar.h>
+#include <vector>
 
 class QMouseEvent;
 class QWheelEvent;

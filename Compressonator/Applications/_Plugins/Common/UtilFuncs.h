@@ -30,8 +30,8 @@
 #include <string>
 
 #ifdef _WIN32
-#include "Windows.h"
-#include "stdio.h"
+#include <Windows.h>
+#include <stdio.h>
 #include <fstream>
 #include <iostream>
 HWND FindTopLevelWindow(TCHAR *pszName);

@@ -28,11 +28,11 @@
 
 #include "TC_PluginAPI.h"
 #include "TC_PluginInternal.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 #include "Compressonator.h"
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <fstream>
 #include <iostream>
 

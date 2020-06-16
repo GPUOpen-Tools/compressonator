@@ -20,7 +20,7 @@
 #pragma once
 
 
-#include "QtWidgets/qwidget.h"
+#include <QtWidgets/qwidget.h>
 
 #include <D3D12.h>
 

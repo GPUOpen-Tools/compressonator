@@ -23,7 +23,7 @@
 #ifndef _PLUGIN_IMAGE_OBJ10_H
 #define _PLUGIN_IMAGE_OBJ10_H
 
-#include "stdafx.h"
+
 #include "PluginInterface.h"
 #include "MeshObjLoader.h"
 #include "ModelData.h"

@@ -24,12 +24,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
-#include <vector>
 #include "TriangleVK.h"
-#include "glslang\Public\ShaderLang.h"
+
+
 #include "ShaderCompilerHelper.h"
-#include "..\d3dx12\d3dx12.h"
+
+#include <DirectXMath.h>
+
+#include <vector>
 
 void TriangleVK::OnCreate(DeviceVK* pDevice, DynamicBufferRingVK *pConstantBufferRing, StaticBufferPoolVK *pStaticGeom, VkRenderPass renderPass)
 {
@@ -397,7 +399,7 @@ void TriangleVK::Render(VkCommandBuffer cmd_buf, Camera *pCam)
 {
     struct DATA
     {
-        XMMATRIX mat;
+        DirectX::XMMATRIX mat;
     } *pData;
     VkDescriptorBufferInfo constantBuffer;
     m_pConstantBufferRing->AllocConstantBuffer(4*4 * sizeof(float), (void**)&pData, &constantBuffer);

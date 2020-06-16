@@ -17,9 +17,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
 #include "DynamicBufferRingDX12.h"
 #include "Misc.h"
+
+#include <Error.h>
+
+#include <d3dx12.h>
 
 //--------------------------------------------------------------------------------------
 //

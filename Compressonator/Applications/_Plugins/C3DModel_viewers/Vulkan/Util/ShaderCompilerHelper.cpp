@@ -24,12 +24,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
-#include <fstream>
-#include <iostream>
-#include "SPIRV/GlslangToSpv.h"
+
 #include "ShaderCompilerHelper.h"
 
+#include <SPIRV/GlslangToSpv.h>
+
+#include <windows.h>
+
+#include <fstream>
+#include <iostream>
 
 void init_resources(TBuiltInResource &Resources) 
 {

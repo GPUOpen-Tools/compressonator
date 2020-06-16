@@ -54,9 +54,6 @@
     <ClInclude Include="..\..\..\Common\PluginInterface.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\stdafx.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\obj_10.h">
       <Filter>Source Files</Filter>
     </ClInclude>

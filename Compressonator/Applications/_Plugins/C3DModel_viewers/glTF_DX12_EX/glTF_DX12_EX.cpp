@@ -30,7 +30,6 @@
 
 #include <iostream>
 #include <fstream>
-using namespace std;
 
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_glTF_DX12_EX)
@@ -40,9 +39,9 @@ SET_PLUGIN_NAME("DX12_EX")
 void *make_Plugin_glTF_DX12_EX() { return new Plugin_glTF_DX12_EX; }
 #endif
 
-#include "stdafx.h"
+
 #include "Misc.h"
-#include "d3dx12\d3dx12.h"
+#include "d3dx12/d3dx12.h"
 #include "glTF_DX12DeviceEx.h"
 
 

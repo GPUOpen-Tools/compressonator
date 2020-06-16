@@ -17,17 +17,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "stdafx.h"
-#include "GltfFeatures.h"
 #include "ModelTexture.h"
-#include "dxgi.h"
+
+#include "Error.h"
+#include "Misc.h"
+#include "UtilFuncs.h"
+
 #include <assert.h>
-#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
-#include "Misc.h"
-#include "UtilFuncs.h"
+#include <map>
+#include <string>
+#include <vector>
+#include <algorithm>
 
 //--------------------------------------------------------------------------------------
 // Constructor of the Texture class

@@ -180,10 +180,10 @@ void *Plugin_glTF_OpenGL::CreateView(void *ModelData, CMP_LONG Width, CMP_LONG H
     m_glTF_OGLDevice = new glTF_OGLDevice();
     if (m_glTF_OGLDevice)
     {
-        m_glTF_OGLDevice->init(m_model, Width, Height,pluginManager, msghandler,m_parent);
+        m_glTF_OGLDevice->init(m_model, Width, Height, pluginManager, msghandler, m_parent);
         m_glTF_OGLDevice->OnCreate();
+        return m_glTF_OGLDevice;
     }
-    else return nullptr;
-    
-    return m_glTF_OGLDevice;
+
+    return nullptr;
 }

@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <Windows.h>
+
 #define KEY_WAS_DOWN_MASK 0x80
 #define KEY_IS_DOWN_MASK  0x01
 

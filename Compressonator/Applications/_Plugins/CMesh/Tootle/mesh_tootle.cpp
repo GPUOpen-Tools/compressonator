@@ -29,6 +29,7 @@
 #include "Compressonator.h"
 #include "Timer.h"
 #include <iostream>
+#include <filesystem>
 #include <fstream>
 
 #ifdef BUILD_AS_PLUGIN_DLL

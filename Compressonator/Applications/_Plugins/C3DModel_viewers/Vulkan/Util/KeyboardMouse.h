@@ -19,14 +19,15 @@
 
 #pragma once
 
-#define KEY_WAS_DOWN_MASK 0x80
-#define KEY_IS_DOWN_MASK  0x01
+#include <windows.h>
+
+#define KEY_WAS_DOWN_MASK   0x80
+#define KEY_IS_DOWN_MASK    0x01
 
 #define MOUSE_LEFT_BUTTON   0x01
 #define MOUSE_MIDDLE_BUTTON 0x02
 #define MOUSE_RIGHT_BUTTON  0x04
 #define MOUSE_WHEEL         0x08
-
 
 void kbmInit();
 bool kbmOnEvent(MSG msg);

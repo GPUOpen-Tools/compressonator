@@ -32,7 +32,7 @@
 #include <dxgiformat.h>
 #include <d3d11.h>
 #include <directxmath.h>
-#include "Windows.h"
+#include <Windows.h>
 #include <stdio.h>
 
 using namespace DirectX;

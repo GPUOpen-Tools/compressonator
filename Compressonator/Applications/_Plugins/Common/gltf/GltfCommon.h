@@ -21,10 +21,11 @@
 
 #include "Compressonator.h"
 #include "Common.h"
-#include "../json/json.h"
 #include "GltfFeatures.h"
 #include "GltfStructures.h"
 #include "ModelData.h"
+
+#include <json/json.h>
 
 #ifdef USE_TINYGLTF2
 #include "tiny_gltf2.h"
