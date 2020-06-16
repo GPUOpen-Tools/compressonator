@@ -24,9 +24,6 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include "UseDefinitions.h"
-#include "Compressonator.h"
-
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
@@ -34,13 +31,17 @@
 #include <string>
 #include <cstring>
 
+#include "Compressonator.h"
+
+using namespace std;
+
 #pragma warning( push )
 #pragma warning(disable:4244)
-#include <half.h>
+#include "half.h"
 #pragma warning( pop )
 
 #ifndef CMP_MAKEFOURCC
-#define CMP_MAKEFOURCC(ch0, ch1, ch2, ch3)                             \
+#define CMP_MAKEFOURCC(ch0, ch1, ch2, ch3)                              \
    ((CMP_DWORD)(CMP_BYTE)(ch0) | ((CMP_DWORD)(CMP_BYTE)(ch1) << 8) |   \
    ((CMP_DWORD)(CMP_BYTE)(ch2) << 16) | ((CMP_DWORD)(CMP_BYTE)(ch3) << 24 ))
 #endif

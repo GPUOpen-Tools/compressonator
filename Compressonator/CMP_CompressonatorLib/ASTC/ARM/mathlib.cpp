@@ -1,4 +1,3 @@
-/*----------------------------------------------------------------------------*/  
 /**
  *	This confidential and proprietary software may be used only as
  *	authorised by a licensing agreement from ARM Limited
@@ -11,7 +10,6 @@
  *
  *	@brief	Library of math functions.
  */ 
-/*----------------------------------------------------------------------------*/ 
 
 #include <time.h>
 #include <stdlib.h>

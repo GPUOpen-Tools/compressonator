@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1169
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CompressonatorCLI", "Compressonator.vcxproj", "{6DFBE28E-925B-4045-884F-4A10FC029132}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -544,5 +544,8 @@ Global
 		{63A44069-66AC-4EE6-8E70-729744443BCD} = {0607E5ED-1D4D-46B4-9EC4-79225EDE9247}
 		{DF04E80A-23A1-4172-89AA-841E4D376745} = {63A44069-66AC-4EE6-8E70-729744443BCD}
 		{C5C9003E-9986-431F-B8A0-15BB232ED650} = {63A44069-66AC-4EE6-8E70-729744443BCD}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9264414B-5148-485B-84E5-CFA2F5ABDD00}
 	EndGlobalSection
 EndGlobal

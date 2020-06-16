@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1169
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Compute_Lib", "Compute_Lib.vcxproj", "{38B807B1-A03A-48AD-A8DD-7AB89280023D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CMP_Framework", "Compute_Lib.vcxproj", "{38B807B1-A03A-48AD-A8DD-7AB89280023D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,5 +60,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {654D70F2-D69F-45E5-B4F8-831BCA0A5708}
 	EndGlobalSection
 EndGlobal

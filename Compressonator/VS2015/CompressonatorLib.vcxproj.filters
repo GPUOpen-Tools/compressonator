@@ -375,9 +375,6 @@
     <ClInclude Include="..\Applications\_Plugins\Common\ATIFormats.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\CMP_CompressonatorLib\Common.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\CMP_CompressonatorLib\Version.h">
       <Filter>Source Files</Filter>
     </ClInclude>

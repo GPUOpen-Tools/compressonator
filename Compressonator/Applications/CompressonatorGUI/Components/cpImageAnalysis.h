@@ -26,19 +26,17 @@
 #ifndef CPIMAGEANALYSIS_H
 #define CPIMAGEANALYSIS_H
 
+#include <QObject>
 #include "PluginManager.h"
 #include "CAnalysis.h"
 #include "cpImageLoader.h"
-
-#include <QtCore/qobject>
-
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/algorithm/string.hpp> 
 
 class C_AnalysisData : public QObject
 {
-    Q_OBJECT
+    Q_OBJECT 
         Q_PROPERTY(double  _MSE            MEMBER m_MSE)
         Q_PROPERTY(double  _SSIM           MEMBER m_SSIM)
         Q_PROPERTY(double  _SSIM_Blue      MEMBER m_SSIM_Blue)

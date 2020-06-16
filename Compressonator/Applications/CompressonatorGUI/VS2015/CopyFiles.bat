@@ -43,41 +43,41 @@ IF NOT EXIST %BUILD_OUTDIR%WelcomePage mkdir %BUILD_OUTDIR%WelcomePage
 XCopy /e /d /y "%BUILD_SOLUTIONDIR%..\WelcomePage" "%BUILD_OUTDIR%WelcomePage"
 
 
-XCopy /r /d /y "%BUILD_QTDIR%bin\libGLESv2%_DEBUG%.dll"            %BUILD_OUTDIR%
-XCopy /r /d /y "%BUILD_QTDIR%bin\libEGL%_DEBUG%.dll"               %BUILD_OUTDIR%
-XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5Core%_DEBUG%.dll"              %BUILD_OUTDIR%
-XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5Widgets%_DEBUG%.dll"           %BUILD_OUTDIR%
-XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5Gui%_DEBUG%.dll"               %BUILD_OUTDIR%
-XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5WebEngineWidgets%_DEBUG%.dll"  %BUILD_OUTDIR%
-XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5WebEngine%_DEBUG%.dll"         %BUILD_OUTDIR%
-XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5WebEngineCore%_DEBUG%.dll"     %BUILD_OUTDIR%
-XCopy /r /d /y "%BUILD_QTDIR%bin\QtWebEngineProcess%_DEBUG%.exe"   %BUILD_OUTDIR%
-XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5Quick%_DEBUG%.dll"             %BUILD_OUTDIR%
-XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5Qml%_DEBUG%.dll"               %BUILD_OUTDIR%
-XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5Network%_DEBUG%.dll"           %BUILD_OUTDIR%
-XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5WebChannel%_DEBUG%.dll"        %BUILD_OUTDIR%
-XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5xml%_DEBUG%.dll"               %BUILD_OUTDIR%
-XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5Positioning%_DEBUG%.dll"       %BUILD_OUTDIR%
-XCopy /r /d /y "%BUILD_QTDIR%bin\Qt5OpenGL%_DEBUG%.dll"            %BUILD_OUTDIR%
+XCopy /r /d /y "%BUILD_QTDIR%\bin\libGLESv2%_DEBUG%.dll"            %BUILD_OUTDIR%
+XCopy /r /d /y "%BUILD_QTDIR%\bin\libEGL%_DEBUG%.dll"               %BUILD_OUTDIR%
+XCopy /r /d /y "%BUILD_QTDIR%\bin\Qt5Core%_DEBUG%.dll"              %BUILD_OUTDIR%
+XCopy /r /d /y "%BUILD_QTDIR%\bin\Qt5Widgets%_DEBUG%.dll"           %BUILD_OUTDIR%
+XCopy /r /d /y "%BUILD_QTDIR%\bin\Qt5Gui%_DEBUG%.dll"               %BUILD_OUTDIR%
+XCopy /r /d /y "%BUILD_QTDIR%\bin\Qt5WebEngineWidgets%_DEBUG%.dll"  %BUILD_OUTDIR%
+XCopy /r /d /y "%BUILD_QTDIR%\bin\Qt5WebEngine%_DEBUG%.dll"         %BUILD_OUTDIR%
+XCopy /r /d /y "%BUILD_QTDIR%\bin\Qt5WebEngineCore%_DEBUG%.dll"     %BUILD_OUTDIR%
+XCopy /r /d /y "%BUILD_QTDIR%\bin\QtWebEngineProcess%_DEBUG%.exe"   %BUILD_OUTDIR%
+XCopy /r /d /y "%BUILD_QTDIR%\bin\Qt5Quick%_DEBUG%.dll"             %BUILD_OUTDIR%
+XCopy /r /d /y "%BUILD_QTDIR%\bin\Qt5Qml%_DEBUG%.dll"               %BUILD_OUTDIR%
+XCopy /r /d /y "%BUILD_QTDIR%\bin\Qt5Network%_DEBUG%.dll"           %BUILD_OUTDIR%
+XCopy /r /d /y "%BUILD_QTDIR%\bin\Qt5WebChannel%_DEBUG%.dll"        %BUILD_OUTDIR%
+XCopy /r /d /y "%BUILD_QTDIR%\bin\Qt5xml%_DEBUG%.dll"               %BUILD_OUTDIR%
+XCopy /r /d /y "%BUILD_QTDIR%\bin\Qt5Positioning%_DEBUG%.dll"       %BUILD_OUTDIR%
+XCopy /r /d /y "%BUILD_QTDIR%\bin\Qt5OpenGL%_DEBUG%.dll"            %BUILD_OUTDIR%
 
 
 IF NOT EXIST %BUILD_OUTDIR%plugins\platforms mkdir %BUILD_OUTDIR%plugins\platforms
-XCopy /r /d /y "%BUILD_QTDIR%plugins\platforms\qwindows%_DEBUG%.dll" %BUILD_OUTDIR%plugins\platforms\
+XCopy /r /d /y "%BUILD_QTDIR%\plugins\platforms\qwindows%_DEBUG%.dll" %BUILD_OUTDIR%plugins\platforms\
 
 IF NOT EXIST %BUILD_OUTDIR%plugins\imageformats mkdir %BUILD_OUTDIR%plugins\imageformats
-XCopy /r /d /y "%BUILD_QTDIR%plugins\imageformats\qtga%_DEBUG%.dll"  %BUILD_OUTDIR%plugins\imageformats\
-XCopy /r /d /y "%BUILD_QTDIR%plugins\imageformats\qtiff%_DEBUG%.dll" %BUILD_OUTDIR%plugins\imageformats\
-XCopy /r /d /y "%BUILD_QTDIR%plugins\imageformats\qjpeg%_DEBUG%.dll" %BUILD_OUTDIR%plugins\imageformats\
+XCopy /r /d /y "%BUILD_QTDIR%\plugins\imageformats\qtga%_DEBUG%.dll"  %BUILD_OUTDIR%plugins\imageformats\
+XCopy /r /d /y "%BUILD_QTDIR%\plugins\imageformats\qtiff%_DEBUG%.dll" %BUILD_OUTDIR%plugins\imageformats\
+XCopy /r /d /y "%BUILD_QTDIR%\plugins\imageformats\qjpeg%_DEBUG%.dll" %BUILD_OUTDIR%plugins\imageformats\
 
 IF NOT EXIST %BUILD_OUTDIR%resources mkdir %BUILD_OUTDIR%resources
-XCopy /s /r /d /y "%BUILD_QTDIR%resources\*" %BUILD_OUTDIR%resources\
+XCopy /s /r /d /y "%BUILD_QTDIR%\resources\*" %BUILD_OUTDIR%resources\
 
 IF NOT EXIST %BUILD_OUTDIR%translations mkdir %BUILD_OUTDIR%translations
-XCopy /r /d /y "%BUILD_QTDIR%translations\qtwebengine_en.qm" %BUILD_OUTDIR%translations\
+XCopy /r /d /y "%BUILD_QTDIR%\translations\qtwebengine_en.qm" %BUILD_OUTDIR%translations\
 
 
 IF NOT EXIST %BUILD_OUTDIR%translations\qtwebengine_locales mkdir %BUILD_OUTDIR%translations\qtwebengine_locales
-XCopy /s /r /d /y "%BUILD_QTDIR%translations\qtwebengine_locales\en-US.pak" %BUILD_OUTDIR%translations\qtwebengine_locales\
+XCopy /s /r /d /y "%BUILD_QTDIR%\translations\qtwebengine_locales\en-US.pak" %BUILD_OUTDIR%translations\qtwebengine_locales\
 
 echo "Dependencies copied done"
 

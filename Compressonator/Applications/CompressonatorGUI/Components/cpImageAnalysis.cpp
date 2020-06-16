@@ -38,7 +38,7 @@ C_AnalysisData ::~C_AnalysisData()
 static inline void helper_toLower(std::string &str)
 {
     for (char& c : str)
-        c = std::tolower(c);
+        c = tolower(c);
 }
 
 bool C_AnalysisData::SourceAndDestFileExtMatch(const char *fsource, const char *fdest)

@@ -28,26 +28,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -76,22 +76,22 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <IntDir>$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir>$(Compressonator_RootDev)Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <IntDir>$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir>$(Compressonator_RootDev)Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <IntDir>$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir>$(Compressonator_RootDev)Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <IntDir>$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir>$(Compressonator_RootDev)Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
     <ClCompile>

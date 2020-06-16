@@ -26,6 +26,7 @@
 #ifndef _IMAGECOMPARE_H
 #define _IMAGECOMPARE_H
 
+#include <QObject>
 #include <QtWidgets>
 #include "cpImageView.h"
 #include "cpImageAnalysis.h"

@@ -44,42 +44,42 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -123,10 +123,10 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Compressonator_RootDev)Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">$(Compressonator_RootDev)Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Compressonator_RootDev)Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">$(Compressonator_RootDev)Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
@@ -135,10 +135,10 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">$(Compressonator_RootDev)Build\$(Configuration)\$(Platform)\plugins\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">$(Compressonator_RootDev)Build\Temp\$(SolutionName)\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Compressonator_RootDev)Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">$(Compressonator_RootDev)Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Compressonator_RootDev)Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">$(Compressonator_RootDev)Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\plugins\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
@@ -202,7 +202,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>.\;..\;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_Math/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/CMP_Core/source/;$(Compressonator_RootDev)/CMP_Core/shaders/;$(Compressonator_BOOST);..\..\..\..\..\..\Common\Lib\Ext\Qt\5.7\include\QtGui;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.7\\include;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\openexr\;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\openexr\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_Math/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/CMP_Core/source/;$(Compressonator_RootDev)/CMP_Core/shaders/;$(Compressonator_BOOST);$(QTDIR)/include/;$(QTDIR)/include/QtGui;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.7\include\QtGui;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.7\\include;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\openexr\;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\openexr\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -229,7 +229,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>.\;..\;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_Math/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/CMP_Core/source/;$(Compressonator_RootDev)/CMP_Core/shaders/;$(Compressonator_BOOST);$(Compressonator_QT)\include\QtGui;$(Compressonator_QT)\include;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\openexr\;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\openexr\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_Math/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/CMP_Core/source/;$(Compressonator_RootDev)/CMP_Core/shaders/;$(Compressonator_BOOST);$(QTDIR)/include/;$(QTDIR)/include/QtGui;$(Compressonator_QT)\include\QtGui;$(Compressonator_QT)\include;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\openexr\;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\openexr\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -255,7 +255,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>.\;..\;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_Math/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/CMP_Core/source/;$(Compressonator_RootDev)/CMP_Core/shaders/;$(Compressonator_BOOST);..\..\..\..\..\..\Common\Lib\Ext\Qt\5.7\include\QtGui;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.7\\include;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\openexr\;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\openexr\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_Math/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/CMP_Core/source/;$(Compressonator_RootDev)/CMP_Core/shaders/;$(Compressonator_BOOST);$(QTDIR)/include/;$(QTDIR)/include/QtGui;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.7\include\QtGui;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.7\\include;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\openexr\;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\openexr\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -280,7 +280,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>.\;..\;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_Math/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/CMP_Core/source/;$(Compressonator_RootDev)/CMP_Core/shaders/;$(Compressonator_BOOST);$(Compressonator_QT)\include\QtGui;$(Compressonator_QT)\include;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\openexr\;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\openexr\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_Math/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/CMP_Core/source/;$(Compressonator_RootDev)/CMP_Core/shaders/;$(Compressonator_BOOST);$(QTDIR)/include/;$(QTDIR)/include/QtGui;$(Compressonator_QT)\include\QtGui;$(Compressonator_QT)\include;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\openexr\;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\openexr\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -308,7 +308,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>.\;..\;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_Math/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/CMP_Core/source/;$(Compressonator_RootDev)/CMP_Core/shaders/;$(Compressonator_BOOST);..\..\..\..\..\..\Common\Lib\Ext\Qt\5.7\include\QtGui;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.7\\include;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\openexr\;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\openexr\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_Math/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/CMP_Core/source/;$(Compressonator_RootDev)/CMP_Core/shaders/;$(Compressonator_BOOST);$(QTDIR)/include/;$(QTDIR)/include/QtGui;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.7\include\QtGui;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.7\\include;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\openexr\;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\openexr\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -339,7 +339,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>.\;..\;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_Math/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/CMP_Core/source/;$(Compressonator_RootDev)/CMP_Core/shaders/;$(Compressonator_BOOST);$(Compressonator_QT)\include\QtGui;$(Compressonator_QT)\include;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\openexr\;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\openexr\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_Math/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/CMP_Core/source/;$(Compressonator_RootDev)/CMP_Core/shaders/;$(Compressonator_BOOST);$(QTDIR)/include/;$(QTDIR)/include/QtGui;$(QTDIR)/include/QtGui;$(QTDIR)/include;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\openexr\;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\openexr\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -370,7 +370,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>.\;..\;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_Math/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/CMP_Core/source/;$(Compressonator_RootDev)/CMP_Core/shaders/;$(Compressonator_BOOST);..\..\..\..\..\..\Common\Lib\Ext\Qt\5.7\include\QtGui;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.7\\include;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\openexr\;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\openexr\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_Math/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/CMP_Core/source/;$(Compressonator_RootDev)/CMP_Core/shaders/;$(Compressonator_BOOST);$(QTDIR)/include/;$(QTDIR)/include/QtGui;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.7\include\QtGui;..\..\..\..\..\..\Common\Lib\Ext\Qt\5.7\\include;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\openexr\;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\openexr\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -400,7 +400,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>.\;..\;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_Math/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/CMP_Core/source/;$(Compressonator_RootDev)/CMP_Core/shaders/;$(Compressonator_BOOST);$(Compressonator_QT)\include\QtGui;$(Compressonator_QT)\include;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\openexr\;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\openexr\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Plugins/Common/;$(Compressonator_RootDev)/Applications/_Libs/CMP_Math/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/CMP_Core/source/;$(Compressonator_RootDev)/CMP_Core/shaders/;$(Compressonator_BOOST);$(QTDIR)/include/;$(QTDIR)/include/QtGui;..\..\..\..\..\..\Common\Lib\AMD\APPSDK\3-0\include;$(Compressonator_OPENEXR)\$(SolutionName)\$(Platform)\include\openexr\;$(Compressonator_ILMBASE)\$(SolutionName)\$(Platform)\include\openexr\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
