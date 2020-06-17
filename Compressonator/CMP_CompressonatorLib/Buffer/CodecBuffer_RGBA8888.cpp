@@ -169,40 +169,40 @@ bool CCodecBuffer_RGBA8888::WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CM
     return WriteBlock(x, y, w, h, block, RGBA8888_OFFSET_B);
 }
 
-bool CCodecBuffer_RGBA8888::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_BYTE block[])
+bool CCodecBuffer_RGBA8888::ReadBlockRGBA(CMP_DWORD xw, CMP_DWORD yh, CMP_BYTE w, CMP_BYTE h, CMP_BYTE block[])
 {
-    assert(x < GetWidth());
-    assert(y < GetHeight());
-    assert(x % w == 0);
-    assert(y % h == 0);
+    assert(xw < GetWidth());
+    assert(yh < GetHeight());
+    assert(xw % w == 0);
+    assert(yh % h == 0);
 
-    if(x >= GetWidth() || y >= GetHeight())
+    if (xw >= GetWidth() || yh >= GetHeight())
         return false;
 
-    CMP_DWORD* pdwBlock = (CMP_DWORD*) block;
-    if (w==4 && h==4 && (x+w)<=GetWidth() && (y+h)<=GetHeight())
+    CMP_DWORD* pdwBlock = (CMP_DWORD*)block;
+    if (w == 4 && h == 4 && (xw + w) <= GetWidth() && (yh + h) <= GetHeight())
     {
         // Fastpath for the key case to alleviate the drag this code puts on the really fast DXTC
-        CMP_DWORD* pData = (CMP_DWORD*) (GetData() + (y * m_dwPitch) + (x * sizeof(CMP_DWORD)));
+        CMP_DWORD* pData = (CMP_DWORD*)(GetData() + (yh * m_dwPitch) + (xw * sizeof(CMP_DWORD)));
 
         // The source is RGBA8888 and the codec reqiures a BGRA8888 
         if (m_bSwizzle)
         {
-            pdwBlock[0]  = SWIZZLE_RGBA_BGRA(pData[0]);
-            pdwBlock[1]  = SWIZZLE_RGBA_BGRA(pData[1]);
-            pdwBlock[2]  = SWIZZLE_RGBA_BGRA(pData[2]);
-            pdwBlock[3]  = SWIZZLE_RGBA_BGRA(pData[3]);
-            pData += (m_dwPitch>>2);
-            pdwBlock[4]  = SWIZZLE_RGBA_BGRA(pData[0]);
-            pdwBlock[5]  = SWIZZLE_RGBA_BGRA(pData[1]);
-            pdwBlock[6]  = SWIZZLE_RGBA_BGRA(pData[2]);
-            pdwBlock[7]  = SWIZZLE_RGBA_BGRA(pData[3]);
-            pData += (m_dwPitch>>2);
-            pdwBlock[8]  = SWIZZLE_RGBA_BGRA(pData[0]);
-            pdwBlock[9]  = SWIZZLE_RGBA_BGRA(pData[1]);
+            pdwBlock[0] = SWIZZLE_RGBA_BGRA(pData[0]);
+            pdwBlock[1] = SWIZZLE_RGBA_BGRA(pData[1]);
+            pdwBlock[2] = SWIZZLE_RGBA_BGRA(pData[2]);
+            pdwBlock[3] = SWIZZLE_RGBA_BGRA(pData[3]);
+            pData += (m_dwPitch >> 2);
+            pdwBlock[4] = SWIZZLE_RGBA_BGRA(pData[0]);
+            pdwBlock[5] = SWIZZLE_RGBA_BGRA(pData[1]);
+            pdwBlock[6] = SWIZZLE_RGBA_BGRA(pData[2]);
+            pdwBlock[7] = SWIZZLE_RGBA_BGRA(pData[3]);
+            pData += (m_dwPitch >> 2);
+            pdwBlock[8] = SWIZZLE_RGBA_BGRA(pData[0]);
+            pdwBlock[9] = SWIZZLE_RGBA_BGRA(pData[1]);
             pdwBlock[10] = SWIZZLE_RGBA_BGRA(pData[2]);
             pdwBlock[11] = SWIZZLE_RGBA_BGRA(pData[3]);
-            pData += (m_dwPitch>>2);
+            pData += (m_dwPitch >> 2);
             pdwBlock[12] = SWIZZLE_RGBA_BGRA(pData[0]);
             pdwBlock[13] = SWIZZLE_RGBA_BGRA(pData[1]);
             pdwBlock[14] = SWIZZLE_RGBA_BGRA(pData[2]);
@@ -210,21 +210,21 @@ bool CCodecBuffer_RGBA8888::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, 
         }
         else
         {
-            pdwBlock[0]  = pData[0];
-            pdwBlock[1]  = pData[1];
-            pdwBlock[2]  = pData[2];
-            pdwBlock[3]  = pData[3];
-            pData += (m_dwPitch>>2);
-            pdwBlock[4]  = pData[0];
-            pdwBlock[5]  = pData[1];
-            pdwBlock[6]  = pData[2];
-            pdwBlock[7]  = pData[3];
-            pData += (m_dwPitch>>2);
-            pdwBlock[8]  = pData[0];
-            pdwBlock[9]  = pData[1];
+            pdwBlock[0] = pData[0];
+            pdwBlock[1] = pData[1];
+            pdwBlock[2] = pData[2];
+            pdwBlock[3] = pData[3];
+            pData += (m_dwPitch >> 2);
+            pdwBlock[4] = pData[0];
+            pdwBlock[5] = pData[1];
+            pdwBlock[6] = pData[2];
+            pdwBlock[7] = pData[3];
+            pData += (m_dwPitch >> 2);
+            pdwBlock[8] = pData[0];
+            pdwBlock[9] = pData[1];
             pdwBlock[10] = pData[2];
             pdwBlock[11] = pData[3];
-            pData += (m_dwPitch>>2);
+            pData += (m_dwPitch >> 2);
             pdwBlock[12] = pData[0];
             pdwBlock[13] = pData[1];
             pdwBlock[14] = pData[2];
@@ -233,34 +233,36 @@ bool CCodecBuffer_RGBA8888::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, 
     }
     else
     {
-        CMP_DWORD dwWidth = min(w, (GetWidth() - x));
-        CMP_DWORD i, j;
-        for(j = 0; j < h && (y + j) < GetHeight(); j++)
+        CMP_DWORD minWidth = min(w, (GetWidth() - xw));
+        CMP_DWORD srcOffset;
+        CMP_DWORD iw, jh;
+        CMP_BYTE  *srcData = GetData();
+        CMP_DWORD *pdwData;
+
+        for (jh = 0; jh < h && (yh + jh) < GetHeight(); jh++)
         {
-            CMP_DWORD* pData = (CMP_DWORD*) (GetData() + ((y + j) * m_dwPitch) + (x * sizeof(CMP_DWORD)));
-            if (m_bSwizzle)
-            {
-                for(i = 0; i < dwWidth; i++)
-                {
-                    pdwBlock[(j * w) + i] = SWIZZLE_RGBA_BGRA(*pData++);
+            srcOffset = ((yh + jh) * m_dwPitch) + (xw * 4);
+            pdwData = (CMP_DWORD*)(srcData + srcOffset);
+            if (m_bSwizzle) {
+                for (iw = 0; iw < minWidth; iw++) {
+                    pdwBlock[(jh * w) + iw] = SWIZZLE_RGBA_BGRA(pdwData[iw]);
                 }
             }
-            else
-            {
-                for(i = 0; i < dwWidth; i++)
+            else {
+                for (iw = 0; iw < minWidth; iw++)
                 {
-                    pdwBlock[(j * w) + i] = *pData++;
+                    pdwBlock[(jh * w) + iw] = pdwData[iw];
                 }
             }
 
             // Pad block with previous values if necessary
-            if(i < w)
-                PadLine(i, w, 4, (CMP_BYTE*) &pdwBlock[j * w]);
+            if (iw < w)
+                PadLine(iw, w, 4, (CMP_BYTE*)&pdwBlock[jh * w]);
         }
 
         // Pad block with previous values if necessary
-        if(j < h)
-            PadBlock(j, w, h, 4, (CMP_BYTE*) pdwBlock);
+        if (jh < h)
+            PadBlock(jh, w, h, 4, (CMP_BYTE*)pdwBlock);
     }
 
     return true;
