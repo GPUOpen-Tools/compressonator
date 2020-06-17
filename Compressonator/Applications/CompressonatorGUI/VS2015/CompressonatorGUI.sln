@@ -55,9 +55,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CompressonatorGUI", "MainAp
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Compressonator", "..\..\..\VS2015\CompressonatorLib.vcxproj", "{9EE67DB2-4AD8-4B9A-AE58-2E536412033C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{38B807B1-A03A-48AD-A8DD-7AB89280023D} = {38B807B1-A03A-48AD-A8DD-7AB89280023D}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IMGAnalysis", "..\..\_Plugins\CAnalysis\Analysis\VS2015\CAnalysis.vcxproj", "{51581D29-8097-49A6-A692-0C16D56B5D9A}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -1141,7 +1138,7 @@ Global
 		{C5C9003E-9986-431F-B8A0-15BB232ED650} = {693D4D50-9AF4-4FEC-895B-4763E5D79F56}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {F0E44A9A-E7EE-4F0F-89C7-33A46A818984}
 		Qt5Version = V5.5
+		SolutionGuid = {F0E44A9A-E7EE-4F0F-89C7-33A46A818984}
 	EndGlobalSection
 EndGlobal

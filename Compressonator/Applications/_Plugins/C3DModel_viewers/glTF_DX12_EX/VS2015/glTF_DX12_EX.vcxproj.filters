@@ -379,7 +379,7 @@
       <Filter>Common\model_viewer</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Common\Misc.h">
-      <Filter>Generated Files</Filter>
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
