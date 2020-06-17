@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.28307.1169
+VisualStudioVersion = 15.0.28307.1000
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CMP_Mesh", "CMP_MeshLib.vcxproj", "{6DFF37E8-F886-4E97-A672-2085F2A548E3}"
 EndProject
@@ -62,6 +62,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {C03B1046-5EC7-4EEB-A3EA-5192A853223B}
+		SolutionGuid = {1A2E0F3F-02A9-4536-A121-BE9762F9E64C}
 	EndGlobalSection
 EndGlobal

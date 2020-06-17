@@ -366,28 +366,28 @@
     <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(SolutionName)\$(ProjectName)\</IntDir>
+    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
-    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(SolutionName)\$(ProjectName)\</IntDir>
+    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
-    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(SolutionName)\$(ProjectName)\</IntDir>
+    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">
-    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(SolutionName)\$(ProjectName)\</IntDir>
+    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(SolutionName)\$(ProjectName)\</IntDir>
+    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
-    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(SolutionName)\$(ProjectName)\</IntDir>
+    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
-    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(SolutionName)\$(ProjectName)\</IntDir>
+    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
-    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(SolutionName)\$(ProjectName)\</IntDir>
+    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>$(ProjectName)_MTd</TargetName>
@@ -438,28 +438,28 @@
     <OutDir>..\Build\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(SolutionName)\$(ProjectName)\</IntDir>
+    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
-    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(SolutionName)\$(ProjectName)\</IntDir>
+    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
-    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(SolutionName)\$(ProjectName)\</IntDir>
+    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
-    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(SolutionName)\$(ProjectName)\</IntDir>
+    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(SolutionName)\$(ProjectName)\</IntDir>
+    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
-    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(SolutionName)\$(ProjectName)\</IntDir>
+    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
-    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(SolutionName)\$(ProjectName)\</IntDir>
+    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
-    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(SolutionName)\$(ProjectName)\</IntDir>
+    <IntDir>..\Build\Temp\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetName>$(ProjectName)_MT</TargetName>

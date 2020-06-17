@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.28307.1169
+VisualStudioVersion = 15.0.28307.1000
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GPU_Decode", "GPU_DecodeLib.vcxproj", "{17CCD4C6-5E35-404C-8613-32775F250A92}"
 EndProject
@@ -62,6 +62,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {C0152AF7-72A7-43A0-8767-E3DCF36E826E}
+		SolutionGuid = {E10E12B2-8BCD-486C-A005-A405691A6F9F}
 	EndGlobalSection
 EndGlobal
