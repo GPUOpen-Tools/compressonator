@@ -13,6 +13,15 @@ https://github.com/GPUOpen-Tools/Compressonator/releases
 
 To build the source files follow the instructions in http://compressonator.readthedocs.io/en/latest/build_from_source/build_instructions.html
 
+## Style and Format Change ##
+
+The source code of this product is being reformatted to follow the Google C++ Style Guide https://google.github.io/styleguide/cppguide.html
+
+In the interim you may encounter a mix of both an older C++ coding style, as well as the newer Google C++ Style.
+
+Please refer to the _clang-format file in the root directory of the product for additional style information.
+
+
 ## Compressonator Core
 Provides block level API access to updated performance and quality driven BCn codecs. The library is designed to be a small self-contained, cross-platform, and linkable library for user applications.
 
