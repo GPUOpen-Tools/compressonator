@@ -120,7 +120,7 @@
       <AdditionalOptions>/SAFESEH:NO   /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>../CopyFiles.bat $(QTDIR) $(Compressonator_OPENCV)\$(Platform)\$(SolutionName)\bin\$(DebugRelease)\ $(OUTDIR) $(Compressonator_RootDev) $(Compressonator_GLEW)\bin\$(ShortPlatform) $(Compressonator_VULKAN) $(DebugSuffix)</Command>
+      <Command>../CopyFiles.bat $(QTDIR) $(Compressonator_OPENCV)\$(Platform)\VS2015\bin\$(DebugRelease)\ $(OUTDIR) $(Compressonator_RootDev) $(Compressonator_GLEW)\bin\$(ShortPlatform) $(Compressonator_VULKAN) $(DebugSuffix)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
@@ -146,7 +146,7 @@
       <AdditionalOptions>/SAFESEH:NO   /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>../CopyFiles.bat $(QTDIR) $(Compressonator_OPENCV)\$(Platform)\$(SolutionName)\bin\$(DebugRelease)\ $(OUTDIR) $(Compressonator_RootDev) $(Compressonator_GLEW)\bin\$(ShortPlatform) $(Compressonator_VULKAN) $(DebugSuffix)</Command>
+      <Command>../CopyFiles.bat $(QTDIR) $(Compressonator_OPENCV)\$(Platform)\VS2015\bin\$(DebugRelease)\ $(OUTDIR) $(Compressonator_RootDev) $(Compressonator_GLEW)\bin\$(ShortPlatform) $(Compressonator_VULKAN) $(DebugSuffix)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
@@ -181,7 +181,7 @@
       </Outputs>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>../CopyFiles.bat $(QTDIR) $(Compressonator_OPENCV)\$(Platform)\$(SolutionName)\bin\$(DebugRelease)\ $(OUTDIR) $(Compressonator_RootDev) $(Compressonator_GLEW)\bin\$(ShortPlatform) $(Compressonator_VULKAN) $(DebugSuffix)</Command>
+      <Command>../CopyFiles.bat $(QTDIR) $(Compressonator_OPENCV)\$(Platform)\VS2015\bin\$(DebugRelease)\ $(OUTDIR) $(Compressonator_RootDev) $(Compressonator_GLEW)\bin\$(ShortPlatform) $(Compressonator_VULKAN) $(DebugSuffix)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
@@ -211,7 +211,7 @@
       <AdditionalOptions>/SAFESEH:NO  %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>../CopyFiles.bat $(QTDIR) $(Compressonator_OPENCV)\$(Platform)\$(SolutionName)\bin\$(DebugRelease)\ $(OUTDIR) $(Compressonator_RootDev) $(Compressonator_GLEW)\bin\$(ShortPlatform) $(Compressonator_VULKAN) $(DebugSuffix)</Command>
+      <Command>../CopyFiles.bat $(QTDIR) $(Compressonator_OPENCV)\$(Platform)\VS2015\bin\$(DebugRelease)\ $(OUTDIR) $(Compressonator_RootDev) $(Compressonator_GLEW)\bin\$(ShortPlatform) $(Compressonator_VULKAN) $(DebugSuffix)</Command>
     </PostBuildEvent>
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>
