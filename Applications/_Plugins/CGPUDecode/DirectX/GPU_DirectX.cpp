@@ -752,7 +752,7 @@ CMP_ERROR WINAPI GPU_DirectX::Decompress(
     srcImage.format             = mdata.format;
     srcImage.pixels             = pSourceTexture->pData;
 
-    ComputePitch(mdata.format, srcImage.width, srcImage.height, srcImage.rowPitch, srcImage.slicePitch, 0);
+    ComputePitch(mdata.format, srcImage.width, srcImage.height, srcImage.rowPitch, srcImage.slicePitch, CP_FLAGS_NONE);
 
     hr = CreateShaderResourceView(m_pd3dDevice, &srcImage, 1, mdata, &m_pSRV);
     if (FAILED(hr))

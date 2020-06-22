@@ -178,7 +178,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/DirectXTex/DirectXTex-jun2020b/DirectXTex</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -201,7 +201,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/DirectXTex/DirectXTex-jun2020b/DirectXTex</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -223,7 +223,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/DirectXTex/DirectXTex-jun2020b/DirectXTex</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -244,7 +244,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/DirectXTex/DirectXTex-jun2020b/DirectXTex</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -268,7 +268,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/DirectXTex/DirectXTex-jun2020b/DirectXTex</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -295,7 +295,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/DirectXTex/DirectXTex-jun2020b/DirectXTex</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -322,7 +322,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/DirectXTex/DirectXTex-jun2020b/DirectXTex</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -348,7 +348,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/DirectXTex/v132</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Compressonator_RootDev)/;$(Compressonator_RootDev)/CMP_Framework/;$(Compressonator_RootDev)/CMP_Framework/Common/half/;$(Compressonator_RootDev)/CMP_CompressonatorLib/;$(Compressonator_RootDev)/Applications/_Libs/GPU_Decode/;$(Compressonator_RootDev)/Applications/_Plugins/Common;$(Compressonator_RootDev)/../Common/Lib/Ext/DirectXTex/DirectXTex-jun2020b/DirectXTex</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
@@ -367,36 +367,36 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/BC.cpp" />
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/BC4BC5.cpp" />
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/BC6HBC7.cpp" />
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTexCompress.cpp" />
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTexConvert.cpp" />
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTexD3D11.cpp" />
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTexImage.cpp" />
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTexMipmaps.cpp" />
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTexResize.cpp" />
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTexUtil.cpp" />
     <ClCompile Include="../../../Common/TC_PluginInternal.cpp" />
     <ClCompile Include="../../../Common/UtilFuncs.cpp" />
     <ClCompile Include="../CDirectX.cpp" />
     <ClCompile Include="../GPU_DirectX.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\BC.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\BC4BC5.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\BC6HBC7.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTexCompress.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTexConvert.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTexD3D11.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTexImage.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTexMipmaps.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTexResize.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTexUtil.cpp" />
     <ClCompile Include="..\..\..\..\_Libs\GPU_Decode\GPU_DecodeBase.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/BC.h" />
-    <ClInclude Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTex.h" />
-    <ClInclude Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTexP.h" />
-    <ClInclude Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/Filters.h" />
-    <ClInclude Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/scoped.h" />
     <ClInclude Include="../../../Common/TC_PluginAPI.h" />
     <ClInclude Include="../../../Common/TC_PluginInternal.h" />
     <ClInclude Include="../../../Common/UtilFuncs.h" />
     <ClInclude Include="../CDirectX.h" />
     <ClInclude Include="../GPU_DirectX.h" />
+    <ClInclude Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\BC.h" />
+    <ClInclude Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTex.h" />
+    <ClInclude Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTexP.h" />
+    <ClInclude Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\filters.h" />
+    <ClInclude Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\scoped.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTex.inl" />
+    <None Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTex.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

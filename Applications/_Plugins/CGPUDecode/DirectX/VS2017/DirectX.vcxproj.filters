@@ -16,27 +16,6 @@
     <ClCompile Include="../GPU_DirectX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTexCompress.cpp">
-      <Filter>DirectX</Filter>
-    </ClCompile>
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTexConvert.cpp">
-      <Filter>DirectX</Filter>
-    </ClCompile>
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTexD3D11.cpp">
-      <Filter>DirectX</Filter>
-    </ClCompile>
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTexImage.cpp">
-      <Filter>DirectX</Filter>
-    </ClCompile>
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTexMipmaps.cpp">
-      <Filter>DirectX</Filter>
-    </ClCompile>
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTexResize.cpp">
-      <Filter>DirectX</Filter>
-    </ClCompile>
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTexUtil.cpp">
-      <Filter>DirectX</Filter>
-    </ClCompile>
     <ClCompile Include="../CDirectX.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -46,37 +25,46 @@
     <ClCompile Include="../../../Common/UtilFuncs.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/BC.cpp">
-      <Filter>DirectX</Filter>
-    </ClCompile>
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/BC6HBC7.cpp">
-      <Filter>DirectX</Filter>
-    </ClCompile>
-    <ClCompile Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/BC4BC5.cpp">
-      <Filter>DirectX</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\_Libs\GPU_Decode\GPU_DecodeBase.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\BC.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\BC4BC5.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\BC6HBC7.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTexCompress.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTexConvert.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTexD3D11.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTexImage.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTexMipmaps.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTexResize.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTexUtil.cpp">
+      <Filter>DirectX</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../CDirectX.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTex.h">
-      <Filter>DirectX</Filter>
-    </ClInclude>
-    <ClInclude Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTexP.h">
-      <Filter>DirectX</Filter>
-    </ClInclude>
-    <ClInclude Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/Filters.h">
-      <Filter>DirectX</Filter>
-    </ClInclude>
     <ClInclude Include="../GPU_DirectX.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/BC.h">
-      <Filter>DirectX</Filter>
     </ClInclude>
     <ClInclude Include="../../../Common/TC_PluginAPI.h">
       <Filter>Common</Filter>
@@ -87,12 +75,24 @@
     <ClInclude Include="../../../Common/UtilFuncs.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/scoped.h">
+    <ClInclude Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\BC.h">
+      <Filter>DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTex.h">
+      <Filter>DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTexP.h">
+      <Filter>DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\scoped.h">
+      <Filter>DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\filters.h">
       <Filter>DirectX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="../../../../../../Common/Lib/Ext/DirectXTex/v132/DirectXTex.inl">
+    <None Include="..\..\..\..\..\..\Common\Lib\Ext\DirectXTex\DirectXTex-jun2020b\DirectXTex\DirectXTex.inl">
       <Filter>DirectX</Filter>
     </None>
   </ItemGroup>
