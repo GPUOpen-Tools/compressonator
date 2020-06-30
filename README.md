@@ -7,6 +7,12 @@ Compressonator supports Microsoft Windows®, Linux and Mac builds.
 
 For more details goto the online Compressonator Documents: http://compressonator.readthedocs.io/en/latest/ 
 
+## Build System Updates ##
+The code is undergoing a build setup update. This notice will be removed when the changes are completed!
+Currently: To use the VS2017 sln builds run build\fetch_dependencies.py to fetch required external lib dependencies into a Common folder
+above this repository.
+
+
 Get Prebuilt Binaries and Installer here:
 ---------------------------------------------------
 https://github.com/GPUOpen-Tools/Compressonator/releases
