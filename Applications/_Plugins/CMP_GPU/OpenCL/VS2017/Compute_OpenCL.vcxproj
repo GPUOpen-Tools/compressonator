@@ -355,7 +355,7 @@
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
-      <AdditionalLibraryDirectories>..\..\..\..\..\Build\Debug\$(Platform)\;$(Compressonator_RootDev)/Build/Debug/$(Platform);..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x64;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86_64;..\..\..\..\..\..\Common\lib\AMD\APPSDK\3-0\lib\x86_64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\Lib\Ext\OpenCL\lib\x86_64;..\..\..\..\..\Build\Debug\$(Platform)\;$(Compressonator_RootDev)/Build/Debug/$(Platform);..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x64;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86_64;..\..\..\..\..\..\Common\lib\AMD\APPSDK\3-0\lib\x86_64</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MTd.lib;OpenCL.lib;OpenCL.lib;glew32.lib;OPENGL32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -376,7 +376,7 @@
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
-      <AdditionalLibraryDirectories>..\..\..\..\..\Build\Debug_MD\$(Platform)\;..\..\..\..\..\Build\Debug_MD\$(Platform)\;$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x64;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86_64;..\..\..\..\..\..\Common\lib\AMD\APPSDK\3-0\lib\x86_64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\Lib\Ext\OpenCL\lib\x86_64;..\..\..\..\..\Build\Debug_MD\$(Platform)\;$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;$(Compressonator_RootDev)/../Common/lib/Ext/OpenCL/lib/x86_64;..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x64;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86_64;../../../../../../Common/lib/Ext/OpenCL/lib/x86_64</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MDd.lib;OpenCL.lib;glew32.lib;OPENGL32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -397,7 +397,7 @@
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
-      <AdditionalLibraryDirectories>..\..\..\..\..\Build\Debug_MD\$(Platform)\;..\..\..\..\..\Build\Debug_MD\$(Platform)\;$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x64;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86_64;..\..\..\..\..\..\Common\lib\AMD\APPSDK\3-0\lib\x86_64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\Lib\Ext\OpenCL\lib\x86_64;..\..\..\..\..\Build\Debug_MD\$(Platform)\;..\..\..\..\..\Build\Debug_MD\$(Platform)\;$(Compressonator_RootDev)/Build/$(SolutionName)/$(Configuration)/$(Platform)/;..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x64;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86_64;..\..\..\..\..\..\Common\lib\AMD\APPSDK\3-0\lib\x86_64</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MDd.lib;OpenCL.lib;glew32.lib;OPENGL32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -477,7 +477,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalLibraryDirectories>..\..\..\..\..\Build\Release\$(Platform)\;$(Compressonator_RootDev)/Build/Release/$(Platform);..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x64;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86_64;..\..\..\..\..\..\Common\lib\AMD\APPSDK\3-0\lib\x86_64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\Lib\Ext\OpenCL\lib\x86_64;..\..\..\..\..\Build\Release\$(Platform)\;$(Compressonator_RootDev)/Build/Release/$(Platform);..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x64;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86_64;..\..\..\..\..\..\Common\lib\AMD\APPSDK\3-0\lib\x86_64</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MT.lib;OpenCL.lib;OpenCL.lib;glew32.lib;OPENGL32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -503,9 +503,13 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalLibraryDirectories>..\..\..\..\..\Build\Release_MD\$(Platform)\;$(Compressonator_RootDev)/Build/Release_MD/$(Platform);$(Compressonator_RootDev)\Build\$(SolutionName)\$(Configuration)\$(Platform)\;..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x64;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86_64;..\..\..\..\..\..\Common\lib\AMD\APPSDK\3-0\lib\x86_64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\Lib\Ext\OpenCL\lib\x86_64;..\..\..\..\..\Build\Release_MD\$(Platform)\;$(Compressonator_RootDev)/Build/Release_MD/$(Platform);$(Compressonator_RootDev)\Build\$(SolutionName)\$(Configuration)\$(Platform)\;..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x64;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86_64;..\..\..\..\..\..\Common\Lib\Ext\OpenCL\lib\x86_64;..\..\..\..\..\Common\Lib\Ext\OpenCL\lib\x86_64;..\..\..\..\..\..\..\Common\Lib\Ext\OpenCL\lib\x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MD.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
     <Link>
@@ -518,7 +522,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
     <Link>
-      <AdditionalLibraryDirectories>..\..\..\..\..\Build\Release_MD\$(Platform)\;$(Compressonator_RootDev)/Build/Release_MD/$(Platform);$(Compressonator_RootDev)\Build\$(SolutionName)\$(Configuration)\$(Platform)\;..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x64;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86_64;..\..\..\..\..\..\Common\lib\AMD\APPSDK\3-0\lib\x86_64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\..\Common\Lib\Ext\OpenCL\lib\x86_64;..\..\..\..\..\Build\Release_MD\$(Platform)\;$(Compressonator_RootDev)/Build/Release_MD/$(Platform);$(Compressonator_RootDev)\Build\$(SolutionName)\$(Configuration)\$(Platform)\;..\..\..\..\..\..\Common\lib\ext\glew\1.9.0\lib\x64;..\..\..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\lib\VC14\x86_64;..\..\..\..\..\..\Common\lib\AMD\APPSDK\3-0\lib\x86_64</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MD.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>

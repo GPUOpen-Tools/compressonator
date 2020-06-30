@@ -16,7 +16,7 @@
     <Compressonator_ILMBASE>$(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\</Compressonator_ILMBASE>
     <Compressonator_OPENGL>$(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenGL\</Compressonator_OPENGL>
     <Compressonator_TINYXML>$(SolutionDir)..\..\..\..\Common\Lib\Ext\tinyxml\2.6.2\</Compressonator_TINYXML>
-    <Compressonator_ZLIB>$(SolutionDir)..\..\..\..\Common\Lib\Ext\zlib\zlib-1.2.10\</Compressonator_ZLIB>
+    <Compressonator_ZLIB>$(SolutionDir)..\..\..\..\Common\Lib\Ext\zlib\1.2.8\</Compressonator_ZLIB>
     <Compressonator_FLTK>$(SolutionDir)..\..\..\..\Common\Lib\Ext\Fltk\1.3.4\</Compressonator_FLTK>
     <Compressonator_AGS>$(SolutionDir)..\..\..\Libs\ags\</Compressonator_AGS>
     <DebugSuffix Condition="'$(Configuration)'=='Debug_MD'">d</DebugSuffix>

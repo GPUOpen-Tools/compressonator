@@ -3,9 +3,8 @@ set BUILD_OPENCV_DIR=%2
 set BUILD_OUTDIR=%3
 set BUILD_SOLUTIONDIR=%4
 set BUILD_GLEWDIR=%5
-set BUILD_VULKANDIR=%6
-set BUILD_AGSDIR=%7
-set _DEBUG=%8
+set BUILD_AGSDIR=%6
+set _DEBUG=%7
 
 echo ---------------------------------------
 echo QT                 : [%BUILD_QTDIR%]

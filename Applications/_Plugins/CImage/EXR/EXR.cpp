@@ -102,14 +102,14 @@ void *make_Plugin_EXR() { return new Plugin_EXR; }
 #endif
 
 #ifdef _DEBUG
-#pragma comment(lib,"zlibstaticd.lib")
+#pragma comment(lib,"zlibstat.lib")
 #pragma comment(lib,"Imathd.lib")
 #pragma comment(lib,"halfd.lib")
 #pragma comment(lib,"IlmImfd.lib")
 #pragma comment(lib,"IlmThreadd.lib")
 #pragma comment(lib,"Iexd.lib")
 #else
-#pragma comment(lib,"zlibstatic.lib")
+#pragma comment(lib,"zlibstat.lib")
 #pragma comment(lib,"Imath.lib")
 #pragma comment(lib,"half.lib")
 #pragma comment(lib,"IlmImf.lib")
