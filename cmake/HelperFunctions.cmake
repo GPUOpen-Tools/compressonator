@@ -117,3 +117,29 @@ macro(cmp_copy_to_output executable source dest)
                 ${dest}
     )
 endmacro()
+
+macro(cmp_execute_process COMMAND WORKING_DIR)
+
+    set(CMD_MSG "")
+    foreach(CMD ${${COMMAND}})
+        set(CMD_MSG "${CMD_MSG}${CMD} ")
+    endforeach()
+
+    message(STATUS "Executing process: ${CMD_MSG}")
+    execute_process(
+        COMMAND ${${COMMAND}}
+        WORKING_DIRECTORY ${WORKING_DIR}
+        ERROR_VARIABLE _stderr
+        OUTPUT_VARIABLE _stdout
+        RESULT_VARIABLE _exit_code ENCODING UTF-8
+    )
+
+    if(NOT _exit_code EQUAL 0)
+        message(STATUS ${_stdout})
+        if(EXISTS ${VULKAN_OUTPUT_DIR})
+            file(REMOVE_RECURSE ${VULKAN_OUTPUT_DIR})
+        endif()
+        message(FATAL_ERROR "Process exited with non 0 exit code: ${_exit_code}\n${_stderr}")
+    endif()
+
+endmacro()

@@ -228,6 +228,10 @@ if ($PRINT_HELP) {
     exit 0
 }
 
+if (Test-Path "$COMPRESSONATOR_PROJECT_DIR/.env") {
+    . "$COMPRESSONATOR_PROJECT_DIR/.env"
+}
+
 # Pull submodules
 if (!(Test-Path "$PSScriptRoot\$DEPENDENCIES_INIT_MARKER")) {
     & git submodule update --init --recursive

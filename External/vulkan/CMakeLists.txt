@@ -1,21 +1,13 @@
 # -------------------------------------------------------------------------
-#
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/vulkan-submodule ${CMAKE_CURRENT_BINARY_DIR}/submodule)
-
-unset(VULKAN_SDK)
-unset(Vulkan_LIBRARIES)
-unset(Vulkan_INCLUDE_DIRS)
-unset(Vulkan_LIBRARY_DIRS)
-
-# -------------------------------------------------------------------------
 # Vulkan
 
 add_library(ExtVulkan INTERFACE)
 
-if (CMP_HOST_APPLE)
+if (NOT DEFINED ENV{VULKAN_SDK})
+    message(FATAL_ERROR "A 'VULKAN_SDK' environment variable is required")
+endif()
 
-    get_filename_component(VULKAN_SDK ${COMPRESSONATOR_PROJECT_DIR}/External/vulkan/submodule/Apple/MoltenVK ABSOLUTE)
-    set(ENV{VULKAN_SDK} ${VULKAN_SDK})
+if (CMP_HOST_APPLE)
 
     set(MOLTEN_VK_PATHS
 
@@ -61,15 +53,19 @@ if (CMP_HOST_APPLE)
 
 elseif(CMP_HOST_LINUX)
 
-    get_filename_component(VULKAN_SDK ${COMPRESSONATOR_PROJECT_DIR}/External/vulkan/submodule/Linux/x86_64 ABSOLUTE)
+    # More details can be found on this issue: https://vulkan.lunarg.com/issue/view/5ed6eca8e0d2a37f6e19cefc
+    set(RENAME_HACK bash -c "find . -type f -exec sed -i 's,root/sdk-build/${VULKAN_VERSION},${VULKAN_OUTPUT_DIR},' {} \\\;")
+    cmp_execute_process(RENAME_HACK ${VULKAN_OUTPUT_DIR})
+
+    get_filename_component(VULKAN_SDK ${COMPRESSONATOR_PROJECT_DIR}/External/build-out/Linux/vulkan ABSOLUTE)
+    if (NOT EXISTS VULKAN_SDK)
+        file(COPY $ENV{VULKAN_SDK} ${VULKAN_SDK})
+    endif()
     set(ENV{VULKAN_SDK}	${VULKAN_SDK})
 
     find_package(Vulkan REQUIRED)
 
 elseif(CMP_HOST_WINDOWS)
-
-    get_filename_component(VULKAN_SDK ${COMPRESSONATOR_PROJECT_DIR}/External/vulkan/submodule/Windows ABSOLUTE)
-    set(ENV{VULKAN_SDK}	${VULKAN_SDK})
 
     find_package(Vulkan REQUIRED)
 

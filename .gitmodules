@@ -13,9 +13,6 @@
 [submodule "External/libpng/libpng-submodule"]
 	path = External/libpng/libpng-submodule
 	url = https://github.com/glennrp/libpng.git
-[submodule "External/vulkan/vulkan-submodule"]
-	path = External/vulkan/vulkan-submodule
-	url = https://github.com/UebelAndre/compressonator-vulkan.git
 [submodule "External/libtiff/libtiff-submodule"]
 	path = External/libtiff/libtiff-submodule
 	url = https://github.com/UebelAndre/compressonator-tiff.git
@@ -25,9 +22,6 @@
 [submodule "External/directxtex/directxtex-submodule"]
 	path = External/directxtex/directxtex-submodule
 	url = https://github.com/UebelAndre/compressonator-directxtex.git
-[submodule "External/qt5/qt5-submodule"]
-	path = External/qt5/qt5-submodule
-	url = https://github.com/UebelAndre/compressonator-qt.git
 [submodule "External/catch2/catch2-submodule"]
 	path = External/catch2/catch2-submodule
 	url = https://github.com/catchorg/Catch2.git

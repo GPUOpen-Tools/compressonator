@@ -1,9 +1,12 @@
 # CMakeCustomTargets CMakeLists.txt
 
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/qt5-submodule ${CMAKE_CURRENT_BINARY_DIR}/qt5-submodule)
-if (NOT DEFINED QT_LIB_DIR)
-    message(FATAL_ERROR "'QT_LIB_DIR' is expected to be set by the submodule added above")
+if (NOT DEFINED QTDIR)
+    message(FATAL_ERROR "A 'QTDIR' environment variable is required")
 endif()
+
+set(QT_VERSION 5.14.2)
+
+QT_LIB_DIR
 
 set_property(GLOBAL PROPERTY QT_LIB_DIR "${QT_LIB_DIR}")
 list(APPEND CMAKE_FIND_ROOT_PATH ${QT_LIB_DIR})

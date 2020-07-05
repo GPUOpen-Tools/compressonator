@@ -34,8 +34,6 @@ message(STATUS "DEPENDENCIES_INSTALL_DIR -- ${DEPENDENCIES_INSTALL_DIR}")
 message(STATUS "NUM_PARALLEL_JOBS -- ${NUM_PARALLEL_JOBS}")
 
 # Dependencies
-add_subdirectory(${COMPRESSONATOR_PROJECT_DIR}/External/vulkan/vulkan-submodule ${CMAKE_BINARY_DIR}/vulkan)
-add_subdirectory(${COMPRESSONATOR_PROJECT_DIR}/External/qt5/qt5-submodule ${CMAKE_BINARY_DIR}/qt5)
 add_subdirectory(CustomTargets ${CMAKE_BINARY_DIR}/CustomTargets)
 
 # Write a generic c++ source file to compile

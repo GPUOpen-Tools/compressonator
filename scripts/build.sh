@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 COMPRESSONATOR_PROJECT_DIR="$( cd $( cd "$(dirname "$0")" ; pwd -P )/../ ; pwd -P )"
-echo "${COMPRESSONATOR_PROJECT_DIR}"
 
 BUILD_DIR=${COMPRESSONATOR_PROJECT_DIR}/build
 INSTALL_DIR=${COMPRESSONATOR_PROJECT_DIR}/build-out
@@ -192,6 +191,11 @@ fi
 
 # Main functionality
 set -ex
+
+# Load an environment file if one exists
+if [[ -f "${COMPRESSONATOR_PROJECT_DIR}/.env" ]]; then
+    . ${COMPRESSONATOR_PROJECT_DIR}/.env
+fi
 
 # Pull submodules
 if [[ ! -f ${COMPRESSONATOR_PROJECT_DIR}/.dependencies-initialized ]]; then
