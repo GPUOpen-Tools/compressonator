@@ -30,9 +30,6 @@
 #include <QtWidgets>
 #include "cpImageView.h"
 #include "cpImageAnalysis.h"
-#include <boost/foreach.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
 #include "acCustomDockWidget.h"
 #include "cpProjectData.h"
 #include "CMP_FileIO.h"
@@ -81,9 +78,9 @@ private:
     cpImageView               *m_imageviewDiff;
     cpImageView               *m_imageviewFile2;
     C_AnalysisData            *m_imageAnalysis;
-    C_SSIM_Analysis            *m_ssimAnalysis;
-    C_MSE_PSNR_Analysis        *m_allAnalysis;
-    C_PSNR_MSE_Analysis        *m_psnrAnalysis;
+    C_SSIM_Analysis           *m_ssimAnalysis;
+    C_MSE_PSNR_Analysis       *m_allAnalysis;
+    C_PSNR_MSE_Analysis       *m_psnrAnalysis;
  
     const QString              m_title;
     QString                    m_sourceFile;

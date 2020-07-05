@@ -113,15 +113,19 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
     <TargetExt>.lib</TargetExt>
+    <IncludePath>$(Compressonator_RAPIDXML);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
     <TargetExt>.lib</TargetExt>
+    <IncludePath>$(Compressonator_RAPIDXML);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
     <TargetExt>.lib</TargetExt>
+    <IncludePath>$(Compressonator_RAPIDXML);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
     <TargetExt>.lib</TargetExt>
+    <IncludePath>$(Compressonator_RAPIDXML);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
     <ClCompile>
