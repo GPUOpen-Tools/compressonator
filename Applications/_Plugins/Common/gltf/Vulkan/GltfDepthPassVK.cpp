@@ -24,16 +24,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#include "GltfDepthPassVK.h"
 
-#include "TextureVK.h"
-#include "ResourceViewHeapsVK.h"
-#include "UploadHeapVK.h"
+#include "DynamicBufferRingVK.h"
+#include "GltfCommon.h"
 #include "GltfHelpers.h"
 #include "GltfHelpers_Vulkan.h"
-#include "ThreadPool.h"
+#include "ResourceViewHeapsVK.h"
 #include "ShaderCompilerHelper.h"
-#include "vector"
-#include "GltfDepthPassVK.h"
+#include "TextureVK.h"
+#include "ThreadPool.h"
+#include "UploadHeapVK.h"
+
+#include <filesystem>
+#include <vector>
 
 void GltfDepthPass::OnCreate(
     DeviceVK* pDevice,
@@ -161,13 +165,13 @@ void GltfDepthPass::OnCreate(
     m_meshes.resize(meshes.size());
     for (unsigned int i = 0; i < meshes.size(); i++)
     {
-        DepthMesh *tfmesh = &m_meshes[i];
+        DepthMesh* tfmesh = &m_meshes[i];
 
         auto primitives = meshes[i]["primitives"];
         tfmesh->m_pPrimitives.resize(primitives.size());
         for (unsigned int p = 0; p < primitives.size(); p++)
         {
-            DepthPrimitives *pPrimitive = &tfmesh->m_pPrimitives[p];
+            DepthPrimitives* pPrimitive = &tfmesh->m_pPrimitives[p];
             auto primitive = primitives[p];
 
             // Set Material
@@ -179,7 +183,7 @@ void GltfDepthPass::OnCreate(
             tfAccessor indexBuffer;
             {
                 auto indicesAccessor = accessors[primitive["indices"].get<int>()];
-                GetBufferDetails(indicesAccessor,bufferViews, pGLTFData->buffersData, &indexBuffer);
+                GetBufferDetails(indicesAccessor, bufferViews, pGLTFData->buffersData, &indexBuffer);
             }
 
             // Get input layout from glTF attributes
@@ -206,18 +210,18 @@ void GltfDepthPass::OnCreate(
                 //
                 if (semanticName != "Position")
                 {
-                    if (pPrimitive->m_pMaterial->m_defines.find("DEF_alphaMode_OPAQUE")!= pPrimitive->m_pMaterial->m_defines.end())
+                    if (pPrimitive->m_pMaterial->m_defines.find("DEF_alphaMode_OPAQUE") != pPrimitive->m_pMaterial->m_defines.end())
                         if (semanticName != "TEXCOORD")
                             continue;
                 }
 
                 semanticNames[cnt] = it.key();
 
-                auto  accessor = accessors[it.value().get<int>()];
+                auto accessor = accessors[it.value().get<int>()];
 
                 // Get VB accessors
                 //
-                GetBufferDetails(accessor,bufferViews, pGLTFData->buffersData, &vertexBuffers[cnt]);
+                GetBufferDetails(accessor, bufferViews, pGLTFData->buffersData, &vertexBuffers[cnt]);
 
                 // Create Input Layout
                 //
@@ -230,7 +234,7 @@ void GltfDepthPass::OnCreate(
 
                 cnt++;
             }
-            
+
             CreateGeometry(indexBuffer, vertexBuffers, pPrimitive);
             //GetThreadPool()->Add_Job([=]()
             //{
@@ -248,7 +252,7 @@ void GltfDepthPass::OnDestroy()
     }
 }
 
-void GltfDepthPass::CreatePipeline(DeviceVK* pDevice, VkRenderPass renderPass, std::vector<std::string> semanticNames, std::vector<VkVertexInputAttributeDescription> layout, DepthPrimitives *pPrimitive)
+void GltfDepthPass::CreatePipeline(DeviceVK* pDevice, VkRenderPass renderPass, std::vector<std::string> semanticNames, std::vector<VkVertexInputAttributeDescription> layout, DepthPrimitives* pPrimitive)
 {
     VkResult res;
 
@@ -265,20 +269,19 @@ void GltfDepthPass::CreatePipeline(DeviceVK* pDevice, VkRenderPass renderPass, s
     init_glslang();
 
     VkPipelineShaderStageCreateInfo m_vertexShader;
-    res = VKCompileFromFile(pDevice->GetDevice(), SST_GLSL, VK_SHADER_STAGE_VERTEX_BIT, "./plugins/shaders/Shadows-vert_vk.glsl", "main", attributeDefines, &m_vertexShader);
+    res = VKCompileFromFile(pDevice->GetDevice(), SST_GLSL, VK_SHADER_STAGE_VERTEX_BIT, "./plugins/shaders/shadows-vert_vk.glsl", "main", attributeDefines, &m_vertexShader);
     //res = VKCompileFromFile(pDevice->GetDevice(), SST_HLSL, VK_SHADER_STAGE_VERTEX_BIT, "./plugins/shaders/glTF20_vk.hlsl", "mainVS", attributeDefines, &m_vertexShader);
     assert(res == VK_SUCCESS);
 
     VkPipelineShaderStageCreateInfo m_fragmentShader;
-    res = VKCompileFromFile(pDevice->GetDevice(), SST_GLSL, VK_SHADER_STAGE_FRAGMENT_BIT, "./plugins/shaders/Shadows-frag_vk.glsl", "main", attributeDefines, &m_fragmentShader);
+    res = VKCompileFromFile(pDevice->GetDevice(), SST_GLSL, VK_SHADER_STAGE_FRAGMENT_BIT, "./plugins/shaders/shadows-frag_vk.glsl", "main", attributeDefines, &m_fragmentShader);
     assert(res == VK_SUCCESS);
 
     finalize_glslang();
 
     std::vector<VkPipelineShaderStageCreateInfo> shaderStages = { m_vertexShader, m_fragmentShader };
 
-
-    bool bUsingTransparency = (pPrimitive->m_pMaterial->m_textureCount>0);
+    bool bUsingTransparency = (pPrimitive->m_pMaterial->m_textureCount > 0);
 
     /////////////////////////////////////////////
     // Create pipeline layout
@@ -320,7 +323,6 @@ void GltfDepthPass::CreatePipeline(DeviceVK* pDevice, VkRenderPass renderPass, s
     writes[1].dstBinding = 1;
     vkUpdateDescriptorSets(m_pDevice->GetDevice(), 2, writes, 0, NULL);
 
-
     std::vector<VkDescriptorSetLayout> descriptorSetLayout = { pPrimitive->m_descriptorSetLayout };
 
     /* Now use the descriptor layout to create a pipeline layout */
@@ -359,7 +361,7 @@ void GltfDepthPass::CreatePipeline(DeviceVK* pDevice, VkRenderPass renderPass, s
 
     // input assembly state
 
-    VkPipelineInputAssemblyStateCreateInfo ia;
+    VkPipelineInputAssemblyStateCreateInfo ia = {};
     ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
     ia.pNext = NULL;
     ia.flags = 0;
@@ -368,7 +370,7 @@ void GltfDepthPass::CreatePipeline(DeviceVK* pDevice, VkRenderPass renderPass, s
 
     // rasterizer state
 
-    VkPipelineRasterizationStateCreateInfo rs;
+    VkPipelineRasterizationStateCreateInfo rs = {};
     rs.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
     rs.pNext = NULL;
     rs.flags = 0;
@@ -395,7 +397,7 @@ void GltfDepthPass::CreatePipeline(DeviceVK* pDevice, VkRenderPass renderPass, s
 
     // Color blend state
 
-    VkPipelineColorBlendStateCreateInfo cb;
+    VkPipelineColorBlendStateCreateInfo cb = {};
     cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
     cb.flags = 0;
     cb.pNext = NULL;
@@ -410,8 +412,7 @@ void GltfDepthPass::CreatePipeline(DeviceVK* pDevice, VkRenderPass renderPass, s
 
     std::vector<VkDynamicState> dynamicStateEnables = {
         VK_DYNAMIC_STATE_VIEWPORT,
-        VK_DYNAMIC_STATE_SCISSOR
-    };
+        VK_DYNAMIC_STATE_SCISSOR };
     VkPipelineDynamicStateCreateInfo dynamicState = {};
     dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
     dynamicState.pNext = NULL;
@@ -431,7 +432,7 @@ void GltfDepthPass::CreatePipeline(DeviceVK* pDevice, VkRenderPass renderPass, s
 
     // depth stencil state
 
-    VkPipelineDepthStencilStateCreateInfo ds;
+    VkPipelineDepthStencilStateCreateInfo ds = {};
     ds.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
     ds.pNext = NULL;
     ds.flags = 0;
@@ -454,7 +455,7 @@ void GltfDepthPass::CreatePipeline(DeviceVK* pDevice, VkRenderPass renderPass, s
 
     // multi sample state
 
-    VkPipelineMultisampleStateCreateInfo ms;
+    VkPipelineMultisampleStateCreateInfo ms = {};
     ms.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
     ms.pNext = NULL;
     ms.flags = 0;
@@ -467,7 +468,7 @@ void GltfDepthPass::CreatePipeline(DeviceVK* pDevice, VkRenderPass renderPass, s
 
     // create pipeline cache
 
-    VkPipelineCacheCreateInfo pipelineCache;
+    VkPipelineCacheCreateInfo pipelineCache = {};
     pipelineCache.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
     pipelineCache.pNext = NULL;
     pipelineCache.initialDataSize = 0;
@@ -476,7 +477,7 @@ void GltfDepthPass::CreatePipeline(DeviceVK* pDevice, VkRenderPass renderPass, s
     res = vkCreatePipelineCache(pDevice->GetDevice(), &pipelineCache, NULL, &pPrimitive->m_pipelineCache);
     assert(res == VK_SUCCESS);
 
-    // create pipeline 
+    // create pipeline
 
     VkGraphicsPipelineCreateInfo pipeline = {};
     pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -503,37 +504,37 @@ void GltfDepthPass::CreatePipeline(DeviceVK* pDevice, VkRenderPass renderPass, s
     assert(res == VK_SUCCESS);
 }
 
-GltfDepthPass::per_batch *GltfDepthPass::SetPerBatchConstants()
+GltfDepthPass::per_batch* GltfDepthPass::SetPerBatchConstants()
 {
-    GltfDepthPass::per_batch *cbPerBatch;
-    m_pDynamicBufferRing->AllocConstantBuffer(sizeof(GltfDepthPass::per_batch), (void **)&cbPerBatch, &m_perBatchDesc);
+    GltfDepthPass::per_batch* cbPerBatch;
+    m_pDynamicBufferRing->AllocConstantBuffer(sizeof(GltfDepthPass::per_batch), (void**)&cbPerBatch, &m_perBatchDesc);
 
     return cbPerBatch;
 }
 
-void GltfDepthPass::DrawMesh(VkCommandBuffer cmd_buf, int meshIndex, XMMATRIX worldMatrix)
+void GltfDepthPass::DrawMesh(VkCommandBuffer cmd_buf, int meshIndex, const glm::mat4x4& worldMatrix)
 {
-    DepthMesh *pMesh = &m_meshes[meshIndex];
+    DepthMesh* pMesh = &m_meshes[meshIndex];
     for (unsigned int p = 0; p < pMesh->m_pPrimitives.size(); p++)
     {
-        DepthPrimitives *pPrimitive = &pMesh->m_pPrimitives[p];
+        DepthPrimitives* pPrimitive = &pMesh->m_pPrimitives[p];
 
         if (pPrimitive->m_pipeline == NULL)
             continue;
 
         // Set per Object constants
         //
-        per_object *cbPerObject;
-        VkDescriptorBufferInfo perObjectDesc;
-        m_pDynamicBufferRing->AllocConstantBuffer(sizeof(per_object), (void **)&cbPerObject, &perObjectDesc);
+        per_object* cbPerObject;
+        VkDescriptorBufferInfo perObjectDesc = {};
+        m_pDynamicBufferRing->AllocConstantBuffer(sizeof(per_object), (void**)&cbPerObject, &perObjectDesc);
         cbPerObject->mWorld = worldMatrix;
 
         // Compute offsets
         //
-        DWORD size = (DWORD)pPrimitive->m_VBV.size();
-        std::vector<VkBuffer>     buffers(size);
+        std::uint32_t size = (std::uint32_t)pPrimitive->m_VBV.size();
+        std::vector<VkBuffer> buffers(size);
         std::vector<VkDeviceSize> offsets(size);
-        for (DWORD i = 0; i < size; i++)
+        for (std::uint32_t i = 0; i < size; i++)
         {
             buffers[i] = pPrimitive->m_VBV[i].buffer;
             offsets[i] = pPrimitive->m_VBV[i].offset;
@@ -548,9 +549,8 @@ void GltfDepthPass::DrawMesh(VkCommandBuffer cmd_buf, int meshIndex, XMMATRIX wo
 
         VkDescriptorSet descritorSets[1] = { pPrimitive->m_descriptorSet };
 
-        uint32_t uniformOffsets[2] = { (uint32_t)m_perBatchDesc.offset,  (uint32_t)perObjectDesc.offset };
+        uint32_t uniformOffsets[2] = { (uint32_t)m_perBatchDesc.offset, (uint32_t)perObjectDesc.offset };
         vkCmdBindDescriptorSets(cmd_buf, VK_PIPELINE_BIND_POINT_GRAPHICS, pPrimitive->m_pipelineLayout, 0, 1, descritorSets, 2, uniformOffsets);
         vkCmdDrawIndexed(cmd_buf, pPrimitive->m_NumIndices, 1, 0, 0, 0);
     }
 }
-

@@ -28,4 +28,4 @@ using json = nlohmann::json;
 
 //void CompileMacros(const std::map<std::string, std::string> *pMacros, std::vector<D3D_SHADER_MACRO> *pOut);
 VkFormat GetFormat_Vulkan(std::string str, int id);
-DWORD SizeOfFormat_Vulkan(VkFormat format);
+std::uint32_t SizeOfFormat_Vulkan(VkFormat format);

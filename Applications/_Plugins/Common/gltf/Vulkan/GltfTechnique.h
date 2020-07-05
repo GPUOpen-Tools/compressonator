@@ -24,6 +24,8 @@
 #include "StaticBufferPoolVK.h"
 #include "Camera.h"
 
+#include <glm/mat4x4.hpp>
+
 // This class takes a GltfCommon class (that holds all the non-GPU specific data) as an input and loads all the GPU specific data
 //
 struct Primitives
@@ -47,7 +49,7 @@ protected:
     StaticBufferPoolVK *m_pStaticBufferPool;
 
     void CreateGeometry(tfAccessor indexBuffer, std::vector<tfAccessor> &vertexBuffers, Primitives *pPrimitive);
-    virtual void DrawMesh(VkCommandBuffer cmd_buf, int meshIndex, XMMATRIX matrix) = 0;
+    virtual void DrawMesh(VkCommandBuffer cmd_buf, int meshIndex, const glm::mat4x4 &matrix) = 0;
 };
 
 

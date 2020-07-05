@@ -26,6 +26,8 @@
 //
 #include "Vulkan_main.h"
 
+#include "GltfCommon.h"
+
 #include "TC_PluginAPI.h"
 #include "TC_PluginInternal.h"
 
@@ -97,7 +99,7 @@ void Plugin_3DModelViewer_Vulkan::processMSG(void *message)
 {
     if (m_VulkanDevice && m_ShowViewOk)
     {
-        m_VulkanDevice->OnEvent(*static_cast<MSG*>(message));
+        m_VulkanDevice->OnEvent(message);
     }
 }
 

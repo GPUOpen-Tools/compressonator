@@ -26,12 +26,12 @@
 
 #include "TriangleVK.h"
 
-
 #include "ShaderCompilerHelper.h"
 
-#include <DirectXMath.h>
+#include <glm/mat4x4.hpp>
 
 #include <vector>
+
 
 void TriangleVK::OnCreate(DeviceVK* pDevice, DynamicBufferRingVK *pConstantBufferRing, StaticBufferPoolVK *pStaticGeom, VkRenderPass renderPass)
 {
@@ -169,8 +169,7 @@ void TriangleVK::OnCreate(DeviceVK* pDevice, DynamicBufferRingVK *pConstantBuffe
     layout_bindings[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
     layout_bindings[0].pImmutableSamplers = NULL;
 
-    /* Next take layout bindings and use them to create a descriptor set layout
-    */
+    // Next take layout bindings and use them to create a descriptor set layout
     VkDescriptorSetLayoutCreateInfo descriptor_layout = {};
     descriptor_layout.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
     descriptor_layout.pNext = NULL;
@@ -203,7 +202,6 @@ void TriangleVK::OnCreate(DeviceVK* pDevice, DynamicBufferRingVK *pConstantBuffe
     alloc_info[0].descriptorPool = m_descriptorPool;
     alloc_info[0].descriptorSetCount = (uint32_t)desc_layout.size();
     alloc_info[0].pSetLayouts = desc_layout.data();
-
 
     m_descriptorSets.resize(desc_layout.size());
     res = vkAllocateDescriptorSets(pDevice->GetDevice(), alloc_info, m_descriptorSets.data());
@@ -242,7 +240,7 @@ void TriangleVK::OnCreate(DeviceVK* pDevice, DynamicBufferRingVK *pConstantBuffe
 
     // input assembly state
 
-    VkPipelineInputAssemblyStateCreateInfo ia;
+    VkPipelineInputAssemblyStateCreateInfo ia = {};
     ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
     ia.pNext = NULL;
     ia.flags = 0;
@@ -251,7 +249,7 @@ void TriangleVK::OnCreate(DeviceVK* pDevice, DynamicBufferRingVK *pConstantBuffe
 
     // rasterizer state
 
-    VkPipelineRasterizationStateCreateInfo rs;
+    VkPipelineRasterizationStateCreateInfo rs = {};
     rs.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
     rs.pNext = NULL;
     rs.flags = 0;
@@ -278,7 +276,7 @@ void TriangleVK::OnCreate(DeviceVK* pDevice, DynamicBufferRingVK *pConstantBuffe
 
     // Color blend state
 
-    VkPipelineColorBlendStateCreateInfo cb;
+    VkPipelineColorBlendStateCreateInfo cb = {};
     cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
     cb.flags = 0;
     cb.pNext = NULL;
@@ -295,6 +293,7 @@ void TriangleVK::OnCreate(DeviceVK* pDevice, DynamicBufferRingVK *pConstantBuffe
         VK_DYNAMIC_STATE_VIEWPORT,
         VK_DYNAMIC_STATE_SCISSOR 
     };
+
     VkPipelineDynamicStateCreateInfo dynamicState = {};
     dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
     dynamicState.pNext = NULL;
@@ -314,7 +313,7 @@ void TriangleVK::OnCreate(DeviceVK* pDevice, DynamicBufferRingVK *pConstantBuffe
 
     // depth stencil state
 
-    VkPipelineDepthStencilStateCreateInfo ds;
+    VkPipelineDepthStencilStateCreateInfo ds = {};
     ds.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
     ds.pNext = NULL;
     ds.flags = 0;
@@ -337,7 +336,7 @@ void TriangleVK::OnCreate(DeviceVK* pDevice, DynamicBufferRingVK *pConstantBuffe
 
     // multi sample state
 
-    VkPipelineMultisampleStateCreateInfo ms;
+    VkPipelineMultisampleStateCreateInfo ms = {};
     ms.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
     ms.pNext = NULL;
     ms.flags = 0;
@@ -350,7 +349,7 @@ void TriangleVK::OnCreate(DeviceVK* pDevice, DynamicBufferRingVK *pConstantBuffe
 
     // create pipeline cache
 
-    VkPipelineCacheCreateInfo pipelineCache;
+    VkPipelineCacheCreateInfo pipelineCache = {};
     pipelineCache.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
     pipelineCache.pNext = NULL;
     pipelineCache.initialDataSize = 0;
@@ -399,7 +398,7 @@ void TriangleVK::Render(VkCommandBuffer cmd_buf, Camera *pCam)
 {
     struct DATA
     {
-        DirectX::XMMATRIX mat;
+       glm::mat4x4 mat;
     } *pData;
     VkDescriptorBufferInfo constantBuffer;
     m_pConstantBufferRing->AllocConstantBuffer(4*4 * sizeof(float), (void**)&pData, &constantBuffer);

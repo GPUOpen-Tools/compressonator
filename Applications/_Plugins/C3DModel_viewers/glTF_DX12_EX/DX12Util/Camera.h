@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include <windows.h>
-
 #include <DirectXMath.h>
 #include <cstdio>
 
@@ -30,7 +28,7 @@ class Camera
 {
 public:
     void LookAt(DirectX::XMVECTOR eyePos, DirectX::XMVECTOR lookAt);
-    void SetFov(float fov, DWORD width, DWORD height);
+    void SetFov(float fov, uint32_t width, uint32_t height);
     void SetPosition(DirectX::XMVECTOR eyePos) { m_eyePos = eyePos; }
     void UpdateCamera(float roll, float pitch, float distance);
     void UpdateCameraWASD(float roll, float pitch, const bool keyDown[256], double deltaTime);

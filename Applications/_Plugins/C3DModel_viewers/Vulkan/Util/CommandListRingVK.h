@@ -34,7 +34,7 @@ class DeviceVK;
 //
 class CommandListRingVK
 {
-    DWORD m_memTotalSize;
+    std::uint32_t m_memTotalSize;
     RingWithTabs m_mem;
     
     DeviceVK *m_pDevice;
@@ -43,7 +43,7 @@ class CommandListRingVK
     VkCommandBuffer      *m_pCommandBuffer;
 
 public:
-    void OnCreate(DeviceVK *pDevice, DWORD numberOfBackBuffers, DWORD memTotalSize);
+    void OnCreate(DeviceVK *pDevice, std::uint32_t numberOfBackBuffers, std::uint32_t memTotalSize);
     void OnDestroy();
     VkCommandBuffer *GetNewCommandList();
     void OnBeginFrame();

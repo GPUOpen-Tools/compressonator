@@ -19,35 +19,35 @@
 
 #include "Camera.h"
 
-#include <DirectXMath.h>
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <vulkan/vulkan.h>
 
-#include <windows.h>
-
-using namespace DirectX;
+#include <algorithm>
 
 //--------------------------------------------------------------------------------------
 //
 // OnCreate 
 //
 //--------------------------------------------------------------------------------------
-void Camera::SetFov(float fovV, DWORD width, DWORD height)
+void Camera::SetFov(float fovV, unsigned int width, unsigned int height)
 {
-    m_aspectRatio = width *1.f / height;
+    m_aspectRatio = width * 1.f / height;
 
     m_fovV = fovV;
-    m_fovH = min(m_fovV * width / height, 3.1415f / 2);
+    m_fovH = (std::min)(m_fovV * width / height, 3.1415f / 2);
     m_fovV = m_fovH * height / width;
 
     float halfWidth = (float)width / 2.0f;
     float halfHeight = (float)height / 2.0f;
-    m_Viewport = XMMATRIX(
+    m_Viewport = glm::mat4(
         halfWidth, 0.0f, 0.0f, 0.0f,
         0.0f, -halfHeight, 0.0f, 0.0f,
         0.0f, 0.0f, 1.0f, 0.0f,
         halfWidth, halfHeight, 0.0f, 1.0f);
 
-    m_Proj = XMMatrixPerspectiveFovRH(fovV, m_aspectRatio, 0.1f, 10000.f);
-    m_View = XMMatrixIdentity();
+    m_Proj = glm::perspectiveFovRH(fovV, static_cast<float>(width), static_cast<float>(height), 0.1f, 10000.0f);
+    m_View = glm::mat4(1);
 }
 
 //--------------------------------------------------------------------------------------
@@ -55,11 +55,11 @@ void Camera::SetFov(float fovV, DWORD width, DWORD height)
 // LookAt
 //
 //--------------------------------------------------------------------------------------
-void Camera::LookAt(XMVECTOR eyePos, XMVECTOR lookAt)
+void Camera::LookAt(glm::vec4 eyePos, glm::vec4 lookAt)
 {
     m_eyePos = eyePos;
-    XMVECTOR up = XMVectorSet(0, 1, 0, 0);
-    m_View = XMMatrixLookAtRH(eyePos, lookAt, up);
+    glm::vec4 up = glm::vec4(0, 1, 0, 0);
+    m_View = glm::lookAtRH(glm::vec3(eyePos), glm::vec3(lookAt), glm::vec3(up));
 }
 
 //--------------------------------------------------------------------------------------
@@ -100,19 +100,19 @@ void Camera::UpdateCameraWASD(float roll, float pitch, const bool keyDown[256], 
 
     //----------------------------
 
-    XMMATRIX rotation = XMMatrixRotationX(pitch) * XMMatrixRotationY(roll) ;
+    glm::mat4 rotation = (glm::rotate(glm::mat4(1), pitch, glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(glm::mat4(1), roll, glm::vec3(0.0f, 1.0f, 0.0f)));
 
-    XMVECTOR dir = XMVector4Transform(XMVectorSet(0, 0, 1, 0.0f), rotation);
+    glm::vec4 dir = glm::vec4(0, 0, 1, 0.0f) * rotation;
 
-    m_eyePos += XMVector4Transform(XMVectorSet(eyeDir[0], eyeDir[1], eyeDir[2], 0.0f), rotation);
+    m_eyePos += glm::vec4(eyeDir[0], eyeDir[1], eyeDir[2], 0.0f) * rotation;
 
-    XMVECTOR at = m_eyePos + dir;
+    glm::vec4 at = m_eyePos + dir;
     LookAt(m_eyePos, at);
 }
 
 void Camera::UpdateCamera(float roll, float pitch, float distance)
 {
-    m_eyePos = XMVectorSet(distance * sinf(roll) * cosf(pitch), distance * sinf(pitch), distance * cosf(roll) * cosf(pitch), 0);
-    XMVECTOR at = XMVectorSet(0, 0, 0, 0);
+    m_eyePos = glm::vec4(distance * sinf(roll) * cosf(pitch), distance * sinf(pitch), distance * cosf(roll) * cosf(pitch), 0);
+    glm::vec4 at(0, 0, 0, 0);
     LookAt(m_eyePos, at);
 }

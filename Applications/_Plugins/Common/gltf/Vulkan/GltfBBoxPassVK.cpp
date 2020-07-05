@@ -25,16 +25,20 @@
 // THE SOFTWARE.
 
 
+#include "GltfBBoxPassVK.h"
+
 #include "DeviceVK.h"
+#include "StaticBufferPoolVK.h"
+#include "DynamicBufferRingVK.h"
 #include "ResourceViewHeapsVK.h"
 #include "UploadHeapVK.h"
 #include "ShaderCompilerHelper.h"
 #include "Camera.h"
 #include "GltfHelpers.h"
 #include "GltfHelpers_Vulkan.h"
-#include "GltfBBoxPassVK.h"
 
-void GltfBBoxPass::OnCreate(
+
+void GltfBBoxPassVK::OnCreate(
     DeviceVK* pDevice,
     VkRenderPass renderPass,
     UploadHeapVK* pUploadHeap,
@@ -205,7 +209,7 @@ void GltfBBoxPass::OnCreate(
 
     // input assembly state
 
-    VkPipelineInputAssemblyStateCreateInfo ia;
+    VkPipelineInputAssemblyStateCreateInfo ia = {};
     ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
     ia.pNext = NULL;
     ia.flags = 0;
@@ -214,7 +218,7 @@ void GltfBBoxPass::OnCreate(
 
     // rasterizer state
 
-    VkPipelineRasterizationStateCreateInfo rs;
+    VkPipelineRasterizationStateCreateInfo rs = {};
     rs.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
     rs.pNext = NULL;
     rs.flags = 0;
@@ -241,7 +245,7 @@ void GltfBBoxPass::OnCreate(
 
     // Color blend state
 
-    VkPipelineColorBlendStateCreateInfo cb;
+    VkPipelineColorBlendStateCreateInfo cb = {};
     cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
     cb.flags = 0;
     cb.pNext = NULL;
@@ -277,7 +281,7 @@ void GltfBBoxPass::OnCreate(
 
     // depth stencil state
 
-    VkPipelineDepthStencilStateCreateInfo ds;
+    VkPipelineDepthStencilStateCreateInfo ds = {};
     ds.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
     ds.pNext = NULL;
     ds.flags = 0;
@@ -350,11 +354,11 @@ void GltfBBoxPass::OnCreate(
 
 }
 
-void GltfBBoxPass::OnDestroy()
+void GltfBBoxPassVK::OnDestroy()
 {
 }
 
-void GltfBBoxPass::DrawMesh(VkCommandBuffer cmd_buf, int meshIndex, XMMATRIX worldMatrix)
+void GltfBBoxPassVK::DrawMesh(VkCommandBuffer cmd_buf, int meshIndex, const glm::mat4x4& worldMatrix)
 {
     vkCmdBindVertexBuffers(cmd_buf, 0, 1, &m_VBV.buffer, &m_VBV.offset);
     vkCmdBindIndexBuffer(cmd_buf, m_IBV.buffer, m_IBV.offset, m_indexType);
@@ -363,7 +367,7 @@ void GltfBBoxPass::DrawMesh(VkCommandBuffer cmd_buf, int meshIndex, XMMATRIX wor
 
     VkDescriptorSet descritorSets[1] = { m_descriptorSet };
 
-    XMMATRIX mWorldViewProj = worldMatrix * m_Camera;
+    glm::mat4x4 mWorldViewProj = worldMatrix * m_Camera;
 
     tfMesh *pMesh = &m_pGLTFData->m_meshes[meshIndex];
     for (unsigned int p = 0; p < pMesh->m_pPrimitives.size(); p++)
@@ -376,7 +380,7 @@ void GltfBBoxPass::DrawMesh(VkCommandBuffer cmd_buf, int meshIndex, XMMATRIX wor
         cbPerObject->mWorldViewProj = mWorldViewProj;
         cbPerObject->vCenter = pMesh->m_pPrimitives[p].m_center;
         cbPerObject->vRadius = pMesh->m_pPrimitives[p].m_radius;
-        cbPerObject->vColor = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
+        cbPerObject->vColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
         uint32_t uniformOffsets[1] = { (uint32_t)perObjectDesc.offset };
         vkCmdBindDescriptorSets(cmd_buf, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelineLayout, 0, 1, descritorSets, 1, uniformOffsets);

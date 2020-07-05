@@ -18,17 +18,19 @@
 // THE SOFTWARE.
 
 #pragma once
-#include <vector>
 #include "DeviceVK.h"
+
+#include <vector>
+#include <cstdint>
 
 class SwapChainVK
 {
 public:
-    void OnCreate(DeviceVK *pDevice, DWORD numberBackBuffers, DWORD dwWidth, DWORD dwHeight, HWND hWnd);
+    void OnCreate(DeviceVK *pDevice, std::uint32_t numberBackBuffers, std::uint32_t dwWidth, std::uint32_t dwHeight, void* hWnd);
     void OnDestroy();
 
     void SetFullScreen(bool fullscreen);
-    void OnResize(DWORD dwWidth, DWORD dwHeight);
+    void OnResize(std::uint32_t dwWidth, std::uint32_t dwHeight);
 
     /*
     ID3D12Resource *GetCurrentBackBufferResource();    
@@ -60,6 +62,6 @@ private:
     uint32_t m_nextIndex = 0;
     uint32_t m_imageIndex = 0;
 
-    DWORD m_backBufferCount = 0;
+    uint32_t m_backBufferCount = 0;
 };
 

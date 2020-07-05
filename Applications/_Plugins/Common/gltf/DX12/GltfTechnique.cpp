@@ -35,7 +35,11 @@ void GltfTechnique::Draw(ID3D12GraphicsCommandList* pCommandList)
         tfNode *pNode = nodes[i].pN;
         if (pNode != NULL && pNode->meshIndex >= 0)
         {
-            DrawMesh(pCommandList, pNode->meshIndex, nodes[i].m);
+            const DirectX::XMMATRIX mat = { nodes[i].m[0][0], nodes[i].m[0][1], nodes[i].m[0][2], nodes[i].m[0][3],
+                                            nodes[i].m[1][0], nodes[i].m[1][1], nodes[i].m[1][2], nodes[i].m[1][3],
+                                            nodes[i].m[2][0], nodes[i].m[2][1], nodes[i].m[2][2], nodes[i].m[2][3],
+                                            nodes[i].m[3][0], nodes[i].m[3][1], nodes[i].m[3][2], nodes[i].m[3][3] };
+            DrawMesh(pCommandList, pNode->meshIndex, mat);
         }
     }
 }

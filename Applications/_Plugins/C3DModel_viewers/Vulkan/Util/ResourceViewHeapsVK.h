@@ -48,13 +48,13 @@ class ResourceView
     friend class StaticResourceViewHeapDX12;
     friend class DynamicResourceViewHeapDX12;
 
-    DWORD m_dsvDescriptorSize;
-    DWORD m_Size;
+    std::uint32_t m_dsvDescriptorSize;
+    std::uint32_t m_Size;
     D3D12_CPU_DESCRIPTOR_HANDLE m_CPUDescriptor;
     D3D12_GPU_DESCRIPTOR_HANDLE m_GPUDescriptor;
 
 protected:
-    void SetResourceView(DWORD size, DWORD dsvDescriptorSize, D3D12_CPU_DESCRIPTOR_HANDLE CPUDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE GPUDescriptor)
+    void SetResourceView(std::uint32_t size, std::uint32_t dsvDescriptorSize, D3D12_CPU_DESCRIPTOR_HANDLE CPUDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE GPUDescriptor)
     {
         m_Size = size;
         m_dsvDescriptorSize = dsvDescriptorSize;
@@ -64,19 +64,19 @@ protected:
 
 public:
 
-    DWORD GetSize()
+    std::uint32_t GetSize()
     {
         return m_Size;
     }
 
-    D3D12_CPU_DESCRIPTOR_HANDLE GetCPU(DWORD i=0) 
+    D3D12_CPU_DESCRIPTOR_HANDLE GetCPU(std::uint32_t i=0) 
     {    
         D3D12_CPU_DESCRIPTOR_HANDLE CPUDescriptor = m_CPUDescriptor;
         CPUDescriptor.ptr += i * m_dsvDescriptorSize;
         return CPUDescriptor;    
     }
 
-    D3D12_GPU_DESCRIPTOR_HANDLE GetGPU(DWORD i = 0)
+    D3D12_GPU_DESCRIPTOR_HANDLE GetGPU(std::uint32_t i = 0)
     {
         D3D12_GPU_DESCRIPTOR_HANDLE GPUDescriptor = m_GPUDescriptor;
         GPUDescriptor.ptr += i * m_dsvDescriptorSize;
@@ -94,16 +94,16 @@ class SAMPLER : public ResourceView { };
 class StaticResourceViewHeapVK
 {
     DeviceVK *m_pDevice;
-    DWORD m_descriptorCount;
-    DWORD m_descriptorElementSize;
-    DWORD m_index;
+    std::uint32_t m_descriptorCount;
+    std::uint32_t m_descriptorElementSize;
+    std::uint32_t m_index;
 
     ID3D12DescriptorHeap *m_pHeap;
 
 public:
-    void OnCreate(DeviceVK* pDevice, D3D12_DESCRIPTOR_HEAP_TYPE heapType, DWORD descriptorCount, UINT nodeMask = 0);
+    void OnCreate(DeviceVK* pDevice, D3D12_DESCRIPTOR_HEAP_TYPE heapType, std::uint32_t descriptorCount, UINT nodeMask = 0);
     void OnDestroy();    
-    bool AllocDescriptor(DWORD size, ResourceView *pRV)
+    bool AllocDescriptor(std::uint32_t size, ResourceView *pRV)
     {
         if (m_index >= m_descriptorCount)
             return false;
@@ -130,7 +130,7 @@ class ResourceViewHeapsVK
     DeviceVK* m_pDevice;
     VkDescriptorPool m_descriptorPool;
 public:
-    void OnCreate(DeviceVK* pDevice, DWORD cbvDescriptorCount, DWORD srvDescriptorCount, DWORD uavDescriptorCount, DWORD samplerDescriptorCount)
+    void OnCreate(DeviceVK* pDevice, std::uint32_t cbvDescriptorCount, std::uint32_t srvDescriptorCount, std::uint32_t uavDescriptorCount, std::uint32_t samplerDescriptorCount)
     {
         m_pDevice = pDevice;
 

@@ -22,7 +22,7 @@
 
 #define ALIGN(a) ((a + 255) & ~255)
 
-void StaticConstantBufferPoolVK::OnCreate(DeviceVK* pDevice, DWORD totalMemSize)
+void StaticConstantBufferPoolVK::OnCreate(DeviceVK* pDevice, std::uint32_t totalMemSize)
 {
     VkResult res;
     m_pDevice = pDevice;
@@ -77,7 +77,7 @@ void StaticConstantBufferPoolVK::OnDestroy()
     vkDestroyBuffer(m_pDevice->GetDevice(), m_buffer, NULL);
 }
 
-bool StaticConstantBufferPoolVK::AllocConstantBuffer(DWORD size, void **pData, VkDescriptorBufferInfo *pOut)
+bool StaticConstantBufferPoolVK::AllocConstantBuffer(std::uint32_t size, void **pData, VkDescriptorBufferInfo *pOut)
 {
     size = ALIGN(size);
     assert(m_memOffset + size < m_totalMemSize);

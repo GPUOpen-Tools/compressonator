@@ -11,6 +11,7 @@
     <Compressonator_BOOST>$(SolutionDir)..\..\..\..\Common\Lib\Ext\Boost\boost_1_59_0\</Compressonator_BOOST>
     <Compressonator_DIRECTX>$(SolutionDir)..\..\..\..\Common\lib\ext\DirectX-SDK\8.0\</Compressonator_DIRECTX>
     <Compressonator_GLEW>$(SolutionDir)..\..\..\..\Common\Lib\Ext\glew\1.9.0\</Compressonator_GLEW>
+    <Compressonator_GLM>$(SolutionDir)..\..\..\External\glm\glm-submodule\</Compressonator_GLM>
     <Compressonator_OPENCV>$(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenCV\2.49\</Compressonator_OPENCV>
     <Compressonator_OPENEXR>$(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenEXR\openexr-2.2.0\</Compressonator_OPENEXR>
     <Compressonator_ILMBASE>$(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\</Compressonator_ILMBASE>

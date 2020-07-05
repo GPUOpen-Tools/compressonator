@@ -47,11 +47,11 @@ public:
         GLTFCommon *pGLTFData, void *pluginManager, void *msghandler);
 
     void OnDestroy();
-    XMMATRIX *SetPerBatchConstants() { return &m_Camera; };
-    void DrawMesh(ID3D12GraphicsCommandList* pCommandList, int meshIndex, XMMATRIX worldMatrix);
+    DirectX::XMMATRIX *SetPerBatchConstants() { return &m_Camera; };
+    void DrawMesh(ID3D12GraphicsCommandList* pCommandList, int meshIndex, DirectX::XMMATRIX worldMatrix);
 private:
 
-    XMMATRIX m_Camera;
+    DirectX::XMMATRIX m_Camera;
 };
 
 

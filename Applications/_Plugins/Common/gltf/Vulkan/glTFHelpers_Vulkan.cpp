@@ -80,7 +80,7 @@ VkFormat GetFormat_Vulkan(std::string str, int id)
     return VK_FORMAT_UNDEFINED;
 }
 
- DWORD SizeOfFormat_Vulkan(VkFormat format)
+ std::uint32_t SizeOfFormat_Vulkan(VkFormat format)
 {
     switch(format)
     {

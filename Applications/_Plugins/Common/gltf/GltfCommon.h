@@ -32,6 +32,9 @@
 #include "tiny_gltf2_utils.h"
 #endif
 
+#include <glm/matrix.hpp>
+#include <glm/vec4.hpp>
+
 // The GlTF file is loaded in 2 steps
 // 1) loading the GPU agnostic data (This is done in the GLTFCommon class you can see here below)
 //     - nodes
@@ -51,8 +54,8 @@
 
 struct tfPrimitives
 {
-    XMVECTOR m_center;
-    XMVECTOR m_radius;
+    glm::vec4 m_center;
+    glm::vec4 m_radius;
 };
 
 struct tfMesh
@@ -62,7 +65,7 @@ struct tfMesh
 
 struct NodeMatrixPostTransform
 { 
-    tfNode *pN; XMMATRIX m; 
+    tfNode *pN; glm::mat4x4 m; 
 };
 
 class GLTFCommon
@@ -75,10 +78,10 @@ public:
     std::vector<char *> buffersData;
     std::vector<tfMesh> m_meshes;
 
-    CMODEL_DATA m_meshBufferData;  //vertices and indices buffers for mesh process 
+    CMODEL_DATA m_meshBufferData;  // vertices and indices buffers for mesh process 
 
     float m_distance = 4.0f;       // calc from mesh atrribes what the max value in ether x or y direction is going to be
-    double m_CommonLoadTime = 0.0;        // Total time spent in GLTF Common to load data from files
+    double m_CommonLoadTime = 0.0; // Total time spent in GLTF Common to load data from files
     bool  isBinFile = false;
 
     int   Load(std::string path, std::string filename, CMIPS *cmips = NULL);

@@ -232,14 +232,14 @@ void GltfBBoxPass::DrawMesh(ID3D12GraphicsCommandList* pCommandList, int meshInd
         D3D12_GPU_DESCRIPTOR_HANDLE perObjectDesc;
         m_pDynamicBufferRing->AllocConstantBuffer(sizeof(per_object), (void **)&cbPerObject, &perObjectDesc);
         cbPerObject->mWorldViewProj = mWorldViewProj;
-        cbPerObject->vCenter = pMesh->m_pPrimitives[p].m_center;
-        cbPerObject->vRadius = pMesh->m_pPrimitives[p].m_radius;
+        const glm::vec4 &center = pMesh->m_pPrimitives[p].m_center;
+        cbPerObject->vCenter = { center.x, center.y, center.z, center.w };
+        const glm::vec4& radius = pMesh->m_pPrimitives[p].m_radius;
+        cbPerObject->vRadius = { radius.x, radius.y, radius.z, radius.w };
         cbPerObject->vColor = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
 
         pCommandList->SetGraphicsRootDescriptorTable(0, perObjectDesc);
-
         pCommandList->DrawIndexedInstanced(m_NumIndices, 1, 0, 0, 0);
     }
-
 }
 

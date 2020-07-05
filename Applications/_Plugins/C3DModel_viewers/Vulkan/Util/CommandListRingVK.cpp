@@ -22,15 +22,12 @@
 
 #include "DeviceVK.h"
 
-#include <windows.h>
-
-
 //--------------------------------------------------------------------------------------
 //
 // OnCreate
 //
 //--------------------------------------------------------------------------------------
-void CommandListRingVK::OnCreate(DeviceVK *pDevice, DWORD numberOfBackBuffers, DWORD memTotalSize)
+void CommandListRingVK::OnCreate(DeviceVK *pDevice, std::uint32_t numberOfBackBuffers, std::uint32_t memTotalSize)
 {
     VkResult res;
     VkDevice Device = pDevice->GetDevice();
@@ -80,7 +77,7 @@ void CommandListRingVK::OnDestroy()
 //--------------------------------------------------------------------------------------
 VkCommandBuffer *CommandListRingVK::GetNewCommandList()
 {
-    DWORD index;
+    std::uint32_t index;
     if (m_mem.Alloc(1, &index) == false)
         return NULL;
 

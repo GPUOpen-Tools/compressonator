@@ -31,7 +31,7 @@ using namespace DirectX;
 // OnCreate 
 //
 //--------------------------------------------------------------------------------------
-void Camera::SetFov(float fovV, DWORD width, DWORD height)
+void Camera::SetFov(float fovV, uint32_t width, uint32_t height)
 {
     // fovV = fovV * 0.025f; avacado
 

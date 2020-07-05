@@ -126,22 +126,45 @@ json::array_t GetElementJsonArray(json::object_t root, char* path, json::array_t
     return GetElement<json::array_t>(root, path, pDefault);
 }
 
-XMVECTOR GetVector(json::array_t accessor)
+#ifdef _WIN32
+DirectX::XMVECTOR GetXVector(json::array_t accessor)
 {
     if (accessor.size() == 4)
     {
-        return XMVectorSet(accessor[0], accessor[1], accessor[2], accessor[3]);
+        return DirectX::XMVectorSet(accessor[0], accessor[1], accessor[2], accessor[3]);
     }
     else
     {
-        return XMVectorSet(accessor[0], accessor[1], accessor[2], 0);
+        return DirectX::XMVectorSet(accessor[0], accessor[1], accessor[2], 0);
     }
 }
 
-XMMATRIX GetMatrix(json::array_t accessor)
+DirectX::XMMATRIX GetXMatrix(json::array_t accessor)
 {
-    return XMMatrixSet(accessor[0], accessor[1], accessor[2], accessor[3], accessor[4], accessor[5], accessor[6], accessor[7], accessor[8],
+    return DirectX::XMMatrixSet(accessor[0], accessor[1], accessor[2], accessor[3], accessor[4], accessor[5], accessor[6], accessor[7], accessor[8],
                        accessor[9], accessor[10], accessor[11], accessor[12], accessor[13], accessor[14], accessor[15]);
+}
+#endif
+
+glm::vec4 GetVector(json::array_t accessor)
+{
+    if (accessor.size() == 4)
+    {
+        return glm::vec4(static_cast<float>(accessor[0]), static_cast<float>(accessor[1]), static_cast<float>(accessor[2]), static_cast<float>(accessor[3]));
+    }
+    else
+    {
+        return glm::vec4(static_cast<float>(accessor[0]), static_cast<float>(accessor[1]), static_cast<float>(accessor[2]), 0.0f);
+    }
+}
+
+
+glm::mat4x4 GetMatrix(json::array_t accessor)
+{
+    return glm::mat4x4(static_cast<float>(accessor[0]),  static_cast<float>(accessor[1]),  static_cast<float>(accessor[2]),  static_cast<float>(accessor[3]), 
+                       static_cast<float>(accessor[4]),  static_cast<float>(accessor[5]),  static_cast<float>(accessor[6]),  static_cast<float>(accessor[7]), 
+                       static_cast<float>(accessor[8]),  static_cast<float>(accessor[9]),  static_cast<float>(accessor[10]), static_cast<float>(accessor[11]), 
+                       static_cast<float>(accessor[12]), static_cast<float>(accessor[13]), static_cast<float>(accessor[14]), static_cast<float>(accessor[15]));
 }
 
 void SplitGltfAttribute(std::string attribute, std::string* semanticName, unsigned int* semanticIndex)

@@ -43,7 +43,7 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
 extern "C" {
 #endif
 
-#if KTX_USE_GETPROC
+#if KTX_USE_GETPROC && defined(_WIN32)
   // Not defined in glew.h.
   typedef void (GL_APIENTRY* PFNGLTEXIMAGE1DPROC) (
                     GLenum target, GLint level, GLint internalformat,

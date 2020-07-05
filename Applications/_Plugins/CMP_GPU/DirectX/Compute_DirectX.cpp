@@ -1044,14 +1044,14 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer** ppDstTextureAsBufOut,int miplevel)
             // this should match cbuffer cbCS : register( b0 ) in the shader code
             struct ShaderOptions
             {
-                uint  tex_width;
-                uint  num_block_x;
-                uint  format;
-                uint  mode_id;
-                uint  start_block_id;
-                uint  num_total_blocks;
-                float alpha_weight;
-                float quality;
+                unsigned int  tex_width;
+                unsigned int  num_block_x;
+                unsigned int  format;
+                unsigned int  mode_id;
+                unsigned int  start_block_id;
+                unsigned int  num_total_blocks;
+                float         alpha_weight;
+                float         quality;
             } options;
 
             options.tex_width         = texSrcDesc.Width;

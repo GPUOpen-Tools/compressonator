@@ -29,23 +29,23 @@
 //
 class Ring
 {
-    DWORD m_Head;
-    DWORD m_AllocatedSize;
-    DWORD m_TotalSize;
+    std::uint32_t m_Head;
+    std::uint32_t m_AllocatedSize;
+    std::uint32_t m_TotalSize;
 public:
-    void Create(DWORD TotalSize)
+    void Create(std::uint32_t TotalSize)
     {
         m_Head = 0;
         m_AllocatedSize = 0;
         m_TotalSize = TotalSize;
     }
 
-    DWORD GetSize() { return m_AllocatedSize; }
-    DWORD GetHead() { return m_Head; }
-    DWORD GetTail() { return (m_Head + m_AllocatedSize) % m_TotalSize; }
+    std::uint32_t GetSize() { return m_AllocatedSize; }
+    std::uint32_t GetHead() { return m_Head; }
+    std::uint32_t GetTail() { return (m_Head + m_AllocatedSize) % m_TotalSize; }
 
     //helper to avoid allocating chunks that span across the head and the tail of the ring.
-    DWORD PaddingToAvoidCrossOver(DWORD size)
+    std::uint32_t PaddingToAvoidCrossOver(std::uint32_t size)
     {
         int tail = GetTail();
         if ((tail + size) > m_TotalSize)
@@ -54,7 +54,7 @@ public:
             return 0;
     }
 
-    bool Alloc(DWORD size, DWORD *pOut)
+    bool Alloc(std::uint32_t size, std::uint32_t *pOut)
     {
         if (m_AllocatedSize + size <= m_TotalSize)
         {
@@ -69,7 +69,7 @@ public:
         return false;
     }
 
-    bool Free(DWORD size)
+    bool Free(std::uint32_t size)
     {
         if (m_AllocatedSize > size)
         {
@@ -97,14 +97,14 @@ class RingWithTabs
     Ring m_mem;
 
     //this is the external ring buffer (I could have reused the Ring class though)
-    DWORD m_frame;
-    DWORD m_numberOfBackBuffers;
+    std::uint32_t m_frame;
+    std::uint32_t m_numberOfBackBuffers;
 
-    DWORD m_memAllocatedInFrame;
-    DWORD m_allocatedMemPerBackBuffer[4];
+    std::uint32_t m_memAllocatedInFrame;
+    std::uint32_t m_allocatedMemPerBackBuffer[4];
 public:
 
-    void OnCreate(DWORD numberOfBackBuffers, DWORD memTotalSize)
+    void OnCreate(std::uint32_t numberOfBackBuffers, std::uint32_t memTotalSize)
     {
         m_frame = 0;
         m_numberOfBackBuffers = numberOfBackBuffers;
@@ -123,9 +123,9 @@ public:
     }
 
 
-    bool Alloc(DWORD size, DWORD *pOut)
+    bool Alloc(std::uint32_t size, std::uint32_t *pOut)
     {
-        DWORD padding = m_mem.PaddingToAvoidCrossOver(size);
+        std::uint32_t padding = m_mem.PaddingToAvoidCrossOver(size);
         if (padding > 0)
         {
             m_memAllocatedInFrame += padding;
@@ -152,7 +152,7 @@ public:
         m_frame = (m_frame + 1) % m_numberOfBackBuffers;
 
         // free all the entries for the oldest buffer in one go
-        DWORD memToFree = m_allocatedMemPerBackBuffer[m_frame];
+        std::uint32_t memToFree = m_allocatedMemPerBackBuffer[m_frame];
         m_mem.Free(memToFree);
     }
 };

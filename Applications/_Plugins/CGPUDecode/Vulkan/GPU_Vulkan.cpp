@@ -92,7 +92,8 @@ struct {
 
 VkClearColorValue defaultClearColor = { { 0.025f, 0.025f, 0.025f, 1.0f } };
 
-GPU_Vulkan::GPU_Vulkan(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback):RenderWindow("Vulkan")
+GPU_Vulkan::GPU_Vulkan(std::uint32_t Width, std::uint32_t Height, WNDPROC callback)
+    : RenderWindow("Vulkan")
 {
     m_initOk = false;
     //set default width and height if is 0

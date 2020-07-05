@@ -35,16 +35,16 @@ class StaticConstantBufferPoolVK
     VkBuffer                m_buffer;
     VkDeviceMemory          m_deviceMemory;
 
-    DWORD           m_totalMemSize;
-    DWORD           m_memOffset;
+    std::uint32_t           m_totalMemSize;
+    std::uint32_t           m_memOffset;
     char            *m_pData;
 
     bool            m_bUseVidMem;
 
 public:
-    void OnCreate(DeviceVK* pDevice, DWORD totalMemSize);
+    void OnCreate(DeviceVK* pDevice, std::uint32_t totalMemSize);
     void OnDestroy();
-    bool AllocConstantBuffer(DWORD size, void **pData, VkDescriptorBufferInfo *pOut);
+    bool AllocConstantBuffer(std::uint32_t size, void **pData, VkDescriptorBufferInfo *pOut);
     void UploadData(VkCommandBuffer cmd_buf);
     void FreeUploadHeap();
 

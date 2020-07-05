@@ -35,7 +35,7 @@
 class DynamicBufferRingVK
 {
     DeviceVK* m_pDevice;
-    DWORD m_memTotalSize;
+    std::uint32_t m_memTotalSize;
     RingWithTabs m_mem;
 
     char *m_pData;
@@ -43,11 +43,11 @@ class DynamicBufferRingVK
     VkBuffer                m_buffer;
     VkDeviceMemory          m_deviceMemory;
 public:
-    void OnCreate(DeviceVK* pDevice, DWORD numberOfBackBuffers, DWORD memTotalSize);
+    void OnCreate(DeviceVK* pDevice, std::uint32_t numberOfBackBuffers, std::uint32_t memTotalSize);
     void OnDestroy();
-    bool AllocConstantBuffer(DWORD size, void **pData, VkDescriptorBufferInfo *pOut);
-    bool AllocVertexBuffer(DWORD numbeOfVertices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut);
-    bool AllocIndexBuffer(DWORD numbeOfIndices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut);
+    bool AllocConstantBuffer(std::uint32_t size, void **pData, VkDescriptorBufferInfo *pOut);
+    bool AllocVertexBuffer(std::uint32_t numbeOfVertices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut);
+    bool AllocIndexBuffer(std::uint32_t numbeOfIndices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut);
     void OnBeginFrame();
-    VkDescriptorBufferInfo GetMainBuffer(DWORD size);
+    VkDescriptorBufferInfo GetMainBuffer(std::uint32_t size);
 };

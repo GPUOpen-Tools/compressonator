@@ -21,18 +21,30 @@
 #include "GltfCommon.h"
 #include "GltfTechnique.h"
 
+#include <glm/matrix.hpp>
+#include <glm/vec4.hpp>
+
+#include <vulkan/vulkan.h>
+
+// Forward Declaration
+class DeviceVK;
+class ResourceViewHeapsVK;
+class DynamicBufferRingVK;
+class StaticBufferPoolVK;
+class ResourceViewHeapsVK;
+class UploadHeapVK;
 
 // This class takes a GltfCommon class (that holds all the non-GPU specific data) as an input and loads all the GPU specific data
 //
-class GltfBBoxPass : public GltfTechnique
+class GltfBBoxPassVK : public GltfTechnique
 {
 public:
     struct per_object
     {
-        XMMATRIX mWorldViewProj;
-        XMVECTOR vCenter;
-        XMVECTOR vRadius;
-        XMVECTOR vColor;
+        glm::mat4x4 mWorldViewProj;
+        glm::vec4 vCenter;
+        glm::vec4 vRadius;
+        glm::vec4 vColor;
     };
 
     void OnCreate(
@@ -45,8 +57,8 @@ public:
         GLTFCommon *pGLTFData);
 
     void OnDestroy();
-    XMMATRIX *SetPerBatchConstants() { return &m_Camera; };
-    void DrawMesh(VkCommandBuffer cmd_buf, int meshIndex, XMMATRIX worldMatrix);
+    glm::mat4x4 *SetPerBatchConstants() { return &m_Camera; };
+    void DrawMesh(VkCommandBuffer cmd_buf, int meshIndex, const glm::mat4x4& worldMatrix);
 private:
 
     DeviceVK* m_pDevice;
@@ -65,7 +77,7 @@ private:
     VkDescriptorSet m_descriptorSet;
     VkDescriptorSetLayout m_descriptorSetLayout;
 
-    XMMATRIX m_Camera;
+    glm::mat4x4 m_Camera;
 };
 
 

@@ -40,7 +40,7 @@ int Plugin_CVulkan::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
 }
 
 
-int Plugin_CVulkan::TC_Init(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback)
+int Plugin_CVulkan::TC_Init(std::uint32_t Width, std::uint32_t Height, WNDPROC callback)
 {
     m_pGPUDecode = (TextureControl *)new GPU_Vulkan(Width, Height, callback);
     if (m_pGPUDecode == NULL)

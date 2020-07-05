@@ -23,8 +23,7 @@
 
 #include <cassert>
 
-
-void StaticBufferPoolVK::OnCreate(DeviceVK* pDevice, DWORD totalMemSize)
+void StaticBufferPoolVK::OnCreate(DeviceVK* pDevice, std::uint32_t totalMemSize)
 {
     VkResult res;
     m_pDevice = pDevice;
@@ -80,9 +79,9 @@ void StaticBufferPoolVK::OnDestroy()
 }
 
 
-bool StaticBufferPoolVK::AllocVertexBuffer(DWORD numbeOfVertices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut)
+bool StaticBufferPoolVK::AllocVertexBuffer(std::uint32_t numbeOfVertices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut)
 {
-    DWORD size = (DWORD)Align(numbeOfVertices* strideInBytes, 256);
+    std::uint32_t size = (std::uint32_t)Align(numbeOfVertices* strideInBytes, 256);
     assert(m_memOffset + size < m_totalMemSize);
 
     *pData = (void *)(m_pData + m_memOffset);
@@ -96,9 +95,9 @@ bool StaticBufferPoolVK::AllocVertexBuffer(DWORD numbeOfVertices, UINT strideInB
     return true;
 }
 
-bool StaticBufferPoolVK::AllocIndexBuffer(DWORD numbeOfIndices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut)
+bool StaticBufferPoolVK::AllocIndexBuffer(std::uint32_t numbeOfIndices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut)
 {
-    DWORD size = (DWORD)Align(numbeOfIndices*strideInBytes, 256);
+    std::uint32_t size = (std::uint32_t)Align(numbeOfIndices*strideInBytes, 256);
     assert(m_memOffset + size < m_totalMemSize);
 
 

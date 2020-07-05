@@ -18,36 +18,33 @@
 // THE SOFTWARE.
 
 #pragma once
-
-#include <Windows.h>
-
-#include <DirectXMath.h>
+#include <glm/glm.hpp>
 
 // typical camera class
 
 class Camera
 {
 public:
-    void LookAt(DirectX::XMVECTOR eyePos, DirectX::XMVECTOR lookAt);
-    void SetFov(float fov, DWORD width, DWORD height);
-    void SetPosition(DirectX::XMVECTOR eyePos) { m_eyePos = eyePos; }
+    void LookAt(glm::vec4 eyePos, glm::vec4 lookAt);
+    void SetFov(float fov, unsigned int width, unsigned int height);
+    void SetPosition(glm::vec4 eyePos) { m_eyePos = eyePos; }
     void UpdateCamera(float roll, float pitch, float distance);
     void UpdateCameraWASD(float roll, float pitch, const bool keyDown[256], double deltaTime);
 
-    DirectX::XMMATRIX GetView() { return m_View; }
-    DirectX::XMMATRIX GetViewport() { return m_Viewport; }
-    DirectX::XMVECTOR GetPosition() { return m_eyePos; }
-    DirectX::XMVECTOR GetDirection() { return DirectX::XMVector4Transform(DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), DirectX::XMMatrixTranspose(m_View)); }
-    DirectX::XMMATRIX GetProjection() { return m_Proj; }
+    glm::mat4 GetView() { return m_View; }
+    glm::mat4 GetViewport() { return m_Viewport; }
+    glm::vec4 GetPosition() { return m_eyePos; }
+    glm::vec4 GetDirection() { return glm::vec4(0.0f, 0.0f, 1.0f, 0.0f) * glm::transpose(m_View); }
+    glm::mat4 GetProjection() { return m_Proj; }
 
     float GetFovH() { return m_fovH; }
     float GetFovV() { return m_fovV; }
 
 private:
-    DirectX::XMMATRIX   m_View;
-    DirectX::XMMATRIX   m_Proj;
-    DirectX::XMMATRIX   m_Viewport;
-    DirectX::XMVECTOR   m_eyePos;
+    glm::mat4           m_View;
+    glm::mat4           m_Proj;
+    glm::mat4           m_Viewport;
+    glm::vec4           m_eyePos;
     float               m_fovV, m_fovH;
     float               m_aspectRatio;
 };

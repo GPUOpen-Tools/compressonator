@@ -74,7 +74,8 @@ gitMapping = {
     ghRoot+"common-lib-ext-OpenEXR-2.2.git" : ["Common/Lib/Ext/OpenEXR",    "master"],
     "common-lib-ext-OpenGL.git"             : ["Common/Lib/Ext/OpenGL",     "master"],
     "common-lib-ext-tinyxml-2.6.2.git"      : ["Common/Lib/Ext/tinyxml",    "master"],
-    "common-lib-ext-zlib-1.2.8.git"         : ["Common/Lib/Ext/zlib",       "master"]
+    "common-lib-ext-zlib-1.2.8.git"         : ["Common/Lib/Ext/zlib",       "master"],
+    "https://github.com/g-truc/glm.git"     : ["External/glm/glm-submodule","master"],
 }
 
 # The following section contains OS-specific dependencies that are downloaded and placed in the specified target directory.
