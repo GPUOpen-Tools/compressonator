@@ -115,8 +115,8 @@ void  CompressBlockBC5_DualChannel_Internal(const CGU_UINT8 srcBlockR[16],
 
     for (CGU_INT i =0; i< 16; i++)
     {
-        srcAlphaRF[i] = srcBlockR[i];
-        srcAlphaGF[i] = srcBlockG[i];
+        srcAlphaRF[i] = (CGU_FLOAT)( srcBlockR[i] ) / 255.0f;
+        srcAlphaGF[i] = (CGU_FLOAT)( srcBlockG[i] ) / 255.0f;
     } 
 
     cmpBlock = cmp_compressAlphaBlock(srcAlphaRF,BC15options->m_fquality);
