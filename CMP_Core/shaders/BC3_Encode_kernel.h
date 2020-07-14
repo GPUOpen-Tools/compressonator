@@ -24,7 +24,7 @@
 #define BC3_ENCODE_KERNEL_H
 
 #include "Common_Def.h"
-#include "BCn_Common_Kernel.h"
+#include "BCn_Common_kernel.h"
 
 #define BC3CompBlockSize 16
 

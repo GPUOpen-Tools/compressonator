@@ -341,7 +341,7 @@ MipSet *CImageLoader::LoaderDecompressMipSet(CMipImages *MipImages, Config *deco
     {
         //=======================================================
         // We use CPU based decode if OpenGL is not at or above 
-        // V4.0
+        // V4.1
         //=======================================================
         if (g_useCPUDecode)
         {

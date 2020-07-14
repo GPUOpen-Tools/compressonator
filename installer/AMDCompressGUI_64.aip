@@ -103,10 +103,10 @@
     <ROW Component="AI_CustomARPName" ComponentId="{3B6D6898-11B9-4F40-A48D-A08505310F9F}" Directory_="APPDIR" Attributes="260" KeyPath="DisplayName" Options="1"/>
     <ROW Component="AI_DisableModify" ComponentId="{102C7576-AD9C-4ECA-96CF-27856306B927}" Directory_="APPDIR" Attributes="260" KeyPath="NoModify" Options="1"/>
     <ROW Component="AI_ExePath" ComponentId="{182FEE9D-1C39-4613-84C5-77B96467B468}" Directory_="APPDIR" Attributes="4" KeyPath="AI_ExePath"/>
-    <ROW Component="B5158184F44A6981C5919229A6AEBE" ComponentId="{372CD8F8-948B-4E8F-B5FC-5C3FF0A11D1B}" Directory_="APPDIR" Attributes="260" KeyPath="B5158184F44A6981C5919229A6AEBE" Options="2"/>
+    <ROW Component="B5158184F44A6981C5919229A6AEBE" ComponentId="{93100ADA-C64A-405A-AC00-81362FD45796}" Directory_="APPDIR" Attributes="260" KeyPath="B5158184F44A6981C5919229A6AEBE" Options="2"/>
     <ROW Component="BC1_Encode_kernel.cpp" ComponentId="{B2668DFD-5155-4ADD-AA71-4622CE86A6A1}" Directory_="Compute_Dir" Attributes="0" KeyPath="BC1_Encode_kernel.cpp" Type="0"/>
     <ROW Component="BC6H_Compression.cprj" ComponentId="{EC3D28F7-F499-4FD2-BDC6-8590DE1C6CBC}" Directory_="Projects_Dir" Attributes="0" KeyPath="BC6H_Compression.cprj" Type="0"/>
-    <ROW Component="CA62D813A4E74FA2AAE86A7D7B7B1493" ComponentId="{671A3E67-1C93-4A53-8C8E-DE5697B3716E}" Directory_="APPDIR" Attributes="260" KeyPath="CA62D813A4E74FA2AAE86A7D7B7B1493" Options="2"/>
+    <ROW Component="CA62D813A4E74FA2AAE86A7D7B7B1493" ComponentId="{B8841688-8F2E-447C-81EE-318F8B8CC8D8}" Directory_="APPDIR" Attributes="260" KeyPath="CA62D813A4E74FA2AAE86A7D7B7B1493" Options="2"/>
     <ROW Component="CMP_GPU_DXC_MD_DLL.dll" ComponentId="{16201390-7E6F-4324-82C1-4B99051F0308}" Directory_="plugins_Dir" Attributes="256" KeyPath="CMP_GPU_DXC_MD_DLL.dll"/>
     <ROW Component="CMP_GPU_OCL_MD_DLL.dll" ComponentId="{8BE141FD-EAB9-4363-AA75-AF9ADCED8E0C}" Directory_="plugins_Dir" Attributes="256" KeyPath="CMP_GPU_OCL_MD_DLL.dll"/>
     <ROW Component="Compressonator.exe" ComponentId="{F0508FEA-F68B-4D81-AF56-464058EBABA2}" Directory_="bin_Dir" Attributes="256" KeyPath="Compressonator.exe"/>
@@ -204,8 +204,10 @@
     <ROW Component="texture.frag.spv_1" ComponentId="{6EDE5035-4E9B-4016-AAE1-7C5AA41C8D35}" Directory_="bin_Dir" Attributes="0" KeyPath="texture.frag.spv_1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="B5158184F44A6981C5919229A6AEBE" Title="Visual C++ Redistributable for Visual Studio 2015 x64" Description="Visual C++ Redistributable for Visual Studio 2015 x64" Display="9" Level="1" Attributes="0" Components="AI_CustomARPName AI_DisableModify AI_ExePath B5158184F44A6981C5919229A6AEBE"/>
-    <ROW Feature="CA62D813A4E74FA2AAE86A7D7B7B1493" Title="Visual C++ Redistributable for Visual Studio 2013 x64" Description="Visual C++ Redistributable for Visual Studio 2013 x64" Display="11" Level="1" Attributes="0" Components="AI_CustomARPName AI_DisableModify AI_ExePath BC1_Encode_kernel.cpp CA62D813A4E74FA2AAE86A7D7B7B1493 CMP_GPU_DXC_MD_DLL.dll CMP_GPU_OCL_MD_DLL.dll DModelCompression.html DModelCompression.rst.txt GettingStarted.html GettingStarted.rst.txt LICENSE LICENSE_1 License.txt License.txt_1 Name Readme.txt acompress128.png analysis_properties.jpg badge_only.css balls.exr bibliography.rst.txt build_instructions.html build_instructions.rst.txt buildinfo commandline.html commandline.rst.txt contact.html contact.rst.txt fontawesomewebfont.eot index.html index.html_10 index.html_11 index.html_12 index.html_13 index.html_14 index.html_15 index.html_16 index.html_9 index.rst.txt index.rst.txt_10 index.rst.txt_11 index.rst.txt_12 index.rst.txt_13 index.rst.txt_14 index.rst.txt_15 index.rst.txt_16 index.rst.txt_9 licence.txt license.txt license.txt_1 modernizr.min.js readme.txt"/>
+    <ROW Feature="B5158184F44A6981C5919229A6AEBE" Title="Visual C++ Redistributable for Visual Studio 2015 x64" Description="Visual C++ Redistributable for Visual Studio 2015 x64" Display="9" Level="1" Attributes="0" Components="AI_CustomARPName AI_DisableModify AI_ExePath"/>
+    <ROW Feature="B5158184F44A6981C5919229A6AEBE_1" Title="Visual C++ Redistributable for Visual Studio 2015 x64" Description="Visual C++ Redistributable for Visual Studio 2015 x64" Display="13" Level="1" Attributes="0" Components="AI_CustomARPName AI_DisableModify AI_ExePath B5158184F44A6981C5919229A6AEBE"/>
+    <ROW Feature="CA62D813A4E74FA2AAE86A7D7B7B1493" Title="Visual C++ Redistributable for Visual Studio 2013 x64" Description="Visual C++ Redistributable for Visual Studio 2013 x64" Display="11" Level="1" Attributes="0" Components="AI_CustomARPName AI_DisableModify AI_ExePath BC1_Encode_kernel.cpp CMP_GPU_DXC_MD_DLL.dll CMP_GPU_OCL_MD_DLL.dll DModelCompression.html DModelCompression.rst.txt GettingStarted.html GettingStarted.rst.txt LICENSE LICENSE_1 License.txt License.txt_1 Name Readme.txt acompress128.png analysis_properties.jpg badge_only.css balls.exr bibliography.rst.txt build_instructions.html build_instructions.rst.txt buildinfo commandline.html commandline.rst.txt contact.html contact.rst.txt fontawesomewebfont.eot index.html index.html_10 index.html_11 index.html_12 index.html_13 index.html_14 index.html_15 index.html_16 index.html_9 index.rst.txt index.rst.txt_10 index.rst.txt_11 index.rst.txt_12 index.rst.txt_13 index.rst.txt_14 index.rst.txt_15 index.rst.txt_16 index.rst.txt_9 licence.txt license.txt license.txt_1 modernizr.min.js readme.txt"/>
+    <ROW Feature="CA62D813A4E74FA2AAE86A7D7B7B1493_1" Title="Visual C++ Redistributable for Visual Studio 2013 x64" Description="Visual C++ Redistributable for Visual Studio 2013 x64" Display="15" Level="1" Attributes="0" Components="AI_CustomARPName AI_DisableModify AI_ExePath CA62D813A4E74FA2AAE86A7D7B7B1493"/>
     <ROW Feature="VisualStudioCMergeModules" Title="Visual Studio C++ Merge Modules" Description="Description" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_CustomARPName AI_DisableModify AI_ExePath"/>
     <ROW Feature="graphicaluserinterface" Title="Graphical User Interface" Description="Description" Display="2" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_CustomARPName AI_DisableModify AI_ExePath BC6H_Compression.cprj Compressonator.exe GPUDecode_DirectX.dll GPUDecode_OpenGL.dll GPUDecode_Vulkan.dll ModelLoader_drc.dll ModelLoader_glTF.dll ModelLoader_obj.dll ModelViewer_DX12.dll ModelViewer_OpenGL.dll ModelViewer_Vulkan.dll ProductInformation Qt5Core.dll_1 Qt5Gui.dll_1 Qt5Network.dll_1 Qt5OpenGL.dll_1 Qt5Positioning.dll_1 Qt5Qml.dll_1 Qt5Quick.dll_1 Qt5WebChannel.dll_1 Qt5WebEngine.dll_1 Qt5WebEngineCore.dll_1 Qt5WebEngineWidgets.dll_1 Qt5Widgets.dll_1 Qt5Xml.dll_2 QtWebEngineProcess.exe_1 SHORTCUTDIR blend.hlsl brdf.dds enUS.pak glew32.dll icudtl.dat libEGL.dll libGLESv2.dll mesh_compressor.dll mesh_optimizer.dll mesh_tootle.dll opencv_core249.dll_1 opencv_highgui249.dll_1 opencv_imgproc249.dll_1 qjpeg.dll qt.conf qtga.dll qtiff.dll qtwebengine_en.qm qwindows.dll style.css texture.frag.spv_1"/>
     <ATTRIBUTE name="CurrentFeature" value="CA62D813A4E74FA2AAE86A7D7B7B1493"/>
@@ -677,15 +679,15 @@
     <ROW Dialog_="ResumeDlg" Control_="Install" Event="EndDialog" Argument="Return" Condition="AI_RESUME" Ordering="299"/>
     <ROW Dialog_="VerifyReadyDlg" Control_="Install" Event="EndDialog" Argument="Return" Condition="AI_PATCH" Ordering="199"/>
     <ROW Dialog_="VerifyReadyDlg" Control_="Back" Event="NewDialog" Argument="PatchWelcomeDlg" Condition="AI_PATCH" Ordering="205"/>
-    <ROW Dialog_="ExitDialog" Control_="Finish" Event="DoAction" Argument="AI_CleanPrereq" Condition="1" Ordering="301"/>
-    <ROW Dialog_="FatalError" Control_="Finish" Event="DoAction" Argument="AI_CleanPrereq" Condition="1" Ordering="102"/>
-    <ROW Dialog_="UserExit" Control_="Finish" Event="DoAction" Argument="AI_CleanPrereq" Condition="1" Ordering="101"/>
     <ROW Dialog_="LicenseAgreementDlg" Control_="Next" Event="NewDialog" Argument="ConfigureDlg" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="LicenseAgreementDlg" Control_="Back" Event="NewDialog" Argument="WelcomeDlg" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="ConfigureDlg" Control_="Tab" Event="SpawnDialog" Argument="CustomizePage" Condition="( AiTabPage ) AND ( 1 )" Ordering="0"/>
     <ROW Dialog_="ConfigureDlg" Control_="Tab" Event="SpawnDialog" Argument="FolderPage" Condition="( AiTabPage ) AND ( NOT Installed )" Ordering="1"/>
     <ROW Dialog_="ConfigureDlg" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="ConfigureDlg" Control_="Back" Event="NewDialog" Argument="LicenseAgreementDlg" Condition="AI_INSTALL" Ordering="1"/>
+    <ROW Dialog_="ExitDialog" Control_="Finish" Event="DoAction" Argument="AI_CleanPrereq" Condition="1" Ordering="301"/>
+    <ROW Dialog_="FatalError" Control_="Finish" Event="DoAction" Argument="AI_CleanPrereq" Condition="1" Ordering="102"/>
+    <ROW Dialog_="UserExit" Control_="Finish" Event="DoAction" Argument="AI_CleanPrereq" Condition="1" Ordering="101"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR" ManualDelete="false"/>
@@ -751,10 +753,10 @@
     <ROW Action="AI_ExtractFiles" Sequence="3998" Builds="DefaultBuild"/>
     <ROW Action="AI_DATA_SETTER" Sequence="3997"/>
     <ROW Action="AI_EstimateExtractFiles" Sequence="3999" Builds="DefaultBuild"/>
-    <ROW Action="AI_VerifyPrereq" Sequence="1101"/>
-    <ROW Action="AI_AppSearchEx" Sequence="101"/>
     <ROW Action="AI_AiRemoveFilesRollback" Sequence="3099"/>
     <ROW Action="AI_GetArpIconPath" Sequence="1401"/>
+    <ROW Action="AI_VerifyPrereq" Sequence="1101"/>
+    <ROW Action="AI_AppSearchEx" Sequence="101"/>
     <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
@@ -774,10 +776,6 @@
     <ROW Condition="(VersionNT &lt;&gt; 400)" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNT40Display]." DescriptionLocId="AI.LaunchCondition.NoNT40" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="Privileged" Description="[ProductName] requires administrative privileges to install." DescriptionLocId="AI.LaunchCondition.Privileged" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionNT" Description="[ProductName] cannot be installed on [WindowsType9XDisplay]." DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
-  </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.MsiMergeModsComponent">
-    <ROW Module="Microsoft_VC120_CRT_x64.msm" Path="Prerequisites\Microsoft_VC120_CRT_x64.msm" Feature="CA62D813A4E74FA2AAE86A7D7B7B1493" Directory="APPDIR"/>
-    <ROW Module="Microsoft_VC140_CRT_x64.msm" Path="Prerequisites\Microsoft_VC140_CRT_x64.msm" Feature="CA62D813A4E74FA2AAE86A7D7B7B1493" Directory="APPDIR"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiProgIdComponent">
     <ROW ProgId="[|Manufacturer].[|ProductName]"/>
@@ -827,8 +825,8 @@
     <ROW UpgradeCode="[|UpgradeCode]" VersionMin="0.0.1" VersionMax="[|ProductVersion]" Attributes="257" ActionProperty="OLDPRODUCTS"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.PreReqComponent">
-    <ROW PrereqKey="B5158184F44A6981C5919229A6AEBE" DisplayName="Visual C++ Redistributable for Visual Studio 2015 x64" VersionMin="14.0" SetupFileUrl="Prerequisites\Visual C++ Redistributable for Visual Studio 2015\vc_redist.x64.exe" Location="0" ExactSize="0" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" WinNT64Versions="Windows XP x64, Windows XP x64 Service Pack 1, Windows Server 2003 x64, Windows Server 2003 x64 Service Pack 1, Windows Vista x64, Windows Vista x64 Service Pack 1, Windows 7 x64, Windows Server 2008 R2 x64" Operator="1" NoUiComLine="/q /norestart" Options="x" TargetName="Visual C++ Redistributable for Visual Studio 2015\vc_redist.x64.exe" Type="1" Feature="B5158184F44A6981C5919229A6AEBE"/>
-    <ROW PrereqKey="CA62D813A4E74FA2AAE86A7D7B7B1493" DisplayName="Visual C++ Redistributable for Visual Studio 2013 x64" VersionMin="12.0" SetupFileUrl="Prerequisites\Visual C++ Redistributable for Visual Studio 2013\vcredist_x64.exe" Location="0" ExactSize="0" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" Operator="1" NoUiComLine="/q /norestart" Options="x" TargetName="Visual C++ Redistributable for Visual Studio 2013\vcredist_x64.exe" Type="1" Feature="CA62D813A4E74FA2AAE86A7D7B7B1493"/>
+    <ROW PrereqKey="B5158184F44A6981C5919229A6AEBE" DisplayName="Visual C++ Redistributable for Visual Studio 2015 x64" VersionMin="14.0" SetupFileUrl="http://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x64.exe" Location="1" ExactSize="14572000" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" WinNT64Versions="Windows XP x64, Windows XP x64 Service Pack 1, Windows Server 2003 x64, Windows Server 2003 x64 Service Pack 1, Windows Vista x64, Windows Vista x64 Service Pack 1, Windows 7 x64, Windows Server 2008 R2 x64" Operator="1" NoUiComLine="/q /norestart" Options="x" MD5="27b141aacc2777a82bb3fa9f6e5e5c1c" TargetName="Visual C++ Redistributable for Visual Studio 2015" Type="1" Feature="B5158184F44A6981C5919229A6AEBE_1"/>
+    <ROW PrereqKey="CA62D813A4E74FA2AAE86A7D7B7B1493" DisplayName="Visual C++ Redistributable for Visual Studio 2013 x64" VersionMin="12.0" SetupFileUrl="http://download.microsoft.com/download/2/E/6/2E61CFA4-993B-4DD4-91DA-3737CD5CD6E3/vcredist_x64.exe" Location="1" ExactSize="7194312" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" Operator="1" NoUiComLine="/q /norestart" Options="x" MD5="96b61b8e069832e6b809f24ea74567ba" TargetName="Visual C++ Redistributable for Visual Studio 2013" Type="1" Feature="CA62D813A4E74FA2AAE86A7D7B7B1493_1"/>
     <ATTRIBUTE name="PrereqsOrder" value="B5158184F44A6981C5919229A6AEBE CA62D813A4E74FA2AAE86A7D7B7B1493"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.PreReqSearchComponent">

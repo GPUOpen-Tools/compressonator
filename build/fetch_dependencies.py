@@ -66,16 +66,16 @@ ghRoot = "https://github.com/GPUOpen-Tools/"
 
 gitMapping = {
  # Lib.
-    "common-lib-amd-APPSDK-3.0.git"         : ["Common/Lib/AMD/APPSDK",     "master"],
-    "common-lib-ext-Boost-1.59.git"         : ["Common/Lib/Ext/Boost",      "master"],
-    ghRoot+"Catch2.git"                     : ["Common/Lib/Ext/Catch2",     "master"],
-    "common-lib-ext-glew-1.9.git"           : ["Common/Lib/Ext/glew",       "master"],
-    "common-lib-ext-OpenCV-2.49.git"        : ["Common/Lib/Ext/OpenCV",     "master"],
-    ghRoot+"common-lib-ext-OpenEXR-2.2.git" : ["Common/Lib/Ext/OpenEXR",    "master"],
-    "common-lib-ext-OpenGL.git"             : ["Common/Lib/Ext/OpenGL",     "master"],
-    "common-lib-ext-tinyxml-2.6.2.git"      : ["Common/Lib/Ext/tinyxml",    "master"],
-    "common-lib-ext-zlib-1.2.8.git"         : ["Common/Lib/Ext/zlib",       "master"],
-    "https://github.com/g-truc/glm.git"     : ["External/glm/glm-submodule","master"],
+    ghRoot+"common-lib-amd-APPSDK-3.0.git"      : ["Common/Lib/AMD/APPSDK",     "master"],
+    ghRoot+"common-lib-ext-Boost-1.59.git"      : ["Common/Lib/Ext/Boost",      "master"],
+    ghRoot+"Catch2.git"                         : ["Common/Lib/Ext/Catch2",     "master"],
+    ghRoot+"common-lib-ext-glew-1.9.git"        : ["Common/Lib/Ext/glew",       "master"],
+    ghRoot+"common-lib-ext-OpenCV-2.49.git"     : ["Common/Lib/Ext/OpenCV",     "master"],
+    ghRoot+"common-lib-ext-OpenEXR-2.2.git"     : ["Common/Lib/Ext/OpenEXR",    "master"],
+    ghRoot+"common-lib-ext-OpenGL.git"          : ["Common/Lib/Ext/OpenGL",     "master"],
+    ghRoot+"common-lib-ext-tinyxml-2.6.2.git"   : ["Common/Lib/Ext/tinyxml",    "master"],
+    ghRoot+"common-lib-ext-zlib-1.2.8.git"      : ["Common/Lib/Ext/zlib",       "master"],
+    "https://github.com/g-truc/glm.git"         : ["Common/Lib/Ext/glm",        "master"]
 }
 
 # The following section contains OS-specific dependencies that are downloaded and placed in the specified target directory.
@@ -83,22 +83,17 @@ gitMapping = {
 # value = location
 downloadMappingWin = {
     "https://github.com/microsoft/DirectXTex/archive/jun2020b.zip" : "../../Common/Lib/Ext/DirectXTex/",
-    "https://github.com/GPUOpen-LibrariesAndSDKs/OCL-SDK/files/1406216/lightOCLSDK.zip" : "../../Common/Lib/Ext/OpenCL/"
+    "https://github.com/GPUOpen-LibrariesAndSDKs/OCL-SDK/files/1406216/lightOCLSDK.zip" : "../../Common/Lib/Ext/OpenCL/",
 }
 downloadMappingLin = {
-    "https://github.com/microsoft/DirectXTex/archive/jun2020b.tar.gz" : "../../Common/Lib/Ext/DirectXTex/"
+    "https://github.com/microsoft/DirectXTex/archive/jun2020b.tar.gz" : "../../Common/Lib/Ext/DirectXTex/",
 }
 
 # for each dependency - test if it has already been fetched - if not, then fetch it, otherwise update it to top of tree
 for key in gitMapping:
     # Target path, relative to workspace
-    path = gitMapping[key][0]
-    if ghRoot in key:
-        # absolute path defined
-        source = key
-    else:
-        source = gitRoot + key
-
+    path   = gitMapping[key][0]
+    source = key
     reqdCommit = gitMapping[key][1]
     # reqdCommit may be "None" - or user may override commit via command line. In this case, use tip of tree
     if((len(sys.argv) != 1 and sys.argv[1] == "latest") or reqdCommit is None):

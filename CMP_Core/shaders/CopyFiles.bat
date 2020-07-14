@@ -32,14 +32,14 @@ del %BUILD_OUTDIR%Plugins\Compute\BC6_Encode_kernel.cpp.cmp
 del %BUILD_OUTDIR%Plugins\Compute\BC6_Encode_kernel.hlsl.cmp
 del %BUILD_OUTDIR%Plugins\Compute\BC6_Encode_kernel.hlsl.0.cmp
 del %BUILD_OUTDIR%Plugins\Compute\BC6_Encode_kernel.hlsl.1.cmp
-del %BUILD_OUTDIR%Plugins\Compute\BC7_Encode_Kernel.cpp.cmp
-del %BUILD_OUTDIR%Plugins\Compute\BC7_Encode_Kernel.hlsl.cmp
-del %BUILD_OUTDIR%Plugins\Compute\BC7_Encode_Kernel.hlsl.0.cmp
-del %BUILD_OUTDIR%Plugins\Compute\BC7_Encode_Kernel.hlsl.1.cmp
-del %BUILD_OUTDIR%Plugins\Compute\BC7_Encode_Kernel.hlsl.2.cmp
+del %BUILD_OUTDIR%Plugins\Compute\BC7_Encode_kernel.cpp.cmp
+del %BUILD_OUTDIR%Plugins\Compute\BC7_Encode_kernel.hlsl.cmp
+del %BUILD_OUTDIR%Plugins\Compute\BC7_Encode_kernel.hlsl.0.cmp
+del %BUILD_OUTDIR%Plugins\Compute\BC7_Encode_kernel.hlsl.1.cmp
+del %BUILD_OUTDIR%Plugins\Compute\BC7_Encode_kernel.hlsl.2.cmp
 
 XCopy /r /d /y "%mypath:~0,-1%\Common_Def.h"            %BUILD_OUTDIR%Plugins\Compute\
-XCopy /r /d /y "%mypath:~0,-1%\BCn_Common_Kernel.h"     %BUILD_OUTDIR%Plugins\Compute\
+XCopy /r /d /y "%mypath:~0,-1%\BCn_Common_kernel.h"     %BUILD_OUTDIR%Plugins\Compute\
 XCopy /r /d /y "%mypath:~0,-1%\BC1_Encode_kernel.h"     %BUILD_OUTDIR%Plugins\Compute\
 XCopy /r /d /y "%mypath:~0,-1%\BC1_Encode_kernel.hlsl"  %BUILD_OUTDIR%Plugins\Compute\
 XCopy /r /d /y "%mypath:~0,-1%\BC1_Encode_kernel.cpp"   %BUILD_OUTDIR%Plugins\Compute\
@@ -58,9 +58,9 @@ XCopy /r /d /y "%mypath:~0,-1%\BC5_Encode_kernel.cpp"   %BUILD_OUTDIR%Plugins\Co
 XCopy /r /d /y "%mypath:~0,-1%\BC6_Encode_kernel.h"     %BUILD_OUTDIR%Plugins\Compute\
 XCopy /r /d /y "%mypath:~0,-1%\BC6_Encode_kernel.hlsl"  %BUILD_OUTDIR%Plugins\Compute\
 XCopy /r /d /y "%mypath:~0,-1%\BC6_Encode_kernel.cpp"   %BUILD_OUTDIR%Plugins\Compute\
-XCopy /r /d /y "%mypath:~0,-1%\BC7_Encode_Kernel.h"     %BUILD_OUTDIR%Plugins\Compute\
-XCopy /r /d /y "%mypath:~0,-1%\BC7_Encode_Kernel.hlsl"  %BUILD_OUTDIR%Plugins\Compute\
-XCopy /r /d /y "%mypath:~0,-1%\BC7_Encode_Kernel.cpp"   %BUILD_OUTDIR%Plugins\Compute\
+XCopy /r /d /y "%mypath:~0,-1%\BC7_Encode_kernel.h"     %BUILD_OUTDIR%Plugins\Compute\
+XCopy /r /d /y "%mypath:~0,-1%\BC7_Encode_kernel.hlsl"  %BUILD_OUTDIR%Plugins\Compute\
+XCopy /r /d /y "%mypath:~0,-1%\BC7_Encode_kernel.cpp"   %BUILD_OUTDIR%Plugins\Compute\
 
 echo "Dependencies copied done"
 
