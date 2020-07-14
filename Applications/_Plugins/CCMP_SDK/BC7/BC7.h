@@ -28,7 +28,7 @@
 
 #include "Common_Def.h"
 #include "PluginInterface.h"
-#include "BC7_Encode_Kernel.h"
+#include "BC7_Encode_kernel.h"
 #include "HPC_Compress.h"           // padline defs
 #include "cmp_math_common.h"
 

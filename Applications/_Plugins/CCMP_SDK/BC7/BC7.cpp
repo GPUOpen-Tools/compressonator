@@ -35,7 +35,7 @@ SET_PLUGIN_NAME("BC7")
 void *make_Plugin_BC7() { return new Plugin_BC7; }
 #endif
 
-#define GPU_OCL_BC7_COMPUTEFILE      "./plugins/Compute/BC7_Encode_Kernel.cpp"
+#define GPU_OCL_BC7_COMPUTEFILE      "./plugins/Compute/BC7_Encode_kernel.cpp"
 #define GPU_DXC_BC7_COMPUTEFILE      "./plugins/Compute/BC7_Encode_kernel.hlsl"
 
 BC7_Encode      g_BC7Encode;
