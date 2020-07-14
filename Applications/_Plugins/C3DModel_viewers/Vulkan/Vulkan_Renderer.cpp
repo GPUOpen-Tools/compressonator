@@ -24,14 +24,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-
-#include "SwapChainVK.h"
 #include "Vulkan_Renderer.h"
+#include "GltfBBoxPassVK.h"
+#include "GltfDepthPassVK.h"
+#include "GltfPbrVK.h"
 #include "Misc.h"
+#include "SwapChainVK.h"
 
 #ifdef USE_QT10
 
-Vulkan_Renderer::Vulkan_Renderer(QVulkanWindow *w) : m_window(w)
+Vulkan_Renderer::Vulkan_Renderer(QVulkanWindow* w) : m_window(w)
 {
 }
 
@@ -63,8 +65,8 @@ void Vulkan_Renderer::startNextFrame()
     if (m_green > 1.0f)
         m_green = 0.0f;
 
-    VkClearColorValue clearColor = { 0.0f, m_green, 0.0f, 1.0f };
-    VkClearDepthStencilValue clearDS = { 1.0f, 0 };
+    VkClearColorValue clearColor = {0.0f, m_green, 0.0f, 1.0f};
+    VkClearDepthStencilValue clearDS = {1.0f, 0};
     VkClearValue clearValues[2];
     memset(clearValues, 0, sizeof(clearValues));
     clearValues[0].color = clearColor;
@@ -95,18 +97,17 @@ void Vulkan_Renderer::startNextFrame()
     m_window->requestUpdate(); // render continuously, throttled by the presentation rate
 }
 #else
-Vulkan_Renderer::Vulkan_Renderer(void *w)
+Vulkan_Renderer::Vulkan_Renderer(void* w)
 {
 }
 #endif
-
 
 //--------------------------------------------------------------------------------------
 //
 // OnCreate
 //
 //--------------------------------------------------------------------------------------
-void Vulkan_Renderer::OnCreate(DeviceVK *pDevice)
+void Vulkan_Renderer::OnCreate(DeviceVK* pDevice)
 {
     VkResult res;
     m_pDevice = pDevice;
@@ -126,10 +127,8 @@ void Vulkan_Renderer::OnCreate(DeviceVK *pDevice)
     m_StaticBufferPool.OnCreate(pDevice, 30 * 1024 * 1024);
 
     //    m_renderToSwapChainPass.OnCreate(pDevice);
-    /*
-
+/*
     m_pDirectQueue = pDirectQueue;
-
 
     // Create 'dynamic' constant buffers ring
     m_ConstantBufferRing.OnCreate(pDevice, cNumSwapBufs, 200 * 1024 + 320000 * 4, &m_Heaps, 300, node, nodemask);
@@ -146,9 +145,9 @@ void Vulkan_Renderer::OnCreate(DeviceVK *pDevice)
 
     // Quick helper to upload resources, it has it's own commandList.
     m_UploadHeap.OnCreate(pDevice, 64 * 1024 * 1024, m_pDirectQueue, node, nodemask);    // initialize an upload heap (uses suballocation for faster results)
-    */
+*/
 
-    /*
+/*
     // Create the depth buffer view
     m_Heaps.AllocDSVDescriptor(1, &m_DepthBufferDSV);
 
@@ -158,7 +157,7 @@ void Vulkan_Renderer::OnCreate(DeviceVK *pDevice)
     m_Heaps.AllocDSVDescriptor(1, &m_ShadowMapDSV);
     m_ShadowMap.CreateDSV(0, &m_ShadowMapDSV);
     m_ShadowMap.Resource()->SetName(L"m_pShadowMap");
-    */
+*/
     m_shadowMap.InitDepthStencil(m_pDevice, 1024, 1024);
 
     // initialize an upload heap (uses suballocation for faster results)
@@ -172,8 +171,8 @@ void Vulkan_Renderer::OnCreate(DeviceVK *pDevice)
     m_Heaps.AllocDSVDescriptor(1, &m_DepthBufferDSV);
 */
 
-// Create render pass shadow
-//
+    // Create render pass shadow
+    //
     {
         m_shadowViewport.x = 0;
         m_shadowViewport.y = (float)1024;
@@ -234,7 +233,7 @@ void Vulkan_Renderer::OnCreate(DeviceVK *pDevice)
         // Create frame buffer
         //
 
-        VkImageView attachmentViews[1] = { shadowBufferView };
+        VkImageView attachmentViews[1] = {shadowBufferView};
 
         VkFramebufferCreateInfo fb_info = {};
         fb_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -248,9 +247,7 @@ void Vulkan_Renderer::OnCreate(DeviceVK *pDevice)
 
         res = vkCreateFramebuffer(m_pDevice->GetDevice(), &fb_info, NULL, &m_pShadowMapBuffers);
         assert(res == VK_SUCCESS);
-
     }
-
 
     // Create render pass color with clear
     //
@@ -259,7 +256,7 @@ void Vulkan_Renderer::OnCreate(DeviceVK *pDevice)
         VkAttachmentDescription attachments[2];
 
         // color RT
-        attachments[0].format = VK_FORMAT_B8G8R8A8_UNORM;// pSC->GetFormat();
+        attachments[0].format = VK_FORMAT_B8G8R8A8_UNORM; // pSC->GetFormat();
         attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
         attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         attachments[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -270,7 +267,7 @@ void Vulkan_Renderer::OnCreate(DeviceVK *pDevice)
         attachments[0].flags = 0;
 
         // depth RT
-        attachments[1].format = VK_FORMAT_D32_SFLOAT;// m_depthBuffer.GetFormat();
+        attachments[1].format = VK_FORMAT_D32_SFLOAT; // m_depthBuffer.GetFormat();
         attachments[1].samples = VK_SAMPLE_COUNT_1_BIT;
         attachments[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         attachments[1].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -395,7 +392,7 @@ void Vulkan_Renderer::OnDestroy()
 // OnCreateWindowSizeDependentResources
 //
 //--------------------------------------------------------------------------------------
-void Vulkan_Renderer::OnCreateWindowSizeDependentResources(SwapChainVK *pSC, DWORD Width, DWORD Height)
+void Vulkan_Renderer::OnCreateWindowSizeDependentResources(SwapChainVK* pSC, std::uint32_t Width, std::uint32_t Height)
 {
     VkResult res;
 
@@ -404,7 +401,7 @@ void Vulkan_Renderer::OnCreateWindowSizeDependentResources(SwapChainVK *pSC, DWO
     m_pSwapChain = pSC;
 
     m_depthBuffer.InitDepthStencil(m_pDevice, Width, Height);
-    
+
     m_viewport.x = 0;
     m_viewport.y = (float)Height;
     m_viewport.width = (float)Width;
@@ -422,12 +419,12 @@ void Vulkan_Renderer::OnCreateWindowSizeDependentResources(SwapChainVK *pSC, DWO
 
     // Create frame buffer
     //
-    DWORD swapchainImageCount = (DWORD)pSC->GetViews().size();
-    m_pFrameBuffers = (VkFramebuffer *)malloc(swapchainImageCount * sizeof(VkFramebuffer));
+    std::uint32_t swapchainImageCount = (std::uint32_t)pSC->GetViews().size();
+    m_pFrameBuffers = (VkFramebuffer*)malloc(swapchainImageCount * sizeof(VkFramebuffer));
 
     for (uint32_t i = 0; i < swapchainImageCount; i++)
     {
-        VkImageView attachments[2] = { pSC->GetViews()[i], depthBufferView };
+        VkImageView attachments[2] = {pSC->GetViews()[i], depthBufferView};
 
         VkFramebufferCreateInfo fb_info = {};
         fb_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -442,7 +439,6 @@ void Vulkan_Renderer::OnCreateWindowSizeDependentResources(SwapChainVK *pSC, DWO
         res = vkCreateFramebuffer(m_pDevice->GetDevice(), &fb_info, NULL, &m_pFrameBuffers[i]);
         assert(res == VK_SUCCESS);
     }
-
 }
 
 //--------------------------------------------------------------------------------------
@@ -457,18 +453,17 @@ void Vulkan_Renderer::OnDestroyWindowSizeDependentResources()
     m_depthBuffer.OnDestroy();
 }
 
-
 //--------------------------------------------------------------------------------------
 //
 // LoadScene
 //
 //--------------------------------------------------------------------------------------
-void Vulkan_Renderer::LoadScene(GLTFCommon *gltfData, void *pluginManager, void *msghandler)
+void Vulkan_Renderer::LoadScene(GLTFCommon* gltfData, void* pluginManager, void* msghandler)
 {
 
     //ID3D12GraphicsCommandList* pCmdLst = m_UploadHeap.GetCommandList();
 
-    //create the glTF's textures, VBs, IBs, shaders and descriptors    
+    //create the glTF's textures, VBs, IBs, shaders and descriptors
     m_gltfDepth = new GltfDepthPass();
     m_gltfDepth->OnCreate(
         m_pDevice,
@@ -497,7 +492,7 @@ void Vulkan_Renderer::LoadScene(GLTFCommon *gltfData, void *pluginManager, void 
         msghandler
     );
 
-    m_gltfBBox = new GltfBBoxPass();
+    m_gltfBBox = new GltfBBoxPassVK();
     m_gltfBBox->OnCreate(
         m_pDevice,
         m_render_pass_color,
@@ -537,16 +532,14 @@ void Vulkan_Renderer::UnloadScene()
 // OnRender
 //
 //--------------------------------------------------------------------------------------
-void Vulkan_Renderer::OnRender(State *pState, SwapChainVK *pSwapChain)
+void Vulkan_Renderer::OnRender(State* pState, SwapChainVK* pSwapChain)
 {
-    VkResult res;
+    VkResult res = VK_RESULT_MAX_ENUM;
 
-
-    // Let our resource managers do some house keeping 
+    // Let our resource managers do some house keeping
     //
     m_ConstantBufferRing.OnBeginFrame();
     m_CommandListRing.OnBeginFrame();
-
 
     // Shadow map -----------------------------------------------------------------------
     //
@@ -554,9 +547,9 @@ void Vulkan_Renderer::OnRender(State *pState, SwapChainVK *pSwapChain)
     VkCommandBuffer cmd_buf = *m_CommandListRing.GetNewCommandList();
 
     // command buffer calls
-    //    
+    //
     {
-        VkCommandBufferBeginInfo cmd_buf_info;
+        VkCommandBufferBeginInfo cmd_buf_info = {};
         cmd_buf_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         cmd_buf_info.pNext = NULL;
         cmd_buf_info.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
@@ -570,7 +563,7 @@ void Vulkan_Renderer::OnRender(State *pState, SwapChainVK *pSwapChain)
         depth_clear_values[0].depthStencil.depth = 1.0f;
         depth_clear_values[0].depthStencil.stencil = 0;
 
-        VkRenderPassBeginInfo rp_begin;
+        VkRenderPassBeginInfo rp_begin = {};
         rp_begin.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
         rp_begin.pNext = NULL;
         rp_begin.renderPass = m_render_pass_shadow;
@@ -585,26 +578,25 @@ void Vulkan_Renderer::OnRender(State *pState, SwapChainVK *pSwapChain)
         vkCmdBeginRenderPass(cmd_buf, &rp_begin, VK_SUBPASS_CONTENTS_INLINE);
     }
 
-    vkCmdSetScissor(cmd_buf,  0, 1, &m_shadowScissor);
+    vkCmdSetScissor(cmd_buf, 0, 1, &m_shadowScissor);
     vkCmdSetViewport(cmd_buf, 0, 1, &m_shadowViewport);
 
     //set per frame constant buffer values
     if (m_gltfDepth)
     {
-        GltfDepthPass::per_batch *cbPerBatch = m_gltfDepth->SetPerBatchConstants();
+        GltfDepthPass::per_batch* cbPerBatch = m_gltfDepth->SetPerBatchConstants();
         cbPerBatch->mViewProj = pState->light.GetView() * pState->light.GetProjection();
         m_gltfDepth->Draw(cmd_buf);
     }
 
     vkCmdEndRenderPass(cmd_buf);
 
-
     res = vkEndCommandBuffer(cmd_buf);
 
     {
         VkPipelineStageFlags submitWaitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        const VkCommandBuffer cmd_bufs[] = { cmd_buf };
-        VkSubmitInfo submit_info;
+        const VkCommandBuffer cmd_bufs[] = {cmd_buf};
+        VkSubmitInfo submit_info = {};
         submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
         submit_info.pNext = NULL;
         submit_info.waitSemaphoreCount = 0;
@@ -629,7 +621,7 @@ void Vulkan_Renderer::OnRender(State *pState, SwapChainVK *pSwapChain)
     cmd_buf = *m_CommandListRing.GetNewCommandList();
 
     {
-        VkCommandBufferBeginInfo cmd_buf_info;
+        VkCommandBufferBeginInfo cmd_buf_info = {};
         cmd_buf_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         cmd_buf_info.pNext = NULL;
         cmd_buf_info.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
@@ -648,7 +640,7 @@ void Vulkan_Renderer::OnRender(State *pState, SwapChainVK *pSwapChain)
         clear_values[1].depthStencil.depth = 1.0f;
         clear_values[1].depthStencil.stencil = 0;
 
-        VkRenderPassBeginInfo rp_begin;
+        VkRenderPassBeginInfo rp_begin = {};
         rp_begin.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
         rp_begin.pNext = NULL;
         rp_begin.renderPass = m_render_pass_color;
@@ -668,12 +660,12 @@ void Vulkan_Renderer::OnRender(State *pState, SwapChainVK *pSwapChain)
         vkCmdSetViewport(cmd_buf, 0, 1, &m_viewport);
 
         //set per frame constant buffer values
-        GltfPbrVK::per_batch *cbPerBatch = m_gltfPBR->SetPerBatchConstants();
+        GltfPbrVK::per_batch* cbPerBatch = m_gltfPBR->SetPerBatchConstants();
         cbPerBatch->mCameraViewProj = pState->camera.GetView() * pState->camera.GetProjection();
         cbPerBatch->cameraPos = pState->camera.GetPosition();
         cbPerBatch->mLightViewProj = pState->light.GetView() * pState->light.GetProjection();
         cbPerBatch->lightDirection = pState->light.GetDirection();
-        cbPerBatch->lightColor = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f) * pState->spotLightIntensity;
+        cbPerBatch->lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f) * pState->spotLightIntensity;
         cbPerBatch->depthBias = pState->depthBias;
         cbPerBatch->iblFactor = pState->iblFactor;
 
@@ -681,8 +673,6 @@ void Vulkan_Renderer::OnRender(State *pState, SwapChainVK *pSwapChain)
     }
 
     vkCmdEndRenderPass(cmd_buf);
-
-
 
     {
         VkImageMemoryBarrier barrier = {};
@@ -706,7 +696,7 @@ void Vulkan_Renderer::OnRender(State *pState, SwapChainVK *pSwapChain)
 
     // prepare render pass
     {
-        VkRenderPassBeginInfo rp_begin;
+        VkRenderPassBeginInfo rp_begin = {};
         rp_begin.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
         rp_begin.pNext = NULL;
         rp_begin.renderPass = m_render_pass_color_hud;
@@ -727,11 +717,10 @@ void Vulkan_Renderer::OnRender(State *pState, SwapChainVK *pSwapChain)
         vkCmdSetScissor(cmd_buf, 0, 1, &m_scissor);
         vkCmdSetViewport(cmd_buf, 0, 1, &m_viewport);
 
-        XMMATRIX *pCam = m_gltfBBox->SetPerBatchConstants();
+        glm::mat4* pCam = m_gltfBBox->SetPerBatchConstants();
         *pCam = pState->camera.GetView() * pState->camera.GetProjection();
         m_gltfBBox->Draw(cmd_buf);
     }
-
 
     // Render HUD  ------------------------------------------------------------------------
     //
@@ -764,6 +753,4 @@ void Vulkan_Renderer::OnRender(State *pState, SwapChainVK *pSwapChain)
 
     res = vkQueueSubmit(m_pDevice->GetGraphicsQueue(), 1, &submit_info, CmdBufExecutedFences);
     assert(res == VK_SUCCESS);
-
 }
-

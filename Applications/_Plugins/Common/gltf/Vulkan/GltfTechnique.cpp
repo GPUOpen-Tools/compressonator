@@ -26,7 +26,7 @@ void GltfTechnique::Draw(VkCommandBuffer cmd_buf)
     std::vector<NodeMatrixPostTransform> nodes(m_pGLTFData->GetNodeCount());
     m_pGLTFData->TransformNodes(nodes.data(), &dwNodesVisible);
 
-    for (DWORD i = 0; i < dwNodesVisible; i++)
+    for (std::uint32_t i = 0; i < dwNodesVisible; i++)
     {
         tfNode *pNode = nodes[i].pN;
         if (pNode != NULL && pNode->meshIndex >= 0)

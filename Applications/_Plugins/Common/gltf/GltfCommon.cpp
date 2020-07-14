@@ -29,6 +29,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <glm/gtx/quaternion.hpp>
+
 void GetBufferDetails(json::object_t accessor, json::array_t bufferViews, std::vector<char*> buffers, tfAccessor* pAccessor)
 {
     int bufferViewID = accessor["bufferView"].get<int>();
@@ -654,16 +656,16 @@ int GLTFCommon::Load(std::string path, std::string filename, CMIPS* cmips)
 
             auto accessor = accessors[position.get<int>()];
 
-            XMVECTOR max = GetVector(GetElementJsonArray(accessor, "max", {0.0, 0.0, 0.0, 0.0}));
-            XMVECTOR min = GetVector(GetElementJsonArray(accessor, "min", {0.0, 0.0, 0.0, 0.0}));
+            glm::vec4 max = GetVector(GetElementJsonArray(accessor, "max", {0.0, 0.0, 0.0, 0.0}));
+            glm::vec4 min = GetVector(GetElementJsonArray(accessor, "min", {0.0, 0.0, 0.0, 0.0}));
 
-            pPrimitive->m_center = (min + max) * .5;
+            pPrimitive->m_center = (min + max) * 0.5f;
             pPrimitive->m_radius = max - pPrimitive->m_center;
 
-            if (XMVectorGetX(max) > maxx)
-                maxx = XMVectorGetX(max);
-            if (XMVectorGetY(max) > maxy)
-                maxy = XMVectorGetY(max);
+            if (max.x > maxx)
+                maxx = max.x;
+            if (max.y > maxy)
+                maxy = max.y;
 
             primInd++;
         }
@@ -672,7 +674,7 @@ int GLTFCommon::Load(std::string path, std::string filename, CMIPS* cmips)
     // This is a work around for getting
     // the views correct for various models sizes based on [min,max] attributes
     // Should use bounding box of entire model as fix.
-    m_distance = max(maxx, maxy);
+    m_distance = (std::max)(maxx, maxy);
 
     if (m_distance < 0.1)
         m_distance *= 2.0f;
@@ -718,19 +720,26 @@ int GLTFCommon::Load(std::string path, std::string filename, CMIPS* cmips)
         if (node.find("translation") != node.end())
             tfnode->m_translation = GetVector(node["translation"]);
         else
-            tfnode->m_translation = XMVectorSet(0, 0, 0, 0);
+            tfnode->m_translation = glm::vec4(0, 0, 0, 0);
 
         if (node.find("rotation") != node.end())
-            tfnode->m_rotation = XMMatrixRotationQuaternion(GetVector(node["rotation"]));
+        {
+            const glm::vec4 rotation = GetVector(node["rotation"]);
+            tfnode->m_rotation = glm::toMat4(glm::quat(rotation.w, rotation.x, rotation.y, rotation.z));
+        }
         else if (node.find("matrix") != node.end())
+        {
             tfnode->m_rotation = GetMatrix(node["matrix"]);
+        }
         else
-            tfnode->m_rotation = XMMatrixIdentity();
+        {
+            tfnode->m_rotation = glm::mat4x4(1.0f);
+        }
 
         if (node.find("scale") != node.end())
             tfnode->m_scale = GetVector(node["scale"]);
         else
-            tfnode->m_scale = XMVectorSet(1, 1, 1, 0);
+            tfnode->m_scale = glm::vec4(1, 1, 1, 0);
     }
 
     // Load scenes
@@ -882,21 +891,22 @@ void GLTFCommon::SetAnimationTime(int animationIndex, float time)
             if (it->second.m_pRotation != NULL)
             {
                 it->second.m_pRotation->SampleLinear(time, &frac, &pCurr, &pNext);
-                pNode->m_rotation = XMMatrixRotationQuaternion(XMQuaternionSlerp(XMVectorSet(pCurr[0], pCurr[1], pCurr[2], pCurr[3]),
-                                                                                 XMVectorSet(pNext[0], pNext[1], pNext[2], pNext[3]), frac));
+                pNode->m_rotation = glm::toMat4(glm::slerp(glm::quat(pCurr[3], pCurr[0], pCurr[1], pCurr[2]), 
+                                                           glm::quat(pNext[3], pNext[0], pNext[1], pNext[2]), 
+                                                           frac));
             }
 
             if (it->second.m_pTranslation != NULL)
             {
                 it->second.m_pTranslation->SampleLinear(time, &frac, &pCurr, &pNext);
                 pNode->m_translation =
-                    (1.0f - frac) * XMVectorSet(pCurr[0], pCurr[1], pCurr[2], 0) + (frac)*XMVectorSet(pNext[0], pNext[1], pNext[2], 0);
+                    (1.0f - frac) * glm::vec4(pCurr[0], pCurr[1], pCurr[2], 0.0f) + (frac) * glm::vec4(pNext[0], pNext[1], pNext[2], 0.0f);
             }
 
             if (it->second.m_pScale != NULL)
             {
                 it->second.m_pScale->SampleLinear(time, &frac, &pCurr, &pNext);
-                pNode->m_scale = (1.0f - frac) * XMVectorSet(pCurr[0], pCurr[1], pCurr[2], 0) + (frac)*XMVectorSet(pNext[0], pNext[1], pNext[2], 0);
+                pNode->m_scale = (1.0f - frac) * glm::vec4(pCurr[0], pCurr[1], pCurr[2], 0.0f) + (frac) * glm::vec4(pNext[0], pNext[1], pNext[2], 0.0f);
             }
         }
     }

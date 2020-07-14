@@ -113,8 +113,8 @@ bool GltfPbr::OnCreate(
         //
         json::array_t ones = { 1.0, 1.0, 1.0, 1.0 };
         json::array_t zeroes = { 0.0, 0.0, 0.0, 0.0 };
-        tfmat->emissiveFactor  = (XMVECTOR) GetVector(GetElementJsonArray(material, "emissiveFactor", zeroes));
-        tfmat->baseColorFactor = (XMVECTOR) GetVector(GetElementJsonArray(material, "pbrMetallicRoughness/baseColorFactor", ones));
+        tfmat->emissiveFactor  = (XMVECTOR) GetXVector(GetElementJsonArray(material, "emissiveFactor", zeroes));
+        tfmat->baseColorFactor = (XMVECTOR) GetXVector(GetElementJsonArray(material, "pbrMetallicRoughness/baseColorFactor", ones));
         try {
             tfmat->metallicFactor = GetElementFloat(material, "pbrMetallicRoughness/metallicFactor", 1.0);
         }

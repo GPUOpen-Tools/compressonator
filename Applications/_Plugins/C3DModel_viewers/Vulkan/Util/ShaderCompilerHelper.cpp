@@ -24,15 +24,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-
 #include "ShaderCompilerHelper.h"
 
 #include <SPIRV/GlslangToSpv.h>
 
-#include <windows.h>
-
 #include <fstream>
 #include <iostream>
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
+
+void dbg_print(const char* msg)
+{
+    #ifdef _WIN32
+    OutputDebugStringA(msg);
+    #else
+    #ifdef _DEBUG
+    std::cout << msg << std::endl;
+    #endif
+    #endif
+}
+
 
 void init_resources(TBuiltInResource &Resources) 
 {
@@ -188,8 +202,8 @@ bool GLSLtoSPV(const VkShaderStageFlagBits shader_type, const char *pshader, con
     shader.setStrings(shaderStrings, 1);
 
     if (!shader.parse(&Resources, 100, false, messages)) {
-        OutputDebugStringA(shader.getInfoLog());
-        OutputDebugStringA(shader.getInfoDebugLog());
+        dbg_print(shader.getInfoLog());
+        dbg_print(shader.getInfoDebugLog());
         return false;  // something didn't work
     }
 
@@ -200,8 +214,8 @@ bool GLSLtoSPV(const VkShaderStageFlagBits shader_type, const char *pshader, con
     //
 
     if (!program.link(messages)) {
-        OutputDebugStringA(shader.getInfoLog());
-        OutputDebugStringA(shader.getInfoDebugLog());
+        dbg_print(shader.getInfoLog());
+        dbg_print(shader.getInfoDebugLog());
         fflush(stdout);
         return false;
     }
@@ -240,14 +254,14 @@ bool HLSLtoSPV(const VkShaderStageFlagBits shader_type, const char *pshader, con
     shaderStrings[0] = pshader;
     shader.setStrings(shaderStrings, 1);
     shader.setEntryPoint(pEntryPoint);
-#ifdef ENABLE_HSLS
+#ifdef ENABLE_HLSL
     shader.setHlslIoMapping(true);
 #endif
     shader.setEnvTarget(glslang::EshTargetSpv, glslang::EShTargetSpv_1_5);
 
     if (!shader.parse(&Resources, 100, false, messages)) {
-        OutputDebugStringA(shader.getInfoLog());
-        OutputDebugStringA(shader.getInfoDebugLog());
+        dbg_print(shader.getInfoLog());
+        dbg_print(shader.getInfoDebugLog());
         return false;  // something didn't work
     }
 
@@ -257,8 +271,8 @@ bool HLSLtoSPV(const VkShaderStageFlagBits shader_type, const char *pshader, con
     // Program-level processing...
     //
     if (!program.link(messages)) {
-        OutputDebugStringA(shader.getInfoLog());
-        OutputDebugStringA(shader.getInfoDebugLog());
+        dbg_print(shader.getInfoLog());
+        dbg_print(shader.getInfoDebugLog());
         fflush(stdout);
         return false;
     }
@@ -288,7 +302,7 @@ VkResult VKCompile(VkDevice device, ShaderSourceType sourceType, const VkShaderS
         for (auto it = defines.begin(); it != defines.end(); it++)
             shaderCode += "#define " + it->first + " " + it->second + "\n";
 
-        OutputDebugStringA(shaderCode.c_str());
+        dbg_print(shaderCode.c_str());
 
         shaderCode += code;
     }
@@ -301,7 +315,7 @@ VkResult VKCompile(VkDevice device, ShaderSourceType sourceType, const VkShaderS
         for (auto it = defines.begin(); it != defines.end(); it++)
             shaderCode += "#define " + it->first + " " + it->second + "\n";
 
-        OutputDebugStringA(shaderCode.c_str());
+        dbg_print(shaderCode.c_str());
 
         shaderCode += code;
     }

@@ -604,7 +604,7 @@ cp3DModelView::cp3DModelView(const QString filePathName, const QString filePathN
         if (ClassName.compare("cpMainComponents") == 0)
         {
             mainComponents = (cpMainComponents*)m_parent;
-            msgHandler     = (void*) mainComponents->PrintStatus;
+            msgHandler = (void*)(mainComponents->PrintStatus);
         }
     }
 

@@ -24,19 +24,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-
-#include "TextureVK.h"
-#include "ResourceViewHeapsVK.h"
-#include "UploadHeapVK.h"
-#include "GltfHelpers.h"
-#include "GltfHelpers_Vulkan.h"
-#include "ThreadPool.h"
-#include "ShaderCompilerHelper.h"
-#include "vector"
 #include "GltfPbrVK.h"
 
+#include "DeviceVK.h"
+#include "DynamicBufferRingVK.h"
+#include "GltfCommon.h"
+#include "GltfHelpers.h"
+#include "GltfHelpers_Vulkan.h"
+#include "ResourceViewHeapsVK.h"
+#include "ShaderCompilerHelper.h"
+#include "ThreadPool.h"
+#include "UploadHeapVK.h"
 
-void GltfPbrVK::AddTextureIfExists(json::object_t material, json::array_t textures, std::map<std::string, Texture *> &map, char *texturePath, char *textureName)
+#include <vector>
+
+
+void GltfPbrVK::AddTextureIfExists(json::object_t material, json::array_t textures, std::map<std::string, Texture*>& map, char* texturePath, char* textureName)
 {
     int id = GetElementInt(material, texturePath, -1);
     if (id >= 0)
@@ -304,7 +307,7 @@ void GltfPbrVK::OnCreate(
             int cnt = 0;
             for (auto it = attribute.begin(); it != attribute.end(); it++)
             {
-                int index = cnt;        // DWORD semanticIndex = 0;
+                int index = cnt; // std::uint32_t semanticIndex = 0;
 
                 // Diff from DX12 code =====
                 if (it.key() == "TANGENT")
@@ -723,7 +726,7 @@ GltfPbrVK::per_batch *GltfPbrVK::SetPerBatchConstants()
     return cbPerBatch;
 }
 
-void GltfPbrVK::DrawMesh(VkCommandBuffer cmd_buf, int meshIndex, XMMATRIX worldMatrix)
+void GltfPbrVK::DrawMesh(VkCommandBuffer cmd_buf, int meshIndex, const glm::mat4x4& worldMatrix)
 {
     PBRMesh *pMesh = &m_meshes[meshIndex];
     for (unsigned int p = 0; p < pMesh->m_pPrimitives.size(); p++)
@@ -737,18 +740,18 @@ void GltfPbrVK::DrawMesh(VkCommandBuffer cmd_buf, int meshIndex, XMMATRIX worldM
         //
         per_object *cbPerObject;
         VkDescriptorBufferInfo perObjectDesc;
-        m_pDynamicBufferRing->AllocConstantBuffer(sizeof(per_object), (void **)&cbPerObject, &perObjectDesc);
+        m_pDynamicBufferRing->AllocConstantBuffer(sizeof(per_object), (void**)&cbPerObject, &perObjectDesc);
         cbPerObject->mWorld = worldMatrix;
         cbPerObject->u_emissiveFactor = pPrimitive->m_pMaterial->emissiveFactor;
         cbPerObject->u_baseColorFactor = pPrimitive->m_pMaterial->baseColorFactor;
-        cbPerObject->u_metallicRoughnessValues = XMVectorSet(pPrimitive->m_pMaterial->metallicFactor, pPrimitive->m_pMaterial->roughnessFactor, 0, 0);
+        cbPerObject->u_metallicRoughnessValues = glm::vec4(pPrimitive->m_pMaterial->metallicFactor, pPrimitive->m_pMaterial->roughnessFactor, 0, 0);
 
         // Compute offsets
         //
-        DWORD size = (DWORD)pPrimitive->m_VBV.size();
-        std::vector<VkBuffer>     buffers(size);
+        std::uint32_t size = (std::uint32_t)pPrimitive->m_VBV.size();
+        std::vector<VkBuffer> buffers(size);
         std::vector<VkDeviceSize> offsets(size);
-        for (DWORD i = 0; i < size; i++)
+        for (std::uint32_t i = 0; i < size; i++)
         {
             buffers[i] = pPrimitive->m_VBV[i].buffer;
             offsets[i] = pPrimitive->m_VBV[i].offset;

@@ -49,7 +49,6 @@
 
 
 
-#define USE_CMP_LOAD
 extern CMIPS *VK_CMips;
 
 // This class provides functionality to create a 2D-texture from a .DDS file.
@@ -71,12 +70,12 @@ public:
         return m_pTexture2D;
     }
 
-    void CreateSRV(DWORD index, VkImageView *pRV);
-    void CreateDSV(DWORD index, VkImageView *pView);
+    void CreateSRV(std::uint32_t index, VkImageView *pRV);
+    void CreateDSV(std::uint32_t index, VkImageView *pView);
     VkFormat GetFormatVK() { return m_format; }
 
-    DWORD GetWidth() { if (pMipSet) return pMipSet->m_nWidth; else return 0; }
-    DWORD GetHeight() { if (pMipSet) return pMipSet->m_nHeight; else return 0; }
+    std::uint32_t GetWidth() { if (pMipSet) return pMipSet->m_nWidth; else return 0; }
+    std::uint32_t GetHeight() { if (pMipSet) return pMipSet->m_nHeight; else return 0; }
 
 private:
 
@@ -125,9 +124,6 @@ private:
         UINT32           mipMapCount;
         UINT32           format;
     };
-#ifndef USE_CMP_LOAD
-    DDS_HEADER_INFO         m_header;
-#endif
 
     void                    PatchFmt24To32Bit(unsigned char *pDst, unsigned char *pSrc, UINT32 pixelCount);
     UINT32                  GetDxGiFormat(DDS_PIXELFORMAT pixelFmt) const;

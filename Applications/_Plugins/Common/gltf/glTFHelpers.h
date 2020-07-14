@@ -20,16 +20,27 @@
 
 #pragma once
 
-#include "../json/json.h"
 #include "GltfStructures.h"
+#include <json/json.h>
+
+#include <glm/mat4x4.hpp>
+#include <glm/vec4.hpp>
+
+#ifdef _WIN32
+#include <DirectXMath.h>
+#endif
 
 using json = nlohmann::json;
 
 int GetFormatSize(int id);
 int GetDimensions(std::string str);
 
-XMVECTOR GetVector(json::array_t accessor);
-XMMATRIX GetMatrix(json::array_t accessor);
+#ifdef _WIN32
+DirectX::XMVECTOR GetXVector(json::array_t accessor);
+DirectX::XMMATRIX GetXMatrix(json::array_t accessor);
+#endif
+glm::vec4 GetVector(json::array_t accessor);
+glm::mat4x4 GetMatrix(json::array_t accessor);
 std::string GetElementString(json::object_t root, char *path, std::string pDefault);
 float GetElementFloat(json::object_t root, char *path, float pDefault);
 int GetElementInt(json::object_t root, char *path, int pDefault);

@@ -18,8 +18,24 @@
 // THE SOFTWARE.
 #pragma once
 
-#include "GltfCommon.h"
 #include "GltfTechnique.h"
+
+#include "TextureVK.h"
+
+#include <glm/matrix.hpp>
+
+#include <vulkan/vulkan.h>
+
+#include <vector>
+#include <string>
+
+// Forward declarations
+class DeviceVK;
+class DynamicBufferRingVK;
+class GLTFCommon;
+class ResourceViewHeapsVK;
+class StaticBufferPoolVK;
+class UploadHeapVK;
 
 // This class takes a GltfCommon class (that holds all the non-GPU specific data) as an input and loads all the GPU specific data
 //
@@ -36,7 +52,7 @@ struct DepthMaterial
 
 struct DepthPrimitives : public Primitives
 {
-    DepthMaterial *m_pMaterial = NULL;
+    DepthMaterial* m_pMaterial = NULL;
 
     VkPipeline m_pipeline;
     VkPipelineCache m_pipelineCache;
@@ -56,40 +72,38 @@ class GltfDepthPass : public GltfTechnique
 public:
     struct per_batch
     {
-        XMMATRIX mViewProj;
+        glm::mat4x4 mViewProj;
     };
 
     struct per_object
     {
-        XMMATRIX mWorld;
+        glm::mat4x4 mWorld;
     };
 
     void OnCreate(
         DeviceVK* pDevice,
         VkRenderPass renderPass,
         UploadHeapVK* pUploadHeap,
-        ResourceViewHeapsVK *pHeaps,
-        DynamicBufferRingVK *pDynamicBufferRing,
-        StaticBufferPoolVK *pStaticBufferPool,
-        GLTFCommon *pGLTFData, void *pluginManager, void *msghandler);
+        ResourceViewHeapsVK* pHeaps,
+        DynamicBufferRingVK* pDynamicBufferRing,
+        StaticBufferPoolVK* pStaticBufferPool,
+        GLTFCommon* pGLTFData, void* pluginManager, void* msghandler);
 
     void OnDestroy();
-    GltfDepthPass::per_batch *SetPerBatchConstants();
+    GltfDepthPass::per_batch* SetPerBatchConstants();
 
 private:
     DeviceVK* m_pDevice;
-    ResourceViewHeapsVK *m_pResourceViewHeaps;
+    ResourceViewHeapsVK* m_pResourceViewHeaps;
 
     std::vector<DepthMesh> m_meshes;
     std::vector<Texture> m_textures;
 
     VkSampler m_sampler;
-    
+
     VkDescriptorBufferInfo m_perBatchDesc;
 
-    void DrawMesh(VkCommandBuffer cmd_buf, int meshIndex, XMMATRIX worldMatrix);
-    void CreatePipeline(DeviceVK* pDevice, VkRenderPass renderPass, std::vector<std::string> semanticName, std::vector<VkVertexInputAttributeDescription> layout, DepthPrimitives *pPrimitive);
+    void DrawMesh(VkCommandBuffer cmd_buf, int meshIndex, const glm::mat4x4& worldMatrix);
+    void CreatePipeline(DeviceVK* pDevice, VkRenderPass renderPass, std::vector<std::string> semanticName, std::vector<VkVertexInputAttributeDescription> layout, DepthPrimitives* pPrimitive);
 };
-
-
 

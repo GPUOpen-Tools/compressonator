@@ -29,7 +29,7 @@
 // OnCreate
 //
 //--------------------------------------------------------------------------------------
-void StaticResourceViewHeapVK::OnCreate(DeviceVK* pDevice, D3D12_DESCRIPTOR_HEAP_TYPE heapType, DWORD descriptorCount, UINT nodeMask)
+void StaticResourceViewHeapVK::OnCreate(DeviceVK* pDevice, D3D12_DESCRIPTOR_HEAP_TYPE heapType, std::uint32_t descriptorCount, UINT nodeMask)
 {
     m_pDevice = pDevice;
     m_descriptorCount = descriptorCount;

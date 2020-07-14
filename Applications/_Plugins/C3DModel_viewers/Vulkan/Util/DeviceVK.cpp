@@ -38,7 +38,7 @@ DeviceVK::~DeviceVK()
 }
 
 
-void DeviceVK::OnCreate(VkInstance instance, HWND hWnd)
+void DeviceVK::OnCreate(VkInstance instance, void* hWnd)
 {
     VkResult res;
 
@@ -68,12 +68,14 @@ void DeviceVK::OnCreate(VkInstance instance, HWND hWnd)
     vkGetPhysicalDeviceMemoryProperties(m_physicaldevice, &m_memoryProperties);
     vkGetPhysicalDeviceProperties(m_physicaldevice, &m_deviceProperties);
 
+#ifdef _WIN32
     VkWin32SurfaceCreateInfoKHR createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
     createInfo.pNext = NULL;
     createInfo.hinstance = NULL;
-    createInfo.hwnd = hWnd;
+    createInfo.hwnd = *(static_cast<HWND*>(hWnd));
     res = vkCreateWin32SurfaceKHR(instance, &createInfo, NULL, &m_surface);
+#endif
 
     // Iterate over each queue to learn whether it supports presenting:
     VkBool32 *pSupportsPresent = (VkBool32 *)malloc(queue_family_count * sizeof(VkBool32));
@@ -152,15 +154,13 @@ void DeviceVK::OnCreate(VkInstance instance, HWND hWnd)
     {
         vkGetDeviceQueue(m_device, present_queue_family_index, 0, &present_queue);
     }
-
-
 }
+
 
 void DeviceVK::OnDestroy()
 {
 
 }
-
 
 
 bool memory_type_from_properties(VkPhysicalDeviceMemoryProperties &memory_properties, uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex) {

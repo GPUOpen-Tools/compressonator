@@ -24,13 +24,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "SwapChainVK.h"
 #include "Vulkan_Device.h"
-#include "KeyboardMouse.h"
-#include "ImguiVK.h"
 #include "GltfCommon.h"
+#include "ImguiVK.h"
+#include "KeyboardMouse.h"
 #include "Misc.h"
+#include "SwapChainVK.h"
 
+#include <glm/glm.hpp>
 
 #ifdef USE_QT10
 QVulkanWindowRenderer *Vulkan_Device::createRenderer()
@@ -39,12 +40,13 @@ QVulkanWindowRenderer *Vulkan_Device::createRenderer()
 }
 #endif
 
-Vulkan_Device::Vulkan_Device(GLTFCommon gltfLoader[MAX_NUM_OF_NODES], DWORD width, DWORD height, void *pluginManager, void *msghandler) : FrameworkWindows(width, height)
+Vulkan_Device::Vulkan_Device(GLTFCommon gltfLoader[MAX_NUM_OF_NODES], std::uint32_t width, std::uint32_t height, void *pluginManager, void *msghandler) : FrameworkWindows(width, height)
 {
-    m_pluginManager = (PluginManager*)pluginManager;
+    m_pluginManager = (PluginManager *)pluginManager;
     m_msghandler = msghandler;
 
-    if (gltfLoader == NULL) return;
+    if (gltfLoader == NULL)
+        return;
 
     m_gltfLoader[0] = &gltfLoader[0];
     m_gltfLoader[1] = &gltfLoader[1];
@@ -68,8 +70,8 @@ Vulkan_Device::Vulkan_Device(GLTFCommon gltfLoader[MAX_NUM_OF_NODES], DWORD widt
     // imGui default window size and pos
     m_imgui_win_size.x = 200;
     m_imgui_win_size.y = 500;
-    m_imgui_win_pos.x  = 10;
-    m_imgui_win_pos.y  = 10;
+    m_imgui_win_pos.x = 10;
+    m_imgui_win_pos.y = 10;
 
     m_lastFrameTime = MillisecondsNow();
     m_curr_Node = 0;
@@ -86,7 +88,7 @@ Vulkan_Device::Vulkan_Device(GLTFCommon gltfLoader[MAX_NUM_OF_NODES], DWORD widt
 // OnCreate
 //
 //--------------------------------------------------------------------------------------
-int Vulkan_Device::OnCreate(HWND hWnd)
+int Vulkan_Device::OnCreate(void *hWnd)
 {
     VkResult res;
 
@@ -94,10 +96,10 @@ int Vulkan_Device::OnCreate(HWND hWnd)
     std::vector<const char *> instance_extension_names;
 
     instance_extension_names.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
-    instance_extension_names.push_back(VK_KHR_SURFACE_EXTENSION_NAME);    
+    instance_extension_names.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
     instance_extension_names.push_back("VK_EXT_debug_report");
-    
-    instance_layer_names.push_back("VK_LAYER_LUNARG_standard_validation");    
+
+    instance_layer_names.push_back("VK_LAYER_LUNARG_standard_validation");
 
     VkApplicationInfo app_info = {};
     app_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -124,24 +126,22 @@ int Vulkan_Device::OnCreate(HWND hWnd)
         return res;
     }
 
-
     m_device.OnCreate(m_inst, hWnd);
 
-    // 
+    //
     //
     //uint32_t queueFamilyIndices[2] = { (uint32_t)graphics_queue_family_index, (uint32_t)present_queue_family_index };
 
     // Create Swapchain
-    DWORD dwNumberOfBackBuffers = 2;
+    std::uint32_t dwNumberOfBackBuffers = 2;
     m_swapChain.OnCreate(&m_device, dwNumberOfBackBuffers, m_Width, m_Height, hWnd);
 
     for (int curr_Node = 0; curr_Node < m_max_Nodes_loaded; curr_Node++)
     {
-
         // Create a instance of the renderer and initialize it, we need to do that for each GPU
         m_Node[curr_Node] = new Vulkan_Renderer(this);
         m_Node[curr_Node]->OnCreate(&m_device);
-        m_Node[curr_Node]->OnCreateWindowSizeDependentResources(&m_swapChain, m_Width-100, m_Height-100);
+        m_Node[curr_Node]->OnCreateWindowSizeDependentResources(&m_swapChain, m_Width - 100, m_Height - 100);
 
         // Load scene data from system memory into all the GPUs (done once per GPU)
         m_Node[curr_Node]->LoadScene(m_gltfLoader[curr_Node], m_pluginManager, m_msghandler);
@@ -149,7 +149,6 @@ int Vulkan_Device::OnCreate(HWND hWnd)
 
 //    if (UI.m_showimgui)
 //        ImGUIVK_Init((void *)hWnd);
-
 
     // Init Camera, looking at origin
     m_roll = 0.0f;
@@ -163,7 +162,7 @@ int Vulkan_Device::OnCreate(HWND hWnd)
     m_state.toneMapper = 0;
     m_state.glow = 0.1f;
     m_state.bDrawBoundingBoxes = false;
-    m_state.light.SetFov(XM_PI / 2, 1024, 1024);
+    m_state.light.SetFov(glm::pi<float>() / 2, 1024, 1024);
     //m_state.light.UpdateCamera(0.0f, 1.7f, 3.0f);
     m_state.light.UpdateCamera(3.67f + 3.14159f, 0.58f, 3.0f);
 #endif
@@ -212,51 +211,52 @@ static int Roll = 0;
 static int Pitch = 0;
 static int m_lastMouseWheelDelta, m_mouseWheelDelta = 0;
 
-
-bool Vulkan_Device::OnEvent(MSG msg)
+bool Vulkan_Device::OnEvent(void *msg)
 {
-
+#ifdef _WIN32
+    const MSG& message = *static_cast<MSG *>(msg);
     static bool Mouse_RBD = false;
     // Always update mouse pos when mouse clicked.
-    if (msg.message == WM_LBUTTONDOWN)
+    if (message.message == WM_LBUTTONDOWN)
     {
-        m_mouse_press_xpos = (signed short)(msg.lParam);
-        m_mouse_press_ypos = (signed short)(msg.lParam >> 16);
+        m_mouse_press_xpos = (signed short)(message.lParam);
+        m_mouse_press_ypos = (signed short)(message.lParam >> 16);
     }
 
     // Check if mouse is inside imGUI window
-//    if (UI.m_showimgui)
-//    {
-//
-//        if ((m_mouse_press_xpos > m_imgui_win_pos.x) && (m_mouse_press_xpos < (m_imgui_win_pos.x + m_imgui_win_size.x + 20)))
-//        {
-//            if ((m_mouse_press_ypos > m_imgui_win_pos.y) && (m_mouse_press_ypos < (m_imgui_win_pos.y + m_imgui_win_size.y + 20)))
-//            {
-//                return true;
-//            }
-//        }
-//    }
+    //    if (UI.m_showimgui)
+    //    {
+    //
+    //        if ((m_mouse_press_xpos > m_imgui_win_pos.x) && (m_mouse_press_xpos < (m_imgui_win_pos.x + m_imgui_win_size.x + 20)))
+    //        {
+    //            if ((m_mouse_press_ypos > m_imgui_win_pos.y) && (m_mouse_press_ypos < (m_imgui_win_pos.y + m_imgui_win_size.y + 20)))
+    //            {
+    //                return true;
+    //            }
+    //        }
+    //    }
 
-    switch (msg.message)
+    switch (message.message)
     {
     case WM_COMMAND:
     {
-        int show = (int)(msg.lParam);
+        int show = (int)(message.lParam);
         UI.m_showimgui = show ? true : false;
         return true;
     }
     case WM_MOUSEWHEEL:
-        m_mouseWheelDelta += (short)HIWORD(msg.wParam);
+        m_mouseWheelDelta += (short)HIWORD(message.wParam);
         return true;
 
     case WM_MOUSEMOVE:
-        Roll = (signed short)(msg.lParam);
-        Pitch = (signed short)(msg.lParam >> 16);
+        Roll = (signed short)(message.lParam);
+        Pitch = (signed short)(message.lParam >> 16);
 
-        m_roll = Roll / 100.0f;      // Roll  about the x axis (y changes)
-        m_pitch = Pitch / 100.0f;      // Pitch about the y axis (x changes)
+        m_roll = Roll / 100.0f;   // Roll  about the x axis (y changes)
+        m_pitch = Pitch / 100.0f; // Pitch about the y axis (x changes)
         return true;
     }
+#endif
     return true;
 }
 
@@ -267,7 +267,7 @@ bool Vulkan_Device::OnEvent(MSG msg)
 //--------------------------------------------------------------------------------------
 void Vulkan_Device::SetFullScreen(bool fullscreen)
 {
-/*
+    /*
 #ifdef ENABLE_RENDER_CODE
     for (UINT i = 0; i<m_nodeCount; i++)
     {
@@ -284,12 +284,12 @@ void Vulkan_Device::SetFullScreen(bool fullscreen)
 // OnResize
 //
 //--------------------------------------------------------------------------------------
-void Vulkan_Device::OnResize(DWORD width, DWORD height)
+void Vulkan_Device::OnResize(uint32_t width, uint32_t height)
 {
     m_Width = width;
     m_Height = height;
 #ifdef ENABLE_RENDER_CODE
-    m_state.camera.SetFov(XM_PI / 4, m_Width, m_Height);
+    m_state.camera.SetFov(glm::pi<float>() / 4, m_Width, m_Height);
 #endif
 }
 
@@ -302,12 +302,10 @@ void Vulkan_Device::OnRender()
 {
     static int BackBuffer = 1;
 
-
     //==================================
     // Calculate Frame Rates
     //==================================
     m_frameCount++;
-
 
     // Get the number of ms since last timer reset
     m_elapsedTimer = MillisecondsNow() - m_elapsedTimer;
@@ -315,7 +313,8 @@ void Vulkan_Device::OnRender()
     {
         m_frameRate = 1000.0f / m_frameCount;
 
-        if (m_frameRateMin > m_frameRate) m_frameRateMin = m_frameRate;
+        if (m_frameRateMin > m_frameRate)
+            m_frameRateMin = m_frameRate;
 
         m_elapsedTimer = MillisecondsNow();
         m_frameCount = 0;
@@ -327,72 +326,69 @@ void Vulkan_Device::OnRender()
     m_deltaTime = timeNow - m_lastFrameTime;
     m_lastFrameTime = timeNow;
 
-
     // Build UI and set the scene state. Note that the rendering of the UI happens later.
     //
-//    if (UI.m_showimgui)
-//    {
-//        ImGUIVK_UpdateIO();
-//
-//        ImGui::NewFrame();
-//        ImGui::Begin("Stats", NULL, ImGuiWindowFlags_ShowBorders);
-//
-//        if (ImGui::CollapsingHeader("Info"), ImGuiTreeNodeFlags_DefaultOpen)
-//        {
-//            ImGui::Text("Resolution       : %ix%i", m_Width, m_Height);
-//        }
-//
-//
-//        if (ImGui::CollapsingHeader("Animation"), ImGuiTreeNodeFlags_DefaultOpen)
-//        {
-//            //ImGui::Checkbox("Play", &m_bPlay);
-//            ImGui::SliderFloat("Time", &m_time, 0, 30);
-//        }
-//
-//        if (ImGui::CollapsingHeader("Model Selection"), ImGuiTreeNodeFlags_DefaultOpen)
-//        {
-//            const char * tonemappers[] = { "Timothy", "DX11DSK", "Reinhard", "Uncharted2Tonemap", "No tonemapper" };
-//            ImGui::Combo("tone mapper", &m_state.toneMapper, tonemappers, 5);
-//            ImGui::SliderFloat("exposure", &m_state.exposure, -1.0f, 2.0f);
-//
-//            ImGui::SliderFloat("iblFactor", &m_state.iblFactor, 0.0f, 2.0f);
-//            ImGui::SliderFloat("spotLightIntensity", &m_state.spotLightIntensity, 0.0f, 10.0f);
-//            ImGui::SliderFloat("glow", &m_state.glow, 0.0f, 1.0f);
-//        }
-//
-//        ImGui::Checkbox("Show Bounding Boxes", &m_state.bDrawBoundingBoxes);
-//        ImGui::Checkbox("Show Sky dome", &m_state.bDrawSkyDome);
-//        ImGui::Checkbox("Show Gamma test pattern", &m_state.bGammaTestPattern);
-//
-//        ImGui::End();
-//    }
+    //    if (UI.m_showimgui)
+    //    {
+    //        ImGUIVK_UpdateIO();
+    //
+    //        ImGui::NewFrame();
+    //        ImGui::Begin("Stats", NULL, ImGuiWindowFlags_ShowBorders);
+    //
+    //        if (ImGui::CollapsingHeader("Info"), ImGuiTreeNodeFlags_DefaultOpen)
+    //        {
+    //            ImGui::Text("Resolution       : %ix%i", m_Width, m_Height);
+    //        }
+    //
+    //
+    //        if (ImGui::CollapsingHeader("Animation"), ImGuiTreeNodeFlags_DefaultOpen)
+    //        {
+    //            //ImGui::Checkbox("Play", &m_bPlay);
+    //            ImGui::SliderFloat("Time", &m_time, 0, 30);
+    //        }
+    //
+    //        if (ImGui::CollapsingHeader("Model Selection"), ImGuiTreeNodeFlags_DefaultOpen)
+    //        {
+    //            const char * tonemappers[] = { "Timothy", "DX11DSK", "Reinhard", "Uncharted2Tonemap", "No tonemapper" };
+    //            ImGui::Combo("tone mapper", &m_state.toneMapper, tonemappers, 5);
+    //            ImGui::SliderFloat("exposure", &m_state.exposure, -1.0f, 2.0f);
+    //
+    //            ImGui::SliderFloat("iblFactor", &m_state.iblFactor, 0.0f, 2.0f);
+    //            ImGui::SliderFloat("spotLightIntensity", &m_state.spotLightIntensity, 0.0f, 10.0f);
+    //            ImGui::SliderFloat("glow", &m_state.glow, 0.0f, 1.0f);
+    //        }
+    //
+    //        ImGui::Checkbox("Show Bounding Boxes", &m_state.bDrawBoundingBoxes);
+    //        ImGui::Checkbox("Show Sky dome", &m_state.bDrawSkyDome);
+    //        ImGui::Checkbox("Show Gamma test pattern", &m_state.bGammaTestPattern);
+    //
+    //        ImGui::End();
+    //    }
 
-        // If mouse was not used by the GUI then it's for the camera
-        //
-//        ImGuiIO& io = ImGui::GetIO();
-//        if (io.WantCaptureMouse == false)
-//        {
-//            if (io.MouseDown[0])
-//            {
-//                m_roll  += io.MouseDelta.x / 100.f;
-//                m_pitch += io.MouseDelta.y / 100.f;
-//            }
-//
-//            static float distance = 4.0f;
-//            distance -= (float)io.MouseWheel / 3.0f;
-//            if (distance <= 1.0f)
-//                distance = 1.0f;
-//
-//            m_state.camera.UpdateCamera(m_roll, m_pitch, distance);
-//        }
-
+    // If mouse was not used by the GUI then it's for the camera
+    //
+    //        ImGuiIO& io = ImGui::GetIO();
+    //        if (io.WantCaptureMouse == false)
+    //        {
+    //            if (io.MouseDown[0])
+    //            {
+    //                m_roll  += io.MouseDelta.x / 100.f;
+    //                m_pitch += io.MouseDelta.y / 100.f;
+    //            }
+    //
+    //            static float distance = 4.0f;
+    //            distance -= (float)io.MouseWheel / 3.0f;
+    //            if (distance <= 1.0f)
+    //                distance = 1.0f;
+    //
+    //            m_state.camera.UpdateCamera(m_roll, m_pitch, distance);
+    //        }
 
     static float distance = m_gltfLoader[m_curr_Node]->m_distance;
     int mouseWheelDelta = m_mouseWheelDelta - m_lastMouseWheelDelta;
     distance -= (float)(mouseWheelDelta / 200.0f) * distance;
     m_lastMouseWheelDelta = m_mouseWheelDelta;
     m_state.camera.UpdateCamera(m_roll, m_pitch, distance);
-
 
 #ifdef USE_ANIMATION
     // Set animation
@@ -406,7 +402,7 @@ void Vulkan_Device::OnRender()
 #endif
 
 #ifdef ENABLE_RENDER_CODE
-    // Do Render frame using AFR 
+    // Do Render frame using AFR
     //
     m_Node[m_curr_Node]->OnRender(&m_state, &m_swapChain);
 
@@ -415,13 +411,10 @@ void Vulkan_Device::OnRender()
 
     // BackBuffer++;
     // // Flip to new image if loaded after 2 buffer render calls
-    // if ((DWORD)BackBuffer > m_dwNumberOfBackBuffers)
+    // if ((std::uint32_t)BackBuffer > m_dwNumberOfBackBuffers)
     // {
     //     BackBuffer = 1;
     //     m_curr_Node++;
     //     if (m_curr_Node >= m_max_Nodes_loaded) m_curr_Node = 0;
     // }
-
 }
-
-

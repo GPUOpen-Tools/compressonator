@@ -29,7 +29,7 @@ class DeviceVK
 public:
     DeviceVK();
     ~DeviceVK();
-    void OnCreate(VkInstance instance, HWND hWnd);
+    void OnCreate(VkInstance instance, void* hWnd);
     void OnDestroy();
     VkDevice GetDevice() { return m_device; }
     VkQueue GetGraphicsQueue() { return graphics_queue; }

@@ -28,21 +28,23 @@
 //
 #include "DeviceVK.h"
 
+#include <cstdint>
+
 class StaticBufferPoolVK
 {
 public:
-    void OnCreate(DeviceVK* pDevice, DWORD totalMemSize);
+    void OnCreate(DeviceVK* pDevice, std::uint32_t totalMemSize);
     void OnDestroy();
-    bool AllocVertexBuffer(DWORD numbeOfVertices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut);
-    bool AllocIndexBuffer(DWORD numbeOfIndices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut);
+    bool AllocVertexBuffer(std::uint32_t numbeOfVertices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut);
+    bool AllocIndexBuffer(std::uint32_t numbeOfIndices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut);
     void UploadData(VkCommandBuffer cmd_buf);
     void FreeUploadHeap();
 
 private:
     DeviceVK* m_pDevice;
 
-    DWORD           m_totalMemSize;
-    DWORD           m_memOffset;
+    std::uint32_t           m_totalMemSize;
+    std::uint32_t           m_memOffset;
     char            *m_pData;
 
     VkBuffer                m_buffer;

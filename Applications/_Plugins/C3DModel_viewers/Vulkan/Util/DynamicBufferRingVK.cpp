@@ -25,12 +25,12 @@
 // OnCreate
 //
 //--------------------------------------------------------------------------------------
-void DynamicBufferRingVK::OnCreate(DeviceVK* pDevice, DWORD numberOfBackBuffers, DWORD memTotalSize)
+void DynamicBufferRingVK::OnCreate(DeviceVK* pDevice, std::uint32_t numberOfBackBuffers, std::uint32_t memTotalSize)
 {
     VkResult res;
     m_pDevice = pDevice;
 
-    m_memTotalSize = (DWORD)Align(memTotalSize,256);
+    m_memTotalSize = (std::uint32_t)Align(memTotalSize,256);
 
     m_mem.OnCreate(numberOfBackBuffers, m_memTotalSize);
 
@@ -92,11 +92,11 @@ void DynamicBufferRingVK::OnDestroy()
 // AllocConstantBuffer
 //
 //--------------------------------------------------------------------------------------
-bool DynamicBufferRingVK::AllocConstantBuffer(DWORD size, void **pData, VkDescriptorBufferInfo *pOut)
+bool DynamicBufferRingVK::AllocConstantBuffer(std::uint32_t size, void **pData, VkDescriptorBufferInfo *pOut)
 {
-    size = (DWORD)Align(size, 256);
+    size = (std::uint32_t)Align(size, 256);
 
-    DWORD memOffset;
+    std::uint32_t memOffset;
     if (m_mem.Alloc(size, &memOffset) == false)
         return false;
 
@@ -114,12 +114,12 @@ bool DynamicBufferRingVK::AllocConstantBuffer(DWORD size, void **pData, VkDescri
 // AllocVertexBuffer
 //
 //--------------------------------------------------------------------------------------
-bool DynamicBufferRingVK::AllocVertexBuffer(DWORD numbeOfVertices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut)
+bool DynamicBufferRingVK::AllocVertexBuffer(std::uint32_t numbeOfVertices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut)
 {
     return AllocConstantBuffer(numbeOfVertices * strideInBytes, pData, pOut);
 }
 
-bool DynamicBufferRingVK::AllocIndexBuffer(DWORD numbeOfIndices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut)
+bool DynamicBufferRingVK::AllocIndexBuffer(std::uint32_t numbeOfIndices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut)
 {
     return AllocConstantBuffer(numbeOfIndices * strideInBytes, pData, pOut);
 }
@@ -134,7 +134,7 @@ void DynamicBufferRingVK::OnBeginFrame()
     m_mem.OnBeginFrame();
 }
 
-VkDescriptorBufferInfo DynamicBufferRingVK::GetMainBuffer(DWORD size)
+VkDescriptorBufferInfo DynamicBufferRingVK::GetMainBuffer(std::uint32_t size)
 {
     VkDescriptorBufferInfo out;
 

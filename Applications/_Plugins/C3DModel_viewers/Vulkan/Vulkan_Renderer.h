@@ -1,5 +1,5 @@
 // AMD DeferredTiledBasedLightingD3D12 sample code
-// 
+//
 // Copyright(c) 2017 Advanced Micro Devices, Inc.All rights reserved.
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -23,26 +23,25 @@
 #include "DeviceVK.h"
 #include "TextureVK.h"
 
-// #include "UploadHeapVK.h"
-// #include "DynamicBufferRingVK.h"
-// #include "StaticConstantBufferPoolVK.h"
-
-#include "StaticBufferPoolVK.h"
 #include "CommandListRingVK.h"
-//#include "FenceVK.h"
-#include "ResourceViewHeapsVK.h"
-//#include "GPUTimerVK.h"
+#include "StaticBufferPoolVK.h"
+
 #include "ImguiVK.h"
-#include "GltfPbrVK.h"
-#include "GltfDepthPassVK.h"
-#include "GltfBBoxPassVK.h"
+#include "ResourceViewHeapsVK.h"
 #include "TriangleVK.h"
 
 // -- Qt Support
 #ifdef USE_QT10
-#include <QtGUI/QVulkanWindow>
 #include <QtGUI/QVulkanFunctions>
+#include <QtGUI/QVulkanWindow>
 #endif
+
+// Forward declaration
+class GLTFCommon;
+class GltfPbrVK;
+class GltfDepthPass;
+class GltfBBoxPassVK;
+class SwapChainVK;
 
 static const int cNumSwapBufs = 2;
 
@@ -54,9 +53,8 @@ class Vulkan_Renderer
 #endif
 {
 public:
-
 #ifdef USE_QT10
-    Vulkan_Renderer(QVulkanWindow *w);
+    Vulkan_Renderer(QVulkanWindow* w);
 
     void initResources() override;
     void initSwapChainResources() override;
@@ -66,15 +64,15 @@ public:
     void startNextFrame() override;
 
 private:
-    QVulkanWindow           *m_window;
-    QVulkanDeviceFunctions  *m_devFuncs;
+    QVulkanWindow* m_window;
+    QVulkanDeviceFunctions* m_devFuncs;
     float m_green = 0;
 #else
-    Vulkan_Renderer(void *w);
+    Vulkan_Renderer(void* w);
 #endif
 
 public:
-struct State
+    struct State
     {
         float time;
         Camera camera;
@@ -84,46 +82,44 @@ struct State
         float iblFactor;
         float spotLightIntensity;
         float glow;
-        int   toneMapper;
-        bool  bDrawBoundingBoxes;
-        bool  bDrawSkyDome;
-        bool  bGammaTestPattern;
+        int toneMapper;
+        bool bDrawBoundingBoxes;
+        bool bDrawSkyDome;
+        bool bGammaTestPattern;
     };
 
-
-    void OnCreate(DeviceVK *pDevice);
+    void OnCreate(DeviceVK* pDevice);
     void OnDestroy();
-    
-    void OnCreateWindowSizeDependentResources(SwapChainVK *pSC, DWORD Width, DWORD Height);
+
+    void OnCreateWindowSizeDependentResources(SwapChainVK* pSC, std::uint32_t Width, std::uint32_t Height);
     void OnDestroyWindowSizeDependentResources();
-    
-    void LoadScene(GLTFCommon *gltfData, void *pluginManager, void *msghandler);
+
+    void LoadScene(GLTFCommon* gltfData, void* pluginManager, void* msghandler);
     void UnloadScene();
-    void OnRender(State *pState, SwapChainVK *pSwapChain);
+    void OnRender(State* pState, SwapChainVK* pSwapChain);
 
 private:
-    DeviceVK *m_pDevice;
+    DeviceVK* m_pDevice;
 
-    CommandListRingVK             m_CommandListRing;
-    DynamicBufferRingVK           m_ConstantBufferRing;
-    StaticBufferPoolVK            m_StaticBufferPool;
-
+    CommandListRingVK m_CommandListRing;
+    DynamicBufferRingVK m_ConstantBufferRing;
+    StaticBufferPoolVK m_StaticBufferPool;
 
     // Initialize helper classes
-    ResourceViewHeapsVK             m_Heaps;
-    UploadHeapVK                    m_UploadHeap;
-    ImGUIVK                         m_ImGUI;
-    GltfPbrVK                      *m_gltfPBR;
-    GltfDepthPass                  *m_gltfDepth;
-    GltfBBoxPass                   *m_gltfBBox;
-    TriangleVK                      m_triangle;
-    Texture                         m_depthBuffer;
-    Texture                         m_shadowMap;
+    ResourceViewHeapsVK m_Heaps;
+    UploadHeapVK m_UploadHeap;
+    ImGUIVK m_ImGUI;
+    GltfPbrVK* m_gltfPBR;
+    GltfDepthPass* m_gltfDepth;
+    GltfBBoxPassVK* m_gltfBBox;
+    TriangleVK m_triangle;
+    Texture m_depthBuffer;
+    Texture m_shadowMap;
 
     //RenderToSwapChainPass           m_renderToSwapChainPass;
 
-    DWORD m_Width;
-    DWORD m_Height;
+    unsigned int m_Width;
+    unsigned int m_Height;
 
     VkRect2D m_scissor;
     VkViewport m_viewport;
@@ -131,14 +127,12 @@ private:
     VkRect2D m_shadowScissor;
     VkViewport m_shadowViewport;
 
-
     VkRenderPass m_render_pass_color;
     VkRenderPass m_render_pass_color_hud;
     VkRenderPass m_render_pass_shadow;
 
-    VkFramebuffer *m_pFrameBuffers;
+    VkFramebuffer* m_pFrameBuffers;
     VkFramebuffer m_pShadowMapBuffers;
 
-    SwapChainVK *m_pSwapChain;
+    SwapChainVK* m_pSwapChain;
 };
-

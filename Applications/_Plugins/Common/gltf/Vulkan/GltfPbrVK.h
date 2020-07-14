@@ -18,9 +18,27 @@
 // THE SOFTWARE.
 #pragma once
 
-#include "GltfCommon.h"
 #include "GltfTechnique.h"
 //#include "SkyDome.h"
+
+#include "TextureVK.h"
+
+#include <json/json.h>
+
+#include <glm/mat4x4.hpp>
+#include <glm/vec4.hpp>
+
+#include <map>
+#include <string>
+#include <vector>
+
+// Forward Declaration
+class DeviceVK;
+class UploadHeapVK;
+class ResourceViewHeapsVK;
+class DynamicBufferRingVK;
+class StaticBufferPoolVK;
+class GLTFCommon;
 
 struct PBRMaterial
 {
@@ -31,20 +49,20 @@ struct PBRMaterial
 
     std::map<std::string, std::string> m_defines;
 
-    XMVECTOR emissiveFactor;
-    XMVECTOR baseColorFactor;
+    glm::vec4 emissiveFactor;
+    glm::vec4 baseColorFactor;
     float    metallicFactor;
     float    roughnessFactor;
 };
 
 struct PBRPrimitives : public Primitives
 {
-    PBRMaterial *m_pMaterial = NULL;
+    PBRMaterial* m_pMaterial = NULL;
 
     VkPipeline m_pipeline = VK_NULL_HANDLE;
     VkPipelineCache m_pipelineCache;
     VkPipelineLayout m_pipelineLayout;
-    VkDescriptorPool m_descriptorPool;    
+    VkDescriptorPool m_descriptorPool;
     VkDescriptorSet m_descriptorSet;
     VkDescriptorSetLayout m_descriptorSetLayout;
     //SAMPLER                                    *m_sampler;
@@ -62,60 +80,58 @@ class GltfPbrVK : public GltfTechnique
 public:
     struct per_batch
     {
-        XMMATRIX mCameraViewProj; 
-        XMVECTOR cameraPos;
-        XMMATRIX mLightViewProj;
-        XMVECTOR lightDirection;
-        XMVECTOR lightColor;
+        glm::mat4x4 mCameraViewProj;
+        glm::vec4 cameraPos;
+        glm::mat4x4 mLightViewProj;
+        glm::vec4 lightDirection;
+        glm::vec4 lightColor;
         float    depthBias;
         float    iblFactor;
     };
 
     struct per_object
     {
-        XMMATRIX mWorld;
-        XMVECTOR u_emissiveFactor;
-        XMVECTOR u_baseColorFactor;
-        XMVECTOR u_metallicRoughnessValues;
+        glm::mat4x4 mWorld;
+        glm::vec4 u_emissiveFactor;
+        glm::vec4 u_baseColorFactor;
+        glm::vec4 u_metallicRoughnessValues;
     };
 
     void OnCreate(
         DeviceVK* pDevice,
         VkRenderPass renderPass,
         UploadHeapVK* pUploadHeap,
-        ResourceViewHeapsVK *pHeaps,
-        DynamicBufferRingVK *pDynamicBufferRing,
-        StaticBufferPoolVK *pStaticBufferPool,
-        GLTFCommon *pGLTFData,
+        ResourceViewHeapsVK* pHeaps,
+        DynamicBufferRingVK* pDynamicBufferRing,
+        StaticBufferPoolVK* pStaticBufferPool,
+        GLTFCommon* pGLTFData,
         //SkyDome *pSkyDome,
-        Texture *pShadowMap,
-        void *pluginManager,
-        void *msghandler
+        Texture* pShadowMap,
+        void* pluginManager,
+        void* msghandler
     );
 
     void OnDestroy();
-    GltfPbrVK::per_batch *SetPerBatchConstants();
+    GltfPbrVK::per_batch* SetPerBatchConstants();
 
 private:
     DeviceVK* m_pDevice;
-    ResourceViewHeapsVK *m_pResourceViewHeaps;
+    ResourceViewHeapsVK* m_pResourceViewHeaps;
 
     std::vector<PBRMesh> m_meshes;
     std::vector<Texture> m_textures;
-/*
-    
-    Texture *m_pCubeDiffuseTexture;
-    Texture *m_pCubeSpecularTexture;
-    Texture  m_BrdfTexture;
-    SAMPLER m_sampler;
-*/
+    /*
+
+        Texture *m_pCubeDiffuseTexture;
+        Texture *m_pCubeSpecularTexture;
+        Texture  m_BrdfTexture;
+        SAMPLER m_sampler;
+    */
     VkSampler m_sampler;
 
     VkDescriptorBufferInfo m_perBatchDesc;
-    void DrawMesh(VkCommandBuffer cmd_buf, int meshIndex, XMMATRIX worldMatrix);
-    void AddTextureIfExists(nlohmann::json::object_t material, nlohmann::json::array_t textures, std::map<std::string, Texture *> &map, char *texturePath, char *textureName);
-    void CreatePipeline(DeviceVK* pDevice, VkRenderPass renderPass, std::vector<std::string> semanticName, std::vector<VkVertexInputAttributeDescription> layout, PBRPrimitives *pPrimitive);
+    void DrawMesh(VkCommandBuffer cmd_buf, int meshIndex, const glm::mat4x4& worldMatrix);
+    void AddTextureIfExists(nlohmann::json::object_t material, nlohmann::json::array_t textures, std::map<std::string, Texture*>& map, char* texturePath, char* textureName);
+    void CreatePipeline(DeviceVK* pDevice, VkRenderPass renderPass, std::vector<std::string> semanticName, std::vector<VkVertexInputAttributeDescription> layout, PBRPrimitives* pPrimitive);
 };
-
-
 

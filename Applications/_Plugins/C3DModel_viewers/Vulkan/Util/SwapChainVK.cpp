@@ -37,6 +37,7 @@
 #include "DeviceVK.h"
 #include "SwapChainVK.h"
 
+
 #include <cassert>
 
 //--------------------------------------------------------------------------------------
@@ -44,7 +45,7 @@
 // OnCreate
 //
 //--------------------------------------------------------------------------------------
-void SwapChainVK::OnCreate(DeviceVK *pDevice, DWORD numberBackBuffers, DWORD dwWidth, DWORD dwHeight, HWND hWnd)
+void SwapChainVK::OnCreate(DeviceVK *pDevice, std::uint32_t numberBackBuffers, std::uint32_t dwWidth, std::uint32_t dwHeight, void* hWnd)
 {    
     VkResult res;
 
@@ -69,10 +70,12 @@ void SwapChainVK::OnCreate(DeviceVK *pDevice, DWORD numberBackBuffers, DWORD dwW
     // If the format list includes just one entry of VK_FORMAT_UNDEFINED,
     // the surface has no preferred format.  Otherwise, at least one
     // supported format will be returned.
-    if (formatCount == 1 && surfFormats[0].format == VK_FORMAT_UNDEFINED) {
+    if (formatCount == 1 && surfFormats[0].format == VK_FORMAT_UNDEFINED) 
+    {
         m_format = VK_FORMAT_B8G8R8A8_UNORM;
     }
-    else {
+    else 
+    {
         assert(formatCount >= 1);
         m_format = surfFormats[0].format;
     }
@@ -238,14 +241,14 @@ void SwapChainVK::OnCreate(DeviceVK *pDevice, DWORD numberBackBuffers, DWORD dwW
     m_RenderFinishedSemaphores.resize(swapchainImageCount);
     for (uint32_t i = 0; i < swapchainImageCount; i++)
     {
-        VkFenceCreateInfo fence_ci;
+        VkFenceCreateInfo fence_ci = {};
         fence_ci.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
         fence_ci.pNext = NULL;
         fence_ci.flags = 0;
 
         res = vkCreateFence(device, &fence_ci, NULL, &m_CmdBufExecutedFences[i]);
 
-        VkSemaphoreCreateInfo imageAcquiredSemaphoreCreateInfo;
+        VkSemaphoreCreateInfo imageAcquiredSemaphoreCreateInfo = {};
         imageAcquiredSemaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
         imageAcquiredSemaphoreCreateInfo.pNext = NULL;
         imageAcquiredSemaphoreCreateInfo.flags = 0;
@@ -346,7 +349,7 @@ void SwapChainVK::SetFullScreen(bool fullscreen)
 }
 
 
-void SwapChainVK::OnResize(DWORD dwWidth, DWORD dwHeight)
+void SwapChainVK::OnResize(std::uint32_t dwWidth, std::uint32_t dwHeight)
 {
     //m_currentFrame = 0;
 /*

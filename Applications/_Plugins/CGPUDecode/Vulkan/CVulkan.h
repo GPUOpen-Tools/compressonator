@@ -49,7 +49,7 @@ public:
         Plugin_CVulkan();
         virtual ~Plugin_CVulkan();
         int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
-        int TC_Init(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback);
+        int TC_Init(std::uint32_t Width, std::uint32_t Height, WNDPROC callback);
         CMP_ERROR TC_Decompress(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture);
         int TC_Close();
 private:

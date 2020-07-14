@@ -79,13 +79,13 @@ public:
 
     SwapChainVK               m_swapChain;
 
-    Vulkan_Device(GLTFCommon m_gltfLoader[MAX_NUM_OF_NODES], DWORD width, DWORD height, void *pluginManager, void *msghandler);
+    Vulkan_Device(GLTFCommon m_gltfLoader[MAX_NUM_OF_NODES], std::uint32_t width, std::uint32_t height, void *pluginManager, void *msghandler);
 
-    int OnCreate(HWND hWnd);
+    int OnCreate(void* hWnd);
     void OnDestroy();
     void OnRender();
-    bool OnEvent(MSG msg);
-    void OnResize(DWORD Width, DWORD Height);
+    bool OnEvent(void* msg);
+    void OnResize(uint32_t Width, uint32_t Height);
     void SetFullScreen(bool fullscreen);
 
     // *1* marks changes in code from AMDUtils
@@ -93,7 +93,7 @@ public:
     int                      m_curr_Node;
     int                      m_max_Nodes_loaded;
     void                    *m_msghandler;
-    DWORD                    m_dwNumberOfBackBuffers;
+    std::uint32_t                    m_dwNumberOfBackBuffers;
 
     
 private:
