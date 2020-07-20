@@ -16,6 +16,7 @@
     <Compressonator_OPENEXR>$(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenEXR\openexr-2.2.0\</Compressonator_OPENEXR>
     <Compressonator_ILMBASE>$(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenEXR\ilmbase-2.2.0\</Compressonator_ILMBASE>
     <Compressonator_OPENGL>$(SolutionDir)..\..\..\..\Common\Lib\Ext\OpenGL\</Compressonator_OPENGL>
+    <Compressonator_RAPIDXML>$(SolutionDir)..\..\..\External\rapidxml\</Compressonator_RAPIDXML>
     <Compressonator_TINYXML>$(SolutionDir)..\..\..\..\Common\Lib\Ext\tinyxml\2.6.2\</Compressonator_TINYXML>
     <Compressonator_ZLIB>$(SolutionDir)..\..\..\..\Common\Lib\Ext\zlib\1.2.8\</Compressonator_ZLIB>
     <Compressonator_FLTK>$(SolutionDir)..\..\..\..\Common\Lib\Ext\Fltk\1.3.4\</Compressonator_FLTK>

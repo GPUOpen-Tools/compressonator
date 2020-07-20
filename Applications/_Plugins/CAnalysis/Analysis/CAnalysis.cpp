@@ -21,6 +21,10 @@
 // THE SOFTWARE.
 //
 
+
+// for XML file processing
+#include <cmp_rapidxml.hpp>
+
 // Windows Header Files:
 #ifdef _WIN32
 #include <windows.h>
@@ -78,23 +82,28 @@ using namespace std;
 #endif
 
 #ifdef USE_OPENCV
-#define OpenCV_core_Lib     "opencv_core" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
-#define OpenCV_highgui_Lib  "opencv_highgui" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
-#define OpenCV_imgproc_Lib  "opencv_imgproc" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
+    #if defined(_WIN32) && !defined(NO_LEGACY_BEHAVIOR)
+        #define OpenCV_core_Lib     "opencv_core" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
+        #define OpenCV_highgui_Lib  "opencv_highgui" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
+        #define OpenCV_imgproc_Lib  "opencv_imgproc" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
+    #else
+        #define OpenCV_core_Lib     "opencv_core" CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CVAUX_STR(CV_VERSION_REVISION) CMP_EXTERNAL_LibExt
+        #define OpenCV_highgui_Lib  "opencv_highgui" CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CVAUX_STR(CV_VERSION_REVISION) CMP_EXTERNAL_LibExt
+        #define OpenCV_imgproc_Lib  "opencv_imgproc" CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CVAUX_STR(CV_VERSION_REVISION) CMP_EXTERNAL_LibExt
+    #endif
 
-#pragma comment(lib,OpenCV_core_Lib)
-#pragma comment(lib,OpenCV_highgui_Lib)
-#pragma comment(lib,OpenCV_imgproc_Lib)
+    #pragma comment(lib, OpenCV_core_Lib)
+    #pragma comment(lib, OpenCV_highgui_Lib)
+    #pragma comment(lib, OpenCV_imgproc_Lib)
 #endif
 
-
 #define Qt5_core_Lib        "Qt5Core" CMP_EXTERNAL_LibExt
-#define Qt5_guid_Lib        "Qt5Gui" CMP_EXTERNAL_LibExt
+#define Qt5_gui_Lib         "Qt5Gui" CMP_EXTERNAL_LibExt
 #define Qt5_widgets_Lib     "Qt5Widgets" CMP_EXTERNAL_LibExt
 
-#pragma comment(lib,Qt5_core_Lib)
-#pragma comment(lib,Qt5_guid_Lib)
-#pragma comment(lib,Qt5_widgets_Lib)
+#pragma comment(lib, Qt5_core_Lib)
+#pragma comment(lib, Qt5_gui_Lib)
+#pragma comment(lib, Qt5_widgets_Lib)
 
 
 #ifdef BUILD_AS_PLUGIN_DLL
@@ -108,15 +117,15 @@ void *make_Plugin_CAnalysis() { return new Plugin_Canalysis; }
 #define TEST_TOLERANCE 5 //for 4x4 test block omly
 
 Plugin_Canalysis::Plugin_Canalysis()
-{ 
+{
     //default tolerance values
     tolerance_mse     = 1.0100;
-    tolerance_psnr    = 0.9900; 
+    tolerance_psnr    = 0.9900;
     tolerance_psnrb   = 0.9900;
     tolerance_psnrg   = 0.9900;
     tolerance_psnrr   = 0.9900;
     tolerance_ssim    = 0.9995;
-    tolerance_ssimb   = 0.9995; 
+    tolerance_ssimb   = 0.9995;
     tolerance_ssimg   = 0.9995;
     tolerance_ssimr   = 0.9995;
 
@@ -129,7 +138,7 @@ Plugin_Canalysis::Plugin_Canalysis()
 }
 
 Plugin_Canalysis::~Plugin_Canalysis()
-{ 
+{
     if (m_MipSrcImages)
         m_imageloader->clearMipImages(&m_MipSrcImages);
 
@@ -141,9 +150,9 @@ Plugin_Canalysis::~Plugin_Canalysis()
 }
 
 int Plugin_Canalysis::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
-{ 
-    pPluginVersion->dwAPIVersionMajor        = TC_API_VERSION_MAJOR;
-    pPluginVersion->dwAPIVersionMinor        = TC_API_VERSION_MINOR;
+{
+    pPluginVersion->dwAPIVersionMajor       = TC_API_VERSION_MAJOR;
+    pPluginVersion->dwAPIVersionMinor       = TC_API_VERSION_MINOR;
     pPluginVersion->dwPluginVersionMajor    = TC_PLUGIN_VERSION_MAJOR;
     pPluginVersion->dwPluginVersionMinor    = TC_PLUGIN_VERSION_MINOR;
     return 0;
@@ -160,87 +169,116 @@ string f2Str(float data, int prec)
 
 void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char option)
 {
-    using boost::property_tree::ptree;
-    ptree pt;
-    ptree pt_gold;
-    string diffName = "";
-    string diffNodeName = "";
+    rapidxml::file<> *xmlResultsFile = nullptr;
+    rapidxml::file<> *xmlGoldenFile = nullptr;
+    rapidxml::xml_document<> xmlDoc;
+    rapidxml::xml_document<> xmlGoldDoc;
+
+    std::string diffName = "";
+    std::string diffNodeName = "";
     bool nodeExist = false;
-    
+
     if (m_srcFile.size() > 0 && m_destFile.size() > 0)
     {
-        boost::filesystem::path src(m_srcFile);
+        std::filesystem::path src(m_srcFile);
         diffName = src.stem().generic_string();
         diffName.append("_");
 
-        boost::filesystem::path dest(m_destFile);
+        std::filesystem::path dest(m_destFile);
         diffName.append(dest.stem().generic_string());
-        diffNodeName = "ANALYSIS.";
-        diffNodeName.append(diffName);
+        diffNodeName = diffName;
     }
 
-    if ((CMP_FileExists(resultsFile)))
+    auto allocateNewElement = [&](rapidxml::xml_node<>* parent, const std::string name, std::string data)
     {
+        rapidxml::xml_node<>* newElement = nullptr;
+        char* pName = parent->document()->allocate_string(name.c_str());
+        char* pData = parent->document()->allocate_string(data.c_str());
+        newElement = xmlDoc.allocate_node(rapidxml::node_type::node_element, pName, pData);
+        parent->append_node(newElement);
+    };
 
-        std::ifstream input(resultsFile);
-        read_xml(input, pt);
+    auto modifyElement = [&](rapidxml::xml_node<>* parent, const std::string name, std::string data)
+    {
+        char* pName = parent->document()->allocate_string(name.c_str());
+        char* pData = parent->document()->allocate_string(data.c_str());
+        parent->first_node(pName)->value(pData);
+    };
+
+    if (CMP_FileExists(resultsFile))
+    {
+        // Create and parse an xml file (note: we do not want data nodes)
+        xmlResultsFile = new rapidxml::file<>(resultsFile);
+        xmlDoc.parse<rapidxml::parse_no_data_nodes>(xmlResultsFile->data());
 
         // traverse pt
-        BOOST_FOREACH(ptree::value_type &v, pt.get_child("ANALYSIS"))
+        rapidxml::xml_node<>* levelElement = xmlDoc.first_node("ANALYSIS");
+        for (rapidxml::xml_node<> *child = levelElement->first_node(); child != nullptr; child = child->next_sibling())
         {
-            if (v.first == "DATA")  //gui 
+            if (std::string(child->name()) == "DATA")  //gui
             {
                 if (option == 's') //ssim
                 {
-                    v.second.put("SSIM"         , f2Str(data.SSIM,      4).c_str());
-                    v.second.put("SSIM_BLUE"    , f2Str(data.SSIM_Blue, 4).c_str());
-                    v.second.put("SSIM_GREEN"   , f2Str(data.SSIM_Green,4).c_str());
-                    v.second.put("SSIM_RED"     , f2Str(data.SSIM_Red,  4).c_str());
+                    modifyElement(child, "SSIM",        f2Str(data.SSIM,        4));
+                    modifyElement(child, "SSIM_BLUE",   f2Str(data.SSIM_Blue,   4));
+                    modifyElement(child, "SSIM_GREEN",  f2Str(data.SSIM_Green,  4));
+                    modifyElement(child, "SSIM_RED",    f2Str(data.SSIM_Red,    4));
                     nodeExist = true;
-                }
+            }
                 else if (option == 'p') //psnr
                 {
-                    v.second.put("MSE"          , f2Str(data.MSE, 1).c_str());
-                    v.second.put("PSNR"         , f2Str(data.PSNR, 1).c_str());
-                    v.second.put("PSNR_BLUE"    , f2Str(data.PSNR_Blue, 1).c_str());
-                    v.second.put("PSNR_GREEN"   , f2Str(data.PSNR_Green, 1).c_str());
-                    v.second.put("PSNR_RED"     , f2Str(data.PSNR_Red, 1).c_str());
+                    modifyElement(child, "MSE",         f2Str(data.MSE,         1).c_str());
+                    modifyElement(child, "PSNR",        f2Str(data.PSNR,        1).c_str());
+                    modifyElement(child, "PSNR_BLUE",   f2Str(data.PSNR_Blue,   1).c_str());
+                    modifyElement(child, "PSNR_GREEN",  f2Str(data.PSNR_Green,  1).c_str());
+                    modifyElement(child, "PSNR_RED",    f2Str(data.PSNR_Red,    1).c_str());
                     nodeExist = true;
                 }
-                else 
+                else
                 {
-                    v.second.put("MSE"          , f2Str(data.MSE, 1).c_str());
-                    v.second.put("SSIM"         , f2Str(data.SSIM,      4).c_str());
-                    v.second.put("SSIM_BLUE"    , f2Str(data.SSIM_Blue, 4).c_str());
-                    v.second.put("SSIM_GREEN"   , f2Str(data.SSIM_Green,4).c_str());
-                    v.second.put("SSIM_RED"     , f2Str(data.SSIM_Red,  4).c_str());
-                    v.second.put("PSNR"         , f2Str(data.PSNR, 1).c_str());
-                    v.second.put("PSNR_BLUE"    , f2Str(data.PSNR_Blue, 1).c_str());
-                    v.second.put("PSNR_GREEN"   , f2Str(data.PSNR_Green, 1).c_str());
-                    v.second.put("PSNR_RED"     , f2Str(data.PSNR_Red, 1).c_str());
+                    modifyElement(child, "MSE",         f2Str(data.MSE,         1).c_str());
+                    modifyElement(child, "SSIM",        f2Str(data.SSIM,        4).c_str());
+                    modifyElement(child, "SSIM_BLUE",   f2Str(data.SSIM_Blue,   4).c_str());
+                    modifyElement(child, "SSIM_GREEN",  f2Str(data.SSIM_Green,  4).c_str());
+                    modifyElement(child, "SSIM_RED",    f2Str(data.SSIM_Red,    4).c_str());
+                    modifyElement(child, "PSNR",        f2Str(data.PSNR,        1).c_str());
+                    modifyElement(child, "PSNR_BLUE",   f2Str(data.PSNR_Blue,   1).c_str());
+                    modifyElement(child, "PSNR_GREEN",  f2Str(data.PSNR_Green,  1).c_str());
+                    modifyElement(child, "PSNR_RED",    f2Str(data.PSNR_Red,    1).c_str());
                     nodeExist = true;
                     break;
                 }
             }
-            else if (v.first == diffName) //cmdline, node exist
+            else if (std::string(child->name()) == diffName) //cmdline, node exist
             {
-                v.second.put("MSE"          , f2Str(data.MSE, 1).c_str());
-                v.second.put("SSIM"         , f2Str(data.SSIM,4).c_str());
-                v.second.put("SSIM_BLUE"    , f2Str(data.SSIM_Blue, 4).c_str());
-                v.second.put("SSIM_GREEN"   , f2Str(data.SSIM_Green, 4).c_str());
-                v.second.put("SSIM_RED"     , f2Str(data.SSIM_Red, 4).c_str());
-                v.second.put("PSNR"         , f2Str(data.PSNR, 1).c_str());
-                v.second.put("PSNR_BLUE"    , f2Str(data.PSNR_Blue, 1).c_str());
-                v.second.put("PSNR_GREEN"   , f2Str(data.PSNR_Green, 1).c_str());
-                v.second.put("PSNR_RED"     , f2Str(data.PSNR_Red, 1).c_str());
+                modifyElement(child, "MSE",             f2Str(data.MSE,         1).c_str());
+                modifyElement(child, "SSIM",            f2Str(data.SSIM,        4).c_str());
+                modifyElement(child, "SSIM_BLUE",       f2Str(data.SSIM_Blue,   4).c_str());
+                modifyElement(child, "SSIM_GREEN",      f2Str(data.SSIM_Green,  4).c_str());
+                modifyElement(child, "SSIM_RED",        f2Str(data.SSIM_Red,    4).c_str());
+                modifyElement(child, "PSNR",            f2Str(data.PSNR,        1).c_str());
+                modifyElement(child, "PSNR_BLUE",       f2Str(data.PSNR_Blue,   1).c_str());
+                modifyElement(child, "PSNR_GREEN",      f2Str(data.PSNR_Green,  1).c_str());
+                modifyElement(child, "PSNR_RED",        f2Str(data.PSNR_Red,    1).c_str());
                 if (data.srcdecodePattern[0]!='\0')
-                    v.second.put("FAIL_SRCDECODEPATTERN", data.srcdecodePattern);
+                {
+                    modifyElement(child, "FAIL_SRCDECODEPATTERN", data.srcdecodePattern);
+                }
                 else
-                    v.second.erase("FAIL_SRCDECODEPATTERN");
+                {
+                    while (rapidxml::xml_node<> *grandChild = child->first_node("FAIL_SRCDECODEPATTERN"))
+                        child->remove_node(grandChild);
+                }
+
                 if (data.destdecodePattern[0] != '\0')
-                    v.second.put("FAIL_DESTDECODEPATTERN", data.destdecodePattern);
+                {
+                    modifyElement(child, "FAIL_DESTDECODEPATTERN", data.destdecodePattern);
+                }
                 else
-                    v.second.erase("FAIL_DESTDECODEPATTERN");
+                {
+                    while (rapidxml::xml_node<> *grandChild = child->first_node("FAIL_DESTDECODEPATTERN"))
+                        child->remove_node(grandChild);
+                }
 
                 nodeExist = true;
                 break;
@@ -249,72 +287,93 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
 
         if (!nodeExist) //cmdline, node not exist
         {
-            ptree & node = pt.add(diffNodeName, "");
-            node.add("MSE"          , f2Str(data.MSE, 1).c_str());
-            node.add("SSIM"         , f2Str(data.SSIM,4).c_str());
-            node.add("SSIM_BLUE"    , f2Str(data.SSIM_Blue, 4).c_str());
-            node.add("SSIM_GREEN"   , f2Str(data.SSIM_Green, 4).c_str());
-            node.add("SSIM_RED"     , f2Str(data.SSIM_Red, 4).c_str());
-            node.add("PSNR"         , f2Str(data.PSNR, 1).c_str());
-            node.add("PSNR_BLUE"    , f2Str(data.PSNR_Blue, 1).c_str());
-            node.add("PSNR_GREEN"   , f2Str(data.PSNR_Green, 1).c_str());
-            node.add("PSNR_RED"     , f2Str(data.PSNR_Red, 1).c_str());
+            rapidxml::xml_node<> *newTree = xmlDoc.allocate_node(rapidxml::node_type::node_element, diffNodeName.c_str());
+
+            allocateNewElement(newTree, "MSE",        f2Str(data.MSE,         1));
+            allocateNewElement(newTree, "SSIM",       f2Str(data.SSIM,        4));
+            allocateNewElement(newTree, "SSIM_BLUE",  f2Str(data.SSIM_Blue,   4));
+            allocateNewElement(newTree, "SSIM_GREEN", f2Str(data.SSIM_Green,  4));
+            allocateNewElement(newTree, "SSIM_RED",   f2Str(data.SSIM_Red,    4));
+            allocateNewElement(newTree, "PSNR",       f2Str(data.PSNR,        1));
+            allocateNewElement(newTree, "PSNR_BLUE",  f2Str(data.PSNR_Blue,   1));
+            allocateNewElement(newTree, "PSNR_GREEN", f2Str(data.PSNR_Green,  1));
+            allocateNewElement(newTree, "PSNR_RED",   f2Str(data.PSNR_Red,    1));
+
             if (data.srcdecodePattern[0] != '\0')
-                node.add("FAIL_SRCDECODEPATTERN", data.srcdecodePattern);
-           
+                allocateNewElement(newTree, "FAIL_SRCDECODEPATTERN", data.srcdecodePattern);
+
             if (data.destdecodePattern[0] != '\0')
-                node.add("FAIL_DESTDECODEPATTERN", data.destdecodePattern);
+                allocateNewElement(newTree, "FAIL_DESTDECODEPATTERN", data.destdecodePattern);
         }
     }
     else //file not exist
     {
+        rapidxml::xml_node<>* decl = xmlDoc.allocate_node(rapidxml::node_declaration);
+        decl->append_attribute(xmlDoc.allocate_attribute("version", "1.0"));
+        decl->append_attribute(xmlDoc.allocate_attribute("encoding", "UTF-8"));
+        xmlDoc.append_node(decl);
+
+        rapidxml::xml_node<>* rootNode = xmlDoc.allocate_node(rapidxml::node_type::node_element, "ANALYSIS");
+        xmlDoc.append_node(rootNode);
         if (option == 's' || option == 'p')  //only gui will have option ssim or psnr
         {
-            ptree & node = pt.add("ANALYSIS.DATA", "");
-            node.add("MSE"          , f2Str(data.MSE, 1).c_str());
-            node.add("SSIM"         , f2Str(data.SSIM,4).c_str());
-            node.add("SSIM_BLUE"    , f2Str(data.SSIM_Blue, 4).c_str());
-            node.add("SSIM_GREEN"   , f2Str(data.SSIM_Green, 4).c_str());
-            node.add("SSIM_RED"     , f2Str(data.SSIM_Red, 4).c_str());
-            node.add("PSNR"         , f2Str(data.PSNR, 1).c_str());
-            node.add("PSNR_BLUE"    , f2Str(data.PSNR_Blue, 1).c_str());
-            node.add("PSNR_GREEN"   , f2Str(data.PSNR_Green, 1).c_str());
-            node.add("PSNR_RED"     , f2Str(data.PSNR_Red, 1).c_str());
+            rapidxml::xml_node<>* newTree = xmlDoc.allocate_node(rapidxml::node_type::node_element, "DATA");
+            rootNode->append_node(newTree);
+
+            allocateNewElement(newTree, "MSE",        f2Str(data.MSE,         1));
+            allocateNewElement(newTree, "SSIM",       f2Str(data.SSIM,        4));
+            allocateNewElement(newTree, "SSIM_BLUE",  f2Str(data.SSIM_Blue,   4));
+            allocateNewElement(newTree, "SSIM_GREEN", f2Str(data.SSIM_Green,  4));
+            allocateNewElement(newTree, "SSIM_RED",   f2Str(data.SSIM_Red,    4));
+            allocateNewElement(newTree, "PSNR",       f2Str(data.PSNR,        1));
+            allocateNewElement(newTree, "PSNR_BLUE",  f2Str(data.PSNR_Blue,   1));
+            allocateNewElement(newTree, "PSNR_GREEN", f2Str(data.PSNR_Green,  1));
+            allocateNewElement(newTree, "PSNR_RED",   f2Str(data.PSNR_Red,    1));
         }
         else //cmdline
         {
-            ptree & node = pt.add(diffNodeName, "");
-            node.add("MSE"          , f2Str(data.MSE, 1).c_str());
-            node.add("SSIM"         , f2Str(data.SSIM,4).c_str());
-            node.add("SSIM_BLUE"    , f2Str(data.SSIM_Blue, 4).c_str());
-            node.add("SSIM_GREEN"   , f2Str(data.SSIM_Green, 4).c_str());
-            node.add("SSIM_RED"     , f2Str(data.SSIM_Red, 4).c_str());
-            node.add("PSNR"         , f2Str(data.PSNR, 1).c_str());
-            node.add("PSNR_BLUE"    , f2Str(data.PSNR_Blue, 1).c_str());
-            node.add("PSNR_GREEN"   , f2Str(data.PSNR_Green, 1).c_str());
-            node.add("PSNR_RED"     , f2Str(data.PSNR_Red, 1).c_str());
+            rapidxml::xml_node<>* newTree = xmlDoc.allocate_node(rapidxml::node_type::node_element, diffNodeName.c_str());
+            rootNode->append_node(newTree);
+
+            allocateNewElement(newTree, "MSE",        f2Str(data.MSE,         1));
+            allocateNewElement(newTree, "SSIM",       f2Str(data.SSIM,        4));
+            allocateNewElement(newTree, "SSIM_BLUE",  f2Str(data.SSIM_Blue,   4));
+            allocateNewElement(newTree, "SSIM_GREEN", f2Str(data.SSIM_Green,  4));
+            allocateNewElement(newTree, "SSIM_RED",   f2Str(data.SSIM_Red,    4));
+            allocateNewElement(newTree, "PSNR",       f2Str(data.PSNR,        1));
+            allocateNewElement(newTree, "PSNR_BLUE",  f2Str(data.PSNR_Blue,   1));
+            allocateNewElement(newTree, "PSNR_GREEN", f2Str(data.PSNR_Green,  1));
+            allocateNewElement(newTree, "PSNR_RED",   f2Str(data.PSNR_Red,    1));
             if (data.srcdecodePattern[0] != '\0')
-                node.add("FAIL_SRCDECODEPATTERN", data.srcdecodePattern);
+                allocateNewElement(newTree, "FAIL_SRCDECODEPATTERN", data.srcdecodePattern);
 
             if (data.destdecodePattern[0] != '\0')
-                node.add("FAIL_DESTDECODEPATTERN", data.destdecodePattern);
+                allocateNewElement(newTree, "FAIL_DESTDECODEPATTERN", data.destdecodePattern);
         }
     }
 
-    try {
+    // Write the contents to a string and close the document
+    std::string xmlAsString;
+    rapidxml::print(std::back_inserter(xmlAsString), xmlDoc);
+    xmlDoc.clear();
+    delete xmlResultsFile;
+
+    // Save to file
+    try
+    {
         std::ofstream output(resultsFile);
-        write_xml(output, pt);
+        output << xmlAsString.c_str();
+        output.close();
     }
-    catch (std::exception const&  ex)
+    catch (std::exception const& ex)
     {
         printf("Can't write xml. %s", ex.what());
         return;
     }
 
-
-    boost::filesystem::path result(resultsFile);
-    int lastindex = (int)result.generic_string().find_last_of("/");
-    string goldFile = result.generic_string().substr(0, lastindex + 1);
+    std::filesystem::path result(resultsFile);
+    int lastindex = result.generic_string().find_last_of("/");
+    std::string goldFile = result.generic_string().substr(0, lastindex + 1);
     goldFile.append("golden.xml");
 
     string toleranceFile = result.generic_string().substr(0, lastindex + 1);
@@ -322,30 +381,34 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
 
     if ((CMP_FileExists(toleranceFile)))
     {
-        ptree pt_tolerance;
-        try {
-            std::ifstream inputtolerance(toleranceFile);
-            read_xml(inputtolerance, pt_tolerance);
-        }
-        catch (std::exception const&  ex)
+        rapidxml::file<> xmlToleranceFile(toleranceFile.c_str());
+        rapidxml::xml_document<> xmlToleranceDoc;
+
+        try
         {
-            printf("Can't read analysis_tolerance.xml. %s", ex.what());
+            xmlToleranceDoc.parse<0>(xmlToleranceFile.data());
+        }
+        catch (std::exception exc)
+        {
+            printf("Can't read golden.xml. %s", exc.what());
             return;
         }
 
-        BOOST_FOREACH(ptree::value_type &v, pt_tolerance.get_child("ANALYSIS"))
+
+        rapidxml::xml_node<> *levelElement = xmlToleranceDoc.first_node("ANALYSIS");
+        for (rapidxml::xml_node<> *child = levelElement->first_node(); child != NULL; child = child->next_sibling())
         {
-            if (v.first == "TOLERANCE")  
+            if (std::string(child->name()) == "TOLERANCE")
             {
-                tolerance_mse = 1.0000 + v.second.get<double>("MSE");
-                tolerance_ssim = 1.0000 - v.second.get<double>("SSIM");
-                tolerance_ssimb = 1.0000 - v.second.get<double>("SSIM_BLUE");
-                tolerance_ssimg = 1.0000 - v.second.get<double>("SSIM_GREEN");
-                tolerance_ssimr = 1.0000 - v.second.get<double>("SSIM_RED");
-                tolerance_psnr = 1.0000 - v.second.get<double>("PSNR");
-                tolerance_psnrb = 1.0000 - v.second.get<double>("PSNR_BLUE");
-                tolerance_psnrg = 1.0000 - v.second.get<double>("PSNR_GREEN");
-                tolerance_psnrr = 1.0000 - v.second.get<double>("PSNR_RED");
+                tolerance_mse = 1.0000 + std::stod(child->first_node("MSE")->value());
+                tolerance_ssim = 1.0000 - std::stod(child->first_node("SSIM")->value());
+                tolerance_ssimb = 1.0000 - std::stod(child->first_node("SSIM_BLUE")->value());
+                tolerance_ssimg = 1.0000 - std::stod(child->first_node("SSIM_GREEN")->value());
+                tolerance_ssimr = 1.0000 - std::stod(child->first_node("SSIM_RED")->value());
+                tolerance_psnr = 1.0000 - std::stod(child->first_node("PSNR")->value());
+                tolerance_psnrb = 1.0000 - std::stod(child->first_node("PSNR_BLUE")->value());
+                tolerance_psnrg = 1.0000 - std::stod(child->first_node("PSNR_GREEN")->value());
+                tolerance_psnrr = 1.0000 - std::stod(child->first_node("PSNR_RED")->value());
                 break;
             }
         }
@@ -353,129 +416,88 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
     //analysis against golden.xml (gold reference) and reporting result
     if ((CMP_FileExists(goldFile)))
     {
-        try {
-            std::ifstream inputgold(goldFile);
-            read_xml(inputgold, pt_gold);
-
-            std::ifstream input(resultsFile);
-            read_xml(input, pt);
-        }
-        catch (std::exception const&  ex)
+        try
         {
-            printf("Can't read golden.xml. %s", ex.what());
+            xmlGoldenFile = new rapidxml::file<>(goldFile.c_str());
+            xmlGoldDoc.parse<0>(xmlGoldenFile->data());
+        }
+        catch (std::exception exc)
+        {
+            delete xmlGoldenFile;
+            printf("Can't read golden.xml. %s", exc.what());
             return;
         }
+
+        try
+        {
+            xmlResultsFile = new rapidxml::file<>(resultsFile);
+            xmlDoc.parse<0>(xmlResultsFile->data());
+        }
+        catch (std::exception exc)
+        {
+            delete xmlResultsFile;
+            printf("Can't read results.xml. %s", exc.what());
+            return;
+        }
+
+        auto checkFalureGoldAndResults = [&](rapidxml::xml_node<> *compare, rapidxml::xml_node<> *parent, const char *refName, const char* name, double value, bool gte=true)
+        {
+            allocateNewElement(parent, refName, compare->first_node(name)->value());
+            if (gte)
+            {
+                if (std::stod(parent->first_node(name)->value()) >= (std::stod(compare->first_node(name)->value()) * value))
+                {
+                    allocateNewElement(parent, std::string(name) + "_RESULT", "PASS");
+                    return false;
+                }
+            }
+            else
+            {
+                if (std::stod(parent->first_node(name)->value()) <= (std::stod(compare->first_node(name)->value()) * value))
+                {
+                    allocateNewElement(parent, refName, "PASS");
+                    return false;
+                }
+            }
+
+            allocateNewElement(parent, refName, "FAIL");
+            return true;
+        };
 
         int pass = 0;
         int fail = 0;
         int total = 0;
         bool hasFail = false;
         // traverse pt for both golden and test files
-        BOOST_FOREACH(ptree::value_type &v_gold, pt_gold.get_child("ANALYSIS"))
+        rapidxml::xml_node<> *goldLevelElement = xmlGoldDoc.first_node("ANALYSIS");
+        for (rapidxml::xml_node<> *goldChild = goldLevelElement->first_node(); goldChild != NULL; goldChild = goldChild->next_sibling())
         {
-            BOOST_FOREACH(ptree::value_type &v, pt.get_child("ANALYSIS"))
+            rapidxml::xml_node<> *levelElement = xmlDoc.first_node("ANALYSIS");
+            for (rapidxml::xml_node<> *child = levelElement->first_node(); child != NULL; child = child->next_sibling())
             {
-                if (boost::iequals(v_gold.first, v.first)) //diff file node exist on both
+                if (std::string(goldChild->name()) == std::string(child->name())) //diff file node exist on both
                 {
                     total++;
-                    v.second.put("MSE_GOLDREF", v_gold.second.get<double>("MSE"));
-                    if (v.second.get<double>("MSE") <= (v_gold.second.get<double>("MSE") *tolerance_mse))
-                    {
-                        v.second.put("MSE_RESULT", "PASS");
-                    }
-                    else
-                    {
-                        v.second.put("MSE_RESULT", "FAIL");
+                    if (checkFalureGoldAndResults(child, goldChild, "MSE_GOLDREF", "MSE", tolerance_mse, false))
                         hasFail = true;
-                    }
-
-                    v.second.put("SSIM_GOLDREF", v_gold.second.get<double>("SSIM"));
-                    if (v.second.get<double>("SSIM") >= (v_gold.second.get<double>("SSIM") *tolerance_ssim))
-                    {
-                        v.second.put("SSIM_RESULT", "PASS");
-                    }
-                    else
-                    {
-                        v.second.put("SSIM_RESULT", "FAIL");
+                    if (checkFalureGoldAndResults(child, goldChild, "SSIM_GOLDREF", "SSIM", tolerance_ssim))
                         hasFail = true;
-                    }
-
-                    v.second.put("SSIM_BLUE_GOLDREF", v_gold.second.get<double>("SSIM_BLUE"));
-                    if (v.second.get<double>("SSIM_BLUE") >= (v_gold.second.get<double>("SSIM_BLUE") *tolerance_ssimb))
-                    {
-                        v.second.put("SSIM_BLUE_RESULT", "PASS");
-                    }
-                    else
-                    {
-                        v.second.put("SSIM_BLUE_RESULT", "FAIL");
+                    if (checkFalureGoldAndResults(child, goldChild, "SSIM_BLUE_GOLDREF", "SSIM_BLUE", tolerance_ssimb))
                         hasFail = true;
-                    }
-
-                    v.second.put("SSIM_GREEN_GOLDREF", v_gold.second.get<double>("SSIM_GREEN"));
-                    if (v.second.get<double>("SSIM_GREEN") >= (v_gold.second.get<double>("SSIM_GREEN") *tolerance_ssimg))
-                    {
-                        v.second.put("SSIM_GREEN_RESULT", "PASS");
-                    }
-                    else
-                    {
-                        v.second.put("SSIM_GREEN_RESULT", "FAIL");
+                    if (checkFalureGoldAndResults(child, goldChild, "SSIM_GREEN_GOLDREF", "SSIM_GREEN", tolerance_ssimg))
                         hasFail = true;
-                    }
-
-                    v.second.put("SSIM_RED_GOLDREF", v_gold.second.get<double>("SSIM_RED"));
-                    if (v.second.get<double>("SSIM_RED") >= (v_gold.second.get<double>("SSIM_RED") *tolerance_ssimr))
-                    {
-                        v.second.put("SSIM_RED_RESULT", "PASS");
-                    }
-                    else
-                    {
-                        v.second.put("SSIM_RED_RESULT", "FAIL");
+                    if (checkFalureGoldAndResults(child, goldChild, "SSIM_RED_GOLDREF", "SSIM_RED", tolerance_ssimr))
                         hasFail = true;
-                    }
-
-                    v.second.put("PSNR_GOLDREF", v_gold.second.get<double>("PSNR"));
-                    if (v.second.get<double>("PSNR") >= (v_gold.second.get<double>("PSNR") *tolerance_psnr))
-                    {
-                        v.second.put("PSNR_RESULT", "PASS");
-                    }
-                    else
-                    {
-                        v.second.put("PSNR_RESULT", "FAIL");
+                    if (checkFalureGoldAndResults(child, goldChild, "PSNR_GOLDREF", "PSNR", tolerance_psnr))
                         hasFail = true;
-                    }
-
-                    v.second.put("PSNR_BLUE_GOLDREF", v_gold.second.get<double>("PSNR_BLUE"));
-                    if (v.second.get<double>("PSNR_BLUE") >= (v_gold.second.get<double>("PSNR_BLUE") *tolerance_psnrb))
-                    {
-                        v.second.put("PSNR_BLUE_RESULT", "PASS");
-                    }
-                    else
-                    {
-                        v.second.put("PSNR_BLUE_RESULT", "FAIL");
+                    if (checkFalureGoldAndResults(child, goldChild, "PSNR_BLUE_GOLDREF", "PSNR_BLUE", tolerance_psnrb))
                         hasFail = true;
-                    }
-
-                    v.second.put("PSNR_GREEN_GOLDREF", v_gold.second.get<double>("PSNR_GREEN"));
-                    if (v.second.get<double>("PSNR_GREEN") >= (v_gold.second.get<double>("PSNR_GREEN") *tolerance_psnrg))
-                    {
-                        v.second.put("PSNR_GREEN_RESULT", "PASS");
-                    }
-                    else
-                    {
-                        v.second.put("PSNR_GREEN_RESULT", "FAIL");
+                    if (checkFalureGoldAndResults(child, goldChild, "PSNR_GREEN_GOLDREF", "PSNR_GREEN", tolerance_psnrg))
                         hasFail = true;
-                    }
-
-                    v.second.put("PSNR_RED_GOLDREF", v_gold.second.get<double>("PSNR_RED"));
-                    if (v.second.get<double>("PSNR_RED") >= (v_gold.second.get<double>("PSNR_RED") *tolerance_psnrr))
-                    {
-                        v.second.put("PSNR_RED_RESULT", "PASS");
-                    }
-                    else
-                    {
-                        v.second.put("PSNR_RED_RESULT", "FAIL");
+                    if (checkFalureGoldAndResults(child, goldChild, "PSNR_RED_GOLDREF", "PSNR_RED", tolerance_psnrr))
                         hasFail = true;
-                    }
+                    if (checkFalureGoldAndResults(child, goldChild, "MSE_GOLDREF", "MSE", tolerance_mse))
+                        hasFail = true;
 
                     //if one of the above statistic fail, the test case (per image) is fail
                     if (hasFail)
@@ -491,18 +513,40 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
             }
         }
 
+        // Free the golden xml
+        xmlGoldDoc.clear();
+        delete xmlGoldenFile;
+
         if (option != 's' && option != 'p')  //only gui will have this option - s= ssim or p= psnr
         {
-            ptree & node = pt.put("ANALYSIS.TEST_RESULT", "");
-            node.put("PASS", pass);
-            node.put("FAIL", fail);
-            node.put("TOTAL", total);
-
-            try {
-                std::ofstream output(resultsFile);
-                write_xml(output, pt);
+            rapidxml::xml_node<>* root = xmlDoc.first_node("ANALYSIS");
+            if (!root)
+            {
+                root = xmlDoc.allocate_node(rapidxml::node_type::node_element, "ANALYSIS");
+                xmlDoc.append_node(root);
             }
-            catch (std::exception const&  ex)
+
+            rapidxml::xml_node<>* newTree = xmlDoc.allocate_node(rapidxml::node_type::node_element, "TEST_RESULT");
+            root->append_node(newTree);
+
+            newTree->first_node("PASS")->value(std::to_string(pass).c_str());
+            newTree->first_node("FAIL")->value(std::to_string(fail).c_str());
+            newTree->first_node("TOTAL")->value(std::to_string(total).c_str());
+
+            // Write the contents to a string and close the document
+            std::string xmlAsString;
+            rapidxml::print(std::back_inserter(xmlAsString), xmlDoc);
+            xmlDoc.clear();
+            delete xmlResultsFile;
+
+            // Save to file
+            try
+            {
+                std::ofstream output(resultsFile);
+                output << xmlAsString.c_str();
+                output.close();
+            }
+            catch (std::exception const& ex)
             {
                 printf("Can't write xml. %s", ex.what());
                 return;

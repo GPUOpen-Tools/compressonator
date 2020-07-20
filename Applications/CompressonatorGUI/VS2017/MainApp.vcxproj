@@ -1563,15 +1563,19 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(Compressonator_RAPIDXML);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(Compressonator_RAPIDXML);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
     <TargetName>Compressonator</TargetName>
+    <IncludePath>$(Compressonator_RAPIDXML);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">
     <TargetName>Compressonator</TargetName>
+    <IncludePath>$(Compressonator_RAPIDXML);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">
     <ClCompile>

@@ -29,6 +29,9 @@
 #include <QIcon>
 #include <QMap>
 
+// for XML file processing
+#include <cmp_rapidxml.hpp>
+
 #include "cpImageCompare.h"
 #include "cpMainComponents.h"
 
@@ -393,53 +396,56 @@ bool CImageCompare::setAnalysisResultView()
     if ((CMP_FileExists(m_analyzedResult)))
     {
         // populate tree structure pt
-        using boost::property_tree::ptree;
-        ptree pt;
-        std::ifstream input(m_analyzedResult);
-        read_xml(input, pt);
+
+        rapidxml::file<>* xmlResultsFile = new rapidxml::file<>(m_analyzedResult.c_str());
+        rapidxml::xml_document<> xmlDoc; xmlDoc.parse<rapidxml::parse_no_data_nodes>(xmlResultsFile->data());
 
         // traverse pt
-        BOOST_FOREACH(ptree::value_type const&v, pt.get_child("ANALYSIS"))
+        rapidxml::xml_node<>* levelElement = xmlDoc.first_node("ANALYSIS");
+        for (rapidxml::xml_node<>* child = levelElement->first_node(); child != NULL; child = child->next_sibling())
         {
-            if (v.first == "DATA")
+            if (std::string(child->name()) == "DATA")
             {
                 if (ssimAnalysis && !psnrAnalysis)
                 {
-                    
-                    m_ssimAnalysis->m_SSIM = v.second.get<double>("SSIM");
-                    m_ssimAnalysis->m_SSIM_Blue = v.second.get<double>("SSIM_BLUE");
-                    m_ssimAnalysis->m_SSIM_Green = v.second.get<double>("SSIM_GREEN");
-                    m_ssimAnalysis->m_SSIM_Red = v.second.get<double>("SSIM_RED");
+                    m_ssimAnalysis->m_SSIM = std::stod(child->first_node("SSIM")->value());
+                    m_ssimAnalysis->m_SSIM_Blue = std::stod(child->first_node("SSIM_BLUE")->value());
+                    m_ssimAnalysis->m_SSIM_Green = std::stod(child->first_node("SSIM_GREEN")->value());
+                    m_ssimAnalysis->m_SSIM_Red = std::stod(child->first_node("SSIM_RED")->value());
                 }
                 else if (!ssimAnalysis && psnrAnalysis)
                 {
-                    m_psnrAnalysis->m_MSE = v.second.get<double>("MSE");
-                    m_psnrAnalysis->m_PSNR = v.second.get<double>("PSNR");
-                    m_psnrAnalysis->m_PSNR_Blue = v.second.get<double>("PSNR_BLUE");
-                    m_psnrAnalysis->m_PSNR_Green = v.second.get<double>("PSNR_GREEN");
-                    m_psnrAnalysis->m_PSNR_Red = v.second.get<double>("PSNR_RED");
+                    m_psnrAnalysis->m_MSE = std::stod(child->first_node("MSE")->value()); 
+                    m_psnrAnalysis->m_PSNR = std::stod(child->first_node("PSNR")->value());
+                    m_psnrAnalysis->m_PSNR_Blue = std::stod(child->first_node("PSNR_BLUE")->value());
+                    m_psnrAnalysis->m_PSNR_Green = std::stod(child->first_node("PSNR_GREEN")->value());
+                    m_psnrAnalysis->m_PSNR_Red = std::stod(child->first_node("PSNR_RED")->value());
                 }
                 else if (ssimAnalysis && psnrAnalysis)
                 {
                
-                    m_allAnalysis->m_SSIM = v.second.get<double>("SSIM");
-                    m_allAnalysis->m_SSIM_Blue = v.second.get<double>("SSIM_BLUE");
-                    m_allAnalysis->m_SSIM_Green = v.second.get<double>("SSIM_GREEN");
-                    m_allAnalysis->m_SSIM_Red = v.second.get<double>("SSIM_RED");
+                    m_allAnalysis->m_SSIM = std::stod(child->first_node("SSIM")->value());
+                    m_allAnalysis->m_SSIM_Blue = std::stod(child->first_node("SSIM_BLUE")->value());
+                    m_allAnalysis->m_SSIM_Green = std::stod(child->first_node("SSIM_GREEN")->value());
+                    m_allAnalysis->m_SSIM_Red = std::stod(child->first_node("PSNSSIM_REDR_RED")->value());
 
-                    m_allAnalysis->m_MSE = v.second.get<double>("MSE");
-                    m_allAnalysis->m_PSNR = v.second.get<double>("PSNR");
-                    m_allAnalysis->m_PSNR_Blue = v.second.get<double>("PSNR_BLUE");
-                    m_allAnalysis->m_PSNR_Green = v.second.get<double>("PSNR_GREEN");
-                    m_allAnalysis->m_PSNR_Red = v.second.get<double>("PSNR_RED");
+                    m_allAnalysis->m_MSE = std::stod(child->first_node("MSE")->value());
+                    m_allAnalysis->m_PSNR = std::stod(child->first_node("PSNR")->value());
+                    m_allAnalysis->m_PSNR_Blue = std::stod(child->first_node("PSNR_BLUE")->value());
+                    m_allAnalysis->m_PSNR_Green = std::stod(child->first_node("PSNR_GREEN")->value());
+                    m_allAnalysis->m_PSNR_Red = std::stod(child->first_node("PSNR_RED")->value());
                 }
             }
         }
        // QFile::remove(QString::fromStdString(m_analyzedResult));
+        xmlDoc.clear();
+        delete xmlResultsFile;
         return true;
     }
     else
+    {
         return false;
+    }
 }
 
 CImageCompare::~CImageCompare()
