@@ -76,7 +76,7 @@ gitMapping = {
     ghRoot+"common-lib-ext-tinyxml-2.6.2.git"   : ["Common/Lib/Ext/tinyxml",    "master"],
     ghRoot+"common-lib-ext-zlib-1.2.8.git"      : ["Common/Lib/Ext/zlib",       "master"],
     "https://github.com/g-truc/glm.git"         : ["Common/Lib/Ext/glm",        "master"],
-    "https://github.com/discord/rapidxml.git"   : ["External/rapidxml/rapidxml-submodule", "master"]
+    "https://github.com/discord/rapidxml.git"   : ["Common/Lib/Ext/rapidxml",   "master"]
 }
 
 # The following section contains OS-specific dependencies that are downloaded and placed in the specified target directory.

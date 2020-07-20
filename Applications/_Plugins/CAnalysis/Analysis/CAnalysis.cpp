@@ -21,10 +21,6 @@
 // THE SOFTWARE.
 //
 
-
-// for XML file processing
-#include <cmp_rapidxml.hpp>
-
 // Windows Header Files:
 #ifdef _WIN32
 #include <windows.h>
@@ -180,11 +176,13 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
 
     if (m_srcFile.size() > 0 && m_destFile.size() > 0)
     {
-        std::filesystem::path src(m_srcFile);
+        boost::filesystem::path src(m_srcFile);
+        //std::filesystem::path src(m_srcFile);  cpp17 feature ToDo
         diffName = src.stem().generic_string();
         diffName.append("_");
 
-        std::filesystem::path dest(m_destFile);
+        boost::filesystem::path dest(m_destFile);
+        //std::filesystem::path dest(m_destFile); cpp17 feature ToDo
         diffName.append(dest.stem().generic_string());
         diffNodeName = diffName;
     }
@@ -371,7 +369,8 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
         return;
     }
 
-    std::filesystem::path result(resultsFile);
+    boost::filesystem::path result(resultsFile);
+    //std::filesystem::path result(resultsFile); cpp17 feature ToDo
     int lastindex = result.generic_string().find_last_of("/");
     std::string goldFile = result.generic_string().substr(0, lastindex + 1);
     goldFile.append("golden.xml");
