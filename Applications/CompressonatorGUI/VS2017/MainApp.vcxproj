@@ -192,140 +192,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acAboutDlg.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acCustomDockWidget.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acCustomGraphics.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acDiffImage.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acDockWidgetTitleBar.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acEXRTool.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acImageView.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acProgressAnimationWidget.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acProgressDlg.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acTableImageDataModel.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpCompressStatus.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpGenMips.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpImageAnalysis.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpImageCompare.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpImagePropertyView.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpMainComponents.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpNewProject.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpProjectData.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpSetApplicationOptions.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpSetCompressOptions.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpStartupPage.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpWelcomePage.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_qtbuttonpropertybrowser.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_qteditorfactory.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_qtgroupboxpropertybrowser.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_qtpropertybrowser.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_qtpropertybrowserutils_p.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_qtpropertymanager.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_qttreepropertybrowser.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_qtvariantproperty.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="../QPropertyPages/qtbuttonpropertybrowser.cpp" />
     <ClCompile Include="../QPropertyPages/qteditorfactory.cpp" />
     <ClCompile Include="../QPropertyPages/qtgroupboxpropertybrowser.cpp" />
@@ -391,19 +257,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cp3DModelView.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpImageView.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpProjectView.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpTreeWidget.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">true</ExcludedFromBuild>
     </ClCompile>

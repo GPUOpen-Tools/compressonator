@@ -21,6 +21,9 @@
 // THE SOFTWARE.
 //
 
+// for XML file processing
+#include <cmp_rapidxml.hpp>
+
 // Windows Header Files:
 #ifdef _WIN32
 #include <windows.h>

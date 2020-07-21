@@ -94,25 +94,13 @@
     <ClCompile Include="../QPropertyPages/qtvariantproperty.cpp">
       <Filter>QtPropertyManager</Filter>
     </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acAboutDlg.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acAboutDlg.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acCustomDockWidget.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acCustomDockWidget.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acCustomGraphics.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acCustomGraphics.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acDiffImage.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acDiffImage.cpp">
@@ -121,22 +109,10 @@
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acDockWidgetTitleBar.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acDockWidgetTitleBar.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acEXRTool.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acEXRTool.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acImageView.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acImageView.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acProgressAnimationWidget.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acProgressAnimationWidget.cpp">
@@ -145,16 +121,7 @@
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acProgressDlg.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acProgressDlg.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acTableImageDataModel.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_acTableImageDataModel.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpCompressStatus.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpCompressStatus.cpp">
@@ -163,46 +130,22 @@
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpGenMips.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpGenMips.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpImageAnalysis.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpImageAnalysis.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpImageCompare.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpImageCompare.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpImagePropertyView.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpImagePropertyView.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpMainComponents.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpMainComponents.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpNewProject.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpNewProject.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpProjectData.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpProjectData.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpSetApplicationOptions.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpSetApplicationOptions.cpp">
@@ -211,34 +154,16 @@
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpSetCompressOptions.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpSetCompressOptions.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpStartupPage.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpStartupPage.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpWelcomePage.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_cpWelcomePage.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_qtbuttonpropertybrowser.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_qtbuttonpropertybrowser.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_qteditorfactory.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_qteditorfactory.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_qtgroupboxpropertybrowser.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_qtgroupboxpropertybrowser.cpp">
@@ -247,16 +172,7 @@
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_qtpropertybrowser.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_qtpropertybrowser.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_qtpropertybrowserutils_p.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_qtpropertybrowserutils_p.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_qtpropertymanager.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_qtpropertymanager.cpp">
@@ -265,13 +181,7 @@
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_qttreepropertybrowser.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_qttreepropertybrowser.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
     <ClCompile Include="../GeneratedFiles/Debug_MD/moc_qtvariantproperty.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Release_MD/moc_qtvariantproperty.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
     <ClCompile Include="../Components/acAboutDlg.cpp">
@@ -365,12 +275,6 @@
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
     <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpTreeWidget.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cp3DModelView.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpTreeWidget.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
     <ClCompile Include="..\GeneratedFiles\Release_MD\moc_objectcontroller.cpp">
