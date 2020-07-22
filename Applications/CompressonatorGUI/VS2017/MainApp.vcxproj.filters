@@ -33,16 +33,6 @@
     <Filter Include="Common">
       <UniqueIdentifier>{37a9209f-9b53-460d-a225-f0bf7c058c9e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Generated Files\Release_MD">
-      <UniqueIdentifier>{761009fa-edb6-40f7-af37-f0b71aa660e7}</UniqueIdentifier>
-      <Extensions>cpp;moc</Extensions>
-      <SourceControlFiles>False</SourceControlFiles>
-    </Filter>
-    <Filter Include="Generated Files\Debug_MD">
-      <UniqueIdentifier>{40064566-a552-4846-b9da-d51f77b69017}</UniqueIdentifier>
-      <Extensions>cpp;moc</Extensions>
-      <SourceControlFiles>False</SourceControlFiles>
-    </Filter>
     <Filter Include="AppUtils">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
@@ -64,15 +54,6 @@
     <ClCompile Include="../Source/main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="../Common/objectcontroller.cpp">
-      <Filter>QtPropertyManager</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/qrc_CompressonatorGUI.cpp">
-      <Filter>QtPropertyManager</Filter>
-    </ClCompile>
-    <ClCompile Include="../QPropertyPages/qtbuttonpropertybrowser.cpp">
-      <Filter>QtPropertyManager</Filter>
-    </ClCompile>
     <ClCompile Include="../QPropertyPages/qteditorfactory.cpp">
       <Filter>QtPropertyManager</Filter>
     </ClCompile>
@@ -80,9 +61,6 @@
       <Filter>QtPropertyManager</Filter>
     </ClCompile>
     <ClCompile Include="../QPropertyPages/qtpropertybrowser.cpp">
-      <Filter>QtPropertyManager</Filter>
-    </ClCompile>
-    <ClCompile Include="../QPropertyPages/qtpropertybrowserutils.cpp">
       <Filter>QtPropertyManager</Filter>
     </ClCompile>
     <ClCompile Include="../QPropertyPages/qtpropertymanager.cpp">
@@ -94,170 +72,11 @@
     <ClCompile Include="../QPropertyPages/qtvariantproperty.cpp">
       <Filter>QtPropertyManager</Filter>
     </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acAboutDlg.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acCustomDockWidget.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acCustomGraphics.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acDiffImage.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acDockWidgetTitleBar.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acEXRTool.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acImageView.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acProgressAnimationWidget.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acProgressDlg.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_acTableImageDataModel.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpCompressStatus.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpGenMips.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpImageAnalysis.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpImageCompare.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpImagePropertyView.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpMainComponents.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpNewProject.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpProjectData.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpSetApplicationOptions.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpSetCompressOptions.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpStartupPage.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_cpWelcomePage.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_qtbuttonpropertybrowser.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_qteditorfactory.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_qtgroupboxpropertybrowser.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_qtpropertybrowser.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_qtpropertybrowserutils_p.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_qtpropertymanager.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_qttreepropertybrowser.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../GeneratedFiles/Debug_MD/moc_qtvariantproperty.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/acAboutDlg.cpp">
-      <Filter>AppUtils</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/acCustomDockWidget.cpp">
-      <Filter>AppUtils</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/acCustomGraphics.cpp">
-      <Filter>AppUtils</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/acDiffImage.cpp">
-      <Filter>AppUtils</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/acDockWidgetTitleBar.cpp">
-      <Filter>AppUtils</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/acEXRTool.cpp">
-      <Filter>AppUtils</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/acImageView.cpp">
-      <Filter>AppUtils</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/acProgressAnimationWidget.cpp">
-      <Filter>AppUtils</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/acProgressDlg.cpp">
-      <Filter>AppUtils</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/acTableImageDataModel.cpp">
-      <Filter>AppUtils</Filter>
-    </ClCompile>
     <ClCompile Include="../../_Plugins/Common/cmdline.cpp">
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="../../_Plugins/Common/ATIFormats.cpp">
       <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/cpCompressStatus.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/cpGenMips.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/cpImageAnalysis.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/cpImageCompare.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/cpImageLoader.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/cpImagePropertyView.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/cpNewProject.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/cpProjectView.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/cpSetApplicationOptions.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/cpSetCompressOptions.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/cpStartupPage.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="../Common/cpTreeWidget.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="../Components/cpWelcomePage.cpp">
-      <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="../../_Plugins/Common/PluginManager.cpp">
       <Filter>Common</Filter>
@@ -268,68 +87,8 @@
     <ClCompile Include="../Common/cvmatandqimage.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\Components\cp3DModelView.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cp3DModelView.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpTreeWidget.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_objectcontroller.cpp">
-      <Filter>Generated Files\Release_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_objectcontroller.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Components\cp3DModelCompare.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cp3DModelCompare.cpp">
-      <Filter>Generated Files\Release_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cp3DModelCompare.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="../Source/cpMainComponents.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\_Plugins\Common\ModelData.cpp">
       <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_ac3DMeshAnalysis.cpp">
-      <Filter>Generated Files\Release_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_ac3DMeshAnalysis.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Components\ac3DMeshAnalysis.cpp">
-      <Filter>AppUtils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Components\cp3DModelConvert.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cp3DModelConvert.cpp">
-      <Filter>Generated Files\Release_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cp3DModelConvert.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpProjectView.cpp">
-      <Filter>Generated Files\Release_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpProjectView.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Components\cpImageView.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpImageView.cpp">
-      <Filter>Generated Files\Release_MD</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpImageView.cpp">
-      <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
     <ClCompile Include="..\..\_Plugins\Common\UtilFuncs.cpp">
       <Filter>Common</Filter>
@@ -338,6 +97,324 @@
       <Filter>Common\Gltf</Filter>
     </ClCompile>
     <ClCompile Include="..\..\_Plugins\Common\CMP_FileIO.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cp3DModelConvert.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cp3DModelConvert.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\cp3DModelView.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cp3DModelView.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cp3DModelView.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\cpCompressStatus.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpCompressStatus.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpCompressStatus.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\cpGenMips.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpGenMips.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpGenMips.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\cpImageAnalysis.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpImageAnalysis.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpImageAnalysis.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\cpImageCompare.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpImageCompare.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpImageCompare.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\cpImageLoader.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\cpImagePropertyView.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpImagePropertyView.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpImagePropertyView.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\cpImageView.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpImageView.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpImageView.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\cpNewProject.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpNewProject.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpNewProject.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpProjectData.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpProjectData.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\cpSetApplicationOptions.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpSetApplicationOptions.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpSetApplicationOptions.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\cpSetCompressOptions.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpSetCompressOptions.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpSetCompressOptions.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\cpSetMeshOptions.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpSetMeshOptions.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpSetMeshOptions.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\cpStartupPage.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpStartupPage.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpStartupPage.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\cpWelcomePage.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpWelcomePage.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpWelcomePage.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\cp3DModelCompare.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cp3DModelCompare.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cp3DModelCompare.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\cp3DModelConvert.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\ac3DMeshAnalysis.cpp">
+      <Filter>AppUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_ac3DMeshAnalysis.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_ac3DMeshAnalysis.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\acAboutDlg.cpp">
+      <Filter>AppUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_acAboutDlg.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_acAboutDlg.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\acCustomDockWidget.cpp">
+      <Filter>AppUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_acCustomDockWidget.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_acCustomDockWidget.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\acCustomGraphics.cpp">
+      <Filter>AppUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_acCustomGraphics.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_acCustomGraphics.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\acDiffImage.cpp">
+      <Filter>AppUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_acDiffImage.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_acDiffImage.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\acDockWidgetTitleBar.cpp">
+      <Filter>AppUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_acDockWidgetTitleBar.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_acDockWidgetTitleBar.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\acEXRTool.cpp">
+      <Filter>AppUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_acEXRTool.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_acEXRTool.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\acImageView.cpp">
+      <Filter>AppUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_acImageView.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_acImageView.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\acProgressAnimationWidget.cpp">
+      <Filter>AppUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_acProgressAnimationWidget.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_acProgressAnimationWidget.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\acProgressDlg.cpp">
+      <Filter>AppUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_acProgressDlg.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_acProgressDlg.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\acTableImageDataModel.cpp">
+      <Filter>AppUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_acTableImageDataModel.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_acTableImageDataModel.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpMainComponents.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpMainComponents.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QPropertyPages\qtbuttonpropertybrowser.cpp">
+      <Filter>QtPropertyManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_qtbuttonpropertybrowser.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_qtbuttonpropertybrowser.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\cpMainComponents.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\objectcontroller.cpp">
+      <Filter>QtPropertyManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_objectcontroller.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_objectcontroller.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\qrc_CompressonatorGUI.cpp">
+      <Filter>QtPropertyManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QPropertyPages\qtpropertybrowserutils.cpp">
+      <Filter>QtPropertyManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_qtpropertybrowserutils_p.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_qtpropertybrowserutils_p.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\acOGLWidget.cpp">
+      <Filter>AppUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_acOGLWidget.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_acOGLWidget.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Components\cpProjectView.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpProjectView.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpProjectView.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_cpTreeWidget.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_cpTreeWidget.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\geometryengine.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Release_MD\moc_geometryengine.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_geometryengine.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\cpTreeWidget.cpp">
       <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
@@ -353,12 +430,6 @@
     </ClInclude>
     <ClInclude Include="../Resources/resource.h">
       <Filter>Resource Files</Filter>
-    </ClInclude>
-    <ClInclude Include="../Components/cpImageFileData.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="../Components/cpImageLoader.h">
-      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="../../_Plugins/Common/PluginInterface.h">
       <Filter>Common</Filter>
@@ -390,76 +461,16 @@
     <ClInclude Include="..\..\..\CMP_CompressonatorLib\Version.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\Components\cpImageFileData.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Components\cpImageLoader.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="../CompressonatorGUI.qrc">
       <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/acAboutDlg.h">
-      <Filter>AppUtils</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/acCustomDockWidget.h">
-      <Filter>AppUtils</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/acCustomGraphics.h">
-      <Filter>AppUtils</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/acDiffImage.h">
-      <Filter>AppUtils</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/acDockWidgetTitleBar.h">
-      <Filter>AppUtils</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/acEXRTool.h">
-      <Filter>AppUtils</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/acImageView.h">
-      <Filter>AppUtils</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/acProgressAnimationWidget.h">
-      <Filter>AppUtils</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/acProgressDlg.h">
-      <Filter>AppUtils</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/acTableImageDataModel.h">
-      <Filter>AppUtils</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/cpCompressStatus.h">
-      <Filter>Components</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/cpGenMips.h">
-      <Filter>Components</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/cpImageAnalysis.h">
-      <Filter>Components</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/cpImageCompare.h">
-      <Filter>Components</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/cpImagePropertyView.h">
-      <Filter>Components</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/cpNewProject.h">
-      <Filter>Components</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/cpProjectData.h">
-      <Filter>Components</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/cpSetApplicationOptions.h">
-      <Filter>Components</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/cpSetCompressOptions.h">
-      <Filter>Components</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/cpStartupPage.h">
-      <Filter>Components</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../Components/cpWelcomePage.h">
-      <Filter>Components</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../QPropertyPages/qtbuttonpropertybrowser.h">
-      <Filter>QtPropertyManager</Filter>
     </CustomBuild>
     <CustomBuild Include="../QPropertyPages/qteditorfactory.h">
       <Filter>QtPropertyManager</Filter>
@@ -468,9 +479,6 @@
       <Filter>QtPropertyManager</Filter>
     </CustomBuild>
     <CustomBuild Include="../QPropertyPages/qtpropertybrowser.h">
-      <Filter>QtPropertyManager</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../QPropertyPages/qtpropertybrowserutils_p.h">
       <Filter>QtPropertyManager</Filter>
     </CustomBuild>
     <CustomBuild Include="../QPropertyPages/qtpropertymanager.h">
@@ -482,50 +490,110 @@
     <CustomBuild Include="../QPropertyPages/qtvariantproperty.h">
       <Filter>QtPropertyManager</Filter>
     </CustomBuild>
-    <CustomBuild Include="../GeneratedFiles/Debug_MD/qteditorfactory.moc">
-      <Filter>Generated Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../GeneratedFiles/Debug_MD/qtpropertymanager.moc">
-      <Filter>Generated Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../GeneratedFiles/Debug_MD/qttreepropertybrowser.moc">
-      <Filter>Generated Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../GeneratedFiles/Release_MD/qteditorfactory.moc">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../GeneratedFiles/Release_MD/qtpropertymanager.moc">
-      <Filter>Generated Files\Debug_MD</Filter>
-    </CustomBuild>
-    <CustomBuild Include="../GeneratedFiles/Release_MD/qttreepropertybrowser.moc">
-      <Filter>Generated Files\Debug_MD</Filter>
+    <CustomBuild Include="..\Components\cp3DModelConvert.h">
+      <Filter>Components</Filter>
     </CustomBuild>
     <CustomBuild Include="..\Components\cp3DModelView.h">
       <Filter>Components</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\Common\cpTreeWidget.h">
+    <CustomBuild Include="..\Components\cpCompressStatus.h">
       <Filter>Components</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\Common\objectcontroller.h">
-      <Filter>QtPropertyManager</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\Components\cp3DModelCompare.h">
+    <CustomBuild Include="..\Components\cpGenMips.h">
       <Filter>Components</Filter>
     </CustomBuild>
-    <CustomBuild Include="../Source/cpMainComponents.h">
-      <Filter>Source Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\Components\ac3DMeshAnalysis.h">
-      <Filter>AppUtils</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\Components\cp3DModelConvert.h">
+    <CustomBuild Include="..\Components\cpImageAnalysis.h">
       <Filter>Components</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\Components\cpProjectView.h">
+    <CustomBuild Include="..\Components\cpImageCompare.h">
+      <Filter>Components</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\cpImagePropertyView.h">
       <Filter>Components</Filter>
     </CustomBuild>
     <CustomBuild Include="..\Components\cpImageView.h">
       <Filter>Components</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\cpNewProject.h">
+      <Filter>Components</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\cpProjectData.h">
+      <Filter>Components</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\cpSetApplicationOptions.h">
+      <Filter>Components</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\cpSetCompressOptions.h">
+      <Filter>Components</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\cpSetMeshOptions.h">
+      <Filter>Components</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\cpStartupPage.h">
+      <Filter>Components</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\cpWelcomePage.h">
+      <Filter>Components</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\cp3DModelCompare.h">
+      <Filter>Components</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\ac3DMeshAnalysis.h">
+      <Filter>AppUtils</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\acAboutDlg.h">
+      <Filter>AppUtils</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\acCustomDockWidget.h">
+      <Filter>AppUtils</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\acCustomGraphics.h">
+      <Filter>AppUtils</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\acDiffImage.h">
+      <Filter>AppUtils</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\acDockWidgetTitleBar.h">
+      <Filter>AppUtils</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\acEXRTool.h">
+      <Filter>AppUtils</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\acImageView.h">
+      <Filter>AppUtils</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\acProgressAnimationWidget.h">
+      <Filter>AppUtils</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\acProgressDlg.h">
+      <Filter>AppUtils</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\acTableImageDataModel.h">
+      <Filter>AppUtils</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\QPropertyPages\qtbuttonpropertybrowser.h">
+      <Filter>QtPropertyManager</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Source\cpMainComponents.h">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Common\objectcontroller.h">
+      <Filter>QtPropertyManager</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\QPropertyPages\qtpropertybrowserutils_p.h">
+      <Filter>QtPropertyManager</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\acOGLWidget.h">
+      <Filter>AppUtils</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Components\cpProjectView.h">
+      <Filter>Components</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Common\geometryengine.h">
+      <Filter>Common</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Common\cpTreeWidget.h">
+      <Filter>Common</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -674,6 +742,15 @@
     </None>
     <None Include="..\..\..\RunTime\BC7_Compression.cprj">
       <Filter>SampleProjects</Filter>
+    </None>
+    <None Include="..\GeneratedFiles\qttreepropertybrowser.moc">
+      <Filter>Generated Files</Filter>
+    </None>
+    <None Include="..\GeneratedFiles\qtpropertymanager.moc">
+      <Filter>Generated Files</Filter>
+    </None>
+    <None Include="..\GeneratedFiles\qteditorfactory.moc">
+      <Filter>Generated Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
