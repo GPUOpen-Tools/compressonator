@@ -22,9 +22,11 @@
 //
 #pragma once
 
-#include "QtGui\qopenglextrafunctions.h"
-#include "QtCore\qobject.h"
-#include "imgui\imgui.h"
+
+#include "imgui/imgui.h"
+
+#include <QtGui/qopenglextrafunctions.h>
+#include <QtCore/qobject.h>
 
 #include <memory>
 

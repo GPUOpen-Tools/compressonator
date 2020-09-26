@@ -18,21 +18,6 @@
 #ifndef _CMP_FILEIO_H_
 #define _CMP_FILEIO_H_
 
-#ifdef _WIN32
-#include "Windows.h"
-#include <stdio.h>
-
-#include <iostream>
-#include <algorithm>
-#include <iterator>
-#include <direct.h>
-#else
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <wordexp.h>
-#include <dirent.h>
-#endif
-
 #include <string>
 #include <vector>
 

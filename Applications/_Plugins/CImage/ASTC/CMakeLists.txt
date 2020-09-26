@@ -1,24 +1,19 @@
-cmake_minimum_required(VERSION 3.10)
 
-add_library(ASTC STATIC "")
+add_library(Plugin_CImage_ASTC)
 
-target_sources(ASTC
-               PRIVATE
-               ../../Common/TC_PluginAPI.h
-               ../../Common/TC_PluginInternal.h
-               ../../Common/TC_PluginInternal.cpp
-               ../../Common/UtilFuncs.h
-               ../../Common/UtilFuncs.cpp
-               ./cASTC.cpp
-               ./cASTC.h
-               )
+target_sources(Plugin_CImage_ASTC PRIVATE
 
-target_include_directories(ASTC
-                           PRIVATE
-                           ../../../../CMP_CompressonatorLib
-                           ../../../../CMP_Framework/Common/half
-                           ../../Common/
-                           )
-if (UNIX)
-target_compile_definitions(ASTC PRIVATE _LINUX)
-endif()
+	cASTC.h
+    cASTC.cpp
+)
+
+target_link_libraries(Plugin_CImage_ASTC PRIVATE
+
+    CompressonatorLIB
+    CMP_FrameworkLIB
+
+    Plugin_TCPluginAPI
+    Plugin_Common_UtilFuncs
+)
+
+set_target_properties(Plugin_CImage_ASTC PROPERTIES FOLDER ${FOLDER_NAME})

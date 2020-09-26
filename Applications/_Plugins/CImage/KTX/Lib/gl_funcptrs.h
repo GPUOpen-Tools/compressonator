@@ -43,9 +43,9 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
 extern "C" {
 #endif
 
-#if KTX_USE_GETPROC && defined(_WIN32)
-  // Not defined in glew.h.
-  typedef void (GL_APIENTRY* PFNGLTEXIMAGE1DPROC) (
+#if KTX_USE_GETPROC
+    // Not defined in glew.h.
+    typedef void (GL_APIENTRY* PFNGLTEXIMAGE1DPROC) (
                     GLenum target, GLint level, GLint internalformat,
                     GLsizei width, GLint border, GLenum format, GLenum type,
                     const GLvoid *pixels

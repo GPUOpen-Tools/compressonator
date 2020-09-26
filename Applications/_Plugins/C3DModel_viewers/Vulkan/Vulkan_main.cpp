@@ -49,9 +49,14 @@ void *make_Plugin_3DModelViewer_Vulkan() { return new Plugin_3DModelViewer_Vulka
 #include "Misc.h"
 #include "Vulkan_Device.h"
 
-PluginManager g_pluginManager;
-bool g_bAbortCompression = false;
-CMIPS *g_CMIPS;
+namespace ML_vulkan 
+{
+    bool g_bAbortCompression = false;
+    CMIPS *g_CMIPS = nullptr;
+}
+
+using namespace ML_vulkan;
+
 
 Plugin_3DModelViewer_Vulkan::Plugin_3DModelViewer_Vulkan()
 {

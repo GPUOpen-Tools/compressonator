@@ -23,9 +23,9 @@
 
 #include "cp3DModelView.h"
 #include "cpMainComponents.h"
-#include "../../_Plugins/Common/gltf/GltfCommon.h"
-#include "tiny_gltf2.h"
-#include "tiny_gltf2_utils.h"
+#include <gltf/GltfCommon.h>
+#include <gltf/tiny_gltf2.h>
+#include <gltf/tiny_gltf2_utils.h>
 //----------------------------------------
 
 extern C_Application_Options g_Application_Options;
@@ -59,7 +59,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
     return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-WId createNativeWindowView(const QString& name, int width, int height)
+WId createNativeWindowView(const char* name, int width, int height)
 {
     WId result = 0;
 
@@ -604,7 +604,7 @@ cp3DModelView::cp3DModelView(const QString filePathName, const QString filePathN
         if (ClassName.compare("cpMainComponents") == 0)
         {
             mainComponents = (cpMainComponents*)m_parent;
-            msgHandler = (void*)(mainComponents->PrintStatus);
+            msgHandler     = (void*)(mainComponents->PrintStatus);
         }
     }
 

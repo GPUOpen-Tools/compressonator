@@ -25,8 +25,6 @@
 
 #include "BC5.h"
 
-//#define BUILD_AS_PLUGIN_DLL
-
 #ifdef USE_CONVECTION_KERNELS
 #pragma comment(lib, "ConvectionKernels.lib")
 #include "ConvectionKernels.h"

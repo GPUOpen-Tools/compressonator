@@ -24,17 +24,21 @@
 ****************************************************************************/
 
 #include "cvmatandqimage.h"
+
 #include <QtGui/qimage.h>
 #include <QtCore/qsysinfo.h>
 #include <QtCore/qdebug.h>
+
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/imgproc/types_c.h>
+
 #include <cstring>
-#include "opencv2/core/core.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
 
 namespace QtOcv {
 namespace {
 
-#if (CV_VERSION_EPOCH == 2)
+#if defined(CV_VERSION_EPOCH) && (CV_VERSION_EPOCH == 2)
     #define CMP_BGRA2RGBA   CV_BGRA2RGBA
     #define CMP_RGB2GRAY    CV_RGB2GRAY
     #define CMP_BGRA2GRAY   CV_BGRA2GRAY

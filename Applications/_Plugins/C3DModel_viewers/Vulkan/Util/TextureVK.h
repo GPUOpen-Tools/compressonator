@@ -37,6 +37,7 @@
 
 #include "ModelTexture.h"
 
+
 #define ISBITMASK( r,g,b,a ) ( pixelFmt.bitMaskR == r && pixelFmt.bitMaskG == g && pixelFmt.bitMaskB == b && pixelFmt.bitMaskA == a )
 #define DDS_RGB         0x00000040  // DDPF_RGB
 #define DDS_LUMINANCE   0x00020000  // DDPF_LUMINANCE

@@ -1,0 +1,28 @@
+
+add_library(Plugin_CGPUDecode_OpenGL)
+
+target_sources(Plugin_CGPUDecode_OpenGL PUBLIC
+
+    COpenGL.cpp
+    COpenGL.h
+    GPU_OpenGL.cpp
+    GPU_OpenGL.h
+    shader.h
+)
+
+target_link_libraries(Plugin_CGPUDecode_OpenGL 
+
+    PRIVATE
+        CompressonatorLIB
+
+        Plugin_PluginManager
+        Plugin_TCPluginAPI
+        GPU_Decode
+        ExtOpenGL
+        ExtGLEW
+
+    INTERFACE
+        ExtGLEW
+)
+
+set_target_properties(Plugin_CGPUDecode_OpenGL PROPERTIES FOLDER ${FOLDER_NAME})

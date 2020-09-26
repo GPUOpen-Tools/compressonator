@@ -34,12 +34,63 @@ DECLARE_PLUGIN(Plugin_Mesh_Compressor)
 SET_PLUGIN_TYPE("MESH_COMPRESSOR")
 SET_PLUGIN_NAME("DRACO")
 #else
-void *Plugin_Mesh_Compressor() { return new class Plugin_Mesh_Compressor; }
+void *make_Plugin_Mesh_Compressor() { return new class Plugin_Mesh_Compressor; }
 #endif
 
-PluginManager          g_pluginManager;
-bool                   g_bAbortCompression = false;
-CMIPS*                 g_CMIPS = NULL;
+namespace cmesh_mesh_compress {
+CMIPS*                 g_CMIPS = nullptr;
+
+int EncodeMeshToFile(const draco::Mesh &mesh, const std::string &file, draco::Encoder *encoder)
+{
+    if (g_CMIPS) g_CMIPS->Print("Encode Mesh To File");
+
+    // Encode the geometry.
+    draco::EncoderBuffer buffer;
+    const draco::Status status = encoder->EncodeMeshToBuffer(mesh, &buffer);
+    if (!status.ok()) {
+        if (g_CMIPS) g_CMIPS->Print("Failed to encode the mesh. %s", status.error_msg());
+        return -1;
+    }
+
+    // Save the encoded geometry into a file.
+    std::ofstream out_file(file, std::ios::binary);
+    if (!out_file) {
+        if (g_CMIPS) g_CMIPS->Print("Failed to create the output file.");
+        return -1;
+    }
+
+    out_file.write(buffer.data(), buffer.size());
+
+    return 0;
+}
+
+int EncodePointCloudToFile(const draco::PointCloud &pc, const std::string &file, draco::Encoder *encoder)
+{
+    if (g_CMIPS) g_CMIPS->Print("Encode Point Cloud To File");
+
+    // Encode the geometry.
+    draco::EncoderBuffer buffer;
+
+    const draco::Status status = encoder->EncodePointCloudToBuffer(pc, &buffer);
+    if (!status.ok()) {
+        if (g_CMIPS) g_CMIPS->Print("Failed to encode the point cloud. %s", status.error_msg());
+        return -1;
+    }
+
+    // Save the encoded geometry into a file.
+    std::ofstream out_file(file, std::ios::binary);
+    if (!out_file) {
+        if (g_CMIPS) g_CMIPS->Print("Failed to create the output file.\n");
+        return -1;
+    }
+
+    out_file.write(buffer.data(), buffer.size());
+    return 0;
+}
+}
+
+using namespace cmesh_mesh_compress;
+
 
 Plugin_Mesh_Compressor::Plugin_Mesh_Compressor()
 {
@@ -87,54 +138,6 @@ int Plugin_Mesh_Compressor::CleanUp()
     {
         m_InitOK = false;
     }
-    return 0;
-}
-
-int EncodeMeshToFile(const draco::Mesh &mesh, const std::string &file, draco::Encoder *encoder)
-{
-    if (g_CMIPS) g_CMIPS->Print("Encode Mesh To File");
-
-    // Encode the geometry.
-    draco::EncoderBuffer buffer;
-    const draco::Status status = encoder->EncodeMeshToBuffer(mesh, &buffer);
-    if (!status.ok()) {
-        if (g_CMIPS) g_CMIPS->Print("Failed to encode the mesh. %s", status.error_msg());
-        return -1;
-    }
-
-    // Save the encoded geometry into a file.
-    std::ofstream out_file(file, std::ios::binary);
-    if (!out_file) {
-        if (g_CMIPS) g_CMIPS->Print("Failed to create the output file.");
-        return -1;
-    }
-
-    out_file.write(buffer.data(), buffer.size());
-
-    return 0;
-}
-
-int EncodePointCloudToFile(const draco::PointCloud &pc, const std::string &file, draco::Encoder *encoder)
-{
-    if (g_CMIPS) g_CMIPS->Print("Encode Point Cloud To File");
-
-    // Encode the geometry.
-    draco::EncoderBuffer buffer;
-
-    const draco::Status status = encoder->EncodePointCloudToBuffer(pc, &buffer);
-    if (!status.ok()) {
-        if (g_CMIPS) g_CMIPS->Print("Failed to encode the point cloud. %s", status.error_msg());
-        return -1;
-    }
-
-    // Save the encoded geometry into a file.
-    std::ofstream out_file(file, std::ios::binary);
-    if (!out_file) {
-        if (g_CMIPS) g_CMIPS->Print("Failed to create the output file.\n");
-        return -1;
-    }
-
-    out_file.write(buffer.data(), buffer.size());
     return 0;
 }
 

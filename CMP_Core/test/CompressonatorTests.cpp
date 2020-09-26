@@ -1,11 +1,17 @@
-#include <map>
-#include <array>
-#include "../../../Common/Lib/Ext/Catch2/catch.hpp"
-#include "../source/CMP_Core.h"
-#include "../../Applications/_Plugins/Common/UtilFuncs.h"
+#include "CompressonatorTests.h"
+
 // incudes all compressed 4x4 blocks
 #include "BlockConstants.h"
-#include "CompressonatorTests.h"
+
+#include <CMP_Core.h>
+#include <UtilFuncs.h>
+
+#include <catch2/catch.hpp>
+
+#include <map>
+#include <cstring>
+#include <array>
+
 
 static const int BC1_BLOCK_SIZE = 8;
 static const int BC2_BLOCK_SIZE = 16;

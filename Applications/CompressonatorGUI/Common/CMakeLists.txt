@@ -1,23 +1,25 @@
-set(COMMON_H
-  cpTreeWidget.cpp
-  cvmatandqimage.cpp
-  geometryengine.cpp
-  objectcontroller.cpp
+add_library(CMP_GUI_BIN_Common INTERFACE)
+
+target_sources(CMP_GUI_BIN_Common INTERFACE
+    cpTreeWidget.cpp
+    geometryengine.cpp
+    objectcontroller.cpp
 )
 
-set(COMMON_SRC
-  cpTreeWidget.h
-  cvmatandqimage.h
-  geometryengine.h
-  objectcontroller.h
+target_sources(CMP_GUI_BIN_Common INTERFACE
+  
+    cpTreeWidget.h
+    geometryengine.h
+    objectcontroller.h
 )
 
-add_library(CMP_GUI_Common STATIC ${COMMON_H} ${COMMON_SRC})
+target_link_libraries(CMP_GUI_BIN_Common INTERFACE
 
-target_include_directories(CMP_GUI_Common PRIVATE
-  ../../../CMP_Framework/Common/half
-  ../../../CMP_CompressonatorLib
-  ../../_Plugins/Common/
-  ../QPropertyPages)
+    Plugin_PluginManager
+    ExtOpenCV
+)
 
-target_link_libraries(CMP_GUI_Common Qt5::Widgets ${OpenCV_LIBS})
+target_include_directories(CMP_GUI_BIN_Common INTERFACE
+
+    ./
+)

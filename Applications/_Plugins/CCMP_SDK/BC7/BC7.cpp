@@ -25,7 +25,6 @@
 
 #include <stdio.h>
 #include "BC7.h"
-//#define BUILD_AS_PLUGIN_DLL
 
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_BC7)

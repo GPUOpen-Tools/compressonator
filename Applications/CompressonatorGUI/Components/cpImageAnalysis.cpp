@@ -27,6 +27,7 @@
 
 #include <CMP_FileIO.h>
 
+#include <filesystem>
 #include <locale>
 
 extern bool ProgressCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2);
@@ -43,10 +44,10 @@ static inline void helper_toLower(std::string &str)
 
 bool C_AnalysisData::SourceAndDestFileExtMatch(const char *fsource, const char *fdest)
 {
-    std::string fsource_extension = boost::filesystem::extension(fsource);
+    std::string fsource_extension = std::filesystem::path(fsource).extension().string();
     helper_toLower(fsource_extension);
 
-    std::string fdest_extension = boost::filesystem::extension(fdest);
+    std::string fdest_extension = std::filesystem::path(fdest).extension().string();
     helper_toLower(fdest_extension);
 
     return (fsource_extension.compare(fdest_extension) == 0);
@@ -57,8 +58,8 @@ CMipImages* C_AnalysisData::GenerateDiffImage(const char *fsource, const char *f
     int testpassed = 0;
     std::string src_ext = "";
     std::string des_ext = "";
-    src_ext = boost::filesystem::extension(fsource);
-    des_ext = boost::filesystem::extension(fdest);
+    src_ext = std::filesystem::path(fsource).extension().string();
+    des_ext = std::filesystem::path(fdest).extension().string();
 
     if (strcmp(src_ext.c_str(), "")==0 || strcmp(des_ext.c_str(), "")==0)
     {
@@ -71,7 +72,7 @@ CMipImages* C_AnalysisData::GenerateDiffImage(const char *fsource, const char *f
     helper_toLower(src_ext);
     helper_toLower(des_ext);
 
-    boost::filesystem::path file_path = boost::filesystem::path(fdest);
+    std::filesystem::path file_path = std::filesystem::path(fdest);
 
     //if (!SourceAndDestFileExtMatch(src_ext.c_str(), des_ext.c_str()))
     //{
@@ -115,8 +116,8 @@ int C_AnalysisData::GeneratePSNRMSEAnalysis(const char *fsource, const char *fde
     int testpassed = 0;
     std::string src_ext = "";
     std::string des_ext = "";
-    src_ext = boost::filesystem::extension(fsource);
-    des_ext = boost::filesystem::extension(fdest);
+    src_ext = std::filesystem::path(fsource).extension().string();
+    des_ext = std::filesystem::path(fdest).extension().string();
 
     if (strcmp(src_ext.c_str(), "") == 0 || strcmp(des_ext.c_str(), "") == 0)
     {
@@ -128,7 +129,7 @@ int C_AnalysisData::GeneratePSNRMSEAnalysis(const char *fsource, const char *fde
     helper_toLower(src_ext);
     helper_toLower(des_ext);
 
-    boost::filesystem::path file_path = boost::filesystem::path(fdest);
+    std::filesystem::path file_path = std::filesystem::path(fdest);
 
     //if (!SourceAndDestFileExtMatch(src_ext.c_str(), des_ext.c_str()))
     //{
@@ -165,8 +166,8 @@ int C_AnalysisData::GenerateSSIMAnalysis(const char *fsource, const char *fdest)
     int testpassed = 0;
     std::string src_ext = "";
     std::string des_ext = "";
-    src_ext = boost::filesystem::extension(fsource);
-    des_ext = boost::filesystem::extension(fdest);
+    src_ext = std::filesystem::path(fsource).extension().string();
+    des_ext = std::filesystem::path(fdest).extension().string();
 
     if (strcmp(src_ext.c_str(), "") == 0 || strcmp(des_ext.c_str(), "") == 0)
     {
@@ -179,7 +180,7 @@ int C_AnalysisData::GenerateSSIMAnalysis(const char *fsource, const char *fdest)
     helper_toLower(src_ext);
     helper_toLower(des_ext);
 
-    boost::filesystem::path file_path = boost::filesystem::path(fdest);
+    std::filesystem::path file_path = std::filesystem::path(fdest);
 
     //if (!SourceAndDestFileExtMatch(src_ext.c_str(), des_ext.c_str()))
     //{

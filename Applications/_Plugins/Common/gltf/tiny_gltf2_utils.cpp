@@ -33,6 +33,25 @@
 #include <fstream>
 #include <sstream>
 
+#ifdef USE_MESH_DRACO_EXTENSION
+    #ifdef ERROR
+        #undef ERROR
+    #endif
+
+    #pragma warning( push )
+    #pragma warning( disable : 4244)
+    #pragma warning( disable : 4267)
+    #pragma warning( disable : 4018)
+    #pragma warning( disable : 4005)
+
+    #include <draco/compression/encode.h>
+    #include <draco/compression/decode.h>
+    #include <draco/io/mesh_io.h>
+    #include <draco/io/point_cloud_io.h>
+
+    #pragma warning( pop ) 
+#endif
+
 #ifdef __clang__
 // Disable some warnings for external files.
 #pragma clang diagnostic push

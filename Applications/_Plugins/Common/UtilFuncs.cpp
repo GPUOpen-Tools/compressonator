@@ -39,6 +39,8 @@
 #include <windows.h>
 #endif
 
+#include <filesystem>
+
 void SwizzleBytes(void *src, unsigned long numBytes)
 {
     unsigned char tmp[8]; // large enough to hold a double
@@ -80,6 +82,22 @@ float HalfToFloat(uint16_t h)
         o.u |= 255 << 23;
     o.u |= (h & 0x8000) << 16; // sign bit
     return o.f;
+}
+
+
+void getFileNameExt(const char *FilePathName, char *fnameExt, int maxbuffsize)
+{
+    #ifdef _WIN32
+    char drive[_MAX_DRIVE];
+    char dir[_MAX_DIR];
+    char ext[_MAX_EXT];
+    char fname[_MAX_FNAME];
+    _splitpath_s(FilePathName, drive, _MAX_DRIVE, dir, _MAX_DIR, fname, _MAX_FNAME, ext, _MAX_EXT);
+    snprintf(fnameExt, maxbuffsize, "%s%s", fname, ext);
+    #else
+    std::string fname = std::filesystem::path(FilePathName).filename().string();
+    snprintf(fnameExt, maxbuffsize, "%s", fname.c_str());
+    #endif
 }
 
 #ifdef _WIN32
@@ -124,15 +142,6 @@ typedef struct
 //    return ftlwData.hWnd;
 //}
 
-void getFileNameExt(const char *FilePathName, char *fnameExt, int maxbuffsize)
-{
-    char drive[_MAX_DRIVE];
-    char dir[_MAX_DIR];
-    char ext[_MAX_EXT];
-    char fname[_MAX_FNAME];
-    _splitpath_s(FilePathName, drive, _MAX_DRIVE, dir, _MAX_DIR, fname, _MAX_FNAME, ext, _MAX_EXT);
-    snprintf(fnameExt, maxbuffsize, "%s%s", fname, ext);
-}
 
 bool writeObjFileState(std::string filename, std::string state)
 {

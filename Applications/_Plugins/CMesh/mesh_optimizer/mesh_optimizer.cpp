@@ -39,10 +39,11 @@ SET_PLUGIN_NAME("TOOTLE_MESH")
 void *make_Plugin_Mesh_Optimizer() { return new Plugin_Mesh_Optimizer; }
 #endif
 
+namespace cmesh_mesh_opt {
+    CMIPS*                 g_CMIPS = nullptr;
+}
 
-PluginManager          g_pluginManager;
-bool                   g_bAbortCompression = false;
-CMIPS*                 g_CMIPS = NULL;
+using namespace cmesh_mesh_opt;
 
 Plugin_Mesh_Optimizer::Plugin_Mesh_Optimizer()
 {

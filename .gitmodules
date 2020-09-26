@@ -1,0 +1,27 @@
+[submodule "External/amd-appsdk/amd-appsdk-submodule"]
+	path = External/amd-appsdk/amd-appsdk-submodule
+	url = https://github.com/GPUOpen-Tools/common-lib-amd-APPSDK-3.0
+[submodule "External/opencv/opencv-submodule"]
+	path = External/opencv/opencv-submodule
+	url = https://github.com/opencv/opencv.git
+[submodule "External/openexr/openexr-submodule"]
+	path = External/openexr/openexr-submodule
+	url = https://github.com/openexr/openexr.git
+[submodule "External/zlib/zlib-submodule"]
+	path = External/zlib/zlib-submodule
+	url = https://github.com/madler/zlib
+[submodule "External/libpng/libpng-submodule"]
+	path = External/libpng/libpng-submodule
+	url = https://github.com/glennrp/libpng.git
+[submodule "External/libtiff/libtiff-submodule"]
+	path = External/libtiff/libtiff-submodule
+	url = https://github.com/UebelAndre/compressonator-tiff.git
+[submodule "External/glew/glew-submodule"]
+	path = External/glew/glew-submodule
+	url = https://github.com/UebelAndre/glew.git
+[submodule "External/directxtex/directxtex-submodule"]
+	path = External/directxtex/directxtex-submodule
+	url = https://github.com/UebelAndre/compressonator-directxtex.git
+[submodule "External/catch2/catch2-submodule"]
+	path = External/catch2/catch2-submodule
+	url = https://github.com/catchorg/Catch2.git

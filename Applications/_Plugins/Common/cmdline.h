@@ -28,17 +28,11 @@
 #include <tchar.h>
 #endif
 
+#include <Compressonator.h>
+#include <Common.h>
+#include <GPU_Decode.h>
+
 #include <string>
-
-//#ifdef USE_BOOST
-#include <boost/filesystem.hpp>
-#include <boost/lexical_cast.hpp>
-//#endif
-#include "Compressonator.h"
-#include "Common.h"
-#include "GPU_Decode.h"
-#include "CMP_FileIO.h"
-
 
 #define LOG_PROCESS_RESULTS_FILE_TXT "process_results.txt"
 #define LOG_PROCESS_RESULTS_FILE_CSV "process_results.csv"
@@ -159,7 +153,7 @@ class CCmdLineParamaters
     int  BlockWidth;        // Width (xdim) in pixels of the Compression Block that is to be processed default for ASTC is 4
     int  BlockHeight;       // Height (ydim)in pixels of the Compression Block that is to be processed default for ASTC is 4
     int  BlockDepth;        // Depth  (zdim)in pixels of the Compression Block that is to be processed default for ASTC is 1
-    double compress_fDuration; 
+    double compress_fDuration;
     double decompress_fDuration;
     int compress_nIterations;
     int decompress_nIterations;

@@ -9,6 +9,4 @@
 #include <opencv2/highgui/highgui.hpp> // OpenCV window I/O
 #include <opencv2/imgproc/imgproc.hpp> // Gaussian Blur
 
-using namespace cv;
-
 int GetPSNR(const char *file1, const char *file2, REPORT_DATA *stats);

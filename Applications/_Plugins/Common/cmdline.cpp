@@ -21,10 +21,8 @@
 // THE SOFTWARE.
 //
 
-#include "Compressonator.h"
-#include "Common.h"
-
 #include "cmdline.h"
+
 #include "ATIFormats.h"
 #include "Texture.h"
 #include "TextureIO.h"
@@ -33,6 +31,7 @@
 #include "TC_PluginInternal.h"
 #include "Version.h"
 #include "Misc.h"
+#include "CMP_FileIO.h"
 
 #pragma warning( push )
 #pragma warning(disable:4100)
@@ -42,8 +41,9 @@
 #include <ImfRgba.h>
 #pragma warning( pop )
 
-#include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
+#include <filesystem>
+#include <string>
+#include <algorithm>
 
 #ifdef USE_MESH_CLI
 #include <gltf/tiny_gltf2.h>
@@ -52,10 +52,12 @@
 #include "UtilFuncs.h"
 
 using namespace tinygltf2;
+#if !defined(NO_LEGACY_BEHAVIOR)
 #ifdef _DEBUG
 #pragma comment(lib, "CMP_MeshCompressor_MDd.lib")
 #else
 #pragma comment(lib, "CMP_MeshCompressor_MD.lib")
+#endif
 #endif
 
 #ifdef USE_MESHOPTIMIZER
@@ -93,20 +95,32 @@ using namespace std;
 
 CCmdLineParamaters g_CmdPrams;
 
+static inline void helper_erase_all(std::string& str, const char* pErase)
+{
+    size_t pos = str.find(pErase);
+    while (pos != std::string::npos)
+    {
+        str.erase(pos, 1);
+        pos = str.find(pErase);
+    }
+}
+
+static inline void helper_to_upper(std::string& str)
+{
+    for(char& i : str)
+        i = std::toupper(i);
+}
+
 
 bool fileIsGLTF(string SourceFile);
 
 string DefaultDestination(string SourceFile, CMP_FORMAT DestFormat, string DestFileExt)
 {
     string                  DestFile = "";
-//#ifdef USE_BOOST
-    boost::filesystem::path fp(SourceFile);
+    std::filesystem::path fp(SourceFile);
     string                  file_name = fp.stem().string();
     string                  file_ext  = fp.extension().string();
-//#else
-//    string                  file_name;
-//    string                  file_ext;
-//#endif
+
     DestFile.append(file_name);
     DestFile.append("_");
     file_ext.erase(std::remove(file_ext.begin(), file_ext.end(), '.'), file_ext.end());
@@ -132,39 +146,30 @@ string DefaultDestination(string SourceFile, CMP_FORMAT DestFormat, string DestF
 // check if file is glTF format extension
 bool fileIsGLTF(string SourceFile)
 {
-//#ifdef USE_BOOST
-    boost::filesystem::path fp(SourceFile);
+    std::filesystem::path fp(SourceFile);
     string                  file_ext = fp.extension().string();
-    boost::algorithm::to_upper(file_ext);
-//#else
-//    string                  file_ext;
-//#endif
+    helper_to_upper(file_ext);
+
     return (file_ext.compare(".GLTF") == 0);
 }
 
 // check if file is OBJ format extension
 bool fileIsOBJ(string SourceFile)
 {
-//#ifdef USE_BOOST
-    boost::filesystem::path fp(SourceFile);
+    std::filesystem::path fp(SourceFile);
     string                  file_ext = fp.extension().string();
-    boost::algorithm::to_upper(file_ext);
-//#else
-//    string                  file_ext;
-//#endif
+    helper_to_upper(file_ext);
+
     return (file_ext.compare(".OBJ") == 0);
 }
 
 // check if file is DRC (draco compressed OBJ file) format extension
 bool fileIsDRC(string SourceFile)
 {
-//#ifdef USE_BOOST
-    boost::filesystem::path fp(SourceFile);
+    std::filesystem::path fp(SourceFile);
     string                  file_ext = fp.extension().string();
-    boost::algorithm::to_upper(file_ext);
-//#else
-//    string                  file_ext;
-//#endif
+    helper_to_upper(file_ext);
+
     return (file_ext.compare(".DRC") == 0);
 }
 
@@ -812,21 +817,19 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
             {
                 throw "no level is specified";
             }
-//#ifdef USE_BOOST
+
             try
             {
-                g_CmdPrams.MipsLevel = boost::lexical_cast<int>(strParameter);
+                g_CmdPrams.MipsLevel = std::stoi(strParameter);
 
                 if ((g_CmdPrams.MipsLevel <= 0) || ((g_CmdPrams.MipsLevel > 20)))
                     throw "Invalid miplevel value specified, valid range is [1 to 20]";
 
             }
-            catch (boost::bad_lexical_cast)
+            catch (std::exception)
             {
                 throw "conversion failed for miplevel value";
             }
-//#else
-//#endif
         }
         else if ((strcmp(strCommand, "-mipsize") == 0))
         {
@@ -834,17 +837,16 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
             {
                 throw "no size is specified";
             }
-//#ifdef USE_BOOST
+
             try
             {
-                g_CmdPrams.nMinSize = boost::lexical_cast<int>(strParameter);
+                g_CmdPrams.nMinSize = std::stoi(strParameter);
             }
-            catch (boost::bad_lexical_cast)
+            catch (std::exception)
             {
                 throw "conversion failed for mipsize value";
             }
-//#else
-//#endif
+
             g_CmdPrams.MipsLevel = 2;
         }
         else if (strcmp(strCommand, "-r") == 0)
@@ -964,11 +966,9 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
                     if (CMP_PathType(strCommand) == CMP_PATHTYPES::CMP_PATH_IS_FILE)
                     {
                         g_CmdPrams.DestFile   = strCommand;
-//#ifdef USE_BOOST
-                        string file_extension = boost::filesystem::extension(strCommand);
-//#else
-//                        string file_extension;
-//#endif
+
+                        string file_extension = std::filesystem::path(strCommand).extension().string();
+
                         // User did not supply a destination extension default
                         if (file_extension.length() == 0)
                         {
@@ -1017,7 +1017,8 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
                             std::string destFileName;
                             //since  DestFile is empty we need to create one from the source file
                             destFileName = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.CompressOptions.DestFormat, g_CmdPrams.FileOutExt);
-                            g_CmdPrams.DestFile = directory + "\\" + destFileName;
+                            std::filesystem::path destFile = std::filesystem::path(directory) / destFileName;
+                            g_CmdPrams.DestFile = destFile.string();
                         }
                         else
                         {
@@ -1247,13 +1248,10 @@ bool OptimizeMesh(std::string SourceFile, std::string DestFile)
     GLTFCommon* gltfdata     = nullptr;
 
     // load model
-//#ifdef USE_BOOST
-    string file_extension = boost::filesystem::extension(SourceFile);
-    boost::algorithm::to_upper(file_extension);
-    boost::erase_all(file_extension, ".");
-//#else
-//    string file_extension;
-//#endif
+    string file_extension = std::filesystem::path(SourceFile).extension().string();
+    helper_to_upper(file_extension);
+    helper_erase_all(file_extension, ".");
+        
     PluginInterface_3DModel_Loader* plugin_loader;
     plugin_loader = reinterpret_cast<PluginInterface_3DModel_Loader*>(g_pluginManager.GetPlugin("3DMODEL_LOADER", (char*)file_extension.c_str()));
 
@@ -1344,13 +1342,11 @@ bool OptimizeMesh(std::string SourceFile, std::string DestFile)
     {
         std::vector<CMP_Mesh>*          optimized          = ((std::vector<CMP_Mesh>*)modelDataOut);
         PluginInterface_3DModel_Loader* plugin_save        = NULL;
-//#ifdef USE_BOOST
-        string                          destfile_extension = boost::filesystem::extension(DestFile);
-        boost::algorithm::to_upper(destfile_extension);
-        boost::erase_all(destfile_extension, ".");
-//#else
-//        string                          destfile_extension;
-//#endif
+
+        string                          destfile_extension = std::filesystem::path(DestFile).extension().string();
+        helper_to_upper(destfile_extension);
+        helper_erase_all(destfile_extension, ".");
+
         plugin_save =
             reinterpret_cast<PluginInterface_3DModel_Loader*>(g_pluginManager.GetPlugin("3DMODEL_LOADER", (char*)destfile_extension.c_str()));
         if (plugin_save)
@@ -1567,7 +1563,7 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
                         imgDestDir = output.substr(0,pos+1);
                     }
 
-                    boost::filesystem::create_directories(imgDestDir);
+                    std::filesystem::create_directories(imgDestDir);
                     {
                         MipSet inMips{};
                         memset(&inMips, 0, sizeof(CMP_MipSet));
@@ -1616,9 +1612,9 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
                         }
                     }
 
-                    if(!boost::filesystem::exists(dstFolder + input))
+                    if(!std::filesystem::exists(dstFolder + input))
                     {
-                        boost::filesystem::copy(imgSrcDir + input,
+                        std::filesystem::copy(imgSrcDir + input,
                                                 dstFolder + input);
                     }
 
@@ -1858,13 +1854,12 @@ bool GenerateImageProps(std::string ImageFile)
     PrintInfo("File Name: %s\n", ImageFile.c_str());
 
     // full path
-//#ifdef USE_BOOST
-    boost::filesystem::path p(ImageFile);
-    boost::filesystem::path fullpath = boost::filesystem::absolute(p);
+    std::filesystem::path p(ImageFile);
+    std::filesystem::path fullpath = std::filesystem::absolute(p);
     PrintInfo("File Full Path: %s\n", fullpath.generic_string().c_str());
 
     // file size
-    uintmax_t filesize = boost::filesystem::file_size(ImageFile);
+    uintmax_t filesize = std::filesystem::file_size(ImageFile);
 
     if (filesize > 1024000)
     {
@@ -1880,8 +1875,6 @@ bool GenerateImageProps(std::string ImageFile)
     {
         PrintInfo("File Size: %ju Bytes\n", filesize);
     }
-//#else
-//#endif
 
     // load image into mipset
     if (AMDLoadMIPSTextureImage(ImageFile.c_str(), &g_MipSetIn, g_CmdPrams.use_OCV, &g_pluginManager) != 0)
@@ -2385,7 +2378,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
 
         std::string FileName(g_CmdPrams.DestFile);
         std::string DestExt = CMP_GetFilePathExtension(FileName);
-        std::transform(DestExt.begin(), DestExt.end(), DestExt.begin(), ::toupper);
+        helper_to_upper(DestExt);
 
         // Check if destination file is supported, else print warning and continue.
         if (!SupportedFileTypes(DestExt))
@@ -3292,7 +3285,8 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
 
         std::string destFileName;
         destFileName = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.CompressOptions.DestFormat, g_CmdPrams.FileOutExt);
-        g_CmdPrams.DestFile = g_CmdPrams.DestDir + "\\" + destFileName;
+        std::filesystem::path destFile = std::filesystem::path(g_CmdPrams.DestDir) / destFileName;
+        g_CmdPrams.DestFile = destFile.string();
     }
     else
         MoreSourceFiles = false;

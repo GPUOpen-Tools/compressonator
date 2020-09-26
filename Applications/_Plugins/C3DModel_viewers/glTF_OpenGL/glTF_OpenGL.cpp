@@ -41,9 +41,13 @@ void *make_Plugin_glTF_OpenGL() { return new glTF_OGLDevice; }
 
 #include "glTF_OGLDevice.h"
 
-PluginManager          g_pluginManager;
-bool                   g_bAbortCompression = false;
-CMIPS*                 g_CMIPS;
+namespace MV_gltf_opengl
+{
+    bool                   g_bAbortCompression = false;
+    CMIPS*                 g_CMIPS = nullptr;
+}
+
+using namespace MV_gltf_opengl;
 
 Plugin_glTF_OpenGL::Plugin_glTF_OpenGL()
 {
@@ -82,18 +86,6 @@ int Plugin_glTF_OpenGL::TC_PluginSetSharedIO(void *Shared)
         return 0;
     }
     return 1;
-}
-
-std::wstring s2ws(const std::string& s)
-{
-    int len;
-    int slength = (int)s.length() + 1;
-    len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
-    wchar_t* buf = new wchar_t[len];
-    MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
-    std::wstring r(buf);
-    delete[] buf;
-    return r;
 }
 
 void Plugin_glTF_OpenGL::OnReSizeView(CMP_LONG w, CMP_LONG h)

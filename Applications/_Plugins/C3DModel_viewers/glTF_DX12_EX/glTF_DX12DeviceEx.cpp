@@ -388,14 +388,11 @@ void glTF_DX12DeviceEx::processDiffRenderFlip()
 
 void glTF_DX12DeviceEx::OnRender()
 {
-
-
     // Get timings
     //
     double timeNow = MillisecondsNow();
     m_deltaTime = timeNow - m_lastFrameTime;
     m_lastFrameTime = timeNow;
-
 
      static float distance = m_gltfLoader[m_curr_Node]->m_distance;
      int mouseWheelDelta = m_mouseWheelDelta - m_lastMouseWheelDelta;

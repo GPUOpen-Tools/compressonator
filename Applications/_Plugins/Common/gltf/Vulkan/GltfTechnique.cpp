@@ -20,11 +20,16 @@
 
 #include "GltfTechnique.h"
 
+#include "GltfCommon.h"
+
+#include "DynamicBufferRingVK.h"
+#include "StaticBufferPoolVK.h"
+
 void GltfTechnique::Draw(VkCommandBuffer cmd_buf)
 {
-    CMP_DWORD dwNodesVisible;
+    std::uint32_t dwNodesVisible;
     std::vector<NodeMatrixPostTransform> nodes(m_pGLTFData->GetNodeCount());
-    m_pGLTFData->TransformNodes(nodes.data(), &dwNodesVisible);
+    m_pGLTFData->TransformNodes(nodes.data(), &dwNodesVisible); 
 
     for (std::uint32_t i = 0; i < dwNodesVisible; i++)
     {

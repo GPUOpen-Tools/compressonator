@@ -23,6 +23,10 @@
 #include "Misc.h"
 #include "UtilFuncs.h"
 
+#include "Texture.h"
+#include "PluginInterface.h"
+#include "TextureIO.h"
+
 #include <assert.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -31,6 +35,10 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+
+#ifndef _MAX_FNAME
+#define _MAX_FNAME 1024
+#endif
 
 //--------------------------------------------------------------------------------------
 // Constructor of the Texture class
@@ -73,7 +81,7 @@ void ModelTexture::CleanMipSet()
 //--------------------------------------------------------------------------------------
 // entry function to initialize an image from a .DDS texture
 //--------------------------------------------------------------------------------------
-INT32 ModelTexture::LoadImageMipSetFromFile(const WCHAR *pFilename, void *pluginManager)
+int32_t ModelTexture::LoadImageMipSetFromFile(const wchar_t *pFilename, void *pluginManager)
 {
     CleanMipSet();
 

@@ -126,7 +126,7 @@ int CMP_CDECL SetSignedBC6(void *options, bool sf16);
 // for BC6H the format is RGBA Half float (16 bits per channel)
 //------------------------------------------------------------------------------------------------------
 #ifdef __cplusplus
-#define CMP_DEFAULTNULL  =NULL
+#define CMP_DEFAULTNULL  =nullptr
 #else
 #define CMP_DEFAULTNULL
 #endif

@@ -35,6 +35,9 @@
 #include <glm/matrix.hpp>
 #include <glm/vec4.hpp>
 
+#include <vector>
+#include <string>
+
 // The GlTF file is loaded in 2 steps
 // 1) loading the GPU agnostic data (This is done in the GLTFCommon class you can see here below)
 //     - nodes

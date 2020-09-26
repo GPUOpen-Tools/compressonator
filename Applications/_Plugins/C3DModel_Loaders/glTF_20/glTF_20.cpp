@@ -48,9 +48,13 @@ void *make_Plugin_glTF_Loader() { return new Plugin_glTF_Loader; }
 #include "tiny_gltf2_utils.h"
 #endif
 
-PluginManager          g_pluginManager;
-bool                   g_bAbortCompression = false;
-CMIPS*                 g_CMIPS = NULL;
+namespace ML_gltf20 
+{
+    bool                   g_bAbortCompression = false;
+    CMIPS*                 g_CMIPS = nullptr;
+}
+
+using namespace ML_gltf20;
 
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
@@ -91,18 +95,6 @@ void *Plugin_glTF_Loader::GetModelData()
 {
     void *data = (void *)m_gltfLoader;
     return data;
-}
-
-std::wstring s2ws(const std::string& s)
-{
-    int len;
-    int slength = (int)s.length() + 1;
-    len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
-    wchar_t* buf = new wchar_t[len];
-    MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
-    std::wstring r(buf);
-    delete[] buf;
-    return r;
 }
 
 static std::string GetFilePathExtension(const std::string &FileName) {

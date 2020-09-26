@@ -23,9 +23,6 @@
 
 #include "cpProjectView.h"
 
-#include <chrono>
-#include <thread>
-
 #include "cmdline.h"
 
 #ifdef USE_MESHOPTIMIZER
@@ -39,9 +36,13 @@
 #include <assimp/Exporter.hpp>
 #endif
 
-#include "../../_Plugins/Common/gltf/GltfCommon.h"
-#include "tiny_gltf2.h"
-#include "tiny_gltf2_utils.h"
+#include <gltf/GltfCommon.h>
+#include <gltf/tiny_gltf2.h>
+#include <gltf/tiny_gltf2_utils.h>
+
+#include <fstream>
+#include <chrono>
+#include <thread>
 
 #define STATUS_SUCCESS (0x00000000)
 // ToDo(s)
@@ -329,7 +330,9 @@ void ProjectView::setCurrentProjectName(QString filePathName)
         m_curProjectFilePathName = fileInfo.dir().path();
         m_curProjectFilePathName.append(QDir::separator());
         m_curProjectFilePathName.append(filename);
+        #ifdef _WIN32
         m_curProjectFilePathName.replace("/", "\\"); 
+        #endif
     }
     else
     {

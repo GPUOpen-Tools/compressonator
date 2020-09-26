@@ -1,15 +1,23 @@
-cmake_minimum_required(VERSION 3.5)
-project(CMP_Core_Tests)
 
-add_executable(Tests TestsMain.cpp)
-add_subdirectory(../../../Common/Lib/Ext/Catch2
-                Common/Lib/Ext/Catch2/bin)
-target_sources(Tests 
-                PRIVATE
-                CompressonatorTests.cpp
-                CompressonatorTests.h
-                BlockConstants.h
-		../../Applications/_Plugins/Common/UtilFuncs.cpp
-		../../Applications/_Plugins/Common/UtilFuncs.h
-                )
-target_link_libraries(Tests Catch2::Catch2 CMP_Core)
+add_executable(CMP_Core_Tests_BIN)
+
+target_sources(CMP_Core_Tests_BIN 
+    PRIVATE
+        BlockConstants.h
+        CompressonatorTests.cpp
+        CompressonatorTests.h
+        TestsMain.cpp
+)
+
+target_link_libraries(CMP_Core_Tests_BIN 
+    PRIVATE 
+        ExtCatch2 
+        CMP_Core
+        Plugin_Common_UtilFuncs
+)
+
+set_target_properties(CMP_Core_Tests_BIN PROPERTIES FOLDER Tests)
+
+add_test(NAME CMP_Core_Tests
+    COMMAND $<TARGET_FILE:CMP_Core_Tests_BIN>
+)

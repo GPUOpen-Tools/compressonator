@@ -1902,7 +1902,7 @@ public:
 //#ifdef USE_GLTF_OPENGL 
 //        m_GLTFRenderWith       = RenderModelsWith::glTF_OpenGL;
 //#else
-        m_GLTFRenderWith = RenderModelsWith::glTF_DX12_EX;
+        m_GLTFRenderWith = RenderModelsWith::glTF_Vulkan;
 //#endif
     }
 
@@ -2032,6 +2032,17 @@ public:
 
     void setGLTFRender(RenderModelsWith renderwith)
     {
+#ifndef NDEBUG
+#if !OPTION_CMP_DIRECTX
+        assert(renderwith != RenderModelsWith::glTF_DX12_EX);
+#endif
+#if !OPTION_CMP_OPENGL
+        assert(renderwith != RenderModelsWith::glTF_OpenGL);
+#endif
+#if !OPTION_CMP_VULKAN
+        assert(renderwith != RenderModelsWith::glTF_Vulkan);
+#endif
+#endif
         m_GLTFRenderWith = renderwith;
     }
 

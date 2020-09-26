@@ -25,8 +25,6 @@
 
 #include "BC2.h"
 
-//#define BUILD_AS_PLUGIN_DLL
-
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_BC1)
 SET_PLUGIN_TYPE("ENCODER")

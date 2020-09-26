@@ -26,6 +26,8 @@
 
 #include "Common_Def.h"
 
+#include <cmath>
+
 #ifndef ASPM_GPU
 
 #include <cmath>

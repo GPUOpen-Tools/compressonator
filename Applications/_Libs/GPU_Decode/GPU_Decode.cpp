@@ -25,14 +25,13 @@
 //=====================================================================
 
 #ifdef _WIN32
-#ifndef DISABLE_TESTCODE
 #include "GPU_DecodeBase.h"
 #include "GPU_Decode.h"
 #include "PluginInterface.h"
 
-extern PluginManager    g_pluginManager;
+#include <Windows.h>
 
-using namespace GPU_Decode;
+extern PluginManager    g_pluginManager;
 
 PluginInterface_GPUDecode   *g_GPUDecode_plugin = NULL;
 
@@ -113,5 +112,4 @@ CMP_ERROR CMP_API CMP_DecompressTexture(
 
     return CMP_OK;
 }
-#endif
 #endif

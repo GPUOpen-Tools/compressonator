@@ -22,12 +22,16 @@
 //
 #include "mesh_tootle.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "Timer.h"
+
+#include "ModelData.h"
 #include "TC_PluginAPI.h"
 #include "TC_PluginInternal.h"
 #include "Compressonator.h"
-#include "Timer.h"
+#include "PluginInterface.h"
+
+#include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
 #include <filesystem>
 #include <fstream>
@@ -40,10 +44,11 @@ SET_PLUGIN_NAME("TOOTLE")
 void *make_Plugin_Mesh_Tootle() { return new Plugin_Mesh_Tootle; }
 #endif
 
+namespace CMP_Mesh_Tootle {
+    CMIPS *g_CMIPS = nullptr;
+}
 
-PluginManager          g_pluginManager;
-bool                   g_bAbortCompression = false;
-CMIPS*                 g_CMIPS = NULL;
+using namespace CMP_Mesh_Tootle;
 
 Plugin_Mesh_Tootle::Plugin_Mesh_Tootle()
 {
@@ -121,12 +126,9 @@ int Plugin_Mesh_Tootle::CleanUp()
 
 void getFileName(const char *FilePathName, char *fnameExt, int maxbuffsize)
 {
-    char drive[_MAX_DRIVE];
-    char dir[_MAX_DIR];
-    char ext[_MAX_EXT];
-    char fname[_MAX_FNAME];
-    _splitpath_s(FilePathName, drive, _MAX_DRIVE, dir, _MAX_DIR, fname, _MAX_FNAME, ext, _MAX_EXT);
-    snprintf(fnameExt, maxbuffsize, "%s%s", fname, ext);
+    std::filesystem::path filePath(FilePathName);
+    
+    snprintf(fnameExt, maxbuffsize, "%s%s", filePath.filename().c_str(), filePath.extension().c_str());
 }
 
 //=================================================================================================================================
@@ -784,8 +786,14 @@ void* Plugin_Mesh_Tootle::ProcessMesh(void* data, void* setting, void* statOut, 
 
     if (g_CMIPS)
     {
+        #ifdef _WIN32
         char fname[_MAX_FNAME];
         getFileName(m_settings.pDestMeshName, fname, _MAX_FNAME);
+        #else
+        char fname[256];
+        getFileName(m_settings.pDestMeshName, fname, 256);
+        #endif
+        
         g_CMIPS->Print("Saving Output File %s...", fname);
     }
     if (m_settings.bOptimizeVertexMemory)

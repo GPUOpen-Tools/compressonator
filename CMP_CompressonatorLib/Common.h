@@ -24,6 +24,11 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#ifndef NO_LEGACY_BEHAVIOR
+#include "UseDefinitions.h"
+#endif
+#include "Compressonator.h"
+
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
@@ -31,13 +36,9 @@
 #include <string>
 #include <cstring>
 
-#include "Compressonator.h"
-
-using namespace std;
-
 #pragma warning( push )
 #pragma warning(disable:4244)
-#include "half.h"
+#include <half.h>
 #pragma warning( pop )
 
 #ifndef CMP_MAKEFOURCC

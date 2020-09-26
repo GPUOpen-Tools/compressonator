@@ -1,3 +1,6 @@
+# Specify filepatterns you want git to ignore.
+
+.dependencies-initialized
 *.log
 *.pdb
 *.pdb
@@ -6,11 +9,15 @@
 *.vs
 *CMakeLists.txt.user
 *vcxproj.user
-Compressonator/Applications/_Plugins/C3DModel_viewers/glTF_DX12_EX/GeneratedFiles/*
-Compressonator/Applications/_Plugins/C3DModel_viewers/glTF_OpenGL/GeneratedFiles/*
-Compressonator/Applications/CompressonatorCLI/Make/buildCLI_linux_package.sh
-Compressonator/Applications/CompressonatorGUI/GeneratedFiles/Debug_MD/*
-Compressonator/Applications/CompressonatorGUI/GeneratedFiles/qrc_CompressonatorGUI.cpp
-Compressonator/Applications/CompressonatorGUI/GeneratedFiles/Release_MD/*
-Compressonator/Build/*
+Applications/_Plugins/C3DModel_viewers/glTF_DX12_EX/GeneratedFiles/*
+Applications/_Plugins/C3DModel_viewers/glTF_OpenGL/GeneratedFiles/*
+Applications/CompressonatorCLI/Make/buildCLI_linux_package.sh
+Applications/CompressonatorGUI/GeneratedFiles/Debug_MD/*
+Applications/CompressonatorGUI/GeneratedFiles/qrc_CompressonatorGUI.cpp
+Applications/CompressonatorGUI/GeneratedFiles/Release_MD/*
+build-out/*
+build/*
+Build/*
 docs/build/*
+External/build-out/*
+External/build/*

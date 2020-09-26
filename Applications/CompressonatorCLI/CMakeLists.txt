@@ -1,95 +1,96 @@
-cmake_minimum_required(VERSION 3.10)
 
-set(CMAKE_CXX_STANDARD 11)
+add_executable(CompressonatorCLI-bin)
 
-add_executable(CompressonatorCLI-bin "")
+set_target_properties(CompressonatorCLI-bin PROPERTIES
+    OUTPUT_NAME "compressonator"
+)
 
-target_sources(CompressonatorCLI-bin
-               PRIVATE
-               Source/CompressonatorCLI.cpp
-               Source/CompressonatorCLI_Documentation.h
-               ../_Plugins/Common/ATIFormats.h
-               ../_Plugins/Common/ATIFormats.cpp
-               ../_Plugins/Common/cmdline.h
-               ../_Plugins/Common/cmdline.cpp
-               ../_Plugins/Common/CMP_FileIO.h
-               ../_Plugins/Common/CMP_FileIO.cpp
-               ../_Plugins/Common/ModelData.h
-               ../_Plugins/Common/ModelData.cpp
-               ../_Plugins/Common/PluginInterface.h
-               ../_Plugins/Common/PluginManager.h
-               ../_Plugins/Common/PluginManager.cpp
-               ../_Plugins/Common/query_timer.h
-               ../_Plugins/Common/query_timer.cpp
-               ../_Plugins/Common/TextureIO.h
-               ../_Plugins/Common/TextureIO.cpp
-               ../_Plugins/Common/gltf/tiny_gltf2.h
-               ../_Plugins/Common/gltf/tiny_gltf2_utils.h
-               ../_Plugins/Common/gltf/tiny_gltf2_utils.cpp
-               )
-
-target_include_directories(CompressonatorCLI-bin
-                           PRIVATE
-                           Source
-                           ../_Plugins/Common
-                           ../_Plugins/Common/json
-                           ../_Plugins/Common/gltf
-                           ../_Plugins/CMesh/mesh_optimizer
-                           ../_Libs/GPU_Decode
-                           ../_Libs/CMP_MeshOptimizer
-                           ../_Libs/CMP_Math
-                           ../../CMP_CompressonatorLib
-                           ../../CMP_Framework/
-                           ../../CMP_Framework/Common/half
-                           ../../CMP_Core/shaders
-                           ../../CMP_Core/source
-                           ${draco_INCLUDE_DIRS}
-                           ${OpenEXR_INCLUDE_DIRS}
-                           ${Qt5Gui_INCLUDE_DIRS})
-
-if(APPLE)
-target_include_directories(CompressonatorCLI-bin
-                           PRIVATE
-                           /usr/local/include/OpenEXR/)
+if(CMP_HOST_WINDOWS)
+    set_target_properties(CompressonatorCLI-bin PROPERTIES 
+        WIN32_EXECUTABLE ON
+        VS_DEBUGGER_WORKING_DIRECTORY $<TARGET_FILE_DIR:CompressonatorCLI-bin>
+    )
+elseif(CMP_HOST_APPLE)
+    set_target_properties(CompressonatorCLI-bin PROPERTIES
+        LINK_FLAGS "-Wl,-F${CMAKE_OSX_SYSROOT}/System/Library/Frameworks,-v"
+    )
 endif()
 
-# Qt5 include path - users install required
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+target_compile_definitions(CompressonatorCLI-bin PUBLIC
+    -DUSE_WITH_COMMANDLINE_TOOL
+#    -DUSE_CMP_SDK
+#    -DUSE_AMD_PNG
+)
 
-if (UNIX)
-target_compile_definitions(CompressonatorCLI-bin PRIVATE _LINUX)
+target_sources(CompressonatorCLI-bin PRIVATE
+
+    Source/CompressonatorCLI.cpp
+    Source/CompressonatorCLI_Documentation.h
+)
+
+target_include_directories(CompressonatorCLI-bin PRIVATE
+
+   Source
+)
+
+target_link_libraries(CompressonatorCLI-bin 
+    PRIVATE
+        CMP_FileIO
+        CMP_Core
+        CMP_FrameworkLIB
+        CMP_MeshCompressor
+        CMP_MeshOptimizer
+        CompressonatorLIB
+
+        ExtOpenEXR
+        GPU_Decode
+        Plugin_C3DModel_Loaders
+        Plugin_CCMP_Encode
+        Plugin_CCMP_SDK
+        Plugin_CGPUDecode
+        Plugin_CmdLine
+        Plugin_CMesh_Mesh_Optimizer
+        Plugin_Common_QueryPerformance
+        Plugin_GLTF
+
+        # Real plugins
+        Plugin_CImage
+        Plugin_CAnalysis
+)
+
+if (OPTION_USE_QT_IMAGELOAD)
+    target_link_libraries(CompressonatorCLI-bin 
+        PRIVATE
+            ExtQt5
+    )
 endif()
 
-set (CMP_LIBS "")
-if (UNIX)
-    list(APPEND CMP_LIBS Compressonator
-                         CMP_Framework
-                         CMP_MeshCompressor
-                         ASTC
-                         EXR
-                         KTX
-                         TGA
-                         Analysis)
-    if(NOT APPLE)
-        list(APPEND CMP_LIBS Threads::Threads
-                             ${OpenEXR_LIBRARIES})
-    else()
-        list(APPEND CMP_LIBS "/usr/lib/libz.dylib")
-        list(APPEND CMP_LIBS "/usr/local/lib/libHalf.dylib")
-        list(APPEND CMP_LIBS "/usr/local/lib/libImath.dylib")
-        list(APPEND CMP_LIBS "/usr/local/lib/libIlmThread.dylib")
-        list(APPEND CMP_LIBS "/usr/local/lib/libIex.dylib")
-        list(APPEND CMP_LIBS "/usr/local/lib/libIlmImf.dylib")
-    endif()
+if (OPTION_BUILD_TESTING)
+    add_subdirectory(Tests)
 endif()
 
-list(APPEND CMP_LIBS ${Boost_LIBRARIES}
-                     ${OpenCV_LIBRARIES}
-                     ${draco_LIBRARIES})
+include(CopyFiles.cmake)
 
-target_link_libraries(CompressonatorCLI-bin
-                      ${CMP_LIBS}
-                      Qt5::Gui
-                      )
+set_target_properties(CompressonatorCLI-bin PROPERTIES FOLDER ${FOLDER_NAME})
 
-install(TARGETS CompressonatorCLI-bin)
+if (CMAKE_GENERATOR STREQUAL "Unix Makefiles")
+    install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        DESTINATION .
+        USE_SOURCE_PERMISSIONS
+        PATTERN "cmake_install.cmake" EXCLUDE
+        PATTERN "CMakeFiles*" EXCLUDE
+        PATTERN "CTestTestfile.cmake" EXCLUDE
+        PATTERN "Makefile" EXCLUDE
+        PATTERN "Tests*" EXCLUDE
+    )
+elseif (CMAKE_GENERATOR STREQUAL "Visual Studio 16 2019")
+    install(DIRECTORY "$<TARGET_FILE_DIR:CompressonatorCLI-bin>"
+        DESTINATION "./CompressonatorCLI"
+        USE_SOURCE_PERMISSIONS
+    )
+elseif (CMAKE_GENERATOR STREQUAL "Xcode")
+    install(DIRECTORY "$<TARGET_FILE_DIR:CompressonatorCLI-bin>"
+        DESTINATION "./CompressonatorCLI"
+        USE_SOURCE_PERMISSIONS
+    )
+endif()

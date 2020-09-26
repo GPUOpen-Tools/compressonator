@@ -18,6 +18,15 @@
 // THE SOFTWARE.
 
 #pragma once
+
+#include "ResourceViewHeapsDX12.h"
+#include "StaticBufferPoolDX12.h"
+
+#include <windows.h>
+#include <d3d12.h>
+
+#include <string>
+
 class PostProcPS
 {
 public:

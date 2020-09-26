@@ -20,8 +20,6 @@
 #pragma once
 
 
-#include <QtWidgets/qwidget.h>
-
 #include <D3D12.h>
 
 #include "GltfFeatures.h"
@@ -36,8 +34,9 @@
 #include "Camera.h"
 #include "GPUTimestampsDX12.h"
 
-#include <ImGui_DX12.h>
-#include "imgui/imgui.h"
+#include "DX12Util/ImguiDX12.h"
+#include <imgui/imgui.h>
+#include <qtimgui/ImGui_DX12Renderer.h>
 
 #include "GltfPbr.h"
 #include "GltfDepthPass.h"

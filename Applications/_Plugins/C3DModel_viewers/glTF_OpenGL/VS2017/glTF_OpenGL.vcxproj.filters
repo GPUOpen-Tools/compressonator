@@ -98,6 +98,9 @@
     <ClCompile Include="..\GeneratedFiles\Debug_MD\moc_ImGui_OpenGLRenderer.cpp">
       <Filter>Generated Files\Debug_MD</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Common\MipsToQImage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Common\TC_PluginAPI.h">
@@ -150,6 +153,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Common\qtimgui\ImGUI_OpenGL.h">
       <Filter>qtImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\MipsToQImage.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
