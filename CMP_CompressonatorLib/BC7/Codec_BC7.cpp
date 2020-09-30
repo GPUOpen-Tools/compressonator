@@ -279,8 +279,6 @@ CodecError CCodec_BC7::InitializeBC7Library()
 
         // One time initialisation for quantizer and shaker
         Quant_Init();
-        init_ramps();
-
 
         for(CMP_DWORD i=0; i < MAX_BC7_THREADS; i++)
         {

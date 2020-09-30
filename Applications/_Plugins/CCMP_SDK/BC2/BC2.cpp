@@ -83,10 +83,6 @@ char *Plugin_BC2::TC_ComputeSourceFile(CGU_UINT32  Compute_type)
 {
     switch (Compute_type)
     {
-        case CMP_Compute_type::CMP_HPC:
-            // ToDo : Add features
-            break;
-        case CMP_Compute_type::CMP_GPU:
         case CMP_Compute_type::CMP_GPU_OCL:
                     return(GPU_OCL_BC2_COMPUTEFILE);
         case CMP_Compute_type::CMP_GPU_DXC:

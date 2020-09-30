@@ -1,9 +1,15 @@
 # Compressonator GUI
+# this must be before add_executable
+link_directories(
+    ${PROJECT_SOURCE_DIR}/../common/lib/ext/opencv/2.49/x64/VS2015/lib
+    ${PROJECT_SOURCE_DIR}/../common/lib/ext/directxtex/DirectXTex-jun2020b/DirectXTex/Bin/Desktop_2017/x64
+    ${PROJECT_SOURCE_DIR}/../common/lib/ext/zlib/zlib-1.2.10/VS2015/x64/lib
+    ${PROJECT_SOURCE_DIR}/../common/lib/ext/openexr/ilmbase-2.2.0/VS2015/x64/lib
+    ${PROJECT_SOURCE_DIR}/../common/lib/ext/openexr/openexr-2.2.0/VS2015/x64/lib
+    )
 
 # Enable automoc and autorcc
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-# get_property(Qt5Core_VERSION_MAJOR GLOBAL PROPERTY Qt5Core_VERSION_MAJOR)
-# get_property(Qt5Core_VERSION_MINOR GLOBAL PROPERTY Qt5Core_VERSION_MINOR)
+set(CMAKE_INCLUDE_CURRENT_DIR ON) 
 
 add_subdirectory(Common)
 add_subdirectory(Components)
@@ -13,11 +19,17 @@ add_subdirectory(QPropertyPages)
 # Compressonator GUI Application
 add_executable(CompressonatorGUI-bin)
 
+add_dependencies(CompressonatorGUI-bin extern_ktx)
+
 set_target_properties(CompressonatorGUI-bin PROPERTIES
     AUTOMOC ON
     AUTORCC ON
     AUTOMOC_COMPILER_PREDEFINES ON
+    OUTPUT_NAME "compressonator"
 )
+
+# Find the QtWidgets library
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 
 if(CMP_HOST_WINDOWS)
     set_target_properties(CompressonatorGUI-bin PROPERTIES 
@@ -40,12 +52,12 @@ file(GLOB_RECURSE SRCS
 
 file(GLOB_RECURSE IMAGES
 
-    Images/*
+    images/*
 )
 
 file(GLOB_RECURSE RESOURCES
 
-    Resources/*
+    resources/*
 )
 
 target_sources(CompressonatorGUI-bin PRIVATE
@@ -56,14 +68,17 @@ target_sources(CompressonatorGUI-bin PRIVATE
 )
 
 target_include_directories(CompressonatorGUI-bin PRIVATE
-
+     ${PROJECT_SOURCE_DIR}/CMP_CompressonatorLib
     ./Resources
     ./Source
 )
 
 target_link_libraries(CompressonatorGUI-bin 
 
-    PRIVATE    
+    PRIVATE
+        # Static libs
+        ExtKTX
+        ExtGLEW
         CMP_GUI
         CMP_GUI_BIN_Common
         CMP_GUI_BIN_Components
@@ -72,19 +87,21 @@ target_link_libraries(CompressonatorGUI-bin
         CMP_Mesh
         CompressonatorLIB
         GPU_Decode
+
+        # Static plugin libs
         Plugin_CImage
         Plugin_Common_UtilFuncs
         Plugin_GLTF
         Plugin_PluginManager
         Plugin_TCPluginAPI
 
-        # Real plugins
+        # Dynamic plugins
         CMP_MeshCompressor
         Plugin_C3DModel_Loaders
         Plugin_C3DModel_Viewers
         Plugin_CGPUDecode
         Plugin_CMesh
-)
+) 
 
 include(CopyFiles.cmake)
 
@@ -115,3 +132,12 @@ elseif (CMAKE_GENERATOR STREQUAL "Xcode")
         USE_SOURCE_PERMISSIONS
     )
 endif()
+
+
+
+#============== Helper to show all currently accessable variables in cmake
+# get_cmake_property(_variableNames VARIABLES)
+# list (SORT _variableNames) 
+# foreach (_variableName ${_variableNames})
+#     message(STATUS "${_variableName}=${${_variableName}}")
+# endforeach()

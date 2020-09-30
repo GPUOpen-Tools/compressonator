@@ -227,7 +227,7 @@ private slots:
     void handleHDRon();
 #endif
 
-    void onGenerateMIPMap(int nMinSize, QTreeWidgetItem *item); // Generate the MIP levels on selected item(s)
+    void onGenerateMIPMap(CMP_CFilterParams m_CFilterParams, QTreeWidgetItem* item);  // Generate the MIP levels on selected item(s)
 
     void deleteImageFile();
     void onCompressionDone();

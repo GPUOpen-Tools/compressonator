@@ -1,5 +1,7 @@
 # Externals CMakeLists.txt
 
+message(STATUS "++++++++++++++++++OpenEXR Custom TargetCalled" )
+
 set(OPENEXR_VERSION 5754217)
 get_filename_component(OPENEXR_DIR ${COMPRESSONATOR_PROJECT_DIR}/External/openexr ABSOLUTE)
 set(OPENEXR_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/openexr-${OPENEXR_VERSION})

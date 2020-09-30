@@ -42,7 +42,7 @@ void CompressBlockBC4_Internal(const CMP_Vec4uc srcBlockTemp[16],
 
   CGU_Vec2ui cmpBlock;
 
-  cmpBlock = cmp_compressAlphaBlock(alphaBlock,BC15options->m_fquality);
+  cmpBlock = cmp_compressAlphaBlock(alphaBlock,BC15options->m_fquality,FALSE);
   compressedBlock[0] = cmpBlock.x;
   compressedBlock[1] = cmpBlock.y;
 }
@@ -76,11 +76,9 @@ void CompressBlockBC4_SingleChannel(const CGU_UINT8 srcBlockTemp[BLOCK_SIZE_4X4]
   for (CGU_INT32 i = 0; i < BLOCK_SIZE_4X4; i++) alphaBlock[i] = (srcBlockTemp[i] / 255.0f);
 
   CGU_Vec2ui cmpBlock;
-  cmpBlock = cmp_compressAlphaBlock(alphaBlock,BC15options->m_fquality);
+  cmpBlock           = cmp_compressAlphaBlock(alphaBlock, BC15options->m_fquality, FALSE);
   compressedBlock[0] = cmpBlock.x;
   compressedBlock[1] = cmpBlock.y;
-
-
 }
 
 void DecompressBlockBC4_SingleChannel(CGU_UINT8 srcBlockTemp[16],
@@ -88,6 +86,33 @@ void DecompressBlockBC4_SingleChannel(CGU_UINT8 srcBlockTemp[16],
                             const CMP_BC15Options *BC15options) {
   if (BC15options) {}
   cmp_decompressAlphaBlock(srcBlockTemp, compressedBlock);
+}
+
+
+void CompressBlockBC4S_SingleChannel(const CGU_INT8 srcBlockTemp[BLOCK_SIZE_4X4],
+                                    CMP_GLOBAL CGU_INT32 compressedBlock[2],
+                                    CMP_GLOBAL const CMP_BC15Options* BC15options)
+{
+    if (BC15options)
+    {
+    }
+    CGU_FLOAT alphaBlock[BLOCK_SIZE_4X4];
+
+    for (CGU_INT32 i = 0; i < BLOCK_SIZE_4X4; i++)
+        alphaBlock[i] = (srcBlockTemp[i] / 255.0f);
+
+    CGU_Vec2ui cmpBlock;
+    cmpBlock           = cmp_compressAlphaBlock(alphaBlock, BC15options->m_fquality, TRUE);
+    compressedBlock[0] = cmpBlock.x;
+    compressedBlock[1] = cmpBlock.y;
+}
+
+void DecompressBlockBC4S_SingleChannel(CGU_INT8 srcBlockTemp[16], const CGU_INT32 compressedBlock[2], const CMP_BC15Options* BC15options)
+{
+    if (BC15options)
+    {
+    }
+    cmp_decompressAlphaBlockS(srcBlockTemp, compressedBlock);
 }
 
 //============================================== USER INTERFACES ========================================================
@@ -178,6 +203,50 @@ int CMP_CDECL DecompressBlockBC4(const unsigned char cmpBlock[8],
         SetDefaultBC15Options(BC15options);
     }
     DecompressBlockBC4_SingleChannel(srcBlock, (CGU_UINT32 *)cmpBlock,BC15options);
+    return CGU_CORE_OK;
+}
+
+
+int CMP_CDECL CompressBlockBC4S(const char* srcBlock, unsigned int srcStrideInBytes, CMP_GLOBAL char cmpBlock[8], const void* options = NULL)
+{
+    char inBlock[16];
+    //----------------------------------
+    // Fill the inBlock with source data
+    //----------------------------------
+    CGU_INT srcpos = 0;
+    CGU_INT dstptr = 0;
+    for (CGU_UINT8 row = 0; row < 4; row++)
+    {
+        srcpos = row * srcStrideInBytes;
+        for (CGU_UINT8 col = 0; col < 4; col++)
+        {
+            inBlock[dstptr++] = CGU_UINT8(srcBlock[srcpos++]);
+        }
+    }
+
+    CMP_BC15Options* BC15options = (CMP_BC15Options*)options;
+    if (BC15options == NULL)
+    {
+        CMP_BC15Options BC15optionsDefault;
+        BC15options = &BC15optionsDefault;
+        SetDefaultBC15Options(BC15options);
+    }
+
+    CompressBlockBC4S_SingleChannel(inBlock, (CMP_GLOBAL CGU_INT32*)cmpBlock, BC15options);
+    return CGU_CORE_OK;
+}
+
+
+int CMP_CDECL DecompressBlockBC4S(const char cmpBlock[8], CMP_GLOBAL char srcBlock[16], const void* options = NULL)
+{
+    CMP_BC15Options* BC15options = (CMP_BC15Options*)options;
+    CMP_BC15Options  BC15optionsDefault;
+    if (BC15options == NULL)
+    {
+        BC15options = &BC15optionsDefault;
+        SetDefaultBC15Options(BC15options);
+    }
+    DecompressBlockBC4S_SingleChannel(srcBlock, (CGU_INT32*)cmpBlock, BC15options);
     return CGU_CORE_OK;
 }
 #endif

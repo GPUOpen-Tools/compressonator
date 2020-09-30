@@ -29,11 +29,11 @@ CGU_Vec4ui CompressBC5Block_Internal(CMP_IN CGU_FLOAT aBlockU[16], CMP_IN CGU_FL
     CGU_Vec4ui   compBlock;
     CGU_Vec2ui cmpBlock;
 
-    cmpBlock = cmp_compressAlphaBlock(aBlockU,fquality);
+    cmpBlock    = cmp_compressAlphaBlock(aBlockU, fquality, FALSE);
     compBlock.x = cmpBlock.x;
     compBlock.y = cmpBlock.y;
 
-    cmpBlock = cmp_compressAlphaBlock(aBlockV,fquality);
+    cmpBlock    = cmp_compressAlphaBlock(aBlockV, fquality, FALSE);
     compBlock.z = cmpBlock.x;
     compBlock.w = cmpBlock.y;
     return compBlock;
@@ -119,11 +119,11 @@ void  CompressBlockBC5_DualChannel_Internal(const CGU_UINT8 srcBlockR[16],
         srcAlphaGF[i] = (CGU_FLOAT)( srcBlockG[i] ) / 255.0f;
     } 
 
-    cmpBlock = cmp_compressAlphaBlock(srcAlphaRF,BC15options->m_fquality);
+    cmpBlock           = cmp_compressAlphaBlock(srcAlphaRF, BC15options->m_fquality, FALSE);
     compressedBlock[0] = cmpBlock.x;
     compressedBlock[1] = cmpBlock.y;
 
-    cmpBlock = cmp_compressAlphaBlock(srcAlphaGF,BC15options->m_fquality);
+    cmpBlock           = cmp_compressAlphaBlock(srcAlphaGF, BC15options->m_fquality, FALSE);
     compressedBlock[2] = cmpBlock.x;
     compressedBlock[3] = cmpBlock.y;
 }
@@ -137,6 +137,47 @@ void  DecompressBC5_DualChannel_Internal(CMP_GLOBAL CGU_UINT8 srcBlockR[16],
     cmp_decompressAlphaBlock(srcBlockR, &compressedBlock[0]);
     cmp_decompressAlphaBlock(srcBlockG, &compressedBlock[2]);
 }
+
+
+void CompressBlockBC5S_DualChannel_Internal(const CGU_INT8 srcBlockR[16],
+                                           const CGU_INT8 srcBlockG[16],
+                                           CMP_GLOBAL CGU_INT32 compressedBlock[4],
+                                           CMP_GLOBAL const CMP_BC15Options* BC15options)
+{
+    if (BC15options)
+    {
+    }
+    CGU_Vec2ui cmpBlock;
+    CGU_FLOAT  srcAlphaRF[16];
+    CGU_FLOAT  srcAlphaGF[16];
+
+    for (CGU_INT i = 0; i < 16; i++)
+    {
+        srcAlphaRF[i] = (CGU_FLOAT)(srcBlockR[i]) / 255.0f;
+        srcAlphaGF[i] = (CGU_FLOAT)(srcBlockG[i]) / 255.0f;
+    }
+
+    cmpBlock           = cmp_compressAlphaBlock(srcAlphaRF, BC15options->m_fquality, FALSE);
+    compressedBlock[0] = cmpBlock.x;
+    compressedBlock[1] = cmpBlock.y;
+
+    cmpBlock           = cmp_compressAlphaBlock(srcAlphaGF, BC15options->m_fquality, FALSE);
+    compressedBlock[2] = cmpBlock.x;
+    compressedBlock[3] = cmpBlock.y;
+}
+
+void DecompressBC5S_DualChannel_Internal(CMP_GLOBAL CGU_INT8 srcBlockR[16],
+                                        CMP_GLOBAL CGU_INT8   srcBlockG[16],
+                                        const CGU_INT32       compressedBlock[4],
+                                        const CMP_BC15Options* BC15options)
+{
+    if (BC15options)
+    {
+    }
+    cmp_decompressAlphaBlockS(srcBlockR, &compressedBlock[0]);
+    cmp_decompressAlphaBlockS(srcBlockG, &compressedBlock[2]);
+}
+
 #endif
 
 //============================================== USER INTERFACES ========================================================
@@ -251,6 +292,75 @@ int  CMP_CDECL DecompressBlockBC5(const CGU_UINT8 cmpBlock[16],
 
     return CGU_CORE_OK;
 }
+
+int CMP_CDECL CompressBlockBC5S(const CGU_INT8* srcBlockR,
+                               unsigned int     srcStrideInBytes1,
+                               const CGU_INT8* srcBlockG,
+                               unsigned int     srcStrideInBytes2,
+                               CMP_GLOBAL CGU_INT8 cmpBlock[16],
+                               const void*          options = NULL)
+{
+    CGU_INT8 inBlockR[16];
+
+    //----------------------------------
+    // Fill the inBlock with source data
+    //----------------------------------
+    CGU_INT srcpos = 0;
+    CGU_INT dstptr = 0;
+    for (CGU_UINT8 row = 0; row < 4; row++)
+    {
+        srcpos = row * srcStrideInBytes1;
+        for (CGU_UINT8 col = 0; col < 4; col++)
+        {
+            inBlockR[dstptr++] = CGU_UINT8(srcBlockR[srcpos++]);
+        }
+    }
+
+    CGU_INT8 inBlockG[16];
+    //----------------------------------
+    // Fill the inBlock with source data
+    //----------------------------------
+    srcpos = 0;
+    dstptr = 0;
+    for (CGU_UINT8 row = 0; row < 4; row++)
+    {
+        srcpos = row * srcStrideInBytes2;
+        for (CGU_UINT8 col = 0; col < 4; col++)
+        {
+            inBlockG[dstptr++] = CGU_UINT8(srcBlockG[srcpos++]);
+        }
+    }
+
+    CMP_BC15Options* BC15options = (CMP_BC15Options*)options;
+    CMP_BC15Options  BC15optionsDefault;
+    if (BC15options == NULL)
+    {
+        BC15options = &BC15optionsDefault;
+        SetDefaultBC15Options(BC15options);
+    }
+
+    CompressBlockBC5S_DualChannel_Internal(inBlockR, inBlockG, (CMP_GLOBAL CGU_INT32*)cmpBlock, BC15options);
+    return CGU_CORE_OK;
+}
+
+int CMP_CDECL DecompressBlockBC5S(const CGU_INT8 cmpBlock[16],
+                                 CMP_GLOBAL CGU_INT8 srcBlockR[16],
+                                 CMP_GLOBAL CGU_INT8 srcBlockG[16],
+                                 const void*          options = NULL)
+{
+    CMP_BC15Options* BC15options = (CMP_BC15Options*)options;
+    CMP_BC15Options  BC15optionsDefault;
+    if (BC15options == NULL)
+    {
+        BC15options = &BC15optionsDefault;
+        SetDefaultBC15Options(BC15options);
+    }
+    DecompressBC5S_DualChannel_Internal(srcBlockR, srcBlockG, (CGU_INT32*)cmpBlock, BC15options);
+
+    return CGU_CORE_OK;
+}
+
+
 
 #endif
 

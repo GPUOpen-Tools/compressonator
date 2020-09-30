@@ -77,12 +77,12 @@ std::string GetFileExtension(const char *file, CMP_BOOL incDot, CMP_BOOL upperCa
     if (upperCase)
     {
         for (char& c : file_extension)
-            c = std::toupper(c);
+            c = toupper(c);
     }
     else
     {
         for (char& c : file_extension)
-            c = std::tolower(c);
+            c = tolower(c);
     }
 
     if (!incDot)
@@ -193,7 +193,7 @@ bool IsDestinationUnCompressed(const char *fname)
     
     // tolower
     for(char& c : file_extension)
-        c = std::tolower(c);
+        c =tolower(c);
 
     if (file_extension.compare(".dds") == 0)
     {
@@ -231,7 +231,7 @@ CMP_FORMAT FormatByFileExtension(const char *fname, MipSet *pMipSet)
 
     // To upper
     std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(),
-                   [](unsigned char c) -> unsigned char { return std::tolower(c); });
+                   [](unsigned char c) -> unsigned char { return tolower(c); });
 
     pMipSet->m_TextureDataType = TDT_ARGB;
 
@@ -286,6 +286,10 @@ CMP_FORMAT GetFormat(CMP_DWORD dwFourCC)
         case CMP_FOURCC_BC6H:               return CMP_FORMAT_BC6H;
         case CMP_FOURCC_BC7:                return CMP_FORMAT_BC7;
         case CMP_FOURCC_ASTC:               return CMP_FORMAT_ASTC;
+#ifdef USE_APC
+        case CMP_FOURCC_APC:
+            return CMP_FORMAT_APC;
+#endif
 #ifdef USE_GTC
         case CMP_FOURCC_GTC:                return CMP_FORMAT_GTC;
 #endif
@@ -389,41 +393,13 @@ bool FloatFormat(CMP_FORMAT InFormat)
     return false;
 }
 
-bool CompressedFormat(CMP_FORMAT format)
-{
-    switch (format)
-    {
-    case CMP_FORMAT_Unknown:
-    case CMP_FORMAT_ARGB_8888:
-    case CMP_FORMAT_RGB_888:
-    case CMP_FORMAT_RG_8:
-    case CMP_FORMAT_R_8:
-    case CMP_FORMAT_ARGB_2101010:
-    case CMP_FORMAT_ARGB_16:
-    case CMP_FORMAT_RG_16:
-    case CMP_FORMAT_R_16:
-    case CMP_FORMAT_RGBE_32F:
-    case CMP_FORMAT_ARGB_16F:
-    case CMP_FORMAT_RG_16F:
-    case CMP_FORMAT_R_16F:
-    case CMP_FORMAT_ARGB_32F:
-    case CMP_FORMAT_RGB_32F:
-    case CMP_FORMAT_RG_32F:
-    case CMP_FORMAT_R_32F:
-        return (false);
-        break;
-    default:
-        break;
-    }
-    return true;
-}
 
 bool CompressedFileFormat(std::string file)
 {
     std::string file_extension = std::filesystem::path(file).extension().string();
     // To upper
     std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(),
-                   [](unsigned char c) -> unsigned char { return std::toupper(c); });
+                   [](unsigned char c) -> unsigned char { return toupper(c); });
     file_extension.erase(std::remove(file_extension.begin(), file_extension.end(), '.'), file_extension.end());
 
     if (file_extension == "BMP")
@@ -783,8 +759,10 @@ bool KeepSwizzle(CMP_FORMAT destformat)
     switch (destformat)
     {
     case CMP_FORMAT_BC4:
-    case CMP_FORMAT_ATI1N:        // same as BC4
+    case CMP_FORMAT_BC4_S:
+    case CMP_FORMAT_ATI1N:  // same as BC4
     case CMP_FORMAT_BC5:
+    case CMP_FORMAT_BC5_S:
     case CMP_FORMAT_ATI2N:         // same as BC5  channels swizzled to : Green & Red
     case CMP_FORMAT_ATI2N_XY:      // BC5  Red & Green Channel
     case CMP_FORMAT_ATI2N_DXT5:    //
@@ -873,7 +851,7 @@ int AMDSaveMIPSTextureImage(const char *DestFile, MipSet *MipSetIn, bool use_OCV
     std::string file_extension = std::filesystem::path(DestFile).extension().string();
     file_extension.erase(std::remove(file_extension.begin(), file_extension.end(), '.'), file_extension.end());
     for(char& c : file_extension)
-        c = std::toupper(c);
+        c = toupper(c);
 
     PluginInterface_Image *plugin_Image;
 
@@ -961,7 +939,7 @@ int AMDSaveMIPSTextureImage(const char *DestFile, MipSet *MipSetIn, bool use_OCV
 
 bool FormatSupportsQualitySetting(CMP_FORMAT format)
 {
-    return CompressedFormat(format);
+    return CMP_IsCompressedFormat(format);
 }
 
 bool FormatSupportsDXTCBase(CMP_FORMAT format)

@@ -1,6 +1,6 @@
 //=====================================================================
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -92,7 +92,6 @@ CMP_INT CMP_API CMP_CalcMinMipSize(CMP_INT nHeight, CMP_INT nWidth, CMP_INT Mips
     return (nWidth);
 }
 
-
 CMP_ERROR CMP_API CMP_CreateCompressMipSet(CMP_MipSet* pMipSetCMP,CMP_MipSet* pMipSetSRC)
 {
     CMP_CMIPS CMips;
@@ -141,6 +140,103 @@ CMP_ERROR CMP_API CMP_CreateCompressMipSet(CMP_MipSet* pMipSetCMP,CMP_MipSet* pM
     return CMP_OK;
 }
 
+void CMP_calcMSE_PSNRb(MipLevel* pCurMipLevel, CMP_BYTE* pdata1, CMP_BYTE* pdata2, CMP_DOUBLE* outMSE, CMP_DOUBLE* outPSNR, CMP_INT numchannels)
+{
+    CMP_DOUBLE mseRGB      = 0.0;
+    CMP_INT    totalPixels = 0;
+    for (int y = 0; y < pCurMipLevel->m_nHeight; y++)
+    {
+        for (int x = 0; x < pCurMipLevel->m_nWidth; x++)
+        {
+            // calc Gamma for the all color channels
+            for (int i = 0; i < 3 && i < numchannels; i++)
+            {
+                mseRGB += pow(abs(*pdata1 - *pdata2), 2);
+                pdata1++;
+                pdata2++;
+                totalPixels++;
+            }
+            // if alpha skip it
+            if (numchannels > 3)
+            {
+                pdata1++;
+                pdata2++;
+            }
+        }
+    }
+    if (totalPixels == 0)
+        totalPixels = 1;
+    *outMSE = mseRGB / totalPixels;
+    if (*outMSE == 0)
+        *outPSNR = 128;
+    else
+        *outPSNR = 10 * log((1.0 * 255 * 255) / *outMSE) / log(10.0);
+}
+
+template <typename T>
+void CMP_calcMSE_PSNRf(MipLevel* pCurMipLevel, T* pdata1, T* pdata2, CMP_DOUBLE* outMSE, CMP_DOUBLE* outPSNR, CMP_INT numchannels)
+{
+    CMP_DOUBLE mseRGB      = 0.0;
+    CMP_INT    totalPixels = 0;
+    for (int y = 0; y < pCurMipLevel->m_nHeight; y++)
+    {
+        for (int x = 0; x < pCurMipLevel->m_nWidth; x++)
+        {
+            // calc mse for the all color channels
+            for (int i = 0; i < 3 && i < numchannels; i++)
+            {
+                mseRGB += pow(abs(*pdata1 - *pdata2), 2);
+                totalPixels++;
+                pdata1++;
+                pdata2++;
+            }
+            // if alpha skip it
+            if (numchannels > 3)
+            {
+                pdata1++;
+                pdata2++;
+            }
+        }
+    }
+
+    if (totalPixels == 0)
+        totalPixels = 1;
+    *outMSE = mseRGB / totalPixels;
+    if (*outMSE == 0)
+        *outPSNR = 128;
+    else
+        *outPSNR = 10 * log((1.0 * 255 * 255) / *outMSE) / log(10.0);
+}
+
+CMP_ERROR CMP_API CMP_CalcMipSetMSE_PSNR(CMP_MipSet* src1, CMP_MipSet* src2, CMP_INT nMipLevel, CMP_INT nFaceOrSlice, CMP_DOUBLE* outMSE, CMP_DOUBLE* outPSNR)
+{
+    if ((!src1) || (!src2))
+        return CMP_ERR_GENERIC;
+    // sanity checks
+    if (src1->m_nHeight != src2->m_nHeight)
+        return CMP_ERR_GENERIC;
+    CMIPS     CMips;
+    MipLevel* pCurMipLevel1;
+    MipLevel* pCurMipLevel2;
+    *outMSE  = 0.0f;
+    *outPSNR = 0.0f;
+
+    pCurMipLevel1 = CMips.GetMipLevel(src1, nMipLevel, nFaceOrSlice);
+    if (!pCurMipLevel1)
+        return CMP_ERR_INVALID_SOURCE_TEXTURE;
+    pCurMipLevel2 = CMips.GetMipLevel(src2, nMipLevel, nFaceOrSlice);
+    if (!pCurMipLevel2)
+        return CMP_ERR_INVALID_SOURCE_TEXTURE;
+
+    if (src1->m_ChannelFormat == CF_8bit)
+        CMP_calcMSE_PSNRb(pCurMipLevel1, pCurMipLevel1->m_pbData, pCurMipLevel2->m_pbData, outMSE, outPSNR, 4);
+    else if (src1->m_ChannelFormat == CF_Float16)
+        CMP_calcMSE_PSNRf(pCurMipLevel1, pCurMipLevel1->m_phfsData, pCurMipLevel2->m_phfsData, outMSE, outPSNR, 4);
+    else if (src1->m_ChannelFormat == CF_Float32)
+        CMP_calcMSE_PSNRf(pCurMipLevel1, pCurMipLevel1->m_pfData, pCurMipLevel2->m_pfData, outMSE, outPSNR, 4);
+    return CMP_OK;
+}
+
 CMP_INT CMP_MaxFacesOrSlices(const CMP_MipSet* pMipSet, CMP_INT nMipLevel)
 {
     if (!pMipSet)
@@ -162,7 +258,6 @@ CMP_INT CMP_MaxFacesOrSlices(const CMP_MipSet* pMipSet, CMP_INT nMipLevel)
     }
     return 0;    //nMipLevel was too high
 }
-
 
 CMP_MipLevel* CMP_CMIPS::GetMipLevel(const CMP_MipSet* pMipSet, int nMipLevel,    int nFaceOrSlice)
 {
@@ -507,6 +602,16 @@ void CMP_CMIPS::FreeMipSet(CMP_MipSet* pMipSet)
         }
     }
 }
+
+void CMP_CMIPS::FreeMipLevelData(CMP_MipLevel* pMipLevel)
+{
+    if (pMipLevel->m_pbData)
+    {
+        free(pMipLevel->m_pbData);
+        pMipLevel->m_pbData = NULL;
+    }
+}
+
 
 bool CMP_CMIPS::AllocateCompressedDestBuffer(CMP_MipSet *SourceTexture, CMP_FORMAT format, CMP_MipSet *DestTexture)
 {

@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -73,7 +73,7 @@ using namespace std;
 #endif
 
 #ifdef USE_OPENCV
-    #if defined(_WIN32) && !defined(NO_LEGACY_BEHAVIOR)
+    #if defined(_WIN32) // && !defined(NO_LEGACY_BEHAVIOR)
         #define OpenCV_core_Lib     "opencv_core" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
         #define OpenCV_highgui_Lib  "opencv_highgui" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
         #define OpenCV_imgproc_Lib  "opencv_imgproc" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
@@ -171,13 +171,11 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
 
     if (m_srcFile.size() > 0 && m_destFile.size() > 0)
     {
-        boost::filesystem::path src(m_srcFile);
-        //std::filesystem::path src(m_srcFile);  cpp17 feature ToDo
+        std::filesystem::path src(m_srcFile);
         diffName = src.stem().generic_string();
         diffName.append("_");
 
-        boost::filesystem::path dest(m_destFile);
-        //std::filesystem::path dest(m_destFile); cpp17 feature ToDo
+        std::filesystem::path dest(m_destFile);
         diffName.append(dest.stem().generic_string());
         diffNodeName = diffName;
     }
@@ -364,8 +362,7 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
         return;
     }
 
-    boost::filesystem::path result(resultsFile);
-    //std::filesystem::path result(resultsFile); cpp17 feature ToDo
+    std::filesystem::path result(resultsFile);
     int lastindex = result.generic_string().find_last_of("/");
     std::string goldFile = result.generic_string().substr(0, lastindex + 1);
     goldFile.append("golden.xml");
@@ -729,11 +726,13 @@ void Plugin_Canalysis::setActiveChannels()
         switch(m_MipDestImages->mipset->m_format)
         {
             case CMP_FORMAT_ATI1N:
-            case CMP_FORMAT_BC4: // All channels are used and equal, Red is used as active channel
+            case CMP_FORMAT_BC4:
+            case CMP_FORMAT_BC4_S:        // All channels are used and equal, Red is used as active channel
                                  m_RGBAChannels = 0b0001;  // R
                                  break;
             case CMP_FORMAT_ATI2N_XY:
-            case CMP_FORMAT_BC5: // Only Red & Green channels active
+            case CMP_FORMAT_BC5_S:
+            case CMP_FORMAT_BC5:          // Only Red & Green channels active
                                  m_RGBAChannels = 0b0011;  // ABGR
                                  break;
             default:

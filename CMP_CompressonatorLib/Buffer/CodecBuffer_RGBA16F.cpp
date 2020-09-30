@@ -43,7 +43,7 @@ CCodecBuffer_RGBA16F::CCodecBuffer_RGBA16F(
                                             : CCodecBuffer(nBlockWidth, nBlockHeight, nBlockDepth,dwWidth, dwHeight, dwPitch, pData,dwDataSize)
 {
     if (m_dwPitch == 0) printf("");
-    int gw= GetWidth() * RGBA16F_nPixelSize;
+    //int gw= GetWidth() * RGBA16F_nPixelSize;
     //assert((m_dwPitch == 0) || (m_dwPitch >= GetWidth() * RGBA16F_nPixelSize));
     if(m_dwPitch <= GetWidth() * RGBA16F_nPixelSize)
         m_dwPitch = GetWidth() * RGBA16F_nPixelSize;

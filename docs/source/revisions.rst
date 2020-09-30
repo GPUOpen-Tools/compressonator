@@ -3,6 +3,21 @@
 
 For the latest documentation, please refer to:  http://compressonator.readthedocs.io/en/latest/
 
+
+V4.1
+~~~~
+Nov 2020
+
+**Features**
+
+Documenation is been updated, Should be complete before Oct 16 for this release
+
+-  `CMP_Core GPU encoding support <developer_sdk/cmp_core/index.html#cmp-core>`__
+
+    SNORM support for BC4 and BC5
+
+
+
 V4.0
 ~~~~
 May 2020

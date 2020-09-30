@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -35,13 +35,6 @@
 #include <QGraphicsSceneEvent>
 #include <qtimer.h>
 
-//#include "qteditorfactory.h"
-//#include "qttreepropertybrowser.h"
-//#include "qtbuttonpropertybrowser.h"
-//#include "qtgroupboxpropertybrowser.h"
-//#include "qtpropertymanager.h"
-//#include "qtvariantproperty.h"
-//#include "objectcontroller.h"
 #include "cpImageView.h"
 #include "acImageView.h"
 #include "acEXRTool.h"
@@ -150,6 +143,7 @@ public slots:
     void onZoomLevelChanged(int value);
     void onacScaleChange(int value);
     void onResetHDRandDiff(int value);
+    void onacPSNRUpdated(double value);
     void onToolListChanged(int index);
     void onViewCustomContextMenu(const QPoint &point);
     void onSaveViewAs();
@@ -184,6 +178,7 @@ private:
     QWidget             *m_pMyWidget;
     QSpinBox            *m_ZoomLevel;
     QSpinBox            *m_BrightnessLevel;
+    QLabel*              m_PSNRLabel;
 
     QStyle              *Plastique_style;                   // Combobox Style
 

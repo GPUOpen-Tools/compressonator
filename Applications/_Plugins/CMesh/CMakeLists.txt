@@ -5,15 +5,15 @@ add_subdirectory(mesh_compressor)
 add_subdirectory(mesh_optimizer)
 
 target_link_libraries(Plugin_CMesh INTERFACE 
-	Plugin_CMesh_Mesh_Compressor
-	Plugin_CMesh_Mesh_Optimizer
+    Plugin_CMesh_Mesh_Compressor
+    Plugin_CMesh_Mesh_Optimizer
 )
 
 if (OPTION_CMP_DIRECTX)
-	add_subdirectory(Tootle)
-	target_link_libraries(Plugin_CMesh INTERFACE 
-		Plugin_CMesh_Tootle
-	)
+    add_subdirectory(Tootle)
+    target_link_libraries(Plugin_CMesh INTERFACE 
+        Plugin_CMesh_Tootle
+    )
 endif()
 
 #set_target_properties(Plugin_CMesh PROPERTIES FOLDER ${FOLDER_NAME})

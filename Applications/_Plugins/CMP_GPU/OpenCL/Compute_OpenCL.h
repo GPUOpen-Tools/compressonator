@@ -132,10 +132,6 @@ private:
     long file_size(FILE* p_file);
     bool load_file();
 
-#ifdef USE_CRC32
-    bool SourceFile_CRC32();
-#endif
-
     // Need to fill these
     BYTE* p_destination;
     CMP_Vec4uc* m_psource;

@@ -1,13 +1,20 @@
 # CMakeCustomTargets CMakeLists.txt
 
-if (NOT DEFINED QTDIR)
-    message(FATAL_ERROR "A 'QTDIR' environment variable is required")
-endif()
+message(STATUS "++++++++++++++++++ External-QT" )
 
-set(QT_VERSION 5.14.2)
+#if (NOT DEFINED ENV{QTDIR})
+#    message(FATAL_ERROR "A 'QTDIR' environment variable is required")
+#endif()
 
-QT_LIB_DIR
+find_package(Qt5 COMPONENTS REQUIRED Core )
 
+get_target_property(QtCore_location Qt5::Core LOCATION)
+
+set(QT_LIB_DIR  ${_qt5Core_install_prefix})
+
+# ====================================================
+# QT_LIB_DIR
+# ====================================================
 set_property(GLOBAL PROPERTY QT_LIB_DIR "${QT_LIB_DIR}")
 list(APPEND CMAKE_FIND_ROOT_PATH ${QT_LIB_DIR})
 set(PATH_SUFFIXES lib plugins/imageformats)
@@ -22,7 +29,6 @@ set(QT_FIND_ROOT_PATH
 # ====================================================
 
 find_library(LIB_PNG png png.a libpng.a libqtpng.a libqtlibpng.a qtlibpng.lib
-
     PATHS ${QT_FIND_ROOT_PATH}
     PATH_SUFFIXES ${PATH_SUFFIXES}
 )
@@ -32,7 +38,6 @@ if (${LIB_PNG} STREQUAL "LIB_PNG-NOTFOUND")
 endif()
 
 find_package(Qt5 REQUIRED QUIET
-
     COMPONENTS Core Gui OpenGL Qml QuickWidgets WebEngineWidgets Widgets Xml
     PATHS ${QT_FIND_ROOT_PATH}
 )

@@ -2,6 +2,7 @@
 
 # Helper function for cloning a target.
 function(_opencv_clone_target TARGET LIB_BUILD_TYPE PROPERTY_LIST)
+message(STATUS "(4A)======================== opencv Paths ${CMAKE_CURRENT_LIST_DIR}" )
 
     string(TOLOWER ${LIB_BUILD_TYPE} build_type_lower)
     string(TOUPPER ${LIB_BUILD_TYPE} build_type_upper)
@@ -78,13 +79,15 @@ endfunction()
 function(opencv_clone_targets LIB_BUILD_TYPE)
     string(TOLOWER ${LIB_BUILD_TYPE} build_type_lower)
     string(TOUPPER ${LIB_BUILD_TYPE} build_type_upper)
+message(STATUS "(4B)======================== opencv Paths ${CMAKE_CURRENT_LIST_DIR}" )
 
     # Find OpenCV package
     find_package(OpenCV REQUIRED QUIET
-        PATHS ${DEPENDENCIES_INSTALL_DIR}/opencv-${build_type_lower}
+        #PATHS ${DEPENDENCIES_INSTALL_DIR}/opencv-${build_type_lower}
+        PATHS ${CMAKE_CURRENT_LIST_DIR}/../opencv2
     )
 
-    unset(OpenCV_DIR CACHE)
+    #unset(OpenCV_DIR CACHE)
 
     # Get all propreties that cmake supports
     execute_process(COMMAND cmake --help-property-list OUTPUT_VARIABLE CMAKE_PROPERTY_LIST)

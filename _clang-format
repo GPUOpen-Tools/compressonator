@@ -7,7 +7,6 @@ Language: Cpp
 AccessModifierOffset: -4
 BreakBeforeBraces: Custom
 BraceWrapping:
-  AfterCaseLabel: true
   AfterClass: true
   AfterControlStatement: true
   AfterEnum: true

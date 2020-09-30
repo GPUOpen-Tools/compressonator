@@ -7,13 +7,13 @@ set(LEGACY_LOCATION ../)
 
 target_sources(Plugin_Common_UtilFuncs INTERFACE
 
-	${LEGACY_LOCATION}/UtilFuncs.cpp
-	${LEGACY_LOCATION}/UtilFuncs.h
+    ${LEGACY_LOCATION}/UtilFuncs.cpp
+    ${LEGACY_LOCATION}/UtilFuncs.h
 )
 
 target_include_directories(Plugin_Common_UtilFuncs INTERFACE
     ./
-	${LEGACY_LOCATION}
+    ${LEGACY_LOCATION}
 )
 
 #set_target_properties(Plugin_Common_UtilFuncs PROPERTIES FOLDER ${FOLDER_NAME})

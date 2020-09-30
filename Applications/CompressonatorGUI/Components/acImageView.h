@@ -57,6 +57,9 @@ public:
     acImageView(const QString fileName = "", QWidget *parent = 0, CMipImages *OriginalMipImages = NULL, CMipImages *MipImages = NULL);
     ~acImageView();
 
+    int m_DepthIndex;  // QImage[depth][]
+    int m_currentMiplevel;
+
     CImageLoader                     *m_imageloader;
 
     CMipImages                       *m_OriginalMipImages;    // The Original Image data
@@ -119,15 +122,18 @@ public:
     void setBrightnessLevel(int brightness);
     int getBrightnessLevel();
 
+    // Image quality by miplevel and depth
+    void   processPSNR();
+
 private:
+
+    double m_PSNR[MAX_MIPLEVEL_SUPPORTED][6];
+    double m_MSE[MAX_MIPLEVEL_SUPPORTED][6];
 
     bool m_appBusy;
     int  m_imageOrientation;                                 // Tracks Image Rotation from 0 - North (upright) to 1 - East 2 - South 3 - West
     bool m_localMipImages;
     int  m_ImageIndex;                                       // QImage[][index]
-    int  m_DepthIndex;                                       // QImage[depth][]
-
-    int  m_currentMiplevel;
 
     void MatchImagePosition(int activeIndex);
 
@@ -177,7 +183,7 @@ Q_SIGNALS:
     void acImageViewMousePosition(QPointF *scenePos, QPointF *localPos, int ID);     // Signals to user the current mouse position in the view
     void acImageViewVirtualMousePosition(QPointF *scenePos, QPointF *localPos, int ID);
     void acScaleChanged(int value);
-
+    void acPSNRUpdated(double value);
 };
 
 

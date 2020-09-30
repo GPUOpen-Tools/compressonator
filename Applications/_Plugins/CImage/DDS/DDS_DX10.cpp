@@ -198,19 +198,30 @@ TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
             err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, CMP_FOURCC_BC3);
             break;
 
-        case DXGI_FORMAT_BC4_TYPELESS:    
-        case DXGI_FORMAT_BC4_UNORM:    
-        case DXGI_FORMAT_BC4_SNORM:    
+        case DXGI_FORMAT_BC4_TYPELESS:
+        case DXGI_FORMAT_BC4_UNORM:
             pMipSet->m_compressed = true;
             pMipSet->m_format     = CMP_FORMAT_BC4;
             err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, CMP_FOURCC_BC4);
             break;
 
-        case DXGI_FORMAT_BC5_TYPELESS:    
-        case DXGI_FORMAT_BC5_UNORM:    
-        case DXGI_FORMAT_BC5_SNORM:    
+        case DXGI_FORMAT_BC4_SNORM:
+            pMipSet->m_compressed = true;
+            pMipSet->m_format     = CMP_FORMAT_BC4_S;
+            err                   = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, CMP_FOURCC_BC4);
+            break;
+
+        case DXGI_FORMAT_BC5_TYPELESS:
+        case DXGI_FORMAT_BC5_UNORM:
+            pMipSet->m_format     = CMP_FORMAT_BC5;
             pMipSet->m_compressed = true;
             err = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, CMP_FOURCC_BC5);
+            break;
+
+        case DXGI_FORMAT_BC5_SNORM:
+            pMipSet->m_format     = CMP_FORMAT_BC5_S;
+            pMipSet->m_compressed = true;
+            err                   = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, CMP_FOURCC_BC5);
             break;
 
         case DXGI_FORMAT_BC6H_TYPELESS:    

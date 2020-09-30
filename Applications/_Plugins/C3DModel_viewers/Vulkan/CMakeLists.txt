@@ -4,38 +4,38 @@ add_library(Plugin_C3DModel_Viewers_Vulkan)
 
 file(GLOB_RECURSE SRCS
 
-	./*.cpp
-	./*.h
+    ./*.cpp
+    ./*.h
 )
 
 target_sources(Plugin_C3DModel_Viewers_Vulkan PRIVATE
 
-	${SRCS}
+    ${SRCS}
 )
 
 target_include_directories(Plugin_C3DModel_Viewers_Vulkan PUBLIC
 
-	./
-	./Util
+    ./
+    ./Util
 )
 
 target_link_libraries(Plugin_C3DModel_Viewers_Vulkan
 
-	PRIVATE
-		ExtVulkan
-		ExtGLM
-		ExtGlslang
-		ExtQt5Widgets
+    PRIVATE
+        ExtVulkan
+        ExtGLM
+        ExtGlslang
+        ExtQt5Widgets
 
-		CompressonatorLIB
+        CompressonatorLIB
 
-		GPU_Decode
-		Plugin_CmdLine
-		Plugin_Common_Imgui
-		Plugin_Common_Misc
-		Plugin_GLTF_Vulkan
-		Plugin_Model_Viewer
-		Plugin_UserInterface
+        GPU_Decode
+        Plugin_CmdLine
+        Plugin_Common_Imgui
+        Plugin_Common_Misc
+        Plugin_GLTF_Vulkan
+        Plugin_Model_Viewer
+        Plugin_UserInterface
 )
 
 set_target_properties(Plugin_C3DModel_Viewers_Vulkan PROPERTIES FOLDER ${FOLDER_NAME})

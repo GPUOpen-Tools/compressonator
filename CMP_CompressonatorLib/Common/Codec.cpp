@@ -53,7 +53,12 @@
 #include "ASTC/Codec_ASTC.h"
 
 #ifdef _WIN32  //GT only enabled for win build now
+#ifdef USE_APC
+#include "Codec_APC.h"
+#endif
+#ifdef USE_GTC
 #include "Codec_GT.h"
+#endif
 #ifdef USE_BASIS
 #include "Codec_BASIS.h"
 #endif
@@ -174,10 +179,14 @@ CCodec* CreateCodec(CodecType nCodecType)
         return new CCodec_DXT5_xGxR;
     case CT_ATI1N:
         return new CCodec_ATI1N;
+    case CT_ATI1N_S:
+        return new CCodec_ATI1N_S;
     case CT_ATI2N:
         return new CCodec_ATI2N;
     case CT_ATI2N_XY:
         return new CCodec_ATI2N(CT_ATI2N_XY);
+    case CT_ATI2N_XY_S:
+        return new CCodec_ATI2N(CT_ATI2N_XY_S);
     case CT_ATI2N_DXT5:
         return new CCodec_ATI2N_DXT5;
     case CT_ATC_RGB:
@@ -205,8 +214,14 @@ CCodec* CreateCodec(CodecType nCodecType)
     case CT_ASTC:
         return new CCodec_ASTC;
 #ifdef _WIN32
+#ifdef USE_APC
+    case CT_APC:
+        return new CCodec_APC;
+#endif
+#ifdef USE_GTC
     case CT_GTC:
         return new CCodec_GTC;
+#endif
 #ifdef USE_BASIS
      case CT_BASIS:
          return new CCodec_BASIS;
@@ -233,6 +248,7 @@ CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHe
     // Block size is 4x4 and 64 bits per block
     case CT_DXT1:
     case CT_ATI1N:
+    case CT_ATI1N_S:
     case CT_ATC_RGB:
     case CT_ETC_RGB:
     case CT_ETC2_RGB:
@@ -272,6 +288,7 @@ CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHe
     case CT_DXT5_xGxR:
     case CT_ATI2N:
     case CT_ATI2N_XY:
+    case CT_ATI2N_XY_S:
     case CT_ATI2N_DXT5:
     case CT_ATC_RGBA_Explicit:
     case CT_ATC_RGBA_Interpolated:
@@ -308,7 +325,19 @@ CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHe
         buffsize = dwWidth * dwHeight;
         break;
 #ifdef _WIN32
+#ifdef USE_APC
+    case CT_APC:
+        if (nBlockWidth <= 0)
+            nBlockWidth = 4;
+        if (nBlockHeight <= 0)
+            nBlockHeight = 4;
+        dwWidth  = ((dwWidth + nBlockWidth - 1) / nBlockWidth) * 4;
+        dwHeight = ((dwHeight + nBlockHeight - 1) / nBlockHeight) * 4;
+        buffsize = dwWidth * dwHeight;
+        break;
+#endif
     // Block size is 4x4 and 128 bits per block. in future releases its will vary in Block Sizes and bits per block may change to 256
+#ifdef USE_GTC
     case CT_GTC:
         dwWidth  = ((dwWidth + 3) / 4) * 4;
         dwHeight = ((dwHeight + 3) / 4) * 4;
@@ -316,6 +345,7 @@ CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHe
         if (buffsize < (4 * 4))
             buffsize = 4 * 4;
         break;
+#endif
 #ifdef USE_BASIS
     // Block size is 4x4 and 128 bits per block, needs conformation!!
     case CT_BASIS:

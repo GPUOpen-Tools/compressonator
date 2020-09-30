@@ -25,8 +25,8 @@ if isPython3OrAbove:
 
 # to allow the script to be run from anywhere - not just the cwd - store the absolute path to the script file
 scriptRoot = os.path.dirname(os.path.realpath(__file__))
-# Assume workspace root is two folders up from scriptRoot (RGA/Build)
-workspace = os.path.abspath(os.path.normpath(os.path.join(scriptRoot, "../..")))
+# root is one folders up from scriptRoot (compressonator/scripts)
+CompressonatorRoot = os.path.abspath(os.path.normpath(os.path.join(scriptRoot, "../")))
 
 # When running this script on Windows (and not under cygwin), we need to set the shell=True argument to Popen and similar calls
 # Without this option, Jenkins builds fail to find the correct version of git
@@ -64,30 +64,41 @@ print("\nFetching dependencies from: " + gitRoot + " - using branch: " + gitBran
 # Some repos are only hosted on github - these are defined with an absolute URL based here
 ghRoot = "https://github.com/GPUOpen-Tools/"
 
+# source reviews for use
+#    "https://github.com/opencv/opencv.git"      : ["../common/lib/ext/opencv",  "master"],
+#    "https://github.com/openexr/openexr.git"    : ["../common/lib/ext/openexr", "master"],
+#    "https://github.com/madler/zlib"            : ["../common/lib/ext/zlib",    "master"],
+#    "https://github.com/catchorg/Catch2.git"    : ["../common/lib/ext/catch",   "master"],
+#    "https://github.com/syoyo/tinyexr"          : ["../common/lib/ext/tinyexr", "master"],
+#    "https://github.com/google/draco/tree/master/src/draco" : : ["../common/lib/ext/draco", "master"],
+
+# Libs.
 gitMapping = {
- # Lib.
-    ghRoot+"common-lib-amd-APPSDK-3.0.git"      : ["Common/Lib/AMD/APPSDK",     "master"],
-    ghRoot+"common-lib-ext-Boost-1.59.git"      : ["Common/Lib/Ext/Boost",      "master"],
-    ghRoot+"Catch2.git"                         : ["Common/Lib/Ext/Catch2",     "master"],
-    ghRoot+"common-lib-ext-glew-1.9.git"        : ["Common/Lib/Ext/glew",       "master"],
-    ghRoot+"common-lib-ext-OpenCV-2.49.git"     : ["Common/Lib/Ext/OpenCV",     "master"],
-    ghRoot+"common-lib-ext-OpenEXR-2.2.git"     : ["Common/Lib/Ext/OpenEXR",    "master"],
-    ghRoot+"common-lib-ext-OpenGL.git"          : ["Common/Lib/Ext/OpenGL",     "master"],
-    ghRoot+"common-lib-ext-tinyxml-2.6.2.git"   : ["Common/Lib/Ext/tinyxml",    "master"],
-    ghRoot+"common-lib-ext-zlib-1.2.8.git"      : ["Common/Lib/Ext/zlib",       "master"],
-    "https://github.com/g-truc/glm.git"         : ["Common/Lib/Ext/glm",        "master"],
-    "https://github.com/discord/rapidxml.git"   : ["Common/Lib/Ext/rapidxml",   "master"]
+    ghRoot+"Catch2.git"                         : ["../common/lib/ext/catch2",     "master"],
+    ghRoot+"common_lib_ext_glew_1.9.git"        : ["../common/lib/ext/glew",       "master"],
+    ghRoot+"common_lib_ext_opencv_2.49.git"     : ["../common/lib/ext/opencv",     "master"],
+    ghRoot+"common_lib_ext_openexr_2.2.git"     : ["../common/lib/ext/openexr",    "master"],
+    ghRoot+"common_lib_ext_opengl.git"          : ["../common/lib/ext/opengl",     "master"],
+    ghRoot+"common_lib_ext_tinyxml_2.6.2.git"   : ["../common/lib/ext/tinyxml",    "master"],
+    ghRoot+"common_lib_ext_zlib_1.2.10.git"     : ["../common/lib/ext/zlib",       "master"],
+    "https://github.com/g-truc/glm.git"         : ["../common/lib/ext/glm",        "master"],
+    "https://github.com/discord/rapidxml.git"   : ["../common/lib/ext/rapidxml",   "master"],
+    "https://github.com/KhronosGroup/KTX-Software.git" : ["../common/lib/ext/ktx", "master"],
+    "https://github.com/apitrace/dxsdk"         : ["../common/lib/ext/apitrace/dxsdk", "master"],
 }
 
 # The following section contains OS-specific dependencies that are downloaded and placed in the specified target directory.
 # key = GitHub release link
 # value = location
 downloadMappingWin = {
-    "https://github.com/microsoft/DirectXTex/archive/jun2020b.zip" : "../../Common/Lib/Ext/DirectXTex/",
-    "https://github.com/GPUOpen-LibrariesAndSDKs/OCL-SDK/files/1406216/lightOCLSDK.zip" : "../../Common/Lib/Ext/OpenCL/",
+    "https://github.com/glfw/glfw/releases/download/3.3.2/glfw-3.3.2.bin.WIN64.zip" : "../../common/lib/ext/glfw/",
+    "https://github.com/microsoft/DirectXTex/archive/jun2020b.zip" : "../../common/lib/ext/directxtex/",
+    "https://github.com/GPUOpen-LibrariesAndSDKs/OCL-SDK/files/1406216/lightOCLSDK.zip" : "../../common/lib/ext/opencl/",
 }
+
+# need opencl and gltf also
 downloadMappingLin = {
-    "https://github.com/microsoft/DirectXTex/archive/jun2020b.tar.gz" : "../../Common/Lib/Ext/DirectXTex/",
+    "https://github.com/microsoft/DirectXTex/archive/jun2020b.tar.gz" : "../../common/lib/ext/directxtex/",
 }
 
 # for each dependency - test if it has already been fetched - if not, then fetch it, otherwise update it to top of tree
@@ -102,7 +113,7 @@ for key in gitMapping:
 
     print("\nChecking out commit: " + reqdCommit + " for " + key)
 
-    os.chdir(workspace)
+    os.chdir(CompressonatorRoot)
     if os.path.isdir(path):
         # directory exists - get latest from git using pull
         print("Directory " + path + " exists. \n\tUsing 'git fetch' to get latest from " + source)

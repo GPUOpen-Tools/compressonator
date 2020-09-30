@@ -30,6 +30,7 @@
 // Windows Header Files:
 #ifdef _WIN32
 #include <windows.h>
+#define USE_NewLoader
 #endif
 
 #include <filesystem>
@@ -59,85 +60,118 @@ static bool CMP_FileExists(const std::string &abs_filename)
 }
 
 #ifdef USE_NewLoader
-#include "Dbghelp.h"
-#pragma comment(lib, "DbgHelp.lib")
+#include "imagehlp.h"
+#pragma comment(lib, "imagehlp.lib")
 
-bool GetDLLFileExports(LPCSTR szFileName, vector<string> & names)
+bool GetDLLFileExports(LPCSTR szFileName, std::vector<std::string>& names)
 {
-    unsigned int nNoOfExports;
+    _LOADED_IMAGE            LoadedImage;
 
-    HANDLE hFile;
-    HANDLE hFileMapping;
-    LPVOID lpFileBase;
-    PIMAGE_DOS_HEADER pImg_DOS_Header;
-    PIMAGE_NT_HEADERS pImg_NT_Header;
-    PIMAGE_EXPORT_DIRECTORY pImg_Export_Dir;
-
-    hFile = CreateFileA(szFileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-    if (hFile == INVALID_HANDLE_VALUE)
+    if (!MapAndLoad(szFileName, NULL, &LoadedImage, TRUE, TRUE))
         return false;
 
-    hFileMapping = CreateFileMapping(hFile, NULL, PAGE_READONLY, 0, 0, NULL);
-    if (hFileMapping == 0)
+    _IMAGE_EXPORT_DIRECTORY* ImageExportDirectory;
+     ULONG  DataSize;
+
+    ImageExportDirectory = (_IMAGE_EXPORT_DIRECTORY*)ImageDirectoryEntryToData(LoadedImage.MappedAddress, false, IMAGE_DIRECTORY_ENTRY_EXPORT, &DataSize);
+    if (ImageExportDirectory != NULL)
     {
-        CloseHandle(hFile);
-        return false;
+        DWORD* dExportNameAddress(0);
+        char *FileExportName;
+
+        dExportNameAddress = (DWORD*)ImageRvaToVa(LoadedImage.FileHeader, LoadedImage.MappedAddress, ImageExportDirectory->AddressOfNames, NULL);
+        if (!dExportNameAddress) {
+            UnMapAndLoad(&LoadedImage);
+            return false;
+            }
+        
+        for (size_t i = 0; i < ImageExportDirectory->NumberOfNames; i++)
+        {
+            FileExportName = (char*)ImageRvaToVa(LoadedImage.FileHeader, LoadedImage.MappedAddress, dExportNameAddress[i], NULL);
+            if (FileExportName)
+                names.push_back(FileExportName);
+        }
     }
 
-    lpFileBase = MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0);
-    if (lpFileBase == 0)
-    {
-        CloseHandle(hFileMapping);
-        CloseHandle(hFile);
-        return false;
-    }
+    UnMapAndLoad(&LoadedImage);
 
-    pImg_DOS_Header = (PIMAGE_DOS_HEADER)lpFileBase;
-
-    pImg_NT_Header = (PIMAGE_NT_HEADERS)((LONG)pImg_DOS_Header + (LONG)pImg_DOS_Header->e_lfanew);
-
-    if (IsBadReadPtr(pImg_NT_Header, sizeof(IMAGE_NT_HEADERS)) || pImg_NT_Header->Signature != IMAGE_NT_SIGNATURE)
-    {
-        UnmapViewOfFile(lpFileBase);
-        CloseHandle(hFileMapping);
-        CloseHandle(hFile);
-        return false;
-    }
-
-    pImg_Export_Dir = (PIMAGE_EXPORT_DIRECTORY)pImg_NT_Header->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
-    if (!pImg_Export_Dir)
-    {
-        UnmapViewOfFile(lpFileBase);
-        CloseHandle(hFileMapping);
-        CloseHandle(hFile);
-        return false;
-    }
-
-    pImg_Export_Dir = (PIMAGE_EXPORT_DIRECTORY)ImageRvaToVa(pImg_NT_Header, pImg_DOS_Header, (DWORD)pImg_Export_Dir, 0);
-
-    DWORD **ppdwNames = (DWORD **)pImg_Export_Dir->AddressOfNames;
-
-    ppdwNames = (PDWORD*)ImageRvaToVa(pImg_NT_Header, pImg_DOS_Header, (DWORD)ppdwNames, 0);
-    if (!ppdwNames)
-    {
-        UnmapViewOfFile(lpFileBase);
-        CloseHandle(hFileMapping);
-        CloseHandle(hFile);
-        return false;
-    }
-
-    nNoOfExports = pImg_Export_Dir->NumberOfNames;
-
-    for (unsigned i = 0; i < nNoOfExports; i++)
-    {
-        char *szFunc = (PSTR)ImageRvaToVa(pImg_NT_Header, pImg_DOS_Header, (DWORD)*ppdwNames, 0);
-        names.push_back(szFunc);
-        ppdwNames++;
-    }
-
-    UnmapViewOfFile(lpFileBase);
-    CloseHandle(hFileMapping);
-    CloseHandle(hFile);
+//    This code that does not use MapAndLoad() and is much lower level
+//    unsigned int nNoOfExports;
+//
+//    HANDLE hFile;
+//    HANDLE hFileMapping;
+//    LPVOID lpFileBase;
+//    PIMAGE_DOS_HEADER pImg_DOS_Header;
+//    PIMAGE_NT_HEADERS pImg_NT_Header;
+//    PIMAGE_EXPORT_DIRECTORY pImg_Export_Dir;
+//
+//    hFile = CreateFileA(szFileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+//    if (hFile == INVALID_HANDLE_VALUE)
+//        return false;
+//
+//    hFileMapping = CreateFileMapping(hFile, NULL, PAGE_READONLY, 0, 0, NULL);
+//    if (hFileMapping == 0)
+//    {
+//        CloseHandle(hFile);
+//        return false;
+//    }
+//
+//    lpFileBase = MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0);
+//    if (lpFileBase == 0)
+//    {
+//        CloseHandle(hFileMapping);
+//        CloseHandle(hFile);
+//        return false;
+//    }
+//
+//    pImg_DOS_Header = (PIMAGE_DOS_HEADER)lpFileBase;
+//
+//    pImg_NT_Header = (PIMAGE_NT_HEADERS)((BYTE*)pImg_DOS_Header + pImg_DOS_Header->e_lfanew);
+//
+//    if (IsBadReadPtr(pImg_NT_Header, sizeof(IMAGE_NT_HEADERS)) || pImg_NT_Header->Signature != IMAGE_NT_SIGNATURE)
+//    {
+//        UnmapViewOfFile(lpFileBase);
+//        CloseHandle(hFileMapping);
+//        CloseHandle(hFile);
+//        return false;
+//    }
+//
+//    pImg_Export_Dir = (PIMAGE_EXPORT_DIRECTORY)pImg_NT_Header->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
+//    if (!pImg_Export_Dir)
+//    {
+//        UnmapViewOfFile(lpFileBase);
+//        CloseHandle(hFileMapping);
+//        CloseHandle(hFile);
+//        return false;
+//    }
+//
+//    pImg_Export_Dir = (PIMAGE_EXPORT_DIRECTORY)ImageRvaToVa(pImg_NT_Header, pImg_DOS_Header, (DWORD)pImg_Export_Dir, 0);
+//
+//    DWORD **ppdwNames = (DWORD **)pImg_Export_Dir->AddressOfNames;
+//
+//    ppdwNames = (PDWORD*)ImageRvaToVa(pImg_NT_Header, pImg_DOS_Header, (DWORD)ppdwNames, 0);
+//    if (!ppdwNames)
+//    {
+//        UnmapViewOfFile(lpFileBase);
+//        CloseHandle(hFileMapping);
+//        CloseHandle(hFile);
+//        return false;
+//    }
+//
+//    nNoOfExports = pImg_Export_Dir->NumberOfNames;
+//
+//    Bug here skips alternate names : error is in incr address of ppdwNames
+//    for (unsigned i = 0; i < nNoOfExports; i++)
+//    {
+//        char *szFunc = (PSTR)ImageRvaToVa(pImg_NT_Header, pImg_DOS_Header, (DWORD)*ppdwNames, 0);
+//        if (szFunc)
+//            names.push_back(szFunc);
+//        ppdwNames++;
+//    }
+//
+//    UnmapViewOfFile(lpFileBase);
+//    CloseHandle(hFileMapping);
+//    CloseHandle(hFile);
     return true;
 };
 #endif
@@ -364,13 +398,13 @@ void PluginManager::getPluginList(char * SubFolderName, bool append)
                 names.clear();
                 GetDLLFileExports(fname, names);
 
-                if ((names.size() > 3) && (names.size() <= 15))
+                if ((names.size() >= 3) && (names.size() <= 15))
                 {
                     bool bmakePlugin   = false;
                     bool bgetPluginType= false;
                     bool bgetPluginName= false;
 
-                    for (vector<string>::const_iterator str = names.begin(); str != names.end(); ++str)
+                    for (std::vector<std::string>::const_iterator str = names.begin(); str != names.end(); ++str)
                     {
                         if (*str == "makePlugin") bmakePlugin = true;
                         else

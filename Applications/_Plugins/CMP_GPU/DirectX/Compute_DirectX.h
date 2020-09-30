@@ -85,6 +85,7 @@ struct Buffer64Bits
 using Microsoft::WRL::ComPtr;
 #endif
 
+
 class CDirectX :public ComputeBase
 {
 public:
@@ -99,7 +100,6 @@ public:
     const char* GetDeviceName();
     const char* GetVersion();
     int         GetMaxUCores();
-
 
 private:
     bool            m_programRun;

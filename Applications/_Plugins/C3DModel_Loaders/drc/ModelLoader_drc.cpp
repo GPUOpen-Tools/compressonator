@@ -18,13 +18,15 @@ SET_PLUGIN_NAME("DRC")
 void* make_Plugin_ModelLoader_drc() { return new Plugin_ModelLoader_drc; }
 #endif
 
-namespace ML_drc 
-{
+#ifdef BUILD_AS_PLUGIN_DLL
     bool          g_bAbortCompression = false;
     CMIPS*        g_CMIPS             = nullptr;
-}
+#else
+    extern bool   g_bAbortCompression;
+    extern CMIPS* g_CMIPS;
+#endif
 
-using namespace ML_drc;
+//using namespace ML_drc;
 
 Plugin_ModelLoader_drc::Plugin_ModelLoader_drc()
 {

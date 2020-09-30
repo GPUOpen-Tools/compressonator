@@ -52,7 +52,7 @@ public:
 
     void refreshView();
     void SetDefaults();
-    void setMinMaxStep(QtVariantPropertyManager* manager, QtProperty *m_prop, double min, double max, double step);
+    void setMinMaxStep(QtVariantPropertyManager* manager, QtProperty *m_prop, double min, double max, double step, int decimals);
     void evalProperties();
 
 private:
@@ -155,7 +155,7 @@ public slots:
 Q_SIGNALS:
     void saveSetting(QString *FilePathName);
     void compressImage(QString *FilePathName);
-
-
 };
+
+extern C_Application_Options g_Application_Options;
 #endif

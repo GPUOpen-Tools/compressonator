@@ -102,8 +102,9 @@ class PluginInterface_Filters : PluginBase
 public:
         PluginInterface_Filters(){}
         virtual ~PluginInterface_Filters(){}
+        virtual int TC_PluginSetSharedIO(void* Shared) = 0;
         virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
-        virtual int TC_GenerateMIPLevels(MipSet *pMipSet, int nMinSize)=0;
+        virtual int TC_GenerateMIPLevels(CMP_MipSet * pMipSet, CMP_CFilterParams* FilterParams) = 0;
 };
 
 

@@ -1279,6 +1279,9 @@ class C_Destination_Options : public C_Destination_Image
 public:
 
     enum eCompression {
+#ifdef USE_APC
+        APC,
+#endif
 #ifdef USE_BASIS
         BASIS,
 #endif
@@ -1289,7 +1292,9 @@ public:
         BC2,
         BC3,
         BC4,
+        BC4_S,
         BC5,
+        BC5_S,
         BC6H,
         BC6H_SF,
         BC7,
@@ -1648,12 +1653,12 @@ public:
 
     void setQuality(double quality)
     {
-         m_enabled = 1;
-        if (quality > 1.0) quality = 1.0;
-        else
-        if (quality <= 0) 
+        m_enabled = 1;
+        if (quality > 1.0)
+            quality = 1.0;
+        else if (quality <= 0)
         {
-            quality = 0.0;
+            quality   = 0.0;
             m_enabled = 0;
         }
         m_Quality = quality;
@@ -1828,6 +1833,8 @@ public:
 #define APP_Set_Number_of_Threads                       "Set Number of Threads"
 #define APP_Show_MSE_PSNR_SSIM_Results                  "Show MSE PSNR SSIM Results"
 #define APP_Show_Analysis_Results_Table                 "Show Analysis Results Table"
+#define APP_Use_GPU_To_Generate_MipMaps                 "Use GPU To Generate MipMaps"
+#define APP_Use_SRGB_Frames_While_Encoding              "Use SRGB Frames While Encoding"
 
 class C_Application_Options :public QObject
 {
@@ -1836,6 +1843,8 @@ class C_Application_Options :public QObject
         Q_ENUMS(RenderModelsWith)
         Q_ENUMS(ImageEncodeWith)
         Q_PROPERTY(ImageEncodeWith  Encode_with                             READ getImageEncode             WRITE setImageEncode NOTIFY ImageEncodeChanged)
+        Q_PROPERTY(bool             Use_GPU_To_Generate_MipMaps             READ getUseGPUMipMaps           WRITE setUseGPUMipMaps)
+        Q_PROPERTY(bool             Use_SRGB_Frames_While_Encoding          READ getUseSRGBFrames           WRITE setUseSRGBFrames)
         Q_PROPERTY(ImageDecodeWith  Decode_with                             READ getImageViewDecode         WRITE setImageViewDecode NOTIFY ImageViewDecodeChanged)
         Q_PROPERTY(bool             Reload_image_views_on_selection         READ getUseNewImageViews        WRITE setUseNewImageViews)
         Q_PROPERTY(bool             Close_all_image_views_prior_to_process  READ getCloseAllImageViews      WRITE setCloseAllImageViews)
@@ -1857,6 +1866,7 @@ public:
         HPC,
         GPU_DirectX,
         GPU_OpenCL,
+        GPU_HW,
 #ifdef USE_GPU_PIPELINE_VULKAN
         GPU_Vulkan,
 #endif
@@ -1887,6 +1897,8 @@ public:
     {
         m_ImageViewDecode       = ImageDecodeWith::CPU;
         m_ImageEncode           = ImageEncodeWith::CPU;
+        m_useGPUMipMaps         = false;
+        m_useSRGBFrames         = false;
         m_loadRecentFile        = false;
         m_useNewImageViews      = false;
         m_refreshCurrentView    = false;
@@ -1930,7 +1942,8 @@ public:
 
     bool isGPUEncode()
     {
-        return ((m_ImageEncode == ImageEncodeWith::GPU_DirectX)||(m_ImageEncode == ImageEncodeWith::GPU_OpenCL));
+        return ((m_ImageEncode == ImageEncodeWith::GPU_DirectX)
+            ||(m_ImageEncode == ImageEncodeWith::GPU_OpenCL) || (m_ImageEncode == ImageEncodeWith::GPU_HW));
     }
 
     void setImagediffContrast(double contrast)
@@ -1987,6 +2000,26 @@ public:
     bool getLoadRecentFile() const
     {
         return m_loadRecentFile;
+    }
+
+    void setUseGPUMipMaps(bool recent)
+    {
+        m_useGPUMipMaps = recent;
+    }
+
+    bool getUseGPUMipMaps() const
+    {
+        return m_useGPUMipMaps;
+    }
+
+    void setUseSRGBFrames(bool recent)
+    {
+        m_useSRGBFrames = recent;
+    }
+
+    bool getUseSRGBFrames() const
+    {
+        return m_useSRGBFrames;
     }
 
     void setLogResults(bool recent)
@@ -2055,6 +2088,8 @@ public:
     ImageEncodeWith m_ImageEncode;
     bool            m_clickIconToViewImage;
     bool            m_closeAllDocuments;
+    bool            m_useGPUMipMaps;
+    bool            m_useSRGBFrames;
     bool            m_loadRecentFile;
     bool            m_refreshCurrentView;
     bool            m_useAssimp;
@@ -2075,6 +2110,7 @@ signals:
 #define STR_SETTING_MINIMUM             "minimum"
 #define STR_SETTING_MAXIMUM             "maximum"
 #define STR_SETTING_SINGLESTEP          "singleStep"
+#define STR_SETTING_DECIMALS            "decimals"
 
 #define STR_CHANNELWEIGHTR_SETTING_HINT "Channel Weight Setting Range 0 (Poor)to 1 (High)Default R Weightiing is 0.3086"
 #define STR_CHANNELWEIGHTG_SETTING_HINT "Channel Weight Setting Range 0 (Poor)to 1 (High)Default G Weightiing is 0.6094"

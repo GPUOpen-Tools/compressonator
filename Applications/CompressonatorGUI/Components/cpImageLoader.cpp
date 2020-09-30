@@ -339,7 +339,7 @@ MipSet *CImageLoader::LoaderDecompressMipSet(CMipImages *MipImages, Config *deco
     MipSet *tmpMipSet             = NULL;
     MipImages->decompressedMipSet = NULL;
     
-    if ((MipImages->mipset->m_compressed) || (CompressedFormat(MipImages->mipset->m_format)))
+    if ((MipImages->mipset->m_compressed) || (CMP_IsCompressedFormat(MipImages->mipset->m_format)))
     {
         //=======================================================
         // We use CPU based decode if OpenGL is not at or above 
@@ -487,8 +487,7 @@ void CImageLoader::UpdateMIPMapImages(CMipImages *MipImages)
     if (!MipImages->mipset) return;
     QImage *image;
 
-    // Note  MipImages->QImage_list[0].count() = 1 to start with
-    // which is the orginal image size
+    // Note  MipImages->QImage_list[0].count() = 1 single image no cube maps or faces
     int depthMax;
 
     if (MipImages->decompressedMipSet) 
@@ -499,8 +498,8 @@ void CImageLoader::UpdateMIPMapImages(CMipImages *MipImages)
     for (int depth=0; depth<depthMax; depth++)
     {
         int count = MipImages->QImage_list[depth].size();
-        // first depth image is always loaded, but remaining image depths
-        // may not have been converted : check prior to generating any MipMap levels
+
+        // we have not mipmaps saved for this cubemap face
         if ((count == 0) && (depth > 0))
         {
             if (MipImages->decompressedMipSet)
@@ -516,7 +515,18 @@ void CImageLoader::UpdateMIPMapImages(CMipImages *MipImages)
                 // report error to use!
             }
         }
+        else if (count == 1)
+        {
+            // Update the top most image mipmap level 1, in case it was processed by a filter or gamma is set
+            if (MipImages->decompressedMipSet)
+                image = MIPS2QImage(m_CMips, MipImages->decompressedMipSet, 0, 0, m_options, &ProgressCallback);
+            else
+                image = MIPS2QImage(m_CMips, MipImages->mipset, 0, 0, m_options, &ProgressCallback);
+            MipImages->QImage_list[0].clear();
+            MipImages->QImage_list[0].push_back(image);
+        }
 
+        // We have mip levels to process for this cube face
         if (count < MipImages->mipset->m_nMipLevels)
         {
             for (int i = 1; i < MipImages->mipset->m_nMipLevels; i++)

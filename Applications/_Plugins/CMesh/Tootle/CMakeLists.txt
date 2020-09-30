@@ -3,25 +3,25 @@ add_library(Plugin_CMesh_Tootle)
 
 target_sources(Plugin_CMesh_Tootle PRIVATE
 
-	mesh_tootle.cpp
-	mesh_tootle.h
-	option.h
-	Timer.cpp
-	Timer.h
+    mesh_tootle.cpp
+    mesh_tootle.h
+    option.h
+    Timer.cpp
+    Timer.h
 )
 
 target_include_directories(Plugin_CMesh_Tootle PRIVATE
 
-	./
+    ./
 )
 
 target_link_libraries(Plugin_CMesh_Tootle 
-	PRIVATE
-		CMP_Mesh
-		CMP_MeshOptimizer
-		Plugin_C3DModel_Loaders_obj
-		Plugin_PluginManager
-		Plugin_TCPluginAPI
+    PRIVATE
+        CMP_Mesh
+        CMP_MeshOptimizer
+        Plugin_C3DModel_Loaders_obj
+        Plugin_PluginManager
+        Plugin_TCPluginAPI
 )
 
 set_target_properties(Plugin_CMesh_Tootle PROPERTIES FOLDER ${FOLDER_NAME})

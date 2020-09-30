@@ -39,6 +39,14 @@ namespace HDR_Encode
 
 #define USE_NEWRAMP
 
+#ifdef USE_RAMPS
+    #include <mutex>
+    static int g_init_ramps = 0;
+    std::mutex mtx;
+#endif
+
+
+
 //==============================================================================================
 // return # of bits needed to store n. handle signed or unsigned cases properly
 inline int NBits(int n, bool bIsSigned)
@@ -2144,6 +2152,15 @@ void init_ramps()
     int i;
     int o1, o2;
 
+    if (g_init_ramps > 0)
+    {
+        g_init_ramps++;
+        return;
+    }
+
+    mtx.lock();
+
+
     // sp_datap = (SP_DATA **)malloc(SP_ERRIDX_MAX*sizeof(struct SP_DATA));
     // assert(sp_datap);
     // for (int i = 0; i < SP_ERRIDX_MAX; i++)
@@ -2248,11 +2265,20 @@ void init_ramps()
     //                             printf("sp_data[%2d].sp_idx[%2d][%2d][%2d][%2d][%2d][0] = %d\n", in_data,CLT(clog), BTT(bits),o1,o2,i, sp_data[in_data].sp_idx[CLT(clog)][BTT(bits)][o1][o2][i][0]);
     //                             printf("sp_data[%2d].sp_idx[%2d][%2d][%2d][%2d][%2d][1] = %d\n", in_data,CLT(clog), BTT(bits),o1,o2,i, sp_data[in_data].sp_idx[CLT(clog)][BTT(bits)][o1][o2][i][1]);
     //                         }
+
+    g_init_ramps++;
+
+    mtx.unlock();
+
 #endif
 }
 
 void deinit_ramps()
 {
+#ifdef USE_RAMPS
+  if (g_init_ramps > 1)
+        g_init_ramps--;
+#endif
 }
 
 int ep_find_floor(float v, int bits, int use_par, int odd)

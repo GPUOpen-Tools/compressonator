@@ -181,13 +181,6 @@ void COpenCL::Init()
     m_version                   = "";
     m_maxUCores                 = 12;
 
-#ifdef USE_CRC
-    m_sourcefile_CRC32          = 0;
-#else
-    m_sourcefile_CRC32          = 1;
-#endif
-
-
     //-------------------------
     // OpenCL compiler options
     //-------------------------
@@ -398,10 +391,20 @@ bool COpenCL::load_file()
         //===========================
         FILE* p_file_bin = NULL;
         std::string tmp = m_source_file;
-        fopen_result = fopen_s(&p_file_bin, tmp.append(".cmp").c_str(), "rb");
+        bool        rebuild    = false;
+
+        // Check build configuration of the shader, has it been modified since last use
+        rebuild = cmp_recompile_shader(m_source_file);
+
+        if (!rebuild)
+        {
+            fopen_result = fopen_s(&p_file_bin, tmp.append(".cmp").c_str(), "rb");
+            if (fopen_result != 0)
+                rebuild = true;
+        }
 
         // Found a .cmp file use it
-        if (fopen_result == 0)
+        if (!rebuild)
         {
             OpenCLBinary_Header BinFile_Header;
             if (fread(&BinFile_Header, sizeof(OpenCLBinary_Header), 1, p_file_bin) != 1)
@@ -864,7 +867,7 @@ bool  COpenCL::RunKernel()
         // counters are in nano second incriments 1e-9f Convert
         m_num_blocks    = m_height_in_blocks*m_width_in_blocks;
         if (m_num_blocks == 0) m_num_blocks = 1;
-        float nanoSeconds = end-start;
+        float nanoSeconds = (float)(end-start);
         // Convert nanosec to ms divide by 1e6f
         m_computeShaderElapsedMS = nanoSeconds/1e6f;
          // time to process a single block (4x4) which is 16 texels

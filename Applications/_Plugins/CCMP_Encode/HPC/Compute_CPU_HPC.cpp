@@ -340,9 +340,12 @@ CMP_ERROR CCPU_HPC::Compress(KernelOptions *Options, MipSet  &SrcTexture, MipSet
 {
     if (m_plugin_compute == NULL) return(CMP_ERR_UNABLE_TO_INIT_COMPUTELIB);
 
-#if (defined(USE_CONVECTION_KERNELS) || defined(USE_GTC)) 
+#if (defined(USE_CONVECTION_KERNELS) || defined(USE_GTC) || defined(USE_APC)) 
     if  (
-        (destTexture.m_format == CMP_FORMAT_GTC)
+        (destTexture.m_format == CMP_FORMAT_GTC) 
+#ifdef USE_APC
+        || (destTexture.m_format == CMP_FORMAT_APC)
+#endif
 #ifdef USE_CONVECTION_KERNELS
         || (destTexture.m_format == CMP_FORMAT_BC1)
         || (destTexture.m_format == CMP_FORMAT_BC5)

@@ -219,7 +219,9 @@ void CMP_PrepareSourceForCMP_Destination(CMP_Texture* pTexture, CMP_FORMAT  Dest
         case CMP_FORMAT_BC2:
         case CMP_FORMAT_BC3:
         case CMP_FORMAT_BC4:
+        case CMP_FORMAT_BC4_S:
         case CMP_FORMAT_BC5:
+        case CMP_FORMAT_BC5_S:
         case CMP_FORMAT_DXT1:
         case CMP_FORMAT_DXT3:
         case CMP_FORMAT_DXT5:
@@ -268,7 +270,9 @@ void CMP_PrepareSourceForCMP_Destination(CMP_Texture* pTexture, CMP_FORMAT  Dest
         case CMP_FORMAT_BC2:
         case CMP_FORMAT_BC3:
         case CMP_FORMAT_BC4:
+        case CMP_FORMAT_BC4_S:
         case CMP_FORMAT_BC5:
+        case CMP_FORMAT_BC5_S:
         case CMP_FORMAT_DXT1:
         case CMP_FORMAT_DXT3:
         case CMP_FORMAT_DXT5:
@@ -390,7 +394,9 @@ void CMP_PrepareCMPSourceForIMG_Destination(CMP_Texture* pDstTexture, CMP_FORMAT
     case CMP_FORMAT_BC2:
     case CMP_FORMAT_BC3:
     case CMP_FORMAT_BC4:
+    case CMP_FORMAT_BC4_S:
     case CMP_FORMAT_BC5:
+    case CMP_FORMAT_BC5_S:
     case CMP_FORMAT_DXT1:
     case CMP_FORMAT_DXT3:
     case CMP_FORMAT_DXT5:
@@ -565,7 +571,12 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture* pSourceTexture, CMP_Texture* p
             && (destType != CT_BC7)
             && (destType != CT_BC6H)
             && (destType != CT_BC6H_SF)
+#ifdef USE_APC
+           && (destType != CT_APC)
+#endif
+#ifdef USE_GTC
             && (destType != CT_GTC)
+#endif
 #ifdef USE_BASIS
             && (destType != CT_BASIS)
 #endif
@@ -926,11 +937,20 @@ CMP_ERROR CMP_API CMP_ConvertMipTexture(CMP_MipSet* p_MipSetIn, CMP_MipSet* p_Mi
                 if (pOptions->m_PrintInfoStr)
                 {
                    char buff[256];
-                   sprintf(buff,"\nSource Texture size = %d Bytes, width = %d px  height = %d px\n", srcTexture.dwDataSize, srcTexture.dwWidth,srcTexture.dwHeight);
+                   snprintf(buff,
+                             sizeof(buff),
+                             "\nSource Texture size = %d Bytes, width = %d px  height = %d px\n",
+                             srcTexture.dwDataSize,
+                             srcTexture.dwWidth,
+                             srcTexture.dwHeight);
                    pOptions->m_PrintInfoStr(buff);
                    if (destTexture.dwDataSize > 0)
                    {
-                       sprintf(buff,"Destination Texture size = %d Bytes   Resulting compression ratio = %2.2f:1\n", destTexture.dwDataSize,srcTexture.dwDataSize / (float)destTexture.dwDataSize);
+                       snprintf(buff,
+                                 sizeof(buff),
+                                 "Destination Texture size = %d Bytes   Resulting compression ratio = %2.2f:1\n",
+                                 destTexture.dwDataSize,
+                                 srcTexture.dwDataSize / (float)destTexture.dwDataSize);
                        pOptions->m_PrintInfoStr(buff);
                    }
                 }

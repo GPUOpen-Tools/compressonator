@@ -46,4 +46,39 @@ public:
         CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0,CMP_DWORD dwDataSize = 0) const;
 };
 
+
+
+class CCodec_ATI1N_S : public CCodec_DXTC
+{
+public:
+    CCodec_ATI1N_S(CodecType codecType = CT_ATI1N_S);
+    virtual ~CCodec_ATI1N_S();
+
+    virtual CodecError Compress(CCodecBuffer&       bufferIn,
+                                CCodecBuffer&       bufferOut,
+                                Codec_Feedback_Proc pFeedbackProc = NULL,
+                                CMP_DWORD_PTR       pUser1        = NULL,
+                                CMP_DWORD_PTR       pUser2        = NULL);
+    virtual CodecError Compress_Fast(CCodecBuffer&       bufferIn,
+                                     CCodecBuffer&       bufferOut,
+                                     Codec_Feedback_Proc pFeedbackProc = NULL,
+                                     CMP_DWORD_PTR       pUser1        = NULL,
+                                     CMP_DWORD_PTR       pUser2        = NULL);
+    virtual CodecError Decompress(CCodecBuffer&       bufferIn,
+                                  CCodecBuffer&       bufferOut,
+                                  Codec_Feedback_Proc pFeedbackProc = NULL,
+                                  CMP_DWORD_PTR       pUser1        = NULL,
+                                  CMP_DWORD_PTR       pUser2        = NULL);
+
+    virtual CCodecBuffer* CreateBuffer(CMP_BYTE  nBlockWidth,
+                                       CMP_BYTE  nBlockHeight,
+                                       CMP_BYTE  nBlockDepth,
+                                       CMP_DWORD dwWidth,
+                                       CMP_DWORD dwHeight,
+                                       CMP_DWORD dwPitch    = 0,
+                                       CMP_BYTE* pData      = 0,
+                                       CMP_DWORD dwDataSize = 0) const;
+};
+
+
 #endif // !defined(_CODEC_ATI1N_H_INCLUDED_)

@@ -7,7 +7,7 @@ set(LEGACY_LOCATION ../)
 
 target_sources(Plugin_Common_Crc32 INTERFACE
 
-	${LEGACY_LOCATION}/crc32.h
+    ${LEGACY_LOCATION}/crc32.h
 )
 
 target_include_directories(Plugin_Common_Crc32 INTERFACE

@@ -3,8 +3,8 @@ add_library(Plugin_C3DModel_Loaders_obj)
 
 file(GLOB_RECURSE SRCS
 
-	"*.cpp"
-	"*.h"
+    "*.cpp"
+    "*.h"
 )
 
 target_sources(Plugin_C3DModel_Loaders_obj PRIVATE
@@ -26,7 +26,7 @@ target_link_libraries(Plugin_C3DModel_Loaders_obj PRIVATE
 
 target_include_directories(Plugin_C3DModel_Loaders_obj PUBLIC
 
-	./
+    ./
 )
 
 set_target_properties(Plugin_C3DModel_Loaders_obj PROPERTIES FOLDER ${FOLDER_NAME})

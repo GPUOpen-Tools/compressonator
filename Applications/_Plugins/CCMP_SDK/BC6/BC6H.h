@@ -32,7 +32,10 @@
 #include "HPC_Compress.h"           // padline defs
 #include "cmp_math_common.h"
 
+#pragma warning(push)
+#pragma warning(disable : 4244)
 #include "half.h"
+#pragma warning(pop)
 typedef half           CMP_HALF;   ///< A 16-bit floating point number class
 #ifdef _WIN32
 // {9DFF2240-614C-436E-A2E9-FC0993FD4483}

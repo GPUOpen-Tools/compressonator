@@ -445,6 +445,11 @@ QtTreePropertyBrowser *ObjectController::getTreeBrowser()
     return (QtTreePropertyBrowser *)d_ptr->m_browser;
 }
 
+QtGroupBoxPropertyBrowser* ObjectController::getBoxBrowser()
+{
+    return (QtGroupBoxPropertyBrowser *)d_ptr->m_browser;
+}
+
 ObjectController::ObjectController(QWidget *parent, bool use_treeView, bool ReadOnly)
     : QWidget(parent)
 {

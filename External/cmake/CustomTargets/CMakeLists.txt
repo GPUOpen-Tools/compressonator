@@ -1,43 +1,48 @@
 # CustomTargets.cmake
 
 # ====================================================
+#                      DirectXTex
+# ====================================================
+#include(CustomTarget_directxtex.cmake)
+
+# ====================================================
 #                     C A T C H 2
 # ====================================================
-include(CustomTarget_catch2.cmake)
+#include(CustomTarget_catch2.cmake)
 
 # ====================================================
 #                      G L E W
 # ====================================================
-include(CustomTarget_glew.cmake)
+#include(CustomTarget_glew.cmake)
 
 # ====================================================
 #                    G L S L A N G
 # ====================================================
-if (WIN32)
-    include(CustomTarget_glslang.cmake)
-endif()
+#if (WIN32)
+#    include(CustomTarget_glslang.cmake)
+#endif()
 
 # ====================================================
 #                    L I B P N G
 # ====================================================
-include(CustomTarget_libpng.cmake)
+#include(CustomTarget_libpng.cmake)
 
 # ====================================================
 #                   L I B T I F F
 # ====================================================
-include(CustomTarget_libtiff.cmake)
+#include(CustomTarget_libtiff.cmake)
 
 # ====================================================
 #                    O P E N C V
 # ====================================================
-include(CustomTarget_opencv.cmake)
+#include(CustomTarget_opencv.cmake)
 
 # ====================================================
 #                   O P E N E X R
 # ====================================================
-include(CustomTarget_openexr.cmake)
+#include(CustomTarget_openexr.cmake)
 
 # ====================================================
 #                      Z L I B
 # ====================================================
-include(CustomTarget_zlib.cmake)
+#include(CustomTarget_zlib.cmake)

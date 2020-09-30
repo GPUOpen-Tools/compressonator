@@ -1,2 +1,0 @@
-cd ../shaders
-CompileShaders

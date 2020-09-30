@@ -21,10 +21,10 @@
     <ROW Property="BannerBitmap" Value="banner" MultiBuildValue="DefaultBuild:AMDCompressTools.bmp" Type="1" MsiKey="BannerBitmap"/>
     <ROW Property="DialogBitmap" Value="dialog" MultiBuildValue="DefaultBuild:AMDCompress.bmp" Type="1" MsiKey="DialogBitmap"/>
     <ROW Property="Manufacturer" Value="GPUOpen.com"/>
-    <ROW Property="ProductCode" Value="1033:{C9709CF3-D646-4D3B-B5DD-D9D30FAF53E8} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{5898D560-862D-4431-8743-67D67A555B7A} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="CompressonatorFramework"/>
-    <ROW Property="ProductVersion" Value="3.2.0" Type="32"/>
+    <ROW Property="ProductVersion" Value="4.1.0" Type="32"/>
     <ROW Property="SETUP_FILE_NAME" Value="CompressonatorFrameWork_x64_4.1."/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
     <ROW Property="UpgradeCode" Value="{78D0379B-C01A-49C4-A8C7-A41904A35199}"/>
@@ -42,50 +42,65 @@
     <ROW Directory="Samples_Dir" Directory_Parent="APPDIR" DefaultDir="examples" DirectoryOptions="3"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
     <ROW Directory="VS2015_Dir" Directory_Parent="Libs_Dir" DefaultDir="VS2017" DirectoryOptions="3"/>
+    <ROW Directory="common_Dir" Directory_Parent="Samples_Dir" DefaultDir="common" DirectoryOptions="3"/>
+    <ROW Directory="compute_Dir" Directory_Parent="plugins_Dir" DefaultDir="compute" DirectoryOptions="3"/>
+    <ROW Directory="core_example1_Dir" Directory_Parent="Samples_Dir" DefaultDir="CORE_E~1|core_example1" DirectoryOptions="3"/>
     <ROW Directory="encoders_Dir" Directory_Parent="Libs_Dir" DefaultDir="encoders" DirectoryOptions="3"/>
     <ROW Directory="framework_example1_Dir" Directory_Parent="Samples_Dir" DefaultDir="FRAMEW~1|framework_example1" DirectoryOptions="3"/>
     <ROW Directory="framework_example2_Dir" Directory_Parent="Samples_Dir" DefaultDir="FRAMEW~2|framework_example2" DirectoryOptions="3"/>
     <ROW Directory="framework_example3_Dir" Directory_Parent="Samples_Dir" DefaultDir="FRAMEW~3|framework_example3" DirectoryOptions="3"/>
+    <ROW Directory="framework_example4_Dir" Directory_Parent="Samples_Dir" DefaultDir="FRAMEW~4|framework_example4" DirectoryOptions="3"/>
     <ROW Directory="license1_Dir" Directory_Parent="APPDIR" DefaultDir="license" DirectoryOptions="3"/>
+    <ROW Directory="plugins_Dir" Directory_Parent="framework_example4_Dir" DefaultDir="plugins" DirectoryOptions="3"/>
     <ROW Directory="x64_Dir" Directory_Parent="VS2015_Dir" DefaultDir="x64" DirectoryOptions="3"/>
     <ROW Directory="x86_Dir" Directory_Parent="VS2015_Dir" DefaultDir="x86" DirectoryOptions="3"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
-    <ROW Component="AI_CustomARPName" ComponentId="{AC90A5BF-9FAC-43E5-8819-4CBB0B35EDA1}" Directory_="APPDIR" Attributes="260" KeyPath="DisplayName" Options="1"/>
-    <ROW Component="AI_DisableModify" ComponentId="{D1A7ED3D-B70C-48CF-8B4E-4EB9A888ED8B}" Directory_="APPDIR" Attributes="260" KeyPath="NoModify" Options="1"/>
-    <ROW Component="AI_ExePath" ComponentId="{182FEE9D-1C39-4613-84C5-77B96467B468}" Directory_="APPDIR" Attributes="4" KeyPath="AI_ExePath"/>
-    <ROW Component="BC1_Encode_kernel.cpp" ComponentId="{674ED4B3-BE44-4D14-BDC6-2B598A020ED7}" Directory_="encoders_Dir" Attributes="0" KeyPath="BC1_Encode_kernel.cpp" Type="0"/>
-    <ROW Component="CMP_Framework.h" ComponentId="{C49881EC-6E75-4DC4-B611-C098BCD69831}" Directory_="Header_Dir" Attributes="0" KeyPath="CMP_Framework.h" Type="0"/>
-    <ROW Component="CMP_Framework_MD_DLL.dll" ComponentId="{6AEAE5F9-75EC-46D1-9824-503B8434E74E}" Directory_="x64_Dir" Attributes="256" KeyPath="CMP_Framework_MD_DLL.dll"/>
-    <ROW Component="CMP_Framework_MD_DLL.dll_2" ComponentId="{F3F26CFD-9083-432A-894E-171C47C3BDB7}" Directory_="x86_Dir" Attributes="0" KeyPath="CMP_Framework_MD_DLL.dll_2"/>
-    <ROW Component="CMP_Framework_MD_DLL.lib" ComponentId="{42A0C60A-B746-4434-A77A-8B8693ADB839}" Directory_="x86_Dir" Attributes="0" KeyPath="CMP_Framework_MTd.lib_1" Type="0"/>
-    <ROW Component="CMP_Framework_MDd_DLL.dll" ComponentId="{5CB055C1-95A6-4CEC-AE38-D448621DBD25}" Directory_="x64_Dir" Attributes="256" KeyPath="CMP_Framework_MDd_DLL.dll"/>
-    <ROW Component="CMP_Framework_MDd_DLL.dll_1" ComponentId="{7DC15E7F-5239-4E25-9B4D-62F218E7AF96}" Directory_="x86_Dir" Attributes="0" KeyPath="CMP_Framework_MDd_DLL.dll_1"/>
-    <ROW Component="CMP_Framework_MT_DLL.dll" ComponentId="{F33ED14D-3BAE-435F-96F1-F2F838198260}" Directory_="x64_Dir" Attributes="256" KeyPath="CMP_Framework_MT_DLL.dll"/>
-    <ROW Component="CMP_Framework_MT_DLL.dll_1" ComponentId="{B12A9608-A4B2-4F33-939E-A33510EA4CE9}" Directory_="x86_Dir" Attributes="0" KeyPath="CMP_Framework_MT_DLL.dll_1"/>
-    <ROW Component="CMP_Framework_MTd.lib" ComponentId="{B624832F-ECE7-4BB0-81C5-1561AB7FC748}" Directory_="x64_Dir" Attributes="0" KeyPath="CMP_Framework_MTd.lib" Type="0"/>
-    <ROW Component="CMP_Framework_MTd_DLL.dll" ComponentId="{FD740948-89FB-4C45-B57E-6E21EC361AA6}" Directory_="x64_Dir" Attributes="256" KeyPath="CMP_Framework_MTd_DLL.dll"/>
-    <ROW Component="CMP_Framework_MTd_DLL.dll_1" ComponentId="{61386D94-00EB-4A8C-A407-B6B8620FA0C6}" Directory_="x86_Dir" Attributes="0" KeyPath="CMP_Framework_MTd_DLL.dll_1"/>
-    <ROW Component="CopyFiles.bat" ComponentId="{C7328DAA-109D-40B1-9CA5-E51CB9776437}" Directory_="framework_example3_Dir" Attributes="0" KeyPath="SDK_Example3.cpp" Type="0"/>
-    <ROW Component="LICENSE" ComponentId="{4DBADBA5-2C12-4504-AB17-6FDAAEDCDDCE}" Directory_="OpenEXR_Dir" Attributes="0" KeyPath="LICENSE" Type="0"/>
-    <ROW Component="Name" ComponentId="{1811D60F-D827-443D-A950-7E8B88F5C2B1}" Directory_="APPDIR" Attributes="260" KeyPath="Name"/>
-    <ROW Component="ProductInformation" ComponentId="{A58322B9-6439-454D-B31B-E3EF63065836}" Directory_="APPDIR" Attributes="4" KeyPath="Version"/>
-    <ROW Component="Readme.txt" ComponentId="{BDEB0965-4E5F-4833-B554-257AF955CA66}" Directory_="license1_Dir" Attributes="0" KeyPath="Readme.txt_1" Type="0"/>
-    <ROW Component="SDK_Example1.cpp" ComponentId="{B8CF15A8-ED3A-4244-9FDE-3CE08E51B1E6}" Directory_="framework_example1_Dir" Attributes="0" KeyPath="SDK_Example1.cpp" Type="0"/>
-    <ROW Component="SDK_Example2.cpp" ComponentId="{6D9CD6DB-0A85-4005-8C05-219706862348}" Directory_="framework_example2_Dir" Attributes="0" KeyPath="SDK_Example2.cpp" Type="0"/>
-    <ROW Component="SETUP_FILE_NAME" ComponentId="{7C49F7FA-6D9A-47F3-AFED-B20F5C77E2BA}" Directory_="APPDIR" Attributes="260" KeyPath="SETUP_FILE_NAME" Options="1"/>
-    <ROW Component="SHORTCUTDIR" ComponentId="{9B90E024-305F-46C6-A240-C0CF1F0D9C49}" Directory_="SHORTCUTDIR" Attributes="0"/>
-    <ROW Component="readme.txt" ComponentId="{6E1156A6-5E46-41E3-9EDD-43962C07D06A}" Directory_="Samples_Dir" Attributes="0" KeyPath="readme.txt" Type="0"/>
+    <ROW Component="AI_CustomARPName" ComponentId="{4A851328-A215-487F-8CC4-D4927740F120}" Directory_="APPDIR" Attributes="260" KeyPath="DisplayName" Options="1"/>
+    <ROW Component="AI_DisableModify" ComponentId="{0E0CCD51-1185-445C-A387-D7A3BDE69A56}" Directory_="APPDIR" Attributes="260" KeyPath="NoModify" Options="1"/>
+    <ROW Component="AI_ExePath" ComponentId="{E55B1237-B8CB-4E96-A638-4F886FAE72FD}" Directory_="APPDIR" Attributes="4" KeyPath="AI_ExePath"/>
+    <ROW Component="BC1_Encode_kernel.cpp" ComponentId="{5ADAE3B9-3BEC-4A67-9522-CA1123A7C100}" Directory_="encoders_Dir" Attributes="0" KeyPath="BC1_Encode_kernel.cpp" Type="0"/>
+    <ROW Component="BC1_Encode_kernel.h" ComponentId="{AAB038B7-8150-4C93-926C-9DBD9B87A111}" Directory_="compute_Dir" Attributes="0" KeyPath="BC1_Encode_kernel.h_1" Type="0"/>
+    <ROW Component="CMP_Framework.h" ComponentId="{3E671F30-E02F-44DF-8605-B582F8838461}" Directory_="Header_Dir" Attributes="0" KeyPath="CMP_Framework.h" Type="0"/>
+    <ROW Component="CMP_Framework_MD_DLL.dll" ComponentId="{E1F56DE4-BA79-4F86-8256-8A4713708CFA}" Directory_="x64_Dir" Attributes="256" KeyPath="CMP_Framework_MD_DLL.dll"/>
+    <ROW Component="CMP_Framework_MD_DLL.dll_2" ComponentId="{CAE3CFD5-DDF3-4592-AEE0-CD9930190533}" Directory_="x86_Dir" Attributes="0" KeyPath="CMP_Framework_MD_DLL.dll_2"/>
+    <ROW Component="CMP_Framework_MD_DLL.lib" ComponentId="{F7C52469-DAE9-4E9A-9571-8213142F7F75}" Directory_="x86_Dir" Attributes="0" KeyPath="CMP_Framework_MTd.lib_1" Type="0"/>
+    <ROW Component="CMP_Framework_MDd_DLL.dll" ComponentId="{2A35BEBE-E66F-450E-92B8-7B41D905F5AD}" Directory_="x64_Dir" Attributes="256" KeyPath="CMP_Framework_MDd_DLL.dll"/>
+    <ROW Component="CMP_Framework_MDd_DLL.dll_1" ComponentId="{1FE7B659-8C60-4E43-A213-B240FD3202F8}" Directory_="x86_Dir" Attributes="0" KeyPath="CMP_Framework_MDd_DLL.dll_1"/>
+    <ROW Component="CMP_Framework_MT_DLL.dll" ComponentId="{236F479A-A149-48F2-85F8-67D64DFFCB76}" Directory_="x64_Dir" Attributes="256" KeyPath="CMP_Framework_MT_DLL.dll"/>
+    <ROW Component="CMP_Framework_MT_DLL.dll_1" ComponentId="{ED9BB64D-7474-4530-99BF-4501345A0242}" Directory_="x86_Dir" Attributes="0" KeyPath="CMP_Framework_MT_DLL.dll_1"/>
+    <ROW Component="CMP_Framework_MTd.lib" ComponentId="{11169790-3097-4B01-A994-AF7025B5AF15}" Directory_="x64_Dir" Attributes="0" KeyPath="CMP_Framework_MTd.lib" Type="0"/>
+    <ROW Component="CMP_Framework_MTd_DLL.dll" ComponentId="{56027C56-CDEE-4FD1-B7F4-8EF0492CE48D}" Directory_="x64_Dir" Attributes="256" KeyPath="CMP_Framework_MTd_DLL.dll"/>
+    <ROW Component="CMP_Framework_MTd_DLL.dll_1" ComponentId="{D6CD566D-5121-44B3-AD6C-510997ACF8C6}" Directory_="x86_Dir" Attributes="0" KeyPath="CMP_Framework_MTd_DLL.dll_1"/>
+    <ROW Component="CMakeLists.txt" ComponentId="{6B45515E-1AD1-42F6-B51D-BC2C50D34424}" Directory_="framework_example4_Dir" Attributes="0" KeyPath="CMakeLists.txt" Type="0"/>
+    <ROW Component="CMakeLists.txt_1" ComponentId="{658D2EDA-8138-4088-A346-B6F74C9667F5}" Directory_="Samples_Dir" Attributes="0" KeyPath="CMakeLists.txt_4" Type="0"/>
+    <ROW Component="CMakeLists.txt_2" ComponentId="{6785CD37-0712-4A8B-9588-A261E6FACF65}" Directory_="common_Dir" Attributes="0" KeyPath="CMakeLists.txt_5" Type="0"/>
+    <ROW Component="CMakeLists.txt_3" ComponentId="{E46F0E1D-7623-4FB9-900B-85F886DD27C2}" Directory_="core_example1_Dir" Attributes="0" KeyPath="CMakeLists.txt_6" Type="0"/>
+    <ROW Component="CopyFiles.bat" ComponentId="{BEFB8F47-5CDA-463A-BE12-35070DF2FA25}" Directory_="framework_example3_Dir" Attributes="0" KeyPath="SDK_Example3.cpp" Type="0"/>
+    <ROW Component="LICENSE" ComponentId="{DF1CDFDF-F4F9-4785-A5FE-046E91F958B2}" Directory_="OpenEXR_Dir" Attributes="0" KeyPath="LICENSE" Type="0"/>
+    <ROW Component="Name" ComponentId="{7AA11289-3728-4E44-B73F-C108BC1EB9BA}" Directory_="APPDIR" Attributes="260" KeyPath="Name"/>
+    <ROW Component="Plugin_CMP_GPU_DXC.dll" ComponentId="{C885E910-4790-4087-86BF-7B29EB5BA21E}" Directory_="plugins_Dir" Attributes="256" KeyPath="Plugin_CMP_GPU_DXC.dll"/>
+    <ROW Component="Plugin_CMP_GPU_HW.dll" ComponentId="{9A72B192-E451-4AC6-AD12-2AB9937A1F59}" Directory_="plugins_Dir" Attributes="256" KeyPath="Plugin_CMP_GPU_HW.dll"/>
+    <ROW Component="Plugin_CMP_GPU_OCL.dll" ComponentId="{F897BC08-2E9D-44DF-AB3C-A10B94BEDB65}" Directory_="plugins_Dir" Attributes="256" KeyPath="Plugin_CMP_GPU_OCL.dll"/>
+    <ROW Component="ProductInformation" ComponentId="{C697A8F7-809A-4713-B965-3014D78E6EE0}" Directory_="APPDIR" Attributes="4" KeyPath="Version"/>
+    <ROW Component="Readme.txt" ComponentId="{04AABB1B-04BD-4DB6-ADF5-823B085D6AD5}" Directory_="license1_Dir" Attributes="0" KeyPath="FrameworkLicense.txt" Type="0"/>
+    <ROW Component="SDK_Example1.cpp" ComponentId="{015662CA-731A-4E05-92D3-C22CCB9D0F7C}" Directory_="framework_example1_Dir" Attributes="0" KeyPath="SDK_Example1.cpp" Type="0"/>
+    <ROW Component="SDK_Example2.cpp" ComponentId="{F1003511-9A61-4951-A343-2E57C92B6316}" Directory_="framework_example2_Dir" Attributes="0" KeyPath="SDK_Example2.cpp" Type="0"/>
+    <ROW Component="SETUP_FILE_NAME" ComponentId="{3C97B171-C6DD-422C-8FA7-AEA25E5FB7BE}" Directory_="APPDIR" Attributes="260" KeyPath="SETUP_FILE_NAME" Options="1"/>
+    <ROW Component="SHORTCUTDIR" ComponentId="{0ABC6260-2BBB-45BF-A522-07232C59062A}" Directory_="SHORTCUTDIR" Attributes="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="MainFeature" Title="Compressonator SDK" Description="Description" Display="7" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_CustomARPName AI_DisableModify AI_ExePath BC1_Encode_kernel.cpp CMP_Framework.h CMP_Framework_MD_DLL.dll CMP_Framework_MD_DLL.dll_2 CMP_Framework_MD_DLL.lib CMP_Framework_MDd_DLL.dll CMP_Framework_MDd_DLL.dll_1 CMP_Framework_MT_DLL.dll CMP_Framework_MT_DLL.dll_1 CMP_Framework_MTd.lib CMP_Framework_MTd_DLL.dll CMP_Framework_MTd_DLL.dll_1 CopyFiles.bat LICENSE Name ProductInformation Readme.txt SDK_Example1.cpp SDK_Example2.cpp SETUP_FILE_NAME SHORTCUTDIR readme.txt"/>
-    <ROW Feature="VisualStudioCMergeModules" Title="Visual Studio C++ Merge Modules" Description="Description" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_CustomARPName AI_DisableModify AI_ExePath"/>
+    <ROW Feature="MainFeature" Title="Compressonator SDK" Description="Description" Display="7" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_CustomARPName AI_DisableModify AI_ExePath BC1_Encode_kernel.cpp BC1_Encode_kernel.h CMP_Framework.h CMP_Framework_MD_DLL.dll CMP_Framework_MD_DLL.dll_2 CMP_Framework_MD_DLL.lib CMP_Framework_MDd_DLL.dll CMP_Framework_MDd_DLL.dll_1 CMP_Framework_MT_DLL.dll CMP_Framework_MT_DLL.dll_1 CMP_Framework_MTd.lib CMP_Framework_MTd_DLL.dll CMP_Framework_MTd_DLL.dll_1 CMakeLists.txt CMakeLists.txt_1 CMakeLists.txt_2 CMakeLists.txt_3 CopyFiles.bat LICENSE Name Plugin_CMP_GPU_DXC.dll Plugin_CMP_GPU_HW.dll Plugin_CMP_GPU_OCL.dll ProductInformation Readme.txt SDK_Example1.cpp SDK_Example2.cpp SETUP_FILE_NAME SHORTCUTDIR"/>
+    <ROW Feature="VisualStudioCMergeModules" Title="Visual Studio C++ Merge Modules" Description="Description" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_CustomARPName AI_DisableModify AI_ExePath SETUP_FILE_NAME"/>
     <ATTRIBUTE name="CurrentFeature" value="MainFeature"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
     <ROW File="BC1_Encode_kernel.cpp" Component_="BC1_Encode_kernel.cpp" FileName="BC1_EN~1.CPP|BC1_Encode_kernel.cpp" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Core\shaders\BC1_Encode_kernel.cpp" SelfReg="false" NextFile="BC1_Encode_kernel.h"/>
+    <ROW File="BC1_Encode_kernel.cpp_1" Component_="BC1_Encode_kernel.h" FileName="BC1_EN~1.CPP|BC1_Encode_kernel.cpp" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\BC1_Encode_kernel.cpp" SelfReg="false" NextFile="BC1_Encode_kernel.hlsl_1"/>
     <ROW File="BC1_Encode_kernel.h" Component_="BC1_Encode_kernel.cpp" FileName="BC1_EN~1.H|BC1_Encode_kernel.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Core\shaders\BC1_Encode_kernel.h" SelfReg="false" NextFile="BC2_Encode_kernel.cpp"/>
+    <ROW File="BC1_Encode_kernel.h_1" Component_="BC1_Encode_kernel.h" FileName="BC1_EN~1.H|BC1_Encode_kernel.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\BC1_Encode_kernel.h" SelfReg="false" NextFile="BCn_Common_kernel.h_1"/>
     <ROW File="BC1_Encode_kernel.hlsl" Component_="BC1_Encode_kernel.cpp" FileName="BC1_EN~1.HLS|BC1_Encode_kernel.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Core\shaders\BC1_Encode_kernel.hlsl" SelfReg="false" NextFile="BC2_Encode_kernel.hlsl"/>
+    <ROW File="BC1_Encode_kernel.hlsl_1" Component_="BC1_Encode_kernel.h" FileName="BC1_EN~1.HLS|BC1_Encode_kernel.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\BC1_Encode_kernel.hlsl" SelfReg="false"/>
     <ROW File="BC2_Encode_kernel.cpp" Component_="BC1_Encode_kernel.cpp" FileName="BC2_EN~1.CPP|BC2_Encode_kernel.cpp" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Core\shaders\BC2_Encode_kernel.cpp" SelfReg="false" NextFile="BC2_Encode_kernel.h"/>
     <ROW File="BC2_Encode_kernel.h" Component_="BC1_Encode_kernel.cpp" FileName="BC2_EN~1.H|BC2_Encode_kernel.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Core\shaders\BC2_Encode_kernel.h" SelfReg="false" NextFile="BC3_Encode_kernel.cpp"/>
     <ROW File="BC2_Encode_kernel.hlsl" Component_="BC1_Encode_kernel.cpp" FileName="BC2_EN~1.HLS|BC2_Encode_kernel.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Core\shaders\BC2_Encode_kernel.hlsl" SelfReg="false" NextFile="BC3_Encode_kernel.hlsl"/>
@@ -103,9 +118,10 @@
     <ROW File="BC6_Encode_kernel.hlsl" Component_="BC1_Encode_kernel.cpp" FileName="BC6_EN~1.HLS|BC6_Encode_kernel.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Core\shaders\BC6_Encode_kernel.hlsl" SelfReg="false" NextFile="BC7_Encode_kernel.hlsl"/>
     <ROW File="BC7_Encode_Kernel.cpp" Component_="BC1_Encode_kernel.cpp" FileName="BC7_EN~1.CPP|BC7_Encode_Kernel.cpp" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Core\shaders\BC7_Encode_Kernel.cpp" SelfReg="false" NextFile="BC7_Encode_Kernel.h"/>
     <ROW File="BC7_Encode_Kernel.h" Component_="BC1_Encode_kernel.cpp" FileName="BC7_EN~1.H|BC7_Encode_Kernel.h" Version="65535.65535.65535.65535" Attributes="1" SourcePath="..\CMP_Core\shaders\BC7_Encode_Kernel.h" SelfReg="false" NextFile="Common_Def.h"/>
-    <ROW File="BC7_Encode_kernel.hlsl" Component_="BC1_Encode_kernel.cpp" FileName="BC7_EN~1.HLS|BC7_Encode_kernel.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Core\shaders\BC7_Encode_kernel.hlsl" SelfReg="false"/>
+    <ROW File="BC7_Encode_kernel.hlsl" Component_="BC1_Encode_kernel.cpp" FileName="BC7_EN~1.HLS|BC7_Encode_kernel.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Core\shaders\BC7_Encode_kernel.hlsl" SelfReg="false" NextFile="CMakeLists.txt"/>
     <ROW File="BCn_Common_Kernel.h" Component_="BC1_Encode_kernel.cpp" FileName="BCN_CO~1.H|BCn_Common_Kernel.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Core\shaders\BCn_Common_Kernel.h" SelfReg="false" NextFile="SDK_Example1.cpp"/>
-    <ROW File="CMP_Framework.h" Component_="CMP_Framework.h" FileName="CMP_FR~1.H|CMP_Framework.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Framework\CMP_Framework.h" SelfReg="false" NextFile="Readme.txt_1"/>
+    <ROW File="BCn_Common_kernel.h_1" Component_="BC1_Encode_kernel.h" FileName="BCN_CO~1.H|BCn_Common_kernel.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\BCn_Common_kernel.h" SelfReg="false" NextFile="Common_Def.h_1"/>
+    <ROW File="CMP_Framework.h" Component_="CMP_Framework.h" FileName="CMP_FR~1.H|CMP_Framework.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Framework\CMP_Framework.h" SelfReg="false" NextFile="FrameworkLicense.txt"/>
     <ROW File="CMP_Framework_MD.lib" Component_="CMP_Framework_MTd.lib" FileName="CMP_FR~7.LIB|CMP_Framework_MD.lib" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Build\Release_MD\x64\CMP_Framework_MD.lib" SelfReg="false" NextFile="CMP_Framework_MD_DLL.dll"/>
     <ROW File="CMP_Framework_MD.lib_1" Component_="CMP_Framework_MD_DLL.lib" FileName="CMP_FR~7.LIB|CMP_Framework_MD.lib" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Build\Release_MD\Win32\CMP_Framework_MD.lib" SelfReg="false" NextFile="CMP_Framework_MD_DLL.dll_2"/>
     <ROW File="CMP_Framework_MD_DLL.dll" Component_="CMP_Framework_MD_DLL.dll" FileName="CMP_FR~4.DLL|CMP_Framework_MD_DLL.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Build\Release_MD_DLL\x64\CMP_Framework_MD_DLL.dll" SelfReg="false" NextFile="CMP_Framework_MD_DLL.lib"/>
@@ -130,11 +146,31 @@
     <ROW File="CMP_Framework_MTd_DLL.dll_1" Component_="CMP_Framework_MTd_DLL.dll_1" FileName="CMP_FR~1.DLL|CMP_Framework_MTd_DLL.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Build\Debug_DLL\Win32\CMP_Framework_MTd_DLL.dll" SelfReg="false" NextFile="CMP_Framework_MTd_DLL.lib_1"/>
     <ROW File="CMP_Framework_MTd_DLL.lib" Component_="CMP_Framework_MTd.lib" FileName="CMP_FR~2.LIB|CMP_Framework_MTd_DLL.lib" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Build\Debug_DLL\x64\CMP_Framework_MTd_DLL.lib" SelfReg="false" NextFile="CMP_Framework_MDd.lib"/>
     <ROW File="CMP_Framework_MTd_DLL.lib_1" Component_="CMP_Framework_MD_DLL.lib" FileName="CMP_FR~1.LIB|CMP_Framework_MTd_DLL.lib" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Build\Debug_DLL\Win32\CMP_Framework_MTd_DLL.lib" SelfReg="false" NextFile="CMP_Framework_MDd.lib_1"/>
+    <ROW File="CMakeLists.txt" Component_="CMakeLists.txt" FileName="CMAKEL~1.TXT|CMakeLists.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example4\CMakeLists.txt" SelfReg="false" NextFile="CopyFiles.cmake"/>
+    <ROW File="CMakeLists.txt_1" Component_="CopyFiles.bat" FileName="CMAKEL~1.TXT|CMakeLists.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example3\CMakeLists.txt" SelfReg="false" NextFile="CMakeLists.txt_2"/>
+    <ROW File="CMakeLists.txt_2" Component_="SDK_Example2.cpp" FileName="CMAKEL~1.TXT|CMakeLists.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example2\CMakeLists.txt" SelfReg="false" NextFile="CMakeLists.txt_3"/>
+    <ROW File="CMakeLists.txt_3" Component_="SDK_Example1.cpp" FileName="CMAKEL~1.TXT|CMakeLists.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example1\CMakeLists.txt" SelfReg="false" NextFile="CMakeLists.txt_4"/>
+    <ROW File="CMakeLists.txt_4" Component_="CMakeLists.txt_1" FileName="CMAKEL~1.TXT|CMakeLists.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\CMakeLists.txt" SelfReg="false" NextFile="README.md"/>
+    <ROW File="CMakeLists.txt_5" Component_="CMakeLists.txt_2" FileName="CMAKEL~1.TXT|CMakeLists.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\common\CMakeLists.txt" SelfReg="false" NextFile="DDS_Helpers.cpp"/>
+    <ROW File="CMakeLists.txt_6" Component_="CMakeLists.txt_3" FileName="CMAKEL~1.TXT|CMakeLists.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\core_example1\CMakeLists.txt" SelfReg="false" NextFile="CoreExample.cpp"/>
     <ROW File="Common_Def.h" Component_="BC1_Encode_kernel.cpp" FileName="COMMON~1.H|Common_Def.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Core\shaders\Common_Def.h" SelfReg="false" NextFile="BCn_Common_Kernel.h"/>
+    <ROW File="Common_Def.h_1" Component_="BC1_Encode_kernel.h" FileName="COMMON~1.H|Common_Def.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\Common_Def.h" SelfReg="false" NextFile="BC1_Encode_kernel.cpp_1"/>
+    <ROW File="CopyFiles.cmake" Component_="CMakeLists.txt" FileName="COPYFI~1.CMA|CopyFiles.cmake" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example4\CopyFiles.cmake" SelfReg="false" NextFile="Framework_Example4.cpp"/>
+    <ROW File="CoreExample.cpp" Component_="CMakeLists.txt_3" FileName="COREEX~1.CPP|CoreExample.cpp" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\core_example1\CoreExample.cpp" SelfReg="false" NextFile="Core_Example1.sln"/>
+    <ROW File="Core_Example1.sln" Component_="CMakeLists.txt_3" FileName="CORE_E~1.SLN|Core_Example1.sln" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\core_example1\Core_Example1.sln" SelfReg="false" NextFile="Core_Example1.vcxproj"/>
+    <ROW File="Core_Example1.vcxproj" Component_="CMakeLists.txt_3" FileName="CORE_E~1.VCX|Core_Example1.vcxproj" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\core_example1\Core_Example1.vcxproj" SelfReg="false" NextFile="Core_Example1.vcxproj.filters"/>
+    <ROW File="Core_Example1.vcxproj.filters" Component_="CMakeLists.txt_3" FileName="CORE_E~1.FIL|Core_Example1.vcxproj.filters" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\core_example1\Core_Example1.vcxproj.filters" SelfReg="false" NextFile="README.md_1"/>
+    <ROW File="DDS_Helpers.cpp" Component_="CMakeLists.txt_2" FileName="DDS_HE~1.CPP|DDS_Helpers.cpp" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\common\DDS_Helpers.cpp" SelfReg="false" NextFile="DDS_Helpers.h"/>
+    <ROW File="DDS_Helpers.h" Component_="CMakeLists.txt_2" FileName="DDS_HE~1.H|DDS_Helpers.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\common\DDS_Helpers.h" SelfReg="false" NextFile="CMakeLists.txt_6"/>
     <ROW File="FrameworkLicense.txt" Component_="Readme.txt" FileName="FRAMEW~1.TXT|FrameworkLicense.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\License\FrameworkLicense.txt" SelfReg="false" NextFile="LICENSE"/>
+    <ROW File="Framework_Example4.cpp" Component_="CMakeLists.txt" FileName="FRAMEW~1.CPP|Framework_Example4.cpp" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example4\Framework_Example4.cpp" SelfReg="false" NextFile="CMakeLists.txt_1"/>
     <ROW File="LICENSE" Component_="LICENSE" FileName="LICENSE" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\License\OpenEXR\LICENSE" SelfReg="false" NextFile="README"/>
+    <ROW File="Plugin_CMP_GPU_DXC.dll" Component_="Plugin_CMP_GPU_DXC.dll" FileName="PLUGIN~1.DLL|Plugin_CMP_GPU_DXC.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\Plugin_CMP_GPU_DXC.dll" SelfReg="false" NextFile="Plugin_CMP_GPU_HW.dll"/>
+    <ROW File="Plugin_CMP_GPU_HW.dll" Component_="Plugin_CMP_GPU_HW.dll" FileName="PLUGIN~2.DLL|Plugin_CMP_GPU_HW.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\Plugin_CMP_GPU_HW.dll" SelfReg="false" NextFile="Plugin_CMP_GPU_OCL.dll"/>
+    <ROW File="Plugin_CMP_GPU_OCL.dll" Component_="Plugin_CMP_GPU_OCL.dll" FileName="PLUGIN~3.DLL|Plugin_CMP_GPU_OCL.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\Plugin_CMP_GPU_OCL.dll" SelfReg="false" NextFile="BC1_Encode_kernel.h_1"/>
     <ROW File="README" Component_="LICENSE" FileName="README" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\License\OpenEXR\README" SelfReg="false" NextFile="BC1_Encode_kernel.hlsl"/>
-    <ROW File="Readme.txt_1" Component_="Readme.txt" FileName="Readme.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\License\Readme.txt" SelfReg="false" NextFile="FrameworkLicense.txt"/>
+    <ROW File="README.md" Component_="CMakeLists.txt_1" FileName="README.md" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\README.md" SelfReg="false" NextFile="CMakeLists.txt_5"/>
+    <ROW File="README.md_1" Component_="Readme.txt" FileName="README.md" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\License\README.md" SelfReg="false" NextFile="SDK_Example4.sln"/>
     <ROW File="SDK_Example1.cpp" Component_="SDK_Example1.cpp" FileName="SDK_EX~1.CPP|SDK_Example1.cpp" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example1\SDK_Example1.cpp" SelfReg="false" NextFile="SDK_Example1.sln"/>
     <ROW File="SDK_Example1.sln" Component_="SDK_Example1.cpp" FileName="SDK_EX~1.SLN|SDK_Example1.sln" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example1\SDK_Example1.sln" SelfReg="false" NextFile="SDK_Example1.vcxproj"/>
     <ROW File="SDK_Example1.vcxproj" Component_="SDK_Example1.cpp" FileName="SDK_EX~1.VCX|SDK_Example1.vcxproj" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example1\SDK_Example1.vcxproj" SelfReg="false" NextFile="SDK_Example1.vcxproj.filters"/>
@@ -147,7 +183,9 @@
     <ROW File="SDK_Example3.sln" Component_="CopyFiles.bat" FileName="SDK_EX~1.SLN|SDK_Example3.sln" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example3\SDK_Example3.sln" SelfReg="false" NextFile="SDK_Example3.vcxproj"/>
     <ROW File="SDK_Example3.vcxproj" Component_="CopyFiles.bat" FileName="SDK_EX~1.VCX|SDK_Example3.vcxproj" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example3\SDK_Example3.vcxproj" SelfReg="false" NextFile="SDK_Example3.vcxproj.filters"/>
     <ROW File="SDK_Example3.vcxproj.filters" Component_="CopyFiles.bat" FileName="SDK_EX~1.FIL|SDK_Example3.vcxproj.filters" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example3\SDK_Example3.vcxproj.filters" SelfReg="false" NextFile="CMP_Framework.h"/>
-    <ROW File="readme.txt" Component_="readme.txt" FileName="readme.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\readme.txt" SelfReg="false" NextFile="CMP_Framework_MTd.lib"/>
+    <ROW File="SDK_Example4.sln" Component_="CMakeLists.txt" FileName="SDK_EX~1.SLN|SDK_Example4.sln" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example4\SDK_Example4.sln" SelfReg="false" NextFile="SDK_Example4.vcxproj"/>
+    <ROW File="SDK_Example4.vcxproj" Component_="CMakeLists.txt" FileName="SDK_EX~1.VCX|SDK_Example4.vcxproj" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example4\SDK_Example4.vcxproj" SelfReg="false" NextFile="SDK_Example4.vcxproj.filters"/>
+    <ROW File="SDK_Example4.vcxproj.filters" Component_="CMakeLists.txt" FileName="SDK_EX~1.FIL|SDK_Example4.vcxproj.filters" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example4\SDK_Example4.vcxproj.filters" SelfReg="false" NextFile="Plugin_CMP_GPU_DXC.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AiPersistentPropComponent">
     <ROW Property="SETUP_FILE_NAME" Registry="SETUP_FILE_NAME" HklmSearch="SETUP_FILE_NAME" HkcuSearch="SETUP_FILE_NAME_1" Hklm64Search="SETUP_FILE_NAME_2" Hkcu64Search="SETUP_FILE_NAME_3"/>
@@ -314,10 +352,6 @@
     <ROW Condition="(VersionNT &lt;&gt; 400)" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNT40Display]." DescriptionLocId="AI.LaunchCondition.NoNT40" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="Privileged" Description="[ProductName] requires administrative privileges to install." DescriptionLocId="AI.LaunchCondition.Privileged" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionNT" Description="[ProductName] cannot be installed on [WindowsType9XDisplay]." DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
-  </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.MsiMergeModsComponent">
-    <ROW Module="Microsoft_VC120_CRT_x64.msm" Path="Prerequisites\Microsoft_VC120_CRT_x64.msm" Feature="MainFeature" Directory="APPDIR"/>
-    <ROW Module="Microsoft_VC140_CRT_x64.msm" Path="Prerequisites\Microsoft_VC140_CRT_x64.msm" Feature="MainFeature" Directory="APPDIR"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiProgIdComponent">
     <ROW ProgId="[|Manufacturer].[|ProductName]"/>

@@ -1870,7 +1870,7 @@ void InitializeASTCSettingsForSetBlockSize(__global ASTC_Encode *ASTCEncode)
         QualityScale = ASTCEncode->m_Quality/0.20f;
         oplimit_autoset     = 1.2f;
         mincorrel_autoset   = 0.75f;
-        plimit_autoset      = 15+round(10.0f*QualityScale); // max around 25;
+        plimit_autoset      = 15+(int)round(10.0f*QualityScale); // max around 25;
         bmc_autoset         = 57.0f+(18.0f*QualityScale);  // max 75;
         maxiters_autoset    = 2;
         dblimit_autoset_2d  = MAX(95 - 35 * log10_texels_2d, 70 - 19 * log10_texels_2d);
@@ -1880,9 +1880,9 @@ void InitializeASTCSettingsForSetBlockSize(__global ASTC_Encode *ASTCEncode)
     {
         // Thorough
         QualityScale = ASTCEncode->m_Quality/0.60f;
-        oplimit_autoset     = 1.2 + (1.3f*QualityScale); // max 2.5f;
+        oplimit_autoset     = 1.2f + (1.3f*QualityScale); // max 2.5f;
         mincorrel_autoset   = 0.95f;
-        plimit_autoset      = 25+round(75.0f*QualityScale); // max around 100
+        plimit_autoset      = 25+(int)round(75.0f*QualityScale); // max around 100
         bmc_autoset         = 75.0f+(25.0f*QualityScale);  // max 95;
         maxiters_autoset    = 4;
         dblimit_autoset_2d  = MAX(105 - 35 * log10_texels_2d, 77 - 19 * log10_texels_2d);
@@ -1893,7 +1893,7 @@ void InitializeASTCSettingsForSetBlockSize(__global ASTC_Encode *ASTCEncode)
         QualityScale =  ASTCEncode->m_Quality;
         oplimit_autoset     = 2.5f+ (997.5f*QualityScale); // max 1000.0f;
         mincorrel_autoset   = 0.99f;
-        plimit_autoset      = 100 + round(923.0f*QualityScale); // max 1024
+        plimit_autoset      = 100 + (int)round(923.0f * QualityScale);  // max 1024
         bmc_autoset         = 95.0f+(5.0f*QualityScale);  // max 100;
         maxiters_autoset    = 4;
         dblimit_autoset_2d  = 999.0f;

@@ -37,6 +37,7 @@ SET_PLUGIN_TYPE("ENCODER")
 SET_PLUGIN_NAME("BC5")
 #else
 void *make_Plugin_BC5() { return new Plugin_BC5; }
+void* make_Plugin_BC5_S() { return new Plugin_BC5;}
 #endif
 
 CMP_BC15Options  g_BC5Encode;
@@ -89,10 +90,6 @@ char *Plugin_BC5::TC_ComputeSourceFile(CGU_UINT32  Compute_type)
 {
     switch (Compute_type)
     {
-        case CMP_Compute_type::CMP_HPC:
-            // ToDo : Add features
-            break;
-        case CMP_Compute_type::CMP_GPU:
         case CMP_Compute_type::CMP_GPU_OCL:
             return(GPU_OCL_BC5_COMPUTEFILE);
         case CMP_Compute_type::CMP_GPU_DXC:

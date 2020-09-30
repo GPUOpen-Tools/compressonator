@@ -136,6 +136,9 @@ int reconstructGetDirConstr (
 void Quant_Init();
 void Quant_DeInit();
 
+// Externs
+extern void init_ramps(void);
+
 #endif
 
  

@@ -42,7 +42,7 @@ void CompressBlockBC3_Internal(const CMP_Vec4uc srcBlockTemp[16],
 
     CGU_Vec2ui cmpBlock;
 
-    cmpBlock = cmp_compressAlphaBlock(alphaBlock,internalOptions.m_fquality);
+    cmpBlock = cmp_compressAlphaBlock(alphaBlock,internalOptions.m_fquality,FALSE);
     compressedBlock[0] = cmpBlock.x;
     compressedBlock[1] = cmpBlock.y;
 

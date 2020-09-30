@@ -88,7 +88,7 @@ QImage::Format MipFormat2QFormat(MipSet *mipset)
 {
     QImage::Format format = QImage::Format_Invalid;
 
-    if (CompressedFormat(mipset->m_format))
+    if (CMP_IsCompressedFormat(mipset->m_format))
         return format;
 
     switch (mipset->m_ChannelFormat)

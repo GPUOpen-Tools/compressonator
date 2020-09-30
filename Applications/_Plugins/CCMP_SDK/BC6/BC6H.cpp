@@ -79,10 +79,6 @@ char *Plugin_BC6H::TC_ComputeSourceFile(unsigned int     Compute_type)
 {
     switch (Compute_type)
     {
-    case CMP_Compute_type::CMP_HPC:
-        // ToDo : Add features
-        break;
-    case CMP_Compute_type::CMP_GPU:
     case CMP_Compute_type::CMP_GPU_OCL:
         return(GPU_OCL_BC6H_COMPUTEFILE);
     case CMP_Compute_type::CMP_GPU_DXC:

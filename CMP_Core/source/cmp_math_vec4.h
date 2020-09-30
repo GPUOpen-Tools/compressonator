@@ -126,6 +126,8 @@ typedef Vec2<float>           CGU_Vec2f;
 typedef Vec2<float>           CGV_Vec2f;
 typedef Vec2<double>          CMP_Vec2d;
 typedef Vec2<int>             CMP_Vec2i;
+
+typedef Vec2<int>             CGU_Vec2i;
 typedef Vec2<unsigned int>    CGU_Vec2ui;
 
 //}

@@ -44,11 +44,15 @@ SET_PLUGIN_NAME("TOOTLE")
 void *make_Plugin_Mesh_Tootle() { return new Plugin_Mesh_Tootle; }
 #endif
 
-namespace CMP_Mesh_Tootle {
-    CMIPS *g_CMIPS = nullptr;
-}
+#ifdef BUILD_AS_PLUGIN_DLL
+bool   g_bAbortCompression = false;
+CMIPS* g_CMIPS             = nullptr;
+#else
+extern bool   g_bAbortCompression;
+extern CMIPS* g_CMIPS;
+#endif
 
-using namespace CMP_Mesh_Tootle;
+//using namespace CMP_Mesh_Tootle;
 
 Plugin_Mesh_Tootle::Plugin_Mesh_Tootle()
 {

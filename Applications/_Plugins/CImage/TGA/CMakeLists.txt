@@ -3,16 +3,15 @@ add_library(Plugin_CImage_TGA)
 
 target_sources(Plugin_CImage_TGA PRIVATE
 
-	TGA.cpp
-	TGA.h
+    TGA.cpp
+    TGA.h
 )
 
 target_link_libraries(Plugin_CImage_TGA PRIVATE
-
-	CompressonatorLIB
-	CMP_FrameworkLIB
-	Plugin_TCPluginAPI
-	Plugin_Common_UtilFuncs
+    CompressonatorLIB
+    CMP_FrameworkLIB
+    Plugin_TCPluginAPI
+    Plugin_Common_UtilFuncs
 )
 
 set_target_properties(Plugin_CImage_TGA PROPERTIES FOLDER ${FOLDER_NAME})

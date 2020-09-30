@@ -47,8 +47,8 @@ typedef struct {
 
 typedef struct
 {
-    CMP_DWORD            dwSize;
-    CMP_DWORD            dwFourCC;
+    CMP_DWORD        dwSize;
+    CMP_DWORD        dwFourCC;
     float            fWeightingRed;
     float            fWeightingGreen;
     float            fWeightingBlue;
@@ -108,7 +108,6 @@ int             AMDSaveMIPSTextureImage(const char *DestFile, MipSet *CMips, boo
 
 MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *configSetting, CMP_Feedback_Proc pFeedbackProc);
 
-bool            CompressedFormat(CMP_FORMAT format);
 bool            CompressedFileFormat(std::string file);
 bool            FloatFormat(CMP_FORMAT format);
 

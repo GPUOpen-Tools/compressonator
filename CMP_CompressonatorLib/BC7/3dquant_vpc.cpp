@@ -99,6 +99,8 @@ void Quant_Init(void)
         }
     }
 
+    init_ramps();
+
     g_Quant_init++;
 
     mtx.unlock();

@@ -55,13 +55,15 @@ void *make_Plugin_obj_Loader() { return new Plugin_obj_Loader; }
 
 #include "Misc.h"
 
-namespace ML_obj 
-{
-    bool                   g_bAbortCompression = false;
-    CMIPS*                 g_CMIPS = nullptr;
-}
+#ifdef BUILD_AS_PLUGIN_DLL
+bool   g_bAbortCompression = false;
+CMIPS* g_CMIPS             = nullptr;
+#else
+extern bool   g_bAbortCompression;
+extern CMIPS* g_CMIPS;
+#endif
 
-using namespace ML_obj;
+//using namespace ML_obj;
 
 Plugin_obj_Loader::Plugin_obj_Loader()
 {

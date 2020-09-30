@@ -62,6 +62,6 @@ namespace CMP_Compute_Base
 
 
 const CMP_CHAR* GetEncodeWithDesc(CMP_Compute_type nFormat);
-
+bool            cmp_recompile_shader(std::string m_sourceShaderFile);
 
 #endif // !COMPUTE_BASE_H

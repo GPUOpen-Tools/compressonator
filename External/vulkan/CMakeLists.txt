@@ -7,6 +7,11 @@ if (NOT DEFINED ENV{VULKAN_SDK})
     message(FATAL_ERROR "A 'VULKAN_SDK' environment variable is required")
 endif()
 
+set(VULKAN_SDK_PATH $ENV{VULKAN_SDK})
+
+message(STATUS "++++++++++++++++++ External-VULKAN  ${VULKAN_SDK_PATH}" )
+
+
 if (CMP_HOST_APPLE)
 
     set(MOLTEN_VK_PATHS
@@ -24,10 +29,10 @@ if (CMP_HOST_APPLE)
         NO_DEFAULT_PATH
     )
 
-    find_library(IO_KIT_FRAMEWORK		IOKit)
-    find_library(IO_SURFACE_FRAMEWORK	IOSurface)
-    find_library(METAL_FRAMEWORK		Metal)
-    find_library(QUARTZ_CORE_FRAMEWORK	QuartzCore)
+    find_library(IO_KIT_FRAMEWORK       IOKit)
+    find_library(IO_SURFACE_FRAMEWORK   IOSurface)
+    find_library(METAL_FRAMEWORK        Metal)
+    find_library(QUARTZ_CORE_FRAMEWORK  QuartzCore)
 
     set(
         Vulkan_LIBRARIES
@@ -46,7 +51,6 @@ if (CMP_HOST_APPLE)
 
     set(
         Vulkan_INCLUDE_DIRS
-
         ${MVK_INCLUDE_DIR}
         ${MOLTEN_VK_FRAMEWORK}
     )
@@ -61,7 +65,7 @@ elseif(CMP_HOST_LINUX)
     if (NOT EXISTS VULKAN_SDK)
         file(COPY $ENV{VULKAN_SDK} ${VULKAN_SDK})
     endif()
-    set(ENV{VULKAN_SDK}	${VULKAN_SDK})
+    set(ENV{VULKAN_SDK} ${VULKAN_SDK})
 
     find_package(Vulkan REQUIRED)
 
@@ -74,4 +78,19 @@ elseif(CMP_HOST_WINDOWS)
 endif()
 
 target_link_libraries(ExtVulkan INTERFACE ${Vulkan_LIBRARIES})
-target_include_directories(ExtVulkan INTERFACE ${Vulkan_INCLUDE_DIRS})
+target_include_directories(ExtVulkan INTERFACE 
+    ${Vulkan_INCLUDE_DIRS}
+    ${Vulkan_INCLUDE_DIRS}/glslang
+)
+
+add_library(ExtGlslang INTERFACE)
+
+target_link_libraries(ExtGlslang INTERFACE  
+    ${VULKAN_SDK_PATH}/lib/glslang$<$<CONFIG:Debug>:d>.lib
+    ${VULKAN_SDK_PATH}/lib/SPIRV$<$<CONFIG:Debug>:d>.lib
+    ${VULKAN_SDK_PATH}/lib/HLSL$<$<CONFIG:Debug>:d>.lib
+    ${VULKAN_SDK_PATH}/lib/OSDependent$<$<CONFIG:Debug>:d>.lib
+    ${VULKAN_SDK_PATH}/lib/OGLCompiler$<$<CONFIG:Debug>:d>.lib
+    ${VULKAN_SDK_PATH}/lib/SPIRV-Tools.lib
+    ${VULKAN_SDK_PATH}/lib/SPIRV-Tools-opt.lib
+    )

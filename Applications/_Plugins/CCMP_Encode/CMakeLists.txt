@@ -19,9 +19,9 @@ target_include_directories(Plugin_CCMP_Encode PUBLIC
 target_link_libraries(Plugin_CCMP_Encode PRIVATE
 
     CMP_Common
-	CompressonatorLIB
+    CompressonatorLIB
 
-	Plugin_TCPluginAPI
+    Plugin_TCPluginAPI
     Plugin_Common_QueryPerformance
 )
 

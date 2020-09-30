@@ -1,14 +1,9 @@
 
 add_library(Plugin_CImage_KTX)
 
-file(GLOB_RECURSE KTXLib
-    "./Lib/*.h"
-    "./Lib/*.cpp"
-    "./Lib/*.c"
-)
+add_dependencies(Plugin_CImage_KTX extern_ktx)
 
 target_sources(Plugin_CImage_KTX PRIVATE
-    ${KTXLib}
     KTX.cpp
     cKTX.h
     softfloat.cpp
@@ -16,10 +11,8 @@ target_sources(Plugin_CImage_KTX PRIVATE
 )
 
 target_include_directories(Plugin_CImage_KTX PRIVATE
-
     ./
-    ./KHR/
-    ./Lib/
+    ${VULKAN_SDK_PATH}/include/
 )
 
 target_link_libraries(Plugin_CImage_KTX PRIVATE
@@ -27,11 +20,10 @@ target_link_libraries(Plugin_CImage_KTX PRIVATE
     CompressonatorLIB
     CMP_FrameworkLIB
     GPU_Decode
-
     Plugin_TCPluginAPI
-
     ExtGLEW
-    ExtOpenGL
+    ExtOpenGL 
+    ExtKTX
 )
 
 if (CMP_HOST_APPLE)

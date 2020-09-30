@@ -47,21 +47,21 @@
 // All codecs will use default max quality settings, users can create multiple contexts to 
 // set quality levels, masks , channel mapping, etc...
 
-int CMP_CDECL CreateOptionsBC1(void **optionsBC1);
-int CMP_CDECL CreateOptionsBC2(void **optionsBC2);
-int CMP_CDECL CreateOptionsBC3(void **optionsBC3);
-int CMP_CDECL CreateOptionsBC4(void **optionsBC4);
-int CMP_CDECL CreateOptionsBC5(void **optionsBC5);
-int CMP_CDECL CreateOptionsBC6(void **optionsBC6);
-int CMP_CDECL CreateOptionsBC7(void **optionsBC7);
+int32_t CMP_CDECL CreateOptionsBC1(void **optionsBC1);
+int32_t CMP_CDECL CreateOptionsBC2(void **optionsBC2);
+int32_t CMP_CDECL CreateOptionsBC3(void **optionsBC3);
+int32_t CMP_CDECL CreateOptionsBC4(void **optionsBC4);
+int32_t CMP_CDECL CreateOptionsBC5(void **optionsBC5);
+int32_t CMP_CDECL CreateOptionsBC6(void **optionsBC6);
+int32_t CMP_CDECL CreateOptionsBC7(void **optionsBC7);
 
-int CMP_CDECL DestroyOptionsBC1(void *optionsBC1);
-int CMP_CDECL DestroyOptionsBC2(void *optionsBC2);
-int CMP_CDECL DestroyOptionsBC3(void *optionsBC3);
-int CMP_CDECL DestroyOptionsBC4(void *optionsBC4);
-int CMP_CDECL DestroyOptionsBC5(void *optionsBC5);
-int CMP_CDECL DestroyOptionsBC6(void *optionsBC6);
-int CMP_CDECL DestroyOptionsBC7(void *optionsBC7);
+int32_t CMP_CDECL DestroyOptionsBC1(void *optionsBC1);
+int32_t CMP_CDECL DestroyOptionsBC2(void *optionsBC2);
+int32_t CMP_CDECL DestroyOptionsBC3(void *optionsBC3);
+int32_t CMP_CDECL DestroyOptionsBC4(void *optionsBC4);
+int32_t CMP_CDECL DestroyOptionsBC5(void *optionsBC5);
+int32_t CMP_CDECL DestroyOptionsBC6(void *optionsBC6);
+int32_t CMP_CDECL DestroyOptionsBC7(void *optionsBC7);
 
 
 //======================================================================================================
@@ -70,47 +70,47 @@ int CMP_CDECL DestroyOptionsBC7(void *optionsBC7);
 
 // Setting channel Weights : Applies to BC1, BC2 and BC3 valid ranges are [0..1.0f] Default is {1.0f, 1.0f , 1.0f}
 // Use channel weightings. With swizzled formats the weighting applies to the data within the specified channel not the channel itself.
-int CMP_CDECL SetChannelWeightsBC1(void *options, float WeightRed, float WeightGreen, float WeightBlue);
-int CMP_CDECL SetChannelWeightsBC2(void *options, float WeightRed, float WeightGreen, float WeightBlue);
-int CMP_CDECL SetChannelWeightsBC3(void *options, float WeightRed, float WeightGreen, float WeightBlue);
+int32_t CMP_CDECL SetChannelWeightsBC1(void *options, float WeightRed, float WeightGreen, float WeightBlue);
+int32_t CMP_CDECL SetChannelWeightsBC2(void *options, float WeightRed, float WeightGreen, float WeightBlue);
+int32_t CMP_CDECL SetChannelWeightsBC3(void *options, float WeightRed, float WeightGreen, float WeightBlue);
 
 
 //  True sets mapping CMP_Core BC1, BC2 & BC3 to decode Red,Green,Blue and Alpha as
 //       RGBA to channels [0,1,2,3] else BGRA maps to [0,1,2,3]
 //  Default is set to true.
-int CMP_CDECL SetDecodeChannelMapping(void *options, bool mapRGBA);
+int32_t CMP_CDECL SetDecodeChannelMapping(void* options, bool mapRGBA);
 
-int CMP_CDECL SetQualityBC1(void *options, float fquality);
-int CMP_CDECL SetQualityBC2(void *options, float fquality);
-int CMP_CDECL SetQualityBC3(void *options, float fquality);
-int CMP_CDECL SetQualityBC4(void *options, float fquality);
-int CMP_CDECL SetQualityBC5(void *options, float fquality);
-int CMP_CDECL SetQualityBC6(void *options, float fquality);
-int CMP_CDECL SetQualityBC7(void *options, float fquality);
+int32_t CMP_CDECL SetQualityBC1(void *options, float fquality);
+int32_t CMP_CDECL SetQualityBC2(void *options, float fquality);
+int32_t CMP_CDECL SetQualityBC3(void *options, float fquality);
+int32_t CMP_CDECL SetQualityBC4(void *options, float fquality);
+int32_t CMP_CDECL SetQualityBC5(void *options, float fquality);
+int32_t CMP_CDECL SetQualityBC6(void *options, float fquality);
+int32_t CMP_CDECL SetQualityBC7(void *options, float fquality);
 
 
-int CMP_CDECL SetAlphaThresholdBC1(void *options, unsigned char alphaThreshold);
+int32_t CMP_CDECL SetAlphaThresholdBC1(void* options, uint8_t alphaThreshold);
 
-int CMP_CDECL SetMaskBC6(void *options, unsigned int  mask);
-int CMP_CDECL SetMaskBC7(void *options, unsigned char mask);
+int32_t CMP_CDECL SetMaskBC6(void* options, uint32_t mask);
+int32_t CMP_CDECL SetMaskBC7(void* options, uint8_t mask);
 
-int CMP_CDECL SetAlphaOptionsBC7(void *options, bool imageNeedsAlpha, bool colourRestrict, bool alphaRestrict);
-int CMP_CDECL SetErrorThresholdBC7(void *options, float minThreshold, float maxThreshold);
+int32_t CMP_CDECL SetAlphaOptionsBC7(void *options, bool imageNeedsAlpha, bool colourRestrict, bool alphaRestrict);
+int32_t CMP_CDECL SetErrorThresholdBC7(void *options, float minThreshold, float maxThreshold);
 
 // Set if the content is in sRGB color space (true) or linear (false).
 // The default is false.
-int CMP_CDECL SetGammaBC1(void *options, bool sRGB);
-int CMP_CDECL SetGammaBC2(void *options, bool sRGB);
-int CMP_CDECL SetGammaBC3(void *options, bool sRGB);
-int CMP_CDECL SetGammaBC7(void *options, bool sRGB);
+int32_t CMP_CDECL SetGammaBC1(void *options, bool sRGB);
+int32_t CMP_CDECL SetGammaBC2(void *options, bool sRGB);
+int32_t CMP_CDECL SetGammaBC3(void *options, bool sRGB);
+int32_t CMP_CDECL SetGammaBC7(void *options, bool sRGB);
 
 // Set if the content is signed (true) or unsigned (false).
 // The default is false.
 // For BC4 and BC5 this determines if the encoded or decoded byte is treated as SNORM or UNORM.
 // For BC6, the encoded or decoded data is always FP16, but affects the clamping of the values UF16 vs SF16.
-int CMP_CDECL SetSignedBC4(void *options, bool snorm);
-int CMP_CDECL SetSignedBC5(void *options, bool snorm);
-int CMP_CDECL SetSignedBC6(void *options, bool sf16);
+int32_t CMP_CDECL SetSignedBC4(void *options, bool snorm);
+int32_t CMP_CDECL SetSignedBC5(void *options, bool snorm);
+int32_t CMP_CDECL SetSignedBC6(void *options, bool sf16);
 
 //======================================================================================================
 // (4x4) Block level 4 channel source CompressBlock and DecompressBlock API for BCn Codecs
@@ -135,34 +135,53 @@ int CMP_CDECL SetSignedBC6(void *options, bool sf16);
 // 4 channel Sources, default format RGBA:8888 is processed as a 4x4 block starting at srcBlock location
 // where each row of the block is calculated from srcStride
 //=========================================================================================================
-int CMP_CDECL CompressBlockBC1(const unsigned char *srcBlock, unsigned int  srcStrideInBytes, unsigned char cmpBlock[8 ], const void *options CMP_DEFAULTNULL);
-int CMP_CDECL CompressBlockBC2(const unsigned char *srcBlock, unsigned int  srcStrideInBytes, unsigned char cmpBlock[16], const void *options CMP_DEFAULTNULL);
-int CMP_CDECL CompressBlockBC3(const unsigned char *srcBlock, unsigned int  srcStrideInBytes, unsigned char cmpBlock[16], const void *options CMP_DEFAULTNULL);
-int CMP_CDECL CompressBlockBC7(const unsigned char *srcBlock, unsigned int  srcStrideInBytes, unsigned char cmpBlock[16], const void *options CMP_DEFAULTNULL);
+int32_t CMP_CDECL CompressBlockBC1(const uint8_t* srcBlock, uint32_t srcStrideInBytes, uint8_t cmpBlock[8 ], const void* options CMP_DEFAULTNULL);
+int32_t CMP_CDECL CompressBlockBC2(const uint8_t* srcBlock, uint32_t srcStrideInBytes, uint8_t cmpBlock[16], const void* options CMP_DEFAULTNULL);
+int32_t CMP_CDECL CompressBlockBC3(const uint8_t* srcBlock, uint32_t srcStrideInBytes, uint8_t cmpBlock[16], const void* options CMP_DEFAULTNULL);
+int32_t CMP_CDECL CompressBlockBC7(const uint8_t* srcBlock, uint32_t srcStrideInBytes, uint8_t cmpBlock[16], const void* options CMP_DEFAULTNULL);
 
-int CMP_CDECL DecompressBlockBC1(const unsigned char cmpBlock[8 ], unsigned char srcBlock[64], const void *options CMP_DEFAULTNULL);
-int CMP_CDECL DecompressBlockBC2(const unsigned char cmpBlock[16], unsigned char srcBlock[64], const void *options CMP_DEFAULTNULL);
-int CMP_CDECL DecompressBlockBC3(const unsigned char cmpBlock[16], unsigned char srcBlock[64], const void *options CMP_DEFAULTNULL);
-int CMP_CDECL DecompressBlockBC7(const unsigned char cmpBlock[16], unsigned char srcBlock[64], const void *options CMP_DEFAULTNULL);
+int32_t CMP_CDECL DecompressBlockBC1(const uint8_t cmpBlock[8 ], uint8_t srcBlock[64], const void* options CMP_DEFAULTNULL);
+int32_t CMP_CDECL DecompressBlockBC2(const uint8_t cmpBlock[16], uint8_t srcBlock[64], const void* options CMP_DEFAULTNULL);
+int32_t CMP_CDECL DecompressBlockBC3(const uint8_t cmpBlock[16], uint8_t srcBlock[64], const void* options CMP_DEFAULTNULL);
+int32_t CMP_CDECL DecompressBlockBC7(const uint8_t cmpBlock[16], uint8_t srcBlock[64], const void* options CMP_DEFAULTNULL);
 
 //================================================
 // 1 channel Source 4x4 8 bits per block
 //================================================
-int CMP_CDECL CompressBlockBC4(const unsigned char *srcBlock, unsigned int  srcStrideInBytes, unsigned char cmpBlock[8], const void *options  CMP_DEFAULTNULL);
-int CMP_CDECL DecompressBlockBC4(const unsigned char cmpBlock[8], unsigned char srcBlock[16], const void *options  CMP_DEFAULTNULL);
+int32_t CMP_CDECL CompressBlockBC4(const uint8_t* srcBlock, uint32_t srcStrideInBytes, uint8_t cmpBlock[8], const void* options CMP_DEFAULTNULL);
+int32_t CMP_CDECL DecompressBlockBC4(const uint8_t cmpBlock[8], uint8_t srcBlock[16], const void* options CMP_DEFAULTNULL);
+
+int32_t CMP_CDECL CompressBlockBC4S(const int8_t* srcBlock, uint32_t srcStrideInBytes, int8_t cmpBlock[8], const void* options CMP_DEFAULTNULL);
+int32_t CMP_CDECL DecompressBlockBC4S(const int8_t cmpBlock[8], int8_t srcBlock[16], const void* options CMP_DEFAULTNULL);
+
 
 //================================================
 // 2 channel Source 2x(4x4 8 bits)
 //================================================
-int CMP_CDECL CompressBlockBC5(const unsigned char *srcBlock1, unsigned int srcStrideInBytes1,
-                               const unsigned char *srcBlock2, unsigned int srcStrideInBytes2,
-                               unsigned char cmpBlock[16], const void *options  CMP_DEFAULTNULL);
-int CMP_CDECL DecompressBlockBC5(const unsigned char cmpBlock[16], unsigned char srcBlock1[16], unsigned char srcBlock2[16], const void *options  CMP_DEFAULTNULL);
+int32_t CMP_CDECL CompressBlockBC5(const uint8_t* srcBlock1,
+                               uint32_t       srcStrideInBytes1,
+                               const uint8_t* srcBlock2,
+                               uint32_t       srcStrideInBytes2,
+                               uint8_t        cmpBlock[16],
+                               const void* options CMP_DEFAULTNULL);
+int32_t CMP_CDECL DecompressBlockBC5(const uint8_t cmpBlock[16], uint8_t srcBlock1[16], uint8_t srcBlock2[16], const void* options CMP_DEFAULTNULL);
+
+
+int32_t CMP_CDECL CompressBlockBC5S(const int8_t*  srcBlock1,
+                                    uint32_t       srcStrideInBytes1,
+                                    const int8_t*  srcBlock2,
+                                    uint32_t       srcStrideInBytes2,
+                                    int8_t         cmpBlock[16],
+                                    const void*    options CMP_DEFAULTNULL);
+
+int32_t CMP_CDECL DecompressBlockBC5S(const int8_t cmpBlock[16], int8_t srcBlock1[16], int8_t srcBlock2[16],
+                                 const void* options CMP_DEFAULTNULL);
+
 
 //========================================================================================
 // For 3 channel Source  RGB_16, Note srcStride is in unsigned short steps (2 bytes each)
 //========================================================================================
-int CMP_CDECL CompressBlockBC6(const unsigned short *srcBlock, unsigned int srcStrideInShorts, unsigned char cmpBlock[16], const void *options CMP_DEFAULTNULL);
-int CMP_CDECL DecompressBlockBC6(const unsigned char cmpBlock[16], unsigned short srcBlock[48], const void *options CMP_DEFAULTNULL);
+int32_t CMP_CDECL CompressBlockBC6(const uint16_t* srcBlock, uint32_t srcStrideInShorts, uint8_t cmpBlock[16], const void* options CMP_DEFAULTNULL);
+int32_t CMP_CDECL DecompressBlockBC6(const uint8_t cmpBlock[16], uint16_t srcBlock[48], const void* options CMP_DEFAULTNULL);
 
 #endif  // CMP_CORE

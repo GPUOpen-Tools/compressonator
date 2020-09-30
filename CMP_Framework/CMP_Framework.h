@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2007-2016    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2020    Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006    ATI Technologies Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,12 +32,14 @@ typedef unsigned int            CMP_UINT;
 typedef bool                    CMP_BOOL;
 typedef void                    CMP_VOID;
 typedef float                   CMP_FLOAT;
+typedef char                    CMP_SBYTE;
 typedef unsigned char           CMP_BYTE;
 typedef std::uint16_t           CMP_WORD;
 typedef std::uint32_t           CMP_DWORD;
 typedef short                   CMP_HALFSHORT;
 typedef std::vector<uint8_t>    CMP_VEC8;
 typedef size_t                  CMP_DWORD_PTR;
+typedef double                  CMP_DOUBLE;
 
 #if defined(WIN32) || defined(_WIN64)
 #define CMP_API __cdecl
@@ -97,13 +99,15 @@ typedef enum {
     CMP_FORMAT_BC2, // A four component compressed texture format with explicit alpha for Microsoft DirectX10. Identical to DXT3. Eight bits per pixel.
     CMP_FORMAT_BC3, // A four component compressed texture format with interpolated alpha for Microsoft DirectX10. Identical to DXT5. Eight bits per pixel.
     CMP_FORMAT_BC4, // A single component compressed texture format for Microsoft DirectX10. Identical to ATI1N. Four bits per pixel.
+    CMP_FORMAT_BC4_S,// A single component compressed texture format for Microsoft DirectX10. Identical to ATI1N. Four bits per pixel.
     CMP_FORMAT_BC5, // A two component compressed texture format for Microsoft DirectX10. Identical to ATI2N_XY. Eight bits per pixel.
-    CMP_FORMAT_BC6H, // BC6H compressed texture format (UF)
-    CMP_FORMAT_BC6H_SF, // BC6H compressed texture format (SF)
+    CMP_FORMAT_BC5_S,// A two component compressed texture format for Microsoft DirectX10. Identical to ATI2N_XY. Eight bits per pixel.
+    CMP_FORMAT_BC6H,// BC6H compressed texture format (UF)
+    CMP_FORMAT_BC6H_SF,// BC6H compressed texture format (SF)
     CMP_FORMAT_BC7, // BC7  compressed texture format
-    CMP_FORMAT_DXT1, // An DXTC compressed texture matopaque (or 1-bit alpha). Four bits per pixel.
-    CMP_FORMAT_DXT3, //   DXTC compressed texture format with explicit alpha. Eight bits per pixel.
-    CMP_FORMAT_DXT5, //   DXTC compressed texture format with interpolated alpha. Eight bits per pixel.
+    CMP_FORMAT_DXT1,// An DXTC compressed texture matopaque (or 1-bit alpha). Four bits per pixel.
+    CMP_FORMAT_DXT3,//   DXTC compressed texture format with explicit alpha. Eight bits per pixel.
+    CMP_FORMAT_DXT5,//   DXTC compressed texture format with interpolated alpha. Eight bits per pixel.
     CMP_FORMAT_DXT5_xGBR, // DXT5 with the red component swizzled into the alpha channel. Eight bits per pixel.
     CMP_FORMAT_DXT5_RxBG, // swizzled DXT5 format with the green component swizzled into the alpha channel. Eight bits per pixel.
     CMP_FORMAT_DXT5_RBxG, // swizzled DXT5 format with the green component swizzled into the alpha channel & the blue component swizzled into the green channel. Eight bits per pixel.
@@ -119,9 +123,10 @@ typedef enum {
     CMP_FORMAT_ETC2_SRGBA1, // ETC2  GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2
     CMP_FORMAT_PVRTC,
 
+    CMP_FORMAT_APC,        //< APC Texture Compressor
     // Transcoder formats - ------------------------------------------------------------
-    CMP_FORMAT_GTC,        ///< GTC   Fast Gradient Texture Compressor
-    CMP_FORMAT_BASIS,      ///< BASIS compression
+    CMP_FORMAT_GTC,        //< GTC   Fast Gradient Texture Compressor
+    CMP_FORMAT_BASIS,      //< BASIS compression
 
     // End of list
     CMP_FORMAT_MAX = CMP_FORMAT_BASIS
@@ -210,6 +215,14 @@ typedef struct {
     };
 } CMP_COLOR;
 
+typedef struct
+{
+    int           nFilterType;         // This is either CPU Box Filter or GPU Based DXD3X Filters
+    unsigned long dwMipFilterOptions;  // Selects options for the Filter Type
+    int           nMinSize;            // Minimum MipMap Level requested
+    float         fGammaCorrection;    // Apply Gamma correction to RGB channels, using this value as a power exponent,value of 0 or 1 = no correction
+} CMP_CFilterParams;
+
 /// A MipLevel is the fundamental unit for containing texture data.
 /// \remarks
 /// One logical mip level can be composed of many MipLevels, see the documentation of MipSet for explanation.
@@ -221,13 +234,14 @@ typedef struct {
     CMP_INT         m_nHeight;        ///< Height of the data in pixels.
     CMP_DWORD       m_dwLinearSize;   ///< Size of the data in bytes.
     union {
-        CMP_BYTE*       m_pbData;         ///< pointer unsigned 8  bit.data blocks
-        CMP_WORD*       m_pwData;         ///< pointer unsigned 16 bit.data blocks
-        CMP_COLOR*      m_pcData;         ///< pointer to a union (array of 4 unsigned 8 bits or one 32 bit) data blocks
-        CMP_FLOAT*      m_pfData;         ///< pointer to 32-bit signed float data blocks
-        CMP_HALFSHORT*  m_phfsData;       ///< pointer to 16 bit short  data blocks
-        CMP_DWORD*      m_pdwData;        ///< pointer to 32 bit data blocks
-        CMP_VEC8*       m_pvec8Data;      ///< std::vector unsigned 8 bits data blocks
+        CMP_SBYTE*      m_psbData;        // pointer signed 8  bit.data blocks
+        CMP_BYTE*       m_pbData;         // pointer unsigned 8  bit.data blocks
+        CMP_WORD*       m_pwData;         // pointer unsigned 16 bit.data blocks
+        CMP_COLOR*      m_pcData;         // pointer to a union (array of 4 unsigned 8 bits or one 32 bit) data blocks
+        CMP_FLOAT*      m_pfData;         // pointer to 32-bit signed float data blocks
+        CMP_HALFSHORT*  m_phfsData;       // pointer to 16 bit short  data blocks
+        CMP_DWORD*      m_pdwData;        // pointer to 32 bit data blocks
+        CMP_VEC8*       m_pvec8Data;      // std::vector unsigned 8 bits data blocks
     };
 } CMP_MipLevel;
 
@@ -266,6 +280,8 @@ typedef struct {
     CMP_BYTE          m_nBlockWidth;       // Width in pixels of the Compression Block that is to be processed default for ASTC is 4
     CMP_BYTE          m_nBlockHeight;      // Height in pixels of the Compression Block that is to be processed default for ASTC is 4
     CMP_BYTE          m_nBlockDepth;       // Depth in pixels of the Compression Block that is to be processed default for ASTC is 1
+    CMP_BYTE          m_nChannels;         // Number of channels used min is 1 max is 4, 0 defaults to 1
+    CMP_BYTE          m_isSigned;          // channel data is signed (has + and - data values)
 
     // set by various API for internal use. These values change when processing MipLevels
     CMP_DWORD         dwWidth;             // set by various API for ref,Width of the current active miplevel. if toplevel mipmap then value is same as m_nWidth
@@ -276,6 +292,13 @@ typedef struct {
     // Structure to hold all mip levels buffers
     CMP_MipLevelTable* m_pMipLevelTable;   // set by various API for ref, This is an implementation dependent way of storing the MipLevels that this mip-map set contains. Do not depend on it, use TC_AppGetMipLevel to access a mip-map set's MipLevels.
     void*              m_pReservedData;    // Reserved for ArchitectMF ImageLoader
+
+    // Reserved for internal data tracking
+    CMP_INT m_nIterations;
+
+    // Tracking for HW based mipmap compression
+    CMP_INT m_atmiplevel;
+    CMP_INT m_atfaceorslice;
 } CMP_MipSet;
 
 
@@ -291,12 +314,12 @@ typedef struct {
 
 /// An enum selecting the different GPU driver types.
 typedef enum {
-    CMP_CPU = 0,   //Use CPU Only, encoders defined CMP_CPUEncode or Compressonator lib will be used
-    CMP_HPC = 1,   //Use CPU High Performance Compute Encoders with SPMD support defined in CMP_CPUEncode)
-    CMP_GPU = 2,   //Use GPU Kernel Encoders to compress textures using Default GPU Framework auto set by the codecs been used
-    CMP_GPU_OCL = 3,   //Use GPU Kernel Encoders to compress textures using OpenCL Framework
-    CMP_GPU_DXC = 4,   //Use GPU Kernel Encoders to compress textures using DirectX Compute Framework
-    CMP_GPU_VLK = 5    //Use GPU Kernel Encoders to compress textures using Vulkan Compute Framework
+    CMP_CPU     = 0,   //Use CPU Only, encoders defined CMP_CPUEncode or Compressonator lib will be used
+    CMP_HPC     = 1,   //Use CPU High Performance Compute Encoders with SPMD support defined in CMP_CPUEncode)
+    CMP_GPU_OCL = 2,   //Use GPU Kernel Encoders to compress textures using OpenCL Framework
+    CMP_GPU_DXC = 3,   //Use GPU Kernel Encoders to compress textures using DirectX Compute Framework
+    CMP_GPU_VLK = 4,   //Use GPU Kernel Encoders to compress textures using Vulkan Compute Framework
+    CMP_GPU_HW  = 5    //Use GPU Kernel Encoders to compress textures using GPU HW Framework
 } CMP_Compute_type;
 
 
@@ -314,6 +337,9 @@ struct KernelOptions {
     CMP_FORMAT format;                  // Encoder codec format to use for processing
     CMP_Compute_type encodeWith;        // Host Type : default is HPC, options are [HPC or GPU]
     CMP_INT    threads;                 // requested number of threads to use (1= single) max is 128 for HPC
+    CMP_BOOL   genGPUMipMaps;           // When ecoding with GPU HW use it to generate Compressed MipMap images, valid only if source has not miplevels
+    CMP_BOOL   useSRGBFrames;           // Use SRGB frame buffer when generating HW based mipmaps (Default Gamma corretion will be set by HW)
+                                               // if the source is SNORM then this option is enabled regardless of setting
 
     //private: data settings: Do not use it will be removed from this interface!
     CMP_UINT   size;                    // Size of *data
@@ -354,7 +380,11 @@ extern "C"
     extern  CMP_INT CMP_MaxFacesOrSlices(const CMP_MipSet* pMipSet, CMP_INT nMipLevel);
     CMP_INT CMP_API CMP_CalcMinMipSize(CMP_INT nHeight, CMP_INT nWidth, CMP_INT MipsLevel);
     CMP_INT CMP_API CMP_GenerateMIPLevels(CMP_MipSet *pMipSet, CMP_INT nMinSize);
+    CMP_INT CMP_API CMP_GenerateMIPLevelsEx(CMP_MipSet* pMipSet, CMP_CFilterParams* pCFilterParams);
     CMP_ERROR CMP_API CMP_CreateCompressMipSet(CMP_MipSet* pMipSetCMP, CMP_MipSet* pMipSetSRC);
+
+    // MIP Map Quality
+    CMP_ERROR CMP_API  CMP_CalcMipSetMSE_PSNR(CMP_MipSet* src1, CMP_MipSet* src2, CMP_INT nMipLevel, CMP_INT nFaceOrSlice, CMP_DOUBLE* outMSE, CMP_DOUBLE* outPSNR);
 
     /// CMP_MIPFeedback_Proc
     /// Feedback function for conversion.
@@ -374,8 +404,9 @@ extern "C"
     CMP_FORMAT CMP_API CMP_ParseFormat(char* pFormat);
     CMP_INT    CMP_API CMP_NumberOfProcessors();
     CMP_VOID   CMP_API CMP_FreeMipSet(CMP_MipSet *MipSetIn);
-    CMP_VOID   CMP_API CMP_GetMipLevel(CMP_MipLevel *data, const CMP_MipSet* pMipSet, CMP_INT nMipLevel, CMP_INT nFaceOrSlice);
-    
+    CMP_VOID   CMP_API CMP_GetMipLevel(CMP_MipLevel **data, const CMP_MipSet* pMipSet, CMP_INT nMipLevel, CMP_INT nFaceOrSlice);
+    CMP_BOOL   CMP_API CMP_IsCompressedFormat(CMP_FORMAT format);
+
     //--------------------------------------------
     // CMP_Compute Lib: Host level interface
     //--------------------------------------------

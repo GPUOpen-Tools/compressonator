@@ -36,18 +36,23 @@ DECLARE_PLUGIN(Plugin_glTF_OpenGL)
 SET_PLUGIN_TYPE("3DMODEL_VIEWER")
 SET_PLUGIN_NAME("OPENGL")
 #else
-void *make_Plugin_glTF_OpenGL() { return new glTF_OGLDevice; }
+void* make_Plugin_glTF_OpenGL()
+{
+    return new Plugin_glTF_OpenGL();
+}
 #endif
 
 #include "glTF_OGLDevice.h"
 
-namespace MV_gltf_opengl
-{
-    bool                   g_bAbortCompression = false;
-    CMIPS*                 g_CMIPS = nullptr;
-}
+#ifdef BUILD_AS_PLUGIN_DLL
+bool   g_bAbortCompression = false;
+CMIPS* g_CMIPS             = nullptr;
+#else
+extern bool   g_bAbortCompression;
+extern CMIPS* g_CMIPS;
+#endif
 
-using namespace MV_gltf_opengl;
+//using namespace MV_gltf_opengl;
 
 Plugin_glTF_OpenGL::Plugin_glTF_OpenGL()
 {
@@ -169,13 +174,23 @@ void *Plugin_glTF_OpenGL::CreateView(void *ModelData, CMP_LONG Width, CMP_LONG H
     m_model  = (CMODEL_DATA *)ModelData;
     m_parent = (QWidget *)    userWidget;
 
-    m_glTF_OGLDevice = new glTF_OGLDevice();
+ //   m_glTF_OGLDevice = new glTF_OGLDevice();
+ //   if (m_glTF_OGLDevice)
+ //   {
+ //       m_glTF_OGLDevice->init(m_model, Width, Height, pluginManager, msghandler, m_parent);
+ //       m_glTF_OGLDevice->OnCreate();
+ //       return m_glTF_OGLDevice;
+ //   }
+ //
+ //   return nullptr;
+
+    m_glTF_OGLDevice = new glTF_OGLDevice(m_model, Width, Height, pluginManager, msghandler, m_parent);
     if (m_glTF_OGLDevice)
     {
-        m_glTF_OGLDevice->init(m_model, Width, Height, pluginManager, msghandler, m_parent);
         m_glTF_OGLDevice->OnCreate();
-        return m_glTF_OGLDevice;
     }
+    else
+        return nullptr;
 
-    return nullptr;
+    return m_glTF_OGLDevice;
 }

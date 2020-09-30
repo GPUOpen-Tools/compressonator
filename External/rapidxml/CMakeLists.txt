@@ -1,6 +1,7 @@
+message(STATUS "++++++++++++++++++ External-RAPIDXML" )
 
 
-set(RAPIDXML_DIR ${CMAKE_CURRENT_LIST_DIR}/rapidxml-submodule)
+set(RAPIDXML_DIR ${CMAKE_CURRENT_LIST_DIR}/../../../Common/Lib/Ext/rapidxml/)
 
 add_library(ExtRapidXML INTERFACE)
 

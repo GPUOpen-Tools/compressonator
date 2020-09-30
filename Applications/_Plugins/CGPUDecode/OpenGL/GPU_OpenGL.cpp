@@ -36,19 +36,19 @@
 
 #include <assert.h>
 
-#if defined(_WIN32) && !defined(NO_LEGACY_BEHAVIOR)
+#if defined(_WIN32) //&& !defined(NO_LEGACY_BEHAVIOR)
     #pragma comment(lib, "opengl32.lib")     // Open GL
     #pragma comment(lib, "Glu32.lib")        // Glu 
-    #pragma comment(lib, "glew32.lib")       // glew 1.13.0
+    #pragma comment(lib, "glew32.lib")       // glew 
 #else
     #ifdef _WIN32
         #pragma comment(lib, "opengl32.lib")     // Open GL
         #pragma comment(lib, "Glu32.lib")        // Glu 
-        #ifdef _DEBUG
-            #pragma comment(lib, "libglew32d.lib")   // glew
-        #else
-            #pragma comment(lib, "libglew32.lib")   // glew
-        #endif
+        //#ifdef _DEBUG
+        //    #pragma comment(lib, "glew32d.lib")   // glew
+        //#else
+            #pragma comment(lib, "glew32.lib")   // glew
+        //#endif
     #else
         #pragma comment(lib, "libglew32.lib")   // glew
     #endif
@@ -141,11 +141,17 @@ unsigned int GPU_OpenGL::MIP2OLG_Format(const CMP_Texture* pSourceTexture)
     case CMP_FORMAT_ATI1N:
         m_GLnum = GL_COMPRESSED_RED_RGTC1;
         break;
+    case CMP_FORMAT_BC4_S:
+        m_GLnum = GL_COMPRESSED_SIGNED_RED_RGTC1;
+        break;
     case CMP_FORMAT_BC5:
     case CMP_FORMAT_ATI2N:
     case CMP_FORMAT_ATI2N_XY:
     case CMP_FORMAT_ATI2N_DXT5:
         m_GLnum = GL_COMPRESSED_RG_RGTC2;
+        break;
+    case CMP_FORMAT_BC5_S:
+        m_GLnum = GL_COMPRESSED_SIGNED_RG_RGTC2;
         break;
     case CMP_FORMAT_BC6H:
         m_GLnum = GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT;

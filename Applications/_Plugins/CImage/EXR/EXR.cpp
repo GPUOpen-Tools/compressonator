@@ -101,7 +101,7 @@ SET_PLUGIN_NAME("EXR")
 void *make_Plugin_EXR() { return new Plugin_EXR; }
 #endif
 
-#if defined(_WIN32) && !defined(NO_LEGACY_BEHAVIOR)
+#if defined(_WIN32) // && !defined(NO_LEGACY_BEHAVIOR)
     #ifdef _DEBUG
     #pragma comment(lib,"zlibstaticd.lib")
     #pragma comment(lib,"Imathd.lib")

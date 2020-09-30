@@ -48,7 +48,6 @@ extern "C" BC_ERROR CMP_InitializeBCLibrary()
 
     // One time initialisation for quantizer and shaker
     Quant_Init();
-    init_ramps();
     g_LibraryInitialized = TRUE;
     return BC_ERROR_NONE;
 }

@@ -1,9 +1,9 @@
 # CMakeLists.txt
-
+message(STATUS "++++++++++++++++++ External CMAKE subfolder" )
 # Compressonator Dependencies
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.13)
 
-project(CompressonatorDependencies)
+project(Compressonator)
 
 option(BUILD_SHARED_LIBS "Build SHARED, if disabled STATIC is built" OFF)
 
@@ -20,10 +20,12 @@ if (NOT DEFINED NUM_PARALLEL_JOBS)
 endif ()
 
 if (NOT (CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "Debug"))
-    message(FATAL_ERROR "CMAKE_BUILD_TYPE Bad variable: ${CMAKE_BUILD_TYPE}")
+    set(CMAKE_BUILD_TYPE "Release")
+    message(STATUS "CMAKE_BUILD_TYPE Bad variable defaulting to Relase")
 endif ()
 
-include(DependencyInfo.cmake)
+
+include(${CMAKE_CURRENT_LIST_DIR}/DependencyInfo.cmake)
 
 message(STATUS "BUILD_SHARED_LIBS -- ${BUILD_SHARED_LIBS}")
 message(STATUS "CMAKE_BUILD_TYPE -- ${CMAKE_BUILD_TYPE}")
@@ -34,7 +36,8 @@ message(STATUS "DEPENDENCIES_INSTALL_DIR -- ${DEPENDENCIES_INSTALL_DIR}")
 message(STATUS "NUM_PARALLEL_JOBS -- ${NUM_PARALLEL_JOBS}")
 
 # Dependencies
-add_subdirectory(CustomTargets ${CMAKE_BINARY_DIR}/CustomTargets)
+message(STATUS "====== CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_DIR}" )
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/CustomTargets)
 
 # Write a generic c++ source file to compile
 file(
@@ -51,24 +54,27 @@ int main()
 "
 )
 
+#-----------------------------------------------------------
 # Target with all dependencies to ensure everything is built
-add_executable(Dependencies)
-target_sources(Dependencies PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/external.cpp)
-if (WIN32)
-    add_dependencies(Dependencies 
-        catch2
-        glew
-        glslang
-        opencv
-        openexr
-        zlib
-    )
-else()
-    add_dependencies(Dependencies 
-        catch2
-        glew
-        opencv
-        openexr
-        zlib
-    )
-endif()
+#-----------------------------------------------------------
+#add_executable(Dependencies)
+#target_sources(Dependencies PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/external.cpp)
+#if (WIN32)
+#    add_dependencies(Dependencies 
+#        catch2
+#        glew
+#        glslang
+#        opencv
+#        openexr
+#        zlib
+#    )
+#else()
+#    add_dependencies(Dependencies 
+#        catch2
+#        glew
+#        opencv
+#        openexr
+#        zlib
+#    )
+#endif()
+#

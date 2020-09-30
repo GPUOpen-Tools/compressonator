@@ -55,7 +55,7 @@ public:
     bool updateFileFormat(QFileInfo &fileinfo);             // Update the Image Type Combo box by matching the input image format : return false if imput is not supported
     void resetData();                                       // Reset all data back to defaults
     void SaveCompressedInfo();                              // Save compress setting
-    void setMinMaxStep(QtVariantPropertyManager* manager, QtProperty *m_prop, double min, double max, double step);
+    void setMinMaxStep(QtVariantPropertyManager* manager, QtProperty *m_prop, double min, double max, double step, int decimals);
     QString GetFormatString();                              // Reads the m_data format and returns format enum as a string 
 
     bool isEditing;                                         // True when dislog is shown and in edit mode
@@ -75,7 +75,7 @@ public:
     QString                      m_srcext;
     QLineEdit                   *m_LESourceFile;
     QComboBox                   *m_CBSourceFile;
-	QGroupBox                   *GBDestinationFile;
+    QGroupBox                   *GBDestinationFile;
 private:
     // Common for all
     QHBoxLayout                 *m_HlayoutName;
@@ -170,5 +170,6 @@ public Q_SLOTS:
 };
 
 extern PluginManager g_pluginManager;
+extern C_Application_Options g_Application_Options;
 
 #endif

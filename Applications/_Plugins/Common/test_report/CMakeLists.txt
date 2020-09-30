@@ -7,7 +7,7 @@ set(LEGACY_LOCATION ../)
 
 target_sources(Plugin_Common_TestReport INTERFACE
 
-	${LEGACY_LOCATION}/TestReport.h
+    ${LEGACY_LOCATION}/TestReport.h
 )
 
 target_include_directories(Plugin_Common_TestReport INTERFACE

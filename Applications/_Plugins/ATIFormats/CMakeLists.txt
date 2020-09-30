@@ -7,18 +7,18 @@ set(LEGACY_LOCATION ../Common)
 
 target_sources(Plugin_Common_ATIFormats PRIVATE
 
-	${LEGACY_LOCATION}/ATIFormats.cpp
-	${LEGACY_LOCATION}/ATIFormats.h
+    ${LEGACY_LOCATION}/ATIFormats.cpp
+    ${LEGACY_LOCATION}/ATIFormats.h
 )
 
 target_include_directories(Plugin_Common_ATIFormats PUBLIC
     ./
-	${LEGACY_LOCATION}
+    ${LEGACY_LOCATION}
 )
 
 target_link_libraries(Plugin_Common_ATIFormats PRIVATE
-	CompressonatorLIB
-	Plugin_PluginManager
+    CompressonatorLIB
+    Plugin_PluginManager
 )
 
 set_target_properties(Plugin_Common_ATIFormats PROPERTIES FOLDER ${FOLDER_NAME})

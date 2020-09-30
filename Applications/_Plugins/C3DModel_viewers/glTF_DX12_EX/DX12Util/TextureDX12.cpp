@@ -564,11 +564,17 @@ DXGI_FORMAT CMP2DXGIFormat(CMP_FORMAT cmp_format)
     case CMP_FORMAT_ATI1N:
         dxgi_format = DXGI_FORMAT_BC4_UNORM;
         break;
+    case CMP_FORMAT_BC4_S:
+        dxgi_format = DXGI_FORMAT_BC4_SNORM;
+        break;
     case CMP_FORMAT_BC5:
     case CMP_FORMAT_ATI2N:
     case CMP_FORMAT_ATI2N_XY:
     case CMP_FORMAT_ATI2N_DXT5:
         dxgi_format = DXGI_FORMAT_BC5_UNORM;
+        break;
+    case CMP_FORMAT_BC5_S:
+        dxgi_format = DXGI_FORMAT_BC5_SNORM;
         break;
     case CMP_FORMAT_BC6H:
         dxgi_format = DXGI_FORMAT_BC6H_UF16;
@@ -652,9 +658,12 @@ DXGI_FORMAT CMP2DXGIFormat(CMP_FORMAT cmp_format)
     case CMP_FORMAT_ETC2_RGBA1:
     case CMP_FORMAT_ETC2_SRGBA:
     case CMP_FORMAT_ETC2_SRGBA1:
-//#ifdef USE_GTC
+#ifdef USE_APC
+    case CMP_FORMAT_APC:
+#endif
+#ifdef USE_GTC
     case CMP_FORMAT_GTC:
-//#endif
+#endif
 #ifdef USE_BASIS
     case CMP_FORMAT_BASIS:
 #endif

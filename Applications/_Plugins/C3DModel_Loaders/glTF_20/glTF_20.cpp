@@ -48,13 +48,16 @@ void *make_Plugin_glTF_Loader() { return new Plugin_glTF_Loader; }
 #include "tiny_gltf2_utils.h"
 #endif
 
-namespace ML_gltf20 
-{
-    bool                   g_bAbortCompression = false;
-    CMIPS*                 g_CMIPS = nullptr;
-}
+#ifdef BUILD_AS_PLUGIN_DLL
+bool   g_bAbortCompression = false;
+CMIPS* g_CMIPS             = nullptr;
+#else
+extern bool   g_bAbortCompression;
+extern CMIPS* g_CMIPS;
+#endif
 
-using namespace ML_gltf20;
+
+//using namespace ML_gltf20;
 
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")

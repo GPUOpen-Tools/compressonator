@@ -221,3 +221,211 @@ CodecError CCodec_ATI1N::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& buffer
 
     return CE_OK;
 }
+
+//-------------------------------------------------------------------
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+// Construction/Destruction
+//////////////////////////////////////////////////////////////////////////////
+
+CCodec_ATI1N_S::CCodec_ATI1N_S(CodecType codecType)
+    : CCodec_DXTC(codecType)
+{
+}
+
+CCodec_ATI1N_S::~CCodec_ATI1N_S()
+{
+}
+
+CCodecBuffer* CCodec_ATI1N_S::CreateBuffer(CMP_BYTE  nBlockWidth,
+                                         CMP_BYTE  nBlockHeight,
+                                         CMP_BYTE  nBlockDepth,
+                                         CMP_DWORD dwWidth,
+                                         CMP_DWORD dwHeight,
+                                         CMP_DWORD dwPitch,
+                                         CMP_BYTE* pData,
+                                         CMP_DWORD dwDataSize) const
+{
+    return CreateCodecBuffer(CBT_4x4Block_4BPP, 4, 4, 1, dwWidth, dwHeight, dwPitch, pData);
+}
+
+CodecError CCodec_ATI1N_S::Compress(CCodecBuffer&       bufferIn,
+                                  CCodecBuffer&       bufferOut,
+                                  Codec_Feedback_Proc pFeedbackProc,
+                                  CMP_DWORD_PTR       pUser1,
+                                  CMP_DWORD_PTR       pUser2)
+{
+    if ((m_nCompressionSpeed == CMP_Speed_Fast || m_nCompressionSpeed == CMP_Speed_SuperFast) && m_bUseSSE)
+        return Compress_Fast(bufferIn, bufferOut, pFeedbackProc, pUser1, pUser2);
+
+    assert(bufferIn.GetWidth() == bufferOut.GetWidth());
+    assert(bufferIn.GetHeight() == bufferOut.GetHeight());
+
+    if (bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
+        return CE_Unknown;
+
+    const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
+    const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
+
+    bool bUseFixed = (!bufferIn.IsFloat() && bufferIn.GetChannelDepth() == 8 && !m_bUseFloat);
+
+    for (CMP_DWORD j = 0; j < dwBlocksY; j++)
+    {
+        for (CMP_DWORD i = 0; i < dwBlocksX; i++)
+        {
+            CMP_DWORD compressedBlock[2];
+            if (bUseFixed)
+            {
+                CMP_BYTE cAlphaBlock[BLOCK_SIZE_4X4];
+                if (bufferIn.m_bSwizzle)  // Our input red is in the blue offset position of the source buffer
+                    bufferIn.ReadBlockB(i * 4, j * 4, 4, 4, cAlphaBlock);
+                else
+                    bufferIn.ReadBlockR(i * 4, j * 4, 4, 4, cAlphaBlock);
+                CompressAlphaBlock(cAlphaBlock, compressedBlock);
+            }
+            else
+            {
+                float fAlphaBlock[BLOCK_SIZE_4X4];
+                if (bufferIn.m_bSwizzle)
+                    bufferIn.ReadBlockB(i * 4, j * 4, 4, 4, fAlphaBlock);
+                else
+                    bufferIn.ReadBlockR(i * 4, j * 4, 4, 4, fAlphaBlock);
+                CompressAlphaBlock(fAlphaBlock, compressedBlock);
+            }
+            bufferOut.WriteBlock(i * 4, j * 4, compressedBlock, 2);
+        }
+
+        if (pFeedbackProc)
+        {
+            float fProgress = 100.f * (j * dwBlocksX) / (dwBlocksX * dwBlocksY);
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
+                return CE_Aborted;
+        }
+    }
+
+    return CE_OK;
+}
+
+CodecError CCodec_ATI1N_S::Compress_Fast(CCodecBuffer&       bufferIn,
+                                       CCodecBuffer&       bufferOut,
+                                       Codec_Feedback_Proc pFeedbackProc,
+                                       CMP_DWORD_PTR       pUser1,
+                                       CMP_DWORD_PTR       pUser2)
+{
+    assert(bufferIn.GetWidth() == bufferOut.GetWidth());
+    assert(bufferIn.GetHeight() == bufferOut.GetHeight());
+
+    if (bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
+        return CE_Unknown;
+
+    const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
+    const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
+
+    for (CMP_DWORD j = 0; j < dwBlocksY; j++)
+    {
+        for (CMP_DWORD i = 0; i < dwBlocksX; i++)
+        {
+            CMP_DWORD compressedBlock[2];
+            CMP_BYTE  cAlphaBlock[BLOCK_SIZE_4X4];
+
+            if (bufferIn.m_bSwizzle)
+                bufferIn.ReadBlockB(i * 4, j * 4, 4, 4, cAlphaBlock);
+            else
+                bufferIn.ReadBlockR(i * 4, j * 4, 4, 4, cAlphaBlock);
+            CompressAlphaBlock_Fast(cAlphaBlock, compressedBlock);
+            bufferOut.WriteBlock(i * 4, j * 4, compressedBlock, 2);
+        }
+
+        if (pFeedbackProc)
+        {
+            float fProgress = 100.f * (j * dwBlocksX) / (dwBlocksX * dwBlocksY);
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
+                return CE_Aborted;
+        }
+    }
+
+    return CE_OK;
+}
+
+CodecError CCodec_ATI1N_S::Decompress(CCodecBuffer&       bufferIn,
+                                    CCodecBuffer&       bufferOut,
+                                    Codec_Feedback_Proc pFeedbackProc,
+                                    CMP_DWORD_PTR       pUser1,
+                                    CMP_DWORD_PTR       pUser2)
+{
+    assert(bufferIn.GetWidth() == bufferOut.GetWidth());
+    assert(bufferIn.GetHeight() == bufferOut.GetHeight());
+
+    if (bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
+        return CE_Unknown;
+
+    const CMP_DWORD dwBlocksX  = ((bufferIn.GetWidth() + 3) >> 2);
+    const CMP_DWORD dwBlocksY  = ((bufferIn.GetHeight() + 3) >> 2);
+    const CMP_DWORD dwBlocksXY = dwBlocksX * dwBlocksY;
+
+    bool bUseFixed = (!bufferOut.IsFloat() && bufferOut.GetChannelDepth() == 8 && !m_bUseFloat);
+
+    // Init alpha channel
+    CMP_BYTE  alpha[BLOCK_SIZE_4X4];
+    CMP_FLOAT alphaF[BLOCK_SIZE_4X4];
+    for (CMP_BYTE i = 0; i < BLOCK_SIZE_4X4; i++)
+    {
+        alpha[i]  = 0xFF;
+        alphaF[i] = FLT_MAX;
+    }
+
+    for (CMP_DWORD j = 0; j < dwBlocksY; j++)
+    {
+        for (CMP_DWORD i = 0; i < dwBlocksX; i++)
+        {
+            CMP_DWORD compressedBlock[2];
+            bufferIn.ReadBlock(i * 4, j * 4, compressedBlock, 2);
+
+            if (bUseFixed)
+            {
+#ifdef TEST_CMP_CORE_DECODER
+                CMP_BYTE ATI1NBlock[BLOCK_SIZE_4X4];
+                DecompressBlockBC4((CMP_BYTE*)compressedBlock, ATI1NBlock);
+                bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, ATI1NBlock);
+                bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, ATI1NBlock);
+                bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, ATI1NBlock);
+                bufferOut.WriteBlockA(i * 4, j * 4, 4, 4, alpha);
+#else
+                CMP_BYTE ATI1NBlock[BLOCK_SIZE_4X4];
+                DecompressAlphaBlock(ATI1NBlock, compressedBlock);
+                bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, ATI1NBlock);
+                bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, ATI1NBlock);
+                bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, ATI1NBlock);
+                bufferOut.WriteBlockA(i * 4, j * 4, 4, 4, alpha);
+#endif
+            }
+            else
+            {
+                float ATI1NBlock[BLOCK_SIZE_4X4];
+                DecompressAlphaBlock(ATI1NBlock, compressedBlock);
+                bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, ATI1NBlock);
+                bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, ATI1NBlock);
+                bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, ATI1NBlock);
+                bufferOut.WriteBlockA(i * 4, j * 4, 4, 4, alphaF);
+            }
+        }
+
+        if (pFeedbackProc)
+        {
+            float fProgress = 100.f * (j * dwBlocksX) / dwBlocksXY;
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
+            {
+                return CE_Aborted;
+            }
+        }
+    }
+
+    return CE_OK;
+}
+
+
+
+
+

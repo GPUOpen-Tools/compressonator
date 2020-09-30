@@ -7,10 +7,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -27,116 +27,110 @@
 
 #define LOWEST_MIP_LEVELS "Lowest Mip-Level (Width x Height)"
 
-CGenMips::CGenMips(const QString title, QWidget *parent) : QWidget(parent),
-m_title(title),
-m_parent(parent)
+CGenMips::CGenMips(const QString title, QWidget* parent)
+    : QWidget(parent)
+    , m_title(title)
+    , m_parent(parent)
 {
     setWindowTitle(title);
     setWindowFlags(Qt::Dialog);
 
-    Qt::WindowFlags flags = windowFlags();
-    Qt::WindowFlags helpFlag =  Qt::WindowContextHelpButtonHint;
-    flags = flags & (~helpFlag);
+    Qt::WindowFlags flags    = windowFlags();
+    Qt::WindowFlags helpFlag = Qt::WindowContextHelpButtonHint;
+    flags                    = flags & (~helpFlag);
     setWindowFlags(flags | Qt::WindowStaysOnTopHint | Qt::MSWindowsFixedSizeDialogHint);
 
-    resize(300, 80);
-    
-    m_cdata = new CData();
-    m_cdata->set_str("");
+    resize(300, 220);
 
-    evalProperties();
-    variantManager = new QtVariantPropertyManager(this);
-    connect(variantManager, SIGNAL(valueChanged(QtProperty *, const QVariant &)),this, SLOT(valueChanged(QtProperty *, const QVariant &)));
-    QtVariantEditorFactory *variantFactory = new QtVariantEditorFactory(this);
-    
+    m_CFilterParams.nFilterType         = 0; // CMP CPU version
+    m_CFilterParams.dwMipFilterOptions  = 0;
+    m_CFilterParams.nMinSize            = 0;
+    m_CFilterParams.fGammaCorrection    = 1.0;
+
+    m_variantPropertyManager = new QtVariantPropertyManager(this);
+    connect(m_variantPropertyManager, SIGNAL(valueChanged(QtProperty*, const QVariant&)), this, SLOT(valueChanged(QtProperty*, const QVariant&)));
+    QtVariantEditorFactory* variantFactory = new QtVariantEditorFactory(this);
+
     m_propertyEditor = new QtGroupBoxPropertyBrowser(this);
-    // m_propertyEditor = new QtTreePropertyBrowser(this); 
-    m_propertyEditor->setFactoryForManager(variantManager, variantFactory);
-    
-    SetDefaults();
+    m_propertyEditor->setFactoryForManager(m_variantPropertyManager, variantFactory);
+
+    SetGUIItems();
 
     m_ImageSize_W = 0;
     m_ImageSize_H = 0;
     m_MipLevels   = 0;
 
-
+    // evalProperties(); use this to debug set properties of a class definition , in this case its CData
 }
-
 
 void CGenMips::setMipLevelDisplay(int Width, int Height, bool UsingGPU = false)
 {
-    m_ImageSize_W = Width;
-    m_ImageSize_H = Height;
-    m_MipLevelSizes.clear();
+       m_ImageSize_W = Width;
+       m_ImageSize_H = Height;
+       m_MipLevelSizes.clear();
 
-    m_MipLevels = 0;
+       m_MipLevels = 0;
+ 
+     QString level;
+     level.append(QString::number(Width));
+     level.append("x");
+     level.append(QString::number(Height));
+ 
+     m_MipLevelSizes << level;
+ 
+     m_MipLevels++;
+     do
+     {
+         Width  = (Width > 1) ? (Width >> 1) : 1;
+         Height = (Height > 1) ? (Height >> 1) : 1;
+ 
+         if (UsingGPU)
+         {
+             if ((Width % 4) || (Height % 4))
+                 break;
+         }
+ 
+         QString level;
+         level.append(QString::number(Width));
+         level.append("x");
+         level.append(QString::number(Height));
+ 
+         m_MipLevelSizes << level;
+         m_MipLevels++;
+ 
+     } while (Width > 1 && Height > 1);
+ 
+     QStringList reversedList = m_MipLevelSizes;
+     const int   levelSize    = m_MipLevelSizes.size();
+     const int   maxSwap      = m_MipLevelSizes.size() / 2;
+     for (int i = 0; i < maxSwap; ++i)
+     {
+         qSwap(reversedList[i], reversedList[levelSize - 1 - i]);
+     }
+     m_MipLevelSizes = reversedList;
 
-    QString level;
-    level.append(QString::number(Width));
-    level.append("x");
-    level.append(QString::number(Height));
-
-    m_MipLevelSizes << level;
-
-    m_MipLevels++;
-    do
-    {
-        Width = (Width>1) ? (Width >> 1) : 1;
-        Height = (Height>1) ? (Height >> 1) : 1;
-
-        if (UsingGPU)
-        {
-            if ((Width % 4)||(Height%4))
-                break;
-        }
-
-        QString level;
-        level.append(QString::number(Width));
-        level.append("x");
-        level.append(QString::number(Height));
-
-        m_MipLevelSizes << level;
-        m_MipLevels++;
-
-    } while (Width > 1 && Height > 1);
-
-    QStringList reversedList = m_MipLevelSizes;
-    const int levelSize = m_MipLevelSizes.size();
-    const int maxSwap = m_MipLevelSizes.size() / 2;
-    for (int i = 0; i < maxSwap; ++i) {
-        qSwap(reversedList[i], reversedList[levelSize - 1 - i]);
-    }
-    m_MipLevelSizes = reversedList;
-
-    m_property->setAttribute("enumNames", m_MipLevelSizes);
-    m_property->setValue(0);
+     m_propertyMipLevels->setAttribute("enumNames", m_MipLevelSizes);
+     m_propertyMipLevels->setValue(0);
 }
-
 
 void CGenMips::onGenerate()
 {
     int minsize = m_ImageSize_H;
     if (m_ImageSize_W > m_ImageSize_H)
         minsize = m_ImageSize_W;
-    int temp= m_MipLevelSizes.count() - m_MipLevels;
+    int temp    = m_MipLevelSizes.count() - m_MipLevels;
     m_MipLevels = temp - 1;
-    minsize = minsize >> m_MipLevels;
-    emit generateMIPMap(minsize, this->m_mipsitem);
+    minsize     = minsize >> m_MipLevels;
+    m_CFilterParams.nMinSize = minsize;
+    emit generateMIPMap(m_CFilterParams, this->m_mipsitem);
     hide();
 }
 
-
 CGenMips::~CGenMips()
 {
-    if (m_cdata)
-    {
-        delete m_cdata;
-        m_cdata = NULL;
-    }
 }
 
-
-void CGenMips::closeEvent(QCloseEvent * event)
+void CGenMips::closeEvent(QCloseEvent* event)
 {
     hide();
     event->ignore();
@@ -147,188 +141,176 @@ void CGenMips::onCancel()
     hide();
 }
 
-
 void CGenMips::updateExpandState()
 {
-    QList<QtBrowserItem *> list = m_propertyEditor->topLevelItems();
-    QListIterator<QtBrowserItem *> it(list);
-    while (it.hasNext()) {
-        QtBrowserItem *item = it.next();
-        QtProperty *prop = item->property();
-        idToExpanded[propertyToId[prop]] = false; //  propertyEditor->isExpanded(item);
+    QList<QtBrowserItem*>         list = m_propertyEditor->topLevelItems();
+    QListIterator<QtBrowserItem*> it(list);
+    while (it.hasNext())
+    {
+        QtBrowserItem* item              = it.next();
+        QtProperty*    prop              = item->property();
+        idToExpanded[propertyToId[prop]] = false;  //  propertyEditor->isExpanded(item);
     }
 }
 
-void CGenMips::addProperty(QtVariantProperty *property, const QString &id)
+void CGenMips::addProperty(QtVariantProperty* property, const QString& id)
 {
     propertyToId[property] = id;
-    idToProperty[id] = property;
+    idToProperty[id]       = property;
     m_propertyEditor->addProperty(property);
-    // QtBrowserItem *item = propertyEditor->addProperty(property);
-    // if (idToExpanded.contains(id))
-    //    propertyEditor->setExpanded(item, idToExpanded[id]);
 }
 
-void CGenMips::evalProperties()
+void CGenMips::addD3DXProperty(QtVariantProperty* property, const QString& id)
 {
-    QObject *wid = m_cdata;
-    const QMetaObject *metaobject = wid->metaObject();
-    int count = metaobject->propertyCount();
-    for (int i = 0; i<count; ++i) {
-        QMetaProperty metaproperty = metaobject->property(i);
-        const char *name = metaproperty.name();
-        QVariant value = wid->property(name);
-    }
+    propertyToId[property] = id;
+    idToProperty[id]       = property;
 }
 
-void CGenMips::valueChanged(QtProperty *property, const QVariant &value)
+
+// Info how to evaluate class meta object props
+//     QObject* wid; <= set this to equal a class var pointer!
+//     const QMetaObject* metaobject = wid->metaObject();
+//     int                count      = metaobject->propertyCount();
+//     for (int i = 0; i < count; ++i)
+//     {
+//         QMetaProperty metaproperty = metaobject->property(i);
+//         const char*   name         = metaproperty.name();
+//         QVariant      value        = wid->property(name);
+//     }
+
+
+void CGenMips::valueChanged(QtProperty* property, const QVariant& value)
 {
     if (!propertyToId.contains(property))
         return;
     QString id = propertyToId[property];
-    
+
     if (id == QLatin1String(LOWEST_MIP_LEVELS))
     {
         m_MipLevels = value.toInt();
     }
-
-    if (m_cdata == NULL) return;
-
-    if (id == QLatin1String("m_str")) {
-        m_cdata->set_str(value.value<QString>());
+    else if (id == QLatin1String("FilterType"))
+    {
+        int filtertype = value.value<int>();
+        switch (filtertype)
+        {
+            case 0:
+                m_CFilterParams.nFilterType         = 0;
+                m_CFilterParams.dwMipFilterOptions  = 0; 
+                m_GroupProperty->setEnabled(false);
+                m_propertyGamma->setEnabled(true);
+                break;
+            default:
+                m_GroupProperty->setEnabled(true);
+                m_propertyGamma->setEnabled(false); // Not implemented in D3DX options
+                m_CFilterParams.nFilterType = 1;    // Using D3DX options
+                m_CFilterParams.dwMipFilterOptions = 
+                    m_CFilterParams.dwMipFilterOptions &
+                    0xFFFFFFE0 | filtertype;  // mapping is 1: CMP_D3DX_FILTER_NONE to 5:CMP_D3DX_FILTER_BOX
+                break;
+            }
+    }
+    else if (id == QLatin1String("Gamma"))
+    {
+        m_CFilterParams.fGammaCorrection = value.toDouble();
     }
     else
-    if (id == QLatin1String("Dither")) {
-        m_cdata->set_bDither(value.value<bool>());
+    if (id == QLatin1String("Dither"))
+    {
+        m_CFilterParams.dwMipFilterOptions ^= CMP_D3DX_FILTER_DITHER;
     }
-    else
-    if (id == QLatin1String("MirrorPixels")) {
-        m_cdata->set_bDither(value.value<bool>());
+    else if (id == QLatin1String("MirrorPixels"))
+    {
+        m_CFilterParams.dwMipFilterOptions ^= CMP_D3DX_FILTER_MIRROR;
     }
-    if (id == QLatin1String("PerformFiltering")) {
-        m_cdata->set_bDither(value.value<bool>());
-    }
-
+    // Enable when support for sRGB mipmaps is enabled
+    // if (id == QLatin1String("PerformFiltering"))
+    // {
+    // }
 }
 
-
-void CGenMips::SetDefaults()
+void CGenMips::SetGUIItems()
 {
     // Init
     updateExpandState();
 
-    QMap<QtProperty *, QString>::ConstIterator itProp = propertyToId.constBegin();
-    while (itProp != propertyToId.constEnd()) {
+    QMap<QtProperty*, QString>::ConstIterator itProp = propertyToId.constBegin();
+    while (itProp != propertyToId.constEnd())
+    {
         delete itProp.key();
         itProp++;
     }
     propertyToId.clear();
     idToProperty.clear();
 
-    
-#ifdef USE_MULIPLE_FILTERS
-    // Methods
-    // Notes: LMethod->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    QGroupBox *GBCompressionMethod = new QGroupBox();
-    QGridLayout *LayoutCompressionMethod = new QGridLayout(GBCompressionMethod);
+    // Data
+    m_propertyMipLevels = m_variantPropertyManager->addProperty(QtVariantPropertyManager::enumTypeId(), LOWEST_MIP_LEVELS);
+    m_MipLevelSizes << "";  // This will be populated by setMipLevelDisplay()
+    m_propertyMipLevels->setAttribute("enumNames", m_MipLevelSizes);
+    m_propertyMipLevels->setValue(0);
+    addProperty(m_propertyMipLevels, QLatin1String(LOWEST_MIP_LEVELS));
 
-    QLabel *LCompression = new QLabel(tr("Using Box Filter"));
-    
-    QComboBox *CBCompression = new QComboBox();
-    BOOL        IsEnabled = false;
+    m_propertyGamma = m_variantPropertyManager->addProperty(QVariant::Double, tr("Gamma (Pixel ^ Value)"));
+    m_propertyGamma->setValue(1.0);
+    m_propertyGamma->setAttribute("minimum", 0.001);
+    m_propertyGamma->setAttribute("maximum", 4.00);
+    m_propertyGamma->setAttribute("singleStep", 0.001);
+    m_propertyGamma->setAttribute("decimals", 3);
+    addProperty(m_propertyGamma, QLatin1String("Gamma"));
 
-    // Supported Objects
-    CBCompression->addItem(tr("Box"));
-    CBCompression->addItem(tr("D3D"));
-    CBCompression->addItem(tr("D3DX"));
 
-    // Read the class type and set the index and what to enable here
-    CBCompression->setCurrentIndex(0);   // Defaulting to Box
-    LayoutCompressionMethod->addWidget(CBCompression, 0, 1);
-    LayoutCompressionMethod->addWidget(LCompression, 0, 0);
+    m_propertyFilterType = m_variantPropertyManager->addProperty(QtVariantPropertyManager::enumTypeId(), "Filter Type");
+    QStringList types;
+    types << "CMP  Box"
+          << "D3DX None"
+          << "D3DX Point"
+          << "D3DX Linear"
+          << "D3DX Triangle" 
+          << "D3DX Box";
 
-#endif    
+    m_propertyFilterType->setAttribute("enumNames", types);
+    m_propertyFilterType->setValue(0);  // "CMP_Box"
+    addProperty(m_propertyFilterType, QLatin1String("FilterType"));
 
-    
-    // Data 
-    m_property = variantManager->addProperty(QtVariantPropertyManager::enumTypeId(), LOWEST_MIP_LEVELS);
-    m_MipLevelSizes << "";
-    m_property->setAttribute("enumNames", m_MipLevelSizes);
-    m_property->setValue(0);
-    addProperty(m_property, QLatin1String(LOWEST_MIP_LEVELS));
-
-#ifdef USE_MULIPLE_FILTERS
-
-    property = variantManager->addProperty(QtVariantPropertyManager::enumTypeId(), "Filter Type");
-    QStringList  types;
-    types << "None" << "Point" << "Linear" << "Triangle" << "Box";
-    property->setAttribute("enumNames", types);
-    property->setValue(0); // "None"
-    property->setEnabled(IsEnabled);
-    addProperty(property, QLatin1String("FilterType"));
-
-    QLabel *LSetting = new QLabel(tr("Setting"));
+    QLabel* LSetting = new QLabel(tr("Setting"));
     LSetting->setStyleSheet("QLabel { background-color : rgb(200, 200, 200); color : Black; font: bold;}");
 
-    GroupProperty = variantManager->addProperty(QtVariantPropertyManager::groupTypeId(), tr("Options"));
+    m_GroupProperty = m_variantPropertyManager->addProperty(QtVariantPropertyManager::groupTypeId(), tr("D3DX Options"));
+    m_GroupProperty->setEnabled(false);
 
-   // QObject *wid = m_cdata;
-   // const QMetaObject *metaobject = wid->metaObject();
-   // int count = metaobject->propertyCount();
-   // for (int i = 0; i<count; ++i) {
-   //     QMetaProperty metaproperty = metaobject->property(i);
-   //     const char *name = metaproperty.name();
-   //     property = variantManager->addProperty(QVariant::Bool, name);
-   //     QVariant value = wid->property(name);
-   //     property->setValue(value);
-   //     GroupProperty->addSubProperty(property);
-   // }
+    m_propertyDither = m_variantPropertyManager->addProperty(QVariant::Bool, tr("Dither"));
+    m_GroupProperty->addSubProperty(m_propertyDither);
+    addD3DXProperty(m_propertyDither, QLatin1String("Dither"));
 
-    property = variantManager->addProperty(QVariant::Bool, tr("Dither"));
-    property->setValue(m_cdata->get_bDither());
-    //property->setEnabled(IsEnabled);
-    GroupProperty->addSubProperty(property);
+    m_propertyMirrorPixels = m_variantPropertyManager->addProperty(QVariant::Bool, tr("MirrorPixels"));
+    m_GroupProperty->addSubProperty(m_propertyMirrorPixels);
+    addD3DXProperty(m_propertyDither, QLatin1String("MirrorPixels"));
 
-    property = variantManager->addProperty(QVariant::Bool, tr("MirrorPixels"));
-    property->setValue(m_cdata->get_bMirrorPixels());
-    //property->setEnabled(IsEnabled);
-    GroupProperty->addSubProperty(property);
+    // m_propertyPerformFiltering = m_variantPropertyManager->addProperty(QVariant::Bool, tr("PerformFiltering"));
+    // m_propertyPerformFiltering->setEnabled(false);
+    // m_GroupProperty->addSubProperty(m_propertyPerformFiltering);
 
-    property = variantManager->addProperty(QVariant::Bool, tr("PerformFiltering"));
-    property->setValue(m_cdata->get_bPerformFiltering());
-    //property->setEnabled(IsEnabled);
-    GroupProperty->addSubProperty(property);
+    addProperty(m_GroupProperty, QLatin1String("Options"));
 
-    GroupProperty->setEnabled(IsEnabled);
-    addProperty(GroupProperty, QLatin1String("Options"));
-#endif
 
-    QScrollArea *GenMipsOptions = new QScrollArea();
+    QScrollArea* GenMipsOptions = new QScrollArea();
     GenMipsOptions->setWidgetResizable(true);
-    GenMipsOptions->setMinimumSize(300,60);
+    GenMipsOptions->setMinimumSize(300, 60);
     m_propertyEditor->setMinimumSize(250, 55);
     GenMipsOptions->setWidget(m_propertyEditor);
 
-
     // Buttons
-    //QGroupBox *GBhorizontalButtons = new QGroupBox();
-    QHBoxLayout *layoutButtons = new QHBoxLayout;
-    QPushButton *PBGenerate = new QPushButton("Generate");
+    QHBoxLayout* layoutButtons = new QHBoxLayout;
+    QPushButton* PBGenerate    = new QPushButton("Generate");
     layoutButtons->addWidget(PBGenerate);
-    QPushButton *buttons3 = new QPushButton("Cancel");
+    QPushButton* buttons3 = new QPushButton("Cancel");
     layoutButtons->addWidget(buttons3);
-    //GBhorizontalButtons->setLayout(layoutButtons);
 
     // Button Events
     connect(buttons3, SIGNAL(clicked()), this, SLOT(onCancel()));
     connect(PBGenerate, SIGNAL(clicked()), this, SLOT(onGenerate()));
 
-    QGridLayout *layout = new QGridLayout(this); 
-
-#ifdef USE_MULIPLE_FILTERS
-    layout->addWidget(GBCompressionMethod, 0, 0);
-    layout->addWidget(LSetting, 1, 0);
-#endif
+    QGridLayout* layout = new QGridLayout(this);
 
     layout->addWidget(GenMipsOptions, 0, 0);
     layout->addLayout(layoutButtons, 1, 0);
@@ -336,5 +318,4 @@ void CGenMips::SetDefaults()
     layout->setAlignment(Qt::AlignTop);
 
     this->setLayout(layout);
-
 }

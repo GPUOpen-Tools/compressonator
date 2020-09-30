@@ -69,7 +69,6 @@
   <ItemGroup>
     <ClCompile Include="..\Applications\_Libs\CMP_Math\cmp_math_common.cpp" />
     <ClCompile Include="..\Applications\_Libs\CMP_Math\cmp_math_cpuid.cpp" />
-    <ClCompile Include="..\Applications\_Libs\CMP_Math\kernel_math.cpp" />
     <ClCompile Include="..\Applications\_Plugins\CCMP_Encode\HPC\CCPU_HPC.cpp" />
     <ClCompile Include="..\Applications\_Plugins\CCMP_Encode\HPC\cmp_hpc.cpp" />
     <ClCompile Include="..\Applications\_Plugins\CCMP_Encode\HPC\Compute_CPU_HPC.cpp" />

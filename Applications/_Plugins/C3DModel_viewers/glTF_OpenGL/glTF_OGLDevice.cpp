@@ -30,54 +30,23 @@ static float g_Pitch = 0;
 static int   m_lastMouseWheelDelta, m_mouseWheelDelta = 0;
 
 
-glTF_OGLDevice::glTF_OGLDevice()
-    : QGLWidget(QGLFormat(QGL::SampleBuffers), nullptr)
-    , m_fullScreen(false)
-    , m_width(0)
-    , m_height(0)
-    , m_mouse_press_xpos(0)
-    , m_mouse_press_ypos(0)
-    , m_roll(0.0f)
-    , m_pitch(0.0f)
-    , m_last_mouse_xpos(0.0f)
-    , m_last_mouse_ypos(0.0f)
-    , m_frameCount(0)
-    , m_frameRate(0.0f)
-    , m_core(false)
-    , m_xRot(0)
-    , m_yRot(0)
-    , m_zRot(0)
-    , m_projMatrixLoc(0)
-    , m_mvMatrixLoc(0)
-    , m_normalMatrixLoc(0)
-    , m_useFillLoc(0)
-    , m_transparent(false)
-    , m_lightPos_x(0.0f)
-    , m_lightPos_y(0.0f)
-    , m_lightPos_z(0.0f)
+glTF_OGLDevice::glTF_OGLDevice(CMODEL_DATA model[MAX_NUM_OF_NODES], DWORD width, DWORD height, void *pluginManager, void *msghandler, QWidget *parent)
+    : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
-}
-
-glTF_OGLDevice::~glTF_OGLDevice()
-{
-    cleanup();
-}
-
-void glTF_OGLDevice::init(CMODEL_DATA model[MAX_NUM_OF_NODES], DWORD width, DWORD height, void* pluginManager, void* msghandler, QWidget* parent)
-{
-    setParent(parent);
 
     if (glGenQueries && glBeginQuery && glEndQuery && glGetQueryObjectiv && glGetQueryObjectuiv)
         m_haveTimerExtnsions = true;
 
-    m_width = width;
-    m_height = height;
+    m_width     = width;
+    m_height    = height;
 
-    for (int i = 0; i < MAX_NUM_OF_NODES; i++)
+    for (int i=0; i<MAX_NUM_OF_NODES; i++)
         m_model[i] = &model[i];
 
     m_pitch = g_Pitch;
-    m_roll = g_Roll;
+    m_roll  = g_Roll;
+    m_last_mouse_xpos = 0.0f;
+    m_last_mouse_ypos = 0.0f;
 
     UI.xTrans = 0.0f;
     UI.yTrans = 0.0f;
@@ -86,8 +55,8 @@ void glTF_OGLDevice::init(CMODEL_DATA model[MAX_NUM_OF_NODES], DWORD width, DWOR
     UI.xRotation = g_Roll;
     UI.yRotation = g_Pitch;
     UI.zRotation = 0.0f;
-    UI.fill = true;
-    UI.m_showimgui = false;
+    UI.fill         = true;
+    UI.m_showimgui  = false;
 
     // imGui default window size and pos
     m_imgui_win_size.x = 200;
@@ -104,11 +73,11 @@ void glTF_OGLDevice::init(CMODEL_DATA model[MAX_NUM_OF_NODES], DWORD width, DWOR
 
     m_meshdata.MeshLoaded = false;
     m_meshdata.LoadData(model[0].m_meshData[0]);
-    m_meshdata.calc_bounds(m_width, m_height, model[0].m_meshData[0]);
+    m_meshdata.calc_bounds(m_width,m_height, model[0].m_meshData[0]);
 
     // Scale the view acording to bounding box
-    UI.xTrans = (m_meshdata.m_centerx);
-    UI.yTrans = -(m_meshdata.m_centery);
+	UI.xTrans = (m_meshdata.m_centerx);
+	UI.yTrans = -(m_meshdata.m_centery);
     UI.zTrans = -(max(max(m_meshdata.m_extentx, m_meshdata.m_extenty), m_meshdata.m_extentz) * 2.0f);
 
     // Dafault vertical sync is off
@@ -119,14 +88,19 @@ void glTF_OGLDevice::init(CMODEL_DATA model[MAX_NUM_OF_NODES], DWORD width, DWOR
     m_fullScreen = false;
 
     // Camera Position
-    m_cameraPos[0] = -(m_meshdata.m_centerx);
-    m_cameraPos[1] = (m_meshdata.m_centery);
+	m_cameraPos[0] = -(m_meshdata.m_centerx);
+	m_cameraPos[1] = (m_meshdata.m_centery);
     m_cameraPos[2] = -(max(max(m_meshdata.m_extentx, m_meshdata.m_extenty), m_meshdata.m_extentz) * 2.0f);
+}
+
+glTF_OGLDevice::~glTF_OGLDevice()
+{
+       cleanup();
 }
 
 void glTF_OGLDevice::cleanup()
 {
-    if (m_program == nullptr)
+    if (m_program == 0)
         return;
     makeCurrent();
     m_MeshVbo.destroy();

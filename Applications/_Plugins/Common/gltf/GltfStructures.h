@@ -50,6 +50,8 @@
 
 #include <glm/mat4x4.hpp>
 #include <glm/vec4.hpp>
+
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/transform.hpp>
 
 struct tfNode

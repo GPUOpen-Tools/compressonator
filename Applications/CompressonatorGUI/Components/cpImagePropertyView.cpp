@@ -29,7 +29,8 @@
 
 static int msgcnt = 0;
 
-CImagePropertyView::CImagePropertyView(const QString title, QWidget* parent) : QDockWidget(parent)
+CImagePropertyView::CImagePropertyView(const QString title, QWidget* parent)
+    : QDockWidget(parent)
 {
     setWindowTitle(title);
 
@@ -151,7 +152,9 @@ void CImagePropertyView::Init_C_Destiniation_Data_Controller()
 
     m_propQuality = m_theController->getProperty(COMPRESS_OPTIONS_QUALITY);
     if (m_propQuality)
+    {
         m_propQuality->setHidden(true);
+    }
 
     // C_Destination_Image - always enabled common to both Mesh and Image Data
     m_propWidth     = m_theController->getProperty(COMPRESS_OPTIONS_WIDTH);
@@ -269,8 +272,7 @@ void CImagePropertyView::OnUpdateData(QObject* data)
             if (m_propMeshOptimizerSettings)
             {
                 m_propMeshOptimizerSettings->setHidden(false);
-                m_holddata->disable_mesh_optimization_setting(DestinationOptions->m_Do_Mesh_Optimization !=
-                                                              C_Destination_Options::eMeshOptimization::UserOpt);
+                m_holddata->disable_mesh_optimization_setting(DestinationOptions->m_Do_Mesh_Optimization != C_Destination_Options::eMeshOptimization::UserOpt);
                 connect(m_data, SIGNAL(onMesh_Optimization(QVariant&)), this, SLOT(onMesh_Optimization(QVariant&)));
             }
 
@@ -279,8 +281,7 @@ void CImagePropertyView::OnUpdateData(QObject* data)
                 QFileInfo fi(DestinationOptions->m_modelSource);
                 QString   m_modelext = fi.suffix().toUpper();
                 m_propMeshCompressionSettings->setHidden(m_modelext.compare("OBJ") != 0 && m_modelext.compare("GLTF") != 0);
-                m_holddata->disable_mesh_compression_settings(DestinationOptions->m_Do_Mesh_Compression ==
-                                                              C_Destination_Options::eMeshCompression::NoComp);
+                m_holddata->disable_mesh_compression_settings(DestinationOptions->m_Do_Mesh_Compression == C_Destination_Options::eMeshCompression::NoComp);
                 connect(m_data, SIGNAL(onMesh_Compression(QVariant&)), this, SLOT(onMesh_Compression(QVariant&)));
             }
         }
@@ -297,8 +298,12 @@ void CImagePropertyView::OnUpdateData(QObject* data)
             // Show relavent Settings
             if (m_propFormat)
                 m_propFormat->setHidden(false);
-            if (m_propQuality)
+            if (m_propQuality) 
+            {
                 m_propQuality->setHidden(false);
+                QtVariantPropertyManager* Manager = (QtVariantPropertyManager*)m_propQuality->propertyManager();
+                setMinMaxStep(Manager, m_propQuality, 0.0, 1.0, 0.01, 2);
+            }
             if (m_propWidth)
                 m_propWidth->setHidden(false);
             if (m_propHeight)
@@ -339,6 +344,22 @@ void CImagePropertyView::OnUpdateData(QObject* data)
         m_data                       = data;
         m_isEditing_Compress_Options = false;
         m_theController->setObject(m_data, true, true);
+        if (m_currentClassName.compare("C_Global_Process_Settings") == 0)
+        {
+            if (m_propQuality == NULL)
+                m_propQuality = m_theController->getProperty("Set Quality");
+            if (m_propQuality)
+            {
+                if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW)
+                    m_propQuality->setHidden(true);
+                else
+                {
+                    m_propQuality->setHidden(false);
+                    QtVariantPropertyManager* Manager = (QtVariantPropertyManager*)m_propQuality->propertyManager();
+                    setMinMaxStep(Manager, m_propQuality, 0.0, 1.0, 0.01, 2);
+                }
+            }
+        }
     }
 
     m_infotext->clear();
@@ -440,11 +461,13 @@ void CImagePropertyView::compressionValueChanged(QVariant& value)
             "pixel.");
         break;
     case C_Destination_Options::BC4:
+    case C_Destination_Options::BC4_S:
         Quality_Settings = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A single component compressed texture format for Microsoft DirectX10. Identical to ATI1N. Four bits per pixel.");
         break;
     case C_Destination_Options::BC5:
+    case C_Destination_Options::BC5_S:
     case C_Destination_Options::ATI2N:
     case C_Destination_Options::ATI2N_XY:
     case C_Destination_Options::ATI2N_DXT5:
@@ -453,16 +476,15 @@ void CImagePropertyView::compressionValueChanged(QVariant& value)
         m_infotext->append("A two component compressed texture format for Microsoft DirectX10. BC5 identical to ATI2N. Eight bits per pixel.");
         break;
     case C_Destination_Options::ASTC:
-        Quality_Settings  = true;
-        Codec_BlockRate   = true;
+        Quality_Settings = true;
+        Codec_BlockRate  = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("ASTC (Adaptive Scalable Texture Compression),lossy block-based texture compression developed with ARM.");
         break;
     case C_Destination_Options::BC7:
         Quality_Settings = true;
         m_infotext->append("<b>Format Description</b>");
-        m_infotext->append(
-            "The latest block Compression (BC) format designed to support high-quality compression of RGB and RGBA bytes color spaces.");
+        m_infotext->append("The latest block Compression (BC) format designed to support high-quality compression of RGB and RGBA bytes color spaces.");
         break;
     case C_Destination_Options::ATC_RGB:
         Quality_Settings = true;
@@ -524,10 +546,18 @@ void CImagePropertyView::compressionValueChanged(QVariant& value)
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("ETC (Ericsson Texture Compression, lossy texture compression developed with Ericsson Research.)");
         break;
+#ifdef USE_APC
+    case C_Destination_Options::APC:
+        Quality_Settings = true;
+        Codec_BlockRate  = true;
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("The latest block Compression (APC format designed to support high compression");
+        break;
+#endif
 #ifdef USE_GTC
     case C_Destination_Options::GTC:
-        Quality_Settings  = true;
-        Codec_BlockRate   = true;
+        Quality_Settings = true;
+        Codec_BlockRate  = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("The latest block Compression (GTC) format designed to support high-speed compression");
         break;
@@ -550,7 +580,10 @@ void CImagePropertyView::compressionValueChanged(QVariant& value)
         }
         else
         {
-            m_propQuality->setEnabled(Quality_Settings);
+            if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW)
+                m_propQuality->setEnabled(false);
+            else
+                m_propQuality->setEnabled(Quality_Settings);
         }
     }
 
@@ -762,14 +795,18 @@ void CImagePropertyView::refreshView()
     m_theController->setObject(m_data, true, true);
 }
 
-void CImagePropertyView::setMinMaxStep(QtVariantPropertyManager* manager, QtProperty* m_prop, double min, double max, double step)
+void CImagePropertyView::setMinMaxStep(QtVariantPropertyManager* manager, QtProperty* m_prop, double min, double max, double step, int  decimals)
 {
     if (manager)
     {
         QtVariantProperty* prop = manager->variantProperty(m_prop);
-        prop->setAttribute(STR_SETTING_MINIMUM, min);
-        prop->setAttribute(STR_SETTING_MAXIMUM, max);
-        prop->setAttribute(STR_SETTING_SINGLESTEP, step);
+        if (prop)
+        {
+            prop->setAttribute(STR_SETTING_MINIMUM, min);
+            prop->setAttribute(STR_SETTING_MAXIMUM, max);
+            prop->setAttribute(STR_SETTING_SINGLESTEP, step);
+            prop->setAttribute(STR_SETTING_DECIMALS,decimals);
+        }
     }
 }
 

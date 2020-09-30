@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Advanced Micro Devices, Inc. All rights reserved
+// Copyright (c) 2020 Advanced Micro Devices, Inc. All rights reserved
 // Copyright (c) 2004-2006    ATI Technologies Inc.
 //
 // Example1: Console application that demonstrates how to use the Compressonator SDK Lib

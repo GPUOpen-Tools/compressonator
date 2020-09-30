@@ -3,7 +3,7 @@ add_library(Plugin_CImage_ASTC)
 
 target_sources(Plugin_CImage_ASTC PRIVATE
 
-	cASTC.h
+    cASTC.h
     cASTC.cpp
 )
 

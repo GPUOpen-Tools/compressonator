@@ -1,6 +1,6 @@
 //=====================================================================
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -125,109 +125,8 @@ void CMP_GenerateMipLevelF(CMP_MipLevel* pCurMipLevel, CMP_MipLevel* pPrevMipLev
     }
 }
 
-void CMP_GenerateMipLevel(CMP_MipLevel* pCurMipLevel, CMP_MipLevel* pPrevMipLevelOne, CMP_MipLevel* pPrevMipLevelTwo)
-{
-    assert(pCurMipLevel);
-    assert(pPrevMipLevelOne);
-
-    if (pCurMipLevel && pPrevMipLevelOne)
-    {
-        if (!pPrevMipLevelTwo)
-        {
-            bool bDiffHeights = pCurMipLevel->m_nHeight != pPrevMipLevelOne->m_nHeight;
-            bool bDiffWidths = pCurMipLevel->m_nWidth != pPrevMipLevelOne->m_nWidth;
-            CMP_COLOR *pDst = pCurMipLevel->m_pcData;
-            for (int y = 0; y < pCurMipLevel->m_nHeight; y++)
-            {
-                CMP_COLOR *pSrc = pPrevMipLevelOne->m_pcData + (2 * y * pPrevMipLevelOne->m_nWidth);
-                CMP_COLOR *pSrc2;
-                if (bDiffHeights)
-                {
-                    pSrc2 = pSrc + pPrevMipLevelOne->m_nWidth;
-                }
-                else
-                {
-                    //if no change in height, then use same line as source
-                    pSrc2 = pSrc;
-                }
-                for (int x = 0; x < pCurMipLevel->m_nWidth; x++, pSrc += 2, pSrc2 += 2)
-                {
-                    CMP_COLOR c1, c2, c3, c4;
-                    c1 = *pSrc;
-                    c3 = *pSrc2;
-                    if (bDiffWidths)
-                    {
-                        c2 = pSrc[1];
-                        c4 = pSrc2[1];
-                    }
-                    else
-                    {
-                        c2 = *pSrc;
-                        c4 = *pSrc2;
-                    }
-                    for (int i = 0; i < 4; i++)
-                        c1.rgba[i] = static_cast<CMP_BYTE>((c1.rgba[i] + c2.rgba[i] + c3.rgba[i] + c4.rgba[i] + 2) / 4);
-                    *pDst++ = c1;
-                }
-            }
-        }
-        else
-        {//working with volume texture, avg both slices together as well as 4 corners
-            bool bDiffHeights = pCurMipLevel->m_nHeight != pPrevMipLevelOne->m_nHeight;
-            bool bDiffWidths = pCurMipLevel->m_nWidth != pPrevMipLevelOne->m_nWidth;
-            //don't need to check that either height or width is diff, b/c slices are diff
-            CMP_COLOR *pDst = pCurMipLevel->m_pcData;
-            for (int y = 0; y < pCurMipLevel->m_nHeight; y++)
-            {
-                CMP_COLOR *pSrc, *pSrc2, *pOtherSrc, *pOtherSrc2;
-                pSrc = pPrevMipLevelOne->m_pcData + (2 * y * pPrevMipLevelOne->m_nWidth);
-                pOtherSrc = pPrevMipLevelTwo->m_pcData + (2 * y * pPrevMipLevelTwo->m_nWidth);
-                if (bDiffHeights)
-                {
-                    //point to next line, same column
-                    pSrc2 = pSrc + pPrevMipLevelOne->m_nWidth;
-                    pOtherSrc2 = pOtherSrc + pPrevMipLevelTwo->m_nWidth;
-                }
-                else
-                {
-                    //if no change in height, then use same line as source
-                    pSrc2 = pSrc;
-                    pOtherSrc2 = pOtherSrc;
-                }
-                for (int x = 0; x < pCurMipLevel->m_nWidth; x++, pSrc += 2, pSrc2 += 2, pOtherSrc += 2, pOtherSrc2 += 2)
-                {
-                    CMP_COLOR c1, c2, c3, c4, c5, c6, c7, c8;
-                    c1 = *pSrc;
-                    c3 = *pSrc2;
-                    c5 = *pOtherSrc;
-                    c7 = *pOtherSrc2;
-                    if (bDiffWidths)
-                    {
-                        c2 = pSrc[1];
-                        c4 = pSrc2[1];
-                        c6 = pOtherSrc[1];
-                        c8 = pOtherSrc2[1];
-                    }
-                    else
-                    {
-                        c2 = *pSrc;
-                        c4 = *pSrc2;
-                        c6 = *pOtherSrc;
-                        c8 = *pOtherSrc2;
-                    }
-                    for (int i = 0; i < 4; i++)
-                    {
-                        c1.rgba[i] = static_cast<CMP_BYTE>(((int)c1.rgba[i] + c2.rgba[i] + c3.rgba[i] + c4.rgba[i] + c5.rgba[i] + c6.rgba[i] + c7.rgba[i] + c8.rgba[i] + 4) / 8);
-                    }
-                    *pDst++ = c1;
-                }
-            }
-        }
-    }
-}
-
 //nMinSize : The size in pixels used to determine how many mip levels to generate. Once all dimensions are less than or equal to nMinSize your mipper should generate no more mip levels.
-CMP_INT CMP_API CMP_GenerateMIPLevels(CMP_MipSet *pMipSet, CMP_INT nMinSize)
+CMP_INT CMP_API CMP_GenerateMIPLevelsEx(CMP_MipSet* pMipSet, CMP_CFilterParams *CFilterParam)
 {
     CMP_CMIPS CMips;
     assert(pMipSet);
@@ -239,7 +138,7 @@ CMP_INT CMP_API CMP_GenerateMIPLevels(CMP_MipSet *pMipSet, CMP_INT nMinSize)
     CMP_FLOAT *null_float = 0;
     CMP_MipLevel *null_tempMipTwo = nullptr;
 
-    while(nWidth > nMinSize && nHeight > nMinSize)
+    while (nWidth > CFilterParam->nMinSize && nHeight > CFilterParam->nMinSize)
     {
         nWidth  = CMP_MAX(nWidth >> 1, 1);
         nHeight = CMP_MAX(nHeight >> 1, 1);
@@ -273,8 +172,8 @@ CMP_INT CMP_API CMP_GenerateMIPLevels(CMP_MipSet *pMipSet, CMP_INT nMinSize)
             {
 
                 CMP_MipLevel *tempMipOne = CMips.GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice);
-                if(pMipSet->m_ChannelFormat == CF_8bit)
-                    CMP_GenerateMipLevel(pThisMipLevel, tempMipOne,null_tempMipTwo);
+                if (pMipSet->m_ChannelFormat == CF_8bit)
+                    CMP_GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_pbData, tempMipOne->m_pbData);
                 else if (pMipSet->m_ChannelFormat == CF_Float16)
                     CMP_GenerateMipLevelF(pThisMipLevel, tempMipOne, null_tempMipTwo, pThisMipLevel->m_phfsData, tempMipOne->m_phfsData,null_half);
                 else if(pMipSet->m_ChannelFormat == CF_Float32)
@@ -287,8 +186,8 @@ CMP_INT CMP_API CMP_GenerateMIPLevels(CMP_MipSet *pMipSet, CMP_INT nMinSize)
                     CMP_MipLevel *tempMipOne = CMips.GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice * 2);
                     CMP_MipLevel *tempMipTwo = CMips.GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice * 2 + 1);
                     //prev miplevel had 2 or more slices, so avg together slices
-                    if(pMipSet->m_ChannelFormat == CF_8bit)
-                        CMP_GenerateMipLevel(pThisMipLevel, tempMipOne, tempMipTwo);
+                    if (pMipSet->m_ChannelFormat == CF_8bit)
+                        CMP_GenerateMipLevelF(pThisMipLevel, tempMipOne, tempMipTwo, pThisMipLevel->m_pbData, tempMipOne->m_pbData, tempMipTwo->m_pbData);
                     else if (pMipSet->m_ChannelFormat == CF_Float16)
                         CMP_GenerateMipLevelF(pThisMipLevel, tempMipOne, tempMipTwo, pThisMipLevel->m_phfsData, tempMipOne->m_phfsData, tempMipTwo->m_phfsData);
                     else if(pMipSet->m_ChannelFormat == CF_Float32)
@@ -297,8 +196,8 @@ CMP_INT CMP_API CMP_GenerateMIPLevels(CMP_MipSet *pMipSet, CMP_INT nMinSize)
                 else
                 {
                     CMP_MipLevel *tempMipOne = CMips.GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice);
-                    if(pMipSet->m_ChannelFormat == CF_8bit)
-                        CMP_GenerateMipLevel(pThisMipLevel, tempMipOne,NULL);
+                    if (pMipSet->m_ChannelFormat == CF_8bit)
+                        CMP_GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_pbData, tempMipOne->m_pbData);
                     else if (pMipSet->m_ChannelFormat == CF_Float16)
                         CMP_GenerateMipLevelF(pThisMipLevel, tempMipOne, null_tempMipTwo, pThisMipLevel->m_phfsData, tempMipOne->m_phfsData, null_half);
                     else if(pMipSet->m_ChannelFormat == CF_Float32)
@@ -318,3 +217,12 @@ CMP_INT CMP_API CMP_GenerateMIPLevels(CMP_MipSet *pMipSet, CMP_INT nMinSize)
     return CMP_OK;
 }
 
+CMP_INT CMP_API CMP_GenerateMIPLevels(CMP_MipSet* pMipSet, CMP_INT nMinSize)
+{
+    CMP_CFilterParams CFilterParam;
+    CFilterParam.dwMipFilterOptions = 0;
+    CFilterParam.nFilterType        = 0;
+    CFilterParam.nMinSize           = nMinSize;
+    CFilterParam.fGammaCorrection   = 1.0;
+    return CMP_GenerateMIPLevelsEx(pMipSet, &CFilterParam);
+}

@@ -43,9 +43,9 @@ using namespace std;
 static CGU_INT QSortFCmp(const void *Elem1, const void *Elem2) {
   CGU_INT ret = 0;
 
-  if (*(CGU_FLOAT *)Elem1 - *(CGU_FLOAT *)Elem2 < 0.)
+  if (*(CGU_FLOAT *)Elem1 < *(CGU_FLOAT *)Elem2)
     ret = -1;
-  else if (*(CGU_FLOAT *)Elem1 - *(CGU_FLOAT *)Elem2 > 0.)
+  else if (*(CGU_FLOAT *)Elem1 > *(CGU_FLOAT *)Elem2)
     ret = 1;
   return ret;
 }

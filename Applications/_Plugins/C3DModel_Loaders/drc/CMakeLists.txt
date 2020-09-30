@@ -17,9 +17,11 @@ target_link_libraries(Plugin_C3DModel_Loaders_drc PRIVATE
     Plugin_TCPluginAPI
 )
 
-target_include_directories(Plugin_C3DModel_Loaders_drc PUBLIC
+# Find the QtWidgets library
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 
-	./
+target_include_directories(Plugin_C3DModel_Loaders_drc PUBLIC
+    ./
 )
 
 set_target_properties(Plugin_C3DModel_Loaders_drc PROPERTIES FOLDER ${FOLDER_NAME})

@@ -67,6 +67,7 @@ public:
     QObject     *object() const;
     QtProperty  *getProperty(QString propertyName);
     QtTreePropertyBrowser *getTreeBrowser();
+    QtGroupBoxPropertyBrowser* getBoxBrowser();
 
     // Note: Should be set private when ready for publication
     bool m_use_treeView;

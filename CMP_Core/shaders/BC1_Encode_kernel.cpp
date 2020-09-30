@@ -125,7 +125,18 @@ void  CompressBlockBC1_Internal(
     compressedBlock[0] = cmpBlock.x;
     compressedBlock[1] = cmpBlock.y;
 
+    union 
+    {
+        unsigned char buf[8];
+        uint32        blocks[2];
+    } cmp;
 
+    cmp.blocks[0] = compressedBlock[0];
+    cmp.blocks[1] = compressedBlock[1];
+
+ //   printf("[%3d,%3d,%3d,%3d:%3d,%3d,%3d,%3d]\n", 
+ //       cmp.buf[0], cmp.buf[1], cmp.buf[2], cmp.buf[3], 
+ //       cmp.buf[4], cmp.buf[5], cmp.buf[6], cmp.buf[7]);
 }
 #endif
 

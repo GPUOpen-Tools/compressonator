@@ -7,19 +7,19 @@ set(LEGACY_LOCATION ../)
 
 target_sources(Plugin_Common_cExr INTERFACE
 
-	${LEGACY_LOCATION}/cExr.cpp
-	${LEGACY_LOCATION}/cExr.h
-	${LEGACY_LOCATION}/namespaceAlias.h
+    ${LEGACY_LOCATION}/cExr.cpp
+    ${LEGACY_LOCATION}/cExr.h
+    ${LEGACY_LOCATION}/namespaceAlias.h
 )
 
 target_include_directories(Plugin_Common_cExr INTERFACE
     ./
-	${LEGACY_LOCATION}
+    ${LEGACY_LOCATION}
 )
 
 target_link_libraries(Plugin_Common_cExr INTERFACE
 
-	CMP_FileIO
+    CMP_FileIO
 )
 
 #set_target_properties(Plugin_Common_cExr PROPERTIES FOLDER ${FOLDER_NAME})

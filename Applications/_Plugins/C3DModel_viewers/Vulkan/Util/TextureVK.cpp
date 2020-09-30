@@ -375,11 +375,17 @@ VkFormat MIP2VK_Format(MipSet* pMipsTexture)
     case CMP_FORMAT_ATI1N:
         m_VKnum = VK_FORMAT_BC4_UNORM_BLOCK;
         break;
+    case CMP_FORMAT_BC4_S:
+        m_VKnum = VK_FORMAT_BC4_SNORM_BLOCK;
+        break;
     case CMP_FORMAT_BC5:
     case CMP_FORMAT_ATI2N:
     case CMP_FORMAT_ATI2N_XY:
     case CMP_FORMAT_ATI2N_DXT5:
         m_VKnum = VK_FORMAT_BC5_UNORM_BLOCK;
+        break;
+    case CMP_FORMAT_BC5_S:
+        m_VKnum = VK_FORMAT_BC5_SNORM_BLOCK;
         break;
     case CMP_FORMAT_BC6H:
         m_VKnum = VK_FORMAT_BC6H_UFLOAT_BLOCK;

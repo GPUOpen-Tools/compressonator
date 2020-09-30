@@ -9,9 +9,12 @@ target_sources(CMP_Core_Tests_BIN
         TestsMain.cpp
 )
 
+target_include_directories(CMP_Core_Tests_BIN PUBLIC
+    ${PROJECT_SOURCE_DIR}/../common/lib/ext/Catch2
+)
+
 target_link_libraries(CMP_Core_Tests_BIN 
     PRIVATE 
-        ExtCatch2 
         CMP_Core
         Plugin_Common_UtilFuncs
 )

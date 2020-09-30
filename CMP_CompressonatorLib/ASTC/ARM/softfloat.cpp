@@ -12,6 +12,10 @@
  *	@brief	Soft IEEE-754 floating point library.
  */ 
 /*----------------------------------------------------------------------------*/ 
+#ifdef _WIN32
+#pragma warning(disable : 4838)
+#pragma warning(disable : 4245)
+#endif
 
 #include "softfloat.h"
 

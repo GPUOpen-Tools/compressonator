@@ -17,7 +17,7 @@ parser = argparse.ArgumentParser('Update version string in version.h')
 parser.add_argument("major", help='VERSION_MAJOR_MAJOR value')
 parser.add_argument("minor", help='VERSION_MAJOR_MINOR value')
 parser.add_argument("buildnumber", help='VERSION_MINOR_MAJOR value')
-parser.add_argument("update", help='VERSION_MINOR_MINOR value')
+#parser.add_argument("update", help='VERSION_MINOR_MINOR value')
 updateArgs = parser.parse_args()
 
 # initialize file for search
@@ -36,11 +36,11 @@ for line in cmpVersionData:
     elif 'define VERSION_MINOR_MAJOR' in line:
         newline = "#define VERSION_MINOR_MAJOR " + updateArgs.buildnumber + "\n"
         newData.append(newline)
-    elif 'define VERSION_MINOR_MINOR' in line:
-        newline = "#define VERSION_MINOR_MINOR " + updateArgs.update + "\n"
-        newData.append(newline)
+#    elif 'define VERSION_MINOR_MINOR' in line:
+#        newline = "#define VERSION_MINOR_MINOR " + updateArgs.update + "\n"
+#        newData.append(newline)
     elif 'define VERSION_TEXT ' in line:
-        newline = '#define VERSION_TEXT \"' + updateArgs.major + ', ' + updateArgs.minor + ', ' + updateArgs.buildnumber + ' ' + updateArgs.update + '\"' + "\n"
+        newline = '#define VERSION_TEXT \"' + updateArgs.major + ', ' + updateArgs.minor + ', ' + updateArgs.buildnumber + '\"' + "\n"
         newData.append(newline)
     elif 'define VERSION_TEXT_SHORT' in line:
         newline = '#define VERSION_TEXT_SHORT \"' + updateArgs.major + "." + updateArgs.minor + '\"' + "\n"

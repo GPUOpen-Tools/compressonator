@@ -5190,9 +5190,9 @@ int CMP_CDECL SetAlphaOptionsBC7(void *options, CGU_BOOL imageNeedsAlpha, CGU_BO
 
 int CMP_CDECL SetGammaBC7(void *options,
                           CGU_BOOL sRGB) {
+    CMP_UNUSED(sRGB);
     if (!options) return CGU_CORE_ERR_INVALIDPTR;
-    BC7_Encode *BC7options = (BC7_Encode *)options;
-
+    // BC7_Encode *BC7options = (BC7_Encode *)options;
     // BC7options->sRGB = sRGB; // TODO: Implement this option
     return CGU_CORE_ERR_UNKOWN; // Since it doesn't work today
 }

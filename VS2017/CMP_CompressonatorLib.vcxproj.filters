@@ -56,6 +56,9 @@
     <Filter Include="Common\third_party">
       <UniqueIdentifier>{da5bea7c-2a6e-4a94-a698-4e3ccaf3e5ca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Codec\APC">
+      <UniqueIdentifier>{56f7c2da-7e78-494f-ace0-3751beb35667}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\CMP_CompressonatorLib\ASTC\ASTC_Decode.cpp">
@@ -339,6 +342,15 @@
     </ClCompile>
     <ClCompile Include="..\Applications\_Plugins\Common\ATIFormats.cpp">
       <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\APC\APC_Decode.cpp">
+      <Filter>Source Files\Codec\APC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\APC\APC_Encode.cpp">
+      <Filter>Source Files\Codec\APC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\APC\Codec_APC.cpp">
+      <Filter>Source Files\Codec\APC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -656,6 +668,18 @@
     </ClInclude>
     <ClInclude Include="..\Applications\_Plugins\Common\ATIFormats.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\APC\APC_Decode.h">
+      <Filter>Source Files\Codec\APC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\APC\APC_Definitions.h">
+      <Filter>Source Files\Codec\APC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\APC\APC_Encode.h">
+      <Filter>Source Files\Codec\APC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\APC\Codec_APC.h">
+      <Filter>Source Files\Codec\APC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

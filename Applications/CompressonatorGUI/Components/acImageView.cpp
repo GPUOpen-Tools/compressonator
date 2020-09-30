@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -76,8 +76,12 @@ acImageView::acImageView(const QString filePathName, QWidget *parent, CMipImages
     m_imageOrientation  = 0;
     m_ImageScale        = 100;
     m_MouseHandDown     = false;
-    m_appBusy = false;      // Set to true when ImageView is processing data from a prior event.
-    
+    m_appBusy = false;      // Set to true when ImageView is processing data from a prior event
+
+    for (int ml=0; ml<MAX_MIPLEVEL_SUPPORTED; ml++)
+        for (int dl=0; dl < 6; dl++)
+            m_PSNR[ml][dl] = 0.0;
+
     // Display if we have images
     if (m_MipImages)
     {
@@ -1290,15 +1294,13 @@ void acImageView::onSetPixelDiffView(bool OnOff)
     if (!m_imageItem_Processed) return;
 
     if (m_appBusy) return;
+
     m_appBusy = true;
-
-    m_imageItem_Processed->m_ShowPixelDiff = OnOff;
-    m_imageItem_Processed->m_UseProcessedImage = true;
+    m_imageItem_Processed->m_ShowPixelDiff      = OnOff;
+    m_imageItem_Processed->m_UseProcessedImage  = true;
     m_imageItem_Processed->UpdateImage();
-    m_imageItem_Processed->m_UseProcessedImage = false;
-
+    m_imageItem_Processed->m_UseProcessedImage   = false;
     m_appBusy = false;
-
 }
 
 void acImageView::centerImage()
@@ -1417,6 +1419,26 @@ void acImageView::onGridBackground(int enableGrid)
 
 }
 
+void acImageView::processPSNR()
+{
+    // Is the calculation for the first time then process the data
+    if (m_PSNR[m_currentMiplevel][m_DepthIndex] == 0.0)
+    {
+        CMP_DOUBLE outMSE;
+        CMP_DOUBLE outPSNR;
+        if (CMP_CalcMipSetMSE_PSNR(m_OriginalMipImages->mipset, m_MipImages->decompressedMipSet, m_currentMiplevel, m_DepthIndex, &outMSE, &outPSNR) == CMP_OK)
+        {
+            m_MSE[m_currentMiplevel][m_DepthIndex]  = outMSE;
+            m_PSNR[m_currentMiplevel][m_DepthIndex] = outPSNR;
+        }
+        else
+            return; // should post an error message to user!
+    }
+
+    // signal the data to all slots
+    acPSNRUpdated(m_PSNR[m_currentMiplevel][m_DepthIndex]);
+}
+
 void acImageView::onImageMipLevelChanged(int MipLevel)
 {
     m_currentMiplevel = MipLevel;
@@ -1444,9 +1466,10 @@ void acImageView::onImageMipLevelChanged(int MipLevel)
                 }
             }
 
-
             centerImage();
             onFitInWindow();
+
+            processPSNR();
         }
     }
 }
@@ -1472,6 +1495,7 @@ void acImageView::onImageDepthChanged(int DepthLevel)
                     m_imageItem_Processed->changeImageDiffRef(image_original);
                 }
             }
+
             centerImage();
             onFitInWindow();
     }

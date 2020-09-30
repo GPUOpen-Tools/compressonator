@@ -129,9 +129,6 @@
     <ClCompile Include="..\Applications\_Libs\CMP_Math\cmp_math_cpuid.cpp">
       <Filter>CMP_Math</Filter>
     </ClCompile>
-    <ClCompile Include="..\Applications\_Libs\CMP_Math\kernel_math.cpp">
-      <Filter>CMP_Math</Filter>
-    </ClCompile>
     <ClCompile Include="..\CMP_Framework\Common\half\half.cpp">
       <Filter>Common\half</Filter>
     </ClCompile>

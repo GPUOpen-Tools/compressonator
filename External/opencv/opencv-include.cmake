@@ -1,10 +1,13 @@
+message(STATUS "(2)======================== ExtOpenCV " )
+
+
 
 set(OpenCV_STATIC (NOT BUILD_SHARED_LIBS))
 
 add_library(ExtOpenCV INTERFACE)
 
 if (CMP_HOST_WINDOWS)
-    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/debug ${CMAKE_CURRENT_BINARY_DIR}/opencv-debug)  
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/debug ${CMAKE_CURRENT_BINARY_DIR}/opencv-debug)
     add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/release ${CMAKE_CURRENT_BINARY_DIR}/opencv-release)
     
     target_link_libraries(ExtOpenCV INTERFACE

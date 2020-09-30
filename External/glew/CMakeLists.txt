@@ -1,11 +1,21 @@
 # CMakeLists.txt
+message(STATUS "++++++++++++++++++ External-GLEW" )
 
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.13)
 
-if(POLICY CMP0091)
-  cmake_policy(SET CMP0091 NEW)
-endif()
+# if(POLICY CMP0091)
+#   cmake_policy(SET CMP0091 NEW)
+# endif()
 
-project(CompressonatorGLEW)
+#project(CompressonatorGLEW)
+add_library(ExtGLEW INTERFACE)
 
-add_subdirectory(glew-submodule/build/cmake ${CMAKE_CURRENT_BINARY_DIR}/submodule)
+
+set(ExtGLEW_BIN_PATH ${PROJECT_SOURCE_DIR}/../common/lib/ext/glew/1.9.0/bin/x64)
+#set_property(GLOBAL PROPERTY ExtGLEW_BIN_PATH "${ExtGLEW_BIN_PATH}")
+#list(APPEND CMAKE_FIND_ROOT_PATH ${ExtGLEW_BIN_PATH})
+
+target_link_libraries(ExtGLEW INTERFACE ${CMAKE_CURRENT_LIST_DIR}/../../../common/lib/ext/glew/1.9.0/lib/x64/glew32.lib)
+target_include_directories(ExtGLEW INTERFACE
+    ${CMAKE_CURRENT_LIST_DIR}/../../../common/lib/ext/glew/1.9.0/include
+)

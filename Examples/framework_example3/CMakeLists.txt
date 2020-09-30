@@ -1,11 +1,25 @@
-add_executable(FrameworkExample3)
+link_directories(
+    ${CMAKE_BINARY_DIR}/lib         # build from source lib path
+    )
 
-target_sources(Framework_Example3
+add_executable(framework_example3)
+
+target_sources(framework_example3
     PRIVATE
         Framework_Example3.cpp
 )
-
-target_link_libraries(Framework_Example1
-    PRIVATE
-        CMP_Framework 
+target_include_directories(framework_example3 PUBLIC
+    ./
+    ${PROJECT_SOURCE_DIR}/CMP_Framework/                    # Source based path
+    ${COMPRESSONATOR_ROOT}/SDK/include/                     # Installer based path
 )
+
+target_link_libraries(framework_example3
+    PRIVATE
+        CMP_Framework
+)
+
+set_target_properties(framework_example3 
+    PROPERTIES FOLDER ${FOLDER_NAME}
+    )
+

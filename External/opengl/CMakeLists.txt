@@ -1,3 +1,4 @@
+message(STATUS "++++++++++++++++++ External-OPENGL" )
 
 find_package(OpenGL REQUIRED)
 set_target_properties(OpenGL::GL PROPERTIES IMPORTED_GLOBAL TRUE)

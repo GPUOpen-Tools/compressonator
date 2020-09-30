@@ -6,14 +6,14 @@ set(LEGACY_LOCATION ../../_Plugins/Common)
 
 target_sources(CMP_FileIO PRIVATE
 
-	${LEGACY_LOCATION}/CMP_FileIO.cpp
-	${LEGACY_LOCATION}/CMP_FileIO.h
+    ${LEGACY_LOCATION}/CMP_FileIO.cpp
+    ${LEGACY_LOCATION}/CMP_FileIO.h
 )
 
 target_include_directories(CMP_FileIO PUBLIC
 
-	${LEGACY_LOCATION}
-	./
+    ${LEGACY_LOCATION}
+    ./
 )
 
 set_target_properties(CMP_FileIO PROPERTIES FOLDER ${FOLDER_NAME})

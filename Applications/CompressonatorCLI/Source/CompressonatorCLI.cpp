@@ -47,7 +47,7 @@
 #if defined(_WIN32) && !defined(NO_LEGACY_BEHAVIOR)
 #pragma comment(lib, "ASTC.lib")
 #pragma comment(lib, "EXR.lib")
-#pragma comment(lib, "KTX.lib")
+#pragma comment(lib, "KTX2.lib")
 #pragma comment(lib, "TGA.lib")
 #pragma comment(lib, "IMGAnalysis.lib")
 #else
@@ -111,7 +111,7 @@ void PrintUsage()
     printf("                     be compatible \n");
     printf("                     with the sources format,decompress formats are typically\n");
     printf("                     set to ARGB_8888 or ARGB_32F\n");
-    printf("-EncodeWith          Compression with CPU, HPC, OCL or DXC\n");
+    printf("-EncodeWith          Compression with CPU, HPC, GPU, OCL or DXC\n");
 #ifdef _WIN32
     printf("-DecodeWith          GPU based decompression using OpenGL, DirectX or Vulkan\n");
 #endif
@@ -198,6 +198,10 @@ void PrintUsage()
     printf("GTC            Compressed RGB 8:8:8 format \n");
     printf("               This is a preview version for evaluation: subject to changes\n");
 #endif
+#ifdef USE_APC
+    printf("APC            Compressed RGB 8:8:8 format \n");
+    printf("               This is a preview version for evaluation: subject to changes\n");
+#endif
     printf("\n");
     printf("<codec options>: Reference  documentation for range of values\n\n");
     printf("-UseChannelWeighting <value> Use channel weightings\n");
@@ -276,9 +280,10 @@ void PrintUsage()
     printf("CompressonatorCLI.exe -fd BC7  -NumTheads 16 image.bmp result.dds\n");
     printf("CompressonatorCLI.exe -fd BC7  -ff PNG -fx KTX ./source_dir/ ./dist_dir/\n");
     printf("CompressonatorCLI.exe -fd BC6H image.exr result.exr\n\n");
-    printf("Example compression using GPU:\n\n");
-    printf("CompressonatorCLI.exe  -fd BC1 -EncodeWith OCL image.bmp result.dds \n");
+    printf("Example compression using GPU Hardware or shader code with frameworks like OpenCL or DirectX:\n\n");
+    printf("CompressonatorCLI.exe  -fd BC1 -EncodeWith GPU image.bmp result.dds \n");
     printf("CompressonatorCLI.exe  -fd BC1 -EncodeWith DXC image.bmp result.dds \n");
+    printf("CompressonatorCLI.exe  -fd BC1 -EncodeWith OCL image.bmp result.dds \n");
     printf("Example decompression from compressed image using CPU:\n\n");
     printf("CompressonatorCLI.exe  result.dds image.bmp\n\n");
     printf("Example decompression from compressed image using GPU:\n\n");
@@ -320,8 +325,9 @@ bool ProgressCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser
 
 
 //---------------------------------------------
-// Resrved for future releases::compute codecs 
+// For future releases::compute codecs 
 //---------------------------------------------
+#ifdef USE_GTC
 PluginInterface_Encoder *g_plugin_EncoderGTC = NULL;
 CMP_Encoder  *g_Codec_GTC = NULL;
 
@@ -339,7 +345,7 @@ void g_GTC_CompressBlock(void *in, void *out, void *blockoptions)
     if (g_Codec_GTC)
         g_Codec_GTC->CompressBlock(in, out, blockoptions);
 }
-
+#endif
 
 //----------------- BASIS: Run Time Encoder ------------------
 #ifdef USE_BASIS

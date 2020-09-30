@@ -4,15 +4,18 @@ REM Usage:
 REM   cd <workspace>\compressonator
 REM   call Scripts\windows_build_sdk.bat <workspace>
 
-set Path=C:\Python36;C:\Python36\Scripts;C:\Python36\Tools\Scripts;C:\Program Files\Python36\Scripts\;C:\Program Files\Python36\;C:\VC_Redist\redist\Debug_NonRedist\x64\Microsoft.VC120.DebugCRT;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\CMake\bin;C:\Program Files\Git\cmd;%USERPROFILE%\AppData\Local\Microsoft\WindowsApps;
-
+IF NOT [%WORKSPACE%] == [] set ROOTDIR=%WORKSPACE%
 IF NOT [%1] == [] set ROOTDIR=%1
+
 set WORKDIR=%ROOTDIR%\
-set buildTMP=%ROOTDIR%\tmp
+set BUILDTMP=%ROOTDIR%\tmp
+
+set CMAKE_PATH=cmake
+set SCRIPT_DIR=%~dp0
+set CURRENT_DIR=%CD%
 
 REM Create Tmp directory for intermediate files
 IF NOT EXIST "%buildTMP%" mkdir "%buildTMP%"
-
 
 set _MSPDBSRV_ENDPOINT_=71078A5298C742C7B7CBF9ED261E442B
 
@@ -21,7 +24,7 @@ REM  Set Enviornment for VS150 (VS2017)
 REM ######################################
 if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise" goto :Enterprise
 if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Professional" goto :Professional
-if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\buildTools" goto :Docker
+if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\BuildTools" goto :Docker
 
 echo on
 echo VS2017 is not installed on this machine
@@ -29,15 +32,16 @@ cd %WORKDIR%
 exit 1
 
 :Professional
-call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Professional\common7\tools\VsDevCmd.bat"
+cd 
+call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Professional\Common7\Tools\VsDevCmd.bat"
 goto :vscmdset
 
 :Docker
-call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\buildTools\common7\tools\VsDevCmd.bat"
+call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\BuildTools\Common7\Tools\VsDevCmd.bat"
 goto :vscmdset
 
 :Enterprise
-call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\enterprise\common7\tools\VsDevCmd.bat"
+call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat"
 
 :vscmdset
 

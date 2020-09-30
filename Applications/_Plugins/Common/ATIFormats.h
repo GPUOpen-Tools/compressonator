@@ -1,6 +1,6 @@
 //=====================================================================
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -19,11 +19,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
-/// \file ATIFormats.h
-/// \version 2.21
-//
 //=====================================================================
 
 #ifndef _AMDFORMATS_H_
@@ -51,6 +46,7 @@ extern "C" {
 #endif
     CMP_FORMAT CMP_API CMP_ParseFormat(char* pFormat);
     void       CMP_API CMP_Format2FourCC(CMP_FORMAT format, MipSet *pMipSet);
+    CMP_BOOL   CMP_API CMP_IsCompressedFormat(CMP_FORMAT format);
 #ifdef __cplusplus
 };
 #endif

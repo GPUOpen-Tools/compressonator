@@ -171,7 +171,6 @@ extern void               PrintInfo(const char* Format, ...);
 extern bool               ParseParams(int argc, CMP_CHAR* argv[]);
 extern int                ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* userMips);
 extern CCmdLineParamaters g_CmdPrams;
-extern int                GetNumberOfCores(wchar_t* envp[]);
 extern bool               SouceAndDestCompatible(CCmdLineParamaters g_CmdPrams);
 extern void               ProcessResults(CCmdLineParamaters &prams, CMP_ANALYSIS_DATA &analysisData);
 extern void               LogToResults(CCmdLineParamaters &prams, char *str);

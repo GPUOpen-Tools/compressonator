@@ -1310,7 +1310,7 @@ bool CSetMeshOptions::updateDisplayContent()
         m_propQuality->setEnabled(true);
         // Set  Properties for editing
         QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propQuality->propertyManager();
-        setMinMaxStep(Manager, m_propQuality, 0.0, 1.0, 0.05);
+        setMinMaxStep(Manager, m_propQuality, 0.0, 1.0, 0.05, 2);
     }
 
     if (m_propFormat)
@@ -1324,7 +1324,7 @@ bool CSetMeshOptions::updateDisplayContent()
         m_propChannelWeightingR->setEnabled(true);
         // Set  Properties for editing
         QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propChannelWeightingR->propertyManager();
-        setMinMaxStep(Manager, m_propChannelWeightingR, 0.01, 1.0, 0.01);
+        setMinMaxStep(Manager, m_propChannelWeightingR, 0.01, 1.0, 0.01, 2);
     }
 
     if (m_propChannelWeightingG)
@@ -1333,7 +1333,7 @@ bool CSetMeshOptions::updateDisplayContent()
         m_propChannelWeightingG->setEnabled(true);
         // Set  Properties for editing
         QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propChannelWeightingG->propertyManager();
-        setMinMaxStep(Manager, m_propChannelWeightingG, 0.01, 1.0, 0.01);
+        setMinMaxStep(Manager, m_propChannelWeightingG, 0.01, 1.0, 0.01,2);
     }
 
     if (m_propChannelWeightingB)
@@ -1342,7 +1342,7 @@ bool CSetMeshOptions::updateDisplayContent()
         m_propChannelWeightingB->setEnabled(true);
         // Set  Properties for editing
         QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propChannelWeightingB->propertyManager();
-        setMinMaxStep(Manager, m_propChannelWeightingB, 0.01, 1.0, 0.01);
+        setMinMaxStep(Manager, m_propChannelWeightingB, 0.01, 1.0, 0.01,2);
     }
 
     if (m_propBitrate)
@@ -1351,7 +1351,7 @@ bool CSetMeshOptions::updateDisplayContent()
         m_propBitrate->setEnabled(true);
         // Set  Properties for editing
         QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propBitrate->propertyManager();
-        setMinMaxStep(Manager, m_propBitrate, 0.00, 8.00, 0.01);
+        setMinMaxStep(Manager, m_propBitrate, 0.00, 8.00, 0.01,2);
     }
 
     if (m_propDefog)
@@ -1360,7 +1360,7 @@ bool CSetMeshOptions::updateDisplayContent()
         m_propDefog->setEnabled(true);
         // Set  Properties for editing
         QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propDefog->propertyManager();
-        setMinMaxStep(Manager, m_propDefog, 0.000, 0.010, 0.001);
+        setMinMaxStep(Manager, m_propDefog, 0.000, 0.010, 0.001,3);
     }
 
     if (m_propExposure)
@@ -1369,7 +1369,7 @@ bool CSetMeshOptions::updateDisplayContent()
         m_propExposure->setEnabled(true);
         // Set  Properties for editing
         QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propExposure->propertyManager();
-        setMinMaxStep(Manager, m_propExposure, -10.000, 10.000, 0.125);
+        setMinMaxStep(Manager, m_propExposure, -10.000, 10.000, 0.125,3);
     }
 
     if (m_propKneeLow)
@@ -1378,7 +1378,7 @@ bool CSetMeshOptions::updateDisplayContent()
         m_propKneeLow->setEnabled(true);
         // Set  Properties for editing
         QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propKneeLow->propertyManager();
-        setMinMaxStep(Manager, m_propKneeLow, -3.00, 3.00, 0.125);
+        setMinMaxStep(Manager, m_propKneeLow, -3.00, 3.00, 0.125,3);
     }
 
     if (m_propKneeHigh)
@@ -1387,7 +1387,7 @@ bool CSetMeshOptions::updateDisplayContent()
         m_propKneeHigh->setEnabled(true);
         // Set  Properties for editing
         QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propKneeHigh->propertyManager();
-        setMinMaxStep(Manager, m_propKneeHigh, 3.50, 7.50, 0.125);
+        setMinMaxStep(Manager, m_propKneeHigh, 3.50, 7.50, 0.125,3);
     }
 
     if (m_propGamma)
@@ -1396,7 +1396,7 @@ bool CSetMeshOptions::updateDisplayContent()
         m_propGamma->setEnabled(true);
         // Set  Properties for editing
         QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propGamma->propertyManager();
-        setMinMaxStep(Manager, m_propGamma, 1.0, 2.6, 0.2);
+        setMinMaxStep(Manager, m_propGamma, 1.0, 2.6, 0.2,1);
     }
 
     if (m_propAlphaThreshold)
@@ -1405,7 +1405,7 @@ bool CSetMeshOptions::updateDisplayContent()
         m_propAlphaThreshold->setEnabled(true);
         // Set  Properties for editing
         QtVariantPropertyManager *Manager = (QtVariantPropertyManager *)m_propAlphaThreshold->propertyManager();
-        setMinMaxStep(Manager, m_propAlphaThreshold, 0, 255, 1);
+        setMinMaxStep(Manager, m_propAlphaThreshold, 0, 255, 1, 0);
     }
 
     if (m_propDestImage)
@@ -1416,14 +1416,18 @@ bool CSetMeshOptions::updateDisplayContent()
     return true;
 }
 
-void CSetMeshOptions::setMinMaxStep(QtVariantPropertyManager* manager, QtProperty *m_prop, double min, double max, double step)
+void CSetMeshOptions::setMinMaxStep(QtVariantPropertyManager* manager, QtProperty *m_prop, double min, double max, double step, int decimals)
 {
     if (manager)
     {
         QtVariantProperty *prop = manager->variantProperty(m_prop);
-        prop->setAttribute(STR_SETTING_MINIMUM, min);
-        prop->setAttribute(STR_SETTING_MAXIMUM, max);
-        prop->setAttribute(STR_SETTING_SINGLESTEP, step);
+        if (prop)
+        {
+            prop->setAttribute(STR_SETTING_MINIMUM, min);
+            prop->setAttribute(STR_SETTING_MAXIMUM, max);
+            prop->setAttribute(STR_SETTING_SINGLESTEP, step);
+            prop->setAttribute(STR_SETTING_DECIMALS, decimals);
+        }
     }
 }
 
@@ -1579,7 +1583,7 @@ void CSetMeshOptions::PBSaveCompressSetting()
 //            QFileInfo fileinfo(m_imagefile->m_Name);
 //            m_data.m_sourceFileNamePath = m_imagefile->m_Full_Path;
 //            m_data.m_SourceImageSize = m_imagefile->m_ImageSize;
-//            m_data.m_SourceIscompressedFormat = CompressedFormat(m_imagefile->m_Format);
+//            m_data.m_SourceIscompressedFormat = CMP_IsCompressedFormat(m_imagefile->m_Format);
 //
 //            int count = itr->childCount();
 //

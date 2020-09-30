@@ -45,13 +45,15 @@ void *make_Plugin_glTF_DX12_EX() { return new Plugin_glTF_DX12_EX; }
 #include "glTF_DX12DeviceEx.h"
 
 
-namespace ML_gltf_dx12_ex
-{
-    bool                   g_bAbortCompression = false;
-    CMIPS*                 g_CMIPS = nullptr;
-}
+#ifdef BUILD_AS_PLUGIN_DLL
+bool   g_bAbortCompression = false;
+CMIPS* g_CMIPS             = nullptr;
+#else
+extern bool   g_bAbortCompression;
+extern CMIPS* g_CMIPS;
+#endif
 
-using namespace ML_gltf_dx12_ex;
+//using namespace ML_gltf_dx12_ex;
 
 
 //#define _DEBUGMEM

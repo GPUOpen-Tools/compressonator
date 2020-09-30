@@ -97,7 +97,9 @@ CodecType GetCodecType(CMP_FORMAT format)
         case CMP_FORMAT_BC2:                     return CT_DXT3;
         case CMP_FORMAT_BC3:                     return CT_DXT5;
         case CMP_FORMAT_BC4:                     return CT_ATI1N;
-        case CMP_FORMAT_BC5:                     return CT_ATI2N_XY;    // Red & Green channels
+        case CMP_FORMAT_BC4_S:                   return CT_ATI1N_S;
+        case CMP_FORMAT_BC5:                     return CT_ATI2N_XY;  // Red & Green channels
+        case CMP_FORMAT_BC5_S:                   return CT_ATI2N_XY_S;  // Red & Green channels
         case CMP_FORMAT_BC6H:                    return CT_BC6H; 
         case CMP_FORMAT_BC6H_SF:                 return CT_BC6H_SF;
         case CMP_FORMAT_BC7:                     return CT_BC7;
@@ -112,7 +114,12 @@ CodecType GetCodecType(CMP_FORMAT format)
         case CMP_FORMAT_ETC2_RGBA1:              return CT_ETC2_RGBA1;
         case CMP_FORMAT_ETC2_SRGBA:              return CT_ETC2_SRGBA;
         case CMP_FORMAT_ETC2_SRGBA1:             return CT_ETC2_SRGBA1;
+#ifdef USE_APC
+        case CMP_FORMAT_APC:                    return CT_APC;
+#endif
+#ifdef USE_GTC
         case CMP_FORMAT_GTC:                     return CT_GTC;
+#endif
 #ifdef USE_BASIS
         case CMP_FORMAT_BASIS:                  return CT_BASIS;
 #endif
@@ -158,8 +165,10 @@ bool NeedSwizzle(CMP_FORMAT destformat)
     switch (destformat)
     {
     case CMP_FORMAT_BC4:
-    case CMP_FORMAT_ATI1N:        // same as BC4    
+    case CMP_FORMAT_BC4_S:
+    case CMP_FORMAT_ATI1N:  // same as BC4    
     case CMP_FORMAT_BC5:
+    case CMP_FORMAT_BC5_S:
     case CMP_FORMAT_ATI2N:       // Green & Red Channels
     case CMP_FORMAT_ATI2N_XY:    // same as ATI2N  with XY = Red & Green channels
     case CMP_FORMAT_ATI2N_DXT5:  // same as BC5
@@ -235,6 +244,7 @@ CMP_ERROR Byte2HalfShort(CMP_HALFSHORT* hfsBlock, CMP_BYTE* cBlock, CMP_DWORD dw
 
 CMP_ERROR Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, CMP_Texture* srcTexture, CMP_FORMAT destFormat, const CMP_CompressOptions* pOptions)
 {
+    (destFormat);
     assert(cBlock);
     assert(fBlock);
     assert(&srcTexture);
@@ -510,7 +520,12 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
                 else
                     pCodec->SetParameter("NumThreads", (CMP_DWORD)1);
                 break;
+#ifdef USE_APC
+        case CT_APC:
+#endif
+#ifdef USE_GTC
         case CT_GTC:
+#endif
         case CT_BC6H:
         case CT_BC6H_SF:
                 pCodec->SetParameter("Quality", (CODECFLOAT)pOptions->fquality);
@@ -626,7 +641,13 @@ CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture
 {
     // Note function should not be called for the following Codecs....
     if (destType == CT_BC7)     return CMP_ABORTED; 
+#ifdef USE_APC
+    if (destType == CT_APC)
+        return CMP_ABORTED;
+#endif
+#ifdef USE_GTC
     if (destType == CT_GTC)     return CMP_ABORTED;
+#endif
 #ifdef USE_BASIS
     if (destType == CT_BASIS)   return CMP_ABORTED;
 #endif

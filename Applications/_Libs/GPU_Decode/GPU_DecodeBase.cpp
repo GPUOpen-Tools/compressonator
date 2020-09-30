@@ -94,8 +94,8 @@ HRESULT RenderWindow::InitWindow(int width, int height,WNDPROC callback)
     if (m_hInstance == 0)
     {
         m_hInstance = GetModuleHandle(NULL);
-        snprintf(m_strWindowName, sizeof(m_strWindowName),"%s_%x_%d_%d", str_WindowName, (int)m_hInstance,width,height);
-        snprintf(m_strWindowClassName,sizeof(m_strWindowClassName), "%s_%x_%d_%d", str_WindowsClassName, (int)m_hInstance, width, height);
+        snprintf(m_strWindowName, sizeof(m_strWindowName),"%s_%llx_%d_%d", str_WindowName, (unsigned long long)m_hInstance,width,height);
+        snprintf(m_strWindowClassName,sizeof(m_strWindowClassName), "%s_%llx_%d_%d", str_WindowsClassName, (unsigned long long)m_hInstance, width, height);
     }
 
     if (!FindWindowA(m_strWindowClassName, m_strWindowName))

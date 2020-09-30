@@ -78,7 +78,9 @@ CMP_FormatDesc g_FormatDesc[] =
    {CMP_FORMAT_BC2,                     "BC2"},
    {CMP_FORMAT_BC3,                     "BC3"},
    {CMP_FORMAT_BC4,                     "BC4"},
+   {CMP_FORMAT_BC4,                     "BC4_S"},
    {CMP_FORMAT_BC5,                     "BC5"},
+   {CMP_FORMAT_BC5,                     "BC5_S"},
    {CMP_FORMAT_ATC_RGB,                 "ATC_RGB"},
    {CMP_FORMAT_ATC_RGBA_Explicit,       "ATC_RGBA_EXPLICIT"},
    {CMP_FORMAT_ATC_RGBA_Interpolated,   "ATC_RGBA_INTERPOLATED"},
@@ -94,12 +96,15 @@ CMP_FormatDesc g_FormatDesc[] =
    {CMP_FORMAT_BC6H,                    "BC6H"},
    {CMP_FORMAT_BC6H_SF,                 "BC6H_SF" },
    {CMP_FORMAT_BC7,                     "BC7"},
-   {CMP_FORMAT_ASTC,                    "ASTC"},
+   {CMP_FORMAT_ASTC,                    "ASTC"}
 #ifdef USE_GTC
-   {CMP_FORMAT_GTC,                     "GTC" },
+   ,{CMP_FORMAT_GTC,                     "GTC" }
+#endif
+#ifdef USE_APC
+    ,{CMP_FORMAT_APC,                    "APC"}
 #endif
 #ifdef USE_BASIS
-   {CMP_FORMAT_BASIS,                  "BASIS" },
+   ,{CMP_FORMAT_BASIS,                   "BASIS" }
 #endif
 };
 
@@ -155,11 +160,15 @@ void  CMP_API CMP_Format2FourCC(CMP_FORMAT format, MipSet *pMipSet)
     switch(format)
     {
         case CMP_FORMAT_BC4:
-        case CMP_FORMAT_ATI1N:                  pMipSet->m_dwFourCC   = CMP_FOURCC_ATI1N;              break; 
+        case CMP_FORMAT_BC4_S:
+        case CMP_FORMAT_ATI1N:
+                                                pMipSet->m_dwFourCC = CMP_FOURCC_ATI1N;
+                                                break; 
 
         case CMP_FORMAT_ATI2N:                  pMipSet->m_dwFourCC   =  CMP_FOURCC_ATI2N;             break;
 
         case CMP_FORMAT_BC5:
+        case CMP_FORMAT_BC5_S:
         case CMP_FORMAT_ATI2N_XY:
                                                 pMipSet->m_dwFourCC    = CMP_FOURCC_ATI2N;
                                                 pMipSet->m_dwFourCC2   = CMP_FOURCC_ATI2N_XY;
@@ -196,6 +205,9 @@ void  CMP_API CMP_Format2FourCC(CMP_FORMAT format, MipSet *pMipSet)
 #ifdef USE_GTC
         case CMP_FORMAT_GTC:                    pMipSet->m_dwFourCC = CMP_FOURCC_GTC;                 break;
 #endif
+#ifdef USE_APC
+        case CMP_FORMAT_APC:                    pMipSet->m_dwFourCC = CMP_FOURCC_APC;                 break;
+#endif
 #ifdef USE_BASIS
         case CMP_FORMAT_BASIS:                  pMipSet->m_dwFourCC =  CMP_FOURCC_BASIS;              break;
 #endif
@@ -208,3 +220,33 @@ void  CMP_API CMP_Format2FourCC(CMP_FORMAT format, MipSet *pMipSet)
                                                    pMipSet->m_dwFourCC =  CMP_FOURCC_DX10;
     }
 }
+
+CMP_BOOL CMP_API CMP_IsCompressedFormat(CMP_FORMAT format)
+{
+    switch (format)
+    {
+    case CMP_FORMAT_Unknown:
+    case CMP_FORMAT_ARGB_8888:
+    case CMP_FORMAT_RGB_888:
+    case CMP_FORMAT_RG_8:
+    case CMP_FORMAT_R_8:
+    case CMP_FORMAT_ARGB_2101010:
+    case CMP_FORMAT_ARGB_16:
+    case CMP_FORMAT_RG_16:
+    case CMP_FORMAT_R_16:
+    case CMP_FORMAT_RGBE_32F:
+    case CMP_FORMAT_ARGB_16F:
+    case CMP_FORMAT_RG_16F:
+    case CMP_FORMAT_R_16F:
+    case CMP_FORMAT_ARGB_32F:
+    case CMP_FORMAT_RGB_32F:
+    case CMP_FORMAT_RG_32F:
+    case CMP_FORMAT_R_32F:
+        return (false);
+        break;
+    default:
+        break;
+    }
+    return true;
+}
+

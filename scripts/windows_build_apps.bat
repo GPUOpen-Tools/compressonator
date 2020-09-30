@@ -4,18 +4,26 @@ REM Usage:
 REM   cd <workspace>\Compressonator
 REM   call scripts\windows_build_apps.bat <workspace>
 
+IF NOT [%WORKSPACE%] == [] set ROOTDIR=%WORKSPACE%
 IF NOT [%1] == [] set ROOTDIR=%1
+
 set WORKDIR=%ROOTDIR%\
 set BUILDTMP=%ROOTDIR%\tmp
+
+set CMAKE_PATH=cmake
+set SCRIPT_DIR=%~dp0
+set CURRENT_DIR=%CD%
+
 
 REM Create Tmp directory for intermediate files
 IF NOT EXIST "%buildTMP%" mkdir "%buildTMP%"
 
 REM PATH setup
-set Path=C:\Python36;C:\Python36\Scripts;C:\Python36\Tools\Scripts;"C:\Program Files\Python36\Scripts\";"C:\Program Files\Python36\";C:\VC_Redist\redist\Debug_NonRedist\x64\Microsoft.VC120.DebugCRT;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;"C:\Program Files\Microsoft SQL Server\130\Tools\Binn\";"C:\Program Files\CMake\bin";"C:\Program Files\Git\cmd";%USERPROFILE%\AppData\Local\Microsoft\WindowsApps;
+REM set Path=%PATH%C:\Python36;C:\Python36\Scripts;C:\Python36\Tools\Scripts;C:\Program Files\Python36\Scripts\;C:\Program Files\Python36\;
 
 REM Qt Dir
 set QTDIR=C:\Qt\Qt5.12.6\5.12.6\msvc2017_64
+set QT5_DIR=C:\Qt\Qt5.12.6\5.12.6\msvc2017_64
 
 REM Vulkan SDK Dir
 set VULKAN_SDK=C:\VulkanSDK\1.2.141.2
@@ -26,21 +34,23 @@ REM is added from the environment to give a complete build number which is
 REM then used to update a number of files in both compressonator folder
 
 set MAJOR=
-for /f "delims=" %%a in ('python %WORKDIR%\compressonator\scripts\get_version.py --major') do @set MAJOR=%%a
+for /f "delims=" %%a in ('python %SCRIPT_DIR%\get_version.py --major') do @set MAJOR=%%a
 set MINOR=
-for /f "delims=" %%a in ('python %WORKDIR%\compressonator\scripts\get_version.py --minor') do @set MINOR=%%a
+for /f "delims=" %%a in ('python %SCRIPT_DIR%\get_version.py --minor') do @set MINOR=%%a
 
 
 REM --------------------------------------------------------
 REM Get Common folder content: works only for Git repo
 REM --------------------------------------------------------
-python %WORKDIR%\compressonator\build\fetch_dependencies.py
+python %SCRIPT_DIR%\fetch_dependencies.py
 
 REM -----------------------------------
 REM Set build version
 REM -----------------------------------
+IF [%BUILD_NUMBER%] == [] set BUILD_NUMBER=0
+
 set FILEVERSION="v%MAJOR%.%MINOR%.%BUILD_NUMBER%"
-python %WORKDIR%\compressonator\scripts\update_version.py %MAJOR% %MINOR% %BUILD_NUMBER% %MINOR%
+python %SCRIPT_DIR%\update_version.py %MAJOR% %MINOR% %BUILD_NUMBER%
 
 REM ######################################
 REM  Set Enviornment for VS150 (VS2017)
@@ -55,37 +65,62 @@ cd %WORKDIR%
 exit 1
 
 :Professional
-call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Professional\common7\tools\VsDevCmd.bat"
+cd 
+call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Professional\Common7\Tools\VsDevCmd.bat"
 goto :vscmdset
 
 :Docker
-call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\BuildTools\common7\tools\VsDevCmd.bat"
+call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\BuildTools\Common7\Tools\VsDevCmd.bat"
 goto :vscmdset
 
 :Enterprise
-call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\enterprise\common7\tools\VsDevCmd.bat"
+call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat"
 
 :vscmdset
 
 REM #####################################################################################
-REM  CompressonatorCLI COMMAND LINE VS2017 ToDo Change Folder names to be more generic
+REM  Run cmake to generate VS2017 compressonator build all sln
 REM #####################################################################################
-msbuild /m:4 /t:Build /p:Configuration=Release_MD /p:Platform=x64   "%WORKDIR%\compressonator\applications\compressonatorCLI\VS2017\compressonatorCLI.sln"
+set CurrDir=%CD%
+for %%* in (.) do set CurrDirName=%%~nx*
+IF EXIST %CurrDir%\build (rmdir build /s /q)
+mkdir build 
+
+cd build
+cmake -G "Visual Studio 15 2017 Win64" ..\..\%CurrDirName%
+cd %CurrDir%
+
+REM #####################################################################################
+REM  Compressonator 
+REM #####################################################################################
+msbuild /m:4 /t:build /p:Configuration=release /p:Platform=x64   "%SCRIPT_DIR%/..\build\compressonator.sln"
 if not %ERRORLEVEL%==0 (
-    echo build of compressonatorCLI release_md x64 FAILED!
+    echo build of compressonator release apps x64 FAILED!
     cd %WORKDIR%
-    exit 1
+    exit /b 1
 )
 
+
+REM REM #####################################################################################
+REM REM  CompressonatorCLI COMMAND LINE VS2017 ToDo Change Folder names to be more generic
+REM REM #####################################################################################
+REM msbuild /m:4 /t:Build /p:Configuration=Release_MD /p:Platform=x64   "%SCRIPT_DIR%/..\applications\compressonatorCLI\VS2017\compressonatorCLI.sln"
+REM if not %ERRORLEVEL%==0 (
+REM     echo build of compressonatorCLI release_md x64 FAILED!
+REM     cd %WORKDIR%
+REM     exit /b 1
+REM )
+REM 
+REM REM REM ############################
+REM REM  Compressonator GUI VS2017
 REM REM ############################
-REM  Compressonator GUI VS2017
-REM ############################
-msbuild /m:4 /t:Build /p:Configuration=Release_MD /p:Platform=x64   "%WORKDIR%\compressonator\applications\compressonatorGUI\VS2017\compressonatorGUI.sln"
-if not %ERRORLEVEL%==0 (
-    echo build of compressonatorGUI release_md x64 FAILED!
-    cd %WORKDIR%
-    exit 1
-)
+REM msbuild /m:4 /t:Build /p:Configuration=Release_MD /p:Platform=x64  /p:WarningLevel=0 "%SCRIPT_DIR%\..\applications\compressonatorGUI\VS2017\compressonatorGUI.sln"
+REM if not %ERRORLEVEL%==0 (
+REM     echo build of compressonatorGUI release_md x64 FAILED!
+REM     cd %WORKDIR%
+REM     exit /b 1
+REM 
+REM )
 
 REM #################
 REM CLEAN TMP FOLDER

@@ -9,8 +9,8 @@ target_sources(Plugin_CImage_EXR PRIVATE
 
 target_link_libraries(Plugin_CImage_EXR PRIVATE
 
-	CompressonatorLIB
-	CMP_FileIO
+    CompressonatorLIB
+    CMP_FileIO
 
     Plugin_Common_cExr
     Plugin_Common_UtilFuncs
@@ -18,7 +18,7 @@ target_link_libraries(Plugin_CImage_EXR PRIVATE
     Plugin_PluginManager
 
     ExtOpenEXR
-    ExtZlib
+ #   ExtZlib
 )
 
 set_target_properties(Plugin_CImage_EXR PROPERTIES FOLDER ${FOLDER_NAME})

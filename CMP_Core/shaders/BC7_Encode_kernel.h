@@ -87,6 +87,7 @@ struct cmp_bc7_state
 
         // Formats supported by CPU
         CGU_FORMAT_GTC,             // GTC Gradient Texture Compressor
+        CGU_FORMAT_APC,             // APC Texture Compressor
         CGU_FORMAT_MAX
     } CGU_FORMAT;
 

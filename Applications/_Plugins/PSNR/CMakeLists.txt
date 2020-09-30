@@ -6,24 +6,25 @@ add_library(Plugin_PSNR)
 set(LEGACY_LOCATION ../Common)
 
 target_sources(Plugin_PSNR PRIVATE
-
-	${LEGACY_LOCATION}/PSNR.cpp
-	${LEGACY_LOCATION}/PSNR.h
-	${LEGACY_LOCATION}/SSIM.cpp
-	${LEGACY_LOCATION}/SSIM.h
+    ${LEGACY_LOCATION}/PSNR.cpp
+    ${LEGACY_LOCATION}/PSNR.h
+    ${LEGACY_LOCATION}/SSIM.cpp
+    ${LEGACY_LOCATION}/SSIM.h
 )
 
 target_include_directories(Plugin_PSNR PUBLIC
     ./
-	${LEGACY_LOCATION}
+    ${LEGACY_LOCATION}
+    ${PROJECT_SOURCE_DIR}/CMP_CompressonatorLib
+    ${PROJECT_SOURCE_DIR}/CMP_Framework/Common
+    ${PROJECT_SOURCE_DIR}/CMP_Framework/Common/half
 )
 
 target_link_libraries(Plugin_PSNR PRIVATE
 
-	CompressonatorLIB
-
-	Plugin_Common_TestReport
-	ExtOpenCV
+    CompressonatorLIB
+    Plugin_Common_TestReport
+    ExtOpenCV
 )
 
 set_target_properties(Plugin_PSNR PROPERTIES FOLDER ${FOLDER_NAME})

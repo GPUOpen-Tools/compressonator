@@ -54,7 +54,7 @@ public:
     bool updateFileFormat(QFileInfo &fileinfo);             // Update the Image Type Combo box by matching the input image format : return false if imput is not supported
     void resetData();                                       // Reset all data back to defaults
     void SaveCompressedInfo();                              // Save compress setting
-    void setMinMaxStep(QtVariantPropertyManager* manager, QtProperty *m_prop, double min, double max, double step);
+    void setMinMaxStep(QtVariantPropertyManager* manager, QtProperty *m_prop, double min, double max, double step, int decimals);
     QString GetFormatString();                              // Reads the m_data format and returns format enum as a string 
 
     bool isEditing;                                         // True when dislog is shown and in edit mode

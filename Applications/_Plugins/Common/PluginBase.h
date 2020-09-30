@@ -57,9 +57,11 @@ typedef struct _TC_PluginVersion
 /// We should obviously return more meaningful error codes than we currently like.
 typedef enum
 {
-    PE_OK,            ///< No error - success.
-    PE_AlreadyLoaded, ///< The plugin is already loaded. 
-    PE_Unknown,       ///< An error occured.
+    PE_OK,            // No error - success.
+    PE_AlreadyLoaded, // The plugin is already loaded. 
+    PE_Unknown,       // An error occured.
+    PE_InitErr,       // An error occured during init
+    PE_DeviceCreate,  // An error occured durind a device create
 } TC_PluginError;
 
 /// Indicates the error level of an error message.
