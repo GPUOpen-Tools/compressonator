@@ -29,17 +29,16 @@
 
 #include <assert.h>
 #include "debug.h"
-#include "Common.h"
-#include "HDR_Encode.h"
-#include "BC6H_Definitions.h"
-#include "BC6H_Decode.h"
-#include "BC6H_utils.h"
-#include "BC6H_Decode.h"
+#include "common.h"
+#include "hdr_encode.h"
+#include "bc6h_definitions.h"
+#include "bc6h_decode.h"
+#include "bc6h_utils.h"
 #include <bitset>
 #include <stddef.h>
 
 #ifdef TEST_CMP_CORE_DECODER
-#include "CMP_Core.h"
+#include "cmp_core.h"
 #endif
 
 #ifdef BC6H_DECODE_DEBUG

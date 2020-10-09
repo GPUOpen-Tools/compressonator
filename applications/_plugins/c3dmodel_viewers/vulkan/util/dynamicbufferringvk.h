@@ -18,8 +18,8 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "Ring.h"
-#include "DeviceVK.h"
+#include "ring.h"
+#include "devicevk.h"
 
 // This class mimics the behaviour or the DX11 dynamic buffers.
 // It does so by suballocating memory from a huge buffer. The buffer is used in a ring fashion.

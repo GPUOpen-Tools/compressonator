@@ -28,11 +28,11 @@
 //////////////////////////////////////////////////////////////////////////////
 #pragma warning(disable:4100)
 
-#include "Common.h"
-#include "Codec_DXT3.h"
+#include "common.h"
+#include "codec_dxt3.h"
 
 #ifdef TEST_CMP_CORE_DECODER
-#include "CMP_Core.h"
+#include "cmp_core.h"
 #endif
 
 //////////////////////////////////////////////////////////////////////////////

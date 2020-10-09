@@ -25,17 +25,17 @@
 
 #pragma once
 
-#include "DeviceVK.h"
-#include "UploadHeapVK.h"
-#include "DXGIFormat.h"
+#include "devicevk.h"
+#include "uploadheapvk.h"
+#include "dxgiformat.h"
 
-#include "Compressonator.h"
-#include "GPU_Decode.h"
-#include "Texture.h"
-#include "PluginInterface.h"
-#include "TextureIO.h"
+#include "compressonator.h"
+#include "gpu_decode.h"
+#include "texture.h"
+#include "plugininterface.h"
+#include "textureio.h"
 
-#include "ModelTexture.h"
+#include "modeltexture.h"
 
 
 #define ISBITMASK( r,g,b,a ) ( pixelFmt.bitMaskR == r && pixelFmt.bitMaskG == g && pixelFmt.bitMaskB == b && pixelFmt.bitMaskA == a )

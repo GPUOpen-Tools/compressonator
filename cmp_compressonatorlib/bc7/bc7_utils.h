@@ -24,7 +24,7 @@
 #ifndef _BC7_UTILS_H_
 #define _BC7_UTILS_H_
 
-#include "BC7_Definitions.h"
+#include "bc7_definitions.h"
 
 extern void    WriteBit(CMP_BYTE   *base,
                         int  offset,

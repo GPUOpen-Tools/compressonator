@@ -24,7 +24,7 @@
 #ifndef _BC7_DEFINITIONS_H_
 #define _BC7_DEFINITIONS_H_
 
-#include "Compressonator.h"
+#include "compressonator.h"
 
 #include "3dquant_constants.h"
 
@@ -107,6 +107,6 @@ typedef struct {
 
 extern CMP_BTI bti[NUM_BLOCK_TYPES];
 
-#include "MathMacros.h"
+#include "mathmacros.h"
 
 #endif

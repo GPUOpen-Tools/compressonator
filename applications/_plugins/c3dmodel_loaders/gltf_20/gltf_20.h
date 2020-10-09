@@ -25,8 +25,8 @@
 #define _PLUGIN_IMAGE_BMP_H
 
 
-#include "PluginInterface.h"
-#include "GltfCommon.h"
+#include "plugininterface.h"
+#include "gltfcommon.h"
 
 #ifdef _WIN32
 // {2505D1C0-D0F3-4E57-BCED-8358689D3FCC}

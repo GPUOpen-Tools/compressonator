@@ -29,7 +29,7 @@
 #ifndef _CODEC_DXTC_H_INCLUDED_
 #define _CODEC_DXTC_H_INCLUDED_
 
-#include "Codec_Block_4x4.h"
+#include "codec_block_4x4.h"
 
 #define DXTC_OFFSET_ALPHA 0
 #define DXTC_OFFSET_RGB 2

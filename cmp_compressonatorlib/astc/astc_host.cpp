@@ -19,9 +19,9 @@
 #include <fstream>
 #include <cstdlib>
 
-#include "ASTC_Host.h"
-#include "ASTC_Encode_Kernel.h"
-#include "Compressonator.h"
+#include "astc_host.h"
+#include "astc_encode_kernel.h"
+#include "compressonator.h"
 
 
 //================================= ASTC CPU HOST CODE  ===========================================

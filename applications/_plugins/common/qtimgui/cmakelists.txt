@@ -4,9 +4,9 @@ add_library(Plugin_Common_QtImgui_DX12 INTERFACE)
 
 target_sources(Plugin_Common_QtImgui_DX12 INTERFACE
 
-    ImGUI_DX12.h
-    ImGui_DX12Renderer.cpp
-    ImGui_DX12Renderer.h
+    imgui_dx12.h
+    imgui_dx12renderer.cpp
+    imgui_dx12renderer.h
 )
 
 target_link_libraries(Plugin_Common_QtImgui_DX12 INTERFACE
@@ -25,9 +25,9 @@ add_library(Plugin_Common_QtImgui_OpenGL INTERFACE)
 
 target_sources(Plugin_Common_QtImgui_OpenGL INTERFACE
 
-    ImGUI_OpenGL.h
-    ImGui_OpenGLRenderer.cpp
-    ImGui_OpenGLRenderer.h
+    imgui_opengl.h
+    imgui_openglrenderer.cpp
+    imgui_openglrenderer.h
     # demowindow.cpp
     # demowindow.h
 )

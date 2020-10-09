@@ -28,12 +28,12 @@
 //////////////////////////////////////////////////////////////////////////////
 #pragma warning(disable:4100)
 
-#include "Common.h"
-#include "Compressonator.h"
-#include "Codec_DXT1.h"
+#include "common.h"
+#include "compressonator.h"
+#include "codec_dxt1.h"
 
 #ifdef TEST_CMP_CORE_DECODER
-#include "CMP_Core.h"
+#include "cmp_core.h"
 #endif
 
 

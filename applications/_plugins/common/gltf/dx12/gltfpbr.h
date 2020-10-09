@@ -18,11 +18,11 @@
 // THE SOFTWARE.
 #pragma once
 
-#include "GltfCommon.h"
-#include "GltfTechnique.h"
-#include "SkyDome.h"
+#include "gltfcommon.h"
+#include "gltftechnique.h"
+#include "skydome.h"
 
-#include <DirectXMath.h>
+#include <directxmath.h>
 #include <wrl.h>
 
 extern CMIPS *DX12_CMips;

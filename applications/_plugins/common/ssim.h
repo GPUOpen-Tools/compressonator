@@ -24,9 +24,9 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <TestReport.h>
+#include <testreport.h>
 
-#include <Compressonator.h>
+#include <compressonator.h>
 
 #include <opencv2/opencv.hpp>
 

@@ -28,9 +28,9 @@
 //////////////////////////////////////////////////////////////////////////////
 #pragma warning(disable:4100)
 
-#include "Common.h"
-#include "Codec_ETC_RGB.h"
-#include "Compressonator_tc.h"
+#include "common.h"
+#include "codec_etc_rgb.h"
+#include "compressonator_tc.h"
 #include "etcpack_lib.h"
 
 //////////////////////////////////////////////////////////////////////////////

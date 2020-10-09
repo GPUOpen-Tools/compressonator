@@ -22,9 +22,9 @@
 // THE SOFTWARE.
 //
 
-#include "Compressonator.h"
+#include "compressonator.h"
 
-#include "CMP_MIPS.h"
+#include "cmp_mips.h"
 
 #include<stdarg.h>
 #include<stdio.h>
@@ -208,11 +208,12 @@ CMP_ERROR CMP_API CMP_CalcMipSetMSE_PSNR(CMP_MipSet* src1, CMP_MipSet* src2, CMP
     if (!pCurMipLevel2)
         return CMP_ERR_INVALID_SOURCE_TEXTURE;
 
-    if (src1->m_ChannelFormat == CF_8bit)
+    // processed only if both codecs have the same channel formats
+    if ((src1->m_ChannelFormat == CF_8bit) && (src2->m_ChannelFormat == CF_8bit))
         CMP_calcMSE_PSNRb(pCurMipLevel1, pCurMipLevel1->m_pbData, pCurMipLevel2->m_pbData, outMSE, outPSNR, 4);
-    else if (src1->m_ChannelFormat == CF_Float16)
+    else if ((src1->m_ChannelFormat == CF_Float16) && (src2->m_ChannelFormat == CF_Float16))
         CMP_calcMSE_PSNRf(pCurMipLevel1, pCurMipLevel1->m_phfsData, pCurMipLevel2->m_phfsData, outMSE, outPSNR, 4);
-    else if (src1->m_ChannelFormat == CF_Float32)
+    else if ((src1->m_ChannelFormat == CF_Float32) &&(src1->m_ChannelFormat == CF_Float32))
         CMP_calcMSE_PSNRf(pCurMipLevel1, pCurMipLevel1->m_pfData, pCurMipLevel2->m_pfData, outMSE, outPSNR, 4);
     return CMP_OK;
 }

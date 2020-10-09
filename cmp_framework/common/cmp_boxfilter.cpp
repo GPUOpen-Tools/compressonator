@@ -23,8 +23,8 @@
 //
 
 #include <stdio.h>
-#include "CMP_MIPS.h"
-#include "CMP_BoxFilter.h"
+#include "cmp_mips.h"
+#include "cmp_boxfilter.h"
 
 template <typename T>
 void CMP_GenerateMipLevelF(CMP_MipLevel* pCurMipLevel, CMP_MipLevel* pPrevMipLevelOne, CMP_MipLevel* pPrevMipLevelTwo, T* curMipData, T* prevMip1Data, T* prevMip2Data) {

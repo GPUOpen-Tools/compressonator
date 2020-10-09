@@ -1,13 +1,13 @@
 
 add_library(Plugin_CCMP_SDK)
 
-add_subdirectory(BC1)
-add_subdirectory(BC2)
-add_subdirectory(BC3)
-add_subdirectory(BC4)
-add_subdirectory(BC5)
-add_subdirectory(BC6)
-add_subdirectory(BC7)
+add_subdirectory(bc1)
+add_subdirectory(bc2)
+add_subdirectory(bc3)
+add_subdirectory(bc4)
+add_subdirectory(bc5)
+add_subdirectory(bc6)
+add_subdirectory(bc7)
 
 target_include_directories(Plugin_CCMP_SDK PUBLIC
     ./

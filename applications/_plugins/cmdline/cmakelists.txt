@@ -3,21 +3,22 @@
 add_library(Plugin_CmdLine)
 
 # This is the current location of these files. They should be moved here
-set(LEGACY_LOCATION ../Common)
+set(LEGACY_LOCATION ../common)
 
 target_sources(Plugin_CmdLine PRIVATE
 
     ${LEGACY_LOCATION}/cmdline.cpp
     ${LEGACY_LOCATION}/cmdline.h
-    ${LEGACY_LOCATION}/TextureIO.h
-    ${LEGACY_LOCATION}/TextureIO.cpp
-    ${LEGACY_LOCATION}/MipsToQImage.cpp
-    ${LEGACY_LOCATION}/MipsToQImage.h
+    ${LEGACY_LOCATION}/textureio.h
+    ${LEGACY_LOCATION}/textureio.cpp
+    ${LEGACY_LOCATION}/mipstoqimage.cpp
+    ${LEGACY_LOCATION}/mipstoqimage.h
 )
 
 target_include_directories(Plugin_CmdLine PUBLIC
     ./
     ${LEGACY_LOCATION}
+    ${PROJECT_SOURCE_DIR}/applications/_libs/gpu_decode
 )
 
 target_link_libraries(Plugin_CmdLine
@@ -28,6 +29,7 @@ target_link_libraries(Plugin_CmdLine
         CMP_MeshCompressor
         CMP_MeshOptimizer
         CompressonatorLIB
+        GPU_Decode
 
         Plugin_CMesh_Mesh_Optimizer
         Plugin_TCPluginAPI

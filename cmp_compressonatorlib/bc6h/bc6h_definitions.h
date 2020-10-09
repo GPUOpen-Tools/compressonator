@@ -25,7 +25,7 @@
 #ifndef _BC6H_DEFINITIONS_H_
 #define _BC6H_DEFINITIONS_H_
 
-#include "HDR_Encode.h"
+#include "hdr_encode.h"
 
 #include <cstdint>
 #include <cstdlib>

@@ -28,15 +28,15 @@
 //
 #include <assert.h>
 #include "debug.h"
-#include "BC6H_Encode.h"
+#include "bc6h_encode.h"
 #include <float.h>
 #include <stdio.h>
 #include <math.h>
-#include "Common.h"
-#include "HDR_Encode.h"
-#include "BC6H_Definitions.h"
-#include "BC6H_Encode.h"
-#include "BC6H_utils.h"
+#include "common.h"
+#include "hdr_encode.h"
+#include "bc6h_definitions.h"
+#include "bc6h_encode.h"
+#include "bc6h_utils.h"
 
 using namespace HDR_Encode;
 

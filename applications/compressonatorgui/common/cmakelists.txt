@@ -1,14 +1,14 @@
 add_library(CMP_GUI_BIN_Common INTERFACE)
 
 target_sources(CMP_GUI_BIN_Common INTERFACE
-    cpTreeWidget.cpp
+    cptreewidget.cpp
     geometryengine.cpp
     objectcontroller.cpp
 )
 
 target_sources(CMP_GUI_BIN_Common INTERFACE
   
-    cpTreeWidget.h
+    cptreewidget.h
     geometryengine.h
     objectcontroller.h
 )

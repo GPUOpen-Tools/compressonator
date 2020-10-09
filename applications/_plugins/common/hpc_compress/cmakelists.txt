@@ -7,7 +7,7 @@ set(LEGACY_LOCATION ../)
 
 target_sources(Plugin_Common_HPCCompress INTERFACE
 
-    ${LEGACY_LOCATION}/HPC_Compress.h
+    ${LEGACY_LOCATION}/hpc_compress.h
 )
 
 target_include_directories(Plugin_Common_HPCCompress INTERFACE

@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "ThreadPool.h"
+#include "threadpool.h"
 
 static ThreadPool t;
 

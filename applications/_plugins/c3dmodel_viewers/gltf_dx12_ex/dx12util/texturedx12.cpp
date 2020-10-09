@@ -24,16 +24,16 @@
 // http://go.microsoft.com/fwlink/?LinkId=248929
 
 
-#include "GltfFeatures.h"
-#include "TextureDX12.h"
+#include "gltffeatures.h"
+#include "texturedx12.h"
 #include "dxgi.h"
 #include <assert.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
-#include "Misc.h"
-#include "UtilFuncs.h"
+#include "misc.h"
+#include "utilfuncs.h"
 
 //--------------------------------------------------------------------------------------
 // Constructor of the Texture class

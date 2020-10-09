@@ -19,7 +19,7 @@
 
 //====================================== Kernal Compliant Code ============================================
 
-#include "ASTC_Encode_Kernel.h"
+#include "astc_encode_kernel.h"
 
 namespace ASTC_Encoder {
 

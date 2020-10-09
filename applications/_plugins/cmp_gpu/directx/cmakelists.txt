@@ -6,10 +6,10 @@ link_directories(
 add_library(Plugin_CMP_GPU_DXC SHARED )
 
 target_sources(Plugin_CMP_GPU_DXC PUBLIC
-    CDirectX.cpp
-    CDirectX.h
-    Compute_DirectX.cpp
-    Compute_DirectX.h
+    cdirectx.cpp
+    cdirectx.h
+    compute_directx.cpp
+    compute_directx.h
 )
 
 target_link_libraries(Plugin_CMP_GPU_DXC 
@@ -24,10 +24,10 @@ PRIVATE
 )
 
 target_include_directories(Plugin_CMP_GPU_DXC PRIVATE
-    ${PROJECT_SOURCE_DIR}/CMP_Framework             # compute_base.h
-    ${PROJECT_SOURCE_DIR}/CMP_Core/shaders          # common_def.h
-    ${PROJECT_SOURCE_DIR}/CMP_Core/source           # cmp_math_vec4.h
-    ${PROJECT_SOURCE_DIR}/Applications/_Libs/CMP_Math #cmp_math_common.h
+    ${PROJECT_SOURCE_DIR}/cmp_framework             # compute_base.h
+    ${PROJECT_SOURCE_DIR}/cmp_core/shaders          # common_def.h
+    ${PROJECT_SOURCE_DIR}/cmp_core/source           # cmp_math_vec4.h
+    ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_math #cmp_math_common.h
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/directxtex/DirectXTex-jun2020b/DirectXTex
 )
 

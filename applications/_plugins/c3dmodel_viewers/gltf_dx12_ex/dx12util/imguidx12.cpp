@@ -17,7 +17,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "ImguiDX12.h"
+#include "imguidx12.h"
 
 // DirectX
 #include <d3d11.h>

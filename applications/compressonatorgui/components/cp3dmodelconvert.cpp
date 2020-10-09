@@ -23,11 +23,11 @@
 //
 //=====================================================================
 
-#include "cp3DModelConvert.h"
+#include "cp3dmodelconvert.h"
 
 
-#include "PluginInterface.h"
-#include "cpMainComponents.h"
+#include "plugininterface.h"
+#include "cpmaincomponents.h"
 
 #ifdef USE_ASSIMP
 #include <assimp/scene.h>

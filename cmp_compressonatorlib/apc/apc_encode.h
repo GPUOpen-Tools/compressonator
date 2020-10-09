@@ -26,7 +26,7 @@
 #define _APC_ENCODE_H_
 
 #include <float.h>
-#include "APC_Definitions.h"
+#include "apc_definitions.h"
 
 class APCBlockEncoder {
   public:

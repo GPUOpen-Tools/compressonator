@@ -7,9 +7,9 @@
 #define _JRT_HEURISTIC_KD_TREE_BUILDER_H_
 
 
-#include "JRTKDTreeBuilder.h"
-#include "JRTBoundingBox.h"
-#include "JRTCoreUtils.h"
+#include "jrtkdtreebuilder.h"
+#include "jrtboundingbox.h"
+#include "jrtcoreutils.h"
 
 /// \brief A smart KD tree builder which uses the surface area heuristic
 /// Most of the inspiration for this code comes from Havran's PhD thesis

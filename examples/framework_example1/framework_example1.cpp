@@ -32,7 +32,7 @@
 #include <stdio.h>
 #include <string>
 
-#include "CMP_Framework.h"
+#include "cmp_framework.h"
 
 // Example code using high level SDK API's optimized with MultiThreading for processing a single image
 // Note:Limited error checking is done on user arguments, so all parameters must be correct in this example

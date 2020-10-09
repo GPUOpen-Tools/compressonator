@@ -30,9 +30,9 @@
 #define _CODECBUFFER_H_INCLUDED_
 
 #include "debug.h"
-#include "Common.h"
-#include "Compressonator.h"
-#include "MathMacros.h"
+#include "common.h"
+#include "compressonator.h"
+#include "mathmacros.h"
 
 
 

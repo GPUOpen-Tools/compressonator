@@ -28,9 +28,9 @@
 #ifndef TEXTUREIO_H_
 #define TEXTUREIO_H_
 
-#include "Compressonator.h"
-#include "Common.h"
-#include "Texture.h"
+#include "compressonator.h"
+#include "common.h"
+#include "texture.h"
 
 #include <cmath>
 

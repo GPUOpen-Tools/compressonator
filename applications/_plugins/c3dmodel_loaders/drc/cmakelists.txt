@@ -3,8 +3,8 @@ add_library(Plugin_C3DModel_Loaders_drc)
 
 target_sources(Plugin_C3DModel_Loaders_drc PRIVATE
 
-    ModelLoader_drc.cpp
-    ModelLoader_drc.h
+    modelloader_drc.cpp
+    modelloader_drc.h
 )
 
 target_link_libraries(Plugin_C3DModel_Loaders_drc PRIVATE
@@ -18,7 +18,7 @@ target_link_libraries(Plugin_C3DModel_Loaders_drc PRIVATE
 )
 
 # Find the QtWidgets library
-find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets HINTS ${QT_PACKAGE_ROOT})
 
 target_include_directories(Plugin_C3DModel_Loaders_drc PUBLIC
     ./

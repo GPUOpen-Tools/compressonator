@@ -28,11 +28,11 @@
 
 #include <assert.h>
 #include <tchar.h>
-#include "Compressonator.h"
-#include "Common.h"
-#include "Compute_Base.h"
-#include "Compute_GpuHW.h"
-#include "PluginInterface.h"
+#include "compressonator.h"
+#include "common.h"
+#include "compute_base.h"
+#include "compute_gpuhw.h"
+#include "plugininterface.h"
 
 
 

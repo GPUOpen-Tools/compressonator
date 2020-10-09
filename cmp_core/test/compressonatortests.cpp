@@ -21,13 +21,13 @@
 //
 //=====================================================================
 
-#include "CompressonatorTests.h"
+#include "compressonatortests.h"
 
 // incudes all compressed 4x4 blocks
-#include "BlockConstants.h"
+#include "blockconstants.h"
 
-#include <CMP_Core.h>
-#include <UtilFuncs.h>
+#include <cmp_core.h>
+#include <utilfuncs.h>
 
 #include "single_include/catch2/catch.hpp"
 

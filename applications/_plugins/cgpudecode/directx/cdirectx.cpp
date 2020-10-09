@@ -1,11 +1,11 @@
 
-#include "CDirectX.h"
+#include "cdirectx.h"
 
-#include "TC_PluginAPI.h"
-#include "TC_PluginInternal.h"
-#include "Compressonator.h"
+#include "tc_pluginapi.h"
+#include "tc_plugininternal.h"
+#include "compressonator.h"
 
-#include <GPU_DecodeBase.h>
+#include <gpu_decodebase.h>
 
 #include <stdio.h>
 #include <stdlib.h>

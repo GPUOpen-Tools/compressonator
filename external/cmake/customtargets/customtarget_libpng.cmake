@@ -4,7 +4,7 @@
 #                    L I B P N G
 # ====================================================
 set(LIBPNG_VERSION 1.6.37)
-get_filename_component(LIBPNG_DIR ${COMPRESSONATOR_PROJECT_DIR}/External/libpng/libpng-submodule ABSOLUTE)
+get_filename_component(LIBPNG_DIR ${COMPRESSONATOR_PROJECT_DIR}/external/libpng/libpng-submodule ABSOLUTE)
 
 set(LIBPNG_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/libpng-${LIBPNG_VERSION})
 file(MAKE_DIRECTORY ${LIBPNG_BINARY_DIR})

@@ -24,23 +24,23 @@
 // #pragma comment(lib,"d3dcompiler.lib")
 // #pragma comment(lib, "D3D12.lib")
 
-#include "GltfFeatures.h"
-#include "FrameworkWindows.h"
-#include "Camera.h"
-#include "SwapChainVK.h"
-#include "DeviceVK.h"
+#include "gltffeatures.h"
+#include "frameworkwindows.h"
+#include "camera.h"
+#include "swapchainvk.h"
+#include "devicevk.h"
 
 #ifdef ENABLE_RENDER_CODE
-#include "Vulkan_Renderer.h"
+#include "vulkan_renderer.h"
 #endif
 
-#include "UserInterface.h"
-#include "PluginManager.h"
+#include "userinterface.h"
+#include "pluginmanager.h"
 #define MAX_NUM_OF_NODES    2
 
 // -- Qt Support
 #ifdef USE_QT10
-#include <QtGUI/QVulkanWindow>
+#include <QtGUI/qvulkanwindow>
 #endif
 
 

@@ -25,7 +25,7 @@
 #ifndef _DDS_H
 #define _DDS_H
 
-#include "PluginInterface.h"
+#include "plugininterface.h"
 
 #ifdef _WIN32
 #include "ddraw.h"

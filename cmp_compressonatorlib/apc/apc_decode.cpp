@@ -22,7 +22,7 @@
 //=====================================================================
 
 
-#include "APC_Decode.h"
+#include "apc_decode.h"
 
 void (*APC_DecompressBlock)( void *in, void *out) = NULL;
 

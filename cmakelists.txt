@@ -1,6 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
-
-include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
+cmake_minimum_required(VERSION 3.13)
 
 # if(POLICY CMP0091)
 #   cmake_policy(SET CMP0091 NEW)
@@ -12,20 +10,23 @@ enable_testing()
 
 set(CMAKE_CXX_STANDARD 17)
 
-include(cmake/HelperFunctions.cmake)
+include(cmake/helperfunctions.cmake)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Supported configuration options" FORCE)
 set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/build-out")
 
-cmp_option(OPTION_CMP_DIRECTX "Use Directx" (CMP_HOST_WINDOWS))
-cmp_option(OPTION_CMP_OPENGL "Use OpenGL" (CMP_HOST_WINDOWS))
-cmp_option(OPTION_CMP_VULKAN "Use Vulkan" (CMP_HOST_WINDOWS))
-cmp_option(OPTION_USE_QT_IMAGELOAD "Use Qt for Image Loading" ON)
-cmp_option(OPTION_DISABLE_TESTCODE "Remove test code" OFF)
+cmp_option(OPTION_BUILD_GUI "Build the GUI Application" (CMP_HOST_WINDOWS))
+cmp_option(OPTION_BUILD_EXAMPLES "Build examples" (CMP_HOST_WINDOWS))
+cmp_option(OPTION_BUILD_TESTING "Build tests" (CMP_HOST_WINDOWS))
 cmp_option(OPTION_BUILD_SHARED_LIBS "Build SHARED, if disabled STATIC is built" (BUILD_SHARED_LIBS))
-cmp_option(OPTION_BUILD_TESTING "Build tests" ON)
-cmp_option(OPTION_BUILD_EXAMPLES "Build examples" ON)
-cmp_option(NO_LEGACY_BEHAVIOR "Disables any legacy behavior (before CMake migration)" ON)
+
+cmp_option(OPTION_CMP_DIRECTX "Use Directx" (CMP_HOST_WINDOWS)) # set for windows only
+cmp_option(OPTION_CMP_VULKAN "Use Vulkan" ON) # set for windows, can be on other platforms when current code validated!
+cmp_option(OPTION_CMP_OPENGL "Use OpenGL" ON)   # available on all platforms
+cmp_option(OPTION_USE_QT_IMAGELOAD "Use Qt for Image Loading" ON)
+
+cmp_option(OPTION_DISABLE_TESTCODE "Remove test code" OFF)
+cmp_option(NO_LEGACY_BEHAVIOR "Disables any legacy behavior (before CMake migration)" ON) # this needs to be removed
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -57,6 +58,7 @@ endif()
 
 if (APPLE OR UNIX)
     add_compile_definitions(_LINUX=1)
+    add_definitions(-std=c++17)
 endif ()
 
 if (NO_LEGACY_BEHAVIOR)
@@ -99,13 +101,13 @@ add_compile_definitions(
                                                   # if disabled default setting will be used for mesh compression
     #USE_GLTF2_MIPSET                             # Enable Image Transcode & Compression support for GLTF files using TextureIO
     #USE_FILEIO                                   # Used for debugging code
-    
+
     #New features under devlopement
     #USE_GTC                                      # LDR Gradient Texture Compressor patent pending
     #USE_APC                                      # Enable APC encoding reserved for future releases
     #USE_BASIS                                    # Future release:: Universal format for transcoding codecs
     #USE_CMP_TRANSCODE                            # Future release:: Transcode BASIS/GTC to other compressed formats
-    
+
     # Possible future releases features
     #ARGB_32_SUPPORT                              # Enables 32bit Float channel formats
     #SUPPORT_ETC_ALPHA                            # for ATC_RGB output enable A
@@ -121,6 +123,7 @@ set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED "NO")
 set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "")
 
 if (CMP_HOST_WINDOWS)
+    include(${CMAKE_ROOT}/modules/externalproject.cmake)
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 endif()
 
@@ -129,20 +132,42 @@ if (NOT CMP_HOST_APPLE)
     set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 endif()
 
+
+# find_package(OpenCV) 
+# if (OpenCV_FOUND)
+#     target_include_directories(Analysis
+#                                PRIVATE
+#                                ${OpenCV_INCLUDE_DIRS})
+# else()
+#     message(FATAL_ERROR "Package OpenCV are required, but not found. In Unix, run initsetup_unix.sh or sudo apt-get install libopencv-dev to install the libs.")
+# endif()
+# 
+# # Qt5 include path - users install required
+# find_package(Qt5Gui HINTS ${QT_PACKAGE_ROOT})
+# 
+# if(Qt5Gui_FOUND)
+# target_include_directories(Plugin_CAnalysis
+#                            PRIVATE 
+#                            "${Qt5Gui_INCLUDE_DIRS}")
+# else()
+#     message(FATAL_ERROR "Package Qt5 (Qt5Gui) are required, but not found. In Unix, run initsetup_unix.sh or sudo apt-get install qtdeclarative5-dev. If is window, please make sure install qt and add the bin path (i.e. C:\Qt\5.7\msvc2015_64\bin) to environment PATH.")
+# endif()
+
+
 # Configure Externals, they must be added via 'include' before the applications
-include(External/cmake/DependencyInfo.cmake)
-include(External/cmake/CMakeLists.txt)
-include(External/CMakeLists.txt)
+include(external/cmake/dependencyinfo.cmake)
+include(external/cmake/CMakeLists.txt)
+include(external/CMakeLists.txt)
 
 # add_subdirectory(Compressonator ${CMAKE_BINARY_DIR}/Compressonator)
 
-add_subdirectory(CMP_Core)
-add_subdirectory(CMP_Framework) 
-add_subdirectory(CMP_CompressonatorLib)
-add_subdirectory(Applications/_Libs)
-add_subdirectory(Applications/_Plugins)
-add_subdirectory(Applications)
+add_subdirectory(cmp_core)
+add_subdirectory(cmp_framework) 
+add_subdirectory(cmp_compressonatorlib)
+add_subdirectory(applications/_libs)
+add_subdirectory(applications/_plugins)
+add_subdirectory(applications)
 
 if (OPTION_BUILD_EXAMPLES)
-    add_subdirectory(Examples)
+    add_subdirectory(examples)
 endif()

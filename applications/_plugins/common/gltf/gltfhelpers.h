@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "GltfStructures.h"
+#include "gltfstructures.h"
 #include <json/json.h>
 
 #include <glm/mat4x4.hpp>

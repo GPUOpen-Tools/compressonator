@@ -24,17 +24,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "GltfPbrVK.h"
+#include "gltfpbrvk.h"
 
-#include "DeviceVK.h"
-#include "DynamicBufferRingVK.h"
-#include "GltfCommon.h"
-#include "GltfHelpers.h"
-#include "GltfHelpers_Vulkan.h"
-#include "ResourceViewHeapsVK.h"
-#include "ShaderCompilerHelper.h"
-#include "ThreadPool.h"
-#include "UploadHeapVK.h"
+#include "devicevk.h"
+#include "dynamicbufferringvk.h"
+#include "gltfcommon.h"
+#include "gltfhelpers.h"
+#include "gltfhelpers_vulkan.h"
+#include "resourceviewheapsvk.h"
+#include "shadercompilerhelper.h"
+#include "threadpool.h"
+#include "uploadheapvk.h"
 
 #include <vector>
 

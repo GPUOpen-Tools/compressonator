@@ -26,10 +26,10 @@
 #ifndef CPIMAGEANALYSIS_H
 #define CPIMAGEANALYSIS_H
 
-#include "PluginManager.h"
-#include "CAnalysis.h"
+#include "pluginmanager.h"
+#include "canalysis.h"
 
-#include <cpImageLoader.h>
+#include <cpimageloader.h>
 
 #include <QtCore/qobject.h>
 

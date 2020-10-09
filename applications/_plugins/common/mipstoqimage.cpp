@@ -17,7 +17,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "MipsToQImage.h"
+#include "mipstoqimage.h"
 
 #ifndef USE_QT_IMAGELOAD
 int QImage2MIPS(QImage*, CMIPS*, MipSet*) {
@@ -27,7 +27,7 @@ QImage* MIPS2QImage(CMIPS*, MipSet*, int, int, CMP_CompressOptions, CMP_Feedback
     return nullptr;    // no-op
 }
 #else
-#include "TextureIO.h"
+#include "textureio.h"
 
 #include <QImage>
 

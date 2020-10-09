@@ -29,7 +29,7 @@
 #ifndef _Codec_ETC_RGB_H_INCLUDED_
 #define _Codec_ETC_RGB_H_INCLUDED_
 
-#include "Codec_ETC.h"
+#include "codec_etc.h"
 
 class CCodec_ETC_RGB : public CCodec_ETC {
   public:

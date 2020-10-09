@@ -28,7 +28,7 @@
 #include <vector>
 #include <functional>
 
-#include "ModelData.h"
+#include "modeldata.h"
 
 //=================================================================================================================================
 /// \brief An OBJ file loader

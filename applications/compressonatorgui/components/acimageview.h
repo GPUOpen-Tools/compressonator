@@ -36,9 +36,9 @@
 #include <QGLWidget>
 
 // Local
-#include "acCustomGraphics.h"
-#include "acTableImageDataModel.h"
-#include "cpImageLoader.h"
+#include "accustomgraphics.h"
+#include "actableimagedatamodel.h"
+#include "cpimageloader.h"
 
 #define AC_IMAGE_MAX_ZOOM  9999
 #define AC_IMAGE_MIN_ZOOM  10

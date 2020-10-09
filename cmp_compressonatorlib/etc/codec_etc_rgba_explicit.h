@@ -29,7 +29,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "Codec_ETC.h"
+#include "codec_etc.h"
 
 class CCodec_ETC_RGBA_Explicit : public CCodec_ETC {
   public:

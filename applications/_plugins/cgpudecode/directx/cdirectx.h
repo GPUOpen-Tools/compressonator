@@ -28,8 +28,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "GPU_DirectX.h"
-#include "PluginInterface.h"
+#include "gpu_directx.h"
+#include "plugininterface.h"
 
 #include <assert.h>
 #include <tchar.h>

@@ -3,7 +3,7 @@
 /// \author AMD Developer Tools Team
 //=============================================================================
 
-#include "ModelLoader_drc.h"
+#include "modelloader_drc.h"
 
 #include <time.h>
 

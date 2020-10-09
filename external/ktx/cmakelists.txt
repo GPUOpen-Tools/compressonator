@@ -1,24 +1,25 @@
+cmake_minimum_required(VERSION 3.13)
+
 # CMakeLists.txt
 message(STATUS "++++++++++++++++++ " )
 message(STATUS "++++++++++++++++++ External-KTX" )
 message(STATUS "++++++++++++++++++ " )
 
-cmake_minimum_required(VERSION 3.13)
-
 # if(POLICY CMP0091)
 #   cmake_policy(SET CMP0091 NEW)
 # endif()
 
-# build project files
-ExternalProject_Add(extern_ktx
-    PREFIX ${PROJECT_SOURCE_DIR}/../common/lib/ext/ktx
-    SOURCE_DIR ${PROJECT_SOURCE_DIR}/../common/lib/ext/ktx
-    BINARY_DIR ${PROJECT_SOURCE_DIR}/../common/lib/ext/ktx/build
-    DOWNLOAD_DIR .
-    CMAKE_ARGS 
-        -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR}/../common/lib/ext/ktx
-)
-
+if (CMP_HOST_WINDOWS)
+    # build project files
+    ExternalProject_Add(extern_ktx
+        PREFIX ${PROJECT_SOURCE_DIR}/../common/lib/ext/ktx
+        SOURCE_DIR ${PROJECT_SOURCE_DIR}/../common/lib/ext/ktx
+        BINARY_DIR ${PROJECT_SOURCE_DIR}/../common/lib/ext/ktx/build
+        DOWNLOAD_DIR .
+        CMAKE_ARGS 
+            -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR}/../common/lib/ext/ktx
+    )
+endif()
 
 #project(CompressonatorGLEW)
 add_library(ExtKTX INTERFACE)

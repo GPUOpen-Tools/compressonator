@@ -25,7 +25,7 @@
 #pragma once
 
 #include "d3d9.h"
-#include "Module.h"
+#include "module.h"
 
 typedef IDirect3D9*(WINAPI FAR* Direct3DCreate9Proc)(UINT SDKVersion);
 

@@ -3,21 +3,21 @@
 add_library(Plugin_PSNR)
 
 # This is the current location of these files. They should be moved here
-set(LEGACY_LOCATION ../Common)
+set(LEGACY_LOCATION ../common)
 
 target_sources(Plugin_PSNR PRIVATE
-    ${LEGACY_LOCATION}/PSNR.cpp
-    ${LEGACY_LOCATION}/PSNR.h
-    ${LEGACY_LOCATION}/SSIM.cpp
-    ${LEGACY_LOCATION}/SSIM.h
+    ${LEGACY_LOCATION}/psnr.cpp
+    ${LEGACY_LOCATION}/psnr.h
+    ${LEGACY_LOCATION}/ssim.cpp
+    ${LEGACY_LOCATION}/ssim.h
 )
 
 target_include_directories(Plugin_PSNR PUBLIC
     ./
     ${LEGACY_LOCATION}
-    ${PROJECT_SOURCE_DIR}/CMP_CompressonatorLib
-    ${PROJECT_SOURCE_DIR}/CMP_Framework/Common
-    ${PROJECT_SOURCE_DIR}/CMP_Framework/Common/half
+    ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
+    ${PROJECT_SOURCE_DIR}/cmp_framework/common
+    ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
 )
 
 target_link_libraries(Plugin_PSNR PRIVATE

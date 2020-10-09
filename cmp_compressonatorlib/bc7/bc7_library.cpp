@@ -22,13 +22,13 @@
 // THE SOFTWARE.
 //
 
-#include "BC7_Definitions.h"
-#include "BC7_Encode.h"
-#include "BC7_Decode.h"
+#include "bc7_definitions.h"
+#include "bc7_encode.h"
+#include "bc7_decode.h"
 #include "3dquant_vpc.h"
 #include "shake.h"
-#include "Compressonator.h"
-#include "HDR_Encode.h"
+#include "compressonator.h"
+#include "hdr_encode.h"
 
 
 CMP_BOOL    g_LibraryInitialized = FALSE;

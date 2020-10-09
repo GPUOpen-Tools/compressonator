@@ -18,7 +18,7 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "Ring.h"
+#include "ring.h"
 
 #include <vulkan/vulkan.h>
 

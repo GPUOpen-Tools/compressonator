@@ -1,5 +1,5 @@
-#include "ac3DMeshAnalysis.h"
-#include "cpProjectView.h"
+#include "ac3dmeshanalysis.h"
+#include "cpprojectview.h"
 
 
 ac3DMeshAnalysis::ac3DMeshAnalysis(QWidget *parent)

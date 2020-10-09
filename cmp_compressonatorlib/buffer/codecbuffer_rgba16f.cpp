@@ -27,8 +27,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "Common.h"
-#include "CodecBuffer_RGBA16F.h"
+#include "common.h"
+#include "codecbuffer_rgba16f.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -41,7 +41,6 @@ CCodecBuffer_RGBA16F::CCodecBuffer_RGBA16F(
     CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
     CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData,CMP_DWORD dwDataSize)
     : CCodecBuffer(nBlockWidth, nBlockHeight, nBlockDepth,dwWidth, dwHeight, dwPitch, pData,dwDataSize) {
-    if (m_dwPitch == 0) printf("");
     //int gw= GetWidth() * RGBA16F_nPixelSize;
     //assert((m_dwPitch == 0) || (m_dwPitch >= GetWidth() * RGBA16F_nPixelSize));
     if(m_dwPitch <= GetWidth() * RGBA16F_nPixelSize)

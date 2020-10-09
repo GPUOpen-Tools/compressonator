@@ -35,20 +35,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "Common.h"
-#include "Compressonator.h"
-#include "TC_PluginAPI.h"
-#include "TC_PluginInternal.h"
+#include "common.h"
+#include "compressonator.h"
+#include "tc_pluginapi.h"
+#include "tc_plugininternal.h"
 
 #ifdef _WIN32
 #include "ddraw.h"
 #include "d3d9types.h"
 #endif
 
-#include "DDS.h"
-#include "DDS_File.h"
-#include "DDS_Helpers.h"
-#include "Texture.h"
+#include "dds.h"
+#include "dds_file.h"
+#include "dds_helpers.h"
+#include "texture.h"
 
 
 TC_PluginError LoadDDS_FourCC(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet) {

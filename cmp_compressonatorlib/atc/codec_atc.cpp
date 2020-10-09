@@ -27,10 +27,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "Common.h"
-#include "Codec_ATC.h"
-#include "Compressonator_tc.h"
-#include "CompressonatorXCodec.h"
+#include "common.h"
+#include "codec_atc.h"
+#include "compressonator_tc.h"
+#include "compressonatorxcodec.h"
 
 using namespace CMP;
 

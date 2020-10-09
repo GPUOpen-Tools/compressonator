@@ -6,7 +6,7 @@
 #ifndef _JRT_MESH_H_
 #define _JRT_MESH_H_
 
-#include "JRTCommon.h"
+#include "jrtcommon.h"
 
 class JRTTriangle;
 

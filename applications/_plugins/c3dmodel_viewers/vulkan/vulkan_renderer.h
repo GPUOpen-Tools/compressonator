@@ -19,21 +19,21 @@
 
 #pragma once
 
-#include "Camera.h"
-#include "DeviceVK.h"
-#include "TextureVK.h"
+#include "camera.h"
+#include "devicevk.h"
+#include "texturevk.h"
 
-#include "CommandListRingVK.h"
-#include "StaticBufferPoolVK.h"
+#include "commandlistringvk.h"
+#include "staticbufferpoolvk.h"
 
-#include "ImguiVK.h"
-#include "ResourceViewHeapsVK.h"
-#include "TriangleVK.h"
+#include "imguivk.h"
+#include "resourceviewheapsvk.h"
+#include "trianglevk.h"
 
 // -- Qt Support
 #ifdef USE_QT10
-#include <QtGUI/QVulkanFunctions>
-#include <QtGUI/QVulkanWindow>
+#include <QtGUI/qvulkanfunctions>
+#include <QtGUI/qvulkanwindow>
 #endif
 
 // Forward declaration

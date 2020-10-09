@@ -22,10 +22,10 @@
 // THE SOFTWARE.
 //
 
-#include "ASTC/ASTC_Definitions.h"
-#include "ASTC/ASTC_Encode.h"
-#include "ASTC/ASTC_Decode.h"
-#include "Compressonator.h"
+#include "astc/astc_definitions.h"
+#include "astc/astc_encode.h"
+#include "astc/astc_decode.h"
+#include "compressonator.h"
 
 
 extern CMP_BOOL g_LibraryInitialized;

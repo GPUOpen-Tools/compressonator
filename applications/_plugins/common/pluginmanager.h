@@ -40,8 +40,8 @@
 #endif
 #include <vector>
 
-//#include "PluginInterface.h"
-#include "PluginBase.h"
+//#include "plugininterface.h"
+#include "pluginbase.h"
 
 
 #define MAX_PLUGIN_FILENAME_STR   512

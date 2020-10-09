@@ -26,8 +26,8 @@
 
 #include <QtWidgets>
 #include <QtWebEngineWidgets/qwebengineview.h>
-#include "cpStartupPage.h"
-#include "acCustomDockWidget.h"
+#include "cpstartuppage.h"
+#include "accustomdockwidget.h"
 
 class CWelcomePage : public acCustomDockWidget {
     Q_OBJECT

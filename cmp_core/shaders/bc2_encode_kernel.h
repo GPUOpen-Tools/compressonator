@@ -23,8 +23,8 @@
 #ifndef BC2_ENCODE_KERNEL_H
 #define BC2_ENCODE_KERNEL_H
 
-#include "Common_Def.h"
-#include "BCn_Common_kernel.h"
+#include "common_def.h"
+#include "bcn_common_kernel.h"
 
 #define BC2CompBlockSize    16
 #define NUM_CHANNELS        4

@@ -25,15 +25,15 @@
 #define _3DMODELCOMPARE_H
 
 #include <QtWidgets>
-#include "cp3DModelView.h"
+#include "cp3dmodelview.h"
 
 #ifdef USE_IMGDIFF
-#include "cpImageView.h"
+#include "cpimageview.h"
 #endif
 
-#include "cpImageAnalysis.h"
-#include "acCustomDockWidget.h"
-#include "cpProjectData.h"
+#include "cpimageanalysis.h"
+#include "accustomdockwidget.h"
+#include "cpprojectdata.h"
 
 class C3DModelCompare : public acCustomDockWidget {
     Q_OBJECT

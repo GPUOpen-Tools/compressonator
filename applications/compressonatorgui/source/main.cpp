@@ -21,11 +21,11 @@
 //
 //=====================================================================
 
-#include "cpMainComponents.h"
+#include "cpmaincomponents.h"
 
-#include "Common.h"
-#include "Compressonator.h"
-#include "PluginManager.h"
+#include "common.h"
+#include "compressonator.h"
+#include "pluginmanager.h"
 
 #include <QApplication>
 

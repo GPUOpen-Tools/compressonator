@@ -24,7 +24,7 @@
 #ifndef _PLUGIN_IMAGE_KTX_H
 #define _PLUGIN_IMAGE_KTX_H
 
-#include "PluginInterface.h"
+#include "plugininterface.h"
 
 #include <vulkan/vulkan.hpp>
 #include "stdint.h"

@@ -14,7 +14,7 @@ target_include_directories(Plugin_C3DModel_Viewers_glTF_DX12_EX PUBLIC
 
     ./
     ./media
-    ./DX12Util
+    ./dx12util
 )
 
 target_link_libraries(Plugin_C3DModel_Viewers_glTF_DX12_EX PRIVATE

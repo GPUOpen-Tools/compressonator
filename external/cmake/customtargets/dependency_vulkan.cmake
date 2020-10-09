@@ -11,7 +11,7 @@
 if (NOT DEFINED DEPENDENCY_VULKAN_INCLUDE)
 set(DEPENDENCY_VULKAN_INCLUDE ON)
 
-	include(${COMPRESSONATOR_PROJECT_DIR}/External/vulkan/CMakeLists.txt)
+	include(${COMPRESSONATOR_PROJECT_DIR}/external/vulkan/CMakeLists.txt)
 
 	foreach(_lib ${Vulkan_LIBRARIES})
 		get_filename_component(_lib_dir ${_lib} DIRECTORY)

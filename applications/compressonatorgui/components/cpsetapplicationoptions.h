@@ -24,7 +24,7 @@
 #ifndef _SETAPPLICATIONOPTIONS_H
 #define _SETAPPLICATIONOPTIONS_H
 
-#include "cpProjectData.h"
+#include "cpprojectdata.h"
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qtgroupboxpropertybrowser.h"

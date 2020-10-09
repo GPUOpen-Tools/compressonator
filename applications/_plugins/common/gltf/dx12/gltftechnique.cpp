@@ -17,7 +17,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "GltfTechnique.h"
+#include "gltftechnique.h"
 
 #include <cstdio>
 #include <vector>

@@ -18,8 +18,8 @@
 // THE SOFTWARE.
 
 
-#include "ShaderCompilerHelper.h"
-#include "ImguiVK.h"
+#include "shadercompilerhelper.h"
+#include "imguivk.h"
 
 // Data
 static HWND                     g_hWnd = 0;

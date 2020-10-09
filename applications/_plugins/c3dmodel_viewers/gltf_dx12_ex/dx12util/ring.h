@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <Windows.h>
+#include <windows.h>
 #include <cassert>
 
 // This is the typical ring buffer, it is used by resources that will be reused.

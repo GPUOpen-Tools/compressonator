@@ -28,7 +28,7 @@
 #ifndef _CODEC_H_INCLUDED_
 #define _CODEC_H_INCLUDED_
 
-#include "CodecBuffer.h"
+#include "codecbuffer.h"
 
 #define SAFE_DELETE(p) if(p){delete p;p=NULL;}
 

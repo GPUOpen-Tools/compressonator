@@ -27,7 +27,7 @@
 #include <QVector>
 #include <QVector3D>
 
-#include "ModelData.h"
+#include "modeldata.h"
 
 
 class MeshData {

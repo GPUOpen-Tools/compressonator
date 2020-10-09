@@ -24,8 +24,8 @@
 //
 //=====================================================================
 
-#include "cpTreeWidget.h"
-#include "PluginManager.h"
+#include "cptreewidget.h"
+#include "pluginmanager.h"
 
 extern PluginManager g_pluginManager;
 

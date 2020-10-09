@@ -24,13 +24,13 @@
 #ifndef _AMDFORMATS_H_
 #define _AMDFORMATS_H_
 
-#include "Compressonator.h"
-#include "Common.h"
+#include "compressonator.h"
+#include "common.h"
 
 
 typedef struct {
     CMP_FORMAT nFormat;
-    const CMP_CHAR* pszFormatDesc;
+    CMP_CHAR* pszFormatDesc;
 } CMP_FormatDesc;
 
 typedef struct {
@@ -49,6 +49,6 @@ CMP_BOOL   CMP_API CMP_IsCompressedFormat(CMP_FORMAT format);
 };
 #endif
 
-const CMP_CHAR*  GetFormatDesc(CMP_FORMAT nFormat);
+CMP_CHAR*  GetFormatDesc(CMP_FORMAT nFormat);
 CMP_CHAR*  GetTextureTypeDesc(CMP_TextureType nTextureType);
 #endif

@@ -24,7 +24,7 @@
 //
 //=====================================================================
 
-#include "acImageView.h"
+#include "acimageview.h"
 
 #define CURSOR_SIZE 12 // pixel per cross hair fin
 

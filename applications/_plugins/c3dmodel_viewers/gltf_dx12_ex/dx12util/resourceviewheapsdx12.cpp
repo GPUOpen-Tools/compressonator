@@ -17,10 +17,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "ResourceViewHeapsDX12.h"
+#include "resourceviewheapsdx12.h"
 #include "misc.h"
 
-#include <Error.h>
+#include <error.h>
 
 //--------------------------------------------------------------------------------------
 //

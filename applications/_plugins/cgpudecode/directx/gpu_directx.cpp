@@ -22,15 +22,15 @@
 
 // #define DECOMPRESS_SAVE_TO_BMP
 
-#include "GPU_DirectX.h"
+#include "gpu_directx.h"
 #include "directx_shaders\vs.h"
-#include "directx_shaders\ps1D.h"
-#include "directx_shaders\\ps1Darray.h"
-#include "directx_shaders\\ps2D.h"
-#include "directx_shaders\ps2Darray.h"
-#include "directx_shaders\ps3D.h"
-#include "directx_shaders\psCube.h"
-#include "D3D11.h"
+#include "directx_shaders\ps1d.h"
+#include "directx_shaders\\ps1darray.h"
+#include "directx_shaders\\ps2d.h"
+#include "directx_shaders\ps2darray.h"
+#include "directx_shaders\ps3d.h"
+#include "directx_shaders\pscube.h"
+#include "d3d11.h"
 
 using namespace DirectX;
 using namespace GPU_Decode;

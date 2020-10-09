@@ -34,8 +34,8 @@
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "objectcontroller.h"
-#include "cpImageLoader.h"
-#include "cpProjectData.h"
+#include "cpimageloader.h"
+#include "cpprojectdata.h"
 
 
 

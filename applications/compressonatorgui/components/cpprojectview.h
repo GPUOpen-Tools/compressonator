@@ -44,23 +44,23 @@
 #include "objectcontroller.h"
 
 // Progress Bar
-#include "acProgressDlg.h"
-#include "acDiffImage.h"
-#include "ac3DMeshAnalysis.h"
-#include "cpTreeWidget.h"
-#include "cpImageView.h"
-#include "cpProjectData.h"
-#include "cpSetCompressOptions.h"
-#include "cpCompressStatus.h"
-#include "cpImageLoader.h"
-#include "cpNewProject.h"
-#include "TextureIO.h"
-#include "ModelData.h"
+#include "acprogressdlg.h"
+#include "acdiffimage.h"
+#include "ac3dmeshanalysis.h"
+#include "cptreewidget.h"
+#include "cpimageview.h"
+#include "cpprojectdata.h"
+#include "cpsetcompressoptions.h"
+#include "cpcompressstatus.h"
+#include "cpimageloader.h"
+#include "cpnewproject.h"
+#include "textureio.h"
+#include "modeldata.h"
 
 // JSon
 #include "json/json.h"
 
-#include "CMP_FileIO.h"
+#include "cmp_fileio.h"
 
 
 #define    MAX_PROJECTVIEW_COLUMNS               3     // Project view columns to view

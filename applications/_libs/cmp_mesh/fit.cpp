@@ -3,7 +3,7 @@
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
-#include "TootlePCH.h"
+#include "tootlepch.h"
 #include <algorithm>
 
 #include "bbox.h"

@@ -26,8 +26,8 @@
 //
 
 
-#include "TC_PluginAPI.h"
-#include "Version.h"
+#include "tc_pluginapi.h"
+#include "version.h"
 #include <stdio.h>
 
 #ifdef _WIN32

@@ -28,7 +28,7 @@
 #ifndef _BC6H_UTILS_H_
 #define _BC6H_UTILS_H_
 
-#include "BC6H_Definitions.h"
+#include "bc6h_definitions.h"
 #include <bitset>
 #include <stddef.h>
 

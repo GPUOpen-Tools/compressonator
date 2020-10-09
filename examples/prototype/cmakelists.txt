@@ -7,18 +7,17 @@ add_executable(cmp_prototype)
 target_sources(cmp_prototype
     PRIVATE
         cmp_prototype.cpp
-    ${PROJECT_SOURCE_DIR}/External/glad/include/glad/glad.h
-    ${PROJECT_SOURCE_DIR}/External/glad/src/glad.c
 )
+
 target_include_directories(cmp_prototype PUBLIC
     ./
-    ${PROJECT_SOURCE_DIR}/CMP_Framework             # compute_base.h
-    ${PROJECT_SOURCE_DIR}/CMP_Core/shaders          # common_def.h
-    ${PROJECT_SOURCE_DIR}/CMP_Core/source           # cmp_math_vec4.h
-    ${PROJECT_SOURCE_DIR}/Applications/_Libs/CMP_Math #cmp_math_common.h
-    ${PROJECT_SOURCE_DIR}/Applications/_Plugins/Common  # STB_Image
-    ${PROJECT_SOURCE_DIR}/External/glad/include/
-    ${PROJECT_SOURCE_DIR}/External/glad/include/glad
+    ${PROJECT_SOURCE_DIR}/cmp_framework             # compute_base.h
+    ${PROJECT_SOURCE_DIR}/cmp_core/shaders          # common_def.h
+    ${PROJECT_SOURCE_DIR}/cmp_core/source           # cmp_math_vec4.h
+    ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_math #cmp_math_common.h
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common  # stb_image
+    ${PROJECT_SOURCE_DIR}/external/glad/include/
+    ${PROJECT_SOURCE_DIR}/external/glad/include/glad
 )
 
 target_link_libraries(cmp_prototype
@@ -27,6 +26,7 @@ target_link_libraries(cmp_prototype
     ExtGLFW
     CMP_Framework
     CompressonatorLIB
+    d3d11.lib
 )
 
 set_target_properties(cmp_prototype 

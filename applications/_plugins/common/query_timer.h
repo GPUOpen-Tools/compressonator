@@ -44,8 +44,8 @@ typedef timeval         cmp_timeval;
 #define QUERY_PERFORMANCE(label)
 #endif
 
-#include "Compressonator.h"
-#include "Common.h"
+#include "compressonator.h"
+#include "common.h"
 
 struct query_timer {
     static void initialize() {

@@ -2,8 +2,8 @@
 add_library(CMP_MeshCompressor)
 
 file(GLOB_RECURSE DRACO_SRC
-    Draco/*.h
-    Draco/*.cc
+    draco/*.h
+    draco/*.cc
 )
 
 target_sources(CMP_MeshCompressor PRIVATE
@@ -11,7 +11,7 @@ target_sources(CMP_MeshCompressor PRIVATE
 )
 
 target_include_directories(CMP_MeshCompressor PUBLIC
-    ./Draco/src/
+    ./draco/src/
     ./
 )
 

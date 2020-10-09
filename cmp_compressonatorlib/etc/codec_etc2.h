@@ -76,10 +76,10 @@
 #ifndef _CODEC_ETC2_H_INCLUDED_
 #define _CODEC_ETC2_H_INCLUDED_
 
-#include "Common.h"
-#include "Codec_Block_4x4.h"
-#include "Compressonator_tc.h"
-#include "CompressonatorXCodec.h"
+#include "common.h"
+#include "codec_block_4x4.h"
+#include "compressonator_tc.h"
+#include "compressonatorxcodec.h"
 
 #define ATC_OFFSET_ALPHA 0
 #define ATC_OFFSET_RGB 2

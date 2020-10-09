@@ -27,7 +27,7 @@
 #ifndef COMPRESS_H
 #define COMPRESS_H
 
-#include "Codec.h"
+#include "codec.h"
 #include "float.h"
 
 #define FP_EXCEPTION_MASK _MCW_EM // Disable fp exceptions

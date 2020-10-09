@@ -25,22 +25,22 @@
 //
 //=====================================================================
 
-#include "TextureIO.h"
+#include "textureio.h"
 
-#include "Compressonator.h"
-#include "Common.h"
-#include "CMP_FileIO.h"
-#include "PluginManager.h"
-#include "PluginInterface.h"
+#include "compressonator.h"
+#include "common.h"
+#include "cmp_fileio.h"
+#include "pluginmanager.h"
+#include "plugininterface.h"
 
-#include <GPU_Decode.h>
+#include <gpu_decode.h>
 
 #if defined(WIN32) && !defined(NO_LEGACY_BEHAVIOR)
 #define USE_QT_IMAGELOAD
 #endif
 
 #ifdef USE_QT_IMAGELOAD
-#include <MipsToQImage.h>
+#include <mipstoqimage.h>
 #include <QtCore/QCoreApplication>
 #include <QtGui/qimage.h>
 #include <QtGui/qrgb.h>

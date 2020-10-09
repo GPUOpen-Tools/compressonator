@@ -1,5 +1,5 @@
 
-get_filename_component(GLSLANG_DIR ${COMPRESSONATOR_PROJECT_DIR}/External/vulkan/vulkan-submodule/${CMAKE_SYSTEM_NAME}/glslang ABSOLUTE)
+get_filename_component(GLSLANG_DIR ${COMPRESSONATOR_PROJECT_DIR}/external/vulkan/vulkan-submodule/${CMAKE_SYSTEM_NAME}/glslang ABSOLUTE)
 
 set(GLSLANG_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/glslang)
 file(MAKE_DIRECTORY ${GLSLANG_BUILD_DIR})

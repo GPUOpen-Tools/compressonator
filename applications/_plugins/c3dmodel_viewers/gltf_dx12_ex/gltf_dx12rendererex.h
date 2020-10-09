@@ -20,32 +20,32 @@
 #pragma once
 
 
-#include <D3D12.h>
+#include <d3d12.h>
 
-#include "GltfFeatures.h"
-#include "UploadHeapDX12.h"
-#include "TextureDX12.h"
-#include "DynamicBufferRingDX12.h"
-#include "StaticBufferPoolDX12.h"
-#include "StaticConstantBufferPoolDX12.h"
-#include "CommandListRingDX12.h"
-#include "FenceDX12.h"
-#include "ResourceViewHeapsDX12.h"
-#include "Camera.h"
-#include "GPUTimestampsDX12.h"
+#include "gltffeatures.h"
+#include "uploadheapdx12.h"
+#include "texturedx12.h"
+#include "dynamicbufferringdx12.h"
+#include "staticbufferpooldx12.h"
+#include "staticconstantbufferpooldx12.h"
+#include "commandlistringdx12.h"
+#include "fencedx12.h"
+#include "resourceviewheapsdx12.h"
+#include "camera.h"
+#include "gputimestampsdx12.h"
 
-#include "DX12Util/ImguiDX12.h"
+#include "dx12util/imguidx12.h"
 #include <imgui/imgui.h>
-#include <qtimgui/ImGui_DX12Renderer.h>
+#include <qtimgui/imgui_dx12renderer.h>
 
-#include "GltfPbr.h"
-#include "GltfDepthPass.h"
-#include "GltfBBoxPass.h"
-#include "BlurPS.h"
-#include "ToneMapping.h"
-#include "Bloom.h"
-#include "SkyDome.h"
-#include "UserInterface.h"
+#include "gltfpbr.h"
+#include "gltfdepthpass.h"
+#include "gltfbboxpass.h"
+#include "blurps.h"
+#include "tonemapping.h"
+#include "bloom.h"
+#include "skydome.h"
+#include "userinterface.h"
 
 static const int cNumSwapBufs = 2;
 

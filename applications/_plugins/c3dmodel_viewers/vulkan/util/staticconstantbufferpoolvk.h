@@ -18,8 +18,8 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "Ring.h"
-#include "DeviceVK.h"
+#include "ring.h"
+#include "devicevk.h"
 
 // Simulates DX11 style static buffers. For dynamic buffers please see 'DynamicBufferRingDX12.h'
 //

@@ -24,12 +24,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "Vulkan_Device.h"
-#include "GltfCommon.h"
+#include "vulkan_device.h"
+#include "gltfcommon.h"
 #include "ImguiVK.h"
 #include "KeyboardMouse.h"
-#include "Misc.h"
-#include "SwapChainVK.h"
+#include "misc.h"
+#include "swapchainvk.h"
 
 #include <glm/glm.hpp>
 

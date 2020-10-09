@@ -2,23 +2,23 @@
 add_library(CMP_GUI INTERFACE)
 
 # This is the current location of these files. They should be moved here
-set(LEGACY_LOCATION ../../CompressonatorGUI)
+set(LEGACY_LOCATION ../../compressonatorgui)
 
 target_sources(CMP_GUI 
     INTERFACE
-        ${LEGACY_LOCATION}/Common/cvmatandqimage.cpp
-        ${LEGACY_LOCATION}/Common/cvmatandqimage.h
-        ${LEGACY_LOCATION}/Components/cpImageLoader.h
-        ${LEGACY_LOCATION}/Components/cpImageLoader.cpp
+        ${LEGACY_LOCATION}/common/cvmatandqimage.cpp
+        ${LEGACY_LOCATION}/common/cvmatandqimage.h
+        ${LEGACY_LOCATION}/components/cpimageloader.h
+        ${LEGACY_LOCATION}/components/cpimageloader.cpp
 )
 
 target_include_directories(CMP_GUI 
     INTERFACE
-        ./Common
-        ./Components
+        ./common
+        ./components
         ./
-        ${LEGACY_LOCATION}/Common
-        ${LEGACY_LOCATION}/Components
+        ${LEGACY_LOCATION}/common
+        ${LEGACY_LOCATION}/components
         ${LEGACY_LOCATION}
 )
 

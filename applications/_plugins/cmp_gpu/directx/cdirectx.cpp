@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "Compressonator.h"
-#include "Common.h"
-#include "TC_PluginAPI.h"
-#include "TC_PluginInternal.h"
-#include "CDirectX.h"
+#include "compressonator.h"
+#include "common.h"
+#include "tc_pluginapi.h"
+#include "tc_plugininternal.h"
+#include "cdirectx.h"
 
 
 CMIPS *GPU_DXMips = nullptr;

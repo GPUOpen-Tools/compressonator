@@ -28,10 +28,10 @@
 #ifndef _CODEC_APC_H_INCLUDED_
 #define _CODEC_APC_H_INCLUDED_
 
-#include "Compressonator.h"
-#include "Codec_DXTC.h"
-#include "APC_Encode.h"
-#include "APC_Decode.h"
+#include "compressonator.h"
+#include "codec_dxtc.h"
+#include "apc_encode.h"
+#include "apc_decode.h"
 
 #include <thread>
 

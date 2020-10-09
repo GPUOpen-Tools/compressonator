@@ -25,7 +25,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
-#include "cExr.h"
+#include "cexr.h"
 
 float half_conv_float(unsigned short in) {
     union fi32 {

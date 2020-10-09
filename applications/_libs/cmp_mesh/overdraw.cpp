@@ -3,7 +3,7 @@
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
-#include "TootlePCH.h"
+#include "tootlepch.h"
 #include "overdraw.h"
 #include "soup.h"
 
@@ -17,7 +17,7 @@
 #include "gdiwm.h"
 #endif
 
-#include "TootleRaytracer.h"
+#include "tootleraytracer.h"
 
 //=================================================================================================================================
 //

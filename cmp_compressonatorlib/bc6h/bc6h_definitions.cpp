@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "BC6H_Definitions.h"
+#include "bc6h_definitions.h"
 
 unsigned short g_BC6H_FORMAT = UNSIGNED_F16;
 

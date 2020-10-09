@@ -30,7 +30,7 @@
 
 #include <stdio.h>
 #include <string>
-#include "CMP_Framework.h"
+#include "cmp_framework.h"
 
 #ifdef _WIN32
 #include <windows.h>

@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.13)
 
 # add_library(CompressonatorLIB)
 # 
@@ -69,54 +70,52 @@
 #         Plugin_Half
 # )
 
-cmake_minimum_required(VERSION 3.13)
-
 add_library(CompressonatorLIB STATIC "")
 
 file(GLOB_RECURSE CMP_SRCS
      "./*.h"
      "./*.cpp"
-     "ASTC/*.h"
-     "ASTC/*.cpp"
-     "ASTC/ARM/*.h"
-     "ASTC/ARM/*.cpp"
-     "ATC/*.h"
-     "ATC/*.cpp"
-     "ATI/*.h"
-     "ATI/*.cpp"
-     "ATI/*.c"
-     "BASIS/*.h"
-     "BASIS/*.cpp"
-     "BC6H/*.h"
-     "BC6H/*.cpp"
-     "BC7/*.h"
-     "BC7/*.cpp"
-     "Block/*.h"
-     "Block/*.cpp"
-     "Buffer/*.h"
-     "Buffer/*.cpp"
-     "DXT/*.h"
-     "DXT/*.cpp"
-     "DXTC/*.h"
-     "DXTC/*.cpp"
-     "DXTC/*.c"
-     "ETC/*.h"
-     "ETC/*.cpp"
-     "ETC/etcpack/*.h"
-     "ETC/etcpack/*.cpp"
-     "ETC/etcpack/*.cxx"
-     "GT/*.h"
-     "GT/*.cpp"
-     "APC/*.h"
-     "APC/*.cpp"
-     "Common/*.h"
-     "Common/*.cpp"
-     "../CMP_Framework/Common/*.h"
-     "../CMP_Framework/Common/*.cpp"
-     "../CMP_Framework/Common/half/*.h"
-     "../CMP_Framework/Common/half/*.cpp"
-     "../Applications/_Plugins/Common/ATIFormats.cpp"
-     "../Applications/_Plugins/Common/ATIFormats.h"
+     "astc/*.h"
+     "astc/*.cpp"
+     "astc/arm/*.h"
+     "astc/arm/*.cpp"
+     "atc/*.h"
+     "atc/*.cpp"
+     "ati/*.h"
+     "ati/*.cpp"
+     "ati/*.c"
+     "basis/*.h"
+     "basis/*.cpp"
+     "bc6h/*.h"
+     "bc6h/*.cpp"
+     "bc7/*.h"
+     "bc7/*.cpp"
+     "block/*.h"
+     "block/*.cpp"
+     "buffer/*.h"
+     "buffer/*.cpp"
+     "dxt/*.h"
+     "dxt/*.cpp"
+     "dxtc/*.h"
+     "dxtc/*.cpp"
+     "dxtc/*.c"
+     "etc/*.h"
+     "etc/*.cpp"
+     "etc/etcpack/*.h"
+     "etc/etcpack/*.cpp"
+     "etc/etcpack/*.cxx"
+     "gt/*.h"
+     "gt/*.cpp"
+     "apc/*.h"
+     "apc/*.cpp"
+     "common/*.h"
+     "common/*.cpp"
+     "../cmp_framework/common/*.h"
+     "../cmp_framework/common/*.cpp"
+     "../cmp_framework/common/half/*.h"
+     "../cmp_framework/common/half/*.cpp"
+     "../applications/_plugins/common/atiformats.cpp"
+     "../applications/_plugins/common/atiformats.h"
      )
 
 target_sources(CompressonatorLIB
@@ -127,23 +126,23 @@ target_sources(CompressonatorLIB
 target_include_directories(CompressonatorLIB
                            PRIVATE
                            ./
-                           ASTC
-                           ASTC/ARM/
-                           ATC
-                           ATI
-                           BASIS
-                           BC6H
-                           BC7
-                           Block
-                           Buffer
-                           DXT
-                           DXTC
-                           ETC
-                           ETC/etcpack/
-                           APC
-                           GT
-                           Common
-                           ../CMP_Framework/Common
-                           ../CMP_Framework/Common/half
-                           ../Applications/_Plugins/Common)
+                           astc
+                           astc/arm/
+                           atc
+                           ati
+                           basis
+                           bc6h
+                           bc7
+                           block
+                           buffer
+                           dxt
+                           dxtc
+                           etc
+                           etc/etcpack/
+                           apc
+                           gt
+                           common
+                           ../cmp_framework/common
+                           ../cmp_framework/common/half
+                           ../applications/_plugins/common)
 

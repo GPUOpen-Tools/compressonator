@@ -4,8 +4,8 @@ add_library(Plugin_Common_Model_Viewer INTERFACE)
 
 target_sources(Plugin_Common_Model_Viewer INTERFACE
 
-    ModelTexture.cpp
-    ModelTexture.h
+    modeltexture.cpp
+    modeltexture.h
 )
 
 target_include_directories(Plugin_Common_Model_Viewer INTERFACE

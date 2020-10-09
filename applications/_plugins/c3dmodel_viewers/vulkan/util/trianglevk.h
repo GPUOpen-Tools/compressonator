@@ -18,9 +18,9 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "DeviceVK.h"
-#include "DynamicBufferRingVK.h"
-#include "StaticBufferPoolVK.h"
+#include "devicevk.h"
+#include "dynamicbufferringvk.h"
+#include "staticbufferpoolvk.h"
 #include "camera.h"
 
 #include <vector>

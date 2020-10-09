@@ -25,8 +25,8 @@
 #ifndef _CMP_MIPS_H
 #define _CMP_MIPS_H
 
-#include "Common.h"
-#include "Compressonator.h"
+#include "common.h"
+#include "compressonator.h"
 #include "stdlib.h"
 
 #ifndef CMP_MAX

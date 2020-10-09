@@ -3,7 +3,7 @@
 add_library(Plugin_Json INTERFACE)
 
 # This is the current location of these files. They should be moved here
-set(LEGACY_LOCATION ../Common)
+set(LEGACY_LOCATION ../common)
 
 target_sources(Plugin_Json INTERFACE
 

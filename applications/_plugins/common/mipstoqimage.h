@@ -20,8 +20,8 @@
 #ifndef CMP_MIPS_TO_QIMAGE_H_INCLUDE
 #define CMP_MIPS_TO_QIMAGE_H_INCLUDE
 
-#include <Compressonator.h>
-#include <Common.h>
+#include <compressonator.h>
+#include <common.h>
 
 // forward declaration
 class QImage;

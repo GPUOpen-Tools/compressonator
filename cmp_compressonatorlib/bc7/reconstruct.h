@@ -24,7 +24,7 @@
 #ifndef RECONSTRUCT_H_INCLUDED
 #define RECONSTRUCT_H_INCLUDED
 
-#include "BC7_Definitions.h"
+#include "bc7_definitions.h"
 
 // continious recoustruction unclumped
 /*********************************/

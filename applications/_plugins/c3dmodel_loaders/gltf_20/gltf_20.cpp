@@ -21,15 +21,15 @@
 // THE SOFTWARE.
 //
 
-#include "glTF_20.h"
+#include "gltf_20.h"
 
 #include <assert.h>
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "TC_PluginAPI.h"
-#include "TC_PluginInternal.h"
-#include "Compressonator.h"
+#include "tc_pluginapi.h"
+#include "tc_plugininternal.h"
+#include "compressonator.h"
 
 #include <iostream>
 #include <fstream>
@@ -44,7 +44,7 @@ void *make_Plugin_glTF_Loader() {
 }
 #endif
 
-#include "Misc.h"
+#include "misc.h"
 
 #ifdef USE_TINYGLTF2
 #include "tiny_gltf2_utils.h"

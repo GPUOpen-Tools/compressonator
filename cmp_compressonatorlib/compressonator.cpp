@@ -31,10 +31,10 @@
 //                  Code clean to support MSV 2010 and up
 //////////////////////////////////////////////////////////////////////////////
 
-#include "Common.h"
-#include "Compressonator.h"  // User shared: Keep priviate code out of this header
-#include "Compress.h"
-#include "CMP_MIPS.h"
+#include "common.h"
+#include "compressonator.h"  // User shared: Keep priviate code out of this header
+#include "compress.h"
+#include "cmp_mips.h"
 #include "debug.h"
 
 #include <cassert>

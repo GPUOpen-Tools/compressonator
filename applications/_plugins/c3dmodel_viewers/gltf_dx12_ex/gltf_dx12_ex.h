@@ -24,8 +24,8 @@
 #define _PLUGIN_IMAGE_BMP_H
 
 
-#include "PluginInterface.h"
-#include "glTF_DX12DeviceEx.h"
+#include "plugininterface.h"
+#include "gltf_dx12deviceex.h"
 
 
 #ifdef _WIN32

@@ -21,11 +21,11 @@
 // THE SOFTWARE.
 //
 
-#include "BC7_Definitions.h"
-#include "BC6H_Definitions.h"
-#include "BC6H_Encode.h"
-#include "BC6H_Decode.h"
-#include "Compressonator.h"
+#include "bc7_definitions.h"
+#include "bc6h_definitions.h"
+#include "bc6h_encode.h"
+#include "bc6h_decode.h"
+#include "compressonator.h"
 
 
 extern bool    g_LibraryInitialized;

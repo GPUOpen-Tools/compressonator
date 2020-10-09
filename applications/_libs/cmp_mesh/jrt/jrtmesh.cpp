@@ -3,10 +3,10 @@
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
-#include "TootlePCH.h"
-#include "JRTCommon.h"
-#include "JRTMesh.h"
-#include "JRTBoundingBox.h"
+#include "tootlepch.h"
+#include "jrtcommon.h"
+#include "jrtmesh.h"
+#include "jrtboundingbox.h"
 
 ///  A mesh must have an array of positions and connectivity.  It may also have per-vertex normals
 ///  If per-vertex normals are omitted, then per-face normals are used instead.

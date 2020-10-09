@@ -28,9 +28,9 @@
 //                   Code clean to support MSV 2010 and up
 //////////////////////////////////////////////////////////////////////////////
 
-#include "Common.h"
-#include "Compressonator.h"
-#include "Compress.h"
+#include "common.h"
+#include "compressonator.h"
+#include "compress.h"
 #include <assert.h>
 #include <algorithm>
 

@@ -37,8 +37,8 @@
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "objectcontroller.h"
-#include "cpProjectData.h"
-#include "acCustomDockWidget.h"
+#include "cpprojectdata.h"
+#include "accustomdockwidget.h"
 
 class CImagePropertyView :
     public QDockWidget

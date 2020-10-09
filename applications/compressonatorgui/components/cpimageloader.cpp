@@ -21,10 +21,9 @@
 //
 //=====================================================================
 
-#include "cpImageLoader.h"
+#include "cpimageloader.h"
 
-#include <cExr.h>
-#include <MipsToQImage.h>
+#include <mipstoqimage.h>
 
 #include <QtWidgets/qapplication.h>
 #include <QtCore/qstring.h>

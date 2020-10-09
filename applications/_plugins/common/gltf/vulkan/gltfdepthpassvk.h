@@ -18,9 +18,9 @@
 // THE SOFTWARE.
 #pragma once
 
-#include "GltfTechnique.h"
+#include "gltftechnique.h"
 
-#include "TextureVK.h"
+#include "texturevk.h"
 
 #include <glm/matrix.hpp>
 

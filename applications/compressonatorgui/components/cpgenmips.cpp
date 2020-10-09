@@ -23,7 +23,7 @@
 //
 //=====================================================================
 
-#include "cpGenMips.h"
+#include "cpgenmips.h"
 
 #define LOWEST_MIP_LEVELS "Lowest Mip-Level (Width x Height)"
 

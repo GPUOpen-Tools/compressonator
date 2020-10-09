@@ -28,7 +28,7 @@
 
 #define __CL_ENABLE_EXCEPTIONS
 
-#include "Compressonator.h"
+#include "compressonator.h"
 #include "query_timer.h"
 
 #include <thread>

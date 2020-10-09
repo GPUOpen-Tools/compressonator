@@ -3,12 +3,12 @@
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
-#include "TootlePCH.h"
-#include "JRTCommon.h"
-#include "JRTKDTreeBuilder.h"
-#include "JRTKDTree.h"
-#include "JRTMesh.h"
-#include "JRTCoreUtils.h"
+#include "tootlepch.h"
+#include "jrtcommon.h"
+#include "jrtkdtreebuilder.h"
+#include "jrtkdtree.h"
+#include "jrtmesh.h"
+#include "jrtcoreutils.h"
 
 
 //

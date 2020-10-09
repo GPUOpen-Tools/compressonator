@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <Windows.h>
+#include <windows.h>
 
 #include <cstdint>
 #include <cassert>

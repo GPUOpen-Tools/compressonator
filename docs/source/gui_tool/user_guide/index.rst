@@ -5,9 +5,9 @@ GUI User Guide
    :maxdepth: 4
    :name: toc-GUI_User_Guide
 
-   index_Introduction
-   index_TheMainWindow
-   index_TextureCompression
-   index_3DModelCompression
-   UserGuide
+   index_introduction
+   index_themainwindow
+   index_texturecompression
+   index_3dmodelcompression
+   userguide
 

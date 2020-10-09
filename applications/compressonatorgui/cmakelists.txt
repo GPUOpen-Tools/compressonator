@@ -1,8 +1,13 @@
 # Compressonator GUI
 # this must be before add_executable
+if (OPTION_CMP_DIRECTX )
+link_directories(
+    ${PROJECT_SOURCE_DIR}/../common/lib/ext/directxtex/DirectXTex-jun2020b/DirectXTex/Bin/Desktop_2017/x64
+    )
+endif()
+
 link_directories(
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/opencv/2.49/x64/VS2015/lib
-    ${PROJECT_SOURCE_DIR}/../common/lib/ext/directxtex/DirectXTex-jun2020b/DirectXTex/Bin/Desktop_2017/x64
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/zlib/zlib-1.2.10/VS2015/x64/lib
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/openexr/ilmbase-2.2.0/VS2015/x64/lib
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/openexr/openexr-2.2.0/VS2015/x64/lib
@@ -11,15 +16,17 @@ link_directories(
 # Enable automoc and autorcc
 set(CMAKE_INCLUDE_CURRENT_DIR ON) 
 
-add_subdirectory(Common)
-add_subdirectory(Components)
-add_subdirectory(GeneratedFiles)
-add_subdirectory(QPropertyPages)
+add_subdirectory(common)
+add_subdirectory(components)
+add_subdirectory(generatedfiles)
+add_subdirectory(qpropertypages)
 
 # Compressonator GUI Application
 add_executable(CompressonatorGUI-bin)
 
-add_dependencies(CompressonatorGUI-bin extern_ktx)
+if (CMP_HOST_WINDOWS)
+    add_dependencies(CompressonatorGUI-bin extern_ktx)
+endif()
 
 set_target_properties(CompressonatorGUI-bin PROPERTIES
     AUTOMOC ON
@@ -29,7 +36,7 @@ set_target_properties(CompressonatorGUI-bin PROPERTIES
 )
 
 # Find the QtWidgets library
-find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets HINTS ${QT_PACKAGE_ROOT})
 
 if(CMP_HOST_WINDOWS)
     set_target_properties(CompressonatorGUI-bin PROPERTIES 
@@ -64,13 +71,13 @@ target_sources(CompressonatorGUI-bin PRIVATE
 
     ${SRCS}
     ${RESOURCES}
-    CompressonatorGUI.qrc
+    compressonatorgui.qrc
 )
 
 target_include_directories(CompressonatorGUI-bin PRIVATE
-     ${PROJECT_SOURCE_DIR}/CMP_CompressonatorLib
-    ./Resources
-    ./Source
+     ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
+    ./resources
+    ./source
 )
 
 target_link_libraries(CompressonatorGUI-bin 
@@ -103,7 +110,7 @@ target_link_libraries(CompressonatorGUI-bin
         Plugin_CMesh
 ) 
 
-include(CopyFiles.cmake)
+include(copyfiles.cmake)
 
 set_target_properties(CompressonatorGUI-bin PROPERTIES FOLDER ${FOLDER_NAME})
 
@@ -113,22 +120,22 @@ if (CMAKE_GENERATOR STREQUAL "Unix Makefiles")
         USE_SOURCE_PERMISSIONS
         PATTERN "cmake_install.cmake" EXCLUDE
         PATTERN "CMakeFiles*" EXCLUDE
-        PATTERN "Common*" EXCLUDE
-        PATTERN "Components*" EXCLUDE
+        PATTERN "common*" EXCLUDE
+        PATTERN "components*" EXCLUDE
         PATTERN "CompressonatorGUI-bin_autogen*" EXCLUDE
-        PATTERN "CTestTestfile.cmake" EXCLUDE
-        PATTERN "GeneratedFiles*" EXCLUDE
-        PATTERN "Makefile" EXCLUDE
-        PATTERN "QPropertyPages*" EXCLUDE
+        PATTERN "ctesttestfile.cmake" EXCLUDE
+        PATTERN "generatedfiles*" EXCLUDE
+        PATTERN "makefile" EXCLUDE
+        PATTERN "qpropertypages*" EXCLUDE
     )
 elseif (CMAKE_GENERATOR STREQUAL "Visual Studio 16 2019")
     install(DIRECTORY "$<TARGET_FILE_DIR:CompressonatorGUI-bin>"
-        DESTINATION "./CompressonatorGUI"
+        DESTINATION "./compressonatorgui"
         USE_SOURCE_PERMISSIONS
     )
 elseif (CMAKE_GENERATOR STREQUAL "Xcode")
     install(DIRECTORY "$<TARGET_BUNDLE_DIR:CompressonatorGUI-bin>"
-        DESTINATION "./CompressonatorGUI"
+        DESTINATION "./compressonatorgui"
         USE_SOURCE_PERMISSIONS
     )
 endif()

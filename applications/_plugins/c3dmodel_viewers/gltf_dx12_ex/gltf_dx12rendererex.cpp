@@ -18,13 +18,13 @@
 // THE SOFTWARE.
 
 
-#include "Misc.h"
-#include "GltfPbr.h"
+#include "misc.h"
+#include "gltfpbr.h"
 #include "bloom.h"
-#include "ThreadPool.h"
-#include "glTF_DX12RendererEx.h"
+#include "threadpool.h"
+#include "gltf_dx12rendererex.h"
 
-#include <DirectXMath.h>
+#include <directxmath.h>
 
 using namespace DirectX;
 

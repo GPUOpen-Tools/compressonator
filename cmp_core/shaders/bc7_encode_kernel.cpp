@@ -40,7 +40,7 @@
 //--------------------------------------
 // Common BC7 Header
 //--------------------------------------
-#include "BC7_Encode_kernel.h"
+#include "bc7_encode_kernel.h"
 
 #ifndef ASPM
 //---------------------------------------------
@@ -50,7 +50,7 @@
 
 #ifndef ASPM_GPU
 // using code for CPU or hybrid (CPU/GPU)
-//#include "BC7.h"
+//#include "bc7.h"
 #endif
 
 

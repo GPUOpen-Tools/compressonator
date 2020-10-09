@@ -21,9 +21,9 @@
 //
 //=====================================================================
 
-#include "cp3DModelView.h"
-#include "cpMainComponents.h"
-#include <gltf/GltfCommon.h>
+#include "cp3dmodelview.h"
+#include "cpmaincomponents.h"
+#include <gltf/gltfcommon.h>
 #include <gltf/tiny_gltf2.h>
 #include <gltf/tiny_gltf2_utils.h>
 //----------------------------------------

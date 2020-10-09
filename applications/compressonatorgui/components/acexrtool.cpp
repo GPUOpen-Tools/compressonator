@@ -1,4 +1,4 @@
-#include "acEXRTool.h"
+#include "acexrtool.h"
 
 acEXRTool::acEXRTool(QWidget *parent)
     : QDialog(parent) {

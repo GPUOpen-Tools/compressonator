@@ -22,13 +22,13 @@
 //
 #include "mesh_tootle.h"
 
-#include "Timer.h"
+#include "timer.h"
 
-#include "ModelData.h"
-#include "TC_PluginAPI.h"
-#include "TC_PluginInternal.h"
-#include "Compressonator.h"
-#include "PluginInterface.h"
+#include "modeldata.h"
+#include "tc_pluginapi.h"
+#include "tc_plugininternal.h"
+#include "compressonator.h"
+#include "plugininterface.h"
 
 #include <stdio.h>
 #include <stdlib.h>

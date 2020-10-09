@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <DirectXMath.h>
+#include <directxmath.h>
 #include <cstdio>
 
 // typical camera class

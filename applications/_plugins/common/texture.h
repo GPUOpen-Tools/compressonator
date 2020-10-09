@@ -21,7 +21,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "PluginInterface.h"
+#include "plugininterface.h"
 
 #ifdef __cplusplus
 extern "C" {

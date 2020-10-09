@@ -6,9 +6,7 @@
 ///
 //==================================================================================
 
-#include "acProgressAnimationWidget.h"
-//#include <acColours.h>
-
+#include "acprogressanimationwidget.h"
 #include <QtWidgets>
 
 #define AC_PROGRESS_ANIM_COEFF 30

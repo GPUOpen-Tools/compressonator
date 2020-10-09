@@ -6,8 +6,8 @@ target_sources(Plugin_CMesh_Tootle PRIVATE
     mesh_tootle.cpp
     mesh_tootle.h
     option.h
-    Timer.cpp
-    Timer.h
+    timer.cpp
+    timer.h
 )
 
 target_include_directories(Plugin_CMesh_Tootle PRIVATE

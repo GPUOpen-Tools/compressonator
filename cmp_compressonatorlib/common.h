@@ -25,9 +25,9 @@
 #define COMMON_H
 
 #ifndef NO_LEGACY_BEHAVIOR
-#include "UseDefinitions.h"
+#include "usedefinitions.h"
 #endif
-#include "Compressonator.h"
+#include "compressonator.h"
 
 #include <stdio.h>
 #include <assert.h>

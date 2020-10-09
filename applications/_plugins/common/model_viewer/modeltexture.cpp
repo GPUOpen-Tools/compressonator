@@ -17,15 +17,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "ModelTexture.h"
+#include "modeltexture.h"
 
-#include "Error.h"
-#include "Misc.h"
-#include "UtilFuncs.h"
+#include "error.h"
+#include "misc.h"
+#include "utilfuncs.h"
 
-#include "Texture.h"
-#include "PluginInterface.h"
-#include "TextureIO.h"
+#include "texture.h"
+#include "plugininterface.h"
+#include "textureio.h"
 
 #include <assert.h>
 #include <sys/types.h>

@@ -6,8 +6,8 @@
 #ifndef _JRT_CORE_H_
 #define _JRT_CORE_H_
 
-#include "JRTCommon.h"
-#include "JRTTriangleIntersection.h"
+#include "jrtcommon.h"
+#include "jrttriangleintersection.h"
 
 struct JRTHitInfo {
     // the triangle that was hit

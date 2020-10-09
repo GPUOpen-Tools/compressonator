@@ -28,16 +28,16 @@
 //////////////////////////////////////////////////////////////////////////////
 #pragma warning(disable:4100)
 
-#include "Common.h"
-#include "Codec_DXT5.h"
+#include "common.h"
+#include "codec_dxt5.h"
 
 #ifdef TEST_CMP_CORE_DECODER
-#include "CMP_Core.h"
+#include "cmp_core.h"
 #endif
 
 #ifdef DXT5_COMPDEBUGGER
 #include "debug.h"
-#include "CompClient.h"
+#include "compclient.h"
 extern CompViewerClient g_CompClient;
 #endif
 

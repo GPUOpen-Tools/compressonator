@@ -34,7 +34,7 @@
 #endif
 
 
-#include "ObjLoader.h"
+#include "objloader.h"
 #include <assert.h>
 #include <cstdio>
 #include <cstring>

@@ -7,7 +7,7 @@
 #define MESH_H
 
 #include "soup.h"
-#include "Timer.h"
+#include "timer.h"
 #include "error.h"
 
 typedef std::vector< std::vector<UINT> > VTArray;

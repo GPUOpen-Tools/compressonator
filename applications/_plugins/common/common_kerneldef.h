@@ -27,7 +27,7 @@
 #ifndef _COMMON_KERNELDEF2_H
 #define _COMMON_KERNELDEF2_H
 
-#include "Common_Def.h"
+#include "common_def.h"
 
 #ifndef ASPM_GPU
 

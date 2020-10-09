@@ -28,7 +28,7 @@
 #define USE_TOOTLE
 #define USE_MESHOPTIMIZER
 
-#include "TC_PluginAPI.h"
+#include "tc_pluginapi.h"
 
 #ifdef USE_MESHOPTIMIZER
 #include "meshoptimizer.h"

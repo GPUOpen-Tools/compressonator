@@ -27,40 +27,40 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "Common.h"
-#include "Codec.h"
-#include "Codec_ATI1N.h"
-#include "Codec_ATI2N.h"
-#include "Codec_ATI2N_DXT5.h"
-#include "Codec_DXT1.h"
-#include "Codec_DXT3.h"
-#include "Codec_DXT5.h"
-#include "Codec_DXT5_xGBR.h"
-#include "Codec_DXT5_RxBG.h"
-#include "Codec_DXT5_RBxG.h"
-#include "Codec_DXT5_xRBG.h"
-#include "Codec_DXT5_RGxB.h"
-#include "Codec_DXT5_xGxR.h"
-#include "Codec_ATC_RGB.h"
-#include "Codec_ATC_RGBA_Explicit.h"
-#include "Codec_ATC_RGBA_Interpolated.h"
-#include "Codec_ETC_RGB.h"
-#include "Codec_ETC2_RGB.h"
-#include "Codec_ETC2_RGBA.h"
-#include "Codec_ETC2_RGBA1.h"
-#include "Codec_BC6H.h"
-#include "Codec_BC7.h"
-#include "ASTC/Codec_ASTC.h"
+#include "common.h"
+#include "codec.h"
+#include "codec_ati1n.h"
+#include "codec_ati2n.h"
+#include "codec_ati2n_dxt5.h"
+#include "codec_dxt1.h"
+#include "codec_dxt3.h"
+#include "codec_dxt5.h"
+#include "codec_dxt5_xgbr.h"
+#include "codec_dxt5_rxbg.h"
+#include "codec_dxt5_rbxg.h"
+#include "codec_dxt5_xrbg.h"
+#include "codec_dxt5_rgxb.h"
+#include "codec_dxt5_xgxr.h"
+#include "codec_atc_rgb.h"
+#include "codec_atc_rgba_explicit.h"
+#include "codec_atc_rgba_interpolated.h"
+#include "codec_etc_rgb.h"
+#include "codec_etc2_rgb.h"
+#include "codec_etc2_rgba.h"
+#include "codec_etc2_rgba1.h"
+#include "codec_bc6h.h"
+#include "codec_bc7.h"
+#include "astc/codec_astc.h"
 
 #ifdef _WIN32  //GT only enabled for win build now
 #ifdef USE_APC
-#include "Codec_APC.h"
+#include "codec_apc.h"
 #endif
 #ifdef USE_GTC
-#include "Codec_GT.h"
+#include "codec_gt.h"
 #endif
 #ifdef USE_BASIS
-#include "Codec_BASIS.h"
+#include "codec_basis.h"
 #endif
 #endif
 

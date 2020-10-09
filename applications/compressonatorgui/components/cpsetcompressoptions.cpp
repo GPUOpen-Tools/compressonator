@@ -20,8 +20,8 @@
 // THE SOFTWARE.
 //
 //=====================================================================
-#include "cpSetCompressOptions.h"
-#include "cpMainComponents.h"
+#include "cpsetcompressoptions.h"
+#include "cpmaincomponents.h"
 
 #include "qtbuttonpropertybrowser.h"
 #include "qteditorfactory.h"
@@ -34,7 +34,7 @@
 #include <QMap>
 #include <QScrollArea>
 
-#include "Common.h"
+#include "common.h"
 
 #include <chrono>
 #include <thread>

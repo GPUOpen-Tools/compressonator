@@ -29,8 +29,8 @@
 #ifndef _Codec_ETC_H_INCLUDED_
 #define _Codec_ETC_H_INCLUDED_
 
-#include "Common.h"
-#include "Codec_Block_4x4.h"
+#include "common.h"
+#include "codec_block_4x4.h"
 
 #ifdef USE_ETCPACK
 #include "etcpack.h"

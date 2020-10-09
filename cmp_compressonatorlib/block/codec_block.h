@@ -29,7 +29,7 @@
 #ifndef _CODEC_BLOCK_H_INCLUDED_
 #define _CODEC_BLOCK_H_INCLUDED_
 
-#include "Codec.h"
+#include "codec.h"
 
 class CCodec_Block : public CCodec {
   public:

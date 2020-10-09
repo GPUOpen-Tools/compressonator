@@ -26,7 +26,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "Version.h"
+#include "version.h"
 #include "tiny_gltf2_utils.h"
 
 #include <algorithm>
@@ -116,7 +116,7 @@ using nlohmann::json;
 #define FILE_SPLIT_PATH "/\\"
 
 #ifdef __APPLE__
-#include "TargetConditionals.h"
+#include "targetconditionals.h"
 #endif
 
 #ifdef __clang__

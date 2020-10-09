@@ -17,8 +17,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "DynamicBufferRingVK.h"
-#include "Misc.h"
+#include "dynamicbufferringvk.h"
+#include "misc.h"
 
 //--------------------------------------------------------------------------------------
 //

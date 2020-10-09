@@ -2,7 +2,7 @@
 #define AC3DMESHANALYSIS_H
 
 #include <QtWidgets>
-#include <QtWidgets/QDialog>
+#include <QtWidgets/qdialog>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <QPushButton>
@@ -10,7 +10,7 @@
 #include <QTextBrowser>
 #include <QString>
 #include <assert.h>
-#include "ModelData.h"
+#include "modeldata.h"
 #include "meshoptimizer.h"
 
 #define DEFAULT_HWVCACHE_SZ          16

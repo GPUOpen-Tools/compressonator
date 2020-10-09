@@ -34,7 +34,7 @@
 #include "vulkanswapchain.hpp"
 #include "vulkandebug.h"
 
-#include <GPU_DecodeBase.h>
+#include <gpu_decodebase.h>
 
 #include <vulkan/vulkan.h>
 #include <glm/gtc/matrix_transform.hpp>

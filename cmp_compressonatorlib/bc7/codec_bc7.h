@@ -28,11 +28,11 @@
 #ifndef _CODEC_BC7_H_INCLUDED_
 #define _CODEC_BC7_H_INCLUDED_
 
-#include "Compressonator.h"
-#include "Codec_DXTC.h"
-#include "BC7_Encode.h"
-#include "BC7_Decode.h"
-#include "BC7_Library.h"
+#include "compressonator.h"
+#include "codec_dxtc.h"
+#include "bc7_encode.h"
+#include "bc7_decode.h"
+#include "bc7_library.h"
 #include <thread>
 
 // #define USE_THREADED_CALLBACKS  // This is experimental code to improve compression performance!

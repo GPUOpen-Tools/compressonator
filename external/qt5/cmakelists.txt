@@ -1,12 +1,12 @@
 # CMakeCustomTargets CMakeLists.txt
 
-message(STATUS "++++++++++++++++++ External-QT" )
+message(STATUS "++++++++++++++++++ External-QT " ${QT_PACKAGE_ROOT} )
 
 #if (NOT DEFINED ENV{QTDIR})
 #    message(FATAL_ERROR "A 'QTDIR' environment variable is required")
 #endif()
 
-find_package(Qt5 COMPONENTS REQUIRED Core )
+find_package(Qt5 COMPONENTS REQUIRED Core HINTS ${QT_PACKAGE_ROOT})
 
 get_target_property(QtCore_location Qt5::Core LOCATION)
 
@@ -40,6 +40,7 @@ endif()
 find_package(Qt5 REQUIRED QUIET
     COMPONENTS Core Gui OpenGL Qml QuickWidgets WebEngineWidgets Widgets Xml
     PATHS ${QT_FIND_ROOT_PATH}
+    HINTS ${QT_PACKAGE_ROOT}
 )
 
 add_library(ExtQt5 INTERFACE)

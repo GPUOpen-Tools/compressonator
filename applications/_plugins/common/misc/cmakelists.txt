@@ -7,8 +7,8 @@ set(LEGACY_LOCATION ..)
 
 target_sources(Plugin_Common_Misc INTERFACE
 
-    ${LEGACY_LOCATION}/Misc.cpp
-    ${LEGACY_LOCATION}/Misc.h
+    ${LEGACY_LOCATION}/misc.cpp
+    ${LEGACY_LOCATION}/misc.h
 )
 
 target_include_directories(Plugin_Common_Misc INTERFACE

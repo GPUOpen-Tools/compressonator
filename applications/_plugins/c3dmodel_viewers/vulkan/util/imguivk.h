@@ -19,9 +19,9 @@
 
 #pragma once
 
-#include "DynamicBufferRingVK.h"
-#include "CommandListRingVK.h"
-#include "UploadHeapVK.h"
+#include "dynamicbufferringvk.h"
+#include "commandlistringvk.h"
+#include "uploadheapvk.h"
 #include "imgui/imgui.h"
 
 // This is the rendering backend for the excellent ImGUI library.

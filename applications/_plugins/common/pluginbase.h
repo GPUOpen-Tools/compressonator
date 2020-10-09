@@ -29,12 +29,12 @@
 #ifndef _PLUGINBASE_H
 #define _PLUGINBASE_H
 
-#include "Compressonator.h"
-#include "Common.h"
+#include "compressonator.h"
+#include "common.h"
 #include <memory>
 
 #ifdef _WIN32
-#include <Windows.h>
+#include <windows.h>
 #else
 typedef int  HWND;
 typedef int* GUID;

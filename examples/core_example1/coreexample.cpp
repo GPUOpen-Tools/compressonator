@@ -30,7 +30,7 @@
 
 #include <stdio.h>
 #include <string>
-#include "CMP_Core.h"
+#include "cmp_core.h"
 
 //------------------------------------------------------------------------------------------------
 // Sample 4x4 shapes first sample is a shape0 pattern (1's and 0's) used for BC6 and BC7 encoding.

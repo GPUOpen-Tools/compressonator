@@ -31,10 +31,10 @@
 #endif
 #include <assert.h>
 
-#include "Compute_Base.h"
-#include "Compute_CPU_HPC.h"
-#include "Compressonator.h"
-#include "PluginInterface.h"
+#include "compute_base.h"
+#include "compute_cpu_hpc.h"
+#include "compressonator.h"
+#include "plugininterface.h"
 #include "cmp_math_common.h"
 //#include "debug.h"
 

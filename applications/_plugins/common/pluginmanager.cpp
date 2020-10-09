@@ -24,8 +24,8 @@
 /// \brief Declares the interface to the Compressonator & ArchitectMF SDK
 //=====================================================================
 
-#include "PluginManager.h"
-#include "PluginInterface.h"
+#include "pluginmanager.h"
+#include "plugininterface.h"
 
 // Windows Header Files:
 #ifdef _WIN32

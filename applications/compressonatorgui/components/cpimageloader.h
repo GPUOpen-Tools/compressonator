@@ -27,13 +27,13 @@
 
 #include "stdlib.h"
 
-#include "Compressonator.h"
-#include "Common.h"
+#include "compressonator.h"
+#include "common.h"
 
 #include "cmdline.h"
-#include "PluginManager.h"
-#include "TC_PluginAPI.h"
-#include "TextureIO.h"
+#include "pluginmanager.h"
+#include "tc_pluginapi.h"
+#include "textureio.h"
 
 #include <vector>
 #include <string>

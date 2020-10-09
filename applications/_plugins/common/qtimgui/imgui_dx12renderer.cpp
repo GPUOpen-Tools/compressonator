@@ -22,16 +22,16 @@
 //
 // Copyright(c) 2014 - 2018 Omar Cornut
 
-#include "ImGui_DX12Renderer.h"
+#include "imgui_dx12renderer.h"
 
 #include <wrl.h>
 
 #include <QtCore/qdatetime.h>
-#include <Qtgui/QGuiApplication.h>
+#include <Qtgui/qguiapplication.h>
 #include <QtGui/qevent.h>
-#include <Qtgui/QClipboard.h>
-#include <Qtgui/QCursor.h>
-#include <QtCore/QDebug.h>
+#include <Qtgui/qclipboard.h>
+#include <Qtgui/qcursor.h>
+#include <QtCore/qdebug.h>
 
 // DirectX
 #include <d3d11.h>

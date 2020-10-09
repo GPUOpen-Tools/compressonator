@@ -7,9 +7,9 @@ set(LEGACY_LOCATION ../)
 
 target_sources(Plugin_Common_cExr INTERFACE
 
-    ${LEGACY_LOCATION}/cExr.cpp
-    ${LEGACY_LOCATION}/cExr.h
-    ${LEGACY_LOCATION}/namespaceAlias.h
+    ${LEGACY_LOCATION}/cexr.cpp
+    ${LEGACY_LOCATION}/cexr.h
+    ${LEGACY_LOCATION}/namespacealias.h
 )
 
 target_include_directories(Plugin_Common_cExr INTERFACE

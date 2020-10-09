@@ -31,10 +31,10 @@
 #define ALIGN16 __declspec(align(16))
 #endif
 
-#include "JMLVec2.h"
-#include "JMLVec3.h"
-#include "JMLMatrix.h"
-#include "JMLFuncs.h"
+#include "jmlvec2.h"
+#include "jmlvec3.h"
+#include "jmlmatrix.h"
+#include "jmlfuncs.h"
 
 
 

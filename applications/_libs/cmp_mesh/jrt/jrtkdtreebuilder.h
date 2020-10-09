@@ -6,7 +6,7 @@
 #ifndef _JRT_KDTREE_BUILDER_H_
 #define _JRT_KDTREE_BUILDER_H_
 
-#include "JRTCommon.h"
+#include "jrtcommon.h"
 
 class JRTMesh;
 class JRTKDTree;

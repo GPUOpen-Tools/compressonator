@@ -19,10 +19,10 @@
 
 #pragma once
 
-#include "ResourceViewHeapsDX12.h"
-#include "DynamicBufferRingDX12.h"
-#include "CommandListRingDX12.h"
-#include "UploadHeapDX12.h"
+#include "resourceviewheapsdx12.h"
+#include "dynamicbufferringdx12.h"
+#include "commandlistringdx12.h"
+#include "uploadheapdx12.h"
 
 #include "imgui/imgui.h"
 

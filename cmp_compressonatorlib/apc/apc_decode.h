@@ -25,7 +25,7 @@
 #ifndef _APC_DECODE_H_
 #define _APC_DECODE_H_
 
-#include "APC_Definitions.h"
+#include "apc_definitions.h"
 
 class APCBlockDecoder {
   public:

@@ -40,9 +40,9 @@
 #include <windows.h>
 #endif
 
-#include "Compressonator.h"
-#include "Common.h"
-#include "TC_PluginAPI.h"
+#include "compressonator.h"
+#include "common.h"
+#include "tc_pluginapi.h"
 
 #if _MSC_VER > 1000
 #pragma once

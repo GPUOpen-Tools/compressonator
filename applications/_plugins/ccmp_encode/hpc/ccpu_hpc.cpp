@@ -22,10 +22,10 @@
 //=====================================================================
 #include <stdio.h>
 #include <stdlib.h>
-#include "TC_PluginAPI.h"
-#include "TC_PluginInternal.h"
-#include "Compressonator.h"
-#include "CCPU_HPC.h"
+#include "tc_pluginapi.h"
+#include "tc_plugininternal.h"
+#include "compressonator.h"
+#include "ccpu_hpc.h"
 
 CMIPS *CMips = NULL;
 

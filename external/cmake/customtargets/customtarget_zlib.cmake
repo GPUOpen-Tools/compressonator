@@ -4,7 +4,7 @@
 #                      Z L I B
 # ====================================================
 set(ZLIB_VERSION 1.2.10)
-get_filename_component(ZLIB_CMP_DIR ${COMPRESSONATOR_PROJECT_DIR}/External/zlib ABSOLUTE)
+get_filename_component(ZLIB_CMP_DIR ${COMPRESSONATOR_PROJECT_DIR}/external/zlib ABSOLUTE)
 get_filename_component(ZLIB_DIR ${ZLIB_CMP_DIR}/zlib-submodule ABSOLUTE)
 
 set(ZLIB_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/zlib-${ZLIB_VERSION})

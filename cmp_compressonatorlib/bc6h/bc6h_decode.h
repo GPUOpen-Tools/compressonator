@@ -26,8 +26,8 @@
 #define _BC6H_DECODE_H_
 
 #include <float.h>
-#include "BC6H_Library.h"
-#include "BC6H_Definitions.h"
+#include "bc6h_library.h"
+#include "bc6h_definitions.h"
 
 class BC6HBlockDecoder {
   public:

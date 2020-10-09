@@ -29,14 +29,14 @@
 #include <windows.h>
 #endif
 
-#include "CAnalysis.h"
+#include "canalysis.h"
 
-#include "PluginInterface.h"
-#include "PluginManager.h"
-#include "SSIM.h"
-#include "TextureIO.h"
+#include "plugininterface.h"
+#include "pluginmanager.h"
+#include "ssim.h"
+#include "textureio.h"
 
-#include "cpImageLoader.h"
+#include "cpimageloader.h"
 
 #ifdef USE_OPENCV
 #include "cvmatandqimage.h"

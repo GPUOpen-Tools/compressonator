@@ -33,7 +33,7 @@
 #include <QGraphicsView>
 #include <QGraphicsRectItem>
 #include <QGLWidget>
-#include "cpProjectData.h"
+#include "cpprojectdata.h"
 
 extern C_Application_Options g_Application_Options;
 

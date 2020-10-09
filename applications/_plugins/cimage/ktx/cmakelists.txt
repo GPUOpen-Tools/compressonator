@@ -1,11 +1,13 @@
 
 add_library(Plugin_CImage_KTX)
 
-add_dependencies(Plugin_CImage_KTX extern_ktx)
+if (CMP_HOST_WINDOWS)
+    add_dependencies(Plugin_CImage_KTX extern_ktx)
+endif()
 
 target_sources(Plugin_CImage_KTX PRIVATE
-    KTX.cpp
-    cKTX.h
+    ktx.cpp
+    cktx.h
     softfloat.cpp
     softfloat.h
 )

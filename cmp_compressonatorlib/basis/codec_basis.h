@@ -28,11 +28,11 @@
 #ifndef _CODEC_BASIS_H_INCLUDED_
 #define _CODEC_BASIS_H_INCLUDED_
 
-#include "Compressonator.h"
+#include "compressonator.h"
 
 #ifdef USE_BASIS
 
-#include "Codec_DXTC.h"
+#include "codec_dxtc.h"
 
 class CCodec_BASIS : public CCodec_DXTC {
   public:

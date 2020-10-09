@@ -2,7 +2,7 @@ add_executable(core_example1)
 
 target_sources(core_example1
     PRIVATE
-        CoreExample.cpp
+        coreexample.cpp
 )
 
 target_link_libraries(core_example1

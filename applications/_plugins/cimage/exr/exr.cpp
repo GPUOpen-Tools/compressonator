@@ -62,13 +62,13 @@ IMath.lib;Half.lib;IlmImf.lib;IlmThread.lib;Iex.lib;zlibstatic_d.lib;
 #include "EXR.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "TC_PluginAPI.h"
-#include "TC_PluginInternal.h"
+#include "tc_pluginapi.h"
+#include "tc_plugininternal.h"
 
-#include "Common.h"
+#include "common.h"
 
 #include <string>
-#include "cExr.h"
+#include "cexr.h"
 
 #pragma warning( push )
 #pragma warning(disable:4100)
@@ -89,7 +89,7 @@ IMath.lib;Half.lib;IlmImf.lib;IlmThread.lib;Iex.lib;zlibstatic_d.lib;
 #pragma warning( pop )
 
 
-#include "Common.h"
+#include "common.h"
 
 CMIPS *EXR_CMips = NULL;
 

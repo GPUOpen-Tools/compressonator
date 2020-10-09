@@ -27,34 +27,34 @@
 #include <QtWidgets>
 #include <QMainWindow>
 #include <QtXml/QDomDocument>
-#include "cpImagePropertyView.h"
-#include "cpGenMips.h"
-#include "cpSetCompressOptions.h"
-#include "cpSetApplicationOptions.h"
-#include "cpProjectView.h"
-#include "cpImageView.h"
-#include "cp3DModelView.h"
-#include "cp3DModelCompare.h"
-#include "cpWelcomePage.h"
-#include "cpImageCompare.h"
-#include "cpCompressStatus.h"
-#include "acAboutDlg.h"
-#include "acProgressDlg.h"
+#include "cpimagepropertyview.h"
+#include "cpgenmips.h"
+#include "cpsetcompressoptions.h"
+#include "cpsetapplicationoptions.h"
+#include "cpprojectview.h"
+#include "cpimageview.h"
+#include "cp3dmodelview.h"
+#include "cp3dmodelcompare.h"
+#include "cpwelcomepage.h"
+#include "cpimagecompare.h"
+#include "cpcompressstatus.h"
+#include "acaboutdlg.h"
+#include "acprogressdlg.h"
 #include "cmdline.h"
-#include "UtilFuncs.h"
+#include "utilfuncs.h"
 
 #include <QTimer>
-#include "acCustomDockWidget.h"
+#include "accustomdockwidget.h"
 // //Reserved: GPUDecode
 
 // Common Project Data Types
-#include "cpProjectData.h"
+#include "cpprojectdata.h"
 
 // File Menu
 #include <QMenu>
 
 #ifdef USE_3DCONVERT
-#include "cp3DModelConvert.h"
+#include "cp3dmodelconvert.h"
 #endif
 // #define ENABLE_AGS_SUPPORT
 #ifdef ENABLE_AGS_SUPPORT

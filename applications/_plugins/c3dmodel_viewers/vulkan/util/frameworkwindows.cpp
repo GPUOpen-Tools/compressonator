@@ -18,7 +18,7 @@
 // THE SOFTWARE.
 
 
-#include "FrameworkWindows.h"
+#include "frameworkwindows.h"
 
 // LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 

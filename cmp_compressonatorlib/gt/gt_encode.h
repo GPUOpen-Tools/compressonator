@@ -29,7 +29,7 @@
 #define _GT_ENCODE_H_
 
 #include <float.h>
-#include "GT_Definitions.h"
+#include "gt_definitions.h"
 
 class GTCBlockEncoder {
   public:

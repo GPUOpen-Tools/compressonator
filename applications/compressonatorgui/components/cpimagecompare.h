@@ -28,11 +28,11 @@
 
 #include <QObject>
 #include <QtWidgets>
-#include "cpImageView.h"
-#include "cpImageAnalysis.h"
-#include "acCustomDockWidget.h"
-#include "cpProjectData.h"
-#include "CMP_FileIO.h"
+#include "cpimageview.h"
+#include "cpimageanalysis.h"
+#include "accustomdockwidget.h"
+#include "cpprojectdata.h"
+#include "cmp_fileio.h"
 
 class CImageCompare : public acCustomDockWidget {
     Q_OBJECT

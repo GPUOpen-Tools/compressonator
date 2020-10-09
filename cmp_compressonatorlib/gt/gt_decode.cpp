@@ -25,7 +25,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "GT_Decode.h"
+#include "gt_decode.h"
 
 void (*GTC_DecompressBlock)( void *in, void *out) = NULL;
 

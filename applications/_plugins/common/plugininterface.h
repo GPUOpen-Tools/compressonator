@@ -29,12 +29,12 @@
 #ifndef _PLUGININTERFACE_H
 #define _PLUGININTERFACE_H
 
-#include "Common.h"
-#include "Compressonator.h"
+#include "common.h"
+#include "compressonator.h"
 
-#include "PluginBase.h"
-#include "PluginManager.h"
-#include "Texture.h"
+#include "pluginbase.h"
+#include "pluginmanager.h"
+#include "texture.h"
 
 #define TC_API_VERSION_MAJOR 1
 #define TC_API_VERSION_MINOR 4
@@ -116,7 +116,7 @@ class PluginInterface_Filters : PluginBase {
     virtual ~PluginInterface_Filters() {}
     virtual int TC_PluginSetSharedIO(void* Shared) = 0;
     virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
-    virtual int TC_GenerateMIPLevels(CMP_MipSet * pMipSet, CMP_CFilterParams* FilterParams) = 0;
+    virtual int TC_CFilter(CMP_MipSet* pMipSet, CMP_MipSet* pMipSetDst, CMP_CFilterParams* FilterParams) = 0;
 };
 
 

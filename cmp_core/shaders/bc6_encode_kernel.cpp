@@ -20,7 +20,7 @@
 // THE SOFTWARE.
 //
 //=====================================================================
-#include "BC6_Encode_kernel.h"
+#include "bc6_encode_kernel.h"
 
 #ifdef ASPM_GPU
 void memset(CGU_UINT8 *srcdata, CGU_UINT8 value, CGU_INT size) {

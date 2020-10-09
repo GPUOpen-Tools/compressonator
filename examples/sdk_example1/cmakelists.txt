@@ -8,14 +8,14 @@ add_dependencies(sdk_example1 dds_helper)
 
 target_sources(sdk_example1
     PRIVATE
-        SDK_Example1.cpp
+        sdk_example1.cpp
 )
 
 target_include_directories(sdk_example1 PUBLIC
     ./
-    ${PROJECT_SOURCE_DIR}/CMP_CompressonatorLib/            # Source based path
-    ${PROJECT_SOURCE_DIR}/Examples/common/                  # Source based path
-    ${COMPRESSONATOR_ROOT}/SDK/include/                     # Installer based path
+    ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib/            # source based path
+    ${PROJECT_SOURCE_DIR}/examples/common/                  # source based path
+    ${COMPRESSONATOR_ROOT}/sdk/include/                     # installer based path
 )
 
 

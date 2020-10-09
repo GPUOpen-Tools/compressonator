@@ -26,9 +26,9 @@
 #ifndef H_GPU_OPENGL
 #define H_GPU_OPENGL
 
-#include "GPU_DecodeBase.h"
-#include "GPU_Decode.h"
-#include "Compressonator.h"
+#include "gpu_decodebase.h"
+#include "gpu_decode.h"
+#include "compressonator.h"
 
 namespace GPU_Decode {
 class GPU_OpenGL : public RenderWindow {

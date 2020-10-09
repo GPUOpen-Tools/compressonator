@@ -30,9 +30,9 @@
 #endif
 
 #include "cmdline.h"
-#include "PluginManager.h"
-#include "TextureIO.h"
-#include "Version.h"
+#include "pluginmanager.h"
+#include "textureio.h"
+#include "version.h"
 
 #if defined(WIN32) && !defined(NO_LEGACY_BEHAVIOR)
 #define USE_QT_IMAGELOAD

@@ -48,7 +48,7 @@
 // Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
-#include "CDirectX.h"
+#include "cdirectx.h"
 #include "stdio.h"
 #include "minwindef.h"  // max,min
 #include <comdef.h>

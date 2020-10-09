@@ -1,10 +1,10 @@
 
 add_library(Plugin_CMP_EncodeGPU INTERFACE)
 
-add_subdirectory(DirectX)
-#target_link_libraries(Plugin_CMP_GPU INTERFACE Plugin_CMP_GPU_DXC)
+if (OPTION_CMP_DIRECTX)
+add_subdirectory(directx)
+endif()
 
-add_subdirectory(OpenCL)
-#target_link_libraries(Plugin_CMP_GPU INTERFACE Plugin_CMP_GPU_OCL)
+add_subdirectory(opencl)
 
-add_subdirectory(GpuHW)
+add_subdirectory(gpuhw)

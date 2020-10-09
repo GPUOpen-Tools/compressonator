@@ -29,7 +29,7 @@
 // This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 //=====================================================================
 
-#include "GPU_Vulkan.h"
+#include "gpu_vulkan.h"
 
 #pragma comment(lib, "opengl32.lib")        // Open GL Link requirements in Base Code
 

@@ -29,10 +29,10 @@
 #include "qtgroupboxpropertybrowser.h"
 #include "objectcontroller.h"
 #include <QtWidgets>
-#include "PluginManager.h"
-#include "Compressonator.h"
-#include "Common.h"
-#include "cpProjectData.h"
+#include "pluginmanager.h"
+#include "compressonator.h"
+#include "common.h"
+#include "cpprojectdata.h"
 
 class CSetCompressOptions : public QDialog {
     Q_OBJECT

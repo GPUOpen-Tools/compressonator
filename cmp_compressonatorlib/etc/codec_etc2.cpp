@@ -26,7 +26,7 @@
 //  Description: implementation of the CCodec_ETC2 class
 //
 
-#include "Codec_ETC2.h"
+#include "codec_etc2.h"
 
 #pragma warning( push )
 #pragma warning(disable:4244)

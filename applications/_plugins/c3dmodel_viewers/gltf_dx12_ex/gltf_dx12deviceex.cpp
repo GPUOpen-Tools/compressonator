@@ -18,19 +18,19 @@
 // THE SOFTWARE.
 
 
-#include "GltfFeatures.h"
+#include "gltffeatures.h"
 
-#include "glTF_DX12DeviceEx.h"
+#include "gltf_dx12deviceex.h"
 
-#include "GltfCommon.h"
-#include "Misc.h"
+#include "gltfcommon.h"
+#include "misc.h"
 
 #ifdef ENABLE_RENDER_CODE
-#include "glTF_DX12RendererEx.h"
+#include "gltf_dx12rendererex.h"
 #endif
 
-#include <DXGIDebug.h>
-#include <DirectXMath.h>
+#include <dxgidebug.h>
+#include <directxmath.h>
 
 using namespace DirectX;
 

@@ -23,7 +23,7 @@
 #ifndef  QTIMGUI_H
 #define  QTIMGUI_H
 
-#include "ImGui_DX12Renderer.h"
+#include "imgui_dx12renderer.h"
 #include "QtWidgets/qwidget.h"
 
 class QWidget;

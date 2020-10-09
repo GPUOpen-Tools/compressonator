@@ -3,7 +3,7 @@ add_library(Plugin_C3DModel_Loaders INTERFACE)
 
 if (CMP_HOST_WINDOWS)
     add_subdirectory(drc)
-    add_subdirectory(glTF_20)
+    add_subdirectory(gltf_20)
     add_subdirectory(obj)
 
     target_link_libraries(Plugin_C3DModel_Loaders INTERFACE

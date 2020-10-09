@@ -24,7 +24,7 @@
 #ifndef _PLUGIN_IMAGE_ASTC_H
 #define _PLUGIN_IMAGE_ASTC_H
 
-#include "PluginInterface.h"
+#include "plugininterface.h"
 #include "stdint.h"
 
 // {3C9D75E9-D2CB-43F2-B371-D8D38FC8F306}

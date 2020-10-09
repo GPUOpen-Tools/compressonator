@@ -25,7 +25,7 @@
 //=====================================================================
 
 // mymodel.cpp
-#include "acTableImageDataModel.h"
+#include "actableimagedatamodel.h"
 
 acTableImageDataModel::acTableImageDataModel(int rowsize, int colsize, QObject *parent)
     :QAbstractTableModel(parent) {

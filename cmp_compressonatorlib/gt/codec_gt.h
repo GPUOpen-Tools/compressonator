@@ -28,10 +28,10 @@
 #ifndef _CODEC_GTC_H_INCLUDED_
 #define _CODEC_GTC_H_INCLUDED_
 
-#include "Compressonator.h"
-#include "Codec_DXTC.h"
-#include "GT_Encode.h"
-#include "GT_Decode.h"
+#include "compressonator.h"
+#include "codec_dxtc.h"
+#include "gt_encode.h"
+#include "gt_decode.h"
 
 #include <thread>
 

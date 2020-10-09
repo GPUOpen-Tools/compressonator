@@ -71,8 +71,8 @@ the use of this software, even if advised of the possibility of such damage.
 ========================================================================================
 */
 
-#include "TestReport.h"
-#include "SSIM.h"
+#include "testreport.h"
+#include "ssim.h"
 
 void getMSE_PSNR( const Mat& I1, const Mat& I2, double  &mse, double &psnr) {
     Mat s1;

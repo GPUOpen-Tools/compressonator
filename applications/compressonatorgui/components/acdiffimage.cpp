@@ -1,5 +1,5 @@
 #include "acDiffImage.h"
-#include "cpProjectView.h"
+#include "cpprojectview.h"
 acDiffImage::acDiffImage(QWidget *parent)
     : QDialog(parent) {
     m_parent = parent;

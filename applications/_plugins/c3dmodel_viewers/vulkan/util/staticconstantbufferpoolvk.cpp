@@ -18,7 +18,7 @@
 // THE SOFTWARE.
 
 
-#include "StaticConstantBufferPoolVK.h"
+#include "staticconstantbufferpoolvk.h"
 
 #define ALIGN(a) ((a + 255) & ~255)
 

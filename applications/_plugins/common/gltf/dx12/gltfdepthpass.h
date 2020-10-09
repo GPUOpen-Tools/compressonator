@@ -18,8 +18,8 @@
 // THE SOFTWARE.
 #pragma once
 
-#include "GltfCommon.h"
-#include "GltfTechnique.h"
+#include "gltfcommon.h"
+#include "gltftechnique.h"
 
 #include <d3d12.h>
 #include <wrl.h>

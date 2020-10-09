@@ -38,11 +38,11 @@
 #include "draco/io/point_cloud_io.h"
 #pragma warning( pop )
 
-#include "PluginInterface.h"
-#include "TC_PluginAPI.h"
-#include "TC_PluginInternal.h"
-#include "Compressonator.h"
-#include "ModelData.h"
+#include "plugininterface.h"
+#include "tc_pluginapi.h"
+#include "tc_plugininternal.h"
+#include "compressonator.h"
+#include "modeldata.h"
 
 using namespace draco;
 

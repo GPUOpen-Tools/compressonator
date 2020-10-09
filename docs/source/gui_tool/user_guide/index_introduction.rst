@@ -5,7 +5,7 @@ Introduction
    :maxdepth: 4
    :name: toc-GUI_Introduction
 
-   Introduction
+   introduction
 
 
 This guide provides detailed information on the Compressonator GUI

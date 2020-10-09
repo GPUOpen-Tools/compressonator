@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <Windows.h>
+#include <windows.h>
 #include <d3dx12.h>
 
 // Simulates DX11 style static buffers. For dynamic buffers please see 'DynamicBufferRingDX12.h'

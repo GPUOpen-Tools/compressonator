@@ -23,11 +23,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "Compressonator.h"
-#include "Common.h"
-#include "TC_PluginAPI.h"
-#include "TC_PluginInternal.h"
-#include "COpenCL.h"
+#include "compressonator.h"
+#include "common.h"
+#include "tc_pluginapi.h"
+#include "tc_plugininternal.h"
+#include "copencl.h"
 
 
 

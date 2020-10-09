@@ -22,7 +22,7 @@
 // THE SOFTWARE.
 //
 
-#include "D3D9Module.h"
+#include "d3d9module.h"
 
 CD3D9Module::CD3D9Module(void) : CModule() {
     m_pDirect3DCreate9 = NULL;

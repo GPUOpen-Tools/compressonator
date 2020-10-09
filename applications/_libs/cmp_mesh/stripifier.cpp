@@ -9,7 +9,7 @@
 //          Includes / defines / typedefs / static member variable initialization block
 //
 //=================================================================================================================================
-#include "Stripifier.h"
+#include "stripifier.h"
 
 static const int START = 0;
 static const int LEFT = 1;

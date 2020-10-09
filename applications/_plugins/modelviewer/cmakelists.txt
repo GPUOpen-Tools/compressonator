@@ -3,12 +3,12 @@
 add_library(Plugin_Model_Viewer)
 
 # This is the current location of these files. They should be moved here
-set(LEGACY_LOCATION ../Common/model_viewer)
+set(LEGACY_LOCATION ../common/model_viewer)
 
 target_sources(Plugin_Model_Viewer PRIVATE
 
-    ${LEGACY_LOCATION}/ModelTexture.cpp
-    ${LEGACY_LOCATION}/ModelTexture.h
+    ${LEGACY_LOCATION}/modeltexture.cpp
+    ${LEGACY_LOCATION}/modeltexture.h
 )
 
 target_include_directories(Plugin_Model_Viewer PUBLIC

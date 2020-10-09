@@ -22,13 +22,13 @@
 //
 // Copyright(c) 2014 - 2018 Omar Cornut
 
-#include "ImGui_OpenGLRenderer.h"
+#include "imgui_openglrenderer.h"
 #include <QtCore/qdatetime.h>
-#include <Qtgui/QGuiApplication.h>
+#include <Qtgui/qguiapplication.h>
 #include <QtGui/qevent.h>
-#include <Qtgui/QClipboard.h>
-#include <Qtgui/QCursor.h>
-#include <QtCore/QDebug.h>
+#include <Qtgui/qclipboard.h>
+#include <Qtgui/qcursor.h>
+#include <QtCore/qdebug.h>
 
 namespace qtimgui_opengl {
 QHash<int, ImGuiKey> keyMap = {

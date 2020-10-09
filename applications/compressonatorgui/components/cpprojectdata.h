@@ -35,16 +35,16 @@
 #include "objectcontroller.h"
 #include <QtWidgets>
 #include <QQmlListProperty>
-#include "PluginManager.h"
-#include "cpImageLoader.h"
-#include "ATIFormats.h"
-#include "TextureIO.h"
-#include "Common.h"
+#include "pluginmanager.h"
+#include "cpimageloader.h"
+#include "atiformats.h"
+#include "textureio.h"
+#include "common.h"
 // JSon
 #include "json/json.h"
 // Mesh
 #include "cmp_mesh.h"
-#include "ModelData.h"
+#include "modeldata.h"
 
 
 

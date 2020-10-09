@@ -29,7 +29,7 @@
 #ifndef _CODECBUFFER_RGB888_H_INCLUDED_
 #define _CODECBUFFER_RGB888_H_INCLUDED_
 
-#include "CodecBuffer.h"
+#include "codecbuffer.h"
 
 class CCodecBuffer_RGB888 : public CCodecBuffer {
   public:

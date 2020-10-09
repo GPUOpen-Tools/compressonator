@@ -18,9 +18,9 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "PostProcPS.h"
+#include "postprocps.h"
 
-#include "DynamicBufferRingDX12.h"
+#include "dynamicbufferringdx12.h"
 
 #include <d3d12.h>
 

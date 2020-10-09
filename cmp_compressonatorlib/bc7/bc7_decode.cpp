@@ -25,15 +25,15 @@
 //  BC7_Decode.cpp : A reference decoder for BC7
 //
 
-#include "BC7_Definitions.h"
-#include "BC7_Partitions.h"
-#include "BC7_Decode.h"
-#include "BC7_utils.h"
+#include "bc7_definitions.h"
+#include "bc7_partitions.h"
+#include "bc7_decode.h"
+#include "bc7_utils.h"
 
-#include "Common.h"
+#include "common.h"
 
 #ifdef TEST_CMP_CORE_DECODER
-#include "CMP_Core.h"
+#include "cmp_core.h"
 #endif
 
 // Enable this to print info about the decoded blocks

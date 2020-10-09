@@ -29,7 +29,7 @@
 #ifndef _CODECBUFFER_RGBA8888_H_INCLUDED_
 #define _CODECBUFFER_RGBA8888_H_INCLUDED_
 
-#include "CodecBuffer.h"
+#include "codecbuffer.h"
 
 class CCodecBuffer_RGBA8888 : public CCodecBuffer {
   public:

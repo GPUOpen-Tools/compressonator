@@ -27,13 +27,13 @@
 #ifndef H_GPU_DIRECTX
 #define H_GPU_DIRECTX
 
-#include <GPU_DecodeBase.h>
-#include <DirectXTex.h>
+#include <gpu_decodebase.h>
+#include <directxtex.h>
 
 #include <dxgiformat.h>
 #include <d3d11.h>
 #include <directxmath.h>
-#include <Windows.h>
+#include <windows.h>
 
 #include <stdio.h>
 

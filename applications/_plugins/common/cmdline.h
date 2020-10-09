@@ -28,9 +28,9 @@
 #include <tchar.h>
 #endif
 
-#include <Compressonator.h>
-#include <Common.h>
-#include <GPU_Decode.h>
+#include <compressonator.h>
+#include <common.h>
+#include <gpu_decode.h>
 
 #include <string>
 

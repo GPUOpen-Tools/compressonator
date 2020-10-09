@@ -28,11 +28,11 @@
 
 #include <assert.h>
 #include <tchar.h>
-#include "Compressonator.h"
-#include "Common.h"
-#include "Compute_Base.h"
-#include "Compute_DirectX.h"
-#include "PluginInterface.h"
+#include "compressonator.h"
+#include "common.h"
+#include "compute_base.h"
+#include "compute_directX.h"
+#include "plugininterface.h"
 
 
 // {21DE462B-D6C5-4F2A-99A6-2514F087946E}

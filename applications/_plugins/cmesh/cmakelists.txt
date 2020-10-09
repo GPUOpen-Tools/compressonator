@@ -10,7 +10,7 @@ target_link_libraries(Plugin_CMesh INTERFACE
 )
 
 if (OPTION_CMP_DIRECTX)
-    add_subdirectory(Tootle)
+    add_subdirectory(tootle)
     target_link_libraries(Plugin_CMesh INTERFACE 
         Plugin_CMesh_Tootle
     )

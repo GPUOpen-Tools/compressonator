@@ -1,5 +1,5 @@
 
-#include "PSNR.h"
+#include "psnr.h"
 
 #include <opencv2/core/core.hpp>
 

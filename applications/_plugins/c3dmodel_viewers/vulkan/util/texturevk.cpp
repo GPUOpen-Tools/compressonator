@@ -23,10 +23,10 @@
 // http://go.microsoft.com/fwlink/?LinkId=248926
 // http://go.microsoft.com/fwlink/?LinkId=248929
 
-#include "TextureVK.h"
-#include "GltfFeatures.h"
-#include "Misc.h"
-#include "UtilFuncs.h"
+#include "texturevk.h"
+#include "gltffeatures.h"
+#include "misc.h"
+#include "utilfuncs.h"
 #include "dxgi.h"
 #include <assert.h>
 #include <stdio.h>

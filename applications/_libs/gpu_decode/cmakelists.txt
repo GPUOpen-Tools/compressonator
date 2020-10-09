@@ -3,18 +3,18 @@ add_library(GPU_Decode)
 
 target_sources(GPU_Decode
 PRIVATE
-    GPU_Decode.cpp
-    GPU_Decode.h
-    GPU_DecodeBase.cpp
-    GPU_DecodeBase.h
+    gpu_decode.cpp
+    gpu_decode.h
+    gpu_decodebase.cpp
+    gpu_decodebase.h
 )
 
 target_include_directories(GPU_Decode
 PUBLIC
     ./
-     ${PROJECT_SOURCE_DIR}/CMP_CompressonatorLib
-     ${PROJECT_SOURCE_DIR}/CMP_Framework/Common
-     ${PROJECT_SOURCE_DIR}/CMP_Framework/Common/half
+     ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
+     ${PROJECT_SOURCE_DIR}/cmp_framework/common
+     ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
 )
 
 target_link_libraries(GPU_Decode

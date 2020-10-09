@@ -31,8 +31,8 @@
 #ifndef _BC6H_LIBRARY_H_
 #define _BC6H_LIBRARY_H_
 
-#include "Compressonator.h"
-#include "BC6H_Definitions.h"
+#include "compressonator.h"
+#include "bc6h_definitions.h"
 
 // Maximum number of threads supported by the compressor
 #define BC6H_MAX_THREADS     128

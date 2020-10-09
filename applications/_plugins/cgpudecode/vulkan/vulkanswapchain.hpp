@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <Compressonator.h>
+#include <compressonator.h>
 
 #include <stdlib.h>
 #include <string>

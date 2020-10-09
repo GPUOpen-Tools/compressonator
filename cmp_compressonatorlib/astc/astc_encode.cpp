@@ -28,12 +28,12 @@
 #include <assert.h>
 #include <float.h>
 #include <math.h>
-#include "ASTC_Encode.h"
-#include "ASTC_Definitions.h"
+#include "astc_encode.h"
+#include "astc_definitions.h"
 #include "softfloat.h"
 
-#include "ASTC_Encode_Kernel.h"
-#include "ASTC_Host.h"
+#include "astc_encode_kernel.h"
+#include "astc_host.h"
 
 #ifdef ASTC_COMPDEBUGGER
 #include "compclient.h"

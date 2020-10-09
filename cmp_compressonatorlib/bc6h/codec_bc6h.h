@@ -28,11 +28,11 @@
 #if !defined(_CODEC_BC6H_H_INCLUDED_)
 #define _CODEC_BC6H_H_INCLUDED_
 
-#include "Compressonator.h"
-#include "Codec_DXTC.h"
-#include "BC6H_Encode.h"
-#include "BC6H_Decode.h"
-#include "BC6H_Library.h"
+#include "compressonator.h"
+#include "codec_dxtc.h"
+#include "bc6h_encode.h"
+#include "bc6h_decode.h"
+#include "bc6h_library.h"
 
 #include <thread>
 

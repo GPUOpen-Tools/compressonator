@@ -1,10 +1,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "TC_PluginAPI.h"
-#include "TC_PluginInternal.h"
-#include "Compressonator.h"
-#include "TGA.h"
+#include "tc_pluginapi.h"
+#include "tc_plugininternal.h"
+#include "compressonator.h"
+#include "tga.h"
 
 CMIPS *TGA_CMips;
 TGA_FileSaveParams g_FileSaveParams;
@@ -69,7 +69,7 @@ int Plugin_TGA::TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *s
     return 0;
 }
 
-// #include "LoadTGA.h"
+// #include "loadtga.h"
 
 int Plugin_TGA::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSet) {
     CMP_CMIPS lCMips;

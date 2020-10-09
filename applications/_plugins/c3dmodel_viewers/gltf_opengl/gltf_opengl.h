@@ -24,8 +24,8 @@
 #define _GLTF_OPENGL_H
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "PluginInterface.h"
-#include "glTF_OGLDevice.h"
+#include "plugininterface.h"
+#include "gltf_ogldevice.h"
 
 #ifdef _WIN32
 // {79436B32-C8E1-45C9-99E3-AAA56B076A05}

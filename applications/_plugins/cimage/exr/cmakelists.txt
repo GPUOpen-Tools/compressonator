@@ -3,8 +3,8 @@ add_library(Plugin_CImage_EXR)
 
 target_sources(Plugin_CImage_EXR PRIVATE
 
-    EXR.h
-    EXR.cpp
+    exr.h
+    exr.cpp
 )
 
 target_link_libraries(Plugin_CImage_EXR PRIVATE

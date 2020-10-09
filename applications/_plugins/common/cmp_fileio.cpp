@@ -26,10 +26,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "CMP_FileIO.h"
+#include "cmp_fileio.h"
 
 #ifdef _WIN32
-#include "Windows.h"
+#include "windows.h"
 #include <stdio.h>
 
 #include <direct.h>

@@ -27,7 +27,7 @@
 #include <QIcon>
 #include <QMap>
 #include <QDesktopServices>
-#include "cpWelcomePage.h"
+#include "cpwelcomepage.h"
 
 
 CWelcomePage::CWelcomePage(const QString title, QWidget *parent)

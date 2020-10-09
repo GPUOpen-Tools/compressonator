@@ -26,10 +26,10 @@
 #ifndef _PLUGIN_COMPUTE_BC2_H
 #define _PLUGIN_COMPUTE_BC2_H
 
-#include "Common_Def.h"
-#include "PluginInterface.h"
-#include "BC2_Encode_kernel.h"
-#include "HPC_Compress.h"           // padline defs
+#include "common_def.h"
+#include "plugininterface.h"
+#include "bc2_encode_kernel.h"
+#include "hpc_compress.h"           // padline defs
 #include "cmp_math_common.h"
 
 #ifdef _WIN32

@@ -1,4 +1,4 @@
-#include "UserInterface.h"
+#include "userinterface.h"
 
 UserInterface::UserInterface() {
     xRotation = 0.0f;

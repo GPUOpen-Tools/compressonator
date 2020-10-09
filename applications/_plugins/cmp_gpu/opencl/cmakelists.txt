@@ -6,17 +6,17 @@ add_library(Plugin_CMP_GPU_OCL SHARED )
 
 target_sources(Plugin_CMP_GPU_OCL PUBLIC
 
-    Compute_OpenCL.cpp
-    Compute_OpenCL.h
-    COpenCL.cpp
-    COpenCL.h
+    compute_opencl.cpp
+    compute_opencl.h
+    copencl.cpp
+    copencl.h
 )
 
 target_include_directories(Plugin_CMP_GPU_OCL PRIVATE
-    ${PROJECT_SOURCE_DIR}/CMP_Framework             # compute_base.h
-    ${PROJECT_SOURCE_DIR}/CMP_Core/shaders          # common_def.h
-    ${PROJECT_SOURCE_DIR}/CMP_Core/source           # cmp_math_vec4.h
-    ${PROJECT_SOURCE_DIR}/Applications/_Libs/CMP_Math #cmp_math_common.h
+    ${PROJECT_SOURCE_DIR}/cmp_framework             # compute_base.h
+    ${PROJECT_SOURCE_DIR}/cmp_core/shaders          # common_def.h
+    ${PROJECT_SOURCE_DIR}/cmp_core/source           # cmp_math_vec4.h
+    ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_math #cmp_math_common.h
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/opencl/include
 )
 

@@ -27,13 +27,13 @@
 //     Compressonator_xx.lib  For static libs xx is either MD, MT or MDd or MTd,
 //                      When using DLL builds make sure the  Compressonator_xx_DLL.dll is in exe path
 
-#include "Compressonator.h"
+#include "compressonator.h"
 
 // The Helper code is provided to load Textures from a DDS file (Support Images and Compressed formats supported by DX9)
 // Compressed images can also be saved using DDS File (Support Images and Compression format supported by DX9 and partial
 // formats for DX10)
 
-#include "DDS_Helpers.h"
+#include "dds_helpers.h"
 
 #include <stdio.h>
 #include <string>

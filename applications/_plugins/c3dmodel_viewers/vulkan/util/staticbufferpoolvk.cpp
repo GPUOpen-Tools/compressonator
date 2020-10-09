@@ -18,8 +18,8 @@
 // THE SOFTWARE.
 
 
-#include "StaticBufferPoolVK.h"
-#include "Misc.h"
+#include "staticbufferpoolvk.h"
+#include "misc.h"
 
 #include <cassert>
 

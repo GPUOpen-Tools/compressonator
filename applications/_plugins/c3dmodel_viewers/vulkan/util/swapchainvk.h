@@ -18,7 +18,7 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "DeviceVK.h"
+#include "devicevk.h"
 
 #include <vector>
 #include <cstdint>

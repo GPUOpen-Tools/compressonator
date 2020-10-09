@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "ResourceViewHeapsDX12.h"
-#include "StaticBufferPoolDX12.h"
+#include "resourceviewheapsdx12.h"
+#include "staticbufferpooldx12.h"
 
 #include <windows.h>
 #include <d3d12.h>

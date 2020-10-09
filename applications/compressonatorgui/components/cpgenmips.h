@@ -26,7 +26,7 @@
 #ifndef _GENMIPS_H
 #define _GENMIPS_H
 
-#include "Compressonator.h"
+#include "compressonator.h"
 
 #include <QtWidgets>
 #include <QScrollArea>

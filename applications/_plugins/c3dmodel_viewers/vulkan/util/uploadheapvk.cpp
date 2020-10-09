@@ -35,9 +35,9 @@
 
 
 #include <assert.h>
-#include "DeviceVK.h"
-#include "UploadHeapVK.h"
-#include "Misc.h"
+#include "devicevk.h"
+#include "uploadheapvk.h"
+#include "misc.h"
 
 //--------------------------------------------------------------------------------------
 //

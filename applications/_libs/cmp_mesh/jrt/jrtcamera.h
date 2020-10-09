@@ -6,7 +6,7 @@
 #ifndef _JRT_CAMERA_H_
 #define _JRT_CAMERA_H_
 
-#include "JRTCommon.h"
+#include "jrtcommon.h"
 
 
 class JRTCamera {

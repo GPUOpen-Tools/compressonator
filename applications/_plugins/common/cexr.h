@@ -24,7 +24,7 @@
 #ifndef cEXR_HEADER
 #define cEXR_HEADER
 
-#include "namespaceAlias.h"
+#include "namespacealias.h"
 
 #pragma warning(push)
 #pragma warning(disable : 4100)
@@ -39,13 +39,13 @@
 
 #include <string.h>
 
-#include "Common.h"
-#include "Compressonator.h"
+#include "common.h"
+#include "compressonator.h"
 
 using namespace IMF;
 using namespace IMATH;
 
-#include "CMP_FileIO.h"
+#include "cmp_fileio.h"
 
 #pragma warning(disable : 4201)
 typedef unsigned int uint;

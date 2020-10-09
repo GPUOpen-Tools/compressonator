@@ -25,11 +25,11 @@ else()
 endif()
 
 
-cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/RunTime/BC7_Compression.cprj ${ASSETS_PATH}/Projects/BC7_Compression.cprj)
-cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/RunTime/BC6H_Compression.cprj ${ASSETS_PATH}/Projects/BC6H_Compression.cprj)
+cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/runtime/bc7_compression.cprj ${ASSETS_PATH}/projects/bc7_compression.cprj)
+cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/runtime/bc6h_compression.cprj ${ASSETS_PATH}/Projects/bc6h_compression.cprj)
 
-cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/RunTime/images/Balls.exr ${ASSETS_PATH}/images/Balls.exr)
-cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/RunTime/images/ruby.bmp ${ASSETS_PATH}/images/ruby.bmp)
+cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/runtime/images/balls.exr ${ASSETS_PATH}/images/balls.exr)
+cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/runtime/images/ruby.bmp ${ASSETS_PATH}/images/ruby.bmp)
 
 file(GLOB_RECURSE GUI_ASSETS WelcomePage/*)
 foreach(gui_asset ${GUI_ASSETS})
@@ -40,12 +40,8 @@ endforeach()
 
 cmp_gui_copy_to_output(${CMAKE_CURRENT_LIST_DIR}/qt.conf ${ASSETS_PATH}/qt.conf)
 
-cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/Applications/_Plugins/CGPUDecode/Vulkan/VK_ComputeShader/texture.vert.spv ${ASSETS_PATH}/texture.vert.spv)
-cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/Applications/_Plugins/CGPUDecode/Vulkan/VK_ComputeShader/texture.frag.spv ${ASSETS_PATH}/texture.frag.spv)
-
-# TODO Plugins/Compute
-# TODO Plugins/Media
-# TODO plugins/shaders
+cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/applications/_plugins/cgpudecode/vulkan/vk_computeshader/texture.vert.spv ${ASSETS_PATH}/texture.vert.spv)
+cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/applications/_plugins/cgpudecode/vulkan/vk_computeshader/texture.frag.spv ${ASSETS_PATH}/texture.frag.spv)
 
 get_property(QT_LIB_DIR GLOBAL PROPERTY QT_LIB_DIR)
 
@@ -96,10 +92,10 @@ foreach(rsc ${QT_RESOURCES})
      cmp_gui_copy_to_output(${rsc} ${ASSETS_PATH}/resources/${asset})
  endforeach()
 
-include(${PROJECT_SOURCE_DIR}/Applications/_Plugins/C3DModel_viewers/glTF_DX12_EX/CopyFiles.cmake)
+include(${PROJECT_SOURCE_DIR}/applications/_plugins/c3dmodel_viewers/gltf_dx12_ex/copyfiles.cmake)
 gltf_dx12_copy_files(CompressonatorGUI-bin ${PLUGINS_PATH})
 
-include(${PROJECT_SOURCE_DIR}/Applications/_Plugins/C3DModel_viewers/Vulkan/CopyFiles.cmake)
+include(${PROJECT_SOURCE_DIR}/applications/_plugins/c3dmodel_viewers/vulkan/copyfiles.cmake)
 gltf_vulkan_copy_files(CompressonatorGUI-bin ${PLUGINS_PATH})
 
 #copy glew32.dll
@@ -113,10 +109,10 @@ cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/../common/lib/ext/opencv/2.49/x64/V
 cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/../common/lib/ext/ktx/build/$<$<CONFIG:Debug>:debug>$<$<CONFIG:Release>:release>/ktx.dll ${ASSETS_PATH}/ktx.dll)
 
 # GPU Shaders
-file(GLOB_RECURSE GPUCOMPUTE_SHADERS ${PROJECT_SOURCE_DIR}/CMP_Core/shaders/*)
+file(GLOB_RECURSE GPUCOMPUTE_SHADERS ${PROJECT_SOURCE_DIR}/cmp_core/shaders/*)
 #message(STATUS "************** GPUCOMPUTE_SHADERS [${GPUCOMPUTE_SHADERS}]" )
 foreach(rsc ${GPUCOMPUTE_SHADERS})
-     file(RELATIVE_PATH asset ${PROJECT_SOURCE_DIR}/CMP_Core/shaders ${rsc})
+     file(RELATIVE_PATH asset ${PROJECT_SOURCE_DIR}/cmp_core/shaders ${rsc})
      #message(STATUS "************** COPY SHADERS [${rsc} to ${ASSETS_PATH}/${asset}]" )
      cmp_gui_copy_to_output(${rsc} ${ASSETS_PATH}/plugins/compute/${asset})
  endforeach()

@@ -27,19 +27,19 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #pragma warning(disable : 4100)  // Ignore warnings of unreferenced formal parameters
-#include "Common.h"
-#include "Codec_BC6H.h"
-#include "BC7_Definitions.h"
-#include "BC6H_Library.h"
-#include "BC6H_Definitions.h"
-#include "HDR_Encode.h"
+#include "common.h"
+#include "codec_bc6h.h"
+#include "bc7_definitions.h"
+#include "bc6h_library.h"
+#include "bc6h_definitions.h"
+#include "hdr_encode.h"
 
 #include <chrono>
 
 using namespace HDR_Encode;
 
 #ifdef BC6H_COMPDEBUGGER
-#include "CompClient.h"
+#include "compclient.h"
 extern CompViewerClient g_CompClient;
 #endif
 

@@ -24,12 +24,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "Vulkan_Renderer.h"
-#include "GltfBBoxPassVK.h"
-#include "GltfDepthPassVK.h"
-#include "GltfPbrVK.h"
-#include "Misc.h"
-#include "SwapChainVK.h"
+#include "vulkan_renderer.h"
+#include "gltfbboxpassvk.h"
+#include "gltfdepthpassvk.h"
+#include "gltfpbrvk.h"
+#include "misc.h"
+#include "swapchainvk.h"
 
 #ifdef USE_QT10
 

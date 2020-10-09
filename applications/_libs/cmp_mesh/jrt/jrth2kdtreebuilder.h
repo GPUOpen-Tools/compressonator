@@ -6,8 +6,8 @@
 #ifndef _JRT_H2_KDTREE_BUILDER_H_
 #define _JRT_H2_KDTREE_BUILDER_H_
 
-#include "JRTCoreUtils.h"
-#include "JRTKDTreeBuilder.h"
+#include "jrtcoreutils.h"
+#include "jrtkdtreebuilder.h"
 
 /// The H2 KDTree builder is a simplified heuristic tree builder
 ///  The algorithm works thusly:

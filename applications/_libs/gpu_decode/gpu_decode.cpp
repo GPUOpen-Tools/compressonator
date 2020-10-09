@@ -25,11 +25,11 @@
 //=====================================================================
 
 #ifdef _WIN32
-#include "GPU_DecodeBase.h"
-#include "GPU_Decode.h"
-#include "PluginInterface.h"
+#include "gpu_decodebase.h"
+#include "gpu_decode.h"
+#include "plugininterface.h"
 
-#include <Windows.h>
+#include <windows.h>
 
 extern PluginManager    g_pluginManager;
 

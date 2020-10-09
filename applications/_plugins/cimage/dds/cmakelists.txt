@@ -3,14 +3,14 @@ add_library(Plugin_CImage_DDS)
 
 target_sources(Plugin_CImage_DDS PRIVATE
 
-    DDS.cpp
-    DDS.h
-    DDS_DX10.cpp
-    DDS_DX10.h
-    DDS_File.cpp
-    DDS_File.h
-    DDS_Helpers.cpp
-    DDS_Helpers.h
+    dds.cpp
+    dds.h
+    dds_dx10.cpp
+    dds_dx10.h
+    dds_file.cpp
+    dds_file.h
+    dds_helpers.cpp
+    dds_helpers.h
 )
 
 target_link_libraries(Plugin_CImage_DDS PRIVATE

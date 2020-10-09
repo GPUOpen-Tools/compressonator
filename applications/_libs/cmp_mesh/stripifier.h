@@ -16,7 +16,7 @@
 //#define _TIMING
 
 #ifdef _TIMING
-#include <Windows.h>
+#include <windows.h>
 #define GetTime() GetTickCount()
 typedef DWORD _TIME;
 #endif

@@ -48,8 +48,8 @@
 #include <string>
 #include <vector>
 
-#include "Compressonator.h"
-#include "Common.h"
+#include "compressonator.h"
+#include "common.h"
 
 
 namespace tinygltf2 {

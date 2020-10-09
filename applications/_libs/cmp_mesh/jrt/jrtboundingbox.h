@@ -6,7 +6,7 @@
 #ifndef _FRT_BOUNDING_BOX_H_
 #define _FRT_BOUNDING_BOX_H_
 
-#include "JMLSSEVec.h"
+#include "jmlssevec.h"
 
 typedef SSEVec4 SSEVector;
 

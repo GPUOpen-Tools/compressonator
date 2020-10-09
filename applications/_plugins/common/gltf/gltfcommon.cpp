@@ -17,9 +17,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "GltfCommon.h"
+#include "gltfcommon.h"
 
-#include "glTFHelpers.h"
+#include "gltfhelpers.h"
 
 // Windows Header Files:
 #ifdef _WIN32

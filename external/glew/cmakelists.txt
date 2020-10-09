@@ -1,7 +1,6 @@
-# CMakeLists.txt
-message(STATUS "++++++++++++++++++ External-GLEW" )
-
 cmake_minimum_required(VERSION 3.13)
+
+message(STATUS "++++++++++++++++++ External-GLEW" )
 
 # if(POLICY CMP0091)
 #   cmake_policy(SET CMP0091 NEW)

@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "MeshData.h"
+#include "meshdata.h"
 #include <qmath.h>
 
 MeshData::MeshData() {
@@ -148,7 +148,7 @@ CMP_Mesh MeshData::optimize(const CMP_Mesh& mesh, int lod) {
     return result;
 }
 
-#include "JML.h"
+#include "jml.h"
 using namespace JML;
 
 void  MeshData::calcNormals(CMP_Mesh& mesh) {

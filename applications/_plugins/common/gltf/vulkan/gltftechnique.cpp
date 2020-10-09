@@ -18,12 +18,12 @@
 // THE SOFTWARE.
 
 
-#include "GltfTechnique.h"
+#include "gltftechnique.h"
 
-#include "GltfCommon.h"
+#include "gltfcommon.h"
 
-#include "DynamicBufferRingVK.h"
-#include "StaticBufferPoolVK.h"
+#include "dynamicbufferringvk.h"
+#include "staticbufferpoolvk.h"
 
 void GltfTechnique::Draw(VkCommandBuffer cmd_buf) {
     std::uint32_t dwNodesVisible;

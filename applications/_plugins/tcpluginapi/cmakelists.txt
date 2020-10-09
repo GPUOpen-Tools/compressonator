@@ -3,14 +3,14 @@
 add_library(Plugin_TCPluginAPI)
 
 # This is the current location of these files. They should be moved here
-set(LEGACY_LOCATION ../Common)
+set(LEGACY_LOCATION ../common)
 
 target_sources(Plugin_TCPluginAPI PRIVATE
-    ${LEGACY_LOCATION}/ModelData.cpp
-    ${LEGACY_LOCATION}/ModelData.h
-    ${LEGACY_LOCATION}/TC_PluginAPI.h
-    ${LEGACY_LOCATION}/TC_PluginInternal.cpp
-    ${LEGACY_LOCATION}/TC_PluginInternal.h
+    ${LEGACY_LOCATION}/modeldata.cpp
+    ${LEGACY_LOCATION}/modeldata.h
+    ${LEGACY_LOCATION}/tc_pluginapi.h
+    ${LEGACY_LOCATION}/tc_plugininternal.cpp
+    ${LEGACY_LOCATION}/tc_plugininternal.h
 )
 
 target_include_directories(Plugin_TCPluginAPI PUBLIC

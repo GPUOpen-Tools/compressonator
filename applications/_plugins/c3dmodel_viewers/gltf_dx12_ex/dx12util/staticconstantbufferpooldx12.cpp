@@ -17,9 +17,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "StaticConstantBufferPoolDX12.h"
+#include "staticconstantbufferpooldx12.h"
 
-#include <Error.h>
+#include <error.h>
 
 #include <d3dx12.h>
 

@@ -25,12 +25,12 @@
 
 #include <cassert>
 
-#include "PluginInterface.h"
-#include "TC_PluginAPI.h"
-#include "TC_PluginInternal.h"
-#include "Compressonator.h"
+#include "plugininterface.h"
+#include "tc_pluginapi.h"
+#include "tc_plugininternal.h"
+#include "compressonator.h"
 #include "meshoptimizer.h"
-#include "ModelData.h"
+#include "modeldata.h"
 
 #ifdef _WIN32
 // {7702EE85-0957-4EDC-9A65-58B5C5E8C4C8}

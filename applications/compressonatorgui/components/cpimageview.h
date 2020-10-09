@@ -35,11 +35,11 @@
 #include <QGraphicsSceneEvent>
 #include <qtimer.h>
 
-#include "cpImageView.h"
-#include "acImageView.h"
-#include "acEXRTool.h"
-#include "cpImageLoader.h"
-#include "acCustomDockWidget.h"
+#include "cpimageview.h"
+#include "acimageview.h"
+#include "acexrtool.h"
+#include "cpimageloader.h"
+#include "accustomdockwidget.h"
 
 
 #define TXT_IMAGE_PROCESSED     "Processed"

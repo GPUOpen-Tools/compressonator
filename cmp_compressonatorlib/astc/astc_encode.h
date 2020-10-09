@@ -26,8 +26,8 @@
 #define _ASTC_ENCODE_H_
 
 #include <float.h>
-#include "ASTC_Definitions.h"
-#include "ASTC_Encode_Kernel.h"
+#include "astc_definitions.h"
+#include "astc_encode_kernel.h"
 
 class ASTCBlockEncoder {
   public:

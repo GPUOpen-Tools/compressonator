@@ -31,13 +31,13 @@ target_sources(CMP_Mesh
         soup.h
         souptomesh.cpp
         souptomesh.h
-        Stripifier.cpp
-        Stripifier.h
-        Timer.cpp
-        Timer.h
-        TootlePCH.h
-        TootleRaytracer.cpp
-        TootleRaytracer.h
+        stripifier.cpp
+        stripifier.h
+        timer.cpp
+        timer.h
+        tootlepch.h
+        tootleraytracer.cpp
+        tootleraytracer.h
         triorder.cpp
         triorder.h
         vector.h
@@ -45,12 +45,12 @@ target_sources(CMP_Mesh
         window.h
 )
 
-add_subdirectory(JRT)
+add_subdirectory(jrt)
 
 target_include_directories(CMP_Mesh PUBLIC
 
     ./
-    ./JRT/
+    ./jrt/
 )
 
 target_link_libraries(CMP_Mesh PRIVATE
@@ -82,7 +82,6 @@ if (OPTION_CMP_DIRECTX)
     endif()
     
     target_link_libraries(CMP_Mesh PRIVATE
-
         ExtDirectX
     )
 endif()

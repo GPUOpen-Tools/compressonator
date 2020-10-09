@@ -26,7 +26,7 @@
 #ifndef _ASTC_HOST_H
 #define _ASTC_HOST_H
 
-#include "ASTC_Encode_Kernel.h"
+#include "astc_encode_kernel.h"
 #include "vectypes.h"
 
 #define __constant          const

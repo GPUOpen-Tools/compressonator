@@ -7,7 +7,7 @@ set(LEGACY_LOCATION ../)
 
 target_sources(Plugin_Common_KernelDef INTERFACE
 
-    ${LEGACY_LOCATION}/Common_KernelDef.h
+    ${LEGACY_LOCATION}/common_kerneldef.h
 )
 
 target_include_directories(Plugin_Common_KernelDef INTERFACE

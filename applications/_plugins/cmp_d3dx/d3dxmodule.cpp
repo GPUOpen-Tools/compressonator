@@ -22,7 +22,7 @@
 // THE SOFTWARE.
 //
 
-#include "D3DXModule.h"
+#include "d3dxmodule.h"
 
 TCHAR szLatestD3DX9[MAX_PATH] = "";
 

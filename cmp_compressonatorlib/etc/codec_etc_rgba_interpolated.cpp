@@ -22,12 +22,12 @@
 // THE SOFTWARE.
 //
 
-#include "Common.h"  // napatel
+#include "common.h"  // napatel
 
 #ifdef SUPPORT_ETC_ALPHA
 
 #include "etcpack.h"
-#include "Codec_ETC_RGBA_Interpolated.h"
+#include "codec_etc_rgba_interpolated.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // Construction/Destruction

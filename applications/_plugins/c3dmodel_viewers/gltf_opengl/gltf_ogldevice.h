@@ -18,14 +18,14 @@
 #ifndef _GLTF_OGLDEVICE_H
 #define _GLTF_OGLDEVICE_H
 
-#include "UserInterface.h"
-#include "PluginManager.h"
-#include "Compressonator.h"
+#include "userinterface.h"
+#include "pluginmanager.h"
+#include "compressonator.h"
 
 #include "QtWidgets/qwidget.h"
 
 // -- Qt Open GL Support
-#include <qopenglwidget>
+#include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QVector2D>
 #include <QEvent>
@@ -37,23 +37,20 @@
 #include <QElapsedTimer>
 #include <QPainter>
 #include <QOpenGLVertexArrayObject>
-#include <qapplication>
+#include <QApplication>
 
-#include <ImGui_OpenGL.h>
+#include <imgui_opengl.h>
 #include "imgui/imgui.h"
 
-#include <gl/GLU.h>
-#include <gl/GL.h>
-
-#include "ModelData.h"
-#include "Misc.h"
+#include "modeldata.h"
+#include "misc.h"
 
 #define MAX_NUM_OF_NODES    2
 
 #include <QtOpenGL/qgl.h>   // Uses Native Window Context
-#include "ImGui_OpenGLRenderer.h"
+#include "imgui_openglrenderer.h"
 
-#include "MeshData.h"
+#include "meshdata.h"
 #include <QOpenGLShaderProgram>
 #include <QCoreApplication>
 #include <qopenglext.h>

@@ -18,10 +18,10 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "Ring.h"
+#include "ring.h"
 
 #include <d3dx12.h>
-#include <Windows.h>
+#include <windows.h>
 
 // This class, on creation allocates a number of command lists. Using a ring buffer
 // these commandLists are recycled when they are no longer used by the GPU. See the

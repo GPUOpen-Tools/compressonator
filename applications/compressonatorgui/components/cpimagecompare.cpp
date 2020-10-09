@@ -32,8 +32,8 @@
 // for XML file processing
 #include <cmp_rapidxml.hpp>
 
-#include "cpImageCompare.h"
-#include "cpMainComponents.h"
+#include "cpimagecompare.h"
+#include "cpmaincomponents.h"
 
 
 CImageCompare::CImageCompare(const QString title, QString file1, QString file2, bool isCompressed, QMainWindow *parent) : acCustomDockWidget(title, parent) {

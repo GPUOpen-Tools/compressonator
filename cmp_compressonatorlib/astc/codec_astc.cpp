@@ -31,20 +31,20 @@
 #pragma warning(disable:4101)    // Ignore warnings of unreferenced local variable
 #pragma warning(disable:4996)   // This function or variable may be unsafe
 
-#include "Common.h"
-#include "Compressonator.h"
+#include "common.h"
+#include "compressonator.h"
 
-#include "ASTC/Codec_ASTC.h"
-#include "ASTC/ASTC_Library.h"
+#include "astc/codec_astc.h"
+#include "astc/astc_library.h"
 
-#include "ASTC/ARM/astc_codec_internals.h"
+#include "astc/arm/astc_codec_internals.h"
 #include "debug.h"
 
 #include <chrono>
 #include <cstring>
 
 #ifdef ASTC_COMPDEBUGGER
-#include "CompClient.h"
+#include "compclient.h"
 extern    CompViewerClient g_CompClient;
 #endif
 
@@ -300,7 +300,7 @@ bool CCodec_ASTC::SetParameter(const CMP_CHAR* pszParamName, CODECFLOAT fValue) 
 // it should set the exit flag in the parameters to allow the tread to quit
 //
 
-#include "ASTC_Host.h"
+#include "astc_host.h"
 ASTC_Encoder::ASTC_Encode  g_ASTCEncode;
 
 

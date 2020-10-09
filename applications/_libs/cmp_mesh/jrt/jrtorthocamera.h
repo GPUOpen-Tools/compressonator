@@ -6,7 +6,7 @@
 #ifndef _JRT_ORTHO_CAMERA_H_
 #define _JRT_ORTHO_CAMERA_H_
 
-#include "JRTCamera.h"
+#include "jrtcamera.h"
 
 
 class JRTOrthoCamera : public JRTCamera {

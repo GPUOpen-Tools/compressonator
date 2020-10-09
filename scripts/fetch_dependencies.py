@@ -96,9 +96,9 @@ downloadMappingWin = {
     "https://github.com/GPUOpen-LibrariesAndSDKs/OCL-SDK/files/1406216/lightOCLSDK.zip" : "../../common/lib/ext/opencl/",
 }
 
-# need opencl and gltf also
 downloadMappingLin = {
-    "https://github.com/microsoft/DirectXTex/archive/jun2020b.tar.gz" : "../../common/lib/ext/directxtex/",
+    "http://download.savannah.nongnu.org/releases/openexr/ilmbase-2.2.0.tar.gz": "../../common/lib/ext/openexr2/ilmbase",
+    "http://download.savannah.nongnu.org/releases/openexr/openexr-2.2.0.tar.gz": "../../common/lib/ext/openexr2/openexr",
 }
 
 # for each dependency - test if it has already been fetched - if not, then fetch it, otherwise update it to top of tree

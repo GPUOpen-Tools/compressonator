@@ -29,11 +29,11 @@
 #include <float.h>
 #include <stdio.h>
 #include <math.h>
-#include "Common.h"
-#include "BC7_Definitions.h"
-#include "BC7_Partitions.h"
-#include "BC7_Encode.h"
-#include "BC7_utils.h"
+#include "common.h"
+#include "bc7_definitions.h"
+#include "bc7_partitions.h"
+#include "bc7_encode.h"
+#include "bc7_utils.h"
 #include "3dquant_vpc.h"
 #include "shake.h"
 #include "debug.h"

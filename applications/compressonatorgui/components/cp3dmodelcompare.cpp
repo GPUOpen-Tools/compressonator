@@ -29,8 +29,8 @@
 #include <QIcon>
 #include <QMap>
 
-#include "cp3DModelCompare.h"
-#include "cpMainComponents.h"
+#include "cp3dmodelcompare.h"
+#include "cpmaincomponents.h"
 
 C3DModelCompare::C3DModelCompare(const QString title, QString file1, QString file2, bool isCompressed, QMainWindow *parent) : acCustomDockWidget(title, parent) {
     m_parent = parent;

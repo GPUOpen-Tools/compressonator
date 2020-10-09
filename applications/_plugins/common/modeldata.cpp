@@ -29,9 +29,9 @@
 
 #include <stdarg.h>
 #include <stdio.h>
-#include "ModelData.h"
+#include "modeldata.h"
 #include <assert.h>
-#include "TC_PluginInternal.h"
+#include "tc_plugininternal.h"
 
 
 

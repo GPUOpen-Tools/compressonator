@@ -30,11 +30,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "TC_PluginAPI.h"
-#include "TC_PluginInternal.h"
+#include "tc_pluginapi.h"
+#include "tc_plugininternal.h"
 
-#include "Compressonator.h"
-#include "UtilFuncs.h"
+#include "compressonator.h"
+#include "utilfuncs.h"
 
 #include <iostream>
 #include <fstream>
@@ -55,7 +55,7 @@ void *make_Plugin_obj_Loader() {
 }
 #endif
 
-#include "Misc.h"
+#include "misc.h"
 
 #ifdef BUILD_AS_PLUGIN_DLL
 bool   g_bAbortCompression = false;

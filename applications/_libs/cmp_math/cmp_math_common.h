@@ -25,7 +25,7 @@
 #ifndef CMP_MATH_COMMON_H
 #define CMP_MATH_COMMON_H
 
-#include "Common_Def.h"
+#include "common_def.h"
 
 #ifndef ASPM_GPU
 

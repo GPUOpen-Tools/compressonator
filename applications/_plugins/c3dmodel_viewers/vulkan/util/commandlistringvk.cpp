@@ -18,9 +18,9 @@
 // THE SOFTWARE.
 
 
-#include "CommandListRingVK.h"
+#include "commandlistringvk.h"
 
-#include "DeviceVK.h"
+#include "devicevk.h"
 
 //--------------------------------------------------------------------------------------
 //

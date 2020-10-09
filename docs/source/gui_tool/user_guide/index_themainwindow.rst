@@ -5,12 +5,12 @@ The Main Window
    :maxdepth: 4
    :name: toc-GUI_TheMainWindow
 
-   ImageView
-   Toolbars
-   ApplicationOptions
-   PropertyView
-   ProjectExplorer
-   MessageOutput
+   imageview
+   toolbars
+   applicationoptions
+   propertyview
+   projectexplorer
+   messageoutput
 
 |image9|
 

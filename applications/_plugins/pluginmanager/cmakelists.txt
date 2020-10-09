@@ -3,24 +3,24 @@
 add_library(Plugin_PluginManager)
 
 # This is the current location of these files. They should be moved here
-set(LEGACY_LOCATION ../Common)
+set(LEGACY_LOCATION ../common)
 
 target_sources(Plugin_PluginManager 
 PRIVATE
-    ${LEGACY_LOCATION}/PluginBase.h
-    ${LEGACY_LOCATION}/PluginInterface.h
-    ${LEGACY_LOCATION}/PluginManager.cpp
-    ${LEGACY_LOCATION}/PluginManager.h
-    ${LEGACY_LOCATION}/Texture.h
+    ${LEGACY_LOCATION}/pluginbase.h
+    ${LEGACY_LOCATION}/plugininterface.h
+    ${LEGACY_LOCATION}/pluginmanager.cpp
+    ${LEGACY_LOCATION}/pluginmanager.h
+    ${LEGACY_LOCATION}/texture.h
 )
 
 target_include_directories(Plugin_PluginManager 
 PUBLIC
     ./
     ${LEGACY_LOCATION}
-    ${PROJECT_SOURCE_DIR}/CMP_CompressonatorLib
-    ${PROJECT_SOURCE_DIR}/CMP_Framework/Common
-    ${PROJECT_SOURCE_DIR}/CMP_Framework/Common/half
+    ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
+    ${PROJECT_SOURCE_DIR}/cmp_framework/common
+    ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
 )
 
 target_link_libraries(Plugin_PluginManager 

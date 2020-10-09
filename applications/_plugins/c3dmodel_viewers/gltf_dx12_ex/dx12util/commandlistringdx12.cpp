@@ -17,9 +17,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "CommandListRingDX12.h"
+#include "commandlistringdx12.h"
 
-#include <Error.h>
+#include <error.h>
 
 
 //--------------------------------------------------------------------------------------

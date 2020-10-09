@@ -25,7 +25,7 @@
 
 #pragma warning(disable:4505)  // disable warnings on unreferenced local function has been removed
 
-#include "Common_Def.h"
+#include "common_def.h"
 
 #define MAX_TRACE                       10
 #define MAX_ENTRIES_QUANT_TRACE         16

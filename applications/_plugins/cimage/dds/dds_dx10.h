@@ -26,8 +26,8 @@
 #pragma once
 
 
-#include "TC_PluginAPI.h"
-#include "DDS_File.h"
+#include "tc_pluginapi.h"
+#include "dds_file.h"
 
 
 TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);

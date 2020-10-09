@@ -18,13 +18,13 @@
 // THE SOFTWARE.
 
 
-#include "DynamicBufferRingDX12.h"
-#include "StaticBufferPoolDX12.h"
-#include "UploadHeapDX12.h"
-#include "TextureDX12.h"
-#include "PostProcPS.h"
-#include "TextureDX12.h"
-#include "Bloom.h"
+#include "dynamicbufferringdx12.h"
+#include "staticbufferpooldx12.h"
+#include "uploadheapdx12.h"
+#include "texturedx12.h"
+#include "postprocps.h"
+#include "texturedx12.h"
+#include "bloom.h"
 
 
 void Bloom::OnCreate(

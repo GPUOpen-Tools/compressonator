@@ -4,7 +4,7 @@
 #                     G L E W
 # ====================================================
 set(GLEW_VERSION 2.1.0)
-get_filename_component(GLEW_DIR ${COMPRESSONATOR_PROJECT_DIR}/External/glew/glew-submodule ABSOLUTE)
+get_filename_component(GLEW_DIR ${COMPRESSONATOR_PROJECT_DIR}/external/glew/glew-submodule ABSOLUTE)
 
 set(GLEW_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/glew-${GLEW_VERSION})
 file(MAKE_DIRECTORY ${GLEW_BINARY_DIR})

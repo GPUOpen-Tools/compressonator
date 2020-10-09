@@ -3,7 +3,7 @@
 message(STATUS "++++++++++++++++++OpenEXR Custom TargetCalled" )
 
 set(OPENEXR_VERSION 5754217)
-get_filename_component(OPENEXR_DIR ${COMPRESSONATOR_PROJECT_DIR}/External/openexr ABSOLUTE)
+get_filename_component(OPENEXR_DIR ${COMPRESSONATOR_PROJECT_DIR}/external/openexr ABSOLUTE)
 set(OPENEXR_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/openexr-${OPENEXR_VERSION})
 file(MAKE_DIRECTORY ${OPENEXR_BINARY_DIR})
 

@@ -29,7 +29,7 @@
 #ifndef _CODECBUFFER_BLOCK_H_INCLUDED_
 #define _CODECBUFFER_BLOCK_H_INCLUDED_
 
-#include "CodecBuffer.h"
+#include "codecbuffer.h"
 
 class CCodecBuffer_Block : public CCodecBuffer {
   public:

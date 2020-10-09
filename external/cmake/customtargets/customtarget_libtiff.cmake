@@ -4,7 +4,7 @@
 #                    L I B T I F F
 # ====================================================
 set(LIBTIFF_VERSION 4.1.0)
-get_filename_component(LIBTIFF_DIR ${COMPRESSONATOR_PROJECT_DIR}/External/libtiff/libtiff-submodule ABSOLUTE)
+get_filename_component(LIBTIFF_DIR ${COMPRESSONATOR_PROJECT_DIR}/external/libtiff/libtiff-submodule ABSOLUTE)
 
 set(LIBTIFF_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/libtiff-${LIBTIFF_VERSION})
 file(MAKE_DIRECTORY ${LIBTIFF_BINARY_DIR})

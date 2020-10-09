@@ -44,7 +44,7 @@
 // This file holds all the structures/classes used to load a glTF model
 //
 
-#include "GltfFeatures.h"
+#include "gltffeatures.h"
 
 #include <json/json.h>
 

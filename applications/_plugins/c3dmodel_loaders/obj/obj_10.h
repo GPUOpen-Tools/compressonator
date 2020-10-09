@@ -24,9 +24,9 @@
 #define _PLUGIN_IMAGE_OBJ10_H
 
 
-#include "PluginInterface.h"
-#include "MeshObjLoader.h"
-#include "ModelData.h"
+#include "plugininterface.h"
+#include "meshobjloader.h"
+#include "modeldata.h"
 
 #ifdef _WIN32
 // {73376578-3ABB-4F03-A595-95C8552DDFB1}

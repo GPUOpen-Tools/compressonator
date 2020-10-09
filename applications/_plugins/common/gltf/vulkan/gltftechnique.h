@@ -18,7 +18,7 @@
 // THE SOFTWARE.
 #pragma once
 
-#include "GltfStructures.h"
+#include "gltfstructures.h"
 
 #include <glm/mat4x4.hpp>
 

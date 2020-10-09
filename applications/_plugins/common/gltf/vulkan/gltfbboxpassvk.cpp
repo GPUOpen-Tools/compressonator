@@ -25,17 +25,17 @@
 // THE SOFTWARE.
 
 
-#include "GltfBBoxPassVK.h"
+#include "gltfbboxpassvk.h"
 
-#include "DeviceVK.h"
-#include "StaticBufferPoolVK.h"
-#include "DynamicBufferRingVK.h"
-#include "ResourceViewHeapsVK.h"
-#include "UploadHeapVK.h"
-#include "ShaderCompilerHelper.h"
-#include "Camera.h"
-#include "GltfHelpers.h"
-#include "GltfHelpers_Vulkan.h"
+#include "devicevk.h"
+#include "staticbufferpoolvk.h"
+#include "dynamicbufferringvk.h"
+#include "resourceviewheapsvk.h"
+#include "uploadheapvk.h"
+#include "shadercompilerhelper.h"
+#include "camera.h"
+#include "gltfhelpers.h"
+#include "gltfhelpers_vulkan.h"
 
 
 void GltfBBoxPassVK::OnCreate(

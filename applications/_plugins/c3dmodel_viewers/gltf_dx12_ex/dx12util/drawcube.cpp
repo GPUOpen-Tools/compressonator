@@ -21,9 +21,9 @@
 // THE SOFTWARE.
 //
 
-#include "DrawCube.h"
+#include "drawcube.h"
 
-#include <Error.h>
+#include <error.h>
 
 #include <d3dx12.h>
 #include <d3dcompiler.h>

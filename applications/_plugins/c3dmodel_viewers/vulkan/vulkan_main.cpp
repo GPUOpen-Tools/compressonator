@@ -24,14 +24,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "Vulkan_main.h"
+#include "vulkan_main.h"
 
-#include "GltfCommon.h"
+#include "gltfcommon.h"
 
-#include "TC_PluginAPI.h"
-#include "TC_PluginInternal.h"
+#include "tc_pluginapi.h"
+#include "tc_plugininternal.h"
 
-#include "Compressonator.h"
+#include "compressonator.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,8 +48,8 @@ void *make_Plugin_3DModelViewer_Vulkan() {
 }
 #endif
 
-#include "Misc.h"
-#include "Vulkan_Device.h"
+#include "misc.h"
+#include "vulkan_device.h"
 
 #ifdef BUILD_AS_PLUGIN_DLL
 bool   g_bAbortCompression = false;

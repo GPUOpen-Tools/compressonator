@@ -22,7 +22,7 @@
 // THE SOFTWARE.
 //
 
-#include "BC7_Definitions.h"
+#include "bc7_definitions.h"
 
 //
 // Block encoding information for all block types

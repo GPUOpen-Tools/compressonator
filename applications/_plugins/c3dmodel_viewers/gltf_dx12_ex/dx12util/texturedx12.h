@@ -25,16 +25,16 @@
 
 #pragma once
 
-#include "ResourceViewHeapsDX12.h"
-#include "UploadHeapDX12.h"
+#include "resourceviewheapsdx12.h"
+#include "uploadheapdx12.h"
 
-#include <Compressonator.h>
-#include <GPU_Decode.h>
-#include <Texture.h>
-#include <PluginInterface.h>
-#include <TextureIO.h>
+#include <compressonator.h>
+#include <gpu_decode.h>
+#include <texture.h>
+#include <plugininterface.h>
+#include <textureIO.h>
 
-#include <ModelTexture.h>
+#include <modeltexture.h>
 
 #include <d3dx12.h>
 

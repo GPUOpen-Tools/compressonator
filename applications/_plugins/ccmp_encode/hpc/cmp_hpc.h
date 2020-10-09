@@ -21,7 +21,7 @@
 #include <tchar.h>
 #endif
 
-#include "Common_Def.h"
+#include "common_def.h"
 
 struct bc7_enc_settings {
     bool mode_selection[4];

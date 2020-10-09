@@ -21,8 +21,8 @@
 //
 //=====================================================================
 
-#include "cpImageView.h"
-#include "acImageView.h"
+#include "cpimageview.h"
+#include "acimageview.h"
 
 void cpImageView::oncpImageViewVirtualMousePosition(QPointF* scenePos, QPointF* localPos, int onID) {
     oncpImageViewMousePosition(scenePos, localPos, onID);
@@ -176,7 +176,7 @@ void cpImageView::oncpImageViewMousePosition(QPointF* scenePos, QPointF* localPo
     }
 }
 
-#include "cExr.h"
+#include "cexr.h"
 #include "ImfArray.h"
 #include "ImfRgba.h"
 
@@ -1241,7 +1241,7 @@ cpImageView::cpImageView(const QString filePathName,
     if (m_processedMipImages->decompressedMipSet != NULL) {
         m_PSNRLabel = new QLabel(this);
         if (m_PSNRLabel) {
-            m_PSNRLabel->setText("PSNR: N/A");
+            m_PSNRLabel->setText("PSNR: Not Available");
             m_toolBar->addWidget(m_PSNRLabel);
         }
     } else
@@ -1692,7 +1692,7 @@ void cpImageView::onacScaleChange(int value) {
 }
 
 void cpImageView::onacPSNRUpdated(double value) {
-    if (m_PSNRLabel) {
+    if (m_PSNRLabel && value > 0) {
         char buff[16];
         snprintf(buff, sizeof(buff), "PSNR: %3.1f dB", value);
         m_PSNRLabel->setText(buff);

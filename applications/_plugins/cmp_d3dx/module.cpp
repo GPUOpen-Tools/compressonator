@@ -23,8 +23,8 @@
 //
 
 
-#include <Windows.h>
-#include "Module.h"
+#include <windows.h>
+#include "module.h"
 
 CModule::CModule(void) {
     m_hModule = NULL;

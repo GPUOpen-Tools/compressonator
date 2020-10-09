@@ -3,8 +3,8 @@ add_library(Plugin_CImage_TGA)
 
 target_sources(Plugin_CImage_TGA PRIVATE
 
-    TGA.cpp
-    TGA.h
+    tga.cpp
+    tga.h
 )
 
 target_link_libraries(Plugin_CImage_TGA PRIVATE

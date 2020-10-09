@@ -23,7 +23,7 @@
 #ifndef  QTIMGUI_H
 #define  QTIMGUI_H
 
-#include "ImGui_OpenGLRenderer.h"
+#include "imgui_openglrenderer.h"
 #include "QtWidgets/qwidget.h"
 
 class QImGUI_OpenGLWidgetWindowWrapper : public QImGUI_OpenGLWindowWrapper {

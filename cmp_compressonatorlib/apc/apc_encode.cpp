@@ -22,7 +22,7 @@
 //=====================================================================
 
 
-#include "APC_Encode.h"
+#include "apc_encode.h"
 
 
 void (*APC_CompressBlock)(void *srcblock, void *outblock, void *blockoptions) = NULL;

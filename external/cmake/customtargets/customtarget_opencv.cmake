@@ -5,7 +5,7 @@
 # ====================================================
 set(OPENCV_VERSION 4.1.2)
 set(OPENCV_VERSION_SUFFIX 412)
-get_filename_component(OPENCV_CMP_DIR ${COMPRESSONATOR_PROJECT_DIR}/External/opencv ABSOLUTE)
+get_filename_component(OPENCV_CMP_DIR ${COMPRESSONATOR_PROJECT_DIR}/external/opencv ABSOLUTE)
 get_filename_component(OPENCV_DIR ${OPENCV_CMP_DIR}/opencv-submodule ABSOLUTE)
 
 # OpenCV has a weird install layout on windows. So we need to carefully split every 

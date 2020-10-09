@@ -29,7 +29,7 @@
 #ifndef _CODEC_ATC_RGB_H_INCLUDED_
 #define _CODEC_ATC_RGB_H_INCLUDED_
 
-#include "Codec_ATC.h"
+#include "codec_atc.h"
 
 class CCodec_ATC_RGB : public CCodec_ATC {
   public:

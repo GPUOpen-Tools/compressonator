@@ -25,12 +25,12 @@
 #ifndef _PLUGIN_IMAGE_H
 #define _PLUGIN_IMAGE_H
 
-#include "PluginInterface.h"
+#include "plugininterface.h"
 
 #ifdef _WIN32
 #include "d3d9.h"
-#include "D3DXModule.h"
-#include "D3D9Module.h"
+#include "d3dxmodule.h"
+#include "d3d9module.h"
 
 // {3AF62198-7326-48FA-B1FB-1D12A355694D}
 static const GUID g_GUID = {0x3af62198, 0x7326, 0x48fa, {0xb1, 0xfb, 0x1d, 0x12, 0xa3, 0x55, 0x69, 0x4d}};
@@ -48,7 +48,7 @@ class Plugin_BoxFilter : public PluginInterface_Filters {
 
     int TC_PluginSetSharedIO(void* Shared);
     int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
-    int TC_GenerateMIPLevels(MipSet* pMipSet, CMP_CFilterParams* pD3DXFilterParams);
+    int TC_CFilter(MipSet* pMipSet, CMP_MipSet* pMipSetDst, CMP_CFilterParams* pD3DXFilterParams);
 
   private:
     void Error(TCHAR* pszCaption, TC_ErrorLevel errorLevel, UINT nErrorString);

@@ -24,12 +24,12 @@
 #if !defined(_CODEC_ASTC_H_INCLUDED_)
 #define _CODEC_ASTC_H_INCLUDED_
 
-#include "Compressonator.h"
-#include "Codec_DXTC.h"
-#include "ASTC_Encode.h"
-#include "ASTC_Decode.h"
-#include "ASTC_Library.h"
-#include "ASTC_Definitions.h"
+#include "compressonator.h"
+#include "codec_dxtc.h"
+#include "astc_encode.h"
+#include "astc_decode.h"
+#include "astc_library.h"
+#include "astc_definitions.h"
 
 #include <thread>
 

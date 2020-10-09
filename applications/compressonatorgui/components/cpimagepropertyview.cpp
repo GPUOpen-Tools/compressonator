@@ -21,7 +21,7 @@
 //
 //=====================================================================
 
-#include "cpImagePropertyView.h"
+#include "cpimagepropertyview.h"
 
 #define COMPRESS_TEXT "     Process     "
 #define SAVECOMP_TEXT " Save && Process "

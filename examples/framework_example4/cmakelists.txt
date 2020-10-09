@@ -6,12 +6,12 @@ add_executable(framework_example4)
 
 target_sources(framework_example4
     PRIVATE
-        Framework_Example4.cpp 
+        framework_example4.cpp 
 )
 target_include_directories(framework_example4 PUBLIC
     ./
-    ${PROJECT_SOURCE_DIR}/CMP_Framework/                    # Source based path
-    ${COMPRESSONATOR_ROOT}/SDK/include/                     # Installer based path
+    ${PROJECT_SOURCE_DIR}/cmp_framework/                    # Source based path
+    ${COMPRESSONATOR_ROOT}/sdk/include/                     # Installer based path
 )
 
 target_link_libraries(framework_example4

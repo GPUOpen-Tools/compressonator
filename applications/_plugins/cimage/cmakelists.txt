@@ -1,11 +1,11 @@
 
 add_library(Plugin_CImage INTERFACE)
 
-add_subdirectory(ASTC)
-add_subdirectory(DDS)
-add_subdirectory(EXR)
-add_subdirectory(KTX)
-add_subdirectory(TGA)
+add_subdirectory(astc)
+add_subdirectory(dds)
+add_subdirectory(exr)
+add_subdirectory(ktx)
+add_subdirectory(tga)
 
 target_link_libraries(Plugin_CImage INTERFACE
 

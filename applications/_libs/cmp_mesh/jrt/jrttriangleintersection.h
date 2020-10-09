@@ -6,7 +6,7 @@
 #ifndef _JRT_TRIANGLE_INTERSECTION_H_
 #define _JRT_TRIANGLE_INTERSECTION_H_
 
-#include "JRTCommon.h"
+#include "jrtcommon.h"
 
 // Note to self: P4 cache lines: 64 bytes
 

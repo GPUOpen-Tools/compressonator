@@ -25,7 +25,7 @@
 #ifndef _ASTC_DECODE_H_
 #define _ASTC_DECODE_H_
 
-#include "ASTC/ASTC_Definitions.h"
+#include "astc/astc_definitions.h"
 
 class ASTCBlockDecoder {
   public:

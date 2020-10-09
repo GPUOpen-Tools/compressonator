@@ -28,7 +28,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "Common.h"
+#include "common.h"
 
 using namespace CMP;
 
@@ -39,9 +39,9 @@ using namespace CMP;
 #include <emmintrin.h>
 #endif // USE_SSE
 
-#include "Codec.h"
+#include "codec.h"
 
-#include "CompressonatorXCodec.h"
+#include "compressonatorxcodec.h"
 
 #if defined(WIN32) || defined(_WIN64)
 #    define ALIGN_16 __declspec(align(16))

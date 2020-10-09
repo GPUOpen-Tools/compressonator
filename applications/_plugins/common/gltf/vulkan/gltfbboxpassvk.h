@@ -18,8 +18,8 @@
 // THE SOFTWARE.
 #pragma once
 
-#include "GltfCommon.h"
-#include "GltfTechnique.h"
+#include "gltfcommon.h"
+#include "gltftechnique.h"
 
 #include <glm/matrix.hpp>
 #include <glm/vec4.hpp>

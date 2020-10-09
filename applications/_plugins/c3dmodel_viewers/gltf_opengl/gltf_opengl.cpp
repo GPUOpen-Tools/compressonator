@@ -20,13 +20,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "glTF_OpenGL.h"
+#include "gltf_opengl.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "TC_PluginAPI.h"
-#include "TC_PluginInternal.h"
-#include "Compressonator.h"
+#include "tc_pluginapi.h"
+#include "tc_plugininternal.h"
+#include "compressonator.h"
 
 #include <iostream>
 #include <fstream>
@@ -41,7 +41,7 @@ void* make_Plugin_glTF_OpenGL() {
 }
 #endif
 
-#include "glTF_OGLDevice.h"
+#include "gltf_ogldevice.h"
 
 #ifdef BUILD_AS_PLUGIN_DLL
 bool   g_bAbortCompression = false;

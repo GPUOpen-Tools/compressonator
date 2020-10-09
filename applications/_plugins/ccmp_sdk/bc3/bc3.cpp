@@ -22,7 +22,7 @@
 /// \file BC3.cpp
 //
 //=====================================================================
-#include "BC3.h"
+#include "bc3.h"
 
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_BC3)

@@ -26,10 +26,10 @@
 #include <math.h>
 #include <float.h>
 #include <assert.h>
-#include "Common.h"
+#include "common.h"
 #include "3dquant_constants.h"
 #include "3dquant_vpc.h"
-#include "BC7_Definitions.h"
+#include "bc7_definitions.h"
 #include "debug.h"
 
 #include <mutex>

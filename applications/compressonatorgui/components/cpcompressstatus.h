@@ -37,10 +37,10 @@
 #include <qwidget.h>
 #include <qmenu.h>
 
-#include "Compressonator.h"
-#include "Common.h"
-#include "PluginManager.h"
-#include "acCustomDockWidget.h"
+#include "compressonator.h"
+#include "common.h"
+#include "pluginmanager.h"
+#include "accustomdockwidget.h"
 
 class CompressStatusDialog :
     public QDockWidget

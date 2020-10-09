@@ -27,10 +27,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "Common.h"
-#include "Codec_ETC.h"
-#include "Compressonator_tc.h"
-#include "CompressonatorXCodec.h"
+#include "common.h"
+#include "codec_etc.h"
+#include "compressonator_tc.h"
+#include "compressonatorxcodec.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // Construction/Destruction

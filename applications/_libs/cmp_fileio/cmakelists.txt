@@ -2,12 +2,12 @@
 add_library(CMP_FileIO)
 
 # This is the current location of these files. They should be moved here
-set(LEGACY_LOCATION ../../_Plugins/Common)
+set(LEGACY_LOCATION ../../_plugins/common)
 
 target_sources(CMP_FileIO PRIVATE
 
-    ${LEGACY_LOCATION}/CMP_FileIO.cpp
-    ${LEGACY_LOCATION}/CMP_FileIO.h
+    ${LEGACY_LOCATION}/cmp_fileio.cpp
+    ${LEGACY_LOCATION}/cmp_fileio.h
 )
 
 target_include_directories(CMP_FileIO PUBLIC

@@ -29,7 +29,7 @@
 #ifndef _CODECBUFFER_RGBA16F_H_INCLUDED_
 #define _CODECBUFFER_RGBA16F_H_INCLUDED_
 
-#include "CodecBuffer.h"
+#include "codecbuffer.h"
 
 #define CHANNEL_INDEX_R 0
 #define CHANNEL_INDEX_G 1

@@ -23,7 +23,7 @@
 //
 //=====================================================================
 
-#include "BC2.h"
+#include "bc2.h"
 
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_BC1)

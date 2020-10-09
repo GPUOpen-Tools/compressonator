@@ -18,7 +18,7 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "PostProcPS.h"
+#include "postprocps.h"
 
 #define BLOOM_DEPTH 6
 

@@ -34,7 +34,7 @@
 #include <memory.h>
 #endif
 #include <stdio.h>
-#include "Compressonator_tc.h"
+#include "compressonator_tc.h"
 
 #ifndef BOOL
 typedef int BOOL;

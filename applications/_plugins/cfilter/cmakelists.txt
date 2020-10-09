@@ -1,30 +1,32 @@
+if (OPTION_CMP_DIRECTX )
 link_directories(
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/directxtex/DirectXTex-jun2020b/DirectXTex/Bin/Desktop_2017/x64/Release
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/directxtex/DirectXTex-jun2020b/DirectXTex/Bin/Desktop_2017/x64/Debug
     )
+endif()
 
-add_library(Plugin_CFilter SHARED)
+add_library(Plugin_CFilter_MipMap SHARED)
 
-target_sources(Plugin_CFilter PRIVATE
+target_sources(Plugin_CFilter_MipMap PRIVATE
 
-    BoxFilter.cpp
-    BoxFilter.h
-    ${PROJECT_SOURCE_DIR}/Applications/_Plugins/CMP_D3DX/Module.cpp
-    ${PROJECT_SOURCE_DIR}/Applications/_Plugins/CMP_D3DX/Module.h
-    ${PROJECT_SOURCE_DIR}/Applications/_Plugins/CMP_D3DX/D3DXModule.cpp
-    ${PROJECT_SOURCE_DIR}/Applications/_Plugins/CMP_D3DX/D3DXModule.h
-    ${PROJECT_SOURCE_DIR}/Applications/_Plugins/CMP_D3DX/D3D9Module.cpp
-    ${PROJECT_SOURCE_DIR}/Applications/_Plugins/CMP_D3DX/D3D9Module.h
+    boxfilter.cpp
+    boxfilter.h
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/cmp_d3dx/module.cpp
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/cmp_d3dx/module.h
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/cmp_d3dx/d3dxmodule.cpp
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/cmp_d3dx/d3dxmodule.h
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/cmp_d3dx/d3d9module.cpp
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/cmp_d3dx/d3d9module.h
 )
 
-target_include_directories(Plugin_CFilter PUBLIC
+target_include_directories(Plugin_CFilter_MipMap PUBLIC
     ./
-    ${PROJECT_SOURCE_DIR}/../Common/Lib/Ext/apitrace/dxsdk/Include
-    ${PROJECT_SOURCE_DIR}/Applications/_Plugins/CMP_D3DX
+    ${PROJECT_SOURCE_DIR}/../common/lib/ext/apitrace/dxsdk/Include
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/cmp_d3dx
     #${PROJECT_SOURCE_DIR}/../Common/Lib/Ext/DirectX-SDK/June-2010/Include
 )
 
-target_link_libraries(Plugin_CFilter PRIVATE
+target_link_libraries(Plugin_CFilter_MipMap PRIVATE
 
     CMP_FileIO
     CompressonatorLIB
@@ -33,7 +35,7 @@ target_link_libraries(Plugin_CFilter PRIVATE
     Plugin_TCPluginAPI
 )
 
-set_target_properties(Plugin_CFilter PROPERTIES 
+set_target_properties(Plugin_CFilter_MipMap PROPERTIES 
     FOLDER ${FOLDER_NAME}
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin/debug/plugins"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/release/plugins"

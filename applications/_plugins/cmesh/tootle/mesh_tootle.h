@@ -27,9 +27,9 @@
 
 #include "tootlelib.h"
 #ifndef USE_ASSIMP
-#include "ObjLoader.h"      // This should be removed and shared with Compressonator Common!
+#include "objloader.h"      // This should be removed and shared with Compressonator Common!
 #else
-#include "ModelData.h"
+#include "modeldata.h"
 #endif
 
 #ifdef _WIN32

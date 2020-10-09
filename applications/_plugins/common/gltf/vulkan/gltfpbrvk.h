@@ -18,10 +18,10 @@
 // THE SOFTWARE.
 #pragma once
 
-#include "GltfTechnique.h"
-//#include "SkyDome.h"
+#include "gltftechnique.h"
+//#include "skydome.h"
 
-#include "TextureVK.h"
+#include "texturevk.h"
 
 #include <json/json.h>
 

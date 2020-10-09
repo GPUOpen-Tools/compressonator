@@ -7,16 +7,16 @@
 // define this to make the raytracer dump out debugging images
 //#define DEBUG_IMAGES
 
-#include "TootlePCH.h"
-#include "JRTCommon.h"
-#include "TootleRaytracer.h"
-#include "JRTCore.h"
-#include "JRTMesh.h"
-#include "JRTOrthoCamera.h"
-#include "JRTBoundingBox.h"
+#include "tootlepch.h"
+#include "jrtcommon.h"
+#include "tootleraytracer.h"
+#include "jrtcore.h"
+#include "jrtmesh.h"
+#include "jrtorthocamera.h"
+#include "jrtboundingbox.h"
 
 #ifdef DEBUG_IMAGES
-#include "JRTPPMImage.h"
+#include "jrtppmimage.h"
 #endif
 
 // function defined by Tootle that is called to process ray hits for each pixel

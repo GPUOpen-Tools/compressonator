@@ -34,7 +34,7 @@
 #endif
 
 
-#include "MeshObjLoader.h"
+#include "meshobjloader.h"
 #include <assert.h>
 #include <cstdio>
 #include <cstring>

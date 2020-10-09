@@ -21,7 +21,7 @@
 //
 //==============================================================================
 
-#include "Compute_GpuHW.h"
+#include "compute_gpuhw.h"
 
 #ifdef USE_CPU_PERFORMANCE_COUNTERS
 #include "query_timer.h"  // can use CPU timing but pref is to use GPU counters
@@ -547,7 +547,7 @@ bool CGpuHW::CreateContext()
 
     glEnable(GL_RENDERBUFFER);
 
-    if ((m_glformat  == GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT) || m_kernel_options->useSRGBFrames)
+    if (m_kernel_options->useSRGBFrames)
        glEnable(GL_FRAMEBUFFER_SRGB);
     else
        glEnable(GL_FRAMEBUFFER);

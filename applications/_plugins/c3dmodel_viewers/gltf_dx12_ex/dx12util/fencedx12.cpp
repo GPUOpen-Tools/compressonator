@@ -17,9 +17,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "FenceDX12.h"
+#include "fencedx12.h"
 
-#include <Error.h>
+#include <error.h>
 
 FenceDX12::FenceDX12() {
     m_hEvent = CreateEventEx(nullptr, FALSE, FALSE, EVENT_ALL_ACCESS);

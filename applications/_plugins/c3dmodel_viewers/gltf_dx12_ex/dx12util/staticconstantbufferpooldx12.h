@@ -18,7 +18,7 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "ResourceViewHeapsDX12.h"
+#include "resourceviewheapsdx12.h"
 
 // Simulates DX11 style static buffers. For dynamic buffers please see 'DynamicBufferRingDX12.h'
 //

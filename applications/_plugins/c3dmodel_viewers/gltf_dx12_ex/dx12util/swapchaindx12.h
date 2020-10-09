@@ -21,7 +21,7 @@
 #include <dxgi1_4.h>
 #include <vector>
 #include <d3dx12.h>
-#include <Windows.h>
+#include <windows.h>
 
 
 class SwapChainDX12 {

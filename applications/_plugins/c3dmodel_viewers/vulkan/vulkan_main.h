@@ -24,8 +24,8 @@
 #define _PLUGIN_IMAGE_BMP_H
 
 
-#include "PluginInterface.h"
-#include "Vulkan_Device.h"
+#include "plugininterface.h"
+#include "vulkan_device.h"
 
 #include <QtWidgets/qwidget.h>
 

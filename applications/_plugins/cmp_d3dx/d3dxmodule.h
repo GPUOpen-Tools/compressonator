@@ -27,7 +27,7 @@
 
 #include "string"
 #include "d3dx9.h"
-#include "Module.h"
+#include "module.h"
 
 typedef struct {
     const TCHAR*    szModuleName;

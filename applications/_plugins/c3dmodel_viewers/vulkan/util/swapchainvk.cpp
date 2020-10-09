@@ -34,8 +34,8 @@
 //  limitations under the License.
 
 
-#include "DeviceVK.h"
-#include "SwapChainVK.h"
+#include "devicevk.h"
+#include "swapchainvk.h"
 
 
 #include <cassert>

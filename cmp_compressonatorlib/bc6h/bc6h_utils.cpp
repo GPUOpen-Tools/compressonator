@@ -28,6 +28,6 @@
 //
 
 #include <math.h>
-#include "BC6H_Definitions.h"
-#include "BC6H_utils.h"
+#include "bc6h_definitions.h"
+#include "bc6h_utils.h"
 

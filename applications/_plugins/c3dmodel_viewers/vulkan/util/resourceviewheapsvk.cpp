@@ -19,8 +19,8 @@
 
 
 #include <vector>
-#include "DeviceVK.h"
-#include "ResourceViewHeapsVK.h"
+#include "devicevk.h"
+#include "resourceviewheapsvk.h"
 #include "misc.h"
 
 #if 0

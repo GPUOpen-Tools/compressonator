@@ -24,7 +24,7 @@
 // UtilFuncs.cpp : Source file for utility functions
 //
 
-#include "UtilFuncs.h"
+#include "utilfuncs.h"
 
 #ifndef ASSERT
 #include <assert.h>
@@ -33,7 +33,7 @@
 
 #ifdef _WIN32
 // Windows Header Files:
-#include <ShObjIdl.h>
+#include <shobjidl.h>
 #include <shlwapi.h>
 #include <tchar.h>
 #include <windows.h>

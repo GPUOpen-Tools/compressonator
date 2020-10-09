@@ -3,10 +3,10 @@
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
-#include "TootlePCH.h"
-#include "JRTCommon.h"
-#include "JRTKDTree.h"
-#include "JRTMesh.h"
+#include "tootlepch.h"
+#include "jrtcommon.h"
+#include "jrtkdtree.h"
+#include "jrtmesh.h"
 
 
 const UINT JRTKDTree::MAX_TREE_DEPTH = 28;

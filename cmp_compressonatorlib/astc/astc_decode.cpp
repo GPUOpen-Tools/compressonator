@@ -24,9 +24,9 @@
 // ASTC_Decode.cpp : A reference decoder for ASTC
 //
 
-#include "Common.h"
-#include "ASTC/ASTC_Decode.h"
-#include "ASTC_Host.h"
+#include "common.h"
+#include "astc/astc_decode.h"
+#include "astc_host.h"
 
 // //using namespace ASTC_Encoder;
 // void decompress_symbolic_block2(

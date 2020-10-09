@@ -23,7 +23,7 @@
 
 #include <QtWidgets>
 
-#include "cpNewProject.h"
+#include "cpnewproject.h"
 
 cpNewProject::cpNewProject(QWidget *parent):
     m_parent(parent) {

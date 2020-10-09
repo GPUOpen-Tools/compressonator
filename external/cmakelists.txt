@@ -4,8 +4,6 @@ set(FOLDER_NAME "External")
 
 message(STATUS "++++++++++++++++++External CMakeList called" )
 
-include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
-
 include(${CMAKE_CURRENT_LIST_DIR}/glew/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/glm/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/opengl/CMakeLists.txt)
@@ -40,7 +38,7 @@ find_package(Threads REQUIRED QUIET)
 # ====================================================
 #                   D I R E C T X
 # ====================================================
-if (CMP_HOST_WINDOWS)
+if (OPTION_CMP_DIRECTX )
     message(STATUS "++++++++++++++++++ D I R E C T X" )
     add_library(ExtDirectX INTERFACE)
 
@@ -55,7 +53,7 @@ endif()
 # ====================================================
 #                D I R E C T X   T E X
 # ====================================================
-if (CMP_HOST_WINDOWS)
+if (OPTION_CMP_DIRECTX )
     message(STATUS "++++++++++++++++++ D I R E C T X   T E X" )
     include(${CMAKE_CURRENT_LIST_DIR}/directxtex/CMakeLists.txt)
     # add_library(ExtDirectXTex INTERFACE)

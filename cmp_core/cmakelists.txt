@@ -2,25 +2,26 @@
 add_library(CMP_Core)
 
 target_sources(CMP_Core PRIVATE
-    shaders/BC1_Encode_kernel.h
-    shaders/BC1_Encode_kernel.cpp
-    shaders/BC2_Encode_kernel.h
-    shaders/BC2_Encode_kernel.cpp
-    shaders/BC3_Encode_kernel.h
-    shaders/BC3_Encode_kernel.cpp
-    shaders/BC4_Encode_kernel.h
-    shaders/BC4_Encode_kernel.cpp
-    shaders/BC5_Encode_kernel.h
-    shaders/BC5_Encode_kernel.cpp
-    shaders/BC6_Encode_kernel.h
-    shaders/BC6_Encode_kernel.cpp
-    shaders/BC7_Encode_Kernel.h
-    shaders/BC7_Encode_Kernel.cpp
-    shaders/BCn_Common_Kernel.h
-    shaders/Common_Def.h
+    shaders/bc1_encode_kernel.h
+    shaders/bc1_encode_kernel.cpp
+    shaders/bc2_encode_kernel.h
+    shaders/bc2_encode_kernel.cpp
+    shaders/bc3_encode_kernel.h
+    shaders/bc3_encode_kernel.cpp
+    shaders/bc4_encode_kernel.h
+    shaders/bc4_encode_kernel.cpp
+    shaders/bc5_encode_kernel.h
+    shaders/bc5_encode_kernel.cpp
+    shaders/bc6_encode_kernel.h
+    shaders/bc6_encode_kernel.cpp
+    shaders/bc7_encode_kernel.h
+    shaders/bc7_encode_kernel.cpp
+    shaders/bcn_common_kernel.h
+    shaders/common_def.h
 
-    source/CMP_Core.h
+    source/cmp_core.h
     source/cmp_math_vec4.h
+    source/cmp_math_func.h
 )
 
 target_include_directories(CMP_Core PUBLIC

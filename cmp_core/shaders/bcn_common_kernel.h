@@ -31,7 +31,7 @@
 
 #pragma warning(disable : 4505)  // disable warnings on unreferenced local function has been removed
 
-#include "Common_Def.h"
+#include "common_def.h"
 
 //-----------------------------------------------------------------------
 // When build is for CPU, we have some missing API calls common to GPU

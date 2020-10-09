@@ -29,15 +29,15 @@
 #pragma warning(disable:4100)    // Ignore warnings of unreferenced formal parameters
 
 #ifdef _WIN32
-#include "Common.h"
+#include "common.h"
 
 #ifdef USE_APC
-#include "Codec_APC.h"
+#include "codec_apc.h"
 #include <process.h>
 #include "debug.h"
 
 #ifdef APC_COMPDEBUGGER
-#include "CompClient.h"
+#include "compclient.h"
 #endif
 
 //======================================================================================

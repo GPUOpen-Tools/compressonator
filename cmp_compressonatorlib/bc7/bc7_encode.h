@@ -25,7 +25,7 @@
 #define _BC7_ENCODE_H_
 
 #include <float.h>
-#include "BC7_Definitions.h"
+#include "bc7_definitions.h"
 #include "debug.h"
 
 #include <mutex>

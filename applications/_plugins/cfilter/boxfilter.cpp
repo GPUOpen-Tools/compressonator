@@ -21,7 +21,7 @@
 // THE SOFTWARE.
 //
 //==============================================================================
-#include "BoxFilter.h"
+#include "boxfilter.h"
 
 #define BUILD_AS_PLUGIN_DLL
 
@@ -30,15 +30,15 @@
 #include <windows.h>
 #endif
 
-#include <TC_PluginAPI.h>
-#include <TC_PluginInternal.h>
-#include <Compressonator.h>
-#include <Texture.h>
+#include <tc_pluginapi.h>
+#include <tc_plugininternal.h>
+#include <compressonator.h>
+#include <texture.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #ifndef _WIN32
-#include "TextureIO.h"
+#include "textureio.h"
 #endif
 #include <algorithm>
 
@@ -255,7 +255,9 @@ int Plugin_BoxFilter::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) {
 }
 
 //nMinSize : The size in pixels used to determine how many mip levels to generate. Once all dimensions are less than or equal to nMinSize your mipper should generate no more mip levels.
-int Plugin_BoxFilter::TC_GenerateMIPLevels(MipSet* pMipSet, CMP_CFilterParams* pCFilterParams) {
+int Plugin_BoxFilter::TC_CFilter(MipSet* pMipSet, CMP_MipSet* pMipSetDst, CMP_CFilterParams* pCFilterParams)
+{
+    (pMipSetDst);
     assert(pMipSet);
     assert(pMipSet->m_nMipLevels);
     int result = CMP_OK;

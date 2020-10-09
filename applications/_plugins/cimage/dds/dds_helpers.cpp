@@ -30,11 +30,11 @@
 #include <assert.h>
 #include <limits>
 
-#include "DDS.h"
-#include "DDS_File.h"
-#include "DDS_Helpers.h"
-#include "TC_PluginAPI.h"
-#include "Version.h"
+#include "dds.h"
+#include "dds_file.h"
+#include "dds_helpers.h"
+#include "tc_pluginapi.h"
+#include "version.h"
 
 extern int CMP_MaxFacesOrSlices(const MipSet* pMipSet, int nMipLevel);
 typedef TC_PluginError (PreLoopFunction)(FILE*& pFile, DDSD2*& pDDSD, MipSet*& pMipSet, void*& extra);

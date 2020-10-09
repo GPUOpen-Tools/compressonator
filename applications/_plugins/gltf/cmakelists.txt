@@ -3,19 +3,19 @@
 add_library(Plugin_GLTF)
 
 # This is the current location of these files. They should be moved here
-set(LEGACY_LOCATION ../Common)
+set(LEGACY_LOCATION ../common)
 
 target_sources(Plugin_GLTF
     PRIVATE
         ${LEGACY_LOCATION}/gltf/defines.h
-        ${LEGACY_LOCATION}/gltf/Error.cpp
-        ${LEGACY_LOCATION}/gltf/Error.h
-        ${LEGACY_LOCATION}/gltf/GltfCommon.cpp
-        ${LEGACY_LOCATION}/gltf/GltfCommon.h
-        ${LEGACY_LOCATION}/gltf/GltfFeatures.h
-        ${LEGACY_LOCATION}/gltf/glTFHelpers.cpp
-        ${LEGACY_LOCATION}/gltf/glTFHelpers.h
-        ${LEGACY_LOCATION}/gltf/GltfStructures.h
+        ${LEGACY_LOCATION}/gltf/error.cpp
+        ${LEGACY_LOCATION}/gltf/error.h
+        ${LEGACY_LOCATION}/gltf/gltfcommon.cpp
+        ${LEGACY_LOCATION}/gltf/gltfcommon.h
+        ${LEGACY_LOCATION}/gltf/gltffeatures.h
+        ${LEGACY_LOCATION}/gltf/gltfhelpers.cpp
+        ${LEGACY_LOCATION}/gltf/gltfhelpers.h
+        ${LEGACY_LOCATION}/gltf/gltfstructures.h
         ${LEGACY_LOCATION}/gltf/stb_image_write.h
         ${LEGACY_LOCATION}/gltf/stb_image.h
         ${LEGACY_LOCATION}/gltf/tiny_gltf2_utils.cpp
@@ -46,5 +46,8 @@ target_include_directories(Plugin_GLTF
 
 set_target_properties(Plugin_GLTF PROPERTIES FOLDER ${FOLDER_NAME})
 
-add_subdirectory(DX12)
-add_subdirectory(Vulkan)
+if (OPTION_CMP_DIRECTX)
+add_subdirectory(dx12)
+endif()
+
+add_subdirectory(vulkan)

@@ -29,7 +29,7 @@
 #ifndef _CODEC_DXT5_XRGB_H_INCLUDED_
 #define _CODEC_DXT5_XRGB_H_INCLUDED_
 
-#include "Codec_DXT5_Swizzled.h"
+#include "codec_dxt5_swizzled.h"
 
 class CCodec_DXT5_xRBG : public CCodec_DXT5_Swizzled {
   public:

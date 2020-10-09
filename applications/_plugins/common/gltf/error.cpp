@@ -17,7 +17,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "Error.h"
+#include "error.h"
 
 #ifdef _WIN32
 #include <windows.h>

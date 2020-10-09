@@ -26,7 +26,7 @@
 //
 //=====================================================================
 
-#include "ATIFormats.h"
+#include "atiformats.h"
 
 #include <stdio.h>
 #include <cctype>
@@ -34,7 +34,7 @@
 #include <tchar.h>
 #endif
 
-#include "Texture.h"
+#include "texture.h"
 
 CMP_TextureTypeDesc g_TextureTypeDesc[] = {
     {TT_2D,"2D"},
@@ -132,7 +132,7 @@ CMP_FORMAT CMP_API CMP_ParseFormat(char* pFormat) {
     return CMP_FORMAT_Unknown;
 }
 
-const CMP_CHAR* GetFormatDesc(CMP_FORMAT nFormat) {
+CMP_CHAR* GetFormatDesc(CMP_FORMAT nFormat) {
     for(CMP_DWORD i = 0; i < g_dwFormatDescCount; i++)
         if(nFormat == g_FormatDesc[i].nFormat)
             return g_FormatDesc[i].pszFormatDesc;

@@ -41,7 +41,7 @@
 #include <qstyleoption.h>
 #include <qpainter.h>
 
-#include "acDockWidgetTitleBar.h"
+#include "acdockwidgettitlebar.h"
 
 
 class acCustomDockWidget : public QDockWidget {

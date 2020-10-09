@@ -23,11 +23,11 @@
 //
 //=====================================================================
 
-#include "BC5.h"
+#include "bc5.h"
 
 #ifdef USE_CONVECTION_KERNELS
 #pragma comment(lib, "ConvectionKernels.lib")
-#include "ConvectionKernels.h"
+#include "convectionkernels.h"
 using namespace cvtt;
 #endif
 

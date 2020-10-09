@@ -27,7 +27,7 @@
 #include <filesystem>
 
 // Local
-#include "cpStartupPage.h"
+#include "cpstartuppage.h"
 
 #define CP_STR_startup_page_openProjectLink                         "open_project"
 #define CP_STR_startup_page_openProjectLinkPrefix                   CP_STR_startup_page_openProjectLink "_"

@@ -22,6 +22,6 @@
 double MillisecondsNow();
 
 #ifdef _WIN32
-#include <Windows.h>
+#include <windows.h>
 SIZE_T Align(SIZE_T uOffset, SIZE_T uAlign);
 #endif

@@ -23,15 +23,15 @@
 
 #include "cmdline.h"
 
-#include "ATIFormats.h"
-#include "Texture.h"
-#include "TextureIO.h"
-#include "PluginManager.h"
-#include "PluginInterface.h"
-#include "TC_PluginInternal.h"
-#include "Version.h"
-#include "Misc.h"
-#include "CMP_FileIO.h"
+#include "atiformats.h"
+#include "texture.h"
+#include "textureio.h"
+#include "pluginmanager.h"
+#include "plugininterface.h"
+#include "tc_plugininternal.h"
+#include "version.h"
+#include "misc.h"
+#include "cmp_fileio.h"
 
 #include <filesystem>
 #include <string>
@@ -39,9 +39,9 @@
 
 #ifdef USE_MESH_CLI
 #include <gltf/tiny_gltf2.h>
-#include <gltf/GltfCommon.h>
-#include "ModelData.h"
-#include "UtilFuncs.h"
+#include <gltf/gltfcommon.h>
+#include "modeldata.h"
+#include "utilfuncs.h"
 
 using namespace tinygltf2;
 #if !defined(NO_LEGACY_BEHAVIOR)
@@ -60,7 +60,7 @@ using namespace tinygltf2;
 #endif
 
 #ifdef USE_CMP_TRANSCODE
-#include "CMP_Transcoder/transcoders.h"
+#include "cmp_transcoder/transcoders.h"
 #endif
 
 // #define SHOW_PROCESS_MEMORY
@@ -1583,8 +1583,8 @@ void LocalPrintF(char* buff) {
     printf(buff);
 }
 
-#include "Common_KernelDef.h"
-#include "Compute_Base.h"
+#include "common_kerneldef.h"
+#include "compute_base.h"
 
 bool SVMInitCodec(KernelOptions* options) {
     CMP_FORMAT format = options->format;

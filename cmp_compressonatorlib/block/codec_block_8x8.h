@@ -29,7 +29,7 @@
 #ifndef _CODEC_BLOCK_8x8_H_INCLUDED_
 #define _CODEC_BLOCK_8x8_H_INCLUDED_
 
-#include "Codec_Block.h"
+#include "codec_block.h"
 
 class CCodec_Block_8x8 : public CCodec_Block {
   public:

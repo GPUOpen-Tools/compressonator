@@ -21,18 +21,18 @@
 
 #define ENABLE_RENDER_CODE
 
-#include "GltfFeatures.h"
-#include "FrameworkWindows.h"
-#include "Camera.h"
-#include "SwapChainDX12.h"
+#include "gltffeatures.h"
+#include "frameworkwindows.h"
+#include "camera.h"
+#include "swapchaindx12.h"
 
-#include "glTF_DX12RendererEx.h"
+#include "gltf_dx12rendererex.h"
 
-#include <ImGui_DX12.h>
+#include <imgui_dx12.h>
 #include "imgui/imgui.h"
 
-#include "UserInterface.h"
-#include "PluginManager.h"
+#include "userinterface.h"
+#include "pluginmanager.h"
 
 #define MAX_NUM_OF_NODES    2
 

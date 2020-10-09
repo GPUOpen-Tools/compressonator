@@ -17,12 +17,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "GltfBBoxPass.h"
-#include "GltfHelpers.h"
+#include "gltfbboxpass.h"
+#include "gltfhelpers.h"
 
-#include <Error.h>
+#include <error.h>
 
-#include <DirectXMath.h>
+#include <directxmath.h>
 #include <d3dcompiler.h>
 
 using namespace DirectX;

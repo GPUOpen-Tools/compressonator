@@ -23,7 +23,7 @@
 //
 
 #ifdef SUPPORT_ATI_TC
-#include "Codec_ATI_TC.h"
+#include "codec_ati_tc.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // Construction/Destruction

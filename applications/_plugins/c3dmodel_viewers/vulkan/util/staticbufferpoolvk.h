@@ -19,14 +19,14 @@
 
 #pragma once
 
-#include <Windows.h>
+#include <windows.h>
 
 // Simulates DX11 style static buffers. For dynamic buffers please see 'DynamicBufferRingDX12.h'
 //
 // This class allows suballocating small chuncks of memory from a huge buffer that is allocated on creation
 // This class is specialized in vertex buffers.
 //
-#include "DeviceVK.h"
+#include "devicevk.h"
 
 #include <cstdint>
 

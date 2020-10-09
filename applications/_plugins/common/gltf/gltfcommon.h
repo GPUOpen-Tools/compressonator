@@ -19,11 +19,11 @@
 #ifndef GLTFCOMMOM_H
 #define GLTFCOMMOM_H
 
-#include "Compressonator.h"
-#include "Common.h"
-#include "GltfFeatures.h"
-#include "GltfStructures.h"
-#include "ModelData.h"
+#include "compressonator.h"
+#include "common.h"
+#include "gltffeatures.h"
+#include "gltfstructures.h"
+#include "modeldata.h"
 
 #include <json/json.h>
 

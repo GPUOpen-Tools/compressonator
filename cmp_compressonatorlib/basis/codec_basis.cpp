@@ -28,14 +28,14 @@
 
 #pragma warning(disable:4100)    // Ignore warnings of unreferenced formal parameters
 
-#include "Compressonator.h"
+#include "compressonator.h"
 
 #ifdef USE_BASIS
 
 
 #ifdef _WIN32
-#include "Common.h"
-#include "Codec_BASIS.h"
+#include "common.h"
+#include "codec_basis.h"
 #include <process.h>
 #include "debug.h"
 

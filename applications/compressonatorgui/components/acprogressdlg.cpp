@@ -7,8 +7,8 @@
 //==================================================================================
 
 //#include <acDisplay.h>
-#include "acProgressDlg.h"
-#include "acProgressAnimationWidget.h"
+#include "acprogressdlg.h"
+#include "acprogressanimationwidget.h"
 
 #include <QtWidgets>
 

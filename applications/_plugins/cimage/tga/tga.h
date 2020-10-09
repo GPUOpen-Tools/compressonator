@@ -13,7 +13,7 @@
 #include <tchar.h>
 #endif
 
-#include "PluginInterface.h"
+#include "plugininterface.h"
 
 // ---------------- TGA Plugin ------------------------
 #ifdef _WIN32

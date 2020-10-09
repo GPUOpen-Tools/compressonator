@@ -25,12 +25,7 @@
 
 #pragma warning(disable:4505)  // disable warnings on unreferenced local function has been removed
 
-#if defined(ISPC)||defined(ASPM)
-//#include "..\..\Common\Common_Def.h"
-#include "Common_Def.h"
-#else
-#include "Common_Def.h"
-#endif
+#include "common_def.h"
 
 // cmp param uniform data tracking
 typedef CGU_UINT8  CGU_CHANNEL;

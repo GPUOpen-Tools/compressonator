@@ -23,16 +23,16 @@
 //
 //=====================================================================
 
-#include "GPU_OpenGL.h"
-#include "Common.h"
-#include "Compressonator.h"
+#include "gpu_opengl.h"
+#include "common.h"
+#include "compressonator.h"
 
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 
 #include <stdio.h>
-#include "GPU_Decode.h"
+#include "gpu_decode.h"
 
 #include <assert.h>
 

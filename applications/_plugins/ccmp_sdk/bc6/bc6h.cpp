@@ -23,7 +23,7 @@
 //
 //=====================================================================
 
-#include "BC6H.h"
+#include "bc6h.h"
 
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_BC6H)

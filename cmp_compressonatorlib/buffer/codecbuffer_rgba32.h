@@ -29,7 +29,7 @@
 #ifndef _CODECBUFFER_RGBA32_H_INCLUDED_
 #define _CODECBUFFER_RGBA32_H_INCLUDED_
 
-#include "CodecBuffer.h"
+#include "codecbuffer.h"
 
 class CCodecBuffer_RGBA32 : public CCodecBuffer {
   public:

@@ -29,7 +29,7 @@
 #ifndef _CODEC_ATI1N_H_INCLUDED_
 #define _CODEC_ATI1N_H_INCLUDED_
 
-#include "Codec_DXTC.h"
+#include "codec_dxtc.h"
 
 class CCodec_ATI1N : public CCodec_DXTC {
   public:

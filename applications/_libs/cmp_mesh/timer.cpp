@@ -3,7 +3,7 @@
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
-#include "TootlePCH.h"
+#include "tootlepch.h"
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -11,7 +11,7 @@
 #include <sys/time.h>
 #endif
 
-#include "Timer.h"
+#include "timer.h"
 
 Timer::
 Timer() {

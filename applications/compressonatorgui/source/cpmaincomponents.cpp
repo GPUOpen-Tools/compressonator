@@ -21,13 +21,13 @@
 //
 //=====================================================================
 
-#include "cpMainComponents.h"
+#include "cpmaincomponents.h"
 
-#include "Compressonator.h"
-#include "Common.h"
-#include "Version.h"
+#include "compressonator.h"
+#include "common.h"
+#include "version.h"
 
-#include <GPU_Decode.h>
+#include <gpu_decode.h>
 
 #include <gltf/tiny_gltf2_utils.h>
 
@@ -893,7 +893,7 @@ void cpMainComponents::onGenerateMIPMap(CMP_CFilterParams CFilterParams, QTreeWi
                         if (g_plugin_MipMapFilter) {
                             // Init CMips & all devices
                             if (g_plugin_MipMapFilter->TC_PluginSetSharedIO(g_CMIPS) == CMP_OK) {
-                                result = g_plugin_MipMapFilter->TC_GenerateMIPLevels((CMP_MipSet*)data->m_MipImages->mipset, &CFilterParams);
+                                result = g_plugin_MipMapFilter->TC_CFilter((CMP_MipSet*)data->m_MipImages->mipset,NULL, &CFilterParams);
                             } else
                                 result = CMP_ERR_GENERIC;
                         } else

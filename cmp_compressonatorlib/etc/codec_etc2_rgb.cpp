@@ -28,12 +28,12 @@
 //////////////////////////////////////////////////////////////////////////////
 #pragma warning(disable:4100)
 
-#include "Common.h"
-#include "Codec_ETC2_RGB.h"
-#include "Compressonator_tc.h"
+#include "common.h"
+#include "codec_etc2_rgb.h"
+#include "compressonator_tc.h"
 
 #ifndef USE_ETCPACK
-#include "Codec_ETC2_cmodel.cpp"
+#include "codec_etc2_cmodel.cpp"
 #endif
 
 using namespace CMP;

@@ -9,7 +9,7 @@
 /// epsilon value used in intersection computations.
 #define JRTEPSILON 0.00001f
 
-#include "TootlePCH.h"
+#include "tootlepch.h"
 
 #include <iostream>
 
@@ -22,7 +22,7 @@ typedef unsigned int UINT;
 typedef unsigned short USHORT;
 typedef unsigned char UBYTE;
 
-#include "JML.h"
+#include "jml.h"
 using namespace JML;
 
 #define JRT_ASSERT(x) assert(x)

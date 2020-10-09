@@ -28,7 +28,7 @@
 #ifndef _GT_DECODE_H_
 #define _GT_DECODE_H_
 
-#include "GT_Definitions.h"
+#include "gt_definitions.h"
 
 class GTCBlockDecoder {
   public:

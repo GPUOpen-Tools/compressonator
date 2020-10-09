@@ -26,14 +26,14 @@
 
 #define __CL_ENABLE_EXCEPTIONS
 
-#include <CL/opencl.h>
+#include <cl/opencl.h>
 
-#include "Common_Def.h"                     // Updated at run time by COpenCL
+#include "common_def.h"                     // Updated at run time by COpenCL
 
-#include "Compute_Base.h"
-#include "Common_KernelDef.h"
+#include "compute_base.h"
+#include "common_kerneldef.h"
 #include "query_timer.h"
-#include "TextureIO.h"
+#include "textureio.h"
 #include "crc32.h"
 #include "cmp_math_common.h"
 

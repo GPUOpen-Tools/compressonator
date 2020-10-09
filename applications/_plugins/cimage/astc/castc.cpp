@@ -24,13 +24,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "Common.h"
-#include "Compressonator.h"
+#include "common.h"
+#include "compressonator.h"
 
-#include "TC_PluginAPI.h"
-#include "TC_PluginInternal.h"
+#include "tc_pluginapi.h"
+#include "tc_plugininternal.h"
 
-#include "cASTC.h"
+#include "castc.h"
 
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_ASTC)

@@ -28,9 +28,9 @@
 #pragma once
 
 
-#include "TC_PluginAPI.h"
-#include "Texture.h"
-#include "DDS.h"
+#include "tc_pluginapi.h"
+#include "texture.h"
+#include "dds.h"
 
 typedef struct _ARGB8888Struct {
     int		nFlags;

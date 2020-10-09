@@ -16,7 +16,7 @@ target_sources(Plugin_C3DModel_Viewers_Vulkan PRIVATE
 target_include_directories(Plugin_C3DModel_Viewers_Vulkan PUBLIC
 
     ./
-    ./Util
+    ./util
 )
 
 target_link_libraries(Plugin_C3DModel_Viewers_Vulkan

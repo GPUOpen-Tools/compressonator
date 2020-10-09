@@ -18,11 +18,11 @@
 // THE SOFTWARE.
 #pragma once
 
-#include "GltfCommon.h"
-#include "GltfTechnique.h"
+#include "gltfcommon.h"
+#include "gltftechnique.h"
 
-#include <DirectXMath.h>
-#include <Windows.h>
+#include <directxmath.h>
+#include <windows.h>
 #include <wrl.h>
 
 

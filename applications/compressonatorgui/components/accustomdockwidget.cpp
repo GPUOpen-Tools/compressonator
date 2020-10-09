@@ -24,7 +24,7 @@
 //
 //=====================================================================
 
-#include "acCustomDockWidget.h"
+#include "accustomdockwidget.h"
 
 acCustomDockWidget::acCustomDockWidget(const QString title, QWidget *parent)
     : QDockWidget(title, parent) {

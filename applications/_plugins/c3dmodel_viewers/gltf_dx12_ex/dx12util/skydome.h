@@ -18,9 +18,9 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "PostProcPS.h"
+#include "postprocps.h"
 
-#include <DirectXMath.h>
+#include <directxmath.h>
 
 class SkyDome {
   public:

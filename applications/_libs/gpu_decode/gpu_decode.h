@@ -26,7 +26,7 @@
 //
 //=====================================================================
 
-#include "Compressonator.h"
+#include "compressonator.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -17,9 +17,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "SwapChainDX12.h"
+#include "swapchaindx12.h"
 
-#include <Error.h>
+#include <error.h>
 
 #pragma comment(lib, "dxgi.lib")
 

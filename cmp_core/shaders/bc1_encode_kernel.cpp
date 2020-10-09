@@ -32,10 +32,10 @@
 //#define TEST_HEATMAP   // Enable this to run heat map tests on BC1 codec
 #endif
 
-#include "BC1_Encode_kernel.h"
+#include "bc1_encode_kernel.h"
 
 #ifdef TEST_HEATMAP
-#include "ExternCodec.h" // Use external codec for testing 
+#include "externcodec.h" // Use external codec for testing 
 #endif
 //============================================== BC1 INTERFACES  =======================================================
 

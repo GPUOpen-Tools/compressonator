@@ -21,7 +21,7 @@
 //
 //==============================================================================
 
-#include "COpenCL.h"
+#include "copencl.h"
 
 #ifdef USE_CPU_PERFORMANCE_COUNTERS
 #include "query_timer.h"  // can use CPU timing but pref is to use GPU counters
@@ -489,13 +489,21 @@ bool COpenCL::load_file() {
         std::string tmp = m_source_file;
         bool        rebuild    = false;
 
+#ifdef _WIN32
         // Check build configuration of the shader, has it been modified since last use
         rebuild = cmp_recompile_shader(m_source_file);
+#endif
 
         if (!rebuild) {
+#ifdef _WIN32
             fopen_result = fopen_s(&p_file_bin, tmp.append(".cmp").c_str(), "rb");
             if (fopen_result != 0)
                 rebuild = true;
+#else
+            p_file_bin = fopen(tmp.append(".cmp").c_str(), "rb");
+            if (p_file_bin)
+                rebuild = true;
+#endif
         }
 
         // Found a .cmp file use it
@@ -717,7 +725,7 @@ bool COpenCL::CreateIOBuffers() {
     return true;
 }
 
-//#include "BCn_Common_Kernel.h" use this for debugging data to kernel when using BC15
+//#include "bcn_common_kernel.h" use this for debugging data to kernel when using BC15
 
 bool  COpenCL::RunKernel() {
 //    QUERY_PERFORMANCE("Run Kernel      ");

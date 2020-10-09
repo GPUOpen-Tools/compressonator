@@ -1,6 +1,6 @@
-message(STATUS "(1)----------------------  OpenCV CmakeList for ${CMAKE_CURRENT_LIST_DIR}" )
-
 cmake_minimum_required(VERSION 3.13)
+
+message(STATUS "(1)----------------------  OpenCV CmakeList for ${CMAKE_CURRENT_LIST_DIR}" )
 
 add_library(ExtOpenCV INTERFACE)
 

@@ -23,7 +23,7 @@
 
 #define CATCH_CONFIG_RUNNER
 #include "single_include/catch2/catch.hpp"
-#include "CompressonatorTests.h"
+#include "compressonatortests.h"
 
 int main(int argc, char* argv[]) {
     AssignExpectedColorsToBlocks();

@@ -24,7 +24,7 @@
 //
 //=====================================================================
 
-#include "acDockWidgetTitleBar.h"
+#include "acdockwidgettitlebar.h"
 
 
 acDockWidgetTitlebar::acDockWidgetTitlebar(QWidget *parent) : parent(parent) {

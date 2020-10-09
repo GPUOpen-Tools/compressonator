@@ -20,13 +20,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "glTF_DX12_EX.h"
+#include "gltf_dx12_ex.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "TC_PluginAPI.h"
-#include "TC_PluginInternal.h"
-#include "Compressonator.h"
+#include "tc_pluginapi.h"
+#include "tc_plugininternal.h"
+#include "compressonator.h"
 
 #include <iostream>
 #include <fstream>
@@ -42,9 +42,9 @@ void *make_Plugin_glTF_DX12_EX() {
 #endif
 
 
-#include "Misc.h"
+#include "misc.h"
 #include "d3dx12/d3dx12.h"
-#include "glTF_DX12DeviceEx.h"
+#include "gltf_dx12deviceex.h"
 
 
 #ifdef BUILD_AS_PLUGIN_DLL

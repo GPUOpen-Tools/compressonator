@@ -3,10 +3,10 @@ add_library(Plugin_CGPUDecode_OpenGL)
 
 target_sources(Plugin_CGPUDecode_OpenGL PUBLIC
 
-    COpenGL.cpp
-    COpenGL.h
-    GPU_OpenGL.cpp
-    GPU_OpenGL.h
+    copengl.cpp
+    copengl.h
+    gpu_opengl.cpp
+    gpu_opengl.h
     shader.h
 )
 

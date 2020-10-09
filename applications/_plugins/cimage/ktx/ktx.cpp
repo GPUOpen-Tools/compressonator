@@ -26,16 +26,16 @@
 #include <windows.h>
 #endif
 
-#include "cKTX.h"
+#include "cktx.h"
 
-#include "TC_PluginAPI.h"
-#include "TC_PluginInternal.h"
-#include "Common.h"
+#include "tc_pluginapi.h"
+#include "tc_plugininternal.h"
+#include "common.h"
 
 #include "softfloat.h"
 
 #ifndef _WIN32
-#include "TextureIO.h"
+#include "textureio.h"
 #endif
 
 #include <sstream>

@@ -21,9 +21,9 @@
 //
 //=====================================================================
 
-#include "TootlePCH.h"
-#include "JRTCommon.h"
-#include "JMLFuncs.h"
+#include "tootlepch.h"
+#include "jrtcommon.h"
+#include "jmlfuncs.h"
 
 #include <assert.h>
 

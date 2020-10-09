@@ -18,7 +18,7 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "PostProcPS.h"
+#include "postprocps.h"
 
 class BlurPS {
   public:

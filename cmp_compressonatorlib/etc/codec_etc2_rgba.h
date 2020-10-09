@@ -29,7 +29,7 @@
 #ifndef _CODEC_ETC2_RGBA_H_INCLUDED_
 #define _CODEC_ETC2_RGBA_H_INCLUDED_
 
-#include "Codec_ETC2.h"
+#include "codec_etc2.h"
 
 class CCodec_ETC2_RGBA: public CCodec_ETC2 {
   public:

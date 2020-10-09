@@ -28,8 +28,8 @@
 
 #ifdef _WIN32
 #ifndef DISABLE_TESTCODE
-#include "Compressonator.h"
-#include <Windows.h>
+#include "compressonator.h"
+#include <windows.h>
 //uncomment to show image on console window for debug
 //#define SHOW_WINDOW
 

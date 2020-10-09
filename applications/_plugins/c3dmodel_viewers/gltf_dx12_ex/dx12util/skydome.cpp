@@ -20,11 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "DynamicBufferRingDX12.h"
-#include "StaticBufferPoolDX12.h"
-#include "UploadHeapDX12.h"
-#include "TextureDX12.h"
-#include "SkyDome.h"
+#include "dynamicbufferringdx12.h"
+#include "staticbufferpooldx12.h"
+#include "uploadheapdx12.h"
+#include "texturedx12.h"
+#include "skydome.h"
 
 using namespace DirectX;
 

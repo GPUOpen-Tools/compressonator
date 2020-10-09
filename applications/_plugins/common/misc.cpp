@@ -17,7 +17,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "Misc.h"
+#include "misc.h"
 
 #ifndef _WIN32
 #include <chrono>

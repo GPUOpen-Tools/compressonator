@@ -29,7 +29,7 @@
 #ifndef _CODECBUFFER_R16_H_INCLUDED_
 #define _CODECBUFFER_R16_H_INCLUDED_
 
-#include "CodecBuffer.h"
+#include "codecbuffer.h"
 
 class CCodecBuffer_R16 : public CCodecBuffer {
   public:

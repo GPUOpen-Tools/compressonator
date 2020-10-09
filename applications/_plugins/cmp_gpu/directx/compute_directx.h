@@ -28,11 +28,11 @@
 
 #define __CL_ENABLE_EXCEPTIONS
 
-#include "Common_Def.h"
+#include "common_def.h"
 
-#include "Compute_Base.h"
-#include "Common_KernelDef.h"
-#include "TextureIO.h"
+#include "compute_base.h"
+#include "common_kerneldef.h"
+#include "textureio.h"
 #include "crc32.h"
 #include <d3d11.h>
 #include <d3dcompiler.h>

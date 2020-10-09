@@ -27,9 +27,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "Common.h"
-#include "Codec_DXTC.h"
-#include "CompressonatorXCodec.h"
+#include "common.h"
+#include "codec_dxtc.h"
+#include "compressonatorxcodec.h"
 #include "dxtc_v11_compress.h"
 
 CodecError CCodec_DXTC::CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]) {

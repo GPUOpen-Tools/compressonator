@@ -17,7 +17,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "KeyboardMouse.h"
+#include "keyboardmouse.h"
 
 #include <cstdlib>
 

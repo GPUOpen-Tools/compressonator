@@ -24,10 +24,10 @@
 //=====================================================================
 #include <cstdlib>
 
-#include "Compute_Base.h"
-#include "PluginInterface.h"
-#include "Texture.h"
-#include "CMP_Core.h"
+#include "compute_base.h"
+#include "plugininterface.h"
+#include "texture.h"
+#include "cmp_core.h"
 
 #ifndef _WIN32
 #include <unistd.h> /* For open(), creat() */
@@ -38,7 +38,7 @@
 
 #include <string>
 
-const CMP_CHAR*          GetFormatDesc(CMP_FORMAT nFormat);
+CMP_CHAR*          GetFormatDesc(CMP_FORMAT nFormat);
 PluginManager            g_pluginManager;
 PluginInterface_Encoder* plugin_encoder_codec  = NULL;
 static CMP_BOOL          HostPluginsRegistered = FALSE;
@@ -138,6 +138,7 @@ const CMP_CHAR* GetEncodeWithDesc(CMP_Compute_type nFormat) {
     return "CPU";
 }
 
+#ifdef _WIN32
 bool cmp_recompile_shader(std::string m_sourceShaderFile) {
     bool    rebuild    = false;
     FILE*   p_file_bin = NULL;
@@ -153,6 +154,7 @@ bool cmp_recompile_shader(std::string m_sourceShaderFile) {
         if (attr != attrib.st_ctime) {
             char buff[128];
             sprintf_s(buff, " %llx ", attrib.st_ctime);
+            // snprintf(buff, 128, " %llx ", attrib.st_ctime);
             fseek(p_file_bin, 2, SEEK_SET);
             fwrite(buff, 1, 9, p_file_bin);
             rebuild = true;
@@ -162,7 +164,7 @@ bool cmp_recompile_shader(std::string m_sourceShaderFile) {
     }
     return rebuild;
 }
-
+#endif
 
 //-------------------------
 // Application is "Exiting"
@@ -199,6 +201,11 @@ bool isDX12Supported() {
     }
 
     return true;
+}
+#else
+bool isDX12Supported()
+{
+    return false;
 }
 #endif
 

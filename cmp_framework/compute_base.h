@@ -26,10 +26,10 @@
 #ifndef COMPUTE_BASE_H
 #define COMPUTE_BASE_H
 
-#include "Compressonator.h"
-#include "Common.h"
-#include "Common_KernelDef.h"
-#include "Texture.h"
+#include "compressonator.h"
+#include "common.h"
+#include "common_kerneldef.h"
+#include "texture.h"
 
 namespace CMP_Compute_Base {
 

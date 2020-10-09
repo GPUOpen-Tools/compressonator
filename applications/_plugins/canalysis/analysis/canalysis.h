@@ -26,13 +26,13 @@
 
 #define USE_OPENCV
 
-#include "PluginManager.h"
-#include "TC_PluginInternal.h"
-#include "CMP_FileIO.h"
+#include "pluginmanager.h"
+#include "tc_plugininternal.h"
+#include "cmp_fileio.h"
 
-#include <TestReport.h>
+#include <testreport.h>
 
-#include <Compressonator.h>
+#include <compressonator.h>
 
 #ifdef USE_OPENCV
 #include <opencv2/core/core.hpp>

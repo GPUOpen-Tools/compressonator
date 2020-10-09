@@ -35,13 +35,13 @@
 #define _TC_PLUGINAPI_INCLUDED_
 
 #ifdef _WIN32
-#include <Windows.h>
+#include <windows.h>
 #include <tchar.h>
 #endif
 
 #include <assert.h>
 
-#include "PluginInterface.h"
+#include "plugininterface.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -148,9 +148,9 @@ typedef enum {
     TC_VM_Diff,
 } TC_ViewMode;
 
-#include "Texture.h"
+#include "texture.h"
 #ifdef _WIN32
-#include "TC_PluginInternal.h"
+#include "tc_plugininternal.h"
 #endif
 //static const TCHAR TC_Property_BitsPerPixel[] = _T("BitsPerPixel");
 

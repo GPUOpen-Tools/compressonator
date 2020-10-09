@@ -17,14 +17,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "DynamicBufferRingDX12.h"
-#include "StaticBufferPoolDX12.h"
-#include "UploadHeapDX12.h"
-#include "TextureDX12.h"
-#include "PostProcPS.h"
-#include "BlurPS.h"
+#include "dynamicbufferringdx12.h"
+#include "staticbufferpooldx12.h"
+#include "uploadheapdx12.h"
+#include "texturedx12.h"
+#include "postprocps.h"
+#include "blurps.h"
 
-#include <DirectXMath.h>
+#include <directxmath.h>
 
 using namespace DirectX;
 

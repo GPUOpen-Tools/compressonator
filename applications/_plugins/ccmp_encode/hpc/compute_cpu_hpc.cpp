@@ -23,8 +23,8 @@
 //
 //=====================================================================
 
-#include "PluginInterface.h"
-#include "CCPU_HPC.h"
+#include "plugininterface.h"
+#include "ccpu_hpc.h"
 
 #include <chrono>
 #include <thread>

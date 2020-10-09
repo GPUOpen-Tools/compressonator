@@ -1,5 +1,5 @@
 #pragma once
-#include "TestReport.h"
+#include "testreport.h"
 #include <iomanip>  // for controlling float print precision
 #include <iostream> // for standard I/O
 #include <sstream>  // string to number conversion

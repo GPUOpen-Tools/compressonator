@@ -28,7 +28,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 
-#include "HDR_Encode.h"
+#include "hdr_encode.h"
 #include <assert.h>
 #include <math.h>
 #include <float.h>

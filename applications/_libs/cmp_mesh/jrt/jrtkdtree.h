@@ -6,10 +6,10 @@
 #ifndef _JRT_KDTREE_H_
 #define _JRT_KDTREE_H_
 
-#include "JRTCommon.h"
-#include "JRTBoundingBox.h"
-#include "JRTTriangleIntersection.h"
-#include "JRTCore.h"
+#include "jrtcommon.h"
+#include "jrtboundingbox.h"
+#include "jrttriangleintersection.h"
+#include "jrtcore.h"
 
 #ifdef _LINUX
 #include "../aligned_malloc.h"

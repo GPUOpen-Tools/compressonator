@@ -27,10 +27,10 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "JMLVec2.h"
-#include "JMLVec3.h"
-#include "JMLMatrix.h"
-#include "JMLSSEVec.h"
+#include "jmlvec2.h"
+#include "jmlvec3.h"
+#include "jmlmatrix.h"
+#include "jmlssevec.h"
 
 const float PI = 3.1415926f;
 const float E = 2.718281828f;

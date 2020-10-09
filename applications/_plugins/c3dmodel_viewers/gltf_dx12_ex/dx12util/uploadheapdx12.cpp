@@ -19,10 +19,10 @@
 
 
 #include <assert.h>
-#include "UploadHeapDX12.h"
-#include "Misc.h"
+#include "uploadheapdx12.h"
+#include "misc.h"
 
-#include <Error.h>
+#include <error.h>
 
 
 //--------------------------------------------------------------------------------------

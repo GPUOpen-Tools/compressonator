@@ -23,7 +23,7 @@
 //
 //=====================================================================
 
-#include "cpImageAnalysis.h"
+#include "cpimageanalysis.h"
 
 #include <CMP_FileIO.h>
 

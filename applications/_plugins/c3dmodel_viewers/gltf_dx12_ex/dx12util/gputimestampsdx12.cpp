@@ -18,9 +18,9 @@
 // THE SOFTWARE.
 
 
-#include "GPUTimestampsDX12.h"
+#include "gputimestampsdx12.h"
 
-#include <Error.h>
+#include <error.h>
 
 
 void GPUTimestampsDX12::OnCreate(ID3D12Device* pDevice, DWORD numberOfBackBuffers, UINT node, UINT nodemask) {

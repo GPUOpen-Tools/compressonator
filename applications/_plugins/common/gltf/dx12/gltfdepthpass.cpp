@@ -17,15 +17,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "GltfDepthPass.h"
-#include "GltfHelpers.h"
-#include "ThreadPool.h"
+#include "gltfdepthpass.h"
+#include "gltfhelpers.h"
+#include "threadpool.h"
 
 
-#include "gltfGetFormat_DX12.h"
-#include "GltfHelpers_DX12.h"
+#include "gltfgetformat_dx12.h"
+#include "gltfhelpers_dx12.h"
 
-#include <Error.h>
+#include <error.h>
 
 #include <d3dcompiler.h>
 

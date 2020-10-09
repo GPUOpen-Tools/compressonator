@@ -24,7 +24,7 @@
 #ifndef _BC7_DECODE_H_
 #define _BC7_DECODE_H_
 
-#include "BC7_Definitions.h"
+#include "bc7_definitions.h"
 
 class BC7BlockDecoder {
   public:

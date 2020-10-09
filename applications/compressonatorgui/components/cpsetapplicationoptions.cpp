@@ -21,7 +21,7 @@
 //
 //=====================================================================
 
-#include "cpSetApplicationOptions.h"
+#include "cpsetapplicationoptions.h"
 #include "qtbuttonpropertybrowser.h"
 #include "qteditorfactory.h"
 #include "qtgroupboxpropertybrowser.h"

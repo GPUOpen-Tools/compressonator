@@ -23,7 +23,7 @@
 //
 //=====================================================================
 
-#include "cpCompressStatus.h"
+#include "cpcompressstatus.h"
 
 CompressStatusDialog::CompressStatusDialog(const QString title, QWidget *parent) :
     QDockWidget(parent)

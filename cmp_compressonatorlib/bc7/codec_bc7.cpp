@@ -27,13 +27,13 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #pragma warning(disable:4100)    // Ignore warnings of unreferenced formal parameters
-#include "Common.h"
-#include "Codec_BC7.h"
-#include "BC7_Library.h"
+#include "common.h"
+#include "codec_bc7.h"
+#include "bc7_library.h"
 #include <chrono>
 
 #ifdef BC7_COMPDEBUGGER
-#include "CompClient.h"
+#include "compclient.h"
 #endif
 
 #ifdef BC7_COMPDEBUGGER

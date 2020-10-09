@@ -21,7 +21,7 @@
 //
 //=====================================================================
 
-#include "cpProjectView.h"
+#include "cpprojectview.h"
 
 #include "cmdline.h"
 
@@ -30,13 +30,13 @@
 #else
 #include "../../_Plugins/CMesh/Tootle/mesh_tootle.h"
 #endif
-#include "cpMainComponents.h"
+#include "cpmaincomponents.h"
 
 #ifdef USE_ASSIMP
 #include <assimp/Exporter.hpp>
 #endif
 
-#include <gltf/GltfCommon.h>
+#include <gltf/gltfcommon.h>
 #include <gltf/tiny_gltf2.h>
 #include <gltf/tiny_gltf2_utils.h>
 

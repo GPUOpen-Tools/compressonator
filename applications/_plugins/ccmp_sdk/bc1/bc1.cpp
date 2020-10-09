@@ -23,7 +23,7 @@
 //
 //=====================================================================
 
-#include "BC1.h"
+#include "bc1.h"
 
 #ifdef USE_TIMERS
 #include "query_timer.h"
@@ -32,8 +32,8 @@
 //#define BUILD_AS_PLUGIN_DLL
 
 #ifdef USE_CONVECTION_KERNELS
-#pragma comment(lib, "ConvectionKernels.lib")
-#include "ConvectionKernels.h"
+#pragma comment(lib, "convectionkernels.lib")
+#include "convectionkernels.h"
 using namespace cvtt;
 #endif
 

@@ -38,17 +38,17 @@
 
 #ifdef _WIN32
 #include "ddraw.h"
-#include "DXGIFormat.h"
-#include "D3D10.h"
+#include "dxgiformat.h"
+#include "d3d10.h"
 #endif
 
-#include "Common.h"
-#include "Compressonator.h"
-#include "TC_PluginAPI.h"
-#include "DDS_DX10.h"
-#include "DDS_Helpers.h"
-#include "Version.h"
-#include "Texture.h"
+#include "common.h"
+#include "compressonator.h"
+#include "tc_pluginapi.h"
+#include "dds_dx10.h"
+#include "dds_helpers.h"
+#include "version.h"
+#include "texture.h"
 
 TC_PluginError LoadDDS_DX10_RGBA_32F(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
 TC_PluginError LoadDDS_DX10_RGBA32(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);

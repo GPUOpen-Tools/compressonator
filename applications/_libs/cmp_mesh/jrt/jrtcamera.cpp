@@ -3,9 +3,9 @@
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
-#include "TootlePCH.h"
-#include "JRTCommon.h"
-#include "JRTCamera.h"
+#include "tootlepch.h"
+#include "jrtcommon.h"
+#include "jrtcamera.h"
 
 
 /// \param position

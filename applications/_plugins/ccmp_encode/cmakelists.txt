@@ -3,17 +3,17 @@ add_library(Plugin_CCMP_Encode)
 
 target_sources(Plugin_CCMP_Encode PRIVATE
 
-    HPC/CCPU_HPC.cpp
-    HPC/CCPU_HPC.h
-    HPC/cmp_hpc.cpp
-    HPC/cmp_hpc.h
-    HPC/Compute_CPU_HPC.cpp
-    HPC/Compute_CPU_HPC.h
+    hpc/ccpu_hpc.cpp
+    hpc/ccpu_hpc.h
+    hpc/cmp_hpc.cpp
+    hpc/cmp_hpc.h
+    hpc/compute_cpu_hpc.cpp
+    hpc/compute_cpu_hpc.h
 )
 
 target_include_directories(Plugin_CCMP_Encode PUBLIC
     ./
-    ./HPC
+    ./hpc
 )
 
 target_link_libraries(Plugin_CCMP_Encode PRIVATE

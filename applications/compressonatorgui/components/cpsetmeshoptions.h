@@ -29,9 +29,9 @@
 #include "qtgroupboxpropertybrowser.h"
 #include "objectcontroller.h"
 #include <QtWidgets>
-#include "PluginManager.h"
-#include "Compressonator.h"
-#include "cpProjectData.h"
+#include "pluginmanager.h"
+#include "compressonator.h"
+#include "cpprojectdata.h"
 
 class CSetMeshOptions : public QDialog {
     Q_OBJECT

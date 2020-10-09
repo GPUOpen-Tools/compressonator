@@ -20,8 +20,8 @@
 #ifndef MODELTEXTURE_E467CD76_2A95_402D_B989_A39D10E969E1_H
 #define MODELTEXTURE_E467CD76_2A95_402D_B989_A39D10E969E1_H
 
-#include <Compressonator.h>
-#include <Common.h>
+#include <compressonator.h>
+#include <common.h>
 
 #include <cstdint>
 

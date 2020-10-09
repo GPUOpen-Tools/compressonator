@@ -7,9 +7,7 @@
 
 #include <QOpenGLFunctions>
 #include <QOpenGLWidget>
-//#include "AMDCompress.h"
-//#include "MIPS.h"
-#include "PluginManager.h"
+#include "pluginmanager.h"
 #include <QWidget>
 #include <qdebug.h>
 
@@ -21,7 +19,7 @@
 #include <GL/gl.h>
 #endif
 
-#include "acCustomGraphics.h"
+#include "accustomgraphics.h"
 
 #include "geometryengine.h"
 
