@@ -169,10 +169,12 @@ CCodec* CreateCodec(CodecType nCodecType) {
         return new CCodec_ATI1N_S;
     case CT_ATI2N:
         return new CCodec_ATI2N;
+    case CT_ATI2N_S:
+        return new CCodec_ATI2N_S;
     case CT_ATI2N_XY:
         return new CCodec_ATI2N(CT_ATI2N_XY);
     case CT_ATI2N_XY_S:
-        return new CCodec_ATI2N(CT_ATI2N_XY_S);
+        return new CCodec_ATI2N_S(CT_ATI2N_XY_S);
     case CT_ATI2N_DXT5:
         return new CCodec_ATI2N_DXT5;
     case CT_ATC_RGB:
@@ -271,6 +273,7 @@ CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHe
     case CT_DXT5_RGxB:
     case CT_DXT5_xGxR:
     case CT_ATI2N:
+    case CT_ATI2N_S:
     case CT_ATI2N_XY:
     case CT_ATI2N_XY_S:
     case CT_ATI2N_DXT5:

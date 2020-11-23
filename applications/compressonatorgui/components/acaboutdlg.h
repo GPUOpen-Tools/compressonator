@@ -1,12 +1,12 @@
 #ifndef CPABOUTDLG_H
 #define CPABOUTDLG_H
 
-#include <qtwidgets/qdialog>
+#include <QtWidgets/QDialog>
 #include <qdialogbuttonbox.h>
 #include <qimagereader.h>
 #include <qlayout.h>
 #include <qlabel.h>
-#include <qicon>
+#include <QIcon>
 #include <assert.h>
 
 class CHelpAboutDialog : public QDialog {

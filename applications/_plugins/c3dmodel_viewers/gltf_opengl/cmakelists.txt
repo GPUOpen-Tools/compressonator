@@ -1,5 +1,5 @@
 
-add_library(Plugin_C3DModel_Viewers_glTF_OpenGL)
+add_library(ModelViewer_OpenGL SHARED)
 
 
 file(GLOB_RECURSE SRCS
@@ -8,34 +8,40 @@ file(GLOB_RECURSE SRCS
     *.h
 )
 
-target_sources(Plugin_C3DModel_Viewers_glTF_OpenGL PRIVATE
-
+target_sources(ModelViewer_OpenGL PRIVATE
     ${SRCS}
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/qtimgui/imgui_opengl.h
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/qtimgui/imgui_openglrenderer.cpp
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/qtimgui/imgui_openglrenderer.h
+
+    ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshoptimizer/simplifier.cpp
 )
 
-target_include_directories(Plugin_C3DModel_Viewers_glTF_OpenGL PUBLIC
-
+target_include_directories(ModelViewer_OpenGL PUBLIC
     ./
+    ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
+    ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
+    ${PROJECT_SOURCE_DIR}/applications/_libs/gpu_decode
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common
+    ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshoptimizer
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/qtimgui
+    ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_math
 )
 
-target_link_libraries(Plugin_C3DModel_Viewers_glTF_OpenGL PRIVATE
-
-    CompressonatorLIB
-    CMP_Math
-
+target_link_libraries(ModelViewer_OpenGL PRIVATE
+    CMP_Compressonator
+    CMP_Framework
+    CMP_Imgui
+    CMP_Common              # CModel Data
     ExtOpenGL
     ExtQt5OpenGL
-
-    Plugin_GLTF
-    Plugin_UserInterface
-    Plugin_Common_Imgui
-    Plugin_Common_QtImgui_OpenGL
-    Plugin_TCPluginAPI
-    Plugin_Model_Viewer
-    Plugin_CmdLine
 )
 
-set_target_properties(Plugin_C3DModel_Viewers_glTF_OpenGL PROPERTIES 
+target_compile_definitions(ModelViewer_OpenGL PRIVATE BUILD_AS_PLUGIN_DLL=1)
+
+set_target_properties(ModelViewer_OpenGL PROPERTIES 
     AUTOMOC ON
-    FOLDER ${FOLDER_NAME}
+    FOLDER "Plugin_Dynamic/3DModel_Viewers"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin/debug/plugins"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/release/plugins"
     )

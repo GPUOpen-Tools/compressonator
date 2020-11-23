@@ -10,8 +10,12 @@ include(${CMAKE_CURRENT_LIST_DIR}/opengl/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/qt5/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/rapidxml/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/vulkan/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/ktx/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/glfw/CMakeLists.txt)
+
+# Enable KTX2 features
+if(${CMAKE_VERSION} VERSION_GREATER "3.14.0") 
+    include(${CMAKE_CURRENT_LIST_DIR}/ktx/CMakeLists.txt)
+endif()
 
 list(APPEND CMAKE_FIND_ROOT_PATH ${DEPENDENCIES_INSTALL_DIR})
 

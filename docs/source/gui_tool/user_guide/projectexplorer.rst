@@ -181,7 +181,7 @@ Notice also that the "Double Click Here to add files" background color has also 
 .. |image59| image:: media/image65.png
 .. |image60| image:: media/image66.png
 .. |image61| image:: media/image67.png
-.. |QualitySetting1| image:: media/GlobalSettings2.png
-.. |QualitySetting2| image:: media/GlobalSettings3.png
-.. |QualitySetting3| image:: media/GlobalSettings5.png
+.. |QualitySetting1| image:: media/globalsettings2.png
+.. |QualitySetting2| image:: media/globalsettings3.png
+.. |QualitySetting3| image:: media/globalsettings5.png
 

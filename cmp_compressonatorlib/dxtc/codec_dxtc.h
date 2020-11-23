@@ -47,6 +47,12 @@ class CCodec_DXTC : public CCodec_Block_4x4 {
     virtual bool GetParameter(const CMP_CHAR* pszParamName, CODECFLOAT& fValue);
 
   protected:
+
+    // Signed Alpha Block
+      virtual CodecError CompressAlphaBlockSNorm(CMP_FLOAT alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]);
+      virtual void       DecompressAlphaBlockInt8(CMP_SBYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]);
+
+    // Unsigned Alpha Block
     virtual CodecError CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]);
     virtual CodecError CompressExplicitAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]);
     virtual CodecError CompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2], CODECFLOAT* pfChannelWeights = NULL, bool bDXT1 = false, bool bDXT1UseAlpha = false, CMP_BYTE nDXT1AlphaThreshold = 0);
@@ -69,6 +75,7 @@ class CCodec_DXTC : public CCodec_Block_4x4 {
     virtual CodecError CompressRGBABlock_ExplicitAlpha(CODECFLOAT rgbaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[4], CODECFLOAT* pfChannelWeights = NULL);
 
     virtual void DecompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]);
+
     virtual void DecompressExplicitAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]);
     virtual void DecompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2], bool bDXT1);
     virtual void DecompressRGBABlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2]);
@@ -80,11 +87,15 @@ class CCodec_DXTC : public CCodec_Block_4x4 {
     virtual void DecompressRGBABlock(CODECFLOAT rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2]);
     virtual void DecompressRGBABlock_ExplicitAlpha(CODECFLOAT rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2]);
 
-// Alpha decompression functions
+    // Alpha decompression functions
     void GetCompressedAlphaRamp(CMP_BYTE alpha[8],CMP_DWORD compressedBlock[2]);
     void GetCompressedAlphaRamp(CODECFLOAT alpha[8],CMP_DWORD compressedBlock[2]);
 
-// RGB compression functions
+    // Signed Alpha decompression
+    void GetCompressedAlphaRampS(CMP_SBYTE alpha[8], CMP_DWORD compressedBlock[2]);
+
+
+    // RGB compression functions
     CODECFLOAT* CalculateColourWeightings(CMP_BYTE block[BLOCK_SIZE_4X4X4]);
     CODECFLOAT* CalculateColourWeightings(CODECFLOAT block[BLOCK_SIZE_4X4X4]);
 

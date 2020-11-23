@@ -1,26 +1,19 @@
-
-add_library(GPU_Decode)
-
-target_sources(GPU_Decode
-PRIVATE
-    gpu_decode.cpp
-    gpu_decode.h
-    gpu_decodebase.cpp
-    gpu_decodebase.h
+set(GPU_DECODE_H
+  gpu_decodebase.cpp
+  gpu_decode.cpp
 )
 
-target_include_directories(GPU_Decode
-PUBLIC
-    ./
-     ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
-     ${PROJECT_SOURCE_DIR}/cmp_framework/common
-     ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
+set(GPU_DECODE_SRC
+  gpu_decodebase.h
+  gpu_decode.h
 )
 
-target_link_libraries(GPU_Decode
-PRIVATE
-    CompressonatorLIB
-    Plugin_PluginManager
+add_library(CMP_GpuDecode STATIC ${GPU_DECODE_H} ${GPU_DECODE_SRC})
+
+target_include_directories(CMP_GpuDecode PRIVATE
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common
+    ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
+    ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
 )
 
-set_target_properties(GPU_Decode PROPERTIES FOLDER ${FOLDER_NAME})
+set_target_properties(CMP_GpuDecode PROPERTIES FOLDER "Libs")

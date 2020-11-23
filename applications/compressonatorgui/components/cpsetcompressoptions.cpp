@@ -136,6 +136,7 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget* parent)
     m_fileFormats->addItem("DDS");
     m_fileFormats->addItem("KTX");
 
+
     // =================================================
     // Destination File
     // =================================================
@@ -460,6 +461,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         codecBlockOptions   = false;
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
+#ifdef _WIN32
+        m_fileFormats->addItem("KTX2");
+#endif
         m_fileFormats->setCurrentIndex(0);
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
@@ -477,6 +481,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
+#ifdef _WIN32
+        m_fileFormats->addItem("KTX2");
+#endif
 #ifdef USE_CRN
         m_fileFormats->addItem("CRN");
 #endif
@@ -496,6 +503,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
+#ifdef _WIN32
+        m_fileFormats->addItem("KTX2");
+#endif
 #ifdef USE_CRN
         m_fileFormats->addItem("CRN");
 #endif
@@ -516,12 +526,18 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
+#ifdef _WIN32
+        m_fileFormats->addItem("KTX2");
+#endif
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append(
             "A four component compressed texture format with explicit alpha for Microsoft DirectX10. DXT3 identical to BC2. Eight bits per pixel.");
         break;
+
+    case C_Destination_Options::ATI1N:
     case C_Destination_Options::BC4:
+    case C_Destination_Options::BC4_S:
         compressedOptions   = true;
         colorWeightOptions  = false;
         alphaChannelOptions = false;
@@ -531,15 +547,20 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
+#ifdef _WIN32
+        if (comp != C_Destination_Options::ATI1N)
+            m_fileFormats->addItem("KTX2");
+#endif
 #ifdef USE_CRN
         m_fileFormats->addItem("CRN");
 #endif
 
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
-        m_infotext->append("A single component compressed texture format for Microsoft DirectX10. Identical to ATI1N. Four bits per pixel.");
+        m_infotext->append("A single component compressed texture format for Microsoft DirectX10. BC4 identical to ATI1N. Four bits per pixel. BC4_S is used for signed components");
         break;
     case C_Destination_Options::BC5:
+    case C_Destination_Options::BC5_S:
     case C_Destination_Options::ATI2N:
     case C_Destination_Options::ATI2N_XY:
     case C_Destination_Options::ATI2N_DXT5:
@@ -552,13 +573,18 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
+#ifdef _WIN32
+        if ((comp == C_Destination_Options::BC5) || 
+            (comp == C_Destination_Options::BC5_S))
+        m_fileFormats->addItem("KTX2");
+#endif
 #ifdef USE_CRN
         m_fileFormats->addItem("CRN");
 #endif
 
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
-        m_infotext->append("A two component compressed texture format for Microsoft DirectX10. BC5 identical to ATI2N. Eight bits per pixel.");
+        m_infotext->append("A two component compressed texture format for Microsoft DirectX10. BC5 identical to ATI2N. Eight bits per pixel. BC5_S is used for signed components");
         break;
     case C_Destination_Options::ATC_RGB:
         compressedOptions   = true;
@@ -702,6 +728,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
+#ifdef _WIN32
+        m_fileFormats->addItem("KTX2");
+#endif
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("The latest block Compression (BC) format designed to support high-quality compression of RGB and RGBA bytes color spaces.");
@@ -748,6 +777,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         extension = "BASIS";
         m_fileFormats->addItem("BASIS");
         m_fileFormats->addItem("KTX");
+#ifdef _WIN32
+        m_fileFormats->addItem("KTX2");
+#endif
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("The latest block Compression (BASIS) format designed to support CTTF and Transcoding.");
@@ -771,6 +803,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         }
         m_fileFormats->addItem("DDS");
         m_fileFormats->addItem("KTX");
+#ifdef _WIN32
+        m_fileFormats->addItem("KTX2");
+#endif
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("ETC (Ericsson Texture Compression, lossy texture compression developed by Ericsson Research.)");
@@ -786,6 +821,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         extension = "KTX";
         m_fileFormats->addItem("ASTC");
         m_fileFormats->addItem("KTX");
+#ifdef _WIN32
+        m_fileFormats->addItem("KTX2");
+#endif
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("ASTC (Adaptive Scalable Texture Compression),lossy block-based texture compression developed with ARM.");

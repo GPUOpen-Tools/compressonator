@@ -43,9 +43,11 @@
 typedef unsigned char CMP_MATH_BYTE;
 typedef unsigned int  CMP_MATH_DWORD;
 
-#ifndef _LINUX
+#ifdef CMP_USE_XMMINTRIN
+#ifndef __linux__
 extern void cmp_set_fma3_features();
 extern void cmp_set_sse2_features();
+#endif
 #endif
 
 extern void cmp_set_cpu_features();
@@ -61,7 +63,7 @@ extern float cpu_rsqf(float *f);
 extern float cpu_sqrtf(float * pIn);
 
 
-#ifndef _LINUX
+#ifndef __linux__
 extern float sse_clampf(float value, float minval, float maxval);
 extern float sse_lerp2(CMP_Vec4uc C1, CMP_Vec4uc CA, CMP_Vec4uc CB, CMP_Vec4uc C2, CMP_MATH_BYTE *encode1, CMP_MATH_BYTE *encode2);
 extern float sse_maxf(float l1, float r1);

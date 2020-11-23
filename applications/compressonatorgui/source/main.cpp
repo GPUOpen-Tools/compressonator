@@ -29,26 +29,26 @@
 
 #include <QApplication>
 
+#ifdef _CMP_CPP17_  // Build code using std::c++17
 #include <filesystem>
+namespace sfs = std::filesystem;
+#else
+#include <experimental/filesystem>
+namespace sfs = std::experimental::filesystem;
+#endif
 
 #define MSG_HANDLER
 
-// Our Static Plugin Interfaces
-#if defined(_WIN32) && !defined(NO_LEGACY_BEHAVIOR)
-#pragma comment(lib, "ASTC.lib")
-#pragma comment(lib, "EXR.lib")
-#pragma comment(lib, "KTX2.lib")
-#pragma comment(lib, "TGA.lib")
-#pragma comment(lib, "IMGAnalysis.lib")
-
-//#pragma comment(lib, "common_app_lib.lib")
-#else
-#pragma comment(lib, "Plugin_CImage_ASTC.lib")
-#pragma comment(lib, "Plugin_CImage_EXR.lib")
-#pragma comment(lib, "Plugin_CImage_KTX.lib")
-#pragma comment(lib, "Plugin_CImage_TGA.lib")
-#pragma comment(lib, "Plugin_CAnalysis.lib")
+// Standard App Static Plugin Interfaces for minimal support
+#pragma comment(lib, "Image_ASTC.lib")
+#pragma comment(lib, "Image_EXR.lib")
+#pragma comment(lib, "Image_KTX.lib")
+#ifdef _WIN32
+#pragma comment(lib, "Image_KTX2.lib")
 #endif
+#pragma comment(lib, "Image_TGA.lib")
+#pragma comment(lib, "Image_Analysis.lib")
+
 
 #ifdef USE_CRN
 #pragma comment(lib, "CRN.lib")
@@ -57,6 +57,9 @@
 extern void* make_Plugin_ASTC();
 extern void* make_Plugin_EXR();
 extern void* make_Plugin_KTX();
+#ifdef _WIN32
+extern void* make_Plugin_KTX2();
+#endif
 extern void* make_Plugin_TGA();
 extern void* make_Plugin_CAnalysis();
 
@@ -66,36 +69,6 @@ extern void* make_Plugin_CRN();
 
 // Setup Static Host Pluging Libs
 extern void CMP_RegisterHostPlugins();
-
-#ifdef OPTION_BUILD_SHARED_LIBS
-#if !OPTION_BUILD_SHARED_LIBS
-// Plugins that may optionally be dynamic libraries
-#if OPTION_CMP_DIRECTX
-extern void* make_Plugin_glTF_DX12_EX();
-extern void* make_Plugin_GPUDecode_DirectX();
-extern void* make_Plugin_Mesh_Tootle();
-#endif
-
-#if OPTION_CMP_OPENGL
-extern void* make_Plugin_glTF_OpenGL();
-extern void* make_Plugin_GPUDecode_OpenGL();
-#endif
-
-#if OPTION_CMP_VULKAN
-extern void* make_Plugin_GPUDecode_Vulkan();
-extern void* make_Plugin_3DModelViewer_Vulkan();
-#endif
-
-extern void* make_Plugin_Mesh_Compressor();
-extern void* make_Plugin_Mesh_Optimizer();
-
-#if PLUGIN_MODEL_LOADERS
-extern void* make_Plugin_glTF_Loader();
-extern void* make_Plugin_ModelLoader_drc();
-extern void* make_Plugin_obj_Loader();
-#endif
-#endif
-#endif
 
 #define SEPERATOR_STYLE "QMainWindow::separator { background-color: #d7d6d5; width: 3px; height: 3px; border:none; }"
 #define PERCENTAGE_OF_MONITOR_WIDTH_FOR_SCREEN 0.65
@@ -226,7 +199,7 @@ int main(int argc, char** argv) {
 
         QString dirPath = QApplication::applicationDirPath();
 #if __APPLE__
-        std::string contentPath = std::filesystem::path(dirPath.toStdString()) / "../";
+        std::string contentPath = sfs::path(dirPath.toStdString()) / "../";
         dirPath                 = QString(contentPath.c_str());
         QApplication::addLibraryPath(dirPath + "./PlugIns/platforms/");
         QApplication::addLibraryPath(dirPath + "./PlugIns/");
@@ -236,7 +209,7 @@ int main(int argc, char** argv) {
         QApplication::addLibraryPath(dirPath + "./plugins/");
 #endif
 
-        app.setWindowIcon(QIcon(":/CompressonatorGUI/Images/acompress-256.png"));
+        app.setWindowIcon(QIcon(":/compressonatorgui/images/acompress-256.png"));
 
         // ==========================
         // Mip Settings Class
@@ -244,7 +217,7 @@ int main(int argc, char** argv) {
         g_GUI_CMIPS = new CMIPS;
         g_CMIPS     = new CMIPS;
 
-        const QIcon   iconPixMap(":/CompressonatorGUI/Images/compress.png");
+        const QIcon   iconPixMap(":/compressonatorgui/images/compress.png");
         const QString ProductName = "Compressonator";
 
         //----------------------------------
@@ -253,47 +226,21 @@ int main(int argc, char** argv) {
         g_pluginManager.registerStaticPlugin("IMAGE", "ASTC", (void*)make_Plugin_ASTC);
         g_pluginManager.registerStaticPlugin("IMAGE", "EXR", (void*)make_Plugin_EXR);
         g_pluginManager.registerStaticPlugin("IMAGE", "KTX", (void*)make_Plugin_KTX);
+        g_pluginManager.registerStaticPlugin("IMAGE", "TGA", (void*)make_Plugin_TGA);
+        g_pluginManager.registerStaticPlugin("IMAGE", "ANALYSIS", (void*)make_Plugin_CAnalysis);
+
+#ifdef _WIN32
+        g_pluginManager.registerStaticPlugin("IMAGE", "KTX2", (void*)make_Plugin_KTX2);
+#endif
 
 #ifdef USE_CRN
         g_pluginManager.registerStaticPlugin("IMAGE", "CRN", (void*)make_Plugin_CRN);
 #endif
 
-        // TGA is supported by Qt to some extent if it fails we will try to load it using our custom code
-        g_pluginManager.registerStaticPlugin("IMAGE", "TGA", (void*)make_Plugin_TGA);
-        g_pluginManager.registerStaticPlugin("IMAGE", "ANALYSIS", (void*)make_Plugin_CAnalysis);
 
         g_pluginManager.getPluginList("/plugins", true);
 
         CMP_RegisterHostPlugins();
-
-#ifdef OPTION_BUILD_SHARED_LIBS
-#if !OPTION_BUILD_SHARED_LIBS
-#if OPTION_CMP_DIRECTX
-        g_pluginManager.registerStaticPlugin("3DMODEL_VIEWER", "DX12_EX", (void*)make_Plugin_glTF_DX12_EX);
-        g_pluginManager.registerStaticPlugin("GPUDECODE", "DIRECTX", (void*)make_Plugin_GPUDecode_DirectX);
-        g_pluginManager.registerStaticPlugin("MESH_OPTIMIZER", "TOOTLE", (void*)make_Plugin_Mesh_Tootle);
-#endif
-
-#if OPTION_CMP_OPENGL
-        g_pluginManager.registerStaticPlugin("3DMODEL_VIEWER", "OPENGL", (void*)make_Plugin_glTF_OpenGL);
-        g_pluginManager.registerStaticPlugin("GPUDECODE", "OPENGL", (void*)make_Plugin_GPUDecode_OpenGL);
-#endif
-
-#if OPTION_CMP_VULKAN
-        g_pluginManager.registerStaticPlugin("3DMODEL_VIEWER", "VULKAN", (void*)make_Plugin_3DModelViewer_Vulkan);
-        g_pluginManager.registerStaticPlugin("GPUDECODE", "VULKAN", (void*)make_Plugin_GPUDecode_Vulkan);
-#endif
-
-#if PLUGIN_MODEL_LOADERS
-        g_pluginManager.registerStaticPlugin("3DMODEL_LOADER", "DRC", (void*)make_Plugin_ModelLoader_drc);
-        g_pluginManager.registerStaticPlugin("3DMODEL_LOADER", "GLTF", (void*)make_Plugin_glTF_Loader);
-        g_pluginManager.registerStaticPlugin("3DMODEL_LOADER", "OBJ", (void*)make_Plugin_obj_Loader);
-#endif
-        g_pluginManager.registerStaticPlugin("MESH_COMPRESSOR", "DRACO", (void*)make_Plugin_Mesh_Compressor);
-        g_pluginManager.registerStaticPlugin("MESH_OPTIMIZER", "TOOTLE_MESH", (void*)make_Plugin_Mesh_Optimizer);
-
-#endif
-#endif
 
         g_bAbortCompression = false;
 

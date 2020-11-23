@@ -404,7 +404,7 @@ void CImagePropertyView::compressionValueChanged(QVariant& value) {
         DXT1_Alpha       = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append(
-            "A four component opaque (or 1-bit alpha) compressed texture format for Microsoft DirectX10. DXT1 identical to BC1.  Four bits per "
+            "A four component opaque (or 1-bit alpha) compressed texture format. DXT1 identical to BC1.  Four bits per "
             "pixel.");
         break;
     case C_Destination_Options::BC2:
@@ -413,7 +413,7 @@ void CImagePropertyView::compressionValueChanged(QVariant& value) {
         Channel_Weights  = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append(
-            "A four component compressed texture format with explicit alpha for Microsoft DirectX10. DXT3 identical to BC2. Eight bits per pixel.");
+            "A four component compressed texture format with explicit alpha. DXT3 identical to BC2. Eight bits per pixel.");
         break;
     case C_Destination_Options::BC3:
     case C_Destination_Options::DXT5:
@@ -421,14 +421,14 @@ void CImagePropertyView::compressionValueChanged(QVariant& value) {
         Channel_Weights  = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append(
-            "A four component compressed texture format with interpolated alpha for Microsoft DirectX10. DXT5 identical to BC3. Eight bits per "
+            "A four component compressed texture format with interpolated alpha. DXT5 identical to BC3. Eight bits per "
             "pixel.");
         break;
     case C_Destination_Options::BC4:
     case C_Destination_Options::BC4_S:
         Quality_Settings = true;
         m_infotext->append("<b>Format Description</b>");
-        m_infotext->append("A single component compressed texture format for Microsoft DirectX10. Identical to ATI1N. Four bits per pixel.");
+        m_infotext->append("A single component compressed texture. BC4 identical to ATI1N. Four bits per pixel. BC4_S is used for signed components");
         break;
     case C_Destination_Options::BC5:
     case C_Destination_Options::BC5_S:
@@ -437,7 +437,7 @@ void CImagePropertyView::compressionValueChanged(QVariant& value) {
     case C_Destination_Options::ATI2N_DXT5:
         Quality_Settings = true;
         m_infotext->append("<b>Format Description</b>");
-        m_infotext->append("A two component compressed texture format for Microsoft DirectX10. BC5 identical to ATI2N. Eight bits per pixel.");
+        m_infotext->append("A two component compressed texture format. BC5 identical to ATI2N. Eight bits per pixel. BC5_S is used for signed components");
         break;
     case C_Destination_Options::ASTC:
         Quality_Settings = true;

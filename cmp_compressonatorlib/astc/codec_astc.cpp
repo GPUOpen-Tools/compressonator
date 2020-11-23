@@ -578,12 +578,18 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
 
     int bitness = 0; //todo: replace astc_codec_image with bufferIn and rewrite fetch_imageblock()
     switch (bufferIn.GetBufferType()) {
-    case CBT_RGBA8888:
     case CBT_BGRA8888:
     case CBT_ARGB8888:
+    case CBT_RGBA8888:
     case CBT_RGB888:
     case CBT_RG8:
     case CBT_R8:
+        bitness = 8;
+        break;
+    case CBT_RGBA8888S:
+    case CBT_RGB888S:
+    case CBT_RG8S:
+    case CBT_R8S:
         bitness = 8;
         break;
     case CBT_RGBA2101010:

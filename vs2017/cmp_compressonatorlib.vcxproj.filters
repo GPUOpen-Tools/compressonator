@@ -352,6 +352,18 @@
     <ClCompile Include="..\CMP_CompressonatorLib\APC\Codec_APC.cpp">
       <Filter>Source Files\Codec\APC</Filter>
     </ClCompile>
+    <ClCompile Include="..\cmp_compressonatorlib\buffer\codecbuffer_rg8s.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cmp_compressonatorlib\buffer\codecbuffer_rgb888s.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cmp_compressonatorlib\buffer\codecbuffer_rgba8888s.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cmp_compressonatorlib\buffer\codecbuffer_r8s.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ASTC_Decode.h">
@@ -680,6 +692,21 @@
     </ClInclude>
     <ClInclude Include="..\CMP_CompressonatorLib\APC\Codec_APC.h">
       <Filter>Source Files\Codec\APC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_compressonatorlib\buffer\codecbuffer_rg8s.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_compressonatorlib\buffer\codecbuffer_rgb888s.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_compressonatorlib\buffer\codecbuffer_rgba8888s.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_compressonatorlib\buffer\codecbuffer_r8s.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_core\shaders\common_def.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

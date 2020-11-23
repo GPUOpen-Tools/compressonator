@@ -65,6 +65,20 @@ To see how this works, try processing an EXR file format image to compress with 
 If you are unfamiliar with how to process textures, check the tutorial on "getting started using sample projects".
 
 
+Compressing Signed Channel Images
+----------------------------------
+|image435|
+
+Signed channel component processing is available in the Compressonator SDK, Command-Line, and GUI applications.
+
+This supports processing textures from 8-bit unsigned or signed channels to BC4 and BC5 formats.
+
+In the GUI the process is no different than that described for compressing images using the project explorer. Image views will show additional status information about the signed channel data and how it is rendered onto the image views as unsigned channel formats.
+
+For BC4 and BC5 encoding as a signed component use the destination settings option as BC4_S and BC5_S
+
+
+
 Decompressing Textures
 ----------------------
 
@@ -276,4 +290,4 @@ Users still able to generate image diff view with GPU as shown below:
 .. |image123| image:: media/image123.png
 .. |image124| image:: media/image124.png
 .. |image125| image:: media/image125.png
-
+.. |image435| image:: media/image435.png

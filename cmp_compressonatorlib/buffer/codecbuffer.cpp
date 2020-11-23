@@ -33,6 +33,10 @@
 #include "codecbuffer_rgb888.h"
 #include "codecbuffer_rg8.h"
 #include "codecbuffer_r8.h"
+#include "codecbuffer_rgba8888s.h"
+#include "codecbuffer_rgb888s.h"
+#include "codecbuffer_rg8s.h"
+#include "codecbuffer_r8s.h"
 #include "codecbuffer_rgba2101010.h"
 #include "codecbuffer_rgba16.h"
 #include "codecbuffer_rg16.h"
@@ -68,6 +72,14 @@ CCodecBuffer* CreateCodecBuffer(CodecBufferType nCodecBufferType,
         return new CCodecBuffer_RG8(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
     case CBT_R8:
         return new CCodecBuffer_R8(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
+    case CBT_RGBA8888S:
+        return new CCodecBuffer_RGBA8888S(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch,(CMP_SBYTE *)pData, dwDataSize);
+    case CBT_RGB888S:
+        return new CCodecBuffer_RGB888S(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData, dwDataSize);
+    case CBT_RG8S:
+        return new CCodecBuffer_RG8S(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData, dwDataSize);
+    case CBT_R8S:
+        return new CCodecBuffer_R8S(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData, dwDataSize);
     case CBT_RGBA2101010:
         return new CCodecBuffer_RGBA2101010(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
     case CBT_RGBA16:
@@ -175,6 +187,9 @@ CodecBufferType GetCodecBufferType(CMP_FORMAT format) {
     case CMP_FORMAT_ARGB_2101010:
         CBT_type = CBT_RGBA2101010;
         break;
+    case CMP_FORMAT_RGBA_8888_S:  // Need to expand on this format
+        CBT_type = CBT_RGBA8888S;
+        break;
     case CMP_FORMAT_ARGB_8888:  // Need to expand on this format
     case CMP_FORMAT_BGRA_8888:  // Need to expand on this format
     case CMP_FORMAT_RGBA_8888:
@@ -184,11 +199,20 @@ CodecBufferType GetCodecBufferType(CMP_FORMAT format) {
     case CMP_FORMAT_RGB_888:
         CBT_type = CBT_RGB888;
         break;
+    case CMP_FORMAT_RGB_888_S:
+        CBT_type = CBT_RGB888S;
+        break;
     case CMP_FORMAT_RG_8:
         CBT_type = CBT_RG8;
         break;
+    case CMP_FORMAT_RG_8_S:
+        CBT_type = CBT_RG8S;
+        break;
     case CMP_FORMAT_R_8:
         CBT_type = CBT_R8;
+        break;
+    case CMP_FORMAT_R_8_S:
+        CBT_type = CBT_R8S;
         break;
     default:
         CBT_type = CBT_Unknown;
@@ -365,6 +389,119 @@ bool CCodecBuffer::ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, 
         return false;
     }
 }
+
+bool CCodecBuffer::ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[])
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+    // Ok, so we don't support this format
+    // So we try other formats to find one that is supported
+
+    if (m_bPerformingConversion)
+    {
+        return false;
+    }
+    else
+    {
+        m_bPerformingConversion = true;
+
+        ATTEMPT_BLOCK_READ(cBlock, R, double);
+        ATTEMPT_BLOCK_READ(cBlock, R, float);
+        ATTEMPT_BLOCK_READ(cBlock, R, CMP_HALF);
+        ATTEMPT_BLOCK_READ(cBlock, R, CMP_DWORD);
+        ATTEMPT_BLOCK_READ(cBlock, R, CMP_WORD);
+
+        assert(0);
+        m_bPerformingConversion = false;
+        return false;
+    }
+}
+
+bool CCodecBuffer::ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[])
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+    // Ok, so we don't support this format
+    // So we try other formats to find one that is supported
+
+    if (m_bPerformingConversion)
+    {
+        return false;
+    }
+    else
+    {
+        m_bPerformingConversion = true;
+
+        ATTEMPT_BLOCK_READ(cBlock, G, double);
+        ATTEMPT_BLOCK_READ(cBlock, G, float);
+        ATTEMPT_BLOCK_READ(cBlock, G, CMP_HALF);
+        ATTEMPT_BLOCK_READ(cBlock, G, CMP_DWORD);
+        ATTEMPT_BLOCK_READ(cBlock, G, CMP_WORD);
+
+        assert(0);
+        m_bPerformingConversion = false;
+        return false;
+    }
+}
+
+bool CCodecBuffer::ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[])
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+    // Ok, so we don't support this format
+    // So we try other formats to find one that is supported
+
+    if (m_bPerformingConversion)
+    {
+        return false;
+    }
+    else
+    {
+        m_bPerformingConversion = true;
+
+        ATTEMPT_BLOCK_READ(cBlock, B, double);
+        ATTEMPT_BLOCK_READ(cBlock, B, float);
+        ATTEMPT_BLOCK_READ(cBlock, B, CMP_HALF);
+        ATTEMPT_BLOCK_READ(cBlock, B, CMP_DWORD);
+        ATTEMPT_BLOCK_READ(cBlock, B, CMP_WORD);
+
+        assert(0);
+        m_bPerformingConversion = false;
+        return false;
+    }
+}
+
+bool CCodecBuffer::ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[])
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+    // Ok, so we don't support this format
+    // So we try other formats to find one that is supported
+
+    if (m_bPerformingConversion)
+    {
+        return false;
+    }
+    else
+    {
+        m_bPerformingConversion = true;
+
+        ATTEMPT_BLOCK_READ(cBlock, A, double);
+        ATTEMPT_BLOCK_READ(cBlock, A, float);
+        ATTEMPT_BLOCK_READ(cBlock, A, CMP_HALF);
+        ATTEMPT_BLOCK_READ(cBlock, A, CMP_DWORD);
+        ATTEMPT_BLOCK_READ(cBlock, A, CMP_WORD);
+
+        assert(0);
+        m_bPerformingConversion = false;
+        return false;
+    }
+}
+
 
 bool CCodecBuffer::ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_WORD wBlock[]) {
 #ifdef USE_DBGTRACE
@@ -953,6 +1090,123 @@ bool CCodecBuffer::WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
     }
 }
 
+bool CCodecBuffer::WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[])
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+    // Ok, so we don't support this format
+    // So we try other formats to find one that is supported
+
+    if (m_bPerformingConversion)
+    {
+        return false;
+    }
+    else
+    {
+        m_bPerformingConversion = true;
+
+        ATTEMPT_BLOCK_WRITE(cBlock, R, CMP_BYTE);
+        ATTEMPT_BLOCK_WRITE(cBlock, R, CMP_DWORD);
+        ATTEMPT_BLOCK_WRITE(cBlock, R, CMP_WORD);
+        ATTEMPT_BLOCK_WRITE(cBlock, R, double);
+        ATTEMPT_BLOCK_WRITE(cBlock, R, float);
+        ATTEMPT_BLOCK_WRITE(cBlock, R, CMP_HALF);
+
+        assert(0);
+        m_bPerformingConversion = false;
+        return false;
+    }
+}
+
+bool CCodecBuffer::WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[])
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+    // Ok, so we don't support this format
+    // So we try other formats to find one that is supported
+
+    if (m_bPerformingConversion)
+    {
+        return false;
+    }
+    else
+    {
+        m_bPerformingConversion = true;
+
+        ATTEMPT_BLOCK_WRITE(cBlock, G, CMP_BYTE);
+        ATTEMPT_BLOCK_WRITE(cBlock, G, CMP_DWORD);
+        ATTEMPT_BLOCK_WRITE(cBlock, G, CMP_WORD);
+        ATTEMPT_BLOCK_WRITE(cBlock, G, double);
+        ATTEMPT_BLOCK_WRITE(cBlock, G, float);
+        ATTEMPT_BLOCK_WRITE(cBlock, G, CMP_HALF);
+
+        assert(0);
+        m_bPerformingConversion = false;
+        return false;
+    }
+}
+
+bool CCodecBuffer::WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[])
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+    // Ok, so we don't support this format
+    // So we try other formats to find one that is supported
+
+    if (m_bPerformingConversion)
+    {
+        return false;
+    }
+    else
+    {
+        m_bPerformingConversion = true;
+
+        ATTEMPT_BLOCK_WRITE(cBlock, B, CMP_BYTE);
+        ATTEMPT_BLOCK_WRITE(cBlock, B, CMP_DWORD);
+        ATTEMPT_BLOCK_WRITE(cBlock, B, CMP_WORD);
+        ATTEMPT_BLOCK_WRITE(cBlock, B, double);
+        ATTEMPT_BLOCK_WRITE(cBlock, B, float);
+        ATTEMPT_BLOCK_WRITE(cBlock, B, CMP_HALF);
+
+        assert(0);
+        m_bPerformingConversion = false;
+        return false;
+    }
+}
+
+bool CCodecBuffer::WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[])
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+    // Ok, so we don't support this format
+    // So we try other formats to find one that is supported
+
+    if (m_bPerformingConversion)
+    {
+        return false;
+    }
+    else
+    {
+        m_bPerformingConversion = true;
+
+        ATTEMPT_BLOCK_WRITE(cBlock, A, CMP_BYTE);
+        ATTEMPT_BLOCK_WRITE(cBlock, A, CMP_DWORD);
+        ATTEMPT_BLOCK_WRITE(cBlock, A, CMP_WORD);
+        ATTEMPT_BLOCK_WRITE(cBlock, A, double);
+        ATTEMPT_BLOCK_WRITE(cBlock, A, float);
+        ATTEMPT_BLOCK_WRITE(cBlock, A, CMP_HALF);
+
+        assert(0);
+        m_bPerformingConversion = false;
+        return false;
+    }
+}
+
+
 bool CCodecBuffer::WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_WORD wBlock[]) {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -1433,6 +1687,141 @@ bool CCodecBuffer::WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h,
     }
 }
 
+bool CCodecBuffer::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[])
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+    // Ok, so we don't support this format
+    // So we try other formats to find one that is supported
+
+    if (m_bPerformingConversion)
+    {
+        return false;
+    }
+    else
+    {
+        m_bPerformingConversion = true;
+
+        CMP_DWORD dwBlock[MAX_BLOCK * 4];
+        ConvertBlock(dwBlock, cBlock, w * h * 4);
+        SwizzleBlock(dwBlock, w * h);
+        if (WriteBlockRGBA(x, y, w, h, dwBlock))
+        {
+            m_bPerformingConversion = false;
+            return true;
+        }
+
+        CMP_WORD wBlock[MAX_BLOCK * 4];
+        ConvertBlock(wBlock, cBlock, w * h * 4);
+        SwizzleBlock(wBlock, w * h);
+        if (WriteBlockRGBA(x, y, w, h, wBlock))
+        {
+            m_bPerformingConversion = false;
+            return true;
+        }
+
+        double dBlock[MAX_BLOCK * 4];
+        ConvertBlock(dBlock, cBlock, w * h * 4);
+        SwizzleBlock(dBlock, w * h);
+        if (WriteBlockRGBA(x, y, w, h, dBlock))
+        {
+            m_bPerformingConversion = false;
+            return true;
+        }
+
+        float fBlock[MAX_BLOCK * 4];
+        ConvertBlock(fBlock, cBlock, w * h * 4);
+        SwizzleBlock(fBlock, w * h);
+        if (WriteBlockRGBA(x, y, w, h, fBlock))
+        {
+            m_bPerformingConversion = false;
+            return true;
+        }
+
+        CMP_HALF hBlock[MAX_BLOCK * 4];
+        ConvertBlock(hBlock, cBlock, w * h * 4);
+        SwizzleBlock(hBlock, w * h);
+        if (WriteBlockRGBA(x, y, w, h, hBlock))
+        {
+            m_bPerformingConversion = false;
+            return true;
+        }
+
+        assert(0);
+        m_bPerformingConversion = false;
+        return false;
+    }
+}
+
+bool CCodecBuffer::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[])
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+    // Ok, so we don't support this format
+    // So we try other formats to find one that is supported
+
+    if (m_bPerformingConversion)
+    {
+        return false;
+    }
+    else
+    {
+        m_bPerformingConversion = true;
+
+        double dBlock[MAX_BLOCK * 4];
+        if (ReadBlockRGBA(x, y, w, h, dBlock))
+        {
+            SwizzleBlock(dBlock, w * h);
+            ConvertBlock(cBlock, dBlock, w * h * 4);
+            m_bPerformingConversion = false;
+            return true;
+        }
+
+        float fBlock[MAX_BLOCK * 4];
+        if (ReadBlockRGBA(x, y, w, h, fBlock))
+        {
+            SwizzleBlock(fBlock, w * h);
+            ConvertBlock(cBlock, fBlock, w * h * 4);
+            m_bPerformingConversion = false;
+            return true;
+        }
+
+        CMP_HALF hBlock[MAX_BLOCK * 4];
+        if (ReadBlockRGBA(x, y, w, h, hBlock))
+        {
+            SwizzleBlock(hBlock, w * h);
+            ConvertBlock(cBlock, hBlock, w * h * 4);
+            m_bPerformingConversion = false;
+            return true;
+        }
+
+        CMP_DWORD dwBlock[MAX_BLOCK * 4];
+        if (ReadBlockRGBA(x, y, w, h, dwBlock))
+        {
+            SwizzleBlock(dwBlock, w * h);
+            ConvertBlock(cBlock, dwBlock, w * h * 4);
+            m_bPerformingConversion = false;
+            return true;
+        }
+
+        CMP_WORD wBlock[MAX_BLOCK * 4];
+        if (ReadBlockRGBA(x, y, w, h, wBlock))
+        {
+            SwizzleBlock(wBlock, w * h);
+            ConvertBlock(cBlock, wBlock, w * h * 4);
+            m_bPerformingConversion = false;
+            return true;
+        }
+
+        assert(0);
+        m_bPerformingConversion = false;
+        return false;
+    }
+}
+
+
 bool CCodecBuffer::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_BYTE cBlock[]) {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -1730,10 +2119,18 @@ bool CCodecBuffer::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE 
             return true;
         }
 
-        CMP_DWORD dwBlock[MAX_BLOCK];
+        CMP_DWORD dwBlock[MAX_BLOCK*4];
         if(ReadBlockRGBA(x, y, w, h, dwBlock)) {
             ConvertBlock(wBlock, (CMP_BYTE*) dwBlock, w*h*4);
             SwizzleBlock(wBlock, w*h);
+            m_bPerformingConversion = false;
+            return true;
+        }
+
+        unsigned char cBlock[MAX_BLOCK];
+        if (ReadBlockRGBA(x, y, w, h, cBlock))
+        {
+            ConvertBlock(wBlock, cBlock, w * h);
             m_bPerformingConversion = false;
             return true;
         }
@@ -2043,6 +2440,7 @@ bool CCodecBuffer::ReadBlock(CMP_DWORD /*x*/, CMP_DWORD /*y*/, CMP_DWORD* /*pBlo
     return false;
 }
 
+
 void CCodecBuffer::ConvertBlock(double dBlock[], float fBlock[], CMP_DWORD dwBlockSize) {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -2108,6 +2506,22 @@ void CCodecBuffer::ConvertBlock(double dBlock[], CMP_BYTE cBlock[], CMP_DWORD dw
     assert(dwBlockSize);
     if(dBlock && cBlock && dwBlockSize) {
         for(CMP_DWORD i = 0; i < dwBlockSize; i++)
+            dBlock[i] = CONVERT_BYTE_TO_FLOAT(cBlock[i]);
+    }
+}
+
+void CCodecBuffer::ConvertBlock(double dBlock[], CMP_SBYTE cBlock[], CMP_DWORD dwBlockSize)
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+
+    assert(dBlock);
+    assert(cBlock);
+    assert(dwBlockSize);
+    if (dBlock && cBlock && dwBlockSize)
+    {
+        for (CMP_DWORD i = 0; i < dwBlockSize; i++)
             dBlock[i] = CONVERT_BYTE_TO_FLOAT(cBlock[i]);
     }
 }
@@ -2182,6 +2596,22 @@ void CCodecBuffer::ConvertBlock(float fBlock[], CMP_BYTE cBlock[], CMP_DWORD dwB
     }
 }
 
+void CCodecBuffer::ConvertBlock(float fBlock[], CMP_SBYTE cBlock[], CMP_DWORD dwBlockSize)
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+
+    assert(fBlock);
+    assert(cBlock);
+    assert(dwBlockSize);
+    if (fBlock && cBlock && dwBlockSize)
+    {
+        for (CMP_DWORD i = 0; i < dwBlockSize; i++)
+            fBlock[i] = CONVERT_SBYTE_TO_FLOAT(cBlock[i]);
+    }
+}
+
 void CCodecBuffer::ConvertBlock(CMP_HALF hBlock[], double dBlock[], CMP_DWORD dwBlockSize) {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -2252,6 +2682,22 @@ void CCodecBuffer::ConvertBlock(CMP_HALF hBlock[], CMP_BYTE cBlock[], CMP_DWORD 
     }
 }
 
+void CCodecBuffer::ConvertBlock(CMP_HALF hBlock[], CMP_SBYTE cBlock[], CMP_DWORD dwBlockSize)
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+
+    assert(hBlock);
+    assert(cBlock);
+    assert(dwBlockSize);
+    if (hBlock && cBlock && dwBlockSize)
+    {
+        for (CMP_DWORD i = 0; i < dwBlockSize; i++)
+            hBlock[i] = CONVERT_SBYTE_TO_FLOAT(cBlock[i]);
+    }
+}
+
 void CCodecBuffer::ConvertBlock(CMP_DWORD dwBlock[], double dBlock[], CMP_DWORD dwBlockSize) {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -2318,6 +2764,22 @@ void CCodecBuffer::ConvertBlock(CMP_DWORD dwBlock[], CMP_BYTE cBlock[], CMP_DWOR
     assert(dwBlockSize);
     if(dwBlock && cBlock && dwBlockSize) {
         for(CMP_DWORD i = 0; i < dwBlockSize; i++)
+            dwBlock[i] = CONVERT_BYTE_TO_DWORD(cBlock[i]);
+    }
+}
+
+void CCodecBuffer::ConvertBlock(CMP_DWORD dwBlock[], CMP_SBYTE cBlock[], CMP_DWORD dwBlockSize)
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+
+    assert(dwBlock);
+    assert(cBlock);
+    assert(dwBlockSize);
+    if (dwBlock && cBlock && dwBlockSize)
+    {
+        for (CMP_DWORD i = 0; i < dwBlockSize; i++)
             dwBlock[i] = CONVERT_BYTE_TO_DWORD(cBlock[i]);
     }
 }
@@ -2392,6 +2854,22 @@ void CCodecBuffer::ConvertBlock(CMP_WORD wBlock[], CMP_BYTE cBlock[], CMP_DWORD 
     }
 }
 
+void CCodecBuffer::ConvertBlock(CMP_WORD wBlock[], CMP_SBYTE cBlock[], CMP_DWORD dwBlockSize)
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+
+    assert(wBlock);
+    assert(cBlock);
+    assert(dwBlockSize);
+    if (wBlock && cBlock && dwBlockSize)
+    {
+        for (CMP_DWORD i = 0; i < dwBlockSize; i++)
+            wBlock[i] = CONVERT_SBYTE_TO_WORD(cBlock[i]);
+    }
+}
+
 void CCodecBuffer::ConvertBlock(CMP_BYTE cBlock[], double dBlock[], CMP_DWORD dwBlockSize) {
 #ifdef USE_DBGTRACE
     DbgTrace(());
@@ -2461,6 +2939,123 @@ void CCodecBuffer::ConvertBlock(CMP_BYTE cBlock[], CMP_WORD wBlock[], CMP_DWORD 
             cBlock[i] = CONVERT_WORD_TO_BYTE(wBlock[i]);
     }
 }
+
+//============= THESE NEW CALLS NEED VALIDATION ===========================
+
+void CCodecBuffer::ConvertBlock(CMP_SBYTE cBlock[], double dBlock[], CMP_DWORD dwBlockSize)
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+
+    assert(cBlock);
+    assert(dBlock);
+    assert(dwBlockSize);
+    if (cBlock && dBlock && dwBlockSize)
+    {
+        for (CMP_DWORD i = 0; i < dwBlockSize; i++)
+            cBlock[i] = CONVERT_FLOAT_TO_SBYTE(dBlock[i]);
+    }
+}
+
+void CCodecBuffer::ConvertBlock(CMP_SBYTE cBlock[], float fBlock[], CMP_DWORD dwBlockSize)
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+
+    assert(cBlock);
+    assert(fBlock);
+    assert(dwBlockSize);
+    if (cBlock && fBlock && dwBlockSize)
+    {
+        for (CMP_DWORD i = 0; i < dwBlockSize; i++)
+            cBlock[i] = CONVERT_FLOAT_TO_SBYTE(fBlock[i]);
+    }
+}
+
+void CCodecBuffer::ConvertBlock(CMP_SBYTE cBlock[], CMP_HALF hBlock[], CMP_DWORD dwBlockSize)
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+
+    assert(cBlock);
+    assert(hBlock);
+    assert(dwBlockSize);
+    if (cBlock && hBlock && dwBlockSize)
+    {
+        for (CMP_DWORD i = 0; i < dwBlockSize; i++)
+            cBlock[i] = CONVERT_FLOAT_TO_SBYTE(hBlock[i]);
+    }
+}
+
+void CCodecBuffer::ConvertBlock(CMP_SBYTE cBlock[], CMP_DWORD dwBlock[], CMP_DWORD dwBlockSize)
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+
+    assert(cBlock);
+    assert(dwBlock);
+    assert(dwBlockSize);
+    if (cBlock && dwBlock && dwBlockSize)
+    {
+        for (CMP_DWORD i = 0; i < dwBlockSize; i++)
+            cBlock[i] = CONVERT_DWORD_TO_SBYTE(dwBlock[i]);
+    }
+}
+
+void CCodecBuffer::ConvertBlock(CMP_SBYTE cBlock[], CMP_WORD wBlock[], CMP_DWORD dwBlockSize)
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+
+    assert(cBlock);
+    assert(wBlock);
+    assert(dwBlockSize);
+    if (cBlock && wBlock && dwBlockSize)
+    {
+        for (CMP_DWORD i = 0; i < dwBlockSize; i++)
+            cBlock[i] = CONVERT_WORD_TO_SBYTE(wBlock[i]);
+    }
+}
+
+void CCodecBuffer::ConvertBlock(CMP_SBYTE sBlock[], CMP_BYTE cBlock[], CMP_DWORD dwBlockSize)
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+
+    assert(sBlock);
+    assert(cBlock);
+    assert(dwBlockSize);
+    if (cBlock && cBlock && dwBlockSize)
+    {
+        for (CMP_DWORD i = 0; i < dwBlockSize; i++)
+            sBlock[i] = cBlock[i] - 127;
+    }
+}
+
+void CCodecBuffer::ConvertBlock(CMP_BYTE cBlock[], CMP_SBYTE sBlock[], CMP_DWORD dwBlockSize)
+{
+#ifdef USE_DBGTRACE
+    DbgTrace(());
+#endif
+
+    assert(cBlock);
+    assert(sBlock);
+    assert(dwBlockSize);
+    if (cBlock && sBlock && dwBlockSize)
+    {
+        for (CMP_DWORD i = 0; i < dwBlockSize; i++)
+            cBlock[i] = sBlock[i] + 127;
+    }
+}
+
+//============ END OF NEW CODE ===========================================
+
 
 void CCodecBuffer::SwizzleBlock(double dBlock[], CMP_DWORD dwBlockSize) {
 #ifdef USE_DBGTRACE

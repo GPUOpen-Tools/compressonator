@@ -69,7 +69,7 @@ bool g_bAbortCompression = false;   // If set true current compression will abor
 // Sample loop back code called for each compression block been processed
 //---------------------------------------------------------------------------
 bool CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
-    std::printf("\rCompression progress = %2.0f  ", fProgress);
+    std::printf("\rCompression progress = %3.0f  ", fProgress);
     return g_bAbortCompression;
 }
 

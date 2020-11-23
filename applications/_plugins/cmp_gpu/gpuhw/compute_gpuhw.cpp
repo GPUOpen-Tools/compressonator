@@ -299,13 +299,12 @@ const char* CGpuHW::GetVersion()
 
 GLuint CGpuHW::processtexture() {
     CMIPS CMips;
-    int levels;
+    int levels = 1;
+
+    // requested miplevels
     if (m_genGPUMipMaps) {
-        levels = static_cast<int>(std::log2(m_SourceInfo.m_src_width)) - 1;
-        if (levels > MAX_MIPLEVEL_SUPPORTED) levels = MAX_MIPLEVEL_SUPPORTED;
+       levels = m_kernel_options->miplevels;
     }
-    else
-        levels = 1;
 
     int imgChannels = 4; // add code to supprt switching to only 3 channel data!
 
@@ -481,8 +480,7 @@ bool CGpuHW::RunKernel()
         glUniform1i(glGetUniformLocation(w_program, "tex"), 0);
         glDrawArrays(GL_TRIANGLES, 0, 2 * 3);
 
-        // if debugging then do this
-        glfwSwapBuffers(m_gltfwindow); // show result
+        glfwSwapBuffers(m_gltfwindow);
         glfwPollEvents();
 
         if (m_program)
@@ -624,6 +622,7 @@ CMP_ERROR CGpuHW::Compress(KernelOptions* KernelOptions, MipSet& srcTexture, Mip
     m_getPerfStats              = KernelOptions->getPerfStats && (destTexture.m_nIterations < 1);
 
     m_genGPUMipMaps             = KernelOptions->genGPUMipMaps;
+    m_kernel_options->miplevels = KernelOptions->miplevels;
     m_kernel_options->data      = KernelOptions->data;
     m_kernel_options->size      = KernelOptions->size;
     m_kernel_options->format    = KernelOptions->format;

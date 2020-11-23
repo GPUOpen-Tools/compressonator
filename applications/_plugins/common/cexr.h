@@ -24,7 +24,7 @@
 #ifndef cEXR_HEADER
 #define cEXR_HEADER
 
-#include "namespacealias.h"
+#include <namespacealias.h>
 
 #pragma warning(push)
 #pragma warning(disable : 4100)

@@ -60,6 +60,7 @@ CodecType GetCodecType(CMP_FORMAT format) {
         return CT_None;
     case CMP_FORMAT_BGRA_8888:
         return CT_None;
+    case CMP_FORMAT_RGBA_8888_S:
     case CMP_FORMAT_ARGB_8888:
         return CT_None;
     case CMP_FORMAT_BGR_888:
@@ -76,6 +77,7 @@ CodecType GetCodecType(CMP_FORMAT format) {
         return CT_None;
     case CMP_FORMAT_R_16:
         return CT_None;
+    case CMP_FORMAT_ABGR_16F:
     case CMP_FORMAT_ARGB_16F:
         return CT_None;
     case CMP_FORMAT_RG_16F:
@@ -182,7 +184,7 @@ CodecType GetCodecType(CMP_FORMAT format) {
         return CT_Unknown;
     }
 }
-#ifdef ENABLE_MAKE_COMPATIBLE_API
+
 bool IsFloatFormat(CMP_FORMAT InFormat) {
     switch (InFormat) {
     case CMP_FORMAT_ARGB_16F:
@@ -210,6 +212,103 @@ bool IsFloatFormat(CMP_FORMAT InFormat) {
     }
 
     return false;
+}
+
+bool IsCompressedFormat(CMP_FORMAT InFormat)
+{
+    switch (InFormat)
+    {
+        case CMP_FORMAT_ASTC:
+        case CMP_FORMAT_ATI1N:
+        case CMP_FORMAT_ATI2N:
+        case CMP_FORMAT_ATI2N_XY:
+        case CMP_FORMAT_ATI2N_DXT5:
+        case CMP_FORMAT_ATC_RGB:
+        case CMP_FORMAT_ATC_RGBA_Explicit:
+        case CMP_FORMAT_ATC_RGBA_Interpolated:
+        case CMP_FORMAT_BC1:
+        case CMP_FORMAT_BC2:
+        case CMP_FORMAT_BC3:
+        case CMP_FORMAT_BC4:
+        case CMP_FORMAT_BC4_S:
+        case CMP_FORMAT_BC5:  
+        case CMP_FORMAT_BC5_S:
+        case CMP_FORMAT_BC6H: 
+        case CMP_FORMAT_BC6H_SF:
+        case CMP_FORMAT_BC7: 
+        case CMP_FORMAT_DXT1:
+        case CMP_FORMAT_DXT3:
+        case CMP_FORMAT_DXT5:
+        case CMP_FORMAT_DXT5_xGBR:
+        case CMP_FORMAT_DXT5_RxBG:
+        case CMP_FORMAT_DXT5_RBxG:
+        case CMP_FORMAT_DXT5_xRBG:
+        case CMP_FORMAT_DXT5_RGxB:
+        case CMP_FORMAT_DXT5_xGxR:
+        case CMP_FORMAT_ETC_RGB:  
+        case CMP_FORMAT_ETC2_RGB: 
+        case CMP_FORMAT_ETC2_SRGB:
+        case CMP_FORMAT_ETC2_RGBA:
+        case CMP_FORMAT_ETC2_RGBA1:  
+        case CMP_FORMAT_ETC2_SRGBA:  
+        case CMP_FORMAT_ETC2_SRGBA1: 
+        case CMP_FORMAT_PVRTC:       
+#ifdef USE_APC
+        case CMP_FORMAT_APC:  //< APC Texture Compressor
+#endif
+        case         CMP_FORMAT_GTC     :    //< GTC   Fast Gradient Texture Compressor
+        case         CMP_FORMAT_BASIS   :  //< BASIS compression
+    {
+        return true;
+    }
+    break;
+    default:
+        break;
+    }
+
+    return false;
+}
+
+CMP_BYTE FormatChannelBitSize(CMP_FORMAT InFormat)
+{
+    switch (InFormat)
+    {
+    case CMP_FORMAT_ARGB_16F:
+    case CMP_FORMAT_ABGR_16F:
+    case CMP_FORMAT_RGBA_16F:
+    case CMP_FORMAT_BGRA_16F:
+    case CMP_FORMAT_RG_16F:
+    case CMP_FORMAT_R_16F:
+    case CMP_FORMAT_ARGB_16:
+    case CMP_FORMAT_ABGR_16:
+    case CMP_FORMAT_RGBA_16:
+    case CMP_FORMAT_BGRA_16:
+    case CMP_FORMAT_RG_16:
+    case CMP_FORMAT_R_16:
+    case CMP_FORMAT_BC6H:
+    case CMP_FORMAT_BC6H_SF:
+    case CMP_FORMAT_ARGB_2101010:
+    { 
+        return (CMP_BYTE)(16);
+    }
+    break;
+
+    case CMP_FORMAT_ARGB_32F:
+    case CMP_FORMAT_ABGR_32F:
+    case CMP_FORMAT_RGBA_32F:
+    case CMP_FORMAT_BGRA_32F:
+    case CMP_FORMAT_RGB_32F:
+    case CMP_FORMAT_BGR_32F:
+    case CMP_FORMAT_RG_32F:
+    case CMP_FORMAT_R_32F:
+    case CMP_FORMAT_RGBE_32F:
+    {
+        return (CMP_BYTE)(32);
+    }
+    break;
+    }
+
+    return (CMP_BYTE)(8);
 }
 
 bool NeedSwizzle(CMP_FORMAT destformat) {
@@ -284,7 +383,6 @@ CMP_ERROR Byte2HalfShort(CMP_HALFSHORT* hfsBlock, CMP_BYTE* cBlock, CMP_DWORD dw
 
     return CMP_OK;
 }
-
 
 CMP_ERROR Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, CMP_Texture* srcTexture, CMP_FORMAT destFormat, const CMP_CompressOptions* pOptions) {
     (destFormat);
@@ -432,7 +530,85 @@ CMP_ERROR Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, CMP_Texture* srcTextu
 
     return CMP_OK;
 }
-#endif
+
+CMP_ERROR RGBA_Word2Byte(CMP_BYTE cBlock[], CMP_WORD* wBlock, CMP_Texture* srcTexture)
+{
+    assert(cBlock);
+    assert(wBlock);
+    assert(&srcTexture);
+
+    if (cBlock && wBlock)
+    {
+        unsigned int cBlockIndex = 0;
+        unsigned int wBlockIndex = 0;
+        for (unsigned int y = 0; y < srcTexture->dwHeight; y++)
+        {
+            for (unsigned int x = 0; x < srcTexture->dwWidth; x++)
+            {
+                // 4 channel data conversion from 16 bit to 8 bit
+                cBlock[cBlockIndex++] = wBlock[wBlockIndex++] / 257;
+                cBlock[cBlockIndex++] = wBlock[wBlockIndex++] / 257;
+                cBlock[cBlockIndex++] = wBlock[wBlockIndex++] / 257;
+                cBlock[cBlockIndex++] = wBlock[wBlockIndex++] / 257;
+            }
+        }
+    }
+
+    return CMP_OK;
+}
+
+CMP_ERROR SByte2Byte(CMP_BYTE cBlock[], CMP_SBYTE* sBlock, CMP_Texture* srcTexture)
+{
+    assert(cBlock);
+    assert(sBlock);
+    assert(&srcTexture);
+
+    if (cBlock && sBlock)
+    {
+        unsigned int cBlockIndex = 0;
+        unsigned int wBlockIndex = 0;
+        for (unsigned int y = 0; y < srcTexture->dwHeight; y++)
+        {
+            for (unsigned int x = 0; x < srcTexture->dwWidth; x++)
+            {
+                // 4 channel data conversion from 16 bit to 8 bit
+                cBlock[cBlockIndex++] = sBlock[wBlockIndex++] + 127;
+                cBlock[cBlockIndex++] = sBlock[wBlockIndex++] + 127;
+                cBlock[cBlockIndex++] = sBlock[wBlockIndex++] + 127;
+                cBlock[cBlockIndex++] = sBlock[wBlockIndex++] + 127; // ?? alpha
+            }
+        }
+    }
+
+    return CMP_OK;
+}
+
+CMP_ERROR Byte2SByte(CMP_SBYTE sBlock[], CMP_BYTE* cBlock, CMP_Texture* srcTexture)
+{
+    assert(cBlock);
+    assert(sBlock);
+    assert(&srcTexture);
+
+    if (cBlock && sBlock)
+    {
+        unsigned int cBlockIndex = 0;
+        unsigned int wBlockIndex = 0;
+        for (unsigned int y = 0; y < srcTexture->dwHeight; y++)
+        {
+            for (unsigned int x = 0; x < srcTexture->dwWidth; x++)
+            {
+                sBlock[cBlockIndex++] = cBlock[wBlockIndex++] - 127;
+                sBlock[cBlockIndex++] = cBlock[wBlockIndex++] - 127;
+                sBlock[cBlockIndex++] = cBlock[wBlockIndex++] - 127;
+                sBlock[cBlockIndex++] = cBlock[wBlockIndex++] - 127; // ?? alpha
+            }
+        }
+    }
+
+    return CMP_OK;
+}
+
+
 CMP_ERROR GetError(CodecError err) {
     switch(err) {
     case CE_OK:
@@ -463,14 +639,22 @@ CMP_ERROR CheckTexture(const CMP_Texture* pTexture, bool bSource) {
     if(pTexture->dwHeight <= 0 )
         return (bSource ? CMP_ERR_INVALID_SOURCE_TEXTURE : CMP_ERR_INVALID_DEST_TEXTURE);
 
-    assert(pTexture->format >= CMP_FORMAT_ARGB_8888 && pTexture->format <= CMP_FORMAT_MAX);
-    if(pTexture->format < CMP_FORMAT_ARGB_8888 || pTexture->format > CMP_FORMAT_MAX)
+    assert(pTexture->format >= CMP_FORMAT_RGBA_8888_S && pTexture->format <= CMP_FORMAT_MAX);
+    if (pTexture->format < CMP_FORMAT_RGBA_8888_S || pTexture->format > CMP_FORMAT_MAX)
         return (bSource ? CMP_ERR_UNSUPPORTED_SOURCE_FORMAT : CMP_ERR_UNSUPPORTED_DEST_FORMAT);
 
     assert((pTexture->format != CMP_FORMAT_ARGB_8888 && pTexture->format != CMP_FORMAT_ARGB_2101010)
            || pTexture->dwPitch == 0 || pTexture->dwPitch >= (pTexture->dwWidth*4));
+
+    assert((pTexture->format != CMP_FORMAT_RGBA_8888_S && pTexture->format != CMP_FORMAT_ARGB_2101010) || pTexture->dwPitch == 0 ||
+           pTexture->dwPitch >= (pTexture->dwWidth * 4));
+
     if((pTexture->format == CMP_FORMAT_ARGB_8888 || pTexture->format == CMP_FORMAT_ARGB_2101010)
             && pTexture->dwPitch != 0 && pTexture->dwPitch < (pTexture->dwWidth*4))
+        return (bSource ? CMP_ERR_UNSUPPORTED_SOURCE_FORMAT : CMP_ERR_UNSUPPORTED_DEST_FORMAT);
+
+    if ((pTexture->format == CMP_FORMAT_RGBA_8888_S || pTexture->format == CMP_FORMAT_ARGB_2101010) && pTexture->dwPitch != 0 &&
+        pTexture->dwPitch < (pTexture->dwWidth * 4))
         return (bSource ? CMP_ERR_UNSUPPORTED_SOURCE_FORMAT : CMP_ERR_UNSUPPORTED_DEST_FORMAT);
 
     assert(pTexture->pData);
@@ -599,6 +783,7 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
                                 pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight, pSourceTexture->nBlockDepth,
                                 pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData,
                                 pSourceTexture->dwDataSize);
+
     CCodecBuffer* pDestBuffer = pCodec->CreateBuffer(
                                     pDestTexture->nBlockWidth, pDestTexture->nBlockHeight, pDestTexture->nBlockDepth,
                                     pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData,
@@ -612,6 +797,10 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
         SAFE_DELETE(pDestBuffer);
         return CMP_ERR_GENERIC;
     }
+
+    pSrcBuffer->SetFormat(pSourceTexture->format);
+    pDestBuffer->SetFormat(pDestTexture->format);
+
 
     // GPUOpen issue # 59 and #67 fix
     pSrcBuffer->m_bSwizzle = swizzleSrcBuffer;
@@ -777,14 +966,18 @@ CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture
             dwHeight = dwLinesRemaining;
 
         if(dwHeight > 0) {
+
             threadData.m_pSrcBuffer = CreateCodecBuffer(srcBufferType,
                                       pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight, pSourceTexture->nBlockDepth,
                                       pSourceTexture->dwWidth, dwHeight, pSourceTexture->dwPitch, pSourceData,
                                       pSourceTexture->dwDataSize);
+            threadData.m_pSrcBuffer->SetFormat(pSourceTexture->format);
+
             threadData.m_pDestBuffer = threadData.m_pCodec->CreateBuffer(
                                            pDestTexture->nBlockWidth, pDestTexture->nBlockHeight, pDestTexture->nBlockDepth,
                                            pDestTexture->dwWidth, dwHeight, pDestTexture->dwPitch, pDestData,
                                            pDestTexture->dwDataSize);
+            threadData.m_pDestBuffer->SetFormat(pDestTexture->format);
 
             pSourceData += CalcBufferSize(pSourceTexture->format, pSourceTexture->dwWidth, dwHeight, pSourceTexture->dwPitch, pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight);
             pDestData += CalcBufferSize(destType, pDestTexture->dwWidth, dwHeight, pDestTexture->nBlockWidth, pDestTexture->nBlockHeight);

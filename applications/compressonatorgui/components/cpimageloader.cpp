@@ -511,7 +511,7 @@ CMipImages *CImageLoader::LoadPluginImage(std::string filename, CMP_Feedback_Pro
     QFile file(qfilename);
     if (!file.exists()) {
         MipImages->m_Error = MIPIMAGE_FORMAT_ERRORS::Format_InvalidFile;
-        image = new QImage(":/CompressonatorGUI/Images/ImageFileDoesNotExist.png");
+        image = new QImage(":/compressonatorgui/images/imagefiledoesnotexist.png");
         usedQT = true;
     }
 
@@ -522,6 +522,7 @@ CMipImages *CImageLoader::LoadPluginImage(std::string filename, CMP_Feedback_Pro
     QFileInfo fi(qfilename);
     QString ext = fi.suffix().toUpper();
     bool useAMD_Plugin = true;
+    bool      isError       = false;
 
     // -------------------------------------------------------
     // Exception on load as DDS for BCn < 6 is not working
@@ -545,8 +546,9 @@ CMipImages *CImageLoader::LoadPluginImage(std::string filename, CMP_Feedback_Pro
 
             if (tmpMipSet == NULL) {
                 MipImages->errMsg = decompSetting.errMessage;
-                image = new QImage(":/CompressonatorGUI/Images/DeCompressImageError.png");
+                image = new QImage(":/compressonatorgui/images/decompressimageerror.png");
                 usedQT = true;
+                isError = true;
             } else
                 image = MIPS2QImage(m_CMips, tmpMipSet, 0, 0, m_options, pFeedbackProc);
         }
@@ -600,7 +602,7 @@ CMipImages *CImageLoader::LoadPluginImage(std::string filename, CMP_Feedback_Pro
     //-----------------------------------------------
 
     if (MipImages->mipset) {
-        if (MipImages->mipset->m_nMipLevels > 1 || MipImages->mipset->m_nDepth > 1)
+        if (((MipImages->mipset->m_nMipLevels > 1 || MipImages->mipset->m_nDepth > 1)) && !isError)
             UpdateMIPMapImages(MipImages);
     }
 
@@ -611,7 +613,7 @@ CMipImages *CImageLoader::LoadPluginImage(std::string filename, CMP_Feedback_Pro
     if ((MipImages->mipset == NULL) && (MipImages->QImage_list[0].size() == 0)) {
         MipImages->m_Error = MIPIMAGE_FORMAT_ERRORS::Format_NotSupported;
         // we have a bug to fix!!
-        QImage *image = new QImage(":/CompressonatorGUI/Images/notsupportedImage.png");
+        QImage *image = new QImage(":/compressonatorgui/images/notsupportedimage.png");
         if (image) {
             MipImages->QImage_list[0].push_back(image);
             MipImages->m_MipImageFormat = MIPIMAGE_FORMAT::Format_QImage;

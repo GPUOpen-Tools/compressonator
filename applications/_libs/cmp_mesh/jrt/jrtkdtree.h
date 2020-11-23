@@ -11,7 +11,7 @@
 #include "jrttriangleintersection.h"
 #include "jrtcore.h"
 
-#ifdef _LINUX
+#ifdef __linux__
 #include "../aligned_malloc.h"
 #define _aligned_malloc aligned_malloc
 #define _aligned_free aligned_free

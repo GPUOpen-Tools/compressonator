@@ -1,26 +1,34 @@
 
-add_executable(CMP_Core_Tests_BIN)
+add_executable(test_core)
 
-target_sources(CMP_Core_Tests_BIN 
-    PRIVATE
-        blockconstants.h
-        compressonatortests.cpp
-        compressonatortests.h
-        testsmain.cpp
-)
+# CTestDashboardTargets for catch2 (enable for ref only!)
+# add_subdirectory(
+#                 ${PROJECT_EXTERNAL_LIBDIR}/catch2
+#                 ${PROJECT_EXTERNAL_LIBDIR}/catch2/bin
+#                 )
 
-target_include_directories(CMP_Core_Tests_BIN PUBLIC
+target_sources(test_core
+                PRIVATE
+                testsmain.cpp
+                compressonatortests.cpp
+                compressonatortests.h
+                blockconstants.h
+                 ${PROJECT_SOURCE_DIR}/applications/_plugins/common/utilfuncs.cpp
+                 ${PROJECT_SOURCE_DIR}/applications/_plugins/common/utilfuncs.h
+                )
+
+target_include_directories(test_core PUBLIC
+    ./
+    ${PROJECT_SOURCE_DIR}/cmp_core/shaders
+    ${PROJECT_SOURCE_DIR}/cmp_core/source 
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/catch2
-)
+    )
 
-target_link_libraries(CMP_Core_Tests_BIN 
-    PRIVATE 
-        CMP_Core
-        Plugin_Common_UtilFuncs
-)
+target_link_libraries(test_core 
+                CMP_Core
+                )
 
-set_target_properties(CMP_Core_Tests_BIN PROPERTIES FOLDER Tests)
-
-add_test(NAME CMP_Core_Tests
-    COMMAND $<TARGET_FILE:CMP_Core_Tests_BIN>
-)
+set_target_properties(test_core 
+    PROPERTIES FOLDER "Tests"
+    )

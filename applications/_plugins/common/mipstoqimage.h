@@ -28,6 +28,6 @@ class QImage;
 
 int QImage2MIPS(QImage *qimage, CMIPS *m_CMips, MipSet *pMipSet);
 QImage* MIPS2QImage(CMIPS* m_CMips, MipSet* tmpMipSet, int MipMaplevel, int Depthlevel, CMP_CompressOptions option, CMP_Feedback_Proc pFeedbackProc = nullptr);
-
+void    loadExrProperties(CMIPS* m_CMips, MipSet* mipset, int level, QImage* image, CMP_CompressOptions option);
 
 #endif

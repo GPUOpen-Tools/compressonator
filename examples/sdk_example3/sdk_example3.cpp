@@ -61,7 +61,7 @@ bool CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pU
     UNREFERENCED_PARAMETER(pUser1);
     UNREFERENCED_PARAMETER(pUser2);
 
-    std::printf("\rCompression progress = %2.0f  ", fProgress);
+    std::printf("\rCompression progress = %3.0f  ", fProgress);
 
     return g_bAbortCompression;
 }
@@ -214,7 +214,7 @@ int main(int argc, const char* argv[]) {
                 // Show Progress
                 float fProgress = 100.f * (yBlock * dwBlocksX) / dwBlocksXY;
 
-                std::printf("\rCompression progress = %2.0f", fProgress);
+                std::printf("\rCompression progress = %3.0f", fProgress);
 
             }
         }

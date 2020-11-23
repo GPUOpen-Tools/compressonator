@@ -1,8 +1,11 @@
 
 add_library(CMP_Math)
 
-# This is the current location of these files. They should be moved here
-set(LEGACY_LOCATION ../../../cmp_framework/common)
+if(CMP_HOST_WINDOWS)
+    target_compile_definitions(CMP_Math PUBLIC
+        -DCMP_USE_XMMINTRIN
+        )
+endif()
 
 target_sources(CMP_Math PRIVATE
 
@@ -19,18 +22,20 @@ target_sources(CMP_Math PRIVATE
     jmlvec2.h
     jmlvec3.h
     jrtcommon.h
-    ${LEGACY_LOCATION}/mathmacros.h
+    ${PROJECT_SOURCE_DIR}/cmp_framework/common/mathmacros.h
     tootlepch.h
 )
 
 target_include_directories(CMP_Math PUBLIC
-
     ./
+    ${PROJECT_SOURCE_DIR}/cmp_core/shaders
+    ${PROJECT_SOURCE_DIR}/cmp_core/source
 )
 
 target_link_libraries(CMP_Math PRIVATE
-
-    CMP_Core
+ #   CMP_Core
 )
 
-set_target_properties(CMP_Math PROPERTIES FOLDER ${FOLDER_NAME})
+set_target_properties(CMP_Math PROPERTIES 
+    FOLDER "Libs"
+    )

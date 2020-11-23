@@ -51,6 +51,7 @@ if (CMP_HOST_WINDOWS)
     cmp_gui_copy_to_output(${QT_LIB_DIR}/plugins/imageformats/qtiff$<$<CONFIG:Debug>:d>.dll ${PLUGINS_PATH}/imagefomrats/qtiff$<$<CONFIG:Debug>:d>.dll)
     cmp_gui_copy_to_output(${QT_LIB_DIR}/plugins/imageformats/qjpeg$<$<CONFIG:Debug>:d>.dll ${PLUGINS_PATH}/imagefomrats/qjpeg$<$<CONFIG:Debug>:d>.dll)
     cmp_gui_copy_to_output(${QT_LIB_DIR}/bin/QtWebEngineProcess$<$<CONFIG:Debug>:d>.exe ${DYLIBS_PATH}/QtWebEngineProcess$<$<CONFIG:Debug>:d>.exe)
+    cmp_gui_copy_to_output(${QT_LIB_DIR}/bin/Qt5QuickWidgets$<$<CONFIG:Debug>:d>.dll ${DYLIBS_PATH}/Qt5QuickWidgets$<$<CONFIG:Debug>:d>.dll)
 else ()
     # Copy the platform libraries into the bundle
     file(GLOB_RECURSE QT_PLATFORM_LIBS ${QT_LIB_DIR}/plugins/platforms/*)
@@ -105,8 +106,13 @@ cmp_gui_copy_to_output(${ExtGLEW_BIN_PATH}/glew32.dll ${ASSETS_PATH}/glew32.dll)
 cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/../common/lib/ext/opencv/2.49/x64/VS2015/bin/$<$<CONFIG:Debug>:debug>$<$<CONFIG:Release>:release>/opencv_core249$<$<CONFIG:Debug>:d>.dll ${ASSETS_PATH}/opencv_core249$<$<CONFIG:Debug>:d>.dll)
 cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/../common/lib/ext/opencv/2.49/x64/VS2015/bin/$<$<CONFIG:Debug>:debug>$<$<CONFIG:Release>:release>/opencv_imgproc249$<$<CONFIG:Debug>:d>.dll ${ASSETS_PATH}/opencv_imgproc249$<$<CONFIG:Debug>:d>.dll)
 
-#KTX dll
+#KTX2 Features dll
+if (OPTION_BUILD_KTX2)
 cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/../common/lib/ext/ktx/build/$<$<CONFIG:Debug>:debug>$<$<CONFIG:Release>:release>/ktx.dll ${ASSETS_PATH}/ktx.dll)
+else()
+# Use a null dll so that installers can build
+cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/runtime/ktx.dll ${ASSETS_PATH}/ktx.dll)  
+endif()
 
 # GPU Shaders
 file(GLOB_RECURSE GPUCOMPUTE_SHADERS ${PROJECT_SOURCE_DIR}/cmp_core/shaders/*)

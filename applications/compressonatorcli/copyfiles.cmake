@@ -7,10 +7,6 @@ set(ASSETS_PATH $<TARGET_FILE_DIR:CompressonatorCLI-bin>)
 set(DYLIBS_PATH $<TARGET_FILE_DIR:CompressonatorCLI-bin>)
 set(PLUGINS_PATH $<TARGET_FILE_DIR:CompressonatorCLI-bin>/plugins)
 
-#copy glew32.dll
-#get_property(ExtGLEW_BIN_PATH GLOBAL PROPERTY ExtGLEW_BIN_PATH)
-cmp_gui_copy_to_output(${ExtGLEW_BIN_PATH}/glew32.dll ${ASSETS_PATH}/glew32.dll)
-
 cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/Applications/_Plugins/CGPUDecode/Vulkan/VK_ComputeShader/texture.vert.spv ${ASSETS_PATH}/texture.vert.spv)
 cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/Applications/_Plugins/CGPUDecode/Vulkan/VK_ComputeShader/texture.frag.spv ${ASSETS_PATH}/texture.frag.spv)
 
@@ -40,12 +36,26 @@ if (OPTION_USE_QT_IMAGELOAD)
     endif()
 endif()
 
-# OpenCV dll
-cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/../common/lib/ext/opencv/2.49/x64/VS2015/bin/$<$<CONFIG:Debug>:debug>$<$<CONFIG:Release>:release>/opencv_core249$<$<CONFIG:Debug>:d>.dll ${ASSETS_PATH}/opencv_core249$<$<CONFIG:Debug>:d>.dll)
-cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/../common/lib/ext/opencv/2.49/x64/VS2015/bin/$<$<CONFIG:Debug>:debug>$<$<CONFIG:Release>:release>/opencv_imgproc249$<$<CONFIG:Debug>:d>.dll ${ASSETS_PATH}/opencv_imgproc249$<$<CONFIG:Debug>:d>.dll)
 
-#KTX dll
-cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/../common/lib/ext/ktx/build/$<$<CONFIG:Debug>:debug>$<$<CONFIG:Release>:release>/ktx.dll ${ASSETS_PATH}/ktx.dll)
+if (CMP_HOST_WINDOWS)
+    #copy glew32.dll
+    #get_property(ExtGLEW_BIN_PATH GLOBAL PROPERTY ExtGLEW_BIN_PATH)
+    cmp_gui_copy_to_output(${ExtGLEW_BIN_PATH}/glew32.dll ${ASSETS_PATH}/glew32.dll)
+    
+    # OpenCV dll
+    cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/../common/lib/ext/opencv/2.49/x64/VS2015/bin/$<$<CONFIG:Debug>:debug>$<$<CONFIG:Release>:release>/opencv_core249$<$<CONFIG:Debug>:d>.dll ${ASSETS_PATH}/opencv_core249$<$<CONFIG:Debug>:d>.dll)
+    cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/../common/lib/ext/opencv/2.49/x64/VS2015/bin/$<$<CONFIG:Debug>:debug>$<$<CONFIG:Release>:release>/opencv_imgproc249$<$<CONFIG:Debug>:d>.dll ${ASSETS_PATH}/opencv_imgproc249$<$<CONFIG:Debug>:d>.dll)
+    
+    #KTX2 Features dll
+    if (OPTION_BUILD_KTX2)
+        cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/../common/lib/ext/ktx/build/$<$<CONFIG:Debug>:debug>$<$<CONFIG:Release>:release>/ktx.dll ${ASSETS_PATH}/ktx.dll)
+    else()
+        # Use a null dll so that installers can build
+        cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/runtime/ktx.dll ${ASSETS_PATH}/ktx.dll)  
+    endif()
+
+endif() # end host windows
+
 
 # GPU Shaders
 file(GLOB_RECURSE GPUCOMPUTE_SHADERS ${PROJECT_SOURCE_DIR}/CMP_Core/shaders/*)

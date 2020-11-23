@@ -1,8 +1,9 @@
+cmake_minimum_required(VERSION 3.10)
 
-add_library(Plugin_CImage_DDS)
+add_library(Image_DDS STATIC "")
 
-target_sources(Plugin_CImage_DDS PRIVATE
-
+target_sources(Image_DDS 
+    PRIVATE
     dds.cpp
     dds.h
     dds_dx10.cpp
@@ -11,15 +12,20 @@ target_sources(Plugin_CImage_DDS PRIVATE
     dds_file.h
     dds_helpers.cpp
     dds_helpers.h
-)
+    )
 
-target_link_libraries(Plugin_CImage_DDS PRIVATE
+target_include_directories(Image_DDS
+    PRIVATE
+    ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
+    ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common
+    )
 
-    CompressonatorLIB
+target_link_libraries(Image_DDS 
+    PRIVATE
+    CMP_Compressonator
+    )
 
-    Plugin_TCPluginAPI
-
-    ExtOpenEXR
-)
-
-set_target_properties(Plugin_CImage_DDS PROPERTIES FOLDER ${FOLDER_NAME})
+set_target_properties(Image_DDS PROPERTIES 
+    FOLDER "Plugin_Static/ImageIO"
+    )

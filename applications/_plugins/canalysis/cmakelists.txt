@@ -1,45 +1,88 @@
+cmake_minimum_required(VERSION 3.10)
 
+add_library(Image_Analysis STATIC "")
 
-add_library(Plugin_CAnalysis)
+target_sources(Image_Analysis
+               PRIVATE
+               analysis/canalysis.cpp
+               analysis/canalysis.h
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/atiformats.h
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/pluginmanager.h
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/pluginmanager.cpp
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/textureio.h
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/textureio.cpp
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/ssim.h
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/ssim.cpp
+               ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/components/cpimageloader.h
+               ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/components/cpimageloader.cpp
+               ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/common/cvmatandqimage.h
+               ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/common/cvmatandqimage.cpp
+               )
 
+target_include_directories(Image_Analysis
+               PRIVATE
+               ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
+               ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
+               ${PROJECT_SOURCE_DIR}/applications/_libs/gpu_decode
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common
+               ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/common
+               ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/components
+               ${PROJECT_SOURCE_DIR}/../common/lib/ext/rapidxml
 
-target_sources(Plugin_CAnalysis PRIVATE
-    analysis/canalysis.cpp
-    analysis/canalysis.h
-    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/ssim.h
-    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/ssim.cpp
-    ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/components/cpimageloader.h
-    ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/components/cpimageloader.cpp
-    ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/common/cvmatandqimage.h
-    ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/common/cvmatandqimage.cpp
-)
+               ${OpenEXR_INCLUDE_DIRS}
+               ${OpenCV_INCLUDE_DIRS}
+               ${Qt5Gui_INCLUDE_DIRS}
+               )
 
-target_include_directories(Plugin_CAnalysis PUBLIC
-    ./analysis
-    ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
-    ${PROJECT_SOURCE_DIR}/cmp_framework/common
-    ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
-    ${PROJECT_SOURCE_DIR}/applications/_plugins/common
-    ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/common
-    ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/components
-    ${PROJECT_SOURCE_DIR}/applications/_libs/gpu_decode
-    ${Qt5Gui_INCLUDE_DIRS}
-    ${OpenEXR_INCLUDE_DIRS}
-)
+if (CMP_HOST_WINDOWS)
+    # update this and enable for plugin builds
+    # target_link_libraries(Image_Analysis  
+    #      PRIVATE
+    #          CMP_Compressonator
+    #          Plugin_TCPluginAPI
+    #          Plugin_PluginManager
+    #          Plugin_CImage_EXR
+    #          ExtOpenCV
+    #          ExtOpenEXR
+    #          ExtRapidXML
+    #  
+    #      PUBLIC
+    #          Plugin_Common_TestReport
+    #  )
 
-target_link_libraries(Plugin_CAnalysis 
+else()
 
-    PRIVATE
-        CompressonatorLIB
-        Plugin_TCPluginAPI
-        Plugin_PluginManager
-        Plugin_CImage_EXR
-        ExtOpenCV
-        ExtOpenEXR
-        ExtRapidXML
+    find_package(OpenCV) 
+    if (OpenCV_FOUND)
+        target_include_directories(Image_Analysis
+                                   PRIVATE
+                                   ${OpenCV_INCLUDE_DIRS})
+    else()
+        message(FATAL_ERROR "Package OpenCV are required, but not found. In Unix, run initsetup_unix.sh or sudo apt-get install libopencv-dev to install the libs.")
+    endif()
+    
+    # Qt5 include path - users install required
+    set_property(TARGET Image_Analysis PROPERTY POSITION_INDEPENDENT_CODE TRUE)
+    
+    find_package(Qt5Gui)
+    if(Qt5Gui_FOUND)
+        target_include_directories(Image_Analysis
+                                   PRIVATE 
+                                   "${Qt5Gui_INCLUDE_DIRS}")
+    else()
+        message(FATAL_ERROR "Package Qt5 (Qt5Gui) are required, but not found. In Unix, run initsetup_unix.sh or sudo apt-get install qtdeclarative5-dev. If is window, please make sure install qt and add the bin path (i.e. C:\Qt\5.7\msvc2015_64\bin) to environment PATH.")
+    endif()
 
-    PUBLIC
-        Plugin_Common_TestReport
-)
+    if(APPLE)
+        target_include_directories(Image_Analysis
+                                   PRIVATE
+                                   /usr/local/include/openexr/)
+    endif()
 
-set_target_properties(Plugin_CAnalysis PROPERTIES FOLDER ${FOLDER_NAME})
+    if (UNIX)
+        target_compile_definitions(Image_Analysis PRIVATE _LINUX)
+    endif()
+endif()
+
+set_target_properties(Image_Analysis PROPERTIES FOLDER "Plugin_Static/Analysis")
+

@@ -2524,7 +2524,9 @@ static CODECFLOAT CompBlock1(CODECFLOAT _RmpPnts[NUM_ENDPOINTS], [OUT] Min amd M
 
 static CODECFLOAT CompBlock1(CODECFLOAT _RmpPnts[NUM_ENDPOINTS], CODECFLOAT _Blk[MAX_BLOCK], int _Nmbr,
                              CMP_BYTE dwNumPoints, bool bFixedRampPoints,
-                             int _IntPrc, int _FracPrc, bool _bFixedRamp, bool _bUseSSE2) {
+                             int _IntPrc, int _FracPrc, bool _bFixedRamp, bool _bUseSSE2,
+                             bool isSigned
+                             ) {
     CODECFLOAT fMaxError = 0.f;
 
     CODECFLOAT Ramp[NUM_ENDPOINTS];
@@ -2727,12 +2729,42 @@ CODECFLOAT CompBlock1X(CODECFLOAT* _Blk, CMP_WORD dwBlockSize, CMP_BYTE nEndpoin
 
     // this one makes the bulk of the work
     CODECFLOAT Ramp[NUM_ENDPOINTS];
-    CompBlock1(Ramp, _Blk, dwBlockSize, dwNumPoints, bFixedRampPoints, _intPrec, _fracPrec, _bFixedRamp, _bUseSSE2);
+    CompBlock1(Ramp, _Blk, dwBlockSize, dwNumPoints, bFixedRampPoints, _intPrec, _fracPrec, _bFixedRamp, _bUseSSE2, false);
 
     // final clusterization applied
     CODECFLOAT fError = Clstr1(pcIndices, _Blk, Ramp, dwBlockSize, dwNumPoints, bFixedRampPoints, _intPrec, _fracPrec, _bFixedRamp);
     nEndpoints[0] = (BYTE)Ramp[0];
     nEndpoints[1] = (BYTE)Ramp[1];
+
+    return fError;
+}
+
+CODECFLOAT CompBlock1XS(CODECFLOAT* _Blk,
+                       CMP_WORD    dwBlockSize,
+                       CMP_BYTE    nEndpoints[2],
+                       CMP_BYTE*   pcIndices,
+                       CMP_BYTE    dwNumPoints,
+                       bool        bFixedRampPoints,
+                       bool        _bUseSSE2,
+                       int         _intPrec,
+                       int         _fracPrec,
+                       bool        _bFixedRamp)
+{
+    // just to make them initialized
+    if (!_bFixedRamp)
+    {
+        _intPrec  = 8;
+        _fracPrec = 0;
+    }
+
+    // this one makes the bulk of the work
+    CODECFLOAT Ramp[NUM_ENDPOINTS];
+    CompBlock1(Ramp, _Blk, dwBlockSize, dwNumPoints, bFixedRampPoints, _intPrec, _fracPrec, _bFixedRamp, _bUseSSE2, true);
+
+    // final clusterization applied
+    CODECFLOAT fError = Clstr1(pcIndices, _Blk, Ramp, dwBlockSize, dwNumPoints, bFixedRampPoints, _intPrec, _fracPrec, _bFixedRamp);
+    nEndpoints[0]     = (BYTE)Ramp[0];
+    nEndpoints[1]     = (BYTE)Ramp[1];
 
     return fError;
 }
@@ -2756,6 +2788,26 @@ CODECFLOAT CompBlock1X(CMP_BYTE* _Blk, CMP_WORD dwBlockSize, CMP_BYTE nEndpoints
     CODECFLOAT fBlk[MAX_BLOCK];
     for(int i = 0; i < dwBlockSize; i++)
         fBlk[i] = (CODECFLOAT)_Blk[i] / 255.f;
+
+    return CompBlock1X(fBlk, dwBlockSize, nEndpoints, pcIndices, dwNumPoints, bFixedRampPoints, _bUseSSE2, _intPrec, _fracPrec, _bFixedRamp);
+}
+
+
+CODECFLOAT CompBlock1XS(CMP_SBYTE* _Blk,
+                       CMP_WORD  dwBlockSize,
+                       CMP_BYTE  nEndpoints[2],
+                       CMP_BYTE* pcIndices,
+                       CMP_BYTE  dwNumPoints,
+                       bool      bFixedRampPoints,
+                       bool      _bUseSSE2,
+                       int       _intPrec,
+                       int       _fracPrec,
+                       bool      _bFixedRamp)
+{
+    // convert the input and call the float equivalent.
+    CODECFLOAT fBlk[MAX_BLOCK];
+    for (int i = 0; i < dwBlockSize; i++)
+        fBlk[i] = (CODECFLOAT)_Blk[i] / 128.f;
 
     return CompBlock1X(fBlk, dwBlockSize, nEndpoints, pcIndices, dwNumPoints, bFixedRampPoints, _bUseSSE2, _intPrec, _fracPrec, _bFixedRamp);
 }

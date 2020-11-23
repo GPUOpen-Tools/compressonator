@@ -40,5 +40,6 @@ std::string CMP_GetBaseDir(const std::string& srcfileDirpath);
 std::string CMP_GetFileName(const std::string& srcfileNamepath);
 CMP_PATHTYPES  CMP_PathType(const char *path);
 void CMP_GetDirList(const std::string& directory, std::vector<std::string>& files, std::string filter);
-std::string CMP_GetFullPath(std::string  file);
+void           CMP_GetAllDirFilesList(const std::string& directory, std::vector<std::string>& files, std::string filter);
+std::string    CMP_GetFullPath(std::string file);
 #endif

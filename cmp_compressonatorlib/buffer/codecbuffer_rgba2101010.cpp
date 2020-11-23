@@ -63,7 +63,7 @@ void CCodecBuffer_RGBA2101010::Copy(CCodecBuffer& srcBuffer) {
 
     for(CMP_DWORD j = 0; j < dwBlocksY; j++) {
         for(CMP_DWORD i = 0; i < dwBlocksX; i++) {
-            CMP_DWORD block[BLOCK_SIZE_4X4];
+            CMP_WORD block[BLOCK_SIZE_4X4];
             srcBuffer.ReadBlockRGBA(i*4, j*4, 4, 4, block);
             WriteBlockRGBA(i*4, j*4, 4, 4, block);
         }

@@ -13,6 +13,8 @@ target_include_directories(ExtGLEW INTERFACE
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/glm
 )
 
-target_link_libraries(ExtGLM INTERFACE
-    glm::glm
-)
+
+# Enable this for newer GLM libs (using older version 0.9.8.0 is been used)
+# target_link_libraries(ExtGLM INTERFACE
+#     glm::glm
+# )

@@ -11,9 +11,9 @@ target_sources(CMP_FileIO PRIVATE
 )
 
 target_include_directories(CMP_FileIO PUBLIC
-
-    ${LEGACY_LOCATION}
     ./
+    ${LEGACY_LOCATION}
+    ${OpenEXR_INCLUDE_DIRS}
 )
 
 set_target_properties(CMP_FileIO PROPERTIES FOLDER ${FOLDER_NAME})

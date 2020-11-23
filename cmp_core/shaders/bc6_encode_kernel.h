@@ -40,6 +40,7 @@
 #define MAX_PARTITIONS                  64              // Maximum number of partition types
 #define MAX_ENTRIES                     64
 #define MAX_TRY                         20
+#define BC6_FLT_MAX_EXP                 128
 
 #define MAX_PARTITIONS_TABLE            (1+64+64)
 #define DIMENSION                       4

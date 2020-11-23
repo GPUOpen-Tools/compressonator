@@ -4,7 +4,7 @@
 #
 # Usage
 #   export WORKSPACE=<jenkins-workspace-root>
-#   python $WORKSPACE/main/Compressonator/CMP_CompressonatorLib/UpdateVersion.py <major> <minor> <build-number> <update>
+#   python $WORKSPACE/main/Compressonator/CMP_CompressonatorLib/UpdateVersion.py <major> <minor> <build-number>
 #
 import os
 import argparse
@@ -21,7 +21,7 @@ parser.add_argument("buildnumber", help='VERSION_MINOR_MAJOR value')
 updateArgs = parser.parse_args()
 
 # initialize file for search
-cmpVersionFile = os.path.join(os.environ['WORKSPACE'], 'compressonator/cmp_compressonatorLib/version.h')
+cmpVersionFile = os.path.join(os.environ['WORKSPACE'], 'compressonator/cmp_compressonatorlib/version.h')
 cmpVersionData = open(cmpVersionFile, 'r')
 
 # replace version string in data and write back out to file

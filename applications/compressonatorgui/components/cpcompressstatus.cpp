@@ -86,7 +86,7 @@ CompressStatusDialog::CompressStatusDialog(const QString title, QWidget *parent)
 
     connect(m_btnClearText, SIGNAL(pressed()), this, SLOT(onClearText()));
 
-    m_layout = new QGridLayout(m_newWidget);
+   QGridLayout* m_layout = new QGridLayout(m_newWidget);
 
     m_layout->setSpacing(0);
     m_layout->setMargin(0);

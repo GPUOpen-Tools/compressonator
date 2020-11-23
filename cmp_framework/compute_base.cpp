@@ -38,7 +38,7 @@
 
 #include <string>
 
-CMP_CHAR*          GetFormatDesc(CMP_FORMAT nFormat);
+CMP_CHAR*                GetFormatDesc(CMP_FORMAT nFormat);
 PluginManager            g_pluginManager;
 PluginInterface_Encoder* plugin_encoder_codec  = NULL;
 static CMP_BOOL          HostPluginsRegistered = FALSE;
@@ -239,6 +239,7 @@ CMP_ERROR CMP_API CMP_CreateComputeLibrary(MipSet* srcTexture, KernelOptions* ke
     // Initialize the compression codec, pass kernel options
     kernel_options->height = srcTexture->dwHeight;
     kernel_options->width  = srcTexture->dwWidth;
+    kernel_options->srcformat = srcTexture->m_format;
     if (plugin_encoder_codec->TC_Init(kernel_options) != 0) {
         PrintInfo("Failed to init encoder\n");
         return CMP_ERR_UNABLE_TO_INIT_COMPUTELIB;
@@ -358,6 +359,8 @@ CodecType GetCodecType2(CMP_FORMAT format) {
     case CMP_FORMAT_BGRA_8888:
         return CT_None;
     case CMP_FORMAT_ARGB_8888:
+        return CT_None;
+    case CMP_FORMAT_RGBA_8888_S:
         return CT_None;
     case CMP_FORMAT_BGR_888:
         return CT_None;
@@ -617,6 +620,7 @@ CMP_DWORD CalcBufferSize2(CMP_FORMAT format, CMP_DWORD dwWidth, CMP_DWORD dwHeig
     case CMP_FORMAT_RGBA_8888:
     case CMP_FORMAT_BGRA_8888:
     case CMP_FORMAT_ARGB_8888:
+    case CMP_FORMAT_RGBA_8888_S:
     case CMP_FORMAT_ARGB_2101010:
         return ((dwPitch) ? (dwPitch * dwHeight) : (dwWidth * 4 * dwHeight));
 
@@ -686,8 +690,8 @@ CMP_DWORD CMP_API CMP_CalculateBufferSize2(const CMP_Texture* pTexture) {
     if (pTexture->dwHeight <= 0)
         return 0;
 
-    assert(pTexture->format >= CMP_FORMAT_ARGB_8888 && pTexture->format <= CMP_FORMAT_MAX);
-    if (pTexture->format < CMP_FORMAT_ARGB_8888 || pTexture->format > CMP_FORMAT_MAX)
+    assert(pTexture->format >= CMP_FORMAT_RGBA_8888_S && pTexture->format <= CMP_FORMAT_MAX);
+    if (pTexture->format < CMP_FORMAT_RGBA_8888_S || pTexture->format > CMP_FORMAT_MAX)
         return 0;
 
     return CalcBufferSize2(pTexture->format, pTexture->dwWidth, pTexture->dwHeight, pTexture->dwPitch, pTexture->nBlockWidth, pTexture->nBlockHeight);
@@ -1016,7 +1020,11 @@ CMP_ERROR CMP_API CMP_SaveTexture(const char* DestFile, CMP_MipSet* MipSetIn) {
     std::string file_extension = fn.substr(fn.find_last_of(".") + 1);
     std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(), toupperChar);
 
-    if ((((file_extension.compare("DDS") == 0) || file_extension.compare("KTX") == 0)) != TRUE) {
+    if (((((file_extension.compare("DDS") == 0) 
+        || file_extension.compare("KTX") == 0) 
+        || file_extension.compare("KTX2") == 0)) 
+        != TRUE)
+        {
         return CMP_ERR_INVALID_DEST_TEXTURE;
     }
 

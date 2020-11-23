@@ -31,6 +31,7 @@
 
 #include "codec_dxtc.h"
 
+// Also used as BC4
 class CCodec_ATI1N : public CCodec_DXTC {
   public:
     CCodec_ATI1N(CodecType codecType = CT_ATI1N);
@@ -45,8 +46,7 @@ class CCodec_ATI1N : public CCodec_DXTC {
         CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0,CMP_DWORD dwDataSize = 0) const;
 };
 
-
-
+// Also used as BC4_S
 class CCodec_ATI1N_S : public CCodec_DXTC {
   public:
     CCodec_ATI1N_S(CodecType codecType = CT_ATI1N_S);
@@ -57,11 +57,7 @@ class CCodec_ATI1N_S : public CCodec_DXTC {
                                 Codec_Feedback_Proc pFeedbackProc = NULL,
                                 CMP_DWORD_PTR       pUser1        = NULL,
                                 CMP_DWORD_PTR       pUser2        = NULL);
-    virtual CodecError Compress_Fast(CCodecBuffer&       bufferIn,
-                                     CCodecBuffer&       bufferOut,
-                                     Codec_Feedback_Proc pFeedbackProc = NULL,
-                                     CMP_DWORD_PTR       pUser1        = NULL,
-                                     CMP_DWORD_PTR       pUser2        = NULL);
+
     virtual CodecError Decompress(CCodecBuffer&       bufferIn,
                                   CCodecBuffer&       bufferOut,
                                   Codec_Feedback_Proc pFeedbackProc = NULL,

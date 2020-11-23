@@ -1,150 +1,168 @@
-# Compressonator GUI
-# this must be before add_executable
-if (OPTION_CMP_DIRECTX )
-link_directories(
-    ${PROJECT_SOURCE_DIR}/../common/lib/ext/directxtex/DirectXTex-jun2020b/DirectXTex/Bin/Desktop_2017/x64
-    )
-endif()
 
-link_directories(
-    ${PROJECT_SOURCE_DIR}/../common/lib/ext/opencv/2.49/x64/VS2015/lib
-    ${PROJECT_SOURCE_DIR}/../common/lib/ext/zlib/zlib-1.2.10/VS2015/x64/lib
-    ${PROJECT_SOURCE_DIR}/../common/lib/ext/openexr/ilmbase-2.2.0/VS2015/x64/lib
-    ${PROJECT_SOURCE_DIR}/../common/lib/ext/openexr/openexr-2.2.0/VS2015/x64/lib
-    )
-
-# Enable automoc and autorcc
-set(CMAKE_INCLUDE_CURRENT_DIR ON) 
-
+# Include local GUI required libs
 add_subdirectory(common)
 add_subdirectory(components)
-add_subdirectory(generatedfiles)
 add_subdirectory(qpropertypages)
 
-# Compressonator GUI Application
-add_executable(CompressonatorGUI-bin)
-
-if (CMP_HOST_WINDOWS)
-    add_dependencies(CompressonatorGUI-bin extern_ktx)
-endif()
-
-set_target_properties(CompressonatorGUI-bin PROPERTIES
-    AUTOMOC ON
-    AUTORCC ON
-    AUTOMOC_COMPILER_PREDEFINES ON
-    OUTPUT_NAME "compressonator"
-)
-
-# Find the QtWidgets library
-find_package(Qt5 REQUIRED COMPONENTS Core Widgets HINTS ${QT_PACKAGE_ROOT})
-
 if(CMP_HOST_WINDOWS)
-    set_target_properties(CompressonatorGUI-bin PROPERTIES 
-        WIN32_EXECUTABLE ON
-        AUTOMOC_MOC_OPTIONS -D_WIN32
-        VS_DEBUGGER_WORKING_DIRECTORY $<TARGET_FILE_DIR:CompressonatorGUI-bin>
-    )
-elseif(CMP_HOST_APPLE)
-    set_target_properties(CompressonatorGUI-bin PROPERTIES 
-        MACOSX_BUNDLE ON
-        LINK_FLAGS "-Wl,-F${CMAKE_OSX_SYSROOT}/System/Library/Frameworks,-v"
-    )
+    # this must be before add_executable
+    link_directories(
+         ${PROJECT_EXTERNAL_LIBDIR}/opencv/2.49/x64/VS2015/lib
+         ${PROJECT_EXTERNAL_LIBDIR}/zlib/zlib-1.2.10/VS2015/x64/lib
+         ${PROJECT_EXTERNAL_LIBDIR}/openexr/ilmbase-2.2.0/VS2015/x64/lib
+         ${PROJECT_EXTERNAL_LIBDIR}/openexr/openexr-2.2.0/VS2015/x64/lib
+         ${PROJECT_EXTERNAL_LIBDIR}/glew/1.9.0/lib/x64 
+        )
+
+    # this must be before add_executable
+    if (OPTION_CMP_DIRECTX)
+    link_directories(
+         ${PROJECT_EXTERNAL_LIBDIR}/directxtex/DirectXTex-jun2020b/DirectXTex/Bin/Desktop_2017/x64
+        )
+    endif()
+
 endif()
-
-file(GLOB_RECURSE SRCS
-
-    Source/*.cpp
-    Source/*.h
-)
-
-file(GLOB_RECURSE IMAGES
-
-    images/*
-)
 
 file(GLOB_RECURSE RESOURCES
-
     resources/*
 )
 
-target_sources(CompressonatorGUI-bin PRIVATE
+file(GLOB_RECURSE APP_SOURCES
+               source/cpmaincomponents.cpp
+               source/cpmaincomponents.h
+               source/main.cpp
+               source/qtignorecompilerwarnings.h
+               compressonatorgui.qrc
 
-    ${SRCS}
-    ${RESOURCES}
-    compressonatorgui.qrc
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/mipstoqimage.cpp
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/mipstoqimage.h
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/atiformats.h
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/atiformats.cpp
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cmdline.h
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cmdline.cpp
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cmp_fileio.h
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cmp_fileio.cpp
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/modeldata.h
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/modeldata.cpp
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/plugininterface.h
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/pluginmanager.h
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/pluginmanager.cpp
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/query_timer.h
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/query_timer.cpp
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/textureio.h
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/textureio.cpp
 )
 
-target_include_directories(CompressonatorGUI-bin PRIVATE
-     ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
-    ./resources
-    ./source
-)
+if(CMP_HOST_WINDOWS)
+add_executable(CompressonatorGUI-bin
+               WIN32 
+               ${RESOURCES}
+               ${APP_SOURCES}
+               )
+else()
+add_executable(CompressonatorGUI-bin
+               ${RESOURCES}
+               ${APP_SOURCES}
+               )
+endif()
 
-target_link_libraries(CompressonatorGUI-bin 
+set (CMP_LIBS "")
+list(APPEND CMP_LIBS    CMP_Common
+                        CMP_Compressonator
+                        CMP_Framework
+                        CMP_GpuDecode
+                        CMP_MeshCompressor
+                        CMP_MeshOptimizer
 
+                        CMP_GUI_Gltf
+                        CMP_GUI_Components
+                        CMP_GUI_Common
+                        CMP_GUI_QPropertyPages
+
+                        Image_Analysis
+                        Image_ASTC
+                        Image_EXR
+                        Image_KTX
+                        Image_TGA
+
+                        # min links
+                        ${OpenEXR_LIBRARIES}
+                        ${OpenCV_LIBRARIES}
+                        ${Boost_LIBRARIES}
+                        ${draco_LIBRARIES}
+                        Threads::Threads
+                        )
+
+if(CMP_HOST_WINDOWS)
+    list(APPEND CMP_LIBS    ExtQt5 
+                            ExtQt5Widgets
+                            Qt5::Xml
+                            Image_KTX2
+                            )
+else()
+    list(APPEND CMP_LIBS    Qt5::Widgets
+                            Qt5::Qml 
+                            Qt5::OpenGL 
+                            Qt5::WebEngineWidgets 
+                            Qt5::Xml
+                            )
+
+# allow const char* -> char*
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    target_compile_options(CompressonatorGUI-bin 
     PRIVATE
-        # Static libs
-        ExtKTX
-        ExtGLEW
-        CMP_GUI
-        CMP_GUI_BIN_Common
-        CMP_GUI_BIN_Components
-        CMP_GUI_BIN_GeneratedFiles
-        CMP_GUI_BIN_QPropertyPages
-        CMP_Mesh
-        CompressonatorLIB
-        GPU_Decode
-
-        # Static plugin libs
-        Plugin_CImage
-        Plugin_Common_UtilFuncs
-        Plugin_GLTF
-        Plugin_PluginManager
-        Plugin_TCPluginAPI
-
-        # Dynamic plugins
-        CMP_MeshCompressor
-        Plugin_C3DModel_Loaders
-        Plugin_C3DModel_Viewers
-        Plugin_CGPUDecode
-        Plugin_CMesh
-) 
-
-include(copyfiles.cmake)
-
-set_target_properties(CompressonatorGUI-bin PROPERTIES FOLDER ${FOLDER_NAME})
-
-if (CMAKE_GENERATOR STREQUAL "Unix Makefiles")
-    install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        DESTINATION .
-        USE_SOURCE_PERMISSIONS
-        PATTERN "cmake_install.cmake" EXCLUDE
-        PATTERN "CMakeFiles*" EXCLUDE
-        PATTERN "common*" EXCLUDE
-        PATTERN "components*" EXCLUDE
-        PATTERN "CompressonatorGUI-bin_autogen*" EXCLUDE
-        PATTERN "ctesttestfile.cmake" EXCLUDE
-        PATTERN "generatedfiles*" EXCLUDE
-        PATTERN "makefile" EXCLUDE
-        PATTERN "qpropertypages*" EXCLUDE
-    )
-elseif (CMAKE_GENERATOR STREQUAL "Visual Studio 16 2019")
-    install(DIRECTORY "$<TARGET_FILE_DIR:CompressonatorGUI-bin>"
-        DESTINATION "./compressonatorgui"
-        USE_SOURCE_PERMISSIONS
-    )
-elseif (CMAKE_GENERATOR STREQUAL "Xcode")
-    install(DIRECTORY "$<TARGET_BUNDLE_DIR:CompressonatorGUI-bin>"
-        DESTINATION "./compressonatorgui"
-        USE_SOURCE_PERMISSIONS
-    )
+    "-Wno-c++11-compat-deprecated-writable-strings")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    target_compile_options(CompressonatorGUI-bin 
+    PRIVATE
+    "-Wno-write-strings")
 endif()
 
 
+endif()
 
-#============== Helper to show all currently accessable variables in cmake
-# get_cmake_property(_variableNames VARIABLES)
-# list (SORT _variableNames) 
-# foreach (_variableName ${_variableNames})
-#     message(STATUS "${_variableName}=${${_variableName}}")
-# endforeach()
+target_link_libraries(CompressonatorGUI-bin  ${CMP_LIBS} )
+
+target_include_directories(CompressonatorGUI-bin PRIVATE
+                          components
+                          qpropertypages
+                          common
+                          ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
+                          ${PROJECT_SOURCE_DIR}/cmp_framework/
+                          ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
+                          ${PROJECT_SOURCE_DIR}/applications/_plugins/common
+                          ${PROJECT_SOURCE_DIR}/applications/_plugins/canalysis/analysis
+                          ${PROJECT_SOURCE_DIR}/applications/_plugins/common/gltf/
+                          ${PROJECT_SOURCE_DIR}/applications/_plugins/common/json/
+                          ${PROJECT_SOURCE_DIR}/applications/_libs/gpu_decode
+                          ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_mesh
+                          ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshoptimizer
+                          ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshcompressor/draco/src
+                          ${PROJECT_SOURCE_DIR}/applications/_plugins/cmesh/mesh_optimizer
+                          ${PROJECT_SOURCE_DIR}/cmp_core/shaders
+                          ${PROJECT_SOURCE_DIR}/cmp_core/source
+                          ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_math
+                          ${PROJECT_SOURCE_DIR}/../common/lib/ext/glm
+                          ${PROJECT_EXTERNAL_LIBDIR}/rapidxml
+                          ${OpenCV_INCLUDE_DIRS}
+                          ${draco_INCLUDE_DIRS} )
+
+if(CMP_HOST_WINDOWS)
+    include(copyfiles.cmake)
+    set_target_properties(CompressonatorGUI-bin 
+        PROPERTIES 
+        AUTOMOC ON
+        AUTORCC ON
+        AUTOMOC_COMPILER_PREDEFINES ON
+        OUTPUT_NAME "compressonator"
+        )
+else()
+    set_target_properties(CompressonatorGUI-bin 
+        PROPERTIES 
+        AUTOMOC ON
+        AUTORCC ON
+        AUTOMOC_COMPILER_PREDEFINES ON
+        OUTPUT_NAME "compressonator-bin"
+        )
+endif()
+

@@ -57,10 +57,16 @@
 
 #include <algorithm>
 #include <iostream>
-#include <filesystem>
 #include <string>
 #include <locale>
 #include <cstdio>
+#ifdef _CMP_CPP17_  // Build code using std::c++17
+#include <filesystem>
+namespace sfs = std::filesystem;
+#else
+#include <experimental/filesystem>
+namespace sfs = std::experimental::filesystem;
+#endif
 
 
 using namespace std;
@@ -72,7 +78,7 @@ extern bool g_bAbortCompression;
 
 std::string GetFileExtension(const char *file, CMP_BOOL incDot, CMP_BOOL upperCase) {
 //#ifdef USE_BOOST
-    string file_extension = std::filesystem::path(file).extension().string();
+    string file_extension = sfs::path(file).extension().string();
     if (upperCase) {
         for (char& c : file_extension)
             c = toupper(c);
@@ -165,13 +171,13 @@ bool DeCompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR 
     static float Progress = 0;
     if (fProgress > Progress)
         Progress = fProgress;
-    PrintInfo("\rDeCompression progress = %2.0f", Progress);
+    PrintInfo("\rDeCompression progress = %3.0f", Progress);
     return g_bAbortCompression;
 }
 
 bool IsDestinationUnCompressed(const char *fname) {
     bool isuncompressed = true;
-    std::string file_extension = std::filesystem::path(fname).extension().string();
+    std::string file_extension = sfs::path(fname).extension().string();
 
     // tolower
     for(char& c : file_extension)
@@ -179,11 +185,19 @@ bool IsDestinationUnCompressed(const char *fname) {
 
     if (file_extension.compare(".dds") == 0) {
         isuncompressed = false;
-    } else if (file_extension.compare(".astc") == 0) {
+    }
+    else if (file_extension.compare(".astc") == 0) {
         isuncompressed = false;
-    } else if (file_extension.compare(".ktx") == 0) {
+    }
+    else if (file_extension.compare(".ktx") == 0) {
         isuncompressed = false;
-    } else if (file_extension.compare(".raw") == 0) {
+    } 
+    else if (file_extension.compare(".ktx2") == 0)
+    {
+        isuncompressed = false;
+    }
+    else if (file_extension.compare(".raw") == 0)
+    {
         isuncompressed = false;
     } else if (file_extension.compare(".basis") == 0) {
         isuncompressed = false;
@@ -198,7 +212,7 @@ bool IsDestinationUnCompressed(const char *fname) {
 }
 
 CMP_FORMAT FormatByFileExtension(const char *fname, MipSet *pMipSet) {
-    std::string file_extension = std::filesystem::path(fname).extension().string();
+    std::string file_extension = sfs::path(fname).extension().string();
 
     // To upper
     std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(),
@@ -217,87 +231,54 @@ CMP_FORMAT FormatByFileExtension(const char *fname, MipSet *pMipSet) {
 
 CMP_FORMAT GetFormat(CMP_DWORD dwFourCC) {
     switch(dwFourCC) {
-    case CMP_FOURCC_ATI1N:
-        return CMP_FORMAT_ATI1N;
-    case CMP_FOURCC_ATI2N:
-        return CMP_FORMAT_ATI2N;
-    case CMP_FOURCC_ATI2N_XY:
-        return CMP_FORMAT_ATI2N_XY;
-    case CMP_FOURCC_ATI2N_DXT5:
-        return CMP_FORMAT_ATI2N_DXT5;
-    case CMP_FOURCC_DXT1:
-        return CMP_FORMAT_DXT1;
-    case CMP_FOURCC_DXT3:
-        return CMP_FORMAT_DXT3;
-    case CMP_FOURCC_DXT5:
-        return CMP_FORMAT_DXT5;
-    case CMP_FOURCC_DXT5_xGBR:
-        return CMP_FORMAT_DXT5_xGBR;
-    case CMP_FOURCC_DXT5_RxBG:
-        return CMP_FORMAT_DXT5_RxBG;
-    case CMP_FOURCC_DXT5_RBxG:
-        return CMP_FORMAT_DXT5_RBxG;
-    case CMP_FOURCC_DXT5_xRBG:
-        return CMP_FORMAT_DXT5_xRBG;
-    case CMP_FOURCC_DXT5_RGxB:
-        return CMP_FORMAT_DXT5_RGxB;
-    case CMP_FOURCC_DXT5_xGxR:
-        return CMP_FORMAT_DXT5_xGxR;
+    case CMP_FOURCC_ATI1N:              return CMP_FORMAT_ATI1N;
+    case CMP_FOURCC_ATI2N:              return CMP_FORMAT_ATI2N;
+    case CMP_FOURCC_ATI2N_XY:           return CMP_FORMAT_ATI2N_XY;
+    case CMP_FOURCC_ATI2N_DXT5:         return CMP_FORMAT_ATI2N_DXT5;
+    case CMP_FOURCC_DXT1:               return CMP_FORMAT_DXT1;
+    case CMP_FOURCC_DXT3:               return CMP_FORMAT_DXT3;
+    case CMP_FOURCC_DXT5:               return CMP_FORMAT_DXT5;
+    case CMP_FOURCC_DXT5_xGBR:          return CMP_FORMAT_DXT5_xGBR;
+    case CMP_FOURCC_DXT5_RxBG:          return CMP_FORMAT_DXT5_RxBG;
+    case CMP_FOURCC_DXT5_RBxG:          return CMP_FORMAT_DXT5_RBxG;
+    case CMP_FOURCC_DXT5_xRBG:          return CMP_FORMAT_DXT5_xRBG;
+    case CMP_FOURCC_DXT5_RGxB:          return CMP_FORMAT_DXT5_RGxB;
+    case CMP_FOURCC_DXT5_xGxR:          return CMP_FORMAT_DXT5_xGxR;
 
     // Deprecated but still supported for decompression
     // Some definition are not valid FOURCC values nut are used as Custom formats
     // so that DDS files can be used for storage
-    case CMP_FOURCC_DXT5_GXRB:
-        return CMP_FORMAT_DXT5_xRBG;
-    case CMP_FOURCC_DXT5_GRXB:
-        return CMP_FORMAT_DXT5_RxBG;
-    case CMP_FOURCC_DXT5_RXGB:
-        return CMP_FORMAT_DXT5_xGBR;
-    case CMP_FOURCC_DXT5_BRGX:
-        return CMP_FORMAT_DXT5_RGxB;
-    case CMP_FOURCC_BC4S:
-        return CMP_FORMAT_ATI1N;
-    case CMP_FOURCC_BC4U:
-        return CMP_FORMAT_ATI1N;
-    case CMP_FOURCC_BC5S:
-        return CMP_FORMAT_ATI2N_XY;
-    case CMP_FOURCC_ATC_RGB:
-        return CMP_FORMAT_ATC_RGB;
-    case CMP_FOURCC_ATC_RGBA_EXPLICIT:
-        return CMP_FORMAT_ATC_RGBA_Explicit;
-    case CMP_FOURCC_ATC_RGBA_INTERP:
-        return CMP_FORMAT_ATC_RGBA_Interpolated;
-    case CMP_FOURCC_ETC_RGB:
-        return CMP_FORMAT_ETC_RGB;
-    case CMP_FOURCC_ETC2_RGB:
-        return CMP_FORMAT_ETC2_RGB;
-    case CMP_FOURCC_ETC2_SRGB:
-        return CMP_FORMAT_ETC2_SRGB;
-    case CMP_FOURCC_ETC2_RGBA:
-        return CMP_FORMAT_ETC2_RGBA;
-    case CMP_FOURCC_ETC2_RGBA1:
-        return CMP_FORMAT_ETC2_RGBA1;
-    case CMP_FOURCC_ETC2_SRGBA:
-        return CMP_FORMAT_ETC2_SRGBA;
-    case CMP_FOURCC_ETC2_SRGBA1:
-        return CMP_FORMAT_ETC2_SRGBA1;
-    case CMP_FOURCC_BC6H:
-        return CMP_FORMAT_BC6H;
-    case CMP_FOURCC_BC7:
-        return CMP_FORMAT_BC7;
-    case CMP_FOURCC_ASTC:
-        return CMP_FORMAT_ASTC;
+    case CMP_FOURCC_DXT5_GXRB:          return CMP_FORMAT_DXT5_xRBG;
+    case CMP_FOURCC_DXT5_GRXB:          return CMP_FORMAT_DXT5_RxBG;
+    case CMP_FOURCC_DXT5_RXGB:          return CMP_FORMAT_DXT5_xGBR;
+    case CMP_FOURCC_DXT5_BRGX:          return CMP_FORMAT_DXT5_RGxB;
+
+    case CMP_FOURCC_ATC_RGB:            return CMP_FORMAT_ATC_RGB;
+    case CMP_FOURCC_ATC_RGBA_EXPLICIT:  return CMP_FORMAT_ATC_RGBA_Explicit;
+    case CMP_FOURCC_ATC_RGBA_INTERP:    return CMP_FORMAT_ATC_RGBA_Interpolated;
+    case CMP_FOURCC_ETC_RGB:            return CMP_FORMAT_ETC_RGB;
+    case CMP_FOURCC_ETC2_RGB:           return CMP_FORMAT_ETC2_RGB;
+    case CMP_FOURCC_ETC2_SRGB:          return CMP_FORMAT_ETC2_SRGB;
+    case CMP_FOURCC_ETC2_RGBA:          return CMP_FORMAT_ETC2_RGBA;
+    case CMP_FOURCC_ETC2_RGBA1:         return CMP_FORMAT_ETC2_RGBA1;
+    case CMP_FOURCC_ETC2_SRGBA:         return CMP_FORMAT_ETC2_SRGBA;
+    case CMP_FOURCC_ETC2_SRGBA1:        return CMP_FORMAT_ETC2_SRGBA1;
+    case CMP_FOURCC_BC4S:               return CMP_FORMAT_BC4_S;
+    case CMP_FOURCC_BC4:
+    case CMP_FOURCC_BC4U:               return CMP_FORMAT_ATI1N;  
+    case CMP_FOURCC_BC5:                return CMP_FORMAT_BC5;
+    case CMP_FOURCC_BC5S:               return CMP_FORMAT_BC5_S;
+    case CMP_FOURCC_BC6H:               return CMP_FORMAT_BC6H;
+    case CMP_FOURCC_BC7:                return CMP_FORMAT_BC7;
+    case CMP_FOURCC_ASTC:               return CMP_FORMAT_ASTC;
 #ifdef USE_APC
-    case CMP_FOURCC_APC:
-        return CMP_FORMAT_APC;
+    case CMP_FOURCC_APC:                return CMP_FORMAT_APC;
 #endif
 #ifdef USE_GTC
-    case CMP_FOURCC_GTC:
-        return CMP_FORMAT_GTC;
+    case CMP_FOURCC_GTC:                return CMP_FORMAT_GTC;
 #endif
 #ifdef USE_BASIS
-    case CMP_FOURCC_BASIS:
-        return CMP_FORMAT_BASIS;
+    case CMP_FOURCC_BASIS:              return CMP_FORMAT_BASIS;
 #endif
     default:
         return CMP_FORMAT_Unknown;
@@ -405,7 +386,7 @@ bool FloatFormat(CMP_FORMAT InFormat) {
 
 
 bool CompressedFileFormat(std::string file) {
-    std::string file_extension = std::filesystem::path(file).extension().string();
+    std::string file_extension = sfs::path(file).extension().string();
     // To upper
     std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(),
                    [](unsigned char c) -> unsigned char { return toupper(c); });
@@ -430,12 +411,12 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *con
         return NULL;
     }
     if (MipSetIn->m_format == CMP_FORMAT_ASTC && !(configSetting->useCPU) && decodeWith == CMP_GPUDecode::GPUDecode_DIRECTX) {
-        configSetting->errMessage = "ASTC format does not supported by DirectX API. Please view ASTC compressed images using other options (CPU or Vulkan) (under Settings->Application Options).";
-        PrintInfo("Decompress Error: ASTC format does not supported by DirectX API. Please view ASTC compressed images using CPU or GPU_Vulkan (under Settings->Application Options).\n");
+        configSetting->errMessage = "ASTC format does not supported by DirectX API. Please view ASTC compressed images using other options (CPU) (under Settings->Application Options).";
+        PrintInfo("Decompress Error: ASTC format does not supported by DirectX API. Please view ASTC compressed images using CPU (under Settings->Application Options).\n");
         return NULL;
     } else if (MipSetIn->m_format == CMP_FORMAT_ASTC && !(configSetting->useCPU) && decodeWith == CMP_GPUDecode::GPUDecode_OPENGL) {
-        configSetting->errMessage = "Decode ASTC with OpenGL is not supported. Please view ASTC compressed images using other options (CPU or Vulkan) (under Settings->Application Options).";
-        PrintInfo("Decompress Error: Decode ASTC with OpenGL is not supported. Please view ASTC compressed images using CPU or GPU_Vulkan (under Settings->Application Options).\n");
+        configSetting->errMessage = "Decode ASTC with OpenGL is not supported. Please view ASTC compressed images using other options (CPU) (under Settings->Application Options).";
+        PrintInfo("Decompress Error: Decode ASTC with OpenGL is not supported. Please view ASTC compressed images using CPU (under Settings->Application Options).\n");
         return NULL;
     }
 
@@ -461,6 +442,10 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *con
     // BMP is saved as CMP_FORMAT_ARGB_8888
     // EXR is saved as CMP_FORMAT_ARGB_16F
     switch (MipSetIn->m_format) {
+    case CMP_FORMAT_BC4_S:
+    case CMP_FORMAT_BC5_S:
+        MipSetOut->m_format = CMP_FORMAT_RGBA_8888_S;
+        break;
     case CMP_FORMAT_BC6H:
     case CMP_FORMAT_BC6H_SF:
         MipSetOut->m_format = CMP_FORMAT_ARGB_16F;
@@ -547,6 +532,7 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *con
             srcTexture.transcodeFormat =  MipSetIn->m_transcodeFormat;
             srcTexture.dwDataSize = CMP_CalculateBufferSize(&srcTexture);
             srcTexture.pData = pMipData;
+            srcTexture.pMipSet         = MipSetIn;
 
             //-----------------------------
             // Uncompressed Destination
@@ -562,6 +548,7 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *con
             destTexture.format = MipSetOut->m_format;
             destTexture.dwDataSize = CMP_CalculateBufferSize(&destTexture);
             destTexture.pData = m_CMIPS.GetMipLevel(MipSetOut, nMipLevel, nFaceOrSlice)->m_pbData;
+            destTexture.pMipSet      = MipSetOut;
 
             if (!silent) {
                 if ((nMipLevel > 1) || (nFaceOrSlice > 1))
@@ -627,9 +614,18 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *con
                     }
                 } else {
 #ifdef _WIN32
-#ifndef DISABLE_TESTCODE
                     CMP_ERROR res;
+                    CMP_FORMAT hold_destformat = destTexture.format;
                     res = CMP_DecompressTexture(&srcTexture, &destTexture, decodeWith);
+
+                    // Did decompress adjust any formats, if so make sure  MipSetOut->m_format is updated
+                    // This typically can happen when GPU views are used and the captured framebuffer differs 
+                    // from that which was set as a destination texture format. Note all buffer sizes and channel formats
+                    // should match when this happens. Typical case can be moving from SNORM to UNORM bytes
+                    if (hold_destformat != destTexture.format)
+                        MipSetOut->m_format = destTexture.format;
+
+
                     if (res == CMP_ERR_UNSUPPORTED_GPU_ASTC_DECODE) {
                         configSetting->errMessage = "Error: ASTC compressed texture is not supported by the GPU device.\n";
                         PrintInfo("Error: ASTC compressed texture is not supported by the GPU device.\n");
@@ -638,21 +634,20 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *con
                         MipSetOut = NULL;
                         return NULL;
                     } else if (res == CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB) {
-                        configSetting->errMessage = "Error: Failed to decompress with the API selected. Version is not supported. Stay tune for update!\n";
-                        PrintInfo("Error: Failed to decompress with the API selected. Note for Vulkan, only driver version up to 1.5.0 is supported by this app. Please stay tune for update! Thanks.\n");
+                        configSetting->errMessage = "Error: Failed to load decompress lib for this image or view.\n";
+                        PrintInfo("Error: Failed to decompress with the API selected.\n");
                         m_CMIPS.FreeMipSet(MipSetOut);
                         delete MipSetOut;
                         MipSetOut = NULL;
                         return NULL;
                     } else if (res != CMP_OK) {
-                        configSetting->errMessage = "Decompress Failed. Texture format not supported. Please view the compressed images using other options (CPU) (under Settings->Application Options).";
+                        configSetting->errMessage = "Decompress Failed. Texture format not supported. Please view the compressed images using other options (CPU) (under Settings->Application Options)";
                         PrintInfo("Decompress Failed with Error %d\n", res);
                         m_CMIPS.FreeMipSet(MipSetOut);
                         delete MipSetOut;
                         MipSetOut = NULL;
                         return NULL;
                     }
-#endif
 #else
                     PrintInfo("GPU Decompress is not supported in linux.\n");
                     m_CMIPS.FreeMipSet(MipSetOut);
@@ -796,7 +791,6 @@ int AMDLoadMIPSTextureImage(const char *SourceFile, MipSet *MipSetIn, bool use_O
         int result = -1;
         QString filename(SourceFile);
         QImage *qimage = new QImage(filename);
-
         if (qimage) {
             result = QImage2MIPS(qimage, g_CMIPS, MipSetIn);
             delete qimage;
@@ -816,7 +810,7 @@ int AMDSaveMIPSTextureImage(const char *DestFile, MipSet *MipSetIn, bool use_OCV
     bool filesaved = false;
     CMIPS m_CMIPS;
 
-    std::string file_extension = std::filesystem::path(DestFile).extension().string();
+    std::string file_extension = sfs::path(DestFile).extension().string();
     file_extension.erase(std::remove(file_extension.begin(), file_extension.end(), '.'), file_extension.end());
     for(char& c : file_extension)
         c = toupper(c);

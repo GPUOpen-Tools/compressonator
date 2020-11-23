@@ -21,7 +21,15 @@
 // THE SOFTWARE.
 //
 
+// The cmake sets up include paths to the SDK libs 
+// It also includes some external libs that were used in building CLI and GUI apps
+// This is a sample include used for both CPU and GPU shared code
 
-int main() {
-    // add prototype code here...that uses CMP dev code
+#include "compressonator.h"
+#include "common.h"
+#include "common_def.h"
+
+// add prototype code here...that uses CMP dev code
+int main()
+{
 }

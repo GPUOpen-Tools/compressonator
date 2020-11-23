@@ -57,7 +57,7 @@ void ac3DMeshAnalysis::Init(const QString & title, const QString & productName) 
     m_textBrowser = new QTextBrowser(this);
     m_textBrowser->setReadOnly(true);
     m_textBrowser->setAcceptRichText(true);
-    m_textBrowser->setMinimumHeight(350);
+    m_textBrowser->setMinimumHeight(32);
 
     // Main Vertical Layout:
     pMainLayout->addWidget(m_GBAnalyseVCache);

@@ -106,6 +106,8 @@ int Plugin_BC5::TC_Init(void  *kernel_options) {
     g_BC5Encode.m_src_width = m_KernelOptions->width;
     g_BC5Encode.m_src_height = m_KernelOptions->height;
     g_BC5Encode.m_fquality   = m_KernelOptions->fquality;
+    g_BC5Encode.m_bIsSNORM   = (m_KernelOptions->format == CMP_FORMAT_BC5_S);
+    g_BC5Encode.m_sintsrc    = (m_KernelOptions->srcformat == CMP_FORMAT_RGBA_8888_S);
 
     m_KernelOptions->data = &g_BC5Encode;
     m_KernelOptions->size = sizeof(g_BC5Encode);

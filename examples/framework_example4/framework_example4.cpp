@@ -32,7 +32,7 @@
 // This example uses GPU framework (DLL's) and compiles encode shaders (.cpp or hlsl)
 //
 // Using OpenCL (OCL)
-//     CMP_GPU_OCL.dll
+//     EncodeWith_OCL.dll   Note: Only 64bit MD DLL versions available in the Framework SDK
 //     Encode Kernel files in plugins/compute folder
 //          BC1_Encode_Kernel.cpp
 //          BC1_Encode_Kernel.h
@@ -40,17 +40,16 @@
 //          Common_Def.h
 //
 // Using DirectX (DXC)
-//     CMP_GPU_DXC.dll
+//     EncodeWith_DXC.dll  Note: Only 64bit MD DLL versions available in the Framework SDK
 //     Encode Kernel files in plugins/compute folder
 //          BC1_Encode_Kernel.hlsl
 //          BCn_Common_kernel.h
 //          Common_Def.h
 //
-// Can also use any GPU Hardware which support encode extension in OpenGL. This only requires the plugin and no shaders
-//     CMP_GPU_HW.dll
-//
 // When using DXC or OCL the shaders are compiled into .cmp binaries which takes some processing time.
 // subsequent runs will use .cmp files which will provide faster encoding
+//
+// When using EncodeWith_GPU  No plugins/compute shaders are required
 //
 
 #include <stdio.h>
@@ -80,7 +79,7 @@ bool g_bAbortCompression = false;   // If set true current compression will abor
 bool CompressionCallback(CMP_FLOAT fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
     (pUser1);
     (pUser2);
-    std::printf("\rCompression progress = %2.0f", fProgress);
+    std::printf("\rCompression progress = %3.0f", fProgress);
     return g_bAbortCompression;
 }
 

@@ -6,7 +6,8 @@ set WORKDIR=%ROOTDIR%\
 
 PATH=C:\OpenJDK\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files\doxygen\bin;C:\Strawberry\c\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\perl\bin;C:\Program Files\MiKTeX 2.9\miktex\bin\x64\;C:\Program Files (x86)\Graphviz2.38\bin;C:\Program Files\Microsoft DNX\Dnvm\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Perforce;C:\Program Files\Perforce\DVCS\;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\Users\adtbld\.dnx\bin;C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE;C:\Program Files (x86)\MSBuild\14.0\Bin;C:\Program Files\CMake\bin;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin;C:\Users\adtbld\AppData\Local\Microsoft\WindowsApps;C:\Python27;C:\Python27\Scripts;C:\Python27\Tools\Scripts
 
-set ADVANCED_INSTALLER="C:\Program Files (x86)\Caphyon\Advanced Installer 12.4.2\bin\x86\AdvancedInstaller.com"
+REM set ADVANCED_INSTALLER="C:\Program Files (x86)\Caphyon\Advanced Installer 12.4.2\bin\x86\AdvancedInstaller.com"
+set ADVANCED_INSTALLER="C:\Program Files (x86)\Caphyon\Advanced Installer 13.5\bin\x86\AdvancedInstaller.com"
 
 echo on
 

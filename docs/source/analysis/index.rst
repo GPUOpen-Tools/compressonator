@@ -142,6 +142,6 @@ CPU performance based timing, that measures the overall end to end time it took 
 
 
 
-.. |analysis_image1| image:: media/CMP_v3.2_Run_Time_Analysis.png
-.. |analysis_image2| image:: media/CMP_v3.2_Analysis_Output.png
+.. |analysis_image1| image:: media/cmp_v3.2_run_time_analysis.png
+.. |analysis_image2| image:: media/cmp_v3.2_analysis_output.png
 .. |analysis_image3| image:: ../gui_tool/user_guide/media/image2020-3-17_13-43-45.png

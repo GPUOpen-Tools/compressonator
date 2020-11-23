@@ -481,11 +481,11 @@ void BC6HBlockEncoder::SwapIndices(int iEndPoints[MAX_SUBSETS][MAX_END_POINTS][M
         size_t i = subset?g_Region2FixUp[shape_pattern]:0;
 
         if(iIndices[subset][i] & uHighIndexBit) {
+
             // high bit is set, swap the aEndPts and indices for this region
             std::swap(iEndPoints[subset][0][0], iEndPoints[subset][1][0]);
             std::swap(iEndPoints[subset][0][1], iEndPoints[subset][1][1]);
             std::swap(iEndPoints[subset][0][2], iEndPoints[subset][1][2]);
-
             for(size_t j = 0; j < (size_t)entryCount[subset]; ++j) {
                 iIndices[subset][j] = uNumIndices - 1 - iIndices[subset][j] ;
             }
@@ -1379,9 +1379,9 @@ float BC6HBlockEncoder::CompressBlock(float in[MAX_SUBSET_SIZE][MAX_DIMENSION_BI
         // so use 0..0x7BFF and sign bit for the floats
 
         // using if ( < 0.00001) to avoid case of values been -0.0 which is not processed when using if ( < 0)
-        if (in[i][0] < 0.00001 || isnan(in[i][0])) {
+        if (in[i][0] < 0.00001 || cmp_isnan(in[i][0])) {
             if (m_isSigned) {
-                BC6H_data.din[i][0] = (isnan(in[i][0]))? F16NEGPREC_LIMIT_VAL : -CMP_HALF(abs(in[i][0] / normalization)).bits();
+                BC6H_data.din[i][0] = (cmp_isnan(in[i][0]))? F16NEGPREC_LIMIT_VAL : -CMP_HALF(abs(in[i][0] / normalization)).bits();
                 if (BC6H_data.din[i][0] < F16NEGPREC_LIMIT_VAL) {
                     BC6H_data.din[i][0] = F16NEGPREC_LIMIT_VAL;
                 }
@@ -1390,9 +1390,9 @@ float BC6HBlockEncoder::CompressBlock(float in[MAX_SUBSET_SIZE][MAX_DIMENSION_BI
         } else
             BC6H_data.din[i][0] = CMP_HALF(in[i][0] / normalization).bits();
 
-        if (in[i][1] < 0.00001 || isnan(in[i][1])) {
+        if (in[i][1] < 0.00001 || cmp_isnan(in[i][1])) {
             if (m_isSigned) {
-                BC6H_data.din[i][1] = (isnan(in[i][1])) ? F16NEGPREC_LIMIT_VAL : -CMP_HALF(abs(in[i][1] / normalization)).bits();
+                BC6H_data.din[i][1] = (cmp_isnan(in[i][1])) ? F16NEGPREC_LIMIT_VAL : -CMP_HALF(abs(in[i][1] / normalization)).bits();
                 if (BC6H_data.din[i][1] < F16NEGPREC_LIMIT_VAL) {
                     BC6H_data.din[i][1] = F16NEGPREC_LIMIT_VAL;
                 }
@@ -1401,9 +1401,9 @@ float BC6HBlockEncoder::CompressBlock(float in[MAX_SUBSET_SIZE][MAX_DIMENSION_BI
         } else
             BC6H_data.din[i][1] = CMP_HALF(in[i][1] / normalization).bits();
 
-        if (in[i][2] < 0.00001 || isnan(in[i][2])) {
+        if (in[i][2] < 0.00001 || cmp_isnan(in[i][2])) {
             if (m_isSigned) {
-                BC6H_data.din[i][2] = (isnan(in[i][2])) ? F16NEGPREC_LIMIT_VAL : -CMP_HALF(abs(in[i][2] / normalization)).bits();
+                BC6H_data.din[i][2] = (cmp_isnan(in[i][2])) ? F16NEGPREC_LIMIT_VAL : -CMP_HALF(abs(in[i][2] / normalization)).bits();
                 if (BC6H_data.din[i][2] < F16NEGPREC_LIMIT_VAL) {
                     BC6H_data.din[i][2] = F16NEGPREC_LIMIT_VAL;
                 }

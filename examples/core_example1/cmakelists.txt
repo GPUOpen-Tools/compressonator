@@ -5,6 +5,11 @@ target_sources(core_example1
         coreexample.cpp
 )
 
+target_include_directories(core_example1 PUBLIC
+    ./
+    ${PROJECT_SOURCE_DIR}/cmp_core/source
+    )
+
 target_link_libraries(core_example1
     PRIVATE
         CMP_Core

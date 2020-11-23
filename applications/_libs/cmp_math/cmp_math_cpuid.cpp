@@ -30,7 +30,7 @@
 void cmp_cpuid(int cpuInfo[4], int function_id) {
     // subfunction_id = 0
 #ifdef _WIN32
-    __cpuidex(cpuInfo, function_id, 0);
+    __cpuidex(cpuInfo, function_id, 0); // defined in intrin.h
 #else
     // To Do
     //__cpuid_count(0, function_id, cpuInfo[0], cpuInfo[1], cpuInfo[2], cpuInfo[3]);
@@ -47,7 +47,7 @@ cmp_cpufeatures cmp_get_cpufeatures() {
         cpu.feature[i] = 0;
     }
 
-#ifndef _LINUX
+#ifndef __linux__
     cmp_cpuid(cpuInfo,0);
     int nIds = cpuInfo[0];
 
@@ -118,7 +118,8 @@ void cmp_autodected_cpufeatures(CMP_MATH_BYTE set) {
     if ((set & CMP_MATH_USE_CPU) > 0) return;
 
 
-#ifndef _LINUX
+#ifdef CMP_USE_XMMINTRIN
+#ifndef __linux__
     // Auto detect CPU features to enable
     for (int i = 0; i<SSP_SSE_COUNT; i++) {
         if (cpu.feature[i] > 0) {
@@ -138,6 +139,7 @@ void cmp_autodected_cpufeatures(CMP_MATH_BYTE set) {
             }
         }
     }
+#endif
 #endif
 
 }

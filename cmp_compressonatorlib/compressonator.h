@@ -39,7 +39,7 @@ typedef uint16_t WORD;
 typedef uint32_t DWORD;
 typedef int32_t  LONG;
 typedef bool          BOOL;
-#ifdef _LINUX
+#ifdef __linux__
 typedef int32_t*      DWORD_PTR;
 #else
 typedef size_t        DWORD_PTR;
@@ -78,14 +78,19 @@ typedef enum {
     CMP_FORMAT_Unknown   = 0,         // Undefined texture format.
 
     // Channel Component formats --------------------------------------------------------------------------------
+    CMP_FORMAT_RGBA_8888_S,   // RGBA format with signed 8-bit fixed channels.
+    CMP_FORMAT_ARGB_8888_S,   // ARGB format with signed 8-bit fixed channels.
     CMP_FORMAT_ARGB_8888,             // ARGB format with 8-bit fixed channels.
     CMP_FORMAT_ABGR_8888,             // ABGR format with 8-bit fixed channels.
     CMP_FORMAT_RGBA_8888,             // RGBA format with 8-bit fixed channels.
     CMP_FORMAT_BGRA_8888,             // BGRA format with 8-bit fixed channels.
     CMP_FORMAT_RGB_888,               // RGB format with 8-bit fixed channels.
+    CMP_FORMAT_RGB_888_S,             // RGB format with 8-bit fixed channels.
     CMP_FORMAT_BGR_888,               // BGR format with 8-bit fixed channels.
+    CMP_FORMAT_RG_8_S,                // Two component format with signed 8-bit fixed channels.
     CMP_FORMAT_RG_8,                  // Two component format with 8-bit fixed channels.
-    CMP_FORMAT_R_8,                   // Single component format with 8-bit fixed channels.
+    CMP_FORMAT_R_8_S,                 // Single component format with signed 8-bit fixed channel.
+    CMP_FORMAT_R_8,                   // Single component format with 8-bit fixed channel.
     CMP_FORMAT_ARGB_2101010,          // ARGB format with 10-bit fixed channels for color & a 2-bit fixed channel for alpha.
     CMP_FORMAT_ARGB_16,               // ARGB format with 16-bit fixed channels.
     CMP_FORMAT_ABGR_16,               // ABGR format with 16-bit fixed channels.
@@ -232,6 +237,7 @@ struct KernelOptions {
     CMP_DWORD  width;                   // Width of the encoded texture.
     CMP_FLOAT  fquality;                // Set the quality used for encoders 0.05 is the lowest and 1.0 for highest.
     CMP_FORMAT format;                  // Encoder codec format to use for processing
+    CMP_FORMAT srcformat;               // Format of source data
     CMP_Compute_type encodeWith;        // Host Type : default is HPC, options are [HPC or GPU]
     CMP_INT    threads;                 // requested number of threads to use (1= single) max is 128 for HPC
     CMP_BOOL   getPerfStats;            // Set to true if you want to get Performance Stats
@@ -239,11 +245,10 @@ struct KernelOptions {
     CMP_BOOL   getDeviceInfo;           // Set to true if you want to get target Device Info
     KernelDeviceInfo deviceInfo;        // Data storage for the target device
     CMP_BOOL   genGPUMipMaps;           // When ecoding with GPU HW use it to generate Compressed MipMap images, valid only if source has not miplevels
+    CMP_INT   miplevels;                // When using GPU HW, generate upto this requested miplevel.
     CMP_BOOL   useSRGBFrames;           // Use SRGB frame buffer when generating HW based mipmaps (Default Gamma corretion will be set by HW)
-    // if the source is SNORM then this option is enabled regardless of setting
-
-
-    //private: data settings: Do not use it will be removed from this interface!
+                                        // if the source is SNORM then this option is enabled regardless of setting
+                                        //private: data settings: Do not use it will be removed from this interface!
     CMP_UINT   size;                    // Size of *data
     void *data;                         // Data to pass down from CPU to kernel
     void *dataSVM;                      // Data allocated as Shared by CPU and GPU (used only when code is running in 64bit and devices support SVM)
@@ -377,9 +382,9 @@ typedef struct {
     KernelPerformanceStats  perfStats;  // Data storage for the performance stats obtained from GPU or CPU while running encoder processing
     CMP_BOOL   getDeviceInfo;           // Set to true if you want to get target device info
     KernelDeviceInfo deviceInfo;        // Data storage for the performance stats obtained from GPU or CPU while running encoder processing
-    CMP_BOOL   genGPUMipMaps;           // generate mipmaps using GPU HW, this option is only valid when EncodeWith is set to GPU HW
+    CMP_BOOL   genGPUMipMaps;           // When ecoding with GPU HW use it to generate MipMap images, valid only when miplevels is set else default is toplevel 1
     CMP_BOOL   useSRGBFrames;           // when using GPU HW for encoding and mipmap generation use SRGB frames, default is RGB
-
+    CMP_INT    miplevels;               // miplevels to use when GPU is used to generate them
 } CMP_CompressOptions;
 
 // The format of data in the channels of texture.
@@ -409,6 +414,7 @@ typedef enum {
     TDT_RG          = 4,  // A two component texture.
     TDT_YUV_SD      = 5,  // An YUB Standard Definition texture.
     TDT_YUV_HD      = 6,  // An YUB High Definition texture.
+    TDT_RGB         = 7,  // An RGB texture
 } CMP_TextureDataType;
 
 typedef CMP_TextureDataType TextureDataType;
@@ -750,19 +756,55 @@ typedef struct {
 } CMP_EncoderSetting;
 
 
+typedef enum _CMP_ANALYSIS_MODES
+{
+    CMP_ANALYSIS_MSEPSNR = 0x00000000  // Enable Measurement of MSE and PSNR for 2 mipset image samples
+} CMP_ANALYSIS_MODES;
+
+typedef struct
+{
+    // User settings
+    unsigned long analysisMode;   // Bit mapped setting to enable various forms of image anlaysis
+    unsigned int  channelBitMap;  // Bit setting for active channels to do analysis on and reserved features
+                                  // msb(....ABGR)lsb
+
+    // For HDR Image processing
+    float fInputDefog;     // default = 0.0f
+    float fInputExposure;  // default = 0.0f
+    float fInputKneeLow;   // default = 0.0f
+    float fInputKneeHigh;  // default = 5.0f
+    float fInputGamma;     // default = 2.2f
+
+    // Data return after anlysis
+    double mse;    // Mean Square Error for all active channels in a given CMP_FORMAT
+    double mseR;   // Mean Square for Red Channel
+    double mseG;   // Mean Square for Green
+    double mseB;   // Mean Square for Blue
+    double mseA;   // Mean Square for Alpha
+    double psnr;   // Peak Signal Ratio for all active channels in a given CMP_FORMAT
+    double psnrR;  // Peak Signal Ratio for Red Chennel
+    double psnrG;  // Peak Signal Ratio for Green
+    double psnrB;  // Peak Signal Ratio for Blue
+    double psnrA;  // Peak Signal Ratio for Alpha
+
+} CMP_AnalysisData;
+
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
 // MIP MAP Interfaces
+CMP_INT CMP_API CMP_CalcMaxMipLevel(CMP_INT nHeight, CMP_INT nWidth, CMP_BOOL bForGPU);
 CMP_INT CMP_API CMP_CalcMinMipSize(CMP_INT nHeight, CMP_INT nWidth, CMP_INT MipsLevel);
 CMP_INT CMP_API CMP_GenerateMIPLevelsEx(CMP_MipSet* pMipSet, CMP_CFilterParams* pCFilterParams);
 CMP_INT CMP_API CMP_GenerateMIPLevels(CMP_MipSet *pMipSet, CMP_INT nMinSize);
 CMP_ERROR CMP_API CMP_CreateCompressMipSet(CMP_MipSet* pMipSetCMP, CMP_MipSet* pMipSetSRC);
 
 // MIP Map Quality
-CMP_ERROR CMP_API CMP_CalcMipSetMSE_PSNR(CMP_MipSet* src1, CMP_MipSet* src2, CMP_INT nMipLevel, CMP_INT nFaceOrSlice, CMP_DOUBLE* outMSE, CMP_DOUBLE* outPSNR);
+CMP_UINT  CMP_API CMP_getFormat_nChannels(CMP_FORMAT format);
+CMP_ERROR CMP_API CMP_MipSetAnlaysis(CMP_MipSet* src1, CMP_MipSet* src2, CMP_INT nMipLevel, CMP_INT nFaceOrSlice, CMP_AnalysisData* pAnalysisData);
 
 // CMP_MIPFeedback_Proc
 // Feedback function for conversion.

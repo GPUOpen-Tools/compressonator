@@ -39,7 +39,14 @@
 #include <windows.h>
 #endif
 
+#ifdef _CMP_CPP17_  // Build code using std::c++17
 #include <filesystem>
+namespace sfs = std::filesystem;
+#else
+#include <experimental/filesystem>
+namespace sfs = std::experimental::filesystem;
+#endif
+
 
 void SwizzleBytes(void *src, unsigned long numBytes) {
     unsigned char tmp[8]; // large enough to hold a double
@@ -91,7 +98,7 @@ void getFileNameExt(const char *FilePathName, char *fnameExt, int maxbuffsize) {
     _splitpath_s(FilePathName, drive, _MAX_DRIVE, dir, _MAX_DIR, fname, _MAX_FNAME, ext, _MAX_EXT);
     snprintf(fnameExt, maxbuffsize, "%s%s", fname, ext);
 #else
-    std::string fname = std::filesystem::path(FilePathName).filename().string();
+    std::string fname = sfs::path(FilePathName).filename().string();
     snprintf(fnameExt, maxbuffsize, "%s", fname.c_str());
 #endif
 }

@@ -6,30 +6,32 @@ link_directories(
     )
 endif()
 
-add_library(Plugin_CFilter_Fx SHARED)
+add_library(Image_FilterFX SHARED)
 
-target_sources(Plugin_CFilter_Fx PRIVATE
+target_sources(Image_FilterFX PRIVATE
 
     filterfx.cpp
     filterfx.h
 )
 
-target_include_directories(Plugin_CFilter_Fx PUBLIC
+target_include_directories(Image_FilterFX PUBLIC
     ./
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/apitrace/dxsdk/Include
+    ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib         # compressonator.h
+    ${PROJECT_SOURCE_DIR}/cmp_framework                 # compute_base.h
+    ${PROJECT_SOURCE_DIR}/cmp_framework/common/half     # half.h
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common  # tc_pluginapi.h
 )
 
-target_link_libraries(Plugin_CFilter_Fx PRIVATE
+target_link_libraries(Image_FilterFX PRIVATE
+    CMP_Compressonator
 
-    CMP_FileIO
-    CompressonatorLIB
-    Plugin_CmdLine
-    Plugin_PluginManager
-    Plugin_TCPluginAPI
 )
 
-set_target_properties(Plugin_CFilter_Fx PROPERTIES 
-    FOLDER ${FOLDER_NAME}
+target_compile_definitions(Image_FilterFX PRIVATE BUILD_AS_PLUGIN_DLL=1)
+
+set_target_properties(Image_FilterFX PROPERTIES 
+    FOLDER "Plugin_Dynamic/ImageFx"
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin/debug/plugins"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/release/plugins"
     )

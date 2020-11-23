@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="12.4.1" version="12.4.2" Modules="professional" RootPath="." Language="en" Id="{923A3584-87CA-4A31-A0BF-AF989DA207B6}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="12.4.1" version="13.5" Modules="professional" RootPath="." Language="en" Id="{923A3584-87CA-4A31-A0BF-AF989DA207B6}">
+  <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
+    <ROW Name="HiddenItems" Value="AppXAppDetailsComponent;AppXCapabilitiesComponent;AppXDependenciesComponent;AppXProductDetailsComponent;AppXVisualAssetsComponent;AppXAppDeclarationsComponent;AppXUriRulesComponent"/>
+  </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
     <ROW Property="AI_CLEAN_RESOURCES_DISABLE_UPGRADE" Value="0"/>
@@ -34,29 +37,27 @@
     <ROW Property="WindowsType9XDisplay" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
     <ROW Property="WindowsTypeNT40" MultiBuildValue="DefaultBuild:Windows NT 4.0" ValueLocId="-"/>
     <ROW Property="WindowsTypeNT40Display" MultiBuildValue="DefaultBuild:Windows NT 4.0" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT50" MultiBuildValue="DefaultBuild:Windows 2000" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT50Display" MultiBuildValue="DefaultBuild:Windows 2000" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT5X" MultiBuildValue="DefaultBuild:Windows XP/2003 RTM, Windows XP/2003 SP1, Windows XP SP2 x86" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT5XDisplay" MultiBuildValue="DefaultBuild:Windows XP/2003 RTM, Windows XP/2003 SP1, Windows XP SP2 x86" ValueLocId="-"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
-    <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1" DirectoryOptions="3"/>
-    <ROW Directory="ASTC_Dir" Directory_Parent="license1_Dir" DefaultDir="ASTC" DirectoryOptions="3"/>
+    <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1" DirectoryOptions="2"/>
     <ROW Directory="Compute_Dir" Directory_Parent="plugins_Dir" DefaultDir="Compute" DirectoryOptions="3"/>
     <ROW Directory="DesktopFolder" Directory_Parent="TARGETDIR" DefaultDir="DESKTO~1|DesktopFolder" IsPseudoRoot="1"/>
-    <ROW Directory="DirectXTex_Dir" Directory_Parent="license1_Dir" DefaultDir="DIRECT~1|DirectXTex" DirectoryOptions="3"/>
-    <ROW Directory="ETCPACK_Dir" Directory_Parent="license1_Dir" DefaultDir="ETCPACK" DirectoryOptions="3"/>
-    <ROW Directory="NewFolder_Dir" Directory_Parent="APPDIR" DefaultDir="bin" DirectoryOptions="3"/>
-    <ROW Directory="OpenCV_Dir" Directory_Parent="license1_Dir" DefaultDir="OpenCV" DirectoryOptions="3"/>
-    <ROW Directory="OpenEXR_Dir" Directory_Parent="license1_Dir" DefaultDir="OpenEXR" DirectoryOptions="3"/>
-    <ROW Directory="Projects_Dir" Directory_Parent="bin_Dir" DefaultDir="Projects" DirectoryOptions="3"/>
+    <ROW Directory="NewFolder_Dir" Directory_Parent="APPDIR" DefaultDir="bin" DirectoryOptions="2"/>
     <ROW Directory="SHORTCUTDIR" Directory_Parent="TARGETDIR" DefaultDir="SHORTC~1|SHORTCUTDIR" IsPseudoRoot="1"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
-    <ROW Directory="WelcomePage_Dir" Directory_Parent="bin_Dir" DefaultDir="WELCOM~1|WelcomePage" DirectoryOptions="3"/>
-    <ROW Directory="_images_Dir" Directory_Parent="html_Dir" DefaultDir="_images" DirectoryOptions="3"/>
-    <ROW Directory="_sources_Dir" Directory_Parent="html_Dir" DefaultDir="_sources" DirectoryOptions="3"/>
-    <ROW Directory="_static_Dir" Directory_Parent="html_Dir" DefaultDir="_static" DirectoryOptions="3"/>
-    <ROW Directory="analysis_2_Dir" Directory_Parent="_sources_Dir" DefaultDir="analysis" DirectoryOptions="3"/>
-    <ROW Directory="analysis_Dir" Directory_Parent="html_Dir" DefaultDir="analysis" DirectoryOptions="3"/>
-    <ROW Directory="bin_Dir" Directory_Parent="NewFolder_Dir" DefaultDir="GUI" DirectoryOptions="3"/>
-    <ROW Directory="build_from_source_2_Dir" Directory_Parent="_sources_Dir" DefaultDir="BUILD_~1|build_from_source" DirectoryOptions="3"/>
-    <ROW Directory="build_from_source_Dir" Directory_Parent="html_Dir" DefaultDir="BUILD_~1|build_from_source" DirectoryOptions="3"/>
+    <ROW Directory="_images_Dir" Directory_Parent="documents_Dir" DefaultDir="_images" DirectoryOptions="3"/>
+    <ROW Directory="_sources_Dir" Directory_Parent="documents_Dir" DefaultDir="_sources" DirectoryOptions="3"/>
+    <ROW Directory="_static_Dir" Directory_Parent="documents_Dir" DefaultDir="_static" DirectoryOptions="3"/>
+    <ROW Directory="analysis_2_Dir" Directory_Parent="documents_Dir" DefaultDir="analysis" DirectoryOptions="3"/>
+    <ROW Directory="analysis_Dir" Directory_Parent="_sources_Dir" DefaultDir="analysis" DirectoryOptions="3"/>
+    <ROW Directory="astc_Dir" Directory_Parent="license_Dir" DefaultDir="astc" DirectoryOptions="3"/>
+    <ROW Directory="bin_Dir" Directory_Parent="NewFolder_Dir" DefaultDir="GUI" DirectoryOptions="2"/>
+    <ROW Directory="build_from_source_2_Dir" Directory_Parent="documents_Dir" DefaultDir="BUILD_~1|build_from_source" DirectoryOptions="3"/>
+    <ROW Directory="build_from_source_Dir" Directory_Parent="_sources_Dir" DefaultDir="BUILD_~1|build_from_source" DirectoryOptions="3"/>
     <ROW Directory="cmp_compressonator_2_Dir" Directory_Parent="developer_sdk_2_Dir" DefaultDir="CMP_CO~1|cmp_compressonator" DirectoryOptions="3"/>
     <ROW Directory="cmp_compressonator_Dir" Directory_Parent="developer_sdk_Dir" DefaultDir="CMP_CO~1|cmp_compressonator" DirectoryOptions="3"/>
     <ROW Directory="cmp_core_2_Dir" Directory_Parent="developer_sdk_2_Dir" DefaultDir="cmp_core" DirectoryOptions="3"/>
@@ -65,37 +66,39 @@
     <ROW Directory="cmp_framework_Dir" Directory_Parent="developer_sdk_Dir" DefaultDir="CMP_FR~1|cmp_framework" DirectoryOptions="3"/>
     <ROW Directory="codecs_2_Dir" Directory_Parent="developer_sdk_2_Dir" DefaultDir="codecs" DirectoryOptions="3"/>
     <ROW Directory="codecs_Dir" Directory_Parent="developer_sdk_Dir" DefaultDir="codecs" DirectoryOptions="3"/>
-    <ROW Directory="command_line_tool_2_Dir" Directory_Parent="_sources_Dir" DefaultDir="COMMAN~1|command_line_tool" DirectoryOptions="3"/>
-    <ROW Directory="command_line_tool_Dir" Directory_Parent="html_Dir" DefaultDir="COMMAN~1|command_line_tool" DirectoryOptions="3"/>
+    <ROW Directory="command_line_tool_2_Dir" Directory_Parent="documents_Dir" DefaultDir="COMMAN~1|command_line_tool" DirectoryOptions="3"/>
+    <ROW Directory="command_line_tool_Dir" Directory_Parent="_sources_Dir" DefaultDir="COMMAN~1|command_line_tool" DirectoryOptions="3"/>
     <ROW Directory="css_Dir" Directory_Parent="_static_Dir" DefaultDir="css" DirectoryOptions="3"/>
-    <ROW Directory="developer_sdk_2_Dir" Directory_Parent="_sources_Dir" DefaultDir="DEVELO~1|developer_sdk" DirectoryOptions="3"/>
-    <ROW Directory="developer_sdk_Dir" Directory_Parent="html_Dir" DefaultDir="DEVELO~1|developer_sdk" DirectoryOptions="3"/>
+    <ROW Directory="developer_sdk_2_Dir" Directory_Parent="documents_Dir" DefaultDir="DEVELO~1|developer_sdk" DirectoryOptions="3"/>
+    <ROW Directory="developer_sdk_Dir" Directory_Parent="_sources_Dir" DefaultDir="DEVELO~1|developer_sdk" DirectoryOptions="3"/>
+    <ROW Directory="directxtex_Dir" Directory_Parent="license_Dir" DefaultDir="DIRECT~1|directxtex" DirectoryOptions="3"/>
+    <ROW Directory="documents_Dir" Directory_Parent="bin_Dir" DefaultDir="DOCUME~1|documents" DirectoryOptions="3"/>
     <ROW Directory="envmap_Dir" Directory_Parent="media_Dir" DefaultDir="envmap" DirectoryOptions="3"/>
+    <ROW Directory="etcpack_Dir" Directory_Parent="license_Dir" DefaultDir="etcpack" DirectoryOptions="3"/>
     <ROW Directory="fonts_Dir" Directory_Parent="_static_Dir" DefaultDir="fonts" DirectoryOptions="3"/>
     <ROW Directory="getting_started_2_Dir" Directory_Parent="gui_tool_2_Dir" DefaultDir="GETTIN~1|getting_started" DirectoryOptions="3"/>
     <ROW Directory="getting_started_Dir" Directory_Parent="gui_tool_Dir" DefaultDir="GETTIN~1|getting_started" DirectoryOptions="3"/>
-    <ROW Directory="gui_tool_2_Dir" Directory_Parent="_sources_Dir" DefaultDir="gui_tool" DirectoryOptions="3"/>
-    <ROW Directory="gui_tool_Dir" Directory_Parent="html_Dir" DefaultDir="gui_tool" DirectoryOptions="3"/>
-    <ROW Directory="html_Dir" Directory_Parent="bin_Dir" DefaultDir="DOCUME~1|documents" DirectoryOptions="3"/>
+    <ROW Directory="gui_tool_2_Dir" Directory_Parent="documents_Dir" DefaultDir="gui_tool" DirectoryOptions="3"/>
+    <ROW Directory="gui_tool_Dir" Directory_Parent="_sources_Dir" DefaultDir="gui_tool" DirectoryOptions="3"/>
     <ROW Directory="imageformats_Dir" Directory_Parent="plugins_Dir" DefaultDir="IMAGEF~1|imageformats" DirectoryOptions="3"/>
     <ROW Directory="images_Dir" Directory_Parent="bin_Dir" DefaultDir="images" DirectoryOptions="3"/>
-    <ROW Directory="imgui_Dir" Directory_Parent="license1_Dir" DefaultDir="imgui" DirectoryOptions="3"/>
+    <ROW Directory="imgui_Dir" Directory_Parent="license_Dir" DefaultDir="imgui" DirectoryOptions="3"/>
     <ROW Directory="js_Dir" Directory_Parent="_static_Dir" DefaultDir="js" DirectoryOptions="3"/>
-    <ROW Directory="json_Dir" Directory_Parent="license1_Dir" DefaultDir="json" DirectoryOptions="3"/>
-    <ROW Directory="license1_Dir" Directory_Parent="bin_Dir" DefaultDir="license" DirectoryOptions="3"/>
+    <ROW Directory="json_Dir" Directory_Parent="license_Dir" DefaultDir="json" DirectoryOptions="3"/>
+    <ROW Directory="license_Dir" Directory_Parent="bin_Dir" DefaultDir="license" DirectoryOptions="3"/>
     <ROW Directory="media_Dir" Directory_Parent="plugins_Dir" DefaultDir="media" DirectoryOptions="3"/>
     <ROW Directory="mesh_compression_2_Dir" Directory_Parent="developer_sdk_2_Dir" DefaultDir="MESH_C~1|mesh_compression" DirectoryOptions="3"/>
     <ROW Directory="mesh_compression_Dir" Directory_Parent="developer_sdk_Dir" DefaultDir="MESH_C~1|mesh_compression" DirectoryOptions="3"/>
     <ROW Directory="mesh_optimization_2_Dir" Directory_Parent="developer_sdk_2_Dir" DefaultDir="MESH_O~1|mesh_optimization" DirectoryOptions="3"/>
     <ROW Directory="mesh_optimization_Dir" Directory_Parent="developer_sdk_Dir" DefaultDir="MESH_O~1|mesh_optimization" DirectoryOptions="3"/>
+    <ROW Directory="opencv_Dir" Directory_Parent="license_Dir" DefaultDir="opencv" DirectoryOptions="3"/>
+    <ROW Directory="openexr_Dir" Directory_Parent="license_Dir" DefaultDir="openexr" DirectoryOptions="3"/>
     <ROW Directory="platforms_Dir" Directory_Parent="plugins_Dir" DefaultDir="PLATFO~1|platforms" DirectoryOptions="3"/>
-    <ROW Directory="plugins_Dir" Directory_Parent="bin_Dir" DefaultDir="plugins" DirectoryOptions="3"/>
-    <ROW Directory="qtwebengine_locales_Dir" Directory_Parent="translations_Dir" DefaultDir="QTWEBE~1|qtwebengine_locales" DirectoryOptions="3"/>
-    <ROW Directory="resources_Dir" Directory_Parent="bin_Dir" DefaultDir="RESOUR~1|resources" DirectoryOptions="3"/>
+    <ROW Directory="plugins_Dir" Directory_Parent="bin_Dir" DefaultDir="plugins" DirectoryOptions="2"/>
+    <ROW Directory="projects_Dir" Directory_Parent="bin_Dir" DefaultDir="projects" DirectoryOptions="3"/>
     <ROW Directory="shaders_Dir" Directory_Parent="plugins_Dir" DefaultDir="shaders" DirectoryOptions="3"/>
-    <ROW Directory="support_2_Dir" Directory_Parent="_sources_Dir" DefaultDir="support" DirectoryOptions="3"/>
-    <ROW Directory="support_Dir" Directory_Parent="html_Dir" DefaultDir="support" DirectoryOptions="3"/>
-    <ROW Directory="translations_Dir" Directory_Parent="bin_Dir" DefaultDir="TRANSL~1|translations" DirectoryOptions="3"/>
+    <ROW Directory="support_2_Dir" Directory_Parent="documents_Dir" DefaultDir="support" DirectoryOptions="3"/>
+    <ROW Directory="support_Dir" Directory_Parent="_sources_Dir" DefaultDir="support" DirectoryOptions="3"/>
     <ROW Directory="user_guide_2_Dir" Directory_Parent="gui_tool_2_Dir" DefaultDir="USER_G~1|user_guide" DirectoryOptions="3"/>
     <ROW Directory="user_guide_Dir" Directory_Parent="gui_tool_Dir" DefaultDir="USER_G~1|user_guide" DirectoryOptions="3"/>
   </COMPONENT>
@@ -103,169 +106,135 @@
     <ROW Component="AI_CustomARPName" ComponentId="{C4432F7E-DFB2-41EE-94DD-2175621D2420}" Directory_="APPDIR" Attributes="260" KeyPath="DisplayName" Options="1"/>
     <ROW Component="AI_DisableModify" ComponentId="{CB58D186-11EF-48A2-9239-E5CB7574C84B}" Directory_="APPDIR" Attributes="260" KeyPath="NoModify" Options="1"/>
     <ROW Component="AI_ExePath" ComponentId="{047A6E9D-9169-4F21-8053-73B8EF94DDD3}" Directory_="APPDIR" Attributes="4" KeyPath="AI_ExePath"/>
-    <ROW Component="B5158184F44A6981C5919229A6AEBE" ComponentId="{D085734A-C63C-48EC-8288-73D112089D15}" Directory_="APPDIR" Attributes="260" KeyPath="B5158184F44A6981C5919229A6AEBE" Options="2"/>
-    <ROW Component="BC6H_Compression.cprj" ComponentId="{FCDED2D1-BE11-423F-8BF1-8299145F5110}" Directory_="Projects_Dir" Attributes="0" KeyPath="BC6H_Compression.cprj" Type="0"/>
-    <ROW Component="CA62D813A4E74FA2AAE86A7D7B7B1493" ComponentId="{568A153C-EB5A-4439-834A-D65590E75775}" Directory_="APPDIR" Attributes="260" KeyPath="CA62D813A4E74FA2AAE86A7D7B7B1493" Options="2"/>
     <ROW Component="Compressonator.exe" ComponentId="{FC6DC829-9DF7-4CE2-9654-F3FE89E965CF}" Directory_="bin_Dir" Attributes="256" KeyPath="Compressonator.exe"/>
-    <ROW Component="DModelCompression.html" ComponentId="{ED3F4589-FB47-4674-A2CB-D3253B673449}" Directory_="user_guide_Dir" Attributes="0" KeyPath="DModelCompression.html" Type="0"/>
-    <ROW Component="DModelCompression.rst.txt" ComponentId="{63DBA282-E8BA-4BE4-B4AC-74A524AA4D1B}" Directory_="user_guide_2_Dir" Attributes="0" KeyPath="DModelCompression.rst.txt" Type="0"/>
-    <ROW Component="GettingStarted.html" ComponentId="{5537013B-BAE5-403E-AE85-6D4E41EAFAAE}" Directory_="getting_started_Dir" Attributes="0" KeyPath="GettingStarted.html" Type="0"/>
-    <ROW Component="GettingStarted.rst.txt" ComponentId="{04455163-8104-4309-8E71-F3B2481931CA}" Directory_="getting_started_2_Dir" Attributes="0" KeyPath="GettingStarted.rst.txt" Type="0"/>
+    <ROW Component="EncodeWith_DXC.dll" ComponentId="{CE6703A8-D0FC-4953-ADCC-3400B1AAF586}" Directory_="plugins_Dir" Attributes="256" KeyPath="EncodeWith_DXC.dll"/>
+    <ROW Component="EncodeWith_GPU.dll" ComponentId="{6BF6261A-B0A0-4F9C-A98B-41CD9CB47C42}" Directory_="plugins_Dir" Attributes="256" KeyPath="EncodeWith_GPU.dll"/>
+    <ROW Component="EncodeWith_OCL.dll" ComponentId="{925B874E-8CDA-4B23-8ECE-53083AF7FDBE}" Directory_="plugins_Dir" Attributes="256" KeyPath="EncodeWith_OCL.dll"/>
+    <ROW Component="GPUDecode_DirectX.dll" ComponentId="{CEA1F432-8510-475B-AB19-2410D58C09A9}" Directory_="plugins_Dir" Attributes="256" KeyPath="GPUDecode_DirectX.dll"/>
+    <ROW Component="GPUDecode_OpenGL.dll" ComponentId="{32E55779-DA87-4AC2-A4BC-3B7503FBA9C9}" Directory_="plugins_Dir" Attributes="256" KeyPath="GPUDecode_OpenGL.dll"/>
+    <ROW Component="GPUDecode_Vulkan.dll" ComponentId="{B2E14D94-B770-40A3-9055-1D8CB16EFC37}" Directory_="plugins_Dir" Attributes="256" KeyPath="GPUDecode_Vulkan.dll"/>
+    <ROW Component="Image_FilterFX.dll" ComponentId="{EB8891F3-39DB-4C54-BCAF-5DF71D293670}" Directory_="plugins_Dir" Attributes="256" KeyPath="Image_FilterFX.dll"/>
+    <ROW Component="Image_MipMap.dll" ComponentId="{E6208FD2-4D4F-4716-908C-CC9AAD1087F6}" Directory_="plugins_Dir" Attributes="256" KeyPath="Image_MipMap.dll"/>
+    <ROW Component="Mesh_Compressor.dll" ComponentId="{554BE5D8-F524-4582-9DA3-1E83288FE496}" Directory_="plugins_Dir" Attributes="256" KeyPath="Mesh_Compressor.dll"/>
+    <ROW Component="Mesh_Optimizer.dll" ComponentId="{F4E9DFEE-5C93-41A0-9804-50459763BB51}" Directory_="plugins_Dir" Attributes="256" KeyPath="Mesh_Optimizer.dll"/>
+    <ROW Component="Mesh_Tootle.dll" ComponentId="{B442E90D-B622-40C3-8112-D03B68B6CEA0}" Directory_="plugins_Dir" Attributes="256" KeyPath="Mesh_Tootle.dll"/>
+    <ROW Component="ModelLoader_drc.dll" ComponentId="{376B6EE4-3931-41FE-967E-4D592147618A}" Directory_="plugins_Dir" Attributes="256" KeyPath="ModelLoader_drc.dll"/>
+    <ROW Component="ModelLoader_gltf.dll" ComponentId="{4C46FF05-21E3-43A3-8812-534727511911}" Directory_="plugins_Dir" Attributes="256" KeyPath="ModelLoader_gltf.dll"/>
+    <ROW Component="ModelLoader_obj.dll" ComponentId="{6D45AFFA-40D9-4D66-938F-0107BF056627}" Directory_="plugins_Dir" Attributes="256" KeyPath="ModelLoader_obj.dll"/>
+    <ROW Component="ModelViewer_DX12.dll" ComponentId="{33DE5460-4E4A-4320-A28D-DBE5AF853483}" Directory_="plugins_Dir" Attributes="256" KeyPath="ModelViewer_DX12.dll"/>
+    <ROW Component="ModelViewer_OpenGL.dll" ComponentId="{A0790CF0-B1E5-4208-9EA0-6106230BAC86}" Directory_="plugins_Dir" Attributes="256" KeyPath="ModelViewer_OpenGL.dll"/>
+    <ROW Component="ModelViewer_Vulkan.dll" ComponentId="{465BC5EB-5955-437E-8D42-89EC4478F13C}" Directory_="plugins_Dir" Attributes="256" KeyPath="ModelViewer_Vulkan.dll"/>
     <ROW Component="Name" ComponentId="{8D30515C-F947-418A-8FC0-DDEAD51DCB29}" Directory_="APPDIR" Attributes="260" KeyPath="Name"/>
-    <ROW Component="Plugin_CFilter_Fx.dll" ComponentId="{97F6CBA0-7AA5-4840-8DDC-CE160CC8A5B4}" Directory_="plugins_Dir" Attributes="256" KeyPath="Plugin_CFilter_Fx.dll"/>
-    <ROW Component="Plugin_CFilter_MipMap.dll" ComponentId="{0CB6989F-0DB1-4B4D-BDFE-9011528C2B3E}" Directory_="plugins_Dir" Attributes="256" KeyPath="Plugin_CFilter_MipMap.dll"/>
-    <ROW Component="Plugin_CMP_GPU_DXC.dll" ComponentId="{795A30DC-B937-4B6B-96CB-A6BF40CF793B}" Directory_="plugins_Dir" Attributes="256" KeyPath="Plugin_CMP_GPU_DXC.dll"/>
-    <ROW Component="Plugin_CMP_GPU_HW.dll" ComponentId="{04018F11-AD95-4F1A-9990-806D9D061E16}" Directory_="plugins_Dir" Attributes="256" KeyPath="Plugin_CMP_GPU_HW.dll"/>
-    <ROW Component="Plugin_CMP_GPU_OCL.dll" ComponentId="{5C876583-05A3-49E9-92C8-36527C770C4E}" Directory_="plugins_Dir" Attributes="256" KeyPath="Plugin_CMP_GPU_OCL.dll"/>
     <ROW Component="ProductInformation" ComponentId="{4EB6FDEF-717A-4B3B-AF1F-C586FA365E92}" Directory_="APPDIR" Attributes="4" KeyPath="Version"/>
-    <ROW Component="Qt5Core.dll_1" ComponentId="{7489AEE7-2027-46B2-AFED-6B806526345B}" Directory_="bin_Dir" Attributes="256" KeyPath="Qt5Core.dll_1"/>
-    <ROW Component="Qt5Gui.dll_1" ComponentId="{F7DF06D5-8839-41C2-A68F-6FAC60EA0B18}" Directory_="bin_Dir" Attributes="256" KeyPath="Qt5Gui.dll_1"/>
-    <ROW Component="Qt5Network.dll_1" ComponentId="{9C64A49F-35ED-450F-8B6B-3E5ECE061E3B}" Directory_="bin_Dir" Attributes="256" KeyPath="Qt5Network.dll_1"/>
-    <ROW Component="Qt5OpenGL.dll_1" ComponentId="{5E3D84B2-4D07-419A-8568-45DBF3B44F96}" Directory_="bin_Dir" Attributes="256" KeyPath="Qt5OpenGL.dll_1"/>
-    <ROW Component="Qt5Positioning.dll_1" ComponentId="{E98507C8-BEB9-4F25-AE10-3C186FD7BF25}" Directory_="bin_Dir" Attributes="256" KeyPath="Qt5Positioning.dll_1"/>
-    <ROW Component="Qt5PrintSupport.dll" ComponentId="{D44AAADC-D3CB-45D4-A75C-9216A0042B00}" Directory_="bin_Dir" Attributes="256" KeyPath="Qt5PrintSupport.dll"/>
-    <ROW Component="Qt5Qml.dll_1" ComponentId="{67BEF264-11C9-4914-A453-D572E32B08E7}" Directory_="bin_Dir" Attributes="256" KeyPath="Qt5Qml.dll_1"/>
-    <ROW Component="Qt5Quick.dll_1" ComponentId="{89423913-9F5E-446F-94DF-891AAF8232D6}" Directory_="bin_Dir" Attributes="256" KeyPath="Qt5Quick.dll_1"/>
-    <ROW Component="Qt5QuickWidgets.dll" ComponentId="{F0E2D5F2-6C85-4C40-94FE-899F5017EAA6}" Directory_="bin_Dir" Attributes="256" KeyPath="Qt5QuickWidgets.dll"/>
-    <ROW Component="Qt5WebChannel.dll_1" ComponentId="{97ECDC0E-FABD-4272-B35A-D03D6AC7379C}" Directory_="bin_Dir" Attributes="256" KeyPath="Qt5WebChannel.dll_1"/>
-    <ROW Component="Qt5WebEngineCore.dll_1" ComponentId="{6795A532-5C06-4A09-88B8-E93AD6B5C208}" Directory_="bin_Dir" Attributes="256" KeyPath="Qt5WebEngineCore.dll_1"/>
-    <ROW Component="Qt5WebEngineWidgets.dll_1" ComponentId="{5C4E616E-58B9-45C1-9BD8-88A137B0E020}" Directory_="bin_Dir" Attributes="256" KeyPath="Qt5WebEngineWidgets.dll_1"/>
-    <ROW Component="Qt5Widgets.dll_1" ComponentId="{3E7EEA23-AE8A-4BAE-9162-3C6FF78F4F18}" Directory_="bin_Dir" Attributes="256" KeyPath="Qt5Widgets.dll_1"/>
-    <ROW Component="Qt5Xml.dll_2" ComponentId="{B5D038BE-7C30-4765-BB9F-15A62E55E083}" Directory_="bin_Dir" Attributes="256" KeyPath="Qt5Xml.dll_2"/>
-    <ROW Component="QtWebEngineProcess.exe_1" ComponentId="{468E2164-94A3-49BA-9A44-D0C85A5CD912}" Directory_="bin_Dir" Attributes="256" KeyPath="QtWebEngineProcess.exe_1"/>
+    <ROW Component="Qt5Core.dll" ComponentId="{FD6E67CC-E843-43AB-AED8-89A9C190093E}" Directory_="bin_Dir" Attributes="256" KeyPath="Qt5Core.dll"/>
+    <ROW Component="Qt5Gui.dll" ComponentId="{A463D208-18DD-46B9-84ED-DC029C665DA0}" Directory_="bin_Dir" Attributes="256" KeyPath="Qt5Gui.dll"/>
+    <ROW Component="Qt5OpenGL.dll" ComponentId="{39B052D8-3433-4B3B-95C6-6ABF80BBEE4E}" Directory_="bin_Dir" Attributes="256" KeyPath="Qt5OpenGL.dll"/>
+    <ROW Component="Qt5Widgets.dll" ComponentId="{686D3821-9E6D-48D5-A8F4-2F0A77055CE6}" Directory_="bin_Dir" Attributes="256" KeyPath="Qt5Widgets.dll"/>
+    <ROW Component="Qt5Xml.dll" ComponentId="{7ED2F8FD-2536-4CB8-B17A-229F7139723A}" Directory_="bin_Dir" Attributes="256" KeyPath="Qt5Xml.dll"/>
     <ROW Component="SHORTCUTDIR" ComponentId="{AE12CCD3-DFC5-4DD2-A8B2-4129008A0753}" Directory_="SHORTCUTDIR" Attributes="0"/>
-    <ROW Component="acompress128.png" ComponentId="{AF21839F-A830-49A4-A7FE-122706F00B41}" Directory_="_static_Dir" Attributes="0" KeyPath="acompress128.png" Type="0"/>
-    <ROW Component="analysis_properties.jpg" ComponentId="{2BE78B8F-9052-4593-962E-12A2801B4B22}" Directory_="_images_Dir" Attributes="0" KeyPath="analysis_properties.jpg" Type="0"/>
-    <ROW Component="badge_only.css" ComponentId="{2F20205E-0F2B-4F5D-8625-50ED7E2BE543}" Directory_="css_Dir" Attributes="0" KeyPath="badge_only.css" Type="0"/>
-    <ROW Component="balls.exr" ComponentId="{3398FC3D-BC4B-4318-990C-6AE8F95A5911}" Directory_="images_Dir" Attributes="0" KeyPath="_Image_credits.txt" Type="0"/>
-    <ROW Component="bc1_encode_kernel.h" ComponentId="{FC6FE240-1111-4E82-B158-0ACCEF3359FF}" Directory_="Compute_Dir" Attributes="0" KeyPath="bc1_encode_kernel.h" Type="0"/>
-    <ROW Component="bibliography.rst.txt" ComponentId="{9E79D5CB-CC2D-486C-A866-852B6BB0AB3B}" Directory_="_sources_Dir" Attributes="0" KeyPath="bibliography.rst.txt" Type="0"/>
-    <ROW Component="blend.hlsl" ComponentId="{48161C0E-A2D2-452A-BDD8-50F0DE46FFEB}" Directory_="shaders_Dir" Attributes="0" KeyPath="blend.hlsl" Type="0"/>
+    <ROW Component="_image_credits.txt" ComponentId="{D82377AC-F2B1-4DC3-AC52-5D970A4B2713}" Directory_="images_Dir" Attributes="0" KeyPath="_image_credits.txt"/>
+    <ROW Component="acompress128.png" ComponentId="{253B1D74-13F2-4543-AF0B-2AD700355011}" Directory_="_static_Dir" Attributes="0" KeyPath="acompress128.png"/>
+    <ROW Component="analysis_properties.jpg" ComponentId="{679A9189-1ED5-46B9-AFAD-A96183F10039}" Directory_="_images_Dir" Attributes="0" KeyPath="analysis_properties.jpg" Type="0"/>
+    <ROW Component="badge_only.css" ComponentId="{C1BFE296-431E-4053-873E-360AC542F9EE}" Directory_="css_Dir" Attributes="0" KeyPath="badge_only.css"/>
+    <ROW Component="bc1_encode_kernel.h" ComponentId="{D39FC8A6-AC52-4F37-9EDB-BC7B3C5F0F2C}" Directory_="Compute_Dir" Attributes="0" KeyPath="bc1_encode_kernel.h"/>
+    <ROW Component="bc6h_compression.cprj" ComponentId="{91B62CEC-6C6B-49FD-97B4-B8129E5243B3}" Directory_="projects_Dir" Attributes="0" KeyPath="bc6h_compression.cprj"/>
+    <ROW Component="bibliography.rst.txt" ComponentId="{048AC812-657F-4270-9F58-0BCF0DA2C38A}" Directory_="_sources_Dir" Attributes="0" KeyPath="bibliography.rst.txt"/>
+    <ROW Component="blend.hlsl" ComponentId="{34AF8633-2F20-406A-A21A-3FC9ADC6CFBB}" Directory_="shaders_Dir" Attributes="0" KeyPath="blend.hlsl" Type="0"/>
     <ROW Component="brdf.dds" ComponentId="{DC3502FA-951D-4369-BA83-7D0F3EE6949D}" Directory_="envmap_Dir" Attributes="0" KeyPath="brdf.dds"/>
-    <ROW Component="build_instructions.html" ComponentId="{9ECF788A-F77E-4BA9-8AD1-7382F3AD94E7}" Directory_="build_from_source_Dir" Attributes="0" KeyPath="build_instructions.html" Type="0"/>
-    <ROW Component="build_instructions.rst.txt" ComponentId="{E69A9377-E468-4F15-8039-D45241A34B0B}" Directory_="build_from_source_2_Dir" Attributes="0" KeyPath="build_instructions.rst.txt" Type="0"/>
-    <ROW Component="buildinfo" ComponentId="{7E8B8E10-79A0-4F05-BFA3-182DE6617CAE}" Directory_="html_Dir" Attributes="0" KeyPath="buildinfo" Type="0"/>
-    <ROW Component="commandline.html" ComponentId="{305904A1-AE1F-4685-84BA-BDC6B6F0D347}" Directory_="command_line_tool_Dir" Attributes="0" KeyPath="commandline.html" Type="0"/>
-    <ROW Component="commandline.rst.txt" ComponentId="{F31703DD-22E3-4DB5-84D9-3778903EDA6E}" Directory_="command_line_tool_2_Dir" Attributes="0" KeyPath="commandline.rst.txt" Type="0"/>
-    <ROW Component="contact.html" ComponentId="{0B594484-D215-445C-B188-09ED92F3EE38}" Directory_="support_Dir" Attributes="0" KeyPath="contact.html" Type="0"/>
-    <ROW Component="contact.rst.txt" ComponentId="{A41DB56D-7E89-4C66-BDFE-F00B983A50F4}" Directory_="support_2_Dir" Attributes="0" KeyPath="contact.rst.txt" Type="0"/>
-    <ROW Component="enUS.pak" ComponentId="{B2CFF160-9CF7-4483-A9A2-4BCE26130F53}" Directory_="qtwebengine_locales_Dir" Attributes="0" KeyPath="enUS.pak"/>
-    <ROW Component="fontawesomewebfont.eot" ComponentId="{7EB40EF7-327D-476B-BF90-CD999BF9B30C}" Directory_="fonts_Dir" Attributes="0" KeyPath="fontawesomewebfont.eot" Type="0"/>
-    <ROW Component="glew32.dll" ComponentId="{97C2B115-E438-4B12-B3FC-26BD5C1BD557}" Directory_="bin_Dir" Attributes="256" KeyPath="glew32.dll_1"/>
-    <ROW Component="guilicense.txt" ComponentId="{5B985215-97AC-4E73-AE83-A373F41B60CD}" Directory_="license1_Dir" Attributes="0" KeyPath="guilicense.txt" Type="0"/>
-    <ROW Component="icudtl.dat" ComponentId="{9ADAFE40-C431-4431-9FA6-0AF116F0BFCC}" Directory_="resources_Dir" Attributes="0" KeyPath="icudtl.dat"/>
-    <ROW Component="index.html" ComponentId="{F60EECAD-4CE8-40EC-B2D1-DE6DFD5F23E8}" Directory_="analysis_Dir" Attributes="0" KeyPath="index.html" Type="0"/>
-    <ROW Component="index.html_10" ComponentId="{234D0BDD-ED8D-4FA2-A863-CA7EE0634D41}" Directory_="cmp_core_Dir" Attributes="0" KeyPath="index.html_17" Type="0"/>
-    <ROW Component="index.html_11" ComponentId="{BD72FE7F-7ADD-4600-BA62-F723A2269BB1}" Directory_="cmp_framework_Dir" Attributes="0" KeyPath="index.html_18" Type="0"/>
-    <ROW Component="index.html_12" ComponentId="{477AB49A-1404-43EA-A252-469CB38BDAB3}" Directory_="codecs_Dir" Attributes="0" KeyPath="index.html_19" Type="0"/>
-    <ROW Component="index.html_13" ComponentId="{270C4D03-655F-4C47-872E-05EB50B08C87}" Directory_="developer_sdk_Dir" Attributes="0" KeyPath="index.html_20" Type="0"/>
-    <ROW Component="index.html_14" ComponentId="{12A08ACF-4C00-497A-A48D-C297DC8936BB}" Directory_="mesh_compression_Dir" Attributes="0" KeyPath="index.html_21" Type="0"/>
-    <ROW Component="index.html_15" ComponentId="{D28CBB42-BF73-4FA3-97F9-FAD639AAD68E}" Directory_="mesh_optimization_Dir" Attributes="0" KeyPath="index.html_22" Type="0"/>
-    <ROW Component="index.html_16" ComponentId="{8D5EAF42-0982-4C21-BF38-ECF4F3AC74C1}" Directory_="gui_tool_Dir" Attributes="0" KeyPath="index.html_24" Type="0"/>
-    <ROW Component="index.html_9" ComponentId="{72A095BC-0E2F-4355-BE07-4A06C1C48FA6}" Directory_="cmp_compressonator_Dir" Attributes="0" KeyPath="index.html_16" Type="0"/>
-    <ROW Component="index.rst.txt" ComponentId="{02BF044B-A431-4CDA-90FA-955BED0213DB}" Directory_="analysis_2_Dir" Attributes="0" KeyPath="index.rst.txt" Type="0"/>
-    <ROW Component="index.rst.txt_10" ComponentId="{AE14DD3C-30BB-40A6-A85D-395B1D71AB35}" Directory_="cmp_core_2_Dir" Attributes="0" KeyPath="index.rst.txt_17" Type="0"/>
-    <ROW Component="index.rst.txt_11" ComponentId="{C2672F38-42CF-4C29-8969-9C0ACD1EF19F}" Directory_="cmp_framework_2_Dir" Attributes="0" KeyPath="index.rst.txt_18" Type="0"/>
-    <ROW Component="index.rst.txt_12" ComponentId="{66FCCB90-4C7D-4D9C-BD49-43ECA0427C19}" Directory_="codecs_2_Dir" Attributes="0" KeyPath="index.rst.txt_19" Type="0"/>
-    <ROW Component="index.rst.txt_13" ComponentId="{6ABFDF9B-49F1-4AD1-B304-B33C4EEF6B46}" Directory_="developer_sdk_2_Dir" Attributes="0" KeyPath="index.rst.txt_20" Type="0"/>
-    <ROW Component="index.rst.txt_14" ComponentId="{290D14C2-5277-4CA7-BAC1-69C88B944001}" Directory_="mesh_compression_2_Dir" Attributes="0" KeyPath="index.rst.txt_21" Type="0"/>
-    <ROW Component="index.rst.txt_15" ComponentId="{5B1E2364-2231-4FCF-A9C7-45F8531AEF31}" Directory_="mesh_optimization_2_Dir" Attributes="0" KeyPath="index.rst.txt_22" Type="0"/>
-    <ROW Component="index.rst.txt_16" ComponentId="{911496A9-97F7-417F-A403-72F9EC02BA5F}" Directory_="gui_tool_2_Dir" Attributes="0" KeyPath="index.rst.txt_24" Type="0"/>
-    <ROW Component="index.rst.txt_9" ComponentId="{573C5543-D0AB-43CE-A92B-3DCCDEC1E357}" Directory_="cmp_compressonator_2_Dir" Attributes="0" KeyPath="index.rst.txt_16" Type="0"/>
-    <ROW Component="ktx.dll" ComponentId="{5979A5A9-CD5E-44CE-AEE9-D1AE85F58618}" Directory_="bin_Dir" Attributes="256" KeyPath="ktx.dll"/>
-    <ROW Component="licence.txt" ComponentId="{0C778A33-E160-482E-96D4-41D4C3239C86}" Directory_="ETCPACK_Dir" Attributes="0" KeyPath="licence.txt" Type="0"/>
-    <ROW Component="license" ComponentId="{9AE7564E-290B-4222-88E1-A279303C5C42}" Directory_="DirectXTex_Dir" Attributes="0" KeyPath="license_1" Type="0"/>
-    <ROW Component="license.txt" ComponentId="{1869E040-1222-4C8E-ABA3-0835E3F48C0E}" Directory_="ASTC_Dir" Attributes="0" KeyPath="license.txt" Type="0"/>
-    <ROW Component="license.txt_1" ComponentId="{51DC0070-8231-4293-A5D4-ADE666E4ED76}" Directory_="OpenCV_Dir" Attributes="0" KeyPath="license.txt_3" Type="0"/>
-    <ROW Component="license.txt_2" ComponentId="{7A5680C5-48D7-4D71-98E8-2BF642E946B0}" Directory_="imgui_Dir" Attributes="0" KeyPath="license.txt_1" Type="0"/>
-    <ROW Component="license.txt_3" ComponentId="{C29A1F93-6BAF-49A2-8CB1-25640B5F91BF}" Directory_="json_Dir" Attributes="0" KeyPath="license.txt_2" Type="0"/>
-    <ROW Component="license_1" ComponentId="{CFCFF0BC-D0CB-4A08-B912-72755201A67F}" Directory_="OpenEXR_Dir" Attributes="0" KeyPath="license" Type="0"/>
-    <ROW Component="modernizr.min.js" ComponentId="{1E6D0A17-677B-4F18-B568-3640E00AC06C}" Directory_="js_Dir" Attributes="0" KeyPath="modernizr.min.js" Type="0"/>
-    <ROW Component="opencv_core249.dll_1" ComponentId="{23543A5A-F1BF-41C3-9522-0AF18F853C3B}" Directory_="bin_Dir" Attributes="256" KeyPath="opencv_core249.dll_1"/>
-    <ROW Component="opencv_imgproc249.dll_1" ComponentId="{5AE51F5C-22FC-43A3-B134-D45623497D3E}" Directory_="bin_Dir" Attributes="256" KeyPath="opencv_imgproc249.dll_1"/>
+    <ROW Component="build_instructions.html" ComponentId="{8CB9C226-EE94-460D-879B-1E1B0AEA6556}" Directory_="build_from_source_2_Dir" Attributes="0" KeyPath="build_instructions.html"/>
+    <ROW Component="build_instructions.rst.txt" ComponentId="{2E17BBA5-6B9A-4414-A731-6BFFAE078D91}" Directory_="build_from_source_Dir" Attributes="0" KeyPath="build_instructions.rst.txt"/>
+    <ROW Component="buildinfo" ComponentId="{7B14CAD2-365E-477C-AB89-B3BCA1659742}" Directory_="documents_Dir" Attributes="0" KeyPath="buildinfo"/>
+    <ROW Component="clilicense.txt" ComponentId="{57F13C04-E454-4917-A328-89EBD97DC8A1}" Directory_="license_Dir" Attributes="0" KeyPath="guilicense.txt"/>
+    <ROW Component="commandline.html" ComponentId="{CC1C7432-E90E-4B2E-9CFB-3482CDB4AE94}" Directory_="command_line_tool_2_Dir" Attributes="0" KeyPath="commandline.html"/>
+    <ROW Component="commandline.rst.txt" ComponentId="{098E4F21-A318-4AE8-BE1C-F55276BDCB13}" Directory_="command_line_tool_Dir" Attributes="0" KeyPath="commandline.rst.txt"/>
+    <ROW Component="contact.html" ComponentId="{D16B669D-D9F7-4C54-9508-8CEE8EE61367}" Directory_="support_2_Dir" Attributes="0" KeyPath="contact.html"/>
+    <ROW Component="contact.rst.txt" ComponentId="{72CC2456-BB73-4ECF-877C-C1A871E0DE5C}" Directory_="support_Dir" Attributes="0" KeyPath="contact.rst.txt"/>
+    <ROW Component="dmodelcompression.html" ComponentId="{6D05F580-66A5-4776-9882-5EEE9145B75F}" Directory_="user_guide_2_Dir" Attributes="0" KeyPath="dmodelcompression.html"/>
+    <ROW Component="dmodelcompression.rst.txt" ComponentId="{644B3424-18F1-4563-A79E-619724D6B80F}" Directory_="user_guide_Dir" Attributes="0" KeyPath="dmodelcompression.rst.txt"/>
+    <ROW Component="fontawesomewebfont.eot" ComponentId="{08DC8739-D0E0-49CE-9732-1B3FCEC7DC45}" Directory_="fonts_Dir" Attributes="0" KeyPath="fontawesomewebfont.eot"/>
+    <ROW Component="gettingstarted.html" ComponentId="{820F459D-529F-4E82-86F6-A545DD6D2DCA}" Directory_="getting_started_2_Dir" Attributes="0" KeyPath="gettingstarted.html"/>
+    <ROW Component="gettingstarted.rst.txt" ComponentId="{6505F794-8AB0-4419-AFC5-62CCD71CEDC4}" Directory_="getting_started_Dir" Attributes="0" KeyPath="gettingstarted.rst.txt"/>
+    <ROW Component="glew32.dll" ComponentId="{E45EACD0-26E5-4BC4-932F-7912C2A0CC2F}" Directory_="bin_Dir" Attributes="256" KeyPath="glew32.dll"/>
+    <ROW Component="index.html" ComponentId="{CB12F747-B138-40D4-B884-FCAE53BF4F3A}" Directory_="analysis_2_Dir" Attributes="0" KeyPath="index.html_14"/>
+    <ROW Component="index.html_10" ComponentId="{87BA4EC9-D6FB-4BF6-8D62-CA12C50F82D2}" Directory_="cmp_core_2_Dir" Attributes="0" KeyPath="index.html_18"/>
+    <ROW Component="index.html_11" ComponentId="{A862A789-9899-4BC7-A263-1571B431AE49}" Directory_="cmp_framework_2_Dir" Attributes="0" KeyPath="index.html_19"/>
+    <ROW Component="index.html_12" ComponentId="{E553A25F-8A05-4F84-8707-0D1112FFF957}" Directory_="codecs_2_Dir" Attributes="0" KeyPath="index.html_20"/>
+    <ROW Component="index.html_13" ComponentId="{B70FE526-C686-47B5-BE8C-1F226EF81F4A}" Directory_="developer_sdk_2_Dir" Attributes="0" KeyPath="index.html_21"/>
+    <ROW Component="index.html_14" ComponentId="{D17F7A90-0C6F-4EAE-8878-2042DD3399FB}" Directory_="mesh_compression_2_Dir" Attributes="0" KeyPath="index.html_22"/>
+    <ROW Component="index.html_15" ComponentId="{B6494162-3D3F-4A3D-97C3-F51597991070}" Directory_="mesh_optimization_2_Dir" Attributes="0" KeyPath="index.html_23"/>
+    <ROW Component="index.html_16" ComponentId="{25918F70-098F-40C1-A65D-A51E4C1902A2}" Directory_="gui_tool_2_Dir" Attributes="0" KeyPath="index.html_25"/>
+    <ROW Component="index.html_9" ComponentId="{550AEEE0-BA76-49FB-85D3-9248B80BB122}" Directory_="cmp_compressonator_2_Dir" Attributes="0" KeyPath="index.html_17"/>
+    <ROW Component="index.rst.txt" ComponentId="{024ED941-D26B-45FA-87F7-0E3FB389B39F}" Directory_="analysis_Dir" Attributes="0" KeyPath="index.rst.txt"/>
+    <ROW Component="index.rst.txt_17" ComponentId="{19712B6F-FB06-4243-9A06-DE4FA3D7E864}" Directory_="cmp_compressonator_Dir" Attributes="0" KeyPath="index.rst.txt_29"/>
+    <ROW Component="index.rst.txt_18" ComponentId="{FC3DA14E-8BFF-4258-8596-1A04833D4544}" Directory_="cmp_core_Dir" Attributes="0" KeyPath="index.rst.txt_30"/>
+    <ROW Component="index.rst.txt_19" ComponentId="{04EAD9B1-B102-4397-AD47-F696492ABB37}" Directory_="cmp_framework_Dir" Attributes="0" KeyPath="index.rst.txt_31"/>
+    <ROW Component="index.rst.txt_20" ComponentId="{0ACD8837-F3A7-43E1-A19A-E272740AE012}" Directory_="codecs_Dir" Attributes="0" KeyPath="index.rst.txt_32"/>
+    <ROW Component="index.rst.txt_21" ComponentId="{51F3410D-D9B5-429F-B663-41D6C74109BE}" Directory_="developer_sdk_Dir" Attributes="0" KeyPath="index.rst.txt_33"/>
+    <ROW Component="index.rst.txt_22" ComponentId="{110152CB-2703-45D2-BEBF-96D4149CB9F4}" Directory_="mesh_compression_Dir" Attributes="0" KeyPath="index.rst.txt_34"/>
+    <ROW Component="index.rst.txt_23" ComponentId="{F38D8C2B-7CA2-4115-9BD6-FED4D9CA635A}" Directory_="mesh_optimization_Dir" Attributes="0" KeyPath="index.rst.txt_35"/>
+    <ROW Component="index.rst.txt_24" ComponentId="{3FA255BC-79EA-4665-AEF3-B31CA75DA5DA}" Directory_="gui_tool_Dir" Attributes="0" KeyPath="index.rst.txt_37"/>
+    <ROW Component="ktx.dll" ComponentId="{6F3B64F4-B61E-487C-9696-7DDD7E1EB950}" Directory_="bin_Dir" Attributes="256" KeyPath="ktx.dll"/>
+    <ROW Component="licence.txt" ComponentId="{2C7B82D1-9FEE-4FEF-91BD-4A5AEA789B05}" Directory_="etcpack_Dir" Attributes="0" KeyPath="licence.txt"/>
+    <ROW Component="license.txt" ComponentId="{AF570689-C341-409D-84D1-8704A29A66C2}" Directory_="astc_Dir" Attributes="0" KeyPath="license.txt"/>
+    <ROW Component="license.txt_1" ComponentId="{DC325508-90F1-46EB-86A0-D4989574CBDF}" Directory_="imgui_Dir" Attributes="0" KeyPath="license.txt_1"/>
+    <ROW Component="license.txt_2" ComponentId="{2916E5ED-F46A-4D1D-B995-3DC4122E6A3F}" Directory_="json_Dir" Attributes="0" KeyPath="license.txt_2"/>
+    <ROW Component="license.txt_3" ComponentId="{FA913BD2-B23A-4565-8C11-8B5A531AF845}" Directory_="opencv_Dir" Attributes="0" KeyPath="license.txt_4"/>
+    <ROW Component="license_1" ComponentId="{27955D7E-45A9-4F76-A9CE-21D823CD10C5}" Directory_="directxtex_Dir" Attributes="0" KeyPath="license"/>
+    <ROW Component="license_2" ComponentId="{06E57B43-516A-41AA-A526-566D989586CC}" Directory_="openexr_Dir" Attributes="0" KeyPath="license_1"/>
+    <ROW Component="modernizr.min.js" ComponentId="{C70C4DA2-8467-4A32-835F-0FCDB8F7C9BC}" Directory_="js_Dir" Attributes="0" KeyPath="modernizr.min.js"/>
+    <ROW Component="opencv_core249.dll" ComponentId="{CE74009B-4AA6-46EE-8E5D-2DFFED2E2E46}" Directory_="bin_Dir" Attributes="256" KeyPath="opencv_core249.dll"/>
+    <ROW Component="opencv_imgproc249.dll" ComponentId="{33F2BAB6-5ACB-4A91-A2CB-BAB6C027ED9F}" Directory_="bin_Dir" Attributes="256" KeyPath="opencv_imgproc249.dll"/>
     <ROW Component="qjpeg.dll" ComponentId="{00D993AF-3052-44AD-A134-4FF5AF7BD9CB}" Directory_="imageformats_Dir" Attributes="256" KeyPath="qjpeg.dll"/>
-    <ROW Component="qt.conf" ComponentId="{7A6DACAB-6300-4AA6-B321-4B066E6184EA}" Directory_="bin_Dir" Attributes="0" KeyPath="qt.conf_1"/>
+    <ROW Component="qt.conf" ComponentId="{8935E8E0-C0E1-4814-948E-051AA41A2311}" Directory_="bin_Dir" Attributes="0" KeyPath="qt.conf"/>
     <ROW Component="qtga.dll" ComponentId="{5D27A78D-EB90-4776-AE52-44A2A3584995}" Directory_="imageformats_Dir" Attributes="0" KeyPath="qtga.dll"/>
     <ROW Component="qtiff.dll" ComponentId="{2017B74D-BE99-4065-A08D-CA451BCD658F}" Directory_="imageformats_Dir" Attributes="0" KeyPath="qtiff.dll"/>
-    <ROW Component="qtwebengine_en.qm" ComponentId="{5D79BE5A-3261-448A-B989-2BA44E20E38D}" Directory_="translations_Dir" Attributes="0" KeyPath="qtwebengine_en.qm"/>
     <ROW Component="qwindows.dll" ComponentId="{79ACC9F9-BB2A-41AD-B722-DDFEF082BFE0}" Directory_="platforms_Dir" Attributes="0" KeyPath="qwindows.dll"/>
     <ROW Component="readme.txt" ComponentId="{42260EDE-7724-436C-B837-63EE1BA31D41}" Directory_="envmap_Dir" Attributes="0" KeyPath="readme.txt_2" Type="0"/>
-    <ROW Component="style.css" ComponentId="{0DB87DC2-B88C-4B47-B05C-11A6D1123CFB}" Directory_="WelcomePage_Dir" Attributes="0" KeyPath="style.css" Type="0"/>
-    <ROW Component="texture.frag.spv_1" ComponentId="{C1AC6D5D-106D-431F-8230-6728299E1DAD}" Directory_="bin_Dir" Attributes="0" KeyPath="texture.frag.spv_1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="B5158184F44A6981C5919229A6AEBE" Title="Visual C++ Redistributable for Visual Studio 2015 x64" Description="Visual C++ Redistributable for Visual Studio 2015 x64" Display="9" Level="1" Attributes="0" Components="AI_CustomARPName AI_DisableModify AI_ExePath"/>
-    <ROW Feature="B5158184F44A6981C5919229A6AEBE_1" Title="Visual C++ Redistributable for Visual Studio 2015 x64" Description="Visual C++ Redistributable for Visual Studio 2015 x64" Display="13" Level="1" Attributes="0" Components="AI_CustomARPName AI_DisableModify AI_ExePath B5158184F44A6981C5919229A6AEBE"/>
-    <ROW Feature="CA62D813A4E74FA2AAE86A7D7B7B1493" Title="Visual C++ Redistributable for Visual Studio 2013 x64" Description="Visual C++ Redistributable for Visual Studio 2013 x64" Display="11" Level="1" Attributes="0" Components="AI_CustomARPName AI_DisableModify AI_ExePath DModelCompression.html DModelCompression.rst.txt GettingStarted.html GettingStarted.rst.txt Name Plugin_CFilter_Fx.dll Plugin_CFilter_MipMap.dll Plugin_CMP_GPU_DXC.dll Plugin_CMP_GPU_HW.dll Plugin_CMP_GPU_OCL.dll Qt5PrintSupport.dll Qt5QuickWidgets.dll acompress128.png analysis_properties.jpg badge_only.css balls.exr bc1_encode_kernel.h bibliography.rst.txt blend.hlsl build_instructions.html build_instructions.rst.txt buildinfo commandline.html commandline.rst.txt contact.html contact.rst.txt fontawesomewebfont.eot guilicense.txt index.html index.html_10 index.html_11 index.html_12 index.html_13 index.html_14 index.html_15 index.html_16 index.html_9 index.rst.txt index.rst.txt_10 index.rst.txt_11 index.rst.txt_12 index.rst.txt_13 index.rst.txt_14 index.rst.txt_15 index.rst.txt_16 index.rst.txt_9 ktx.dll licence.txt license license.txt license.txt_1 license.txt_2 license.txt_3 license_1 modernizr.min.js readme.txt"/>
-    <ROW Feature="CA62D813A4E74FA2AAE86A7D7B7B1493_1" Title="Visual C++ Redistributable for Visual Studio 2013 x64" Description="Visual C++ Redistributable for Visual Studio 2013 x64" Display="15" Level="1" Attributes="0" Components="AI_CustomARPName AI_DisableModify AI_ExePath CA62D813A4E74FA2AAE86A7D7B7B1493"/>
-    <ROW Feature="VisualStudioCMergeModules" Title="Visual Studio C++ Merge Modules" Description="Description" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_CustomARPName AI_DisableModify AI_ExePath"/>
-    <ROW Feature="graphicaluserinterface" Title="Graphical User Interface" Description="Description" Display="2" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_CustomARPName AI_DisableModify AI_ExePath BC6H_Compression.cprj Compressonator.exe ProductInformation Qt5Core.dll_1 Qt5Gui.dll_1 Qt5Network.dll_1 Qt5OpenGL.dll_1 Qt5Positioning.dll_1 Qt5Qml.dll_1 Qt5Quick.dll_1 Qt5WebChannel.dll_1 Qt5WebEngineCore.dll_1 Qt5WebEngineWidgets.dll_1 Qt5Widgets.dll_1 Qt5Xml.dll_2 QtWebEngineProcess.exe_1 SHORTCUTDIR brdf.dds enUS.pak glew32.dll icudtl.dat opencv_core249.dll_1 opencv_imgproc249.dll_1 qjpeg.dll qt.conf qtga.dll qtiff.dll qtwebengine_en.qm qwindows.dll style.css texture.frag.spv_1"/>
-    <ATTRIBUTE name="CurrentFeature" value="CA62D813A4E74FA2AAE86A7D7B7B1493"/>
+    <ROW Feature="graphicaluserinterface" Title="Graphical User Interface" Description="Description" Display="2" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_CustomARPName AI_DisableModify AI_ExePath Compressonator.exe EncodeWith_DXC.dll EncodeWith_GPU.dll EncodeWith_OCL.dll GPUDecode_DirectX.dll GPUDecode_OpenGL.dll GPUDecode_Vulkan.dll Image_FilterFX.dll Image_MipMap.dll Mesh_Compressor.dll Mesh_Optimizer.dll Mesh_Tootle.dll ModelLoader_drc.dll ModelLoader_gltf.dll ModelLoader_obj.dll ModelViewer_DX12.dll ModelViewer_OpenGL.dll ModelViewer_Vulkan.dll ProductInformation Qt5Core.dll Qt5Gui.dll Qt5OpenGL.dll Qt5Widgets.dll Qt5Xml.dll SHORTCUTDIR _image_credits.txt acompress128.png analysis_properties.jpg badge_only.css bc1_encode_kernel.h bc6h_compression.cprj bibliography.rst.txt blend.hlsl brdf.dds build_instructions.html build_instructions.rst.txt buildinfo clilicense.txt commandline.html commandline.rst.txt contact.html contact.rst.txt dmodelcompression.html dmodelcompression.rst.txt fontawesomewebfont.eot gettingstarted.html gettingstarted.rst.txt glew32.dll index.html index.html_10 index.html_11 index.html_12 index.html_13 index.html_14 index.html_15 index.html_16 index.html_9 index.rst.txt index.rst.txt_17 index.rst.txt_18 index.rst.txt_19 index.rst.txt_20 index.rst.txt_21 index.rst.txt_22 index.rst.txt_23 index.rst.txt_24 ktx.dll licence.txt license.txt license.txt_1 license.txt_2 license.txt_3 license_1 license_2 modernizr.min.js opencv_core249.dll opencv_imgproc249.dll qjpeg.dll qt.conf qtga.dll qtiff.dll qwindows.dll"/>
+    <ATTRIBUTE name="CurrentFeature" value="graphicaluserinterface"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
-    <ROW File="ApplicationOptions.html" Component_="DModelCompression.html" FileName="APPLIC~1.HTM|ApplicationOptions.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\ApplicationOptions.html" SelfReg="false" NextFile="ImageView.html"/>
-    <ROW File="ApplicationOptions.rst.txt" Component_="DModelCompression.rst.txt" FileName="APPLIC~1.TXT|ApplicationOptions.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\ApplicationOptions.rst.txt" SelfReg="false" NextFile="ImageView.rst.txt"/>
-    <ROW File="BC6H_Compression.cprj" Component_="BC6H_Compression.cprj" FileName="BC6H_C~1.CPR|BC6H_Compression.cprj" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Projects\BC6H_Compression.cprj" SelfReg="false" NextFile="BC7_Compression.cprj"/>
-    <ROW File="BC7_Compression.cprj" Component_="BC6H_Compression.cprj" FileName="BC7_CO~1.CPR|BC7_Compression.cprj" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Projects\BC7_Compression.cprj" SelfReg="false" NextFile="style.css"/>
-    <ROW File="CMP_v3.2_Analysis_Output.png" Component_="analysis_properties.jpg" FileName="CMP_V3~1.PNG|CMP_v3.2_Analysis_Output.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\CMP_v3.2_Analysis_Output.png" SelfReg="false" NextFile="CMP_v3.2_Run_Time_Analysis.png"/>
-    <ROW File="CMP_v3.2_Run_Time_Analysis.png" Component_="analysis_properties.jpg" FileName="CMP_V3~2.PNG|CMP_v3.2_Run_Time_Analysis.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\CMP_v3.2_Run_Time_Analysis.png" SelfReg="false" NextFile="compression_setting.jpg"/>
-    <ROW File="Compressonator.exe" Component_="Compressonator.exe" FileName="COMPRE~2.EXE|Compressonator.exe" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\compressonator.exe" SelfReg="false" NextFile="ruby.bmp" DigSign="true"/>
-    <ROW File="DModelCompression.html" Component_="DModelCompression.html" FileName="3DMODE~1.HTM|3DModelCompression.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\3DModelCompression.html" SelfReg="false" NextFile="ApplicationOptions.html"/>
-    <ROW File="DModelCompression.rst.txt" Component_="DModelCompression.rst.txt" FileName="3DMODE~1.TXT|3DModelCompression.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\3DModelCompression.rst.txt" SelfReg="false" NextFile="ApplicationOptions.rst.txt"/>
-    <ROW File="GettingStarted.html" Component_="GettingStarted.html" FileName="GETTIN~1.HTM|GettingStarted.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\getting_started\GettingStarted.html" SelfReg="false" NextFile="index.html_23"/>
-    <ROW File="GettingStarted.rst.txt" Component_="GettingStarted.rst.txt" FileName="GETTIN~1.TXT|GettingStarted.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\getting_started\GettingStarted.rst.txt" SelfReg="false" NextFile="index.rst.txt_23"/>
-    <ROW File="GlobalSettings2.png" Component_="analysis_properties.jpg" FileName="GLOBAL~1.PNG|GlobalSettings2.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\GlobalSettings2.png" SelfReg="false" NextFile="GlobalSettings3.png"/>
-    <ROW File="GlobalSettings3.png" Component_="analysis_properties.jpg" FileName="GLOBAL~2.PNG|GlobalSettings3.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\GlobalSettings3.png" SelfReg="false" NextFile="GlobalSettings5.png"/>
-    <ROW File="GlobalSettings5.png" Component_="analysis_properties.jpg" FileName="GLOBAL~3.PNG|GlobalSettings5.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\GlobalSettings5.png" SelfReg="false" NextFile="image10.png"/>
-    <ROW File="ImageView.html" Component_="DModelCompression.html" FileName="IMAGEV~1.HTM|ImageView.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\ImageView.html" SelfReg="false" NextFile="index.html_25"/>
-    <ROW File="ImageView.rst.txt" Component_="DModelCompression.rst.txt" FileName="IMAGEV~1.TXT|ImageView.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\ImageView.rst.txt" SelfReg="false" NextFile="index.rst.txt_25"/>
+    <ROW File="Compressonator.exe" Component_="Compressonator.exe" FileName="COMPRE~2.EXE|Compressonator.exe" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\compressonator.exe" SelfReg="false" NextFile="readme.txt_2" DigSign="true"/>
+    <ROW File="EncodeWith_DXC.dll" Component_="EncodeWith_DXC.dll" FileName="ENCODE~1.DLL|EncodeWith_DXC.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\EncodeWith_DXC.dll" SelfReg="false" NextFile="EncodeWith_GPU.dll"/>
+    <ROW File="EncodeWith_GPU.dll" Component_="EncodeWith_GPU.dll" FileName="ENCODE~2.DLL|EncodeWith_GPU.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\EncodeWith_GPU.dll" SelfReg="false" NextFile="EncodeWith_OCL.dll"/>
+    <ROW File="EncodeWith_OCL.dll" Component_="EncodeWith_OCL.dll" FileName="ENCODE~3.DLL|EncodeWith_OCL.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\EncodeWith_OCL.dll" SelfReg="false" NextFile="GPUDecode_DirectX.dll"/>
+    <ROW File="GPUDecode_DirectX.dll" Component_="GPUDecode_DirectX.dll" FileName="GPUDEC~1.DLL|GPUDecode_DirectX.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\GPUDecode_DirectX.dll" SelfReg="false" NextFile="GPUDecode_OpenGL.dll"/>
+    <ROW File="GPUDecode_OpenGL.dll" Component_="GPUDecode_OpenGL.dll" FileName="GPUDEC~2.DLL|GPUDecode_OpenGL.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\GPUDecode_OpenGL.dll" SelfReg="false" NextFile="GPUDecode_Vulkan.dll"/>
+    <ROW File="GPUDecode_Vulkan.dll" Component_="GPUDecode_Vulkan.dll" FileName="GPUDEC~3.DLL|GPUDecode_Vulkan.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\GPUDecode_Vulkan.dll" SelfReg="false" NextFile="Image_FilterFX.dll"/>
+    <ROW File="Image_FilterFX.dll" Component_="Image_FilterFX.dll" FileName="IMAGE_~1.DLL|Image_FilterFX.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\Image_FilterFX.dll" SelfReg="false" NextFile="Image_MipMap.dll"/>
+    <ROW File="Image_MipMap.dll" Component_="Image_MipMap.dll" FileName="IMAGE_~2.DLL|Image_MipMap.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\Image_MipMap.dll" SelfReg="false" NextFile="Mesh_Compressor.dll"/>
     <ROW File="InconsolataBold.ttf" Component_="fontawesomewebfont.eot" FileName="INCONS~1.TTF|Inconsolata-Bold.ttf" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\fonts\Inconsolata-Bold.ttf" SelfReg="false" NextFile="InconsolataRegular.ttf"/>
     <ROW File="InconsolataRegular.ttf" Component_="fontawesomewebfont.eot" FileName="INCONS~2.TTF|Inconsolata-Regular.ttf" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\fonts\Inconsolata-Regular.ttf" SelfReg="false" NextFile="LatoBold.ttf"/>
-    <ROW File="Introduction.html" Component_="DModelCompression.html" FileName="INTROD~1.HTM|Introduction.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\Introduction.html" SelfReg="false" NextFile="MessageOutput.html"/>
-    <ROW File="Introduction.rst.txt" Component_="DModelCompression.rst.txt" FileName="INTROD~1.TXT|Introduction.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\Introduction.rst.txt" SelfReg="false" NextFile="MessageOutput.rst.txt"/>
     <ROW File="LatoBold.ttf" Component_="fontawesomewebfont.eot" FileName="LATO-B~1.TTF|Lato-Bold.ttf" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\fonts\Lato-Bold.ttf" SelfReg="false" NextFile="LatoRegular.ttf"/>
     <ROW File="LatoRegular.ttf" Component_="fontawesomewebfont.eot" FileName="LATO-R~1.TTF|Lato-Regular.ttf" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\fonts\Lato-Regular.ttf" SelfReg="false" NextFile="RobotoSlabBold.ttf"/>
-    <ROW File="MessageOutput.html" Component_="DModelCompression.html" FileName="MESSAG~1.HTM|MessageOutput.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\MessageOutput.html" SelfReg="false" NextFile="ProjectExplorer.html"/>
-    <ROW File="MessageOutput.rst.txt" Component_="DModelCompression.rst.txt" FileName="MESSAG~1.TXT|MessageOutput.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\MessageOutput.rst.txt" SelfReg="false" NextFile="ProjectExplorer.rst.txt"/>
-    <ROW File="Plugin_CFilter_Fx.dll" Component_="Plugin_CFilter_Fx.dll" FileName="PLUGIN~4.DLL|Plugin_CFilter_Fx.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\Plugin_CFilter_Fx.dll" SelfReg="false" NextFile="Plugin_CFilter_MipMap.dll"/>
-    <ROW File="Plugin_CFilter_MipMap.dll" Component_="Plugin_CFilter_MipMap.dll" FileName="PLUGIN~5.DLL|Plugin_CFilter_MipMap.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\Plugin_CFilter_MipMap.dll" SelfReg="false" NextFile="blend.hlsl"/>
-    <ROW File="Plugin_CMP_GPU_DXC.dll" Component_="Plugin_CMP_GPU_DXC.dll" FileName="PLUGIN~1.DLL|Plugin_CMP_GPU_DXC.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\Plugin_CMP_GPU_DXC.dll" SelfReg="false" NextFile="Plugin_CMP_GPU_OCL.dll"/>
-    <ROW File="Plugin_CMP_GPU_HW.dll" Component_="Plugin_CMP_GPU_HW.dll" FileName="PLUGIN~3.DLL|Plugin_CMP_GPU_HW.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\Plugin_CMP_GPU_HW.dll" SelfReg="false" NextFile="Plugin_CFilter_Fx.dll"/>
-    <ROW File="Plugin_CMP_GPU_OCL.dll" Component_="Plugin_CMP_GPU_OCL.dll" FileName="PLUGIN~2.DLL|Plugin_CMP_GPU_OCL.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\Plugin_CMP_GPU_OCL.dll" SelfReg="false" NextFile="Plugin_CMP_GPU_HW.dll"/>
-    <ROW File="ProjectExplorer.html" Component_="DModelCompression.html" FileName="PROJEC~1.HTM|ProjectExplorer.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\ProjectExplorer.html" SelfReg="false" NextFile="PropertyView.html"/>
-    <ROW File="ProjectExplorer.rst.txt" Component_="DModelCompression.rst.txt" FileName="PROJEC~1.TXT|ProjectExplorer.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\ProjectExplorer.rst.txt" SelfReg="false" NextFile="PropertyView.rst.txt"/>
-    <ROW File="PropertyView.html" Component_="DModelCompression.html" FileName="PROPER~1.HTM|PropertyView.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\PropertyView.html" SelfReg="false" NextFile="TextureCompression.html"/>
-    <ROW File="PropertyView.rst.txt" Component_="DModelCompression.rst.txt" FileName="PROPER~1.TXT|PropertyView.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\PropertyView.rst.txt" SelfReg="false" NextFile="TextureCompression.rst.txt"/>
-    <ROW File="Qt5Core.dll_1" Component_="Qt5Core.dll_1" FileName="Qt5Core.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Qt5Core.dll" SelfReg="false" NextFile="Qt5WebEngineWidgets.dll_1"/>
-    <ROW File="Qt5Gui.dll_1" Component_="Qt5Gui.dll_1" FileName="Qt5Gui.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Qt5Gui.dll" SelfReg="false" NextFile="Qt5Network.dll_1"/>
-    <ROW File="Qt5Network.dll_1" Component_="Qt5Network.dll_1" FileName="QT5NET~1.DLL|Qt5Network.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Qt5Network.dll" SelfReg="false" NextFile="Qt5Xml.dll_2"/>
-    <ROW File="Qt5OpenGL.dll_1" Component_="Qt5OpenGL.dll_1" FileName="QT5OPE~1.DLL|Qt5OpenGL.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Qt5OpenGL.dll" SelfReg="false" NextFile="Qt5Widgets.dll_1"/>
-    <ROW File="Qt5Positioning.dll_1" Component_="Qt5Positioning.dll_1" FileName="QT5POS~1.DLL|Qt5Positioning.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Qt5Positioning.dll" SelfReg="false" NextFile="Qt5WebChannel.dll_1"/>
-    <ROW File="Qt5PrintSupport.dll" Component_="Qt5PrintSupport.dll" FileName="QT5PRI~1.DLL|Qt5PrintSupport.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Qt5PrintSupport.dll" SelfReg="false" NextFile="Qt5QuickWidgets.dll"/>
-    <ROW File="Qt5Qml.dll_1" Component_="Qt5Qml.dll_1" FileName="Qt5Qml.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Qt5Qml.dll" SelfReg="false" NextFile="Qt5OpenGL.dll_1"/>
-    <ROW File="Qt5Quick.dll_1" Component_="Qt5Quick.dll_1" FileName="Qt5Quick.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Qt5Quick.dll" SelfReg="false" NextFile="Qt5Qml.dll_1"/>
-    <ROW File="Qt5QuickWidgets.dll" Component_="Qt5QuickWidgets.dll" FileName="QT5QUI~1.DLL|Qt5QuickWidgets.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Qt5QuickWidgets.dll" SelfReg="false" NextFile="Plugin_CMP_GPU_DXC.dll"/>
-    <ROW File="Qt5WebChannel.dll_1" Component_="Qt5WebChannel.dll_1" FileName="QT5WEB~4.DLL|Qt5WebChannel.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Qt5WebChannel.dll" SelfReg="false" NextFile="Qt5Quick.dll_1"/>
-    <ROW File="Qt5WebEngineCore.dll_1" Component_="Qt5WebEngineCore.dll_1" FileName="QT5WEB~3.DLL|Qt5WebEngineCore.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Qt5WebEngineCore.dll" SelfReg="false" NextFile="Qt5Positioning.dll_1"/>
-    <ROW File="Qt5WebEngineWidgets.dll_1" Component_="Qt5WebEngineWidgets.dll_1" FileName="QT5WEB~1.DLL|Qt5WebEngineWidgets.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Qt5WebEngineWidgets.dll" SelfReg="false" NextFile="QtWebEngineProcess.exe_1"/>
-    <ROW File="Qt5Widgets.dll_1" Component_="Qt5Widgets.dll_1" FileName="QT5WID~1.DLL|Qt5Widgets.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Qt5Widgets.dll" SelfReg="false" NextFile="Qt5Gui.dll_1"/>
-    <ROW File="Qt5Xml.dll_2" Component_="Qt5Xml.dll_2" FileName="Qt5Xml.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Qt5Xml.dll" SelfReg="false" NextFile="Compressonator.exe"/>
-    <ROW File="QtWebEngineProcess.exe_1" Component_="QtWebEngineProcess.exe_1" FileName="QTWEBE~1.EXE|QtWebEngineProcess.exe" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\QtWebEngineProcess.exe" SelfReg="false" NextFile="Qt5WebEngineCore.dll_1" DigSign="true"/>
+    <ROW File="Mesh_Compressor.dll" Component_="Mesh_Compressor.dll" FileName="MESH_C~1.DLL|Mesh_Compressor.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\Mesh_Compressor.dll" SelfReg="false" NextFile="Mesh_Optimizer.dll"/>
+    <ROW File="Mesh_Optimizer.dll" Component_="Mesh_Optimizer.dll" FileName="MESH_O~1.DLL|Mesh_Optimizer.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\Mesh_Optimizer.dll" SelfReg="false" NextFile="Mesh_Tootle.dll"/>
+    <ROW File="Mesh_Tootle.dll" Component_="Mesh_Tootle.dll" FileName="MESH_T~1.DLL|Mesh_Tootle.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\Mesh_Tootle.dll" SelfReg="false" NextFile="ModelLoader_drc.dll"/>
+    <ROW File="ModelLoader_drc.dll" Component_="ModelLoader_drc.dll" FileName="MODELL~1.DLL|ModelLoader_drc.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\ModelLoader_drc.dll" SelfReg="false" NextFile="ModelLoader_gltf.dll"/>
+    <ROW File="ModelLoader_gltf.dll" Component_="ModelLoader_gltf.dll" FileName="MODELL~2.DLL|ModelLoader_gltf.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\ModelLoader_gltf.dll" SelfReg="false" NextFile="ModelLoader_obj.dll"/>
+    <ROW File="ModelLoader_obj.dll" Component_="ModelLoader_obj.dll" FileName="MODELL~3.DLL|ModelLoader_obj.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\ModelLoader_obj.dll" SelfReg="false" NextFile="ModelViewer_DX12.dll"/>
+    <ROW File="ModelViewer_DX12.dll" Component_="ModelViewer_DX12.dll" FileName="MODELV~1.DLL|ModelViewer_DX12.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\ModelViewer_DX12.dll" SelfReg="false" NextFile="ModelViewer_OpenGL.dll"/>
+    <ROW File="ModelViewer_OpenGL.dll" Component_="ModelViewer_OpenGL.dll" FileName="MODELV~2.DLL|ModelViewer_OpenGL.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\ModelViewer_OpenGL.dll" SelfReg="false" NextFile="ModelViewer_Vulkan.dll"/>
+    <ROW File="ModelViewer_Vulkan.dll" Component_="ModelViewer_Vulkan.dll" FileName="MODELV~3.DLL|ModelViewer_Vulkan.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\ModelViewer_Vulkan.dll" SelfReg="false" NextFile="bc1_encode_kernel.h"/>
+    <ROW File="Qt5Core.dll" Component_="Qt5Core.dll" FileName="Qt5Core.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Qt5Core.dll" SelfReg="false" NextFile="Qt5Gui.dll"/>
+    <ROW File="Qt5Gui.dll" Component_="Qt5Gui.dll" FileName="Qt5Gui.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Qt5Gui.dll" SelfReg="false" NextFile="Qt5Xml.dll"/>
+    <ROW File="Qt5OpenGL.dll" Component_="Qt5OpenGL.dll" FileName="QT5OPE~1.DLL|Qt5OpenGL.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Qt5OpenGL.dll" SelfReg="false" NextFile="analysis_properties.jpg"/>
+    <ROW File="Qt5Widgets.dll" Component_="Qt5Widgets.dll" FileName="QT5WID~1.DLL|Qt5Widgets.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Qt5Widgets.dll" SelfReg="false" NextFile="blend.hlsl"/>
+    <ROW File="Qt5Xml.dll" Component_="Qt5Xml.dll" FileName="Qt5Xml.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\Qt5Xml.dll" SelfReg="false" NextFile="texture.frag.spv"/>
     <ROW File="RobotoSlabBold.ttf" Component_="fontawesomewebfont.eot" FileName="ROBOTO~1.TTF|RobotoSlab-Bold.ttf" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\fonts\RobotoSlab-Bold.ttf" SelfReg="false" NextFile="RobotoSlabRegular.ttf"/>
     <ROW File="RobotoSlabRegular.ttf" Component_="fontawesomewebfont.eot" FileName="ROBOTO~2.TTF|RobotoSlab-Regular.ttf" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\fonts\RobotoSlab-Regular.ttf" SelfReg="false" NextFile="jquery3.1.0.js"/>
-    <ROW File="TextureCompression.html" Component_="DModelCompression.html" FileName="TEXTUR~1.HTM|TextureCompression.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\TextureCompression.html" SelfReg="false" NextFile="Toolbars.html"/>
-    <ROW File="TextureCompression.rst.txt" Component_="DModelCompression.rst.txt" FileName="TEXTUR~1.TXT|TextureCompression.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\TextureCompression.rst.txt" SelfReg="false" NextFile="Toolbars.rst.txt"/>
-    <ROW File="Toolbars.html" Component_="DModelCompression.html" FileName="TOOLBA~1.HTM|Toolbars.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\Toolbars.html" SelfReg="false" NextFile="UserGuide.html"/>
-    <ROW File="Toolbars.rst.txt" Component_="DModelCompression.rst.txt" FileName="TOOLBA~1.TXT|Toolbars.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\Toolbars.rst.txt" SelfReg="false" NextFile="UserGuide.rst.txt"/>
-    <ROW File="UserGuide.html" Component_="DModelCompression.html" FileName="USERGU~1.HTM|UserGuide.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\UserGuide.html" SelfReg="false" NextFile="index.html_26"/>
-    <ROW File="UserGuide.rst.txt" Component_="DModelCompression.rst.txt" FileName="USERGU~1.TXT|UserGuide.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\UserGuide.rst.txt" SelfReg="false" NextFile="index.rst.txt_26"/>
-    <ROW File="Welcome.html" Component_="style.css" FileName="WELCOM~1.HTM|Welcome.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\WelcomePage\Welcome.html" SelfReg="false" NextFile="icudtl.dat"/>
-    <ROW File="_Image_credits.txt" Component_="balls.exr" FileName="_IMAGE~1.TXT|_Image_credits.txt" Version="65535.65535.65535.65535" Attributes="1" SourcePath="..\RunTime\images\_Image_credits.txt" SelfReg="false" NextFile="license.txt"/>
+    <ROW File="_image_credits.txt" Component_="_image_credits.txt" FileName="_IMAGE~1.TXT|_image_credits.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\runtime\images\_image_credits.txt" SelfReg="false" NextFile="balls.exr"/>
     <ROW File="acompress128.png" Component_="acompress128.png" FileName="ACOMPR~1.PNG|acompress-128.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\acompress-128.png" SelfReg="false" NextFile="ajaxloader.gif"/>
     <ROW File="ajaxloader.gif" Component_="acompress128.png" FileName="AJAX-L~1.GIF|ajax-loader.gif" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\ajax-loader.gif" SelfReg="false" NextFile="basic.css"/>
-    <ROW File="analysis_properties.jpg" Component_="analysis_properties.jpg" FileName="ANALYS~1.JPG|analysis_properties.jpg" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\analysis_properties.jpg" SelfReg="false" NextFile="CMP_v3.2_Analysis_Output.png"/>
+    <ROW File="analysis_properties.jpg" Component_="analysis_properties.jpg" FileName="ANALYS~1.JPG|analysis_properties.jpg" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\analysis_properties.jpg" SelfReg="false" NextFile="appsettings1.png"/>
+    <ROW File="applicationoptions.html" Component_="dmodelcompression.html" FileName="APPLIC~1.HTM|applicationoptions.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\applicationoptions.html" SelfReg="false" NextFile="imageview.html"/>
+    <ROW File="applicationoptions.rst.txt" Component_="dmodelcompression.rst.txt" FileName="APPLIC~1.TXT|applicationoptions.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\applicationoptions.rst.txt" SelfReg="false" NextFile="imageview.rst.txt"/>
+    <ROW File="appsettings1.png" Component_="analysis_properties.jpg" FileName="APPSET~1.PNG|appsettings1.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\appsettings1.png" SelfReg="false" NextFile="appsettings2.png"/>
+    <ROW File="appsettings2.png" Component_="analysis_properties.jpg" FileName="APPSET~2.PNG|appsettings2.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\appsettings2.png" SelfReg="false" NextFile="cmp_v3.2_analysis_output.png"/>
     <ROW File="badge_only.css" Component_="badge_only.css" FileName="BADGE_~1.CSS|badge_only.css" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\css\badge_only.css" SelfReg="false" NextFile="theme.css"/>
-    <ROW File="balls.exr" Component_="balls.exr" FileName="balls.exr" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\RunTime\images\balls.exr" SelfReg="false" NextFile="ruby.dds"/>
+    <ROW File="balls.exr" Component_="_image_credits.txt" FileName="balls.exr" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\runtime\images\balls.exr" SelfReg="false" NextFile="ruby.bmp"/>
     <ROW File="basic.css" Component_="acompress128.png" FileName="basic.css" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\basic.css" SelfReg="false" NextFile="commentbright.png"/>
     <ROW File="bc1_encode_kernel.cpp" Component_="bc1_encode_kernel.h" FileName="BC1_EN~1.CPP|bc1_encode_kernel.cpp" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\bc1_encode_kernel.cpp" SelfReg="false" NextFile="bc2_encode_kernel.cpp"/>
     <ROW File="bc1_encode_kernel.h" Component_="bc1_encode_kernel.h" FileName="BC1_EN~1.H|bc1_encode_kernel.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\bc1_encode_kernel.h" SelfReg="false" NextFile="bc2_encode_kernel.h"/>
@@ -285,21 +254,25 @@
     <ROW File="bc6_encode_kernel.cpp" Component_="bc1_encode_kernel.h" FileName="BC6_EN~1.CPP|bc6_encode_kernel.cpp" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\bc6_encode_kernel.cpp" SelfReg="false" NextFile="bc7_encode_kernel.cpp"/>
     <ROW File="bc6_encode_kernel.h" Component_="bc1_encode_kernel.h" FileName="BC6_EN~1.H|bc6_encode_kernel.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\bc6_encode_kernel.h" SelfReg="false" NextFile="bc7_encode_kernel.h"/>
     <ROW File="bc6_encode_kernel.hlsl" Component_="bc1_encode_kernel.h" FileName="BC6_EN~1.HLS|bc6_encode_kernel.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\bc6_encode_kernel.hlsl" SelfReg="false" NextFile="bc7_encode_kernel.hlsl"/>
+    <ROW File="bc6h_compression.cprj" Component_="bc6h_compression.cprj" FileName="BC6H_C~1.CPR|bc6h_compression.cprj" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\runtime\bc6h_compression.cprj" SelfReg="false" NextFile="bc7_compression.cprj"/>
+    <ROW File="bc7_compression.cprj" Component_="bc6h_compression.cprj" FileName="BC7_CO~1.CPR|bc7_compression.cprj" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\runtime\bc7_compression.cprj" SelfReg="false" NextFile="Qt5Widgets.dll"/>
     <ROW File="bc7_encode_kernel.cpp" Component_="bc1_encode_kernel.h" FileName="BC7_EN~1.CPP|bc7_encode_kernel.cpp" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\bc7_encode_kernel.cpp" SelfReg="false" NextFile="bc1_encode_kernel.hlsl"/>
     <ROW File="bc7_encode_kernel.h" Component_="bc1_encode_kernel.h" FileName="BC7_EN~1.H|bc7_encode_kernel.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\bc7_encode_kernel.h" SelfReg="false" NextFile="bcn_common_kernel.h"/>
-    <ROW File="bc7_encode_kernel.hlsl" Component_="bc1_encode_kernel.h" FileName="BC7_EN~1.HLS|bc7_encode_kernel.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\bc7_encode_kernel.hlsl" SelfReg="false" NextFile="copyfiles.bat"/>
+    <ROW File="bc7_encode_kernel.hlsl" Component_="bc1_encode_kernel.h" FileName="BC7_EN~1.HLS|bc7_encode_kernel.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\bc7_encode_kernel.hlsl" SelfReg="false" NextFile="_image_credits.txt"/>
     <ROW File="bcn_common_kernel.h" Component_="bc1_encode_kernel.h" FileName="BCN_CO~1.H|bcn_common_kernel.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\bcn_common_kernel.h" SelfReg="false" NextFile="common_def.h"/>
-    <ROW File="bibliography.html" Component_="buildinfo" FileName="BIBLIO~1.HTM|bibliography.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\bibliography.html" SelfReg="false" NextFile="build_instructions.html"/>
+    <ROW File="bibliography.html" Component_="buildinfo" FileName="BIBLIO~1.HTM|bibliography.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\bibliography.html" SelfReg="false" NextFile="genindex.html"/>
     <ROW File="bibliography.rst.txt" Component_="bibliography.rst.txt" FileName="BIBLIO~1.TXT|bibliography.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\bibliography.rst.txt" SelfReg="false" NextFile="build_instructions.rst.txt"/>
     <ROW File="blend.hlsl" Component_="blend.hlsl" FileName="BLEND~1.HLS|blend.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\blend.hlsl" SelfReg="false" NextFile="bloom.hlsl"/>
     <ROW File="bloom.hlsl" Component_="blend.hlsl" FileName="BLOOM~1.HLS|bloom.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\bloom.hlsl" SelfReg="false" NextFile="blur.hlsl"/>
     <ROW File="blur.hlsl" Component_="blend.hlsl" FileName="BLUR~1.HLS|blur.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\blur.hlsl" SelfReg="false" NextFile="downscale.hlsl"/>
     <ROW File="brdf.dds" Component_="brdf.dds" FileName="brdf.dds" Version="65535.65535.65535.65535" Attributes="1" SourcePath="..\build\bin\Release\plugins\media\envmap\brdf.dds" SelfReg="false" NextFile="diffuse.dds"/>
-    <ROW File="build_instructions.html" Component_="build_instructions.html" FileName="BUILD_~1.HTM|build_instructions.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\build_from_source\build_instructions.html" SelfReg="false" NextFile="index.html_14"/>
-    <ROW File="build_instructions.rst.txt" Component_="build_instructions.rst.txt" FileName="BUILD_~1.TXT|build_instructions.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\build_from_source\build_instructions.rst.txt" SelfReg="false" NextFile="index.rst.txt_14"/>
-    <ROW File="buildinfo" Component_="buildinfo" FileName="BUILDI~1|.buildinfo" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\.buildinfo" SelfReg="false" NextFile="index.html"/>
-    <ROW File="commandline.html" Component_="commandline.html" FileName="COMMAN~1.HTM|commandline.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\command_line_tool\commandline.html" SelfReg="false" NextFile="index.html_15"/>
-    <ROW File="commandline.rst.txt" Component_="commandline.rst.txt" FileName="COMMAN~1.TXT|commandline.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\command_line_tool\commandline.rst.txt" SelfReg="false" NextFile="index.rst.txt_15"/>
+    <ROW File="build_instructions.html" Component_="build_instructions.html" FileName="BUILD_~1.HTM|build_instructions.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\build_from_source\build_instructions.html" SelfReg="false" NextFile="index.html_15"/>
+    <ROW File="build_instructions.rst.txt" Component_="build_instructions.rst.txt" FileName="BUILD_~1.TXT|build_instructions.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\build_from_source\build_instructions.rst.txt" SelfReg="false" NextFile="index.rst.txt_27"/>
+    <ROW File="buildinfo" Component_="buildinfo" FileName="BUILDI~1|.buildinfo" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\.buildinfo" SelfReg="false" NextFile="bibliography.html"/>
+    <ROW File="cmp_v3.2_analysis_output.png" Component_="analysis_properties.jpg" FileName="CMP_V3~1.PNG|cmp_v3.2_analysis_output.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\cmp_v3.2_analysis_output.png" SelfReg="false" NextFile="cmp_v3.2_run_time_analysis.png"/>
+    <ROW File="cmp_v3.2_run_time_analysis.png" Component_="analysis_properties.jpg" FileName="CMP_V3~2.PNG|cmp_v3.2_run_time_analysis.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\cmp_v3.2_run_time_analysis.png" SelfReg="false" NextFile="compression_setting.jpg"/>
+    <ROW File="commandline.html" Component_="commandline.html" FileName="COMMAN~1.HTM|commandline.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\command_line_tool\commandline.html" SelfReg="false" NextFile="index.html_16"/>
+    <ROW File="commandline.rst.txt" Component_="commandline.rst.txt" FileName="COMMAN~1.TXT|commandline.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\command_line_tool\commandline.rst.txt" SelfReg="false" NextFile="index.rst.txt_28"/>
     <ROW File="comment.png" Component_="acompress128.png" FileName="comment.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\comment.png" SelfReg="false" NextFile="badge_only.css"/>
     <ROW File="commentbright.png" Component_="acompress128.png" FileName="COMMEN~1.PNG|comment-bright.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\comment-bright.png" SelfReg="false" NextFile="commentclose.png"/>
     <ROW File="commentclose.png" Component_="acompress128.png" FileName="COMMEN~2.PNG|comment-close.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\comment-close.png" SelfReg="false" NextFile="comment.png"/>
@@ -310,33 +283,38 @@
     <ROW File="compressonator_properties.jpg" Component_="analysis_properties.jpg" FileName="COMPRE~4.JPG|compressonator_properties.jpg" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\compressonator_properties.jpg" SelfReg="false" NextFile="compressonator_properties_view.jpg"/>
     <ROW File="compressonator_properties_view.jpg" Component_="analysis_properties.jpg" FileName="COMPRE~5.JPG|compressonator_properties_view.jpg" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\compressonator_properties_view.jpg" SelfReg="false" NextFile="compressonator_tree_view.jpg"/>
     <ROW File="compressonator_tree_view.jpg" Component_="analysis_properties.jpg" FileName="COMPRE~6.JPG|compressonator_tree_view.jpg" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\compressonator_tree_view.jpg" SelfReg="false" NextFile="compressonator_window.jpg"/>
-    <ROW File="compressonator_window.jpg" Component_="analysis_properties.jpg" FileName="COMPRE~7.JPG|compressonator_window.jpg" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\compressonator_window.jpg" SelfReg="false" NextFile="cubemaps.png"/>
+    <ROW File="compressonator_window.jpg" Component_="analysis_properties.jpg" FileName="COMPRE~7.JPG|compressonator_window.jpg" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\compressonator_window.jpg" SelfReg="false" NextFile="csvfilesupport.png"/>
     <ROW File="contact.html" Component_="contact.html" FileName="CONTAC~1.HTM|contact.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\support\contact.html" SelfReg="false" NextFile="license.html"/>
     <ROW File="contact.rst.txt" Component_="contact.rst.txt" FileName="CONTAC~1.TXT|contact.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\support\contact.rst.txt" SelfReg="false" NextFile="license.rst.txt"/>
-    <ROW File="copyfiles.bat" Component_="bc1_encode_kernel.h" FileName="COPYFI~1.BAT|copyfiles.bat" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\copyfiles.bat" SelfReg="false" NextFile="guilicense.txt"/>
+    <ROW File="csvfilesupport.png" Component_="analysis_properties.jpg" FileName="CSVFIL~1.PNG|csvfilesupport.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\csvfilesupport.png" SelfReg="false" NextFile="cubemaps.png"/>
     <ROW File="cubemaps.png" Component_="analysis_properties.jpg" FileName="cubemaps.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\cubemaps.png" SelfReg="false" NextFile="del_remove_window.jpg"/>
     <ROW File="del_remove_window.jpg" Component_="analysis_properties.jpg" FileName="DEL_RE~1.JPG|del_remove_window.jpg" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\del_remove_window.jpg" SelfReg="false" NextFile="difficon.png"/>
-    <ROW File="difficon.png" Component_="analysis_properties.jpg" FileName="difficon.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\difficon.png" SelfReg="false" NextFile="GlobalSettings2.png"/>
+    <ROW File="difficon.png" Component_="analysis_properties.jpg" FileName="difficon.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\difficon.png" SelfReg="false" NextFile="globalsettings2.png"/>
     <ROW File="diffuse.dds" Component_="brdf.dds" FileName="diffuse.dds" Version="65535.65535.65535.65535" Attributes="1" SourcePath="..\build\bin\Release\plugins\media\envmap\diffuse.dds" SelfReg="false" NextFile="specular.dds"/>
+    <ROW File="dmodelcompression.html" Component_="dmodelcompression.html" FileName="3DMODE~1.HTM|3dmodelcompression.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\3dmodelcompression.html" SelfReg="false" NextFile="applicationoptions.html"/>
+    <ROW File="dmodelcompression.rst.txt" Component_="dmodelcompression.rst.txt" FileName="3DMODE~1.TXT|3dmodelcompression.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\3dmodelcompression.rst.txt" SelfReg="false" NextFile="applicationoptions.rst.txt"/>
     <ROW File="doctools.js" Component_="acompress128.png" FileName="doctools.js" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\doctools.js" SelfReg="false" NextFile="downpressed.png"/>
     <ROW File="down.png" Component_="acompress128.png" FileName="down.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\down.png" SelfReg="false" NextFile="file.png"/>
     <ROW File="downpressed.png" Component_="acompress128.png" FileName="DOWN-P~1.PNG|down-pressed.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\down-pressed.png" SelfReg="false" NextFile="down.png"/>
     <ROW File="downscale.hlsl" Component_="blend.hlsl" FileName="DOWNSC~1.HLS|downscale.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\downscale.hlsl" SelfReg="false" NextFile="downscalethreshold.hlsl"/>
-    <ROW File="downscalethreshold.hlsl" Component_="blend.hlsl" FileName="DOWNSC~2.HLS|downscalethreshold.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\downscalethreshold.hlsl" SelfReg="false" NextFile="gltf20.hlsl"/>
-    <ROW File="enUS.pak" Component_="enUS.pak" FileName="en-US.pak" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\translations\qtwebengine_locales\en-US.pak" SelfReg="false" NextFile="qjpeg.dll"/>
+    <ROW File="downscalethreshold.hlsl" Component_="blend.hlsl" FileName="DOWNSC~2.HLS|downscalethreshold.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\downscalethreshold.hlsl" SelfReg="false" NextFile="gltf20frag_vk.glsl"/>
     <ROW File="file.png" Component_="acompress128.png" FileName="file.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\file.png" SelfReg="false" NextFile="fontawesomewebfont.eot"/>
     <ROW File="fontawesomewebfont.eot" Component_="fontawesomewebfont.eot" FileName="FONTAW~1.EOT|fontawesome-webfont.eot" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\fonts\fontawesome-webfont.eot" SelfReg="false" NextFile="fontawesomewebfont.svg"/>
     <ROW File="fontawesomewebfont.svg" Component_="fontawesomewebfont.eot" FileName="FONTAW~1.SVG|fontawesome-webfont.svg" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\fonts\fontawesome-webfont.svg" SelfReg="false" NextFile="fontawesomewebfont.ttf"/>
     <ROW File="fontawesomewebfont.ttf" Component_="fontawesomewebfont.eot" FileName="FONTAW~1.TTF|fontawesome-webfont.ttf" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\fonts\fontawesome-webfont.ttf" SelfReg="false" NextFile="fontawesomewebfont.woff"/>
     <ROW File="fontawesomewebfont.woff" Component_="fontawesomewebfont.eot" FileName="FONTAW~1.WOF|fontawesome-webfont.woff" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\fonts\fontawesome-webfont.woff" SelfReg="false" NextFile="InconsolataBold.ttf"/>
-    <ROW File="genindex.html" Component_="buildinfo" FileName="GENIND~1.HTM|genindex.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\genindex.html" SelfReg="false" NextFile="GettingStarted.html"/>
-    <ROW File="glew32.dll_1" Component_="glew32.dll" FileName="glew32.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\glew32.dll" SelfReg="false" NextFile="opencv_core249.dll_1"/>
+    <ROW File="genindex.html" Component_="buildinfo" FileName="GENIND~1.HTM|genindex.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\genindex.html" SelfReg="false" NextFile="index.html"/>
+    <ROW File="gettingstarted.html" Component_="gettingstarted.html" FileName="GETTIN~1.HTM|gettingstarted.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\getting_started\gettingstarted.html" SelfReg="false" NextFile="index.html_24"/>
+    <ROW File="gettingstarted.rst.txt" Component_="gettingstarted.rst.txt" FileName="GETTIN~1.TXT|gettingstarted.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\getting_started\gettingstarted.rst.txt" SelfReg="false" NextFile="index.rst.txt_36"/>
+    <ROW File="glew32.dll" Component_="glew32.dll" FileName="glew32.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\glew32.dll" SelfReg="false" NextFile="ktx.dll"/>
+    <ROW File="globalsettings2.png" Component_="analysis_properties.jpg" FileName="GLOBAL~1.PNG|globalsettings2.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\globalsettings2.png" SelfReg="false" NextFile="globalsettings3.png"/>
+    <ROW File="globalsettings3.png" Component_="analysis_properties.jpg" FileName="GLOBAL~2.PNG|globalsettings3.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\globalsettings3.png" SelfReg="false" NextFile="globalsettings5.png"/>
+    <ROW File="globalsettings5.png" Component_="analysis_properties.jpg" FileName="GLOBAL~3.PNG|globalsettings5.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\globalsettings5.png" SelfReg="false" NextFile="image10.png"/>
     <ROW File="gltf20.hlsl" Component_="blend.hlsl" FileName="GLTF20~1.HLS|gltf20.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\gltf20.hlsl" SelfReg="false" NextFile="gltf20_ex.hlsl"/>
-    <ROW File="gltf20_ex.hlsl" Component_="blend.hlsl" FileName="GLTF20~2.HLS|gltf20_ex.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\gltf20_ex.hlsl" SelfReg="false" NextFile="gltf20frag_vk.glsl"/>
+    <ROW File="gltf20_ex.hlsl" Component_="blend.hlsl" FileName="GLTF20~2.HLS|gltf20_ex.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\gltf20_ex.hlsl" SelfReg="false" NextFile="shadowsfrag_vk.glsl"/>
     <ROW File="gltf20frag_vk.glsl" Component_="blend.hlsl" FileName="GLTF20~1.GLS|gltf20-frag_vk.glsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\gltf20-frag_vk.glsl" SelfReg="false" NextFile="gltf20vert_vk.glsl"/>
-    <ROW File="gltf20vert_vk.glsl" Component_="blend.hlsl" FileName="GLTF20~2.GLS|gltf20-vert_vk.glsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\gltf20-vert_vk.glsl" SelfReg="false" NextFile="shadows.hlsl"/>
-    <ROW File="guilicense.txt" Component_="guilicense.txt" FileName="GUILIC~1.TXT|guilicense.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\license\guilicense.txt" SelfReg="false" NextFile="license_file"/>
-    <ROW File="icudtl.dat" Component_="icudtl.dat" FileName="icudtl.dat" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\resources\icudtl.dat" SelfReg="false" NextFile="qtwebengine_devtools_resources.pak"/>
+    <ROW File="gltf20vert_vk.glsl" Component_="blend.hlsl" FileName="GLTF20~2.GLS|gltf20-vert_vk.glsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\gltf20-vert_vk.glsl" SelfReg="false" NextFile="gltf20.hlsl"/>
+    <ROW File="guilicense.txt" Component_="clilicense.txt" FileName="GUILIC~1.TXT|guilicense.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\license\guilicense.txt" SelfReg="false" NextFile="license.txt_1"/>
     <ROW File="image10.png" Component_="analysis_properties.jpg" FileName="image10.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image10.png" SelfReg="false" NextFile="image100.png"/>
     <ROW File="image100.png" Component_="analysis_properties.jpg" FileName="image100.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image100.png" SelfReg="false" NextFile="image101.png"/>
     <ROW File="image101.png" Component_="analysis_properties.jpg" FileName="image101.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image101.png" SelfReg="false" NextFile="image102.png"/>
@@ -368,17 +346,12 @@
     <ROW File="image123.png" Component_="analysis_properties.jpg" FileName="image123.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image123.png" SelfReg="false" NextFile="image124.png"/>
     <ROW File="image124.png" Component_="analysis_properties.jpg" FileName="image124.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image124.png" SelfReg="false" NextFile="image125.png"/>
     <ROW File="image125.png" Component_="analysis_properties.jpg" FileName="image125.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image125.png" SelfReg="false" NextFile="image126.png"/>
-    <ROW File="image126.png" Component_="analysis_properties.jpg" FileName="image126.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image126.png" SelfReg="false" NextFile="image1261.png"/>
-    <ROW File="image1261.png" Component_="analysis_properties.jpg" FileName="IMAGE1~3.PNG|image1261.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image1261.png" SelfReg="false" NextFile="image127.png"/>
-    <ROW File="image127.png" Component_="analysis_properties.jpg" FileName="image127.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image127.png" SelfReg="false" NextFile="image1271.png"/>
-    <ROW File="image1271.png" Component_="analysis_properties.jpg" FileName="IMAGE1~4.PNG|image1271.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image1271.png" SelfReg="false" NextFile="image128.png"/>
-    <ROW File="image128.png" Component_="analysis_properties.jpg" FileName="image128.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image128.png" SelfReg="false" NextFile="image1281.png"/>
-    <ROW File="image1281.png" Component_="analysis_properties.jpg" FileName="IMAGE1~5.PNG|image1281.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image1281.png" SelfReg="false" NextFile="image129.png"/>
-    <ROW File="image129.png" Component_="analysis_properties.jpg" FileName="image129.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image129.png" SelfReg="false" NextFile="image1291.png"/>
-    <ROW File="image1291.png" Component_="analysis_properties.jpg" FileName="IMAGE1~6.PNG|image1291.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image1291.png" SelfReg="false" NextFile="image13.png"/>
+    <ROW File="image126.png" Component_="analysis_properties.jpg" FileName="image126.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image126.png" SelfReg="false" NextFile="image127.png"/>
+    <ROW File="image127.png" Component_="analysis_properties.jpg" FileName="image127.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image127.png" SelfReg="false" NextFile="image128.png"/>
+    <ROW File="image128.png" Component_="analysis_properties.jpg" FileName="image128.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image128.png" SelfReg="false" NextFile="image129.png"/>
+    <ROW File="image129.png" Component_="analysis_properties.jpg" FileName="image129.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image129.png" SelfReg="false" NextFile="image13.png"/>
     <ROW File="image13.png" Component_="analysis_properties.jpg" FileName="image13.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image13.png" SelfReg="false" NextFile="image130.png"/>
-    <ROW File="image130.png" Component_="analysis_properties.jpg" FileName="image130.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image130.png" SelfReg="false" NextFile="image1301.png"/>
-    <ROW File="image1301.png" Component_="analysis_properties.jpg" FileName="IMAGE1~7.PNG|image1301.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image1301.png" SelfReg="false" NextFile="image131.png"/>
+    <ROW File="image130.png" Component_="analysis_properties.jpg" FileName="image130.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image130.png" SelfReg="false" NextFile="image131.png"/>
     <ROW File="image131.png" Component_="analysis_properties.jpg" FileName="image131.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image131.png" SelfReg="false" NextFile="image14.png"/>
     <ROW File="image14.png" Component_="analysis_properties.jpg" FileName="image14.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image14.png" SelfReg="false" NextFile="image15.png"/>
     <ROW File="image15.png" Component_="analysis_properties.jpg" FileName="image15.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image15.png" SelfReg="false" NextFile="image16.png"/>
@@ -415,7 +388,9 @@
     <ROW File="image40.png" Component_="analysis_properties.jpg" FileName="image40.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image40.png" SelfReg="false" NextFile="image41.png"/>
     <ROW File="image41.png" Component_="analysis_properties.jpg" FileName="image41.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image41.png" SelfReg="false" NextFile="image42.png"/>
     <ROW File="image42.png" Component_="analysis_properties.jpg" FileName="image42.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image42.png" SelfReg="false" NextFile="image43.png"/>
-    <ROW File="image43.png" Component_="analysis_properties.jpg" FileName="image43.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image43.png" SelfReg="false" NextFile="image44.png"/>
+    <ROW File="image43.png" Component_="analysis_properties.jpg" FileName="image43.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image43.png" SelfReg="false" NextFile="image435.png"/>
+    <ROW File="image435.png" Component_="analysis_properties.jpg" FileName="image435.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image435.png" SelfReg="false" NextFile="image436.png"/>
+    <ROW File="image436.png" Component_="analysis_properties.jpg" FileName="image436.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image436.png" SelfReg="false" NextFile="image44.png"/>
     <ROW File="image44.png" Component_="analysis_properties.jpg" FileName="image44.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image44.png" SelfReg="false" NextFile="image45.png"/>
     <ROW File="image45.png" Component_="analysis_properties.jpg" FileName="image45.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image45.png" SelfReg="false" NextFile="image46.png"/>
     <ROW File="image46.png" Component_="analysis_properties.jpg" FileName="image46.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image46.png" SelfReg="false" NextFile="image47.png"/>
@@ -474,117 +449,125 @@
     <ROW File="image98.png" Component_="analysis_properties.jpg" FileName="image98.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image98.png" SelfReg="false" NextFile="image99.png"/>
     <ROW File="image99.png" Component_="analysis_properties.jpg" FileName="image99.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image99.png" SelfReg="false" NextFile="image_diff_view.jpg"/>
     <ROW File="image_diff_view.jpg" Component_="analysis_properties.jpg" FileName="IMAGE_~1.JPG|image_diff_view.jpg" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\image_diff_view.jpg" SelfReg="false" NextFile="output.png"/>
-    <ROW File="index.html" Component_="index.html" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\analysis\index.html" SelfReg="false" NextFile="bibliography.html"/>
-    <ROW File="index.html_14" Component_="build_instructions.html" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\build_from_source\index.html" SelfReg="false" NextFile="commandline.html"/>
-    <ROW File="index.html_15" Component_="commandline.html" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\command_line_tool\index.html" SelfReg="false" NextFile="index.html_16"/>
-    <ROW File="index.html_16" Component_="index.html_9" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\developer_sdk\cmp_compressonator\index.html" SelfReg="false" NextFile="index.html_17"/>
-    <ROW File="index.html_17" Component_="index.html_10" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\developer_sdk\cmp_core\index.html" SelfReg="false" NextFile="index.html_18"/>
-    <ROW File="index.html_18" Component_="index.html_11" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\developer_sdk\cmp_framework\index.html" SelfReg="false" NextFile="index.html_19"/>
-    <ROW File="index.html_19" Component_="index.html_12" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\developer_sdk\codecs\index.html" SelfReg="false" NextFile="index.html_20"/>
-    <ROW File="index.html_20" Component_="index.html_13" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\developer_sdk\index.html" SelfReg="false" NextFile="index.html_21"/>
-    <ROW File="index.html_21" Component_="index.html_14" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\developer_sdk\mesh_compression\index.html" SelfReg="false" NextFile="index.html_22"/>
-    <ROW File="index.html_22" Component_="index.html_15" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\developer_sdk\mesh_optimization\index.html" SelfReg="false" NextFile="genindex.html"/>
-    <ROW File="index.html_23" Component_="GettingStarted.html" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\getting_started\index.html" SelfReg="false" NextFile="index.html_24"/>
-    <ROW File="index.html_24" Component_="index.html_16" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\index.html" SelfReg="false" NextFile="DModelCompression.html"/>
-    <ROW File="index.html_25" Component_="DModelCompression.html" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\index.html" SelfReg="false" NextFile="index_3DModelCompression.html"/>
-    <ROW File="index.html_26" Component_="buildinfo" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\index.html" SelfReg="false" NextFile="objects.inv"/>
+    <ROW File="imageview.html" Component_="dmodelcompression.html" FileName="IMAGEV~1.HTM|imageview.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\imageview.html" SelfReg="false" NextFile="index.html_26"/>
+    <ROW File="imageview.rst.txt" Component_="dmodelcompression.rst.txt" FileName="IMAGEV~1.TXT|imageview.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\imageview.rst.txt" SelfReg="false" NextFile="index.rst.txt_38"/>
+    <ROW File="index.html" Component_="buildinfo" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\index.html" SelfReg="false" NextFile="objects.inv"/>
+    <ROW File="index.html_14" Component_="index.html" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\analysis\index.html" SelfReg="false" NextFile="build_instructions.html"/>
+    <ROW File="index.html_15" Component_="build_instructions.html" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\build_from_source\index.html" SelfReg="false" NextFile="commandline.html"/>
+    <ROW File="index.html_16" Component_="commandline.html" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\command_line_tool\index.html" SelfReg="false" NextFile="index.html_17"/>
+    <ROW File="index.html_17" Component_="index.html_9" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\developer_sdk\cmp_compressonator\index.html" SelfReg="false" NextFile="index.html_18"/>
+    <ROW File="index.html_18" Component_="index.html_10" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\developer_sdk\cmp_core\index.html" SelfReg="false" NextFile="index.html_19"/>
+    <ROW File="index.html_19" Component_="index.html_11" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\developer_sdk\cmp_framework\index.html" SelfReg="false" NextFile="index.html_20"/>
+    <ROW File="index.html_20" Component_="index.html_12" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\developer_sdk\codecs\index.html" SelfReg="false" NextFile="index.html_21"/>
+    <ROW File="index.html_21" Component_="index.html_13" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\developer_sdk\index.html" SelfReg="false" NextFile="index.html_22"/>
+    <ROW File="index.html_22" Component_="index.html_14" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\developer_sdk\mesh_compression\index.html" SelfReg="false" NextFile="index.html_23"/>
+    <ROW File="index.html_23" Component_="index.html_15" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\developer_sdk\mesh_optimization\index.html" SelfReg="false" NextFile="gettingstarted.html"/>
+    <ROW File="index.html_24" Component_="gettingstarted.html" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\getting_started\index.html" SelfReg="false" NextFile="index.html_25"/>
+    <ROW File="index.html_25" Component_="index.html_16" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\index.html" SelfReg="false" NextFile="dmodelcompression.html"/>
+    <ROW File="index.html_26" Component_="dmodelcompression.html" FileName="INDEX~1.HTM|index.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\index.html" SelfReg="false" NextFile="index_3dmodelcompression.html"/>
     <ROW File="index.rst.txt" Component_="index.rst.txt" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\analysis\index.rst.txt" SelfReg="false" NextFile="bibliography.rst.txt"/>
-    <ROW File="index.rst.txt_14" Component_="build_instructions.rst.txt" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\build_from_source\index.rst.txt" SelfReg="false" NextFile="commandline.rst.txt"/>
-    <ROW File="index.rst.txt_15" Component_="commandline.rst.txt" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\command_line_tool\index.rst.txt" SelfReg="false" NextFile="index.rst.txt_16"/>
-    <ROW File="index.rst.txt_16" Component_="index.rst.txt_9" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\developer_sdk\cmp_compressonator\index.rst.txt" SelfReg="false" NextFile="index.rst.txt_17"/>
-    <ROW File="index.rst.txt_17" Component_="index.rst.txt_10" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\developer_sdk\cmp_core\index.rst.txt" SelfReg="false" NextFile="index.rst.txt_18"/>
-    <ROW File="index.rst.txt_18" Component_="index.rst.txt_11" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\developer_sdk\cmp_framework\index.rst.txt" SelfReg="false" NextFile="index.rst.txt_19"/>
-    <ROW File="index.rst.txt_19" Component_="index.rst.txt_12" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\developer_sdk\codecs\index.rst.txt" SelfReg="false" NextFile="index.rst.txt_20"/>
-    <ROW File="index.rst.txt_20" Component_="index.rst.txt_13" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\developer_sdk\index.rst.txt" SelfReg="false" NextFile="index.rst.txt_21"/>
-    <ROW File="index.rst.txt_21" Component_="index.rst.txt_14" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\developer_sdk\mesh_compression\index.rst.txt" SelfReg="false" NextFile="index.rst.txt_22"/>
-    <ROW File="index.rst.txt_22" Component_="index.rst.txt_15" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\developer_sdk\mesh_optimization\index.rst.txt" SelfReg="false" NextFile="GettingStarted.rst.txt"/>
-    <ROW File="index.rst.txt_23" Component_="GettingStarted.rst.txt" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\getting_started\index.rst.txt" SelfReg="false" NextFile="index.rst.txt_24"/>
-    <ROW File="index.rst.txt_24" Component_="index.rst.txt_16" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\index.rst.txt" SelfReg="false" NextFile="DModelCompression.rst.txt"/>
-    <ROW File="index.rst.txt_25" Component_="DModelCompression.rst.txt" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\index.rst.txt" SelfReg="false" NextFile="index_3DModelCompression.rst.txt"/>
-    <ROW File="index.rst.txt_26" Component_="bibliography.rst.txt" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\index.rst.txt" SelfReg="false" NextFile="revisions.rst.txt"/>
-    <ROW File="index_3DModelCompression.html" Component_="DModelCompression.html" FileName="INDEX_~1.HTM|index_3DModelCompression.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\index_3DModelCompression.html" SelfReg="false" NextFile="index_Introduction.html"/>
-    <ROW File="index_3DModelCompression.rst.txt" Component_="DModelCompression.rst.txt" FileName="INDEX_~1.TXT|index_3DModelCompression.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\index_3DModelCompression.rst.txt" SelfReg="false" NextFile="index_Introduction.rst.txt"/>
-    <ROW File="index_Introduction.html" Component_="DModelCompression.html" FileName="INDEX_~2.HTM|index_Introduction.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\index_Introduction.html" SelfReg="false" NextFile="index_TextureCompression.html"/>
-    <ROW File="index_Introduction.rst.txt" Component_="DModelCompression.rst.txt" FileName="INDEX_~2.TXT|index_Introduction.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\index_Introduction.rst.txt" SelfReg="false" NextFile="index_TextureCompression.rst.txt"/>
-    <ROW File="index_TextureCompression.html" Component_="DModelCompression.html" FileName="INDEX_~3.HTM|index_TextureCompression.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\index_TextureCompression.html" SelfReg="false" NextFile="index_TheMainWindow.html"/>
-    <ROW File="index_TextureCompression.rst.txt" Component_="DModelCompression.rst.txt" FileName="INDEX_~3.TXT|index_TextureCompression.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\index_TextureCompression.rst.txt" SelfReg="false" NextFile="index_TheMainWindow.rst.txt"/>
-    <ROW File="index_TheMainWindow.html" Component_="DModelCompression.html" FileName="INDEX_~4.HTM|index_TheMainWindow.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\index_TheMainWindow.html" SelfReg="false" NextFile="Introduction.html"/>
-    <ROW File="index_TheMainWindow.rst.txt" Component_="DModelCompression.rst.txt" FileName="INDEX_~4.TXT|index_TheMainWindow.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\index_TheMainWindow.rst.txt" SelfReg="false" NextFile="Introduction.rst.txt"/>
+    <ROW File="index.rst.txt_27" Component_="build_instructions.rst.txt" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\build_from_source\index.rst.txt" SelfReg="false" NextFile="commandline.rst.txt"/>
+    <ROW File="index.rst.txt_28" Component_="commandline.rst.txt" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\command_line_tool\index.rst.txt" SelfReg="false" NextFile="index.rst.txt_29"/>
+    <ROW File="index.rst.txt_29" Component_="index.rst.txt_17" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\developer_sdk\cmp_compressonator\index.rst.txt" SelfReg="false" NextFile="index.rst.txt_30"/>
+    <ROW File="index.rst.txt_30" Component_="index.rst.txt_18" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\developer_sdk\cmp_core\index.rst.txt" SelfReg="false" NextFile="index.rst.txt_31"/>
+    <ROW File="index.rst.txt_31" Component_="index.rst.txt_19" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\developer_sdk\cmp_framework\index.rst.txt" SelfReg="false" NextFile="index.rst.txt_32"/>
+    <ROW File="index.rst.txt_32" Component_="index.rst.txt_20" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\developer_sdk\codecs\index.rst.txt" SelfReg="false" NextFile="index.rst.txt_33"/>
+    <ROW File="index.rst.txt_33" Component_="index.rst.txt_21" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\developer_sdk\index.rst.txt" SelfReg="false" NextFile="index.rst.txt_34"/>
+    <ROW File="index.rst.txt_34" Component_="index.rst.txt_22" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\developer_sdk\mesh_compression\index.rst.txt" SelfReg="false" NextFile="index.rst.txt_35"/>
+    <ROW File="index.rst.txt_35" Component_="index.rst.txt_23" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\developer_sdk\mesh_optimization\index.rst.txt" SelfReg="false" NextFile="gettingstarted.rst.txt"/>
+    <ROW File="index.rst.txt_36" Component_="gettingstarted.rst.txt" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\getting_started\index.rst.txt" SelfReg="false" NextFile="index.rst.txt_37"/>
+    <ROW File="index.rst.txt_37" Component_="index.rst.txt_24" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\index.rst.txt" SelfReg="false" NextFile="dmodelcompression.rst.txt"/>
+    <ROW File="index.rst.txt_38" Component_="dmodelcompression.rst.txt" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\index.rst.txt" SelfReg="false" NextFile="index_3dmodelcompression.rst.txt"/>
+    <ROW File="index.rst.txt_39" Component_="bibliography.rst.txt" FileName="INDEXR~1.TXT|index.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\index.rst.txt" SelfReg="false" NextFile="revisions.rst.txt"/>
+    <ROW File="index_3dmodelcompression.html" Component_="dmodelcompression.html" FileName="INDEX_~1.HTM|index_3dmodelcompression.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\index_3dmodelcompression.html" SelfReg="false" NextFile="index_introduction.html"/>
+    <ROW File="index_3dmodelcompression.rst.txt" Component_="dmodelcompression.rst.txt" FileName="INDEX_~1.TXT|index_3dmodelcompression.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\index_3dmodelcompression.rst.txt" SelfReg="false" NextFile="index_introduction.rst.txt"/>
+    <ROW File="index_introduction.html" Component_="dmodelcompression.html" FileName="INDEX_~2.HTM|index_introduction.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\index_introduction.html" SelfReg="false" NextFile="index_texturecompression.html"/>
+    <ROW File="index_introduction.rst.txt" Component_="dmodelcompression.rst.txt" FileName="INDEX_~2.TXT|index_introduction.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\index_introduction.rst.txt" SelfReg="false" NextFile="index_texturecompression.rst.txt"/>
+    <ROW File="index_texturecompression.html" Component_="dmodelcompression.html" FileName="INDEX_~3.HTM|index_texturecompression.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\index_texturecompression.html" SelfReg="false" NextFile="index_themainwindow.html"/>
+    <ROW File="index_texturecompression.rst.txt" Component_="dmodelcompression.rst.txt" FileName="INDEX_~3.TXT|index_texturecompression.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\index_texturecompression.rst.txt" SelfReg="false" NextFile="index_themainwindow.rst.txt"/>
+    <ROW File="index_themainwindow.html" Component_="dmodelcompression.html" FileName="INDEX_~4.HTM|index_themainwindow.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\index_themainwindow.html" SelfReg="false" NextFile="introduction.html"/>
+    <ROW File="index_themainwindow.rst.txt" Component_="dmodelcompression.rst.txt" FileName="INDEX_~4.TXT|index_themainwindow.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\index_themainwindow.rst.txt" SelfReg="false" NextFile="introduction.rst.txt"/>
+    <ROW File="introduction.html" Component_="dmodelcompression.html" FileName="INTROD~1.HTM|introduction.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\introduction.html" SelfReg="false" NextFile="messageoutput.html"/>
+    <ROW File="introduction.rst.txt" Component_="dmodelcompression.rst.txt" FileName="INTROD~1.TXT|introduction.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\introduction.rst.txt" SelfReg="false" NextFile="messageoutput.rst.txt"/>
     <ROW File="jquery.js" Component_="acompress128.png" FileName="jquery.js" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\jquery.js" SelfReg="false" NextFile="modernizr.min.js"/>
     <ROW File="jquery3.1.0.js" Component_="acompress128.png" FileName="JQUERY~1.JS|jquery-3.1.0.js" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\jquery-3.1.0.js" SelfReg="false" NextFile="jquery.js"/>
-    <ROW File="ktx.dll" Component_="ktx.dll" FileName="ktx.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\ktx.dll" SelfReg="false" NextFile="Qt5PrintSupport.dll"/>
-    <ROW File="licence.txt" Component_="licence.txt" FileName="licence.txt" Version="65535.65535.65535.65535" Attributes="1" SourcePath="..\License\ETCPACK\licence.txt" SelfReg="false" NextFile="license.txt_3"/>
-    <ROW File="license" Component_="license_1" FileName="license" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\license\openexr\license" SelfReg="false" NextFile="readme"/>
-    <ROW File="license.html" Component_="contact.html" FileName="LICENS~1.HTM|license.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\support\license.html" SelfReg="false" NextFile="analysis_properties.jpg"/>
+    <ROW File="ktx.dll" Component_="ktx.dll" FileName="ktx.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\ktx.dll" SelfReg="false" NextFile="opencv_core249.dll"/>
+    <ROW File="licence.txt" Component_="licence.txt" FileName="licence.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\license\etcpack\licence.txt" SelfReg="false" NextFile="guilicense.txt"/>
+    <ROW File="license" Component_="license_1" FileName="license" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\license\directxtex\license" SelfReg="false" NextFile="licence.txt"/>
+    <ROW File="license.html" Component_="contact.html" FileName="LICENS~1.HTM|license.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\support\license.html" SelfReg="false" NextFile="license.txt"/>
     <ROW File="license.rst.txt" Component_="contact.rst.txt" FileName="LICENS~1.TXT|license.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\support\license.rst.txt" SelfReg="false" NextFile="acompress128.png"/>
-    <ROW File="license.txt" Component_="license.txt" FileName="license.txt" Version="65535.65535.65535.65535" Attributes="1" SourcePath="..\License\ASTC\license.txt" SelfReg="false" NextFile="licence.txt"/>
-    <ROW File="license.txt_1" Component_="license.txt_2" FileName="license.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\license\imgui\license.txt" SelfReg="false" NextFile="license.txt_2"/>
-    <ROW File="license.txt_2" Component_="license.txt_3" FileName="license.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\license\json\license.txt" SelfReg="false" NextFile="license"/>
-    <ROW File="license.txt_3" Component_="license.txt_1" FileName="license.txt" Version="65535.65535.65535.65535" Attributes="1" SourcePath="..\License\OpenCV\license.txt" SelfReg="false" NextFile="balls.exr"/>
-    <ROW File="license_1" Component_="license" FileName="license" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\license\directxtex\license" SelfReg="false" NextFile="license.txt_1"/>
-    <ROW File="license_file" Component_="guilicense.txt" FileName="LICENS~1|license_file" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\license\license_file" SelfReg="false" NextFile="readme.md"/>
+    <ROW File="license.txt" Component_="license.txt" FileName="license.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\license\astc\license.txt" SelfReg="false" NextFile="license"/>
+    <ROW File="license.txt_1" Component_="license.txt_1" FileName="license.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\license\imgui\license.txt" SelfReg="false" NextFile="license.txt_2"/>
+    <ROW File="license.txt_2" Component_="license.txt_2" FileName="license.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\license\json\license.txt" SelfReg="false" NextFile="license.txt_4"/>
+    <ROW File="license.txt_4" Component_="license.txt_3" FileName="license.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\license\opencv\license.txt" SelfReg="false" NextFile="license_1"/>
+    <ROW File="license_1" Component_="license_2" FileName="license" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\license\openexr\license" SelfReg="false" NextFile="readme"/>
+    <ROW File="messageoutput.html" Component_="dmodelcompression.html" FileName="MESSAG~1.HTM|messageoutput.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\messageoutput.html" SelfReg="false" NextFile="projectexplorer.html"/>
+    <ROW File="messageoutput.rst.txt" Component_="dmodelcompression.rst.txt" FileName="MESSAG~1.TXT|messageoutput.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\messageoutput.rst.txt" SelfReg="false" NextFile="projectexplorer.rst.txt"/>
     <ROW File="minus.png" Component_="acompress128.png" FileName="minus.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\minus.png" SelfReg="false" NextFile="plus.png"/>
     <ROW File="modernizr.min.js" Component_="modernizr.min.js" FileName="MODERN~1.JS|modernizr.min.js" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\js\modernizr.min.js" SelfReg="false" NextFile="theme.js"/>
     <ROW File="objects.inv" Component_="buildinfo" FileName="objects.inv" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\objects.inv" SelfReg="false" NextFile="revisions.html"/>
-    <ROW File="opencv_core249.dll_1" Component_="opencv_core249.dll_1" FileName="OPENCV~1.DLL|opencv_core249.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\opencv_core249.dll" SelfReg="false" NextFile="opencv_imgproc249.dll_1"/>
-    <ROW File="opencv_imgproc249.dll_1" Component_="opencv_imgproc249.dll_1" FileName="OPENCV~3.DLL|opencv_imgproc249.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\opencv_imgproc249.dll" SelfReg="false" NextFile="Qt5Core.dll_1"/>
-    <ROW File="output.png" Component_="analysis_properties.jpg" FileName="output.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\output.png" SelfReg="false" NextFile="rubybmp.jpg"/>
+    <ROW File="opencv_core249.dll" Component_="opencv_core249.dll" FileName="OPENCV~1.DLL|opencv_core249.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\opencv_core249.dll" SelfReg="false" NextFile="opencv_imgproc249.dll"/>
+    <ROW File="opencv_imgproc249.dll" Component_="opencv_imgproc249.dll" FileName="OPENCV~2.DLL|opencv_imgproc249.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\opencv_imgproc249.dll" SelfReg="false" NextFile="qt.conf"/>
+    <ROW File="output.png" Component_="analysis_properties.jpg" FileName="output.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\output.png" SelfReg="false" NextFile="psnrdisplayfeature.png"/>
     <ROW File="plus.png" Component_="acompress128.png" FileName="plus.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\plus.png" SelfReg="false" NextFile="pygments.css"/>
+    <ROW File="projectexplorer.html" Component_="dmodelcompression.html" FileName="PROJEC~1.HTM|projectexplorer.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\projectexplorer.html" SelfReg="false" NextFile="propertyview.html"/>
+    <ROW File="projectexplorer.rst.txt" Component_="dmodelcompression.rst.txt" FileName="PROJEC~1.TXT|projectexplorer.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\projectexplorer.rst.txt" SelfReg="false" NextFile="propertyview.rst.txt"/>
+    <ROW File="propertyview.html" Component_="dmodelcompression.html" FileName="PROPER~1.HTM|propertyview.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\propertyview.html" SelfReg="false" NextFile="texturecompression.html"/>
+    <ROW File="propertyview.rst.txt" Component_="dmodelcompression.rst.txt" FileName="PROPER~1.TXT|propertyview.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\propertyview.rst.txt" SelfReg="false" NextFile="texturecompression.rst.txt"/>
+    <ROW File="psnrdisplayfeature.png" Component_="analysis_properties.jpg" FileName="PSNRDI~1.PNG|psnrdisplayfeature.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\psnrdisplayfeature.png" SelfReg="false" NextFile="rubybmp.jpg"/>
     <ROW File="pygments.css" Component_="acompress128.png" FileName="pygments.css" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\pygments.css" SelfReg="false" NextFile="searchtools.js"/>
     <ROW File="qjpeg.dll" Component_="qjpeg.dll" FileName="qjpeg.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\imagefomrats\qjpeg.dll" SelfReg="false" NextFile="brdf.dds"/>
-    <ROW File="qt.conf_1" Component_="qt.conf" FileName="QT~1.CON|qt.conf" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\qt.conf" SelfReg="false" NextFile="glew32.dll_1"/>
+    <ROW File="qt.conf" Component_="qt.conf" FileName="QT~1.CON|qt.conf" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\qt.conf" SelfReg="false" NextFile="Qt5Core.dll"/>
     <ROW File="qtga.dll" Component_="qtga.dll" FileName="qtga.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\imagefomrats\qtga.dll" SelfReg="false" NextFile="qtiff.dll"/>
-    <ROW File="qtiff.dll" Component_="qtiff.dll" FileName="qtiff.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\imagefomrats\qtiff.dll" SelfReg="false" NextFile="BC6H_Compression.cprj"/>
-    <ROW File="qtwebengine_devtools_resources.pak" Component_="icudtl.dat" FileName="QTWEBE~1.PAK|qtwebengine_devtools_resources.pak" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\resources\qtwebengine_devtools_resources.pak" SelfReg="false" NextFile="qtwebengine_resources.pak"/>
-    <ROW File="qtwebengine_en.qm" Component_="qtwebengine_en.qm" FileName="QTWEBE~1.QM|qtwebengine_en.qm" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\translations\qtwebengine_en.qm" SelfReg="false" NextFile="enUS.pak"/>
-    <ROW File="qtwebengine_resources.pak" Component_="icudtl.dat" FileName="QTWEBE~2.PAK|qtwebengine_resources.pak" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\resources\qtwebengine_resources.pak" SelfReg="false" NextFile="qtwebengine_resources_100p.pak"/>
-    <ROW File="qtwebengine_resources_100p.pak" Component_="icudtl.dat" FileName="QTWEBE~3.PAK|qtwebengine_resources_100p.pak" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\resources\qtwebengine_resources_100p.pak" SelfReg="false" NextFile="qtwebengine_resources_200p.pak"/>
-    <ROW File="qtwebengine_resources_200p.pak" Component_="icudtl.dat" FileName="QTWEBE~4.PAK|qtwebengine_resources_200p.pak" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\resources\qtwebengine_resources_200p.pak" SelfReg="false" NextFile="qtwebengine_en.qm"/>
+    <ROW File="qtiff.dll" Component_="qtiff.dll" FileName="qtiff.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\imagefomrats\qtiff.dll" SelfReg="false" NextFile="qjpeg.dll"/>
     <ROW File="qwindows.dll" Component_="qwindows.dll" FileName="qwindows.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\platforms\qwindows.dll" SelfReg="false" NextFile="qtga.dll"/>
-    <ROW File="readme" Component_="license_1" FileName="readme" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\license\openexr\readme" SelfReg="false"/>
-    <ROW File="readme.md" Component_="guilicense.txt" FileName="readme.md" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\license\readme.md" SelfReg="false" NextFile="license_1"/>
-    <ROW File="readme.txt_2" Component_="readme.txt" FileName="readme.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\media\envmap\readme.txt" SelfReg="false" NextFile="buildinfo"/>
+    <ROW File="readme" Component_="license_2" FileName="readme" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\license\openexr\readme" SelfReg="false" NextFile="bc6h_compression.cprj"/>
+    <ROW File="readme.txt_2" Component_="readme.txt" FileName="readme.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\media\envmap\readme.txt" SelfReg="false" NextFile="glew32.dll"/>
     <ROW File="revisions.html" Component_="buildinfo" FileName="REVISI~1.HTM|revisions.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\revisions.html" SelfReg="false" NextFile="search.html"/>
     <ROW File="revisions.rst.txt" Component_="bibliography.rst.txt" FileName="REVISI~1.TXT|revisions.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\revisions.rst.txt" SelfReg="false" NextFile="contact.rst.txt"/>
-    <ROW File="ruby.bmp" Component_="balls.exr" FileName="ruby.bmp" Version="65535.65535.65535.65535" Attributes="1" SourcePath="..\RunTime\images\ruby.bmp" SelfReg="false" NextFile="ruby.png"/>
-    <ROW File="ruby.dds" Component_="balls.exr" FileName="ruby.dds" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\RunTime\images\ruby.dds" SelfReg="false" NextFile="readme.txt_2"/>
-    <ROW File="ruby.png" Component_="balls.exr" FileName="ruby.png" Version="65535.65535.65535.65535" Attributes="1" SourcePath="..\RunTime\images\ruby.png" SelfReg="false" NextFile="ruby.tga"/>
-    <ROW File="ruby.tga" Component_="balls.exr" FileName="ruby.tga" Version="65535.65535.65535.65535" Attributes="1" SourcePath="..\RunTime\images\ruby.tga" SelfReg="false" NextFile="ruby.tif"/>
-    <ROW File="ruby.tif" Component_="balls.exr" FileName="ruby.tif" Version="65535.65535.65535.65535" Attributes="1" SourcePath="..\RunTime\images\ruby.tif" SelfReg="false" NextFile="ruby_alpha.tga"/>
+    <ROW File="ruby.bmp" Component_="_image_credits.txt" FileName="ruby.bmp" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\runtime\images\ruby.bmp" SelfReg="false" NextFile="ruby.dds"/>
+    <ROW File="ruby.dds" Component_="_image_credits.txt" FileName="ruby.dds" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\runtime\images\ruby.dds" SelfReg="false" NextFile="ruby.png"/>
+    <ROW File="ruby.png" Component_="_image_credits.txt" FileName="ruby.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\runtime\images\ruby.png" SelfReg="false" NextFile="ruby.tga"/>
+    <ROW File="ruby.tga" Component_="_image_credits.txt" FileName="ruby.tga" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\runtime\images\ruby.tga" SelfReg="false" NextFile="ruby.tif"/>
+    <ROW File="ruby.tif" Component_="_image_credits.txt" FileName="ruby.tif" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\runtime\images\ruby.tif" SelfReg="false" NextFile="ruby_alpha.tga"/>
     <ROW File="ruby_1view.jpg" Component_="analysis_properties.jpg" FileName="RUBY_1~1.JPG|ruby_1view.jpg" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\ruby_1view.jpg" SelfReg="false" NextFile="ruby_compress_win_view.jpg"/>
-    <ROW File="ruby_alpha.tga" Component_="balls.exr" FileName="RUBY_A~1.TGA|ruby_alpha.tga" Version="65535.65535.65535.65535" Attributes="1" SourcePath="..\RunTime\images\ruby_alpha.tga" SelfReg="false" NextFile="_Image_credits.txt"/>
+    <ROW File="ruby_alpha.tga" Component_="_image_credits.txt" FileName="RUBY_A~1.TGA|ruby_alpha.tga" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\runtime\images\ruby_alpha.tga" SelfReg="false" NextFile="buildinfo"/>
     <ROW File="ruby_compress_win_view.jpg" Component_="analysis_properties.jpg" FileName="RUBY_C~1.JPG|ruby_compress_win_view.jpg" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\ruby_compress_win_view.jpg" SelfReg="false" NextFile="save_view.jpg"/>
     <ROW File="rubybmp.jpg" Component_="analysis_properties.jpg" FileName="rubybmp.jpg" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\rubybmp.jpg" SelfReg="false" NextFile="ruby_1view.jpg"/>
     <ROW File="save_view.jpg" Component_="analysis_properties.jpg" FileName="SAVE_V~1.JPG|save_view.jpg" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\save_view.jpg" SelfReg="false" NextFile="view_img_diff.jpg"/>
     <ROW File="search.html" Component_="buildinfo" FileName="SEARCH~1.HTM|search.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\search.html" SelfReg="false" NextFile="searchindex.js"/>
-    <ROW File="searchindex.js" Component_="buildinfo" FileName="SEARCH~1.JS|searchindex.js" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\searchindex.js" SelfReg="false" NextFile="contact.html"/>
+    <ROW File="searchindex.js" Component_="buildinfo" FileName="SEARCH~1.JS|searchindex.js" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\searchindex.js" SelfReg="false" NextFile="index.rst.txt"/>
     <ROW File="searchtools.js" Component_="acompress128.png" FileName="SEARCH~1.JS|searchtools.js" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\searchtools.js" SelfReg="false" NextFile="theme_overrides.css"/>
     <ROW File="shadows.hlsl" Component_="blend.hlsl" FileName="SHADOW~1.HLS|shadows.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\shadows.hlsl" SelfReg="false" NextFile="shadows_vk.hlsl"/>
-    <ROW File="shadows_vk.hlsl" Component_="blend.hlsl" FileName="SHADOW~2.HLS|shadows_vk.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\shadows_vk.hlsl" SelfReg="false" NextFile="shadowsfrag_vk.glsl"/>
+    <ROW File="shadows_vk.hlsl" Component_="blend.hlsl" FileName="SHADOW~2.HLS|shadows_vk.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\shadows_vk.hlsl" SelfReg="false" NextFile="skydome.hlsl"/>
     <ROW File="shadowsfrag_vk.glsl" Component_="blend.hlsl" FileName="SHADOW~1.GLS|shadows-frag_vk.glsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\shadows-frag_vk.glsl" SelfReg="false" NextFile="shadowsvert_vk.glsl"/>
-    <ROW File="shadowsvert_vk.glsl" Component_="blend.hlsl" FileName="SHADOW~2.GLS|shadows-vert_vk.glsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\shadows-vert_vk.glsl" SelfReg="false" NextFile="skydome.hlsl"/>
+    <ROW File="shadowsvert_vk.glsl" Component_="blend.hlsl" FileName="SHADOW~2.GLS|shadows-vert_vk.glsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\shadows-vert_vk.glsl" SelfReg="false" NextFile="shadows.hlsl"/>
     <ROW File="skydome.hlsl" Component_="blend.hlsl" FileName="SKYDOM~1.HLS|skydome.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\skydome.hlsl" SelfReg="false" NextFile="tonemapping.hlsl"/>
-    <ROW File="specular.dds" Component_="brdf.dds" FileName="specular.dds" Version="65535.65535.65535.65535" Attributes="1" SourcePath="..\build\bin\Release\plugins\media\envmap\specular.dds" SelfReg="false" NextFile="texture.frag.spv_1"/>
-    <ROW File="style.css" Component_="style.css" FileName="style.css" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\WelcomePage\style.css" SelfReg="false" NextFile="Welcome.html"/>
-    <ROW File="texture.frag.spv_1" Component_="texture.frag.spv_1" FileName="TEXTUR~1.SPV|texture.frag.spv" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\texture.frag.spv" SelfReg="false" NextFile="texture.vert.spv_1"/>
-    <ROW File="texture.vert.spv_1" Component_="texture.frag.spv_1" FileName="TEXTUR~2.SPV|texture.vert.spv" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\texture.vert.spv" SelfReg="false" NextFile="qt.conf_1"/>
+    <ROW File="specular.dds" Component_="brdf.dds" FileName="specular.dds" Version="65535.65535.65535.65535" Attributes="1" SourcePath="..\build\bin\Release\plugins\media\envmap\specular.dds" SelfReg="false" NextFile="Compressonator.exe"/>
+    <ROW File="texture.frag.spv" Component_="qt.conf" FileName="TEXTUR~1.SPV|texture.frag.spv" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\texture.frag.spv" SelfReg="false" NextFile="texture.vert.spv"/>
+    <ROW File="texture.vert.spv" Component_="qt.conf" FileName="TEXTUR~2.SPV|texture.vert.spv" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\texture.vert.spv" SelfReg="false" NextFile="EncodeWith_DXC.dll"/>
+    <ROW File="texturecompression.html" Component_="dmodelcompression.html" FileName="TEXTUR~1.HTM|texturecompression.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\texturecompression.html" SelfReg="false" NextFile="toolbars.html"/>
+    <ROW File="texturecompression.rst.txt" Component_="dmodelcompression.rst.txt" FileName="TEXTUR~1.TXT|texturecompression.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\texturecompression.rst.txt" SelfReg="false" NextFile="toolbars.rst.txt"/>
     <ROW File="theme.css" Component_="badge_only.css" FileName="theme.css" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\css\theme.css" SelfReg="false" NextFile="doctools.js"/>
     <ROW File="theme.js" Component_="modernizr.min.js" FileName="theme.js" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\js\theme.js" SelfReg="false" NextFile="minus.png"/>
     <ROW File="theme_overrides.css" Component_="acompress128.png" FileName="THEME_~1.CSS|theme_overrides.css" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\theme_overrides.css" SelfReg="false" NextFile="underscore1.3.1.js"/>
-    <ROW File="tonemapping.hlsl" Component_="blend.hlsl" FileName="TONEMA~1.HLS|tonemapping.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\tonemapping.hlsl" SelfReg="false" NextFile="bc1_encode_kernel.h"/>
+    <ROW File="tonemapping.hlsl" Component_="blend.hlsl" FileName="TONEMA~1.HLS|tonemapping.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\shaders\tonemapping.hlsl" SelfReg="false" NextFile="Qt5OpenGL.dll"/>
+    <ROW File="toolbars.html" Component_="dmodelcompression.html" FileName="TOOLBA~1.HTM|toolbars.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\toolbars.html" SelfReg="false" NextFile="userguide.html"/>
+    <ROW File="toolbars.rst.txt" Component_="dmodelcompression.rst.txt" FileName="TOOLBA~1.TXT|toolbars.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\toolbars.rst.txt" SelfReg="false" NextFile="userguide.rst.txt"/>
     <ROW File="underscore.js" Component_="acompress128.png" FileName="UNDERS~2.JS|underscore.js" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\underscore.js" SelfReg="false" NextFile="uppressed.png"/>
     <ROW File="underscore1.3.1.js" Component_="acompress128.png" FileName="UNDERS~1.JS|underscore-1.3.1.js" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\underscore-1.3.1.js" SelfReg="false" NextFile="underscore.js"/>
     <ROW File="up.png" Component_="acompress128.png" FileName="up.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\up.png" SelfReg="false" NextFile="websupport.js"/>
     <ROW File="uppressed.png" Component_="acompress128.png" FileName="UP-PRE~1.PNG|up-pressed.png" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\up-pressed.png" SelfReg="false" NextFile="up.png"/>
-    <ROW File="view_img_diff.jpg" Component_="analysis_properties.jpg" FileName="VIEW_I~1.JPG|view_img_diff.jpg" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\view_img_diff.jpg" SelfReg="false" NextFile="index.rst.txt"/>
-    <ROW File="websupport.js" Component_="acompress128.png" FileName="WEBSUP~1.JS|websupport.js" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\websupport.js" SelfReg="false" NextFile="ktx.dll"/>
+    <ROW File="userguide.html" Component_="dmodelcompression.html" FileName="USERGU~1.HTM|userguide.html" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\gui_tool\user_guide\userguide.html" SelfReg="false" NextFile="contact.html"/>
+    <ROW File="userguide.rst.txt" Component_="dmodelcompression.rst.txt" FileName="USERGU~1.TXT|userguide.rst.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_sources\gui_tool\user_guide\userguide.rst.txt" SelfReg="false" NextFile="index.rst.txt_39"/>
+    <ROW File="view_img_diff.jpg" Component_="analysis_properties.jpg" FileName="VIEW_I~1.JPG|view_img_diff.jpg" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_images\view_img_diff.jpg" SelfReg="false"/>
+    <ROW File="websupport.js" Component_="acompress128.png" FileName="WEBSUP~1.JS|websupport.js" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\docs\build\html\_static\websupport.js" SelfReg="false" NextFile="index.html_14"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AiRemoveFileComponent">
     <ROW RemoveFile="_" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;)" Options="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
     <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="0" PackageFolder="AMDCompress-SetupFiles" PackageFileName="[|SETUP_FILE_NAME]" Languages="en" InstallationType="2" CabsLocation="1" UseLzma="true" LzmaMethod="2" LzmaCompressionLevel="3" PackageType="1" FilesInsideExe="true" ExeIconPath="..\build\bin\Release\compressonator.exe" ExtractionFolder="[AppDataFolder][|Manufacturer]\[|ProductName] [|ProductVersion]\install" ExtUI="true" UseLargeSchema="true" ExeName="[|SETUP_FILE_NAME]" MsiPackageType="x64" UACExecutionLevel="2"/>
-    <ATTRIBUTE name="CurrentBuild" value="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
     <ROW Path="&lt;AI_DICTS&gt;ui.ail"/>
@@ -598,6 +581,9 @@
     <ROW Fragment="LicenseAgreementDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\LicenseAgreementDlg.aip"/>
     <ROW Fragment="MaintenanceTypeDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\MaintenanceTypeDlg.aip"/>
     <ROW Fragment="MaintenanceWelcomeDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\MaintenanceWelcomeDlg.aip"/>
+    <ROW Fragment="PreparePrereqDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\PreparePrereqDlg.aip"/>
+    <ROW Fragment="PrerequisitesDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\PrerequisitesDlg.aip"/>
+    <ROW Fragment="ProgressPrereqDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\ProgressPrereqDlg.aip"/>
     <ROW Fragment="SequenceDialogs.aip" Path="&lt;AI_THEMES&gt;classic\fragments\SequenceDialogs.aip"/>
     <ROW Fragment="Sequences.aip" Path="&lt;AI_FRAGS&gt;Sequences.aip"/>
     <ROW Fragment="StaticUIStrings.aip" Path="&lt;AI_FRAGS&gt;StaticUIStrings.aip"/>
@@ -606,6 +592,7 @@
     <ROW Fragment="VerifyRemoveDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\VerifyRemoveDlg.aip"/>
     <ROW Fragment="VerifyRepairDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\VerifyRepairDlg.aip"/>
     <ROW Fragment="WelcomeDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\WelcomeDlg.aip"/>
+    <ROW Fragment="WelcomePrereqDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\WelcomePrereqDlg.aip"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiActionTextComponent">
     <ROW Action="AI_AiRemoveFilesCommit" Description="Executing file removal operations" Template="Executing file removal: [1]" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesCommit" TemplateLocId="ActionText.Template.AI_AiRemoveFilesCommit"/>
@@ -615,13 +602,8 @@
     <ROW Action="AI_AiRemoveFilesRollback" Description="Restoring removed files" Template="Restoring file: [1]" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesRollback" TemplateLocId="ActionText.Template.AI_AiRemoveFilesRollback"/>
     <ROW Action="AI_DeleteLzma" Description="Deleting files extracted from archive" DescriptionLocId="ActionText.Description.AI_DeleteLzma" TemplateLocId="-"/>
     <ROW Action="AI_DeleteRLzma" Description="Deleting files extracted from archive" DescriptionLocId="ActionText.Description.AI_DeleteLzma" TemplateLocId="-"/>
-    <ROW Action="AI_DownloadPrereq" Description="Downloading prerequisite software" Template="Downloading [1]{[2] completed}" DescriptionLocId="ActionText.Description.AI_DownloadPrereq" TemplateLocId="ActionText.Template.AI_DownloadPrereq"/>
     <ROW Action="AI_ExtractFiles" Description="Extracting files from archive" DescriptionLocId="ActionText.Description.AI_ExtractLzma" TemplateLocId="-"/>
     <ROW Action="AI_ExtractLzma" Description="Extracting files from archive" DescriptionLocId="ActionText.Description.AI_ExtractLzma" TemplateLocId="-"/>
-    <ROW Action="AI_ExtractPrereq" Description="Extracting prerequisite software" Template="Extracting [1]{[2] completed}" DescriptionLocId="ActionText.Description.AI_ExtractPrereq" TemplateLocId="ActionText.Template.AI_ExtractPrereq"/>
-    <ROW Action="AI_InstallPostPrerequisite" Description="Installing prerequisite software" Template="Installing [1]{[2] completed}" DescriptionLocId="ActionText.Description.AI_InstallPrerequisite" TemplateLocId="ActionText.Template.AI_InstallPrerequisite"/>
-    <ROW Action="AI_InstallPrerequisite" Description="Installing prerequisite software" Template="Installing [1]{[2] completed}" DescriptionLocId="ActionText.Description.AI_InstallPrerequisite" TemplateLocId="ActionText.Template.AI_InstallPrerequisite"/>
-    <ROW Action="AI_VerifyPrereq" Description="Verifying prerequisites" Template="[1] was not installed correctly." DescriptionLocId="ActionText.Description.AI_VerifyPrereq" TemplateLocId="ActionText.Template.AI_VerifyPrereq"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiAppSearchComponent">
     <ROW Property="AI_SETUPEXEPATH" Signature_="AI_EXE_PATH_CU" Builds="DefaultBuild"/>
@@ -669,9 +651,9 @@
     <ROW Dialog_="ConfigureDlg" Control_="Tab" Event="SpawnDialog" Argument="FolderPage" Condition="( AiTabPage ) AND ( NOT Installed )" Ordering="1"/>
     <ROW Dialog_="ConfigureDlg" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="ConfigureDlg" Control_="Back" Event="NewDialog" Argument="LicenseAgreementDlg" Condition="AI_INSTALL" Ordering="1"/>
-    <ROW Dialog_="ExitDialog" Control_="Finish" Event="DoAction" Argument="AI_CleanPrereq" Condition="1" Ordering="301"/>
-    <ROW Dialog_="FatalError" Control_="Finish" Event="DoAction" Argument="AI_CleanPrereq" Condition="1" Ordering="102"/>
-    <ROW Dialog_="UserExit" Control_="Finish" Event="DoAction" Argument="AI_CleanPrereq" Condition="1" Ordering="101"/>
+    <ROW Dialog_="WelcomePrereqDlg" Control_="Next" Event="NewDialog" Argument="PrerequisitesDlg" Condition="AI_BOOTSTRAPPER" Ordering="1"/>
+    <ROW Dialog_="PrerequisitesDlg" Control_="Next" Event="EndDialog" Argument="Return" Condition="AI_BOOTSTRAPPER" Ordering="1"/>
+    <ROW Dialog_="PrerequisitesDlg" Control_="Back" Event="NewDialog" Argument="WelcomePrereqDlg" Condition="AI_BOOTSTRAPPER" Ordering="1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR" ManualDelete="false"/>
@@ -684,24 +666,20 @@
     <ROW Action="AI_AiRemoveFilesRollback" Type="11521" Source="ResourceCleaner.dll" Target="OnAiUndoRemoveFiles"/>
     <ROW Action="AI_AppSearchEx" Type="1" Source="Prereq.dll" Target="DoAppSearchEx"/>
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH_ORIGINAL" Target="[AI_SETUPEXEPATH]"/>
-    <ROW Action="AI_CleanPrereq" Type="65" Source="Prereq.dll" Target="CleanPrereq" WithoutSeq="true"/>
     <ROW Action="AI_DATA_SETTER" Type="51" Source="AI_ExtractFiles" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DeleteCadLzma" Type="51" Source="AI_DeleteLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DeleteLzma" Type="1025" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
     <ROW Action="AI_DeleteRCadLzma" Type="51" Source="AI_DeleteRLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DeleteRLzma" Type="1281" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
-    <ROW Action="AI_DownloadPrereq" Type="1" Source="Prereq.dll" Target="DownloadPrereq"/>
     <ROW Action="AI_DpiContentScale" Type="1" Source="aicustact.dll" Target="DpiContentScale"/>
+    <ROW Action="AI_EnableDebugLog" Type="321" Source="aicustact.dll" Target="EnableDebugLog"/>
     <ROW Action="AI_EstimateExtractFiles" Type="1" Source="Prereq.dll" Target="EstimateExtractFiles"/>
     <ROW Action="AI_ExtractCadLzma" Type="51" Source="AI_ExtractLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_ExtractFiles" Type="1025" Source="Prereq.dll" Target="ExtractSourceFiles" AdditionalSeq="AI_DATA_SETTER"/>
     <ROW Action="AI_ExtractLzma" Type="1025" Source="lzmaextractor.dll" Target="ExtractLZMAFiles"/>
-    <ROW Action="AI_ExtractPrereq" Type="65" Source="Prereq.dll" Target="ExtractPrereq"/>
     <ROW Action="AI_FindExeLzma" Type="1" Source="lzmaextractor.dll" Target="FindEXE"/>
     <ROW Action="AI_GetArpIconPath" Type="1" Source="aicustact.dll" Target="GetArpIconPath"/>
     <ROW Action="AI_InstallModeCheck" Type="1" Source="aicustact.dll" Target="UpdateInstallMode" WithoutSeq="true"/>
-    <ROW Action="AI_InstallPostPrerequisite" Type="1" Source="Prereq.dll" Target="InstallPostPrereq"/>
-    <ROW Action="AI_InstallPrerequisite" Type="65" Source="Prereq.dll" Target="InstallPrereq"/>
     <ROW Action="AI_LaunchApp" Type="1" Source="aicustact.dll" Target="[#Compressonator.exe]"/>
     <ROW Action="AI_PREPARE_UPGRADE" Type="65" Source="aicustact.dll" Target="PrepareUpgrade"/>
     <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH" Target="[AI_SETUPEXEPATH_ORIGINAL]"/>
@@ -709,13 +687,12 @@
     <ROW Action="AI_SETMIXINSTLOCATION" Type="1" Source="aicustact.dll" Target="MixedAllUsersInstallLocation"/>
     <ROW Action="AI_SHOW_LOG" Type="65" Source="aicustact.dll" Target="LaunchLogFile" WithoutSeq="true"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
-    <ROW Action="AI_VerifyPrereq" Type="1" Source="Prereq.dll" Target="VerifyPrereq"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[WindowsVolume]Compressonator_[ProductVersion]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]" MultiBuildTarget="DefaultBuild:[ProgramMenuFolder]\Compressonator_[ProductVersion]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiEnvComponent">
-    <ROW Environment="AMDCOMPRESS_ROOT" Name="=-*COMPRESSONATOR_ROOT" Value="[APPDIR]" Component_="acompress128.png"/>
+    <ROW Environment="AMDCOMPRESS_ROOT" Name="=-*COMPRESSONATOR_ROOT" Value="[APPDIR]" Component_="EncodeWith_GPU.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
     <ROW Name="appicon.exe" SourcePath="appicon.ico" Index="0"/>
@@ -723,7 +700,7 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
     <ROW Action="AI_STORE_LOCATION" Condition="(Not Installed) OR REINSTALL" Sequence="1501"/>
     <ROW Action="AI_PREPARE_UPGRADE" Condition="AI_UPGRADE=&quot;No&quot; AND (Not Installed)" Sequence="1399"/>
-    <ROW Action="AI_ResolveKnownFolders" Sequence="51"/>
+    <ROW Action="AI_ResolveKnownFolders" Sequence="52"/>
     <ROW Action="AI_SETMIXINSTLOCATION" Sequence="748"/>
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Sequence="99" Builds="DefaultBuild"/>
     <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Condition="AI_SETUPEXEPATH_ORIGINAL" Sequence="102" Builds="DefaultBuild"/>
@@ -733,31 +710,30 @@
     <ROW Action="AI_FindExeLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="196" Builds="DefaultBuild"/>
     <ROW Action="AI_ExtractLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="1549" Builds="DefaultBuild"/>
     <ROW Action="AI_DeleteRLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="1548" Builds="DefaultBuild"/>
-    <ROW Action="AI_DeleteLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="6599" Builds="DefaultBuild"/>
+    <ROW Action="AI_DeleteLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="6598" Builds="DefaultBuild"/>
     <ROW Action="AI_ExtractFiles" Sequence="3998" Builds="DefaultBuild"/>
     <ROW Action="AI_DATA_SETTER" Sequence="3997"/>
     <ROW Action="AI_EstimateExtractFiles" Sequence="3999" Builds="DefaultBuild"/>
     <ROW Action="AI_AiRemoveFilesRollback" Sequence="3099"/>
     <ROW Action="AI_GetArpIconPath" Sequence="1401"/>
-    <ROW Action="AI_VerifyPrereq" Sequence="1101"/>
     <ROW Action="AI_AppSearchEx" Sequence="101"/>
+    <ROW Action="AI_EnableDebugLog" Sequence="51"/>
     <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="ExecuteAction" Sequence="1299" SeqType="0" MsiKey="ExecuteAction"/>
-    <ROW Action="AI_ResolveKnownFolders" Sequence="52"/>
-    <ROW Action="AI_DpiContentScale" Sequence="51"/>
+    <ROW Action="AI_ResolveKnownFolders" Sequence="53"/>
+    <ROW Action="AI_DpiContentScale" Sequence="52"/>
     <ROW Action="AI_SETMIXINSTLOCATION" Sequence="748"/>
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Sequence="99"/>
     <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Condition="AI_SETUPEXEPATH_ORIGINAL" Sequence="102"/>
-    <ROW Action="AI_DownloadPrereq" Sequence="1296"/>
-    <ROW Action="AI_ExtractPrereq" Sequence="1297"/>
-    <ROW Action="AI_InstallPrerequisite" Sequence="1298"/>
-    <ROW Action="AI_InstallPostPrerequisite" Sequence="1300"/>
     <ROW Action="AI_AppSearchEx" Sequence="101"/>
+    <ROW Action="AI_EnableDebugLog" Sequence="51"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiLaunchConditionsComponent">
     <ROW Condition="(VersionNT &lt;&gt; 400)" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNT40Display]." DescriptionLocId="AI.LaunchCondition.NoNT40" IsPredefined="true" Builds="DefaultBuild"/>
+    <ROW Condition="(VersionNT &lt;&gt; 500)" Description="[ProductName] cannot be installed on [WindowsTypeNT50Display]." DescriptionLocId="AI.LaunchCondition.NoNT50" IsPredefined="true" Builds="DefaultBuild"/>
+    <ROW Condition="(VersionNT64 OR ((VersionNT &lt;&gt; 501) OR (ServicePackLevel = 3))) AND ((VersionNT &lt;&gt; 502) OR (ServicePackLevel = 2))" Description="[ProductName] cannot be installed on [WindowsTypeNT5XDisplay]." DescriptionLocId="AI.LaunchCondition.NoNT5X" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="Privileged" Description="[ProductName] requires administrative privileges to install." DescriptionLocId="AI.LaunchCondition.Privileged" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionNT" Description="[ProductName] cannot be installed on [WindowsType9XDisplay]." DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
   </COMPONENT>
@@ -770,8 +746,6 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRegsComponent">
     <ROW Registry="AI_ExePath" Root="-1" Key="Software\Caphyon\Advanced Installer\LZMA\[ProductCode]\[ProductVersion]" Name="AI_ExePath" Value="[AI_SETUPEXEPATH]" Component_="AI_ExePath"/>
-    <ROW Registry="B5158184F44A6981C5919229A6AEBE" Root="-1" Key="Software\Caphyon\Advanced Installer\Prereqs\[ProductCode]\[ProductVersion]" Name="B5158184F44A6981C5919229A6AEBE" Value="1" Component_="B5158184F44A6981C5919229A6AEBE"/>
-    <ROW Registry="CA62D813A4E74FA2AAE86A7D7B7B1493" Root="-1" Key="Software\Caphyon\Advanced Installer\Prereqs\[ProductCode]\[ProductVersion]" Name="CA62D813A4E74FA2AAE86A7D7B7B1493" Value="1" Component_="CA62D813A4E74FA2AAE86A7D7B7B1493"/>
     <ROW Registry="Comments" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="Comments" Value="[ARPCOMMENTS]" Component_="AI_CustomARPName"/>
     <ROW Registry="Contact" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="Contact" Value="[ARPCONTACT]" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayIcon" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="DisplayIcon" Value="[ARP_ICON_PATH]" Component_="AI_CustomARPName"/>
@@ -789,8 +763,8 @@
     <ROW Registry="Publisher" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="Publisher" Value="[Manufacturer]" Component_="AI_CustomARPName"/>
     <ROW Registry="URLInfoAbout" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="URLInfoAbout" Value="[ARPURLINFOABOUT]" Component_="AI_CustomARPName"/>
     <ROW Registry="URLUpdateInfo" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="URLUpdateInfo" Value="[ARPURLUPDATEINFO]" Component_="AI_CustomARPName"/>
-    <ROW Registry="UninstallPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="UninstallPath" Value="[AI_UNINSTALLER] /x [ProductCode]" Component_="AI_CustomARPName"/>
-    <ROW Registry="UninstallString" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="UninstallString" Value="[AI_UNINSTALLER] /x [ProductCode]" Component_="AI_CustomARPName"/>
+    <ROW Registry="UninstallPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="UninstallPath" Value="[AI_UNINSTALLER] /x [ProductCode] AI_UNINSTALLER_CTP=1" Component_="AI_CustomARPName"/>
+    <ROW Registry="UninstallString" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="UninstallString" Value="[AI_UNINSTALLER] /x [ProductCode] AI_UNINSTALLER_CTP=1" Component_="AI_CustomARPName"/>
     <ROW Registry="Version" Root="-1" Key="Software\[Manufacturer]\[ProductName]" Name="Version" Value="[ProductVersion]" Component_="ProductInformation"/>
     <ROW Registry="VersionMajor" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="VersionMajor" Value="#2" Component_="AI_CustomARPName"/>
     <ROW Registry="VersionMinor" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="VersionMinor" Value="#5" Component_="AI_CustomARPName"/>
@@ -809,15 +783,14 @@
     <ROW UpgradeCode="[|UpgradeCode]" VersionMin="0.0.1" VersionMax="[|ProductVersion]" Attributes="257" ActionProperty="OLDPRODUCTS"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.PreReqComponent">
-    <ROW PrereqKey="B5158184F44A6981C5919229A6AEBE" DisplayName="Visual C++ Redistributable for Visual Studio 2015 x64" VersionMin="14.0" SetupFileUrl="http://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x64.exe" Location="1" ExactSize="14572000" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" WinNT64Versions="Windows XP x64, Windows XP x64 Service Pack 1, Windows Server 2003 x64, Windows Server 2003 x64 Service Pack 1, Windows Vista x64, Windows Vista x64 Service Pack 1, Windows 7 x64, Windows Server 2008 R2 x64" Operator="1" NoUiComLine="/q /norestart" Options="x" MD5="27b141aacc2777a82bb3fa9f6e5e5c1c" TargetName="Visual C++ Redistributable for Visual Studio 2015" Type="1" Feature="B5158184F44A6981C5919229A6AEBE_1"/>
-    <ROW PrereqKey="CA62D813A4E74FA2AAE86A7D7B7B1493" DisplayName="Visual C++ Redistributable for Visual Studio 2013 x64" VersionMin="12.0" SetupFileUrl="http://download.microsoft.com/download/2/E/6/2E61CFA4-993B-4DD4-91DA-3737CD5CD6E3/vcredist_x64.exe" Location="1" ExactSize="7194312" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" Operator="1" NoUiComLine="/q /norestart" Options="x" MD5="96b61b8e069832e6b809f24ea74567ba" TargetName="Visual C++ Redistributable for Visual Studio 2013" Type="1" Feature="CA62D813A4E74FA2AAE86A7D7B7B1493_1"/>
-    <ATTRIBUTE name="PrereqsOrder" value="B5158184F44A6981C5919229A6AEBE CA62D813A4E74FA2AAE86A7D7B7B1493"/>
+    <ROW PrereqKey="B5158184F44A6981C5919229A6AEBE" DisplayName="Visual C++ Redistributable for Visual Studio 2015-2019 x64" VersionMin="14.26" SetupFileUrl="https://download.visualstudio.microsoft.com/download/pr/3b070396-b7fb-4eee-aa8b-102a23c3e4f4/40EA2955391C9EAE3E35619C4C24B5AAF3D17AEAA6D09424EE9672AA9372AEED/VC_redist.x64.exe" Location="1" ExactSize="15060496" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" Operator="1" NoUiComLine="/q /norestart" Options="xy" MD5="be433764fa9bbe0f2f9c654f6512c9e0" TargetName="Visual C++ Redistributable for Visual Studio 2015-2019"/>
+    <ROW PrereqKey="B6FBF6979285455486B7C8B4E3AEC51C" DisplayName="DirectX Runtime x64" SetupFileUrl="https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe" Location="1" ExactSize="292184" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" Operator="0" NoUiComLine="/silent" Options="xy" MD5="bcbb7c0cd9696068988953990ec5bd11" TargetName="DirectX  Runtime"/>
+    <ATTRIBUTE name="PrereqsOrder" value="B5158184F44A6981C5919229A6AEBE B6FBF6979285455486B7C8B4E3AEC51C"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.PreReqSearchComponent">
-    <ROW SearchKey="B5158184F44A6981C5919229A6AEBEVersion" Prereq="B5158184F44A6981C5919229A6AEBE" SearchType="2" SearchString="HKLM\SOFTWARE\Microsoft\DevDiv\VC\Servicing\14.0\RuntimeMinimum\Version" VerMin="14.0.23026" Order="1" Property="PreReqSearch_B5158184F44A6981C5919229A6AEBE" Platform="1"/>
-    <ROW SearchKey="CA62D813A4E74FA2AAE86A7D7B7B1493Version" Prereq="CA62D813A4E74FA2AAE86A7D7B7B1493" SearchType="2" SearchString="HKLM\SOFTWARE\Microsoft\DevDiv\VC\Servicing\12.0\RuntimeMinimum\Version" VerMin="12.0.21005" Order="1" Property="PreReqSearch_CA62D813A4E74FA2AAE86A7D7B7B1493" Platform="1"/>
-  </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.SynchronizedFolderComponent">
-    <ROW Directory_="images_Dir" SourcePath="..\RunTime\images" Feature="CA62D813A4E74FA2AAE86A7D7B7B1493" ExcludePattern="*~|#*#|%*%|._|CVS|.cvsignore|SCCS|vssver.scc|mssccprj.scc|vssver2.scc|.svn|.DS_Store" ExcludeFlags="6"/>
+    <ROW SearchKey="B5158184F44A6981C5919229A6AEBEVersion" Prereq="B5158184F44A6981C5919229A6AEBE" SearchType="0" SearchString="[SystemFolder]vcruntime140.dll" VerMin="14.26.28720" Order="1" Property="PreReqSearch_B5158184F44A6981C5919229A6AEBE"/>
+    <ROW SearchKey="B6FBF6979285455486B7C8B4E3AEC51CSystemFolderd3d11.dll" Prereq="B6FBF6979285455486B7C8B4E3AEC51C" SearchType="0" SearchString="[SystemFolder]d3d11.dll" VerMin="7.0.6002.18107" Order="1" Property="PreReqSearch_B6FBF6979285455486B7C8B4E3AEC51C"/>
+    <ROW SearchKey="SystemFolderd3d9.dll" Prereq="B6FBF6979285455486B7C8B4E3AEC51C" SearchType="0" SearchString="[SystemFolder]d3d9.dll" VerMin="7" Order="2" Property="PreReqSearch_1"/>
+    <ROW SearchKey="Version" Prereq="B5158184F44A6981C5919229A6AEBE" SearchType="2" SearchString="HKLM\SOFTWARE\Microsoft\DevDiv\VC\Servicing\14.0\RuntimeMinimum\Version" VerMin="14.0.0" Order="2" Property="PreReqSearch"/>
   </COMPONENT>
 </DOCUMENT>

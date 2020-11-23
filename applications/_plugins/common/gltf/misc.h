@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <windoes.h>
+#include <windows.h>
 
 double MillisecondsNow();
 

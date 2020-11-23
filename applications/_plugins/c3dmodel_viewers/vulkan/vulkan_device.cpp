@@ -24,6 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#define CMP_PI 3.1428
+
 #include "vulkan_device.h"
 #include "gltfcommon.h"
 #include "ImguiVK.h"
@@ -156,7 +158,7 @@ int Vulkan_Device::OnCreate(void *hWnd) {
     m_state.toneMapper = 0;
     m_state.glow = 0.1f;
     m_state.bDrawBoundingBoxes = false;
-    m_state.light.SetFov(glm::pi<float>() / 2, 1024, 1024);
+    m_state.light.SetFov(CMP_PI / 2, 1024, 1024);
     //m_state.light.UpdateCamera(0.0f, 1.7f, 3.0f);
     m_state.light.UpdateCamera(3.67f + 3.14159f, 0.58f, 3.0f);
 #endif
@@ -275,7 +277,7 @@ void Vulkan_Device::OnResize(uint32_t width, uint32_t height) {
     m_Width = width;
     m_Height = height;
 #ifdef ENABLE_RENDER_CODE
-    m_state.camera.SetFov(glm::pi<float>() / 4, m_Width, m_Height);
+    m_state.camera.SetFov(CMP_PI / 4, m_Width, m_Height);
 #endif
 }
 

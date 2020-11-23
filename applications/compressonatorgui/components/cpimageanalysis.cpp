@@ -25,9 +25,15 @@
 
 #include "cpimageanalysis.h"
 
-#include <CMP_FileIO.h>
+#include <cmp_fileio.h>
 
+#ifdef _CMP_CPP17_  // Build code using std::c++17
 #include <filesystem>
+namespace sfs = std::filesystem;
+#else
+#include <experimental/filesystem>
+namespace sfs = std::experimental::filesystem;
+#endif
 #include <locale>
 
 extern bool ProgressCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2);
@@ -41,10 +47,10 @@ static inline void helper_toLower(std::string &str) {
 }
 
 bool C_AnalysisData::SourceAndDestFileExtMatch(const char *fsource, const char *fdest) {
-    std::string fsource_extension = std::filesystem::path(fsource).extension().string();
+    std::string fsource_extension = sfs::path(fsource).extension().string();
     helper_toLower(fsource_extension);
 
-    std::string fdest_extension = std::filesystem::path(fdest).extension().string();
+    std::string fdest_extension = sfs::path(fdest).extension().string();
     helper_toLower(fdest_extension);
 
     return (fsource_extension.compare(fdest_extension) == 0);
@@ -54,8 +60,8 @@ CMipImages* C_AnalysisData::GenerateDiffImage(const char *fsource, const char *f
     int testpassed = 0;
     std::string src_ext = "";
     std::string des_ext = "";
-    src_ext = std::filesystem::path(fsource).extension().string();
-    des_ext = std::filesystem::path(fdest).extension().string();
+    src_ext                = sfs::path(fsource).extension().string();
+    des_ext                = sfs::path(fdest).extension().string();
 
     if (strcmp(src_ext.c_str(), "")==0 || strcmp(des_ext.c_str(), "")==0) {
         printf("Error: Source or compressed files cannot be found \n");
@@ -67,7 +73,7 @@ CMipImages* C_AnalysisData::GenerateDiffImage(const char *fsource, const char *f
     helper_toLower(src_ext);
     helper_toLower(des_ext);
 
-    std::filesystem::path file_path = std::filesystem::path(fdest);
+    sfs::path file_path = sfs::path(fdest);
 
     //if (!SourceAndDestFileExtMatch(src_ext.c_str(), des_ext.c_str()))
     //{
@@ -107,8 +113,8 @@ int C_AnalysisData::GeneratePSNRMSEAnalysis(const char *fsource, const char *fde
     int testpassed = 0;
     std::string src_ext = "";
     std::string des_ext = "";
-    src_ext = std::filesystem::path(fsource).extension().string();
-    des_ext = std::filesystem::path(fdest).extension().string();
+    src_ext = sfs::path(fsource).extension().string();
+    des_ext = sfs::path(fdest).extension().string();
 
     if (strcmp(src_ext.c_str(), "") == 0 || strcmp(des_ext.c_str(), "") == 0) {
         printf("Error: Source or compressed files cannot be found \n");
@@ -119,7 +125,7 @@ int C_AnalysisData::GeneratePSNRMSEAnalysis(const char *fsource, const char *fde
     helper_toLower(src_ext);
     helper_toLower(des_ext);
 
-    std::filesystem::path file_path = std::filesystem::path(fdest);
+    sfs::path file_path = sfs::path(fdest);
 
     //if (!SourceAndDestFileExtMatch(src_ext.c_str(), des_ext.c_str()))
     //{
@@ -152,8 +158,8 @@ int C_AnalysisData::GenerateSSIMAnalysis(const char *fsource, const char *fdest)
     int testpassed = 0;
     std::string src_ext = "";
     std::string des_ext = "";
-    src_ext = std::filesystem::path(fsource).extension().string();
-    des_ext = std::filesystem::path(fdest).extension().string();
+    src_ext                = sfs::path(fsource).extension().string();
+    des_ext                = sfs::path(fdest).extension().string();
 
     if (strcmp(src_ext.c_str(), "") == 0 || strcmp(des_ext.c_str(), "") == 0) {
         printf("Error: Source or compressed files cannot be found \n");
@@ -165,7 +171,7 @@ int C_AnalysisData::GenerateSSIMAnalysis(const char *fsource, const char *fdest)
     helper_toLower(src_ext);
     helper_toLower(des_ext);
 
-    std::filesystem::path file_path = std::filesystem::path(fdest);
+    sfs::path file_path = sfs::path(fdest);
 
     //if (!SourceAndDestFileExtMatch(src_ext.c_str(), des_ext.c_str()))
     //{

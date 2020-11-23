@@ -41,7 +41,7 @@ double MillisecondsNow() {
     return milliseconds;
 #else
     std::chrono::duration<double, std::milli> diff = std::chrono::steady_clock::now() - misc_start;
-    return diff.count()
+    return diff.count();
 #endif
 }
 

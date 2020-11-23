@@ -33,8 +33,15 @@
 #define USE_NewLoader
 #endif
 
-#include <filesystem>
 #include <string>
+
+#ifdef _CMP_CPP17_  // Build code using std::c++17
+#include <filesystem>
+namespace sfs = std::filesystem;
+#else
+#include <experimental/filesystem>
+namespace sfs = std::experimental::filesystem;
+#endif
 
 static bool CMP_FileExists(const std::string &abs_filename) {
 #ifdef _WIN32
@@ -52,7 +59,7 @@ static bool CMP_FileExists(const std::string &abs_filename) {
 
     return ret;
 #else
-    return std::filesystem::exists(abs_filename);
+    return sfs::exists(abs_filename);
 #endif
 }
 
@@ -61,6 +68,7 @@ static bool CMP_FileExists(const std::string &abs_filename) {
 #pragma comment(lib, "imagehlp.lib")
 
 bool GetDLLFileExports(LPCSTR szFileName, std::vector<std::string>& names) {
+    //printf("%s\n",__FUNCTION__);
     _LOADED_IMAGE            LoadedImage;
 
     if (!MapAndLoad(szFileName, NULL, &LoadedImage, TRUE, TRUE))
@@ -173,16 +181,22 @@ bool GetDLLFileExports(LPCSTR szFileName, std::vector<std::string>& names) {
 
 
 PluginManager::PluginManager() {
+    //printf("%s\n", __FUNCTION__);
+
     m_pluginlistset = false;
 }
 
 PluginManager::~PluginManager() {
+    //printf("%s\n", __FUNCTION__);
+
     clearPluginList();
 }
 
 
 
 void PluginManager::registerStaticPlugin(char *pluginType, char *pluginName, void * makePlugin) {
+    //printf("%s\n", __FUNCTION__);
+
     PluginDetails * curPlugin = new PluginDetails();
     curPlugin->funcHandle = reinterpret_cast<PLUGIN_FACTORYFUNC>(makePlugin);
     curPlugin->isStatic = true;
@@ -205,6 +219,8 @@ void PluginManager::registerStaticPlugin(char *pluginType, char *pluginName, cha
 
 
 void PluginManager::getPluginDetails(PluginDetails *curPlugin) {
+    //printf("%s\n", __FUNCTION__);
+
 #ifdef _WIN32
     HINSTANCE dllHandle;
 
@@ -236,6 +252,8 @@ void PluginManager::getPluginDetails(PluginDetails *curPlugin) {
 }
 
 void PluginManager::clearPluginList() {
+    //printf("%s\n", __FUNCTION__);
+
     for (unsigned int i = 0; i < pluginRegister.size(); i++) {
         delete pluginRegister.at(i);
         pluginRegister.at(i) = NULL;
@@ -244,6 +262,8 @@ void PluginManager::clearPluginList() {
 }
 
 void PluginManager::getPluginList(char * SubFolderName, bool append) {
+    //printf("%s\n", __FUNCTION__);
+
     // Check for prior setting, if set clear for new one
     if (m_pluginlistset) {
         if (!append)
@@ -364,6 +384,8 @@ void PluginManager::getPluginList(char * SubFolderName, bool append) {
                 snprintf(fname, MAX_PATH,"%s\\%s",dirPath,fd.cFileName);
 
 #ifdef USE_NewLoader
+
+    //printf("GetDLL File exports %s\n", fd.cFileName);
                 // Valid only for Windows need one for Linux
                 names.clear();
                 GetDLLFileExports(fname, names);
@@ -478,7 +500,7 @@ void *PluginManager::GetPlugin(char *type, const char *name) {
         PluginDetails *pPlugin = pluginRegister.at(i);
         if (!pPlugin->isRegistered)
             getPluginDetails(pPlugin);
-
+        //printf("%2d getPlugin(Type %s name %s) == [%s,%s] \n", i, getPluginType(i), getPluginName(i), type, name);
         if ( (strcmp(getPluginType(i),type) == 0) &&
                 (strcmp(getPluginName(i),name)   == 0)) {
             return ( (void *)makeNewPluginInstance(i) );

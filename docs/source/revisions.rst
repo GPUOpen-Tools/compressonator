@@ -10,12 +10,47 @@ Nov 2020
 
 **Features**
 
-Documenation is been updated, Should be complete before Oct 16 for this release
+-  SNORM Support
 
--  `CMP_Core GPU encoding support <developer_sdk/cmp_core/index.html#cmp-core>`__
+    `Signed channel support for BC4 and BC5 <gui_tool/user_guide/texturecompression.html#compressing-signed-channel-images>`__ 
 
-    SNORM support for BC4 and BC5
 
+-  GPU Encoding
+
+    `GPU Based Compression  <gui_tool/user_guide/applicationoptions.html?#encode-with>`__ 
+
+-  Mip Map Generation
+
+    `MIP Map Filter Support Using either GPU or CPU <gui_tool/user_guide/userguide.html#mip-map-filter-support-using-either-gpu-or-cpu>`__
+
+    `GPU Based MIP Map generation <gui_tool/user_guide/userguide.html#gpu-based-compression-and-mip-map-generation>`__
+
+-  Image View
+
+    `PSNR Display Feature for GUI Image Views <gui_tool/user_guide/imageview.html#psnr-display-feature-for-gui-image-views>`__
+
+-  Test Analysis
+
+    `CSV File Update to Support Automation <command_line_tool/commandline.html#csv-file-update-to-support-automation>`__
+
+-  `KTX2 File Support <gui_tool/user_guide/imageview.html?#adding-additional-image-formats>`__
+
+    A KTX version 2 plugin has been added to the SDK, that supports saving and loading multichannel images, BCn, ETCn, and ASTC codecs.
+
+
+**Known issues and limitations**
+
+-  When using GPU encoding, all source image width and height must be divisible by 4.
+-  GPU HW based encoding feature is only available on the Windows platform. Encoding is set only for BCn codecs and quality is limited when compared to CPU encoding.
+-  BC6H is not supported  with GPU HW based encoding.
+-  KTX2 file formats for ATIn and DXT5 swizzled formats are not supported.
+-  ATI1n, ATI2n processed images save as BC4 and BC5 formats.
+-  Transcoding to ARGB_16F, ARGB_32F, and ARGB_8888 image formats is supported, all other channel formats have various data issues and have been removed until a fix is available.
+-  Viewing glTF and OBJ models using Vulkan(TM) rendering shows blank views.
+-  PSNR and Image diff analysis for mismatched channel source and destination types (F16, F32, HalfFloat, and 8bit) needs improvement.
+-  BC6H for OpenCL is not available in this release.
+-  If user-requested MIP Map level generation for GPU texture sizes in the GUI and CLI applications are invalid, they will automatically be adjusted to the lowest settable limits.
+-  Limited CubeMap support.
 
 
 V4.0
@@ -25,6 +60,7 @@ May 2020
 **Features**
 
 -  `CMP_Core GPU encoding support <developer_sdk/cmp_core/index.html#cmp-core>`__
+
 
     Supports GPU based encoding with OpenCL and DX11
 
@@ -404,3 +440,4 @@ views <gui_tool/user_guide/UserGuide.html#selectable-gpu-or-cpu-based-compressed
 
 .. |image118| image:: gui_tool/user_guide/media/image118.png
 .. |image126| image:: gui_tool/user_guide/media/image126.png
+

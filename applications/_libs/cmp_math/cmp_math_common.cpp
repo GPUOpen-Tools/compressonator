@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -34,7 +34,8 @@ float cpu_sqrtf(float * pIn) {
     return sqrtf(*pIn);
 }
 
-#ifndef _LINUX
+#ifdef CMP_USE_XMMINTRIN
+#ifndef __linux__
 //---------------------------------------------
 // SSE: Computes square root of  a float value
 //---------------------------------------------
@@ -44,6 +45,7 @@ float sse_sqrtf(  float *pIn ) {
     val = _mm_sqrt_ss(val);
     return val.m128_f32[0];
 }
+#endif
 #endif
 
 //-------------------------------------------------
@@ -57,16 +59,29 @@ float cpu_rsqf(float *f) {
         return 0.0f;
 }
 
-#ifndef _LINUX
+#ifdef CMP_USE_XMMINTRIN
+#ifndef __linux__
 //-------------------------------------------------
 // SSE: Computes 1 / (square root of a float value)
 //-------------------------------------------------
-float sse_rsqf(float *v) {
+#ifdef CMP_USE_RSQ_RSQR
+float sse_rsqf(float* v)
+{
     __m128 val = _mm_load1_ps(v);
-    val = _mm_rsqrt_ss(val);
+    val        = _mm_rsqrt_ss(val);
     float frsq = val.m128_f32[0];
-    return (0.5f * frsq) * (3.0f - (*v  * frsq) * frsq);
+    return (0.5f * frsq) * (3.0f - (*v * frsq) * frsq);
 };
+#else
+float sse_rsqf(float *v) {
+    __m128 val  = _mm_set_ss(*v); // Copy float and zero the upper 3 elements
+    __m128 val1 = _mm_set_ss(1.0f);
+    val         = _mm_sqrt_ss(val);
+    val         = _mm_div_ss(val1, val);
+    return ( val.m128_f32[0] );
+};
+#endif
+#endif
 #endif
 
 //---------------------------------------------
@@ -76,12 +91,14 @@ float cpu_minf(float l1, float r1) {
     return (l1 < r1 ? l1 : r1);
 }
 
-#ifndef _LINUX
+#ifdef CMP_USE_XMMINTRIN
+#ifndef __linux__
 float sse_minf( float a, float b ) {
     // Branchless SSE min.
     _mm_store_ss( &a, _mm_min_ss(_mm_set_ss(a),_mm_set_ss(b)) );
     return a;
 }
+#endif
 #endif
 
 //---------------------------------------------
@@ -91,12 +108,14 @@ float cpu_maxf(float l1, float r1) {
     return (l1 > r1 ? l1 : r1);
 }
 
-#ifndef _LINUX
+#ifdef CMP_USE_XMMINTRIN
+#ifndef __linux__
 float sse_maxf( float a, float b ) {
     // Branchless SSE max.
     _mm_store_ss( &a, _mm_max_ss(_mm_set_ss(a),_mm_set_ss(b)) );
     return a;
 }
+#endif
 #endif
 
 //================================================
@@ -111,11 +130,13 @@ float cpu_clampf(float value, float minval, float maxval) {
     return value;
 }
 
-#ifndef _LINUX
+#ifdef CMP_USE_XMMINTRIN
+#ifndef __linux__
 float sse_clampf( float val, float minval, float maxval ) {
     _mm_store_ss( &val, _mm_min_ss( _mm_max_ss(_mm_set_ss(val),_mm_set_ss(minval)), _mm_set_ss(maxval) ) );
     return val;
 }
+#endif
 #endif
 
 void cpu_averageRGB(unsigned char *src_rgba_block) {
@@ -184,7 +205,8 @@ float cpu_lerp2(CMP_Vec4uc C1, CMP_Vec4uc CA, CMP_Vec4uc CB, CMP_Vec4uc C2, CMP_
     return float(min1+min2);
 }
 
-#ifndef _LINUX
+#ifdef CMP_USE_XMMINTRIN
+#ifndef __linux__
 float sse_lerp2(CMP_Vec4uc C1, CMP_Vec4uc CA, CMP_Vec4uc CB, CMP_Vec4uc C2, CMP_MATH_BYTE *encode1, CMP_MATH_BYTE *encode2) {
     // Initial Setup
     __m128 iC1, iC2, iCA, iCB; //Load auchars into _m128
@@ -301,6 +323,7 @@ void cmp_set_fma3_features() {
     cmp_lerp2 = fma_lerp2;
 }
 #endif
+#endif
 
 
 void cmp_set_cpu_features() {
@@ -313,7 +336,9 @@ void cmp_set_cpu_features() {
     cmp_sqrtf    = cpu_sqrtf;
 }
 
-#ifndef _LINUX
+
+#ifdef CMP_USE_XMMINTRIN
+#ifndef __linux__
 void cmp_set_sse2_features() {
     cmp_clampf   = sse_clampf;
     cmp_lerp2    = sse_lerp2;
@@ -322,6 +347,7 @@ void cmp_set_sse2_features() {
     cmp_rsqf     = sse_rsqf;
     cmp_sqrtf    = sse_sqrtf;
 }
+#endif
 #endif
 
 //---------------------------------

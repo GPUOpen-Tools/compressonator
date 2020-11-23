@@ -27,7 +27,6 @@
 #define H_GPU_DECODE_BASE
 
 #ifdef _WIN32
-#ifndef DISABLE_TESTCODE
 #include "compressonator.h"
 #include <windows.h>
 //uncomment to show image on console window for debug
@@ -77,6 +76,6 @@ class TextureControl: public RenderWindow {
 
 extern LRESULT CALLBACK WndProc2(HWND, UINT, WPARAM, LPARAM);
 
-#endif // !H_GPU_DECODE_BASE
+
 #endif
 #endif

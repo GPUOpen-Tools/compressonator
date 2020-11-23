@@ -41,9 +41,7 @@ extern "C" {
 void DXTCV11CompressBlockSSE(DWORD *block_32, DWORD *block_dxtc);
 
 #ifdef _WIN32
-#ifndef DISABLE_TESTCODE
 void __cdecl DXTCV11CompressBlockSSE2(DWORD *block_32, DWORD *block_dxtc);
-#endif
 #endif
 
 
@@ -54,13 +52,11 @@ void DXTCV11CompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2]);
 void DXTCV11CompressExplicitAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2]);
 
 #ifdef _WIN32
-#ifndef DISABLE_TESTCODE
 #if defined(_WIN64) || defined(__linux__)
 void DXTCV11CompressExplicitAlphaBlockMMX(BYTE block_8[16], DWORD block_dxtc[2]);
 #else
 void __fastcall DXTCV11CompressExplicitAlphaBlockMMX(BYTE block_8[16], DWORD block_dxtc[2]);
 #endif // !_WIN64
-#endif
 #endif //_WIN32
 
 #ifdef __cplusplus

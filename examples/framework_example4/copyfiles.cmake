@@ -6,11 +6,10 @@ endmacro()
 
 if (CMP_HOST_APPLE)
     # Following: https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFBundles/BundleTypes/BundleTypes.html#//apple_ref/doc/uid/10000123i-CH101-SW1
-    set(PLUGINS_PATH $<TARGET_BUNDLE_CONTENT_DIR:framework_example4>/PlugIns)
+    set(PLUGINS_PATH $<TARGET_BUNDLE_CONTENT_DIR:framework_example4>/plugins)
 else()
     set(PLUGINS_PATH $<TARGET_FILE_DIR:framework_example4>/plugins)
 endif()
 
 
-#OpenCL pipeline dll
-cmp_app_copy_to_output($<TARGET_FILE_DIR:framework_example4>/Plugin_CMP_GPU_OCL.dll ${PLUGINS_PATH}/Plugin_CMP_GPU_OCL.dll)
+# cmp_app_copy_to_output(plugins/*.dll ${PLUGINS_PATH}/*.dll)

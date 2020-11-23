@@ -45,6 +45,10 @@ typedef enum _CodecBufferType {
     CBT_BGR888,         // Reserved for future work
     CBT_RG8,
     CBT_R8,
+    CBT_RGBA8888S,
+    CBT_RGB888S,
+    CBT_RG8S,
+    CBT_R8S,
     CBT_RGBA2101010,
     CBT_RGBA16,
     CBT_RG16,
@@ -159,10 +163,13 @@ typedef enum _CodecBufferType {
 #define SWIZZLE_xGxR_RGBA(dsw) ((((dsw >> RGBA8888_OFFSET_A) & BYTE_MASK) << RGBA8888_OFFSET_R) | (((dsw >> RGBA8888_OFFSET_G) & BYTE_MASK) << RGBA8888_OFFSET_G) | (BYTE_MASK << RGBA8888_OFFSET_A))
 #define SWIZZLE_RGBA_xGxR(dsw) ((((dsw >> RGBA8888_OFFSET_R) & BYTE_MASK) << RGBA8888_OFFSET_A) | (((dsw >> RGBA8888_OFFSET_G) & BYTE_MASK) << RGBA8888_OFFSET_G))
 
+#define SBYTE_MAXVAL 127
 #define BYTE_MAXVAL 255
 #define BYTE_MAX_FLOAT 255.0f
 #define CONVERT_FLOAT_TO_BYTE(f) static_cast<CMP_BYTE>(((f) * BYTE_MAX_FLOAT) + 0.5)
+#define CONVERT_FLOAT_TO_SBYTE(f) static_cast<CMP_SBYTE>(((f)*BYTE_MAX_FLOAT) + 0.5)
 #define CONVERT_BYTE_TO_FLOAT(b) (b) / BYTE_MAX_FLOAT
+#define CONVERT_SBYTE_TO_FLOAT(b) (b) / BYTE_MAX_FLOAT
 
 #define DWORD_MAXVAL 4294967295.0f
 #define WORD_MAXVAL 65535.0f
@@ -173,9 +180,13 @@ typedef enum _CodecBufferType {
 #define CONVERT_WORD_TO_DWORD(w) (((static_cast<CMP_DWORD>(w)) << 16) | static_cast<CMP_DWORD>(w))
 #define CONVERT_DWORD_TO_WORD(dw) static_cast<CMP_BYTE>(min(((dw >> 16) + ((dw & 0x0000ffff) >= 0x00008000 ? 1 : 0)),WORD_MAXVAL))
 #define CONVERT_BYTE_TO_DWORD(b) (((static_cast<CMP_DWORD>(b)) << 24) | ((static_cast<CMP_DWORD>(b)) << 16) | ((static_cast<CMP_DWORD>(b)) << 8) | static_cast<CMP_DWORD>(b))
+#define CONVERT_SBYTE_TO_DWORD(b) (((static_cast<CMP_DWORD>(b)) << 24) | ((static_cast<CMP_DWORD>(b)) << 16) | ((static_cast<CMP_DWORD>(b)) << 8) | static_cast<CMP_DWORD>(b))
 #define CONVERT_DWORD_TO_BYTE(dw) static_cast<CMP_BYTE>(min(((dw >> 24) + ((dw & 0x00ffffff) >= 0x00800000 ? 1 : 0)), BYTE_MAXVAL))
+#define CONVERT_DWORD_TO_SBYTE(dw) static_cast<CMP_SBYTE>(min(((dw >> 24) + ((dw & 0x00ffffff) >= 0x00800000 ? 1 : 0)), SBYTE_MAXVAL))
 #define CONVERT_BYTE_TO_WORD(b) (((static_cast<CMP_WORD>(b)) << 8) | static_cast<CMP_WORD>(b))
+#define CONVERT_SBYTE_TO_WORD(b) (((static_cast<CMP_WORD>(b)) << 8) | static_cast<CMP_WORD>(b))
 #define CONVERT_WORD_TO_BYTE(w) static_cast<CMP_BYTE>(min(((w >> 8) + ((w & BYTE_MASK) >= 128 ? 1 : 0)), BYTE_MAXVAL))
+#define CONVERT_WORD_TO_SBYTE(w) static_cast<CMP_BYTE>(min(((w >> 8) + ((w & BYTE_MASK) >= 128 ? 1 : 0)), SBYTE_MAXVAL))
 #define CONVERT_10BIT_TO_WORD(b) (((static_cast<CMP_WORD>(b)) << 6) | static_cast<CMP_WORD>(b) >> 2)
 #define CONVERT_2BIT_TO_WORD(b) ((static_cast<CMP_WORD>(b)) | ((static_cast<CMP_WORD>(b)) << 2) | ((static_cast<CMP_WORD>(b)) << 4) | ((static_cast<CMP_WORD>(b)) << 6) | ((static_cast<CMP_WORD>(b)) << 8) | ((static_cast<CMP_WORD>(b)) << 10) | ((static_cast<CMP_WORD>(b)) << 12) | ((static_cast<CMP_WORD>(b)) << 14))
 #define CONVERT_WORD_TO_10BIT(b) ((b >> 6) & TEN_BIT_MASK)
@@ -293,6 +304,12 @@ class CCodecBuffer {
     virtual bool ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_BYTE cBlock[]);
     virtual bool ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_BYTE cBlock[]);
 
+    virtual bool ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[]);
+    virtual bool ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[]);
+    virtual bool ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[]);
+    virtual bool ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[]);
+
+
     virtual bool ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_WORD wblock[]);
     virtual bool ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_WORD wblock[]);
     virtual bool ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_WORD wblock[]);
@@ -323,6 +340,11 @@ class CCodecBuffer {
     virtual bool WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_BYTE cBlock[]);
     virtual bool WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_BYTE cBlock[]);
 
+    virtual bool WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[]);
+    virtual bool WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[]);
+    virtual bool WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[]);
+    virtual bool WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[]);
+
     virtual bool WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_WORD wblock[]);
     virtual bool WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_WORD wblock[]);
     virtual bool WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_WORD wblock[]);
@@ -347,6 +369,9 @@ class CCodecBuffer {
     virtual bool WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, double dBlock[]);
     virtual bool WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, double dBlock[]);
     virtual bool WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, double dBlock[]);
+
+    virtual bool ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[]);
+    virtual bool WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE cBlock[]);
 
     virtual bool ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_BYTE cBlock[]);
     virtual bool WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_BYTE cBlock[]);
@@ -380,41 +405,57 @@ class CCodecBuffer {
 
   protected:
 
+    // Converts data from a source type  to a destination type
     void ConvertBlock(double dBlock[], float fBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(double dBlock[], CMP_HALF hBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(double dBlock[], CMP_DWORD dwBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(double dBlock[], CMP_WORD wBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(double dBlock[], CMP_BYTE cBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(double dBlock[], CMP_SBYTE cBlock[], CMP_DWORD dwBlockSize);
 
     void ConvertBlock(float fBlock[], double dBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(float fBlock[], CMP_HALF hBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(float fBlock[], CMP_DWORD dwBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(float fBlock[], CMP_WORD wBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(float fBlock[], CMP_BYTE cBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(float fBlock[], CMP_SBYTE cBlock[], CMP_DWORD dwBlockSize);
 
     void ConvertBlock(CMP_HALF hBlock[], double dBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_HALF hBlock[], float fBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_HALF hBlock[], CMP_DWORD dwBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_HALF hBlock[], CMP_WORD wBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_HALF hBlock[], CMP_BYTE cBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(CMP_HALF hBlock[], CMP_SBYTE cBlock[], CMP_DWORD dwBlockSize);
 
     void ConvertBlock(CMP_DWORD dwBlock[], double dBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_DWORD dwBlock[], float fBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_DWORD dwBlock[], CMP_HALF hBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_DWORD dwBlock[], CMP_WORD wBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_DWORD dwBlock[], CMP_BYTE cBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(CMP_DWORD dwBlock[], CMP_SBYTE cBlock[], CMP_DWORD dwBlockSize);
 
     void ConvertBlock(CMP_WORD wBlock[], double dBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_WORD wBlock[], float fBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_WORD wBlock[], CMP_HALF hBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_WORD wBlock[], CMP_DWORD dwBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_WORD wBlock[], CMP_BYTE cBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(CMP_WORD wBlock[], CMP_SBYTE cBlock[], CMP_DWORD dwBlockSize);
 
     void ConvertBlock(CMP_BYTE cBlock[], double dBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_BYTE cBlock[], float fBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_BYTE cBlock[], CMP_HALF hBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_BYTE cBlock[], CMP_DWORD dwBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_BYTE cBlock[], CMP_WORD wBlock[], CMP_DWORD dwBlockSize);
+
+    // Signed Conversions
+    void ConvertBlock(CMP_BYTE cBlock[], CMP_SBYTE wBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(CMP_SBYTE cBlock[], double dBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(CMP_SBYTE cBlock[], float fBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(CMP_SBYTE cBlock[], CMP_HALF hBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(CMP_SBYTE cBlock[], CMP_DWORD dwBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(CMP_SBYTE cBlock[], CMP_WORD wBlock[], CMP_DWORD dwBlockSize);
+    void ConvertBlock(CMP_SBYTE cBlock[], CMP_BYTE wBlock[], CMP_DWORD dwBlockSize);
+
 
     void SwizzleBlock(double dBlock[], CMP_DWORD dwBlockSize);
     void SwizzleBlock(float fBlock[], CMP_DWORD dwBlockSize);

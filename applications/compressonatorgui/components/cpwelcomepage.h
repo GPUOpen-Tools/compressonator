@@ -25,45 +25,48 @@
 #define _WELCOMEPAGE_H
 
 #include <QtWidgets>
+
+#ifdef USE_QTWEBENGINE
 #include <QtWebEngineWidgets/qwebengineview.h>
+#endif
+
 #include "cpstartuppage.h"
 #include "accustomdockwidget.h"
 
-class CWelcomePage : public acCustomDockWidget {
+class CWelcomePage : public acCustomDockWidget
+{
     Q_OBJECT
 
-  public:
-    CWelcomePage(const QString title, QWidget *parent);
+public:
+    CWelcomePage(const QString title, QWidget* parent);
     ~CWelcomePage();
 
     void GoToAMDHomePage(QVector<QString>& projectsNames);
 
-    cpStartupPage           *m_startUpPage;
-    acDockWidgetTitlebar    *custTitleBar;
+    cpStartupPage*        m_startUpPage;
+    acDockWidgetTitlebar* custTitleBar;
 
-  signals:
+signals:
 
-    void WebPageButtonClick(QString &Request, QString &Msg);
+    void WebPageButtonClick(QString& Request, QString& Msg);
 
-  public slots:
-    void onWebPageButtonClick(QString &Request, QString &Msg);
+public slots:
+    void onWebPageButtonClick(QString& Request, QString& Msg);
 
-  private:
-
-    QString                      m_homePage;
+private:
+    QString m_homePage;
 
     // Common for all
-    QWidget                     *m_newWidget;
-    QGridLayout                 *m_layout;
-    const QString                m_title;
-    QWidget                     *m_parent;
-
+    QWidget*      m_newWidget;
+    QGridLayout*  m_layout;
+    const QString m_title;
+    QWidget*      m_parent;
 };
 
 #define COMPRESSONATOR_HOME "http://gpuopen.com/gaming-product/compressonator/"
-#define URL_FILE                     "file:///"
-#define COMPRESSONATOR_GETTING_STARTED  "Documents/gui_tool/getting_started/index.html"
-#define COMPRESSONATOR_USER_GUIDE       "Documents/gui_tool/user_guide/index.html"
-#define COMPRESSONATOR_NEWFEATURES_GUIDE  "Documents/revisions.html"
+#define URL_FILE "file:///"
+#define COMPRESSONATOR_GETTING_STARTED "Documents/gui_tool/getting_started/index.html"
+#define COMPRESSONATOR_USER_GUIDE "Documents/gui_tool/user_guide/index.html"
+#define COMPRESSONATOR_NEWFEATURES_GUIDE "Documents/revisions.html"
 
 #endif

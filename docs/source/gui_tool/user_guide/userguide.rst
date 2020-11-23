@@ -3,9 +3,10 @@
 
 You can generate different MIP map level for the original image by
 selecting the image (Ruby.bmp in this example) on the project explorer
-and then click on the |image51|\ button on the Application Toolbar.
+and then click on the “Generate MIP Map” |image51|\ button on the Application Toolbar.
 
-Note: Only one image can be selected for MIP map generation at one time.
+Note: Only one image on the project explorer can be selected for MIP map generation at one time.
+
 
 A Generate MIP Maps window will appear.
 
@@ -13,7 +14,7 @@ A Generate MIP Maps window will appear.
 
 Select the desired Mip-Level for MIP map generation from the drop down
 list. This drop down list is generated based on the selected original
-image. Select the lowest mip-level you want to generate, then press the
+image and the intended targets EncodeWith options (CPU or GPU based). Select the lowest mip-level you want to generate, then press the
 Generate button.
 
 |image53|
@@ -25,7 +26,7 @@ toolbar. Click on the little triangle to expand the drop down list.
 
 You can select the view of each MIP level from the list.
 
-For example, selecting the level 3 (72x53) will update the current image
+For example, selecting the level 3 will update the current image
 view as shown below
 
 |image56|
@@ -35,6 +36,36 @@ Image View of Ruby BMP file at Mip Level 3
 
 You can always re-generate MIP map for the same image by repeating the
 all the steps mentioned in this section.
+
+MIP Map Filter Support Using either GPU or CPU
+----------------------------------------------
+
+The GUI applications “Generate MIP Map” option can be used on a variety of image formats to produce MIP maps filtered for optimal GPU or CPU use.
+
+Options for using a Compressonator Box filter or DirectX® based filters are provided.
+
+|image436|
+
+
+Applying Gamma to MIP Maps
+--------------------------
+
+Gamma correction can be applied to the image pixels after MIP map generation by changing the default 1.0 value higher (darken the image) or lower (brighten the image).
+
+
+GPU Based Compression and MIP Map generation
+--------------------------------------------
+An alternative option to generate MIP map levels is provided using the application setting window.
+A feature to encode textures using just the GPU hardware and its driver components is provided. The encoding process uses no user application shader code to process the textures. 
+Both the GUI and Command-line tools can run BCn GPU extensions provided by most GPU vendors and can be used to evaluate the quality and performance of encoded images using the image views and analysis setting.
+
+Just enable the GUI “Application Settings” options to set the encoding with GPU and optionally set generating GPU based mipmaps as shown:
+
+|image437|
+
+|image438|
+
+Once the images are processed users can view the quality of the resulting images with the applications image view PSNR feature,
 
 
 
@@ -47,7 +78,7 @@ A new notation is used for the cube faces labeled as “Frames” for each cube 
 When textures are added to the Project Explorer, the properties view will now display the type of texture as either a 2D or Cube Map, The Depth field is used for the frames size, the Depth field will also be used to indicate the z component of a 3D image (These notations may change in future revisions).
 
 
-|cubemaps_image1|
+|image131|
 
 
 View Image Difference
@@ -96,11 +127,8 @@ the Property View
 .. |image72| image:: media/image76.png
 .. |image73| image:: media/image77.png
 .. |image116| image:: media/image118.png
-.. |image126| image:: media/image126.png
-.. |image127| image:: media/image127.png
-.. |image128| image:: media/image128.png
-.. |image129| image:: media/image129.png
-.. |image130| image:: media/image130.png
-.. |cubemaps_image1| image:: media/cubemaps.png
-
+.. |image131| image:: media/cubemaps.png
+.. |image436| image:: media/image436.png
+.. |image437| image:: media/appsettings1.png
+.. |image438| image:: media/appsettings2.png
 

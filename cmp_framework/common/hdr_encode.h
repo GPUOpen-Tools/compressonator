@@ -60,7 +60,7 @@ extern  void    Partition(  int       shape,
 // Used by optQuantAnD_d
 #define MAX_ENTRIES                             64
 #define MAX_TRY                                 4000
-#define FLT_MAX_EXP                             128 // DBL_MAX_EXP_ = 1024
+#define HDR_FLT_MAX_EXP                         128 // DBL_MAX_EXP_ = 1024
 #define MAX_PARTITIONS_TABLE                    (1+64+64)
 
 // Out contains all endpoints (out) calaculated for the input shape (data) and pattern (index)

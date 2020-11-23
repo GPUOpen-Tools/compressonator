@@ -1221,24 +1221,28 @@ class C_Destination_Options : public C_Destination_Image {
         DXT5_RGxB,
         DXT5_xGxR,
         ARGB_8888,
+        // ARGB_8888_S,
         ARGB_16F,
         ARGB_32F,
+
+        //ARGB_16,
         //RGB_888,
         //RG_8,
         //R_8,
         //ARGB_2101010,
-        //ARGB_16,
         //RG_16,
         //R_16,
         //RG_16F,
         //R_16F,
         //RG_32F,
         //R_32F,
+
         MESH_DATA
     };
 
     C_Destination_Options() {
         init();
+        m_Compression = C_Destination_Options::BC7;
     }
 
 
@@ -1249,7 +1253,6 @@ class C_Destination_Options : public C_Destination_Image {
         m_FileSize = 0;
         m_DstWidth = 0;
         m_DstHeight = 0;
-        m_Compression = C_Destination_Options::BC7;
         //m_Encoding    = No_Encoding;
         m_Quality = AMD_CODEC_QUALITY_DEFAULT;
         m_isselected = false;               // Flag to force Project View to use the datas child item in compression

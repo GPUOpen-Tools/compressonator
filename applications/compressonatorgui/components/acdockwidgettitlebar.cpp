@@ -40,7 +40,7 @@ acDockWidgetTitlebar::acDockWidgetTitlebar(QWidget *parent) : parent(parent) {
     m_parent = parent;
 
     // Create a close button and set its icon to that of the OS
-    m_ToolBarIcon = new QIcon(":/CompressonatorGUI/Images/settings.png");
+    m_ToolBarIcon = new QIcon(":/compressonatorgui/images/settings.png");
 
     m_buttonToolBar = new QPushButton(this);
     m_buttonToolBar->setIcon(*m_ToolBarIcon);
@@ -78,7 +78,7 @@ acDockWidgetTitlebar::acDockWidgetTitlebar(QWidget *parent) : parent(parent) {
 
     // Create a close button and set its icon to that of the OS
     m_buttonClose = new QPushButton(this);
-    //m_buttonClose->setIcon(QIcon(":/CompressonatorGUI/Images/cxClose.png"));
+    //m_buttonClose->setIcon(qicon(":/compressonatorgui/images/cxclose.png"));
     m_buttonClose->setIcon(closeIcon);
     m_buttonClose->setStyleSheet(PushButtonStyle);
     m_buttonClose->setToolTip("Close Window");

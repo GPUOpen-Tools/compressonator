@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2006-2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2006-2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -124,14 +124,27 @@ inline Vec3d Cross(const Vec3d& v1, const Vec3d& v2) {
 /// Returns a random float between 0 and 1
 float RandomFloat();
 
+#ifdef CMP_USE_RSQ_RSQR
+inline float FastRCP(float v)
+{
+    __m128 a      = _mm_load_ss(&v);
+    __m128 Ra0    = _mm_rcp_ps(a);
+    __m128 result = _mm_sub_ps(_mm_add_ps(Ra0, Ra0), _mm_mul_ps(_mm_mul_ps(Ra0, a), Ra0));
+    float  x;
+    _mm_store_ss(&x, result);
+    return x;
+}
+#else
 inline float FastRCP(float v) {
     __m128 a   = _mm_load_ss(&v);
-    __m128 Ra0 = _mm_rcp_ps(a);
+    __m128 val1   = _mm_set_ps(1.0f, 1.0f, 1.0f, 1.0f);
+    __m128 Ra0    = _mm_div_ps(val1, a);  //__m128 Ra0 = _mm_rcp_ps(a);
     __m128 result = _mm_sub_ps(_mm_add_ps(Ra0, Ra0), _mm_mul_ps(_mm_mul_ps(Ra0, a), Ra0));
     float x;
     _mm_store_ss(&x, result);
     return x;
 };
+#endif
 
 /// Transformation of a point (w=1) by an arbitrary matrix, multiplies from right
 /// It is safe for pPoint to equal pPointOut

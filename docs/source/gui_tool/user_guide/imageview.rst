@@ -85,27 +85,33 @@ the application
 +--------------+----------------------------------+
 | DDS          | Direct Draw Surface files        |
 +--------------+----------------------------------+
-| KTX          | Khronos Texture Files            |
+| KTX, KTX2    | Khronos Texture Files            |
 +--------------+----------------------------------+
 | TGA          | Targa Texture files              |
 +--------------+----------------------------------+
 | TIFF         | Tagged Image File Format files   |
 +--------------+----------------------------------+
 
-Support for EXR, DDS and KTX are linked into the main application and
+Support for ASTC, EXR, TGA, DDS and KTX are linked into the main application and
 cannot be overwritten
-
-PNG and BMP are supported by QT (along with a number of other formats
-PBM, PGM, PPM, XBM and XPM.)
-
-TGA (24 bit uncompressed images) and TIF are supported by DLL’s in the
-plugin folder AMD Compress\\plugins\\imageformats
 
 Users can add additional file format by placing appropriate Qt Image
 plugins into \\plugins\\imageformats folder.
 
-Note: These DLL’s must support variations of decompressed images in
-ARGB32 or ARGB32F
+
+KTX2 Support Notes
+------------------
+KTX2 is supported by a DLL in the plugin folder AMD Compress\\plugins\\imageformats and at the root folder as ktx.dll
+it supports saving and loading multichannel images, BCn, ETCn, and ASTC codecs.
+
+The following custom image formats supported in Compressonator KTX is not available in KTX2
+ATC_RGB,ATC_RGBA_Explicit,ATI1N,ATI2N,ATI2N_XY, DXT5_xGBR, ATI2N_DXT5,
+DXT5_xGBR,DXT5_RxBG ,DXT5_RBxG,DXT5_xRBG,DXT5_RGxB and DXT5_xGxR.
+
+For ATI1N use BC4 and for ATI2N use BC5.  
+
+Additional support for universal textures and streaming can be added upon request.
+For specific KTX2 feature enablement, please file a request at https://github.com/GPUOpen-Tools/compressonator/issues
 
 
 Image View switch between Original and Processed
@@ -140,6 +146,17 @@ To change the Processed Image View back to Compressed Image View, click
 on the same icon |image115|.
 
 
+PSNR Display Feature for GUI Image Views
+----------------------------------------
+|image434|
+
+
+All Compressed image views in the GUI application display a PSNR value for each MIP level and cube face.
+
+Users can log and compare the quality of the compressed images and the effects that various filter options have on mip levels after processing.
+
+
+
 .. |image57| image:: media/image59.png
 .. |image58| image:: media/image60.png
 .. |image110| image:: media/image114.png
@@ -150,4 +167,6 @@ on the same icon |image115|.
 .. |image115| image:: media/image116.png
 .. |image121| image:: media/image121.png
 .. |image131| image:: media/image131.png
+.. |image434| image:: media/psnrdisplayfeature.png
+
 

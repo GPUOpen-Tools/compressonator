@@ -17,10 +17,12 @@
 #define _SOFTWARE_ONLY_VERSION          // Do not use DirectX SDK 
 #endif // !_SOFTWARE_ONLY_VERSION
 
-#ifdef _LINUX
+#ifdef __linux__
 #define __cdecl
-#define _isnan(x) isnan(x)
-#define _finite(x) finite(x)
+#define cmp_isnan(x)  isnan(x)
+#define cmp_finite(x) finite(x)
+#else
+#define cmp_isnan(x) std::isnan(x)
 #endif
 
 #ifdef __cplusplus

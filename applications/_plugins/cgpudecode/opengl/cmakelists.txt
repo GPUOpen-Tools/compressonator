@@ -1,7 +1,7 @@
 
-add_library(Plugin_CGPUDecode_OpenGL)
+add_library(GPUDecode_OpenGL SHARED)
 
-target_sources(Plugin_CGPUDecode_OpenGL PUBLIC
+target_sources(GPUDecode_OpenGL PUBLIC
 
     copengl.cpp
     copengl.h
@@ -10,14 +10,21 @@ target_sources(Plugin_CGPUDecode_OpenGL PUBLIC
     shader.h
 )
 
-target_link_libraries(Plugin_CGPUDecode_OpenGL 
+
+target_include_directories(GPUDecode_OpenGL PRIVATE
+    ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
+    ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
+    ${PROJECT_SOURCE_DIR}/applications/_libs/gpu_decode
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common
+)
+
+target_link_libraries(GPUDecode_OpenGL 
 
     PRIVATE
-        CompressonatorLIB
+        CMP_Compressonator
+        CMP_Framework
+        CMP_GpuDecode
 
-        Plugin_PluginManager
-        Plugin_TCPluginAPI
-        GPU_Decode
         ExtOpenGL
         ExtGLEW
 
@@ -25,4 +32,10 @@ target_link_libraries(Plugin_CGPUDecode_OpenGL
         ExtGLEW
 )
 
-set_target_properties(Plugin_CGPUDecode_OpenGL PROPERTIES FOLDER ${FOLDER_NAME})
+target_compile_definitions(GPUDecode_OpenGL PRIVATE BUILD_AS_PLUGIN_DLL=1)
+
+set_target_properties(GPUDecode_OpenGL PROPERTIES 
+    FOLDER "Plugin_Dynamic/GPU_DecodeView"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin/debug/plugins"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/release/plugins"
+    )

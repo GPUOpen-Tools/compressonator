@@ -72,7 +72,8 @@ class Plugin_Canalysis : public PluginInterface_Analysis {
 
 #ifdef USE_OPENCV
     cv::Scalar m_SSIM;
-    bool psnr(QImage *src, const cv::Mat& srcimg, QImage *dest, const cv::Mat& destimg, REPORT_DATA &myReport, CMP_Feedback_Proc pFeedbackProc = NULL);
+    // removed as of v4.1
+    // bool psnr(QImage *src, const cv::Mat& srcimg, QImage *dest, const cv::Mat& destimg, REPORT_DATA &myReport, CMP_Feedback_Proc pFeedbackProc = NULL);
 #endif
     char m_results_path[MAX_PATH];
     std::string m_srcFile;

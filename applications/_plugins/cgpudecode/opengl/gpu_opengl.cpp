@@ -78,6 +78,7 @@ GPU_OpenGL::~GPU_OpenGL() {
 }
 
 //====================================================================================
+// #define SHOW_WINDOW
 
 void GPU_OpenGL::GLRender() {
     // OpenGL animation code goes here
@@ -321,15 +322,21 @@ CMP_ERROR WINAPI GPU_OpenGL::Decompress(
                 pSourceTexture->format == CMP_FORMAT_ETC2_RGBA ||
                 pSourceTexture->format == CMP_FORMAT_ETC2_RGBA1
            )
-            glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_BGRA_EXT, GL_UNSIGNED_BYTE, pDestTexture->pData);
+           glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_BGRA_EXT, GL_UNSIGNED_BYTE, pDestTexture->pData);
         else if (pSourceTexture->format == CMP_FORMAT_ETC2_SRGB ||
                  pSourceTexture->format == CMP_FORMAT_ETC2_SRGBA ||
                  pSourceTexture->format == CMP_FORMAT_ETC2_SRGBA1
                 )
-            glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_BGRA_EXT, GL_BYTE, pDestTexture->pData);
+           glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_BGRA_EXT, GL_BYTE, pDestTexture->pData);
         else {
-            if(pDestTexture->format ==  CMP_FORMAT_ARGB_16F)
+            if (pDestTexture->format == CMP_FORMAT_ARGB_16F)
+            {
                 glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_RGBA, GL_HALF_FLOAT, pDestTexture->pData);
+            }
+            else if (pDestTexture->format == CMP_FORMAT_RGBA_8888_S)
+            {
+                glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_RGBA_SNORM, GL_BYTE, pDestTexture->pData);
+            }
             else
                 glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_RGBA, GL_UNSIGNED_BYTE, pDestTexture->pData);
         }

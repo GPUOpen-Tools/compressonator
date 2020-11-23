@@ -1251,7 +1251,7 @@ void eigenVector_d(float cov[MAX_DIMENSION_BIG][MAX_DIMENSION_BIG], float vector
         for (j = 0; j<dimension; j++)
             c[0][i][j] = cov[i][j];
 
-    p = (int)floorf(logf((FLT_MAX_EXP - EV_SLACK) / ceilf(logf((float)dimension) / logf(2.0f))) / logf(2.0f));
+    p = (int)floorf(logf((HDR_FLT_MAX_EXP - EV_SLACK) / ceilf(logf((float)dimension) / logf(2.0f))) / logf(2.0f));
 
     //assert(p>0);
 

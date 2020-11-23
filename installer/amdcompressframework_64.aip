@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="12.4.1" version="12.4.2" Modules="professional" RootPath="." Language="en" Id="{923A3584-87CA-4A31-A0BF-AF989DA207B6}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="12.4.1" version="13.5" Modules="professional" RootPath="." Language="en" Id="{923A3584-87CA-4A31-A0BF-AF989DA207B6}">
+  <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
+    <ROW Name="HiddenItems" Value="AppXAppDetailsComponent;AppXCapabilitiesComponent;AppXDependenciesComponent;AppXProductDetailsComponent;AppXVisualAssetsComponent;AppXAppDeclarationsComponent;AppXUriRulesComponent"/>
+  </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
     <ROW Property="AI_CLEAN_RESOURCES_DISABLE_UPGRADE" Value="0"/>
@@ -32,6 +35,10 @@
     <ROW Property="WindowsType9XDisplay" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
     <ROW Property="WindowsTypeNT40" MultiBuildValue="DefaultBuild:Windows NT 4.0" ValueLocId="-"/>
     <ROW Property="WindowsTypeNT40Display" MultiBuildValue="DefaultBuild:Windows NT 4.0" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT50" MultiBuildValue="DefaultBuild:Windows 2000" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT50Display" MultiBuildValue="DefaultBuild:Windows 2000" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT5X" MultiBuildValue="DefaultBuild:Windows XP/2003 RTM, Windows XP/2003 SP1, Windows XP SP2 x86" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT5XDisplay" MultiBuildValue="DefaultBuild:Windows XP/2003 RTM, Windows XP/2003 SP1, Windows XP SP2 x86" ValueLocId="-"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
     <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1" DirectoryOptions="3"/>
@@ -44,7 +51,6 @@
     <ROW Directory="VS2015_Dir" Directory_Parent="Libs_Dir" DefaultDir="VS2017" DirectoryOptions="3"/>
     <ROW Directory="common_Dir" Directory_Parent="Samples_Dir" DefaultDir="common" DirectoryOptions="3"/>
     <ROW Directory="compute_Dir" Directory_Parent="plugins_Dir" DefaultDir="compute" DirectoryOptions="3"/>
-    <ROW Directory="core_example1_Dir" Directory_Parent="Samples_Dir" DefaultDir="CORE_E~1|core_example1" DirectoryOptions="3"/>
     <ROW Directory="encoders_Dir" Directory_Parent="Libs_Dir" DefaultDir="encoders" DirectoryOptions="3"/>
     <ROW Directory="framework_example1_Dir" Directory_Parent="Samples_Dir" DefaultDir="FRAMEW~1|framework_example1" DirectoryOptions="3"/>
     <ROW Directory="framework_example2_Dir" Directory_Parent="Samples_Dir" DefaultDir="FRAMEW~2|framework_example2" DirectoryOptions="3"/>
@@ -75,13 +81,15 @@
     <ROW Component="CMakeLists.txt" ComponentId="{6B45515E-1AD1-42F6-B51D-BC2C50D34424}" Directory_="framework_example4_Dir" Attributes="0" KeyPath="CMakeLists.txt" Type="0"/>
     <ROW Component="CMakeLists.txt_1" ComponentId="{658D2EDA-8138-4088-A346-B6F74C9667F5}" Directory_="Samples_Dir" Attributes="0" KeyPath="CMakeLists.txt_4" Type="0"/>
     <ROW Component="CMakeLists.txt_2" ComponentId="{6785CD37-0712-4A8B-9588-A261E6FACF65}" Directory_="common_Dir" Attributes="0" KeyPath="CMakeLists.txt_5" Type="0"/>
-    <ROW Component="CMakeLists.txt_3" ComponentId="{E46F0E1D-7623-4FB9-900B-85F886DD27C2}" Directory_="core_example1_Dir" Attributes="0" KeyPath="CMakeLists.txt_6" Type="0"/>
     <ROW Component="CopyFiles.bat" ComponentId="{BEFB8F47-5CDA-463A-BE12-35070DF2FA25}" Directory_="framework_example3_Dir" Attributes="0" KeyPath="SDK_Example3.cpp" Type="0"/>
+    <ROW Component="EncodeWith_DXC.dll" ComponentId="{10E0BA62-9083-4BCC-A1AB-0C31BA26A3E2}" Directory_="plugins_Dir" Attributes="256" KeyPath="EncodeWith_DXC.dll"/>
+    <ROW Component="EncodeWith_DXC.dll_1" ComponentId="{BAFCA06A-AA89-44E0-9239-3EDB189A46DD}" Directory_="x64_Dir" Attributes="256" KeyPath="EncodeWith_DXC.dll_1"/>
+    <ROW Component="EncodeWith_GPU.dll" ComponentId="{72F54B6F-20D2-401C-B696-E5C4FFEFDF8F}" Directory_="plugins_Dir" Attributes="256" KeyPath="EncodeWith_GPU.dll"/>
+    <ROW Component="EncodeWith_GPU.dll_1" ComponentId="{64DD9736-F034-47D4-BAD1-524063237DAE}" Directory_="x64_Dir" Attributes="256" KeyPath="EncodeWith_GPU.dll_1"/>
+    <ROW Component="EncodeWith_OCL.dll" ComponentId="{0CA0A710-340A-44B0-AB98-77FCDD114885}" Directory_="plugins_Dir" Attributes="256" KeyPath="EncodeWith_OCL.dll"/>
+    <ROW Component="EncodeWith_OCL.dll_1" ComponentId="{AFFB468C-A9BF-4B6D-B046-18424E17B3F8}" Directory_="x64_Dir" Attributes="256" KeyPath="EncodeWith_OCL.dll_1"/>
     <ROW Component="LICENSE" ComponentId="{DF1CDFDF-F4F9-4785-A5FE-046E91F958B2}" Directory_="OpenEXR_Dir" Attributes="0" KeyPath="LICENSE" Type="0"/>
     <ROW Component="Name" ComponentId="{7AA11289-3728-4E44-B73F-C108BC1EB9BA}" Directory_="APPDIR" Attributes="260" KeyPath="Name"/>
-    <ROW Component="Plugin_CMP_GPU_DXC.dll" ComponentId="{C885E910-4790-4087-86BF-7B29EB5BA21E}" Directory_="plugins_Dir" Attributes="256" KeyPath="Plugin_CMP_GPU_DXC.dll"/>
-    <ROW Component="Plugin_CMP_GPU_HW.dll" ComponentId="{9A72B192-E451-4AC6-AD12-2AB9937A1F59}" Directory_="plugins_Dir" Attributes="256" KeyPath="Plugin_CMP_GPU_HW.dll"/>
-    <ROW Component="Plugin_CMP_GPU_OCL.dll" ComponentId="{F897BC08-2E9D-44DF-AB3C-A10B94BEDB65}" Directory_="plugins_Dir" Attributes="256" KeyPath="Plugin_CMP_GPU_OCL.dll"/>
     <ROW Component="ProductInformation" ComponentId="{C697A8F7-809A-4713-B965-3014D78E6EE0}" Directory_="APPDIR" Attributes="4" KeyPath="Version"/>
     <ROW Component="Readme.txt" ComponentId="{04AABB1B-04BD-4DB6-ADF5-823B085D6AD5}" Directory_="license1_Dir" Attributes="0" KeyPath="FrameworkLicense.txt" Type="0"/>
     <ROW Component="SDK_Example1.cpp" ComponentId="{015662CA-731A-4E05-92D3-C22CCB9D0F7C}" Directory_="framework_example1_Dir" Attributes="0" KeyPath="SDK_Example1.cpp" Type="0"/>
@@ -90,7 +98,7 @@
     <ROW Component="SHORTCUTDIR" ComponentId="{0ABC6260-2BBB-45BF-A522-07232C59062A}" Directory_="SHORTCUTDIR" Attributes="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="MainFeature" Title="Compressonator SDK" Description="Description" Display="7" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_CustomARPName AI_DisableModify AI_ExePath BC1_Encode_kernel.cpp BC1_Encode_kernel.h CMP_Framework.h CMP_Framework_MD_DLL.dll CMP_Framework_MD_DLL.dll_2 CMP_Framework_MD_DLL.lib CMP_Framework_MDd_DLL.dll CMP_Framework_MDd_DLL.dll_1 CMP_Framework_MT_DLL.dll CMP_Framework_MT_DLL.dll_1 CMP_Framework_MTd.lib CMP_Framework_MTd_DLL.dll CMP_Framework_MTd_DLL.dll_1 CMakeLists.txt CMakeLists.txt_1 CMakeLists.txt_2 CMakeLists.txt_3 CopyFiles.bat LICENSE Name Plugin_CMP_GPU_DXC.dll Plugin_CMP_GPU_HW.dll Plugin_CMP_GPU_OCL.dll ProductInformation Readme.txt SDK_Example1.cpp SDK_Example2.cpp SETUP_FILE_NAME SHORTCUTDIR"/>
+    <ROW Feature="MainFeature" Title="Compressonator SDK" Description="Description" Display="7" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_CustomARPName AI_DisableModify AI_ExePath BC1_Encode_kernel.cpp BC1_Encode_kernel.h CMP_Framework.h CMP_Framework_MD_DLL.dll CMP_Framework_MD_DLL.dll_2 CMP_Framework_MD_DLL.lib CMP_Framework_MDd_DLL.dll CMP_Framework_MDd_DLL.dll_1 CMP_Framework_MT_DLL.dll CMP_Framework_MT_DLL.dll_1 CMP_Framework_MTd.lib CMP_Framework_MTd_DLL.dll CMP_Framework_MTd_DLL.dll_1 CMakeLists.txt CMakeLists.txt_1 CMakeLists.txt_2 CopyFiles.bat EncodeWith_DXC.dll EncodeWith_DXC.dll_1 EncodeWith_GPU.dll EncodeWith_GPU.dll_1 EncodeWith_OCL.dll EncodeWith_OCL.dll_1 LICENSE Name ProductInformation Readme.txt SDK_Example1.cpp SDK_Example2.cpp SETUP_FILE_NAME SHORTCUTDIR"/>
     <ROW Feature="VisualStudioCMergeModules" Title="Visual Studio C++ Merge Modules" Description="Description" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_CustomARPName AI_DisableModify AI_ExePath SETUP_FILE_NAME"/>
     <ATTRIBUTE name="CurrentFeature" value="MainFeature"/>
   </COMPONENT>
@@ -100,7 +108,7 @@
     <ROW File="BC1_Encode_kernel.h" Component_="BC1_Encode_kernel.cpp" FileName="BC1_EN~1.H|BC1_Encode_kernel.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Core\shaders\BC1_Encode_kernel.h" SelfReg="false" NextFile="BC2_Encode_kernel.cpp"/>
     <ROW File="BC1_Encode_kernel.h_1" Component_="BC1_Encode_kernel.h" FileName="BC1_EN~1.H|BC1_Encode_kernel.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\BC1_Encode_kernel.h" SelfReg="false" NextFile="BCn_Common_kernel.h_1"/>
     <ROW File="BC1_Encode_kernel.hlsl" Component_="BC1_Encode_kernel.cpp" FileName="BC1_EN~1.HLS|BC1_Encode_kernel.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Core\shaders\BC1_Encode_kernel.hlsl" SelfReg="false" NextFile="BC2_Encode_kernel.hlsl"/>
-    <ROW File="BC1_Encode_kernel.hlsl_1" Component_="BC1_Encode_kernel.h" FileName="BC1_EN~1.HLS|BC1_Encode_kernel.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\BC1_Encode_kernel.hlsl" SelfReg="false"/>
+    <ROW File="BC1_Encode_kernel.hlsl_1" Component_="BC1_Encode_kernel.h" FileName="BC1_EN~1.HLS|BC1_Encode_kernel.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\BC1_Encode_kernel.hlsl" SelfReg="false" NextFile="EncodeWith_DXC.dll"/>
     <ROW File="BC2_Encode_kernel.cpp" Component_="BC1_Encode_kernel.cpp" FileName="BC2_EN~1.CPP|BC2_Encode_kernel.cpp" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Core\shaders\BC2_Encode_kernel.cpp" SelfReg="false" NextFile="BC2_Encode_kernel.h"/>
     <ROW File="BC2_Encode_kernel.h" Component_="BC1_Encode_kernel.cpp" FileName="BC2_EN~1.H|BC2_Encode_kernel.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Core\shaders\BC2_Encode_kernel.h" SelfReg="false" NextFile="BC3_Encode_kernel.cpp"/>
     <ROW File="BC2_Encode_kernel.hlsl" Component_="BC1_Encode_kernel.cpp" FileName="BC2_EN~1.HLS|BC2_Encode_kernel.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Core\shaders\BC2_Encode_kernel.hlsl" SelfReg="false" NextFile="BC3_Encode_kernel.hlsl"/>
@@ -152,22 +160,20 @@
     <ROW File="CMakeLists.txt_3" Component_="SDK_Example1.cpp" FileName="CMAKEL~1.TXT|CMakeLists.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example1\CMakeLists.txt" SelfReg="false" NextFile="CMakeLists.txt_4"/>
     <ROW File="CMakeLists.txt_4" Component_="CMakeLists.txt_1" FileName="CMAKEL~1.TXT|CMakeLists.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\CMakeLists.txt" SelfReg="false" NextFile="README.md"/>
     <ROW File="CMakeLists.txt_5" Component_="CMakeLists.txt_2" FileName="CMAKEL~1.TXT|CMakeLists.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\common\CMakeLists.txt" SelfReg="false" NextFile="DDS_Helpers.cpp"/>
-    <ROW File="CMakeLists.txt_6" Component_="CMakeLists.txt_3" FileName="CMAKEL~1.TXT|CMakeLists.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\core_example1\CMakeLists.txt" SelfReg="false" NextFile="CoreExample.cpp"/>
     <ROW File="Common_Def.h" Component_="BC1_Encode_kernel.cpp" FileName="COMMON~1.H|Common_Def.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\CMP_Core\shaders\Common_Def.h" SelfReg="false" NextFile="BCn_Common_Kernel.h"/>
     <ROW File="Common_Def.h_1" Component_="BC1_Encode_kernel.h" FileName="COMMON~1.H|Common_Def.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\compute\Common_Def.h" SelfReg="false" NextFile="BC1_Encode_kernel.cpp_1"/>
     <ROW File="CopyFiles.cmake" Component_="CMakeLists.txt" FileName="COPYFI~1.CMA|CopyFiles.cmake" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example4\CopyFiles.cmake" SelfReg="false" NextFile="Framework_Example4.cpp"/>
-    <ROW File="CoreExample.cpp" Component_="CMakeLists.txt_3" FileName="COREEX~1.CPP|CoreExample.cpp" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\core_example1\CoreExample.cpp" SelfReg="false" NextFile="Core_Example1.sln"/>
-    <ROW File="Core_Example1.sln" Component_="CMakeLists.txt_3" FileName="CORE_E~1.SLN|Core_Example1.sln" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\core_example1\Core_Example1.sln" SelfReg="false" NextFile="Core_Example1.vcxproj"/>
-    <ROW File="Core_Example1.vcxproj" Component_="CMakeLists.txt_3" FileName="CORE_E~1.VCX|Core_Example1.vcxproj" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\core_example1\Core_Example1.vcxproj" SelfReg="false" NextFile="Core_Example1.vcxproj.filters"/>
-    <ROW File="Core_Example1.vcxproj.filters" Component_="CMakeLists.txt_3" FileName="CORE_E~1.FIL|Core_Example1.vcxproj.filters" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\core_example1\Core_Example1.vcxproj.filters" SelfReg="false" NextFile="README.md_1"/>
     <ROW File="DDS_Helpers.cpp" Component_="CMakeLists.txt_2" FileName="DDS_HE~1.CPP|DDS_Helpers.cpp" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\common\DDS_Helpers.cpp" SelfReg="false" NextFile="DDS_Helpers.h"/>
-    <ROW File="DDS_Helpers.h" Component_="CMakeLists.txt_2" FileName="DDS_HE~1.H|DDS_Helpers.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\common\DDS_Helpers.h" SelfReg="false" NextFile="CMakeLists.txt_6"/>
+    <ROW File="DDS_Helpers.h" Component_="CMakeLists.txt_2" FileName="DDS_HE~1.H|DDS_Helpers.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\common\DDS_Helpers.h" SelfReg="false" NextFile="README.md_1"/>
+    <ROW File="EncodeWith_DXC.dll" Component_="EncodeWith_DXC.dll" FileName="ENCODE~1.DLL|EncodeWith_DXC.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\EncodeWith_DXC.dll" SelfReg="false" NextFile="EncodeWith_GPU.dll"/>
+    <ROW File="EncodeWith_DXC.dll_1" Component_="EncodeWith_DXC.dll_1" FileName="ENCODE~1.DLL|EncodeWith_DXC.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\EncodeWith_DXC.dll" SelfReg="false" NextFile="EncodeWith_GPU.dll_1"/>
+    <ROW File="EncodeWith_GPU.dll" Component_="EncodeWith_GPU.dll" FileName="ENCODE~2.DLL|EncodeWith_GPU.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\EncodeWith_GPU.dll" SelfReg="false" NextFile="EncodeWith_OCL.dll"/>
+    <ROW File="EncodeWith_GPU.dll_1" Component_="EncodeWith_GPU.dll_1" FileName="ENCODE~2.DLL|EncodeWith_GPU.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\EncodeWith_GPU.dll" SelfReg="false" NextFile="EncodeWith_OCL.dll_1"/>
+    <ROW File="EncodeWith_OCL.dll" Component_="EncodeWith_OCL.dll" FileName="ENCODE~3.DLL|EncodeWith_OCL.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\EncodeWith_OCL.dll" SelfReg="false" NextFile="EncodeWith_DXC.dll_1"/>
+    <ROW File="EncodeWith_OCL.dll_1" Component_="EncodeWith_OCL.dll_1" FileName="ENCODE~3.DLL|EncodeWith_OCL.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\EncodeWith_OCL.dll" SelfReg="false"/>
     <ROW File="FrameworkLicense.txt" Component_="Readme.txt" FileName="FRAMEW~1.TXT|FrameworkLicense.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\License\FrameworkLicense.txt" SelfReg="false" NextFile="LICENSE"/>
     <ROW File="Framework_Example4.cpp" Component_="CMakeLists.txt" FileName="FRAMEW~1.CPP|Framework_Example4.cpp" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example4\Framework_Example4.cpp" SelfReg="false" NextFile="CMakeLists.txt_1"/>
     <ROW File="LICENSE" Component_="LICENSE" FileName="LICENSE" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\License\OpenEXR\LICENSE" SelfReg="false" NextFile="README"/>
-    <ROW File="Plugin_CMP_GPU_DXC.dll" Component_="Plugin_CMP_GPU_DXC.dll" FileName="PLUGIN~1.DLL|Plugin_CMP_GPU_DXC.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\Plugin_CMP_GPU_DXC.dll" SelfReg="false" NextFile="Plugin_CMP_GPU_HW.dll"/>
-    <ROW File="Plugin_CMP_GPU_HW.dll" Component_="Plugin_CMP_GPU_HW.dll" FileName="PLUGIN~2.DLL|Plugin_CMP_GPU_HW.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\Plugin_CMP_GPU_HW.dll" SelfReg="false" NextFile="Plugin_CMP_GPU_OCL.dll"/>
-    <ROW File="Plugin_CMP_GPU_OCL.dll" Component_="Plugin_CMP_GPU_OCL.dll" FileName="PLUGIN~3.DLL|Plugin_CMP_GPU_OCL.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\build\bin\Release\plugins\Plugin_CMP_GPU_OCL.dll" SelfReg="false" NextFile="BC1_Encode_kernel.h_1"/>
     <ROW File="README" Component_="LICENSE" FileName="README" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\License\OpenEXR\README" SelfReg="false" NextFile="BC1_Encode_kernel.hlsl"/>
     <ROW File="README.md" Component_="CMakeLists.txt_1" FileName="README.md" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\README.md" SelfReg="false" NextFile="CMakeLists.txt_5"/>
     <ROW File="README.md_1" Component_="Readme.txt" FileName="README.md" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\License\README.md" SelfReg="false" NextFile="SDK_Example4.sln"/>
@@ -185,7 +191,7 @@
     <ROW File="SDK_Example3.vcxproj.filters" Component_="CopyFiles.bat" FileName="SDK_EX~1.FIL|SDK_Example3.vcxproj.filters" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example3\SDK_Example3.vcxproj.filters" SelfReg="false" NextFile="CMP_Framework.h"/>
     <ROW File="SDK_Example4.sln" Component_="CMakeLists.txt" FileName="SDK_EX~1.SLN|SDK_Example4.sln" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example4\SDK_Example4.sln" SelfReg="false" NextFile="SDK_Example4.vcxproj"/>
     <ROW File="SDK_Example4.vcxproj" Component_="CMakeLists.txt" FileName="SDK_EX~1.VCX|SDK_Example4.vcxproj" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example4\SDK_Example4.vcxproj" SelfReg="false" NextFile="SDK_Example4.vcxproj.filters"/>
-    <ROW File="SDK_Example4.vcxproj.filters" Component_="CMakeLists.txt" FileName="SDK_EX~1.FIL|SDK_Example4.vcxproj.filters" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example4\SDK_Example4.vcxproj.filters" SelfReg="false" NextFile="Plugin_CMP_GPU_DXC.dll"/>
+    <ROW File="SDK_Example4.vcxproj.filters" Component_="CMakeLists.txt" FileName="SDK_EX~1.FIL|SDK_Example4.vcxproj.filters" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\Examples\framework_example4\SDK_Example4.vcxproj.filters" SelfReg="false" NextFile="BC1_Encode_kernel.h_1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AiPersistentPropComponent">
     <ROW Property="SETUP_FILE_NAME" Registry="SETUP_FILE_NAME" HklmSearch="SETUP_FILE_NAME" HkcuSearch="SETUP_FILE_NAME_1" Hklm64Search="SETUP_FILE_NAME_2" Hkcu64Search="SETUP_FILE_NAME_3"/>
@@ -195,7 +201,6 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
     <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="0" PackageFolder="AMDCompress-SetupFiles" PackageFileName="[|SETUP_FILE_NAME]" Languages="en" InstallationType="2" CabsLocation="1" UseLzma="true" LzmaMethod="2" LzmaCompressionLevel="3" PackageType="1" FilesInsideExe="true" ExeIconPath="appicon.ico" ExtractionFolder="[AppDataFolder][|Manufacturer]\[|ProductName] [|ProductVersion]\install" ExtUI="true" UseLargeSchema="true" ExeName="[|SETUP_FILE_NAME]" MsiPackageType="x64" UACExecutionLevel="2"/>
-    <ATTRIBUTE name="CurrentBuild" value="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
     <ROW Path="&lt;AI_DICTS&gt;ui.ail"/>
@@ -296,6 +301,7 @@
     <ROW Action="AI_DeleteRCadLzma" Type="51" Source="AI_DeleteRLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DeleteRLzma" Type="1281" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
     <ROW Action="AI_DpiContentScale" Type="1" Source="aicustact.dll" Target="DpiContentScale"/>
+    <ROW Action="AI_EnableDebugLog" Type="321" Source="aicustact.dll" Target="EnableDebugLog"/>
     <ROW Action="AI_EstimateExtractFiles" Type="1" Source="Prereq.dll" Target="EstimateExtractFiles"/>
     <ROW Action="AI_ExtractCadLzma" Type="51" Source="AI_ExtractLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_ExtractFiles" Type="1025" Source="Prereq.dll" Target="ExtractSourceFiles" AdditionalSeq="AI_DATA_SETTER"/>
@@ -322,7 +328,7 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
     <ROW Action="AI_STORE_LOCATION" Condition="(Not Installed) OR REINSTALL" Sequence="1501"/>
     <ROW Action="AI_PREPARE_UPGRADE" Condition="AI_UPGRADE=&quot;No&quot; AND (Not Installed)" Sequence="1399"/>
-    <ROW Action="AI_ResolveKnownFolders" Sequence="51"/>
+    <ROW Action="AI_ResolveKnownFolders" Sequence="52"/>
     <ROW Action="AI_SETMIXINSTLOCATION" Sequence="748"/>
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Sequence="99" Builds="DefaultBuild"/>
     <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Condition="AI_SETUPEXEPATH_ORIGINAL" Sequence="101" Builds="DefaultBuild"/>
@@ -338,18 +344,22 @@
     <ROW Action="AI_EstimateExtractFiles" Sequence="3999" Builds="DefaultBuild"/>
     <ROW Action="AI_AiRemoveFilesRollback" Sequence="3099"/>
     <ROW Action="AI_GetArpIconPath" Sequence="1401"/>
+    <ROW Action="AI_EnableDebugLog" Sequence="51"/>
     <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="ExecuteAction" Sequence="1299" SeqType="0" MsiKey="ExecuteAction"/>
-    <ROW Action="AI_ResolveKnownFolders" Sequence="52"/>
-    <ROW Action="AI_DpiContentScale" Sequence="51"/>
+    <ROW Action="AI_ResolveKnownFolders" Sequence="53"/>
+    <ROW Action="AI_DpiContentScale" Sequence="52"/>
     <ROW Action="AI_SETMIXINSTLOCATION" Sequence="748"/>
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Sequence="99"/>
     <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Condition="AI_SETUPEXEPATH_ORIGINAL" Sequence="101"/>
+    <ROW Action="AI_EnableDebugLog" Sequence="51"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiLaunchConditionsComponent">
     <ROW Condition="(VersionNT &lt;&gt; 400)" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNT40Display]." DescriptionLocId="AI.LaunchCondition.NoNT40" IsPredefined="true" Builds="DefaultBuild"/>
+    <ROW Condition="(VersionNT &lt;&gt; 500)" Description="[ProductName] cannot be installed on [WindowsTypeNT50Display]." DescriptionLocId="AI.LaunchCondition.NoNT50" IsPredefined="true" Builds="DefaultBuild"/>
+    <ROW Condition="(VersionNT64 OR ((VersionNT &lt;&gt; 501) OR (ServicePackLevel = 3))) AND ((VersionNT &lt;&gt; 502) OR (ServicePackLevel = 2))" Description="[ProductName] cannot be installed on [WindowsTypeNT5XDisplay]." DescriptionLocId="AI.LaunchCondition.NoNT5X" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="Privileged" Description="[ProductName] requires administrative privileges to install." DescriptionLocId="AI.LaunchCondition.Privileged" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionNT" Description="[ProductName] cannot be installed on [WindowsType9XDisplay]." DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
   </COMPONENT>

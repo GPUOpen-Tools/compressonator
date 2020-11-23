@@ -19,6 +19,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+//--------------------------------------------------------------------------------------
 
 // #define DECOMPRESS_SAVE_TO_BMP
 
@@ -740,6 +741,18 @@ CMP_ERROR WINAPI GPU_DirectX::Decompress(
         //pDestTexture->dwHeight = m_height;
         uint8_t *pxdata = sratchimage.GetPixels();
         memcpy(pDestTexture->pData, pxdata, pDestTexture->dwDataSize);
+
+        // handle special cases
+        // adjust destination format as described by the captured buffers meta data
+        TexMetadata mdata = sratchimage.GetMetadata();
+        if (pDestTexture->format == CMP_FORMAT_RGBA_8888_S)
+        {
+            // switch data type as captured data is not snorm
+            // This case should be handled properly, code is needed to setup snorm captures
+            if (mdata.format == DXGI_FORMAT_R8G8B8A8_UNORM)
+                pDestTexture->format = CMP_FORMAT_ARGB_8888;
+        }
+
     }
 
     CleanupDevice();

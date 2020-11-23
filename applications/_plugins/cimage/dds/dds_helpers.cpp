@@ -105,6 +105,7 @@ TC_PluginError GenericLoadFunction(FILE*& pFile, DDSD2*& pDDSD, MipSet*& pMipSet
     TC_PluginError err;
 
     DetermineTextureType(pDDSD, pMipSet);
+
     if(!DDS_CMips->AllocateMipSet(pMipSet, channelFormat, textureDataType, pMipSet->m_TextureType,
                                   pDDSD->dwWidth, pDDSD->dwHeight, pMipSet->m_nDepth))
         return PE_Unknown;
@@ -395,6 +396,56 @@ TC_PluginError LoopRGB8888(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*& extra
     }
     return PE_OK;
 }
+
+
+TC_PluginError LoopRGB8888_S(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*& extra, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight)
+{
+    MipLevel* pMipLevel = DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nFaceOrSlice);
+
+    // Allocate the permanent buffer and unpack the bitmap data into it
+    if (!DDS_CMips->AllocateMipLevelData(pMipLevel, dwWidth, dwHeight, CF_8bit, pMipSet->m_TextureDataType))
+    {
+        return PE_Unknown;
+    }
+    ARGB8888Struct* pARGB8888Struct = reinterpret_cast<ARGB8888Struct*>(extra);
+    if (!(pARGB8888Struct->nFlags & EF_UseBitMasks))
+    {
+        //not using bitmasks
+        if (fread(pMipLevel->m_pbData, pMipLevel->m_dwLinearSize, 1, pFile) != 1)
+        {
+            return PE_Unknown;
+        }
+    }
+    else
+    {
+        //using bitmasks
+        if (fread(pARGB8888Struct->pMemory, pMipLevel->m_dwLinearSize, 1, pFile) != 1)
+        {
+            return PE_Unknown;
+        }
+        CMP_SBYTE*  pData    = pMipLevel->m_psbData;
+        CMP_DWORD* pTempPtr = (CMP_DWORD*)pARGB8888Struct->pMemory;
+        CMP_DWORD* pEnd     = (CMP_DWORD*)pARGB8888Struct->pMemory + (pMipLevel->m_dwLinearSize / 4);
+        CMP_SBYTE   R, G, B, A;
+        while (pTempPtr < pEnd)
+        {
+
+            R = static_cast<CMP_SBYTE>((*pTempPtr & pARGB8888Struct->nRMask) >> pARGB8888Struct->nRShift);
+            G = static_cast<CMP_SBYTE>((*pTempPtr & pARGB8888Struct->nGMask) >> pARGB8888Struct->nGShift);
+            B = static_cast<CMP_SBYTE>((*pTempPtr & pARGB8888Struct->nBMask) >> pARGB8888Struct->nBShift);
+            A = static_cast<CMP_SBYTE>((*pTempPtr & 0xFF000000) >> 24);
+            A = (pMipSet->m_TextureDataType == TDT_ARGB ? A : 127);
+            *pData++ = R;
+            *pData++ = G;
+            *pData++ = B;
+            *pData++ = A;
+            // printf("[%d,%d,%d,%d]\n",R,G,B,A);
+            pTempPtr++;
+        }
+    }
+    return PE_OK;
+}
+
 
 TC_PluginError PostLoopRGB8888(FILE*&, DDSD2*&, MipSet*&, void*&) {
     return PE_OK;
@@ -717,32 +768,37 @@ TC_PluginError PostLoopG16R16(FILE*&, DDSD2*&, MipSet*&, void*&) {
 }
 
 bool SetupDDSD(DDSD2& ddsd2, const MipSet* pMipSet, bool bCompressed) {
-    memset(&ddsd2, 0, sizeof(DDSD2));
-    ddsd2.dwSize = sizeof(DDSD2);
 
     assert(pMipSet);
-    if(pMipSet == NULL)
+    if (pMipSet == NULL)
         return false;
 
-    ddsd2.dwWidth = pMipSet->m_nWidth;
-    ddsd2.dwHeight = pMipSet->m_nHeight;
+    memset(&ddsd2, 0, sizeof(DDSD2));
+    ddsd2.dwSize        = sizeof(DDSD2);
+    ddsd2.dwWidth       = pMipSet->m_nWidth;
+    ddsd2.dwHeight      = pMipSet->m_nHeight;
     ddsd2.dwMipMapCount = pMipSet->m_nMipLevels;
-    ddsd2.dwFlags = DDSD_CAPS|DDSD_WIDTH|DDSD_HEIGHT|DDSD_PIXELFORMAT|DDSD_MIPMAPCOUNT;
+    ddsd2.dwFlags       = DDSD_CAPS|DDSD_WIDTH|DDSD_HEIGHT|DDSD_PIXELFORMAT|DDSD_MIPMAPCOUNT;
+
     if(bCompressed) {
-        ddsd2.dwFlags |= DDSD_LINEARSIZE;
-        ddsd2.dwLinearSize = DDS_CMips->GetMipLevel(pMipSet, 0)->m_dwLinearSize;
+        ddsd2.dwFlags       |= DDSD_LINEARSIZE;
+        ddsd2.dwLinearSize   = DDS_CMips->GetMipLevel(pMipSet, 0)->m_dwLinearSize;
     } else
-        ddsd2.dwFlags |= DDSD_PITCH;
+        ddsd2.dwFlags       |= DDSD_PITCH;
 
     ddsd2.ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
-    ddsd2.ddsCaps.dwCaps = DDSCAPS_TEXTURE|DDSCAPS_COMPLEX|DDSCAPS_MIPMAP;
+
+    ddsd2.ddsCaps.dwCaps = DDSCAPS_TEXTURE;
+
+    if (pMipSet->m_nMipLevels > 1)
+        ddsd2.ddsCaps.dwCaps    |= DDSCAPS_COMPLEX | DDSCAPS_MIPMAP;
 
     if(pMipSet->m_TextureType == TT_CubeMap) {
-        ddsd2.ddsCaps.dwCaps2 |= DDSCAPS2_CUBEMAP | DDSCAPS2_CUBEMAP_ALLFACES;
+        ddsd2.ddsCaps.dwCaps2   |= DDSCAPS2_CUBEMAP | DDSCAPS2_CUBEMAP_ALLFACES;
     } else if(pMipSet->m_TextureType == TT_VolumeTexture) {
-        ddsd2.dwFlags |= DDSD_DEPTH;
-        ddsd2.dwDepth = pMipSet->m_nDepth;
-        ddsd2.ddsCaps.dwCaps2 |= DDSCAPS2_VOLUME;
+        ddsd2.dwFlags           |= DDSD_DEPTH;
+        ddsd2.dwDepth            = pMipSet->m_nDepth;
+        ddsd2.ddsCaps.dwCaps2   |= DDSCAPS2_VOLUME;
     }
 
     return true;
@@ -987,15 +1043,25 @@ TC_PluginError LoopR16G16(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,
     return PE_OK;
 }
 
+TC_PluginError PreLoopR16(FILE*&, DDSD2*&, MipSet*& pMipSet, void*&)
+{
+    return PE_OK;
+}
+
+
 TC_PluginError LoopR16(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,
                        int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight) {
+
     MipLevel* pMipLevel = DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nFaceOrSlice);
-    // Allocate the permanent buffer and unpack the bitmap data into it
-    if(!DDS_CMips->AllocateMipLevelData(pMipLevel, dwWidth, dwHeight, CF_16bit, pMipSet->m_TextureDataType)) {
+    // Allocate the permanent buffer and unpack the bitmap data into it, for CMP we are always using RGBA buffer
+    if (!DDS_CMips->AllocateMipLevelData(pMipLevel, dwWidth, dwHeight, CF_16bit, TDT_ARGB)) // pMipSet->m_TextureDataType))
+    {
         return PE_Unknown;
     }
 
+    pMipSet->m_TextureDataType = TDT_ARGB;
     CMP_DWORD dwSize = pMipLevel->m_dwLinearSize / 4;
+
     CMP_BYTE* pTempData = (CMP_BYTE*) malloc(dwSize);
     assert(pTempData);
     if(!pTempData)
@@ -1007,13 +1073,14 @@ TC_PluginError LoopR16(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,
         return PE_Unknown;
     }
 
+    // Load as gray scale
     CMP_WORD* pSrc = (CMP_WORD*) pTempData;
     CMP_WORD* pEnd = (CMP_WORD*) (pTempData + dwSize);
     CMP_WORD* pDest = pMipLevel->m_pwData;
     while(pSrc < pEnd) {
+        *pDest++ = *pSrc;
+        *pDest++ = *pSrc;
         *pDest++ = *pSrc++;
-        *pDest++ = 0;
-        *pDest++ = 0;
         *pDest++ = _UI16_MAX;
     }
 
@@ -1021,6 +1088,12 @@ TC_PluginError LoopR16(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,
 
     return PE_OK;
 }
+
+TC_PluginError PostLoopR16(FILE*&, DDSD2*&, MipSet*& pMipSet, void*&)
+{
+    return PE_OK;
+}
+
 
 TC_PluginError LoopR8(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,
                       int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight) {

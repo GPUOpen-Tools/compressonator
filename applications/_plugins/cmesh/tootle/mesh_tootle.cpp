@@ -20,10 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+
 #include "mesh_tootle.h"
 
-#include "timer.h"
 
+#include "timer.h"
 #include "modeldata.h"
 #include "tc_pluginapi.h"
 #include "tc_plugininternal.h"
@@ -33,7 +34,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+
+#ifdef _CMP_CPP17_  // Build code using std::c++17
 #include <filesystem>
+namespace sfs = std::filesystem;
+#else
+#include <experimental/filesystem>
+namespace sfs = std::experimental::filesystem;
+#endif
 #include <fstream>
 
 #ifdef BUILD_AS_PLUGIN_DLL
@@ -122,7 +130,7 @@ int Plugin_Mesh_Tootle::CleanUp() {
 }
 
 void getFileName(const char *FilePathName, char *fnameExt, int maxbuffsize) {
-    std::filesystem::path filePath(FilePathName);
+    sfs::path filePath(FilePathName);
 
     snprintf(fnameExt, maxbuffsize, "%s%s", filePath.filename().c_str(), filePath.extension().c_str());
 }

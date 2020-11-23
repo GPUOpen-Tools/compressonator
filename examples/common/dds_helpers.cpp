@@ -64,6 +64,7 @@ using namespace CMP;
 #define FOURCC_BC4U                 MAKEFOURCC('B', 'C', '4', 'U')
 #define FOURCC_BC5                  MAKEFOURCC('B', 'C', '5', ' ')
 #define FOURCC_BC5S                 MAKEFOURCC('B', 'C', '5', 'S')
+#define FOURCC_BC5U                 MAKEFOURCC('B', 'C', '5', 'U')
 
 
 // Deprecated but still supported for decompression
@@ -107,10 +108,10 @@ CMP_FourCC g_FourCCs[] = {
     {FOURCC_BC2,                CMP_FORMAT_BC2},
     {FOURCC_BC3,                CMP_FORMAT_BC3},
     {FOURCC_BC4,                CMP_FORMAT_BC4},
-    {FOURCC_BC4S,               CMP_FORMAT_BC4},
+    {FOURCC_BC4S,               CMP_FORMAT_BC4_S},
     {FOURCC_BC4U,               CMP_FORMAT_BC4},
     {FOURCC_BC5,                CMP_FORMAT_BC5},
-    {FOURCC_BC5S,               CMP_FORMAT_BC5},
+    {FOURCC_BC5S,               CMP_FORMAT_BC5_S},
     {FOURCC_ATC_RGB,            CMP_FORMAT_ATC_RGB},
     {FOURCC_ATC_RGBA_EXPLICIT,  CMP_FORMAT_ATC_RGBA_Explicit},
     {FOURCC_ATC_RGBA_INTERP,    CMP_FORMAT_ATC_RGBA_Interpolated},
@@ -150,12 +151,16 @@ typedef struct {
 
 CMP_FormatDesc g_DDSFormatDesc[] = {
     {CMP_FORMAT_Unknown,                 ("Unknown")},
+    {CMP_FORMAT_RGBA_8888_S,             ("RGBA_8888_S")},
     {CMP_FORMAT_ARGB_8888,               ("ARGB_8888")},
     {CMP_FORMAT_BGRA_8888,               ("BGRA_8888")},
     {CMP_FORMAT_RGBA_8888,               ("RBGA_8888")},
+    {CMP_FORMAT_RGB_888_S,               ("RGB_888_S")},
     {CMP_FORMAT_RGB_888,                 ("RGB_888")},
     {CMP_FORMAT_BGR_888,                 ("BRG_888")},
+    {CMP_FORMAT_RG_8_S,                  ("RG_8_S")},
     {CMP_FORMAT_RG_8,                    ("RG_8")},
+    {CMP_FORMAT_R_8_S,                   ("R_8_S")},
     {CMP_FORMAT_R_8,                     ("R_8")},
     {CMP_FORMAT_ARGB_2101010,            ("ARGB_2101010")},
     {CMP_FORMAT_ARGB_16,                 ("ARGB_16")},
@@ -184,8 +189,10 @@ CMP_FormatDesc g_DDSFormatDesc[] = {
     {CMP_FORMAT_BC2,                     ("BC2")},
     {CMP_FORMAT_BC3,                     ("BC3")},
     {CMP_FORMAT_BC4,                     ("BC4")},
+    {CMP_FORMAT_BC4_S,                   ("BC4_S")},
     {CMP_FORMAT_BC5,                     ("BC5")},
-    {CMP_FORMAT_BC6H,                    ("BC6H") },
+    {CMP_FORMAT_BC5_S,                   ("BC5_S")},
+    {CMP_FORMAT_BC6H,                    ("BC6H")},
     {CMP_FORMAT_BC7,                     ("BC7") },
     {CMP_FORMAT_ATC_RGB,                 ("ATC_RGB")},
     {CMP_FORMAT_ATC_RGBA_Explicit,       ("ATC_RGBA_Explicit")},
@@ -762,21 +769,23 @@ void SaveDDSFile(const char* pszFile, CMP_Texture& texture) {
     case CMP_FORMAT_BC2:
     case CMP_FORMAT_BC3:
     case CMP_FORMAT_BC4:
-    case CMP_FORMAT_BC5: {
+    case CMP_FORMAT_BC4_S:
+    case CMP_FORMAT_BC5:
+    case CMP_FORMAT_BC5_S:
+    {
         fwrite(&DDS_HEADER, sizeof(DWORD), 1, pFile);
         DDSD2 ddsd2;
         memset(&ddsd2, 0, sizeof(DDSD2));
         ddsd2.dwSize                   = sizeof(DDSD2);
         ddsd2.dwWidth                  = texture.dwWidth;
         ddsd2.dwHeight                 = texture.dwHeight;
-        ddsd2.dwMipMapCount            = 1;
+        ddsd2.dwMipMapCount            = 1; // For this example  code only 1 mip level is used.
         ddsd2.dwFlags                  = DDSD_CAPS|DDSD_WIDTH|DDSD_HEIGHT|DDSD_PIXELFORMAT|DDSD_MIPMAPCOUNT;
         ddsd2.dwFlags                 |= DDSD_LINEARSIZE;
         ddsd2.dwLinearSize             = texture.dwDataSize;
         ddsd2.ddpfPixelFormat.dwSize   = sizeof(DDPIXELFORMAT);
-        ddsd2.ddsCaps.dwCaps           = DDSCAPS_TEXTURE|DDSCAPS_COMPLEX|DDSCAPS_MIPMAP;
+        ddsd2.ddsCaps.dwCaps           = DDSCAPS_TEXTURE;  // In this example texture are just 2D no cubemap or volume
         ddsd2.ddpfPixelFormat.dwFlags  = DDPF_FOURCC;
-        ddsd2.ddpfPixelFormat.dwFlags |= DDPF_ALPHAPIXELS;
 
         switch (texture.format) {
         case CMP_FORMAT_BC1:
@@ -789,10 +798,16 @@ void SaveDDSFile(const char* pszFile, CMP_Texture& texture) {
             ddsd2.ddpfPixelFormat.dwFourCC = FOURCC_DXT5;
             break;
         case CMP_FORMAT_BC4:
-            ddsd2.ddpfPixelFormat.dwFourCC = FOURCC_ATI1N;
+            ddsd2.ddpfPixelFormat.dwFourCC = FOURCC_BC4U;   // FOURCC_ATI1N;
+            break;
+        case CMP_FORMAT_BC4_S:
+            ddsd2.ddpfPixelFormat.dwFourCC = FOURCC_BC4S;
             break;
         case CMP_FORMAT_BC5:
-            ddsd2.ddpfPixelFormat.dwFourCC = FOURCC_ATI2N_XY;
+            ddsd2.ddpfPixelFormat.dwFourCC = FOURCC_BC5U;   // FOURCC_ATI2N_XY;
+            break;
+        case CMP_FORMAT_BC5_S:
+            ddsd2.ddpfPixelFormat.dwFourCC = FOURCC_BC5S;
             break;
         }
 
@@ -888,7 +903,15 @@ void SaveDDSFile(const char* pszFile, CMP_Texture& texture) {
                     ddsd.ddpfPixelFormat.dwRGBBitCount = 32;
                     ddsd.ddpfPixelFormat.dwFlags = DDPF_ALPHAPIXELS | DDPF_RGB;
                     break;
-
+                case CMP_FORMAT_RGBA_8888_S:
+                    ddsd.ddpfPixelFormat.dwRBitMask        = 0x000000ff;
+                    ddsd.ddpfPixelFormat.dwGBitMask        = 0x0000ff00;
+                    ddsd.ddpfPixelFormat.dwBBitMask        = 0x00ff0000;
+                    ddsd.ddpfPixelFormat.dwRGBAlphaBitMask = 0xff000000;
+                    ddsd.lPitch                            = texture.dwPitch;
+                    ddsd.ddpfPixelFormat.dwRGBBitCount     = 32;
+                    ddsd.ddpfPixelFormat.dwFlags           = 0x00080000;  // DDPF_BUMPDUDV
+                    break;
                 case CMP_FORMAT_RGB_888:
                     ddsd.ddpfPixelFormat.dwRBitMask = 0x00ff0000;
                     ddsd.ddpfPixelFormat.dwGBitMask = 0x0000ff00;
@@ -896,6 +919,14 @@ void SaveDDSFile(const char* pszFile, CMP_Texture& texture) {
                     ddsd.lPitch = texture.dwPitch;
                     ddsd.ddpfPixelFormat.dwRGBBitCount = 24;
                     ddsd.ddpfPixelFormat.dwFlags = DDPF_RGB;
+                    break;
+                case CMP_FORMAT_RGB_888_S:
+                    ddsd.ddpfPixelFormat.dwRBitMask    = 0x00ff0000;
+                    ddsd.ddpfPixelFormat.dwGBitMask    = 0x0000ff00;
+                    ddsd.ddpfPixelFormat.dwBBitMask    = 0x000000ff;
+                    ddsd.lPitch                        = texture.dwPitch;
+                    ddsd.ddpfPixelFormat.dwRGBBitCount = 24;
+                    ddsd.ddpfPixelFormat.dwFlags       = DDPF_RGB;
                     break;
 
                 case CMP_FORMAT_RG_8:
@@ -906,8 +937,21 @@ void SaveDDSFile(const char* pszFile, CMP_Texture& texture) {
                     ddsd.ddpfPixelFormat.dwFlags = DDPF_ALPHAPIXELS | DDPF_LUMINANCE;
                     ddsd.ddpfPixelFormat.dwRGBAlphaBitMask = 0xff000000;
                     break;
-
+                case CMP_FORMAT_RG_8_S:
+                    ddsd.ddpfPixelFormat.dwRBitMask        = 0x0000ff00;
+                    ddsd.ddpfPixelFormat.dwGBitMask        = 0x000000ff;
+                    ddsd.lPitch                            = texture.dwPitch;
+                    ddsd.ddpfPixelFormat.dwRGBBitCount     = 16;
+                    ddsd.ddpfPixelFormat.dwFlags           = DDPF_ALPHAPIXELS | DDPF_LUMINANCE;
+                    ddsd.ddpfPixelFormat.dwRGBAlphaBitMask = 0xff000000;
+                    break;
                 case CMP_FORMAT_R_8:
+                    ddsd.ddpfPixelFormat.dwRBitMask    = 0x000000ff;
+                    ddsd.lPitch                        = texture.dwPitch;
+                    ddsd.ddpfPixelFormat.dwRGBBitCount = 8;
+                    ddsd.ddpfPixelFormat.dwFlags       = DDPF_LUMINANCE;
+                    break;
+                case CMP_FORMAT_R_8_S:
                     ddsd.ddpfPixelFormat.dwRBitMask = 0x000000ff;
                     ddsd.lPitch = texture.dwPitch;
                     ddsd.ddpfPixelFormat.dwRGBBitCount = 8;

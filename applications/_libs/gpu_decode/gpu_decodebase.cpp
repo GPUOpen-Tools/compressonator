@@ -25,11 +25,9 @@
 //=====================================================================
 
 #ifdef _WIN32
-#ifndef DISABLE_TESTCODE
 #include "common.h"
 #include "compressonator.h"
 #include "gpu_decodebase.h"
-
 
 using namespace GPU_Decode;
 
@@ -140,6 +138,6 @@ HRESULT RenderWindow::InitWindow(int width, int height,WNDPROC callback) {
 
     return S_OK;
 }
-#endif
+
 #endif
 

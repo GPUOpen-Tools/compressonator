@@ -96,9 +96,11 @@ int Plugin_BC4::TC_Init(void  *kernel_options) {
 
     memset(&g_BC4Encode, 0, sizeof(CMP_BC15Options));
     SetDefaultBC15Options(&g_BC4Encode);
-    g_BC4Encode.m_src_width = m_KernelOptions->width;
-    g_BC4Encode.m_src_height = m_KernelOptions->height;
-    g_BC4Encode.m_fquality   = m_KernelOptions->fquality;
+    g_BC4Encode.m_src_width   = m_KernelOptions->width;
+    g_BC4Encode.m_src_height  = m_KernelOptions->height;
+    g_BC4Encode.m_fquality    = m_KernelOptions->fquality;
+    g_BC4Encode.m_bIsSNORM    = (m_KernelOptions->format == CMP_FORMAT_BC4_S);
+    g_BC4Encode.m_sintsrc     = (m_KernelOptions->srcformat == CMP_FORMAT_RGBA_8888_S);
 
     m_KernelOptions->data = &g_BC4Encode;
     m_KernelOptions->size = sizeof(g_BC4Encode);

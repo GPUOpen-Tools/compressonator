@@ -65,12 +65,12 @@ print("\nFetching dependencies from: " + gitRoot + " - using branch: " + gitBran
 ghRoot = "https://github.com/GPUOpen-Tools/"
 
 # source reviews for use
-#    "https://github.com/opencv/opencv.git"      : ["../common/lib/ext/opencv",  "master"],
-#    "https://github.com/openexr/openexr.git"    : ["../common/lib/ext/openexr", "master"],
-#    "https://github.com/madler/zlib"            : ["../common/lib/ext/zlib",    "master"],
-#    "https://github.com/catchorg/Catch2.git"    : ["../common/lib/ext/catch",   "master"],
-#    "https://github.com/syoyo/tinyexr"          : ["../common/lib/ext/tinyexr", "master"],
-#    "https://github.com/google/draco/tree/master/src/draco" : : ["../common/lib/ext/draco", "master"],
+#   "https://github.com/opencv/opencv.git"      : ["../common/lib/ext/opencv2",  "2.4.9"]
+#   "https://github.com/openexr/openexr.git"    : ["../common/lib/ext/openexr", "master"],
+#   "https://github.com/madler/zlib"            : ["../common/lib/ext/zlib",    "master"],
+#   "https://github.com/catchorg/Catch2.git"    : ["../common/lib/ext/catch",   "master"],
+#   "https://github.com/syoyo/tinyexr"          : ["../common/lib/ext/tinyexr", "master"],
+#   "https://github.com/google/draco/tree/master/src/draco" : : ["../common/lib/ext/draco", "master"],
 
 # Libs.
 gitMapping = {
@@ -81,9 +81,9 @@ gitMapping = {
     ghRoot+"common_lib_ext_opengl.git"          : ["../common/lib/ext/opengl",     "master"],
     ghRoot+"common_lib_ext_tinyxml_2.6.2.git"   : ["../common/lib/ext/tinyxml",    "master"],
     ghRoot+"common_lib_ext_zlib_1.2.10.git"     : ["../common/lib/ext/zlib",       "master"],
-    "https://github.com/g-truc/glm.git"         : ["../common/lib/ext/glm",        "master"],
+    "https://github.com/g-truc/glm.git"         : ["../common/lib/ext/glm",        "0.9.8.0"],
     "https://github.com/discord/rapidxml.git"   : ["../common/lib/ext/rapidxml",   "master"],
-    "https://github.com/KhronosGroup/KTX-Software.git" : ["../common/lib/ext/ktx", "master"],
+    "https://github.com/KhronosGroup/KTX-Software.git" : ["../common/lib/ext/ktx", "v4.0.0-beta4"],
     "https://github.com/apitrace/dxsdk"         : ["../common/lib/ext/apitrace/dxsdk", "master"],
 }
 

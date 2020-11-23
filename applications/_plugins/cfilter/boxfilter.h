@@ -28,9 +28,15 @@
 #include "plugininterface.h"
 
 #ifdef _WIN32
+#define USE_DIRECTX9
+#ifdef USE_DIRECTX9
 #include "d3d9.h"
 #include "d3dxmodule.h"
 #include "d3d9module.h"
+#else
+#include <d3d11.h>
+#include <comdef.h>
+#endif
 
 // {3AF62198-7326-48FA-B1FB-1D12A355694D}
 static const GUID g_GUID = {0x3af62198, 0x7326, 0x48fa, {0xb1, 0xfb, 0x1d, 0x12, 0xa3, 0x55, 0x69, 0x4d}};
@@ -41,8 +47,18 @@ static const GUID g_GUID = {0};
 #define TC_PLUGIN_VERSION_MAJOR 1
 #define TC_PLUGIN_VERSION_MINOR 0
 
-class Plugin_BoxFilter : public PluginInterface_Filters {
-  public:
+#define SAFE_RELEASE(x)   \
+    {                     \
+        if (x)            \
+        {                 \
+            x->Release(); \
+            x = nullptr;  \
+        }                 \
+    }
+
+class Plugin_BoxFilter : public PluginInterface_Filters
+{
+public:
     Plugin_BoxFilter();
     virtual ~Plugin_BoxFilter();
 
@@ -50,10 +66,22 @@ class Plugin_BoxFilter : public PluginInterface_Filters {
     int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
     int TC_CFilter(MipSet* pMipSet, CMP_MipSet* pMipSetDst, CMP_CFilterParams* pD3DXFilterParams);
 
-  private:
-    void Error(TCHAR* pszCaption, TC_ErrorLevel errorLevel, UINT nErrorString);
+private:
+    void Error(CMP_CHAR* pszCaption, CMP_UINT nErrorString, CMP_CHAR* errMsg);
+
 #ifdef _WIN32
     int GenMipLevelsUsingD3DXFilter(MipSet* pMipSet, CMP_CFilterParams* pD3DXFilterParams);
+
+    #ifndef USE_DIRECTX9
+        // DirectX
+        ID3D11Device*        m_pDevice;
+        ID3D11DeviceContext* m_pContext;
+        ID3D11Texture2D*     m_pTexture2DSourceTexture;
+    
+        void    CleanupDX();
+        HRESULT CreateDXDevice();
+        HRESULT Create2DTexture(MipSet* pMipSet, DWORD dwMipLevels)
+    #endif
 #endif
 };
 

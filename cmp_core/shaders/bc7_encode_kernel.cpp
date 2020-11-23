@@ -895,7 +895,7 @@ void  GetProjectedIndex(
     CGV_IMAGE img_diff = image_max-image_min;
 
     if (img_diff == 0.0f) return;
-    if (isnan(img_diff)) return;
+    if (cmp_isnan(img_diff)) return;
 
     image_s = (clusters-1)/img_diff;
 
@@ -4658,14 +4658,6 @@ int CMP_CDECL SetAlphaOptionsBC7(void *options, CGU_BOOL imageNeedsAlpha, CGU_BO
     return CGU_CORE_OK;
 }
 
-int CMP_CDECL SetGammaBC7(void *options,
-                          CGU_BOOL sRGB) {
-    CMP_UNUSED(sRGB);
-    if (!options) return CGU_CORE_ERR_INVALIDPTR;
-    // BC7_Encode *BC7options = (BC7_Encode *)options;
-    // BC7options->sRGB = sRGB; // TODO: Implement this option
-    return CGU_CORE_ERR_UNKOWN; // Since it doesn't work today
-}
 
 int CMP_CDECL CompressBlockBC7( const unsigned char *srcBlock,
                                 unsigned int srcStrideInBytes,

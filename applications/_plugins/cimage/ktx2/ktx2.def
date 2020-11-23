@@ -1,0 +1,17 @@
+; TGA.def : Declares the module parameters for the DLL.
+
+LIBRARY   TGA
+
+EXPORTS
+	TC_PluginInitialise
+	TC_PluginGetVersion
+	TC_PluginLoad
+	TC_PluginUnload
+	TC_PluginGetAboutInfo
+	TC_PluginGetHelpInfo
+
+	TC_PluginFileLoadTexture
+	TC_PluginFileSaveTexture
+	TC_PluginFileSupportsFormat
+	TC_PluginFileSupportsMipLevels
+	TC_PluginFileGetFileSaveParametersDialog

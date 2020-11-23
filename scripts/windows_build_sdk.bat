@@ -409,29 +409,29 @@ if not %ERRORLEVEL%==0 (
 
 
 REM Qt dir only required for Framework Plugins build
-set QTDIR=C:\Qt\Qt5.12.6\5.12.6\msvc2017_64
-
-REM Vulkan SDK only required for Framework Plugin build
-set VULKAN_SDK=C:\VulkanSDK\1.2.141.2
-
+REM set QTDIR=C:\Qt\Qt5.12.6\5.12.6\msvc2017_64
+REM 
+REM REM Vulkan SDK only required for Framework Plugin build
+REM set VULKAN_SDK=C:\VulkanSDK\1.2.141.2
+REM 
 REM ##################################################################
 REM cmp_frameworkPlugins - VS 2017 Release  Reserved for V4.0
 REM ##################################################################
-msbuild /m:4 /t:build /p:Configuration=Release_MD_DLL /p:Platform=x64 %WORKDIR%\compressonator\VS2017\cmp_frameworkPlugins.sln
-if not %ERRORLEVEL%==0 (
-    echo on
-    echo cmp_frameworkPlugins build release_md_dll x64 FAILED
-    cd %WORKDIR%
-    exit 1
-)
-
-msbuild /m:4 /t:build /p:Configuration=Debug_MD_DLL /p:Platform=x64 %WORKDIR%\compressonator\VS2017\cmp_frameworkPlugins.sln
-if not %ERRORLEVEL%==0 (
-    echo on
-    echo cmp_frameworkPlugins build Debug_MD_dll x64 FAILED
-    cd %WORKDIR%
-    exit 1
-)
+REM msbuild /m:4 /t:build /p:Configuration=Release_MD_DLL /p:Platform=x64 %WORKDIR%\compressonator\VS2017\cmp_frameworkPlugins.sln
+REM if not %ERRORLEVEL%==0 (
+REM     echo on
+REM     echo cmp_frameworkPlugins build release_md_dll x64 FAILED
+REM     cd %WORKDIR%
+REM     exit 1
+REM )
+REM 
+REM msbuild /m:4 /t:build /p:Configuration=Debug_MD_DLL /p:Platform=x64 %WORKDIR%\compressonator\VS2017\cmp_frameworkPlugins.sln
+REM if not %ERRORLEVEL%==0 (
+REM     echo on
+REM     echo cmp_frameworkPlugins build Debug_MD_dll x64 FAILED
+REM     cd %WORKDIR%
+REM     exit 1
+REM )
 
 REM #################
 REM CLEAN TMP FOLDER

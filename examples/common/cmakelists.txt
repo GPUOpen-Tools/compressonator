@@ -15,7 +15,7 @@ target_include_directories(dds_helper PUBLIC
 
 target_link_libraries(dds_helper
     PUBLIC
-        CompressonatorLIB
+        CMP_Compressonator
 )
 
 set_target_properties(dds_helper PROPERTIES FOLDER ${FOLDER_NAME})

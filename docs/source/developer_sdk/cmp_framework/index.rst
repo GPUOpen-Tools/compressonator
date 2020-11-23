@@ -1,7 +1,7 @@
 CMP Framework
 ==============
 
-This library depends only standard libaray.
+This library depends only on standard libaray.
 
 CMP Error Codes
 ---------------
@@ -9,37 +9,40 @@ CMP Error Codes
 .. code-block:: c
 
 	typedef enum {
-	    CMP_OK = 0,                            // Ok.
-	    CMP_ABORTED,                           // The conversion was aborted.
-	    CMP_ERR_INVALID_SOURCE_TEXTURE,        // The source texture is invalid.
-	    CMP_ERR_INVALID_DEST_TEXTURE,          // The destination texture is invalid.
-	    CMP_ERR_UNSUPPORTED_SOURCE_FORMAT,     // The source format is not a supported format.
-	    CMP_ERR_UNSUPPORTED_DEST_FORMAT,       // The destination format is not a supported format.
-	    CMP_ERR_UNSUPPORTED_GPU_ASTC_DECODE,   // The gpu hardware is not supported.
-	    CMP_ERR_UNSUPPORTED_GPU_BASIS_DECODE,  // The gpu hardware is not supported.
-	    CMP_ERR_SIZE_MISMATCH,                 // The source and destination texture sizes do not match.
-	    CMP_ERR_UNABLE_TO_INIT_CODEC,          // Compressonator was unable to initialize the codec needed for conversion.
-	    CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB,  // GPU_Decode Lib was unable to initialize the codec needed for decompression .
-	    CMP_ERR_UNABLE_TO_INIT_COMPUTELIB,     // Compute Lib was unable to initialize the codec needed for compression.
-	    CMP_ERR_CMP_DESTINATION,               // Error in compressing destination texture
-	    CMP_ERR_MEM_ALLOC_FOR_MIPSET,          // Memory Error: allocating MIPSet compression level data buffer
-	    CMP_ERR_UNKNOWN_DESTINATION_FORMAT,    // The destination Codec Type is unknown! In SDK refer to GetCodecType()
-	    CMP_ERR_FAILED_HOST_SETUP,             // Failed to setup Host for processing
-	    CMP_ERR_PLUGIN_FILE_NOT_FOUND,         // The required plugin library was not found
-	    CMP_ERR_UNABLE_TO_LOAD_FILE,           // The requested file was not loaded
-	    CMP_ERR_UNABLE_TO_CREATE_ENCODER,      // Request to create an encoder failed
-	    CMP_ERR_UNABLE_TO_LOAD_ENCODER,        // Unable to load an encode library
-	    CMP_ERR_NOSHADER_CODE_DEFINED,         // No shader code is available for the requested framework
-	    CMP_ERR_GPU_DOESNOT_SUPPORT_COMPUTE,   // The GPU device selected does not support compute
-	    CMP_ERR_GENERIC                        // An unknown error occurred.
+        CMP_OK = 0,                            // Ok.
+        CMP_ABORTED,                           // The conversion was aborted.
+        CMP_ERR_INVALID_SOURCE_TEXTURE,        // The source texture is invalid.
+        CMP_ERR_INVALID_DEST_TEXTURE,          // The destination texture is invalid.
+        CMP_ERR_UNSUPPORTED_SOURCE_FORMAT,     // The source format is not a supported format.
+        CMP_ERR_UNSUPPORTED_DEST_FORMAT,       // The destination format is not a supported format.
+        CMP_ERR_UNSUPPORTED_GPU_ASTC_DECODE,   // The gpu hardware is not supported.
+        CMP_ERR_UNSUPPORTED_GPU_BASIS_DECODE,  // The gpu hardware is not supported.
+        CMP_ERR_SIZE_MISMATCH,                 // The source and destination texture sizes do not match.
+        CMP_ERR_UNABLE_TO_INIT_CODEC,          // Compressonator was unable to initialize the codec needed for conversion.
+        CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB,  // GPU_Decode Lib was unable to initialize the codec needed for decompression .
+        CMP_ERR_UNABLE_TO_INIT_COMPUTELIB,     // Compute Lib was unable to initialize the codec needed for compression.
+        CMP_ERR_CMP_DESTINATION,               // Error in compressing destination texture
+        CMP_ERR_MEM_ALLOC_FOR_MIPSET,          // Memory Error: allocating MIPSet compression level data buffer
+        CMP_ERR_UNKNOWN_DESTINATION_FORMAT,    // The destination Codec Type is unknown! In SDK refer to GetCodecType()
+        CMP_ERR_FAILED_HOST_SETUP,             // Failed to setup Host for processing
+        CMP_ERR_PLUGIN_FILE_NOT_FOUND,         // The required plugin library was not found
+        CMP_ERR_UNABLE_TO_LOAD_FILE,           // The requested file was not loaded
+        CMP_ERR_UNABLE_TO_CREATE_ENCODER,      // Request to create an encoder failed
+        CMP_ERR_UNABLE_TO_LOAD_ENCODER,        // Unable to load an encode library
+        CMP_ERR_NOSHADER_CODE_DEFINED,         // No shader code is available for the requested framework
+        CMP_ERR_GPU_DOESNOT_SUPPORT_COMPUTE,   // The GPU device selected does not support compute
+        CMP_ERR_NOPERFSTATS,                   // No Performance Stats are available
+        CMP_ERR_GPU_DOESNOT_SUPPORT_CMP_EXT,   // The GPU does not support the requested compression extension!
+        CMP_ERR_GAMMA_OUTOFRANGE,              // Gamma value set for processing is out of range
+        CMP_ERR_PLUGIN_SHAREDIO_NOT_SET,       // The plugin C_PluginSetSharedIO call was not set and is required for this plugin to operate
+        CMP_ERR_UNABLE_TO_INIT_D3DX,           // Unable to initialize DirectX SDK or get a specific DX API
+        CMP_ERR_GENERIC                        // An unknown error occurred.
 	} CMP_ERROR;
 
 
 
 Kernel Options and Extensions
 -----------------------------
-**Note** GPU processing will be available on next release.
-
 .. code-block:: c
 
 	typedef enum CMPComputeExtensions {
@@ -68,6 +71,30 @@ Kernel Options and Extensions
 	    CMP_INT    threads;                 // requested number of threads to use (1=single) max is 128 for HPC, 0 for Auto
 	};
 
+	typedef enum _CMP_ANALYSIS_MODES
+	{
+	    CMP_ANALYSIS_MSEPSNR = 0x00000000  // Enable Measurement of MSE and PSNR for 2 mipset image samples
+	} CMP_ANALYSIS_MODES;
+	
+	typedef struct
+	{
+	    unsigned long analysisMode;     // Bit mapped setting to enable various forms of image anlaysis
+	    unsigned int  channelBitMap;    // Bit setting for active channels to do analysis on and reserved features
+	                                    // msb(....ABGR)lsb
+	    double        mse;      // Mean Square Error for all active channels in a given CMP_FORMAT
+	    double        mseR;     // Mean Square for Red Channel
+	    double        mseG;     // Mean Square for Green
+	    double        mseB;     // Mean Square for Blue 
+	    double        mseA;     // Mean Square for Alpha
+	    double        psnr;     // Peak Signal Ratio for all active channels in a given CMP_FORMAT
+	    double        psnrR;    // Peak Signal Ratio for Red Chennel
+	    double        psnrG;    // Peak Signal Ratio for Green
+	    double        psnrB;    // Peak Signal Ratio for Blue
+	    double        psnrA;    // Peak Signal Ratio for Alpha
+	} CMP_AnalysisData;
+
+
+
 
 Encoder Settings
 ----------------
@@ -89,14 +116,25 @@ Mip Map Interfaces
 
 .. code-block:: c
 
-    // MIP MAP Interfaces
-    CMP_INT CMP_MaxFacesOrSlices(const CMP_MipSet* pMipSet, CMP_INT nMipLevel);
-    CMP_INT CMP_API CMP_CalcMinMipSize(CMP_INT nHeight, CMP_INT nWidth, CMP_INT MipsLevel);
+	// MIP MAP Interfaces
+	CMP_INT CMP_MaxFacesOrSlices(const CMP_MipSet* pMipSet, CMP_INT nMipLevel);
+	CMP_INT CMP_API CMP_CalcMinMipSize(CMP_INT nHeight, CMP_INT nWidth, CMP_INT MipsLevel);
+	
+	CMP_VOID CMP_API CMP_FreeMipSet(CMP_MipSet *MipSetIn);
+	CMP_VOID CMP_API CMP_GetMipLevel(CMP_MipLevel *data, const CMP_MipSet* pMipSet, CMP_INT nMipLevel, CMP_INT nFaceOrSlice);
+	CMP_INT  CMP_API CMP_CalcMaxMipLevel(CMP_INT nHeight, CMP_INT nWidth, CMP_BOOL bForGPU);
+	CMP_INT  CMP_API CMP_CalcMinMipSize(CMP_INT nHeight, CMP_INT nWidth, CMP_INT MipsLevel);
+	
+	CMP_INT  CMP_API CMP_GenerateMIPLevels(CMP_MipSet *pMipSet, CMP_INT nMinSize);
+	CMP_INT  CMP_API CMP_GenerateMIPLevelsEx(CMP_MipSet* pMipSet, CMP_CFilterParams* pCFilterParams);
+	
+	CMP_ERROR CMP_API CMP_CreateCompressMipSet(CMP_MipSet* pMipSetCMP, CMP_MipSet* pMipSetSRC);
 
-    CMP_VOID  CMP_API CMP_FreeMipSet(CMP_MipSet *MipSetIn);
-    CMP_VOID  CMP_API CMP_GetMipLevel(CMP_MipLevel *data, const CMP_MipSet* pMipSet, CMP_INT nMipLevel, CMP_INT nFaceOrSlice);
-    CMP_INT   CMP_API CMP_GenerateMIPLevels(CMP_MipSet *pMipSet, CMP_INT nMinSize);
-    CMP_ERROR CMP_API CMP_CreateCompressMipSet(CMP_MipSet* pMipSetCMP, CMP_MipSet* pMipSetSRC);
+	// MIP Map Quality
+	CMP_UINT  CMP_API CMP_getFormat_nChannels(CMP_FORMAT format);
+	CMP_ERROR CMP_API CMP_MipSetAnlaysis(CMP_MipSet* src1, CMP_MipSet* src2, CMP_INT nMipLevel, CMP_INT nFaceOrSlice, CMP_AnalysisData* pAnalysisData);
+
+
 
 
 User Processing Callback
@@ -104,12 +142,12 @@ User Processing Callback
 
 .. code-block:: c
 
-    // CMP_MIPFeedback_Proc
-    // Feedback function for conversion.
-    // \param[in] fProgress The percentage progress of the texture compression.
-    // \param[in] mipProgress The current MIP level been processed, value of fProgress = mipProgress
-    // \return non-NULL(true) value to abort conversion
-    typedef bool(CMP_API* CMP_MIPFeedback_Proc)(CMP_MIPPROGRESSPARAM mipProgress);
+	// CMP_MIPFeedback_Proc
+	// Feedback function for conversion.
+	// \param[in] fProgress The percentage progress of the texture compression.
+	// \param[in] mipProgress The current MIP level been processed, value of fProgress = mipProgress
+	// \return non-NULL(true) value to abort conversion
+	typedef bool(CMP_API* CMP_MIPFeedback_Proc)(CMP_MIPPROGRESSPARAM mipProgress);
 
 
 Texture Load and Save

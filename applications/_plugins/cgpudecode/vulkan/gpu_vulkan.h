@@ -91,6 +91,7 @@ class GPU_Vulkan : public RenderWindow {
     uint32_t    m_height;
 
     bool        m_initOk;
+    const CMP_Texture* m_pSourceTexture = nullptr;
 
     VulkanSwapChain swapChain;
 
@@ -100,8 +101,6 @@ class GPU_Vulkan : public RenderWindow {
     uint32_t currentBuffer = 0;
     // Handle to the device graphics queue that command buffers are submitted to
     VkQueue queue;
-    // Color buffer format
-    VkFormat colorformat = VK_FORMAT_B8G8R8A8_UNORM;
     // Depth format is selected during Vulkan initialization
     VkFormat depthFormat;
     // number of vulkan devices

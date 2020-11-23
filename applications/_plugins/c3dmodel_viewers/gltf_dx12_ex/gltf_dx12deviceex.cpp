@@ -24,6 +24,7 @@
 
 #include "gltfcommon.h"
 #include "misc.h"
+#include "error.h"
 
 #ifdef ENABLE_RENDER_CODE
 #include "gltf_dx12rendererex.h"

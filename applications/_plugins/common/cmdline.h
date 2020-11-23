@@ -115,6 +115,7 @@ class CCmdLineParamaters {
     std::vector<std::string> SourceFileList;   //
     std::string         SourceFile;            //
     std::string         DestFile;              //
+    std::string         SourceDir;             //
     std::string         DestDir;               //
     std::string         DiffFile;              // Diff image file name
     std::string         DecompressFile;        //

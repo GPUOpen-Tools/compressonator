@@ -33,7 +33,6 @@
 #include "misc.h"
 #include "cmp_fileio.h"
 
-#include <filesystem>
 #include <string>
 #include <algorithm>
 
@@ -42,6 +41,14 @@
 #include <gltf/gltfcommon.h>
 #include "modeldata.h"
 #include "utilfuncs.h"
+
+#ifdef _CMP_CPP17_  // Build code using std::c++17
+#include <filesystem>
+namespace sfs = std::filesystem;
+#else
+#include <experimental/filesystem>
+namespace sfs = std::experimental::filesystem;
+#endif
 
 using namespace tinygltf2;
 #if !defined(NO_LEGACY_BEHAVIOR)
@@ -85,40 +92,54 @@ using namespace std;
 
 CCmdLineParamaters g_CmdPrams;
 
-static inline void helper_erase_all(std::string& str, const char* pErase) {
+static inline void helper_erase_all(std::string& str, const char* pErase)
+{
     size_t pos = str.find(pErase);
-    while (pos != std::string::npos) {
+    while (pos != std::string::npos)
+    {
         str.erase(pos, 1);
         pos = str.find(pErase);
     }
 }
 
-static inline void helper_to_upper(std::string& str) {
+static inline void helper_to_upper(std::string& str)
+{
     for (char& i : str)
         i = toupper(i);
 }
 
 bool fileIsGLTF(string SourceFile);
 
-string DefaultDestination(string SourceFile, CMP_FORMAT DestFormat, string DestFileExt) {
-    string                DestFile = "";
-    std::filesystem::path fp(SourceFile);
-    string                file_name = fp.stem().string();
-    string                file_ext  = fp.extension().string();
+string DefaultDestination(string SourceFile, CMP_FORMAT DestFormat, string DestFileExt, CMP_BOOL suffixDestFormat)
+{
+    string    DestFile = "";
+    sfs::path fp(SourceFile);
+    string    file_name = fp.stem().string();
+    string    file_ext  = fp.extension().string();
 
     DestFile.append(file_name);
-    DestFile.append("_");
-    file_ext.erase(std::remove(file_ext.begin(), file_ext.end(), '.'), file_ext.end());
-    DestFile.append(file_ext);
-    DestFile.append("_");
-    DestFile.append(GetFormatDesc(DestFormat));
 
-    if (DestFileExt.find('.') != std::string::npos) {
+    if (suffixDestFormat)
+    {
+        DestFile.append("_");
+        file_ext.erase(std::remove(file_ext.begin(), file_ext.end(), '.'), file_ext.end());
+        DestFile.append(file_ext);
+        DestFile.append("_");
+        DestFile.append(GetFormatDesc(DestFormat));
+    }
+    else
+        file_ext.erase(std::remove(file_ext.begin(), file_ext.end(), '.'), file_ext.end());
+
+    if (DestFileExt.find('.') != std::string::npos)
+    {
         DestFile.append(DestFileExt);
-    } else {
+    }
+    else
+    {
         if (DestFormat == CMP_FORMAT_ASTC)
             DestFile.append(".astc");
-        else {
+        else
+        {
             DestFile.append(".dds");
         }
     }
@@ -127,64 +148,42 @@ string DefaultDestination(string SourceFile, CMP_FORMAT DestFormat, string DestF
 }
 
 // check if file is glTF format extension
-bool fileIsGLTF(string SourceFile) {
-    std::filesystem::path fp(SourceFile);
-    string                file_ext = fp.extension().string();
+bool fileIsGLTF(string SourceFile)
+{
+    sfs::path fp(SourceFile);
+    string    file_ext = fp.extension().string();
     helper_to_upper(file_ext);
 
     return (file_ext.compare(".GLTF") == 0);
 }
 
 // check if file is OBJ format extension
-bool fileIsOBJ(string SourceFile) {
-    std::filesystem::path fp(SourceFile);
-    string                file_ext = fp.extension().string();
+bool fileIsOBJ(string SourceFile)
+{
+    sfs::path fp(SourceFile);
+    string    file_ext = fp.extension().string();
     helper_to_upper(file_ext);
 
     return (file_ext.compare(".OBJ") == 0);
 }
 
 // check if file is DRC (draco compressed OBJ file) format extension
-bool fileIsDRC(string SourceFile) {
-    std::filesystem::path fp(SourceFile);
-    string                file_ext = fp.extension().string();
+bool fileIsDRC(string SourceFile)
+{
+    sfs::path fp(SourceFile);
+    string    file_ext = fp.extension().string();
     helper_to_upper(file_ext);
 
     return (file_ext.compare(".DRC") == 0);
 }
 
-bool fileIsModel(string SourceFile) {
+bool fileIsModel(string SourceFile)
+{
     return (fileIsGLTF(SourceFile) || fileIsOBJ(SourceFile) || fileIsDRC(SourceFile));
 }
 
-#ifdef USE_WITH_COMMANDLINE_TOOL
-
-int GetNumberOfCores(wchar_t* envp[]) {
-    int i, cores = 1;
-
-    for (i = 0; envp[i] != NULL; i++) {
-        //wprintf(L"var = %ws\n", envp[i]);
-        cores = wcsncmp(envp[i], L"NUMBER_OF_PROCESSORS", 20);
-        if (cores == 0) {
-            wchar_t* p_envp;
-            size_t   equal = wcscspn(envp[i], L"=");
-            if ((equal > 0) && (equal < wcslen(envp[i]))) {
-                p_envp = envp[i] + equal + 1;
-                wchar_t num[16];
-                wcsncpy_s(num, p_envp, 16);
-                cores = _wtoi(num);
-                return cores > 0 ? cores : 1;
-            }
-            break;
-        }
-    }
-    return 1;
-}
-
-#else  // Code is shared with GUI
-#endif
-
-CMP_GPUDecode DecodeWith(const char* strParameter) {
+CMP_GPUDecode DecodeWith(const char* strParameter)
+{
     if (strcmp(strParameter, "DirectX") == 0)
         return GPUDecode_DIRECTX;
     else if (strcmp(strParameter, "DXC") == 0)
@@ -201,7 +200,8 @@ CMP_GPUDecode DecodeWith(const char* strParameter) {
         return GPUDecode_INVALID;
 }
 
-CMP_Compute_type EncodeWith(const char* strParameter) {
+CMP_Compute_type EncodeWith(const char* strParameter)
+{
     if (strcmp(strParameter, "CPU") == 0)
         return CMP_CPU;
     else if (strcmp(strParameter, "HPC") == 0)
@@ -218,79 +218,117 @@ CMP_Compute_type EncodeWith(const char* strParameter) {
         return CMP_UNKNOWN;
 }
 
-bool ProcessSingleFlags(const char* strCommand) {
+bool ProcessSingleFlags(const char* strCommand)
+{
     bool isset = false;
-    if ((strcmp(strCommand, "-nomipmap") == 0)) {
+    if ((strcmp(strCommand, "-nomipmap") == 0))
+    {
         g_CmdPrams.use_noMipMaps = true;
         isset                    = true;
+        if (g_CmdPrams.MipsLevel > 0)
+            throw "Both nomipmap and miplevels are set!";
     }
 #ifdef USE_MESH_DRACO_EXTENSION
-    else if ((strcmp(strCommand, "-draco") == 0)) {
+    else if ((strcmp(strCommand, "-draco") == 0))
+    {
         g_CmdPrams.use_Draco_Encode = true;
         isset                       = true;
     }
 #endif
-    else if ((strcmp(strCommand, "-silent") == 0)) {
+    else if ((strcmp(strCommand, "-silent") == 0))
+    {
         g_CmdPrams.silent = true;
         isset             = true;
-    } else if ((strcmp(strCommand, "-performance") == 0)) {
+    }
+    else if ((strcmp(strCommand, "-performance") == 0))
+    {
         g_CmdPrams.showperformance = true;
         isset                      = true;
-    } else if ((strcmp(strCommand, "-noprogress") == 0)) {
+    }
+    else if ((strcmp(strCommand, "-noprogress") == 0))
+    {
         g_CmdPrams.noprogressinfo = true;
         isset                     = true;
-    } else if ((strcmp(strCommand, "-noswizzle") == 0)) {
+    }
+    else if ((strcmp(strCommand, "-noswizzle") == 0))
+    {
         g_CmdPrams.noswizzle = true;
         isset                = true;
-    } else if ((strcmp(strCommand, "-doswizzle") == 0)) {
+    }
+    else if ((strcmp(strCommand, "-doswizzle") == 0))
+    {
         g_CmdPrams.doswizzle = true;
         isset                = true;
-    } else if ((strcmp(strCommand, "-analysis") == 0) || (strcmp(strCommand, "-Analysis") == 0)) {
+    }
+    else if ((strcmp(strCommand, "-analysis") == 0) || (strcmp(strCommand, "-Analysis") == 0))
+    {
         g_CmdPrams.analysis = true;
         isset               = true;
-    } else if ((strcmp(strCommand, "-diff_image") == 0)) {
+    }
+    else if ((strcmp(strCommand, "-diff_image") == 0))
+    {
         g_CmdPrams.diffImage = true;
         isset                = true;
-    } else if ((strcmp(strCommand, "-imageprops") == 0)) {
+    }
+    else if ((strcmp(strCommand, "-imageprops") == 0))
+    {
         g_CmdPrams.imageprops = true;
         isset                 = true;
     }
 #ifdef USE_3DMESH_OPTIMIZE
-    else if ((strcmp(strCommand, "-meshopt") == 0)) {
+    else if ((strcmp(strCommand, "-meshopt") == 0))
+    {
         g_CmdPrams.doMeshOptimize = true;
         isset                     = true;
     }
 #endif
-    else if (strcmp(strCommand, "-compress-gltf-images") == 0) {
+    else if (strcmp(strCommand, "-compress-gltf-images") == 0)
+    {
         g_CmdPrams.compressImagesFromGLTF = true;
         isset                             = true;
-    } else if ((strcmp(strCommand, "-log") == 0)) {
+    }
+    else if ((strcmp(strCommand, "-log") == 0))
+    {
         g_CmdPrams.logcsvformat     = false;
         g_CmdPrams.logresultsToFile = true;
         g_CmdPrams.logresults       = true;
         isset                       = true;
         g_CmdPrams.LogProcessResultsFile.assign(LOG_PROCESS_RESULTS_FILE_TXT);
-    } else if ((strcmp(strCommand, "-logcsv") == 0)) {
+    }
+    else if ((strcmp(strCommand, "-logcsv") == 0))
+    {
         g_CmdPrams.logcsvformat     = true;
         g_CmdPrams.logresultsToFile = true;
         g_CmdPrams.logresults       = true;
         isset                       = true;
         g_CmdPrams.LogProcessResultsFile.assign(LOG_PROCESS_RESULTS_FILE_CSV);
-    } else if (strcmp(strCommand, "-UseGPUDecompress") == 0) {
+    }
+    else if (strcmp(strCommand, "-UseGPUDecompress") == 0)
+    {
         g_CmdPrams.CompressOptions.bUseGPUDecompress = true;
         isset                                        = true;
-    } else if ((strcmp(strCommand, "-GenGPUMipMaps") == 0)) {
+    }
+#ifndef __linux__
+    else if ((strcmp(strCommand, "-GenGPUMipMaps") == 0))
+    {
         g_CmdPrams.CompressOptions.genGPUMipMaps = true;
         isset                                    = true;
-    } else if ((strcmp(strCommand, "-UseSRGBFrames") == 0)) {
+    }
+#endif
+#ifndef __linux__
+    else if ((strcmp(strCommand, "-UseSRGBFrames") == 0))
+    {
         g_CmdPrams.CompressOptions.useSRGBFrames = true;
         isset                                    = true;
     }
+#endif
     return isset;
 }
 
-bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter) {
-    try {
+bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
+{
+    try
+    {
         // ====================================
         // Prechecks prior to sending to Codec
         // ====================================
@@ -298,409 +336,574 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter) {
         // Special Case for ASTC - improve this remove in next revision
         // This command param is passed down to ASTC Codex
         // We are doing an early capture to get some dimensions for ASTC file Save
-        if (strcmp(strCommand, "-BlockRate") == 0) {
-            if (strchr(strParameter, 'x') != NULL) {
+        if (strcmp(strCommand, "-BlockRate") == 0)
+        {
+            if (strchr(strParameter, 'x') != NULL)
+            {
                 int dimensions = sscanf(strParameter, "%dx%dx", &g_CmdPrams.BlockWidth, &g_CmdPrams.BlockHeight);
                 if (dimensions < 2)
                     throw "Command Parameter is invalid";
-                else {
+                else
+                {
                     astc_find_closest_blockxy_2d(&g_CmdPrams.BlockWidth, &g_CmdPrams.BlockHeight, 0);
                 }
-            } else {
+            }
+            else
+            {
                 float m_target_bitrate = static_cast<float>(atof(strParameter));
                 if (m_target_bitrate > 0)
                     astc_find_closest_blockdim_2d(m_target_bitrate, &g_CmdPrams.BlockWidth, &g_CmdPrams.BlockHeight, 0);
                 else
                     throw "Command Parameter is invalid";
             }
-        } else if (strcmp(strCommand, "-Quality") == 0) {
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-Quality") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "No Quality value specified";
             }
             float value = std::stof(strParameter);
-            if ((value < 0) || (value > 1.0)) {
+            if ((value < 0) || (value > 1.0))
+            {
                 throw "Quality value should be in range of 0 to 1.0";
             }
             g_CmdPrams.CompressOptions.fquality = value;
         }
 #ifdef ENABLE_MAKE_COMPATIBLE_API
-        else if (strcmp(strCommand, "-InExposure") == 0) {
-            if (strlen(strParameter) == 0) {
+        else if (strcmp(strCommand, "-InExposure") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "No input exposure value specified";
             }
             float value = std::stof(strParameter);
-            if ((value < -10) || (value > 10)) {
+            if ((value < -10) || (value > 10))
+            {
                 throw "Input Exposure value should be in range of -10 to 10";
             }
             g_CmdPrams.CompressOptions.fInputExposure = value;
-        } else if (strcmp(strCommand, "-InDefog") == 0) {
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-InDefog") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "No input defog value specified";
             }
             float value = std::stof(strParameter);
-            if ((value < 0) || (value > 0.01)) {
+            if ((value < 0) || (value > 0.01))
+            {
                 throw "Input Defog value should be in range of 0.0000 to 0.0100";
             }
             g_CmdPrams.CompressOptions.fInputDefog = value;
-        } else if (strcmp(strCommand, "-InKneeLow") == 0) {
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-InKneeLow") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "No input kneelow value specified";
             }
             float value = std::stof(strParameter);
-            if ((value < -3) || (value > 3)) {
+            if ((value < -3) || (value > 3))
+            {
                 throw "Input Knee Low value should be in range of -3 to 3";
             }
             g_CmdPrams.CompressOptions.fInputKneeLow = value;
-        } else if (strcmp(strCommand, "-InKneeHigh") == 0) {
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-InKneeHigh") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "No input kneehigh value specified";
             }
             float value = std::stof(strParameter);
-            if ((value < 3.5) || (value > 7.5)) {
+            if ((value < 3.5) || (value > 7.5))
+            {
                 throw "Input Knee High value should be in range of 3.5 to 7.5";
             }
             g_CmdPrams.CompressOptions.fInputKneeHigh = value;
-        } else if (strcmp(strCommand, "-Gamma") == 0) {
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-Gamma") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "No gamma value specified";
             }
             float value = std::stof(strParameter);
-            if ((value < 1.0) || (value > 2.6)) {
+            if ((value < 1.0) || (value > 2.6))
+            {
                 throw "Gamma supported is in range of 1.0 to 2.6";
             }
             g_CmdPrams.CompressOptions.fInputGamma = value;
         }
 #endif
-        else if (strcmp(strCommand, "-WeightR") == 0) {
-            if (!g_CmdPrams.CompressOptions.bUseChannelWeighting) {
+        else if (strcmp(strCommand, "-WeightR") == 0)
+        {
+            if (!g_CmdPrams.CompressOptions.bUseChannelWeighting)
+            {
                 throw "Please enable \"-UseChannelWeighting 1\" first before setting weight for color channel";
             }
 
-            if (strlen(strParameter) == 0) {
+            if (strlen(strParameter) == 0)
+            {
                 throw "No WeightR value specified";
             }
             float value = std::stof(strParameter);
-            if ((value < 0) || (value > 1.0)) {
+            if ((value < 0) || (value > 1.0))
+            {
                 throw "WeightR value should be in range of 0 to 1.0";
             }
             g_CmdPrams.CompressOptions.fWeightingRed = value;
-        } else if (strcmp(strCommand, "-WeightG") == 0) {
-            if (!g_CmdPrams.CompressOptions.bUseChannelWeighting) {
+        }
+        else if (strcmp(strCommand, "-WeightG") == 0)
+        {
+            if (!g_CmdPrams.CompressOptions.bUseChannelWeighting)
+            {
                 throw "Please enable \"-UseChannelWeighting 1\" first before setting weight for color channel";
             }
-            if (strlen(strParameter) == 0) {
+            if (strlen(strParameter) == 0)
+            {
                 throw "No WeightG value specified";
             }
             float value = std::stof(strParameter);
-            if ((value < 0) || (value > 1.0)) {
+            if ((value < 0) || (value > 1.0))
+            {
                 throw "WeightG value should be in range of 0 to 1.0";
             }
             g_CmdPrams.CompressOptions.fWeightingGreen = value;
-        } else if (strcmp(strCommand, "-WeightB") == 0) {
-            if (!g_CmdPrams.CompressOptions.bUseChannelWeighting) {
+        }
+        else if (strcmp(strCommand, "-WeightB") == 0)
+        {
+            if (!g_CmdPrams.CompressOptions.bUseChannelWeighting)
+            {
                 throw "Please enable \"-UseChannelWeighting 1\" first before setting weight for color channel";
             }
-            if (strlen(strParameter) == 0) {
+            if (strlen(strParameter) == 0)
+            {
                 throw "No WeightB value specified";
             }
             float value = std::stof(strParameter);
-            if ((value < 0) || (value > 1.0)) {
+            if ((value < 0) || (value > 1.0))
+            {
                 throw "WeightB value should be in range of 0 to 1.0";
             }
             g_CmdPrams.CompressOptions.fWeightingBlue = value;
-        } else if (strcmp(strCommand, "-UseChannelWeighting") == 0) {
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-UseChannelWeighting") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "No UseChannelWeighting value specified (default is 0:off; 1:on)";
             }
             int value = std::stof(strParameter);
-            if ((value < 0) || (value > 1)) {
+            if ((value < 0) || (value > 1))
+            {
                 throw "UseChannelWeighting value should be 1 or 0";
             }
             g_CmdPrams.CompressOptions.bUseChannelWeighting = bool(value);
-        } else if (strcmp(strCommand, "-AlphaThreshold") == 0) {
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-AlphaThreshold") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "No Alpha threshold value specified";
             }
             int value = std::stof(strParameter);
-            if ((value < 1) || (value > 255)) {
+            if ((value < 1) || (value > 255))
+            {
                 throw "Alpha threshold value should be in range of 1 to 255";
             }
             g_CmdPrams.CompressOptions.nAlphaThreshold = value;
-        } else if (strcmp(strCommand, "-DXT1UseAlpha") == 0) {
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-DXT1UseAlpha") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "No DXT1UseAlpha value specified (default is 0:off; 1:on)";
             }
             int value = std::stof(strParameter);
-            if ((value < 0) || (value > 1)) {
+            if ((value < 0) || (value > 1))
+            {
                 throw "DXT1UseAlpha value should be 1 or 0";
             }
             g_CmdPrams.CompressOptions.bDXT1UseAlpha   = bool(value);
             g_CmdPrams.CompressOptions.nAlphaThreshold = 128;  //default to 128
-        } else if (strcmp(strCommand, "-DecodeWith") == 0) {
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-DecodeWith") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "No API specified (set either OpenGL or DirectX (Default is OpenGL).";
             }
 
             g_CmdPrams.CompressOptions.nGPUDecode = DecodeWith((char*)strParameter);
 
-            if (g_CmdPrams.CompressOptions.nGPUDecode == GPUDecode_INVALID) {
+            if (g_CmdPrams.CompressOptions.nGPUDecode == GPUDecode_INVALID)
+            {
                 throw "Unknown API format specified.";
             }
 
             g_CmdPrams.CompressOptions.bUseGPUDecompress = true;
         }
 #ifdef USE_3DMESH_OPTIMIZE
-        else if (strcmp(strCommand, "-optVCacheSize") == 0) {
-            if (strlen(strParameter) == 0) {
+        else if (strcmp(strCommand, "-optVCacheSize") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "No hardware vertices cache size specified.";
             }
 
             int value = std::stoi(strParameter);
-            if (value < 1) {
+            if (value < 1)
+            {
                 throw "Hardware vertices cache size must be a positive value.";
             }
             g_CmdPrams.CompressOptions.iVcacheSize = value;
-        } else if (strcmp(strCommand, "-optVCacheFIFOSize") == 0) {
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-optVCacheFIFOSize") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "No hardware vertices cache(FIFO replacement policy) size specified.";
             }
 
             int value = std::stoi(strParameter);
-            if (value < 1) {
+            if (value < 1)
+            {
                 throw "Hardware vertices cache(FIFO replacement policy) size should be > 1.";
             }
             g_CmdPrams.CompressOptions.iVcacheFIFOSize = value;
-        } else if (strcmp(strCommand, "-optOverdrawACMRThres") == 0) {
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-optOverdrawACMRThres") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "No ACMR threshold value specified for overdraw optimization.";
             }
 
             float value = std::stof(strParameter);
-            if ((value < 1) || (value > 3)) {
+            if ((value < 1) || (value > 3))
+            {
                 throw "ACMR (Average Cache Miss Ratio) should be in the range of 1 - 3.";
             }
             g_CmdPrams.CompressOptions.fOverdrawACMR = value;
-        } else if (strcmp(strCommand, "-simplifyMeshLOD") == 0) {
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-simplifyMeshLOD") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "No LOD (Level of Details) specified for mesh simplication.";
             }
 
             int value = std::stoi(strParameter);
-            if (value < 1) {
+            if (value < 1)
+            {
                 throw "LOD (Level of Details) for mesh simplication should be > 1.";
             }
             g_CmdPrams.CompressOptions.iSimplifyLOD = value;
-        } else if (strcmp(strCommand, "-optVFetch") == 0) {
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-optVFetch") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "No boolean value (1 or 0) specified to enable vertex fetch optimization or not.";
             }
 
             int value = std::stof(strParameter);
-            if ((value < 0) || (value > 1)) {
+            if ((value < 0) || (value > 1))
+            {
                 throw "Optimize vertex fetch value should be 1(enabled) or 0(disabled).";
             }
             g_CmdPrams.CompressOptions.bVertexFetch = bool(value);
         }
 #endif
-        else if (strcmp(strCommand, "-EncodeWith") == 0) {
-            if (strlen(strParameter) == 0) {
+        else if (strcmp(strCommand, "-EncodeWith") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "No API specified.";
             }
 
             g_CmdPrams.CompressOptions.nEncodeWith = EncodeWith((char*)strParameter);
 
-            if (g_CmdPrams.CompressOptions.nEncodeWith == CMP_Compute_type::CMP_UNKNOWN) {
-                throw "Unknown API format specified.";
+            if (g_CmdPrams.CompressOptions.nEncodeWith == CMP_Compute_type::CMP_UNKNOWN)
+            {
+                g_CmdPrams.CompressOptions.nEncodeWith    = CMP_Compute_type::CMP_CPU;
+                g_CmdPrams.CompressOptions.bUseCGCompress = false;
+                PrintInfo("Unknown EncodeWith format specified. CPU will be used!");
             }
-
-            g_CmdPrams.CompressOptions.bUseCGCompress = true;
-        } else if (strcmp(strCommand, "-decomp") == 0) {
-            if (strlen(strParameter) == 0) {
+            else if ((g_CmdPrams.CompressOptions.nEncodeWith == CMP_Compute_type::CMP_CPU)
+                     //|| (g_CmdPrams.CompressOptions.nEncodeWith == CMP_Compute_type::CMP_HPC)
+            )
+                g_CmdPrams.CompressOptions.bUseCGCompress = false;
+            else
+                g_CmdPrams.CompressOptions.bUseCGCompress = true;
+        }
+        else if (strcmp(strCommand, "-decomp") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "no destination file specified";
             }
             g_CmdPrams.DecompressFile = (char*)strParameter;
-            g_CmdPrams.doDecompress   = true;
+            if (g_CmdPrams.DestFile.length() == 0)
+                g_CmdPrams.DestFile = g_CmdPrams.DecompressFile;
+            g_CmdPrams.doDecompress = true;
         }
 #ifdef USE_MESH_DRACO_EXTENSION
 #ifdef USE_MESH_DRACO_SETTING
-        else if (strcmp(strCommand, "-dracolvl") == 0) { //draco compression level
-            if (strlen(strParameter) == 0) {
+        else if (strcmp(strCommand, "-dracolvl") == 0)
+        {  //draco compression level
+            if (strlen(strParameter) == 0)
+            {
                 throw "No draco compression level specified";
             }
             int value = std::stoi(strParameter);
-            if ((value < 0) || (value > 10)) {
+            if ((value < 0) || (value > 10))
+            {
                 throw "draco compression level supported is in range of 0 to 10";
             }
             g_CmdPrams.CompressOptions.iCmpLevel = value;
-        } else if (strcmp(strCommand, "-qpos") == 0) { //quantization bit for positon
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-qpos") == 0)
+        {  //quantization bit for positon
+            if (strlen(strParameter) == 0)
+            {
                 throw "No quantization bits for position specified";
             }
             int value = std::stoi(strParameter);
-            if ((value < 1) || (value > 30)) {
+            if ((value < 1) || (value > 30))
+            {
                 throw "quantization bits for position supported is in range of 1 to 30";
             }
             g_CmdPrams.CompressOptions.iPosBits = value;
-        } else if (strcmp(strCommand, "-qtexc") == 0) { //quantization bit for texture coordinates
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-qtexc") == 0)
+        {  //quantization bit for texture coordinates
+            if (strlen(strParameter) == 0)
+            {
                 throw "No quantization bits for texture coordinates specified";
             }
             int value = std::stoi(strParameter);
-            if ((value < 1) || (value > 30)) {
+            if ((value < 1) || (value > 30))
+            {
                 throw "quantization bits for texture coordinates supported is in range of 1 to 30";
             }
             g_CmdPrams.CompressOptions.iTexCBits = value;
-        } else if (strcmp(strCommand, "-qnorm") == 0) { //quantization bit for normal
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-qnorm") == 0)
+        {  //quantization bit for normal
+            if (strlen(strParameter) == 0)
+            {
                 throw "No quantization bits for normal specified";
             }
             int value = std::stoi(strParameter);
-            if ((value < 1) || (value > 30)) {
+            if ((value < 1) || (value > 30))
+            {
                 throw "quantization bits for normal supported is in range of 1 to 30";
             }
             g_CmdPrams.CompressOptions.iNormalBits = value;
-        } else if (strcmp(strCommand, "-qgen") == 0) { //quantization bit for generic
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-qgen") == 0)
+        {  //quantization bit for generic
+            if (strlen(strParameter) == 0)
+            {
                 throw "No quantization bits for generic (i.e. tangent) specified";
             }
             int value = std::stoi(strParameter);
-            if ((value < 1) || (value > 30)) {
+            if ((value < 1) || (value > 30))
+            {
                 throw "quantization bits for generic (i.e. tangent) supported is in range of 1 to 30";
             }
             g_CmdPrams.CompressOptions.iGenericBits = value;
         }
 #endif
 #endif
-        else if (strcmp(strCommand, "-logfile") == 0) {
-            if (strlen(strParameter) == 0) {
+        else if (strcmp(strCommand, "-logfile") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "no log file specified";
             }
             g_CmdPrams.logcsvformat     = false;
             g_CmdPrams.logresults       = true;
             g_CmdPrams.logresultsToFile = true;
             g_CmdPrams.LogProcessResultsFile.assign((char*)strParameter);
-        } else if (strcmp(strCommand, "-logcsvfile") == 0) {
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-logcsvfile") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "no log file specified";
             }
             g_CmdPrams.logcsvformat     = true;
             g_CmdPrams.logresults       = true;
             g_CmdPrams.logresultsToFile = true;
             g_CmdPrams.LogProcessResultsFile.assign((char*)strParameter);
-        } else if (strcmp(strCommand, "-fs") == 0) {
-            if (strlen(strParameter) == 0) {
+        }
+#ifdef CMP_ENABLE_LEGACY_OPTIONS
+        else if (strcmp(strCommand, "-fs") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "no format specified";
             }
 
             g_CmdPrams.CompressOptions.SourceFormat = CMP_ParseFormat((char*)strParameter);
 
-            if (g_CmdPrams.CompressOptions.SourceFormat == CMP_FORMAT_Unknown) {
+            if (g_CmdPrams.CompressOptions.SourceFormat == CMP_FORMAT_Unknown)
+            {
                 throw "unknown format specified";
             }
-        } else if ((strcmp(strCommand, "-ff") == 0) || // FileFilter used for collecting list of source files in a given source Dir
-                   (strcmp(strCommand, "-fx") == 0)) {  //and FileOutExt used for file output extension at given output Dir
-            if (strlen(strParameter) == 0) {
+        }
+#endif
+        else if ((strcmp(strCommand, "-ff") == 0) ||  // FileFilter used for collecting list of source files in a given source Dir
+                 (strcmp(strCommand, "-fx") == 0))
+        {  //and FileOutExt used for file output extension at given output Dir
+            if (strlen(strParameter) == 0)
+            {
                 throw "no file filter specified";
             }
 
             std::string filterParameter = strParameter;
             std::transform(filterParameter.begin(), filterParameter.end(), filterParameter.begin(), ::toupper);
 
-            string supported_ExtListings = {"DDS,KTX,TGA,EXR,PNG,BMP,HDR,JPG,TIFF,PPM"};
+            string supported_ExtListings = {"DDS,KTX,KTX2,TGA,EXR,PNG,BMP,HDR,JPG,TIFF,PPM"};
 
             istringstream ff(filterParameter);
             string        sff;
             int           filter_num = 0;
-            while (getline(ff, sff, ',')) {
+            while (getline(ff, sff, ','))
+            {
                 filter_num++;
-                if (supported_ExtListings.find(sff) == std::string::npos) {
+                if (supported_ExtListings.find(sff) == std::string::npos)
+                {
                     char err[128];
                     sprintf(err, "[%s] file filter is not supported", sff.c_str());
                     throw(err);
-                } else if (filter_num > 1 && strcmp(strCommand, "-fx") == 0) {
+                }
+                else if (filter_num > 1 && strcmp(strCommand, "-fx") == 0)
+                {
                     char err[128];
                     sprintf(err, "Only one file extension for output file.");
                     throw(err);
                 }
             }
 
-            if (strcmp(strCommand, "-ff") == 0) {
+            if (strcmp(strCommand, "-ff") == 0)
+            {
                 g_CmdPrams.FileFilter = filterParameter;
-            } else if (strcmp(strCommand, "-fx") == 0) {
+            }
+            else if (strcmp(strCommand, "-fx") == 0)
+            {
                 std::transform(filterParameter.begin(), filterParameter.end(), filterParameter.begin(), ::tolower);  //change to lower
                 g_CmdPrams.FileOutExt = "." + filterParameter;                                                       //add dot
             }
-        } else if (strcmp(strCommand, "-fd") == 0) {
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-fd") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "no format specified";
             }
 
             g_CmdPrams.CompressOptions.DestFormat = CMP_ParseFormat((char*)strParameter);
 
-            if (g_CmdPrams.CompressOptions.DestFormat == CMP_FORMAT_Unknown) {
+            if (g_CmdPrams.CompressOptions.DestFormat == CMP_FORMAT_Unknown)
+            {
                 throw "unknown format specified";
             }
-        } else if ((strcmp(strCommand, "-miplevels") == 0)) {
-            if (strlen(strParameter) == 0) {
+        }
+        else if ((strcmp(strCommand, "-miplevels") == 0))
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "no level is specified";
             }
 
-            try {
+            if (g_CmdPrams.use_noMipMaps == true)
+                throw "Both miplevels and nomipmap are set!";
+
+            try
+            {
                 g_CmdPrams.MipsLevel = std::stoi(strParameter);
 
                 if ((g_CmdPrams.MipsLevel <= 0) || ((g_CmdPrams.MipsLevel > 20)))
                     throw "Invalid miplevel value specified, valid range is [1 to 20]";
-            } catch (std::exception) {
+            }
+            catch (std::exception)
+            {
                 throw "conversion failed for miplevel value";
             }
-        } else if ((strcmp(strCommand, "-mipsize") == 0)) {
-            if (strlen(strParameter) == 0) {
+        }
+        else if ((strcmp(strCommand, "-mipsize") == 0))
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "no size is specified";
             }
 
-            try {
+            try
+            {
                 g_CmdPrams.nMinSize = std::stoi(strParameter);
-            } catch (std::exception) {
+            }
+            catch (std::exception)
+            {
                 throw "conversion failed for mipsize value";
             }
 
             g_CmdPrams.MipsLevel = 2;
-        } else if (strcmp(strCommand, "-r") == 0) {
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-r") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "no read codec framework is specified";
             }
 
             if (strcmp(strParameter, "ocv") == 0)
                 g_CmdPrams.use_OCV = true;
-            else {
+            else
+            {
                 throw "unsupported codec framework is specified";
             }
-        } else if (strcmp(strCommand, "-w") == 0) {
-            if (strlen(strParameter) == 0) {
+        }
+        else if (strcmp(strCommand, "-w") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
                 throw "no read codec framework is specified";
             }
 
             if (strcmp(strParameter, "ocv") == 0)
                 g_CmdPrams.use_OCV_out = true;
-            else {
+            else
+            {
                 throw "unsupported codec framework is specified";
             }
-        } else if ((strcmp(strCommand, "-version") == 0) || (strcmp(strCommand, "-v") == 0)) {
+        }
+        else if ((strcmp(strCommand, "-version") == 0) || (strcmp(strCommand, "-v") == 0))
+        {
             printf("version %d.%d.%d\n", VERSION_MAJOR_MAJOR, VERSION_MAJOR_MINOR, VERSION_MINOR_MAJOR);
-        } else {
-            if ((strlen(strParameter) > 0) || (strCommand[0] == '-')) {
+            exit(0);
+        }
+        else
+        {
+            if ((strlen(strParameter) > 0) || (strCommand[0] == '-'))
+            {
                 // List of command the codecs use.
                 // A call back loop should be used command for all codecs that can validate the seetings
                 // For now we list all of the commands here to check. Prior to passing down to Codecs!
                 if ((strcmp(strCommand, "-NumThreads") == 0) || (strcmp(strCommand, "-Quality") == 0) || (strcmp(strCommand, "-ModeMask") == 0) ||
-                        (strcmp(strCommand, "-PatternRec") == 0) || (strcmp(strCommand, "-ColourRestrict") == 0) || (strcmp(strCommand, "-AlphaRestrict") == 0) ||
-                        (strcmp(strCommand, "-AlphaThreshold") == 0) || (strcmp(strCommand, "-ImageNeedsAlpha") == 0) || (strcmp(strCommand, "-UseSSE2") == 0) ||
-                        (strcmp(strCommand, "-DXT1UseAlpha") == 0) || (strcmp(strCommand, "-WeightR") == 0) || (strcmp(strCommand, "-WeightG") == 0) ||
-                        (strcmp(strCommand, "-WeightB") == 0) || (strcmp(strCommand, "-3DRefinement") == 0) || (strcmp(strCommand, "-UseAdaptiveWeighting") == 0) ||
-                        (strcmp(strCommand, "-UseChannelWeighting") == 0) || (strcmp(strCommand, "-RefinementSteps") == 0) ||
-                        (strcmp(strCommand, "-ForceFloatPath") == 0) || (strcmp(strCommand, "-CompressionSpeed") == 0) ||
-                        (strcmp(strCommand, "-SwizzleChannels") == 0) || (strcmp(strCommand, "-CompressionSpeed") == 0) ||
-                        (strcmp(strCommand, "-MultiThreading") == 0)) {
+                    (strcmp(strCommand, "-PatternRec") == 0) || (strcmp(strCommand, "-ColourRestrict") == 0) || (strcmp(strCommand, "-AlphaRestrict") == 0) ||
+                    (strcmp(strCommand, "-AlphaThreshold") == 0) || (strcmp(strCommand, "-ImageNeedsAlpha") == 0) || (strcmp(strCommand, "-UseSSE2") == 0) ||
+                    (strcmp(strCommand, "-DXT1UseAlpha") == 0) || (strcmp(strCommand, "-WeightR") == 0) || (strcmp(strCommand, "-WeightG") == 0) ||
+                    (strcmp(strCommand, "-WeightB") == 0) || (strcmp(strCommand, "-3DRefinement") == 0) || (strcmp(strCommand, "-UseAdaptiveWeighting") == 0) ||
+                    (strcmp(strCommand, "-UseChannelWeighting") == 0) || (strcmp(strCommand, "-RefinementSteps") == 0) ||
+                    (strcmp(strCommand, "-ForceFloatPath") == 0) || (strcmp(strCommand, "-CompressionSpeed") == 0) ||
+                    (strcmp(strCommand, "-SwizzleChannels") == 0) || (strcmp(strCommand, "-CompressionSpeed") == 0) ||
+                    (strcmp(strCommand, "-MultiThreading") == 0))
+                {
                     // Reserved for future dev: command options passed down to codec levels
                     const char* str;
                     // strip leading - or --
@@ -710,11 +913,13 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter) {
                     if (strCommand[1] == '-')
                         str++;
 
-                    if (strlen(str) > AMD_MAX_CMD_STR) {
+                    if (strlen(str) > AMD_MAX_CMD_STR)
+                    {
                         throw "Command option is invalid";
                     }
 
-                    if (strlen(strParameter) > AMD_MAX_CMD_PARAM) {
+                    if (strlen(strParameter) > AMD_MAX_CMD_PARAM)
+                    {
                         throw "Command Parameter is invalid";
                     }
 
@@ -722,86 +927,119 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter) {
                     strcpy(g_CmdPrams.CompressOptions.CmdSet[g_CmdPrams.CompressOptions.NumCmds].strParameter, strParameter);
 
                     g_CmdPrams.CompressOptions.NumCmds++;
-                } else
+                }
+                else
                     throw "Command option is invalid";
-            } else {
+            }
+            else
+            {
                 // Flags or Source and destination files specified
-                if ((g_CmdPrams.SourceFile.length() == 0) && (g_CmdPrams.SourceFileList.size() == 0)) {
+                if ((g_CmdPrams.SourceFile.length() == 0) && (g_CmdPrams.SourceFileList.size() == 0))
+                {
                     if (CMP_PathType(strCommand) == CMP_PATHTYPES::CMP_PATH_IS_FILE)
                         g_CmdPrams.SourceFile = strCommand;
-                    else {
+                    else
+                    {
                         const std::string directory(CMP_GetFullPath(strCommand));
+
                         CMP_GetDirList(directory, g_CmdPrams.SourceFileList, g_CmdPrams.FileFilter);
-                        if (g_CmdPrams.SourceFileList.size() > 0) {
+
+                        // feature for recursive  folder scans to get souce list to process, feature for v4.2
+                        // g_CmdPrams.SourceDir = directory;
+                        // CMP_GetAllDirFilesList(directory, g_CmdPrams.SourceFileList, g_CmdPrams.FileFilter);
+
+                        if (g_CmdPrams.SourceFileList.size() > 0)
+                        {
                             // Set the first file in the new list to SourceFile and delete it from the list
                             g_CmdPrams.SourceFile = g_CmdPrams.SourceFileList[0].c_str();
                             g_CmdPrams.SourceFileList.erase(g_CmdPrams.SourceFileList.begin());
-                        } else
+                        }
+                        else
                             throw "No files to process in source dir";
                     }
-                } else // now check for destination once sourcefile or filelist has been added
-                    if ((g_CmdPrams.DestFile.length() == 0) && (g_CmdPrams.SourceFile.length() || g_CmdPrams.SourceFileList.size())) {
-                        if (CMP_PathType(strCommand) == CMP_PATHTYPES::CMP_PATH_IS_FILE) {
-                            g_CmdPrams.DestFile = strCommand;
+                }
+                else  // now check for destination once sourcefile or filelist has been added
+                    if ((g_CmdPrams.DestFile.length() == 0) && (g_CmdPrams.SourceFile.length() || g_CmdPrams.SourceFileList.size()))
+                {
+                    if (CMP_PathType(strCommand) == CMP_PATHTYPES::CMP_PATH_IS_FILE)
+                    {
+                        g_CmdPrams.DestFile = strCommand;
 
-                            string file_extension = std::filesystem::path(strCommand).extension().string();
+                        string file_extension = sfs::path(strCommand).extension().string();
 
-                            // User did not supply a destination extension default
-                            if (file_extension.length() == 0) {
-                                if (g_CmdPrams.DestFile.length() == 0) {
-                                    g_CmdPrams.DestFile = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.CompressOptions.DestFormat, g_CmdPrams.FileOutExt);
-                                    PrintInfo("Destination texture file was not supplied: Defaulting to %s\n", g_CmdPrams.DestFile.c_str());
-                                } else {
-                                    if (g_CmdPrams.CompressOptions.DestFormat == CMP_FORMAT_ASTC)
-                                        g_CmdPrams.DestFile.append(".astc");
-                                    else
-                                        g_CmdPrams.DestFile.append(".dds");
-                                }
+                        // User did not supply a destination extension default
+                        if (file_extension.length() == 0)
+                        {
+                            if (g_CmdPrams.DestFile.length() == 0)
+                            {
+                                g_CmdPrams.DestFile =
+                                    DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.CompressOptions.DestFormat, g_CmdPrams.FileOutExt, true);
+                                PrintInfo("Destination texture file was not supplied: Defaulting to %s\n", g_CmdPrams.DestFile.c_str());
                             }
-                        } else {
-                            const std::string fullPath = CMP_GetFullPath(strCommand);
-
-                            if (fullPath.length() > 0) {
-                                const std::string directory(CMP_GetFullPath(strCommand));
-                                // check if dir exist if not create it!
-                                if (!CMP_DirExists(directory)) {
-                                    if (!CMP_CreateDir(directory))
-                                        throw "Unable to create destination dir";
-                                    // check and wait for system to generate a valid dir,
-                                    // typically this should not happen on local a dir
-                                    int delayloop = 0;
-                                    while (!CMP_DirExists(directory) && (delayloop < 5)) {
-#ifdef _WIN32
-                                        Sleep(100);
-#else
-                                        usleep(100000);
-#endif
-                                        delayloop++;
-                                    }
-                                    if (delayloop == 5)
-                                        throw "Unable to create destination dir";
-                                }
-                                g_CmdPrams.DestDir = directory;
-                                std::string destFileName;
-                                //since  DestFile is empty we need to create one from the source file
-                                destFileName = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.CompressOptions.DestFormat, g_CmdPrams.FileOutExt);
-                                std::filesystem::path destFile = std::filesystem::path(directory) / destFileName;
-                                g_CmdPrams.DestFile            = destFile.string();
-                            } else {
-                                throw "Unable to create destination dir or file path is invalid";
+                            else
+                            {
+                                if (g_CmdPrams.CompressOptions.DestFormat == CMP_FORMAT_ASTC)
+                                    g_CmdPrams.DestFile.append(".astc");
+                                else
+                                    g_CmdPrams.DestFile.append(".dds");
                             }
                         }
-                    } else {
-                        throw "unknown source, destination file or dir path specified";
                     }
+                    else
+                    {
+                        const std::string fullPath = CMP_GetFullPath(strCommand);
+
+                        if (fullPath.length() > 0)
+                        {
+                            const std::string directory(CMP_GetFullPath(strCommand));
+                            // check if dir exist if not create it!
+                            if (!CMP_DirExists(directory))
+                            {
+                                if (!CMP_CreateDir(directory))
+                                    throw "Unable to create destination dir";
+                                // check and wait for system to generate a valid dir,
+                                // typically this should not happen on local a dir
+                                int delayloop = 0;
+                                while (!CMP_DirExists(directory) && (delayloop < 5))
+                                {
+#ifdef _WIN32
+                                    Sleep(100);
+#else
+                                    usleep(100000);
+#endif
+                                    delayloop++;
+                                }
+                                if (delayloop == 5)
+                                    throw "Unable to create destination dir";
+                            }
+                            g_CmdPrams.DestDir = directory;
+                            std::string destFileName;
+                            //since  DestFile is empty we need to create one from the source file
+                            destFileName        = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.CompressOptions.DestFormat, g_CmdPrams.FileOutExt, true);
+                            sfs::path destFile  = sfs::path(directory) / destFileName;
+                            g_CmdPrams.DestFile = destFile.string();
+                        }
+                        else
+                        {
+                            throw "Unable to create destination dir or file path is invalid";
+                        }
+                    }
+                }
+                else
+                {
+                    throw "unknown source, destination file or dir path specified";
+                }
             }
         }
     }  // Try code
 
-    catch (const char* str) {
+    catch (const char* str)
+    {
         PrintInfo("Option [%s] : %s\n\n", strCommand, str);
         return false;
-    } catch (std::exception& e) {
+    }
+    catch (std::exception& e)
+    {
         PrintInfo("Option [%s] : %s\n\n", strCommand, e.what());
         return false;
     }
@@ -827,12 +1065,15 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter) {
      ParseParams(5,argv);
 */
 
-bool ParseParams(int argc, CMP_CHAR* argv[]) {
-    try {
+bool ParseParams(int argc, CMP_CHAR* argv[])
+{
+    try
+    {
         g_CmdPrams.SetDefault();
 
 #ifdef USE_WITH_COMMANDLINE_TOOL1
-        if (argc == 1) {
+        if (argc == 1)
+        {
             PrintUsage();
         }
 #endif
@@ -841,32 +1082,45 @@ bool ParseParams(int argc, CMP_CHAR* argv[]) {
         std::string strParameter;
         std::string strTemp;
 
-        for (int i = 1; i < argc; i++) {
+        for (int i = 1; i < argc; i++)
+        {
             strTemp = argv[i];
 
             //
             // Cmd line options can be -option value
             //
             strCommand = strTemp;
-            if ((strTemp[0] == '-') && (i <= (argc - 1))) {
-                if (!ProcessSingleFlags(strCommand.c_str())) {
+            if ((strTemp[0] == '-') && (i <= (argc - 1)))
+            {
+                if (!ProcessSingleFlags(strCommand.c_str()))
+                {
                     i++;
                     if (i < argc)
                         strParameter = argv[i];
                     else
                         strParameter = "";
-                    if (!ProcessCMDLineOptions(strCommand.c_str(), strParameter.c_str())) {
+                    if (!ProcessCMDLineOptions(strCommand.c_str(), strParameter.c_str()))
+                    {
                         throw "Invalid Command";
                     }
+
+                    // Check odd cases
+                    if (g_CmdPrams.use_noMipMaps && g_CmdPrams.CompressOptions.genGPUMipMaps)
+                        throw "Invalid commands set for combined nomipmap and GenGPUMipMaps";
                 }
-            } else {
-                if (!ProcessCMDLineOptions(strCommand.c_str(), "")) {
+            }
+            else
+            {
+                if (!ProcessCMDLineOptions(strCommand.c_str(), ""))
+                {
                     throw "Invalid Command";
                 }
             }
 
         }  // for loop
-    } catch (const char* str) {
+    }
+    catch (const char* str)
+    {
         PrintInfo("%s\n", str);
         return false;
     }
@@ -874,7 +1128,8 @@ bool ParseParams(int argc, CMP_CHAR* argv[]) {
     return true;
 }
 
-bool SouceAndDestCompatible(CCmdLineParamaters CmdPrams) {
+bool SouceAndDestCompatible(CCmdLineParamaters CmdPrams)
+{
     return true;
 }
 
@@ -909,8 +1164,10 @@ MipSet g_MipSetOut;
 int    g_MipLevel  = 1;
 float  g_fProgress = -1;
 
-bool CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
-    if (g_fProgress != fProgress) {
+bool CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
+{
+    if (g_fProgress != fProgress)
+    {
         UNREFERENCED_PARAMETER(pUser1);
         UNREFERENCED_PARAMETER(pUser2);
 
@@ -928,8 +1185,10 @@ bool CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pU
     return g_bAbortCompression;
 }
 
-int CalcMinMipSize(int nHeight, int nWidth, int MipsLevel) {
-    while (MipsLevel > 0) {
+int CalcMinMipSize(int nHeight, int nWidth, int MipsLevel)
+{
+    while (MipsLevel > 0)
+    {
         nWidth  = max(nWidth >> 1, 1);
         nHeight = max(nHeight >> 1, 1);
         MipsLevel--;
@@ -940,32 +1199,53 @@ int CalcMinMipSize(int nHeight, int nWidth, int MipsLevel) {
     return (nWidth);
 }
 
-bool TC_PluginCodecSupportsFormat(const MipSet* pMipSet) {
+bool TC_PluginCodecSupportsFormat(const MipSet* pMipSet)
+{
     return (pMipSet->m_ChannelFormat == CF_8bit || pMipSet->m_ChannelFormat == CF_16bit || pMipSet->m_ChannelFormat == CF_2101010 ||
             pMipSet->m_ChannelFormat == CF_32bit || pMipSet->m_ChannelFormat == CF_Float16 || pMipSet->m_ChannelFormat == CF_Float32);
 }
 
-void cleanup(bool Delete_gMipSetIn, bool SwizzleMipSetIn) {
+void LogErrorToCSVFile(AnalysisErrorCodeType error)
+{
+    // Used in test automation and results validation
+    if (g_CmdPrams.logcsvformat)
+    {
+        CMP_ANALYSIS_DATA analysisData = {0};
+        analysisData.SSIM              = -1;  // Set data content is invalid and not processed
+        analysisData.errCode           = error;
+        ProcessResults(g_CmdPrams, analysisData);
+    }
+}
+
+void cleanup(bool Delete_gMipSetIn, bool SwizzleMipSetIn)
+{
 #ifdef _WIN32
     SetDllDirectory(NULL);
 #endif
-    if (Delete_gMipSetIn) {
-        if (g_MipSetIn.m_pMipLevelTable) {
+    if (Delete_gMipSetIn)
+    {
+        if (g_MipSetIn.m_pMipLevelTable)
+        {
             g_CMIPS->FreeMipSet(&g_MipSetIn);
             g_MipSetIn.m_pMipLevelTable = NULL;
         }
-    } else {
-        if (SwizzleMipSetIn) {
+    }
+    else
+    {
+        if (SwizzleMipSetIn)
+        {
             SwizzleMipMap(&g_MipSetIn);
         }
     }
 
-    if (g_MipSetCmp.m_pMipLevelTable) {
+    if (g_MipSetCmp.m_pMipLevelTable)
+    {
         g_CMIPS->FreeMipSet(&g_MipSetCmp);
         g_MipSetCmp.m_pMipLevelTable = NULL;
     }
 
-    if (g_MipSetOut.m_pMipLevelTable) {
+    if (g_MipSetOut.m_pMipLevelTable)
+    {
         g_CMIPS->FreeMipSet(&g_MipSetOut);
         g_MipSetOut.m_pMipLevelTable = NULL;
     }
@@ -973,8 +1253,10 @@ void cleanup(bool Delete_gMipSetIn, bool SwizzleMipSetIn) {
 
 // mesh optimization process
 // only support case glTF->glTF, case obj->obj
-bool OptimizeMesh(std::string SourceFile, std::string DestFile) {
-    if (!(CMP_FileExists(SourceFile))) {
+bool OptimizeMesh(std::string SourceFile, std::string DestFile)
+{
+    if (!(CMP_FileExists(SourceFile)))
+    {
         PrintInfo("Error: Source Model Mesh File is not found.\n");
         return false;
     }
@@ -984,38 +1266,47 @@ bool OptimizeMesh(std::string SourceFile, std::string DestFile) {
     GLTFCommon* gltfdata     = nullptr;
 
     // load model
-    string file_extension = std::filesystem::path(SourceFile).extension().string();
+    string file_extension = sfs::path(SourceFile).extension().string();
     helper_to_upper(file_extension);
     helper_erase_all(file_extension, ".");
 
     PluginInterface_3DModel_Loader* plugin_loader;
     plugin_loader = reinterpret_cast<PluginInterface_3DModel_Loader*>(g_pluginManager.GetPlugin("3DMODEL_LOADER", (char*)file_extension.c_str()));
 
-    if (plugin_loader) {
+    if (plugin_loader)
+    {
         plugin_loader->TC_PluginSetSharedIO(g_CMIPS);
         void* msgHandler = NULL;
 
         int result;
-        if (result = plugin_loader->LoadModelData(g_CmdPrams.SourceFile.c_str(), "", &g_pluginManager, msgHandler, &CompressionCallback) != 0) {
+        if (result = plugin_loader->LoadModelData(g_CmdPrams.SourceFile.c_str(), "", &g_pluginManager, msgHandler, &CompressionCallback) != 0)
+        {
             if (result != 0)
                 throw("Error Loading Model Data");
         }
-        if (fileIsGLTF(g_CmdPrams.SourceFile)) {
+        if (fileIsGLTF(g_CmdPrams.SourceFile))
+        {
             gltfdata = (GLTFCommon*)plugin_loader->GetModelData();
-            if (gltfdata) {
+            if (gltfdata)
+            {
                 if (gltfdata->m_meshBufferData.m_meshData[0].vertices.size() > 0)
                     modelDataIn = (void*)&(gltfdata->m_meshBufferData);
-                else {
+                else
+                {
                     modelDataIn = nullptr;
                     PrintInfo("[Mesh Optimization] Error in processing mesh. Mesh data format size is not supported.");
                     return false;
                 }
             }
-        } else
+        }
+        else
             modelDataIn = plugin_loader->GetModelData();
-    } else {
+    }
+    else
+    {
         PrintInfo("[Mesh Optimization] Loading file error.: %s\n.", SourceFile.c_str());
-        if (plugin_loader) {
+        if (plugin_loader)
+        {
             delete plugin_loader;
             plugin_loader = nullptr;
         }
@@ -1029,8 +1320,10 @@ bool OptimizeMesh(std::string SourceFile, std::string DestFile) {
 
     plugin_Mesh = reinterpret_cast<PluginInterface_Mesh*>(g_pluginManager.GetPlugin("MESH_OPTIMIZER", "TOOTLE_MESH"));
 
-    if (plugin_Mesh) {
-        if (plugin_Mesh->Init() == 0) {
+    if (plugin_Mesh)
+    {
+        if (plugin_Mesh->Init() == 0)
+        {
             plugin_Mesh->TC_PluginSetSharedIO(g_CMIPS);
             MeshSettings meshSettings;
             meshSettings.bOptimizeOverdraw = (g_CmdPrams.CompressOptions.fOverdrawACMR > 0);
@@ -1048,9 +1341,12 @@ bool OptimizeMesh(std::string SourceFile, std::string DestFile) {
             if (meshSettings.bSimplifyMesh)
                 meshSettings.nlevelofDetails = g_CmdPrams.CompressOptions.iSimplifyLOD;
 
-            try {
+            try
+            {
                 modelDataOut = plugin_Mesh->ProcessMesh(modelDataIn, (void*)&meshSettings, NULL, &CompressionCallback);
-            } catch (std::exception& e) {
+            }
+            catch (std::exception& e)
+            {
                 PrintInfo("[Mesh Optimization] Error: %s\n.", e.what());
                 if (plugin_Mesh)
                     plugin_Mesh->CleanUp();
@@ -1060,21 +1356,25 @@ bool OptimizeMesh(std::string SourceFile, std::string DestFile) {
     }
 
     //save model
-    if (modelDataOut) {
+    if (modelDataOut)
+    {
         std::vector<CMP_Mesh>*          optimized   = ((std::vector<CMP_Mesh>*)modelDataOut);
         PluginInterface_3DModel_Loader* plugin_save = NULL;
 
-        string destfile_extension = std::filesystem::path(DestFile).extension().string();
+        string destfile_extension = sfs::path(DestFile).extension().string();
         helper_to_upper(destfile_extension);
         helper_erase_all(destfile_extension, ".");
 
         plugin_save = reinterpret_cast<PluginInterface_3DModel_Loader*>(g_pluginManager.GetPlugin("3DMODEL_LOADER", (char*)destfile_extension.c_str()));
-        if (plugin_save) {
+        if (plugin_save)
+        {
             plugin_save->TC_PluginSetSharedIO(g_CMIPS);
 
             int result = 0;
-            if (fileIsGLTF(g_CmdPrams.DestFile)) {
-                if (gltfdata) {
+            if (fileIsGLTF(g_CmdPrams.DestFile))
+            {
+                if (gltfdata)
+                {
                     GLTFCommon optimizedGltf;
                     optimizedGltf.buffersData                 = gltfdata->buffersData;
                     optimizedGltf.isBinFile                   = gltfdata->isBinFile;
@@ -1087,31 +1387,42 @@ bool OptimizeMesh(std::string SourceFile, std::string DestFile) {
                     optimizedGltf.m_scenes                    = gltfdata->m_scenes;
                     optimizedGltf.m_meshBufferData.m_meshData = *optimized;
 
-                    if (plugin_save->SaveModelData(g_CmdPrams.DestFile.c_str(), &optimizedGltf) == -1) {
+                    if (plugin_save->SaveModelData(g_CmdPrams.DestFile.c_str(), &optimizedGltf) == -1)
+                    {
                         PrintInfo("[Mesh Optimization] Failed to save optimized gltf data.\n");
                         plugin_Mesh->CleanUp();
-                        if (plugin_save) {
+                        if (plugin_save)
+                        {
                             delete plugin_save;
                             plugin_save = nullptr;
                         }
                         return false;
                     }
-                } else {
+                }
+                else
+                {
                     PrintInfo("[Mesh Optimization] Failed to save optimized gltf data.\n");
                     plugin_Mesh->CleanUp();
-                    if (plugin_save) {
+                    if (plugin_save)
+                    {
                         delete plugin_save;
                         plugin_save = nullptr;
                     }
                     return false;
                 }
-            } else {
-                if (plugin_save->SaveModelData(g_CmdPrams.DestFile.c_str(), &((*optimized)[0])) != -1) {
+            }
+            else
+            {
+                if (plugin_save->SaveModelData(g_CmdPrams.DestFile.c_str(), &((*optimized)[0])) != -1)
+                {
                     PrintInfo("[Mesh Optimization] Success in saving optimized obj data.\n");
-                } else {
+                }
+                else
+                {
                     PrintInfo("[Mesh Optimization] Failed to save optimized obj data.\n");
                     plugin_Mesh->CleanUp();
-                    if (plugin_save) {
+                    if (plugin_save)
+                    {
                         delete plugin_save;
                         plugin_save = nullptr;
                     }
@@ -1119,21 +1430,28 @@ bool OptimizeMesh(std::string SourceFile, std::string DestFile) {
                 }
             }
 
-            if (result != 0) {
+            if (result != 0)
+            {
                 PrintInfo("[Mesh Optimization] Error in saving mesh file.");
                 plugin_Mesh->CleanUp();
-                if (plugin_save) {
+                if (plugin_save)
+                {
                     delete plugin_save;
                     plugin_save = nullptr;
                 }
                 return false;
-            } else {
+            }
+            else
+            {
                 PrintInfo("[Mesh Optimization] Saving %s done.\n", g_CmdPrams.DestFile.c_str());
             }
-        } else {
+        }
+        else
+        {
             PrintInfo("[Mesh Optimization]Saving: File format not supported.\n");
             plugin_Mesh->CleanUp();
-            if (plugin_save) {
+            if (plugin_save)
+            {
                 delete plugin_save;
                 plugin_save = nullptr;
             }
@@ -1141,7 +1459,8 @@ bool OptimizeMesh(std::string SourceFile, std::string DestFile) {
         }
 
         plugin_Mesh->CleanUp();
-        if (plugin_save) {
+        if (plugin_save)
+        {
             delete plugin_save;
             plugin_save = nullptr;
         }
@@ -1150,16 +1469,55 @@ bool OptimizeMesh(std::string SourceFile, std::string DestFile) {
     return true;
 }
 
+CMP_ChannelFormat cmp_getChannelFormat(CMP_FORMAT destFormat)
+{
+    switch (destFormat)
+    {
+    case CMP_FORMAT_ARGB_32F:
+    case CMP_FORMAT_ABGR_32F:
+    case CMP_FORMAT_RGBA_32F:
+    case CMP_FORMAT_BGRA_32F:
+    case CMP_FORMAT_RGB_32F:
+    case CMP_FORMAT_BGR_32F:
+    case CMP_FORMAT_RG_32F:
+    case CMP_FORMAT_R_32F:
+        return (CF_Float32);
+        break;
+    case CMP_FORMAT_ARGB_16F:
+    case CMP_FORMAT_ABGR_16F:
+    case CMP_FORMAT_RGBA_16F:
+    case CMP_FORMAT_BGRA_16F:
+    case CMP_FORMAT_RG_16F:
+    case CMP_FORMAT_R_16F:
+        return (CF_Float16);
+        break;
+    case CMP_FORMAT_ARGB_2101010:
+    case CMP_FORMAT_ARGB_16:
+    case CMP_FORMAT_ABGR_16:
+    case CMP_FORMAT_RGBA_16:
+    case CMP_FORMAT_BGRA_16:
+    case CMP_FORMAT_RG_16:
+    case CMP_FORMAT_R_16:
+        return (CF_16bit);
+        break;
+    }
+    return (CF_8bit);
+}
+
 // mesh draco compression/decompression
-bool CompressDecompressMesh(std::string SourceFile, std::string DestFile) {
-    if (!(CMP_FileExists(SourceFile))) {
+bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
+{
+    if (!(CMP_FileExists(SourceFile)))
+    {
         PrintInfo("Error: Source Model Mesh File is not found.\n");
         return false;
     }
 
     // Case: glTF -> glTF handle both compression and decompression
-    if (fileIsGLTF(SourceFile)) {
-        if (fileIsGLTF(DestFile)) {
+    if (fileIsGLTF(SourceFile))
+    {
+        if (fileIsGLTF(DestFile))
+        {
             std::string err;
             Model       model;
             TinyGLTF    loader;
@@ -1172,9 +1530,11 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile) {
             std::string srcFile = SourceFile;
             std::string dstFile = DestFile;
             // Check if mesh optimization was done if so then source is optimized file
-            if (g_CmdPrams.doMeshOptimize) {
+            if (g_CmdPrams.doMeshOptimize)
+            {
                 srcFile = DestFile;
-                if (!CMP_FileExists(srcFile)) {
+                if (!CMP_FileExists(srcFile))
+                {
                     PrintInfo("Error: Source Model Mesh File is not found.\n");
                     return false;
                 }
@@ -1183,39 +1543,49 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile) {
             }
 
             bool ret = loader.LoadASCIIFromFile(&model, &err, srcFile, g_CmdPrams.use_Draco_Encode);
-            if (!err.empty()) {
+            if (!err.empty())
+            {
                 PrintInfo("Error processing gltf source:[%s] file [%s]\n", srcFile.c_str(), err.c_str());
                 return false;
             }
-            if (!ret) {
+            if (!ret)
+            {
                 PrintInfo("Failed in loading glTF file : [%s].\n", srcFile.c_str());
                 return false;
-            } else {
+            }
+            else
+            {
                 PrintInfo("Success in loading glTF file : [%s].\n", srcFile.c_str());
             }
 
             bool is_draco_src = false;
 #ifdef USE_MESH_DRACO_EXTENSION
-            if (model.dracomeshes.size() > 0) {
+            if (model.dracomeshes.size() > 0)
+            {
                 is_draco_src = true;
             }
 #endif
             err.clear();
 
-            if (g_CmdPrams.compressImagesFromGLTF) {
+            if (g_CmdPrams.compressImagesFromGLTF)
+            {
                 std::string dstFolder = dstFile;
                 auto        pos       = dstFolder.rfind("\\");
-                if (pos == std::string::npos) {
+                if (pos == std::string::npos)
+                {
                     pos = dstFolder.rfind("/");
                 }
-                if (pos != std::string::npos) {
+                if (pos != std::string::npos)
+                {
                     dstFolder = dstFolder.substr(0, pos + 1);
                 }
                 size_t originalImages = model.images.size();
-                for (unsigned i = 0; i < model.images.size(); ++i) {
+                for (unsigned i = 0; i < model.images.size(); ++i)
+                {
                     std::string input = model.images[i].uri;
                     PrintInfo("Processing '%s'\n", input.c_str());
-                    if (input.empty()) {
+                    if (input.empty())
+                    {
                         PrintInfo("Error: Compressonator can only compress separate images with glTF!\n");
                         return false;
                     }
@@ -1225,29 +1595,34 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile) {
 
                     std::string imgSrcDir = "";
                     auto        pos       = srcFile.rfind("\\");
-                    if (pos == std::string::npos) {
+                    if (pos == std::string::npos)
+                    {
                         pos = srcFile.rfind("/");
                     }
-                    if (pos != std::string::npos) {
+                    if (pos != std::string::npos)
+                    {
                         imgSrcDir = srcFile.substr(0, pos + 1);
                     }
 
                     std::string imgDestDir = dstFolder;
                     pos                    = output.rfind("\\");
-                    if (pos == std::string::npos) {
+                    if (pos == std::string::npos)
+                    {
                         pos = output.rfind("/");
                     }
-                    if (pos != std::string::npos) {
+                    if (pos != std::string::npos)
+                    {
                         imgDestDir = output.substr(0, pos + 1);
                     }
 
-                    std::filesystem::create_directories(imgDestDir);
+                    sfs::create_directories(imgDestDir);
                     {
                         MipSet inMips{};
                         memset(&inMips, 0, sizeof(CMP_MipSet));
                         int ret = AMDLoadMIPSTextureImage((imgSrcDir + input).c_str(), &inMips, false, &g_pluginManager);
 
-                        if (inMips.m_nMipLevels < g_CmdPrams.MipsLevel && !g_CmdPrams.use_noMipMaps) {
+                        if (inMips.m_nMipLevels < g_CmdPrams.MipsLevel && !g_CmdPrams.use_noMipMaps)
+                        {
                             CMP_INT requestLevel = g_CmdPrams.MipsLevel;
                             CMP_INT nMinSize     = CMP_CalcMinMipSize(inMips.m_nHeight, inMips.m_nWidth, requestLevel);
                             CMP_GenerateMIPLevels(&inMips, nMinSize);
@@ -1267,44 +1642,54 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile) {
                         kernel_options.encodeWith = g_CmdPrams.CompressOptions.nEncodeWith;
 
                         auto cmp_status = CMP_ProcessTexture(&inMips, &mipSetCmp, kernel_options, CompressionCallback);
-                        if (cmp_status == CMP_ERR_FAILED_HOST_SETUP) {
+                        if (cmp_status == CMP_ERR_FAILED_HOST_SETUP)
+                        {
                             g_CmdPrams.CompressOptions.nEncodeWith = CMP_Compute_type::CMP_CPU;
                             kernel_options.encodeWith              = g_CmdPrams.CompressOptions.nEncodeWith;
                             memset(&mipSetCmp, 0, sizeof(CMP_MipSet));
                             cmp_status = CMP_ProcessTexture(&inMips, &mipSetCmp, kernel_options, CompressionCallback);
                         }
 
-                        if (cmp_status != CMP_OK) {
+                        if (cmp_status != CMP_OK)
+                        {
                             PrintInfo("Error: Something went wrong while compressing image!\n");
                             return false;
                         }
 
                         ret = AMDSaveMIPSTextureImage(output.c_str(), &mipSetCmp, false, g_CmdPrams.CompressOptions);
-                        if (ret != 0) {
+                        if (ret != 0)
+                        {
                             PrintInfo("Error: Something went wrong while saving compressed image!\n");
                             return false;
                         }
                     }
 
-                    if (!std::filesystem::exists(dstFolder + input)) {
-                        std::filesystem::copy(imgSrcDir + input, dstFolder + input);
+                    if (!sfs::exists(dstFolder + input))
+                    {
+                        sfs::copy(imgSrcDir + input, dstFolder + input);
                     }
                 }
             }
 
             ret = saver.WriteGltfSceneToFile(&model, &err, dstFile, g_CmdPrams.CompressOptions, is_draco_src, g_CmdPrams.use_Draco_Encode);
 
-            if (!err.empty()) {
+            if (!err.empty())
+            {
                 PrintInfo("Error processing gltf destination:[%s] file [%s]\n", dstFile.c_str(), err.c_str());
                 return false;
             }
-            if (!ret) {
+            if (!ret)
+            {
                 PrintInfo("Failed to save glTF file %s\n", dstFile.c_str());
                 return false;
-            } else {
+            }
+            else
+            {
                 PrintInfo("Success in writting glTF file : [%s].\n", dstFile.c_str());
             }
-        } else {
+        }
+        else
+        {
             PrintInfo("Destination file must also be a gltf file\n");
             return false;
         }
@@ -1318,8 +1703,10 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile) {
     PluginInterface_Mesh* plugin_MeshComp;
     plugin_MeshComp = reinterpret_cast<PluginInterface_Mesh*>(g_pluginManager.GetPlugin("MESH_COMPRESSOR", "DRACO"));
 
-    if (plugin_MeshComp) {
-        if (plugin_MeshComp->Init() == 0) {
+    if (plugin_MeshComp)
+    {
+        if (plugin_MeshComp->Init() == 0)
+        {
             //showProgressDialog("Process Mesh Data");
             plugin_MeshComp->TC_PluginSetSharedIO(g_CMIPS);
 
@@ -1333,18 +1720,23 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile) {
             DracoOptions.generic_quantization_bits    = g_CmdPrams.CompressOptions.iGenericBits;
 
             // Check if mesh optimization was done if so then source is optimized file
-            if (g_CmdPrams.doMeshOptimize) {
+            if (g_CmdPrams.doMeshOptimize)
+            {
                 DracoOptions.input = DestFile;
                 if (fileIsOBJ(DracoOptions.input))
                     DracoOptions.output = DestFile + ".drc";
-            } else {
+            }
+            else
+            {
                 DracoOptions.input = SourceFile;
                 //obj->obj
-                if (fileIsOBJ(SourceFile) && fileIsOBJ(DestFile)) {
+                if (fileIsOBJ(SourceFile) && fileIsOBJ(DestFile))
+                {
                     //this obj->obj case only support for encode, a new encode.drc will be created
                     if (g_CmdPrams.use_Draco_Encode)
                         DracoOptions.output = DestFile + ".drc";
-                    else {
+                    else
+                    {
                         PrintInfo("Error: please use -draco option to perform encode on the source obj file.\n");
                         return false;
                     }
@@ -1363,22 +1755,30 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile) {
             PluginInterface_3DModel_Loader* m_plugin_loader_drc;
             m_plugin_loader_drc = reinterpret_cast<PluginInterface_3DModel_Loader*>(g_pluginManager.GetPlugin("3DMODEL_LOADER", "DRC"));
 
-            if (m_plugin_loader_drc) {
+            if (m_plugin_loader_drc)
+            {
                 m_plugin_loader_drc->TC_PluginSetSharedIO(g_CMIPS);
 
                 int result;
-                if (fileIsOBJ(DracoOptions.input)) {
-                    if (result = m_plugin_loader_drc->LoadModelData("OBJ", NULL, &g_pluginManager, &DracoOptions, &CompressionCallback) != 0) {
-                        if (result != 0) {
+                if (fileIsOBJ(DracoOptions.input))
+                {
+                    if (result = m_plugin_loader_drc->LoadModelData("OBJ", NULL, &g_pluginManager, &DracoOptions, &CompressionCallback) != 0)
+                    {
+                        if (result != 0)
+                        {
                             PrintInfo("[Mesh Compression] Error Loading Model Data.\n");
                             plugin_MeshComp->CleanUp();
                             return false;
                         }
                     }
-                } else if (fileIsDRC(DracoOptions.input)) {
+                }
+                else if (fileIsDRC(DracoOptions.input))
+                {
                     if (result =
-                                m_plugin_loader_drc->LoadModelData(DracoOptions.input.c_str(), NULL, &g_pluginManager, &DracoOptions, &CompressionCallback) != 0) {
-                        if (result != 0) {
+                            m_plugin_loader_drc->LoadModelData(DracoOptions.input.c_str(), NULL, &g_pluginManager, &DracoOptions, &CompressionCallback) != 0)
+                    {
+                        if (result != 0)
+                        {
                             PrintInfo("[Mesh Compression] Error Loading Model Data.\n");
                             plugin_MeshComp->CleanUp();
                             return false;
@@ -1390,27 +1790,35 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile) {
 
                 modelDataIn = m_plugin_loader_drc->GetModelData();
 
-                try {
+                try
+                {
                     if (modelDataIn)
                         modelDataOut = plugin_MeshComp->ProcessMesh(modelDataIn, (void*)&DracoOptions, NULL, &CompressionCallback);
-                } catch (std::exception& e) {
+                }
+                catch (std::exception& e)
+                {
                     PrintInfo("[Mesh Compression] Error: %s . Please try another setting.\n", e.what());
                     plugin_MeshComp->CleanUp();
                     return false;
                 }
 
-                if (!modelDataOut) {
+                if (!modelDataOut)
+                {
                     PrintInfo("[Mesh Compression] Error in processing mesh.\n");
                     plugin_MeshComp->CleanUp();
                     return false;
                 }
             }
-        } else {
+        }
+        else
+        {
             PrintInfo("[Mesh Compression] Error in init mesh plugin.\n");
             plugin_MeshComp->CleanUp();
             return false;
         }
-    } else {
+    }
+    else
+    {
         PrintInfo("[Mesh Compression] Error in loading mesh compression plugin.\n");
         return false;
     }
@@ -1419,13 +1827,16 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile) {
 }
 
 //cmdline only
-bool GenerateAnalysis(std::string SourceFile, std::string DestFile) {
-    if (!(CMP_FileExists(SourceFile))) {
+bool GenerateAnalysis(std::string SourceFile, std::string DestFile)
+{
+    if (!(CMP_FileExists(SourceFile)))
+    {
         PrintInfo("Error: Source Image File is not found.\n");
         return false;
     }
 
-    if (!(CMP_FileExists(DestFile))) {
+    if (!(CMP_FileExists(DestFile)))
+    {
         PrintInfo("Error: Destination Image File is not found.\n");
         return false;
     }
@@ -1434,18 +1845,23 @@ bool GenerateAnalysis(std::string SourceFile, std::string DestFile) {
     PluginInterface_Analysis* Plugin_Analysis;
     int                       testpassed = 0;
     Plugin_Analysis                      = reinterpret_cast<PluginInterface_Analysis*>(g_pluginManager.GetPlugin("IMAGE", "ANALYSIS"));
-    if (Plugin_Analysis) {
-        if (g_CmdPrams.diffImage) {
+    if (Plugin_Analysis)
+    {
+        if (g_CmdPrams.diffImage)
+        {
             g_CmdPrams.DiffFile = DestFile;
             int lastindex       = (int)g_CmdPrams.DiffFile.find_last_of(".");
             g_CmdPrams.DiffFile = g_CmdPrams.DiffFile.substr(0, lastindex);
             g_CmdPrams.DiffFile.append("_diff.bmp");
-        } else {
+        }
+        else
+        {
             g_CmdPrams.DiffFile = "";
         }
 
         string results_file = "";
-        if (g_CmdPrams.analysis) {
+        if (g_CmdPrams.analysis)
+        {
             results_file = DestFile;
             int index    = (int)results_file.find_last_of("/");
             results_file = results_file.substr(0, (index + 1));
@@ -1453,12 +1869,15 @@ bool GenerateAnalysis(std::string SourceFile, std::string DestFile) {
         }
 
         testpassed = Plugin_Analysis->TC_ImageDiff(
-                         SourceFile.c_str(), DestFile.c_str(), g_CmdPrams.DiffFile.c_str(), (char*)results_file.c_str(), NULL, &g_pluginManager, NULL);
+            SourceFile.c_str(), DestFile.c_str(), g_CmdPrams.DiffFile.c_str(), (char*)results_file.c_str(), NULL, &g_pluginManager, NULL);
         delete Plugin_Analysis;
-        if (testpassed != 0) {
+        if (testpassed != 0)
+        {
             return false;
         }
-    } else {
+    }
+    else
+    {
         printf("Error: Plugin for image analysis is not loaded\n");
         return false;
     }
@@ -1467,8 +1886,10 @@ bool GenerateAnalysis(std::string SourceFile, std::string DestFile) {
 }
 
 //cmdline only: print image properties (i.e. image name, path, file size, image size, image width, height, miplevel and format)
-bool GenerateImageProps(std::string ImageFile) {
-    if (!(CMP_FileExists(ImageFile))) {
+bool GenerateImageProps(std::string ImageFile)
+{
+    if (!(CMP_FileExists(ImageFile)))
+    {
         PrintInfo("Error: Image File is not found.\n");
         return false;
     }
@@ -1477,43 +1898,55 @@ bool GenerateImageProps(std::string ImageFile) {
     PrintInfo("File Name: %s\n", ImageFile.c_str());
 
     // full path
-    std::filesystem::path p(ImageFile);
-    std::filesystem::path fullpath = std::filesystem::absolute(p);
+    sfs::path p(ImageFile);
+    sfs::path fullpath = sfs::absolute(p);
     PrintInfo("File Full Path: %s\n", fullpath.generic_string().c_str());
 
     // file size
-    uintmax_t filesize = std::filesystem::file_size(ImageFile);
+    uintmax_t filesize = sfs::file_size(ImageFile);
 
-    if (filesize > 1024000) {
+    if (filesize > 1024000)
+    {
         filesize /= 1024000;
         PrintInfo("File Size: %ju MB\n", filesize);
-    } else if (filesize > 1024) {
+    }
+    else if (filesize > 1024)
+    {
         filesize /= 1024;
         PrintInfo("File Size: %ju KB\n", filesize);
-    } else {
+    }
+    else
+    {
         PrintInfo("File Size: %ju Bytes\n", filesize);
     }
 
     // load image into mipset
-    if (AMDLoadMIPSTextureImage(ImageFile.c_str(), &g_MipSetIn, g_CmdPrams.use_OCV, &g_pluginManager) != 0) {
+    if (AMDLoadMIPSTextureImage(ImageFile.c_str(), &g_MipSetIn, g_CmdPrams.use_OCV, &g_pluginManager) != 0)
+    {
         PrintInfo("Error: reading image, data type not supported.\n");
         return false;
     }
 
-    if (&g_MipSetIn) {
+    if (&g_MipSetIn)
+    {
         //image size
 
         CMIPS     CMips;
         MipLevel* pInMipLevel = CMips.GetMipLevel(&g_MipSetIn, 0, 0);
         uintmax_t imagesize   = pInMipLevel->m_dwLinearSize;
 
-        if (imagesize > 1024000) {
+        if (imagesize > 1024000)
+        {
             imagesize /= 1024000;
             PrintInfo("Image Size: %ju MB\n", imagesize);
-        } else if (imagesize > 1024) {
+        }
+        else if (imagesize > 1024)
+        {
             imagesize /= 1024;
             PrintInfo("Image Size: %ju KB\n", imagesize);
-        } else {
+        }
+        else
+        {
             PrintInfo("Image Size: %ju Bytes\n", imagesize);
         }
 
@@ -1528,8 +1961,10 @@ bool GenerateImageProps(std::string ImageFile) {
 
         if (g_MipSetIn.m_format != CMP_FORMAT_Unknown)
             PrintInfo("Format: %s\n", GetFormatDesc(g_MipSetIn.m_format));
-        else {
-            switch (g_MipSetIn.m_ChannelFormat) {
+        else
+        {
+            switch (g_MipSetIn.m_ChannelFormat)
+            {
             case CF_8bit:  //< 8-bit integer data.
                 PrintInfo("Channel Format: 8-bit integer data\n");
                 break;
@@ -1573,7 +2008,8 @@ bool GenerateImageProps(std::string ImageFile) {
     return true;
 }
 
-void LocalPrintF(char* buff) {
+void LocalPrintF(char* buff)
+{
 // Issue #89 Pull Request
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wformat-security"  // warning : warning: format string is not a string literal
@@ -1586,13 +2022,16 @@ void LocalPrintF(char* buff) {
 #include "common_kerneldef.h"
 #include "compute_base.h"
 
-bool SVMInitCodec(KernelOptions* options) {
+bool SVMInitCodec(KernelOptions* options)
+{
     CMP_FORMAT format = options->format;
-    switch (format) {
+    switch (format)
+    {
     case CMP_FORMAT_BC1:
     case CMP_FORMAT_DXT1:
     case CMP_FORMAT_BC7:
-    case CMP_FORMAT_ASTC: {
+    case CMP_FORMAT_ASTC:
+    {
         unsigned char* src = (unsigned char*)options->data;
         unsigned char* dst = (unsigned char*)options->dataSVM;
         memcpy(dst, src, options->size);
@@ -1605,7 +2044,8 @@ bool SVMInitCodec(KernelOptions* options) {
 
 //#endif
 
-double timeStampsec() {
+double timeStampsec()
+{
 #ifdef _WIN32
     static LARGE_INTEGER frequency;
     if (frequency.QuadPart == 0)
@@ -1621,7 +2061,8 @@ double timeStampsec() {
 #endif
 }
 
-bool CMP_GenerateMipLevelData(CMP_FORMAT format, int w, int h, int level, int nFaceOrSlice, MipSet* pMipSetOut) {
+bool CMP_GenerateMipLevelData(CMP_FORMAT format, int w, int h, int level, int nFaceOrSlice, MipSet* pMipSetOut)
+{
     //========================
     // Compressed Destination
     //========================
@@ -1639,14 +2080,16 @@ bool CMP_GenerateMipLevelData(CMP_FORMAT format, int w, int h, int level, int nF
     pMipSetOut->dwHeight   = h;
 
     MipLevel* pGPUOutMipLevel = g_CMIPS->GetMipLevel(pMipSetOut, level, nFaceOrSlice);
-    if (!g_CMIPS->AllocateCompressedMipLevelData(pGPUOutMipLevel, w, h, destGPUMipTexture.dwDataSize)) {
+    if (!g_CMIPS->AllocateCompressedMipLevelData(pGPUOutMipLevel, w, h, destGPUMipTexture.dwDataSize))
+    {
         return false;
     }
 
     return true;
 }
 
-CMP_ERROR CMP_ConvertMipTextureCGP(MipSet* pMipSetIn, MipSet* pMipSetOut, CMP_CompressOptions* pCompressOptions, CMP_Feedback_Proc pFeedbackProc) {
+CMP_ERROR CMP_ConvertMipTextureCGP(MipSet* pMipSetIn, MipSet* pMipSetOut, CMP_CompressOptions* pCompressOptions, CMP_Feedback_Proc pFeedbackProc)
+{
     assert(pMipSetIn);
     assert(pMipSetOut);
     assert(pCompressOptions);
@@ -1673,13 +2116,9 @@ CMP_ERROR CMP_ConvertMipTextureCGP(MipSet* pMipSetIn, MipSet* pMipSetOut, CMP_Co
     pMipSetOut->m_TextureType   = pMipSetIn->m_TextureType;
     pMipSetOut->m_nIterations   = 0;
 
-    if (!g_CMIPS->AllocateMipSet(pMipSetOut,
-                                 pMipSetOut->m_ChannelFormat,
-                                 TDT_ARGB,
-                                 pMipSetOut->m_TextureType,
-                                 pMipSetIn->m_nWidth,
-                                 pMipSetIn->m_nHeight,
-                                 pMipSetOut->m_nDepth)) { // depthsupport, what should nDepth be set as here?
+    if (!g_CMIPS->AllocateMipSet(
+            pMipSetOut, pMipSetOut->m_ChannelFormat, TDT_ARGB, pMipSetOut->m_TextureType, pMipSetIn->m_nWidth, pMipSetIn->m_nHeight, pMipSetOut->m_nDepth))
+    {  // depthsupport, what should nDepth be set as here?
         return CMP_ERR_MEM_ALLOC_FOR_MIPSET;
     }
 
@@ -1700,12 +2139,15 @@ CMP_ERROR CMP_ConvertMipTextureCGP(MipSet* pMipSetIn, MipSet* pMipSetOut, CMP_Co
     CGU_BOOL genGPUMipMaps = pCompressOptions->genGPUMipMaps;
     // If generating GPU mipmaps using HW allocate IO data, do this only once as this loop also processes cubemap faces
     bool genOntimeDestMipMaps = false;
-    if (pCompressOptions->nEncodeWith == CMP_Compute_type::CMP_GPU_HW) {
+    if (pCompressOptions->nEncodeWith == CMP_Compute_type::CMP_GPU_HW)
+    {
         genOntimeDestMipMaps = genGPUMipMaps;
     }
 
-    for (int nMipLevel = 0; (nMipLevel < DestMipLevel) && contineProcessing; nMipLevel++) {
-        for (int nFaceOrSlice = 0; (nFaceOrSlice < CMP_MaxFacesOrSlices(pMipSetIn, nMipLevel)) && contineProcessing; nFaceOrSlice++) {
+    for (int nMipLevel = 0; (nMipLevel < DestMipLevel) && contineProcessing; nMipLevel++)
+    {
+        for (int nFaceOrSlice = 0; (nFaceOrSlice < CMP_MaxFacesOrSlices(pMipSetIn, nMipLevel)) && contineProcessing; nFaceOrSlice++)
+        {
             //=====================
             // Uncompressed source
             //======================
@@ -1714,12 +2156,16 @@ CMP_ERROR CMP_ConvertMipTextureCGP(MipSet* pMipSetIn, MipSet* pMipSetOut, CMP_Co
             //=======================================
             // For GPU skip non-divisable by 4 pixels
             //=======================================
-            if (isGPUEncoding && ((pInMipLevel->m_nWidth % 4) || (pInMipLevel->m_nHeight % 4))) {
+            if (isGPUEncoding && ((pInMipLevel->m_nWidth % 4) || (pInMipLevel->m_nHeight % 4)))
+            {
                 // adjust final output miplevel
-                PrintInfo("GPU Process Warning! MipLevels > %d not processed,  miplevel width or height not divisible by 4!\n", nMipLevel);
-                pMipSetOut->m_nMipLevels = nMipLevel;
-                contineProcessing        = false;
-                continue;
+                PrintInfo("GPU Process Warning! MIP level %d not processed", nMipLevel);
+                PrintInfo("MIP level width (%d) or height (%d) not divisible by 4!. CPU will be used\n", pInMipLevel->m_nWidth, pInMipLevel->m_nHeight);
+                // pMipSetOut->m_nMipLevels = nMipLevel;
+                // contineProcessing        = false;
+                pCompressOptions->format_support_hostEncoder = false;
+                isGPUEncoding                                = false;
+                // continue;
             }
 
             dataProcessed           = true;
@@ -1761,7 +2207,8 @@ CMP_ERROR CMP_ConvertMipTextureCGP(MipSet* pMipSetIn, MipSet* pMipSetOut, CMP_Co
             CMP_INT m_atcubeorface;
 
             MipLevel* pOutMipLevel = g_CMIPS->GetMipLevel(pMipSetOut, nMipLevel, nFaceOrSlice);
-            if (!g_CMIPS->AllocateCompressedMipLevelData(pOutMipLevel, destTexture.dwWidth, destTexture.dwHeight, destTexture.dwDataSize)) {
+            if (!g_CMIPS->AllocateCompressedMipLevelData(pOutMipLevel, destTexture.dwWidth, destTexture.dwHeight, destTexture.dwDataSize))
+            {
                 return CMP_ERR_MEM_ALLOC_FOR_MIPSET;
             }
 
@@ -1771,7 +2218,8 @@ CMP_ERROR CMP_ConvertMipTextureCGP(MipSet* pMipSetIn, MipSet* pMipSetOut, CMP_Co
             //========================
             // Process ConvertTexture
             //========================
-            if (pCompressOptions->format_support_hostEncoder) {
+            if (pCompressOptions->format_support_hostEncoder)
+            {
                 //------------------------------------------------
                 // Initializing the Host Framework
                 // if it fails revert to CPU version of the codec
@@ -1786,40 +2234,55 @@ CMP_ERROR CMP_ConvertMipTextureCGP(MipSet* pMipSetIn, MipSet* pMipSetOut, CMP_Co
                 kernel_options.getDeviceInfo = pCompressOptions->getDeviceInfo;
                 kernel_options.genGPUMipMaps = genGPUMipMaps;
                 kernel_options.useSRGBFrames = pCompressOptions->useSRGBFrames;
-                do {
+                do
+                {
                     ComputeOptions options;
                     options.force_rebuild = false;  // set this to true if you want the shader source code  to be allways compiled!
 
                     //===============================================================================
                     // Initalize the  Pipeline that will be used for the codec to run on HPC or GPU
                     //===============================================================================
-                    if (CMP_CreateComputeLibrary(&g_MipSetIn, &kernel_options, g_CMIPS) != CMP_OK) {
+                    if (CMP_CreateComputeLibrary(&g_MipSetIn, &kernel_options, g_CMIPS) != CMP_OK)
+                    {
                         PrintInfo("Warning! CPU will be used for compression\n");
                         pCompressOptions->format_support_hostEncoder = false;
                         break;
                     }
 
                     // Init Compute Codec info IO
-                    if ((g_CMIPS->PrintLine == NULL) && (PrintStatusLine != NULL)) {
+                    if ((g_CMIPS->PrintLine == NULL) && (PrintStatusLine != NULL))
+                    {
                         g_CMIPS->PrintLine = PrintStatusLine;
                     }
 
                     // Set any addition feature as needed for the Host
-                    if (CMP_SetComputeOptions(&options) != CMP_OK) {
+                    if (CMP_SetComputeOptions(&options) != CMP_OK)
+                    {
                         PrintInfo("Failed to setup (HPC, SPMD or GPU) host options\n");
                         return CMP_ERR_FAILED_HOST_SETUP;
                     }
 
-                    if (genOntimeDestMipMaps) {
+                    if (genOntimeDestMipMaps)
+                    {
                         // Generate MipMap images : Using CPU Box Filter, note however these miplevel images will be overritten by GPU generated images
                         // CMP_GenerateMIPLevels(pMipSetIn, 4);
 
                         // Now setup destination miplevel storage that will be filled in by GPU based mipmaping
-                        CMP_INT levels = static_cast<int>(std::log2(pMipSetIn->m_nWidth)) - 1;
+                        CMP_INT levels = CMP_CalcMaxMipLevel(pMipSetIn->m_nWidth, pMipSetIn->m_nHeight, true);
+
                         if (levels > pMipSetIn->m_nMaxMipLevels)
                             levels = pMipSetIn->m_nMaxMipLevels;
+
+                        if ((pCompressOptions->miplevels < levels) && (pCompressOptions->miplevels >= 1))
+                        {
+                            levels = pCompressOptions->miplevels;
+                        }
+
+                        kernel_options.miplevels = levels;
                         pMipSetOut->m_nMipLevels = levels;
-                        for (CMP_INT level = 1; level < levels; level++) {
+
+                        for (CMP_INT level = 1; level < levels; level++)
+                        {
                             CMP_INT w = pMipSetIn->m_nWidth >> level;
                             CMP_INT h = pMipSetIn->m_nHeight >> level;
                             if (!CMP_GenerateMipLevelData(pMipSetOut->m_format, w, h, level, nFaceOrSlice, pMipSetOut))
@@ -1829,27 +2292,59 @@ CMP_ERROR CMP_ConvertMipTextureCGP(MipSet* pMipSetIn, MipSet* pMipSetOut, CMP_Co
                         }
                     }
 
+                    //==========================
+                    // User suppiled Print Info
+                    //==========================
+                    if (pCompressOptions->m_PrintInfoStr)
+                    {
+                        char buff[256];
+                        snprintf(buff,
+                                 sizeof(buff),
+                                 "\nSource Texture size = %d Bytes, width = %d px  height = %d px\n",
+                                 srcTexture.dwDataSize,
+                                 srcTexture.dwWidth,
+                                 srcTexture.dwHeight);
+                        pCompressOptions->m_PrintInfoStr(buff);
+                        if (destTexture.dwDataSize > 0)
+                        {
+                            snprintf(buff,
+                                     sizeof(buff),
+                                     "Destination Texture size = %d Bytes   Resulting compression ratio = %2.2f:1\n",
+                                     destTexture.dwDataSize,
+                                     srcTexture.dwDataSize / (float)destTexture.dwDataSize);
+                            pCompressOptions->m_PrintInfoStr(buff);
+                        }
+                    }
+
                     // Do the compression
-                    if (CMP_CompressTexture(&kernel_options, *pMipSetIn, *pMipSetOut, pFeedbackProc) != CMP_OK) {
+                    if (CMP_CompressTexture(&kernel_options, *pMipSetIn, *pMipSetOut, pFeedbackProc) != CMP_OK)
+                    {
                         PrintInfo("Warning: Target device or format is not supported or failed to build. CPU will be used\n");
                         pCompressOptions->format_support_hostEncoder = false;
                         break;
-                    } else
+                    }
+                    else
                         pMipSetOut->m_nIterations++;
 
-                    if (kernel_options.getPerfStats) {
+                    if (kernel_options.getPerfStats)
+                    {
                         // Get Preformance Stats
-                        if (CMP_GetPerformanceStats(&kernel_options.perfStats) == CMP_OK) {
+                        if (CMP_GetPerformanceStats(&kernel_options.perfStats) == CMP_OK)
+                        {
                             pCompressOptions->perfStats = kernel_options.perfStats;
-                        } else
+                        }
+                        else
                             PrintInfo("Warning: Target device or format is not supported or failed to build. CPU will be used\n");
                     }
 
-                    if (kernel_options.getDeviceInfo) {
+                    if (kernel_options.getDeviceInfo)
+                    {
                         // Get Device Info
-                        if (CMP_GetDeviceInfo(&kernel_options.deviceInfo) == CMP_OK) {
+                        if (CMP_GetDeviceInfo(&kernel_options.deviceInfo) == CMP_OK)
+                        {
                             pCompressOptions->deviceInfo = kernel_options.deviceInfo;
-                        } else
+                        }
+                        else
                             PrintInfo("Warning: Target device or format is not supported or failed to build. CPU will be used\n");
                     }
 
@@ -1862,26 +2357,30 @@ CMP_ERROR CMP_ConvertMipTextureCGP(MipSet* pMipSetIn, MipSet* pMipSetOut, CMP_Co
             }
 
             // SPMD/GPU failed run CPU version
-            if (!pCompressOptions->format_support_hostEncoder) {
+            if (!pCompressOptions->format_support_hostEncoder)
+            {
                 isGPUEncoding = false;
-                if (CMP_ConvertTexture(&srcTexture, &destTexture, pCompressOptions, pFeedbackProc) != CMP_OK) {
+                if (CMP_ConvertTexture(&srcTexture, &destTexture, pCompressOptions, pFeedbackProc) != CMP_OK)
+                {
                     PrintInfo("Error in compressing destination texture\n");
                     return CMP_ERR_CMP_DESTINATION;
-                } else
+                }
+                else
                     pMipSetOut->m_nIterations++;
             }
         }
 
         // Check if GPU was used for MipMap Generation, This indicates that All processed compressed miplevels were generated
         // Need to exit the outter processing loop
-        if (genGPUMipMaps)
+        if (genGPUMipMaps && isGPUEncoding)
             contineProcessing = false;
     }
 
     if (pFeedbackProc)
         pFeedbackProc(100, NULL, NULL);
 
-    if (isGPUEncoding && !dataProcessed) {
+    if (isGPUEncoding && !dataProcessed)
+    {
         PrintInfo("Error source texture is not processed, check source width & height is divisable by 4!\n");
         return CMP_ERR_CMP_DESTINATION;
     }
@@ -1892,22 +2391,25 @@ CMP_ERROR CMP_ConvertMipTextureCGP(MipSet* pMipSetIn, MipSet* pMipSetOut, CMP_Co
 }
 
 // ToDo replace with plugin scan, qt checks and src dest format checks.
-bool SupportedFileTypes(std::string fileExt) {
-    char* supportedTypes[19] = {
-        "DDS", "KTX", "BMP", "PNG", "JPEG", "JPG", "EXR", "TGA", "TIF", "TIFF", "OBJ", "GLTF", "PBM", "PGM", "PPM", "XBM", "XPM", "ASTC", "DRC"
-    };
-    for (int i = 0; i < 19; i++) {
+bool SupportedFileTypes(std::string fileExt)
+{
+    char* supportedTypes[20] = {"DDS",  "KTX", "KTX2", "BMP", "PNG", "JPEG", "JPG", "EXR", "TGA",  "TIF",
+                                "TIFF", "OBJ", "GLTF", "PBM", "PGM", "PPM",  "XBM", "XPM", "ASTC", "DRC"};
+    for (int i = 0; i < 20; i++)
+    {
         if (fileExt.compare(supportedTypes[i]) == 0)
             return true;
     }
     return false;
 }
 
-void PrintInfoStr(const char* InfoStr) {
+void PrintInfoStr(const char* InfoStr)
+{
     PrintInfo(InfoStr);
 }
 
-int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
+int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
+{
     int    processResult = 0;
     double frequency, conversion_loopStartTime = {0}, conversion_loopEndTime = {0}, compress_loopStartTime = {0}, compress_loopEndTime = {0},
                       decompress_loopStartTime = {0}, decompress_loopEndTime = {0};
@@ -1952,43 +2454,56 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
     bool                      MoreSourceFiles = false;
     PluginInterface_Analysis* Plugin_Analysis = NULL;
 
-    if (g_CmdPrams.logresults) {
+    if (g_CmdPrams.logresults)
+    {
         // Check for vaild -log usage
-        if ((!fileIsModel(g_CmdPrams.SourceFile)) && (!fileIsModel(g_CmdPrams.DestFile))) {
+        if ((!fileIsModel(g_CmdPrams.SourceFile)) && (!fileIsModel(g_CmdPrams.DestFile)))
+        {
             //int             testpassed = 0;
             Plugin_Analysis = reinterpret_cast<PluginInterface_Analysis*>(g_pluginManager.GetPlugin("IMAGE", "ANALYSIS"));
-        } else {
+        }
+        else
+        {
             PrintInfo("Warning: -log is only valid for Images, option is turned off!\n");
             g_CmdPrams.logresults = false;
         }
     }
 
+    // Check if print status line has been assigned
+    // if not get it a default to printf
+    if (PrintStatusLine == NULL)
+    {
+        PrintStatusLine = &LocalPrintF;
+    }
+
     // Fix to output view to look the same as v3.1 print info for calls to CMP_ConvertMipTexture
     g_CmdPrams.CompressOptions.m_PrintInfoStr = PrintInfoStr;
 
-    do {
+    do
+    {
         // Initailize stats data and defaults for repeated use in do while()!
         g_CmdPrams.compress_nIterations                       = 0;
         g_CmdPrams.decompress_nIterations                     = 0;
         g_CmdPrams.CompressOptions.format_support_hostEncoder = false;
 
-        if ((!fileIsModel(g_CmdPrams.SourceFile)) && (!fileIsModel(g_CmdPrams.DestFile))) {
-            // Check if print status line has been assigned
-            // if not get it a default to printf
-            if (PrintStatusLine == NULL) {
-                PrintStatusLine = &LocalPrintF;
-            }
-
-            if (g_CmdPrams.analysis || g_CmdPrams.diffImage) {
-                if (!(GenerateAnalysis(g_CmdPrams.SourceFile, g_CmdPrams.DestFile))) {
+        if ((!fileIsModel(g_CmdPrams.SourceFile)) && (!fileIsModel(g_CmdPrams.DestFile)))
+        {
+            if (g_CmdPrams.analysis || g_CmdPrams.diffImage)
+            {
+                if (!(GenerateAnalysis(g_CmdPrams.SourceFile, g_CmdPrams.DestFile)))
+                {
+                    LogErrorToCSVFile(ANALYSIS_IMAGE_TESTFAILED);
                     PrintInfo("Error: Image Analysis Failed\n");
                     return -1;
                 }
                 return 0;
             }
 
-            if (g_CmdPrams.imageprops) {
-                if (!(GenerateImageProps(g_CmdPrams.SourceFile))) {
+            if (g_CmdPrams.imageprops)
+            {
+                if (!(GenerateImageProps(g_CmdPrams.SourceFile)))
+                {
+                    LogErrorToCSVFile(ANALYSIS_RETRIEVE_IMAGE_PROPERTIES);
                     PrintInfo("Error: Failed to retrieve image properties\n");
                     return -1;
                 }
@@ -2013,28 +2528,31 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
             helper_to_upper(DestExt);
 
             // Check if destination file is supported, else print warning and continue.
-            if (!SupportedFileTypes(DestExt)) {
+            if (!SupportedFileTypes(DestExt))
+            {
+                LogErrorToCSVFile(ANALYSIS_DESTINATION_TYPE_NOT_SUPPORTED);
                 PrintInfo("Error: Destination file type not is supported\n");
                 processResult = -2;
                 continue;
             }
 
             // Try some known format to attach by supported file ext types
-            if (g_CmdPrams.CompressOptions.DestFormat == CMP_FORMAT_Unknown) {
+            if (g_CmdPrams.CompressOptions.DestFormat == CMP_FORMAT_Unknown)
+            {
                 if (DestExt.compare("ASTC") == 0)
                     g_CmdPrams.CompressOptions.DestFormat = CMP_FORMAT_ASTC;
                 else
 #ifdef USE_BASIS
                     if (DestExt.compare("BASIS") == 0)
-                        g_CmdPrams.CompressOptions.DestFormat = CMP_FORMAT_BASIS;
-                    else
+                    g_CmdPrams.CompressOptions.DestFormat = CMP_FORMAT_BASIS;
+                else
 #endif
-                        if (DestExt.compare("EXR") == 0)
-                            g_CmdPrams.CompressOptions.DestFormat = CMP_FORMAT_ARGB_16F;
-                        else if (DestExt.compare("BMP") == 0)
-                            g_CmdPrams.CompressOptions.DestFormat = CMP_FORMAT_ARGB_8888;
-                        else if (DestExt.compare("PNG") == 0)
-                            g_CmdPrams.CompressOptions.DestFormat = CMP_FORMAT_ARGB_8888;
+                    if (DestExt.compare("EXR") == 0)
+                    g_CmdPrams.CompressOptions.DestFormat = CMP_FORMAT_ARGB_16F;
+                else if (DestExt.compare("BMP") == 0)
+                    g_CmdPrams.CompressOptions.DestFormat = CMP_FORMAT_ARGB_8888;
+                else if (DestExt.compare("PNG") == 0)
+                    g_CmdPrams.CompressOptions.DestFormat = CMP_FORMAT_ARGB_8888;
             }
 
             destFormat = g_CmdPrams.CompressOptions.DestFormat;
@@ -2042,25 +2560,34 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
             // Determin if destinationfile is to be Compressed
             DestinationFormatIsCompressed = CMP_IsCompressedFormat(destFormat);
 
-            if (destFormat != CMP_FORMAT_ASTC) {
+            if (destFormat != CMP_FORMAT_ASTC)
+            {
                 // Check for valid format to destination for ASTC
 
-                if (DestExt.compare("ASTC") == 0) {
+                if (DestExt.compare("ASTC") == 0)
+                {
+                    LogErrorToCSVFile(ANALYSIS_ASTC_DESTINATION_TYPE_NOT_SUPPORTED);
                     PrintInfo("Error: destination file type only supports ASTC compression format\n");
                     return -1;
                 }
-            } else {
+            }
+            else
+            {
                 // Check for valid format to destination for ASTC
-                if (!((DestExt.compare("ASTC") == 0) || (DestExt.compare("KTX") == 0))) {
-                    PrintInfo("Error: destination file type for ASTC must be set to .astc or .ktx\n");
+                if (!((DestExt.compare("ASTC") == 0) || (DestExt.compare("KTX") == 0) || (DestExt.compare("KTX2") == 0)))
+                {
+                    LogErrorToCSVFile(ANALYSIS_ASTC_DESTINATION_FILE_FORMAT_NOTSET);
+                    PrintInfo("Error: destination file type for ASTC must be set to .astc or .ktx, .ktx2\n");
                     return -1;
                 }
 
                 //==========================================================
                 // Determine if MIP mapping is set for invalid file formats
                 //==========================================================
-                if ((g_CmdPrams.MipsLevel > 1) && (DestExt.compare("ASTC") == 0)) {
-                    PrintInfo("Error: destination file type for ASTC must be set to .ktx for miplevel support\n");
+                if ((g_CmdPrams.MipsLevel > 1) && (DestExt.compare("ASTC") == 0))
+                {
+                    LogErrorToCSVFile(ANALYSIS_ASTC_MIPMAP_DESTINATION_NOT_SUPPORTED);
+                    PrintInfo("Error: destination file type for ASTC must be set to .ktx or .ktx2 for miplevel support\n");
                     return -1;
                 }
             }
@@ -2071,7 +2598,8 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
             //----------------
             // Read Input file
             //----------------
-            if (p_userMipSetIn) { //for GUI
+            if (p_userMipSetIn)
+            {  //for GUI
                 memcpy(&g_MipSetIn, p_userMipSetIn, sizeof(MipSet));
                 // Data in DXTn Files are expected to be in BGRA as input to CMP_ConvertTexture
                 // Data in ASTC BC6 BC7 etc - expect data to be RGBA as input to CMP_ConvertTexture
@@ -2079,7 +2607,9 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
                 g_MipSetIn.m_pMipLevelTable = p_userMipSetIn->m_pMipLevelTable;
 
                 Delete_gMipSetIn = false;
-            } else { //for CLI
+            }
+            else
+            {  //for CLI
                 Delete_gMipSetIn = true;
 
                 // ===============================================
@@ -2108,7 +2638,9 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
                 //---------------------------------------
                 // Set user specification for Block sizes
                 //----------------------------------------
-                if (AMDLoadMIPSTextureImage(g_CmdPrams.SourceFile.c_str(), &g_MipSetIn, g_CmdPrams.use_OCV, &g_pluginManager) != 0) {
+                if (AMDLoadMIPSTextureImage(g_CmdPrams.SourceFile.c_str(), &g_MipSetIn, g_CmdPrams.use_OCV, &g_pluginManager) != 0)
+                {
+                    LogErrorToCSVFile(ANALYSIS_FAILED_FILELOAD);
                     cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                     PrintInfo("Error: loading source image\n");
                     return -1;
@@ -2131,13 +2663,17 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
             g_MipSetIn.m_nBlockWidth  = g_CmdPrams.BlockWidth;
             g_MipSetIn.m_nBlockHeight = g_CmdPrams.BlockHeight;
             g_MipSetIn.m_nBlockDepth  = g_CmdPrams.BlockDepth;
-            if (g_CmdPrams.use_noMipMaps) {
+            if (g_CmdPrams.use_noMipMaps)
+            {
                 g_MipSetIn.m_Flags = MS_FLAG_DisableMipMapping;
             }
 
             // check if CubeMap is supported in destination file
-            if (g_MipSetIn.m_TextureType == TT_CubeMap) {
-                if (!(DestExt.compare("DDS") == 0 || DestExt.compare("KTX") == 0)) {
+            if (g_MipSetIn.m_TextureType == TT_CubeMap)
+            {
+                if (!(DestExt.compare("DDS") == 0 || DestExt.compare("KTX") == 0 || DestExt.compare("KTX2") == 0))
+                {
+                    LogErrorToCSVFile(ANALYSIS_CUBEMAP_NOTSUPPORTED);
                     PrintInfo("Error: Cube Maps is not supported in destination file.\n");
                     cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                     return -1;
@@ -2154,9 +2690,12 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
                 srcFormat = g_MipSetIn.m_format;
 
             // Load MIPS did not return a format try to set one
-            if (srcFormat == CMP_FORMAT_Unknown) {
+            if (srcFormat == CMP_FORMAT_Unknown)
+            {
                 g_MipSetIn.m_format = GetFormat(&g_MipSetIn);
-                if (g_MipSetIn.m_format == CMP_FORMAT_Unknown) {
+                if (g_MipSetIn.m_format == CMP_FORMAT_Unknown)
+                {
+                    LogErrorToCSVFile(ANALYSIS_UNSUPPORTED_IMAGE_FORMAT);
                     cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                     PrintInfo("Error: unsupported input image file format\n");
                     return -1;
@@ -2169,7 +2708,8 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
             SourceFormatIsCompressed = CMP_IsCompressedFormat(srcFormat);
 
 #ifndef ENABLE_MAKE_COMPATIBLE_API
-            if ((FloatFormat(srcFormat) && !FloatFormat(destFormat)) || (!FloatFormat(srcFormat) && FloatFormat(destFormat))) {
+            if ((FloatFormat(srcFormat) && !FloatFormat(destFormat)) || (!FloatFormat(srcFormat) && FloatFormat(destFormat)))
+            {
                 cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                 PrintInfo("Error: Processing floating point format <-> non-floating point format is not supported\n");
                 return -1;
@@ -2178,44 +2718,59 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
             //=====================================================
             // Check for Transcode else Unsupported conversion
             // ====================================================
-            if (SourceFormatIsCompressed && DestinationFormatIsCompressed) {
+            if (SourceFormatIsCompressed && DestinationFormatIsCompressed)
+            {
 #ifdef USE_CMP_TRANSCODE
 
 #ifdef USE_GTC
                 if ((g_MipSetIn.m_format == CMP_FORMAT_GTC) && ((destFormat == CMP_FORMAT_ASTC) || (destFormat == CMP_FORMAT_BC1) ||
-                        (destFormat == CMP_FORMAT_BC7) || (destFormat == CMP_FORMAT_ETC2_RGB))) {
+                                                                (destFormat == CMP_FORMAT_BC7) || (destFormat == CMP_FORMAT_ETC2_RGB)))
+                {
                     CMP_TranscodeFormat = true;
-                } else
+                }
+                else
 #endif
 #ifdef USE_BASIS
                     if ((g_MipSetIn.m_format == CMP_FORMAT_BASIS) &&
-                            ((destFormat == CMP_FORMAT_BC1) || (destFormat == CMP_FORMAT_BC7) || (destFormat == CMP_FORMAT_ETC2_RGB))) {
-                        CMP_TranscodeFormat = true;
-                    } else
+                        ((destFormat == CMP_FORMAT_BC1) || (destFormat == CMP_FORMAT_BC7) || (destFormat == CMP_FORMAT_ETC2_RGB)))
+                {
+                    CMP_TranscodeFormat = true;
+                }
+                else
 #endif
 
 #endif
-                    {
-                        cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
-                        PrintInfo("Trascoding Error: Compressed source and compressed destination selection is not supported\n");
-                        return -1;
-                    }
+                {
+                    LogErrorToCSVFile(ANALYSIS_TRANSCODE_SRC_TO_DST_NOT_SUPPORTED);
+                    cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
+                    PrintInfo("Trascoding Error: Compressed source and compressed destination selection is not supported\n");
+                    return -1;
+                }
             }
 
             //=====================================================
             // Perform swizzle
             // ===================================================
-            if (p_userMipSetIn) { //for GUI
+            if (p_userMipSetIn)
+            {  //for GUI
 #ifdef USE_SWIZZLE
-                if (g_MipSetIn.m_swizzle && !g_CmdPrams.CompressOptions.bUseCGCompress) {
+                if (g_MipSetIn.m_swizzle && !g_CmdPrams.CompressOptions.bUseCGCompress)
+                {
                     //SwizzleMipMap(&g_MipSetIn);
                     //SwizzledMipSetIn = true;
                 }
 #endif
-            } else {
+            }
+            else
+            {
                 if (g_MipSetIn.m_swizzle)
                     SwizzleMipMap(&g_MipSetIn);
             }
+
+            CMP_BOOL isGPUEncoding = !((g_CmdPrams.CompressOptions.nEncodeWith == CMP_Compute_type::CMP_CPU) ||
+                                       (g_CmdPrams.CompressOptions.nEncodeWith == CMP_Compute_type::CMP_UNKNOWN) ||
+                                       (g_CmdPrams.CompressOptions.nEncodeWith == CMP_Compute_type::CMP_HPC));
+
 
             //======================================================
             // Determine if MIP mapping is required
@@ -2223,30 +2778,40 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
             //=======================================================
             if (((g_CmdPrams.MipsLevel > 1) && (g_MipSetIn.m_nMipLevels == 1)) && (!g_CmdPrams.use_noMipMaps)) {
                 int nMinSize;
+
                 // Precheck user setting against image size
-                CMP_INT nHeight   = g_MipSetIn.m_nHeight;
-                CMP_INT nWidth    = g_MipSetIn.m_nWidth;
-                CMP_INT maxLevel  = 1;  // count from top level
-                CMP_INT MipsLevel = g_CmdPrams.MipsLevel;
-                while (MipsLevel > 0) {
-                    maxLevel++;
-                    nWidth  = CMP_MAX(nWidth >> 1, 1);
-                    nHeight = CMP_MAX(nHeight >> 1, 1);
-                    if ((nWidth <= 1) || (nHeight <= 1))
-                        break;
-                    MipsLevel--;
-                }
+                CMP_INT nHeight  = g_MipSetIn.m_nHeight;
+                CMP_INT nWidth   = g_MipSetIn.m_nWidth;
+                CMP_INT maxLevel = CMP_CalcMaxMipLevel(nWidth, nHeight, (g_CmdPrams.CompressOptions.genGPUMipMaps || isGPUEncoding ));
 
                 // User has two option to specify MIP levels
-                if (g_CmdPrams.nMinSize > 0) {
+                if (g_CmdPrams.nMinSize > 0)
+                {
                     nMinSize = g_CmdPrams.nMinSize;
-                } else {
+                }
+                else
+                {
                     if (maxLevel < g_CmdPrams.MipsLevel)
+                    {
                         PrintInfo("Warning miplevels %d is larger then required, value is autoset to use %d\n", g_CmdPrams.MipsLevel, maxLevel);
-                    nMinSize = CMP_CalcMinMipSize(g_MipSetIn.m_nHeight, g_MipSetIn.m_nWidth, g_CmdPrams.MipsLevel);
+                    }
+                    else
+                        maxLevel = g_CmdPrams.MipsLevel;
+
+                    nMinSize = CMP_CalcMinMipSize(g_MipSetIn.m_nHeight, g_MipSetIn.m_nWidth, maxLevel);
                 }
 
                 CMP_GenerateMIPLevels((CMP_MipSet*)&g_MipSetIn, nMinSize);
+            }
+            else if (g_CmdPrams.CompressOptions.genGPUMipMaps)
+            {
+                // check ranges for GPU use
+                CMP_INT maxlevel = CMP_CalcMaxMipLevel(g_MipSetIn.m_nHeight, g_MipSetIn.m_nWidth, true);
+                if (maxlevel < g_CmdPrams.MipsLevel)
+                {
+                    PrintInfo("Warning miplevels %d is larger then required, value is autoset to use %d\n", g_CmdPrams.MipsLevel, maxlevel);
+                    g_CmdPrams.MipsLevel = maxlevel;
+                }
             }
 
             // --------------------------------
@@ -2274,7 +2839,8 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
             // Example: BMP -> DDS  with -fd Compression flag
             //
             //=====================================================
-            if ((!SourceFormatIsCompressed) && (DestinationFormatIsCompressed)) {
+            if ((!SourceFormatIsCompressed) && (DestinationFormatIsCompressed))
+            {
                 compress_loopStartTime                   = timeStampsec();
                 g_CmdPrams.CompressOptions.getPerfStats  = true;
                 g_CmdPrams.CompressOptions.getDeviceInfo = true;
@@ -2287,9 +2853,10 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
                 // Use CGP only if it is not a transcoder format
                 if (g_CmdPrams.CompressOptions.bUseCGCompress
 #ifdef USE_BASIS
-                        && (g_MipSetCmp.m_format != CMP_FORMAT_BASIS)
+                    && (g_MipSetCmp.m_format != CMP_FORMAT_BASIS)
 #endif
-                   ) {
+                )
+                {
                     // Use HPC, GPU Interfaces
 
                     // Use this for internal CPU verion code tests
@@ -2303,29 +2870,34 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
                     // cmp_status = CMP_ProcessTexture(&g_MipSetIn,&g_MipSetCmp,kernel_options,pFeedbackProc);
 
                     // Save info for -log
-                    if (g_CmdPrams.logresultsToFile) {
+                    if (g_CmdPrams.logresultsToFile)
+                    {
                         MipLevel* pInMipLevel = g_CMIPS->GetMipLevel(&g_MipSetIn, 0, 0);
                         g_CmdPrams.dwHeight   = pInMipLevel->m_nHeight;
                         g_CmdPrams.dwWidth    = pInMipLevel->m_nWidth;
                         g_CmdPrams.dwDataSize = pInMipLevel->m_dwLinearSize;
                     }
 
+                    // set for kernel options use, incase of GPU processing
+                    g_CmdPrams.CompressOptions.miplevels = g_CmdPrams.MipsLevel;
+
                     // Process the texture
                     cmp_status = CMP_ConvertMipTextureCGP(&g_MipSetIn, &g_MipSetCmp, &g_CmdPrams.CompressOptions, pFeedbackProc);
 
                     g_CmdPrams.compress_nIterations = g_MipSetCmp.m_nIterations;
-                } else {
-                    // use Compressonator SDK intercace: This is only CPU based. Check if user set GPU, give warning msg
-                    CMP_BOOL isGPUEncoding = !((g_CmdPrams.CompressOptions.nEncodeWith == CMP_Compute_type::CMP_CPU) ||
-                                               (g_CmdPrams.CompressOptions.nEncodeWith == CMP_Compute_type::CMP_UNKNOWN) ||
-                                               (g_CmdPrams.CompressOptions.nEncodeWith == CMP_Compute_type::CMP_HPC));
+                }
+                else
+                {
+                    // use Compressonator SDK : This is only CPU based. Check if user set GPU, give warning msg
                     if (isGPUEncoding)
                         PrintInfo("Warning! GPU Encoding with this codec is not supported. CPU will be used for compression\n");
                     cmp_status = CMP_ConvertMipTexture((CMP_MipSet*)&g_MipSetIn, (CMP_MipSet*)&g_MipSetCmp, &g_CmdPrams.CompressOptions, pFeedbackProc);
                     g_CmdPrams.compress_nIterations = g_MipSetCmp.m_nIterations;
                 }
 
-                if (cmp_status != CMP_OK) {
+                if (cmp_status != CMP_OK)
+                {
+                    LogErrorToCSVFile(ANALYSIS_COMPRESSING_TEXTURE);
                     PrintInfo("Error %d: Compressing Texture\n", cmp_status);
                     cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                     return -1;
@@ -2344,7 +2916,8 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
             //==============================================
             if ((!SourceFormatIsCompressed) && (DestinationFormatIsCompressed) && (IsDestinationUnCompressed((const char*)g_CmdPrams.DestFile.c_str()) == false)
 
-               ) {
+            )
+            {
                 //-------------------------------------------------------------
                 // Set user specification for ASTC Block sizes that was used!
                 //-------------------------------------------------------------
@@ -2355,7 +2928,9 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
 #ifdef USE_WITH_COMMANDLINE_TOOL
                 PrintInfo("\n");
 #endif
-                if (AMDSaveMIPSTextureImage(g_CmdPrams.DestFile.c_str(), &g_MipSetCmp, g_CmdPrams.use_OCV_out, g_CmdPrams.CompressOptions) != 0) {
+                if (AMDSaveMIPSTextureImage(g_CmdPrams.DestFile.c_str(), &g_MipSetCmp, g_CmdPrams.use_OCV_out, g_CmdPrams.CompressOptions) != 0)
+                {
+                    LogErrorToCSVFile(ANALYSIS_FAILED_FILESAVE);
                     PrintInfo("Error: saving image failed, write permission denied or format is unsupported for the file extension.\n");
                     cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                     return -1;
@@ -2363,9 +2938,11 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
 
                 // User requested a DECOMPRESS file also
                 // Set a new destinate and flag a Midway Decompress
-                if (g_CmdPrams.doDecompress) {
+                if (g_CmdPrams.doDecompress)
+                {
                     // Clean the Mipset if any was set
-                    if (g_MipSetOut.m_pMipLevelTable) {
+                    if (g_MipSetOut.m_pMipLevelTable)
+                    {
                         g_CMIPS->FreeMipSet(&g_MipSetOut);
                     }
                     g_CmdPrams.DestFile = g_CmdPrams.DecompressFile;
@@ -2380,10 +2957,13 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
             // Case example: BMP -> BMP with -fd uncompression flag
             //
             //=====================================================
-            if ((!SourceFormatIsCompressed) && (!DestinationFormatIsCompressed)) {
+            if ((!SourceFormatIsCompressed) && (!DestinationFormatIsCompressed))
+            {
                 TranscodeBits = true;
                 // Check if source and destinatation types are supported for transcoding
-                if ((g_MipSetOut.m_TextureType == TT_2D) && (g_MipSetIn.m_TextureType == TT_CubeMap)) {
+                if ((g_MipSetOut.m_TextureType == TT_2D) && (g_MipSetIn.m_TextureType == TT_CubeMap))
+                {
+                    LogErrorToCSVFile(ANALYSIS_CUBEMAP_TRANSCODE_NOTSUPPORTED);
                     PrintInfo("Error: Transcoding Cube Maps is not supported.\n");
                     cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                     return -1;
@@ -2397,7 +2977,8 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
             // Case example: BMP -> BMP with -fd compression flag
             //
             //=====================================================
-            if ((!SourceFormatIsCompressed) && (DestinationFormatIsCompressed) && (IsDestinationUnCompressed((const char*)g_CmdPrams.DestFile.c_str()) == true)) {
+            if ((!SourceFormatIsCompressed) && (DestinationFormatIsCompressed) && (IsDestinationUnCompressed((const char*)g_CmdPrams.DestFile.c_str()) == true))
+            {
                 MidwayDecompress = true;
                 // Prepare for an uncompress request on destination
                 p_MipSetIn = &g_MipSetCmp;
@@ -2412,37 +2993,53 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
             //                BMP - BMP  with    -fd flag(s)
             //
             //=====================================================
-            if (MidwayDecompress) {
+            if (MidwayDecompress)
+            {
                 PrintInfo("\nProcessed image is been decompressed to new target format!\n");
             }
 
-            if (((SourceFormatIsCompressed) && (!DestinationFormatIsCompressed)) || (TranscodeBits) || (MidwayDecompress)) {
+            if (((SourceFormatIsCompressed) && (!DestinationFormatIsCompressed)) || (TranscodeBits) || (MidwayDecompress))
+            {
                 compress_loopStartTime = timeStampsec();
 
-                g_MipSetOut.m_TextureDataType = TDT_ARGB;
-
-                if (SourceFormatIsCompressed) {
+                if (SourceFormatIsCompressed)
+                {
                     // BMP is saved as CMP_FORMAT_ARGB_8888
                     // EXR is saved as CMP_FORMAT_ARGB_32F
-                    switch (srcFormat) {
+                    switch (srcFormat)
+                    {
                     case CMP_FORMAT_BC6H:
                     case CMP_FORMAT_BC6H_SF:
                         destFormat                  = CMP_FORMAT_ARGB_16F;
                         g_MipSetOut.m_ChannelFormat = CF_Float16;
                         break;
+                    case CMP_FORMAT_BC4_S:
+                    case CMP_FORMAT_BC5_S:
+                        destFormat                    = CMP_FORMAT_RGBA_8888_S;
+                        g_MipSetOut.m_TextureDataType = TDT_XRGB;
+                        break;
                     default:
                         destFormat = CMP_FORMAT_ARGB_8888;
                         break;
                     }
-                } else {
-                    if (MidwayDecompress) {
+                }
+                else
+                {
+                    if (MidwayDecompress)
+                    {
                         // Need to determin a target format.
                         // Based on file extension.
-                        switch (srcFormat) {
+                        switch (srcFormat)
+                        {
                         case CMP_FORMAT_BC6H:
                         case CMP_FORMAT_BC6H_SF:
                             destFormat                  = CMP_FORMAT_ARGB_16F;
                             g_MipSetOut.m_ChannelFormat = CF_Float16;
+                            break;
+                        case CMP_FORMAT_BC4_S:
+                        case CMP_FORMAT_BC5_S:
+                            destFormat                    = CMP_FORMAT_RGBA_8888_S;
+                            g_MipSetOut.m_TextureDataType = TDT_XRGB;
                             break;
                         default:
                             destFormat = FormatByFileExtension((const char*)g_CmdPrams.DestFile.c_str(), &g_MipSetOut);
@@ -2456,13 +3053,23 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
                 if (destFormat == CMP_FORMAT_Unknown)
                     destFormat = CMP_FORMAT_ARGB_8888;
 
-                if (destFormat == CMP_FORMAT_ARGB_32F)
-                    g_MipSetOut.m_ChannelFormat = CF_Float32;
-                else if (destFormat == CMP_FORMAT_ARGB_16F)
-                    g_MipSetOut.m_ChannelFormat = CF_Float16;
-
+                g_MipSetOut.m_ChannelFormat  = cmp_getChannelFormat(destFormat);
                 g_MipSetOut.m_format         = destFormat;
                 g_MipSetOut.m_isDeCompressed = srcFormat != CMP_FORMAT_Unknown ? srcFormat : CMP_FORMAT_MAX;
+
+                // set m_TextureDataType Correct to Format Type
+                switch (destFormat)
+                {
+                case CMP_FORMAT_RGB_888:
+                    g_MipSetOut.m_TextureDataType = TDT_RGB;
+                    break;
+                case CMP_FORMAT_RGBA_8888_S:
+                    // skip already set
+                    break;
+                default:
+                    g_MipSetOut.m_TextureDataType = TDT_ARGB;
+                    break;
+                }
 
                 // Allocate output MipSet
                 if (!g_CMIPS->AllocateMipSet(&g_MipSetOut,
@@ -2471,7 +3078,9 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
                                              p_MipSetIn->m_TextureType,
                                              p_MipSetIn->m_nWidth,
                                              p_MipSetIn->m_nHeight,
-                                             p_MipSetIn->m_nDepth)) { // depthsupport, what should nDepth be set as here?
+                                             p_MipSetIn->m_nDepth))
+                {  // depthsupport, what should nDepth be set as here?
+                    LogErrorToCSVFile(ANALYSIS_MEMORY_ERROR2);
                     PrintInfo("Memory Error(2): allocating MIPSet Output buffer\n");
                     cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                     return -1;
@@ -2491,14 +3100,18 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
 
                 decompress_loopStartTime = timeStampsec();
 
-                for (int nFaceOrSlice = 0; nFaceOrSlice < nMaxFaceOrSlice; nFaceOrSlice++) {
+                for (int nFaceOrSlice = 0; nFaceOrSlice < nMaxFaceOrSlice; nFaceOrSlice++)
+                {
                     int nMipWidth  = nWidth;
                     int nMipHeight = nHeight;
 
-                    for (int nMipLevel = 0; nMipLevel < p_MipSetIn->m_nMipLevels; nMipLevel++) {
+                    for (int nMipLevel = 0; nMipLevel < p_MipSetIn->m_nMipLevels; nMipLevel++)
+                    {
                         MipLevel* pInMipLevel = g_CMIPS->GetMipLevel(p_MipSetIn, nMipLevel, nFaceOrSlice);
-                        if (!pInMipLevel) {
-                            PrintInfo("Memory Error(2): allocating MIPSet Output Cmp level buffer\n");
+                        if (!pInMipLevel)
+                        {
+                            LogErrorToCSVFile(ANALYSIS_MEMORY_ERROR3);
+                            PrintInfo("Memory Error(3): allocating MIPSet Output Cmp level buffer\n");
                             cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                             return -1;
                         }
@@ -2511,8 +3124,10 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
                                                            nMipWidth,
                                                            nMipHeight,
                                                            g_MipSetOut.m_ChannelFormat,
-                                                           g_MipSetOut.m_TextureDataType)) {
-                            PrintInfo("Memory Error(2): allocating MIPSet Output level buffer\n");
+                                                           g_MipSetOut.m_TextureDataType))
+                        {
+                            LogErrorToCSVFile(ANALYSIS_MEMORY_ERROR4);
+                            PrintInfo("Memory Error(4): allocating MIPSet Output level buffer\n");
                             cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                             return -1;
                         }
@@ -2540,29 +3155,34 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
                         // Uncompressed Destination
                         //-----------------------------
                         CMP_Texture destTexture;
-                        destTexture.dwSize     = sizeof(destTexture);
-                        destTexture.dwWidth    = nMipWidth;
-                        destTexture.dwHeight   = nMipHeight;
-                        destTexture.dwPitch    = 0;
-                        destTexture.format     = destFormat;
-                        destTexture.dwDataSize = CMP_CalculateBufferSize(&destTexture);
-                        destTexture.pData      = g_CMIPS->GetMipLevel(&g_MipSetOut, nMipLevel, nFaceOrSlice)->m_pbData;
-                        if (!g_CmdPrams.silent) {
-                            if ((nMipLevel > 1) || (nFaceOrSlice > 1))
-                                PrintInfo("\rProcessing destination     MipLevel %2d FaceOrSlice %2d", nMipLevel + 1, nFaceOrSlice);
-                            else
-                                PrintInfo("\rProcessing destination    ");
+                        destTexture.dwSize       = sizeof(destTexture);
+                        destTexture.dwWidth      = nMipWidth;
+                        destTexture.dwHeight     = nMipHeight;
+                        destTexture.dwPitch      = 0;
+                        destTexture.nBlockHeight = p_MipSetIn->m_nBlockHeight;
+                        destTexture.nBlockWidth  = p_MipSetIn->m_nBlockWidth;
+                        destTexture.nBlockDepth  = p_MipSetIn->m_nBlockDepth;
+                        destTexture.format       = destFormat;
+                        destTexture.dwDataSize   = CMP_CalculateBufferSize(&destTexture);
+                        destTexture.pData        = g_CMIPS->GetMipLevel(&g_MipSetOut, nMipLevel, nFaceOrSlice)->m_pbData;
+                        if (!g_CmdPrams.silent)
+                        {
+                            PrintInfo("\rProcessing destination     MipLevel %2d FaceOrSlice %2d", nMipLevel + 1, nFaceOrSlice + 1);
                         }
 #ifdef _WIN32
-                        if (/*(srcTexture.dwDataSize > destTexture.dwDataSize) || */ (IsBadWritePtr(destTexture.pData, destTexture.dwDataSize))) {
-                            PrintInfo("Memory Error(2): Destination image must be compatible with source\n");
+                        if (/*(srcTexture.dwDataSize > destTexture.dwDataSize) || */ (IsBadWritePtr(destTexture.pData, destTexture.dwDataSize)))
+                        {
+                            LogErrorToCSVFile(ANALYSIS_MEMORY_ERROR5);
+                            PrintInfo("Memory Error(5): Destination image must be compatible with source\n");
                             cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                             return -1;
                         }
 #else
                         int nullfd = open("/dev/random", O_WRONLY);
-                        if (write(nullfd, destTexture.pData, destTexture.dwDataSize) < 0) {
-                            PrintInfo("Memory Error(2): Destination image must be compatible with source\n");
+                        if (write(nullfd, destTexture.pData, destTexture.dwDataSize) < 0)
+                        {
+                            LogErrorToCSVFile(ANALYSIS_MEMORY_ERROR5);
+                            PrintInfo("Memory Error(5): Destination image must be compatible with source\n");
                             cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                             return -1;
                         }
@@ -2570,29 +3190,36 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
 #endif
                         g_fProgress = -1;
 
-                        if (use_GPUDecode) {
+                        if (use_GPUDecode)
+                        {
 #ifdef _WIN32
-#ifndef DISABLE_TESTCODE
-                            if (srcTexture.format == CMP_FORMAT_ASTC) {
-                                PrintInfo("Decompress Error: ASTC decompressed with GPU is not supported. Please view ASTC compressed images using CPU.\n");
+                            if (srcTexture.format == CMP_FORMAT_ASTC)
+                            {
+                                LogErrorToCSVFile(ANALYSIS_ATSC_TRANCODE_WITH_GPU_NOT_SUPPORTED);
+                                PrintInfo("Destination Error: ASTC decompressed with GPU is not supported. Please view ASTC compressed images using CPU.\n");
                                 cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                                 return -1;
                             }
 
-                            if (CMP_DecompressTexture(&srcTexture, &destTexture, DecodeWith) != CMP_OK) {
-                                PrintInfo("Error in decompressing source texture\n");
+                            if (CMP_DecompressTexture(&srcTexture, &destTexture, DecodeWith) != CMP_OK)
+                            {
+                                LogErrorToCSVFile(ANALYSIS_DECOMPRESSING_SOURCE);
+                                PrintInfo("Error in Destination source texture\n");
                                 cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                                 return -1;
                             }
-#endif
 #else
                             PrintInfo("GPU Decompress is not supported in linux.\n");
                             cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                             return -1;
 #endif
-                        } else {
-                            if (CMP_ConvertTexture(&srcTexture, &destTexture, &g_CmdPrams.CompressOptions, pFeedbackProc) != CMP_OK) {
-                                PrintInfo("Error(2) in compressing destination texture\n");
+                        }
+                        else
+                        {
+                            if (CMP_ConvertTexture(&srcTexture, &destTexture, &g_CmdPrams.CompressOptions, pFeedbackProc) != CMP_OK)
+                            {
+                                LogErrorToCSVFile(ANALYSIS_ERROR_COMPRESSING_DESTINATION_TEXTURE);
+                                PrintInfo("Error in compressing destination texture\n");
                                 cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                                 return -1;
                             }
@@ -2644,7 +3271,9 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
 #ifdef USE_WITH_COMMANDLINE_TOOL
                 PrintInfo("\n");
 #endif
-                if (AMDSaveMIPSTextureImage(g_CmdPrams.DestFile.c_str(), p_MipSetOut, g_CmdPrams.use_OCV_out, g_CmdPrams.CompressOptions) != 0) {
+                if (AMDSaveMIPSTextureImage(g_CmdPrams.DestFile.c_str(), p_MipSetOut, g_CmdPrams.use_OCV_out, g_CmdPrams.CompressOptions) != 0)
+                {
+                    LogErrorToCSVFile(ANALYSIS_FAILED_FILESAVE);
                     PrintInfo("Error: saving image failed, write permission denied or format is unsupported for the file extension.\n");
                     cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                     return -1;
@@ -2655,9 +3284,11 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
             //============================================================
             // Process Transcode Compress source to new compressed target
             //============================================================
-            if (SourceFormatIsCompressed && DestinationFormatIsCompressed && CMP_TranscodeFormat) {
+            if (SourceFormatIsCompressed && DestinationFormatIsCompressed && CMP_TranscodeFormat)
+            {
                 PrintInfo("\nTranscoding %s to %s\n", GetFormatDesc(g_MipSetIn.m_format), GetFormatDesc(g_MipSetCmp.m_format));
-                if (GTCTranscode(&g_MipSetIn, &g_MipSetCmp, g_pluginManager)) {
+                if (GTCTranscode(&g_MipSetIn, &g_MipSetCmp, g_pluginManager))
+                {
                     g_MipSetOut.m_nMipLevels = p_MipSetIn->m_nMipLevels;
 
                     p_MipSetOut = &g_MipSetCmp;
@@ -2668,7 +3299,8 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
                     p_MipSetOut->m_nBlockHeight = g_CmdPrams.BlockHeight;
                     p_MipSetOut->m_nBlockDepth  = g_CmdPrams.BlockDepth;
 
-                    if (AMDSaveMIPSTextureImage(g_CmdPrams.DestFile.c_str(), &g_MipSetCmp, g_CmdPrams.use_OCV_out, g_CmdPrams.CompressOptions) != 0) {
+                    if (AMDSaveMIPSTextureImage(g_CmdPrams.DestFile.c_str(), &g_MipSetCmp, g_CmdPrams.use_OCV_out, g_CmdPrams.CompressOptions) != 0)
+                    {
                         PrintInfo("Error: saving image failed, write permission denied or format is unsupported for the file extension.\n");
                         cleanup(Delete_gMipSetIn, SwizzledMipSetIn);
                         return -1;
@@ -2691,7 +3323,8 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
             if (g_CmdPrams.conversion_fDuration < 0.001)
                 g_CmdPrams.conversion_fDuration = 0.0;
 
-            if ((!g_CmdPrams.silent) && (g_CmdPrams.showperformance)) {
+            if ((!g_CmdPrams.silent) && (g_CmdPrams.showperformance))
+            {
 #ifdef USE_WITH_COMMANDLINE_TOOL
                 PrintInfo("\r");
 #endif
@@ -2703,25 +3336,34 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
                               g_CmdPrams.compress_fDuration);
 
                 if (g_CmdPrams.decompress_nIterations)
-                    PrintInfo("DeCompressed to %s with %i iteration(s) in %.3f seconds\n",
+                    PrintInfo("Processed to %s with %i iteration(s) in %.3f seconds\n",
                               GetFormatDesc(destFormat),
                               g_CmdPrams.decompress_nIterations,
                               g_CmdPrams.decompress_fDuration);
 
                 PrintInfo("Total time taken (includes file I/O): %.3f seconds\n", g_CmdPrams.conversion_fDuration);
             }
-        } else {
+        }
+        else
+        {
 #ifdef USE_MESH_CLI
             //Mesh Optimization
 #ifdef USE_3DMESH_OPTIMIZE
-            if (g_CmdPrams.doMeshOptimize) {
+            if (g_CmdPrams.doMeshOptimize)
+            {
                 if ((fileIsGLTF(g_CmdPrams.SourceFile) && fileIsGLTF(g_CmdPrams.DestFile)) ||
-                        (fileIsOBJ(g_CmdPrams.SourceFile) && fileIsOBJ(g_CmdPrams.DestFile))) {
-                    if (!(OptimizeMesh(g_CmdPrams.SourceFile, g_CmdPrams.DestFile))) {
+                    (fileIsOBJ(g_CmdPrams.SourceFile) && fileIsOBJ(g_CmdPrams.DestFile)))
+                {
+                    if (!(OptimizeMesh(g_CmdPrams.SourceFile, g_CmdPrams.DestFile)))
+                    {
+                        LogErrorToCSVFile(ANALYSIS_MESH_OPTIMIZATION_FAILED);
                         PrintInfo("Error: Mesh Optimization Failed.\n");
                         return -1;
                     }
-                } else {
+                }
+                else
+                {
+                    LogErrorToCSVFile(ANALYSIS_MESH_OPTIMIZATION_TYPE_FAILED);
                     PrintInfo("Error: Mesh Optimization Failed. Only glTF->glTF, obj->obj are supported in mesh optimization.\n");
                     return -1;
                 }
@@ -2729,20 +3371,24 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
 #endif
 
             // Mesh Compression and Decompression
-            if (!(g_CmdPrams.doMeshOptimize &&
-                    !g_CmdPrams
-                    .use_Draco_Encode)) { // skip mesh decompression for case only meshopt turn on: CompressonatorCLI.exe -meshopt source.gltf/obj dest.gltf/obj
+            if (!(g_CmdPrams.doMeshOptimize && !g_CmdPrams.use_Draco_Encode))
+            {  // skip mesh decompression for case only meshopt turn on: CompressonatorCLI.exe -meshopt source.gltf/obj dest.gltf/obj
                 if ((fileIsGLTF(g_CmdPrams.SourceFile) && fileIsGLTF(g_CmdPrams.DestFile))
 #ifdef _WIN32
-                        || (fileIsOBJ(g_CmdPrams.SourceFile) && fileIsDRC(g_CmdPrams.DestFile)) ||
-                        (fileIsDRC(g_CmdPrams.SourceFile) && fileIsOBJ(g_CmdPrams.DestFile)) || (fileIsOBJ(g_CmdPrams.SourceFile) && fileIsOBJ(g_CmdPrams.DestFile))
+                    || (fileIsOBJ(g_CmdPrams.SourceFile) && fileIsDRC(g_CmdPrams.DestFile)) ||
+                    (fileIsDRC(g_CmdPrams.SourceFile) && fileIsOBJ(g_CmdPrams.DestFile)) || (fileIsOBJ(g_CmdPrams.SourceFile) && fileIsOBJ(g_CmdPrams.DestFile))
 #endif
-                   ) {
-                    if (!(CompressDecompressMesh(g_CmdPrams.SourceFile, g_CmdPrams.DestFile))) {
+                )
+                {
+                    if (!(CompressDecompressMesh(g_CmdPrams.SourceFile, g_CmdPrams.DestFile)))
+                    {
+                        LogErrorToCSVFile(ANALYSIS_MESH_COMPRESSION_FAILED);
                         PrintInfo("Error: Mesh Compression Failed.\n");
                         return -1;
                     }
-                } else {
+                }
+                else
+                {
 #ifdef _WIN32
                     PrintInfo(
                         "Note: Mesh Compression Failed. Only glTF->glTF, obj->drc(compression), drc->obj(decompression), obj->obj(optimize first then "
@@ -2750,6 +3396,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
 #else
                     PrintInfo("Note: Mesh Compression Failed. Only glTF->glTF are supported in mesh compression/decompression.\n");
 #endif
+                    LogErrorToCSVFile(ANALYSIS_MESH_COMPRESSION_FAILED);
                     return -1;
                 }
             }
@@ -2762,14 +3409,10 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
         bool result2 = GetProcessMemoryInfo(GetCurrentProcess(), &memCounter2, sizeof(memCounter2));
 #endif
 
-        // Warning for log on when not compressing files
-        if ((g_CmdPrams.logresults) && (g_CmdPrams.decompress_nIterations > 0)) {
-            PrintInfo("\nWarning: log is only supported for image compression, option is turned off!\n");
-            g_CmdPrams.logresults = false;
-        }
-
-        if (g_CmdPrams.logresults) {
-            if (!g_CmdPrams.silent) {
+        if (g_CmdPrams.logresults)
+        {
+            if (!g_CmdPrams.silent)
+            {
 #ifdef USE_WITH_COMMANDLINE_TOOL
                 PrintInfo("\rlog results                                           ");
 #endif
@@ -2778,7 +3421,8 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
             CMP_ANALYSIS_DATA analysisData = {0};
             analysisData.SSIM              = -1;  // Set data content is invalid and not processed
 
-            if (Plugin_Analysis) {
+            if (Plugin_Analysis)
+            {
                 // Diff File
                 {
                     g_CmdPrams.DiffFile = g_CmdPrams.DestFile;
@@ -2795,7 +3439,8 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
                                                       "",
                                                       &analysisData,
                                                       &g_pluginManager,
-                                                      NULL) != 0) {
+                                                      NULL) != 0)
+                    {
                         analysisData.SSIM = -2;
                     }
                 }  // Analysis report
@@ -2803,7 +3448,8 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
 
             ProcessResults(g_CmdPrams, analysisData);
 
-            if ((analysisData.SSIM != -1) && ((analysisData.SSIM != -2))) {
+            if ((analysisData.SSIM != -1) && ((analysisData.SSIM != -2)))
+            {
                 psnr_sum += analysisData.PSNR;
                 ssim_sum += analysisData.SSIM;
                 process_time_sum += g_CmdPrams.compress_fDuration;
@@ -2816,23 +3462,28 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
         //==============================================================
         // Get a new set of source and destination files for processing.
         //==============================================================
-        if (g_CmdPrams.SourceFileList.size() > 0) {
+        if (g_CmdPrams.SourceFileList.size() > 0)
+        {
             MoreSourceFiles = true;
             // Set the first file in list to SourceFile and delete it from the list
             g_CmdPrams.SourceFile = g_CmdPrams.SourceFileList[0].c_str();
             g_CmdPrams.SourceFileList.erase(g_CmdPrams.SourceFileList.begin());
 
             std::string destFileName;
-            destFileName                   = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.CompressOptions.DestFormat, g_CmdPrams.FileOutExt);
-            std::filesystem::path destFile = std::filesystem::path(g_CmdPrams.DestDir) / destFileName;
-            g_CmdPrams.DestFile            = destFile.string();
-        } else
+            destFileName        = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.CompressOptions.DestFormat, g_CmdPrams.FileOutExt, true);
+            sfs::path destFile  = sfs::path(g_CmdPrams.DestDir) / destFileName;
+            g_CmdPrams.DestFile = destFile.string();
+        }
+        else
             MoreSourceFiles = false;
 
-        if (!g_CmdPrams.silent) {
-            if ((g_CmdPrams.logresults) && (!g_CmdPrams.logresultsToFile)) {
+        if (!g_CmdPrams.silent)
+        {
+            if ((g_CmdPrams.logresults) && (!g_CmdPrams.logresultsToFile))
+            {
                 // check if any data was calculated
-                if (g_CmdPrams.SSIM >= 0) {
+                if (g_CmdPrams.SSIM >= 0)
+                {
                     PrintInfo("MSE %.2f PSRN %.1f SSIM %.4f\n", g_CmdPrams.MSE, g_CmdPrams.PSNR, g_CmdPrams.SSIM);
                 }
             }
@@ -2842,11 +3493,13 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
 
     } while (MoreSourceFiles);
 
-    if (g_CmdPrams.logresults) {
+    if (g_CmdPrams.logresults)
+    {
         if (Plugin_Analysis)
             delete Plugin_Analysis;
 
-        if (total_processed_items > 1) {
+        if (total_processed_items > 1)
+        {
             char buff[128];
             snprintf(buff,
                      sizeof(buff),
@@ -2862,12 +3515,13 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn) {
             LogToResults(g_CmdPrams, "--------------\n");
     }
 
-    //printf("--END--\n");
     return processResult;
 }
 
-void LogToResults(CCmdLineParamaters& prams, char* str) {
-    if (prams.logresultsToFile) {
+void LogToResults(CCmdLineParamaters& prams, char* str)
+{
+    if (prams.logresultsToFile)
+    {
 #ifdef _WIN32
         FILE* fp;
         //errno_t err =
@@ -2875,15 +3529,18 @@ void LogToResults(CCmdLineParamaters& prams, char* str) {
 #else
         FILE* fp = fopen(prams.LogProcessResultsFile.c_str(), "a");
 #endif
-        if (fp) {
+        if (fp)
+        {
             fprintf(fp, "%s", str);
             fclose(fp);
         }
     }
 }
 
-void ProcessResults(CCmdLineParamaters& prams, CMP_ANALYSIS_DATA& analysisData) {
-    if (prams.logresultsToFile) {
+void ProcessResults(CCmdLineParamaters& prams, CMP_ANALYSIS_DATA& analysisData)
+{
+    if (prams.logresultsToFile)
+    {
         bool newfile = false;
         // Check for file existance first!
         if (!CMP_FileExists(prams.LogProcessResultsFile))
@@ -2895,16 +3552,22 @@ void ProcessResults(CCmdLineParamaters& prams, CMP_ANALYSIS_DATA& analysisData) 
 #else
         FILE* fp = fopen(prams.LogProcessResultsFile.c_str(), "a");
 #endif
-        if (fp) {
+        if (fp)
+        {
             // Write Header info
-            if (newfile) {
-                fprintf(fp, "CompressonatorCLI Performance Log v1.1\n\n");
-                fprintf(fp, "Negative values are errors in measurement\n");
-                fprintf(fp, "For images with no errors PSNR=255 MSE=0 and SSIM=1.0\n\n");
-                if (prams.logcsvformat) {
+            if (newfile)
+            {
+                fprintf(fp, "CompressonatorCLI Performance Log v1.2\n\n");
+                fprintf(fp, "Negative values are errors in measurement Sets ErrCode > 0 else 0 for none\n");
+                fprintf(fp, "For images with no errors MSE= 0 PSNR=255 and SSIM= 1.0\n");
+                fprintf(fp, "Transcoded images         MSE= 0 PSNR=255 and SSIM=-2.0\n");
+                fprintf(fp, "No image data generated   MSE=-1 PSNR= -1 and SSIM=-1.0 with ErrCode set\n\n");
+
+                if (prams.logcsvformat)
+                {
                     fprintf(fp,
                             "Source,Height,Width,LinearSize(MB),Destination,ProcessedTo,Iteration,Duration(s),Using,Quality,KPerf(ms),MTx/"
-                            "s,MSE,PSNR,SSIM,TotalTime(s)\n");
+                            "s,MSE,PSNR,SSIM,TotalTime(s),ErrCode\n");
                 }
             }
 
@@ -2938,17 +3601,25 @@ void ProcessResults(CCmdLineParamaters& prams, CMP_ANALYSIS_DATA& analysisData) 
             //====================================
             // EncodeWith option
             //====================================
-            if (prams.CompressOptions.bUseCGCompress) {
-                if (prams.CompressOptions.nEncodeWith != CMP_Compute_type::CMP_CPU) {
-                    if (!prams.CompressOptions.format_support_hostEncoder) {
+            if (prams.CompressOptions.bUseCGCompress)
+            {
+                if (prams.CompressOptions.nEncodeWith != CMP_Compute_type::CMP_CPU)
+                {
+                    if (!prams.CompressOptions.format_support_hostEncoder)
+                    {
                         str_encodewith.append("[CPU] ");
                     }
                     str_encodewith.append(GetEncodeWithDesc(prams.CompressOptions.nEncodeWith));
-                } else
+                }
+                else
                     str_encodewith.append("[CPU]");
-            } else {
-                if (prams.CompressOptions.bUseGPUDecompress) {
-                    switch (prams.CompressOptions.nGPUDecode) {
+            }
+            else
+            {
+                if (prams.CompressOptions.bUseGPUDecompress)
+                {
+                    switch (prams.CompressOptions.nGPUDecode)
+                    {
                     case GPUDecode_DIRECTX:
                         str_encodewith.append("DirectX");
                         break;
@@ -2960,7 +3631,8 @@ void ProcessResults(CCmdLineParamaters& prams, CMP_ANALYSIS_DATA& analysisData) 
                         str_encodewith.append("OpenGL");
                         break;
                     }
-                } else
+                }
+                else
                     str_encodewith.append("CPU");
             }
 
@@ -2999,21 +3671,22 @@ void ProcessResults(CCmdLineParamaters& prams, CMP_ANALYSIS_DATA& analysisData) 
             //======================================
             // Quality Data
             //======================================
-            if (analysisData.PSNR <= 0) {
+            if (analysisData.PSNR <= 0)
+            {
                 analysisData.PSNR = 256;
             }
-            if (analysisData.SSIM != -1) {
-                snprintf(buffer, 1024, "%.2f", analysisData.MSE);
+
+            if (analysisData.SSIM != -1)
+            {
+                snprintf(buffer, 1024, "%.4f", analysisData.MSE);
                 str_mse = buffer;
                 snprintf(buffer, 1024, "%.1f", analysisData.PSNR);
                 str_psnr = buffer;
                 snprintf(buffer, 1024, "%.4f", analysisData.SSIM);
                 str_ssim = buffer;
-            } else if (analysisData.SSIM == -2) { // Failed to process
-                str_mse  = "-2";
-                str_psnr = "-2";
-                str_ssim = "-2";
-            } else {
+            }
+            else
+            {
                 str_mse  = "-1";
                 str_psnr = "-1";
                 str_ssim = "-1";
@@ -3022,9 +3695,10 @@ void ProcessResults(CCmdLineParamaters& prams, CMP_ANALYSIS_DATA& analysisData) 
             snprintf(buffer, 1024, "%.3f", prams.conversion_fDuration);
             str_duration = buffer;
 
-            if (prams.logcsvformat) {
+            if (prams.logcsvformat)
+            {
                 fprintf(fp,
-                        "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
+                        "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%d\n",
                         str_source.c_str(),
                         str_height.c_str(),
                         str_width.c_str(),
@@ -3040,8 +3714,11 @@ void ProcessResults(CCmdLineParamaters& prams, CMP_ANALYSIS_DATA& analysisData) 
                         str_mse.c_str(),
                         str_psnr.c_str(),
                         str_ssim.c_str(),
-                        str_duration.c_str());
-            } else {
+                        str_duration.c_str(),
+                        analysisData.errCode);
+            }
+            else
+            {
                 fprintf(fp,
                         "Source       : %s, Height %s, Width %s, Linear size %s MB\n",
                         str_source.c_str(),
@@ -3065,12 +3742,16 @@ void ProcessResults(CCmdLineParamaters& prams, CMP_ANALYSIS_DATA& analysisData) 
             }
             fclose(fp);
         }
-    } else {
-        if (analysisData.PSNR <= 0) {
+    }
+    else
+    {
+        if (analysisData.PSNR <= 0)
+        {
             analysisData.PSNR = 256;
         }
 
-        if (analysisData.SSIM != -1) {
+        if (analysisData.SSIM != -1)
+        {
             prams.MSE  = analysisData.MSE;
             prams.PSNR = analysisData.PSNR;
             prams.SSIM = analysisData.SSIM;

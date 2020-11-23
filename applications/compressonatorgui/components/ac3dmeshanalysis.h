@@ -2,7 +2,7 @@
 #define AC3DMESHANALYSIS_H
 
 #include <QtWidgets>
-#include <QtWidgets/qdialog>
+#include <QtWidgets/QDialog>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <QPushButton>

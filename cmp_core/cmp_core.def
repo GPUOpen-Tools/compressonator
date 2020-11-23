@@ -43,7 +43,9 @@ CompressBlockBC1
 CompressBlockBC2
 CompressBlockBC3
 CompressBlockBC4
+CompressBlockBC4S
 CompressBlockBC5
+CompressBlockBC5S
 CompressBlockBC6
 CompressBlockBC7
 
@@ -51,6 +53,8 @@ DecompressBlockBC1
 DecompressBlockBC2
 DecompressBlockBC3
 DecompressBlockBC4
+DecompressBlockBC4S
 DecompressBlockBC5
+DecompressBlockBC5S
 DecompressBlockBC6
 DecompressBlockBC7

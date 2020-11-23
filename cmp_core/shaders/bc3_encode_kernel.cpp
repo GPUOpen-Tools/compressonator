@@ -119,8 +119,7 @@ int CMP_CDECL SetChannelWeightsBC3(void *options,
     return CGU_CORE_OK;
 }
 
-int CMP_CDECL SetGammaBC3(void *options,
-                          CGU_BOOL sRGB) {
+int CMP_CDECL SetSrgbBC3(void* options,CGU_BOOL sRGB) {
     if (!options) return CGU_CORE_ERR_INVALIDPTR;
     CMP_BC15Options *BC15optionsDefault = (CMP_BC15Options *)options;
 

@@ -57,13 +57,14 @@ unsigned short shape0_RGBF16[48] = {
     0,15128,0,    0,15128,0,    15128,0,0,    15128,0,0
 };
 
-// Test shapes for BC4 & BC5 Encoding by channels
-unsigned char shape_1[16] = { 18, 21, 21,13,18,10,16,5,5,21,16,21,21,7, 7, 2 };
-unsigned char shape_2[16] = { 12, 126, 45,28,45,61,28,12,28,12,45,28,28,77,61,61 };
+// Test shapes for BC4 & BC5 Encoding by channels, data set so that ramps return 0 errors for ecncoder testing
+unsigned char shape_1[16]  = { 18, 21, 21,13,18,10,16,5,5,21,16,21,21,7, 7, 2 };
+unsigned char shape_2[16]  = { 12, 126, 45,28,45,61,28,12,28,12,45,28,28,77,61,61 };
+char          shape_1s[16] = {-19,-19, 20,-13, 20,  9,-13,  3,  3, 20,-13,-19, 20,  9,  9, -1};
+char          shape_2s[16] = {-120, -18, 14, -120, 14, 14, -120, 14, 14, 14, -18, -18, 115, 14, 14, -120};
 
-
-void ShowResults1(int testcodec, unsigned char src_1[], unsigned char decomp_1[]) {
-    std::printf("\n[BC%d]\n", testcodec);
+ void ShowResults1(char *testcodec, unsigned char src_1[16], unsigned char decomp_1[]) {
+    std::printf("\n[%s]\n", testcodec);
     // show the first row of pixels
     std::printf("original   : (%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d)\n",
                 src_1[0], src_1[1], src_1[2],  src_1[3],
@@ -85,8 +86,31 @@ void ShowResults1(int testcodec, unsigned char src_1[], unsigned char decomp_1[]
     std::printf("Data Diff Sum = %d\n", diffSum);
 }
 
-void ShowResults(int testcodec, unsigned char src_RGBA[], unsigned char decomp_RGBA[]) {
-    std::printf("\n[BC%d]\n", testcodec);
+void ShowResults1s(char *testcodec, char src_1[], char decomp_1[]) {
+    std::printf("\n[%s]\n", testcodec);
+    // show the first row of pixels
+    std::printf("original   : (%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d)\n",
+                src_1[0], src_1[1], src_1[2],  src_1[3],
+                src_1[4], src_1[5], src_1[6],  src_1[7],
+                src_1[8], src_1[9], src_1[10], src_1[11],
+                src_1[12], src_1[13], src_1[14], src_1[15]);
+
+    std::printf("decompress : (%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d,%3d)\n",
+                decomp_1[0],  decomp_1[1],  decomp_1[2],  decomp_1[3],
+                decomp_1[4],  decomp_1[5],  decomp_1[6],  decomp_1[7],
+                decomp_1[8],  decomp_1[9],  decomp_1[10], decomp_1[11],
+                decomp_1[12], decomp_1[13], decomp_1[14], decomp_1[15]);
+
+    // Calculate a sum of image diffs:to see how well the codec compressed
+    int diffSum = 0;
+    for (int i = 0; i < 16; i++) {
+        diffSum += abs(src_1[i] - decomp_1[i]);
+    }
+    std::printf("Data Diff Sum = %d\n", diffSum);
+}
+
+void ShowResults(char *testcodec, unsigned char src_RGBA[], unsigned char decomp_RGBA[]) {
+    std::printf("\n[%s]\n", testcodec);
     // show the first row of pixels
     std::printf("original   : (%3d,%3d,%3d,%3d) (%3d,%3d,%3d,%3d) (%3d,%3d,%3d,%3d) (%3d,%3d,%3d,%3d)\n",
                 src_RGBA[0], src_RGBA[1], src_RGBA[2], src_RGBA[3],
@@ -108,8 +132,9 @@ void ShowResults(int testcodec, unsigned char src_RGBA[], unsigned char decomp_R
     std::printf("Image Diff Sum = %d\n", diffSum);
 }
 
-void ShowResultsBC6(unsigned short src_RGBA[], unsigned short decomp_RGBA[]) {
-    std::printf("\n[BC6]\n");
+void ShowResultsBC6(char* testcodec, unsigned short src_RGBA[], unsigned short decomp_RGBA[])
+{
+    std::printf("\n[%s]\n", testcodec);
     // show the first row of pixels
     std::printf(
         "original   : (%5d,%5d,%5d), (%5d,%5d,%5d) (%5d,%5d,%5d) (%5d,%5d,%5d)\n",
@@ -139,8 +164,12 @@ int main(int argc, char* argv[]) {
     unsigned short imgBufferF16[48]  = {0};  // Results buffer for decompressed  shape0_RGBAF16
     unsigned char  imgBuffer1[16]    = {0};  // Results buffer for decompressed  single channel 1
     unsigned char  imgBuffer2[16]    = {0};  // Results buffer for decompressed  single channel 2
+    char           imgBuffer1s[16]   = {0};  // Results buffer for decompressed  single signed channel
+    char           imgBuffer2s[16]   = {0};  // Results buffer for decompressed  single signed channel
+
     unsigned char  cmpBuffer8[8]     = {0};  // Compression buffer for BC1 and BC4 Codecs
-    unsigned char  cmpBuffer16[16]   = {0};  // Compression buffer for BC2,BC3,BC5,BC6 and BC7
+    unsigned char  cmpBuffer16[16]   = {0};  // Compression buffer for BC5,BC6 and BC7
+             char  cmpBuffer8s[8]    = {0};  // Compression buffer for BC4s Codecs
 
     //===================================================================
     // Example #1 of how to set compress and decompress for BCn codecs
@@ -163,51 +192,65 @@ int main(int argc, char* argv[]) {
     CompressBlockBC1(shape0_RGBA,16,cmpBuffer8,NULL);
     DecompressBC1(cmpBuffer8, imgBuffer,NULL);
 #endif
-    ShowResults(1,shape0_RGBA, imgBuffer);
+    ShowResults("BC1",shape0_RGBA, imgBuffer);
 
     //============
     // BC2 Example
     //=============
     CompressBlockBC2(shape0_RGBA,16,cmpBuffer16, NULL);
     DecompressBlockBC2(cmpBuffer16, imgBuffer, NULL);
-    ShowResults(2,shape0_RGBA, imgBuffer);
+    ShowResults("BC2",shape0_RGBA, imgBuffer);
 
     //=============
     // BC3 Example
     //=============
     CompressBlockBC3(shape0_RGBA,16,cmpBuffer16, NULL);
     DecompressBlockBC3(cmpBuffer16, imgBuffer, NULL);
-    ShowResults(3,shape0_RGBA, imgBuffer);
+    ShowResults("BC3",shape0_RGBA, imgBuffer);
 
     //==============
     // BC4 Example
     //==============
-    CompressBlockBC4(shape_1,4, cmpBuffer16, NULL);
-    DecompressBlockBC4(cmpBuffer16, imgBuffer, NULL);
-    ShowResults1(4, shape_1, imgBuffer);
+    CompressBlockBC4(shape_1,4, cmpBuffer8, NULL);
+    DecompressBlockBC4(cmpBuffer8, imgBuffer, NULL);
+    ShowResults1("BC4", shape_1, imgBuffer);
+
+    //==============================
+    // BC4 Signed Channel Example
+    //==============================
+    CompressBlockBC4S((const char*)shape_1s, 4, cmpBuffer8, NULL);
+    DecompressBlockBC4S(cmpBuffer8, imgBuffer1s, NULL);
+    ShowResults1s("BC4_S", shape_1s, imgBuffer1s);
 
     //==============
     // BC5 Example
     //==============
     CompressBlockBC5(shape_1,4, shape_2,4, cmpBuffer16, NULL);
     DecompressBlockBC5(cmpBuffer16, imgBuffer1, imgBuffer2, NULL);
-    ShowResults1(5, shape_1, imgBuffer1);
-    ShowResults1(5, shape_2, imgBuffer2);
+    ShowResults1("BC5 R", shape_1, imgBuffer1);
+    ShowResults1("BC5 G", shape_2, imgBuffer2);
 
+    //============================
+    // BC5 Signed Channel Example
+    //============================
+    CompressBlockBC5S(shape_1s, 4, shape_2s, 4, cmpBuffer16, NULL);
+    DecompressBlockBC5S(cmpBuffer16, imgBuffer1s, imgBuffer2s, NULL);
+    ShowResults1s("BC5_S R", shape_1s, imgBuffer1s);
+    ShowResults1s("BC5_S G", shape_2s, imgBuffer2s);
 
     //=============
     // BC6 Example
     //=============
     CompressBlockBC6(shape0_RGBF16, 12, cmpBuffer16, NULL);
     DecompressBlockBC6(cmpBuffer16,imgBufferF16, NULL);
-    ShowResultsBC6(shape0_RGBF16, imgBufferF16);
+    ShowResultsBC6("BC6",shape0_RGBF16, imgBufferF16);
 
     //=============
     // BC7 Example
     //=============
     CompressBlockBC7(shape0_RGBA, 16, cmpBuffer16, NULL);
     DecompressBlockBC7(cmpBuffer16,imgBuffer, NULL);
-    ShowResults(7,shape0_RGBA, imgBuffer);
+    ShowResults("BC7",shape0_RGBA, imgBuffer);
 
     //============================================
     // Example #2 of how to set options for BC1
@@ -231,7 +274,7 @@ int main(int argc, char* argv[]) {
 
         CompressBlockBC1(shape0_RGBA, 16, cmpBuffer8, BC15Options);
         DecompressBlockBC1(cmpBuffer8,imgBuffer,BC15Options);
-        ShowResults(1, shape0_RGBA, imgBuffer);
+        ShowResults("BC1 options", shape0_RGBA, imgBuffer);
 
         DestroyOptionsBC1(BC15Options);
     }
@@ -266,7 +309,6 @@ int main(int argc, char* argv[]) {
 
         // Example use only modes 1 & 6
         SetMaskBC7(BC7Options,0b01000010);
-        std::printf("\nBC7 mode 1&6 only. Loss in quality expected.");
 
         // Now compress the block
         CompressBlockBC7(shape0_RGBA,16, cmpBuffer16, BC7Options);
@@ -275,7 +317,7 @@ int main(int argc, char* argv[]) {
         DecompressBlockBC7(cmpBuffer16, imgBuffer);
 
         // Show results of low quality encoding and reduced modes, expect small errors
-        ShowResults(7, shape0_RGBA, imgBuffer);
+        ShowResults("BC7 mode 1&6 only. Loss in quality expected", shape0_RGBA, imgBuffer);
 
         // cleanup the options context
         DestroyOptionsBC7(BC7Options);

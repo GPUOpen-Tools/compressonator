@@ -1,0 +1,52 @@
+Checks: bugprone-*,clang-analyzer-*,clang-diagnostic-*,google-*,misc-*,modernize-*,-modernize-use-trailing-return-type,-modernize-concat-nested-namespaces,performance-*,readability-*,-modernize-use-auto
+WarningsAsErrors: bugprone-*,clang-analyzer-*,clang-diagnostic-*,google-*,misc-*,modernize-*,performance-*,readability-*
+FormatStyle: file
+CheckOptions:
+    - key: readability-identifier-naming.ClassCase
+      value: CamelCase
+    - key: readability-identifier-naming.ClassConstantCase
+      value: CamelCase
+    - key: readability-identifier-naming.ClassConstantPrefix
+      value: k
+    - key: readability-identifier-naming.EnumCase
+      value: CamelCase
+    - key: readability-identifier-naming.EnumConstantCase
+      value: CamelCase
+    - key: readability-identifier-naming.EnumConstantPrefix
+      value: k
+    - key: readability-identifier-naming.FunctionCase
+      value: CamelCase
+    - key: readability-identifier-naming.GlobalConstantCase
+      value: CamelCase
+    - key: readability-identifier-naming.GlobalConstantPrefix
+      value: k
+    - key: readability-identifier-naming.GlobalConstantPointerCase
+      value: CamelCase
+    - key: readability-identifier-naming.GlobalConstantPointerPrefix
+      value: k
+    - key: readability-identifier-naming.MethodCase
+      value: CamelCase
+    - key: readability-identifier-naming.NamespaceCase
+      value: lower_case
+    - key: readability-identifier-naming.ParameterCase
+      value: lower_case
+    - key: readability-identifier-naming.PrivateMemberCase
+      value: lower_case
+    - key: readability-identifier-naming.PrivateMemberSuffix
+      value: _
+    - key: readability-identifier-naming.PublicMemberCase
+      value: lower_case
+    - key: readability-identifier-naming.StaticConstantCase
+      value: CamelCase
+    - key: readability-identifier-naming.StaticConstantPrefix
+      value: k
+    - key: readability-identifier-naming.TemplateParameterCase
+      value: CamelCase
+    - key: readability-identifier-naming.TypeAliasCase
+      value: CamelCase
+    - key: readability-identifier-naming.TypedefCase
+      value: CamelCase
+    - key: readability-identifier-naming.UnionCase
+      value: CamelCase
+    - key: readability-identifier-naming.VariableCase
+      value: lower_case

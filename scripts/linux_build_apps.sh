@@ -1,6 +1,12 @@
-cd ..
-export VULKAN_SDK=~/vulkan/1.2.141.2
-QT_ROOT=~/Qt5.12.6/5.12.6/gcc_64
+# Build documentation
+set -x
+cd $WORKSPACE/compressonator/scripts
+python3 fetch_dependencies.py --no-hooks
+
+cd $WORKSPACE/compressonator
+export VULKAN_SDK_VER=1.2.141.2
+export VULKAN_SDK=/opt/VulkanSDK/$VULKAN_SDK_VER/
+QT_ROOT=/opt/Qt/Qt5.9.2/5.9.2/gcc_64
 cmake -DQT_PACKAGE_ROOT=$QT_ROOT .
 make
 

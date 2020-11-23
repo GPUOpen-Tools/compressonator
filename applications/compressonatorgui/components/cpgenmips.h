@@ -27,6 +27,7 @@
 #define _GENMIPS_H
 
 #include "compressonator.h"
+#include "common.h"
 
 #include <QtWidgets>
 #include <QScrollArea>
@@ -51,10 +52,11 @@
 #define CMP_D3DX_FILTER_DITHER (1 << 19)
 #define CMP_D3DX_FILTER_SRGB (3 << 21)
 
-class CGenMips : public QWidget {
+class CGenMips : public QWidget
+{
     Q_OBJECT
 
-  public:
+public:
     CGenMips(const QString title, QWidget* parent);
     ~CGenMips();
 
@@ -62,12 +64,13 @@ class CGenMips : public QWidget {
 
     void SetGUIItems();
 
-  private:
+private:
     CMP_CFilterParams m_CFilterParams;
 
     int m_ImageSize_W;
     int m_ImageSize_H;
     int m_MipLevels;
+    int m_minsize[MAX_MIPLEVEL_SUPPORTED];
 
     QtVariantProperty* m_propertyMipLevels;
     QtVariantProperty* m_propertyGamma;
@@ -77,7 +80,7 @@ class CGenMips : public QWidget {
     QtVariantProperty* m_propertyMirrorPixels;
     //QtVariantProperty* m_propertyPerformFiltering;
 
-    QStringList        m_MipLevelSizes;
+    QStringList m_MipLevelSizes;
 
     void addProperty(QtVariantProperty* property, const QString& id);
     void addD3DXProperty(QtVariantProperty* property, const QString& id);
@@ -98,16 +101,16 @@ class CGenMips : public QWidget {
     const QString m_title;
     QWidget*      m_parent;
 
-  Q_SIGNALS:
+Q_SIGNALS:
 
     void generateMIPMap(CMP_CFilterParams m_CFilterParams, QTreeWidgetItem* item);
 
-  public Q_SLOTS:
+public Q_SLOTS:
     void valueChanged(QtProperty* property, const QVariant& value);
     void onCancel();
     void onGenerate();
 
-  public:
+public:
     QTreeWidgetItem* m_mipsitem;
 };
 #endif

@@ -300,7 +300,7 @@ void COpenCL::Init() {
     m_compile_options[0] = 0;
 
     // Make all warnings into errors, use -w to Inhitit all warning messages
-    strncat_s(m_compile_options, cmp_opt_size, "-Werror ", _TRUNCATE);
+    // strncat_s(m_compile_options, cmp_opt_size, "-Werror ", _TRUNCATE);
 
     // single and double precision denormalized numbers may be flushed to zero
     strncat_s(m_compile_options, cmp_opt_size, "-cl-denorms-are-zero ", _TRUNCATE);

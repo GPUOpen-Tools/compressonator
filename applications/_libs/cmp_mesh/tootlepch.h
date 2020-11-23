@@ -13,10 +13,12 @@
 #endif
 #endif
 
-#ifdef _LINUX
+#ifdef __linux__
 #define __cdecl
 #define _isnan(x) isnan(x)
 #define _finite(x) finite(x)
+#else
+#define cmp_isnan(x) std::isnan(x)
 #endif
 
 #ifdef __cplusplus

@@ -88,12 +88,17 @@ extern "C" {
 #define CMP_FOURCC_DXT5_BRGX               CMP_MAKEFOURCC('B', 'R', 'G', 'X')
 
 #define CMP_FOURCC_BC1                     CMP_MAKEFOURCC('B', 'C', '1', ' ')
+#define CMP_FOURCC_BC1U                    CMP_MAKEFOURCC('B', 'C', '1', 'U')
 #define CMP_FOURCC_BC2                     CMP_MAKEFOURCC('B', 'C', '2', ' ')
+#define CMP_FOURCC_BC2U                    CMP_MAKEFOURCC('B', 'C', '2', 'U')
 #define CMP_FOURCC_BC3                     CMP_MAKEFOURCC('B', 'C', '3', ' ')
+#define CMP_FOURCC_BC3U                    CMP_MAKEFOURCC('B', 'C', '3', 'U')
 #define CMP_FOURCC_BC4                     CMP_MAKEFOURCC('B', 'C', '4', ' ')
+#define CMP_FOURCC_BC4U                    CMP_MAKEFOURCC('B', 'C', '4', 'U')
 #define CMP_FOURCC_BC4S                    CMP_MAKEFOURCC('B', 'C', '4', 'S')
 #define CMP_FOURCC_BC4U                    CMP_MAKEFOURCC('B', 'C', '4', 'U')
 #define CMP_FOURCC_BC5                     CMP_MAKEFOURCC('B', 'C', '5', ' ')
+#define CMP_FOURCC_BC5U                    CMP_MAKEFOURCC('B', 'C', '5', 'U')
 #define CMP_FOURCC_BC5S                    CMP_MAKEFOURCC('B', 'C', '5', 'S')
 
 #define CMP_FOURCC_DX10                    CMP_MAKEFOURCC('D', 'X', '1', '0')

@@ -24,7 +24,7 @@
 #ifndef _JML_H_
 #define _JML_H_
 
-#ifdef _LINUX
+#ifdef __linux__
 #define ALIGN16
 #else
 // helpful alias for 16-byte alignment

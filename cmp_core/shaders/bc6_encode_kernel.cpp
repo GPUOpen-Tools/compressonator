@@ -358,7 +358,7 @@ void eigenVector_d(CGU_FLOAT cov[MAX_DIMENSION_BIG][MAX_DIMENSION_BIG], CGU_FLOA
         for (j = 0; j < dimension; j++)
             c[0][i][j] = cov[i][j];
 
-    p = (int)floorf(log((FLT_MAX_EXP - EV_SLACK) / ceilf(logf((CGU_FLOAT)dimension) / logf(2.0f))) / logf(2.0f));
+    p = (int)floorf(log((BC6_FLT_MAX_EXP - EV_SLACK) / ceilf(logf((CGU_FLOAT)dimension) / logf(2.0f))) / logf(2.0f));
 
     //assert(p>0);
 
@@ -2176,10 +2176,18 @@ void SwapIndices(CGU_INT32 iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION
         size_t i = subset ? g_Region2FixUp[shape_pattern] : 0;
 
         if (iIndices[subset][i] & uHighIndexBit) {
+
+#ifdef ASPM_GPU
+            // high bit is set, swap the aEndPts and indices for this region
+            swap(iEndPoints[subset][0][0], iEndPoints[subset][1][0]);
+            swap(iEndPoints[subset][0][1], iEndPoints[subset][1][1]);
+            swap(iEndPoints[subset][0][2], iEndPoints[subset][1][2]);
+#else
             // high bit is set, swap the aEndPts and indices for this region
             std::swap(iEndPoints[subset][0][0], iEndPoints[subset][1][0]);
             std::swap(iEndPoints[subset][0][1], iEndPoints[subset][1][1]);
             std::swap(iEndPoints[subset][0][2], iEndPoints[subset][1][2]);
+#endif
 
             for (size_t j = 0; j < (size_t)entryCount[subset]; ++j) {
                 iIndices[subset][j] = uNumIndices - 1 - iIndices[subset][j];
@@ -3688,9 +3696,9 @@ CMP_STATIC CMP_KERNEL void CMP_GPUEncoder(
         srcidx = i * stride;
         for (CGU_INT j = 0; j < BlockY; j++) {
             BC6HEncode_local.din[i*BlockX + j][0] = (CGU_UINT16)(p_source_pixels[srcOffset + srcidx++]);
-            if (BC6HEncode_local.din[i*BlockX + j][0] < 0.00001 || isnan(BC6HEncode_local.din[i*BlockX + j][0])) {
+            if (BC6HEncode_local.din[i*BlockX + j][0] < 0.00001 || cmp_isnan(BC6HEncode_local.din[i*BlockX + j][0])) {
                 if (BC6HEncode->m_isSigned) {
-                    BC6HEncode_local.din[i*BlockX + j][0] = (isnan(BC6HEncode_local.din[i*BlockX + j][0])) ? F16NEGPREC_LIMIT_VAL : -BC6HEncode_local.din[i*BlockX + j][0];
+                    BC6HEncode_local.din[i*BlockX + j][0] = (cmp_isnan(BC6HEncode_local.din[i*BlockX + j][0])) ? F16NEGPREC_LIMIT_VAL : -BC6HEncode_local.din[i*BlockX + j][0];
                     if (BC6HEncode_local.din[i*BlockX + j][0] < F16NEGPREC_LIMIT_VAL) {
                         BC6HEncode_local.din[i*BlockX + j][0] = F16NEGPREC_LIMIT_VAL;
                     }
@@ -3700,9 +3708,12 @@ CMP_STATIC CMP_KERNEL void CMP_GPUEncoder(
 
             BC6HEncode_local.din[i*BlockX + j][1] = (CGU_UINT16)(p_source_pixels[srcOffset + srcidx++]);
 
-            if (BC6HEncode_local.din[i*BlockX + j][1] < 0.00001 || isnan(BC6HEncode_local.din[i*BlockX + j][1])) {
+            if (BC6HEncode_local.din[i * BlockX + j][1] < 0.00001 || cmp_isnan(BC6HEncode_local.din[i * BlockX + j][1]))
+            {
                 if (BC6HEncode->m_isSigned) {
-                    BC6HEncode_local.din[i*BlockX + j][1] = (isnan(BC6HEncode_local.din[i*BlockX + j][1])) ? F16NEGPREC_LIMIT_VAL : -BC6HEncode_local.din[i*BlockX + j][1];
+            if (BC6HEncode_local.din[i * BlockX + j][1] < 0.00001 || cmp_isnan(BC6HEncode_local.din[i * BlockX + j][1]))
+                            (isnan(BC6HEncode_local.din[i * BlockX + j][1])) ? F16NEGPREC_LIMIT_VAL : -BC6HEncode_local.din[i * BlockX + j][1];
+                    BC6HEncode_local.din[i*BlockX + j][1] = (cmp_isnan(BC6HEncode_local.din[i*BlockX + j][1])) ? F16NEGPREC_LIMIT_VAL : -BC6HEncode_local.din[i*BlockX + j][1];
                     if (BC6HEncode_local.din[i*BlockX + j][1] < F16NEGPREC_LIMIT_VAL) {
                         BC6HEncode_local.din[i*BlockX + j][1] = F16NEGPREC_LIMIT_VAL;
                     }

@@ -24,6 +24,7 @@ set_target_properties(framework_example4
     )
 
 
-# WIP to add pipeline dlls in proper folders
-# include(CopyFiles.cmake)
-
+# ToDo WIP to add pipeline dlls in proper folders, users will have to add manually as instructed in documentation
+if (EXISTS "./plugins")
+    include(CopyFiles.cmake)
+endif()

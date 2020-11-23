@@ -58,6 +58,7 @@ CGenMips::CGenMips(const QString title, QWidget* parent)
     m_ImageSize_W = 0;
     m_ImageSize_H = 0;
     m_MipLevels   = 0;
+    m_minsize[0]  = 0;
 
     // evalProperties(); use this to debug set properties of a class definition , in this case its CData
 }
@@ -67,8 +68,6 @@ void CGenMips::setMipLevelDisplay(int Width, int Height, bool UsingGPU = false) 
     m_ImageSize_H = Height;
     m_MipLevelSizes.clear();
 
-    m_MipLevels = 0;
-
     QString level;
     level.append(QString::number(Width));
     level.append("x");
@@ -76,15 +75,24 @@ void CGenMips::setMipLevelDisplay(int Width, int Height, bool UsingGPU = false) 
 
     m_MipLevelSizes << level;
 
-    m_MipLevels++;
+    m_minsize[0] = Width;
+    m_MipLevels  = 1;
+
     do {
         Width  = (Width > 1) ? (Width >> 1) : 1;
         Height = (Height > 1) ? (Height >> 1) : 1;
 
         if (UsingGPU) {
-            if ((Width % 4) || (Height % 4))
+            int non4DivW = (Width  % 4); 
+            int non4DivH = (Height % 4);
+            if (non4DivW || non4DivH)
                 break;
         }
+
+        if (m_MipLevels > MAX_MIPLEVEL_SUPPORTED)
+            break;
+
+        m_minsize[m_MipLevels] = Width;
 
         QString level;
         level.append(QString::number(Width));
@@ -106,16 +114,14 @@ void CGenMips::setMipLevelDisplay(int Width, int Height, bool UsingGPU = false) 
 
     m_propertyMipLevels->setAttribute("enumNames", m_MipLevelSizes);
     m_propertyMipLevels->setValue(0);
+    m_MipLevels = 0;
 }
 
 void CGenMips::onGenerate() {
-    int minsize = m_ImageSize_H;
-    if (m_ImageSize_W > m_ImageSize_H)
-        minsize = m_ImageSize_W;
-    int temp    = m_MipLevelSizes.count() - m_MipLevels;
-    m_MipLevels = temp - 1;
-    minsize     = minsize >> m_MipLevels;
-    m_CFilterParams.nMinSize = minsize;
+    int levelSize   = (m_MipLevelSizes.size() - 1) - m_MipLevels;
+    if ((levelSize < 0) || (levelSize >= MAX_MIPLEVEL_SUPPORTED))
+        levelSize = 0;
+    m_CFilterParams.nMinSize = m_minsize[levelSize];
     emit generateMIPMap(m_CFilterParams, this->m_mipsitem);
     hide();
 }
@@ -185,10 +191,28 @@ void CGenMips::valueChanged(QtProperty* property, const QVariant& value) {
         default:
             m_GroupProperty->setEnabled(true);
             m_propertyGamma->setEnabled(false); // Not implemented in D3DX options
-            m_CFilterParams.nFilterType = 1;    // Using D3DX options
+            m_CFilterParams.nFilterType = 1;    // Using D3DX options 
+            int dxFilter                = CMP_D3DX_FILTER_POINT;  // Default
+
+            // CMP_D3DX_FILTER_NONE is skipped as it cause the mip map image to be enlarged and offset!
+
+            switch (filtertype) {
+                case 1:
+                    dxFilter = CMP_D3DX_FILTER_POINT;
+                    break;
+                case 2:
+                    dxFilter = CMP_D3DX_FILTER_LINEAR;
+                    break;
+                case 3:
+                    dxFilter = CMP_D3DX_FILTER_TRIANGLE;
+                    break;
+                case 4:
+                    dxFilter = CMP_D3DX_FILTER_BOX;
+                    break;
+            }
+
             m_CFilterParams.dwMipFilterOptions =
-                m_CFilterParams.dwMipFilterOptions &
-                0xFFFFFFE0 | filtertype;  // mapping is 1: CMP_D3DX_FILTER_NONE to 5:CMP_D3DX_FILTER_BOX
+                m_CFilterParams.dwMipFilterOptions & 0xFFFFFFE0 | dxFilter;
             break;
         }
     } else if (id == QLatin1String("Gamma")) {
@@ -233,9 +257,10 @@ void CGenMips::SetGUIItems() {
 
 
     m_propertyFilterType = m_variantPropertyManager->addProperty(QtVariantPropertyManager::enumTypeId(), "Filter Type");
+
+    // Note: The enum for this should bt a struct type with proper settings to attribtre for D3DX and other options
     QStringList types;
     types << "CMP  Box"
-          << "D3DX None"
           << "D3DX Point"
           << "D3DX Linear"
           << "D3DX Triangle"

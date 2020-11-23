@@ -53,7 +53,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C5C9003E-9986-431F-B8A0-15BB232ED650}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <ProjectName>CMP_GPU_OCL</ProjectName>
+    <ProjectName>EncodeWith_OCL</ProjectName>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

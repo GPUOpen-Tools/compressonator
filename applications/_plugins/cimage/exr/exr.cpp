@@ -59,7 +59,7 @@ IMath.lib;Half.lib;IlmImf.lib;IlmThread.lib;Iex.lib;zlibstatic_d.lib;
 #endif
 
 #include <stdio.h>
-#include "EXR.h"
+#include "exr.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "tc_pluginapi.h"

@@ -224,7 +224,7 @@ void acCustomGraphicsScene::drawBackground(QPainter* painter, const QRectF& rect
 
         switch (m_gridenabled) {
         case eCustomGraphicsScene_Grids::Block: {
-            QImage image(":/CompressonatorGUI/Images/GridSolid.png");
+            QImage image(":/compressonatorgui/images/gridsolid.png");
             QBrush brush(image);
             painter->fillRect(rect, brush);
             break;

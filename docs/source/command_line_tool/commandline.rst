@@ -5,21 +5,26 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 +------------------------+----------------------------------------------+
 |Mip Map Options:        |                                              |
 +========================+==============================================+
-|-nomipmap               | Turns off Mipmap generation                  |
+| -nomipmap              | Turns off Mipmap generation                  |
 +------------------------+----------------------------------------------+
-|-\mipsize    <size>     | The size in pixels used to determine         |
+| -\mipsize    <size>    | The size in pixels used to determine         |
 |                        | how many mip levels to generate              |
 +------------------------+----------------------------------------------+
-|-\miplevels  <Level>    | Sets Mips Level for output,                  |
+| -\miplevels  <Level>   | Sets Mips Level for output,                  |
 |                        | (mipSize overides this option): default is 1 |
 +------------------------+----------------------------------------------+
+| -GenGPUMipMap          | When encoding with GPU this flag will enable |
+|                        | mip map level generation using GPU HW        |
++------------------------+----------------------------------------------+
+| -UseSRGBFrames         | When encoding with GPU,  GL_FRAMEBUFFER_SRGB |
+|                        | will be enabled else use GL_FRAMEBUFFER      |
++------------------------+----------------------------------------------+
+
 
 
 +---------------------+------------------------------------------------------------+
 |Compression Options  |                                                            |
 +=====================+============================================================+
-| -fs <format>        | Optionally specifies the source texture format to use      |
-+---------------------+------------------------------------------------------------+
 | -fd <format>        | Specifies the destination texture format to use            |
 +---------------------+------------------------------------------------------------+
 | -decomp <filename>  | If the destination  file is compressed optionally          |
@@ -29,17 +34,20 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 |                     | with the sources format,decompress formats are typically   |
 |                     | set to ARGB_8888 or ARGB_32F                               |
 +---------------------+------------------------------------------------------------+
-| -UseGPUDecompress   | By default decompression is done using CPU                 |
+| -UseGPUDecompress   | By default decompression is done using CPU,                |
 |                     | when set OpenGL will be used by default, this can be       |
 |                     | changed to DirectX or Vulkan using DecodeWith setting      |
 +---------------------+------------------------------------------------------------+
-| -EncodeWith         | Compression with CPU, HPC, OCL or DXC                      |
+| -EncodeWith         | Compression with CPU, HPC, OCL, DXC, GPU.                  |
 |                     | Default is CPU.                                            |
+|                     | GPU will use GL Compress Extensions                        |
 |                     | OCL & DXC is only available on Windows Version             |
 +---------------------+------------------------------------------------------------+
-| -DecodeWith         | Sets OpenGL, DirectX or Vulkan for GPU decompress          |
+| -DecodeWith         | GPU based decompression using OpenGL,DirectX or Vulkan     |
 |                     | Default is OpenGL, UseGPUDecompress is implied when        |
 |                     | this option is set                                         |
++---------------------+------------------------------------------------------------+
+| -draco              | Enable draco compression. (only support glTF files)        |
 +---------------------+------------------------------------------------------------+
 | -doswizzle          | Swizzle the source images Red and Blue channels            |
 +---------------------+------------------------------------------------------------+
@@ -47,34 +55,11 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 +-----------------------+----------------------------------------------------------+
 |Channel Formats        |                                                          |
 +=======================+==========================================================+
-|ARGB_16                |ARGB format with 16-bit fixed channels                    |
+|ARGB_8888              |ARGB format with 8-bit fixed channels                     |
 +-----------------------+----------------------------------------------------------+
 |ARGB_16F               |ARGB format with 16-bit floating-point channels           |
 +-----------------------+----------------------------------------------------------+
 |ARGB_32F               |ARGB format with 32-bit floating-point channels           |
-+-----------------------+----------------------------------------------------------+
-|ARGB_2101010           |ARGB format with 10-bit fixed channels for color          |
-|                       |and a 2-bit fixed channel for alpha                       |
-+-----------------------+----------------------------------------------------------+
-|ARGB_8888              |ARGB format with 8-bit fixed channels                     |
-+-----------------------+----------------------------------------------------------+
-|R_8                    |Single component format with 8-bit fixed channels         |
-+-----------------------+----------------------------------------------------------+
-|R_16                   |Single component format with 16-bit fixed channels        |
-+-----------------------+----------------------------------------------------------+
-|R_16F                  |Two component format with 32-bit floating-point channels  |
-+-----------------------+----------------------------------------------------------+
-|R_32F                  |Single component with 32-bit floating-point channels      |
-+-----------------------+----------------------------------------------------------+
-|RG_8                   |Two component format with 8-bit fixed channels            |
-+-----------------------+----------------------------------------------------------+
-|RG_16                  |Two component format with 16-bit fixed channels           |
-+-----------------------+----------------------------------------------------------+
-|RG_16F                 |Two component format with 16-bit floating-point channels  |
-+-----------------------+----------------------------------------------------------+
-|RG_32F                 |Two component format with 32-bit floating-point channels  |
-+-----------------------+----------------------------------------------------------+
-|RGB_888                |RGB format with 8-bit fixed channels                      |
 +-----------------------+----------------------------------------------------------+
 
 +-----------------------+-----------------------------------------------------------+
@@ -111,9 +96,13 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 |BC3                    |Four component compressed texture format with interpolated |
 |                       |alpha.  Eight bits per pixel                               |
 +-----------------------+-----------------------------------------------------------+
-|BC4                    |Single component compressed texture format for Microsoft   |
+|BC4                    |Single component (red channel)compressed texture format    |
 +-----------------------+-----------------------------------------------------------+
-|BC5                    |Two component compressed texture format for Microsoft      |
+|BC4_S                  |Signed Channel compression using BC4 format                |
++-----------------------+-----------------------------------------------------------+
+|BC5                    |Two component (reg and green channels) compressed format   |
++-----------------------+-----------------------------------------------------------+
+|BC5_S                  |Signed Channel compression using BC5 format                |
 +-----------------------+-----------------------------------------------------------+
 |BC6H                   |High-Dynamic Range  compression format                     |
 +-----------------------+-----------------------------------------------------------+
@@ -229,7 +218,7 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 +-----------------------------+----------------------------------------------------------+
 |-logcsv <filename>           |Logs process information to a user defined csv file       |
 +-----------------------------+----------------------------------------------------------+
-|-\f\f  <ext><ext>,...,<ext>  |File filters used for processing a list of image files    |
+|-\f\f  <ext>,<ext>,...,<ext> |File filters used for processing a list of image files    |
 |                             |with specified extensions in a given directory folder     |
 |                             |supported <ext> are any of the following combinations:    |
 |                             |DDS,KTX,TGA,EXR,PNG,BMP,HDR,JPG,TIFF,PPM                  |
@@ -260,6 +249,7 @@ Example Compression
 Example Compression using GPU
 -----------------------------
 
+`CompressonatorCLI.exe  -fd BC1 -EncodeWith GPU image.bmp result.dds` |br|
 `CompressonatorCLI.exe  -fd BC1 -EncodeWith OCL image.bmp result.dds` |br|
 `CompressonatorCLI.exe  -fd BC1 -EncodeWith DXC image.bmp result.dds` |br|
 
@@ -277,7 +267,7 @@ Compression Followed by Decompression
 
 GPU Based Decompression 
 ------------------------
-`CompressonatorCLI.exe  -DecodeWith OpenGL result.dds image.bmp`
+`compressonatorCLI.exe  -DecodeWith OpenGL result.dds image.bmp`
 
 
 Mesh Compression
@@ -296,14 +286,18 @@ The following mesh compression uses default quantization bits with Google Draco 
 - quantization bits value for normal = 10.
 
 
-`CompressonatorCLI.exe -draco source.gltf dest.gltf`
+`compressonatorcli.exe -draco source.gltf dest.gltf`
+
+`compressonatorcli.exe -draco source.obj  dest.drc`
 
 
 Mesh Decompression
 ------------------
 (support glTF and obj file only)
 
-`CompressonatorCLI.exe source.gltf dest.gltf`
+`compressonatorcli.exe source.gltf dest.gltf`
+
+`compressonatorcli.exe source.drc  dest.obj`
 
 
 Mesh Optimization
@@ -312,13 +306,13 @@ Mesh Optimization
 
 The following uses default settings that optimizes vertices with cache size = 16, overdraw with ACMR Threshold = 1.05 and vertices fetch. |br|
 
-`CompressonatorCLI.exe -meshopt source.gltf dest.gltf`
+`compressonatorcli.exe -meshopt source.gltf dest.gltf`
 
-`CompressonatorCLI.exe -meshopt source.obj dest.obj`
+`compressonatorcli.exe -meshopt source.obj dest.obj`
 
 Specifies settings:
 
-`CompressonatorCLI.exe -meshopt -optVCacheSize  32 -optOverdrawACMRThres  1.03 -optVFetch 0 source.gltf dest.gltf`
+`compressonatorcli.exe -meshopt -optVCacheSize  32 -optOverdrawACMRThres  1.03 -optVFetch 0 source.gltf dest.gltf`
 
 CLI mesh optimization include settings:
 
@@ -360,7 +354,7 @@ Multiple processes will append results to this file with a dash line separator. 
 
 In addition to the -log and -logfile two  command-line options are avilable to output analysis data into comma-separated file format. use -logcsv or -logcsvfile to generate a .csv file suitable to use in any application that supports viewing these files in a table as shown in this sample:
 
-|imageCSV|
+|image432|
 
 
 The CLI also support processing image files from a folder, without the need to specify a file name. Using a file filter, specific files types can also be selected for compression as needed.
@@ -375,11 +369,28 @@ Processes all image file with BC7 Compression into results folder
 
 Processes only images with extension bmp, png and exr.  Notice that BC7 compression is been applied to HDR images, this is an automatic Adaptive Channel Format feature (ACF) that transcodes the image half float channels to byte prior to processing.
 
+
+CSV File Update to Support Automation
+--------------------------------------
+
+An error code field is added to log the state of a processed image when using the command-line application option “-logcsv”.
+
+|image433|
+
+The error code will be 0 for processed images, else a value is set to indicate any errors encountered while the image was processed.
+
+For a list of the most recent codes look for `AnalysisErrorCodeType <https://github.com/GPUOpen-Tools/compressonator/search?q=AnalysisErrorCodeType>`__ in the sdk file cmp_compressonatorlib/common.h
+
+
+
+
 .. |image127| image:: ../gui_tool/user_guide/media/image127.png
 .. |image128| image:: ../gui_tool/user_guide/media/image128.png
 .. |image129| image:: ../gui_tool/user_guide/media/image129.png
 .. |image130| image:: ../gui_tool/user_guide/media/image130.png
-.. |imageCSV| image:: ../gui_tool/user_guide/media/image2020-3-17_13-39-6.png
+.. |image432| image:: ../gui_tool/user_guide/media/image2020-3-17_13-39-6.png
+.. |image433| image:: ../gui_tool/user_guide/media/csvfilesupport.png
+
 .. |br| raw:: html
 
    <br />

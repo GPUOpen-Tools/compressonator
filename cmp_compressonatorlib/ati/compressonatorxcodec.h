@@ -97,6 +97,18 @@ CODECFLOAT CompBlock1X(CODECFLOAT* _Blk,
                        int _fracPrec = 0,
                        bool _bFixedRamp = true);
 
+CODECFLOAT CompBlock1XS(CODECFLOAT* _Blk,
+                       CMP_WORD    dwBlockSize,
+                       CMP_BYTE    nEndpoints[2],
+                       CMP_BYTE*   pcIndices,
+                       CMP_BYTE    dwNumPoints,
+                       bool        bFixedRampPoints,
+                       bool        _bUseSSE2   = true,
+                       int         _intPrec    = 8,
+                       int         _fracPrec   = 0,
+                       bool        _bFixedRamp = true);
+
+
 /*--------------------------------------------------------------------------------------------
 // input [0,255]
 void CompBlock1X(CMP_BYTE* _Blk,                [IN] scalar data block (alphas or normals) in 8 bits format
@@ -120,5 +132,16 @@ CODECFLOAT CompBlock1X(CMP_BYTE* _Blk,
                        int _intPrec = 8,
                        int _fracPrec = 0,
                        bool _bFixedRamp = true);
+
+CODECFLOAT CompBlock1XS(CMP_SBYTE* _Blk,
+                       CMP_WORD  dwBlockSize,
+                       CMP_BYTE  nEndpoints[2],
+                       CMP_BYTE* pcIndices,
+                       CMP_BYTE  dwNumPoints,
+                       bool      bFixedRampPoints,
+                       bool      _bUseSSE2   = true,
+                       int       _intPrec    = 8,
+                       int       _fracPrec   = 0,
+                       bool      _bFixedRamp = true);
 
 #endif

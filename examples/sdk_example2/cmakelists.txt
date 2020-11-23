@@ -22,7 +22,7 @@ target_include_directories(sdk_example2 PUBLIC
 target_link_libraries(sdk_example2
     PRIVATE
         dds_helper
-        CompressonatorLIB
+        CMP_Compressonator
 )
 
 set_target_properties(sdk_example2 PROPERTIES FOLDER ${FOLDER_NAME})

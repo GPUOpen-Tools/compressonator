@@ -71,6 +71,7 @@ TC_PluginError LoopRGB888(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*& extra,
 TC_PluginError PostLoopRGB888(FILE*&, DDSD2*&, MipSet*&, void*& extra);
 TC_PluginError PreLoopRGB8888(FILE*&, DDSD2*&, MipSet*& pMipSet, void*&);
 TC_PluginError LoopRGB8888(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*& extra, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
+TC_PluginError LoopRGB8888_S(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*& extra, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
 TC_PluginError PostLoopRGB8888(FILE*&, DDSD2*&, MipSet*&, void*&);
 TC_PluginError PreLoopABGR32F(FILE*&, DDSD2*&, MipSet*& pMipSet, void*&);
 TC_PluginError LoopABGR32F(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
@@ -96,19 +97,28 @@ TC_PluginError PostLoopA8(FILE*&, DDSD2*&, MipSet*&, void*&);
 TC_PluginError PreLoopABGR16(FILE*&, DDSD2*&, MipSet*& pMipSet, void*&);
 TC_PluginError LoopABGR16(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
 TC_PluginError PostLoopABGR16(FILE*&, DDSD2*&, MipSet*&, void*&);
+
 TC_PluginError PreLoopG16R16(FILE*&, DDSD2*&, MipSet*& pMipSet, void*&);
 TC_PluginError LoopG16R16(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
 TC_PluginError PostLoopG16R16(FILE*&, DDSD2*&, MipSet*&, void*&);
+
 TC_PluginError PreLoopABGR32(FILE*&, DDSD2*&, MipSet*& pMipSet, void*&);
 TC_PluginError LoopABGR32(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
 TC_PluginError PostLoopABGR32(FILE*&, DDSD2*&, MipSet*&, void*&);
+
 TC_PluginError LoopR32G32(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
 TC_PluginError LoopR10G10B10A2(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
 TC_PluginError LoopR9G9B9E5(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
+
 TC_PluginError LoopR16G16(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
 TC_PluginError LoopR32(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
 TC_PluginError LoopR8G8(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
+
+TC_PluginError PreLoopR16(FILE*&, DDSD2*&, MipSet*&, void*&);
 TC_PluginError LoopR16(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
-TC_PluginError LoopR8(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
+TC_PluginError PostLoopR16(FILE*&, DDSD2*&, MipSet*&, void*&);
+
+TC_PluginError LoopR8(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
+
 bool SetupDDSD(DDSD2& ddsd2, const MipSet* pMipSet, bool bCompressed);
 bool SetupDDSD_DX10(DDSD2& ddsd2, const MipSet* pMipSet, bool bCompressed);

@@ -44,4 +44,27 @@ class CCodec_ATI2N : public CCodec_DXTC {
     CodecType m_codecType;
 };
 
+class CCodec_ATI2N_S : public CCodec_DXTC
+{
+public:
+    CCodec_ATI2N_S(CodecType codecType = CT_ATI2N);
+    virtual ~CCodec_ATI2N_S();
+
+    virtual CodecError Compress(CCodecBuffer&       bufferIn,
+                                CCodecBuffer&       bufferOut,
+                                Codec_Feedback_Proc pFeedbackProc = NULL,
+                                CMP_DWORD_PTR       pUser1        = NULL,
+                                CMP_DWORD_PTR       pUser2        = NULL);
+
+    virtual CodecError Decompress(CCodecBuffer&       bufferIn,
+                                  CCodecBuffer&       bufferOut,
+                                  Codec_Feedback_Proc pFeedbackProc = NULL,
+                                  CMP_DWORD_PTR       pUser1        = NULL,
+                                  CMP_DWORD_PTR       pUser2        = NULL);
+
+protected:
+    CodecType m_codecType;
+};
+
+
 #endif // !defined(_CODEC_ATI2N_H_INCLUDED_)

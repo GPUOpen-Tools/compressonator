@@ -7,7 +7,7 @@
 #ifndef _TOOTLE_LIB_H_
 #define _TOOTLE_LIB_H_
 
-#ifdef _LINUX
+#ifdef __linux__
 #define TOOTLE_DLL
 #else
 #define TOOTLE_DLL __declspec(dllexport)

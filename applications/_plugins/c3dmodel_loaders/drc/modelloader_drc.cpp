@@ -9,7 +9,6 @@
 
 using namespace draco;
 
-
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_ModelLoader_drc)
 SET_PLUGIN_TYPE("3DMODEL_LOADER")

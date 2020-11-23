@@ -85,11 +85,11 @@ CImageCompare::CImageCompare(const QString title, QString file1, QString file2, 
     m_dockToolBar   = new QToolBar(tr("dockToolbar"));
     m_dockToolBar->setObjectName("dockImageViewToolBar");
 
-    ssimAct = new QAction(QIcon(":/CompressonatorGUI/Images/ssim.png"), tr("&Run SSIM Analysis"), this);
-    psnrmseAct = new QAction(QIcon(":/CompressonatorGUI/Images/psnrmse.png"), tr("&Run PSNR & MSE Analysis"), this);
+    ssimAct = new QAction(QIcon(":/compressonatorgui/images/ssim.png"), tr("&Run SSIM Analysis"), this);
+    psnrmseAct = new QAction(QIcon(":/compressonatorgui/images/psnrmse.png"), tr("&Run PSNR & MSE Analysis"), this);
 
-    hlayoutAct      = new QAction(QIcon(":/CompressonatorGUI/Images/horizontal.png"), tr("&Change to horizontal view"), this);
-    orilayoutAct    = new QAction(QIcon(":/CompressonatorGUI/Images/orilayout.png"), tr("&Change to default view"), this);
+    hlayoutAct      = new QAction(QIcon(":/compressonatorgui/images/horizontal.png"), tr("&Change to horizontal view"), this);
+    orilayoutAct    = new QAction(QIcon(":/compressonatorgui/images/orilayout.png"), tr("&Change to default view"), this);
     orilayoutAct->setDisabled(true);
 
     m_dockToolBar->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea | Qt::RightToolBarArea | Qt::LeftToolBarArea);
@@ -386,17 +386,15 @@ bool CImageCompare::setAnalysisResultView() {
                     m_psnrAnalysis->m_PSNR_Green = std::stod(child->first_node("PSNR_GREEN")->value());
                     m_psnrAnalysis->m_PSNR_Red = std::stod(child->first_node("PSNR_RED")->value());
                 } else if (ssimAnalysis && psnrAnalysis) {
-
-                    m_allAnalysis->m_SSIM = std::stod(child->first_node("SSIM")->value());
-                    m_allAnalysis->m_SSIM_Blue = std::stod(child->first_node("SSIM_BLUE")->value());
-                    m_allAnalysis->m_SSIM_Green = std::stod(child->first_node("SSIM_GREEN")->value());
-                    m_allAnalysis->m_SSIM_Red = std::stod(child->first_node("PSNSSIM_REDR_RED")->value());
-
-                    m_allAnalysis->m_MSE = std::stod(child->first_node("MSE")->value());
-                    m_allAnalysis->m_PSNR = std::stod(child->first_node("PSNR")->value());
-                    m_allAnalysis->m_PSNR_Blue = std::stod(child->first_node("PSNR_BLUE")->value());
-                    m_allAnalysis->m_PSNR_Green = std::stod(child->first_node("PSNR_GREEN")->value());
-                    m_allAnalysis->m_PSNR_Red = std::stod(child->first_node("PSNR_RED")->value());
+                        m_allAnalysis->m_SSIM       = std::stod(child->first_node("SSIM")->value());
+                        m_allAnalysis->m_SSIM_Blue  = std::stod(child->first_node("SSIM_BLUE")->value());
+                        m_allAnalysis->m_SSIM_Green = std::stod(child->first_node("SSIM_GREEN")->value());
+                        m_allAnalysis->m_SSIM_Red   = std::stod(child->first_node("SSIM_RED")->value());
+                        m_allAnalysis->m_MSE        = std::stod(child->first_node("MSE")->value());
+                        m_allAnalysis->m_PSNR       = std::stod(child->first_node("PSNR")->value());
+                        m_allAnalysis->m_PSNR_Blue  = std::stod(child->first_node("PSNR_BLUE")->value());
+                        m_allAnalysis->m_PSNR_Green = std::stod(child->first_node("PSNR_GREEN")->value());
+                        m_allAnalysis->m_PSNR_Red   = std::stod(child->first_node("PSNR_RED")->value());
                 }
             }
         }

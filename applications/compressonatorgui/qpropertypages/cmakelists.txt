@@ -1,6 +1,4 @@
-add_library(CMP_GUI_BIN_QPropertyPages INTERFACE)
-
-target_sources(CMP_GUI_BIN_QPropertyPages INTERFACE
+set(Q_PROPERTY_PAGES_SRC
     qtbuttonpropertybrowser.cpp
     qteditorfactory.cpp
     qtgroupboxpropertybrowser.cpp
@@ -11,7 +9,7 @@ target_sources(CMP_GUI_BIN_QPropertyPages INTERFACE
     qtvariantproperty.cpp
 )
 
-target_sources(CMP_GUI_BIN_QPropertyPages INTERFACE
+set(Q_PROPERTY_PAGES_H
     qtbuttonpropertybrowser.h
     qteditorfactory.h
     qtgroupboxpropertybrowser.h
@@ -22,8 +20,10 @@ target_sources(CMP_GUI_BIN_QPropertyPages INTERFACE
     qtvariantproperty.h
 )
 
-target_include_directories(CMP_GUI_BIN_QPropertyPages INTERFACE
+add_library(CMP_GUI_QPropertyPages STATIC ${Q_PROPERTY_PAGES_H} ${Q_PROPERTY_PAGES_SRC})
 
-    ./
-)
+target_link_libraries(CMP_GUI_QPropertyPages Qt5::Widgets)
 
+set_target_properties(CMP_GUI_QPropertyPages PROPERTIES
+        AUTOMOC ON
+        FOLDER "Libs")

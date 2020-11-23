@@ -1,50 +1,30 @@
-# =======================================================================
+add_library(CMP_Imgui)
 
-add_library(Plugin_Common_QtImgui_DX12 INTERFACE)
-
-target_sources(Plugin_Common_QtImgui_DX12 INTERFACE
-
-    imgui_dx12.h
-    imgui_dx12renderer.cpp
-    imgui_dx12renderer.h
+file(GLOB_RECURSE IMGUI_SRCS
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/imgui/*.cpp
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/imgui/*.h
 )
 
-target_link_libraries(Plugin_Common_QtImgui_DX12 INTERFACE
+file(GLOB_RECURSE QTIMGUI_SRCS
+)
+
+target_sources(CMP_Imgui PRIVATE
+    ${IMGUI_SRCS}
+    )
+
+target_include_directories(CMP_Imgui
+    PRIVATE
+    ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common
+    )
+
+target_link_libraries(CMP_Imgui 
+    PRIVATE
     ExtQt5
 )
 
-target_include_directories(Plugin_Common_QtImgui_DX12 INTERFACE
-    ./
-)
-
-#set_target_properties(Plugin_Common_QtImgui PROPERTIES FOLDER ${FOLDER_NAME})
-
+set_target_properties(CMP_Imgui PROPERTIES 
+    FOLDER "Libs"
+    )
 # =======================================================================
 
-add_library(Plugin_Common_QtImgui_OpenGL INTERFACE)
-
-target_sources(Plugin_Common_QtImgui_OpenGL INTERFACE
-
-    imgui_opengl.h
-    imgui_openglrenderer.cpp
-    imgui_openglrenderer.h
-    # demowindow.cpp
-    # demowindow.h
-)
-
-target_include_directories(Plugin_Common_QtImgui_OpenGL INTERFACE
-    ./
-)
-
-#set_target_properties(Plugin_Common_QtImgui PROPERTIES FOLDER ${FOLDER_NAME})
-
-# =======================================================================
-
-add_library(Plugin_Common_QtImgui INTERFACE)
-
-target_link_libraries(Plugin_Common_QtImgui INTERFACE
-    Plugin_Common_QtImgui_DX12
-    Plugin_Common_QtImgui_OpenGL
-)
-
-#set_target_properties(Plugin_Common_QtImgui PROPERTIES FOLDER ${FOLDER_NAME})

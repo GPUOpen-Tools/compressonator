@@ -14,7 +14,7 @@ void CHelpAboutDialog::Init(const QString & title, const QString & productName) 
 
     // Set the dialog title:
     setWindowTitle(title);
-    setWindowIcon(QIcon(":/CompressonatorGUI/Images/acompress-256.png"));
+    setWindowIcon(QIcon(":/compressonatorgui/images/acompress-256.png"));
 
     // Set window flags (minimize / maximize / close buttons):
     Qt::WindowFlags flags = windowFlags();

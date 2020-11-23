@@ -61,8 +61,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#include <filesystem>
 #include <string>
+#ifdef _CMP_CPP17_  // Build code using std::c++17
+#include <filesystem>
+namespace sfs = std::filesystem;
+#else
+#include <experimental/filesystem>
+namespace sfs = std::experimental::filesystem;
+#endif
 
 using namespace std;
 
@@ -167,11 +173,11 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
     bool nodeExist = false;
 
     if (m_srcFile.size() > 0 && m_destFile.size() > 0) {
-        std::filesystem::path src(m_srcFile);
+        sfs::path src(m_srcFile);
         diffName = src.stem().generic_string();
         diffName.append("_");
 
-        std::filesystem::path dest(m_destFile);
+        sfs::path dest(m_destFile);
         diffName.append(dest.stem().generic_string());
         diffNodeName = diffName;
     }
@@ -206,7 +212,7 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
                     modifyElement(child, "SSIM_RED",    f2Str(data.SSIM_Red,    4));
                     nodeExist = true;
                 } else if (option == 'p') { //psnr
-                    modifyElement(child, "MSE",         f2Str(data.MSE,         1).c_str());
+                    modifyElement(child, "MSE",         f2Str(data.MSE,         4).c_str());
                     modifyElement(child, "PSNR",        f2Str(data.PSNR,        1).c_str());
                     modifyElement(child, "PSNR_BLUE",   f2Str(data.PSNR_Blue,   1).c_str());
                     modifyElement(child, "PSNR_GREEN",  f2Str(data.PSNR_Green,  1).c_str());
@@ -331,7 +337,7 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
         return;
     }
 
-    std::filesystem::path result(resultsFile);
+    sfs::path   result(resultsFile);
     int lastindex = result.generic_string().find_last_of("/");
     std::string goldFile = result.generic_string().substr(0, lastindex + 1);
     goldFile.append("golden.xml");
@@ -558,6 +564,7 @@ void  Plugin_Canalysis::generateBCtestResult(QImage *src, QImage *dest, REPORT_D
 }
 
 #ifdef USE_OPENCV
+/*
 bool Plugin_Canalysis::psnr(QImage *src, const cv::Mat& srcimg, QImage *dest, const cv::Mat& destimg, REPORT_DATA &myReport, CMP_Feedback_Proc pFeedbackProc) {
     double bMSE = 0, gMSE = 0, rMSE = 0, MSE = 0;
     double MAX = 255.0; // Maximum possible pixel range. For our BMP's, which have 8 bits, it's 255.
@@ -644,6 +651,7 @@ bool Plugin_Canalysis::psnr(QImage *src, const cv::Mat& srcimg, QImage *dest, co
 
     return (myReport.PSNR != -1);
 }
+*/
 #endif
 
 void Plugin_Canalysis::setActiveChannels() {
@@ -723,7 +731,10 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
     }
 
     if (m_MipSrcImages != NULL && m_MipDestImages != NULL) {
-        setActiveChannels();
+
+        // analyize the destination image type and set active channels to compare the source with
+        setActiveChannels(); 
+
         // Analysis is only on top MipLevel and first cubemap face!
         // Need to update the code to handle all faces of cubemaps
         if (m_MipSrcImages->QImage_list[0].size() >0) {
@@ -744,7 +755,43 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
         return -1;
     }
 
+    if ((m_MipSrcImages->mipset == NULL) || (m_MipDestImages->mipset == NULL))
+    {
+        printf("Error: unabled to read mipset data");
+        return -1;
+    }
 
+    // Calculate MSE & PSNR 
+    CMP_AnalysisData pAnalysisData = { 0 };
+    pAnalysisData.channelBitMap    = m_RGBAChannels;
+    if (CMP_MipSetAnlaysis(m_MipSrcImages->mipset, m_MipDestImages->decompressedMipSet, 0, 0, &pAnalysisData) != CMP_OK)
+    {
+        printf("Error: unabled to calculate MSE and PSNR");
+        return -1;
+    }
+
+    if (analysisData)
+    {
+        analysisData->PSNR       = report.data.PSNR         = pAnalysisData.psnr;
+        analysisData->PSNR_Red   = report.data.PSNR_Red     = pAnalysisData.psnrR;
+        analysisData->PSNR_Green = report.data.PSNR_Green   = pAnalysisData.psnrG;
+        analysisData->PSNR_Blue  = report.data.PSNR_Blue    = pAnalysisData.psnrB;
+        analysisData->MSE        = report.data.MSE          = pAnalysisData.mse;
+    }
+
+    // Test images
+    if (srcImage->width() == 4 && srcImage->height() == 4)
+    {
+        generateBCtestResult(srcImage, destImage, report.data);
+        bool testpassed = report.data.PSNR > 0;
+        if (!testpassed)
+        {
+            printf("Error: Images analysis fail\n");
+            return -1;
+        }
+    }
+
+    // Do SSIM using OpenCV
     if (srcImage != NULL && destImage != NULL) {
         m_srcFile = in1;
         m_destFile = in2;
@@ -757,6 +804,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
             return -1;
         }
 
+
         if (cmipImages == NULL) { //cmdline enable both ssim and psnr
 
 #ifdef USE_OPENCV
@@ -764,12 +812,6 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
             cv::Mat destimg = QtOcv::image2Mat(*destImage);
             if (!&srcimg || !&destimg) {
                 printf("Error: Images fail to allocate for ssim analysis\n");
-                return -1;
-            }
-
-            bool testpassed = psnr(srcImage, srcimg, destImage, destimg, report.data);
-            if (!testpassed) {
-                printf("Error: Images analysis fail\n");
                 return -1;
             }
 
@@ -790,12 +832,6 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
                 analysisData->SSIM_Red   = report.data.SSIM_Red;
                 analysisData->SSIM_Green = report.data.SSIM_Green;
                 analysisData->SSIM_Blue  = report.data.SSIM_Blue;
-                analysisData->PSNR       = report.data.PSNR;
-                analysisData->PSNR_Red   = report.data.PSNR_Red;
-                analysisData->PSNR_Green = report.data.PSNR_Green;
-                analysisData->PSNR_Blue  = report.data.PSNR_Blue;
-                analysisData->MSE        = report.data.MSE;
-
             }
         } //
 
@@ -885,7 +921,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
             } else {
                 QString appLocalPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
                 QString redirectOut = appLocalPath + "/diff.bmp";
-                redirectOut.replace("CompressonatorCLI", "Compressonator");
+                redirectOut.replace("compressonatorcli", "compressonator");
                 saved = diffImage->save(redirectOut);
                 if (saved) {
                     if (m_MipDiffImages)
@@ -911,7 +947,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
             } else {
                 QString appLocalPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
                 QString redirectOut = appLocalPath + "/diff.bmp";
-                redirectOut.replace("CompressonatorCLI", "Compressonator");
+                redirectOut.replace("compressonatorcli", "compressonator");
                 saved = diffImage->save(redirectOut);
                 delete diffImage;
                 if (saved) {
@@ -978,24 +1014,56 @@ int Plugin_Canalysis::TC_PSNR_MSE(const char * in1, const char * in2,  char *res
             return -1;
         }
 
-#ifdef USE_OPENCV
-        cv::Mat srcimg  = QtOcv::image2Mat(*srcImage);
-        cv::Mat destimg = QtOcv::image2Mat(*destImage);
-        if (!&srcimg || !&destimg) {
-            printf("Error: Images fail to allocate for ssim analysis\n");
-            return -1;
-        }
 
-        bool testpassed = psnr(srcImage, srcimg, destImage, destimg, report.data);
-        if (!testpassed) {
+     report.data.PSNR_Blue  = -1;
+     report.data.PSNR_Green = -1;
+     report.data.PSNR_Red   = -1;
+
+     CMP_AnalysisData pAnalysisData = {0};
+     pAnalysisData.channelBitMap    = m_RGBAChannels;
+     if (CMP_MipSetAnlaysis(m_MipSrcImages->mipset, m_MipDestImages->decompressedMipSet, 0, 0, &pAnalysisData) != CMP_OK)
+     {
+         printf("Error: unabled to calculate MSE and PSNR");
+         return -1;
+     }
+
+
+    report.data.PSNR = pAnalysisData.psnr;
+    report.data.PSNR_Red = pAnalysisData.psnrR;
+    report.data.PSNR_Green = pAnalysisData.psnrG;
+    report.data.PSNR_Blue = pAnalysisData.psnrB;
+    report.data.MSE = pAnalysisData.mse;
+
+    // cv::Mat srcimg  = QtOcv::image2Mat(*srcImage);
+    // cv::Mat destimg = QtOcv::image2Mat(*destImage);
+    // if (!&srcimg || !&destimg) {
+    //     printf("Error: Images fail to allocate for ssim analysis\n");
+    //     return -1;
+    // }
+    // 
+    // bool testpassed = psnr(srcImage, srcimg, destImage, destimg, report.data);
+    // if (!testpassed) {
+    //     printf("Error: Images analysis fail\n");
+    //     return -1;
+    // }
+
+    // Test images
+    if (srcImage->width() == 4 && srcImage->height() == 4)
+    {
+        generateBCtestResult(srcImage, destImage, report.data);
+        bool testpassed = report.data.PSNR > 0;
+        if (!testpassed)
+        {
             printf("Error: Images analysis fail\n");
             return -1;
         }
+    }
 
-        write(report.data, resultsFile,'p');
-#endif
-        //cout << report;
-    } else {
+
+    write(report.data, resultsFile,'p');
+
+    } 
+    else {
         printf("Error: Image(s) cannot be loaded\n");
         return -1;
     }

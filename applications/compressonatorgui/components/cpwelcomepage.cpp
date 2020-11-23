@@ -64,7 +64,9 @@ CWelcomePage::CWelcomePage(const QString title, QWidget *parent)
 
 void CWelcomePage::GoToAMDHomePage(QVector<QString>& projectsNames) {
     if (m_startUpPage)
+    {
         m_startUpPage->UpdateHTML(projectsNames);
+    }
 }
 
 CWelcomePage::~CWelcomePage() {

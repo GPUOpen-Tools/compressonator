@@ -27,8 +27,7 @@
 #include "resourceviewheapsdx12.h"
 #include "uploadheapdx12.h"
 
-#include "Error.h"
-#include "Defines.h"
+#include "defines.h"
 
 #include <imgui/imgui.h>
 

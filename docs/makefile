@@ -3,8 +3,8 @@
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
-SPHINXBUILD   = python -msphinx
-SPHINXPROJ    = Compressonator
+SPHINXBUILD   = sphinx-build
+SPHINXPROJ    = RadeonGPUAnalyzer
 SOURCEDIR     = source
 BUILDDIR      = build
 

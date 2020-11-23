@@ -90,8 +90,8 @@ C3DModelCompare::C3DModelCompare(const QString title, QString file1, QString fil
 
     m_dockToolBar->addWidget(m_CBManual_renderView);
 
-    hlayoutAct      = new QAction(QIcon(":/CompressonatorGUI/Images/horizontal.png"), tr("&Change to horizontal view"), this);
-    orilayoutAct    = new QAction(QIcon(":/CompressonatorGUI/Images/orilayout.png"), tr("&Change to default view"), this);
+    hlayoutAct      = new QAction(QIcon(":/compressonatorgui/images/horizontal.png"), tr("&Change to horizontal view"), this);
+    orilayoutAct    = new QAction(QIcon(":/compressonatorgui/images/orilayout.png"), tr("&Change to default view"), this);
     orilayoutAct->setDisabled(true);
 
     m_dockToolBar->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea | Qt::RightToolBarArea | Qt::LeftToolBarArea);

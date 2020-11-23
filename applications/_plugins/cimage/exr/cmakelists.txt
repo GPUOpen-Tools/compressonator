@@ -1,24 +1,39 @@
+cmake_minimum_required(VERSION 3.10)
 
-add_library(Plugin_CImage_EXR)
+add_library(Image_EXR STATIC "")
 
-target_sources(Plugin_CImage_EXR PRIVATE
+target_sources(Image_EXR
+    PRIVATE
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/tc_pluginapi.h
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/tc_plugininternal.h
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/tc_plugininternal.cpp
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/utilfuncs.h
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/utilfuncs.cpp
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cmp_fileio.h
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cmp_fileio.cpp
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cexr.h
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cexr.cpp
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/namespacealias.h
+    ./exr.h
+    ./exr.cpp
+    )
 
-    exr.h
-    exr.cpp
-)
+target_include_directories(Image_EXR
+    PRIVATE
+    ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
+    ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common
+    ${OpenEXR_INCLUDE_DIRS}
+    )
 
-target_link_libraries(Plugin_CImage_EXR PRIVATE
+if (APPLE)
+    target_include_directories(Image_EXR
+                               PRIVATE
+                               /usr/local/include/OpenEXR/)
+endif()
 
-    CompressonatorLIB
-    CMP_FileIO
+if (UNIX)
+    target_compile_definitions(Image_EXR PRIVATE _LINUX)
+endif()
 
-    Plugin_Common_cExr
-    Plugin_Common_UtilFuncs
-    Plugin_TCPluginAPI
-    Plugin_PluginManager
-
-    ExtOpenEXR
- #   ExtZlib
-)
-
-set_target_properties(Plugin_CImage_EXR PROPERTIES FOLDER ${FOLDER_NAME})
+set_target_properties(Image_EXR PROPERTIES FOLDER "Plugin_Static/ImageIO")

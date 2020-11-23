@@ -55,7 +55,7 @@ bool CompressionCallback(CMP_FLOAT fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PT
     (pUser1);
     (pUser2);
 
-    std::printf("\rCompression progress = %2.0f  ", fProgress);
+    std::printf("\rCompression progress = %3.0f  ", fProgress);
 
     return g_bAbortCompression;
 }

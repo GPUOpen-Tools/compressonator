@@ -3,7 +3,7 @@
 # simple script to read version information from Compressonator\Header\Version.h
 # Usage
 #   export WORKSPACE=<workspace-root>
-#   set <var>=`python $WORKSPACE/main/Compressonator/Scripts/GetVersion.py --major|--minor`
+#   set <var>=`python $WORKSPACE/compressonator/scripts/getversion.py --major|--minor`
 #
 import os
 import argparse
@@ -18,7 +18,7 @@ parser.add_argument('--minor', action='store_true', default=False, help='Return 
 args = parser.parse_args()
 
 # initialize file for search
-gpaVersionFile = os.path.join(os.environ['WORKSPACE'], 'compressonator/cmp_compressonatorLib/version.h')
+gpaVersionFile = os.path.join(os.environ['WORKSPACE'], 'compressonator/cmp_compressonatorlib/version.h')
 gpaVersionData = open(gpaVersionFile)
 
 # get major, minor, and update values

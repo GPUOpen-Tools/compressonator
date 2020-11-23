@@ -24,73 +24,92 @@
 #ifndef __CPSTARTUPPAGE_H
 #define __CPSTARTUPPAGE_H
 
+//#define USE_QTWEBENGINE
+
+#ifdef USE_QTWEBENGINE
 #include <QWebEngineView>
 #include <QWebEnginePage>
+#endif
+
 #include <assert.h>
 #include <algorithm>
 
-// ----------------------------------------------------------------------------------
-// Class Name:          afWebPage: public QWebPage
-// General Description: Inherit QWebPage. We need this class to override the JavaScript
-//                      events since in the current HTML design, we need to use JS to
-//                      execute CodeXL actions
-// Author:              Sigal Algranaty
-// Creation Date:       23/9/2014
-// ----------------------------------------------------------------------------------
-class afWebPage : public QWebEnginePage {
+#ifdef USE_QTWEBENGINE
+class afWebPage : public QWebEnginePage
+{
     Q_OBJECT
 
-  public:
-
+public:
     // Constructor:
     afWebPage(QObject* pParent = nullptr);
 
-  Q_SIGNALS:
-    void PageButtonClick(QString &Request, QString &Msg);
+Q_SIGNALS:
+    void PageButtonClick(QString& Request, QString& Msg);
 
-
-
-  protected:
+protected:
     // Overrides QWebEnginePage: is used for catching requests from welcome page, and implement in Qt:
     virtual void javaScriptConsoleMessage(JavaScriptConsoleMessageLevel level, const QString& message, int lineNumber, const QString& sourceID);
-    virtual bool acceptNavigationRequest(const QUrl &url, NavigationType type, bool isMainFrame);
+    virtual bool acceptNavigationRequest(const QUrl& url, NavigationType type, bool isMainFrame);
 };
+#endif
 
-// ----------------------------------------------------------------------------------
-// Class Name:          afStartupPage: public QWebView
-// General Description: Inherit QWebView and is used for displaying the CodeXL HTML welcome page
-// Author:              Sigal Algranaty
-// Creation Date:       23/9/2014
-// ----------------------------------------------------------------------------------
-class cpStartupPage : public QWebEngineView {
+class cpStartupPage 
+#ifdef USE_QTWEBENGINE
+    : public QWebEngineView  
+#else
+    : public QWidget 
+#endif
+{
     Q_OBJECT
 
-  public:
-
-    cpStartupPage(QWidget *parent);
+public:
+    cpStartupPage(QWidget* parent);
     virtual ~cpStartupPage();
 
     bool UpdateHTML(QVector<QString>& projectsNames);
 
-  Q_SIGNALS:
-    void PageButtonClick(QString &Request, QString &Msg);
+#ifndef USE_QTWEBENGINE
+    QPushButton*  m_PButtonUserGuide;
+    QPushButton*  m_PButtonGettingStarted;
+    QPushButton*  m_PButtonCompressonatorWeb;
 
-  public slots:
+    QStringList       m_Projectlist;
+    QListWidget*      m_Projectlistview;
+
+    QStringList       m_RecentProjectlist;
+    QStringList       m_RecentProjectlistFullPath;
+    QListWidget*      m_RecentProjectsview;
+    QLabel*           m_LNoRecentProjects;
+    QStringList       m_NewFeatureslist;
+    QListWidget*      m_NewFeaturesview;
+#endif
+
+Q_SIGNALS:
+    void PageButtonClick(QString& Request, QString& Msg);
+
+public slots:
     virtual void setSource(const QUrl& name);
-    void onPageButtonClick(QString &Request, QString &Msg);
 
-  protected:
+#ifndef USE_QTWEBENGINE
+    void         onPageButtonClick(QString& Request, QString& Msg);
+    void         onPButtonUserGuide();
+    void         onPButtonGettingStarted();
+    void         onPButtonCompressonatorWeb();
 
+    void         onProjectlistviewClicked(QListWidgetItem* item);
+    void         onRecentProjectsviewClicked(QListWidgetItem* item);
+    void         onNewFeaturesviewClicked(QListWidgetItem* item);
+#endif
+
+protected:
     bool CanLinkBeClicked(const QUrl& url);
 
-  protected slots:
+protected slots:
 
     /// Build the recently opened projects table, and replace it in the HTML text:
     /// \param htmlText the loaded HTML text (should contain dummy table for replacement)
     /// \return true for success (the text contain the expected table)
     bool BuildRecentlyOpenedProjectsTable(QString& htmlText, QVector<QString>& recentlyUsedProjectsNames);
-
 };
 
-#endif //__CPSTARTUPPAGE_H
-
+#endif  //__CPSTARTUPPAGE_H

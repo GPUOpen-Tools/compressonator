@@ -1,80 +1,35 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.10)
 
-# add_library(CompressonatorLIB)
-# 
-# file(GLOB_RECURSE CMP_ASM_SRCS
-#     *.asm
-# )
-# 
-# set(CMP_ASM_COMPILE_OPTIONS "/arch:SSE" "/arch:SSE2")
-# 
-# foreach(asm_src ${CMP_ASM_SRCS})
-#     set_source_files_properties(${asm_src} PROPERTIES 
-#         LANGUAGE ASM_MASM
-#         COMPILE_DEFINITIONS X64=1 USE_SSE2=1 USE_SSE=1
-#     )
-# endforeach()
-# 
-# file(GLOB_RECURSE CMP_SRCS
-#     *.c
-#     *.cpp
-#     *.cxx
-#     *.h
-# )
-# 
-# target_sources(CompressonatorLIB PRIVATE
-# 
-#     # ${CMP_ASM_SRCS}
-#     ${CMP_SRCS}
-# )
-# 
-# if (CMP_HOST_WINDOWS)
-#     target_compile_definitions(CompressonatorLIB PRIVATE -D_WIN64)
-# endif()
-# 
-# target_include_directories(CompressonatorLIB PUBLIC
-#     ASTC
-#     ASTC/ARM/
-#     ATC
-#     ATI
-#     BASIS
-#     BC6H
-#     BC7
-#     Block
-#     Buffer
-#     DXT
-#     DXTC
-#     ETC
-#     ETC/etcpack/
-#     GT
-#     Common
-#     ./
-# )
-# 
-# target_link_libraries(CompressonatorLIB PRIVATE
-# 
-#     PRIVATE
-#         CMP_Math
-#         CMP_Common
-#         CMP_FrameworkLIB
-#         CMP_Core
-# 
-#         Plugin_PluginManager
-#         Plugin_Common_KernelDef
-#         Plugin_Common_STBImage
-# 
-#         ExtOpenEXR
-#         Plugin_Half
-#         
-#     INTERFACE
-#         Plugin_Half
-# )
+add_library(CMP_Compressonator STATIC "")
 
-add_library(CompressonatorLIB STATIC "")
+# Reserved for Future releases
+file(GLOB_RECURSE CMP_CORE_SRC
+#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc1_encode_kernel.h
+#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc1_encode_kernel.cpp
+#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc2_encode_kernel.h
+#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc2_encode_kernel.cpp
+#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc3_encode_kernel.h
+#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc3_encode_kernel.cpp
+#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc4_encode_kernel.h
+#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc4_encode_kernel.cpp
+#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc5_encode_kernel.h
+#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc5_encode_kernel.cpp
+#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc6_encode_kernel.h
+#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc6_encode_kernel.cpp
+#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc7_encode_kernel.h
+#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc7_encode_kernel.cpp
+#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bcn_common_kernel.h
+      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/common_def.h
+#     ${PROJECT_SOURCE_DIR}/cmp_core/source/cmp_core.h
+#     ${PROJECT_SOURCE_DIR}/cmp_core/source/cmp_math_vec4.h
+#     ${PROJECT_SOURCE_DIR}/cmp_core/source/cmp_math_func.h
+)
 
 file(GLOB_RECURSE CMP_SRCS
      "./*.h"
      "./*.cpp"
+     "apc/*.h"
+     "apc/*.cpp"
      "astc/*.h"
      "astc/*.cpp"
      "astc/arm/*.h"
@@ -106,24 +61,23 @@ file(GLOB_RECURSE CMP_SRCS
      "etc/etcpack/*.cxx"
      "gt/*.h"
      "gt/*.cpp"
-     "apc/*.h"
-     "apc/*.cpp"
      "common/*.h"
      "common/*.cpp"
-     "../cmp_framework/common/*.h"
-     "../cmp_framework/common/*.cpp"
-     "../cmp_framework/common/half/*.h"
-     "../cmp_framework/common/half/*.cpp"
-     "../applications/_plugins/common/atiformats.cpp"
-     "../applications/_plugins/common/atiformats.h"
+     ${PROJECT_SOURCE_DIR}/cmp_framework/common/*.h
+     ${PROJECT_SOURCE_DIR}/cmp_framework/common/*.cpp
+     ${PROJECT_SOURCE_DIR}/cmp_framework/common/half/*.h
+     ${PROJECT_SOURCE_DIR}/cmp_framework/common/half/*.cpp
+     ${PROJECT_SOURCE_DIR}/applications/_plugins/common/atiformats.cpp
+     ${PROJECT_SOURCE_DIR}/applications/_plugins/common/atiformats.h 
      )
 
-target_sources(CompressonatorLIB
+target_sources(CMP_Compressonator
                PRIVATE
                ${CMP_SRCS}
+               ${CMP_CORE_SRC} 
                )
 
-target_include_directories(CompressonatorLIB
+target_include_directories(CMP_Compressonator
                            PRIVATE
                            ./
                            astc
@@ -139,10 +93,13 @@ target_include_directories(CompressonatorLIB
                            dxtc
                            etc
                            etc/etcpack/
-                           apc
                            gt
                            common
-                           ../cmp_framework/common
-                           ../cmp_framework/common/half
-                           ../applications/_plugins/common)
+                           ${PROJECT_SOURCE_DIR}/cmp_core/shaders
+                           ${PROJECT_SOURCE_DIR}/cmp_core/source
+                           ${PROJECT_SOURCE_DIR}/cmp_framework/common
+                           ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
+                           ${PROJECT_SOURCE_DIR}/applications/_plugins/common
+                           )
 
+set_target_properties(CMP_Compressonator PROPERTIES FOLDER "Libs")
