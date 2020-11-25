@@ -430,7 +430,7 @@ int Plugin_BoxFilter::TC_CFilter(MipSet* pMipSet, CMP_MipSet* pMipSetDst, CMP_CF
         int nWidth         = pMipSet->m_nWidth;
         int nHeight        = pMipSet->m_nHeight;
 
-        while (nWidth > pCFilterParams->nMinSize && nHeight > pCFilterParams->nMinSize)
+        while (nWidth >= pCFilterParams->nMinSize && nHeight >= pCFilterParams->nMinSize)
         {
             nWidth               = (std::max)(nWidth >> 1, 1);
             nHeight              = (std::max)(nHeight >> 1, 1);

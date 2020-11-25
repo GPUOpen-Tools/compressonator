@@ -144,7 +144,7 @@ CMP_INT CMP_API CMP_GenerateMIPLevelsEx(CMP_MipSet* pMipSet, CMP_CFilterParams* 
     CMP_FLOAT*     null_float      = 0;
     CMP_MipLevel*  null_tempMipTwo = nullptr;
 
-    while (nWidth > CFilterParam->nMinSize && nHeight > CFilterParam->nMinSize)
+    while (nWidth >= CFilterParam->nMinSize && nHeight >= CFilterParam->nMinSize)
     {
         nWidth                   = CMP_MAX(nWidth >> 1, 1);
         nHeight                  = CMP_MAX(nHeight >> 1, 1);
