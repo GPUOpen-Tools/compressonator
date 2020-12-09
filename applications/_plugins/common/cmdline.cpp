@@ -225,7 +225,7 @@ bool ProcessSingleFlags(const char* strCommand)
     {
         g_CmdPrams.use_noMipMaps = true;
         isset                    = true;
-        if (g_CmdPrams.MipsLevel > 0)
+        if (g_CmdPrams.MipsLevel > 1)
             throw "Both nomipmap and miplevels are set!";
     }
 #ifdef USE_MESH_DRACO_EXTENSION
@@ -902,6 +902,7 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
                     (strcmp(strCommand, "-UseChannelWeighting") == 0) || (strcmp(strCommand, "-RefinementSteps") == 0) ||
                     (strcmp(strCommand, "-ForceFloatPath") == 0) || (strcmp(strCommand, "-CompressionSpeed") == 0) ||
                     (strcmp(strCommand, "-SwizzleChannels") == 0) || (strcmp(strCommand, "-CompressionSpeed") == 0) ||
+                    (strcmp(strCommand, "-Performance") == 0) ||
                     (strcmp(strCommand, "-MultiThreading") == 0))
                 {
                     // Reserved for future dev: command options passed down to codec levels
