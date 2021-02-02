@@ -155,6 +155,8 @@ typedef uint CGU_UINT;
 // ==== Scalar Types ====
 typedef int        CGU_BOOL;
 typedef int        CGV_BOOL;
+typedef int        CGV_INT8;
+typedef int        CGV_UINT8;
 typedef int        CGU_INT32;
 typedef int        CGV_INT32;
 typedef uint       CGU_UINT32;

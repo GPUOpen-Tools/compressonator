@@ -84,6 +84,7 @@
     <ClCompile Include="..\Applications\_Plugins\CImage\DDS\DDS_File.cpp" />
     <ClCompile Include="..\Applications\_Plugins\CImage\DDS\DDS_Helpers.cpp" />
     <ClCompile Include="..\Applications\_Plugins\Common\ATIFormats.cpp" />
+    <ClCompile Include="..\applications\_plugins\common\cmp_fileio.cpp" />
     <ClCompile Include="..\Applications\_Plugins\Common\PluginManager.cpp" />
     <ClCompile Include="..\Applications\_Plugins\Common\query_timer.cpp" />
     <ClCompile Include="..\Applications\_Plugins\Common\TC_PluginInternal.cpp" />
@@ -118,6 +119,7 @@
     <ClInclude Include="..\Applications\_Plugins\CImage\DDS\DDS_File.h" />
     <ClInclude Include="..\Applications\_Plugins\CImage\DDS\DDS_Helpers.h" />
     <ClInclude Include="..\Applications\_Plugins\Common\ATIFormats.h" />
+    <ClInclude Include="..\applications\_plugins\common\cmp_fileio.h" />
     <ClInclude Include="..\Applications\_Plugins\Common\PluginBase.h" />
     <ClInclude Include="..\Applications\_Plugins\Common\PluginInterface.h" />
     <ClInclude Include="..\Applications\_Plugins\Common\PluginManager.h" />

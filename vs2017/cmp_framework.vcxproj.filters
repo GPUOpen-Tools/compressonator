@@ -132,6 +132,9 @@
     <ClCompile Include="..\CMP_Framework\Common\half\half.cpp">
       <Filter>Common\half</Filter>
     </ClCompile>
+    <ClCompile Include="..\applications\_plugins\common\cmp_fileio.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Applications\_Plugins\Common\PluginInterface.h">
@@ -271,6 +274,9 @@
     </ClInclude>
     <ClInclude Include="..\CMP_Core\source\cmp_math_func.h">
       <Filter>CMP_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\common\cmp_fileio.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -69,7 +69,9 @@ target_sources(CMP_Framework
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/tc_plugininternal.cpp
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/utilfuncs.h
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/utilfuncs.cpp
-        
+        ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cmp_fileio.h 
+        ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cmp_fileio.cpp
+
         # CMP_SDK
         ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk/bc1/bc1.h
         ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk/bc1/bc1.cpp

@@ -36,7 +36,7 @@
 #include "pluginmanager.h"
 #include "texture.h"
 
-#define TC_API_VERSION_MAJOR 1
+#define TC_API_VERSION_MAJOR 2
 #define TC_API_VERSION_MINOR 4
 
 typedef CMP_DWORD_PTR TC_HANDLE;  ///< Generic Texture API handle

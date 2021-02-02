@@ -45,7 +45,7 @@ BC1, BC2, and BC3 have discrete quality settings, These settings are available i
     q = 0.101 to 0.6 sets mid-quality
     q = 0.601 to 1.0 set the best quality and low performance  
     BC4 and BC5 have no quality settings, no changes in quality will occur if set.
-    BC6 & BC7 have full q ranges from 0 to 1.0
+    BC6 & BC7 & ASTC have full q ranges from 0 to 1.0
 
 
 Create and Destroy Options Pointers

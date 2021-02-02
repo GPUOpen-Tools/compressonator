@@ -64,7 +64,7 @@ typedef double                  CMP_DOUBLE;
 typedef void                    CMP_VOID;
 typedef std::vector<uint8_t>    CMP_VEC8;
 
-#define AMD_COMPRESS_VERSION_MAJOR 3  // The major version number of this release.
+#define AMD_COMPRESS_VERSION_MAJOR 4  // The major version number of this release.
 #define AMD_COMPRESS_VERSION_MINOR 2  // The minor version number of this release.
 
 #if defined(WIN32) || defined(_WIN64)
