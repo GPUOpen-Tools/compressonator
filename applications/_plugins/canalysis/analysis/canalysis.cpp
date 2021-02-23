@@ -755,7 +755,10 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
         return -1;
     }
 
-    if ((m_MipSrcImages->mipset == NULL) || (m_MipDestImages->mipset == NULL))
+    MipSet* mipset_src = (m_MipSrcImages->mipset              != NULL) ? m_MipSrcImages->mipset              : m_MipSrcImages->decompressedMipSet;
+    MipSet* mipset_dst = (m_MipDestImages->decompressedMipSet != NULL) ? m_MipDestImages->decompressedMipSet : m_MipDestImages->mipset;
+
+    if ((mipset_src == NULL) || (mipset_dst == NULL))
     {
         printf("Error: unabled to read mipset data");
         return -1;
@@ -764,19 +767,28 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
     // Calculate MSE & PSNR 
     CMP_AnalysisData pAnalysisData = { 0 };
     pAnalysisData.channelBitMap    = m_RGBAChannels;
-    if (CMP_MipSetAnlaysis(m_MipSrcImages->mipset, m_MipDestImages->decompressedMipSet, 0, 0, &pAnalysisData) != CMP_OK)
+
+    
+    if (CMP_MipSetAnlaysis(mipset_src, mipset_dst, 0, 0, &pAnalysisData) != CMP_OK)
     {
         printf("Error: unabled to calculate MSE and PSNR");
         return -1;
     }
 
+   report.data.PSNR = pAnalysisData.psnr;
+   report.data.PSNR_Red = pAnalysisData.psnrR;
+   report.data.PSNR_Green = pAnalysisData.psnrG;
+   report.data.PSNR_Blue = pAnalysisData.psnrB;
+   report.data.MSE = pAnalysisData.mse;
+
+
     if (analysisData)
     {
-        analysisData->PSNR       = report.data.PSNR         = pAnalysisData.psnr;
-        analysisData->PSNR_Red   = report.data.PSNR_Red     = pAnalysisData.psnrR;
-        analysisData->PSNR_Green = report.data.PSNR_Green   = pAnalysisData.psnrG;
-        analysisData->PSNR_Blue  = report.data.PSNR_Blue    = pAnalysisData.psnrB;
-        analysisData->MSE        = report.data.MSE          = pAnalysisData.mse;
+        analysisData->PSNR       = pAnalysisData.psnr;
+        analysisData->PSNR_Red   = pAnalysisData.psnrR;
+        analysisData->PSNR_Green = pAnalysisData.psnrG;
+        analysisData->PSNR_Blue  = pAnalysisData.psnrB;
+        analysisData->MSE        = pAnalysisData.mse;
     }
 
     // Test images
@@ -1021,7 +1033,17 @@ int Plugin_Canalysis::TC_PSNR_MSE(const char * in1, const char * in2,  char *res
 
      CMP_AnalysisData pAnalysisData = {0};
      pAnalysisData.channelBitMap    = m_RGBAChannels;
-     if (CMP_MipSetAnlaysis(m_MipSrcImages->mipset, m_MipDestImages->decompressedMipSet, 0, 0, &pAnalysisData) != CMP_OK)
+
+     MipSet* mipset_src = (m_MipSrcImages->mipset != NULL) ? m_MipSrcImages->mipset : m_MipSrcImages->decompressedMipSet;
+     MipSet* mipset_dst = (m_MipDestImages->decompressedMipSet != NULL) ? m_MipDestImages->decompressedMipSet : m_MipDestImages->mipset;
+
+     if ((mipset_src == NULL) || (mipset_dst == NULL))
+     {
+         printf("Error: unabled to read mipset data");
+         return -1;
+     }
+
+     if (CMP_MipSetAnlaysis(mipset_src, mipset_dst, 0, 0, &pAnalysisData) != CMP_OK)
      {
          printf("Error: unabled to calculate MSE and PSNR");
          return -1;
