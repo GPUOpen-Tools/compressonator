@@ -71,7 +71,7 @@
 #define ASPM_GPU
 #endif
 
-#ifdef __linux__
+#ifndef _WIN32
 #undef ASPM_GPU
 #undef ASPM_OPENCL
 #ifndef ASPM_HLSL
