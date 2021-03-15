@@ -27,7 +27,7 @@
 // Vector Class definitions for CPU & Intrinsics
 //====================================================
 
-#if defined(__linux__) || defined(_WIN32)
+#if defined(__linux__) || defined(_WIN32) || defined(__APPLE__)
 
 //============================================= VEC2 ==================================================
 template <class T> class vec3;
@@ -467,7 +467,7 @@ class Vec4 {
 #include <float.h>
 
 // SSE Vec4
-#ifdef __linux__
+#ifndef _WIN32
 class CMP_SSEVec4f
 #else
 #include "intrin.h"
@@ -478,7 +478,7 @@ class   __declspec(align(16)) CMP_SSEVec4f
 
     union {
         __m128 vec128;          // float Vector 128 bits in total (16 Bytes) = array of 4 floats
-#ifdef __linux__
+#ifndef _WIN32
         float f32[4];
 #endif
     };
@@ -506,7 +506,7 @@ class   __declspec(align(16)) CMP_SSEVec4f
     };
 
     // indexing
-#ifdef __linux__
+#ifndef _WIN32
     inline const float& operator[](int i) const {
         return f32[i];
     };
