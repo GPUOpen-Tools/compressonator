@@ -1,3 +1,4 @@
+set CurrDir=%CD%
 del  /s *.sdf
 del  /s *.db
 del  /s *.pdb
@@ -19,3 +20,11 @@ rmdir /s  /q build
 rmdir /s  /q lib
 FOR /d /r . %%d IN (CMakeFiles) DO @IF EXIST "%%d" rd /s /q "%%d"
 FOR /d /r . %%d IN (*_autogen) DO @IF EXIST "%%d" rd /s /q "%%d"
+
+REM Extern KTX folder cleanup
+cd ../common/lib/ext/ktx
+rmdir  /s /q  bin
+rmdir  /s /q  build
+rmdir  /s /q  src
+rmdir  /s /q  tmp
+cd %CurrDir%
