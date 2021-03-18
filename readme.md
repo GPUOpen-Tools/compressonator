@@ -19,7 +19,7 @@ https://github.com/GPUOpen-Tools/Compressonator/releases
 
 To build the source files follow the instructions in http://compressonator.readthedocs.io/en/latest/build_from_source/build_instructions.html
 
-## Cmake Build Configuration ##
+## CMake Build Configuration ##
 As of v4.2, The cmake command line options have settings to build specific libs and applications
 
 Examples: Generating Visual Studio Solution File
