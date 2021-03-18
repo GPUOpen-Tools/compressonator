@@ -52,6 +52,7 @@
 // Features
 #ifdef _WIN32
 //#define USE_ASPM_CODE
+#include <cmath>
 #endif
 
 // Proxy ISPC compiler (Warning! Not all ASPM features will be available : expect build errors for specialized ASPM code!

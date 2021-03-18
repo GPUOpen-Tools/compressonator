@@ -15,11 +15,18 @@ above this repository.
 
 Get Prebuilt Binaries and Installer here:
 ---------------------------------------------------
-<div>
-  <a href="https://github.com/GPUOpen-Tools/Compressonator/releases/latest/"><img src="http://gpuopen-librariesandsdks.github.io/media/latest-release-button.svg" alt="Latest release" title="Latest release"></a>
-</div>
+https://github.com/GPUOpen-Tools/Compressonator/releases
 
 To build the source files follow the instructions in http://compressonator.readthedocs.io/en/latest/build_from_source/build_instructions.html
+
+## Cmake Build Configuration ##
+
+As of v4.2, The cmake command line options have settings to build specific libs and applications
+Examples: Generating Visual Studio Solution File
+cmake -G "Visual Studio 15 2017 Win64"   Enable building all apps and libs
+cmake -DOPTION_ENABLE_ALL_APPS=OFF -G "Visual Studio 15 2017 Win64"    Disable all builds except external libs, minimal cmake base setup 
+cmake -DOPTION_ENABLE_ALL_APPS=OFF -DOPTION_BUILD_APPS_CMP_CLI=ON -G "Visual Studio 15 2017 Win64"   Enable only CLI app build
+for more details reference the CMakeList file on the root folder.
 
 ## Style and Format Change ##
 
