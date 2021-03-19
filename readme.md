@@ -15,7 +15,9 @@ above this repository.
 
 Get Prebuilt Binaries and Installer here:
 ---------------------------------------------------
-https://github.com/GPUOpen-Tools/Compressonator/releases
+<div>
+  <a href="https://github.com/GPUOpen-Tools/Compressonator/releases/latest/"><img src="http://gpuopen-librariesandsdks.github.io/media/latest-release-button.svg" alt="Latest release" title="Latest release"></a>
+</div>
 
 To build the source files follow the instructions in http://compressonator.readthedocs.io/en/latest/build_from_source/build_instructions.html
 
