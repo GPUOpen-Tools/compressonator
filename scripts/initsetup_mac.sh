@@ -2,11 +2,12 @@
 #assuming you already have homebrew installed
 brew update
 brew install cmake
+brew install pkgconfig
 
-#need >gcc-6 and >g++-6 for the build
-brew install gcc
-export CC=/usr/local/bin/gcc-9
-export CXX=/usr/local/bin/g++-9
+# need >gcc-6 and >g++-6 for the build
+# brew install gcc
+# export CC=/usr/local/bin/gcc-9
+# export CXX=/usr/local/bin/g++-9
 
 brew install mesa
 echo 'export PATH="$(brew --prefix glew)/bin:$PATH"' >> ~/.bashrc
@@ -31,9 +32,6 @@ wget http://download.savannah.nongnu.org/releases/openexr/openexr-2.2.0.tar.gz
 
 brew install opencv
 echo 'export PATH="$(brew --prefix opencv@2)/lib:$PATH"' >> ~/.bashrc
-
-brew install boost
-echo 'export PATH="$(brew --prefix boost)/bin:$PATH"' >> ~/.bashrc
 
 source ~/.bashrc
 

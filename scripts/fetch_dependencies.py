@@ -72,19 +72,30 @@ ghRoot = "https://github.com/GPUOpen-Tools/"
 #   "https://github.com/syoyo/tinyexr"          : ["../common/lib/ext/tinyexr", "master"],
 #   "https://github.com/google/draco/tree/master/src/draco" : : ["../common/lib/ext/draco", "master"],
 
-# Libs.
-gitMapping = {
-    ghRoot+"Catch2.git"                         : ["../common/lib/ext/catch2",     "master"],
-    ghRoot+"common_lib_ext_glew_1.9.git"        : ["../common/lib/ext/glew",       "master"],
-    ghRoot+"common_lib_ext_opencv_2.49.git"     : ["../common/lib/ext/opencv",     "master"],
-    ghRoot+"common_lib_ext_openexr_2.2.git"     : ["../common/lib/ext/openexr",    "master"],
-    ghRoot+"common_lib_ext_opengl.git"          : ["../common/lib/ext/opengl",     "master"],
-    ghRoot+"common_lib_ext_tinyxml_2.6.2.git"   : ["../common/lib/ext/tinyxml",    "master"],
-    ghRoot+"common_lib_ext_zlib_1.2.10.git"     : ["../common/lib/ext/zlib",       "master"],
-    "https://github.com/g-truc/glm.git"         : ["../common/lib/ext/glm",        "0.9.8.0"],
-    "https://github.com/discord/rapidxml.git"   : ["../common/lib/ext/rapidxml",   "master"],
-    "https://github.com/KhronosGroup/KTX-Software.git" : ["../common/lib/ext/ktx", "v4.0.0-beta4"],
-    "https://github.com/apitrace/dxsdk"         : ["../common/lib/ext/apitrace/dxsdk", "master"],
+# Libs to build on Window
+gitMappingWin = {
+     ghRoot+"Catch2.git"                         : ["../common/lib/ext/catch2",     "master"],
+     ghRoot+"common_lib_ext_glew_1.9.git"        : ["../common/lib/ext/glew",       "master"],
+     ghRoot+"common_lib_ext_opencv_2.49.git"     : ["../common/lib/ext/opencv",     "master"],
+     ghRoot+"common_lib_ext_openexr_2.2.git"     : ["../common/lib/ext/openexr",    "master"],
+     ghRoot+"common_lib_ext_opengl.git"          : ["../common/lib/ext/opengl",     "master"],
+     ghRoot+"common_lib_ext_tinyxml_2.6.2.git"   : ["../common/lib/ext/tinyxml",    "master"],
+     ghRoot+"common_lib_ext_zlib_1.2.10.git"     : ["../common/lib/ext/zlib",       "master"],
+     "https://github.com/g-truc/glm.git"         : ["../common/lib/ext/glm",        "0.9.8.0"],
+     "https://github.com/discord/rapidxml.git"   : ["../common/lib/ext/rapidxml",   "master"],
+     "https://github.com/KhronosGroup/KTX-Software.git" : ["../common/lib/ext/ktx", "v4.0.0-beta4"],
+     "https://github.com/apitrace/dxsdk"         : ["../common/lib/ext/apitrace/dxsdk", "master"],
+}
+
+# Libs to build on Linux
+gitMappingLin = {
+     ghRoot+"common_lib_ext_openexr_2.2.git"     : ["../common/lib/ext/openexr",    "master"],
+     "https://github.com/g-truc/glm.git"         : ["../common/lib/ext/glm",        "0.9.8.0"],
+     "https://github.com/discord/rapidxml.git"   : ["../common/lib/ext/rapidxml",   "master"],
+}
+
+# Libs to build on Unix
+gitMappingUni = {
 }
 
 # The following section contains OS-specific dependencies that are downloaded and placed in the specified target directory.
@@ -101,8 +112,40 @@ downloadMappingLin = {
     "http://download.savannah.nongnu.org/releases/openexr/openexr-2.2.0.tar.gz": "../../common/lib/ext/openexr2/openexr",
 }
 
+downloadMappingUni = {
+}
+
+# detect the OS
+MACHINE_OS = ""
+print("OS:",platform.system().lower())
+if "windows" in platform.system().lower():
+    MACHINE_OS = "WINDOWS"
+elif "cygwin" in platform.system().lower():
+    MACHINE_OS = "WINDOWS"
+elif "linux" in platform.system().lower():
+    MACHINE_OS = "LINUX"
+elif "darwin" in platform.system().lower():
+    MACHINE_OS = "UNIX"
+else:
+    print("Operating system not recognized correctly")
+    sys.exit(1)
+print("BUILD MACHINE AS:",MACHINE_OS)
+
+# reference the correct archive path
+gitMapping = ""
+downloadMapping = ""
+if MACHINE_OS == "LINUX":
+    gitMapping = gitMappingLin
+    downloadMapping = downloadMappingLin
+if MACHINE_OS == "WINDOWS":
+    gitMapping = gitMappingWin
+    downloadMapping = downloadMappingWin
+if MACHINE_OS == "UNIX":
+    gitMapping = gitMappingUni
+    downloadMapping = downloadMappingUni
+
 # for each dependency - test if it has already been fetched - if not, then fetch it, otherwise update it to top of tree
-for key in gitMapping:
+def downloadgit(key, path, reqdCommit):
     # Target path, relative to workspace
     path   = gitMapping[key][0]
     source = key
@@ -140,25 +183,8 @@ for key in gitMapping:
             sys.exit(1)
         sys.stderr.flush()
         sys.stdout.flush()
-
-# detect the OS
-MACHINE_OS = ""
-if "windows" in platform.system().lower():
-    MACHINE_OS = "Windows"
-elif "cygwin" in platform.system().lower():
-    MACHINE_OS = "Windows"
-elif "linux" in platform.system().lower():
-    MACHINE_OS = "Linux"
-else:
-    print("Operating system not recognized correctly")
-    sys.exit(1)
-
-# reference the correct archive path
-downloadMapping = ""
-if MACHINE_OS == "Linux":
-    downloadMapping = downloadMappingLin
-else:
-    downloadMapping = downloadMappingWin
+for key in gitMapping:
+    downloadgit(key, gitMapping[key][0], gitMapping[key][1])
 
 # routine for downloading and unzipping an archive
 def downloadandunzip(key, value):
@@ -184,5 +210,6 @@ def downloadandunzip(key, value):
             os.remove(zipPath)
 
 # for each archived release, download and unzip the artifacts into the target location
+
 for key in downloadMapping:
     downloadandunzip(key, downloadMapping[key])
