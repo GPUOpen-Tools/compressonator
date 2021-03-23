@@ -101,10 +101,10 @@
 // All of these definitions need to be removed from this file!!
 // into CMakeList.txt, the content here is temporary
 
-#define OPTION_CMP_DIRECTX 1
-#define OPTION_CMP_OPENGL 1
-#define OPTION_CMP_VULKAN 1
-#define OPTION_USE_QT_IMAGELOAD 1
+//#define OPTION_CMP_DIRECTX 1
+//#define OPTION_CMP_OPENGL 1
+//#define OPTION_CMP_VULKAN 0
+//#define OPTION_CMP_QT 0
 //#define OPTION_BUILD_SHARED_LIBS 1
 //#define CMP_BUILD_SHARED_LIBS 1
 //#define BUILD_AS_PLUGIN_DLL 1

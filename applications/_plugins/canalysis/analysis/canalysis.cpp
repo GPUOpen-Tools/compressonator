@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2021 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -38,10 +38,8 @@
 
 #include "cpimageloader.h"
 
-#ifdef USE_OPENCV
+#if (OPTION_CMP_QT == 1)
 #include "cvmatandqimage.h"
-#endif
-
 #include <QtCore/QCoreApplication>
 #include <QtCore/qstandardpaths.h>
 #include <QtCore/qstring.h>
@@ -50,6 +48,7 @@
 #include <QtGui/qcolor.h>
 #include <QtGui/qimage.h>
 #include <QtCore/qmath.h>
+#endif
 
 #ifdef USE_OPENCV
 #include <opencv2/core/core.hpp>
@@ -94,6 +93,7 @@ using namespace std;
 #pragma comment(lib, OpenCV_imgproc_Lib)
 #endif
 
+#if (OPTION_CMP_QT == 1)
 #define Qt5_core_Lib        "Qt5Core" CMP_EXTERNAL_LibExt
 #define Qt5_gui_Lib         "Qt5Gui" CMP_EXTERNAL_LibExt
 #define Qt5_widgets_Lib     "Qt5Widgets" CMP_EXTERNAL_LibExt
@@ -101,7 +101,7 @@ using namespace std;
 #pragma comment(lib, Qt5_core_Lib)
 #pragma comment(lib, Qt5_gui_Lib)
 #pragma comment(lib, Qt5_widgets_Lib)
-
+#endif
 
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_Canalysis)
@@ -127,7 +127,10 @@ Plugin_Canalysis::Plugin_Canalysis() {
     tolerance_ssimg   = 0.9995;
     tolerance_ssimr   = 0.9995;
 
+#if (OPTION_CMP_QT == 1)
     m_imageloader     = NULL;
+#endif
+
     m_MipSrcImages    = NULL;
     m_MipDestImages   = NULL;
     m_MipDiffImages   = NULL;
@@ -136,14 +139,15 @@ Plugin_Canalysis::Plugin_Canalysis() {
 }
 
 Plugin_Canalysis::~Plugin_Canalysis() {
+#if (OPTION_CMP_QT == 1)
     if (m_MipSrcImages)
         m_imageloader->clearMipImages(&m_MipSrcImages);
 
     if (m_MipDestImages)
         m_imageloader->clearMipImages(&m_MipDestImages);
-
     if (m_imageloader)
         delete m_imageloader;
+#endif
 }
 
 int Plugin_Canalysis::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) {
@@ -526,6 +530,7 @@ void checkPattern(int* r, int* g, int* b, char *pattern, CMP_FORMAT format) {
 }
 
 void  Plugin_Canalysis::generateBCtestResult(QImage *src, QImage *dest, REPORT_DATA &myReport) {
+#if (OPTION_CMP_QT == 1)
     int srcR = 0, srcG = 0, srcB = 0;
     int destR = 0, destG = 0, destB = 0;
 
@@ -561,6 +566,7 @@ void  Plugin_Canalysis::generateBCtestResult(QImage *src, QImage *dest, REPORT_D
         strncpy(myReport.srcdecodePattern, srcPattern, 16);
         strncpy(myReport.destdecodePattern, destPattern, 16);
     }
+#endif
 }
 
 #ifdef USE_OPENCV
@@ -709,6 +715,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
                                    CMP_Feedback_Proc pFeedbackProc) {
     if (pluginManager == NULL) return -1;
 
+#if (OPTION_CMP_QT == 1)
     CMP_ANALYSIS_DATA *analysisData = (CMP_ANALYSIS_DATA *) usrAnalysisData;
 
     if (m_imageloader == NULL)
@@ -979,11 +986,16 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
         return 0;
     else
         return -1;
+#else
+    printf("Error: Image Diff is not supported requires Qt\n");
+    return -1;
+#endif
 }
 
 int Plugin_Canalysis::TC_PSNR_MSE(const char * in1, const char * in2,  char *resultsFile, void *pluginManager, CMP_Feedback_Proc pFeedbackProc) {
     if (pluginManager == NULL) return -1;
 
+#if (OPTION_CMP_QT == 1)
     if (m_imageloader == NULL)
         m_imageloader = new CImageLoader(pluginManager);
 
@@ -1089,16 +1101,20 @@ int Plugin_Canalysis::TC_PSNR_MSE(const char * in1, const char * in2,  char *res
         printf("Error: Image(s) cannot be loaded\n");
         return -1;
     }
-
     return 0;
+#else
+    printf("Error: Image PSNT MSE is not supported requires Qt\n");
+    return -1;
+#endif
+
 }
 
 int Plugin_Canalysis::TC_SSIM(const char * in1, const char * in2, char *resultsFile, void *pluginManager, CMP_Feedback_Proc pFeedbackProc) {
     if (pluginManager == NULL) return -1;
 
+#if (OPTION_CMP_QT == 1)
     if (m_imageloader == NULL)
         m_imageloader = new CImageLoader(pluginManager);
-
     QImage* srcImage = NULL;
     QImage* destImage = NULL;
 
@@ -1170,6 +1186,9 @@ int Plugin_Canalysis::TC_SSIM(const char * in1, const char * in2, char *resultsF
         printf("Error: Image(s) cannot be loaded\n");
         return -1;
     }
-
     return 0;
+#else
+    printf("Error: Image SSIM is not supported requires Qt\n");
+    return -1;
+#endif
 }

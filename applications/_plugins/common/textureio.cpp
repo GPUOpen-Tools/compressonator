@@ -35,11 +35,11 @@
 
 #include <gpu_decode.h>
 
-#if defined(WIN32) && !defined(NO_LEGACY_BEHAVIOR)
-#define USE_QT_IMAGELOAD
-#endif
+// #if defined(WIN32) && !defined(NO_LEGACY_BEHAVIOR)
+// #define OPTION_CMP_QT
+// #endif
 
-#ifdef USE_QT_IMAGELOAD
+#if (OPTION_CMP_QT == 1)
 #include <mipstoqimage.h>
 #include <QtCore/QCoreApplication>
 #include <QtGui/qimage.h>
@@ -53,7 +53,7 @@
 #pragma comment(lib, "Qt5Gui.lib")
 #endif
 
-#endif //USE_QT_IMAGELOAD
+#endif // CMP_USE_QT
 
 #include <algorithm>
 #include <iostream>
@@ -785,7 +785,8 @@ int AMDLoadMIPSTextureImage(const char *SourceFile, MipSet *MipSetIn, bool use_O
         delete plugin_Image;
         plugin_Image = NULL;
     } else {
-#ifdef USE_QT_IMAGELOAD
+
+#if (OPTION_CMP_QT == 1)
         // Failed to load using a AMD Plugin
         // Try Qt based
         int result = -1;
@@ -859,8 +860,9 @@ int AMDSaveMIPSTextureImage(const char *DestFile, MipSet *MipSetIn, bool use_OCV
     }
 
 
-#ifdef USE_QT_IMAGELOAD
-    if (!filesaved) {
+#if (OPTION_CMP_QT == 1)
+    if (!filesaved)
+    {
         // Try Qt based filesave!
         QImage *qimage = MIPS2QImage(&m_CMIPS, MipSetIn, 0, 0, option, nullptr);
 

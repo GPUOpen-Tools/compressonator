@@ -10,7 +10,7 @@ set(PLUGINS_PATH $<TARGET_FILE_DIR:CompressonatorCLI-bin>/plugins)
 cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/Applications/_Plugins/CGPUDecode/Vulkan/VK_ComputeShader/texture.vert.spv ${ASSETS_PATH}/texture.vert.spv)
 cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/Applications/_Plugins/CGPUDecode/Vulkan/VK_ComputeShader/texture.frag.spv ${ASSETS_PATH}/texture.frag.spv)
 
-if (OPTION_USE_QT_IMAGELOAD)
+if (OPTION_CMP_QT)
     cmp_gui_copy_to_output(${CMAKE_CURRENT_LIST_DIR}/qt.conf ${ASSETS_PATH}/qt.conf)
 
     get_property(QT_LIB_DIR GLOBAL PROPERTY QT_LIB_DIR)

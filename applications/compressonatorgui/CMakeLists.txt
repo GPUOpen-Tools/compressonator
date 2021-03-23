@@ -149,16 +149,17 @@ target_include_directories(CompressonatorGUI-bin PRIVATE
 
 if(CMP_HOST_WINDOWS)
     include(copyfiles.cmake)
-    set_target_properties(CompressonatorGUI-bin 
-        PROPERTIES 
+    set_target_properties(CompressonatorGUI-bin PROPERTIES 
+        FOLDER "Applications"
+        LINK_FLAGS "/SUBSYSTEM:CONSOLE"
         AUTOMOC ON
         AUTORCC ON
         AUTOMOC_COMPILER_PREDEFINES ON
         OUTPUT_NAME "compressonator"
         )
 else()
-    set_target_properties(CompressonatorGUI-bin 
-        PROPERTIES 
+    set_target_properties(CompressonatorGUI-bin PROPERTIES 
+        FOLDER "Applications"
         AUTOMOC ON
         AUTORCC ON
         AUTOMOC_COMPILER_PREDEFINES ON

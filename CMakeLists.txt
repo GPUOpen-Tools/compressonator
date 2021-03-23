@@ -56,6 +56,11 @@ if (OPTION_BUILD_APPS_CMP_CLI OR OPTION_BUILD_APPS_CMP_GUI)
     set(LIB_BUILD_GPUDECODE ON)
 endif()
 
+if (OPTION_BUILD_APPS_CMP_VISION)
+    set(LIB_BUILD_COMPRESSONATOR_SDK ON)
+    set(LIB_BUILD_FRAMEWORK_SDK ON)
+endif()
+
 # ------------------------------
 # Helper function for the build 
 # ------------------------------
@@ -78,9 +83,9 @@ cmp_option(OPTION_BUILD_EXR   "Build CLI EXR Support" CMP_HOST_WINDOWS)
 cmp_option(OPTION_BUILD_DRACO "Build CLI Draco Support" CMP_HOST_WINDOWS)
 cmp_option(OPTION_BUILD_GUI "Build the GUI Application" CMP_HOST_WINDOWS)
 cmp_option(OPTION_CMP_DIRECTX "Use Directx" CMP_HOST_WINDOWS) # set for windows only
-cmp_option(OPTION_CMP_VULKAN "Use Vulkan" ON) # set for windows, can be on other platforms when current code validated!
+cmp_option(OPTION_CMP_VULKAN "Use Vulkan" OPTION_ENABLE_ALL_APPS) # set for windows, can be on other platforms when current code validated!
 cmp_option(OPTION_CMP_OPENGL "Use OpenGL" ON)   # available on all platforms
-cmp_option(OPTION_USE_QT_IMAGELOAD "Use Qt for Image Loading" ON)
+cmp_option(OPTION_CMP_QT "Use Qt for Image Loading" OPTION_ENABLE_ALL_APPS)
 cmp_option(NO_LEGACY_BEHAVIOR "Disables any legacy behavior (before CMake migration)" ON) # this needs to be removed
 
 # --------------------------------------------
@@ -92,7 +97,6 @@ option(OPTION_BUILD_ARCHITECTMF "Internal Dev ArchitectMF Tool" OFF)
 # Code build definitions and features: These options are been revised for v4.2
 # -----------------------------------------------------------------------------------
 add_compile_definitions(
-    USE_QTWEBKIT                # Enable Qt Webengine interfaces for GUI welcome page
     USE_ETCPACK                 # Use ETCPack for ETC2 else use CModel code!
     USE_MESH_CLI                # CLI Process Mesh (only support glTF and OBJ files)
     ENABLE_MAKE_COMPATIBLE_API  # Byte<->Float to make all source and dest compatible
@@ -142,8 +146,8 @@ if (OPTION_BUILD_DRACO)
 endif()
 
 
-if (OPTION_USE_QT_IMAGELOAD)
-    add_compile_definitions(USE_QT_IMAGELOAD=1)
+if (OPTION_USE_QT)
+    add_compile_definitions(CMP_USE_QT=1)
 endif()
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Supported configuration options" FORCE)
@@ -193,9 +197,10 @@ else()
         if (Qt5Gui_FOUND)
         else()
           message(FATAL_ERROR "Package Qt5 (Qt5Gui) are required, but not found. "
-                  "In Unix, run initsetup_unix.sh or sudo apt-get install "
-                  "qtdeclarative5-dev. If is window, please make sure install qt and "
-                  "add the bin path (i.e. C:\Qt\5.7\msvc2015_64\bin) to environment PATH.")
+                  "In Unix, run initsetup_unix.sh or sudo apt-get install qtdeclarative5-dev. "
+                  "If is window, please make sure install qt and "
+                  "add the bin path to environment PATH.(i.e. C:\Qt\5.x.x\msvcYYYY_64\bin) "
+                  "where x is Qt build version and YYYY is MS Compiler release date")
         endif()
     endif()
     
@@ -282,7 +287,7 @@ if (NOT CMP_HOST_APPLE)
         add_subdirectory(applications/compressonatorgui)
         add_subdirectory(applications/_libs/cmp_meshoptimizer)
         add_subdirectory(applications/_plugins/common/qtimgui)
-        #add_subdirectory(applications/_plugins/common/gltf)
+        add_subdirectory(applications/_plugins/common/gltf)
     endif()
 endif()
 
@@ -309,11 +314,11 @@ if (CMP_HOST_WINDOWS)
     if (OPTION_BUILD_APPS_CMP_VISION)
         message("Build cmp vision setup")
         add_subdirectory(applications/cmp_vision)
+        add_subdirectory(applications/_plugins/cvision)
     endif()
 
     if (OPTION_BUILD_APPS_CMP_GUI)
         # Windows Based Plugins
-        add_subdirectory(applications/_plugins/cvision)
         add_subdirectory(applications/_plugins/cgpudecode)
     
         # 3D Mesh processing

@@ -2,6 +2,11 @@
 
 message(STATUS "++++++++++++++++++ External-QT " ${QT_PACKAGE_ROOT} )
 
+if (NOT OPTION_CMP_QT)
+    message("OPTION_CMP_QT=OFF")
+    return()
+endif()
+
 #if (NOT DEFINED ENV{QTDIR})
 #    message(FATAL_ERROR "A 'QTDIR' environment variable is required")
 #endif()

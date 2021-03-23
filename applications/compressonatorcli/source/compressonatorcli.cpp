@@ -34,11 +34,11 @@
 #include "textureio.h"
 #include "version.h"
 
-#if defined(WIN32) && !defined(NO_LEGACY_BEHAVIOR)
-#define USE_QT_IMAGELOAD
-#endif
+// #if defined(WIN32) && !defined(NO_LEGACY_BEHAVIOR)
+// #define OPTION_CMP_QT
+// #endif
 
-#ifdef USE_QT_IMAGELOAD
+#if (OPTION_CMP_QT == 1)
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qdebug.h>
 #endif
@@ -84,7 +84,7 @@ void AboutCompressonator()
     {
         // Keep track of Customer patches from last release to current
         // This is what is shown when you build the exe outside of the automated Build System (such as Jenkins)
-        printf("compressonatorcli V4.2.0 Copyright AMD 2021\n");
+        printf("compressonatorcli V4.1.0 Copyright AMD 2020\n");
     }
     printf("------------------------------------------------\n");
     printf("\n");
@@ -238,7 +238,7 @@ void PrintUsage()
     printf("                             This setting is not used in BC6H and BC7\n");
     printf("-NumThreads <value>          Number of threads to initialize for ASTC,BC6H,BC7\n");
     printf("                             encoding (Max up to 128). Default set to 8\n");
-    printf("-Quality <value>             Sets quality of encoding for ASTC,BC6H,BC7\n");
+    printf("-Quality <value>             Sets quality of encoding for BC7\n");
     printf("-Performance <value>         Sets performance of encoding for BC7\n");
     printf("-ColourRestrict <value>      This setting is a quality tuning setting for BC7\n");
     printf("                             which may be necessary for convenience in some\n");
@@ -423,7 +423,7 @@ int main(int argc, char* argv[])
     if (PrintStatusLine == NULL)
         PrintStatusLine = &LocalPrintF;
 
-#ifdef USE_QT_IMAGELOAD
+#if (OPTION_CMP_QT == 1)
     QCoreApplication app(argc, argv);
 #endif
 
@@ -443,7 +443,7 @@ int main(int argc, char* argv[])
 
     CMP_RegisterHostPlugins();
 
-#ifdef USE_QT_IMAGELOAD
+#if (OPTION_CMP_QT == 1)
     QString dirPath = QCoreApplication::applicationDirPath();
     QCoreApplication::addLibraryPath(dirPath + "./plugins/imageformats");
 #endif

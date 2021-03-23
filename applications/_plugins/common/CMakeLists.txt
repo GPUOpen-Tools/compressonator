@@ -1,3 +1,17 @@
+
+if (OPTION_CMP_QT)
+    set(PLUGIN_COMMON_SRC_QT
+        mipstoqimage.cpp
+        )
+    set(PLUGIN_COMMON_INC_QT
+        mipstoqimage.h
+        )
+else()
+    set(PLUGIN_COMMON_SRC_QT)
+    set(PLUGIN_COMMON_INC_QT)
+endif()
+
+
 set(PLUGIN_COMMON_SRC
     atiformats.cpp
     cexr.cpp
@@ -5,7 +19,6 @@ set(PLUGIN_COMMON_SRC
     cmp_fileio.cpp
     misc.cpp
     modeldata.cpp
-    mipstoqimage.cpp
     pluginmanager.cpp
     query_timer.cpp
     ssim.cpp
@@ -25,7 +38,6 @@ set(PLUGIN_COMMON_H
     hpc_compress.h
     misc.h
     modeldata.h
-    mipstoqimage.h
     namespacealias.h
     pluginbase.h
     plugininterface.h
@@ -43,7 +55,12 @@ set(PLUGIN_COMMON_H
     vectypes.h
 )
 
-add_library(CMP_Common STATIC ${PLUGIN_COMMON_SRC} ${PLUGIN_COMMON_H})
+add_library(CMP_Common STATIC 
+    ${PLUGIN_COMMON_SRC} 
+    ${PLUGIN_COMMON_SRC_QT}
+    ${PLUGIN_COMMON_H}
+    ${PLUGIN_COMMON_INC_QT}
+    )
 
 target_include_directories(CMP_Common PRIVATE
   .
@@ -65,9 +82,9 @@ target_include_directories(CMP_Common PRIVATE
   ${draco_INCLUDE_DIRS}
   )
 
-target_link_libraries(CMP_Common Qt5::Widgets)
+if (OPTION_CMP_QT)
+    target_link_libraries(CMP_Common Qt5::Widgets)
+endif()
 
 set_target_properties(CMP_Common PROPERTIES FOLDER "Libs")
-
-add_subdirectory(gltf)
 

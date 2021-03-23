@@ -1,6 +1,13 @@
 # -------------------------------------------------------------------------
 # Vulkan
 
+message(STATUS "++++++++++++++++++ External-Vulkan")
+
+if (NOT OPTION_CMP_VULKAN)
+    message("OPTION_CMP_VULKAN=OFF")
+    return()
+endif()
+
 add_library(ExtVulkan INTERFACE)
 
 if (NOT DEFINED ENV{VULKAN_SDK})

@@ -42,13 +42,20 @@ file(GLOB_RECURSE RESOURCES
     resources/*
 )
 
+if (OPTION_CMP_QT)
+    set (CLI_QTFILES
+         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/mipstoqimage.cpp
+         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/mipstoqimage.h
+    )
+else()
+    set (CLI_QTFILES)
+endif()
+
 target_sources(CompressonatorCLI-bin
                PRIVATE
                ${RESOURCES}
                source/compressonatorcli.cpp
                source/compressonatorcli_documentation.h
-               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/mipstoqimage.cpp
-               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/mipstoqimage.h
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/atiformats.h
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/atiformats.cpp
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cmdline.h
@@ -67,6 +74,7 @@ target_sources(CompressonatorCLI-bin
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/gltf/tiny_gltf2.h
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/gltf/tiny_gltf2_utils.h
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/gltf/tiny_gltf2_utils.cpp
+               ${CLI_QTFILES}
                )
 
 target_include_directories(CompressonatorCLI-bin
@@ -87,7 +95,14 @@ target_include_directories(CompressonatorCLI-bin
                            ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshcompressor/draco/src
                            ${draco_INCLUDE_DIRS}
                            ${OpenEXR_INCLUDE_DIRS}
-                           ${Qt5Gui_INCLUDE_DIRS})
+                           )
+
+if (OPTION_CMP_QT)
+target_include_directories(CompressonatorCLI-bin
+                           PRIVATE
+                           ${Qt5Gui_INCLUDE_DIRS}
+                           )
+endif()
 
 if(APPLE)
 target_include_directories(CompressonatorCLI-bin
@@ -95,7 +110,6 @@ target_include_directories(CompressonatorCLI-bin
                            /usr/local/include/OpenEXR/)
 endif()
 
-# Qt5 include path - users install required
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if (UNIX)
@@ -128,21 +142,36 @@ if (UNIX)
         list(APPEND CMP_LIBS "/usr/local/lib/libIlmImf.dylib")
     endif()
 else()
-        list(APPEND 
-            CMP_LIBS
-            CMP_GpuDecode
-            Image_KTX2
-            ExtQt5 
-            ExtQt5Widgets)
+        if (OPTION_CMP_QT)
+            list(APPEND 
+                CMP_LIBS
+                CMP_GpuDecode
+                Image_KTX2
+                ExtQt5 
+                ExtQt5Widgets
+                )
+        else()
+            list(APPEND 
+                CMP_LIBS
+                CMP_GpuDecode
+                Image_KTX2
+                )
+        endif()
 endif()
 
 list(APPEND CMP_LIBS ${OpenCV_LIBRARIES}
                      ${draco_LIBRARIES})
 
-target_link_libraries(CompressonatorCLI-bin
+if (OPTION_CMP_QT)
+    target_link_libraries(CompressonatorCLI-bin
                       ${CMP_LIBS}
                       Qt5::Gui
                       )
+else()
+    target_link_libraries(CompressonatorCLI-bin
+                      ${CMP_LIBS}
+                      )
+endif()
 
 add_dependencies(CompressonatorCLI-bin 
                 CMP_Compressonator
@@ -169,17 +198,32 @@ elseif(CMP_HOST_APPLE)
 endif()
 
 if(CMP_HOST_WINDOWS)
-set_target_properties(CompressonatorCLI-bin PROPERTIES 
-                AUTORCC ON
-                AUTOMOC ON
-                OUTPUT_NAME "compressonatorcli"
-                )
+    if (OPTION_CMP_QT)
+        set_target_properties(CompressonatorCLI-bin PROPERTIES 
+                        FOLDER "Applications"
+                        AUTORCC ON
+                        AUTOMOC ON
+                        OUTPUT_NAME "compressonatorcli"
+                        )
+    else()
+        set_target_properties(CompressonatorCLI-bin PROPERTIES 
+                        FOLDER "Applications"
+                        OUTPUT_NAME "compressonatorcli"
+                        )
+    endif()
 else()
-set_target_properties(CompressonatorCLI-bin PROPERTIES 
-                AUTORCC ON
-                AUTOMOC ON
-                OUTPUT_NAME "compressonatorcli-bin"
-                )
+    if (OPTION_CMP_QT)
+        set_target_properties(CompressonatorCLI-bin PROPERTIES 
+                    FOLDER "Applications"
+                    AUTORCC ON
+                    AUTOMOC ON
+                    OUTPUT_NAME "compressonatorcli-bin"
+                    )
+    else()
+        set_target_properties(CompressonatorCLI-bin PROPERTIES 
+                    FOLDER "Applications"
+                    OUTPUT_NAME "compressonatorcli-bin"
+                    )
+    endif()
 endif()
 
-# install(TARGETS CompressonatorCLI-bin)

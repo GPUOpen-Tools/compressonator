@@ -19,7 +19,7 @@
 
 #include "mipstoqimage.h"
 
-#ifndef USE_QT_IMAGELOAD
+#ifndef OPTION_CMP_QT
 int QImage2MIPS(QImage*, CMIPS*, MipSet*)
 {
     return 0;  // no-op
