@@ -49,7 +49,6 @@ if (OPTION_BUILD_APPS_CMP_CLI OR OPTION_BUILD_APPS_CMP_GUI)
     set(LIB_BUILD_COMPRESSONATOR_SDK ON)
     set(LIB_BUILD_FRAMEWORK_SDK ON)
     set(LIB_BUILD_IMAGEIO ON)
-    set(LIB_BUILD_MESHCOMPRESSOR ON)
     set(LIB_BUILD_ANALYSIS ON)
     set(LIB_BUILD_COMMON ON)
     set(LIB_BUILD_CORE ON)
@@ -60,6 +59,10 @@ if (OPTION_BUILD_APPS_CMP_VISION)
     set(LIB_BUILD_COMPRESSONATOR_SDK ON)
     set(LIB_BUILD_FRAMEWORK_SDK ON)
 endif()
+
+# The following options that have been removed
+set(LIB_BUILD_MESHCOMPRESSOR OFF)
+
 
 # ------------------------------
 # Helper function for the build 
@@ -80,7 +83,7 @@ else()
 cmp_option(OPTION_BUILD_KTX2  "Build CLI KTX2 Support" OFF)
 endif()
 cmp_option(OPTION_BUILD_EXR   "Build CLI EXR Support" CMP_HOST_WINDOWS)
-cmp_option(OPTION_BUILD_DRACO "Build CLI Draco Support" CMP_HOST_WINDOWS)
+cmp_option(OPTION_BUILD_DRACO "Build CLI Draco Support" OFF)
 cmp_option(OPTION_BUILD_GUI "Build the GUI Application" CMP_HOST_WINDOWS)
 cmp_option(OPTION_CMP_DIRECTX "Use Directx" CMP_HOST_WINDOWS) # set for windows only
 cmp_option(OPTION_CMP_VULKAN "Use Vulkan" OPTION_ENABLE_ALL_APPS) # set for windows, can be on other platforms when current code validated!
@@ -213,14 +216,14 @@ else()
          
          # Draco cmake find scripts are also broken (looks for src/ path in install directory)
          # find_package(Draco REQUIRED)
-         pkg_check_modules(draco draco)
-         if(draco_FOUND)
-         else()
-           # TODO: To do this properly we require a generated config header from CMake
-           # Which can be done with configure_file.
-           # See: https://cmake.org/cmake/help/latest/command/configure_file.html
-           add_definitions(-DCMAKE_DRACO_NOT_FOUND)
-         endif()
+         # pkg_check_modules(draco draco)
+         # if(draco_FOUND)
+         # else()
+         #   # TODO: To do this properly we require a generated config header from CMake
+         #   # Which can be done with configure_file.
+         #   # See: https://cmake.org/cmake/help/latest/command/configure_file.html
+         #   add_definitions(-DCMAKE_DRACO_NOT_FOUND)
+         # endif()
      
          find_package(OpenCV REQUIRED)
          if (OpenCV_FOUND)
@@ -267,7 +270,7 @@ if (LIB_BUILD_ANALYSIS)
 endif()
 
 if (LIB_BUILD_MESHCOMPRESSOR)
-    add_subdirectory(applications/_libs/cmp_meshcompressor) # Currently only draco based
+    # add_subdirectory(applications/_libs/cmp_meshcompressor) # Currently only draco based
 endif()
 
 # Add CLI common to all OS

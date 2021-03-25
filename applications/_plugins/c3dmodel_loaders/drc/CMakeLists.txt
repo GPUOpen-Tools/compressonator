@@ -10,7 +10,7 @@ target_sources(ModelLoader_drc PRIVATE
 target_link_libraries(ModelLoader_drc PRIVATE
     CMP_Compressonator
     CMP_Framework
-    CMP_MeshCompressor
+    # CMP_MeshCompressor
 )
 
 # Find the QtWidgets library
@@ -22,7 +22,7 @@ target_include_directories(ModelLoader_drc PUBLIC
     ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common
     ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshoptimizer
-    ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshcompressor/draco/src
+    # ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshcompressor/draco/src
 )
 
 target_compile_definitions(ModelLoader_drc PRIVATE BUILD_AS_PLUGIN_DLL=1)

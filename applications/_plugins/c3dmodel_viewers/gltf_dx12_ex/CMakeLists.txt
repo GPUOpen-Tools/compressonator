@@ -52,7 +52,7 @@ target_include_directories(ModelViewer_DX12 PUBLIC
 target_link_libraries(ModelViewer_DX12 PRIVATE
     CMP_Compressonator
     CMP_Framework
-    CMP_MeshCompressor
+    # CMP_MeshCompressor
     CMP_GUI_Gltf
     CMP_GpuDecode
     CMP_Imgui

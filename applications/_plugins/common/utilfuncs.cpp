@@ -39,10 +39,13 @@
 #include <windows.h>
 #endif
 
-#ifdef _CMP_CPP17_  // Build code using std::c++17
+#if defined _CMP_CPP17_ // Build code using std::c++17
 #include <filesystem>
 namespace sfs = std::filesystem;
 #else
+#ifndef _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+#endif
 #include <experimental/filesystem>
 namespace sfs = std::experimental::filesystem;
 #endif

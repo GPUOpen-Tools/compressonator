@@ -15,7 +15,7 @@ target_sources(ModelLoader_obj PRIVATE
 target_link_libraries(ModelLoader_obj PRIVATE
     CMP_Compressonator
     CMP_Framework
-    CMP_MeshCompressor
+    # CMP_MeshCompressor
     CMP_Common
 )
 

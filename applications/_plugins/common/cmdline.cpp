@@ -51,7 +51,8 @@ namespace sfs = std::experimental::filesystem;
 #endif
 
 using namespace tinygltf2;
-#if !defined(NO_LEGACY_BEHAVIOR)
+
+#if (LIB_BUILD_MESHCOMPRESSOR == 1)
 #ifdef _DEBUG
 #pragma comment(lib, "CMP_MeshCompressor_MDd.lib")
 #else
@@ -902,8 +903,7 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
                     (strcmp(strCommand, "-UseChannelWeighting") == 0) || (strcmp(strCommand, "-RefinementSteps") == 0) ||
                     (strcmp(strCommand, "-ForceFloatPath") == 0) || (strcmp(strCommand, "-CompressionSpeed") == 0) ||
                     (strcmp(strCommand, "-SwizzleChannels") == 0) || (strcmp(strCommand, "-CompressionSpeed") == 0) ||
-                    (strcmp(strCommand, "-Performance") == 0) ||
-                    (strcmp(strCommand, "-MultiThreading") == 0))
+                    (strcmp(strCommand, "-Performance") == 0) || (strcmp(strCommand, "-MultiThreading") == 0))
                 {
                     // Reserved for future dev: command options passed down to codec levels
                     const char* str;
@@ -1701,7 +1701,8 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
     // Case: drc -> obj decompression
     //PluginInterface_3DModel_Loader* m_plugin_loader_drc = NULL;
 
-    PluginInterface_Mesh* plugin_MeshComp;
+#if (LIB_BUILD_MESHCOMPRESSOR)
+        PluginInterface_Mesh* plugin_MeshComp;
     plugin_MeshComp = reinterpret_cast<PluginInterface_Mesh*>(g_pluginManager.GetPlugin("MESH_COMPRESSOR", "DRACO"));
 
     if (plugin_MeshComp)
@@ -1823,6 +1824,7 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
         PrintInfo("[Mesh Compression] Error in loading mesh compression plugin.\n");
         return false;
     }
+#endif()
 
     return true;
 }
@@ -2772,18 +2774,18 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
                                        (g_CmdPrams.CompressOptions.nEncodeWith == CMP_Compute_type::CMP_UNKNOWN) ||
                                        (g_CmdPrams.CompressOptions.nEncodeWith == CMP_Compute_type::CMP_HPC));
 
-
             //======================================================
             // Determine if MIP mapping is required
             // if so generate the MIP levels for the source file
             //=======================================================
-            if (((g_CmdPrams.MipsLevel > 1) && (g_MipSetIn.m_nMipLevels == 1)) && (!g_CmdPrams.use_noMipMaps)) {
+            if (((g_CmdPrams.MipsLevel > 1) && (g_MipSetIn.m_nMipLevels == 1)) && (!g_CmdPrams.use_noMipMaps))
+            {
                 int nMinSize;
 
                 // Precheck user setting against image size
                 CMP_INT nHeight  = g_MipSetIn.m_nHeight;
                 CMP_INT nWidth   = g_MipSetIn.m_nWidth;
-                CMP_INT maxLevel = CMP_CalcMaxMipLevel(nWidth, nHeight, (g_CmdPrams.CompressOptions.genGPUMipMaps || isGPUEncoding ));
+                CMP_INT maxLevel = CMP_CalcMaxMipLevel(nWidth, nHeight, (g_CmdPrams.CompressOptions.genGPUMipMaps || isGPUEncoding));
 
                 // User has two option to specify MIP levels
                 if (g_CmdPrams.nMinSize > 0)
@@ -3485,7 +3487,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
                 // check if any data was calculated
                 if (g_CmdPrams.SSIM >= 0)
                 {
-                    PrintInfo("MSE %.2f PSRN %.1f SSIM %.4f\n", g_CmdPrams.MSE, g_CmdPrams.PSNR, g_CmdPrams.SSIM);
+                    PrintInfo("MSE %.2f PSRN %.2f SSIM %.4f\n", g_CmdPrams.MSE, g_CmdPrams.PSNR, g_CmdPrams.SSIM);
                 }
             }
 
@@ -3504,7 +3506,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
             char buff[128];
             snprintf(buff,
                      sizeof(buff),
-                     "Average      : PSNR: %.1f  SSIM: %.4f  Time %.3f Sec for %d item(s) \n",
+                     "Average      : PSNR: %.2f  SSIM: %.4f  Time %.3f Sec for %d item(s) \n",
                      psnr_sum / total_processed_items,
                      ssim_sum / total_processed_items,
                      process_time_sum / total_processed_items,
@@ -3558,7 +3560,7 @@ void ProcessResults(CCmdLineParamaters& prams, CMP_ANALYSIS_DATA& analysisData)
             // Write Header info
             if (newfile)
             {
-                fprintf(fp, "CompressonatorCLI Performance Log v1.2\n\n");
+                fprintf(fp, "CompressonatorCLI Performance Log v1.3\n\n");
                 fprintf(fp, "Negative values are errors in measurement Sets ErrCode > 0 else 0 for none\n");
                 fprintf(fp, "For images with no errors MSE= 0 PSNR=255 and SSIM= 1.0\n");
                 fprintf(fp, "Transcoded images         MSE= 0 PSNR=255 and SSIM=-2.0\n");
@@ -3681,7 +3683,7 @@ void ProcessResults(CCmdLineParamaters& prams, CMP_ANALYSIS_DATA& analysisData)
             {
                 snprintf(buffer, 1024, "%.4f", analysisData.MSE);
                 str_mse = buffer;
-                snprintf(buffer, 1024, "%.1f", analysisData.PSNR);
+                snprintf(buffer, 1024, "%.2f", analysisData.PSNR);
                 str_psnr = buffer;
                 snprintf(buffer, 1024, "%.4f", analysisData.SSIM);
                 str_ssim = buffer;

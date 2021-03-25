@@ -92,7 +92,7 @@ target_include_directories(CompressonatorCLI-bin
                            ${PROJECT_SOURCE_DIR}/cmp_core/shaders
                            ${PROJECT_SOURCE_DIR}/cmp_core/source
                            ${PROJECT_SOURCE_DIR}/../common/lib/ext/glm
-                           ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshcompressor/draco/src
+                           # ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshcompressor/draco/src
                            ${draco_INCLUDE_DIRS}
                            ${OpenEXR_INCLUDE_DIRS}
                            )
@@ -119,7 +119,7 @@ endif()
 set (CMP_LIBS "")
 list(APPEND CMP_LIBS CMP_Compressonator
                      CMP_Framework
-                     CMP_MeshCompressor
+                     # CMP_MeshCompressor
 
                      Image_Analysis 
                      Image_ASTC
@@ -160,7 +160,8 @@ else()
 endif()
 
 list(APPEND CMP_LIBS ${OpenCV_LIBRARIES}
-                     ${draco_LIBRARIES})
+                     # ${draco_LIBRARIES}
+                     )
 
 if (OPTION_CMP_QT)
     target_link_libraries(CompressonatorCLI-bin
@@ -176,7 +177,7 @@ endif()
 add_dependencies(CompressonatorCLI-bin 
                 CMP_Compressonator
                 CMP_Framework
-                CMP_MeshCompressor
+                # CMP_MeshCompressor 
 
                 Image_Analysis
                 Image_ASTC

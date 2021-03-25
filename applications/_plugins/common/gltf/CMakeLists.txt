@@ -23,7 +23,7 @@ add_library(CMP_GUI_Gltf STATIC ${GLTF_H} ${GLTF_SRC})
 target_include_directories(CMP_GUI_Gltf PRIVATE
   ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
   ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
-  ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshcompressor/draco/src
+  # ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshcompressor/draco/src
   ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshoptimizer
   ${PROJECT_SOURCE_DIR}/applications/_plugins/common
   ${PROJECT_SOURCE_DIR}/applications/_plugins/common/json

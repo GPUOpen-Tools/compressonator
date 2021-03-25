@@ -71,7 +71,7 @@ list(APPEND CMP_LIBS    CMP_Common
                         CMP_Compressonator
                         CMP_Framework
                         CMP_GpuDecode
-                        CMP_MeshCompressor
+                        # CMP_MeshCompressor
                         CMP_MeshOptimizer
 
                         CMP_GUI_Gltf
@@ -89,7 +89,7 @@ list(APPEND CMP_LIBS    CMP_Common
                         ${OpenEXR_LIBRARIES}
                         ${OpenCV_LIBRARIES}
                         ${Boost_LIBRARIES}
-                        ${draco_LIBRARIES}
+                        # ${draco_LIBRARIES}
                         Threads::Threads
                         )
 
@@ -137,7 +137,7 @@ target_include_directories(CompressonatorGUI-bin PRIVATE
                           ${PROJECT_SOURCE_DIR}/applications/_libs/gpu_decode
                           ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_mesh
                           ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshoptimizer
-                          ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshcompressor/draco/src
+                          # ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshcompressor/draco/src
                           ${PROJECT_SOURCE_DIR}/applications/_plugins/cmesh/mesh_optimizer
                           ${PROJECT_SOURCE_DIR}/cmp_core/shaders
                           ${PROJECT_SOURCE_DIR}/cmp_core/source

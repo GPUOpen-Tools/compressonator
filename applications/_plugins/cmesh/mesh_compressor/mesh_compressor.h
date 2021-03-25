@@ -27,16 +27,16 @@
 
 #include <fstream>
 
-#pragma warning( push )
-#pragma warning( disable : 4244)
-#pragma warning( disable : 4267)
-#pragma warning( disable : 4018)
-#pragma warning( disable : 4005)
-#include "draco/compression/encode.h"
-#include "draco/compression/decode.h"
-#include "draco/io/mesh_io.h"
-#include "draco/io/point_cloud_io.h"
-#pragma warning( pop )
+// #pragma warning( push )
+// #pragma warning( disable : 4244)
+// #pragma warning( disable : 4267)
+// #pragma warning( disable : 4018)
+// #pragma warning( disable : 4005)
+// #include "draco/compression/encode.h"
+// #include "draco/compression/decode.h"
+// #include "draco/io/mesh_io.h"
+// #include "draco/io/point_cloud_io.h"
+// #pragma warning( pop )
 
 #include "plugininterface.h"
 #include "tc_pluginapi.h"
@@ -44,7 +44,7 @@
 #include "compressonator.h"
 #include "modeldata.h"
 
-using namespace draco;
+// using namespace draco;
 
 
 #ifdef _WIN32

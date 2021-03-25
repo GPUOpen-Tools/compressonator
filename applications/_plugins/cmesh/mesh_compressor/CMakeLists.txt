@@ -10,7 +10,7 @@ target_sources(Mesh_Compressor
 target_link_libraries(Mesh_Compressor
     PRIVATE
     CMP_Framework
-    CMP_MeshCompressor
+    # CMP_MeshCompressor
 )
 
 target_include_directories(Mesh_Compressor PUBLIC
@@ -20,7 +20,7 @@ target_include_directories(Mesh_Compressor PUBLIC
     ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common
     ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_mesh
-    ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshcompressor/draco/src
+    # ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshcompressor/draco/src
     ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshoptimizer
 )
 

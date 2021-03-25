@@ -42,7 +42,9 @@ void *make_Plugin_Mesh_Compressor() {
 namespace cmesh_mesh_compress {
 CMIPS*                 g_CMIPS = nullptr;
 
-int EncodeMeshToFile(const draco::Mesh &mesh, const std::string &file, draco::Encoder *encoder) {
+#if (LIB_BUILD_MESHCOMPRESSOR == 1)
+int EncodeMeshToFile(const draco::Mesh& mesh, const std::string& file, draco::Encoder* encoder)
+{
     if (g_CMIPS) g_CMIPS->Print("Encode Mesh To File");
 
     // Encode the geometry.
@@ -87,6 +89,7 @@ int EncodePointCloudToFile(const draco::PointCloud &pc, const std::string &file,
     out_file.write(buffer.data(), buffer.size());
     return 0;
 }
+#endif
 }
 
 using namespace cmesh_mesh_compress;
@@ -136,6 +139,7 @@ int Plugin_Mesh_Compressor::CleanUp() {
 void* Plugin_Mesh_Compressor::ProcessMesh(void* data, void* setting, void* statsOut, CMP_Feedback_Proc pFeedbackProc) {
     if ((!setting) || (!data)) return NULL;
 
+#if (LIB_BUILD_MESHCOMPRESSOR == 1)
     draco::Mesh *mesh;
     draco::PointCloud *pc;
     CMP_DracoOptions *options = (CMP_DracoOptions  *)setting;
@@ -246,6 +250,8 @@ void* Plugin_Mesh_Compressor::ProcessMesh(void* data, void* setting, void* stats
         // Decode failed
         return NULL;
     }
-
-
+#else
+    // Decode failed: Option not supported
+    return NULL;
+#endif
 }
