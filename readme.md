@@ -1,6 +1,6 @@
 
 # Compressonator
-[![Actions Status](https://github.com/zeux/meshoptimizer/workflows/build/badge.svg)](https://github.com//GPUOpen-Tools/compressonator/actions) 
+[![CMake](https://github.com/GPUOpen-Tools/compressonator/actions/workflows/cmake.yml/badge.svg)](https://github.com/GPUOpen-Tools/compressonator/actions/workflows/cmake.yml)
 
 Compressonator is a set of tools to allow artists and developers to more easily create compressed texture assets or model mesh optimizations and easily visualize the quality impact of various compression and rendering technologies.  It consists of a GUI application, a command line application and an SDK for easy integration into a developer tool chain.
 
