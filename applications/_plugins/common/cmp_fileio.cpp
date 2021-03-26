@@ -1,30 +1,3 @@
-// AMD AMDUtils code
-//
-// Copyright(c) 2020 Advanced Micro Devices, Inc.All rights reserved.
-//
-// Major Code based on Header-only tiny glTF 2.0 loader and serializer.
-// The MIT License (MIT)
-//
-// Copyright (c) 2015 - 2017 Syoyo Fujita, Aurélien Chatelain and many
-// contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 
 #include "cmp_fileio.h"
 
@@ -84,6 +57,8 @@ bool CMP_DirExists(const std::string& abs_dir)
 #if defined _CMP_CPP17_ || defined _CMP_CPP14_
     if (sfs::exists(abs_dir))
         return sfs::is_directory(abs_dir);
+    else
+        return false;
 #else
     return (false);
 #endif
@@ -233,35 +208,55 @@ std::string CMP_GetFileName(const std::string& srcfileNamepath)
     return srcfileNamepath.substr(pos + 1);
 }
 
+std::string CMP_GetFileNameAndExt(const std::string& FilePathName)
+{
+#if defined _CMP_CPP17_ || defined _CMP_CPP14_
+    return sfs::path(FilePathName).filename().string();
+#else
+    return "";
+#endif
+}
+
 std::string CMP_GetJustFileName(const std::string& SourceFile)
 {
+#if defined _CMP_CPP17_ || defined _CMP_CPP14_
     sfs::path   fp(SourceFile);
     std::string file_name = fp.stem().string();
     return file_name;
+#else
+    return "";
+#endif
 }
 
 std::string CMP_GetPath(const std::string& SourceFile)
 {
+#if defined _CMP_CPP17_ || defined _CMP_CPP14_
     return sfs::path(SourceFile).string();
+#else
+    return "";
+#endif
 }
 
 std::string CMP_GetJustFileExt(const std::string& SourceFile)
 {
+#if defined _CMP_CPP17_ || defined _CMP_CPP14_
     sfs::path   fp(SourceFile);
     std::string file_ext = fp.extension().string();
     return file_ext;
+#else
     // Aternate Code
-    //    std::string fn = file;
-    //    string file_extension;
-    //    if (incDot)
-    //        file_extension = fn.substr(fn.find_last_of("."));
-    //    else
-    //        file_extension = fn.substr(fn.find_last_of(".") + 1);
-    //    if (upperCase)
-    //        std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(),::toupper);
-    //    else
-    //        std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(), ::tolower);
-
+    std::string fn = file;
+    string file_extension;
+    if (incDot)
+        file_extension = fn.substr(fn.find_last_of("."));
+    else
+        file_extension = fn.substr(fn.find_last_of(".") + 1);
+    if (upperCase)
+        std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(),::toupper);
+    else
+        std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(), ::tolower);
+    return file_extension;
+#endif
 }
 
 std::string CMP_GetFileExtension(const char* file, bool incDot, bool upperCase)
@@ -452,6 +447,7 @@ CMP_PATHTYPES CMP_PathType(const char* path)
         {
             return CMP_PATHTYPES::CMP_PATH_IS_FILE;
         }
+        return CMP_PATH_IS_UNKNOWN;
     }
 #else
 #if defined _CMP_CPP17_ || defined _CMP_CPP14_
@@ -491,5 +487,5 @@ CMP_PATHTYPES CMP_PathType(const char* path)
 //            return CMP_PATH_IS_FILE;
 //    }
 //
-//    return CMP_PATHTYPES::CMP_PATH_IS_UNKNOWN;
+    return CMP_PATHTYPES::CMP_PATH_IS_UNKNOWN;
 }

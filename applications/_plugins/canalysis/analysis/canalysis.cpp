@@ -61,13 +61,6 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string>
-#ifdef _CMP_CPP17_  // Build code using std::c++17
-#include <filesystem>
-namespace sfs = std::filesystem;
-#else
-#include <experimental/filesystem>
-namespace sfs = std::experimental::filesystem;
-#endif
 
 using namespace std;
 
@@ -177,12 +170,9 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
     bool nodeExist = false;
 
     if (m_srcFile.size() > 0 && m_destFile.size() > 0) {
-        sfs::path src(m_srcFile);
-        diffName = src.stem().generic_string();
+        diffName = CMP_GetJustFileName(m_srcFile);
         diffName.append("_");
-
-        sfs::path dest(m_destFile);
-        diffName.append(dest.stem().generic_string());
+        diffName.append(CMP_GetJustFileName(m_destFile));
         diffNodeName = diffName;
     }
 
@@ -341,12 +331,12 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
         return;
     }
 
-    sfs::path   result(resultsFile);
-    int lastindex = result.generic_string().find_last_of("/");
-    std::string goldFile = result.generic_string().substr(0, lastindex + 1);
+    std::string result    = CMP_GetPath(resultsFile);
+    int lastindex = result.find_last_of("/");
+    std::string goldFile = result.substr(0, lastindex + 1);
     goldFile.append("golden.xml");
 
-    std::string toleranceFile = result.generic_string().substr(0, lastindex + 1);
+    std::string toleranceFile = result.substr(0, lastindex + 1);
     toleranceFile.append("analysis_tolerance.xml");
 
     if ((CMP_FileExists(toleranceFile))) {

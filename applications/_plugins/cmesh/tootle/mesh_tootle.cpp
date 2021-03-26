@@ -30,18 +30,12 @@
 #include "tc_plugininternal.h"
 #include "compressonator.h"
 #include "plugininterface.h"
+#include "cmp_fileio.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
 
-#ifdef _CMP_CPP17_  // Build code using std::c++17
-#include <filesystem>
-namespace sfs = std::filesystem;
-#else
-#include <experimental/filesystem>
-namespace sfs = std::experimental::filesystem;
-#endif
 #include <fstream>
 
 #ifdef BUILD_AS_PLUGIN_DLL
@@ -130,9 +124,9 @@ int Plugin_Mesh_Tootle::CleanUp() {
 }
 
 void getFileName(const char *FilePathName, char *fnameExt, int maxbuffsize) {
-    sfs::path filePath(FilePathName);
-
-    snprintf(fnameExt, maxbuffsize, "%s%s", filePath.filename().c_str(), filePath.extension().c_str());
+    std::string FileName = CMP_GetJustFileName(FilePathName);
+    std::string FileExt  = CMP_GetJustFileExt(FilePathName);
+    snprintf(fnameExt, maxbuffsize, "%s%s", FileName.c_str(), FileExt.c_str());
 }
 
 //=================================================================================================================================

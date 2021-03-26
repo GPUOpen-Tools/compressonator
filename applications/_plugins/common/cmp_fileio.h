@@ -51,6 +51,7 @@ std::string CMP_GetFilePathExtension(const std::string& FileName);
 std::string CMP_GetFileExtension(const char* file, bool incDot, bool upperCase);
 std::string CMP_GetBaseDir(const std::string& srcfileDirpath);
 std::string CMP_GetFileName(const std::string& srcfileNamepath);
+std::string CMP_GetFileNameAndExt(const std::string& FilePathName);
 std::string CMP_GetJustFileName(const std::string& SourceFile);
 std::string CMP_GetJustFileExt(const std::string& SourceFile);
 std::string CMP_GetFullPath(std::string file);

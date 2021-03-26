@@ -29,15 +29,6 @@
 
 #include <qfileinfo.h>
 
-#ifdef _CMP_CPP17_  // Build code using std::c++17
-#include <filesystem>
-
-namespace sfs = std::filesystem;
-#else
-#include <experimental/filesystem>
-namespace sfs = std::experimental::filesystem;
-#endif
-
 // Local
 #include "cpstartuppage.h"
 

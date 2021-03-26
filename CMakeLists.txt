@@ -21,14 +21,22 @@ endif()
 
 project(Compressonator)
 
+# ------------------------------
+# Helper function for the build 
+# ------------------------------
+include(cmake/helperfunctions.cmake)
+
+
 # -----------------------------------
 # Check compiler support level
+# for Apple (Mac) default to C++11
 # -----------------------------------
-include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG(-std=c++11 COMPILER_SUPPORTS_CXX11)
-CHECK_CXX_COMPILER_FLAG(-std=c++14 COMPILER_SUPPORTS_CXX14)
-CHECK_CXX_COMPILER_FLAG(-std=c++17 COMPILER_SUPPORTS_CXX17)
-
+if (CMP_HOST_LINUX OR CMP_HOST_WINDOWS)
+    include(CheckCXXCompilerFlag)
+    CHECK_CXX_COMPILER_FLAG(-std=c++11 COMPILER_SUPPORTS_CXX11)
+    CHECK_CXX_COMPILER_FLAG(-std=c++14 COMPILER_SUPPORTS_CXX14)
+    CHECK_CXX_COMPILER_FLAG(-std=c++17 COMPILER_SUPPORTS_CXX17)
+endif()
 
 option(OPTION_ENABLE_ALL_APPS "Enable all apps" ON)
 
@@ -72,10 +80,7 @@ endif()
 set(LIB_BUILD_MESHCOMPRESSOR OFF)
 
 
-# ------------------------------
-# Helper function for the build 
-# ------------------------------
-include(cmake/helperfunctions.cmake)
+
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Supported configuration options" FORCE)
 set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/build-out")
@@ -97,6 +102,7 @@ cmp_option(OPTION_CMP_DIRECTX "Use Directx" CMP_HOST_WINDOWS) # set for windows 
 cmp_option(OPTION_CMP_VULKAN "Use Vulkan" OPTION_ENABLE_ALL_APPS) # set for windows, can be on other platforms when current code validated!
 cmp_option(OPTION_CMP_OPENGL "Use OpenGL" ON)   # available on all platforms
 cmp_option(OPTION_CMP_QT "Use Qt for Image Loading" OPTION_ENABLE_ALL_APPS)
+cmp_option(OPTION_CMP_OPENCV "Use OpenCV" OPTION_ENABLE_ALL_APPS)   # available on all platforms
 cmp_option(NO_LEGACY_BEHAVIOR "Disables any legacy behavior (before CMake migration)" ON) # this needs to be removed
 
 # --------------------------------------------
@@ -235,25 +241,26 @@ else()
          
          # Draco cmake find scripts are also broken (looks for src/ path in install directory)
          if (OPTION_BUILD_DRACO)
-             find_package(Draco REQUIRED)
+             find_package(Draco)
              pkg_check_modules(draco draco)
              if(draco_FOUND)
              else()
-               # TODO: To do this properly we require a generated config header from CMake
-               # Which can be done with configure_file.
-               # See: https://cmake.org/cmake/help/latest/command/configure_file.html
+               message("Package Draco not found. CMP features using Draco will be disabled")
                add_definitions(-DCMAKE_DRACO_NOT_FOUND)
                set(OPTION_BUILD_DRACO OFF)
              endif()
          endif()
      
-         find_package(OpenCV REQUIRED)
-         if (OpenCV_FOUND)
-         else()
-             message(FATAL_ERROR "Package OpenCV are required, but not found. "
-                     "In Unix, run initsetup_unix.sh or sudo apt-get install "
-                     "libopencv-dev to install the libs.")
-         endif()
+         if (OPTION_CMP_OPENCV)
+            find_package(OpenCV)
+            if (OpenCV_FOUND)
+            else()
+                message("Package OpenCV not found. CMP features using OpenCV will be disabled"
+                        "In Unix, run initsetup_unix.sh or sudo apt-get install "
+                        "libopencv-dev to install the libs.")
+                set(OPTION_CMP_OPENCV OFF)
+            endif()
+        endif()
      
      endif()
 endif()

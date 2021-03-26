@@ -29,14 +29,6 @@
 
 #include <QApplication>
 
-#ifdef _CMP_CPP17_  // Build code using std::c++17
-#include <filesystem>
-namespace sfs = std::filesystem;
-#else
-#include <experimental/filesystem>
-namespace sfs = std::experimental::filesystem;
-#endif
-
 #define MSG_HANDLER
 
 // Standard App Static Plugin Interfaces for minimal support
@@ -199,7 +191,7 @@ int main(int argc, char** argv) {
 
         QString dirPath = QApplication::applicationDirPath();
 #if __APPLE__
-        std::string contentPath = sfs::path(dirPath.toStdString()) / "../";
+        std::string contentPath = CMP_GetPath(dirPath.toStdString()) / "../";
         dirPath                 = QString(contentPath.c_str());
         QApplication::addLibraryPath(dirPath + "./PlugIns/platforms/");
         QApplication::addLibraryPath(dirPath + "./PlugIns/");
