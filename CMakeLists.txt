@@ -36,6 +36,9 @@ if (CMP_HOST_LINUX OR CMP_HOST_WINDOWS)
     CHECK_CXX_COMPILER_FLAG(-std=c++11 COMPILER_SUPPORTS_CXX11)
     CHECK_CXX_COMPILER_FLAG(-std=c++14 COMPILER_SUPPORTS_CXX14)
     CHECK_CXX_COMPILER_FLAG(-std=c++17 COMPILER_SUPPORTS_CXX17)
+else()
+    message("CHECK_CXX_COMPILER_FLAG default to max -std=c++11")
+    set(COMPILER_SUPPORTS_CXX11 ON)
 endif()
 
 option(OPTION_ENABLE_ALL_APPS "Enable all apps" ON)
@@ -180,13 +183,17 @@ add_compile_definitions($<$<CONFIG:Debug>:_DEBUG>)
 # -----------------------------------
 # Set or get all package requirements
 # -----------------------------------
-if (COMPILER_SUPPORTS_CXX17)
+if (COMPILER_SUPPORTS_CXX17 AND CMP_HOST_WINDOWS)
     set(CMAKE_CXX_STANDARD 17)
     add_compile_definitions(_CMP_CPP17_=1)
 else()
+    # Linux
     if (COMPILER_SUPPORTS_CXX14)
         set(CMAKE_CXX_STANDARD 14)
         add_compile_definitions(_CMP_CPP14_=1)
+    else()
+        # UNIX or LINUX
+        set(CMAKE_CXX_STANDARD 11)
     endif()
 endif()
 
@@ -210,6 +217,8 @@ else()
     if (COMPILER_SUPPORTS_CXX14)
         add_definitions(-std=c++14)
         link_libraries(stdc++fs)
+    else()
+        add_definitions(-std=c++11)
     endif()
 
     add_definitions(-fPIC -Wno-write-strings)

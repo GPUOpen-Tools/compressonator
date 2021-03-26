@@ -47,7 +47,7 @@ unsigned int _stdcall ProcEncode(void* param) {
     ThreadParam *tp = (ThreadParam*)param;
 
     //printf("Thead Active [%4x]\n",std::this_thread::get_id());
-    std::this_thread::sleep_for(0ms);
+    std::this_thread::sleep_for(std::chrono::milliseconds(0));
 
     using namespace std::chrono;
 
@@ -57,7 +57,7 @@ unsigned int _stdcall ProcEncode(void* param) {
             tp->run = false;
         }
 
-        std::this_thread::sleep_for(0ms);
+        std::this_thread::sleep_for(std::chrono::milliseconds(0));
     }
 
     // printf("Thead Closed [%x] run[%d]\n",std::this_thread::get_id(),tp->run?1:0);
@@ -215,7 +215,7 @@ void CCPU_HPC::FinishThreadEncoding() {
         // If a thread is in the running state then we need to wait for it to finish
         // its work from the producer
         while (m_EncodeParameterStorage[i].run == true) {
-            std::this_thread::sleep_for(1ms);
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
 
         m_EncodeParameterStorage[i].exit = true;
