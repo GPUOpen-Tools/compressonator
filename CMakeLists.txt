@@ -21,7 +21,21 @@ endif()
 
 project(Compressonator)
 
+# -----------------------------------
+# Check compiler support level
+# -----------------------------------
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG(-std=c++11 COMPILER_SUPPORTS_CXX11)
+CHECK_CXX_COMPILER_FLAG(-std=c++14 COMPILER_SUPPORTS_CXX14)
+CHECK_CXX_COMPILER_FLAG(-std=c++17 COMPILER_SUPPORTS_CXX17)
+
+
 option(OPTION_ENABLE_ALL_APPS "Enable all apps" ON)
+
+# New Features in R&D
+option(OPTION_BUILD_APPS_CMP_CAS      "Build Application: cmp_cas" OFF)
+option(OPTION_BUILD_APPS_CMP_VISION   "Build Application: cmp_vision" OFF)
+option(OPTION_BUILD_APPS_CMP_TESTAPP  "Build Application: cmp_testapp" OFF)
 
 #--------------------------------------------------------------------------
 # Enable or Disable Specific Build Apps
@@ -29,17 +43,11 @@ option(OPTION_ENABLE_ALL_APPS "Enable all apps" ON)
 if (OPTION_ENABLE_ALL_APPS) 
     set(OPTION_BUILD_APPS_CMP_CLI      ON)
     set(OPTION_BUILD_APPS_CMP_GUI      ON)
-    set(OPTION_BUILD_APPS_CMP_CAS      ON)
-    set(OPTION_BUILD_APPS_CMP_VISION   ON)
-    set(OPTION_BUILD_APPS_CMP_TESTAPP  ON)
     set(OPTION_BUILD_APPS_CMP_TESTCORE ON)
     set(OPTION_BUILD_APPS_CMP_EXAMPLES ON)
 else()
     option(OPTION_BUILD_APPS_CMP_CLI      "Build Application: compressonatorcli" OFF)
     option(OPTION_BUILD_APPS_CMP_GUI      "Build Application: compressonator gui" OFF)
-    option(OPTION_BUILD_APPS_CMP_CAS      "Build Application: cmp_cas" OFF)
-    option(OPTION_BUILD_APPS_CMP_VISION   "Build Application: cmp_vision" OFF)
-    option(OPTION_BUILD_APPS_CMP_TESTAPP  "Build Application: cmp_testapp" OFF)
     option(OPTION_BUILD_APPS_CMP_TESTCORE "Build Application: cmp_testcore" OFF)
     option(OPTION_BUILD_APPS_CMP_EXAMPLES "Build Application: examples" OFF)
 endif()
@@ -162,13 +170,23 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 # '_DEBUG' is only defined by Visual Studio. Make sure it's definied everywhere
 add_compile_definitions($<$<CONFIG:Debug>:_DEBUG>)
 
+
 # -----------------------------------
 # Set or get all package requirements
 # -----------------------------------
+if (COMPILER_SUPPORTS_CXX17)
+    set(CMAKE_CXX_STANDARD 17)
+    add_compile_definitions(_CMP_CPP17_=1)
+else()
+    if (COMPILER_SUPPORTS_CXX14)
+        set(CMAKE_CXX_STANDARD 14)
+        add_compile_definitions(_CMP_CPP14_=1)
+    endif()
+endif()
 
 if (CMP_HOST_WINDOWS)
-    set(CMAKE_CXX_STANDARD 17)
-    add_compile_definitions(WIN32_LEAN_AND_MEAN=1 _CMP_CPP17_=1 _WIN32)
+    add_compile_definitions(WIN32_LEAN_AND_MEAN=1 _WIN32)
+
     set(CMAKE_EXE_LINKER_FLAGS "/INCREMENTAL:NO")
     # Configure Externals, they must be added via 'include' before the applications
     include(${CMAKE_ROOT}/modules/externalproject.cmake)
@@ -177,17 +195,18 @@ if (CMP_HOST_WINDOWS)
     include(external/cmake/CMakeLists.txt)
     include(external/CMakeLists.txt)
 else()
-    set(CMAKE_CXX_STANDARD 14)
-
     if (CMP_HOST_LINUX)
         #gltf code needs _LINUX define
         add_compile_definitions(_LINUX=1)
     endif()
 
-    add_definitions(-std=c++14 -fPIC -Wno-write-strings)
+    # filesystem support for c++14 
+    if (COMPILER_SUPPORTS_CXX14)
+        add_definitions(-std=c++14)
+        link_libraries(stdc++fs)
+    endif()
 
-    # experimental filesystem support for c++14 
-    link_libraries(stdc++fs)
+    add_definitions(-fPIC -Wno-write-strings)
 
     # ----------------------------------
     # Package requirements for the Build
@@ -195,7 +214,7 @@ else()
     find_package(Threads REQUIRED)
     set(OpenGL_GL_PREFERENCE "GLVND")
 
-    if (CMP_HOST_LINUX)
+    if (CMP_HOST_LINUX AND OPTION_CMP_QT)
         find_package(Qt5 COMPONENTS Gui Widgets OpenGL Qml WebEngineWidgets Xml REQUIRED HINTS ${QT_PACKAGE_ROOT})
         if (Qt5Gui_FOUND)
         else()
@@ -215,15 +234,18 @@ else()
          pkg_check_modules(OpenEXR REQUIRED OpenEXR)
          
          # Draco cmake find scripts are also broken (looks for src/ path in install directory)
-         # find_package(Draco REQUIRED)
-         # pkg_check_modules(draco draco)
-         # if(draco_FOUND)
-         # else()
-         #   # TODO: To do this properly we require a generated config header from CMake
-         #   # Which can be done with configure_file.
-         #   # See: https://cmake.org/cmake/help/latest/command/configure_file.html
-         #   add_definitions(-DCMAKE_DRACO_NOT_FOUND)
-         # endif()
+         if (OPTION_BUILD_DRACO)
+             find_package(Draco REQUIRED)
+             pkg_check_modules(draco draco)
+             if(draco_FOUND)
+             else()
+               # TODO: To do this properly we require a generated config header from CMake
+               # Which can be done with configure_file.
+               # See: https://cmake.org/cmake/help/latest/command/configure_file.html
+               add_definitions(-DCMAKE_DRACO_NOT_FOUND)
+               set(OPTION_BUILD_DRACO OFF)
+             endif()
+         endif()
      
          find_package(OpenCV REQUIRED)
          if (OpenCV_FOUND)

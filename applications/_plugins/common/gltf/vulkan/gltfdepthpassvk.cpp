@@ -36,7 +36,6 @@
 #include "threadpool.h"
 #include "uploadheapvk.h"
 
-#include <filesystem>
 #include <vector>
 
 void GltfDepthPass::OnCreate(

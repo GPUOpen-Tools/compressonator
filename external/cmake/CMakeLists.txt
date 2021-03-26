@@ -7,9 +7,9 @@ project(Compressonator)
 
 option(BUILD_SHARED_LIBS "Build SHARED, if disabled STATIC is built" OFF)
 
-if (NOT DEFINED CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 17)
-endif ()
+# if (NOT DEFINED CMAKE_CXX_STANDARD)
+#     set(CMAKE_CXX_STANDARD 17)
+# endif ()
 
 if (NOT DEFINED COMPRESSONATOR_PROJECT_DIR)
     get_filename_component(COMPRESSONATOR_PROJECT_DIR ${CMAKE_CURRENT_LIST_DIR}/../../../ ABSOLUTE)

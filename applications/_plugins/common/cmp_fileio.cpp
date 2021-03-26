@@ -41,33 +41,89 @@
 #include <wordexp.h>
 #endif
 
-#ifdef _CMP_CPP17_  // Build code using std::c++17
-#include <filesystem>
-namespace sfs = std::filesystem;
+// For dev work on C++ 11 code
+#if defined _CMP_CPP17_ || defined _CMP_CPP14_ 
+// #undef _CMP_CPP17_
+// #undef _CMP_CPP14_
+#endif
+
+#if defined _CMP_CPP17_  // Build code using std::c++17
+    #include <filesystem>
+    namespace sfs = std::filesystem;
 #else
-#include <experimental/filesystem>
-namespace sfs = std::experimental::filesystem;
+    #if defined _CMP_CPP14_  // Build code using std::c++14
+        #ifndef _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+        #define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+        #endif
+        #include <experimental/filesystem>
+        namespace sfs = std::experimental::filesystem;
+    #endif
 #endif
 
 #include <algorithm>
 
+uintmax_t CMP_GetFileSize(std::string& source_file)
+{
+#if defined _CMP_CPP17_ || defined _CMP_CPP14_ 
+    return sfs::file_size(source_file);
+#else
+    return 0;
+#endif
+}
+
+void CMP_FileCopy(std::string& source_file, std::string& destination_file)
+{
+#if defined _CMP_CPP17_ || defined _CMP_CPP14_ 
+    sfs::copy(source_file, destination_file);
+#else
+#endif
+}
+
 bool CMP_DirExists(const std::string& abs_dir)
 {
+#if defined _CMP_CPP17_ || defined _CMP_CPP14_
     if (sfs::exists(abs_dir))
         return sfs::is_directory(abs_dir);
-
+#else
     return (false);
+#endif
 }
 
 bool CMP_FileExists(const std::string& abs_filename)
 {
+#if defined _CMP_CPP17_ || defined _CMP_CPP14_
     return sfs::exists(abs_filename);
+#else
+    #ifdef _WIN32
+        bool    ret = false;
+        FILE*   fp;
+        errno_t err = fopen_s(&fp, abs_filename.c_str(), "rb");
+        if (err != 0)
+        {
+            return false;
+        }
+    
+        if (fp)
+        {
+            ret = true;
+            fclose(fp);
+        }
+    
+        return ret;
+    #else
+        return false;
+    #endif
+#endif
 }
 
 bool CMP_CreateDir(std::string sPath)
 {
+#if defined _CMP_CPP17_ || defined _CMP_CPP14_
     bool success = sfs::create_directory(sfs::absolute(sPath));
     return (success);
+#else
+    return false;
+#endif
 }
 
 std::string CMP_ExpandFilePath(const std::string& filepath)
@@ -177,6 +233,76 @@ std::string CMP_GetFileName(const std::string& srcfileNamepath)
     return srcfileNamepath.substr(pos + 1);
 }
 
+std::string CMP_GetJustFileName(const std::string& SourceFile)
+{
+    sfs::path   fp(SourceFile);
+    std::string file_name = fp.stem().string();
+    return file_name;
+}
+
+std::string CMP_GetPath(const std::string& SourceFile)
+{
+    return sfs::path(SourceFile).string();
+}
+
+std::string CMP_GetJustFileExt(const std::string& SourceFile)
+{
+    sfs::path   fp(SourceFile);
+    std::string file_ext = fp.extension().string();
+    return file_ext;
+    // Aternate Code
+    //    std::string fn = file;
+    //    string file_extension;
+    //    if (incDot)
+    //        file_extension = fn.substr(fn.find_last_of("."));
+    //    else
+    //        file_extension = fn.substr(fn.find_last_of(".") + 1);
+    //    if (upperCase)
+    //        std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(),::toupper);
+    //    else
+    //        std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(), ::tolower);
+
+}
+
+std::string CMP_GetFileExtension(const char* file, bool incDot, bool upperCase)
+{
+    std::string file_extension = CMP_GetJustFileExt(file);
+    if (upperCase)
+    {
+        for (char& c : file_extension)
+            c = toupper(c);
+    }
+    else
+    {
+        for (char& c : file_extension)
+            c = tolower(c);
+    }
+
+    if (!incDot)
+    {
+        file_extension.erase(std::remove(file_extension.begin(), file_extension.end(), '.'), file_extension.end());
+    }
+
+    return file_extension;
+}
+
+FILE* CMP_OpenTextFile(char* SourceFile, const char* mode)
+{
+    FILE* fp;
+#ifdef _WIN32
+    fopen_s(&fp, SourceFile, mode);
+#else
+    fp = fopen(SourceFile, mode);
+#endif
+    return fp;
+}
+
+void CMP_CLoseTextFile(FILE* fp)
+{
+    if (fp)
+        fclose(fp);
+}
+
 bool CMP_IsHidden(const std::string& fullpath)
 {
 #ifdef _WIN32
@@ -189,18 +315,23 @@ bool CMP_IsHidden(const std::string& fullpath)
 
     return IsHidden;
 #else
-    sfs::path path(fullpath);
-    if (path.filename().string().find(".") == 0)
-        return true;
-
-    return false;
+    #if defined _CMP_CPP17_ || defined _CMP_CPP14_
+        sfs::path path(fullpath);
+        if (path.filename().string().find(".") == 0)
+            return true;
+    #else
+        return false;
+    #endif
 #endif
 }
 
+#if defined _CMP_CPP17_ || defined _CMP_CPP14_
 using recursive_directory_iterator = sfs::recursive_directory_iterator;
+#endif
 
 void CMP_GetAllDirFilesList(const std::string& directory, std::vector<std::string>& files, std::string filter)
 {
+#if defined _CMP_CPP17_ || defined _CMP_CPP14_
     std::string path(directory);
     for (const auto& dirEntry : recursive_directory_iterator(path))
     {
@@ -213,17 +344,20 @@ void CMP_GetAllDirFilesList(const std::string& directory, std::vector<std::strin
                 std::string FileName = CMP_GetFileName(FileNamePath);
                 std::string ext      = CMP_GetFilePathExtension(FileName);
                 std::transform(ext.begin(), ext.end(), ext.begin(), ::toupper);
-                if (filter.find(ext) != std::string::npos) {
+                if (filter.find(ext) != std::string::npos)
+                {
                     //std::cout << FileNamePath << std::endl;
                     files.push_back(FileNamePath);
                 }
             }
-            else {
+            else
+            {
                 //std::cout << FileNamePath << std::endl;
                 files.push_back(FileNamePath);
             }
         }
     }
+#endif
 }
 
 void CMP_GetDirList(const std::string& directory, std::vector<std::string>& files, std::string filter)
@@ -270,6 +404,7 @@ void CMP_GetDirList(const std::string& directory, std::vector<std::string>& file
         FindClose(hFind);
     }
 #else
+#if defined _CMP_CPP17_ || defined _CMP_CPP14_
     for (const sfs::directory_entry& entry : sfs::directory_iterator(directory))
     {
         if (CMP_IsHidden(entry.path().string()))
@@ -288,11 +423,19 @@ void CMP_GetDirList(const std::string& directory, std::vector<std::string>& file
         }
     }
 #endif
+#endif
 }
 
 std::string CMP_GetFullPath(std::string file)
 {
-    return sfs::absolute(file).string();
+#if defined _CMP_CPP17_ || defined _CMP_CPP14_
+    sfs::path p(file);
+    sfs::path fullpath = sfs::absolute(p);
+    return fullpath.generic_string();
+    //return sfs::absolute(file).string();
+#else
+    return "";
+#endif
 }
 
 CMP_PATHTYPES CMP_PathType(const char* path)
@@ -311,6 +454,7 @@ CMP_PATHTYPES CMP_PathType(const char* path)
         }
     }
 #else
+#if defined _CMP_CPP17_ || defined _CMP_CPP14_
     // works only if file or dir exists!
     if (sfs::is_directory(path))
     {
@@ -321,30 +465,31 @@ CMP_PATHTYPES CMP_PathType(const char* path)
         return CMP_PATHTYPES::CMP_PATH_IS_FILE;
     }
 #endif
+#endif
 
-    // a none existant file or dir
-    std::string unkn = path;
-
-    std::string basedir  = CMP_GetBaseDir(unkn);
-    std::string ext      = CMP_GetFilePathExtension(unkn);
-    std::string filename = CMP_GetFileName(unkn);
-
-    // files should have an extension
-    if (ext.length() > 0)
-    {
-        if ((  // we only support a limited relative path upto 2 levels up!
-                (basedir.compare(".") == 0) || (basedir.compare("..\\..") == 0) || (basedir.compare("../..") == 0) || (basedir.compare("..") == 0)) &&
-            ((ext.compare(0, 1, "\\") == 0) || (ext.compare(0, 1, "/") == 0)))
-            return CMP_PATH_IS_DIR;
-        return CMP_PATH_IS_FILE;
-    }
-    else
-    {  // must be a folder or file with no extension
-        if ((basedir.length() > 0))
-            return CMP_PATH_IS_DIR;
-        if (filename.length() > 0)
-            return CMP_PATH_IS_FILE;
-    }
-
-    return CMP_PATHTYPES::CMP_PATH_IS_UNKNOWN;
+//    // a none existant file or dir
+//    std::string unkn = path;
+//
+//    std::string basedir  = CMP_GetBaseDir(unkn);
+//    std::string ext      = CMP_GetFilePathExtension(unkn);
+//    std::string filename = CMP_GetFileName(unkn);
+//
+//    // files should have an extension
+//    if (ext.length() > 0)
+//    {
+//        if ((  // we only support a limited relative path upto 2 levels up!
+//                (basedir.compare(".") == 0) || (basedir.compare("..\\..") == 0) || (basedir.compare("../..") == 0) || (basedir.compare("..") == 0)) &&
+//            ((ext.compare(0, 1, "\\") == 0) || (ext.compare(0, 1, "/") == 0)))
+//            return CMP_PATH_IS_DIR;
+//        return CMP_PATH_IS_FILE;
+//    }
+//    else
+//    {  // must be a folder or file with no extension
+//        if ((basedir.length() > 0))
+//            return CMP_PATH_IS_DIR;
+//        if (filename.length() > 0)
+//            return CMP_PATH_IS_FILE;
+//    }
+//
+//    return CMP_PATHTYPES::CMP_PATH_IS_UNKNOWN;
 }

@@ -42,14 +42,6 @@
 #include "modeldata.h"
 #include "utilfuncs.h"
 
-#ifdef _CMP_CPP17_  // Build code using std::c++17
-#include <filesystem>
-namespace sfs = std::filesystem;
-#else
-#include <experimental/filesystem>
-namespace sfs = std::experimental::filesystem;
-#endif
-
 using namespace tinygltf2;
 
 #if (LIB_BUILD_MESHCOMPRESSOR == 1)
@@ -114,9 +106,8 @@ bool fileIsGLTF(string SourceFile);
 string DefaultDestination(string SourceFile, CMP_FORMAT DestFormat, string DestFileExt, CMP_BOOL suffixDestFormat)
 {
     string    DestFile = "";
-    sfs::path fp(SourceFile);
-    string    file_name = fp.stem().string();
-    string    file_ext  = fp.extension().string();
+    string    file_name = CMP_GetJustFileName(SourceFile);
+    string    file_ext  = CMP_GetJustFileExt(SourceFile);
 
     DestFile.append(file_name);
 
@@ -151,30 +142,24 @@ string DefaultDestination(string SourceFile, CMP_FORMAT DestFormat, string DestF
 // check if file is glTF format extension
 bool fileIsGLTF(string SourceFile)
 {
-    sfs::path fp(SourceFile);
-    string    file_ext = fp.extension().string();
+    string    file_ext  = CMP_GetJustFileExt(SourceFile);
     helper_to_upper(file_ext);
-
     return (file_ext.compare(".GLTF") == 0);
 }
 
 // check if file is OBJ format extension
 bool fileIsOBJ(string SourceFile)
 {
-    sfs::path fp(SourceFile);
-    string    file_ext = fp.extension().string();
+    string file_ext = CMP_GetJustFileExt(SourceFile);
     helper_to_upper(file_ext);
-
     return (file_ext.compare(".OBJ") == 0);
 }
 
 // check if file is DRC (draco compressed OBJ file) format extension
 bool fileIsDRC(string SourceFile)
 {
-    sfs::path fp(SourceFile);
-    string    file_ext = fp.extension().string();
+    string file_ext = CMP_GetJustFileExt(SourceFile);
     helper_to_upper(file_ext);
-
     return (file_ext.compare(".DRC") == 0);
 }
 
@@ -966,7 +951,7 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
                     {
                         g_CmdPrams.DestFile = strCommand;
 
-                        string file_extension = sfs::path(strCommand).extension().string();
+                        string file_extension = CMP_GetJustFileExt(strCommand);
 
                         // User did not supply a destination extension default
                         if (file_extension.length() == 0)
@@ -1017,8 +1002,7 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
                             std::string destFileName;
                             //since  DestFile is empty we need to create one from the source file
                             destFileName        = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.CompressOptions.DestFormat, g_CmdPrams.FileOutExt, true);
-                            sfs::path destFile  = sfs::path(directory) / destFileName;
-                            g_CmdPrams.DestFile = destFile.string();
+                            g_CmdPrams.DestFile = CMP_GetPath(directory) + "/" + destFileName;
                         }
                         else
                         {
@@ -1267,8 +1251,9 @@ bool OptimizeMesh(std::string SourceFile, std::string DestFile)
     GLTFCommon* gltfdata     = nullptr;
 
     // load model
-    string file_extension = sfs::path(SourceFile).extension().string();
+    string file_extension = CMP_GetJustFileExt(SourceFile);
     helper_to_upper(file_extension);
+
     helper_erase_all(file_extension, ".");
 
     PluginInterface_3DModel_Loader* plugin_loader;
@@ -1362,8 +1347,9 @@ bool OptimizeMesh(std::string SourceFile, std::string DestFile)
         std::vector<CMP_Mesh>*          optimized   = ((std::vector<CMP_Mesh>*)modelDataOut);
         PluginInterface_3DModel_Loader* plugin_save = NULL;
 
-        string destfile_extension = sfs::path(DestFile).extension().string();
+        string destfile_extension = CMP_GetJustFileExt(DestFile);
         helper_to_upper(destfile_extension);
+
         helper_erase_all(destfile_extension, ".");
 
         plugin_save = reinterpret_cast<PluginInterface_3DModel_Loader*>(g_pluginManager.GetPlugin("3DMODEL_LOADER", (char*)destfile_extension.c_str()));
@@ -1616,7 +1602,7 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
                         imgDestDir = output.substr(0, pos + 1);
                     }
 
-                    sfs::create_directories(imgDestDir);
+                    if (CMP_CreateDir(imgDestDir))
                     {
                         MipSet inMips{};
                         memset(&inMips, 0, sizeof(CMP_MipSet));
@@ -1665,9 +1651,9 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
                         }
                     }
 
-                    if (!sfs::exists(dstFolder + input))
+                    if (!CMP_FileExists(dstFolder + input))
                     {
-                        sfs::copy(imgSrcDir + input, dstFolder + input);
+                        CMP_FileCopy(imgSrcDir + input, dstFolder + input);
                     }
                 }
             }
@@ -1901,12 +1887,10 @@ bool GenerateImageProps(std::string ImageFile)
     PrintInfo("File Name: %s\n", ImageFile.c_str());
 
     // full path
-    sfs::path p(ImageFile);
-    sfs::path fullpath = sfs::absolute(p);
-    PrintInfo("File Full Path: %s\n", fullpath.generic_string().c_str());
+    PrintInfo("File Full Path: %s\n", CMP_GetFullPath(ImageFile).c_str());
 
     // file size
-    uintmax_t filesize = sfs::file_size(ImageFile);
+    uintmax_t filesize = CMP_GetFileSize(ImageFile);
 
     if (filesize > 1024000)
     {
@@ -3474,8 +3458,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
 
             std::string destFileName;
             destFileName        = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.CompressOptions.DestFormat, g_CmdPrams.FileOutExt, true);
-            sfs::path destFile  = sfs::path(g_CmdPrams.DestDir) / destFileName;
-            g_CmdPrams.DestFile = destFile.string();
+            g_CmdPrams.DestFile = CMP_GetPath(g_CmdPrams.DestDir) + "/" + destFileName;
         }
         else
             MoreSourceFiles = false;
