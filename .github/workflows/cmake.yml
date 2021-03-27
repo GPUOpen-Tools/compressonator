@@ -50,7 +50,7 @@ jobs:
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run:  |
         echo 'test' >> test.exe
-        xcopy /r /d /y ${{github.workspace}}/build/*.exe ${{github.workspace}}/downloads/
+        xcopy *.exe ../downloads/
 
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v2
