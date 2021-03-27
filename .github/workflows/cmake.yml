@@ -52,7 +52,7 @@ jobs:
       shell: bash
       run:  |
         echo 'test' >> test.exe
-        dir ../*.*
+        dir ../../*.*
 
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v2
