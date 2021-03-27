@@ -49,7 +49,7 @@ jobs:
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run:  |
         echo 'test' >> test.exe
-        xcopy *.exe ../downloads/
+        xcopy "*.exe" "../downloads/*.exe"
 
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v2
