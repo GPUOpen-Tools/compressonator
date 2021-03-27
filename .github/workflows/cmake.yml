@@ -52,8 +52,7 @@ jobs:
       shell: bash
       run:  |
         echo 'test' >> test.exe
-        dir *.exe
-        dir ${{github.workspace}}/downloads/
+        dir ../*.*
 
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v2
