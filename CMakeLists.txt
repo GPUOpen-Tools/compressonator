@@ -27,24 +27,31 @@ project(Compressonator)
 include(cmake/helperfunctions.cmake)
 
 
-# -----------------------------------
-# Check compiler support level
+#----------------------------------------
+# Check compiler feature support levels
 # for Apple (Mac) default to C++11
-# -----------------------------------
+#---------------------------------------
 if (CMP_HOST_LINUX OR CMP_HOST_WINDOWS)
-    unset(COMPILER_SUPPORTS_CXX0X CACHE)
-    include(CheckCXXCompilerFlag)
-    CHECK_CXX_COMPILER_FLAG(-std=c++11 COMPILER_SUPPORTS_CXX11)
-    CHECK_CXX_COMPILER_FLAG(-std=c++14 COMPILER_SUPPORTS_CXX14)
-    CHECK_CXX_COMPILER_FLAG(-std=c++17 COMPILER_SUPPORTS_CXX17)
+    foreach(i ${CMAKE_CXX_COMPILE_FEATURES})
+        if("${i}" STREQUAL "cxx_std_11")
+            set(COMPILER_SUPPORTS_CXX11 ON)
+            message("Complier Supports ${i}")
+        endif()
+        if("${i}" STREQUAL "cxx_std_14")
+            set(COMPILER_SUPPORTS_CXX14 ON)
+            message("Complier Supports ${i}")
+        endif()
+        if("${i}" STREQUAL "cxx_std_17")
+            set(COMPILER_SUPPORTS_CXX17 ON)
+            message("Complier Supports ${i}")
+    endif()
+    # message("${i}")
+endforeach()
 else()
     message("CHECK_CXX_COMPILER_FLAG default to max -std=c++11")
     set(COMPILER_SUPPORTS_CXX11 ON)
 endif()
 
-foreach(i ${CMAKE_CXX_COMPILE_FEATURES})
-  message("${i}")
-endforeach()
 
 option(OPTION_ENABLE_ALL_APPS "Enable all apps" ON)
 
