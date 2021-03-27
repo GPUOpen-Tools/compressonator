@@ -46,7 +46,6 @@ jobs:
 
     - name: Make Artifact Folder
       working-directory: ${{github.workspace}}/build
-      shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run:  |
         echo 'test' >> test.exe
