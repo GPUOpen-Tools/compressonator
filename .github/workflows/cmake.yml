@@ -38,8 +38,16 @@ jobs:
 
     - name: Build
       working-directory: ${{github.workspace}}/build
-      shell: bash
-      
-      
+      shell: bash      
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config $BUILD_TYPE
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v2
+      with: 
+          name: compressonatlrCLI_64_Windows_Master_Build
+          path: ${{github.workspace}}/build/bin/Release
+
+
+
+
