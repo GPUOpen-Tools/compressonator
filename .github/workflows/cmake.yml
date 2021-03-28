@@ -26,40 +26,23 @@ jobs:
       working-directory: ${{github.workspace}}/scripts
       run: python fetch_dependencies.py
   
-    #- name: Configure CMake
+    - name: Configure CMake
       # Use a bash shell so we can use the same syntax for environment variable
       # access regardless of the host operating system
-    #  shell: bash
-    #  working-directory: ${{github.workspace}}/build
-      # Note the current convention is to use the -S and -B options here to specify source 
-      # and build directories, but this is only available with CMake 3.13 and higher.  
-      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-    #  run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOPTION_ENABLE_ALL_APPS=OFF -DOPTION_BUILD_APPS_CMP_CLI=ON 
+      shell: bash
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOPTION_ENABLE_ALL_APPS=OFF -DOPTION_BUILD_APPS_CMP_CLI=ON 
 
-    #- name: Build
-    #  working-directory: ${{github.workspace}}/build
-    #  shell: bash
-    #  # Execute the build.  You can specify a specific target with "--target <NAME>"
-    #  run: cmake --build . --config $BUILD_TYPE
-
-    - name: Make Artifact Folder
+    - name: Build
       working-directory: ${{github.workspace}}/build
       shell: bash
-      run: mkdir downloads
-        
-    - name: Copy Files to Artifact Folder
-      working-directory: ${{github.workspace}}/build
-      shell: powershell
-      run:  |
-        dir 
-        copy *.exe ./downloads
-        dir downloads
+      # Execute the build.  You can specify a specific target with "--target <NAME>"
+      run: cmake --build . --config $BUILD_TYPE
 
-    #- name: Upload Build Artifacts
-    #  uses: actions/upload-artifact@v2
-    #  with: 
-    #      name: assets-for-download
-    #      path: ${{github.workspace}}/build/downloads
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v2
+      with: 
+          name: assets-for-download
+          path: ${{github.workspace}}/build/bin/Release
 
     #- name: Test
     #  working-directory: ${{github.workspace}}/build
