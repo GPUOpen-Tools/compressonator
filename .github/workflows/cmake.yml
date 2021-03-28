@@ -21,11 +21,6 @@ jobs:
       # Some projects don't allow in-source building, so create a separate build directory
       # We'll use this as our working directory for all subsequent commands
       run: cmake -E make_directory ${{github.workspace}}/build
-      
-    - name: Create Download Folder
-      # Some projects don't allow in-source building, so create a separate build directory
-      # We'll use this as our working directory for all subsequent commands
-      run: cmake -E make_directory ${{github.workspace}}/downloads
           
     #- name: Sync external libs
     #  working-directory: ${{github.workspace}}/scripts
@@ -52,7 +47,14 @@ jobs:
       shell: bash
       run:  |
         # echo 'test' >> test.exe
-        dir ${{github.workspace}}/downloads
+        mkdir downloads
+        
+    - name: Copy Files to Artifact Folder
+      working-directory: ${{github.workspace}}/build
+      shell: powershell
+      run:  |
+        dir 
+        copy *.exe ./downloads/*.exe
 
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v2
