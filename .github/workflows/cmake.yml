@@ -54,7 +54,7 @@ jobs:
       shell: powershell
       run:  |
         dir 
-        copy *.exe ./downloads/*.exe
+        copy *.exe ./downloads
 
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v2
