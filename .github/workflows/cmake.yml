@@ -46,7 +46,7 @@ jobs:
       working-directory: ${{github.workspace}}/build
       shell: bash
       run:  |
-        # echo 'test' >> test.exe
+        echo 'test' >> test.exe
         mkdir downloads
         
     - name: Copy Files to Artifact Folder
