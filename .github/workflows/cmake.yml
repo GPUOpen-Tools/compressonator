@@ -55,12 +55,13 @@ jobs:
       run:  |
         dir 
         copy *.exe ./downloads
+        dir downloads
 
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v2
       with: 
           name: assets-for-download
-          path: downloads
+          path: ${{github.workspace}}/build/downloads
 
     #- name: Test
     #  working-directory: ${{github.workspace}}/build
