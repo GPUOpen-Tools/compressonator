@@ -22,9 +22,9 @@ jobs:
       # We'll use this as our working directory for all subsequent commands
       run: cmake -E make_directory ${{github.workspace}}/build
           
-    #- name: Sync external libs
-    #  working-directory: ${{github.workspace}}/scripts
-    #  run: python fetch_dependencies.py
+    - name: Sync external libs
+      working-directory: ${{github.workspace}}/scripts
+      run: python fetch_dependencies.py
   
     #- name: Configure CMake
       # Use a bash shell so we can use the same syntax for environment variable
@@ -45,9 +45,7 @@ jobs:
     - name: Make Artifact Folder
       working-directory: ${{github.workspace}}/build
       shell: bash
-      run:  |
-        echo 'test' >> test.exe
-        mkdir downloads
+      run: mkdir downloads
         
     - name: Copy Files to Artifact Folder
       working-directory: ${{github.workspace}}/build
@@ -57,11 +55,11 @@ jobs:
         copy *.exe ./downloads
         dir downloads
 
-    - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v2
-      with: 
-          name: assets-for-download
-          path: ${{github.workspace}}/build/downloads
+    #- name: Upload Build Artifacts
+    #  uses: actions/upload-artifact@v2
+    #  with: 
+    #      name: assets-for-download
+    #      path: ${{github.workspace}}/build/downloads
 
     #- name: Test
     #  working-directory: ${{github.workspace}}/build
