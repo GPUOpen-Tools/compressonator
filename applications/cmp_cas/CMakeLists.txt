@@ -1,2 +1,2 @@
-# reserved for future releases
+# Folder reserved for v4.2 release
 
