@@ -220,7 +220,7 @@ if(CMP_HOST_WINDOWS)
                         )
     else()
         set_target_properties(CompressonatorCLI-bin PROPERTIES 
-                        FOLDER "Applications"
+                        FOLDER "Applications" 
                         VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$(Configuration)"
                         OUTPUT_NAME "compressonatorcli"
                         )

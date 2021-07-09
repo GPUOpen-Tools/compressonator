@@ -20,9 +20,11 @@ add_subdirectory(cmp_gpu)
 
 if (OPTION_CMP_DIRECTX)
 add_subdirectory(cfilter)
-add_subdirectory(cfilter_fx)
 endif()
 
+if (OPTION_BUILD_APPS_CMP_CAS)
+add_subdirectory(cfilter_fx)
+endif()
 
 
 # =======================================================================
