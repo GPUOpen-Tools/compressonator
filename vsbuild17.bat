@@ -13,6 +13,7 @@ python %CurrDir%\scripts\fetch_dependencies.py
 
 cd build
 cmake -G "Visual Studio 15 2017 Win64" ..\..\%CurrDirName%
+REM cmake -DOPTION_ENABLE_ALL_APPS=OFF -DOPTION_BUILD_APPS_CMP_CLI=ON -G "Visual Studio 15 2017 Win64"  ..\..\%CurrDirName%
 cd %CurrDir%
 
 
