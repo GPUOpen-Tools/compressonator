@@ -23,14 +23,14 @@
 // Sample application to process a image file using Block Level Compression with a BC7 encoder
 //
 // SDK files required for application:
-//     CMP_Framework.h
+//     compressonator.h
 //     CMP_Framework_xx.lib  For static libs xx is either MD, MT or MDd or MTd,
 //                      When using DLL's make sure the  CMP_Framework_xx_DLL.dll is in exe path
 //
 
 #include <stdio.h>
 #include <string>
-#include "cmp_framework.h"
+#include "compressonator.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -92,6 +92,12 @@ int main(int argc, char* argv[]) {
         std::printf("Error: Unable to process quality setting\n");
         return -1;
     }
+
+    //--------------------------
+    // Init frameworks
+    // plugin and IO interfaces
+    //--------------------------
+    CMP_InitFramework();
 
     //=====================================================================================================
     // You can optionally use a 4th argv to set a destFormat other then the example BC7

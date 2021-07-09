@@ -88,14 +88,15 @@ class CImagePropertyView :
     // Options that can change during editing of C_Destination_Options data type
     void Init_C_Destiniation_Data_Controller();
     QtProperty         *m_propQuality = NULL;
+#ifdef USE_ENABLEHQ
+    QtProperty         *m_propEnableHQ = NULL;
+#endif
     QtProperty         *m_propFormat = NULL;
     QtProperty         *m_propChannelWeightingR = NULL;
     QtProperty         *m_propChannelWeightingG = NULL;
     QtProperty         *m_propChannelWeightingB = NULL;
     QtProperty         *m_propAlphaThreshold = NULL;
     QtProperty         *m_propAdaptiveColor = NULL;
-    QtProperty         *m_propUseAlpha = NULL;
-    QtProperty         *m_propNoAlpha = NULL;
     QtProperty         *m_propBitrate = NULL;
     QtProperty         *m_propDefog = NULL;
     QtProperty         *m_propExposure = NULL;
@@ -121,6 +122,7 @@ class CImagePropertyView :
     QtProperty         *m_propDXT1Alpha = NULL;
     QtProperty         *m_propCodecBlockRate = NULL;
     QtProperty         *m_propHDRProperties = NULL;
+    QtProperty         *m_propRefine = NULL;
 
 
   public slots:
@@ -133,8 +135,6 @@ class CImagePropertyView :
     void onCompressionStart();
     void onCompressionDone();
     void onCompressDataChanged();
-    void noAlphaChannelValue();
-    void hasAlphaChannelValue();
     void compressionValueChanged(QVariant &value);
     void qualityValueChanged(QVariant &value);
     void redwValueChanged(QVariant &value);

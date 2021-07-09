@@ -23,7 +23,7 @@
 //
 // UtilFuncs.cpp : Source file for utility functions
 //
-
+ 
 #include "utilfuncs.h"
 
 #ifndef ASSERT
@@ -37,19 +37,8 @@
 #include <shlwapi.h>
 #include <tchar.h>
 #include <windows.h>
+#pragma warning(disable : 4201)  //nameless struct/union
 #endif
-
-#if defined _CMP_CPP17_ // Build code using std::c++17
-#include <filesystem>
-namespace sfs = std::filesystem;
-#else
-#ifndef _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
-#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
-#endif
-#include <experimental/filesystem>
-namespace sfs = std::experimental::filesystem;
-#endif
-
 
 void SwizzleBytes(void *src, unsigned long numBytes) {
     unsigned char tmp[8]; // large enough to hold a double
@@ -101,7 +90,7 @@ void getFileNameExt(const char *FilePathName, char *fnameExt, int maxbuffsize) {
     _splitpath_s(FilePathName, drive, _MAX_DRIVE, dir, _MAX_DIR, fname, _MAX_FNAME, ext, _MAX_EXT);
     snprintf(fnameExt, maxbuffsize, "%s%s", fname, ext);
 #else
-    std::string fname = sfs::path(FilePathName).filename().string();
+    std::string fname = CMP_GetFileNameAndExt(FilePathName);
     snprintf(fnameExt, maxbuffsize, "%s", fname.c_str());
 #endif
 }

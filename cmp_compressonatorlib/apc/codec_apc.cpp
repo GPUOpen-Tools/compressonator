@@ -67,9 +67,8 @@ unsigned int    _stdcall APCThreadProcEncode(void* param) {
             tp->encoder->CompressBlock(tp->in, tp->out);
             tp->run = false;
         }
-        using namespace std::chrono;
 
-        std::this_thread::sleep_for(0ms);
+        std::this_thread::sleep_for(std::chrono::milliseconds(0));
     }
 
     return 0;
@@ -353,7 +352,6 @@ CodecError CCodec_APC::FinishAPCEncoding(void) {
     }
 
     if (m_Use_MultiThreading) {
-        using namespace std::chrono;
 
         // Wait for all the live threads to finish any current work
         for(CMP_DWORD i=0; i < m_LiveThreads; i++) {
@@ -361,7 +359,7 @@ CodecError CCodec_APC::FinishAPCEncoding(void) {
             // If a thread is in the running state then we need to wait for it to finish
             // its work from the producer
             while (m_EncodeParameterStorage[i].run == TRUE) {
-                std::this_thread::sleep_for(1ms);
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
             }
         }
     }

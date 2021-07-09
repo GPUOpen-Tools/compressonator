@@ -16,7 +16,7 @@
 // shorthand declarations
 typedef Matrix<2, 1, float> Vector2;
 typedef Matrix<3, 1, float> Vector3;
-typedef Matrix<4, 1, float> Vector4;
+typedef Matrix<4, 1, float> CGU_Vec4f;
 typedef Matrix<5, 1, float> Vector5;
 typedef Matrix<6, 1, float> Vector6;
 typedef Matrix<7, 1, float> Vector7;

@@ -60,14 +60,6 @@
 #include <string>
 #include <locale>
 #include <cstdio>
-#ifdef _CMP_CPP17_  // Build code using std::c++17
-#include <filesystem>
-namespace sfs = std::filesystem;
-#else
-#include <experimental/filesystem>
-namespace sfs = std::experimental::filesystem;
-#endif
-
 
 using namespace std;
 
@@ -75,37 +67,6 @@ using namespace std;
 // Global plugin manager instance
 extern PluginManager g_pluginManager;
 extern bool g_bAbortCompression;
-
-std::string GetFileExtension(const char *file, CMP_BOOL incDot, CMP_BOOL upperCase) {
-//#ifdef USE_BOOST
-    string file_extension = sfs::path(file).extension().string();
-    if (upperCase) {
-        for (char& c : file_extension)
-            c = toupper(c);
-    } else {
-        for (char& c : file_extension)
-            c = tolower(c);
-    }
-
-    if (!incDot) {
-        file_extension.erase(std::remove(file_extension.begin(), file_extension.end(), '.'), file_extension.end());
-    }
-//#else
-//    std::string fn = file;
-//    string file_extension;
-//    if (incDot)
-//        file_extension = fn.substr(fn.find_last_of("."));
-//    else
-//        file_extension = fn.substr(fn.find_last_of(".") + 1);
-//    if (upperCase)
-//        std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(),::toupper);
-//    else
-//        std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(), ::tolower);
-//#endif
-
-    return file_extension;
-}
-
 
 inline CMP_FLOAT clamp(CMP_FLOAT a, CMP_FLOAT l, CMP_FLOAT h) {
     return (a < l) ? l : ((a > h) ? h : a);
@@ -177,7 +138,7 @@ bool DeCompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR 
 
 bool IsDestinationUnCompressed(const char *fname) {
     bool isuncompressed = true;
-    std::string file_extension = sfs::path(fname).extension().string();
+    std::string file_extension = CMP_GetJustFileExt(fname);
 
     // tolower
     for(char& c : file_extension)
@@ -212,7 +173,7 @@ bool IsDestinationUnCompressed(const char *fname) {
 }
 
 CMP_FORMAT FormatByFileExtension(const char *fname, MipSet *pMipSet) {
-    std::string file_extension = sfs::path(fname).extension().string();
+    std::string file_extension = CMP_GetJustFileExt(fname);
 
     // To upper
     std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(),
@@ -386,7 +347,7 @@ bool FloatFormat(CMP_FORMAT InFormat) {
 
 
 bool CompressedFileFormat(std::string file) {
-    std::string file_extension = sfs::path(file).extension().string();
+    std::string file_extension = CMP_GetJustFileExt(file);
     // To upper
     std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(),
                    [](unsigned char c) -> unsigned char { return toupper(c); });
@@ -767,7 +728,7 @@ int AMDLoadMIPSTextureImage(const char *SourceFile, MipSet *MipSetIn, bool use_O
     if (use_OCV) {
         plugin_Image = reinterpret_cast<PluginInterface_Image *>(plugin_Manager->GetPlugin("IMAGE", "OCV"));
     } else {
-        std::string file_extension = GetFileExtension(SourceFile, false, true);
+        std::string file_extension = CMP_GetFileExtension(SourceFile, false, true);
         plugin_Image = reinterpret_cast<PluginInterface_Image*>(plugin_Manager->GetPlugin("IMAGE", (char*)file_extension.c_str()));
     }
 
@@ -811,7 +772,7 @@ int AMDSaveMIPSTextureImage(const char *DestFile, MipSet *MipSetIn, bool use_OCV
     bool filesaved = false;
     CMIPS m_CMIPS;
 
-    std::string file_extension = sfs::path(DestFile).extension().string();
+    std::string file_extension = CMP_GetJustFileExt(DestFile);
     file_extension.erase(std::remove(file_extension.begin(), file_extension.end(), '.'), file_extension.end());
     for(char& c : file_extension)
         c = toupper(c);

@@ -234,6 +234,7 @@ void CImageCompare::runPsnrMse() {
     showProgressDialog("Running PSNR and MSE Analysis");
 
     m_imageAnalysis->GeneratePSNRMSEAnalysis(m_sourceFile.toStdString().c_str(), m_destFile.toStdString().c_str());
+
     if (setAnalysisResultView()) {
         emitUpdateData();
     }
@@ -359,14 +360,10 @@ bool CImageCompare::setAnalysisResultView() {
         return false;
     }
 
-    int index = (int)m_destFile.toStdString().find_last_of(".");
-    std::string m_analyzedResult = m_destFile.toStdString().substr(0, index);
-    m_analyzedResult.append("_analysis.xml");
-
-    if ((CMP_FileExists(m_analyzedResult))) {
+    // check file exists
+    if (CMP_FileExists(m_imageAnalysis->m_analysisFile)) {
         // populate tree structure pt
-
-        rapidxml::file<>* xmlResultsFile = new rapidxml::file<>(m_analyzedResult.c_str());
+        rapidxml::file<>* xmlResultsFile = new rapidxml::file<>(m_imageAnalysis->m_analysisFile.c_str());
         rapidxml::xml_document<> xmlDoc;
         xmlDoc.parse<rapidxml::parse_no_data_nodes>(xmlResultsFile->data());
 
@@ -402,9 +399,10 @@ bool CImageCompare::setAnalysisResultView() {
         xmlDoc.clear();
         delete xmlResultsFile;
         return true;
-    } else {
-        return false;
     }
+
+    // something went wronge return failed
+    return false;
 }
 
 CImageCompare::~CImageCompare() {

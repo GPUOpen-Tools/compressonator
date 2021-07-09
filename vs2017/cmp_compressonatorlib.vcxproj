@@ -1033,12 +1033,12 @@
     <ClCompile Include="..\CMP_CompressonatorLib\ATC\Codec_ATC_RGB.cpp" />
     <ClCompile Include="..\CMP_CompressonatorLib\ATC\Codec_ATC_RGBA_Explicit.cpp" />
     <ClCompile Include="..\CMP_CompressonatorLib\ATC\Codec_ATC_RGBA_Interpolated.cpp" />
-    <ClCompile Include="..\CMP_CompressonatorLib\ATI\Codec_ATI1N.cpp" />
-    <ClCompile Include="..\CMP_CompressonatorLib\ATI\Codec_ATI2N.cpp" />
-    <ClCompile Include="..\CMP_CompressonatorLib\ATI\Codec_ATI2N_DXT5.cpp" />
-    <ClCompile Include="..\CMP_CompressonatorLib\ATI\Codec_ATI_TC.cpp" />
-    <ClCompile Include="..\CMP_CompressonatorLib\ATI\Compressonatori_tc.c" />
-    <ClCompile Include="..\CMP_CompressonatorLib\ATI\CompressonatorXCodec.cpp" />
+    <ClCompile Include="..\cmp_compressonatorlib\ati\codec_ati1n.cpp" />
+    <ClCompile Include="..\cmp_compressonatorlib\ati\codec_ati2n.cpp" />
+    <ClCompile Include="..\cmp_compressonatorlib\ati\codec_ati2n_dxt5.cpp" />
+    <ClCompile Include="..\cmp_compressonatorlib\ati\codec_ati_tc.cpp" />
+    <ClCompile Include="..\cmp_compressonatorlib\ati\compressonatori_tc.c" />
+    <ClCompile Include="..\cmp_compressonatorlib\ati\compressonatorxcodec.cpp" />
     <ClCompile Include="..\CMP_CompressonatorLib\BASIS\Codec_BASIS.cpp" />
     <ClCompile Include="..\CMP_CompressonatorLib\BC6H\BC6H_Decode.cpp" />
     <ClCompile Include="..\CMP_CompressonatorLib\BC6H\BC6H_Definitions.cpp" />
@@ -1086,11 +1086,11 @@
     <ClCompile Include="..\CMP_CompressonatorLib\Common\Codec.cpp" />
     <ClCompile Include="..\CMP_CompressonatorLib\Compress.cpp" />
     <ClCompile Include="..\CMP_CompressonatorLib\Compressonator.cpp" />
-    <ClCompile Include="..\CMP_CompressonatorLib\DXTC\Codec_DXTC.cpp" />
-    <ClCompile Include="..\CMP_CompressonatorLib\DXTC\Codec_DXTC_Alpha.cpp" />
-    <ClCompile Include="..\CMP_CompressonatorLib\DXTC\Codec_DXTC_RGBA.cpp" />
-    <ClCompile Include="..\CMP_CompressonatorLib\DXTC\dxtc_v11_compress.c" />
-    <ClCompile Include="..\CMP_CompressonatorLib\DXTC\dxtc_v11_compress_asm.c" />
+    <ClCompile Include="..\cmp_compressonatorlib\dxtc\codec_dxtc.cpp" />
+    <ClCompile Include="..\cmp_compressonatorlib\dxtc\codec_dxtc_alpha.cpp" />
+    <ClCompile Include="..\cmp_compressonatorlib\dxtc\codec_dxtc_rgba.cpp" />
+    <ClCompile Include="..\cmp_compressonatorlib\dxtc\dxtc_v11_compress.c" />
+    <ClCompile Include="..\cmp_compressonatorlib\dxtc\dxtc_v11_compress_asm.c" />
     <ClCompile Include="..\CMP_CompressonatorLib\DXT\Codec_DXT1.cpp" />
     <ClCompile Include="..\CMP_CompressonatorLib\DXT\Codec_DXT3.cpp" />
     <ClCompile Include="..\CMP_CompressonatorLib\DXT\Codec_DXT5.cpp" />
@@ -1115,6 +1115,13 @@
     <ClCompile Include="..\CMP_CompressonatorLib\GT\Codec_GT.cpp" />
     <ClCompile Include="..\CMP_CompressonatorLib\GT\GT_Decode.cpp" />
     <ClCompile Include="..\CMP_CompressonatorLib\GT\GT_Encode.cpp" />
+    <ClCompile Include="..\cmp_core\shaders\bc1_encode_kernel.cpp" />
+    <ClCompile Include="..\cmp_core\shaders\bc2_encode_kernel.cpp" />
+    <ClCompile Include="..\cmp_core\shaders\bc3_encode_kernel.cpp" />
+    <ClCompile Include="..\cmp_core\shaders\bc4_encode_kernel.cpp" />
+    <ClCompile Include="..\cmp_core\shaders\bc5_encode_kernel.cpp" />
+    <ClCompile Include="..\cmp_core\shaders\bc6_encode_kernel.cpp" />
+    <ClCompile Include="..\cmp_core\shaders\bc7_encode_kernel.cpp" />
     <ClCompile Include="..\CMP_Framework\Common\CMP_MIPS.cpp" />
     <ClCompile Include="..\CMP_Framework\Common\half\half.cpp" />
     <ClCompile Include="..\CMP_Framework\Common\HDR_Encode.cpp" />
@@ -1140,11 +1147,11 @@
     <ClInclude Include="..\CMP_CompressonatorLib\ATC\Codec_ATC_RGB.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\ATC\Codec_ATC_RGBA_Explicit.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\ATC\Codec_ATC_RGBA_Interpolated.h" />
-    <ClInclude Include="..\CMP_CompressonatorLib\ATI\Codec_ATI1N.h" />
-    <ClInclude Include="..\CMP_CompressonatorLib\ATI\Codec_ATI2N.h" />
-    <ClInclude Include="..\CMP_CompressonatorLib\ATI\Codec_ATI2N_DXT5.h" />
-    <ClInclude Include="..\CMP_CompressonatorLib\ATI\CompressonatorXCodec.h" />
-    <ClInclude Include="..\CMP_CompressonatorLib\ATI\Compressonator_tc.h" />
+    <ClInclude Include="..\cmp_compressonatorlib\ati\codec_ati1n.h" />
+    <ClInclude Include="..\cmp_compressonatorlib\ati\codec_ati2n.h" />
+    <ClInclude Include="..\cmp_compressonatorlib\ati\codec_ati2n_dxt5.h" />
+    <ClInclude Include="..\cmp_compressonatorlib\ati\compressonatorxcodec.h" />
+    <ClInclude Include="..\cmp_compressonatorlib\ati\compressonator_tc.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\BASIS\Codec_BASIS.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\BC6H\BC6H_Decode.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\BC6H\BC6H_Definitions.h" />
@@ -1190,16 +1197,15 @@
     <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGBA32F.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGBA8888.h" />
     <ClInclude Include="..\cmp_compressonatorlib\buffer\codecbuffer_rgba8888s.h" />
+    <ClInclude Include="..\cmp_compressonatorlib\common.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\Common\Codec.h" />
-    <ClInclude Include="..\CMP_CompressonatorLib\Common\Common.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\Common\CommonTypes.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\Common\CompClient.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\Common\Compress.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\Common\debug.h" />
-    <ClInclude Include="..\CMP_CompressonatorLib\Common\Version.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\Compressonator.h" />
-    <ClInclude Include="..\CMP_CompressonatorLib\DXTC\Codec_DXTC.h" />
-    <ClInclude Include="..\CMP_CompressonatorLib\DXTC\dxtc_v11_compress.h" />
+    <ClInclude Include="..\cmp_compressonatorlib\dxtc\codec_dxtc.h" />
+    <ClInclude Include="..\cmp_compressonatorlib\dxtc\dxtc_v11_compress.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\DXT\Codec_DXT1.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\DXT\Codec_DXT3.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\DXT\Codec_DXT5.h" />
@@ -1225,7 +1231,25 @@
     <ClInclude Include="..\CMP_CompressonatorLib\GT\GT_Decode.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\GT\GT_Definitions.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\GT\GT_Encode.h" />
+    <ClInclude Include="..\cmp_compressonatorlib\version.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc1_cmp.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc1_common_kernel.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc1_encode_kernel.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc2_encode_kernel.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc3_encode_kernel.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc4_encode_kernel.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc5_encode_kernel.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc6_common_encoder.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc6_encode_kernel.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc7_cmpmsc.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc7_cmpmsc_backup.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc7_common_encoder.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc7_encode_kernel.h" />
+    <ClInclude Include="..\cmp_core\shaders\bcn_common_api.h" />
+    <ClInclude Include="..\cmp_core\shaders\bcn_common_kernel.h" />
     <ClInclude Include="..\cmp_core\shaders\common_def.h" />
+    <ClInclude Include="..\cmp_core\source\cmp_math_func.h" />
+    <ClInclude Include="..\cmp_core\source\cmp_math_vec4.h" />
     <ClInclude Include="..\CMP_Framework\Common\CMP_MIPS.h" />
     <ClInclude Include="..\CMP_Framework\Common\half\eLut.h" />
     <ClInclude Include="..\CMP_Framework\Common\half\half.h" />
@@ -1236,84 +1260,8 @@
     <ClInclude Include="..\CMP_Framework\Common\HDR_Encode.h" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\CMP_CompressonatorLib\DXTC\dxtc_v11_compress_64.asm">
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">ml64 /Fo "$(IntDir)%(Filename).obj" /c /Cp /Zi "%(FullPath)"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">Assembling %(Filename) to $(IntDir)%(Filename).obj</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ml64 /Fo "$(IntDir)%(Filename).obj" /c /Cp /Zi "%(FullPath)"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Assembling %(Filename) to $(IntDir)%(Filename).obj</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">ml64 /Fo "$(IntDir)%(Filename).obj" /c /Cp /Zi "%(FullPath)"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">Assembling %(Filename) to $(IntDir)%(Filename).obj</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">ml64 /Fo "$(IntDir)%(Filename).obj" /c /Cp /Zi "%(FullPath)"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">Assembling %(Filename) to $(IntDir)%(Filename).obj</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">ml64 /Fo "$(IntDir)%(Filename).obj" /c /Cp /Zi "%(FullPath)"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">Assembling %(Filename) to $(IntDir)%(Filename).obj</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ml64 /Fo "$(IntDir)%(Filename).obj" /c /Cp /Zi "%(FullPath)"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Assembling %(Filename) to $(IntDir)%(Filename).obj</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">ml64 /Fo "$(IntDir)%(Filename).obj" /c /Cp /Zi "%(FullPath)"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">Assembling %(Filename) to $(IntDir)%(Filename).obj</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">ml64 /Fo "$(IntDir)%(Filename).obj" /c /Cp /Zi "%(FullPath)"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Assembling %(Filename) to $(IntDir)%(Filename).obj</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="..\CMP_CompressonatorLib\DXTC\dxtc_v11_compress_sse2.asm">
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">ml64 /DX64=1 /W3 /Fo "$(IntDir)%(Filename).obj" /c /Cp /Zi "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ml64 /DX64=1 /W3 /Fo "$(IntDir)%(Filename).obj" /c /Cp /Zi "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">ml64 /DX64=1 /W3 /Fo "$(IntDir)%(Filename).obj" /c /Cp /Zi "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">ml64 /DX64=1 /W3 /Fo "$(IntDir)%(Filename).obj" /c /Cp /Zi "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">ml64 /DX64=1 /W3 /Fo "$(IntDir)%(Filename).obj" /c /Cp /Zi "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ml64 /DX64=1 /W3 /Fo "$(IntDir)%(Filename).obj" /c /Cp /Zi "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">ml64 /DX64=1 /W3 /Fo "$(IntDir)%(Filename).obj" /c /Cp /Zi "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">ml64 /DX64=1 /W3 /Fo "$(IntDir)%(Filename).obj" /c /Cp /Zi "%(FullPath)"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">Assembling %(Filename) to $(IntDir)%(Filename).objs</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Assembling %(Filename) to $(IntDir)%(Filename).objs</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">Assembling %(Filename) to $(IntDir)%(Filename).objs</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">Assembling %(Filename) to $(IntDir)%(Filename).objs</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_MD|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">Assembling %(Filename) to $(IntDir)%(Filename).objs</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_MD|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Assembling %(Filename) to $(IntDir)%(Filename).objs</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">Assembling %(Filename) to $(IntDir)%(Filename).objs</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Assembling %(Filename) to $(IntDir)%(Filename).objs</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">ml /DX64=0 /W3 /safeseh /Fo "$(IntDir)%(Filename).obj" /c /coff /Cp /Zi "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ml /DX64=0 /W3 /safeseh /Fo "$(IntDir)%(Filename).obj" /c /coff /Cp /Zi "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">ml /DX64=0 /W3 /safeseh /Fo "$(IntDir)%(Filename).obj" /c /coff /Cp /Zi "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">ml /DX64=0 /W3 /safeseh /Fo "$(IntDir)%(Filename).obj" /c /coff /Cp /Zi "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">ml /DX64=0 /W3 /safeseh /Fo "$(IntDir)%(Filename).obj" /c /coff /Cp /Zi "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ml /DX64=0 /W3 /safeseh /Fo "$(IntDir)%(Filename).obj" /c /coff /Cp /Zi "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">ml /DX64=0 /W3 /safeseh /Fo "$(IntDir)%(Filename).obj" /c /coff /Cp /Zi "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">ml /DX64=0 /W3 /safeseh /Fo "$(IntDir)%(Filename).obj" /c /coff /Cp /Zi "%(FullPath)"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">Assembling %(Filename) to $(IntDir)%(Filename).obj</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Assembling %(Filename) to $(IntDir)%(Filename).obj</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">Assembling %(Filename) to $(IntDir)%(Filename).obj</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">Assembling %(Filename) to $(IntDir)%(Filename).obj</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_MD|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">Assembling %(Filename) to $(IntDir)%(Filename).obj</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_MD|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Assembling %(Filename) to $(IntDir)%(Filename).obj</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">Assembling %(Filename) to $(IntDir)%(Filename).obj</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">Assembling %(Filename) to $(IntDir)%(Filename).obj</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-    </CustomBuild>
+    <None Include="..\cmp_compressonatorlib\dxtc\dxtc_v11_compress_64.asm" />
+    <None Include="..\cmp_compressonatorlib\dxtc\dxtc_v11_compress_sse2.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

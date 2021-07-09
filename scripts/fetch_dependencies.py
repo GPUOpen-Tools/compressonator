@@ -96,6 +96,9 @@ gitMappingLin = {
 
 # Libs to build on Unix
 gitMappingUni = {
+     ghRoot+"common_lib_ext_openexr_2.2.git"     : ["../common/lib/ext/openexr",    "master"],
+     "https://github.com/g-truc/glm.git"         : ["../common/lib/ext/glm",        "0.9.8.0"],
+     "https://github.com/discord/rapidxml.git"   : ["../common/lib/ext/rapidxml",   "master"],
 }
 
 # The following section contains OS-specific dependencies that are downloaded and placed in the specified target directory.
@@ -113,6 +116,8 @@ downloadMappingLin = {
 }
 
 downloadMappingUni = {
+    "http://download.savannah.nongnu.org/releases/openexr/ilmbase-2.2.0.tar.gz": "../../common/lib/ext/openexr2/ilmbase",
+    "http://download.savannah.nongnu.org/releases/openexr/openexr-2.2.0.tar.gz": "../../common/lib/ext/openexr2/openexr",
 }
 
 # detect the OS

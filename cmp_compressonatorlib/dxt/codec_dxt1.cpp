@@ -44,7 +44,7 @@
 CCodec_DXT1::CCodec_DXT1() :
     CCodec_DXTC(CT_DXT1) {
     m_bDXT1UseAlpha = false;
-    m_nAlphaThreshold = 128;
+    m_nAlphaThreshold = 0;
 }
 
 CCodec_DXT1::~CCodec_DXT1() {
@@ -52,30 +52,41 @@ CCodec_DXT1::~CCodec_DXT1() {
 }
 
 bool CCodec_DXT1::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue) {
-    if(strcmp(pszParamName, "DXT1UseAlpha") == 0)
+    if(strcmp(pszParamName, "DXT1UseAlpha") == 0) {
         m_bDXT1UseAlpha = (std::stoi(sValue) > 0) ? true : false;
-    else if(strcmp(pszParamName, "AlphaThreshold") == 0)
+        m_BC15Options.m_bUseAlpha = m_bDXT1UseAlpha;
+    }
+    else if(strcmp(pszParamName, "AlphaThreshold") == 0) {
         m_nAlphaThreshold = (CMP_BYTE) (std::stoi(sValue) & 0xFF);
+        m_BC15Options.m_nAlphaThreshold = m_nAlphaThreshold;
+    }
     else
         return CCodec_DXTC::SetParameter(pszParamName, sValue);
     return true;
 }
 
 bool CCodec_DXT1::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue) {
-    if(strcmp(pszParamName, "DXT1UseAlpha") == 0)
+    if(strcmp(pszParamName, "DXT1UseAlpha") == 0) {
         m_bDXT1UseAlpha = dwValue ? true : false;
-    else if(strcmp(pszParamName, "AlphaThreshold") == 0)
+        m_BC15Options.m_bUseAlpha = m_bDXT1UseAlpha;
+    }
+    else if(strcmp(pszParamName, "AlphaThreshold") == 0) {
         m_nAlphaThreshold = (CMP_BYTE) dwValue;
+        m_BC15Options.m_nAlphaThreshold = m_nAlphaThreshold;
+    }
     else
         return CCodec_DXTC::SetParameter(pszParamName, dwValue);
     return true;
 }
 
 bool CCodec_DXT1::GetParameter(const CMP_CHAR* pszParamName, CMP_DWORD& dwValue) {
-    if(strcmp(pszParamName, "DXT1UseAlpha") == 0)
-        dwValue = m_bDXT1UseAlpha;
-    else if(strcmp(pszParamName, "AlphaThreshold") == 0)
-        dwValue = m_nAlphaThreshold;
+    if(strcmp(pszParamName, "DXT1UseAlpha") == 0) {
+        dwValue = m_BC15Options.m_bUseAlpha;
+
+    }
+    else if(strcmp(pszParamName, "AlphaThreshold") == 0) {
+        dwValue = m_BC15Options.m_nAlphaThreshold;
+    }
     else
         return CCodec_DXTC::SetParameter(pszParamName, dwValue);
     return true;
@@ -88,12 +99,6 @@ CCodecBuffer* CCodec_DXT1::CreateBuffer(
 }
 
 CodecError CCodec_DXT1::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
-#ifndef _WIN64  //todo: add sse2 feature for win64
-    if(m_nCompressionSpeed == CMP_Speed_SuperFast && m_bUseSSE2)
-        return Compress_SuperFast(bufferIn, bufferOut, pFeedbackProc, pUser1, pUser2);
-    else if((m_nCompressionSpeed == CMP_Speed_Fast || m_nCompressionSpeed == CMP_Speed_SuperFast) && m_bUseSSE)
-        return Compress_Fast(bufferIn, bufferOut, pFeedbackProc, pUser1, pUser2);
-#endif
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
 

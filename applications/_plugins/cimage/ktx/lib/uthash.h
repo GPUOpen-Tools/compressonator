@@ -386,7 +386,7 @@ do {                                                                            
 #define HASH_JEN(key,keylen,num_bkts,hashv,bkt)                                  \
 do {                                                                             \
   unsigned _hj_i,_hj_j,_hj_k;                                                    \
-  char *_hj_key=(char*)key;														 \
+  char *_hj_key=(char*)key;                                                         \
   hashv = 0xfeedbeef;                                                            \
   _hj_i = _hj_j = 0x9e3779b9;                                                    \
   _hj_k = keylen;                                                                \

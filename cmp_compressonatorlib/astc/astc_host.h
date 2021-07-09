@@ -4923,7 +4923,7 @@ void imageblock_initialize_orig_from_work_cpu(imageblock_cpu * pb, int pixelcoun
 
 void fetch_imageblock_cpu(
     const astc_codec_image_cpu * img,
-    imageblock_cpu * pb,	// picture-block to imitialize with image data
+    imageblock_cpu * pb,    // picture-block to imitialize with image data
     // block dimensions
     int xdim, int ydim, int zdim,
     // position in texture.

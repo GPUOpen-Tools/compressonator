@@ -64,23 +64,23 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
 static
 KTX_error_code ktxMem_expand(struct ktxMem *mem, const GLsizei newsize)
 {
-	GLsizei new_alloc_size = mem->alloc_size;
-	while (new_alloc_size < newsize)
-		new_alloc_size <<= 1;
+    GLsizei new_alloc_size = mem->alloc_size;
+    while (new_alloc_size < newsize)
+        new_alloc_size <<= 1;
 
-	if (new_alloc_size == mem->alloc_size)
-		return KTX_SUCCESS;
+    if (new_alloc_size == mem->alloc_size)
+        return KTX_SUCCESS;
 
-	mem->bytes = (unsigned char*)realloc(mem->bytes, new_alloc_size);
-	if(!mem->bytes)
-	{
-		mem->alloc_size = 0;
-		mem->used_size = 0;
-		return KTX_OUT_OF_MEMORY;
-	}
+    mem->bytes = (unsigned char*)realloc(mem->bytes, new_alloc_size);
+    if(!mem->bytes)
+    {
+        mem->alloc_size = 0;
+        mem->used_size = 0;
+        return KTX_OUT_OF_MEMORY;
+    }
 
-	mem->alloc_size = new_alloc_size;
-	return KTX_SUCCESS;
+    mem->alloc_size = new_alloc_size;
+    return KTX_SUCCESS;
 }
 
 /**
@@ -99,15 +99,15 @@ KTX_error_code ktxMem_expand(struct ktxMem *mem, const GLsizei newsize)
 static
 KTX_error_code ktxMemStream_read(void* dst, const GLsizei count, void* src)
 {
-	struct ktxMem* mem = (struct ktxMem*)src;
+    struct ktxMem* mem = (struct ktxMem*)src;
 
-	if(!dst || !mem || (mem->pos + count > mem->used_size) || (mem->pos + count < mem->pos))
-		return KTX_INVALID_VALUE;
+    if(!dst || !mem || (mem->pos + count > mem->used_size) || (mem->pos + count < mem->pos))
+        return KTX_INVALID_VALUE;
 
-	memcpy(dst, mem->bytes + mem->pos, count);
-	mem->pos += count;
+    memcpy(dst, mem->bytes + mem->pos, count);
+    mem->pos += count;
 
-	return KTX_SUCCESS;
+    return KTX_SUCCESS;
 }
 
 /**
@@ -125,14 +125,14 @@ KTX_error_code ktxMemStream_read(void* dst, const GLsizei count, void* src)
 static
 KTX_error_code ktxMemStream_skip(const GLsizei count, void* src)
 {
-	struct ktxMem* mem = (struct ktxMem*)src;
+    struct ktxMem* mem = (struct ktxMem*)src;
 
-	if(!mem || (mem->pos + count > mem->used_size) || (mem->pos + count < mem->pos))
-		return KTX_INVALID_VALUE;
+    if(!mem || (mem->pos + count > mem->used_size) || (mem->pos + count < mem->pos))
+        return KTX_INVALID_VALUE;
 
-	mem->pos += count;
+    mem->pos += count;
 
-	return KTX_SUCCESS;
+    return KTX_SUCCESS;
 }
 
 /**
@@ -153,23 +153,23 @@ KTX_error_code ktxMemStream_skip(const GLsizei count, void* src)
 static
 KTX_error_code ktxMemStream_write(const void* src, const GLsizei size, const GLsizei count, void* dst)
 {
-	struct ktxMem* mem = (struct ktxMem*)dst;
-	KTX_error_code rc = KTX_SUCCESS;
+    struct ktxMem* mem = (struct ktxMem*)dst;
+    KTX_error_code rc = KTX_SUCCESS;
 
-	if(!dst || !mem)
-		return KTX_INVALID_VALUE;
+    if(!dst || !mem)
+        return KTX_INVALID_VALUE;
 
-	if(mem->alloc_size < mem->used_size + size*count)
-	{
-		rc = ktxMem_expand(mem, mem->used_size + size*count);
-		if(rc != KTX_SUCCESS)
-			return rc;
-	}
+    if(mem->alloc_size < mem->used_size + size*count)
+    {
+        rc = ktxMem_expand(mem, mem->used_size + size*count);
+        if(rc != KTX_SUCCESS)
+            return rc;
+    }
 
-	memcpy(mem->bytes + mem->used_size, src, size*count);
-	mem->used_size += size*count;
+    memcpy(mem->bytes + mem->used_size, src, size*count);
+    mem->used_size += size*count;
 
-	return KTX_SUCCESS;
+    return KTX_SUCCESS;
 }
 
 /**
@@ -194,32 +194,32 @@ KTX_error_code ktxMemStream_write(const void* src, const GLsizei size, const GLs
  */
 KTX_error_code ktxMemInit(struct ktxStream* stream, struct ktxMem* mem, const void* bytes, GLsizei size)
 {
-	if (!stream || !mem || size < 0)
-		return KTX_INVALID_VALUE;
+    if (!stream || !mem || size < 0)
+        return KTX_INVALID_VALUE;
 
-	if(!bytes)
-	{
-		if (size == 0)
-			size = KTX_MEM_DEFAULT_ALLOCATED_SIZE;
-		mem->bytes = (unsigned char*)malloc(size);
-		if (!mem->bytes)
-			return KTX_OUT_OF_MEMORY;
-		mem->alloc_size = size;
-		mem->used_size = 0;
-		mem->pos = 0;
-	}
-	else
-	{
-		mem->bytes = (unsigned char*)bytes;
-		mem->used_size = size;
-		mem->alloc_size = size;
-		mem->pos = 0;
-	}
+    if(!bytes)
+    {
+        if (size == 0)
+            size = KTX_MEM_DEFAULT_ALLOCATED_SIZE;
+        mem->bytes = (unsigned char*)malloc(size);
+        if (!mem->bytes)
+            return KTX_OUT_OF_MEMORY;
+        mem->alloc_size = size;
+        mem->used_size = 0;
+        mem->pos = 0;
+    }
+    else
+    {
+        mem->bytes = (unsigned char*)bytes;
+        mem->used_size = size;
+        mem->alloc_size = size;
+        mem->pos = 0;
+    }
 
-	stream->src = mem;
-	stream->read = ktxMemStream_read;
-	stream->skip = ktxMemStream_skip;
-	stream->write = ktxMemStream_write;
+    stream->src = mem;
+    stream->read = ktxMemStream_read;
+    stream->skip = ktxMemStream_skip;
+    stream->write = ktxMemStream_write;
 
-	return KTX_SUCCESS;
+    return KTX_SUCCESS;
 }

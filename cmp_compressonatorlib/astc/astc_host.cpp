@@ -1574,7 +1574,7 @@ void decode_ise(int quantization_level, int elements, const uint8_t * input_data
     // The maximum actual number of results is 64 bit, but we keep 4 additional elements
     // of padding.
     uint8_t results[68];
-    uint8_t tq_blocks[22];		// trit-blocks or quint-blocks
+    uint8_t tq_blocks[22];        // trit-blocks or quint-blocks
 
     int bits, trits, quints;
     find_number_of_bits_trits_quints(quantization_level, &bits, &trits, &quints);
@@ -2552,7 +2552,7 @@ void update_imageblock_flags_cpu(imageblock_cpu * pb, int xdim, int ydim, int zd
 // fetch an imageblock from the input file.
 void fetch_imageblock_cpu(
     const astc_codec_image_cpu * img,
-    imageblock_cpu * pb,	// picture-block to imitialize with image data
+    imageblock_cpu * pb,    // picture-block to imitialize with image data
     // block dimensions
     int xdim, int ydim, int zdim,
     // position in texture.
@@ -2965,7 +2965,7 @@ void write_imageblock_cpu(astc_codec_image_cpu * img, const imageblock_cpu * pb,
 uint32_t hash52_cpu(uint32_t inp) {
     inp ^= inp >> 15;
 
-    inp *= 0xEEDE0891;			// (2^4+1)*(2^7+1)*(2^17-1)
+    inp *= 0xEEDE0891;            // (2^4+1)*(2^7+1)*(2^17-1)
     inp ^= inp >> 5;
     inp += inp << 16;
     inp ^= inp >> 7;
@@ -3344,7 +3344,7 @@ void unpack_color_endpoints_cpu(ASTC_Encoder::astc_decode_mode decode_mode, int 
 }
 
 
-ASTC_Encoder::ushort4 lerp_color_int(ASTC_Encoder::astc_decode_mode decode_mode, ASTC_Encoder::ushort4 color0, ASTC_Encoder::ushort4 color1, int weight, int plane2_weight, int plane2_color_component	// -1 in 1-plane mode
+ASTC_Encoder::ushort4 lerp_color_int(ASTC_Encoder::astc_decode_mode decode_mode, ASTC_Encoder::ushort4 color0, ASTC_Encoder::ushort4 color1, int weight, int plane2_weight, int plane2_color_component    // -1 in 1-plane mode
                                     ) {
     ASTC_Encoder::int4 ecolor0 = ASTC_Encoder::int4(color0.x, color0.y, color0.z, color0.w);
     ASTC_Encoder::int4 ecolor1 = ASTC_Encoder::int4(color1.x, color1.y, color1.z, color1.w);

@@ -22,13 +22,27 @@
 // THE SOFTWARE.
 //
 
-#ifndef _PLUGIN_IMAGE_H
-#define _PLUGIN_IMAGE_H
+#ifndef _PLUGIN_IMAGE_FILTERFX_H
+#define _PLUGIN_IMAGE_FILTERFX_H
 
 #include "plugininterface.h"
 
 #ifdef _WIN32
+#include <Windows.h>
+#include <atlbase.h>  // CComPtr
 #include "d3d11.h"
+
+#include <string>
+#include <algorithm>
+#include <exception>
+#include <stdexcept>
+
+#include <cstdio>
+#include <cassert>
+
+#ifdef _WIN32
+#include "gpuresources.h"
+#endif
 
 // {3AF62198-7326-48FA-B1FB-1D12A355694D}
 static const GUID g_GUID = {0x3af62198, 0x7326, 0x48fa, {0xb1, 0xfb, 0x1d, 0x12, 0xa3, 0x55, 0x69, 0x4d}};
@@ -41,16 +55,20 @@ static const GUID g_GUID = {0};
 
 class Plugin_CFilterFx : public PluginInterface_Filters
 {
-  public:
+public:
     Plugin_CFilterFx();
-      virtual ~Plugin_CFilterFx();
+    virtual ~Plugin_CFilterFx();
 
     int TC_PluginSetSharedIO(void* Shared);
     int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
-    int TC_CFilter(MipSet* pMipSetSrc, CMP_MipSet* pMipSetDst, CMP_CFilterParams* pD3DXFilterParams);
+    int TC_CFilter(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSet, CMP_CFilterParams* pCFilterParams);
 
-  private:
+private:
     void Error(TCHAR* pszCaption, TC_ErrorLevel errorLevel, UINT nErrorString);
+    bool initialized = false;
+#ifdef _WIN32
+    std::unique_ptr<GpuResources> m_GpuResources;
+#endif
 };
 
 #endif

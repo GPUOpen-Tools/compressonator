@@ -1068,7 +1068,7 @@ cpImageView::cpImageView(const QString filePathName,
             // check levels with number of images to view
             //if (m_processedMipImages->m_MipImageFormat == MIPIMAGE_FORMAT::Format_QImage)
             //{
-            int count = m_processedMipImages->QImage_list[0].size();
+            int count = (int)m_processedMipImages->QImage_list[0].size();
             if (count <= 1)
             {
                 m_MipLevels = 0;
@@ -1371,7 +1371,7 @@ cpImageView::cpImageView(const QString filePathName,
 
         m_CBimageview_MipLevel = new QComboBox(this);
 
-        int processedImage_miplevel_max = m_processedMipImages->QImage_list[0].size();
+        int processedImage_miplevel_max = (int)m_processedMipImages->QImage_list[0].size();
 
         // check if we have miplevels in Original Image if its available match its level with the processed
         if (m_OriginalMipImages && (setting->input_image == eImageViewState::isProcessed))
@@ -1385,7 +1385,7 @@ cpImageView::cpImageView(const QString filePathName,
                 //                      "Original image MipMap Levels do not match the Processed image levels.\nLevels will be limited, retry by regenerating "
                 //                      "original image mip levels",
                 //                      QMessageBox::Ok);
-                processedImage_miplevel_max = m_OriginalMipImages->QImage_list[0].size();
+                processedImage_miplevel_max = (int)m_OriginalMipImages->QImage_list[0].size();
             }
         }
 
@@ -2032,7 +2032,7 @@ void cpImageView::onacPSNRUpdated(double value)
     if (m_PSNRLabel && value > 0)
     {
         char buff[16];
-        snprintf(buff, sizeof(buff), "PSNR: %3.1f dB", value);
+        snprintf(buff, sizeof(buff), "PSNR: %3.2f dB", value);
         m_PSNRLabel->setText(buff);
     }
 }

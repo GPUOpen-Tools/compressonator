@@ -1,5 +1,5 @@
 
-add_executable(test_core)
+add_executable(cmp_testcore)
 
 # CTestDashboardTargets for catch2 (enable for ref only!)
 # add_subdirectory(
@@ -7,7 +7,7 @@ add_executable(test_core)
 #                 ${PROJECT_EXTERNAL_LIBDIR}/catch2/bin
 #                 )
 
-target_sources(test_core
+target_sources(cmp_testcore
                 PRIVATE
                 testsmain.cpp
                 compressonatortests.cpp
@@ -17,7 +17,7 @@ target_sources(test_core
                  ${PROJECT_SOURCE_DIR}/applications/_plugins/common/utilfuncs.h
                 )
 
-target_include_directories(test_core PUBLIC
+target_include_directories(cmp_testcore PUBLIC
     ./
     ${PROJECT_SOURCE_DIR}/cmp_core/shaders
     ${PROJECT_SOURCE_DIR}/cmp_core/source 
@@ -25,10 +25,12 @@ target_include_directories(test_core PUBLIC
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/catch2
     )
 
-target_link_libraries(test_core 
+target_link_libraries(cmp_testcore 
                 CMP_Core
                 )
 
-set_target_properties(test_core 
-    PROPERTIES FOLDER "Tests"
+set_target_properties(cmp_testcore PROPERTIES 
+    FOLDER "Tests"
+    OUTPUT_NAME "cmp_testcore" 
+    VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$(Configuration)"
     )

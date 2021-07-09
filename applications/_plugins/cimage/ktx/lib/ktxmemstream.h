@@ -48,10 +48,10 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
  */
 struct ktxMem
 {
-	unsigned char* bytes;
-	GLsizei alloc_size;
-	GLsizei used_size;
-	GLsizei pos;
+    unsigned char* bytes;
+    GLsizei alloc_size;
+    GLsizei used_size;
+    GLsizei pos;
 };
 
 /*

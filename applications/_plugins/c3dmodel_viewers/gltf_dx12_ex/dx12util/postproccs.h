@@ -51,7 +51,7 @@ class PostProcCS {
 
     D3D12_GPU_DESCRIPTOR_HANDLE *m_pGpuDescriptor;
 
-    ID3D12RootSignature	        *m_pRootSignature;
+    ID3D12RootSignature            *m_pRootSignature;
 
     CBV_SRV_UAV                 *m_pUAVTable;
 

@@ -29,13 +29,8 @@
 #ifndef _ATIXCODEC_H_
 #define _ATIXCODEC_H_
 
-/*------------------------------------------------------------------------------------
-void CompRGBBlock(CODECFLOAT* block_32,    [IN]  array of the 3 component color vectors (888)
-                  CMP_DWORD block_dxtc[2],                [OUT] compressed data in DXT1 for mat
-                  int _NbrClrs = BLOCK_SIZE_4X4,            [IN]  actuall number of elements in the array
-                  bool _bUseSSE2 = true);                    [IN]  switch to SSE2 implementation
-------------------------------------------------------------------------------------*/
 CODECFLOAT CompRGBBlock(CODECFLOAT* block_32,
+                        CMP_DWORD compressedBlock[2],
                         CMP_WORD dwBlockSize,
                         CMP_BYTE nRedBits,
                         CMP_BYTE nGreenBits,
@@ -50,13 +45,8 @@ CODECFLOAT CompRGBBlock(CODECFLOAT* block_32,
                         bool _bUseAlpha = false,
                         CODECFLOAT _fAlphaThreshold = 0.5);
 
-/*------------------------------------------------------------------------------------
-void CompRGBBlock(CMP_DWORD* block_32,    [IN]  array of the 3 component color vectors (888)
-                  CMP_DWORD block_dxtc[2],                [OUT] compressed data in DXT1 for mat
-                  int _NbrClrs = BLOCK_SIZE_4X4,            [IN]  actuall number of elements in the array
-                  bool _bUseSSE2 = true);                    [IN]  switch to SSE2 implementation
-------------------------------------------------------------------------------------*/
 CODECFLOAT CompRGBBlock(CMP_DWORD* block_32,
+                        CMP_DWORD compressedBlock[2],
                         CMP_WORD dwBlockSize,
                         CMP_BYTE nRedBits,
                         CMP_BYTE nGreenBits,

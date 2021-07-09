@@ -41,7 +41,7 @@ class C_AnalysisData : public QObject {
     Q_PROPERTY(double  _SSIM_Blue      MEMBER m_SSIM_Blue)
     Q_PROPERTY(double  _SSIM_Green     MEMBER m_SSIM_Green)
     Q_PROPERTY(double  _SSIM_Red       MEMBER m_SSIM_Red)
-    Q_PROPERTY(double  _PSNR		   MEMBER m_PSNR)
+    Q_PROPERTY(double  _PSNR           MEMBER m_PSNR)
     Q_PROPERTY(double  _PSNR_Blue      MEMBER m_PSNR_Blue)
     Q_PROPERTY(double  _PSNR_Green     MEMBER m_PSNR_Green)
     Q_PROPERTY(double  _PSNR_Red       MEMBER m_PSNR_Red)
@@ -58,6 +58,8 @@ class C_AnalysisData : public QObject {
         m_PSNR_Green = 0.0;
         m_PSNR_Red = 0.0;
         diffCMipImages = new CMipImages();
+        m_analysisFile = "";
+        m_diffFile = "";
     }
 
     double m_MSE;
@@ -70,12 +72,16 @@ class C_AnalysisData : public QObject {
     double m_PSNR_Green;
     double m_PSNR_Red;
 
+    std::string m_analysisFile;
+    std::string m_diffFile;
+
     ~C_AnalysisData();
 
     bool SourceAndDestFileExtMatch(const char *fsource, const char *fdest);
     CMipImages* GenerateDiffImage(const char *fsource, const char *fdest);
     int GenerateSSIMAnalysis(const char *fsource, const char *fdest);
     int GeneratePSNRMSEAnalysis(const char *fsource, const char *fdest);
+    std::string CreateResultsFileName(const char *fsource, const char *fdest, const char *type_ext);
 
     CMipImages* diffCMipImages;
 
@@ -109,7 +115,7 @@ class C_SSIM_Analysis : public QObject {
 class C_MSE_PSNR_Analysis : public C_SSIM_Analysis {
     Q_OBJECT
     Q_PROPERTY(double  _MSE            MEMBER m_MSE)
-    Q_PROPERTY(double  _PSNR		   MEMBER m_PSNR)
+    Q_PROPERTY(double  _PSNR           MEMBER m_PSNR)
     Q_PROPERTY(double  _PSNR_Blue      MEMBER m_PSNR_Blue)
     Q_PROPERTY(double  _PSNR_Green     MEMBER m_PSNR_Green)
     Q_PROPERTY(double  _PSNR_Red       MEMBER m_PSNR_Red)
@@ -136,7 +142,7 @@ class C_MSE_PSNR_Analysis : public C_SSIM_Analysis {
 class C_PSNR_MSE_Analysis : public  QObject {
     Q_OBJECT
     Q_PROPERTY(double  _MSE            MEMBER m_MSE)
-    Q_PROPERTY(double  _PSNR		   MEMBER m_PSNR)
+    Q_PROPERTY(double  _PSNR           MEMBER m_PSNR)
     Q_PROPERTY(double  _PSNR_Blue      MEMBER m_PSNR_Blue)
     Q_PROPERTY(double  _PSNR_Green     MEMBER m_PSNR_Green)
     Q_PROPERTY(double  _PSNR_Red       MEMBER m_PSNR_Red)

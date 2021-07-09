@@ -77,19 +77,19 @@ else()
         message(FATAL_ERROR "Package OpenCV are required, but not found. In Unix, run initsetup_unix.sh or sudo apt-get install libopencv-dev to install the libs.")
     endif()
     
-    # Qt5 include path - users install required
     set_property(TARGET Image_Analysis PROPERTY POSITION_INDEPENDENT_CODE TRUE)
-    
-if (OPTION_CMP_QT)
-    find_package(Qt5Gui)
-    if(Qt5Gui_FOUND)
-        target_include_directories(Image_Analysis
-                                   PRIVATE 
-                                   "${Qt5Gui_INCLUDE_DIRS}")
-    else()
-        message(FATAL_ERROR "Package Qt5 (Qt5Gui) are required, but not found. In Unix, run initsetup_unix.sh or sudo apt-get install qtdeclarative5-dev. If is window, please make sure install qt and add the bin path (i.e. C:\Qt\5.7\msvc2015_64\bin) to environment PATH.")
+
+    # Qt5 include path - users install required
+    if (OPTION_CMP_QT)
+        find_package(Qt5Gui)
+        if(Qt5Gui_FOUND)
+            target_include_directories(Image_Analysis
+                                       PRIVATE 
+                                       "${Qt5Gui_INCLUDE_DIRS}")
+        else()
+            message(FATAL_ERROR "Package Qt5 (Qt5Gui) are required, but not found. In Unix, run initsetup_unix.sh or sudo apt-get install qtdeclarative5-dev. If is window, please make sure install qt and add the bin path (i.e. C:\Qt\5.7\msvc2015_64\bin) to environment PATH.")
+        endif()
     endif()
-endif()
 
     if(APPLE)
         target_include_directories(Image_Analysis

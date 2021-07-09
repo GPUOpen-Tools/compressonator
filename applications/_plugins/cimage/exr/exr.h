@@ -29,11 +29,11 @@
 #define IDS_STRING1                     1
 #define IDS_ERROR_FILE_OPEN             1
 #define IDS_ERROR_REGISTER_FILETYPE     2
-#define IDS_ERROR_NOT_EXR           	3
+#define IDS_ERROR_NOT_EXR               3
 #define IDS_ERROR_UNSUPPORTED_TYPE      4
 
 //#define EXR_SAVE_32F
-#define TILE_WIDTH	64
+#define TILE_WIDTH    64
 #define TILE_HEIGHT 64
 
 // {2438C059-CD7B-49AD-A626-FBAE37A059F5}
@@ -43,8 +43,8 @@ static const GUID g_GUID = { 0x2438c059, 0xcd7b, 0x49ad, { 0xa6, 0x26, 0xfb, 0xa
 static const GUID g_GUID = { 0 };
 #endif
 
-#define TC_PLUGIN_VERSION_MAJOR	1
-#define TC_PLUGIN_VERSION_MINOR	0
+#define TC_PLUGIN_VERSION_MAJOR    1
+#define TC_PLUGIN_VERSION_MINOR    0
 
 static const CMP_WORD BMP_HEADER = ((CMP_WORD)(CMP_BYTE)('B') | ((CMP_WORD)(CMP_BYTE)('M') << 8));
 

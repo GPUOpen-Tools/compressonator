@@ -37,6 +37,8 @@
 HWND FindTopLevelWindow(TCHAR *pszName);
 #endif
 
+#include "cmp_fileio.h"
+
 #define CMP_STATENUM 14 //14 characters for the state
 #define CMP_COPY "# CMP_filecopy"
 #define CMP_PROCESSED "# CMP_fileproc"

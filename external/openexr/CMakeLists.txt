@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 # CMakeLists.txt
-message(STATUS "++++++++++++++++++External OpenEXR CMakeList called" )
+message(STATUS "++++++++++++++++++External Adding OpenEXR include paths" )
 
 add_library(ExtOpenEXR INTERFACE)
 

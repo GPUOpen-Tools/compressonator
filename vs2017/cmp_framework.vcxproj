@@ -79,6 +79,7 @@
     <ClCompile Include="..\Applications\_Plugins\CCMP_SDK\BC5\BC5.cpp" />
     <ClCompile Include="..\Applications\_Plugins\CCMP_SDK\BC6\BC6H.cpp" />
     <ClCompile Include="..\Applications\_Plugins\CCMP_SDK\BC7\BC7.cpp" />
+    <ClCompile Include="..\applications\_plugins\ccmp_sdk\bcn.cpp" />
     <ClCompile Include="..\Applications\_Plugins\CImage\DDS\DDS.cpp" />
     <ClCompile Include="..\Applications\_Plugins\CImage\DDS\DDS_DX10.cpp" />
     <ClCompile Include="..\Applications\_Plugins\CImage\DDS\DDS_File.cpp" />
@@ -114,12 +115,14 @@
     <ClInclude Include="..\Applications\_Plugins\CCMP_SDK\BC5\BC5.h" />
     <ClInclude Include="..\Applications\_Plugins\CCMP_SDK\BC6\BC6H.h" />
     <ClInclude Include="..\Applications\_Plugins\CCMP_SDK\BC7\BC7.h" />
+    <ClInclude Include="..\applications\_plugins\ccmp_sdk\bcn.h" />
     <ClInclude Include="..\Applications\_Plugins\CImage\DDS\DDS.h" />
     <ClInclude Include="..\Applications\_Plugins\CImage\DDS\DDS_DX10.h" />
     <ClInclude Include="..\Applications\_Plugins\CImage\DDS\DDS_File.h" />
     <ClInclude Include="..\Applications\_Plugins\CImage\DDS\DDS_Helpers.h" />
     <ClInclude Include="..\Applications\_Plugins\Common\ATIFormats.h" />
     <ClInclude Include="..\applications\_plugins\common\cmp_fileio.h" />
+    <ClInclude Include="..\applications\_plugins\common\gltf\stb_image_write.h" />
     <ClInclude Include="..\Applications\_Plugins\Common\PluginBase.h" />
     <ClInclude Include="..\Applications\_Plugins\Common\PluginInterface.h" />
     <ClInclude Include="..\Applications\_Plugins\Common\PluginManager.h" />
@@ -128,16 +131,22 @@
     <ClInclude Include="..\Applications\_Plugins\Common\TC_PluginAPI.h" />
     <ClInclude Include="..\Applications\_Plugins\Common\TC_PluginInternal.h" />
     <ClInclude Include="..\Applications\_Plugins\Common\UtilFuncs.h" />
+    <ClInclude Include="..\cmp_compressonatorlib\compressonator.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc1_cmp.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc1_common_kernel.h" />
     <ClInclude Include="..\CMP_Core\shaders\BC1_Encode_kernel.h" />
     <ClInclude Include="..\CMP_Core\shaders\BC2_Encode_kernel.h" />
     <ClInclude Include="..\CMP_Core\shaders\BC3_Encode_kernel.h" />
     <ClInclude Include="..\CMP_Core\shaders\BC4_Encode_kernel.h" />
     <ClInclude Include="..\CMP_Core\shaders\BC5_Encode_kernel.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc6_common_encoder.h" />
     <ClInclude Include="..\CMP_Core\shaders\BC6_Encode_kernel.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc7_cmpmsc.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc7_common_encoder.h" />
     <ClInclude Include="..\CMP_Core\shaders\BC7_Encode_Kernel.h" />
+    <ClInclude Include="..\cmp_core\shaders\bcn_common_api.h" />
     <ClInclude Include="..\CMP_Core\shaders\BCn_Common_Kernel.h" />
     <ClInclude Include="..\CMP_Core\source\cmp_math_func.h" />
-    <ClInclude Include="..\CMP_Framework\CMP_framework.h" />
     <ClInclude Include="..\CMP_Framework\Common\CMP_BoxFilter.h" />
     <ClInclude Include="..\CMP_Framework\Common\CMP_MIPS.h" />
     <ClInclude Include="..\CMP_Framework\Common\half\eLut.h" />
@@ -493,7 +502,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;CMP_USE_XMMINTRIN;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../CMP_Core/source../CMP_Core/source../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../applications/_plugins/ccmp_sdk;../CMP_Core/source../CMP_Core/source../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -535,7 +544,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;CMP_USE_XMMINTRIN;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../CMP_Core/source../CMP_Core/source../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../applications/_plugins/ccmp_sdk;../CMP_Core/source../CMP_Core/source../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -577,7 +586,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;CMP_USE_XMMINTRIN;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../CMP_Core/source../CMP_Core/source../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../applications/_plugins/ccmp_sdk;../CMP_Core/source../CMP_Core/source../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -620,7 +629,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;CMP_USE_XMMINTRIN;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../CMP_Core/source../CMP_Core/source../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../applications/_plugins/ccmp_sdk;../CMP_Core/source../CMP_Core/source../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -662,7 +671,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;CMP_USE_XMMINTRIN;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../CMP_Core/source../CMP_Core/source../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../applications/_plugins/ccmp_sdk;../CMP_Core/source../CMP_Core/source../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -698,7 +707,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;CMP_USE_XMMINTRIN;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../CMP_Core/source../CMP_Core/source../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../applications/_plugins/ccmp_sdk;../CMP_Core/source../CMP_Core/source../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -732,7 +741,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;CMP_USE_XMMINTRIN;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../CMP_Core/source../CMP_Core/source../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../applications/_plugins/ccmp_sdk;../CMP_Core/source../CMP_Core/source../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -769,7 +778,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;CMP_USE_XMMINTRIN;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../CMP_Core/source../CMP_Core/source../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../applications/_plugins/ccmp_sdk;../CMP_Core/source../CMP_Core/source../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -806,7 +815,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;CMP_USE_XMMINTRIN;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../CMP_Core/source../CMP_Core/source../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../applications/_plugins/ccmp_sdk;../CMP_Core/source../CMP_Core/source../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -857,7 +866,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;CMP_USE_XMMINTRIN;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../CMP_Core/source../CMP_Core/source../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../applications/_plugins/ccmp_sdk;../CMP_Core/source../CMP_Core/source../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -908,7 +917,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;CMP_USE_XMMINTRIN;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../CMP_Core/source../CMP_Core/source../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../applications/_plugins/ccmp_sdk;../CMP_Core/source../CMP_Core/source../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -959,7 +968,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;CMP_USE_XMMINTRIN;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../CMP_Core/source../CMP_Core/source../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../applications/_plugins/ccmp_sdk;../CMP_Core/source../CMP_Core/source../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -1009,7 +1018,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;CMP_USE_XMMINTRIN;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../CMP_Core/source../CMP_Core/source../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../applications/_plugins/ccmp_sdk;../CMP_Core/source../CMP_Core/source../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -1047,7 +1056,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;CMP_USE_XMMINTRIN;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../CMP_Core/source../CMP_Core/source../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../applications/_plugins/ccmp_sdk;../CMP_Core/source../CMP_Core/source../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -1085,7 +1094,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;CMP_USE_XMMINTRIN;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../CMP_Core/source../CMP_Core/source../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../applications/_plugins/ccmp_sdk;../CMP_Core/source../CMP_Core/source../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -1123,7 +1132,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;CMP_USE_XMMINTRIN;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../CMP_Core/source../CMP_Core/source../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;../Applications/_Libs/CMP_Math;../CMP_Core/source;../CMP_Core/shaders;../CMP_Framework;../CMP_Framework/Common;../CMP_Framework/Common/half;../Applications/_Plugins/Common;../CMP_CompressonatorLib;../CMP_CompressonatorLib/Common;../applications/_plugins/ccmp_sdk;../CMP_Core/source../CMP_Core/source../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>

@@ -20,6 +20,9 @@
 // THE SOFTWARE.
 //
 //=====================================================================
+#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
 
 #include "cpmaincomponents.h"
 
@@ -1093,7 +1096,7 @@ void cpMainComponents::genMIPMaps()
                 // regenrate mip map
                 if (data->m_MipImages->mipset->m_nMipLevels > 1 || data->m_MipImages->QImage_list[0].size() > 1)
                 {
-                    int n = data->m_MipImages->QImage_list[0].size();
+                    int n = (int)data->m_MipImages->QImage_list[0].size();
                     for (int i = 1; i < n; i++)
                     {
                         data->m_MipImages->QImage_list[0].pop_back();
@@ -1137,7 +1140,7 @@ void cpMainComponents::genMIPMaps()
                             // regenrate mip map
                             if (data->m_MipImages->mipset->m_nMipLevels > 1 || data->m_MipImages->QImage_list[0].size() > 1)
                             {
-                                int n = data->m_MipImages->QImage_list[0].size();
+                                int n = (int)data->m_MipImages->QImage_list[0].size();
                                 for (int i = 1; i < n; i++)
                                 {
                                     data->m_MipImages->QImage_list[0].pop_back();

@@ -1043,7 +1043,7 @@ TC_PluginError LoopR16G16(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,
     return PE_OK;
 }
 
-TC_PluginError PreLoopR16(FILE*&, DDSD2*&, MipSet*& pMipSet, void*&)
+TC_PluginError PreLoopR16(FILE*&, DDSD2*&, MipSet*& , void*&)
 {
     return PE_OK;
 }
@@ -1089,7 +1089,7 @@ TC_PluginError LoopR16(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,
     return PE_OK;
 }
 
-TC_PluginError PostLoopR16(FILE*&, DDSD2*&, MipSet*& pMipSet, void*&)
+TC_PluginError PostLoopR16(FILE*&, DDSD2*&, MipSet*&, void*&)
 {
     return PE_OK;
 }

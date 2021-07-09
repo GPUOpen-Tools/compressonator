@@ -3291,7 +3291,7 @@ static bool BeginPopupEx(const char* str_id, ImGuiWindowFlags extra_flags) {
 }
 
 bool ImGui::BeginPopup(const char* str_id) {
-    if (GImGui->OpenPopupStack.Size <= GImGui->CurrentPopupStack.Size) {	// Early out for performance
+    if (GImGui->OpenPopupStack.Size <= GImGui->CurrentPopupStack.Size) {    // Early out for performance
         ClearSetNextWindowData(); // We behave like Begin() and need to consume those values
         return false;
     }
@@ -8521,7 +8521,7 @@ void ImGui::EndGroup() {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = GetCurrentWindow();
 
-    IM_ASSERT(!window->DC.GroupStack.empty());	// Mismatched BeginGroup()/EndGroup() calls
+    IM_ASSERT(!window->DC.GroupStack.empty());    // Mismatched BeginGroup()/EndGroup() calls
 
     ImGuiGroupData& group_data = window->DC.GroupStack.back();
 

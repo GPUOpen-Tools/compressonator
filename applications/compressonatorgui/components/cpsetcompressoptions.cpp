@@ -74,13 +74,14 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget* parent)
     , m_parent(parent) {
     changeSelf              = false;
     m_propQuality           = NULL;
+#ifdef USE_ENABLEHQ
+    m_propEnableHQ          = NULL;
+#endif
     m_propChannelWeightingR = NULL;
     m_propChannelWeightingG = NULL;
     m_propChannelWeightingB = NULL;
     m_propAlphaThreshold    = NULL;
     m_propAdaptiveColor     = NULL;
-    m_propUseAlpha          = NULL;
-    m_propNoAlpha           = NULL;
     m_propDefog             = NULL;
     m_propExposure          = NULL;
     m_propKneeLow           = NULL;
@@ -169,8 +170,6 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget* parent)
     connect(&m_DestinationData, SIGNAL(greenwChanged(QVariant&)), this, SLOT(greenwValueChanged(QVariant&)));
     connect(&m_DestinationData, SIGNAL(bluewChanged(QVariant&)), this, SLOT(bluewValueChanged(QVariant&)));
     connect(&m_DestinationData, SIGNAL(thresholdChanged(QVariant&)), this, SLOT(thresholdValueChanged(QVariant&)));
-    connect(&m_DestinationData, SIGNAL(noAlphaChannel()), this, SLOT(noAlphaChannelValue()));
-    connect(&m_DestinationData, SIGNAL(hasAlphaChannel()), this, SLOT(hasAlphaChannelValue()));
     connect(&m_DestinationData, SIGNAL(bitrateChanged(QString&, int&, int&)), this, SLOT(bitrateValueChanged(QString&, int&, int&)));
     connect(&m_DestinationData, SIGNAL(defogChanged(double&)), this, SLOT(defogValueChanged(double&)));
     connect(&m_DestinationData, SIGNAL(exposureChanged(double&)), this, SLOT(exposureValueChanged(double&)));
@@ -184,6 +183,9 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget* parent)
 
     // Set Editing Defaults
     m_propQuality = m_theController->getProperty(COMPRESS_OPTIONS_QUALITY);
+#ifdef USE_ENABLEHQ
+    m_propEnableHQ= m_theController->getProperty(COMPRESS_OPTIONS_HIGHQUALITY);
+#endif
     m_propFormat  = m_theController->getProperty(COMPRESS_OPTIONS_FORMAT);
 
     // Hide settings not relavent to the current setup
@@ -208,19 +210,18 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget* parent)
     m_propChannelWeightingB = m_theController->getProperty(COMPRESS_OPTIONS_CHANNEL_WEIGHTING_B);
     m_propAlphaThreshold    = m_theController->getProperty(COMPRESS_OPTIONS_ALPHATHRESHOLD);
     m_propAdaptiveColor     = m_theController->getProperty(COMPRESS_OPTIONS_ADAPTIVECOLOR);
-    m_propUseAlpha          = m_theController->getProperty(COMPRESS_OPTIONS_USEALPHA);
     m_propBitrate           = m_theController->getProperty(COMPRESS_OPTIONS_BITRATE);
     m_propDefog             = m_theController->getProperty(COMPRESS_OPTIONS_DEFOG);
     m_propExposure          = m_theController->getProperty(COMPRESS_OPTIONS_EXPOSURE);
     m_propKneeLow           = m_theController->getProperty(COMPRESS_OPTIONS_KNEELOW);
     m_propKneeHigh          = m_theController->getProperty(COMPRESS_OPTIONS_KNEEHIGH);
     m_propGamma             = m_theController->getProperty(COMPRESS_OPTIONS_GAMMA);
-    m_propNoAlpha           = m_theController->getProperty(COMPRESS_OPTIONS_NOALPHA);
     m_propDestImage         = m_theController->getProperty(DESTINATION_IMAGE_CLASS_NAME);
     m_propChannelWeight     = m_theController->getProperty(CHANNEL_WEIGHTING_CLASS_NAME);
     m_propDXT1Alpha         = m_theController->getProperty(DXT1_ALPHA_CLASS_NAME);
     m_propCodecBlockRate    = m_theController->getProperty(CODEC_BLOCK_CLASS_NAME);
     m_propHDRProperties     = m_theController->getProperty(HDR_PROP_CLASS_NAME);
+    m_propRefine            = m_theController->getProperty(REFINE_CLASS_NAME);
 
     //=================================
     // Text View for help and Hints
@@ -403,6 +404,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
     else
         m_infotext->hide();
 
+   if (m_propRefine)
+        m_propRefine->setHidden(true);
+
     // Get the source compression data
     C_Destination_Options::eCompression comp = (C_Destination_Options::eCompression&)value;
 
@@ -420,10 +424,18 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
     m_fileFormats->clear();
 
     if (m_propQuality) {
-        if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW)
+        if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW) {
             m_propQuality->setEnabled(false);
-        else
+#ifdef USE_ENABLEHQ
+            if (m_propEnableHQ) m_propEnableHQ->setEnabled(false);
+#endif
+        }
+        else {
             m_propQuality->setEnabled(true);
+#ifdef USE_ENABLEHQ
+            if (m_propEnableHQ) m_propEnableHQ->setEnabled(true);
+#endif
+        }
     }
     if (m_propChannelWeightingR)
         m_propChannelWeightingR->setEnabled(true);
@@ -435,10 +447,6 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         m_propAlphaThreshold->setEnabled(true);
     if (m_propAdaptiveColor)
         m_propAdaptiveColor->setEnabled(true);
-    if (m_propUseAlpha)
-        m_propUseAlpha->setEnabled(true);
-    if (m_propNoAlpha)
-        m_propNoAlpha->setEnabled(true);
     if (m_propBitrate)
         m_propBitrate->setEnabled(true);
     if (m_propDefog)
@@ -476,6 +484,9 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         colorWeightOptions  = true;
         alphaChannelOptions = true;
         codecBlockOptions   = false;
+        if (m_propRefine)
+            m_propRefine->setHidden(false);
+
         if (m_DestinationData.m_SourceIsFloatFormat) {
             hdrOptions = true;
         }
@@ -835,6 +846,10 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
 
         if (m_propQuality)
             m_propQuality->setEnabled(false);
+#ifdef USE_ENABLEHQ
+        if (m_propEnableHQ)
+            m_propEnableHQ->setEnabled(false);
+#endif
         if (m_propChannelWeightingR)
             m_propChannelWeightingR->setEnabled(false);
         if (m_propChannelWeightingG)
@@ -845,10 +860,6 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
             m_propAlphaThreshold->setEnabled(false);
         if (m_propAdaptiveColor)
             m_propAdaptiveColor->setEnabled(false);
-        if (m_propUseAlpha)
-            m_propUseAlpha->setEnabled(false);
-        if (m_propNoAlpha)
-            m_propNoAlpha->setEnabled(false);
         if (m_propBitrate)
             m_propBitrate->setEnabled(false);
         if (m_propDefog)
@@ -866,10 +877,18 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
     }
 
     if (m_propQuality) {
-        if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW)
+        if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW) {
             m_propQuality->setEnabled(false);
-        else
+#ifdef USE_ENABLEHQ
+            if (m_propEnableHQ) m_propEnableHQ->setEnabled(false);
+#endif
+        }
+        else {
             m_propQuality->setEnabled(useQualityOption);
+#ifdef USE_ENABLEHQ
+            if (m_propEnableHQ) m_propEnableHQ->setEnabled(useQualityOption);
+#endif
+        }
     }
     if (m_propChannelWeightingR)
         m_propChannelWeightingR->setEnabled(colorWeightOptions);
@@ -881,10 +900,6 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         m_propAlphaThreshold->setEnabled(alphaChannelOptions);
     if (m_propAdaptiveColor)
         m_propAdaptiveColor->setEnabled(colorWeightOptions);
-    if (m_propUseAlpha)
-        m_propUseAlpha->setEnabled(alphaChannelOptions);
-    if (m_propNoAlpha)
-        m_propNoAlpha->setEnabled(alphaChannelOptions);
     if (m_propBitrate)
         m_propBitrate->setEnabled(codecBlockOptions);
     if (m_propDefog)
@@ -947,6 +962,11 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
             if (m_propQuality) {
                 m_propQuality->setHidden(true);
             }
+#ifdef USE_ENABLEHQ
+            if (m_propEnableHQ) {
+                m_propEnableHQ->setHidden(true);
+            }
+#endif
         } else {
             // Restrict destination to DDS files
             m_fileFormats->addItem("DDS");
@@ -959,6 +979,11 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
             if (m_propQuality) {
                 m_propQuality->setHidden(false);
             }
+#ifdef USE_ENABLEHQ
+            if (m_propEnableHQ) {
+                m_propEnableHQ->setHidden(true); // v4.2 feature set to false when ready
+            }
+#endif
         }
     }
     break;
@@ -972,6 +997,11 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         if (m_propQuality) {
             m_propQuality->setHidden(false);
         }
+#ifdef USE_ENABLEHQ
+        if (m_propEnableHQ) {
+            m_propEnableHQ->setHidden(false);
+        }
+#endif
     }
     break;
     }
@@ -1029,19 +1059,6 @@ void CSetCompressOptions::thresholdValueChanged(QVariant& value) {
     m_infotext->clear();
     m_infotext->append("<b>Alpha Threshold</b> Applies only to compressed formats (with alpha channel on)");
     m_infotext->append("Value range is 1-255");
-}
-
-//===================================================================
-// Check if alpha is selected
-//===================================================================
-void CSetCompressOptions::noAlphaChannelValue() {
-    if (m_propAlphaThreshold)
-        m_propAlphaThreshold->setEnabled(false);
-}
-
-void CSetCompressOptions::hasAlphaChannelValue() {
-    if (m_propAlphaThreshold)
-        m_propAlphaThreshold->setEnabled(true);
 }
 
 //===================================================================
@@ -1237,7 +1254,11 @@ bool CSetCompressOptions::updateDisplayContent() {
             if (m_propQuality) {
                 m_propQuality->setHidden(true);
             }
-
+#ifdef USE_ENABLEHQ
+            if (m_propEnableHQ) {
+                m_propEnableHQ->setHidden(true);
+            }
+#endif
             if (m_propFormat) {
                 m_propFormat->setHidden(true);
             }
@@ -1260,7 +1281,11 @@ bool CSetCompressOptions::updateDisplayContent() {
             if (m_propQuality) {
                 m_propQuality->setHidden(false);
             }
-
+#ifdef USE_ENABLEHQ
+            if (m_propEnableHQ) {
+                m_propEnableHQ->setHidden(true); // v4.2 feature set to false when ready
+            }
+#endif
             if (m_propFormat) {
                 m_propFormat->setHidden(false);
             }
@@ -1345,10 +1370,18 @@ bool CSetCompressOptions::updateDisplayContent() {
 
     if (m_propQuality) {
         m_propQuality->setToolTip(STR_QUALITY_SETTING_HINT);
-        if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW)
+        if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW) {
             m_propQuality->setEnabled(false);
-        else
+#ifdef USE_ENABLEHQ
+            if (m_propEnableHQ) m_propEnableHQ->setEnabled(false);
+#endif
+        }
+        else {
             m_propQuality->setEnabled(true);
+#ifdef USE_ENABLEHQ
+            if (m_propEnableHQ) m_propEnableHQ->setEnabled(true);
+#endif
+        }
         // Set  Properties for editing
         QtVariantPropertyManager* Manager = (QtVariantPropertyManager*)m_propQuality->propertyManager();
         setMinMaxStep(Manager, m_propQuality, 0.0, 1.0, 0.01,2);

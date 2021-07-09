@@ -724,7 +724,7 @@ void ImGUIVK_UpdateIO() {
 
     // Hide OS mouse cursor if ImGui is drawing it
     if (io.MouseDrawCursor)
-        SetCursor(NULL);	// Start the frame
+        SetCursor(NULL);    // Start the frame
 }
 
 IMGUI_API LRESULT ImGUIVK_WndProcHandler(MSG msg) {

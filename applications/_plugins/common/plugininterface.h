@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016-2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2021 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,7 +21,7 @@
 // THE SOFTWARE.
 //
 /// \file PluginInterface.h
-/// \version 3.1
+/// \version 3.2
 /// \brief Declares the interface to the Compressonator & ArchitectMF SDK
 //
 //=====================================================================
@@ -36,7 +36,7 @@
 #include "pluginmanager.h"
 #include "texture.h"
 
-#define TC_API_VERSION_MAJOR 2
+#define TC_API_VERSION_MAJOR 1
 #define TC_API_VERSION_MINOR 4
 
 typedef CMP_DWORD_PTR TC_HANDLE;  ///< Generic Texture API handle
@@ -251,6 +251,21 @@ class CMP_Encoder {
     unsigned int     m_zdim;
     // Compression quality to apply during compression
     float            m_quality;
+};
+
+
+class PluginInterface_Vision : PluginBase
+{
+public:
+    PluginInterface_Vision()
+    {
+    }
+    virtual ~PluginInterface_Vision()
+    {
+    }
+    virtual int   TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
+
+    virtual void VisionProcess(char* srcFile, char* testFile, void *options, void *results) = 0;
 };
 
 #endif

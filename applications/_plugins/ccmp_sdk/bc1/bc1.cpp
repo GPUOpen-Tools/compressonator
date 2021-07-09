@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2016    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2021    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -23,6 +23,7 @@
 //
 //=====================================================================
 
+#include "bcn.h"
 #include "bc1.h"
 
 #ifdef USE_TIMERS
@@ -48,11 +49,9 @@ void *make_Plugin_BC1() {
 }
 #endif
 
-
-
 CMP_BC15Options  g_BC1Encode;
 
-#define GPU_OCL_BC1_COMPUTEFILE          "./plugins/Compute/BC1_Encode_kernel.cpp"
+#define GPU_OCL_BC1_COMPUTEFILE      "./plugins/Compute/BC1_Encode_kernel.cpp"
 #define GPU_DXC_BC1_COMPUTEFILE      "./plugins/Compute/BC1_Encode_kernel.hlsl"
 
 void  CompressBlockBC1_Internal(
@@ -86,8 +85,12 @@ void* Plugin_BC1::TC_Create() {
 }
 
 void  Plugin_BC1::TC_Destroy(void* codec) {
-    delete codec;
-    codec = nullptr;
+    if (codec != nullptr) {
+        BC1_EncodeClass* pcodec;
+        pcodec = reinterpret_cast<BC1_EncodeClass*>(codec);
+        delete pcodec;
+        codec = nullptr;
+    }
 }
 
 char *Plugin_BC1::TC_ComputeSourceFile(CGU_UINT32  Compute_type) {
@@ -103,15 +106,23 @@ char *Plugin_BC1::TC_ComputeSourceFile(CGU_UINT32  Compute_type) {
 void Plugin_BC1::TC_Start() {};
 void Plugin_BC1::TC_End() {};
 
+
+
 int Plugin_BC1::TC_Init(void  *kernel_options) {
     if (!kernel_options)    return (-1);
     m_KernelOptions = reinterpret_cast<KernelOptions *>(kernel_options);
 
     memset(&g_BC1Encode, 0, sizeof(CMP_BC15Options));
+
     SetDefaultBC15Options(&g_BC1Encode);
+
+    SetUserBC15EncoderOptions(&g_BC1Encode,m_KernelOptions);
+
     g_BC1Encode.m_src_width  = m_KernelOptions->width;
     g_BC1Encode.m_src_height = m_KernelOptions->height;
     g_BC1Encode.m_fquality   = m_KernelOptions->fquality;
+
+
 
     m_KernelOptions->data = &g_BC1Encode;
     m_KernelOptions->size = sizeof(g_BC1Encode);

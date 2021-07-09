@@ -31,6 +31,11 @@
 
 #include "codec_block_4x4.h"
 
+//#define USE_CMP_CORE_API
+#ifdef USE_CMP_CORE_API
+#include "bcn_common_kernel.h"
+#endif
+
 #define DXTC_OFFSET_ALPHA 0
 #define DXTC_OFFSET_RGB 2
 
@@ -107,11 +112,14 @@ class CCodec_DXTC : public CCodec_Block_4x4 {
     bool m_b3DRefinement;
     bool m_bSwizzleChannels;
 
-    CMP_BYTE m_nRefinementSteps;
+    CMP_BYTE  m_nRefinementSteps;
     CMP_Speed m_nCompressionSpeed;
 
     CODECFLOAT m_fBaseChannelWeights[3];
     CODECFLOAT m_fChannelWeights[3];
+    CODECFLOAT m_fQuality;
+
+    CMP_BC15Options m_BC15Options;
 };
 
 #endif // !defined(_CODEC_DXTC_H_INCLUDED_)

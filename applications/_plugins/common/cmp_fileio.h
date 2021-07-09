@@ -32,6 +32,7 @@ enum CMP_PATHTYPES
 
 CMP_PATHTYPES CMP_PathType(const char* path);
 
+void  CMP_CreateTextFile(std::string& source_file);
 FILE* CMP_OpenTextFile(char* SourceFile, const char* mode);
 void  CMP_CLoseTextFile(FILE* fp);
 

@@ -248,10 +248,10 @@ void GltfDepthPass::CreatePipeline(ID3D12Device* pDevice, UINT node, std::vector
         CD3DX12_ROOT_SIGNATURE_DESC descRootSignature = CD3DX12_ROOT_SIGNATURE_DESC();
 
         if (bUsingTransparency) {
-            DescRange[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);		// b0 <- per frame
-            DescRange[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);		// t0 <- per material
-            DescRange[2].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);		// b1 <- per material parameters
-            DescRange[3].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 4, 0);	// s0 <- samplers
+            DescRange[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);        // b0 <- per frame
+            DescRange[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);        // t0 <- per material
+            DescRange[2].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);        // b1 <- per material parameters
+            DescRange[3].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 4, 0);    // s0 <- samplers
 
             RTSlot[0].InitAsDescriptorTable(1, &DescRange[0], D3D12_SHADER_VISIBILITY_ALL);
             RTSlot[1].InitAsDescriptorTable(1, &DescRange[1], D3D12_SHADER_VISIBILITY_PIXEL);
@@ -264,8 +264,8 @@ void GltfDepthPass::CreatePipeline(ID3D12Device* pDevice, UINT node, std::vector
             descRootSignature.NumStaticSamplers = 0;
             descRootSignature.pStaticSamplers = NULL;
         } else {
-            DescRange[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);		// b0 <- per frame
-            DescRange[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);		// b1 <- per material parameters
+            DescRange[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);        // b0 <- per frame
+            DescRange[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);        // b1 <- per material parameters
 
             RTSlot[0].InitAsDescriptorTable(1, &DescRange[0], D3D12_SHADER_VISIBILITY_ALL);
             RTSlot[1].InitAsDescriptorTable(1, &DescRange[1], D3D12_SHADER_VISIBILITY_ALL);

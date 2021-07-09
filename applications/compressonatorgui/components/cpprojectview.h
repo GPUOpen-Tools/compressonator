@@ -58,7 +58,7 @@
 #include "modeldata.h"
 
 // JSon
-#include "json/json.h"
+#include "json/json.hpp"
 
 #include "cmp_fileio.h"
 

@@ -129,6 +129,22 @@ void CImagePropertyView::oncurrentItemChanged(QtBrowserItem* item) {
         m_infotext->append("For low values quality will be poor and the time to process the image will be short.");
         m_infotext->append("Subsequently higher values will increase the quality and processing time");
     }
+    else if (text.compare(COMPRESS_OPTIONS_REFINE_STEPS) == 0) {
+        m_infotext->append("Sets added steps to increase image quality");
+        m_infotext->append("Set 1 for low-frequency images, these images typically have solid or gradient colors per block");
+        m_infotext->append("Set 2 for processing mixed low + high-frequency images, these images typically contain edges or mixed colors per block");
+    }
+    else if (text.compare(COMPRESS_OPTIONS_ALPHATHRESHOLD) == 0) {
+        m_infotext->append("Punch through alpha for BC1");
+        m_infotext->append("To enable set a value > 0");
+        m_infotext->append("Blocks with alpha below the threshold will be set transparent");
+    }
+#ifdef USE_ENABLEHQ
+    else if (text.compare(COMPRESS_OPTIONS_HIGHQUALITY) == 0) {
+        m_infotext->append("Enables high-quality encoding to improve overall image quality");
+        m_infotext->append("This will option will considerably increase processing time");
+    }
+#endif
 }
 
 void CImagePropertyView::Init_C_Destiniation_Data_Controller() {
@@ -146,7 +162,12 @@ void CImagePropertyView::Init_C_Destiniation_Data_Controller() {
     if (m_propQuality) {
         m_propQuality->setHidden(true);
     }
-
+#ifdef USE_ENABLEHQ
+    m_propEnableHQ = m_theController->getProperty(COMPRESS_OPTIONS_HIGHQUALITY);
+    if (m_propEnableHQ) {
+        m_propEnableHQ->setHidden(true);
+    }
+#endif
     // C_Destination_Image - always enabled common to both Mesh and Image Data
     m_propWidth     = m_theController->getProperty(COMPRESS_OPTIONS_WIDTH);
     m_propHeight    = m_theController->getProperty(COMPRESS_OPTIONS_HEIGHT);
@@ -180,8 +201,6 @@ void CImagePropertyView::Init_C_Destiniation_Data_Controller() {
         m_propDXT1Alpha->setHidden(true);
         m_propAlphaThreshold = m_theController->getProperty(COMPRESS_OPTIONS_ALPHATHRESHOLD);
         m_propAdaptiveColor  = m_theController->getProperty(COMPRESS_OPTIONS_ADAPTIVECOLOR);
-        m_propUseAlpha       = m_theController->getProperty(COMPRESS_OPTIONS_USEALPHA);
-        m_propNoAlpha        = m_theController->getProperty(COMPRESS_OPTIONS_NOALPHA);
         m_propBitrate        = m_theController->getProperty(COMPRESS_OPTIONS_BITRATE);
     }
 
@@ -189,6 +208,12 @@ void CImagePropertyView::Init_C_Destiniation_Data_Controller() {
     m_propCodecBlockRate = m_theController->getProperty(CODEC_BLOCK_CLASS_NAME);
     if (m_propCodecBlockRate) {
         m_propCodecBlockRate->setHidden(true);
+    }
+
+    // C_Refine - default hidden : Enabled for BC1 
+    m_propRefine = m_theController->getProperty(REFINE_CLASS_NAME);
+    if (m_propRefine) {
+        m_propRefine->setHidden(true);
     }
 
     // C_Input_HDR_Image_Properties - default hidden
@@ -277,6 +302,9 @@ void CImagePropertyView::OnUpdateData(QObject* data) {
             if (m_propFormat)
                 m_propFormat->setHidden(false);
             if (m_propQuality) {
+#ifdef USE_ENABLEHQ
+                if (m_propEnableHQ) m_propEnableHQ->setHidden(true); // v4.2 feature set to false when ready
+#endif
                 m_propQuality->setHidden(false);
                 QtVariantPropertyManager* Manager = (QtVariantPropertyManager*)m_propQuality->propertyManager();
                 setMinMaxStep(Manager, m_propQuality, 0.0, 1.0, 0.01, 2);
@@ -299,8 +327,6 @@ void CImagePropertyView::OnUpdateData(QObject* data) {
             connect(m_data, SIGNAL(greenwChanged(QVariant&)), this, SLOT(greenwValueChanged(QVariant&)));
             connect(m_data, SIGNAL(bluewChanged(QVariant&)), this, SLOT(bluewValueChanged(QVariant&)));
             connect(m_data, SIGNAL(thresholdChanged(QVariant&)), this, SLOT(thresholdValueChanged(QVariant&)));
-            connect(m_data, SIGNAL(noAlphaChannel()), this, SLOT(noAlphaChannelValue()));
-            connect(m_data, SIGNAL(hasAlphaChannel()), this, SLOT(hasAlphaChannelValue()));
             connect(m_data, SIGNAL(bitrateChanged(QString&, int&, int&)), this, SLOT(bitrateValueChanged(QString&, int&, int&)));
 
             connect(m_data, SIGNAL(defogChanged(double&)), this, SLOT(defogValueChanged(double&)));
@@ -323,10 +349,17 @@ void CImagePropertyView::OnUpdateData(QObject* data) {
             if (m_propQuality == NULL)
                 m_propQuality = m_theController->getProperty("Set Quality");
             if (m_propQuality) {
-                if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW)
+                if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW) {
                     m_propQuality->setHidden(true);
+#ifdef USE_ENABLEHQ
+                    if (m_propEnableHQ) m_propEnableHQ->setHidden(true);
+#endif
+                }
                 else {
                     m_propQuality->setHidden(false);
+#ifdef USE_ENABLEHQ
+                    if (m_propEnableHQ) m_propEnableHQ->setHidden(false);
+#endif
                     QtVariantPropertyManager* Manager = (QtVariantPropertyManager*)m_propQuality->propertyManager();
                     setMinMaxStep(Manager, m_propQuality, 0.0, 1.0, 0.01, 2);
                 }
@@ -335,16 +368,6 @@ void CImagePropertyView::OnUpdateData(QObject* data) {
     }
 
     m_infotext->clear();
-}
-
-void CImagePropertyView::noAlphaChannelValue() {
-    if (m_propAlphaThreshold)
-        m_propAlphaThreshold->setEnabled(false);
-}
-
-void CImagePropertyView::hasAlphaChannelValue() {
-    if (m_propAlphaThreshold)
-        m_propAlphaThreshold->setEnabled(true);
 }
 
 void CImagePropertyView::onMesh_Optimization(QVariant& value) {
@@ -369,14 +392,7 @@ void CImagePropertyView::compressionValueChanged(QVariant& value) {
     bool Channel_Weights      = false;
     bool DXT1_Alpha           = false;
     bool Codec_BlockRate      = false;
-    bool HDR_Image_Properties = false;
-
-    C_Destination_Options* Data = (C_Destination_Options*)m_data;
-    if (Data) {
-        if (Data->m_SourceIsFloatFormat) {
-            HDR_Image_Properties = true;
-        }
-    }
+    bool Hide_HDR_Image_Properties = true;
 
     m_infotext->clear();
 
@@ -384,14 +400,14 @@ void CImagePropertyView::compressionValueChanged(QVariant& value) {
     switch (comp) {
     case C_Destination_Options::BC6H:
         Quality_Settings     = true;
-        HDR_Image_Properties = false;
+        Hide_HDR_Image_Properties = false;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append(
             "Block Compression (BC) format designed to support high-dynamic range (floating point) color spaces. (e.g. .exr extension image file).");
         break;
     case C_Destination_Options::BC6H_SF:
         Quality_Settings     = true;
-        HDR_Image_Properties = false;
+        Hide_HDR_Image_Properties = false;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append(
             "Block Compression (BC) format designed to support high-dynamic range (signed floating point) color spaces. (e.g. .exr extension image "
@@ -402,6 +418,8 @@ void CImagePropertyView::compressionValueChanged(QVariant& value) {
         Quality_Settings = true;
         Channel_Weights  = true;
         DXT1_Alpha       = true;
+        if (m_propRefine)
+            m_propRefine->setHidden(false);
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append(
             "A four component opaque (or 1-bit alpha) compressed texture format. DXT1 identical to BC1.  Four bits per "
@@ -536,14 +554,27 @@ void CImagePropertyView::compressionValueChanged(QVariant& value) {
     }
 
     if (m_propQuality) {
-        m_propQuality->setHidden(!Quality_Settings);
+#ifdef USE_ENABLEHQ
+        if (m_propEnableHQ) m_propQuality->setHidden(!Quality_Settings);
+#endif
         if (m_C_Destination_Options->m_globalSetting_qualityEnabled) {
             m_propQuality->setEnabled(false);
+#ifdef USE_ENABLEHQ
+            if (m_propEnableHQ) m_propEnableHQ->setEnabled(true); // v4.2 feature set to false when ready
+#endif
         } else {
-            if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW)
+            if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW) {
                 m_propQuality->setEnabled(false);
-            else
+#ifdef USE_ENABLEHQ
+                if (m_propEnableHQ) m_propEnableHQ->setEnabled(false);
+#endif
+            }
+            else {
                 m_propQuality->setEnabled(Quality_Settings);
+#ifdef USE_ENABLEHQ
+                if (m_propEnableHQ) m_propEnableHQ->setEnabled(Quality_Settings);
+#endif
+            }
         }
     }
 
@@ -560,7 +591,7 @@ void CImagePropertyView::compressionValueChanged(QVariant& value) {
     }
 
     if (m_propHDRProperties) {
-        m_propHDRProperties->setHidden(!HDR_Image_Properties);
+        m_propHDRProperties->setHidden(Hide_HDR_Image_Properties);
     }
 
     if (Quality_Settings) {

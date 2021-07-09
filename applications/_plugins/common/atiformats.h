@@ -46,6 +46,7 @@ CMP_FORMAT CMP_API CMP_ParseFormat(char* pFormat);
 void       CMP_API CMP_Format2FourCC(CMP_FORMAT format, MipSet *pMipSet);
 CMP_FORMAT CMP_API CMP_FourCC2Format(CMP_DWORD fourCC);
 CMP_BOOL CMP_API CMP_IsCompressedFormat(CMP_FORMAT format);
+CMP_BOOL CMP_API CMP_IsFloatFormat(CMP_FORMAT InFormat);
 #ifdef __cplusplus
 };
 #endif

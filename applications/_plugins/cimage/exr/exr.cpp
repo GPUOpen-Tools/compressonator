@@ -73,6 +73,7 @@ IMath.lib;Half.lib;IlmImf.lib;IlmThread.lib;Iex.lib;zlibstatic_d.lib;
 #pragma warning( push )
 #pragma warning(disable:4100)
 #pragma warning(disable:4800)
+#pragma warning(disable:5040)
 #include <ImfTiledRgbaFile.h>
 #include <ImfHeader.h>
 #include <ImfMultiPartInputFile.h>

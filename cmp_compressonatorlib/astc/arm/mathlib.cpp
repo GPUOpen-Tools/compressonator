@@ -1,14 +1,14 @@
 /**
- *	This confidential and proprietary software may be used only as
- *	authorised by a licensing agreement from ARM Limited
- *	(C) COPYRIGHT 2011-2012 ARM Limited
- *	ALL RIGHTS RESERVED
+ *    This confidential and proprietary software may be used only as
+ *    authorised by a licensing agreement from ARM Limited
+ *    (C) COPYRIGHT 2011-2012 ARM Limited
+ *    ALL RIGHTS RESERVED
  *
- *	The entire notice above must be reproduced on all authorised
- *	copies and copies may only be made to the extent permitted
- *	by a licensing agreement from ARM Limited.
+ *    The entire notice above must be reproduced on all authorised
+ *    copies and copies may only be made to the extent permitted
+ *    by a licensing agreement from ARM Limited.
  *
- *	@brief	Library of math functions.
+ *    @brief    Library of math functions.
  */
 
 #include <time.h>
@@ -183,9 +183,9 @@ float4 normalize(float4 p) {
 *************************************************/
 
 /*
-	struct mat2 { float2 v[2]; };
-	struct mat3 { float3 v[3]; };
-	struct mat4 { float4 v[4]; };
+    struct mat2 { float2 v[2]; };
+    struct mat3 { float3 v[3]; };
+    struct mat4 { float4 v[4]; };
 */
 
 float trace(mat2 p) {
@@ -242,17 +242,17 @@ float4 characteristic_poly(mat4 p) {
 
 
 /*
-	Root finders for monic polynomials (highest coefficient is equal to 1)
+    Root finders for monic polynomials (highest coefficient is equal to 1)
 
-	Returns a vector with length equal to the number of roots that the polynomial has;
-	for roots that do not genuinely exist, we return NaN.
+    Returns a vector with length equal to the number of roots that the polynomial has;
+    for roots that do not genuinely exist, we return NaN.
 
-	The polynomial is basically
+    The polynomial is basically
 
-	poly(n) = p.x + p.y*n + p.z*n^2 + p.w*n^3
+    poly(n) = p.x + p.y*n + p.z*n^2 + p.w*n^3
 
-	(including only the components of the vector that actually exist; the next coefficient
-	has the value 1, and the remaining ones have value 0. )
+    (including only the components of the vector that actually exist; the next coefficient
+    has the value 1, and the remaining ones have value 0. )
  */
 
 
@@ -279,23 +279,23 @@ float3 solve_monic(float3 p) {
     float rscal = 1.0f / scal;
     p = p * float3(rscal * rscal * rscal, rscal * rscal, rscal);
 
-    float bb = p.z * p.z;		// div scal^2
+    float bb = p.z * p.z;        // div scal^2
 
-    float nq = bb - p.y;		// div scal^2
-    float r = 1.5f * (p.y * p.z - p.x) - p.z * bb;	// div scal^3
-    float nq3 = nq * nq * nq;	// div scal^6
-    float r2 = r * r;			// div scal^6
+    float nq = bb - p.y;        // div scal^2
+    float r = 1.5f * (p.y * p.z - p.x) - p.z * bb;    // div scal^3
+    float nq3 = nq * nq * nq;    // div scal^6
+    float r2 = r * r;            // div scal^6
 
     if (nq3 < r2) {
         // one root
-        float root = (float)sqrt(r2 - nq3);	// div scal^3
-        float s = static_cast < float >(cbrt(r + root));	// div scal
-        float t = static_cast < float >(cbrt(r - root));	// div scal
+        float root = (float)sqrt(r2 - nq3);    // div scal^3
+        float s = static_cast < float >(cbrt(r + root));    // div scal
+        float t = static_cast < float >(cbrt(r - root));    // div scal
         return float3((s + t) * scal - pz, nan(0), nan(0));
     } else {
         // three roots
-        float phi_r = inversesqrt(nq3);	// div scal ^ -3
-        float phi_root = static_cast < float >(cbrt(phi_r * nq3));	// div scal
+        float phi_r = inversesqrt(nq3);    // div scal ^ -3
+        float phi_root = static_cast < float >(cbrt(phi_r * nq3));    // div scal
         float theta = acospi(r * phi_r);
         theta *= 1.0f / 3.0f;
         float ncprod = phi_root * cospi(theta);
@@ -324,9 +324,9 @@ float4 solve_monic(float4 p) {
     // is numerically at least nonnegative (but may have become negative as a result of
     // a roundoff error). We use fmax() to extract this value or a very small positive value.
     float2 v2 = fmax(v.xy, v.zw);
-    float p2 = (float)fmax(v2.x, v2.y);	// p^2
-    float pr = inversesqrt(p2);	// 1/p
-    float pm = p2 * pr;			// p
+    float p2 = (float)fmax(v2.x, v2.y);    // p^2
+    float pr = inversesqrt(p2);    // 1/p
+    float pm = p2 * pr;            // p
 
     // step 3: use the solution for the cubic equation to set up two quadratic equations;
     // these two equations then result in the 4 possible roots.

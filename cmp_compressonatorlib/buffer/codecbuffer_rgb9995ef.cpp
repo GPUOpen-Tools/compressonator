@@ -76,7 +76,7 @@ bool CCodecBuffer_RGB9995EF::ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP
     if(x >= GetWidth() || y >= GetHeight())
         return false;
 
-    CMP_DWORD dwWidth = min(w, (GetWidth() - x));
+    CMP_DWORD dwWidth = cmp_minT(w, (GetWidth() - x));
 
     CMP_DWORD i,j;
     for(j = 0; j < h && (y + j) < GetHeight(); j++) {
@@ -105,7 +105,7 @@ bool CCodecBuffer_RGB9995EF::WriteBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CM
     if (x >= GetWidth() || y >= GetHeight())
         return false;
 
-    CMP_DWORD dwWidth = min(w, (GetWidth() - x));
+    CMP_DWORD dwWidth = cmp_minT(w, (GetWidth() - x));
 
     for (CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); j++) {
         CMP_HALF* pData = (CMP_HALF*)(GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));
@@ -156,7 +156,7 @@ bool CCodecBuffer_RGB9995EF::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w,
     if(x >= GetWidth() || y >= GetHeight())
         return false;
 
-    CMP_DWORD dwWidth = min(w, (GetWidth() - x));
+    CMP_DWORD dwWidth = cmp_minT(w, (GetWidth() - x));
     union {
         float f;
         int32_t i;
@@ -212,7 +212,7 @@ bool CCodecBuffer_RGB9995EF::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w
     if (x >= GetWidth() || y >= GetHeight())
         return false;
 
-    CMP_DWORD dwWidth = min(w, (GetWidth() - x));
+    CMP_DWORD dwWidth = cmp_minT(w, (GetWidth() - x));
 
     for (CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); j++) {
         float* pData = (float*)(GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));

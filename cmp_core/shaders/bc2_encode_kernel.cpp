@@ -55,8 +55,8 @@ void  CompressBlockBC2_Internal(const CMP_Vec4uc srcBlockTemp[16],
                    rgbBlock,
                    BlockA,
                    channelWeights,
-                   0,//internalOptions.m_nAlphaThreshold,
-                   1, //internalOptions.m_nRefinementSteps
+                   internalOptions.m_nAlphaThreshold,
+                   internalOptions.m_nRefinementSteps,
                    internalOptions.m_fquality,
                    FALSE);
 

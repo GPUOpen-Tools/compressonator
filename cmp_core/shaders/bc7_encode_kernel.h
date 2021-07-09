@@ -27,43 +27,13 @@
 
 #include "common_def.h"
 
-// cmp param uniform data tracking
-typedef CGU_UINT8  CGU_CHANNEL;
-typedef CGV_UINT32 CGV_SHIFT32;
-typedef CGV_UINT8  CGV_BYTE;
-typedef CGV_FLOAT  CGV_ERROR;
-typedef CGV_FLOAT  CGV_IMAGE;
-typedef CGV_INT    CGV_EPOCODE;
-typedef CGV_UINT8  CGV_CMPOUT;
-typedef CGV_UINT8  CGV_INDEX;
-typedef CGV_UINT32 CGV_INDEXPACKED;
-typedef CGV_UINT32 CGV_CMPOUTPACKED;
-typedef CGV_INT    CGV_LEVELS;
-typedef CGV_INT    CGV_SUBSETS;
-typedef CGV_INT    CGV_MASK;
-typedef CGV_INT    CGV_ITTERATIONS;
-typedef CGV_INT    CGV_PARTID;
-typedef CGV_INT    CGV_FIXUPINDEX;
-typedef CGV_INT    CGV_RAMP;
-typedef CGV_INT    CGV_ENTRIES;
-typedef CGV_INT    CGV_TYPEINT;
-typedef CGV_UINT32 CGV_TYPEUINT32;
-typedef CGU_UINT8  CGU_BYTE;
-typedef CGV_CMPOUT CGUV_CMPOUT;
-typedef CGU_UINT8  CGUV_DSTPTR;
-
 #define USE_VARYING
-#ifdef USE_VARYING
-typedef CGV_INT    CGUV_BLOCKWIDTH;
-#else
-typedef CGU_INT    CGUV_BLOCKWIDTH;
-#endif
 
 #ifndef ASPM_GPU
 
 struct cmp_bc7_state {
-    CGV_IMAGE      block[16][4];
-    CGV_SHIFT32    best_data[4];
+    CGV_FLOAT   block[16][4];
+    CGV_UINT32    best_data[4];
 } ;
 
 
@@ -114,12 +84,12 @@ struct CGU_Texture_Type {
 #define MAX_INDEX_BITS                  4      // Maximum number of index bits
 
 typedef struct {
-    CGV_IMAGE   image;
-    CGV_INDEX   index;
+    CGV_FLOAT image;
+    CGV_UINT8   index;
 } CMP_di;
 
 typedef struct {
-    CGV_IMAGE   image;
+    CGV_FLOAT image;
     CGV_UINT8   index;
 } CMP_du;
 
@@ -145,7 +115,6 @@ typedef struct {
 #define CLT(cl)                         (cl-LOG_CL_BASE)
 
 #define MAX_TRY_QUANT_TRACE             2       // used in optQuantTrace_d : increasing this has no gain in quality!, keep it set at 2 
-#define MAX_TRY_SHAKER                  5       // used in ep_shaker_2_d if set at 4  PSNR drops by -0.1 SSIM stays the same
 #define NUM_BLOCK_TYPES                 8       // Number of block types in the format
 
 #define BC7_MAX_TRACE                   25000
@@ -165,18 +134,18 @@ typedef struct
     BC7_EncodeState
 #endif
 {
-    CGV_IMAGE       image_src[64];
-    CGV_CMPOUT      cmp_out[COMPRESSED_BLOCK_SIZE];
+    CGV_FLOAT  image_src[64];
+    CGV_UINT8  cmp_out[COMPRESSED_BLOCK_SIZE];
 
     // Common
-    CGV_ERROR       opaque_err;       // error for coding alpha=255
-    CGV_ERROR       best_err;
+    CGV_FLOAT       opaque_err;       // error for coding alpha=255
+    CGV_FLOAT       best_err;
 
     // set per mode
-    CGU_CHANNEL     channels3or4;
+    CGU_UINT8     channels3or4;
     CGU_UINT8       bits;
     CGU_INT         clusters;
-    CGU_BYTE        componentBits;
+    CGU_UINT8        componentBits;
     CGU_UINT8       numPartitionModes;
     CGU_INT         maxSubSets;
     CGU_UINT8       numClusters0[2];
@@ -187,10 +156,10 @@ typedef struct
 
     CGU_UINT32      validModeMask;
     CGU_INT         part_count;
-    CGU_CHANNEL     channels;
+    CGU_UINT8     channels;
 
     // use_icmp
-    CGV_CMPOUTPACKED    best_cmp_out[5];
+    CGV_UINT32    best_cmp_out[5];
     CGV_BOOL            cmp_isout16Bytes;
     CGU_INT             refineIterations;
     CGU_INT             fastSkipTreshold;
@@ -205,14 +174,14 @@ typedef struct
     cmp_mode_parameters
 #endif
 {
-    CGV_EPOCODE       color_qendpoint[8];
-    CGV_EPOCODE       alpha_qendpoint[8];
-    CGV_INDEXPACKED   best_color_index[2];
-    CGV_INDEXPACKED   best_alpha_index[2];
-    CGV_INDEX         color_index[SOURCE_BLOCK_SIZE];
-    CGV_INDEX         alpha_index[SOURCE_BLOCK_SIZE];
-    CGV_SHIFT32       idxMode;
-    CGV_SHIFT32       rotated_channel;
+    CGV_INT       color_qendpoint[8];
+    CGV_INT       alpha_qendpoint[8];
+    CGV_UINT32   best_color_index[2];
+    CGV_UINT32   best_alpha_index[2];
+    CGV_UINT8         color_index[SOURCE_BLOCK_SIZE];
+    CGV_UINT8         alpha_index[SOURCE_BLOCK_SIZE];
+    CGV_UINT32       idxMode;
+    CGV_UINT32       rotated_channel;
 }
 #ifndef ASPM
 cmp_mode_parameters
@@ -234,8 +203,8 @@ typedef struct
     CGU_BOOL   alphaRestrict;                   // default: false
 
     // Used to track errors in internal state code
-    CGV_ERROR  opaque_err;
-    CGV_ERROR  best_err;
+    CGV_FLOAT  opaque_err;
+    CGV_FLOAT  best_err;
 
     CGU_FLOAT  minThreshold;
     CGU_FLOAT  maxThreshold;;
@@ -308,8 +277,8 @@ typedef struct
 {
     // Data for compressing a particular block mode
     CGV_INT    clusters[2];
-    CGV_BYTE   parityBits;
-    CGV_BYTE   componentBits[MAX_CHANNELS];
+    CGV_UINT8   parityBits;
+    CGV_UINT8   componentBits[MAX_CHANNELS];
 
     CMP_BCE     encodingType;           // Type of block
     CGU_UINT8   partitionBits;          // Number of bits for partition data
@@ -321,14 +290,14 @@ typedef struct
 
     // Bulky temporary data used during compression of a block
     CGV_UINT8  storedindex[MAX_PARTITIONS][MAX_SUBSETS][MAX_SUBSET_SIZE];
-    CGV_ERROR  storedError[MAX_PARTITIONS];
+    CGV_FLOAT  storedError[MAX_PARTITIONS];
     CGV_UINT8  sortedModes[MAX_PARTITIONS];
 
     // This stores the min and max for the components of the block, and the ranges
-    CGV_IMAGE  blockMin[MAX_CHANNELS];
-    CGV_IMAGE  blockMax[MAX_CHANNELS];
-    CGV_IMAGE  blockRange[MAX_CHANNELS];
-    CGV_IMAGE  blockMaxRange;
+    CGV_FLOAT  blockMin[MAX_CHANNELS];
+    CGV_FLOAT  blockMax[MAX_CHANNELS];
+    CGV_FLOAT  blockRange[MAX_CHANNELS];
+    CGV_FLOAT  blockMaxRange;
 }
 #ifndef ASPM
 BC7_Encode_local
@@ -690,7 +659,7 @@ CMP_CONSTANT CGU_UINT32 subset_mask_table[] = {
     0x731008CEu,// 63   0111 0011 0001 0000 : 0000 1000 1100 1110 = 0222102211021110
 };
 
-CMP_CONSTANT CGV_EPOCODE rampI[5*SOURCE_BLOCK_SIZE] = {
+CMP_CONSTANT CGV_INT rampI[5*SOURCE_BLOCK_SIZE] = {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,                 // 0 bit index
     0,64,0,0,0,0,0,0,0,0,0,0,0,0,0,0,                // 1 bit index
     0,21,43,64,0,0,0,0,0,0,0,0,0,0,0,0,              // 2 bit index
@@ -700,7 +669,7 @@ CMP_CONSTANT CGV_EPOCODE rampI[5*SOURCE_BLOCK_SIZE] = {
 
 // same as  CMP SDK v3.1 BC7_FIXUPINDEX1 &  BC7_FIXUPINDEX2 for each partition range 0..63
 // The data is saved as a packed INT = (BC7_FIXUPINDEX1 << 4 + BC7_FIXUPINDEX2)
-CMP_CONSTANT CGV_FIXUPINDEX  FIXUPINDEX[] = {
+CMP_CONSTANT CGV_UINT32 FIXUPINDEX[] = {
     // 2 subset partitions 0..63
     0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u, 0xf0u,
     0xf0u, 0x20u, 0x80u, 0x20u, 0x20u, 0x80u, 0x80u, 0xf0u, 0x20u, 0x80u, 0x20u, 0x20u, 0x80u, 0x80u, 0x20u, 0x20u,

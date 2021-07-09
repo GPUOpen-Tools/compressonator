@@ -57,7 +57,7 @@ class PostProcPS {
     D3D12_GPU_DESCRIPTOR_HANDLE *m_pGpuDescriptor;
 
     ID3D12RootSignature         *m_pRootSignature;
-    ID3D12PipelineState	        *m_pPipelineRender;
+    ID3D12PipelineState            *m_pPipelineRender;
     SAMPLER                     m_sampler;
     bool                        m_ready = false;
 };

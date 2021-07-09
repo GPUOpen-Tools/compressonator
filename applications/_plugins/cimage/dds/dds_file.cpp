@@ -22,8 +22,6 @@
 // THE SOFTWARE.
 //
 
-#pragma once
-
 // Windows Header Files:
 #ifdef _WIN32
 #include <windows.h>

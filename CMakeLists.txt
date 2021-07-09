@@ -48,31 +48,31 @@ if (CMP_HOST_LINUX OR CMP_HOST_WINDOWS)
     # message("${i}")
 endforeach()
 else()
-    message("CHECK_CXX_COMPILER_FLAG default to max -std=c++11")
+    message("UNIX Build: CHECK_CXX_COMPILER_FLAG defaulted to -std=c++11")
     set(COMPILER_SUPPORTS_CXX11 ON)
 endif()
 
-
 option(OPTION_ENABLE_ALL_APPS "Enable all apps" ON)
 
-# New Features in R&D
-option(OPTION_BUILD_APPS_CMP_CAS      "Build Application: cmp_cas" OFF)
-option(OPTION_BUILD_APPS_CMP_VISION   "Build Application: cmp_vision" OFF)
-option(OPTION_BUILD_APPS_CMP_TESTAPP  "Build Application: cmp_testapp" OFF)
+#  Some of these options are for internal developement, or scheduled for future releases
+if (CMP_HOST_WINDOWS)
+#release
+    option(OPTION_BUILD_APPS_CMP_CAS      "Build Application: cmp_cas"     ON)
+endif()
 
 #--------------------------------------------------------------------------
 # Enable or Disable Specific Build Apps
 #--------------------------------------------------------------------------
 if (OPTION_ENABLE_ALL_APPS) 
-    set(OPTION_BUILD_APPS_CMP_CLI      ON)
-    set(OPTION_BUILD_APPS_CMP_GUI      ON)
-    set(OPTION_BUILD_APPS_CMP_TESTCORE ON)
-    set(OPTION_BUILD_APPS_CMP_EXAMPLES ON)
+    set(OPTION_BUILD_APPS_CMP_CLI     "Build Application: compressonatorcli" ON)
+    set(OPTION_BUILD_APPS_CMP_GUI     "Build Application: compressonator gui" ON)
+    set(OPTION_BUILD_APPS_CMP_TESTCORE "Build Application: cmp_testcore" ON)
+    set(OPTION_BUILD_APPS_CMP_EXAMPLES "Build Application: examples" ON)
 else()
-    option(OPTION_BUILD_APPS_CMP_CLI      "Build Application: compressonatorcli" OFF)
-    option(OPTION_BUILD_APPS_CMP_GUI      "Build Application: compressonator gui" OFF)
-    option(OPTION_BUILD_APPS_CMP_TESTCORE "Build Application: cmp_testcore" OFF)
-    option(OPTION_BUILD_APPS_CMP_EXAMPLES "Build Application: examples" OFF)
+    option(OPTION_BUILD_APPS_CMP_CLI       OFF)
+    option(OPTION_BUILD_APPS_CMP_GUI       OFF)
+    option(OPTION_BUILD_APPS_CMP_TESTCORE  OFF)
+    option(OPTION_BUILD_APPS_CMP_EXAMPLES  OFF)
 endif()
 
 # Minimum Lib Dependencies for CLI and GUI (GUI has addtion lib requirements condition later in this cmake)
@@ -94,9 +94,6 @@ endif()
 # The following options that have been removed
 set(LIB_BUILD_MESHCOMPRESSOR OFF)
 
-
-
-
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Supported configuration options" FORCE)
 set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/build-out")
 
@@ -106,19 +103,22 @@ set(PROJECT_EXTERNAL_LIBDIR ${PROJECT_SOURCE_DIR}/../common/lib/ext)
 # GPUOpen Source Code build options : These options are been revised for v4.2
 # ----------------------------------------------------------------------------
 if(${CMAKE_VERSION} VERSION_GREATER "3.14.0")
-cmp_option(OPTION_BUILD_KTX2  "Build CLI KTX2 Support" ON)
+cmp_option(OPTION_BUILD_KTX2    "Build CLI KTX2 Support" ON)
 else()
-cmp_option(OPTION_BUILD_KTX2  "Build CLI KTX2 Support" OFF)
+cmp_option(OPTION_BUILD_KTX2    "Build CLI KTX2 Support" OFF)
 endif()
-cmp_option(OPTION_BUILD_EXR   "Build CLI EXR Support" CMP_HOST_WINDOWS)
-cmp_option(OPTION_BUILD_DRACO "Build CLI Draco Support" OFF)
-cmp_option(OPTION_BUILD_GUI "Build the GUI Application" CMP_HOST_WINDOWS)
-cmp_option(OPTION_CMP_DIRECTX "Use Directx" CMP_HOST_WINDOWS) # set for windows only
-cmp_option(OPTION_CMP_VULKAN "Use Vulkan" OPTION_ENABLE_ALL_APPS) # set for windows, can be on other platforms when current code validated!
-cmp_option(OPTION_CMP_OPENGL "Use OpenGL" ON)   # available on all platforms
-cmp_option(OPTION_CMP_QT "Use Qt for Image Loading" OPTION_ENABLE_ALL_APPS)
-cmp_option(OPTION_CMP_OPENCV "Use OpenCV" OPTION_ENABLE_ALL_APPS)   # available on all platforms
-cmp_option(NO_LEGACY_BEHAVIOR "Disables any legacy behavior (before CMake migration)" ON) # this needs to be removed
+cmp_option(OPTION_BUILD_EXR     "Build CLI EXR Support" CMP_HOST_WINDOWS OR CMP_HOST_LINUX)
+cmp_option(OPTION_BUILD_DRACO   "Build CLI Draco Support" OFF)
+cmp_option(OPTION_BUILD_GUI     "Build the GUI Application" CMP_HOST_WINDOWS OR OPTION_BUILD_APPS_CMP_GUI)
+cmp_option(OPTION_CMP_DIRECTX   "Use Directx" CMP_HOST_WINDOWS) # set for windows only
+cmp_option(OPTION_CMP_VULKAN    "Use Vulkan" OPTION_ENABLE_ALL_APPS)
+cmp_option(OPTION_CMP_OPENGL    "Use OpenGL" ON)   # available on all platforms
+cmp_option(OPTION_CMP_QT        "Use Qt for Image Loading" OPTION_ENABLE_ALL_APPS OR OPTION_BUILD_APPS_CMP_GUI)
+cmp_option(OPTION_CMP_OPENCV    "Use OpenCV" ON)   # available on all platforms
+cmp_option(OPTION_CMP_GTC       "Use GTC Codec" OFF) # Internal R&D
+cmp_option(OPTION_CMP_APC       "Use APC Codec" OFF) # Internal R&D
+
+cmp_option(NO_LEGACY_BEHAVIOR   "Disables any legacy behavior (before CMake migration)" ON) # this needs to be removed
 
 # --------------------------------------------
 # build system options for internal devs
@@ -154,8 +154,6 @@ add_compile_definitions(
     #USE_FILEIO                                   # Used for debugging code
 
     #New features under devlopement
-    #USE_GTC                                      # LDR Gradient Texture Compressor patent pending
-    #USE_APC                                      # Enable APC encoding reserved for future releases
     #USE_BASIS                                    # Future release:: Universal format for transcoding codecs
     #USE_CMP_TRANSCODE                            # Future release:: Transcode BASIS/GTC to other compressed formats
 
@@ -168,6 +166,19 @@ add_compile_definitions(
     #USE_3DCONVERT                                # Enable 3D model conversion (glTF<->obj) icon
     #ENABLE_USER_ETC2S_FORMATS                    # Enable users to set these formats in CLI and GUI applications
 )
+
+
+if (OPTION_CMP_GTC)
+    add_compile_definitions(
+        USE_GTC                                      # LDR Gradient Texture Compressor patent pending
+        )
+endif()
+
+if (OPTION_CMP_APC)
+    add_compile_definitions(
+        USE_APC                                      # LDR Gradient Texture Compressor patent pending
+        )
+endif()
 
 # Additional options
 if (OPTION_BUILD_DRACO)
@@ -230,7 +241,9 @@ else()
         add_definitions(-std=c++14)
         link_libraries(stdc++fs)
     else()
-        add_definitions(-std=c++11)
+        if (CMP_HOST_LINUX)
+            add_definitions(-std=c++11)
+        endif()
     endif()
 
     add_definitions(-fPIC -Wno-write-strings)
@@ -256,11 +269,15 @@ else()
      if (UNIX)
          find_package(PkgConfig REQUIRED)
          
-         # OpenEXRConfig.cmake is broken on Linux, use PkgConfig
-         # find_package(OpenEXR REQUIRED)
-         pkg_check_modules(OpenEXR REQUIRED OpenEXR)
+         if (OPTION_BUILD_EXR)
+            pkg_check_modules(OpenEXR OpenEXR)
+             if(OpenEXR_FOUND)
+             else()
+               message("Package OpenEXR not found. CMP features using OpenEXR will be disabled")
+               set(OPTION_BUILD_EXR OFF)
+             endif()
+         endif()
          
-         # Draco cmake find scripts are also broken (looks for src/ path in install directory)
          if (OPTION_BUILD_DRACO)
              find_package(Draco)
              pkg_check_modules(draco draco)
@@ -307,7 +324,9 @@ endif()
 if (LIB_BUILD_IMAGEIO)
     add_subdirectory(applications/_plugins/cimage/astc)
     add_subdirectory(applications/_plugins/cimage/dds)
-    add_subdirectory(applications/_plugins/cimage/exr)
+    if (OPTION_BUILD_EXR) # disable for Mac builds
+        add_subdirectory(applications/_plugins/cimage/exr)
+    endif()
     add_subdirectory(applications/_plugins/cimage/ktx)
     if (CMP_HOST_WINDOWS) # disable for Linux & Mac builds
         add_subdirectory(applications/_plugins/cimage/ktx2)
@@ -368,6 +387,16 @@ if (CMP_HOST_WINDOWS)
         message("Build cmp vision setup")
         add_subdirectory(applications/cmp_vision)
         add_subdirectory(applications/_plugins/cvision)
+    endif()
+
+    if (OPTION_BUILD_APPS_CMP_TEXTURE)
+        message("Build cmp texture setup")
+        add_subdirectory(applications/cmp_texture)
+    endif()
+
+    if (OPTION_BUILD_APPS_CMP_UPSCALE)
+        message("Build cmp upscale setup")
+        add_subdirectory(applications/cmp_upscale)
     endif()
 
     if (OPTION_BUILD_APPS_CMP_GUI)

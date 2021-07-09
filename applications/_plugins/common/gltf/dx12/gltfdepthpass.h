@@ -38,8 +38,8 @@ struct DepthPrimitives {
 
     DepthMaterial *m_pMaterial = NULL;
 
-    Microsoft::WRL::ComPtr<ID3D12RootSignature>	m_RootSignature;
-    Microsoft::WRL::ComPtr<ID3D12PipelineState>	m_PipelineRender;
+    Microsoft::WRL::ComPtr<ID3D12RootSignature>    m_RootSignature;
+    Microsoft::WRL::ComPtr<ID3D12PipelineState>    m_PipelineRender;
     SAMPLER                                    *m_sampler;
 };
 

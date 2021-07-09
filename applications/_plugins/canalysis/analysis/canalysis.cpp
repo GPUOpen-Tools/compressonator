@@ -50,7 +50,7 @@
 #include <QtCore/qmath.h>
 #endif
 
-#ifdef USE_OPENCV
+#if (OPTION_CMP_OPENCV == 1)
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>  // Gaussian Blur
 #include <opencv2/highgui/highgui.hpp>  // OpenCV window I/O
@@ -70,20 +70,25 @@ using namespace std;
 #define CMP_EXTERNAL_LibExt    ".lib"
 #endif
 
-#ifdef USE_OPENCV
-#if defined(_WIN32) // && !defined(NO_LEGACY_BEHAVIOR)
-#define OpenCV_core_Lib     "opencv_core" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
-#define OpenCV_highgui_Lib  "opencv_highgui" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
-#define OpenCV_imgproc_Lib  "opencv_imgproc" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
-#else
-#define OpenCV_core_Lib     "opencv_core" CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CVAUX_STR(CV_VERSION_REVISION) CMP_EXTERNAL_LibExt
-#define OpenCV_highgui_Lib  "opencv_highgui" CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CVAUX_STR(CV_VERSION_REVISION) CMP_EXTERNAL_LibExt
-#define OpenCV_imgproc_Lib  "opencv_imgproc" CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CVAUX_STR(CV_VERSION_REVISION) CMP_EXTERNAL_LibExt
-#endif
+#if (OPTION_CMP_OPENCV == 1)
+#if ((CV_VERSION_EPOCH == 2) || (CV_VERSION_MAJOR < 4))
+    #if defined(_WIN32)
+    #define OpenCV_core_Lib "opencv_core" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
+    #define OpenCV_highgui_Lib "opencv_highgui" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
+    #define OpenCV_imgproc_Lib "opencv_imgproc" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
+    #else
+    #define OpenCV_core_Lib "opencv_core" CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CVAUX_STR(CV_VERSION_REVISION) CMP_EXTERNAL_LibExt
+    #define OpenCV_highgui_Lib "opencv_highgui" CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CVAUX_STR(CV_VERSION_REVISION) CMP_EXTERNAL_LibExt
+    #define OpenCV_imgproc_Lib "opencv_imgproc" CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CVAUX_STR(CV_VERSION_REVISION) CMP_EXTERNAL_LibExt
+    #endif
 
-#pragma comment(lib, OpenCV_core_Lib)
-#pragma comment(lib, OpenCV_highgui_Lib)
-#pragma comment(lib, OpenCV_imgproc_Lib)
+    #pragma comment(lib, OpenCV_core_Lib)
+    #pragma comment(lib, OpenCV_highgui_Lib)
+    #pragma comment(lib, OpenCV_imgproc_Lib)
+#else
+    #define OpenCV_world_Lib "opencv_world" CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CVAUX_STR(CV_VERSION_REVISION) CMP_EXTERNAL_LibExt
+    #pragma comment(lib, OpenCV_world_Lib)
+#endif
 #endif
 
 #if (OPTION_CMP_QT == 1)
@@ -332,7 +337,7 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
     }
 
     std::string result    = CMP_GetPath(resultsFile);
-    int lastindex = result.find_last_of("/");
+    int lastindex = (int)result.find_last_of("/");
     std::string goldFile = result.substr(0, lastindex + 1);
     goldFile.append("golden.xml");
 
@@ -559,7 +564,7 @@ void  Plugin_Canalysis::generateBCtestResult(QImage *src, QImage *dest, REPORT_D
 #endif
 }
 
-#ifdef USE_OPENCV
+#if (OPTION_CMP_OPENCV == 1)
 /*
 bool Plugin_Canalysis::psnr(QImage *src, const cv::Mat& srcimg, QImage *dest, const cv::Mat& destimg, REPORT_DATA &myReport, CMP_Feedback_Proc pFeedbackProc) {
     double bMSE = 0, gMSE = 0, rMSE = 0, MSE = 0;
@@ -816,7 +821,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
 
         if (cmipImages == NULL) { //cmdline enable both ssim and psnr
 
-#ifdef USE_OPENCV
+#if (OPTION_CMP_OPENCV == 1)
             cv::Mat srcimg  = QtOcv::image2Mat(*srcImage);
             cv::Mat destimg = QtOcv::image2Mat(*destImage);
             if (!&srcimg || !&destimg) {
@@ -1154,7 +1159,7 @@ int Plugin_Canalysis::TC_SSIM(const char * in1, const char * in2, char *resultsF
         report.data.SSIM_Red    = 0;
         report.data.SSIM        = 0;
 
-#ifdef USE_OPENCV
+#if (OPTION_CMP_OPENCV == 1)
         cv::Mat srcimg  = QtOcv::image2Mat(*srcImage);
         cv::Mat destimg = QtOcv::image2Mat(*destImage);
 

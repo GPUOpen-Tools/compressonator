@@ -26,5 +26,8 @@
 #include "common_def.h"
 #include "bcn_common_kernel.h"
 
+#ifndef ASPM_OPENCL
+#include "bc1_common_kernel.h"
+#endif
 
 #endif

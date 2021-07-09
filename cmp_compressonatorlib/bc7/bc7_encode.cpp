@@ -38,6 +38,12 @@
 #include "shake.h"
 #include "debug.h"
 
+//#ifdef USE_CMP_CORE_API
+//#include "bcn_common_kernel.h"
+//#include "bcn_common_api.h"
+//#include "bc7_encode_kernel.h"
+//#endif
+
 #ifdef BC7_COMPDEBUGGER
 #include "compclient.h"
 #endif
@@ -346,7 +352,7 @@ double BC7BlockEncoder::CompressSingleIndexBlock(
     // Linearly reduce the number of partitions to try as the quality falls below a threshold
     if(m_quality < g_qFAST_THRESHOLD) {
         partitionsToTry = (CMP_DWORD)floor((double)(partitionsToTry * m_partitionSearchSize) + 0.5);
-        partitionsToTry = min(numPartitionModes, max(1, partitionsToTry));
+        partitionsToTry = cmp_minT(numPartitionModes, cmp_maxT(1, partitionsToTry));
     }
 
     CMP_DWORD   blockPartition;
@@ -543,10 +549,10 @@ double BC7BlockEncoder::CompressSingleIndexBlock(
     // shakeSize gives the size of the shake cube (for ep_shaker_2_d)
     // ep_shaker always runs on a 1x1x1 cube on both endpoints
     CMP_DWORD   shakeSize = 8 - (CMP_DWORD)floor(1.5 * bti[blockMode].indexBits[0]);
-    shakeSize = max(2, min((CMP_DWORD)floor( shakeSize * m_quality + 0.5), 6));
+    shakeSize           = cmp_maxT(2, cmp_minT((CMP_DWORD)floor(shakeSize * m_quality + 0.5), 6));
 
     // Shake attempts indicates how many partitions to try to shake
-    CMP_DWORD   numShakeAttempts = max(1, min((CMP_DWORD)floor(8 * m_quality + 0.5), partitionsToTry));
+    CMP_DWORD numShakeAttempts = cmp_maxT(1, cmp_minT((CMP_DWORD)floor(8 * m_quality + 0.5), partitionsToTry));
 
     // Set up all the parameters for the shakers
     // Must increase shake size if these block endpoints use parity
@@ -1084,7 +1090,7 @@ double BC7BlockEncoder::CompressDualIndexBlock(double in[MAX_SUBSET_SIZE][MAX_DI
                 // Shake size gives the size of the shake cube
                 CMP_DWORD   shakeSize;
 
-                shakeSize = max(2, min( (CMP_DWORD)(6 * m_quality), 6));
+                shakeSize = cmp_maxT(2, cmp_minT((CMP_DWORD)(6 * m_quality), 6));
 
                 int     bits[2][4];
 
@@ -1269,9 +1275,9 @@ double BC7BlockEncoder::CompressBlock(double in[MAX_SUBSET_SIZE][MAX_DIMENSION_B
         m_blockRange[1] = m_blockMax[1] - m_blockMin[1];
         m_blockRange[2] = m_blockMax[2] - m_blockMin[2];
         m_blockRange[3] = m_blockMax[3] - m_blockMin[3];
-        m_blockMaxRange = max(m_blockRange[0], m_blockRange[1]);
-        m_blockMaxRange = max(m_blockMaxRange, m_blockRange[2]);
-        m_blockMaxRange = max(m_blockMaxRange, m_blockRange[3]);
+        m_blockMaxRange = cmp_maxT(m_blockRange[0], m_blockRange[1]);
+        m_blockMaxRange = cmp_maxT(m_blockMaxRange, m_blockRange[2]);
+        m_blockMaxRange = cmp_maxT(m_blockMaxRange, m_blockRange[3]);
 
 
 #ifdef    BC7_DEBUG_TO_RESULTS_TXT

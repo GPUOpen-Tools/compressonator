@@ -16,10 +16,6 @@ endif()
 
 set(FOLDER_NAME _Plugins_dynamic)
 
-if (CMP_HOST_WINDOWS)
-    add_subdirectory(cvision)
-endif()
-
 add_subdirectory(cmp_gpu)
 
 if (OPTION_CMP_DIRECTX)

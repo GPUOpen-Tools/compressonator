@@ -545,7 +545,7 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture*               pSourceTexture,
         {
             if ((pDestTexture->format != CMP_FORMAT_BC4_S) && ((pDestTexture->format != CMP_FORMAT_BC5_S)))
             {
-                CMP_DWORD size     = pSourceTexture->dwWidth * pSourceTexture->dwHeight;
+                //CMP_DWORD size     = pSourceTexture->dwWidth * pSourceTexture->dwHeight;
                 CMP_BYTE* byteData = new CMP_BYTE[pSourceTexture->dwDataSize];
 
                 SByte2Byte(byteData, (CMP_SBYTE*)pSourceTexture->pData, pSourceTexture);

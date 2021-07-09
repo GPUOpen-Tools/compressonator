@@ -1,4 +1,4 @@
-//=====================================================================
+// 603e63ed=====================================================================
 // Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -7,10 +7,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -19,16 +19,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-// File: BC1_Encode_kernel.hlsl
-//--------------------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-//--------------------------------------------------------------------------------------
-#ifndef ASPM_HLSL
-#define ASPM_HLSL
-#endif
+//===============================================================================
+#define ASPM_HLSL  // This is required
+#define ASPM_GPU   // This is required
 
-cbuffer cbCS : register( b0 )
+#define USE_CMP
+//#define USE_BETSY
+
+
+cbuffer cbCS : register(b0)
 {
     uint  g_tex_width;
     uint  g_num_block_x;
@@ -40,11 +39,9 @@ cbuffer cbCS : register( b0 )
     float g_quality;
 };
 
-#include "BCn_Common_Kernel.h"
-
 // Source Data
 Texture2D g_Input                : register( t0 ); 
-StructuredBuffer<uint4> g_InBuff : register( t1 );
+StructuredBuffer<uint4> g_InBuff : register( t1 );  // Currently unused for BC1 processing
 
 // Compressed Output Data
 RWStructuredBuffer<uint2> g_OutBuff : register( u0 );
@@ -57,6 +54,8 @@ RWStructuredBuffer<uint2> g_OutBuff : register( u0 );
 #define BLOCK_SIZE_X        4
 
 groupshared float4 shared_temp[THREAD_GROUP_SIZE];
+
+#include "bc1_common_kernel.h"
 
 [numthreads( THREAD_GROUP_SIZE, 1, 1 )]
 void EncodeBlocks(uint GI : SV_GroupIndex, uint3 groupID : SV_GroupID)
@@ -73,7 +72,6 @@ void EncodeBlocks(uint GI : SV_GroupIndex, uint3 groupID : SV_GroupID)
     uint base_x         = block_x * BLOCK_SIZE_X;
     uint base_y         = block_y * BLOCK_SIZE_Y;
 
-
     // Load up the pixels
     if (pixelInBlock < 16)
     {
@@ -86,14 +84,36 @@ void EncodeBlocks(uint GI : SV_GroupIndex, uint3 groupID : SV_GroupID)
     // Process and save s
     if (pixelInBlock == 0)
     {
-           float3 block[16];
+           float4 block[16];
            for (int i = 0; i < 16; i++ )
            {
                    block[i].x  = shared_temp[pixelBase + i].x;
                    block[i].y  = shared_temp[pixelBase + i].y;
                    block[i].z  = shared_temp[pixelBase + i].z;
+                   block[i].w  = shared_temp[pixelBase + i].w;
            }
 
-           g_OutBuff[blockID] = CompressBlockBC1_UNORM(block,g_quality,false);
+            CMP_BC15Options BC15Options;
+
+            // set defaults
+            BC15Options.m_fquality              = g_quality;
+            BC15Options.m_fChannelWeights[0]    = 1.0f;
+            BC15Options.m_fChannelWeights[1]    = 1.0f;
+            BC15Options.m_fChannelWeights[2]    = 1.0f;
+            BC15Options.m_bUseChannelWeighting  = false;
+            BC15Options.m_bUseAdaptiveWeighting = false;
+            BC15Options.m_bUseFloat             = false;
+            BC15Options.m_b3DRefinement         = false;
+            BC15Options.m_bUseAlpha             = false;
+            BC15Options.m_bIsSRGB               = false;
+            BC15Options.m_bIsSNORM              = false;
+            BC15Options.m_sintsrc               = 0;  // source data pointer is signed data
+            BC15Options.m_nRefinementSteps      = 1;
+            BC15Options.m_nAlphaThreshold       = 128;
+            BC15Options.m_mapDecodeRGBA         = false;
+            BC15Options.m_src_width             = 4;
+            BC15Options.m_src_height            = 4;
+
+           g_OutBuff[blockID] = CompressBlockBC1_UNORM2(block,BC15Options);
     }
 }

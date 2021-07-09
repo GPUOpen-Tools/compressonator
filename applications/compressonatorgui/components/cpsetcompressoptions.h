@@ -112,14 +112,14 @@ class CSetCompressOptions : public QDialog {
     QtProperty                  *m_propMeshCompressionSettings;
     QtProperty                  *m_propFormat;
     QtProperty                  *m_propQuality;
-
+#ifdef USE_ENABLEHQ
+    QtProperty                  *m_propEnableHQ;
+#endif
     QtProperty                  *m_propChannelWeightingR;
     QtProperty                  *m_propChannelWeightingG;
     QtProperty                  *m_propChannelWeightingB;
     QtProperty                  *m_propAlphaThreshold;
     QtProperty                  *m_propAdaptiveColor;
-    QtProperty                  *m_propUseAlpha;
-    QtProperty                  *m_propNoAlpha;
     QtProperty                  *m_propBitrate;
 
     // Options for input HDR image properties
@@ -135,6 +135,7 @@ class CSetCompressOptions : public QDialog {
     QtProperty                  *m_propDXT1Alpha;
     QtProperty                  *m_propCodecBlockRate;
     QtProperty                  *m_propHDRProperties;
+    QtProperty                  *m_propRefine;
 
 
   signals:
@@ -143,8 +144,6 @@ class CSetCompressOptions : public QDialog {
   public Q_SLOTS:
 
     void    compressionValueChanged(QVariant &value);
-    void    noAlphaChannelValue();
-    void    hasAlphaChannelValue();
     void    redwValueChanged(QVariant &value);
     void    greenwValueChanged(QVariant &value);
     void    bluewValueChanged(QVariant &value);

@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Advanced Micro Devices, Inc. All rights reserved
+// Copyright (c) 2021 Advanced Micro Devices, Inc. All rights reserved
 // Copyright (c) 2004-2006    ATI Technologies Inc.
 //
 // Example1: Console application that demonstrates how to use the Compressonator Framework Lib
@@ -24,7 +24,7 @@
 // Example1: Console application that demonstrates Framework SDK API
 //
 // SDK files required for application:
-//     CMP_Framework.h
+//     compressonator.h
 //     CMP_Framework_xx.lib  For static libs xx is either MD, MT or MDd or MTd,
 //                      When using DLL builds make sure the  CMP_Framework_xx_DLL.dll is in exe path
 
@@ -32,7 +32,7 @@
 #include <stdio.h>
 #include <string>
 
-#include "cmp_framework.h"
+#include "compressonator.h"
 
 // Example code using high level SDK API's optimized with MultiThreading for processing a single image
 // Note:Limited error checking is done on user arguments, so all parameters must be correct in this example
@@ -108,6 +108,12 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
+    //--------------------------
+    // Init frameworks
+    // plugin and IO interfaces
+    //--------------------------
+    CMP_InitFramework();
+
     //---------------
     // Load the image
     //---------------
@@ -148,7 +154,24 @@ int main(int argc, char* argv[]) {
 
     kernel_options.format   = destFormat;   // Set the format to process
     kernel_options.fquality = fQuality;     // Set the quality of the result
-    kernel_options.threads  = 0;            // Auto setting
+    kernel_options.threads  = 0;            // Auto setting will enable maxium number of threads for processing
+
+    //=====================================================
+    // example of using BC1 encoder options 
+    // kernel_options.bc15 is valid for BC1 to BC5 formats
+    //=====================================================
+    if (destFormat == CMP_FORMAT_BC1)
+    {
+        // Enable punch through alpha setting
+        kernel_options.bc15.useAlphaThreshold = true;
+        kernel_options.bc15.alphaThreshold    = 128;
+
+        // Enable setting channel weights
+        kernel_options.bc15.useChannelWeights = true;
+        kernel_options.bc15.channelWeights[0] = 0.3086f;
+        kernel_options.bc15.channelWeights[1] = 0.6094f;
+        kernel_options.bc15.channelWeights[2] = 0.0820f;
+    }
 
     //--------------------------------------------------------------
     // Setup a results buffer for the processed file,

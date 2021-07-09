@@ -22,11 +22,6 @@
 // THE SOFTWARE.
 //
 
-// DDS.cpp : Defines the entry point for the DLL application.
-
-
-#pragma once
-
 // Windows Header Files:
 #ifdef _WIN32
 #include <windows.h>

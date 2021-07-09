@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2016    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2021    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -71,8 +71,13 @@ void* Plugin_BC2::TC_Create() {
 }
 
 void  Plugin_BC2::TC_Destroy(void* codec) {
-    delete codec;
-    codec = nullptr;
+    if (codec != nullptr)
+    {
+        BC2_EncodeClass* pcodec;
+        pcodec = reinterpret_cast<BC2_EncodeClass*>(codec);
+        delete pcodec;
+        codec = nullptr;
+    }
 }
 
 char *Plugin_BC2::TC_ComputeSourceFile(CGU_UINT32  Compute_type) {

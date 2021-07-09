@@ -47,11 +47,9 @@ get_property(QT_LIB_DIR GLOBAL PROPERTY QT_LIB_DIR)
 
 if (CMP_HOST_WINDOWS)
     cmp_gui_copy_to_output(${QT_LIB_DIR}/plugins/platforms/qwindows$<$<CONFIG:Debug>:d>.dll ${PLUGINS_PATH}/platforms/qwindows$<$<CONFIG:Debug>:d>.dll)
-    cmp_gui_copy_to_output(${QT_LIB_DIR}/plugins/imageformats/qtga$<$<CONFIG:Debug>:d>.dll  ${PLUGINS_PATH}/imagefomrats/qtga$<$<CONFIG:Debug>:d>.dll)
-    cmp_gui_copy_to_output(${QT_LIB_DIR}/plugins/imageformats/qtiff$<$<CONFIG:Debug>:d>.dll ${PLUGINS_PATH}/imagefomrats/qtiff$<$<CONFIG:Debug>:d>.dll)
-    cmp_gui_copy_to_output(${QT_LIB_DIR}/plugins/imageformats/qjpeg$<$<CONFIG:Debug>:d>.dll ${PLUGINS_PATH}/imagefomrats/qjpeg$<$<CONFIG:Debug>:d>.dll)
-    cmp_gui_copy_to_output(${QT_LIB_DIR}/bin/QtWebEngineProcess$<$<CONFIG:Debug>:d>.exe ${DYLIBS_PATH}/QtWebEngineProcess$<$<CONFIG:Debug>:d>.exe)
-    cmp_gui_copy_to_output(${QT_LIB_DIR}/bin/Qt5QuickWidgets$<$<CONFIG:Debug>:d>.dll ${DYLIBS_PATH}/Qt5QuickWidgets$<$<CONFIG:Debug>:d>.dll)
+    cmp_gui_copy_to_output(${QT_LIB_DIR}/plugins/imageformats/qtga$<$<CONFIG:Debug>:d>.dll  ${PLUGINS_PATH}/imageformats/qtga$<$<CONFIG:Debug>:d>.dll)
+    cmp_gui_copy_to_output(${QT_LIB_DIR}/plugins/imageformats/qtiff$<$<CONFIG:Debug>:d>.dll ${PLUGINS_PATH}/imageformats/qtiff$<$<CONFIG:Debug>:d>.dll)
+    cmp_gui_copy_to_output(${QT_LIB_DIR}/plugins/imageformats/qjpeg$<$<CONFIG:Debug>:d>.dll ${PLUGINS_PATH}/imageformats/qjpeg$<$<CONFIG:Debug>:d>.dll)
 else ()
     # Copy the platform libraries into the bundle
     file(GLOB_RECURSE QT_PLATFORM_LIBS ${QT_LIB_DIR}/plugins/platforms/*)
@@ -105,6 +103,12 @@ cmp_gui_copy_to_output(${ExtGLEW_BIN_PATH}/glew32.dll ${ASSETS_PATH}/glew32.dll)
 # OpenCV dll
 cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/../common/lib/ext/opencv/2.49/x64/VS2015/bin/$<$<CONFIG:Debug>:debug>$<$<CONFIG:Release>:release>/opencv_core249$<$<CONFIG:Debug>:d>.dll ${ASSETS_PATH}/opencv_core249$<$<CONFIG:Debug>:d>.dll)
 cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/../common/lib/ext/opencv/2.49/x64/VS2015/bin/$<$<CONFIG:Debug>:debug>$<$<CONFIG:Release>:release>/opencv_imgproc249$<$<CONFIG:Debug>:d>.dll ${ASSETS_PATH}/opencv_imgproc249$<$<CONFIG:Debug>:d>.dll)
+
+# New OpenCV support
+if (CMP_HOST_WINDOWS)
+    cmp_gui_copy_to_output(C:/opencv/build/x64/vc14/bin/opencv_world420$<$<CONFIG:Debug>:d>.dll ${ASSETS_PATH}/opencv_world420$<$<CONFIG:Debug>:d>.dll)
+endif()
+
 
 #KTX2 Features dll
 if (OPTION_BUILD_KTX2)

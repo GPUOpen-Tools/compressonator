@@ -324,9 +324,7 @@ unsigned int ASTCThreadProcEncode(void* param) {
             tp->run = FALSE;
         }
 
-        using namespace std::chrono_literals;
-
-        std::this_thread::sleep_for( 0ms );
+        std::this_thread::sleep_for(std::chrono::milliseconds(0));
     }
 
     return 0;
@@ -354,7 +352,7 @@ CodecError CCodec_ASTC::InitializeASTCLibrary() {
         // Create threaded encoder instances
         m_LiveThreads = 0;
         m_LastThread = 0;
-        m_NumEncodingThreads = min(m_NumThreads, (decltype(m_NumThreads))MAX_ASTC_THREADS);
+        m_NumEncodingThreads = MIN(m_NumThreads, (decltype(m_NumThreads))MAX_ASTC_THREADS);
         if (m_NumEncodingThreads == 0) {
             m_NumEncodingThreads = CMP_GetNumberOfProcessors();
             if (m_NumEncodingThreads <= 2)
@@ -515,9 +513,7 @@ CodecError CCodec_ASTC::FinishASTCEncoding(void) {
             // If a thread is in the running state then we need to wait for it to finish
             // its work from the producer
             while (g_EncodeParameterStorage[i].run == TRUE) {
-                using namespace std::chrono;
-
-                std::this_thread::sleep_for( 1ms );
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
             }
         }
     }
@@ -640,7 +636,7 @@ CodecError CCodec_ASTC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
         }
     }
 
-    m_NumEncodingThreads = min(m_NumThreads, (decltype(m_NumThreads))MAX_ASTC_THREADS);
+    m_NumEncodingThreads = MIN(m_NumThreads, (decltype(m_NumThreads))MAX_ASTC_THREADS);
     if (m_NumEncodingThreads == 0) {
         m_NumEncodingThreads = CMP_GetNumberOfProcessors();
         if (m_NumEncodingThreads <= 2)

@@ -23,8 +23,8 @@
 //
 
 
-#pragma once
-
+#ifndef _DDS_DX10_H
+#define _DDS_DX10_H
 
 #include "tc_pluginapi.h"
 #include "dds_file.h"
@@ -32,3 +32,5 @@
 
 TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
 TC_PluginError SaveDDS_DX10(FILE* pFile, const MipSet* pMipSet);
+
+#endif

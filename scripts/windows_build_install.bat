@@ -12,41 +12,41 @@ echo on
 
 cd %WORKDIR%\compressonator\Installer
 
-echo --- INSTALLER: AMDCompressCore_64.aip
+echo --- PUBLIC INSTALLER: AMDCompressCore_64.aip
 attrib -r AMDCompressCore_64.aip
 %ADVANCED_INSTALLER% /edit AMDCompressCore_64.aip /SetVersion 4.2.%BUILD_NUMBER%
 %ADVANCED_INSTALLER% /edit AMDCompressCore_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorCore_x64_4.2.%BUILD_NUMBER%
 %ADVANCED_INSTALLER% /build AMDCompressCore_64.aip -buildslist DefaultBuild > %WORKSPACE%\Setup_BuildCMPCore_x64.log 2>&1
 
-echo --- INSTALLER: AMDCompressFrameWork_64.aip
+echo --- PUBLIC INSTALLER: AMDCompressFrameWork_64.aip
 attrib -r AMDCompressFrameWork_64.aip
 %ADVANCED_INSTALLER% /edit AMDCompressFrameWork_64.aip /SetVersion 4.2.%BUILD_NUMBER%
 %ADVANCED_INSTALLER% /edit AMDCompressFrameWork_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorFrameWork_x64_4.2.%BUILD_NUMBER%
 %ADVANCED_INSTALLER% /build AMDCompressFrameWork_64.aip -buildslist DefaultBuild > %WORKSPACE%\Setup_BuildCMPFrameWork_x64.log 2>&1
 
-echo --- INSTALLER: AMDCompressSDK_64.aip
+echo --- PUBLIC INSTALLER: AMDCompressSDK_64.aip
 attrib -r AMDCompressSDK_64.aip
 %ADVANCED_INSTALLER% /edit AMDCompressSDK_64.aip /SetVersion 4.2.%BUILD_NUMBER%
 %ADVANCED_INSTALLER% /edit AMDCompressSDK_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorSDK_x64_4.2.%BUILD_NUMBER%
 %ADVANCED_INSTALLER% /build AMDCompressSDK_64.aip -buildslist DefaultBuild > %WORKSPACE%\Setup_BuildCMPSDK_x64.log 2>&1
 
-echo --- INSTALLER: AMDCompressCLI_64.aip
+echo --- PUBLIC INSTALLER: AMDCompressCLI_64.aip
 attrib -r AMDCompressCLI_64.aip
 %ADVANCED_INSTALLER% /edit AMDCompressCLI_64.aip /SetVersion 4.2.%BUILD_NUMBER% 
 %ADVANCED_INSTALLER% /edit AMDCompressCLI_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorCLI_x64_4.2.%BUILD_NUMBER%
 %ADVANCED_INSTALLER% /build AMDCompressCLI_64.aip -buildslist DefaultBuild > %WORKSPACE%\Setup_BuildCMPCLI_x64.log 2>&1
 
-echo --- INSTALLER: AMDCompressGUI_64.aip
+echo --- PUBLIC INSTALLER: AMDCompressGUI_64.aip
 attrib -r AMDCompressGUI_64.aip
 %ADVANCED_INSTALLER% /edit AMDCompressGUI_64.aip /SetVersion 4.2.%BUILD_NUMBER% 
 %ADVANCED_INSTALLER% /edit AMDCompressGUI_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorGUI_x64_4.2.%BUILD_NUMBER%
 %ADVANCED_INSTALLER% /build AMDCompressGUI_64.aip -buildslist DefaultBuild > %WORKSPACE%\Setup_BuildCMPGUI_x64.log 2>&1
 
-echo --- INSTALLER: amdcmp_vision_64.aip
-attrib -r amdcmp_vision_64.aip
-%ADVANCED_INSTALLER% /edit amdcmp_vision_64.aip /SetVersion 4.2.%BUILD_NUMBER% 
-%ADVANCED_INSTALLER% /edit amdcmp_vision_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorVision_x64_4.2.%BUILD_NUMBER%
-%ADVANCED_INSTALLER% /build amdcmp_vision_64.aip -buildslist DefaultBuild > %WORKSPACE%\Setup_BuildCMPVISION_x64.log 2>&1
+echo --- INTERNAL INSTALLER: amdcmp_vision_64.aip
+echo attrib -r amdcmp_vision_64.aip
+echo %ADVANCED_INSTALLER% /edit amdcmp_vision_64.aip /SetVersion 4.2.%BUILD_NUMBER% 
+echo %ADVANCED_INSTALLER% /edit amdcmp_vision_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorVIS_x64_4.2.%BUILD_NUMBER%
+echo %ADVANCED_INSTALLER% /build amdcmp_vision_64.aip -buildslist DefaultBuild > %WORKSPACE%\Setup_BuildCMPVIS_x64.log 2>&1
 
 
 cd %WORKDIR%

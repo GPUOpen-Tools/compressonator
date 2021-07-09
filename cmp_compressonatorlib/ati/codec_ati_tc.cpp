@@ -51,14 +51,14 @@ CodecError CCodec_ATI_TC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferO
     for(ATI_TC_DWORD j = 0; j < dwBlocksY; j++) {
         ATI_TC_DWORD compressedBlock[4];
         for(ATI_TC_DWORD i = 0; i < dwBlocksX; i++) {
-            /*			ATI_TC_BYTE cAlphaBlock[BLOCK_SIZE_4X4];
-            						bufferIn.ReadBlockR(i*4, j*4, 4, 4, cAlphaBlock);
-            						CompressAlphaBlock(cAlphaBlock, &compressedBlock[dwXOffset]);
+            /*            ATI_TC_BYTE cAlphaBlock[BLOCK_SIZE_4X4];
+                                    bufferIn.ReadBlockR(i*4, j*4, 4, 4, cAlphaBlock);
+                                    CompressAlphaBlock(cAlphaBlock, &compressedBlock[dwXOffset]);
 
-            						bufferIn.ReadBlockG(i*4, j*4, 4, 4, cAlphaBlock);
-            						CompressAlphaBlock(cAlphaBlock, &compressedBlock[dwYOffset]);
+                                    bufferIn.ReadBlockG(i*4, j*4, 4, 4, cAlphaBlock);
+                                    CompressAlphaBlock(cAlphaBlock, &compressedBlock[dwYOffset]);
 
-            						bufferOut.WriteBlock(i*4, j*4, compressedBlock, 4);*/
+                                    bufferOut.WriteBlock(i*4, j*4, compressedBlock, 4);*/
         }
         if(pFeedbackProc) {
             float fProgress = 100.f * (j * dwBlocksX) / (dwBlocksX * dwBlocksY);
@@ -82,24 +82,24 @@ CodecError CCodec_ATI_TC::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& buffe
 
     for(ATI_TC_DWORD j = 0; j < dwBlocksY; j++) {
         for(ATI_TC_DWORD i = 0; i < dwBlocksX; i++) {
-            /*			ATI_TC_DWORD compressedBlock[4];
-            			bufferIn.ReadBlock(i*4, j*4, compressedBlock, 4);
+            /*            ATI_TC_DWORD compressedBlock[4];
+                        bufferIn.ReadBlock(i*4, j*4, compressedBlock, 4);
 
-            			ATI_TC_BYTE alphaBlockR[BLOCK_SIZE_4X4];
-            			DecompressAlphaBlock(alphaBlockR, &compressedBlock[dwXOffset]);
-            			bufferOut.WriteBlockR(i*4, j*4, 4, 4, alphaBlockR);
+                        ATI_TC_BYTE alphaBlockR[BLOCK_SIZE_4X4];
+                        DecompressAlphaBlock(alphaBlockR, &compressedBlock[dwXOffset]);
+                        bufferOut.WriteBlockR(i*4, j*4, 4, 4, alphaBlockR);
 
-            			ATI_TC_BYTE alphaBlockG[BLOCK_SIZE_4X4];
-            			DecompressAlphaBlock(alphaBlockG, &compressedBlock[dwYOffset]);
-            			bufferOut.WriteBlockG(i*4, j*4, 4, 4, alphaBlockG);
+                        ATI_TC_BYTE alphaBlockG[BLOCK_SIZE_4X4];
+                        DecompressAlphaBlock(alphaBlockG, &compressedBlock[dwYOffset]);
+                        bufferOut.WriteBlockG(i*4, j*4, 4, 4, alphaBlockG);
 
-            			ATI_TC_BYTE alphaBlockB[BLOCK_SIZE_4X4];
-            			DeriveBlockB(alphaBlockR, alphaBlockG, alphaBlockB);
-            			bufferOut.WriteBlockB(i*4, j*4, 4, 4, alphaBlockB);
+                        ATI_TC_BYTE alphaBlockB[BLOCK_SIZE_4X4];
+                        DeriveBlockB(alphaBlockR, alphaBlockG, alphaBlockB);
+                        bufferOut.WriteBlockB(i*4, j*4, 4, 4, alphaBlockB);
 
-            			ATI_TC_BYTE alphaBlockA[BLOCK_SIZE_4X4];
-            			memset(alphaBlockA, 0, sizeof(alphaBlockA));
-            			bufferOut.WriteBlockA(i*4, j*4, 4, 4, alphaBlockA);*/
+                        ATI_TC_BYTE alphaBlockA[BLOCK_SIZE_4X4];
+                        memset(alphaBlockA, 0, sizeof(alphaBlockA));
+                        bufferOut.WriteBlockA(i*4, j*4, 4, 4, alphaBlockA);*/
         }
     }
 

@@ -253,7 +253,7 @@ CodecError CCodec_ATI2N_S::Compress(CCodecBuffer&       bufferIn,
     const CMP_DWORD dwXOffset = 0; // (GetType() == CT_ATI2N) ? 2 : 0;
     const CMP_DWORD dwYOffset = 2; // (GetType() == CT_ATI2N) ? 0 : 2;
 
-    bool bUseFixed = (!bufferIn.IsFloat() && bufferIn.GetChannelDepth() == 8 && !m_bUseFloat);
+    // bool bUseFixed = (!bufferIn.IsFloat() && bufferIn.GetChannelDepth() == 8 && !m_bUseFloat);
 
     for (CMP_DWORD j = 0; j < dwBlocksY; j++)
     {
@@ -270,9 +270,9 @@ CodecError CCodec_ATI2N_S::Compress(CCodecBuffer&       bufferIn,
                 // Convert to sbyte to float
                 float AlphaBlockSNorm[BLOCK_SIZE_4X4];
 
-                for (int i = 0; i < BLOCK_SIZE_4X4; i++)
+                for (int ii = 0; ii < BLOCK_SIZE_4X4; ii++)
                 {
-                    AlphaBlockSNorm[i] = (cAlphaBlock[i] / 127.0f);
+                    AlphaBlockSNorm[ii] = (cAlphaBlock[ii] / 127.0f);
                 }
 
                 CompressAlphaBlockSNorm(AlphaBlockSNorm, &compressedBlock[dwXOffset]);
@@ -280,9 +280,9 @@ CodecError CCodec_ATI2N_S::Compress(CCodecBuffer&       bufferIn,
                 bufferIn.ReadBlockG(i * 4, j * 4, 4, 4, cAlphaBlock);
 
                 // conversion of ubyte to signed normalized <c>/(2^7 -1)
-                for (int i = 0; i < BLOCK_SIZE_4X4; i++)
+                for (int ii = 0; ii < BLOCK_SIZE_4X4; ii++)
                 {
-                    AlphaBlockSNorm[i] = (cAlphaBlock[i] / 127.0f);
+                    AlphaBlockSNorm[ii] = (cAlphaBlock[ii] / 127.0f);
                 }
 
                 CompressAlphaBlockSNorm(AlphaBlockSNorm, &compressedBlock[dwYOffset]);
@@ -300,9 +300,9 @@ CodecError CCodec_ATI2N_S::Compress(CCodecBuffer&       bufferIn,
                 float AlphaBlockSNorm[BLOCK_SIZE_4X4];
 
                 // Convert UINT -> SNORM
-                for (int i = 0; i < BLOCK_SIZE_4X4; i++)
+                for (int ii = 0; ii < BLOCK_SIZE_4X4; ii++)
                 {
-                    AlphaBlockSNorm[i] = ((cAlphaBlock[i] / 255.0f) * 2.0f - 1.0f);
+                    AlphaBlockSNorm[ii] = ((cAlphaBlock[ii] / 255.0f) * 2.0f - 1.0f);
                 }
 
 
@@ -311,9 +311,9 @@ CodecError CCodec_ATI2N_S::Compress(CCodecBuffer&       bufferIn,
                 bufferIn.ReadBlockG(i * 4, j * 4, 4, 4, cAlphaBlock);
 
                 // Convert UINT -> SNORM
-                for (int i = 0; i < BLOCK_SIZE_4X4; i++)
+                for (int ii = 0; ii < BLOCK_SIZE_4X4; ii++)
                 {
-                    AlphaBlockSNorm[i] = ((cAlphaBlock[i] / 255.0f) * 2.0f - 1.0f);
+                    AlphaBlockSNorm[ii] = ((cAlphaBlock[ii] / 255.0f) * 2.0f - 1.0f);
                 }
 
                 CompressAlphaBlockSNorm(AlphaBlockSNorm, &compressedBlock[dwYOffset]);
@@ -351,7 +351,7 @@ CodecError CCodec_ATI2N_S::Decompress(CCodecBuffer&       bufferIn,
     const CMP_DWORD dwXOffset = 0; // (GetType() == CT_ATI2N) ? 2 : 0;
     const CMP_DWORD dwYOffset = 2; // (GetType() == CT_ATI2N) ? 0 : 2;
 
-    bool bUseFixed = (!bufferOut.IsFloat() && bufferOut.GetChannelDepth() == 8 && !m_bUseFloat);
+    //bool bUseFixed = (!bufferOut.IsFloat() && bufferOut.GetChannelDepth() == 8 && !m_bUseFloat);
 
     CMP_SBYTE alphaBlockA[BLOCK_SIZE_4X4];
     CMP_SBYTE alphaBlockB[BLOCK_SIZE_4X4];

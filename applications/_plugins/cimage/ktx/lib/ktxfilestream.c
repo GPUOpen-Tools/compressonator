@@ -55,7 +55,7 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
  * @brief Read bytes from a ktxFileStream.
  *
  * @param [out] dst           pointer to a block of memory with a size
-			   of at least @p size bytes, converted to a void*.
+               of at least @p size bytes, converted to a void*.
  * @param [in] size          total size of bytes to be read.
  * @param [in] src           pointer to a FILE object, converted to a void*, that specifies an input stream.
  *
@@ -67,13 +67,13 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
 static
 KTX_error_code ktxFileStream_read(void* dst, const GLsizei size, void* src)
 {
-	if (!dst || !src)
-		return KTX_INVALID_VALUE;
+    if (!dst || !src)
+        return KTX_INVALID_VALUE;
 
-	if (fread(dst, size, 1, (FILE*)src) != 1)
-		return KTX_UNEXPECTED_END_OF_FILE;
+    if (fread(dst, size, 1, (FILE*)src) != 1)
+        return KTX_UNEXPECTED_END_OF_FILE;
 
-	return KTX_SUCCESS;
+    return KTX_SUCCESS;
 }
 
 /**
@@ -92,13 +92,13 @@ KTX_error_code ktxFileStream_read(void* dst, const GLsizei size, void* src)
 static
 KTX_error_code ktxFileStream_skip(const GLsizei count, void* src)
 {
-	if (!src || (count < 0))
-		return KTX_INVALID_VALUE;
+    if (!src || (count < 0))
+        return KTX_INVALID_VALUE;
 
-	if (fseek((FILE*)src, count, SEEK_CUR) != 0)
-		return KTX_UNEXPECTED_END_OF_FILE;
+    if (fseek((FILE*)src, count, SEEK_CUR) != 0)
+        return KTX_UNEXPECTED_END_OF_FILE;
 
-	return KTX_SUCCESS;
+    return KTX_SUCCESS;
 }
 
 /**
@@ -119,13 +119,13 @@ KTX_error_code ktxFileStream_skip(const GLsizei count, void* src)
 static
 KTX_error_code ktxFileStream_write(const void *src, const GLsizei size, const GLsizei count, void* dst)
 {
-	if (!dst || !src)
-		return KTX_INVALID_VALUE;
+    if (!dst || !src)
+        return KTX_INVALID_VALUE;
 
-	if (fwrite(src, size, count, (FILE*)dst) != count)
-		return KTX_FILE_WRITE_ERROR;
+    if (fwrite(src, size, count, (FILE*)dst) != count)
+        return KTX_FILE_WRITE_ERROR;
 
-	return KTX_SUCCESS;
+    return KTX_SUCCESS;
 }
 
 /**
@@ -142,13 +142,13 @@ KTX_error_code ktxFileStream_write(const void *src, const GLsizei size, const GL
  */
 KTX_error_code ktxFileInit(struct ktxStream* stream, FILE* file)
 {
-	if (!stream || !file)
-		return KTX_INVALID_VALUE;
+    if (!stream || !file)
+        return KTX_INVALID_VALUE;
 
-	stream->src = (void*)file;
-	stream->read = ktxFileStream_read;
-	stream->skip = ktxFileStream_skip;
-	stream->write = ktxFileStream_write;
+    stream->src = (void*)file;
+    stream->read = ktxFileStream_read;
+    stream->skip = ktxFileStream_skip;
+    stream->write = ktxFileStream_write;
 
-	return KTX_SUCCESS;
+    return KTX_SUCCESS;
 }

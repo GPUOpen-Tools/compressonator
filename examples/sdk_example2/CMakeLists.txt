@@ -25,5 +25,8 @@ target_link_libraries(sdk_example2
         CMP_Compressonator
 )
 
-set_target_properties(sdk_example2 PROPERTIES FOLDER ${FOLDER_NAME})
+set_target_properties(sdk_example2 PROPERTIES 
+    FOLDER ${FOLDER_NAME}    
+    VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$(Configuration)"
+    )
 

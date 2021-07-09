@@ -25,7 +25,7 @@
 #include "gltfstructures.h"
 #include "modeldata.h"
 
-#include <json/json.h>
+#include <json/json.hpp>
 
 #ifdef USE_TINYGLTF2
 #include "tiny_gltf2.h"

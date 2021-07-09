@@ -30,7 +30,11 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = []
+extensions = ['sphinx.ext.autodoc',
+              'sphinx.ext.doctest',
+              'sphinx.ext.imgmath',
+              'sphinx.ext.ifconfig',
+              'sphinx.ext.githubpages']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -46,7 +50,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Compressonator'
-copyright = u'2017 to 2020, AMD Developer Tools'
+copyright = u'2017 to 2021, AMD Developer Tools'
 author = u'AMD Developer Tools'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -82,7 +86,7 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 # these seem to work
-html_theme = 'sphinx_rtd_theme'
+#html_theme = 'sphinx_rtd_theme'
 #html_theme = 'alabaster'
 #html_theme = 'scrolls'
 #html_theme = 'agogo'
@@ -101,15 +105,7 @@ html_theme = 'sphinx_rtd_theme'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-html_theme_options = {
-    # 'typekit_id': 'hiw1hhg',
-    # 'analytics_id': '',
-    # 'sticky_navigation': True  # Set to False to disable the sticky nav while scrolling.
-    'logo_only': True,  # if we have a html_logo below, this shows /only/ the logo with no title text
-    'collapse_navigation': False,  # Collapse navigation (False makes it tree-like)
-    # 'display_version': True,  # Display the docs version
-    # 'navigation_depth': 4,  # Depth of the headers shown in the navigation bar
-}
+html_theme_options = {}
 
 html_logo = 'media/acompress-128.png'
 

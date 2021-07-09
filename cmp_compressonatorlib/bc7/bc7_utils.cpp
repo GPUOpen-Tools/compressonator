@@ -124,8 +124,8 @@ void DecodeEndPoints(CMP_DWORD endpoint[][MAX_DIMENSION_BIG],
             ep[0][i] += (float)((CMP_DWORD)ep[0][i] >> componentBits[i]);
             ep[1][i] += (float)((CMP_DWORD)ep[1][i] >> componentBits[i]);
 
-            ep[0][i] = (float)min(255., max(0., ep[0][i]));
-            ep[1][i] = (float)min(255., max(0., ep[1][i]));
+            ep[0][i] = (float)cmp_minT(255., cmp_maxT(0., ep[0][i]));
+            ep[1][i] = (float)cmp_minT(255., cmp_maxT(0., ep[1][i]));
         }
     }
 
@@ -158,8 +158,8 @@ void GetRamp(CMP_DWORD endpoint[][MAX_DIMENSION_BIG],
             ep[0][i] += (double)((CMP_DWORD)ep[0][i] >> componentBits[i]);
             ep[1][i] += (double)((CMP_DWORD)ep[1][i] >> componentBits[i]);
 
-            ep[0][i] = min(255., max(0., ep[0][i]));
-            ep[1][i] = min(255., max(0., ep[1][i]));
+            ep[0][i] = cmp_minT(255., cmp_maxT(0., ep[0][i]));
+            ep[1][i] = cmp_minT(255., cmp_maxT(0., ep[1][i]));
         }
     }
 
@@ -178,13 +178,13 @@ void GetRamp(CMP_DWORD endpoint[][MAX_DIMENSION_BIG],
 #ifdef USE_HIGH_PRECISION_INTERPOLATION_BC7
         ramp[COMP_RED][i] = floor((ep[0][COMP_RED] * (1.0-rampLerpWeights[rampIndex][i])) +
                                   (ep[1][COMP_RED] * rampLerpWeights[rampIndex][i]) + 0.5);
-        ramp[COMP_RED][i] = min(255.0, max(0., ramp[COMP_RED][i]));
+        ramp[COMP_RED][i]   = cmp_minT(255.0, cmp_maxT(0., ramp[COMP_RED][i]));
         ramp[COMP_GREEN][i] = floor((ep[0][COMP_GREEN] * (1.0-rampLerpWeights[rampIndex][i])) +
                                     (ep[1][COMP_GREEN] * rampLerpWeights[rampIndex][i]) + 0.5);
-        ramp[COMP_GREEN][i] = min(255.0, max(0., ramp[COMP_GREEN][i]));
+        ramp[COMP_GREEN][i] = cmp_minT(255.0, cmp_maxT(0., ramp[COMP_GREEN][i]));
         ramp[COMP_BLUE][i] = floor((ep[0][COMP_BLUE] * (1.0-rampLerpWeights[rampIndex][i])) +
                                    (ep[1][COMP_BLUE] * rampLerpWeights[rampIndex][i]) + 0.5);
-        ramp[COMP_BLUE][i] = min(255.0, max(0., ramp[COMP_BLUE][i]));
+        ramp[COMP_BLUE][i]  = cmp_minT(255.0, cmp_maxT(0., ramp[COMP_BLUE][i]));
 #else
         ramp[COMP_RED][i] = interpolate(ep[0][COMP_RED], ep[1][COMP_RED], i, rampIndex);
         ramp[COMP_GREEN][i] = interpolate(ep[0][COMP_GREEN], ep[1][COMP_GREEN], i, rampIndex);
@@ -207,7 +207,7 @@ void GetRamp(CMP_DWORD endpoint[][MAX_DIMENSION_BIG],
 #ifdef USE_HIGH_PRECISION_INTERPOLATION_BC7
             ramp[COMP_ALPHA][i] = floor((ep[0][COMP_ALPHA] * (1.0-rampLerpWeights[rampIndex][i])) +
                                         (ep[1][COMP_ALPHA] * rampLerpWeights[rampIndex][i]) + 0.5);
-            ramp[COMP_ALPHA][i] = min(255.0, max(0., ramp[COMP_ALPHA][i]));
+            ramp[COMP_ALPHA][i] = cmp_minT(255.0, cmp_maxT(0., ramp[COMP_ALPHA][i]));
 #else
             ramp[COMP_ALPHA][i] = interpolate(ep[0][COMP_ALPHA], ep[1][COMP_ALPHA], i, rampIndex);
 #endif

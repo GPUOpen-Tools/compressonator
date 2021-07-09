@@ -41,7 +41,20 @@ using namespace CMP;
 
 #include "codec.h"
 
+//#define USE_REFINE_CODE
+//#define USE_CMP_CORE_API
+
+#ifdef USE_CMP_CORE_API
+#include "bcn_common_kernel.h"
+#include "bcn_common_api.h"
+#include "bc1_cmp.h"
+#endif
+
+using namespace CMP;
+
 #include "compressonatorxcodec.h"
+
+using namespace std;
 
 #if defined(WIN32) || defined(_WIN64)
 #    define ALIGN_16 __declspec(align(16))
@@ -113,9 +126,11 @@ DWORD ConstructColor(BYTE R, BYTE nRedBits, BYTE G, BYTE nGreenBits, BYTE B, BYT
 /*------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------------*/
+#ifndef USE_CMP_CORE_API
 static int QSortIntCmp(const void * Elem1, const void * Elem2) {
     return (*(int*)Elem1 - *(int*)Elem2);
 }
+#endif
 
 static int QSortFloatCmp(const void * Elem1, const void * Elem2) {
     DWORD* pdwElem1 = (DWORD*) Elem1;
@@ -154,7 +169,7 @@ static void MkRmpOnGrid(CODECFLOAT _RmpF[NUM_CHANNELS][NUM_ENDPOINTS], CODECFLOA
                 _RmpF[j][k] = _Min;
             else {
                 _RmpF[j][k] += floor(128.f / Fctrs1[j]) - floor(_RmpF[j][k] / Fctrs1[j]);
-                _RmpF[j][k] = min(_RmpF[j][k], _Max);
+                _RmpF[j][k] = std::min(_RmpF[j][k], _Max);
             }
 
             _RmpF[j][k] = floor(_RmpF[j][k] / Fctrs0[j]) * Fctrs0[j];
@@ -166,6 +181,7 @@ static void MkRmpOnGrid(CODECFLOAT _RmpF[NUM_CHANNELS][NUM_ENDPOINTS], CODECFLOA
 /*------------------------------------------------------------------------------------------------
 // this is how the end points is going to be look like when decompressed
 ------------------------------------------------------------------------------------------------*/
+
 inline void MkWkRmpPts(bool *_bEq, CODECFLOAT _OutRmpPts[NUM_CHANNELS][NUM_ENDPOINTS],
                        CODECFLOAT _InpRmpPts[NUM_CHANNELS][NUM_ENDPOINTS], CMP_BYTE nRedBits, CMP_BYTE nGreenBits, CMP_BYTE nBlueBits) {
     CODECFLOAT Fctrs[3];
@@ -183,11 +199,12 @@ inline void MkWkRmpPts(bool *_bEq, CODECFLOAT _OutRmpPts[NUM_CHANNELS][NUM_ENDPO
         for(int k = 0; k <2; k++) {
             // Apply the lower bit replication to give full dynamic range
             _OutRmpPts[j][k] = _InpRmpPts[j][k] + floor(_InpRmpPts[j][k] / Fctrs[j]);
-            _OutRmpPts[j][k] = max(_OutRmpPts[j][k], 0.f);
-            _OutRmpPts[j][k] = min(_OutRmpPts[j][k], 255.f);
+            _OutRmpPts[j][k] = std::max(_OutRmpPts[j][k], 0.f);
+            _OutRmpPts[j][k] = std::min(_OutRmpPts[j][k], 255.f);
         }
     }
 }
+
 
 DWORD dwRndAmount[] = {0, 0, 0, 0, 1, 1, 2, 2, 3};
 
@@ -257,9 +274,15 @@ static CODECFLOAT ClstrErr(CODECFLOAT _Blk[MAX_BLOCK][NUM_CHANNELS], CODECFLOAT 
 }
 
 // Compute error and find DXTC indexes for the current cluster
-static CODECFLOAT ClstrIntnl(CODECFLOAT _Blk[MAX_BLOCK][NUM_CHANNELS], CMP_BYTE* _Indxs,
-                             CODECFLOAT _Rmp[NUM_CHANNELS][MAX_POINTS], int dwBlockSize, CMP_BYTE dwNumPoints,
-                             bool _ConstRamp, CODECFLOAT* _pfWeights, bool _bUseAlpha) {
+static CODECFLOAT ClstrIntnl(CODECFLOAT _Blk[MAX_BLOCK][NUM_CHANNELS], 
+                             CMP_BYTE* _Indxs,
+                             CODECFLOAT _Rmp[NUM_CHANNELS][MAX_POINTS], 
+                             int dwBlockSize, 
+                             CMP_BYTE dwNumPoints,
+                             bool _ConstRamp, 
+                             CODECFLOAT* _pfWeights, 
+                             bool _bUseAlpha) 
+{
     CODECFLOAT Err = 0.f;
     CMP_BYTE rmp_l = (_ConstRamp) ? 1 : dwNumPoints;
 
@@ -313,9 +336,17 @@ static CODECFLOAT ClstrIntnl(CODECFLOAT _Blk[MAX_BLOCK][NUM_CHANNELS], CMP_BYTE*
 /*------------------------------------------------------------------------------------------------
 // input ramp is on the coarse grid
 ------------------------------------------------------------------------------------------------*/
-static CODECFLOAT ClstrBas(CMP_BYTE* _Indxs, CODECFLOAT _Blk[MAX_BLOCK][NUM_CHANNELS],
-                           CODECFLOAT _InpRmp[NUM_CHANNELS][NUM_ENDPOINTS], int dwBlockSize, CMP_BYTE dwNumPoints, CODECFLOAT* _pfWeights,
-                           bool _bUseAlpha, CMP_BYTE nRedBits, CMP_BYTE nGreenBits, CMP_BYTE nBlueBits) {
+static CODECFLOAT ClstrBas( CMP_BYTE* _Indxs, 
+                            CODECFLOAT _Blk[MAX_BLOCK][NUM_CHANNELS],
+                            CODECFLOAT _InpRmp[NUM_CHANNELS][NUM_ENDPOINTS], 
+                            int dwBlockSize, 
+                            CMP_BYTE dwNumPoints, 
+                            CODECFLOAT* _pfWeights,
+                            bool _bUseAlpha, 
+                            CMP_BYTE nRedBits, 
+                            CMP_BYTE nGreenBits, 
+                            CMP_BYTE nBlueBits) 
+{
     // make ramp endpoints the way they'll going to be decompressed
     bool Eq = true;
     CODECFLOAT InpRmp[NUM_CHANNELS][NUM_ENDPOINTS];
@@ -333,12 +364,18 @@ static CODECFLOAT ClstrBas(CMP_BYTE* _Indxs, CODECFLOAT _Blk[MAX_BLOCK][NUM_CHAN
 Clusterization the way it looks from the DXTC decompressor
 ------------------------------------------------------------------------------------------------*/
 
-CODECFLOAT Clstr(CMP_DWORD block_32[MAX_BLOCK], CMP_WORD dwBlockSize,
+CODECFLOAT Clstr(CMP_DWORD block_32[MAX_BLOCK], 
+                 CMP_WORD dwBlockSize,
                  CMP_BYTE nEndpoints[3][NUM_ENDPOINTS],
-                 CMP_BYTE* pcIndices, CMP_BYTE dwNumPoints,
-                 CODECFLOAT* _pfWeights, bool _bUseAlpha, CMP_BYTE _nAlphaThreshold,
-                 CMP_BYTE nRedBits, CMP_BYTE nGreenBits, CMP_BYTE nBlueBits
-                ) {
+                 CMP_BYTE* pcIndices, 
+                 CMP_BYTE dwNumPoints,
+                 CODECFLOAT* _pfWeights, 
+                 bool _bUseAlpha, 
+                 CMP_BYTE _nAlphaThreshold,
+                 CMP_BYTE nRedBits, 
+                 CMP_BYTE nGreenBits, 
+                 CMP_BYTE nBlueBits)
+{
     unsigned int c0 = ConstructColor(nEndpoints[RC][0], nRedBits, nEndpoints[GC][0], nGreenBits, nEndpoints[BC][0], nBlueBits);
     unsigned int c1 = ConstructColor(nEndpoints[RC][1], nRedBits, nEndpoints[GC][1], nGreenBits, nEndpoints[BC][1], nBlueBits);
     unsigned int nEndpointIndex0 = 0;
@@ -404,21 +441,6 @@ CODECFLOAT Clstr(CODECFLOAT block_32[MAX_BLOCK*4], CMP_WORD dwBlockSize,
     return ClstrBas(pcIndices, Blk, InpRmp, dwBlockSize, dwNumPoints, _pfWeights, _bUseAlpha, nRedBits, nGreenBits, nBlueBits);
 }
 
-
-#ifdef USE_SSE
-static CODECFLOAT RefineSSE2(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
-                             CODECFLOAT _InpRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
-                             CODECFLOAT _Blk[MAX_BLOCK][NUM_CHANNELS], ALIGN_16 CODECFLOAT _Rpt[MAX_BLOCK],
-                             int _NmrClrs, CMP_BYTE dwNumPoints, CODECFLOAT* _pfWeights,
-                             CMP_BYTE nRedBits, CMP_BYTE nGreenBits, CMP_BYTE nBlueBits,
-                             CMP_BYTE nRefineSteps);
-static CODECFLOAT Refine3DSSE2(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
-                               CODECFLOAT _InpRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
-                               CODECFLOAT _Blk[MAX_BLOCK][NUM_CHANNELS], ALIGN_16 CODECFLOAT _Rpt[MAX_BLOCK],
-                               int _NmrClrs, CMP_BYTE dwNumPoints, CODECFLOAT* _pfWeights,
-                               CMP_BYTE nRedBits, CMP_BYTE nGreenBits, CMP_BYTE nBlueBits, CMP_BYTE nRefineSteps);
-#endif //USE_SSE
-
 static CODECFLOAT Refine(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
                          CODECFLOAT _InpRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
                          CODECFLOAT _Blk[MAX_BLOCK][NUM_CHANNELS], CODECFLOAT _Rpt[MAX_BLOCK],
@@ -431,84 +453,41 @@ static CODECFLOAT Refine3D(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
                            int _NmrClrs, CMP_BYTE dwNumPoints, CODECFLOAT* _pfWeights,
                            CMP_BYTE nRedBits, CMP_BYTE nGreenBits, CMP_BYTE nBlueBits, CMP_BYTE nRefineSteps);
 
-#ifdef USE_SSE
-/*------------------------------------------------------------------------------------------------
-
-------------------------------------------------------------------------------------------------*/
-static CODECFLOAT RampSrchWSS2E(ALIGN_16 CODECFLOAT _Blck[MAX_BLOCK],
-                                ALIGN_16 CODECFLOAT _BlckErr[MAX_BLOCK],
-                                ALIGN_16 CODECFLOAT _Rpt[MAX_BLOCK],
-                                CODECFLOAT _maxerror, CODECFLOAT _min_ex, CODECFLOAT _max_ex,
-                                int _NmbClrs,
-                                CMP_BYTE dwNumPoints) {
-    CODECFLOAT error = _maxerror;
-    CODECFLOAT step = (_max_ex - _min_ex) / (dwNumPoints - 1);
-    CODECFLOAT rstep = (CODECFLOAT)1.0f / step;
-
-    int SIMDFac = 128 / (sizeof(CODECFLOAT) * 8);
-    int NbrCycls = (_NmbClrs + SIMDFac - 1) / SIMDFac;
-
-    __m128 err = _mm_setzero_ps();
-    for(int i=0; i < NbrCycls; i++) {
-        // do not add half since rounding is different
-        __m128 v = _mm_cvtepi32_ps(
-                       _mm_cvtps_epi32(
-                           _mm_mul_ps(
-                               _mm_sub_ps(
-                                   _mm_load_ps(&_Blck[SIMDFac * i]),
-                                   _mm_set_ps1(_min_ex)),
-                               _mm_set_ps1(rstep))));
-
-        v = _mm_add_ps(_mm_mul_ps(v, _mm_set_ps1(step)), _mm_set_ps1(_min_ex));
-
-        v = _mm_min_ps(_mm_max_ps(v, _mm_set_ps1(_min_ex)), _mm_set_ps1(_max_ex));
-
-        __m128 d = _mm_sub_ps(_mm_load_ps(&_Blck[SIMDFac * i]), v);
-        d = _mm_mul_ps(d,d);
-        err = _mm_add_ps(err,_mm_add_ps(_mm_load_ps(&_BlckErr[SIMDFac * i]),_mm_mul_ps(_mm_load_ps(&_Rpt[SIMDFac * i]),d)));
-    }
-
-    err = _mm_add_ps(_mm_movelh_ps(err, _mm_setzero_ps()),_mm_movehl_ps(_mm_setzero_ps(), err));
-    err = _mm_add_ps(err, _mm_shuffle_ps(err, _mm_setzero_ps(), _MM_SHUFFLE(0,0,3,1)));
-    _mm_store_ss(&error, err);
-
-    return (error);
-}
-#endif //USE_SSE
-
 /*------------------------------------------------------------------------------------------------
 1 dim error
 ------------------------------------------------------------------------------------------------*/
-static CODECFLOAT RampSrchW(CODECFLOAT _Blck[MAX_BLOCK],
-                            CODECFLOAT _BlckErr[MAX_BLOCK],
-                            CODECFLOAT _Rpt[MAX_BLOCK],
-                            CODECFLOAT _maxerror, CODECFLOAT _min_ex, CODECFLOAT _max_ex,
-                            int _NmbClrs,
-                            int _block) {
+static CODECFLOAT RampSrchW(CODECFLOAT Prj[MAX_BLOCK],
+                            CODECFLOAT PrjErr[MAX_BLOCK],
+                            CODECFLOAT PreMRep[MAX_BLOCK],
+                            CODECFLOAT StepErr, 
+                            CODECFLOAT lowPosStep, 
+                            CODECFLOAT highPosStep,
+                            int dwUniqueColors,
+                            int dwNumPoints) {
     CODECFLOAT error = 0;
-    CODECFLOAT step = (_max_ex - _min_ex) / (_block - 1);
+    CODECFLOAT step = (highPosStep - lowPosStep) / (dwNumPoints - 1);
     CODECFLOAT step_h = step * (CODECFLOAT)0.5;
     CODECFLOAT rstep = (CODECFLOAT)1.0f / step;
 
-    for(int i=0; i < _NmbClrs; i++) {
+    for(int i=0; i < dwUniqueColors; i++) {
         CODECFLOAT v;
         // Work out which value in the block this select
         CODECFLOAT del;
 
-        if((del = _Blck[i] - _min_ex) <= 0)
-            v = _min_ex;
-        else if(_Blck[i] -  _max_ex >= 0)
-            v = _max_ex;
+        if((del = Prj[i] - lowPosStep) <= 0)
+            v = lowPosStep;
+        else if(Prj[i] -  highPosStep >= 0)
+            v = highPosStep;
         else
-            v = floor((del + step_h) * rstep) * step + _min_ex;
+            v = floor((del + step_h) * rstep) * step + lowPosStep;
 
         // And accumulate the error
-        CODECFLOAT d = (_Blck[i] - v);
+        CODECFLOAT d = (Prj[i] - v);
         d *= d;
-        CODECFLOAT err = _Rpt[i] * d + _BlckErr[i];
+        CODECFLOAT err = PreMRep[i] * d + PrjErr[i];
         error += err;
-        if(_maxerror < error) {
-            error  = _maxerror;
+        if(StepErr < error) {
+            error  = StepErr;
             break;
         }
     }
@@ -520,21 +499,27 @@ static CODECFLOAT RampSrchW(CODECFLOAT _Blck[MAX_BLOCK],
 //   Z = a * X_In
 //   Z = b * Y_In
 // Find a,b to minimize MSE between Z and Z_In
-static void FindAxis(CODECFLOAT _outBlk[MAX_BLOCK][NUM_CHANNELS], CODECFLOAT fLineDirection[NUM_CHANNELS],
-                     CODECFLOAT fBlockCenter[NUM_CHANNELS], bool * _pbSmall, CODECFLOAT _inpBlk[MAX_BLOCK][NUM_CHANNELS],
-                     CODECFLOAT _inpRpt[MAX_BLOCK], int nDimensions, int nNumColors) {
+static void FindAxis(CODECFLOAT BlkSh[MAX_BLOCK][NUM_CHANNELS],     // output
+                     CODECFLOAT LineDir0[NUM_CHANNELS],
+                     CODECFLOAT fBlockCenter[NUM_CHANNELS], 
+                     bool       *AxisIsSmall, 
+                     CODECFLOAT BlkUV[MAX_BLOCK][NUM_CHANNELS],
+                     CODECFLOAT _inpRpt[MAX_BLOCK], 
+                    int         nDimensions, 
+                    int         dwUniqueColors) 
+{
     CODECFLOAT Crrl[NUM_CHANNELS];
     CODECFLOAT RGB2[NUM_CHANNELS];
 
-    fLineDirection[0] = fLineDirection[1] = fLineDirection[2] = RGB2[0] = RGB2[1] = RGB2[2] =
-            Crrl[0] = Crrl[1] = Crrl[2] = fBlockCenter[0] = fBlockCenter[1] = fBlockCenter[2] = 0.f;
+    LineDir0[0] = LineDir0[1] = LineDir0[2] = RGB2[0] = RGB2[1] = RGB2[2] =
+    Crrl[0] = Crrl[1] = Crrl[2] = fBlockCenter[0] = fBlockCenter[1] = fBlockCenter[2] = 0.f;
 
     // sum position of all points
     CODECFLOAT fNumPoints = 0.f;
-    for(int i=0; i < nNumColors; i++) {
-        fBlockCenter[0] += _inpBlk[i][0] * _inpRpt[i];
-        fBlockCenter[1] += _inpBlk[i][1] * _inpRpt[i];
-        fBlockCenter[2] += _inpBlk[i][2] * _inpRpt[i];
+    for(int i=0; i < dwUniqueColors; i++) {
+        fBlockCenter[0] += BlkUV[i][0] * _inpRpt[i];
+        fBlockCenter[1] += BlkUV[i][1] * _inpRpt[i];
+        fBlockCenter[2] += BlkUV[i][2] * _inpRpt[i];
         fNumPoints += _inpRpt[i];
     }
 
@@ -543,18 +528,18 @@ static void FindAxis(CODECFLOAT _outBlk[MAX_BLOCK][NUM_CHANNELS], CODECFLOAT fLi
     fBlockCenter[1] /= fNumPoints;
     fBlockCenter[2] /= fNumPoints;
 
-    for(int i = 0; i < nNumColors; i++) {
+    for(int i = 0; i < dwUniqueColors; i++) {
         // calculate output block as offsets around block center
-        _outBlk[i][0] = _inpBlk[i][0] - fBlockCenter[0];
-        _outBlk[i][1] = _inpBlk[i][1] - fBlockCenter[1];
-        _outBlk[i][2] = _inpBlk[i][2] - fBlockCenter[2];
+        BlkSh[i][0] = BlkUV[i][0] - fBlockCenter[0];
+        BlkSh[i][1] = BlkUV[i][1] - fBlockCenter[1];
+        BlkSh[i][2] = BlkUV[i][2] - fBlockCenter[2];
 
         // compute correlation matrix
         // RGB2 = sum of ((distance from point from center) squared)
         // Crrl = ???????. Seems to be be some calculation based on distance from point center in two dimensions
         for(int j = 0; j < nDimensions; j++) {
-            RGB2[j] += _outBlk[i][j] * _outBlk[i][j] * _inpRpt[i];
-            Crrl[j] += _outBlk[i][j] * _outBlk[i][(j+1)%3] * _inpRpt[i];
+            RGB2[j] += BlkSh[i][j] * BlkSh[i][j] * _inpRpt[i];
+            Crrl[j] += BlkSh[i][j] * BlkSh[i][(j+1)%3] * _inpRpt[i];
         }
     }
 
@@ -576,20 +561,20 @@ static void FindAxis(CODECFLOAT _outBlk[MAX_BLOCK][NUM_CHANNELS], CODECFLOAT fLi
     }
 
     CODECFLOAT fEPS2 = fNumPoints * EPS2;
-    *_pbSmall = true;
+    *AxisIsSmall = true;
     for(j = 0; j < 3; j++)
-        *_pbSmall &= (RGB2[j] < fEPS2);
+        *AxisIsSmall &= (RGB2[j] < fEPS2);
 
-    if(*_pbSmall) // all are very small to avoid division on the small determinant
+    if(*AxisIsSmall) // all are very small to avoid division on the small determinant
         return;
 
     if(k == 1) // really only 1 dimension
-        fLineDirection[i0]= 1.;
+        LineDir0[i0]= 1.;
     else if(k == 2) { // really only 2 dimensions
         i1 = (RGB2[(i0+1)%3] > 0.f) ? (i0+1)%3 : (i0+2)%3;
         CODECFLOAT Crl = (i1 == (i0+1)%3) ? Crrl[i0] : Crrl[(i0+2)%3];
-        fLineDirection[i1] = Crl/ RGB2[i0];
-        fLineDirection[i0]= 1.;
+        LineDir0[i1] = Crl/ RGB2[i0];
+        LineDir0[i0]= 1.;
     } else {
         CODECFLOAT maxDet = 100000.f;
         CODECFLOAT Cs[3];
@@ -626,35 +611,45 @@ static void FindAxis(CODECFLOAT _outBlk[MAX_BLOCK][NUM_CHANNELS], CODECFLOAT fLi
         vc[0] /= maxDet;
         vc[1] /= maxDet;
         // find a line direction vector
-        fLineDirection[i0] = 1.;
-        fLineDirection[(i0 + 1) %3] = 1.;
-        fLineDirection[(i0 + 2) %3] = vc[0] + vc[1];
+        LineDir0[i0] = 1.;
+        LineDir0[(i0 + 1) %3] = 1.;
+        LineDir0[(i0 + 2) %3] = vc[0] + vc[1];
     }
 
     // normalize direction vector
-    CODECFLOAT Len = fLineDirection[0] * fLineDirection[0] + fLineDirection[1] * fLineDirection[1] + fLineDirection[2] * fLineDirection[2];
+    CODECFLOAT Len = LineDir0[0] * LineDir0[0] + LineDir0[1] * LineDir0[1] + LineDir0[2] * LineDir0[2];
     Len = sqrt(Len);
 
     for(j = 0; j < 3; j++)
-        fLineDirection[j] = (Len > 0.f) ? fLineDirection[j] / Len : 0.f;
+        LineDir0[j] = (Len > 0.f) ? LineDir0[j] / Len : 0.f;
 }
 
 /*-------------------------------------------------------------------------------------------
 
-This C version. For more performance, please, take SSE2 route.
+This C version. For more performance
 --------------------------------------------------------------------------------------------*/
 #define SCH_STPS 3 // number of search steps to make at each end of interval
 
 // coefficient defining a number of grid units in one search step
-
+#ifndef USE_CMP_CORE_API
 static const CODECFLOAT sMvF[] = { 0.f, -1.f, 1.f, -2.f, 2.f, -3.f, 3.f, -4.f, 4.f, -5.f, 5.f, -6.f, 6.f, -7.f, 7.f, -8.f, 8.f};
+#endif
 
 CODECFLOAT Refine(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
                   CODECFLOAT _InpRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
-                  CODECFLOAT _Blk[MAX_BLOCK][NUM_CHANNELS], CODECFLOAT _Rpt[MAX_BLOCK],
-                  int _NmrClrs, CMP_BYTE dwNumPoints, CODECFLOAT* _pfWeights,
-                  CMP_BYTE nRedBits, CMP_BYTE nGreenBits, CMP_BYTE nBlueBits, CMP_BYTE nRefineSteps) {
+                  CODECFLOAT _Blk[MAX_BLOCK][NUM_CHANNELS], 
+                  CODECFLOAT _Rpt[MAX_BLOCK],
+                  int _NmrClrs, 
+                  CMP_BYTE dwNumPoints, 
+                  CODECFLOAT* _pfWeights,
+                  CMP_BYTE nRedBits, 
+                  CMP_BYTE nGreenBits, 
+                  CMP_BYTE nBlueBits, 
+                  CMP_BYTE nRefineSteps )
+{
     ALIGN_16 CODECFLOAT Rmp[NUM_CHANNELS][MAX_POINTS];
+
+    if (nRefineSteps == 0) nRefineSteps = 1;
 
     CODECFLOAT Blk[MAX_BLOCK][NUM_CHANNELS];
     for(int i = 0; i < _NmrClrs; i++)
@@ -688,7 +683,7 @@ CODECFLOAT Refine(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
 
     // clusterize for the current ramp
     CODECFLOAT bestE = ClstrErr(Blk, _Rpt, Rmp, _NmrClrs, dwNumPoints, Eq, _pfWeights);
-    if(bestE == 0.f || !nRefineSteps)    // if exact, we've done
+    if(bestE == 0.f)    // if exact, we've done
         return bestE;
 
     // Tweak each component in isolation and get the best values
@@ -706,13 +701,13 @@ CODECFLOAT Refine(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
     // First Red
     CODECFLOAT bstC0 = InpRmp0[RC][0];
     CODECFLOAT bstC1 = InpRmp0[RC][1];
-    int nRefineStart = 0 - (min(nRefineSteps, (CMP_BYTE)8));
-    int nRefineEnd = min(nRefineSteps, (CMP_BYTE)8);
+    int nRefineStart = 0 - (std::min(nRefineSteps, (CMP_BYTE)8));
+    int nRefineEnd =std::min(nRefineSteps, (CMP_BYTE)8);
     for(int i = nRefineStart; i <= nRefineEnd; i++) {
         for(int j = nRefineStart; j <= nRefineEnd; j++) {
             // make a move; both sides of interval.
-            InpRmp[RC][0] = min(max(InpRmp0[RC][0] + i * Fctrs[RC], 0.f), 255.f);
-            InpRmp[RC][1] = min(max(InpRmp0[RC][1] + j * Fctrs[RC], 0.f), 255.f);
+            InpRmp[RC][0] = std::min(std::max(InpRmp0[RC][0] + i * Fctrs[RC], 0.f), 255.f);
+            InpRmp[RC][1] = std::min(std::max(InpRmp0[RC][1] + j * Fctrs[RC], 0.f), 255.f);
 
             // make ramp endpoints the way they'll going to be decompressed
             // plus check whether the ramp is flat
@@ -729,7 +724,7 @@ CODECFLOAT Refine(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
                 for(int r = 0; r < rmp_l; r++) {
                     CODECFLOAT Dist = (Rmp[RC][r] - Blk[k][RC]);
                     CODECFLOAT Err = RmpErr[r][k] + Dist * Dist * fWeightRed;
-                    MinErr = min(MinErr, Err);
+                    MinErr = std::min(MinErr, Err);
                 }
                 mse += MinErr * _Rpt[k];
             }
@@ -768,8 +763,8 @@ CODECFLOAT Refine(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
     bstC1 = InpRmp0[GC][1];
     for(int i = nRefineStart; i <= nRefineEnd; i++) {
         for(int j = nRefineStart; j <= nRefineEnd; j++) {
-            InpRmp[GC][0] = min(max(InpRmp0[GC][0] + i * Fctrs[GC], 0.f), 255.f);
-            InpRmp[GC][1] = min(max(InpRmp0[GC][1] + j * Fctrs[GC], 0.f), 255.f);
+            InpRmp[GC][0] = std::min(std::max(InpRmp0[GC][0] + i * Fctrs[GC], 0.f), 255.f);
+            InpRmp[GC][1] = std::min(std::max(InpRmp0[GC][1] + j * Fctrs[GC], 0.f), 255.f);
 
             MkWkRmpPts(&Eq, WkRmpPts, InpRmp, nRedBits, nGreenBits, nBlueBits);
             BldClrRmp(Rmp[GC], WkRmpPts[GC], dwNumPoints);
@@ -781,7 +776,7 @@ CODECFLOAT Refine(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
                 for(int r = 0; r < rmp_l; r++) {
                     CODECFLOAT Dist = (Rmp[GC][r] - Blk[k][GC]);
                     CODECFLOAT Err = RmpErr[r][k] +  Dist * Dist * fWeightGreen;
-                    MinErr = min(MinErr, Err);
+                    MinErr = std::min(MinErr, Err);
                 }
                 mse += MinErr * _Rpt[k];
             }
@@ -855,9 +850,16 @@ CODECFLOAT Refine(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
 
 CODECFLOAT Refine3D(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
                     CODECFLOAT _InpRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
-                    CODECFLOAT _Blk[MAX_BLOCK][NUM_CHANNELS], CODECFLOAT _Rpt[MAX_BLOCK],
-                    int _NmrClrs, CMP_BYTE dwNumPoints, CODECFLOAT* _pfWeights,
-                    CMP_BYTE nRedBits, CMP_BYTE nGreenBits, CMP_BYTE nBlueBits, CMP_BYTE nRefineSteps) {
+                    CODECFLOAT _Blk[MAX_BLOCK][NUM_CHANNELS], 
+                    CODECFLOAT _Rpt[MAX_BLOCK],
+                    int _NmrClrs, 
+                    CMP_BYTE dwNumPoints, 
+                    CODECFLOAT* _pfWeights,
+                    CMP_BYTE nRedBits, 
+                    CMP_BYTE nGreenBits, 
+                    CMP_BYTE nBlueBits, 
+                    CMP_BYTE nRefineSteps)
+{
     ALIGN_16 CODECFLOAT Rmp[NUM_CHANNELS][MAX_POINTS];
 
     CODECFLOAT Blk[MAX_BLOCK][NUM_CHANNELS];
@@ -865,9 +867,9 @@ CODECFLOAT Refine3D(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
         for(int j = 0; j < 3; j++)
             Blk[i][j] = _Blk[i][j];
 
-    CODECFLOAT fWeightRed = _pfWeights ? _pfWeights[0] : 1.f;
+    CODECFLOAT fWeightRed   = _pfWeights ? _pfWeights[0] : 1.f;
     CODECFLOAT fWeightGreen = _pfWeights ? _pfWeights[1] : 1.f;
-    CODECFLOAT fWeightBlue = _pfWeights ? _pfWeights[2] : 1.f;
+    CODECFLOAT fWeightBlue  = _pfWeights ? _pfWeights[2] : 1.f;
 
     // here is our grid
     CODECFLOAT Fctrs[3];
@@ -965,847 +967,35 @@ CODECFLOAT Refine3D(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
     return bestE;
 }
 
-#ifdef USE_SSE
-/*---------------------------------------------------------------------------------------------------------
-this is SSE2 version. for more explanation, please, go to C version.
-----------------------------------------------------------------------------------------------------------*/
-
-CODECFLOAT RefineSSE2(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
-                      CODECFLOAT _InpRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
-                      CODECFLOAT _Blk[MAX_BLOCK][NUM_CHANNELS], ALIGN_16 CODECFLOAT _Rpt[MAX_BLOCK],
-                      int _NmrClrs, CMP_BYTE dwNumPoints, CODECFLOAT* _pfWeights,
-                      CMP_BYTE nRedBits, CMP_BYTE nGreenBits, CMP_BYTE nBlueBits, CMP_BYTE nRefineSteps) {
-    ALIGN_16 CODECFLOAT BlkSSE2[NUM_CHANNELS][MAX_BLOCK];
-    ALIGN_16 CODECFLOAT Rmp[NUM_CHANNELS][MAX_POINTS];
-    ALIGN_16 CODECFLOAT RmpErr[MAX_BLOCK][MAX_POINTS];
-
-    int SIMDFac = 128 / (sizeof(CODECFLOAT) * 8);
-    int NbrCycls = (_NmrClrs + SIMDFac - 1) / SIMDFac;
-
-    CODECFLOAT Blk[MAX_BLOCK][NUM_CHANNELS];
-    for(int i = 0; i < _NmrClrs; i++)
-        for(int j = 0; j < 3; j++)
-            BlkSSE2[j][i] = Blk[i][j] = _Blk[i][j];
-
-    CODECFLOAT fWeightRed = _pfWeights ? _pfWeights[0] : 1.f;
-    CODECFLOAT fWeightGreen = _pfWeights ? _pfWeights[1] : 1.f;
-    CODECFLOAT fWeightBlue = _pfWeights ? _pfWeights[2] : 1.f;
-
-    // here is our grid
-    CODECFLOAT Fctrs[3];
-    Fctrs[RC] = (CODECFLOAT)(1 << (PIX_GRID-nRedBits));
-    Fctrs[GC] = (CODECFLOAT)(1 << (PIX_GRID-nGreenBits));
-    Fctrs[BC] = (CODECFLOAT)(1 << (PIX_GRID-nBlueBits));
-
-    CODECFLOAT InpRmp0[NUM_CHANNELS][NUM_ENDPOINTS];
-    CODECFLOAT InpRmp[NUM_CHANNELS][NUM_ENDPOINTS];
-    for(int k = 0; k < 2; k++)
-        for(int j = 0; j < 3; j++)
-            InpRmp0[j][k] = InpRmp[j][k] = _OutRmpPnts[j][k] = _InpRmpPnts[j][k];
-
-    bool Eq;
-    CODECFLOAT WkRmpPts[NUM_CHANNELS][NUM_ENDPOINTS];
-    MkWkRmpPts(&Eq, WkRmpPts, InpRmp, nRedBits, nGreenBits, nBlueBits);
-    BldRmp(Rmp, WkRmpPts, dwNumPoints);
-
-    CODECFLOAT bestE = ClstrErr(Blk, _Rpt, Rmp, _NmrClrs, dwNumPoints, Eq, _pfWeights);
-    if(bestE == 0.f || !nRefineSteps)    // if exact, we've done
-        return bestE;
-
-    // ramp err for Green and Blue
-    for(int i=0; i < _NmrClrs; i++)
-        for(int r = 0; r < dwNumPoints; r++) {
-            CODECFLOAT DistG = (Rmp[GC][r] - Blk[i][GC]);
-            CODECFLOAT DistB = (Rmp[BC][r] - Blk[i][BC]);
-            RmpErr[i][r] = DistG * DistG * fWeightGreen + DistB * DistB * fWeightBlue;
-        }
-
-    // Tweak each component in isolation and get the best values
-    // First Red
-    CODECFLOAT bstC0 = InpRmp0[RC][0];
-    CODECFLOAT bstC1 = InpRmp0[RC][1];
-    int nRefineStart = 0 - (min(nRefineSteps, (CMP_BYTE)8));
-    int nRefineEnd = min(nRefineSteps, (CMP_BYTE)8);
-    int nRampLoops = (dwNumPoints + 3) / 4;
-
-    for(int i = nRefineStart; i <= nRefineEnd; i++) {
-        for(int j = nRefineStart; j <= nRefineEnd; j++) {
-            InpRmp[RC][0] = min(max(InpRmp0[RC][0] + i * Fctrs[RC], 0.f), 255.f);
-            InpRmp[RC][1] = min(max(InpRmp0[RC][1] + j * Fctrs[RC], 0.f), 255.f);
-
-            MkWkRmpPts(&Eq, WkRmpPts, InpRmp, nRedBits, nGreenBits, nBlueBits);
-            BldClrRmp(Rmp[RC], WkRmpPts[RC], dwNumPoints);
-
-            CODECFLOAT mse;
-            {
-                __m128 Mse = _mm_setzero_ps();
-                __m128 weight = _mm_load_ps1(&fWeightRed);
-                for(int k = 0; k < NbrCycls; k++) {
-                    __m128 minMse = _mm_set_ps1(FLT_MAX);
-                    for(int l = 0; l < nRampLoops; l++) {
-                        __m128 r = _mm_load_ps(&Rmp[RC][l * 4]);
-                        __m128 c4 = _mm_load_ps(&BlkSSE2[RC][k * SIMDFac]);
-                        // COLOR
-                        __m128 c  = _mm_shuffle_ps(c4, c4, _MM_SHUFFLE(0,0,0,0));
-                        __m128 rmp_err = _mm_load_ps(&RmpErr[k * SIMDFac + 0][l * 4]);
-                        // dist from ramp
-                        __m128 d  = _mm_sub_ps(c, r);
-                        d = _mm_mul_ps(d, d);
-                        d = _mm_mul_ps(d, weight);
-                        // overall error
-                        __m128 err = _mm_add_ps(d, rmp_err);
-                        // next rmp error
-                        rmp_err = _mm_load_ps(&RmpErr[k * SIMDFac + 1][l * 4]);
-
-                        __m128 min = _mm_shuffle_ps(err, _mm_setzero_ps(), _MM_SHUFFLE(3,3, 3,2)); // fold into 2 01 01
-                        err = _mm_min_ps(min, err); // take min
-                        min = _mm_shuffle_ps(err, _mm_setzero_ps(), _MM_SHUFFLE(3,3, 3,1)); // fold into 2 0 0
-                        __m128 Min = _mm_min_ps(min, err); // take min
-
-                        // NEXT COLOR
-
-                        c  = _mm_shuffle_ps(c4, c4, _MM_SHUFFLE(1,1,1,1));
-                        // dist from ramp
-                        d  = _mm_sub_ps(c, r);
-                        d = _mm_mul_ps(d, d);
-                        d = _mm_mul_ps(d, weight);
-                        // overall error
-                        err = _mm_add_ps(d, rmp_err);
-                        // next rmp error
-                        rmp_err = _mm_load_ps(&RmpErr[k * SIMDFac + 2][l * 4]);
-
-                        min = _mm_shuffle_ps(err, _mm_setzero_ps(), _MM_SHUFFLE(3,3, 3,2)); // fold into 2 01 01
-                        err = _mm_min_ps(min, err); // take min
-                        min = _mm_shuffle_ps(err, _mm_setzero_ps(), _MM_SHUFFLE(3,3, 0,3)); // fold into 2 1 1
-                        Min = _mm_add_ps(Min, _mm_min_ps(min, err));
-
-                        // NEXT COLOR
-                        c  = _mm_shuffle_ps(c4, c4, _MM_SHUFFLE(2,2,2,2));
-                        // dist from ramp
-                        d  = _mm_sub_ps(c, r);
-                        d = _mm_mul_ps(d, d);
-                        d = _mm_mul_ps(d, weight);
-                        // overall error
-                        err = _mm_add_ps(d, rmp_err);
-                        // next rmp error
-                        rmp_err = _mm_load_ps(&RmpErr[k * SIMDFac + 3][l * 4]);
-
-                        min = _mm_shuffle_ps(_mm_setzero_ps(), err, _MM_SHUFFLE(1,0, 3,3)); // fold into 2 23 23
-                        err = _mm_min_ps(min, err); // take min
-                        min = _mm_shuffle_ps(_mm_setzero_ps(), err, _MM_SHUFFLE(0,3, 3,3)); // fold into 2 2 2
-                        Min = _mm_add_ps(Min, _mm_min_ps(min, err));
-
-                        // NEXT COLOR
-                        c  = _mm_shuffle_ps(c4, c4, _MM_SHUFFLE(3,3,3,3));
-                        // dist from ramp
-                        d  = _mm_sub_ps(c, r);
-                        d = _mm_mul_ps(d, d);
-                        d = _mm_mul_ps(d, weight);
-                        // overall error
-                        err = _mm_add_ps(d, rmp_err);
-
-                        min = _mm_shuffle_ps(_mm_setzero_ps(), err, _MM_SHUFFLE(1,0, 3,3)); // fold into 2 23 23
-                        err = _mm_min_ps(min, err); // take min
-                        min = _mm_shuffle_ps(_mm_setzero_ps(), err, _MM_SHUFFLE(2,0, 3,3)); // fold into 2 3 3
-                        Min = _mm_add_ps(Min, _mm_min_ps(min, err));
-                        // now we have 4 Mins from 4 colors
-                        // multiple them on 5 Rpt and accumulate
-                        minMse = _mm_min_ps(minMse, Min);
-                    }
-                    // repeats
-                    __m128 rp = _mm_load_ps(&_Rpt[k * SIMDFac]);
-                    Mse = _mm_add_ps(Mse, _mm_mul_ps(minMse, rp));
-                }
-                mse = Mse.m128_f32[0] + Mse.m128_f32[1] + Mse.m128_f32[2] + Mse.m128_f32[3];
-            }
-
-            if(mse < bestE) {
-                bstC0 = InpRmp[RC][0];
-                bstC1 = InpRmp[RC][1];
-                bestE = mse;
-            }
-        }
-    }
-
-    InpRmp[RC][0] = bstC0;
-    InpRmp[RC][1] = bstC1;
-
-    MkWkRmpPts(&Eq, WkRmpPts, InpRmp, nRedBits, nGreenBits, nBlueBits);
-    BldRmp(Rmp, WkRmpPts, dwNumPoints);
-
-    // ramp err for Red and Blue
-    for(int i=0; i < _NmrClrs; i++)
-        for(int r = 0; r < dwNumPoints; r++) {
-            CODECFLOAT DistR = (Rmp[RC][r] - Blk[i][RC]);
-            CODECFLOAT DistB = (Rmp[BC][r] - Blk[i][BC]);
-            RmpErr[i][r] = DistR * DistR * fWeightRed + DistB * DistB * fWeightBlue;
-        }
-
-    bstC0 = InpRmp0[GC][0];
-    bstC1 = InpRmp0[GC][1];
-    // Now green
-    for(int i = nRefineStart; i <= nRefineEnd; i++) {
-        for(int j = nRefineStart; j <= nRefineEnd; j++) {
-            InpRmp[GC][0] = min(max(InpRmp0[GC][0] + i * Fctrs[GC], 0.f), 255.f);
-            InpRmp[GC][1] = min(max(InpRmp0[GC][1] + j * Fctrs[GC], 0.f), 255.f);
-
-            MkWkRmpPts(&Eq, WkRmpPts, InpRmp, nRedBits, nGreenBits, nBlueBits);
-            BldClrRmp(Rmp[GC],WkRmpPts[GC], dwNumPoints);
-
-            CODECFLOAT mse;
-            {
-                __m128 Mse = _mm_setzero_ps();
-                __m128 weight = _mm_load_ps1(&fWeightGreen);
-                for(int k = 0; k < NbrCycls; k++) {
-                    __m128 minMse = _mm_set_ps1(FLT_MAX);
-                    for(int l = 0; l < nRampLoops; l++) {
-                        __m128 r = _mm_load_ps(&Rmp[GC][l * 4]);
-                        __m128 c4 = _mm_load_ps(&BlkSSE2[GC][k * SIMDFac]);
-                        // COLOR
-                        __m128 c  = _mm_shuffle_ps(c4, c4, _MM_SHUFFLE(0,0,0,0));
-                        __m128 rmp_err = _mm_load_ps(&RmpErr[k * SIMDFac + 0][l * 4]);
-                        // dist from ramp
-                        __m128 d  = _mm_sub_ps(c, r);
-                        d = _mm_mul_ps(d, d);
-                        d = _mm_mul_ps(d, weight);
-                        // overall error
-                        __m128 err = _mm_add_ps(d, rmp_err);
-                        // next rmp error
-                        rmp_err = _mm_load_ps(&RmpErr[k * SIMDFac + 1][l * 4]);
-
-                        __m128 min = _mm_shuffle_ps(err, _mm_setzero_ps(), _MM_SHUFFLE(3,3, 3,2)); // fold into 2 01 01
-                        err = _mm_min_ps(min, err); // take min
-                        min = _mm_shuffle_ps(err, _mm_setzero_ps(), _MM_SHUFFLE(3,3, 3,1)); // fold into 2 0 0
-                        __m128 Min = _mm_min_ps(min, err); // take min
-
-                        // NEXT COLOR
-
-                        c  = _mm_shuffle_ps(c4, c4, _MM_SHUFFLE(1,1,1,1));
-                        // dist from ramp
-                        d  = _mm_sub_ps(c, r);
-                        d = _mm_mul_ps(d, d);
-                        d = _mm_mul_ps(d, weight);
-                        // overall error
-                        err = _mm_add_ps(d, rmp_err);
-                        // next rmp error
-                        rmp_err = _mm_load_ps(&RmpErr[k * SIMDFac + 2][l * 4]);
-
-                        min = _mm_shuffle_ps(err, _mm_setzero_ps(), _MM_SHUFFLE(3,3, 3,2)); // fold into 2 01 01
-                        err = _mm_min_ps(min, err); // take min
-                        min = _mm_shuffle_ps(err, _mm_setzero_ps(), _MM_SHUFFLE(3,3, 0,3)); // fold into 2 1 1
-                        Min = _mm_add_ps(Min, _mm_min_ps(min, err));
-
-                        // NEXT COLOR
-                        c  = _mm_shuffle_ps(c4, c4, _MM_SHUFFLE(2,2,2,2));
-                        // dist from ramp
-                        d  = _mm_sub_ps(c, r);
-                        d = _mm_mul_ps(d, d);
-                        d = _mm_mul_ps(d, weight);
-                        // overall error
-                        err = _mm_add_ps(d, rmp_err);
-                        // next rmp error
-                        rmp_err = _mm_load_ps(&RmpErr[k * SIMDFac + 3][l * 4]);
-
-                        min = _mm_shuffle_ps(_mm_setzero_ps(), err, _MM_SHUFFLE(1,0, 3,3)); // fold into 2 23 23
-                        err = _mm_min_ps(min, err); // take min
-                        min = _mm_shuffle_ps(_mm_setzero_ps(), err, _MM_SHUFFLE(0,3, 3,3)); // fold into 2 2 2
-                        Min = _mm_add_ps(Min, _mm_min_ps(min, err));
-
-                        // NEXT COLOR
-                        c  = _mm_shuffle_ps(c4, c4, _MM_SHUFFLE(3,3,3,3));
-                        // dist from ramp
-                        d  = _mm_sub_ps(c, r);
-                        d = _mm_mul_ps(d, d);
-                        d = _mm_mul_ps(d, weight);
-                        // overall error
-                        err = _mm_add_ps(d, rmp_err);
-
-                        min = _mm_shuffle_ps(_mm_setzero_ps(), err, _MM_SHUFFLE(1,0, 3,3)); // fold into 2 23 23
-                        err = _mm_min_ps(min, err); // take min
-                        min = _mm_shuffle_ps(_mm_setzero_ps(), err, _MM_SHUFFLE(2,0, 3,3)); // fold into 2 3 3
-                        Min = _mm_add_ps(Min, _mm_min_ps(min, err));
-                        // now we have 4 Mins from 4 colors
-                        // multiple them on 5 Rpt and accumulate
-                        minMse = _mm_min_ps(minMse, Min);
-                    }
-                    // repeats
-                    __m128 rp = _mm_load_ps(&_Rpt[k * SIMDFac]);
-                    Mse = _mm_add_ps(Mse, _mm_mul_ps(minMse, rp));
-                }
-                mse = Mse.m128_f32[0] + Mse.m128_f32[1] + Mse.m128_f32[2] + Mse.m128_f32[3];
-            }
-
-            if(mse < bestE) {
-                bstC0 = InpRmp[GC][0];
-                bstC1 = InpRmp[GC][1];
-                bestE = mse;
-            }
-        }
-    }
-
-    InpRmp[GC][0] = bstC0;
-    InpRmp[GC][1] = bstC1;
-
-    MkWkRmpPts(&Eq, WkRmpPts, InpRmp, nRedBits, nGreenBits, nBlueBits);
-    BldRmp(Rmp, WkRmpPts, dwNumPoints);
-
-    // ramp err for Red and Green
-    for(int i=0; i < _NmrClrs; i++)
-        for(int r = 0; r < dwNumPoints; r++) {
-            CODECFLOAT DistR = (Rmp[RC][r] - Blk[i][RC]);
-            CODECFLOAT DistG = (Rmp[GC][r] - Blk[i][GC]);
-            RmpErr[i][r] = DistR * DistR * fWeightRed + DistG * DistG * fWeightGreen;
-        }
-
-    bstC0 = InpRmp0[BC][0];
-    bstC1 = InpRmp0[BC][1];
-    // Now blue
-    for(int i = nRefineStart; i <= nRefineEnd; i++) {
-        for(int j = nRefineStart; j <= nRefineEnd; j++) {
-            InpRmp[BC][0] = min(max(InpRmp0[BC][0] + i * Fctrs[BC], 0.f), 255.f);
-            InpRmp[BC][1] = min(max(InpRmp0[BC][1] + j * Fctrs[BC], 0.f), 255.f);
-
-            MkWkRmpPts(&Eq, WkRmpPts, InpRmp, nRedBits, nGreenBits, nBlueBits);
-            BldClrRmp(Rmp[BC],WkRmpPts[BC], dwNumPoints);
-
-            CODECFLOAT mse;
-            {
-                __m128 Mse = _mm_setzero_ps();
-                __m128 weight = _mm_load_ps1(&fWeightBlue);
-                for(int k = 0; k < NbrCycls; k++) {
-                    __m128 minMse = _mm_set_ps1(FLT_MAX);
-                    for(int l = 0; l < nRampLoops; l++) {
-                        __m128 r = _mm_load_ps(&Rmp[BC][l * 4]);
-                        __m128 c4 = _mm_load_ps(&BlkSSE2[BC][k * SIMDFac]);
-                        // COLOR
-                        __m128 c  = _mm_shuffle_ps(c4, c4, _MM_SHUFFLE(0,0,0,0));
-                        __m128 rmp_err = _mm_load_ps(&RmpErr[k * SIMDFac + 0][l * 4]);
-                        // dist from ramp
-                        __m128 d  = _mm_sub_ps(c, r);
-                        d = _mm_mul_ps(d, d);
-                        d = _mm_mul_ps(d, weight);
-                        // overall error
-                        __m128 err = _mm_add_ps(d, rmp_err);
-                        // next rmp error
-                        rmp_err = _mm_load_ps(&RmpErr[k * SIMDFac + 1][l * 4]);
-
-                        __m128 min = _mm_shuffle_ps(err, _mm_setzero_ps(), _MM_SHUFFLE(3,3, 3,2)); // fold into 2 01 01
-                        err = _mm_min_ps(min, err); // take min
-                        min = _mm_shuffle_ps(err, _mm_setzero_ps(), _MM_SHUFFLE(3,3, 3,1)); // fold into 2 0 0
-                        __m128 Min = _mm_min_ps(min, err); // take min
-
-                        // NEXT COLOR
-
-                        c  = _mm_shuffle_ps(c4, c4, _MM_SHUFFLE(1,1,1,1));
-                        // dist from ramp
-                        d  = _mm_sub_ps(c, r);
-                        d = _mm_mul_ps(d, d);
-                        d = _mm_mul_ps(d, weight);
-                        // overall error
-                        err = _mm_add_ps(d, rmp_err);
-                        // next rmp error
-                        rmp_err = _mm_load_ps(&RmpErr[k * SIMDFac + 2][l * 4]);
-
-                        min = _mm_shuffle_ps(err, _mm_setzero_ps(), _MM_SHUFFLE(3,3, 3,2)); // fold into 2 01 01
-                        err = _mm_min_ps(min, err); // take min
-                        min = _mm_shuffle_ps(err, _mm_setzero_ps(), _MM_SHUFFLE(3,3, 0,3)); // fold into 2 1 1
-                        Min = _mm_add_ps(Min, _mm_min_ps(min, err));
-
-                        // NEXT COLOR
-                        c  = _mm_shuffle_ps(c4, c4, _MM_SHUFFLE(2,2,2,2));
-                        // dist from ramp
-                        d  = _mm_sub_ps(c, r);
-                        d = _mm_mul_ps(d, d);
-                        d = _mm_mul_ps(d, weight);
-                        // overall error
-                        err = _mm_add_ps(d, rmp_err);
-                        // next rmp error
-                        rmp_err = _mm_load_ps(&RmpErr[k * SIMDFac + 3][l * 4]);
-
-                        min = _mm_shuffle_ps(_mm_setzero_ps(), err, _MM_SHUFFLE(1,0, 3,3)); // fold into 2 23 23
-                        err = _mm_min_ps(min, err); // take min
-                        min = _mm_shuffle_ps(_mm_setzero_ps(), err, _MM_SHUFFLE(0,3, 3,3)); // fold into 2 2 2
-                        Min = _mm_add_ps(Min, _mm_min_ps(min, err));
-
-                        // NEXT COLOR
-                        c  = _mm_shuffle_ps(c4, c4, _MM_SHUFFLE(3,3,3,3));
-                        // dist from ramp
-                        d  = _mm_sub_ps(c, r);
-                        d = _mm_mul_ps(d, d);
-                        d = _mm_mul_ps(d, weight);
-                        // overall error
-                        err = _mm_add_ps(d, rmp_err);
-
-                        min = _mm_shuffle_ps(_mm_setzero_ps(), err, _MM_SHUFFLE(1,0, 3,3)); // fold into 2 23 23
-                        err = _mm_min_ps(min, err); // take min
-                        min = _mm_shuffle_ps(_mm_setzero_ps(), err, _MM_SHUFFLE(2,0, 3,3)); // fold into 2 3 3
-                        Min = _mm_add_ps(Min, _mm_min_ps(min, err));
-                        // now we have 4 Mins from 4 colors
-                        // multiple them on 4 Rpts and accumulate
-                        minMse = _mm_min_ps(minMse, Min);
-                    }
-                    // repeats
-                    __m128 rp = _mm_load_ps(&_Rpt[k * SIMDFac]);
-                    Mse = _mm_add_ps(Mse, _mm_mul_ps(minMse, rp));
-                }
-                mse = Mse.m128_f32[0] + Mse.m128_f32[1] + Mse.m128_f32[2] + Mse.m128_f32[3];
-            }
-
-            if(mse < bestE) {
-                bstC0 = InpRmp[BC][0];
-                bstC1 = InpRmp[BC][1];
-                bestE = mse;
-            }
-        }
-    }
-
-    InpRmp[BC][0] = bstC0;
-    InpRmp[BC][1] = bstC1;
-
-    MkWkRmpPts(&Eq, WkRmpPts, InpRmp, nRedBits, nGreenBits, nBlueBits);
-    BldRmp(Rmp, WkRmpPts, dwNumPoints);
-
-    bestE = ClstrErr(Blk, _Rpt, Rmp, _NmrClrs, dwNumPoints, Eq, _pfWeights);
-
-    for(int j = 0; j < 3; j++)
-        for(int k = 0; k < 2; k++)
-            _OutRmpPnts[j][k] = InpRmp[j][k];
-
-    return (bestE);
-}
-
-static CODECFLOAT Refine3DSSE2(CODECFLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
-                               CODECFLOAT _InpRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
-                               CODECFLOAT _Blk[MAX_BLOCK][NUM_CHANNELS], ALIGN_16 CODECFLOAT _Rpt[MAX_BLOCK],
-                               int _NmrClrs, CMP_BYTE dwNumPoints, CODECFLOAT* _pfWeights,
-                               CMP_BYTE nRedBits, CMP_BYTE nGreenBits, CMP_BYTE nBlueBits, CMP_BYTE nRefineSteps) {
-    ALIGN_16 CODECFLOAT BlkSSE2[NUM_CHANNELS][MAX_BLOCK];
-    ALIGN_16 CODECFLOAT Rmp[NUM_CHANNELS][MAX_POINTS];
-    ALIGN_16 CODECFLOAT RmpErr[MAX_BLOCK][MAX_POINTS];
-    ALIGN_16 CODECFLOAT RmpErrG[MAX_BLOCK][MAX_POINTS];
-
-    int SIMDFac = 128 / (sizeof(CODECFLOAT) * 8);
-    int NbrCycls = (_NmrClrs + SIMDFac - 1) / SIMDFac;
-
-    CODECFLOAT Blk[MAX_BLOCK][NUM_CHANNELS];
-    for(int i = 0; i < _NmrClrs; i++)
-        for(int j = 0; j < 3; j++)
-            BlkSSE2[j][i] = Blk[i][j] = _Blk[i][j];
-
-    CODECFLOAT fWeightRed = _pfWeights ? _pfWeights[0] : 1.f;
-    CODECFLOAT fWeightGreen = _pfWeights ? _pfWeights[1] : 1.f;
-    CODECFLOAT fWeightBlue = _pfWeights ? _pfWeights[2] : 1.f;
-
-    // here is our grid
-    CODECFLOAT Fctrs[3];
-    Fctrs[RC] = (CODECFLOAT)(1 << (PIX_GRID-nRedBits));
-    Fctrs[GC] = (CODECFLOAT)(1 << (PIX_GRID-nGreenBits));
-    Fctrs[BC] = (CODECFLOAT)(1 << (PIX_GRID-nBlueBits));
-
-    CODECFLOAT InpRmp0[NUM_CHANNELS][NUM_ENDPOINTS];
-    CODECFLOAT InpRmp[NUM_CHANNELS][NUM_ENDPOINTS];
-    for(int k = 0; k < 2; k++)
-        for(int j = 0; j < 3; j++)
-            InpRmp0[j][k] = InpRmp[j][k] = _OutRmpPnts[j][k] = _InpRmpPnts[j][k];
-
-    bool Eq;
-    CODECFLOAT WkRmpPts[NUM_CHANNELS][NUM_ENDPOINTS];
-    MkWkRmpPts(&Eq, WkRmpPts, InpRmp, nRedBits, nGreenBits, nBlueBits);
-
-    BldRmp(Rmp, WkRmpPts, dwNumPoints);
-
-    CODECFLOAT bestE = ClstrErr(Blk, _Rpt, Rmp, _NmrClrs, dwNumPoints, Eq, _pfWeights);
-    if(bestE == 0.f || !nRefineSteps)    // if exact, we've done
-        return bestE;
-
-    // Jitter endpoints in each direction
-    int nRefineStart = 0 - (min(nRefineSteps, (CMP_BYTE)8));
-    int nRefineEnd = min(nRefineSteps, (CMP_BYTE)8);
-    int nRampLoops = (dwNumPoints + 3) / 4;
-
-    for(int nJitterG0 = nRefineStart; nJitterG0 <= nRefineEnd; nJitterG0++) {
-        InpRmp[GC][0] = min(max(InpRmp0[GC][0] + nJitterG0 * Fctrs[GC], 0.f), 255.f);
-        for(int nJitterG1 = nRefineStart; nJitterG1 <= nRefineEnd; nJitterG1++) {
-            InpRmp[GC][1] = min(max(InpRmp0[GC][1] + nJitterG1 * Fctrs[GC], 0.f), 255.f);
-            MkWkRmpPts(&Eq, WkRmpPts, InpRmp, nRedBits, nGreenBits, nBlueBits);
-            BldClrRmp(Rmp[GC], WkRmpPts[GC], dwNumPoints);
-
-            for(int i=0; i < _NmrClrs; i++) {
-                for(int r = 0; r < dwNumPoints; r++) {
-                    CODECFLOAT DistG = (Rmp[GC][r] - Blk[i][GC]);
-                    RmpErrG[i][r] = DistG * DistG * fWeightGreen;
-                }
-            }
-
-            for(int nJitterB0 = nRefineStart; nJitterB0 <= nRefineEnd; nJitterB0++) {
-                InpRmp[BC][0] = min(max(InpRmp0[BC][0] + nJitterB0 * Fctrs[BC], 0.f), 255.f);
-                for(int nJitterB1 = nRefineStart; nJitterB1 <= nRefineEnd; nJitterB1++) {
-                    InpRmp[BC][1] = min(max(InpRmp0[BC][1] + nJitterB1 * Fctrs[BC], 0.f), 255.f);
-                    MkWkRmpPts(&Eq, WkRmpPts, InpRmp, nRedBits, nGreenBits, nBlueBits);
-                    BldClrRmp(Rmp[BC], WkRmpPts[BC], dwNumPoints);
-
-                    for(int i=0; i < _NmrClrs; i++) {
-                        for(int r = 0; r < dwNumPoints; r++) {
-                            CODECFLOAT DistB = (Rmp[BC][r] - Blk[i][BC]);
-                            RmpErr[i][r] = RmpErrG[i][r] + DistB * DistB * fWeightBlue;
-                        }
-                    }
-
-                    for(int nJitterR0 = nRefineStart; nJitterR0 <= nRefineEnd; nJitterR0++) {
-                        InpRmp[RC][0] = min(max(InpRmp0[RC][0] + nJitterR0 * Fctrs[RC], 0.f), 255.f);
-                        for(int nJitterR1 = nRefineStart; nJitterR1 <= nRefineEnd; nJitterR1++) {
-                            InpRmp[RC][1] = min(max(InpRmp0[RC][1] + nJitterR1 * Fctrs[RC], 0.f), 255.f);
-                            MkWkRmpPts(&Eq, WkRmpPts, InpRmp, nRedBits, nGreenBits, nBlueBits);
-                            BldClrRmp(Rmp[RC], WkRmpPts[RC], dwNumPoints);
-
-                            CODECFLOAT mse;
-                            {
-                                __m128 Mse = _mm_setzero_ps();
-                                __m128 weight = _mm_load_ps1(&fWeightRed);
-                                for(int k = 0; k < NbrCycls; k++) {
-                                    __m128 minMse = _mm_set_ps1(FLT_MAX);
-                                    for(int l = 0; l < nRampLoops; l++) {
-                                        __m128 r = _mm_load_ps(&Rmp[RC][l * 4]);
-
-                                        __m128 c4 = _mm_load_ps(&BlkSSE2[RC][k * SIMDFac]);
-                                        // COLOR
-                                        __m128 c  = _mm_shuffle_ps(c4, c4, _MM_SHUFFLE(0,0,0,0));
-                                        __m128 rmp_err = _mm_load_ps(&RmpErr[k * SIMDFac + 0][l * 4]);
-                                        // dist from ramp
-                                        __m128 d  = _mm_sub_ps(c, r);
-                                        d = _mm_mul_ps(d, d);
-                                        d = _mm_mul_ps(d, weight);
-                                        // overall error
-                                        __m128 err = _mm_add_ps(d, rmp_err);
-                                        // next rmp error
-                                        rmp_err = _mm_load_ps(&RmpErr[k * SIMDFac + 1][l * 4]);
-
-                                        __m128 min = _mm_shuffle_ps(err, _mm_setzero_ps(), _MM_SHUFFLE(3,3, 3,2)); // fold into 2 01 01
-                                        err = _mm_min_ps(min, err); // take min
-                                        min = _mm_shuffle_ps(err, _mm_setzero_ps(), _MM_SHUFFLE(3,3, 3,1)); // fold into 2 0 0
-                                        __m128 Min = _mm_min_ps(min, err); // take min
-
-                                        // NEXT COLOR
-
-                                        c  = _mm_shuffle_ps(c4, c4, _MM_SHUFFLE(1,1,1,1));
-                                        // dist from ramp
-                                        d  = _mm_sub_ps(c, r);
-                                        d = _mm_mul_ps(d, d);
-                                        d = _mm_mul_ps(d, weight);
-                                        // overall error
-                                        err = _mm_add_ps(d, rmp_err);
-                                        // next rmp error
-                                        rmp_err = _mm_load_ps(&RmpErr[k * SIMDFac + 2][l * 4]);
-
-                                        min = _mm_shuffle_ps(err, _mm_setzero_ps(), _MM_SHUFFLE(3,3, 3,2)); // fold into 2 01 01
-                                        err = _mm_min_ps(min, err); // take min
-                                        min = _mm_shuffle_ps(err, _mm_setzero_ps(), _MM_SHUFFLE(3,3, 0,3)); // fold into 2 1 1
-                                        Min = _mm_add_ps(Min, _mm_min_ps(min, err));
-
-                                        // NEXT COLOR
-                                        c  = _mm_shuffle_ps(c4, c4, _MM_SHUFFLE(2,2,2,2));
-                                        // dist from ramp
-                                        d  = _mm_sub_ps(c, r);
-                                        d = _mm_mul_ps(d, d);
-                                        d = _mm_mul_ps(d, weight);
-                                        // overall error
-                                        err = _mm_add_ps(d, rmp_err);
-                                        // next rmp error
-                                        rmp_err = _mm_load_ps(&RmpErr[k * SIMDFac + 3][l * 4]);
-
-                                        min = _mm_shuffle_ps(_mm_setzero_ps(), err, _MM_SHUFFLE(1,0, 3,3)); // fold into 2 23 23
-                                        err = _mm_min_ps(min, err); // take min
-                                        min = _mm_shuffle_ps(_mm_setzero_ps(), err, _MM_SHUFFLE(0,3, 3,3)); // fold into 2 2 2
-                                        Min = _mm_add_ps(Min, _mm_min_ps(min, err));
-
-                                        // NEXT COLOR
-                                        c  = _mm_shuffle_ps(c4, c4, _MM_SHUFFLE(3,3,3,3));
-                                        // dist from ramp
-                                        d  = _mm_sub_ps(c, r);
-                                        d = _mm_mul_ps(d, d);
-                                        d = _mm_mul_ps(d, weight);
-                                        // overall error
-                                        err = _mm_add_ps(d, rmp_err);
-
-                                        min = _mm_shuffle_ps(_mm_setzero_ps(), err, _MM_SHUFFLE(1,0, 3,3)); // fold into 2 23 23
-                                        err = _mm_min_ps(min, err); // take min
-                                        min = _mm_shuffle_ps(_mm_setzero_ps(), err, _MM_SHUFFLE(2,0, 3,3)); // fold into 2 3 3
-                                        Min = _mm_add_ps(Min, _mm_min_ps(min, err));
-                                        // now we have 4 Mins from 4 colors
-                                        // multiple them on 5 Rpt and accumulate
-                                        minMse = _mm_min_ps(minMse, Min);
-                                    }
-                                    // repeats
-                                    __m128 rp = _mm_load_ps(&_Rpt[k * SIMDFac]);
-                                    Mse = _mm_add_ps(Mse, _mm_mul_ps(minMse, rp));
-                                }
-                                mse = Mse.m128_f32[0] + Mse.m128_f32[1] + Mse.m128_f32[2] + Mse.m128_f32[3];
-                            }
-
-                            // save if we achieve better result
-                            if(mse < bestE) {
-                                bestE = mse;
-                                for(int k = 0; k < 2; k++)
-                                    for(int j = 0; j < 3; j++)
-                                        _OutRmpPnts[j][k] = InpRmp[j][k];
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    MkWkRmpPts(&Eq, WkRmpPts, InpRmp, nRedBits, nGreenBits, nBlueBits);
-    BldRmp(Rmp, WkRmpPts, dwNumPoints);
-
-    bestE = ClstrErr(Blk, _Rpt, Rmp, _NmrClrs, dwNumPoints, Eq, _pfWeights);
-
-    return (bestE);
-}
-
-/*------------------------------------------------------------------------------------------------
-this is a float point-based compression.
-it assumes that the number of unique colors is already known; input is in [0., 255.] range.
-This is SSE2 version.
-
-------------------------------------------------------------------------------------------------*/
-void CompressRGBBlockXSSE2(CODECFLOAT _RsltRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
-                           ALIGN_16 CODECFLOAT _BlkIn[MAX_BLOCK][NUM_CHANNELS],
-                           ALIGN_16 CODECFLOAT _Rpt[MAX_BLOCK],
-                           int _UniqClrs, CMP_BYTE dwNumPoints,
-                           bool b3DRefinement, CMP_BYTE nRefinementSteps,
-                           CODECFLOAT* _pfWeights, CMP_BYTE nRedBits,
-                           CMP_BYTE nGreenBits, CMP_BYTE nBlueBits) {
-    ALIGN_16 CODECFLOAT Prj0[BLOCK_SIZE];
-    ALIGN_16 CODECFLOAT Prj[BLOCK_SIZE];
-    ALIGN_16 CODECFLOAT PrjErr[BLOCK_SIZE];
-    ALIGN_16 CODECFLOAT LineDir[NUM_CHANNELS];
-    ALIGN_16 CODECFLOAT RmpIndxs[BLOCK_SIZE];
-
-    CODECFLOAT LineDirG[NUM_CHANNELS];
-    CODECFLOAT PosG[NUM_ENDPOINTS];
-    ALIGN_16 CODECFLOAT Blk[BLOCK_SIZE][NUM_CHANNELS];
-    CODECFLOAT BlkSh[BLOCK_SIZE][NUM_CHANNELS];
-    CODECFLOAT LineDir0[NUM_CHANNELS];
-    CODECFLOAT Mdl[NUM_CHANNELS];
-    CODECFLOAT rsltC[NUM_CHANNELS][NUM_ENDPOINTS];
-    int i, j, k;
-
-    for(i=0; i < _UniqClrs; i++)
-        for(j = 0; j < 3; j++)
-            Blk[i][j] = _BlkIn[i][j] / 255.f;
-
-    int SIMDFac = 128 / (sizeof(CODECFLOAT) * 8);
-    int NbrCycls = (_UniqClrs + SIMDFac - 1) / SIMDFac;
-
-    bool isDONE = false;
-
-    if(_UniqClrs <= 2) {
-        for(j = 0; j < 3; j++) {
-            rsltC[j][0] = _BlkIn[0][j];
-            rsltC[j][1] = _BlkIn[_UniqClrs - 1][j];
-        }
-        isDONE = true;
-    }
-
-    if ( !isDONE ) {
-        bool bSmall = true;
-
-        //the first approximation of the line along which we are going to find a ramp
-        FindAxis(BlkSh, LineDir0, Mdl, &bSmall, Blk, _Rpt, 3, _UniqClrs);
-
-        // all are very small
-        if(bSmall) {
-            for(j = 0; j < 3; j++) {
-                rsltC[j][0] = _BlkIn[0][j];
-                rsltC[j][1] = _BlkIn[_UniqClrs - 1][j];
-            }
-            isDONE = true;
-        }
-    }
-
-    if ( !isDONE ) {
-        //SKIP_FIND_AXIS :
-
-        CODECFLOAT  ErrG = 10000000.f;
-        //SRCH :
-        CODECFLOAT PrjBnd[NUM_ENDPOINTS];
-        ALIGN_16 CODECFLOAT PreMRep[BLOCK_SIZE];
-
-        for(j =0; j < 3; j++)
-            LineDir[j] = LineDir0[j];
-
-        // the search loop to find a more precise line along which we are going to find a ramp
-        for(;;) {
-            // From Foley & Van Dam: Closest point of approach of a line (P + v) to a point (R) is
-            //                            P + ((R-P).v) / (v.v))v
-            // The distance along v is therefore (R-P).v / (v.v)
-            // (v.v) is 1 if v is a unit vector.
-            //
-            PrjBnd[0] = 1000.;
-            PrjBnd[1] = -1000.;
-            for(i = 0; i < BLOCK_SIZE; i++)
-                Prj0[i] = Prj[i] = PrjErr[i] = PreMRep[i] = 0.f;
-
-            // project all points on the current line
-            for(i = 0; i < _UniqClrs; i++) {
-                Prj0[i] = Prj[i] = BlkSh[i][0] * LineDir[0] + BlkSh[i][1] * LineDir[1] + BlkSh[i][2] * LineDir[2];
-
-                PrjErr[i] = (BlkSh[i][0] - LineDir[0] * Prj[i]) * (BlkSh[i][0] - LineDir[0] * Prj[i])
-                            + (BlkSh[i][1] - LineDir[1] * Prj[i]) * (BlkSh[i][1] - LineDir[1] * Prj[i])
-                            + (BlkSh[i][2] - LineDir[2] * Prj[i]) * (BlkSh[i][2] - LineDir[2] * Prj[i]);
-
-                PrjBnd[0] = min(PrjBnd[0], Prj[i]);
-                PrjBnd[1] = max(PrjBnd[1], Prj[i]);
-            }
-
-            //  find (sub) optimal ramp on the line
-            CODECFLOAT Scl[NUM_ENDPOINTS];
-            Scl[0] = PrjBnd[0] - (PrjBnd[1] - PrjBnd[0]) * 0.125f;;
-            Scl[1] = PrjBnd[1] + (PrjBnd[1] - PrjBnd[0]) * 0.125f;;
-
-            const CODECFLOAT Scl2 = (Scl[1] - Scl[0]) * (Scl[1] - Scl[0]);
-            const CODECFLOAT overScl = 1.f/(Scl[1] - Scl[0]);
-            for(i = 0; i < _UniqClrs; i++) {
-                Prj[i] = (Prj[i] - Scl[0]) * overScl;
-                PreMRep[i] = _Rpt[i] * Scl2;
-            }
-
-            for(k = 0; k <2; k++)
-                PrjBnd[k] = (PrjBnd[k] - Scl[0]) * overScl;
-
-            CODECFLOAT Err = MAX_ERROR;
-
-            static const CODECFLOAT stp = 0.025f;
-            const CODECFLOAT lS = (PrjBnd[0] - 2.f * stp > 0.f) ?  PrjBnd[0] - 2.f * stp : 0.f;
-            const CODECFLOAT hE = (PrjBnd[1] + 2.f * stp < 1.f) ?  PrjBnd[1] + 2.f * stp : 1.f;
-
-            // loop searching for the (sub) optimal ramp
-            CODECFLOAT Pos[NUM_ENDPOINTS];
-            CODECFLOAT lP, hP;
-            int l, h;
-            for(l = 0, lP = lS; l < 8; l++, lP += stp) {
-                for(h = 0, hP = hE; h < 8; h++, hP -= stp) {
-                    CODECFLOAT err = Err;
-                    err = RampSrchWSS2E(Prj, PrjErr, PreMRep, 0.f, lP, hP, _UniqClrs, dwNumPoints);
-                    if(err < Err) {
-                        Err = err;
-                        Pos[0] = lP;
-                        Pos[1] = hP;
-                    }
-                }
-            }
-
-            for(k = 0; k < 2; k++)
-                Pos[k] = Pos[k] * (Scl[1] - Scl[0])+ Scl[0];
-
-            // are we moving somewhere ?
-            if(Err + 0.001 < ErrG) {
-                // yes
-                ErrG = Err;
-                LineDirG[0] =  LineDir[0];
-                LineDirG[1] =  LineDir[1];
-                LineDirG[2] =  LineDir[2];
-                PosG[0] = Pos[0];
-                PosG[1] = Pos[1];
-
-                // indexes
-                {
-                    CODECFLOAT indxAvrg;
-                    CODECFLOAT step = (Pos[1] - Pos[0]) / (CODECFLOAT)(dwNumPoints - 1);
-                    CODECFLOAT rstep = (CODECFLOAT)1.0f / step;
-                    CODECFLOAT overBlkTp = 1.f/  (CODECFLOAT)(dwNumPoints - 1) ;
-
-                    indxAvrg = (CODECFLOAT)(dwNumPoints - 1) / 2.f;
-
-                    // then find 16 dim "index" vector
-                    for(i=0; i < NbrCycls; i++) {
-                        // (float)(int)(b - _min_ex) * rstep)
-                        __m128 v =    _mm_cvtepi32_ps(
-                                          _mm_cvtps_epi32(
-                                              _mm_mul_ps(
-                                                  _mm_sub_ps(
-                                                      _mm_load_ps(&Prj0[SIMDFac * i]),
-                                                      _mm_set_ps1(Pos[0])),
-                                                  _mm_set_ps1(rstep))));
-                        // min(max(v, 0.f), (dwNumPoints - 1))
-                        v = _mm_min_ps(_mm_max_ps(v, _mm_setzero_ps()), _mm_set_ps1((CODECFLOAT)(dwNumPoints - 1)));
-
-                        v = _mm_mul_ps(_mm_set_ps1(overBlkTp),_mm_sub_ps(v,_mm_set_ps1(indxAvrg)));
-
-                        _mm_store_ps(&RmpIndxs[SIMDFac * i], v);
-                    }
-                }
-
-                {
-                    CODECFLOAT Crs[3], Len, Len2;
-
-                    for(i = 0, Crs[0] = Crs[1] = Crs[2] = Len = 0.f; i < _UniqClrs; i++) {
-                        CODECFLOAT PreMlt = RmpIndxs[i] * _Rpt[i];
-                        Len += RmpIndxs[i] * PreMlt;
-                        for(j = 0; j < 3; j++)
-                            Crs[j] += BlkSh[i][j] * PreMlt;
-                    }
-
-                    LineDir[0] = LineDir[1] = LineDir[2] = 0.f;
-                    if(Len > 0.f) {
-                        LineDir[0] = Crs[0]/ Len;
-                        LineDir[1] = Crs[1]/ Len;
-                        LineDir[2] = Crs[2]/ Len;
-
-                        Len2 = LineDir[0] * LineDir[0] + LineDir[1] * LineDir[1] + LineDir[2] * LineDir[2];
-                        Len2 = sqrt(Len2);
-
-                        LineDir[0] /= Len2;
-                        LineDir[1] /= Len2;
-                        LineDir[2] /= Len2;
-                    }
-                }
-            } else {
-// No, we could not find anything better.
-// Drop dead.
-                break;
-            }
-        }
-
-// inverse transform
-        for(k = 0; k < 2; k++)
-            for(j = 0; j <3; j++)
-                rsltC[j][k] = (PosG[k] * LineDirG[j]  + Mdl[j]) * 255.f;
-    }
-// We've dealt with almost (mathematical) unrestricted full precision realm.
-// Now back to the dirty digital world.
-
-    CODECFLOAT inpRmpEndPts[NUM_CHANNELS][NUM_ENDPOINTS];
-    MkRmpOnGrid(inpRmpEndPts, rsltC, 0.f, 255.f, nRedBits, nGreenBits, nBlueBits);
-
-    if(b3DRefinement)
-        Refine3DSSE2(_RsltRmpPnts, inpRmpEndPts, _BlkIn, _Rpt, _UniqClrs, dwNumPoints, _pfWeights, nRedBits, nGreenBits, nBlueBits, nRefinementSteps);
-    else
-        RefineSSE2(_RsltRmpPnts, inpRmpEndPts, _BlkIn, _Rpt, _UniqClrs, dwNumPoints, _pfWeights, nRedBits, nGreenBits, nBlueBits, nRefinementSteps);
-}
-#endif // USE_SSE
-
 //    This is a float point-based compression
 //    it assumes that the number of unique colors is already known; input is in [0., 255.] range.
 //    This is C version.
-static void CompressRGBBlockX(CODECFLOAT _RsltRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
-                              CODECFLOAT _BlkIn[MAX_BLOCK][NUM_CHANNELS],
-                              CODECFLOAT _Rpt[MAX_BLOCK],
-                              int _UniqClrs,
-                              CMP_BYTE dwNumPoints, bool b3DRefinement, CMP_BYTE nRefinementSteps,
-                              CODECFLOAT* _pfWeights,
-                              CMP_BYTE nRedBits, CMP_BYTE nGreenBits, CMP_BYTE nBlueBits) {
+static bool CompressRGBBlockX(CODECFLOAT    _RsltRmpPnts[NUM_CHANNELS][NUM_ENDPOINTS],
+                              CODECFLOAT    src_image[MAX_BLOCK][NUM_CHANNELS],
+                              CODECFLOAT    Rpt[MAX_BLOCK],
+                              int           dwUniqueColors,
+                              CMP_BYTE      dwNumPoints, 
+                              bool          b3DRefinement, 
+                              CMP_BYTE      nRefinementSteps,
+                              CODECFLOAT*   _pfWeights,
+                              CMP_BYTE      nRedBits, 
+                              CMP_BYTE      nGreenBits, 
+                              CMP_BYTE      nBlueBits,
+                              CODECFLOAT    fquality
+                              ) 
+{
     ALIGN_16 CODECFLOAT Prj0[MAX_BLOCK];
     ALIGN_16 CODECFLOAT Prj[MAX_BLOCK];
     ALIGN_16 CODECFLOAT PrjErr[MAX_BLOCK];
     ALIGN_16 CODECFLOAT LineDir[NUM_CHANNELS];
     ALIGN_16 CODECFLOAT RmpIndxs[MAX_BLOCK];
-
+#ifdef USE_CMP_CORE_API
+    CMP_UNUSED(fquality);
+    CMP_UNUSED(b3DRefinement);
+#endif
     CODECFLOAT LineDirG[NUM_CHANNELS];
     CODECFLOAT PosG[NUM_ENDPOINTS];
-    CODECFLOAT Blk[MAX_BLOCK][NUM_CHANNELS];
+    CODECFLOAT BlkUV[MAX_BLOCK][NUM_CHANNELS];
     CODECFLOAT BlkSh[MAX_BLOCK][NUM_CHANNELS];
     CODECFLOAT LineDir0[NUM_CHANNELS];
     CODECFLOAT Mdl[NUM_CHANNELS];
@@ -1813,34 +1003,34 @@ static void CompressRGBBlockX(CODECFLOAT _RsltRmpPnts[NUM_CHANNELS][NUM_ENDPOINT
     CODECFLOAT rsltC[NUM_CHANNELS][NUM_ENDPOINTS];
     int i, j, k;
 
-// down to [0., 1.]
-    for(i = 0; i < _UniqClrs; i++)
+    // down to [0., 1.]
+    for(i = 0; i < dwUniqueColors; i++)
         for(j = 0; j < 3; j++)
-            Blk[i][j] = _BlkIn[i][j] / 255.f;
+            BlkUV[i][j] = src_image[i][j] / 255.f;
 
-    bool isDONE = false;
+    bool isDONE         = false;
 
-// as usual if not more then 2 different colors, we've done
-    if(_UniqClrs <= 2) {
+    // as usual if not more then 2 different colors, we've done
+    if(dwUniqueColors <= 2) {
         for(j = 0; j < 3; j++) {
-            rsltC[j][0] = _BlkIn[0][j];
-            rsltC[j][1] = _BlkIn[_UniqClrs - 1][j];
+            rsltC[j][0] = src_image[0][j];
+            rsltC[j][1] = src_image[dwUniqueColors - 1][j];
         }
         isDONE = true;
     }
 
     if ( !isDONE ) {
-//    This is our first attempt to find an axis we will go along.
-//    The cumulation is done to find a line minimizing the MSE from the input 3D points.
+        //    This is our first attempt to find an axis we will go along.
+        //    The cumulation is done to find a line minimizing the MSE from the input 3D points.
         bool bSmall = true;
-        FindAxis(BlkSh, LineDir0, Mdl, &bSmall, Blk, _Rpt, 3, _UniqClrs);
+        FindAxis(BlkSh, LineDir0, Mdl, &bSmall, BlkUV, Rpt, 3, dwUniqueColors);
 
-//    While trying to find the axis we found that the diameter of the input set is quite small.
-//    Do not bother.
+        //    While trying to find the axis we found that the diameter of the input set is quite small.
+        //    Do not bother.
         if(bSmall) {
             for(j = 0; j < 3; j++) {
-                rsltC[j][0] = _BlkIn[0][j];
-                rsltC[j][1] = _BlkIn[_UniqClrs - 1][j];
+                rsltC[j][0] = src_image[0][j];
+                rsltC[j][1] = src_image[dwUniqueColors - 1][j];
             }
             isDONE = true;
         }
@@ -1855,31 +1045,27 @@ static void CompressRGBBlockX(CODECFLOAT _RsltRmpPnts[NUM_CHANNELS][NUM_ENDPOINT
         for(j =0; j < 3; j++)
             LineDir[j] = LineDir0[j];
 
-//    Here is the main loop.
-//    1. Project input set on the axis in consideration.
-//    2. Run 1 dimensional search (see scalar case) to find an (sub) optimal pair of end points.
-//    3. Compute the vector of indexes (or clusters) for the current approximate ramp.
-//    4. Present our color channels as 3 16DIM vectors.
-//    5. Find closest approximation of each of 16DIM color vector with the projection of the 16DIM index vector.
-//    6. Plug the projections as a new directional vector for the axis.
-//    7. Goto 1.
-
-//    D - is 16 dim "index" vector (or 16 DIM vector of indexes - {0, 1/3, 2/3, 0, ...,}, but shifted and normalized).
-//    Ci - is a 16 dim vector of color i.
-//    for each Ci find a scalar Ai such that
-//    (Ai * D - Ci) (Ai * D - Ci) -> min , i.e distance between vector AiD and C is min.
-//    You can think of D as a unit interval(vector) "clusterizer",
-//    and Ai is a scale you need to apply to the clusterizer to
-//    approximate the Ci vector instead of the unit vector.
-
-//    Solution is
-
+       //    Here is the main loop.
+        //    1. Project input set on the axis in consideration.
+        //    2. Run 1 dimensional search (see scalar case) to find an (sub) optimal pair of end points.
+        //    3. Compute the vector of indexes (or clusters) for the current approximate ramp.
+        //    4. Present our color channels as 3 16DIM vectors.
+        //    5. Find closest approximation of each of 16DIM color vector with the projection of the 16DIM index vector.
+        //    6. Plug the projections as a new directional vector for the axis.
+        //    7. Goto 1.
+        //    D - is 16 dim "index" vector (or 16 DIM vector of indexes - {0, 1/3, 2/3, 0, ...,}, but shifted and normalized).
+        //    Ci - is a 16 dim vector of color i.
+        //    for each Ci find a scalar Ai such that
+        //    (Ai * D - Ci) (Ai * D - Ci) -> min , i.e distance between vector AiD and C is min.
+        //    You can think of D as a unit interval(vector) "clusterizer",
+        //    and Ai is a scale you need to apply to the clusterizer to
+        //    approximate the Ci vector instead of the unit vector.
+        //    Solution is
         //    Ai = (D . Ci) / (D . D); . - is a dot product.
-
-//    in 3 dim space Ai(s) represent a line direction, along which
-//    we again try to find (sub)optimal quantizer.
-
-//    That's what our for(;;) loop is about.
+        //    in 3 dim space Ai(s) represent a line direction, along which
+        //    we again try to find (sub)optimal quantizer.
+        
+        //    That's what our for(;;) loop is about.
         for(;;) {
             //  1. Project input set on the axis in consideration.
             // From Foley & Van Dam: Closest point of approach of a line (P + v) to a point (R) is
@@ -1892,7 +1078,7 @@ static void CompressRGBBlockX(CODECFLOAT _RsltRmpPnts[NUM_CHANNELS][NUM_ENDPOINT
             for(i = 0; i < MAX_BLOCK; i++)
                 Prj0[i] = Prj[i] = PrjErr[i] = PreMRep[i] = 0.f;
 
-            for(i = 0; i < _UniqClrs; i++) {
+            for(i = 0; i < dwUniqueColors; i++) {
                 Prj0[i] = Prj[i] = BlkSh[i][0] * LineDir[0] + BlkSh[i][1] * LineDir[1] + BlkSh[i][2] * LineDir[2];
 
                 PrjErr[i] = (BlkSh[i][0] - LineDir[0] * Prj[i]) * (BlkSh[i][0] - LineDir[0] * Prj[i])
@@ -1910,45 +1096,53 @@ static void CompressRGBBlockX(CODECFLOAT _RsltRmpPnts[NUM_CHANNELS][NUM_ENDPOINT
             Scl[0] = PrjBnd[0] - (PrjBnd[1] - PrjBnd[0]) * 0.125f;;
             Scl[1] = PrjBnd[1] + (PrjBnd[1] - PrjBnd[0]) * 0.125f;;
 
+#ifdef USE_CMP_CORE_API
+            // No range found exit
+            if (Scl[0] == Scl[1]) {
+                return false;
+            }
+#endif
+
             // compute scaling factor to scale down the search interval to [0.,1]
             const CODECFLOAT Scl2 = (Scl[1] - Scl[0]) * (Scl[1] - Scl[0]);
             const CODECFLOAT overScl = 1.f/(Scl[1] - Scl[0]);
 
-            for(i = 0; i < _UniqClrs; i++) {
+            for(i = 0; i < dwUniqueColors; i++) {
                 // scale them
                 Prj[i] = (Prj[i] - Scl[0]) * overScl;
                 // premultiply the scale squire to plug into error computation later
-                PreMRep[i] = _Rpt[i] * Scl2;
+                PreMRep[i] = Rpt[i] * Scl2;
             }
 
             // scale first approximation of end points
             for(k = 0; k <2; k++)
                 PrjBnd[k] = (PrjBnd[k] - Scl[0]) * overScl;
 
-            CODECFLOAT Err = MAX_ERROR;
+            CODECFLOAT StepErr = MAX_ERROR;
 
             // search step
-            static const CODECFLOAT stp = 0.025f;
+            static const CODECFLOAT searchStep = 0.025f;
 
             // low Start/End; high Start/End
-            const CODECFLOAT lS = (PrjBnd[0] - 2.f * stp > 0.f) ?  PrjBnd[0] - 2.f * stp : 0.f;
-            const CODECFLOAT hE = (PrjBnd[1] + 2.f * stp < 1.f) ?  PrjBnd[1] + 2.f * stp : 1.f;
+            const CODECFLOAT lowStartEnd  = (PrjBnd[0] - 2.f * searchStep > 0.f) ?  PrjBnd[0] - 2.f * searchStep : 0.f;
+            const CODECFLOAT highStartEnd = (PrjBnd[1] + 2.f * searchStep < 1.f) ?  PrjBnd[1] + 2.f * searchStep : 1.f;
 
             // find the best endpoints
             CODECFLOAT Pos[NUM_ENDPOINTS];
-            CODECFLOAT lP, hP;
-            int l, h;
-            for(l = 0, lP = lS; l < 8; l++, lP += stp) {
-                for(h = 0, hP = hE; h < 8; h++, hP -= stp) {
-                    CODECFLOAT err = Err;
-                    // compute an error for the current pair of end points.
-                    err = RampSrchW(Prj, PrjErr, PreMRep, err, lP, hP, _UniqClrs, dwNumPoints);
+            CODECFLOAT lowPosStep, highPosStep;
+            CODECFLOAT err;
 
-                    if(err < Err) {
+            int l, h;
+            for(l = 0, lowPosStep = lowStartEnd; l < 8; l++, lowPosStep += searchStep) {
+                for(h = 0, highPosStep = highStartEnd; h < 8; h++, highPosStep -= searchStep) {
+                    // compute an error for the current pair of end points.
+                    err = RampSrchW(Prj, PrjErr, PreMRep, StepErr, lowPosStep, highPosStep, dwUniqueColors, dwNumPoints);
+
+                    if(err < StepErr) {
                         // save better result
-                        Err = err;
-                        Pos[0] = lP;
-                        Pos[1] = hP;
+                        StepErr = err;
+                        Pos[0] = lowPosStep;
+                        Pos[1] = highPosStep;
                     }
                 }
             }
@@ -1958,9 +1152,9 @@ static void CompressRGBBlockX(CODECFLOAT _RsltRmpPnts[NUM_CHANNELS][NUM_ENDPOINT
                 Pos[k] = Pos[k] * (Scl[1] - Scl[0])+ Scl[0];
 
             // did we find somthing better from the previous run?
-            if(Err + 0.001 < ErrG) {
+            if(StepErr + 0.001 < ErrG) {
                 // yes, remember it
-                ErrG = Err;
+                ErrG = StepErr;
                 LineDirG[0] =  LineDir[0];
                 LineDirG[1] =  LineDir[1];
                 LineDirG[2] =  LineDir[2];
@@ -1977,7 +1171,7 @@ static void CompressRGBBlockX(CODECFLOAT _RsltRmpPnts[NUM_CHANNELS][NUM_ENDPOINT
                 // shifted and normalized
                 CODECFLOAT indxAvrg = (CODECFLOAT)(dwNumPoints - 1) / 2.f;
 
-                for(i=0; i < _UniqClrs; i++) {
+                for(i=0; i < dwUniqueColors; i++) {
                     CODECFLOAT del;
                     //int n = (int)((b - _min_ex + (step*0.5f)) * rstep);
                     if((del = Prj0[i] - Pos[0]) <= 0)
@@ -1993,8 +1187,8 @@ static void CompressRGBBlockX(CODECFLOAT _RsltRmpPnts[NUM_CHANNELS][NUM_ENDPOINT
                 //  4. Present our color channels as 3 16DIM vectors.
                 //  5. Find closest aproximation of each of 16DIM color vector with the pojection of the 16DIM index vector.
                 CODECFLOAT Crs[3], Len, Len2;
-                for(i = 0, Crs[0] = Crs[1] = Crs[2] = Len = 0.f; i < _UniqClrs; i++) {
-                    const CODECFLOAT PreMlt = RmpIndxs[i] * _Rpt[i];
+                for(i = 0, Crs[0] = Crs[1] = Crs[2] = Len = 0.f; i < dwUniqueColors; i++) {
+                    const CODECFLOAT PreMlt = RmpIndxs[i] * Rpt[i];
                     Len += RmpIndxs[i] * PreMlt;
                     for(j = 0; j < 3; j++)
                         Crs[j] += BlkSh[i][j] * PreMlt;
@@ -2019,36 +1213,56 @@ static void CompressRGBBlockX(CODECFLOAT _RsltRmpPnts[NUM_CHANNELS][NUM_ENDPOINT
                 break;
         }
 
-// inverse transform to find end-points of 3-color ramp
+        // inverse transform to find end-points of 3-color ramp
         for(k = 0; k < 2; k++)
             for(j = 0; j < 3; j++)
                 rsltC[j][k] = (PosG[k] * LineDirG[j]  + Mdl[j]) * 255.f;
     }
 
-// We've dealt with (almost) unrestricted full precision realm.
-// Now back to the dirty digital world.
-
-// round the end points to make them look like compressed ones
+    // We've dealt with (almost) unrestricted full precision realm.
+    // Now back to the dirty digital world.
+    
+    // round the end points to make them look like compressed ones
     CODECFLOAT inpRmpEndPts[NUM_CHANNELS][NUM_ENDPOINTS];
     MkRmpOnGrid(inpRmpEndPts, rsltC, 0.f, 255.f, nRedBits, nGreenBits, nBlueBits);
 
-//    This not a small procedure squeezes and stretches the ramp along each axis (R,G,B) separately while other 2 are fixed.
-//    It does it only over coarse grid - 565 that is. It tries to squeeze more precision for the real world ramp.
-    if(b3DRefinement)
-        Refine3D(_RsltRmpPnts, inpRmpEndPts, _BlkIn, _Rpt, _UniqClrs, dwNumPoints, _pfWeights, nRedBits, nGreenBits, nBlueBits, nRefinementSteps);
-    else
-        Refine(_RsltRmpPnts, inpRmpEndPts, _BlkIn, _Rpt, _UniqClrs, dwNumPoints, _pfWeights, nRedBits, nGreenBits, nBlueBits, nRefinementSteps);
+    switch (nRefinementSteps) {
+        case 1:
+            Refine(_RsltRmpPnts, inpRmpEndPts, src_image, Rpt, dwUniqueColors, dwNumPoints, _pfWeights, nRedBits, nGreenBits, nBlueBits, 3);
+            break;
+        case 2:
+            if (dwUniqueColors > 2)
+                Refine3D(_RsltRmpPnts, inpRmpEndPts, src_image, Rpt, dwUniqueColors, dwNumPoints, _pfWeights, nRedBits, nGreenBits, nBlueBits, 1);
+            else
+                Refine(_RsltRmpPnts, inpRmpEndPts, src_image, Rpt, dwUniqueColors, dwNumPoints, _pfWeights, nRedBits, nGreenBits, nBlueBits, 3);
+            break;
+        default:
+            Refine(_RsltRmpPnts, inpRmpEndPts, src_image, Rpt, dwUniqueColors, dwNumPoints, _pfWeights, nRedBits, nGreenBits, nBlueBits, 1);
+            break;
+    }
+    return true;
 }
 
-/*--------------------------------------------------------------------------------------------------------
-
---------------------------------------------------------------------------------------------------------*/
-
-CODECFLOAT CompRGBBlock(CODECFLOAT* block_32, CMP_WORD dwBlockSize,
-                        CMP_BYTE nRedBits, CMP_BYTE nGreenBits, CMP_BYTE nBlueBits,
-                        CMP_BYTE nEndpoints[3][NUM_ENDPOINTS], CMP_BYTE* pcIndices, CMP_BYTE dwNumPoints,
-                        bool _bUseSSE2, bool b3DRefinement, CMP_BYTE nRefinementSteps, CODECFLOAT* _pfChannelWeights,
-                        bool _bUseAlpha, CODECFLOAT _fAlphaThreshold) {
+CODECFLOAT CompRGBBlock(CODECFLOAT* block_32, 
+                        CMP_DWORD compressedBlock[2],
+                        CMP_WORD dwBlockSize,
+                        CMP_BYTE nRedBits,
+                        CMP_BYTE nGreenBits, 
+                        CMP_BYTE nBlueBits,
+                        CMP_BYTE nEndpoints[3][NUM_ENDPOINTS], 
+                        CMP_BYTE* pcIndices, 
+                        CMP_BYTE dwNumPoints,
+                        bool _bUseSSE2, 
+                        bool b3DRefinement, 
+                        CMP_BYTE nRefinementSteps, 
+                        CODECFLOAT* _pfChannelWeights,
+                        bool _bUseAlpha, 
+                        CODECFLOAT _fAlphaThreshold) 
+{
+#ifdef USE_CMP_CORE_API
+    CMP_UNUSED(_bUseSSE2);
+    CMP_UNUSED(compressedBlock);
+#endif
     ALIGN_16 CODECFLOAT Rpt[MAX_BLOCK];
     ALIGN_16 CODECFLOAT BlkIn[MAX_BLOCK][NUM_CHANNELS];
 
@@ -2098,14 +1312,18 @@ CODECFLOAT CompRGBBlock(CODECFLOAT* block_32, CMP_WORD dwBlockSize,
                 BlkIn[i][j] *= 255.0;
 
         CODECFLOAT rsltC[NUM_CHANNELS][NUM_ENDPOINTS];
-#ifdef USE_SSE
-        if(_bUseSSE2)
-            CompressRGBBlockXSSE2(rsltC, BlkIn, Rpt, dwUniqueColors, dwNumPoints, b3DRefinement, nRefinementSteps,
-                                  _pfChannelWeights, nRedBits, nGreenBits, nBlueBits);
-        else
-#endif // USE_SSE
-            CompressRGBBlockX(rsltC, BlkIn, Rpt, dwUniqueColors, dwNumPoints, b3DRefinement, nRefinementSteps,
-                              _pfChannelWeights, nRedBits, nGreenBits, nBlueBits);
+        CompressRGBBlockX(rsltC, 
+                          BlkIn, 
+                          Rpt, 
+                          dwUniqueColors, 
+                          dwNumPoints, 
+                          b3DRefinement, 
+                          nRefinementSteps,
+                          _pfChannelWeights, 
+                          nRedBits, 
+                          nGreenBits, 
+                          nBlueBits,
+                          1.0f);
 
         // return to integer realm
         for(int i = 0; i < 3; i++)
@@ -2130,20 +1348,33 @@ CODECFLOAT CompRGBBlock(CODECFLOAT* block_32, CMP_WORD dwBlockSize,
     }
 }
 
-/*--------------------------------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------------------------------*/
 
-CODECFLOAT CompRGBBlock(CMP_DWORD* block_32, CMP_WORD dwBlockSize,
-                        CMP_BYTE nRedBits, CMP_BYTE nGreenBits, CMP_BYTE nBlueBits,
-                        CMP_BYTE nEndpoints[3][NUM_ENDPOINTS], CMP_BYTE* pcIndices, CMP_BYTE dwNumPoints,
-                        bool _bUseSSE2, bool b3DRefinement, CMP_BYTE nRefinementSteps, CODECFLOAT* _pfChannelWeights,
-                        bool _bUseAlpha, CMP_BYTE _nAlphaThreshold) {
+CODECFLOAT CompRGBBlock(CMP_DWORD* block_32, 
+                        CMP_DWORD compressedBlock[2],
+                        CMP_WORD dwBlockSize,
+                        CMP_BYTE nRedBits, 
+                        CMP_BYTE nGreenBits, 
+                        CMP_BYTE nBlueBits,
+                        CMP_BYTE nEndpoints[3][NUM_ENDPOINTS], 
+                        CMP_BYTE* pcIndices, 
+                        CMP_BYTE dwNumPoints,
+                        bool _bUseSSE2, 
+                        bool b3DRefinement, 
+                        CMP_BYTE nRefinementSteps, 
+                        CODECFLOAT* _pfChannelWeights,
+                        bool _bUseAlpha, 
+                        CMP_BYTE _nAlphaThreshold)
+{
     ALIGN_16 CODECFLOAT Rpt[BLOCK_SIZE];
     ALIGN_16 CODECFLOAT BlkIn[BLOCK_SIZE][NUM_CHANNELS];
+#ifdef USE_CMP_CORE_API
+    CMP_UNUSED(_bUseSSE2);
+#endif
 
     memset(Rpt, 0, sizeof(Rpt));
     memset(BlkIn, 0, sizeof(BlkIn));
+    compressedBlock[0] = 0;
 
     DWORD dwAlphaThreshold = _nAlphaThreshold << 24;
     DWORD dwColors = 0;
@@ -2153,6 +1384,7 @@ CODECFLOAT CompRGBBlock(CMP_DWORD* block_32, CMP_WORD dwBlockSize,
             dwBlk[dwColors++] = block_32[i] | 0xff000000;
 
     // Do we have any colors ?
+    static int id=0;
     if(dwColors) {
         bool bHasAlpha = (dwColors != dwBlockSize);
         if(bHasAlpha && _bUseAlpha && !(dwNumPoints & 0x1))
@@ -2186,22 +1418,57 @@ CODECFLOAT CompRGBBlock(CMP_DWORD* block_32, CMP_WORD dwBlockSize,
         }
 
         CODECFLOAT rsltC[NUM_CHANNELS][NUM_ENDPOINTS];
-#ifdef USE_SSE
-        if(_bUseSSE2)
-            CompressRGBBlockXSSE2(rsltC, BlkIn, Rpt, dwUniqueColors, dwNumPoints, b3DRefinement, nRefinementSteps,
-                                  _pfChannelWeights, nRedBits, nGreenBits, nBlueBits);
-        else
-#endif // USE_SSE
-            CompressRGBBlockX(rsltC, BlkIn, Rpt, dwUniqueColors, dwNumPoints, b3DRefinement, nRefinementSteps,
-                              _pfChannelWeights, nRedBits, nGreenBits, nBlueBits);
+        if (CompressRGBBlockX(rsltC,                            //  CMP_EndPoints = CompressRGBBlock_Slow2 (
+                          BlkIn,                                //  CGU_Vec3f  src_imageNorm[BLOCK_SIZE_4X4]
+                          Rpt,                                  //  CGU_FLOAT  Rpt[BLOCK_SIZE_4X4],
+                          dwUniqueColors,                       //  CGU_UINT32 dwUniqueColors,
+                          dwNumPoints,                          //  CGU_UINT32 dwNumPoints,
+                          b3DRefinement,                        //
+                          nRefinementSteps,                     //  CGU_UINT32 m_nRefinementSteps,
+                          _pfChannelWeights,                    //  CGU_Vec3f  channelWeightsBGR,
+                          nRedBits,                             //  );
+                          nGreenBits, 
+                          nBlueBits,
+                          1.0f) )
+        {
+            // return to integer realm
+            for(int i = 0; i < 3; i++)
+                for(int j = 0; j < 2; j++)
+                    nEndpoints[i][j] =  (CMP_BYTE)rsltC[i][j];
+            // printf("Endpoints {%3d,%3d,%3d} {%3d,%3d,%3d} ", nEndpoints[0][0],nEndpoints[1][0],nEndpoints[2][0],
+            //                                                   nEndpoints[0][1],nEndpoints[1][1],nEndpoints[2][1]);
+            // Now get the indices using the new end points
+            return Clstr(block_32, dwBlockSize, nEndpoints, pcIndices, dwNumPoints, _pfChannelWeights, _bUseAlpha,_nAlphaThreshold, nRedBits, nGreenBits, nBlueBits);
+        }
+        else {
+#ifdef USE_CMP_CORE_API
+            CGU_FLOAT        CompErr = FLT_MAX;
+            if (dwNumPoints < 4) {
+                CGU_Vec3f        src_imageNorm[BLOCK_SIZE_4X4];
+    
+                for (CGU_UINT32 px = 0; px < 16; px++)
+                {
+                   src_imageNorm[px].r = (CODECFLOAT)((block_32[px] >> 16) & 0xff)/ 255.0f;
+                   src_imageNorm[px].g = (CODECFLOAT)((block_32[px] >> 8)  & 0xff)/ 255.0f;
+                   src_imageNorm[px].b = (CODECFLOAT)((block_32[px] >> 0)  & 0xff)/ 255.0f;
+                }
+    
+                // Do a quick compression test
+                CGU_Vec3f srcRGB[16];      // The list of source colors with blue channel altered
+                CGU_Vec3f average_rgb;     // The centrepoint of the axis
+                CGU_FLOAT  errLQ    = CMP_FLT_MAX;
+                cgu_CompressRGBBlock_MinMax(src_imageNorm, 1.0f, false,srcRGB, average_rgb, errLQ);
+                CGU_Vec2ui cmp =  cgu_CompressRGBBlock_Fast(src_imageNorm, 1.0f, false,srcRGB, average_rgb, CompErr);
 
-        // return to integer realm
-        for(int i = 0; i < 3; i++)
-            for(int j = 0; j < 2; j++)
-                nEndpoints[i][j] =  (CMP_BYTE)rsltC[i][j];
+                compressedBlock[0] = cmp.x;
+                compressedBlock[1] = cmp.y;
+            }
+            return CompErr;
+#else
+            return FLT_MAX;
+ #endif
+        }
 
-        return Clstr(block_32, dwBlockSize, nEndpoints, pcIndices, dwNumPoints, _pfChannelWeights, _bUseAlpha,
-                     _nAlphaThreshold, nRedBits, nGreenBits, nBlueBits);
     } else {
         // All colors transparent
         nEndpoints[0][0] = nEndpoints[1][0] = nEndpoints[2][0] = 0;
@@ -2220,8 +1487,10 @@ SCALAR CASE
 ---------------------------------------------------------------------------*/
 
 static CODECFLOAT CompBlock1(CODECFLOAT _RmpPnts[NUM_ENDPOINTS],
-                             CODECFLOAT _Blk[MAX_BLOCK], int _Nmbr,
-                             CMP_BYTE dwNumPoints, bool bFixedRampPoints,
+                             CODECFLOAT _Blk[MAX_BLOCK], 
+                             int _Nmbr,
+                             CMP_BYTE dwNumPoints, 
+                             bool bFixedRampPoints,
                              int _IntPrc = 8,
                              int _FracPrc = 0,
                              bool _bFixedRamp = true,
@@ -2239,9 +1508,7 @@ static  CODECFLOAT   Clstr1(CMP_BYTE* pcIndices,
                             bool _bFixedRamp = true
                            );
 
-/*------------------------------------------------------------------------------------------------
 
-------------------------------------------------------------------------------------------------*/
 static void BldRmp1(CODECFLOAT _Rmp[MAX_POINTS], CODECFLOAT _InpRmp[NUM_ENDPOINTS], int nNumPoints) {
     // for 3 point ramp; not to select the 4th point in min
     for(int e = nNumPoints; e < MAX_POINTS; e++)
@@ -2252,9 +1519,7 @@ static void BldRmp1(CODECFLOAT _Rmp[MAX_POINTS], CODECFLOAT _InpRmp[NUM_ENDPOINT
     for(int e = 1; e < nNumPoints - 1; e++)
         _Rmp[e + 1] = (_Rmp[0] * (nNumPoints - 1 - e) + _Rmp[1] * e)/(CODECFLOAT)(nNumPoints - 1);
 }
-/*--------------------------------------------------------------------------------------------
 
----------------------------------------------------------------------------------------------*/
 static void GetRmp1(CODECFLOAT _rampDat[MAX_POINTS], CODECFLOAT _ramp[NUM_ENDPOINTS], int nNumPoints,
                     bool bFixedRampPoints, int _intPrec, int _fracPrec, bool _bFixedRamp) {
     if(_ramp[0] == _ramp[1])
@@ -2290,11 +1555,15 @@ static void GetRmp1(CODECFLOAT _rampDat[MAX_POINTS], CODECFLOAT _ramp[NUM_ENDPOI
     }
 }
 
-/*--------------------------------------------------------------------------------------------
-
----------------------------------------------------------------------------------------------*/
-static CODECFLOAT Clstr1(CMP_BYTE* pcIndices, CODECFLOAT _blockIn[MAX_BLOCK], CODECFLOAT _ramp[NUM_ENDPOINTS],
-                         int _NmbrClrs, int nNumPoints, bool bFixedRampPoints, int _intPrec, int _fracPrec, bool _bFixedRamp) {
+static CODECFLOAT Clstr1(CMP_BYTE* pcIndices,
+                         CODECFLOAT _blockIn[MAX_BLOCK], 
+                         CODECFLOAT _ramp[NUM_ENDPOINTS],
+                         int _NmbrClrs, 
+                         int nNumPoints, 
+                         bool bFixedRampPoints, 
+                         int _intPrec, 
+                         int _fracPrec, 
+                         bool _bFixedRamp) {
     CODECFLOAT Err = 0.f;
     CODECFLOAT alpha[MAX_POINTS];
 
@@ -2343,66 +1612,6 @@ static CODECFLOAT Clstr1(CMP_BYTE* pcIndices, CODECFLOAT _blockIn[MAX_BLOCK], CO
     return Err;
 }
 
-#ifdef USE_SSE
-/*------------------------------------------------------------------------------------------------
-
-------------------------------------------------------------------------------------------------*/
-static CODECFLOAT RmpSrch1SSE2(ALIGN_16 CODECFLOAT _Blck[MAX_BLOCK],
-                               ALIGN_16 CODECFLOAT _Rpt[MAX_BLOCK],
-                               CODECFLOAT _maxerror,
-                               CODECFLOAT _min_ex,
-                               CODECFLOAT _max_ex,
-                               int _NmbClrs,
-                               CMP_BYTE dwNumPoints) {
-    CODECFLOAT error = _maxerror;
-    CODECFLOAT step = (_max_ex - _min_ex) / (dwNumPoints - 1);
-    CODECFLOAT rstep = (CODECFLOAT)1.0f / step;
-    static const int SIMDFac = 128 / (sizeof(CODECFLOAT) * 8);
-    int NbrCycls = (_NmbClrs + SIMDFac - 1) / SIMDFac;
-
-    __m128 err = _mm_setzero_ps();
-    for(int i=0; i < NbrCycls; i++) {
-        __m128 v;
-// do not add half since rounding is different
-        v = _mm_cvtepi32_ps(
-                _mm_cvtps_epi32(
-                    _mm_mul_ps(
-                        _mm_sub_ps(
-                            _mm_load_ps(&_Blck[SIMDFac * i]),
-                            _mm_set_ps1(_min_ex)
-                        ),
-                        _mm_set_ps1(rstep)
-                    )
-                )
-            );
-
-        v = _mm_add_ps(_mm_mul_ps(v, _mm_set_ps1(step)), _mm_set_ps1(_min_ex));
-
-        v = _mm_min_ps(_mm_max_ps(v, _mm_set_ps1(_min_ex)), _mm_set_ps1(_max_ex));
-
-
-        __m128  d = _mm_sub_ps(_mm_load_ps(&_Blck[SIMDFac * i]), v);
-        d = _mm_mul_ps(d,d);
-        err = _mm_add_ps(err, _mm_mul_ps(_mm_load_ps(&_Rpt[SIMDFac * i]),d));
-    }
-
-    err = _mm_add_ps(
-              _mm_movelh_ps(err, _mm_setzero_ps()),
-              _mm_movehl_ps(_mm_setzero_ps(), err)
-          );
-
-    err = _mm_add_ps(err,
-                     _mm_shuffle_ps(err, _mm_setzero_ps(), _MM_SHUFFLE(0,0,3,1))
-                    );
-    _mm_store_ss(&error, err);
-
-    return (error);
-}
-#endif // USE_SSE
-
-/*--------------------------------------------------------------------------------------------
-
----------------------------------------------------------------------------------------------*/
 static CODECFLOAT RmpSrch1(CODECFLOAT _Blk[MAX_BLOCK],
                            CODECFLOAT _Rpt[MAX_BLOCK],
                            CODECFLOAT _maxerror,
@@ -2441,16 +1650,22 @@ static CODECFLOAT RmpSrch1(CODECFLOAT _Blk[MAX_BLOCK],
 }
 
 
-/*--------------------------------------------------------------------------------------------
-
----------------------------------------------------------------------------------------------*/
-
-static CODECFLOAT Refine1(ALIGN_16 CODECFLOAT _Blk[MAX_BLOCK], ALIGN_16 CODECFLOAT _Rpt[MAX_BLOCK],
-                          CODECFLOAT _MaxError, CODECFLOAT& _min_ex, CODECFLOAT& _max_ex, CODECFLOAT _m_step,
-                          CODECFLOAT _min_bnd, CODECFLOAT _max_bnd, int _NmbrClrs,
-                          CMP_BYTE dwNumPoints, bool _bUseSSE2) {
+static CODECFLOAT Refine1(CODECFLOAT _Blk[MAX_BLOCK], 
+                          CODECFLOAT _Rpt[MAX_BLOCK],
+                          CODECFLOAT _MaxError, 
+                          CODECFLOAT& _min_ex, 
+                          CODECFLOAT& _max_ex, 
+                          CODECFLOAT _m_step,
+                          CODECFLOAT _min_bnd, 
+                          CODECFLOAT _max_bnd, 
+                          int _NmbrClrs,
+                          CMP_BYTE dwNumPoints, 
+                          bool _bUseSSE2) 
+{
+#ifdef USE_CMP_CORE_API
+    CMP_UNUSED(_bUseSSE2);
+#endif
     // Start out assuming our endpoints are the min and max values we've determined
-
     // Attempt a (simple) progressive refinement step to reduce noise in the
     // output image by trying to find a better overall match for the endpoints.
 
@@ -2471,12 +1686,7 @@ static CODECFLOAT Refine1(ALIGN_16 CODECFLOAT _Blk[MAX_BLOCK], ALIGN_16 CODECFLO
             cr_max = min(cr_max, _max_bnd);
 
             CODECFLOAT error;
-#ifdef USE_SSE
-            if(_bUseSSE2)
-                error = RmpSrch1SSE2(_Blk, _Rpt, maxerror, cr_min, cr_max, _NmbrClrs, dwNumPoints);
-            else
-#endif // USE_SSE
-                error = RmpSrch1(_Blk, _Rpt, maxerror, cr_min, cr_max, _NmbrClrs, dwNumPoints);
+            error = RmpSrch1(_Blk, _Rpt, maxerror, cr_min, cr_max, _NmbrClrs, dwNumPoints);
 
             if(error < maxerror) {
                 maxerror = error;
@@ -2499,6 +1709,7 @@ static CODECFLOAT Refine1(ALIGN_16 CODECFLOAT _Blk[MAX_BLOCK], ALIGN_16 CODECFLO
     return maxerror;
 }
 
+#ifndef USE_CMP_CORE_API
 static int QSortFCmp(const void * Elem1, const void * Elem2) {
     int ret = 0;
 
@@ -2508,38 +1719,40 @@ static int QSortFCmp(const void * Elem1, const void * Elem2) {
         ret = 1;
     return ret;
 }
-
+#endif
 
 /*--------------------------------------------------------------------------------------------
 // input [0,1]
-static CODECFLOAT CompBlock1(CODECFLOAT _RmpPnts[NUM_ENDPOINTS], [OUT] Min amd Max value of the ramp in float
-                                                     format in [0., (1 << _IntPrc) - 1] range
-
-
----------------------------------------------------------------------------------------------*/
-/*
    this is the case when the input data and possible ramp values are all on integer grid.
 */
 #define _INT_GRID (_bFixedRamp && _FracPrc == 0)
 
-static CODECFLOAT CompBlock1(CODECFLOAT _RmpPnts[NUM_ENDPOINTS], CODECFLOAT _Blk[MAX_BLOCK], int _Nmbr,
-                             CMP_BYTE dwNumPoints, bool bFixedRampPoints,
-                             int _IntPrc, int _FracPrc, bool _bFixedRamp, bool _bUseSSE2,
+static CODECFLOAT CompBlock1(CODECFLOAT _RmpPnts[NUM_ENDPOINTS], 
+                             CODECFLOAT _Blk[MAX_BLOCK], 
+                             int _Nmbr,
+                             CMP_BYTE dwNumPoints, 
+                             bool bFixedRampPoints,
+                             int _IntPrc, 
+                             int _FracPrc, 
+                             bool _bFixedRamp, 
+                             bool _bUseSSE2,
                              bool isSigned
-                             ) {
+                             ) 
+{
+#ifdef USE_CMP_CORE_API
+    CMP_UNUSED(isSigned);
+#endif
+
     CODECFLOAT fMaxError = 0.f;
-
     CODECFLOAT Ramp[NUM_ENDPOINTS];
-
     CODECFLOAT IntFctr = (CODECFLOAT)(1 << _IntPrc);
-//    CODECFLOAT FracFctr = (CODECFLOAT)(1 << _FracPrc);
 
     ALIGN_16 CODECFLOAT afUniqueValues[MAX_BLOCK];
     ALIGN_16 CODECFLOAT afValueRepeats[MAX_BLOCK];
     for(int i = 0; i < MAX_BLOCK; i++)
         afUniqueValues[i] = afValueRepeats[i] = 0.f;
 
-// For each unique value we compute the number of it appearances.
+    // For each unique value we compute the number of it appearances.
     CODECFLOAT fBlk[MAX_BLOCK];
     std::memcpy(fBlk, _Blk, _Nmbr * sizeof(CODECFLOAT));
 
@@ -2636,11 +1849,6 @@ static CODECFLOAT CompBlock1(CODECFLOAT _RmpPnts[NUM_ENDPOINTS], CODECFLOAT _Blk
             for(CODECFLOAT step_l = gbl_llb; step_l < gbl_lrb ; step_l+= GBL_SCH_STEP) {
                 for(CODECFLOAT step_r = gbl_rrb; gbl_rlb <= step_r; step_r-=GBL_SCH_STEP) {
                     CODECFLOAT sch_err;
-#ifdef USE_SSE
-                    if(_bUseSSE2)
-                        sch_err = RmpSrch1SSE2(afUniqueValues, afValueRepeats, gbl_err, step_l, step_r, dwUniqueValues, dwNumPoints);
-                    else
-#endif // USE_SSE
                         sch_err = RmpSrch1(afUniqueValues, afValueRepeats, gbl_err, step_l, step_r, dwUniqueValues, dwNumPoints);
                     if(sch_err < gbl_err) {
                         gbl_err = sch_err;
@@ -2715,12 +1923,20 @@ void CompBlock1X(CODECFLOAT* _Blk, [IN] scalar data block (alphas or normals) in
                  int _fracPrec,             [IN] fractional precision of the ramp points
                  bool _bFixedRamp,          [IN] non-fixed ramp means we have input and generate
                                                  output as float. fixed ramp means that they are fractional numbers.
-                 bool _bUseSSE2             [IN] forces to switch to the SSE2 implementation
                )
 ---------------------------------------------------------------------------------------------*/
 
-CODECFLOAT CompBlock1X(CODECFLOAT* _Blk, CMP_WORD dwBlockSize, CMP_BYTE nEndpoints[2], CMP_BYTE* pcIndices,
-                       CMP_BYTE dwNumPoints, bool bFixedRampPoints, bool _bUseSSE2, int _intPrec, int _fracPrec, bool _bFixedRamp) {
+CODECFLOAT CompBlock1X( CODECFLOAT* _Blk, 
+                        CMP_WORD dwBlockSize, 
+                        CMP_BYTE nEndpoints[2], 
+                        CMP_BYTE* pcIndices,
+                        CMP_BYTE dwNumPoints, 
+                        bool bFixedRampPoints, 
+                        bool _bUseSSE2, 
+                        int _intPrec, 
+                        int _fracPrec, 
+                        bool _bFixedRamp)
+{
     // just to make them initialized
     if(!_bFixedRamp) {
         _intPrec = 8;
@@ -2778,12 +1994,20 @@ void CompBlock1X(CMP_BYTE* _Blk, [IN] scalar data block (alphas or normals) in 8
                                                  to the ramp points
                  int _fracPrec,             [IN] fractional precision of the ramp points
                  bool _bFixedRamp,          [IN] always true at this point
-                 bool _bUseSSE2             [IN] forces to switch to the SSE2-based assembler implementation
                )
 ---------------------------------------------------------------------------------------------*/
 
-CODECFLOAT CompBlock1X(CMP_BYTE* _Blk, CMP_WORD dwBlockSize, CMP_BYTE nEndpoints[2], CMP_BYTE* pcIndices,
-                       CMP_BYTE dwNumPoints, bool bFixedRampPoints, bool _bUseSSE2, int _intPrec, int _fracPrec, bool _bFixedRamp) {
+CODECFLOAT CompBlock1X( CMP_BYTE* _Blk, 
+                        CMP_WORD dwBlockSize, 
+                        CMP_BYTE nEndpoints[2], 
+                        CMP_BYTE* pcIndices,
+                        CMP_BYTE dwNumPoints, 
+                        bool bFixedRampPoints, 
+                        bool _bUseSSE2, 
+                        int _intPrec, 
+                        int _fracPrec, 
+                        bool _bFixedRamp) 
+{
     // convert the input and call the float equivalent.
     CODECFLOAT fBlk[MAX_BLOCK];
     for(int i = 0; i < dwBlockSize; i++)
@@ -2791,7 +2015,6 @@ CODECFLOAT CompBlock1X(CMP_BYTE* _Blk, CMP_WORD dwBlockSize, CMP_BYTE nEndpoints
 
     return CompBlock1X(fBlk, dwBlockSize, nEndpoints, pcIndices, dwNumPoints, bFixedRampPoints, _bUseSSE2, _intPrec, _fracPrec, _bFixedRamp);
 }
-
 
 CODECFLOAT CompBlock1XS(CMP_SBYTE* _Blk,
                        CMP_WORD  dwBlockSize,

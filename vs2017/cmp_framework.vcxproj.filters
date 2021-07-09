@@ -135,6 +135,9 @@
     <ClCompile Include="..\applications\_plugins\common\cmp_fileio.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\applications\_plugins\ccmp_sdk\bcn.cpp">
+      <Filter>StaticPlugins\Encoders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Applications\_Plugins\Common\PluginInterface.h">
@@ -269,13 +272,37 @@
     <ClInclude Include="..\CMP_Framework\Common\half\toFloat.h">
       <Filter>Common\half</Filter>
     </ClInclude>
-    <ClInclude Include="..\CMP_Framework\CMP_framework.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\CMP_Core\source\cmp_math_func.h">
       <Filter>CMP_Core</Filter>
     </ClInclude>
     <ClInclude Include="..\applications\_plugins\common\cmp_fileio.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_core\shaders\bcn_common_api.h">
+      <Filter>CMP_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_core\shaders\bc7_common_encoder.h">
+      <Filter>CMP_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_core\shaders\bc7_cmpmsc.h">
+      <Filter>CMP_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_core\shaders\bc6_common_encoder.h">
+      <Filter>CMP_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_core\shaders\bc1_common_kernel.h">
+      <Filter>CMP_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_core\shaders\bc1_cmp.h">
+      <Filter>CMP_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_compressonatorlib\compressonator.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\ccmp_sdk\bcn.h">
+      <Filter>StaticPlugins\Encoders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\common\gltf\stb_image_write.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>

@@ -80,13 +80,19 @@
     <ClCompile Include="..\CMP_Core\shaders\BC7_Encode_Kernel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\cmp_core\shaders\bc1_cmp.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc1_common_kernel.h" />
     <ClInclude Include="..\CMP_Core\shaders\BC1_Encode_kernel.h" />
     <ClInclude Include="..\CMP_Core\shaders\BC2_Encode_kernel.h" />
     <ClInclude Include="..\CMP_Core\shaders\BC3_Encode_kernel.h" />
     <ClInclude Include="..\CMP_Core\shaders\BC4_Encode_kernel.h" />
     <ClInclude Include="..\CMP_Core\shaders\BC5_Encode_kernel.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc6_common_encoder.h" />
     <ClInclude Include="..\CMP_Core\shaders\BC6_Encode_kernel.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc7_cmpmsc.h" />
+    <ClInclude Include="..\cmp_core\shaders\bc7_common_encoder.h" />
     <ClInclude Include="..\CMP_Core\shaders\BC7_Encode_Kernel.h" />
+    <ClInclude Include="..\cmp_core\shaders\bcn_common_api.h" />
     <ClInclude Include="..\CMP_Core\shaders\BCn_Common_Kernel.h" />
     <ClInclude Include="..\CMP_Core\shaders\Common_Def.h" />
     <ClInclude Include="..\CMP_Core\source\CMP_Core.h" />

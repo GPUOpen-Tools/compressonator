@@ -45,7 +45,7 @@ class ImGUIDX12 {
     ID3D12RootSignature       *m_pRootSignature;
 
     SAMPLER                    m_sampler;
-    CBV_SRV_UAV			       m_pTextureSRV;
+    CBV_SRV_UAV                   m_pTextureSRV;
 
     UINT m_node;
     UINT m_nodeMask;

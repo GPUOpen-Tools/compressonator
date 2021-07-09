@@ -251,8 +251,9 @@ ProjectView::ProjectView(const QString title, CompressStatusDialog* StatusDialog
     // Enables diplay of checked box next to items
     m_EnableCheckedItemsView         = false;
     m_processFromContext             = false;
-    m_globalProcessSetting.m_Quality = 0.0f;
-    m_globalProcessSetting.m_enabled = 0;
+    m_globalProcessSetting.m_Quality = 1.0f;
+    m_globalProcessSetting.m_Refine_Steps = 0;
+    m_globalProcessSetting.m_GlobalSettingEnabled = false;
 
     m_newWidget = new QWidget(parent);
     m_layout    = new QGridLayout(m_newWidget);
@@ -368,9 +369,10 @@ void ProjectView::SignalUpdateData(QTreeWidgetItem* item, int levelType)
         C_Destination_Options* m_data = v.value<C_Destination_Options*>();
         if (m_data)
         {
-            if ((m_globalProcessSetting.m_Quality > 0.0f) && (g_Application_Options.m_ImageEncode != C_Application_Options::ImageEncodeWith::GPU_HW))
+            if ((m_globalProcessSetting.m_GlobalSettingEnabled) && (g_Application_Options.m_ImageEncode != C_Application_Options::ImageEncodeWith::GPU_HW))
             {
                 m_data->m_globalSetting_quality        = m_globalProcessSetting.m_Quality;
+                m_data->m_globalSetting_refine_steps   = m_globalProcessSetting.m_Refine_Steps;
                 m_data->m_globalSetting_qualityEnabled = true;
             }
             else
@@ -1889,6 +1891,7 @@ void ProjectView::saveProjectFile()
                                     xmlWriter.writeTextElement("WeightB", QString::number(data->Z_BLUE, 'g', 4));
 
                                     xmlWriter.writeTextElement("AlphaThreshold", QString::number(data->Threshold));
+                                    xmlWriter.writeTextElement("RefineSteps", QString::number(data->Refine_Steps));
                                     xmlWriter.writeTextElement("BlockRate", data->m_Bitrate);
                                 }
                                 else
@@ -2024,7 +2027,7 @@ void ProjectView::saveProjectFile()
                                                         xmlWriter.writeTextElement("WeightB", QString::number(data->Z_BLUE, 'g', 4));
 
                                                         xmlWriter.writeTextElement("AlphaThreshold", QString::number(data->Threshold));
-
+                                                        xmlWriter.writeTextElement("RefineSteps", QString::number(data->Refine_Steps));
                                                         xmlWriter.writeTextElement("BlockRate", data->m_Bitrate);
                                                     }
                                                     else
@@ -2182,26 +2185,27 @@ bool ProjectView::loadProjectFile(QString fileToLoad)
                                             QDomElement eleDestination = child.toElement();
                                             m_data->m_destFileNamePath = eleDestination.text();
 
-                                            QFileInfo fileInfo(m_data->m_destFileNamePath);
-                                            if (!fileInfo.isWritable())
-                                            {
-                                                QFileInfo fileInfo2(m_curProjectFilePathName);
-                                                m_data->m_destFileNamePath = fileInfo2.dir().path();
-                                                m_data->m_destFileNamePath.append(QDir::separator());
-                                                m_data->m_destFileNamePath.append(fileInfo.fileName());
-                                                m_data->m_destFileNamePath.replace("/", "\\");
-                                                //if current project file path is still not writable then change to app local path
-                                                QFileInfo fileInfo3(m_data->m_destFileNamePath);
-                                                if (!fileInfo3.isWritable())
-                                                {
-                                                    m_data->m_destFileNamePath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-                                                    m_data->m_destFileNamePath.append(QDir::separator());
-                                                    m_data->m_destFileNamePath.append(fileInfo.fileName());
-                                                    m_data->m_destFileNamePath.replace("/", "\\");
-                                                }
-                                            }
-                                            else
-                                                m_data->m_FileInfoDestinationName = Setting + "." + fileInfo.suffix();
+                                            // V4.2 change to just load the files as is. No check done until its used
+                                            // QFileInfo fileInfo(m_data->m_destFileNamePath);
+                                            // if (!fileInfo.isWritable())
+                                            // {
+                                            //     QFileInfo fileInfo2(m_curProjectFilePathName);
+                                            //     m_data->m_destFileNamePath = fileInfo2.dir().path();
+                                            //     m_data->m_destFileNamePath.append(QDir::separator());
+                                            //     m_data->m_destFileNamePath.append(fileInfo.fileName());
+                                            //     m_data->m_destFileNamePath.replace("/", "\\");
+                                            //     //if current project file path is still not writable then change to app local path
+                                            //     QFileInfo fileInfo3(m_data->m_destFileNamePath);
+                                            //     if (!fileInfo3.isWritable())
+                                            //     {
+                                            //         m_data->m_destFileNamePath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+                                            //         m_data->m_destFileNamePath.append(QDir::separator());
+                                            //         m_data->m_destFileNamePath.append(fileInfo.fileName());
+                                            //         m_data->m_destFileNamePath.replace("/", "\\");
+                                            //     }
+                                            // }
+                                            // else
+                                            //     m_data->m_FileInfoDestinationName = Setting + "." + fileInfo.suffix();
                                         }
                                         else if (child.toElement().tagName() == "fd")
                                         {
@@ -2258,6 +2262,15 @@ bool ProjectView::loadProjectFile(QString fileToLoad)
                                             m_data->Threshold = AlphaThreshold.toInt(&ok);
                                             if (!ok)
                                                 m_data->Threshold = 0;
+                                        }
+                                        else if (child.toElement().tagName() == "RefineSteps")
+                                        {
+                                            QDomElement eleFD = child.toElement();
+                                            QString     value = eleFD.text();
+                                            bool        ok;
+                                            m_data->Refine_Steps= value.toInt(&ok);
+                                            if (!ok)
+                                                m_data->Refine_Steps = 0;
                                         }
                                         else if (child.toElement().tagName() == "BlockRate")
                                         {
@@ -2538,6 +2551,15 @@ bool ProjectView::loadProjectFile(QString fileToLoad)
                                                             m_data->Threshold = AlphaThreshold.toInt(&ok);
                                                             if (!ok)
                                                                 m_data->Threshold = 0;
+                                                        }
+                                                        else if (child.toElement().tagName() == "RefineSteps")
+                                                        {
+                                                            QDomElement eleFD = child.toElement();
+                                                            QString     value = eleFD.text();
+                                                            bool        ok;
+                                                            m_data->Refine_Steps = value.toInt(&ok);
+                                                            if (!ok)
+                                                                m_data->Refine_Steps = 0;
                                                         }
                                                         else if (child.toElement().tagName() == "BlockRate")
                                                         {
@@ -4822,13 +4844,16 @@ void ProjectView::onTree_ItemClicked(QTreeWidgetItem* item, int column)
 
                 if ((column == 0) && (m_clicked_onIcon))
                 {
+#ifdef USE_MESH_DRACO_EXTENSION
                     QFile compfile(m_data->m_destFileNamePath + ".drc");
                     if ((m_data->getDo_Mesh_Compression() == m_data->Draco) && (compfile.exists()))
                     {
                         QString fileName = compfile.fileName();
                         emit    ViewImageFile(fileName, item);
                     }
-                    else if (file.exists())
+                    else
+#endif
+                        if (file.exists())
                     {
                         emit ViewImageFile(m_data->m_destFileNamePath, item);
                     }
@@ -5516,10 +5541,10 @@ bool processItem(QFile*                  file,
                 //=============================
                 if (FormatSupportsQualitySetting(cmp_format))
                 {
-                    if ((data->m_Quality != setDefaultOptions.m_Quality) || (ProjectView->m_globalProcessSetting.m_Quality > 0))
+                    if ((data->m_Quality != setDefaultOptions.m_Quality) || (ProjectView->m_globalProcessSetting.m_GlobalSettingEnabled))
                     {
                         // Override the setting
-                        if (ProjectView->m_globalProcessSetting.m_Quality > 0)
+                        if (ProjectView->m_globalProcessSetting.m_GlobalSettingEnabled)
                             fqualty_setting = ProjectView->m_globalProcessSetting.m_Quality;
                         else
                             fqualty_setting = data->m_Quality;
@@ -5555,6 +5580,8 @@ bool processItem(QFile*                  file,
                     msgCommandLine.append(" ");
                 }
 
+                //=====================================================
+                // User set Refine BCn option
                 if (FormatSupportsDXTCBase(cmp_format))
                 {
                     //=============================
@@ -5654,9 +5681,9 @@ bool processItem(QFile*                  file,
                 // ====================================
                 // DXTC1 settings only
                 // ====================================
-                if (cmp_format == CMP_FORMAT_DXT1)
+                if ((cmp_format == CMP_FORMAT_DXT1) || (cmp_format == CMP_FORMAT_BC1))
                 {
-                    if (data->Threshold != setDefaultOptions.Threshold)
+                    if (data->Threshold > 0)
                     {
                         // User Msg
                         QString value = QString::number(data->Threshold);
@@ -5696,6 +5723,32 @@ bool processItem(QFile*                  file,
                         //g_CmdPrams.CompressOptions.bDXT1UseAlpha = true;
                         //g_CmdPrams.CompressOptions.nAlphaThreshold = data->Threshold;
                     }
+
+                    if ((data->Refine_Steps > 0) || (ProjectView->m_globalProcessSetting.m_GlobalSettingEnabled 
+                                                     && (ProjectView->m_globalProcessSetting.m_Refine_Steps  > 0))) {
+                        // User Msg
+                        QString value;
+                        if (ProjectView->m_globalProcessSetting.m_Refine_Steps > 0)
+                            value = QString::number(ProjectView->m_globalProcessSetting.m_Refine_Steps);
+                        else
+                            value = QString::number(data->Refine_Steps);
+                        msgCommandLine.append(" -RefineSteps ");
+                        msgCommandLine.append(value);
+                        msgCommandLine.append(" ");
+
+                        // User Setting Text
+                        std::string strSetText = "-RefineSteps";
+                        argvVec.push_back(CharArray(strSetText.begin(), strSetText.end()));
+                        argvVec.back().push_back(0);  // Terminate String
+                        argv.push_back(argvVec.back().data());
+
+                        // User Setting Value
+                        strSetText = value.toStdString();
+                        argvVec.push_back(CharArray(strSetText.begin(), strSetText.end()));
+                        argvVec.back().push_back(0);  // Terminate String
+                        argv.push_back(argvVec.back().data());
+                    }
+
                 }
 
                 // ====================================
@@ -6112,7 +6165,7 @@ void AnalysisTableWidget::AddTestResults(std::string processPath,
     str_perftime.sprintf("%03.3f", PerfTime * 1000);
     str_Mpx.sprintf("%03.3f", MPxPerSec);
     str_time.sprintf("%03.3f", Time);
-    str_psnr.sprintf("%03.1f", psnr);
+    str_psnr.sprintf("%03.2f", psnr);
     str_ssim.sprintf("%01.4f", ssim);
 
     int rowCount = this->rowCount();
@@ -6232,7 +6285,7 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                     {
                         if (m_data->m_MipImages->mipset)
                         {
-                            miplevels         = m_data->m_MipImages->mipset->m_nMipLevels;
+                            miplevels = m_data->m_MipImages->mipset->m_nMipLevels;
                             //
                             // Feature disbled causes confusion when src has not mip levels and is then has them after processing
                             // Do auto MipMap generation for the source if GPU HW is used to generate compressed textures
@@ -6913,149 +6966,153 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                                         }
                                     }
                                     //case obj->obj will produce obj->drc draco compression
-                                    else
-                                    {
-                                        PluginInterface_3DModel_Loader* m_plugin_loader_drc = NULL;
-
-                                        PluginInterface_Mesh* plugin_MeshComp;
-                                        plugin_MeshComp = reinterpret_cast<PluginInterface_Mesh*>(g_pluginManager.GetPlugin("MESH_COMPRESSOR", "DRACO"));
-
-                                        if (plugin_MeshComp)
+#if (LIB_BUILD_MESHCOMPRESSOR)
+                                        else
                                         {
-                                            if (plugin_MeshComp->Init() == 0)
+                                            PluginInterface_3DModel_Loader* m_plugin_loader_drc = NULL;
+
+                                            PluginInterface_Mesh* plugin_MeshComp;
+                                            plugin_MeshComp = reinterpret_cast<PluginInterface_Mesh*>(g_pluginManager.GetPlugin("MESH_COMPRESSOR", "DRACO"));
+
+                                            if (plugin_MeshComp)
                                             {
-                                                //showProgressDialog("Process Mesh Data");
-                                                plugin_MeshComp->TC_PluginSetSharedIO(g_GUI_CMIPS);
-
-                                                CMP_DracoOptions DracoOptions;
-                                                DracoOptions.is_point_cloud               = data->getForce_Input_as_Point_Cloud();
-                                                DracoOptions.use_metadata                 = data->getUse_Metadata();
-                                                DracoOptions.compression_level            = data->getCompression_Level();
-                                                DracoOptions.pos_quantization_bits        = data->getPosition_Bits();
-                                                DracoOptions.tex_coords_quantization_bits = data->getTex_Coords_Bits();
-                                                DracoOptions.normals_quantization_bits    = data->getNormals_Bits();
-                                                DracoOptions.generic_quantization_bits    = data->getGeneric_Bits();
-
-                                                // Check if mesh optimization was done if so then source is optimized file
-                                                if (bMeshOptimized)
-                                                    DracoOptions.input = ModelDestination.toStdString();
-                                                else
-                                                    DracoOptions.input = ModelSource.toStdString();
-
-                                                DracoOptions.output = ModelDestination.toStdString() + ".drc";
-
-                                                msgCommandLine = "[Mesh Compression] Src: " + QString(DracoOptions.input.c_str()) +
-                                                                 " Dst: " + QString(DracoOptions.output.c_str());
-                                                g_pProgressDlg->SetHeader("Processing: Mesh Compression");
-                                                g_pProgressDlg->SetLabelText(msgCommandLine);
-                                                if (ProjectView->m_CompressStatusDialog)
-                                                    ProjectView->m_CompressStatusDialog->appendText(msgCommandLine);
-
-                                                void* modelDataOut = nullptr;
-                                                void* modelDataIn  = nullptr;
-
-                                                PluginInterface_3DModel_Loader* m_plugin_loader_drc;
-                                                m_plugin_loader_drc =
-                                                    reinterpret_cast<PluginInterface_3DModel_Loader*>(g_pluginManager.GetPlugin("3DMODEL_LOADER", "DRC"));
-
-                                                if (m_plugin_loader_drc)
+                                                if (plugin_MeshComp->Init() == 0)
                                                 {
-                                                    m_plugin_loader_drc->TC_PluginSetSharedIO(g_GUI_CMIPS);
-                                                    void* msgHandler = NULL;
-                                                    if (ProjectView)
-                                                    {
-                                                        cpMainComponents* mainComponents = NULL;
-                                                        mainComponents                   = (cpMainComponents*)ProjectView->m_parent;
-                                                        if (mainComponents)
-                                                            msgHandler = (void*)mainComponents->PrintStatus;
-                                                    }
+                                                    //showProgressDialog("Process Mesh Data");
+                                                    plugin_MeshComp->TC_PluginSetSharedIO(g_GUI_CMIPS);
 
-                                                    int result;
-                                                    if (result = m_plugin_loader_drc->LoadModelData(
-                                                                     "OBJ", NULL, &g_pluginManager, &DracoOptions, &ProgressCallback) != 0)
+                                                    CMP_DracoOptions DracoOptions;
+                                                    DracoOptions.is_point_cloud               = data->getForce_Input_as_Point_Cloud();
+                                                    DracoOptions.use_metadata                 = data->getUse_Metadata();
+                                                    DracoOptions.compression_level            = data->getCompression_Level();
+                                                    DracoOptions.pos_quantization_bits        = data->getPosition_Bits();
+                                                    DracoOptions.tex_coords_quantization_bits = data->getTex_Coords_Bits();
+                                                    DracoOptions.normals_quantization_bits    = data->getNormals_Bits();
+                                                    DracoOptions.generic_quantization_bits    = data->getGeneric_Bits();
+
+                                                    // Check if mesh optimization was done if so then source is optimized file
+                                                    if (bMeshOptimized)
+                                                        DracoOptions.input = ModelDestination.toStdString();
+                                                    else
+                                                        DracoOptions.input = ModelSource.toStdString();
+
+                                                    DracoOptions.output = ModelDestination.toStdString() + ".drc";
+
+                                                    msgCommandLine = "[Mesh Compression] Src: " + QString(DracoOptions.input.c_str()) +
+                                                                     " Dst: " + QString(DracoOptions.output.c_str());
+                                                    g_pProgressDlg->SetHeader("Processing: Mesh Compression");
+                                                    g_pProgressDlg->SetLabelText(msgCommandLine);
+                                                    if (ProjectView->m_CompressStatusDialog)
+                                                        ProjectView->m_CompressStatusDialog->appendText(msgCommandLine);
+
+                                                    void* modelDataOut = nullptr;
+                                                    void* modelDataIn  = nullptr;
+
+                                                    PluginInterface_3DModel_Loader* m_plugin_loader_drc;
+                                                    m_plugin_loader_drc =
+                                                        reinterpret_cast<PluginInterface_3DModel_Loader*>(g_pluginManager.GetPlugin("3DMODEL_LOADER", "DRC"));
+
+                                                    if (m_plugin_loader_drc)
                                                     {
-                                                        if (result != 0)
+                                                        m_plugin_loader_drc->TC_PluginSetSharedIO(g_GUI_CMIPS);
+                                                        void* msgHandler = NULL;
+                                                        if (ProjectView)
+                                                        {
+                                                            cpMainComponents* mainComponents = NULL;
+                                                            mainComponents                   = (cpMainComponents*)ProjectView->m_parent;
+                                                            if (mainComponents)
+                                                                msgHandler = (void*)mainComponents->PrintStatus;
+                                                        }
+
+                                                        int result;
+                                                        if (result = m_plugin_loader_drc->LoadModelData(
+                                                                         "OBJ", NULL, &g_pluginManager, &DracoOptions, &ProgressCallback) != 0)
+                                                        {
+                                                            if (result != 0)
+                                                            {
+                                                                if (ProjectView->m_CompressStatusDialog)
+                                                                    ProjectView->m_CompressStatusDialog->appendText(
+                                                                        "[Mesh Compression] Error Loading Model Data");
+                                                                return;
+                                                            }
+                                                        }
+
+                                                        modelDataIn = m_plugin_loader_drc->GetModelData();
+
+                                                        try
+                                                        {
+                                                            if (modelDataIn)
+                                                                modelDataOut =
+                                                                    plugin_MeshComp->ProcessMesh(modelDataIn, (void*)&DracoOptions, NULL, &ProgressCallback);
+                                                        }
+                                                        catch (std::exception& e)
                                                         {
                                                             if (ProjectView->m_CompressStatusDialog)
-                                                                ProjectView->m_CompressStatusDialog->appendText("[Mesh Compression] Error Loading Model Data");
-                                                            return;
+                                                                ProjectView->m_CompressStatusDialog->appendText(
+                                                                    "[Mesh Compression] Error: " + QString::fromStdString(e.what()) +
+                                                                    ". Please try another setting.");
                                                         }
-                                                    }
 
-                                                    modelDataIn = m_plugin_loader_drc->GetModelData();
-
-                                                    try
-                                                    {
-                                                        if (modelDataIn)
-                                                            modelDataOut =
-                                                                plugin_MeshComp->ProcessMesh(modelDataIn, (void*)&DracoOptions, NULL, &ProgressCallback);
-                                                    }
-                                                    catch (std::exception& e)
-                                                    {
-                                                        if (ProjectView->m_CompressStatusDialog)
-                                                            ProjectView->m_CompressStatusDialog->appendText(
-                                                                "[Mesh Compression] Error: " + QString::fromStdString(e.what()) +
-                                                                ". Please try another setting.");
-                                                    }
-
-                                                    if (modelDataOut)
-                                                    {
-                                                        if (g_bAbortCompression)
+                                                        if (modelDataOut)
                                                         {
-                                                            Imageitem->setIcon(0, QIcon(QStringLiteral(":/compressonatorgui/images/smallgraystone.png")));
-                                                            g_pProgressDlg->SetValue(0);
+                                                            if (g_bAbortCompression)
+                                                            {
+                                                                Imageitem->setIcon(0, QIcon(QStringLiteral(":/compressonatorgui/images/smallgraystone.png")));
+                                                                g_pProgressDlg->SetValue(0);
+                                                            }
+                                                            else
+                                                            {
+                                                                NumberOfItemCompressed++;
+                                                                if (ProjectView->m_CompressStatusDialog)
+                                                                    ProjectView->m_CompressStatusDialog->appendText("[Mesh Compression] Done.");
+                                                                g_pProgressDlg->SetValue(0);
+                                                            }
+
+                                                            // Update Icon if new file exists
+                                                            if (!ProjectView->Tree_updateCompressIcon(Imageitem, QString(DracoOptions.output.c_str()), true))
+                                                            {
+                                                                NumberOfItemCompressedFailed++;
+                                                                g_pProgressDlg->SetValue(0);
+                                                            }
                                                         }
                                                         else
                                                         {
-                                                            NumberOfItemCompressed++;
                                                             if (ProjectView->m_CompressStatusDialog)
-                                                                ProjectView->m_CompressStatusDialog->appendText("[Mesh Compression] Done.");
-                                                            g_pProgressDlg->SetValue(0);
-                                                        }
+                                                                ProjectView->m_CompressStatusDialog->appendText("[Mesh Compression] Error in processing mesh.");
 
-                                                        // Update Icon if new file exists
-                                                        if (!ProjectView->Tree_updateCompressIcon(Imageitem, QString(DracoOptions.output.c_str()), true))
-                                                        {
                                                             NumberOfItemCompressedFailed++;
+                                                            Imageitem->setIcon(0, QIcon(QStringLiteral(":/compressonatorgui/images/smallredstone.png")));
                                                             g_pProgressDlg->SetValue(0);
                                                         }
-                                                    }
-                                                    else
-                                                    {
-                                                        if (ProjectView->m_CompressStatusDialog)
-                                                            ProjectView->m_CompressStatusDialog->appendText("[Mesh Compression] Error in processing mesh.");
-
-                                                        NumberOfItemCompressedFailed++;
-                                                        Imageitem->setIcon(0, QIcon(QStringLiteral(":/compressonatorgui/images/smallredstone.png")));
-                                                        g_pProgressDlg->SetValue(0);
                                                     }
                                                 }
+                                                else
+                                                {
+                                                    if (ProjectView->m_CompressStatusDialog)
+                                                        ProjectView->m_CompressStatusDialog->appendText("[Mesh Compression] Error in init mesh plugin.");
+                                                }
+
+                                                plugin_MeshComp->CleanUp();
                                             }
                                             else
                                             {
                                                 if (ProjectView->m_CompressStatusDialog)
-                                                    ProjectView->m_CompressStatusDialog->appendText("[Mesh Compression] Error in init mesh plugin.");
+                                                    ProjectView->m_CompressStatusDialog->appendText(
+                                                        "[Mesh Compression] Error in loading mesh compression plugin.");
                                             }
 
-                                            plugin_MeshComp->CleanUp();
+                                            if (plugin_MeshComp)
+                                            {
+                                                delete plugin_MeshComp;
+                                                plugin_MeshComp = nullptr;
+                                            }
+                                            if (m_plugin_loader_drc)
+                                            {
+                                                delete m_plugin_loader_drc;
+                                                m_plugin_loader_drc = nullptr;
+                                            }
                                         }
-                                        else
-                                        {
-                                            if (ProjectView->m_CompressStatusDialog)
-                                                ProjectView->m_CompressStatusDialog->appendText("[Mesh Compression] Error in loading mesh compression plugin.");
-                                        }
-
-                                        if (plugin_MeshComp)
-                                        {
-                                            delete plugin_MeshComp;
-                                            plugin_MeshComp = nullptr;
-                                        }
-                                        if (m_plugin_loader_drc)
-                                        {
-                                            delete m_plugin_loader_drc;
-                                            m_plugin_loader_drc = nullptr;
-                                        }
-                                    }
+#endif
                                 }  // end if Compressed Vertex Checked
                             }
                         }
@@ -7130,7 +7187,7 @@ void CompressFiles(QFile* file, ProjectView* ProjectView)
                     QString ssim;
 
                     time.sprintf("%03.3f", (m_AnalaysisData.processTime / m_AnalaysisData.processCount));
-                    psnr.sprintf("%03.1f", (m_AnalaysisData.PSNR_Total / m_AnalaysisData.processCount));
+                    psnr.sprintf("%03.2f", (m_AnalaysisData.PSNR_Total / m_AnalaysisData.processCount));
                     ssim.sprintf("%01.4f", (m_AnalaysisData.SSIM_Total / m_AnalaysisData.processCount));
 
                     Msg.append(", Time ");

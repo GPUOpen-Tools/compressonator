@@ -45,7 +45,11 @@
 
 // Standard App Static Plugin Interfaces for minimal support
 #pragma comment(lib, "Image_ASTC.lib")
+
+#if (OPTION_BUILD_EXR == 1)
 #pragma comment(lib, "Image_EXR.lib")
+#endif
+
 #pragma comment(lib, "Image_KTX.lib")
 #ifdef _WIN32
 #pragma comment(lib, "Image_KTX2.lib")
@@ -234,6 +238,9 @@ void PrintUsage()
     printf("                             values of 4,5,6,8,10 or 12 from 4x4 to 12x12\n");
     printf("-DXT1UseAlpha <value>        Encode single-bit alpha data.\n");
     printf("                             Only valid when compressing to DXT1 & BC1\n");
+    printf("-RefineSteps <value>         Adds extra steps in encoding for BC1,BC2 and BC3\n");
+    printf("                             To improve quality over performance.\n");
+    printf("                             Step range is 1 to 3\n");
     printf("-CompressionSpeed <value>    The trade-off between compression speed & quality\n");
     printf("                             This setting is not used in BC6H and BC7\n");
     printf("-NumThreads <value>          Number of threads to initialize for ASTC,BC6H,BC7\n");
@@ -430,7 +437,11 @@ int main(int argc, char* argv[])
     g_CMIPS = new CMIPS;
 
     g_pluginManager.registerStaticPlugin("IMAGE", "ASTC", (void*)make_Plugin_ASTC);
+
+#if (OPTION_BUILD_EXR == 1)
     g_pluginManager.registerStaticPlugin("IMAGE", "EXR", (void*)make_Plugin_EXR);
+#endif
+
     g_pluginManager.registerStaticPlugin("IMAGE", "TGA", (void*)make_Plugin_TGA);  // Use for load only, Qt will be used for Save
     g_pluginManager.registerStaticPlugin("IMAGE", "KTX", (void*)make_Plugin_KTX);
     g_pluginManager.registerStaticPlugin("IMAGE", "ANALYSIS", (void*)make_Plugin_CAnalysis);

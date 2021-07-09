@@ -349,10 +349,10 @@ void GltfPbr::CreatePipeline(ID3D12Device* pDevice, UINT node, std::vector<std::
     //
     {
         CD3DX12_DESCRIPTOR_RANGE DescRange[4];
-        DescRange[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);		// b0 <- per frame
-        DescRange[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, pPrimitive->m_pMaterial->m_textureCount, 0);		// t0 <- per material
-        DescRange[2].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);		// b1 <- per material parameters
-        DescRange[3].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 5, 0);	// s0 <- samplers
+        DescRange[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);        // b0 <- per frame
+        DescRange[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, pPrimitive->m_pMaterial->m_textureCount, 0);        // t0 <- per material
+        DescRange[2].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);        // b1 <- per material parameters
+        DescRange[3].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 5, 0);    // s0 <- samplers
 
         CD3DX12_ROOT_PARAMETER RTSlot[4];
         RTSlot[0].InitAsDescriptorTable(1, &DescRange[0], D3D12_SHADER_VISIBILITY_ALL);

@@ -24,9 +24,12 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#ifndef NO_LEGACY_BEHAVIOR
-#include "usedefinitions.h"
+#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
+#define _CRT_SECURE_NO_WARNINGS
 #endif
+
+#define USE_CMP_CORE_API
+
 #include "compressonator.h"
 
 #include <stdio.h>
@@ -46,6 +49,16 @@
     ((CMP_DWORD)(CMP_BYTE)(ch0) | ((CMP_DWORD)(CMP_BYTE)(ch1) << 8) | ((CMP_DWORD)(CMP_BYTE)(ch2) << 16) | ((CMP_DWORD)(CMP_BYTE)(ch3) << 24))
 #endif
 
+// Codec options
+#ifndef USE_ETCPACK
+#define USE_ETCPACK  // Use ETCPack for ETC2 else use CModel code!
+#endif
+
+#ifndef USE_OLD_SWIZZLE
+#define USE_OLD_SWIZZLE  //  Remove swizzle flag and abide by CMP_Formats
+#endif
+
+
 typedef half CMP_HALF;  ///< A 16-bit floating point number class
 
 #define QT_KEY_SPACE 0x20  // Qt::Key_Space = 0x20
@@ -54,7 +67,12 @@ typedef half CMP_HALF;  ///< A 16-bit floating point number class
 #define UNREFERENCED_PARAMETER(P) (P)
 
 #ifndef cmp_isnan
+// Needs Defs for Apple
+#ifdef __APPLE__
+#define cmp_isnan(x) isnan(x)
+#else
 #define cmp_isnan(x) std::isnan(x)
+#endif
 #endif
 
 typedef enum _AnalysisErrorCodeType
@@ -156,12 +174,12 @@ extern void PrintInfo(const char* Format, ...);
 
 #define MINIMUM_WEIGHT_VALUE 0.01f
 
-#define AMD_CODEC_QUALITY_DEFAULT 0.05f  ///< This is the default value set for all Codecs (Gives fast Processing and lowest Quality)
-#define AMD_CODEC_EXPOSURE_DEFAULT 0     ///< This is the default value set for exposure value of hdr/exr input image
-#define AMD_CODEC_DEFOG_DEFAULT 0        ///< This is the default value set for defog value of hdr/exr input image
-#define AMD_CODEC_KNEELOW_DEFAULT 0      ///< This is the default value set for kneelow value of hdr/exr input image
-#define AMD_CODEC_KNEEHIGH_DEFAULT 5     ///< This is the default value set for kneehigh value of hdr/exr input image
-#define AMD_CODEC_GAMMA_DEFAULT 2.2f     ///< This is the default value set for gamma value of hdr/exr input image
+#define AMD_CODEC_QUALITY_DEFAULT   0.05f ///< This is the default value set for all Codecs (Gives fast Processing and lowest Quality)
+#define AMD_CODEC_EXPOSURE_DEFAULT  0     ///< This is the default value set for exposure value of hdr/exr input image
+#define AMD_CODEC_DEFOG_DEFAULT     0     ///< This is the default value set for defog value of hdr/exr input image
+#define AMD_CODEC_KNEELOW_DEFAULT   0     ///< This is the default value set for kneelow value of hdr/exr input image
+#define AMD_CODEC_KNEEHIGH_DEFAULT  5     ///< This is the default value set for kneehigh value of hdr/exr input image
+#define AMD_CODEC_GAMMA_DEFAULT     2.2f  ///< This is the default value set for gamma value of hdr/exr input image
 
 #define CMP_MESH_COMP_LEVEL 7    ///< This is the default value set for draco compress level for mesh compression
 #define CMP_MESH_POS_BITS 14     ///< This is the default value set for draco position quantization bits for mesh compression

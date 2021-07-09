@@ -37,8 +37,8 @@ class DrawCube {
     UINT m_NumIndices;
     D3D12_INDEX_BUFFER_VIEW m_IBV;
     D3D12_VERTEX_BUFFER_VIEW m_VBV;
-    Microsoft::WRL::ComPtr<ID3D12RootSignature>	m_RootSignature;
-    Microsoft::WRL::ComPtr<ID3D12PipelineState>	m_PipelineRender;
+    Microsoft::WRL::ComPtr<ID3D12RootSignature>    m_RootSignature;
+    Microsoft::WRL::ComPtr<ID3D12PipelineState>    m_PipelineRender;
 
     DynamicBufferRingDX12 *m_pDynamicBufferRing;
     ResourceViewHeapsDX12 *m_pResourceViewHeaps;

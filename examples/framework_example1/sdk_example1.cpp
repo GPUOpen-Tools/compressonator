@@ -24,7 +24,7 @@
 // Example1: Console application that demonstrates Framework SDK API
 //
 // SDK files required for application:
-//     CMP_Framework.h
+//     compressonator.h
 //     CMP_Framework_xx.lib  For static libs xx is either MD, MT or MDd or MTd,
 //                      When using DLL builds make sure the  CMP_Framework_xx_DLL.dll is in exe path
 
@@ -32,7 +32,7 @@
 #include <stdio.h>
 #include <string>
 
-#include "CMP_Framework.h"
+#include "compressonator.h"
 
 // Example code using high level SDK API's optimized with MultiThreading for processing a single image
 // Note:Limited error checking is done on user arguments, so all parameters must be correct in this example

@@ -33,15 +33,17 @@
 #include <QtGui/qpainter.h>
 #include <QtCore/qdebug.h>
 
-#pragma warning(push)
-#pragma warning(disable : 4100)
-#pragma warning(disable : 4800)
-#include <ImfStandardAttributes.h>
-#include <ImathBox.h>
-#include <ImfArray.h>
-#include <ImfRgba.h>
-#include <ImfArray.h>
-#pragma warning(pop)
+#if (OPTION_BUILD_EXR == 1)
+    #pragma warning(push)
+    #pragma warning(disable : 4100)
+    #pragma warning(disable : 4800)
+    #include <ImfStandardAttributes.h>
+    #include <ImathBox.h>
+    #include <ImfArray.h>
+    #include <ImfRgba.h>
+    #include <ImfArray.h>
+    #pragma warning(pop)
+#endif
 
 bool            g_useCPUDecode    = true;
 MIPIMAGE_FORMAT g_gpudecodeFormat = Format_OpenGL;

@@ -60,8 +60,8 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
  * sanity checks the values and returns information about the texture in a
  * KTX_texinfo structure.
  *
- * @param header	pointer to the KTX header to check
- * @param texinfo	pointer to a KTX_texinfo structure in which to return
+ * @param header    pointer to the KTX header to check
+ * @param texinfo    pointer to a KTX_texinfo structure in which to return
  *                  information about the texture.
  * 
  * @author Georg Kolling, Imagination Technology
@@ -69,101 +69,101 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
  */
 KTX_error_code _ktxCheckHeader(KTX_header* header, KTX_texinfo* texinfo)
 {
-	khronos_uint8_t identifier_reference[12] = KTX_IDENTIFIER_REF;
-	khronos_uint32_t max_dim;
+    khronos_uint8_t identifier_reference[12] = KTX_IDENTIFIER_REF;
+    khronos_uint32_t max_dim;
 
-	/* Compare identifier, is this a KTX file? */
-	if (memcmp(header->identifier, identifier_reference, 12) != 0)
-	{
-		return KTX_UNKNOWN_FILE_FORMAT;
-	}
+    /* Compare identifier, is this a KTX file? */
+    if (memcmp(header->identifier, identifier_reference, 12) != 0)
+    {
+        return KTX_UNKNOWN_FILE_FORMAT;
+    }
 
-	if (header->endianness == KTX_ENDIAN_REF_REV)
-	{
-		/* Convert endianness of header fields. */
-		_ktxSwapEndian32(&header->glType, 12);
+    if (header->endianness == KTX_ENDIAN_REF_REV)
+    {
+        /* Convert endianness of header fields. */
+        _ktxSwapEndian32(&header->glType, 12);
 
-		if (header->glTypeSize != 1 &&
-			header->glTypeSize != 2 &&
-			header->glTypeSize != 4)
-		{
-			/* Only 8-, 16-, and 32-bit types supported so far. */
-			return KTX_INVALID_VALUE;
-		}
-	}
-	else if (header->endianness != KTX_ENDIAN_REF)
-	{
-		return KTX_INVALID_VALUE;
-	}
+        if (header->glTypeSize != 1 &&
+            header->glTypeSize != 2 &&
+            header->glTypeSize != 4)
+        {
+            /* Only 8-, 16-, and 32-bit types supported so far. */
+            return KTX_INVALID_VALUE;
+        }
+    }
+    else if (header->endianness != KTX_ENDIAN_REF)
+    {
+        return KTX_INVALID_VALUE;
+    }
 
-	/* Check glType and glFormat */
-	texinfo->compressed = 0;
-	if (header->glType == 0 || header->glFormat == 0)
-	{
-		if (header->glType + header->glFormat != 0)
-		{
-			/* either both or none of glType, glFormat must be zero */
-			return KTX_INVALID_VALUE;
-		}
-		texinfo->compressed = 1;
-	}
+    /* Check glType and glFormat */
+    texinfo->compressed = 0;
+    if (header->glType == 0 || header->glFormat == 0)
+    {
+        if (header->glType + header->glFormat != 0)
+        {
+            /* either both or none of glType, glFormat must be zero */
+            return KTX_INVALID_VALUE;
+        }
+        texinfo->compressed = 1;
+    }
 
-	/* Check texture dimensions. KTX files can store 8 types of textures:
-	   1D, 2D, 3D, cube, and array variants of these. There is currently
-	   no GL extension for 3D array textures. */
-	if ((header->pixelWidth == 0) ||
-		(header->pixelDepth > 0 && header->pixelHeight == 0))
-	{
-		/* texture must have width */
-		/* texture must have height if it has depth */
-		return KTX_INVALID_VALUE; 
-	}
+    /* Check texture dimensions. KTX files can store 8 types of textures:
+       1D, 2D, 3D, cube, and array variants of these. There is currently
+       no GL extension for 3D array textures. */
+    if ((header->pixelWidth == 0) ||
+        (header->pixelDepth > 0 && header->pixelHeight == 0))
+    {
+        /* texture must have width */
+        /* texture must have height if it has depth */
+        return KTX_INVALID_VALUE; 
+    }
 
-	texinfo->textureDimensions = 1;
-	texinfo->glTarget = GL_TEXTURE_1D;
-	texinfo->generateMipmaps = 0;
-	if (header->pixelHeight > 0)
-	{
-		texinfo->textureDimensions = 2;
-		texinfo->glTarget = GL_TEXTURE_2D;
-	}
-	if (header->pixelDepth > 0)
-	{
-		texinfo->textureDimensions = 3;
-		texinfo->glTarget = GL_TEXTURE_3D;
-	}
+    texinfo->textureDimensions = 1;
+    texinfo->glTarget = GL_TEXTURE_1D;
+    texinfo->generateMipmaps = 0;
+    if (header->pixelHeight > 0)
+    {
+        texinfo->textureDimensions = 2;
+        texinfo->glTarget = GL_TEXTURE_2D;
+    }
+    if (header->pixelDepth > 0)
+    {
+        texinfo->textureDimensions = 3;
+        texinfo->glTarget = GL_TEXTURE_3D;
+    }
 
-	if (header->numberOfFaces == 6)
-	{
-		if (texinfo->textureDimensions == 2)
-		{
-			texinfo->glTarget = GL_TEXTURE_CUBE_MAP;
-		}
-		else
-		{
-			/* cube map needs 2D faces */
-			return KTX_INVALID_VALUE;
-		}
-	}
-	else if (header->numberOfFaces != 1)
-	{
-		/* numberOfFaces must be either 1 or 6 */
-		return KTX_INVALID_VALUE;
-	}
+    if (header->numberOfFaces == 6)
+    {
+        if (texinfo->textureDimensions == 2)
+        {
+            texinfo->glTarget = GL_TEXTURE_CUBE_MAP;
+        }
+        else
+        {
+            /* cube map needs 2D faces */
+            return KTX_INVALID_VALUE;
+        }
+    }
+    else if (header->numberOfFaces != 1)
+    {
+        /* numberOfFaces must be either 1 or 6 */
+        return KTX_INVALID_VALUE;
+    }
     
-	/* Check number of mipmap levels */
-	if (header->numberOfMipmapLevels == 0)
-	{
-		texinfo->generateMipmaps = 1;
-		header->numberOfMipmapLevels = 1;
-	}
+    /* Check number of mipmap levels */
+    if (header->numberOfMipmapLevels == 0)
+    {
+        texinfo->generateMipmaps = 1;
+        header->numberOfMipmapLevels = 1;
+    }
     /* This test works for arrays too because height or depth will be 0. */
     max_dim = MAX(MAX(header->pixelWidth, header->pixelHeight), header->pixelDepth);
-	if (max_dim < ((khronos_uint32_t)1 << (header->numberOfMipmapLevels - 1)))
-	{
-		/* Can't have more mip levels than 1 + log2(max(width, height, depth)) */
-		return KTX_INVALID_VALUE;
-	}
+    if (max_dim < ((khronos_uint32_t)1 << (header->numberOfMipmapLevels - 1)))
+    {
+        /* Can't have more mip levels than 1 + log2(max(width, height, depth)) */
+        return KTX_INVALID_VALUE;
+    }
 
-	return KTX_SUCCESS;
+    return KTX_SUCCESS;
 }

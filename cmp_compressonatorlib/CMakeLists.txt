@@ -4,25 +4,27 @@ add_library(CMP_Compressonator STATIC "")
 
 # Reserved for Future releases
 file(GLOB_RECURSE CMP_CORE_SRC
-#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc1_encode_kernel.h
-#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc1_encode_kernel.cpp
-#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc2_encode_kernel.h
-#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc2_encode_kernel.cpp
-#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc3_encode_kernel.h
-#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc3_encode_kernel.cpp
-#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc4_encode_kernel.h
-#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc4_encode_kernel.cpp
-#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc5_encode_kernel.h
-#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc5_encode_kernel.cpp
-#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc6_encode_kernel.h
-#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc6_encode_kernel.cpp
-#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc7_encode_kernel.h
-#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc7_encode_kernel.cpp
-#     ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bcn_common_kernel.h
+      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc1_encode_kernel.h
+      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc1_encode_kernel.cpp
+      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc2_encode_kernel.h
+      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc2_encode_kernel.cpp
+      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc3_encode_kernel.h
+      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc3_encode_kernel.cpp
+      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc4_encode_kernel.h
+      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc4_encode_kernel.cpp
+      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc5_encode_kernel.h
+      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc5_encode_kernel.cpp
+      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc6_encode_kernel.h
+      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc6_encode_kernel.cpp
+      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc7_encode_kernel.h
+      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc7_encode_kernel.cpp
+      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bcn_common_kernel.h
+      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bcn_common_api.h
+      ${PROJECT_SOURCE_DIR}/cmp_core/source/cmp_core.h
+      ${PROJECT_SOURCE_DIR}/cmp_core/source/cmp_math_func.h
+      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/
       ${PROJECT_SOURCE_DIR}/cmp_core/shaders/common_def.h
-#     ${PROJECT_SOURCE_DIR}/cmp_core/source/cmp_core.h
-#     ${PROJECT_SOURCE_DIR}/cmp_core/source/cmp_math_vec4.h
-#     ${PROJECT_SOURCE_DIR}/cmp_core/source/cmp_math_func.h
+      ${PROJECT_SOURCE_DIR}/cmp_core/source/cmp_math_vec4.h
 )
 
 file(GLOB_RECURSE CMP_SRCS
@@ -80,6 +82,7 @@ target_sources(CMP_Compressonator
 target_include_directories(CMP_Compressonator
                            PRIVATE
                            ./
+                           apc
                            astc
                            astc/arm/
                            atc

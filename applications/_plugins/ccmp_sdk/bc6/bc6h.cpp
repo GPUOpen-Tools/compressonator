@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2018    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2021    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -94,8 +94,13 @@ void* Plugin_BC6H::TC_Create() {
 }
 
 void  Plugin_BC6H::TC_Destroy(void* codec) {
-    delete codec;
-    codec = nullptr;
+    if (codec != nullptr)
+    {
+        BC6H_EncodeClass* pcodec;
+        pcodec = reinterpret_cast<BC6H_EncodeClass*>(codec);
+        delete pcodec;
+        codec = nullptr;
+    }
 }
 
 void Plugin_BC6H::InitCodecDefaults() {

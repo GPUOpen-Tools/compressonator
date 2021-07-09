@@ -77,7 +77,7 @@ bool CCodecBuffer_RG16::ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE
     if(x >= GetWidth() || y >= GetHeight())
         return false;
 
-    CMP_DWORD dwWidth = min(w, (GetWidth() - x));
+    CMP_DWORD dwWidth = cmp_minT(w, (GetWidth() - x));
 
     CMP_DWORD i,j;
     for(j = 0; j < h && (y + j) < GetHeight(); j++) {
@@ -106,7 +106,7 @@ bool CCodecBuffer_RG16::WriteBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYT
     if(x >= GetWidth() || y >= GetHeight())
         return false;
 
-    CMP_DWORD dwWidth = min(w, (GetWidth() - x));
+    CMP_DWORD dwWidth = cmp_minT(w, (GetWidth() - x));
 
     for(CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); j++) {
         CMP_WORD* pData = (CMP_WORD*) (GetData() + ((y + j) * m_dwPitch) + (x * nChannelCount * sizeof(CMP_WORD)));
@@ -191,7 +191,7 @@ bool CCodecBuffer_RG16::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_
     if(x >= GetWidth() || y >= GetHeight())
         return false;
 
-    CMP_DWORD dwWidth = min(w, (GetWidth() - x));
+    CMP_DWORD dwWidth = cmp_minT(w, (GetWidth() - x));
 
     CMP_DWORD i, j;
     for(j = 0; j < h && (y + j) < GetHeight(); j++) {
@@ -226,7 +226,7 @@ bool CCodecBuffer_RG16::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP
     if(x >= GetWidth() || y >= GetHeight())
         return false;
 
-    CMP_DWORD dwWidth = min(w, (GetWidth() - x));
+    CMP_DWORD dwWidth = cmp_minT(w, (GetWidth() - x));
 
     for(CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); j++) {
         CMP_WORD* pData = (CMP_WORD*) (GetData() + ((y + j) * m_dwPitch) + (x * nPixelSize));

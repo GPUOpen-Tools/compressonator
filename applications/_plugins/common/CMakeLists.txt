@@ -1,4 +1,7 @@
 
+set (PLUGIN_COMMON_SRC "")
+set (PLUGIN_COMMON_H   "")
+
 if (OPTION_CMP_QT)
     set(PLUGIN_COMMON_SRC_QT
         mipstoqimage.cpp
@@ -12,9 +15,8 @@ else()
 endif()
 
 
-set(PLUGIN_COMMON_SRC
+list(APPEND PLUGIN_COMMON_SRC
     atiformats.cpp
-    cexr.cpp
     cmdline.cpp
     cmp_fileio.cpp
     misc.cpp
@@ -28,9 +30,8 @@ set(PLUGIN_COMMON_SRC
     utilfuncs.cpp
 )
 
-set(PLUGIN_COMMON_H
+list(APPEND PLUGIN_COMMON_H
     atiformats.h
-    cexr.h
     cmdline.h
     cmp_fileio.h
     common_kerneldef.h
@@ -54,6 +55,11 @@ set(PLUGIN_COMMON_H
     utilfuncs.h
     vectypes.h
 )
+
+if (OPTION_BUILD_EXR)
+    list(APPEND PLUGIN_COMMON_SRC cexr.cpp)
+    list(APPEND PLUGIN_COMMON_H   cexr.h)
+endif()
 
 add_library(CMP_Common STATIC 
     ${PLUGIN_COMMON_SRC} 

@@ -149,8 +149,8 @@ These files are part of the SDL2 source distributed by the [SDL project]
 #define KTX_OPENGL 1
 #if KTX_OPENGL
 
-	#ifdef _WIN32
-	  #include <windows.h>
+    #ifdef _WIN32
+      #include <windows.h>
       #undef KTX_USE_GETPROC  /* Must use GETPROC on Windows */
       #define KTX_USE_GETPROC 1
     #else
@@ -163,31 +163,31 @@ These files are part of the SDL2 source distributed by the [SDL project]
     #else
       #define GL_GLEXT_PROTOTYPES
       #include <GL/glcorearb.h>
-	#endif
+    #endif
 
-	#define GL_APIENTRY APIENTRY
+    #define GL_APIENTRY APIENTRY
     #define KTX_GLFUNCPTRS "gl_funcptrs.h"
 
 #elif KTX_OPENGL_ES1
 
-	#include <GLES/gl.h>
-	#include <GLES/glext.h>
+    #include <GLES/gl.h>
+    #include <GLES/glext.h>
 
     #define KTX_GLFUNCPTRS "gles1_funcptrs.h"
 
 #elif KTX_OPENGL_ES2
 
     #define GL_GLEXT_PROTOTYPES
-	#include <GLES2/gl2.h>
-	#include <GLES2/gl2ext.h>
+    #include <GLES2/gl2.h>
+    #include <GLES2/gl2ext.h>
 
     #define KTX_GLFUNCPTRS "gles2_funcptrs.h"
 
 #elif KTX_OPENGL_ES3
 
     #define GL_GLEXT_PROTOTYPES
-	#include <GLES3/gl3.h>
-	#include <GLES2/gl2ext.h>
+    #include <GLES3/gl3.h>
+    #include <GLES2/gl2ext.h>
 
     #define KTX_GLFUNCPTRS "gles3_funcptrs.h"
 
@@ -203,7 +203,7 @@ extern "C" {
 /**
  * @brief Key String for standard orientation value.
  */
-#define KTX_ORIENTATION_KEY	"KTXorientation"
+#define KTX_ORIENTATION_KEY    "KTXorientation"
 /**
  * @brief Standard format for 2D orientation value.
  */
@@ -221,17 +221,17 @@ extern "C" {
  * @brief Error codes returned by library functions.
  */
 typedef enum KTX_error_code_t {
-	KTX_SUCCESS = 0,		 /*!< Operation was successful. */
-	KTX_FILE_OPEN_FAILED,	 /*!< The target file could not be opened. */
-	KTX_FILE_WRITE_ERROR,    /*!< An error occurred while writing to the file. */
-	KTX_GL_ERROR,            /*!< GL operations resulted in an error. */
-	KTX_INVALID_OPERATION,   /*!< The operation is not allowed in the current state. */
-	KTX_INVALID_VALUE,	     /*!< A parameter value was not valid */
-	KTX_NOT_FOUND,			 /*!< Requested key was not found */
-	KTX_OUT_OF_MEMORY,       /*!< Not enough memory to complete the operation. */
-	KTX_UNEXPECTED_END_OF_FILE, /*!< The file did not contain enough data */
-	KTX_UNKNOWN_FILE_FORMAT, /*!< The file not a KTX file */
-	KTX_UNSUPPORTED_TEXTURE_TYPE, /*!< The KTX file specifies an unsupported texture type. */
+    KTX_SUCCESS = 0,         /*!< Operation was successful. */
+    KTX_FILE_OPEN_FAILED,     /*!< The target file could not be opened. */
+    KTX_FILE_WRITE_ERROR,    /*!< An error occurred while writing to the file. */
+    KTX_GL_ERROR,            /*!< GL operations resulted in an error. */
+    KTX_INVALID_OPERATION,   /*!< The operation is not allowed in the current state. */
+    KTX_INVALID_VALUE,         /*!< A parameter value was not valid */
+    KTX_NOT_FOUND,             /*!< Requested key was not found */
+    KTX_OUT_OF_MEMORY,       /*!< Not enough memory to complete the operation. */
+    KTX_UNEXPECTED_END_OF_FILE, /*!< The file did not contain enough data */
+    KTX_UNKNOWN_FILE_FORMAT, /*!< The file not a KTX file */
+    KTX_UNSUPPORTED_TEXTURE_TYPE, /*!< The KTX file specifies an unsupported texture type. */
 } KTX_error_code;
 
 /**
@@ -239,74 +239,74 @@ typedef enum KTX_error_code_t {
  */
 typedef struct KTX_texture_info_t
 {
-	/**
-	 * @brief The type of the image data.
-	 *
-	 * Values are the same as in the @p type parameter of
+    /**
+     * @brief The type of the image data.
+     *
+     * Values are the same as in the @p type parameter of
      * glTexImage*D. Must be 0 for compressed images.
-	 */
-	khronos_uint32_t glType;
-	/**
-	 * @brief The data type size to be used in case of endianness
-	 *        conversion.
-	 *
-	 * This value is used in the event conversion is required when the
-	 * KTX file is loaded. It should be the size in bytes corresponding
-	 * to glType. Must be 1 for compressed images.
-	 */
-	khronos_uint32_t glTypeSize;
-	/**
-	 * @brief The format of the image(s).
-	 *
-	 * Values are the same as in the format parameter
-	 * of glTexImage*D. Must be 0 for compressed images.
      */
-	khronos_uint32_t glFormat;
-	/** @brief The internalformat of the image(s).
-	 *
-	 * Values are the same as for the internalformat parameter of
-	 * glTexImage*2D. Note: it will not be used when a KTX file
-	 * containing an uncompressed texture is loaded into OpenGL ES.
-	 */
-	khronos_uint32_t glInternalFormat;
+    khronos_uint32_t glType;
+    /**
+     * @brief The data type size to be used in case of endianness
+     *        conversion.
+     *
+     * This value is used in the event conversion is required when the
+     * KTX file is loaded. It should be the size in bytes corresponding
+     * to glType. Must be 1 for compressed images.
+     */
+    khronos_uint32_t glTypeSize;
+    /**
+     * @brief The format of the image(s).
+     *
+     * Values are the same as in the format parameter
+     * of glTexImage*D. Must be 0 for compressed images.
+     */
+    khronos_uint32_t glFormat;
+    /** @brief The internalformat of the image(s).
+     *
+     * Values are the same as for the internalformat parameter of
+     * glTexImage*2D. Note: it will not be used when a KTX file
+     * containing an uncompressed texture is loaded into OpenGL ES.
+     */
+    khronos_uint32_t glInternalFormat;
     /** @brief The base internalformat of the image(s)
-	 *
-	 * For non-compressed textures, should be the same as glFormat.
-	 * For compressed textures specifies the base internal, e.g.
-	 * GL_RGB, GL_RGBA.
+     *
+     * For non-compressed textures, should be the same as glFormat.
+     * For compressed textures specifies the base internal, e.g.
+     * GL_RGB, GL_RGBA.
      */
-	khronos_uint32_t glBaseInternalFormat;
-	/** @brief Width of the image for texture level 0, in pixels. */
-	khronos_uint32_t pixelWidth;
-	/** @brief Height of the texture image for level 0, in pixels.
-	 *
-	 * Must be 0 for 1D textures.
-	 */
- 	khronos_uint32_t pixelHeight;
-	/** @brief Depth of the texture image for level 0, in pixels.
-	 *
-	 * Must be 0 for 1D, 2D and cube textures.
-	 */
-	khronos_uint32_t pixelDepth;
-	/** @brief The number of array elements.
-	 *
-	 * Must be 0 if not an array texture.
-	 */
-	khronos_uint32_t numberOfArrayElements;
-	/** @brief The number of cubemap faces.
-	 *
-	 * Must be 6 for cubemaps and cubemap arrays, 1 otherwise. Cubemap
+    khronos_uint32_t glBaseInternalFormat;
+    /** @brief Width of the image for texture level 0, in pixels. */
+    khronos_uint32_t pixelWidth;
+    /** @brief Height of the texture image for level 0, in pixels.
+     *
+     * Must be 0 for 1D textures.
+     */
+     khronos_uint32_t pixelHeight;
+    /** @brief Depth of the texture image for level 0, in pixels.
+     *
+     * Must be 0 for 1D, 2D and cube textures.
+     */
+    khronos_uint32_t pixelDepth;
+    /** @brief The number of array elements.
+     *
+     * Must be 0 if not an array texture.
+     */
+    khronos_uint32_t numberOfArrayElements;
+    /** @brief The number of cubemap faces.
+     *
+     * Must be 6 for cubemaps and cubemap arrays, 1 otherwise. Cubemap
      * faces must be provided in the order: +X, -X, +Y, -Y, +Z, -Z.
-	 */
-	khronos_uint32_t numberOfFaces;
+     */
+    khronos_uint32_t numberOfFaces;
     /** @brief The number of mipmap levels.
-	 *
+     *
      * 1 for non-mipmapped texture. 0 indicates that a full mipmap pyramid should
      * be generated from level 0 at load time (this is usually not allowed for
-	 * compressed formats). Mipmaps must be provided in order from largest size to
-	 * smallest size. The first mipmap level is always level 0.
-	 */
-	khronos_uint32_t numberOfMipmapLevels;
+     * compressed formats). Mipmaps must be provided in order from largest size to
+     * smallest size. The first mipmap level is always level 0.
+     */
+    khronos_uint32_t numberOfMipmapLevels;
 } KTX_texture_info;
 
 
@@ -314,8 +314,8 @@ typedef struct KTX_texture_info_t
  * @brief Structure used to pass image data to ktxWriteKTX.
  */
 typedef struct KTX_image_info {
-	GLsizei size;	/*!< Size of the image data in bytes. */
-	GLubyte* data;  /*!< Pointer to the image data. */
+    GLsizei size;    /*!< Size of the image data in bytes. */
+    GLubyte* data;  /*!< Pointer to the image data. */
 } KTX_image_info;
 
 
@@ -323,9 +323,9 @@ typedef struct KTX_image_info {
  * @brief Structure used to return texture dimensions
  */
 typedef struct KTX_dimensions {
-	GLsizei width;  /*!< */
-	GLsizei height; /*!< */
-	GLsizei depth;  /*!< */
+    GLsizei width;  /*!< */
+    GLsizei height; /*!< */
+    GLsizei depth;  /*!< */
 } KTX_dimensions;
 
 /**
@@ -339,9 +339,9 @@ typedef void* KTX_hash_table;
  */
 KTX_error_code
 ktxLoadTextureF(FILE*, GLuint* pTexture, GLenum* pTarget,
-				KTX_dimensions* pDimensions, GLboolean* pIsMipmapped,
-				GLenum* pGlerror,
-				unsigned int* pKvdLen, unsigned char** ppKvd);
+                KTX_dimensions* pDimensions, GLboolean* pIsMipmapped,
+                GLenum* pGlerror,
+                unsigned int* pKvdLen, unsigned char** ppKvd);
 
 /* ktxLoadTextureN
  *
@@ -349,9 +349,9 @@ ktxLoadTextureF(FILE*, GLuint* pTexture, GLenum* pTarget,
  */
 KTX_error_code
 ktxLoadTextureN(const char* const filename, GLuint* pTexture, GLenum* pTarget,
-				KTX_dimensions* pDimensions, GLboolean* pIsMipmapped,
-				GLenum* pGlerror,
-				unsigned int* pKvdLen, unsigned char** ppKvd);
+                KTX_dimensions* pDimensions, GLboolean* pIsMipmapped,
+                GLenum* pGlerror,
+                unsigned int* pKvdLen, unsigned char** ppKvd);
 
 /* ktxLoadTextureM
  *
@@ -359,9 +359,9 @@ ktxLoadTextureN(const char* const filename, GLuint* pTexture, GLenum* pTarget,
  */
 KTX_error_code
 ktxLoadTextureM(const void* bytes, GLsizei size, GLuint* pTexture, GLenum* pTarget,
-				KTX_dimensions* pDimensions, GLboolean* pIsMipmapped,
-				GLenum* pGlerror,
-				unsigned int* pKvdLen, unsigned char** ppKvd);
+                KTX_dimensions* pDimensions, GLboolean* pIsMipmapped,
+                GLenum* pGlerror,
+                unsigned int* pKvdLen, unsigned char** ppKvd);
 
 /* ktxWriteKTXF
  *
@@ -369,8 +369,8 @@ ktxLoadTextureM(const void* bytes, GLsizei size, GLuint* pTexture, GLenum* pTarg
  */
 KTX_error_code
 ktxWriteKTXF(FILE*, const KTX_texture_info* imageInfo,
-			 GLsizei bytesOfKeyValueData, const void* keyValueData,
-			 GLuint numImages, KTX_image_info images[]);
+             GLsizei bytesOfKeyValueData, const void* keyValueData,
+             GLuint numImages, KTX_image_info images[]);
 
 /* ktxWriteKTXN
  *
@@ -378,8 +378,8 @@ ktxWriteKTXF(FILE*, const KTX_texture_info* imageInfo,
  */
 KTX_error_code
 ktxWriteKTXN(const char* dstname, const KTX_texture_info* imageInfo,
-			 GLsizei bytesOfKeyValueData, const void* keyValueData,
-			 GLuint numImages, KTX_image_info images[]);
+             GLsizei bytesOfKeyValueData, const void* keyValueData,
+             GLuint numImages, KTX_image_info images[]);
 
 /* ktxWriteKTXM
  *
@@ -387,8 +387,8 @@ ktxWriteKTXN(const char* dstname, const KTX_texture_info* imageInfo,
  */
 KTX_error_code
 ktxWriteKTXM(unsigned char** bytes, GLsizei* size, const KTX_texture_info* textureInfo,
-			 GLsizei bytesOfKeyValueData, const void* keyValueData,
-			 GLuint numImages, KTX_image_info images[]);
+             GLsizei bytesOfKeyValueData, const void* keyValueData,
+             GLuint numImages, KTX_image_info images[]);
 
 /* ktxErrorString()
  *
@@ -414,7 +414,7 @@ void ktxHashTable_Destroy(KTX_hash_table This);
  */
 KTX_error_code
 ktxHashTable_AddKVPair(KTX_hash_table This, const char* key,
-					   unsigned int valueLen, const void* value);
+                       unsigned int valueLen, const void* value);
 
 
 /* ktxHashTable_FindValue()
@@ -423,7 +423,7 @@ ktxHashTable_AddKVPair(KTX_hash_table This, const char* key,
  */
 KTX_error_code
 ktxHashTable_FindValue(KTX_hash_table This, const char* key,
-					   unsigned int* pValueLen, void** pValue);
+                       unsigned int* pValueLen, void** pValue);
 
 
 /* ktxHashTable_Serialize()
@@ -474,11 +474,11 @@ Added:
     decoder.
 @li support for converting textures with legacy LUMINANCE, LUMINANCE_ALPHA,
     etc. formats to the equivalent R, RG, etc. format with an
-	appropriate swizzle, when loading in OpenGL Core Profile contexts.
+    appropriate swizzle, when loading in OpenGL Core Profile contexts.
 @li ktxErrorString function to return a string corresponding to an error code.
-@li	tests for ktxLoadTexture[FN] that run under OpenGL ES 3.0 and OpenGL 3.3.
+@li    tests for ktxLoadTexture[FN] that run under OpenGL ES 3.0 and OpenGL 3.3.
     The latter includes an EGL on WGL wrapper that makes porting apps between
-	OpenGL ES and OpenGL easier on Windows.
+    OpenGL ES and OpenGL easier on Windows.
 @li more texture formats to ktxLoadTexture[FN] and toktx tests.
 
 Changed:

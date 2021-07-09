@@ -34,6 +34,10 @@
 
 #include "common_def.h"
 
+#ifdef _WIN32
+#pragma warning(disable : 4201)
+#endif
+
 CodecError CCodec_DXTC::CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]) {
     BYTE nEndpoints[2][2];
     BYTE nIndices[2][BLOCK_SIZE_4X4];
@@ -408,7 +412,7 @@ static CGU_Vec2f cmp_OptimizeEndPoints(CGU_FLOAT* pPoints, CGU_INT8 cSteps, CGU_
     CGU_FLOAT fc;
     CGU_FLOAT fd;
 
-    for (size_t iIteration = 0; iIteration < 8; iIteration++)
+    for (CGU_UINT8 iIteration = 0; iIteration < 8; iIteration++)
     {
         // reach minimum threashold break
         if ((fY - fX) < (1.0f / 256.0f))
@@ -417,7 +421,7 @@ static CGU_Vec2f cmp_OptimizeEndPoints(CGU_FLOAT* pPoints, CGU_INT8 cSteps, CGU_
         CGU_FLOAT fScale = cStepsDiv / (fY - fX);
 
         // Calculate new steps
-        for (size_t iStep = 0; iStep < cSteps; iStep++)
+        for (CGU_INT8 iStep = 0; iStep < cSteps; iStep++)
         {
             fc            = (cStepsDiv - (CGU_FLOAT)iStep) / cStepsDiv;
             fd            = (CGU_FLOAT)iStep / cStepsDiv;
@@ -436,7 +440,7 @@ static CGU_Vec2f cmp_OptimizeEndPoints(CGU_FLOAT* pPoints, CGU_INT8 cSteps, CGU_
         CGU_FLOAT d2X = 0.0f;
         CGU_FLOAT d2Y = 0.0f;
 
-        for (size_t iPoint = 0; iPoint < BLOCK_SIZE_4X4; iPoint++)
+        for (CGU_UINT8 iPoint = 0; iPoint < BLOCK_SIZE_4X4; iPoint++)
         {
             float fDot = (pPoints[iPoint] - fX) * fScale;
 
@@ -451,7 +455,7 @@ static CGU_Vec2f cmp_OptimizeEndPoints(CGU_FLOAT* pPoints, CGU_INT8 cSteps, CGU_
             }
             else
             {
-                iStep = uint32_t(fDot + 0.5f);
+                iStep = CGU_INT8(fDot + 0.5f);
             }
 
             // steps to improve quality
@@ -502,7 +506,7 @@ static CGU_Vec2i CMP_FindEndpointsAlphaBlockSnorm(CGU_FLOAT alphaBlockSnorm[])
     cmpMinMax.x  = alphaBlockSnorm[0];
     cmpMinMax.y  = alphaBlockSnorm[0];
 
-        for (size_t i = 0; i < BLOCK_SIZE_4X4; ++i)
+        for (CGU_UINT8 i = 0; i < BLOCK_SIZE_4X4; ++i)
         {
             if (alphaBlockSnorm[i] < cmpMinMax.x)
             {
@@ -584,7 +588,7 @@ static uint64_t cmp_getBlockPackedIndicesSNorm(CGU_Vec2f alphaMinMax, const floa
             CGU_FLOAT fCurrentDelta = fabsf(alpha[uIndex] - alphaBlockSnorm[i]);
             if (fCurrentDelta < fBestDelta)
             {
-                uBestIndex = uIndex;
+                uBestIndex = (CGU_UINT8)(uIndex);
                 fBestDelta = fCurrentDelta;
             }
         }

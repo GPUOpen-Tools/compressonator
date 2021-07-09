@@ -77,12 +77,12 @@ extern float sse_sqrtf(  float *pIn );
 //==================================
 void cmp_autodected_cpufeatures(CMP_MATH_BYTE set);
 
-extern float(*cmp_clampf )(float value, float minval, float maxval);
+extern float(*cmp_clampf2 )(float value, float minval, float maxval);
 extern float(*cmp_lerp2  )(CMP_Vec4uc C1, CMP_Vec4uc CA, CMP_Vec4uc CB, CMP_Vec4uc C2, CMP_MATH_BYTE *encode1, CMP_MATH_BYTE *encode2);
-extern float(*cmp_maxf   )(float l1, float r1);
-extern float(*cmp_minf   )(float l1, float r1);
-extern float(*cmp_rsqf   )(float *);
-extern float(*cmp_sqrtf  )(float *);
+extern float(*cmp_maxf2   )(float l1, float r1);
+extern float(*cmp_minf2   )(float l1, float r1);
+extern float(*cmp_rsqf2   )(float *);
+extern float(*cmp_sqrtf2  )(float *);
 
 #endif
 

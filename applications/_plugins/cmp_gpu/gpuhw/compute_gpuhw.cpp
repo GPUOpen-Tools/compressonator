@@ -68,7 +68,9 @@ void PrintCGpu(const char* Format, ...) {
 #include <iostream>
 #include <random>
 #include <algorithm>
+#ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
+#endif
 #include <iostream>
 #include <stb_image.h>
 #include <stdexcept>

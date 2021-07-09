@@ -33,6 +33,7 @@
 #ifdef _WIN32
 #include "ddraw.h"
 #include "d3d9types.h"
+#pragma warning(disable : 4996)  //'fopen': This function or variable may be unsafe.
 #endif
 
 #include "dds.h"
@@ -40,7 +41,9 @@
 #include "dds_dx10.h"
 #include "dds_helpers.h"
 
+#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
 #define _CRT_SECURE_NO_WARNINGS
+#endif
 
 CMIPS*      DDS_CMips = NULL;
 const char* g_pszFilename;

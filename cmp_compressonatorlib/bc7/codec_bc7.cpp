@@ -71,9 +71,7 @@ unsigned int BC7ThreadProcEncode(void* param) {
             tp->run = FALSE;
         }
 
-        using namespace std::chrono;
-
-        std::this_thread::sleep_for(0ms);
+        std::this_thread::sleep_for(std::chrono::milliseconds(0));
     }
 
     return 0;
@@ -246,7 +244,7 @@ CodecError CCodec_BC7::InitializeBC7Library() {
         m_LiveThreads = 0;
         m_LastThread  = 0;
         //printf("BC7 CPU Num user threads = %d\n",m_NumEncodingThreads);
-        m_NumEncodingThreads = min(m_NumThreads, MAX_BC7_THREADS);
+        m_NumEncodingThreads = cmp_minT(m_NumThreads, MAX_BC7_THREADS);
         if (m_NumEncodingThreads == 0) {
             m_NumEncodingThreads = CMP_GetNumberOfProcessors();
             if (m_NumEncodingThreads <= 2)
@@ -408,12 +406,10 @@ CodecError CCodec_BC7::FinishBC7Encoding(void) {
 
         // Wait for all the live threads to finish any current work
         for (CMP_DWORD i = 0; i < m_LiveThreads; i++) {
-            using namespace std::chrono;
-
             // If a thread is in the running state then we need to wait for it to finish
             // its work from the producer
             while (m_EncodeParameterStorage[i].run == TRUE) {
-                std::this_thread::sleep_for(1ms);
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
             }
         }
     }

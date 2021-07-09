@@ -60,32 +60,13 @@ CMipImages* C_AnalysisData::GenerateDiffImage(const char *fsource, const char *f
         return NULL;
     }
 
-    std::string results_file = "";
-    std::string fdiff = "";
-    helper_toLower(src_ext);
-    helper_toLower(des_ext);
+    m_diffFile      = CreateResultsFileName(fsource,fdest,"_diff.bmp");
+    m_analysisFile  = CreateResultsFileName(fsource,fdest,"_analysis.xml");
 
-     std::string file_path = CMP_GetPath(fdest);
-
-    //if (!SourceAndDestFileExtMatch(src_ext.c_str(), des_ext.c_str()))
-    //{
-    //    printf("Error: Both source and destination file types must be the same\n");
-    //    return "";
-    //}
     Plugin_Canalysis *Plugin_Analysis;
-    fdiff = file_path;
-    int lastindex = (int)fdiff.find_last_of(".");
-    fdiff = fdiff.substr(0, lastindex);
-    fdiff.append("_diff.bmp");
-
-    results_file = file_path;
-    int index = (int)results_file.find_last_of(".");
-    results_file = results_file.substr(0, index);
-    results_file.append("_analysis.xml");
-
     Plugin_Analysis = reinterpret_cast<Plugin_Canalysis*>(g_pluginManager.GetPlugin("IMAGE", "ANALYSIS"));
     if (Plugin_Analysis) {
-        testpassed = Plugin_Analysis->TC_ImageDiff(fsource, fdest, fdiff.c_str(), (char*)results_file.c_str(), NULL, &g_pluginManager, (void**)&diffCMipImages, &ProgressCallback);
+        testpassed = Plugin_Analysis->TC_ImageDiff(fsource, fdest, m_diffFile.c_str(), (char*)m_analysisFile.c_str(), NULL, &g_pluginManager, (void**)&diffCMipImages, &ProgressCallback);
 
         delete Plugin_Analysis;
         Plugin_Analysis = NULL;
@@ -101,6 +82,24 @@ CMipImages* C_AnalysisData::GenerateDiffImage(const char *fsource, const char *f
     return NULL;
 }
 
+std::string C_AnalysisData::CreateResultsFileName(const char *fsource, const char *fdest, const char *type_ext)
+{
+    std::string results_file;
+
+    std::string file_path    = CMP_GetPath(fdest);
+    std::string src_fileName = CMP_GetJustFileName(fsource);
+    std::string dst_fileName = CMP_GetJustFileName(fdest);
+
+    results_file = file_path;
+    results_file.append("/");
+    results_file.append(src_fileName);
+    results_file.append("_");
+    results_file.append(dst_fileName);
+    results_file.append(type_ext);
+
+    return results_file;
+}
+
 int C_AnalysisData::GeneratePSNRMSEAnalysis(const char *fsource, const char *fdest) {
     int testpassed = 0;
     std::string src_ext = "";
@@ -113,27 +112,12 @@ int C_AnalysisData::GeneratePSNRMSEAnalysis(const char *fsource, const char *fde
         return NULL;
     }
 
-    std::string results_file = "";
-    helper_toLower(src_ext);
-    helper_toLower(des_ext);
+    m_analysisFile = CreateResultsFileName(fsource,fdest,"_analysis.xml");
 
-    std::string file_path = CMP_GetPath(fdest);
-
-    //if (!SourceAndDestFileExtMatch(src_ext.c_str(), des_ext.c_str()))
-    //{
-    //    printf("Error: Both source and destination file types must be the same\n");
-    //    return "";
-    //}
     Plugin_Canalysis *Plugin_Analysis;
-
-    results_file = file_path;
-    int index = (int)results_file.find_last_of(".");
-    results_file = results_file.substr(0, index);
-    results_file.append("_analysis.xml");
-
     Plugin_Analysis = reinterpret_cast<Plugin_Canalysis*>(g_pluginManager.GetPlugin("IMAGE", "ANALYSIS"));
     if (Plugin_Analysis) {
-        testpassed = Plugin_Analysis->TC_PSNR_MSE(fsource, fdest, (char*)results_file.c_str(), &g_pluginManager, &ProgressCallback);
+        testpassed = Plugin_Analysis->TC_PSNR_MSE(fsource, fdest, (char*)m_analysisFile.c_str(), &g_pluginManager, &ProgressCallback);
 
         delete Plugin_Analysis;
         Plugin_Analysis = NULL;
@@ -158,28 +142,12 @@ int C_AnalysisData::GenerateSSIMAnalysis(const char *fsource, const char *fdest)
         return NULL;
     }
 
-    std::string results_file = "";
+    m_analysisFile = CreateResultsFileName(fsource,fdest,"_analysis.xml");
 
-    helper_toLower(src_ext);
-    helper_toLower(des_ext);
-
-    std::string file_path = CMP_GetPath(fdest);
-
-    //if (!SourceAndDestFileExtMatch(src_ext.c_str(), des_ext.c_str()))
-    //{
-    //    printf("Error: Both source and destination file types must be the same\n");
-    //    return "";
-    //}
     Plugin_Canalysis *Plugin_Analysis;
-
-    results_file = file_path;
-    int index = (int)results_file.find_last_of(".");
-    results_file = results_file.substr(0, index);
-    results_file.append("_analysis.xml");
-
     Plugin_Analysis = reinterpret_cast<Plugin_Canalysis*>(g_pluginManager.GetPlugin("IMAGE", "ANALYSIS"));
     if (Plugin_Analysis) {
-        testpassed = Plugin_Analysis->TC_SSIM(fsource, fdest, (char*)results_file.c_str(), &g_pluginManager, &ProgressCallback);
+        testpassed = Plugin_Analysis->TC_SSIM(fsource, fdest, (char*)m_analysisFile.c_str(), &g_pluginManager, &ProgressCallback);
 
         delete Plugin_Analysis;
         Plugin_Analysis = NULL;

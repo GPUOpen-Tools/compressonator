@@ -91,7 +91,7 @@ cmake -G "Visual Studio 15 2017 Win64" ..\..\%CurrDirName%
 cd %CurrDir%
 
 REM #####################################################################################
-REM  Compressonator 
+REM  Compressonator : This will build all apps enabled in root folder CMakeList.txt
 REM #####################################################################################
 msbuild /m:4 /t:build /p:Configuration=release /p:Platform=x64   "%SCRIPT_DIR%/..\build\compressonator.sln"
 if not %ERRORLEVEL%==0 (
@@ -99,28 +99,6 @@ if not %ERRORLEVEL%==0 (
     cd %WORKDIR%
     exit /b 1
 )
-
-
-REM REM #####################################################################################
-REM REM  CompressonatorCLI COMMAND LINE VS2017 ToDo Change Folder names to be more generic
-REM REM #####################################################################################
-REM msbuild /m:4 /t:Build /p:Configuration=Release_MD /p:Platform=x64   "%SCRIPT_DIR%/..\applications\compressonatorCLI\VS2017\compressonatorCLI.sln"
-REM if not %ERRORLEVEL%==0 (
-REM     echo build of compressonatorCLI release_md x64 FAILED!
-REM     cd %WORKDIR%
-REM     exit /b 1
-REM )
-REM 
-REM REM REM ############################
-REM REM  Compressonator GUI VS2017
-REM REM ############################
-REM msbuild /m:4 /t:Build /p:Configuration=Release_MD /p:Platform=x64  /p:WarningLevel=0 "%SCRIPT_DIR%\..\applications\compressonatorGUI\VS2017\compressonatorGUI.sln"
-REM if not %ERRORLEVEL%==0 (
-REM     echo build of compressonatorGUI release_md x64 FAILED!
-REM     cd %WORKDIR%
-REM     exit /b 1
-REM 
-REM )
 
 REM #################
 REM CLEAN TMP FOLDER

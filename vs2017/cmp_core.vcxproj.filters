@@ -74,5 +74,23 @@
     <ClInclude Include="..\CMP_Core\source\cmp_math_func.h">
       <Filter>source</Filter>
     </ClInclude>
+    <ClInclude Include="..\cmp_core\shaders\bc1_cmp.h">
+      <Filter>BCn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_core\shaders\bc1_common_kernel.h">
+      <Filter>BCn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_core\shaders\bc6_common_encoder.h">
+      <Filter>BCn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_core\shaders\bc7_cmpmsc.h">
+      <Filter>BCn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_core\shaders\bc7_common_encoder.h">
+      <Filter>BCn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_core\shaders\bcn_common_api.h">
+      <Filter>BCn</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

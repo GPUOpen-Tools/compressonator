@@ -433,7 +433,7 @@ IMGUI_API ImVec2        CalcItemRectClosestPoint(const ImVec2& pos, bool on_edge
 IMGUI_API ImVec2        CalcTextSize(const char* text, const char* text_end = NULL, bool hide_text_after_double_hash = false, float wrap_width = -1.0f);
 IMGUI_API void          CalcListClipping(int items_count, float items_height, int* out_items_display_start, int* out_items_display_end);    // calculate coarse clipping for large list of evenly sized items. Prefer using the ImGuiListClipper higher-level helper if you can.
 
-IMGUI_API bool          BeginChildFrame(ImGuiID id, const ImVec2& size, ImGuiWindowFlags extra_flags = 0);	// helper to create a child window / scrolling region that looks like a normal widget frame
+IMGUI_API bool          BeginChildFrame(ImGuiID id, const ImVec2& size, ImGuiWindowFlags extra_flags = 0);    // helper to create a child window / scrolling region that looks like a normal widget frame
 IMGUI_API void          EndChildFrame();
 
 IMGUI_API ImVec4        ColorConvertU32ToFloat4(ImU32 in);
@@ -1187,8 +1187,8 @@ struct ImGuiTextEditCallbackData {
 // NB: For basic min/max size constraint on each axis you don't need to use the callback! The SetNextWindowSizeConstraints() parameters are enough.
 struct ImGuiSizeConstraintCallbackData {
     void*   UserData;       // Read-only.   What user passed to SetNextWindowSizeConstraints()
-    ImVec2  Pos;            // Read-only.	Window position, for reference.
-    ImVec2  CurrentSize;    // Read-only.	Current window size.
+    ImVec2  Pos;            // Read-only.    Window position, for reference.
+    ImVec2  CurrentSize;    // Read-only.    Current window size.
     ImVec2  DesiredSize;    // Read-write.  Desired size, based on user's mouse position. Write to this field to restrain resizing.
 };
 

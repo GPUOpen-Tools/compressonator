@@ -185,6 +185,79 @@ CMP_ERROR CMP_API CMP_CreateCompressMipSet(CMP_MipSet* pMipSetCMP, CMP_MipSet* p
     return CMP_OK;
 }
 
+CMP_ERROR CMP_API CMP_CreateMipSet(CMP_MipSet* pMipSet, CMP_INT nWidth, CMP_INT nHeight, CMP_INT nDepth, ChannelFormat channelFormat, TextureType textureType)
+{
+    CMP_CMIPS CMips;
+
+    pMipSet->m_Flags         = MS_FLAG_Default;
+    pMipSet->m_nHeight       = nHeight;
+    pMipSet->m_nWidth        = nWidth;
+    pMipSet->dwWidth         = 0;
+    pMipSet->dwHeight        = 0;
+    pMipSet->m_ChannelFormat = channelFormat;
+    pMipSet->m_dwFourCC      = 0;
+    pMipSet->m_nBlockHeight  = 4;
+    pMipSet->m_nBlockWidth   = 4;
+    pMipSet->m_nMaxMipLevels = CMP_CalcMaxMipLevel(nHeight, nWidth, false);
+    pMipSet->m_nMipLevels    = 1;
+    pMipSet->m_TextureType   = textureType;
+    pMipSet->m_nDepth        = nDepth;
+
+    if (!CMips.AllocateMipSet(pMipSet, channelFormat, TDT_ARGB, pMipSet->m_TextureType, nWidth, nHeight, nDepth))
+        return CMP_ERR_MEM_ALLOC_FOR_MIPSET;
+
+    //----------------------------------------------------------------
+    // Access the data table for mip level 0 (full texture width and height)
+    //----------------------------------------------------------------
+
+    MipLevel* pOutMipLevel = CMips.GetMipLevel(pMipSet, 0);
+
+    //-----------------------------------------------------------------------
+    // Calculate the target compressed block buffer size (4 bytes x 4 bytes)
+    //-----------------------------------------------------------------------
+    CMP_INT bytesPerChannel; // use m_ChannelFormat for this 
+
+    switch (channelFormat)
+    {
+        case CF_16bit:
+        case CF_Float16:
+            bytesPerChannel = 8;
+            break;
+        case CF_32bit:
+        case CF_Float32:
+            bytesPerChannel = 16;
+            break;
+       case CF_2101010    :
+       case CF_Float9995E :
+       case CF_YUV_420    :
+       case CF_YUV_422    :
+       case CF_YUV_444    :
+       case CF_YUV_4444   :
+            // toDo
+           return CMP_ERR_UNSUPPORTED_SOURCE_FORMAT;
+            break;
+       case CF_Compressed:
+       default:
+            bytesPerChannel = 4;
+            break;
+    }
+
+    pMipSet->dwDataSize     = (nWidth * nHeight) * bytesPerChannel;
+
+    //----------------------------------------------------------------
+    // Allocate memory for the mip level 0
+    //----------------------------------------------------------------
+    if (!CMips.AllocateCompressedMipLevelData(pOutMipLevel, pMipSet->m_nWidth, pMipSet->m_nHeight, pMipSet->dwDataSize))
+    {
+        std::printf("Memory Error(1): allocating MIPSet compression level data buffer\n");
+        return CMP_ERR_MEM_ALLOC_FOR_MIPSET;
+    }
+
+    pMipSet->pData = pOutMipLevel->m_pbData;
+
+    return CMP_OK;
+}
+
 // Code duplication for all 3 functions to calc MSE & PSNR
 // can reduce to typed templates
 
@@ -283,7 +356,7 @@ void CMP_calcMSE_PSNRb(MipLevel* pCurMipLevel, CMP_BYTE* pdata1, CMP_BYTE* pdata
     else
     {
         if (pAnalysisData->mse > 0.0)
-            pAnalysisData->psnr = 10 * log((1.0 * 255 * 255) / pAnalysisData->mse) / log(10.0);
+              pAnalysisData->psnr = 10 * log((1.0 * 255 * 255) / pAnalysisData->mse) / log(10.0);
         if (pAnalysisData->mseR > 0.0)
             pAnalysisData->psnrR = 10 * log((1.0 * 255 * 255) / pAnalysisData->mseR) / log(10.0);
         if (pAnalysisData->mseG > 0.0)
@@ -344,7 +417,8 @@ static float cmp_findKneeValue(float x, float y)
 // This is the default convertion used for CT_Foat16 to  CF_8Bit in Compressonators transcoding example. EXR to BC1..5,7
 static CMP_BYTE HalfShorttoByteCMP(CMP_HALFSHORT halfdata, CMP_BOOL alpha, CMP_AnalysisData* pAnalysisData)
 {
- 
+    (alpha);    // Unref for now
+
     CMP_FLOAT fdata = HalfShorttoFloat(halfdata);
     CMP_FLOAT fInputKneeHigh, fInputGamma;
 

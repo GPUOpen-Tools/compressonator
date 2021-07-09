@@ -15,5 +15,8 @@ target_link_libraries(core_example1
         CMP_Core
 )
 
-set_target_properties(core_example1 PROPERTIES FOLDER ${FOLDER_NAME})
+set_target_properties(core_example1 PROPERTIES 
+    FOLDER ${FOLDER_NAME}
+    VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$(Configuration)"
+    )
 

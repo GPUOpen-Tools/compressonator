@@ -52,9 +52,9 @@ float sse_sqrtf(  float *pIn ) {
 // CPU: Computes 1 / (square root of a float value)
 //-------------------------------------------------
 float cpu_rsqf(float *f) {
-    float sf = cmp_sqrtf(f);
+    float sf = cmp_sqrtf2(f);
     if (sf != 0)
-        return 1 / cmp_sqrtf(f);
+        return 1 / cmp_sqrtf2(f);
     else
         return 0.0f;
 }
@@ -157,7 +157,7 @@ void cpu_averageRGB(unsigned char *src_rgba_block) {
     medianB /= 16;
 
     // Now skew the colour weightings based on the gravity center of the block
-    float largest = cmp_maxf(cmp_maxf(medianR,medianG), medianB);
+    float largest = cmp_maxf2(cmp_maxf2(medianR,medianG), medianB);
 
     if (largest > 0) {
         medianR /= largest;
@@ -328,24 +328,24 @@ void cmp_set_fma3_features() {
 
 void cmp_set_cpu_features() {
     // features list in Alphabetical order
-    cmp_clampf   = cpu_clampf;
+    cmp_clampf2   = cpu_clampf;
     cmp_lerp2    = cpu_lerp2;
-    cmp_maxf     = cpu_maxf;
-    cmp_minf     = cpu_minf;
-    cmp_rsqf     = cpu_rsqf;
-    cmp_sqrtf    = cpu_sqrtf;
+    cmp_maxf2     = cpu_maxf;
+    cmp_minf2     = cpu_minf;
+    cmp_rsqf2     = cpu_rsqf;
+    cmp_sqrtf2    = cpu_sqrtf;
 }
 
 
 #ifdef CMP_USE_XMMINTRIN
 #ifndef __linux__
 void cmp_set_sse2_features() {
-    cmp_clampf   = sse_clampf;
+    cmp_clampf2   = sse_clampf;
     cmp_lerp2    = sse_lerp2;
-    cmp_maxf     = sse_maxf;
-    cmp_minf     = sse_minf;
-    cmp_rsqf     = sse_rsqf;
-    cmp_sqrtf    = sse_sqrtf;
+    cmp_maxf2     = sse_maxf;
+    cmp_minf2     = sse_minf;
+    cmp_rsqf2     = sse_rsqf;
+    cmp_sqrtf2    = sse_sqrtf;
 }
 #endif
 #endif
@@ -353,22 +353,22 @@ void cmp_set_sse2_features() {
 //---------------------------------
 // User Interface to the CMP_MATH
 //---------------------------------
-float(*cmp_sqrtf   ) (float *)                                   = cpu_sqrtf;
-float(*cmp_rsqf    ) (float *)                                   = cpu_rsqf;
-float(*cmp_minf    ) (float l1, float r1)                        = cpu_minf;
-float(*cmp_maxf    ) (float l1, float r1)                        = cpu_maxf;
-float(*cmp_clampf  ) (float value, float minval, float maxval)   = cpu_clampf;
+float(*cmp_sqrtf2   ) (float *)                                   = cpu_sqrtf;
+float(*cmp_rsqf2    ) (float *)                                   = cpu_rsqf;
+float(*cmp_minf2    ) (float l1, float r1)                        = cpu_minf;
+float(*cmp_maxf2    ) (float l1, float r1)                        = cpu_maxf;
+float(*cmp_clampf2  ) (float value, float minval, float maxval)   = cpu_clampf;
 float (*cmp_lerp2) (CMP_Vec4uc C1, CMP_Vec4uc CA, CMP_Vec4uc CB, CMP_Vec4uc C2, CMP_MATH_BYTE *encode1, CMP_MATH_BYTE *encode2) = cpu_lerp2;
 void  (*cmp_averageRGB)(unsigned char *src_rgba_block) = cpu_averageRGB;
 //}
 
 #else
 // OpenCL interfaces
-float cmp_sqrtf (float *)                                {};
-float cmp_rsqf  (float *)                                {};
-float cmp_minf  (float l1, float r1)                     {};
-float cmp_maxf  (float l1, float r1)                     {};
-float cmp_clampf(float value, float minval, float maxval) {};
+float cmp_sqrtf2 (float *)                                {};
+float cmp_rsqf2  (float *)                                {};
+float cmp_minf2  (float l1, float r1)                     {};
+float cmp_maxf2  (float l1, float r1)                     {};
+float cmp_clampf2(float value, float minval, float maxval) {};
 void  cmp_lerp2(CMP_Vec4uc C1, CMP_Vec4uc CA, CMP_Vec4uc CB, CMP_Vec4uc C2, CMP_MATH_BYTE *encode1, CMP_MATH_BYTE *encode2) {};
 void  cmp_averageRGB(unsigned char *src_rgba_block) {};
 #endif // not def OPENCL

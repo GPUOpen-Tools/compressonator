@@ -85,6 +85,8 @@ class CImageCompare : public acCustomDockWidget {
     QString                    m_sourceFile;
     QString                    m_destFile;
     std::string                m_analyzed;
+    std::string                m_resultsFile;
+
     CMipImages                *m_diffMips;
     QMainWindow               *m_parent;
     QToolBar                  *m_dockToolBar;

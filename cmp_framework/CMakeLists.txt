@@ -64,6 +64,7 @@ target_sources(CMP_Framework
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/query_timer.h
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/query_timer.cpp
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/stb_image.h
+        ${PROJECT_SOURCE_DIR}/applications/_plugins/common/gltf/stb_image_write.h
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/tc_pluginapi.h
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/tc_plugininternal.h
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/tc_plugininternal.cpp
@@ -73,6 +74,8 @@ target_sources(CMP_Framework
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cmp_fileio.cpp
 
         # CMP_SDK
+        ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk/bcn.cpp
+        ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk/bcn.h
         ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk/bc1/bc1.h
         ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk/bc1/bc1.cpp
         ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk/bc2/bc2.h
@@ -90,6 +93,24 @@ target_sources(CMP_Framework
         )
 
 
+if (OPTION_CMP_GTC)
+target_sources(CMP_Framework
+        PRIVATE
+        # Extra 
+        ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk/gtc/gtc.h
+        ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk/gtc/gtc.cpp
+        )
+endif()
+
+if (OPTION_CMP_APC)
+target_sources(CMP_Framework
+        PRIVATE
+        # Extra 
+        ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk/apc/apc.h
+        ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk/apc/apc.cpp
+        )
+endif()
+
 target_include_directories(CMP_Framework
         PRIVATE
         ./
@@ -97,7 +118,9 @@ target_include_directories(CMP_Framework
         ${PROJECT_SOURCE_DIR}/cmp_core/source
         ${PROJECT_SOURCE_DIR}/cmp_core/shaders
         ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
+        ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common
+        ${PROJECT_SOURCE_DIR}/applications/_plugins/common/gltf
         ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_math
         ${PROJECT_SOURCE_DIR}/applications/_libs/gpu_decode
         )

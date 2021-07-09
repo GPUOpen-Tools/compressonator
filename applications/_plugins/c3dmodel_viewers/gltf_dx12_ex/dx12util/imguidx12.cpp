@@ -424,7 +424,7 @@ void ImGUIDX12_UpdateIO() {
 
     // Hide OS mouse cursor if ImGui is drawing it
     if (io.MouseDrawCursor)
-        SetCursor(NULL);	// Start the frame
+        SetCursor(NULL);    // Start the frame
 }
 
 

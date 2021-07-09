@@ -25,7 +25,8 @@
 // DDS.h : Defines the entry point for the DLL application.
 
 
-#pragma once
+#ifndef _DDS_HELPERS_H
+#define _DDS_HELPERS_H
 
 
 #include "tc_pluginapi.h"
@@ -33,14 +34,14 @@
 #include "dds.h"
 
 typedef struct _ARGB8888Struct {
-    int		nFlags;
-    void*	pMemory;
-    int		nRMask;
-    int		nRShift;
-    int		nGMask;
-    int		nGShift;
-    int		nBMask;
-    int		nBShift;
+    int        nFlags;
+    void*    pMemory;
+    int        nRMask;
+    int        nRShift;
+    int        nGMask;
+    int        nGShift;
+    int        nBMask;
+    int        nBShift;
 } ARGB8888Struct;
 
 typedef enum _ExtraFlags {
@@ -122,3 +123,5 @@ TC_PluginError LoopR8(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipL
 
 bool SetupDDSD(DDSD2& ddsd2, const MipSet* pMipSet, bool bCompressed);
 bool SetupDDSD_DX10(DDSD2& ddsd2, const MipSet* pMipSet, bool bCompressed);
+
+#endif

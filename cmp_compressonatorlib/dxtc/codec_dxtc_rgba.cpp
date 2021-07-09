@@ -32,8 +32,18 @@
 #include "compressonatorxcodec.h"
 #include "dxtc_v11_compress.h"
 
-// #define PRINT_DECODE_INFO
+#include <algorithm>
 
+#ifdef USE_CMP_CORE_API
+#include "bcn_common_kernel.h"
+#include "bcn_common_api.h"
+#include "bc1_cmp.h"
+#endif
+
+using namespace CMP;
+
+// #define PRINT_DECODE_INFO
+using namespace std;
 
 CodecError CCodec_DXTC::CompressRGBABlock(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[4], CODECFLOAT* pfChannelWeights) {
     CMP_BYTE alphaBlock[BLOCK_SIZE_4X4];
@@ -89,20 +99,50 @@ Channel Bits
 #define BG 5
 
 CodecError CCodec_DXTC::CompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2], CODECFLOAT* pfChannelWeights, bool bDXT1, bool bDXT1UseAlpha, CMP_BYTE nDXT1AlphaThreshold) {
+
+#ifdef USE_CMP_CORE_API
+    CGU_Vec2ui cmpBlock;
+    CGU_Vec4f src_imageNorm[BLOCK_SIZE_4X4];
+
+    CGU_UINT32 jj=0;
+    for (CGU_UINT32 ii = 0; ii < 16; ii++)
+    {
+        src_imageNorm[ii].b = rgbBlock[jj++] / 255.0f;
+        src_imageNorm[ii].g = rgbBlock[jj++] / 255.0f;
+        src_imageNorm[ii].r = rgbBlock[jj++] / 255.0f;
+        src_imageNorm[ii].w = rgbBlock[jj++] / 255.0f;
+    }
+
+    cmpBlock = CompressBlockBC1_NORMALIZED(src_imageNorm,m_BC15Options);
+    compressedBlock[0] = cmpBlock.x;
+    compressedBlock[1] = cmpBlock.y;
+#else // Use Legacy API
     /*
     ARGB Channel indexes
     */
-
     int RC = 2, GC = 1, BC = 0;
 
     if(bDXT1 && m_nCompressionSpeed == CMP_Speed_Normal) {
         CMP_BYTE nEndpoints[2][3][2];
         CMP_BYTE nIndices[2][BLOCK_SIZE_4X4];
 
-        double fError3 = CompRGBBlock((DWORD*)rgbBlock, BLOCK_SIZE_4X4, RG, GG, BG, nEndpoints[0], nIndices[0], 3, m_bUseSSE2, m_b3DRefinement, m_nRefinementSteps, pfChannelWeights, bDXT1UseAlpha, nDXT1AlphaThreshold);
-        double fError4 = (fError3 == 0.0) ? FLT_MAX : CompRGBBlock((DWORD*)rgbBlock, BLOCK_SIZE_4X4, RG, GG, BG, nEndpoints[1], nIndices[1], 4, m_bUseSSE2, m_b3DRefinement, m_nRefinementSteps, pfChannelWeights, bDXT1UseAlpha, nDXT1AlphaThreshold);
+        double fError3 = CompRGBBlock((DWORD*)rgbBlock,compressedBlock, BLOCK_SIZE_4X4, RG, GG, BG, nEndpoints[0], nIndices[0], 3, m_bUseSSE2, m_b3DRefinement, m_nRefinementSteps, pfChannelWeights, bDXT1UseAlpha, nDXT1AlphaThreshold);
+
+        //printf(": %2d %2d %2d %2d %2d\n",nIndices[0][0],nIndices[0][1],nIndices[0][2],nIndices[0][3],nIndices[0][4]);
+
+       // use case of small min max ranges
+       if (compressedBlock[0] > 0) {
+           return CE_OK;
+       }
+
+        CMP_DWORD compressedBlock1[2];
+        double fError4 = (fError3 == 0.0) ? FLT_MAX : CompRGBBlock((DWORD*)rgbBlock, compressedBlock1, BLOCK_SIZE_4X4, RG, GG, BG, nEndpoints[1], nIndices[1], 4, m_bUseSSE2, m_b3DRefinement, m_nRefinementSteps, pfChannelWeights, bDXT1UseAlpha, nDXT1AlphaThreshold);
+
+        //if (fError3 > 0.0f)
+        //    printf(": %2d %2d %2d %2d %2d\n",nIndices[1][0],nIndices[1][1],nIndices[1][2],nIndices[1][3],nIndices[1][4]);
 
         unsigned int nMethod = (fError3 <= fError4) ? 0 : 1;
+
         unsigned int c0 = ConstructColour((nEndpoints[nMethod][RC][0] >> (8-RG)), (nEndpoints[nMethod][GC][0] >> (8-GG)), (nEndpoints[nMethod][BC][0] >> (8-BG)));
         unsigned int c1 = ConstructColour((nEndpoints[nMethod][RC][1] >> (8-RG)), (nEndpoints[nMethod][GC][1] >> (8-GG)), (nEndpoints[nMethod][BC][1] >> (8-BG)));
         if(nMethod == 1 && c0 <= c1 || nMethod == 0 && c0 > c1)
@@ -113,11 +153,13 @@ CodecError CCodec_DXTC::CompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CM
         compressedBlock[1] = 0;
         for(int i=0; i<16; i++)
             compressedBlock[1] |= (nIndices[nMethod][i] << (2*i));
-    } else {
+
+    } 
+    else {
         CMP_BYTE nEndpoints[3][2];
         CMP_BYTE nIndices[BLOCK_SIZE_4X4];
 
-        CompRGBBlock((DWORD*)rgbBlock, BLOCK_SIZE_4X4, RG, GG, BG, nEndpoints, nIndices, 4, m_bUseSSE2, m_b3DRefinement, m_nRefinementSteps, pfChannelWeights, bDXT1UseAlpha, nDXT1AlphaThreshold);
+        CompRGBBlock((DWORD*)rgbBlock,compressedBlock, BLOCK_SIZE_4X4, RG, GG, BG, nEndpoints, nIndices, 4, m_bUseSSE2, m_b3DRefinement, m_nRefinementSteps, pfChannelWeights, bDXT1UseAlpha, nDXT1AlphaThreshold);
 
         unsigned int c0 = ConstructColour((nEndpoints[RC][0] >> (8-RG)), (nEndpoints[GC][0] >> (8-GG)), (nEndpoints[BC][0] >> (8-BG)));
         unsigned int c1 = ConstructColour((nEndpoints[RC][1] >> (8-RG)), (nEndpoints[GC][1] >> (8-GG)), (nEndpoints[BC][1] >> (8-BG)));
@@ -130,6 +172,7 @@ CodecError CCodec_DXTC::CompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CM
         for(int i=0; i<16; i++)
             compressedBlock[1] |= (nIndices[i] << (2*i));
     }
+#endif
 
     return CE_OK;
 }
@@ -140,23 +183,7 @@ CodecError CCodec_DXTC::CompressRGBBlock_Fast(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4
 }
 
 CodecError CCodec_DXTC::CompressRGBBlock_SuperFast(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2]) {
-#ifndef NO_LEGACY_BEHAVIOR
-#if defined(USE_SSE2)
-#ifdef _WIN64
-    // todo: fix sse2 asm function
-    DXTCV11CompressBlockSSE2((DWORD*)rgbBlock, compressedBlock);
-#else
-    DXTCV11CompressBlockSSEMinimal((DWORD*)rgbBlock, compressedBlock);
-#endif
-#elif defined(USE_SSE)
-    DXTCV11CompressBlockSSE((DWORD*) rgbBlock, compressedBlock);
-#else
     CompressRGBBlock(rgbBlock, compressedBlock);
-#endif
-#else
-    CompressRGBBlock(rgbBlock, compressedBlock);
-#endif
-
     return CE_OK;
 }
 
@@ -232,19 +259,22 @@ CodecError CCodec_DXTC::CompressRGBABlock_ExplicitAlpha(CODECFLOAT rgbaBlock[BLO
     return CompressRGBBlock(rgbaBlock, &compressedBlock[DXTC_OFFSET_RGB], pfChannelWeights, false);
 }
 
-CodecError CCodec_DXTC::CompressRGBBlock(CODECFLOAT rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2], CODECFLOAT* pfChannelWeights, bool bDXT1, bool bDXT1UseAlpha, CODECFLOAT fDXT1AlphaThreshold) {
-    /*
-    ARGB Channel indexes
-    */
 
-    int RC = 2, GC = 1, BC = 0;
+// ToDo Remove this interface
+CodecError CCodec_DXTC::CompressRGBBlock(CODECFLOAT rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2], CODECFLOAT* pfChannelWeights, bool bDXT1, bool bDXT1UseAlpha, CODECFLOAT fDXT1AlphaThreshold) {
+    // Use Legacy API
+#ifndef USE_CMP_CORE_API
+     int RC = 2, GC = 1, BC = 0;
+#endif
 
     if(bDXT1) {
         CMP_BYTE nEndpoints[2][3][2];
         CMP_BYTE nIndices[2][BLOCK_SIZE_4X4];
 
-        double fError3 = CompRGBBlock(rgbBlock, BLOCK_SIZE_4X4, RG, GG, BG, nEndpoints[0], nIndices[0], 3, m_bUseSSE2, m_b3DRefinement, m_nRefinementSteps, pfChannelWeights, bDXT1UseAlpha, fDXT1AlphaThreshold);
-        double fError4 = (fError3 == 0.0) ? FLT_MAX : CompRGBBlock(rgbBlock, BLOCK_SIZE_4X4, RG, GG, BG, nEndpoints[1], nIndices[1], 4, m_bUseSSE2, m_b3DRefinement, m_nRefinementSteps, pfChannelWeights, bDXT1UseAlpha, fDXT1AlphaThreshold);
+        double fError3 = CompRGBBlock(rgbBlock,compressedBlock, BLOCK_SIZE_4X4, RG, GG, BG, nEndpoints[0], nIndices[0], 3, m_bUseSSE2, m_b3DRefinement, m_nRefinementSteps, pfChannelWeights, bDXT1UseAlpha, fDXT1AlphaThreshold);
+
+        CMP_DWORD compressedBlock1[2];
+        double fError4 = (fError3 == 0.0) ? FLT_MAX : CompRGBBlock(rgbBlock,compressedBlock1, BLOCK_SIZE_4X4, RG, GG, BG, nEndpoints[1], nIndices[1], 4, m_bUseSSE2, m_b3DRefinement, m_nRefinementSteps, pfChannelWeights, bDXT1UseAlpha, fDXT1AlphaThreshold);
 
         unsigned int nMethod = (fError3 <= fError4) ? 0 : 1;
         unsigned int c0 = ConstructColour((nEndpoints[nMethod][RC][0] >> (8-RG)), (nEndpoints[nMethod][GC][0] >> (8-GG)), (nEndpoints[nMethod][BC][0] >> (8-BG)));
@@ -261,7 +291,7 @@ CodecError CCodec_DXTC::CompressRGBBlock(CODECFLOAT rgbBlock[BLOCK_SIZE_4X4X4], 
         CMP_BYTE nEndpoints[3][2];
         CMP_BYTE nIndices[BLOCK_SIZE_4X4];
 
-        CompRGBBlock(rgbBlock, BLOCK_SIZE_4X4, RG, GG, BG, nEndpoints, nIndices, 4, m_bUseSSE2, m_b3DRefinement, m_nRefinementSteps, pfChannelWeights, bDXT1UseAlpha, fDXT1AlphaThreshold);
+        CompRGBBlock(rgbBlock,compressedBlock, BLOCK_SIZE_4X4, RG, GG, BG, nEndpoints, nIndices, 4, m_bUseSSE2, m_b3DRefinement, m_nRefinementSteps, pfChannelWeights, bDXT1UseAlpha, fDXT1AlphaThreshold);
 
         unsigned int c0 = ConstructColour((nEndpoints[RC][0] >> (8-RG)), (nEndpoints[GC][0] >> (8-GG)), (nEndpoints[BC][0] >> (8-BG)));
         unsigned int c1 = ConstructColour((nEndpoints[RC][1] >> (8-RG)), (nEndpoints[GC][1] >> (8-GG)), (nEndpoints[BC][1] >> (8-BG)));
@@ -274,6 +304,7 @@ CodecError CCodec_DXTC::CompressRGBBlock(CODECFLOAT rgbBlock[BLOCK_SIZE_4X4X4], 
         for(int i=0; i<16; i++)
             compressedBlock[1] |= (nIndices[i] << (2*i));
     }
+
     return CE_OK;
 }
 

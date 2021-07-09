@@ -24,8 +24,6 @@
 #ifndef _Plugin_Canalysis_H
 #define _Plugin_Canalysis_H
 
-#define USE_OPENCV
-
 #include "pluginmanager.h"
 #include "tc_plugininternal.h"
 #include "cmp_fileio.h"
@@ -34,7 +32,7 @@
 
 #include <compressonator.h>
 
-#ifdef USE_OPENCV
+#if (OPTION_CMP_OPENCV == 1)
 #include <opencv2/core/core.hpp>
 #endif
 
@@ -77,7 +75,7 @@ private:
     void setActiveChannels();
     void processSSIMResults();
 
-#ifdef USE_OPENCV
+#if (OPTION_CMP_OPENCV == 1)
     cv::Scalar m_SSIM;
     // removed as of v4.1
     // bool psnr(QImage *src, const cv::Mat& srcimg, QImage *dest, const cv::Mat& destimg, REPORT_DATA &myReport, CMP_Feedback_Proc pFeedbackProc = NULL);

@@ -546,10 +546,10 @@ CMP_ERROR RGBA_Word2Byte(CMP_BYTE cBlock[], CMP_WORD* wBlock, CMP_Texture* srcTe
             for (unsigned int x = 0; x < srcTexture->dwWidth; x++)
             {
                 // 4 channel data conversion from 16 bit to 8 bit
-                cBlock[cBlockIndex++] = wBlock[wBlockIndex++] / 257;
-                cBlock[cBlockIndex++] = wBlock[wBlockIndex++] / 257;
-                cBlock[cBlockIndex++] = wBlock[wBlockIndex++] / 257;
-                cBlock[cBlockIndex++] = wBlock[wBlockIndex++] / 257;
+                cBlock[cBlockIndex++] = (CMP_BYTE)(wBlock[wBlockIndex++] / 257);
+                cBlock[cBlockIndex++] = (CMP_BYTE)(wBlock[wBlockIndex++] / 257);
+                cBlock[cBlockIndex++] = (CMP_BYTE)(wBlock[wBlockIndex++] / 257);
+                cBlock[cBlockIndex++] = (CMP_BYTE)(wBlock[wBlockIndex++] / 257);
             }
         }
     }
@@ -696,8 +696,11 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
         pCodec->SetParameter("UseAdaptiveWeighting", (CMP_DWORD) pOptions->bUseAdaptiveWeighting);
         pCodec->SetParameter("DXT1UseAlpha", (CMP_DWORD) pOptions->bDXT1UseAlpha);
         pCodec->SetParameter("AlphaThreshold", (CMP_DWORD) pOptions->nAlphaThreshold);
+        if (pOptions->bUseRefinementSteps)
+            pCodec->SetParameter("RefineSteps", (CMP_DWORD) pOptions->nRefinementSteps);
         // New override to that set quality if compresion for DXTn & ATInN codecs
         if (pOptions->fquality != AMD_CODEC_QUALITY_DEFAULT) {
+            pCodec->SetParameter("Quality", (CODECFLOAT)pOptions->fquality);
 #ifndef _WIN64
             if (pOptions->fquality < 0.3)
                 pCodec->SetParameter("CompressionSpeed", (CMP_DWORD)CMP_Speed_SuperFast);
@@ -863,7 +866,7 @@ CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture
 #endif
     if (destType == CT_ASTC)  return CMP_ABORTED;
 
-    CMP_DWORD dwMaxThreadCount = min(f_dwProcessorCount, MAX_THREADS);
+    CMP_DWORD dwMaxThreadCount = cmp_minT(f_dwProcessorCount, MAX_THREADS);
     CMP_DWORD dwLinesRemaining = pDestTexture->dwHeight;
     CMP_BYTE* pSourceData = pSourceTexture->pData;
     CMP_BYTE* pDestData = pDestTexture->pData;
@@ -908,6 +911,8 @@ CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture
             threadData.m_pCodec->SetParameter("UseAdaptiveWeighting", (CMP_DWORD) pOptions->bUseAdaptiveWeighting);
             threadData.m_pCodec->SetParameter("DXT1UseAlpha", (CMP_DWORD) pOptions->bDXT1UseAlpha);
             threadData.m_pCodec->SetParameter("AlphaThreshold", (CMP_DWORD) pOptions->nAlphaThreshold);
+            threadData.m_pCodec->SetParameter("RefineSteps", (CMP_DWORD) pOptions->nRefinementSteps);
+            threadData.m_pCodec->SetParameter("Quality", (CODECFLOAT)pOptions->fquality);
 
             // New override to that set quality if compresion for DXTn & ATInN codecs
             if (pOptions->fquality != AMD_CODEC_QUALITY_DEFAULT) {
@@ -960,7 +965,7 @@ CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture
         if(dwThreadsRemaining > 1) {
             CMP_DWORD dwBlockHeight = threadData.m_pCodec->GetBlockHeight();
             dwHeight = dwLinesRemaining / dwThreadsRemaining;
-            dwHeight = min(((dwHeight + dwBlockHeight - 1) / dwBlockHeight) * dwBlockHeight, dwLinesRemaining); // Round by block height
+            dwHeight = cmp_minT(((dwHeight + dwBlockHeight - 1) / dwBlockHeight) * dwBlockHeight, dwLinesRemaining); // Round by block height
             dwLinesRemaining -= dwHeight;
         } else
             dwHeight = dwLinesRemaining;

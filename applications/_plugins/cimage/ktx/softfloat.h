@@ -1,15 +1,15 @@
 /*----------------------------------------------------------------------------*/
 /**
- *	This confidential and proprietary software may be used only as
- *	authorised by a licensing agreement from ARM Limited
- *	(C) COPYRIGHT 2011-2012 ARM Limited
- *	ALL RIGHTS RESERVED
+ *    This confidential and proprietary software may be used only as
+ *    authorised by a licensing agreement from ARM Limited
+ *    (C) COPYRIGHT 2011-2012 ARM Limited
+ *    ALL RIGHTS RESERVED
  *
- *	The entire notice above must be reproduced on all authorised
- *	copies and copies may only be made to the extent permitted
- *	by a licensing agreement from ARM Limited.
+ *    The entire notice above must be reproduced on all authorised
+ *    copies and copies may only be made to the extent permitted
+ *    by a licensing agreement from ARM Limited.
  *
- *	@brief	Soft IEEE-754 floating point library.
+ *    @brief    Soft IEEE-754 floating point library.
  */
 /*----------------------------------------------------------------------------*/
 
@@ -62,19 +62,19 @@ extern "C"
 
 #endif
 
-    /*	sized soft-float types. These are mapped to the sized integer types of C99, instead of C's
-    	floating-point types; this is because the library needs to maintain exact, bit-level control on all
-    	operations on these data types. */
+    /*    sized soft-float types. These are mapped to the sized integer types of C99, instead of C's
+        floating-point types; this is because the library needs to maintain exact, bit-level control on all
+        operations on these data types. */
     typedef uint16_t sf16;
     typedef uint32_t sf32;
 
     /* the five rounding modes that IEEE-754r defines */
     typedef enum {
-        SF_UP = 0,				/* round towards positive infinity */
-        SF_DOWN = 1,			/* round towards negative infinity */
-        SF_TOZERO = 2,			/* round towards zero */
-        SF_NEARESTEVEN = 3,		/* round toward nearest value; if mid-between, round to even value */
-        SF_NEARESTAWAY = 4		/* round toward nearest value; if mid-between, round away from zero */
+        SF_UP = 0,                /* round towards positive infinity */
+        SF_DOWN = 1,            /* round towards negative infinity */
+        SF_TOZERO = 2,            /* round towards zero */
+        SF_NEARESTEVEN = 3,        /* round toward nearest value; if mid-between, round to even value */
+        SF_NEARESTAWAY = 4        /* round toward nearest value; if mid-between, round away from zero */
     } roundmode;
 
     /* narrowing float->float conversions */

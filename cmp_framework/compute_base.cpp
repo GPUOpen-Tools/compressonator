@@ -28,15 +28,25 @@
 #include "plugininterface.h"
 #include "texture.h"
 #include "cmp_core.h"
+#include "bcn_common_kernel.h"
 
 #ifndef _WIN32
 #include <unistd.h> /* For open(), creat() */
 #endif
 
+#ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
+#endif
 #include "stb_image.h"
 
+#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#endif
+#include "gltf/stb_image_write.h"
+
 #include <string>
+#include <mutex>
+
 
 CMP_CHAR*                GetFormatDesc(CMP_FORMAT nFormat);
 PluginManager            g_pluginManager;
@@ -74,8 +84,8 @@ extern void* make_Plugin_APC();
 void CMP_RegisterHostPlugins() {
     if (HostPluginsRegistered == FALSE) {
         // Hosts
-        g_pluginManager.registerStaticPlugin("IMAGE", "DDS", (void*)make_Plugin_DDS);
-        g_pluginManager.registerStaticPlugin("PIPELINE", "HPC", (void*)make_Plugin_HPC);
+        g_pluginManager.registerStaticPlugin("IMAGE",   "DDS", (void*)make_Plugin_DDS);
+        g_pluginManager.registerStaticPlugin("PIPELINE","HPC", (void*)make_Plugin_HPC);
         // Encoders
         g_pluginManager.registerStaticPlugin("ENCODER", "BC1", (void*)make_Plugin_BC1);
         g_pluginManager.registerStaticPlugin("ENCODER", "BC2", (void*)make_Plugin_BC2);
@@ -87,12 +97,12 @@ void CMP_RegisterHostPlugins() {
         g_pluginManager.registerStaticPlugin("ENCODER", "BC6H", (void*)make_Plugin_BC6H);
         g_pluginManager.registerStaticPlugin("ENCODER", "BC6H_SF", (void*)make_Plugin_BC6H_SF);
         g_pluginManager.registerStaticPlugin("ENCODER", "BC7", (void*)make_Plugin_BC7);
-// #ifdef USE_GTC
-//         g_pluginManager.registerStaticPlugin("ENCODER", "GTC", (void*)make_Plugin_GTC);
-// #endif
-// #ifdef USE_APC
-//         g_pluginManager.registerStaticPlugin("ENCODER", "APC", (void*)make_Plugin_APC);
-// #endif
+#ifdef USE_GTC
+        g_pluginManager.registerStaticPlugin("ENCODER", "GTC", (void*)make_Plugin_GTC);
+#endif
+#ifdef USE_APC
+        g_pluginManager.registerStaticPlugin("ENCODER", "APC", (void*)make_Plugin_APC);
+#endif
         g_pluginManager.getPluginList(".", TRUE);
         HostPluginsRegistered = TRUE;
     }
@@ -698,8 +708,14 @@ CMP_DWORD CMP_API CMP_CalculateBufferSize2(const CMP_Texture* pTexture) {
 }
 
 //===========================================================================================================
+// This is a high level API that locks calling thread with mutex, blocking if necessary until completed
+//===========================================================================================================
+std::mutex cmp_mutex;
 
-CMP_ERROR CMP_API CMP_ProcessTexture(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSet, KernelOptions kernelOptions, CMP_Feedback_Proc pFeedbackProc) {
+CMP_ERROR CMP_API CMP_ProcessTexture(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSet, KernelOptions kernelOptions, CMP_Feedback_Proc pFeedbackProc) 
+{
+    cmp_mutex.lock();
+
     CMP_CMIPS CMips;
     assert(srcMipSet);
     assert(dstMipSet);
@@ -726,8 +742,8 @@ CMP_ERROR CMP_API CMP_ProcessTexture(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSe
     dstMipSet->m_nDepth        = srcMipSet->m_nDepth;
     dstMipSet->m_TextureType   = srcMipSet->m_TextureType;
 
-    if (!CMips.AllocateMipSet(
-                dstMipSet, dstMipSet->m_ChannelFormat, TDT_ARGB, dstMipSet->m_TextureType, srcMipSet->m_nWidth, srcMipSet->m_nHeight, dstMipSet->m_nDepth)) {
+    if (!CMips.AllocateMipSet(dstMipSet, dstMipSet->m_ChannelFormat, TDT_ARGB, dstMipSet->m_TextureType, srcMipSet->m_nWidth, srcMipSet->m_nHeight, dstMipSet->m_nDepth)) {
+        cmp_mutex.unlock();
         return CMP_ERR_MEM_ALLOC_FOR_MIPSET;
     }
 
@@ -800,6 +816,7 @@ CMP_ERROR CMP_API CMP_ProcessTexture(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSe
             //===============================================================================
             if (CMP_CreateComputeLibrary(srcMipSet, &kernelOptions, &CMips) != CMP_OK) {
                 PrintInfo("Failed to init HOST Lib. CPU will be used for compression\n");
+                cmp_mutex.unlock();
                 return CMP_ERR_FAILED_HOST_SETUP;
             }
 
@@ -812,6 +829,7 @@ CMP_ERROR CMP_API CMP_ProcessTexture(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSe
             if (CMP_SetComputeOptions(&options) != CMP_OK) {
                 CMP_DestroyComputeLibrary(false);
                 PrintInfo("Failed to setup SPMD GPU options\n");
+                cmp_mutex.unlock();
                 return CMP_ERR_FAILED_HOST_SETUP;
             }
 
@@ -820,6 +838,7 @@ CMP_ERROR CMP_API CMP_ProcessTexture(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSe
                 CMips.FreeMipSet(dstMipSet);
                 CMP_DestroyComputeLibrary(false);
                 PrintInfo("Failed to run compute plugin: CPU will be used for compression.\n");
+                cmp_mutex.unlock();
                 return CMP_ERR_FAILED_HOST_SETUP;
             }
 
@@ -839,6 +858,7 @@ CMP_ERROR CMP_API CMP_ProcessTexture(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSe
     if (pFeedbackProc)
         pFeedbackProc(100, NULL, NULL);
 
+    cmp_mutex.unlock();
     return CMP_OK;
 }
 
@@ -846,7 +866,8 @@ CMP_ERROR CMP_API CMP_ProcessTexture(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSe
 // Block Level Encoder Support
 //
 CMP_ERROR CMP_API CMP_CreateBlockEncoder(void** block_encoder, CMP_EncoderSetting encodeSettings) {
-    CMP_RegisterHostPlugins();
+
+    CMP_RegisterHostPlugins(); // Keep for legacy, user should now use CMP_InitFramework
 
     PluginInterface_Encoder* encoder_codec;
     encoder_codec = reinterpret_cast<PluginInterface_Encoder*>(g_pluginManager.GetPlugin("ENCODER", GetFormatDesc((CMP_FORMAT)encodeSettings.format)));
@@ -963,8 +984,15 @@ char toupperChar(char ch) {
     return static_cast<char>(::toupper(static_cast<unsigned char>(ch)));
 }
 
-CMP_ERROR CMP_API CMP_LoadTexture(const char* SourceFile, CMP_MipSet* MipSetIn) {
+void CMP_API CMP_InitFramework()
+{
     CMP_RegisterHostPlugins();
+}
+
+
+CMP_ERROR CMP_API CMP_LoadTexture(const char* SourceFile, CMP_MipSet* MipSetIn) {
+
+    CMP_RegisterHostPlugins(); // Keep for legacy, user should now use CMP_InitFramework
 
     CMP_CMIPS CMips;
     CMP_ERROR status = CMP_OK;
@@ -1011,8 +1039,9 @@ CMP_ERROR CMP_API CMP_LoadTexture(const char* SourceFile, CMP_MipSet* MipSetIn) 
     return status;
 }
 
-CMP_ERROR CMP_API CMP_SaveTexture(const char* DestFile, CMP_MipSet* MipSetIn) {
-    CMP_RegisterHostPlugins();
+CMP_ERROR CMP_API CMP_SaveTexture(const char* DestFile, CMP_MipSet* MipSetIn) 
+{
+    CMP_RegisterHostPlugins(); // Keep for legacy, user should now use CMP_InitFramework
 
     bool        filesaved = false;
     CMIPS       m_CMIPS;
@@ -1020,13 +1049,13 @@ CMP_ERROR CMP_API CMP_SaveTexture(const char* DestFile, CMP_MipSet* MipSetIn) {
     std::string file_extension = fn.substr(fn.find_last_of(".") + 1);
     std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(), toupperChar);
 
-    if (((((file_extension.compare("DDS") == 0) 
-        || file_extension.compare("KTX") == 0) 
-        || file_extension.compare("KTX2") == 0)) 
-        != TRUE)
-        {
-        return CMP_ERR_INVALID_DEST_TEXTURE;
-    }
+    //if (((((file_extension.compare("DDS") == 0) 
+    //    || file_extension.compare("KTX") == 0) 
+    //    || file_extension.compare("KTX2") == 0)) 
+    //    != TRUE)
+    //    {
+    //    return CMP_ERR_INVALID_DEST_TEXTURE;
+    //}
 
     PluginInterface_Image* plugin_Image;
     plugin_Image = reinterpret_cast<PluginInterface_Image*>(g_pluginManager.GetPlugin("IMAGE", (char*)file_extension.c_str()));
@@ -1044,7 +1073,16 @@ CMP_ERROR CMP_API CMP_SaveTexture(const char* DestFile, CMP_MipSet* MipSetIn) {
         plugin_Image = NULL;
     }
 
-    if (!filesaved) {
+    if (!filesaved) { // ToDo create a stb_save()
+        if (file_extension.compare("PNG") == 0)
+            stbi_write_png(DestFile, MipSetIn->m_nWidth, MipSetIn->m_nHeight, 4, MipSetIn->pData, MipSetIn->m_nWidth * 4);
+        else
+        if (file_extension.compare("BMP") == 0)
+            stbi_write_bmp(DestFile, MipSetIn->m_nWidth, MipSetIn->m_nHeight, 4, MipSetIn->pData);
+        else
+        if (file_extension.compare("JPG") == 0)
+            stbi_write_jpg(DestFile, MipSetIn->m_nWidth, MipSetIn->m_nHeight, 4, MipSetIn->pData, 100);
+        else
         return CMP_ERR_GENERIC;
     }
 
@@ -1062,5 +1100,6 @@ CMP_INT CMP_API CMP_NumberOfProcessors(void) {
     return GetMaximumProcessorCount(0);
 #endif
 }
+
 
 

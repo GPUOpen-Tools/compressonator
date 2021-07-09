@@ -18,7 +18,7 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "json/json.h"
+#include "json/json.hpp"
 
 #include <vulkan/vulkan.h>
 

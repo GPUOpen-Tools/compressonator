@@ -40,7 +40,8 @@ cbuffer cbCS : register( b0 )
     float g_quality;
 };
 
-#include "BCn_Common_Kernel.h"
+#include "bcn_common_kernel.h"
+
 
 // Source Data
 Texture2D g_Input : register( t0 ); 

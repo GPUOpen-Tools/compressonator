@@ -23,7 +23,9 @@
 #ifndef _GLTF_OPENGL_H
 #define _GLTF_OPENGL_H
 
+#ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
+#endif
 #include "plugininterface.h"
 #include "gltf_ogldevice.h"
 

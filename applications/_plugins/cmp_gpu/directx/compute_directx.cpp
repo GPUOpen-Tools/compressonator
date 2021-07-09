@@ -58,11 +58,16 @@ using namespace std;
 
 #pragma comment(lib, "dxguid.lib")
 
-// #define _CRT_SECURE_NO_WARNINGS
+#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+#define USE_ALL_BC7_MODES
+#define USE_ALL_BC6_MODES
 
 extern CMIPS* GPU_DXMips;
 
-void PrintDX(const char* Format, ...) {
+void PrintDX(const char* Format, ...)
+{
     // define a pointer to save argument list
     va_list args;
     char    buff[1024];
@@ -71,24 +76,31 @@ void PrintDX(const char* Format, ...) {
     vsprintf_s(buff, Format, args);
     va_end(args);
 
-    if (GPU_DXMips) {
+    if (GPU_DXMips)
+    {
         GPU_DXMips->Print(buff);
-    } else {
+    }
+    else
+    {
         printf(buff);
     }
 }
 
 //======================================  Direct Compute Interfaces ==========================================
 
-void CDirectX::QueryDispatchBegin() {
+void CDirectX::QueryDispatchBegin()
+{
 }
 
-void CDirectX::QueryDispatchEnd(unsigned int numBlocks) {
+void CDirectX::QueryDispatchEnd(unsigned int numBlocks)
+{
     m_totalnumBlocks += numBlocks;
 }
 
-void CDirectX::QueryProcessBegin(int miplevel) {
-    if (m_getGPUPerfStats && m_initQueryOk) {
+void CDirectX::QueryProcessBegin(int miplevel)
+{
+    if (m_getGPUPerfStats && m_initQueryOk)
+    {
         m_cmpTimer.Start(miplevel);
         m_totalnumBlocks = 0;
         m_pContext->Begin(m_pQueryDisjoint);  // Begin Disjoint (used to get current GPU frequency)
@@ -96,46 +108,56 @@ void CDirectX::QueryProcessBegin(int miplevel) {
     }
 }
 
-void CDirectX::QueryProcessEnd(int miplevel) {
-    if (m_getGPUPerfStats && m_initQueryOk) {
+void CDirectX::QueryProcessEnd(int miplevel)
+{
+    if (m_getGPUPerfStats && m_initQueryOk)
+    {
         m_pContext->End(m_pQueryEnd);
         m_pContext->End(m_pQueryDisjoint);
         m_pContext->Flush();  // May not be need for more recent DX versions
 
         // Wait for data to become available
         D3D11_QUERY_DATA_TIMESTAMP_DISJOINT tsDisjoint;
-        while (m_pContext->GetData(m_pQueryDisjoint, &tsDisjoint, sizeof(tsDisjoint), 0) == S_FALSE) {
+        while (m_pContext->GetData(m_pQueryDisjoint, &tsDisjoint, sizeof(tsDisjoint), 0) == S_FALSE)
+        {
             Sleep(0);  // Give other threads time to process
         }
 
         m_cmpTimer.Stop(miplevel);
 
         // disgard this block analysis if GPU is not valid!
-        if (!tsDisjoint.Disjoint) {
+        if (!tsDisjoint.Disjoint)
+        {
             // Get GPU counter increments in Hz.
             m_GPUFrequency = (float)tsDisjoint.Frequency;
             if (m_GPUFrequency <= m_GPUFrequencyMin)
                 m_GPUFrequencyMin = m_GPUFrequency;
             if (m_GPUFrequency > m_GPUFrequencyMax)
                 m_GPUFrequencyMax = m_GPUFrequency;
-        } else {
+        }
+        else
+        {
             PrintDX("Query disjoint failed!\n");
         }
 
-        if (m_GPUFrequency > 0) {
+        if (m_GPUFrequency > 0)
+        {
             UINT64 beginCSTimeStamp;
             UINT64 endCSTimeStamp;
             UINT64 diffCSTimeStamp;
-            while (m_pContext->GetData(m_pQueryBegin, &beginCSTimeStamp, sizeof(UINT64), 0) == S_FALSE) {
+            while (m_pContext->GetData(m_pQueryBegin, &beginCSTimeStamp, sizeof(UINT64), 0) == S_FALSE)
+            {
             }
-            while (m_pContext->GetData(m_pQueryEnd, &endCSTimeStamp, sizeof(UINT64), 0) == S_FALSE) {
+            while (m_pContext->GetData(m_pQueryEnd, &endCSTimeStamp, sizeof(UINT64), 0) == S_FALSE)
+            {
             }
 
             // get GPU count
             diffCSTimeStamp = endCSTimeStamp - beginCSTimeStamp;
 
             // Profile data available to store
-            if ((diffCSTimeStamp > 0) && (m_totalnumBlocks)) {
+            if ((diffCSTimeStamp > 0) && (m_totalnumBlocks))
+            {
                 float ElapseHz     = float(diffCSTimeStamp) / m_GPUFrequency;
                 float ElapseHzToMs = ElapseHz * 1E3f;
                 // time to process a single block (4x4) which is 16 texels in ms
@@ -144,10 +166,23 @@ void CDirectX::QueryProcessEnd(int miplevel) {
                 float ElapsedSecondsPerTx = ElapsedSeconds / 16;
                 float TxPerSec            = 1 / ElapsedSecondsPerTx;
                 // time to process a 1M texels in a second
-                m_CmpMTxPerSec = TxPerSec / 1E6f;
+                m_CmpMTxPerSec = TxPerSec / 1E6f; 
             }
         }
     }
+}
+
+void CDirectX::ResetContext()
+{
+    ID3D11UnorderedAccessView* nullUAV = nullptr;
+    m_pContext->CSSetUnorderedAccessViews(0, 1, &nullUAV, nullptr);
+
+    ID3D11ShaderResourceView* nullSRV[3] = {nullptr, nullptr, nullptr};
+    m_pContext->CSSetShaderResources(0, 3, nullSRV);
+
+    ID3D11Buffer* nullBuffer[1] = {nullptr};
+    m_pContext->CSSetConstantBuffers(0, 1, nullBuffer);
+
 }
 
 void CDirectX::RunComputeShader(ID3D11ComputeShader*       pComputeShader,
@@ -158,10 +193,13 @@ void CDirectX::RunComputeShader(ID3D11ComputeShader*       pComputeShader,
                                 UINT                       X,
                                 UINT                       Y,
                                 UINT                       Z,
-                                UINT                       numBlocks,
-                                bool                       fixed) {
-    if (!fixed)
-        m_pContext->CSSetShader(pComputeShader, nullptr, 0);
+                                UINT                       numBlocks)
+{
+    // Force UAV to nullptr before setting SRV since we are swapping buffers
+    ID3D11UnorderedAccessView* nullUAV = nullptr;
+    m_pContext->CSSetUnorderedAccessViews(0, 1, &nullUAV, nullptr);
+
+    m_pContext->CSSetShader(pComputeShader, nullptr, 0);
     m_pContext->CSSetShaderResources(0, uNumSRVs, pShaderResourceViews);
     m_pContext->CSSetUnorderedAccessViews(0, 1, &pUnorderedAccessView, nullptr);
     m_pContext->CSSetConstantBuffers(0, 1, &pCBCS);
@@ -170,18 +208,15 @@ void CDirectX::RunComputeShader(ID3D11ComputeShader*       pComputeShader,
     m_pContext->Dispatch(X, Y, Z);
     QueryDispatchEnd(numBlocks);
 
-    ID3D11UnorderedAccessView* ppUAViewNULL[1] = {nullptr};
-    m_pContext->CSSetUnorderedAccessViews(0, 1, ppUAViewNULL, nullptr);
-    ID3D11ShaderResourceView* ppSRVNULL[3] = {nullptr, nullptr, nullptr};
-    m_pContext->CSSetShaderResources(0, 3, ppSRVNULL);
-    ID3D11Buffer* ppBufferNULL[1] = {nullptr};
-    m_pContext->CSSetConstantBuffers(0, 1, ppBufferNULL);
+    ResetContext();
+
 }
 
 //--------------------------------------------------------------------------------------
 // Create a CPU accessible buffer and download the content of a GPU buffer into it
 //--------------------------------------------------------------------------------------
-ID3D11Buffer* CreateAndCopyToCPUBuf(ID3D11Device* pDevice, ID3D11DeviceContext* pd3dImmediateContext, ID3D11Buffer* pBuffer) {
+ID3D11Buffer* CreateAndCopyToCPUBuf(ID3D11Device* pDevice, ID3D11DeviceContext* pd3dImmediateContext, ID3D11Buffer* pBuffer)
+{
     ID3D11Buffer* cpubuf = nullptr;
 
     D3D11_BUFFER_DESC desc = {};
@@ -190,7 +225,8 @@ ID3D11Buffer* CreateAndCopyToCPUBuf(ID3D11Device* pDevice, ID3D11DeviceContext* 
     desc.Usage          = D3D11_USAGE_STAGING;
     desc.BindFlags      = 0;
     desc.MiscFlags      = 0;
-    if (SUCCEEDED(pDevice->CreateBuffer(&desc, nullptr, &cpubuf))) {
+    if (SUCCEEDED(pDevice->CreateBuffer(&desc, nullptr, &cpubuf)))
+    {
         pd3dImmediateContext->CopyResource(cpubuf, pBuffer);
     }
 
@@ -199,15 +235,18 @@ ID3D11Buffer* CreateAndCopyToCPUBuf(ID3D11Device* pDevice, ID3D11DeviceContext* 
 
 //====================================== Framework Common Interfaces : Direct Compute  ==========================================
 
-CDirectX::CDirectX(void* kerneloptions) {
+CDirectX::CDirectX(void* kerneloptions)
+{
     m_initDeviceOk  = false;
     m_kernelOptions = (KernelOptions*)kerneloptions;
     Init();
 }
 
-CDirectX::~CDirectX() {
+CDirectX::~CDirectX()
+{
     // Clear any old states
-    if (m_pContext) {
+    if (m_pContext)
+    {
         m_pContext->ClearState();
         m_pContext->Flush();
     }
@@ -221,10 +260,12 @@ CDirectX::~CDirectX() {
 #endif
 }
 
-void CDirectX::GetErrorMessages() {
+void CDirectX::GetErrorMessages()
+{
 }
 
-void CDirectX::Init() {
+void CDirectX::Init()
+{
     m_programRun   = false;
     m_codecFormat  = CMP_FORMAT_Unknown;
     m_deviceName   = "";
@@ -245,11 +286,14 @@ void CDirectX::Init() {
     m_pDebug = nullptr;
 #endif
 
+    m_bc7_mode02  = true;   // uses 3 subsets
+    m_bc7_mode137 = true;   // uses 2 subsets
+
     m_BC7_pTryMode456CS = nullptr;
     m_BC7_pTryMode137CS = nullptr;
     m_BC7_pTryMode02CS  = nullptr;
 
-    m_BC6H_pTryModeG10CS  = nullptr;
+    m_BC6H_pTryModeG10CS  = nullptr; 
     m_BC6H_pTryModeLE10CS = nullptr;
 
     m_BCn_pEncodeBlockCS[ACTIVE_ENCODER_BC1] = nullptr;
@@ -266,34 +310,42 @@ void CDirectX::Init() {
     m_getGPUPerfStats = true;
 }
 
-void CDirectX::SetComputeOptions(ComputeOptions* CLOptions) {
+void CDirectX::SetComputeOptions(ComputeOptions* CLOptions)
+{
 }
 
-float CDirectX::GetProcessElapsedTimeMS() {
+float CDirectX::GetProcessElapsedTimeMS()
+{
     return m_computeShaderElapsedMS;
 }
 
-float CDirectX::GetMTxPerSec() {
+float CDirectX::GetMTxPerSec()
+{
     return m_CmpMTxPerSec;
 }
 
-int CDirectX::GetBlockSize() {
+int CDirectX::GetBlockSize()
+{
     return m_num_blocks;
 }
 
-int CDirectX::GetMaxUCores() {
+int CDirectX::GetMaxUCores()
+{
     return m_maxUCores;
 }
 
-const char* CDirectX::GetDeviceName() {
+const char* CDirectX::GetDeviceName()
+{
     return m_deviceName.c_str();
 }
 
-const char* CDirectX::GetVersion() {
+const char* CDirectX::GetVersion()
+{
     return m_version.c_str();
 }
 
-void CDirectX::CleanupEncoders() {
+void CDirectX::CleanupEncoders()
+{
     SAFE_RELEASE(m_BCn_pEncodeBlockCS[ACTIVE_ENCODER_BC1]);
     SAFE_RELEASE(m_BCn_pEncodeBlockCS[ACTIVE_ENCODER_BC2]);
     SAFE_RELEASE(m_BCn_pEncodeBlockCS[ACTIVE_ENCODER_BC3]);
@@ -312,7 +364,8 @@ void CDirectX::CleanupEncoders() {
     SAFE_RELEASE(m_BC6H_pTryModeLE10CS);
 }
 
-void CDirectX::Cleanup() {
+void CDirectX::Cleanup()
+{
     CleanupEncoders();
 
     // Compute
@@ -326,7 +379,8 @@ void CDirectX::Cleanup() {
     SAFE_RELEASE(m_pQueryEnd);
 }
 
-bool CDirectX::CreateDevice() {
+bool CDirectX::CreateDevice()
+{
     //printf("CreateDevice\n");
 
     Init();
@@ -350,7 +404,8 @@ bool CDirectX::CreateDevice() {
                            &flOut,                    // Actual feature level created
                            &m_pContext);              // Context out
 
-    if (FAILED(hr)) {
+    if (FAILED(hr))
+    {
         // Failure on creating a hardware device, try to create a ref device
         SAFE_RELEASE(m_pDevice);
         SAFE_RELEASE(m_pContext);
@@ -365,14 +420,18 @@ bool CDirectX::CreateDevice() {
                                &m_pDevice,                 // Device out
                                &flOut,                     // Actual feature level created
                                &m_pContext);               // Context out
-        if (FAILED(hr)) {
+        if (FAILED(hr))
+        {
             _com_error err(hr);
             LPCTSTR    errMsg = err.ErrorMessage();
             PrintDX("Error %s\n", errMsg);
             return false;
         }
-    } else {
-        if (FAILED(hr)) {
+    }
+    else
+    {
+        if (FAILED(hr))
+        {
             _com_error err(hr);
             LPCTSTR    errMsg = err.ErrorMessage();
             PrintDX("Error %s\n", errMsg);
@@ -382,7 +441,8 @@ bool CDirectX::CreateDevice() {
 
 #if defined(_DEBUG)
     hr = m_pDevice->QueryInterface(IID_PPV_ARGS(&m_pDebug));
-    if (FAILED(hr)) {
+    if (FAILED(hr))
+    {
         _com_error err(hr);
         LPCTSTR    errMsg = err.ErrorMessage();
         PrintDX("Error %s\n", errMsg);
@@ -395,7 +455,8 @@ bool CDirectX::CreateDevice() {
     return true;
 }
 
-bool CDirectX::GetDeviceInfo() {
+bool CDirectX::GetDeviceInfo()
+{
     IDXGIDevice1* pDXGIDevice = NULL;
     HRESULT       hr          = m_pDevice->QueryInterface(&pDXGIDevice);
 
@@ -417,12 +478,14 @@ bool CDirectX::GetDeviceInfo() {
     return (hr == S_OK);
 }
 
-bool CDirectX::CheckCS4Suppot() {
+bool CDirectX::CheckCS4Suppot()
+{
     //printf("CheckCS4Suppot\n");
 
     D3D11_FEATURE_DATA_D3D10_X_HARDWARE_OPTIONS hwopts;
     m_pDevice->CheckFeatureSupport(D3D11_FEATURE_D3D10_X_HARDWARE_OPTIONS, &hwopts, sizeof(hwopts));
-    if (!hwopts.ComputeShaders_Plus_RawAndStructuredBuffers_Via_Shader_4_x) {
+    if (!hwopts.ComputeShaders_Plus_RawAndStructuredBuffers_Via_Shader_4_x)
+    {
         PrintDX("GPU does not support DirectCompute 4.x\n");
         Cleanup();
         return false;
@@ -439,7 +502,8 @@ bool CDirectX::CheckCS4Suppot() {
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 
-HRESULT CDirectX::CompileComputeShader(_In_ LPCWSTR srcFile, _In_ LPCSTR entryPoint, _Outptr_ ID3DBlob** blob) {
+HRESULT CDirectX::CompileComputeShader(_In_ LPCWSTR srcFile, _In_ LPCSTR entryPoint, _Outptr_ ID3DBlob** blob)
+{
     if (!srcFile || !entryPoint || !blob)
         return E_INVALIDARG;
 
@@ -458,8 +522,10 @@ HRESULT CDirectX::CompileComputeShader(_In_ LPCWSTR srcFile, _In_ LPCSTR entryPo
     ID3DBlob* shaderBlob = nullptr;
     ID3DBlob* errorBlob  = nullptr;
     HRESULT   hr         = D3DCompileFromFile(srcFile, defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, entryPoint, profile, flags, 0, &shaderBlob, &errorBlob);
-    if (FAILED(hr)) {
-        if (errorBlob) {
+    if (FAILED(hr))
+    {
+        if (errorBlob)
+        {
             PrintDX((char*)errorBlob->GetBufferPointer());
             errorBlob->Release();
         }
@@ -475,19 +541,22 @@ HRESULT CDirectX::CompileComputeShader(_In_ LPCWSTR srcFile, _In_ LPCSTR entryPo
     return hr;
 }
 
-void CDirectX::csBlobCleanUp() {
+void CDirectX::csBlobCleanUp()
+{
     //---------------
     // Clean up temps
     //---------------
     if (m_csBlob != nullptr)
         m_csBlob->Release();
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         if (m_csBlobEx[i] != nullptr)
             m_csBlobEx[i]->Release();
     }
 }
 
-HRESULT CDirectX::BuildBCnEncoder() {
+HRESULT CDirectX::BuildBCnEncoder()
+{
     //printf("BuildBCnEncoder\n");
     HRESULT hr = S_OK;
     bool    rebuild;
@@ -503,7 +572,8 @@ HRESULT CDirectX::BuildBCnEncoder() {
     LPCWSTR      sw;
 
     m_csBlob = nullptr;
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         if (m_csBlobEx[i])
             m_csBlobEx[i] = nullptr;
     }
@@ -511,7 +581,8 @@ HRESULT CDirectX::BuildBCnEncoder() {
     // Check build configuration of the shader, has it been modified since last use
     rebuild = cmp_recompile_shader(m_sourceShaderFile);
 
-    if (!rebuild) {
+    if (!rebuild)
+    {
         fopen_result = fopen_s(&p_file_bin, compiledShaderFile.c_str(), "rb");
         if (fopen_result != 0)
             rebuild = true;
@@ -520,23 +591,56 @@ HRESULT CDirectX::BuildBCnEncoder() {
     //------------------------------
     // compiled (.cmp) file exists
     //------------------------------
-    if (!rebuild) {
+    if (!rebuild)
+    {
         fclose(p_file_bin);
+        // Load the .cmp binary
         stemp = std::wstring(compiledShaderFile.begin(), compiledShaderFile.end());
         sw    = stemp.c_str();
         hr    = D3DReadFileToBlob(sw, &m_csBlob);
-        if (FAILED(hr)) {
+        if (FAILED(hr))
+        {
             PrintDX("Failed reading shader binary %08X\n", hr);
             return -1;
         }
 
-        if (m_activeEncoder == ACTIVE_ENCODER_BC6) {
+        if (m_activeEncoder == ACTIVE_ENCODER_BC6)
+        {
+#ifdef USE_ALL_BC6_MODES
             compiledShaderFile = m_sourceShaderFile;
             compiledShaderFile.append(".0.cmp");
             stemp = std::wstring(compiledShaderFile.begin(), compiledShaderFile.end());
             sw    = stemp.c_str();
             hr    = D3DReadFileToBlob(sw, &m_csBlobEx[0]);
-            if (FAILED(hr)) {
+            if (FAILED(hr))
+            {
+                csBlobCleanUp();
+                PrintDX("Failed reading shader binary %08X\n", hr);
+                return -1;
+            }
+            compiledShaderFile = m_sourceShaderFile;
+            compiledShaderFile.append(".1.cmp");
+            stemp = std::wstring(compiledShaderFile.begin(), compiledShaderFile.end());
+            sw    = stemp.c_str();
+            hr    = D3DReadFileToBlob(sw, &m_csBlobEx[1]);
+            if (FAILED(hr))
+            {
+                csBlobCleanUp();
+                PrintDX("Failed reading shader binary %08X\n", hr);
+                return -1;
+            }
+#endif
+        }
+#ifdef USE_ALL_BC7_MODES
+        else if (m_activeEncoder == ACTIVE_ENCODER_BC7)
+        {
+            compiledShaderFile = m_sourceShaderFile;
+            compiledShaderFile.append(".0.cmp");
+            stemp = std::wstring(compiledShaderFile.begin(), compiledShaderFile.end());
+            sw    = stemp.c_str();
+            hr    = D3DReadFileToBlob(sw, &m_csBlobEx[0]);
+            if (FAILED(hr))
+            {
                 csBlobCleanUp();
                 PrintDX("Failed reading shader binary %08X\n", hr);
                 return -1;
@@ -547,29 +651,8 @@ HRESULT CDirectX::BuildBCnEncoder() {
             stemp = std::wstring(compiledShaderFile.begin(), compiledShaderFile.end());
             sw    = stemp.c_str();
             hr    = D3DReadFileToBlob(sw, &m_csBlobEx[1]);
-            if (FAILED(hr)) {
-                csBlobCleanUp();
-                PrintDX("Failed reading shader binary %08X\n", hr);
-                return -1;
-            }
-        } else if (m_activeEncoder == ACTIVE_ENCODER_BC7) {
-            compiledShaderFile = m_sourceShaderFile;
-            compiledShaderFile.append(".0.cmp");
-            stemp = std::wstring(compiledShaderFile.begin(), compiledShaderFile.end());
-            sw    = stemp.c_str();
-            hr    = D3DReadFileToBlob(sw, &m_csBlobEx[0]);
-            if (FAILED(hr)) {
-                csBlobCleanUp();
-                PrintDX("Failed reading shader binary %08X\n", hr);
-                return -1;
-            }
-
-            compiledShaderFile = m_sourceShaderFile;
-            compiledShaderFile.append(".1.cmp");
-            stemp = std::wstring(compiledShaderFile.begin(), compiledShaderFile.end());
-            sw    = stemp.c_str();
-            hr    = D3DReadFileToBlob(sw, &m_csBlobEx[1]);
-            if (FAILED(hr)) {
+            if (FAILED(hr))
+            {
                 csBlobCleanUp();
                 PrintDX("Failed reading shader binary %08X\n", hr);
                 return -1;
@@ -580,21 +663,25 @@ HRESULT CDirectX::BuildBCnEncoder() {
             stemp = std::wstring(compiledShaderFile.begin(), compiledShaderFile.end());
             sw    = stemp.c_str();
             hr    = D3DReadFileToBlob(sw, &m_csBlobEx[2]);
-            if (FAILED(hr)) {
+            if (FAILED(hr))
+            {
                 csBlobCleanUp();
                 PrintDX("Failed reading shader binary %08X\n", hr);
                 return -1;
             }
         }
+#endif
     }
     //-------------------------------------
     // Compile the codec for first time use
     //-------------------------------------
-    else {
+    else
+    {
         stemp = std::wstring(m_sourceShaderFile.begin(), m_sourceShaderFile.end());
         sw    = stemp.c_str();
         hr    = CompileComputeShader(sw, "EncodeBlocks", &m_csBlob);
-        if (FAILED(hr)) {
+        if (FAILED(hr))
+        {
             csBlobCleanUp();
             Cleanup();
             PrintDX("Failed compiling shader %08X\n", hr);
@@ -602,57 +689,71 @@ HRESULT CDirectX::BuildBCnEncoder() {
         }
 
         // Additional Shaders Needed for larger codecs
-        if (m_activeEncoder == ACTIVE_ENCODER_BC6) {
+        if (m_activeEncoder == ACTIVE_ENCODER_BC6)
+        {
+#ifdef USE_ALL_BC6_MODES
             hr = CompileComputeShader(sw, "TryModeG10CS", &m_csBlobEx[0]);
-            if (FAILED(hr)) {
+            if (FAILED(hr))
+            {
                 csBlobCleanUp();
                 Cleanup();
                 PrintDX("Failed compiling shader %08X\n", hr);
                 return -1;
             }
             hr = CompileComputeShader(sw, "TryModeLE10CS", &m_csBlobEx[1]);
-            if (FAILED(hr)) {
+            if (FAILED(hr))
+            {
                 csBlobCleanUp();
                 Cleanup();
                 PrintDX("Failed compiling shader %08X\n", hr);
                 return -1;
             }
-        } else if (m_activeEncoder == ACTIVE_ENCODER_BC7) {
+#endif
+        }
+#ifdef USE_ALL_BC7_MODES
+        else if (m_activeEncoder == ACTIVE_ENCODER_BC7)
+        {
             hr = CompileComputeShader(sw, "TryMode456CS", &m_csBlobEx[0]);
-            if (FAILED(hr)) {
+            if (FAILED(hr))
+            {
                 csBlobCleanUp();
                 Cleanup();
                 PrintDX("Failed compiling shader %08X\n", hr);
                 return -1;
             }
             hr = CompileComputeShader(sw, "TryMode137CS", &m_csBlobEx[1]);
-            if (FAILED(hr)) {
+            if (FAILED(hr))
+            {
                 csBlobCleanUp();
                 Cleanup();
                 PrintDX("Failed compiling shader %08X\n", hr);
                 return -1;
             }
             hr = CompileComputeShader(sw, "TryMode02CS", &m_csBlobEx[2]);
-            if (FAILED(hr)) {
+            if (FAILED(hr))
+            {
                 csBlobCleanUp();
                 Cleanup();
                 PrintDX("Failed compiling shader %08X\n", hr);
                 return -1;
             }
         }
-
+#endif
         // Save the compiled version for use on future runs
         stemp = std::wstring(compiledShaderFile.begin(), compiledShaderFile.end());
         sw    = stemp.c_str();
         hr    = D3DWriteBlobToFile(m_csBlob, sw, true);
-        if (FAILED(hr)) {
+        if (FAILED(hr))
+        {
             csBlobCleanUp();
             Cleanup();
             PrintDX("Failed to save compiled shader %08X\n", hr);
             return -1;
         }
 
-        if (m_activeEncoder == ACTIVE_ENCODER_BC6) {
+        if (m_activeEncoder == ACTIVE_ENCODER_BC6)
+        {
+#ifdef USE_ALL_BC6_MODES
             compiledShaderFile = m_sourceShaderFile;
             compiledShaderFile.append(".0.cmp");
 
@@ -660,7 +761,8 @@ HRESULT CDirectX::BuildBCnEncoder() {
             stemp = std::wstring(compiledShaderFile.begin(), compiledShaderFile.end());
             sw    = stemp.c_str();
             hr    = D3DWriteBlobToFile(m_csBlobEx[0], sw, true);
-            if (FAILED(hr)) {
+            if (FAILED(hr))
+            {
                 csBlobCleanUp();
                 Cleanup();
                 PrintDX("Failed to save compiled shader %08X\n", hr);
@@ -673,13 +775,18 @@ HRESULT CDirectX::BuildBCnEncoder() {
             stemp = std::wstring(compiledShaderFile.begin(), compiledShaderFile.end());
             sw    = stemp.c_str();
             hr    = D3DWriteBlobToFile(m_csBlobEx[1], sw, true);
-            if (FAILED(hr)) {
+            if (FAILED(hr))
+            {
                 csBlobCleanUp();
                 Cleanup();
                 PrintDX("Failed to save compiled shader %08X\n", hr);
                 return -1;
             }
-        } else if (m_activeEncoder == ACTIVE_ENCODER_BC7) {
+#endif
+        }
+#ifdef USE_ALL_BC7_MODES
+        else if (m_activeEncoder == ACTIVE_ENCODER_BC7)
+        {
             compiledShaderFile = m_sourceShaderFile;
             compiledShaderFile.append(".0.cmp");
 
@@ -687,7 +794,8 @@ HRESULT CDirectX::BuildBCnEncoder() {
             stemp = std::wstring(compiledShaderFile.begin(), compiledShaderFile.end());
             sw    = stemp.c_str();
             hr    = D3DWriteBlobToFile(m_csBlobEx[0], sw, true);
-            if (FAILED(hr)) {
+            if (FAILED(hr))
+            {
                 csBlobCleanUp();
                 Cleanup();
                 PrintDX("Failed to save compiled shader %08X\n", hr);
@@ -700,7 +808,8 @@ HRESULT CDirectX::BuildBCnEncoder() {
             stemp = std::wstring(compiledShaderFile.begin(), compiledShaderFile.end());
             sw    = stemp.c_str();
             hr    = D3DWriteBlobToFile(m_csBlobEx[1], sw, true);
-            if (FAILED(hr)) {
+            if (FAILED(hr))
+            {
                 csBlobCleanUp();
                 Cleanup();
                 PrintDX("Failed to save compiled shader %08X\n", hr);
@@ -713,13 +822,15 @@ HRESULT CDirectX::BuildBCnEncoder() {
             stemp = std::wstring(compiledShaderFile.begin(), compiledShaderFile.end());
             sw    = stemp.c_str();
             hr    = D3DWriteBlobToFile(m_csBlobEx[2], sw, true);
-            if (FAILED(hr)) {
+            if (FAILED(hr))
+            {
                 csBlobCleanUp();
                 Cleanup();
                 PrintDX("Failed to save compiled shader %08X\n", hr);
                 return -1;
             }
         }
+#endif
     }
 
     //------------------------------------------------------------------
@@ -727,16 +838,20 @@ HRESULT CDirectX::BuildBCnEncoder() {
     //-------------------------------------------------------------------
     CleanupEncoders();
     hr = m_pDevice->CreateComputeShader(m_csBlob->GetBufferPointer(), m_csBlob->GetBufferSize(), nullptr, &m_BCn_pEncodeBlockCS[m_activeEncoder]);
-    if (FAILED(hr)) {
+    if (FAILED(hr))
+    {
         csBlobCleanUp();
         Cleanup();
         PrintDX("Failed to create shader %08X\n", hr);
         return -1;
     }
 
-    if (m_activeEncoder == ACTIVE_ENCODER_BC6) {
+    if (m_activeEncoder == ACTIVE_ENCODER_BC6)
+    {
+#ifdef USE_ALL_BC6_MODES
         hr = m_pDevice->CreateComputeShader(m_csBlobEx[0]->GetBufferPointer(), m_csBlobEx[0]->GetBufferSize(), nullptr, &m_BC6H_pTryModeG10CS);
-        if (FAILED(hr)) {
+        if (FAILED(hr))
+        {
             csBlobCleanUp();
             Cleanup();
             PrintDX("Failed to create shader %08X\n", hr);
@@ -744,15 +859,21 @@ HRESULT CDirectX::BuildBCnEncoder() {
         }
 
         hr = m_pDevice->CreateComputeShader(m_csBlobEx[1]->GetBufferPointer(), m_csBlobEx[1]->GetBufferSize(), nullptr, &m_BC6H_pTryModeLE10CS);
-        if (FAILED(hr)) {
+        if (FAILED(hr))
+        {
             csBlobCleanUp();
             Cleanup();
             PrintDX("Failed to create shader %08X\n", hr);
             return -1;
         }
-    } else if (m_activeEncoder == ACTIVE_ENCODER_BC7) {
+#endif
+    }
+#ifdef USE_ALL_BC7_MODES
+    else if (m_activeEncoder == ACTIVE_ENCODER_BC7)
+    {
         hr = m_pDevice->CreateComputeShader(m_csBlobEx[0]->GetBufferPointer(), m_csBlobEx[0]->GetBufferSize(), nullptr, &m_BC7_pTryMode456CS);
-        if (FAILED(hr)) {
+        if (FAILED(hr))
+        {
             csBlobCleanUp();
             Cleanup();
             PrintDX("Failed to create shader %08X\n", hr);
@@ -760,7 +881,8 @@ HRESULT CDirectX::BuildBCnEncoder() {
         }
 
         hr = m_pDevice->CreateComputeShader(m_csBlobEx[1]->GetBufferPointer(), m_csBlobEx[1]->GetBufferSize(), nullptr, &m_BC7_pTryMode137CS);
-        if (FAILED(hr)) {
+        if (FAILED(hr))
+        {
             csBlobCleanUp();
             Cleanup();
             PrintDX("Failed to create shader %08X\n", hr);
@@ -768,13 +890,15 @@ HRESULT CDirectX::BuildBCnEncoder() {
         }
 
         hr = m_pDevice->CreateComputeShader(m_csBlobEx[2]->GetBufferPointer(), m_csBlobEx[2]->GetBufferSize(), nullptr, &m_BC7_pTryMode02CS);
-        if (FAILED(hr)) {
+        if (FAILED(hr))
+        {
             csBlobCleanUp();
             Cleanup();
             PrintDX("Failed to create shader %08X\n", hr);
             return -1;
         }
     }
+#endif
 
     //---------------
     // Clean up temps
@@ -784,7 +908,8 @@ HRESULT CDirectX::BuildBCnEncoder() {
     return hr;
 }
 
-HRESULT CDirectX::GPU_Encode(ID3D11Buffer * *ppDstTextureAsBufOut, int miplevel) {
+HRESULT CDirectX::GPU_Encode(ID3D11Buffer** ppDstTextureAsBufOut, int miplevel)
+{
     if (!ppDstTextureAsBufOut)
         return false;
 
@@ -796,13 +921,13 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer * *ppDstTextureAsBufOut, int miplevel)
     {
         ID3D11Buffer*              pCBCS                 = nullptr;
         ID3D11Buffer*              pErrBestModeBuffer[2] = {nullptr, nullptr};
-        ID3D11ShaderResourceView*  pSRV                  = nullptr;
-        ID3D11UnorderedAccessView* pUAV                  = nullptr;
+        ID3D11ShaderResourceView*  pInputsourceSRV       = nullptr;
+        ID3D11UnorderedAccessView* pCompressedBlockUAV   = nullptr;
         ID3D11UnorderedAccessView* pErrBestModeUAV[2]    = {nullptr, nullptr};
         ID3D11ShaderResourceView*  pErrBestModeSRV[2]    = {nullptr, nullptr};
-
         // check for supported formats
-        switch (m_fmtEncode) {
+        switch (m_fmtEncode)
+        {
         case DXGI_FORMAT_BC1_UNORM:
         case DXGI_FORMAT_BC2_UNORM:
         case DXGI_FORMAT_BC3_UNORM:
@@ -821,8 +946,11 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer * *ppDstTextureAsBufOut, int miplevel)
         D3D11_TEXTURE2D_DESC texSrcDesc;
         m_pTexture2DSourceTexture->GetDesc(&texSrcDesc);
 
+        CGU_UINT32 NumOfBlocks = (texSrcDesc.Height * texSrcDesc.Width) / (4 * 4);
+
         // Init Query Performance Monitors
-        if ((!m_initQueryOk) && m_getGPUPerfStats) {
+        if ((!m_initQueryOk) && m_getGPUPerfStats)
+        {
             D3D11_QUERY_DESC m_queryDisjointDesc;
             D3D11_QUERY_DESC m_queryDesc;
 
@@ -834,7 +962,8 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer * *ppDstTextureAsBufOut, int miplevel)
             m_queryDisjointDesc.Query     = D3D11_QUERY_TIMESTAMP_DISJOINT;
             m_queryDisjointDesc.MiscFlags = 0;
             hr                            = m_pDevice->CreateQuery(&m_queryDisjointDesc, &m_pQueryDisjoint);
-            if (FAILED(hr)) {
+            if (FAILED(hr))
+            {
                 _com_error err(hr);
                 LPCTSTR    errMsg = err.ErrorMessage();
                 PrintDX("Query Error %s\n", errMsg);
@@ -843,14 +972,16 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer * *ppDstTextureAsBufOut, int miplevel)
             m_queryDesc.Query     = D3D11_QUERY_TIMESTAMP;
             m_queryDesc.MiscFlags = 0;
             hr                    = m_pDevice->CreateQuery(&m_queryDesc, &m_pQueryBegin);
-            if (FAILED(hr)) {
+            if (FAILED(hr))
+            {
                 _com_error err(hr);
                 LPCTSTR    errMsg = err.ErrorMessage();
                 PrintDX("Query Error %s\n", errMsg);
             }
 
             hr = m_pDevice->CreateQuery(&m_queryDesc, &m_pQueryEnd);
-            if (FAILED(hr)) {
+            if (FAILED(hr))
+            {
                 _com_error err(hr);
                 LPCTSTR    errMsg = err.ErrorMessage();
                 PrintDX("Query Error %s\n", errMsg);
@@ -858,6 +989,9 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer * *ppDstTextureAsBufOut, int miplevel)
             m_initQueryOk = true;
         }
 
+
+
+        //===================================================================================================================================================================
         // Create a Shader Resource View (SRV) for input texture
         {
             D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
@@ -865,7 +999,7 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer * *ppDstTextureAsBufOut, int miplevel)
             SRVDesc.Texture2D.MipLevels             = texSrcDesc.MipLevels;
             SRVDesc.Texture2D.MostDetailedMip       = 0;
             SRVDesc.Format                          = texSrcDesc.Format;
-            V_GOTO(m_pDevice->CreateShaderResourceView(m_pTexture2DSourceTexture, &SRVDesc, &pSRV));
+            V_GOTO(m_pDevice->CreateShaderResourceView(m_pTexture2DSourceTexture, &SRVDesc, &pInputsourceSRV));
         }
 
         //========================================================================================
@@ -879,11 +1013,12 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer * *ppDstTextureAsBufOut, int miplevel)
             sbOutDesc.Usage          = D3D11_USAGE_DEFAULT;
             sbOutDesc.MiscFlags      = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
-            switch (m_fmtEncode) {
+            switch (m_fmtEncode)
+            {
             case DXGI_FORMAT_BC1_UNORM:
             case DXGI_FORMAT_BC4_UNORM:
-                sbOutDesc.StructureByteStride = sizeof(Buffer64Bits);  // 8 Bytes
-                sbOutDesc.ByteWidth           = texSrcDesc.Height * texSrcDesc.Width * sizeof(Buffer64Bits) / 16;
+                sbOutDesc.StructureByteStride = sizeof(OutCompressedStruct64Bits);  // 8 Bytes
+                sbOutDesc.ByteWidth           = NumOfBlocks * sizeof(OutCompressedStruct64Bits);
                 break;
             case DXGI_FORMAT_BC2_UNORM:
             case DXGI_FORMAT_BC3_UNORM:
@@ -892,15 +1027,39 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer * *ppDstTextureAsBufOut, int miplevel)
             case DXGI_FORMAT_BC6H_SF16:
             case DXGI_FORMAT_BC7_UNORM:
             default:
-                sbOutDesc.StructureByteStride = sizeof(Buffer128Bits);  // 16 Bytes
-                sbOutDesc.ByteWidth           = texSrcDesc.Height * texSrcDesc.Width * sizeof(Buffer128Bits) / 16;
+                sbOutDesc.StructureByteStride = sizeof(OutCompressedStruct128Bits);  // 16 Bytes
+                sbOutDesc.ByteWidth           = NumOfBlocks * sizeof(OutCompressedStruct128Bits);
                 break;
             }
 
             V_GOTO(m_pDevice->CreateBuffer(&sbOutDesc, nullptr, ppDstTextureAsBufOut));
-            V_GOTO(m_pDevice->CreateBuffer(&sbOutDesc, nullptr, &pErrBestModeBuffer[0]));
-            V_GOTO(m_pDevice->CreateBuffer(&sbOutDesc, nullptr, &pErrBestModeBuffer[1]));
+        }
 
+        // Create UAV of the output resources
+        {
+            D3D11_UNORDERED_ACCESS_VIEW_DESC UAVDesc = {};
+            UAVDesc.ViewDimension                    = D3D11_UAV_DIMENSION_BUFFER;
+            UAVDesc.Format                           = DXGI_FORMAT_UNKNOWN;
+            UAVDesc.Buffer.FirstElement              = 0;
+            UAVDesc.Buffer.NumElements               = NumOfBlocks;
+#pragma warning(push)
+#pragma warning(disable : 6387)
+            V_GOTO(m_pDevice->CreateUnorderedAccessView(*ppDstTextureAsBufOut, &UAVDesc, &pCompressedBlockUAV));
+#pragma warning(pop)
+        }
+
+//===================================================================================================================================================================
+        D3D11_BUFFER_DESC sbOutTempDesc;
+        {
+            sbOutTempDesc.BindFlags      = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+            sbOutTempDesc.CPUAccessFlags = 0;
+            sbOutTempDesc.Usage          = D3D11_USAGE_DEFAULT;
+            sbOutTempDesc.MiscFlags      = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+            sbOutTempDesc.StructureByteStride = sizeof(SharedIOData);
+            sbOutTempDesc.ByteWidth           = NumOfBlocks * sizeof(SharedIOData);
+
+            V_GOTO(m_pDevice->CreateBuffer(&sbOutTempDesc, nullptr, &pErrBestModeBuffer[0]));
+            V_GOTO(m_pDevice->CreateBuffer(&sbOutTempDesc, nullptr, &pErrBestModeBuffer[1]));
             _Analysis_assume_(pErrBestModeBuffer[0] != 0);
         }
 
@@ -910,10 +1069,9 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer * *ppDstTextureAsBufOut, int miplevel)
             UAVDesc.ViewDimension                    = D3D11_UAV_DIMENSION_BUFFER;
             UAVDesc.Format                           = DXGI_FORMAT_UNKNOWN;
             UAVDesc.Buffer.FirstElement              = 0;
-            UAVDesc.Buffer.NumElements               = sbOutDesc.ByteWidth / sbOutDesc.StructureByteStride;
+            UAVDesc.Buffer.NumElements               = NumOfBlocks;
 #pragma warning(push)
 #pragma warning(disable : 6387)
-            V_GOTO(m_pDevice->CreateUnorderedAccessView(*ppDstTextureAsBufOut, &UAVDesc, &pUAV));
             V_GOTO(m_pDevice->CreateUnorderedAccessView(pErrBestModeBuffer[0], &UAVDesc, &pErrBestModeUAV[0]));
             V_GOTO(m_pDevice->CreateUnorderedAccessView(pErrBestModeBuffer[1], &UAVDesc, &pErrBestModeUAV[1]));
 #pragma warning(pop)
@@ -925,7 +1083,7 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer * *ppDstTextureAsBufOut, int miplevel)
             SRVDesc.ViewDimension                   = D3D11_SRV_DIMENSION_BUFFER;
             SRVDesc.Format                          = DXGI_FORMAT_UNKNOWN;
             SRVDesc.Buffer.FirstElement             = 0;
-            SRVDesc.Buffer.NumElements = texSrcDesc.Height * texSrcDesc.Width / 16;  // BC6H:  sbOutDesc.ByteWidth / sbOutDesc.StructureByteStride;
+            SRVDesc.Buffer.NumElements              = NumOfBlocks;
 #pragma warning(push)
 #pragma warning(disable : 6387)
             V_GOTO(m_pDevice->CreateShaderResourceView(pErrBestModeBuffer[0], &SRVDesc, &pErrBestModeSRV[0]));
@@ -933,56 +1091,57 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer * *ppDstTextureAsBufOut, int miplevel)
 #pragma warning(pop)
         }
 
+        //===================================================================================================================================================================
         int const MAX_BLOCK_BATCH = 64;
-
-        unsigned int num_total_blocks = texSrcDesc.Width / BLOCK_SIZE_X * texSrcDesc.Height / BLOCK_SIZE_Y;
-        unsigned int num_blocks       = num_total_blocks;
         unsigned int start_block_id   = 0;
 
-        m_num_blocks = num_blocks;
+        m_num_blocks = NumOfBlocks;
 
-        //================================
-        // Run the BC1 to BC5 Shaders
-        //================================
+        // BCn options to pass down to shaders
+        // this should match cbuffer cbCS : register( b0 ) in the shader code 
+        struct ShaderOptions
+        {
+            unsigned int tex_width;         // param[0]
+            unsigned int num_block_x;       // param[1]
+            unsigned int format;            // param[2]
+            unsigned int mode_id;           // param[3]
+            unsigned int start_block_id;    // param[4]
+            unsigned int num_total_blocks;  // param[5]
+            float        alpha_weight;      // param[6]
+            float        quality;           // param[7]
+        } options;
+
+        options.tex_width        = texSrcDesc.Width;
+        options.num_block_x      = texSrcDesc.Width / BLOCK_SIZE_X;
+        options.format           = m_fmtEncode;
+        options.mode_id          = 0;
+        options.start_block_id   = start_block_id;
+        options.num_total_blocks = NumOfBlocks;
+        options.alpha_weight     = m_fAlphaWeight;
+        options.quality          = m_fquality;
+
+        // Create constant buffer for BCn options
+        {
+            D3D11_BUFFER_DESC cbDesc;
+            cbDesc.Usage          = D3D11_USAGE_DYNAMIC;
+            cbDesc.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
+            cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+            cbDesc.MiscFlags      = 0;
+            cbDesc.ByteWidth      = sizeof(ShaderOptions);
+            V_GOTO(m_pDevice->CreateBuffer(&cbDesc, nullptr, &pCBCS));
+        }
+
+        //================================================
+        // Run the BC1 to BC5, New BC7 Code Shaders
+        //================================================
         if ((m_fmtEncode == DXGI_FORMAT_BC1_UNORM) || (m_fmtEncode == DXGI_FORMAT_BC2_UNORM) || (m_fmtEncode == DXGI_FORMAT_BC3_UNORM) ||
-                (m_fmtEncode == DXGI_FORMAT_BC4_UNORM) || (m_fmtEncode == DXGI_FORMAT_BC5_UNORM)) {
-            // BC1 to BC5 options to pass down to shaders
-            // this should match cbuffer cbCS : register( b0 ) in the shader code
-            struct ShaderOptions {
-                unsigned int tex_width;
-                unsigned int num_block_x;
-                unsigned int format;
-                unsigned int mode_id;
-                unsigned int start_block_id;
-                unsigned int num_total_blocks;
-                float        alpha_weight;
-                float        quality;
-            } options;
-
-            options.tex_width        = texSrcDesc.Width;
-            options.num_block_x      = texSrcDesc.Width / BLOCK_SIZE_X;
-            options.format           = m_fmtEncode;
-            options.mode_id          = 0;
-            options.start_block_id   = start_block_id;
-            options.num_total_blocks = num_total_blocks;
-            options.alpha_weight     = m_fAlphaWeight;
-            options.quality          = m_fquality;
-
-            // Create constant buffer for BC1..BC5 options
-            {
-                D3D11_BUFFER_DESC cbDesc;
-                cbDesc.Usage          = D3D11_USAGE_DYNAMIC;
-                cbDesc.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
-                cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-                cbDesc.MiscFlags      = 0;
-                cbDesc.ByteWidth      = sizeof(ShaderOptions);
-                V_GOTO(m_pDevice->CreateBuffer(&cbDesc, nullptr, &pCBCS));
-            }
-
-            ID3D11ShaderResourceView* pSRVs[] = {pSRV, nullptr};
+            (m_fmtEncode == DXGI_FORMAT_BC4_UNORM) || (m_fmtEncode == DXGI_FORMAT_BC5_UNORM)
+        )
+        {
+            ID3D11ShaderResourceView* pSRVs[] = {pInputsourceSRV, nullptr};
             m_pContext->CSSetShader(m_BCn_pEncodeBlockCS[m_activeEncoder], nullptr, 0);
             m_pContext->CSSetShaderResources(0, 1, pSRVs);
-            m_pContext->CSSetUnorderedAccessViews(0, 1, &pUAV, nullptr);
+            m_pContext->CSSetUnorderedAccessViews(0, 1, &pCompressedBlockUAV, nullptr);
 
             ID3D11Buffer* ppBufferNULL[1] = {nullptr};
 
@@ -990,14 +1149,18 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer * *ppDstTextureAsBufOut, int miplevel)
             int  n;
 
             QueryProcessBegin(miplevel);
-            while (num_blocks > 0) {
-                if (num_blocks >= MAX_BLOCK_BATCH) {
+            while (NumOfBlocks > 0)
+            {
+                if (NumOfBlocks >= MAX_BLOCK_BATCH)
+                {
                     n                 = MAX_BLOCK_BATCH;
                     uThreadGroupCount = 16;
-                } else {
-                    n                 = num_blocks;
+                }
+                else
+                {
+                    n                 = NumOfBlocks;
                     uThreadGroupCount = __max(n / 4, 1);
-                    if ((uThreadGroupCount * 4) < num_blocks)
+                    if ((uThreadGroupCount * 4) < NumOfBlocks)
                         uThreadGroupCount++;
                 }
 
@@ -1018,54 +1181,35 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer * *ppDstTextureAsBufOut, int miplevel)
                 m_pContext->CSSetConstantBuffers(0, 1, ppBufferNULL);
 
                 start_block_id += n;
-                num_blocks -= n;
+                NumOfBlocks    -= n;
             }  // while num_blocks
             QueryProcessEnd(miplevel);
 
         }  // BC
-        else {
-            // ToDo Check how calc of  n = min(num_blocks, MAX_BLOCK_BATCH) & uThreadGroupCount are used
-            // See BC1..5 for fix on small blocks size issue when  num_blocks < MAX_BLOCK_BATCH
-
-            // BC6 & BC7 option to pass down to shader
-            UINT param[8];
-            param[0]             = texSrcDesc.Width;
-            param[1]             = texSrcDesc.Width / BLOCK_SIZE_X;
-            param[2]             = m_fmtEncode;
-            param[3]             = 0;
-            param[4]             = start_block_id;
-            param[5]             = num_total_blocks;
-            *((float*)&param[6]) = m_fAlphaWeight;
-            *((float*)&param[7]) = m_fquality;
-
-            // Create constant buffer for BC6 & BC7 Options
-            {
-                D3D11_BUFFER_DESC cbDesc;
-                cbDesc.Usage          = D3D11_USAGE_DYNAMIC;
-                cbDesc.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
-                cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-                cbDesc.MiscFlags      = 0;
-                cbDesc.ByteWidth      = sizeof(UINT) * 8;
-                V_GOTO(m_pDevice->CreateBuffer(&cbDesc, nullptr, &pCBCS));
-            }
-
+        else
+        {
             //=======================
             // Run the BC6H Shaders
             //=======================
-            if ((m_fmtEncode == DXGI_FORMAT_BC6H_UF16) || (m_fmtEncode == DXGI_FORMAT_BC6H_SF16)) {
+            if ((m_fmtEncode == DXGI_FORMAT_BC6H_UF16) || (m_fmtEncode == DXGI_FORMAT_BC6H_SF16))
+            {
                 unsigned int              n;
                 UINT                      uThreadGroupCount4;
                 UINT                      uThreadGroupCount2;
                 D3D11_MAPPED_SUBRESOURCE  cbMapped;
-                ID3D11ShaderResourceView* pSRVs[] = {pSRV, nullptr};
+                ID3D11ShaderResourceView* pSRVs[] = {pInputsourceSRV, nullptr};
                 QueryProcessBegin(miplevel);
-                while (num_blocks > 0) {
-                    if (num_blocks >= MAX_BLOCK_BATCH) {
+                while (NumOfBlocks > 0)
+                {
+                    if (NumOfBlocks >= MAX_BLOCK_BATCH)
+                    {
                         n                  = MAX_BLOCK_BATCH;
                         uThreadGroupCount2 = 32;
                         uThreadGroupCount4 = 16;
-                    } else {
-                        n                  = num_blocks;
+                    }
+                    else
+                    {
+                        n                  = NumOfBlocks;
                         uThreadGroupCount2 = __max(n / 2, 1);
                         if ((uThreadGroupCount2 * 2) < n)
                             uThreadGroupCount2++;
@@ -1074,113 +1218,134 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer * *ppDstTextureAsBufOut, int miplevel)
                             uThreadGroupCount4++;
                     }
 
+                    m_pContext->Map(pCBCS, 0, D3D11_MAP_WRITE_DISCARD, 0, &cbMapped);
+                    options.mode_id        = 0;
+                    options.start_block_id = start_block_id;
+                    memcpy(cbMapped.pData, &options, sizeof(ShaderOptions));
+                    m_pContext->Unmap(pCBCS, 0);
+
+#ifdef USE_ALL_BC6_MODES
+                    RunComputeShader(m_BC6H_pTryModeG10CS, pSRVs, 2, pCBCS, pErrBestModeUAV[0], uThreadGroupCount4, 1, 1, n);
+
+                    for (INT modeID = 0; modeID < 10; ++modeID)
                     {
-                        m_pContext->Map(pCBCS, 0, D3D11_MAP_WRITE_DISCARD, 0, &cbMapped);
-                        param[3] = 0;
-                        param[4] = start_block_id;
-                        memcpy((void*)cbMapped.pData, (void*)param, sizeof(param));
-                        m_pContext->Unmap(pCBCS, 0);
-                    }
-
-                    RunComputeShader(m_BC6H_pTryModeG10CS, pSRVs, 2, pCBCS, pErrBestModeUAV[0], uThreadGroupCount4, 1, 1, n, false);
-
-                    for (INT modeID = 0; modeID < 10; ++modeID) {
                         {
                             m_pContext->Map(pCBCS, 0, D3D11_MAP_WRITE_DISCARD, 0, &cbMapped);
-                            param[3] = modeID;
-                            param[4] = start_block_id;
-                            memcpy(cbMapped.pData, param, sizeof(param));
+                            options.mode_id        = modeID;
+                            options.start_block_id = start_block_id;
+                            memcpy(cbMapped.pData, &options, sizeof(ShaderOptions));
                             m_pContext->Unmap(pCBCS, 0);
                         }
 
                         pSRVs[1] = pErrBestModeSRV[modeID & 1];
-                        RunComputeShader(m_BC6H_pTryModeLE10CS, pSRVs, 2, pCBCS, pErrBestModeUAV[!(modeID & 1)], uThreadGroupCount2, 1, 1, n, false);
+                        RunComputeShader(m_BC6H_pTryModeLE10CS, pSRVs, 2, pCBCS, pErrBestModeUAV[!(modeID & 1)], uThreadGroupCount2, 1, 1, n);
                     }
-
+#endif
                     pSRVs[1] = pErrBestModeSRV[0];
-                    RunComputeShader(m_BCn_pEncodeBlockCS[m_activeEncoder], pSRVs, 2, pCBCS, pUAV, uThreadGroupCount2, 1, 1, n, false);
+                    RunComputeShader(m_BCn_pEncodeBlockCS[m_activeEncoder], pSRVs, 2, pCBCS, pCompressedBlockUAV, uThreadGroupCount2, 1, 1, n);
 
                     start_block_id += n;
-                    num_blocks -= n;
+                    NumOfBlocks    -= n;
                 }  // while num_blocks
                 QueryProcessEnd(miplevel);
+                ResetContext();
             }  // BC6H
+#ifdef USE_ALL_BC7_MODES
             else
                 //====================
                 // Run the BC7 Shaders
                 //====================
-                if ((m_fmtEncode == DXGI_FORMAT_BC7_UNORM) || (m_fmtEncode == DXGI_FORMAT_BC7_UNORM_SRGB)) {
-                    int                      modes137[] = {1, 3, 7};
-                    int                      modes02[]  = {0, 2};
-                    D3D11_MAPPED_SUBRESOURCE cbMapped;
-                    unsigned int             n;
-                    UINT                     uThreadGroupCount4;
-                    UINT                     uThreadGroupCount;
+                if ((m_fmtEncode == DXGI_FORMAT_BC7_UNORM) || (m_fmtEncode == DXGI_FORMAT_BC7_UNORM_SRGB))
+            {
+                int                      modes137[3] = {1, 3, 7};
+                int                      modes02[2]  = {0, 2};
+                D3D11_MAPPED_SUBRESOURCE cbMapped;
+                unsigned int             n;
+                UINT                     uThreadGroupCount4;
+                UINT                     uThreadGroupCount;
 
-                    QueryProcessBegin(miplevel);
-                    while (num_blocks > 0) {
-                        if (num_blocks >= MAX_BLOCK_BATCH) {
-                            n                  = MAX_BLOCK_BATCH;
-                            uThreadGroupCount  = n;
-                            uThreadGroupCount4 = 16;
-                        } else {
-                            n                  = num_blocks;
-                            uThreadGroupCount  = n;
-                            uThreadGroupCount4 = __max(n / 4, 1);
-                            if ((uThreadGroupCount4 * 4) < n)
-                                uThreadGroupCount4++;
-                        }
+                QueryProcessBegin(miplevel);
 
-                        ID3D11ShaderResourceView* pSRVs[] = {pSRV, nullptr};
+                while (NumOfBlocks > 0)
+                {
+                    if (NumOfBlocks >= MAX_BLOCK_BATCH)
+                    {
+                        n                  = MAX_BLOCK_BATCH;
+                        uThreadGroupCount  = n;
+                        uThreadGroupCount4 = 16;
+                    }
+                    else
+                    {
+                        n                  = NumOfBlocks;
+                        uThreadGroupCount  = n;
+                        uThreadGroupCount4 = __max(n / 4, 1);
+                        if ((uThreadGroupCount4 * 4) < n)
+                            uThreadGroupCount4++;
+                    }
+
+                    ID3D11ShaderResourceView* pSRVs[] = {pInputsourceSRV, nullptr};
+                    {
+                        m_pContext->Map(pCBCS, 0, D3D11_MAP_WRITE_DISCARD, 0, &cbMapped);
+                        options.mode_id          = 6;
+                        options.start_block_id   = start_block_id;
+                        memcpy(cbMapped.pData, &options, sizeof(ShaderOptions));
+                        m_pContext->Unmap(pCBCS, 0);
+                    }
+
+                    RunComputeShader(m_BC7_pTryMode456CS, pSRVs, 2, pCBCS, pErrBestModeUAV[0], uThreadGroupCount4, 1, 1, n);
+
+                    if (m_bc7_mode137)
+                    {
+                        for (int i = 0; i < 3; ++i)
                         {
-                            D3D11_MAPPED_SUBRESOURCE cbMapped;
                             m_pContext->Map(pCBCS, 0, D3D11_MAP_WRITE_DISCARD, 0, &cbMapped);
-                            param[3] = 0;
-                            param[4] = start_block_id;
-                            memcpy(cbMapped.pData, param, sizeof(param));
+                            options.mode_id        = modes137[i];
+                            options.start_block_id = start_block_id;
+                            memcpy(cbMapped.pData, &options, sizeof(ShaderOptions));
                             m_pContext->Unmap(pCBCS, 0);
+
+                            // Mode 1: err1 -> err2
+                            // Mode 3: err2 -> err1
+                            // Mode 7: err1 -> err2
+                            pSRVs[1] = (i & 1) ? pErrBestModeSRV[1] : pErrBestModeSRV[0];
+                            RunComputeShader(m_BC7_pTryMode137CS, pSRVs, 2, pCBCS, pErrBestModeUAV[!(i & 1)], uThreadGroupCount, 1, 1, n);
                         }
+                    }
 
-                        RunComputeShader(m_BC7_pTryMode456CS, pSRVs, 2, pCBCS, pErrBestModeUAV[0], uThreadGroupCount4, 1, 1, n, false);
+                    if (m_bc7_mode02)
+                    {
+                        for (int i = 0; i < 2; ++i)
+                        {
+                            m_pContext->Map(pCBCS, 0, D3D11_MAP_WRITE_DISCARD, 0, &cbMapped);
+                            options.mode_id          = modes02[i];
+                            options.start_block_id   = start_block_id;
+                            memcpy(cbMapped.pData, &options, sizeof(ShaderOptions));
+                            m_pContext->Unmap(pCBCS, 0);
 
-                        for (int i = 0; i < 3; ++i) {
-                            {
-                                m_pContext->Map(pCBCS, 0, D3D11_MAP_WRITE_DISCARD, 0, &cbMapped);
-                                param[3] = modes137[i];
-                                param[4] = start_block_id;
-                                memcpy(cbMapped.pData, param, sizeof(param));
-                                m_pContext->Unmap(pCBCS, 0);
-                            }
-
-                            pSRVs[1] = pErrBestModeSRV[i & 1];
-                            RunComputeShader(m_BC7_pTryMode137CS, pSRVs, 2, pCBCS, pErrBestModeUAV[!(i & 1)], uThreadGroupCount, 1, 1, n, false);
+                            // Mode 0: err2 -> err1
+                            // Mode 2: err1 -> err2
+                            pSRVs[1] = (i & 1) ? pErrBestModeSRV[0] : pErrBestModeSRV[1];
+                            RunComputeShader(m_BC7_pTryMode02CS, pSRVs, 2, pCBCS, pErrBestModeUAV[i & 1], uThreadGroupCount, 1, 1, n);
                         }
+                    }
 
-                        for (int i = 0; i < 2; ++i) {
-                            {
-                                m_pContext->Map(pCBCS, 0, D3D11_MAP_WRITE_DISCARD, 0, &cbMapped);
-                                param[3] = modes02[i];
-                                param[4] = start_block_id;
-                                memcpy(cbMapped.pData, param, sizeof(param));
-                                m_pContext->Unmap(pCBCS, 0);
-                            }
+                    pSRVs[1] = (m_bc7_mode02 || m_bc7_mode137) ? pErrBestModeSRV[1] : pErrBestModeSRV[0];
+                    RunComputeShader(m_BCn_pEncodeBlockCS[m_activeEncoder], pSRVs, 2, pCBCS, pCompressedBlockUAV, uThreadGroupCount4, 1, 1, n);
 
-                            pSRVs[1] = pErrBestModeSRV[!(i & 1)];
-                            RunComputeShader(m_BC7_pTryMode02CS, pSRVs, 2, pCBCS, pErrBestModeUAV[i & 1], uThreadGroupCount, 1, 1, n, false);
-                        }
+                    start_block_id += n;
+                    NumOfBlocks    -= n;
+                }  // while num_blocks
 
-                        pSRVs[1] = pErrBestModeSRV[1];
-                        RunComputeShader(m_BCn_pEncodeBlockCS[m_activeEncoder], pSRVs, 2, pCBCS, pUAV, uThreadGroupCount4, 1, 1, n, false);
-
-                        start_block_id += n;
-                        num_blocks -= n;
-                    }  // while num_blocks
-                    QueryProcessEnd(miplevel);
-                }  // BC7
+                QueryProcessEnd(miplevel);
+                
+            }  // BC7
+#endif
         }
-quit:
-        SAFE_RELEASE(pSRV);
-        SAFE_RELEASE(pUAV);
+    quit:
+
+        SAFE_RELEASE(pInputsourceSRV);
+        SAFE_RELEASE(pCompressedBlockUAV);
+
         SAFE_RELEASE(pErrBestModeSRV[0]);
         SAFE_RELEASE(pErrBestModeSRV[1]);
         SAFE_RELEASE(pErrBestModeUAV[0]);
@@ -1194,7 +1359,8 @@ quit:
     // ------------------ END OF BCn Encoders
 }
 
-HRESULT CDirectX::Create2DTexture() {
+HRESULT CDirectX::Create2DTexture()
+{
     //printf("Create2DTexture\n");
 
     HRESULT hr;
@@ -1204,8 +1370,13 @@ HRESULT CDirectX::Create2DTexture() {
     if (!initData)
         return E_OUTOFMEMORY;
 
-    initData[0].pSysMem          = m_SrcTexture.pData;  // pixel data
-    initData[0].SysMemPitch      = m_SrcTexture.dwWidth * 4;
+    initData[0].pSysMem = m_SrcTexture.pData;  // pixel data
+
+    if (m_activeEncoder == ACTIVE_ENCODER_BC6)
+        initData[0].SysMemPitch = m_SrcTexture.dwWidth * 8;
+    else
+        initData[0].SysMemPitch = m_SrcTexture.dwWidth * 4;
+
     initData[0].SysMemSlicePitch = m_SrcTexture.dwDataSize;
 
     D3D11_TEXTURE2D_DESC desc = {};
@@ -1213,20 +1384,24 @@ HRESULT CDirectX::Create2DTexture() {
     desc.Height               = m_SrcTexture.dwHeight;
     desc.MipLevels            = 1;
     desc.ArraySize            = 1;
-    desc.Format               = DXGI_FORMAT_R8G8B8A8_UNORM;
-    desc.SampleDesc.Count     = 1;
-    desc.SampleDesc.Quality   = 0;
-    desc.Usage                = D3D11_USAGE_DEFAULT;
-    desc.BindFlags            = D3D11_BIND_SHADER_RESOURCE;
-    desc.CPUAccessFlags       = 0;
-    desc.MiscFlags            = miscFlags & ~static_cast<uint32_t>(D3D11_RESOURCE_MISC_TEXTURECUBE);
+    if (m_activeEncoder == ACTIVE_ENCODER_BC6)
+        desc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+    else
+        desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    desc.SampleDesc.Count   = 1;
+    desc.SampleDesc.Quality = 0;
+    desc.Usage              = D3D11_USAGE_DEFAULT;
+    desc.BindFlags          = D3D11_BIND_SHADER_RESOURCE;
+    desc.CPUAccessFlags     = 0;
+    desc.MiscFlags          = miscFlags & ~static_cast<uint32_t>(D3D11_RESOURCE_MISC_TEXTURECUBE);
 
     hr = m_pDevice->CreateTexture2D(&desc, initData.get(), reinterpret_cast<ID3D11Texture2D**>(&m_pTexture2DSourceTexture));
 
     return (hr);
 }
 
-HRESULT CDirectX::GPU_Process() {
+HRESULT CDirectX::GPU_Process()
+{
     //printf("GPU_Process\n");
 
     bool isprocessed = true;
@@ -1244,27 +1419,33 @@ HRESULT CDirectX::GPU_Process() {
     UINT srcW = srcDesc.Width, srcH = srcDesc.Height;
     UINT w, h;
 
-    for (UINT item = 0; (item < srcDesc.ArraySize) && isprocessed; ++item) {
+    for (UINT item = 0; (item < srcDesc.ArraySize) && isprocessed; ++item)
+    {
         w = desc.Width = srcW;
         h = desc.Height = srcH;
 
         if ((desc.Width % 4) != 0 || (desc.Height % 4) != 0)
             break;
 
-        for (UINT level = 0; (level < srcDesc.MipLevels) && isprocessed; ++level) {
+        for (UINT level = 0; (level < srcDesc.MipLevels) && isprocessed; ++level)
+        {
             ID3D11Texture2D* pMipLevel = nullptr;
             m_pDevice->CreateTexture2D(&desc, nullptr, &pMipLevel);
 
-            for (UINT x = 0; x < desc.Width; x += w) {
-                for (UINT y = 0; y < desc.Height; y += h) {
+            for (UINT x = 0; x < desc.Width; x += w)
+            {
+                for (UINT y = 0; y < desc.Height; y += h)
+                {
                     m_pContext->CopySubresourceRegion(pMipLevel, 0, x, y, 0, m_pTexture2DSourceTexture, item * srcDesc.MipLevels + level, nullptr);
                 }
             }
 
             ID3D11Buffer* pBufferMipLevel = nullptr;
-            if (GPU_Encode(&pBufferMipLevel, level)) {
+            if (GPU_Encode(&pBufferMipLevel, level))
+            {
                 buffers.push_back(pBufferMipLevel);
-            } else
+            }
+            else
                 isprocessed = false;
 
             SAFE_RELEASE(pMipLevel);
@@ -1294,7 +1475,8 @@ HRESULT CDirectX::GPU_Process() {
     return (isprocessed);
 }
 
-HRESULT CDirectX::GPU_CompressedBuffer(std::vector<ID3D11Buffer*> & subTextureAsBufs) {
+HRESULT CDirectX::GPU_CompressedBuffer(std::vector<ID3D11Buffer*>& subTextureAsBufs)
+{
     HRESULT hr = S_OK;
 
     D3D11_TEXTURE2D_DESC desc;
@@ -1304,12 +1486,15 @@ HRESULT CDirectX::GPU_CompressedBuffer(std::vector<ID3D11Buffer*> & subTextureAs
         return E_INVALIDARG;
 
     UINT srcW = desc.Width, srcH = desc.Height;
-    for (UINT item = 0; item < desc.ArraySize; ++item) {
+    for (UINT item = 0; item < desc.ArraySize; ++item)
+    {
         desc.Width  = srcW;
         desc.Height = srcH;
-        for (UINT level = 0; level < desc.MipLevels; ++level) {
+        for (UINT level = 0; level < desc.MipLevels; ++level)
+        {
             ID3D11Buffer* pReadbackbuf = CreateAndCopyToCPUBuf(m_pDevice, m_pContext, subTextureAsBufs[item * desc.MipLevels + level]);
-            if (!pReadbackbuf) {
+            if (!pReadbackbuf)
+            {
                 hr = E_OUTOFMEMORY;
                 return hr;
             }
@@ -1319,6 +1504,15 @@ HRESULT CDirectX::GPU_CompressedBuffer(std::vector<ID3D11Buffer*> & subTextureAs
 #pragma warning(disable : 6387)
             m_pContext->Map(pReadbackbuf, 0, D3D11_MAP_READ, 0, &mappedSrc);
             memcpy(m_DstTexture.pData, mappedSrc.pData, m_DstTexture.dwDataSize);
+            // printf("CMP %x %x %x %x %x %x %x %x\n",
+            //        m_DstTexture.pData[0],
+            //        m_DstTexture.pData[1],
+            //        m_DstTexture.pData[2],
+            //        m_DstTexture.pData[3],
+            //        m_DstTexture.pData[4],
+            //        m_DstTexture.pData[5],
+            //        m_DstTexture.pData[6],
+            //        m_DstTexture.pData[7]);
             m_pContext->Unmap(pReadbackbuf, 0);
 #pragma warning(pop)
 
@@ -1338,17 +1532,21 @@ HRESULT CDirectX::GPU_CompressedBuffer(std::vector<ID3D11Buffer*> & subTextureAs
 
 //-----------------------------------------------------------------
 #ifdef USE_COMMON_PIPELINE_API
-void CDirectX::CleanUpKernelAndIOBuffers() {
+void CDirectX::CleanUpKernelAndIOBuffers()
+{
 }
 
-void CDirectX::CleanUpProgramEncoder() {
+void CDirectX::CleanUpProgramEncoder()
+{
 }
 
-bool CDirectX::CreateIOBuffers() {
+bool CDirectX::CreateIOBuffers()
+{
     return true;
 }
 
-long CDirectX::file_size(FILE * p_file) {
+long CDirectX::file_size(FILE* p_file)
+{
     // Get the size of the program.
     if (fseek(p_file, 0, SEEK_END) != 0)
         return 0;
@@ -1358,15 +1556,18 @@ long CDirectX::file_size(FILE * p_file) {
     return program_size;
 }
 
-bool CDirectX::load_file() {
+bool CDirectX::load_file()
+{
     return true;
 }
 
-bool CDirectX::Create_Program_File() {
+bool CDirectX::Create_Program_File()
+{
     return true;
 }
 
-bool CDirectX::CreateProgramEncoder() {
+bool CDirectX::CreateProgramEncoder()
+{
     // Create the program.
     // if (!Create_Program_File())
     // {
@@ -1375,19 +1576,23 @@ bool CDirectX::CreateProgramEncoder() {
     return true;
 }
 
-bool CDirectX::RunKernel() {
+bool CDirectX::RunKernel()
+{
     return true;
 }
 
-bool CDirectX::GetResults() {
+bool CDirectX::GetResults()
+{
     return true;
 }
 #endif
 
 //------------------------------------------------------------------
-CMP_ERROR CDirectX::Compress(KernelOptions * KernelOptions, MipSet & srcTexture, MipSet & destTexture, CMP_Feedback_Proc pFeedback = NULL) {
+CMP_ERROR CDirectX::Compress(KernelOptions* KernelOptions, MipSet& srcTexture, MipSet& destTexture, CMP_Feedback_Proc pFeedback = NULL)
+{
     bool newFormat = false;
-    if (m_codecFormat != destTexture.m_format) {
+    if (m_codecFormat != destTexture.m_format)
+    {
         m_codecFormat = destTexture.m_format;
         newFormat     = true;
     }
@@ -1399,17 +1604,18 @@ CMP_ERROR CDirectX::Compress(KernelOptions * KernelOptions, MipSet & srcTexture,
     // Get perf data only on top most miplevels
     m_getPerfStats = KernelOptions->getPerfStats && (destTexture.m_nIterations < 1);
 
+    m_fAlphaWeight           = 1.0f;  // Need to add to kerneloptions!
     m_fquality               = KernelOptions->fquality;
     m_kernelOptions->data    = KernelOptions->data;
     m_kernelOptions->size    = KernelOptions->size;
     m_kernelOptions->format  = KernelOptions->format;
     m_kernelOptions->dataSVM = KernelOptions->dataSVM;
-    ;
-    m_SrcTexture = srcTexture;
-    m_DstTexture = destTexture;
+    m_SrcTexture             = srcTexture;
+    m_DstTexture             = destTexture;
 
     bool ok = true;
-    if (!m_initDeviceOk) {
+    if (!m_initDeviceOk)
+    {
         if (!CreateDevice())
             return CMP_ERROR::CMP_ERR_FAILED_HOST_SETUP;
         if (!CheckCS4Suppot())
@@ -1419,7 +1625,8 @@ CMP_ERROR CDirectX::Compress(KernelOptions * KernelOptions, MipSet & srcTexture,
     }
 
     // Check for supported formats!
-    switch (m_DstTexture.m_format) {
+    switch (m_DstTexture.m_format)
+    {
     case CMP_FORMAT_BC1:
         m_fmtEncode     = DXGI_FORMAT_BC1_UNORM;
         m_activeEncoder = ACTIVE_ENCODER_BC1;
@@ -1456,13 +1663,15 @@ CMP_ERROR CDirectX::Compress(KernelOptions * KernelOptions, MipSet & srcTexture,
     }
 
 #ifdef USE_COMMON_PIPELINE_API
-    if (m_programRun) {
+    if (m_programRun)
+    {
         CleanUpKernelAndIOBuffers();
         if (newFormat)
             CleanUpProgramEncoder();
         m_programRun = false;
     }
-    if (newFormat) {
+    if (newFormat)
+    {
         if (ok && (CreateProgramEncoder() == false))
             ok = false;
     }
@@ -1473,24 +1682,28 @@ CMP_ERROR CDirectX::Compress(KernelOptions * KernelOptions, MipSet & srcTexture,
     if (ok && (GetResults() == false))
         ok = false;
 
-    if (ok) {
+    if (ok)
+    {
         m_programRun = true;
     }
 #endif
 
-    if (FAILED(BuildBCnEncoder())) {
+    if (FAILED(BuildBCnEncoder()))
+    {
         Cleanup();
         return CMP_ERROR::CMP_ERR_UNABLE_TO_CREATE_ENCODER;
     }
 
     // Create input Texture to process
     SAFE_RELEASE(m_pTexture2DSourceTexture);
-    if (FAILED(Create2DTexture())) {
+    if (FAILED(Create2DTexture()))
+    {
         Cleanup();
         return CMP_ERROR::CMP_ERR_UNABLE_TO_CREATE_ENCODER;
     }
 
-    if (FAILED(GPU_Process())) {
+    if (FAILED(GPU_Process()))
+    {
         Cleanup();
         return CMP_ERROR::CMP_ERR_UNABLE_TO_CREATE_ENCODER;
     }

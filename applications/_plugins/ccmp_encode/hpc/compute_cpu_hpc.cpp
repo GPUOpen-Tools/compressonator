@@ -298,7 +298,8 @@ void CompressTexture(const texture_surface* input, unsigned char* output) {
     g_plugin_compute->CompressTexture((void *)input, (void *)output, nullptr);
 }
 
-CMP_ERROR CCPU_HPC::Compress(KernelOptions *Options, MipSet  &SrcTexture, MipSet  &destTexture,CMP_Feedback_Proc pFeedback) {
+CMP_ERROR CCPU_HPC::Compress(KernelOptions *Options, MipSet  &SrcTexture, MipSet  &destTexture,CMP_Feedback_Proc pFeedback)
+{
     if (m_plugin_compute == NULL) return(CMP_ERR_UNABLE_TO_INIT_COMPUTELIB);
 
 #if (defined(USE_CONVECTION_KERNELS) || defined(USE_GTC) || defined(USE_APC))
@@ -350,13 +351,19 @@ CMP_ERROR CCPU_HPC::Compress(KernelOptions *Options, MipSet  &SrcTexture, MipSet
     }
 #endif
 
+    // Get Encoder source file
     m_source_file                = Options->srcfile;
+
+    // Update user format options
+    memcpy(m_kernel_options,Options,sizeof(Options->encodeoptions));
 
     // Update kernel option settings
     m_kernel_options->data       = Options->data;
     m_kernel_options->size       = Options->size;
     m_kernel_options->format     = Options->format;
     m_kernel_options->dataSVM    = Options->dataSVM;
+
+    // Get Texture info
     m_source_buffer_size         = SrcTexture.dwDataSize;
     p_destination                = destTexture.pData;
     m_destination_size           = destTexture.dwDataSize;

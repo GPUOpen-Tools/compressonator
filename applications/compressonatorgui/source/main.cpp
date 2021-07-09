@@ -183,6 +183,7 @@ int g_BASIS_DecompressTexture(void* in, void* out, void* blockoptions) {
 
 int main(int argc, char** argv) {
     try {
+        QApplication::setAttribute(Qt::AA_EnableHighDpiScaling); 
         QApplication           app(argc, argv);
 
 #ifdef USE_TESTAUTOMATION

@@ -1702,8 +1702,8 @@ void acImageView::processPSNR()
         if (m_MipImages->decompressedMipSet == NULL)
             return;
 
-        CMP_DOUBLE       outMSE;
-        CMP_DOUBLE       outPSNR;
+        //CMP_DOUBLE       outMSE;
+        //CMP_DOUBLE       outPSNR;
         CMP_AnalysisData anlysisData = {0};
         anlysisData.channelBitMap    = CMP_getFormat_nChannels(m_MipImages->mipset->m_format);  // m_MipImages->decompressedMipSet->m_format);
         if (CMP_MipSetAnlaysis(m_OriginalMipImages->mipset, m_MipImages->decompressedMipSet, m_currentMiplevel, m_DepthIndex, &anlysisData) == CMP_OK)

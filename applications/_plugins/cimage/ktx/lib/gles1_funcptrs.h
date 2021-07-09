@@ -64,7 +64,7 @@ extern PFNGLGETSTRINGIPROC pfGlGetStringi;
     PFNGLCOMPRESSEDTEXIMAGE1DPROC pfGlCompressedTexImage1D; \
     PFNGLCOMPRESSEDTEXIMAGE3DPROC pfGlCompressedTexImage3D; \
     PFNGLGENERATEMIPMAPPROC pfGlGenerateMipmap; \
-	PFNGLGETSTRINGIPROC pfGlGetStringi;
+    PFNGLGETSTRINGIPROC pfGlGetStringi;
 
 #define INITIALIZE_GL_FUNCPTRS \
     pfGlTexImage1D = 0; \
@@ -72,7 +72,7 @@ extern PFNGLGETSTRINGIPROC pfGlGetStringi;
     pfGlCompressedTexImage1D = 0; \
     pfGlCompressedTexImage3D = 0; \
     pfGlGenerateMipmap = 0; \
-	pfGlGetStringi = 0;
+    pfGlGetStringi = 0;
 
 #ifdef __cplusplus
 }

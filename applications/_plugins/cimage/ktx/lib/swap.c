@@ -40,12 +40,12 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
 void
 _ktxSwapEndian16(khronos_uint16_t* pData16, int count)
 {
-	int i;
-	for (i = 0; i < count; ++i)
-	{
-		khronos_uint16_t x = *pData16;
-		*pData16++ = (x << 8) | (x >> 8);
-	}
+    int i;
+    for (i = 0; i < count; ++i)
+    {
+        khronos_uint16_t x = *pData16;
+        *pData16++ = (x << 8) | (x >> 8);
+    }
 }
 
 /*
@@ -54,12 +54,12 @@ _ktxSwapEndian16(khronos_uint16_t* pData16, int count)
 void 
 _ktxSwapEndian32(khronos_uint32_t* pData32, int count)
 {
-	int i;
-	for (i = 0; i < count; ++i)
-	{
-		khronos_uint32_t x = *pData32;
-		*pData32++ = (x << 24) | ((x & 0xFF00) << 8) | ((x & 0xFF0000) >> 8) | (x >> 24);
-	}
+    int i;
+    for (i = 0; i < count; ++i)
+    {
+        khronos_uint32_t x = *pData32;
+        *pData32++ = (x << 24) | ((x & 0xFF00) << 8) | ((x & 0xFF0000) >> 8) | (x >> 24);
+    }
 }
 
 

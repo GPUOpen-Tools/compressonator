@@ -249,9 +249,9 @@ CodecError CCodec_ATI1N_S::Compress(CCodecBuffer&       bufferIn,
                 // Our input red is in the correct offset position of the source buffer
                 bufferIn.ReadBlockR(i * 4, j * 4, 4, 4, cAlphaBlock);
 
-                for (int i = 0; i < BLOCK_SIZE_4X4; i++)
+                for (int ii = 0; ii < BLOCK_SIZE_4X4; ii++)
                 {
-                    AlphaBlockSNorm[i] = cAlphaBlock[i] / 127.0f;
+                    AlphaBlockSNorm[ii] = cAlphaBlock[ii] / 127.0f;
                 }
             }
             else
@@ -264,9 +264,9 @@ CodecError CCodec_ATI1N_S::Compress(CCodecBuffer&       bufferIn,
                     bufferIn.ReadBlockR(i * 4, j * 4, 4, 4, cAlphaBlock);
 
                 // Convert UINT -> SNORM
-                for (int i = 0; i < BLOCK_SIZE_4X4; i++)
+                for (int ii = 0; ii < BLOCK_SIZE_4X4; ii++)
                 {
-                    AlphaBlockSNorm[i] = ((cAlphaBlock[i]/255.0f)*2.0f - 1.0f);
+                    AlphaBlockSNorm[ii] = ((cAlphaBlock[ii]/255.0f)*2.0f - 1.0f);
                 }
             }
 

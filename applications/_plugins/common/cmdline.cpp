@@ -81,6 +81,8 @@ using namespace tinygltf2;
 #include "psapi.h"
 #endif
 
+#include <sstream>
+
 using namespace std;
 
 CCmdLineParamaters g_CmdPrams;
@@ -481,7 +483,8 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
             {
                 throw "No UseChannelWeighting value specified (default is 0:off; 1:on)";
             }
-            int value = std::stof(strParameter);
+
+            float value = std::stof(strParameter);
             if ((value < 0) || (value > 1))
             {
                 throw "UseChannelWeighting value should be 1 or 0";
@@ -494,26 +497,41 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
             {
                 throw "No Alpha threshold value specified";
             }
-            int value = std::stof(strParameter);
+
+            int value = std::stoi(strParameter);
             if ((value < 1) || (value > 255))
             {
                 throw "Alpha threshold value should be in range of 1 to 255";
             }
             g_CmdPrams.CompressOptions.nAlphaThreshold = value;
+             g_CmdPrams.CompressOptions.bDXT1UseAlpha = true;
         }
-        else if (strcmp(strCommand, "-DXT1UseAlpha") == 0)
+        else if (strcmp(strCommand, "-DXT1UseAlpha") == 0) // Legacy will be removed! use AlphaThreshold > 0 to set
         {
             if (strlen(strParameter) == 0)
             {
                 throw "No DXT1UseAlpha value specified (default is 0:off; 1:on)";
             }
-            int value = std::stof(strParameter);
+            int value = std::stoi(strParameter);
             if ((value < 0) || (value > 1))
             {
                 throw "DXT1UseAlpha value should be 1 or 0";
             }
             g_CmdPrams.CompressOptions.bDXT1UseAlpha   = bool(value);
-            g_CmdPrams.CompressOptions.nAlphaThreshold = 128;  //default to 128
+        }
+        else if (strcmp(strCommand, "-RefineSteps") == 0)
+        {
+            if (strlen(strParameter) == 0)
+            {
+                throw "No RefineSteps value specified (To enable set value to 1 or 2)";
+            }
+            int value = std::stoi(strParameter);
+            if ((value < 1) || (value > 2))
+            {
+                throw "RefineSteps valid range is 1 or 2";
+            }
+            g_CmdPrams.CompressOptions.bUseRefinementSteps = true;
+            g_CmdPrams.CompressOptions.nRefinementSteps     = value;
         }
         else if (strcmp(strCommand, "-DecodeWith") == 0)
         {
@@ -595,7 +613,7 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
                 throw "No boolean value (1 or 0) specified to enable vertex fetch optimization or not.";
             }
 
-            int value = std::stof(strParameter);
+            int value = std::stoi(strParameter);
             if ((value < 0) || (value > 1))
             {
                 throw "Optimize vertex fetch value should be 1(enabled) or 0(disabled).";
@@ -754,9 +772,10 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
             std::string filterParameter = strParameter;
             std::transform(filterParameter.begin(), filterParameter.end(), filterParameter.begin(), ::toupper);
 
-            string supported_ExtListings = {"DDS,KTX,KTX2,TGA,EXR,PNG,BMP,HDR,JPG,TIFF,PPM"};
+            string supported_ExtListings = {"DDS,KTX,KTX2,TGA,EXR,PNG,BMP,HDR,JPG,TIFF,TIF,PPM"};
 
-            istringstream ff(filterParameter);
+            std::istringstream ff(filterParameter);
+
             string        sff;
             int           filter_num = 0;
             while (getline(ff, sff, ','))
@@ -945,8 +964,9 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
                     }
                 }
                 else  // now check for destination once sourcefile or filelist has been added
-                    if ((g_CmdPrams.DestFile.length() == 0) && (g_CmdPrams.SourceFile.length() || g_CmdPrams.SourceFileList.size()))
+                if ((g_CmdPrams.DestFile.length() == 0) && (g_CmdPrams.SourceFile.length() || g_CmdPrams.SourceFileList.size()))
                 {
+                    // Check if destination to a file
                     if (CMP_PathType(strCommand) == CMP_PATHTYPES::CMP_PATH_IS_FILE)
                     {
                         g_CmdPrams.DestFile = strCommand;
@@ -973,11 +993,12 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
                     }
                     else
                     {
+                        // Processing a Directory
                         const std::string fullPath = CMP_GetFullPath(strCommand);
 
                         if (fullPath.length() > 0)
                         {
-                            const std::string directory(CMP_GetFullPath(strCommand));
+                            const std::string directory = CMP_GetPath(strCommand);
                             // check if dir exist if not create it!
                             if (!CMP_DirExists(directory))
                             {
@@ -1653,7 +1674,11 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
 
                     if (!CMP_FileExists(dstFolder + input))
                     {
-                        CMP_FileCopy(imgSrcDir + input, dstFolder + input);
+                        std::string src = imgSrcDir;
+                        src.append(input);
+                        std::string dst = dstFolder;
+                        dst.append(input);
+                        CMP_FileCopy(src, dst);
                     }
                 }
             }
@@ -1810,7 +1835,7 @@ bool CompressDecompressMesh(std::string SourceFile, std::string DestFile)
         PrintInfo("[Mesh Compression] Error in loading mesh compression plugin.\n");
         return false;
     }
-#endif()
+#endif
 
     return true;
 }
@@ -2221,6 +2246,17 @@ CMP_ERROR CMP_ConvertMipTextureCGP(MipSet* pMipSetIn, MipSet* pMipSetOut, CMP_Co
                 kernel_options.getDeviceInfo = pCompressOptions->getDeviceInfo;
                 kernel_options.genGPUMipMaps = genGPUMipMaps;
                 kernel_options.useSRGBFrames = pCompressOptions->useSRGBFrames;
+                // New BC15 settings
+                kernel_options.bc15.useAlphaThreshold  = pCompressOptions->bDXT1UseAlpha;
+                kernel_options.bc15.alphaThreshold     = pCompressOptions->nAlphaThreshold;
+                kernel_options.bc15.useAdaptiveWeights = pCompressOptions->bUseAdaptiveWeighting;
+                kernel_options.bc15.useChannelWeights  = pCompressOptions->bUseChannelWeighting;
+                kernel_options.bc15.channelWeights[0]  = pCompressOptions->fWeightingRed;
+                kernel_options.bc15.channelWeights[1]  = pCompressOptions->fWeightingGreen;
+                kernel_options.bc15.channelWeights[2]  = pCompressOptions->fWeightingBlue;
+                kernel_options.bc15.useRefinementSteps = pCompressOptions->bUseRefinementSteps;
+                kernel_options.bc15.refinementSteps    = pCompressOptions->nRefinementSteps;
+
                 do
                 {
                     ComputeOptions options;

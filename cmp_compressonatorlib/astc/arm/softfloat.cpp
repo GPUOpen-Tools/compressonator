@@ -1,15 +1,15 @@
 /*----------------------------------------------------------------------------*/
 /**
- *	This confidential and proprietary software may be used only as
- *	authorised by a licensing agreement from ARM Limited
- *	(C) COPYRIGHT 2011-2012 ARM Limited
- *	ALL RIGHTS RESERVED
+ *    This confidential and proprietary software may be used only as
+ *    authorised by a licensing agreement from ARM Limited
+ *    (C) COPYRIGHT 2011-2012 ARM Limited
+ *    ALL RIGHTS RESERVED
  *
- *	The entire notice above must be reproduced on all authorised
- *	copies and copies may only be made to the extent permitted
- *	by a licensing agreement from ARM Limited.
+ *    The entire notice above must be reproduced on all authorised
+ *    copies and copies may only be made to the extent permitted
+ *    by a licensing agreement from ARM Limited.
  *
- *	@brief	Soft IEEE-754 floating point library.
+ *    @brief    Soft IEEE-754 floating point library.
  */
 /*----------------------------------------------------------------------------*/
 #ifdef _WIN32
@@ -61,7 +61,7 @@ SOFTFLOAT_INLINE uint32_t clz32(uint32_t inp) {
     return 31 - bsr;
 #else
 #if defined(__arm__) && defined(__ARMCC_VERSION)
-    return __clz(inp);			/* armcc builtin */
+    return __clz(inp);            /* armcc builtin */
 #else
 #if defined(__arm__) && defined(__GNUC__)
     uint32_t lz;
@@ -86,10 +86,10 @@ SOFTFLOAT_INLINE uint32_t clz32(uint32_t inp) {
 
 static SOFTFLOAT_INLINE uint32_t rtne_shift32(uint32_t inp, uint32_t shamt) {
     uint32_t vl1 = UINT32_C(1) << shamt;
-    uint32_t inp2 = inp + (vl1 >> 1);	/* added 0.5 ulp */
-    uint32_t msk = (inp | UINT32_C(1)) & vl1;	/* nonzero if odd. '| 1' forces it to 1 if the shamt is 0. */
-    msk--;						/* negative if even, nonnegative if odd. */
-    inp2 -= (msk >> 31);		/* subtract epsilon before shift if even. */
+    uint32_t inp2 = inp + (vl1 >> 1);    /* added 0.5 ulp */
+    uint32_t msk = (inp | UINT32_C(1)) & vl1;    /* nonzero if odd. '| 1' forces it to 1 if the shamt is 0. */
+    msk--;                        /* negative if even, nonnegative if odd. */
+    inp2 -= (msk >> 31);        /* subtract epsilon before shift if even. */
     inp2 >>= shamt;
     return inp2;
 }
@@ -118,11 +118,11 @@ sf32 sf16_to_sf32(sf16 inp) {
     uint32_t inpx = inp;
 
     /*
-    	This table contains, for every FP16 sign/exponent value combination,
-    	the difference between the input FP16 value and the value obtained
-    	by shifting the correct FP32 result right by 13 bits.
-    	This table allows us to handle every case except denormals and NaN
-    	with just 1 table lookup, 2 shifts and 1 add.
+        This table contains, for every FP16 sign/exponent value combination,
+        the difference between the input FP16 value and the value obtained
+        by shifting the correct FP32 result right by 13 bits.
+        This table allows us to handle every case except denormals and NaN
+        with just 1 table lookup, 2 shifts and 1 add.
     */
 
     static const uint32_t tbl[64] = {
@@ -140,7 +140,7 @@ sf32 sf16_to_sf32(sf16 inp) {
     res += inpx;
 
     /* the normal cases: the MSB of 'res' is not set. */
-    if (res >= 0)				/* signed compare */
+    if (res >= 0)                /* signed compare */
         return res << 13;
 
     /* Infinity and Zero: the bottom 10 bits of 'res' are clear. */
@@ -220,10 +220,10 @@ sf16 sf32_to_sf16(sf32 inp, roundmode rmode) {
     uint32_t vlx = tabx[idx];
     switch (idx) {
     /*
-      	Positive number which may be Infinity or NaN.
-    	We need to check whether it is NaN; if it is, quieten it by setting the top bit of the mantissa.
-    	(If we don't do this quieting, then a NaN  that is distinguished only by having
-    	its low-order bits set, would be turned into an INF. */
+          Positive number which may be Infinity or NaN.
+        We need to check whether it is NaN; if it is, quieten it by setting the top bit of the mantissa.
+        (If we don't do this quieting, then a NaN  that is distinguished only by having
+        its low-order bits set, would be turned into an INF. */
     case 50:
     case 51:
     case 52:
@@ -235,42 +235,42 @@ sf16 sf32_to_sf16(sf32 inp, roundmode rmode) {
     case 58:
     case 59:
         /*
-        	the input value is 0x7F800000 or 0xFF800000 if it is INF.
-        	By subtracting 1, we get 7F7FFFFF or FF7FFFFF, that is, bit 23 becomes zero.
-        	For NaNs, however, this operation will keep bit 23 with the value 1.
-        	We can then extract bit 23, and logical-OR bit 9 of the result with this
-        	bit in order to quieten the NaN (a Quiet NaN is a NaN where the top bit
-        	of the mantissa is set.)
+            the input value is 0x7F800000 or 0xFF800000 if it is INF.
+            By subtracting 1, we get 7F7FFFFF or FF7FFFFF, that is, bit 23 becomes zero.
+            For NaNs, however, this operation will keep bit 23 with the value 1.
+            We can then extract bit 23, and logical-OR bit 9 of the result with this
+            bit in order to quieten the NaN (a Quiet NaN is a NaN where the top bit
+            of the mantissa is set.)
         */
-        p = (inp - 1) & UINT32_C(0x800000);	/* zero if INF, nonzero if NaN. */
+        p = (inp - 1) & UINT32_C(0x800000);    /* zero if INF, nonzero if NaN. */
         return (sf16)(((inp + (sf16)vlx) >> 13) | (p >> 14));
     /*
-    	positive, exponent = 0, round-mode == UP; need to check whether number actually is 0.
-    	If it is, then return 0, else return 1 (the smallest representable nonzero number)
+        positive, exponent = 0, round-mode == UP; need to check whether number actually is 0.
+        If it is, then return 0, else return 1 (the smallest representable nonzero number)
     */
     case 0:
         /*
-        	-inp will set the MSB if the input number is nonzero.
-        	Thus (-inp) >> 31 will turn into 0 if the input number is 0 and 1 otherwise.
+            -inp will set the MSB if the input number is nonzero.
+            Thus (-inp) >> 31 will turn into 0 if the input number is 0 and 1 otherwise.
         */
         return (uint32_t) (-(int32_t) inp) >> 31;
 
     /*
-    	negative, exponent = , round-mode == DOWN, need to check whether number is
-    	actually 0. If it is, return 0x8000 ( float -0.0 )
-    	Else return the smallest negative number ( 0x8001 ) */
+        negative, exponent = , round-mode == DOWN, need to check whether number is
+        actually 0. If it is, return 0x8000 ( float -0.0 )
+        Else return the smallest negative number ( 0x8001 ) */
     case 6:
         /*
-        	in this case 'vlx' is 0x80000000. By subtracting the input value from it,
-        	we obtain a value that is 0 if the input value is in fact zero and has
-        	the MSB set if it isn't. We then right-shift the value by 31 places to
-        	get a value that is 0 if the input is -0.0 and 1 otherwise.
+            in this case 'vlx' is 0x80000000. By subtracting the input value from it,
+            we obtain a value that is 0 if the input value is in fact zero and has
+            the MSB set if it isn't. We then right-shift the value by 31 places to
+            get a value that is 0 if the input is -0.0 and 1 otherwise.
         */
         return ((vlx - inp) >> 31) + UINT32_C(0x8000);
 
     /*
-    	for all other cases involving underflow/overflow, we don't need to
-    	do actual tests; we just return 'vlx'.
+        for all other cases involving underflow/overflow, we don't need to
+        do actual tests; we just return 'vlx'.
     */
     case 1:
     case 2:
@@ -303,12 +303,12 @@ sf16 sf32_to_sf16(sf32 inp, roundmode rmode) {
         return (sf16)vlx;
 
     /*
-    	for normal numbers, 'vlx' is the difference between the FP32 value of a number and the
-    	FP16 representation of the same number left-shifted by 13 places. In addition, a rounding constant is
-    	baked into 'vlx': for rounding-away-from zero, the constant is 2^13 - 1, causing roundoff away
-    	from zero. for round-to-nearest away, the constant is 2^12, causing roundoff away from zero.
-    	for round-to-nearest-even, the constant is 2^12 - 1. This causes correct round-to-nearest-even
-    	except for odd input numbers. For odd input numbers, we need to add 1 to the constant. */
+        for normal numbers, 'vlx' is the difference between the FP32 value of a number and the
+        FP16 representation of the same number left-shifted by 13 places. In addition, a rounding constant is
+        baked into 'vlx': for rounding-away-from zero, the constant is 2^13 - 1, causing roundoff away
+        from zero. for round-to-nearest away, the constant is 2^12, causing roundoff away from zero.
+        for round-to-nearest-even, the constant is 2^12 - 1. This causes correct round-to-nearest-even
+        except for odd input numbers. For odd input numbers, we need to add 1 to the constant. */
 
     /* normal number, all rounding modes except round-to-nearest-even: */
     case 30:
@@ -329,11 +329,11 @@ sf16 sf32_to_sf16(sf32 inp, roundmode rmode) {
         return (sf16)(p >> 13);
 
     /*
-    	the various denormal cases. These are not expected to be common, so their performance is a bit
-    	less important. For each of these cases, we need to extract an exponent and a mantissa
-    	(including the implicit '1'!), and then right-shift the mantissa by a shift-amount that
-    	depends on the exponent. The shift must apply the correct rounding mode. 'vlx' is used to supply the
-    	sign of the resulting denormal number.
+        the various denormal cases. These are not expected to be common, so their performance is a bit
+        less important. For each of these cases, we need to extract an exponent and a mantissa
+        (including the implicit '1'!), and then right-shift the mantissa by a shift-amount that
+        depends on the exponent. The shift must apply the correct rounding mode. 'vlx' is used to supply the
+        sign of the resulting denormal number.
     */
     case 21:
     case 22:

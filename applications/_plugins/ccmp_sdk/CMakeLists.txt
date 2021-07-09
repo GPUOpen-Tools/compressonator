@@ -9,6 +9,14 @@ add_subdirectory(bc5)
 add_subdirectory(bc6)
 add_subdirectory(bc7)
 
+if (OPTION_CMP_GTC)
+add_subdirectory(gtc)
+endif()
+
+if (OPTION_CMP_APC)
+add_subdirectory(apc)
+endif()
+
 target_include_directories(Plugin_CCMP_SDK PUBLIC
     ./
 )

@@ -12,6 +12,7 @@ if(CMP_HOST_WINDOWS)
          ${PROJECT_EXTERNAL_LIBDIR}/openexr/ilmbase-2.2.0/VS2015/x64/lib
          ${PROJECT_EXTERNAL_LIBDIR}/openexr/openexr-2.2.0/VS2015/x64/lib
          ${PROJECT_EXTERNAL_LIBDIR}/glew/1.9.0/lib/x64 
+         ${OpenCV_LIB_DIRS}
         )
 
     # this must be before add_executable
@@ -89,7 +90,7 @@ list(APPEND CMP_LIBS    CMP_Common
                         ${OpenEXR_LIBRARIES}
                         ${OpenCV_LIBRARIES}
                         ${Boost_LIBRARIES}
-                        # ${draco_LIBRARIES}
+                        ${draco_LIBRARIES}
                         Threads::Threads
                         )
 
@@ -151,7 +152,8 @@ if(CMP_HOST_WINDOWS)
     include(copyfiles.cmake)
     set_target_properties(CompressonatorGUI-bin PROPERTIES 
         FOLDER "Applications"
-        LINK_FLAGS "/SUBSYSTEM:CONSOLE"
+        # LINK_FLAGS "/SUBSYSTEM:CONSOLE"
+        VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$(Configuration)"
         AUTOMOC ON
         AUTORCC ON
         AUTOMOC_COMPILER_PREDEFINES ON

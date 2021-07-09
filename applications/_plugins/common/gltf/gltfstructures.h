@@ -46,7 +46,7 @@
 
 #include "gltffeatures.h"
 
-#include <json/json.h>
+#include <json/json.hpp>
 
 #include <glm/mat4x4.hpp>
 #include <glm/vec4.hpp>

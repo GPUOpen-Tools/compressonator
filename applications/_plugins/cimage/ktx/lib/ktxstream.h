@@ -66,10 +66,10 @@ typedef KTX_error_code(*ktxStream_write)(const void *src, const GLsizei size, co
  */
 struct ktxStream
 {
-	void* src;                 /**< pointer to the stream source */
-	ktxStream_read read;       /**< pointer to function for reading bytes */
-	ktxStream_skip skip;       /**< pointer to function for skipping bytes */
-	ktxStream_write write;     /**< pointer to function for writing bytes */
+    void* src;                 /**< pointer to the stream source */
+    ktxStream_read read;       /**< pointer to function for reading bytes */
+    ktxStream_skip skip;       /**< pointer to function for skipping bytes */
+    ktxStream_write write;     /**< pointer to function for writing bytes */
 };
 
 #endif /* KTXSTREAM_H */

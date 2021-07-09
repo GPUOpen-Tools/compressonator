@@ -466,3 +466,36 @@ CMP_BOOL CMP_API CMP_IsCompressedFormat(CMP_FORMAT format) {
     return false;
 }
 
+
+CMP_BOOL CMP_API CMP_IsFloatFormat(CMP_FORMAT InFormat)
+{
+    switch (InFormat)
+    {
+    case CMP_FORMAT_ARGB_16F:
+    case CMP_FORMAT_ABGR_16F:
+    case CMP_FORMAT_RGBA_16F:
+    case CMP_FORMAT_BGRA_16F:
+    case CMP_FORMAT_RG_16F:
+    case CMP_FORMAT_R_16F:
+    case CMP_FORMAT_ARGB_32F:
+    case CMP_FORMAT_ABGR_32F:
+    case CMP_FORMAT_RGBA_32F:
+    case CMP_FORMAT_BGRA_32F:
+    case CMP_FORMAT_RGB_32F:
+    case CMP_FORMAT_BGR_32F:
+    case CMP_FORMAT_RG_32F:
+    case CMP_FORMAT_R_32F:
+    case CMP_FORMAT_BC6H:
+    case CMP_FORMAT_BC6H_SF:
+    case CMP_FORMAT_RGBE_32F:
+    {
+        return true;
+    }
+    break;
+    default:
+        break;
+    }
+
+    return false;
+}
+

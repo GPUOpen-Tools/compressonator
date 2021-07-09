@@ -29,7 +29,8 @@
 #pragma warning(push)
 #pragma warning(disable : 4100)
 #pragma warning(disable : 4800)
-
+#pragma warning(disable : 5040) // dynamic exception specifications are valid only in C++14 and earlier; 
+ 
 #include "ImfArray.h"
 #include "ImfRgba.h"
 #include <ImathBox.h>

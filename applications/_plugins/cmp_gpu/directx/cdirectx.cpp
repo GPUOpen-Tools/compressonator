@@ -275,7 +275,7 @@ CMP_ERROR Plugin_CDirectX::TC_Compress(void *Options, MipSet  &SrcTexture, MipSe
     srcFloat  = (SrcTexture.m_ChannelFormat == CF_Float16  || SrcTexture.m_ChannelFormat == CF_Float32) ? true : false;
 
     if (destTexture.m_format != CMP_FORMAT_Unknown)
-        destFloat= false; // IsFloatFormat(destTexture.m_format);  for v4.0  DXC float target of BC6 is handled in Codec
+        destFloat = IsFloatFormat(destTexture.m_format);  // for v4.0  DXC float target of BC6 is handled in Codec
     else {
         destFloat = (destTexture.m_ChannelFormat == CF_Float16 || destTexture.m_ChannelFormat == CF_Float32) ? true : false;
     }
@@ -330,7 +330,8 @@ CMP_ERROR Plugin_CDirectX::TC_Compress(void *Options, MipSet  &SrcTexture, MipSe
         newBuffer = true;
     } else { // both src & dest are of type int
         // check if src format is 8 bit and dest is 8 bit if not convert src to match dest
-        if ((SrcTexture.m_ChannelFormat == CF_16bit) && (destTexture.m_ChannelFormat == CF_Compressed)) {
+        if ((SrcTexture.m_ChannelFormat == CF_16bit) && (destTexture.m_ChannelFormat == CF_Compressed) && (!destFloat))
+        {
             hold_pData      = SrcTexture.pData;
             hold_format     = SrcTexture.m_format;
             hold_dwDataSize = SrcTexture.dwDataSize;
