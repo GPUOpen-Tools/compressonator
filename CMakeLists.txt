@@ -54,12 +54,6 @@ endif()
 
 option(OPTION_ENABLE_ALL_APPS "Enable all apps" ON)
 
-#  Some of these options are for internal developement, or scheduled for future releases
-if (CMP_HOST_WINDOWS)
-#release
-    option(OPTION_BUILD_APPS_CMP_CAS      "Build Application: cmp_cas"     ON)
-endif()
-
 #--------------------------------------------------------------------------
 # Enable or Disable Specific Build Apps
 #--------------------------------------------------------------------------
@@ -68,11 +62,13 @@ if (OPTION_ENABLE_ALL_APPS)
     set(OPTION_BUILD_APPS_CMP_GUI     "Build Application: compressonator gui" ON)
     set(OPTION_BUILD_APPS_CMP_TESTCORE "Build Application: cmp_testcore" ON)
     set(OPTION_BUILD_APPS_CMP_EXAMPLES "Build Application: examples" ON)
+    set(OPTION_BUILD_APPS_CMP_CAS      "Build Application: cmp_cas"     ON)
 else()
     option(OPTION_BUILD_APPS_CMP_CLI       OFF)
     option(OPTION_BUILD_APPS_CMP_GUI       OFF)
     option(OPTION_BUILD_APPS_CMP_TESTCORE  OFF)
     option(OPTION_BUILD_APPS_CMP_EXAMPLES  OFF)
+    option(OPTION_BUILD_APPS_CMP_CAS      "Build Application: cmp_cas"     OFF)
 endif()
 
 # Minimum Lib Dependencies for CLI and GUI (GUI has addtion lib requirements condition later in this cmake)
