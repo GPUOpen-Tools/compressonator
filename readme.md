@@ -1,6 +1,8 @@
 
 # Compressonator
 [![CMake](https://github.com/GPUOpen-Tools/compressonator/actions/workflows/cmake.yml/badge.svg)](https://github.com/GPUOpen-Tools/compressonator/actions/workflows/cmake.yml)
+![download](https://img.shields.io/github/downloads/GPUOpen-Tools/Compressonator/total.svg)
+![download](https://img.shields.io/github/downloads/GPUOpen-Tools/Compressonator/V4.1.5083/total.svg)
 
 Compressonator is a set of tools to allow artists and developers to more easily create compressed texture assets or model mesh optimizations and easily visualize the quality impact of various compression and rendering technologies.  It consists of a GUI application, a command line application and an SDK for easy integration into a developer tool chain.
 
@@ -91,7 +93,13 @@ Includes Compressonator core with interfaces for multi-threading, mipmap generat
 // To use Compressonator Framework "C" interfaces, just include
 // a single header file and CMP_Framework lib into  your projects
 
-#include "CMP_Framework.h"
+#include "compressonator.h"
+
+ //--------------------------
+ // Init frameworks
+ // plugin and IO interfaces
+ //--------------------------
+ CMP_InitFramework();
 
 //---------------
 // Load the image
@@ -135,6 +143,23 @@ memset(&kernel_options, 0, sizeof(KernalOptions));
 kernel_options.format   = destFormat;   // Set the format to process
 kernel_options.fquality = fQuality;     // Set the quality of the result
 kernel_options.threads  = 0;            // Auto setting
+
+//=====================================================
+// example of using BC1 encoder options 
+// kernel_options.bc15 is valid for BC1 to BC5 formats
+//=====================================================
+if (destFormat == CMP_FORMAT_BC1)
+{
+    // Enable punch through alpha setting
+    kernel_options.bc15.useAlphaThreshold = true;
+    kernel_options.bc15.alphaThreshold    = 128;
+
+    // Enable setting channel weights
+    kernel_options.bc15.useChannelWeights = true;
+    kernel_options.bc15.channelWeights[0] = 0.3086f;
+    kernel_options.bc15.channelWeights[1] = 0.6094f;
+    kernel_options.bc15.channelWeights[2] = 0.0820f;
+}
 
 //--------------------------------------------------------------
 // Setup a results buffer for the processed file,
@@ -189,7 +214,7 @@ CMP_FreeMipSet(&MipSetCmp);
 //     BCn_Common_kernel.h
 //     Common_Def.h
 
-#include "CMP_Framework.h"
+#include "compressonator.h"
 
 CMP_FORMAT      destFormat = CMP_FORMAT_BC1;
 
