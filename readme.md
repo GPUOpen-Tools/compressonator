@@ -1,6 +1,6 @@
 
 # Compressonator
-[![CMake Windows CLI](https://github.com/GPUOpen-Tools/compressonator/actions/workflows/cmake.yml/badge.svg)](https://github.com/GPUOpen-Tools/compressonator/actions/workflows/cmake.yml)
+[![CMake](https://github.com/GPUOpen-Tools/compressonator/actions/workflows/cmake.yml/badge.svg)](https://github.com/GPUOpen-Tools/compressonator/actions/workflows/cmake.yml)
 ![download](https://img.shields.io/github/downloads/GPUOpen-Tools/Compressonator/total.svg)
 ![download](https://img.shields.io/github/downloads/GPUOpen-Tools/Compressonator/V4.1.5083/total.svg)
 
