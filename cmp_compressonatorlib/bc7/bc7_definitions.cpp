@@ -29,7 +29,7 @@
 // {Component Encoding, PartitionBits, RotationBits, indexSwapBits,
 //  scalarBits, vectorBits, pBitType, subsetCount, {index0Bits, index1Bits}}
 //
-CMP_BTI bti[NUM_BLOCK_TYPES] = {
+CMP_BTI bti_cpu[NUM_BLOCK_TYPES] = {
     {NO_ALPHA,          4, 0, 0, 0, 12, TWO_PBIT, 3, {3, 0}},  // Format Mode 0
     {NO_ALPHA,          6, 0, 0, 0, 18, ONE_PBIT, 2, {3, 0}},  // Format Mode 1
     {NO_ALPHA,          6, 0, 0, 0, 15, NO_PBIT,  3, {2, 0}},  // Format Mode 2

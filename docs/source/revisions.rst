@@ -11,40 +11,34 @@ July 2021
 
 - BC1 Quality Improvements
 
-	- Added new refine steps to improve quality of images with mixed low and high-frequency content.
-	- Boosted encoding performance by 2x with improved quality for smooth texture-mapped surfaces.
-  
+    - Added new refine steps to improve quality of images with mixed low and high-frequency content.
+    - Boosted encoding performance by 2x with improved quality for smooth texture-mapped surfaces.
+
 - BC7 HLSL Improvements
 
-  	- Bug fixes and improved overall quality of the shader.
-
-- New CMP CAS Command Line Tool
-
-    - Uses AMD FidelityFX Contrast Adaptive Sharpening (CAS) shaders
-    - Provides a mixed ability to sharpen and optionally scale image formats
-    - Can use this tool to test CAS using screenshots from your game or any other image prior to programming
+    - Bug fixes and improved overall quality of the shader.
 
 - GUI Update
 
-	- Added "Refine Steps" settings for BC1 image processing
-	- Removed "Use Alpha" and "No Alpha" setting for BC1, Just set a threshold above 0 to enable BC1 punch through ranges
-	
+    - Added "Refine Steps" settings for BC1 image processing
+    - Removed "Use Alpha" and "No Alpha" setting for BC1, Just set a threshold above 0 to enable BC1 punch through ranges
+
 - SDK Updates
-	
-	- Removed framework.h file, replaced with compressonator.h
-	- Added new kernel setting options for BCn codecs in CMP_Framework
-	- New single header shader files added for CPU-GPU common API's and type definitions
-	- Added FidelityFX types to common_defs.h to support programming FidelityFX shaders with CMP type definitions
-	- Improved CompressonatorLib BC1 performance and quality
-	
+
+    - Removed framework.h file, replaced with compressonator.h
+    - Added new kernel setting options for BCn codecs in CMP_Framework
+    - New single header shader files added for CPU-GPU common API's and type definitions
+    - Added FidelityFX types to common_defs.h to support programming FidelityFX shaders with CMP type definitions
+    - Improved CompressonatorLib BC1 performance and quality
+    
 - CMake Build Updates
-	
-	- Added options to select build of external libs, SDK libs and applications
-	- Build updated for CLI on Mac OS
-	- OpenCV 4 supported
-	- Improved compiler standard revision detection and extensions
-	- Visual Studio 2019 support
-	- Qt 5.15 support
+
+    - Added options to select build of external libs, SDK libs and applications
+    - Build updated for CLI on Mac OS
+    - OpenCV 4 supported
+    - Improved compiler standard revision detection and extensions
+    - Visual Studio 2019 support
+    - Qt 5.15 support
 
 **Known issues and limitations**
 
@@ -53,8 +47,6 @@ July 2021
 - Fixed quality issues for BC7 HLSL for images with alpha content, the processing time is longer than the previous release
 
 - Global Setting of Refine Steps is only valid for BC1, it will not work for any other format settings.
-
-- CMP_CAS target file format uses a limited set of file formats (BMP, PNG, JPG, and DDS)
 
 
 V4.1

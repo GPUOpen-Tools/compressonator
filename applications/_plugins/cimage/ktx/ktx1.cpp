@@ -752,13 +752,13 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
     }
 
     if (fheader.numberOfMipmapLevels == 0) fheader.numberOfMipmapLevels = 1;
-    if (fheader.numberOfArrayElements != 0)
-    {
-        if (KTX_CMips)
-            KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) array textures not supported %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.numberOfArrayElements);
-        fclose(pFile);
-        return -1;
-    }
+    //if (fheader.numberOfArrayElements != 0)
+    //{
+    //    if (KTX_CMips)
+    //        KTX_CMips->PrintError(("Error(%d): KTX Plugin ID(%d) array textures not supported %x\n"), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, fheader.numberOfArrayElements);
+    //    fclose(pFile);
+    //    return -1;
+    //}
    
 
     pMipSet->m_nMipLevels = fheader.numberOfMipmapLevels;

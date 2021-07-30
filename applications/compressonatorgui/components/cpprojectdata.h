@@ -2257,7 +2257,7 @@ signals:
 #define STR_CHANNELWEIGHTG_SETTING_HINT "Channel Weight Setting Range 0 (Poor)to 1 (High)Default G Weightiing is 0.6094"
 #define STR_CHANNELWEIGHTB_SETTING_HINT "Channel Weight Setting Range 0 (Poor)to 1 (High)Default B Weightiing is 0.0820"
 
-#define STR_ALPHATHRESHOLD_HINT "Alpha Threshold Range 1 to 255. Default is 128"
+#define STR_ALPHATHRESHOLD_HINT "Alpha Threshold Range 1 to 255"
 
 #define STR_BITRATE_SETTING_HINT "The maximum bitrate allowed is 8.00. The closest bitrate will be determined. Default is 8.00(4x4)"
 

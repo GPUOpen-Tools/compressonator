@@ -591,6 +591,7 @@ TEST_CASE("BC2_Red_Ignore_Alpha", "[BC2_Red_Ignore_Alpha]") {
     DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
     CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
+#ifdef TEST_BC2_HALF_ALPHA
 TEST_CASE("BC2_Blue_Half_Alpha", "[BC2_Blue_Half_Alpha]") {
     const auto block = blocks.find("BC2_Blue_Half_Alpha")->second;
     const auto blockData = block.data;
@@ -669,6 +670,7 @@ TEST_CASE("BC2_Green_Blue_Half_Alpha", "[BC2_Green_Blue_Half_Alpha]") {
     DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
     CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
+#endif
 TEST_CASE("BC2_Red_Full_Alpha", "[BC2_Red_Full_Alpha]") {
     const auto block = blocks.find("BC2_Red_Full_Alpha")->second;
     const auto blockData = block.data;
@@ -864,6 +866,7 @@ TEST_CASE("BC2_Green_Blue_Ignore_Alpha", "[BC2_Green_Blue_Ignore_Alpha]") {
     DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
     CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
+#ifdef TEST_BC2_HALF_ALPHA
 TEST_CASE("BC2_Red_Half_Alpha", "[BC2_Red_Half_Alpha]") {
     const auto block = blocks.find("BC2_Red_Half_Alpha")->second;
     const auto blockData = block.data;
@@ -890,6 +893,7 @@ TEST_CASE("BC2_Green_Half_Alpha", "[BC2_Green_Half_Alpha]") {
     DecompressBlockBC2(compBlock, decompCompBlock, nullptr);
     CHECK(ColorMatches(decompCompBlock, blockColor, false));
 }
+#endif
 TEST_CASE("BC3_Red_Ignore_Alpha", "[BC3_Red_Ignore_Alpha]") {
     const auto block = blocks.find("BC3_Red_Ignore_Alpha")->second;
     const auto blockData = block.data;

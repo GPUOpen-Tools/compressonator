@@ -42,11 +42,17 @@ attrib -r AMDCompressGUI_64.aip
 %ADVANCED_INSTALLER% /edit AMDCompressGUI_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorGUI_x64_4.2.%BUILD_NUMBER%
 %ADVANCED_INSTALLER% /build AMDCompressGUI_64.aip -buildslist DefaultBuild > %WORKSPACE%\Setup_BuildCMPGUI_x64.log 2>&1
 
-echo --- INTERNAL INSTALLER: amdcmp_vision_64.aip
-echo attrib -r amdcmp_vision_64.aip
-echo %ADVANCED_INSTALLER% /edit amdcmp_vision_64.aip /SetVersion 4.2.%BUILD_NUMBER% 
-echo %ADVANCED_INSTALLER% /edit amdcmp_vision_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorVIS_x64_4.2.%BUILD_NUMBER%
-echo %ADVANCED_INSTALLER% /build amdcmp_vision_64.aip -buildslist DefaultBuild > %WORKSPACE%\Setup_BuildCMPVIS_x64.log 2>&1
+echo --- INTERNAL INSTALLER: AMDCompressTest_64.aip
+attrib -r amdcompresstest_64.aip
+%ADVANCED_INSTALLER% /edit amdcompresstest_64.aip /SetVersion 4.2.%BUILD_NUMBER% 
+%ADVANCED_INSTALLER% /edit amdcompresstest_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorTest_x64_4.2.%BUILD_NUMBER%
+%ADVANCED_INSTALLER% /build amdcompresstest_64.aip -buildslist DefaultBuild > %WORKSPACE%\Setup_BuildCMPTest_x64.log 2>&1
+
+rem echo --- INTERNAL INSTALLER: AMDCompressUpscale_64.aip
+rem attrib -r amdcompressupscale_64.aip
+rem %ADVANCED_INSTALLER% /edit amdcompressupscale_64.aip /SetVersion 4.2.%BUILD_NUMBER% 
+rem %ADVANCED_INSTALLER% /edit amdcompressupscale_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorUpscale_x64_4.2.%BUILD_NUMBER%
+rem %ADVANCED_INSTALLER% /build amdcompressupscale_64.aip -buildslist DefaultBuild > %WORKSPACE%\Setup_BuildCMPUpscale_x64.log 2>&1
 
 
 cd %WORKDIR%

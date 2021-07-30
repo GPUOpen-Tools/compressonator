@@ -250,9 +250,11 @@ Used in simplify mesh. Each level will use 70% of the index count on
 previous level. The higher the level, the less detail appear on the
 resulted mesh.
 
-Mesh Compression Settings for Draco selection
+Mesh Compression Settings selection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+ 
+As of v4.2 this option has been disabled. 
+ 
 When selected it will perform mesh compression using
 `Draco <https://opensource.google.com/projects/draco>`__ encoder lib.
 

@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2021 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -96,7 +96,7 @@ class CCmdLineParamaters {
         CompressOptions.bVertexFetch    = CMP_MESH_OPTVFETCH_DEFAULT;
 #endif
 
-        CompressOptions.fquality       = AMD_CODEC_QUALITY_DEFAULT;  // This default value is also ref by code in SDK Compress.cpp
+        CompressOptions.fquality       = 0.001f;
         CompressOptions.fInputDefog    = AMD_CODEC_DEFOG_DEFAULT;
         CompressOptions.fInputExposure = AMD_CODEC_EXPOSURE_DEFAULT;
         CompressOptions.fInputKneeLow  = AMD_CODEC_KNEELOW_DEFAULT;

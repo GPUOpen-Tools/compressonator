@@ -116,7 +116,7 @@ and a simple usage is shown as below:
     free(srcTexture.pData);
     free(destTexture.pData);
 
-Example projects have been provided `here <https://github.com/GPUOpen-Tools/Compressonator/tree/master/Compressonator/Examples/>`_ with:
+Example projects have been provided `here <https://github.com/GPUOpen-Tools/Compressonator/tree/master/examples/>`_ with:
 
 * sdk_example1 demonstrates simple SDK API usage as shown above. 
 * sdk_example2 demonstrates how to use the SDK API in multihreaded environment.

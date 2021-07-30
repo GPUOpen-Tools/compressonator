@@ -93,8 +93,8 @@ void BC7BlockDecoder::DecompressDualIndexBlock(double  out[MAX_SUBSET_SIZE][MAX_
     CMP_DWORD   blockIndices[2][MAX_SUBSET_SIZE];
 
     CMP_DWORD   clusters[2];
-    clusters[0] = 1 << bti[m_blockMode].indexBits[0];
-    clusters[1] = 1 << bti[m_blockMode].indexBits[1];
+    clusters[0] = 1 << bti_cpu[m_blockMode].indexBits[0];
+    clusters[1] = 1 << bti_cpu[m_blockMode].indexBits[1];
     if(m_indexSwap) {
         CMP_DWORD   temp = clusters[0];
         clusters[0] = clusters[1];
@@ -112,12 +112,12 @@ void BC7BlockDecoder::DecompressDualIndexBlock(double  out[MAX_SUBSET_SIZE][MAX_
             blockIndices[i][j] = 0;
             // If this is a fixup index then clear the implicit bit
             if(j==0) {
-                blockIndices[i][j] &= ~(1 << (bti[m_blockMode].indexBits[i]-1));
-                for(k=0; k<bti[m_blockMode].indexBits[i]-1; k++) {
+                blockIndices[i][j] &= ~(1 << (bti_cpu[m_blockMode].indexBits[i]-1));
+                for(k=0; k<bti_cpu[m_blockMode].indexBits[i]-1; k++) {
                     blockIndices[i][j] |= (CMP_DWORD)ReadBit(in) << k;
                 }
             } else {
-                for(k=0; k<bti[m_blockMode].indexBits[i]; k++) {
+                for(k=0; k<bti_cpu[m_blockMode].indexBits[i]; k++) {
                     blockIndices[i][j] |= (CMP_DWORD)ReadBit(in) << k;
                 }
             }
@@ -208,34 +208,34 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
         return;
     }
 
-    for(i=0; i<bti[m_blockMode].rotationBits; i++) {
+    for(i=0; i<bti_cpu[m_blockMode].rotationBits; i++) {
         m_rotation |= ReadBit(in) << i;
     }
-    for(i=0; i<bti[m_blockMode].indexModeBits; i++) {
+    for(i=0; i<bti_cpu[m_blockMode].indexModeBits; i++) {
         m_indexSwap |= ReadBit(in) << i;
     }
 
-    for(i=0; i<bti[m_blockMode].partitionBits; i++) {
+    for(i=0; i<bti_cpu[m_blockMode].partitionBits; i++) {
         m_partition |= ReadBit(in) << i;
     }
 
 
 
-    if(bti[m_blockMode].encodingType == NO_ALPHA) {
+    if(bti_cpu[m_blockMode].encodingType == NO_ALPHA) {
         m_componentBits[COMP_ALPHA] = 0;
         m_componentBits[COMP_RED]   =
             m_componentBits[COMP_GREEN] =
-                m_componentBits[COMP_BLUE]  = bti[m_blockMode].vectorBits / 3;
-    } else if(bti[m_blockMode].encodingType == COMBINED_ALPHA) {
+                m_componentBits[COMP_BLUE]  = bti_cpu[m_blockMode].vectorBits / 3;
+    } else if(bti_cpu[m_blockMode].encodingType == COMBINED_ALPHA) {
         m_componentBits[COMP_ALPHA] =
             m_componentBits[COMP_RED]   =
                 m_componentBits[COMP_GREEN] =
-                    m_componentBits[COMP_BLUE]  = bti[m_blockMode].vectorBits / 4;
-    } else if(bti[m_blockMode].encodingType == SEPARATE_ALPHA) {
-        m_componentBits[COMP_ALPHA] = bti[m_blockMode].scalarBits;
+                    m_componentBits[COMP_BLUE]  = bti_cpu[m_blockMode].vectorBits / 4;
+    } else if(bti_cpu[m_blockMode].encodingType == SEPARATE_ALPHA) {
+        m_componentBits[COMP_ALPHA] = bti_cpu[m_blockMode].scalarBits;
         m_componentBits[COMP_RED]   =
             m_componentBits[COMP_GREEN] =
-                m_componentBits[COMP_BLUE]  = bti[m_blockMode].vectorBits / 3;
+                m_componentBits[COMP_BLUE]  = bti_cpu[m_blockMode].vectorBits / 3;
     }
 
     CMP_DWORD   subset, ep, component;
@@ -244,7 +244,7 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
     // Loop over components
     for(component=0; component < MAX_DIMENSION_BIG; component++) {
         // loop over subsets
-        for(subset=0; subset<(int)bti[m_blockMode].subsetCount; subset++) {
+        for(subset=0; subset<(int)bti_cpu[m_blockMode].subsetCount; subset++) {
             // Loop over endpoints
             for(ep=0; ep<2; ep++) {
                 endpoint[subset][ep][component] = 0;
@@ -257,13 +257,13 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
 
 
     // Now get any parity bits
-    if(bti[m_blockMode].pBitType != NO_PBIT) {
-        for(subset=0; subset<(int)bti[m_blockMode].subsetCount; subset++) {
+    if(bti_cpu[m_blockMode].pBitType != NO_PBIT) {
+        for(subset=0; subset<(int)bti_cpu[m_blockMode].subsetCount; subset++) {
             CMP_DWORD   pBit[2];
-            if(bti[m_blockMode].pBitType == ONE_PBIT) {
+            if(bti_cpu[m_blockMode].pBitType == ONE_PBIT) {
                 pBit[0] = ReadBit(in);
                 pBit[1] = pBit[0];
-            } else if(bti[m_blockMode].pBitType == TWO_PBIT) {
+            } else if(bti_cpu[m_blockMode].pBitType == TWO_PBIT) {
                 pBit[0] = ReadBit(in);
                 pBit[1] = ReadBit(in);
             }
@@ -279,7 +279,7 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
         }
     }
 
-    if(bti[m_blockMode].pBitType != NO_PBIT) {
+    if(bti_cpu[m_blockMode].pBitType != NO_PBIT) {
         // Now that we've unpacked the parity bits, update the component size information
         // for the ramp generator
         for(j=0; j<MAX_DIMENSION_BIG; j++) {
@@ -290,13 +290,13 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
     }
 
     // If this block has two independent sets of indices then put it to that decoder
-    if(bti[m_blockMode].encodingType == SEPARATE_ALPHA) {
+    if(bti_cpu[m_blockMode].encodingType == SEPARATE_ALPHA) {
         DecompressDualIndexBlock(out, in, endpoint[0]);
         return;
     }
 
     CMP_DWORD   fixup[MAX_SUBSETS] = {0, 0, 0};
-    switch(bti[m_blockMode].subsetCount) {
+    switch(bti_cpu[m_blockMode].subsetCount) {
     case    3:
         fixup[1] = BC7_FIXUPINDICES[2][m_partition][1];
         fixup[2] = BC7_FIXUPINDICES[2][m_partition][2];
@@ -308,13 +308,13 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
         break;
     }
 
-    partitionTable = (CMP_DWORD*)BC7_PARTITIONS[bti[m_blockMode].subsetCount-1][m_partition];
+    partitionTable = (CMP_DWORD*)BC7_PARTITIONS_CPU[bti_cpu[m_blockMode].subsetCount-1][m_partition];
 
     // Extract index bits
     for(i=0; i < MAX_SUBSET_SIZE; i++) {
         CMP_DWORD   p = partitionTable[i];
         blockIndices[i] = 0;
-        CMP_DWORD   bitsToRead = bti[m_blockMode].indexBits[0];
+        CMP_DWORD   bitsToRead = bti_cpu[m_blockMode].indexBits[0];
 
         // If this is a fixup index then set the implicit bit
         if(i==fixup[p]) {
@@ -331,7 +331,7 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
 
 #ifdef USE_FILEIO
     if (bc7_File) {
-        fprintf(bc7_File, "Subset %d Partition %2d\n", bti[m_blockMode].subsetCount - 1, m_partition);
+        fprintf(bc7_File, "Subset %d Partition %2d\n", bti_cpu[m_blockMode].subsetCount - 1, m_partition);
         fprintf(bc7_File, "[%d,%d,%d,%d]\n", partitionTable[0], partitionTable[1],partitionTable[2], partitionTable[3]);
         fprintf(bc7_File, "[%d,%d,%d,%d]\n", partitionTable[4], partitionTable[5], partitionTable[6], partitionTable[7]);
         fprintf(bc7_File, "[%d,%d,%d,%d]\n", partitionTable[8], partitionTable[9], partitionTable[10], partitionTable[11]);
@@ -341,14 +341,14 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
 
     // Get the ramps
     CMP_DWORD   clusters[2];
-    clusters[0] = clusters[1] = 1 << bti[m_blockMode].indexBits[0];
+    clusters[0] = clusters[1] = 1 << bti_cpu[m_blockMode].indexBits[0];
 
 
 #ifdef USE_FILEIO
     float epoints[2][MAX_DIMENSION_BIG];
     if (bc7_File) {
         fprintf(bc7_File, "End Points ");
-        for (i = 0; i < (int)bti[m_blockMode].subsetCount; i++) {
+        for (i = 0; i < (int)bti_cpu[m_blockMode].subsetCount; i++) {
             DecodeEndPoints(endpoint[i],
                             m_componentBits,
                             epoints);
@@ -362,9 +362,9 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
 #endif
 
 #ifdef PRINT_DECODE_INFO
-    fprintf(gt_File_decode, "BC7.[%3d] Part.%3d: ", bti[m_blockMode].subsetCount - 1, m_partition);
+    fprintf(gt_File_decode, "BC7.[%3d] Part.%3d: ", bti_cpu[m_blockMode].subsetCount - 1, m_partition);
     float epoints[2][MAX_DIMENSION_BIG];
-    for (i = 0; i < (int)bti[m_blockMode].subsetCount; i++) {
+    for (i = 0; i < (int)bti_cpu[m_blockMode].subsetCount; i++) {
         DecodeEndPoints(endpoint[i],
                         m_componentBits,
                         epoints);
@@ -379,7 +379,7 @@ void BC7BlockDecoder::DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION
     // Colour Ramps
     double          c[MAX_SUBSETS][MAX_DIMENSION_BIG][1<<MAX_INDEX_BITS];
 
-    for(i=0; i<(int)bti[m_blockMode].subsetCount; i++) {
+    for(i=0; i<(int)bti_cpu[m_blockMode].subsetCount; i++) {
         // Unpack the colours
         GetRamp(endpoint[i],
                 c[i],

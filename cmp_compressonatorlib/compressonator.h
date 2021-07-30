@@ -328,7 +328,7 @@ typedef struct {
     CMP_DWORD dwSize;                   // The size of this structure.
 
                                         // New to v4.2
-    CMP_BOOL  bUseRefinementSteps;      // Used by BC1,BC2 and BC3 codecs for improved quality, this setting will increase encoding time for better quality results
+    CMP_BOOL  bUseRefinementSteps;      // Used by BC1,BC2, BC3 codecs for improved quality, this setting will increase encoding time for better quality results
     CMP_INT   nRefinementSteps;         // Currently only 1 step is implemneted
 
                                         // v4.1 and older settings
@@ -353,7 +353,7 @@ typedef struct {
     CMP_GPUDecode    nGPUDecode;        // This value is set using DecodeWith argument (OpenGL, DirectX) default is OpenGL
     CMP_Compute_type nEncodeWith;       // This value is set using EncodeWith argument, currently only OpenCL is used
     CMP_DWORD        dwnumThreads;      // Number of threads to initialize for BC7 encoding (Max up to 128). Default set to auto,
-    CMP_FLOAT        fquality;          // Quality of encoding. This value ranges between 0.0 and 1.0. Default set to 0.05
+    CMP_FLOAT        fquality;          // Quality of encoding. This value ranges between 0.0 and 1.0. BC7 & BC6 default is 0.05, others codecs are set at 1.0
                                         // setting fquality above 0.0 gives the fastest, lowest quality encoding, 1.0 is the slowest, highest quality encoding. Default set to a low value of 0.05
     CMP_BOOL brestrictColour;           // This setting is a quality tuning setting for BC7 which may be necessary for convenience in some applications. Default set to false
                                         // if  set and the block does not need alpha it instructs the code not to use modes that have combined colour + alpha - this

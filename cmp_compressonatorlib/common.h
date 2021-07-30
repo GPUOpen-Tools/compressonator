@@ -174,7 +174,7 @@ extern void PrintInfo(const char* Format, ...);
 
 #define MINIMUM_WEIGHT_VALUE 0.01f
 
-#define AMD_CODEC_QUALITY_DEFAULT   0.05f ///< This is the default value set for all Codecs (Gives fast Processing and lowest Quality)
+#define AMD_CODEC_QUALITY_DEFAULT   0.05f ///< This is the default for most codecs
 #define AMD_CODEC_EXPOSURE_DEFAULT  0     ///< This is the default value set for exposure value of hdr/exr input image
 #define AMD_CODEC_DEFOG_DEFAULT     0     ///< This is the default value set for defog value of hdr/exr input image
 #define AMD_CODEC_KNEELOW_DEFAULT   0     ///< This is the default value set for kneelow value of hdr/exr input image

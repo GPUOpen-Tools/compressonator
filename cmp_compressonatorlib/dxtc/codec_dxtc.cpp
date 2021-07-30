@@ -46,7 +46,7 @@ CCodec_DXTC::CCodec_DXTC(CodecType codecType)
     m_nRefinementSteps = 0;
     m_nCompressionSpeed = CMP_Speed_SuperFast;
     m_bSwizzleChannels = false;
-    m_fQuality = 0.05f;
+    m_fQuality = 1.0f;
 
     memset(&m_BC15Options,0,sizeof(CMP_BC15Options));
     m_BC15Options.m_fquality = 1.0f;

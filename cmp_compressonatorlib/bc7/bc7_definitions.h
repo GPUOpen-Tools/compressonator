@@ -63,7 +63,7 @@
 // Otherwise, ramp calculation is done by bit shifting
 #define USE_HIGH_PRECISION_INTERPOLATION_BC7
 
-#define MAX_PARTITIONS_TABLE (1+64+64)
+#define MAX_PARTITIONS_TABLE (1+64+64) //cpu
 
 #define MAX_ENTRIES_QUANT_TRACE     16
 #define MAX_CLUSTERS_QUANT_TRACE    8
@@ -80,7 +80,7 @@ typedef enum {
     NO_ALPHA,
     COMBINED_ALPHA,
     SEPARATE_ALPHA
-} CMP_BCE;
+} CMP_BCE_cpu;              // cpu
 
 // Endpoint encoding type
 typedef enum {
@@ -90,22 +90,22 @@ typedef enum {
     THREE_PBIT,
     FOUR_PBIT,
     FIVE_PBIT
-} CMP_PBIT;
+} CMP_PBIT_cpu;     // cpu
 
 // Descriptor structure for block encodings
 typedef struct {
-    CMP_BCE encodingType;           // Type of block
+    CMP_BCE_cpu encodingType;           // Type of block
     CMP_DWORD   partitionBits;          // Number of bits for partition data
     CMP_DWORD   rotationBits;           // Number of bits for component rotation
     CMP_DWORD   indexModeBits;          // Number of bits for index selection
     CMP_DWORD   scalarBits;             // Number of bits for one scalar endpoint
     CMP_DWORD   vectorBits;             // Number of bits for one vector endpoint(excluding P bits)
-    CMP_PBIT  pBitType;               // Type of P-bit encoding
+    CMP_PBIT_cpu  pBitType;               // Type of P-bit encoding
     CMP_DWORD   subsetCount;            // Number of subsets
     CMP_DWORD   indexBits[2];           // Number of bits per index in each index set
 } CMP_BTI;
 
-extern CMP_BTI bti[NUM_BLOCK_TYPES];
+extern CMP_BTI bti_cpu[NUM_BLOCK_TYPES];        // cpu
 
 #include "mathmacros.h"
 

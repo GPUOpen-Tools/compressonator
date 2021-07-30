@@ -10,7 +10,7 @@ double ep_shaker_2_(
     int size,
     int Mi_,                // last cluster
     int bits[3],            // including parity
-    CMP_qt type
+    CMP_qt_cpu type
 );
 
 
@@ -37,7 +37,7 @@ double ep_shaker_(
     int size,
     int Mi_,                // last cluster
     int bits[3],            // including parity
-    CMP_qt type
+    CMP_qt_cpu type
 );
 
 
@@ -50,7 +50,7 @@ double ep_shaker_d(
 // Note:    int size,
     int Mi_,                // last cluster
     int bits[3],            // including parity
-    CMP_qt type,
+    CMP_qt_cpu type,
     int dimension
 );
 

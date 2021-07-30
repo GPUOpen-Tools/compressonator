@@ -29,7 +29,7 @@
 //
 
 
-CMP_DWORD   BC7_PARTITIONS[MAX_SUBSETS][MAX_PARTITIONS][MAX_SUBSET_SIZE] = {
+CMP_DWORD   BC7_PARTITIONS_CPU[MAX_SUBSETS][MAX_PARTITIONS][MAX_SUBSET_SIZE] = {
     // Single subset partitions for both BC6H abd BC7
     {
         {
@@ -1084,22 +1084,22 @@ void    Partition(CMP_DWORD partition,
 
     int insubset = 0,inpart;
 
-    switch(bti[blockType].subsetCount) {
+    switch(bti_cpu[blockType].subsetCount) {
     case    0:
     case    1:
         insubset = 0;
         inpart   = 0;
-        table = &(BC7_PARTITIONS[0][0][0]);
+        table = &(BC7_PARTITIONS_CPU[0][0][0]);
         break;
     case    2:
         insubset = 1;
         inpart   = partition;
-        table = &(BC7_PARTITIONS[1][partition][0]);
+        table = &(BC7_PARTITIONS_CPU[1][partition][0]);
         break;
     case    3:
         insubset = 2;
         inpart   = partition;
-        table = &(BC7_PARTITIONS[2][partition][0]);
+        table = &(BC7_PARTITIONS_CPU[2][partition][0]);
         break;
     default:
         break;

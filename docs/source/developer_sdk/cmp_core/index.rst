@@ -301,7 +301,7 @@ Example usage is shown as below, error checking on the function returns has been
         DestroyOptionsBC1(BC1Options);
 
 
-A full example project is provided `here <https://github.com/GPUOpen-Tools/Compressonator/tree/master/Compressonator/Examples/>`_ 
+A full example project is provided `here <https://github.com/GPUOpen-Tools/Compressonator/tree/master/examples/>`_ 
 
 * core_example demonstrates compression and decompression of all of the available codecs with various quality and performance settings. 
 

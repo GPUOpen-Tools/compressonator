@@ -324,7 +324,7 @@ You will need to include a header file and a lib file: **CMP_Framework** and **C
     CMP_FreeMipSet(&MipSetIn);
     CMP_FreeMipSet(&MipSetCmp);
 
-Example projects have been provided `here <https://github.com/GPUOpen-Tools/Compressonator/tree/master/Compressonator/Examples/>`_ with:
+Example projects have been provided `here <https://github.com/GPUOpen-Tools/Compressonator/tree/master/examples/>`_ with:
 
 * framework_example1 demonstrates simple SDK API usage by generating mipmap levels as shown above. 
 * framework_example2 demonstrates how to use the SDK API compression format, using a quality setting and a HPC pipeline framework.

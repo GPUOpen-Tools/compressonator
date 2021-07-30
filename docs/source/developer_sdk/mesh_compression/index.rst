@@ -1,24 +1,10 @@
 Mesh Compression
 ================
 
-To use glTF draco mesh compresssion or decompression, please include the headers and source files below in your application:
+As of v4.2 glTF draco mesh compression is no longer supported.
+Reference CMP_Mesh lib for alternate implementations. 
 
-`Compressonator\\Header\\Compressonator.h <https://github.com/GPUOpen-Tools/Compressonator/blob/master/Compressonator/Header/Compressonator.h>`_
-`Compressonator\\Header\\Common.h <https://github.com/GPUOpen-Tools/Compressonator/blob/master/Compressonator/Header/Common.h>`_
-`Compressonator\\Header\\Version.h <https://github.com/GPUOpen-Tools/Compressonator/blob/master/Compressonator/Header/Version.h>`_
-`Compressonator\\Applications\\_Plugins\\Common\\json\\json.h <https://github.com/GPUOpen-Tools/Compressonator/blob/master/Compressonator/Applications/_Plugins/Common/json/json.h>`_
-`Compressonator\\Applications\\_Plugins\\Common\\gltf\\tiny_gltf2.h <https://github.com/GPUOpen-Tools/Compressonator/blob/master/Compressonator/Applications/_Plugins/Common/gltf/tiny_gltf2.h>`_
-`Compressonator\\Applications\\_Plugins\\Common\\gltf\\tiny_gltf2_utils.h <https://github.com/GPUOpen-Tools/Compressonator/blob/master/Compressonator/Applications/_Plugins/Common/gltf/tiny_gltf2_utils.h>`_
-`Compressonator\\Applications\\_Plugins\\Common\\gltf\\tiny_gltf2_utils.cpp <https://github.com/GPUOpen-Tools/Compressonator/blob/master/Compressonator/Applications/_Plugins/Common/gltf/tiny_gltf2_utils.cpp>`_
-
-and set the draco directory as shown below as your include directory, also include the library 
-
-**CMP_MeshCompressor_MD.lib** (which you can build this lib from CMP_MeshCompressor.vcxproj (in Debug_MD/Release_MD configuration) located `here <https://github.com/GPUOpen-Tools/Compressonator/tree/master/Compressonator/VS2015>`_ .)
-`Compressonator\\Source\\CMP_MeshCompressor\\Draco\\src\\ <https://github.com/GPUOpen-Tools/Compressonator/tree/master/Compressonator/Source/CMP_MeshCompressor/Draco/src/draco>`_
-
-in your application.
-
-Then, you can use the mesh compression/decompression provided in Compressonator by adding the following lines:
+Mesh compression/decompression provided in Compressonator by adding the following lines:
 
 .. code-block:: c
 
@@ -33,7 +19,7 @@ Then, you can use the mesh compression/decompression provided in Compressonator 
     tinygltf2::TinyGLTF saver;
 
     bool perform_mesh_compression = true;  //flag to turn on/off compression
-    bool is_src_file_draco        = true;  //flag to indicate source file is compressed or not- 
+    bool is_src_file_draco        = false; //flag to indicate source file is compressed or not- 
                                            //can be replaced with helper function provided below to check for glTF compressed file
 
     bool ret = loader.LoadASCIIFromFile(&model, &err, src_file, perform_mesh_compression);

@@ -41,5 +41,5 @@ typedef enum {
     SAME_FCC,
     FCC,
     FCC_SAME_BCC,
-} CMP_qt;
+} CMP_qt_cpu;               // cpu
 #endif

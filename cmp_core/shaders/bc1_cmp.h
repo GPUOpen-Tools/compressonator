@@ -691,17 +691,17 @@ CMP_STATIC CGU_Vec2ui cgu_CompRGBBlock(CMP_IN CGU_Vec4f src_imageNorm[BLOCK_SIZE
         G = (CGU_UINT32)(rgbBlock_normal[i].y * 255.0f);
         B = (CGU_UINT32)(rgbBlock_normal[i].z * 255.0f);
     
-        if (dwAlphaThreshold > 0)
-            A = (CGU_UINT32)src_imageNorm[i].w * 255.0f;
-        else
+        //if (dwAlphaThreshold > 0)
+        //    A = (CGU_UINT32)src_imageNorm[i].w * 255.0f;
+        //else
             A = 255;
     
         // Punch Through Alpha in BC1 Codec (1 bit alpha)
-        if ((dwAlphaThreshold == 0) || (A >= dwAlphaThreshold))
-        {
+        //if ((dwAlphaThreshold == 0) || (A >= dwAlphaThreshold))
+        //{
             // copy to local RGB data and have alpha set to 0xFF
             dwBlk[dwColors++] = A << 24 | R << 16 | G << 8 | B;
-        }
+        //}
     }
     
     if (!dwColors)
@@ -850,7 +850,7 @@ CMP_STATIC CGU_Vec2ui cgu_CompRGBBlock(CMP_IN CGU_Vec4f src_imageNorm[BLOCK_SIZE
                 srcblockBGR[i].z = rgbBlock_normal[i].x * 255.0f;
                 srcblockBGR[i].y = rgbBlock_normal[i].y * 255.0f;
                 srcblockBGR[i].x = rgbBlock_normal[i].z * 255.0f;
-                srcblockA[i]     = 0.0f;
+                srcblockA[i]     = 255.0f;
                 if (dwAlphaThreshold > 0)
                 {
                     CGU_UINT32 alpha = (CGU_UINT32)src_imageNorm[i].w*255.0f;
@@ -3146,6 +3146,8 @@ CMP_STATIC CGU_Vec2ui CompressBlockBC1_NORMALIZED(CMP_IN CGU_Vec4f src_imageNorm
 {
     bool usingMaxQualityOnly = false;
 
+
+
 #ifndef ASPM_GPU
     if (BC15Options.m_fquality > 0.75) 
           usingMaxQualityOnly = true;
@@ -3167,6 +3169,16 @@ CMP_STATIC CGU_Vec2ui CompressBlockBC1_NORMALIZED(CMP_IN CGU_Vec4f src_imageNorm
         pixelsBGRA[sr].g = pixels[sr].g = src_imageNorm[sr].g * 255.0f;
         pixelsBGRA[sr].r = pixels[sr].b = src_imageNorm[sr].b * 255.0f;
         pixelsBGRA[sr].a = pixels[sr].a = src_imageNorm[sr].a * 255.0f;
+    }
+
+
+    // check for a punch through transparent alpha setting
+    if ((BC15Options.m_fquality < 0.75) && (BC15Options.m_bUseAlpha)) {
+        CGU_Vec2ui cmpBlockAlpha         = {0xffff0000,0xffffffffU};
+        for (CGU_UINT32 sr = 0; sr < 16; sr++) 
+            if (pixels[sr].a < BC15Options.m_nAlphaThreshold) {
+                return cmpBlockAlpha;
+            }
     }
 
     //================

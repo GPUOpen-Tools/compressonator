@@ -2738,6 +2738,19 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
                 return -1;
             }
 #endif
+
+            // Has user set quality settings, if not use a default
+            if ((g_CmdPrams.CompressOptions.fquality > 0.00f) && (g_CmdPrams.CompressOptions.fquality < 0.01f))
+            {
+                // set default max quality for fast processing codecs
+                if ((destFormat != CMP_FORMAT_BC7)&&(destFormat != CMP_FORMAT_BC6H)&&(destFormat != CMP_FORMAT_BC6H_SF)) {
+                    g_CmdPrams.CompressOptions.fquality = 1.0f;
+                }
+                else { // set default low quality for slow process codecs
+                    g_CmdPrams.CompressOptions.fquality = AMD_CODEC_QUALITY_DEFAULT;
+                }
+            }
+
             //=====================================================
             // Check for Transcode else Unsupported conversion
             // ====================================================
