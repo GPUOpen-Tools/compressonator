@@ -352,9 +352,9 @@ void PrintUsage()
     printf("CompressonatorCLI.exe -meshopt -optVCacheSize  32 -optOverdrawACMRThres  1.03 -optVFetch 0 source.gltf dest.gltf\n");
 #endif
 #ifdef _WIN32
-    printf("For additional help go to documents folder and type index.htlm \n");
+    printf("For additional help go to documents folder and type index.html \n");
 #else
-    printf("For additional help go to documents htlm folder and type index.htlm \n");
+    printf("For additional help go to documents htlm folder and type index.html \n");
 #endif
 }
 
