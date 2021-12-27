@@ -102,7 +102,7 @@ bool CCodec::GetParameter(const CMP_CHAR* /*pszParamName*/, CODECFLOAT& /*fValue
 //  Windows
 #define cpuid(info, x) __cpuidex(info, x, 0)
 
-#else
+#elif defined(USE_SSE)
 
 //  GCC Intrinsics
 #include <cpuid.h>
