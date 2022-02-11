@@ -224,7 +224,7 @@ typedef struct
     CGU_Vec3i  avg;
 } CMP_EncodeData;
 
-typedef struct
+typedef struct CMP_BC1_Block_t
 {
     // Union struct not supported on GPU
     // 8 Bytes Total
