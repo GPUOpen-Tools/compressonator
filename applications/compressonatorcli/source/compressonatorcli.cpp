@@ -109,7 +109,7 @@ void PrintUsage()
 {
     AboutCompressonator();
 
-    printf("Usage: compressonatorcli.exe [options] SourceFile DestFile\n\n");
+    printf("Usage: compressonatorcli [options] SourceFile DestFile\n\n");
     printf("MipMap options:\n\n");
     printf("-nomipmap                 Turns off Mipmap generation\n");
     printf("-mipsize    <size>        The size in pixels used to determine\n");
@@ -305,40 +305,41 @@ void PrintUsage()
     printf("-noprogress                  Disables showing of compression progress messages\n");
     printf("\n\n");
     printf("Example compression:\n\n");
-    printf("compressonatorcli.exe -fd ASTC image.bmp result.astc \n");
-    printf("compressonatorcli.exe -fd ASTC -BlockRate 0.8 image.bmp result.astc\n");
-    printf("compressonatorcli.exe -fd ASTC -BlockRate 12x12 image.bmp result.astc\n");
-    printf("compressonatorcli.exe -fd BC7  image.bmp result.dds \n");
-    printf("compressonatorcli.exe -fd BC7  image.bmp result.bmp\n");
-    printf("compressonatorcli.exe -fd BC7  -NumTheads 16 image.bmp result.dds\n");
-    printf("compressonatorcli.exe -fd BC7  -ff PNG -fx KTX ./source_dir/ ./dist_dir/\n");
-    printf("compressonatorcli.exe -fd BC6H image.exr result.exr\n\n");
+    printf("compressonatorcli -fd ASTC image.bmp result.astc \n");
+    printf("compressonatorcli -fd ASTC -BlockRate 0.8 image.bmp result.astc\n");
+    printf("compressonatorcli -fd ASTC -BlockRate 12x12 image.bmp result.astc\n");
+    printf("compressonatorcli -fd BC7  image.bmp result.dds \n");
+    printf("compressonatorcli -fd BC7  image.bmp result.bmp\n");
+    printf("compressonatorcli -fd BC7  -NumTheads 16 image.bmp result.dds\n");
+    printf("compressonatorcli -fd BC7  -ff PNG -fx KTX ./source_dir/ ./dist_dir/\n");
+    printf("compressonatorcli -fd BC6H image.exr result.exr\n\n");
 #ifdef _WIN32
     printf("Example compression using GPU Hardware or shader code with frameworks like OpenCL or DirectX:\n\n");
-    printf("compressonatorcli.exe  -fd BC1 -EncodeWith GPU image.bmp result.dds \n");
-    printf("compressonatorcli.exe  -fd BC1 -EncodeWith DXC image.bmp result.dds \n");
-    printf("compressonatorcli.exe  -fd BC1 -EncodeWith OCL image.bmp result.dds \n");
+    printf("compressonatorcli  -fd BC1 -EncodeWith GPU image.bmp result.dds \n");
+    printf("compressonatorcli  -fd BC1 -EncodeWith DXC image.bmp result.dds \n");
+    printf("compressonatorcli  -fd BC1 -EncodeWith OCL image.bmp result.dds \n");
 #endif
     printf("Example decompression from compressed image using CPU:\n\n");
-    printf("compressonatorcli.exe  result.dds image.bmp\n\n");
+    printf("compressonatorcli  result.dds image.bmp\n\n");
 #ifdef _WIN32
     printf("Example decompression from compressed image using GPU:\n\n");
-    printf("compressonatorcli.exe  -UseGPUDecompress result.dds image.bmp\n\n");
+    printf("compressonatorcli  -UseGPUDecompress result.dds image.bmp\n\n");
 #endif
-    printf("Example compression with decompressed result (Useful for qualitative analysis):\n\n");
+//    printf("Example compression with decompressed result (Useful for qualitative analysis):\n\n");
+//    TODO: add example and uncomment above
 #ifdef USE_MESH_DRACO_EXTENSION
     printf("Example draco compression usage (support glTF and OBJ file only):\n\n");
-    printf("compressonatorcli.exe -draco source.gltf dest.gltf\n");
-    printf("compressonatorcli.exe -draco source.obj dest.drc\n");
+    printf("compressonatorcli -draco source.gltf dest.gltf\n");
+    printf("compressonatorcli -draco source.obj dest.drc\n");
     printf("Note: only .obj file produces compressed .drc file. glTF does not produce .drc compressed file.\n");
     printf("Note: You can specify .obj as compressed file format as well, but a new .drc file will be created for this case.\n\n");
 #ifdef USE_MESH_DRACO_SETTING
     printf("Specifies quantization bits settings:\n");
-    printf("CompressonatorCLI.exe -draco -dracolvl 7 -qpos 12 -qtexc 8 -qnorm 8 source.gltf dest.gltf\n\n");
+    printf("compressonatorcli -draco -dracolvl 7 -qpos 12 -qtexc 8 -qnorm 8 source.gltf dest.gltf\n\n");
 #endif
     printf("Example draco decompression usage (support glTF and drc file only):\n\n");
-    printf("compressonatorcli.exe source.gltf dest.gltf\n");
-    printf("compressonatorcli.exe source.drc dest.obj\n");
+    printf("compressonatorcli source.gltf dest.gltf\n");
+    printf("compressonatorcli source.drc dest.obj\n");
 #endif
 #ifdef USE_3DMESH_OPTIMIZE
     printf("\n\n");
@@ -346,16 +347,12 @@ void PrintUsage()
     printf(
         "Using default settings : Optimize vertices with cache size = 16; Optimize overdraw with ACMR Threshold = 1.05; Optimize vertices fetch. "
         "\n\n");
-    printf("CompressonatorCLI.exe -meshopt source.gltf dest.gltf\n");
-    printf("CompressonatorCLI.exe -meshopt source.obj dest.obj\n\n");
+    printf("compressonatorcli -meshopt source.gltf dest.gltf\n");
+    printf("compressonatorcli -meshopt source.obj dest.obj\n\n");
     printf("Specifies settings :\n\n");
-    printf("CompressonatorCLI.exe -meshopt -optVCacheSize  32 -optOverdrawACMRThres  1.03 -optVFetch 0 source.gltf dest.gltf\n");
+    printf("compressonatorcli -meshopt -optVCacheSize  32 -optOverdrawACMRThres  1.03 -optVFetch 0 source.gltf dest.gltf\n");
 #endif
-#ifdef _WIN32
     printf("For additional help go to documents folder and type index.html \n");
-#else
-    printf("For additional help go to documents htlm folder and type index.html \n");
-#endif
 }
 
 bool ProgressCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
