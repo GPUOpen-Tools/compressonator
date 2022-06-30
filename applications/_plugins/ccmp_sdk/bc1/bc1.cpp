@@ -23,8 +23,9 @@
 //
 //=====================================================================
 
-#include "bcn.h"
 #include "bc1.h"
+
+void SetUserBC15EncoderOptions(CMP_BC15Options* bc15options, KernelOptions* kerneloptions);
 
 #ifdef USE_TIMERS
 #include "query_timer.h"
