@@ -324,13 +324,13 @@ typedef unsigned int CGU_UINT;
 typedef int          CGUV_INT;
 typedef int          CGV_BOOL;
 
-typedef char               CGU_INT8;
-typedef unsigned char      CGU_UINT8;
-typedef short              CGU_INT16;
-typedef unsigned short     CGU_UINT16;
-typedef int                CGU_INT32;
-typedef unsigned int       CGU_UINT32;
-typedef unsigned long long CGU_UINT64;
+typedef char           CGU_INT8;
+typedef unsigned char  CGU_UINT8;
+typedef short          CGU_INT16;
+typedef unsigned short CGU_UINT16;
+typedef int            CGU_INT32;
+typedef unsigned int   CGU_UINT32;
+typedef unsigned long  CGU_UINT64;
 
 typedef char           CGV_INT8;
 typedef unsigned char  CGV_UINT8;
