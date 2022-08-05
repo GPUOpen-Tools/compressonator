@@ -1001,7 +1001,7 @@ CGU_FLOAT optQuantAnD_d(CGU_FLOAT  data[MAX_ENTRIES][MAX_DIMENSION_BIG],
                         CGU_INT    dimension,
                         CGU_FLOAT  quality)
 {
-    CGU_INT index_[MAX_ENTRIES];
+    CGU_INT index_[MAX_ENTRIES] = {};
 
     CGU_INT maxTry  = (int)(MAX_TRY * quality);
     CGU_INT try_two = 50;
@@ -1009,15 +1009,15 @@ CGU_FLOAT optQuantAnD_d(CGU_FLOAT  data[MAX_ENTRIES][MAX_DIMENSION_BIG],
     CGU_INT   i, j, k;
     CGU_FLOAT t, s;
 
-    CGU_FLOAT centered[MAX_ENTRIES][MAX_DIMENSION_BIG];
+    CGU_FLOAT centered[MAX_ENTRIES][MAX_DIMENSION_BIG] = {};
 
-    CGU_FLOAT mean[MAX_DIMENSION_BIG];
+    CGU_FLOAT mean[MAX_DIMENSION_BIG] = {};
 
-    CGU_FLOAT cov[MAX_DIMENSION_BIG][MAX_DIMENSION_BIG];
+    CGU_FLOAT cov[MAX_DIMENSION_BIG][MAX_DIMENSION_BIG] = {};
 
-    CGU_FLOAT projected[MAX_ENTRIES];
+    CGU_FLOAT projected[MAX_ENTRIES] = {};
 
-    CGU_INT order_[MAX_ENTRIES];
+    CGU_INT order_[MAX_ENTRIES] = {};
 
     for (i = 0; i < numEntries; i++)
         for (j = 0; j < dimension; j++)
@@ -1034,7 +1034,7 @@ CGU_FLOAT optQuantAnD_d(CGU_FLOAT  data[MAX_ENTRIES][MAX_DIMENSION_BIG],
 
     if (numEntries == 0)
     {
-        for (i = 0; i < numEntries; i++)
+        for (i = 0; i < MAX_ENTRIES; i++)
         {
             index[i] = 0;
             for (j = 0; j < dimension; j++)
@@ -1089,7 +1089,7 @@ CGU_FLOAT optQuantAnD_d(CGU_FLOAT  data[MAX_ENTRIES][MAX_DIMENSION_BIG],
                 project_d(centered, numEntries, direction, projected, dimension);
                 sortProjection(projected, order_, numEntries);
 
-                CGU_INT index__[MAX_ENTRIES];
+                CGU_INT index__[MAX_ENTRIES] = {};
 
                 // it's projected and centered; cluster centers are (index[i]-s)*t (*dir)
                 k = 0;
@@ -1116,7 +1116,7 @@ CGU_FLOAT optQuantAnD_d(CGU_FLOAT  data[MAX_ENTRIES][MAX_DIMENSION_BIG],
                 for (j = 0; j < numEntries; j++)
                 {
                     done      = (done && (index_[j] == index[j]));
-                    index_[j] = index_[j];
+                    index[j] = index_[j];
                 }
                 if (done)
                     break;
@@ -2176,8 +2176,8 @@ CGU_FLOAT FindBestPattern(BC6H_Encode_local* BC6H_data, CGU_BOOL TwoRegionShapes
     // All one zone shapes gave 4 bits per color, max index value < 16
     CGU_INT8  Index_BitSize = TwoRegionShapes ? 8 : 16;
     CGU_INT8  max_subsets   = TwoRegionShapes ? 2 : 1;
-    CGU_FLOAT direction[NCHANNELS];
-    CGU_FLOAT step;
+    CGU_FLOAT direction[NCHANNELS] = {};
+    CGU_FLOAT step = 0;
 
     BC6H_data->region        = max_subsets;
     BC6H_data->index         = 0;
@@ -2198,8 +2198,8 @@ CGU_FLOAT FindBestPattern(BC6H_Encode_local* BC6H_data, CGU_BOOL TwoRegionShapes
     CGU_FLOAT BestError;         //the lowest error from vector direction quantization
     CGU_FLOAT BestError_endpts;  //the lowest error from endpoints extracted from the vector direction quantization
 
-    CGU_FLOAT outB[2][2][MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
-    CGU_INT   shape_indicesB[2][MAX_SUBSETS][MAX_SUBSET_SIZE];
+    CGU_FLOAT outB[2][2][MAX_SUBSET_SIZE][MAX_DIMENSION_BIG] = {};
+    CGU_INT   shape_indicesB[2][MAX_SUBSETS][MAX_SUBSET_SIZE] = {};
 
     for (CGU_INT subset = 0; subset < max_subsets; subset++)
     {
@@ -2225,12 +2225,12 @@ CGU_FLOAT FindBestPattern(BC6H_Encode_local* BC6H_data, CGU_BOOL TwoRegionShapes
     // Valid only for 2 region shapes
     if ((max_subsets > 1) && (quality > 0.80))
     {
-        CGU_INT tempIndices[MAX_SUBSET_SIZE];
+        CGU_INT tempIndices[MAX_SUBSET_SIZE] = {};
         // CGU_INT     temp_epo_code[2][2][MAX_DIMENSION_BIG];
         CGU_INT bits[3] = {8, 8, 8};  // Channel index bit size
 
         // CGU_FLOAT   epo[2][MAX_DIMENSION_BIG];
-        CGU_INT epo_code[MAX_SUBSETS][2][MAX_DIMENSION_BIG];
+        CGU_INT epo_code[MAX_SUBSETS][2][MAX_DIMENSION_BIG] = {};
         // CGU_INT     shakeSize = 8;
 
         error[1] = 0.0;
@@ -2823,7 +2823,7 @@ void ReIndexShapef(BC6H_Encode_local* BC6H_data, CGU_INT shape_indices[MAX_SUBSE
     CGU_INT   bestIndex = 0;
     CGU_INT   sub0index = 0;
     CGU_INT   sub1index = 0;
-    CGU_INT   MaxPallet;
+    CGU_INT   MaxPallet = 0;
     CGU_INT   region = (BC6H_data->region - 1);
 
     if (region == 0)
@@ -4280,7 +4280,7 @@ int CMP_CDECL CompressBlockBC6(const CGU_UINT16* srcBlock,
                                CMP_GLOBAL CGU_UINT8   cmpBlock[16],
                                const CMP_GLOBAL void* options = NULL)
 {
-    CGU_UINT16 inBlock[48];
+    CGU_UINT16 inBlock[48] = {};
 
     //----------------------------------
     // Fill the inBlock with source data
