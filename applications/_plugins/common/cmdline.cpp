@@ -994,11 +994,11 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
                     else
                     {
                         // Processing a Directory
-                        const std::string fullPath = CMP_GetFullPath(strCommand);
 
-                        if (fullPath.length() > 0)
+                        const std::string directory = CMP_GetFullPath(strCommand);
+
+                        if (directory.length() > 0)
                         {
-                            const std::string directory = CMP_GetPath(strCommand);
                             // check if dir exist if not create it!
                             if (!CMP_DirExists(directory))
                             {
@@ -1023,7 +1023,7 @@ bool ProcessCMDLineOptions(const char* strCommand, const char* strParameter)
                             std::string destFileName;
                             //since  DestFile is empty we need to create one from the source file
                             destFileName        = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.CompressOptions.DestFormat, g_CmdPrams.FileOutExt, true);
-                            g_CmdPrams.DestFile = CMP_GetPath(directory) + "/" + destFileName;
+                            g_CmdPrams.DestFile = directory + "/" + destFileName;
                         }
                         else
                         {
@@ -3507,7 +3507,11 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
 
             std::string destFileName;
             destFileName        = DefaultDestination(g_CmdPrams.SourceFile, g_CmdPrams.CompressOptions.DestFormat, g_CmdPrams.FileOutExt, true);
-            g_CmdPrams.DestFile = CMP_GetPath(g_CmdPrams.DestDir) + "/" + destFileName;
+
+            if (g_CmdPrams.DestDir.empty())
+                g_CmdPrams.DestFile = destFileName;
+            else
+                g_CmdPrams.DestFile = g_CmdPrams.DestDir + "/" + destFileName;
         }
         else
             MoreSourceFiles = false;
