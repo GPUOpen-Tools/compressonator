@@ -44,7 +44,9 @@ bool  CMP_CreateDir(std::string sPath);
 void  CMP_GetDirList(const std::string& directory, std::vector<std::string>& files, std::string filter);
 void  CMP_GetAllDirFilesList(const std::string& directory, std::vector<std::string>& files, std::string filter);
 
+// This function assumes the input is a file path and returns the parent directory of SourceFile
 std::string CMP_GetPath(const std::string& SourceFile);
+
 std::string CMP_FindFile(const std::vector<std::string>& paths, const std::string& filepath);
 std::string CMP_ExpandFilePath(const std::string& filepath);
 std::string CMP_JoinPath(const std::string& path0, const std::string& path1);
