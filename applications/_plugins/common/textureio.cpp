@@ -761,7 +761,9 @@ int AMDLoadMIPSTextureImage(const char *SourceFile, MipSet *MipSetIn, bool use_O
 
         return result;
 #else
-        return -1;
+        //DS - fallback to stb, push for a minimal commandline size and load time...
+        extern CMP_ERROR stb_load(const char* SourceFile, MipSet* MipSetIn); 
+        return stb_load(SourceFile, MipSetIn);
 #endif
     }
 
