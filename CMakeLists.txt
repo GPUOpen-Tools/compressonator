@@ -96,9 +96,6 @@ endif()
 # The following options that have been removed
 set(LIB_BUILD_MESHCOMPRESSOR OFF)
 
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Supported configuration options" FORCE)
-set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/build-out")
-
 set(PROJECT_EXTERNAL_LIBDIR ${PROJECT_SOURCE_DIR}/../common/lib/ext)
 
 # ----------------------------------------------------------------------------
