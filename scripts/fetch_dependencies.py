@@ -15,6 +15,7 @@ import urllib
 import zipfile
 import tarfile
 import platform
+import shutil
 
 isPython3OrAbove = None
 if sys.version_info[0] >= 3:
@@ -74,38 +75,40 @@ ghRoot = "https://github.com/GPUOpen-Tools/"
 
 # Libs to build on Window
 gitMappingWin = {
-     ghRoot+"Catch2.git"                         : ["../common/lib/ext/catch2",     "master"],
-     ghRoot+"common_lib_ext_glew_1.9.git"        : ["../common/lib/ext/glew",       "master"],
-     ghRoot+"common_lib_ext_opencv_2.49.git"     : ["../common/lib/ext/opencv",     "master"],
-     ghRoot+"common_lib_ext_openexr_2.2.git"     : ["../common/lib/ext/openexr",    "master"],
-     ghRoot+"common_lib_ext_opengl.git"          : ["../common/lib/ext/opengl",     "master"],
-     ghRoot+"common_lib_ext_tinyxml_2.6.2.git"   : ["../common/lib/ext/tinyxml",    "master"],
-     ghRoot+"common_lib_ext_zlib_1.2.10.git"     : ["../common/lib/ext/zlib",       "master"],
-     "https://github.com/g-truc/glm.git"         : ["../common/lib/ext/glm",        "0.9.8.0"],
-     "https://github.com/discord/rapidxml.git"   : ["../common/lib/ext/rapidxml",   "master"],
-     "https://github.com/KhronosGroup/KTX-Software.git" : ["../common/lib/ext/ktx", "v4.0.0-beta4"],
-     "https://github.com/apitrace/dxsdk"         : ["../common/lib/ext/apitrace/dxsdk", "master"],
+    ghRoot+"Catch2.git"                         : ["../common/lib/ext/catch2",     "master"],
+    ghRoot+"common_lib_ext_glew_1.9.git"        : ["../common/lib/ext/glew",       "master"],
+    ghRoot+"common_lib_ext_opencv_2.49.git"     : ["../common/lib/ext/opencv",     "master"],
+    ghRoot+"common_lib_ext_openexr_2.2.git"     : ["../common/lib/ext/openexr",    "master"],
+    ghRoot+"common_lib_ext_opengl.git"          : ["../common/lib/ext/opengl",     "master"],
+    ghRoot+"common_lib_ext_tinyxml_2.6.2.git"   : ["../common/lib/ext/tinyxml",    "master"],
+    ghRoot+"common_lib_ext_zlib_1.2.10.git"     : ["../common/lib/ext/zlib",       "master"],
+    "https://github.com/g-truc/glm.git"         : ["../common/lib/ext/glm",        "0.9.8.0"],
+    "https://github.com/discord/rapidxml.git"   : ["../common/lib/ext/rapidxml",   "master"],
+    "https://github.com/KhronosGroup/KTX-Software.git" : ["../common/lib/ext/ktx", "v4.0.0-beta4"],
+    "https://github.com/apitrace/dxsdk"         : ["../common/lib/ext/apitrace/dxsdk", "master"],
+    "https://github.com/glfw/glfw/"             : ["../common/lib/ext/glfw",        "3.3.2"]
 }
 
 # Libs to build on Linux
 gitMappingLin = {
-     ghRoot+"common_lib_ext_openexr_2.2.git"     : ["../common/lib/ext/openexr",    "master"],
-     "https://github.com/g-truc/glm.git"         : ["../common/lib/ext/glm",        "0.9.8.0"],
-     "https://github.com/discord/rapidxml.git"   : ["../common/lib/ext/rapidxml",   "master"],
+    ghRoot+"common_lib_ext_openexr_2.2.git"     : ["../common/lib/ext/openexr",    "master"],
+    "https://github.com/g-truc/glm.git"         : ["../common/lib/ext/glm",        "0.9.8.0"],
+    "https://github.com/discord/rapidxml.git"   : ["../common/lib/ext/rapidxml",   "master"],
+    "https://github.com/glfw/glfw/"             : ["../common/lib/ext/glfw",        "3.3.2"]
 }
 
 # Libs to build on Unix
 gitMappingUni = {
-     ghRoot+"common_lib_ext_openexr_2.2.git"     : ["../common/lib/ext/openexr",    "master"],
-     "https://github.com/g-truc/glm.git"         : ["../common/lib/ext/glm",        "0.9.8.0"],
-     "https://github.com/discord/rapidxml.git"   : ["../common/lib/ext/rapidxml",   "master"],
+    ghRoot+"common_lib_ext_openexr_2.2.git"     : ["../common/lib/ext/openexr",    "master"],
+    "https://github.com/g-truc/glm.git"         : ["../common/lib/ext/glm",        "0.9.8.0"],
+    "https://github.com/discord/rapidxml.git"   : ["../common/lib/ext/rapidxml",   "master"],
+    "https://github.com/glfw/glfw/"             : ["../common/lib/ext/glfw",        "3.3.2"]
 }
 
 # The following section contains OS-specific dependencies that are downloaded and placed in the specified target directory.
 # key = GitHub release link
 # value = location
 downloadMappingWin = {
-    "https://github.com/glfw/glfw/releases/download/3.3.2/glfw-3.3.2.bin.WIN64.zip" : "../../common/lib/ext/glfw/",
     "https://github.com/microsoft/DirectXTex/archive/jun2020b.zip" : "../../common/lib/ext/directxtex/",
     "https://github.com/GPUOpen-LibrariesAndSDKs/OCL-SDK/files/1406216/lightOCLSDK.zip" : "../../common/lib/ext/opencl/",
 }
@@ -119,6 +122,10 @@ downloadMappingUni = {
     "http://download.savannah.nongnu.org/releases/openexr/ilmbase-2.2.0.tar.gz": "../../common/lib/ext/openexr2/ilmbase",
     "http://download.savannah.nongnu.org/releases/openexr/openexr-2.2.0.tar.gz": "../../common/lib/ext/openexr2/openexr",
 }
+
+userAgentWin = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246"
+userAgentLin = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1"
+userAgentUni = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9"
 
 # detect the OS
 MACHINE_OS = ""
@@ -139,15 +146,19 @@ print("BUILD MACHINE AS:",MACHINE_OS)
 # reference the correct archive path
 gitMapping = ""
 downloadMapping = ""
+userAgentString = ""
 if MACHINE_OS == "LINUX":
     gitMapping = gitMappingLin
     downloadMapping = downloadMappingLin
+    userAgentString = userAgentLin
 if MACHINE_OS == "WINDOWS":
     gitMapping = gitMappingWin
     downloadMapping = downloadMappingWin
+    userAgentString = userAgentWin
 if MACHINE_OS == "UNIX":
     gitMapping = gitMappingUni
     downloadMapping = downloadMappingUni
+    userAgentString = userAgentUni
 
 # for each dependency - test if it has already been fetched - if not, then fetch it, otherwise update it to top of tree
 def downloadgit(key, path, reqdCommit):
@@ -204,7 +215,11 @@ def downloadandunzip(key, value):
     if False == os.path.isfile(zipPath):
         print("\nDownloading " + key + " into " + zipPath)
         if isPython3OrAbove:
-            urllib.request.urlretrieve(key, zipPath)
+            req = urllib.request.Request(key, headers={"User-Agent": userAgentString})
+            
+            with urllib.request.urlopen(req) as response:
+                with open(zipPath, 'wb') as outputFile:
+                    shutil.copyfileobj(response, outputFile)
         else:
             urllib.urlretrieve(key, zipPath)
         if os.path.splitext(zipPath)[1] == ".zip":

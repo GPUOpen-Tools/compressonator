@@ -216,16 +216,17 @@ else()
     endif()
 endif()
 
+# Configure Externals, they must be added via 'include' before the applications
+include(ExternalProject)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+include(external/cmake/dependencyinfo.cmake)
+include(external/cmake/CMakeLists.txt)
+include(external/CMakeLists.txt)
+
 if (CMP_HOST_WINDOWS)
     add_compile_definitions(WIN32_LEAN_AND_MEAN=1 _WIN32)
 
     set(CMAKE_EXE_LINKER_FLAGS "/INCREMENTAL:NO")
-    # Configure Externals, they must be added via 'include' before the applications
-    include(${CMAKE_ROOT}/modules/externalproject.cmake)
-    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-    include(external/cmake/dependencyinfo.cmake)
-    include(external/cmake/CMakeLists.txt)
-    include(external/CMakeLists.txt)
 else()
     if (CMP_HOST_LINUX)
         #gltf code needs _LINUX define
