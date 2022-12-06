@@ -24,11 +24,10 @@ target_include_directories(cmp_prototype PUBLIC
 
 target_link_libraries(cmp_prototype
     PRIVATE
-    ExtGLM 
+    ExtGLM
     ExtGLFW
     CMP_Framework
     CMP_Compressonator
-    d3d11.lib
 )
 
 set_target_properties(cmp_prototype 

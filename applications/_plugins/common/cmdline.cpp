@@ -69,7 +69,7 @@ using namespace tinygltf2;
 
 #ifndef _WIN32
 #include <fcntl.h> /* For O_RDWR */
-#include <gltf/stb_image.h>
+#include <stb_image.h>
 #include <stdarg.h>
 #include <time.h>
 #include <wchar.h>
