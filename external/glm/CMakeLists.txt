@@ -1,8 +1,8 @@
 message(STATUS "++++++++++++++++++ External-GLM" )
 
 # -------------------------------------------------------------------------
-#
-add_subdirectory(${PROJECT_SOURCE_DIR}/../common/lib/ext/glm ${PROJECT_SOURCE_DIR}/../common/lib/ext/glm)
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/../common/lib/ext/glm ${PROJECT_SOURCE_DIR}/../common/lib/ext/glm EXCLUDE_FROM_ALL)
 
 # -------------------------------------------------------------------------
 # GLM

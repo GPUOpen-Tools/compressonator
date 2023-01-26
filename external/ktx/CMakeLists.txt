@@ -11,10 +11,6 @@ message(STATUS "++++++++++++++++++ " )
 
 if (CMP_HOST_WINDOWS)
     # build project files
-# if(CMAKE_CXX_COMPILER_ID MATCHES MSVC)
-#   if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 19)
-#     set(BOOST_TOOLSET msvc-14.1)
-
     ExternalProject_Add(extern_ktx
         PREFIX ${PROJECT_SOURCE_DIR}/../common/lib/ext/ktx
         SOURCE_DIR ${PROJECT_SOURCE_DIR}/../common/lib/ext/ktx

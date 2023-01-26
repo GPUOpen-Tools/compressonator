@@ -12,25 +12,29 @@ include(${CMAKE_CURRENT_LIST_DIR}/rapidxml/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/vulkan/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/glfw/CMakeLists.txt)
 
-# Enable KTX2 features
+if (OPTION_BUILD_BROTLIG)
+    include(${CMAKE_CURRENT_LIST_DIR}/brotlig/CMakeLists.txt)
+endif()
+
+# enable KTX2 features
 if(${CMAKE_VERSION} VERSION_GREATER "3.14.0") 
     include(${CMAKE_CURRENT_LIST_DIR}/ktx/CMakeLists.txt)
 endif()
 
 list(APPEND CMAKE_FIND_ROOT_PATH ${DEPENDENCIES_INSTALL_DIR})
 
-#aqppend know paths to cmake search path
+#append know paths to cmake search path
 list(APPEND CMAKE_FIND_ROOT_PATH ${CMAKE_CURRENT_LIST_DIR}/glew/glew_1.9.0)
 
 set(PATH_SUFFIXES lib)
 
 # ====================================================
-#                    C O M M O N
+#                    COMMON
 # ====================================================
 find_package(Threads REQUIRED QUIET)
 
 # ====================================================
-#                    C A T C H 2
+#                    CATCH2
 # ====================================================
 #find_package(Catch2 REQUIRED QUIET
 #    PATHS ${CMAKE_FIND_ROOT_PATH}
@@ -39,15 +43,15 @@ find_package(Threads REQUIRED QUIET)
 #add_library(ExtCatch2 INTERFACE)
 #target_link_libraries(ExtCatch2 INTERFACE Catch2::Catch2)
 #
+
 # ====================================================
-#                   D I R E C T X
+#                  DIRECTX
 # ====================================================
 if (OPTION_CMP_DIRECTX )
-    message(STATUS "++++++++++++++++++ D I R E C T X" )
+    message(STATUS "++++++++++++++++++ DIRECTX 12" )
     add_library(ExtDirectX INTERFACE)
 
     target_link_libraries(ExtDirectX INTERFACE
-
         d3d12.lib
         dxgi.lib
         d3dcompiler.lib
@@ -55,36 +59,19 @@ if (OPTION_CMP_DIRECTX )
 endif()
 
 # ====================================================
-#                D I R E C T X   T E X
+#                DIRECTX   TEX
 # ====================================================
 if (OPTION_CMP_DIRECTX )
-    message(STATUS "++++++++++++++++++ D I R E C T X   T E X" )
+    message(STATUS "++++++++++++++++++ DIRECTX TEX" )
     include(${CMAKE_CURRENT_LIST_DIR}/directxtex/CMakeLists.txt)
     # add_library(ExtDirectXTex INTERFACE)
-    target_link_libraries(ExtDirectX INTERFACE
+    target_link_libraries(ExtDirectXTex INTERFACE
          DirectXTex
      )
 endif()
 
 # ====================================================
-#                      G L E W
-# common/lib/ext/glew/1.9.0/lib/x64)
-# ====================================================
-# message(STATUS "++++++++++++++++++ GLEW path = ${CMAKE_FIND_ROOT_PATH}" )
-# find_package(GLEW REQUIRED QUIET
-#    PATHS ${CMAKE_FIND_ROOT_PATH}
-# )
-#
-#set_target_properties(GLEW::GLEW PROPERTIES IMPORTED_GLOBAL ON)
-#
-#add_library(ExtGLEW INTERFACE)
-#
-#target_link_libraries(ExtGLEW INTERFACE
-#    GLEW::GLEW
-#)
-
-# ====================================================
-#                   G L S L A N G
+#                   GLSLANG
 # ====================================================
 
 #set(GLSLANG_PATHS ${CMAKE_FIND_ROOT_PATH})
@@ -123,15 +110,15 @@ endif()
 #)
 
 # ====================================================
-#                     O P E N C V
+#                     OPENCV
 # ====================================================
 # Creates ExtOpenCV
 list(APPEND CMAKE_FIND_ROOT_PATH ${CMAKE_CURRENT_LIST_DIR}/opencv/)
-message(STATUS "++++++++++++++++++  O P E N C V CMakeList" )
+message(STATUS "++++++++++++++++++  OPENCV" )
 include(${CMAKE_CURRENT_LIST_DIR}/opencv/CMakeLists.txt)
 
 # ====================================================
-#                      Z L I B
+#                      ZLIB
 # ====================================================
 # message(STATUS "++++++++++++++++++ Z L I B" )
 # find_library(LIB_ZLIB zlibstatic zlib libz libz.a zlibstatic.lib zlib.lib
@@ -156,8 +143,9 @@ include(${CMAKE_CURRENT_LIST_DIR}/opencv/CMakeLists.txt)
 #     ZLIB::ZLIB
 # )
 # 
+
 # ====================================================
-#                   O P E N E X R
+#                   OPENEXR
 # ====================================================
 message(STATUS "++++++++++++++++++ O P E N E X R" )
 include(${CMAKE_CURRENT_LIST_DIR}/openexr/CMakeLists.txt)

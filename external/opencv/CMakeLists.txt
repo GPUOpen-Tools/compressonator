@@ -15,7 +15,7 @@ if (CMP_HOST_WINDOWS)
             ${CMAKE_CURRENT_LIST_DIR}/../../../common/lib/ext/opencv/2.49/include
             )
     set(OpenCV_LIB_DIRS
-            C:/opencv/build/x64/vc14/lib
+            C:/opencv/build/x64/vc15/lib
             )
 endif()
 

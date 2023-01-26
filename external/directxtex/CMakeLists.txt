@@ -13,12 +13,12 @@ target_include_directories(ExtDirectXTex INTERFACE
 # Build Relase platform
 execute_process(
     COMMAND ${CMAKE_VS_MSBUILD_COMMAND} 
-            ${PROJECT_SOURCE_DIR}/../common/lib/ext/directxtex/DirectXTex-jun2020b/DirectXTex/DirectXTex_Desktop_2017.vcxproj  /p:Configuration=Release  /p:Platform=${CMAKE_VS_PLATFORM_NAME} 
+            ${PROJECT_SOURCE_DIR}/../common/lib/ext/directxtex/DirectXTex-jun2020b/DirectXTex/DirectXTex_Desktop_2019.vcxproj  /p:Configuration=Release  /p:Platform=${CMAKE_VS_PLATFORM_NAME} 
     )
 # Build Debug platform
 execute_process(
     COMMAND ${CMAKE_VS_MSBUILD_COMMAND} 
-            ${PROJECT_SOURCE_DIR}/../common/lib/ext/directxtex/DirectXTex-jun2020b/DirectXTex/DirectXTex_Desktop_2017.vcxproj  /p:Configuration=Debug  /p:Platform=${CMAKE_VS_PLATFORM_NAME} 
+            ${PROJECT_SOURCE_DIR}/../common/lib/ext/directxtex/DirectXTex-jun2020b/DirectXTex/DirectXTex_Desktop_2019.vcxproj  /p:Configuration=Debug  /p:Platform=${CMAKE_VS_PLATFORM_NAME} 
     )
 #message(STATUS "****************** END: Compile DirectXTex" )
 
