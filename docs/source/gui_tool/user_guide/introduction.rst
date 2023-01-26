@@ -1,49 +1,18 @@
-﻿Application Requirements
-------------------------
+﻿Introduction
+---------------------
 
--  Application was tested on Windows 10 platform.
+The Compressonator GUI (Graphical User Interface) application, commonly shortened to just Compressonator GUI, is meant to be a user-friendly way to access all of Compressonator's many features. It allows users to do things like: texture compression & decompression, generating mipmaps, viewing a wide variety of images, image analysis, and more without needing to write any code or interface with a command line.
 
--  For best performance, a multi core CPU system with the latest AMD
-   Graphics card are required.
+This page will go over the basic requirements and installation of Compressonator GUI.
 
--  For ease of use, a wheel based mouse is essential.
+System Requirements
+~~~~~~~~~~~~~~~~~~~
 
--  Use of multiple monitors is optional, and can be beneficial when
-   examining multiple image views at the same time.
+Compressonator GUI is currently only available for the Windows operating system. It has primarily been tested on Windows 10 and Windows 11, though it may work with other versions as well.
+
+For optimal performance, a multi-core CPU paired with the latest AMD GPU is strongly recommended.
 
 Installation
-------------
+~~~~~~~~~~~~~~~~~~~
 
--  To install the application, download the executable file from `GPU
-   Open <https://github.com/GPUOpen-Tools/Compressonator/releases>`__ to
-   your system. Then, double click the executable to start the
-   installation process and follow the on-screen instructions.
-
--  Run the application in Administrator mode, recommended that UAC be
-   turned off.
-
-Compressonator GUI features
----------------------------
-
--  The GUI interacts with Compressonator SDK for texture compression and
-   bit format conversions; it can compress a wide range of compression
-   formats including ASTC, ATC, ATInN, BCn, ETCn, DXTn, swizzle DXTn
-   formats.
-
--  Supports conversion of textures with 32bit fixed and float formats.
-
--  Process multiple compression, decompression and transcode of images
-   with a single processing action.
-
--  Allow multiple processing interactions for a single source image
-
--  Inspect visually and analytically compression results.
-
--  Uses a single image viewer that supports many compressed and
-   uncompressed image formats.
-
--  Support 3D model file .obj and .gltf view and process the model file
-   (optimize and/or compress mesh and/or compress textures within the 3D
-   model).
-
-
+Installation is pretty simple, download the latest "CompressonatorGUI" executable file from `GPU Open <https://github.com/GPUOpen-Tools/Compressonator/releases>`__ and double-click to install like you would with any other Windows application.

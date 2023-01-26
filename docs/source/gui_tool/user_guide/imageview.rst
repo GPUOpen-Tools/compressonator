@@ -1,10 +1,9 @@
 ﻿Image View
 ==========
 
-An Image View is displayed when an item on the Project Explorer is
-selected by mouse a single click on branch items or double click on sub
-item.
+The Image View is the main window in Compressonator GUI. It is where you can view a wide variety of source image formats, see the results of compression, inspect image analysis metrics, and much more.
 
+To open an image in the Image View you must left-click on the image icon next to an item in the Project Explorer. Multiple images can be opened simultaneously and switched between by selecting the appropriate tab at the top of the Image View.
 
 Viewing Images
 --------------
@@ -92,7 +91,7 @@ the application
 | TIFF         | Tagged Image File Format files   |
 +--------------+----------------------------------+
 
-Support for ASTC, EXR, TGA, DDS and KTX are linked into the main application and
+Support for EXR, TGA, DDS and KTX are linked into the main application and
 cannot be overwritten
 
 Users can add additional file format by placing appropriate Qt Image
@@ -102,7 +101,7 @@ plugins into \\plugins\\imageformats folder.
 KTX2 Support Notes
 ------------------
 KTX2 is supported by a DLL in the plugin folder AMD Compress\\plugins\\imageformats and at the root folder as ktx.dll
-it supports saving and loading multichannel images, BCn, ETCn, and ASTC codecs.
+it supports saving and loading multichannel images, BCn, and ETCn codecs.
 
 The following custom image formats supported in Compressonator KTX is not available in KTX2
 ATC_RGB,ATC_RGBA_Explicit,ATI1N,ATI2N,ATI2N_XY, DXT5_xGBR, ATI2N_DXT5,
@@ -146,14 +145,14 @@ To change the Processed Image View back to Compressed Image View, click
 on the same icon |image115|.
 
 
-PSNR Display Feature for GUI Image Views
+PSNR Image Quality Metric
 ----------------------------------------
+
 |image434|
 
+When viewing the compressed result of an image some analysis metrics are calculated and can be viewed. One such metric is the PSNR. It can be seen in the status bar at the bottom of the image view and updates based on which mipmap level or cubemap face is currently being viewed.
 
-All Compressed image views in the GUI application display a PSNR value for each MIP level and cube face.
-
-Users can log and compare the quality of the compressed images and the effects that various filter options have on mip levels after processing.
+The PSNR value can be used to numerically compare the quality of various types of compressed images and filter options applied to an image.
 
 
 
@@ -167,6 +166,6 @@ Users can log and compare the quality of the compressed images and the effects t
 .. |image115| image:: media/image116.png
 .. |image121| image:: media/image121.png
 .. |image131| image:: media/image131.png
-.. |image434| image:: media/psnrdisplayfeature.png
+.. |image434| image:: media/psnr_location.png
 
 

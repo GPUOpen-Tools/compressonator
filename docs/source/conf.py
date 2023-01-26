@@ -50,7 +50,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Compressonator'
-copyright = u'2017 to 2021, AMD Developer Tools'
+copyright = u'2017 to 2023, AMD Developer Tools'
 author = u'AMD Developer Tools'
 
 # The version info for the project you're documenting, acts as replacement for

@@ -1,30 +1,24 @@
-﻿Mip Map Generation
+﻿Mipmap Generation
 ------------------
 
-You can generate different MIP map level for the original image by
-selecting the image (Ruby.bmp in this example) on the project explorer
-and then click on the “Generate MIP Map” |image51|\ button on the Application Toolbar.
+Mipmaps can be generated for one or more source images in the Project Explorer by selecting the image(s) and clicking the "Generate Mipmaps" button |image51|\ in the Application Toolbar.
 
-Note: Only one image on the project explorer can be selected for MIP map generation at one time.
-
-
-A Generate MIP Maps window will appear.
+This will cause a dialog box to appear with some parameters related to mipmap generation.
 
 |image52|
 
-Select the desired Mip-Level for MIP map generation from the drop down
-list. This drop down list is generated based on the selected original
-image and the intended targets EncodeWith options (CPU or GPU based). Select the lowest mip-level you want to generate, then press the
-Generate button.
+Select the minimum mipmap level size you desire from the drop-down list and press the "Generate" button.
+
+The available mipmap sizes changes based on a few different variables. By default, all supported sizes for the current selected image will be display. If you have chosen to generate mipmaps using the GPU in the Application Options then only sizes divisible by 4 will be shown. Finally, if multiple images are selected a set of "standard" sizes will be shown and you should choose the one closest to your desired goal.
 
 |image53|
 
-When MIP map generation completes, |image54| will appear in Image View
+When mipmap generation completes, |image54| will appear in Image View
 toolbar. Click on the little triangle to expand the drop down list.
 
 |image55|
 
-You can select the view of each MIP level from the list.
+You can select the view of each mipmap level from the list.
 
 For example, selecting the level 3 will update the current image
 view as shown below
@@ -32,30 +26,29 @@ view as shown below
 |image56|
 
 
-Image View of Ruby BMP file at Mip Level 3
+*Image View of Ruby BMP file at Mip Level 3*
 
-You can always re-generate MIP map for the same image by repeating the
-all the steps mentioned in this section.
+You can always re-generate mipmaps for the same image by repeating all the steps mentioned in this section.
 
-MIP Map Filter Support Using either GPU or CPU
+Mipmap Filter Support Using either GPU or CPU
 ----------------------------------------------
 
-The GUI applications “Generate MIP Map” option can be used on a variety of image formats to produce MIP maps filtered for optimal GPU or CPU use.
+The GUI applications “Generate Mipmaps” option can be used on a variety of image formats to produce mipmaps filtered for optimal GPU or CPU use.
 
 Options for using a Compressonator Box filter or DirectX® based filters are provided.
 
 |image436|
 
 
-Applying Gamma to MIP Maps
+Applying Gamma to Mipmaps
 --------------------------
 
-Gamma correction can be applied to the image pixels after MIP map generation by changing the default 1.0 value higher (darken the image) or lower (brighten the image).
+Gamma correction can be applied to the image pixels after mipmap generation by changing the default 1.0 value higher (darken the image) or lower (brighten the image).
 
 
-GPU Based Compression and MIP Map generation
+GPU Based Compression and Mipmap generation
 --------------------------------------------
-An alternative option to generate MIP map levels is provided using the application setting window.
+An alternative option to generate mipmap levels is provided using the application setting window.
 A feature to encode textures using just the GPU hardware and its driver components is provided. The encoding process uses no user application shader code to process the textures. 
 Both the GUI and Command-line tools can run BCn GPU extensions provided by most GPU vendors and can be used to evaluate the quality and performance of encoded images using the image views and analysis setting.
 
@@ -71,7 +64,7 @@ Once the images are processed users can view the quality of the resulting images
 
 Cube Maps
 ---------
-Cube Maps can be compressed with or without MIP Levels. Only a limited set of texture types (RGBA_8888 and RGBA_F16) are currently supported in DDS and KTX file formats. Compressing, Generating MIP Levels and Viewing Cube Maps uses the same process as image textures. Just place the file onto the Project Explorer and process them as required.
+Cube Maps can be compressed with or without mipmap levels. Only a limited set of texture types (RGBA_8888 and RGBA_F16) are currently supported in DDS and KTX file formats. Compressing, generating mipmap levels, and viewing cube maps uses the same process as image textures. Just place the file onto the Project Explorer and process them as required.
 
 A new notation is used for the cube faces labeled as “Frames” for each cube face. For cube mapped files maximum frames is set to 6. Support for volumetric texture files is been reviewed and the frames limit will be expanded as needed.
 

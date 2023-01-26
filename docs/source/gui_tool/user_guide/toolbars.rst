@@ -2,7 +2,7 @@
 ~~~~~~~~
 
 There are several types of tool bars. Depending on user preferences,
-some can be moved to a new location on the application and other can
+some can be moved to a new location on the application and others can
 either be displayed or hidden by selecting the |image0| button.
 
 **Note**: The Toolbar view setting is reset when the application is
@@ -15,7 +15,7 @@ restarted.
 
 +------------------------+-----------------------------------------------------------------------------------------------+
 | |image2|               | Create a new project                                                                          |
-+========================+===============================================================================================+
++------------------------+-----------------------------------------------------------------------------------------------+
 | |image3|               | Open an existing project file (project files have the extension .cprj)                        |
 +------------------------+-----------------------------------------------------------------------------------------------+
 | |image4|               | Saves any changes to the current project                                                      |
@@ -26,13 +26,14 @@ restarted.
 +------------------------+-----------------------------------------------------------------------------------------------+
 | |image7|               | Delete the current selected items on the Project Explorer                                     |
 +------------------------+-----------------------------------------------------------------------------------------------+
-| |image8|               | Starts to process (Compresses, Decompresses or Transcodes)                                    |
+| |image8|               | Process all selected images (that might be compresssion, decompression, or transcoding)       |
 |                        |                                                                                               |
-|                        | If no items are selected it will auto select all items in the project.                        |
+|                        | If no items are selected when the button is clicked, it will default to processing every item |
+|                        | in the project.                                                                               |
 +------------------------+-----------------------------------------------------------------------------------------------+
 | |image9|               | View image difference for a processed image (sub item) with the original image (branch item)  |
 +------------------------+-----------------------------------------------------------------------------------------------+
-| |image10|              | Generates MIP mapping to a specified minimum Mipmap level for original image (branch item)    |
+| |image10|              | Generate mipmaps for every selected image based on the specified minimum size.                |
 +------------------------+-----------------------------------------------------------------------------------------------+
 
 **Image View Toolbar**
@@ -42,7 +43,7 @@ restarted.
 +-----------------------+-------------------------------------------------------------------------------------------------------------+
 | |image12|             | |image13|\ |image14|\ |image15|                                                                             |
 |                       | Select the background the image is displayed on (default black)                                             |
-+=======================+=============================================================================================================+
++-----------------------+-------------------------------------------------------------------------------------------------------------+
 | |image16|             | Zoom into or out of the image using a specific scale (100 = original size) Min setting is 10 and Max is 9999|
 +-----------------------+-------------------------------------------------------------------------------------------------------------+
 | |image17|             | Displays the image at its original size                                                                     |
@@ -51,17 +52,17 @@ restarted.
 +-----------------------+-------------------------------------------------------------------------------------------------------------+
 | |image19|             | Restore the original image view to default                                                                  |
 +-----------------------+-------------------------------------------------------------------------------------------------------------+
-| |image20|             | Toggles the images Red channel on or off                                                                    |
+| |image20|             | Toggles the image's red channel on or off                                                                   |
 +-----------------------+-------------------------------------------------------------------------------------------------------------+
-| |image21|             | Toggles the images Green channel on or off                                                                  |
+| |image21|             | Toggles the image's green channel on or off                                                                 |
 +-----------------------+-------------------------------------------------------------------------------------------------------------+
-| |image22|             | Toggles the Images Blue channel on or off                                                                   |
+| |image22|             | Toggles the image's blue channel on or off                                                                  |
 +-----------------------+-------------------------------------------------------------------------------------------------------------+
-| |image23|             | Toggles the Images Alpha channel on or off                                                                  |
+| |image23|             | Toggles the image's alpha channel on or off                                                                 |
 +-----------------------+-------------------------------------------------------------------------------------------------------------+
-| |image24|             | Toggles the image from (Black and White) to Color                                                           |
+| |image24|             | Toggles display of a greyscale version of the image                                                         |
 +-----------------------+-------------------------------------------------------------------------------------------------------------+
-| |image25|             | Toggles inverting the images colors                                                                         |
+| |image25|             | Toggle between original and inverted colours                                                                |
 +-----------------------+-------------------------------------------------------------------------------------------------------------+
 | |image26|             | Mirrors the image horizontally                                                                              |
 +-----------------------+-------------------------------------------------------------------------------------------------------------+
@@ -73,17 +74,17 @@ restarted.
 +-----------------------+-------------------------------------------------------------------------------------------------------------+
 
 Additional Toolbar options will be displayed when viewing certain type
-of images, such as an image diff or images with multiple MIP levels
+of images, such as an image diff or images with multiple mipmap levels
 
 +-------------------------------------+---------------------------------------------------------------------------+
 | |image30|                           | Increases the brightness of the image                                     |
 |                                     |                                                                           |
-+=====================================+===========================================================================+
++-------------------------------------+---------------------------------------------------------------------------+
 | |image31|                           | Decreases the brightness of the image                                     |
 |                                     |                                                                           |
 +-------------------------------------+---------------------------------------------------------------------------+
-| |image32|                           | Displayed when an image has multiple MIP Mapping (0 = original image).    |
-|                                     | The view of any MIP level and size (as width x height) is selectable.     |
+| |image32|                           | Selecting a mipmap level in the dropdown will switch the image view to    |
+|                                     | display that specific mipmap level (index 0 is the original image).       |
 +-------------------------------------+---------------------------------------------------------------------------+
 
 **View Image Diff Toolbar**
@@ -93,7 +94,7 @@ of images, such as an image diff or images with multiple MIP levels
 +-----------------------------+-----------------------------------------------------------------------------------+
 | |image34|                   | Displays an Image Difference to the left of two stacked images.                   |
 |                             | Original on top and Processed Image at the bottom.                                |
-+=============================+===================================================================================+
++-------------------------------------+---------------------------------------------------------------------------+
 | |image35|                   | Organizes three image views (Original Image, Image Difference and Processed Image)|
 |                             |                                                                                   |
 |                             | in a horizontal line                                                              |

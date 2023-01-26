@@ -1,12 +1,14 @@
-Introduction
-============
+.. _getting-started-page:
+
+Getting Started with Compressonator GUI
+=============================================
 
 This guide provides detailed information on the Compressonator application. It lists the requirement needed for running the application and helps in installation, getting started with the tool, using the sample projects and finding specific topics of interest.
 
 Compressonator GUI features
-===========================
+----------------------------
 
-* The GUI interacts with Compressonator SDK for texture compression and bit format conversions; it can compress a wide range of compression formats including ASTC, ATC, ATInN, BCn, ETCn, DXTn, swizzle DXTn formats. 
+* The GUI interacts with Compressonator SDK for texture compression and bit format conversions; it can compress a wide range of compression formats including ATC, ATInN, BCn, ETCn, DXTn, swizzle DXTn formats. 
 * Supports conversion of textures with 32 bit fixed and float formats.
 * Process multiple compression, decompression and transcode of images with a single processing action.
 * Allow multiple processing interactions for a single source image
@@ -14,7 +16,7 @@ Compressonator GUI features
 * Uses a single image viewer that supports a large number of compressed and uncompressed image formats.
   
 Application Requirements
-========================
+-------------------------
   
 * Application was tested on Windows 10 platform. 
 * For best performance, a multi core CPU system with the latest AMD Graphics card are required.
@@ -24,8 +26,8 @@ Application Requirements
 * To install the application, download the executable file from release page to your system. Then, double click the executable to start the installation process and follow the on-screen instructions.
 * Run the application in Administrator mode, recommended that UAC be turned off.
 
-Getting started (Using sample projects)
-=======================================
+Using Sample Projects
+-------------------------------------------
 
 This section shows you how to get started with the application using the sample projects that come with the installation. Note that you can also start by creating a new project and add your image files for compression. 
 
@@ -99,15 +101,15 @@ When analysis process completed, the statistics result will be shown on the Prop
 .. image:: media/analysis_properties.jpg  
 
 Closing views
-=============
+--------------
 At any time you can close various views by selecting the close button (on tabs or windows)
 
 Changing views
-==============
+------------------
 Click on Image View window tab titles or click on any image on Project Explorer.
 
 Delete or Remove Image(s)
-=========================
+---------------------------------
 Select the image in Project Explorer and press DEL key. A message window will pop up as shown below.
 
 .. image:: media/del_remove_window.jpg
@@ -119,7 +121,7 @@ Cancel	Will return you back to the application (similar applies when selecting t
 
 
 Closing and Saving the Project 
-==============================
+---------------------------------
 Select File menu and then Exit or Click on the close button on the application window
 Since we have no changes to the settings or added any new images, the application will simply close when exit.
 If you made any changes to the sample project “BC7_Compression” the application will prompt to save the changes or discard them. 

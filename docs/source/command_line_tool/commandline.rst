@@ -23,35 +23,48 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 
 
 
-+---------------------+------------------------------------------------------------+
-|Compression Options  |                                                            |
-+=====================+============================================================+
-| -fd <format>        | Specifies the destination texture format to use            |
-+---------------------+------------------------------------------------------------+
-| -DecodeWith         | GPU based decompression using OpenGL,DirectX or Vulkan     |
-|                     | Default is OpenGL, UseGPUDecompress is implied when        |
-|                     | this option is set                                         |
-+---------------------+------------------------------------------------------------+
-| -decomp <filename>  | If the destination  file is compressed optionally          |
-|                     | decompress it                                              |
-|                     | to the specified file. Note the destination  must          |
-|                     | be compatible                                              |
-|                     | with the sources format,decompress formats are typically   |
-|                     | set to ARGB_8888 or ARGB_32F                               |
-+---------------------+------------------------------------------------------------+
-| -doswizzle          | Swizzle the source images Red and Blue channels            |
-+---------------------+------------------------------------------------------------+
-| -EncodeWith         | Compression with CPU, HPC, OCL, DXC, GPU.                  |
-|                     | Default is CPU.                                            |
-|                     | GPU will use GL Compress Extensions                        |
-|                     | OCL & DXC is only available on Windows Version             |
-+---------------------+------------------------------------------------------------+
-| -UseGPUDecompress   | By default decompression is done using CPU,                |
-|                     | when set OpenGL will be used by default, this can be       |
-|                     | changed to DirectX or Vulkan using DecodeWith setting      |
-+---------------------+------------------------------------------------------------+
-
-
++-----------------------+------------------------------------------------------------+
+|Compression Options    |                                                            |
++=======================+============================================================+
+| -fd <format>          | Specifies the destination texture format to use            |
++-----------------------+------------------------------------------------------------+
+| -DecodeWith           | GPU based decompression using OpenGL,DirectX or Vulkan     |
+|                       | Default is OpenGL, UseGPUDecompress is implied when        |
+|                       | this option is set                                         |
++-----------------------+------------------------------------------------------------+
+| -decomp <filename>    | If the destination  file is compressed optionally          |
+|                       | decompress it                                              |
+|                       | to the specified file. Note the destination  must          |
+|                       | be compatible                                              |
+|                       | with the sources format,decompress formats are typically   |
+|                       | set to ARGB_8888 or ARGB_32F                               |
++-----------------------+------------------------------------------------------------+
+| -doswizzle            | Swizzle the source images Red and Blue channels            |
++-----------------------+------------------------------------------------------------+
+| -EncodeWith           | Compression with CPU, HPC, OCL, DXC, GPU.                  |
+|                       | Default is CPU.                                            |
+|                       | GPU will use GL Compress Extensions                        |
+|                       | OCL & DXC is only available on Windows Version             |
++-----------------------+------------------------------------------------------------+
+| -UseGPUDecompress     | By default decompression is done using CPU,                |
+|                       | when set OpenGL will be used by default, this can be       |
+|                       | changed to DirectX or Vulkan using DecodeWith setting      |
++-----------------------+------------------------------------------------------------+
+| -UseMangledFileNames  | Turns on name mangling, meaning processed files will have  |
+|                       | codec information appended to the end of the file name.    |
+|                       | Useful if you want to process multiple files with the same |
+|                       | file name but different extensions.                        |
++-----------------------+------------------------------------------------------------+
+|-\f\f  <ext>,...,<ext> | File filters used for selecting a subset of files in a     |
+|                       | directory folder for processing. The subset will contain   |
+|                       | only files that match any of the extensions given.         |
+|                       | Supported <ext> are any of the following combinations:     |
+|                       | DDS,KTX,TGA,EXR,PNG,BMP,HDR,JPG,TIFF,PPM,BRLG              |
++-----------------------+------------------------------------------------------------+
+|-\fx  <ext>            | Specifies the file extension to use for output files.      |
+|                       | Supported <ext> are any of the following values:           |
+|                       | DDS,KTX,TGA,EXR,PNG,BMP,HDR,JPG,TIFF,PPM,BRLG              |
++-----------------------+------------------------------------------------------------+
 
 +-----------------------+----------------------------------------------------------+
 |Channel Formats        |                                                          |
@@ -68,8 +81,6 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 +-----------------------+-----------------------------------------------------------+
 |Compression Formats    |                                                           |
 +=======================+===========================================================+
-|ASTC                   |Adaptive Scalable Texture Compression                      |
-+-----------------------+-----------------------------------------------------------+
 |ATC_RGB                |Compressed RGB format                                      |
 +-----------------------+-----------------------------------------------------------+
 |ATC_RGBA_Explicit      |ARGB format with explicit alpha                            |
@@ -149,7 +160,8 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 +-----------------------+-----------------------------------------------------------+
 |ETC2_RGBA1             |RGB with 1 bit alpha                                       |
 +-----------------------+-----------------------------------------------------------+
-
+| BRLG                  | Lossless compression using Brotli-G                       |
++-----------------------+-----------------------------------------------------------+
 
 
 
@@ -168,11 +180,6 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 |-Analysis <image1> <image2>  |Generate analysis metric like SSIM, PSNR values           |
 |                             |between 2 images with same size. Analysis_Result.xml file |
 |                             |will be generated.                                        |
-+-----------------------------+----------------------------------------------------------+
-|-BlockRate <value>           |ASTC 2D only - sets block size or bit rate                |
-|                             |value can be a bit per pixel rate from 0.0 to 9.9         |
-|                             |or can be a combination of x and y axes with paired       |
-|                             |values of 4,5,6,8,10 or 12 from 4x4 to 12x12              |
 +-----------------------------+----------------------------------------------------------+
 |-ColourRestrict <value>      |This setting is a quality tuning setting for BC7          |
 |                             |which may be necessary for convenience in some            |
@@ -204,10 +211,12 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 |                             |different block modes in order to obtain the              |
 |                             |highest quality                                           |
 +-----------------------------+----------------------------------------------------------+
-|-NumThreads <value>          |Number of threads to initialize for ASTC,BC6H,BC7         |
+|-NumThreads <value>          |Number of threads to initialize for BC6H and BC7          |
 |                             |encoding (Max up to 128). Default set to 0 (Auto)         |
 +-----------------------------+----------------------------------------------------------+
 |-Performance <value>         |Sets performance of encoding for BC7                      |
++-----------------------------+----------------------------------------------------------+
+|-PageSize <value>            | Page size, in bytes, to use for Brotli-G compression     |
 +-----------------------------+----------------------------------------------------------+
 |-Quality <value>             |Sets quality of encoding for BC7                          |
 +-----------------------------+----------------------------------------------------------+
@@ -228,11 +237,6 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 +-----------------------------+----------------------------------------------------------+
 |-WeightB <value>             |The weighting of the Blue or Z Channel                    |
 +-----------------------------+----------------------------------------------------------+
-|-\f\f  <ext>,<ext>,...,<ext> |File filters used for processing a list of image files    |
-|                             |with specified extensions in a given directory folder     |
-|                             |supported <ext> are any of the following combinations:    |
-|                             |DDS,KTX,TGA,EXR,PNG,BMP,HDR,JPG,TIFF,PPM                  |
-+-----------------------------+----------------------------------------------------------+
 
 
 +-----------------------------+----------------------------------------------------------+
@@ -249,9 +253,6 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 Example Compression
 -------------------
 `CompressonatorCLI.exe -fd BC7  -EncodeWith HPC image.bmp result.dds` |br|
-`CompressonatorCLI.exe -fd ASTC image.bmp result.astc` |br|
-`CompressonatorCLI.exe -fd ASTC -BlockRate 0.8 image.bmp result.astc`  |br|
-`CompressonatorCLI.exe -fd ASTC -BlockRate 12x12 image.bmp result.astc` |br|
 `CompressonatorCLI.exe -fd BC7  image.bmp result.dds` |br|
 `CompressonatorCLI.exe -fd BC7  -NumTheads 16 image.bmp result.dds` |br|
 `CompressonatorCLI.exe -fd BC6H image.exr result.dds` |br|
@@ -280,39 +281,9 @@ GPU Based Decompression
 `compressonatorCLI.exe  -DecodeWith OpenGL result.dds image.bmp`
 
 
-Mesh Compression
-----------------
-(support glTF and obj file only)
-
-The following mesh compression uses default quantization bits with Google Draco library settings 
-(These default settings are currently not programmable):
-
-- Compression level = 7.
-
-- Quantization bits for position = 14.
-
-- Quantization bits value for texture coordinates = 12.
-
-- quantization bits value for normal = 10.
-
-
-`compressonatorcli.exe -draco source.gltf dest.gltf`
-
-`compressonatorcli.exe -draco source.obj  dest.drc`
-
-
-Mesh Decompression
-------------------
-(support glTF and obj file only)
-
-`compressonatorcli.exe source.gltf dest.gltf`
-
-`compressonatorcli.exe source.drc  dest.obj`
-
-
 Mesh Optimization
 -----------------
-(support glTF and obj file only)
+(Only supports glTF and obj files)
 
 The following uses default settings that optimizes vertices with cache size = 16, overdraw with ACMR Threshold = 1.05 and vertices fetch. |br|
 
@@ -324,7 +295,7 @@ Specifies settings:
 
 `compressonatorcli.exe -meshopt -optVCacheSize  32 -optOverdrawACMRThres  1.03 -optVFetch 0 source.gltf dest.gltf`
 
-CLI mesh optimization include settings:
+CLI mesh optimization has the following settings:
 
 +-------------------------------+---------------------------------------------------------------------------------------+
 |-optVCacheSize <value>         | optimize vertices with hardware cache size in the value specified                     |

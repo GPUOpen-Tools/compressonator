@@ -5,7 +5,7 @@ Various default application behaviors can be set using the Application
 Settings window. Select |image38| from the application tool bar or from
 the Settings – Set Application Options menu
 
-|image39|
+|ApplicationOptions|
 
 Application Settings Window
 
@@ -107,6 +107,11 @@ Show Analysis Results Table
 
 Shows all Process Times, PSNR and SSIM results for compressed images in a table view. 
 
+Use Original File Names
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Enabled by default, this option can be used to toggle whether generated destination file names should use the same name as the source. This only applies to the first destination for each source file. To prevent file overwriting, subsequent destination files will have the codec type and an index appended to the file name.
+
 .. |image38| image:: media/image41.png
-.. |image39| image:: media/image42.png
+.. |ApplicationOptions| image:: media/application_options.png
 .. |EncodeWith| image:: media/image2020-3-26_14-19-1.png

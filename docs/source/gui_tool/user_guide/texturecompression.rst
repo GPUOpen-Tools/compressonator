@@ -1,8 +1,10 @@
-﻿Compressing Images
-------------------
+﻿Texture Compression
+========================
 
-Please refer to Getting Started document to get additional information
-on how to use sample projects
+This page will go over the steps needed to compress an image using Compressonator GUI. It is assumed that you are already familiar with the basics of the application and how to use the sample projects. If not, please refer back to the :ref:`getting-started-page` page.
+
+Compressing Images
+------------------
 
 After adding the `destination settings <#_Add_Destination_Settings>`__
 for the image, select the preset setting and click on “Process” button
@@ -206,25 +208,6 @@ Ruby image processed with ETC2_RGBA
 |image125|
 
 Ruby image processed with ETC2_RGBA1
-
-ASTC 
------
-
-ASTC compression and decompression of various block sizes from 4x4 to
-12x12 has been added to the SDK. Viewing compressed ASTC images using
-the OpenGL option requires GPU hardware that supports the ASTC format.
-CPU based views have no hardware dependencies.
-
-Note: DirectX 11 does not support viewing ASTC and ETC2 compressed
-textures.
-
-When ASTC is selected as a destination format, users can specify the
-numerical compression bitrate (e.g. 8) or block number XxY (e.g. 4x4)
-under the ASTC BlockRate section. Once specified, the closest bit rate
-and the block number will be computed and shown in the info window. This
-closest bit rate will be used for ASTC compression.
-
-|image78| |image79|
 
 Selectable GPU or CPU based compressed image views
 --------------------------------------------------

@@ -132,6 +132,7 @@ CPU performance based timing, that measures the overall end to end time it took 
 
 **Please note the following**
 
+	- Analysis is not supported for processes that are: Lossless, HDR to LDR or LDR to HDR 
 	- The table view is re-sizable by mouse clicking on and dragging the table edges and dividers. 
 	- The resized view and table position are not saved and is reset when the GUI application is restarted.
 	- Table Header labels are not copied.
