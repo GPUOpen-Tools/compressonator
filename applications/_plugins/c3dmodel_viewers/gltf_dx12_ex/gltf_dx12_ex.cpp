@@ -195,7 +195,7 @@ void *Plugin_glTF_DX12_EX::CreateView(void *ModelData, CMP_LONG Width, CMP_LONG 
     printMemUsage(__func__);
 #endif
 
-    m_gltfLoader = (GLTFCommon *) ModelData;
+    m_gltfLoader = (CMP_GLTFCommon*)ModelData;
 
     // Check User Canceled status for long glTF file loads!!
     if (DX12_CMips) {

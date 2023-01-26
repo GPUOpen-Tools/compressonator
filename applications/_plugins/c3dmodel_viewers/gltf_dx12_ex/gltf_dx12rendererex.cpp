@@ -17,12 +17,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "misc.h"
-#include "gltfpbr.h"
-#include "bloom.h"
-#include "threadpool.h"
+#include "cmp_misc.h"
+#include "cmp_gltfpbr.h"
+#include "cmp_bloom.h"
+#include "cmp_threadpool.h"
 #include "gltf_dx12rendererex.h"
-#include "error.h"
+#include "cmp_error.h"
 
 #include <directxmath.h>
 
@@ -202,7 +202,7 @@ void glTF_DX12RendererEx::OnDestroyWindowSizeDependentResources()
 // LoadScene
 //--------------------------------------------------------------------------------------
 
-void glTF_DX12RendererEx::LoadScene(GLTFCommon* gltfData, void* pluginManager, void* msghandler)
+void glTF_DX12RendererEx::LoadScene(CMP_GLTFCommon* gltfData, void* pluginManager, void* msghandler)
 {
     ID3D12GraphicsCommandList* pCmdLst = m_UploadHeap.GetCommandList();
 
@@ -217,7 +217,7 @@ void glTF_DX12RendererEx::LoadScene(GLTFCommon* gltfData, void* pluginManager, v
     }
 #endif
 
-    if (m_gltfPBR = new GltfPbr())
+    if (m_gltfPBR = new CMP_GltfPbr())
     {
         m_gltfPBR->OnCreate(m_pDevice,
                             &m_UploadHeap,
@@ -364,7 +364,7 @@ void glTF_DX12RendererEx::OnRender(State*                       pState,
     if (m_gltfPBR)
     {
         //set per frame constant buffer values
-        GltfPbr::per_batch* cbPerBatch = m_gltfPBR->SetPerBatchConstants();
+        CMP_GltfPbr::per_batch* cbPerBatch = m_gltfPBR->SetPerBatchConstants();
         cbPerBatch->mCameraViewProj    = pState->camera.GetView() * pState->camera.GetProjection();
         cbPerBatch->cameraPos          = pState->camera.GetPosition();
         cbPerBatch->mLightViewProj     = pState->light.GetView() * pState->light.GetProjection();

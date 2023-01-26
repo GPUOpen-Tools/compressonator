@@ -21,15 +21,15 @@
 
 #define ENABLE_RENDER_CODE
 
-#include "gltffeatures.h"
-#include "frameworkwindows.h"
-#include "camera.h"
-#include "swapchaindx12.h"
+#include "cmp_gltffeatures.h"
+#include "cmp_frameworkwindows.h"
+#include "cmp_camera.h"
+#include "cmp_swapchaindx12.h"
 
 #include "gltf_dx12rendererex.h"
 
 #include <imgui_dx12.h>
-#include "imgui/imgui.h"
+#include "imgui.h"
 
 #include "userinterface.h"
 #include "pluginmanager.h"
@@ -40,7 +40,7 @@
 #define RENDER_FLIP_MANUAL    1
 
 class glTF_DX12RenderEx;
-class GLTFCommon;
+class CMP_GLTFCommon;
 
 extern CMIPS *DX12_CMips;
 //
@@ -76,7 +76,7 @@ class glTF_DX12DeviceEx : public FrameworkWindows, public QWidget {
     void                    *m_msghandler;
     DWORD                    m_dwNumberOfBackBuffers;
 
-    glTF_DX12DeviceEx(GLTFCommon m_gltfLoader[MAX_NUM_OF_NODES], DWORD width, DWORD height, void *pluginManager, void *msghandler, QWidget *parent);
+    glTF_DX12DeviceEx(CMP_GLTFCommon m_gltfLoader[MAX_NUM_OF_NODES], DWORD width, DWORD height, void* pluginManager, void* msghandler, QWidget* parent);
 
   private:
 
@@ -101,7 +101,7 @@ class glTF_DX12DeviceEx : public FrameworkWindows, public QWidget {
     ID3D12CommandQueue  **m_pDirectQueue;
 
     // *1* change to MAX_NUM_OF_NODES
-    GLTFCommon           *m_gltfLoader[MAX_NUM_OF_NODES];
+    CMP_GLTFCommon* m_gltfLoader[MAX_NUM_OF_NODES];
 
 
 #ifdef ENABLE_RENDER_CODE

@@ -1,6 +1,6 @@
 # this must be before add_executable
 # link_directories(
-#      ${PROJECT_EXTERNAL_LIBDIR}/directxtex/DirectXTex-jun2020b/DirectXTex/Bin/Desktop_2017/x64
+#      ${PROJECT_EXTERNAL_LIBDIR}/directxtex/DirectXTex-jun2020b/DirectXTex/Bin/Desktop_2019/x64
 #     )
 
 add_library(ModelViewer_DX12 SHARED)
@@ -45,14 +45,16 @@ target_include_directories(ModelViewer_DX12 PUBLIC
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common/model_viewer
     ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshoptimizer
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common/qtimgui
+    ${PROJECT_SOURCE_DIR}/external/imgui
+
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/glm
     ${Qt5Gui_INCLUDE_DIRS}
-    )
+    ${PROJECT_SOURCE_DIR}/../common/lib/ext/imgui 
+)
 
 target_link_libraries(ModelViewer_DX12 PRIVATE
     CMP_Compressonator
     CMP_Framework
-    # CMP_MeshCompressor
     CMP_GUI_Gltf
     CMP_GpuDecode
     CMP_Imgui

@@ -18,13 +18,13 @@
 // THE SOFTWARE.
 
 
-#include "gltffeatures.h"
+#include "cmp_gltffeatures.h"
 
 #include "gltf_dx12deviceex.h"
 
-#include "gltfcommon.h"
-#include "misc.h"
-#include "error.h"
+#include "cmp_gltfcommon.h"
+#include "cmp_misc.h"
+#include "cmp_error.h"
 
 #ifdef ENABLE_RENDER_CODE
 #include "gltf_dx12rendererex.h"
@@ -37,7 +37,14 @@ using namespace DirectX;
 
 static int BackBuffer = 1;
 
-glTF_DX12DeviceEx::glTF_DX12DeviceEx(GLTFCommon gltfLoader[MAX_NUM_OF_NODES], DWORD width, DWORD height, void *pluginManager, void *msghandler, QWidget *parent) : FrameworkWindows(width, height) {
+glTF_DX12DeviceEx::glTF_DX12DeviceEx(CMP_GLTFCommon gltfLoader[MAX_NUM_OF_NODES],
+                                     DWORD          width,
+                                     DWORD          height,
+                                     void*          pluginManager,
+                                     void*          msghandler,
+                                     QWidget*       parent)
+    : FrameworkWindows(width, height)
+{
     m_parent = parent;
 
     m_pluginManager = (PluginManager*)pluginManager;
@@ -363,7 +370,7 @@ void glTF_DX12DeviceEx::OnRender() {
         m_ImGuiRenderer.newFrame();
         {
 
-            ImGui::Begin("Stats", NULL, ImGuiWindowFlags_ShowBorders);
+            ImGui::Begin("Stats", NULL); // ImGuiWindowFlags_ShowBorders);
 
             m_imgui_win_size = ImGui::GetWindowSize();
             m_imgui_win_pos  = ImGui::GetWindowPos();
@@ -416,6 +423,7 @@ void glTF_DX12DeviceEx::OnRender() {
 
             ImGui::End();
         }
+        ImGui::EndFrame();
     }
 
 

@@ -22,29 +22,29 @@
 
 #include <d3d12.h>
 
-#include "gltffeatures.h"
-#include "uploadheapdx12.h"
-#include "texturedx12.h"
-#include "dynamicbufferringdx12.h"
-#include "staticbufferpooldx12.h"
-#include "staticconstantbufferpooldx12.h"
-#include "commandlistringdx12.h"
-#include "fencedx12.h"
-#include "resourceviewheapsdx12.h"
-#include "camera.h"
-#include "gputimestampsdx12.h"
+#include "cmp_gltffeatures.h"
+#include "cmp_uploadheapdx12.h"
+#include "cmp_texturedx12.h"
+#include "cmp_dynamicbufferringdx12.h"
+#include "cmp_staticbufferpooldx12.h"
+#include "cmp_staticconstantbufferpooldx12.h"
+#include "cmp_commandlistringdx12.h"
+#include "cmp_fencedx12.h"
+#include "cmp_resourceviewheapsdx12.h"
+#include "cmp_camera.h"
+#include "cmp_gputimestampsdx12.h"
 
-#include "dx12util/imguidx12.h"
-#include <imgui/imgui.h>
+#include "dx12util/cmp_imguidx12.h"
+#include "imgui.h"
 #include <qtimgui/imgui_dx12renderer.h>
 
-#include "gltfpbr.h"
-#include "gltfdepthpass.h"
-#include "gltfbboxpass.h"
-#include "blurps.h"
-#include "tonemapping.h"
-#include "bloom.h"
-#include "skydome.h"
+#include "cmp_gltfpbr.h"
+#include "cmp_gltfdepthpass.h"
+#include "cmp_gltfbboxpass.h"
+#include "cmp_blurps.h"
+#include "cmp_tonemapping.h"
+#include "cmp_bloom.h"
+#include "cmp_skydome.h"
 #include "userinterface.h"
 
 static const int cNumSwapBufs = 2;
@@ -60,8 +60,8 @@ class glTF_DX12RendererEx {
   public:
     struct State {
         float time;
-        Camera camera;
-        Camera light;
+        CMP_Camera camera;
+        CMP_Camera light;
         float depthBias;
         float exposure;
         float iblFactor;
@@ -83,7 +83,7 @@ class glTF_DX12RendererEx {
     void OnCreateWindowSizeDependentResources(ID3D12Device* pDevice, DWORD Width, DWORD Height, UINT node, UINT nodemask);
     void OnDestroyWindowSizeDependentResources();
 
-    void LoadScene(GLTFCommon *gltfData, void *pluginManager, void *msghandler);
+    void LoadScene(CMP_GLTFCommon* gltfData, void* pluginManager, void* msghandler);
     void UnloadScene();
 
     std::vector<TimeStamp> &GetTimingValues() {
@@ -115,7 +115,7 @@ class glTF_DX12RendererEx {
     ToneMapping                     m_toneMapping;
 
 #ifdef USE_BLOOM
-    Bloom                           m_bloom;
+    CMP_Bloom m_bloom;
 #endif
 
 #ifdef USE_SHADOWMAPS
@@ -135,7 +135,7 @@ class glTF_DX12RendererEx {
     GPUTimestampsDX12               m_GPUTimer;
 
 
-    GltfPbr                        *m_gltfPBR;
+    CMP_GltfPbr*                    m_gltfPBR;
     GltfDepthPass                  *m_gltfDepth;
     GltfBBoxPass                   *m_gltfBBox;
 
