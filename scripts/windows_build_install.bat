@@ -14,45 +14,41 @@ cd %WORKDIR%\compressonator\Installer
 
 echo --- PUBLIC INSTALLER: AMDCompressCore_64.aip
 attrib -r AMDCompressCore_64.aip
-%ADVANCED_INSTALLER% /edit AMDCompressCore_64.aip /SetVersion 4.2.%BUILD_NUMBER%
-%ADVANCED_INSTALLER% /edit AMDCompressCore_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorCore_x64_4.2.%BUILD_NUMBER%
+%ADVANCED_INSTALLER% /edit AMDCompressCore_64.aip /SetVersion 4.3.%BUILD_NUMBER%
+%ADVANCED_INSTALLER% /edit AMDCompressCore_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorCore_x64_4.3.%BUILD_NUMBER%
 %ADVANCED_INSTALLER% /build AMDCompressCore_64.aip -buildslist DefaultBuild > %WORKSPACE%\Setup_BuildCMPCore_x64.log 2>&1
 
 echo --- PUBLIC INSTALLER: AMDCompressFrameWork_64.aip
 attrib -r AMDCompressFrameWork_64.aip
-%ADVANCED_INSTALLER% /edit AMDCompressFrameWork_64.aip /SetVersion 4.2.%BUILD_NUMBER%
-%ADVANCED_INSTALLER% /edit AMDCompressFrameWork_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorFrameWork_x64_4.2.%BUILD_NUMBER%
+%ADVANCED_INSTALLER% /edit AMDCompressFrameWork_64.aip /SetVersion 4.3.%BUILD_NUMBER%
+%ADVANCED_INSTALLER% /edit AMDCompressFrameWork_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorFrameWork_x64_4.3.%BUILD_NUMBER%
 %ADVANCED_INSTALLER% /build AMDCompressFrameWork_64.aip -buildslist DefaultBuild > %WORKSPACE%\Setup_BuildCMPFrameWork_x64.log 2>&1
 
 echo --- PUBLIC INSTALLER: AMDCompressSDK_64.aip
 attrib -r AMDCompressSDK_64.aip
-%ADVANCED_INSTALLER% /edit AMDCompressSDK_64.aip /SetVersion 4.2.%BUILD_NUMBER%
-%ADVANCED_INSTALLER% /edit AMDCompressSDK_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorSDK_x64_4.2.%BUILD_NUMBER%
+%ADVANCED_INSTALLER% /edit AMDCompressSDK_64.aip /SetVersion 4.3.%BUILD_NUMBER%
+%ADVANCED_INSTALLER% /edit AMDCompressSDK_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorSDK_x64_4.3.%BUILD_NUMBER%
 %ADVANCED_INSTALLER% /build AMDCompressSDK_64.aip -buildslist DefaultBuild > %WORKSPACE%\Setup_BuildCMPSDK_x64.log 2>&1
 
 echo --- PUBLIC INSTALLER: AMDCompressCLI_64.aip
 attrib -r AMDCompressCLI_64.aip
-%ADVANCED_INSTALLER% /edit AMDCompressCLI_64.aip /SetVersion 4.2.%BUILD_NUMBER% 
-%ADVANCED_INSTALLER% /edit AMDCompressCLI_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorCLI_x64_4.2.%BUILD_NUMBER%
+%ADVANCED_INSTALLER% /edit AMDCompressCLI_64.aip /SetVersion 4.3.%BUILD_NUMBER% 
+%ADVANCED_INSTALLER% /edit AMDCompressCLI_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorCLI_x64_4.3.%BUILD_NUMBER%
 %ADVANCED_INSTALLER% /build AMDCompressCLI_64.aip -buildslist DefaultBuild > %WORKSPACE%\Setup_BuildCMPCLI_x64.log 2>&1
 
 echo --- PUBLIC INSTALLER: AMDCompressGUI_64.aip
 attrib -r AMDCompressGUI_64.aip
-%ADVANCED_INSTALLER% /edit AMDCompressGUI_64.aip /SetVersion 4.2.%BUILD_NUMBER% 
-%ADVANCED_INSTALLER% /edit AMDCompressGUI_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorGUI_x64_4.2.%BUILD_NUMBER%
+%ADVANCED_INSTALLER% /edit AMDCompressGUI_64.aip /SetVersion 4.3.%BUILD_NUMBER% 
+%ADVANCED_INSTALLER% /edit AMDCompressGUI_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorGUI_x64_4.3.%BUILD_NUMBER%
 %ADVANCED_INSTALLER% /build AMDCompressGUI_64.aip -buildslist DefaultBuild > %WORKSPACE%\Setup_BuildCMPGUI_x64.log 2>&1
 
-echo --- INTERNAL INSTALLER: AMDCompressTest_64.aip
-attrib -r amdcompresstest_64.aip
-%ADVANCED_INSTALLER% /edit amdcompresstest_64.aip /SetVersion 4.2.%BUILD_NUMBER% 
-%ADVANCED_INSTALLER% /edit amdcompresstest_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorTest_x64_4.2.%BUILD_NUMBER%
-%ADVANCED_INSTALLER% /build amdcompresstest_64.aip -buildslist DefaultBuild > %WORKSPACE%\Setup_BuildCMPTest_x64.log 2>&1
-
-rem echo --- INTERNAL INSTALLER: AMDCompressUpscale_64.aip
-rem attrib -r amdcompressupscale_64.aip
-rem %ADVANCED_INSTALLER% /edit amdcompressupscale_64.aip /SetVersion 4.2.%BUILD_NUMBER% 
-rem %ADVANCED_INSTALLER% /edit amdcompressupscale_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorUpscale_x64_4.2.%BUILD_NUMBER%
-rem %ADVANCED_INSTALLER% /build amdcompressupscale_64.aip -buildslist DefaultBuild > %WORKSPACE%\Setup_BuildCMPUpscale_x64.log 2>&1
-
+REM Disable CMP Test for non-internal builds
+if EXIST ..\internal (
+    echo --- INTERNAL INSTALLER: AMDCompressTest_64.aip
+    attrib -r amdcompresstest_64.aip
+    %ADVANCED_INSTALLER% /edit amdcompresstest_64.aip /SetVersion 4.3.%BUILD_NUMBER% 
+    %ADVANCED_INSTALLER% /edit amdcompresstest_64.aip /SetProperty  SETUP_FILE_NAME=CompressonatorTest_x64_4.3.%BUILD_NUMBER%
+    %ADVANCED_INSTALLER% /build amdcompresstest_64.aip -buildslist DefaultBuild > %WORKSPACE%\Setup_BuildCMPTest_x64.log 2>&1
+)
 
 cd %WORKDIR%

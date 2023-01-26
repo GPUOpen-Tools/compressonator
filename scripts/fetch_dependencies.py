@@ -17,6 +17,10 @@ import tarfile
 import platform
 import shutil
 
+#parser = argparse.ArgumentParser(description='Fetch external dependencies for Compressonator')
+#parser.add_argument('--enable_brotlig', action='store_true', help='Enable fetching dependencies for Brotli-G support')
+#args = parser.parse_args()
+
 isPython3OrAbove = None
 if sys.version_info[0] >= 3:
     isPython3OrAbove = True
@@ -71,7 +75,12 @@ ghRoot = "https://github.com/GPUOpen-Tools/"
 #   "https://github.com/madler/zlib"            : ["../common/lib/ext/zlib",    "master"],
 #   "https://github.com/catchorg/Catch2.git"    : ["../common/lib/ext/catch",   "master"],
 #   "https://github.com/syoyo/tinyexr"          : ["../common/lib/ext/tinyexr", "master"],
-#   "https://github.com/google/draco/tree/master/src/draco" : : ["../common/lib/ext/draco", "master"],
+#   "https://github.com/google/draco/tree/master/src/draco" : ["../common/lib/ext/draco", "master"],
+#   "https://github.com/microsoft/directxtk"    : ["../common/lib/ext/directxtk11",   "aug2021"],
+#   "https://github.com/microsoft/directxtk12"  : ["../common/lib/ext/directxtk12",   "aug2021"],
+#   "https://github.com/nvidia/dlss"            : ["../common/lib/ext/dlss",        "v2.3.1"],
+#   "https://github.com/GPUOpen-LibrariesAndSDKs/Cauldron" : ["../common/lib/ext/cauldron", "v1.4.1"]
+#   "https://github.com/GPUOpen-LibrariesAndSDKs/RadeonML": ["../common/lib/ext/radeonml", "master"]
 
 # Libs to build on Window
 gitMappingWin = {
@@ -86,7 +95,10 @@ gitMappingWin = {
     "https://github.com/discord/rapidxml.git"   : ["../common/lib/ext/rapidxml",   "master"],
     "https://github.com/KhronosGroup/KTX-Software.git" : ["../common/lib/ext/ktx", "v4.0.0-beta4"],
     "https://github.com/apitrace/dxsdk"         : ["../common/lib/ext/apitrace/dxsdk", "master"],
-    "https://github.com/glfw/glfw/"             : ["../common/lib/ext/glfw",        "3.3.2"]
+    "https://github.com/ocornut/imgui"          : ["../common/lib/ext/imgui",       "v1.85"],
+    "https://github.com/glfw/glfw/"             : ["../common/lib/ext/glfw",        "3.3.2"],
+    "https://github.com/GPUOpen-LibrariesAndSDKs/brotli_g_sdk.git" : ["../common/lib/ext/brotlig","main"],
+
 }
 
 # Libs to build on Linux
@@ -94,6 +106,7 @@ gitMappingLin = {
     ghRoot+"common_lib_ext_openexr_2.2.git"     : ["../common/lib/ext/openexr",    "master"],
     "https://github.com/g-truc/glm.git"         : ["../common/lib/ext/glm",        "0.9.8.0"],
     "https://github.com/discord/rapidxml.git"   : ["../common/lib/ext/rapidxml",   "master"],
+    "https://github.com/ocornut/imgui"          : ["../common/lib/ext/imgui",       "v1.85"],
     "https://github.com/glfw/glfw/"             : ["../common/lib/ext/glfw",        "3.3.2"]
 }
 
@@ -102,6 +115,7 @@ gitMappingUni = {
     ghRoot+"common_lib_ext_openexr_2.2.git"     : ["../common/lib/ext/openexr",    "master"],
     "https://github.com/g-truc/glm.git"         : ["../common/lib/ext/glm",        "0.9.8.0"],
     "https://github.com/discord/rapidxml.git"   : ["../common/lib/ext/rapidxml",   "master"],
+    "https://github.com/ocornut/imgui"          : ["../common/lib/ext/imgui",       "v1.85"],
     "https://github.com/glfw/glfw/"             : ["../common/lib/ext/glfw",        "3.3.2"]
 }
 
@@ -111,6 +125,7 @@ gitMappingUni = {
 downloadMappingWin = {
     "https://github.com/microsoft/DirectXTex/archive/jun2020b.zip" : "../../common/lib/ext/directxtex/",
     "https://github.com/GPUOpen-LibrariesAndSDKs/OCL-SDK/files/1406216/lightOCLSDK.zip" : "../../common/lib/ext/opencl/",
+    "https://github.com/microsoft/DirectXShaderCompiler/releases/download/v1.6.2112/dxc_2021_12_08.zip" : "../../common/lib/ext/dxc/"
 }
 
 downloadMappingLin = {
@@ -131,7 +146,7 @@ userAgentUni = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.
 MACHINE_OS = ""
 print("OS:",platform.system().lower())
 if "windows" in platform.system().lower():
-    MACHINE_OS = "WINDOWS"
+    MACHINE_OS = "WINDOWS"  
 elif "cygwin" in platform.system().lower():
     MACHINE_OS = "WINDOWS"
 elif "linux" in platform.system().lower():
@@ -233,3 +248,5 @@ def downloadandunzip(key, value):
 
 for key in downloadMapping:
     downloadandunzip(key, downloadMapping[key])
+
+print("Fetching dependencies finished successfully.\n")

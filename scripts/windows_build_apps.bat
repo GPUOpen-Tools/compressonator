@@ -3,6 +3,9 @@ REM
 REM Usage:
 REM   cd <workspace>\Compressonator
 REM   call scripts\windows_build_apps.bat <workspace>
+REM
+REM Optionally, you can set the CMAKE_ARGS environment variable to add extra options
+REM     to the CMake generation step of the build
 
 IF NOT [%WORKSPACE%] == [] set ROOTDIR=%WORKSPACE%
 IF NOT [%1] == [] set ROOTDIR=%1
@@ -52,34 +55,34 @@ IF [%BUILD_NUMBER%] == [] set BUILD_NUMBER=0
 set FILEVERSION="v%MAJOR%.%MINOR%.%BUILD_NUMBER%"
 python %SCRIPT_DIR%\update_version.py %MAJOR% %MINOR% %BUILD_NUMBER%
 
-REM ######################################
-REM  Set Enviornment for VS150 (VS2017)
-REM ######################################
-if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise" goto :Enterprise
-if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Professional" goto :Professional
-if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\BuildTools" goto :Docker
+REM ################################
+REM  Set Enviornment for (VS2019)
+REM ###############################
+if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise" goto :Enterprise
+if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Professional" goto :Professional
+if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\BuildTools" goto :Docker
 
 echo on
-echo VS2017 is not installed on this machine
+echo VS2019 is not installed on this machine
 cd %WORKDIR%
 exit 1
 
 :Professional
 cd 
-call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Professional\Common7\Tools\VsDevCmd.bat"
+call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Professional\Common7\Tools\VsDevCmd.bat"
 goto :vscmdset
 
 :Docker
-call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\BuildTools\Common7\Tools\VsDevCmd.bat"
+call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\BuildTools\Common7\Tools\VsDevCmd.bat"
 goto :vscmdset
 
 :Enterprise
-call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat"
+call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\VsDevCmd.bat"
 
 :vscmdset
 
 REM #####################################################################################
-REM  Run cmake to generate VS2017 compressonator build all sln
+REM  Run cmake to generate VS2019 compressonator build all sln
 REM #####################################################################################
 set CurrDir=%CD%
 for %%* in (.) do set CurrDirName=%%~nx*
@@ -87,7 +90,7 @@ IF EXIST %CurrDir%\build (rmdir build /s /q)
 mkdir build 
 
 cd build
-cmake -G "Visual Studio 15 2017 Win64" ..\..\%CurrDirName%
+cmake %CMAKE_ARGS% -G "Visual Studio 16 2019" ..\..\%CurrDirName%
 cd %CurrDir%
 
 REM #####################################################################################

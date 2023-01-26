@@ -27,7 +27,7 @@
     <ROW Property="ProductCode" Value="1033:{FB88015A-B8A8-4908-8936-4D90AC16389C} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="CompressonatorCore"/>
-    <ROW Property="ProductVersion" Value="4.1.0" Type="32"/>
+    <ROW Property="ProductVersion" Value="4.3.0" Type="32"/>
     <ROW Property="SETUP_FILE_NAME" Value="CompressonatorCore_x64_4.1."/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
     <ROW Property="UpgradeCode" Value="{78D0379B-C01A-49C4-A8C7-A41904A35199}"/>
@@ -48,7 +48,7 @@
     <ROW Directory="SHORTCUTDIR" Directory_Parent="TARGETDIR" DefaultDir="SHORTC~1|SHORTCUTDIR" IsPseudoRoot="1"/>
     <ROW Directory="Samples_Dir" Directory_Parent="APPDIR" DefaultDir="examples" DirectoryOptions="3"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
-    <ROW Directory="VS2015_Dir" Directory_Parent="Libs_Dir" DefaultDir="VS2017" DirectoryOptions="3"/>
+    <ROW Directory="VS2015_Dir" Directory_Parent="Libs_Dir" DefaultDir="VS2019" DirectoryOptions="3"/>
     <ROW Directory="core_example1_Dir" Directory_Parent="Samples_Dir" DefaultDir="CORE_E~1|core_example1" DirectoryOptions="3"/>
     <ROW Directory="encoders_Dir" Directory_Parent="Libs_Dir" DefaultDir="encoders" DirectoryOptions="3"/>
     <ROW Directory="x64_Dir" Directory_Parent="VS2015_Dir" DefaultDir="x64" DirectoryOptions="3"/>
@@ -335,8 +335,8 @@
     <ROW Registry="Publisher" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="Publisher" Value="[Manufacturer]" Component_="AI_CustomARPName"/>
     <ROW Registry="URLInfoAbout" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="URLInfoAbout" Value="[ARPURLINFOABOUT]" Component_="AI_CustomARPName"/>
     <ROW Registry="URLUpdateInfo" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="URLUpdateInfo" Value="[ARPURLUPDATEINFO]" Component_="AI_CustomARPName"/>
-    <ROW Registry="UninstallPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="UninstallPath" Value="[AI_UNINSTALLER] /x [ProductCode]" Component_="AI_CustomARPName"/>
-    <ROW Registry="UninstallString" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="UninstallString" Value="[AI_UNINSTALLER] /x [ProductCode]" Component_="AI_CustomARPName"/>
+    <ROW Registry="UninstallPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="UninstallPath" Value="[AI_UNINSTALLER] /x [ProductCode] AI_UNINSTALLER_CTP=1" Component_="AI_CustomARPName"/>
+    <ROW Registry="UninstallString" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="UninstallString" Value="[AI_UNINSTALLER] /x [ProductCode] AI_UNINSTALLER_CTP=1" Component_="AI_CustomARPName"/>
     <ROW Registry="VersionMajor" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="VersionMajor" Value="#3" Component_="AI_CustomARPName"/>
     <ROW Registry="VersionMinor" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="VersionMinor" Value="#1" Component_="AI_CustomARPName"/>
   </COMPONENT>

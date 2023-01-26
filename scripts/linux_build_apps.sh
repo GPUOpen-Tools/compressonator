@@ -1,7 +1,7 @@
 # Build documentation
 set -x
 cd $WORKSPACE/compressonator/scripts
-python3 fetch_dependencies.py --no-hooks
+python3 fetch_dependencies.py
 
 cd $WORKSPACE/compressonator
 export VULKAN_SDK_VER=1.2.141.2
