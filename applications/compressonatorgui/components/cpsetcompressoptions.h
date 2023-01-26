@@ -47,7 +47,7 @@ class CSetCompressOptions : public QDialog {
 #endif
 
     QTreeWidgetItem                *m_item;                // Ref to a project's item when the dialog was called: Must be set if Saving the data int a project tree
-    C_Destination_Options           m_DestinationData;    // Our loacal data settings: copy of orignal or default
+    C_Destination_Options           m_DestinationData;    // Our local data settings: copy of original or default
     C_Destination_Options           m_dataOriginal;        // Original Data prior to Edit
 
     bool updateDisplayContent();                            // Update data to all widgets and vaildate compressable image format support
@@ -57,9 +57,9 @@ class CSetCompressOptions : public QDialog {
     void setMinMaxStep(QtVariantPropertyManager* manager, QtProperty *m_prop, double min, double max, double step, int decimals);
     QString GetFormatString();                              // Reads the m_data format and returns format enum as a string
 
-    bool isEditing;                                         // True when dislog is shown and in edit mode
-    bool isInit;
-    bool isNoSetting;
+    bool m_isEditing;                                         // True when dialog is shown and in edit mode
+    bool m_automaticProcessing; // Set when the user automatically processes each file without manually setting each destination file
+    bool m_isInit;
     int  m_extnum;
 
     bool m_showDestinationEXTSetting;                       // Dropdown list for DDS, KTX, ...
@@ -71,7 +71,6 @@ class CSetCompressOptions : public QDialog {
     QLineEdit                   *m_DestinationFolder;
     QPushButton                 *m_PBDestFileFolder;
     QLineEdit                   *m_LEName;
-    QString                      m_srcext;
     QLineEdit                   *m_LESourceFile;
     QComboBox                   *m_CBSourceFile;
     QGroupBox                   *GBDestinationFile;
@@ -137,6 +136,12 @@ class CSetCompressOptions : public QDialog {
     QtProperty                  *m_propHDRProperties;
     QtProperty                  *m_propRefine;
 
+    // some helper functions
+    QString GenerateDefaultDestName();
+    void ReduceNumChildrenIndex();
+
+    // overriding the function for handling the X button being pressed, so that m_extnum can be properly updated
+    void closeEvent(QCloseEvent* e) override;
 
   signals:
     void SaveCompressSettings(QTreeWidgetItem *m_item, C_Destination_Options &m_data);

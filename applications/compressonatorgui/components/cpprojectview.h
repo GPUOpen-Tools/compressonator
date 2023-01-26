@@ -177,19 +177,35 @@ class ProjectView : public QDockWidget {
     // Red Icon or Null is used on Files that dont exist
     bool Tree_updateCompressIcon(QTreeWidgetItem *item, QString FilePathName, bool RedIcon);
     QTreeWidgetItem * Tree_SetCurrentItem(QString FilePathName);
-    void Tree_setAllItemsSetected();
-    void Tree_clearAllItemsSetected();
+    void Tree_setAllItemsSelected();
+
+    // Returns a list of all image items that have been selected, does not contain destination items
+    std::vector<QTreeWidgetItem*> GetAllSelectedImages();
+
+    void Tree_clearAllItemsSelected();
     void SelectImageItem(QString filePathName);
     bool AnySelectedItems();
     bool saveImageAs();
     void Tree_selectAllChildItems(QTreeWidgetItem *item);
-    int  Tree_numSelectedtems(int &ItemsCount);
-    int  Tree_numCompresstemsSelected(int &ItemsCount, int &NumCompressedItems);
+
+    // Get the number of items in the project tree that match one of the bitwise or'd type flags, or all items if typeFlags is 0
+    int GetNumItemsByType(int typeFlags);
+    // Return the number of items in the project tree, minus the "add" items
+    int GetNumItems();
+    // Return the number of compression destination items, either from images or 3D models
+    int GetNumDestItems();
+
+    // Get the number of selected items in the project tree that match one of the bitwise or'd type flags (checks all if typeFlags == 0)
+    int GetNumSelectedItemsByType(int typeFlags);
+    // Return the number of selected items in the project tree, minus the "add" items
+    int GetNumSelectedItems();
+    // Return the number of selected compression destination items, either from images or 3D models
+    int GetNumSelectedDestItems();
 
     QTreeWidgetItem *GetCurrentItem(int inLevelType);
     QTreeWidgetItem *GetCurrentItem();
 
-    QTreeWidgetItem *Tree_FindImageItem(QString filePathName, bool inCludeDestination);
+    QTreeWidgetItem *Tree_FindImageItem(QString filePathName, bool includeDestination);
     QTreeWidgetItem *ContextMenu_ImageItem;
 
     // Delete Items
@@ -199,6 +215,10 @@ class ProjectView : public QDockWidget {
     void DeleteItemData(QTreeWidgetItem *item, bool userdeleted = false);
     QTreeWidgetItem * DeleteSelectedItemData(QTreeWidgetItem *item, bool RemoveFromDisk);
     void SignalUpdateData(QTreeWidgetItem * item, int levelType);
+
+    // Compression
+    // TODO: this function probably shouldn't in this class? There is a lot of cleaning up that could be done here
+    void CompressSelectedItems();
 
     QAction *actOpenContainingFolder;
     QAction *actCopyFullPath;
@@ -270,12 +290,17 @@ class ProjectView : public QDockWidget {
     void onTree_ItemClicked(QTreeWidgetItem * item, int column);
     void onDroppedImageItem(QString &filePathName, int index);
     void onSetCurrentItem(QString &FilePathName);
-    void onEntered(const QModelIndex & index);
-    void onShowCompressStatus();
+    void onEntered(const QModelIndex & index);  
+
     void OnGlobalMessage(const char *msg);
     void onSetNewProject(QString &FilePathName);
 
-    void OnStartCompression();
+    // activated when the user right-clicks and presses the "process image" button
+    void onContextMenuCompression();
+    
+    // activated when the user clicks the compression button on the menu bar
+    void onMenuBarCompression();
+
     void OnCloseCompression();
     void onSignalProcessMessage();
 
@@ -302,6 +327,9 @@ class ProjectView : public QDockWidget {
 
     void onImageLoadStart();
     void onImageLoadDone();
+
+  private:
+    void AddDefaultDestToItems(const std::vector<QTreeWidgetItem*>& items);
 
   public:
     // Common for all

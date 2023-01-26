@@ -1085,10 +1085,7 @@ cpImageView::cpImageView(const QString filePathName,
     //================================
     // Image/Texture Viewer Component
     //================================
-    if (m_CompressedMipImages)
-        m_acImageView = new acImageView(filePathName, this, NULL, m_processedMipImages);
-    else
-        m_acImageView = new acImageView(filePathName, this, m_OriginalMipImages, m_processedMipImages);
+    m_acImageView = new acImageView(filePathName, this, m_OriginalMipImages, m_processedMipImages);
 
     m_viewContextMenu = new QMenu(m_acImageView);
 
@@ -1458,8 +1455,11 @@ cpImageView::cpImageView(const QString filePathName,
 
     if (m_processedMipImages && (m_processedMipImages->mipset != NULL))
     {
-        if (m_processedMipImages->mipset->m_format == CMP_FORMAT_ARGB_32F || (m_processedMipImages->mipset->m_format == CMP_FORMAT_ARGB_16F) ||
-            (m_processedMipImages->mipset->m_format == CMP_FORMAT_RGBE_32F) || (m_processedMipImages->mipset->m_format == CMP_FORMAT_BC6H) ||
+        if  (m_processedMipImages->mipset->m_format == CMP_FORMAT_ARGB_32F || 
+            (m_processedMipImages->mipset->m_format == CMP_FORMAT_ARGB_16F) ||
+            (m_processedMipImages->mipset->m_format == CMP_FORMAT_RGBA_16F) ||
+            (m_processedMipImages->mipset->m_format == CMP_FORMAT_RGBE_32F) || 
+            (m_processedMipImages->mipset->m_format == CMP_FORMAT_BC6H) ||
             (m_processedMipImages->mipset->m_format == CMP_FORMAT_BC6H_SF))
         {
             m_ExrProperties = new acEXRTool();
@@ -1499,18 +1499,8 @@ cpImageView::cpImageView(const QString filePathName,
     m_toolBar->addWidget(m_CBimageview_MipLevel);
 #endif
 
-    // IF we have processed images then enable PSNR view to user
-    if (m_processedMipImages->decompressedMipSet != NULL)
-    {
-        m_PSNRLabel = new QLabel(this);
-        if (m_PSNRLabel)
-        {
-            m_PSNRLabel->setText("PSNR: Not Available");
-            m_toolBar->addWidget(m_PSNRLabel);
-        }
-    }
-    else
-        m_PSNRLabel = NULL;
+    m_PSNRLabel = new QLabel(this);
+    m_PSNRLabel->setText("PSNR: N/A");
 
     m_toolBar->setMaximumHeight(25);
 
@@ -1580,6 +1570,7 @@ cpImageView::cpImageView(const QString filePathName,
 
     m_statusBar->addPermanentWidget(m_labelColorRGBA);
     m_statusBar->addPermanentWidget(m_labelTxtView, 10);
+    m_statusBar->addPermanentWidget(m_PSNRLabel, 15);
     m_statusBar->addPermanentWidget(m_labelColorTxt, 40);
     m_statusBar->addPermanentWidget(m_labelPos, 40);
     m_statusBar->addPermanentWidget(m_labelBlockPos, 20);

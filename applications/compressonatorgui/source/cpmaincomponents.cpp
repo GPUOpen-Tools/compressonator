@@ -196,7 +196,7 @@ cpMainComponents::cpMainComponents(QDockWidget* root_dock, QMainWindow* parent)
     m_blankpage->m_fileName = "";
     setCorner(Qt::TopRightCorner, Qt::RightDockWidgetArea);
     m_blankpage->setFeatures(QDockWidget::NoDockWidgetFeatures);
-    m_blankpage->setMinimumHeight(600);
+    m_blankpage->setMinimumHeight(400);
     m_parent->addDockWidget(Qt::RightDockWidgetArea, m_blankpage);
     if (m_blankpage->custTitleBar)
     {
@@ -243,7 +243,7 @@ cpMainComponents::cpMainComponents(QDockWidget* root_dock, QMainWindow* parent)
     m_welcomePage->m_fileName = "";
     m_parent->tabifyDockWidget(m_blankpage, m_welcomePage);
     m_welcomePage->resize(600, 400);
-    m_welcomePage->setMinimumHeight(600);
+    m_welcomePage->setMinimumHeight(400);
 
     if (m_welcomePage->custTitleBar)
         m_welcomePage->custTitleBar->setTitle(STR_WELCOME_PAGE);
@@ -310,7 +310,7 @@ cpMainComponents::cpMainComponents(QDockWidget* root_dock, QMainWindow* parent)
     //
     m_genmips = new CGenMips("Generate MIP Maps", NULL);
     m_genmips->hide();
-    connect(m_genmips, SIGNAL(generateMIPMap(CMP_CFilterParams, QTreeWidgetItem*)), this, SLOT(onGenerateMIPMap(CMP_CFilterParams, QTreeWidgetItem*)));
+    connect(m_genmips, SIGNAL(signalGenerateMipmaps(CMP_CFilterParams, const std::vector<QTreeWidgetItem*>&)), this, SLOT(generateMipmaps(CMP_CFilterParams, const std::vector<QTreeWidgetItem*>&)));
 
 #ifdef USE_3DCONVERT
     m_modelConvert = new CModelConvert("Convert 3D Models", NULL);
@@ -436,9 +436,7 @@ void cpMainComponents::OnWelcomePageButtonClick(QString& Request, QString& Msg)
     {
         openNewProject();
     }
-    else
-        // qDebug() << Request << " Msg: " << Msg;
-        if (Request.compare("open_project") == 0)
+    else if (Request.compare("open_project") == 0)
     {
         if (!m_projectview)
             return;
@@ -830,7 +828,7 @@ void cpMainComponents::createActions()
     if (compressAct)
     {
         compressAct->setStatusTip(tr("Compress all selected items"));
-        connect(compressAct, SIGNAL(triggered()), m_projectview, SLOT(OnStartCompression()));
+        connect(compressAct, SIGNAL(triggered()), m_projectview, SLOT(onMenuBarCompression()));
         compressAct->setEnabled(false);
     }
 
@@ -842,11 +840,11 @@ void cpMainComponents::createActions()
         imagediffAct->setEnabled(true);
     }
 
-    MIPGenAct = new QAction(QIcon(":/compressonatorgui/images/mip.png"), tr("&Generate MIP maps for current source image"), this);
+    MIPGenAct = new QAction(QIcon(":/compressonatorgui/images/mip.png"), tr("&Generate MIP maps on selected source images"), this);
     if (MIPGenAct)
     {
-        MIPGenAct->setStatusTip(tr("Generate MIP maps on current source image"));
-        connect(MIPGenAct, SIGNAL(triggered()), this, SLOT(genMIPMaps()));
+        MIPGenAct->setStatusTip(tr("Generate MIP maps on selected source images"));
+        connect(MIPGenAct, SIGNAL(triggered()), this, SLOT(onGenerateMipmapsMenuClicked()));
         MIPGenAct->setEnabled(false);
     }
 #ifdef USE_3DCONVERT
@@ -944,233 +942,243 @@ void cpMainComponents::createActions()
     }
 }
 
-void cpMainComponents::onGenerateMIPMap(CMP_CFilterParams CFilterParams, QTreeWidgetItem* item)
+void cpMainComponents::generateMipmaps(CMP_CFilterParams CFilterParams, const std::vector<QTreeWidgetItem*>& images)
 {
-    if (!m_projectview)
+    if (!m_projectview || images.size() <= 0)
         return;
-
-    if (item)
+    
+    if (m_CompressStatusDialog)
     {
-        QVariant       v    = item->data(TREE_SourceInfo, Qt::UserRole);
-        C_Source_Info* data = v.value<C_Source_Info*>();
-        if (data == NULL)
-            return;
-
-        if (data->m_MipImages)
-            if (data->m_MipImages->mipset)
-                if (data->m_MipImages->mipset->m_compressed)
-                {
-                    if (m_CompressStatusDialog)
-                    {
-                        m_CompressStatusDialog->onClearText();
-                        m_CompressStatusDialog->showOutput();
-                    }
-                    PrintInfo("Mipmap generation is not supported for compressed image.");
-                    return;
-                }
+        m_CompressStatusDialog->onClearText();
+        m_CompressStatusDialog->showOutput();
     }
 
     if (CFilterParams.nMinSize <= 0)
         CFilterParams.nMinSize = 1;
 
-    if (item)
+    for (auto& image : images)
     {
-        QVariant       v    = item->data(TREE_SourceInfo, Qt::UserRole);
-        C_Source_Info* data = v.value<C_Source_Info*>();
-        if (data)
+        CMP_CFilterParams currImageParams = CFilterParams;
+
+        QVariant variant = image->data(TREE_SourceInfo, Qt::UserRole);
+        C_Source_Info* data = variant.value<C_Source_Info*>();
+
+        // initial checks before creating the mipmaps
+
+        if (!data || !data->m_MipImages || !data->m_MipImages->mipset)
+            continue;
+
+        if (data->m_MipImages->mipset->m_compressed)
         {
             if (m_CompressStatusDialog)
+                m_CompressStatusDialog->appendText("Skipping image: '" + data->m_Name + "', mipmap generation is not supported for compressed images.\n");
+            continue;
+        }
+
+        if (m_CompressStatusDialog)
+            m_CompressStatusDialog->appendText("Processing image \"" + data->m_Name + "\"...");
+
+        // make sure that the minimum mipmap size is not larger than the current image size
+        // NOTE: nMinSize is set using the width value
+        if (currImageParams.nMinSize >= data->m_Width || currImageParams.nMinSize >= data->m_Height)
+        {
+            if (m_CompressStatusDialog)
+                m_CompressStatusDialog->appendText("No mipmaps created for " + data->m_Name + ", minimum size is not smaller than image size.\n");
+            continue;
+        }
+
+        // reset mipmaps that might already be present
+        
+        if (data->m_MipImages->mipset->m_nMipLevels > 1 || data->m_MipImages->QImage_list[0].size() > 1)
+        {
+            for (int depth = 0; depth < data->m_MipImages->mipset->m_nDepth; ++depth)
             {
-                m_CompressStatusDialog->onClearText();
-                m_CompressStatusDialog->showOutput();
-            }
-
-            // Quick Check to see if lowest level is lower then current image size
-            int min = data->m_Width;
-            if (min > data->m_Height)
-                min = data->m_Height;
-            if (CFilterParams.nMinSize <= min)
-            {
-                if (data->m_MipImages)
-                    if (data->m_MipImages->mipset)
-                    {
-                        if (m_CompressStatusDialog)
-                        {
-                            m_CompressStatusDialog->onClearText();
-                            m_CompressStatusDialog->show();
-                        }
-
-                        // Always reload the original source image prior to processing
-                        // this will clear any prior mipmap processing that was performed on the source image
-                        // like Gamma settings, and some filters been applied on the source image
-                        // It also takes care of freeing any old mip levels that the use has not request to be kept
-                        // ie moving from a lower mip level to a higher one
-                        CMP_FreeMipSet((CMP_MipSet*)data->m_MipImages->mipset);
-                        if (AMDLoadMIPSTextureImage(data->m_Full_Path.toStdString().c_str(), (CMP_MipSet*)data->m_MipImages->mipset, false, &g_pluginManager) !=
-                            CMP_OK)
-                        {
-                            // Something went wronge on reload exit!
-                            m_CompressStatusDialog->appendText("Error in reloading the impage for MIP Map processing! ");
-                            m_CompressStatusDialog->appendText("Please restart the application to restore the source image");
-                            return;
-                        }
-
-                        CMP_INT result;
-
-                        // Check if a plugin is avaliable for MipMap Generation
-                        PluginInterface_Filters* g_plugin_MipMapFilter =
-                            reinterpret_cast<PluginInterface_Filters*>(g_pluginManager.GetPlugin("FILTERS", "MIPMAP"));
-
-                        if (g_plugin_MipMapFilter)
-                        {
-                            // Init Codec info IO
-                            if ((g_CMIPS->PrintLine == NULL) && (PrintStatusLine != NULL))
-                            {
-                                g_CMIPS->PrintLine = PrintStatusLine;
-                            }
-
-                            if (g_plugin_MipMapFilter->TC_PluginSetSharedIO(g_CMIPS) == CMP_OK)
-                            {
-                                result = g_plugin_MipMapFilter->TC_CFilter((CMP_MipSet*)data->m_MipImages->mipset, NULL, &CFilterParams);
-                            }
-                            else
-                                result = CMP_ERR_GENERIC;
-
-                            delete g_plugin_MipMapFilter;
-                        }
-                        else
-                            // Generate the MIP levels using Compressonator SDK
-                            result = CMP_GenerateMIPLevelsEx((CMP_MipSet*)data->m_MipImages->mipset, &CFilterParams);
-
-                        // Create Image views for the levels
-                        if (result == CMP_OK)
-                        {
-                            CImageLoader ImageLoader;
-                            ImageLoader.UpdateMIPMapImages(data->m_MipImages);
-
-                            if (m_CompressStatusDialog)
-                            {
-                                QString msg = "<b>Generated : ";
-                                msg.append(QString::number(data->m_MipImages->mipset->m_nMipLevels));
-                                msg.append(" MIP level(s)</b>");
-                                msg.append(" with a minimum size set to ");
-                                msg.append(QString::number(CFilterParams.nMinSize));
-                                msg.append(" px");
-                                m_CompressStatusDialog->appendText(msg);
-                                m_ForceImageRefresh = true;
-                            }
-                        }
-                        else if (m_CompressStatusDialog)
-                        {
-                            m_CompressStatusDialog->appendText("Error in processing MipMap!");
-                        }
-
-                        m_projectview->SignalUpdateData(item, TREETYPE_IMAGEFILE_DATA);
-                        m_projectview->m_clicked_onIcon = true;
-                        m_projectview->onTree_ItemClicked(item, 0);
-                    }
-            }
-            else
-            {
-                if (m_CompressStatusDialog)
+                // need to cache value so that it doesn't change as we change the list
+                int numMipLevels = data->m_MipImages->QImage_list[depth].size();
+                for (int mipLevel = 1; mipLevel < numMipLevels; mipLevel++)
                 {
-                    m_CompressStatusDialog->appendText("No new MIP levels generated: if using GPU encoding make sure image sizes are divisible by 4");
+                    delete data->m_MipImages->QImage_list[depth][data->m_MipImages->QImage_list[depth].size() - 1];
+                    data->m_MipImages->QImage_list[depth].pop_back();
                 }
             }
+
+            data->m_MipImages->mipset->m_nMipLevels = 1;
         }
+
+        // make sure the requested mipmap level size is supported for the current image
+        if (g_Application_Options.isGPUEncode())
+        {
+            int minValidSize = data->m_Width;
+
+            int currWidth = data->m_Width;
+            int currHeight = data->m_Height;
+
+            while (currWidth > currImageParams.nMinSize && currHeight > currImageParams.nMinSize)
+            {
+                currWidth = currWidth >> 1;
+                currHeight = currHeight >> 1;
+
+                if (currWidth <= 1 || currHeight <= 1 || currWidth % 4 != 0 || currHeight % 4 != 0)
+                    break;
+                
+                minValidSize = currWidth;
+            }
+
+            currImageParams.nMinSize = minValidSize;
+        }
+
+        if (currImageParams.nMinSize != CFilterParams.nMinSize)
+        {
+            if (m_CompressStatusDialog)
+                m_CompressStatusDialog->appendText("Minimum valid size for " + data->m_Name + " set to " + QString::number(currImageParams.nMinSize) + "\n");
+        }
+
+        // generate new mipmaps
+
+        // Always reload the original source image prior to processing
+        // this will clear any prior mipmap processing that was performed on the source image
+        // like Gamma settings, and some filters been applied on the source image
+        // It also takes care of freeing any old mip levels that the user has not requested to be kept
+        // ie moving from a lower mip level to a higher one
+        CMP_FreeMipSet((CMP_MipSet*)data->m_MipImages->mipset);
+        if (AMDLoadMIPSTextureImage(data->m_Full_Path.toStdString().c_str(), (CMP_MipSet*)data->m_MipImages->mipset, false, &g_pluginManager) != CMP_OK)
+        {
+            // Something went wrong on reload, exit!
+            if (m_CompressStatusDialog)
+            {
+                m_CompressStatusDialog->appendText("Error in reloading the image for mipmap processing!");
+                m_CompressStatusDialog->appendText("Please restart the application to restore the source image");
+            }
+            continue;
+        }
+
+        // Check if a plugin is avaliable for MipMap Generation
+        PluginInterface_Filters* g_plugin_MipMapFilter =
+            reinterpret_cast<PluginInterface_Filters*>(g_pluginManager.GetPlugin("FILTERS", "MIPMAP"));
+        
+        CMP_INT result;
+        if (g_plugin_MipMapFilter)
+        {
+            // Init Codec info IO
+            if ((g_CMIPS->PrintLine == NULL) && (PrintStatusLine != NULL))
+            {
+                g_CMIPS->PrintLine = PrintStatusLine;
+            }
+
+            if (g_plugin_MipMapFilter->TC_PluginSetSharedIO(g_CMIPS) == CMP_OK)
+            {
+                result = g_plugin_MipMapFilter->TC_CFilter((CMP_MipSet*)data->m_MipImages->mipset, NULL, &currImageParams);
+            }
+            else
+                result = CMP_ERR_GENERIC;
+
+            delete g_plugin_MipMapFilter;
+        }
+        else
+            // Generate the MIP levels using Compressonator SDK
+            result = CMP_GenerateMIPLevelsEx((CMP_MipSet*)data->m_MipImages->mipset, &currImageParams);
+
+        // Create Image views for the levels
+        if (result == CMP_OK)
+        {
+            CImageLoader imageLoader;
+            imageLoader.UpdateMIPMapImages(data->m_MipImages);
+
+            if (m_CompressStatusDialog)
+            {
+                QString msg = "<b>Generated : ";
+                msg.append(QString::number(data->m_MipImages->mipset->m_nMipLevels));
+                msg.append(" MIP level(s)</b>");
+                msg.append(" with a minimum size set to ");
+                msg.append(QString::number(currImageParams.nMinSize));
+                msg.append(" px");
+                m_CompressStatusDialog->appendText(msg);
+                m_ForceImageRefresh = true;
+            }
+        }
+        else if (m_CompressStatusDialog)
+        {
+            m_CompressStatusDialog->appendText("Error in processing MipMap!");
+        }
+
+        m_projectview->SignalUpdateData(image, TREETYPE_IMAGEFILE_DATA);
+        m_projectview->m_clicked_onIcon = true;
+        m_projectview->onTree_ItemClicked(image, 0);
+
+        if (m_CompressStatusDialog)
+            m_CompressStatusDialog->appendText("");
     }
 }
 
-void cpMainComponents::genMIPMaps()
+void cpMainComponents::onGenerateMipmapsMenuClicked()
 {
-    if (m_projectview)
+    if (!m_projectview)
+        return;
+    
+    std::vector<QTreeWidgetItem*> images = m_projectview->GetAllSelectedImages();
+
+    if (images.size() == 0)
     {
-        QTreeWidgetItem* item = m_projectview->GetCurrentItem(TREETYPE_IMAGEFILE_DATA);
-        if (item)
-        {
-            QString        Setting = item->text(0);
-            QVariant       v       = item->data(TREE_SourceInfo, Qt::UserRole);
-            C_Source_Info* data    = v.value<C_Source_Info*>();
-            if (data)
-            {
-                // regenrate mip map
-                if (data->m_MipImages->mipset->m_nMipLevels > 1 || data->m_MipImages->QImage_list[0].size() > 1)
-                {
-                    int n = (int)data->m_MipImages->QImage_list[0].size();
-                    for (int i = 1; i < n; i++)
-                    {
-                        data->m_MipImages->QImage_list[0].pop_back();
-                    }
-
-                    data->m_MipImages->mipset->m_nMipLevels = 1;
-                }
-
-                m_genmips->m_mipsitem = item;
-                m_genmips->setMipLevelDisplay(data->m_Width, data->m_Height, g_Application_Options.isGPUEncode());
-                QString title = "Generate MIP Maps for ";
-                if (g_Application_Options.isGPUEncode())
-                    title.append("GPU");
-                else
-                    title.append("CPU");
-                m_genmips->setWindowTitle(title);
-                m_genmips->show();
-            }
-            else
-            {
-                if (m_projectview)
-                {
-                    QTreeWidgetItemIterator it(m_projectview->m_projectTreeView);
-                    QString                 Setting = (*it)->text(0);
-                    ++it;  //skip add image node
-                    if (!(*it))
-                    {
-                        m_projectview->m_CompressStatusDialog->appendText("Please add the image file that you would like to generate mip map with.");
-                        m_projectview->m_CompressStatusDialog->show();
-                        return;
-                    }
-                    while (*it)
-                    {
-                        QVariant v       = (*it)->data(TREE_SourceInfo, Qt::UserRole);
-                        QString  Setting = (*it)->text(0);
-                        //if (levelType == TREETYPE_IMAGEFILE_DATA)
-                        //{
-                        C_Source_Info* data = v.value<C_Source_Info*>();
-                        if (data)
-                        {
-                            // regenrate mip map
-                            if (data->m_MipImages->mipset->m_nMipLevels > 1 || data->m_MipImages->QImage_list[0].size() > 1)
-                            {
-                                int n = (int)data->m_MipImages->QImage_list[0].size();
-                                for (int i = 1; i < n; i++)
-                                {
-                                    data->m_MipImages->QImage_list[0].pop_back();
-                                }
-
-                                data->m_MipImages->mipset->m_nMipLevels = 1;
-                            }
-
-                            m_genmips->m_mipsitem = (*it);
-                            m_genmips->setMipLevelDisplay(data->m_Width, data->m_Height, g_Application_Options.isGPUEncode());
-                            m_genmips->show();
-                        }
-                        //}
-                        if (*it)
-                            ++it;
-                        else
-                            break;
-                    }
-                }
-            }
-        }
-        else
-        {
-            if (m_projectview)
-            {
-                m_projectview->m_CompressStatusDialog->appendText("Please add the image file that you would like to generate mip map with.");
-                m_projectview->m_CompressStatusDialog->show();
-            }
-        }
+        m_projectview->m_CompressStatusDialog->appendText("Please select the image file(s) to use for generating mipmaps.");
+        m_projectview->m_CompressStatusDialog->show();
+        return;
     }
+
+    int mipWidth = 0;
+    int mipHeight = 0;
+
+    if (images.size() == 1)
+    {
+        // directly use width and height if there is only one image being processed
+
+        QVariant v = images[0]->data(TREE_SourceInfo, Qt::UserRole);
+        C_Source_Info* data = v.value<C_Source_Info*>();
+
+        mipWidth = data->m_Width;
+        mipHeight = data->m_Height;
+    }
+    else if (images.size() > 1)
+    {
+        // when processing more than one image, we use the largest "standardized" size as the basis for generating the mip levels
+
+        int mipPower = 0;
+
+        // out of all the images we want to pick the one that could generate the most mipmap levels
+        // to do this we find the image that can fit the largest power of 2 sized square
+        // we use the dimensions of that square as our mipmap level 0 size
+        for (const auto& image : images)
+        {
+            QVariant v = image->data(TREE_SourceInfo, Qt::UserRole);
+            C_Source_Info* data = v.value<C_Source_Info*>();
+
+            // width and height as a power of 2, rounded up to provide the full range
+            int widthPower = (int)ceil(log2(data->m_Width));
+            int heightPower = (int)ceil(log2(data->m_Height));
+
+            int smallerPower = widthPower < heightPower ? widthPower : heightPower;
+
+            if (smallerPower > mipPower)
+                mipPower = smallerPower;
+        }
+
+        int mipSize = (int)pow(2, mipPower);
+
+        mipWidth = mipSize;
+        mipHeight = mipSize;
+    }
+
+    m_genmips->m_imageItems = std::move(images);
+
+    m_genmips->setMipLevelDisplay(mipWidth, mipHeight, g_Application_Options.isGPUEncode());
+    QString title = "Generate Mipmaps for ";
+
+    if (g_Application_Options.isGPUEncode())
+        title.append("GPU");
+    else
+        title.append("CPU");
+
+    m_genmips->setWindowTitle(title);
+    m_genmips->show();
 }
 
 void cpMainComponents::convertModels()
@@ -1578,8 +1586,8 @@ void cpMainComponents::hideProgressBusy(QString Message)
 void cpMainComponents::readSettings()
 {
     QSettings settings(m_sSettingsFile, QSettings::IniFormat);
-    QPoint    pos  = settings.value("pos", QPoint(200, 200)).toPoint();
-    QSize     size = settings.value("size", QSize(800, 600)).toSize();
+    QPoint    pos  = settings.value("pos", QPoint(100, 100)).toPoint();
+    QSize     size = settings.value("size", QSize(600, 400)).toSize();
     resize(size);
     move(pos);
     if (m_showAppSettingsDialog)
@@ -2604,11 +2612,10 @@ void cpMainComponents::OnDeleteImageView(QString& fileName)
     // Check if we need to disable any buttons from the main app!
     if (m_projectview)
     {
-        int ItemsCount;
-        m_projectview->Tree_numSelectedtems(ItemsCount);
+        int itemsCount = m_projectview->GetNumItems();
         if (deleteImageAct)
         {
-            deleteImageAct->setEnabled(ItemsCount > 0);
+            deleteImageAct->setEnabled(itemsCount > 0);
         }
     }
     hideProgressBusy("Ready");
@@ -2688,7 +2695,7 @@ void cpMainComponents::OnAddCompressSettings(QTreeWidgetItem* item)
             m_setcompressoptions->m_DestinationData.m_sourceFileNamePath       = m_ImageSourceFile->m_Full_Path;
             m_setcompressoptions->m_DestinationData.m_SourceImageSize          = m_ImageSourceFile->m_ImageSize;
             m_setcompressoptions->m_DestinationData.m_SourceIscompressedFormat = CMP_IsCompressedFormat(m_ImageSourceFile->m_Format);
-            m_setcompressoptions->m_DestinationData.m_SourceIsFloatFormat      = FloatFormat(m_ImageSourceFile->m_Format);
+            m_setcompressoptions->m_DestinationData.m_SourceIsFloatFormat      = CMP_IsFloatFormat(m_ImageSourceFile->m_Format);
 
             // Used to append to name - for unique name
             // There is still chances of duplucate names, but it will not effect
@@ -3008,16 +3015,16 @@ void cpMainComponents::onPropertyViewCompressImage(QString* FilePathName)
     if (m_projectview)
     {
         removeItemTabs(FilePathName);
-        m_projectview->Tree_clearAllItemsSetected();
+        m_projectview->Tree_clearAllItemsSelected();
         QTreeWidgetItem* item = m_projectview->Tree_SetCurrentItem(*FilePathName);
         if (item != NULL)
         {
-            QVariant               v      = item->data(TREE_SourceInfo, Qt::UserRole);
+            QVariant v = item->data(TREE_SourceInfo, Qt::UserRole);
             C_Destination_Options* m_data = v.value<C_Destination_Options*>();
             if (m_data)
             {
                 m_data->m_isselected = true;
-                m_projectview->OnStartCompression();
+                m_projectview->CompressSelectedItems();
             }
             else
             {
@@ -3027,11 +3034,11 @@ void cpMainComponents::onPropertyViewCompressImage(QString* FilePathName)
                     QTreeWidgetItemIterator it(item);
                     while (*it)
                     {
-                        QVariant vc        = (*it)->data(TREE_LevelType, Qt::UserRole);
-                        int      levelType = vc.toInt();
+                        QVariant vc = (*it)->data(TREE_LevelType, Qt::UserRole);
+                        int levelType = vc.toInt();
                         if (levelType == TREETYPE_COMPRESSION_DATA || levelType == TREETYPE_MESH_DATA)
                         {
-                            v                           = (*it)->data(TREE_SourceInfo, Qt::UserRole);
+                            v = (*it)->data(TREE_SourceInfo, Qt::UserRole);
                             C_Destination_Options* data = v.value<C_Destination_Options*>();
                             if (data)
                             {
@@ -3044,7 +3051,7 @@ void cpMainComponents::onPropertyViewCompressImage(QString* FilePathName)
                         it++;
                     }
 
-                    m_projectview->OnStartCompression();
+                    m_projectview->CompressSelectedItems();
                 }
             }
         }
@@ -3082,9 +3089,8 @@ void cpMainComponents::onCompressionDone()
     if (m_projectview)
     {
         // check if any items prior to compressing!
-        int ItemsCount;
-        m_projectview->Tree_numSelectedtems(ItemsCount);
-        if (ItemsCount > 0)
+        int itemsCount = m_projectview->GetNumDestItems();
+        if (itemsCount > 0)
         {
             // Called when compression from Project view is completed.
             QTreeWidgetItem* item = m_projectview->GetCurrentItem(TREETYPE_COMPRESSION_DATA);

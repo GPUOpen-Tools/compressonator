@@ -23,7 +23,8 @@
 
 #include "cpimageloader.h"
 
-#include <mipstoqimage.h>
+#include "mipstoqimage.h"
+#include "atiformats.h"
 
 #include <QtWidgets/qapplication.h>
 #include <QtCore/qstring.h>
@@ -53,6 +54,7 @@ extern MipSet*       DecompressMIPSet(MipSet* MipSetIn, CMP_GPUDecode decodeWith
 extern int           g_OpenGLMajorVersion;
 
 extern QRgb RgbaToQrgba(struct Imf::Rgba imagePixel);
+extern QImage* CMP_CreateQImage(const char* SourceFile);
 
 // Finds a matching Qt Image format for the Mip Set
 // Qt V5.4 has
@@ -216,7 +218,6 @@ bool CImageLoader::clearMipImages(CMipImages** MipImages)
     return true;
 }
 
-#ifdef OPTION_CMP_QT
 void CImageLoader::QImageFormatInfo(QImage* image)
 {
     // QImage info
@@ -244,85 +245,6 @@ void CImageLoader::QImageFormatInfo(QImage* image)
     Q_UNUSED(format);
 }
 
-
-//load ARGB32 Qimage format to Mips
-MipSet* CImageLoader::QImage2MIPS(QImage* qimage, CMP_Feedback_Proc pFeedbackProc)
-{
-    if (qimage == NULL)
-    {
-        return NULL;
-    }
-
-    // QImage info for debugging
-    // QImageFormatInfo(qimage);
-
-    // Check supported format
-    //int format = qimage->format();
-    if (!((qimage->format() == QImage::Format_ARGB32) || (qimage->format() == QImage::Format_ARGB32_Premultiplied) ||
-          (qimage->format() == QImage::Format_RGB32) || (qimage->format() == QImage::Format_Mono) || (qimage->format() == QImage::Format_Indexed8)))
-    {
-        return NULL;
-    }
-
-    MipSet* pMipSet;
-    pMipSet = new MipSet();
-    if (pMipSet == NULL)
-        return (NULL);
-    memset(pMipSet, 0, sizeof(MipSet));
-
-    // Set the channel formats and mip levels
-    pMipSet->m_ChannelFormat   = CF_8bit;
-    pMipSet->m_TextureDataType = TDT_ARGB;
-    pMipSet->m_dwFourCC        = 0;
-    pMipSet->m_dwFourCC2       = 0;
-    pMipSet->m_TextureType     = TT_2D;
-    pMipSet->m_nDepth          = 1;  // depthsupport
-
-    // Allocate default MipSet header
-    m_CMips->AllocateMipSet(
-        pMipSet, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType, pMipSet->m_TextureType, qimage->width(), qimage->height(), pMipSet->m_nDepth);
-
-    // Determin buffer size and set Mip Set Levels we want to use for now
-    MipLevel* mipLevel    = m_CMips->GetMipLevel(pMipSet, 0);
-    pMipSet->m_nMipLevels = 1;
-    m_CMips->AllocateMipLevelData(mipLevel, pMipSet->m_nWidth, pMipSet->m_nHeight, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType);
-
-    // We have allocated a data buffer to fill get its referance
-    CMP_BYTE* pData = (CMP_BYTE*)(mipLevel->m_pbData);
-
-    QRgb qRGB;
-    int  i = 0;
-    for (int y = 0; y < qimage->height(); y++)
-    {
-        for (int x = 0; x < qimage->width(); x++)
-        {
-            qRGB     = qimage->pixel(x, y);
-            pData[i] = qRed(qRGB);
-            i++;
-            pData[i] = qGreen(qRGB);
-            i++;
-            pData[i] = qBlue(qRGB);
-            i++;
-            pData[i] = qAlpha(qRGB);
-            i++;
-        }
-        if (pFeedbackProc)
-        {
-            float fProgress = 100.f * (y * qimage->width()) / (qimage->width() * qimage->height());
-            if (pFeedbackProc(fProgress, NULL, NULL))
-                return NULL;
-        }
-    }
-
-    if (pMipSet->m_format == CMP_FORMAT_Unknown)
-    {
-        pMipSet->m_format = QFormat2MipFormat(qimage->format());
-    }
-
-    return pMipSet;
-}
-#endif
-
 MipSet* CImageLoader::LoaderDecompressMipSet(CMipImages* MipImages, Config* decompConfig)
 {
     MipSet* tmpMipSet             = NULL;
@@ -349,7 +271,7 @@ MipSet* CImageLoader::LoaderDecompressMipSet(CMipImages* MipImages, Config* deco
                 //---------------------------
                 //if (KeepSwizzle(MipImages->mipset->m_format))
                 //{
-                //    SwizzleMipMap(tmpMipSet);
+                //    SwizzleMipSet(tmpMipSet);
                 //}
 
                 tmpMipSet->m_isDeCompressed   = MipImages->mipset->m_format != CMP_FORMAT_Unknown ? MipImages->mipset->m_format : CMP_FORMAT_MAX;
@@ -509,11 +431,11 @@ void CImageLoader::UpdateMIPMapImages(CMipImages* MipImages)
         {
             // Update the top most image mipmap level 1, in case it was processed by a filter or gamma is set
             if (MipImages->decompressedMipSet)
-                image = MIPS2QImage(m_CMips, MipImages->decompressedMipSet, 0, 0, m_options, &ProgressCallback);
+                image = MIPS2QImage(m_CMips, MipImages->decompressedMipSet, 0, depth, m_options, &ProgressCallback);
             else
-                image = MIPS2QImage(m_CMips, MipImages->mipset, 0, 0, m_options, &ProgressCallback);
-            MipImages->QImage_list[0].clear();
-            MipImages->QImage_list[0].push_back(image);
+                image = MIPS2QImage(m_CMips, MipImages->mipset, 0, depth, m_options, &ProgressCallback);
+            MipImages->QImage_list[depth].clear();
+            MipImages->QImage_list[depth].push_back(image);
         }
 
         // We have mip levels to process for this cube face
@@ -537,32 +459,32 @@ void CImageLoader::UpdateMIPMapImages(CMipImages* MipImages)
 
 CMipImages* CImageLoader::LoadPluginImage(std::string filename, CMP_Feedback_Proc pFeedbackProc)
 {
-    QString     qfilename = QString::fromStdString(filename);
-    CMipImages* MipImages;
-    QImage*     image  = NULL;
-    bool        usedQT = false;
+    QString qfilename = QString::fromStdString(filename);
+    QImage* image  = NULL;
+    bool usedQT = false;
 
-    MipImages = new CMipImages();
+    CMipImages* MipImages = new CMipImages();
     if (MipImages == NULL)
         return (NULL);
+
     MipImages->mipset = NULL;
 
     QFile file(qfilename);
     if (!file.exists())
     {
         MipImages->m_Error = MIPIMAGE_FORMAT_ERRORS::Format_InvalidFile;
-        image              = new QImage(":/compressonatorgui/images/imagefiledoesnotexist.png");
-        usedQT             = true;
+        image              = CMP_CreateQImage(":/compressonatorgui/images/imagefiledoesnotexist.png");
+        usedQT = true;
     }
 
     // -------------------------------------------------------------------------
-    // Try Our Plugins First to handle special cases of ASTC, DDS, KTX, EXR etc...
+    // Try Our Plugins First to handle special cases of DDS, KTX, EXR etc...
     // -------------------------------------------------------------------------
 
     QFileInfo fi(qfilename);
-    QString   ext           = fi.suffix().toUpper();
-    bool      useAMD_Plugin = true;
-    bool      isError       = false;
+    QString ext = fi.suffix().toUpper();
+    bool useAMD_Plugin = true;
+    bool isError = false;
 
     // -------------------------------------------------------
     // Exception on load as DDS for BCn < 6 is not working
@@ -585,14 +507,14 @@ CMipImages* CImageLoader::LoadPluginImage(std::string filename, CMP_Feedback_Pro
             MipSet* tmpMipSet;
             Config  decompSetting;
             decompSetting.errMessage = "";
-            tmpMipSet                = LoaderDecompressMipSet(MipImages, &decompSetting);
+            tmpMipSet = LoaderDecompressMipSet(MipImages, &decompSetting);
 
             if (tmpMipSet == NULL)
             {
                 MipImages->errMsg = decompSetting.errMessage;
-                image             = new QImage(":/compressonatorgui/images/decompressimageerror.png");
-                usedQT            = true;
-                isError           = true;
+                image = new QImage(":/compressonatorgui/images/decompressimageerror.png");
+                usedQT = true;
+                isError = true;
             }
             else
                 image = MIPS2QImage(m_CMips, tmpMipSet, 0, 0, m_options, pFeedbackProc);
@@ -605,7 +527,7 @@ CMipImages* CImageLoader::LoadPluginImage(std::string filename, CMP_Feedback_Pro
 
     if (image == NULL)
     {
-        image  = new QImage(qfilename);
+        image = CMP_CreateQImage(filename.c_str());
         usedQT = true;
     }
 
@@ -613,7 +535,7 @@ CMipImages* CImageLoader::LoadPluginImage(std::string filename, CMP_Feedback_Pro
     // Do we have a Image if so keep it
     //-----------------------------------------
 
-    if (image)
+    if (image != NULL)
     {
         // validate the format is not compressed!
         QImage::Format format = image->format();
@@ -647,7 +569,16 @@ CMipImages* CImageLoader::LoadPluginImage(std::string filename, CMP_Feedback_Pro
 
     if ((MipImages->QImage_list[0].size() > 0) && (MipImages->mipset == NULL))
     {
-        MipImages->mipset = QImage2MIPS(MipImages->QImage_list[0][0], pFeedbackProc);
+        MipImages->mipset = (MipSet*)calloc(1, sizeof(MipSet));
+        int result = QImage2MIPS(MipImages->QImage_list[0][0], m_CMips, MipImages->mipset, pFeedbackProc);
+
+        if (result != 0)
+        {
+            free(MipImages->mipset);
+            MipImages->mipset = 0;
+            PrintInfo("Error: Couldn't load image '%s'\n", filename.c_str());
+            MipImages->QImage_list[0].clear();
+        }
     }
 
     //----------------------------------------------
@@ -668,7 +599,7 @@ CMipImages* CImageLoader::LoadPluginImage(std::string filename, CMP_Feedback_Pro
     {
         MipImages->m_Error = MIPIMAGE_FORMAT_ERRORS::Format_NotSupported;
         // we have a bug to fix!!
-        QImage* image = new QImage(":/compressonatorgui/images/notsupportedimage.png");
+        QImage* image = CMP_CreateQImage(":/compressonatorgui/images/notsupportedimage.png");
         if (image)
         {
             MipImages->QImage_list[0].push_back(image);

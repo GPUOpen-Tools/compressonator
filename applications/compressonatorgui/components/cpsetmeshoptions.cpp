@@ -122,7 +122,9 @@ CSetMeshOptions::CSetMeshOptions(const QString title, QWidget *parent) : QDialog
     for (i = m_supportedFormats.begin(); i != m_supportedFormats.end(); ++i) {
         QByteArray fformat = (*i);
         QString item = fformat;
+#if (OPTION_BUILD_ASTC == 1)
         if(item != "ASTC")
+#endif
             m_AllFileTypes.append(item);
     }
 
@@ -212,7 +214,9 @@ CSetMeshOptions::CSetMeshOptions(const QString title, QWidget *parent) : QDialog
     m_propDestImage = m_theController->getProperty(DESTINATION_IMAGE_CLASS_NAME);
     m_propChannelWeight = m_theController->getProperty(CHANNEL_WEIGHTING_CLASS_NAME);
     m_propDXT1Alpha     = m_theController->getProperty(DXT1_ALPHA_CLASS_NAME);
+#if (OPTION_BUILD_ASTC == 1)
     m_propASTCBlockRate = m_theController->getProperty(ASTC_BLOCKRATE_CLASS_NAME);
+#endif
     m_propHDRProperties = m_theController->getProperty(HDR_PROP_CLASS_NAME);
 
     //=================================
@@ -337,7 +341,7 @@ void CSetMeshOptions::onSourceNameSelectionChanged(int index) {
         m_DestinationData.m_isModelData = !isImage;
         if (isImage) {
             // default back to BC7
-            m_DestinationData.m_Compression = C_Destination_Options::eCompression::BC7;
+            m_DestinationData.m_Compression = C_Destination_Options::eCompression_options::BC7;
 
             QFileInfo fileInfo(m_CBSourceFile->itemText(index));
             m_LEName->clear();
@@ -349,7 +353,7 @@ void CSetMeshOptions::onSourceNameSelectionChanged(int index) {
             m_LEName->insert(m_DestinationData.m_compname + "_" + GetFormatString() + "_" + QString::number(m_extnum));
         } else { // Processing a Model Mesh Data
             // default NONE
-            m_DestinationData.m_Compression = C_Destination_Options::eCompression::MESH_DATA;
+            m_DestinationData.m_Compression = C_Destination_Options::eCompression_options::MESH_DATA;
 
             QFileInfo fileInfo(m_DestinationData.m_modelDest);
             m_LEName->clear();
@@ -401,7 +405,7 @@ void CSetMeshOptions::compressionValueChanged(QVariant &value) {
         m_infotext->hide();
 
     // Get the source compression data
-    C_Destination_Options::eCompression comp = (C_Destination_Options::eCompression &)value;
+    C_Destination_Options::eCompression_options comp = (C_Destination_Options::eCompression_options&)value;
 
     // Backup the original source in case user cancels the dialog or wants to revert settings
     m_DestinationData.m_Compression = comp;
@@ -732,6 +736,7 @@ void CSetMeshOptions::compressionValueChanged(QVariant &value) {
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("ETC (Ericsson Texture Compression, lossy texture compression developed with Ericsson Research.)");
         break;
+#if (OPTION_BUILD_ASTC == 1)
     case C_Destination_Options::ASTC:
         compressedOptions = true;
         colorWeightOptions = false;
@@ -751,6 +756,7 @@ void CSetMeshOptions::compressionValueChanged(QVariant &value) {
         m_infotext->append("ASTC (Adaptive Scalable Texture Compression),lossy block-based texture compression developed with ARM.");
 
         break;
+#endif
     default:
         m_infotext->clear();
         m_fileFormats->addItems(m_AllFileTypes);
@@ -803,8 +809,10 @@ void CSetMeshOptions::compressionValueChanged(QVariant &value) {
         m_propAlphaThreshold->setEnabled(alphaChannelOptions);
     if (m_propAdaptiveColor)
         m_propAdaptiveColor->setEnabled(colorWeightOptions);
+#if (OPTION_BUILD_ASTC == 1)
     if (m_propBitrate)
         m_propBitrate->setEnabled(astcbitrateOptions);
+#endif
     if (m_propDefog)
         m_propDefog->setEnabled(hdrOptions);
     if (m_propExposure)
@@ -820,9 +828,11 @@ void CSetMeshOptions::compressionValueChanged(QVariant &value) {
         m_propDXT1Alpha->setHidden(!alphaChannelOptions);
     }
 
+#if (OPTION_BUILD_ASTC == 1)
     if (m_propASTCBlockRate) {
         m_propASTCBlockRate->setHidden(!astcbitrateOptions);
     }
+#endif
 
     if (m_propHDRProperties) {
         m_propHDRProperties->setHidden(!hdrOptions);
@@ -1109,7 +1119,7 @@ void CSetMeshOptions::resetData() {
 
 QString CSetMeshOptions::GetFormatString() {
     QMetaObject meta = C_Destination_Options::staticMetaObject;
-    int indexCompression = meta.indexOfEnumerator("eCompression");
+    int indexCompression = meta.indexOfEnumerator("eCompression_options");
     QMetaEnum metaEnumCompression = meta.enumerator(indexCompression);
     QString format = metaEnumCompression.valueToKey(m_DestinationData.m_Compression);
     return format;

@@ -19,7 +19,7 @@ if(CMP_HOST_WINDOWS)
     # this must be before add_executable
     if (OPTION_CMP_DIRECTX)
         link_directories(
-            ${PROJECT_EXTERNAL_LIBDIR}/directxtex/DirectXTex-jun2020b/DirectXTex/Bin/Desktop_2017/x64
+            ${PROJECT_EXTERNAL_LIBDIR}/directxtex/DirectXTex-jun2020b/DirectXTex/Bin/Desktop_2019/x64
         )
     endif()
 endif()
@@ -61,7 +61,6 @@ target_sources(CompressonatorCLI-bin
                PRIVATE
                ${RESOURCES}
                source/compressonatorcli.cpp
-               source/compressonatorcli_documentation.h
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/atiformats.h
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/atiformats.cpp
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cmdline.h
@@ -98,10 +97,8 @@ target_include_directories(CompressonatorCLI-bin
                            ${PROJECT_SOURCE_DIR}/cmp_core/shaders
                            ${PROJECT_SOURCE_DIR}/cmp_core/source
                            ${PROJECT_SOURCE_DIR}/../common/lib/ext/glm
-                           # ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshcompressor/draco/src
-                           # ${draco_INCLUDE_DIRS}
                            ${OpenEXR_INCLUDE_DIRS}
-                           )
+                        )
 
 if (OPTION_CMP_QT)
 target_include_directories(CompressonatorCLI-bin
@@ -127,15 +124,24 @@ endif()
 set (CMP_LIBS "")
 list(APPEND CMP_LIBS CMP_Compressonator
                      CMP_Framework
-                     # CMP_MeshCompressor
                      Image_Analysis 
-                     Image_ASTC
                      Image_KTX
                      Image_TGA
                      )
 
+if (OPTION_BUILD_ASTC)
+list(APPEND CMP_LIBS Image_ASTC)
+endif()
+
 if (OPTION_BUILD_EXR)
     list(APPEND CMP_LIBS Image_EXR)
+endif()
+
+if (OPTION_BUILD_BROTLIG)
+    list(APPEND CMP_LIBS
+            Image_BRLG
+            Image_BINARY
+    )
 endif()
 
 if (UNIX)
@@ -169,7 +175,6 @@ else()
 endif()
 
 list(APPEND CMP_LIBS ${OpenCV_LIBRARIES}
-                     # ${draco_LIBRARIES}
                      )
 
 if (OPTION_CMP_QT)
@@ -186,9 +191,7 @@ endif()
 add_dependencies(CompressonatorCLI-bin 
                 CMP_Compressonator
                 CMP_Framework
-                # CMP_MeshCompressor 
                 Image_Analysis
-                Image_ASTC
                 Image_KTX
                 Image_TGA
                 )
@@ -241,3 +244,6 @@ else()
     endif()
 endif()
 
+# Installation
+
+install(TARGETS CompressonatorCLI-bin DESTINATION ".")

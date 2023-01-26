@@ -28,8 +28,15 @@ endif()
 cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/runtime/bc7_compression.cprj ${ASSETS_PATH}/projects/bc7_compression.cprj)
 cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/runtime/bc6h_compression.cprj ${ASSETS_PATH}/Projects/bc6h_compression.cprj)
 
-cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/runtime/images/balls.exr ${ASSETS_PATH}/images/balls.exr)
-cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/runtime/images/ruby.bmp ${ASSETS_PATH}/images/ruby.bmp)
+# Image sample assets
+file(GLOB_RECURSE RUNTIME_IMAGE_ASSETS  ${PROJECT_SOURCE_DIR}/runtime/images/*)
+#message(STATUS "************** RUNTIME_IMAGE_ASSETS [${RUNTIME_IMAGE_ASSETS}]" )
+foreach(rsc ${RUNTIME_IMAGE_ASSETS})
+     file(RELATIVE_PATH asset ${PROJECT_SOURCE_DIR}/runtime/images ${rsc})
+     #message(STATUS "************** COPY SHADERS [${rsc} to ${ASSETS_PATH}/${asset}]" )
+     cmp_gui_copy_to_output(${rsc} ${ASSETS_PATH}/images/${asset})
+ endforeach()
+
 
 file(GLOB_RECURSE GUI_ASSETS WelcomePage/*)
 foreach(gui_asset ${GUI_ASSETS})
@@ -38,7 +45,7 @@ foreach(gui_asset ${GUI_ASSETS})
 endforeach()
 
 
-cmp_gui_copy_to_output(${CMAKE_CURRENT_LIST_DIR}/qt.conf ${ASSETS_PATH}/qt.conf)
+cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/runtime/qt.conf ${ASSETS_PATH}/qt.conf)
 
 cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/applications/_plugins/cgpudecode/vulkan/vk_computeshader/texture.vert.spv ${ASSETS_PATH}/texture.vert.spv)
 cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/applications/_plugins/cgpudecode/vulkan/vk_computeshader/texture.frag.spv ${ASSETS_PATH}/texture.frag.spv)
@@ -106,7 +113,7 @@ cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/../common/lib/ext/opencv/2.49/x64/V
 
 # New OpenCV support
 if (CMP_HOST_WINDOWS)
-    cmp_gui_copy_to_output(C:/opencv/build/x64/vc14/bin/opencv_world420$<$<CONFIG:Debug>:d>.dll ${ASSETS_PATH}/opencv_world420$<$<CONFIG:Debug>:d>.dll)
+    cmp_gui_copy_to_output(C:/opencv/build/x64/vc15/bin/opencv_world420$<$<CONFIG:Debug>:d>.dll ${ASSETS_PATH}/opencv_world420$<$<CONFIG:Debug>:d>.dll)
 endif()
 
 
@@ -127,5 +134,16 @@ foreach(rsc ${GPUCOMPUTE_SHADERS})
      cmp_gui_copy_to_output(${rsc} ${ASSETS_PATH}/plugins/compute/${asset})
  endforeach()
 
+if (OPTION_BUILD_BROTLIG)
+    set(BRLG_SHADER_SRC ${BROTLIG_ROOT_PATH}/src/decoder/BrotliGCompute.hlsl)
+    message(STATUS "************** BROTLIG SHADER ${BRLG_SHADER_SRC}")
+    cmp_gui_copy_to_output(${BRLG_SHADER_SRC} ${ASSETS_PATH}/plugins/compute/)
+
+    set(BRLG_DX_CMP ${BROTLIG_ROOT_PATH}/sample/external/dxc_2021_12_08/bin/x64/dxcompiler.dll)
+    cmp_gui_copy_to_output(${BRLG_DX_CMP} ${ASSETS_PATH}/)
+
+    set(BRLG_DX_IL ${BROTLIG_ROOT_PATH}/sample/external/dxc_2021_12_08/bin/x64/dxil.dll)
+    cmp_gui_copy_to_output(${BRLG_DX_IL} ${ASSETS_PATH}/)
+endif()
 
 executable_post_build_dylibs(CompressonatorGUI-bin ${DYLIBS_PATH})

@@ -36,7 +36,7 @@ void CHelpAboutDialog::Init(const QString & title, const QString & productName) 
     QString helpAboutString = "Compressonator<br>";
     helpAboutString.append(version);
 
-    QString copyRightCaption = "<p> &copy; 2021 Advanced Micro Devices, Inc. All Rights Reserved.</p>";
+    QString copyRightCaption = "<p> &copy; 2023 Advanced Micro Devices, Inc. All Rights Reserved.</p>";
     // Create the QLabels from the strings:
     QLabel* pHelpAboutStringAsStaticText = new QLabel(helpAboutString);
     QLabel* pCopyRightCaptionAsStaticText = new QLabel(copyRightCaption);

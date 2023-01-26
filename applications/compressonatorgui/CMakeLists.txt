@@ -18,7 +18,7 @@ if(CMP_HOST_WINDOWS)
     # this must be before add_executable
     if (OPTION_CMP_DIRECTX)
     link_directories(
-         ${PROJECT_EXTERNAL_LIBDIR}/directxtex/DirectXTex-jun2020b/DirectXTex/Bin/Desktop_2017/x64
+         ${PROJECT_EXTERNAL_LIBDIR}/directxtex/DirectXTex-jun2020b/DirectXTex/Bin/Desktop_2019/x64
         )
     endif()
 
@@ -72,7 +72,6 @@ list(APPEND CMP_LIBS    CMP_Common
                         CMP_Compressonator
                         CMP_Framework
                         CMP_GpuDecode
-                        # CMP_MeshCompressor
                         CMP_MeshOptimizer
 
                         CMP_GUI_Gltf
@@ -81,7 +80,6 @@ list(APPEND CMP_LIBS    CMP_Common
                         CMP_GUI_QPropertyPages
 
                         Image_Analysis
-                        Image_ASTC
                         Image_EXR
                         Image_KTX
                         Image_TGA
@@ -89,10 +87,19 @@ list(APPEND CMP_LIBS    CMP_Common
                         # min links
                         ${OpenEXR_LIBRARIES}
                         ${OpenCV_LIBRARIES}
-                        ${Boost_LIBRARIES}
-                        ${draco_LIBRARIES}
                         Threads::Threads
                         )
+
+if (OPTION_BUILD_ASTC)
+list(APPEND CMP_LIBS Image_ASTC)
+endif()
+
+if (OPTION_BUILD_BROTLIG)
+    list(APPEND CMP_LIBS
+            Image_BRLG
+            Image_BINARY
+    )
+endif()
 
 if(CMP_HOST_WINDOWS)
     list(APPEND CMP_LIBS    ExtQt5 
@@ -138,7 +145,6 @@ target_include_directories(CompressonatorGUI-bin PRIVATE
                           ${PROJECT_SOURCE_DIR}/applications/_libs/gpu_decode
                           ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_mesh
                           ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshoptimizer
-                          # ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshcompressor/draco/src
                           ${PROJECT_SOURCE_DIR}/applications/_plugins/cmesh/mesh_optimizer
                           ${PROJECT_SOURCE_DIR}/cmp_core/shaders
                           ${PROJECT_SOURCE_DIR}/cmp_core/source
@@ -146,7 +152,7 @@ target_include_directories(CompressonatorGUI-bin PRIVATE
                           ${PROJECT_SOURCE_DIR}/../common/lib/ext/glm
                           ${PROJECT_EXTERNAL_LIBDIR}/rapidxml
                           ${OpenCV_INCLUDE_DIRS}
-                          ${draco_INCLUDE_DIRS} )
+                        )
 
 if(CMP_HOST_WINDOWS)
     include(copyfiles.cmake)
@@ -168,4 +174,3 @@ else()
         OUTPUT_NAME "compressonator-bin"
         )
 endif()
-

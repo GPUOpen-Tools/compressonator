@@ -32,11 +32,19 @@
 #define MSG_HANDLER
 
 // Standard App Static Plugin Interfaces for minimal support
+#if (OPTION_BUILD_ASTC == 1)
 #pragma comment(lib, "Image_ASTC.lib")
+#endif
 #pragma comment(lib, "Image_EXR.lib")
 #pragma comment(lib, "Image_KTX.lib")
 #ifdef _WIN32
 #pragma comment(lib, "Image_KTX2.lib")
+#endif
+#ifdef USE_GUI_LOSSLESS_COMPRESSION
+#pragma comment(lib, "Image_BRLG.lib")
+#endif
+#ifdef USE_GUI_LOSSLESS_COMPRESSION_BINARY
+#pragma comment(lib, "Image_BINARY.lib")
 #endif
 #pragma comment(lib, "Image_TGA.lib")
 #pragma comment(lib, "Image_Analysis.lib")
@@ -51,6 +59,12 @@ extern void* make_Plugin_EXR();
 extern void* make_Plugin_KTX();
 #ifdef _WIN32
 extern void* make_Plugin_KTX2();
+#endif
+#ifdef USE_GUI_LOSSLESS_COMPRESSION
+extern void* make_Image_Plugin_BRLG();
+#endif
+#ifdef USE_GUI_LOSSLESS_COMPRESSION_BINARY
+extern void* make_Image_Plugin_BINARY();
 #endif
 extern void* make_Plugin_TGA();
 extern void* make_Plugin_CAnalysis();
@@ -152,6 +166,27 @@ void g_GTC_CompressBlock(void* in, void* out, void* blockoptions) {
 }
 #endif
 
+#ifdef USE_GUI_LOSSLESS_COMPRESSION
+PluginInterface_Encoder* g_plugin_EncoderBRLG = NULL;
+CMP_Encoder*             g_Codec_BRLG         = NULL;
+extern void (*BRLG_DecompressBlock)(void* out, void* in);
+extern void (*BRLG_CompressBlock)(void* srcblock, void* dest, void* blockoptions);
+
+void g_BRLG_DecompressBlock(void* in, void* out)
+{
+    if (g_Codec_BRLG)
+        g_Codec_BRLG->DecompressBlock(in, out);
+}
+
+void g_BRLG_CompressBlock(void* in, void* out, void* blockoptions)
+{
+    if (g_Codec_BRLG)
+    {
+        g_Codec_BRLG->CompressBlock(in, out, blockoptions);
+    }
+}
+#endif
+
 //----------------- BASIS: Run Time Encoder ------------------
 #ifdef USE_BASIS
 PluginInterface_Encoder* g_plugin_EncoderBASIS = NULL;
@@ -216,12 +251,19 @@ int main(int argc, char** argv) {
         //----------------------------------
         // Load plugin List for processing
         //----------------------------------
+#if (OPTION_BUILD_ASTC == 1)
         g_pluginManager.registerStaticPlugin("IMAGE", "ASTC", (void*)make_Plugin_ASTC);
+#endif
         g_pluginManager.registerStaticPlugin("IMAGE", "EXR", (void*)make_Plugin_EXR);
         g_pluginManager.registerStaticPlugin("IMAGE", "KTX", (void*)make_Plugin_KTX);
         g_pluginManager.registerStaticPlugin("IMAGE", "TGA", (void*)make_Plugin_TGA);
         g_pluginManager.registerStaticPlugin("IMAGE", "ANALYSIS", (void*)make_Plugin_CAnalysis);
-
+#ifdef USE_GUI_LOSSLESS_COMPRESSION
+        g_pluginManager.registerStaticPlugin("IMAGE", "BRLG", (void*)make_Image_Plugin_BRLG);
+#endif
+#ifdef USE_GUI_LOSSLESS_COMPRESSION_BINARY
+        g_pluginManager.registerStaticPlugin("IMAGE", "BINARY", (void*)make_Image_Plugin_BINARY);
+#endif
 #ifdef _WIN32
         g_pluginManager.registerStaticPlugin("IMAGE", "KTX2", (void*)make_Plugin_KTX2);
 #endif
@@ -281,6 +323,31 @@ int main(int argc, char** argv) {
             }
         }
 #endif
+
+        //---------------------------------------
+        // attempt to load compute BRLG Codec
+        //---------------------------------------
+#ifdef USE_GUI_LOSSLESS_COMPRESSION
+        g_plugin_EncoderBRLG = reinterpret_cast<PluginInterface_Encoder*>(g_pluginManager.GetPlugin("ENCODER", "BRLG"));
+        // Found GTC Codec
+        if (g_plugin_EncoderBRLG)
+        {
+            //-------------------------------
+            // create the compression  Codec
+            //-------------------------------
+            g_Codec_BRLG = (CMP_Encoder*)g_plugin_EncoderBRLG->TC_Create();
+
+            //------------------------------------------------------------
+            // Assign compressonator lib GTC codec to Compute GTC Codec
+            //------------------------------------------------------------
+            if (g_Codec_BRLG)
+            {
+                BRLG_CompressBlock   = g_BRLG_CompressBlock;
+                BRLG_DecompressBlock = g_BRLG_DecompressBlock;
+            }
+        }
+#endif
+
 
 #ifdef USE_BASIS
         //---------------------------------------

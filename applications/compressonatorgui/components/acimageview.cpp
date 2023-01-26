@@ -25,250 +25,7 @@
 //=====================================================================
 
 #include "acimageview.h"
-
-//==========================================================
-// Note; acPrefix functions are defined also in mipstoqimage
-// remove this duplication
-//==========================================================
-
-CMP_FLOAT acF16toF32(CMP_HALFSHORT f)
-{
-    CMP_HALF A;
-    A.setBits(f);
-    return ((CMP_FLOAT)A);
-}
-
-static float accmp_clampf(float value, float min, float max)
-{
-    if (value < min)
-        return min;
-    if (value > max)
-        return max;
-    return value;
-}
-
-//load data byte in mipset into Qimage ARGB32 format
-inline float acknee(double x, double f)
-{
-    return float(log(x * f + 1.f) / f);
-}
-
-float acfindKneeF(float x, float y)
-{
-    float f0 = 0;
-    float f1 = 1.f;
-
-    while (acknee(x, f1) > y)
-    {
-        f0 = f1;
-        f1 = f1 * 2.f;
-    }
-
-    for (int i = 0; i < 30; ++i)
-    {
-        const float f2 = (f0 + f1) / 2.f;
-        const float y2 = acknee(x, f2);
-
-        if (y2 < y)
-        {
-            f1 = f2;
-        }
-        else
-        {
-            f0 = f2;
-        }
-    }
-
-    return (f0 + f1) / 2.f;
-}
-
-void acfloat2Pixel(float kl, float f, float r, float g, float b, float a, int x, int y, QImage* image, CMP_CompressOptions option)
-{
-    CMP_BYTE r_b, g_b, b_b, a_b;
-
-    float invGamma, scale;
-    if (option.fInputGamma < 1.0f)
-    {
-        option.fInputGamma = 2.2f;
-    }
-
-    invGamma          = 1.0 / option.fInputGamma;  //for gamma correction
-    float luminance3f = powf(2, -3.5);             // always assume max intensity is 1 and 3.5f darker for scale later
-    scale             = 255.0 * powf(luminance3f, invGamma);
-
-    //  1) Compensate for fogging by subtracting defog
-    //     from the raw pixel values.
-    // We assume a defog of 0
-    if (option.fInputDefog > 0.0f)
-    {
-        r = r - option.fInputDefog;
-        g = g - option.fInputDefog;
-        b = b - option.fInputDefog;
-        a = a - option.fInputDefog;
-    }
-
-    //  2) Multiply the defogged pixel values by
-    //     2^(exposure + 2.47393).
-    const float exposeScale = pow(2, option.fInputExposure + 2.47393f);
-    r                       = r * exposeScale;
-    g                       = g * exposeScale;
-    b                       = b * exposeScale;
-    a                       = a * exposeScale;
-
-    //  3) Values that are now 1.0 are called "middle gray".
-    //     If defog and exposure are both set to 0.0, then
-    //     middle gray corresponds to a raw pixel value of 0.18.
-    //     In step 6, middle gray values will be mapped to an
-    //     intensity 3.5 f-stops below the display's maximum
-    //     intensity.
-
-    //  4) Apply a knee function.  The knee function has two
-    //     parameters, kneeLow and kneeHigh.  Pixel values
-    //     below 2^kneeLow are not changed by the knee
-    //     function.  Pixel values above kneeLow are lowered
-    //     according to a logarithmic curve, such that the
-    //     value 2^kneeHigh is mapped to 2^3.5.  (In step 6,
-    //     this value will be mapped to the the display's
-    //     maximum intensity.)
-    if (r > kl)
-    {
-        r = kl + acknee(r - kl, f);
-    }
-    if (g > kl)
-    {
-        g = kl + acknee(g - kl, f);
-    }
-    if (b > kl)
-    {
-        b = kl + acknee(b - kl, f);
-    }
-    if (a > kl)
-    {
-        a = kl + acknee(a - kl, f);
-    }
-
-    //  5) Gamma-correct the pixel values, according to the
-    //     screen's gamma.  (We assume that the gamma curve
-    //     is a simple power function.)
-    r = pow(r, invGamma);
-    g = pow(g, invGamma);
-    b = pow(b, invGamma);
-    a = pow(a, option.fInputGamma);
-
-    //  6) Scale the values such that middle gray pixels are
-    //     mapped to a frame buffer value that is 3.5 f-stops
-    //     below the display's maximum intensity. (84.65 if
-    //     the screen's gamma is 2.2)
-    r *= scale;
-    g *= scale;
-    b *= scale;
-    a *= scale;
-
-    r_b = (CMP_BYTE)accmp_clampf(r, 0.f, 255.f);
-    g_b = (CMP_BYTE)accmp_clampf(g, 0.f, 255.f);
-    b_b = (CMP_BYTE)accmp_clampf(b, 0.f, 255.f);
-    a_b = (CMP_BYTE)accmp_clampf(a, 0.f, 255.f);
-
-    image->setPixel(x, y, qRgba(r_b, g_b, b_b, a_b));
-}
-
-//
-// load Exr Image Properties
-//
-
-void acloadExrProperties(CMIPS* m_CMips, MipSet* mipset, int level, QImage* image, CMP_CompressOptions option)
-{
-    MipLevel* mipLevel = m_CMips->GetMipLevel(mipset, level);
-    if (mipLevel->m_pbData == NULL)
-        return;
-
-    float kl = pow(2.f, option.fInputKneeLow);
-    float f  = acfindKneeF(pow(2.f, option.fInputKneeHigh) - kl, pow(2.f, 3.5f) - kl);
-
-    if (mipset->m_ChannelFormat == CF_Float32)
-    {
-        float* data = mipLevel->m_pfData;
-        float  r = 0, g = 0, b = 0, a = 0;
-        //copy pixels into image
-        for (int y = 0; y < mipLevel->m_nHeight; y++)
-        {
-            for (int x = 0; x < mipLevel->m_nWidth; x++)
-            {
-                r = *data;
-                data++;
-                g = *data;
-                data++;
-                b = *data;
-                data++;
-                a = *data;
-                data++;
-                acfloat2Pixel(kl, f, r, g, b, a, x, y, image, option);
-            }
-
-            //if ((y % 10) == 0)
-            //    QApplication::processEvents();
-        }
-    }
-    else if (mipset->m_ChannelFormat == CF_Float16)
-    {
-        CMP_HALFSHORT* data = mipLevel->m_phfsData;
-        CMP_HALFSHORT  r, g, b, a;
-        //copy pixels into image
-        for (int y = 0; y < mipLevel->m_nHeight; y++)
-        {
-            for (int x = 0; x < mipLevel->m_nWidth; x++)
-            {
-                r = *data;
-                data++;
-                g = *data;
-                data++;
-                b = *data;
-                data++;
-                a = *data;
-                data++;
-                acfloat2Pixel(kl, f, acF16toF32(r), acF16toF32(g), acF16toF32(b), acF16toF32(a), x, y, image, option);
-            }
-
-            //if ((y % 10) == 0)
-            //    QApplication::processEvents();
-        }
-    }
-    else if (mipset->m_ChannelFormat == CF_Float9995E)
-    {
-        //CMP_DWORD dwSize = mipLevel->m_dwLinearSize;
-        CMP_DWORD* pSrc = mipLevel->m_pdwData;
-        float      r = 0, g = 0, b = 0, a = 0;
-        union
-        {
-            float   f;
-            int32_t i;
-        } fi;
-        float Scale = 0.0f;
-        for (int y = 0; y < mipLevel->m_nHeight; y++)
-        {
-            for (int x = 0; x < mipLevel->m_nWidth; x++)
-            {
-                CMP_DWORD dwSrc = *pSrc++;
-                R9G9B9E5  pTemp;
-
-                pTemp.rm = (dwSrc & 0x000001ff);
-                pTemp.gm = (dwSrc & 0x0003fe00) >> 9;
-                pTemp.bm = (dwSrc & 0x07fc0000) >> 18;
-                pTemp.e  = (dwSrc & 0xf8000000) >> 27;
-
-                fi.i  = 0x33800000 + (pTemp.e << 23);
-                Scale = fi.f;
-                r     = Scale * float(pTemp.rm);
-                g     = Scale * float(pTemp.gm);
-                b     = Scale * float(pTemp.bm);
-                a     = 1.0f;
-                acfloat2Pixel(kl, f, r, g, b, a, x, y, image, option);
-            }
-            //if ((y % 10) == 0)
-            //    QApplication::processEvents();
-        }
-    }
-}
+#include "format_conversion.h"
 
 #define CURSOR_SIZE 12  // pixel per cross hair fin
 
@@ -309,7 +66,7 @@ acImageView::acImageView(const QString filePathName, QWidget* parent, CMipImages
     m_navVisible      = false;
     m_isDiffView      = false;
     m_currentMiplevel = 0;
-    m_DepthIndex      = 0;
+    m_depthIndex      = 0;
 #ifdef _DEBUG
     m_debugMode   = false;
     m_debugFormat = "";
@@ -354,8 +111,8 @@ acImageView::acImageView(const QString filePathName, QWidget* parent, CMipImages
 
                 if (m_OriginalMipImages)
                 {
-                    image_original           = m_OriginalMipImages->QImage_list[m_DepthIndex][m_ImageIndex];
-                    pixmap_original          = QPixmap::fromImage(*image_original);
+                    image_original           = m_OriginalMipImages->QImage_list[m_depthIndex][m_ImageIndex];
+                    pixmap_original          = QPixmap::fromImage(*image_original, Qt::NoFormatConversion);
                     m_imageItem_Original     = new acCustomGraphicsImageItem(pixmap_original, NULL);
                     m_imageItem_Original->ID = m_graphicsScene->ID;
                     m_imageItem_Original->setFlags(QGraphicsItem::ItemIsSelectable);
@@ -365,11 +122,11 @@ acImageView::acImageView(const QString filePathName, QWidget* parent, CMipImages
                 else
                     m_imageItem_Original = NULL;
 
-                QImage* image_processed = m_MipImages->QImage_list[m_DepthIndex][m_ImageIndex];
+                QImage* image_processed = m_MipImages->QImage_list[m_depthIndex][m_ImageIndex];
 
                 if (image_processed != NULL)
                 {
-                    QPixmap pixmap_processed = QPixmap::fromImage(*image_processed);
+                    QPixmap pixmap_processed = QPixmap::fromImage(*image_processed, Qt::NoFormatConversion);
 
                     m_imageItem_Processed     = new acCustomGraphicsImageItem(pixmap_processed, image_original);
                     m_imageItem_Processed->ID = m_graphicsScene->ID;
@@ -787,6 +544,29 @@ void acImageView::MatchImagePosition(int activeIndex)
     }
 }
 
+void acImageView::UpdatePixmapImage()
+{
+    QImage srcImage((m_imageItem_Processed->pixmap()).toImage());
+
+    // ensure that we are always working on an RGBA8888 image, since that is what our conversion function generates
+    QImage workingImage = srcImage.convertToFormat(QImage::Format_RGBA8888);
+
+    MipSet* mipset = 0;
+
+    if (m_MipImages->mipset->m_compressed)
+        mipset = m_MipImages->decompressedMipSet;
+    else
+        mipset = m_MipImages->mipset;
+
+    MipLevel* mipLevel = m_imageloader->getCMips()->GetMipLevel(mipset, m_currentMiplevel, m_depthIndex);
+    CMP_ChannelFormat channelFormat = mipset->m_ChannelFormat;
+    FloatParams params(&m_imageloader->m_options);
+    
+    FloatToByte(workingImage.bits(), mipLevel->m_pfData, channelFormat, mipLevel->m_nWidth, mipLevel->m_nHeight, &params);
+
+    m_imageItem_Processed->setPixmap(QPixmap::fromImage(workingImage));
+}
+
 void acImageView::onVirtualMouseMoveEvent(QPointF* scenePos, QPointF* localPos, int onID)
 {
     if (m_MouseHandDown)
@@ -1155,14 +935,7 @@ void acImageView::onExrExposureChanged(double value)
 
     m_imageloader->m_options.fInputExposure = float(value);
 
-    QImage image((m_imageItem_Processed->pixmap()).toImage());
-
-    if (m_MipImages->mipset->m_compressed)
-        acloadExrProperties(m_imageloader->getCMips(), m_MipImages->decompressedMipSet, m_currentMiplevel, &image, m_imageloader->m_options);
-    else
-        acloadExrProperties(m_imageloader->getCMips(), m_MipImages->mipset, m_currentMiplevel, &image, m_imageloader->m_options);
-
-    m_imageItem_Processed->setPixmap(QPixmap::fromImage(image));
+    UpdatePixmapImage();
 }
 
 void acImageView::onExrDefogChanged(double value)
@@ -1178,14 +951,7 @@ void acImageView::onExrDefogChanged(double value)
 
     m_imageloader->m_options.fInputDefog = float(value);
 
-    QImage image((m_imageItem_Processed->pixmap()).toImage());
-
-    if (m_MipImages->mipset->m_compressed)
-        acloadExrProperties(m_imageloader->getCMips(), m_MipImages->decompressedMipSet, m_currentMiplevel, &image, m_imageloader->m_options);
-    else
-        acloadExrProperties(m_imageloader->getCMips(), m_MipImages->mipset, m_currentMiplevel, &image, m_imageloader->m_options);
-
-    m_imageItem_Processed->setPixmap(QPixmap::fromImage(image));
+    UpdatePixmapImage();
 }
 
 void acImageView::onExrKneeLowChanged(double value)
@@ -1202,14 +968,7 @@ void acImageView::onExrKneeLowChanged(double value)
 
     m_imageloader->m_options.fInputKneeLow = float(value);
 
-    QImage image((m_imageItem_Processed->pixmap()).toImage());
-
-    if (m_MipImages->mipset->m_compressed)
-        acloadExrProperties(m_imageloader->getCMips(), m_MipImages->decompressedMipSet, m_currentMiplevel, &image, m_imageloader->m_options);
-    else
-        acloadExrProperties(m_imageloader->getCMips(), m_MipImages->mipset, m_currentMiplevel, &image, m_imageloader->m_options);
-
-    m_imageItem_Processed->setPixmap(QPixmap::fromImage(image));
+    UpdatePixmapImage();
 }
 
 void acImageView::onExrKneeHighChanged(double value)
@@ -1225,14 +984,7 @@ void acImageView::onExrKneeHighChanged(double value)
 
     m_imageloader->m_options.fInputKneeHigh = float(value);
 
-    QImage image((m_imageItem_Processed->pixmap()).toImage());
-
-    if (m_MipImages->mipset->m_compressed)
-        acloadExrProperties(m_imageloader->getCMips(), m_MipImages->decompressedMipSet, m_currentMiplevel, &image, m_imageloader->m_options);
-    else
-        acloadExrProperties(m_imageloader->getCMips(), m_MipImages->mipset, m_currentMiplevel, &image, m_imageloader->m_options);
-
-    m_imageItem_Processed->setPixmap(QPixmap::fromImage(image));
+    UpdatePixmapImage();
 }
 
 void acImageView::onExrGammaChanged(double value)
@@ -1249,14 +1001,7 @@ void acImageView::onExrGammaChanged(double value)
 
     m_imageloader->m_options.fInputGamma = float(value);
 
-    QImage image((m_imageItem_Processed->pixmap()).toImage());
-
-    if (m_MipImages->mipset->m_compressed)
-        acloadExrProperties(m_imageloader->getCMips(), m_MipImages->decompressedMipSet, m_currentMiplevel, &image, m_imageloader->m_options);
-    else
-        acloadExrProperties(m_imageloader->getCMips(), m_MipImages->mipset, m_currentMiplevel, &image, m_imageloader->m_options);
-
-    m_imageItem_Processed->setPixmap(QPixmap::fromImage(image));
+    UpdatePixmapImage();
 }
 
 void acImageView::onToggleChannelR()
@@ -1689,11 +1434,11 @@ void acImageView::onGridBackground(int enableGrid)
 }
 
 // This can be called multiple time when used with more then 1 image view, like that used in Image DIff views
-// the code should be optimized so that the PSNR calc can be turned on of off during contruct or viewing
+// the code should be optimized so that the PSNR calc can be turned on of off during construct or viewing
 void acImageView::processPSNR()
 {
     // Is the calculation for the first time then process the data
-    if (m_PSNR[m_currentMiplevel][m_DepthIndex] == 0.0)
+    if (m_PSNR[m_currentMiplevel][m_depthIndex] == 0.0)
     {
         if (m_OriginalMipImages == NULL)
             return;
@@ -1701,22 +1446,33 @@ void acImageView::processPSNR()
             return;
         if (m_MipImages->decompressedMipSet == NULL)
             return;
+        if (m_OriginalMipImages->mipset == NULL)
+            return;
+        if (m_OriginalMipImages->mipset->m_compressed && m_OriginalMipImages->decompressedMipSet == NULL)
+            return;
 
         //CMP_DOUBLE       outMSE;
         //CMP_DOUBLE       outPSNR;
-        CMP_AnalysisData anlysisData = {0};
-        anlysisData.channelBitMap    = CMP_getFormat_nChannels(m_MipImages->mipset->m_format);  // m_MipImages->decompressedMipSet->m_format);
-        if (CMP_MipSetAnlaysis(m_OriginalMipImages->mipset, m_MipImages->decompressedMipSet, m_currentMiplevel, m_DepthIndex, &anlysisData) == CMP_OK)
+        CMP_AnalysisData analysisData = {0};
+        analysisData.channelBitMap    = CMP_getFormat_nChannels(m_MipImages->mipset->m_format);  // m_MipImages->decompressedMipSet->m_format);
+        CMP_ERROR status;
+
+        if (m_OriginalMipImages->mipset->m_compressed)
+            status = CMP_MipSetAnlaysis(m_OriginalMipImages->decompressedMipSet, m_MipImages->decompressedMipSet, m_currentMiplevel, m_depthIndex, &analysisData);
+        else
+            status = CMP_MipSetAnlaysis(m_OriginalMipImages->mipset, m_MipImages->decompressedMipSet, m_currentMiplevel, m_depthIndex, &analysisData);
+
+        if (status == CMP_OK)
         {
-            m_MSE[m_currentMiplevel][m_DepthIndex]  = anlysisData.mse;
-            m_PSNR[m_currentMiplevel][m_DepthIndex] = anlysisData.psnr;
+            m_MSE[m_currentMiplevel][m_depthIndex] = analysisData.mse;
+            m_PSNR[m_currentMiplevel][m_depthIndex] = analysisData.psnr;
         }
         else
             return;  // should post an error message to user!
     }
 
     // signal the data to all slots
-    acPSNRUpdated(m_PSNR[m_currentMiplevel][m_DepthIndex]);
+    acPSNRUpdated(m_PSNR[m_currentMiplevel][m_depthIndex]);
 }
 
 void acImageView::onImageMipLevelChanged(int MipLevel)
@@ -1724,10 +1480,10 @@ void acImageView::onImageMipLevelChanged(int MipLevel)
     m_currentMiplevel = MipLevel;
     if (m_MipImages)
     {
-        if (m_MipImages->QImage_list[m_DepthIndex].size() > MipLevel)
+        if (m_MipImages->QImage_list[m_depthIndex].size() > MipLevel)
         {
             m_ImageIndex  = MipLevel;
-            QImage* image = m_MipImages->QImage_list[m_DepthIndex][m_ImageIndex];
+            QImage* image = m_MipImages->QImage_list[m_depthIndex][m_ImageIndex];
             if (image)
             {
                 m_imageItem_Processed->changeImage(*image);
@@ -1735,9 +1491,9 @@ void acImageView::onImageMipLevelChanged(int MipLevel)
 
             if (m_OriginalMipImages)
             {
-                if (m_OriginalMipImages->QImage_list[m_DepthIndex].size() > MipLevel)
+                if (m_OriginalMipImages->QImage_list[m_depthIndex].size() > MipLevel)
                 {
-                    QImage* image_original = m_OriginalMipImages->QImage_list[m_DepthIndex][m_ImageIndex];
+                    QImage* image_original = m_OriginalMipImages->QImage_list[m_depthIndex][m_ImageIndex];
                     if (image_original)
                     {
                         m_imageItem_Original->changeImage(*image_original);
@@ -1758,9 +1514,10 @@ void acImageView::onImageDepthChanged(int DepthLevel)
 {
     if (DepthLevel >= CMP_MIPSET_MAX_DEPTHS)
         DepthLevel = CMP_MIPSET_MAX_DEPTHS - 1;
+    
     if (m_MipImages)
     {
-        m_DepthIndex  = DepthLevel;
+        m_depthIndex  = DepthLevel;
         QImage* image = m_MipImages->QImage_list[DepthLevel][m_ImageIndex];
         if (image)
         {

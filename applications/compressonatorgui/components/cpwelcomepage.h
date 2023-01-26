@@ -65,7 +65,7 @@ private:
 
 #define COMPRESSONATOR_HOME "http://gpuopen.com/gaming-product/compressonator/"
 #define URL_FILE "file:///"
-#define COMPRESSONATOR_GETTING_STARTED "Documents/gui_tool/getting_started/index.html"
+#define COMPRESSONATOR_GETTING_STARTED "Documents/gui_tool/getting_started/gettingstarted.html"
 #define COMPRESSONATOR_USER_GUIDE "Documents/gui_tool/user_guide/index.html"
 #define COMPRESSONATOR_NEWFEATURES_GUIDE "Documents/revisions.html"
 

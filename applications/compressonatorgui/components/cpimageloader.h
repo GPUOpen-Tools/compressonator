@@ -93,7 +93,6 @@ class CImageLoader {
     CMipImages *LoadPluginImage(std::string filename, CMP_Feedback_Proc pFeedbackProc = NULL);   // Creates Image & MIP data
     bool        clearMipImages(CMipImages **MipImages);                                          // Clears (delete) all Image & MIP data
     void        UpdateMIPMapImages(CMipImages *MipImages);                                       // Maps MIP levels to Images
-    MipSet     *QImage2MIPS(QImage *qimage, CMP_Feedback_Proc pFeedbackProc = NULL);             // Converts a QImage to MipSet
     MipSet     *LoaderDecompressMipSet(CMipImages *MipImages, Config *decompConfig);
     CMIPS      *getCMips() {
         return m_CMips;

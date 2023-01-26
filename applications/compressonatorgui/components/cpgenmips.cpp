@@ -25,7 +25,7 @@
 
 #include "cpgenmips.h"
 
-#define LOWEST_MIP_LEVELS "Lowest Mip-Level (Width x Height)"
+#define MIP_LEVELS_TEXT "Smallest Mipmap Size (Width x Height)"
 
 CGenMips::CGenMips(const QString title, QWidget* parent)
     : QWidget(parent)
@@ -55,74 +55,71 @@ CGenMips::CGenMips(const QString title, QWidget* parent)
 
     SetGUIItems();
 
-    m_ImageSize_W = 0;
-    m_ImageSize_H = 0;
-    m_MipLevels   = 0;
-    m_minsize[0]  = 0;
+    m_selectedMipLevel = 0;
+    m_levelWidths[0] = 0;
 
     // evalProperties(); use this to debug set properties of a class definition , in this case its CData
 }
 
 void CGenMips::setMipLevelDisplay(int Width, int Height, bool UsingGPU = false) {
-    m_ImageSize_W = Width;
-    m_ImageSize_H = Height;
-    m_MipLevelSizes.clear();
+    m_mipLevelSizes.clear();
+    m_selectedMipLevel = 0;
 
     QString level;
     level.append(QString::number(Width));
     level.append("x");
     level.append(QString::number(Height));
 
-    m_MipLevelSizes << level;
+    m_mipLevelSizes << level;
 
-    m_minsize[0] = Width;
-    m_MipLevels  = 1;
+    m_levelWidths[0] = Width;
 
     do {
         Width  = (Width > 1) ? (Width >> 1) : 1;
         Height = (Height > 1) ? (Height >> 1) : 1;
 
         if (UsingGPU) {
-            int non4DivW = (Width  % 4); 
+            int non4DivW = (Width  % 4);
             int non4DivH = (Height % 4);
             if (non4DivW || non4DivH)
                 break;
         }
 
-        if (m_MipLevels > MAX_MIPLEVEL_SUPPORTED)
+        int numMipLevels = m_mipLevelSizes.size();
+
+        if (numMipLevels > MAX_MIPLEVEL_SUPPORTED)
             break;
 
-        m_minsize[m_MipLevels] = Width;
+        m_levelWidths[numMipLevels] = Width;
 
         QString level;
         level.append(QString::number(Width));
         level.append("x");
         level.append(QString::number(Height));
 
-        m_MipLevelSizes << level;
-        m_MipLevels++;
+        m_mipLevelSizes << level;
 
     } while (Width > 1 && Height > 1);
 
-    QStringList reversedList = m_MipLevelSizes;
-    const int   levelSize    = m_MipLevelSizes.size();
-    const int   maxSwap      = m_MipLevelSizes.size() / 2;
+    QStringList reversedList = m_mipLevelSizes;
+    const int   levelSize    = m_mipLevelSizes.size();
+    const int   maxSwap      = m_mipLevelSizes.size() / 2;
     for (int i = 0; i < maxSwap; ++i) {
         qSwap(reversedList[i], reversedList[levelSize - 1 - i]);
     }
-    m_MipLevelSizes = reversedList;
+    m_mipLevelSizes = reversedList;
 
-    m_propertyMipLevels->setAttribute("enumNames", m_MipLevelSizes);
+    m_propertyMipLevels->setAttribute("enumNames", m_mipLevelSizes);
     m_propertyMipLevels->setValue(0);
-    m_MipLevels = 0;
 }
 
 void CGenMips::onGenerate() {
-    int levelSize   = (m_MipLevelSizes.size() - 1) - m_MipLevels;
-    if ((levelSize < 0) || (levelSize >= MAX_MIPLEVEL_SUPPORTED))
-        levelSize = 0;
-    m_CFilterParams.nMinSize = m_minsize[levelSize];
-    emit generateMIPMap(m_CFilterParams, this->m_mipsitem);
+    int numLevelsToGenerate = (m_mipLevelSizes.size() - 1) - m_selectedMipLevel;
+    if (numLevelsToGenerate < 0 || numLevelsToGenerate >= MAX_MIPLEVEL_SUPPORTED)
+        numLevelsToGenerate = 0;
+    
+    m_CFilterParams.nMinSize = m_levelWidths[numLevelsToGenerate];
+    emit signalGenerateMipmaps(m_CFilterParams, this->m_imageItems);
     hide();
 }
 
@@ -177,8 +174,8 @@ void CGenMips::valueChanged(QtProperty* property, const QVariant& value) {
         return;
     QString id = propertyToId[property];
 
-    if (id == QLatin1String(LOWEST_MIP_LEVELS)) {
-        m_MipLevels = value.toInt();
+    if (id == QLatin1String(MIP_LEVELS_TEXT)) {
+        m_selectedMipLevel = value.toInt();
     } else if (id == QLatin1String("FilterType")) {
         int filtertype = value.value<int>();
         switch (filtertype) {
@@ -241,11 +238,11 @@ void CGenMips::SetGUIItems() {
     idToProperty.clear();
 
     // Data
-    m_propertyMipLevels = m_variantPropertyManager->addProperty(QtVariantPropertyManager::enumTypeId(), LOWEST_MIP_LEVELS);
-    m_MipLevelSizes << "";  // This will be populated by setMipLevelDisplay()
-    m_propertyMipLevels->setAttribute("enumNames", m_MipLevelSizes);
+    m_propertyMipLevels = m_variantPropertyManager->addProperty(QtVariantPropertyManager::enumTypeId(), MIP_LEVELS_TEXT);
+    m_mipLevelSizes << "";  // This will be populated by setMipLevelDisplay()
+    m_propertyMipLevels->setAttribute("enumNames", m_mipLevelSizes);
     m_propertyMipLevels->setValue(0);
-    addProperty(m_propertyMipLevels, QLatin1String(LOWEST_MIP_LEVELS));
+    addProperty(m_propertyMipLevels, QLatin1String(MIP_LEVELS_TEXT));
 
     m_propertyGamma = m_variantPropertyManager->addProperty(QVariant::Double, tr("Gamma (Pixel ^ Value)"));
     m_propertyGamma->setValue(1.0);

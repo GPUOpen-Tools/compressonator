@@ -11,7 +11,7 @@ cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/Applications/_Plugins/CGPUDecode/Vu
 cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/Applications/_Plugins/CGPUDecode/Vulkan/VK_ComputeShader/texture.frag.spv ${ASSETS_PATH}/texture.frag.spv)
 
 if (OPTION_CMP_QT)
-    cmp_gui_copy_to_output(${CMAKE_CURRENT_LIST_DIR}/qt.conf ${ASSETS_PATH}/qt.conf)
+    cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/runtime/qt.conf ${ASSETS_PATH}/qt.conf)
 
     get_property(QT_LIB_DIR GLOBAL PROPERTY QT_LIB_DIR)
 
@@ -48,7 +48,7 @@ if (CMP_HOST_WINDOWS)
 
     # New OpenCV Support
     if(EXISTS C:/opencv)
-    cmp_gui_copy_to_output(C:/opencv/build/x64/vc14/bin/opencv_world420$<$<CONFIG:Debug>:d>.dll ${ASSETS_PATH}/opencv_world420$<$<CONFIG:Debug>:d>.dll)
+    cmp_gui_copy_to_output(C:/opencv/build/x64/vc15/bin/opencv_world420$<$<CONFIG:Debug>:d>.dll ${ASSETS_PATH}/opencv_world420$<$<CONFIG:Debug>:d>.dll)
     endif()
 
     #KTX2 Features dll
@@ -70,5 +70,18 @@ foreach(rsc ${GPUCOMPUTE_SHADERS})
      #message(STATUS "************** COPY SHADERS [${rsc} to ${ASSETS_PATH}/${asset}]" )
      cmp_gui_copy_to_output(${rsc} ${ASSETS_PATH}/plugins/compute/${asset})
  endforeach()
+
+if (OPTION_BUILD_BROTLIG)
+    set(BRLG_SHADER_SRC ${BROTLIG_ROOT_PATH}/src/decoder/BrotliGCompute.hlsl)
+    message(STATUS "************** BROTLIG SHADER ${BRLG_SHADER_SRC}")
+    cmp_gui_copy_to_output(${BRLG_SHADER_SRC} ${ASSETS_PATH}/plugins/compute/)
+
+    set(BRLG_DX_CMP ${BROTLIG_ROOT_PATH}/sample/external/dxc_2021_12_08/bin/x64/dxcompiler.dll)
+    cmp_gui_copy_to_output(${BRLG_DX_CMP} ${ASSETS_PATH}/)
+
+    set(BRLG_DX_IL ${BROTLIG_ROOT_PATH}/sample/external/dxc_2021_12_08/bin/x64/dxil.dll)
+    cmp_gui_copy_to_output(${BRLG_DX_IL} ${ASSETS_PATH}/)
+
+endif()
 
 executable_post_build_dylibs(CompressonatorCLI-bin ${DYLIBS_PATH})

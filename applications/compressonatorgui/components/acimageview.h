@@ -56,7 +56,7 @@ class acImageView : public QWidget {
     acImageView(const QString fileName = "", QWidget *parent = 0, CMipImages *OriginalMipImages = NULL, CMipImages *MipImages = NULL);
     ~acImageView();
 
-    int m_DepthIndex;  // QImage[depth][]
+    int m_depthIndex;  // QImage[depth][]
     int m_currentMiplevel;
 
     CImageLoader                     *m_imageloader;
@@ -135,6 +135,7 @@ class acImageView : public QWidget {
     int  m_ImageIndex;                                       // QImage[][index]
 
     void MatchImagePosition(int activeIndex);
+    void UpdatePixmapImage();
 
   public slots:
     void onVirtualMouseMoveEvent(QPointF *pos, QPointF *localPos, int onID);     //

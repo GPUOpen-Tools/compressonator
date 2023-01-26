@@ -54,17 +54,17 @@
 #include "cmp_mesh.h"
 #include "modeldata.h"
 
-#define TREETYPE_Double_Click_here_to_add_files 0  // [+] Double Click here to add files ...
-#define TREETYPE_Add_destination_setting 1         // [+] Add destination setting ...
-#define TREETYPE_Add_Model_destination_settings 2  // Create a new copy of 3D source data node
-#define TREETYPE_IMAGEFILE_DATA 3                  // items column (1) uses new allocated varient data for C_FileProperties
-#define TREETYPE_3DMODEL_DATA 4                    // items column (1) uses new allocated varient data for C_FileProperties
-#define TREETYPE_VIEWIMAGE_ONLY_NODE 5             // Autogen data  that is part of a 3D  Image that is only viewed
-#define TREETYPE_VIEWMESH_ONLY_NODE 6              // Autogen data  that is part of a 3D  Image that is only viewed
-#define TREETYPE_3DSUBMODEL_DATA 7                 // items column (1) uses new allocated varient data for C_FileProperties
-#define TREETYPE_COMPRESSION_DATA 8                // items column (1) uses new allocated varient data for C_CompressOptions
-#define TREETYPE_MESH_DATA 9                       // Mesh data node contains (Vertices, Index, ...)
-#define TREETYPE_DIFFVIEW 10                       // no item data, this id is used along with above for identifying docked widgets
+#define TREETYPE_Double_Click_here_to_add_files 0x00000001  // [+] Double Click here to add files ...
+#define TREETYPE_Add_destination_setting        0x00000002  // [+] Add destination setting ...
+#define TREETYPE_Add_Model_destination_settings 0x00000004  // Create a new copy of 3D source data node
+#define TREETYPE_IMAGEFILE_DATA                 0x00000008  // items column (1) uses new allocated varient data for C_FileProperties
+#define TREETYPE_3DMODEL_DATA                   0x00000010  // items column (1) uses new allocated varient data for C_FileProperties
+#define TREETYPE_VIEWIMAGE_ONLY_NODE            0x00000020  // Autogen data  that is part of a 3D  Image that is only viewed
+#define TREETYPE_VIEWMESH_ONLY_NODE             0x00000040  // Autogen data  that is part of a 3D  Image that is only viewed
+#define TREETYPE_3DSUBMODEL_DATA                0x00000080  // items column (1) uses new allocated varient data for C_FileProperties
+#define TREETYPE_COMPRESSION_DATA               0x00000100  // Texture saved as part of a 3D model
+#define TREETYPE_MESH_DATA                      0x00000200  // Mesh data node contains (Vertices, Index, ...)
+#define TREETYPE_DIFFVIEW                       0x00000400  // no item data, this id is used along with above for identifying docked widgets
 
 #define TREE_LevelType 0   // Treeview index of data column variant data storage for TREETYPE_...
 #define TREE_SourceInfo 1  // Treeview index of data column variant data storage for Source data
@@ -351,7 +351,7 @@ public:
                         m_Bitrate        = bitrate;
                         m_correctBitrate = bitrate;
                     }
-                    astc_find_closest_blockdim_2d(bitrateF, &xblock, &yblock, 1);
+                    find_closest_blockdim_2d(bitrateF, &xblock, &yblock, 1);
                     m_correctBitrate = bitrateF;
                     emit bitrateChanged(m_Bitrate, xblock, yblock);
                     m_data_has_been_changed = true;
@@ -363,7 +363,7 @@ public:
                 int dimensions = sscanf(bitrate.toUtf8().constData(), "%dx%dx", &xblock, &yblock);
                 if (dimensions < 2)
                     return;
-                astc_find_closest_blockxy_2d(&xblock, &yblock, 0);
+                find_closest_blockxy_2d(&xblock, &yblock, 0);
                 if (xblock < 3 || xblock > 12 || yblock < 3 || yblock > 12)
                 {
                     xblock = -1;
@@ -637,7 +637,11 @@ signals:
 #define DESTINATION_IMAGE_CLASS_NAME "Destination Image"
 #define CHANNEL_WEIGHTING_CLASS_NAME "Channel Weighting"
 #define DXT1_ALPHA_CLASS_NAME "DXT1 Alpha"
+
+#if (OPTION_BUILD_ASTC == 1)
 #define ASTC_BLOCKRATE_CLASS_NAME "ASTC Block Rate"
+#endif
+
 #define CODEC_BLOCK_CLASS_NAME "Codec Block"
 #define HDR_PROP_CLASS_NAME "Input HDR Image Properties"
 #define REFINE_CLASS_NAME "Refine"
@@ -1355,16 +1359,20 @@ struct Model_Image
 class C_Destination_Options : public C_Destination_Image
 {
     Q_OBJECT
-    Q_ENUMS(eCompression)
-    Q_PROPERTY(eCompression Format READ getCompression WRITE setCompression NOTIFY compressionChanged)
+    Q_ENUMS(eCompression_options)
+    Q_PROPERTY(eCompression_options Format READ getCompression WRITE setCompression NOTIFY compressionChanged)
     Q_PROPERTY(double Quality  READ getQuality WRITE setQuality NOTIFY qualityChanged)
 #ifdef USE_ENABLEHQ
     Q_PROPERTY(bool   EnableHQ READ getEnableHQ WRITE setEnableHQ NOTIFY enableHQChanged)
 #endif
 
 public:
-    enum eCompression
+    enum eCompression_options
     {
+#ifdef USE_GUI_LOSSLESS_COMPRESSION
+       // Lossless GPU Based Compression Formats --------------------------------------------------------------------------------
+       BRLG,
+#endif
 #ifdef USE_APC
         APC,
 #endif
@@ -1393,7 +1401,9 @@ public:
         ETC2_SRGBA,
         ETC2_SRGBA1,
 #endif
+#if (OPTION_BUILD_ASTC == 1)
         ASTC,
+#endif
         ATC_RGB,
         ATC_RGBA_Explicit,
         ATC_RGBA_Interpolated,
@@ -1427,7 +1437,10 @@ public:
         //RG_32F,
         //R_32F,
 
-        MESH_DATA
+        MESH_DATA,
+
+
+
     };
 
     C_Destination_Options()
@@ -1500,7 +1513,7 @@ public:
         return m_controller;
     }
 
-    void setCompression(eCompression Compression)
+    void setCompression(eCompression_options Compression)
     {
         if (m_Compression != Compression)
         {
@@ -1512,7 +1525,7 @@ public:
         //}
     }
 
-    eCompression getCompression() const
+    eCompression_options getCompression() const
     {
         return m_Compression;
     }
@@ -1593,7 +1606,7 @@ public:
     QString            m_sourceFileNamePath;
     QString            m_destFileNamePath;
     QString            m_decompressedFileNamePath;
-    eCompression       m_Compression;
+    eCompression_options m_Compression;
     bool               m_editing;
     double             m_Quality;
 #ifdef USE_ENABLEHQ
@@ -1969,6 +1982,7 @@ public:
 #define APP_Show_Analysis_Results_Table "Show Analysis Results Table"
 #define APP_Use_GPU_To_Generate_MipMaps "Use GPU To Generate MipMaps"
 #define APP_Use_SRGB_Frames_While_Encoding "Use SRGB Frames While Encoding"
+#define APP_Use_Original_File_Names "Use Original File Names"
 
 class C_Application_Options : public QObject
 {
@@ -1992,6 +2006,7 @@ class C_Application_Options : public QObject
     Q_PROPERTY(RenderModelsWith Render_Models_with READ getGLTFRender WRITE setGLTFRender)
     Q_PROPERTY(bool Show_MSE_PSNR_SSIM_Results READ getLogResults WRITE setLogResults NOTIFY LogResultsChanged)
     Q_PROPERTY(bool Show_Analysis_Results_Table READ getAnalysisResultTable WRITE setAnalysisResultTable)
+    Q_PROPERTY(bool Use_Original_File_Names READ getUseOriginalFileNames WRITE setUseOriginalFileNames)
 public:
     // Keep order of list as its ref is saved in CompressSettings.ini
     // we should change the save to use string name instead of indexes to the enum
@@ -2052,6 +2067,8 @@ public:
         //#else
         m_GLTFRenderWith = RenderModelsWith::glTF_Vulkan;
         //#endif
+
+        m_useOriginalFileNames = true;
     }
 
     void setImageViewDecode(ImageDecodeWith decodewith)
@@ -2222,6 +2239,16 @@ public:
         return m_GLTFRenderWith;
     }
 
+    bool getUseOriginalFileNames() const
+    {
+        return m_useOriginalFileNames;
+    }
+
+    void setUseOriginalFileNames(bool newValue)
+    {
+        m_useOriginalFileNames = newValue;
+    }
+
     ImageDecodeWith  m_ImageViewDecode;
     ImageEncodeWith  m_ImageEncode;
     bool             m_clickIconToViewImage;
@@ -2236,6 +2263,7 @@ public:
     bool             m_logresults;
     bool             m_analysisResultTable;
     RenderModelsWith m_GLTFRenderWith;
+    bool m_useOriginalFileNames;
 
 signals:
     void ImageViewDecodeChanged(QVariant&);

@@ -84,8 +84,7 @@ target_include_directories(CMP_GUI_Components PRIVATE
   ${PROJECT_SOURCE_DIR}/../common/lib/ext/glm
   ${OpenCV_INCLUDE_DIRS}
   ${OpenEXR_INCLUDE_DIRS}
-  ${draco_INCLUDE_DIRS}
-  )
+)
 
 target_link_libraries(CMP_GUI_Components 
                       Qt5::Widgets 

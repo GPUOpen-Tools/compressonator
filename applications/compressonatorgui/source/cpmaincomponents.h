@@ -218,14 +218,14 @@ class cpMainComponents : public QMainWindow {
     void browserMsg(const char *msg);
     void OnWelcomePageButtonClick(QString &Request, QString &Msg);
 
-    void genMIPMaps();      // Dialog
+    void onGenerateMipmapsMenuClicked();
     void convertModels();   // Dialog
 
 #ifdef ENABLE_AGS_SUPPORT
     void handleHDRon();
 #endif
 
-    void onGenerateMIPMap(CMP_CFilterParams m_CFilterParams, QTreeWidgetItem* item);  // Generate the MIP levels on selected item(s)
+    void generateMipmaps(CMP_CFilterParams m_CFilterParams, const std::vector<QTreeWidgetItem*>& images);  // Generate the MIP levels on selected item(s)
 
     void deleteImageFile();
     void onCompressionDone();

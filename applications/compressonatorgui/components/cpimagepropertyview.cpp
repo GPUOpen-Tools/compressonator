@@ -229,7 +229,7 @@ void CImagePropertyView::Init_C_Destiniation_Data_Controller() {
 }
 
 // -----------------------------------------------------------
-// This call may be called too oftern for the same data
+// This call may be called too often for the same data
 // Optimize its calls in final production
 // -----------------------------------------------------------
 
@@ -396,7 +396,7 @@ void CImagePropertyView::compressionValueChanged(QVariant& value) {
 
     m_infotext->clear();
 
-    C_Destination_Options::eCompression comp = (C_Destination_Options::eCompression&)value;
+    C_Destination_Options::eCompression_options comp = (C_Destination_Options::eCompression_options&)value;
     switch (comp) {
     case C_Destination_Options::BC6H:
         Quality_Settings     = true;
@@ -457,12 +457,14 @@ void CImagePropertyView::compressionValueChanged(QVariant& value) {
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A two component compressed texture format. BC5 identical to ATI2N. Eight bits per pixel. BC5_S is used for signed components");
         break;
+#if (OPTION_BUILD_ASTC == 1)
     case C_Destination_Options::ASTC:
         Quality_Settings = true;
         Codec_BlockRate  = true;
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("ASTC (Adaptive Scalable Texture Compression),lossy block-based texture compression developed with ARM.");
         break;
+#endif
     case C_Destination_Options::BC7:
         Quality_Settings = true;
         m_infotext->append("<b>Format Description</b>");
@@ -544,6 +546,14 @@ void CImagePropertyView::compressionValueChanged(QVariant& value) {
         m_infotext->append("The latest block Compression (GTC) format designed to support high-speed compression");
         break;
 #endif
+#ifdef USE_GUI_LOSSLESS_COMPRESSION
+    case C_Destination_Options::BRLG:
+        Quality_Settings = false;
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("A lossless data compression format that uses CPU and or GPU for processing");
+        break;
+#endif
+
 #ifdef USE_BASIS
     case C_Destination_Options::BASIS:
         Quality_Settings = true;
@@ -551,6 +561,7 @@ void CImagePropertyView::compressionValueChanged(QVariant& value) {
         m_infotext->append("The latest block Compression format designed to support high-speed compression");
         break;
 #endif
+
     }
 
     if (m_propQuality) {

@@ -159,7 +159,9 @@ void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem* item) {
         m_infotext->append("<b>Compressed image views</b>");
         m_infotext->append("For compressed images this option selects how images are decompressed for viewing.");
         m_infotext->append("<b>Note:</b>");
+#if (OPTION_BUILD_ASTC == 1)
         m_infotext->append("For ASTC, GPU Decompress will not work until hardware supports it");
+#endif
         m_infotext->append("For ETCn, GPU Decompress with DirectX is not supported");
         m_infotext->append("For HDR image view, decode with OpenGL is not supported. It may appear darker.");
     }
@@ -213,11 +215,20 @@ void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem* item) {
     } else if (text.compare(APP_Show_MSE_PSNR_SSIM_Results) == 0) {
         m_infotext->append("<b>Show MSE, PSNR and SSIM_Results</b>");
         m_infotext->append("Show these values after processing compressed images");
-    } else if (text.compare(APP_Show_Analysis_Results_Table) == 0) {
+        m_infotext->append("<b>Note</b> Analysis is not supported for processes that are: Lossless, HDR to LDR or LDR to HDR");
+    }
+    else if (text.compare(APP_Show_Analysis_Results_Table) == 0)
+    {
         m_infotext->append("<b>Show Analysis Results Table</b>");
         m_infotext->append("Show all Process Times, PSNR and SSIM results for compressed images in a table view");
+        m_infotext->append("<b>Note</b> Results are not shown for processes that are: Lossless, HDR to LDR or LDR to HDR");
     } else if (text.compare(APP_Render_Models_with) == 0) {
         m_infotext->append("<b>Selects how to render 3DModels files</b>");
+    }
+    else if (text.compare(APP_Use_Original_File_Names) == 0) {
+        m_infotext->append("<b>Use Original File Names</b>");
+        m_infotext->append("The destination file name will default to using the same name as the source file.");
+        m_infotext->append("This will only apply to the first destination for each source file to prevent file overwriting.");
     }
 }
 

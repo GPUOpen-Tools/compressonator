@@ -132,7 +132,9 @@ class CSetMeshOptions : public QDialog {
     QtProperty                  *m_propDestImage;
     QtProperty                  *m_propChannelWeight;
     QtProperty                  *m_propDXT1Alpha;
+#if (OPTION_BUILD_ASTC == 1)
     QtProperty                  *m_propASTCBlockRate;
+#endif
     QtProperty                  *m_propHDRProperties;
 
 

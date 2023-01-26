@@ -32,7 +32,7 @@
 #include "compressonator.h"
 #include "common.h"
 #include "accustomdockwidget.h"
-#include "plugininterface.h"
+#include "cmp_plugininterface.h"
 
 #define HIDE_VIEW_OPTIONS "Hide View Options"
 #define SHOW_VIEW_OPTIONS "Show View Options"

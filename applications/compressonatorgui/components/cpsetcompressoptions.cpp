@@ -80,22 +80,22 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget* parent)
     m_propChannelWeightingR = NULL;
     m_propChannelWeightingG = NULL;
     m_propChannelWeightingB = NULL;
-    m_propAlphaThreshold    = NULL;
-    m_propAdaptiveColor     = NULL;
-    m_propDefog             = NULL;
-    m_propExposure          = NULL;
-    m_propKneeLow           = NULL;
-    m_propKneeHigh          = NULL;
-    m_propGamma             = NULL;
-    m_propBitrate           = NULL;
-    isEditing               = false;
-    isInit                  = false;
-    isNoSetting             = false;
-    m_extnum                = 1;
+    m_propAlphaThreshold = NULL;
+    m_propAdaptiveColor = NULL;
+    m_propDefog = NULL;
+    m_propExposure = NULL;
+    m_propKneeLow = NULL;
+    m_propKneeHigh = NULL;
+    m_propGamma = NULL;
+    m_propBitrate = NULL;
+    m_isInit = false;
+    m_isEditing = false;
+    m_automaticProcessing = false;
+    m_extnum = 1;
 
     m_showDestinationEXTSetting = true;  // Show the FileFormat drop down list (DDS, KTX...)
-    m_showTheControllerSetting  = true;  // Show the FileFormat drop down list (DDS, KTX...)
-    m_showTheInfoTextSetting    = true;  // Show the Info Text
+    m_showTheControllerSetting = true;  // Show the FileFormat drop down list (DDS, KTX...)
+    m_showTheInfoTextSetting = true;  // Show the Info Text
 
     setWindowTitle(title);
     Qt::WindowFlags flags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
@@ -125,7 +125,10 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget* parent)
     for (i = m_supportedFormats.begin(); i != m_supportedFormats.end(); ++i) {
         QByteArray fformat = (*i);
         QString    item    = fformat;
-        if ((item != "ASTC") &&
+        if (
+#if (OPTION_BUILD_ASTC == 1)
+                (item != "ASTC") &&
+#endif
 #ifdef USE_BASIS
                 (item != "BASIS") &&
 #endif
@@ -330,34 +333,108 @@ bool CSetCompressOptions::updateFileFormat(QFileInfo& fileinfo) {
     return false;
 }
 
+QString CSetCompressOptions::GenerateDefaultDestName()
+{
+    bool useSourceName = false;
+
+    assert(m_item);
+
+    // determining if we should use the original source name or not
+    if (m_item && g_Application_Options.m_useOriginalFileNames)
+    {
+        QTreeWidgetItem* parent = m_item->parent();
+
+        if (parent && parent->childCount() <= 1)
+            useSourceName = true;
+        else if (!parent)
+            useSourceName = true;
+
+        // If the current source shares a name with another source in the project tree, we disable using the source name as the destination
+        QTreeWidget* root = m_item->treeWidget();
+        if (root)
+        {
+            std::unordered_map<std::string, int> fileNameCount;
+
+            int numItems = root->topLevelItemCount();
+            for (int i = 0; i < numItems; ++i)
+            {
+                QTreeWidgetItem* sourceItem = root->topLevelItem(i);
+
+                int itemType = 0;
+                {
+                    QVariant data = sourceItem->data(TREE_LevelType, Qt::UserRole);
+                    itemType = data.toInt();
+                }
+
+                if (itemType == TREETYPE_IMAGEFILE_DATA)
+                {
+                    QVariant v = sourceItem->data(TREE_SourceInfo, Qt::UserRole);
+                    if (!v.Invalid)
+                    {
+                        C_Source_Info* sourceData = v.value<C_Source_Info*>();
+                        if (sourceData)
+                        {
+                            QFileInfo fileInfo(sourceData->m_Full_Path);
+                            std::string itemString = fileInfo.baseName().toStdString();
+
+                            if (fileNameCount.find(itemString) == fileNameCount.end())
+                                fileNameCount[itemString] = 1;
+                            else
+                                ++fileNameCount[itemString];
+                        }
+                    }
+                }
+            }
+
+            if (fileNameCount[m_DestinationData.m_compname.toStdString()] > 1)
+                useSourceName = false;
+        }
+    }
+
+    QFileInfo sourceFileInfo(m_DestinationData.m_sourceFileNamePath);
+    QString srcExt = sourceFileInfo.suffix().toUpper();
+
+    QString name;
+
+    // we only use the original file name for the first destination of each file
+    if (useSourceName)
+        name = m_DestinationData.m_compname;
+    // default file name for 3D model data
+    else if (m_DestinationData.m_SourceType == TREETYPE_3DMODEL_DATA || 
+            (m_DestinationData.m_SourceType == TREETYPE_3DSUBMODEL_DATA && m_DestinationData.m_isModelData))
+        name = m_DestinationData.m_compname + "_" + QString::number(m_extnum);
+    // default file name for image data
+    else
+        name = m_DestinationData.m_compname + "_" + srcExt + "_" + GetFormatString() + "_" + QString::number(m_extnum);
+
+    return name;
+}
+
 void CSetCompressOptions::onSourceNameSelectionChanged(int index) {
     if (index < 0)
         return;
+    
     switch (m_DestinationData.m_SourceType) {
     case TREETYPE_3DSUBMODEL_DATA: {
-        bool isImage                    = m_CBSourceFile->itemData(index).toBool();
+        bool isImage = m_CBSourceFile->itemData(index).toBool();
         m_DestinationData.m_isModelData = !isImage;
+        
         if (isImage) {
             // default back to BC7
-            m_DestinationData.m_Compression = C_Destination_Options::eCompression::BC7;
+            m_DestinationData.m_Compression = C_Destination_Options::eCompression_options::BC7;
 
             QFileInfo fileInfo(m_CBSourceFile->itemText(index));
-            m_LEName->clear();
             m_DestinationData.m_compname = fileInfo.baseName();
 
             QFileInfo srcfileInfo(m_DestinationData.m_modelSource);
-            QString   srcPath                      = srcfileInfo.absolutePath();
+            QString srcPath = srcfileInfo.absolutePath();
             m_DestinationData.m_sourceFileNamePath = srcPath + "/" + m_CBSourceFile->itemText(index);
-            m_LEName->insert(m_DestinationData.m_compname + "_" + GetFormatString() + "_" + QString::number(m_extnum));
+
             m_DestinationData.compressionChanged((QVariant&)m_DestinationData.m_Compression);
         } else { // Processing a Model Mesh Data
             // default NONE
-            m_DestinationData.m_isModelData = true;
-
-            QFileInfo fileInfo(m_DestinationData.m_modelDest);
-            m_LEName->clear();
             m_DestinationData.m_compname = m_DestinationData.m_modelDest;
-            m_LEName->insert(m_DestinationData.m_compname);
+
             m_fileFormats->clear();
             QString ext = getFileExt(m_CBSourceFile->itemText(index));
             m_fileFormats->addItem(ext);
@@ -408,7 +485,7 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         m_propRefine->setHidden(true);
 
     // Get the source compression data
-    C_Destination_Options::eCompression comp = (C_Destination_Options::eCompression&)value;
+   C_Destination_Options::eCompression_options comp = (C_Destination_Options::eCompression_options&)value;
 
     // Backup the original source in case user cancels the dialog or wants to revert settings
     m_DestinationData.m_Compression = comp;
@@ -761,6 +838,20 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         m_infotext->append("The latest block Compression (GTC) format designed to support super fast compression of RGB LDR color spaces.");
         break;
 #endif
+#ifdef USE_GUI_LOSSLESS_COMPRESSION
+    case C_Destination_Options::BRLG:
+        useQualityOption    = false; 
+        compressedOptions   = true;
+        colorWeightOptions  = false;
+        alphaChannelOptions = false;
+        codecBlockOptions   = false;
+        extension           = "BRLG";
+        m_fileFormats->addItem("BRLG");
+        m_infotext->clear();
+        m_infotext->append("<b>Format Description</b>");
+        m_infotext->append("A lossless data compression format that uses GPU for processing");
+        break;
+#endif
 #ifdef USE_APC
     case C_Destination_Options::APC:
         compressedOptions   = true;
@@ -821,6 +912,7 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("ETC (Ericsson Texture Compression, lossy texture compression developed by Ericsson Research.)");
         break;
+#if (OPTION_BUILD_ASTC == 1)
     case C_Destination_Options::ASTC:
         compressedOptions   = true;
         colorWeightOptions  = false;
@@ -840,6 +932,7 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         m_infotext->append("ASTC (Adaptive Scalable Texture Compression),lossy block-based texture compression developed with ARM.");
 
         break;
+#endif
     default:
         m_infotext->clear();
         m_fileFormats->addItems(m_AllFileTypes);
@@ -940,13 +1033,15 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
     // Update Compression Name
     m_LEName->clear();
 
+    QString destFileName = GenerateDefaultDestName();
+    m_LEName->insert(destFileName);
+
     switch (m_DestinationData.m_SourceType) {
     case TREETYPE_3DMODEL_DATA: {
         // Restrict destination to DDS files
         m_fileFormats->clear();
         QString ext = getFileExt(m_DestinationData.m_modelDest);
         m_fileFormats->addItem(ext);
-        m_LEName->insert(m_DestinationData.m_compname + "_" + QString::number(m_extnum));
     }
     break;
     case TREETYPE_3DSUBMODEL_DATA: {
@@ -954,7 +1049,6 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         if (m_DestinationData.m_isModelData) {
             QString ext = getFileExt(m_DestinationData.m_sourceFileNamePath);
             m_fileFormats->addItem(ext);
-            m_LEName->insert(m_DestinationData.m_compname + "_" + QString::number(m_extnum));
 
             if (m_propFormat) {
                 m_propFormat->setHidden(true);
@@ -970,7 +1064,6 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         } else {
             // Restrict destination to DDS files
             m_fileFormats->addItem("DDS");
-            m_LEName->insert(m_DestinationData.m_compname + "_" + GetFormatString() + "_" + QString::number(m_extnum));
 
             if (m_propFormat) {
                 m_propFormat->setHidden(false);
@@ -989,8 +1082,6 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
     break;
     case TREETYPE_IMAGEFILE_DATA:
     default: {
-        m_LEName->insert(m_DestinationData.m_compname + "_" + GetFormatString() + "_" + QString::number(m_extnum));
-
         if (m_propFormat) {
             m_propFormat->setHidden(false);
         }
@@ -1201,7 +1292,7 @@ void CSetCompressOptions::resetData() {
 
 QString CSetCompressOptions::GetFormatString() {
     QMetaObject meta                = C_Destination_Options::staticMetaObject;
-    int         indexCompression    = meta.indexOfEnumerator("eCompression");
+    int         indexCompression    = meta.indexOfEnumerator("eCompression_options");
     QMetaEnum   metaEnumCompression = meta.enumerator(indexCompression);
     QString     format              = metaEnumCompression.valueToKey(m_DestinationData.m_Compression);
     return format;
@@ -1215,41 +1306,37 @@ QString CSetCompressOptions::GetFormatString() {
 bool CSetCompressOptions::updateDisplayContent() {
     bool isModelType = true;
 
-    isEditing = true;
+    m_isEditing = true;
 
     m_dataOriginal << m_DestinationData;
 
-    // Check source file extension for special cases
-    //m_data.m_settoUseOnlyBC6 = false;
-    QFileInfo fi(m_DestinationData.m_sourceFileNamePath);
-    m_srcext = fi.suffix().toUpper();
 
     // Compression Name
     m_LEName->clear();
+
+    m_DestinationData.m_FileInfoDestinationName = m_DestinationData.m_compname;
+
+    QString destFileName = GenerateDefaultDestName();
+    m_LEName->insert(destFileName);
+
     switch (m_DestinationData.m_SourceType) {
-    case TREETYPE_3DMODEL_DATA: {
-        m_DestinationData.m_FileInfoDestinationName = m_DestinationData.m_compname;
-        m_LEName->insert(m_DestinationData.m_compname + "_" + QString::number(m_extnum));
-    }
-    break;
     case TREETYPE_3DSUBMODEL_DATA: {
         if (m_DestinationData.m_isModelData) {
             if (m_DestinationData.m_modelSource.length() > 0) {
                 QFileInfo fi(m_DestinationData.m_modelSource);
-                QString   m_modelext = fi.suffix().toUpper();
+                QString modelExt = fi.suffix().toUpper();
+
                 // Set some start up default views for the destination data to be edited
                 m_DestinationData.InitOptimizationSettings();
                 m_DestinationData.InitCompSettings();
                 m_DestinationData.setDo_Mesh_Optimization(m_DestinationData.AutoOpt);
                 m_DestinationData.setDo_Mesh_Compression(m_DestinationData.NoComp);
-                if (m_modelext.compare("OBJ") == 0 || m_modelext.compare("GLTF") == 0)
+
+                if (modelExt.compare("OBJ") == 0 || modelExt.compare("GLTF") == 0)
                     m_DestinationData.hide_mesh_compression_settings(false);
                 else
                     m_DestinationData.hide_mesh_compression_settings(true);
             }
-
-            m_DestinationData.m_FileInfoDestinationName = m_DestinationData.m_compname;
-            m_LEName->insert(m_DestinationData.m_compname + "_" + QString::number(m_extnum));
 
             if (m_propQuality) {
                 m_propQuality->setHidden(true);
@@ -1274,10 +1361,6 @@ bool CSetCompressOptions::updateDisplayContent() {
                 m_propMeshSettings->setHidden(false);
 #endif
         } else {
-            m_DestinationData.m_compname                = m_DestinationData.m_compname + "_" + m_srcext;
-            m_DestinationData.m_FileInfoDestinationName = m_DestinationData.m_compname;
-            m_LEName->insert(m_DestinationData.m_compname + "_" + GetFormatString() + "_" + QString::number(m_extnum));
-
             if (m_propQuality) {
                 m_propQuality->setHidden(false);
             }
@@ -1309,10 +1392,6 @@ bool CSetCompressOptions::updateDisplayContent() {
     break;
     case TREETYPE_IMAGEFILE_DATA:
     default: {
-        m_DestinationData.m_compname                = m_DestinationData.m_compname + "_" + m_srcext;
-        m_DestinationData.m_FileInfoDestinationName = m_DestinationData.m_compname;
-        m_LEName->insert(m_DestinationData.m_compname + "_" + GetFormatString() + "_" + QString::number(m_extnum));
-
         m_propMeshOptimizerSettings = m_theController->getProperty(MESH_OPTIMIZER_SETTING_CLASS_NAME);
         if (m_propMeshOptimizerSettings)
             m_propMeshOptimizerSettings->setHidden(true);
@@ -1333,7 +1412,7 @@ bool CSetCompressOptions::updateDisplayContent() {
     // Destination FileName
     QString   FileName;
     QFileInfo fileinfo;
-    //if (isInit)
+    //if (m_isInit)
     //{
     //    fileinfo.setFile(m_data.m_destFileNamePath);
     //    m_DestinationFolder->setText(m_destFilePath);
@@ -1361,7 +1440,7 @@ bool CSetCompressOptions::updateDisplayContent() {
         }
 
         m_DestinationFolder->setText(DestFolder);
-        isInit = true;
+        m_isInit = true;
     }
 
     //m_DestinationFile->setText(FileName);
@@ -1491,41 +1570,21 @@ void CSetCompressOptions::setMinMaxStep(QtVariantPropertyManager* manager, QtPro
 }
 
 void CSetCompressOptions::onPBCancel() {
-    isNoSetting = false;
+    m_automaticProcessing = false;
+    m_isEditing = false;
+
     resetData();
     hide();
-    isEditing = false;
 
-    // Obtain the Parent and its data
-    // and reset the num of extension counts for that image
-    QTreeWidgetItem* parent = m_item->parent();
-    if (parent) {
-        // Varify its root
-        QVariant v               = parent->data(TREE_LevelType, Qt::UserRole);
-        int      ParentlevelType = v.toInt();
-        if (ParentlevelType == TREETYPE_IMAGEFILE_DATA) {
-            QVariant       v           = parent->data(TREE_SourceInfo, Qt::UserRole);
-            C_Source_Info* m_imagefile = v.value<C_Source_Info*>();
-            if (m_imagefile)
-                m_imagefile->m_extnum--;
-        }
-        if (ParentlevelType == TREETYPE_3DMODEL_DATA) {
-            QVariant        v            = parent->data(TREE_SourceInfo, Qt::UserRole);
-            C_3DModel_Info* m_sourcefile = v.value<C_3DModel_Info*>();
-            if (m_sourcefile)
-                m_sourcefile->m_extnum -= 2;
-        }
-    }
+    ReduceNumChildrenIndex();
 }
 
 void CSetCompressOptions::SaveCompressedInfo() {
-    if (!isNoSetting) {
+    if (!m_automaticProcessing) {
         m_DestinationData.m_compname = m_LEName->displayText();
-    } else {
-        QString temp = m_LEName->displayText();
-        int     ind  = temp.indexOf('_');
-        temp         = temp.mid(ind);
-        m_DestinationData.m_compname.append(temp);
+    }
+    else {
+        m_DestinationData.m_compname = GenerateDefaultDestName();
     }
 
     if (m_DestinationData.m_compname == "") {
@@ -1626,11 +1685,11 @@ void CSetCompressOptions::SaveCompressedInfo() {
 
     emit SaveCompressSettings(m_item, m_DestinationData);
     hide();
-    isEditing = false;
+    m_isEditing = false;
 }
 
 void CSetCompressOptions::PBSaveCompressSetting() {
-    if (!isNoSetting) {
+    if (!m_automaticProcessing) {
         SaveCompressedInfo();
     } else
         hide();
@@ -1675,7 +1734,7 @@ void CSetCompressOptions::PBSaveCompressSetting() {
     //                break;
     //        }
     //
-    //        isNoSetting = false; //reset value
+    //        m_automaticProcessing = false; //reset value
     //        m_LEName->setEnabled(true); //re-enable file naming
     //    }
 }
@@ -1696,5 +1755,40 @@ void CSetCompressOptions::onDestFileFolder() {
     QString fileFolder = QFileDialog::getExistingDirectory(this, tr("Destination Folder"), m_DestinationFolder->text());
     if (fileFolder.length() > 0) {
         m_DestinationFolder->setText(fileFolder);
+    }
+}
+
+void CSetCompressOptions::closeEvent(QCloseEvent* e)
+{
+    m_isEditing = false;
+    m_automaticProcessing = false;
+
+    resetData();
+    ReduceNumChildrenIndex();
+
+    QDialog::closeEvent(e);
+}
+
+void CSetCompressOptions::ReduceNumChildrenIndex()
+{
+    // Obtain the Parent and its data
+    // and reset the num of extension counts for that image
+    QTreeWidgetItem* parent = m_item->parent();
+    if (parent) {
+        // Varify its root
+        QVariant v = parent->data(TREE_LevelType, Qt::UserRole);
+        int ParentlevelType = v.toInt();
+        if (ParentlevelType == TREETYPE_IMAGEFILE_DATA) {
+            QVariant v = parent->data(TREE_SourceInfo, Qt::UserRole);
+            C_Source_Info* m_imagefile = v.value<C_Source_Info*>();
+            if (m_imagefile)
+                m_imagefile->m_extnum--;
+        }
+        if (ParentlevelType == TREETYPE_3DMODEL_DATA) {
+            QVariant v = parent->data(TREE_SourceInfo, Qt::UserRole);
+            C_3DModel_Info* m_sourcefile = v.value<C_3DModel_Info*>();
+            if (m_sourcefile)
+                m_sourcefile->m_extnum -= 2;
+        }
     }
 }

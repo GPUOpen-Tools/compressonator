@@ -23,7 +23,7 @@
 
 #include "cp3dmodelview.h"
 #include "cpmaincomponents.h"
-#include <gltf/gltfcommon.h>
+#include <gltf/cmp_gltfcommon.h>
 #include <gltf/tiny_gltf2.h>
 #include <gltf/tiny_gltf2_utils.h>
 //----------------------------------------
@@ -810,9 +810,9 @@ cp3DModelView::cp3DModelView(const QString filePathName, const QString filePathN
                 if (data && m_isviewingDX12)
                 {
                     if ((strcmp(c_ext, "BIN") == 0))
-                        ((GLTFCommon*)data)->isBinFile = true;
+                        ((CMP_GLTFCommon*)data)->isBinFile = true;
                     else
-                        ((GLTFCommon*)data)->isBinFile = false;
+                        ((CMP_GLTFCommon*)data)->isBinFile = false;
                 }
 
                 void* result = NULL;

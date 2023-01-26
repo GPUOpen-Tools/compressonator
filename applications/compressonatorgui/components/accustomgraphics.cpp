@@ -389,7 +389,7 @@ void acCustomGraphicsImageItem::UpdateImage() {
         // Set channel mapping and Alpha
         for (int x = 0; x < image.width(); x++) {
             for (int y = 0; y < image.height(); y++) {
-                QColor color(image.pixel(x, y));
+                QColor color = image.pixelColor(x, y);
                 if (m_GrayScale) {
                     // Note qGray() actually computes luminosity using the formula (r*11 + g*16 + b*5)/32.
                     int gray = (color.red() + color.green() + color.blue()) / 3;
@@ -402,7 +402,7 @@ void acCustomGraphicsImageItem::UpdateImage() {
                     if (!m_ChannelB)
                         color.setBlue(0);
                     if (m_ChannelA)
-                        color.setAlpha(m_alpha);
+                        color.setAlpha(255);
                     image.setPixel(x, y, color.rgba());
                 }
             }
@@ -434,7 +434,7 @@ void acCustomGraphicsImageItem::UpdateImage() {
         int r, g, b;
         for (int x = 0; x < image.width(); x++) {
             for (int y = 0; y < image.height(); y++) {
-                QColor color(image.pixel(x, y));
+                QColor color = image.pixelColor(x, y);
                 r = (color.red() * m_fContrast) + m_iBrightness;
                 g = (color.green() * m_fContrast) + m_iBrightness;
                 b = (color.blue() * m_fContrast) + m_iBrightness;
