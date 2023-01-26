@@ -102,29 +102,42 @@ static std::string GetFilePathExtension(const std::string &FileName) {
     return "";
 }
 
+static void SplitFilePath(const char* filePath, std::string& fileDir, std::string& fileName)
+{
+    std::string filePathString(filePath);
+
+    fileDir = "";
+    fileName = filePathString;
+
+    size_t fileNameIndex = filePathString.find_last_of("/\\");
+    if (fileNameIndex != std::string::npos)
+    {
+        fileDir = filePathString.substr(0, fileNameIndex + 1);
+        fileName = filePathString.substr(fileNameIndex + 1, std::string::npos);
+    }
+}
+
 int Plugin_glTF_Loader::LoadModelData(const char* pszFilename, const char* pszFilename2, void *pluginManager, void *msghandler, CMP_Feedback_Proc pFeedbackProc) {
     int result = 0;
-    char drive[_MAX_DRIVE];
-    char dir[_MAX_DIR];
-    char fname[_MAX_FNAME];
-    char ext[_MAX_EXT];
 
     m_gltfLoader[0].m_filename = "";
     m_gltfLoader[1].m_filename = "";
 
-    if (pszFilename) {
+    if (pszFilename)
+    {
+        std::string directory;
+        std::string fileName;
+        SplitFilePath(pszFilename, directory, fileName);
 
-        std::string FilePathName(pszFilename);
-        _splitpath_s(pszFilename, drive, _MAX_DRIVE, dir, _MAX_DIR, fname, _MAX_FNAME, ext, _MAX_EXT);
-        std::string Path(dir);
-        std::string File(fname);
-        File.append(ext);
         double timeNow = MillisecondsNow();
         m_gltfLoader[0].m_CommonLoadTime = 0;
-        result = m_gltfLoader[0].Load(Path, File, g_CMIPS);
+
+        result = m_gltfLoader[0].Load(std::move(directory), std::move(fileName), g_CMIPS);
+        
         m_gltfLoader[0].m_CommonLoadTime = MillisecondsNow() - timeNow;
+
         if (result == 0)
-            m_gltfLoader[0].m_filename = FilePathName;
+            m_gltfLoader[0].m_filename = pszFilename;
         else
             return -2;
 
@@ -154,18 +167,21 @@ int Plugin_glTF_Loader::LoadModelData(const char* pszFilename, const char* pszFi
     } else
         return -1;
 
-    if (strlen(pszFilename2) > 0) {
-        std::string FilePathName(pszFilename2);
-        _splitpath_s(pszFilename2, drive, _MAX_DRIVE, dir, _MAX_DIR, fname, _MAX_FNAME, ext, _MAX_EXT);
-        std::string Path(dir);
-        std::string File(fname);
-        File.append(ext);
+    if (pszFilename2 && strlen(pszFilename2) > 0)
+    {
+        std::string directory;
+        std::string fileName;
+        SplitFilePath(pszFilename2, directory, fileName);
+
         double timeNow = MillisecondsNow();
         m_gltfLoader[1].m_CommonLoadTime = 0;
-        result = m_gltfLoader[1].Load(Path, File, g_CMIPS);
+
+        result = m_gltfLoader[1].Load(std::move(directory), std::move(fileName), g_CMIPS);
+        
         m_gltfLoader[1].m_CommonLoadTime = MillisecondsNow() - timeNow;
+
         if (result == 0)
-            m_gltfLoader[1].m_filename = FilePathName;
+            m_gltfLoader[1].m_filename = pszFilename2;
         else
             return -3;
 
@@ -174,17 +190,17 @@ int Plugin_glTF_Loader::LoadModelData(const char* pszFilename, const char* pszFi
             tinygltf2::TinyGLTF loader;
             std::string err;
             bool ret = false;
-            std::string ext = GetFilePathExtension(pszFilename);
+            std::string ext = GetFilePathExtension(pszFilename2);
             if (ext.compare("glb") == 0) {
                 // assume binary glTF.
-                ret = loader.LoadBinaryFromFile(&m_gltfLoader[1].m_model, &err, pszFilename);
+                ret = loader.LoadBinaryFromFile(&m_gltfLoader[1].m_model, &err, pszFilename2);
             } else {
                 // assume ascii glTF.
-                ret = loader.LoadASCIIFromFile(&m_gltfLoader[1].m_model, &err, pszFilename);
+                ret = loader.LoadASCIIFromFile(&m_gltfLoader[1].m_model, &err, pszFilename2);
             }
             if (!ret) {
                 if (g_CMIPS)
-                    g_CMIPS->Print("Failed to load .gltf file: %s", pszFilename);
+                    g_CMIPS->Print("Failed to load .gltf file: %s", pszFilename2s);
 
                 // return -1;  Ignore for now until we fully utilize the replacement:::
             }
@@ -200,30 +216,23 @@ int Plugin_glTF_Loader::LoadModelData(const char* pszFilename, const char* pszFi
 }
 
 int Plugin_glTF_Loader::SaveModelData(const char* pdstFilename, void* meshData) {
-    GLTFCommon *gltfData  = reinterpret_cast<GLTFCommon *> (meshData);
+    CMP_GLTFCommon* gltfData = reinterpret_cast<CMP_GLTFCommon*>(meshData);
     if (!gltfData) {
         if (g_CMIPS)
-            g_CMIPS->Print("Failed to write .gltf file, data is empty.: %s", pdstFilename);
+            g_CMIPS->Print("Failed to write .gltf file, data is empty: %s\n", pdstFilename);
 
         return -1;
     }
 
-    char drive[_MAX_DRIVE];
-    char dir[_MAX_DIR];
-    char fname[_MAX_FNAME];
-    char ext[_MAX_EXT];
+    std::string directory;
+    std::string fileName;
+    SplitFilePath(pdstFilename, directory, fileName);
 
-    std::string FilePathName(pdstFilename);
-    _splitpath_s(pdstFilename, drive, _MAX_DRIVE, dir, _MAX_DIR, fname, _MAX_FNAME, ext, _MAX_EXT);
-    std::string Path(dir);
-    std::string File(fname);
-    File.append(ext);
-
-    int result = gltfData->Save(Path, File, g_CMIPS);
+    int result = gltfData->Save(std::move(directory), std::move(fileName), g_CMIPS);
 
     if (result != 0) {
         if (g_CMIPS)
-            g_CMIPS->Print("Failed to write .gltf file: %s", pdstFilename);
+            g_CMIPS->Print("Failed to write .gltf file: %s\n", pdstFilename);
 
         return -1;
     }
@@ -231,7 +240,7 @@ int Plugin_glTF_Loader::SaveModelData(const char* pdstFilename, void* meshData) 
     std::ofstream ofstreamdest(pdstFilename, std::ios_base::out);
     if (!ofstreamdest) {
         if (g_CMIPS)
-            g_CMIPS->Print("Failed to write .gltf file: %s", pdstFilename);
+            g_CMIPS->Print("Failed to write .gltf file: %s\n", pdstFilename);
 
         return -1;
     }
@@ -244,7 +253,7 @@ int Plugin_glTF_Loader::SaveModelData(const char* pdstFilename, void* meshData) 
 
     if (!loader.WriteGltfSceneToFile(&gltfData->m_model, pdstFilename)) {
         if (g_CMIPS)
-            g_CMIPS->Print("Failed to write .gltf file: %s", pdstFilename);
+            g_CMIPS->Print("Failed to write .gltf file: %s\n", pdstFilename);
     }
 #endif
 

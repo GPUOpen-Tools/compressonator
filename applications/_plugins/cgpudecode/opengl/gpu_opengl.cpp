@@ -184,6 +184,7 @@ unsigned int GPU_OpenGL::MIP2OLG_Format(const CMP_Texture* pSourceTexture) {
     case CMP_FORMAT_ETC2_SRGBA1:
         m_GLnum = GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2;
         break;
+#if (OPTION_BUILD_ASTC == 1)
     case CMP_FORMAT_ASTC:
         if ((pSourceTexture->nBlockWidth == 4) && (pSourceTexture->nBlockHeight == 4))
             m_GLnum = GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
@@ -216,6 +217,7 @@ unsigned int GPU_OpenGL::MIP2OLG_Format(const CMP_Texture* pSourceTexture) {
         else
             m_GLnum = GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
         break;
+#endif
     default:
         m_GLnum = GL_INVALID_ENUM;
         break;
@@ -329,7 +331,8 @@ CMP_ERROR WINAPI GPU_OpenGL::Decompress(
                 )
            glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_BGRA_EXT, GL_BYTE, pDestTexture->pData);
         else {
-            if (pDestTexture->format == CMP_FORMAT_ARGB_16F)
+            if ((pDestTexture->format == CMP_FORMAT_ARGB_16F) || // Fix or remove this line 
+                (pDestTexture->format == CMP_FORMAT_RGBA_16F))
             {
                 glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_RGBA, GL_HALF_FLOAT, pDestTexture->pData);
             }

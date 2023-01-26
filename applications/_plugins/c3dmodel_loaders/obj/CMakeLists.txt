@@ -15,7 +15,6 @@ target_sources(ModelLoader_obj PRIVATE
 target_link_libraries(ModelLoader_obj PRIVATE
     CMP_Compressonator
     CMP_Framework
-    # CMP_MeshCompressor
     CMP_Common
 )
 
@@ -33,4 +32,4 @@ set_target_properties(ModelLoader_obj PROPERTIES
     FOLDER "Plugin_Dynamic/3DModel_Loaders"
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin/debug/plugins"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/release/plugins"
-    )
+)

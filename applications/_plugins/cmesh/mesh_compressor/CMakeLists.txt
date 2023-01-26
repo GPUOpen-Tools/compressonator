@@ -31,4 +31,4 @@ set_target_properties(Mesh_Compressor PROPERTIES
         FOLDER "Plugin_Dynamic/Mesh_Compression"
         RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin/debug/plugins"
         RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/release/plugins"
-        )
+)

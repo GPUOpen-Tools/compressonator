@@ -29,7 +29,7 @@
 #endif // _MSC_VER > 1000
 
 #include "gpu_directx.h"
-#include "plugininterface.h"
+#include "cmp_plugininterface.h"
 
 #include <assert.h>
 #include <tchar.h>

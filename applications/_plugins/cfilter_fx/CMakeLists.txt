@@ -1,8 +1,8 @@
 
 if (OPTION_CMP_DIRECTX )
 link_directories(
-    ${PROJECT_SOURCE_DIR}/../common/lib/ext/directxtex/DirectXTex-jun2020b/DirectXTex/Bin/Desktop_2017/x64/Release
-    ${PROJECT_SOURCE_DIR}/../common/lib/ext/directxtex/DirectXTex-jun2020b/DirectXTex/Bin/Desktop_2017/x64/Debug
+    ${PROJECT_SOURCE_DIR}/../common/lib/ext/directxtex/DirectXTex-jun2020b/DirectXTex/Bin/Desktop_2019/x64/Release
+    ${PROJECT_SOURCE_DIR}/../common/lib/ext/directxtex/DirectXTex-jun2020b/DirectXTex/Bin/Desktop_2019/x64/Debug
     )
 endif()
 
@@ -17,6 +17,8 @@ target_sources(Image_FilterFX PRIVATE
     gpuresources_cas.h
     gpuresources_dx11.cpp
     gpuresources_dx11.h
+    gpuresources_fsr.cpp
+    gpuresources_fsr.h
 )
 
 # Experimental FXC code
@@ -38,6 +40,8 @@ target_include_directories(Image_FilterFX PUBLIC
     ${PROJECT_SOURCE_DIR}/cmp_framework/common/half     # half.h
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common  # tc_pluginapi.h
 )
+
+add_compile_definitions(USE_FSR)     # Super Resolution Upscaling
 
 target_link_libraries(Image_FilterFX PRIVATE
     CMP_Compressonator

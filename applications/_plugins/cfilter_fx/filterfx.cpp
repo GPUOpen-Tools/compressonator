@@ -122,7 +122,8 @@ int Plugin_CFilterFx::TC_CFilter(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSet, C
 
     switch (srcMipSet->m_format)
     {
-    case CMP_FORMAT_ABGR_16F:
+    case CMP_FORMAT_ABGR_16F: // fix this to a proper DXGI mapping
+    case CMP_FORMAT_RGBA_16F:
         d3dTextureFormat  = DXGI_FORMAT_R16G16B16A16_FLOAT;
         rgbaBytesPerPixel = 8;
         break;

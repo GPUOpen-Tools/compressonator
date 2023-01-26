@@ -975,6 +975,7 @@ VkFormat GPU_Vulkan::MIP2VK_Format(const CMP_Texture* pSourceTexture)
     case CMP_FORMAT_ETC2_SRGBA1:
         m_VKnum = VK_FORMAT_ETC2_R8G8B8A1_SRGB_BLOCK;
         break;
+#if (OPTION_BUILD_ASTC == 1)
     case CMP_FORMAT_ASTC:
         if ((pSourceTexture->nBlockWidth == 4) && (pSourceTexture->nBlockHeight == 4))
             m_VKnum = VK_FORMAT_ASTC_4x4_UNORM_BLOCK;
@@ -1007,6 +1008,7 @@ VkFormat GPU_Vulkan::MIP2VK_Format(const CMP_Texture* pSourceTexture)
         else
             m_VKnum = VK_FORMAT_ASTC_4x4_UNORM_BLOCK;
         break;
+#endif
     default:
         m_VKnum = VK_FORMAT_UNDEFINED;
         break;
@@ -1931,6 +1933,7 @@ bool GPU_Vulkan::isSupportVersion()
         return true;
 }
 
+#if (OPTION_BUILD_ASTC == 1)
 bool GPU_Vulkan::isSupportASTC()
 {
     VkPhysicalDeviceFeatures deviceFeature;
@@ -1941,6 +1944,7 @@ bool GPU_Vulkan::isSupportASTC()
     else
         return true;
 }
+#endif
 
 //--------------------------------------------------------------------------------------
 #pragma warning(suppress : 6262)
@@ -1958,6 +1962,7 @@ CMP_ERROR WINAPI GPU_Vulkan::Decompress(const CMP_Texture* pSourceTexture, CMP_T
     if (!initVulkan(m_tenableValidation))
         return CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB;
 
+#if (OPTION_BUILD_ASTC == 1)
     // Check for device feature for ASTC decode only
     if (pSourceTexture->format == CMP_FORMAT_ASTC)
     {
@@ -1967,6 +1972,7 @@ CMP_ERROR WINAPI GPU_Vulkan::Decompress(const CMP_Texture* pSourceTexture, CMP_T
             return CMP_ERR_UNSUPPORTED_GPU_ASTC_DECODE;
         }
     }
+#endif
 
     swapChain.initSurface(m_hInstance, m_hWnd, pDestTexture->format);
 

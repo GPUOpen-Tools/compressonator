@@ -35,6 +35,7 @@
 #include "compute_cpu_hpc.h"
 #include "compressonator.h"
 #include "plugininterface.h"
+#include "cmp_plugininterface.h"
 #include "cmp_math_common.h"
 //#include "debug.h"
 
@@ -66,13 +67,6 @@ class Plugin_CCPU_HPC : public PluginInterface_Pipeline {
 
   private:
     ComputeBase  *m_pComputeBase;
-#ifdef ENABLE_MAKE_COMPATIBLE_API
-    bool IsFloatFormat(CMP_FORMAT InFormat);
-    float findKneeValueHPC(float x, float y);
-    CMP_ERROR Byte2HalfShort(CMP_HALFSHORT* hfBlock, CMP_BYTE* cBlock, CMP_DWORD dwBlockSize);
-    CMP_ERROR Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, MipSet& srcTexture, const CMP_CompressOptions* pOptions);
-    CMP_ERROR CF_16BitTo8Bit(CMP_WORD* sBlock, CMP_BYTE* cBlock, CMP_DWORD dwBlockSize);
-#endif
 };
 
 #endif

@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2021 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,13 +22,11 @@
 // THE SOFTWARE.
 //
 
-#ifndef _PLUGIN_IMAGE_FILTERFX_H
-#define _PLUGIN_IMAGE_FILTERFX_H
+#ifndef _GPURESOURCES_FSR_FILTERFX_H
+#define _GPURESOURCES_FSR_FILTERFX_H
 
 #include "plugininterface.h"
-#include "cmp_plugininterface.h"
 
-#ifdef _WIN32
 #include <Windows.h>
 #include <atlbase.h>  // CComPtr
 #include "d3d11.h"
@@ -41,35 +39,54 @@
 #include <cstdio>
 #include <cassert>
 
-#ifdef _WIN32
-#include "gpuresources.h"
-#endif
+#include "gpuresources_dx11.h"
 
-// {3AF62198-7326-48FA-B1FB-1D12A355694D}
-static const GUID g_GUID = {0x3af62198, 0x7326, 0x48fa, {0xb1, 0xfb, 0x1d, 0x12, 0xa3, 0x55, 0x69, 0x4d}};
-#else
-static const GUID g_GUID = {0};
-#endif
+#define A_CPU 1
+#define USE_CMP_FIDELITY_FX_H
+#include "common_def.h"
+#include "ffx_fsr1.h"
 
-#define TC_PLUGIN_VERSION_MAJOR 1
-#define TC_PLUGIN_VERSION_MINOR 0
+namespace FSR_EASU
+{
+#include "./compiled/fsr_easu.h"
+}
 
-class Plugin_CFilterFx : public PluginInterface_Filters
+namespace FSR_BILINEAR
+{
+#include "./compiled/fsr_bilinear.h"
+}
+
+namespace FSR_RCAS
+{
+#include "./compiled/fsr_rcas.h"
+}
+
+class GpuResources_fsr : public GpuResources_dx11
 {
 public:
-    Plugin_CFilterFx();
-    virtual ~Plugin_CFilterFx();
+    GpuResources_fsr();
+    void InitBuffers_fsr();
+    void GpuCompileShaders_fsr(CMP_FORMAT format, bool useSRGB);
 
-    int TC_PluginSetSharedIO(void* Shared);
-    int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
-    int TC_CFilter(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSet, CMP_CFilterParams* pCFilterParams);
+    void FSR_EASU(ID3D11UnorderedAccessView* dstUav, uvec2 dstSize, ID3D11ShaderResourceView* srcSrv, uvec2 srcSize) const;
+    void FSR_BILINEAR(ID3D11UnorderedAccessView* dstUav, uvec2 dstSize, ID3D11ShaderResourceView* srcSrv, uvec2 srcSize) const;
+    void FSR_RCAS(bool hdr, float sharpness, ID3D11UnorderedAccessView* dstUav, uvec2 dstSize, ID3D11ShaderResourceView* srcSrv, uvec2 srcSize) const;
 
 private:
-    void Error(TCHAR* pszCaption, TC_ErrorLevel errorLevel, UINT nErrorString);
-    bool initialized = false;
-#ifdef _WIN32
-    std::unique_ptr<GpuResources> m_GpuResources;
-#endif
+
+    struct ConstantBufferStructureFSR
+    {
+        varAU4(const0);
+        varAU4(const1);
+        varAU4(const2);
+        varAU4(const3);
+        varAU4(sample);
+    };
+
+    static void GetShaderCode_FSR_EASU(const BYTE*& outCode_FSR,size_t& outCodeSize_FSR);
+    static void GetShaderCode_FSR_BILINEAR(const BYTE*& outCode_FSR,size_t& outCodeSize_FSR);
+    static void GetShaderCode_FSR_RCAS(const BYTE*& outCode_FSR,size_t& outCodeSize_FSR);
 };
+
 
 #endif

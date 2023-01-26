@@ -1,6 +1,6 @@
 
 link_directories(
-    ${PROJECT_SOURCE_DIR}/../common/lib/ext/directxtex/DirectXTex-jun2020b/DirectXTex/Bin/Desktop_2017/x64/$<$<CONFIG:Debug>:debug>$<$<CONFIG:Release>:release>
+    ${PROJECT_SOURCE_DIR}/../common/lib/ext/directxtex/DirectXTex-jun2020b/DirectXTex/Bin/Desktop_2019/x64/$<$<CONFIG:Debug>:debug>$<$<CONFIG:Release>:release>
     )
 
 add_library(GPUDecode_DirectX SHARED)
@@ -19,8 +19,7 @@ target_link_libraries(GPUDecode_DirectX PRIVATE
         CMP_Compressonator
         CMP_Framework
         CMP_GpuDecode
-
-        ExtDirectX
+        ExtDirectXTex
 )
 
 target_include_directories(GPUDecode_DirectX PRIVATE

@@ -148,7 +148,9 @@ class GPU_Vulkan : public RenderWindow {
     VkResult createInstance(bool enableValidation);
     VkResult createDevice(VkDeviceQueueCreateInfo requestedQueues, bool enableValidation);
     bool initVulkan(bool enableValidation);
+#if (OPTION_BUILD_ASTC == 1)
     bool isSupportASTC();
+#endif
     bool isSupportVersion();
     void submitPostPresentBarrier(VkImage image);
     void submitPrePresentBarrier(VkImage image);

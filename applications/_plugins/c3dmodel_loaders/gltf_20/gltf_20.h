@@ -25,8 +25,8 @@
 #define _PLUGIN_IMAGE_BMP_H
 
 
+#include "cmp_gltfcommon.h"
 #include "plugininterface.h"
-#include "gltfcommon.h"
 
 #ifdef _WIN32
 // {2505D1C0-D0F3-4E57-BCED-8358689D3FCC}
@@ -49,7 +49,7 @@ class Plugin_glTF_Loader : public PluginInterface_3DModel_Loader {
     int LoadModelData(const char* pszFilename, const char* pszFilename2, void *pluginManager, void *msghandler, CMP_Feedback_Proc pFeedbackProc);
     int SaveModelData(const char* pdstFilename, void* meshData);
   private:
-    GLTFCommon       m_gltfLoader[2];
+    CMP_GLTFCommon m_gltfLoader[2];
 
 };
 

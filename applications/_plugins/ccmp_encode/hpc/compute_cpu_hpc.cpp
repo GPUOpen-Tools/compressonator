@@ -24,6 +24,7 @@
 //=====================================================================
 
 #include "plugininterface.h"
+#include "cmp_plugininterface.h"
 #include "ccpu_hpc.h"
 
 #include <chrono>
@@ -302,12 +303,13 @@ CMP_ERROR CCPU_HPC::Compress(KernelOptions *Options, MipSet  &SrcTexture, MipSet
 {
     if (m_plugin_compute == NULL) return(CMP_ERR_UNABLE_TO_INIT_COMPUTELIB);
 
-#if (defined(USE_CONVECTION_KERNELS) || defined(USE_GTC) || defined(USE_APC))
+#if (defined(USE_CONVECTION_KERNELS) || defined(USE_GTC) || defined(USE_APC) || defined(USE_LOSSLESS_COMPRESSION))
     if  (
         (destTexture.m_format == CMP_FORMAT_GTC)
 #ifdef USE_APC
         || (destTexture.m_format == CMP_FORMAT_APC)
 #endif
+        || (destTexture.m_format == CMP_FORMAT_BROTLIG)
 #ifdef USE_CONVECTION_KERNELS
         || (destTexture.m_format == CMP_FORMAT_BC1)
         || (destTexture.m_format == CMP_FORMAT_BC5)

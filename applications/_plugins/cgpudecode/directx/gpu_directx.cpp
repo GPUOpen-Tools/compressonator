@@ -151,7 +151,8 @@ HRESULT GPU_DirectX::InitDevice(const TexMetadata& mdata, CMP_FORMAT cmp_format)
     sd.BufferCount = 1;
     sd.BufferDesc.Width = width;
     sd.BufferDesc.Height = height;
-    if(cmp_format == CMP_FORMAT_ARGB_16F)
+    if ((cmp_format == CMP_FORMAT_ARGB_16F) || // Fix this line to use correct DXGI format
+        (cmp_format == CMP_FORMAT_RGBA_16F))
         sd.BufferDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
     else
         sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -585,7 +586,9 @@ DXGI_FORMAT GPU_DirectX::CMP2DXGIFormat(CMP_FORMAT cmp_format) {
         break;
 
     // Unknown compression mapping to Direct X
+#if (OPTION_BUILD_ASTC == 1)
     case CMP_FORMAT_ASTC:
+#endif
     case CMP_FORMAT_ATC_RGB:
     case CMP_FORMAT_ATC_RGBA_Explicit:
     case CMP_FORMAT_ATC_RGBA_Interpolated:
@@ -605,6 +608,7 @@ DXGI_FORMAT GPU_DirectX::CMP2DXGIFormat(CMP_FORMAT cmp_format) {
 #ifdef USE_GTC
     case CMP_FORMAT_GTC:
 #endif
+    case CMP_FORMAT_BROTLIG:
 #ifdef USE_BASIS
     case CMP_FORMAT_BASIS:
 #endif

@@ -67,12 +67,7 @@ namespace NoScaling1_Linear1
 #include "gpuresources_fsr.h"
 #endif
 
-class GpuResources_cas: 
-#ifdef USE_FSR
-    public GpuResources_fsr
-#else
-    public GpuResources_dx11
-#endif
+class GpuResources_cas: public GpuResources_fsr
 {
 public:
     GpuResources_cas();

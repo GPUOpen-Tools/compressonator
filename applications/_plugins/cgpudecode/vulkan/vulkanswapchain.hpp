@@ -201,7 +201,8 @@ public:
         // there is no preferered format, so we assume VK_FORMAT_R8G8B8A8_UNORM
         if ((formatCount == 1) && (surfaceFormats[0].format == VK_FORMAT_UNDEFINED))
         {
-            if(cmp_format ==  CMP_FORMAT_ARGB_16F)
+            if ((cmp_format ==  CMP_FORMAT_ARGB_16F) || // Fix or remove this line
+                (cmp_format ==  CMP_FORMAT_RGBA_16F))
                 colorFormat = VK_FORMAT_R16G16B16A16_SFLOAT;
             else
                 colorFormat = VK_FORMAT_R8G8B8A8_UNORM;
@@ -215,14 +216,14 @@ public:
             bool found_format = false;
             for (auto&& surfaceFormat : surfaceFormats)
             {
-                if (surfaceFormat.format == VK_FORMAT_R8G8B8A8_UNORM && cmp_format != CMP_FORMAT_ARGB_16F)
+                if (surfaceFormat.format == VK_FORMAT_R8G8B8A8_UNORM && (cmp_format != CMP_FORMAT_ARGB_16F) && (cmp_format != CMP_FORMAT_RGBA_16F))
                 {
                     colorFormat = surfaceFormat.format;
                     colorSpace = surfaceFormat.colorSpace;
                     found_format = true;
                     break;
                 }
-                else if (surfaceFormat.format == VK_FORMAT_R16G16B16A16_SFLOAT && cmp_format == CMP_FORMAT_ARGB_16F)
+                else if (surfaceFormat.format == VK_FORMAT_R16G16B16A16_SFLOAT && ((cmp_format == CMP_FORMAT_ARGB_16F) || (cmp_format == CMP_FORMAT_RGBA_16F)))
                 {
                     colorFormat = surfaceFormat.format;
                     colorSpace = surfaceFormat.colorSpace;

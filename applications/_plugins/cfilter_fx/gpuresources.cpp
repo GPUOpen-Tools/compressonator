@@ -43,18 +43,13 @@
 GpuResources::GpuResources()
 {
     InitBuffers_cas();
-
-#ifdef USE_FSR
     InitBuffers_fsr();
-#endif
 }
 
 void GpuResources::GpuCompileShaders(CMP_FORMAT format, bool useSRGB)
 {
     GpuCompileShaders_cas(format, useSRGB);
-#ifdef USE_FSR
     GpuCompileShaders_fsr(format, useSRGB);
-#endif
 }
 
 

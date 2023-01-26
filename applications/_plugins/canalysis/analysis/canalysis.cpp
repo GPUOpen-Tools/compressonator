@@ -261,6 +261,7 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
 
         if (!nodeExist) { //cmdline, node not exist
             rapidxml::xml_node<> *newTree = xmlDoc.allocate_node(rapidxml::node_type::node_element, diffNodeName.c_str());
+            levelElement->append_node(newTree);
 
             allocateNewElement(newTree, "MSE",        f2Str(data.MSE,         1));
             allocateNewElement(newTree, "SSIM",       f2Str(data.SSIM,        4));
@@ -762,7 +763,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
 
     if ((mipset_src == NULL) || (mipset_dst == NULL))
     {
-        printf("Error: unabled to read mipset data");
+        printf("Error: Unable to read mipset data\n");
         return -1;
     }
 
@@ -773,7 +774,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
     
     if (CMP_MipSetAnlaysis(mipset_src, mipset_dst, 0, 0, &pAnalysisData) != CMP_OK)
     {
-        printf("Error: unabled to calculate MSE and PSNR");
+        printf("Error: Unable to calculate MSE and PSNR\n");
         return -1;
     }
 
@@ -824,7 +825,7 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
 #if (OPTION_CMP_OPENCV == 1)
             cv::Mat srcimg  = QtOcv::image2Mat(*srcImage);
             cv::Mat destimg = QtOcv::image2Mat(*destImage);
-            if (!&srcimg || !&destimg) {
+            if (srcimg.empty() || destimg.empty()) {
                 printf("Error: Images fail to allocate for ssim analysis\n");
                 return -1;
             }
@@ -1046,13 +1047,13 @@ int Plugin_Canalysis::TC_PSNR_MSE(const char * in1, const char * in2,  char *res
 
      if ((mipset_src == NULL) || (mipset_dst == NULL))
      {
-         printf("Error: unabled to read mipset data");
+         printf("Error: Unable to read mipset data\n");
          return -1;
      }
 
      if (CMP_MipSetAnlaysis(mipset_src, mipset_dst, 0, 0, &pAnalysisData) != CMP_OK)
      {
-         printf("Error: unabled to calculate MSE and PSNR");
+         printf("Error: Unable to calculate MSE and PSNR\n");
          return -1;
      }
 
