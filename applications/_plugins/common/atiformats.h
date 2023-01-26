@@ -45,12 +45,24 @@ extern "C" {
 CMP_FORMAT CMP_API CMP_ParseFormat(char* pFormat);
 void       CMP_API CMP_Format2FourCC(CMP_FORMAT format, MipSet *pMipSet);
 CMP_FORMAT CMP_API CMP_FourCC2Format(CMP_DWORD fourCC);
-CMP_BOOL CMP_API CMP_IsCompressedFormat(CMP_FORMAT format);
-CMP_BOOL CMP_API CMP_IsFloatFormat(CMP_FORMAT InFormat);
+CMP_BOOL   CMP_API CMP_IsCompressedFormat(CMP_FORMAT format);
+CMP_BOOL   CMP_API CMP_IsFloatFormat(CMP_FORMAT InFormat);
+CMP_BOOL   CMP_API CMP_IsHDR(CMP_FORMAT InFormat);
+CMP_BOOL   CMP_API CMP_IsLossless(CMP_FORMAT InFormat);
+CMP_BOOL CMP_API   CMP_IsValidFormat(CMP_FORMAT InFormat);
 #ifdef __cplusplus
 };
 #endif
 
+CMP_TextureType ParseTextureType(char* typeString);
+
 CMP_CHAR*  GetFormatDesc(CMP_FORMAT nFormat);
 CMP_CHAR*  GetTextureTypeDesc(CMP_TextureType nTextureType);
+
+CMP_ChannelFormat GetChannelFormat(CMP_FORMAT format);
+CMP_BYTE GetChannelFormatBitSize(CMP_FORMAT format);
+// TODO: move GetChannelCount() from texture.cpp here
+
+CMP_FORMAT GetFormat(MipSet* pMipSet);
+
 #endif

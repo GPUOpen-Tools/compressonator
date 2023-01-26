@@ -48,8 +48,10 @@ HWND FindTopLevelWindow(TCHAR *pszName);
 void SwizzleBytes(void *src, unsigned long numBytes);
 float HalfToFloat(uint16_t h);
 void getFileNameExt(const char *FilePathName, char *fnameExt, int maxbuffsize);
+
 #ifdef _WIN32
 bool writeObjFileState(std::string filename, std::string state);
 std::string readObjFileState(std::string filename);
 #endif
+
 #endif // !defined(_AMD_TEX_UTILSFUNCS_H_INCLUDED_)

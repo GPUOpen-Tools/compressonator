@@ -41,6 +41,7 @@
 
 #include <assert.h>
 
+#include "cmp_plugininterface.h"
 #include "plugininterface.h"
 
 #ifdef __cplusplus

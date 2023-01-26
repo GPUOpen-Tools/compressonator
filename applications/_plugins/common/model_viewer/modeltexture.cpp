@@ -19,13 +19,14 @@
 
 #include "modeltexture.h"
 
-#include "error.h"
-#include "misc.h"
+#include "cmp_error.h"
+#include "cmp_misc.h"
 #include "utilfuncs.h"
 
 #include "texture.h"
 #include "plugininterface.h"
 #include "textureio.h"
+#include "atiformats.h"
 
 #include <assert.h>
 #include <sys/types.h>
@@ -141,7 +142,7 @@ int32_t ModelTexture::LoadImageMipSetFromFile(const wchar_t *pFilename, void *pl
                 }
             }
             if (pMipSet->m_swizzle)
-                SwizzleMipMap(pMipSet);
+                SwizzleMipSet(pMipSet);
         } else {
             CleanMipSet();
             if (m_CMIPS) {

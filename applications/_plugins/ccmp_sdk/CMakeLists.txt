@@ -17,6 +17,10 @@ if (OPTION_CMP_APC)
 add_subdirectory(apc)
 endif()
 
+if (OPTION_BUILD_BROTLIG)
+    add_subdirectory(brlg)
+endif()
+
 target_include_directories(Plugin_CCMP_SDK PUBLIC
     ./
 )

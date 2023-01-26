@@ -37,12 +37,13 @@
 #pragma warning( push )
 #pragma warning(disable:4100)
 #pragma warning(disable:4800)
+#pragma warning(disable :5208) //  unnamed class used in typedef name cannot declare members other than non-static data members, member enumerations, or member classes
 #pragma warning( pop )
 
-typedef struct {
-    bool swizzle = false;
-    bool useCPU = true;
-    std::string errMessage = "";
+typedef struct {               //  use defaults as
+    bool swizzle;              //  false;
+    bool useCPU;               //  true;
+    std::string errMessage;    //  ""
 } Config;
 
 typedef struct {
@@ -98,9 +99,6 @@ typedef struct _R9G9B9E5 {
     }
 } R9G9B9E5;
 
-CMP_FORMAT      GetFormat(MipSet* pMipSet);
-
-
 extern  CMIPS *g_CMIPS;
 
 bool            IsFileExt(const char *fname, const char *fext);
@@ -113,15 +111,16 @@ int             AMDSaveMIPSTextureImage(const char *DestFile, MipSet *CMips, boo
 MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *configSetting, CMP_Feedback_Proc pFeedbackProc);
 
 bool            CompressedFileFormat(std::string file);
-bool            FloatFormat(CMP_FORMAT format);
 
-void            astc_find_closest_blockdim_2d(float target_bitrate, int *x, int *y, int consider_illegal);
-void            astc_find_closest_blockxy_2d(int *x, int *y, int consider_illegal);
+void            find_closest_blockdim_2d(float target_bitrate, int *x, int *y, int consider_illegal);
+void            find_closest_blockxy_2d(int *x, int *y, int consider_illegal);
 
 bool            FormatSupportsQualitySetting(CMP_FORMAT format);
 bool            FormatSupportsDXTCBase(CMP_FORMAT format);
 
-extern void     SwizzleMipMap(MipSet *pMipSet);
+// Swizzles the red and blue channels of the input MipSet
+extern void     SwizzleMipSet(MipSet *pMipSet);
+// Determines if the given format will need to be swizzled, used for certain compressed formats
 extern bool     KeepSwizzle(CMP_FORMAT destformat);
 
 CMP_FLOAT       F16toF32(CMP_HALFSHORT f);

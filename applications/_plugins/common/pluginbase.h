@@ -29,8 +29,6 @@
 #ifndef _PLUGINBASE_H
 #define _PLUGINBASE_H
 
-#include "compressonator.h"
-#include "common.h"
 #include <memory>
 
 #ifdef _WIN32
@@ -45,11 +43,11 @@ typedef int* GUID;
 //===========================================================================================
 
 typedef struct _TC_PluginVersion {
-    GUID  guid;
-    CMP_DWORD dwAPIVersionMajor;         // Do not load plugin with greater API major version than app
-    CMP_DWORD dwAPIVersionMinor;
-    CMP_DWORD dwPluginVersionMajor;
-    CMP_DWORD dwPluginVersionMinor;
+    GUID	 guid;
+    uint32_t dwAPIVersionMajor;         // Do not load plugin with greater API major version than app
+    uint32_t dwAPIVersionMinor;
+    uint32_t dwPluginVersionMajor;
+    uint32_t dwPluginVersionMinor;
 } TC_PluginVersion;
 
 /// Error codes returned by application & plugin functions.
@@ -68,12 +66,17 @@ typedef enum {
     EL_Warning,    ///< The error message is for a warning.
 } TC_ErrorLevel;
 
+//-------------------------
+// User defined Interfaces
+//------------------------
+
 //#define DECLARE_PLUGIN(x)     extern "C"{__declspec(dllexport) std::unique_ptr<x> makePlugin()  { return std::move(std::make_unique<x>()); }}
 #define DECLARE_PLUGIN(x)         extern "C"{__declspec(dllexport) void * makePlugin()       { return new x;}}
-#define SET_PLUGIN_TYPE(x)        extern "C"{__declspec(dllexport) char * getPluginType()    { return x;  }}
+#define SET_PLUGIN_TYPE(x)        extern "C"{__declspec(dllexport) char * getPluginType()    { return x; }}
 #define SET_PLUGIN_NAME(x)        extern "C"{__declspec(dllexport) char * getPluginName()    { return x; }}
 #define SET_PLUGIN_UUID(x)        extern "C"{__declspec(dllexport) char * getPluginUUID()    { return x; }}
 #define SET_PLUGIN_CATEGORY(x)    extern "C"{__declspec(dllexport) char * getPluginCategory(){ return x; }}
+#define SET_PLUGIN_OPTIONS(x)     extern "C"{__declspec(dllexport) unsigned long  getPluginOptions() { return x; }}
 
 class PluginBase {
   public:
@@ -82,7 +85,8 @@ class PluginBase {
     virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
 };
 
-typedef void        *(*PLUGIN_FACTORYFUNC)();
-typedef char        *(*PLUGIN_TEXTFUNC)();
+typedef void				*(*PLUGIN_FACTORYFUNC)();
+typedef char				*(*PLUGIN_TEXTFUNC)();
+typedef unsigned long        (*PLUGIN_ULONGFUNC)();
 
 #endif

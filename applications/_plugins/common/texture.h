@@ -107,13 +107,16 @@ extern "C" {
 
 #define CMP_FOURCC_BC6H                    CMP_MAKEFOURCC('B', 'C', '6', 'H')
 #define CMP_FOURCC_BC7                     CMP_MAKEFOURCC('B', 'C', '7', 'x')
+#if (OPTION_BUILD_ASTC == 1)
 #define CMP_FOURCC_ASTC                    CMP_MAKEFOURCC('A', 'S', 'T', 'C')
+#endif
 #ifdef USE_APC
-#define CMP_FOURCC_APC                     CMP_MAKEFOURCC('A', 'P', 'C', 'x')  // This is not a standard
+#define CMP_FOURCC_APC                     CMP_MAKEFOURCC('A', 'P', 'C', 'x')       // This is not a standard
 #endif
 #ifdef USE_GTC
 #define CMP_FOURCC_GTC                     CMP_MAKEFOURCC('G', 'T', 'C', 'x')       // This is not a standard
 #endif
+#define CMP_FOURCC_BROTLIG                 CMP_MAKEFOURCC('B', 'R', 'L', 'G')       // This is not a standard
 #ifdef USE_BASIS
 #define CMP_FOURCC_BASIS                   CMP_MAKEFOURCC('B', 'A', 'S', '1')       // This is not a standard
 #endif

@@ -37,6 +37,7 @@
 #define _DDS_FILE_H
 
 #include "plugininterface.h"
+#include "cmp_plugininterface.h"
 
 #ifdef _WIN32
 #include "ddraw.h"
@@ -585,6 +586,7 @@ TC_PluginError LoadDDS_RGB888(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
 TC_PluginError LoadDDS_RGB8888(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet, bool bAlpha);
 TC_PluginError LoadDDS_RGB8888_S(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet, bool bAlpha);
 TC_PluginError LoadDDS_ARGB2101010(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
+TC_PluginError LoadDDS_RGBA1010102(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
 TC_PluginError LoadDDS_ABGR16(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
 TC_PluginError LoadDDS_G16R16(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
 TC_PluginError LoadDDS_R16(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);

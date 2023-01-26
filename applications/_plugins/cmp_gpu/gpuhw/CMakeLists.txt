@@ -23,7 +23,7 @@ target_include_directories(EncodeWith_GPU PRIVATE
 )
 
 target_link_libraries(EncodeWith_GPU 
-PRIVATE
+    PRIVATE
     ExtGLM 
     ExtGLFW
     CMP_Framework

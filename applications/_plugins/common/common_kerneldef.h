@@ -66,7 +66,8 @@ typedef struct {
 
 
 #define QUANTIZEBLOCK_ID "A896F2E4-0C7F-41F1-B074-22545FDE4808"
-typedef struct {
+typedef struct QuantizerBufferType
+{
     int         DataType = 0;  // 0 = 64 Bits, 1 = 128 Bits 2 = 512 bits
     int         w = 0;                          // Origin Image size
     int         h = 0;                          //

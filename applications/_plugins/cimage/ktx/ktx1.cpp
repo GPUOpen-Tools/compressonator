@@ -473,6 +473,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
             pMipSet->m_format = CMP_FORMAT_ATC_RGBA_Interpolated;
             pMipSet->m_TextureDataType = TDT_ARGB;
             break;
+#if (OPTION_BUILD_ASTC == 1)
         case GL_COMPRESSED_RGBA_ASTC_4x4_KHR:
             pMipSet->m_format = CMP_FORMAT_ASTC;
             pMipSet->m_nBlockWidth = 4;
@@ -557,6 +558,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
             pMipSet->m_nBlockHeight = 12;
             pMipSet->m_TextureDataType = TDT_ARGB;
             break;
+#endif
         case ETC1_RGB8_OES: 
             pMipSet->m_format = CMP_FORMAT_ETC_RGB;
             pMipSet->m_TextureDataType = TDT_ARGB;
@@ -686,13 +688,13 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
                 pMipSet->m_TextureDataType = TDT_RG;
                 break;
             case GL_RGBA:
-                pMipSet->m_format = CMP_FORMAT_ARGB_16F;
+                pMipSet->m_format          = CMP_FORMAT_RGBA_16F;  // CMP_FORMAT_ARGB_16F;
                 pMipSet->m_TextureDataType = TDT_ARGB;
                 break;
             case GL_BGRA:
-                pMipSet->m_swizzle = true;
-                pMipSet->m_format = CMP_FORMAT_ARGB_16F;
-                pMipSet->m_TextureDataType = TDT_ARGB;
+                pMipSet->m_swizzle          = true;
+                pMipSet->m_format           = CMP_FORMAT_RGBA_16F;  // CMP_FORMAT_ARGB_16F;
+                pMipSet->m_TextureDataType  = TDT_ARGB;
                 break;
             }
             break;
@@ -876,6 +878,7 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
                 {
                 case CF_8bit:
                 case CF_2101010:
+                case CF_1010102:
                 case CF_Float9995E:
                     bytesPerChannel = 1;
                     break;
@@ -1033,7 +1036,8 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
         textureinfo.glType = GL_UNSIGNED_SHORT;
         textureinfo.glTypeSize = 2;
         break;
-    case  CMP_FORMAT_ARGB_16F :                 
+    case  CMP_FORMAT_ARGB_16F:   // fix this line              
+    case CMP_FORMAT_RGBA_16F:
     case  CMP_FORMAT_RG_16F :                   
     case  CMP_FORMAT_R_16F : 
         textureinfo.glType = GL_HALF_FLOAT;
@@ -1080,7 +1084,10 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
     case CMP_FORMAT_ETC2_RGBA1:
     case CMP_FORMAT_ETC2_SRGBA:
     case CMP_FORMAT_ETC2_SRGBA1:
+#if (OPTION_BUILD_ASTC == 1)
     case CMP_FORMAT_ASTC :
+#endif
+    case CMP_FORMAT_BROTLIG:
 #ifdef USE_GTC
     case  CMP_FORMAT_GTC:
 #endif
@@ -1233,7 +1240,7 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
             case  CMP_FORMAT_ATC_RGBA_Interpolated:
                 textureinfo.glInternalFormat = ATC_RGBA_INTERPOLATED_ALPHA_AMD;
                 break;
-
+#if (OPTION_BUILD_ASTC == 1)
             case  CMP_FORMAT_ASTC:
                 if ((pMipSet->m_nBlockWidth == 4) && (pMipSet->m_nBlockHeight == 4))
                     textureinfo.glInternalFormat = GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
@@ -1266,6 +1273,7 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
                 else 
                     textureinfo.glInternalFormat = GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
                 break;
+#endif
             case CMP_FORMAT_ETC_RGB:
                 textureinfo.glInternalFormat = ETC1_RGB8_OES;
                 break;

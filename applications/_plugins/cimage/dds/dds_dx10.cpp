@@ -71,6 +71,9 @@ typedef struct {
     uint32_t                            reserved;                   // Currently unused
 } DDS_HEADER_DDS10;
 
+// TODO: This function doesn't set pMipSet->m_format for all loaded DDS images
+// this is mostly fine because we assume RGBA8888 by default, and most of these functions convert to that format
+// but this isn't the case for everything, so a better solution should probably be sought out
 TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet) {
     DDS_HEADER_DDS10 HeaderDDS10;;
     fread(&HeaderDDS10, sizeof(HeaderDDS10), 1, pFile);
@@ -106,6 +109,7 @@ TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet) {
     case DXGI_FORMAT_R10G10B10A2_TYPELESS:
     case DXGI_FORMAT_R10G10B10A2_UNORM:
     case DXGI_FORMAT_R10G10B10A2_UINT:
+        pMipSet->m_format = CMP_FORMAT_RGBA_1010102;
         err = LoadDDS_DX10_R10G10B10A2(pFile, pDDSD, pMipSet);
         break;
 
@@ -279,7 +283,7 @@ TC_PluginError LoadDDS_DX10_RG32(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet) {
 
 TC_PluginError LoadDDS_DX10_R10G10B10A2(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet) {
     pMipSet->m_TextureDataType = TDT_ARGB;
-    ChannelFormat channelFormat = CF_2101010;
+    ChannelFormat channelFormat = CF_1010102;
     void* pChannelFormat = &channelFormat;
     return GenericLoadFunction(pFile, pDDSD, pMipSet, pChannelFormat, channelFormat, pMipSet->m_TextureDataType, PreLoopDefault, LoopR10G10B10A2, PostLoopDefault);
 }

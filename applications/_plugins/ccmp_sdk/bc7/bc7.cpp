@@ -48,7 +48,7 @@ static          LARGE_INTEGER frequency = {0};
 extern void  CompressBlockBC7_Internal(
     CGU_UINT8       image_src[SOURCE_BLOCK_SIZE][4],
     CMP_GLOBAL CGU_UINT8       cmp_out[COMPRESSED_BLOCK_SIZE],
-    uniform  CMP_GLOBAL BC7_Encode      BC7Encode[]);
+    CMP_UNIFORM  CMP_GLOBAL BC7_Encode      BC7Encode[]);
 
 double timeStampsecBC7() {
 #ifdef _WIN32

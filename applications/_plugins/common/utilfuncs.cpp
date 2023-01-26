@@ -80,7 +80,6 @@ float HalfToFloat(uint16_t h) {
     return o.f;
 }
 
-
 void getFileNameExt(const char *FilePathName, char *fnameExt, int maxbuffsize) {
 #ifdef _WIN32
     char drive[_MAX_DRIVE];

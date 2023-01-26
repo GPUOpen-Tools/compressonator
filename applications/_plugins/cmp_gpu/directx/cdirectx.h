@@ -32,7 +32,7 @@
 #include "common.h"
 #include "compute_base.h"
 #include "compute_directX.h"
-#include "plugininterface.h"
+#include "cmp_plugininterface.h"
 
 
 // {21DE462B-D6C5-4F2A-99A6-2514F087946E}
@@ -59,15 +59,6 @@ class Plugin_CDirectX : public PluginInterface_Pipeline {
     int             TC_Close();
   private:
     ComputeBase  *m_pComputeBase;
-
-#ifdef ENABLE_MAKE_COMPATIBLE_API
-    bool IsFloatFormat(CMP_FORMAT InFormat);
-    float findKneeValueHPC(float x, float y);
-    CMP_ERROR CF_16BitTo8Bit(CMP_WORD* sBlock, CMP_BYTE* cBlock, CMP_DWORD dwBlockSize);
-    CMP_ERROR Byte2HalfShort(CMP_HALFSHORT* hfsBlock, CMP_BYTE* cBlock, CMP_DWORD dwBlockSize);
-    CMP_ERROR Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, MipSet  &srcTexture, const CMP_CompressOptions* pOptions);
-#endif
-
 };
 
 #endif

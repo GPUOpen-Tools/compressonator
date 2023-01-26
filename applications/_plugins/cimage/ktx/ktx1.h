@@ -24,7 +24,7 @@
 #ifndef _PLUGIN_IMAGE_KTX_H
 #define _PLUGIN_IMAGE_KTX_H
 
-#include "plugininterface.h"
+#include "cmp_plugininterface.h"
 #include "stdint.h"
 #include "ktx.h"
 #include "ktxint.h"

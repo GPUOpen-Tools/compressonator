@@ -18,6 +18,7 @@
 // THE SOFTWARE.
 
 #include "mipstoqimage.h"
+#include "format_conversion.h"
 
 #ifndef OPTION_CMP_QT
 int QImage2MIPS(QImage*, CMIPS*, MipSet*)
@@ -136,7 +137,9 @@ QImage::Format MipFormat2QFormat(MipSet* mipset)
         break;
     }
     case CF_2101010:
+    case CF_1010102:
     {
+        format = QImage::Format_ARGB32;
         break;
     }
     case CF_32bit:
@@ -153,16 +156,16 @@ QImage::Format MipFormat2QFormat(MipSet* mipset)
     return format;
 }
 
-int QImage2MIPS(QImage* qimage, CMIPS* m_CMips, MipSet* pMipSet)
+int QImage2MIPS(QImage* image, CMIPS* m_CMips, MipSet* pMipSet, CMP_Feedback_Proc pFeedbackProc)
 {
-    if (qimage == nullptr)
+    if (image == nullptr)
     {
         return -1;
     }
 
     // QImage info for debugging
-    // QImageFormatInfo(qimage);
-    QImage::Format format = qimage->format();
+    // QImageFormatInfo(image);
+    QImage::Format format = image->format();
 
     // Check supported format
     if (!(  (format == QImage::Format_ARGB32) || 
@@ -172,6 +175,7 @@ int QImage2MIPS(QImage* qimage, CMIPS* m_CMips, MipSet* pMipSet)
             (format == QImage::Format_Grayscale8) ||
             (format == QImage::Format_Indexed8)))
     {
+
         return -1;
     }
 
@@ -189,11 +193,11 @@ int QImage2MIPS(QImage* qimage, CMIPS* m_CMips, MipSet* pMipSet)
                             pMipSet->m_ChannelFormat,
                             pMipSet->m_TextureDataType,
                             pMipSet->m_TextureType,
-                            qimage->width(),
-                            qimage->height(),
+                            image->width(),
+                            image->height(),
                             pMipSet->m_nDepth);  // depthsupport, what should nDepth be set as here?
 
-    // Determin buffer size and set Mip Set Levels we want to use for now
+    // Determine buffer size and set Mip Set Levels we want to use for now
     MipLevel* mipLevel    = m_CMips->GetMipLevel(pMipSet, 0);
     pMipSet->m_nMipLevels = 1;
     m_CMips->AllocateMipLevelData(mipLevel, pMipSet->m_nWidth, pMipSet->m_nHeight, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType);
@@ -205,11 +209,11 @@ int QImage2MIPS(QImage* qimage, CMIPS* m_CMips, MipSet* pMipSet)
 
     if (pMipSet->m_swizzle)
     {
-        for (int y = 0; y < qimage->height(); y++)
+        for (int y = 0; y < image->height(); y++)
         {
-            for (int x = 0; x < qimage->width(); x++)
+            for (int x = 0; x < image->width(); x++)
             {
-                qRGB     = qimage->pixel(x, y);
+                qRGB     = image->pixel(x, y);
                 pData[i] = qBlue(qRGB);
                 i++;
                 pData[i] = qGreen(qRGB);
@@ -218,17 +222,24 @@ int QImage2MIPS(QImage* qimage, CMIPS* m_CMips, MipSet* pMipSet)
                 i++;
                 pData[i] = qAlpha(qRGB);
                 i++;
+            }
+
+            if (pFeedbackProc)
+            {
+                float fProgress = 100.f * (y * image->width()) / (image->width() * image->height());
+                if (pFeedbackProc(fProgress, NULL, NULL))
+                    return -1;
             }
         }
         pMipSet->m_swizzle = false;  //already swizzled; reset
     }
     else
     {
-        for (int y = 0; y < qimage->height(); y++)
+        for (int y = 0; y < image->height(); y++)
         {
-            for (int x = 0; x < qimage->width(); x++)
+            for (int x = 0; x < image->width(); x++)
             {
-                qRGB     = qimage->pixel(x, y);
+                qRGB     = image->pixel(x, y);
                 pData[i] = qRed(qRGB);
                 i++;
                 pData[i] = qGreen(qRGB);
@@ -238,245 +249,17 @@ int QImage2MIPS(QImage* qimage, CMIPS* m_CMips, MipSet* pMipSet)
                 pData[i] = qAlpha(qRGB);
                 i++;
             }
+
+            if (pFeedbackProc)
+            {
+                float fProgress = 100.f * (y * image->width()) / (image->width() * image->height());
+                if (pFeedbackProc(fProgress, NULL, NULL))
+                    return -1;
+            }
         }
     }
 
     return 0;
-}
-
-//load data byte in mipset into Qimage ARGB32 format
-inline float knee(double x, double f)
-{
-    return float(log(x * f + 1.f) / f);
-}
-
-float findKneeF(float x, float y)
-{
-    float f0 = 0;
-    float f1 = 1.f;
-
-    while (knee(x, f1) > y)
-    {
-        f0 = f1;
-        f1 = f1 * 2.f;
-    }
-
-    for (int i = 0; i < 30; ++i)
-    {
-        const float f2 = (f0 + f1) / 2.f;
-        const float y2 = knee(x, f2);
-
-        if (y2 < y)
-        {
-            f1 = f2;
-        }
-        else
-        {
-            f0 = f2;
-        }
-    }
-
-    return (f0 + f1) / 2.f;
-}
-
-CMP_FLOAT F16toF32(CMP_HALFSHORT f)
-{
-    CMP_HALF A;
-    A.setBits(f);
-    return ((CMP_FLOAT)A);
-}
-
-CMP_HALFSHORT F32toF16(CMP_FLOAT f)
-{
-    return (half(f).bits());
-}
-
-void float2Pixel(float kl, float f, float r, float g, float b, float a, int x, int y, QImage* image, CMP_CompressOptions option)
-{
-    CMP_BYTE r_b, g_b, b_b, a_b;
-
-    float invGamma, scale;
-    if (option.fInputGamma < 1.0f)
-    {
-        option.fInputGamma = 2.2f;
-    }
-
-    invGamma          = 1.0 / option.fInputGamma;  //for gamma correction
-    float luminance3f = powf(2, -3.5);             // always assume max intensity is 1 and 3.5f darker for scale later
-    scale             = 255.0 * powf(luminance3f, invGamma);
-
-    //  1) Compensate for fogging by subtracting defog
-    //     from the raw pixel values.
-    // We assume a defog of 0
-    if (option.fInputDefog > 0.0f)
-    {
-        r = r - option.fInputDefog;
-        g = g - option.fInputDefog;
-        b = b - option.fInputDefog;
-        a = a - option.fInputDefog;
-    }
-
-    //  2) Multiply the defogged pixel values by
-    //     2^(exposure + 2.47393).
-    const float exposeScale = pow(2, option.fInputExposure + 2.47393f);
-    r                       = r * exposeScale;
-    g                       = g * exposeScale;
-    b                       = b * exposeScale;
-    a                       = a * exposeScale;
-
-    //  3) Values that are now 1.0 are called "middle gray".
-    //     If defog and exposure are both set to 0.0, then
-    //     middle gray corresponds to a raw pixel value of 0.18.
-    //     In step 6, middle gray values will be mapped to an
-    //     intensity 3.5 f-stops below the display's maximum
-    //     intensity.
-
-    //  4) Apply a knee function.  The knee function has two
-    //     parameters, kneeLow and kneeHigh.  Pixel values
-    //     below 2^kneeLow are not changed by the knee
-    //     function.  Pixel values above kneeLow are lowered
-    //     according to a logarithmic curve, such that the
-    //     value 2^kneeHigh is mapped to 2^3.5.  (In step 6,
-    //     this value will be mapped to the the display's
-    //     maximum intensity.)
-    if (r > kl)
-    {
-        r = kl + knee(r - kl, f);
-    }
-    if (g > kl)
-    {
-        g = kl + knee(g - kl, f);
-    }
-    if (b > kl)
-    {
-        b = kl + knee(b - kl, f);
-    }
-    if (a > kl)
-    {
-        a = kl + knee(a - kl, f);
-    }
-
-    //  5) Gamma-correct the pixel values, according to the
-    //     screen's gamma.  (We assume that the gamma curve
-    //     is a simple power function.)
-    r = pow(r, invGamma);
-    g = pow(g, invGamma);
-    b = pow(b, invGamma);
-    a = pow(a, option.fInputGamma);
-
-    //  6) Scale the values such that middle gray pixels are
-    //     mapped to a frame buffer value that is 3.5 f-stops
-    //     below the display's maximum intensity. (84.65 if
-    //     the screen's gamma is 2.2)
-    r *= scale;
-    g *= scale;
-    b *= scale;
-    a *= scale;
-
-    r_b = (CMP_BYTE)cmp_clampf(r, 0.f, 255.f);
-    g_b = (CMP_BYTE)cmp_clampf(g, 0.f, 255.f);
-    b_b = (CMP_BYTE)cmp_clampf(b, 0.f, 255.f);
-    a_b = (CMP_BYTE)cmp_clampf(a, 0.f, 255.f);
-
-    image->setPixel(x, y, qRgba(r_b, g_b, b_b, a_b));
-}
-
-//
-// load Exr Image Properties
-//
-
-void loadExrProperties(CMIPS* m_CMips, MipSet* mipset, int level, QImage* image, CMP_CompressOptions option)
-{
-    MipLevel* mipLevel = m_CMips->GetMipLevel(mipset, level);
-    if (mipLevel->m_pbData == NULL)
-        return;
-
-    float kl = pow(2.f, option.fInputKneeLow);
-    float f  = findKneeF(pow(2.f, option.fInputKneeHigh) - kl, pow(2.f, 3.5f) - kl);
-
-    if (mipset->m_ChannelFormat == CF_Float32)
-    {
-        float* data = mipLevel->m_pfData;
-        float  r = 0, g = 0, b = 0, a = 0;
-        //copy pixels into image
-        for (int y = 0; y < mipLevel->m_nHeight; y++)
-        {
-            for (int x = 0; x < mipLevel->m_nWidth; x++)
-            {
-                r = *data;
-                data++;
-                g = *data;
-                data++;
-                b = *data;
-                data++;
-                a = *data;
-                data++;
-                float2Pixel(kl, f, r, g, b, a, x, y, image, option);
-            }
-
-            //if ((y % 10) == 0)
-            //    QApplication::processEvents();
-        }
-    }
-    else if (mipset->m_ChannelFormat == CF_Float16)
-    {
-        CMP_HALFSHORT* data = mipLevel->m_phfsData;
-        CMP_HALFSHORT  r, g, b, a;
-        //copy pixels into image
-        for (int y = 0; y < mipLevel->m_nHeight; y++)
-        {
-            for (int x = 0; x < mipLevel->m_nWidth; x++)
-            {
-                r = *data;
-                data++;
-                g = *data;
-                data++;
-                b = *data;
-                data++;
-                a = *data;
-                data++;
-                float2Pixel(kl, f, F16toF32(r), F16toF32(g), F16toF32(b), F16toF32(a), x, y, image, option);
-            }
-
-            //if ((y % 10) == 0)
-            //    QApplication::processEvents();
-        }
-    }
-    else if (mipset->m_ChannelFormat == CF_Float9995E)
-    {
-        //CMP_DWORD dwSize = mipLevel->m_dwLinearSize;
-        CMP_DWORD* pSrc = mipLevel->m_pdwData;
-        float      r = 0, g = 0, b = 0, a = 0;
-        union
-        {
-            float   f;
-            int32_t i;
-        } fi;
-        float Scale = 0.0f;
-        for (int y = 0; y < mipLevel->m_nHeight; y++)
-        {
-            for (int x = 0; x < mipLevel->m_nWidth; x++)
-            {
-                CMP_DWORD dwSrc = *pSrc++;
-                R9G9B9E5  pTemp;
-
-                pTemp.rm = (dwSrc & 0x000001ff);
-                pTemp.gm = (dwSrc & 0x0003fe00) >> 9;
-                pTemp.bm = (dwSrc & 0x07fc0000) >> 18;
-                pTemp.e  = (dwSrc & 0xf8000000) >> 27;
-
-                fi.i  = 0x33800000 + (pTemp.e << 23);
-                Scale = fi.f;
-                r     = Scale * float(pTemp.rm);
-                g     = Scale * float(pTemp.gm);
-                b     = Scale * float(pTemp.bm);
-                a     = 1.0f;
-                float2Pixel(kl, f, r, g, b, a, x, y, image, option);
-            }
-            //if ((y % 10) == 0)
-            //    QApplication::processEvents();
-        }
-    }
 }
 
 // SNORM int ranges from -128 to 127
@@ -491,8 +274,9 @@ CMP_BYTE CMP_SBYTE_to_UBYTE(CMP_SBYTE value)
     return (value + 128);
 }
 
-    //load data byte in mipset into Qimage ARGB32 format
-QImage* MIPS2QImage(CMIPS* m_CMips, MipSet* tmpMipSet, int MipMaplevel, int Depthlevel, CMP_CompressOptions option, CMP_Feedback_Proc pFeedbackProc)
+//load data byte in mipset into Qimage ARGB32 format
+// TODO: A lot of this could probabaly be reworked and removed in favor of using the functions in format_conversion.h
+QImage* MIPS2QImage(CMIPS* m_CMips, MipSet* tmpMipSet, int mipmapLevel, int depthLevel, CMP_CompressOptions option, CMP_Feedback_Proc pFeedbackProc)
 {
     if (tmpMipSet == NULL)
     {
@@ -500,12 +284,13 @@ QImage* MIPS2QImage(CMIPS* m_CMips, MipSet* tmpMipSet, int MipMaplevel, int Dept
         return image;
     }
 
-    MipLevel* mipLevel = m_CMips->GetMipLevel(tmpMipSet, MipMaplevel, Depthlevel);
+    MipLevel* mipLevel = m_CMips->GetMipLevel(tmpMipSet, mipmapLevel, depthLevel);
     if (!mipLevel)
     {
         return nullptr;
     }
 
+    FloatParams params(&option);
     QImage* image = NULL;
 
     if ((tmpMipSet->m_TextureDataType == TDT_ARGB) || (tmpMipSet->m_TextureDataType == TDT_XRGB))
@@ -531,14 +316,14 @@ QImage* MIPS2QImage(CMIPS* m_CMips, MipSet* tmpMipSet, int MipMaplevel, int Dept
                     return nullptr;
             }
 
-            image = new QImage(mipLevel->m_nWidth, mipLevel->m_nHeight, MipFormat2QFormat(tmpMipSet));
+            image = new QImage(mipLevel->m_nWidth, mipLevel->m_nHeight, QImage::Format_RGBA8888);
             if (image == NULL)
             {
                 image = new QImage(":/compressonatorgui/images/outofmemoryerror.png");
                 return nullptr;
             }
 
-            loadExrProperties(m_CMips, tmpMipSet, MipMaplevel, image, option);
+            FloatToByte(image->bits(), mipLevel->m_pfData, tmpMipSet->m_ChannelFormat, mipLevel->m_nWidth, mipLevel->m_nHeight, &params);
         }
         else if (tmpMipSet->m_ChannelFormat == CF_Float9995E)
         {
@@ -546,16 +331,16 @@ QImage* MIPS2QImage(CMIPS* m_CMips, MipSet* tmpMipSet, int MipMaplevel, int Dept
             if (pData == NULL)
                 return nullptr;
 
-            image = new QImage(mipLevel->m_nWidth, mipLevel->m_nHeight, MipFormat2QFormat(tmpMipSet));
+            image = new QImage(mipLevel->m_nWidth, mipLevel->m_nHeight, QImage::Format_RGBA8888);
             if (image == NULL)
             {
                 image = new QImage(":/compressonatorgui/images/outofmemoryerror.png");
                 return nullptr;
             }
-            loadExrProperties(m_CMips, tmpMipSet, MipMaplevel, image, option);
+
+            FloatToByte(image->bits(), mipLevel->m_pfData, tmpMipSet->m_ChannelFormat, mipLevel->m_nWidth, mipLevel->m_nHeight, &params);
         }
-        else 
-        if (tmpMipSet->m_ChannelFormat == CF_16bit)
+        else if (tmpMipSet->m_ChannelFormat == CF_16bit)
         {
             // We have allocated a data buffer to fill get its referance
             CMP_WORD* pData = mipLevel->m_pwData;
@@ -622,6 +407,26 @@ QImage* MIPS2QImage(CMIPS* m_CMips, MipSet* tmpMipSet, int MipMaplevel, int Dept
                         return NULL;
                 }
             }
+        }
+        else if (tmpMipSet->m_ChannelFormat == CF_1010102) {
+            // We have allocated a data buffer to fill get its referance
+            CMP_DWORD* pData = mipLevel->m_pdwData;
+            if (pData == NULL)
+                return nullptr;
+
+            // Allocates a uninitialized buffer of specified size and format
+            image = new QImage(mipLevel->m_nWidth, mipLevel->m_nHeight, QImage::Format_RGBA8888);
+            if (image == NULL)
+            {
+                image = new QImage(":/compressonatorgui/images/outofmemoryerror.png");
+                return nullptr;
+            }
+
+            // To fix potential issues with some RGBA1010102 images with bad alpha channels, we disable
+            // the alpha of RGBA1010102 images in the GUI
+            bool hasAlpha = false;
+
+            ConvertRGBA1010102ToRGBA8888((CMP_DWORD*)image->bits(), pData, mipLevel->m_nWidth*mipLevel->m_nHeight, hasAlpha);
         }
         else
         {

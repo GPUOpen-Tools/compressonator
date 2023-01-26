@@ -26,8 +26,7 @@
 // forward declaration
 class QImage;
 
-int QImage2MIPS(QImage *qimage, CMIPS *m_CMips, MipSet *pMipSet);
+int QImage2MIPS(QImage *qimage, CMIPS *m_CMips, MipSet *pMipSet, CMP_Feedback_Proc pFeedbackProc = NULL);
 QImage* MIPS2QImage(CMIPS* m_CMips, MipSet* tmpMipSet, int MipMaplevel, int Depthlevel, CMP_CompressOptions option, CMP_Feedback_Proc pFeedbackProc = nullptr);
-void    loadExrProperties(CMIPS* m_CMips, MipSet* mipset, int level, QImage* image, CMP_CompressOptions option);
 
 #endif

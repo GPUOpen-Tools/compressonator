@@ -108,6 +108,8 @@ class CCmdLineParamaters {
 
         compressImagesFromGLTF = false;
 
+        mangleFileNames = false;
+
         LogProcessResultsFile.assign(LOG_PROCESS_RESULTS_FILE_TXT);
     }
 
@@ -158,6 +160,8 @@ class CCmdLineParamaters {
     double compute_setup_fDuration;
 
     bool compressImagesFromGLTF;
+
+    bool mangleFileNames; // Flag for whether to mangle the output file names (by appending the compression codec type and file extension), false by default
 
     // Analysis data
     double    SSIM;            // Structural Similarity Index: Average of RGB Channels

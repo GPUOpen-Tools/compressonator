@@ -62,6 +62,7 @@ using namespace qtimgui_opengl;
 void ImGuiRenderer::initialize(QImGUI_OpenGLWindowWrapper *window) {
     m_window.reset(window);
     initializeOpenGLFunctions();
+    ImGui::CreateContext();
 
     ImGuiIO &io = ImGui::GetIO();
     for (ImGuiKey key : keyMap.values()) {
@@ -309,7 +310,11 @@ void ImGuiRenderer::newFrame() {
 
     // Setup time step
     double current_time =  QDateTime::currentMSecsSinceEpoch() / double(1000);
-    io.DeltaTime = g_Time > 0.0 ? (float)(current_time - g_Time) : (float)(1.0f/60.0f);
+    if ((g_Time > 0.0) && (current_time - g_Time) > 0.0)
+        io.DeltaTime = (float)(current_time - g_Time);
+    else
+        io.DeltaTime = (float)(1.0f / 60.0f);
+
     g_Time = current_time;
 
     // Setup inputs
@@ -390,7 +395,6 @@ bool ImGuiRenderer::eventFilter(QObject *watched, QEvent *event) {
     }
     return QObject::eventFilter(watched, event);
 }
-
 
 void ImGuiRenderer::Draw() {
     ImGui::Render();

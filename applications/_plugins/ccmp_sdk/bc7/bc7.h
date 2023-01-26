@@ -28,6 +28,7 @@
 
 #include "common_def.h"
 #include "plugininterface.h"
+#include "cmp_plugininterface.h"
 #include "bc7_encode_kernel.h"
 #include "hpc_compress.h"           // padline defs
 #include "cmp_math_common.h"

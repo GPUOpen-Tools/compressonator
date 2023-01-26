@@ -28,6 +28,8 @@
 #ifndef  _PLUGINMANAGER_H
 #define  _PLUGINMANAGER_H
 
+#include <string>
+
 // C RunTime Header Files
 #include <stdlib.h>
 #ifndef __APPLE__
@@ -40,9 +42,7 @@
 #endif
 #include <vector>
 
-//#include "plugininterface.h"
 #include "pluginbase.h"
-
 
 #define MAX_PLUGIN_FILENAME_STR   512
 #define MAX_PLUGIN_NAME_STR       256
@@ -60,30 +60,23 @@ class PluginDetails {
     ~PluginDetails();
 
     void *makeNewInstance();
-    void setFileName(char * nm);
-    char *getFileName()     {
-        return filename;
-    }
-    char *getName()         {
-        return pluginName;
-    }
-    char *getUUID()         {
-        return pluginUUID;
-    }
-    char *getType()         {
-        return pluginType;
-    }
-    char *getCategory()     {
-        return pluginCategory;
-    }
-    void setName(char * nm);
-    void setUUID(char * nm);
-    void setType(char * nm);
-    void setCategory(char * nm);
-    bool                isStatic;
-    bool                isRegistered;       // true when all dll interfaces has been registered using LoadLibraryA and GetProcAddress
+    void  setFileName(char * nm);
+    char *getFileName()     {return filename;}
+    char *getName()         {return pluginName;}
+    char *getUUID()         {return pluginUUID;}
+    char *getType()         {return pluginType;}
+    char *getCategory()     {return pluginCategory;}
+	unsigned long getOptions()		{return pluginOptions;}
+    void  setName(char * nm);
+    void  setUUID(char * nm);
+    void  setType(char * nm);
+    void  setCategory(char * nm);
+    void  setOptions(unsigned long uoptions);
+    bool  isStatic;
+    bool  isRegistered;       // true when all dll interfaces has been registered using LoadLibraryA and GetProcAddress
     PLUGIN_FACTORYFUNC  funcHandle;
   private:
+
     void clearMembers() {
 #ifdef _WIN32
         dllHandle  = NULL;
@@ -91,12 +84,12 @@ class PluginDetails {
         isStatic   = false;
         isRegistered = false;
 
-        filename[0]   = 0;
-        pluginType[0] = 0;
-        pluginName[0] = 0;
-        pluginUUID[0] = 0;
+        filename[0]		  = 0;
+        pluginType[0]	  = 0;
+        pluginName[0]	  = 0;
+        pluginUUID[0]	  = 0;
         pluginCategory[0] = 0;
-
+        pluginOptions     = 0;
         funcHandle = NULL;
     }
 
@@ -105,6 +98,7 @@ class PluginDetails {
     char pluginName [MAX_PLUGIN_NAME_STR];
     char pluginUUID [MAX_PLUGIN_UUID_STR];
     char pluginCategory[MAX_PLUGIN_CATEGORY_STR];
+    unsigned long pluginOptions;
 
 #ifdef _WIN32
     HINSTANCE           dllHandle;
@@ -116,24 +110,30 @@ class PluginManager {
   public:
     PluginManager();
     ~PluginManager();
-    void getPluginList(char * dirPath, bool append = false);
-    void registerStaticPlugin(char *pluginType, char *pluginName, void *  makePlugin);
-    void registerStaticPlugin(char *pluginType, char *pluginName, char *uuid, void *  makePlugin);
-    bool PluginSupported(char *type, char *name);
-    void getPluginDetails(PluginDetails *curPlugin);
-    int  getNumPlugins();
+
+    void  getPluginList(char * dirPath, bool append = false);
+    void  getPluginListTypeNames(char* pluginType, std::vector<std::string> &TypeNames);
+    void  getPluginListOptionNames(char* pluginType, unsigned long options, std::vector<std::string>& TypeNames);
+    void  registerStaticPlugin(char* pluginType, char* pluginName, void* makePlugin);
+    void  registerStaticPlugin(char *pluginType, char *pluginName, char *uuid, void *  makePlugin);
+    bool  PluginSupported(char *type, char *name);
+    void  getPluginDetails(PluginDetails *curPlugin);
+    int   getNumPlugins();
     void *makeNewPluginInstance(int index);
-    char *getPluginName(int index);
+    unsigned long getPluginOption(int index);
+    char* getPluginName(int index);
     char *getPluginUUID(int index);
     char *getPluginCategory(int index);
     char *getPluginType(int index);
     void *GetPlugin(char *type, const char *name);
     void *GetPlugin(char *uuid);
-    bool RemovePlugin(char *type, char *name);
+    bool  RemovePlugin(char *type, char *name);
+
   private:
-    bool         m_pluginlistset;
-    char         m_pluginfolder [MAX_PLUGIN_FILENAME_STR];
-    void         clearPluginList();
+    bool  m_pluginlistset;
+    char  m_pluginfolder [MAX_PLUGIN_FILENAME_STR];
+    void  clearPluginList();
+    bool  fileExists(const std::string& abs_filename);
     std::vector<PluginDetails*> pluginRegister;
 };
 

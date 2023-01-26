@@ -54,13 +54,15 @@
 #include <d3d11.h>
 #endif
 
-#include <tc_pluginapi.h>
-#include <tc_plugininternal.h>
-#include <compressonator.h>
-#include <texture.h>
-
 #include <stdio.h>
 #include <stdlib.h>
+#include <algorithm>
+
+#include "tc_pluginapi.h"
+#include "tc_plugininternal.h"
+#include "compressonator.h"
+#include "texture.h"
+#include "cmp_boxfilter.h"
 
 #ifndef _WIN32
 #include "textureio.h"
@@ -72,7 +74,6 @@
 #endif
 #endif
 
-#include <algorithm>
 
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_BoxFilter)
@@ -232,106 +233,6 @@ void CMP_SetMipSetGamma(MipSet* pMipSet, CMP_FLOAT Gamma)
     }
 }
 
-template <typename T>
-void GenerateMipLevelF(MipLevel* pCurMipLevel, MipLevel* pPrevMipLevelOne, MipLevel* pPrevMipLevelTwo, T* curMipData, T* prevMip1Data, T* prevMip2Data)
-{
-    assert(pCurMipLevel);
-    assert(pPrevMipLevelOne);
-
-    if (pCurMipLevel && pPrevMipLevelOne)
-    {
-        if (!pPrevMipLevelTwo)
-        {
-            bool bDiffHeights = pCurMipLevel->m_nHeight != pPrevMipLevelOne->m_nHeight;
-            bool bDiffWidths  = pCurMipLevel->m_nWidth != pPrevMipLevelOne->m_nWidth;
-            assert(bDiffHeights || bDiffWidths);
-            T* pDst = curMipData;
-            for (int y = 0; y < pCurMipLevel->m_nHeight; y++)
-            {
-                T* pSrc = prevMip1Data + (2 * y * pPrevMipLevelOne->m_nWidth * 4);
-                T* pSrc2;
-                if (bDiffHeights)
-                {
-                    pSrc2 = pSrc + (pPrevMipLevelOne->m_nWidth * 4);
-                }
-                else
-                {
-                    //if no change in height, then use same line as source
-                    pSrc2 = pSrc;
-                }
-                for (int x = 0; x < pCurMipLevel->m_nWidth; x++, pSrc += 8, pSrc2 += 8)
-                {
-                    T c1[4], c2[4], c3[4], c4[4];
-                    memcpy(c1, pSrc, sizeof(c1));
-                    memcpy(c3, pSrc2, sizeof(c3));
-                    if (bDiffWidths)
-                    {
-                        memcpy(c2, pSrc + 4, sizeof(c2));
-                        memcpy(c4, pSrc2 + 4, sizeof(c4));
-                    }
-                    else
-                    {
-                        memcpy(c2, pSrc, sizeof(c2));
-                        memcpy(c4, pSrc2, sizeof(c4));
-                    }
-                    for (int i = 0; i < 4; i++)
-                        *pDst++ = (c1[i] + c2[i] + c3[i] + c4[i]) / T(4.f);
-                }
-            }
-        }
-        else
-        {
-            //working with volume texture, avg both slices together as well as 4 corners
-            bool bDiffHeights = pCurMipLevel->m_nHeight != pPrevMipLevelOne->m_nHeight;
-            bool bDiffWidths  = pCurMipLevel->m_nWidth != pPrevMipLevelOne->m_nWidth;
-            //don't need to check that either height or width is diff, b/c slices are diff
-            T* pDst = curMipData;
-            for (int y = 0; y < pCurMipLevel->m_nHeight; y++)
-            {
-                T *pSrc, *pSrc2, *pOtherSrc, *pOtherSrc2;
-                pSrc      = prevMip1Data + (2 * y * pPrevMipLevelOne->m_nWidth * 4);
-                pOtherSrc = prevMip2Data + (2 * y * pPrevMipLevelTwo->m_nWidth * 4);
-                if (bDiffHeights)
-                {
-                    //point to next line, same column
-                    pSrc2      = pSrc + (pPrevMipLevelOne->m_nWidth * 4);
-                    pOtherSrc2 = pOtherSrc + (pPrevMipLevelTwo->m_nWidth * 4);
-                }
-                else
-                {
-                    //if no change in height, then use same line as source
-                    pSrc2      = pSrc;
-                    pOtherSrc2 = pOtherSrc;
-                }
-                for (int x = 0; x < pCurMipLevel->m_nWidth; x++, pSrc += 8, pSrc2 += 8, pOtherSrc += 8, pOtherSrc2 += 8)
-                {
-                    T c1[4], c2[4], c3[4], c4[4], c5[4], c6[4], c7[4], c8[4];
-                    memcpy(c1, pSrc, sizeof(c1));
-                    memcpy(c3, pSrc2, sizeof(c3));
-                    memcpy(c5, pOtherSrc, sizeof(c5));
-                    memcpy(c7, pOtherSrc2, sizeof(c7));
-                    if (bDiffWidths)
-                    {
-                        memcpy(c2, pSrc + 4, sizeof(c2));
-                        memcpy(c4, pSrc2 + 4, sizeof(c4));
-                        memcpy(c6, pOtherSrc + 4, sizeof(c6));
-                        memcpy(c8, pOtherSrc2 + 4, sizeof(c8));
-                    }
-                    else
-                    {
-                        memcpy(c2, pSrc, sizeof(c2));
-                        memcpy(c4, pSrc2, sizeof(c4));
-                        memcpy(c6, pOtherSrc, sizeof(c6));
-                        memcpy(c8, pOtherSrc2, sizeof(c8));
-                    }
-                    for (int i = 0; i < 4; i++)
-                        *pDst++ = (c1[i] + c2[i] + c3[i] + c4[i] + c5[i] + c6[i] + c7[i] + c8[i]) / T(8.f);
-                }
-            }
-        }
-    }
-}
-
 Plugin_BoxFilter::Plugin_BoxFilter()
 {
 #ifdef _WIN32
@@ -373,7 +274,7 @@ int Plugin_BoxFilter::TC_PluginSetSharedIO(void* SharedCMips)
         std::string strD3DX = _T("");
         if (LoadD3DX(g_D3DX, strD3DX) == LOAD_FAILED)
         {
-            Error("D3DXFilter Plugin", CMP_ERR_UNABLE_TO_LOAD_FILE, "Load D3DX failed");
+            Error("D3DXFilter Plugin", CMP_ERR_UNABLE_TO_LOAD_FILE, "Load D3DX failed, Try installing DX 2010 runtime");
             return CMP_ERR_UNABLE_TO_LOAD_FILE;
         }
 
@@ -426,11 +327,12 @@ int Plugin_BoxFilter::TC_CFilter(MipSet* pMipSet, CMP_MipSet* pMipSetDst, CMP_CF
 
     if (pCFilterParams->nFilterType == 0)
     {
-        int nPrevMipLevels = pMipSet->m_nMipLevels;
+        pMipSet->m_nMipLevels = 1;
+        
         int nWidth         = pMipSet->m_nWidth;
         int nHeight        = pMipSet->m_nHeight;
 
-        while (nWidth >= pCFilterParams->nMinSize && nHeight >= pCFilterParams->nMinSize)
+        while (nWidth > pCFilterParams->nMinSize && nHeight > pCFilterParams->nMinSize)
         {
             nWidth               = (std::max)(nWidth >> 1, 1);
             nHeight              = (std::max)(nHeight >> 1, 1);
@@ -463,58 +365,22 @@ int Plugin_BoxFilter::TC_CFilter(MipSet* pMipSet, CMP_MipSet* pMipSetDst, CMP_CF
                 }
 
                 assert(pThisMipLevel->m_pbData);
-                if (pMipSet->m_TextureType != TT_VolumeTexture)
+                
+                if (pMipSet->m_TextureType == TT_VolumeTexture && CMP_MaxFacesOrSlices(pMipSet, nCurMipLevel - 1) > 1)
                 {
-                    MipLevel* tempMipOne = CFilterMips->GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice);
-                    if (pMipSet->m_ChannelFormat == CF_8bit)
-                    {
-                        if (pMipSet->m_format == CMP_FORMAT_RGBA_8888_S)
-                        {
-                            GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_psbData, tempMipOne->m_psbData);
-                        }
-                        else
-                            GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_pbData, tempMipOne->m_pbData);
-                    }
-                    else if (pMipSet->m_ChannelFormat == CF_Float16)
-                        GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_phfsData, tempMipOne->m_phfsData);
-                    else if (pMipSet->m_ChannelFormat == CF_Float32)
-                        GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_pfData, tempMipOne->m_pfData);
+                    //prev miplevel had 2 or more slices, so avg together slices
+
+                    MipLevel* prevMipLevels[] = {
+                        CFilterMips->GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice * 2),
+                        CFilterMips->GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice * 2 + 1)
+                    };
+
+                    GenerateMipmapLevel(pThisMipLevel, prevMipLevels, 2, pMipSet->m_format);
                 }
                 else
                 {
-                    if (CMP_MaxFacesOrSlices(pMipSet, nCurMipLevel - 1) > 1)
-                    {
-                        MipLevel* tempMipOne = CFilterMips->GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice * 2);
-                        MipLevel* tempMipTwo = CFilterMips->GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice * 2 + 1);
-                        //prev miplevel had 2 or more slices, so avg together slices
-                        if (pMipSet->m_ChannelFormat == CF_8bit)
-                        {
-                            if (pMipSet->m_format == CMP_FORMAT_RGBA_8888_S)
-                                GenerateMipLevelF(
-                                    pThisMipLevel, tempMipOne, tempMipTwo, pThisMipLevel->m_psbData, tempMipOne->m_psbData, tempMipTwo->m_psbData);
-                            else
-                                GenerateMipLevelF(pThisMipLevel, tempMipOne, tempMipTwo, pThisMipLevel->m_pbData, tempMipOne->m_pbData, tempMipTwo->m_pbData);
-                        }
-                        else if (pMipSet->m_ChannelFormat == CF_Float16)
-                            GenerateMipLevelF(pThisMipLevel, tempMipOne, tempMipTwo, pThisMipLevel->m_phfsData, tempMipOne->m_phfsData, tempMipTwo->m_phfsData);
-                        else if (pMipSet->m_ChannelFormat == CF_Float32)
-                            GenerateMipLevelF(pThisMipLevel, tempMipOne, tempMipTwo, pThisMipLevel->m_pfData, tempMipOne->m_pfData, tempMipTwo->m_pfData);
-                    }
-                    else
-                    {
-                        MipLevel* tempMipOne = CFilterMips->GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice);
-                        if (pMipSet->m_ChannelFormat == CF_8bit)
-                        {
-                            if (pMipSet->m_format == CMP_FORMAT_RGBA_8888_S)
-                                GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_psbData, tempMipOne->m_psbData);
-                            else
-                                GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_pbData, tempMipOne->m_pbData);
-                        }
-                        else if (pMipSet->m_ChannelFormat == CF_Float16)
-                            GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_phfsData, tempMipOne->m_phfsData);
-                        else if (pMipSet->m_ChannelFormat == CF_Float32)
-                            GenerateMipLevelF(pThisMipLevel, tempMipOne, NULL, pThisMipLevel->m_pfData, tempMipOne->m_pfData);
-                    }
+                    MipLevel* prevMipLevel = CFilterMips->GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice);
+                    GenerateMipmapLevel(pThisMipLevel, &prevMipLevel, 1, pMipSet->m_format);
                 }
             }
 

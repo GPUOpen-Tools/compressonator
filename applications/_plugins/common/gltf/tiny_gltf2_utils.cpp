@@ -1926,7 +1926,8 @@ static bool ParseOrthographicCamera(OrthographicCamera* camera, std::string* err
     return true;
 }
 
-static bool ParseCamera(Camera* camera, std::string* err, const json& o) {
+static bool ParseCamera(CMP_Camera* camera, std::string* err, const json& o)
+{
     if (!ParseStringProperty(&camera->type, err, o, "type", true, "Camera")) {
         return false;
     }
@@ -2694,7 +2695,7 @@ bool TinyGLTF::LoadFromString(Model* model, std::string* err, const char* str, u
                     }
                     return false;
                 }
-                Camera camera;
+                CMP_Camera camera;
                 if (!ParseCamera(&camera, err, it->get<json>())) {
                     return false;
                 }
@@ -3531,7 +3532,8 @@ static void SerializeGltfPerspectiveCamera(const PerspectiveCamera& camera, json
     }
 }
 
-static void SerializeGltfCamera(const Camera& camera, json& o) {
+static void SerializeGltfCamera(const CMP_Camera& camera, json& o)
+{
     SerializeStringProperty("type", camera.type, o);
     if (!camera.name.empty()) {
         SerializeStringProperty("name", camera.type, o);

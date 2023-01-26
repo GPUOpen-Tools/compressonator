@@ -24,7 +24,7 @@
 #ifndef _PLUGIN_IMAGE_EXR_H
 #define _PLUGIN_IMAGE_EXR_H
 
-#include "plugininterface.h"
+#include "cmp_plugininterface.h"
 
 #define IDS_STRING1                     1
 #define IDS_ERROR_FILE_OPEN             1

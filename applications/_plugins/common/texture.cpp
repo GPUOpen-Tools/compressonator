@@ -70,6 +70,8 @@ DWORD GetChannelCount(TextureDataType textureDataType) {
         return 1;
     case TDT_RG:
         return 2;
+    case TDT_RGB:
+        return 3;
     default:
         return 4;
     }

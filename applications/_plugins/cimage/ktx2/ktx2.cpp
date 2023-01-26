@@ -233,6 +233,7 @@ int Plugin_KTX2::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipS
             case VK_FORMAT_ETC2_R8G8B8A8_SRGB_BLOCK:
                 pMipSet->m_format                  = CMP_FORMAT_ETC2_SRGBA;
                 break;
+#if (OPTION_BUILD_ASTC == 1)
             case VK_FORMAT_ASTC_4x4_UNORM_BLOCK:
                 pMipSet->m_format                  = CMP_FORMAT_ASTC;
                 pMipSet->m_nBlockWidth             = 4;
@@ -303,6 +304,7 @@ int Plugin_KTX2::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipS
                 pMipSet->m_nBlockWidth             = 12;
                 pMipSet->m_nBlockHeight            = 12;
                 break;
+#endif
             }
         }
         else
@@ -380,12 +382,12 @@ int Plugin_KTX2::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipS
                 pMipSet->m_TextureDataType = TDT_RG;
                 break;
             case GL_RGBA:
-                pMipSet->m_format          = CMP_FORMAT_ARGB_16F;
+                pMipSet->m_format          = CMP_FORMAT_RGBA_16F;  // CMP_FORMAT_ARGB_16F;
                 pMipSet->m_TextureDataType = TDT_ARGB;
                 break;
             case GL_BGRA:
                 pMipSet->m_swizzle         = true;
-                pMipSet->m_format          = CMP_FORMAT_ARGB_16F;
+                pMipSet->m_format          = CMP_FORMAT_RGBA_16F;  // CMP_FORMAT_ARGB_16F;
                 pMipSet->m_TextureDataType = TDT_ARGB;
                 break;
             }
@@ -933,6 +935,7 @@ int Plugin_KTX2::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipS
                     //     // COMPRESSED_FORMAT_DXT5_xGxR_TMP;
                     //     textureCreateInfo.vkFormat         = VK_FORMAT_BC3_UNORM_BLOCK;
                     //     break;
+#if (OPTION_BUILD_ASTC == 1)
                     case CMP_FORMAT_ASTC:
                         if ((pMipSet->m_nBlockWidth == 4) && (pMipSet->m_nBlockHeight == 4))
                         {
@@ -1010,6 +1013,7 @@ int Plugin_KTX2::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipS
                             textureCreateInfo.vkFormat         = VK_FORMAT_ASTC_4x4_UNORM_BLOCK;
                         }
                         break;
+#endif
                     case CMP_FORMAT_BASIS:
                         // GL_RGBA8;
                         textureCreateInfo.vkFormat         = VK_FORMAT_R8G8B8A8_UNORM;

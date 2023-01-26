@@ -333,7 +333,7 @@ void ImGuiRenderer_DX12::initialize(
     UINT node,
     UINT nodemask) {
     m_window.reset(window);
-
+    ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
     for (ImGuiKey key : keyMap.values()) {
         io.KeyMap[key] = key;
@@ -364,7 +364,10 @@ void ImGuiRenderer_DX12::newFrame() {
 
     // Setup time step
     double current_time =  QDateTime::currentMSecsSinceEpoch() / double(1000);
-    io.DeltaTime = g_Time > 0.0 ? (float)(current_time - g_Time) : (float)(1.0f/60.0f);
+    if ((g_Time > 0.0) && (current_time - g_Time) > 0.0)
+        io.DeltaTime = (float)(current_time - g_Time);
+    else
+        io.DeltaTime = (float)(1.0f / 60.0f);
     g_Time = current_time;
 
     // Setup inputs

@@ -33,7 +33,9 @@
 #define TINYGLTF_NO_STB_IMAGE
 
 #ifndef TINYGLTF_NO_STB_IMAGE_WRITE
-#define STB_IMAGE_WRITE_IMPLEMENTATION
+//#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
+//#define STB_IMAGE_WRITE_IMPLEMENTATION
+//#endif
 #endif
 
 #ifndef TINYGLTF_NO_STB_IMAGE
@@ -618,14 +620,16 @@ struct OrthographicCamera {
     Value        extras;
 };
 
-struct Camera {
+struct CMP_Camera
+{
     std::string type;  // required. "perspective" or "orthographic"
     std::string name;
 
     PerspectiveCamera  perspective;
     OrthographicCamera orthographic;
 
-    Camera() {
+    CMP_Camera()
+    {
     }
 
     ExtensionMap extensions;
@@ -764,7 +768,7 @@ class Model {
     std::vector<Image>      images;
     std::vector<Skin>       skins;
     std::vector<Sampler>    samplers;
-    std::vector<Camera>     cameras;
+    std::vector<CMP_Camera> cameras;
     std::vector<Scene>      scenes;
     std::vector<Light>      lights;
 

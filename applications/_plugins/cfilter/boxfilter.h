@@ -25,7 +25,7 @@
 #ifndef _PLUGIN_IMAGE_H
 #define _PLUGIN_IMAGE_H
 
-#include "plugininterface.h"
+#include "cmp_plugininterface.h"
 
 #ifdef _WIN32
 #define USE_DIRECTX9
@@ -84,13 +84,5 @@ private:
     #endif
 #endif
 };
-
-template <typename T>
-void GenerateMipLevelF(MipLevel* pCurMipLevel,
-                       MipLevel* pPrevMipLevelOne,
-                       MipLevel* pPrevMipLevelTwo = NULL,
-                       T*        curMipData       = NULL,
-                       T*        prevMip1Data     = NULL,
-                       T*        prevMip2Data     = NULL);
 
 #endif

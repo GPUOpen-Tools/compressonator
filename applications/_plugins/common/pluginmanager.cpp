@@ -25,8 +25,6 @@
 //=====================================================================
 
 #include "pluginmanager.h"
-#include "plugininterface.h"
-#include "cmp_fileio.h"
 
 // Windows Header Files:
 #ifdef _WIN32
@@ -223,6 +221,14 @@ void PluginManager::getPluginDetails(PluginDetails* curPlugin)
         if (textFunc)
             curPlugin->setCategory(textFunc());
 
+		PLUGIN_ULONGFUNC ulongFunc;
+        ulongFunc = reinterpret_cast<PLUGIN_ULONGFUNC>(GetProcAddress(dllHandle, "getPluginOptions"));
+        if (ulongFunc)
+            curPlugin->setOptions(ulongFunc());
+        else
+            curPlugin->setOptions(0);
+
+
         curPlugin->isRegistered = true;
 
         FreeLibrary(dllHandle);
@@ -241,6 +247,26 @@ void PluginManager::clearPluginList()
     }
     pluginRegister.clear();
 }
+
+bool PluginManager::fileExists(const std::string& abs_filename)
+{
+    bool ret = false;
+    FILE* fp;
+#ifdef _WIN32
+    errno_t err = fopen_s(&fp, abs_filename.c_str(), "rb");
+    if (err != 0)
+        return false;
+#else
+    fp = fopen(abs_filename.c_str(), "rb");
+#endif
+    if (fp)
+    {
+        ret = true;
+        fclose(fp);
+    }
+    return ret;
+}
+
 
 void PluginManager::getPluginList(char* SubFolderName, bool append)
 {
@@ -339,7 +365,7 @@ void PluginManager::getPluginList(char* SubFolderName, bool append)
                 {
                     token = s.substr(0, pos);
                     snprintf(dirPath, 260, "%s\\compressonatorCLI.exe", token.c_str());
-                    if (CMP_FileExists(dirPath))
+                    if (fileExists(dirPath))
                     {
                         snprintf(dirPath, 260, "%s", token.c_str());
                         strcat_s(dirPath, SubFolderName);
@@ -388,7 +414,7 @@ void PluginManager::getPluginList(char* SubFolderName, bool append)
                 names.clear();
                 GetDLLFileExports(fname, names);
 
-                if ((names.size() >= 3) && (names.size() <= 15))
+                if ((names.size() >= 3) && (names.size() <= 50))
                 {
                     bool bmakePlugin    = false;
                     bool bgetPluginType = false;
@@ -503,6 +529,13 @@ char* PluginManager::getPluginType(int index)
     return pluginRegister.at(index)->getType();
 }
 
+unsigned long PluginManager::getPluginOption(int index)
+{
+    if (!pluginRegister.at(index)->isRegistered)
+        getPluginDetails(pluginRegister.at(index));
+    return pluginRegister.at(index)->getOptions();
+}
+
 void* PluginManager::GetPlugin(char* type, const char* name)
 {
     if (!m_pluginlistset)
@@ -594,6 +627,72 @@ bool PluginManager::PluginSupported(char* type, char* name)
     return (false);
 }
 
+void PluginManager::getPluginListTypeNames(char* pluginType, std::vector<std::string> &TypeNames)
+{
+    TypeNames.clear();
+    PluginDetails* plugin;
+    char*          pName;
+    char*          pType;
+    for (unsigned int i = 0; i < pluginRegister.size(); i++)
+    {
+        plugin = pluginRegister.at(i);
+
+        pType = plugin->getType();
+        if (strlen(pType) == 0)
+        { 
+            getPluginDetails(plugin);
+            pName = plugin->getName();
+            pType = plugin->getType();
+        }
+        else
+            pName = plugin->getName();
+
+        if (strlen(pType) > 0)
+        {
+            if (strcmp(pluginType, pType) == 0)
+            {
+                TypeNames.push_back(pName);
+            }
+        }
+    }
+}
+
+void PluginManager::getPluginListOptionNames(char* pluginType, unsigned long options, std::vector<std::string>& TypeNames)
+{
+    PluginDetails* plugin;
+    char*          pName;
+    char*          pType;
+    unsigned long  uOptions;
+
+    for (unsigned int i = 0; i < pluginRegister.size(); i++)
+    {
+        plugin = pluginRegister.at(i);
+
+        pType = plugin->getType();
+        if (strlen(pType) == 0)
+        { 
+            getPluginDetails(plugin);
+            pName = plugin->getName();
+            pType = plugin->getType();
+            uOptions = plugin->getOptions();
+        }
+        else
+        {
+            pName = plugin->getName();
+            uOptions = plugin->getOptions();
+        }
+
+        if (strlen(pType) > 0)
+        {
+            unsigned long selectedoption = uOptions & options;
+            if ((strcmp(pluginType, pType) == 0) && (selectedoption > 0))
+            {
+                TypeNames.push_back(pName);
+            }
+        }
+    }
+}
+
 //----------------------------------------------
 
 PluginDetails::~PluginDetails()
@@ -632,6 +731,11 @@ void PluginDetails::setUUID(char* nm)
 #endif
 }
 
+void PluginDetails::setOptions(unsigned long  uoptions)
+{
+    pluginOptions = uoptions;
+}
+
 void PluginDetails::setType(char* nm)
 {
 #ifdef _WIN32
@@ -639,7 +743,7 @@ void PluginDetails::setType(char* nm)
 #else
     strcpy(pluginType, nm);
 #endif
-}
+} 
 
 void PluginDetails::setCategory(char* nm)
 {

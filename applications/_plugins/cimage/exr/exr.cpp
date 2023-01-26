@@ -191,7 +191,7 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *s
     srcTexture->dwWidth           = width;
     srcTexture->dwHeight          = height;
     srcTexture->dwPitch           = 0;
-    srcTexture->format            = CMP_FORMAT_ARGB_16F;
+    srcTexture->format            = CMP_FORMAT_RGBA_16F; // CMP_FORMAT_ARGB_16F;
     srcTexture->dwDataSize        = 4*width*height*sizeof(CMP_HALFSHORT);
     srcTexture->pData             = (CMP_BYTE*) malloc(srcTexture->dwDataSize);
 
@@ -276,7 +276,7 @@ loadImage(const char fileName[],
         srcTexture.dwWidth = width;
         srcTexture.dwHeight = height;
         srcTexture.dwPitch = 0;
-        srcTexture.format = CMP_FORMAT_ARGB_16F;
+        srcTexture.format     = CMP_FORMAT_RGBA_16F;  // CMP_FORMAT_ARGB_16F;
         srcTexture.dwDataSize = 4 * width*height * sizeof(CMP_HALFSHORT);
         srcTexture.pData = (CMP_BYTE*)malloc(srcTexture.dwDataSize);
 
@@ -1093,7 +1093,7 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
         if (miplevels > 1)
             isTile = true;
 
-        pMipSet->m_format = CMP_FORMAT_ARGB_16F;
+        pMipSet->m_format = CMP_FORMAT_RGBA_16F;  // CMP_FORMAT_ARGB_16F;
 
         //handle mipmap exr load using Tile File
         if (((isTile)) && (!(pMipSet->m_Flags & MS_FLAG_DisableMipMapping))) {

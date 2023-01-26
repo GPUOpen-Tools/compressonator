@@ -32,7 +32,7 @@
 #include "common.h"
 #include "compute_base.h"
 #include "Compute_OpenCL.h"
-#include "plugininterface.h"
+#include "cmp_plugininterface.h"
 
 // {D88C7EB3-38D3-4B75-BE14-22ED445156FE}
 static const GUID  g_GUID_GPU = { 0xd88c7eb3, 0x38d3, 0x4b75,{ 0xbe, 0x14, 0x22, 0xed, 0x44, 0x51, 0x56, 0xfe } };
@@ -60,15 +60,6 @@ class Plugin_COpenCL : public PluginInterface_Pipeline {
 
   private:
     ComputeBase  *m_pComputeBase;
-
-#ifdef ENABLE_MAKE_COMPATIBLE_API
-    bool IsFloatFormat(CMP_FORMAT InFormat);
-    float findKneeValueHPC(float x, float y);
-    CMP_ERROR CF_16BitTo8Bit(CMP_WORD* sBlock, CMP_BYTE* cBlock, CMP_DWORD dwBlockSize);
-    CMP_ERROR Byte2HalfShort(CMP_HALFSHORT* hfsBlock, CMP_BYTE* cBlock, CMP_DWORD dwBlockSize);
-    CMP_ERROR Float2Byte(CMP_BYTE cBlock[], CMP_FLOAT* fBlock, MipSet  &srcTexture, const CMP_CompressOptions* pOptions);
-#endif
-
 };
 
 #endif

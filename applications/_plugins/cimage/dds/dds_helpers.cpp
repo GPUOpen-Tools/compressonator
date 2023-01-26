@@ -967,7 +967,7 @@ TC_PluginError LoopR10G10B10A2(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,
                                int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight) {
     MipLevel* pMipLevel = DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nFaceOrSlice);
     // Allocate the permanent buffer and unpack the bitmap data into it
-    if(!DDS_CMips->AllocateMipLevelData(pMipLevel, dwWidth, dwHeight, CF_2101010, pMipSet->m_TextureDataType)) {
+    if(!DDS_CMips->AllocateMipLevelData(pMipLevel, dwWidth, dwHeight, CF_1010102, pMipSet->m_TextureDataType)) {
         return PE_Unknown;
     }
 
@@ -987,7 +987,7 @@ TC_PluginError LoopR10G10B10A2(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,
     CMP_DWORD* pDest = pMipLevel->m_pdwData;
     while(pSrc < pEnd) {
         CMP_DWORD dwSrc = *pSrc++;
-        CMP_DWORD dwDest = (dwSrc & 0xc00ffc00) | ((dwSrc & 0x3ff00000) >> 20) | ((dwSrc & 0x000003ff) << 20);
+        CMP_DWORD dwDest = dwSrc;
         *pDest++ = dwDest;
     }
 
@@ -1118,9 +1118,9 @@ TC_PluginError LoopR8(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,
     CMP_BYTE* pEnd = (pTempData + dwSize);
     CMP_BYTE* pDest = pMipLevel->m_pbData;
     while(pSrc < pEnd) {
-        *pDest++ = 0;
-        *pDest++ = 0;
         *pDest++ = *pSrc++;
+        *pDest++ = 0;
+        *pDest++ = 0;
         *pDest++ = 255;
     }
 

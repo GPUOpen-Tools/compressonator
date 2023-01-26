@@ -23,7 +23,7 @@
 #pragma once
 
 
-#include "imgui/imgui.h"
+#include "imgui.h"
 
 #include <QtGui/qopenglextrafunctions.h>
 #include <QtCore/qobject.h>

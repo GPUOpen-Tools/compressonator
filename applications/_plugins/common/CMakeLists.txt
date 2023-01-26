@@ -85,7 +85,6 @@ target_include_directories(CMP_Common PRIVATE
   ${PROJECT_SOURCE_DIR}/../common/lib/ext/glm
   ${OpenCV_INCLUDE_DIRS}
   ${OpenEXR_INCLUDE_DIRS}
-  ${draco_INCLUDE_DIRS}
   )
 
 if (OPTION_CMP_QT)

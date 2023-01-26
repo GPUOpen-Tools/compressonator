@@ -22,19 +22,16 @@ void *make_Plugin_TGA() {
 #ifndef _WIN32
 typedef CMP_DWORD* LPDWORD;
 #endif
-/*
-..\.\..\..\..\..\Common\Lib\Ext\OpenEXR\v1.4.0\lib_MT\$(Configuration)\$(Platform);
-zlibstatic_d.lib
-*/
+
 
 #pragma comment(lib,"advapi32.lib")        // for RegCloseKey and other Reg calls ...
 
 Plugin_TGA::Plugin_TGA() {
-    //MessageBox(0,"Plugin_TGA","Plugin_TGA",MB_OK);
+
 }
 
 Plugin_TGA::~Plugin_TGA() {
-    //MessageBox(0,"Plugin_TGA","~Plugin_TGA",MB_OK);
+
 }
 
 int Plugin_TGA::TC_PluginSetSharedIO(void* Shared) {
@@ -47,7 +44,6 @@ int Plugin_TGA::TC_PluginSetSharedIO(void* Shared) {
 
 
 int Plugin_TGA::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) {
-    //MessageBox(0,"TC_PluginGetVersion","Plugin_TGA",MB_OK);
 #ifdef _WIN32
     pPluginVersion->guid                    = g_GUID;
 #endif
@@ -59,17 +55,17 @@ int Plugin_TGA::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) {
 }
 
 int Plugin_TGA::TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *srcTexture) {
-    //MessageBox(0,"TC_PluginFileLoadTexture srcTexture","Plugin_TGA",MB_OK);
     return 0;
-
 }
 
 int Plugin_TGA::TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *srcTexture) {
-    //MessageBox(0,"TC_PluginFileSaveTexture srcTexture","Plugin_TGA",MB_OK);
     return 0;
 }
 
-// #include "loadtga.h"
+#ifdef BUILD_AS_PLUGIN_DLL
+#define STB_IMAGE_IMPLEMENTATION
+#endif
+#include "stb_image.h"
 
 int Plugin_TGA::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSet) {
     CMP_CMIPS lCMips;
@@ -113,14 +109,38 @@ int Plugin_TGA::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
             return LoadTGA_RGB888(pFile, pMipSet, header);
         else if(header.cImageType == ImageType_ARGB8888_RLE && header.cColorDepth == 24)
             return LoadTGA_RGB888_RLE(pFile, pMipSet, header);
-        else if(header.cImageType == ImageType_G8 && header.cColorDepth == 8)
-            return LoadTGA_G8(pFile, pMipSet, header);
-        else if(header.cImageType == ImageType_G8_RLE && header.cColorDepth == 8)
-            return LoadTGA_G8_RLE(pFile, pMipSet, header);
+        else if (header.cImageType == ImageType_G8_RLE && header.cColorDepth == 8)
+            return LoadTGA_G8_RLE(pFile, pMipSet, header);  // Raw greyscale -> Converted to RGBA channels where R=G=B and alpha is 255
+        else // use stbi
+        {
+            fclose(pFile);
+            char*   sti_pData;
+            int32_t width, height, channels;
+            sti_pData = (char*)stbi_load(pszFilename, &width, &height, &channels, STBI_rgb_alpha);
+            if (sti_pData)
+            {
+                if (!TGA_CMips->AllocateMipLevelData(TGA_CMips->GetMipLevel(pMipSet, 0), width, height, CF_8bit, TDT_ARGB))
+                    return PE_Unknown;
+                CMP_DWORD dwSize           = pMipSet->m_nWidth * pMipSet->m_nHeight * sizeof(CMP_COLOR);
+                pMipSet->m_ChannelFormat   = CF_8bit;
+                pMipSet->m_TextureDataType = TDT_ARGB;
+                pMipSet->m_dwFourCC        = 0;
+                pMipSet->m_dwFourCC2       = 0;
+                pMipSet->m_format          = CMP_FORMAT_ARGB_8888;
+                pMipSet->m_nMipLevels      = 1;
+                CMP_BYTE* cmp_pData            = (CMP_BYTE*)(TGA_CMips->GetMipLevel(pMipSet, 0)->m_pbData);
+                memcpy(cmp_pData, sti_pData, dwSize);
+                free(sti_pData);
+                return PE_OK;
+            }
+            if (TGA_CMips)
+                TGA_CMips->PrintError(("Error(%d): TGA Plugin ID(%d) unsupported type Filename = %s "), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, pszFilename);
+            return -1;
+        }
     }
 
     if (TGA_CMips)
-        TGA_CMips->PrintError(("Error(%d): TGA Plugin ID(%d) unsupported type Filename = %s "), EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, pszFilename);
+        TGA_CMips->PrintError(("Error(%d): TGA Plugin ID(%d) file load Filename = %s "), EL_Error, IDS_ERROR_FILE_OPEN, pszFilename);
     fclose(pFile);
 
     return -1;
@@ -472,40 +492,82 @@ TC_PluginError LoadTGA_RGB888_RLE(FILE* pFile, MipSet* pMipSet, TGAHeader& Heade
     return PE_OK;
 }
 
+// No longer used : Remove
 TC_PluginError LoadTGA_G8(FILE* pFile, MipSet* pMipSet, TGAHeader& Header) {
-    if(!TGA_CMips->AllocateCompressedMipLevelData(TGA_CMips->GetMipLevel(pMipSet, 0), Header.nWidth, Header.nHeight, Header.nWidth * Header.nHeight))
+    if (!TGA_CMips->AllocateMipLevelData(TGA_CMips->GetMipLevel(pMipSet, 0), Header.nWidth, Header.nHeight, CF_8bit, TDT_ARGB))
         return PE_Unknown;
 
-    pMipSet->m_ChannelFormat        = CF_Compressed;
-    pMipSet->m_TextureDataType      = TDT_XRGB;
-    pMipSet->m_dwFourCC             = CMP_MAKEFOURCC('G', '8', ' ', ' ');
-    pMipSet->m_dwFourCC2            = 0;
-    pMipSet->m_nMipLevels           = 1;
+    pMipSet->m_ChannelFormat   = CF_8bit;
+    pMipSet->m_TextureDataType = TDT_ARGB;
+    pMipSet->m_dwFourCC        = 0;
+    pMipSet->m_dwFourCC2       = 0;
+    pMipSet->m_nMipLevels      = 1;
+    pMipSet->m_format          = CMP_FORMAT_ARGB_8888;
 
     // Allocate a temporary buffer and read the bitmap data into it
-    CMP_DWORD dwSize = pMipSet->m_nWidth *  pMipSet->m_nHeight * sizeof(CMP_BYTE);
-    unsigned char* pTempData = static_cast<unsigned char*>(malloc(dwSize));
-    fread(pTempData, dwSize, 1, pFile);
+    long lCurrPos = ftell(pFile);
+    fseek(pFile, 0, SEEK_END);
+    long lEndPos = ftell(pFile);
+    fseek(pFile, lCurrPos, SEEK_SET);
+    CMP_DWORD      dwTempSize = lEndPos - lCurrPos;
+    unsigned char* pTempData  = static_cast<unsigned char*>(malloc(dwTempSize));
+    fread(pTempData, dwTempSize, 1, pFile);
     fclose(pFile);
 
     CMP_BYTE* pTempPtr = pTempData;
 
     int nStart, nEnd, nIncrement;
     // Bottom up ?
-    if(Header.cFormatFlags & 0x20) {
-        nStart = 0;
-        nEnd = pMipSet->m_nHeight;
+    if (Header.cFormatFlags & 0x20)
+    {
+        nStart     = 0;
+        nEnd       = pMipSet->m_nHeight;
         nIncrement = 1;
-    } else {
-        nStart = pMipSet->m_nHeight-1;
-        nEnd = -1;
+    }
+    else
+    {
+        nStart     = pMipSet->m_nHeight - 1;
+        nEnd       = -1;
         nIncrement = -1;
     }
 
-    for(int j = nStart; j != nEnd; j+= nIncrement) {
-        CMP_BYTE* pData = (CMP_BYTE*) (TGA_CMips->GetMipLevel(pMipSet, 0)->m_pbData + (j * pMipSet->m_nWidth));
-        memcpy(pData, pTempPtr, pMipSet->m_nWidth);
-        pTempPtr += pMipSet->m_nWidth;
+    for (int j = nStart; j != nEnd; j += nIncrement)
+    {
+        CMP_BYTE* pData = (CMP_BYTE*)(TGA_CMips->GetMipLevel(pMipSet, 0)->m_pbData + (j * pMipSet->m_nWidth * sizeof(CMP_COLOR)));
+
+        int nColumn = 0;
+        while (nColumn < pMipSet->m_nWidth)
+        {
+            unsigned char nLength = *pTempPtr++;
+            if (nLength & 0x80)
+            {
+                int      nRepeat = nLength - 0x7f;
+                CMP_BYTE gray    = *pTempPtr++;
+                while (nRepeat && nColumn < pMipSet->m_nWidth)
+                {
+                    *pData++ = gray;
+                    *pData++ = gray;
+                    *pData++ = gray;
+                    *pData++ = 0xff;
+                    nColumn++;
+                    nRepeat--;
+                }
+            }
+            else
+            {
+                int      nRepeat = nLength + 1;
+                CMP_BYTE gray    = *pTempPtr++;
+                while (nRepeat && nColumn < pMipSet->m_nWidth)
+                {
+                    *pData++ = gray;
+                    *pData++ = gray;
+                    *pData++ = gray;
+                    *pData++ = 0xff;
+                    nColumn++;
+                    nRepeat--;
+                }
+            }
+        }
     }
 
     free(pTempData);

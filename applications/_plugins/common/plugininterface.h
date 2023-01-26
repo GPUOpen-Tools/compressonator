@@ -29,177 +29,22 @@
 #ifndef _PLUGININTERFACE_H
 #define _PLUGININTERFACE_H
 
-#include "common.h"
 #include "compressonator.h"
-
 #include "pluginbase.h"
 #include "pluginmanager.h"
-#include "texture.h"
-
-#define TC_API_VERSION_MAJOR 1
-#define TC_API_VERSION_MINOR 4
-
-typedef CMP_DWORD_PTR TC_HANDLE;  ///< Generic Texture API handle
-typedef TC_HANDLE HFILETYPE;  ///< Handle to a FileType.
-typedef TC_HANDLE HCODEC;     ///< Handle to a Codec.
-typedef TC_HANDLE HMIPPER;    ///< Handle to a Mipper.
-typedef TC_HANDLE HVIEWTYPE;  ///< \internal Handle to a ViewType.
-typedef TC_HANDLE HVIEW;      ///< \internal Handle to a View.
 
 #ifndef _WIN32
 typedef CMP_DWORD WNDPROC;
 #endif
 
-class PluginInterface_Image : PluginBase {
-  public:
-    PluginInterface_Image() {}
-    virtual ~PluginInterface_Image() {}
-    virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
-    virtual int TC_PluginSetSharedIO(void* Shared)=0;
-
-    virtual int TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSet) = 0;
-    virtual int TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSet) = 0;
-    virtual int TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *srcTexture) = 0;
-    virtual int TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *srcTexture) = 0;
-};
-
-class PluginInterface_Codec : PluginBase {
-  public:
-    PluginInterface_Codec() {}
-    virtual ~PluginInterface_Codec() {}
-    virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
-};
-
-// These type of plugins are used to Analyze images
-class PluginInterface_Analysis : PluginBase {
-  public:
-    PluginInterface_Analysis() {}
-    virtual ~PluginInterface_Analysis() {}
-    virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
-    virtual int TC_ImageDiff(const char *in1, const char *in2, const char *out, char *resultsFile, void *usrAnalysisData, void *pluginManager, void **cmipImages, CMP_Feedback_Proc pFeedbackProc = NULL) {
-        (void)in1, (void)in2, (void)out, (void)resultsFile;
-        (void) usrAnalysisData;
-        (void)pluginManager;
-        (void*)cmipImages;
-        (void)pFeedbackProc;
-        return 0;
-    };
-    virtual int TC_PSNR_MSE(const char *in1, const char *in2, char *resultsFile, void *pluginManager, CMP_Feedback_Proc pFeedbackProc = NULL) {
-        (void)in1, (void)in2, (void)resultsFile;
-        (void)pluginManager;
-        (void)pFeedbackProc;
-        return 0;
-    };
-    virtual int TC_SSIM(const char *in1, const char *in2, char *resultsFile, void *pluginManager, CMP_Feedback_Proc pFeedbackProc = NULL) {
-        (void)in1, (void)in2, (void)resultsFile;
-        (void)pluginManager;
-        (void)pFeedbackProc;
-        return 0;
-    };
-};
-
-
-// These type of plugins are used transcode compress texture to another compressed format
-class PluginInterface_CMPTranscode : PluginBase {
-  public:
-    PluginInterface_CMPTranscode() {}
-    virtual ~PluginInterface_CMPTranscode() {}
-    virtual int         TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
-    virtual int         TC_PluginSetSharedIO(void* Shared) = 0;
-    virtual CMP_ERROR   TC_Trancode(MipSet  *srcTexture, MipSet  *destTexture) = 0;
-};
-
-// These type of plugins are used to Generate or transform images
-class PluginInterface_Filters : PluginBase {
-  public:
-    PluginInterface_Filters() {}
-    virtual ~PluginInterface_Filters() {}
-    virtual int TC_PluginSetSharedIO(void* Shared) = 0;
-    virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)=0;
-    virtual int TC_CFilter(CMP_MipSet* pMipSet, CMP_MipSet* pMipSetDst, CMP_CFilterParams* FilterParams) = 0;
-};
-
-
-// These type of plugins are used for Compute
-class PluginInterface_Encoder : PluginBase {
-  public:
-    PluginInterface_Encoder() {}
-    virtual ~PluginInterface_Encoder() {}
-    virtual int     TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
-    virtual int     TC_PluginSetSharedIO(void* Shared) = 0;
-    virtual void*   TC_Create() = 0;
-    virtual void    TC_Destroy(void* codec) = 0;
-    virtual int     TC_Init(void* kernel_options) = 0;
-    virtual char *  TC_ComputeSourceFile(unsigned int     Compute_type) = 0;
-    virtual void    TC_Start() = 0;
-    virtual void    TC_End() =0;
-};
-
-class PluginInterface_Pipeline : PluginBase {
-  public:
-    PluginInterface_Pipeline() {}
-    virtual ~PluginInterface_Pipeline() {}
-    virtual int         TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
-    virtual int         TC_PluginSetSharedIO(void* Shared) = 0;
-    virtual int         TC_Init(void  *kernel_options) = 0;
-    virtual CMP_ERROR   TC_Compress(void  *kernel_options, MipSet  &SrcTexture, MipSet  &destTexture,CMP_Feedback_Proc pFeedbackProc = NULL) = 0;
-    virtual void        TC_SetComputeOptions(void *options) = 0;
-    virtual char *      TC_ComputeSourceFile() = 0;
-    virtual CMP_ERROR   TC_GetPerformanceStats(void* pPerfStats) = 0;
-    virtual CMP_ERROR   TC_GetDeviceInfo(void* pDeviceInfo) = 0;
-    virtual int TC_Close() = 0;
-};
-
-
-// These type of plugins are used to Decompress Images using GPU
-class PluginInterface_GPUDecode : PluginBase {
-  public:
-    PluginInterface_GPUDecode() {}
-    virtual ~PluginInterface_GPUDecode() {}
-    virtual int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
-    virtual int TC_Init(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback) = 0;
-    virtual CMP_ERROR TC_Decompress(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture) = 0;
-    virtual int TC_Close() = 0;
-};
-
-
-class PluginInterface_3DModel : PluginBase {
-  public:
-    PluginInterface_3DModel() {}
-    virtual ~PluginInterface_3DModel() {}
-    virtual int  TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
-    virtual int  TC_PluginSetSharedIO(void* Shared) = 0;
-    virtual void *CreateView(void *ModelData, CMP_LONG Width, CMP_LONG Height, void *HWND, void *pluginManager, void *msghandler,CMP_Feedback_Proc pFeedbackProc = NULL) = 0;
-    virtual void *ShowView(void *data) = 0;
-    virtual void CloseView()    = 0;
-    virtual bool OnRenderView()   = 0;
-    virtual void OnReSizeView(CMP_LONG w, CMP_LONG h) = 0;
-    virtual void processMSG(void *message) = 0;
-};
-
-
-class PluginInterface_3DModel_Loader : PluginBase {
-  public:
-    PluginInterface_3DModel_Loader() {}
-    virtual ~PluginInterface_3DModel_Loader() {}
-    virtual int  TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
-    virtual int  TC_PluginSetSharedIO(void* Shared) = 0;
-    virtual int  LoadModelData(const char* pszFilename, const char* pszFilename2, void *pluginManager, void *msghandler, CMP_Feedback_Proc pFeedbackProc) = 0;
-    virtual int  SaveModelData(const char* pdstFilename, void* meshData) = 0;
-    virtual void *GetModelData() = 0;
-};
-
-class PluginInterface_Mesh : PluginBase {
-  public:
-    PluginInterface_Mesh() {}
-    virtual ~PluginInterface_Mesh() {}
-    virtual int  TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
-    virtual int  TC_PluginSetSharedIO(void* Shared) = 0;
-
-    virtual int Init() = 0;
-    virtual void* ProcessMesh(void* data = NULL, void* setting = NULL, void* statsOut = NULL, CMP_Feedback_Proc pFeedbackProc = NULL) = 0;
-    virtual int CleanUp() = 0;
-};
+// make cmp plugins optional when using code with plugin apps based off c++17 features.
+// #if (_MSVC_LANG > 201700L)
+// #if __has_include("cmp_plugininterface.h")
+// #include "cmp_plugininterface.h"
+// #endif
+// #else
+// #include "cmp_plugininterface.h"
+// #endif
 
 class PluginInterface_WindowViews : PluginBase {
   public:
@@ -211,8 +56,6 @@ class PluginInterface_WindowViews : PluginBase {
     virtual void  DeleteView()  = 0;
 };
 
-
-//High Performance Compute codec interface
 class CMP_Encoder {
   public:
     CMP_Encoder() {
@@ -253,7 +96,6 @@ class CMP_Encoder {
     float            m_quality;
 };
 
-
 class PluginInterface_Vision : PluginBase
 {
 public:
@@ -267,5 +109,89 @@ public:
 
     virtual void VisionProcess(char* srcFile, char* testFile, void *options, void *results) = 0;
 };
+
+class PluginInterface_Engine : PluginBase
+{
+public:
+    PluginInterface_Engine()
+    {
+    }
+    virtual ~PluginInterface_Engine()
+    {
+    }
+    virtual int  TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
+    virtual int  InitEngine(void* remoteEngine, void* remoteImGui, void* remoteHWND, int nCmdShow) = 0;
+    virtual void CloseEngine() = 0;
+    virtual int  ProcessFrame(void* pMipSet,bool getFrame, int framenumber)   = 0;
+    virtual int  GetRenderTarget(void** GroundTruth, void** Upscaled) = 0;
+};
+
+class PluginInterface_ImageMetrics : PluginBase
+{
+public:
+    PluginInterface_ImageMetrics()  { }
+    virtual ~PluginInterface_ImageMetrics() { }
+    virtual int   TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) = 0;
+    virtual int   Init(void* remoteDevice, void* remoteCommandList, void* remoteDescriptoList) = 0;
+    virtual void  Close() = 0;
+    virtual float GetPSNR(unsigned int index) = 0;
+    virtual float GetSSIM(unsigned int index) = 0;
+    virtual int   ComputePSNR(unsigned int index,
+                              void*        GroundTruthResource,
+                              void*        UpscaledResource,
+                              void*        descriptor0,
+                              void*        descriptor1)								 = 0;
+    virtual int   ComputeSSIM(unsigned int index,
+                              void*        GroundTruthResource,
+                              void*        UpscaledResource,
+							  void*		   descriptor0,
+                              void*		   descriptor1)							     = 0;
+    virtual void* GetPSNRMetric(unsigned int index)                                  = 0;
+    virtual void* GetSSIMMetric(unsigned int index)                                  = 0;
+};
+
+
+class PluginInterface_UpscaleContext: PluginBase
+{
+public:
+    PluginInterface_UpscaleContext()
+    {
+    }
+    virtual ~PluginInterface_UpscaleContext()
+    {
+    }
+    virtual int  TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)= 0;
+    virtual int  Init(void* remoteEngine, void* remoteSetting) = 0;
+    virtual void Close() = 0;
+    virtual int  CreateContext(unsigned int version, unsigned int uType, void* initParams, void** Context) = 0;
+};
+
+
+
+class PluginInterface_ImageProcessRT : PluginBase
+{
+public:
+    PluginInterface_ImageProcessRT()
+    {
+    }
+    virtual ~PluginInterface_ImageProcessRT()
+    {
+    }
+    virtual int   TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)              = 0;
+    virtual int   Init(void* remoteEngine, void* settings)                           = 0;
+    virtual void  Close()                                                            = 0;
+    virtual void* GetRenderTarget(unsigned int index)                                = 0;
+    virtual int   Process(unsigned int index, void* Rendertarget1, void* Rendertarget2, void* ImageMetrics2, void* settings) = 0;
+};
+
+
+class PluginInterface_SubjectiveImageMetric : PluginBase
+{
+public:
+    PluginInterface_SubjectiveImageMetric() { }
+    virtual ~PluginInterface_SubjectiveImageMetric(){ }
+    virtual float Process(int type, const char* imagefile, const char* modelPath) = 0;
+};
+
 
 #endif

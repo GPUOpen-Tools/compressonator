@@ -25,6 +25,7 @@
 #ifndef _DDS_H
 #define _DDS_H
 
+#include "cmp_plugininterface.h"
 #include "plugininterface.h"
 
 #ifdef _WIN32

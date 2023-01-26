@@ -22,14 +22,14 @@
 //
 #pragma once
 
-#include "commandlistringdx12.h"
-#include "dynamicbufferringdx12.h"
-#include "resourceviewheapsdx12.h"
-#include "uploadheapdx12.h"
+#include "cmp_commandlistringdx12.h"
+#include "cmp_dynamicbufferringdx12.h"
+#include "cmp_resourceviewheapsdx12.h"
+#include "cmp_uploadheapdx12.h"
 
-#include "defines.h"
+#include "cmp_defines.h"
 
-#include <imgui/imgui.h>
+#include "imgui.h"
 
 #include <QtGui/qopenglextrafunctions.h>
 #include <QtCore/qobject.h>

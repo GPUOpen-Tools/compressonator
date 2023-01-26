@@ -238,6 +238,25 @@ TC_PluginError LoadDDS_ARGB2101010(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
     return err;
 }
 
+TC_PluginError LoadDDS_RGBA1010102(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
+{
+    pMipSet->m_TextureDataType    = TDT_ARGB;
+    ChannelFormat  channelFormat  = CF_1010102;
+    void*          pChannelFormat = &channelFormat;
+    TC_PluginError err            = GenericLoadFunction(pFile,
+                                             pDDSD,
+                                             pMipSet,
+                                             pChannelFormat,
+                                             channelFormat,
+                                             pMipSet->m_TextureDataType,
+                                             PreLoopDefault,
+                                             (pDDSD->ddpfPixelFormat.dwRBitMask == 0xffc00000) ? LoopR10G10B10A2 : LoopDefault,
+                                             PostLoopDefault);
+    pMipSet->m_format             = CMP_FORMAT_RGBA_1010102;
+    fclose(pFile);
+    return err;
+}
+
 TC_PluginError LoadDDS_ABGR32F(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
 {
     void*          extra;

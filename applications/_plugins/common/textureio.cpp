@@ -31,7 +31,8 @@
 #include "common.h"
 #include "cmp_fileio.h"
 #include "pluginmanager.h"
-#include "plugininterface.h"
+#include "cmp_plugininterface.h"
+#include "atiformats.h"
 
 #include <gpu_decode.h>
 
@@ -44,6 +45,7 @@
 #include <QtCore/QCoreApplication>
 #include <QtGui/qimage.h>
 #include <QtGui/qrgb.h>
+
 
 #ifdef _DEBUG
 #pragma comment(lib, "Qt5Cored.lib")
@@ -72,8 +74,7 @@ inline CMP_FLOAT clamp(CMP_FLOAT a, CMP_FLOAT l, CMP_FLOAT h) {
     return (a < l) ? l : ((a > h) ? h : a);
 }
 
-
-void astc_find_closest_blockdim_2d(float target_bitrate, int *x, int *y, int consider_illegal) {
+void find_closest_blockdim_2d(float target_bitrate, int *x, int *y, int consider_illegal) {
     int blockdims[6] = { 4, 5, 6, 8, 10, 12 };
 
     float best_error = 1000;
@@ -102,7 +103,7 @@ void astc_find_closest_blockdim_2d(float target_bitrate, int *x, int *y, int con
     }
 }
 
-void astc_find_closest_blockxy_2d(int *x, int *y, int consider_illegal) {
+void find_closest_blockxy_2d(int *x, int *y, int consider_illegal) {
     (void)consider_illegal;
 
     int blockdims[6] = { 4, 5, 6, 8, 10, 12 };
@@ -117,13 +118,13 @@ void astc_find_closest_blockxy_2d(int *x, int *y, int consider_illegal) {
             *y = temp;
         }
         float bitrateF = float(128.0f / ((*x)*(*y)));
-        astc_find_closest_blockdim_2d(bitrateF, x, y, 0);
+        find_closest_blockdim_2d(bitrateF, x, y, 0);
     } else {
         float bitrateF = float(128.0f / ((*x)*(*y)));
-        astc_find_closest_blockdim_2d(bitrateF, x, y, 0);
+        find_closest_blockdim_2d(bitrateF, x, y, 0);
     }
-
 }
+
 
 bool DeCompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
     UNREFERENCED_PARAMETER(pUser1);
@@ -168,6 +169,11 @@ bool IsDestinationUnCompressed(const char *fname) {
         isuncompressed = false;
     }
 #endif
+#ifdef USE_LOSSLESS_COMPRESSION
+    else if (file_extension.compare(".brlg") == 0) {
+        isuncompressed = false;
+    }
+#endif
 
     return isuncompressed;
 }
@@ -183,168 +189,12 @@ CMP_FORMAT FormatByFileExtension(const char *fname, MipSet *pMipSet) {
 
     if (file_extension.compare(".exr") == 0) {
         pMipSet->m_ChannelFormat = CF_Float16;
-        return CMP_FORMAT_ARGB_16F;
+        return CMP_FORMAT_RGBA_16F;
     }
 
     pMipSet->m_ChannelFormat = CF_8bit;
     return CMP_FORMAT_ARGB_8888;
 }
-
-CMP_FORMAT GetFormat(CMP_DWORD dwFourCC) {
-    switch(dwFourCC) {
-    case CMP_FOURCC_ATI1N:              return CMP_FORMAT_ATI1N;
-    case CMP_FOURCC_ATI2N:              return CMP_FORMAT_ATI2N;
-    case CMP_FOURCC_ATI2N_XY:           return CMP_FORMAT_ATI2N_XY;
-    case CMP_FOURCC_ATI2N_DXT5:         return CMP_FORMAT_ATI2N_DXT5;
-    case CMP_FOURCC_DXT1:               return CMP_FORMAT_DXT1;
-    case CMP_FOURCC_DXT3:               return CMP_FORMAT_DXT3;
-    case CMP_FOURCC_DXT5:               return CMP_FORMAT_DXT5;
-    case CMP_FOURCC_DXT5_xGBR:          return CMP_FORMAT_DXT5_xGBR;
-    case CMP_FOURCC_DXT5_RxBG:          return CMP_FORMAT_DXT5_RxBG;
-    case CMP_FOURCC_DXT5_RBxG:          return CMP_FORMAT_DXT5_RBxG;
-    case CMP_FOURCC_DXT5_xRBG:          return CMP_FORMAT_DXT5_xRBG;
-    case CMP_FOURCC_DXT5_RGxB:          return CMP_FORMAT_DXT5_RGxB;
-    case CMP_FOURCC_DXT5_xGxR:          return CMP_FORMAT_DXT5_xGxR;
-
-    // Deprecated but still supported for decompression
-    // Some definition are not valid FOURCC values nut are used as Custom formats
-    // so that DDS files can be used for storage
-    case CMP_FOURCC_DXT5_GXRB:          return CMP_FORMAT_DXT5_xRBG;
-    case CMP_FOURCC_DXT5_GRXB:          return CMP_FORMAT_DXT5_RxBG;
-    case CMP_FOURCC_DXT5_RXGB:          return CMP_FORMAT_DXT5_xGBR;
-    case CMP_FOURCC_DXT5_BRGX:          return CMP_FORMAT_DXT5_RGxB;
-
-    case CMP_FOURCC_ATC_RGB:            return CMP_FORMAT_ATC_RGB;
-    case CMP_FOURCC_ATC_RGBA_EXPLICIT:  return CMP_FORMAT_ATC_RGBA_Explicit;
-    case CMP_FOURCC_ATC_RGBA_INTERP:    return CMP_FORMAT_ATC_RGBA_Interpolated;
-    case CMP_FOURCC_ETC_RGB:            return CMP_FORMAT_ETC_RGB;
-    case CMP_FOURCC_ETC2_RGB:           return CMP_FORMAT_ETC2_RGB;
-    case CMP_FOURCC_ETC2_SRGB:          return CMP_FORMAT_ETC2_SRGB;
-    case CMP_FOURCC_ETC2_RGBA:          return CMP_FORMAT_ETC2_RGBA;
-    case CMP_FOURCC_ETC2_RGBA1:         return CMP_FORMAT_ETC2_RGBA1;
-    case CMP_FOURCC_ETC2_SRGBA:         return CMP_FORMAT_ETC2_SRGBA;
-    case CMP_FOURCC_ETC2_SRGBA1:        return CMP_FORMAT_ETC2_SRGBA1;
-    case CMP_FOURCC_BC4S:               return CMP_FORMAT_BC4_S;
-    case CMP_FOURCC_BC4:
-    case CMP_FOURCC_BC4U:               return CMP_FORMAT_ATI1N;  
-    case CMP_FOURCC_BC5:                return CMP_FORMAT_BC5;
-    case CMP_FOURCC_BC5S:               return CMP_FORMAT_BC5_S;
-    case CMP_FOURCC_BC6H:               return CMP_FORMAT_BC6H;
-    case CMP_FOURCC_BC7:                return CMP_FORMAT_BC7;
-    case CMP_FOURCC_ASTC:               return CMP_FORMAT_ASTC;
-#ifdef USE_APC
-    case CMP_FOURCC_APC:                return CMP_FORMAT_APC;
-#endif
-#ifdef USE_GTC
-    case CMP_FOURCC_GTC:                return CMP_FORMAT_GTC;
-#endif
-#ifdef USE_BASIS
-    case CMP_FOURCC_BASIS:              return CMP_FORMAT_BASIS;
-#endif
-    default:
-        return CMP_FORMAT_Unknown;
-    }
-}
-
-
-
-CMP_FORMAT GetFormat(MipSet* pMipSet) {
-    assert(pMipSet);
-    if(pMipSet == NULL)
-        return CMP_FORMAT_Unknown;
-
-    switch(pMipSet->m_ChannelFormat) {
-    case CF_8bit:
-        switch(pMipSet->m_TextureDataType) {
-        case TDT_R:
-            return CMP_FORMAT_R_8;
-        case TDT_RG:
-            return CMP_FORMAT_RG_8;
-        default:
-            return CMP_FORMAT_ARGB_8888;
-        }
-    case CF_Float16:
-        switch(pMipSet->m_TextureDataType) {
-        case TDT_R:
-            return CMP_FORMAT_R_16F;
-        case TDT_RG:
-            return CMP_FORMAT_RG_16F;
-        default:
-            return CMP_FORMAT_ARGB_16F;
-        }
-    case CF_Float32:
-        switch(pMipSet->m_TextureDataType) {
-        case TDT_R:
-            return CMP_FORMAT_R_32F;
-        case TDT_RG:
-            return CMP_FORMAT_RG_32F;
-        default:
-            return CMP_FORMAT_ARGB_32F;
-        }
-    case CF_Float9995E:
-        return CMP_FORMAT_RGBE_32F;
-
-    case CF_Compressed:
-        return GetFormat(pMipSet->m_dwFourCC2 ? pMipSet->m_dwFourCC2 : pMipSet->m_dwFourCC);
-    case CF_16bit:
-        switch(pMipSet->m_TextureDataType) {
-        case TDT_R:
-            return CMP_FORMAT_R_16;
-        case TDT_RG:
-            return CMP_FORMAT_RG_16;
-        default:
-            return CMP_FORMAT_ARGB_16;
-        }
-    case CF_2101010:
-        return CMP_FORMAT_ARGB_2101010;
-
-#ifdef ARGB_32_SUPPORT
-    case CF_32bit:
-        switch(pMipSet->m_TextureDataType) {
-        case TDT_R:
-            return CMP_FORMAT_R_32;
-        case TDT_RG:
-            return CMP_FORMAT_RG_32;
-        default:
-            return CMP_FORMAT_ARGB_32;
-        }
-#endif // ARGB_32_SUPPORT
-
-    default:
-        return CMP_FORMAT_Unknown;
-    }
-}
-
-
-bool FloatFormat(CMP_FORMAT InFormat) {
-    switch (InFormat) {
-    case CMP_FORMAT_ARGB_16F:
-    case CMP_FORMAT_ABGR_16F:
-    case CMP_FORMAT_RGBA_16F:
-    case CMP_FORMAT_BGRA_16F:
-    case CMP_FORMAT_RG_16F:
-    case CMP_FORMAT_R_16F:
-    case CMP_FORMAT_ARGB_32F:
-    case CMP_FORMAT_ABGR_32F:
-    case CMP_FORMAT_RGBA_32F:
-    case CMP_FORMAT_BGRA_32F:
-    case CMP_FORMAT_RGB_32F:
-    case CMP_FORMAT_BGR_32F:
-    case CMP_FORMAT_RG_32F:
-    case CMP_FORMAT_R_32F:
-    case CMP_FORMAT_BC6H:
-    case CMP_FORMAT_BC6H_SF:
-    case CMP_FORMAT_RGBE_32F: {
-        return true;
-    }
-    break;
-    default:
-        break;
-    }
-
-    return false;
-}
-
 
 bool CompressedFileFormat(std::string file) {
     std::string file_extension = CMP_GetJustFileExt(file);
@@ -371,6 +221,7 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *con
         PrintInfo("GPU based cubemap decode is currently not supported in this version. Please view decode images using CPU (under Settings->Application Options)\n");
         return NULL;
     }
+#if (OPTION_BUILD_ASTC == 1)
     if (MipSetIn->m_format == CMP_FORMAT_ASTC && !(configSetting->useCPU) && decodeWith == CMP_GPUDecode::GPUDecode_DIRECTX) {
         configSetting->errMessage = "ASTC format does not supported by DirectX API. Please view ASTC compressed images using other options (CPU) (under Settings->Application Options).";
         PrintInfo("Decompress Error: ASTC format does not supported by DirectX API. Please view ASTC compressed images using CPU (under Settings->Application Options).\n");
@@ -380,15 +231,21 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *con
         PrintInfo("Decompress Error: Decode ASTC with OpenGL is not supported. Please view ASTC compressed images using CPU (under Settings->Application Options).\n");
         return NULL;
     }
-
+#endif
+    if (MipSetIn->m_format == CMP_FORMAT_BROTLIG || MipSetIn->m_format == CMP_FORMAT_BINARY)
+    {
+        configSetting->errMessage = "BRLG and BINARY formats cannot be decompressed and viewed.";
+        PrintInfo("Decompress Error: BRLG and BINARY formats cannot be decompressed.\n");
+        return NULL;
+    }
     // Compress Options
     bool silent = true;
-    CMP_CompressOptions    CompressOptions;
+    CMP_CompressOptions CompressOptions;
     memset(&CompressOptions, 0, sizeof(CMP_CompressOptions));
     CompressOptions.dwnumThreads = 0;
     CMIPS m_CMIPS;
 
-    MipSet    *MipSetOut = new MipSet();
+    MipSet* MipSetOut = new MipSet();
     memset(MipSetOut, 0, sizeof(MipSet));
 
     MipSetOut->m_TextureDataType = TDT_ARGB;
@@ -409,7 +266,7 @@ MipSet* DecompressMIPSet(MipSet *MipSetIn, CMP_GPUDecode decodeWith, Config *con
         break;
     case CMP_FORMAT_BC6H:
     case CMP_FORMAT_BC6H_SF:
-        MipSetOut->m_format = CMP_FORMAT_ARGB_16F;
+        MipSetOut->m_format = CMP_FORMAT_RGBA_16F;
         MipSetOut->m_ChannelFormat = CF_Float16;
         break;
     default:
@@ -654,36 +511,51 @@ void swap_Bytes(CMP_BYTE *src, int width, int height, int offset) {
 
 }
 
-void SwizzleMipMap(MipSet *pMipSet) {
-    CMP_DWORD dwWidth;
-    CMP_DWORD dwHeight;
-    CMP_BYTE     *pData;
+void SwizzleMipSet(MipSet* pMipSet)
+{
+    if (pMipSet->m_ChannelFormat == CF_Compressed)
+        return;
 
-    for (int nMipLevel = 0; nMipLevel<pMipSet->m_nMipLevels; nMipLevel++) {
-        for (int nFaceOrSlice = 0; nFaceOrSlice< CMP_MaxFacesOrSlices(pMipSet, nMipLevel); nFaceOrSlice++) {
+    for (int nMipLevel = 0; nMipLevel<pMipSet->m_nMipLevels; nMipLevel++)
+    {
+        for (int nFaceOrSlice = 0; nFaceOrSlice< CMP_MaxFacesOrSlices(pMipSet, nMipLevel); nFaceOrSlice++)
+        {
             //=====================
             // Uncompressed source
             //======================
             MipLevel* pInMipLevel = g_CMIPS->GetMipLevel(pMipSet, nMipLevel, nFaceOrSlice);
-            dwWidth = pInMipLevel->m_nWidth;
-            dwHeight = pInMipLevel->m_nHeight;
-            pData = pInMipLevel->m_pbData;
 
-            // Swizzle to RGBA format when compressing from uncompressed DDS file! This is a Patch for now.
-            // may want to try this patch on other file types BMP & PNG to move swizzle out to main code.
-            switch (pMipSet->m_TextureDataType) {
-            case TDT_ARGB:
-                swap_Bytes(pInMipLevel->m_pbData, dwWidth, dwHeight, 4);
-                break;
-            case TDT_XRGB:
-                swap_Bytes(pInMipLevel->m_pbData, dwWidth, dwHeight, 3);
-                break;
-            default:
-                break;
+            CMP_DWORD width = pInMipLevel->m_nWidth;
+            CMP_DWORD height = pInMipLevel->m_nHeight;
+            CMP_BYTE* data = pInMipLevel->m_pbData;
+
+            CMP_DWORD numChannels = 4;
+
+            if (pMipSet->m_TextureDataType == TDT_XRGB || pMipSet->m_TextureDataType == TDT_RGB)
+                numChannels = 3;
+            
+            CMP_DWORD bytesPerChannel = GetChannelFormatBitSize(pMipSet->m_format) / 8;
+
+            CMP_BYTE* redChannel = data;
+            CMP_BYTE* blueChannel = data + 2*bytesPerChannel;
+
+            for (uint32_t y = 0; y < height; ++y)
+            {
+                for (uint32_t x = 0; x < width; ++x)
+                {
+                    for (uint32_t i = 0; i < bytesPerChannel; ++i)
+                    {
+                        CMP_BYTE temp = redChannel[i];
+                        redChannel[i] = blueChannel[i];
+                        blueChannel[i] = temp;
+                    }
+
+                    redChannel += bytesPerChannel*numChannels;
+                    blueChannel += bytesPerChannel*numChannels;
+                }
             }
         }
     }
-
 }
 
 // Determine if RGB channel to BGA can be done or skipped
@@ -718,6 +590,37 @@ bool KeepSwizzle(CMP_FORMAT destformat) {
     return false;
 }
 
+#if (OPTION_CMP_QT == 1)
+QImage* CMP_CreateQImage(const char* SourceFile)
+{
+    QImage* image = new QImage(SourceFile);
+    if (image)
+    {
+        QImage::Format format = image->format();
+        // Check supported QImage to MipSet conversion
+        if (!((format == QImage::Format_ARGB32) || 
+              (format == QImage::Format_ARGB32_Premultiplied) || 
+              (format == QImage::Format_RGB32) ||
+              (format == QImage::Format_Mono) || 
+              (format == QImage::Format_Grayscale8) || 
+              (format == QImage::Format_Indexed8)))
+        {
+            int    width = image->width(), height = image->height();
+            QImage newimage = image->convertToFormat(QImage::Format_ARGB32);
+            delete image;
+            image = new QImage(width, height, QImage::Format_ARGB32);
+            if (image)
+                *image = newimage.copy();
+            else
+                return NULL;
+        }
+    }
+    else
+        return NULL;
+    return image;
+}
+#endif
+
 int AMDLoadMIPSTextureImage(const char *SourceFile, MipSet *MipSetIn, bool use_OCV, void *pluginManager) {
     if (pluginManager == NULL)
         return -1;
@@ -725,16 +628,25 @@ int AMDLoadMIPSTextureImage(const char *SourceFile, MipSet *MipSetIn, bool use_O
     PluginInterface_Image *plugin_Image;
 
     PluginManager *plugin_Manager = (PluginManager *)pluginManager;
-    if (use_OCV) {
+    if (use_OCV)
+    {
         plugin_Image = reinterpret_cast<PluginInterface_Image *>(plugin_Manager->GetPlugin("IMAGE", "OCV"));
-    } else {
+    }
+#ifdef USE_LOSSLESS_COMPRESSION_BINARY
+    else if (MipSetIn->m_format == CMP_FORMAT_BINARY)
+    {
+        plugin_Image = reinterpret_cast<PluginInterface_Image*>(plugin_Manager->GetPlugin("IMAGE", "BINARY"));
+    }
+#endif
+    else
+    {
         std::string file_extension = CMP_GetFileExtension(SourceFile, false, true);
         plugin_Image = reinterpret_cast<PluginInterface_Image*>(plugin_Manager->GetPlugin("IMAGE", (char*)file_extension.c_str()));
     }
 
     // do the load
     if (plugin_Image) {
-        plugin_Image->TC_PluginSetSharedIO(&g_CMIPS);
+        plugin_Image->TC_PluginSetSharedIO(g_CMIPS);
 
         if (plugin_Image->TC_PluginFileLoadTexture(SourceFile, MipSetIn) != 0) {
             // Process Error
@@ -751,18 +663,16 @@ int AMDLoadMIPSTextureImage(const char *SourceFile, MipSet *MipSetIn, bool use_O
         // Failed to load using a AMD Plugin
         // Try Qt based
         int result = -1;
-        QString filename(SourceFile);
-        QImage *qimage = new QImage(filename);
-        if (qimage) {
+        QImage* qimage = CMP_CreateQImage(SourceFile);
+        if (qimage != NULL)
+        {
             result = QImage2MIPS(qimage, g_CMIPS, MipSetIn);
             delete qimage;
-            qimage = NULL;
         }
-
         return result;
-#else
+#else 
         //DS - fallback to stb, push for a minimal commandline size and load time...
-        extern CMP_ERROR stb_load(const char* SourceFile, MipSet* MipSetIn); 
+        extern CMP_ERROR stb_load(const char* SourceFile, MipSet* MipSetIn);
         return stb_load(SourceFile, MipSetIn);
 #endif
     }
@@ -773,6 +683,7 @@ int AMDLoadMIPSTextureImage(const char *SourceFile, MipSet *MipSetIn, bool use_O
 int AMDSaveMIPSTextureImage(const char *DestFile, MipSet *MipSetIn, bool use_OCV, CMP_CompressOptions option) {
     bool filesaved = false;
     CMIPS m_CMIPS;
+    m_CMIPS.PrintLine = PrintStatusLine;
 
     std::string file_extension = CMP_GetJustFileExt(DestFile);
     file_extension.erase(std::remove(file_extension.begin(), file_extension.end(), '.'), file_extension.end());
@@ -781,9 +692,18 @@ int AMDSaveMIPSTextureImage(const char *DestFile, MipSet *MipSetIn, bool use_OCV
 
     PluginInterface_Image *plugin_Image;
 
-    if (use_OCV) {
+    if (use_OCV)
+    {
         plugin_Image = reinterpret_cast<PluginInterface_Image *>(g_pluginManager.GetPlugin("IMAGE", "OCV"));
-    } else {
+    }
+#ifdef USE_LOSSLESS_COMPRESSION_BINARY
+    else if (MipSetIn->m_format == CMP_FORMAT_BINARY)
+    {
+        plugin_Image = reinterpret_cast<PluginInterface_Image*>(g_pluginManager.GetPlugin("IMAGE", "BINARY"));
+    }
+#endif
+    else
+    {
         plugin_Image = reinterpret_cast<PluginInterface_Image *>(g_pluginManager.GetPlugin("IMAGE", (char *)file_extension.c_str()));
     }
 
@@ -797,7 +717,9 @@ int AMDSaveMIPSTextureImage(const char *DestFile, MipSet *MipSetIn, bool use_OCV
             // to be fixed in V2.5 release
             MipSetIn->m_swizzle = false;
             switch (MipSetIn->m_isDeCompressed) {
+#if (OPTION_BUILD_ASTC == 1)
             case CMP_FORMAT_ASTC:
+#endif
             case CMP_FORMAT_BC7:
             case CMP_FORMAT_BC6H:
             case CMP_FORMAT_BC6H_SF:
