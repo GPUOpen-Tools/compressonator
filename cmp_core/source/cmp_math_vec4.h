@@ -31,7 +31,7 @@
 // Vector Class definitions for CPU & Intrinsics
 //====================================================
 
-#if defined(__unix__) || defined(_WIN32) || defined(__APPLE__)
+#if defined(__linux__) || defined(__unix__) || defined(_WIN32) || defined(__APPLE__)
 
 //============================================= VEC2 ==================================================
 

@@ -105,7 +105,7 @@
 #define INC_cmp_math_func "cmp_math_func.h"
 #endif
 
-#if defined(__unix__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
 #ifndef _LINUX
 #define _LINUX
 #endif
@@ -139,6 +139,14 @@
 #endif
 #endif
 
+#ifndef cmp_isinf
+#ifdef ASPM_GPU
+#define cmp_isinf(x) isinf(x)
+#else
+#define cmp_isinf(x) std::isinf(x)
+#endif
+#endif
+
 #ifdef ASPM_GPU
 #define CMP_STATIC_CAST(x, y) (x)(y)
 #define CMP_TYPE_CAST(x) (x)
@@ -166,6 +174,13 @@
 //#define USE_BLOCK_LINEAR    // Source Data is organized in linear form for each block : Experimental Code not fully developed
 //#define USE_DOUBLE          // Default is to use float, enable to use double data types only for float definitions
 
+#ifdef ASPM 
+#define CMP_UNIFORM uniform
+#define CMP_VARYING varying
+#else
+#define CMP_UNIFORM
+#define CMP_VARYING 
+#endif
 //---------------------------------------------
 // Predefinitions for GPU and CPU compiled code
 //---------------------------------------------
@@ -225,7 +240,7 @@ typedef min16float CGU_MIN16_FLOAT;  // FP16 GPU support defaults to 32 bit if n
 #define BC7_ENCODECLASS
 #define CMP_EXPORT
 #define INLINE inline
-#define uniform
+#define CMP_UNIFORM
 #define varying
 #define CMP_GLOBAL
 #define CMP_KERNEL
@@ -297,7 +312,7 @@ typedef uint4 CGV_Vec4ui;
 
 #define CMP_EXPORT
 #define INLINE
-#define uniform
+#define CMP_UNIFORM
 #define varying
 #define CMP_GLOBAL __global
 #define CMP_KERNEL __kernel
@@ -370,23 +385,23 @@ typedef float CGV_FLOAT;
 #define CMP_EXPORT export
 #define TRUE true
 #define FALSE false
-typedef uniform bool CGU_BOOL;
+typedef CMP_UNIFORM bool CGU_BOOL;
 typedef bool         CGV_BOOL;
 
 typedef unsigned int8 uint8;
 typedef unsigned int16 uint16;
 typedef unsigned int32 uint32;
 typedef unsigned int64 uint64;
-typedef uniform float  CGU_FLOAT;
+typedef CMP_UNIFORM float  CGU_FLOAT;
 typedef varying float  CGV_FLOAT;
-typedef uniform float  CGU_MIN16_FLOAT;
+typedef CMP_UNIFORM float  CGU_MIN16_FLOAT;
 
-typedef uniform uint16 CGU_UINT16;
+typedef CMP_UNIFORM uint16 CGU_UINT16;
 
-typedef uniform uint8 CGU_UINT8;
+typedef CMP_UNIFORM uint8 CGU_UINT8;
 typedef varying uint8 CGV_UINT8;
 
-typedef uniform uint64 CGU_UINT64;
+typedef CMP_UNIFORM uint64 CGU_UINT64;
 
 typedef CGV_UINT8<4> CGV_Vec4uc;
 typedef CGU_UINT8<4> CGU_Vec4uc;
@@ -419,7 +434,7 @@ typedef CGV_UINT32<4> CGV_Vec4ui;
 #define BC7_ENCODECLASS BC7_EncodeClass::
 #define TRUE 1
 #define FALSE 0
-#define uniform
+#define CMP_UNIFORM
 #define varying
 
 typedef char               int8;
@@ -438,14 +453,14 @@ typedef uint8         CGU_SHORT;
 typedef long          CGU_LONG;
 typedef unsigned long CGU_ULONG;
 
-typedef uniform float CGU_FLOAT;
+typedef CMP_UNIFORM float CGU_FLOAT;
 typedef varying float CGV_FLOAT;
-typedef uniform float CGU_MIN16_FLOAT;
+typedef CMP_UNIFORM float CGU_MIN16_FLOAT;
 
-typedef uniform uint8 CGU_UINT8;
+typedef CMP_UNIFORM uint8 CGU_UINT8;
 typedef varying uint8 CGV_UINT8;
 
-typedef uniform uint16 CGU_UINT16;
+typedef CMP_UNIFORM uint16 CGU_UINT16;
 
 typedef CMP_Vec3ui CGU_Vec3ui;
 typedef CMP_Vec3ui CGV_Vec3ui;
@@ -480,16 +495,16 @@ typedef CMP_Vec4f  CGV_Vec4f;
 #define INLINE inline
 #define CMP_STATIC static
 
-typedef uniform int32 CGU_DWORD;
-typedef uniform uint8 CGU_UBYTE;
-typedef uniform int   CGU_INT;
-typedef uniform int8 CGU_INT8;
+typedef CMP_UNIFORM int32 CGU_DWORD;
+typedef CMP_UNIFORM uint8 CGU_UBYTE;
+typedef CMP_UNIFORM int   CGU_INT;
+typedef CMP_UNIFORM int8 CGU_INT8;
 
-typedef uniform int16 CGU_INT16;
-typedef uniform uint16 CGU_UINT16;
-typedef uniform int32 CGU_INT32;
-typedef uniform uint32 CGU_UINT32;
-typedef uniform uint64 CGU_UINT64;
+typedef CMP_UNIFORM int16 CGU_INT16;
+typedef CMP_UNIFORM uint16 CGU_UINT16;
+typedef CMP_UNIFORM int32 CGU_INT32;
+typedef CMP_UNIFORM uint32 CGU_UINT32;
+typedef CMP_UNIFORM uint64 CGU_UINT64;
 
 typedef int    CGV_INT;
 typedef int8   CGV_INT8;
@@ -501,8 +516,7 @@ typedef uint64 CGV_UINT64;
 
 #endif  // else ASPM_GPU
 
-#define CMP_UNIFORM uniform
-#define CMP_VARYING varying
+
 
 typedef struct
 {

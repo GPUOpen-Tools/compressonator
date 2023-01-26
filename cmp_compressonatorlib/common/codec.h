@@ -37,6 +37,15 @@ typedef float CODECFLOAT;
 
 
 namespace AMD_Compress {
+
+struct CodecParameters
+{
+  // TODO: add all the other parameters here
+  static const CMP_CHAR* NumThreads; // the number of CPU threads to use during compression/decompression
+  static const CMP_CHAR* UseGPUDecompression; // boolean parameter to indicate whether to use GPU-accelerated decompression
+  static const CMP_CHAR* PageSize; // the page size to use in compression using the Brotli-G codec
+};
+
 class CCodec {
   public:
     CCodec(CodecType codecType);

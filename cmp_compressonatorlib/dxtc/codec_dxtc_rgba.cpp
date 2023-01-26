@@ -99,6 +99,11 @@ Channel Bits
 #define BG 5
 
 CodecError CCodec_DXTC::CompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2], CODECFLOAT* pfChannelWeights, bool bDXT1, bool bDXT1UseAlpha, CMP_BYTE nDXT1AlphaThreshold) {
+    
+    CMP_UNUSED(nDXT1AlphaThreshold);
+    CMP_UNUSED(bDXT1UseAlpha);
+    CMP_UNUSED(bDXT1);
+    CMP_UNUSED(pfChannelWeights);
 
 #ifdef USE_CMP_CORE_API
     CGU_Vec2ui cmpBlock;

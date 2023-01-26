@@ -47,8 +47,15 @@ typedef std::uint32_t DWORD;
 #define NCHANNELS                       3
 #define NINDICES                        16
 #define MAXENDPOINTS                    2
-#define F16NEGPREC_LIMIT_VAL            -2048.0f //f16 negative precision limit value
-#define F16MAX                          0x7bff
+
+// these are the limits that can be found in half.h
+#define F16_MAX                         65504.0f
+#define F16_MAX_NEGATIVE                -65504.0f
+
+// F16 limits in bits, converted to floating point numbers. Useful for our implementation.
+#define F16_MAX_BITS                    ((float)0x7BFF)
+#define F16_MAX_NEGATIVE_BITS           (-F16_MAX_BITS)
+
 #define F16S_MASK                       0x8000   // f16 sign mask
 #define F16EM_MASK                      0x7fff   // f16 exp & mantissa mask
 #define U16MAX                          0xffff

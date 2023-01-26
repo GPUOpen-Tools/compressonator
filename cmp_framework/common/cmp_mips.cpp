@@ -1,6 +1,6 @@
 //=====================================================================
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2022 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,6 +25,8 @@
 #include "compressonator.h"
 
 #include "cmp_mips.h"
+#include "format_conversion.h"
+#include "atiformats.h"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -79,7 +81,7 @@ void CMP_CMIPS::Print(const char* Format, ...)
     }
 }
 
-// Determins the active channels used for a given format
+// Determines the active channels used for a given format
 // See CMP_AnalysisData for more details on the bits set
 CMP_UINT CMP_API CMP_getFormat_nChannels(CMP_FORMAT format)
 {
@@ -118,8 +120,8 @@ CMP_INT CMP_API CMP_CalcMinMipSize(CMP_INT nHeight, CMP_INT nWidth, CMP_INT Mips
 
 CMP_INT CMP_API CMP_CalcMaxMipLevel(CMP_INT nHeight, CMP_INT nWidth, CMP_BOOL bForGPU)
 {
-    CMP_INT MaxLipLevel = 1;
-    while (MaxLipLevel < MAX_MIPLEVEL_SUPPORTED)
+    CMP_INT MaxMipLevel = 1;
+    while (MaxMipLevel < MAX_MIPLEVEL_SUPPORTED && nWidth > 1 && nHeight > 1)
     {
         nWidth  = CMP_MAX(nWidth >> 1, 1);
         nHeight = CMP_MAX(nHeight >> 1, 1);
@@ -128,12 +130,10 @@ CMP_INT CMP_API CMP_CalcMaxMipLevel(CMP_INT nHeight, CMP_INT nWidth, CMP_BOOL bF
             if ((nWidth % 4) || (nHeight % 4))
                 break;
         }
-        MaxLipLevel++;
-        if ((nWidth == 1) || (nHeight == 1))
-            break;
+        MaxMipLevel++;
     }
 
-    return (MaxLipLevel);
+    return MaxMipLevel;
 }
 
 CMP_ERROR CMP_API CMP_CreateCompressMipSet(CMP_MipSet* pMipSetCMP, CMP_MipSet* pMipSetSRC)
@@ -227,17 +227,20 @@ CMP_ERROR CMP_API CMP_CreateMipSet(CMP_MipSet* pMipSet, CMP_INT nWidth, CMP_INT 
         case CF_Float32:
             bytesPerChannel = 16;
             break;
-       case CF_2101010    :
-       case CF_Float9995E :
-       case CF_YUV_420    :
-       case CF_YUV_422    :
-       case CF_YUV_444    :
-       case CF_YUV_4444   :
+        case CF_1010102:
+        case CF_2101010:
+        case CF_Float9995E:
+        case CF_YUV_420:
+        case CF_YUV_422:
+        case CF_YUV_444:
+        case CF_YUV_4444:
             // toDo
-           return CMP_ERR_UNSUPPORTED_SOURCE_FORMAT;
+            return CMP_ERR_UNSUPPORTED_SOURCE_FORMAT;
             break;
-       case CF_Compressed:
-       default:
+        case CF_Compressed:
+            bytesPerChannel = 1;
+            break;
+        default:
             bytesPerChannel = 4;
             break;
     }
@@ -264,12 +267,12 @@ CMP_ERROR CMP_API CMP_CreateMipSet(CMP_MipSet* pMipSet, CMP_INT nWidth, CMP_INT 
 void CMP_calcMSE_PSNRb(MipLevel* pCurMipLevel, CMP_BYTE* pdata1, CMP_BYTE* pdata2, CMP_AnalysisData* pAnalysisData)
 {
     CMP_UINT   RGBAChannels = pAnalysisData->channelBitMap;
-    CMP_DOUBLE mse;
-    CMP_DOUBLE mseR         = 0.0;
-    CMP_DOUBLE mseG         = 0.0;
-    CMP_DOUBLE mseB         = 0.0;
-    CMP_DOUBLE mseA         = 0.0;
-    CMP_DOUBLE mseRGBA      = 0.0;
+    CMP_FLOAT  mse;
+    CMP_FLOAT  mseR         = 0.0f;
+    CMP_FLOAT  mseG         = 0.0f;
+    CMP_FLOAT  mseB         = 0.0f;
+    CMP_FLOAT  mseA         = 0.0f;
+    CMP_FLOAT  mseRGBA      = 0.0f;
     CMP_INT    totalPixelsR = 0;
     CMP_INT    totalPixelsG = 0;
     CMP_INT    totalPixelsB = 0;
@@ -284,7 +287,7 @@ void CMP_calcMSE_PSNRb(MipLevel* pCurMipLevel, CMP_BYTE* pdata1, CMP_BYTE* pdata
             // Red channel
             if (RGBAChannels & 0b0001)
             {
-                mse = pow(abs(*pdata1 - *pdata2), 2);
+                mse = powf(abs(*pdata1 - *pdata2), 2);
                 mseR += mse;
                 mseRGBA += mse;
                 totalPixelsR++;
@@ -295,7 +298,7 @@ void CMP_calcMSE_PSNRb(MipLevel* pCurMipLevel, CMP_BYTE* pdata1, CMP_BYTE* pdata
             // Green channel
             if (RGBAChannels & 0b0010)
             {
-                mse = pow(abs(*pdata1 - *pdata2), 2);
+                mse = powf(abs(*pdata1 - *pdata2), 2);
                 mseG += mse;
                 mseRGBA += mse;
                 totalPixelsG++;
@@ -306,7 +309,7 @@ void CMP_calcMSE_PSNRb(MipLevel* pCurMipLevel, CMP_BYTE* pdata1, CMP_BYTE* pdata
             // Blue channel
             if (RGBAChannels & 0b0100)
             {
-                mse = pow(abs(*pdata1 - *pdata2), 2);
+                mse = powf(abs(*pdata1 - *pdata2), 2);
                 mseB += mse;
                 mseRGBA += mse;
                 totalPixelsB++;
@@ -317,7 +320,7 @@ void CMP_calcMSE_PSNRb(MipLevel* pCurMipLevel, CMP_BYTE* pdata1, CMP_BYTE* pdata
             // Alpha channel
             if (RGBAChannels & 0b1000)
             {
-                mse = pow(abs(*pdata1 - *pdata2), 2);
+                mse = powf(abs(*pdata1 - *pdata2), 2);
                 mseA += mse;
                 mseRGBA += mse;
                 totalPixelsA++;
@@ -339,149 +342,144 @@ void CMP_calcMSE_PSNRb(MipLevel* pCurMipLevel, CMP_BYTE* pdata1, CMP_BYTE* pdata
     pAnalysisData->mseB = mseB / totalPixelsB;
     pAnalysisData->mseA = mseA / totalPixelsA;
 
-    if (pAnalysisData->mse <= 0.0)
+    if (pAnalysisData->mse <= 0.0f)
     {
-        pAnalysisData->mse  = 0.0;
-        pAnalysisData->mseR = 0.0;
-        pAnalysisData->mseG = 0.0;
-        pAnalysisData->mseB = 0.0;
-        pAnalysisData->mseA = 0.0;
+        pAnalysisData->mse  = 0.0f;
+        pAnalysisData->mseR = 0.0f;
+        pAnalysisData->mseG = 0.0f;
+        pAnalysisData->mseB = 0.0f;
+        pAnalysisData->mseA = 0.0f;
 
-        pAnalysisData->psnr  = 128;
-        pAnalysisData->psnrR = 128;
-        pAnalysisData->psnrG = 128;
-        pAnalysisData->psnrB = 128;
-        pAnalysisData->psnrA = 128;
+        pAnalysisData->psnr  = 128.0f;
+        pAnalysisData->psnrR = 128.0f;
+        pAnalysisData->psnrG = 128.0f;
+        pAnalysisData->psnrB = 128.0f;
+        pAnalysisData->psnrA = 128.0f;
     }
     else
     {
-        if (pAnalysisData->mse > 0.0)
-              pAnalysisData->psnr = 10 * log((1.0 * 255 * 255) / pAnalysisData->mse) / log(10.0);
-        if (pAnalysisData->mseR > 0.0)
-            pAnalysisData->psnrR = 10 * log((1.0 * 255 * 255) / pAnalysisData->mseR) / log(10.0);
-        if (pAnalysisData->mseG > 0.0)
-            pAnalysisData->psnrG = 10 * log((1.0 * 255 * 255) / pAnalysisData->mseG) / log(10.0);
-        if (pAnalysisData->mseB > 0.0)
-            pAnalysisData->psnrB = 10 * log((1.0 * 255 * 255) / pAnalysisData->mseB) / log(10.0);
-        if (pAnalysisData->mseA > 0.0)
-            pAnalysisData->psnrA = 10 * log((1.0 * 255 * 255) / pAnalysisData->mseA) / log(10.0);
+        if (pAnalysisData->mse > 0.0f)
+            pAnalysisData->psnr = 10.0f * logf((1.0f * 255.0f * 255.0f) / pAnalysisData->mse) / logf(10.0f);
+        if (pAnalysisData->mseR > 0.0f)
+            pAnalysisData->psnrR = 10 * logf((1.0f * 255.0f * 255.0f) / pAnalysisData->mseR) / logf(10.0f);
+        if (pAnalysisData->mseG > 0.0f)
+            pAnalysisData->psnrG = 10 * logf((1.0f * 255.0f * 255.0f) / pAnalysisData->mseG) / logf(10.0f);
+        if (pAnalysisData->mseB > 0.0f)
+            pAnalysisData->psnrB = 10.0f * logf((1.0f * 255.0f * 255.0f) / pAnalysisData->mseB) / logf(10.0f);
+        if (pAnalysisData->mseA > 0.0f)
+            pAnalysisData->psnrA = 10.0f * logf((1.0f * 255.0f * 255.0f) / pAnalysisData->mseA) / logf(10.0f);
     }
 }
 
-static CMP_FLOAT HalfShorttoFloat(CMP_HALFSHORT f)
+void CMP_calcMSE_PSNR1010102(MipLevel* pCurMipLevel, CMP_DWORD* buffer1, CMP_DWORD* buffer2, CMP_AnalysisData* pAnalysisData)
 {
-    CMP_HALF A;
-    A.setBits(f);
-    return ((CMP_FLOAT)A);
-}
+    CMP_UINT RGBAChannels = pAnalysisData->channelBitMap;
+    CMP_FLOAT mse = 0.0f;
+    CMP_FLOAT mseR = 0.0f;
+    CMP_FLOAT mseG = 0.0f;
+    CMP_FLOAT mseB = 0.0f;
+    CMP_FLOAT mseA = 0.0f;
+    CMP_FLOAT mseRGBA = 0.0f;
+    CMP_INT totalPixelsR = 0;
+    CMP_INT totalPixelsG = 0;
+    CMP_INT totalPixelsB = 0;
+    CMP_INT totalPixelsA = 0;
+    CMP_INT totalPixels = 0;
 
-inline float clamp(float a, float l, float h)
-{
-    return (a < l) ? l : ((a > h) ? h : a);
-}
-
-inline float knee(double x, double f)
-{
-    return float(log(x * f + 1.f) / f);
-}
-
-static float cmp_findKneeValue(float x, float y)
-{
-    float f0 = 0;
-    float f1 = 1.f;
-
-    while (knee(x, f1) > y)
+    for (uint32_t i = 0; i < pCurMipLevel->m_nHeight*pCurMipLevel->m_nWidth; ++i)
     {
-        f0 = f1;
-        f1 = f1 * 2.f;
-    }
-
-    for (int i = 0; i < 30; ++i)
-    {
-        const float f2 = (f0 + f1) / 2.f;
-        const float y2 = knee(x, f2);
-
-        if (y2 < y)
+        // calc Gamma for the all active channels
+        // Red channel
+        if (RGBAChannels & 0b0001)
         {
-            f1 = f2;
+            int32_t r1 = RGBA1010102_GET_R(buffer1[i]);
+            int32_t r2 = RGBA1010102_GET_R(buffer2[i]);
+
+            mse = powf(abs(r1 - r2), 2);
+            mseR += mse;
+            mseRGBA += mse;
+            totalPixelsR++;
+            totalPixels++;
         }
-        else
+
+        // Green channel
+        if (RGBAChannels & 0b0010)
         {
-            f0 = f2;
+            int32_t g1 = RGBA1010102_GET_G(buffer1[i]);
+            int32_t g2 = RGBA1010102_GET_G(buffer2[i]);
+    
+            mse = powf(abs(g1 - g2), 2);
+            mseG += mse;
+            mseRGBA += mse;
+            totalPixelsG++;
+            totalPixels++;
+        }
+
+        // Blue channel
+        if (RGBAChannels & 0b0100)
+        {
+            int32_t b1 = RGBA1010102_GET_B(buffer1[i]);
+            int32_t b2 = RGBA1010102_GET_B(buffer2[i]);
+
+            mse = powf(abs(b1 - b2), 2);
+            mseB += mse;
+            mseRGBA += mse;
+            totalPixelsB++;
+            totalPixels++;
+        }
+
+        // Alpha channel
+        if (RGBAChannels & 0b1000)
+        {
+            int32_t a1 = RGBA1010102_GET_A(buffer1[i]);
+            int32_t a2 = RGBA1010102_GET_A(buffer2[i]);
+
+            mse = powf(abs(a1 - a2), 2);
+            mseA += mse;
+            mseRGBA += mse;
+            totalPixelsA++;
+            totalPixels++;
         }
     }
 
-    return (f0 + f1) / 2.f;
-}
-
-// This is the default convertion used for CT_Foat16 to  CF_8Bit in Compressonators transcoding example. EXR to BC1..5,7
-static CMP_BYTE HalfShorttoByteCMP(CMP_HALFSHORT halfdata, CMP_BOOL alpha, CMP_AnalysisData* pAnalysisData)
-{
-    (alpha);    // Unref for now
-
-    CMP_FLOAT fdata = HalfShorttoFloat(halfdata);
-    CMP_FLOAT fInputKneeHigh, fInputGamma;
-
-    if (pAnalysisData->fInputKneeHigh <= 0.0f)
-        fInputKneeHigh = 5.0f;
-    else
-        fInputKneeHigh = pAnalysisData->fInputKneeHigh;
-
-    float     kl          = powf(2.f, pAnalysisData->fInputKneeLow);
-    float     f           = cmp_findKneeValue(powf(2.f, fInputKneeHigh) - kl, powf(2.f, 3.5f) - kl);
-    float     luminance3f = powf(2, -3.5);    // always assume max intensity is 1 and 3.5f darker for scale later
-
-    if (pAnalysisData->fInputGamma == 0.0f)
-        fInputGamma = 2.2f;
-    else
-        fInputGamma = pAnalysisData->fInputGamma;
-
-    float     invGamma    = 1 / fInputGamma;  //for gamma correction
-    float     scale       = 255.0f * powf(luminance3f, invGamma);
-    CMP_BYTE  retb;
-
-    //  1) Compensate for fogging by subtracting defog from the raw pixel values.
-    if (pAnalysisData->fInputDefog > 0.0)
+    if (totalPixels == 0)
     {
-        fdata = fdata - pAnalysisData->fInputDefog;
+        totalPixels = 1;
     }
 
-    //  2) Multiply the defogged pixel values by 2^(exposure + 2.47393).
-    const float exposeScale = powf(2, pAnalysisData->fInputExposure + 2.47393f);
-    fdata                   = fdata * exposeScale;
+    pAnalysisData->mse  = mseRGBA / totalPixels;
+    pAnalysisData->mseR = mseR / totalPixelsR;
+    pAnalysisData->mseG = mseG / totalPixelsG;
+    pAnalysisData->mseB = mseB / totalPixelsB;
+    pAnalysisData->mseA = mseA / totalPixelsA;
 
-    //  3) Values that are now 1.0 are called "middle gray".
-    //     If defog and exposure are both set to 0.0, then
-    //     middle gray corresponds to a raw pixel value of 0.18.
-    //     In step 6, middle gray values will be mapped to an
-    //     intensity 3.5 f-stops below the display's maximum
-    //     intensity.
-
-    //  4) Apply a knee function.  The knee function has two
-    //     parameters, kneeLow and kneeHigh.  Pixel values
-    //     below 2^kneeLow are not changed by the knee
-    //     function.  Pixel values above kneeLow are lowered
-    //     according to a logarithmic curve, such that the
-    //     value 2^kneeHigh is mapped to 2^3.5.  (In step 6,
-    //     this value will be mapped to the the display's
-    //     maximum intensity.)
-    if (fdata > kl)
+    if (pAnalysisData->mse <= 0.0f)
     {
-        fdata = kl + knee(fdata - kl, f);
+        pAnalysisData->mse  = 0.0f;
+        pAnalysisData->mseR = 0.0f;
+        pAnalysisData->mseG = 0.0f;
+        pAnalysisData->mseB = 0.0f;
+        pAnalysisData->mseA = 0.0f;
+
+        pAnalysisData->psnr  = 128.0f;
+        pAnalysisData->psnrR = 128.0f;
+        pAnalysisData->psnrG = 128.0f;
+        pAnalysisData->psnrB = 128.0f;
+        pAnalysisData->psnrA = 128.0f;
     }
-
-    //  5) Gamma-correct the pixel values, according to the
-    //     screen's gamma.  (We assume that the gamma curve
-    //     is a simple power function.)
-    fdata = powf(fdata, invGamma);
-
-    //  6) Scale the values such that middle gray pixels are
-    //     mapped to a frame buffer value that is 3.5 f-stops
-    //     below the display's maximum intensity.
-    fdata *= scale;
-
-    retb = (CMP_BYTE)clamp(fdata, 0.f, 255.f);
-    return (retb);
+    else
+    {
+        if (pAnalysisData->mse > 0.0f)
+            pAnalysisData->psnr = 10.0f * logf((1.0f * 255.0f * 255.0f) / pAnalysisData->mse) / logf(10.0f);
+        if (pAnalysisData->mseR > 0.0f)
+            pAnalysisData->psnrR = 10 * logf((1.0f * 255.0f * 255.0f) / pAnalysisData->mseR) / logf(10.0f);
+        if (pAnalysisData->mseG > 0.0f)
+            pAnalysisData->psnrG = 10 * logf((1.0f * 255.0f * 255.0f) / pAnalysisData->mseG) / logf(10.0f);
+        if (pAnalysisData->mseB > 0.0f)
+            pAnalysisData->psnrB = 10.0f * logf((1.0f * 255.0f * 255.0f) / pAnalysisData->mseB) / logf(10.0f);
+        if (pAnalysisData->mseA > 0.0f)
+            pAnalysisData->psnrA = 10.0f * logf((1.0f * 255.0f * 255.0f) / pAnalysisData->mseA) / logf(10.0f);
+    }
 }
 
 void CMP_calcMSE_PSNRHalfShort(MipLevel* pCurMipLevel, CMP_HALFSHORT* pdata1, CMP_HALFSHORT* pdata2, CMP_AnalysisData* pAnalysisData)
@@ -510,8 +508,8 @@ void CMP_calcMSE_PSNRHalfShort(MipLevel* pCurMipLevel, CMP_HALFSHORT* pdata1, CM
             // Red channel
             if (RGBAChannels & 0b0001)
             {
-                pixf1 = HalfShorttoFloat(*pdata1);  // convert short int to float
-                pixf2 = HalfShorttoFloat(*pdata2);  // convert short int to float
+                pixf1 = HalfShortToFloat(*pdata1);  // convert short int to float
+                pixf2 = HalfShortToFloat(*pdata2);  // convert short int to float
                 mse   = pow(abs(pixf1 - pixf2), 2);
                 mseR += mse;
                 mseRGBA += mse;
@@ -524,8 +522,8 @@ void CMP_calcMSE_PSNRHalfShort(MipLevel* pCurMipLevel, CMP_HALFSHORT* pdata1, CM
             // Green channel
             if (RGBAChannels & 0b0010)
             {
-                pixf1 = HalfShorttoFloat(*pdata1);  // convert short int to float
-                pixf2 = HalfShorttoFloat(*pdata2);  // convert short int to float
+                pixf1 = HalfShortToFloat(*pdata1);  // convert short int to float
+                pixf2 = HalfShortToFloat(*pdata2);  // convert short int to float
                 mse   = pow(abs(pixf1 - pixf2), 2);
                 mseG += mse;
                 mseRGBA += mse;
@@ -537,8 +535,8 @@ void CMP_calcMSE_PSNRHalfShort(MipLevel* pCurMipLevel, CMP_HALFSHORT* pdata1, CM
             // Blue channel
             if (RGBAChannels & 0b0100)
             {
-                pixf1 = HalfShorttoFloat(*pdata1);  // convert short int to float
-                pixf2 = HalfShorttoFloat(*pdata2);  // convert short int to float
+                pixf1 = HalfShortToFloat(*pdata1);  // convert short int to float
+                pixf2 = HalfShortToFloat(*pdata2);  // convert short int to float
                 mse   = pow(abs(pixf1 - pixf2), 2);
                 mseB += mse;
                 mseRGBA += mse;
@@ -550,127 +548,8 @@ void CMP_calcMSE_PSNRHalfShort(MipLevel* pCurMipLevel, CMP_HALFSHORT* pdata1, CM
             // Alpha channel
             if (RGBAChannels & 0b1000)
             {
-                pixf1 = HalfShorttoFloat(*pdata1);  // convert short int to float
-                pixf2 = HalfShorttoFloat(*pdata2);  // convert short int to float
-                mse   = pow(abs(pixf1 - pixf2), 2);
-                mseA += mse;
-                mseRGBA += mse;
-                totalPixelsA++;
-                totalPixels++;
-            }
-            pdata1++;
-            pdata2++;
-        }
-    }
-
-    if (totalPixels == 0)
-    {
-        totalPixels = 1;
-    }
-
-    pAnalysisData->mse  = mseRGBA / totalPixels;
-    pAnalysisData->mseR = mseR / totalPixelsR;
-    pAnalysisData->mseG = mseG / totalPixelsG;
-    pAnalysisData->mseB = mseB / totalPixelsB;
-    pAnalysisData->mseA = mseA / totalPixelsA;
-
-    if (pAnalysisData->mse <= 0.0)
-    {
-        pAnalysisData->mse  = 0.0;
-        pAnalysisData->mseR = 0.0;
-        pAnalysisData->mseG = 0.0;
-        pAnalysisData->mseB = 0.0;
-        pAnalysisData->mseA = 0.0;
-
-        pAnalysisData->psnr  = 128;
-        pAnalysisData->psnrR = 128;
-        pAnalysisData->psnrG = 128;
-        pAnalysisData->psnrB = 128;
-        pAnalysisData->psnrA = 128;
-    }
-    else
-    {
-        if (pAnalysisData->mse > 0.0)
-            pAnalysisData->psnr = 10 * log((1.0 * 255 * 255) / pAnalysisData->mse) / log(10.0);
-        if (pAnalysisData->mseR > 0.0)
-            pAnalysisData->psnrR = 10 * log((1.0 * 255 * 255) / pAnalysisData->mseR) / log(10.0);
-        if (pAnalysisData->mseG > 0.0)
-            pAnalysisData->psnrG = 10 * log((1.0 * 255 * 255) / pAnalysisData->mseG) / log(10.0);
-        if (pAnalysisData->mseB > 0.0)
-            pAnalysisData->psnrB = 10 * log((1.0 * 255 * 255) / pAnalysisData->mseB) / log(10.0);
-        if (pAnalysisData->mseA > 0.0)
-            pAnalysisData->psnrA = 10 * log((1.0 * 255 * 255) / pAnalysisData->mseA) / log(10.0);
-    }
-}
-
-void CMP_calcMSE_PSNRHalfShortByte(MipLevel* pCurMipLevel, CMP_HALFSHORT* pdata1, CMP_BYTE* pdata2, CMP_AnalysisData* pAnalysisData)
-{
-    CMP_UINT   RGBAChannels = pAnalysisData->channelBitMap;
-    CMP_DOUBLE mse;
-    CMP_DOUBLE mseR         = 0.0;
-    CMP_DOUBLE mseG         = 0.0;
-    CMP_DOUBLE mseB         = 0.0;
-    CMP_DOUBLE mseA         = 0.0;
-    CMP_DOUBLE mseRGBA      = 0.0;
-    CMP_INT    totalPixelsR = 0;
-    CMP_INT    totalPixelsG = 0;
-    CMP_INT    totalPixelsB = 0;
-    CMP_INT    totalPixelsA = 0;
-    CMP_INT    totalPixels  = 0;
-
-    CMP_BYTE pixf1;
-    CMP_BYTE pixf2;
-
-    for (int y = 0; y < pCurMipLevel->m_nHeight; y++)
-    {
-        for (int x = 0; x < pCurMipLevel->m_nWidth; x++)
-        {
-            // calc Gamma for the all active channels
-            // Red channel
-            if (RGBAChannels & 0b0001)
-            {
-                pixf1 = HalfShorttoByteCMP(*pdata1, false, pAnalysisData);
-                pixf2 = *pdata2;
-                mse   = pow(abs(pixf1 - pixf2), 2);
-                mseR += mse;
-                mseRGBA += mse;
-
-                totalPixelsR++;
-                totalPixels++;
-            }
-            pdata1++;
-            pdata2++;
-            // Green channel
-            if (RGBAChannels & 0b0010)
-            {
-                pixf1 = HalfShorttoByteCMP(*pdata1, false, pAnalysisData);
-                pixf2 = *pdata2;
-                mse   = pow(abs(pixf1 - pixf2), 2);
-                mseG += mse;
-                mseRGBA += mse;
-                totalPixelsG++;
-                totalPixels++;
-            }
-            pdata1++;
-            pdata2++;
-            // Blue channel
-            if (RGBAChannels & 0b0100)
-            {
-                pixf1 = HalfShorttoByteCMP(*pdata1, false, pAnalysisData);
-                pixf2 = *pdata2;
-                mse   = pow(abs(pixf1 - pixf2), 2);
-                mseB += mse;
-                mseRGBA += mse;
-                totalPixelsB++;
-                totalPixels++;
-            }
-            pdata1++;
-            pdata2++;
-            // Alpha channel
-            if (RGBAChannels & 0b1000)
-            {
-                pixf1 = HalfShorttoByteCMP(*pdata1, true, pAnalysisData);
-                pixf2 = *pdata2;
+                pixf1 = HalfShortToFloat(*pdata1);  // convert short int to float
+                pixf2 = HalfShortToFloat(*pdata2);  // convert short int to float
                 mse   = pow(abs(pixf1 - pixf2), 2);
                 mseA += mse;
                 mseRGBA += mse;
@@ -830,14 +709,22 @@ void CMP_calcMSE_PSNRf32(MipLevel* pCurMipLevel, CMP_FLOAT* pdata1, CMP_FLOAT* p
 
 CMP_ERROR CMP_API CMP_MipSetAnlaysis(CMP_MipSet* src1, CMP_MipSet* src2, CMP_INT nMipLevel, CMP_INT nFaceOrSlice, CMP_AnalysisData* pAnalysisData)
 {
-    if ((!src1) || (!src2))
+    if (!src1 || !src2)
         return CMP_ERR_GENERIC;
     // sanity checks
     if (src1->m_nHeight != src2->m_nHeight)
         return CMP_ERR_GENERIC;
-    CMIPS     CMips;
+
+    if (src1->m_ChannelFormat == CF_Compressed)
+        return CMP_ERR_INVALID_SOURCE_TEXTURE;
+    if (src2->m_ChannelFormat == CF_Compressed)
+        return CMP_ERR_INVALID_DEST_TEXTURE;
+    
+    CMIPS CMips;
+    
     MipLevel* pCurMipLevel1;
     MipLevel* pCurMipLevel2;
+    
     pAnalysisData->mse  = 0.0f;
     pAnalysisData->psnr = 0.0f;
 
@@ -848,15 +735,50 @@ CMP_ERROR CMP_API CMP_MipSetAnlaysis(CMP_MipSet* src1, CMP_MipSet* src2, CMP_INT
     if (!pCurMipLevel2)
         return CMP_ERR_INVALID_SOURCE_TEXTURE;
 
+    // TODO: It would be better if we took the float settings out of the CMP_AnalysisData struct
+    FloatParams floatParams = FloatParams(pAnalysisData);
+
+    CMP_ChannelFormat src1ChannelFormat = src1->m_ChannelFormat;
+    CMP_ChannelFormat src2ChannelFormat = src2->m_ChannelFormat;
+
+    bool isSrc1Float = CMP_IsFloatFormat(src1->m_format);
+    bool isSrc2Float = CMP_IsFloatFormat(src2->m_format);
+
+    ConvertedBuffer src1Buffer;
+    src1Buffer.data = pCurMipLevel1->m_pbData;
+    src1Buffer.dataSize = pCurMipLevel1->m_dwLinearSize;
+    src1Buffer.format = src1->m_format;
+
+    ConvertedBuffer src2Buffer;
+    src2Buffer.data = pCurMipLevel2->m_pbData;
+    src2Buffer.dataSize = pCurMipLevel2->m_dwLinearSize;
+    src2Buffer.format = src2->m_format;
+
+    // some conversion might be needed
+    if (src1ChannelFormat != src2ChannelFormat)
+    {
+        // For most cases we convert the "source" format to the "destination" format, except for in special cases like RGBA1010102
+
+        if (src2ChannelFormat == CF_1010102)
+            src2Buffer = CreateCompatibleBuffer(src1->m_format, src2Buffer.format, src2Buffer.data, src2Buffer.dataSize, pCurMipLevel2->m_nWidth, pCurMipLevel2->m_nHeight, &floatParams);
+        else
+            src1Buffer = CreateCompatibleBuffer(src2->m_format, src1Buffer.format, src1Buffer.data, src1Buffer.dataSize, pCurMipLevel1->m_nWidth, pCurMipLevel1->m_nHeight, &floatParams);
+
+        src1ChannelFormat = GetChannelFormat(src1Buffer.format);
+        src2ChannelFormat = GetChannelFormat(src2Buffer.format);
+    }
+
     // processed only if both codecs have the same channel formats
-    if ((src1->m_ChannelFormat == CF_8bit) && (src2->m_ChannelFormat == CF_8bit))
-        CMP_calcMSE_PSNRb(pCurMipLevel1, pCurMipLevel1->m_pbData, pCurMipLevel2->m_pbData, pAnalysisData);
-    else if ((src1->m_ChannelFormat == CF_Float16) && (src2->m_ChannelFormat == CF_Float16))
-        CMP_calcMSE_PSNRHalfShort(pCurMipLevel1, pCurMipLevel1->m_phfsData, pCurMipLevel2->m_phfsData, pAnalysisData);
-    else if ((src1->m_ChannelFormat == CF_Float32) && (src2->m_ChannelFormat == CF_Float32))
-        CMP_calcMSE_PSNRf32(pCurMipLevel1, pCurMipLevel1->m_pfData, pCurMipLevel2->m_pfData, pAnalysisData);
-    else if ((src1->m_ChannelFormat == CF_Float16) && (src2->m_ChannelFormat == CF_8bit))
-        CMP_calcMSE_PSNRHalfShortByte(pCurMipLevel1, pCurMipLevel1->m_phfsData, pCurMipLevel2->m_pbData, pAnalysisData);
+    if (src1ChannelFormat == CF_8bit && src2ChannelFormat == CF_8bit)
+        CMP_calcMSE_PSNRb(pCurMipLevel1, (CMP_BYTE*)src1Buffer.data, (CMP_BYTE*)src2Buffer.data, pAnalysisData);
+    else if (src1ChannelFormat == CF_Float16 && src2ChannelFormat == CF_Float16)
+        CMP_calcMSE_PSNRHalfShort(pCurMipLevel1, (CMP_HALFSHORT*)src1Buffer.data, (CMP_HALFSHORT*)src2Buffer.data, pAnalysisData);
+    else if (src1ChannelFormat == CF_Float32 && src2ChannelFormat == CF_Float32)
+        CMP_calcMSE_PSNRf32(pCurMipLevel1, (CMP_FLOAT*)src1Buffer.data, (CMP_FLOAT*)src2Buffer.data, pAnalysisData);
+    else if (src1ChannelFormat == CF_1010102 && src2ChannelFormat == CF_1010102)
+        CMP_calcMSE_PSNR1010102(pCurMipLevel1, (CMP_DWORD*)src1Buffer.data, (CMP_DWORD*)src2Buffer.data, pAnalysisData);
+    else
+        return CMP_ABORTED; // Format not supported
 
     return CMP_OK;
 }
@@ -914,6 +836,7 @@ CMP_MipLevel* CMP_CMIPS::GetMipLevel(const CMP_MipSet* pMipSet, int nMipLevel, i
 
     switch (pMipSet->m_TextureType)
     {
+    case TT_1D:
     case TT_2D:
         if (nFaceOrSlice != 0)
         {
@@ -981,6 +904,7 @@ bool CMP_CMIPS::AllocateMipLevelTable(CMP_MipLevelTable** ppMipLevelTable, int n
     //determine # miplevels to allocate based on texture type
     switch (textureType)
     {
+    case TT_1D:
     case TT_2D:
         nLevelsToAllocate = nMaxMipLevels;
         if (nDepth != 1)
@@ -1103,6 +1027,7 @@ bool CMP_CMIPS::AllocateMipLevelData(CMP_MipLevel* pMipLevel, int nWidth, int nH
     {
     case CF_8bit:
     case CF_2101010:
+    case CF_1010102:
     case CF_Float9995E:
         dwBitsPerPixel = 8;
         break;
@@ -1133,9 +1058,11 @@ bool CMP_CMIPS::AllocateMipLevelData(CMP_MipLevel* pMipLevel, int nWidth, int nH
         dwBitsPerPixel *= 3;
         break;
     case TDT_RG:
+    case TDT_16:
         dwBitsPerPixel *= 2;
         break;
     case TDT_R:
+    case TDT_8:
         break;
     default:
         assert(0);
@@ -1143,9 +1070,9 @@ bool CMP_CMIPS::AllocateMipLevelData(CMP_MipLevel* pMipLevel, int nWidth, int nH
     }
 
     CMP_DWORD dwPitch         = CMP_PAD_BYTE(nWidth, dwBitsPerPixel);
-    pMipLevel->m_dwLinearSize = dwPitch * nHeight;
     pMipLevel->m_nWidth       = nWidth;
     pMipLevel->m_nHeight      = nHeight;
+    pMipLevel->m_dwLinearSize = dwPitch * nHeight;
 
     pMipLevel->m_pbData = reinterpret_cast<CMP_BYTE*>(malloc(pMipLevel->m_dwLinearSize));
 
@@ -1179,6 +1106,7 @@ void CMP_CMIPS::FreeMipSet(CMP_MipSet* pMipSet)
             //determine number of miplevels in the old mipleveltable
             switch (pMipSet->m_TextureType)
             {
+            case TT_1D:
             case TT_2D:
                 nTotalOldMipLevels = pMipSet->m_nMaxMipLevels;
                 break;

@@ -24,7 +24,7 @@
 #define ASPM_HLSL  // This is required
 #define ASPM_GPU   // This is required
 
-#define USE_MSC   // Use MSC Codec
+//#define USE_MSC   // Use MSC Codec
 //#define USE_BETSY  // Use Betsy Codec
 //#define USE_CMP     // Use Compressonator Codec
 

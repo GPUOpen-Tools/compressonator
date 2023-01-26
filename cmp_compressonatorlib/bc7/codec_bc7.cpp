@@ -113,7 +113,7 @@ bool CCodec_BC7::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue) {
         m_AlphaRestrict        = std::stoi(sValue) > 0?TRUE:FALSE;
     else if(strcmp(pszParamName, "ImageNeedsAlpha") == 0)
         m_ImageNeedsAlpha     = std::stoi(sValue) > 0?TRUE:FALSE;
-    else if(strcmp(pszParamName, "NumThreads") == 0) {
+    else if(strcmp(pszParamName, CodecParameters::NumThreads) == 0) {
         m_NumThreads = (CMP_BYTE) std::stoi(sValue) & 0xFF;
         m_Use_MultiThreading = m_NumThreads != 1;
         //printf("BC7 CPU set threads = %d\n",m_NumThreads);
@@ -144,7 +144,7 @@ bool CCodec_BC7::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue) {
         m_AlphaRestrict        =  (dwValue & 1)?TRUE:FALSE;
     else if(strcmp(pszParamName, "ImageNeedsAlpha") == 0)
         m_ImageNeedsAlpha     = (dwValue & 1)?TRUE:FALSE;
-    else if(strcmp(pszParamName, "NumThreads") == 0) {
+    else if(strcmp(pszParamName, CodecParameters::NumThreads) == 0) {
         m_NumThreads = (CMP_BYTE) dwValue;
         m_Use_MultiThreading = (m_NumThreads != 1)?TRUE:FALSE;
     } else

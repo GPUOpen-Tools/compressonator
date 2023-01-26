@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2022  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -50,7 +50,10 @@
 #include "codec_etc2_rgba1.h"
 #include "codec_bc6h.h"
 #include "codec_bc7.h"
+
+#if (OPTION_BUILD_ASTC == 1)
 #include "astc/codec_astc.h"
+#endif
 
 #ifdef _WIN32  //GT only enabled for win build now
 #ifdef USE_APC
@@ -59,10 +62,20 @@
 #ifdef USE_GTC
 #include "codec_gt.h"
 #endif
+#ifdef USE_LOSSLESS_COMPRESSION
+#include "codec_brlg.h"
+#endif
 #ifdef USE_BASIS
 #include "codec_basis.h"
 #endif
 #endif
+
+//////////////////////////////////////////////////////////////////////
+// Parameter names
+//////////////////////////////////////////////////////////////////////
+const CMP_CHAR* CodecParameters::NumThreads = "NumThreads";
+const CMP_CHAR* CodecParameters::UseGPUDecompression = "UseGPUDecompression";
+const CMP_CHAR* CodecParameters::PageSize = "PageSize";
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -199,8 +212,10 @@ CCodec* CreateCodec(CodecType nCodecType) {
         return new CCodec_BC6H(nCodecType);
     case CT_BC7:
         return new CCodec_BC7;
+#if (OPTION_BUILD_ASTC == 1)
     case CT_ASTC:
         return new CCodec_ASTC;
+#endif
 #ifdef _WIN32
 #ifdef USE_APC
     case CT_APC:
@@ -209,6 +224,10 @@ CCodec* CreateCodec(CodecType nCodecType) {
 #ifdef USE_GTC
     case CT_GTC:
         return new CCodec_GTC;
+#endif
+#ifdef USE_LOSSLESS_COMPRESSION
+    case CT_BRLG:
+        return new CCodec_BRLG;
 #endif
 #ifdef USE_BASIS
     case CT_BASIS:
@@ -223,6 +242,9 @@ CCodec* CreateCodec(CodecType nCodecType) {
 }
 
 CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight) {
+    CMP_UNUSED(nBlockWidth);
+    CMP_UNUSED(nBlockHeight);
+
 #ifdef USE_DBGTRACE
     DbgTrace(("IN: nCodecType %d, dwWidth %d, dwHeight %d", nCodecType, dwWidth, dwHeight));
 #endif
@@ -304,13 +326,14 @@ CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHe
         if (buffsize < BC7_BLOCK_PIXELS)
             buffsize = BC7_BLOCK_PIXELS;
         break;
-
+#if (OPTION_BUILD_ASTC == 1)
     // Block size ranges from 4x4 to 12x12 and 128 bits per block
     case CT_ASTC:
         dwWidth  = ((dwWidth + nBlockWidth - 1) / nBlockWidth) * 4;
         dwHeight = ((dwHeight + nBlockHeight - 1) / nBlockHeight) * 4;
         buffsize = dwWidth * dwHeight;
         break;
+#endif
 #ifdef _WIN32
 #ifdef USE_APC
     case CT_APC:
@@ -326,6 +349,17 @@ CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHe
         // Block size is 4x4 and 128 bits per block. in future releases its will vary in Block Sizes and bits per block may change to 256
 #ifdef USE_GTC
     case CT_GTC:
+        dwWidth  = ((dwWidth + 3) / 4) * 4;
+        dwHeight = ((dwHeight + 3) / 4) * 4;
+        buffsize = dwWidth * dwHeight;
+        if (buffsize < (4 * 4))
+            buffsize = 4 * 4;
+        break;
+#endif
+#ifdef USE_LOSSLESS_COMPRESSION
+        // TODO: For the time being, this path is never executed
+        // ToDo : Note blocks are not 4x4 so fix this to the correct size used in the DX12 Brotli-G shader code
+    case CT_BRLG:
         dwWidth  = ((dwWidth + 3) / 4) * 4;
         dwHeight = ((dwHeight + 3) / 4) * 4;
         buffsize = dwWidth * dwHeight;

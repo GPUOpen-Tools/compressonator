@@ -32,4 +32,5 @@
 // add prototype code here...that uses CMP dev code
 int main()
 {
+    printf("Hello World\n");
 }

@@ -26,24 +26,25 @@ target_sources(CMP_Core
                 source/cmp_core.h
                 source/cmp_math_vec4.h
                 source/cmp_math_func.h
-                )
+            )
 
 if (OPTION_CMP_GTC)
-target_sources(CMP_Core
-               PRIVATE
-                shaders/gtc_encode_kernel.h
-                shaders/gtc_encode_kernel.cpp
-	)
+target_sources(
+    CMP_Core
+    PRIVATE
+    shaders/gtc_encode_kernel.h
+    shaders/gtc_encode_kernel.cpp
+)
 endif()
 
-if (OPTION_CMP_APC)
-target_sources(CMP_Core
-               PRIVATE
-                shaders/apc_encode_kernel.h
-                shaders/apc_encode_kernel.cpp
-	)
+if (OPTION_BUILD_BROTLIG)
+    target_sources(
+        CMP_Core
+        PRIVATE
+        shaders/brlg_encode_kernel.h
+        shaders/brlg_encode_kernel.cpp
+    )
 endif()
-
 
 target_include_directories(CMP_Core
                            PRIVATE

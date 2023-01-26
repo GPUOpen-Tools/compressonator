@@ -102,7 +102,7 @@ CCodec_APC::CCodec_APC() : CCodec_DXTC(CT_APC) {
 bool CCodec_APC::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue) {
     if (sValue == NULL) return false;
 
-    if(strcmp(pszParamName, "NumThreads") == 0) {
+    if(strcmp(pszParamName, CodecParameters::NumThreads) == 0) {
         m_NumThreads = (CMP_BYTE) std::stoi(sValue) & 0xFF;
         m_Use_MultiThreading = m_NumThreads > 1;
     } else if (strcmp(pszParamName, "Quality") == 0) {
@@ -118,7 +118,7 @@ bool CCodec_APC::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue) {
 
 
 bool CCodec_APC::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue) {
-    if(strcmp(pszParamName, "NumThreads") == 0) {
+    if(strcmp(pszParamName, CodecParameters::NumThreads) == 0) {
         m_NumThreads = (CMP_BYTE) dwValue;
         m_Use_MultiThreading = m_NumThreads > 1;
     } else

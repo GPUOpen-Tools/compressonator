@@ -699,6 +699,8 @@ AMD_BC6H_Format extract_format(BYTE in[COMPRESSED_BLOCK_SIZE]) {
 void BC6HBlockDecoder::DecompressBlock( float out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],BYTE in[COMPRESSED_BLOCK_SIZE]) {
 
     AMD_BC6H_Format bc6h_format = extract_format(in);
+
+    bc6h_format.issigned = bc6signed;
     if (!bc6signed)
         bc6h_format.format = UNSIGNED_F16;
     else
@@ -738,14 +740,29 @@ void BC6HBlockDecoder::DecompressBlock( float out[MAX_SUBSET_SIZE][MAX_DIMENSION
             // this result is validated ok for region = BC6_ONE , BC6_TWO To be determined
             data = bc6h_format.Palete[region][paleteIndex];
 
-            // Int to Half
-            rgb[0].setBits((unsigned short) data.x);
-            rgb[1].setBits((unsigned short) data.y);
-            rgb[2].setBits((unsigned short) data.z);
+            // TODO: Because of the weird way we handle bit data in the encoder we need to be careful with how
+            // we deal with negative numbers in the data.
+            // The encoder generates data where negative numbers are represented by negating the positive bit values, which
+            // is not how the bit data should behave if we wanted it to work with F16 directly. So that is why the following work-around
+            // was done.
 
-            out[indexPos][0]  = (float) rgb[0];    // r;
+            // Int to Half
+            rgb[0].setBits((unsigned short)abs(data.x));
+            rgb[1].setBits((unsigned short)abs(data.y));
+            rgb[2].setBits((unsigned short)abs(data.z));
+
+            out[indexPos][0]  = (float) rgb[0]; // r
+            if (data.x < 0)
+                out[indexPos][0] = -out[indexPos][0];
+
             out[indexPos][1]  = (float) rgb[1]; // g;
-            out[indexPos][2]  = (float) rgb[2];    // b;
+            if (data.y < 0)
+                out[indexPos][1] = -out[indexPos][1];
+ 
+            out[indexPos][2]  = (float) rgb[2]; // b;
+            if (data.z < 0)
+                out[indexPos][2] = -out[indexPos][2];
+
             out[indexPos][3]  = 1.0f;
 
             indexPos++;

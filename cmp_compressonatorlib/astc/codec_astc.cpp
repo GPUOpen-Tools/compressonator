@@ -242,7 +242,7 @@ void CCodec_ASTC::find_closest_blockdim_3d(float target_bitrate, int *x, int *y,
 bool CCodec_ASTC::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue) {
     if (sValue == NULL) return false;
 
-    if(strcmp(pszParamName, "NumThreads") == 0) {
+    if(strcmp(pszParamName, CodecParameters::NumThreads) == 0) {
         m_NumThreads = (CMP_BYTE) std::stoi(sValue) & 0xFF;
     }
     if(strcmp(pszParamName, "BlockRate") == 0) {
@@ -276,7 +276,7 @@ bool CCodec_ASTC::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue) {
 }
 
 bool CCodec_ASTC::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue) {
-    if(strcmp(pszParamName, "NumThreads") == 0) {
+    if(strcmp(pszParamName, CodecParameters::NumThreads) == 0) {
         m_NumThreads = (CMP_BYTE) dwValue;
     } else
         return CCodec_DXTC::SetParameter(pszParamName, dwValue);

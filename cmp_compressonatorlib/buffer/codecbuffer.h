@@ -29,7 +29,6 @@
 #ifndef _CODECBUFFER_H_INCLUDED_
 #define _CODECBUFFER_H_INCLUDED_
 
-#include "debug.h"
 #include "common.h"
 #include "compressonator.h"
 #include "mathmacros.h"
@@ -50,6 +49,7 @@ typedef enum _CodecBufferType {
     CBT_RG8S,
     CBT_R8S,
     CBT_RGBA2101010,
+    CBT_RGBA1010102,
     CBT_RGBA16,
     CBT_RG16,
     CBT_R16,
@@ -110,11 +110,6 @@ typedef enum _CodecBufferType {
 #define ATC_RGBA8888_OFFSET_G (ATC_RGBA8888_CHANNEL_G * 8)
 #define ATC_RGBA8888_OFFSET_B (ATC_RGBA8888_CHANNEL_B * 8)
 
-#define RGBA2101010_OFFSET_A 30
-#define RGBA2101010_OFFSET_R 20
-#define RGBA2101010_OFFSET_G 10
-#define RGBA2101010_OFFSET_B  0
-
 #define RGBA16_OFFSET_R 0
 #define RGBA16_OFFSET_G 1
 #define RGBA16_OFFSET_B 2
@@ -135,9 +130,7 @@ typedef enum _CodecBufferType {
 #define RGBA32F_OFFSET_B 2
 #define RGBA32F_OFFSET_A 3
 
-#define TWO_BIT_MASK    0x0003
 #define BYTE_MASK       0x00ff
-#define TEN_BIT_MASK    0x03ff
 #define WORD_MASK       0xffff
 
 #define MAKE_RGBA8888(r, g, b, a) ((r << RGBA8888_OFFSET_R) | (g << RGBA8888_OFFSET_G) | (b << RGBA8888_OFFSET_B) | (a << RGBA8888_OFFSET_A))
@@ -189,8 +182,6 @@ typedef enum _CodecBufferType {
 #define CONVERT_WORD_TO_SBYTE(w) static_cast<CMP_BYTE>(cmp_minT(((w >> 8) + ((w & BYTE_MASK) >= 128 ? 1 : 0)), SBYTE_MAXVAL))
 #define CONVERT_10BIT_TO_WORD(b) (((static_cast<CMP_WORD>(b)) << 6) | static_cast<CMP_WORD>(b) >> 2)
 #define CONVERT_2BIT_TO_WORD(b) ((static_cast<CMP_WORD>(b)) | ((static_cast<CMP_WORD>(b)) << 2) | ((static_cast<CMP_WORD>(b)) << 4) | ((static_cast<CMP_WORD>(b)) << 6) | ((static_cast<CMP_WORD>(b)) << 8) | ((static_cast<CMP_WORD>(b)) << 10) | ((static_cast<CMP_WORD>(b)) << 12) | ((static_cast<CMP_WORD>(b)) << 14))
-#define CONVERT_WORD_TO_10BIT(b) ((b >> 6) & TEN_BIT_MASK)
-#define CONVERT_WORD_TO_2BIT(b) ((b >> 14) & TWO_BIT_MASK)
 
 #define SWAP_DWORDS(a, b) {CMP_DWORD dwTemp = a; a = b; b = dwTemp;}
 #define SWAP_WORDS(a, b) {CMP_WORD wTemp = a; a = b; b = wTemp;}

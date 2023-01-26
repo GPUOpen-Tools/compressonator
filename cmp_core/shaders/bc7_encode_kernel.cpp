@@ -324,17 +324,17 @@ extern "C" CGU_INT timerEnd(CGU_INT id);
 #else
 #define GATHER_UINT8(x, y) gather_uint8(x, y)
 #endif
-// INLINE CGV_UINT8  gather_uint8 (CMP_CONSTANT  CGU_UINT8 * __constant uniform ptr, CGV_INT idx)
+// INLINE CGV_UINT8  gather_uint8 (CMP_CONSTANT  CGU_UINT8 * __constant CMP_UNIFORM ptr, CGV_INT idx)
 // {
 //    return ptr[idx]; // (perf warning expected)
 // }
 //
-// INLINE CGV_UINT8 gather_cmpout(CMP_CONSTANT CGV_UINT8 * __constant uniform ptr, CGU_INT idx)
+// INLINE CGV_UINT8 gather_cmpout(CMP_CONSTANT CGV_UINT8 * __constant CMP_UNIFORM ptr, CGU_INT idx)
 // {
 //    return ptr[idx]; // (perf warning expected)
 // }
 //
-//INLINE CGV_UINT8 gather_index(CMP_CONSTANT varying CGV_UINT8* __constant uniform ptr, CGV_INT idx)
+//INLINE CGV_UINT8 gather_index(CMP_CONSTANT varying CGV_UINT8* __constant CMP_UNIFORM ptr, CGV_INT idx)
 //{
 //   return ptr[idx]; // (perf warning expected)
 //}
@@ -352,12 +352,12 @@ INLINE CGV_INT gather_epocode(CMP_CONSTANT CGV_INT* ptr, CGV_INT idx)
 }
 #endif
 
-INLINE CGV_UINT32 gather_partid(CMP_CONSTANT CGV_UINT32* uniform ptr, CGV_INT idx)
+INLINE CGV_UINT32 gather_partid(CMP_CONSTANT CGV_UINT32* CMP_UNIFORM ptr, CGV_INT idx)
 {
     return ptr[idx];  // (perf warning expected)
 }
 
-//INLINE CGV_UINT8 gather_vuint8(CMP_CONSTANT varying CGV_UINT8* __constant uniform ptr, CGV_INT idx)
+//INLINE CGV_UINT8 gather_vuint8(CMP_CONSTANT varying CGV_UINT8* __constant CMP_UNIFORM ptr, CGV_INT idx)
 //{
 //   return ptr[idx]; // (perf warning expected)
 //}
@@ -441,7 +441,7 @@ INLINE CGV_UINT8 shift_right_uint8V(CGV_UINT8 v, CGV_UINT8 bits)
 }
 
 // valid bit range is 0..8
-INLINE CGV_INT expandEPObits(CGV_INT v, uniform CGV_INT bits)
+INLINE CGV_INT expandEPObits(CGV_INT v, CMP_UNIFORM CGV_INT bits)
 {
     CGV_INT vv = v << (8 - bits);
     return vv + shift_right_uint32(vv, bits);
@@ -863,7 +863,7 @@ void sortPartitionProjection(CGV_FLOAT projection[MAX_PARTITION_ENTRIES],
         order[Parti] = what[Parti].index;
 };
 
-void cmp_Write8Bit(CGV_UINT8 base[], CGU_INT* uniform offset, CGU_INT bits, CGV_UINT8 bitVal)
+void cmp_Write8Bit(CGV_UINT8 base[], CGU_INT* CMP_UNIFORM offset, CGU_INT bits, CGV_UINT8 bitVal)
 {
     base[*offset / 8] |= bitVal << (*offset % 8);
     if (*offset % 8 + bits > 8)
@@ -1643,7 +1643,7 @@ CGV_FLOAT optimize_IndexAndEndPoints(CGV_UINT8 index_io[MAX_SUBSET_SIZE],
                                      CGU_UINT8 Mi_,           // last cluster , This should be no larger than 16
                                      CGU_UINT8 bits,          // total for all components
                                      CGU_UINT8 channels3or4,  // IN: 3 = RGB or 4 = RGBA (4 = MAX_CHANNELS)
-                                     uniform CMP_GLOBAL BC7_Encode u_BC7Encode[])
+                                     CMP_UNIFORM CMP_GLOBAL BC7_Encode u_BC7Encode[])
 {
     CGV_FLOAT err_best = CMP_FLOAT_MAX;
     CGU_INT   type;
@@ -1818,7 +1818,7 @@ CGV_FLOAT optimize_IndexAndEndPoints(CGV_UINT8 index_io[MAX_SUBSET_SIZE],
     return err_best;
 }
 
-CGU_UINT8 get_partitionsToTry(uniform CMP_GLOBAL BC7_Encode u_BC7Encode[], CGU_UINT8 maxPartitions)
+CGU_UINT8 get_partitionsToTry(CMP_UNIFORM CMP_GLOBAL BC7_Encode u_BC7Encode[], CGU_UINT8 maxPartitions)
 {
     CGU_FLOAT u_minPartitionSearchSize = 0.30f;
     if (u_BC7Encode->quality <= BC7_qFAST_THRESHOLD)
@@ -1847,7 +1847,7 @@ INLINE void cmp_encode_swap(CGV_INT endpoint[], CGU_INT channels, CGV_UINT8 bloc
     }
 }
 
-void cmp_encode_index(CGV_UINT8 data[16], CGU_INT* uniform pPos, CGV_UINT8 block_index[MAX_SUBSET_SIZE], CGU_INT bits)
+void cmp_encode_index(CGV_UINT8 data[16], CGU_INT* CMP_UNIFORM pPos, CGV_UINT8 block_index[MAX_SUBSET_SIZE], CGU_INT bits)
 {
     cmp_Write8Bit(data, pPos, bits - 1, block_index[0]);
     for (CGU_INT j = 1; j < SOURCE_BLOCK_SIZE; j++)
@@ -1857,7 +1857,7 @@ void cmp_encode_index(CGV_UINT8 data[16], CGU_INT* uniform pPos, CGV_UINT8 block
     }
 }
 
-void encode_endpoint(CGV_UINT8 data[16], CGU_INT* uniform pPos, CGV_UINT8 block_index[16], CGU_INT bits, CGV_UINT32 flips)
+void encode_endpoint(CGV_UINT8 data[16], CGU_INT* CMP_UNIFORM pPos, CGV_UINT8 block_index[16], CGU_INT bits, CGV_UINT32 flips)
 {
     CGU_INT levels        = 1 << bits;
     CGV_INT flips_shifted = flips;
@@ -2086,7 +2086,7 @@ void Encode_mode01237(CGU_INT    blockMode,
     }
 }
 
-void Encode_mode4(CGV_UINT8 cmp_out[COMPRESSED_BLOCK_SIZE], varying cmp_mode_parameters* uniform params)
+void Encode_mode4(CGV_UINT8 cmp_out[COMPRESSED_BLOCK_SIZE], varying cmp_mode_parameters* CMP_UNIFORM params)
 {
     CGU_INT bitPosition = 4;  // Position the pointer at the LSB
 
@@ -2140,7 +2140,7 @@ void Encode_mode4(CGV_UINT8 cmp_out[COMPRESSED_BLOCK_SIZE], varying cmp_mode_par
     cmp_encode_index(cmp_out, &bitPosition, params->alpha_index, 3);
 }
 
-void Encode_mode5(CGV_UINT8 cmp_out[COMPRESSED_BLOCK_SIZE], varying cmp_mode_parameters* uniform params)
+void Encode_mode5(CGV_UINT8 cmp_out[COMPRESSED_BLOCK_SIZE], varying cmp_mode_parameters* CMP_UNIFORM params)
 {
     for (CGU_INT k = 0; k < COMPRESSED_BLOCK_SIZE; k++)
         cmp_out[k] = 0;
@@ -2202,7 +2202,7 @@ void Encode_mode6(CGV_UINT8 index[MAX_SUBSET_SIZE], CGV_INT epo_code[8], CGV_UIN
     cmp_encode_index(cmp_out, &bitPosition, index, 4);
 }
 
-void Compress_mode01237(CGU_INT blockMode, BC7_EncodeState EncodeState[], uniform CMP_GLOBAL BC7_Encode u_BC7Encode[])
+void Compress_mode01237(CGU_INT blockMode, BC7_EncodeState EncodeState[], CMP_UNIFORM CMP_GLOBAL BC7_Encode u_BC7Encode[])
 {
     CGV_UINT8 storedBestindex[MAX_PARTITIONS][MAX_SUBSETS][MAX_SUBSET_SIZE];
     CGV_FLOAT storedError[MAX_PARTITIONS];
@@ -2467,7 +2467,7 @@ void Compress_mode01237(CGU_INT blockMode, BC7_EncodeState EncodeState[], unifor
     Encode_mode01237(blockMode, bestPartition, packedEndpoints, bestindex16, EncodeState->cmp_out);
 }
 
-void Compress_mode45(CGU_INT blockMode, BC7_EncodeState EncodeState[], uniform CMP_GLOBAL BC7_Encode u_BC7Encode[])
+void Compress_mode45(CGU_INT blockMode, BC7_EncodeState EncodeState[], CMP_UNIFORM CMP_GLOBAL BC7_Encode u_BC7Encode[])
 {
     cmp_mode_parameters best_candidate;
     EncodeState->channels3or4 = 4;
@@ -2571,7 +2571,7 @@ void Compress_mode45(CGU_INT blockMode, BC7_EncodeState EncodeState[], uniform C
     }      // A
 }
 
-void Compress_mode6(BC7_EncodeState EncodeState[], uniform CMP_GLOBAL BC7_Encode u_BC7Encode[])
+void Compress_mode6(BC7_EncodeState EncodeState[], CMP_UNIFORM CMP_GLOBAL BC7_Encode u_BC7Encode[])
 {
     CGV_FLOAT err;
 
@@ -2614,7 +2614,7 @@ void Compress_mode6(BC7_EncodeState EncodeState[], uniform CMP_GLOBAL BC7_Encode
     }
 }
 
-void copy_BC7_Encode_settings(BC7_EncodeState EncodeState[], uniform CMP_GLOBAL BC7_Encode settings[])
+void copy_BC7_Encode_settings(BC7_EncodeState EncodeState[], CMP_UNIFORM CMP_GLOBAL BC7_Encode settings[])
 {
     EncodeState->best_err      = CMP_FLOAT_MAX;
     EncodeState->validModeMask = settings->validModeMask;
@@ -2629,7 +2629,7 @@ void copy_BC7_Encode_settings(BC7_EncodeState EncodeState[], uniform CMP_GLOBAL 
 #include "external/bc7_icmp.h"
 #endif
 
-bool notValidBlockForMode(CGU_UINT32 blockMode, CGU_BOOL blockNeedsAlpha, CGU_BOOL blockAlphaZeroOne, uniform CMP_GLOBAL BC7_Encode u_BC7Encode[])
+bool notValidBlockForMode(CGU_UINT32 blockMode, CGU_BOOL blockNeedsAlpha, CGU_BOOL blockAlphaZeroOne, CMP_UNIFORM CMP_GLOBAL BC7_Encode u_BC7Encode[])
 {
     // Do we need to skip alpha processing blocks
     if ((blockNeedsAlpha == FALSE) && (blockMode > 3))
@@ -2659,7 +2659,7 @@ bool notValidBlockForMode(CGU_UINT32 blockMode, CGU_BOOL blockNeedsAlpha, CGU_BO
     return FALSE;
 }
 
-void BC7_CompressBlock(BC7_EncodeState EncodeState[], uniform CMP_GLOBAL BC7_Encode u_BC7Encode[])
+void BC7_CompressBlock(BC7_EncodeState EncodeState[], CMP_UNIFORM CMP_GLOBAL BC7_Encode u_BC7Encode[])
 {
 #ifdef USE_NEW_SINGLE_HEADER_INTERFACES
     CGV_Vec4f image_src[16];
@@ -2841,12 +2841,12 @@ void BC7_CompressBlock(BC7_EncodeState EncodeState[], uniform CMP_GLOBAL BC7_Enc
 
 #ifndef ASPM_GPU
 
-INLINE void load_block_interleaved_rgba2(CGV_FLOAT image_src[64], uniform texture_surface* uniform src, CGV_INT block_xx, CGU_INT block_yy)
+INLINE void load_block_interleaved_rgba2(CGV_FLOAT image_src[64], CMP_UNIFORM texture_surface* CMP_UNIFORM src, CGV_INT block_xx, CGU_INT block_yy)
 {
     for (CGU_INT y = 0; y < 4; y++)
         for (CGU_INT x = 0; x < 4; x++)
         {
-            CGU_UINT32* uniform src_ptr = (CGV_UINT32*)&src->ptr[(block_yy * 4 + y) * src->stride];
+            CGU_UINT32* CMP_UNIFORM src_ptr = (CGV_UINT32*)&src->ptr[(block_yy * 4 + y) * src->stride];
 #ifdef USE_VARYING
             CGV_UINT32 rgba               = gather_partid(src_ptr, block_xx * 4 + x);
             image_src[16 * 0 + y * 4 + x] = (CGV_FLOAT)((rgba >> 0) & 255);
@@ -2916,10 +2916,10 @@ INLINE void store_data_uint32(CGU_UINT8 dst[], CGV_UINT32 width, CGU_INT v_xx, C
     }
 }
 
-void CompressBlockBC7_XY(uniform texture_surface u_srcptr[], CGU_INT block_x, CGU_INT block_y, CGU_UINT8 u_dst[], uniform BC7_Encode u_settings[])
+void CompressBlockBC7_XY(CMP_UNIFORM texture_surface u_srcptr[], CGU_INT block_x, CGU_INT block_y, CGU_UINT8 u_dst[], CMP_UNIFORM BC7_Encode u_settings[])
 {
     BC7_EncodeState _state;
-    varying BC7_EncodeState* uniform state = &_state;
+    varying BC7_EncodeState* CMP_UNIFORM state = &_state;
 
     copy_BC7_Encode_settings(state, u_settings);
 
@@ -2933,7 +2933,7 @@ void CompressBlockBC7_XY(uniform texture_surface u_srcptr[], CGU_INT block_x, CG
         store_data_uint32(u_dst, u_srcptr->width, block_x, block_y, state->best_cmp_out, 4);
 }
 
-CMP_EXPORT void CompressBlockBC7_encode(uniform texture_surface src[], CGU_UINT8 dst[], uniform BC7_Encode settings[])
+CMP_EXPORT void CompressBlockBC7_encode(CMP_UNIFORM texture_surface src[], CGU_UINT8 dst[], CMP_UNIFORM BC7_Encode settings[])
 {
     // bc7_isa(); ASPM_PRINT(("ASPM encode [%d,%d]\n",bc7_isa(),src->width,src->height));
 
@@ -3398,10 +3398,10 @@ void DecompressBC7_internal(CGU_UINT8 out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG], c
 
 void CompressBlockBC7_Internal(CGU_UINT8  image_src[SOURCE_BLOCK_SIZE][4],
                                CMP_GLOBAL CGV_UINT8 cmp_out[COMPRESSED_BLOCK_SIZE],
-                               uniform CMP_GLOBAL BC7_Encode u_BC7Encode[])
+                               CMP_UNIFORM CMP_GLOBAL BC7_Encode u_BC7Encode[])
 {
     BC7_EncodeState _state                 = {0};
-    varying BC7_EncodeState* uniform state = &_state;
+    varying BC7_EncodeState* CMP_UNIFORM state = &_state;
 
     copy_BC7_Encode_settings(state, u_BC7Encode);
 
@@ -3604,10 +3604,10 @@ int CMP_CDECL DecompressBlockBC7(const unsigned char cmpBlock[16], unsigned char
 
 //============================================== OpenCL USER INTERFACE ====================================================
 #ifdef ASPM_OPENCL
-CMP_STATIC CMP_KERNEL void CMP_GPUEncoder(uniform CMP_GLOBAL const CGU_Vec4uc ImageSource[],
+CMP_STATIC CMP_KERNEL void CMP_GPUEncoder(CMP_UNIFORM CMP_GLOBAL const CGU_Vec4uc ImageSource[],
                                           CMP_GLOBAL CGV_UINT8 ImageDestination[],
-                                          uniform CMP_GLOBAL Source_Info SourceInfo[],
-                                          uniform CMP_GLOBAL BC7_Encode BC7Encode[])
+                                          CMP_UNIFORM CMP_GLOBAL Source_Info      SourceInfo[],
+                                          CMP_UNIFORM CMP_GLOBAL BC7_Encode       BC7Encode[])
 {
     CGU_INT xID = 0;
     CGU_INT yID = 0;

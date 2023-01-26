@@ -103,6 +103,12 @@ int CMP_CDECL SetSrgbBC1(void* options, bool sRGB);
 int CMP_CDECL SetSrgbBC2(void* options, bool sRGB);
 int CMP_CDECL SetSrgbBC3(void* options, bool sRGB);
 
+// In v4.2 SetGammaBCn was renamed to SetSrgbBCn.
+// Keeping previous declarations for backwards compatibility.
+int CMP_CDECL SetGammaBC1(void* options, bool sRGB);
+int CMP_CDECL SetGammaBC2(void* options, bool sRGB);
+int CMP_CDECL SetGammaBC3(void* options, bool sRGB);
+
 // Set if the content is signed (true) or unsigned (false).
 // The default is false.
 // For BC6, the encoded or decoded data is always FP16, but affects the clamping of the values UF16 vs SF16.

@@ -80,6 +80,7 @@ typedef enum
     CMP_FORMAT_R_8_S,         // Single component format with signed 8-bit fixed channel.
     CMP_FORMAT_R_8,           // Single component format with 8-bit fixed channel.
     CMP_FORMAT_ARGB_2101010,  // ARGB format with 10-bit fixed channels for color & a 2-bit fixed channel for alpha.
+    CMP_FORMAT_RGBA_1010102,  // RGBA format with 10-bit fixed channels for color & a 2-bit fixed channel for alpha.
     CMP_FORMAT_ARGB_16,       // ARGB format with 16-bit fixed channels.
     CMP_FORMAT_ABGR_16,       // ABGR format with 16-bit fixed channels.
     CMP_FORMAT_RGBA_16,       // RGBA format with 16-bit fixed channels.
@@ -103,7 +104,9 @@ typedef enum
     CMP_FORMAT_R_32F,         // Single component with 32-bit floating-point channels.
 
     // Compression formats ------------ GPU Mapping DirectX, Vulkan and OpenGL formats and comments --------
+#if (OPTION_BUILD_ASTC == 1)
     CMP_FORMAT_ASTC,   // DXGI_FORMAT_UNKNOWN   VK_FORMAT_ASTC_4x4_UNORM_BLOCK to VK_FORMAT_ASTC_12x12_UNORM_BLOCK
+#endif
     CMP_FORMAT_ATI1N,  // DXGI_FORMAT_BC4_UNORM VK_FORMAT_BC4_UNORM_BLOCK GL_COMPRESSED_RED_RGTC1 Single component compression format using the same technique as DXT5 alpha. Four bits per pixel.
     CMP_FORMAT_ATI2N,  // DXGI_FORMAT_BC5_UNORM VK_FORMAT_BC5_UNORM_BLOCK GL_COMPRESSED_RG_RGTC2 Two component compression format using the same technique as DXT5 alpha. Designed for compression of tangent space normal maps. Eight bits per pixel.
     CMP_FORMAT_ATI2N_XY,  // DXGI_FORMAT_BC5_UNORM VK_FORMAT_BC5_UNORM_BLOCK GL_COMPRESSED_RG_RGTC2 Two component compression format using the same technique as DXT5 alpha. The same as ATI2N but with the channels swizzled. Eight bits per pixel.
@@ -141,12 +144,11 @@ typedef enum
 #ifdef USE_APC
     CMP_FORMAT_APC,  //< APC Texture Compressor
 #endif
-    // Transcoder formats - ------------------------------------------------------------
+    // Specialty formats - ------------------------------------------------------------
     CMP_FORMAT_GTC,    //< GTC   Fast Gradient Texture Compressor
     CMP_FORMAT_BASIS,  //< BASIS compression
-
-    // End of list
-    CMP_FORMAT_MAX = CMP_FORMAT_BASIS
+    CMP_FORMAT_BROTLIG,
+    CMP_FORMAT_MAX = CMP_FORMAT_BROTLIG
 } CMP_FORMAT;
 
 
@@ -158,7 +160,7 @@ typedef enum {
     CMP_ERR_INVALID_DEST_TEXTURE,          ///< The destination texture is invalid.
     CMP_ERR_UNSUPPORTED_SOURCE_FORMAT,     ///< The source format is not a supported format.
     CMP_ERR_UNSUPPORTED_DEST_FORMAT,       ///< The destination format is not a supported format.
-    CMP_ERR_UNSUPPORTED_GPU_ASTC_DECODE,   ///< The gpu hardware is not supported.
+    CMP_ERR_UNSUPPORTED_GPU_ASTC_DECODE,   ///< Legacy: need to remove The gpu hardware is not supported.
     CMP_ERR_SIZE_MISMATCH,                 ///< The source and destination texture sizes do not match.
     CMP_ERR_UNABLE_TO_INIT_CODEC,          ///< Compressonator was unable to initialize the codec needed for conversion.
     CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB,  ///< GPU_Decode Lib was unable to initialize the codec needed for decompression .

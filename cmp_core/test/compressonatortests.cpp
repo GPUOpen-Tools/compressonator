@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2020-2022 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -23,7 +23,7 @@
 
 #include "compressonatortests.h"
 
-// incudes all compressed 4x4 blocks
+// includes all compressed 4x4 blocks
 #include "blockconstants.h"
 
 #include <cmp_core.h>
@@ -35,6 +35,11 @@
 #include <cstring>
 #include <array>
 
+#ifdef USE_LOSSLESS_COMPRESSION
+#include "brotlig/brlg_sdk_wrapper.h"
+#include "common.h"
+#include "brlg_data.h"
+#endif
 
 static const int BC1_BLOCK_SIZE = 8;
 static const int BC2_BLOCK_SIZE = 16;
@@ -265,6 +270,42 @@ bool ColorMatchesBC6(unsigned short* buffer, const float* expectedColor) {
 }
 
 //***************************************************************************************
+#ifdef USE_LOSSLESS_COMPRESSION
+TEST_CASE("BROTLIG_Codec_CPU", "[BROTLIG]")
+{
+    void* compressedBuffer = 0;
+    uint32_t compressedSize = 0;
+
+    // Compression
+
+    compressedBuffer = malloc(BRLG::MaxCompressedSize(sizeof(BRLG_UNCOMPRESSED_DATA)));
+
+    CHECK(BRLG::EncodeDataStream((CMP_BYTE*)BRLG_UNCOMPRESSED_DATA, sizeof(BRLG_UNCOMPRESSED_DATA), (CMP_BYTE*)compressedBuffer, &compressedSize, 65536));
+
+    CHECK(compressedSize == sizeof(BRLG_COMPRESSED_DATA));
+
+    CHECK(memcmp(compressedBuffer, BRLG_COMPRESSED_DATA, compressedSize) == 0);
+
+    // Decompression
+
+    uint32_t decompressedSize = 0;
+    void* decompressedBuffer = 0;
+
+    decompressedSize = sizeof(BRLG_UNCOMPRESSED_DATA);
+    decompressedBuffer = malloc(decompressedSize);
+
+    CHECK(BRLG::DecodeDataStreamCPU((CMP_BYTE*)compressedBuffer, compressedSize, (CMP_BYTE*)decompressedBuffer, &decompressedSize));
+
+    CHECK(decompressedSize == sizeof(BRLG_UNCOMPRESSED_DATA));
+
+    CHECK(memcmp(decompressedBuffer, BRLG_UNCOMPRESSED_DATA, decompressedSize) == 0);
+
+    // clean up
+
+    free(compressedBuffer);
+    free(decompressedBuffer);
+}
+#endif
 
 TEST_CASE("BC1_Red_Ignore_Alpha", "[BC1_Red_Ignore_Alpha]") {
     const auto block = blocks.find("BC1_Red_Ignore_Alpha")->second;
@@ -279,6 +320,7 @@ TEST_CASE("BC1_Red_Ignore_Alpha", "[BC1_Red_Ignore_Alpha]") {
     DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
     CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
+
 TEST_CASE("BC1_Blue_Half_Alpha", "[BC1_Blue_Half_Alpha]") {
     const auto block = blocks.find("BC1_Blue_Half_Alpha")->second;
     const auto blockData = block.data;
@@ -409,6 +451,7 @@ TEST_CASE("BC1_White_Full_Alpha", "[BC1_White_Full_Alpha]") {
     DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
     CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
+
 TEST_CASE("BC1_Green_Ignore_Alpha", "[BC1_Green_Ignore_Alpha]") {
     const auto block = blocks.find("BC1_Green_Ignore_Alpha")->second;
     const auto blockData = block.data;
@@ -422,6 +465,7 @@ TEST_CASE("BC1_Green_Ignore_Alpha", "[BC1_Green_Ignore_Alpha]") {
     DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
     CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
+
 TEST_CASE("BC1_Black_Full_Alpha", "[BC1_Black_Full_Alpha]") {
     const auto block = blocks.find("BC1_Black_Full_Alpha")->second;
     const auto blockData = block.data;
@@ -474,6 +518,7 @@ TEST_CASE("BC1_Green_Blue_Full_Alpha", "[BC1_Green_Blue_Full_Alpha]") {
     DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
     CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
+
 TEST_CASE("BC1_Blue_Ignore_Alpha", "[BC1_Blue_Ignore_Alpha]") {
     const auto block = blocks.find("BC1_Blue_Ignore_Alpha")->second;
     const auto blockData = block.data;
@@ -487,6 +532,7 @@ TEST_CASE("BC1_Blue_Ignore_Alpha", "[BC1_Blue_Ignore_Alpha]") {
     DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
     CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
+
 TEST_CASE("BC1_White_Ignore_Alpha", "[BC1_White_Ignore_Alpha]") {
     const auto block = blocks.find("BC1_White_Ignore_Alpha")->second;
     const auto blockData = block.data;
@@ -500,6 +546,7 @@ TEST_CASE("BC1_White_Ignore_Alpha", "[BC1_White_Ignore_Alpha]") {
     DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
     CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
+
 TEST_CASE("BC1_Black_Ignore_Alpha", "[BC1_Black_Ignore_Alpha]") {
     const auto block = blocks.find("BC1_Black_Ignore_Alpha")->second;
     const auto blockData = block.data;
@@ -513,6 +560,7 @@ TEST_CASE("BC1_Black_Ignore_Alpha", "[BC1_Black_Ignore_Alpha]") {
     DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
     CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
+
 TEST_CASE("BC1_Red_Blue_Ignore_Alpha", "[BC1_Red_Blue_Ignore_Alpha]") {
     const auto block = blocks.find("BC1_Red_Blue_Ignore_Alpha")->second;
     const auto blockData = block.data;
@@ -526,6 +574,7 @@ TEST_CASE("BC1_Red_Blue_Ignore_Alpha", "[BC1_Red_Blue_Ignore_Alpha]") {
     DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
     CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
+
 TEST_CASE("BC1_Red_Green_Ignore_Alpha", "[BC1_Red_Green_Ignore_Alpha]") {
     const auto block = blocks.find("BC1_Red_Green_Ignore_Alpha")->second;
     const auto blockData = block.data;
@@ -539,6 +588,7 @@ TEST_CASE("BC1_Red_Green_Ignore_Alpha", "[BC1_Red_Green_Ignore_Alpha]") {
     DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
     CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
+
 TEST_CASE("BC1_Green_Blue_Ignore_Alpha", "[BC1_Green_Blue_Ignore_Alpha]") {
     const auto block = blocks.find("BC1_Green_Blue_Ignore_Alpha")->second;
     const auto blockData = block.data;
@@ -552,6 +602,7 @@ TEST_CASE("BC1_Green_Blue_Ignore_Alpha", "[BC1_Green_Blue_Ignore_Alpha]") {
     DecompressBlockBC1(compBlock, decompCompBlock, nullptr);
     CHECK(ColorMatches(decompCompBlock, blockColor, true));
 }
+
 TEST_CASE("BC1_Red_Half_Alpha", "[BC1_Red_Half_Alpha]") {
     const auto block = blocks.find("BC1_Red_Half_Alpha")->second;
     const auto blockData = block.data;

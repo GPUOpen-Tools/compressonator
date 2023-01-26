@@ -108,7 +108,7 @@ bool CCodec_BC6H::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue) {
         m_ModeMask = std::stoi(sValue) & 0xFFFF;
     } else if (strcmp(pszParamName, "PatternRec") == 0) {
         m_UsePatternRec = (bool)(std::stoi(sValue) > 0);
-    } else if (strcmp(pszParamName, "NumThreads") == 0) {
+    } else if (strcmp(pszParamName, CodecParameters::NumThreads) == 0) {
         m_NumThreads         = (CMP_BYTE)std::stoi(sValue);
         m_Use_MultiThreading = m_NumThreads != 1;
     } else if (strcmp(pszParamName, "Quality") == 0) {
@@ -133,7 +133,7 @@ bool CCodec_BC6H::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue) 
         m_ModeMask = (CMP_BYTE)dwValue & 0xFF;
     else if (strcmp(pszParamName, "PatternRec") == 0)
         m_UsePatternRec = (bool)(dwValue > 0);
-    else if (strcmp(pszParamName, "NumThreads") == 0) {
+    else if (strcmp(pszParamName, CodecParameters::NumThreads) == 0) {
         m_NumThreads         = (CMP_BYTE)dwValue;
         m_Use_MultiThreading = m_NumThreads != 1;
     } else
@@ -465,9 +465,9 @@ CodecError CCodec_BC6H::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
             srcIndex = 0;
             for (row = 0; row < BLOCK_SIZE_4; row++) {
                 for (col = 0; col < BLOCK_SIZE_4; col++) {
-                    blockToEncode[row * BLOCK_SIZE_4 + col][BC6H_COMP_RED]   = (float)srcBlock[srcIndex];
+                    blockToEncode[row * BLOCK_SIZE_4 + col][BC6H_COMP_RED] = (float)srcBlock[srcIndex];
                     blockToEncode[row * BLOCK_SIZE_4 + col][BC6H_COMP_GREEN] = (float)srcBlock[srcIndex + 1];
-                    blockToEncode[row * BLOCK_SIZE_4 + col][BC6H_COMP_BLUE]  = (float)srcBlock[srcIndex + 2];
+                    blockToEncode[row * BLOCK_SIZE_4 + col][BC6H_COMP_BLUE] = (float)srcBlock[srcIndex + 2];
                     blockToEncode[row * BLOCK_SIZE_4 + col][BC6H_COMP_ALPHA] = (float)srcBlock[srcIndex + 3];
                     srcIndex += 4;
                 }
@@ -591,11 +591,12 @@ CodecError CCodec_BC6H::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferO
             int   srcIndex = 0;
             for (int row = 0; row < BLOCK_SIZE_4; row++) {
                 for (int col = 0; col < BLOCK_SIZE_4; col++) {
-                    R                       = (CMP_FLOAT)DecData.decodedBlock[row * BLOCK_SIZE_4 + col][BC6H_COMP_RED];
-                    G                       = (CMP_FLOAT)DecData.decodedBlock[row * BLOCK_SIZE_4 + col][BC6H_COMP_GREEN];
-                    B                       = (CMP_FLOAT)DecData.decodedBlock[row * BLOCK_SIZE_4 + col][BC6H_COMP_BLUE];
-                    A                       = (CMP_FLOAT)DecData.decodedBlock[row * BLOCK_SIZE_4 + col][BC6H_COMP_ALPHA];
-                    destBlock[srcIndex]     = R;
+                    R = (CMP_FLOAT)DecData.decodedBlock[row * BLOCK_SIZE_4 + col][BC6H_COMP_RED];
+                    G = (CMP_FLOAT)DecData.decodedBlock[row * BLOCK_SIZE_4 + col][BC6H_COMP_GREEN];
+                    B = (CMP_FLOAT)DecData.decodedBlock[row * BLOCK_SIZE_4 + col][BC6H_COMP_BLUE];
+                    A = (CMP_FLOAT)DecData.decodedBlock[row * BLOCK_SIZE_4 + col][BC6H_COMP_ALPHA];
+
+                    destBlock[srcIndex] = R;
                     destBlock[srcIndex + 1] = G;
                     destBlock[srcIndex + 2] = B;
                     destBlock[srcIndex + 3] = A;

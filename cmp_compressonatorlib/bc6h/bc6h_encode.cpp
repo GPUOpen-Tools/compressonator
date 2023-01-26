@@ -437,11 +437,11 @@ void BC6HBlockEncoder::clampF16Max(float EndPoints[MAX_SUBSETS][MAX_END_POINTS][
         for(int ab = 0; ab<2; ab++)
             for (int rgb=0; rgb<3; rgb++) {
                 if (m_isSigned) {
-                    if (EndPoints[region][ab][rgb] < -F16MAX) EndPoints[region][ab][rgb] = -F16MAX;
-                    else if (EndPoints[region][ab][rgb] > F16MAX) EndPoints[region][ab][rgb] = F16MAX;
+                    if (EndPoints[region][ab][rgb] < F16_MAX_NEGATIVE_BITS) EndPoints[region][ab][rgb] = F16_MAX_NEGATIVE_BITS;
+                    else if (EndPoints[region][ab][rgb] > F16_MAX_BITS) EndPoints[region][ab][rgb] = F16_MAX_BITS;
                 } else {
                     if (EndPoints[region][ab][rgb] < 0.0) EndPoints[region][ab][rgb] = 0;
-                    else if (EndPoints[region][ab][rgb] > F16MAX) EndPoints[region][ab][rgb] = F16MAX;
+                    else if (EndPoints[region][ab][rgb] > F16_MAX_BITS) EndPoints[region][ab][rgb] = F16_MAX_BITS;
                 }
                 // Zero region
                 // if ((EndPoints[region][ab][rgb] > -0.01) && ((EndPoints[region][ab][rgb] < 0.01))) EndPoints[region][ab][rgb] = 0.0;
@@ -453,8 +453,8 @@ void BC6HBlockEncoder::clampF16Max(float EndPoints[MAX_SUBSETS][MAX_END_POINTS][
     for a given mode
 ==================================================================*/
 
-void BC6HBlockEncoder::QuantizeEndPointToF16Prec(float EndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int max_subsets, int prec) {
-
+void BC6HBlockEncoder::QuantizeEndPointToF16Prec(float EndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int max_subsets, int prec)
+{
     for (int subset = 0; subset < max_subsets; ++subset) {
         iEndPoints[subset][0][0] = QuantizeToInt((short)EndPoints[subset][0][0],prec,m_isSigned, m_Exposure);    // A.Red
         iEndPoints[subset][0][1] = QuantizeToInt((short)EndPoints[subset][0][1],prec,m_isSigned, m_Exposure);    // A.Green
@@ -540,6 +540,13 @@ bool BC6HBlockEncoder::TransformEndPoints(AMD_BC6H_Format &BC6H_data, int iEndPo
         for (int i=0; i<3; ++i) {
             Mask = MASK(ModePartition[mode].nbits);
             oEndPoints[0][0][i] = iEndPoints[0][0][i] & Mask;    // [0][A]
+
+            // for negative numbers we add back the sign bits
+            if (iEndPoints[0][0][i] < 0)
+            {
+                Mask = ~Mask;
+                oEndPoints[0][0][i] |= Mask;
+            }
 
             Mask = MASK(ModePartition[mode].prec[i]);
             oEndPoints[0][1][i] = iEndPoints[0][1][i]- iEndPoints[0][0][i]; // [0][B] - [0][A]
@@ -1350,6 +1357,49 @@ float Testdin[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG] = {
 };
 #endif
 
+static float MapToF16(float f, bool isSigned)
+{
+    const float normalization = 1.0;  // For future use
+
+    float result = 0.0f;
+
+    // negative infinity for signed formats
+    if (isSigned && cmp_isinf(f) && f < 0.0f)
+    {
+        result = F16_MAX_NEGATIVE_BITS;
+    }
+    // positive infinity
+    else if (cmp_isinf(f) && f > 0.0f)
+    {
+        result = F16_MAX_BITS;
+    }
+    // NaN, or negative infinity for non-signed formats
+    else if (cmp_isnan(f) || cmp_isinf(f))
+    {
+        result = 0.0f;
+    }
+    // signed number is very close to zero
+    else if (isSigned && f > -0.00001f && f < 0.00001f)
+    {
+        result = 0.0f;
+    }
+    // non-signed number is negative or very close to zero
+    else if (!isSigned && f < 0.00001f)
+    {
+        result = 0.0f;
+    }
+    else if (isSigned && f < 0.0f)
+    {
+        result = -CMP_HALF(abs(f / normalization)).bits();
+    }
+    else
+    {
+        result = CMP_HALF(f / normalization).bits();
+    }
+
+    return result;
+}
+
 float BC6HBlockEncoder::CompressBlock(float in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG], BYTE out[COMPRESSED_BLOCK_SIZE]) {
     /* Reserved feature:
     float smono[16];
@@ -1363,57 +1413,19 @@ float BC6HBlockEncoder::CompressBlock(float in[MAX_SUBSET_SIZE][MAX_DIMENSION_BI
     fi = fopen("deltaImages.txt", "w");
 #endif
 
-    float    bestError = FLT_MAX;
-    float    error = FLT_MAX;
-    int      bestShape = 0;
+    float bestError = FLT_MAX;
+    float error = FLT_MAX;
+    int bestShape = 0;
 
-    AMD_BC6H_Format            BC6H_data;
+    AMD_BC6H_Format BC6H_data;
 
     memset(&BC6H_data, 0, sizeof(AMD_BC6H_Format));
 
-    float normalization = 1.0;  // For future use
-
     for (int i = 0; i < BC6H_MAX_SUBSET_SIZE; i++) {
-
-        // Our Half floats will be restricted to 0x7BFF with a sign components
-        // so use 0..0x7BFF and sign bit for the floats
-
-        // using if ( < 0.00001) to avoid case of values been -0.0 which is not processed when using if ( < 0)
-        if (in[i][0] < 0.00001 || cmp_isnan(in[i][0])) {
-            if (m_isSigned) {
-                BC6H_data.din[i][0] = (cmp_isnan(in[i][0]))? F16NEGPREC_LIMIT_VAL : -CMP_HALF(abs(in[i][0] / normalization)).bits();
-                if (BC6H_data.din[i][0] < F16NEGPREC_LIMIT_VAL) {
-                    BC6H_data.din[i][0] = F16NEGPREC_LIMIT_VAL;
-                }
-            } else
-                BC6H_data.din[i][0] = 0.0;
-        } else
-            BC6H_data.din[i][0] = CMP_HALF(in[i][0] / normalization).bits();
-
-        if (in[i][1] < 0.00001 || cmp_isnan(in[i][1])) {
-            if (m_isSigned) {
-                BC6H_data.din[i][1] = (cmp_isnan(in[i][1])) ? F16NEGPREC_LIMIT_VAL : -CMP_HALF(abs(in[i][1] / normalization)).bits();
-                if (BC6H_data.din[i][1] < F16NEGPREC_LIMIT_VAL) {
-                    BC6H_data.din[i][1] = F16NEGPREC_LIMIT_VAL;
-                }
-            } else
-                BC6H_data.din[i][1] = 0.0;
-        } else
-            BC6H_data.din[i][1] = CMP_HALF(in[i][1] / normalization).bits();
-
-        if (in[i][2] < 0.00001 || cmp_isnan(in[i][2])) {
-            if (m_isSigned) {
-                BC6H_data.din[i][2] = (cmp_isnan(in[i][2])) ? F16NEGPREC_LIMIT_VAL : -CMP_HALF(abs(in[i][2] / normalization)).bits();
-                if (BC6H_data.din[i][2] < F16NEGPREC_LIMIT_VAL) {
-                    BC6H_data.din[i][2] = F16NEGPREC_LIMIT_VAL;
-                }
-            } else
-                BC6H_data.din[i][2] = 0.0;
-        } else
-            BC6H_data.din[i][2] = CMP_HALF(in[i][2] / normalization).bits();
-
-        BC6H_data.din[i][3] = 0.0;
-
+        BC6H_data.din[i][0] = MapToF16(in[i][0], m_isSigned);
+        BC6H_data.din[i][1] = MapToF16(in[i][1], m_isSigned);
+        BC6H_data.din[i][2] = MapToF16(in[i][2], m_isSigned);
+        BC6H_data.din[i][3] = 0.0f;
     }
 
     BC6H_data.issigned = m_isSigned;

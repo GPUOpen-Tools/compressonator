@@ -24,6 +24,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
+#define USE_CMP
 #include "common_def.h"
 #include "bcn_common_kernel.h"
 #include "bcn_common_api.h"
@@ -1300,6 +1301,8 @@ CMP_STATIC CGU_Vec2ui cgu_CompressRGBBlock_Fast(CMP_IN const CGU_Vec3f src_image
                                                 CMP_IN CGU_Vec3f CMP_REFINOUT  average_rgb, 
                                                 CMP_INOUT CGU_FLOAT CMP_REFINOUT errout)
 {
+    CMP_UNUSED(fquality);
+
     CGU_Vec3f  axisVectorRGB = {0.0f, 0.0f, 0.0f};  // The axis vector for index projection
     CGU_FLOAT  pos_on_axis[16];                     // The distance each unique falls along the compression axis
     CGU_FLOAT  axisleft   = 0;                      // The extremities and centre (average of left/right) of srcRGB along the compression axis

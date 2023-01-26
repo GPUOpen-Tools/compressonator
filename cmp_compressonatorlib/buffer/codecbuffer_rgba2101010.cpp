@@ -29,6 +29,7 @@
 
 #include "common.h"
 #include "codecbuffer_rgba2101010.h"
+#include "format_conversion.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // Construction/Destruction

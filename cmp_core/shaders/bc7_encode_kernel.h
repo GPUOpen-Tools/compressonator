@@ -320,13 +320,13 @@ typedef enum {
 
 // Descriptor structure for block encodings
 typedef struct {
-    uniform CMP_BCE     encodingType;           // Type of block
+    CMP_UNIFORM CMP_BCE     encodingType;           // Type of block
     CGU_UINT8   partitionBits;          // Number of bits for partition data
     CGU_UINT8   rotationBits;           // Number of bits for component rotation
     CGU_UINT8   indexModeBits;          // Number of bits for index selection
     CGU_UINT8   scalarBits;             // Number of bits for one scalar endpoint
     CGU_UINT8   vectorBits;             // Number of bits for one vector endpoint(excluding P bits)
-    uniform CMP_PBIT    pBitType;               // Type of P-bit encoding
+    CMP_UNIFORM CMP_PBIT    pBitType;               // Type of P-bit encoding
     CGU_UINT8   subsetCount;            // Number of subsets
     CGU_UINT8   indexBits[2];           // Number of bits per index in each index set
 } CMP_BTI;

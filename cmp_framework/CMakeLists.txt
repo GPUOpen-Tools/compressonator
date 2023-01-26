@@ -29,6 +29,7 @@ file(GLOB_RECURSE CORE_SRC
         ${PROJECT_SOURCE_DIR}/cmp_core/source/*.h
         ${PROJECT_SOURCE_DIR}/cmp_core/source/*.cpp
         )
+
 file(GLOB_RECURSE CMP_FRAMEWORK_SRC
         ${PROJECT_SOURCE_DIR}/cmp_framework/*.h
         ${PROJECT_SOURCE_DIR}/cmp_framework/*.cpp
@@ -64,7 +65,7 @@ target_sources(CMP_Framework
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/query_timer.h
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/query_timer.cpp
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/stb_image.h
-        ${PROJECT_SOURCE_DIR}/applications/_plugins/common/gltf/stb_image_write.h
+        ${PROJECT_SOURCE_DIR}/applications/_plugins/common/stb_image_write.h
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/tc_pluginapi.h
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/tc_plugininternal.h
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/tc_plugininternal.cpp
@@ -72,8 +73,10 @@ target_sources(CMP_Framework
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/utilfuncs.cpp
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cmp_fileio.h 
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cmp_fileio.cpp
+        ${PROJECT_SOURCE_DIR}/applications/_plugins/common/format_conversion.h
+        ${PROJECT_SOURCE_DIR}/applications/_plugins/common/format_conversion.cpp
 
-        # CMP_SDK
+        # CMP_SDK Lossy Compression
         ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk/bcn.cpp
         ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk/bcn.h
         ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk/bc1/bc1.h
@@ -102,6 +105,19 @@ target_sources(CMP_Framework
         )
 endif()
 
+if (OPTION_BUILD_BROTLIG)
+    target_sources(CMP_Framework
+        PRIVATE
+        ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk/brlg/codec_brlg.h
+        ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk/brlg/codec_brlg.cpp
+    )
+
+    target_link_libraries(CMP_Framework
+        PRIVATE
+        ExtBrotlig
+    )
+endif()
+
 if (OPTION_CMP_APC)
 target_sources(CMP_Framework
         PRIVATE
@@ -115,12 +131,14 @@ target_include_directories(CMP_Framework
         PRIVATE
         ./
         ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
+        ${PROJECT_SOURCE_DIR}/cmp_framework/common/
         ${PROJECT_SOURCE_DIR}/cmp_core/source
         ${PROJECT_SOURCE_DIR}/cmp_core/shaders
         ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
+        ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib/buffer
         ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk
         ${PROJECT_SOURCE_DIR}/applications/_plugins/common
-        ${PROJECT_SOURCE_DIR}/applications/_plugins/common/gltf
+        #${PROJECT_SOURCE_DIR}/applications/_plugins/common/gltf
         ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_math
         ${PROJECT_SOURCE_DIR}/applications/_libs/gpu_decode
         )

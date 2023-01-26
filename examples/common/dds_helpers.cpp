@@ -166,6 +166,7 @@ CMP_FormatDesc g_DDSFormatDesc[] = {
     {CMP_FORMAT_ARGB_16,                 ("ARGB_16")},
     {CMP_FORMAT_RG_16,                   ("RG_16")},
     {CMP_FORMAT_R_16,                    ("R_16")},
+    {CMP_FORMAT_RGBA_16F,                ("RGBA_16F")},
     {CMP_FORMAT_ARGB_16F,                ("ARGB_16F")},
     {CMP_FORMAT_RG_16F,                  ("RG_16F")},
     {CMP_FORMAT_R_16F,                   ("R_16F")},
@@ -986,8 +987,10 @@ void SaveDDSFile(const char* pszFile, CMP_Texture& texture) {
                     ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_L16;
                     break;
 
-                case CMP_FORMAT_ARGB_16F:
-                    ddsd.dwLinearSize = texture.dwDataSize;
+                case CMP_FORMAT_RGBA_16F: // mapped top same DXGI format ?
+                case CMP_FORMAT_ARGB_16F: // mapped top same DXGI format ?
+                case CMP_FORMAT_ABGR_16F: // correct format
+                    ddsd.dwLinearSize             = texture.dwDataSize;
                     ddsd.ddpfPixelFormat.dwFlags = DDPF_FOURCC | DDPF_ALPHAPIXELS;
                     ddsd.ddpfPixelFormat.dwFourCC = D3DFMT_A16B16G16R16F;
                     break;

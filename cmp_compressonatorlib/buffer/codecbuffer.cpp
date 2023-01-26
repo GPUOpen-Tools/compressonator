@@ -38,6 +38,7 @@
 #include "codecbuffer_rg8s.h"
 #include "codecbuffer_r8s.h"
 #include "codecbuffer_rgba2101010.h"
+#include "codecbuffer_rgba1010102.h"
 #include "codecbuffer_rgba16.h"
 #include "codecbuffer_rg16.h"
 #include "codecbuffer_r16.h"
@@ -82,6 +83,8 @@ CCodecBuffer* CreateCodecBuffer(CodecBufferType nCodecBufferType,
         return new CCodecBuffer_R8S(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData, dwDataSize);
     case CBT_RGBA2101010:
         return new CCodecBuffer_RGBA2101010(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
+    case CBT_RGBA1010102:
+        return new CCodecBuffer_RGBA1010102(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData, dwDataSize);
     case CBT_RGBA16:
         return new CCodecBuffer_RGBA16(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
     case CBT_RG16:
@@ -187,6 +190,9 @@ CodecBufferType GetCodecBufferType(CMP_FORMAT format) {
     case CMP_FORMAT_ARGB_2101010:
         CBT_type = CBT_RGBA2101010;
         break;
+    case CMP_FORMAT_RGBA_1010102:
+        CBT_type = CBT_RGBA1010102;
+        break;
     case CMP_FORMAT_RGBA_8888_S:  // Need to expand on this format
         CBT_type = CBT_RGBA8888S;
         break;
@@ -208,6 +214,7 @@ CodecBufferType GetCodecBufferType(CMP_FORMAT format) {
     case CMP_FORMAT_RG_8_S:
         CBT_type = CBT_RG8S;
         break;
+    case CMP_FORMAT_BINARY:
     case CMP_FORMAT_R_8:
         CBT_type = CBT_R8;
         break;

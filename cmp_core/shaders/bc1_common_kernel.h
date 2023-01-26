@@ -1,5 +1,6 @@
 #include "common_def.h"
 #include "bcn_common_api.h"
+#include "bcn_common_kernel.h"
 
 #ifdef USE_CMP
 #include "bc1_cmp.h"
