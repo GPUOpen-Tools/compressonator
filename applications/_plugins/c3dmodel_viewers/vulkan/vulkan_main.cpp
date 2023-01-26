@@ -26,7 +26,7 @@
 //
 #include "vulkan_main.h"
 
-#include "gltfcommon.h"
+#include "cmp_gltfcommon.h"
 
 #include "tc_pluginapi.h"
 #include "tc_plugininternal.h"
@@ -171,7 +171,7 @@ void *Plugin_3DModelViewer_Vulkan::CreateView(void *ModelData, CMP_LONG Width, C
     if (!ModelData)
         return 0;
 
-    m_gltfLoader = (GLTFCommon *)ModelData;
+    m_gltfLoader = (CMP_GLTFCommon*)ModelData;
 
     // Check User Canceled status for long glTF file loads!!
     if (VK_CMips) {

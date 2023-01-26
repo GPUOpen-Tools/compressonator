@@ -17,7 +17,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "ring.h"
+#pragma once
+
+#include "cmp_dynamicbufferringvk.h"
+#include "cmp_commandlistringvk.h"
+#include "cmp_uploadheapvk.h"
+#include "imgui.h"
+
+// This is the rendering backend for the excellent ImGUI library.
+
+class ImGUIVK {
+  public:
+    void OnCreate(CMP_DeviceVK* pDevice, CMP_UploadHeapVK* pUploadHeap, CMP_DynamicBufferRingVK* pConstantBufferRing, VkRenderPass renderPass);
+    void OnDestroy();
+
+    void Draw(VkCommandBuffer cmd_buf);
+
+  private:
+    CMP_DeviceVK*        m_pDevice;
+      CMP_DynamicBufferRingVK* m_pConstBuf;
+
+    VkImage                     m_pTexture2D;
+    VkDeviceMemory              m_deviceMemory;
+    VkDescriptorBufferInfo      m_geometry;
+    VkPipelineLayout            m_pipelineLayout;
+    VkPipelineCache             m_pipelineCache;
+    VkDescriptorPool            m_descriptorPool;
+    VkPipeline                  m_pipeline;
+    VkDescriptorSet             m_descriptorSet;
+    VkSampler                   m_sampler;
+    VkImageView                 m_pTextureSRV;
+};
 
 
-
+bool ImGUIVK_Init(void* hwnd);
+void ImGUIVK_Shutdown();
+void ImGUIVK_UpdateIO();
+LRESULT ImGUIVK_WndProcHandler(MSG msg);

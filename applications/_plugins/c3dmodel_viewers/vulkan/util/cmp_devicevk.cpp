@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "devicevk.h"
+#include "cmp_devicevk.h"
 
 #include <vulkan/vulkan.h>
 
@@ -28,15 +28,18 @@
 #include <cassert>
 
 
-DeviceVK::DeviceVK() {
+CMP_DeviceVK::CMP_DeviceVK()
+{
 }
 
 
-DeviceVK::~DeviceVK() {
+CMP_DeviceVK::~CMP_DeviceVK()
+{
 }
 
 
-void DeviceVK::OnCreate(VkInstance instance, void* hWnd) {
+void CMP_DeviceVK::OnCreate(VkInstance instance, void* hWnd)
+{
     VkResult res;
 
     uint32_t gpu_count = 1;
@@ -145,7 +148,8 @@ void DeviceVK::OnCreate(VkInstance instance, void* hWnd) {
 }
 
 
-void DeviceVK::OnDestroy() {
+void CMP_DeviceVK::OnDestroy()
+{
 
 }
 

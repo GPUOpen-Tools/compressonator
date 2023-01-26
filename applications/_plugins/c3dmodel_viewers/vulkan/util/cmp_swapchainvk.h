@@ -18,14 +18,14 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "devicevk.h"
+#include "cmp_devicevk.h"
 
 #include <vector>
 #include <cstdint>
 
 class SwapChainVK {
   public:
-    void OnCreate(DeviceVK *pDevice, std::uint32_t numberBackBuffers, std::uint32_t dwWidth, std::uint32_t dwHeight, void* hWnd);
+    void OnCreate(CMP_DeviceVK* pDevice, std::uint32_t numberBackBuffers, std::uint32_t dwWidth, std::uint32_t dwHeight, void* hWnd);
     void OnDestroy();
 
     void SetFullScreen(bool fullscreen);
@@ -49,7 +49,7 @@ class SwapChainVK {
     void GetSemaphores(VkSemaphore *pImageAvailableSemaphore, VkSemaphore *pRenderFinishedSemaphores, VkFence *pCmdBufExecutedFences);
     void Present();
   private:
-    DeviceVK *m_pDevice;
+    CMP_DeviceVK* m_pDevice;
 
     VkSwapchainKHR m_swapChain;
     VkFormat m_format;

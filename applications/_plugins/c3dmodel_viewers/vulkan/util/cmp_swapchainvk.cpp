@@ -34,8 +34,8 @@
 //  limitations under the License.
 
 
-#include "devicevk.h"
-#include "swapchainvk.h"
+#include "cmp_devicevk.h"
+#include "cmp_swapchainvk.h"
 
 
 #include <cassert>
@@ -45,7 +45,8 @@
 // OnCreate
 //
 //--------------------------------------------------------------------------------------
-void SwapChainVK::OnCreate(DeviceVK *pDevice, std::uint32_t numberBackBuffers, std::uint32_t dwWidth, std::uint32_t dwHeight, void* hWnd) {
+void SwapChainVK::OnCreate(CMP_DeviceVK* pDevice, std::uint32_t numberBackBuffers, std::uint32_t dwWidth, std::uint32_t dwHeight, void* hWnd)
+{
     VkResult res;
 
     m_pDevice = pDevice;

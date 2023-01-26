@@ -25,11 +25,11 @@
 // THE SOFTWARE.
 
 #include "vulkan_renderer.h"
-#include "gltfbboxpassvk.h"
-#include "gltfdepthpassvk.h"
-#include "gltfpbrvk.h"
-#include "misc.h"
-#include "swapchainvk.h"
+#include "cmp_gltfbboxpassvk.h"
+#include "cmp_gltfdepthpassvk.h"
+#include "cmp_gltfpbrvk.h"
+#include "cmp_misc.h"
+#include "cmp_swapchainvk.h"
 
 #ifdef USE_QT10
 
@@ -100,7 +100,8 @@ Vulkan_Renderer::Vulkan_Renderer(void* w) {
 // OnCreate
 //
 //--------------------------------------------------------------------------------------
-void Vulkan_Renderer::OnCreate(DeviceVK* pDevice) {
+void Vulkan_Renderer::OnCreate(CMP_DeviceVK* pDevice)
+{
     VkResult res;
     m_pDevice = pDevice;
 
@@ -446,7 +447,8 @@ void Vulkan_Renderer::OnDestroyWindowSizeDependentResources() {
 // LoadScene
 //
 //--------------------------------------------------------------------------------------
-void Vulkan_Renderer::LoadScene(GLTFCommon* gltfData, void* pluginManager, void* msghandler) {
+void Vulkan_Renderer::LoadScene(CMP_GLTFCommon* gltfData, void* pluginManager, void* msghandler)
+{
 
     //ID3D12GraphicsCommandList* pCmdLst = m_UploadHeap.GetCommandList();
 
@@ -464,7 +466,7 @@ void Vulkan_Renderer::LoadScene(GLTFCommon* gltfData, void* pluginManager, void*
         msghandler
     );
 
-    m_gltfPBR = new GltfPbrVK();
+    m_gltfPBR = new CMP_GltfPbrVK();
     m_gltfPBR->OnCreate(
         m_pDevice,
         m_render_pass_color,
@@ -644,7 +646,7 @@ void Vulkan_Renderer::OnRender(State* pState, SwapChainVK* pSwapChain) {
         vkCmdSetViewport(cmd_buf, 0, 1, &m_viewport);
 
         //set per frame constant buffer values
-        GltfPbrVK::per_batch* cbPerBatch = m_gltfPBR->SetPerBatchConstants();
+        CMP_GltfPbrVK::per_batch* cbPerBatch = m_gltfPBR->SetPerBatchConstants();
         cbPerBatch->mCameraViewProj = pState->camera.GetView() * pState->camera.GetProjection();
         cbPerBatch->cameraPos = pState->camera.GetPosition();
         cbPerBatch->mLightViewProj = pState->light.GetView() * pState->light.GetProjection();

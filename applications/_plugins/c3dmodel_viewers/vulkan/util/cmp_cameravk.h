@@ -18,28 +18,50 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "devicevk.h"
-#include "dynamicbufferringvk.h"
-#include "staticbufferpoolvk.h"
-#include "camera.h"
+#include <glm/glm.hpp>
 
-#include <vector>
+// typical camera class
 
-class TriangleVK {
-    DeviceVK* m_pDevice;
-    DynamicBufferRingVK     *m_pConstantBufferRing;
-
-    VkDescriptorBufferInfo m_geometry;
-    VkPipelineLayout m_pipelineLayout;
-    VkPipelineCache m_pipelineCache;
-    VkDescriptorPool m_descriptorPool;
-    VkPipeline m_pipeline;
-    std::vector<VkDescriptorSet> m_descriptorSets;
-
-
+class CMP_Camera
+{
   public:
-    void OnCreate(DeviceVK* pDevice, DynamicBufferRingVK *pConstantBufferRing, StaticBufferPoolVK *pStaticGeom, VkRenderPass renderPass);
-    void OnDestroy();
+    void LookAt(glm::vec4 eyePos, glm::vec4 lookAt);
+    void SetFov(float fov, unsigned int width, unsigned int height);
+    void SetPosition(glm::vec4 eyePos) {
+        m_eyePos = eyePos;
+    }
+    void UpdateCamera(float roll, float pitch, float distance);
+    void UpdateCameraWASD(float roll, float pitch, const bool keyDown[256], double deltaTime);
 
-    void Render(VkCommandBuffer cmd_buf, Camera *pCam);
+    glm::mat4 GetView() {
+        return m_View;
+    }
+    glm::mat4 GetViewport() {
+        return m_Viewport;
+    }
+    glm::vec4 GetPosition() {
+        return m_eyePos;
+    }
+    glm::vec4 GetDirection() {
+        return glm::vec4(0.0f, 0.0f, 1.0f, 0.0f) * glm::transpose(m_View);
+    }
+    glm::mat4 GetProjection() {
+        return m_Proj;
+    }
+
+    float GetFovH() {
+        return m_fovH;
+    }
+    float GetFovV() {
+        return m_fovV;
+    }
+
+  private:
+    glm::mat4           m_View;
+    glm::mat4           m_Proj;
+    glm::mat4           m_Viewport;
+    glm::vec4           m_eyePos;
+    float               m_fovV, m_fovH;
+    float               m_aspectRatio;
 };
+

@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "shadercompilerhelper.h"
+#include "cmp_shadercompilerhelpervk.h"
 
 #include <SPIRV/GlslangToSpv.h>
 

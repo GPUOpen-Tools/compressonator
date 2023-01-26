@@ -19,16 +19,16 @@
 
 #pragma once
 
-#include "camera.h"
-#include "devicevk.h"
-#include "texturevk.h"
+#include "cmp_cameravk.h"
+#include "cmp_devicevk.h"
+#include "cmp_texturevk.h"
 
-#include "commandlistringvk.h"
-#include "staticbufferpoolvk.h"
+#include "cmp_commandlistringvk.h"
+#include "cmp_staticbufferpoolvk.h"
 
-#include "imguivk.h"
-#include "resourceviewheapsvk.h"
-#include "trianglevk.h"
+#include "cmp_imguivk.h"
+#include "cmp_resourceviewheapsvk.h"
+#include "cmp_trianglevk.h"
 
 // -- Qt Support
 #ifdef USE_QT10
@@ -37,8 +37,8 @@
 #endif
 
 // Forward declaration
-class GLTFCommon;
-class GltfPbrVK;
+class CMP_GLTFCommon;
+class CMP_GltfPbrVK;
 class GltfDepthPass;
 class GltfBBoxPassVK;
 class SwapChainVK;
@@ -74,8 +74,8 @@ class Vulkan_Renderer
   public:
     struct State {
         float time;
-        Camera camera;
-        Camera light;
+        CMP_Camera camera;
+        CMP_Camera light;
         float depthBias;
         float exposure;
         float iblFactor;
@@ -87,28 +87,28 @@ class Vulkan_Renderer
         bool bGammaTestPattern;
     };
 
-    void OnCreate(DeviceVK* pDevice);
+    void OnCreate(CMP_DeviceVK* pDevice);
     void OnDestroy();
 
     void OnCreateWindowSizeDependentResources(SwapChainVK* pSC, std::uint32_t Width, std::uint32_t Height);
     void OnDestroyWindowSizeDependentResources();
 
-    void LoadScene(GLTFCommon* gltfData, void* pluginManager, void* msghandler);
+    void LoadScene(CMP_GLTFCommon* gltfData, void* pluginManager, void* msghandler);
     void UnloadScene();
     void OnRender(State* pState, SwapChainVK* pSwapChain);
 
   private:
-    DeviceVK* m_pDevice;
+    CMP_DeviceVK* m_pDevice;
 
     CommandListRingVK m_CommandListRing;
-    DynamicBufferRingVK m_ConstantBufferRing;
-    StaticBufferPoolVK m_StaticBufferPool;
+    CMP_DynamicBufferRingVK m_ConstantBufferRing;
+    CMP_StaticBufferPoolVK  m_StaticBufferPool;
 
     // Initialize helper classes
-    ResourceViewHeapsVK m_Heaps;
-    UploadHeapVK m_UploadHeap;
+    CMP_ResourceViewHeapsVK m_Heaps;
+    CMP_UploadHeapVK        m_UploadHeap;
     ImGUIVK m_ImGUI;
-    GltfPbrVK* m_gltfPBR;
+    CMP_GltfPbrVK*      m_gltfPBR;
     GltfDepthPass* m_gltfDepth;
     GltfBBoxPassVK* m_gltfBBox;
     TriangleVK m_triangle;

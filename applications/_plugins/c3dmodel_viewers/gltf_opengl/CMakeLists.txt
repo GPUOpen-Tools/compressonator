@@ -25,7 +25,9 @@ target_include_directories(ModelViewer_OpenGL PUBLIC
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common
     ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshoptimizer
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common/qtimgui
+    ${PROJECT_SOURCE_DIR}/external/imgui
     ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_math
+    ${PROJECT_SOURCE_DIR}/../common/lib/ext/imgui 
 )
 
 target_link_libraries(ModelViewer_OpenGL PRIVATE

@@ -18,8 +18,8 @@
 // THE SOFTWARE.
 
 
-#include "shadercompilerhelper.h"
-#include "imguivk.h"
+#include "cmp_shadercompilerhelpervk.h"
+#include "cmp_imguivk.h"
 
 // Data
 static HWND                     g_hWnd = 0;
@@ -28,7 +28,8 @@ struct VERTEX_CONSTANT_BUFFER {
     float        mvp[4][4];
 };
 
-void ImGUIVK::OnCreate(DeviceVK* pDevice, UploadHeapVK *pUploadHeap, DynamicBufferRingVK *pConstantBufferRing, VkRenderPass renderPass) {
+void ImGUIVK::OnCreate(CMP_DeviceVK* pDevice, CMP_UploadHeapVK* pUploadHeap, CMP_DynamicBufferRingVK* pConstantBufferRing, VkRenderPass renderPass)
+{
     m_pConstBuf = pConstantBufferRing;
     m_pDevice = pDevice;
 
@@ -671,7 +672,7 @@ void ImGUIVK::Draw(VkCommandBuffer cmd_buf) {
 
 bool ImGUIVK_Init(void* hwnd) {
     g_hWnd = (HWND)hwnd;
-
+    ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     io.KeyMap[ImGuiKey_Tab] = VK_TAB;                       // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array that we will update during the application lifetime.
     io.KeyMap[ImGuiKey_LeftArrow] = VK_LEFT;
@@ -693,14 +694,14 @@ bool ImGUIVK_Init(void* hwnd) {
     io.KeyMap[ImGuiKey_Y] = 'Y';
     io.KeyMap[ImGuiKey_Z] = 'Z';
 
-    io.RenderDrawListsFn = NULL;
+    //io.RenderDrawListsFn = NULL;
     io.ImeWindowHandle = g_hWnd;
 
     return true;
 }
 
 void ImGUIVK_Shutdown() {
-    ImGui::Shutdown();
+    //ImGui::Shutdown();
     g_hWnd = (HWND)0;
 }
 

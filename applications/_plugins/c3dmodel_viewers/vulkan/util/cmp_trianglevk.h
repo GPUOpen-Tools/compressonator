@@ -18,35 +18,28 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "ring.h"
-#include "devicevk.h"
+#include "cmp_devicevk.h"
+#include "cmp_dynamicbufferringvk.h"
+#include "cmp_staticbufferpoolvk.h"
+#include "cmp_cameravk.h"
 
-// Simulates DX11 style static buffers. For dynamic buffers please see 'DynamicBufferRingDX12.h'
-//
-// This class allows suballocating small chuncks of memory from a huge buffer that is allocated on creation
-// This class is specialized in constant buffers.
-//
-class StaticConstantBufferPoolVK {
-    DeviceVK* m_pDevice;
+#include <vector>
 
-    RingWithTabs m_mem;
+class TriangleVK {
+    CMP_DeviceVK*        m_pDevice;
+    CMP_DynamicBufferRingVK* m_pConstantBufferRing;
 
-    VkBuffer                m_buffer;
-    VkDeviceMemory          m_deviceMemory;
+    VkDescriptorBufferInfo m_geometry;
+    VkPipelineLayout m_pipelineLayout;
+    VkPipelineCache m_pipelineCache;
+    VkDescriptorPool m_descriptorPool;
+    VkPipeline m_pipeline;
+    std::vector<VkDescriptorSet> m_descriptorSets;
 
-    std::uint32_t           m_totalMemSize;
-    std::uint32_t           m_memOffset;
-    char            *m_pData;
-
-    bool            m_bUseVidMem;
 
   public:
-    void OnCreate(DeviceVK* pDevice, std::uint32_t totalMemSize);
+    void OnCreate(CMP_DeviceVK* pDevice, CMP_DynamicBufferRingVK* pConstantBufferRing, CMP_StaticBufferPoolVK* pStaticGeom, VkRenderPass renderPass);
     void OnDestroy();
-    bool AllocConstantBuffer(std::uint32_t size, void **pData, VkDescriptorBufferInfo *pOut);
-    void UploadData(VkCommandBuffer cmd_buf);
-    void FreeUploadHeap();
 
+    void Render(VkCommandBuffer cmd_buf, CMP_Camera* pCam);
 };
-
-

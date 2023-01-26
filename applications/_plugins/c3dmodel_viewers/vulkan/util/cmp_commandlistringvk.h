@@ -18,49 +18,33 @@
 // THE SOFTWARE.
 
 #pragma once
-#include <glm/glm.hpp>
+#include "cmp_ringvk.h"
 
-// typical camera class
+#include <vulkan/vulkan.h>
 
-class Camera {
+#include <cstdint>
+
+
+// Forward Declaration
+class CMP_DeviceVK;
+
+// This class, on creation allocates a number of command lists. Using a ring buffer
+// these commandLists are recycled when they are no longer used by the GPU. See the
+// 'ring.h' for more details on allocation and recycling
+//
+class CommandListRingVK {
+    std::uint32_t m_memTotalSize;
+    RingWithTabs m_mem;
+
+    CMP_DeviceVK* m_pDevice;
+
+    VkCommandPool        m_commandPool;
+    VkCommandBuffer      *m_pCommandBuffer;
+
   public:
-    void LookAt(glm::vec4 eyePos, glm::vec4 lookAt);
-    void SetFov(float fov, unsigned int width, unsigned int height);
-    void SetPosition(glm::vec4 eyePos) {
-        m_eyePos = eyePos;
-    }
-    void UpdateCamera(float roll, float pitch, float distance);
-    void UpdateCameraWASD(float roll, float pitch, const bool keyDown[256], double deltaTime);
-
-    glm::mat4 GetView() {
-        return m_View;
-    }
-    glm::mat4 GetViewport() {
-        return m_Viewport;
-    }
-    glm::vec4 GetPosition() {
-        return m_eyePos;
-    }
-    glm::vec4 GetDirection() {
-        return glm::vec4(0.0f, 0.0f, 1.0f, 0.0f) * glm::transpose(m_View);
-    }
-    glm::mat4 GetProjection() {
-        return m_Proj;
-    }
-
-    float GetFovH() {
-        return m_fovH;
-    }
-    float GetFovV() {
-        return m_fovV;
-    }
-
-  private:
-    glm::mat4           m_View;
-    glm::mat4           m_Proj;
-    glm::mat4           m_Viewport;
-    glm::vec4           m_eyePos;
-    float               m_fovV, m_fovH;
-    float               m_aspectRatio;
+    void             OnCreate(CMP_DeviceVK* pDevice, std::uint32_t numberOfBackBuffers, std::uint32_t memTotalSize);
+    void OnDestroy();
+    VkCommandBuffer *GetNewCommandList();
+    void OnBeginFrame();
 };
 

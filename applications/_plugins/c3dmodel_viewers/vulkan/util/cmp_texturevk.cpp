@@ -23,8 +23,8 @@
 // http://go.microsoft.com/fwlink/?LinkId=248926
 // http://go.microsoft.com/fwlink/?LinkId=248929
 
-#include "texturevk.h"
-#include "gltffeatures.h"
+#include "cmp_texturevk.h"
+#include "cmp_gltffeatures.h"
 #include "misc.h"
 #include "utilfuncs.h"
 #include "dxgi.h"
@@ -381,6 +381,7 @@ VkFormat MIP2VK_Format(MipSet* pMipsTexture) {
     case CMP_FORMAT_ABGR_8888:
         m_VKnum = VK_FORMAT_B8G8R8A8_UNORM;
         break;
+#if (OPTION_BUILD_ASTC == 1)
     case CMP_FORMAT_ASTC:
         if ((pMipsTexture->m_nBlockWidth == 4) && (pMipsTexture->m_nBlockHeight == 4))
             m_VKnum = VK_FORMAT_ASTC_4x4_UNORM_BLOCK;
@@ -413,6 +414,7 @@ VkFormat MIP2VK_Format(MipSet* pMipsTexture) {
         else
             m_VKnum = VK_FORMAT_ASTC_4x4_UNORM_BLOCK;
         break;
+#endif
     default:
         m_VKnum = VK_FORMAT_UNDEFINED;
         break;
@@ -424,7 +426,8 @@ VkFormat MIP2VK_Format(MipSet* pMipsTexture) {
 //--------------------------------------------------------------------------------------
 // entry function to initialize an image from a .DDS texture
 //--------------------------------------------------------------------------------------
-INT32 Texture::InitFromFile(DeviceVK* pDevice, UploadHeapVK* pUploadHeap, const char* pFilename, void* pluginManager, void* msghandler) {
+INT32 Texture::InitFromFile(CMP_DeviceVK* pDevice, CMP_UploadHeapVK* pUploadHeap, const char* pFilename, void* pluginManager, void* msghandler)
+{
     OnDestroy();
 
     if (VK_CMips)
@@ -608,7 +611,8 @@ INT32 Texture::InitFromFile(DeviceVK* pDevice, UploadHeapVK* pUploadHeap, const 
     return 0;
 }
 
-INT32 Texture::InitDepthStencil(DeviceVK* pDevice, UINT width, UINT height) {
+INT32 Texture::InitDepthStencil(CMP_DeviceVK* pDevice, UINT width, UINT height)
+{
     m_device = pDevice->GetDevice();
 
     m_format = VK_FORMAT_D32_SFLOAT;

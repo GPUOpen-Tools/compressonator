@@ -35,8 +35,8 @@
 
 
 #include <assert.h>
-#include "devicevk.h"
-#include "uploadheapvk.h"
+#include "cmp_devicevk.h"
+#include "cmp_uploadheapvk.h"
 #include "misc.h"
 
 //--------------------------------------------------------------------------------------
@@ -44,7 +44,8 @@
 // OnCreate
 //
 //--------------------------------------------------------------------------------------
-void UploadHeapVK::OnCreate(DeviceVK* pDevice, SIZE_T uSize) {
+void CMP_UploadHeapVK::OnCreate(CMP_DeviceVK* pDevice, SIZE_T uSize)
+{
     m_pDevice = pDevice;
 
     VkResult res;
@@ -134,7 +135,8 @@ void UploadHeapVK::OnCreate(DeviceVK* pDevice, SIZE_T uSize) {
 // OnDestroy
 //
 //--------------------------------------------------------------------------------------
-void UploadHeapVK::OnDestroy() {
+void CMP_UploadHeapVK::OnDestroy()
+{
     vkUnmapMemory(m_pDevice->GetDevice(), m_deviceMemory);
     vkFreeMemory(m_pDevice->GetDevice(), m_deviceMemory, NULL);
     vkDestroyBuffer(m_pDevice->GetDevice(), m_buffer, NULL);
@@ -150,7 +152,8 @@ void UploadHeapVK::OnDestroy() {
 // SuballocateFromUploadHeap
 //
 //--------------------------------------------------------------------------------------
-UINT8* UploadHeapVK::Suballocate(SIZE_T uSize, UINT64 uAlign) {
+UINT8* CMP_UploadHeapVK::Suballocate(SIZE_T uSize, UINT64 uAlign)
+{
     m_pDataCur = reinterpret_cast<UINT8*>(Align(reinterpret_cast<SIZE_T>(m_pDataCur), uAlign));
 
     // flush operations if we ran out of space in the heap
@@ -164,7 +167,8 @@ UINT8* UploadHeapVK::Suballocate(SIZE_T uSize, UINT64 uAlign) {
     return pRet;
 }
 
-void UploadHeapVK::Flush() {
+void CMP_UploadHeapVK::Flush()
+{
     VkResult res;
 
     VkMappedMemoryRange range[1] = {};
@@ -180,7 +184,8 @@ void UploadHeapVK::Flush() {
 // FlushAndFinish
 //
 //--------------------------------------------------------------------------------------
-void UploadHeapVK::FlushAndFinish() {
+void CMP_UploadHeapVK::FlushAndFinish()
+{
     VkResult res;
 
     Flush();

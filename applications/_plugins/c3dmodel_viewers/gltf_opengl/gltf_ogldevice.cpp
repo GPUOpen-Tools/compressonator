@@ -406,7 +406,7 @@ void glTF_OGLDevice::paintGL() {
         static double RenderingTime;
         m_ImGuiRenderer.newFrame();
         {
-            ImGui::Begin("Stats", NULL, ImGuiWindowFlags_ShowBorders);
+            ImGui::Begin("Stats"); //, NULL, ImGuiWindowFlags_ShowBorders);
             m_imgui_win_size = ImGui::GetWindowSize();
             m_imgui_win_pos = ImGui::GetWindowPos();
 

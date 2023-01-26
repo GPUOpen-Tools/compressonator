@@ -93,7 +93,7 @@ class SAMPLER : public ResourceView { };
 //helper class to use a specific type of heap
 class StaticResourceViewHeapVK
 {
-    DeviceVK *m_pDevice;
+    CMP_DeviceVK *m_pDevice;
     std::uint32_t m_descriptorCount;
     std::uint32_t m_descriptorElementSize;
     std::uint32_t m_index;
@@ -101,7 +101,7 @@ class StaticResourceViewHeapVK
     ID3D12DescriptorHeap *m_pHeap;
 
 public:
-    void OnCreate(DeviceVK* pDevice, D3D12_DESCRIPTOR_HEAP_TYPE heapType, std::uint32_t descriptorCount, UINT nodeMask = 0);
+    void OnCreate(CMP_DeviceVK* pDevice, D3D12_DESCRIPTOR_HEAP_TYPE heapType, std::uint32_t descriptorCount, UINT nodeMask = 0);
     void OnDestroy();
     bool AllocDescriptor(std::uint32_t size, ResourceView *pRV)
     {
@@ -125,11 +125,17 @@ public:
 
 
 // This class will hold descriptor heaps for all the types of resources. We are going to need them all anyway.
-class ResourceViewHeapsVK {
-    DeviceVK* m_pDevice;
+class CMP_ResourceViewHeapsVK
+{
+    CMP_DeviceVK*    m_pDevice;
     VkDescriptorPool m_descriptorPool;
   public:
-    void OnCreate(DeviceVK* pDevice, std::uint32_t cbvDescriptorCount, std::uint32_t srvDescriptorCount, std::uint32_t uavDescriptorCount, std::uint32_t samplerDescriptorCount) {
+    void OnCreate(CMP_DeviceVK* pDevice,
+                  std::uint32_t cbvDescriptorCount,
+                  std::uint32_t srvDescriptorCount,
+                  std::uint32_t uavDescriptorCount,
+                  std::uint32_t samplerDescriptorCount)
+    {
         m_pDevice = pDevice;
 
         VkResult res;

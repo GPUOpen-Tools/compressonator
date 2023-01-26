@@ -40,7 +40,7 @@
 #include <QApplication>
 
 #include <imgui_opengl.h>
-#include "imgui/imgui.h"
+#include "imgui.h"
 
 #include "modeldata.h"
 #include "misc.h"

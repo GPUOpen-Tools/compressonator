@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "devicevk.h"
-#include "uploadheapvk.h"
+#include "cmp_devicevk.h"
+#include "cmp_uploadheapvk.h"
 #include "dxgiformat.h"
 
 #include "compressonator.h"
@@ -62,8 +62,8 @@ class Texture : public ModelTexture {
     virtual void            OnDestroy();
 
     // load file into heap
-    INT32   InitFromFile(DeviceVK *pDevice, UploadHeapVK* pUploadHeap, const char *pFilename, void *pluginManager, void *msghandler);
-    INT32   InitDepthStencil(DeviceVK *pDevice, UINT width, UINT height);
+    INT32 InitFromFile(CMP_DeviceVK* pDevice, CMP_UploadHeapVK* pUploadHeap, const char* pFilename, void* pluginManager, void* msghandler);
+    INT32 InitDepthStencil(CMP_DeviceVK* pDevice, UINT width, UINT height);
 
     VkImage Resource() {
         return m_pTexture2D;

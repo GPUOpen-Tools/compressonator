@@ -18,33 +18,50 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "ring.h"
 
-#include <vulkan/vulkan.h>
-
-#include <cstdint>
-
-
-// Forward Declaration
-class DeviceVK;
-
-// This class, on creation allocates a number of command lists. Using a ring buffer
-// these commandLists are recycled when they are no longer used by the GPU. See the
-// 'ring.h' for more details on allocation and recycling
 //
-class CommandListRingVK {
-    std::uint32_t m_memTotalSize;
-    RingWithTabs m_mem;
+// This class shows the most efficient way to upload resources to the GPU memory.
+// The idea is to create just one upload heap and suballocate memory from it.
+// For convenience this class comes with it's own command list & submit (FlushAndFinish)
+//
 
-    DeviceVK *m_pDevice;
+class CMP_UploadHeapVK
+{
+  public:
+    void OnCreate(CMP_DeviceVK* pDevice, SIZE_T uSize);
+    void OnDestroy();
+
+    UINT8* Suballocate(SIZE_T uSize, UINT64 uAlign);
+
+    UINT8* BasePtr() {
+        return m_pDataBegin;
+    }
+    VkBuffer GetResource() {
+        return m_buffer;
+    }
+    VkCommandBuffer GetCommandList() {
+        return m_pCommandBuffer;
+    }
+
+    void Flush();
+    void FlushAndFinish();
+
+  private:
+
+    CMP_DeviceVK* m_pDevice;
 
     VkCommandPool        m_commandPool;
-    VkCommandBuffer      *m_pCommandBuffer;
+    VkCommandBuffer      m_pCommandBuffer;
 
-  public:
-    void OnCreate(DeviceVK *pDevice, std::uint32_t numberOfBackBuffers, std::uint32_t memTotalSize);
-    void OnDestroy();
-    VkCommandBuffer *GetNewCommandList();
-    void OnBeginFrame();
+    VkBuffer                m_buffer;
+    VkDeviceMemory          m_deviceMemory;
+
+    VkFence m_fence;
+
+    UINT8* m_pDataBegin = nullptr;    // starting position of upload heap
+    UINT8* m_pDataCur = nullptr;      // current position of upload heap
+    UINT8* m_pDataEnd = nullptr;      // ending position of upload heap
+
 };
 
+SIZE_T Align(SIZE_T uOffset, SIZE_T uAlign);

@@ -17,7 +17,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "camera.h"
+#include "cmp_cameravk.h"
 
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -30,7 +30,8 @@
 // OnCreate
 //
 //--------------------------------------------------------------------------------------
-void Camera::SetFov(float fovV, unsigned int width, unsigned int height) {
+void CMP_Camera::SetFov(float fovV, unsigned int width, unsigned int height)
+{
     m_aspectRatio = width * 1.f / height;
 
     m_fovV = fovV;
@@ -54,7 +55,8 @@ void Camera::SetFov(float fovV, unsigned int width, unsigned int height) {
 // LookAt
 //
 //--------------------------------------------------------------------------------------
-void Camera::LookAt(glm::vec4 eyePos, glm::vec4 lookAt) {
+void CMP_Camera::LookAt(glm::vec4 eyePos, glm::vec4 lookAt)
+{
     m_eyePos = eyePos;
     glm::vec4 up = glm::vec4(0, 1, 0, 0);
     m_View = glm::lookAtRH(glm::vec3(eyePos), glm::vec3(lookAt), glm::vec3(up));
@@ -65,7 +67,8 @@ void Camera::LookAt(glm::vec4 eyePos, glm::vec4 lookAt) {
 // UpdateCamera
 //
 //--------------------------------------------------------------------------------------
-void Camera::UpdateCameraWASD(float roll, float pitch, const bool keyDown[256], double deltaTime) {
+void CMP_Camera::UpdateCameraWASD(float roll, float pitch, const bool keyDown[256], double deltaTime)
+{
     float speed = 0.0003f * (keyDown[VK_SHIFT] ? 25.f * (float)deltaTime : 5.f * (float)deltaTime);
 
     float eyeDir[3] = { 0,0,0 };
@@ -101,7 +104,8 @@ void Camera::UpdateCameraWASD(float roll, float pitch, const bool keyDown[256], 
     LookAt(m_eyePos, at);
 }
 
-void Camera::UpdateCamera(float roll, float pitch, float distance) {
+void CMP_Camera::UpdateCamera(float roll, float pitch, float distance)
+{
     m_eyePos = glm::vec4(distance * sinf(roll) * cosf(pitch), distance * sinf(pitch), distance * cosf(roll) * cosf(pitch), 0);
     glm::vec4 at(0, 0, 0, 0);
     LookAt(m_eyePos, at);

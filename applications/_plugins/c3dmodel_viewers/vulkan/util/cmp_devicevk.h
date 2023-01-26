@@ -24,13 +24,15 @@
 
 #include <vulkan/vulkan.h>
 
-class DeviceVK {
+class CMP_DeviceVK
+{
   public:
-    DeviceVK();
-    ~DeviceVK();
+    CMP_DeviceVK();
+      ~CMP_DeviceVK();
     void OnCreate(VkInstance instance, void* hWnd);
     void OnDestroy();
-    VkDevice GetDevice() {
+    VkDevice GetDevice()
+    {
         return m_device;
     }
     VkQueue GetGraphicsQueue() {

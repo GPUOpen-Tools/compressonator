@@ -18,35 +18,35 @@
 // THE SOFTWARE.
 
 #pragma once
-#include "ring.h"
-#include "devicevk.h"
+#include "cmp_ringvk.h"
+#include "cmp_devicevk.h"
 
-// This class mimics the behaviour or the DX11 dynamic buffers.
-// It does so by suballocating memory from a huge buffer. The buffer is used in a ring fashion.
-// Allocated memory is taken from the tail, freed memory makes the head advance;
-// See 'ring.h' to get more details on the ring buffer.
+// Simulates DX11 style static buffers. For dynamic buffers please see 'DynamicBufferRingDX12.h'
 //
-// The class knows when to free memory by just knowing:
-//    1) the amount of memory used per frame
-//    2) the number of backbuffers
-//    3) When a new frame just started ( indicated by OnBeginFrame() )
-//         - This will free the data of the oldest frame so it can be reused for the new frame
+// This class allows suballocating small chuncks of memory from a huge buffer that is allocated on creation
+// This class is specialized in constant buffers.
+//
+class StaticConstantBufferPoolVK {
+    CMP_DeviceVK* m_pDevice;
 
-class DynamicBufferRingVK {
-    DeviceVK* m_pDevice;
-    std::uint32_t m_memTotalSize;
     RingWithTabs m_mem;
-
-    char *m_pData;
 
     VkBuffer                m_buffer;
     VkDeviceMemory          m_deviceMemory;
+
+    std::uint32_t           m_totalMemSize;
+    std::uint32_t           m_memOffset;
+    char            *m_pData;
+
+    bool            m_bUseVidMem;
+
   public:
-    void OnCreate(DeviceVK* pDevice, std::uint32_t numberOfBackBuffers, std::uint32_t memTotalSize);
+    void OnCreate(CMP_DeviceVK* pDevice, std::uint32_t totalMemSize);
     void OnDestroy();
     bool AllocConstantBuffer(std::uint32_t size, void **pData, VkDescriptorBufferInfo *pOut);
-    bool AllocVertexBuffer(std::uint32_t numbeOfVertices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut);
-    bool AllocIndexBuffer(std::uint32_t numbeOfIndices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut);
-    void OnBeginFrame();
-    VkDescriptorBufferInfo GetMainBuffer(std::uint32_t size);
+    void UploadData(VkCommandBuffer cmd_buf);
+    void FreeUploadHeap();
+
 };
+
+

@@ -17,28 +17,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "dynamicbufferringvk.h"
-#include "misc.h"
 
-//--------------------------------------------------------------------------------------
-//
-// OnCreate
-//
-//--------------------------------------------------------------------------------------
-void DynamicBufferRingVK::OnCreate(DeviceVK* pDevice, std::uint32_t numberOfBackBuffers, std::uint32_t memTotalSize) {
+#include "cmp_staticconstantbufferpoolvk.h"
+
+#define ALIGN(a) ((a + 255) & ~255)
+
+void StaticConstantBufferPoolVK::OnCreate(CMP_DeviceVK* pDevice, std::uint32_t totalMemSize)
+{
     VkResult res;
     m_pDevice = pDevice;
 
-    m_memTotalSize = (std::uint32_t)Align(memTotalSize,256);
-
-    m_mem.OnCreate(numberOfBackBuffers, m_memTotalSize);
+    m_totalMemSize = totalMemSize;
+    m_memOffset = 0;
+    m_pData = NULL;
 
     /* VULKAN_KEY_START */
     VkBufferCreateInfo buf_info = {};
     buf_info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     buf_info.pNext = NULL;
-    buf_info.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-    buf_info.size = m_memTotalSize;
+    buf_info.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+    buf_info.size = m_totalMemSize;
     buf_info.queueFamilyIndexCount = 0;
     buf_info.pQueueFamilyIndices = NULL;
     buf_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
@@ -70,70 +68,35 @@ void DynamicBufferRingVK::OnCreate(DeviceVK* pDevice, std::uint32_t numberOfBack
 
     res = vkBindBufferMemory(m_pDevice->GetDevice(), m_buffer, m_deviceMemory, 0);
     assert(res == VK_SUCCESS);
-
 }
 
-//--------------------------------------------------------------------------------------
-//
-// OnDestroy
-//
-//--------------------------------------------------------------------------------------
-void DynamicBufferRingVK::OnDestroy() {
+void StaticConstantBufferPoolVK::OnDestroy() {
     vkUnmapMemory(m_pDevice->GetDevice(), m_deviceMemory);
     vkFreeMemory(m_pDevice->GetDevice(), m_deviceMemory, NULL);
     vkDestroyBuffer(m_pDevice->GetDevice(), m_buffer, NULL);
-    m_mem.OnDestroy();
 }
 
-//--------------------------------------------------------------------------------------
-//
-// AllocConstantBuffer
-//
-//--------------------------------------------------------------------------------------
-bool DynamicBufferRingVK::AllocConstantBuffer(std::uint32_t size, void **pData, VkDescriptorBufferInfo *pOut) {
-    size = (std::uint32_t)Align(size, 256);
+bool StaticConstantBufferPoolVK::AllocConstantBuffer(std::uint32_t size, void **pData, VkDescriptorBufferInfo *pOut) {
+    size = ALIGN(size);
+    assert(m_memOffset + size < m_totalMemSize);
 
-    std::uint32_t memOffset;
-    if (m_mem.Alloc(size, &memOffset) == false)
-        return false;
+    *pData = (void *)(m_pData + m_memOffset);
 
-    *pData = (void *)(m_pData + memOffset);
-
+    //returning an index allows to create more CBV for a constant buffer, this is useful when packing CBV into tables
     pOut->buffer = m_buffer;
-    pOut->offset = memOffset;
+    pOut->offset = m_memOffset;
     pOut->range = size;
+
+    m_memOffset += size;
+
+    assert(m_memOffset < m_totalMemSize);
 
     return true;
 }
 
-//--------------------------------------------------------------------------------------
-//
-// AllocVertexBuffer
-//
-//--------------------------------------------------------------------------------------
-bool DynamicBufferRingVK::AllocVertexBuffer(std::uint32_t numbeOfVertices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut) {
-    return AllocConstantBuffer(numbeOfVertices * strideInBytes, pData, pOut);
+void StaticConstantBufferPoolVK::UploadData(VkCommandBuffer cmd_buf) {
 }
 
-bool DynamicBufferRingVK::AllocIndexBuffer(std::uint32_t numbeOfIndices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut) {
-    return AllocConstantBuffer(numbeOfIndices * strideInBytes, pData, pOut);
+void StaticConstantBufferPoolVK::FreeUploadHeap() {
 }
 
-//--------------------------------------------------------------------------------------
-//
-// OnBeginFrame
-//
-//--------------------------------------------------------------------------------------
-void DynamicBufferRingVK::OnBeginFrame() {
-    m_mem.OnBeginFrame();
-}
-
-VkDescriptorBufferInfo DynamicBufferRingVK::GetMainBuffer(std::uint32_t size) {
-    VkDescriptorBufferInfo out;
-
-    out.buffer = m_buffer;
-    out.offset = 0;
-    out.range = size;
-
-    return out;
-}

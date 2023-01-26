@@ -18,16 +18,17 @@
 // THE SOFTWARE.
 
 
-#include "commandlistringvk.h"
+#include "cmp_commandlistringvk.h"
 
-#include "devicevk.h"
+#include "cmp_devicevk.h"
 
 //--------------------------------------------------------------------------------------
 //
 // OnCreate
 //
 //--------------------------------------------------------------------------------------
-void CommandListRingVK::OnCreate(DeviceVK *pDevice, std::uint32_t numberOfBackBuffers, std::uint32_t memTotalSize) {
+void CommandListRingVK::OnCreate(CMP_DeviceVK* pDevice, std::uint32_t numberOfBackBuffers, std::uint32_t memTotalSize)
+{
     VkResult res;
     VkDevice Device = pDevice->GetDevice();
     m_pDevice = pDevice;

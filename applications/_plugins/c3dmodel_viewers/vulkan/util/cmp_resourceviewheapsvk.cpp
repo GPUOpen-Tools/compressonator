@@ -19,8 +19,8 @@
 
 
 #include <vector>
-#include "devicevk.h"
-#include "resourceviewheapsvk.h"
+#include "cmp_devicevk.h"
+#include "cmp_resourceviewheapsvk.h"
 #include "misc.h"
 
 #if 0
@@ -29,7 +29,7 @@
 // OnCreate
 //
 //--------------------------------------------------------------------------------------
-void StaticResourceViewHeapVK::OnCreate(DeviceVK* pDevice, D3D12_DESCRIPTOR_HEAP_TYPE heapType, std::uint32_t descriptorCount, UINT nodeMask) {
+void StaticResourceViewHeapVK::OnCreate(CMP_DeviceVK* pDevice, D3D12_DESCRIPTOR_HEAP_TYPE heapType, std::uint32_t descriptorCount, UINT nodeMask) {
     m_pDevice = pDevice;
     m_descriptorCount = descriptorCount;
     m_index = 0;

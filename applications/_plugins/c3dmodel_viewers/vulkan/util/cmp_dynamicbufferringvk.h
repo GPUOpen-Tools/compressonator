@@ -18,36 +18,36 @@
 // THE SOFTWARE.
 
 #pragma once
+#include "cmp_ringvk.h"
+#include "cmp_devicevk.h"
 
-#include <windows.h>
-
-// Simulates DX11 style static buffers. For dynamic buffers please see 'DynamicBufferRingDX12.h'
+// This class mimics the behaviour or the DX11 dynamic buffers.
+// It does so by suballocating memory from a huge buffer. The buffer is used in a ring fashion.
+// Allocated memory is taken from the tail, freed memory makes the head advance;
+// See 'ring.h' to get more details on the ring buffer.
 //
-// This class allows suballocating small chuncks of memory from a huge buffer that is allocated on creation
-// This class is specialized in vertex buffers.
-//
-#include "devicevk.h"
+// The class knows when to free memory by just knowing:
+//    1) the amount of memory used per frame
+//    2) the number of backbuffers
+//    3) When a new frame just started ( indicated by OnBeginFrame() )
+//         - This will free the data of the oldest frame so it can be reused for the new frame
 
-#include <cstdint>
+class CMP_DynamicBufferRingVK
+{
+    CMP_DeviceVK* m_pDevice;
+    std::uint32_t m_memTotalSize;
+    RingWithTabs m_mem;
 
-class StaticBufferPoolVK {
-  public:
-    void OnCreate(DeviceVK* pDevice, std::uint32_t totalMemSize);
-    void OnDestroy();
-    bool AllocVertexBuffer(std::uint32_t numbeOfVertices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut);
-    bool AllocIndexBuffer(std::uint32_t numbeOfIndices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut);
-    void UploadData(VkCommandBuffer cmd_buf);
-    void FreeUploadHeap();
-
-  private:
-    DeviceVK* m_pDevice;
-
-    std::uint32_t           m_totalMemSize;
-    std::uint32_t           m_memOffset;
-    char            *m_pData;
+    char *m_pData;
 
     VkBuffer                m_buffer;
     VkDeviceMemory          m_deviceMemory;
+  public:
+    void                   OnCreate(CMP_DeviceVK* pDevice, std::uint32_t numberOfBackBuffers, std::uint32_t memTotalSize);
+    void OnDestroy();
+    bool AllocConstantBuffer(std::uint32_t size, void **pData, VkDescriptorBufferInfo *pOut);
+    bool AllocVertexBuffer(std::uint32_t numbeOfVertices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut);
+    bool AllocIndexBuffer(std::uint32_t numbeOfIndices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut);
+    void OnBeginFrame();
+    VkDescriptorBufferInfo GetMainBuffer(std::uint32_t size);
 };
-
-

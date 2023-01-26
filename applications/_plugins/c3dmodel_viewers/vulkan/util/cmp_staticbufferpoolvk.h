@@ -19,48 +19,36 @@
 
 #pragma once
 
-//
-// This class shows the most efficient way to upload resources to the GPU memory.
-// The idea is to create just one upload heap and suballocate memory from it.
-// For convenience this class comes with it's own command list & submit (FlushAndFinish)
-//
+#include <windows.h>
 
-class UploadHeapVK {
+// Simulates DX11 style static buffers. For dynamic buffers please see 'DynamicBufferRingDX12.h'
+//
+// This class allows suballocating small chuncks of memory from a huge buffer that is allocated on creation
+// This class is specialized in vertex buffers.
+//
+#include "cmp_devicevk.h"
+
+#include <cstdint>
+
+class CMP_StaticBufferPoolVK
+{
   public:
-    void OnCreate(DeviceVK* pDevice, SIZE_T uSize);
+    void OnCreate(CMP_DeviceVK* pDevice, std::uint32_t totalMemSize);
     void OnDestroy();
-
-    UINT8* Suballocate(SIZE_T uSize, UINT64 uAlign);
-
-    UINT8* BasePtr() {
-        return m_pDataBegin;
-    }
-    VkBuffer GetResource() {
-        return m_buffer;
-    }
-    VkCommandBuffer GetCommandList() {
-        return m_pCommandBuffer;
-    }
-
-    void Flush();
-    void FlushAndFinish();
+    bool AllocVertexBuffer(std::uint32_t numbeOfVertices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut);
+    bool AllocIndexBuffer(std::uint32_t numbeOfIndices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut);
+    void UploadData(VkCommandBuffer cmd_buf);
+    void FreeUploadHeap();
 
   private:
+    CMP_DeviceVK* m_pDevice;
 
-    DeviceVK *m_pDevice;
-
-    VkCommandPool        m_commandPool;
-    VkCommandBuffer      m_pCommandBuffer;
+    std::uint32_t           m_totalMemSize;
+    std::uint32_t           m_memOffset;
+    char            *m_pData;
 
     VkBuffer                m_buffer;
     VkDeviceMemory          m_deviceMemory;
-
-    VkFence m_fence;
-
-    UINT8* m_pDataBegin = nullptr;    // starting position of upload heap
-    UINT8* m_pDataCur = nullptr;      // current position of upload heap
-    UINT8* m_pDataEnd = nullptr;      // ending position of upload heap
-
 };
 
-SIZE_T Align(SIZE_T uOffset, SIZE_T uAlign);
+

@@ -24,11 +24,11 @@
 // #pragma comment(lib,"d3dcompiler.lib")
 // #pragma comment(lib, "D3D12.lib")
 
-#include "gltffeatures.h"
-#include "frameworkwindows.h"
-#include "camera.h"
-#include "swapchainvk.h"
-#include "devicevk.h"
+#include "cmp_gltffeatures.h"
+#include "cmp_frameworkwindowsvk.h"
+#include "cmp_cameravk.h"
+#include "cmp_swapchainvk.h"
+#include "cmp_devicevk.h"
 
 #ifdef ENABLE_RENDER_CODE
 #include "vulkan_renderer.h"
@@ -44,7 +44,7 @@
 #endif
 
 
-class GLTFCommon;
+class CMP_GLTFCommon;
 extern CMIPS *VK_CMips;
 
 class Vulkan_Device :
@@ -63,14 +63,14 @@ class Vulkan_Device :
     double  m_elapsedTimer = 0;
 
     VkInstance m_inst;
-    DeviceVK m_device;
+    CMP_DeviceVK m_device;
 
 #ifdef USE_QT10
     QVulkanWindowRenderer *createRenderer() override;
 #endif
 
 // *1* change to MAX_NUM_OF_NODES
-    GLTFCommon               *m_gltfLoader[MAX_NUM_OF_NODES];
+    CMP_GLTFCommon* m_gltfLoader[MAX_NUM_OF_NODES];
 
 #ifdef ENABLE_RENDER_CODE
     Vulkan_Renderer          *m_Node[MAX_NUM_OF_NODES];
@@ -79,7 +79,7 @@ class Vulkan_Device :
 
     SwapChainVK               m_swapChain;
 
-    Vulkan_Device(GLTFCommon m_gltfLoader[MAX_NUM_OF_NODES], std::uint32_t width, std::uint32_t height, void *pluginManager, void *msghandler);
+    Vulkan_Device(CMP_GLTFCommon m_gltfLoader[MAX_NUM_OF_NODES], std::uint32_t width, std::uint32_t height, void* pluginManager, void* msghandler);
 
     int OnCreate(void* hWnd);
     void OnDestroy();

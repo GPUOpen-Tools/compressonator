@@ -27,11 +27,11 @@
 #define CMP_PI 3.1428
 
 #include "vulkan_device.h"
-#include "gltfcommon.h"
-#include "ImguiVK.h"
-#include "KeyboardMouse.h"
-#include "misc.h"
-#include "swapchainvk.h"
+#include "cmp_gltfcommon.h"
+#include "cmp_imguivk.h"
+#include "cmp_keyboardmousevk.h"
+#include "cmp_misc.h"
+#include "cmp_swapchainvk.h"
 
 #include <glm/glm.hpp>
 
@@ -41,7 +41,9 @@ QVulkanWindowRenderer *Vulkan_Device::createRenderer() {
 }
 #endif
 
-Vulkan_Device::Vulkan_Device(GLTFCommon gltfLoader[MAX_NUM_OF_NODES], std::uint32_t width, std::uint32_t height, void *pluginManager, void *msghandler) : FrameworkWindows(width, height) {
+Vulkan_Device::Vulkan_Device(CMP_GLTFCommon gltfLoader[MAX_NUM_OF_NODES], std::uint32_t width, std::uint32_t height, void* pluginManager, void* msghandler)
+    : FrameworkWindows(width, height)
+{
     m_pluginManager = (PluginManager *)pluginManager;
     m_msghandler = msghandler;
 

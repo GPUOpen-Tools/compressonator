@@ -24,7 +24,7 @@
 #define _PLUGIN_IMAGE_BMP_H
 
 
-#include "plugininterface.h"
+#include "cmp_plugininterface.h"
 #include "vulkan_device.h"
 
 #include <QtWidgets/qwidget.h>
@@ -58,7 +58,7 @@ class Plugin_3DModelViewer_Vulkan : public PluginInterface_3DModel {
   private:
     bool                m_ShowViewOk;
     Vulkan_Device      *m_VulkanDevice;
-    GLTFCommon         *m_gltfLoader;
+    CMP_GLTFCommon*      m_gltfLoader;
     HWND                m_hwnd;
     QWidget             *m_parent;
 };

@@ -24,16 +24,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "trianglevk.h"
+#include "cmp_trianglevk.h"
 
-#include "shadercompilerhelper.h"
+#include "cmp_shadercompilerhelpervk.h"
 
 #include <glm/mat4x4.hpp>
 
 #include <vector>
 
 
-void TriangleVK::OnCreate(DeviceVK* pDevice, DynamicBufferRingVK *pConstantBufferRing, StaticBufferPoolVK *pStaticGeom, VkRenderPass renderPass) {
+void TriangleVK::OnCreate(CMP_DeviceVK* pDevice, CMP_DynamicBufferRingVK* pConstantBufferRing, CMP_StaticBufferPoolVK* pStaticGeom, VkRenderPass renderPass)
+{
     m_pDevice = pDevice;
     m_pConstantBufferRing = pConstantBufferRing;
 
@@ -392,7 +393,8 @@ void TriangleVK::OnDestroy() {
     m_pipeline;
 }
 
-void TriangleVK::Render(VkCommandBuffer cmd_buf, Camera *pCam) {
+void TriangleVK::Render(VkCommandBuffer cmd_buf, CMP_Camera* pCam)
+{
     struct DATA {
         glm::mat4x4 mat;
     } *pData;

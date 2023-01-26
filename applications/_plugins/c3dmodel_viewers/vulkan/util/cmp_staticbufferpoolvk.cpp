@@ -18,12 +18,13 @@
 // THE SOFTWARE.
 
 
-#include "staticbufferpoolvk.h"
+#include "cmp_staticbufferpoolvk.h"
 #include "misc.h"
 
 #include <cassert>
 
-void StaticBufferPoolVK::OnCreate(DeviceVK* pDevice, std::uint32_t totalMemSize) {
+void CMP_StaticBufferPoolVK::OnCreate(CMP_DeviceVK* pDevice, std::uint32_t totalMemSize)
+{
     VkResult res;
     m_pDevice = pDevice;
 
@@ -70,14 +71,16 @@ void StaticBufferPoolVK::OnCreate(DeviceVK* pDevice, std::uint32_t totalMemSize)
     assert(res == VK_SUCCESS);
 }
 
-void StaticBufferPoolVK::OnDestroy() {
+void CMP_StaticBufferPoolVK::OnDestroy()
+{
     vkUnmapMemory(m_pDevice->GetDevice(), m_deviceMemory);
     vkFreeMemory(m_pDevice->GetDevice(), m_deviceMemory, NULL);
     vkDestroyBuffer(m_pDevice->GetDevice(), m_buffer, NULL);
 }
 
 
-bool StaticBufferPoolVK::AllocVertexBuffer(std::uint32_t numbeOfVertices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut) {
+bool CMP_StaticBufferPoolVK::AllocVertexBuffer(std::uint32_t numbeOfVertices, UINT strideInBytes, void** pData, VkDescriptorBufferInfo* pOut)
+{
     std::uint32_t size = (std::uint32_t)Align(numbeOfVertices* strideInBytes, 256);
     assert(m_memOffset + size < m_totalMemSize);
 
@@ -92,7 +95,8 @@ bool StaticBufferPoolVK::AllocVertexBuffer(std::uint32_t numbeOfVertices, UINT s
     return true;
 }
 
-bool StaticBufferPoolVK::AllocIndexBuffer(std::uint32_t numbeOfIndices, UINT strideInBytes, void **pData, VkDescriptorBufferInfo *pOut) {
+bool CMP_StaticBufferPoolVK::AllocIndexBuffer(std::uint32_t numbeOfIndices, UINT strideInBytes, void** pData, VkDescriptorBufferInfo* pOut)
+{
     std::uint32_t size = (std::uint32_t)Align(numbeOfIndices*strideInBytes, 256);
     assert(m_memOffset + size < m_totalMemSize);
 
@@ -109,10 +113,12 @@ bool StaticBufferPoolVK::AllocIndexBuffer(std::uint32_t numbeOfIndices, UINT str
     return true;
 }
 
-void StaticBufferPoolVK::UploadData(VkCommandBuffer cmd_buf) {
+void CMP_StaticBufferPoolVK::UploadData(VkCommandBuffer cmd_buf)
+{
 }
 
-void StaticBufferPoolVK::FreeUploadHeap() {
+void CMP_StaticBufferPoolVK::FreeUploadHeap()
+{
 }
 
 
