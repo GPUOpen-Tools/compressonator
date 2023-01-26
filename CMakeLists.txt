@@ -19,7 +19,15 @@ if(POLICY CMP0076)
   cmake_policy(SET CMP0076 NEW)
 endif()
 
-project(Compressonator)
+set(CMP_VERSION_MAJOR 4)
+set(CMP_VERSION_MINOR 3)
+
+if (NOT CMP_VERSION_BUILD_NUMBER)
+    set(CMP_VERSION_BUILD_NUMBER 0)
+endif()
+
+project(Compressonator VERSION ${CMP_VERSION_MAJOR}.${CMP_VERSION_MINOR})
+message("Building Compressonator version ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 
 # ------------------------------
 # Helper function for the build 
@@ -62,13 +70,11 @@ if (OPTION_ENABLE_ALL_APPS)
     set(OPTION_BUILD_APPS_CMP_GUI     "Build Application: compressonator gui" ON)
     set(OPTION_BUILD_APPS_CMP_TESTCORE "Build Application: cmp_testcore" ON)
     set(OPTION_BUILD_APPS_CMP_EXAMPLES "Build Application: examples" ON)
-    set(OPTION_BUILD_APPS_CMP_CAS      "Build Application: cmp_cas"     ON)
 else()
     option(OPTION_BUILD_APPS_CMP_CLI       OFF)
     option(OPTION_BUILD_APPS_CMP_GUI       OFF)
     option(OPTION_BUILD_APPS_CMP_TESTCORE  OFF)
     option(OPTION_BUILD_APPS_CMP_EXAMPLES  OFF)
-    option(OPTION_BUILD_APPS_CMP_CAS      "Build Application: cmp_cas"     OFF)
 endif()
 
 # Minimum Lib Dependencies for CLI and GUI (GUI has addtion lib requirements condition later in this cmake)
@@ -103,8 +109,8 @@ cmp_option(OPTION_BUILD_KTX2    "Build CLI KTX2 Support" ON)
 else()
 cmp_option(OPTION_BUILD_KTX2    "Build CLI KTX2 Support" OFF)
 endif()
+
 cmp_option(OPTION_BUILD_EXR     "Build CLI EXR Support" CMP_HOST_WINDOWS OR CMP_HOST_LINUX)
-cmp_option(OPTION_BUILD_DRACO   "Build CLI Draco Support" OFF)
 cmp_option(OPTION_BUILD_GUI     "Build the GUI Application" CMP_HOST_WINDOWS OR OPTION_BUILD_APPS_CMP_GUI)
 cmp_option(OPTION_CMP_DIRECTX   "Use Directx" CMP_HOST_WINDOWS) # set for windows only
 cmp_option(OPTION_CMP_VULKAN    "Use Vulkan" OPTION_ENABLE_ALL_APPS)
@@ -112,14 +118,18 @@ cmp_option(OPTION_CMP_OPENGL    "Use OpenGL" ON)   # available on all platforms
 cmp_option(OPTION_CMP_QT        "Use Qt for Image Loading" OPTION_ENABLE_ALL_APPS OR OPTION_BUILD_APPS_CMP_GUI)
 cmp_option(OPTION_CMP_OPENCV    "Use OpenCV" ON)   # available on all platforms
 cmp_option(OPTION_CMP_GTC       "Use GTC Codec" OFF) # Internal R&D
-cmp_option(OPTION_CMP_APC       "Use APC Codec" OFF) # Internal R&D
+cmp_option(OPTION_BUILD_BROTLIG   "Use Brotli-G Codec for Commandline" CMP_HOST_WINDOWS) # BrotliG Compression & Decompression support
+cmp_option(OPTION_BUILD_BROTLIG_GUI   "Use Brotli-G Codec for GUI" OFF) # BrotliG Compression & Decompression support on GUI (In development for v4.4)
 
-cmp_option(NO_LEGACY_BEHAVIOR   "Disables any legacy behavior (before CMake migration)" ON) # this needs to be removed
+# Internal testing application
+option(OPTION_BUILD_INTERNAL_CMP_TEST "Build Internal Application: cmp_test" OFF)
 
-# --------------------------------------------
-# build system options for internal devs
-# --------------------------------------------
-option(OPTION_BUILD_ARCHITECTMF "Internal Dev ArchitectMF Tool" OFF)
+# No longer supported
+cmp_option(OPTION_BUILD_ASTC    "Build ASTC Support" OFF)
+cmp_option(OPTION_BUILD_DRACO   "Build CLI Draco Support" OFF)
+
+# this needs to be removed
+cmp_option(NO_LEGACY_BEHAVIOR   "Disables any legacy behavior (before CMake migration)" ON) 
 
 # -----------------------------------------------------------------------------------
 # Code build definitions and features: These options are been revised for v4.2
@@ -149,7 +159,7 @@ add_compile_definitions(
     #USE_GLTF2_MIPSET                             # Enable Image Transcode & Compression support for GLTF files using TextureIO
     #USE_FILEIO                                   # Used for debugging code
 
-    #New features under devlopement
+    #New features under developement
     #USE_BASIS                                    # Future release:: Universal format for transcoding codecs
     #USE_CMP_TRANSCODE                            # Future release:: Transcode BASIS/GTC to other compressed formats
 
@@ -163,16 +173,23 @@ add_compile_definitions(
     #ENABLE_USER_ETC2S_FORMATS                    # Enable users to set these formats in CLI and GUI applications
 )
 
+if (OPTION_BUILD_BROTLIG)
+    add_compile_definitions(
+        USE_LOSSLESS_COMPRESSION            # Enable Lossless Compression using BrotliG
+        USE_LOSSLESS_COMPRESSION_BINARY     # Change behaviour of lossless compression to load input as binary data for compression
+    )
+
+    if (OPTION_BUILD_BROTLIG_GUI)
+        add_compile_definitions(
+            USE_GUI_LOSSLESS_COMPRESSION            # Enable Lossless Compression using BrotliG
+            USE_GUI_LOSSLESS_COMPRESSION_BINARY     # Change behaviour of lossless compression to load input as binary data for compression
+        )
+    endif()
+endif()
 
 if (OPTION_CMP_GTC)
     add_compile_definitions(
-        USE_GTC                                      # LDR Gradient Texture Compressor patent pending
-        )
-endif()
-
-if (OPTION_CMP_APC)
-    add_compile_definitions(
-        USE_APC                                      # LDR Gradient Texture Compressor patent pending
+        USE_GTC                                      # Patented: LDR Gradient Texture Compressor 
         )
 endif()
 
@@ -183,6 +200,7 @@ if (OPTION_BUILD_DRACO)
         USE_KTX_EXTENSION           # Add KTX file support
         )
 endif()
+
 
 
 if (OPTION_USE_QT)
@@ -224,7 +242,7 @@ include(external/cmake/CMakeLists.txt)
 include(external/CMakeLists.txt)
 
 if (CMP_HOST_WINDOWS)
-    add_compile_definitions(WIN32_LEAN_AND_MEAN=1 _WIN32)
+    add_compile_definitions(_WIN32)
 
     set(CMAKE_EXE_LINKER_FLAGS "/INCREMENTAL:NO")
 else()
@@ -319,7 +337,9 @@ if (LIB_BUILD_COMMON)
 endif()
 
 if (LIB_BUILD_IMAGEIO)
-    add_subdirectory(applications/_plugins/cimage/astc)
+    if (OPTION_BUILD_ASTC)
+        add_subdirectory(applications/_plugins/cimage/astc)
+    endif()
     add_subdirectory(applications/_plugins/cimage/dds)
     if (OPTION_BUILD_EXR) # disable for Mac builds
         add_subdirectory(applications/_plugins/cimage/exr)
@@ -327,16 +347,17 @@ if (LIB_BUILD_IMAGEIO)
     add_subdirectory(applications/_plugins/cimage/ktx)
     if (CMP_HOST_WINDOWS) # disable for Linux & Mac builds
         add_subdirectory(applications/_plugins/cimage/ktx2)
+        
+        if (OPTION_BUILD_BROTLIG)
+            add_subdirectory(applications/_plugins/cimage/brlg)
+            add_subdirectory(applications/_plugins/cimage/binary)
+        endif()
     endif()
     add_subdirectory(applications/_plugins/cimage/tga)
 endif()
 
 if (LIB_BUILD_ANALYSIS)
     add_subdirectory(applications/_plugins/canalysis)
-endif()
-
-if (LIB_BUILD_MESHCOMPRESSOR)
-    # add_subdirectory(applications/_libs/cmp_meshcompressor) # Currently only draco based
 endif()
 
 # Add CLI common to all OS
@@ -352,49 +373,18 @@ endif()
 # GUI - limited to Windows & Linux 
 if (NOT CMP_HOST_APPLE)
     if (OPTION_BUILD_APPS_CMP_GUI)
+        add_subdirectory(external/imgui)
+    endif()
+    if (OPTION_BUILD_APPS_CMP_GUI)
         message("Build GUI setup")
         add_subdirectory(applications/compressonatorgui)
         add_subdirectory(applications/_libs/cmp_meshoptimizer)
-        add_subdirectory(applications/_plugins/common/qtimgui)
         add_subdirectory(applications/_plugins/common/gltf)
     endif()
 endif()
 
-
-# Proto-Typing Application and extended plugins
-if (OPTION_BUILD_ARCHITECTMF)
-    message("Build architectmf setup")
-    add_subdirectory(applications/architectmf)
-    add_subdirectory(applications/architectmf/plugins/sample)
-    add_subdirectory(applications/architectmf/plugins/imageio/imageload)
-    add_subdirectory(applications/architectmf/plugins/imageio/imageshow)
-endif()
-
-
 # Extended Plugins and required libs on Windows
 if (CMP_HOST_WINDOWS)
-
-    # Windows Util applications 
-    if (OPTION_BUILD_APPS_CMP_CAS)
-        message("Build cmp cas setup")
-        add_subdirectory(applications/cmp_cas)
-    endif()
-
-    if (OPTION_BUILD_APPS_CMP_VISION)
-        message("Build cmp vision setup")
-        add_subdirectory(applications/cmp_vision)
-        add_subdirectory(applications/_plugins/cvision)
-    endif()
-
-    if (OPTION_BUILD_APPS_CMP_TEXTURE)
-        message("Build cmp texture setup")
-        add_subdirectory(applications/cmp_texture)
-    endif()
-
-    if (OPTION_BUILD_APPS_CMP_UPSCALE)
-        message("Build cmp upscale setup")
-        add_subdirectory(applications/cmp_upscale)
-    endif()
 
     if (OPTION_BUILD_APPS_CMP_GUI)
         # Windows Based Plugins
@@ -435,9 +425,119 @@ if (CMP_HOST_WINDOWS)
     endif()
 
     # CLI + GUI Automation testing
-    if (OPTION_BUILD_APPS_CMP_TESTAPP)
+    if (OPTION_BUILD_INTERNAL_CMP_TEST)
          message("Build cmp test setup")
-         add_subdirectory(applications/cmp_test)
+         add_subdirectory(internal/applications/cmp_test)
     endif()
 
 endif()
+
+# Installation
+
+install(DIRECTORY docs/build/html DESTINATION documents/)
+install(DIRECTORY runtime/images DESTINATION ".")
+install(FILES license/license.txt DESTINATION "license/")
+install(FILES runtime/qt.conf DESTINATION ".")
+
+if (CMP_HOST_WINDOWS)
+    set(WINDOWS_BIN_PREFIX ${CMAKE_BINARY_DIR}/bin/$<$<CONFIG:Debug>:debug>$<$<CONFIG:Release>:release>)
+
+    set(WINDOWS_INSTALL_DLLS dxcompiler.dll dxil.dll glew32.dll ktx.dll opencv_core249.dll opencv_imgproc249.dll opencv_world420.dll Qt5Core.dll Qt5Gui.dll Qt5OpenGL.dll Qt5Widgets.dll)
+    foreach(WINDOWS_INSTALL_DLL ${WINDOWS_INSTALL_DLLS})
+        install(FILES ${WINDOWS_BIN_PREFIX}/${WINDOWS_INSTALL_DLL} DESTINATION ".")
+    endforeach()
+
+    install(
+        DIRECTORY ${WINDOWS_BIN_PREFIX}/plugins DESTINATION "."
+        PATTERN "./*.dll"
+        PATTERN "imageformats" EXCLUDE
+        PATTERN "shaders" EXCLUDE
+        PATTERN "compute" EXCLUDE
+        PATTERN "media" EXCLUDE
+    )
+
+    install(
+        DIRECTORY ${QT_LIB_DIR}/plugins/imageformats DESTINATION plugins
+        FILES_MATCHING
+        PATTERN "qjpeg.dll"
+        PATTERN "qtga.dll"
+        PATTERN "qtiff.dll"
+    )
+
+    install(
+        DIRECTORY ${WINDOWS_BIN_PREFIX}/plugins/compute DESTINATION "plugins/"
+        PATTERN "*.h"
+        PATTERN "*.cpp"
+        PATTERN "*.hlsl"
+        PATTERN "compiled" EXCLUDE
+        PATTERN "*.cmd" EXCLUDE
+        PATTERN "*.bat" EXCLUDE
+    )
+
+    install(FILES ${WINDOWS_BIN_PREFIX}/texture.frag.spv ${WINDOWS_BIN_PREFIX}/texture.vert.spv DESTINATION ".")
+
+elseif (CMP_HOST_LINUX)
+    install(DIRECTORY ${QT_LIB_DIR}/plugins/imageformats DESTINATION plugins)
+    install(PROGRAMS scripts/compressonatorcli DESTINATION ".")
+    
+    # Qt
+
+    set(QT_INSTALL_LIBS libQt5Core libQt5Gui libicui18n libicuuc libicudata)
+
+    foreach(QT_INSTALL_LIB ${QT_INSTALL_LIBS})
+        file(GLOB QT_LIB_VARIATIONS ${QT_LIB_DIR}/lib/${QT_INSTALL_LIB}.so*)
+
+        foreach(QT_LIB_VARIATION ${QT_LIB_VARIATIONS})
+            install(FILES ${QT_LIB_VARIATION} DESTINATION qt)
+        endforeach()
+    endforeach()
+
+    # OpenCV, TBB, and extra
+
+    set(EXTRA_INSTALL_LIBS_DIR /usr/lib/x86_64-linux-gnu)
+    set(EXTRA_INSTALL_LIBS 
+        libopencv_core
+        libopencv_highgui
+        libopencv_imgproc
+        libtbb
+        libHalf
+        libIex-2_2
+        libIexMath-2_2
+        libImath-2_2
+        libIlmThread-2_2
+        libIlmImf-2_2
+    )
+
+    foreach(EXTRA_INSTALL_LIB ${EXTRA_INSTALL_LIBS})
+        file(GLOB EXTRA_LIB_VARIATIONS ${EXTRA_INSTALL_LIBS_DIR}/${EXTRA_INSTALL_LIB}.so*)
+
+        foreach(EXTRA_LIB_VARIATION ${EXTRA_LIB_VARIATIONS})
+            install(FILES ${EXTRA_LIB_VARIATION} DESTINATION pkglibs)
+        endforeach()
+    endforeach()
+endif()
+
+# CPack set-up
+
+message("Preparing CPack for version ${CMP_VERSION_MAJOR}.${CMP_VERSION_MINOR}.${CMP_VERSION_BUILD_NUMBER}")
+
+# We only generate packages for CompressonatorCLI at the moment
+set(CPACK_PACKAGE_NAME "compressonatorcli")
+
+set(CPACK_PACKAGE_VERSION_MAJOR "${CMP_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${CMP_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${CMP_VERSION_BUILD_NUMBER}")
+
+set(CPACK_PROJECT_CONFIG_FILE "${PROJECT_SOURCE_DIR}/scripts/cpack_config.txt")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "compressonatorcli_${CMP_VERSION_MAJOR}.${CMP_VERSION_MINOR}.${CMP_VERSION_BUILD_NUMBER}")
+set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/license/license.txt")
+
+set(CPACK_PACKAGE_VENDOR "AMD")
+set(CPACK_PACKAGE_DESCRIPTION "Compressonator is a set of tools to allow artists and developers to more easily work with compressed assets and easily visualize the quality impact of various compression technologies.")
+set(CPACK_PACKAGE_HOMEPAGE_URL "https://gpuopen.com/compressonator/")
+
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "AMD")
+set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://gpuopen.com/compressonator/")
+set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
+
+include(CPack)

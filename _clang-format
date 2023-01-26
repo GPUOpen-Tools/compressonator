@@ -26,7 +26,7 @@ ConstructorInitializerAllOnOneLineOrOnePerLine : false
 BreakConstructorInitializers: BeforeComma
 DerivePointerAlignment: false
 IndentCaseLabels: false
-NamespaceIndentation: All
+NamespaceIndentation: None
 AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: true
 AlignEscapedNewlines: Left

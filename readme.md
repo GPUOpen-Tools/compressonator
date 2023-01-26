@@ -2,6 +2,8 @@
 # Compressonator
 [![CMake](https://github.com/GPUOpen-Tools/compressonator/actions/workflows/cmake.yml/badge.svg)](https://github.com/GPUOpen-Tools/compressonator/actions/workflows/cmake.yml)
 ![download](https://img.shields.io/github/downloads/GPUOpen-Tools/Compressonator/total.svg)
+![download](https://img.shields.io/github/downloads/GPUOpen-Tools/Compressonator/V4.1.5083/total.svg)
+![download](https://img.shields.io/github/downloads/GPUOpen-Tools/Compressonator/V4.2.5185/total.svg)
 
 Compressonator is a set of tools to allow artists and developers to more easily create compressed texture assets or model mesh optimizations and easily visualize the quality impact of various compression and rendering technologies.  It consists of a GUI application, a command line application and an SDK for easy integration into a developer tool chain.
 
@@ -11,7 +13,7 @@ For more details goto the online Compressonator Documents: http://compressonator
 
 ## Build System Updates ##
 The code is undergoing a build setup update. This notice will be removed when the changes are completed!
-Currently: To use the VS2017 sln builds run build\fetch_dependencies.py to fetch required external lib dependencies into a Common folder
+Currently: To use the VS2019 sln builds run build\fetch_dependencies.py to fetch required external lib dependencies into a Common folder
 above this repository.
 
 

@@ -51,6 +51,9 @@
     <ClCompile Include="..\Applications\_Plugins\Common\UtilFuncs.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\Common\format_conversion.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
     <ClCompile Include="..\Applications\_Plugins\CImage\DDS\DDS.cpp">
       <Filter>StaticPlugins\ImageIO\DDS</Filter>
     </ClCompile>
@@ -165,6 +168,9 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Applications\_Plugins\Common\UtilFuncs.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\Common\format_conversion.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Applications\_Plugins\CImage\DDS\DDS.h">

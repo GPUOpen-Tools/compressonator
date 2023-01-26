@@ -35,9 +35,6 @@
     <Filter Include="Source Files\Codec\BC6H">
       <UniqueIdentifier>{2d3ed901-7ce8-4b4e-bae5-61e35fa72ac8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Codec\ASTC">
-      <UniqueIdentifier>{5b1bb7fd-2503-4734-9890-dd35e8267dc7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Codec\ETC\etcpack">
       <UniqueIdentifier>{495864e7-9c02-4468-a604-32b7dcba6eed}</UniqueIdentifier>
     </Filter>
@@ -50,9 +47,6 @@
     <Filter Include="Source Files\Codec\BASIS">
       <UniqueIdentifier>{6f58aef5-f313-4608-b77c-346ebd280c52}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Codec\ASTC\ARM">
-      <UniqueIdentifier>{1cbc87fb-985d-4c50-89bf-029e1957bf7c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Common\third_party">
       <UniqueIdentifier>{da5bea7c-2a6e-4a94-a698-4e3ccaf3e5ca}</UniqueIdentifier>
     </Filter>
@@ -64,30 +58,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\CMP_CompressonatorLib\ASTC\ASTC_Decode.cpp">
-      <Filter>Source Files\Codec\ASTC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\CMP_CompressonatorLib\ASTC\ASTC_Encode.cpp">
-      <Filter>Source Files\Codec\ASTC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\CMP_CompressonatorLib\ASTC\ASTC_Encode_Kernel.cpp">
-      <Filter>Source Files\Codec\ASTC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\CMP_CompressonatorLib\ASTC\ASTC_Host.cpp">
-      <Filter>Source Files\Codec\ASTC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\CMP_CompressonatorLib\ASTC\ASTC_Library.cpp">
-      <Filter>Source Files\Codec\ASTC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\CMP_CompressonatorLib\ASTC\Codec_ASTC.cpp">
-      <Filter>Source Files\Codec\ASTC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\CMP_CompressonatorLib\ASTC\ARM\mathlib.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\CMP_CompressonatorLib\ASTC\ARM\softfloat.cpp">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClCompile>
     <ClCompile Include="..\CMP_CompressonatorLib\ATC\Codec_ATC.cpp">
       <Filter>Source Files\Codec\ATC</Filter>
     </ClCompile>
@@ -220,6 +190,9 @@
     <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGBA2101010.cpp">
       <Filter>Source Files\Codec\Buffer</Filter>
     </ClCompile>
+    <ClCompile Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGBA1010102.cpp">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClCompile>
     <ClCompile Include="..\CMP_CompressonatorLib\DXT\Codec_DXT1.cpp">
       <Filter>Source Files\Codec\DXT</Filter>
     </ClCompile>
@@ -313,6 +286,12 @@
     <ClCompile Include="..\Applications\_Plugins\Common\ATIFormats.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\Common\utilfuncs.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Applications\_Plugins\Common\format_conversion.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
     <ClCompile Include="..\CMP_CompressonatorLib\APC\APC_Decode.cpp">
       <Filter>Source Files\Codec\APC</Filter>
     </ClCompile>
@@ -390,39 +369,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ASTC_Decode.h">
-      <Filter>Source Files\Codec\ASTC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ASTC_Definitions.h">
-      <Filter>Source Files\Codec\ASTC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ASTC_Encode.h">
-      <Filter>Source Files\Codec\ASTC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ASTC_Encode_Kernel.h">
-      <Filter>Source Files\Codec\ASTC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ASTC_Host.h">
-      <Filter>Source Files\Codec\ASTC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ASTC_Library.h">
-      <Filter>Source Files\Codec\ASTC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\Codec_ASTC.h">
-      <Filter>Source Files\Codec\ASTC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ARM\astc_codec_internals.h">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ARM\mathlib.h">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ARM\softfloat.h">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CMP_CompressonatorLib\ASTC\ARM\vectypes.h">
-      <Filter>Source Files\Codec\ASTC\ARM</Filter>
-    </ClInclude>
     <ClInclude Include="..\CMP_CompressonatorLib\ATC\Codec_ATC.h">
       <Filter>Source Files\Codec\ATC</Filter>
     </ClInclude>
@@ -558,6 +504,9 @@
     <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGBA2101010.h">
       <Filter>Source Files\Codec\Buffer</Filter>
     </ClInclude>
+    <ClInclude Include="..\CMP_CompressonatorLib\Buffer\CodecBuffer_RGBA1010102.h">
+      <Filter>Source Files\Codec\Buffer</Filter>
+    </ClInclude>
     <ClInclude Include="..\CMP_CompressonatorLib\DXT\Codec_DXT1.h">
       <Filter>Source Files\Codec\DXT</Filter>
     </ClInclude>
@@ -676,6 +625,12 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Applications\_Plugins\Common\ATIFormats.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\Common\utilfuncs.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Applications\_Plugins\Common\format_conversion.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\CMP_CompressonatorLib\APC\APC_Decode.h">

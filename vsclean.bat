@@ -17,8 +17,28 @@ del  /s cmp_core/Makefile
 del  /s cmp_framework/Makefile
 del  Makefile
 rmdir /s  /q bin
-rmdir /s  /q build
 rmdir /s  /q lib
+
+IF EXIST %CurrDir%\build (
+cd build
+rmdir  /s /q  applications
+rmdir  /s /q  bin
+rmdir  /s /q  Cauldron_Common.dir
+rmdir  /s /q  Cauldron_DX12.dir
+rmdir  /s /q  cmp_compressonatorlib
+rmdir  /s /q  cmp_core
+rmdir  /s /q  cmp_framework
+rmdir  /s /q  examples
+rmdir  /s /q  external
+rmdir  /s /q  lib
+rmdir  /s /q  x64
+del  /s *.vcxproj
+del  /s *.filters
+del  /s *.sln
+del  /s *.cpp
+del  /s *.vs
+cd %CurrDir
+)
 
 cd cmp_core/shaders/
 rmdir /s  /q compiled
