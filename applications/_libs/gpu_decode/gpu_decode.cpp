@@ -27,7 +27,7 @@
 #ifdef _WIN32
 #include "gpu_decodebase.h"
 #include "gpu_decode.h"
-#include "plugininterface.h"
+#include "cmp_plugininterface.h"
 
 #include <windows.h>
 
