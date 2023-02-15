@@ -7,15 +7,11 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  build:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+  build_compressonator_cli:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
@@ -43,11 +39,97 @@ jobs:
       run: cmake --build . --config $BUILD_TYPE
 
     - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with: 
-          name: compressonatlrCLI_64_Windows_Master_Build
+          name: CompressonatorCLI_64_Windows_Master_Build
           path: ${{github.workspace}}/build/bin/Release
+  
+  build_compressonator_framework:
+    runs-on: windows-latest
 
+    steps:
+      - uses: actions/checkout@v3
 
+      - name: Create Build Environment
+        # Some projects don't allow in-source building, so create a separate build directory
+        # We'll use this as our working directory for all subsequent commands
+        run: cmake -E make_directory ${{github.workspace}}/build
+      
+      - name: Sync external libs
+        working-directory: ${{github.workspace}}/scripts
+        run: python fetch_dependencies.py
+      
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
 
+      - name: Build Framework Release Win32
+        run: 'msbuild -target:build -property:Configuration=Release -property:Platform=Win32 -m VS2019\cmp_framework.sln'
 
+      - name: Build Framework Debug Win32
+        run: 'msbuild -target:build -property:Configuration=Debug -property:Platform=Win32 -m VS2019\cmp_framework.sln'
+
+      - name: Build Framework Release x64
+        run: 'msbuild -target:build -property:Configuration=Release -property:Platform=x64 -m VS2019\cmp_framework.sln'
+      
+      - name: Build Framework Debug x64
+        run: 'msbuild -target:build -property:Configuration=Debug -property:Platform=x64 -m VS2019\cmp_framework.sln'
+
+      - name: Build Framework Release_MD Win32
+        run: 'msbuild -target:build -property:Configuration=Release_MD -property:Platform=Win32 -m VS2019\cmp_framework.sln'
+
+      - name: Build Framework Debug_MD Win32
+        run: 'msbuild -target:build -property:Configuration=Debug_MD -property:Platform=Win32 -m VS2019\cmp_framework.sln'
+
+      - name: Build Framework Release_MD x64
+        run: 'msbuild -target:build -property:Configuration=Release_MD -property:Platform=x64 -m VS2019\cmp_framework.sln'
+
+      - name: Build Framework Debug_MD x64
+        run: 'msbuild -target:build -property:Configuration=Debug_MD -property:Platform=x64 -m VS2019\cmp_framework.sln'
+
+      - name: Build Framework Release_DLL Win32
+        run: 'msbuild -target:build -property:Configuration=Release_DLL -property:Platform=Win32 -m VS2019\cmp_framework.sln'
+
+      - name: Build Framework Debug_DLL Win32
+        run: 'msbuild -target:build -property:Configuration=Debug_DLL -property:Platform=Win32 -m VS2019\cmp_framework.sln'
+
+      - name: Build Framework Release_DLL x64
+        run: 'msbuild -target:build -property:Configuration=Release_DLL -property:Platform=x64 -m VS2019\cmp_framework.sln'
+
+      - name: Build Framework Debug_DLL x64
+        run: 'msbuild -target:build -property:Configuration=Debug_DLL -property:Platform=x64 -m VS2019\cmp_framework.sln'
+
+      - name: Build Framework Release_MD_DLL Win32
+        run: 'msbuild -target:build -property:Configuration=Release_MD_DLL -property:Platform=Win32 -m VS2019\cmp_framework.sln'
+
+      - name: Build Framework Debug_MD_DLL Win32
+        run: 'msbuild -target:build -property:Configuration=Debug_MD_DLL -property:Platform=Win32 -m VS2019\cmp_framework.sln'
+
+      - name: Build Framework Release_MD_DLL x64
+        run: 'msbuild -target:build -property:Configuration=Release_MD_DLL -property:Platform=x64 -m VS2019\cmp_framework.sln'
+
+      - name: Build Framework Debug_MD_DLL x64
+        run: 'msbuild -target:build -property:Configuration=Debug_MD_DLL -property:Platform=x64 -m VS2019\cmp_framework.sln'
+
+      - name: Create folder structure for build results
+        run: |
+          mkdir CompressonatorFramework_result\lib\encoders
+          mkdir CompressonatorFramework_result\include
+          mkdir CompressonatorFramework_result\lib\VS2019\x64
+          mkdir CompressonatorFramework_result\lib\VS2019\x86
+
+      - name: Copy files into build results directory
+        shell: bash
+        run: |
+          cp build/Release*/x64/{*.lib,*.dll} CompressonatorFramework_result/lib/VS2019/x64/
+          cp build/Release*/Win32/{*.lib,*.dll} CompressonatorFramework_result/lib/VS2019/x86/
+          cp build/Debug*/x64/{*.lib,*.dll} CompressonatorFramework_result/lib/VS2019/x64/
+          cp build/Debug*/Win32/{*.lib,*.dll} CompressonatorFramework_result/lib/VS2019/x86/
+          cp build/Release/x64/Plugins/Compute/{*.h,*.hlsl,*.cpp} CompressonatorFramework_result/lib/encoders/
+          cp cmp_compressonatorlib/compressonator.h CompressonatorFramework_result/include/
+
+      # Will probably want to collect the files into a better structure before running this command
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with: 
+          name: CompressonatorFramework_Windows_Master_Build
+          path: CompressonatorFramework_result/
