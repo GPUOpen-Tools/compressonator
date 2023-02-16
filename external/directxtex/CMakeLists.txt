@@ -10,7 +10,7 @@ target_include_directories(ExtDirectXTex INTERFACE
 #message(STATUS "****************** INFO BUILD_TYPE [${CMAKE_BUILD_TYPE}]" ) # This the users cmake command line build type "Release or Debug" for our SDK we need both builds
 #message(STATUS "****************** INFO CMAKE_VS_PLATFORM_NAME [${CMAKE_VS_PLATFORM_NAME}]" ) # can use this for x86 or x64 specific builds, note:cmp uses x64 only
 
-# Build Relase platform
+# Build Release platform
 execute_process(
     COMMAND ${CMAKE_VS_MSBUILD_COMMAND} 
             ${PROJECT_SOURCE_DIR}/../common/lib/ext/directxtex/DirectXTex-jun2020b/DirectXTex/DirectXTex_Desktop_2019.vcxproj  /p:Configuration=Release  /p:Platform=${CMAKE_VS_PLATFORM_NAME} 
