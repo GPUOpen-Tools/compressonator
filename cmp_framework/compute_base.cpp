@@ -1069,6 +1069,7 @@ CMP_ERROR CMP_API CMP_SaveTexture(const char* DestFile, CMP_MipSet* MipSetIn)
     if (plugin_Image) {
         bool holdswizzle = MipSetIn->m_swizzle;
 
+        plugin_Image->TC_PluginSetSharedIO(&m_CMIPS);
         if (plugin_Image->TC_PluginFileSaveTexture(DestFile, (MipSet*)MipSetIn) == 0) {
             filesaved = true;
         }
