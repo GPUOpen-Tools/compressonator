@@ -32,6 +32,10 @@ rmdir  /s /q  examples
 rmdir  /s /q  external
 rmdir  /s /q  lib
 rmdir  /s /q  x64
+rmdir  /s /q  extern_brotlig-prefix
+rmdir  /s /q  extern_glfw-prefix
+del  /q CPackConfig.cmake
+del  /q CPackSourceConfig.cmake
 del  /s *.vcxproj
 del  /s *.filters
 del  /s *.sln

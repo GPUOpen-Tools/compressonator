@@ -203,7 +203,7 @@ bool CCodecBuffer_RGB888::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, C
 
     for(CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); j++) {
         CMP_BYTE* pSrcData = (CMP_BYTE*) &pdwBlock[(j * w)];
-        CMP_BYTE* pDestData = (CMP_BYTE*) (GetData() + ((y + j) * m_dwPitch) + (x * sizeof(nChannelCount)));
+        CMP_BYTE* pDestData = (CMP_BYTE*) (GetData() + ((y + j) * m_dwPitch) + (x * nChannelCount));
         for(CMP_DWORD i = 0; i < dwWidth; i++) {
             *pDestData++ = *pSrcData++;
             *pDestData++ = *pSrcData++;

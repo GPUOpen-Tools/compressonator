@@ -10,10 +10,6 @@ IF NOT [%1] == [] set ROOTDIR=%1
 set WORKDIR=%ROOTDIR%\
 set BUILDTMP=%ROOTDIR%\tmp
 
-set CMAKE_PATH=cmake
-set SCRIPT_DIR=%~dp0
-set CURRENT_DIR=%CD%
-
 REM Create Tmp directory for intermediate files
 IF NOT EXIST "%buildTMP%" mkdir "%buildTMP%"
 

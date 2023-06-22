@@ -21,7 +21,7 @@ endif ()
 
 if (NOT (CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "Debug"))
     set(CMAKE_BUILD_TYPE "Release")
-    message(STATUS "CMAKE_BUILD_TYPE Bad variable defaulting to Relase")
+    message(STATUS "CMAKE_BUILD_TYPE Bad variable defaulting to Release")
 endif ()
 
 
