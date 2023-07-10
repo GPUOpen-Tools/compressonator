@@ -5,6 +5,7 @@ on: [push]
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
+  OPENCV_DIR: C:/opencv/
 
 jobs:
   build_compressonator_cli:
@@ -56,7 +57,7 @@ jobs:
         run: cmake -E make_directory ${{github.workspace}}/build/bin
       
       - name: Sync external libs
-        working-directory: ${{github.workspace}}/build/bin
+        working-directory: ${{github.workspace}}/build/
         run: python fetch_dependencies.py
       
       - name: Add msbuild to PATH
