@@ -22,7 +22,7 @@ list(APPEND PLUGIN_COMMON_SRC
     misc.cpp
     modeldata.cpp
     pluginmanager.cpp
-    query_timer.cpp
+    cpu_timing.cpp
     ssim.cpp
     tc_plugininternal.cpp
     textureio.cpp
@@ -43,9 +43,8 @@ list(APPEND PLUGIN_COMMON_H
     pluginbase.h
     plugininterface.h
     pluginmanager.h
-    query_timer.h
+    cpu_timing.h
     ssim.h
-    stb_image.h
     tc_pluginapi.h
     tc_plugininternal.h
     testreport.h
@@ -81,6 +80,7 @@ target_include_directories(CMP_Common PRIVATE
   ${PROJECT_SOURCE_DIR}/applications/_libs/gpu_decode
   ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_math
   ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshoptimizer
+  ${PROJECT_SOURCE_DIR}/external/stb/
   ${PROJECT_SOURCE_DIR}/../common/lib/ext/rapidxml
   ${PROJECT_SOURCE_DIR}/../common/lib/ext/glm
   ${OpenCV_INCLUDE_DIRS}

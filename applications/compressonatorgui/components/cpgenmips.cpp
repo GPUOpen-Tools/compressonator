@@ -99,7 +99,7 @@ void CGenMips::setMipLevelDisplay(int Width, int Height, bool UsingGPU = false) 
 
         m_mipLevelSizes << level;
 
-    } while (Width > 1 && Height > 1);
+    } while (Width > 1 || Height > 1);
 
     QStringList reversedList = m_mipLevelSizes;
     const int   levelSize    = m_mipLevelSizes.size();
@@ -196,15 +196,19 @@ void CGenMips::valueChanged(QtProperty* property, const QVariant& value) {
             switch (filtertype) {
                 case 1:
                     dxFilter = CMP_D3DX_FILTER_POINT;
+                    m_propertyMirrorPixels->setEnabled(false);
                     break;
                 case 2:
                     dxFilter = CMP_D3DX_FILTER_LINEAR;
+                    m_propertyMirrorPixels->setEnabled(true);
                     break;
                 case 3:
                     dxFilter = CMP_D3DX_FILTER_TRIANGLE;
+                    m_propertyMirrorPixels->setEnabled(true);
                     break;
                 case 4:
                     dxFilter = CMP_D3DX_FILTER_BOX;
+                    m_propertyMirrorPixels->setEnabled(false);
                     break;
             }
 
@@ -279,7 +283,7 @@ void CGenMips::SetGUIItems() {
 
     m_propertyMirrorPixels = m_variantPropertyManager->addProperty(QVariant::Bool, tr("MirrorPixels"));
     m_GroupProperty->addSubProperty(m_propertyMirrorPixels);
-    addD3DXProperty(m_propertyDither, QLatin1String("MirrorPixels"));
+    addD3DXProperty(m_propertyMirrorPixels, QLatin1String("MirrorPixels"));
 
     // m_propertyPerformFiltering = m_variantPropertyManager->addProperty(QVariant::Bool, tr("PerformFiltering"));
     // m_propertyPerformFiltering->setEnabled(false);

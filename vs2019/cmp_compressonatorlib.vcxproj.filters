@@ -367,6 +367,21 @@
     <ClCompile Include="..\cmp_core\shaders\bc7_encode_kernel.cpp">
       <Filter>cmp_core</Filter>
     </ClCompile>
+    <ClCompile Include="..\cmp_core\source\core_simd_avx.cpp">
+      <Filter>cmp_core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cmp_core\source\core_simd_avx512.cpp">
+      <Filter>cmp_core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cmp_core\source\core_simd_sse.cpp">
+      <Filter>cmp_core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_libs\cmp_math\cpu_extensions.cpp">
+      <Filter>cmp_core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_libs\cmp_math\cmp_math_common.cpp">
+      <Filter>cmp_core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\CMP_CompressonatorLib\ATC\Codec_ATC.h">
@@ -736,6 +751,12 @@
       <Filter>cmp_core</Filter>
     </ClInclude>
     <ClInclude Include="..\cmp_core\shaders\bc7_encode_kernel.h">
+      <Filter>cmp_core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_core\source\core_simd.h">
+      <Filter>cmp_core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_libs\cmp_math\cpu_extensions.h">
       <Filter>cmp_core</Filter>
     </ClInclude>
   </ItemGroup>

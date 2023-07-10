@@ -419,6 +419,7 @@ typedef struct {
     CMP_FLOAT fInputKneeLow;            //
     CMP_FLOAT fInputKneeHigh;           //
     CMP_FLOAT fInputGamma;              //
+    CMP_FLOAT fInputFilterGamma;        // Gamma correction value applied for mipmap generation
 
     CMP_INT iCmpLevel;                  // < draco setting: compression level (range 0-10: higher mean more compressed) - default 7
     CMP_INT iPosBits;                   // quantization bits for position - default 14
@@ -510,9 +511,20 @@ typedef struct {
     };
 } CMP_COLOR;
 
+
+#define CMP_D3DX_FILTER_NONE        1
+#define CMP_D3DX_FILTER_POINT       2
+#define CMP_D3DX_FILTER_LINEAR      3
+#define CMP_D3DX_FILTER_TRIANGLE    4
+#define CMP_D3DX_FILTER_BOX         5
+
+#define CMP_D3DX_FILTER_DITHER  (1 << 19)
+#define CMP_D3DX_FILTER_SRGB    (3 << 21)
+#define CMP_D3DX_FILTER_MIRROR  (7 << 16)
+
 typedef struct
 {
-    int nFilterType;  // This is either CPU Box Filter or GPU Based DXD3X Filters
+    int nFilterType;  // This is either CPU Box Filter or GPU Based CMP_D3DX_FILTER_... definitions 
 
     // Setting that applies to a MIP Map Filters
     unsigned long dwMipFilterOptions;  // Selects options for the Filter Type

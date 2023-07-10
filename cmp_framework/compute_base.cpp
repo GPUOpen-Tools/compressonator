@@ -36,11 +36,13 @@
 #include <unistd.h> /* For open(), creat() */
 #endif
 
+#define STB_IMAGE_STATIC
 #ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #endif
 #include "stb_image.h"
 
+#define STB_IMAGE_WRITE_STATIC
 #ifndef STB_IMAGE_WRITE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #endif
@@ -833,7 +835,7 @@ CMP_ERROR CMP_API CMP_ProcessTexture(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSe
 
             // Set any addition feature as needed for the Host
             if (CMP_SetComputeOptions(&options) != CMP_OK) {
-                CMP_DestroyComputeLibrary(false);
+                CMP_DestroyComputeLibrary(true);
                 PrintInfo("Failed to setup SPMD GPU options\n");
                 cmp_mutex.unlock();
                 return CMP_ERR_FAILED_HOST_SETUP;
@@ -842,7 +844,7 @@ CMP_ERROR CMP_API CMP_ProcessTexture(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSe
             // Do the compression
             if (CMP_CompressTexture(&kernelOptions, *srcMipSet, *dstMipSet, pFeedbackProc) != CMP_OK) {
                 CMips.FreeMipSet(dstMipSet);
-                CMP_DestroyComputeLibrary(false);
+                CMP_DestroyComputeLibrary(true);
                 PrintInfo("Failed to run compute plugin: CPU will be used for compression.\n");
                 cmp_mutex.unlock();
                 return CMP_ERR_FAILED_HOST_SETUP;
@@ -857,7 +859,7 @@ CMP_ERROR CMP_API CMP_ProcessTexture(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSe
             //===============================================================================
             // Close the Pipeline with option to cache as needed
             //===============================================================================
-            CMP_DestroyComputeLibrary(false);
+            CMP_DestroyComputeLibrary(true);
         }
     }
 

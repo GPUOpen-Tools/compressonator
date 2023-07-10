@@ -29,7 +29,7 @@
 #define __CL_ENABLE_EXCEPTIONS
 
 #include "compressonator.h"
-#include "query_timer.h"
+#include "cpu_timing.h"
 
 #include <thread>
 #include <atomic>
@@ -74,7 +74,7 @@ class CCPU_HPC :public ComputeBase {
     std::string          m_version;
     int                  m_maxUCores;
 
-    cmp_cputimer m_cputimer;
+    cpu_timer m_cputimer;
     // Thread Code
     ThreadParam*    m_EncodeParameterStorage;
     std::thread*    m_EncodingThreadHandle;

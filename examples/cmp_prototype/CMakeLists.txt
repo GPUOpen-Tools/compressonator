@@ -18,14 +18,10 @@ target_include_directories(cmp_prototype PUBLIC
     ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
     ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_math
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common  # stb_image
-    ${PROJECT_SOURCE_DIR}/external/glad/include/
-    ${PROJECT_SOURCE_DIR}/external/glad/include/glad
 )
 
 target_link_libraries(cmp_prototype
     PRIVATE
-    ExtGLM
-    ExtGLFW
     CMP_Framework
     CMP_Compressonator
 )

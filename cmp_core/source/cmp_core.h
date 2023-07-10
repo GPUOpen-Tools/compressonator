@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2021   Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2021-2023   Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -113,6 +113,28 @@ int CMP_CDECL SetGammaBC3(void* options, bool sRGB);
 // The default is false.
 // For BC6, the encoded or decoded data is always FP16, but affects the clamping of the values UF16 vs SF16.
 int CMP_CDECL SetSignedBC6(void* options, bool sf16);
+
+//======================================================================================================
+// Manually set which SIMD instruction set to use in the BCn codecs
+//======================================================================================================
+// The BCn codecs will automatically detect supported instruction set extensions on the current CPU and use them,
+// but these functions allow users to manually override this process if desired.
+// Whichever instruction set was enabled most recently will be the one that is used. This means that calling
+// EnableSSE4() will overwrite any previous calls to EnableAVX512().
+
+// If the requested instruction set isn't supported on the CPU a > 0 value will be returned
+int CMP_CDECL EnableSSE4();
+int CMP_CDECL EnableAVX2();
+int CMP_CDECL EnableAVX512();
+
+int CMP_CDECL DisableSIMD();
+
+// Returns a number representing the currently enabled SIMD instruction set
+// 0 = None
+// 1 = SSE4
+// 2 = AVX2
+// 3 = AVX-512
+int CMP_CDECL GetEnabledSIMDExtension();
 
 //======================================================================================================
 // (4x4) Block level 4 channel source CompressBlock and DecompressBlock API for BCn Codecs

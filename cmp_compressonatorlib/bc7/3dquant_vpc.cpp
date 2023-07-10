@@ -102,30 +102,33 @@ void Quant_Init(void) {
 }
 
 void Quant_DeInit(void) {
-    g_Quant_init--;
-    if (g_Quant_init > 1) {
-        return;
-    } else {
-        g_Quant_init = 0; // Reset in case user called Quant_DeInit too many times without matching Quant_Init
-        if (amd_codes[0][0] == nullptr)  return;
+    // gpuopen issue 242 quick fix. We are not freeing memory to improve BC7 compression performance
+    return;
 
-#ifdef USE_TRACE_WITH_DYNAMIC_MEM
+//     g_Quant_init--;
+//     if (g_Quant_init > 1) {
+//         return;
+//     } else {
+//         g_Quant_init = 0; // Reset in case user called Quant_DeInit too many times without matching Quant_Init
+//         if (amd_codes[0][0] == nullptr)  return;
 
-        for (int i = 0; i < MAX_CLUSTERS; i++) {
-            for (int j = 0; j < MAX_ENTRIES_QUANT_TRACE; j++) {
-                if (amd_codes[i][j]) {
-                    delete[] amd_codes[i][j];
-                    amd_codes[i][j] = nullptr;
-                }
-                if (amd_trs[i][j]) {
-                    delete[] amd_trs[i][j];
-                    amd_trs[i][j] = nullptr;
-                }
-            }
-        }
+// #ifdef USE_TRACE_WITH_DYNAMIC_MEM
 
-#endif
-    }
+//         for (int i = 0; i < MAX_CLUSTERS; i++) {
+//             for (int j = 0; j < MAX_ENTRIES_QUANT_TRACE; j++) {
+//                 if (amd_codes[i][j]) {
+//                     delete[] amd_codes[i][j];
+//                     amd_codes[i][j] = nullptr;
+//                 }
+//                 if (amd_trs[i][j]) {
+//                     delete[] amd_trs[i][j];
+//                     amd_trs[i][j] = nullptr;
+//                 }
+//             }
+//         }
+
+// #endif
+//     }
 
 }
 

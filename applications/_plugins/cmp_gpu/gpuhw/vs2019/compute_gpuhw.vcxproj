@@ -530,14 +530,14 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Common\query_timer.cpp" />
+    <ClCompile Include="..\..\..\Common\cpu_timing.cpp" />
     <ClCompile Include="..\..\..\Common\TC_PluginInternal.cpp" />
     <ClCompile Include="..\..\..\Common\UtilFuncs.cpp" />
     <ClCompile Include="..\CGpuHW.cpp" />
     <ClCompile Include="..\Compute_GpuHW.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Common\query_timer.h" />
+    <ClInclude Include="..\..\..\Common\cpu_timing.h" />
     <ClInclude Include="..\..\..\Common\TC_PluginAPI.h" />
     <ClInclude Include="..\..\..\Common\TC_PluginInternal.h" />
     <ClInclude Include="..\..\..\Common\UtilFuncs.h" />

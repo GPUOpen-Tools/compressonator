@@ -10,11 +10,11 @@ endif()
 
 add_library(ExtVulkan INTERFACE)
 
-if (NOT DEFINED ENV{VULKAN_SDK})
-    message(FATAL_ERROR "A 'VULKAN_SDK' environment variable is required")
+if (NOT DEFINED ENV{VULKAN_DIR})
+    message(FATAL_ERROR "A 'VULKAN_DIR' environment variable is required to indicate where the Vulkan SDK is installed.")
 endif()
 
-set(VULKAN_SDK_PATH $ENV{VULKAN_SDK})
+set(VULKAN_SDK_PATH $ENV{VULKAN_DIR})
 
 message(STATUS "++++++++++++++++++ External-VULKAN  ${VULKAN_SDK_PATH}" )
 
@@ -105,7 +105,7 @@ if (CMP_HOST_APPLE)
 
     find_path(MVK_INCLUDE_DIR
         NAMES MoltenVK/mvk_vulkan.h
-        PATHS ${VULKAN_SDK}/include
+        PATHS ${VULKAN_DIR}/include
     )
 
     set(
@@ -120,11 +120,11 @@ elseif(CMP_HOST_LINUX)
 #    set(RENAME_HACK bash -c "find . -type f -exec sed -i 's,root/sdk-build/${VULKAN_VERSION},${VULKAN_OUTPUT_DIR},' {} \\\;")
 #    cmp_execute_process(RENAME_HACK ${VULKAN_OUTPUT_DIR})
 #
-#    get_filename_component(VULKAN_SDK ${COMPRESSONATOR_PROJECT_DIR}/External/build-out/Linux/vulkan ABSOLUTE)
-#    if (NOT EXISTS VULKAN_SDK)
-#        file(COPY $ENV{VULKAN_SDK} ${VULKAN_SDK})
+#    get_filename_component(VULKAN_DIR ${COMPRESSONATOR_PROJECT_DIR}/External/build-out/Linux/vulkan ABSOLUTE)
+#    if (NOT EXISTS VULKAN_DIR)
+#        file(COPY $ENV{VULKAN_DIR} ${VULKAN_DIR})
 #    endif()
-#    set(ENV{VULKAN_SDK} ${VULKAN_SDK})
+#    set(ENV{VULKAN_DIR} ${VULKAN_DIR})
 #
 #    find_package(Vulkan REQUIRED)
 

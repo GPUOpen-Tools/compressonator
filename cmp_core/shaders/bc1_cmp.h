@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020-2023    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -19,15 +19,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-// File: BC1_Encode_kernel.hlsl
+// File: bc1_cmp.h
 //--------------------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
+
 #define USE_CMP
+
 #include "common_def.h"
 #include "bcn_common_kernel.h"
 #include "bcn_common_api.h"
+
+#ifndef ASPM_GPU
+#include "cpu_extensions.h"
+#include "core_simd.h"
+#endif
 
 //-----------------------------------------------------------------------
 // When build is for CPU, we have some missing API calls common to GPU
@@ -35,12 +42,18 @@
 //-----------------------------------------------------------------------
 #if defined(ASPM_GPU) || defined(ASPM_HLSL) || defined(ASPM_OPENCL)
 #define ALIGN_16
+#define ALIGN_32
+#define ALIGN_64
 #else
 #include INC_cmp_math_func
-#if defined(WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
 #define ALIGN_16 __declspec(align(16))
+#define ALIGN_32 __declspec(align(32))
+#define ALIGN_64 __declspec(align(64))
 #else  // !WIN32 && !_WIN64
-#define ALIGN_16
+#define ALIGN_16 __attribute__((aligned(16)))
+#define ALIGN_32 __attribute__((aligned(32)))
+#define ALIGN_64 __attribute__((aligned(64)))
 #endif  // !WIN32 && !_WIN64
 #endif
 
@@ -69,7 +82,60 @@
 #define EPS (2.f / 255.f) * (2.f / 255.f)
 #define EPS2 3.f * (2.f / 255.f) * (2.f / 255.f)
 
+// Disable SIMD code during GPU builds
+#if !defined(ASPM_GPU)
+CMP_STATIC CGU_BOOL g_bc1FunctionPointersSet = false;
 
+// declarations for SIMD function variations
+CMP_STATIC CGU_FLOAT _cpu_bc1ComputeBestEndpoints(CGU_FLOAT*, CGU_FLOAT*, CGU_FLOAT*, CGU_FLOAT*, CGU_FLOAT*, int, int);
+
+// function pointers
+CMP_STATIC CGU_FLOAT (*cpu_bc1ComputeBestEndpoints)(CGU_FLOAT*, CGU_FLOAT*, CGU_FLOAT*, CGU_FLOAT*, CGU_FLOAT*, int, int) = 0;
+
+// Toggle which SIMD instruction set extensions to use. Setting this to EXTENSION_COUNT will enable auto-detection of supported extensions.
+// NOTE: The requested extension will only be enabled if it is supported by the current CPU.
+CMP_STATIC bool bc1ToggleSIMD(CGU_INT newExtension)
+{
+    CGU_BOOL useAVX512 = true;
+    CGU_BOOL useAVX2 = true;
+    CGU_BOOL useSSE42 = true;
+
+    CPUExtensions extensions = GetCPUExtensions();
+
+    if (newExtension < EXTENSION_COUNT) // user requested a specific instruction set extension
+    {
+        useAVX512 = newExtension == EXTENSION_AVX512_F;
+        useAVX2 = newExtension == EXTENSION_AVX2;
+        useSSE42 = newExtension == EXTENSION_SSE42;
+    }
+
+    if (useAVX512 && IsAvailableAVX512(extensions))
+    {
+        cpu_bc1ComputeBestEndpoints = avx512_bc1ComputeBestEndpoints;
+    }
+    else if (useAVX2 && IsAvailableAVX2(extensions))
+    {
+        cpu_bc1ComputeBestEndpoints = avx_bc1ComputeBestEndpoints;
+    }
+    else if (useSSE42 && IsAvailableSSE4(extensions))
+    {
+        cpu_bc1ComputeBestEndpoints = sse_bc1ComputeBestEndpoints;
+    }
+    else
+    {
+        cpu_bc1ComputeBestEndpoints = _cpu_bc1ComputeBestEndpoints;
+    }
+
+    g_bc1FunctionPointersSet = true;
+
+    bool result = true;
+
+    if (newExtension != EXTENSION_COUNT && (useAVX512 && !IsAvailableAVX512(extensions)) || (useAVX2 && !IsAvailableAVX2(extensions)) || (useSSE42 && !IsAvailableSSE4(extensions)))
+        result = false;
+
+    return result;
+}
+#endif
 
 static CGU_FLOAT cgu_getRampErr(CGU_FLOAT  Prj[BLOCK_SIZE_4X4],
                                 CGU_FLOAT  PrjErr[BLOCK_SIZE_4X4],
@@ -95,7 +161,7 @@ static CGU_FLOAT cgu_getRampErr(CGU_FLOAT  Prj[BLOCK_SIZE_4X4],
         else if (Prj[i] - highPosStep >= 0)
             v = highPosStep;
         else
-            v = floor((del + step_h) * rstep) * step + lowPosStep;
+            v = cmp_floor((del + step_h) * rstep) * step + lowPosStep;
 
         // And accumulate the error
         CGU_FLOAT d = (Prj[i] - v);
@@ -121,10 +187,10 @@ CMP_STATIC CMP_EndPoints cgu_CompressRGBBlockX( CMP_IN CGU_Vec3f   BlkInBGRf_UV[
 {
     CMP_UNUSED(channelWeightsBGR);
     CMP_UNUSED(b3DRefinement);
-    ALIGN_16 CGU_FLOAT Prj0[BLOCK_SIZE_4X4];
-    ALIGN_16 CGU_FLOAT Prj[BLOCK_SIZE_4X4];
-    ALIGN_16 CGU_FLOAT PrjErr[BLOCK_SIZE_4X4];
-    ALIGN_16 CGU_FLOAT RmpIndxs[BLOCK_SIZE_4X4];
+    CGU_FLOAT ALIGN_16 Prj0[BLOCK_SIZE_4X4];
+    CGU_FLOAT ALIGN_16 Prj[BLOCK_SIZE_4X4];
+    CGU_FLOAT ALIGN_16 PrjErr[BLOCK_SIZE_4X4];
+    CGU_FLOAT ALIGN_16 RmpIndxs[BLOCK_SIZE_4X4];
 
     CGU_Vec3f LineDirG;
     CGU_Vec3f LineDir;
@@ -304,7 +370,7 @@ CMP_STATIC CMP_EndPoints cgu_CompressRGBBlockX( CMP_IN CGU_Vec3f   BlkInBGRf_UV[
         CGU_FLOAT ErrG = 10000000.f;
         CGU_FLOAT PrjBnd0;
         CGU_FLOAT PrjBnd1;
-        ALIGN_16 CGU_FLOAT PreMRep[BLOCK_SIZE_4X4];
+        CGU_FLOAT ALIGN_16 PreMRep[BLOCK_SIZE_4X4];
 
         LineDir.x = LineDir0[0];
         LineDir.y = LineDir0[1];
@@ -446,7 +512,7 @@ CMP_STATIC CMP_EndPoints cgu_CompressRGBBlockX( CMP_IN CGU_Vec3f   BlkInBGRf_UV[
                     else if (Prj0[i] - Pos1 >= 0)
                         RmpIndxs[i] = 3.0f;  // (dwNumChannels=4 - 1);
                     else
-                        RmpIndxs[i] = floor((del + step_h) * rstep);
+                        RmpIndxs[i] = cmp_floor((del + step_h) * rstep);
                     // shift and normalization
                     RmpIndxs[i] = (RmpIndxs[i] - indxAvrg) * overBlkTp;
                 }
@@ -501,56 +567,56 @@ CMP_STATIC CMP_EndPoints cgu_CompressRGBBlockX( CMP_IN CGU_Vec3f   BlkInBGRf_UV[
     {
         // MkRmpOnGrid(inpRmpEndPts, rsltC, _Min, _Max);
 
-        inpRmpEndPts0 = floor(rsltC0);
+        inpRmpEndPts0 = cmp_floorVec3f(rsltC0);
 
         if (inpRmpEndPts0.x <= _Min)
             inpRmpEndPts0.x = _Min;
         else
         {
-            inpRmpEndPts0.x += floor(128.f / Fctrs1.x) - floor(inpRmpEndPts0.x / Fctrs1.x);
+            inpRmpEndPts0.x += cmp_floor(128.f / Fctrs1.x) - cmp_floor(inpRmpEndPts0.x / Fctrs1.x);
             inpRmpEndPts0.x = min(inpRmpEndPts0.x, _Max);
         }
         if (inpRmpEndPts0.y <= _Min)
             inpRmpEndPts0.y = _Min;
         else
         {
-            inpRmpEndPts0.y += floor(128.f / Fctrs1.y) - floor(inpRmpEndPts0.y / Fctrs1.y);
+            inpRmpEndPts0.y += cmp_floor(128.f / Fctrs1.y) - cmp_floor(inpRmpEndPts0.y / Fctrs1.y);
             inpRmpEndPts0.y = min(inpRmpEndPts0.y, _Max);
         }
         if (inpRmpEndPts0.z <= _Min)
             inpRmpEndPts0.z = _Min;
         else
         {
-            inpRmpEndPts0.z += floor(128.f / Fctrs1.z) - floor(inpRmpEndPts0.z / Fctrs1.z);
+            inpRmpEndPts0.z += cmp_floor(128.f / Fctrs1.z) - cmp_floor(inpRmpEndPts0.z / Fctrs1.z);
             inpRmpEndPts0.z = min(inpRmpEndPts0.z, _Max);
         }
 
-        inpRmpEndPts0 = floor(inpRmpEndPts0 / Fctrs0) * Fctrs0;
+        inpRmpEndPts0 = cmp_floorVec3f(inpRmpEndPts0 / Fctrs0) * Fctrs0;
 
-        inpRmpEndPts1 = floor(rsltC1);
+        inpRmpEndPts1 = cmp_floorVec3f(rsltC1);
         if (inpRmpEndPts1.x <= _Min)
             inpRmpEndPts1.x = _Min;
         else
         {
-            inpRmpEndPts1.x += floor(128.f / Fctrs1.x) - floor(inpRmpEndPts1.x / Fctrs1.x);
+            inpRmpEndPts1.x += cmp_floor(128.f / Fctrs1.x) - cmp_floor(inpRmpEndPts1.x / Fctrs1.x);
             inpRmpEndPts1.x = min(inpRmpEndPts1.x, _Max);
         }
         if (inpRmpEndPts1.y <= _Min)
             inpRmpEndPts1.y = _Min;
         else
         {
-            inpRmpEndPts1.y += floor(128.f / Fctrs1.y) - floor(inpRmpEndPts1.y / Fctrs1.y);
+            inpRmpEndPts1.y += cmp_floor(128.f / Fctrs1.y) - cmp_floor(inpRmpEndPts1.y / Fctrs1.y);
             inpRmpEndPts1.y = min(inpRmpEndPts1.y, _Max);
         }
         if (inpRmpEndPts1.z <= _Min)
             inpRmpEndPts1.z = _Min;
         else
         {
-            inpRmpEndPts1.z += floor(128.f / Fctrs1.z) - floor(inpRmpEndPts1.z / Fctrs1.z);
+            inpRmpEndPts1.z += cmp_floor(128.f / Fctrs1.z) - cmp_floor(inpRmpEndPts1.z / Fctrs1.z);
             inpRmpEndPts1.z = min(inpRmpEndPts1.z, _Max);
         }
 
-        inpRmpEndPts1 = floor(inpRmpEndPts1 / Fctrs0) * Fctrs0;
+        inpRmpEndPts1 = cmp_floorVec3f(inpRmpEndPts1 / Fctrs0) * Fctrs0;
     }  // MkRmpOnGrid
 
     CMP_EndPoints EndPoints;
@@ -663,7 +729,7 @@ CMP_STATIC CGU_Vec2ui cgu_CompRGBBlock(CMP_IN CGU_Vec4f src_imageNorm[BLOCK_SIZE
     CMP_EndPoints EndPoints = {{0, 0, 0xFF}, {0, 0, 0xFF}};
     CGU_UINT32 i;
     
-    ALIGN_16 CGU_FLOAT Rpt[BLOCK_SIZE_4X4];
+    CGU_FLOAT ALIGN_16 Rpt[BLOCK_SIZE_4X4];
     CGU_UINT32         pcIndices = 0;
     
     m_nRefinementSteps = 0;
@@ -867,9 +933,9 @@ CMP_STATIC CGU_Vec2ui cgu_CompRGBBlock(CMP_IN CGU_Vec4f src_imageNorm[BLOCK_SIZE
 
             {
                 //   ConstantRamp = MkWkRmpPts(InpRmpL, InpRmp);
-                InpRmpL[0] = InpRmp[0] + floor(InpRmp[0] / Fctrs);
+                InpRmpL[0] = InpRmp[0] + cmp_floorVec3f(InpRmp[0] / Fctrs);
                 InpRmpL[0] = cmp_clampVec3f(InpRmpL[0], 0.0f, 255.0f);
-                InpRmpL[1] = InpRmp[1] + floor(InpRmp[1] / Fctrs);
+                InpRmpL[1] = InpRmp[1] + cmp_floorVec3f(InpRmp[1] / Fctrs);
                 InpRmpL[1] = cmp_clampVec3f(InpRmpL[1], 0.0f, 255.0f);
             }  // MkWkRmpPts
 
@@ -881,8 +947,8 @@ CMP_STATIC CGU_Vec2ui cgu_CompRGBBlock(CMP_IN CGU_Vec4f src_imageNorm[BLOCK_SIZE
                 // linear interpolate end points to get the ramp
                 LerpRmp[0] = InpRmpL[0];
                 LerpRmp[3] = InpRmpL[1];
-                LerpRmp[1] = floor((InpRmpL[0] * 2.0f + LerpRmp[3] + offset) / 3.0f);
-                LerpRmp[2] = floor((InpRmpL[0] + LerpRmp[3] * 2.0f + offset) / 3.0f);
+                LerpRmp[1] = cmp_floorVec3f((InpRmpL[0] * 2.0f + LerpRmp[3] + offset) / 3.0f);
+                LerpRmp[2] = cmp_floorVec3f((InpRmpL[0] + LerpRmp[3] * 2.0f + offset) / 3.0f);
             }  // BldRmp
 
             //=========================================================================
@@ -1643,7 +1709,7 @@ CMP_STATIC inline void cpu_BldClrRmp(CGU_FLOAT _Rmp[MAX_POINTS], CGU_FLOAT _InpR
     if(dwNumPoints % 2)
         _Rmp[dwNumPoints] = 1000000.f; // for 3 point ramp; not to select the 4th point as min
     for(CGU_UINT32 e = 1; e < dwNumPoints - 1; e++)
-        _Rmp[e] = floor((_Rmp[0] * (dwNumPoints - 1 - e) + _Rmp[dwNumPoints - 1] * e + dwRndAmount[dwNumPoints])/ (CGU_FLOAT)(dwNumPoints - 1));
+        _Rmp[e] = cmp_floor((_Rmp[0] * (dwNumPoints - 1 - e) + _Rmp[dwNumPoints - 1] * e + dwRndAmount[dwNumPoints])/ (CGU_FLOAT)(dwNumPoints - 1));
 }
 
 /*------------------------------------------------------------------------------------------------
@@ -1680,7 +1746,7 @@ CMP_STATIC inline void cpu_MkWkRmpPts(CMP_INOUT CGU_UINT8  CMP_REFINOUT _bEq,
     for(CGU_UINT32 j = 0; j <3; j++) {
         for(CGU_UINT32 k = 0; k <2; k++) {
             // Apply the lower bit replication to give full dynamic range
-            _OutRmpPts[j][k] = _InpRmpPts[j][k] + floor(_InpRmpPts[j][k] / Fctrs[j]);
+            _OutRmpPts[j][k] = _InpRmpPts[j][k] + cmp_floor(_InpRmpPts[j][k] / Fctrs[j]);
             _OutRmpPts[j][k] = cmp_max(_OutRmpPts[j][k], 0.f);
             _OutRmpPts[j][k] = cmp_min(_OutRmpPts[j][k], 255.f);
         }
@@ -1888,7 +1954,7 @@ CMP_STATIC CGU_FLOAT cmp_Refine3D(  CGU_FLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDP
                                 CGU_UINT8 nBlueBits, 
                                 CGU_UINT32 nRefineSteps) 
 {
-    ALIGN_16 CGU_FLOAT Rmp[NUM_CHANNELS][MAX_POINTS];
+    CGU_FLOAT ALIGN_16 Rmp[NUM_CHANNELS][MAX_POINTS];
 
     CGU_FLOAT Blk[BLOCK_SIZE_4X4][NUM_CHANNELS];
     for(CGU_UINT32 i = 0; i < _NmrClrs; i++)
@@ -2009,7 +2075,7 @@ CMP_STATIC CGU_FLOAT cmp_Refine(CGU_FLOAT _OutRmpPnts[NUM_CHANNELS][NUM_ENDPOINT
                   CGU_UINT32 nBlueBits, 
                   CGU_UINT32 nRefineSteps )
 {
-    ALIGN_16 CGU_FLOAT Rmp[NUM_CHANNELS][MAX_POINTS];
+    CGU_FLOAT ALIGN_16 Rmp[NUM_CHANNELS][MAX_POINTS];
 
     if (nRefineSteps == 0) nRefineSteps = 1;
 
@@ -2245,15 +2311,15 @@ CMP_STATIC void cpu_MkRmpOnGrid(CGU_FLOAT _RmpF[NUM_CHANNELS][NUM_ENDPOINTS],
 
     for(int j = 0; j < 3; j++) {
         for(int k = 0; k < 2; k++) {
-            _RmpF[j][k] = floor(_MnMx[j][k]);
+            _RmpF[j][k] = cmp_floor(_MnMx[j][k]);
             if(_RmpF[j][k] <= _Min)
                 _RmpF[j][k] = _Min;
             else {
-                _RmpF[j][k] += floor(128.f / Fctrs1[j]) - floor(_RmpF[j][k] / Fctrs1[j]);
+                _RmpF[j][k] += cmp_floor(128.f / Fctrs1[j]) - cmp_floor(_RmpF[j][k] / Fctrs1[j]);
                 _RmpF[j][k] = cmp_minf(_RmpF[j][k], _Max);
             }
 
-            _RmpF[j][k] = floor(_RmpF[j][k] / Fctrs0[j]) * Fctrs0[j];
+            _RmpF[j][k] = cmp_floor(_RmpF[j][k] / Fctrs0[j]) * Fctrs0[j];
         }
     }
 }
@@ -2392,32 +2458,34 @@ CMP_STATIC void cpu_FindAxis(CMP_OUT    CGU_FLOAT BlkSh[BLOCK_SIZE_4X4][NUM_CHAN
         LineDir0[j] = (Len > 0.f) ? LineDir0[j] / Len : 0.f;
 }
 
-CMP_STATIC CGU_FLOAT cpu_RampSrchW( CGU_FLOAT Prj[BLOCK_SIZE_4X4],
-                                    CGU_FLOAT PrjErr[BLOCK_SIZE_4X4],
-                                    CGU_FLOAT PreMRep[BLOCK_SIZE_4X4],
-                                    CGU_FLOAT StepErr, 
-                                    CGU_FLOAT lowPosStep, 
-                                    CGU_FLOAT highPosStep,
-                                    int dwUniqueColors,
-                                    int dwNumPoints )
+CMP_STATIC CGU_FLOAT cpu_RampSrchW(CGU_FLOAT Prj[BLOCK_SIZE_4X4],
+                                   CGU_FLOAT PrjErr[BLOCK_SIZE_4X4],
+                                   CGU_FLOAT PreMRep[BLOCK_SIZE_4X4],
+                                   CGU_FLOAT StepErr, 
+                                   CGU_FLOAT lowPosStep, 
+                                   CGU_FLOAT highPosStep,
+                                   int dwUniqueColors,
+                                   int dwNumPoints)
 {
-    CGU_FLOAT error = 0;
+    CGU_FLOAT error = 0.0f;
     CGU_FLOAT step = (highPosStep - lowPosStep)/(dwNumPoints - 1);
-    CGU_FLOAT step_h = step * (CGU_FLOAT)0.5;
+    CGU_FLOAT step_h = step * 0.5f;
     CGU_FLOAT rstep = (CGU_FLOAT)1.0f / step;
     CGU_INT   i;
 
-    for(i=0; i < dwUniqueColors; i++) {
-        CGU_FLOAT v;
+    for(i=0; i < dwUniqueColors; i++)
+    {
         // Work out which value in the block this select
-        CGU_FLOAT del;
+        CGU_FLOAT del = Prj[i] - lowPosStep;
 
-        if((del = Prj[i] - lowPosStep) <= 0)
+        CGU_FLOAT v;
+
+        if(del <= 0)
             v = lowPosStep;
         else if(Prj[i] -  highPosStep >= 0)
             v = highPosStep;
         else
-            v = floor((del + step_h) * rstep) * step + lowPosStep;
+            v = cmp_floor((del + step_h) * rstep) * step + lowPosStep;
 
         // And accumulate the error
         CGU_FLOAT d = (Prj[i] - v);
@@ -2432,6 +2500,42 @@ CMP_STATIC CGU_FLOAT cpu_RampSrchW( CGU_FLOAT Prj[BLOCK_SIZE_4X4],
     return error;
 }
 
+CMP_STATIC CGU_FLOAT _cpu_bc1ComputeBestEndpoints(CGU_FLOAT endpointsOut[NUM_ENDPOINTS], CGU_FLOAT endpointsIn[NUM_ENDPOINTS], 
+                                                CGU_FLOAT prj[BLOCK_SIZE_4X4], CGU_FLOAT prjError[BLOCK_SIZE_4X4], CGU_FLOAT preMRep[BLOCK_SIZE_4X4],
+                                                int numColours, int numPoints)
+{
+    CGU_FLOAT minError = MAX_ERROR;
+
+    static const CGU_FLOAT searchStep = 0.025f;
+
+    const CGU_FLOAT lowStart = (endpointsIn[0] - 2.0f*searchStep > 0.0f) ?  endpointsIn[0] - 2.0f*searchStep : 0.0f;
+    const CGU_FLOAT highStart = (endpointsIn[1] + 2.0f*searchStep < 1.0f) ?  endpointsIn[1] + 2.0f*searchStep : 1.0f;
+
+    CGU_FLOAT lowStep = lowStart;
+    CGU_FLOAT highStep = highStart;
+
+    for(int low = 0; low < 8; ++low)
+    {
+        for(int high = 0; high < 8; ++high)
+        {
+            // compute an error for the current pair of end points.
+            CGU_FLOAT error = cpu_RampSrchW(prj, prjError, preMRep, minError, lowStep, highStep, numColours, numPoints);
+
+            if(error < minError) {
+                // save better result
+                minError = error;
+                endpointsOut[0] = lowStep;
+                endpointsOut[1] = highStep;
+            }
+
+            highStep -= searchStep;
+        }
+
+        lowStep += searchStep;
+    }
+
+    return minError;
+}
 
 //    This is a float point-based compression
 //    it assumes that the number of unique colors is already known; input is in [0., 255.] range.
@@ -2449,11 +2553,18 @@ CMP_STATIC bool cpu_CompressRGBBlockX(  CMP_OUT CGU_FLOAT  _RsltRmpPnts[NUM_CHAN
                                         CMP_IN  CGU_UINT8  nBlueBits,
                                         CMP_IN  CGU_FLOAT  fquality )
 {
-    ALIGN_16 CGU_FLOAT Prj0[BLOCK_SIZE_4X4];
-    ALIGN_16 CGU_FLOAT Prj[BLOCK_SIZE_4X4];
-    ALIGN_16 CGU_FLOAT PrjErr[BLOCK_SIZE_4X4];
-    ALIGN_16 CGU_FLOAT LineDir[NUM_CHANNELS];
-    ALIGN_16 CGU_FLOAT RmpIndxs[BLOCK_SIZE_4X4];
+#if !defined(ASPM_GPU)
+    if (!g_bc1FunctionPointersSet)
+    {
+        bc1ToggleSIMD(EXTENSION_COUNT);
+    }
+#endif
+
+    CGU_FLOAT ALIGN_16 Prj0[BLOCK_SIZE_4X4];
+    CGU_FLOAT ALIGN_16 Prj[BLOCK_SIZE_4X4];
+    CGU_FLOAT ALIGN_16 PrjErr[BLOCK_SIZE_4X4];
+    CGU_FLOAT ALIGN_16 LineDir[NUM_CHANNELS];
+    CGU_FLOAT ALIGN_16 RmpIndxs[BLOCK_SIZE_4X4];
 
     CMP_UNUSED(fquality);
     CMP_UNUSED(b3DRefinement)
@@ -2473,7 +2584,7 @@ CMP_STATIC bool cpu_CompressRGBBlockX(  CMP_OUT CGU_FLOAT  _RsltRmpPnts[NUM_CHAN
         for(j = 0; j < 3; j++)
             BlkUV[i][j] = src_image[i][j] / 255.f;
 
-    bool isDONE         = false;
+    bool isDONE = false;
 
     // as usual if not more then 2 different colors, we've done
     if(dwUniqueColors <= 2) {
@@ -2506,7 +2617,7 @@ CMP_STATIC bool cpu_CompressRGBBlockX(  CMP_OUT CGU_FLOAT  _RsltRmpPnts[NUM_CHAN
     if ( !isDONE ) {
         CGU_FLOAT ErrG = 10000000.f;
         CGU_FLOAT PrjBnd[NUM_ENDPOINTS];
-        ALIGN_16 CGU_FLOAT PreMRep[BLOCK_SIZE_4X4];
+        CGU_FLOAT ALIGN_16 PreMRep[BLOCK_SIZE_4X4];
         for(j =0; j < 3; j++)
             LineDir[j] = LineDir0[j];
 
@@ -2580,41 +2691,20 @@ CMP_STATIC bool cpu_CompressRGBBlockX(  CMP_OUT CGU_FLOAT  _RsltRmpPnts[NUM_CHAN
             }
 
             // scale first approximation of end points
-            for(k = 0; k <2; k++)
-                PrjBnd[k] = (PrjBnd[k] - Scl[0]) * overScl;
-
-            CGU_FLOAT StepErr = MAX_ERROR;
-
-            // search step
-            static const CGU_FLOAT searchStep = 0.025f;
-
-            // low Start/End; high Start/End
-            const CGU_FLOAT lowStartEnd  = (PrjBnd[0] - 2.f * searchStep > 0.f) ?  PrjBnd[0] - 2.f * searchStep : 0.f;
-            const CGU_FLOAT highStartEnd = (PrjBnd[1] + 2.f * searchStep < 1.f) ?  PrjBnd[1] + 2.f * searchStep : 1.f;
+            PrjBnd[0] = (PrjBnd[0] - Scl[0]) * overScl;
+            PrjBnd[1] = (PrjBnd[1] - Scl[0]) * overScl;
 
             // find the best endpoints
             CGU_FLOAT Pos[NUM_ENDPOINTS];
-            CGU_FLOAT lowPosStep, highPosStep;
-            CGU_FLOAT err;
-
-            int l, h;
-            for(l = 0, lowPosStep = lowStartEnd; l < 8; l++, lowPosStep += searchStep) {
-                for(h = 0, highPosStep = highStartEnd; h < 8; h++, highPosStep -= searchStep) {
-                    // compute an error for the current pair of end points.
-                    err = cpu_RampSrchW(Prj, PrjErr, PreMRep, StepErr, lowPosStep, highPosStep, dwUniqueColors, dwNumPoints);
-
-                    if(err < StepErr) {
-                        // save better result
-                        StepErr = err;
-                        Pos[0] = lowPosStep;
-                        Pos[1] = highPosStep;
-                    }
-                }
-            }
+#if defined(ASPM_GPU)
+            CGU_FLOAT StepErr = _cpu_bc1ComputeBestEndpoints(Pos, PrjBnd, Prj, PrjErr, PreMRep, dwUniqueColors, dwNumPoints);
+#else
+            CGU_FLOAT StepErr = cpu_bc1ComputeBestEndpoints(Pos, PrjBnd, Prj, PrjErr, PreMRep, dwUniqueColors, dwNumPoints);
+#endif
 
             // inverse the scaling
-            for(k = 0; k < 2; k++)
-                Pos[k] = Pos[k] * (Scl[1] - Scl[0])+ Scl[0];
+            Pos[0] = Pos[0] * (Scl[1] - Scl[0])+ Scl[0];
+            Pos[1] = Pos[1] * (Scl[1] - Scl[0])+ Scl[0];
 
             // did we find somthing better from the previous run?
             if(StepErr + 0.001 < ErrG) {
@@ -2644,7 +2734,7 @@ CMP_STATIC bool cpu_CompressRGBBlockX(  CMP_OUT CGU_FLOAT  _RsltRmpPnts[NUM_CHAN
                     else if(Prj0[i] -  Pos[1] >= 0)
                         RmpIndxs[i] = (CGU_FLOAT)(dwNumPoints - 1);
                     else
-                        RmpIndxs[i] = floor((del + step_h) * rstep);
+                        RmpIndxs[i] = cmp_floor((del + step_h) * rstep);
                     // shift and normalization
                     RmpIndxs[i] = (RmpIndxs[i] - indxAvrg) * overBlkTp;
                 }
@@ -2731,8 +2821,8 @@ CMP_STATIC CGU_FLOAT cpu_CompRGBBlock32(CGU_UINT32  block_32[16],
                                       bool        _bUseAlpha,
                                       CGU_UINT8   _nAlphaThreshold)
 {
-    ALIGN_16 CGU_FLOAT Rpt[BLOCK_SIZE_4X4];
-    ALIGN_16 CGU_FLOAT BlkIn[BLOCK_SIZE_4X4][NUM_CHANNELS];
+    CGU_FLOAT ALIGN_16 Rpt[BLOCK_SIZE_4X4];
+    CGU_FLOAT ALIGN_16 BlkIn[BLOCK_SIZE_4X4][NUM_CHANNELS];
     CGU_UINT32 mx;
     for (mx=0; mx < BLOCK_SIZE_4X4; mx++) {
         Rpt[mx] = 0;
@@ -2885,8 +2975,8 @@ CMP_STATIC CGU_Vec2ui cpu_CompRGBBlock(CMP_IN CGU_Vec4uc bgraBlock[BLOCK_SIZE_4X
                                        CMP_IN CMP_BC15Options BC15Options,
                                        CMP_INOUT CGU_FLOAT CMP_REFINOUT err)
 {
-    CGU_Vec2ui  cmpBlock         = {0U,0U};
-    CGU_FLOAT   pfChannelWeights[3]     = {1.0f,1.0f,1.0f};
+    CGU_Vec2ui  cmpBlock = {0U,0U};
+    CGU_FLOAT   pfChannelWeights[3] = {1.0f,1.0f,1.0f};
     CGU_UINT8   nEndpoints[2][3][2];
     CGU_UINT8   nIndices[2][BLOCK_SIZE_4X4]; 
     CGU_UINT32  compressedBlock[2] = {0,0};
@@ -2987,7 +3077,7 @@ CMP_STATIC CGU_FLOAT cgu_RampSrchW( CGU_FLOAT  Prj[BLOCK_SIZE_4X4],
         else if (Prj[i] - highPosStep >= 0)
             v = highPosStep;
         else
-            v = floor((del + step_h) * rstep) * step + lowPosStep;
+            v = cmp_floor((del + step_h) * rstep) * step + lowPosStep;
 
         // And accumulate the error
         CGU_FLOAT d = (Prj[i] - v);
@@ -3149,8 +3239,6 @@ CMP_STATIC CGU_Vec2ui CompressBlockBC1_NORMALIZED(CMP_IN CGU_Vec4f src_imageNorm
 {
     bool usingMaxQualityOnly = false;
 
-
-
 #ifndef ASPM_GPU
     if (BC15Options.m_fquality > 0.75) 
           usingMaxQualityOnly = true;
@@ -3262,7 +3350,9 @@ CMP_STATIC CGU_Vec2ui CompressBlockBC1_NORMALIZED(CMP_IN CGU_Vec4f src_imageNorm
     //=====================================
 #ifndef ASPM_GPU
     cmpBlockTemp = cpu_CompRGBBlock(pixelsBGRA,BC15Options,CompErrTemp);
+
     CompErrTemp  = cgu_RGBABlockErrorLinear(pixels, cmpBlockTemp);
+
     if (CompErr > CompErrTemp) {
         CompErr  = CompErrTemp;
         cmpBlock = cmpBlockTemp;

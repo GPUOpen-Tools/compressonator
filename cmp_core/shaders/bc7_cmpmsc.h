@@ -722,7 +722,7 @@ INLINE CGV_FLOAT cmp_GetRamp(CMP_IN CGU_INT index_bits,  // ramp bits Valid rang
     CGU_INT   e1    = expand_epocode2(p1, bits);
     CGU_INT   e2    = expand_epocode2(p2, bits);
     CGV_FLOAT ramp  = cmp_rampI[index_bits - 2][index] / 64.0F;
-    CGV_FLOAT rampf = floor(e1 + ramp * (e2 - e1) + 0.5F);
+    CGV_FLOAT rampf = cmp_floor(e1 + ramp * (e2 - e1) + 0.5F);
     return rampf;
 }
 
@@ -821,7 +821,7 @@ void old_init_BC7ramps()
                     for (index = 0; index < (1 << clogBC7); index++)
                     {
                         CGV_INT floatf =
-                            floor((CGV_FLOAT)BC7EncodeRamps2.ep_d[BTT2(bits)][p1] +
+                            cmp_floor((CGV_FLOAT)BC7EncodeRamps2.ep_d[BTT2(bits)][p1] +
                                   rampWeights2[clogBC7][index] * (CGV_FLOAT)((BC7EncodeRamps2.ep_d[BTT2(bits)][p2] - BC7EncodeRamps2.ep_d[BTT2(bits)][p1])) + 0.5F);
                         BC7EncodeRamps2.sp_idx[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16 * 2) + (BTT2(bits) * 256 * 2 * 2 * 16 * 2) + (floatf * 2 * 2 * 16 * 2) +
                                               ((p1 & 0x1) * 2 * 16 * 2) + ((p2 & 0x1) * 16 * 2) + (index * 2) + 0] = p1;
@@ -1925,7 +1925,7 @@ void cmp_block_index(CMP_INOUT CGU_UINT32 index_out[16],
     for (CGU_UINT32 idx = 0; idx <= numEntries; idx++)
     {
         image_v[idx]   = image_projected[idx] * image_s;
-        image_z[idx]   = floor(image_v[idx] + 0.5F - projected_high * image_s);
+        image_z[idx]   = cmp_floor(image_v[idx] + 0.5F - projected_high * image_s);
         index_out[idx] = (CGV_UINT32)image_z[idx];
     }
 
@@ -2146,11 +2146,11 @@ INLINE void GetClusterMean2(CMP_INOUT CGV_Vec4f image_cluster_mean[16],
         CGU_UINT32 icmp = i_comp[i];
         if (i_cnt[icmp] != 0)
         {
-            image_cluster_mean[icmp].x = (CGV_FLOAT)floor((image_cluster_mean[icmp].x / (CGV_FLOAT)i_cnt[icmp]) + 0.5F);
-            image_cluster_mean[icmp].y = (CGV_FLOAT)floor((image_cluster_mean[icmp].y / (CGV_FLOAT)i_cnt[icmp]) + 0.5F);
-            image_cluster_mean[icmp].z = (CGV_FLOAT)floor((image_cluster_mean[icmp].z / (CGV_FLOAT)i_cnt[icmp]) + 0.5F);
+            image_cluster_mean[icmp].x = (CGV_FLOAT)cmp_floor((image_cluster_mean[icmp].x / (CGV_FLOAT)i_cnt[icmp]) + 0.5F);
+            image_cluster_mean[icmp].y = (CGV_FLOAT)cmp_floor((image_cluster_mean[icmp].y / (CGV_FLOAT)i_cnt[icmp]) + 0.5F);
+            image_cluster_mean[icmp].z = (CGV_FLOAT)cmp_floor((image_cluster_mean[icmp].z / (CGV_FLOAT)i_cnt[icmp]) + 0.5F);
             if (channels3or4 == 4)
-                image_cluster_mean[icmp].w = (CGV_FLOAT)floor((image_cluster_mean[icmp].w / (CGV_FLOAT)i_cnt[icmp]) + 0.5F);
+                image_cluster_mean[icmp].w = (CGV_FLOAT)cmp_floor((image_cluster_mean[icmp].w / (CGV_FLOAT)i_cnt[icmp]) + 0.5F);
             else
                 image_cluster_mean[icmp].w = 0.0f;
         }
@@ -2409,7 +2409,7 @@ void cmp_GetProjectedIndex(CMP_INOUT CGU_UINT8 projected_index_out[16],  //outpu
     for (i = 0; i < numEntries; i++)
     {
         image_v[i]             = image_projected[i] * image_s;
-        image_z[i]             = floor(image_v[i] + 0.5F - image_min * image_s);
+        image_z[i]             = cmp_floor(image_v[i] + 0.5F - image_min * image_s);
         projected_index_out[i] = (CGU_UINT8)image_z[i];
 
         what[i].image = image_v[i] - image_z[i] - image_min * image_s;
@@ -2845,7 +2845,7 @@ CGV_FLOAT cmp_quant_solid_color(CMP_INOUT CGU_UINT32 index_out[16],
                         // B
                         CGU_INT image_tf;
                         CGU_INT image_tc;
-                        image_tf = (CGU_INT)floor(image_src[0][ch1]);
+                        image_tf = (CGU_INT)cmp_floor(image_src[0][ch1]);
                         image_tc = (CGU_INT)ceil(image_src[0][ch1]);
 #ifndef ASPM_GPU
 #ifdef USE_NEW_SP_ERR_IDX
@@ -2856,7 +2856,7 @@ CGV_FLOAT cmp_quant_solid_color(CMP_INOUT CGU_UINT32 index_out[16],
                         else if (err_tf < err_tc)
                             image_tcr[ch1] = image_tf;
                         else
-                            image_tcr[ch1] = (CGV_INT)floor(image_src[ch1][COMP_RED] + 0.5F);
+                            image_tcr[ch1] = (CGV_INT)cmp_floor(image_src[ch1][COMP_RED] + 0.5F);
                         
                         //===============================
                         // Refine this for better quality!
@@ -2876,7 +2876,7 @@ CGV_FLOAT cmp_quant_solid_color(CMP_INOUT CGU_UINT32 index_out[16],
                         }
 #endif
 #else
-                        image_tcr[ch1] = (CGU_INT)floor(image_src[0][ch1] + 0.5F);
+                        image_tcr[ch1] = (CGU_INT)cmp_floor(image_src[0][ch1] + 0.5F);
                         error_ta       = 0;
                         t1o[ch1]       = t1;
                         t2o[ch1]       = t2;
@@ -3594,7 +3594,7 @@ CGV_FLOAT cmp_process_mode(CMP_INOUT CGU_UINT32 best_cmp_out[5], CMP_IN CGU_Vec4
     // Sort the results
     cmp_sortPartitionProjection(storedError, sortedPartition, 64);  // 64 partitions
 
-    CGU_UINT8 numShakeAttempts = cmp_max8(1, cmp_min8((CGU_UINT8)floor(8 * quality + 0.5), 64));  // 64 partitions
+    CGU_UINT8 numShakeAttempts = cmp_max8(1, cmp_min8((CGU_UINT8)cmp_floor(8 * quality + 0.5), 64));  // 64 partitions
     CGV_FLOAT err_best         = CMP_FLOAT_MAX;
 
     // Now do the endpoint shaking

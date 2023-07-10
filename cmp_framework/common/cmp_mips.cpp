@@ -121,7 +121,7 @@ CMP_INT CMP_API CMP_CalcMinMipSize(CMP_INT nHeight, CMP_INT nWidth, CMP_INT Mips
 CMP_INT CMP_API CMP_CalcMaxMipLevel(CMP_INT nHeight, CMP_INT nWidth, CMP_BOOL bForGPU)
 {
     CMP_INT MaxMipLevel = 1;
-    while (MaxMipLevel < MAX_MIPLEVEL_SUPPORTED && nWidth > 1 && nHeight > 1)
+    while (MaxMipLevel < MAX_MIPLEVEL_SUPPORTED && (nWidth > 1 || nHeight > 1))
     {
         nWidth  = CMP_MAX(nWidth >> 1, 1);
         nHeight = CMP_MAX(nHeight >> 1, 1);
@@ -884,7 +884,7 @@ int CMP_CMIPS::GetMaxMipLevels(int nWidth, int nHeight, int nDepth)
     {
         maxMipLevels++;
 
-        if (nWidth == 1 || nHeight == 1)
+        if (nWidth == 1 && nHeight == 1)
             break;
 
         //div by 2

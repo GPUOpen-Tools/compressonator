@@ -7,7 +7,7 @@
     <ClCompile Include="..\Compute_GpuHW.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\query_timer.cpp">
+    <ClCompile Include="..\..\..\Common\cpu_timing.cpp">
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Common\TC_PluginInternal.cpp">
@@ -24,7 +24,7 @@
     <ClInclude Include="..\Compute_GpuHW.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\query_timer.h">
+    <ClInclude Include="..\..\..\Common\cpu_timing.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Common\TC_PluginAPI.h">

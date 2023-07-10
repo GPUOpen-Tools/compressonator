@@ -17,11 +17,11 @@ DestroyOptionsBC5
 DestroyOptionsBC6
 DestroyOptionsBC7
 
-SetDecodeChannelMapping
-
 SetChannelWeightsBC1
 SetChannelWeightsBC2
 SetChannelWeightsBC3
+
+SetDecodeChannelMapping
 
 SetQualityBC1
 SetQualityBC2
@@ -32,12 +32,31 @@ SetQualityBC6
 SetQualityBC7
 
 SetAlphaThresholdBC1
+SetRefineStepsBC1
 
 SetMaskBC6
 SetMaskBC7
 
-SetErrorThresholdBC7
 SetAlphaOptionsBC7
+SetErrorThresholdBC7
+
+SetSrgbBC1
+SetSrgbBC2
+SetSrgbBC3
+
+SetGammaBC1
+SetGammaBC2
+SetGammaBC3
+
+SetSignedBC6
+
+EnableSSE4
+EnableAVX2
+EnableAVX512
+
+DisableSIMD
+
+GetEnabledSIMDExtension
 
 CompressBlockBC1
 CompressBlockBC2

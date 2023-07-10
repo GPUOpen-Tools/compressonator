@@ -19,29 +19,9 @@ del  Makefile
 rmdir /s  /q bin
 rmdir /s  /q lib
 
-IF EXIST %CurrDir%\build (
-cd build
-rmdir  /s /q  applications
-rmdir  /s /q  bin
-rmdir  /s /q  Cauldron_Common.dir
-rmdir  /s /q  Cauldron_DX12.dir
-rmdir  /s /q  cmp_compressonatorlib
-rmdir  /s /q  cmp_core
-rmdir  /s /q  cmp_framework
-rmdir  /s /q  examples
-rmdir  /s /q  external
-rmdir  /s /q  lib
-rmdir  /s /q  x64
-rmdir  /s /q  extern_brotlig-prefix
-rmdir  /s /q  extern_glfw-prefix
-del  /q CPackConfig.cmake
-del  /q CPackSourceConfig.cmake
-del  /s *.vcxproj
-del  /s *.filters
-del  /s *.sln
-del  /s *.cpp
-del  /s *.vs
-cd %CurrDir
+IF EXIST %CurrDir%\build\bin (
+    rmdir /s /q %CurrDir%\build\bin
+    cd %CurrDir
 )
 
 cd cmp_core/shaders/
@@ -52,9 +32,25 @@ FOR /d /r . %%d IN (CMakeFiles) DO @IF EXIST "%%d" rd /s /q "%%d"
 FOR /d /r . %%d IN (*_autogen) DO @IF EXIST "%%d" rd /s /q "%%d"
 
 REM Extern KTX folder cleanup
-cd ../common/lib/ext/ktx
-rmdir  /s /q  bin
-rmdir  /s /q  build
-rmdir  /s /q  src
-rmdir  /s /q  tmp
-cd %CurrDir%
+IF EXIST %CurrDir%\..\common\lib\ext\ktx (
+    cd ../common/lib/ext/ktx
+    rmdir  /s /q  bin
+    rmdir  /s /q  build
+    rmdir  /s /q  src
+    rmdir  /s /q  tmp
+    cd %CurrDir%
+)
+
+REM Extern Brotli-G folder cleanup
+IF EXIST %CurrDir%\..\common\lib\ext\brotlig (
+    cd ../common/lib/ext/brotlig
+    rmdir  /s /q  build
+    cd %CurrDir%
+)
+
+REM Extern GLFW folder cleanup
+IF EXIST %CurrDir%\..\common\lib\ext\glfw (
+    cd ../common/lib/ext/glfw
+    rmdir  /s /q  build
+    cd %CurrDir%
+)

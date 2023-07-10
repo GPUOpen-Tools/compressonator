@@ -48,8 +48,8 @@ file(GLOB_RECURSE APP_SOURCES
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/plugininterface.h
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/pluginmanager.h
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/pluginmanager.cpp
-               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/query_timer.h
-               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/query_timer.cpp
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cpu_timing.h
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cpu_timing.cpp
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/textureio.h
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/textureio.cpp
 )
@@ -149,6 +149,7 @@ target_include_directories(CompressonatorGUI-bin PRIVATE
                           ${PROJECT_SOURCE_DIR}/cmp_core/shaders
                           ${PROJECT_SOURCE_DIR}/cmp_core/source
                           ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_math
+                          ${PROJECT_SOURCE_DIR}/external/stb
                           ${PROJECT_SOURCE_DIR}/../common/lib/ext/glm
                           ${PROJECT_EXTERNAL_LIBDIR}/rapidxml
                           ${OpenCV_INCLUDE_DIRS}

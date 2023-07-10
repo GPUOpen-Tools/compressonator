@@ -5,7 +5,7 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 +------------------------+----------------------------------------------+
 |Mip Map Options:        |                                              |
 +========================+==============================================+
-| -GenGPUMipMap          | When encoding with GPU this flag will enable |
+| -GenGPUMipMaps         | When encoding with GPU this flag will enable |
 |                        | mip map level generation using GPU HW        |
 +------------------------+----------------------------------------------+
 | -\mipsize    <size>    | The size in pixels used to determine         |
@@ -18,6 +18,9 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 +------------------------+----------------------------------------------+
 | -UseSRGBFrames         | When encoding with GPU,  GL_FRAMEBUFFER_SRGB |
 |                        | will be enabled else use GL_FRAMEBUFFER      |
++------------------------+----------------------------------------------+
+| -\FilterGamma  <value> | Set a gamma correction value that will be    |
+|                        | applied after mipmap generation              |
 +------------------------+----------------------------------------------+
 
 
@@ -64,6 +67,21 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 |-\fx  <ext>            | Specifies the file extension to use for output files.      |
 |                       | Supported <ext> are any of the following values:           |
 |                       | DDS,KTX,TGA,EXR,PNG,BMP,HDR,JPG,TIFF,PPM,BRLG              |
++-----------------------+------------------------------------------------------------+
+|-\InExposure  <value>  | Set exposure tonemap property for float to non-float       |
+|                       | compression                                                |
++-----------------------+------------------------------------------------------------+
+|-\InDefog  <value>     | Set defog tonemap property for float to non-float          |
+|                       | compression                                                |
++-----------------------+------------------------------------------------------------+
+|-\InKneeLow  <value>   | Set knee low tonemap property for float to non-float       |
+|                       | compression                                                |
++-----------------------+------------------------------------------------------------+
+|-\InKneeHigh  <value>  | Set knee high tonemap property for float to non-float      |
+|                       | compression                                                |
++-----------------------+------------------------------------------------------------+
+|-\Gamma  <value>       | Set gamma tonemap property for float to non-float          |
+|                       | compression                                                |
 +-----------------------+------------------------------------------------------------+
 
 +-----------------------+----------------------------------------------------------+

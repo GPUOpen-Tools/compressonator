@@ -42,15 +42,6 @@
 #include "qtgroupboxpropertybrowser.h"
 
 // As defined by D3DX9
-#define CMP_D3DX_FILTER_NONE 1
-#define CMP_D3DX_FILTER_POINT 2
-#define CMP_D3DX_FILTER_LINEAR 3
-#define CMP_D3DX_FILTER_TRIANGLE 4
-#define CMP_D3DX_FILTER_BOX 5
-
-#define CMP_D3DX_FILTER_MIRROR (7 << 16)
-#define CMP_D3DX_FILTER_DITHER (1 << 19)
-#define CMP_D3DX_FILTER_SRGB (3 << 21)
 
 class CGenMips : public QWidget
 {

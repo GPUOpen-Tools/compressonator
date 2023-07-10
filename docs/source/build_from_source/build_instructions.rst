@@ -83,27 +83,28 @@ folder.
 Generating Project Files
 --------------------------
 
-The next step is to use CMake to generate the project files. But before you can do that you need to set a an environment variable.
+The next step is to use CMake to generate the project files. But before you can do that a few environment variables need to be set.
 
-The Compressonator CMake files expect an environment variable named **VULKAN_SDK** to be set that points to the installed location of the
-Vulkan SDK. 
+There are a few libraries that Compressonator expects the user to install on their own and then tell Compressonator where to find them. Those libraries are: the Vulkan SDK, Qt5, and OpenCV. To let Compressonator know where to find these libraries we use environment variables. The variables are **VULKAN_DIR**, **QT_DIR**, and **OPENCV_DIR** respectively.
+
+They can be set by doing running commands like the following:
 
 *Windows* 
 
 .. code-block:: console
 
-    set VULKAN_SDK=/opt/VulkanSDK/1.2.141.2/
+    set VULKAN_DIR=C:\VulkanSDK\1.2.141.2\
+    set QT_DIR=C:\Qt\Qt5.12.6\5.12.6\msvc2017_64\
+    set OPENCV_DIR=C:\opencv\
 
 *Linux*
 
 .. code-block:: console
 
-    export VULKAN_SDK=/opt/VulkanSDK/1.2.141.2/
+    export VULKAN_DIR=/opt/VulkanSDK/1.2.141.2/
+    export QT_DIR=/opt/Qt/Qt5.9.2/5.9.2/gcc_64/
+    export OPENCV_DIR=/opt/opencv/
 
-Additionally, you will need to pass in the installed location of Qt to the CMake command through the variable **QT_PACKAGE_ROOT**
-
-Finally, it should be noted that Compressonator currently assumes that OpenCV is installed on your machine in its default location,
-"C:/opencv" on Windows.
 
 With all of that said, you are now ready to run CMake and generate the project files. An example of the CMake command to run on both
 Windows and Linux can be found below (run from the root compressonator folder that contains the CMakeLists.txt file):
@@ -112,7 +113,7 @@ Windows and Linux can be found below (run from the root compressonator folder th
 
 .. code-block:: console
 
-    cmake -DQT_PACKAGE_ROOT=C:\\Qt\\Qt5.12.6\\5.12.6\\msvc2017_64\\ -G "Visual Studio 16 2019" .
+    cmake -G "Visual Studio 16 2019" .
 
 If you are instead using Visual Studio 17 2022 (or newer) you will need to change the value passed to the -G option, you will also need
 to explicitly set the toolset version used to v142 via the -T option ("-T v142").
@@ -121,7 +122,7 @@ to explicitly set the toolset version used to v142 via the -T option ("-T v142")
 
 .. code-block:: console
 
-    cmake -DQT_PACKAGE_ROOT=/opt/Qt/Qt5.9.2/5.9.2/gcc_64 .
+    cmake .
 
 Building Compressonator
 --------------------------

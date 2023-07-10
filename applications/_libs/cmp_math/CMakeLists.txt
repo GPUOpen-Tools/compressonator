@@ -11,8 +11,8 @@ target_sources(CMP_Math PRIVATE
 
     cmp_math_common.cpp
     cmp_math_common.h
-    cmp_math_cpuid.cpp
-    cmp_math_cpuid.h
+    cpu_extensions.cpp
+    cpu_extensions.h
     jml.h
     jmlfuncs.cpp
     jmlfuncs.h

@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2023 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -75,14 +75,14 @@ extern float sse_sqrtf(  float *pIn );
 //==================================
 // User interfaces
 //==================================
-void cmp_autodected_cpufeatures(CMP_MATH_BYTE set);
+void cmp_autodetected_cpufeatures(CMP_MATH_BYTE set);
 
-extern float(*cmp_clampf2 )(float value, float minval, float maxval);
-extern float(*cmp_lerp2  )(CMP_Vec4uc C1, CMP_Vec4uc CA, CMP_Vec4uc CB, CMP_Vec4uc C2, CMP_MATH_BYTE *encode1, CMP_MATH_BYTE *encode2);
-extern float(*cmp_maxf2   )(float l1, float r1);
-extern float(*cmp_minf2   )(float l1, float r1);
-extern float(*cmp_rsqf2   )(float *);
-extern float(*cmp_sqrtf2  )(float *);
+extern float(*cmp_clampf2)(float value, float minval, float maxval);
+extern float(*cmp_lerp2)(CMP_Vec4uc C1, CMP_Vec4uc CA, CMP_Vec4uc CB, CMP_Vec4uc C2, CMP_MATH_BYTE *encode1, CMP_MATH_BYTE *encode2);
+extern float(*cmp_maxf2)(float l1, float r1);
+extern float(*cmp_minf2)(float l1, float r1);
+extern float(*cmp_rsqf2)(float *);
+extern float(*cmp_sqrtf2)(float *);
 
 #endif
 

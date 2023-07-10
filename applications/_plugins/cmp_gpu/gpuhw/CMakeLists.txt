@@ -20,6 +20,7 @@ target_include_directories(EncodeWith_GPU PRIVATE
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common  # tc_pluginapi.h
     ${PROJECT_SOURCE_DIR}/external/glad/include/
     ${PROJECT_SOURCE_DIR}/external/glad/include/glad
+    ${PROJECT_SOURCE_DIR}/external/stb
 )
 
 target_link_libraries(EncodeWith_GPU 

@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright (c) 2018-2021    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2018-2023    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -516,7 +516,7 @@ static CGU_FLOAT cmp_getRampErr(CGU_FLOAT  Prj[BLOCK_SIZE_4X4],
         else if (Prj[i] - highPosStep >= 0)
             v = highPosStep;
         else
-            v = floor((del + step_h) * rstep) * step + lowPosStep;
+            v = cmp_floor((del + step_h) * rstep) * step + lowPosStep;
 
         // And accumulate the error
         CGU_FLOAT d = (Prj[i] - v);
@@ -579,7 +579,7 @@ static CGU_FLOAT cmp_getRampError(CGU_FLOAT _Blk[BLOCK_SIZE_4X4],
         else if (_Blk[i] - _max_ex >= 0)
             v = _max_ex;
         else
-            v = (floor((del + step_h) * rstep) * step) + _min_ex;
+            v = (cmp_floor((del + step_h) * rstep) * step) + _min_ex;
 
         // And accumulate the error
         CGU_FLOAT del2 = (_Blk[i] - v);
@@ -760,11 +760,11 @@ static CGU_Vec2f cmp_getLinearEndPoints(CGU_FLOAT _Blk[BLOCK_SIZE_4X4], CMP_IN C
         // if number of unique colors is less or eq 2, we've done
         if (dwUniqueValues <= 2)
         {
-            Ramp[0] = floor(afUniqueValues[0] * 255.0f + 0.5f);
+            Ramp[0] = cmp_floor(afUniqueValues[0] * 255.0f + 0.5f);
             if (dwUniqueValues == 1)
                 Ramp[1] = Ramp[0] + 1.f;
             else
-                Ramp[1] = floor(afUniqueValues[1] * 255.0f + 0.5f);
+                Ramp[1] = cmp_floor(afUniqueValues[1] * 255.0f + 0.5f);
             requiresCalculation = false;
         }
     }  // Ramp not fixed
@@ -827,8 +827,8 @@ static CGU_Vec2f cmp_getLinearEndPoints(CGU_FLOAT _Blk[BLOCK_SIZE_4X4], CMP_IN C
         max_ex *= 255.0f;
         min_ex *= 255.0f;
 
-        Ramp[0] = floor(min_ex + 0.5f);
-        Ramp[1] = floor(max_ex + 0.5f);
+        Ramp[0] = cmp_floor(min_ex + 0.5f);
+        Ramp[1] = cmp_floor(max_ex + 0.5f);
     }
 
     // Ensure that the two endpoints are not the same
@@ -949,7 +949,7 @@ static CGU_Vec2ui cmp_getBlockPackedIndices(CGU_Vec2f RampMinMax, CGU_FLOAT alph
             // FixedRamp
             for (i = 0; i < CMP_ALPHA_RAMP; i++)
             {
-                alpha[i] = floor(alpha[i] + 0.5f);
+                alpha[i] = cmp_floor(alpha[i] + 0.5f);
             }
         }  // GetRmp1
 
@@ -1494,7 +1494,7 @@ static void cmp_ProcessColors(CMP_INOUT CGU_Vec3f CMP_PTRINOUT colorMin,
     switch (setopt)
     {
     case 0:  // Use Min Max processing
-        MinColorScaled        = floor(MinColorScaled * scale);
+        MinColorScaled        = cmp_floorVec3f(MinColorScaled * scale);
         MaxColorScaled        = ceil(MaxColorScaled * scale);
         CMP_PTRINOUT colorMin = MinColorScaled / scale;
         CMP_PTRINOUT colorMax = MaxColorScaled / scale;
@@ -1798,6 +1798,43 @@ static float CMP_RGBBlockError(const CGU_Vec3f src_rgbBlock[BLOCK_SIZE_4X4], con
 
     // MSE for 16 texels
     return (serr.x + serr.y + serr.z) / 48.0f;
+}
+
+static CGU_FLOAT cpu_bcnComputeBestEndpoints(CGU_FLOAT endpointsOut[NUM_ENDPOINTS], CGU_FLOAT endpointsIn[NUM_ENDPOINTS], 
+                                            CGU_FLOAT prj[BLOCK_SIZE_4X4], CGU_FLOAT prjError[BLOCK_SIZE_4X4], CGU_FLOAT preMRep[BLOCK_SIZE_4X4],
+                                            int numColours)
+{
+    CGU_FLOAT minError = MAX_ERROR;
+
+    const CGU_FLOAT searchStep = 0.025f;
+
+    const CGU_FLOAT lowStart = (endpointsIn[0] - 2.0f*searchStep > 0.0f) ?  endpointsIn[0] - 2.0f*searchStep : 0.0f;
+    const CGU_FLOAT highStart = (endpointsIn[1] + 2.0f*searchStep < 1.0f) ?  endpointsIn[1] + 2.0f*searchStep : 1.0f;
+
+    CGU_FLOAT lowStep = lowStart;
+    CGU_FLOAT highStep = highStart;
+
+    for(int low = 0; low < 8; ++low)
+    {
+        for(int high = 0; high < 8; ++high)
+        {
+            // compute an error for the current pair of end points.
+            CGU_FLOAT error = cmp_getRampErr(prj, prjError, preMRep, minError, lowStep, highStep, numColours);
+
+            if(error < minError) {
+                // save better result
+                minError = error;
+                endpointsOut[0] = lowStep;
+                endpointsOut[1] = highStep;
+            }
+
+            highStep -= searchStep;
+        }
+
+        lowStep += searchStep;
+    }
+
+    return minError;
 }
 
 // Processing input source 0..1.0f)
@@ -2269,8 +2306,6 @@ static CMP_EndPoints CompressRGBBlock_Slow(CGU_Vec3f  BlkInBGRf_UV[BLOCK_SIZE_4X
         // GCC is being an awful being when it comes to goto-jumps.
         // So please bear with this.
         CGU_FLOAT ErrG = 10000000.f;
-        CGU_FLOAT PrjBnd0;
-        CGU_FLOAT PrjBnd1;
         ALIGN_16 CGU_FLOAT PreMRep[BLOCK_SIZE_4X4];
 
         LineDir.x = LineDir0[0];
@@ -2303,8 +2338,10 @@ static CMP_EndPoints CompressRGBBlock_Slow(CGU_Vec3f  BlkInBGRf_UV[BLOCK_SIZE_4X
             // The distance along v is therefore (R-P).v / (v.v)
             // (v.v) is 1 if v is a unit vector.
             //
-            PrjBnd0 = 1000.0f;
-            PrjBnd1 = -1000.0f;
+            CGU_FLOAT PrjBnd[NUM_ENDPOINTS];
+            PrjBnd[0] = 1000.0f;
+            PrjBnd[1] = -1000.0f;
+            
             for (i = 0; i < BLOCK_SIZE_4X4; i++)
                 Prj0[i] = Prj[i] = PrjErr[i] = PreMRep[i] = 0.f;
 
@@ -2312,8 +2349,8 @@ static CMP_EndPoints CompressRGBBlock_Slow(CGU_Vec3f  BlkInBGRf_UV[BLOCK_SIZE_4X
             {
                 Prj0[i] = Prj[i] = dot(BlkSh[i], LineDir);
                 PrjErr[i]        = dot(BlkSh[i] - LineDir * Prj[i], BlkSh[i] - LineDir * Prj[i]);
-                PrjBnd0          = min(PrjBnd0, Prj[i]);
-                PrjBnd1          = max(PrjBnd1, Prj[i]);
+                PrjBnd[0]          = min(PrjBnd[0], Prj[i]);
+                PrjBnd[1]          = max(PrjBnd[1], Prj[i]);
             }
 
             //  2. Run 1 dimensional search (see scalar case) to find an (sub) optimal
@@ -2322,8 +2359,8 @@ static CMP_EndPoints CompressRGBBlock_Slow(CGU_Vec3f  BlkInBGRf_UV[BLOCK_SIZE_4X
             // min and max of the search interval
             CGU_FLOAT Scl0;
             CGU_FLOAT Scl1;
-            Scl0 = PrjBnd0 - (PrjBnd1 - PrjBnd0) * 0.125f;
-            Scl1 = PrjBnd1 + (PrjBnd1 - PrjBnd0) * 0.125f;
+            Scl0 = PrjBnd[0] - (PrjBnd[1] - PrjBnd[0]) * 0.125f;
+            Scl1 = PrjBnd[1] + (PrjBnd[1] - PrjBnd[0]) * 0.125f;
 
             // compute scaling factor to scale down the search interval to [0.,1]
             const CGU_FLOAT Scl2    = (Scl1 - Scl0) * (Scl1 - Scl0);
@@ -2338,45 +2375,16 @@ static CMP_EndPoints CompressRGBBlock_Slow(CGU_Vec3f  BlkInBGRf_UV[BLOCK_SIZE_4X
             }
 
             // scale first approximation of end points
-            PrjBnd0 = (PrjBnd0 - Scl0) * overScl;
-            PrjBnd1 = (PrjBnd1 - Scl0) * overScl;
-
-            CGU_FLOAT StepErr = MAX_ERROR;
-
-            // search step
-            CGU_FLOAT searchStep = 0.025f;
-
-            // low Start/End; high Start/End
-            const CGU_FLOAT lowStartEnd  = (PrjBnd0 - 2.f * searchStep > 0.f) ? PrjBnd0 - 2.f * searchStep : 0.f;
-            const CGU_FLOAT highStartEnd = (PrjBnd1 + 2.f * searchStep < 1.f) ? PrjBnd1 + 2.f * searchStep : 1.f;
+            PrjBnd[0] = (PrjBnd[0] - Scl0) * overScl;
+            PrjBnd[1] = (PrjBnd[1] - Scl0) * overScl;
 
             // find the best endpoints
-            CGU_FLOAT Pos0 = 0;
-            CGU_FLOAT Pos1 = 0;
-            CGU_FLOAT lowPosStep, highPosStep;
-            CGU_FLOAT err;
-
-            int l, h;
-            for (l = 0, lowPosStep = lowStartEnd; l < 8; l++, lowPosStep += searchStep)
-            {
-                for (h = 0, highPosStep = highStartEnd; h < 8; h++, highPosStep -= searchStep)
-                {
-                    // compute an error for the current pair of end points.
-                    err = cmp_getRampErr(Prj, PrjErr, PreMRep, StepErr, lowPosStep, highPosStep, dwUniqueColors);
-
-                    if (err < StepErr)
-                    {
-                        // save better result
-                        StepErr = err;
-                        Pos0    = lowPosStep;
-                        Pos1    = highPosStep;
-                    }
-                }
-            }
+            CGU_FLOAT Pos[NUM_ENDPOINTS] = {0.0f, 0.0f};
+            CGU_FLOAT StepErr = cpu_bcnComputeBestEndpoints(Pos, PrjBnd, Prj, PrjErr, PreMRep, dwUniqueColors);
 
             // inverse the scaling
-            Pos0 = Pos0 * (Scl1 - Scl0) + Scl0;
-            Pos1 = Pos1 * (Scl1 - Scl0) + Scl0;
+            Pos[0] = Pos[0] * (Scl1 - Scl0) + Scl0;
+            Pos[1] = Pos[1] * (Scl1 - Scl0) + Scl0;
 
             // did we find somthing better from the previous run?
             if (StepErr + 0.001 < ErrG)
@@ -2385,17 +2393,17 @@ static CMP_EndPoints CompressRGBBlock_Slow(CGU_Vec3f  BlkInBGRf_UV[BLOCK_SIZE_4X
                 ErrG     = StepErr;
                 LineDirG = LineDir;
 
-                PosG0.x = Pos0;
-                PosG0.y = Pos0;
-                PosG0.z = Pos0;
-                PosG1.x = Pos1;
-                PosG1.y = Pos1;
-                PosG1.z = Pos1;
+                PosG0.x = Pos[0];
+                PosG0.y = Pos[0];
+                PosG0.z = Pos[0];
+                PosG1.x = Pos[1];
+                PosG1.y = Pos[1];
+                PosG1.z = Pos[1];
 
                 //  3. Compute the vector of indexes (or clusters) for the current
                 //  approximate ramp.
                 // indexes
-                const CGU_FLOAT step      = (Pos1 - Pos0) / 3.0f;  // (dwNumChannels=4 - 1);
+                const CGU_FLOAT step      = (Pos[1] - Pos[0]) / 3.0f;  // (dwNumChannels=4 - 1);
                 const CGU_FLOAT step_h    = step * (CGU_FLOAT)0.5;
                 const CGU_FLOAT rstep     = (CGU_FLOAT)1.0f / step;
                 const CGU_FLOAT overBlkTp = 1.f / 3.0f;  // (dwNumChannels=4 - 1);
@@ -2408,12 +2416,12 @@ static CMP_EndPoints CompressRGBBlock_Slow(CGU_Vec3f  BlkInBGRf_UV[BLOCK_SIZE_4X
                 {
                     CGU_FLOAT del;
                     // CGU_UINT32 n = (CGU_UINT32)((b - _min_ex + (step*0.5f)) * rstep);
-                    if ((del = Prj0[i] - Pos0) <= 0)
+                    if ((del = Prj0[i] - Pos[0]) <= 0)
                         RmpIndxs[i] = 0.f;
-                    else if (Prj0[i] - Pos1 >= 0)
+                    else if (Prj0[i] - Pos[1] >= 0)
                         RmpIndxs[i] = 3.0f;  // (dwNumChannels=4 - 1);
                     else
-                        RmpIndxs[i] = floor((del + step_h) * rstep);
+                        RmpIndxs[i] = cmp_floor((del + step_h) * rstep);
                     // shift and normalization
                     RmpIndxs[i] = (RmpIndxs[i] - indxAvrg) * overBlkTp;
                 }
@@ -2468,56 +2476,56 @@ static CMP_EndPoints CompressRGBBlock_Slow(CGU_Vec3f  BlkInBGRf_UV[BLOCK_SIZE_4X
     {
         // MkRmpOnGrid(inpRmpEndPts, rsltC, _Min, _Max);
 
-        inpRmpEndPts0 = floor(rsltC0);
+        inpRmpEndPts0 = cmp_floorVec3f(rsltC0);
 
         if (inpRmpEndPts0.x <= _Min)
             inpRmpEndPts0.x = _Min;
         else
         {
-            inpRmpEndPts0.x += floor(128.f / Fctrs1.x) - floor(inpRmpEndPts0.x / Fctrs1.x);
+            inpRmpEndPts0.x += cmp_floor(128.f / Fctrs1.x) - cmp_floor(inpRmpEndPts0.x / Fctrs1.x);
             inpRmpEndPts0.x = min(inpRmpEndPts0.x, _Max);
         }
         if (inpRmpEndPts0.y <= _Min)
             inpRmpEndPts0.y = _Min;
         else
         {
-            inpRmpEndPts0.y += floor(128.f / Fctrs1.y) - floor(inpRmpEndPts0.y / Fctrs1.y);
+            inpRmpEndPts0.y += cmp_floor(128.f / Fctrs1.y) - cmp_floor(inpRmpEndPts0.y / Fctrs1.y);
             inpRmpEndPts0.y = min(inpRmpEndPts0.y, _Max);
         }
         if (inpRmpEndPts0.z <= _Min)
             inpRmpEndPts0.z = _Min;
         else
         {
-            inpRmpEndPts0.z += floor(128.f / Fctrs1.z) - floor(inpRmpEndPts0.z / Fctrs1.z);
+            inpRmpEndPts0.z += cmp_floor(128.f / Fctrs1.z) - cmp_floor(inpRmpEndPts0.z / Fctrs1.z);
             inpRmpEndPts0.z = min(inpRmpEndPts0.z, _Max);
         }
 
-        inpRmpEndPts0 = floor(inpRmpEndPts0 / Fctrs0) * Fctrs0;
+        inpRmpEndPts0 = cmp_floorVec3f(inpRmpEndPts0 / Fctrs0) * Fctrs0;
 
-        inpRmpEndPts1 = floor(rsltC1);
+        inpRmpEndPts1 = cmp_floorVec3f(rsltC1);
         if (inpRmpEndPts1.x <= _Min)
             inpRmpEndPts1.x = _Min;
         else
         {
-            inpRmpEndPts1.x += floor(128.f / Fctrs1.x) - floor(inpRmpEndPts1.x / Fctrs1.x);
+            inpRmpEndPts1.x += cmp_floor(128.f / Fctrs1.x) - cmp_floor(inpRmpEndPts1.x / Fctrs1.x);
             inpRmpEndPts1.x = min(inpRmpEndPts1.x, _Max);
         }
         if (inpRmpEndPts1.y <= _Min)
             inpRmpEndPts1.y = _Min;
         else
         {
-            inpRmpEndPts1.y += floor(128.f / Fctrs1.y) - floor(inpRmpEndPts1.y / Fctrs1.y);
+            inpRmpEndPts1.y += cmp_floor(128.f / Fctrs1.y) - cmp_floor(inpRmpEndPts1.y / Fctrs1.y);
             inpRmpEndPts1.y = min(inpRmpEndPts1.y, _Max);
         }
         if (inpRmpEndPts1.z <= _Min)
             inpRmpEndPts1.z = _Min;
         else
         {
-            inpRmpEndPts1.z += floor(128.f / Fctrs1.z) - floor(inpRmpEndPts1.z / Fctrs1.z);
+            inpRmpEndPts1.z += cmp_floor(128.f / Fctrs1.z) - cmp_floor(inpRmpEndPts1.z / Fctrs1.z);
             inpRmpEndPts1.z = min(inpRmpEndPts1.z, _Max);
         }
 
-        inpRmpEndPts1 = floor(inpRmpEndPts1 / Fctrs0) * Fctrs0;
+        inpRmpEndPts1 = cmp_floorVec3f(inpRmpEndPts1 / Fctrs0) * Fctrs0;
     }  // MkRmpOnGrid
 
     CMP_EndPoints EndPoints;
@@ -2538,7 +2546,7 @@ static CGU_Vec2ui CompressBlockBC1_RGBA_Internal(const CGU_Vec3f rgbBlockUVf[BLO
                                                  CGU_BOOL         isSRGB)
 {
     CGU_Vec2ui cmpBlock = {0, 0};
-    CGU_FLOAT  errLQ    = 1e6f;
+    CGU_FLOAT errLQ = 1e6f;
 
     cmpBlock = CompressRGBBlock_FM(rgbBlockUVf, fquality, isSRGB, CMP_REFINOUT errLQ);
 
@@ -2587,8 +2595,9 @@ static CGU_Vec2ui CompressBlockBC1_RGBA_Internal(const CGU_Vec3f rgbBlockUVf[BLO
             G = (CGU_UINT32)(rgbBlock_normal[i].y * 255.0f);
             B = (CGU_UINT32)(rgbBlock_normal[i].z * 255.0f);
 
+            // TODO: This appears to be a bug? I think it should be A = (CGU_UINT32)(BlockA[i] * 255.0f);
             if (dwAlphaThreshold > 0)
-                A = (CGU_UINT32)BlockA[i];
+                A = (CGU_UINT32)(BlockA[i]);
             else
                 A = 255;
 
@@ -2605,7 +2614,7 @@ static CGU_Vec2ui CompressBlockBC1_RGBA_Internal(const CGU_Vec3f rgbBlockUVf[BLO
             // All are colors transparent
             EndPoints.Color0.x = EndPoints.Color0.y = EndPoints.Color0.z = 0.0f;
             EndPoints.Color1.x = EndPoints.Color1.y = EndPoints.Color0.z = 255.0f;
-            nCmpIndices                                                  = 0xFFFFFFFF;
+            nCmpIndices = 0xFFFFFFFF;
         }
         else
         {
@@ -2758,9 +2767,9 @@ static CGU_Vec2ui CompressBlockBC1_RGBA_Internal(const CGU_Vec3f rgbBlockUVf[BLO
 
             {
                 //   ConstantRamp = MkWkRmpPts(InpRmpL, InpRmp);
-                InpRmpL[0] = InpRmp[0] + floor(InpRmp[0] / Fctrs);
+                InpRmpL[0] = InpRmp[0] + cmp_floorVec3f(InpRmp[0] / Fctrs);
                 InpRmpL[0] = cmp_clampVec3f(InpRmpL[0], 0.0f, 255.0f);
-                InpRmpL[1] = InpRmp[1] + floor(InpRmp[1] / Fctrs);
+                InpRmpL[1] = InpRmp[1] + cmp_floorVec3f(InpRmp[1] / Fctrs);
                 InpRmpL[1] = cmp_clampVec3f(InpRmpL[1], 0.0f, 255.0f);
             }  // MkWkRmpPts
 
@@ -2772,8 +2781,8 @@ static CGU_Vec2ui CompressBlockBC1_RGBA_Internal(const CGU_Vec3f rgbBlockUVf[BLO
                 // linear interpolate end points to get the ramp
                 LerpRmp[0] = InpRmpL[0];
                 LerpRmp[3] = InpRmpL[1];
-                LerpRmp[1] = floor((InpRmpL[0] * 2.0f + LerpRmp[3] + offset) / 3.0f);
-                LerpRmp[2] = floor((InpRmpL[0] + LerpRmp[3] * 2.0f + offset) / 3.0f);
+                LerpRmp[1] = cmp_floorVec3f((InpRmpL[0] * 2.0f + LerpRmp[3] + offset) / 3.0f);
+                LerpRmp[2] = cmp_floorVec3f((InpRmpL[0] + LerpRmp[3] * 2.0f + offset) / 3.0f);
             }  // BldRmp
 
             //=========================================================================

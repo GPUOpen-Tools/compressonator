@@ -127,6 +127,11 @@ int CMP_CDECL SetSrgbBC3(void* options,CGU_BOOL sRGB) {
     return CGU_CORE_OK;
 }
 
+int CMP_CDECL SetGammaBC3(void* options, CGU_BOOL sRGB)
+{
+    return SetSrgbBC3(options, sRGB);
+}
+
 void DecompressBC3_Internal(CMP_GLOBAL CGU_UINT8 rgbaBlock[64],
                             const CGU_UINT32 compressedBlock[4],
                             const CMP_BC15Options *BC15options) {

@@ -7,6 +7,7 @@
 *.VC.db
 *.VC.VC.opendb
 *.vs
+*.vscode
 *CMakeLists.txt.user
 *vcxproj.user
 Applications/_Plugins/C3DModel_viewers/glTF_DX12_EX/GeneratedFiles/*
@@ -19,3 +20,18 @@ build-out/*
 docs/build/*
 External/build-out/*
 External/build/*
+external/brotlig/brotlig/build/*
+
+build/bin/*
+build/sdk/bin/*
+build/TEMP/*
+build/Debug*
+build/Release*
+
+*/shaders/compiled/*
+internal/tests/output/*
+internal/tests/testenv/*
+internal/tests/scripts/temp/*
+__pycache__
+*.aps
+transcode_temp.dds

@@ -186,26 +186,30 @@ CodecError CCodec_ATI2N::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& buffer
             if(bUseFixed) {
 #ifdef TEST_CMP_CORE_DECODER
                 DecompressBlockBC5((CMP_BYTE *)&compressedBlock[dwXOffset],alphaBlockR,alphaBlockG);
-                bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, alphaBlockR);
-                bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, alphaBlockG);
                 bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, alphaBlockB);
+                bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, alphaBlockG);
+                bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, alphaBlockR);
                 bufferOut.WriteBlockA(i * 4, j * 4, 4, 4, alphaBlockA);
 #else
                 DecompressAlphaBlock(alphaBlockR, &compressedBlock[dwXOffset]);
                 DecompressAlphaBlock(alphaBlockG, &compressedBlock[dwYOffset]);
-                bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, alphaBlockR);
-                bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, alphaBlockG);
+
+                // we need to write the blue and red channels like this because the internal representation of codec buffers is BGRA, and later in Compressonator
+                // we directly access the byte data to get the final result
                 bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, alphaBlockB);
+                bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, alphaBlockG);
+                bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, alphaBlockR);
                 bufferOut.WriteBlockA(i * 4, j * 4, 4, 4, alphaBlockA);
 #endif
             } else {
                 DecompressAlphaBlock(falphaBlockR, &compressedBlock[dwXOffset]);
                 DecompressAlphaBlock(falphaBlockG, &compressedBlock[dwYOffset]);
-                // Bug Work Arround: This codec buffer is BGRA -> we expect data to be RGBA, the codec buffer is configured
-                // for BGRA and we want output as RGBA...
-                bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, falphaBlockB);
+
+                // we need to write the blue and red channels like this because the internal representation of codec buffers is BGRA, and later in Compressonator
+                // we directly access the byte data to get the final result
+                bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, falphaBlockB);
                 bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, falphaBlockG);
-                bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, falphaBlockR);
+                bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, falphaBlockR);
                 bufferOut.WriteBlockA(i * 4, j * 4, 4, 4, falphaBlockA);
             }
         }
@@ -367,23 +371,27 @@ CodecError CCodec_ATI2N_S::Decompress(CCodecBuffer&       bufferIn,
     {
         for (CMP_DWORD i = 0; i < dwBlocksX; i++)
         {
-               bufferIn.ReadBlock(i * 4, j * 4, compressedBlock, 4);
+            bufferIn.ReadBlock(i * 4, j * 4, compressedBlock, 4);
 
 #ifdef TEST_CMP_CORE_DECODER
-                DecompressBlockBC5((CMP_BYTE*)&compressedBlock[dwXOffset], alphaBlockR, alphaBlockG);
-                bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, alphaBlockR);
-                bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, alphaBlockG);
-                bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, alphaBlockB);
-                bufferOut.WriteBlockA(i * 4, j * 4, 4, 4, alphaBlockA);
+            DecompressBlockBC5((CMP_BYTE*)&compressedBlock[dwXOffset], alphaBlockR, alphaBlockG);
+            // we need to write the blue and red channels like this because the internal representation of codec buffers is BGRA, and later in Compressonator
+            // we directly access the byte data to get the final result
+            bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, alphaBlockB);
+            bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, alphaBlockG);
+            bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, alphaBlockR);
+            bufferOut.WriteBlockA(i * 4, j * 4, 4, 4, alphaBlockA);
 #else
-               DecompressAlphaBlockInt8(alphaBlockR, &compressedBlock[dwXOffset]);
-               DecompressAlphaBlockInt8(alphaBlockG, &compressedBlock[dwYOffset]);
-               bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, alphaBlockR);
-               bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, alphaBlockG);
-               bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, alphaBlockB);
-               bufferOut.WriteBlockA(i * 4, j * 4, 4, 4, alphaBlockA);
+            DecompressAlphaBlockInt8(alphaBlockR, &compressedBlock[dwXOffset]);
+            DecompressAlphaBlockInt8(alphaBlockG, &compressedBlock[dwYOffset]);
+            
+            // we need to write the blue and red channels like this because the internal representation of codec buffers is BGRA, and later in Compressonator
+            // we directly access the byte data to get the final result
+            bufferOut.WriteBlockR(i * 4, j * 4, 4, 4, alphaBlockB);
+            bufferOut.WriteBlockG(i * 4, j * 4, 4, 4, alphaBlockG);
+            bufferOut.WriteBlockB(i * 4, j * 4, 4, 4, alphaBlockR);
+            bufferOut.WriteBlockA(i * 4, j * 4, 4, 4, alphaBlockA);
 #endif
- 
         }
 
         if (pFeedbackProc)

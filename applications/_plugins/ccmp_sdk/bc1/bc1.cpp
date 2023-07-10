@@ -28,7 +28,7 @@
 void SetUserBC15EncoderOptions(CMP_BC15Options* bc15options, KernelOptions* kerneloptions);
 
 #ifdef USE_TIMERS
-#include "query_timer.h"
+#include "cpu_timing.h"
 #endif
 
 //#define BUILD_AS_PLUGIN_DLL
@@ -292,7 +292,7 @@ int BC1_EncodeClass::CompressBlock(CGU_UINT32 xBlock, CGU_UINT32 yBlock, void *s
 #ifdef USE_TIMERS
     static int init = false;
     if (!init) {
-        query_timer::initialize();
+        query_timer::Initialize();
         init = true;
     }
     {
