@@ -24,7 +24,7 @@
 #include "compute_gpuhw.h"
 
 #ifdef USE_CPU_PERFORMANCE_COUNTERS
-#include "query_timer.h"  // can use CPU timing but pref is to use GPU counters
+#include "cpu_timing.h"  // can use CPU timing but pref is to use GPU counters
 #endif
 
 #ifdef ENABLE_SVM
@@ -188,7 +188,7 @@ void CGpuHW::errorCallback(const int error, const char* description)
 
 void CGpuHW::Init()
 {
-    query_timer::initialize();
+    query_timer::Initialize();
 
     m_initDeviceOk              = false;
     m_programRun                = false;

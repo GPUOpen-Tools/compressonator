@@ -42,7 +42,7 @@
     <ClCompile Include="..\Applications\_Plugins\Common\PluginManager.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\Applications\_Plugins\Common\query_timer.cpp">
+    <ClCompile Include="..\Applications\_Plugins\Common\cpu_timing.cpp">
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="..\Applications\_Plugins\Common\TC_PluginInternal.cpp">
@@ -129,7 +129,7 @@
     <ClCompile Include="..\Applications\_Libs\CMP_Math\cmp_math_common.cpp">
       <Filter>CMP_Math</Filter>
     </ClCompile>
-    <ClCompile Include="..\Applications\_Libs\CMP_Math\cmp_math_cpuid.cpp">
+    <ClCompile Include="..\Applications\_Libs\CMP_Math\cpu_extensions.cpp">
       <Filter>CMP_Math</Filter>
     </ClCompile>
     <ClCompile Include="..\CMP_Framework\Common\half\half.cpp">
@@ -140,6 +140,18 @@
     </ClCompile>
     <ClCompile Include="..\applications\_plugins\ccmp_sdk\bcn.cpp">
       <Filter>StaticPlugins\Encoders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cmp_core\source\cmp_core.cpp">
+      <Filter>CMP_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cmp_core\source\core_simd_avx.cpp">
+      <Filter>CMP_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cmp_core\source\core_simd_avx512.cpp">
+      <Filter>CMP_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cmp_core\source\core_simd_sse.cpp">
+      <Filter>CMP_Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -155,7 +167,7 @@
     <ClInclude Include="..\Applications\_Plugins\Common\PluginManager.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\Applications\_Plugins\Common\query_timer.h">
+    <ClInclude Include="..\Applications\_Plugins\Common\cpu_timing.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Applications\_Plugins\Common\stb_image.h">
@@ -257,7 +269,7 @@
     <ClInclude Include="..\Applications\_Libs\CMP_Math\cmp_math_common.h">
       <Filter>CMP_Math</Filter>
     </ClInclude>
-    <ClInclude Include="..\Applications\_Libs\CMP_Math\cmp_math_cpuid.h">
+    <ClInclude Include="..\Applications\_Libs\CMP_Math\cpu_extensions.h">
       <Filter>CMP_Math</Filter>
     </ClInclude>
     <ClInclude Include="..\CMP_Framework\Common\half\eLut.h">
@@ -310,6 +322,12 @@
     </ClInclude>
     <ClInclude Include="..\applications\_plugins\common\gltf\stb_image_write.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_core\source\cmp_core.h">
+      <Filter>CMP_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_core\source\core_simd.h">
+      <Filter>CMP_Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

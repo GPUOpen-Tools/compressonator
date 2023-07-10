@@ -98,7 +98,7 @@ char* Codec_Plugin_BRLG::TC_ComputeSourceFile(CGU_UINT32 Compute_type)
             return(GPU_BRLG_COMPUTEFILE);
     }
 
-    cmp_autodected_cpufeatures(CMP_MATH_USE_CPU);
+    cmp_autodetected_cpufeatures(CMP_MATH_USE_CPU);
     return ("");
 }
 

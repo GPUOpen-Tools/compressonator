@@ -182,8 +182,8 @@ CMP_EXPORT void init_BC7ramps()
                         if (index > maxi)
                             maxi = index;
                         BC7EncodeRamps.ramp[(CLT(clogBC7) * 4 * 256 * 256 * 16) + (BTT(bits) * 256 * 256 * 16) + (p1 * 256 * 16) + (p2 * 16) + index] =
-                            //floor((CGV_FLOAT)BC7EncodeRamps.ep_d[BTT(bits)][p1] + rampWeights[clogBC7][index] * (CGV_FLOAT)((BC7EncodeRamps.ep_d[BTT(bits)][p2] - BC7EncodeRamps.ep_d[BTT(bits)][p1]))+ 0.5F);
-                            floor(BC7EncodeRamps.ep_d[BTT(bits)][p1] +
+                            //cmp_floor((CGV_FLOAT)BC7EncodeRamps.ep_d[BTT(bits)][p1] + rampWeights[clogBC7][index] * (CGV_FLOAT)((BC7EncodeRamps.ep_d[BTT(bits)][p2] - BC7EncodeRamps.ep_d[BTT(bits)][p1]))+ 0.5F);
+                            cmp_floor(BC7EncodeRamps.ep_d[BTT(bits)][p1] +
                                   rampWeights[clogBC7][index] * ((BC7EncodeRamps.ep_d[BTT(bits)][p2] - BC7EncodeRamps.ep_d[BTT(bits)][p1])) + 0.5F);
                     }  //index<(1 << clogBC7)
                 }      //p2<(1 << bits)
@@ -222,7 +222,7 @@ CMP_EXPORT void init_BC7ramps()
                                 BC7EncodeRamps.ramp[(CLT(clogBC7) * 4 * 256 * 256 * 16) + (BTT(bits) * 256 * 256 * 16) + (p1 * 256 * 16) + (p2 * 16) + index];
 #else
                         CGV_INT floatf =
-                            floor((CGV_FLOAT)BC7EncodeRamps.ep_d[BTT(bits)][p1] +
+                            cmp_floor((CGV_FLOAT)BC7EncodeRamps.ep_d[BTT(bits)][p1] +
                                   rampWeights[clogBC7][index] * (CGV_FLOAT)((BC7EncodeRamps.ep_d[BTT(bits)][p2] - BC7EncodeRamps.ep_d[BTT(bits)][p1])) + 0.5F);
 #endif
                         BC7EncodeRamps.sp_idx[(CLT(clogBC7) * 4 * 256 * 2 * 2 * 16 * 2) + (BTT(bits) * 256 * 2 * 2 * 16 * 2) + (floatf * 2 * 2 * 16 * 2) +
@@ -653,7 +653,7 @@ INLINE void GetClusterMean(CGV_FLOAT cluster_mean_out[SOURCE_BLOCK_SIZE][MAX_CHA
             if (i_cnt[i_comp[i]] != 0)
             {
                 CGV_UINT8 icmp             = i_comp[i];
-                cluster_mean_out[icmp][ch] = (CGV_FLOAT)floor((cluster_mean_out[icmp][ch] / (CGV_FLOAT)i_cnt[icmp]) + 0.5F);
+                cluster_mean_out[icmp][ch] = (CGV_FLOAT)cmp_floor((cluster_mean_out[icmp][ch] / (CGV_FLOAT)i_cnt[icmp]) + 0.5F);
             }
         }
 }
@@ -914,14 +914,14 @@ INLINE CGV_FLOAT GetRamp(CGU_INT   clogBC7,  // ramp bits Valid range 2..4
     CGV_INT   e1    = expand_epocode(p1, bits);
     CGV_INT   e2    = expand_epocode(p2, bits);
     CGV_FLOAT ramp  = gather_epocode(rampI, clogBC7 * 16 + index) / 64.0F;
-    rampf           = floor(e1 + ramp * (e2 - e1) + 0.5F);  // returns 0..255 values
+    rampf           = cmp_floor(e1 + ramp * (e2 - e1) + 0.5F);  // returns 0..255 values
     return rampf;
 #else  // CPU ASPM Code
 #ifdef USE_BC7_RAMP
     CGV_FLOAT rampf = BC7EncodeRamps.ramp[(CLT(clogBC7) * 4 * 256 * 256 * 16) + (BTT(bits) * 256 * 256 * 16) + (p1 * 256 * 16) + (p2 * 16) + index];
     return rampf;
 #else
-    return (CGV_FLOAT)floor((CGV_FLOAT)BC7EncodeRamps.ep_d[BTT(bits)][p1] +
+    return (CGV_FLOAT)cmp_floor((CGV_FLOAT)BC7EncodeRamps.ep_d[BTT(bits)][p1] +
                             rampWeights[clogBC7][index] * (CGV_FLOAT)((BC7EncodeRamps.ep_d[BTT(bits)][p2] - BC7EncodeRamps.ep_d[BTT(bits)][p1])) + 0.5F);
 #endif
 #endif
@@ -1019,7 +1019,7 @@ void GetProjectedIndex(CGV_UINT8 projected_index_out[MAX_SUBSET_SIZE],  //output
     for (CGV_UINT8 i = 0; i < numEntries; i++)
     {
         image_v[i]             = image_projected[i] * image_s;
-        image_z[i]             = floor(image_v[i] + 0.5F - image_min * image_s);
+        image_z[i]             = cmp_floor(image_v[i] + 0.5F - image_min * image_s);
         projected_index_out[i] = (CGV_UINT8)image_z[i];
 
         what[i].image = image_v[i] - image_z[i] - image_min * image_s;
@@ -1285,7 +1285,7 @@ CGV_FLOAT quant_solid_color(CGV_UINT8 index_out[MAX_SUBSET_SIZE],
                         // B
                         CGV_INT image_tf;
                         CGV_INT image_tc;
-                        image_tf = (CGV_INT)floor(image_src[COMP_RED + (ch1 * SOURCE_BLOCK_SIZE)]);
+                        image_tf = (CGV_INT)cmp_floor(image_src[COMP_RED + (ch1 * SOURCE_BLOCK_SIZE)]);
                         image_tc = (CGV_INT)ceil(image_src[COMP_RED + (ch1 * SOURCE_BLOCK_SIZE)]);
 
 #ifdef USE_BC7_SP_ERR_IDX
@@ -1296,7 +1296,7 @@ CGV_FLOAT quant_solid_color(CGV_UINT8 index_out[MAX_SUBSET_SIZE],
                         else if (err_tf < err_tc)
                             image_tcr[ch1] = image_tf;
                         else
-                            image_tcr[ch1] = (CGV_INT)floor(image_src[COMP_RED + (ch1 * SOURCE_BLOCK_SIZE)] + 0.5F);
+                            image_tcr[ch1] = (CGV_INT)cmp_floor(image_src[COMP_RED + (ch1 * SOURCE_BLOCK_SIZE)] + 0.5F);
 
                         //image_tcr[ch1] = image_tf + (image_tc - image_tf)/2;
 
@@ -1316,7 +1316,7 @@ CGV_FLOAT quant_solid_color(CGV_UINT8 index_out[MAX_SUBSET_SIZE],
                             epo_dr_0[ch1] = clampEPO(image_tcr[ch1], 0, 255);
                         }
 #else
-                        image_tcr[ch1] = floor(image_src[COMP_RED + (ch1 * SOURCE_BLOCK_SIZE)] + 0.5F);
+                        image_tcr[ch1] = cmp_floor(image_src[COMP_RED + (ch1 * SOURCE_BLOCK_SIZE)] + 0.5F);
                         error_ta       = 0;
                         t1o[ch1]       = t1;
                         t2o[ch1]       = t2;
@@ -2311,7 +2311,7 @@ void Compress_mode01237(CGU_INT blockMode, BC7_EncodeState EncodeState[], CMP_UN
     // - the more index we have the less shaking should be required to find a near
     // optimal match
 
-    CGU_UINT8 numShakeAttempts = max8(1, min8((CGU_UINT8)floor(8 * u_BC7Encode->quality + 0.5), mode_partitionsToTry));
+    CGU_UINT8 numShakeAttempts = max8(1, min8((CGU_UINT8)cmp_floor(8 * u_BC7Encode->quality + 0.5), mode_partitionsToTry));
     CGV_FLOAT err_best         = CMP_FLOAT_MAX;
 
     // Now do the endpoint shaking
@@ -3013,13 +3013,13 @@ void GetBC7Ramp(CGU_UINT32 endpoint[][MAX_DIMENSION_BIG],
     {
 #ifdef USE_HIGH_PRECISION_INTERPOLATION_BC7
         ramp[COMP_RED][i] =
-            (CGU_FLOAT)floor((ep[0][COMP_RED] * (1.0 - rampLerpWeightsBC7[rampIndex][i])) + (ep[1][COMP_RED] * rampLerpWeightsBC7[rampIndex][i]) + 0.5);
+            (CGU_FLOAT)cmp_floor((ep[0][COMP_RED] * (1.0 - rampLerpWeightsBC7[rampIndex][i])) + (ep[1][COMP_RED] * rampLerpWeightsBC7[rampIndex][i]) + 0.5);
         ramp[COMP_RED][i] = bc7_minf(255.0, bc7_maxf(0., ramp[COMP_RED][i]));
         ramp[COMP_GREEN][i] =
-            (CGU_FLOAT)floor((ep[0][COMP_GREEN] * (1.0 - rampLerpWeightsBC7[rampIndex][i])) + (ep[1][COMP_GREEN] * rampLerpWeightsBC7[rampIndex][i]) + 0.5);
+            (CGU_FLOAT)cmp_floor((ep[0][COMP_GREEN] * (1.0 - rampLerpWeightsBC7[rampIndex][i])) + (ep[1][COMP_GREEN] * rampLerpWeightsBC7[rampIndex][i]) + 0.5);
         ramp[COMP_GREEN][i] = bc7_minf(255.0, bc7_maxf(0., ramp[COMP_GREEN][i]));
         ramp[COMP_BLUE][i] =
-            (CGU_FLOAT)floor((ep[0][COMP_BLUE] * (1.0 - rampLerpWeightsBC7[rampIndex][i])) + (ep[1][COMP_BLUE] * rampLerpWeightsBC7[rampIndex][i]) + 0.5);
+            (CGU_FLOAT)cmp_floor((ep[0][COMP_BLUE] * (1.0 - rampLerpWeightsBC7[rampIndex][i])) + (ep[1][COMP_BLUE] * rampLerpWeightsBC7[rampIndex][i]) + 0.5);
         ramp[COMP_BLUE][i] = bc7_minf(255.0, bc7_maxf(0., ramp[COMP_BLUE][i]));
 #else
         ramp[COMP_RED][i]   = interpolate(ep[0][COMP_RED], ep[1][COMP_RED], i, rampIndex);
@@ -3045,7 +3045,7 @@ void GetBC7Ramp(CGU_UINT32 endpoint[][MAX_DIMENSION_BIG],
         {
 #ifdef USE_HIGH_PRECISION_INTERPOLATION_BC7
             ramp[COMP_ALPHA][i] =
-                (CGU_FLOAT)floor((ep[0][COMP_ALPHA] * (1.0 - rampLerpWeightsBC7[rampIndex][i])) + (ep[1][COMP_ALPHA] * rampLerpWeightsBC7[rampIndex][i]) + 0.5);
+                (CGU_FLOAT)cmp_floor((ep[0][COMP_ALPHA] * (1.0 - rampLerpWeightsBC7[rampIndex][i])) + (ep[1][COMP_ALPHA] * rampLerpWeightsBC7[rampIndex][i]) + 0.5);
             ramp[COMP_ALPHA][i] = bc7_minf(255.0, bc7_maxf(0., ramp[COMP_ALPHA][i]));
 #else
             ramp[COMP_ALPHA][i] = interpolate(ep[0][COMP_ALPHA], ep[1][COMP_ALPHA], i, rampIndex);

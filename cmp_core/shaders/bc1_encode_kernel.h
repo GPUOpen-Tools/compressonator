@@ -30,4 +30,10 @@
 #include "bc1_common_kernel.h"
 #endif
 
+int BC1EnableSSE4();
+int BC1EnableAVX2();
+int BC1EnableAVX512();
+
+void BC1DisableSIMD();
+
 #endif

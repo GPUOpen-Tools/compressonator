@@ -22,7 +22,7 @@
     <ClCompile Include="..\Compute_DirectX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\query_timer.cpp">
+    <ClCompile Include="..\..\..\Common\cpu_timing.cpp">
       <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
@@ -42,7 +42,7 @@
     <ClInclude Include="..\Compute_DirectX.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\query_timer.h">
+    <ClInclude Include="..\..\..\Common\cpu_timing.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>

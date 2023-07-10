@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2023  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -158,55 +158,68 @@ typedef enum _CodecBufferType {
 
 #define SBYTE_MAXVAL 127
 #define BYTE_MAXVAL 255
-#define BYTE_MAX_FLOAT 255.0f
-#define CONVERT_FLOAT_TO_BYTE(f) static_cast<CMP_BYTE>(((f) * BYTE_MAX_FLOAT) + 0.5)
-#define CONVERT_FLOAT_TO_SBYTE(f) static_cast<CMP_SBYTE>(((f)*BYTE_MAX_FLOAT) + 0.5)
-#define CONVERT_BYTE_TO_FLOAT(b) (b) / BYTE_MAX_FLOAT
-#define CONVERT_SBYTE_TO_FLOAT(b) (b) / BYTE_MAX_FLOAT
+#define WORD_MAXVAL 65535
+#define DWORD_MAXVAL 4294967295
 
-#define DWORD_MAXVAL 4294967295.0f
-#define WORD_MAXVAL 65535.0f
-#define CONVERT_FLOAT_TO_DWORD(f) static_cast<CMP_DWORD>(((f) * DWORD_MAXVAL) + 0.5)
-#define CONVERT_FLOAT_TO_WORD(f) static_cast<CMP_WORD>(((f) * WORD_MAXVAL) + 0.5)
-#define CONVERT_DWORD_TO_FLOAT(w) (w) / DWORD_MAXVAL
-#define CONVERT_WORD_TO_FLOAT(w) (w) / WORD_MAXVAL
-#define CONVERT_WORD_TO_DWORD(w) (((static_cast<CMP_DWORD>(w)) << 16) | static_cast<CMP_DWORD>(w))
-#define CONVERT_DWORD_TO_WORD(dw) static_cast<CMP_BYTE>(cmp_minT(((dw >> 16) + ((dw & 0x0000ffff) >= 0x00008000 ? 1 : 0)),WORD_MAXVAL))
-#define CONVERT_BYTE_TO_DWORD(b) (((static_cast<CMP_DWORD>(b)) << 24) | ((static_cast<CMP_DWORD>(b)) << 16) | ((static_cast<CMP_DWORD>(b)) << 8) | static_cast<CMP_DWORD>(b))
-#define CONVERT_SBYTE_TO_DWORD(b) (((static_cast<CMP_DWORD>(b)) << 24) | ((static_cast<CMP_DWORD>(b)) << 16) | ((static_cast<CMP_DWORD>(b)) << 8) | static_cast<CMP_DWORD>(b))
-#define CONVERT_DWORD_TO_BYTE(dw) static_cast<CMP_BYTE>(cmp_minT(((dw >> 24) + ((dw & 0x00ffffff) >= 0x00800000 ? 1 : 0)), BYTE_MAXVAL))
-#define CONVERT_DWORD_TO_SBYTE(dw) static_cast<CMP_SBYTE>(cmp_minT(((dw >> 24) + ((dw & 0x00ffffff) >= 0x00800000 ? 1 : 0)), SBYTE_MAXVAL))
-#define CONVERT_BYTE_TO_WORD(b) (((static_cast<CMP_WORD>(b)) << 8) | static_cast<CMP_WORD>(b))
-#define CONVERT_SBYTE_TO_WORD(b) (((static_cast<CMP_WORD>(b)) << 8) | static_cast<CMP_WORD>(b))
-#define CONVERT_WORD_TO_BYTE(w) static_cast<CMP_BYTE>(cmp_minT(((w >> 8) + ((w & BYTE_MASK) >= 128 ? 1 : 0)), BYTE_MAXVAL))
-#define CONVERT_WORD_TO_SBYTE(w) static_cast<CMP_BYTE>(cmp_minT(((w >> 8) + ((w & BYTE_MASK) >= 128 ? 1 : 0)), SBYTE_MAXVAL))
+// The general goal of these conversion macros is to go between types in a simple and easily reversible way (if possible)
+// Larger types -> smaller types will potentially loose data, but if the smaller type can hold the entire value that should be preserved
+// Smaller types -> larger types will typically not modify anything, we simply perform an up-cast
+
+// Float Converions
+#define CONVERT_FLOAT_TO_BYTE(f) static_cast<CMP_BYTE>(((float)(f)*BYTE_MAXVAL) + 0.5f)
+#define CONVERT_FLOAT_TO_SBYTE(f) static_cast<CMP_SBYTE>(((float)(f)*SBYTE_MAXVAL) + 0.5f)
+#define CONVERT_FLOAT_TO_WORD(f) static_cast<CMP_WORD>(((float)(f)*WORD_MAXVAL) + 0.5f)
+#define CONVERT_FLOAT_TO_DWORD(f) static_cast<CMP_DWORD>(((float)(f)*DWORD_MAXVAL) + 0.5f)
+
+// DWORD Conversions
+#define CONVERT_DWORD_TO_BYTE(dw) static_cast<CMP_BYTE>(dw)
+#define CONVERT_DWORD_TO_SBYTE(dw) static_cast<CMP_SBYTE>(dw)
+#define CONVERT_DWORD_TO_WORD(dw) static_cast<CMP_WORD>(dw)
+#define CONVERT_DWORD_TO_FLOAT(dw) ((dw) / (float)DWORD_MAXVAL)
+
+// Byte Conversions
+#define CONVERT_BYTE_TO_WORD(b) static_cast<CMP_WORD>(b)
+#define CONVERT_BYTE_TO_DWORD(b) static_cast<CMP_DWORD>(b)
+#define CONVERT_BYTE_TO_FLOAT(b) ((b) / (float)BYTE_MAXVAL)
+
+// Signed Byte Conversions
+#define CONVERT_SBYTE_TO_WORD(b) static_cast<CMP_WORD>(b)
+#define CONVERT_SBYTE_TO_DWORD(b) static_cast<CMP_DWORD>(b)
+#define CONVERT_SBYTE_TO_FLOAT(b) ((b) / (float)SBYTE_MAXVAL)
+
+// WORD Conversions
+#define CONVERT_WORD_TO_BYTE(w) static_cast<CMP_BYTE>(w)
+#define CONVERT_WORD_TO_SBYTE(w) static_cast<CMP_SBYTE>(w)
+#define CONVERT_WORD_TO_DWORD(w) static_cast<CMP_DWORD>(w)
+#define CONVERT_WORD_TO_FLOAT(w) ((w) / (float)WORD_MAXVAL)
+
 #define CONVERT_10BIT_TO_WORD(b) (((static_cast<CMP_WORD>(b)) << 6) | static_cast<CMP_WORD>(b) >> 2)
 #define CONVERT_2BIT_TO_WORD(b) ((static_cast<CMP_WORD>(b)) | ((static_cast<CMP_WORD>(b)) << 2) | ((static_cast<CMP_WORD>(b)) << 4) | ((static_cast<CMP_WORD>(b)) << 6) | ((static_cast<CMP_WORD>(b)) << 8) | ((static_cast<CMP_WORD>(b)) << 10) | ((static_cast<CMP_WORD>(b)) << 12) | ((static_cast<CMP_WORD>(b)) << 14))
 
 #define SWAP_DWORDS(a, b) {CMP_DWORD dwTemp = a; a = b; b = dwTemp;}
 #define SWAP_WORDS(a, b) {CMP_WORD wTemp = a; a = b; b = wTemp;}
+#define SWAP_BYTES(a, b) {CMP_BYTE temp = a; a = b; b = temp;}
+#define SWAP_SBYTES(a, b) {CMP_SBYTE temp = a; a = b; b = temp;}
 #define SWAP_HALFS(a, b) {CMP_HALF fTemp = a; a = b; b = fTemp;}
 #define SWAP_FLOATS(a, b) {float fTemp = a; a = b; b = fTemp;}
 #define SWAP_DOUBLES(a, b) {double dTemp = a; a = b; b = dTemp;}
 
-template <typename T> void PadLine(CMP_DWORD i, CMP_BYTE w, CMP_BYTE c, T block[]) {
-    // So who do we perform generic padding ?
-    // In powers of two
+template <typename T> void PadLine(CMP_DWORD startIndex, CMP_DWORD endIndex, CMP_BYTE repeatCount, T block[])
+{
+    CMP_DWORD padWidth = endIndex - startIndex;
 
-    CMP_DWORD dwPadWidth = w - i;
-    if(dwPadWidth > i) {
-        PadLine(i, w >> 1, c, block);
-        i = w >> 1;
-        dwPadWidth = w - i;
+    if(padWidth > startIndex)
+    {
+        PadLine(startIndex, endIndex >> 1, repeatCount, block);
+
+        startIndex = endIndex >> 1;
+        padWidth = endIndex - startIndex;
     }
 
-    memcpy(&block[i*c], &block[0], dwPadWidth * c * sizeof(T));
+    memcpy(&block[startIndex*repeatCount], &block[0], padWidth*repeatCount*sizeof(T));
 }
 
 template <typename T> void PadBlock(CMP_DWORD j, CMP_BYTE w, CMP_BYTE h, CMP_BYTE c, T block[]) {
-    // So who do we perform generic padding ?
-    // In powers of two
-
     CMP_DWORD dwPadHeight = h - j;
     if(dwPadHeight > j) {
         PadBlock(j, w, h >> 1, c, block);
@@ -447,12 +460,14 @@ class CCodecBuffer {
     void ConvertBlock(CMP_SBYTE cBlock[], CMP_WORD wBlock[], CMP_DWORD dwBlockSize);
     void ConvertBlock(CMP_SBYTE cBlock[], CMP_BYTE wBlock[], CMP_DWORD dwBlockSize);
 
-
+    // NOTE: these are never used currently, so they are a candidate for removal
     void SwizzleBlock(double dBlock[], CMP_DWORD dwBlockSize);
     void SwizzleBlock(float fBlock[], CMP_DWORD dwBlockSize);
     void SwizzleBlock(CMP_HALF hBlock[], CMP_DWORD dwBlockSize);
     void SwizzleBlock(CMP_DWORD dwBlock[], CMP_DWORD dwBlockSize);
     void SwizzleBlock(CMP_WORD wBlock[], CMP_DWORD dwBlockSize);
+    void SwizzleBlock(CMP_BYTE bBlock[], CMP_DWORD dwBlockSize);
+    void SwizzleBlock(CMP_SBYTE sbBlock[], CMP_DWORD dwBlockSize);
 
     CMP_DWORD m_dwWidth;        // Final Image Width
     CMP_DWORD m_dwHeight;       // Final Image Height

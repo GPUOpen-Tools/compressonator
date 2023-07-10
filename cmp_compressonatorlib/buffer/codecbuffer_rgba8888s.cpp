@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2023  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -35,7 +35,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 const int nChannelCount = 4;
-const int nPixelSize = nChannelCount * sizeof(CMP_BYTE);
+const int nPixelSize = nChannelCount * sizeof(CMP_SBYTE);
 
 CCodecBuffer_RGBA8888S::CCodecBuffer_RGBA8888S(
     CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
@@ -47,9 +47,11 @@ CCodecBuffer_RGBA8888S::CCodecBuffer_RGBA8888S(
         m_dwPitch = GetWidth() * nPixelSize;
 
     if(m_pData == NULL) {
-        CMP_DWORD dwSize = m_dwPitch * GetHeight();
-        m_pData = (CMP_BYTE*) malloc(dwSize);
+        m_DataSize = m_dwPitch * GetHeight();
+        m_pData = (CMP_BYTE*)calloc(1, m_DataSize);
     }
+    
+    m_dwFormat = CMP_FORMAT_RGBA_8888_S;
 }
 
 CCodecBuffer_RGBA8888S::~CCodecBuffer_RGBA8888S() {
@@ -72,7 +74,8 @@ void CCodecBuffer_RGBA8888S::Copy(CCodecBuffer& srcBuffer) {
     }
 }
 
-bool CCodecBuffer_RGBA8888S::ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[], CMP_DWORD dwChannelOffset) {
+bool CCodecBuffer_RGBA8888S::ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[], CMP_DWORD dwChannelOffset)
+{
     assert(x < GetWidth());
     assert(y < GetHeight());
 
@@ -82,10 +85,12 @@ bool CCodecBuffer_RGBA8888S::ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP
     CMP_DWORD dwWidth = cmp_minT(w, (GetWidth() - x));
 
     CMP_DWORD i, j;
-    for(j = 0; j < h && (y + j) < GetHeight(); j++) {
-        CMP_DWORD* pData = (CMP_DWORD*) (GetData() + ((y + j) * m_dwPitch) + (x * sizeof(CMP_DWORD)));
+    for(j = 0; j < h && (y + j) < GetHeight(); j++)
+    {
+        CMP_DWORD* pData = (CMP_DWORD*)(GetData() + (y + j)*m_dwPitch + x*sizeof(CMP_DWORD));
+    
         for(i = 0; i < dwWidth; i++)
-            block[(j * w) + i] = static_cast<CMP_SBYTE>(((*pData++) >> dwChannelOffset) & BYTE_MASK);
+            block[j*w + i] = static_cast<CMP_SBYTE>(((*pData++) >> dwChannelOffset) & BYTE_MASK);
 
         // Pad line with previous values if necessary
         if(i < w)
@@ -99,74 +104,80 @@ bool CCodecBuffer_RGBA8888S::ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP
     return true;
 }
 
-bool CCodecBuffer_RGBA8888S::WriteBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[], CMP_DWORD dwChannelOffset) {
+bool CCodecBuffer_RGBA8888S::WriteBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[], CMP_DWORD dwChannelOffset)
+{
     assert(x < GetWidth());
     assert(y < GetHeight());
 
     if(x >= GetWidth() || y >= GetHeight())
         return false;
 
-    CMP_DWORD dwChannelMask = ~((CMP_DWORD) BYTE_MASK << dwChannelOffset);
+    CMP_DWORD dwChannelMask = ~((CMP_DWORD)BYTE_MASK << dwChannelOffset);
     CMP_DWORD dwWidth       = cmp_minT(w, (GetWidth() - x));
 
-    for(CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); j++) {
+    for(CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); j++)
+    {
         CMP_DWORD* pData = (CMP_DWORD*) (GetData() + ((y + j) * m_dwPitch) + (x * sizeof(CMP_DWORD)));
-        for(CMP_DWORD i = 0; i < dwWidth; i++) {
-            *pData = (*pData & dwChannelMask) | (((CMP_DWORD) block[(j * w) + i]) << dwChannelOffset);
+        for(CMP_DWORD i = 0; i < dwWidth; i++)
+        {
+            CMP_DWORD blockValue = block[j*dwWidth + i];
+            *pData = (*pData & dwChannelMask) | ((blockValue & BYTE_MASK) << dwChannelOffset);
             pData++;
         }
     }
+
     return true;
 }
 
 bool CCodecBuffer_RGBA8888S::ReadBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[]) {
-    return ReadBlock(x, y, w, h, block, ATC_RGBA8888_OFFSET_A);
+    return ReadBlock(x, y, w, h, block, RGBA8888_OFFSET_A);
 }
 
 bool CCodecBuffer_RGBA8888S::ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[]) {
-    return ReadBlock(x, y, w, h, block, ATC_RGBA8888_OFFSET_R);
+    return ReadBlock(x, y, w, h, block, RGBA8888_OFFSET_R);
 }
 
 bool CCodecBuffer_RGBA8888S::ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[]) {
-    return ReadBlock(x, y, w, h, block, ATC_RGBA8888_OFFSET_G);
+    return ReadBlock(x, y, w, h, block, RGBA8888_OFFSET_G);
 }
 
 bool CCodecBuffer_RGBA8888S::ReadBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[]) {
-    return ReadBlock(x, y, w, h, block, ATC_RGBA8888_OFFSET_B);
+    return ReadBlock(x, y, w, h, block, RGBA8888_OFFSET_B);
 }
 
 bool CCodecBuffer_RGBA8888S::WriteBlockA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[]) {
-    return WriteBlock(x, y, w, h, block, ATC_RGBA8888_OFFSET_A);
+    return WriteBlock(x, y, w, h, block, RGBA8888_OFFSET_A);
 }
 
 bool CCodecBuffer_RGBA8888S::WriteBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[]) {
-    return WriteBlock(x, y, w, h, block, ATC_RGBA8888_OFFSET_R);
+    return WriteBlock(x, y, w, h, block, RGBA8888_OFFSET_R);
 }
 
 bool CCodecBuffer_RGBA8888S::WriteBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[]) {
-    return WriteBlock(x, y, w, h, block, ATC_RGBA8888_OFFSET_G);
+    return WriteBlock(x, y, w, h, block, RGBA8888_OFFSET_G);
 }
 
 bool CCodecBuffer_RGBA8888S::WriteBlockB(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[]) {
-    return WriteBlock(x, y, w, h, block, ATC_RGBA8888_OFFSET_B);
+    return WriteBlock(x, y, w, h, block, RGBA8888_OFFSET_B);
 }
 
-bool CCodecBuffer_RGBA8888S::ReadBlockRGBA(CMP_DWORD xw, CMP_DWORD yh, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[]) {
+bool CCodecBuffer_RGBA8888S::ReadBlockRGBA(CMP_DWORD xw, CMP_DWORD yh, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[])
+{
     assert(xw < GetWidth());
     assert(yh < GetHeight());
-    assert(xw % w == 0);
-    assert(yh % h == 0);
 
     if (xw >= GetWidth() || yh >= GetHeight())
         return false;
 
     CMP_DWORD* pdwBlock = (CMP_DWORD*)block;
-    if (w == 4 && h == 4 && (xw + w) <= GetWidth() && (yh + h) <= GetHeight()) {
+    if (w == 4 && h == 4 && (xw + w) <= GetWidth() && (yh + h) <= GetHeight())
+    {
         // Fastpath for the key case to alleviate the drag this code puts on the really fast DXTC
         CMP_DWORD* pData = (CMP_DWORD*)(GetData() + (yh * m_dwPitch) + (xw * sizeof(CMP_DWORD)));
 
         // The source is RGBA8888 and the codec reqiures a BGRA8888
-        if (m_bSwizzle) {
+        if (m_bSwizzle)
+        {
             pdwBlock[0] = SWIZZLE_RGBA_BGRA(pData[0]);
             pdwBlock[1] = SWIZZLE_RGBA_BGRA(pData[1]);
             pdwBlock[2] = SWIZZLE_RGBA_BGRA(pData[2]);
@@ -186,7 +197,9 @@ bool CCodecBuffer_RGBA8888S::ReadBlockRGBA(CMP_DWORD xw, CMP_DWORD yh, CMP_BYTE 
             pdwBlock[13] = SWIZZLE_RGBA_BGRA(pData[1]);
             pdwBlock[14] = SWIZZLE_RGBA_BGRA(pData[2]);
             pdwBlock[15] = SWIZZLE_RGBA_BGRA(pData[3]);
-        } else {
+        }
+        else
+        {
             pdwBlock[0] = pData[0];
             pdwBlock[1] = pData[1];
             pdwBlock[2] = pData[2];
@@ -207,23 +220,31 @@ bool CCodecBuffer_RGBA8888S::ReadBlockRGBA(CMP_DWORD xw, CMP_DWORD yh, CMP_BYTE 
             pdwBlock[14] = pData[2];
             pdwBlock[15] = pData[3];
         }
-    } else {
+    }
+    else
+    {
         CMP_DWORD  minWidth = cmp_minT(w, (GetWidth() - xw));
         CMP_DWORD srcOffset;
         CMP_DWORD iw, jh;
         CMP_BYTE  *srcData = GetData();
         CMP_DWORD *pdwData;
 
-        for (jh = 0; jh < h && (yh + jh) < GetHeight(); jh++) {
+        for (jh = 0; jh < h && (yh + jh) < GetHeight(); jh++)
+        {
             srcOffset = ((yh + jh) * m_dwPitch) + (xw * 4);
             pdwData = (CMP_DWORD*)(srcData + srcOffset);
-            if (m_bSwizzle) {
-                for (iw = 0; iw < minWidth; iw++) {
-                    pdwBlock[(jh * w) + iw] = SWIZZLE_RGBA_BGRA(pdwData[iw]);
+            if (m_bSwizzle)
+            {
+                for (iw = 0; iw < minWidth; iw++)
+                {
+                    pdwBlock[(jh * minWidth) + iw] = SWIZZLE_RGBA_BGRA(pdwData[iw]);
                 }
-            } else {
-                for (iw = 0; iw < minWidth; iw++) {
-                    pdwBlock[(jh * w) + iw] = pdwData[iw];
+            }
+            else
+            {
+                for (iw = 0; iw < minWidth; iw++)
+                {
+                    pdwBlock[(jh * minWidth) + iw] = pdwData[iw];
                 }
             }
 
@@ -240,11 +261,10 @@ bool CCodecBuffer_RGBA8888S::ReadBlockRGBA(CMP_DWORD xw, CMP_DWORD yh, CMP_BYTE 
     return true;
 }
 
-bool CCodecBuffer_RGBA8888S::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[]) {
+bool CCodecBuffer_RGBA8888S::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[])
+{
     assert(x < GetWidth());
     assert(y < GetHeight());
-    assert(x % 4 == 0);
-    assert(y % 4 == 0);
 
     if(x >= GetWidth() || y >= GetHeight())
         return false;
@@ -252,11 +272,14 @@ bool CCodecBuffer_RGBA8888S::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w
     CMP_DWORD  dwWidth  = cmp_minT(w, (GetWidth() - x));
     CMP_DWORD* pdwBlock = (CMP_DWORD*) block;
 
-    for(CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); j++) {
+    for(CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); j++)
+    {
         CMP_DWORD* pData = (CMP_DWORD*) (GetData() + ((y + j) * m_dwPitch) + (x * sizeof(CMP_DWORD)));
+
         for(CMP_DWORD i = 0; i < dwWidth; i++)
-            *pData++ = pdwBlock[(j * w) + i];
+            *pData++ = pdwBlock[(j * dwWidth) + i];
     }
+
     return true;
 }
 

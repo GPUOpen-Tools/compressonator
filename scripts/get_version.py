@@ -12,7 +12,7 @@ import argparse
 scriptRoot = os.path.dirname(os.path.realpath(__file__))
 
 # handle command line arguments
-parser = argparse.ArgumentParser(description='Get GPA version information')
+parser = argparse.ArgumentParser(description='Get Compressonator version information')
 parser.add_argument('--major', action='store_true', default=False, help='Return value of MAJOR version string')
 parser.add_argument('--minor', action='store_true', default=False, help='Return value of MINOR version string')
 args = parser.parse_args()

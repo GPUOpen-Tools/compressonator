@@ -171,7 +171,7 @@ CGU_Vec4f FsrEasuBF(CGU_Vec2f p) {} ;
     //------------------------------------------------------------------------------------------------------------------------------
     // Get position of 'f'.
     CGU_Vec2f pp = CGU_Vec2f(ip.x,ip.y)*CGU_Vec2f(con0.x,con0.y)+CGU_Vec2f(con0.z,con0.w);
-    CGU_Vec2f fp = CGU_Vec2f(floor(pp.x),floor(pp.x));
+    CGU_Vec2f fp = CGU_Vec2f(cmp_floor(pp.x),cmp_floor(pp.x));
     pp-=fp;
 
     //------------------------------------------------------------------------------------------------------------------------------

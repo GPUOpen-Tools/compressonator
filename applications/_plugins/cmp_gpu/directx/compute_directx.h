@@ -43,7 +43,7 @@
 #include <dxgidebug.h>
 #endif
 
-#include "query_timer.h"
+#include "cpu_timing.h"
 
 using namespace CMP_Compute_Base;
 
@@ -181,7 +181,7 @@ class CDirectX :public ComputeBase {
     bool m_bc7_mode137;
 
     // GPU Performance Monitoring
-    cmp_cputimer        m_cmpTimer;
+    cpu_timer           m_cmpTimer;
     ID3D11Query*        m_pQueryDisjoint;        // Checks for valid timestamp query
     ID3D11Query*        m_pQueryBegin;           // Individual timestamp queries for Begin of shader exec
     ID3D11Query*        m_pQueryEnd;             // Individual timestamp queries for End   of shader exec

@@ -1,6 +1,6 @@
 //=============================================================================
-// Copyright (c) 2020  Advanced Micro Devices, Inc. All rights reserved.
-// Copyright (c) 2008-2020, ATI Technologies Inc. All rights reserved.
+// Copyright (c) 2023 Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2008-2023, ATI Technologies Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -51,7 +51,6 @@
 // Windows Header Files:
 #ifdef _WIN32
 #include <windows.h>
-#include <d3d11.h>
 #endif
 
 #include <stdio.h>
@@ -68,13 +67,6 @@
 #include "textureio.h"
 #endif
 
-#ifdef _WIN32
-#ifndef USE_DIRECTX9
-#pragma comment(lib, "d3d11.lib")
-#endif
-#endif
-
-
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_BoxFilter)
 SET_PLUGIN_TYPE("FILTERS")
@@ -86,178 +78,12 @@ void* make_Plugin_BoxFilter()
 }
 #endif
 
-#ifdef USE_DIRECTX9
-CD3DXModule g_D3DX;
-CD3D9Module g_D3D9;
-#endif
-
 CMIPS* CFilterMips = NULL;
 
-void CMP_SetMipLevelGammaLinearB(MipLevel* pCurMipLevel, CMP_BYTE* pdata, CMP_FLOAT Gamma, CMP_INT numchannels)
-{
-    for (int y = 0; y < pCurMipLevel->m_nHeight; y++)
-    {
-        for (int x = 0; x < pCurMipLevel->m_nWidth; x++)
-        {
-            // calc Gamma for the all color channels
-            for (int i = 0; i < 3 && i < numchannels; i++)
-            {
-                CMP_FLOAT normpixel = 0.0f;
-                if (*pdata > 0)
-                {
-                    normpixel = *pdata;
-                    normpixel = normpixel / 255.0f;
-                    normpixel = powf(normpixel, Gamma) * 255.0f;
-
-                    // need to check for signed components
-                    if (normpixel > 255)
-                        normpixel = 255;
-                    else if (normpixel < 0)
-                        normpixel = 0;
-
-                    *pdata = (CMP_BYTE)round(normpixel);
-                }
-                pdata++;
-            }
-            // if alpha skip it
-            if (numchannels > 3)
-                pdata++;
-        }
-    }
-}
-
-
-void CMP_SetMipLevelGammaLinearSB(MipLevel* pCurMipLevel, CMP_SBYTE* pdata, CMP_FLOAT Gamma, CMP_INT numchannels)
-{
-    for (int y = 0; y < pCurMipLevel->m_nHeight; y++)
-    {
-        for (int x = 0; x < pCurMipLevel->m_nWidth; x++)
-        {
-            // calc Gamma for the all color channels
-            for (int i = 0; i < 3 && i < numchannels; i++)
-            {
-                CMP_FLOAT normpixel = 0.0f;
-                if (*pdata > 0)
-                {
-                    normpixel = *pdata;
-                    normpixel = normpixel / 127.0f;
-                    normpixel = powf(normpixel, Gamma) * 127.0f;
-
-                    // need to check for signed components
-                    if (normpixel > 127)
-                        normpixel = 127;
-                    else if (normpixel < -127)
-                        normpixel = -127;
-
-                    *pdata = (CMP_SBYTE)round(normpixel);
-                }
-                pdata++;
-            }
-            // if alpha skip it
-            if (numchannels > 3)
-                pdata++;
-        }
-    }
-}
-
-template <typename T>
-void CMP_SetMipLevelGammaf(MipLevel* pCurMipLevel, T* pdata, CMP_FLOAT Gamma, CMP_INT numchannels)
-{
-    for (int y = 0; y < pCurMipLevel->m_nHeight; y++)
-    {
-        for (int x = 0; x < pCurMipLevel->m_nWidth; x++)
-        {
-            // calc Gamma for the all color channels
-            for (int i = 0; i < 3 && i < numchannels; i++)
-                *pdata++ = pow(*pdata, Gamma);
-            // if alpha skip it
-            if (numchannels > 3)
-                pdata++;
-        }
-    }
-}
-
-static CMP_FLOAT F16toF32(CMP_HALFSHORT f)
-{
-    CMP_HALF A;
-    A.setBits(f);
-    return ((CMP_FLOAT)A);
-}
-
-void CMP_SetMipLevelGammaHalfShort(MipLevel* pCurMipLevel, CMP_HALFSHORT* pdata, CMP_FLOAT Gamma, CMP_INT numchannels)
-{
-    for (int y = 0; y < pCurMipLevel->m_nHeight; y++)
-    {
-        for (int x = 0; x < pCurMipLevel->m_nWidth; x++)
-        {
-            // calc Gamma for the all color channels
-            for (int i = 0; i < 3 && i < numchannels; i++)
-            {
-                CMP_FLOAT pixf = F16toF32(*pdata);  // convert short int to float
-                pixf           = pow(pixf, Gamma);  // Do gamma using float
-                CMP_HALF pixh  = pixf;              // back to half type
-                *pdata         = pixh.bits();       // back to short int bits
-                pdata++;                            // move on to next pixel
-            }
-            // if alpha skip it
-            if (numchannels > 3)
-                pdata++;
-        }
-    }
-}
-
-void CMP_SetMipSetGamma(MipSet* pMipSet, CMP_FLOAT Gamma)
-{
-    CMIPS     CMips;
-    MipLevel* pCurMipLevel;
-    CMP_INT   maxFaceOrSlice;
-    if (pMipSet->m_TextureType & TT_CubeMap)
-        maxFaceOrSlice = 6;
-    else
-        maxFaceOrSlice = 1;
-    for (CMP_INT nCurMipLevel = 0; nCurMipLevel < pMipSet->m_nMipLevels; nCurMipLevel++)
-    {
-        for (CMP_INT nFaceOrSlice = 0; nFaceOrSlice < maxFaceOrSlice; nFaceOrSlice++)
-        {
-            pCurMipLevel = CMips.GetMipLevel(pMipSet, nCurMipLevel, nFaceOrSlice);
-            if (pMipSet->m_ChannelFormat == CF_8bit)
-            {
-                if (pMipSet->m_format == CMP_FORMAT_RGBA_8888_S)
-                    CMP_SetMipLevelGammaLinearSB(pCurMipLevel, pCurMipLevel->m_psbData, Gamma, 4);
-                else 
-                    CMP_SetMipLevelGammaLinearB(pCurMipLevel, pCurMipLevel->m_pbData, Gamma, 4);
-            }
-            else if (pMipSet->m_ChannelFormat == CF_Float16) CMP_SetMipLevelGammaHalfShort(pCurMipLevel, pCurMipLevel->m_phfsData, Gamma, 4);
-            else if (pMipSet->m_ChannelFormat == CF_Float32) CMP_SetMipLevelGammaf(pCurMipLevel, pCurMipLevel->m_pfData, Gamma, 4);
-        }
-    }
-}
-
-Plugin_BoxFilter::Plugin_BoxFilter()
-{
-#ifdef _WIN32
-#ifndef USE_DIRECTX9
-    m_pTexture2DSourceTexture = nullptr;
-    m_pDevice                 = nullptr;
-    m_pContext                = nullptr;
-#endif
-#endif
-}
+Plugin_BoxFilter::Plugin_BoxFilter() { }
 
 Plugin_BoxFilter::~Plugin_BoxFilter()
 {
-#ifdef _WIN32
-#ifndef USE_DIRECTX9
-    // Clear any old states
-    if (m_pContext)
-    {
-        m_pContext->ClearState();
-        m_pContext->Flush();
-    }
-
-    CleanupDX();
-#endif
-#endif
     CFilterMips = NULL;
 }
 
@@ -268,29 +94,6 @@ int Plugin_BoxFilter::TC_PluginSetSharedIO(void* SharedCMips)
     {
         CFilterMips     = reinterpret_cast<CMIPS*>(SharedCMips);
         PrintStatusLine = CFilterMips->PrintLine;
-
-#ifdef _WIN32
-#ifdef USE_DIRECTX9
-        std::string strD3DX = _T("");
-        if (LoadD3DX(g_D3DX, strD3DX) == LOAD_FAILED)
-        {
-            Error("D3DXFilter Plugin", CMP_ERR_UNABLE_TO_LOAD_FILE, "Load D3DX failed, Try installing DX 2010 runtime");
-            return CMP_ERR_UNABLE_TO_LOAD_FILE;
-        }
-
-        // Ensure DX9 is present & can be loaded
-        g_D3D9.LoadModule();
-        IDirect3D9* pD3D = g_D3D9.Direct3DCreate9(D3D_SDK_VERSION);
-        if (pD3D == NULL)
-        {
-            Error("D3DXFilter Plugin", CMP_ERR_UNABLE_TO_LOAD_FILE, "D3DX9 not found");
-            return CMP_ERR_UNABLE_TO_LOAD_FILE;
-        }
-        else
-            pD3D->Release();
-#endif
-#endif
-
         return CMP_OK;
     }
     else
@@ -301,7 +104,6 @@ int Plugin_BoxFilter::TC_PluginSetSharedIO(void* SharedCMips)
 
 int Plugin_BoxFilter::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
 {
-    //MessageBox(0,"TC_PluginGetVersion","Plugin_WIC",MB_OK);
 #ifdef _WIN32
     pPluginVersion->guid = g_GUID;
 #endif
@@ -332,7 +134,7 @@ int Plugin_BoxFilter::TC_CFilter(MipSet* pMipSet, CMP_MipSet* pMipSetDst, CMP_CF
         int nWidth         = pMipSet->m_nWidth;
         int nHeight        = pMipSet->m_nHeight;
 
-        while (nWidth > pCFilterParams->nMinSize && nHeight > pCFilterParams->nMinSize)
+        while ((nWidth > pCFilterParams->nMinSize || nHeight > pCFilterParams->nMinSize))
         {
             nWidth               = (std::max)(nWidth >> 1, 1);
             nHeight              = (std::max)(nHeight >> 1, 1);
@@ -388,14 +190,14 @@ int Plugin_BoxFilter::TC_CFilter(MipSet* pMipSet, CMP_MipSet* pMipSetDst, CMP_CF
                 ++pMipSet->m_nMipLevels;
             else
                 break;
-            if (nWidth == 1 || nHeight == 1)
+            if (nWidth == 1 && nHeight == 1)
                 break;
         }
     }
     else
     {
 #ifdef _WIN32
-        result = GenMipLevelsUsingD3DXFilter(pMipSet, pCFilterParams);
+        result = GenMipLevelsUsingDXTex(pMipSet, pCFilterParams);
 #else
         result = CMP_ERR_UNSUPPORTED_DEST_FORMAT;
 #endif
@@ -422,16 +224,11 @@ void Plugin_BoxFilter::Error(CMP_CHAR* pszCaption, CMP_UINT nErrorNo, CMP_CHAR* 
 
 #ifdef _WIN32
 
-#define HANDLE_ERROR(err, msg)                \
-    {                                         \
-        Error("D3DXFilter Plugin", err, msg); \
-        goto Cleanup;                         \
+#define HANDLE_ERROR_BREAK(err, msg)                            \
+    {                                                           \
+        Plugin_BoxFilter::Error("D3DXFilter Plugin", err, msg); \
+        break;                                                  \
     }
-
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    return DefWindowProc(hWnd, message, wParam, lParam);
-}
 
 void PrintDX(const char* Format, ...)
 {
@@ -453,202 +250,9 @@ void PrintDX(const char* Format, ...)
     }
 }
 
-#ifndef USE_DIRECTX9
-void Plugin_BoxFilter::CleanupDX()
+#ifdef _WIN32
+DWORD Plugin_BoxFilter::CalcMipLevels(MipSet* pMipSet, CMP_CFilterParams* pD3DXFilterParams)
 {
-    // Compute
-    SAFE_RELEASE(m_pTexture2DSourceTexture);
-    SAFE_RELEASE(m_pContext);
-    SAFE_RELEASE(m_pDevice);
-}
-
-HRESULT Plugin_BoxFilter::CreateDXDevice()
-{
-    HRESULT hr             = S_OK;
-    UINT    uCreationFlags = D3D11_CREATE_DEVICE_SINGLETHREADED;
-#if defined(_DEBUG)
-    uCreationFlags |= D3D11_CREATE_DEVICE_DEBUG;
-#endif
-    D3D_FEATURE_LEVEL flOut = D3D_FEATURE_LEVEL_9_1;
-
-    hr = D3D11CreateDevice(nullptr,                   // Use default graphics card to support printf
-                           D3D_DRIVER_TYPE_HARDWARE,  // Try to create a hardware accelerated device
-                           nullptr,                   // Do not use external software rasterizer module
-                           uCreationFlags,            // Device creation flags
-                           nullptr,                   // Try to get greatest feature level available
-                           0,                         // # of elements in the previous array
-                           D3D11_SDK_VERSION,         // SDK version
-                           &m_pDevice,                // Device out
-                           &flOut,                    // Actual feature level created
-                           &m_pContext);              // Context out
-
-    if (FAILED(hr))
-    {
-        // Failure on creating a hardware device, try to create a ref device
-        SAFE_RELEASE(m_pDevice);
-        SAFE_RELEASE(m_pContext);
-
-        hr = D3D11CreateDevice(nullptr,                    // Use default graphics card
-                               D3D_DRIVER_TYPE_REFERENCE,  // Try to create a hardware accelerated device
-                               nullptr,                    // Do not use external software rasterizer module
-                               uCreationFlags,             // Device creation flags
-                               nullptr,                    // Try to get greatest feature level available
-                               0,                          // # of elements in the previous array
-                               D3D11_SDK_VERSION,          // SDK version
-                               &m_pDevice,                 // Device out
-                               &flOut,                     // Actual feature level created
-                               &m_pContext);               // Context out
-        if (FAILED(hr))
-        {
-            _com_error err(hr);
-            LPCTSTR    errMsg = err.ErrorMessage();
-            PrintDX("Error %s\n", errMsg);
-            return hr;
-        }
-    }
-    else
-    {
-        if (FAILED(hr))
-        {
-            _com_error err(hr);
-            LPCTSTR    errMsg = err.ErrorMessage();
-            PrintDX("Error %s\n", errMsg);
-            return hr;
-        }
-    }
-
-    return hr;
-}
-
-HRESULT Plugin_BoxFilter::Create2DTexture(MipSet* pMipSet, DWORD dwMipLevels)
-{
-    MipLevel* miplevel = CFilterMips->GetMipLevel(pMipSet, 0);
-
-    HRESULT hr = 0;
-
-    unsigned int                              miscFlags = 0;
-    std::unique_ptr<D3D11_SUBRESOURCE_DATA[]> initData(new (std::nothrow) D3D11_SUBRESOURCE_DATA[1]);
-    if (!initData)
-        return E_OUTOFMEMORY;
-
-    initData[0].pSysMem          = miplevel->m_pbData;  // pixel data
-    initData[0].SysMemPitch      = miplevel->m_nWidth * 4;
-    initData[0].SysMemSlicePitch = miplevel->m_dwLinearSize;
-
-    D3D11_TEXTURE2D_DESC desc = {};
-    desc.Width                = miplevel->m_nWidth;
-    desc.Height               = miplevel->m_nHeight;
-    desc.MipLevels            = dwMipLevels;
-    desc.ArraySize            = 1;
-    desc.Format               = DXGI_FORMAT_R8G8B8A8_UNORM;
-    desc.SampleDesc.Count     = 1;
-    desc.SampleDesc.Quality   = 0;
-    desc.Usage                = D3D11_USAGE_DEFAULT;
-    desc.BindFlags            = D3D11_BIND_SHADER_RESOURCE;
-    desc.CPUAccessFlags       = 0;
-    desc.MiscFlags            = miscFlags & ~static_cast<uint32_t>(D3D11_RESOURCE_MISC_TEXTURECUBE);
-
-    hr = m_pDevice->CreateTexture2D(&desc, initData.get(), reinterpret_cast<ID3D11Texture2D**>(&m_pTexture2DSourceTexture));
-
-    return (hr);
-}
-#endif
-
-int Plugin_BoxFilter::GenMipLevelsUsingD3DXFilter(MipSet* pMipSet, CMP_CFilterParams* pD3DXFilterParams)
-{
-    if (!((pMipSet->m_ChannelFormat == CF_8bit) || (pMipSet->m_ChannelFormat == CF_Float16)))
-    {
-        if (CFilterMips)
-            CFilterMips->PrintError("Feature is only avaiable for 8 bit per channel images");
-        return PE_Unknown;
-    }
-
-    DWORD dwFlags = pD3DXFilterParams->dwMipFilterOptions;
-
-    CMP_ERROR retVal = CMP_ERR_GENERIC;
-    HWND      hWnd   = NULL;  //
-
-    HMODULE hInstance = GetModuleHandle(NULL);
-
-    TCHAR    szWindowClass[] = _T("D3DXFilter Window");
-    WNDCLASS wndClass        = {0, WndProc, 0, 0, hInstance, NULL, NULL, (HBRUSH)COLOR_BACKGROUND, NULL, szWindowClass};
-    RegisterClass(&wndClass);
-
-    // Set the window's initial style
-    hWnd = CreateWindow(
-        szWindowClass, szWindowClass, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, pMipSet->m_nWidth, pMipSet->m_nHeight, NULL, NULL, hInstance, NULL);
-    if (hWnd == NULL)
-        HANDLE_ERROR(CMP_ERR_UNABLE_TO_INIT_D3DX, "Unable to init D3DX9");
-
-    HRESULT hr = 0;
-
-#ifdef USE_DIRECTX9
-
-    D3DFORMAT d3dformat;
-
-    switch (pMipSet->m_ChannelFormat)
-    {
-    case CF_Float32:
-        d3dformat = D3DFMT_A32B32G32R32F;
-        break;
-    case CF_Float16:
-        d3dformat = D3DFMT_A16B16G16R16F;
-        break;
-    case CF_16bit:
-        d3dformat = D3DFMT_A16B16G16R16;
-        break;
-    case CF_8bit:
-        d3dformat = D3DFMT_A8R8G8B8;
-        break;
-    default:
-        // CF format Not mapped at this time!
-        // CF_2101010    10-bit integer data in the color channels & 2-bit integer data in the alpha channel.
-        // CF_32bit      32-bit integer data.
-        // CF_Float9995E 32-bit partial precision float.
-        // CF_YUV_420    YUV Chroma formats
-        // CF_YUV_422    YUV Chroma formats
-        // CF_YUV_444    YUV Chroma formats
-        // CF_YUV_4444   YUV Chroma formats
-        if (CFilterMips)
-            CFilterMips->PrintError("Feature is not supported for the images channel type!");
-        return PE_Unknown;
-        break;
-    }
-
-    IDirect3D9*        pD3D                      = NULL;
-    IDirect3DDevice9*  m_pDevice                 = NULL;
-    IDirect3DTexture9* m_pTexture2DSourceTexture = NULL;
-    IDirect3DSurface9* pSurface                  = NULL;
-
-    pD3D = g_D3D9.Direct3DCreate9(D3D_SDK_VERSION);
-    if (pD3D == NULL)
-        HANDLE_ERROR(CMP_ERR_UNABLE_TO_INIT_D3DX, "Unable get pD3D");
-
-    D3DPRESENT_PARAMETERS presentParams;
-    presentParams.BackBufferWidth            = pMipSet->m_nWidth;
-    presentParams.BackBufferHeight           = pMipSet->m_nHeight;
-    presentParams.BackBufferCount            = 0;
-    presentParams.BackBufferFormat           = D3DFMT_UNKNOWN;
-    presentParams.MultiSampleType            = D3DMULTISAMPLE_NONE;
-    presentParams.MultiSampleQuality         = 0;
-    presentParams.SwapEffect                 = D3DSWAPEFFECT_DISCARD;
-    presentParams.hDeviceWindow              = NULL;
-    presentParams.Windowed                   = TRUE;
-    presentParams.EnableAutoDepthStencil     = FALSE;
-    presentParams.AutoDepthStencilFormat     = D3DFMT_UNKNOWN;
-    presentParams.Flags                      = 0;
-    presentParams.FullScreen_RefreshRateInHz = 0;
-    presentParams.PresentationInterval       = D3DPRESENT_INTERVAL_DEFAULT;
-
-    hr = pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_MIXED_VERTEXPROCESSING, &presentParams, &m_pDevice);
-    if (FAILED(hr))
-        HANDLE_ERROR(CMP_ERR_UNABLE_TO_INIT_D3DX, "Failed to create D3DX9 device");
-#else
-    if (!CreateDXDevice())
-    {
-        HANDLE_ERROR(CMP_ERR_UNABLE_TO_INIT_D3DX, "Failed to create device");
-    }
-#endif
     DWORD dwMipLevels = 1;
     int   nWidth      = pMipSet->m_nWidth;
     int   nHeight     = pMipSet->m_nHeight;
@@ -658,139 +262,151 @@ int Plugin_BoxFilter::GenMipLevelsUsingD3DXFilter(MipSet* pMipSet, CMP_CFilterPa
         nWidth  = max(nWidth >> 1, 1);
         nHeight = max(nHeight >> 1, 1);
         dwMipLevels++;
-        if ((nWidth <= pD3DXFilterParams->nMinSize) || (nHeight <= pD3DXFilterParams->nMinSize))
+        if ((nWidth <= pD3DXFilterParams->nMinSize) && (nHeight <= pD3DXFilterParams->nMinSize))
             break;
         if (dwMipLevels == pMipSet->m_nMaxMipLevels)
             break;
     }
 
-    DWORD dwLevel;
+    return dwMipLevels;
+}
 
-#ifdef USE_DIRECTX9
-    m_pDevice->CreateTexture(pMipSet->m_nWidth, pMipSet->m_nHeight, dwMipLevels, 0, d3dformat, D3DPOOL_SCRATCH, &m_pTexture2DSourceTexture, NULL);
-    if (FAILED(hr))
-        HANDLE_ERROR(CMP_ERR_UNABLE_TO_INIT_D3DX, "Failed to create texture");
-#else
-    hr = Create2DTexture(pMipSet, dwMipLevels);
-    if (FAILED(hr))
-        HANDLE_ERROR(CMP_ERR_UNABLE_TO_INIT_D3DX, "Failed to create texture");
-#endif
+int Plugin_BoxFilter::GenMipLevelsUsingDXTex(MipSet* pMipSet, CMP_CFilterParams* pD3DXFilterParams)
+{
+    CMP_ERROR retVal = CMP_OK;
+    HWND      hWnd   = NULL;  //
+    HRESULT   hRes;
+    DWORD     dwLevel;
 
-#ifdef USE_DIRECTX9
-    D3DLOCKED_RECT rect;
-    hr = m_pTexture2DSourceTexture->LockRect(0, &rect, NULL, 0);
-    if (FAILED(hr))
-        HANDLE_ERROR(CMP_ERR_UNABLE_TO_INIT_D3DX, "Failed to lock rect");
-
-    memcpy(rect.pBits, CFilterMips->GetMipLevel(pMipSet, 0)->m_pbData, CFilterMips->GetMipLevel(pMipSet, 0)->m_dwLinearSize);
-
-    hr = m_pTexture2DSourceTexture->UnlockRect(0);
-    if (FAILED(hr))
-        HANDLE_ERROR(CMP_ERR_UNABLE_TO_INIT_D3DX, "Failed to unlock rect");
-
-    hr = g_D3DX.D3DXFilterTexture(m_pTexture2DSourceTexture, NULL, D3DX_DEFAULT, dwFlags);
-    if (FAILED(hr))
-        HANDLE_ERROR(CMP_ERR_UNABLE_TO_INIT_D3DX, "Failed D3DXFilterTexture");
-    DWORD dwLevels = m_pTexture2DSourceTexture->GetLevelCount();
-
-    ASSERT(dwLevels == dwMipLevels);
-
-    for (dwLevel = 1; dwLevel < dwLevels; dwLevel++)
+    DXGI_FORMAT d3dformat;
+    bool        extra_mirror_filtering = false;
+    switch (pMipSet->m_ChannelFormat)
     {
-        hr = m_pTexture2DSourceTexture->GetSurfaceLevel(dwLevel, &pSurface);
-        if (FAILED(hr))
-            HANDLE_ERROR(CMP_ERR_UNABLE_TO_INIT_D3DX, "Failed GetSurfaceLevel");
+    case CF_Float32:
+        d3dformat = DXGI_FORMAT_R32G32B32A32_FLOAT;
+        break;
+    case CF_Float16:
+        d3dformat = DXGI_FORMAT_R16G16B16A16_FLOAT;
+        break;
+    case CF_16bit:
+        d3dformat = DXGI_FORMAT_R16G16B16A16_UNORM;
+        break;
+    case CF_8bit:
+        d3dformat = DXGI_FORMAT_R8G8B8A8_UNORM;
+        break;
+    default:
+        if (CFilterMips)
+            CFilterMips->PrintError("Feature is not supported for the images channel type!");
+        return PE_Unknown;
+        break;
+    }
 
-        D3DSURFACE_DESC desc;
-        hr = pSurface->GetDesc(&desc);
-        if (FAILED(hr))
-            HANDLE_ERROR(CMP_ERR_UNABLE_TO_INIT_D3DX, "Failed GetDesc");
+    DirectX::TEX_FILTER_FLAGS filter;
+    switch (pD3DXFilterParams->dwMipFilterOptions & 0xF)
+    {
+    case CMP_D3DX_FILTER_POINT:
+        filter = DirectX::TEX_FILTER_FLAGS::TEX_FILTER_POINT;
+        break;
+    case CMP_D3DX_FILTER_LINEAR:
+        filter = DirectX::TEX_FILTER_FLAGS::TEX_FILTER_LINEAR;
+        extra_mirror_filtering = true;
+        break;
+    case CMP_D3DX_FILTER_TRIANGLE:
+        filter = DirectX::TEX_FILTER_FLAGS::TEX_FILTER_TRIANGLE;
+        extra_mirror_filtering = true;
+        break;
+    default: // BOX 
+        filter = DirectX::TEX_FILTER_FLAGS::TEX_FILTER_BOX;
+        break;
+    }
 
-        if (CFilterMips->GetMipLevel(pMipSet, dwLevel)->m_pbData)
-        {  // Space for mip level already allocated ?
+    if (pD3DXFilterParams->dwMipFilterOptions & CMP_D3DX_FILTER_DITHER)
+        filter |= DirectX::TEX_FILTER_FLAGS::TEX_FILTER_DITHER;
 
-            if (CFilterMips->GetMipLevel(pMipSet, dwLevel)->m_nWidth != (int)desc.Width ||
-                CFilterMips->GetMipLevel(pMipSet, dwLevel)->m_nHeight != (int)desc.Height)
+    if (extra_mirror_filtering)
+    {
+         if (pD3DXFilterParams->dwMipFilterOptions & CMP_D3DX_FILTER_MIRROR)
+             filter |= DirectX::TEX_FILTER_FLAGS::TEX_FILTER_MIRROR;
+    }
+   
+   DWORD dwMipLevels = CalcMipLevels(pMipSet, pD3DXFilterParams);
+
+    // Create ScratchImage from loaded image
+    DirectX::Image inputPixels =
+    {
+        (size_t)pMipSet->m_nWidth, 
+        (size_t)pMipSet->m_nHeight, 
+        d3dformat,
+        1,                      // rowPitch
+        1,                      // slicePitch
+        CFilterMips->GetMipLevel(pMipSet, 0)->m_pbData
+    };
+
+
+    DirectX::ScratchImage mipMaps;
+    DirectX::ScratchImage scratchImage;
+    DirectX::Rect         imputRec     = {0,0,(size_t)pMipSet->m_nWidth,(size_t)pMipSet->m_nHeight};
+    DirectX::Image        outputPixels = {};
+
+    do
+    {
+        if (DirectX::ComputePitch(d3dformat, pMipSet->m_nWidth, pMipSet->m_nHeight, inputPixels.rowPitch, inputPixels.slicePitch, DirectX::CP_FLAGS_NONE) != S_OK)
+            HANDLE_ERROR_BREAK(retVal = CMP_ERR_GENERIC, " Failed ComputePitch");
+
+        if (scratchImage.Initialize2D(d3dformat, pMipSet->m_nWidth, pMipSet->m_nHeight, dwMipLevels, 1) != S_OK)
+            HANDLE_ERROR_BREAK(retVal = CMP_ERR_GENERIC, " Failed Initialize2D");
+
+        outputPixels = *scratchImage.GetImage(0, 0, 0);
+        if (DirectX::CopyRectangle(inputPixels, imputRec, outputPixels, DirectX::TEX_FILTER_DEFAULT, 0, 0) != S_OK)
+            HANDLE_ERROR_BREAK(retVal = CMP_ERR_GENERIC, " Failed CopyRectangle");
+
+        hRes = DirectX::GenerateMipMaps(scratchImage.GetImages(), scratchImage.GetImageCount(), scratchImage.GetMetadata(), filter, 0, mipMaps);
+        if (hRes != S_OK)
+            HANDLE_ERROR_BREAK(retVal = CMP_ERR_GENERIC, " Failed GenerateMipMaps");
+
+
+        for (dwLevel = 0; dwLevel < dwMipLevels; dwLevel++)
+        {
+            DirectX::Image mipPixel = *mipMaps.GetImage(dwLevel, 0, 0);
+
+            // Space for mip level already allocated
+            if (CFilterMips->GetMipLevel(pMipSet, dwLevel)->m_pbData) 
             {
-                // Wrong size - release & reallocate
-                CFilterMips->FreeMipLevelData(CFilterMips->GetMipLevel(pMipSet, dwLevel));
-                if (CFilterMips->AllocateMipLevelData(
-                        CFilterMips->GetMipLevel(pMipSet, dwLevel), desc.Width, desc.Height, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType) == NULL)
+                if (CFilterMips->GetMipLevel(pMipSet, dwLevel)->m_nWidth != (int)mipPixel.width ||
+                    CFilterMips->GetMipLevel(pMipSet, dwLevel)->m_nHeight != (int)mipPixel.height)
                 {
-                    HANDLE_ERROR(CMP_ERR_UNABLE_TO_INIT_D3DX, "Failed AllocateMipLevelData");
+                    // Wrong size - release & reallocate
+                    CFilterMips->FreeMipLevelData(CFilterMips->GetMipLevel(pMipSet, dwLevel));
+                    if (CFilterMips->AllocateMipLevelData(CFilterMips->GetMipLevel(pMipSet, dwLevel),
+                                                          mipPixel.width,
+                                                          mipPixel.height,
+                                                          pMipSet->m_ChannelFormat,
+                                                          pMipSet->m_TextureDataType) == NULL)
+                        HANDLE_ERROR_BREAK(retVal = CMP_ERR_GENERIC, "Failed Existing AllocateMipLevelData");
                 }
             }
+            else 
+            if (CFilterMips->AllocateMipLevelData(CFilterMips->GetMipLevel(pMipSet, dwLevel), mipPixel.width, mipPixel.height, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType) == NULL)
+                HANDLE_ERROR_BREAK(retVal = CMP_ERR_GENERIC, " Failed New AllocateMipLevelData");
+
+            if (CFilterMips->GetMipLevel(pMipSet, dwLevel)->m_dwLinearSize == mipPixel.slicePitch)
+                memcpy(CFilterMips->GetMipLevel(pMipSet, dwLevel)->m_pbData, mipPixel.pixels, CFilterMips->GetMipLevel(pMipSet, dwLevel)->m_dwLinearSize);
+            else
+                HANDLE_ERROR_BREAK(retVal = CMP_ERR_GENERIC, " Failed GetMipLevel");
         }
-        else if (CFilterMips->AllocateMipLevelData(
-                     CFilterMips->GetMipLevel(pMipSet, dwLevel), desc.Width, desc.Height, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType) == NULL)
-        {
-            HANDLE_ERROR(CMP_ERR_UNABLE_TO_INIT_D3DX, " Failed GetMipLevel");
-        }
 
-        hr = pSurface->LockRect(&rect, NULL, 0);
-        if (FAILED(hr))
-            HANDLE_ERROR(CMP_ERR_UNABLE_TO_INIT_D3DX, "Failed LockRect 2");
+        // Increment nMipLevel to point to next (empty) miplevel
+        while (++dwLevel < dwMipLevels)
+            CFilterMips->FreeMipLevelData(CFilterMips->GetMipLevel(pMipSet, dwLevel));
 
-        memcpy(CFilterMips->GetMipLevel(pMipSet, dwLevel)->m_pbData, rect.pBits, CFilterMips->GetMipLevel(pMipSet, dwLevel)->m_dwLinearSize);
+        pMipSet->m_nMipLevels = dwMipLevels;
 
-        pSurface->UnlockRect();
-        pSurface->Release();
-        pSurface = NULL;
-    }
-#else
+    } while (0);
 
-    D3D11_TEXTURE2D_DESC srcDesc;
-    m_pTexture2DSourceTexture->GetDesc(&srcDesc);
-
-    D3D11_TEXTURE2D_DESC desc = srcDesc;
-    desc.MipLevels            = 1;
-    desc.ArraySize            = 1;
-    desc.MiscFlags            = 0;
-
-    ID3D11Texture2D* pMipLevel = nullptr;
-    m_pDevice->CreateTexture2D(&desc, nullptr, &pMipLevel);
-#endif
-
-    retVal = CMP_OK;
-
-    // Increment nMipLevel to point to next (empty) miplevel
-    while (++dwLevel < dwMipLevels)
-        CFilterMips->FreeMipLevelData(CFilterMips->GetMipLevel(pMipSet, dwLevel));
-
-    pMipSet->m_nMipLevels = dwMipLevels;
-
-Cleanup:
-#ifdef USE_DIRECTX9
-    if (pSurface)
-    {
-        pSurface->Release();
-        pSurface = NULL;
-    }
-#endif
-    if (m_pTexture2DSourceTexture)
-    {
-        m_pTexture2DSourceTexture->Release();
-        m_pTexture2DSourceTexture = NULL;
-    }
-    if (m_pDevice)
-    {
-        m_pDevice->Release();
-        m_pDevice = NULL;
-    }
-
-#ifdef USE_DIRECTX9
-    if (pD3D)
-    {
-        pD3D->Release();
-        pD3D = NULL;
-    }
-#endif
-    if (hWnd)
-    {
-        DestroyWindow(hWnd);
-        hWnd = NULL;
-    }
-
+    scratchImage.Release();
+    mipMaps.Release();
     return retVal;
 }
+#endif
+
 #endif

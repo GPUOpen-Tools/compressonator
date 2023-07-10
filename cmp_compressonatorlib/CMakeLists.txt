@@ -1,31 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
 
-
-# Reserved for Future releases
-file(GLOB_RECURSE CMP_CORE_SRC
-      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc1_encode_kernel.h
-      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc1_encode_kernel.cpp
-      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc2_encode_kernel.h
-      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc2_encode_kernel.cpp
-      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc3_encode_kernel.h
-      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc3_encode_kernel.cpp
-      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc4_encode_kernel.h
-      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc4_encode_kernel.cpp
-      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc5_encode_kernel.h
-      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc5_encode_kernel.cpp
-      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc6_encode_kernel.h
-      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc6_encode_kernel.cpp
-      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc7_encode_kernel.h
-      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bc7_encode_kernel.cpp
-      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bcn_common_kernel.h
-      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/bcn_common_api.h
-      ${PROJECT_SOURCE_DIR}/cmp_core/source/cmp_core.h
-      ${PROJECT_SOURCE_DIR}/cmp_core/source/cmp_math_func.h
-      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/
-      ${PROJECT_SOURCE_DIR}/cmp_core/shaders/common_def.h
-      ${PROJECT_SOURCE_DIR}/cmp_core/source/cmp_math_vec4.h
-)
-
 file(GLOB_RECURSE CMP_SRCS
     # Lossy Compression
     "apc/*.h"
@@ -90,44 +64,40 @@ if (OPTION_BUILD_BROTLIG)
 endif()
 
 add_library(CMP_Compressonator 
-            STATIC  
-            version.h
-            common.h
-            compress.cpp
-            compressonator.h
-            compressonator.cpp
-            ${CMP_SRCS} 
-            ${CMP_CORE_SRC}  
-            )
-
-source_group("cmp_core" FILES ${CMP_CORE_SRC})
+    STATIC  
+    version.h
+    common.h
+    compress.cpp
+    compressonator.h
+    compressonator.cpp
+    ${CMP_SRCS}
+)
 
 target_include_directories(CMP_Compressonator
-                           PRIVATE
-                           ./
-                           # Lossy Compression
-                           apc
-                           atc
-                           ati
-                           basis
-                           bc6h
-                           bc7
-                           block
-                           buffer
-                           dxt
-                           dxtc
-                           etc
-                           etc/etcpack/
-                           gt
+    PRIVATE
+    ./
+    # Lossy Compression
+    apc
+    atc
+    ati
+    basis
+    bc6h
+    bc7
+    block
+    buffer
+    dxt
+    dxtc
+    etc
+    etc/etcpack/
+    gt
 
-                           # Common
-                           common
-                           ${PROJECT_SOURCE_DIR}/cmp_core/shaders
-                           ${PROJECT_SOURCE_DIR}/cmp_core/source
-                           ${PROJECT_SOURCE_DIR}/cmp_framework/common
-                           ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
-                           ${PROJECT_SOURCE_DIR}/applications/_plugins/common
-                           )
+    # Common
+    common
+    ${PROJECT_SOURCE_DIR}/cmp_framework/common
+    ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common
+    ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_math/
+)
 
 set_target_properties(CMP_Compressonator PROPERTIES FOLDER "Libs")
 
@@ -151,3 +121,7 @@ if (OPTION_BUILD_BROTLIG)
         dxguid.lib
     )
 endif()
+
+# TODO: More libraries should be linked like this when building so that we don't have to constantly repeat source file includes
+# Not just for CMP_Compressonator, do the same for the Framework and all other libraries
+target_link_libraries(CMP_Compressonator PRIVATE CMP_Core)

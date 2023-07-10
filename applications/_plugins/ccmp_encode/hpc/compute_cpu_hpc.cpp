@@ -225,7 +225,7 @@ void CCPU_HPC::FinishThreadEncoding() {
 }
 
 void CCPU_HPC::Init() {
-    m_cputimer.initialize();
+    m_cputimer = cpu_timer();
 
     m_plugin_compute            = NULL;
     m_ThreadCodecInitialized    = false;
@@ -440,7 +440,7 @@ CMP_ERROR CCPU_HPC::Compress(KernelOptions *Options, MipSet  &SrcTexture, MipSet
 
                 if (Options->getPerfStats) {
                     m_cputimer.Stop(1);
-                    pFeedbackTimeMS += m_cputimer.GetMS(1);
+                    pFeedbackTimeMS += m_cputimer.GetTimeMS(1);
                 }
             }
         }
@@ -456,7 +456,7 @@ CMP_ERROR CCPU_HPC::Compress(KernelOptions *Options, MipSet  &SrcTexture, MipSet
 
         // Only collect perf data on topmost miplevel
         if (Options->getPerfStats && (destTexture.m_nIterations < 1)) {
-            m_computeShaderElapsedMS = ((CGU_FLOAT)(m_cputimer.GetMS(0) - pFeedbackTimeMS))/m_num_blocks;
+            m_computeShaderElapsedMS = ((CGU_FLOAT)(m_cputimer.GetTimeMS(0) - pFeedbackTimeMS))/m_num_blocks;
             if (m_computeShaderElapsedMS > 0) {
                 CMP_FLOAT blocksPerSecond = (1000.0f/m_computeShaderElapsedMS);
                 m_CmpMTxPerSec = (BLOCK_SIZE_4X4 * blocksPerSecond) / 1000000.0f;

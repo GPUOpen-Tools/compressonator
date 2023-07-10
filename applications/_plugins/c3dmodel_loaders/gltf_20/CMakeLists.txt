@@ -13,7 +13,7 @@ target_link_libraries(ModelLoader_gltf PRIVATE
     CMP_Common              # CModel Data
 )
 
-find_package(Qt5 REQUIRED COMPONENTS Core Widgets HINTS ${QT_PACKAGE_ROOT})
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets HINTS ${QT_DIR})
 
 target_include_directories(ModelLoader_gltf PUBLIC
     ./

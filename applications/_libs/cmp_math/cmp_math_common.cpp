@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2023 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -329,7 +329,7 @@ void cmp_set_fma3_features() {
 void cmp_set_cpu_features() {
     // features list in Alphabetical order
     cmp_clampf2   = cpu_clampf;
-    cmp_lerp2    = cpu_lerp2;
+    cmp_lerp2     = cpu_lerp2;
     cmp_maxf2     = cpu_maxf;
     cmp_minf2     = cpu_minf;
     cmp_rsqf2     = cpu_rsqf;
@@ -341,7 +341,7 @@ void cmp_set_cpu_features() {
 #ifndef __linux__
 void cmp_set_sse2_features() {
     cmp_clampf2   = sse_clampf;
-    cmp_lerp2    = sse_lerp2;
+    cmp_lerp2     = sse_lerp2;
     cmp_maxf2     = sse_maxf;
     cmp_minf2     = sse_minf;
     cmp_rsqf2     = sse_rsqf;

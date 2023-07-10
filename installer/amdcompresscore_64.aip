@@ -27,7 +27,7 @@
     <ROW Property="ProductCode" Value="1033:{FB88015A-B8A8-4908-8936-4D90AC16389C} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="CompressonatorCore"/>
-    <ROW Property="ProductVersion" Value="4.3.0" Type="32"/>
+    <ROW Property="ProductVersion" Value="4.4.0" Type="32"/>
     <ROW Property="SETUP_FILE_NAME" Value="CompressonatorCore_x64_4.1."/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
     <ROW Property="UpgradeCode" Value="{78D0379B-C01A-49C4-A8C7-A41904A35199}"/>

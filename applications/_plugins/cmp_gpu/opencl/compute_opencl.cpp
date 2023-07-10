@@ -24,7 +24,7 @@
 #include "copencl.h"
 
 #ifdef USE_CPU_PERFORMANCE_COUNTERS
-#include "query_timer.h"  // can use CPU timing but pref is to use GPU counters
+#include "cpu_timing.h"  // can use CPU timing but pref is to use GPU counters
 #endif
 
 #ifdef  _M_X64
@@ -266,7 +266,7 @@ void PrintOCLError(cl_int error) {
 //====================================== Framework Common Interfaces : OpenCL Compute  ==========================================
 
 void COpenCL::Init() {
-    query_timer::initialize();
+    query_timer::Initialize();
 
     m_initDeviceOk              = false;
     m_programRun                = false;
@@ -865,8 +865,7 @@ bool  COpenCL::RunKernel() {
     }
 
 #ifdef USE_CPU_PERFORMANCE_COUNTERS
-    cmp_cputimer cputimer;
-    cputimer.initialize();
+    cpu_timer cputimer;
     cputimer.Start(0);
 #else
     cl_event cl_perf_event = NULL;
@@ -899,7 +898,7 @@ bool  COpenCL::RunKernel() {
 
 #ifdef USE_CPU_PERFORMANCE_COUNTERS
     cputimer.Stop(0);
-    m_computeShaderElapsedMS = cputimer.GetMS(0);
+    m_computeShaderElapsedMS = cputimer.GetTimeMS(0);
 #endif
 
     // Check if performance event has been set and valid

@@ -1,17 +1,20 @@
 # CMakeCustomTargets CMakeLists.txt
 
-message(STATUS "++++++++++++++++++ External-QT " ${QT_PACKAGE_ROOT} )
+message(STATUS "++++++++++++++++++ External-QT " ${QT_DIR} )
 
 if (NOT OPTION_CMP_QT)
     message("OPTION_CMP_QT=OFF")
     return()
 endif()
 
-#if (NOT DEFINED ENV{QTDIR})
-#    message(FATAL_ERROR "A 'QTDIR' environment variable is required")
-#endif()
+if (NOT DEFINED ENV{QT_DIR})
+    message(FATAL_ERROR "A 'QT_DIR' environment variable is required to indicate the location where Qt5 is installed.")
+endif()
 
-find_package(Qt5 COMPONENTS REQUIRED Core HINTS ${QT_PACKAGE_ROOT})
+# We set Qt5_DIR because it is needed for find_package to work, but we want to keep the consistency of the user environment variables
+set(ENV{Qt5_DIR} $ENV{QT_DIR})
+
+find_package(Qt5 COMPONENTS REQUIRED Core PATHS ${QT_DIR})
 
 get_target_property(QtCore_location Qt5::Core LOCATION)
 
@@ -45,7 +48,7 @@ endif()
 find_package(Qt5 REQUIRED QUIET
     COMPONENTS Core Gui OpenGL Qml QuickWidgets WebEngineWidgets Widgets Xml
     PATHS ${QT_FIND_ROOT_PATH}
-    HINTS ${QT_PACKAGE_ROOT}
+    HINTS ${QT_DIR}
 )
 
 add_library(ExtQt5 INTERFACE)

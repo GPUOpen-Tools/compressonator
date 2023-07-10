@@ -36,6 +36,24 @@
     <ClCompile Include="..\CMP_Core\shaders\BC6_Encode_kernel.cpp">
       <Filter>BCn</Filter>
     </ClCompile>
+    <ClCompile Include="..\cmp_core\source\cmp_core.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cmp_core\source\core_simd_avx.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cmp_core\source\core_simd_avx512.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cmp_core\source\core_simd_sse.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_libs\cmp_math\cmp_math_common.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_libs\cmp_math\cpu_extensions.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\CMP_Core\shaders\BC1_Encode_kernel.h">
@@ -91,6 +109,15 @@
     </ClInclude>
     <ClInclude Include="..\cmp_core\shaders\bcn_common_api.h">
       <Filter>BCn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_core\source\core_simd.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_libs\cmp_math\cmp_math_common.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_libs\cmp_math\cpu_extensions.h">
+      <Filter>source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

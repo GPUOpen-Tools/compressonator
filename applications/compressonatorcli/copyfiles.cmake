@@ -47,8 +47,8 @@ if (CMP_HOST_WINDOWS)
     cmp_gui_copy_to_output(${PROJECT_SOURCE_DIR}/../common/lib/ext/opencv/2.49/x64/VS2015/bin/$<$<CONFIG:Debug>:debug>$<$<CONFIG:Release>:release>/opencv_imgproc249$<$<CONFIG:Debug>:d>.dll ${ASSETS_PATH}/opencv_imgproc249$<$<CONFIG:Debug>:d>.dll)
 
     # New OpenCV Support
-    if(EXISTS C:/opencv)
-    cmp_gui_copy_to_output(C:/opencv/build/x64/vc15/bin/opencv_world420$<$<CONFIG:Debug>:d>.dll ${ASSETS_PATH}/opencv_world420$<$<CONFIG:Debug>:d>.dll)
+    if(DEFINED ${OPENCV_DIR})
+        cmp_gui_copy_to_output(${OPENCV_DIR}build/x64/vc15/bin/opencv_world420$<$<CONFIG:Debug>:d>.dll ${ASSETS_PATH}/opencv_world420$<$<CONFIG:Debug>:d>.dll)
     endif()
 
     #KTX2 Features dll

@@ -18,6 +18,7 @@ target_include_directories(Image_TGA
      ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
      ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
      ${PROJECT_SOURCE_DIR}/applications/_plugins/common
+     ${PROJECT_SOURCE_DIR}/external/stb
      )
 
 if (UNIX)

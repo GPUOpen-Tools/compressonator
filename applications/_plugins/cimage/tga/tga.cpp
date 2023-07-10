@@ -62,7 +62,8 @@ int Plugin_TGA::TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *s
     return 0;
 }
 
-#ifdef BUILD_AS_PLUGIN_DLL
+#define STB_IMAGE_STATIC
+#ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #endif
 #include "stb_image.h"

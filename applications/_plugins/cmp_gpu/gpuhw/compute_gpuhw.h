@@ -28,7 +28,7 @@
 #include "common_def.h"  // Updated at run time
 #include "compute_base.h"
 #include "common_kerneldef.h"
-#include "query_timer.h"
+#include "cpu_timing.h"
 #include "textureio.h"
 #include "crc32.h"
 #include "cmp_math_common.h"

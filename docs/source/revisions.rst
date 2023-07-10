@@ -3,6 +3,43 @@ Revision History
 
 For the latest documentation, please refer to:  http://compressonator.readthedocs.io/en/latest/
 
+V4.4
+~~~~
+July 2023
+
+**Features**
+
+- SIMD Support in BC1 Encoding
+
+    - Added new code paths for SSE4, AVX2, and AVX-512 encoding in Compressonator Core that are automatically chosen based on CPU support
+    - New functions added to the core interface to allow users to manually enable/disable SIMD instructions if desired: **EnableSSE4()**, **EnableAVX2()**, **EnableAVX512()**, and **DisableSIMD()**
+    - Another new function was added to allow users to query the SIMD instruction set extensions currently being used in Compressonator Core: **GetEnabledSIMDExtension()**
+
+- Mipmap Generation Updates
+    
+    - New option called "FilterGamma" added to Compressonator CLI which allows users to apply gamma correction to mipmap levels after generation
+    - Mipmap generation behaviour has been modified to only stop once all dimensions of the mipmap level are equal to or below the minimum size specified
+
+- Miscellaneous Changes
+
+    - The default location of build artifacts has changed from *build* to *build/bin*, and build scripts have been moved to *build*
+    - A new CMake project for building only the SDK in various configurations has been created under the *build/sdk* folder
+    - The regular CMake build now requires three environment variables to be set that point to external dependency installations: **OPENCV_DIR**, **QT_DIR**, and **VULKAN_DIR** (more details can be found in the build section of the docs)
+    - 16-bit PNG support added to Compressonator Framework
+    - Removed implicit channel swizzling from all codec buffer classes, ensuring more consistent behaviour
+    - Renamed CMP_TestCore project to CMP_UnitTests and expanded the suite of unit tests
+    - Fixed compilation errors for BC6H core shader
+    - Dependency on DirectX 9 and DirectX 10 DLL files has been replaced with the use of DirectXTex
+    - Silent option in Compressonator CLI properly disables all output other than fatal errors.
+    - Edited documentation to fix typo for "GenGPUMipMaps" option
+    - Improved BC7 codec performance by keeping initialization data in memory rather than freeing it after each call to CMP_ConvertTexture
+
+**Known issues and limitations**
+
+- Compressing RG8 format images to BC5 results in black data in the output red channel
+- Potential buffer overflow in RG8 Codec Buffer class when converting RG8 data to BC5
+- Swizzling is not supported in all variations of the codec buffer classes
+
 V4.3
 ~~~~
 January 2023

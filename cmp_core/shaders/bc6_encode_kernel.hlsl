@@ -1,6 +1,6 @@
 // 60354e86-----------------------------------------------------------------------------
 //==============================================================================
-// Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020-2023    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -77,6 +77,16 @@ groupshared float3 shared_temp[THREAD_GROUP_SIZE];
 #endif
 
 #include "bc6_common_encoder.h"
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)] void TryModeG10CS(uint GI : SV_GroupIndex, uint3 groupID : SV_GroupID)
+{
+    // Do nothing
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)] void TryModeLE10CS(uint GI : SV_GroupIndex, uint3 groupID : SV_GroupID)
+{
+    // Do nothing
+}
 
 #ifndef USE_MSC
 [numthreads(THREAD_GROUP_SIZE, 1, 1)] void EncodeBlocks(CGU_UINT32 GI

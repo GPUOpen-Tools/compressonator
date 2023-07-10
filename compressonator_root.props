@@ -70,8 +70,8 @@
     <BuildMacro Include="Compressonator_DIRECTX">
       <Value>$(Compressonator_DIRECTX)</Value>
     </BuildMacro>
-    <BuildMacro Include="QTDIR">
-      <Value>$(QTDIR)</Value>
+    <BuildMacro Include="QT_DIR">
+      <Value>$(QT_DIR)</Value>
     </BuildMacro>
     <BuildMacro Include="Compressonator_FLTK">
         <Value>$(Compressonator_FLTK)</Value>

@@ -55,6 +55,39 @@
 #include "externcodec.h"  // Use external codec for testing
 #endif
 
+#if !defined(ASPM_GPU)
+int BC1EnableSSE4()
+{
+    bool result = bc1ToggleSIMD(EXTENSION_SSE42);
+
+    return result ? 0 : 1;
+}
+
+int BC1EnableAVX2()
+{
+    bool result = bc1ToggleSIMD(EXTENSION_AVX2);
+
+    return result ? 0 : 1;
+}
+
+int BC1EnableAVX512()
+{
+    bool result = bc1ToggleSIMD(EXTENSION_AVX512_F);
+
+    return result ? 0 : 1;
+}
+
+void BC1DisableSIMD()
+{
+    bc1ToggleSIMD(EXTENSION_NONE);
+}
+#else
+int BC1EnableSSE4() { return 0; }
+int BC1EnableAVX2() { return 0; }
+int BC1EnableAVX512() { return 0; }
+void BC1DisableSIMD() {}
+#endif
+
 #ifndef ASPM_HLSL
 void  CompressBlockBC1_Internal(const       CMP_Vec4uc      srcBlockTemp[16],
                                 CMP_GLOBAL  CGU_UINT32      compressedBlock[2],
@@ -64,7 +97,7 @@ void  CompressBlockBC1_Internal(const       CMP_Vec4uc      srcBlockTemp[16],
 #ifdef USE_NEW_SINGLE_HEADER_INTERFACES
     CGU_Vec2ui cmpBlock2 = {0,0};
     CGU_Vec4f  image_src[16];
-    //int        px = 0;
+    
     for (int i = 0; i < 16; i++)
     {
         image_src[i].x = srcBlockTemp[i].x / 255.0f;
@@ -240,12 +273,18 @@ int CMP_CDECL SetChannelWeightsBC1(void *options,
     return CGU_CORE_OK;
 }
 
-int CMP_CDECL SetGammaBC1(void *options, CGU_BOOL sRGB) {
+int CMP_CDECL SetSrgbBC1(void *options, CGU_BOOL sRGB)
+{
     if (!options) return CGU_CORE_ERR_INVALIDPTR;
     CMP_BC15Options *BC15optionsDefault = (CMP_BC15Options *)options;
 
     BC15optionsDefault->m_bIsSRGB = sRGB;
     return CGU_CORE_OK;
+}
+
+int CMP_CDECL SetGammaBC1(void* options, CGU_BOOL sRGB)
+{
+    return SetSrgbBC1(options, sRGB);
 }
 
 int CMP_CDECL CompressBlockBC1(const unsigned char *srcBlock,

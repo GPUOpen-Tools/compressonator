@@ -27,6 +27,9 @@
 
 #include <compressonator.h>
 
+// Gamma correction helper function for mipmap generation
+void CMP_SetMipSetGamma(MipSet* pMipSet, CMP_FLOAT Gamma);
+
 // generate a new mipmap level by averaging the pixel values of blocks in the previous mipmap levels
 void GenerateMipmapLevel(MipLevel* currMipLevel, MipLevel** prevMipLevels, uint32_t numPrevLevels, CMP_FORMAT format);
 

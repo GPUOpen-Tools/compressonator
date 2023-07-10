@@ -6,7 +6,6 @@ cmake_minimum_required(VERSION 3.10)
 # cmake -DOPTION_ENABLE_ALL_APPS=OFF -G "Visual Studio 15 2017 Win64"    Disable all builds except external libs, minimal cmake base setup 
 # cmake -DOPTION_ENABLE_ALL_APPS=OFF -DOPTION_BUILD_APPS_CMP_CLI=ON -G "Visual Studio 15 2017 Win64"   Enable only CLI app build
 # cmake -DOPTION_ENABLE_ALL_APPS=OFF -DOPTION_BUILD_APPS_CMP_GUI=ON -G "Visual Studio 15 2017 Win64"   Enable only GUI app build
-# cmake -DOPTION_ENABLE_ALL_APPS=OFF -DOPTION_BUILD_APPS_TESTCORE=ON -G "Visual Studio 15 2017 Win64"  Enable only Test Core App build
 #
 # Other options are available : see OPTION_BUILDS... 
 #
@@ -19,8 +18,15 @@ if(POLICY CMP0076)
   cmake_policy(SET CMP0076 NEW)
 endif()
 
-set(CMP_VERSION_MAJOR 4)
-set(CMP_VERSION_MINOR 3)
+# Setting version information
+
+if (NOT CMP_VERSION_MAJOR)
+    set(CMP_VERSION_MAJOR 4)
+endif()
+
+if (NOT CMP_VERSION_MINOR)
+    set(CMP_VERSION_MINOR 4)
+endif()
 
 if (NOT CMP_VERSION_BUILD_NUMBER)
     set(CMP_VERSION_BUILD_NUMBER 0)
@@ -52,9 +58,8 @@ if (CMP_HOST_LINUX OR CMP_HOST_WINDOWS)
         if("${i}" STREQUAL "cxx_std_17")
             set(COMPILER_SUPPORTS_CXX17 ON)
             message("Complier Supports ${i}")
-    endif()
-    # message("${i}")
-endforeach()
+        endif()
+    endforeach()
 else()
     message("UNIX Build: CHECK_CXX_COMPILER_FLAG defaulted to -std=c++11")
     set(COMPILER_SUPPORTS_CXX11 ON)
@@ -68,12 +73,12 @@ option(OPTION_ENABLE_ALL_APPS "Enable all apps" ON)
 if (OPTION_ENABLE_ALL_APPS) 
     set(OPTION_BUILD_APPS_CMP_CLI     "Build Application: compressonatorcli" ON)
     set(OPTION_BUILD_APPS_CMP_GUI     "Build Application: compressonator gui" ON)
-    set(OPTION_BUILD_APPS_CMP_TESTCORE "Build Application: cmp_testcore" ON)
+    set(OPTION_BUILD_APPS_CMP_UNITTESTS "Build Application: cmp_unittests" ON)
     set(OPTION_BUILD_APPS_CMP_EXAMPLES "Build Application: examples" ON)
 else()
     option(OPTION_BUILD_APPS_CMP_CLI       OFF)
     option(OPTION_BUILD_APPS_CMP_GUI       OFF)
-    option(OPTION_BUILD_APPS_CMP_TESTCORE  OFF)
+    option(OPTION_BUILD_APPS_CMP_UNITTESTS  OFF)
     option(OPTION_BUILD_APPS_CMP_EXAMPLES  OFF)
 endif()
 
@@ -156,7 +161,7 @@ add_compile_definitions(
     #USE_GLTF2_MIPSET                             # Enable Image Transcode & Compression support for GLTF files using TextureIO
     #USE_FILEIO                                   # Used for debugging code
 
-    #New features under developement
+    #New features under development
     #USE_BASIS                                    # Future release:: Universal format for transcoding codecs
     #USE_CMP_TRANSCODE                            # Future release:: Transcode BASIS/GTC to other compressed formats
 
@@ -187,7 +192,7 @@ endif()
 if (OPTION_CMP_GTC)
     add_compile_definitions(
         USE_GTC                                      # Patented: LDR Gradient Texture Compressor 
-        )
+    )
 endif()
 
 # Additional options
@@ -195,7 +200,7 @@ if (OPTION_BUILD_DRACO)
     add_compile_definitions(
         USE_MESH_DRACO_EXTENSION    # Mesh Compression with Draco support in glTF and OBJ files only
         USE_KTX_EXTENSION           # Add KTX file support
-        )
+    )
 endif()
 
 
@@ -267,7 +272,7 @@ else()
     set(OpenGL_GL_PREFERENCE "GLVND")
 
     if (CMP_HOST_LINUX AND OPTION_CMP_QT)
-        find_package(Qt5 COMPONENTS Gui Widgets OpenGL Qml WebEngineWidgets Xml REQUIRED HINTS ${QT_PACKAGE_ROOT})
+        find_package(Qt5 COMPONENTS Gui Widgets OpenGL Qml WebEngineWidgets Xml REQUIRED HINTS ${QT_DIR})
         if (Qt5Gui_FOUND)
         else()
           message(FATAL_ERROR "Package Qt5 (Qt5Gui) are required, but not found. "
@@ -415,16 +420,16 @@ if (CMP_HOST_WINDOWS)
         add_subdirectory(examples)
     endif()
 
-    # Core Test and CLI
-    if (OPTION_BUILD_APPS_CMP_TESTCORE)
-          message("Build cmp core setup")
-         add_subdirectory(cmp_core/test)
+    # Unit tests
+    if (OPTION_BUILD_APPS_CMP_UNITTESTS)
+          message("Build cmp unittests setup")
+         add_subdirectory(cmp_unittests)
     endif()
 
     # CLI + GUI Automation testing
     if (OPTION_BUILD_INTERNAL_CMP_TEST)
          message("Build cmp test setup")
-         add_subdirectory(internal/applications/cmp_test)
+         add_subdirectory(compressonator_internal/applications/cmp_test)
     endif()
 
 endif()

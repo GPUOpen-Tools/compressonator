@@ -135,9 +135,10 @@ void PrintUsage()
     printf("                          how many mip levels to generate\n");
     printf("-miplevels  <Level>       Sets Mips Level for output, range is 1 to 20\n");
     printf("                          (mipSize overides this option): default is 1\n");
+    printf("-FilterGamma <value>      A gamma correction level to apply after mipmap generation, in the range 1.0 to 2.6\n");
 #ifdef _WIN32
-    printf("-GenGPUMipMap             When encoding with GPU this flag will enable mipmap level generation\n");
-    printf("                          using GPU HW. Default level is 1 unless miplevels is set\n ");
+    printf("-GenGPUMipMaps            When encoding with GPU this flag will enable mipmap level generation\n");
+    printf("                          using GPU HW. Default level is 1 unless miplevels is set\n");
     printf("-UseSRGBFrames            When encoding with GPU, GL_FRAMEBUFFER_SRGB will be enabled else it will use GL_FRAMEBUFFER\n");
 #endif
     printf("\nCompression options:\n\n");

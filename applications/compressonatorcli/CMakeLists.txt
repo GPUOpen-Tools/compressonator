@@ -72,8 +72,8 @@ target_sources(CompressonatorCLI-bin
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/plugininterface.h
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/pluginmanager.h
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/pluginmanager.cpp
-               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/query_timer.h
-               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/query_timer.cpp
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cpu_timing.h
+               ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cpu_timing.cpp
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/textureio.h
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/textureio.cpp
                ${PROJECT_SOURCE_DIR}/applications/_plugins/common/gltf/tiny_gltf2.h
@@ -96,6 +96,7 @@ target_include_directories(CompressonatorCLI-bin
                            ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
                            ${PROJECT_SOURCE_DIR}/cmp_core/shaders
                            ${PROJECT_SOURCE_DIR}/cmp_core/source
+                           ${PROJECT_SOURCE_DIR}/external/stb/
                            ${PROJECT_SOURCE_DIR}/../common/lib/ext/glm
                            ${OpenEXR_INCLUDE_DIRS}
                         )

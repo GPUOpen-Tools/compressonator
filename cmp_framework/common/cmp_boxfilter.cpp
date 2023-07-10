@@ -43,6 +43,145 @@ union BoxFilter
     CMP_BYTE* pixels[4];
 };
 
+void CMP_SetMipLevelGammaLinearB(MipLevel* pCurMipLevel, CMP_BYTE* pdata, CMP_FLOAT Gamma, CMP_INT numchannels)
+{
+    for (int y = 0; y < pCurMipLevel->m_nHeight; y++)
+    {
+        for (int x = 0; x < pCurMipLevel->m_nWidth; x++)
+        {
+            // calc Gamma for the all color channels
+            for (int i = 0; i < 3 && i < numchannels; i++)
+            {
+                CMP_FLOAT normpixel = 0.0f;
+                if (*pdata > 0)
+                {
+                    normpixel = *pdata;
+                    normpixel = normpixel / 255.0f;
+                    normpixel = powf(normpixel, Gamma) * 255.0f;
+
+                    // need to check for signed components
+                    if (normpixel > 255)
+                        normpixel = 255;
+                    else if (normpixel < 0)
+                        normpixel = 0;
+
+                    *pdata = (CMP_BYTE)round(normpixel);
+                }
+                pdata++;
+            }
+            // if alpha skip it
+            if (numchannels > 3)
+                pdata++;
+        }
+    }
+}
+
+void CMP_SetMipLevelGammaLinearSB(MipLevel* pCurMipLevel, CMP_SBYTE* pdata, CMP_FLOAT Gamma, CMP_INT numchannels)
+{
+    for (int y = 0; y < pCurMipLevel->m_nHeight; y++)
+    {
+        for (int x = 0; x < pCurMipLevel->m_nWidth; x++)
+        {
+            // calc Gamma for the all color channels
+            for (int i = 0; i < 3 && i < numchannels; i++)
+            {
+                CMP_FLOAT normpixel = 0.0f;
+                if (*pdata > 0)
+                {
+                    normpixel = *pdata;
+                    normpixel = normpixel / 127.0f;
+                    normpixel = powf(normpixel, Gamma) * 127.0f;
+
+                    // need to check for signed components
+                    if (normpixel > 127)
+                        normpixel = 127;
+                    else if (normpixel < -127)
+                        normpixel = -127;
+
+                    *pdata = (CMP_SBYTE)round(normpixel);
+                }
+                pdata++;
+            }
+            // if alpha skip it
+            if (numchannels > 3)
+                pdata++;
+        }
+    }
+}
+
+template <typename T>
+void CMP_SetMipLevelGammaf(MipLevel* pCurMipLevel, T* pdata, CMP_FLOAT Gamma, CMP_INT numchannels)
+{
+    for (int y = 0; y < pCurMipLevel->m_nHeight; y++)
+    {
+        for (int x = 0; x < pCurMipLevel->m_nWidth; x++)
+        {
+            // calc Gamma for the all color channels
+            for (int i = 0; i < 3 && i < numchannels; i++)
+                *pdata++ = pow(*pdata, Gamma);
+            // if alpha skip it
+            if (numchannels > 3)
+                pdata++;
+        }
+    }
+}
+
+static CMP_FLOAT F16toF32(CMP_HALFSHORT f)
+{
+    CMP_HALF A;
+    A.setBits(f);
+    return ((CMP_FLOAT)A);
+}
+
+void CMP_SetMipLevelGammaHalfShort(MipLevel* pCurMipLevel, CMP_HALFSHORT* pdata, CMP_FLOAT Gamma, CMP_INT numchannels)
+{
+    for (int y = 0; y < pCurMipLevel->m_nHeight; y++)
+    {
+        for (int x = 0; x < pCurMipLevel->m_nWidth; x++)
+        {
+            // calc Gamma for the all color channels
+            for (int i = 0; i < 3 && i < numchannels; i++)
+            {
+                CMP_FLOAT pixf = F16toF32(*pdata);  // convert short int to float
+                pixf           = pow(pixf, Gamma);  // Do gamma using float
+                CMP_HALF pixh  = pixf;              // back to half type
+                *pdata         = pixh.bits();       // back to short int bits
+                pdata++;                            // move on to next pixel
+            }
+            // if alpha skip it
+            if (numchannels > 3)
+                pdata++;
+        }
+    }
+}
+
+void CMP_SetMipSetGamma(MipSet* pMipSet, CMP_FLOAT Gamma)
+{
+    CMIPS     CMips;
+    MipLevel* pCurMipLevel;
+    CMP_INT   maxFaceOrSlice;
+    if (pMipSet->m_TextureType & TT_CubeMap)
+        maxFaceOrSlice = 6;
+    else
+        maxFaceOrSlice = 1;
+    for (CMP_INT nCurMipLevel = 0; nCurMipLevel < pMipSet->m_nMipLevels; nCurMipLevel++)
+    {
+        for (CMP_INT nFaceOrSlice = 0; nFaceOrSlice < maxFaceOrSlice; nFaceOrSlice++)
+        {
+            pCurMipLevel = CMips.GetMipLevel(pMipSet, nCurMipLevel, nFaceOrSlice);
+            if (pMipSet->m_ChannelFormat == CF_8bit)
+            {
+                if (pMipSet->m_format == CMP_FORMAT_RGBA_8888_S)
+                    CMP_SetMipLevelGammaLinearSB(pCurMipLevel, pCurMipLevel->m_psbData, Gamma, 4);
+                else 
+                    CMP_SetMipLevelGammaLinearB(pCurMipLevel, pCurMipLevel->m_pbData, Gamma, 4);
+            }
+            else if (pMipSet->m_ChannelFormat == CF_Float16) CMP_SetMipLevelGammaHalfShort(pCurMipLevel, pCurMipLevel->m_phfsData, Gamma, 4);
+            else if (pMipSet->m_ChannelFormat == CF_Float32) CMP_SetMipLevelGammaf(pCurMipLevel, pCurMipLevel->m_pfData, Gamma, 4);
+        }
+    }
+}
+
 void GenerateMipmapLevel(MipLevel* currMipLevel, MipLevel** prevMipLevels, uint32_t numPrevLevels, CMP_FORMAT format)
 {
     static const uint32_t numChannels = 4;
@@ -212,14 +351,14 @@ CMP_INT CMP_API CMP_GenerateMIPLevelsEx(CMP_MipSet* pMipSet, CMP_CFilterParams* 
 
     pMipSet->m_nMipLevels = 1;
 
-    while (nWidth > CFilterParam->nMinSize && nHeight > CFilterParam->nMinSize)
+    while (nWidth > CFilterParam->nMinSize || nHeight > CFilterParam->nMinSize)
     {
         nWidth                   = CMP_MAX(nWidth >> 1, 1);
         nHeight                  = CMP_MAX(nHeight >> 1, 1);
         CMP_INT nCurMipLevel     = pMipSet->m_nMipLevels;
         CMP_INT maxFacesOrSlices = CMP_MAX((pMipSet->m_TextureType == TT_VolumeTexture) ? (CMP_MaxFacesOrSlices(pMipSet, nCurMipLevel - 1) >> 1)
-                                                                                        : CMP_MaxFacesOrSlices(pMipSet, nCurMipLevel - 1),
-                                           1);
+                                                                                        : CMP_MaxFacesOrSlices(pMipSet, nCurMipLevel - 1),1);
+
         for (CMP_INT nFaceOrSlice = 0; nFaceOrSlice < maxFacesOrSlices; nFaceOrSlice++)
         {
             CMP_MipLevel* pThisMipLevel = CMips.GetMipLevel(pMipSet, nCurMipLevel, nFaceOrSlice);
@@ -268,9 +407,12 @@ CMP_INT CMP_API CMP_GenerateMIPLevelsEx(CMP_MipSet* pMipSet, CMP_CFilterParams* 
             ++pMipSet->m_nMipLevels;
         else
             break;
-        if (nWidth == 1 || nHeight == 1)
+        if (nWidth == 1 && nHeight == 1)
             break;
     }
+
+    if (CFilterParam->fGammaCorrection != 1.0f)
+        CMP_SetMipSetGamma(pMipSet, CFilterParam->fGammaCorrection);
 
     return CMP_OK;
 }
