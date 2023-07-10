@@ -2,7 +2,7 @@
 # Compressonator
 [![CMake](https://github.com/GPUOpen-Tools/compressonator/actions/workflows/cmake.yml/badge.svg)](https://github.com/GPUOpen-Tools/compressonator/actions/workflows/cmake.yml)
 ![download](https://img.shields.io/github/downloads/GPUOpen-Tools/Compressonator/total.svg)
-![download](https://img.shields.io/github/downloads/GPUOpen-Tools/Compressonator/V4.3.206/total.svg)
+![download](https://img.shields.io/github/downloads/GPUOpen-Tools/Compressonator/V4.4.19/total)
 
 *Download the latest revision for changes that have been made since the last major release by clicking the CMake button above or the link [here](https://github.com/GPUOpen-Tools/compressonator/actions/workflows/cmake.yml). Currently, only Compressonator Framework and Compressonator CLI are built every revision.*
 
