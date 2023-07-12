@@ -356,11 +356,14 @@ if (LIB_BUILD_IMAGEIO)
     if (OPTION_BUILD_EXR) # disable for Mac builds
         add_subdirectory(applications/_plugins/cimage/exr)
     endif()
-    add_subdirectory(applications/_plugins/cimage/ktx)
-    if (CMP_HOST_WINDOWS) # disable for Linux & Mac builds
-        add_subdirectory(applications/_plugins/cimage/ktx2)
-        
-        if (OPTION_BUILD_BROTLIG)
+    if (OPTION_BUILD_KTX2)
+        add_subdirectory(applications/_plugins/cimage/ktx)
+        if (CMP_HOST_WINDOWS) # disable for Linux & Mac builds
+            add_subdirectory(applications/_plugins/cimage/ktx2)
+        endif()
+    endif()
+    if (OPTION_BUILD_BROTLIG)
+        if (CMP_HOST_WINDOWS) # disable for Linux & Mac builds
             add_subdirectory(applications/_plugins/cimage/brlg)
             add_subdirectory(applications/_plugins/cimage/binary)
         endif()

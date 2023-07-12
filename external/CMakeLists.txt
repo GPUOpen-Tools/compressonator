@@ -65,14 +65,18 @@ endif()
 #                     OPENCV
 # ====================================================
 # Creates ExtOpenCV
-list(APPEND CMAKE_FIND_ROOT_PATH ${CMAKE_CURRENT_LIST_DIR}/opencv/)
-message(STATUS "++++++++++++++++++  OPENCV" )
-include(${CMAKE_CURRENT_LIST_DIR}/opencv/CMakeLists.txt)
+if (OPTION_BUILD_OPENCV)
+    list(APPEND CMAKE_FIND_ROOT_PATH ${CMAKE_CURRENT_LIST_DIR}/opencv/)
+    message(STATUS "++++++++++++++++++  OPENCV" )
+    include(${CMAKE_CURRENT_LIST_DIR}/opencv/CMakeLists.txt)
+endif()
 
 # ====================================================
 #                   OPENEXR
 # ====================================================
-message(STATUS "++++++++++++++++++ O P E N E X R" )
-include(${CMAKE_CURRENT_LIST_DIR}/openexr/CMakeLists.txt)
+if (OPTION_BUILD_EXR)
+    message(STATUS "++++++++++++++++++ O P E N E X R" )
+    include(${CMAKE_CURRENT_LIST_DIR}/openexr/CMakeLists.txt)
+endif()
 
 
