@@ -112,7 +112,7 @@ elseif (OPTION_BUILD_CMP_SDK)
     set(LIB_BUILD_GPUDECODE             ON)
 endif()
 
-if (OPTION_BUILD_APPS_CMP_VISION)
+if (OPTION_BUILD_APPS_CMP_VISION) # ??? This option is not referenced anywhere else, what does it do?
     set(LIB_BUILD_COMPRESSONATOR_SDK ON)
     set(LIB_BUILD_FRAMEWORK_SDK ON)
 endif()
@@ -122,35 +122,30 @@ set(LIB_BUILD_MESHCOMPRESSOR OFF)
 
 set(PROJECT_EXTERNAL_LIBDIR ${PROJECT_SOURCE_DIR}/../common/lib/ext)
 
+
 # ----------------------------------------------------------------------------
 # GPUOpen Source Code build options : These options are been revised for v4.2
 # ----------------------------------------------------------------------------
-if(CMAKE_VERSION VERSION_GREATER "3.14.0")
-cmp_option(OPTION_BUILD_KTX2          "Build CLI KTX2 Support"      ON)
-else()
-cmp_option(OPTION_BUILD_KTX2          "Build CLI KTX2 Support"      OFF)
-endif()
-
-cmp_option(OPTION_BUILD_EXR           "Build CLI EXR Support"       CMP_HOST_WINDOWS OR CMP_HOST_LINUX)
-cmp_option(OPTION_BUILD_GUI           "Build the GUI Application"   CMP_HOST_WINDOWS OR OPTION_BUILD_APPS_CMP_GUI)
-cmp_option(OPTION_CMP_DIRECTX         "Use Directx"                 CMP_HOST_WINDOWS) # set for windows only
-cmp_option(OPTION_CMP_VULKAN          "Use Vulkan"                  OPTION_ENABLE_ALL_APPS)
-cmp_option(OPTION_CMP_OPENGL          "Use OpenGL"                  OPTION_BUILD_APPS_CMP_CLI OR OPTION_BUILD_APPS_CMP_GUI)
-cmp_option(OPTION_CMP_QT              "Use Qt for Image Loading"    OPTION_ENABLE_ALL_APPS OR OPTION_BUILD_APPS_CMP_GUI)
-cmp_option(OPTION_CMP_OPENCV          "Use OpenCV"                  OPTION_BUILD_APPS_CMP_CLI OR OPTION_BUILD_APPS_CMP_GUI)
-cmp_option(OPTION_CMP_GTC             "Use GTC Codec"               OFF) # Internal R&D
-cmp_option(OPTION_BUILD_BROTLIG       "Use Brotli-G Codec for CLI"  CMP_HOST_WINDOWS) # BrotliG Compression & Decompression support
-cmp_option(OPTION_BUILD_BROTLIG_GUI   "Use Brotli-G Codec for GUI"  OFF) # BrotliG Compression & Decompression support on GUI (In development for v4.4)
-
+#              OPTION                    DESCRIPTION               DEFAULT          REQUIREMENT
+cmp_option(OPTION_BUILD_KTX2         "Build CLI KTX2 Support"        ON     CMAKE_VERSION VERSION_GREATER "3.14.0")
+cmp_option(OPTION_BUILD_EXR          "Build CLI EXR Support"         ON     CMP_HOST_WINDOWS OR CMP_HOST_LINUX)
+cmp_option(OPTION_BUILD_GUI          "Build the GUI Application"     ON     CMP_HOST_WINDOWS OR OPTION_BUILD_APPS_CMP_GUI)
+cmp_option(OPTION_CMP_DIRECTX        "Use Directx"                   ON     CMP_HOST_WINDOWS)
+cmp_option(OPTION_CMP_VULKAN         "Use Vulkan"                    ON     OPTION_ENABLE_ALL_APPS)
+cmp_option(OPTION_CMP_OPENGL         "Use OpenGL"                    ON     OPTION_BUILD_APPS_CMP_CLI OR OPTION_BUILD_APPS_CMP_GUI)
+cmp_option(OPTION_CMP_QT             "Use Qt for Image Loading"      ON     OPTION_ENABLE_ALL_APPS OR OPTION_BUILD_APPS_CMP_GUI)
+cmp_option(OPTION_CMP_OPENCV         "Use OpenCV"                    ON     OPTION_BUILD_APPS_CMP_CLI OR OPTION_BUILD_APPS_CMP_GUI)
+cmp_option(OPTION_CMP_GTC            "Use GTC Codec"                 OFF    TRUE) # Internal R&D
+cmp_option(OPTION_BUILD_BROTLIG      "Use Brotli-G Codec for CLI"    ON     CMP_HOST_WINDOWS)
+cmp_option(OPTION_BUILD_BROTLIG_GUI  "Use Brotli-G Codec for GUI"    OFF    TRUE) # In development for v4.4
 # Internal testing application
 option(OPTION_BUILD_INTERNAL_CMP_TEST "Build Internal Application: cmp_test" OFF)
-
 # No longer supported
-cmp_option(OPTION_BUILD_ASTC    "Build ASTC Support" OFF)
-cmp_option(OPTION_BUILD_DRACO   "Build CLI Draco Support" OFF)
-
+cmp_option(OPTION_BUILD_ASTC         "Build ASTC Support"            OFF    FALSE)
+cmp_option(OPTION_BUILD_DRACO        "Build CLI Draco Support"       OFF    FALSE)
 # this needs to be removed
-cmp_option(NO_LEGACY_BEHAVIOR   "Disables any legacy behavior (before CMake migration)" ON) 
+cmp_option(NO_LEGACY_BEHAVIOR   "Disables any legacy behavior (before CMake migration)"  ON  TRUE)
+
 
 # -----------------------------------------------------------------------------------
 # Code build definitions and features: These options are been revised for v4.2
