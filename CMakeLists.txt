@@ -63,24 +63,35 @@ else()
     set(COMPILER_SUPPORTS_CXX11 ON)
 endif()
 
-option(OPTION_ENABLE_ALL_APPS "Enable all apps" ON)
+
+#---------------------------------------------------------------------------------
+# Provide default values for each build option
+#
+# ! Cached variables should not be modified and reflect user's preference
+# ! Though regular variables may be subject to change due to requirements, dependencies, etc.
+#  Example:
+#  do not set(OPTION_BUILD_CMP_SDK ON CACHE BOOL "Build Compressonator SDK" FORCE)
+#  do     set(OPTION_BUILD_CMP_SDK ON)
+#  so that user preference is $CACHE{OPTION_BUILD_CMP_SDK} and the actual value is ${OPTION_BUILD_CMP_SDK}
+#---------------------------------------------------------------------------------
+option(OPTION_ENABLE_ALL_APPS             "Enable all apps"                 ON) # TODO rename to OPTION_BUILD_ALL
+option(OPTION_BUILD_CMP_SDK               "Build Compressonator SDK"        OFF)
+option(OPTION_BUILD_APPS_CMP_CLI          "Build Application: CLI"          OFF)
+option(OPTION_BUILD_APPS_CMP_GUI          "Build Application: GUI"          OFF)
+option(OPTION_BUILD_APPS_CMP_UNITTESTS    "Build Application: UnitTests"    OFF)
+option(OPTION_BUILD_APPS_CMP_EXAMPLES     "Build Application: Examples"     OFF)
 
 #--------------------------------------------------------------------------
 # Enable or Disable Specific Build Apps
 #--------------------------------------------------------------------------
-if (OPTION_ENABLE_ALL_APPS) 
-    set(OPTION_BUILD_CMP_SDK               "Build Compressonator SDK"        ON)
-    set(OPTION_BUILD_APPS_CMP_CLI          "Build Application: CLI"          ON)
-    set(OPTION_BUILD_APPS_CMP_GUI          "Build Application: GUI"          ON)
-    set(OPTION_BUILD_APPS_CMP_UNITTESTS    "Build Application: UnitTests"    ON)
-    set(OPTION_BUILD_APPS_CMP_EXAMPLES     "Build Application: Examples"     ON)
-else()
-    option(OPTION_BUILD_CMP_SDK               OFF)
-    option(OPTION_BUILD_APPS_CMP_CLI          OFF)
-    option(OPTION_BUILD_APPS_CMP_GUI          OFF)
-    option(OPTION_BUILD_APPS_CMP_UNITTESTS    OFF)
-    option(OPTION_BUILD_APPS_CMP_EXAMPLES     OFF)
+if (OPTION_ENABLE_ALL_APPS)
+    set(OPTION_BUILD_CMP_SDK               ON)
+    set(OPTION_BUILD_APPS_CMP_CLI          ON)
+    set(OPTION_BUILD_APPS_CMP_GUI          ON)
+    set(OPTION_BUILD_APPS_CMP_UNITTESTS    ON)
+    set(OPTION_BUILD_APPS_CMP_EXAMPLES     ON)
 endif()
+
 
 # Minimum Lib Dependencies for CLI, GUI, and SDK (GUI has additional lib requirements added later in this cmake)
 if (OPTION_BUILD_APPS_CMP_CLI OR OPTION_BUILD_APPS_CMP_GUI)
@@ -91,7 +102,7 @@ if (OPTION_BUILD_APPS_CMP_CLI OR OPTION_BUILD_APPS_CMP_GUI)
     set(LIB_BUILD_COMMON                ON)
     set(LIB_BUILD_CORE                  ON)
     set(LIB_BUILD_GPUDECODE             ON)
-elseif(OPTION_BUILD_CMP_SDK)
+elseif (OPTION_BUILD_CMP_SDK)
     set(LIB_BUILD_COMPRESSONATOR_SDK    ON)
     set(LIB_BUILD_FRAMEWORK_SDK         ON)
     set(LIB_BUILD_IMAGEIO               ON)
