@@ -18,8 +18,7 @@ endif()
 # Helper function for setting persistent CMake options
 macro(cmp_option OPTION_NAME DESCRIPTION EXPRESSION)
     set(expression ${ARGV})
-    list(REMOVE_AT expression 0)
-    list(REMOVE_AT expression 0)
+    list(REMOVE_AT expression 0 1)
 
     if (${expression})
         set(${OPTION_NAME} ON CACHE BOOL ${DESCRIPTION} FORCE)

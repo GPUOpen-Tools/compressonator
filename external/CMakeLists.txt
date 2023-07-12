@@ -19,7 +19,7 @@ if (OPTION_BUILD_BROTLIG)
 endif()
 
 # enable KTX2 features
-if(${CMAKE_VERSION} VERSION_GREATER "3.14.0") 
+if (OPTION_BUILD_KTX2)
     include(${CMAKE_CURRENT_LIST_DIR}/ktx/CMakeLists.txt)
 endif()
 
@@ -38,10 +38,9 @@ find_package(Threads REQUIRED QUIET)
 # ====================================================
 #                  DIRECTX
 # ====================================================
-if (OPTION_CMP_DIRECTX )
-    message(STATUS "++++++++++++++++++ DIRECTX 12" )
+if (OPTION_CMP_DIRECTX)
+    message(STATUS "++++++++++++++++++ DIRECTX 12")
     add_library(ExtDirectX INTERFACE)
-
     target_link_libraries(ExtDirectX INTERFACE
         d3d12.lib
         dxgi.lib
@@ -50,15 +49,15 @@ if (OPTION_CMP_DIRECTX )
 endif()
 
 # ====================================================
-#                DIRECTX   TEX
+#                DIRECTX TEX
 # ====================================================
-if (OPTION_CMP_DIRECTX )
-    message(STATUS "++++++++++++++++++ DIRECTX TEX" )
+if (OPTION_CMP_DIRECTX)
+    message(STATUS "++++++++++++++++++ DIRECTX TEX")
     include(${CMAKE_CURRENT_LIST_DIR}/directxtex/CMakeLists.txt)
     # add_library(ExtDirectXTex INTERFACE)
     target_link_libraries(ExtDirectXTex INTERFACE
-         DirectXTex
-     )
+        DirectXTex
+    )
 endif()
 
 # ====================================================
