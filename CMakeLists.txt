@@ -43,69 +43,73 @@ include(cmake/helperfunctions.cmake)
 
 #----------------------------------------
 # Check compiler feature support levels
-# for Apple (Mac) default to C++11
+# For Apple (Mac) default to C++11
 #---------------------------------------
 if (CMP_HOST_LINUX OR CMP_HOST_WINDOWS)
-    foreach(i ${CMAKE_CXX_COMPILE_FEATURES})
-        if("${i}" STREQUAL "cxx_std_11")
-            set(COMPILER_SUPPORTS_CXX11 ON)
-            message("Complier Supports ${i}")
-        endif()
-        if("${i}" STREQUAL "cxx_std_14")
-            set(COMPILER_SUPPORTS_CXX14 ON)
-            message("Complier Supports ${i}")
-        endif()
-        if("${i}" STREQUAL "cxx_std_17")
-            set(COMPILER_SUPPORTS_CXX17 ON)
-            message("Complier Supports ${i}")
-        endif()
-    endforeach()
+    if("cxx_std_11" IN_LIST CMAKE_CXX_COMPILE_FEATURES)
+        set(COMPILER_SUPPORTS_CXX11 ON)
+        message("Compiler Supports cxx_std_11")
+    endif()
+    if("cxx_std_14" IN_LIST CMAKE_CXX_COMPILE_FEATURES)
+        set(COMPILER_SUPPORTS_CXX14 ON)
+        message("Compiler Supports cxx_std_14")
+    endif()
+    if("cxx_std_17" IN_LIST CMAKE_CXX_COMPILE_FEATURES)
+        set(COMPILER_SUPPORTS_CXX17 ON)
+        message("Compiler Supports cxx_std_17")
+    endif()
 else()
     message("UNIX Build: CHECK_CXX_COMPILER_FLAG defaulted to -std=c++11")
     set(COMPILER_SUPPORTS_CXX11 ON)
 endif()
 
-option(OPTION_ENABLE_ALL_APPS "Enable all apps" ON)
+
+#---------------------------------------------------------------------------------
+# Provide default values for each build option
+#
+# ! Cached variables should not be modified and reflect user's preference
+# ! Though regular variables may be subject to change due to requirements, dependencies, etc.
+#  Example:
+#  do not set(OPTION_BUILD_CMP_SDK ON CACHE BOOL "Build Compressonator SDK" FORCE)
+#  do     set(OPTION_BUILD_CMP_SDK ON)
+#  so that user preference is $CACHE{OPTION_BUILD_CMP_SDK} and the actual value is ${OPTION_BUILD_CMP_SDK}
+#---------------------------------------------------------------------------------
+option(OPTION_ENABLE_ALL_APPS             "Enable all apps"                 ON) # TODO rename to OPTION_BUILD_ALL
+option(OPTION_BUILD_CMP_SDK               "Build Compressonator SDK"        OFF)
+option(OPTION_BUILD_APPS_CMP_CLI          "Build Application: CLI"          OFF)
+option(OPTION_BUILD_APPS_CMP_GUI          "Build Application: GUI"          OFF)
+option(OPTION_BUILD_APPS_CMP_UNITTESTS    "Build Application: UnitTests"    OFF)
+option(OPTION_BUILD_APPS_CMP_EXAMPLES     "Build Application: Examples"     OFF)
 
 #--------------------------------------------------------------------------
 # Enable or Disable Specific Build Apps
 #--------------------------------------------------------------------------
-if (OPTION_ENABLE_ALL_APPS) 
-    set(OPTION_BUILD_APPS_CMP_CLI     "Build Application: compressonatorcli" ON)
-    set(OPTION_BUILD_APPS_CMP_GUI     "Build Application: compressonator gui" ON)
-    set(OPTION_BUILD_CMP_SDK          "Build Compressonator SDK" ON)
-    set(OPTION_BUILD_APPS_CMP_UNITTESTS "Build Application: cmp_unittests" ON)
-    set(OPTION_BUILD_APPS_CMP_EXAMPLES "Build Application: examples" ON)
-else()
-    option(OPTION_BUILD_APPS_CMP_CLI       OFF)
-    option(OPTION_BUILD_APPS_CMP_GUI       OFF)
-    option(OPTION_BUILD_CMP_SDK            OFF)
-    option(OPTION_BUILD_APPS_CMP_UNITTESTS  OFF)
-    option(OPTION_BUILD_APPS_CMP_EXAMPLES  OFF)
+if (OPTION_ENABLE_ALL_APPS)
+    set(OPTION_BUILD_CMP_SDK               ON)
+    set(OPTION_BUILD_APPS_CMP_CLI          ON)
+    set(OPTION_BUILD_APPS_CMP_GUI          ON)
+    set(OPTION_BUILD_APPS_CMP_UNITTESTS    ON)
+    set(OPTION_BUILD_APPS_CMP_EXAMPLES     ON)
 endif()
+
 
 # Minimum Lib Dependencies for CLI, GUI, and SDK (GUI has additional lib requirements added later in this cmake)
 if (OPTION_BUILD_APPS_CMP_CLI OR OPTION_BUILD_APPS_CMP_GUI)
-    set(LIB_BUILD_COMPRESSONATOR_SDK ON)
-    set(LIB_BUILD_FRAMEWORK_SDK ON)
-    set(LIB_BUILD_IMAGEIO ON)
-    set(LIB_BUILD_ANALYSIS ON)
-    set(LIB_BUILD_COMMON ON)
-    set(LIB_BUILD_CORE ON)
-    set(LIB_BUILD_GPUDECODE ON)
-elseif(OPTION_BUILD_CMP_SDK)
-    set(LIB_BUILD_COMPRESSONATOR_SDK ON)
-    set(LIB_BUILD_FRAMEWORK_SDK ON)
-    set(LIB_BUILD_IMAGEIO ON)
-    set(LIB_BUILD_ANALYSIS OFF)
-    set(LIB_BUILD_COMMON ON)
-    set(LIB_BUILD_CORE ON)
-    set(LIB_BUILD_GPUDECODE ON)
-endif()
-
-if (OPTION_BUILD_APPS_CMP_VISION)
-    set(LIB_BUILD_COMPRESSONATOR_SDK ON)
-    set(LIB_BUILD_FRAMEWORK_SDK ON)
+    set(LIB_BUILD_COMPRESSONATOR_SDK    ON)
+    set(LIB_BUILD_FRAMEWORK_SDK         ON)
+    set(LIB_BUILD_IMAGEIO               ON)
+    set(LIB_BUILD_ANALYSIS              ON)
+    set(LIB_BUILD_COMMON                ON)
+    set(LIB_BUILD_CORE                  ON)
+    set(LIB_BUILD_GPUDECODE             ON)
+elseif (OPTION_BUILD_CMP_SDK)
+    set(LIB_BUILD_COMPRESSONATOR_SDK    ON)
+    set(LIB_BUILD_FRAMEWORK_SDK         ON)
+    set(LIB_BUILD_IMAGEIO               ON)
+    set(LIB_BUILD_ANALYSIS              OFF)
+    set(LIB_BUILD_COMMON                ON)
+    set(LIB_BUILD_CORE                  ON)
+    set(LIB_BUILD_GPUDECODE             ON)
 endif()
 
 # The following options that have been removed
@@ -113,35 +117,30 @@ set(LIB_BUILD_MESHCOMPRESSOR OFF)
 
 set(PROJECT_EXTERNAL_LIBDIR ${PROJECT_SOURCE_DIR}/../common/lib/ext)
 
+
 # ----------------------------------------------------------------------------
 # GPUOpen Source Code build options : These options are been revised for v4.2
 # ----------------------------------------------------------------------------
-if(${CMAKE_VERSION} VERSION_GREATER "3.14.0")
-cmp_option(OPTION_BUILD_KTX2    "Build CLI KTX2 Support" ON)
-else()
-cmp_option(OPTION_BUILD_KTX2    "Build CLI KTX2 Support" OFF)
-endif()
-
-cmp_option(OPTION_BUILD_EXR     "Build CLI EXR Support" CMP_HOST_WINDOWS OR CMP_HOST_LINUX)
-cmp_option(OPTION_BUILD_GUI     "Build the GUI Application" CMP_HOST_WINDOWS OR OPTION_BUILD_APPS_CMP_GUI)
-cmp_option(OPTION_CMP_DIRECTX   "Use Directx" CMP_HOST_WINDOWS) # set for windows only
-cmp_option(OPTION_CMP_VULKAN    "Use Vulkan" OPTION_ENABLE_ALL_APPS)
-cmp_option(OPTION_CMP_OPENGL    "Use OpenGL" OPTION_BUILD_APPS_CMP_CLI OR OPTION_BUILD_APPS_CMP_GUI)
-cmp_option(OPTION_CMP_QT        "Use Qt for Image Loading" OPTION_ENABLE_ALL_APPS OR OPTION_BUILD_APPS_CMP_GUI)
-cmp_option(OPTION_CMP_OPENCV    "Use OpenCV" OPTION_BUILD_APPS_CMP_CLI OR OPTION_BUILD_APPS_CMP_GUI)
-cmp_option(OPTION_CMP_GTC       "Use GTC Codec" OFF) # Internal R&D
-cmp_option(OPTION_BUILD_BROTLIG   "Use Brotli-G Codec for Commandline" CMP_HOST_WINDOWS) # BrotliG Compression & Decompression support
-cmp_option(OPTION_BUILD_BROTLIG_GUI   "Use Brotli-G Codec for GUI" OFF) # BrotliG Compression & Decompression support on GUI (In development for v4.4)
-
+#              OPTION                    DESCRIPTION               DEFAULT          REQUIREMENT
+cmp_option(OPTION_BUILD_KTX2         "Build CLI KTX2 Support"        ON     CMAKE_VERSION VERSION_GREATER "3.14.0")
+cmp_option(OPTION_BUILD_EXR          "Build CLI EXR Support"         ON     CMP_HOST_WINDOWS OR CMP_HOST_LINUX)
+cmp_option(OPTION_BUILD_GUI          "Build the GUI Application"     ON     CMP_HOST_WINDOWS OR OPTION_BUILD_APPS_CMP_GUI)
+cmp_option(OPTION_CMP_DIRECTX        "Use Directx"                   ON     CMP_HOST_WINDOWS)
+cmp_option(OPTION_CMP_VULKAN         "Use Vulkan"                    ON     OPTION_ENABLE_ALL_APPS)
+cmp_option(OPTION_CMP_OPENGL         "Use OpenGL"                    ON     OPTION_BUILD_APPS_CMP_CLI OR OPTION_BUILD_APPS_CMP_GUI)
+cmp_option(OPTION_CMP_QT             "Use Qt for Image Loading"      ON     OPTION_ENABLE_ALL_APPS OR OPTION_BUILD_APPS_CMP_GUI)
+cmp_option(OPTION_CMP_OPENCV         "Use OpenCV"                    ON     OPTION_BUILD_APPS_CMP_CLI OR OPTION_BUILD_APPS_CMP_GUI)
+cmp_option(OPTION_CMP_GTC            "Use GTC Codec"                 OFF    TRUE) # Internal R&D
+cmp_option(OPTION_BUILD_BROTLIG      "Use Brotli-G Codec for CLI"    ON     CMP_HOST_WINDOWS)
+cmp_option(OPTION_BUILD_BROTLIG_GUI  "Use Brotli-G Codec for GUI"    OFF    TRUE) # In development for v4.4
 # Internal testing application
 option(OPTION_BUILD_INTERNAL_CMP_TEST "Build Internal Application: cmp_test" OFF)
-
 # No longer supported
-cmp_option(OPTION_BUILD_ASTC    "Build ASTC Support" OFF)
-cmp_option(OPTION_BUILD_DRACO   "Build CLI Draco Support" OFF)
-
+cmp_option(OPTION_BUILD_ASTC         "Build ASTC Support"            OFF    FALSE)
+cmp_option(OPTION_BUILD_DRACO        "Build CLI Draco Support"       OFF    FALSE)
 # this needs to be removed
-cmp_option(NO_LEGACY_BEHAVIOR   "Disables any legacy behavior (before CMake migration)" ON) 
+cmp_option(NO_LEGACY_BEHAVIOR   "Disables any legacy behavior (before CMake migration)"  ON  TRUE)
+
 
 # -----------------------------------------------------------------------------------
 # Code build definitions and features: These options are been revised for v4.2
@@ -283,50 +282,47 @@ else()
 
     if (CMP_HOST_LINUX AND OPTION_CMP_QT)
         find_package(Qt5 COMPONENTS Gui Widgets OpenGL Qml WebEngineWidgets Xml REQUIRED HINTS ${QT_DIR})
-        if (Qt5Gui_FOUND)
-        else()
-          message(FATAL_ERROR "Package Qt5 (Qt5Gui) are required, but not found. "
-                  "In Unix, run initsetup_unix.sh or sudo apt-get install qtdeclarative5-dev. "
-                  "If is window, please make sure install qt and "
-                  "add the bin path to environment PATH.(i.e. C:\Qt\5.x.x\msvcYYYY_64\bin) "
-                  "where x is Qt build version and YYYY is MS Compiler release date")
+        if (NOT Qt5Gui_FOUND)
+            message(FATAL_ERROR
+                "Package Qt5 (Qt5Gui) are required, but not found. "
+                "In Unix, run initsetup_unix.sh or sudo apt-get install qtdeclarative5-dev. "
+                "If is window, please make sure install qt and "
+                "add the bin path to environment PATH.(i.e. C:\\Qt\\5.x.x\\msvcYYYY_64\\bin) "
+                "where x is Qt build version and YYYY is MS Compiler release date"
+            )
         endif()
     endif()
     
-     if (UNIX AND (OPTION_BUILD_EXR OR OPTION_BUILD_DRACO OR OPTION_CMP_OPENCV))
-         find_package(PkgConfig REQUIRED)
-         
-         if (OPTION_BUILD_EXR)
+    if (UNIX AND (OPTION_BUILD_EXR OR OPTION_BUILD_DRACO OR OPTION_CMP_OPENCV))
+        find_package(PkgConfig REQUIRED)
+
+        if (OPTION_BUILD_EXR)
             pkg_check_modules(OpenEXR OpenEXR)
-             if(OpenEXR_FOUND)
-             else()
-               message("Package OpenEXR not found. CMP features using OpenEXR will be disabled")
-               set(OPTION_BUILD_EXR OFF)
-             endif()
-         endif()
-         
-         if (OPTION_BUILD_DRACO)
-             find_package(Draco)
-             pkg_check_modules(draco draco)
-             if(draco_FOUND)
-             else()
-               message("Package Draco not found. CMP features using Draco will be disabled")
-               add_definitions(-DCMAKE_DRACO_NOT_FOUND)
-               set(OPTION_BUILD_DRACO OFF)
-             endif()
-         endif()
-     
-         if (OPTION_CMP_OPENCV)
+            if (NOT OpenEXR_FOUND)
+                message(WARNING "Package OpenEXR not found. CMP features using OpenEXR will be disabled")
+                set(OPTION_BUILD_EXR OFF)
+            endif()
+        endif()
+
+        if (OPTION_BUILD_DRACO)
+            find_package(Draco)
+            pkg_check_modules(draco draco)
+            if (NOT draco_FOUND)
+                message(WARNING "Package Draco not found. CMP features using Draco will be disabled")
+                add_definitions(-DCMAKE_DRACO_NOT_FOUND)
+                set(OPTION_BUILD_DRACO OFF)
+            endif()
+        endif()
+
+        if (OPTION_CMP_OPENCV)
             find_package(OpenCV)
-            if (OpenCV_FOUND)
-            else()
-                message("Package OpenCV not found. CMP features using OpenCV will be disabled"
-                        "In Unix, run initsetup_unix.sh or sudo apt-get install "
-                        "libopencv-dev to install the libs.")
+            if (NOT OpenCV_FOUND)
+                message(WARNING "Package OpenCV not found. CMP features using OpenCV will be disabled"
+                    "In Unix, run initsetup_unix.sh or sudo apt-get install "
+                    "libopencv-dev to install the libs.")
                 set(OPTION_CMP_OPENCV OFF)
             endif()
         endif()
-     
      endif()
 endif()
 
@@ -356,11 +352,14 @@ if (LIB_BUILD_IMAGEIO)
     if (OPTION_BUILD_EXR) # disable for Mac builds
         add_subdirectory(applications/_plugins/cimage/exr)
     endif()
-    add_subdirectory(applications/_plugins/cimage/ktx)
-    if (CMP_HOST_WINDOWS) # disable for Linux & Mac builds
-        add_subdirectory(applications/_plugins/cimage/ktx2)
-        
-        if (OPTION_BUILD_BROTLIG)
+    if (OPTION_BUILD_KTX2)
+        add_subdirectory(applications/_plugins/cimage/ktx)
+        if (CMP_HOST_WINDOWS) # disable for Linux & Mac builds
+            add_subdirectory(applications/_plugins/cimage/ktx2)
+        endif()
+    endif()
+    if (OPTION_BUILD_BROTLIG)
+        if (CMP_HOST_WINDOWS) # disable for Linux & Mac builds
             add_subdirectory(applications/_plugins/cimage/brlg)
             add_subdirectory(applications/_plugins/cimage/binary)
         endif()

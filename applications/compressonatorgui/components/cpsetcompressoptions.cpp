@@ -44,10 +44,12 @@
 extern void GetSupportedFileFormats(QList<QByteArray>& g_supportedFormats);
 
 #ifdef USE_TREEVIEW_PROP
-QTreeWidgetItem* CSetCompressOptions::AddRootItem(int col, QString itemtext, bool checkable) {
+QTreeWidgetItem* CSetCompressOptions::AddRootItem(int col, QString itemtext, bool checkable)
+{
     QTreeWidgetItem* treeItem = new QTreeWidgetItem(m_trewwview);
     treeItem->setText(col, itemtext);
-    if (checkable) {
+    if (checkable)
+    {
         treeItem->setFlags(treeItem->flags() | Qt::ItemIsUserCheckable);
         treeItem->setCheckState(0, Qt::Unchecked);
     }
@@ -55,10 +57,12 @@ QTreeWidgetItem* CSetCompressOptions::AddRootItem(int col, QString itemtext, boo
     return treeItem;
 }
 
-QTreeWidgetItem* CSetCompressOptions::AddChildItem(QTreeWidgetItem* parent, int col, QString itemtext, bool checkable) {
+QTreeWidgetItem* CSetCompressOptions::AddChildItem(QTreeWidgetItem* parent, int col, QString itemtext, bool checkable)
+{
     QTreeWidgetItem* treeItem = new QTreeWidgetItem(parent);
     treeItem->setText(col, itemtext);
-    if (checkable) {
+    if (checkable)
+    {
         treeItem->setFlags(treeItem->flags() | Qt::ItemIsUserCheckable);
         treeItem->setCheckState(0, Qt::Unchecked);
     }
@@ -70,32 +74,33 @@ QTreeWidgetItem* CSetCompressOptions::AddChildItem(QTreeWidgetItem* parent, int 
 CSetCompressOptions::CSetCompressOptions(const QString title, QWidget* parent)
     : QDialog(parent)
     ,  //QDockWidget(title, parent),
-      m_title(title)
-    , m_parent(parent) {
-    changeSelf              = false;
-    m_propQuality           = NULL;
+    m_title(title)
+    , m_parent(parent)
+{
+    changeSelf    = false;
+    m_propQuality = NULL;
 #ifdef USE_ENABLEHQ
-    m_propEnableHQ          = NULL;
+    m_propEnableHQ = NULL;
 #endif
     m_propChannelWeightingR = NULL;
     m_propChannelWeightingG = NULL;
     m_propChannelWeightingB = NULL;
-    m_propAlphaThreshold = NULL;
-    m_propAdaptiveColor = NULL;
-    m_propDefog = NULL;
-    m_propExposure = NULL;
-    m_propKneeLow = NULL;
-    m_propKneeHigh = NULL;
-    m_propGamma = NULL;
-    m_propBitrate = NULL;
-    m_isInit = false;
-    m_isEditing = false;
-    m_automaticProcessing = false;
-    m_extnum = 1;
+    m_propAlphaThreshold    = NULL;
+    m_propAdaptiveColor     = NULL;
+    m_propDefog             = NULL;
+    m_propExposure          = NULL;
+    m_propKneeLow           = NULL;
+    m_propKneeHigh          = NULL;
+    m_propGamma             = NULL;
+    m_propBitrate           = NULL;
+    m_isInit                = false;
+    m_isEditing             = false;
+    m_automaticProcessing   = false;
+    m_extnum                = 1;
 
     m_showDestinationEXTSetting = true;  // Show the FileFormat drop down list (DDS, KTX...)
-    m_showTheControllerSetting = true;  // Show the FileFormat drop down list (DDS, KTX...)
-    m_showTheInfoTextSetting = true;  // Show the Info Text
+    m_showTheControllerSetting  = true;  // Show the FileFormat drop down list (DDS, KTX...)
+    m_showTheInfoTextSetting    = true;  // Show the Info Text
 
     setWindowTitle(title);
     Qt::WindowFlags flags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
@@ -122,24 +127,26 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget* parent)
     m_AllFileTypes.clear();
 
     QList<QByteArray>::Iterator i;
-    for (i = m_supportedFormats.begin(); i != m_supportedFormats.end(); ++i) {
+    for (i = m_supportedFormats.begin(); i != m_supportedFormats.end(); ++i)
+    {
         QByteArray fformat = (*i);
         QString    item    = fformat;
         if (
 #if (OPTION_BUILD_ASTC == 1)
-                (item != "ASTC") &&
+            (item != "ASTC") &&
 #endif
 #ifdef USE_BASIS
-                (item != "BASIS") &&
+            (item != "BASIS") &&
 #endif
-                (item != "OBJ") && (item != "DRC") && (item != "GLTF"))
+            (item != "OBJ") && (item != "DRC") && (item != "GLTF"))
             m_AllFileTypes.append(item);
     }
 
     // Default output format
     m_fileFormats->addItem("DDS");
+#if (OPTION_BUILD_KTX2 == 1)
     m_fileFormats->addItem("KTX");
-
+#endif
 
     // =================================================
     // Destination File
@@ -159,7 +166,8 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget* parent)
     // =================================================
     m_theController                = new ObjectController(this, true);
     QtTreePropertyBrowser* browser = m_theController->getTreeBrowser();
-    if (browser) {
+    if (browser)
+    {
         browser->setHeaderVisible(false);
         browser->SetBrowserClick(true);
         browser->setResizeMode(QtTreePropertyBrowser::ResizeToContents);  // follow this comment Note#1
@@ -187,9 +195,9 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget* parent)
     // Set Editing Defaults
     m_propQuality = m_theController->getProperty(COMPRESS_OPTIONS_QUALITY);
 #ifdef USE_ENABLEHQ
-    m_propEnableHQ= m_theController->getProperty(COMPRESS_OPTIONS_HIGHQUALITY);
+    m_propEnableHQ = m_theController->getProperty(COMPRESS_OPTIONS_HIGHQUALITY);
 #endif
-    m_propFormat  = m_theController->getProperty(COMPRESS_OPTIONS_FORMAT);
+    m_propFormat = m_theController->getProperty(COMPRESS_OPTIONS_FORMAT);
 
     // Hide settings not relavent to the current setup
 
@@ -248,7 +256,8 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget* parent)
 #ifdef USE_TREEVIEW_PROP
     m_theControllerOptions         = new ObjectController(this, true);
     QtTreePropertyBrowser* browser = m_theController->getTreeBrowser();
-    if (browser) {
+    if (browser)
+    {
         browser->setHeaderVisible(false);
         browser->SetBrowserClick(true);
         browser->setResizeMode(QtTreePropertyBrowser::ResizeToContents);  // follow this comment Note#1
@@ -321,11 +330,13 @@ CSetCompressOptions::CSetCompressOptions(const QString title, QWidget* parent)
 // update FileType Combobox this event is not called
 // when setText is used on a LineEdit
 //===================================================================
-bool CSetCompressOptions::updateFileFormat(QFileInfo& fileinfo) {
+bool CSetCompressOptions::updateFileFormat(QFileInfo& fileinfo)
+{
     QString filetype = fileinfo.suffix();
     filetype         = filetype.toUpper();
     int index        = m_fileFormats->findText(filetype);
-    if (index != -1) {
+    if (index != -1)
+    {
         m_fileFormats->setCurrentIndex(index);
         return true;
     }
@@ -363,7 +374,7 @@ QString CSetCompressOptions::GenerateDefaultDestName()
                 int itemType = 0;
                 {
                     QVariant data = sourceItem->data(TREE_LevelType, Qt::UserRole);
-                    itemType = data.toInt();
+                    itemType      = data.toInt();
                 }
 
                 if (itemType == TREETYPE_IMAGEFILE_DATA)
@@ -374,7 +385,7 @@ QString CSetCompressOptions::GenerateDefaultDestName()
                         C_Source_Info* sourceData = v.value<C_Source_Info*>();
                         if (sourceData)
                         {
-                            QFileInfo fileInfo(sourceData->m_Full_Path);
+                            QFileInfo   fileInfo(sourceData->m_Full_Path);
                             std::string itemString = fileInfo.baseName().toStdString();
 
                             if (fileNameCount.find(itemString) == fileNameCount.end())
@@ -392,7 +403,7 @@ QString CSetCompressOptions::GenerateDefaultDestName()
     }
 
     QFileInfo sourceFileInfo(m_DestinationData.m_sourceFileNamePath);
-    QString srcExt = sourceFileInfo.suffix().toUpper();
+    QString   srcExt = sourceFileInfo.suffix().toUpper();
 
     QString name;
 
@@ -400,8 +411,8 @@ QString CSetCompressOptions::GenerateDefaultDestName()
     if (useSourceName)
         name = m_DestinationData.m_compname;
     // default file name for 3D model data
-    else if (m_DestinationData.m_SourceType == TREETYPE_3DMODEL_DATA || 
-            (m_DestinationData.m_SourceType == TREETYPE_3DSUBMODEL_DATA && m_DestinationData.m_isModelData))
+    else if (m_DestinationData.m_SourceType == TREETYPE_3DMODEL_DATA ||
+             (m_DestinationData.m_SourceType == TREETYPE_3DSUBMODEL_DATA && m_DestinationData.m_isModelData))
         name = m_DestinationData.m_compname + "_" + QString::number(m_extnum);
     // default file name for image data
     else
@@ -410,16 +421,19 @@ QString CSetCompressOptions::GenerateDefaultDestName()
     return name;
 }
 
-void CSetCompressOptions::onSourceNameSelectionChanged(int index) {
+void CSetCompressOptions::onSourceNameSelectionChanged(int index)
+{
     if (index < 0)
         return;
-    
-    switch (m_DestinationData.m_SourceType) {
+
+    switch (m_DestinationData.m_SourceType)
+    {
     case TREETYPE_3DSUBMODEL_DATA: {
-        bool isImage = m_CBSourceFile->itemData(index).toBool();
+        bool isImage                    = m_CBSourceFile->itemData(index).toBool();
         m_DestinationData.m_isModelData = !isImage;
-        
-        if (isImage) {
+
+        if (isImage)
+        {
             // default back to BC7
             m_DestinationData.m_Compression = C_Destination_Options::eCompression_options::BC7;
 
@@ -427,11 +441,13 @@ void CSetCompressOptions::onSourceNameSelectionChanged(int index) {
             m_DestinationData.m_compname = fileInfo.baseName();
 
             QFileInfo srcfileInfo(m_DestinationData.m_modelSource);
-            QString srcPath = srcfileInfo.absolutePath();
+            QString   srcPath                      = srcfileInfo.absolutePath();
             m_DestinationData.m_sourceFileNamePath = srcPath + "/" + m_CBSourceFile->itemText(index);
 
             m_DestinationData.compressionChanged((QVariant&)m_DestinationData.m_Compression);
-        } else { // Processing a Model Mesh Data
+        }
+        else
+        {  // Processing a Model Mesh Data
             // default NONE
             m_DestinationData.m_compname = m_DestinationData.m_modelDest;
 
@@ -450,20 +466,23 @@ void CSetCompressOptions::onSourceNameSelectionChanged(int index) {
 // Destination NAME editing
 //==========================
 
-void CSetCompressOptions::onNameEditingFinished() {
+void CSetCompressOptions::onNameEditingFinished()
+{
     // m_data.m_compname = m_LEName->displayText();
     // m_data.m_FileInfoDestinationName = m_data.m_compname;
     // m_theController->update();
 }
 
-void CSetCompressOptions::onNameTextChanged(QString text) {
+void CSetCompressOptions::onNameTextChanged(QString text)
+{
 }
 
 //===================================================================
 // Check if compression is been specified
 //===================================================================
 
-void CSetCompressOptions::compressionValueChanged(QVariant& value) {
+void CSetCompressOptions::compressionValueChanged(QVariant& value)
+{
     // Enable or Diable Some of the Dialogs Displayed Widgets
     // as per callers request
     if (m_showDestinationEXTSetting)
@@ -481,11 +500,11 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
     else
         m_infotext->hide();
 
-   if (m_propRefine)
+    if (m_propRefine)
         m_propRefine->setHidden(true);
 
     // Get the source compression data
-   C_Destination_Options::eCompression_options comp = (C_Destination_Options::eCompression_options&)value;
+    C_Destination_Options::eCompression_options comp = (C_Destination_Options::eCompression_options&)value;
 
     // Backup the original source in case user cancels the dialog or wants to revert settings
     m_DestinationData.m_Compression = comp;
@@ -500,17 +519,22 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
 
     m_fileFormats->clear();
 
-    if (m_propQuality) {
-        if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW) {
+    if (m_propQuality)
+    {
+        if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW)
+        {
             m_propQuality->setEnabled(false);
 #ifdef USE_ENABLEHQ
-            if (m_propEnableHQ) m_propEnableHQ->setEnabled(false);
+            if (m_propEnableHQ)
+                m_propEnableHQ->setEnabled(false);
 #endif
         }
-        else {
+        else
+        {
             m_propQuality->setEnabled(true);
 #ifdef USE_ENABLEHQ
-            if (m_propEnableHQ) m_propEnableHQ->setEnabled(true);
+            if (m_propEnableHQ)
+                m_propEnableHQ->setEnabled(true);
 #endif
         }
     }
@@ -537,7 +561,8 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
     if (m_propGamma)
         m_propGamma->setEnabled(true);
 
-    switch (comp) {
+    switch (comp)
+    {
     case C_Destination_Options::BC6H:
     case C_Destination_Options::BC6H_SF:
         compressedOptions   = true;
@@ -545,10 +570,14 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         alphaChannelOptions = false;
         codecBlockOptions   = false;
         m_fileFormats->addItem("DDS");
+
+#if (OPTION_BUILD_KTX2 == 1)
         m_fileFormats->addItem("KTX");
 #ifdef _WIN32
         m_fileFormats->addItem("KTX2");
 #endif
+#endif
+
         m_fileFormats->setCurrentIndex(0);
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
@@ -564,14 +593,19 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         if (m_propRefine)
             m_propRefine->setHidden(false);
 
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         m_fileFormats->addItem("DDS");
+
+#if (OPTION_BUILD_KTX2 == 1)
         m_fileFormats->addItem("KTX");
 #ifdef _WIN32
         m_fileFormats->addItem("KTX2");
 #endif
+#endif
+
 #ifdef USE_CRN
         m_fileFormats->addItem("CRN");
 #endif
@@ -586,14 +620,19 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         colorWeightOptions  = true;
         alphaChannelOptions = false;
         codecBlockOptions   = false;
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         m_fileFormats->addItem("DDS");
+
+#if (OPTION_BUILD_KTX2 == 1)
         m_fileFormats->addItem("KTX");
 #ifdef _WIN32
         m_fileFormats->addItem("KTX2");
 #endif
+#endif
+
 #ifdef USE_CRN
         m_fileFormats->addItem("CRN");
 #endif
@@ -609,14 +648,19 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         colorWeightOptions  = true;
         alphaChannelOptions = false;
         codecBlockOptions   = false;
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         m_fileFormats->addItem("DDS");
+
+#if (OPTION_BUILD_KTX2 == 1)
         m_fileFormats->addItem("KTX");
 #ifdef _WIN32
         m_fileFormats->addItem("KTX2");
 #endif
+#endif
+
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append(
@@ -630,22 +674,29 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         colorWeightOptions  = false;
         alphaChannelOptions = false;
         codecBlockOptions   = false;
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         m_fileFormats->addItem("DDS");
+
+#if (OPTION_BUILD_KTX2 == 1)
         m_fileFormats->addItem("KTX");
 #ifdef _WIN32
         if (comp != C_Destination_Options::ATI1N)
             m_fileFormats->addItem("KTX2");
 #endif
+#endif
+
 #ifdef USE_CRN
         m_fileFormats->addItem("CRN");
 #endif
 
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
-        m_infotext->append("A single component compressed texture format for Microsoft DirectX10. BC4 identical to ATI1N. Four bits per pixel. BC4_S is used for signed components");
+        m_infotext->append(
+            "A single component compressed texture format for Microsoft DirectX10. BC4 identical to ATI1N. Four bits per pixel. BC4_S is used for signed "
+            "components");
         break;
     case C_Destination_Options::BC5:
     case C_Destination_Options::BC5_S:
@@ -656,34 +707,45 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         colorWeightOptions  = false;
         alphaChannelOptions = false;
         codecBlockOptions   = false;
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         m_fileFormats->addItem("DDS");
+
+#if (OPTION_BUILD_KTX2 == 1)
         m_fileFormats->addItem("KTX");
 #ifdef _WIN32
-        if ((comp == C_Destination_Options::BC5) || 
-            (comp == C_Destination_Options::BC5_S))
-        m_fileFormats->addItem("KTX2");
+        if ((comp == C_Destination_Options::BC5) || (comp == C_Destination_Options::BC5_S))
+            m_fileFormats->addItem("KTX2");
 #endif
+#endif
+
 #ifdef USE_CRN
         m_fileFormats->addItem("CRN");
 #endif
 
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
-        m_infotext->append("A two component compressed texture format for Microsoft DirectX10. BC5 identical to ATI2N. Eight bits per pixel. BC5_S is used for signed components");
+        m_infotext->append(
+            "A two component compressed texture format for Microsoft DirectX10. BC5 identical to ATI2N. Eight bits per pixel. BC5_S is used for signed "
+            "components");
         break;
     case C_Destination_Options::ATC_RGB:
         compressedOptions   = true;
         colorWeightOptions  = true;
         alphaChannelOptions = false;
         codecBlockOptions   = false;
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         m_fileFormats->addItem("DDS");
+
+#if (OPTION_BUILD_KTX2 == 1)
         m_fileFormats->addItem("KTX");
+#endif
+
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A compressed RGB format.");
@@ -693,11 +755,16 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         colorWeightOptions  = true;
         alphaChannelOptions = false;
         codecBlockOptions   = false;
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         m_fileFormats->addItem("DDS");
+
+#if (OPTION_BUILD_KTX2 == 1)
         m_fileFormats->addItem("KTX");
+#endif
+
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A compressed ARGB format with explicit alpha.");
@@ -707,11 +774,16 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         colorWeightOptions  = true;
         alphaChannelOptions = false;
         codecBlockOptions   = false;
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         m_fileFormats->addItem("DDS");
+
+#if (OPTION_BUILD_KTX2 == 1)
         m_fileFormats->addItem("KTX");
+#endif
+
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("A compressed ARGB format with interpolated alpha.");
@@ -721,11 +793,16 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         colorWeightOptions  = true;
         alphaChannelOptions = false;
         codecBlockOptions   = false;
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         m_fileFormats->addItem("DDS");
+
+#if (OPTION_BUILD_KTX2 == 1)
         m_fileFormats->addItem("KTX");
+#endif
+
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append(" DXT5 with the red component swizzled into the alpha channel. Eight bits per pixel.");
@@ -735,11 +812,16 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         colorWeightOptions  = true;
         alphaChannelOptions = false;
         codecBlockOptions   = false;
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         m_fileFormats->addItem("DDS");
+
+#if (OPTION_BUILD_KTX2 == 1)
         m_fileFormats->addItem("KTX");
+#endif
+
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("swizzled DXT5 format with the green component swizzled into the alpha channel. Eight bits per pixel.");
@@ -749,11 +831,16 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         colorWeightOptions  = true;
         alphaChannelOptions = false;
         codecBlockOptions   = false;
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         m_fileFormats->addItem("DDS");
+
+#if (OPTION_BUILD_KTX2 == 1)
         m_fileFormats->addItem("KTX");
+#endif
+
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append(
@@ -765,11 +852,16 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         colorWeightOptions  = true;
         alphaChannelOptions = false;
         codecBlockOptions   = false;
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         m_fileFormats->addItem("DDS");
+
+#if (OPTION_BUILD_KTX2 == 1)
         m_fileFormats->addItem("KTX");
+#endif
+
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append(
@@ -781,11 +873,16 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         colorWeightOptions  = true;
         alphaChannelOptions = false;
         codecBlockOptions   = false;
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         m_fileFormats->addItem("DDS");
+
+#if (OPTION_BUILD_KTX2 == 1)
         m_fileFormats->addItem("KTX");
+#endif
+
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("swizzled DXT5 format with the blue component swizzled into the alpha channel. Eight bits per pixel.");
@@ -795,11 +892,16 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         colorWeightOptions  = true;
         alphaChannelOptions = false;
         codecBlockOptions   = false;
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         m_fileFormats->addItem("DDS");
+
+#if (OPTION_BUILD_KTX2 == 1)
         m_fileFormats->addItem("KTX");
+#endif
+
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append(
@@ -811,14 +913,19 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         colorWeightOptions  = false;
         alphaChannelOptions = false;
         codecBlockOptions   = false;
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         m_fileFormats->addItem("DDS");
+
+#if (OPTION_BUILD_KTX2 == 1)
         m_fileFormats->addItem("KTX");
 #ifdef _WIN32
         m_fileFormats->addItem("KTX2");
 #endif
+#endif
+
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("The latest block Compression (BC) format designed to support high-quality compression of RGB and RGBA bytes color spaces.");
@@ -829,7 +936,8 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         colorWeightOptions  = false;
         alphaChannelOptions = false;
         codecBlockOptions   = true;
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         m_fileFormats->addItem("DDS");
@@ -840,7 +948,7 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
 #endif
 #ifdef USE_GUI_LOSSLESS_COMPRESSION
     case C_Destination_Options::BRLG:
-        useQualityOption    = false; 
+        useQualityOption    = false;
         compressedOptions   = true;
         colorWeightOptions  = false;
         alphaChannelOptions = false;
@@ -858,7 +966,8 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         colorWeightOptions  = false;
         alphaChannelOptions = false;
         codecBlockOptions   = true;
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         m_fileFormats->addItem("DDS");
@@ -873,15 +982,20 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         colorWeightOptions  = false;
         alphaChannelOptions = false;
         codecBlockOptions   = false;
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         extension = "BASIS";
         m_fileFormats->addItem("BASIS");
+
+#if (OPTION_BUILD_KTX2 == 1)
         m_fileFormats->addItem("KTX");
 #ifdef _WIN32
         m_fileFormats->addItem("KTX2");
 #endif
+#endif
+
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("The latest block Compression (BASIS) format designed to support CTTF and Transcoding.");
@@ -900,14 +1014,19 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         colorWeightOptions  = false;
         alphaChannelOptions = false;
         codecBlockOptions   = false;
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         m_fileFormats->addItem("DDS");
+
+#if (OPTION_BUILD_KTX2 == 1)
         m_fileFormats->addItem("KTX");
 #ifdef _WIN32
         m_fileFormats->addItem("KTX2");
 #endif
+#endif
+
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("ETC (Ericsson Texture Compression, lossy texture compression developed by Ericsson Research.)");
@@ -918,15 +1037,20 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         colorWeightOptions  = false;
         alphaChannelOptions = false;
         codecBlockOptions   = true;
-        if (m_DestinationData.m_SourceIsFloatFormat) {
+        if (m_DestinationData.m_SourceIsFloatFormat)
+        {
             hdrOptions = true;
         }
         extension = "KTX";
         m_fileFormats->addItem("ASTC");
+
+#if (OPTION_BUILD_KTX2 == 1)
         m_fileFormats->addItem("KTX");
 #ifdef _WIN32
         m_fileFormats->addItem("KTX2");
 #endif
+#endif
+
         m_infotext->clear();
         m_infotext->append("<b>Format Description</b>");
         m_infotext->append("ASTC (Adaptive Scalable Texture Compression),lossy block-based texture compression developed with ARM.");
@@ -969,17 +1093,22 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
         break;
     }
 
-    if (m_propQuality) {
-        if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW) {
+    if (m_propQuality)
+    {
+        if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW)
+        {
             m_propQuality->setEnabled(false);
 #ifdef USE_ENABLEHQ
-            if (m_propEnableHQ) m_propEnableHQ->setEnabled(false);
+            if (m_propEnableHQ)
+                m_propEnableHQ->setEnabled(false);
 #endif
         }
-        else {
+        else
+        {
             m_propQuality->setEnabled(useQualityOption);
 #ifdef USE_ENABLEHQ
-            if (m_propEnableHQ) m_propEnableHQ->setEnabled(useQualityOption);
+            if (m_propEnableHQ)
+                m_propEnableHQ->setEnabled(useQualityOption);
 #endif
         }
     }
@@ -1006,19 +1135,23 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
     if (m_propGamma)
         m_propGamma->setEnabled(hdrOptions);
 
-    if (m_propDXT1Alpha) {
+    if (m_propDXT1Alpha)
+    {
         m_propDXT1Alpha->setHidden(!alphaChannelOptions);
     }
 
-    if (m_propCodecBlockRate) {
+    if (m_propCodecBlockRate)
+    {
         m_propCodecBlockRate->setHidden(!codecBlockOptions);
     }
 
-    if (m_propHDRProperties) {
+    if (m_propHDRProperties)
+    {
         m_propHDRProperties->setHidden(!hdrOptions);
     }
 
-    if (m_propChannelWeight) {
+    if (m_propChannelWeight)
+    {
         m_propChannelWeight->setHidden(!colorWeightOptions);
     }
 
@@ -1036,7 +1169,8 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
     QString destFileName = GenerateDefaultDestName();
     m_LEName->insert(destFileName);
 
-    switch (m_DestinationData.m_SourceType) {
+    switch (m_DestinationData.m_SourceType)
+    {
     case TREETYPE_3DMODEL_DATA: {
         // Restrict destination to DDS files
         m_fileFormats->clear();
@@ -1046,35 +1180,44 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
     break;
     case TREETYPE_3DSUBMODEL_DATA: {
         m_fileFormats->clear();
-        if (m_DestinationData.m_isModelData) {
+        if (m_DestinationData.m_isModelData)
+        {
             QString ext = getFileExt(m_DestinationData.m_sourceFileNamePath);
             m_fileFormats->addItem(ext);
 
-            if (m_propFormat) {
+            if (m_propFormat)
+            {
                 m_propFormat->setHidden(true);
             }
-            if (m_propQuality) {
+            if (m_propQuality)
+            {
                 m_propQuality->setHidden(true);
             }
 #ifdef USE_ENABLEHQ
-            if (m_propEnableHQ) {
+            if (m_propEnableHQ)
+            {
                 m_propEnableHQ->setHidden(true);
             }
 #endif
-        } else {
+        }
+        else
+        {
             // Restrict destination to DDS files
             m_fileFormats->addItem("DDS");
 
-            if (m_propFormat) {
+            if (m_propFormat)
+            {
                 m_propFormat->setHidden(false);
             }
 
-            if (m_propQuality) {
+            if (m_propQuality)
+            {
                 m_propQuality->setHidden(false);
             }
 #ifdef USE_ENABLEHQ
-            if (m_propEnableHQ) {
-                m_propEnableHQ->setHidden(true); // v4.2 feature set to false when ready
+            if (m_propEnableHQ)
+            {
+                m_propEnableHQ->setHidden(true);  // v4.2 feature set to false when ready
             }
 #endif
         }
@@ -1082,14 +1225,17 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
     break;
     case TREETYPE_IMAGEFILE_DATA:
     default: {
-        if (m_propFormat) {
+        if (m_propFormat)
+        {
             m_propFormat->setHidden(false);
         }
-        if (m_propQuality) {
+        if (m_propQuality)
+        {
             m_propQuality->setHidden(false);
         }
 #ifdef USE_ENABLEHQ
-        if (m_propEnableHQ) {
+        if (m_propEnableHQ)
+        {
             m_propEnableHQ->setHidden(false);
         }
 #endif
@@ -1105,7 +1251,8 @@ void CSetCompressOptions::compressionValueChanged(QVariant& value) {
 //===================================================================
 // Check if compression quality value changed
 //===================================================================
-void CSetCompressOptions::qualityValueChanged(QVariant& value) {
+void CSetCompressOptions::qualityValueChanged(QVariant& value)
+{
     Q_UNUSED(value);
     m_infotext->clear();
     m_infotext->append("<b>Quality</b> Applies only to compressed formats");
@@ -1115,7 +1262,8 @@ void CSetCompressOptions::qualityValueChanged(QVariant& value) {
 //===================================================================
 // Check if red weight value changed
 //===================================================================
-void CSetCompressOptions::redwValueChanged(QVariant& value) {
+void CSetCompressOptions::redwValueChanged(QVariant& value)
+{
     Q_UNUSED(value);
     m_infotext->clear();
     m_infotext->append("<b>Red Channel Weighting</b> Applies only to compressed formats");
@@ -1125,7 +1273,8 @@ void CSetCompressOptions::redwValueChanged(QVariant& value) {
 //===================================================================
 // Check if green weight value changed
 //===================================================================
-void CSetCompressOptions::greenwValueChanged(QVariant& value) {
+void CSetCompressOptions::greenwValueChanged(QVariant& value)
+{
     Q_UNUSED(value);
     m_infotext->clear();
     m_infotext->append("<b>Green Channel Weighting</b> Applies only to compressed formats");
@@ -1135,7 +1284,8 @@ void CSetCompressOptions::greenwValueChanged(QVariant& value) {
 //===================================================================
 // Check if blue weight value changed
 //===================================================================
-void CSetCompressOptions::bluewValueChanged(QVariant& value) {
+void CSetCompressOptions::bluewValueChanged(QVariant& value)
+{
     Q_UNUSED(value);
     m_infotext->clear();
     m_infotext->append("<b>Blue Channel Weighting</b> Applies only to compressed formats");
@@ -1145,7 +1295,8 @@ void CSetCompressOptions::bluewValueChanged(QVariant& value) {
 //===================================================================
 // Check if alpha threshold value changed
 //===================================================================
-void CSetCompressOptions::thresholdValueChanged(QVariant& value) {
+void CSetCompressOptions::thresholdValueChanged(QVariant& value)
+{
     Q_UNUSED(value);
     m_infotext->clear();
     m_infotext->append("<b>Alpha Threshold</b> Applies only to compressed formats (with alpha channel on)");
@@ -1155,13 +1306,17 @@ void CSetCompressOptions::thresholdValueChanged(QVariant& value) {
 //===================================================================
 // Check if compression is been specified
 //===================================================================
-void CSetCompressOptions::bitrateValueChanged(QString& actualbitrate, int& xblock, int& yblock) {
+void CSetCompressOptions::bitrateValueChanged(QString& actualbitrate, int& xblock, int& yblock)
+{
     QString msg      = "";
     QString blockmsg = "";
-    if (xblock == -1 && yblock == -1) {
+    if (xblock == -1 && yblock == -1)
+    {
         msg      = "Invalid input. Not supported.";
         blockmsg = "Value changed to default bit rate 8.00 (4x4).";
-    } else {
+    }
+    else
+    {
         msg      = "The <b>closet bit rate</b> is " + actualbitrate;
         blockmsg = "<b>Block number</b> is (XxY): " + QString::number(xblock) + "x" + QString::number(yblock);
     }
@@ -1174,10 +1329,12 @@ void CSetCompressOptions::bitrateValueChanged(QString& actualbitrate, int& xbloc
 //===================================================================
 // Defog value changed
 //===================================================================
-void CSetCompressOptions::defogValueChanged(double& defog) {
+void CSetCompressOptions::defogValueChanged(double& defog)
+{
     QString msg      = "";
     QString blockmsg = "";
-    if (defog < 0.00 || defog > 0.01) {
+    if (defog < 0.00 || defog > 0.01)
+    {
         msg      = "Invalid input. Not supported. Clamp to valid range";
         blockmsg = "Defog value should be in range of 0.0000 to 0.0100.";
     }
@@ -1190,10 +1347,12 @@ void CSetCompressOptions::defogValueChanged(double& defog) {
 //===================================================================
 //exposure value changed
 //===================================================================
-void CSetCompressOptions::exposureValueChanged(double& exposure) {
+void CSetCompressOptions::exposureValueChanged(double& exposure)
+{
     QString msg      = "";
     QString blockmsg = "";
-    if (exposure < -10.0 || exposure > 10.0) {
+    if (exposure < -10.0 || exposure > 10.0)
+    {
         msg      = "Invalid input. Not supported. Clamp to valid range";
         blockmsg = "Exposure value supported is in range of -10.0 to 10.0.";
     }
@@ -1206,10 +1365,12 @@ void CSetCompressOptions::exposureValueChanged(double& exposure) {
 //===================================================================
 // kneelow value changed
 //===================================================================
-void CSetCompressOptions::kneelowValueChanged(double& kl) {
+void CSetCompressOptions::kneelowValueChanged(double& kl)
+{
     QString msg      = "";
     QString blockmsg = "";
-    if (kl < -3.00 || kl > 3.00) {
+    if (kl < -3.00 || kl > 3.00)
+    {
         msg      = "Invalid input. Not supported. Clamp to valid range";
         blockmsg = "Knee Low value should be in range of -3.0 to 3.0.";
     }
@@ -1222,10 +1383,12 @@ void CSetCompressOptions::kneelowValueChanged(double& kl) {
 //===================================================================
 // knee high value changed
 //===================================================================
-void CSetCompressOptions::kneehighValueChanged(double& kh) {
+void CSetCompressOptions::kneehighValueChanged(double& kh)
+{
     QString msg      = "";
     QString blockmsg = "";
-    if (kh < 3.5 || kh > 7.5) {
+    if (kh < 3.5 || kh > 7.5)
+    {
         msg      = "Invalid input. Not supported. Clamp to valid range";
         blockmsg = "Knee High value supported is in range of 3.5 to 7.5.";
     }
@@ -1238,10 +1401,12 @@ void CSetCompressOptions::kneehighValueChanged(double& kh) {
 //===================================================================
 // gamma value changed
 //===================================================================
-void CSetCompressOptions::gammaValueChanged(double& gamma) {
+void CSetCompressOptions::gammaValueChanged(double& gamma)
+{
     QString msg      = "";
     QString blockmsg = "";
-    if (gamma < 1.0 || gamma > 2.6) {
+    if (gamma < 1.0 || gamma > 2.6)
+    {
         msg      = "Invalid input. Not supported. Clamp to valid range";
         blockmsg = "Gamma value supported is in range of 1.0 to 2.6.";
     }
@@ -1254,7 +1419,8 @@ void CSetCompressOptions::gammaValueChanged(double& gamma) {
 // -----------------------------------------------------------
 // Signaled when items focus has changed on th property view
 // ----------------------------------------
-void CSetCompressOptions::oncurrentItemChanged(QtBrowserItem* item) {
+void CSetCompressOptions::oncurrentItemChanged(QtBrowserItem* item)
+{
     if (!item)
         return;
     m_infotext->clear();
@@ -1264,33 +1430,49 @@ void CSetCompressOptions::oncurrentItemChanged(QtBrowserItem* item) {
     text = treeItem->propertyName();
     m_infotext->append("<b>" + text + "</b>");
 
-    if (text.compare(COMPRESS_OPTIONS_FORMAT) == 0) {
+    if (text.compare(COMPRESS_OPTIONS_FORMAT) == 0)
+    {
         m_infotext->append("Sets destination image format");
-    } else if (text.compare(COMPRESS_OPTIONS_QUALITY) == 0) {
+    }
+    else if (text.compare(COMPRESS_OPTIONS_QUALITY) == 0)
+    {
         m_infotext->append(tr("Sets destinations image quality"));
         m_infotext->append(tr("For low values quality will be poor and the time to process the image will be short."));
         m_infotext->append(tr("Subsequently higher values will increase the quality and processing time"));
-    } else if (text.compare(COMPRESS_OPTIONS_DEFOG) == 0) {
+    }
+    else if (text.compare(COMPRESS_OPTIONS_DEFOG) == 0)
+    {
         m_infotext->append(tr("Remove \"fog\" from Input Float type Image (range 0.0000 t0 0.0100)."));
-    } else if (text.compare(COMPRESS_OPTIONS_EXPOSURE) == 0) {
+    }
+    else if (text.compare(COMPRESS_OPTIONS_EXPOSURE) == 0)
+    {
         m_infotext->append(tr("Exposure control for Input Float type Image (-10.0 to 10.0)."));
-    } else if (text.compare(COMPRESS_OPTIONS_KNEELOW) == 0) {
+    }
+    else if (text.compare(COMPRESS_OPTIONS_KNEELOW) == 0)
+    {
         m_infotext->append(tr("Pixel values between kneeHigh and kneeLow set the white level of the input image. Knee Low should be in range -3.0 to 3.0."));
-    } else if (text.compare(COMPRESS_OPTIONS_KNEEHIGH) == 0) {
+    }
+    else if (text.compare(COMPRESS_OPTIONS_KNEEHIGH) == 0)
+    {
         m_infotext->append(tr("Pixel values between kneeHigh and kneeLow set the white level of the input image. Knee High should be in range 3.5-7.5."));
-    } else if (text.compare(COMPRESS_OPTIONS_GAMMA) == 0) {
+    }
+    else if (text.compare(COMPRESS_OPTIONS_GAMMA) == 0)
+    {
         m_infotext->append(tr("Gamma correction for Input Float type Image (1.0-2.6)."));
     }
 }
 
-CSetCompressOptions::~CSetCompressOptions() {
+CSetCompressOptions::~CSetCompressOptions()
+{
 }
 
-void CSetCompressOptions::resetData() {
+void CSetCompressOptions::resetData()
+{
     m_DestinationData << m_dataOriginal;
 }
 
-QString CSetCompressOptions::GetFormatString() {
+QString CSetCompressOptions::GetFormatString()
+{
     QMetaObject meta                = C_Destination_Options::staticMetaObject;
     int         indexCompression    = meta.indexOfEnumerator("eCompression_options");
     QMetaEnum   metaEnumCompression = meta.enumerator(indexCompression);
@@ -1303,13 +1485,13 @@ QString CSetCompressOptions::GetFormatString() {
 // normally called prior to Adding or Editing data
 //===================================================================
 
-bool CSetCompressOptions::updateDisplayContent() {
+bool CSetCompressOptions::updateDisplayContent()
+{
     bool isModelType = true;
 
     m_isEditing = true;
 
     m_dataOriginal << m_DestinationData;
-
 
     // Compression Name
     m_LEName->clear();
@@ -1319,12 +1501,15 @@ bool CSetCompressOptions::updateDisplayContent() {
     QString destFileName = GenerateDefaultDestName();
     m_LEName->insert(destFileName);
 
-    switch (m_DestinationData.m_SourceType) {
+    switch (m_DestinationData.m_SourceType)
+    {
     case TREETYPE_3DSUBMODEL_DATA: {
-        if (m_DestinationData.m_isModelData) {
-            if (m_DestinationData.m_modelSource.length() > 0) {
+        if (m_DestinationData.m_isModelData)
+        {
+            if (m_DestinationData.m_modelSource.length() > 0)
+            {
                 QFileInfo fi(m_DestinationData.m_modelSource);
-                QString modelExt = fi.suffix().toUpper();
+                QString   modelExt = fi.suffix().toUpper();
 
                 // Set some start up default views for the destination data to be edited
                 m_DestinationData.InitOptimizationSettings();
@@ -1338,15 +1523,18 @@ bool CSetCompressOptions::updateDisplayContent() {
                     m_DestinationData.hide_mesh_compression_settings(true);
             }
 
-            if (m_propQuality) {
+            if (m_propQuality)
+            {
                 m_propQuality->setHidden(true);
             }
 #ifdef USE_ENABLEHQ
-            if (m_propEnableHQ) {
+            if (m_propEnableHQ)
+            {
                 m_propEnableHQ->setHidden(true);
             }
 #endif
-            if (m_propFormat) {
+            if (m_propFormat)
+            {
                 m_propFormat->setHidden(true);
             }
 
@@ -1360,16 +1548,21 @@ bool CSetCompressOptions::updateDisplayContent() {
             if (m_propMeshSettings)
                 m_propMeshSettings->setHidden(false);
 #endif
-        } else {
-            if (m_propQuality) {
+        }
+        else
+        {
+            if (m_propQuality)
+            {
                 m_propQuality->setHidden(false);
             }
 #ifdef USE_ENABLEHQ
-            if (m_propEnableHQ) {
-                m_propEnableHQ->setHidden(true); // v4.2 feature set to false when ready
+            if (m_propEnableHQ)
+            {
+                m_propEnableHQ->setHidden(true);  // v4.2 feature set to false when ready
             }
 #endif
-            if (m_propFormat) {
+            if (m_propFormat)
+            {
                 m_propFormat->setHidden(false);
             }
 #ifdef USE_MESHOPTIMIZER
@@ -1427,12 +1620,15 @@ bool CSetCompressOptions::updateDisplayContent() {
         // Destination Folder
         QDir    dir(fileinfo.absoluteDir());
         QString DestFolder = dir.absolutePath();
-        if ((DestFolder.length() <= 1) && DestFolder.contains(".")) {
+        if ((DestFolder.length() <= 1) && DestFolder.contains("."))
+        {
             if (!isModelType)
                 DestFolder = "./results/";
             else
                 DestFolder = "./";
-        } else {
+        }
+        else
+        {
             if (!isModelType)
                 DestFolder.append("/results/");
             else
@@ -1447,46 +1643,55 @@ bool CSetCompressOptions::updateDisplayContent() {
 
     m_PBSaveSettings->setEnabled(true);
 
-    if (m_propQuality) {
+    if (m_propQuality)
+    {
         m_propQuality->setToolTip(STR_QUALITY_SETTING_HINT);
-        if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW) {
+        if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW)
+        {
             m_propQuality->setEnabled(false);
 #ifdef USE_ENABLEHQ
-            if (m_propEnableHQ) m_propEnableHQ->setEnabled(false);
+            if (m_propEnableHQ)
+                m_propEnableHQ->setEnabled(false);
 #endif
         }
-        else {
+        else
+        {
             m_propQuality->setEnabled(true);
 #ifdef USE_ENABLEHQ
-            if (m_propEnableHQ) m_propEnableHQ->setEnabled(true);
+            if (m_propEnableHQ)
+                m_propEnableHQ->setEnabled(true);
 #endif
         }
         // Set  Properties for editing
         QtVariantPropertyManager* Manager = (QtVariantPropertyManager*)m_propQuality->propertyManager();
-        setMinMaxStep(Manager, m_propQuality, 0.0, 1.0, 0.01,2);
+        setMinMaxStep(Manager, m_propQuality, 0.0, 1.0, 0.01, 2);
     }
 
-    if (m_propFormat) {
+    if (m_propFormat)
+    {
         m_propFormat->setToolTip(STR_FORMAT_SETTING_HINT);
     }
 
-    if (m_propChannelWeightingR) {
+    if (m_propChannelWeightingR)
+    {
         m_propChannelWeightingR->setToolTip(STR_CHANNELWEIGHTR_SETTING_HINT);
         m_propChannelWeightingR->setEnabled(true);
         // Set  Properties for editing
         QtVariantPropertyManager* Manager = (QtVariantPropertyManager*)m_propChannelWeightingR->propertyManager();
-        setMinMaxStep(Manager, m_propChannelWeightingR, 0.01, 1.0, 0.01,2);
+        setMinMaxStep(Manager, m_propChannelWeightingR, 0.01, 1.0, 0.01, 2);
     }
 
-    if (m_propChannelWeightingG) {
+    if (m_propChannelWeightingG)
+    {
         m_propChannelWeightingG->setToolTip(STR_CHANNELWEIGHTG_SETTING_HINT);
         m_propChannelWeightingG->setEnabled(true);
         // Set  Properties for editing
         QtVariantPropertyManager* Manager = (QtVariantPropertyManager*)m_propChannelWeightingG->propertyManager();
-        setMinMaxStep(Manager, m_propChannelWeightingG, 0.01, 1.0, 0.01,2);
+        setMinMaxStep(Manager, m_propChannelWeightingG, 0.01, 1.0, 0.01, 2);
     }
 
-    if (m_propChannelWeightingB) {
+    if (m_propChannelWeightingB)
+    {
         m_propChannelWeightingB->setToolTip(STR_CHANNELWEIGHTB_SETTING_HINT);
         m_propChannelWeightingB->setEnabled(true);
         // Set  Properties for editing
@@ -1494,7 +1699,8 @@ bool CSetCompressOptions::updateDisplayContent() {
         setMinMaxStep(Manager, m_propChannelWeightingB, 0.01, 1.0, 0.01, 2);
     }
 
-    if (m_propBitrate) {
+    if (m_propBitrate)
+    {
         m_propBitrate->setToolTip(STR_BITRATE_SETTING_HINT);
         m_propBitrate->setEnabled(true);
         // Set  Properties for editing
@@ -1502,7 +1708,8 @@ bool CSetCompressOptions::updateDisplayContent() {
         setMinMaxStep(Manager, m_propBitrate, 0.00, 8.00, 0.01, 2);
     }
 
-    if (m_propDefog) {
+    if (m_propDefog)
+    {
         m_propDefog->setToolTip(STR_DEFOG_SETTING_HINT);
         m_propDefog->setEnabled(true);
         // Set  Properties for editing
@@ -1510,7 +1717,8 @@ bool CSetCompressOptions::updateDisplayContent() {
         setMinMaxStep(Manager, m_propDefog, 0.000, 0.010, 0.001, 3);
     }
 
-    if (m_propExposure) {
+    if (m_propExposure)
+    {
         m_propExposure->setToolTip(STR_EXPOSURE_SETTING_HINT);
         m_propExposure->setEnabled(true);
         // Set  Properties for editing
@@ -1518,7 +1726,8 @@ bool CSetCompressOptions::updateDisplayContent() {
         setMinMaxStep(Manager, m_propExposure, -10.000, 10.000, 0.125, 3);
     }
 
-    if (m_propKneeLow) {
+    if (m_propKneeLow)
+    {
         m_propKneeLow->setToolTip(STR_KNEELOW_SETTING_HINT);
         m_propKneeLow->setEnabled(true);
         // Set  Properties for editing
@@ -1526,7 +1735,8 @@ bool CSetCompressOptions::updateDisplayContent() {
         setMinMaxStep(Manager, m_propKneeLow, -3.00, 3.00, 0.125, 3);
     }
 
-    if (m_propKneeHigh) {
+    if (m_propKneeHigh)
+    {
         m_propKneeHigh->setToolTip(STR_KNEEHIGH_SETTING_HINT);
         m_propKneeHigh->setEnabled(true);
         // Set  Properties for editing
@@ -1534,7 +1744,8 @@ bool CSetCompressOptions::updateDisplayContent() {
         setMinMaxStep(Manager, m_propKneeHigh, 3.50, 7.50, 0.125, 3);
     }
 
-    if (m_propGamma) {
+    if (m_propGamma)
+    {
         m_propGamma->setToolTip(STR_GAMMA_SETTING_HINT);
         m_propGamma->setEnabled(true);
         // Set  Properties for editing
@@ -1542,7 +1753,8 @@ bool CSetCompressOptions::updateDisplayContent() {
         setMinMaxStep(Manager, m_propGamma, 1.0, 2.6, 0.2, 1);
     }
 
-    if (m_propAlphaThreshold) {
+    if (m_propAlphaThreshold)
+    {
         m_propAlphaThreshold->setToolTip(STR_ALPHATHRESHOLD_HINT);
         m_propAlphaThreshold->setEnabled(true);
         // Set  Properties for editing
@@ -1550,17 +1762,21 @@ bool CSetCompressOptions::updateDisplayContent() {
         setMinMaxStep(Manager, m_propAlphaThreshold, 0, 255, 1, 0);
     }
 
-    if (m_propDestImage) {
+    if (m_propDestImage)
+    {
         m_propDestImage->setHidden(true);
     }
 
     return true;
 }
 
-void CSetCompressOptions::setMinMaxStep(QtVariantPropertyManager* manager, QtProperty* m_prop, double min, double max, double step, int decimals) {
-    if (manager) {
+void CSetCompressOptions::setMinMaxStep(QtVariantPropertyManager* manager, QtProperty* m_prop, double min, double max, double step, int decimals)
+{
+    if (manager)
+    {
         QtVariantProperty* prop = manager->variantProperty(m_prop);
-        if (prop) {
+        if (prop)
+        {
             prop->setAttribute(STR_SETTING_MINIMUM, min);
             prop->setAttribute(STR_SETTING_MAXIMUM, max);
             prop->setAttribute(STR_SETTING_SINGLESTEP, step);
@@ -1569,9 +1785,10 @@ void CSetCompressOptions::setMinMaxStep(QtVariantPropertyManager* manager, QtPro
     }
 }
 
-void CSetCompressOptions::onPBCancel() {
+void CSetCompressOptions::onPBCancel()
+{
     m_automaticProcessing = false;
-    m_isEditing = false;
+    m_isEditing           = false;
 
     resetData();
     hide();
@@ -1579,23 +1796,29 @@ void CSetCompressOptions::onPBCancel() {
     ReduceNumChildrenIndex();
 }
 
-void CSetCompressOptions::SaveCompressedInfo() {
-    if (!m_automaticProcessing) {
+void CSetCompressOptions::SaveCompressedInfo()
+{
+    if (!m_automaticProcessing)
+    {
         m_DestinationData.m_compname = m_LEName->displayText();
     }
-    else {
+    else
+    {
         m_DestinationData.m_compname = GenerateDefaultDestName();
     }
 
-    if (m_DestinationData.m_compname == "") {
+    if (m_DestinationData.m_compname == "")
+    {
         QMessageBox msgBox;
         msgBox.setText("Please enter a valid filename.");
         msgBox.exec();
         return;
     }
 
-    if (m_DestinationData.m_isModelData) {
-        if (m_DestinationData.getDo_Mesh_Optimization() == m_DestinationData.NoOpt && m_DestinationData.getDo_Mesh_Compression() == m_DestinationData.NoComp) {
+    if (m_DestinationData.m_isModelData)
+    {
+        if (m_DestinationData.getDo_Mesh_Optimization() == m_DestinationData.NoOpt && m_DestinationData.getDo_Mesh_Compression() == m_DestinationData.NoComp)
+        {
             QMessageBox msgBox;
             msgBox.setText("No process setting detected: Please select at least one mesh process (Optimize and/or Compress) option.");
             msgBox.exec();
@@ -1615,12 +1838,15 @@ void CSetCompressOptions::SaveCompressedInfo() {
     QString finalPath = dir.absolutePath();
 
     // Determine if destination folder exists if not try to create
-    if (!CMP_DirExists(finalPath.toStdString().c_str())) {
-        if (CMP_CreateDir(finalPath.toStdString().c_str())) {
+    if (!CMP_DirExists(finalPath.toStdString().c_str()))
+    {
+        if (CMP_CreateDir(finalPath.toStdString().c_str()))
+        {
             // check and wait for system to generate a valid dir,
             // typically this should not happen on local a dir
             int delayloop = 0;
-            while (!CMP_DirExists(finalPath.toStdString().c_str()) && (delayloop < 5)) {
+            while (!CMP_DirExists(finalPath.toStdString().c_str()) && (delayloop < 5))
+            {
                 std::this_thread::sleep_for(std::chrono::microseconds(100000));
                 delayloop++;
             }
@@ -1636,7 +1862,8 @@ void CSetCompressOptions::SaveCompressedInfo() {
     file.setFileName(finalPath);
     bool isWritable = file.open(QIODevice::WriteOnly);
 
-    if (!isWritable) {
+    if (!isWritable)
+    {
         QString   appLocalPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
         QFileInfo fileInfo2(appLocalPath);
         finalPath = fileInfo2.dir().path();
@@ -1646,8 +1873,10 @@ void CSetCompressOptions::SaveCompressedInfo() {
         QFileInfo fileInfo(finalPath);
 
         cpMainComponents* temp = (cpMainComponents*)(m_parent);
-        if (temp) {
-            if (temp->m_CompressStatusDialog) {
+        if (temp)
+        {
+            if (temp->m_CompressStatusDialog)
+            {
                 temp->m_CompressStatusDialog->onClearText();
                 temp->m_CompressStatusDialog->showOutput();
             }
@@ -1658,21 +1887,28 @@ void CSetCompressOptions::SaveCompressedInfo() {
     file.close();
     file.remove();
 
-    if (m_DestinationData.m_SourceType == TREETYPE_3DMODEL_DATA) {
+    if (m_DestinationData.m_SourceType == TREETYPE_3DMODEL_DATA)
+    {
         QString fileExt(getFileExt(m_DestinationData.m_modelSource));
         fileExt.prepend(".");
         finalPath.append(fileExt);
         m_DestinationData.m_modelDest = finalPath;
-    } else {
-        if (m_fileFormats->currentIndex() >= 0 && !(ImageExt.isEmpty())) {
+    }
+    else
+    {
+        if (m_fileFormats->currentIndex() >= 0 && !(ImageExt.isEmpty()))
+        {
             finalPath.append(".");
             finalPath.append(ImageExt);
 
             // obj file "add destination setting" has destination filename same as 3dsubmodule
-            if (ImageExt == "obj" || ImageExt == "OBJ") {
+            if (ImageExt == "obj" || ImageExt == "OBJ")
+            {
                 finalPath = m_DestinationData.m_modelDest;
             }
-        } else {
+        }
+        else
+        {
             finalPath.append(".DDS");
         }
     }
@@ -1688,10 +1924,13 @@ void CSetCompressOptions::SaveCompressedInfo() {
     m_isEditing = false;
 }
 
-void CSetCompressOptions::PBSaveCompressSetting() {
-    if (!m_automaticProcessing) {
+void CSetCompressOptions::PBSaveCompressSetting()
+{
+    if (!m_automaticProcessing)
+    {
         SaveCompressedInfo();
-    } else
+    }
+    else
         hide();
     //    else
     //    {
@@ -1741,7 +1980,8 @@ void CSetCompressOptions::PBSaveCompressSetting() {
 
 // update FileType Combobox this event is not called
 // when setText is used on a LineEdit
-void CSetCompressOptions::onDestinationFileEditingFinished() {
+void CSetCompressOptions::onDestinationFileEditingFinished()
+{
     QFileInfo fileinfo(m_DestinationFile->text());
 
     // Update the FileType combobox
@@ -1751,16 +1991,18 @@ void CSetCompressOptions::onDestinationFileEditingFinished() {
     m_DestinationFile->setText(fileinfo.baseName());
 }
 
-void CSetCompressOptions::onDestFileFolder() {
+void CSetCompressOptions::onDestFileFolder()
+{
     QString fileFolder = QFileDialog::getExistingDirectory(this, tr("Destination Folder"), m_DestinationFolder->text());
-    if (fileFolder.length() > 0) {
+    if (fileFolder.length() > 0)
+    {
         m_DestinationFolder->setText(fileFolder);
     }
 }
 
 void CSetCompressOptions::closeEvent(QCloseEvent* e)
 {
-    m_isEditing = false;
+    m_isEditing           = false;
     m_automaticProcessing = false;
 
     resetData();
@@ -1774,18 +2016,21 @@ void CSetCompressOptions::ReduceNumChildrenIndex()
     // Obtain the Parent and its data
     // and reset the num of extension counts for that image
     QTreeWidgetItem* parent = m_item->parent();
-    if (parent) {
+    if (parent)
+    {
         // Varify its root
-        QVariant v = parent->data(TREE_LevelType, Qt::UserRole);
-        int ParentlevelType = v.toInt();
-        if (ParentlevelType == TREETYPE_IMAGEFILE_DATA) {
-            QVariant v = parent->data(TREE_SourceInfo, Qt::UserRole);
+        QVariant v               = parent->data(TREE_LevelType, Qt::UserRole);
+        int      ParentlevelType = v.toInt();
+        if (ParentlevelType == TREETYPE_IMAGEFILE_DATA)
+        {
+            QVariant       v           = parent->data(TREE_SourceInfo, Qt::UserRole);
             C_Source_Info* m_imagefile = v.value<C_Source_Info*>();
             if (m_imagefile)
                 m_imagefile->m_extnum--;
         }
-        if (ParentlevelType == TREETYPE_3DMODEL_DATA) {
-            QVariant v = parent->data(TREE_SourceInfo, Qt::UserRole);
+        if (ParentlevelType == TREETYPE_3DMODEL_DATA)
+        {
+            QVariant        v            = parent->data(TREE_SourceInfo, Qt::UserRole);
             C_3DModel_Info* m_sourcefile = v.value<C_3DModel_Info*>();
             if (m_sourcefile)
                 m_sourcefile->m_extnum -= 2;

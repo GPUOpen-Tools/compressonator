@@ -1,6 +1,6 @@
 //=====================================================================
 // Copyright 2016-2022 (c), Advanced Micro Devices, Inc. All rights reserved
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -51,10 +51,13 @@
 #pragma comment(lib, "Image_EXR.lib")
 #endif
 
+#if (OPTION_BUILD_KTX2 == 1)
 #pragma comment(lib, "Image_KTX.lib")
 #ifdef _WIN32
 #pragma comment(lib, "Image_KTX2.lib")
 #endif
+#endif
+
 #pragma comment(lib, "Image_TGA.lib")
 #pragma comment(lib, "Image_Analysis.lib")
 
@@ -103,22 +106,22 @@ void AboutCompressonator()
     char year[5] = "2023";
 
 #ifdef USE_AUTODATE
-    time_t now = time(0);
-    auto tm = localtime(&now);
-    int tm_year = 0;
-    if (tm != nullptr) 
-        sprintf_s(year,"%d",tm->tm_year+1900);
+    time_t now     = time(0);
+    auto   tm      = localtime(&now);
+    int    tm_year = 0;
+    if (tm != nullptr)
+        sprintf_s(year, "%d", tm->tm_year + 1900);
 #endif
 
     printf("------------------------------------------------\n");
     // current build release
     if (VERSION_MINOR_MAJOR)
-        printf("compressonatorcli V%d.%d.%d Copyright AMD %s\n", VERSION_MAJOR_MAJOR, VERSION_MAJOR_MINOR, VERSION_MINOR_MAJOR,year);
+        printf("compressonatorcli V%d.%d.%d Copyright AMD %s\n", VERSION_MAJOR_MAJOR, VERSION_MAJOR_MINOR, VERSION_MINOR_MAJOR, year);
     else
     {
         // Keep track of Customer patches from last release to current
         // This is what is shown when you build the exe outside of the automated Build System (such as Jenkins)
-        printf("compressonatorcli V%d.%d.0 Copyright AMD %s\n",VERSION_MAJOR_MAJOR,VERSION_MAJOR_MINOR,year);
+        printf("compressonatorcli V%d.%d.0 Copyright AMD %s\n", VERSION_MAJOR_MAJOR, VERSION_MAJOR_MINOR, year);
     }
     printf("------------------------------------------------\n");
     printf("\n");
@@ -154,7 +157,6 @@ void PrintUsage()
     printf("                      be compatible \n");
     printf("                      with the sources format,decompress formats are typically\n");
     printf("                      set to ARGB_8888 or ARGB_32F\n");
-
 
 #ifdef _WIN32
     printf("-EncodeWith           Compression with CPU, HPC, GPU, OCL or DXC\n");
@@ -424,9 +426,8 @@ void g_GTC_CompressBlock(void* in, void* out, void* blockoptions)
 }
 #endif
 
-
 //---------------------------------------------
-// Lossless Compression 
+// Lossless Compression
 //---------------------------------------------
 #ifdef USE_LOSSLESS_COMPRESSION
 
@@ -449,7 +450,6 @@ void g_BRLG_CompressBlock(void* in, void* out, void* blockoptions)
         g_Codec_BRLG->CompressBlock(in, out, blockoptions);
 }
 #endif
-
 
 //----------------- BASIS: Run Time Encoder ------------------
 #ifdef USE_BASIS
@@ -510,7 +510,7 @@ int main(int argc, char* argv[])
     QCoreApplication app(argc, argv);
 #endif
 
-    g_CMIPS = new CMIPS;
+    g_CMIPS            = new CMIPS;
     g_CMIPS->PrintLine = PrintStatusLine;
 
 #if (OPTION_BUILD_ASTC == 1)
@@ -522,12 +522,15 @@ int main(int argc, char* argv[])
 #endif
 
     g_pluginManager.registerStaticPlugin("IMAGE", "TGA", (void*)make_Plugin_TGA);  // Use for load only, Qt will be used for Save
-    g_pluginManager.registerStaticPlugin("IMAGE", "KTX", (void*)make_Plugin_KTX);
     g_pluginManager.registerStaticPlugin("IMAGE", "ANALYSIS", (void*)make_Plugin_CAnalysis);
 
+#if (OPTION_BUILD_KTX2 == 1)
+    g_pluginManager.registerStaticPlugin("IMAGE", "KTX", (void*)make_Plugin_KTX);
 #ifdef _WIN32
     g_pluginManager.registerStaticPlugin("IMAGE", "KTX2", (void*)make_Plugin_KTX2);
 #endif
+#endif
+
 #ifdef USE_LOSSLESS_COMPRESSION
     g_pluginManager.registerStaticPlugin("IMAGE", "BRLG", (void*)make_Image_Plugin_BRLG);
 #endif
@@ -544,8 +547,6 @@ int main(int argc, char* argv[])
     QCoreApplication::addLibraryPath(dirPath + "./plugins/imageformats");
 #endif
 
-
-
     //----------------------------------
     // Process user command line parameters
     //----------------------------------
@@ -558,13 +559,12 @@ int main(int argc, char* argv[])
             return -1;
         }
 
-         if (g_CmdPrams.SourceFile.length() == 0)
+        if (g_CmdPrams.SourceFile.length() == 0)
         {
             printf("Source file was not supplied!\n");
             delete g_CMIPS;
             return -2;
         }
-
 
 #ifdef USE_GTC
         //---------------------------------------
@@ -608,7 +608,7 @@ int main(int argc, char* argv[])
             //------------------------------------------------------------
             if (g_Codec_BRLG)
             {
-                BRLG_CompressBlock  = g_BRLG_CompressBlock;
+                BRLG_CompressBlock   = g_BRLG_CompressBlock;
                 BRLG_DecompressBlock = g_BRLG_DecompressBlock;
             }
         }
@@ -662,7 +662,6 @@ int main(int argc, char* argv[])
             printf("Setup Error: genGPUMipMaps or useSRGBFrames requires EncodeWith GPU\n");
             return -1;
         }
-
 
         int ret = ProcessCMDLine(&CompressionCallback, NULL);
 
