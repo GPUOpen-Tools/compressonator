@@ -35,11 +35,15 @@
 #if (OPTION_BUILD_ASTC == 1)
 #pragma comment(lib, "Image_ASTC.lib")
 #endif
+
+#if (OPTION_BUILD_KTX2 == 1)
 #pragma comment(lib, "Image_EXR.lib")
 #pragma comment(lib, "Image_KTX.lib")
 #ifdef _WIN32
 #pragma comment(lib, "Image_KTX2.lib")
 #endif
+#endif
+
 #ifdef USE_GUI_LOSSLESS_COMPRESSION
 #pragma comment(lib, "Image_BRLG.lib")
 #endif
@@ -48,7 +52,6 @@
 #endif
 #pragma comment(lib, "Image_TGA.lib")
 #pragma comment(lib, "Image_Analysis.lib")
-
 
 #ifdef USE_CRN
 #pragma comment(lib, "CRN.lib")
@@ -85,11 +88,14 @@ bool                 g_bAbortCompression;
 CMIPS*               g_CMIPS;      // Global MIPS functions shared between app and all IMAGE plugins
 CMIPS*               g_GUI_CMIPS;  // Global MIPS functions shared by 3DModels
 
-void GetSupportedFileFormats(QList<QByteArray>& g_supportedFormats) {
+void GetSupportedFileFormats(QList<QByteArray>& g_supportedFormats)
+{
     // Assemble list of supported Image Formats from our plugin
     int numPlugins = g_pluginManager.getNumPlugins();
-    for (int i = 0; i < numPlugins; i++) {
-        if (strcmp(g_pluginManager.getPluginType(i), "IMAGE") == 0) {
+    for (int i = 0; i < numPlugins; i++)
+    {
+        if (strcmp(g_pluginManager.getPluginType(i), "IMAGE") == 0)
+        {
             QByteArray bArray = g_pluginManager.getPluginName(i);
 #ifdef _WIN32
             QByteArray fformat = bArray.toUpper();
@@ -100,7 +106,9 @@ void GetSupportedFileFormats(QList<QByteArray>& g_supportedFormats) {
                 continue;
             if (!g_supportedFormats.contains(fformat))
                 g_supportedFormats.append(fformat);
-        } else if (strcmp(g_pluginManager.getPluginType(i), "3DMODEL_LOADER") == 0) {
+        }
+        else if (strcmp(g_pluginManager.getPluginType(i), "3DMODEL_LOADER") == 0)
+        {
             QByteArray bArray = g_pluginManager.getPluginName(i);
 #ifdef _WIN32
             QByteArray fformat = bArray.toUpper();
@@ -117,7 +125,8 @@ void GetSupportedFileFormats(QList<QByteArray>& g_supportedFormats) {
 
     // Upppercase List
     QList<QByteArray>::Iterator i;
-    for (i = QtFormats.begin(); i != QtFormats.end(); ++i) {
+    for (i = QtFormats.begin(); i != QtFormats.end(); ++i)
+    {
         QByteArray fformat = (*i);
         fformat            = fformat.toUpper();
         if (!g_supportedFormats.contains(fformat))
@@ -137,13 +146,16 @@ PluginInterface_Encoder* g_plugin_EncoderAPC = NULL;
 CMP_Encoder*             g_Codec_APC         = NULL;
 extern void (*APC_DecompressBlock)(void* out, void* in);
 extern void (*APC_CompressBlock)(void* srcblock, void* dest, void* blockoptions);
-void g_APC_DecompressBlock(void* in, void* out) {
+void g_APC_DecompressBlock(void* in, void* out)
+{
     if (g_Codec_APC)
         g_Codec_APC->DecompressBlock(in, out);
 }
 
-void g_APC_CompressBlock(void* in, void* out, void* blockoptions) {
-    if (g_Codec_APC) {
+void g_APC_CompressBlock(void* in, void* out, void* blockoptions)
+{
+    if (g_Codec_APC)
+    {
         g_Codec_APC->CompressBlock(in, out, blockoptions);
     }
 }
@@ -154,13 +166,16 @@ PluginInterface_Encoder* g_plugin_EncoderGTC = NULL;
 CMP_Encoder*             g_Codec_GTC         = NULL;
 extern void (*GTC_DecompressBlock)(void* out, void* in);
 extern void (*GTC_CompressBlock)(void* srcblock, void* dest, void* blockoptions);
-void g_GTC_DecompressBlock(void* in, void* out) {
+void g_GTC_DecompressBlock(void* in, void* out)
+{
     if (g_Codec_GTC)
         g_Codec_GTC->DecompressBlock(in, out);
 }
 
-void g_GTC_CompressBlock(void* in, void* out, void* blockoptions) {
-    if (g_Codec_GTC) {
+void g_GTC_CompressBlock(void* in, void* out, void* blockoptions)
+{
+    if (g_Codec_GTC)
+    {
         g_Codec_GTC->CompressBlock(in, out, blockoptions);
     }
 }
@@ -194,15 +209,19 @@ CMP_Encoder*             g_Codec_BASIS         = NULL;
 extern int (*BASIS_CompressTexture)(void* in, void* out, void* blockoptions);
 extern int (*BASIS_DecompressTexture)(void* in, void* out, void* blockoptions);
 
-int g_BASIS_CompressTexture(void* in, void* out, void* blockoptions) {
-    if (g_Codec_BASIS) {
+int g_BASIS_CompressTexture(void* in, void* out, void* blockoptions)
+{
+    if (g_Codec_BASIS)
+    {
         return g_Codec_BASIS->CompressTexture(in, out, blockoptions);
     }
     return 0;
 }
 
-int g_BASIS_DecompressTexture(void* in, void* out, void* blockoptions) {
-    if (g_Codec_BASIS) {
+int g_BASIS_DecompressTexture(void* in, void* out, void* blockoptions)
+{
+    if (g_Codec_BASIS)
+    {
         return g_Codec_BASIS->DecompressTexture(in, out, blockoptions);
     }
     return 0;
@@ -216,10 +235,12 @@ int g_BASIS_DecompressTexture(void* in, void* out, void* blockoptions) {
 #pragma comment(lib, "Qt5Test.lib")
 #endif
 
-int main(int argc, char** argv) {
-    try {
-        QApplication::setAttribute(Qt::AA_EnableHighDpiScaling); 
-        QApplication           app(argc, argv);
+int main(int argc, char** argv)
+{
+    try
+    {
+        QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+        QApplication app(argc, argv);
 
 #ifdef USE_TESTAUTOMATION
         qt_monkey_agent::Agent agent;
@@ -255,7 +276,14 @@ int main(int argc, char** argv) {
         g_pluginManager.registerStaticPlugin("IMAGE", "ASTC", (void*)make_Plugin_ASTC);
 #endif
         g_pluginManager.registerStaticPlugin("IMAGE", "EXR", (void*)make_Plugin_EXR);
+
+#if (OPTION_BUILD_KTX2 == 1)
         g_pluginManager.registerStaticPlugin("IMAGE", "KTX", (void*)make_Plugin_KTX);
+#ifdef _WIN32
+        g_pluginManager.registerStaticPlugin("IMAGE", "KTX2", (void*)make_Plugin_KTX2);
+#endif
+#endif
+
         g_pluginManager.registerStaticPlugin("IMAGE", "TGA", (void*)make_Plugin_TGA);
         g_pluginManager.registerStaticPlugin("IMAGE", "ANALYSIS", (void*)make_Plugin_CAnalysis);
 #ifdef USE_GUI_LOSSLESS_COMPRESSION
@@ -264,14 +292,10 @@ int main(int argc, char** argv) {
 #ifdef USE_GUI_LOSSLESS_COMPRESSION_BINARY
         g_pluginManager.registerStaticPlugin("IMAGE", "BINARY", (void*)make_Image_Plugin_BINARY);
 #endif
-#ifdef _WIN32
-        g_pluginManager.registerStaticPlugin("IMAGE", "KTX2", (void*)make_Plugin_KTX2);
-#endif
 
 #ifdef USE_CRN
         g_pluginManager.registerStaticPlugin("IMAGE", "CRN", (void*)make_Plugin_CRN);
 #endif
-
 
         g_pluginManager.getPluginList("/plugins", true);
 
@@ -285,7 +309,8 @@ int main(int argc, char** argv) {
 #ifdef USE_APC
         g_plugin_EncoderAPC = reinterpret_cast<PluginInterface_Encoder*>(g_pluginManager.GetPlugin("ENCODER", "APC"));
         // Found APC Codec
-        if (g_plugin_EncoderAPC) {
+        if (g_plugin_EncoderAPC)
+        {
             //-------------------------------
             // create the compression  Codec
             //-------------------------------
@@ -294,13 +319,13 @@ int main(int argc, char** argv) {
             //------------------------------------------------------------
             // Assign compressonator lib APC codec to Compute GTC Codec
             //------------------------------------------------------------
-            if (g_Codec_APC) {
+            if (g_Codec_APC)
+            {
                 APC_CompressBlock   = g_APC_CompressBlock;
                 APC_DecompressBlock = g_APC_DecompressBlock;
             }
         }
 #endif
-
 
         //---------------------------------------
         // attempt to load compute GTC Codec
@@ -308,7 +333,8 @@ int main(int argc, char** argv) {
 #ifdef USE_GTC
         g_plugin_EncoderGTC = reinterpret_cast<PluginInterface_Encoder*>(g_pluginManager.GetPlugin("ENCODER", "GTC"));
         // Found GTC Codec
-        if (g_plugin_EncoderGTC) {
+        if (g_plugin_EncoderGTC)
+        {
             //-------------------------------
             // create the compression  Codec
             //-------------------------------
@@ -317,7 +343,8 @@ int main(int argc, char** argv) {
             //------------------------------------------------------------
             // Assign compressonator lib GTC codec to Compute GTC Codec
             //------------------------------------------------------------
-            if (g_Codec_GTC) {
+            if (g_Codec_GTC)
+            {
                 GTC_CompressBlock   = g_GTC_CompressBlock;
                 GTC_DecompressBlock = g_GTC_DecompressBlock;
             }
@@ -348,21 +375,22 @@ int main(int argc, char** argv) {
         }
 #endif
 
-
 #ifdef USE_BASIS
         //---------------------------------------
         // attempt to load compute BASIS Codec
         //---------------------------------------
         g_plugin_EncoderBASIS = reinterpret_cast<PluginInterface_Encoder*>(g_pluginManager.GetPlugin("ENCODER", "BASIS"));
         // Found BASIS Codec
-        if (g_plugin_EncoderBASIS) {
+        if (g_plugin_EncoderBASIS)
+        {
             //-------------------------------
             // create the compression  Codec
             //-------------------------------
             g_Codec_BASIS = (CMP_Encoder*)g_plugin_EncoderBASIS->TC_Create();
 
             // ToDo: Assignment to new encoder interfaces
-            if (g_Codec_BASIS) {
+            if (g_Codec_BASIS)
+            {
                 BASIS_CompressTexture   = g_BASIS_CompressTexture;
                 BASIS_DecompressTexture = g_BASIS_DecompressTexture;
             }
@@ -387,12 +415,12 @@ int main(int argc, char** argv) {
         delete g_GUI_CMIPS;
         delete g_CMIPS;
 
-
 #ifdef USE_APC
         //------------------------------------------
         // Cleanup the compute APC compression Codec
         //------------------------------------------
-        if (g_plugin_EncoderAPC) {
+        if (g_plugin_EncoderAPC)
+        {
             if (g_Codec_APC)
                 g_plugin_EncoderAPC->TC_Destroy(g_Codec_APC);
             delete g_plugin_EncoderAPC;
@@ -403,7 +431,8 @@ int main(int argc, char** argv) {
         //------------------------------------------
         // Cleanup the compute GTC compression Codec
         //------------------------------------------
-        if (g_plugin_EncoderGTC) {
+        if (g_plugin_EncoderGTC)
+        {
             if (g_Codec_GTC)
                 g_plugin_EncoderGTC->TC_Destroy(g_Codec_GTC);
             delete g_plugin_EncoderGTC;
@@ -414,7 +443,8 @@ int main(int argc, char** argv) {
         //------------------------------------------
         // Cleanup the compute compression Codec
         //------------------------------------------
-        if (g_plugin_EncoderBASIS) {
+        if (g_plugin_EncoderBASIS)
+        {
             if (g_Codec_BASIS)
                 g_plugin_EncoderBASIS->TC_Destroy(g_Codec_BASIS);
             delete g_plugin_EncoderBASIS;
@@ -422,9 +452,13 @@ int main(int argc, char** argv) {
 #endif
 
         return ret;
-    } catch (std::exception& e) {
+    }
+    catch (std::exception& e)
+    {
         qDebug() << e.what();
-    } catch (...) {
+    }
+    catch (...)
+    {
         qDebug() << "Unknown Error";
     }
     return (-1);

@@ -16,20 +16,24 @@ endif()
 
 
 # Helper function for setting persistent CMake options
-macro(cmp_option OPTION_NAME DESCRIPTION EXPRESSION)
-    set(expression ${ARGV})
-    list(REMOVE_AT expression 0)
-    list(REMOVE_AT expression 0)
+macro(cmp_option OPTION DESCRIPTION DEFAULT REQUIREMENT)
+    set(requirement ${ARGV})
+    list(REMOVE_AT requirement 0 1 2)
 
-    if (${expression})
-        set(${OPTION_NAME} ON CACHE BOOL ${DESCRIPTION} FORCE)
-        add_compile_definitions(${OPTION_NAME}=1)
-    else()
-        set(${OPTION_NAME} OFF CACHE BOOL ${DESCRIPTION} FORCE)
-        add_compile_definitions(${OPTION_NAME}=0)
+    if (${requirement})
+        option(${OPTION} ${DESCRIPTION} ${DEFAULT})
+    elseif ($CACHE{${OPTION}})
+        message(WARNING "cache = $CACHE{${OPTION}} Turning off ${OPTION} because it requires ${requirement}")
+        set(${OPTION} OFF)
     endif()
 
-    message(STATUS "${OPTION_NAME} ${${OPTION_NAME}}")
+    if (${${OPTION}})
+        add_compile_definitions(${OPTION}=1)
+        message(STATUS "[ON] ${OPTION}")
+    else()
+        add_compile_definitions(${OPTION}=0)
+        message(STATUS "[__] ${OPTION}")
+    endif()
 endmacro()
 
 # Helper function to gather transitive (potential shared/dynamic) dependencies of a target
