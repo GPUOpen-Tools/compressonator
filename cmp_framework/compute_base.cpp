@@ -1006,8 +1006,8 @@ CMP_ERROR CMP_API CMP_LoadTexture(const char* SourceFile, CMP_MipSet* MipSetIn) 
     CMP_CMIPS CMips;
     CMP_ERROR status = CMP_OK;
 
-    std::string fn             = SourceFile;
-    std::string file_extension = fn.substr(fn.find_last_of(".") + 1);
+    const std::string& fn             = SourceFile;
+    std::string file_extension = fn.substr(fn.find_last_of('.') + 1);
     std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(), toupperChar);
 
     PluginInterface_Image* plugin_Image;
@@ -1054,8 +1054,8 @@ CMP_ERROR CMP_API CMP_SaveTexture(const char* DestFile, CMP_MipSet* MipSetIn)
 
     bool        filesaved = false;
     CMIPS       m_CMIPS;
-    std::string fn             = DestFile;
-    std::string file_extension = fn.substr(fn.find_last_of(".") + 1);
+    const std::string& fn             = DestFile;
+    std::string file_extension = fn.substr(fn.find_last_of('.') + 1);
     std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(), toupperChar);
 
     //if (((((file_extension.compare("DDS") == 0) 

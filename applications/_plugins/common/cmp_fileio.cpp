@@ -200,7 +200,7 @@ std::string CMP_GetJustFileExt(const std::string& sourceFile)
 #else
     // Aternate Code
     std::string file_extension;
-    file_extension = sourceFile.substr(sourceFile.find_last_of(".") + 1);
+    file_extension = sourceFile.substr(sourceFile.find_last_of('.') + 1);
     return file_extension;
 #endif
 }
@@ -442,7 +442,7 @@ std::string CMP_FindFile(const std::vector<std::string>& paths, const std::strin
 
 std::string CMP_GetFilePathExtension(const std::string& fileName)
 {
-    std::size_t extIndex = fileName.find_last_of(".");
+    std::size_t extIndex = fileName.find_last_of('.');
 
     if (extIndex != std::string::npos)
     {
