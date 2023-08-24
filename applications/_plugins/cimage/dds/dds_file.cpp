@@ -518,7 +518,7 @@ TC_PluginError SaveDDS_RGBA8888_S(FILE* pFile, const MipSet* pMipSet)
             }
 
             fwrite(pData, (DDS_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize), 1, pFile);
-            delete pData;
+            delete[] pData;
         }
     fclose(pFile);
 

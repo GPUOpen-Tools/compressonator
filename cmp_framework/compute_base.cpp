@@ -803,6 +803,7 @@ CMP_ERROR CMP_API CMP_ProcessTexture(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSe
 
             MipLevel* pOutMipLevel = CMips.GetMipLevel(dstMipSet, nMipLevel, nFaceOrSlice);
             if (!CMips.AllocateCompressedMipLevelData(pOutMipLevel, destTexture.dwWidth, destTexture.dwHeight, destTexture.dwDataSize)) {
+                cmp_mutex.unlock();
                 return CMP_ERR_MEM_ALLOC_FOR_MIPSET;
             }
 
@@ -925,7 +926,7 @@ CMP_CompressBlockXY(void** block_encoder, unsigned int x, unsigned int y, void* 
 }
 
 void CMP_API CMP_DestroyBlockEncoder(void** block_encoder) {
-    delete *block_encoder;
+    delete (CMP_Encoder*)*block_encoder;
 }
 
 void CMP_API CMP_GetMipLevel(CMP_MipLevel** data, const CMP_MipSet* pMipSet, int nMipLevel, int nFaceOrSlice) {

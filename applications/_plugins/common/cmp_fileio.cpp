@@ -98,7 +98,10 @@ void CMP_FileCopy(std::string& source_file, std::string& destination_file)
         return;
     FILE* dst = fopen(destination_file.c_str(), "wb");
     if (dst == NULL)
+    {
+        fclose(src);
         return;
+    }
     for (int i = getc(src); i != EOF; i = getc(src))
     {
         putc(i, dst);
