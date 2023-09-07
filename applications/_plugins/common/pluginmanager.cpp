@@ -358,7 +358,7 @@ void PluginManager::getPluginList(char* SubFolderName, bool append)
             if (len > 0)
             {
                 std::string s         = pPath;
-                std::string delimiter = ";";
+                char        delimiter = ';';
                 size_t      pos       = 0;
                 std::string token;
                 while ((pos = s.find(delimiter)) != std::string::npos)
@@ -372,7 +372,7 @@ void PluginManager::getPluginList(char* SubFolderName, bool append)
                         pathFound = true;
                         break;
                     }
-                    s.erase(0, pos + delimiter.length());
+                    s.erase(0, pos + sizeof(delimiter));
                 }
             }
         }

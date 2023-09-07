@@ -803,6 +803,7 @@ CMP_ERROR CMP_API CMP_ProcessTexture(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSe
 
             MipLevel* pOutMipLevel = CMips.GetMipLevel(dstMipSet, nMipLevel, nFaceOrSlice);
             if (!CMips.AllocateCompressedMipLevelData(pOutMipLevel, destTexture.dwWidth, destTexture.dwHeight, destTexture.dwDataSize)) {
+                cmp_mutex.unlock();
                 return CMP_ERR_MEM_ALLOC_FOR_MIPSET;
             }
 
@@ -925,7 +926,7 @@ CMP_CompressBlockXY(void** block_encoder, unsigned int x, unsigned int y, void* 
 }
 
 void CMP_API CMP_DestroyBlockEncoder(void** block_encoder) {
-    delete *block_encoder;
+    delete (CMP_Encoder*)*block_encoder;
 }
 
 void CMP_API CMP_GetMipLevel(CMP_MipLevel** data, const CMP_MipSet* pMipSet, int nMipLevel, int nFaceOrSlice) {
@@ -1005,8 +1006,8 @@ CMP_ERROR CMP_API CMP_LoadTexture(const char* SourceFile, CMP_MipSet* MipSetIn) 
     CMP_CMIPS CMips;
     CMP_ERROR status = CMP_OK;
 
-    std::string fn             = SourceFile;
-    std::string file_extension = fn.substr(fn.find_last_of(".") + 1);
+    const std::string& fn             = SourceFile;
+    std::string file_extension = fn.substr(fn.find_last_of('.') + 1);
     std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(), toupperChar);
 
     PluginInterface_Image* plugin_Image;
@@ -1053,8 +1054,8 @@ CMP_ERROR CMP_API CMP_SaveTexture(const char* DestFile, CMP_MipSet* MipSetIn)
 
     bool        filesaved = false;
     CMIPS       m_CMIPS;
-    std::string fn             = DestFile;
-    std::string file_extension = fn.substr(fn.find_last_of(".") + 1);
+    const std::string& fn             = DestFile;
+    std::string file_extension = fn.substr(fn.find_last_of('.') + 1);
     std::transform(file_extension.begin(), file_extension.end(), file_extension.begin(), toupperChar);
 
     //if (((((file_extension.compare("DDS") == 0) 

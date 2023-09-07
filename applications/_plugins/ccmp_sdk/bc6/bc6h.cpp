@@ -169,7 +169,7 @@ int BC6H_EncodeClass::CompressBlock(void *in, void *out, void *blockoptions) {
     // if the srcWidth and srcHeight is not set try using the alternate user setting
     // that was set by user for block level codec access!
     if ((g_BC6HEncode.m_src_width == 0) && (g_BC6HEncode.m_src_height == 0)) {
-        if ((CMP_Encoder::m_srcWidth == 0) && (CMP_Encoder::m_srcWidth == 0)) {
+        if ((CMP_Encoder::m_srcWidth == 0) && (CMP_Encoder::m_srcHeight == 0)) {
             return (-1);
         }
         g_BC6HEncode.m_src_width    = CMP_Encoder::m_srcWidth;
