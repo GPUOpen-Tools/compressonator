@@ -60,6 +60,7 @@ REM ###############################
 if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise" goto :Enterprise
 if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Professional" goto :Professional
 if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\BuildTools" goto :Docker
+if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Community" goto :Community
 
 echo on
 echo VS2019 is not installed on this machine
@@ -77,6 +78,10 @@ goto :vscmdset
 
 :Enterprise
 call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\VsDevCmd.bat"
+goto :vscmdset
+
+:Community
+call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Community\Common7\Tools\VsDevCmd.bat"
 
 :vscmdset
 

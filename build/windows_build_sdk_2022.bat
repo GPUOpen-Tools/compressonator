@@ -17,6 +17,7 @@ REM ###############################
 if EXIST "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise" goto :Enterprise
 if EXIST "%ProgramFiles%\Microsoft Visual Studio\2022\Professional" goto :Professional
 if EXIST "%ProgramFiles%\Microsoft Visual Studio\2022\BuildTools" goto :Docker
+if EXIST "%ProgramFiles%\Microsoft Visual Studio\2022\Community" goto :Community
 
 echo on
 echo VS2022 is not installed on this machine
@@ -34,6 +35,10 @@ goto :vscmdset
 
 :Enterprise
 call "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat"
+goto :vscmdset
+
+:Community
+call "%ProgramFiles%\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"
 
 :vscmdset
 
