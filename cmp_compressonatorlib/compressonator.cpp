@@ -145,6 +145,9 @@ CMP_DWORD CalcBufferSize(CMP_FORMAT format, CMP_DWORD dwWidth, CMP_DWORD dwHeigh
     case CMP_FORMAT_ARGB_32:
 #endif  // ARGB_32_SUPPORT
     case CMP_FORMAT_ARGB_32F:
+    case CMP_FORMAT_ABGR_32F:
+    case CMP_FORMAT_RGBA_32F:
+    case CMP_FORMAT_BGRA_32F:
         return ((dwPitch) ? (dwPitch * dwHeight) : (dwWidth * 4 * sizeof(float) * dwHeight));
 
 #ifdef ARGB_32_SUPPORT
