@@ -89,6 +89,7 @@ CodecType GetCodecType(CMP_FORMAT format) {
         return CT_None;
     case CMP_FORMAT_ARGB_32F:
     case CMP_FORMAT_RGBA_32F:
+    case CMP_FORMAT_ABGR_32F:
         return CT_None;
     case CMP_FORMAT_RG_32F:
         return CT_None;
