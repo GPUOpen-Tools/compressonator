@@ -151,6 +151,8 @@ CodecType GetCodecType(CMP_FORMAT format) {
         return CT_BC6H_SF;
     case CMP_FORMAT_BC7:
         return CT_BC7;
+    case CMP_FORMAT_BC7_SRGB:
+        return CT_BC7_SRGB;
 #if (OPTION_BUILD_ASTC == 1)
     case CMP_FORMAT_ASTC:
         return CT_ASTC;
@@ -326,6 +328,7 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
 
         switch(destType) {
         case CT_BC7:
+        case CT_BC7_SRGB:
             pCodec->SetParameter("MultiThreading", (CMP_DWORD) !pOptions->bDisableMultiThreading);
 
             if (!pOptions->bDisableMultiThreading)
@@ -477,6 +480,7 @@ void ThreadedCompressProc(void *lpParameter) {
 CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, CodecType destType) {
     // Note function should not be called for the following Codecs....
     if (destType == CT_BC7)     return CMP_ABORTED;
+    if (destType == CT_BC7_SRGB)     return CMP_ABORTED;
 #ifdef USE_APC
     if (destType == CT_APC)
         return CMP_ABORTED;

@@ -252,6 +252,7 @@ typedef enum _CodecType
     CT_BC6H,
     CT_BC6H_SF,
     CT_BC7,
+    CT_BC7_SRGB,
 #if (OPTION_BUILD_ASTC == 1)
     CT_ASTC,
 #endif

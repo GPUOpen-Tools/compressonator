@@ -81,7 +81,7 @@ unsigned int BC7ThreadProcEncode(void* param) {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////////////
 
-CCodec_BC7::CCodec_BC7() : CCodec_DXTC(CT_BC7) {
+CCodec_BC7::CCodec_BC7(CodecType codecType) : CCodec_DXTC(codecType) {
     m_LibraryInitialized   = false;
 
     m_Use_MultiThreading   = true;

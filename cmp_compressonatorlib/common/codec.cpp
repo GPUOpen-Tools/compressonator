@@ -211,7 +211,8 @@ CCodec* CreateCodec(CodecType nCodecType) {
     case CT_BC6H_SF:
         return new CCodec_BC6H(nCodecType);
     case CT_BC7:
-        return new CCodec_BC7;
+    case CT_BC7_SRGB:
+        return new CCodec_BC7(nCodecType);
 #if (OPTION_BUILD_ASTC == 1)
     case CT_ASTC:
         return new CCodec_ASTC;
@@ -320,6 +321,7 @@ CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHe
 
     // Block size is 4x4 and 128 bits per block
     case CT_BC7:
+    case CT_BC7_SRGB:
         dwWidth  = ((dwWidth + 3) / 4) * 4;
         dwHeight = ((dwHeight + 3) / 4) * 4;
         buffsize = dwWidth * dwHeight;

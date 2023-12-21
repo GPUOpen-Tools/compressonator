@@ -1068,6 +1068,7 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
     case CMP_FORMAT_BC6H:
     case CMP_FORMAT_BC6H_SF:
     case CMP_FORMAT_BC7 :
+    case CMP_FORMAT_BC7_SRGB :
     case CMP_FORMAT_DXT1 :
     case CMP_FORMAT_DXT3 :
     case CMP_FORMAT_DXT5 :
