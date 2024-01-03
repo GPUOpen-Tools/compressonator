@@ -195,7 +195,7 @@ CMP_CHAR* GetFormatDesc(CMP_FORMAT nFormat) {
 }
 
 CMP_CHAR* GetTextureTypeDesc(CMP_TextureType nTextureType) { // depthsupport
-    for(CMP_DWORD i = 0; i < FORMAT_DESC_COUNT; i++)
+    for(CMP_DWORD i = 0; i < TEXTURE_TYPE_DESC_COUNT; i++)
         if(nTextureType == g_TextureTypeDesc[i].nTextureType)
             return g_TextureTypeDesc[i].pszTextureTypeDesc;
 
