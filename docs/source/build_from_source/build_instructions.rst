@@ -55,6 +55,8 @@ The script can be called from the root Compressonator folder like:
 
     call build/windows_build_sdk.bat
 
+(For Visual Studio 2022, use "build/windows_build_sdk_2022.bat" instead.)
+
 Building the GUI and CLI Applications
 ==============================================================
 
