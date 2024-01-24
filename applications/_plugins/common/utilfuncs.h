@@ -36,6 +36,7 @@
 #include <iostream>
 HWND FindTopLevelWindow(TCHAR *pszName);
 #endif
+#include <cstdint>
 
 #include "cmp_fileio.h"
 
