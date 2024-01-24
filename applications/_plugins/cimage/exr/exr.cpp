@@ -87,6 +87,7 @@ IMath.lib;Half.lib;IlmImf.lib;IlmThread.lib;Iex.lib;zlibstatic_d.lib;
 #include <ImfCompositeDeepScanLine.h>
 #include <ImfPixelType.h>
 #include <ImathFun.h>
+#include <ImfDeepFrameBuffer.h>
 #pragma warning( pop )
 
 
