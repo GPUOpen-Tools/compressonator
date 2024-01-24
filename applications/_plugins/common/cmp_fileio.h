@@ -20,6 +20,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 
 enum CMP_PATHTYPES
 {
