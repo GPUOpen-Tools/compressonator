@@ -2,9 +2,11 @@
 # Compressonator
 [![CMake](https://github.com/GPUOpen-Tools/compressonator/actions/workflows/cmake.yml/badge.svg)](https://github.com/GPUOpen-Tools/compressonator/actions/workflows/cmake.yml)
 ![download](https://img.shields.io/github/downloads/GPUOpen-Tools/Compressonator/total.svg)
-![download](https://img.shields.io/github/downloads/GPUOpen-Tools/Compressonator/V4.3.206/total.svg)
+![download](https://img.shields.io/github/downloads/GPUOpen-Tools/Compressonator/V4.5.52/total.svg)
 
 *Download the latest revision for changes that have been made since the last major release by clicking the CMake button above or the link [here](https://github.com/GPUOpen-Tools/compressonator/actions/workflows/cmake.yml). Currently, only Compressonator Framework and Compressonator CLI are built every revision.*
+
+***NOTE: Compressonator v4.5 requires version 1.1 of the Brotli-G SDK to build which is not yet available, but will be very soon. In the meantime you can grab the prebuilt binaries from the releases page.***
 
 Compressonator is a set of tools to allow artists and developers to more easily create compressed texture assets or model mesh optimizations and easily visualize the quality impact of various compression and rendering technologies.  It consists of a GUI application, a command line application and an SDK for easy integration into a developer tool chain.
 
