@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2014-2018  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2014-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,16 +29,14 @@
 
 GTC_Encode g_GTCEncode;
 
-void (*GTC_CompressBlock)(void *srcblock, void *outblock, void *blockoptions) = NULL;
+void (*GTC_CompressBlock)(void* srcblock, void* outblock, void* blockoptions) = NULL;
 
-double GTCBlockEncoder::CompressBlock(
-    CMP_BYTE      *srcblock,
-    CMP_BYTE      outblock[COMPRESSED_BLOCK_SIZE]) {
-    if (GTC_CompressBlock) {
+double GTCBlockEncoder::CompressBlock(CMP_BYTE* srcblock, CMP_BYTE outblock[COMPRESSED_BLOCK_SIZE])
+{
+    if (GTC_CompressBlock)
+    {
         g_GTCEncode.m_quality = m_quality;
         GTC_CompressBlock(srcblock, outblock, &g_GTCEncode);
     }
     return (0);
 }
-
-

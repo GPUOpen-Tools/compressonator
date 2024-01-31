@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -31,12 +31,13 @@
 
 #include "codec_dxt5_swizzled.h"
 
-class CCodec_DXT5_RGxB : public CCodec_DXT5_Swizzled {
-  public:
+class CCodec_DXT5_RGxB : public CCodec_DXT5_Swizzled
+{
+public:
     CCodec_DXT5_RGxB();
     virtual ~CCodec_DXT5_RGxB();
 
-  protected:
+protected:
     virtual void ReadBlock(CCodecBuffer& buffer, CMP_DWORD x, CMP_DWORD y, CMP_BYTE block[BLOCK_SIZE_4X4X4]);
     virtual void WriteBlock(CCodecBuffer& buffer, CMP_DWORD x, CMP_DWORD y, CMP_BYTE block[BLOCK_SIZE_4X4X4]);
 
@@ -44,4 +45,4 @@ class CCodec_DXT5_RGxB : public CCodec_DXT5_Swizzled {
     virtual void WriteBlock(CCodecBuffer& buffer, CMP_DWORD x, CMP_DWORD y, CODECFLOAT block[BLOCK_SIZE_4X4X4]);
 };
 
-#endif // !defined(_CODEC_DXT5_RGXB_H_INCLUDED_)
+#endif  // !defined(_CODEC_DXT5_RGXB_H_INCLUDED_)

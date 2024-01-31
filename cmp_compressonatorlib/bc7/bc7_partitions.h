@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -27,16 +27,14 @@
 #include "bc7_definitions.h"
 #include "debug.h"
 
-extern CMP_DWORD    BC7_PARTITIONS_CPU[MAX_SUBSETS][MAX_PARTITIONS][MAX_SUBSET_SIZE];       // cpu
-extern CMP_DWORD    BC7_FIXUPINDICES[MAX_SUBSETS][MAX_PARTITIONS][3];
+extern CMP_DWORD BC7_PARTITIONS_CPU[MAX_SUBSETS][MAX_PARTITIONS][MAX_SUBSET_SIZE];  // cpu
+extern CMP_DWORD BC7_FIXUPINDICES[MAX_SUBSETS][MAX_PARTITIONS][3];
 
-
-extern void    Partition(CMP_DWORD partition,
-                         double in[][MAX_DIMENSION_BIG],
-                         double subsets[MAX_SUBSETS][MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-                         CMP_DWORD count[MAX_SUBSETS],
-                         CMP_DWORD blockType,
-                         int   dimension);
-
+extern void Partition(CMP_DWORD partition,
+                      double    in[][MAX_DIMENSION_BIG],
+                      double    subsets[MAX_SUBSETS][MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
+                      CMP_DWORD count[MAX_SUBSETS],
+                      CMP_DWORD blockType,
+                      int       dimension);
 
 #endif

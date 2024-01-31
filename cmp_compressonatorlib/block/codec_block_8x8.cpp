@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -35,20 +35,26 @@
 //////////////////////////////////////////////////////////////////////////////
 
 CCodec_Block_8x8::CCodec_Block_8x8(CodecType codecType)
-    : CCodec_Block(codecType) {
-
+    : CCodec_Block(codecType)
+{
 }
 
-CCodec_Block_8x8::~CCodec_Block_8x8() {
-
+CCodec_Block_8x8::~CCodec_Block_8x8()
+{
 }
 
-CCodecBuffer* CCodec_Block_8x8::CreateBuffer(
-    CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-    CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData,CMP_DWORD dwDataSize) const {
+CCodecBuffer* CCodec_Block_8x8::CreateBuffer(CMP_BYTE  nBlockWidth,
+                                             CMP_BYTE  nBlockHeight,
+                                             CMP_BYTE  nBlockDepth,
+                                             CMP_DWORD dwWidth,
+                                             CMP_DWORD dwHeight,
+                                             CMP_DWORD dwPitch,
+                                             CMP_BYTE* pData,
+                                             CMP_DWORD dwDataSize) const
+{
     UNREFERENCED_PARAMETER(nBlockWidth);
     UNREFERENCED_PARAMETER(nBlockHeight);
     UNREFERENCED_PARAMETER(nBlockDepth);
 
-    return CreateCodecBuffer(CBT_8x8Block_8BPP, 8,8,1, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
+    return CreateCodecBuffer(CBT_8x8Block_8BPP, 8, 8, 1, dwWidth, dwHeight, dwPitch, pData, dwDataSize);
 }

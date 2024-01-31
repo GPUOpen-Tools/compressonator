@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -30,6 +30,7 @@
 #define _CODEC_DXTC_H_INCLUDED_
 
 #include "codec_block_4x4.h"
+#include "codec_common.h"
 
 //#define USE_CMP_CORE_API
 #ifdef USE_CMP_CORE_API
@@ -39,8 +40,9 @@
 #define DXTC_OFFSET_ALPHA 0
 #define DXTC_OFFSET_RGB 2
 
-class CCodec_DXTC : public CCodec_Block_4x4 {
-  public:
+class CCodec_DXTC : public CCodec_Block_4x4
+{
+public:
     CCodec_DXTC(CodecType codecType);
     virtual ~CCodec_DXTC();
 
@@ -51,16 +53,20 @@ class CCodec_DXTC : public CCodec_Block_4x4 {
     virtual bool SetParameter(const CMP_CHAR* pszParamName, CODECFLOAT fValue);
     virtual bool GetParameter(const CMP_CHAR* pszParamName, CODECFLOAT& fValue);
 
-  protected:
-
+protected:
     // Signed Alpha Block
-      virtual CodecError CompressAlphaBlockSNorm(CMP_FLOAT alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]);
-      virtual void       DecompressAlphaBlockInt8(CMP_SBYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]);
+    virtual CodecError CompressAlphaBlockSNorm(CMP_FLOAT alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]);
+    virtual void       DecompressAlphaBlockInt8(CMP_SBYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]);
 
     // Unsigned Alpha Block
     virtual CodecError CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]);
     virtual CodecError CompressExplicitAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]);
-    virtual CodecError CompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2], CODECFLOAT* pfChannelWeights = NULL, bool bDXT1 = false, bool bDXT1UseAlpha = false, CMP_BYTE nDXT1AlphaThreshold = 0);
+    virtual CodecError CompressRGBBlock(CMP_BYTE    rgbBlock[BLOCK_SIZE_4X4X4],
+                                        CMP_DWORD   compressedBlock[2],
+                                        CODECFLOAT* pfChannelWeights    = NULL,
+                                        bool        bDXT1               = false,
+                                        bool        bDXT1UseAlpha       = false,
+                                        CMP_BYTE    nDXT1AlphaThreshold = 0);
     virtual CodecError CompressRGBABlock(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[4], CODECFLOAT* pfChannelWeights = NULL);
     virtual CodecError CompressRGBABlock_ExplicitAlpha(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[4], CODECFLOAT* pfChannelWeights = NULL);
 
@@ -75,7 +81,12 @@ class CCodec_DXTC : public CCodec_Block_4x4 {
 
     virtual CodecError CompressAlphaBlock(CODECFLOAT alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]);
     virtual CodecError CompressExplicitAlphaBlock(CODECFLOAT alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]);
-    virtual CodecError CompressRGBBlock(CODECFLOAT rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2], CODECFLOAT* pfChannelWeights = NULL, bool bDXT1 = false, bool bDXT1UseAlpha = false, CODECFLOAT fDXT1AlphaThreshold = 0.0);
+    virtual CodecError CompressRGBBlock(CODECFLOAT  rgbBlock[BLOCK_SIZE_4X4X4],
+                                        CMP_DWORD   compressedBlock[2],
+                                        CODECFLOAT* pfChannelWeights    = NULL,
+                                        bool        bDXT1               = false,
+                                        bool        bDXT1UseAlpha       = false,
+                                        CODECFLOAT  fDXT1AlphaThreshold = 0.0);
     virtual CodecError CompressRGBABlock(CODECFLOAT rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[4], CODECFLOAT* pfChannelWeights = NULL);
     virtual CodecError CompressRGBABlock_ExplicitAlpha(CODECFLOAT rgbaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[4], CODECFLOAT* pfChannelWeights = NULL);
 
@@ -93,12 +104,11 @@ class CCodec_DXTC : public CCodec_Block_4x4 {
     virtual void DecompressRGBABlock_ExplicitAlpha(CODECFLOAT rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2]);
 
     // Alpha decompression functions
-    void GetCompressedAlphaRamp(CMP_BYTE alpha[8],CMP_DWORD compressedBlock[2]);
-    void GetCompressedAlphaRamp(CODECFLOAT alpha[8],CMP_DWORD compressedBlock[2]);
+    void GetCompressedAlphaRamp(CMP_BYTE alpha[8], CMP_DWORD compressedBlock[2]);
+    void GetCompressedAlphaRamp(CODECFLOAT alpha[8], CMP_DWORD compressedBlock[2]);
 
     // Signed Alpha decompression
     void GetCompressedAlphaRampS(CMP_SBYTE alpha[8], CMP_DWORD compressedBlock[2]);
-
 
     // RGB compression functions
     CODECFLOAT* CalculateColourWeightings(CMP_BYTE block[BLOCK_SIZE_4X4X4]);
@@ -122,4 +132,4 @@ class CCodec_DXTC : public CCodec_Block_4x4 {
     CMP_BC15Options m_BC15Options;
 };
 
-#endif // !defined(_CODEC_DXTC_H_INCLUDED_)
+#endif  // !defined(_CODEC_DXTC_H_INCLUDED_)

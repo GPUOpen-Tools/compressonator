@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,6 +27,7 @@
 #ifndef _AMD_TEX_UTILSFUNCS_H_INCLUDED_
 #define _AMD_TEX_UTILSFUNCS_H_INCLUDED_
 
+#include <cstdint>
 #include <string>
 
 #ifdef _WIN32
@@ -34,25 +35,24 @@
 #include <stdio.h>
 #include <fstream>
 #include <iostream>
-HWND FindTopLevelWindow(TCHAR *pszName);
+HWND FindTopLevelWindow(TCHAR* pszName);
 #endif
-#include <cstdint>
 
 #include "cmp_fileio.h"
 
-#define CMP_STATENUM 14 //14 characters for the state
+#define CMP_STATENUM 14  //14 characters for the state
 #define CMP_COPY "# CMP_filecopy"
 #define CMP_PROCESSED "# CMP_fileproc"
 #define CMP_ORIGINAL ""
 #define CMP_FILE_ERROR "fileIOError"
 
-void SwizzleBytes(void *src, unsigned long numBytes);
+void  SwizzleBytes(void* src, unsigned long numBytes);
 float HalfToFloat(uint16_t h);
-void getFileNameExt(const char *FilePathName, char *fnameExt, int maxbuffsize);
+void  getFileNameExt(const char* FilePathName, char* fnameExt, int maxbuffsize);
 
 #ifdef _WIN32
-bool writeObjFileState(std::string filename, std::string state);
+bool        writeObjFileState(std::string filename, std::string state);
 std::string readObjFileState(std::string filename);
 #endif
 
-#endif // !defined(_AMD_TEX_UTILSFUNCS_H_INCLUDED_)
+#endif  // !defined(_AMD_TEX_UTILSFUNCS_H_INCLUDED_)

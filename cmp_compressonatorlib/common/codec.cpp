@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2022  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -27,8 +27,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "common.h"
 #include "codec.h"
+
+#include "common.h"
+#include "codec_common.h"
 #include "codec_ati1n.h"
 #include "codec_ati2n.h"
 #include "codec_ati2n_dxt5.h"
@@ -73,38 +75,52 @@
 //////////////////////////////////////////////////////////////////////
 // Parameter names
 //////////////////////////////////////////////////////////////////////
-const CMP_CHAR* CodecParameters::NumThreads = "NumThreads";
+const CMP_CHAR* CodecParameters::NumThreads          = "NumThreads";
 const CMP_CHAR* CodecParameters::UseGPUDecompression = "UseGPUDecompression";
-const CMP_CHAR* CodecParameters::PageSize = "PageSize";
+const CMP_CHAR* CodecParameters::PageSize            = "PageSize";
+const CMP_CHAR* CodecParameters::TextureWidth        = "TextureWidth";
+const CMP_CHAR* CodecParameters::TextureHeight       = "TextureHeight";
+const CMP_CHAR* CodecParameters::TextureFormat       = "TextureFormat";
+const CMP_CHAR* CodecParameters::MipmapLevels        = "MipmapLevels";
+const CMP_CHAR* CodecParameters::Precondition        = "Precondition";
+const CMP_CHAR* CodecParameters::Swizzle             = "Swizzle";
+const CMP_CHAR* CodecParameters::DeltaEncode         = "DeltaEncode";
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CCodec::CCodec(CodecType codecType) {
+CCodec::CCodec(CodecType codecType)
+{
     m_CodecType = codecType;
 }
 
-CCodec::~CCodec() {
+CCodec::~CCodec()
+{
 }
 
-bool CCodec::SetParameter(const CMP_CHAR* /*pszParamName*/, CMP_CHAR* /*dwValue*/) {
+bool CCodec::SetParameter(const CMP_CHAR* /*pszParamName*/, CMP_CHAR* /*dwValue*/)
+{
     return false;
 }
 
-bool CCodec::SetParameter(const CMP_CHAR* /*pszParamName*/, CMP_DWORD /*dwValue*/) {
+bool CCodec::SetParameter(const CMP_CHAR* /*pszParamName*/, CMP_DWORD /*dwValue*/)
+{
     return false;
 }
 
-bool CCodec::GetParameter(const CMP_CHAR* /*pszParamName*/, CMP_DWORD& /*dwValue*/) {
+bool CCodec::GetParameter(const CMP_CHAR* /*pszParamName*/, CMP_DWORD& /*dwValue*/)
+{
     return false;
 }
 
-bool CCodec::SetParameter(const CMP_CHAR* /*pszParamName*/, CODECFLOAT /*fValue*/) {
+bool CCodec::SetParameter(const CMP_CHAR* /*pszParamName*/, CODECFLOAT /*fValue*/)
+{
     return false;
 }
 
-bool CCodec::GetParameter(const CMP_CHAR* /*pszParamName*/, CODECFLOAT& /*fValue*/) {
+bool CCodec::GetParameter(const CMP_CHAR* /*pszParamName*/, CODECFLOAT& /*fValue*/)
+{
     return false;
 }
 
@@ -119,45 +135,52 @@ bool CCodec::GetParameter(const CMP_CHAR* /*pszParamName*/, CODECFLOAT& /*fValue
 
 //  GCC Intrinsics
 #include <cpuid.h>
-void cpuid(int info[4], int InfoType) {
+void cpuid(int info[4], int InfoType)
+{
     __cpuid_count(InfoType, 0, info[0], info[1], info[2], info[3]);
 }
 
 #endif
 
-bool SupportsSSE() {
+bool SupportsSSE()
+{
 #if defined(USE_SSE)
     int info[4];
     cpuid(info, 0);
 
     int nIds = info[0];
 
-    if (nIds >= 1) {
+    if (nIds >= 1)
+    {
         return ((info[3] & ((int)1 << 25)) != 0);
     }
 #endif
     return false;
 }
 
-bool SupportsSSE2() {
+bool SupportsSSE2()
+{
 #if defined(USE_SSE2) && defined(_WIN32)
     int info[4];
     cpuid(info, 0);
 
     int nIds = info[0];
 
-    if (nIds >= 1) {
+    if (nIds >= 1)
+    {
         return ((info[3] & ((int)1 << 26)) != 0);
     }
 #endif
     return false;
 }
 
-CCodec* CreateCodec(CodecType nCodecType) {
+CCodec* CreateCodec(CodecType nCodecType)
+{
 #ifdef USE_DBGTRACE
     DbgTrace(("nCodecType %d", nCodecType));
 #endif
-    switch (nCodecType) {
+    switch (nCodecType)
+    {
     case CT_DXT1:
         return new CCodec_DXT1;
     case CT_DXT3:
@@ -239,152 +262,4 @@ CCodec* CreateCodec(CodecType nCodecType) {
         assert(0);
         return NULL;
     }
-}
-
-CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight) {
-    CMP_UNUSED(nBlockWidth);
-    CMP_UNUSED(nBlockHeight);
-
-#ifdef USE_DBGTRACE
-    DbgTrace(("IN: nCodecType %d, dwWidth %d, dwHeight %d", nCodecType, dwWidth, dwHeight));
-#endif
-    CMP_DWORD dwChannels;
-    CMP_DWORD dwBitsPerChannel;
-    CMP_DWORD buffsize = 0;
-
-    switch (nCodecType) {
-    // Block size is 4x4 and 64 bits per block
-    case CT_DXT1:
-    case CT_ATI1N:
-    case CT_ATI1N_S:
-    case CT_ATC_RGB:
-    case CT_ETC_RGB:
-    case CT_ETC2_RGB:
-    case CT_ETC2_SRGB:
-    case CT_ETC2_RGBA1:
-    case CT_ETC2_SRGBA1:
-        dwChannels       = 1;
-        dwBitsPerChannel = 4;
-        dwWidth          = ((dwWidth + 3) / 4) * 4;
-        dwHeight         = ((dwHeight + 3) / 4) * 4;
-        buffsize         = (dwWidth * dwHeight * dwChannels * dwBitsPerChannel) / 8;
-        break;
-
-    // Block size is 4x4 and 128 bits per block
-    case CT_ETC2_RGBA:
-    case CT_ETC2_SRGBA:
-        // dwChannels = 2;
-        // dwBitsPerChannel = 4;
-        // dwWidth = ((dwWidth + 3) / 4) * 4;
-        // dwHeight = ((dwHeight + 3) / 4) * 4;
-        // buffsize = (dwWidth * dwHeight * dwChannels * dwBitsPerChannel) / 8;
-        dwWidth = ((dwWidth + 3) / 4) * 4;
-        dwHeight = ((dwHeight + 3) / 4) * 4;
-        buffsize = dwWidth * dwHeight;
-        if (buffsize < BC_BLOCK_PIXELS)
-            buffsize = BC_BLOCK_PIXELS;
-        break;
-
-    // Block size is 4x4 and 128 bits per block
-    case CT_DXT3:
-    case CT_DXT5:
-    case CT_DXT5_xGBR:
-    case CT_DXT5_RxBG:
-    case CT_DXT5_RBxG:
-    case CT_DXT5_xRBG:
-    case CT_DXT5_RGxB:
-    case CT_DXT5_xGxR:
-    case CT_ATI2N:
-    case CT_ATI2N_S:
-    case CT_ATI2N_XY:
-    case CT_ATI2N_XY_S:
-    case CT_ATI2N_DXT5:
-    case CT_ATC_RGBA_Explicit:
-    case CT_ATC_RGBA_Interpolated:
-        dwChannels       = 2;
-        dwBitsPerChannel = 4;
-        dwWidth          = ((dwWidth + 3) / 4) * 4;
-        dwHeight         = ((dwHeight + 3) / 4) * 4;
-        buffsize         = (dwWidth * dwHeight * dwChannels * dwBitsPerChannel) / 8;
-        break;
-
-    // Block size is 4x4 and 128 bits per block
-    case CT_BC6H:
-    case CT_BC6H_SF:
-        dwWidth  = ((dwWidth + 3) / 4) * 4;
-        dwHeight = ((dwHeight + 3) / 4) * 4;
-        buffsize = dwWidth * dwHeight;
-        if (buffsize < BC6H_BLOCK_PIXELS)
-            buffsize = BC6H_BLOCK_PIXELS;
-        break;
-
-    // Block size is 4x4 and 128 bits per block
-    case CT_BC7:
-        dwWidth  = ((dwWidth + 3) / 4) * 4;
-        dwHeight = ((dwHeight + 3) / 4) * 4;
-        buffsize = dwWidth * dwHeight;
-        if (buffsize < BC7_BLOCK_PIXELS)
-            buffsize = BC7_BLOCK_PIXELS;
-        break;
-#if (OPTION_BUILD_ASTC == 1)
-    // Block size ranges from 4x4 to 12x12 and 128 bits per block
-    case CT_ASTC:
-        dwWidth  = ((dwWidth + nBlockWidth - 1) / nBlockWidth) * 4;
-        dwHeight = ((dwHeight + nBlockHeight - 1) / nBlockHeight) * 4;
-        buffsize = dwWidth * dwHeight;
-        break;
-#endif
-#ifdef _WIN32
-#ifdef USE_APC
-    case CT_APC:
-        if (nBlockWidth <= 0)
-            nBlockWidth = 4;
-        if (nBlockHeight <= 0)
-            nBlockHeight = 4;
-        dwWidth  = ((dwWidth + nBlockWidth - 1) / nBlockWidth) * 4;
-        dwHeight = ((dwHeight + nBlockHeight - 1) / nBlockHeight) * 4;
-        buffsize = dwWidth * dwHeight;
-        break;
-#endif
-        // Block size is 4x4 and 128 bits per block. in future releases its will vary in Block Sizes and bits per block may change to 256
-#ifdef USE_GTC
-    case CT_GTC:
-        dwWidth  = ((dwWidth + 3) / 4) * 4;
-        dwHeight = ((dwHeight + 3) / 4) * 4;
-        buffsize = dwWidth * dwHeight;
-        if (buffsize < (4 * 4))
-            buffsize = 4 * 4;
-        break;
-#endif
-#ifdef USE_LOSSLESS_COMPRESSION
-        // TODO: For the time being, this path is never executed
-        // ToDo : Note blocks are not 4x4 so fix this to the correct size used in the DX12 Brotli-G shader code
-    case CT_BRLG:
-        dwWidth  = ((dwWidth + 3) / 4) * 4;
-        dwHeight = ((dwHeight + 3) / 4) * 4;
-        buffsize = dwWidth * dwHeight;
-        if (buffsize < (4 * 4))
-            buffsize = 4 * 4;
-        break;
-#endif
-#ifdef USE_BASIS
-    // Block size is 4x4 and 128 bits per block, needs conformation!!
-    case CT_BASIS:
-        dwWidth  = ((dwWidth + 3) / 4) * 4;
-        dwHeight = ((dwHeight + 3) / 4) * 4;
-        buffsize = dwWidth * dwHeight;
-        if (buffsize < (4 * 4))
-            buffsize = 4 * 4;
-        break;
-#endif
-#endif
-    default:
-        return 0;
-    }
-
-#ifdef USE_DBGTRACE
-    DbgTrace(("OUT: %d", buffsize));
-#endif
-
-    return buffsize;
 }

@@ -1,6 +1,5 @@
-
 //=====================================================================
-// Copyright (c) 2016    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2016-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -31,10 +30,12 @@
 
 using namespace GPU_Decode;
 
-LRESULT CALLBACK WndProc2(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK WndProc2(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
     PAINTSTRUCT ps;
-    HDC hdc;
-    switch (message) {
+    HDC         hdc;
+    switch (message)
+    {
     case WM_PAINT:
         hdc = BeginPaint(hWnd, &ps);
         EndPaint(hWnd, &ps);
@@ -49,26 +50,24 @@ LRESULT CALLBACK WndProc2(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-
-
-void RenderWindow::EnableWindowContext(HWND hWnd, HDC * hDC, HGLRC * hRC) {
+void RenderWindow::EnableWindowContext(HWND hWnd, HDC* hDC, HGLRC* hRC)
+{
     PIXELFORMATDESCRIPTOR pfd;
-    int iFormat;
+    int                   iFormat;
 
     // get the device context (DC)
     *hDC = GetDC(hWnd);
 
     // set the pixel format for the DC
     ZeroMemory(&pfd, sizeof(pfd));
-    pfd.nSize = sizeof(pfd);
-    pfd.nVersion = 1;
-    pfd.dwFlags = PFD_DRAW_TO_WINDOW |
-                  PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+    pfd.nSize      = sizeof(pfd);
+    pfd.nVersion   = 1;
+    pfd.dwFlags    = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
     pfd.iPixelType = PFD_TYPE_RGBA;
     pfd.cColorBits = 24;
     pfd.cDepthBits = 16;
     pfd.iLayerType = PFD_MAIN_PLANE;
-    iFormat = ChoosePixelFormat(*hDC, &pfd);
+    iFormat        = ChoosePixelFormat(*hDC, &pfd);
     SetPixelFormat(*hDC, iFormat, &pfd);
 
     // create and enable the render context (RC)
@@ -77,39 +76,45 @@ void RenderWindow::EnableWindowContext(HWND hWnd, HDC * hDC, HGLRC * hRC) {
 }
 
 // Disable OpenGL
-void RenderWindow::DisableWindowContext(HWND hWnd, HDC hDC, HGLRC hRC) {
+void RenderWindow::DisableWindowContext(HWND hWnd, HDC hDC, HGLRC hRC)
+{
     wglMakeCurrent(NULL, NULL);
     wglDeleteContext(hRC);
     ReleaseDC(hWnd, hDC);
 }
 
-HRESULT RenderWindow::InitWindow(int width, int height,WNDPROC callback) {
-    if (m_hInstance == 0) {
+HRESULT RenderWindow::InitWindow(int width, int height, WNDPROC callback)
+{
+    if (m_hInstance == 0)
+    {
         m_hInstance = GetModuleHandle(NULL);
-        snprintf(m_strWindowName, sizeof(m_strWindowName),"%s_%llx_%d_%d", str_WindowName, (unsigned long long)m_hInstance,width,height);
-        snprintf(m_strWindowClassName,sizeof(m_strWindowClassName), "%s_%llx_%d_%d", str_WindowsClassName, (unsigned long long)m_hInstance, width, height);
+        snprintf(m_strWindowName, sizeof(m_strWindowName), "%s_%llx_%d_%d", str_WindowName, (unsigned long long)m_hInstance, width, height);
+        snprintf(m_strWindowClassName, sizeof(m_strWindowClassName), "%s_%llx_%d_%d", str_WindowsClassName, (unsigned long long)m_hInstance, width, height);
     }
 
-    if (!FindWindowA(m_strWindowClassName, m_strWindowName)) {
+    if (!FindWindowA(m_strWindowClassName, m_strWindowName))
+    {
         // Register class
         WNDCLASSEX wcex;
         wcex.cbSize = sizeof(WNDCLASSEX);
-        wcex.style = CS_HREDRAW | CS_VREDRAW;
+        wcex.style  = CS_HREDRAW | CS_VREDRAW;
         if (callback)
             wcex.lpfnWndProc = callback;
         else
             wcex.lpfnWndProc = WndProc2;
         wcex.cbClsExtra = 0;
         wcex.cbWndExtra = 0;
-        wcex.hInstance = m_hInstance;
-        wcex.hIcon = LoadIcon(NULL, IDI_APPLICATION);;
-        wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
+        wcex.hInstance  = m_hInstance;
+        wcex.hIcon      = LoadIcon(NULL, IDI_APPLICATION);
+        ;
+        wcex.hCursor       = LoadCursor(nullptr, IDC_ARROW);
         wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-        wcex.lpszMenuName = nullptr;
+        wcex.lpszMenuName  = nullptr;
         wcex.lpszClassName = m_strWindowClassName;
-        wcex.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+        wcex.hIconSm       = LoadIcon(NULL, IDI_APPLICATION);
 
-        if (!RegisterClassEx(&wcex)) {
+        if (!RegisterClassEx(&wcex))
+        {
             PrintInfo("Error: RegisterClass failed.\n");
             fprintf(stderr, "[OpenGL Decode] Error: CreateWindow Failed.\n");
             return E_FAIL;
@@ -117,20 +122,21 @@ HRESULT RenderWindow::InitWindow(int width, int height,WNDPROC callback) {
     }
 
     // Create window
-    m_hWnd = CreateWindowEx(
-                 WS_EX_APPWINDOW,
-                 m_strWindowClassName,
-                 m_strWindowName,
-                 WS_POPUP,// WS_OVERLAPPEDWINDOW,
-                 0, 0,
-                 width,
-                 height,
-                 nullptr,
-                 nullptr,
-                 m_hInstance,
-                 nullptr);
+    m_hWnd = CreateWindowEx(WS_EX_APPWINDOW,
+                            m_strWindowClassName,
+                            m_strWindowName,
+                            WS_POPUP,  // WS_OVERLAPPEDWINDOW,
+                            0,
+                            0,
+                            width,
+                            height,
+                            nullptr,
+                            nullptr,
+                            m_hInstance,
+                            nullptr);
 
-    if (!m_hWnd) {
+    if (!m_hWnd)
+    {
         PrintInfo("Error: CreateWindow Failed.\n");
         fprintf(stderr, "[OpenGL Decode] Error: CreateWindow Failed.\n");
         return E_FAIL;
@@ -140,4 +146,3 @@ HRESULT RenderWindow::InitWindow(int width, int height,WNDPROC callback) {
 }
 
 #endif
-

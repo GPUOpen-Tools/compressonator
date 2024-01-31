@@ -62,7 +62,7 @@ if (UNIX)
     target_compile_definitions(CMP_Core PRIVATE _LINUX ASPM_GPU)
 endif()
 
-set_target_properties(CMP_Core PROPERTIES FOLDER "Libs")
+set_target_properties(CMP_Core PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})
 
 # Core SIMD options
 
@@ -75,7 +75,7 @@ if (UNIX)
     target_compile_options(CMP_Core_SSE PRIVATE -march=nehalem)
 endif()
 
-set_target_properties(CMP_Core_SSE PROPERTIES FOLDER "Core_SIMD")
+set_target_properties(CMP_Core_SSE PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})
 
 # AVX
 add_library(CMP_Core_AVX STATIC)
@@ -88,7 +88,7 @@ else()
     target_compile_options(CMP_Core_AVX PRIVATE -march=haswell)
 endif()
 
-set_target_properties(CMP_Core_AVX PROPERTIES FOLDER "Core_SIMD")
+set_target_properties(CMP_Core_AVX PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})
 
 # AVX-512
 add_library(CMP_Core_AVX512 STATIC)
@@ -101,7 +101,7 @@ else()
     target_compile_options(CMP_Core_AVX512 PRIVATE -march=knl)
 endif()
 
-set_target_properties(CMP_Core_AVX512 PROPERTIES FOLDER "Core_SIMD")
+set_target_properties(CMP_Core_AVX512 PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})
 
 # Link SIMD libraries to CMP_Core
 target_link_libraries(CMP_Core PRIVATE CMP_Core_SSE CMP_Core_AVX CMP_Core_AVX512)

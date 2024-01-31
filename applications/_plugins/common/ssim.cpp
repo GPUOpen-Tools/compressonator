@@ -49,7 +49,7 @@ or tort (including negligence or otherwise) arising in any way out of
 the use of this software, even if advised of the possibility of such damage.
 
 =============================================================================
- Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
+ Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files(the "Software"), to deal
@@ -74,54 +74,59 @@ the use of this software, even if advised of the possibility of such damage.
 #include "testreport.h"
 #include "ssim.h"
 
-void getMSE_PSNR( const Mat& I1, const Mat& I2, double  &mse, double &psnr) {
+void getMSE_PSNR(const Mat& I1, const Mat& I2, double& mse, double& psnr)
+{
     Mat s1;
     absdiff(I1, I2, s1);       // |I1 - I2|
     s1.convertTo(s1, CV_32F);  // cannot make a square on 8 bits
     s1 = s1.mul(s1);           // |I1 - I2|^2
 
-    Scalar s = sum(s1);         // sum elements per channel
+    Scalar s = sum(s1);  // sum elements per channel
 
-    double sse = s.val[0] + s.val[1] + s.val[2]; // sum channels
+    double sse = s.val[0] + s.val[1] + s.val[2];  // sum channels
 
-    if( sse <= 1e-10) { // for small values return zero
-        mse     = 0;
-        psnr    = 0;
-    } else {
-        mse     = sse /(double)(I1.channels() * I1.total());
-        psnr    = 10.0*log10((255*255)/mse);
+    if (sse <= 1e-10)
+    {  // for small values return zero
+        mse  = 0;
+        psnr = 0;
+    }
+    else
+    {
+        mse  = sse / (double)(I1.channels() * I1.total());
+        psnr = 10.0 * log10((255 * 255) / mse);
     }
 }
 
-Scalar getSSIM( const Mat& i1, const Mat& i2, CMP_Feedback_Proc pFeedbackProc) {
+Scalar getSSIM(const Mat& i1, const Mat& i2, CMP_Feedback_Proc pFeedbackProc)
+{
     const double C1 = 6.5025, C2 = 58.5225;
     /***************************** INITS **********************************/
-    int d     = CV_32F;
+    int d = CV_32F;
 
     Mat I1, I2;
-    i1.convertTo(I1, d);           // cannot calculate on one byte large values
+    i1.convertTo(I1, d);  // cannot calculate on one byte large values
     i2.convertTo(I2, d);
 
-    Mat I2_2   = I2.mul(I2);        // I2^2
-    Mat I1_2   = I1.mul(I1);        // I1^2
-    Mat I1_I2  = I1.mul(I2);        // I1 * I2
-
+    Mat I2_2  = I2.mul(I2);  // I2^2
+    Mat I1_2  = I1.mul(I1);  // I1^2
+    Mat I1_I2 = I1.mul(I2);  // I1 * I2
 
     // Progress
-    if (pFeedbackProc) {
+    if (pFeedbackProc)
+    {
         if (pFeedbackProc(50.0, NULL, NULL))
-            return -1; //abort
+            return -1;  //abort
     }
 
     /*************************** END INITS **********************************/
 
-    Mat mu1, mu2;   // PRELIMINARY COMPUTING
+    Mat mu1, mu2;  // PRELIMINARY COMPUTING
     GaussianBlur(I1, mu1, Size(11, 11), 1.5);
     GaussianBlur(I2, mu2, Size(11, 11), 1.5);
 
-    Mat mu1_2   =   mu1.mul(mu1);
-    Mat mu2_2   =   mu2.mul(mu2);
-    Mat mu1_mu2 =   mu1.mul(mu2);
+    Mat mu1_2   = mu1.mul(mu1);
+    Mat mu2_2   = mu2.mul(mu2);
+    Mat mu1_mu2 = mu1.mul(mu2);
 
     Mat sigma1_2, sigma2_2, sigma12;
 
@@ -139,16 +144,15 @@ Scalar getSSIM( const Mat& i1, const Mat& i2, CMP_Feedback_Proc pFeedbackProc) {
 
     t1 = 2 * mu1_mu2 + C1;
     t2 = 2 * sigma12 + C2;
-    t3 = t1.mul(t2);              // t3 = ((2*mu1_mu2 + C1).*(2*sigma12 + C2))
+    t3 = t1.mul(t2);  // t3 = ((2*mu1_mu2 + C1).*(2*sigma12 + C2))
 
     t1 = mu1_2 + mu2_2 + C1;
     t2 = sigma1_2 + sigma2_2 + C2;
-    t1 = t1.mul(t2);               // t1 =((mu1_2 + mu2_2 + C1).*(sigma1_2 + sigma2_2 + C2))
+    t1 = t1.mul(t2);  // t1 =((mu1_2 + mu2_2 + C1).*(sigma1_2 + sigma2_2 + C2))
 
     Mat ssim_map;
-    divide(t3, t1, ssim_map);      // ssim_map =  t3./t1;
+    divide(t3, t1, ssim_map);  // ssim_map =  t3./t1;
 
-    Scalar mssim = mean( ssim_map ); // mssim = average of ssim map
+    Scalar mssim = mean(ssim_map);  // mssim = average of ssim map
     return mssim;
 }
-

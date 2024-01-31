@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -30,36 +30,36 @@
 #define _ATIXCODEC_H_
 
 CODECFLOAT CompRGBBlock(CODECFLOAT* block_32,
-                        CMP_DWORD compressedBlock[2],
-                        CMP_WORD dwBlockSize,
-                        CMP_BYTE nRedBits,
-                        CMP_BYTE nGreenBits,
-                        CMP_BYTE nBlueBits,
-                        CMP_BYTE nEndpoints[3][2],
-                        CMP_BYTE* pcIndices,
-                        CMP_BYTE dwNumPoints,
-                        bool _bUseSSE2,
-                        bool b3DRefinement,
-                        CMP_BYTE nRefinementSteps,
+                        CMP_DWORD   compressedBlock[2],
+                        CMP_WORD    dwBlockSize,
+                        CMP_BYTE    nRedBits,
+                        CMP_BYTE    nGreenBits,
+                        CMP_BYTE    nBlueBits,
+                        CMP_BYTE    nEndpoints[3][2],
+                        CMP_BYTE*   pcIndices,
+                        CMP_BYTE    dwNumPoints,
+                        bool        _bUseSSE2,
+                        bool        b3DRefinement,
+                        CMP_BYTE    nRefinementSteps,
                         CODECFLOAT* _pfChannelWeights = NULL,
-                        bool _bUseAlpha = false,
-                        CODECFLOAT _fAlphaThreshold = 0.5);
+                        bool        _bUseAlpha        = false,
+                        CODECFLOAT  _fAlphaThreshold  = 0.5);
 
-CODECFLOAT CompRGBBlock(CMP_DWORD* block_32,
-                        CMP_DWORD compressedBlock[2],
-                        CMP_WORD dwBlockSize,
-                        CMP_BYTE nRedBits,
-                        CMP_BYTE nGreenBits,
-                        CMP_BYTE nBlueBits,
-                        CMP_BYTE nEndpoints[3][2],
-                        CMP_BYTE* pcIndices,
-                        CMP_BYTE dwNumPoints,
-                        bool _bUseSSE2,
-                        bool b3DRefinement,
-                        CMP_BYTE nRefinementSteps,
+CODECFLOAT CompRGBBlock(CMP_DWORD*  block_32,
+                        CMP_DWORD   compressedBlock[2],
+                        CMP_WORD    dwBlockSize,
+                        CMP_BYTE    nRedBits,
+                        CMP_BYTE    nGreenBits,
+                        CMP_BYTE    nBlueBits,
+                        CMP_BYTE    nEndpoints[3][2],
+                        CMP_BYTE*   pcIndices,
+                        CMP_BYTE    dwNumPoints,
+                        bool        _bUseSSE2,
+                        bool        b3DRefinement,
+                        CMP_BYTE    nRefinementSteps,
                         CODECFLOAT* _pfChannelWeights = NULL,
-                        bool _bUseAlpha = false,
-                        CMP_BYTE _nAlphaThreshold = 128);
+                        bool        _bUseAlpha        = false,
+                        CMP_BYTE    _nAlphaThreshold  = 128);
 
 /*--------------------------------------------------------------------------------------------
 // input [0,1]
@@ -77,17 +77,6 @@ void CompBlock1X(CODECFLOAT* _Blk,              [IN] scalar data block (alphas o
 ---------------------------------------------------------------------------------------------*/
 
 CODECFLOAT CompBlock1X(CODECFLOAT* _Blk,
-                       CMP_WORD dwBlockSize,
-                       CMP_BYTE nEndpoints[2],
-                       CMP_BYTE* pcIndices,
-                       CMP_BYTE dwNumPoints,
-                       bool bFixedRampPoints,
-                       bool _bUseSSE2 = true,
-                       int _intPrec = 8,
-                       int _fracPrec = 0,
-                       bool _bFixedRamp = true);
-
-CODECFLOAT CompBlock1XS(CODECFLOAT* _Blk,
                        CMP_WORD    dwBlockSize,
                        CMP_BYTE    nEndpoints[2],
                        CMP_BYTE*   pcIndices,
@@ -98,6 +87,16 @@ CODECFLOAT CompBlock1XS(CODECFLOAT* _Blk,
                        int         _fracPrec   = 0,
                        bool        _bFixedRamp = true);
 
+CODECFLOAT CompBlock1XS(CODECFLOAT* _Blk,
+                        CMP_WORD    dwBlockSize,
+                        CMP_BYTE    nEndpoints[2],
+                        CMP_BYTE*   pcIndices,
+                        CMP_BYTE    dwNumPoints,
+                        bool        bFixedRampPoints,
+                        bool        _bUseSSE2   = true,
+                        int         _intPrec    = 8,
+                        int         _fracPrec   = 0,
+                        bool        _bFixedRamp = true);
 
 /*--------------------------------------------------------------------------------------------
 // input [0,255]
@@ -113,17 +112,6 @@ void CompBlock1X(CMP_BYTE* _Blk,                [IN] scalar data block (alphas o
 ---------------------------------------------------------------------------------------------*/
 
 CODECFLOAT CompBlock1X(CMP_BYTE* _Blk,
-                       CMP_WORD dwBlockSize,
-                       CMP_BYTE nEndpoints[2],
-                       CMP_BYTE* pcIndices,
-                       CMP_BYTE dwNumPoints,
-                       bool bFixedRampPoints,
-                       bool _bUseSSE2 = true,
-                       int _intPrec = 8,
-                       int _fracPrec = 0,
-                       bool _bFixedRamp = true);
-
-CODECFLOAT CompBlock1XS(CMP_SBYTE* _Blk,
                        CMP_WORD  dwBlockSize,
                        CMP_BYTE  nEndpoints[2],
                        CMP_BYTE* pcIndices,
@@ -133,5 +121,16 @@ CODECFLOAT CompBlock1XS(CMP_SBYTE* _Blk,
                        int       _intPrec    = 8,
                        int       _fracPrec   = 0,
                        bool      _bFixedRamp = true);
+
+CODECFLOAT CompBlock1XS(CMP_SBYTE* _Blk,
+                        CMP_WORD   dwBlockSize,
+                        CMP_BYTE   nEndpoints[2],
+                        CMP_BYTE*  pcIndices,
+                        CMP_BYTE   dwNumPoints,
+                        bool       bFixedRampPoints,
+                        bool       _bUseSSE2   = true,
+                        int        _intPrec    = 8,
+                        int        _fracPrec   = 0,
+                        bool       _bFixedRamp = true);
 
 #endif

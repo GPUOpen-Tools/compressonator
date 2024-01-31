@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 20120 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2012-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -36,8 +36,9 @@
 #pragma comment(lib, "Image_ASTC.lib")
 #endif
 
-#if (OPTION_BUILD_KTX2 == 1)
 #pragma comment(lib, "Image_EXR.lib")
+
+#if (OPTION_BUILD_KTX2 == 1)
 #pragma comment(lib, "Image_KTX.lib")
 #ifdef _WIN32
 #pragma comment(lib, "Image_KTX2.lib")

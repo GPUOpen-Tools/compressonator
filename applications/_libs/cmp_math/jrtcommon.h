@@ -1,5 +1,5 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
@@ -18,17 +18,25 @@ typedef unsigned long long UINT64;
 #else
 typedef unsigned __int64 UINT64;
 #endif
-typedef unsigned int UINT;
+typedef unsigned int   UINT;
 typedef unsigned short USHORT;
-typedef unsigned char UBYTE;
+typedef unsigned char  UBYTE;
 
 #include "jml.h"
 using namespace JML;
 
 #define JRT_ASSERT(x) assert(x)
-#define JRT_SAFE_DELETE(x) {if(x) delete x; x = NULL;}
-#define JRT_SAFE_DELETE_ARRAY(x) { if(x) delete[] x; x=NULL; }
-
-
+#define JRT_SAFE_DELETE(x) \
+    {                      \
+        if (x)             \
+            delete x;      \
+        x = NULL;          \
+    }
+#define JRT_SAFE_DELETE_ARRAY(x) \
+    {                            \
+        if (x)                   \
+            delete[] x;          \
+        x = NULL;                \
+    }
 
 #endif

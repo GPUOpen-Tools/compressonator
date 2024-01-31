@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright (c) 2021  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2021-2024  Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -50,7 +50,7 @@ void* make_Plugin_CFilterFx()
 }
 #endif
 
-CMIPS       *CFilterMipsFx = NULL;
+CMIPS* CFilterMipsFx = NULL;
 
 Plugin_CFilterFx::Plugin_CFilterFx()
 {
@@ -75,7 +75,8 @@ int Plugin_CFilterFx::TC_PluginSetSharedIO(void* SharedCMips)
     {
         CFilterMipsFx = reinterpret_cast<CMIPS*>(SharedCMips);
         return CMP_OK;
-    } else
+    }
+    else
         CFilterMipsFx = NULL;
 
     return CMP_ERR_GENERIC;
@@ -93,7 +94,6 @@ int Plugin_CFilterFx::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
     return 0;
 }
 
-
 //--------------------------------------------------------------------------------------------
 // DirectX Filter
 //--------------------------------------------------------------------------------------------
@@ -102,7 +102,7 @@ void Plugin_CFilterFx::Error(TCHAR* pszCaption, TC_ErrorLevel errorLevel, UINT n
     // Add code to print message to caller
 }
 
-int Plugin_CFilterFx::TC_CFilter(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSet, CMP_CFilterParams *pCFilterParams)
+int Plugin_CFilterFx::TC_CFilter(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSet, CMP_CFilterParams* pCFilterParams)
 {
     int result = CMP_OK;
 
@@ -122,7 +122,7 @@ int Plugin_CFilterFx::TC_CFilter(CMP_MipSet* srcMipSet, CMP_MipSet* dstMipSet, C
 
     switch (srcMipSet->m_format)
     {
-    case CMP_FORMAT_ABGR_16F: // fix this to a proper DXGI mapping
+    case CMP_FORMAT_ABGR_16F:  // fix this to a proper DXGI mapping
     case CMP_FORMAT_RGBA_16F:
         d3dTextureFormat  = DXGI_FORMAT_R16G16B16A16_FLOAT;
         rgbaBytesPerPixel = 8;

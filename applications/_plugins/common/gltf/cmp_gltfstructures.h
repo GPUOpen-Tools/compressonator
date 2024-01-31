@@ -44,8 +44,6 @@
 // This file holds all the structures/classes used to load a glTF model
 //
 
-#include "cmp_gltffeatures.h"
-
 #include <json/json.hpp>
 
 #include <glm/mat4x4.hpp>

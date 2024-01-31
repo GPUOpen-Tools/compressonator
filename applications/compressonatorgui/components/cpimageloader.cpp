@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -35,15 +35,15 @@
 #include <QtCore/qdebug.h>
 
 #if (OPTION_BUILD_EXR == 1)
-    #pragma warning(push)
-    #pragma warning(disable : 4100)
-    #pragma warning(disable : 4800)
-    #include <ImfStandardAttributes.h>
-    #include <ImathBox.h>
-    #include <ImfArray.h>
-    #include <ImfRgba.h>
-    #include <ImfArray.h>
-    #pragma warning(pop)
+#pragma warning(push)
+#pragma warning(disable : 4100)
+#pragma warning(disable : 4800)
+#include <ImfStandardAttributes.h>
+#include <ImathBox.h>
+#include <ImfArray.h>
+#include <ImfRgba.h>
+#include <ImfArray.h>
+#pragma warning(pop)
 #endif
 
 bool            g_useCPUDecode    = true;
@@ -53,7 +53,7 @@ extern PluginManager g_pluginManager;
 extern MipSet*       DecompressMIPSet(MipSet* MipSetIn, CMP_GPUDecode decodeWith, Config* configSetting, CMP_Feedback_Proc pFeedbackProc);
 extern int           g_OpenGLMajorVersion;
 
-extern QRgb RgbaToQrgba(struct Imf::Rgba imagePixel);
+extern QRgb    RgbaToQrgba(struct Imf::Rgba imagePixel);
 extern QImage* CMP_CreateQImage(const char* SourceFile);
 
 // Finds a matching Qt Image format for the Mip Set
@@ -460,8 +460,8 @@ void CImageLoader::UpdateMIPMapImages(CMipImages* MipImages)
 CMipImages* CImageLoader::LoadPluginImage(std::string filename, CMP_Feedback_Proc pFeedbackProc)
 {
     QString qfilename = QString::fromStdString(filename);
-    QImage* image  = NULL;
-    bool usedQT = false;
+    QImage* image     = NULL;
+    bool    usedQT    = false;
 
     CMipImages* MipImages = new CMipImages();
     if (MipImages == NULL)
@@ -474,7 +474,7 @@ CMipImages* CImageLoader::LoadPluginImage(std::string filename, CMP_Feedback_Pro
     {
         MipImages->m_Error = MIPIMAGE_FORMAT_ERRORS::Format_InvalidFile;
         image              = CMP_CreateQImage(":/compressonatorgui/images/imagefiledoesnotexist.png");
-        usedQT = true;
+        usedQT             = true;
     }
 
     // -------------------------------------------------------------------------
@@ -482,9 +482,9 @@ CMipImages* CImageLoader::LoadPluginImage(std::string filename, CMP_Feedback_Pro
     // -------------------------------------------------------------------------
 
     QFileInfo fi(qfilename);
-    QString ext = fi.suffix().toUpper();
-    bool useAMD_Plugin = true;
-    bool isError = false;
+    QString   ext           = fi.suffix().toUpper();
+    bool      useAMD_Plugin = true;
+    bool      isError       = false;
 
     // -------------------------------------------------------
     // Exception on load as DDS for BCn < 6 is not working
@@ -507,14 +507,14 @@ CMipImages* CImageLoader::LoadPluginImage(std::string filename, CMP_Feedback_Pro
             MipSet* tmpMipSet;
             Config  decompSetting;
             decompSetting.errMessage = "";
-            tmpMipSet = LoaderDecompressMipSet(MipImages, &decompSetting);
+            tmpMipSet                = LoaderDecompressMipSet(MipImages, &decompSetting);
 
             if (tmpMipSet == NULL)
             {
                 MipImages->errMsg = decompSetting.errMessage;
-                image = new QImage(":/compressonatorgui/images/decompressimageerror.png");
-                usedQT = true;
-                isError = true;
+                image             = new QImage(":/compressonatorgui/images/decompressimageerror.png");
+                usedQT            = true;
+                isError           = true;
             }
             else
                 image = MIPS2QImage(m_CMips, tmpMipSet, 0, 0, m_options, pFeedbackProc);
@@ -527,7 +527,7 @@ CMipImages* CImageLoader::LoadPluginImage(std::string filename, CMP_Feedback_Pro
 
     if (image == NULL)
     {
-        image = CMP_CreateQImage(filename.c_str());
+        image  = CMP_CreateQImage(filename.c_str());
         usedQT = true;
     }
 
@@ -570,7 +570,7 @@ CMipImages* CImageLoader::LoadPluginImage(std::string filename, CMP_Feedback_Pro
     if ((MipImages->QImage_list[0].size() > 0) && (MipImages->mipset == NULL))
     {
         MipImages->mipset = (MipSet*)calloc(1, sizeof(MipSet));
-        int result = QImage2MIPS(MipImages->QImage_list[0][0], m_CMips, MipImages->mipset, pFeedbackProc);
+        int result        = QImage2MIPS(MipImages->QImage_list[0][0], m_CMips, MipImages->mipset, pFeedbackProc);
 
         if (result != 0)
         {

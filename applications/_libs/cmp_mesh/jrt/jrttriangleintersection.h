@@ -1,5 +1,5 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
@@ -12,11 +12,11 @@
 
 class JRTMesh;
 
-
 // JRTCoreTriangle is a struct which stores all of the information needed to perform
 // ray-triangle intersection.  Some preprocessing is performed on the triangles to optimize the
 // intersection calculation.
-struct JRTCoreTriangle {
+struct JRTCoreTriangle
+{
     // Nu and Nv are the smaller two components of the normal, divided by
     // the largest component of the normal.  This eliminates some multiplies
     // from the intersection code (Ingo wald thought of this, not me)
@@ -30,8 +30,8 @@ struct JRTCoreTriangle {
     // this determines what plane to project into to compute barycentrics
     UINT max_normal_comp;
 
-    JRTMesh* pMesh; // pointer back to the mesh
-    UINT nTriIndex; // index of this triangle in the mesh
+    JRTMesh* pMesh;      // pointer back to the mesh
+    UINT     nTriIndex;  // index of this triangle in the mesh
 
     // one of the vertices, projected into the 2D plane of choice
     float V0u;
@@ -46,9 +46,6 @@ struct JRTCoreTriangle {
     float E2v;
 };
 
-
-
-
 /**
     This function performs some pre-processing on a triangle to get it read for use by the
     ray-triangle intersector.  This function does all kinds of magical pre-computation which allows
@@ -60,8 +57,6 @@ struct JRTCoreTriangle {
     the pre-computed triangle information that the intersector uses.
 */
 void PreprocessTri(const float* v1, const float* v2, const float* v3, JRTCoreTriangle* triOut1);
-
-
 
 /**
     Ray-Triangle Intersection routine:
@@ -81,11 +76,12 @@ void PreprocessTri(const float* v1, const float* v2, const float* v3, JRTCoreTri
         If there is no such intersection, then the values of *tout and barycentrics do not change
           and false is returned
 */
-bool RayTriangleIntersect(const JRTCoreTriangle* pTriInfo, const float* origin, const float* direction, float tmin, float tmax, float* tout, float barcentrics_out[3]);
-
-
-
-
-
+bool RayTriangleIntersect(const JRTCoreTriangle* pTriInfo,
+                          const float*           origin,
+                          const float*           direction,
+                          float                  tmin,
+                          float                  tmax,
+                          float*                 tout,
+                          float                  barcentrics_out[3]);
 
 #endif

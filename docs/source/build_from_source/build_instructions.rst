@@ -42,7 +42,7 @@ Visual Studio 2019, but for newer versions you will need to install the correct 
 Building the SDK and Other Libraries
 ==============================================
 
-There are Visual Studio 19 project files provided in the "compressonator/vs2019" folder that can be used to build the SDK
+There are Visual Studio project files provided in the "compressonator/build_sdk" folder that can be used to build the SDK
 (also called cmp_compressonatorlib), the Core, and the Framework.
 
 There is a batch script provided in the "compressonator/build" folder named "windows_build_sdk.bat" if you'd prefer to run an automated
@@ -54,8 +54,6 @@ The script can be called from the root Compressonator folder like:
 .. code-block:: console
 
     call build/windows_build_sdk.bat
-
-(For Visual Studio 2022, use "build/windows_build_sdk_2022.bat" instead.)
 
 Building the GUI and CLI Applications
 ==============================================================

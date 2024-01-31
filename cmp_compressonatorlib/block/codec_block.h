@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -31,10 +31,11 @@
 
 #include "codec.h"
 
-class CCodec_Block : public CCodec {
-  public:
+class CCodec_Block : public CCodec
+{
+public:
     CCodec_Block(CodecType codecType);
     virtual ~CCodec_Block();
 };
 
-#endif // !defined(_CODEC_BLOCK_H_INCLUDED_)
+#endif  // !defined(_CODEC_BLOCK_H_INCLUDED_)

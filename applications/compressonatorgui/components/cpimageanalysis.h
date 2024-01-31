@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -33,33 +33,34 @@
 
 #include <QtCore/qobject.h>
 
-
-class C_AnalysisData : public QObject {
+class C_AnalysisData : public QObject
+{
     Q_OBJECT
-    Q_PROPERTY(double  _MSE            MEMBER m_MSE)
-    Q_PROPERTY(double  _SSIM           MEMBER m_SSIM)
-    Q_PROPERTY(double  _SSIM_Blue      MEMBER m_SSIM_Blue)
-    Q_PROPERTY(double  _SSIM_Green     MEMBER m_SSIM_Green)
-    Q_PROPERTY(double  _SSIM_Red       MEMBER m_SSIM_Red)
-    Q_PROPERTY(double  _PSNR           MEMBER m_PSNR)
-    Q_PROPERTY(double  _PSNR_Blue      MEMBER m_PSNR_Blue)
-    Q_PROPERTY(double  _PSNR_Green     MEMBER m_PSNR_Green)
-    Q_PROPERTY(double  _PSNR_Red       MEMBER m_PSNR_Red)
+    Q_PROPERTY(double _MSE MEMBER m_MSE)
+    Q_PROPERTY(double _SSIM MEMBER m_SSIM)
+    Q_PROPERTY(double _SSIM_Blue MEMBER m_SSIM_Blue)
+    Q_PROPERTY(double _SSIM_Green MEMBER m_SSIM_Green)
+    Q_PROPERTY(double _SSIM_Red MEMBER m_SSIM_Red)
+    Q_PROPERTY(double _PSNR MEMBER m_PSNR)
+    Q_PROPERTY(double _PSNR_Blue MEMBER m_PSNR_Blue)
+    Q_PROPERTY(double _PSNR_Green MEMBER m_PSNR_Green)
+    Q_PROPERTY(double _PSNR_Red MEMBER m_PSNR_Red)
 
-  public:
-    C_AnalysisData() {
-        m_MSE = 0.0;
-        m_SSIM = 0.0;
-        m_SSIM_Blue = 0.0;
-        m_SSIM_Green = 0.0;
-        m_SSIM_Red = 0.0;
-        m_PSNR = 0.0;
-        m_PSNR_Blue = 0.0;
-        m_PSNR_Green = 0.0;
-        m_PSNR_Red = 0.0;
+public:
+    C_AnalysisData()
+    {
+        m_MSE          = 0.0;
+        m_SSIM         = 0.0;
+        m_SSIM_Blue    = 0.0;
+        m_SSIM_Green   = 0.0;
+        m_SSIM_Red     = 0.0;
+        m_PSNR         = 0.0;
+        m_PSNR_Blue    = 0.0;
+        m_PSNR_Green   = 0.0;
+        m_PSNR_Red     = 0.0;
         diffCMipImages = new CMipImages();
         m_analysisFile = "";
-        m_diffFile = "";
+        m_diffFile     = "";
     }
 
     double m_MSE;
@@ -77,30 +78,30 @@ class C_AnalysisData : public QObject {
 
     ~C_AnalysisData();
 
-    bool SourceAndDestFileExtMatch(const char *fsource, const char *fdest);
-    CMipImages* GenerateDiffImage(const char *fsource, const char *fdest);
-    int GenerateSSIMAnalysis(const char *fsource, const char *fdest);
-    int GeneratePSNRMSEAnalysis(const char *fsource, const char *fdest);
-    std::string CreateResultsFileName(const char *fsource, const char *fdest, const char *type_ext);
+    bool        SourceAndDestFileExtMatch(const char* fsource, const char* fdest);
+    CMipImages* GenerateDiffImage(const char* fsource, const char* fdest);
+    int         GenerateSSIMAnalysis(const char* fsource, const char* fdest);
+    int         GeneratePSNRMSEAnalysis(const char* fsource, const char* fdest);
+    std::string CreateResultsFileName(const char* fsource, const char* fdest, const char* type_ext);
 
     CMipImages* diffCMipImages;
-
 };
 
-class C_SSIM_Analysis : public QObject {
+class C_SSIM_Analysis : public QObject
+{
     Q_OBJECT
-    Q_PROPERTY(double  _SSIM           MEMBER m_SSIM)
-    Q_PROPERTY(double  _SSIM_Blue      MEMBER m_SSIM_Blue)
-    Q_PROPERTY(double  _SSIM_Green     MEMBER m_SSIM_Green)
-    Q_PROPERTY(double  _SSIM_Red       MEMBER m_SSIM_Red)
+    Q_PROPERTY(double _SSIM MEMBER m_SSIM)
+    Q_PROPERTY(double _SSIM_Blue MEMBER m_SSIM_Blue)
+    Q_PROPERTY(double _SSIM_Green MEMBER m_SSIM_Green)
+    Q_PROPERTY(double _SSIM_Red MEMBER m_SSIM_Red)
 
-  public:
-    C_SSIM_Analysis() {
-        m_SSIM = 0.0;
-        m_SSIM_Blue = 0.0;
+public:
+    C_SSIM_Analysis()
+    {
+        m_SSIM       = 0.0;
+        m_SSIM_Blue  = 0.0;
         m_SSIM_Green = 0.0;
-        m_SSIM_Red = 0.0;
-
+        m_SSIM_Red   = 0.0;
     }
 
     double m_SSIM;
@@ -109,24 +110,25 @@ class C_SSIM_Analysis : public QObject {
     double m_SSIM_Red;
 
     ~C_SSIM_Analysis();
-
 };
 
-class C_MSE_PSNR_Analysis : public C_SSIM_Analysis {
+class C_MSE_PSNR_Analysis : public C_SSIM_Analysis
+{
     Q_OBJECT
-    Q_PROPERTY(double  _MSE            MEMBER m_MSE)
-    Q_PROPERTY(double  _PSNR           MEMBER m_PSNR)
-    Q_PROPERTY(double  _PSNR_Blue      MEMBER m_PSNR_Blue)
-    Q_PROPERTY(double  _PSNR_Green     MEMBER m_PSNR_Green)
-    Q_PROPERTY(double  _PSNR_Red       MEMBER m_PSNR_Red)
+    Q_PROPERTY(double _MSE MEMBER m_MSE)
+    Q_PROPERTY(double _PSNR MEMBER m_PSNR)
+    Q_PROPERTY(double _PSNR_Blue MEMBER m_PSNR_Blue)
+    Q_PROPERTY(double _PSNR_Green MEMBER m_PSNR_Green)
+    Q_PROPERTY(double _PSNR_Red MEMBER m_PSNR_Red)
 
-  public:
-    C_MSE_PSNR_Analysis() {
-        m_MSE = 0.0;
-        m_PSNR = 0.0;
-        m_PSNR_Blue = 0.0;
+public:
+    C_MSE_PSNR_Analysis()
+    {
+        m_MSE        = 0.0;
+        m_PSNR       = 0.0;
+        m_PSNR_Blue  = 0.0;
         m_PSNR_Green = 0.0;
-        m_PSNR_Red = 0.0;
+        m_PSNR_Red   = 0.0;
     }
 
     double m_MSE;
@@ -136,24 +138,25 @@ class C_MSE_PSNR_Analysis : public C_SSIM_Analysis {
     double m_PSNR_Red;
 
     ~C_MSE_PSNR_Analysis();
-
 };
 
-class C_PSNR_MSE_Analysis : public  QObject {
+class C_PSNR_MSE_Analysis : public QObject
+{
     Q_OBJECT
-    Q_PROPERTY(double  _MSE            MEMBER m_MSE)
-    Q_PROPERTY(double  _PSNR           MEMBER m_PSNR)
-    Q_PROPERTY(double  _PSNR_Blue      MEMBER m_PSNR_Blue)
-    Q_PROPERTY(double  _PSNR_Green     MEMBER m_PSNR_Green)
-    Q_PROPERTY(double  _PSNR_Red       MEMBER m_PSNR_Red)
+    Q_PROPERTY(double _MSE MEMBER m_MSE)
+    Q_PROPERTY(double _PSNR MEMBER m_PSNR)
+    Q_PROPERTY(double _PSNR_Blue MEMBER m_PSNR_Blue)
+    Q_PROPERTY(double _PSNR_Green MEMBER m_PSNR_Green)
+    Q_PROPERTY(double _PSNR_Red MEMBER m_PSNR_Red)
 
-  public:
-    C_PSNR_MSE_Analysis() {
-        m_MSE = 0.0;
-        m_PSNR = 0.0;
-        m_PSNR_Blue = 0.0;
+public:
+    C_PSNR_MSE_Analysis()
+    {
+        m_MSE        = 0.0;
+        m_PSNR       = 0.0;
+        m_PSNR_Blue  = 0.0;
         m_PSNR_Green = 0.0;
-        m_PSNR_Red = 0.0;
+        m_PSNR_Red   = 0.0;
     }
 
     double m_MSE;
@@ -163,10 +166,7 @@ class C_PSNR_MSE_Analysis : public  QObject {
     double m_PSNR_Red;
 
     ~C_PSNR_MSE_Analysis();
-
 };
 extern PluginManager g_pluginManager;
 
-
-
-#endif // CPIMAGEANALYSIS_H
+#endif  // CPIMAGEANALYSIS_H

@@ -25,4 +25,4 @@ if (UNIX)
     target_compile_definitions(Image_TGA PRIVATE _LINUX)
 endif()
 
-set_target_properties(Image_TGA PROPERTIES FOLDER "Plugin_Static/ImageIO")
+set_target_properties(Image_TGA PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_PLUGIN_STATIC})

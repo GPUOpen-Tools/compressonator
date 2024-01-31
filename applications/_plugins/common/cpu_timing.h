@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2021-2023    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2021-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -23,10 +23,8 @@
 //
 //=====================================================================
 
-
 #ifndef __CPU_TIMING_H
 #define __CPU_TIMING_H
-
 
 #define ENABLE_QUERY_TIMER
 
@@ -53,27 +51,27 @@ struct query_timer
 
 private:
     static long long m_frequency;
-    long long m_start;
-    long long m_end;
-    char const* m_label;
+    long long        m_start;
+    long long        m_end;
+    char const*      m_label;
 };
 
-#define CMP_TIMER_REFMAX 15     // Max number of timer references used for timing a function call
+#define CMP_TIMER_REFMAX 15  // Max number of timer references used for timing a function call
 
 // The most basic timer which provides the ability to time up to CMP_TIMER_REFMAX number of sections with one timer object
 class cpu_timer
 {
-  public:
+public:
     cpu_timer();
 
     void Reset(unsigned int id);
     void Start(unsigned int id);
     void Stop(unsigned int id);
-    
+
     double GetTimeMS(unsigned int id);
 
-  private:
-    double m_frequency;
+private:
+    double    m_frequency;
     long long m_startTimes[CMP_TIMER_REFMAX];
     long long m_endTimes[CMP_TIMER_REFMAX];
 };
@@ -94,7 +92,7 @@ struct stopwatch
 
     double GetTimeMS(unsigned int refId);
 
-  private:
+private:
     long long m_startTimes[MAX_ENTRIES];
     long long m_endTimes[MAX_ENTRIES];
     long long m_elapsedTimes[MAX_ENTRIES];
@@ -102,4 +100,4 @@ struct stopwatch
     double m_msPerTick;
 };
 
-#endif // __CPU_TIMING_H
+#endif  // __CPU_TIMING_H

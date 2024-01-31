@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -35,9 +35,11 @@
 
 #define CMP_PAD_BYTE(width, bpp) (((bpp) * (width) + 7) / 8)
 
-#define CMP_MIPS_FOURCC_DX10                    CMP_MAKEFOURCC('D', 'X', '1', '0')
+#define CMP_MIPS_FOURCC_DX10 CMP_MAKEFOURCC('D', 'X', '1', '0')
 
-template <class T> const T& max(const T& a, const T& b) {
+template <class T>
+const T& max(const T& a, const T& b)
+{
     return (a < b) ? b : a;
 }
 

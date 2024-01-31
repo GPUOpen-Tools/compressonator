@@ -1,8 +1,5 @@
-#ifndef H_GPU_DECOMP
-#define H_GPU_DECOMP
-
 //=====================================================================
-// Copyright (c) 2016    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2016-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -26,6 +23,9 @@
 //
 //=====================================================================
 
+#ifndef H_GPU_DECOMP
+#define H_GPU_DECOMP
+
 #include "compressonator.h"
 
 #ifdef __cplusplus
@@ -38,11 +38,7 @@ extern "C" {
 /// \param[in] Type of GPU drivers to use for decode
 /// \return    CMP_OK if successful, otherwise the error code.
 
-CMP_ERROR CMP_API CMP_DecompressTexture(
-    const CMP_Texture* pSourceTexture,
-    CMP_Texture* pDestTexture,
-    CMP_GPUDecode GPUDecodeType
-);
+CMP_ERROR CMP_API CMP_DecompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, CMP_GPUDecode GPUDecodeType);
 
 //
 /// CMP_InitializeDecompessLibrary - Initialize the DeCompression library based in GPU Driver support types
@@ -60,5 +56,4 @@ CMP_ERROR CMP_API CMP_ShutdownDecompessLibrary();
 };
 #endif
 
-
-#endif // !H_GPU_DECOMP
+#endif  // !H_GPU_DECOMP

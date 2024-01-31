@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright (c) 2021  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2021-2024  Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -54,17 +54,15 @@ void GpuResources_fsr::InitBuffers_fsr()
     CHECK_HR(m_D3D11Device->CreateBuffer(&constantBufferDesc_FSR, nullptr, &m_ConstantBufferFSR));
 }
 
-
 void GpuResources_fsr::GpuCompileShaders_fsr(CMP_FORMAT format, bool useSRGB)
 {
-
     //=====================================
     // FSR EASU
     //=====================================
     const BYTE* shaderCode_FSR;
     size_t      shaderCodeSize_FSR;
 
-    GetShaderCode_FSR_EASU(shaderCode_FSR,shaderCodeSize_FSR);
+    GetShaderCode_FSR_EASU(shaderCode_FSR, shaderCodeSize_FSR);
     CHECK_HR(m_D3D11Device->CreateComputeShader(shaderCode_FSR, shaderCodeSize_FSR, nullptr, &m_ComputeShader_FSR_EASU));
 
     //=====================================
@@ -73,7 +71,7 @@ void GpuResources_fsr::GpuCompileShaders_fsr(CMP_FORMAT format, bool useSRGB)
     const BYTE* shaderCode_BILINEAR;
     size_t      shaderCodeSize_BILINEAR;
 
-    GetShaderCode_FSR_BILINEAR(shaderCode_BILINEAR,shaderCodeSize_BILINEAR);
+    GetShaderCode_FSR_BILINEAR(shaderCode_BILINEAR, shaderCodeSize_BILINEAR);
     CHECK_HR(m_D3D11Device->CreateComputeShader(shaderCode_BILINEAR, shaderCodeSize_BILINEAR, nullptr, &m_ComputeShader_FSR_BILINEAR));
 
     //=====================================
@@ -82,29 +80,26 @@ void GpuResources_fsr::GpuCompileShaders_fsr(CMP_FORMAT format, bool useSRGB)
     const BYTE* shaderCode_RCAS;
     size_t      shaderCodeSize_RCAS;
 
-    GetShaderCode_FSR_RCAS(shaderCode_RCAS,shaderCodeSize_RCAS);
+    GetShaderCode_FSR_RCAS(shaderCode_RCAS, shaderCodeSize_RCAS);
     CHECK_HR(m_D3D11Device->CreateComputeShader(shaderCode_RCAS, shaderCodeSize_RCAS, nullptr, &m_ComputeShader_FSR_RCAS));
 }
 
-void GpuResources_fsr::GetShaderCode_FSR_EASU(const BYTE*& outCode_FSR,
-                                     size_t&      outCodeSize_FSR)
+void GpuResources_fsr::GetShaderCode_FSR_EASU(const BYTE*& outCode_FSR, size_t& outCodeSize_FSR)
 {
-     outCode_FSR         = FSR_EASU::g_mainCS;
-     outCodeSize_FSR     = _countof(FSR_EASU::g_mainCS);
+    outCode_FSR     = FSR_EASU::g_mainCS;
+    outCodeSize_FSR = _countof(FSR_EASU::g_mainCS);
 }
 
-void GpuResources_fsr::GetShaderCode_FSR_BILINEAR(const BYTE*& outCode_FSR,
-                                     size_t&      outCodeSize_FSR)
+void GpuResources_fsr::GetShaderCode_FSR_BILINEAR(const BYTE*& outCode_FSR, size_t& outCodeSize_FSR)
 {
-     outCode_FSR         = FSR_BILINEAR::g_mainCS;
-     outCodeSize_FSR     = _countof(FSR_BILINEAR::g_mainCS);
+    outCode_FSR     = FSR_BILINEAR::g_mainCS;
+    outCodeSize_FSR = _countof(FSR_BILINEAR::g_mainCS);
 }
 
-void GpuResources_fsr::GetShaderCode_FSR_RCAS(const BYTE*& outCode_FSR,
-                                     size_t&      outCodeSize_FSR)
+void GpuResources_fsr::GetShaderCode_FSR_RCAS(const BYTE*& outCode_FSR, size_t& outCodeSize_FSR)
 {
-     outCode_FSR         = FSR_RCAS::g_mainCS;
-     outCodeSize_FSR     = _countof(FSR_RCAS::g_mainCS);
+    outCode_FSR     = FSR_RCAS::g_mainCS;
+    outCodeSize_FSR = _countof(FSR_RCAS::g_mainCS);
 }
 
 void GpuResources_fsr::FSR_EASU(ID3D11UnorderedAccessView* dstUav, uvec2 dstSize, ID3D11ShaderResourceView* srcSrv, uvec2 srcSize) const
@@ -116,11 +111,14 @@ void GpuResources_fsr::FSR_EASU(ID3D11UnorderedAccessView* dstUav, uvec2 dstSize
                constBufStruct.const2,
                constBufStruct.const3,
                // This the rendered part of the input image.
-               (float)srcSize.x, (float)srcSize.y, 
+               (float)srcSize.x,
+               (float)srcSize.y,
                // This is the size of the input image.
-               (float)srcSize.x, (float)srcSize.y, 
+               (float)srcSize.x,
+               (float)srcSize.y,
                // This is the size of the output image.
-               (float)dstSize.x, (float)dstSize.y);
+               (float)dstSize.x,
+               (float)dstSize.y);
 
     m_DeviceContext->UpdateSubresource(m_ConstantBufferFSR, 0, NULL, &constBufStruct, sizeof(constBufStruct), 0);
 
@@ -143,11 +141,14 @@ void GpuResources_fsr::FSR_BILINEAR(ID3D11UnorderedAccessView* dstUav, uvec2 dst
                constBufStruct.const2,
                constBufStruct.const3,
                // This the rendered part of the input image.
-               (float)srcSize.x, (float)srcSize.y, 
+               (float)srcSize.x,
+               (float)srcSize.y,
                // This is the size of the input image.
-               (float)srcSize.x, (float)srcSize.y, 
+               (float)srcSize.x,
+               (float)srcSize.y,
                // This is the size of the output image.
-               (float)dstSize.x, (float)dstSize.y);
+               (float)dstSize.x,
+               (float)dstSize.y);
 
     m_DeviceContext->UpdateSubresource(m_ConstantBufferFSR, 0, NULL, &constBufStruct, sizeof(constBufStruct), 0);
 
@@ -161,11 +162,12 @@ void GpuResources_fsr::FSR_BILINEAR(ID3D11UnorderedAccessView* dstUav, uvec2 dst
     m_DeviceContext->Dispatch(CeilDiv(dstSize.x, 16u), CeilDiv(dstSize.y, 16u), 1);
 }
 
-void GpuResources_fsr::FSR_RCAS(bool hdr, float sharpness, ID3D11UnorderedAccessView* dstUav, uvec2 dstSize, ID3D11ShaderResourceView* srcSrv, uvec2 srcSize) const
+void GpuResources_fsr::FSR_RCAS(bool hdr, float sharpness, ID3D11UnorderedAccessView* dstUav, uvec2 dstSize, ID3D11ShaderResourceView* srcSrv, uvec2 srcSize)
+    const
 {
     ConstantBufferStructureFSR constBufStruct = {0};
 
-    FsrRcasCon(constBufStruct.const0,sharpness);
+    FsrRcasCon(constBufStruct.const0, sharpness);
     if (hdr)
         constBufStruct.sample[0] = 1;
 

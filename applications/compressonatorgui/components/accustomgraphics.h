@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -37,15 +37,14 @@
 
 extern C_Application_Options g_Application_Options;
 
-
 // Available Item Types:
-enum acCustomGraphicsTypes {
+enum acCustomGraphicsTypes
+{
     IMAGE = 1,
     TABLE_DIALOG,
     NAVIGATION_IMAGE,
     NAVIGATION_WINDOW,
 };
-
 
 // ----------------------------------------------------------------------------------
 // Class Name:          acCustomGraphicsNavImageItem
@@ -53,14 +52,16 @@ enum acCustomGraphicsTypes {
 //                      under a custom type, it is used to identify itself for visiblity
 // Creation Date:       4/9/2015
 // ----------------------------------------------------------------------------------
-class acCustomGraphicsNavImageItem : public QGraphicsPixmapItem {
-  public:
+class acCustomGraphicsNavImageItem : public QGraphicsPixmapItem
+{
+public:
     int ID;
 
-    acCustomGraphicsNavImageItem(QPixmap &PixItem);
+    acCustomGraphicsNavImageItem(QPixmap& PixItem);
 
     // Enable the use of qgraphicsitem_cast with this item.
-    int type() const {
+    int type() const
+    {
         return (UserType + acCustomGraphicsTypes::NAVIGATION_IMAGE);
     }
 };
@@ -72,19 +73,19 @@ class acCustomGraphicsNavImageItem : public QGraphicsPixmapItem {
 //                      scale and moves
 // Creation Date:       4/9/2015
 // ----------------------------------------------------------------------------------
-class acCustomGraphicsNavWindow : public QGraphicsRectItem {
-  public:
+class acCustomGraphicsNavWindow : public QGraphicsRectItem
+{
+public:
     int ID;
 
-    acCustomGraphicsNavWindow(QRectF &Rec, QGraphicsItem *parent);
+    acCustomGraphicsNavWindow(QRectF& Rec, QGraphicsItem* parent);
 
     // Enable the use of qgraphicsitem_cast with this item.
-    int type() const {
+    int type() const
+    {
         return (UserType + acCustomGraphicsTypes::NAVIGATION_WINDOW);
     }
-
 };
-
 
 // ----------------------------------------------------------------------------------
 // Class Name:          acCustomGraphicsScene
@@ -93,20 +94,22 @@ class acCustomGraphicsNavWindow : public QGraphicsRectItem {
 // Creation Date:       4/9/2015
 // ----------------------------------------------------------------------------------
 
-enum eCustomGraphicsScene_Grids {
+enum eCustomGraphicsScene_Grids
+{
     Block = 0,
     None,
     Lines,
     Dots
 };
 
-class acCustomGraphicsScene : public QGraphicsScene {
+class acCustomGraphicsScene : public QGraphicsScene
+{
     Q_OBJECT
 
-  public:
+public:
     int ID;
 
-    acCustomGraphicsScene(QObject *parent=nullptr);
+    acCustomGraphicsScene(QObject* parent = nullptr);
     void gridEnabled(eCustomGraphicsScene_Grids enable);
     bool isGridEnabled();
     bool isDebug;
@@ -114,38 +117,35 @@ class acCustomGraphicsScene : public QGraphicsScene {
     int cursorBlockX;
     int cursorBlockY;
 
-  Q_SIGNALS:
-    void sceneMousePosition(QPointF *pos, int ID);
+Q_SIGNALS:
+    void sceneMousePosition(QPointF* pos, int ID);
 
-  protected:
-
-    int  m_gridStep;
+protected:
+    int                        m_gridStep;
     eCustomGraphicsScene_Grids m_gridenabled;
 
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void drawBackground(QPainter *painter, const QRectF &rect);
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+    void         drawBackground(QPainter* painter, const QRectF& rect);
 };
-
 
 // ----------------------------------------------------------------------------------
 // Class Name:          acVirtualMouseHub
 // General Description: This class is a host for multiple signals from Graphics Scenes
 // Creation Date:       4/9/2015
 // ----------------------------------------------------------------------------------
-class acVirtualMouseHub: public QObject {
+class acVirtualMouseHub : public QObject
+{
     Q_OBJECT
 
-  Q_SIGNALS:
-    void VirtialMousePosition(QPointF *scenePos, QPointF *localPos, int ID);
+Q_SIGNALS:
+    void VirtialMousePosition(QPointF* scenePos, QPointF* localPos, int ID);
     void VirtualSignalWheelEvent(QWheelEvent* theEvent, int ID);
 
-  public slots:
-    void onVirtualMouseMoveEvent(QPointF *scenePos, QPointF *localPos, int onID);
+public slots:
+    void onVirtualMouseMoveEvent(QPointF* scenePos, QPointF* localPos, int onID);
     void onVirtualSignalWheelEvent(QWheelEvent* theEvent, int ID);
 };
-
-
 
 // ----------------------------------------------------------------------------------
 // Class Name:          acCustomGraphicsView
@@ -153,34 +153,34 @@ class acVirtualMouseHub: public QObject {
 //                      Used to capture mouse events and mouse wheel movements
 // Creation Date:       4/9/2015
 // ----------------------------------------------------------------------------------
-class acCustomGraphicsView : public QGraphicsView {
+class acCustomGraphicsView : public QGraphicsView
+{
     Q_OBJECT
 
-  public:
+public:
     int ID;
 
     acCustomGraphicsView();
-    bool mousechanged;;
+    bool mousechanged;
+    ;
 
-  Q_SIGNALS:
+Q_SIGNALS:
     void resetImageView();
-    void ResizeEvent(QResizeEvent *event);
+    void ResizeEvent(QResizeEvent* event);
     void signalWheelEvent(QWheelEvent* event);
     void OnMouseHandDown();
     void OnMouseHandD();
-    void OnWheelScaleUp(QPointF &pos);
-    void OnWheelScaleDown(QPointF &pos);
+    void OnWheelScaleUp(QPointF& pos);
+    void OnWheelScaleDown(QPointF& pos);
 
-  protected:
+protected:
     qreal zoomFactor;
 
     virtual void wheelEvent(QWheelEvent* event);
-    virtual void mousePressEvent(QMouseEvent  *event);
-    virtual void mouseReleaseEvent(QMouseEvent *event);
-    virtual void resizeEvent(QResizeEvent *event);
-
+    virtual void mousePressEvent(QMouseEvent* event);
+    virtual void mouseReleaseEvent(QMouseEvent* event);
+    virtual void resizeEvent(QResizeEvent* event);
 };
-
 
 // ----------------------------------------------------------------------------------
 // Class Name:          acCustomGraphicsImageItem
@@ -189,42 +189,42 @@ class acCustomGraphicsView : public QGraphicsView {
 //                      scale and moves
 // Creation Date:       4/9/2015
 // ----------------------------------------------------------------------------------
-class acCustomGraphicsImageItem : public QGraphicsPixmapItem {
-  public:
+class acCustomGraphicsImageItem : public QGraphicsPixmapItem
+{
+public:
     int ID;
 
-    acCustomGraphicsImageItem(QPixmap &ProcessedPixItem, QImage *OriginalImage);
+    acCustomGraphicsImageItem(QPixmap& ProcessedPixItem, QImage* OriginalImage);
 
     // Enable the use of qgraphicsitem_cast with this item.
-    int type() const {
+    int type() const
+    {
         return (UserType + acCustomGraphicsTypes::IMAGE);
     }
 
     void UpdateImage();
     void setDefaults();
     void changeImage(QImage image);
-    void changeImageDiffRef(QImage *imageDiffRef);
-
+    void changeImageDiffRef(QImage* imageDiffRef);
 
     // Current Image Data Setting
-    bool m_ChannelR;
-    bool m_ChannelG;
-    bool m_ChannelB;
-    bool m_ChannelA;
-    bool m_GrayScale;
-    bool m_InvertImage;
-    bool m_Mirrored;
-    bool m_Mirrored_h;
-    bool m_Mirrored_v;
-    bool m_UseProcessedImage;
-    bool m_ShowPixelDiff;
-    bool m_ImageBrightness;
-    int  m_alpha;
+    bool    m_ChannelR;
+    bool    m_ChannelG;
+    bool    m_ChannelB;
+    bool    m_ChannelA;
+    bool    m_GrayScale;
+    bool    m_InvertImage;
+    bool    m_Mirrored;
+    bool    m_Mirrored_h;
+    bool    m_Mirrored_v;
+    bool    m_UseProcessedImage;
+    bool    m_ShowPixelDiff;
+    bool    m_ImageBrightness;
+    int     m_alpha;
     QImage  m_ProcessedImage;
-    QImage  *m_refImage  = NULL;
-    int m_iBrightness;
-    int m_fContrast;
-
+    QImage* m_refImage = NULL;
+    int     m_iBrightness;
+    int     m_fContrast;
 };
 
-#endif // _ACCUSTOMGRAPHICS_H
+#endif  // _ACCUSTOMGRAPHICS_H

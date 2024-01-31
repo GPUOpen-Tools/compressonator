@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -30,15 +30,18 @@
 
 extern bool ProgressCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2);
 
-C_AnalysisData ::~C_AnalysisData() {
+C_AnalysisData ::~C_AnalysisData()
+{
 }
 
-static inline void helper_toLower(std::string &str) {
+static inline void helper_toLower(std::string& str)
+{
     for (char& c : str)
         c = tolower(c);
 }
 
-bool C_AnalysisData::SourceAndDestFileExtMatch(const char *fsource, const char *fdest) {
+bool C_AnalysisData::SourceAndDestFileExtMatch(const char* fsource, const char* fdest)
+{
     std::string fsource_extension = CMP_GetJustFileExt(fsource);
     helper_toLower(fsource_extension);
 
@@ -48,25 +51,29 @@ bool C_AnalysisData::SourceAndDestFileExtMatch(const char *fsource, const char *
     return (fsource_extension.compare(fdest_extension) == 0);
 }
 
-CMipImages* C_AnalysisData::GenerateDiffImage(const char *fsource, const char *fdest) {
-    int testpassed = 0;
-    std::string src_ext = "";
-    std::string des_ext = "";
+CMipImages* C_AnalysisData::GenerateDiffImage(const char* fsource, const char* fdest)
+{
+    int         testpassed = 0;
+    std::string src_ext    = "";
+    std::string des_ext    = "";
     src_ext                = CMP_GetJustFileExt(fsource);
     des_ext                = CMP_GetJustFileExt(fdest);
 
-    if (strcmp(src_ext.c_str(), "")==0 || strcmp(des_ext.c_str(), "")==0) {
+    if (strcmp(src_ext.c_str(), "") == 0 || strcmp(des_ext.c_str(), "") == 0)
+    {
         printf("Error: Source or compressed files cannot be found \n");
         return NULL;
     }
 
-    m_diffFile      = CreateResultsFileName(fsource,fdest,"_diff.bmp");
-    m_analysisFile  = CreateResultsFileName(fsource,fdest,"_analysis.xml");
+    m_diffFile     = CreateResultsFileName(fsource, fdest, "_diff.bmp");
+    m_analysisFile = CreateResultsFileName(fsource, fdest, "_analysis.xml");
 
-    Plugin_Canalysis *Plugin_Analysis;
+    Plugin_Canalysis* Plugin_Analysis;
     Plugin_Analysis = reinterpret_cast<Plugin_Canalysis*>(g_pluginManager.GetPlugin("IMAGE", "ANALYSIS"));
-    if (Plugin_Analysis) {
-        testpassed = Plugin_Analysis->TC_ImageDiff(fsource, fdest, m_diffFile.c_str(), (char*)m_analysisFile.c_str(), NULL, &g_pluginManager, (void**)&diffCMipImages, &ProgressCallback);
+    if (Plugin_Analysis)
+    {
+        testpassed = Plugin_Analysis->TC_ImageDiff(
+            fsource, fdest, m_diffFile.c_str(), (char*)m_analysisFile.c_str(), NULL, &g_pluginManager, (void**)&diffCMipImages, &ProgressCallback);
 
         delete Plugin_Analysis;
         Plugin_Analysis = NULL;
@@ -74,7 +81,9 @@ CMipImages* C_AnalysisData::GenerateDiffImage(const char *fsource, const char *f
             return NULL;
         else
             return (CMipImages*)diffCMipImages;
-    } else {
+    }
+    else
+    {
         PrintInfo("Plugin Error: image analysis is not loaded (Ouf of Memory)\n");
         return NULL;
     }
@@ -82,7 +91,7 @@ CMipImages* C_AnalysisData::GenerateDiffImage(const char *fsource, const char *f
     return NULL;
 }
 
-std::string C_AnalysisData::CreateResultsFileName(const char *fsource, const char *fdest, const char *type_ext)
+std::string C_AnalysisData::CreateResultsFileName(const char* fsource, const char* fdest, const char* type_ext)
 {
     std::string results_file;
 
@@ -100,29 +109,34 @@ std::string C_AnalysisData::CreateResultsFileName(const char *fsource, const cha
     return results_file;
 }
 
-int C_AnalysisData::GeneratePSNRMSEAnalysis(const char *fsource, const char *fdest) {
-    int testpassed = 0;
-    std::string src_ext = "";
-    std::string des_ext = "";
-    src_ext = CMP_GetJustFileExt(fsource);
-    des_ext = CMP_GetJustFileExt(fdest);
+int C_AnalysisData::GeneratePSNRMSEAnalysis(const char* fsource, const char* fdest)
+{
+    int         testpassed = 0;
+    std::string src_ext    = "";
+    std::string des_ext    = "";
+    src_ext                = CMP_GetJustFileExt(fsource);
+    des_ext                = CMP_GetJustFileExt(fdest);
 
-    if (strcmp(src_ext.c_str(), "") == 0 || strcmp(des_ext.c_str(), "") == 0) {
+    if (strcmp(src_ext.c_str(), "") == 0 || strcmp(des_ext.c_str(), "") == 0)
+    {
         printf("Error: Source or compressed files cannot be found \n");
         return NULL;
     }
 
-    m_analysisFile = CreateResultsFileName(fsource,fdest,"_analysis.xml");
+    m_analysisFile = CreateResultsFileName(fsource, fdest, "_analysis.xml");
 
-    Plugin_Canalysis *Plugin_Analysis;
+    Plugin_Canalysis* Plugin_Analysis;
     Plugin_Analysis = reinterpret_cast<Plugin_Canalysis*>(g_pluginManager.GetPlugin("IMAGE", "ANALYSIS"));
-    if (Plugin_Analysis) {
+    if (Plugin_Analysis)
+    {
         testpassed = Plugin_Analysis->TC_PSNR_MSE(fsource, fdest, (char*)m_analysisFile.c_str(), &g_pluginManager, &ProgressCallback);
 
         delete Plugin_Analysis;
         Plugin_Analysis = NULL;
         return testpassed;
-    } else {
+    }
+    else
+    {
         PrintInfo("Plugin Error: image analysis is not loaded (Ouf of Memory)\n");
         return -1;
     }
@@ -130,29 +144,34 @@ int C_AnalysisData::GeneratePSNRMSEAnalysis(const char *fsource, const char *fde
     return -1;
 }
 
-int C_AnalysisData::GenerateSSIMAnalysis(const char *fsource, const char *fdest) {
-    int testpassed = 0;
-    std::string src_ext = "";
-    std::string des_ext = "";
+int C_AnalysisData::GenerateSSIMAnalysis(const char* fsource, const char* fdest)
+{
+    int         testpassed = 0;
+    std::string src_ext    = "";
+    std::string des_ext    = "";
     src_ext                = CMP_GetJustFileExt(fsource);
     des_ext                = CMP_GetJustFileExt(fdest);
 
-    if (strcmp(src_ext.c_str(), "") == 0 || strcmp(des_ext.c_str(), "") == 0) {
+    if (strcmp(src_ext.c_str(), "") == 0 || strcmp(des_ext.c_str(), "") == 0)
+    {
         printf("Error: Source or compressed files cannot be found \n");
         return NULL;
     }
 
-    m_analysisFile = CreateResultsFileName(fsource,fdest,"_analysis.xml");
+    m_analysisFile = CreateResultsFileName(fsource, fdest, "_analysis.xml");
 
-    Plugin_Canalysis *Plugin_Analysis;
+    Plugin_Canalysis* Plugin_Analysis;
     Plugin_Analysis = reinterpret_cast<Plugin_Canalysis*>(g_pluginManager.GetPlugin("IMAGE", "ANALYSIS"));
-    if (Plugin_Analysis) {
+    if (Plugin_Analysis)
+    {
         testpassed = Plugin_Analysis->TC_SSIM(fsource, fdest, (char*)m_analysisFile.c_str(), &g_pluginManager, &ProgressCallback);
 
         delete Plugin_Analysis;
         Plugin_Analysis = NULL;
         return testpassed;
-    } else {
+    }
+    else
+    {
         PrintInfo("Plugin Error: image analysis is not loaded (Ouf of Memory)\n");
         return -1;
     }
@@ -160,11 +179,14 @@ int C_AnalysisData::GenerateSSIMAnalysis(const char *fsource, const char *fdest)
     return -1;
 }
 
-C_SSIM_Analysis ::~C_SSIM_Analysis() {
+C_SSIM_Analysis ::~C_SSIM_Analysis()
+{
 }
 
-C_PSNR_MSE_Analysis ::~C_PSNR_MSE_Analysis() {
+C_PSNR_MSE_Analysis ::~C_PSNR_MSE_Analysis()
+{
 }
 
-C_MSE_PSNR_Analysis ::~C_MSE_PSNR_Analysis() {
+C_MSE_PSNR_Analysis ::~C_MSE_PSNR_Analysis()
+{
 }

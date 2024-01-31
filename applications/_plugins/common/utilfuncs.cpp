@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,13 +23,13 @@
 //
 // UtilFuncs.cpp : Source file for utility functions
 //
- 
+
 #include "utilfuncs.h"
 
 #ifndef ASSERT
 #include <assert.h>
 #define ASSERT assert
-#endif // !ASSERT
+#endif  // !ASSERT
 
 #ifdef _WIN32
 // Windows Header Files:
@@ -40,16 +40,17 @@
 #pragma warning(disable : 4201)  //nameless struct/union
 #endif
 
-void SwizzleBytes(void *src, unsigned long numBytes) {
-    unsigned char tmp[8]; // large enough to hold a double
+void SwizzleBytes(void* src, unsigned long numBytes)
+{
+    unsigned char tmp[8];  // large enough to hold a double
     unsigned long max, i;
 
     ASSERT(src);
     if ((numBytes == 0) || (numBytes == 1) || (numBytes > 8))
         return;
 
-    char *pSrc = (char *)src;
-    max = numBytes - 1;
+    char* pSrc = (char*)src;
+    max        = numBytes - 1;
     for (i = 0; i < numBytes; i++)
         tmp[(max - i)] = pSrc[i];
 
@@ -57,30 +58,34 @@ void SwizzleBytes(void *src, unsigned long numBytes) {
         pSrc[i] = tmp[i];
 }
 
-float HalfToFloat(uint16_t h) {
-    union FP32 {
+float HalfToFloat(uint16_t h)
+{
+    union FP32
+    {
         uint32_t u;
-        float f;
-        struct {
+        float    f;
+        struct
+        {
             unsigned Mantissa : 23;
             unsigned Exponent : 8;
             unsigned Sign : 1;
         };
     };
 
-    const FP32 magic = {(254 - 15) << 23};
+    const FP32 magic      = {(254 - 15) << 23};
     const FP32 was_infnan = {(127 + 16) << 23};
 
     FP32 o;
-    o.u = (h & 0x7fff) << 13; // exponent/mantissa bits
-    o.f *= magic.f;           // exponent adjust
-    if (o.f >= was_infnan.f)  // check Inf/NaN
+    o.u = (h & 0x7fff) << 13;  // exponent/mantissa bits
+    o.f *= magic.f;            // exponent adjust
+    if (o.f >= was_infnan.f)   // check Inf/NaN
         o.u |= 255 << 23;
-    o.u |= (h & 0x8000) << 16; // sign bit
+    o.u |= (h & 0x8000) << 16;  // sign bit
     return o.f;
 }
 
-void getFileNameExt(const char *FilePathName, char *fnameExt, int maxbuffsize) {
+void getFileNameExt(const char* FilePathName, char* fnameExt, int maxbuffsize)
+{
 #ifdef _WIN32
     char drive[_MAX_DRIVE];
     char dir[_MAX_DIR];
@@ -96,9 +101,10 @@ void getFileNameExt(const char *FilePathName, char *fnameExt, int maxbuffsize) {
 
 #ifdef _WIN32
 
-typedef struct {
-    TCHAR *pszName;
-    HWND hWnd;
+typedef struct
+{
+    TCHAR* pszName;
+    HWND   hWnd;
 } FTLWData;
 
 #define MAX_WINDOW_TEXT 256
@@ -135,24 +141,29 @@ typedef struct {
 //    return ftlwData.hWnd;
 //}
 
-
-bool writeObjFileState(std::string filename, std::string state) {
+bool writeObjFileState(std::string filename, std::string state)
+{
     std::ofstream file;
-    try {
+    try
+    {
         file.open(filename, std::ios::app);
         file << state << std::endl;
         file.close();
-    } catch (...) {
+    }
+    catch (...)
+    {
         return false;
     }
 
     return true;
 }
 
-std::string readObjFileState(std::string filename) {
+std::string readObjFileState(std::string filename)
+{
     std::ifstream objfile(filename, std::ios::in);
 
-    if (objfile) {
+    if (objfile)
+    {
         //get file size
         objfile.seekg(0, objfile.end);
         std::streamoff length = objfile.tellg();
@@ -162,18 +173,22 @@ std::string readObjFileState(std::string filename) {
         std::string lastLine = "";
         //loop from the end of the file, skip endline and endfile characters
         //last line suppose consist of 14 characters for cmpcopy of obj
-        for (int i = (int)length - 2; i > 0; i -= (int)CMP_STATENUM) {
+        for (int i = (int)length - 2; i > 0; i -= (int)CMP_STATENUM)
+        {
             objfile.seekg(i);
             //read last line
             std::getline(objfile, lastLine);
-            if (lastLine == CMP_COPY) {
+            if (lastLine == CMP_COPY)
+            {
                 return CMP_COPY;
             }
-            if (lastLine == CMP_PROCESSED) {
+            if (lastLine == CMP_PROCESSED)
+            {
                 return CMP_PROCESSED;
             }
             // break out of the loop if last line is passed (14 characters + 2 (EOF and EOL))
-            if (i < length - CMP_STATENUM - 2) {
+            if (i < length - CMP_STATENUM - 2)
+            {
                 return CMP_ORIGINAL;
             }
         }
@@ -185,50 +200,58 @@ std::string readObjFileState(std::string filename) {
 #endif
 
 #ifdef __AFX_H__
-CString GetDirectory(const CString &strPath) {
+CString GetDirectory(const CString& strPath)
+{
     int nIndex = strPath.ReverseFind('\\');
 
-    if (nIndex <= 0) // No extension
+    if (nIndex <= 0)  // No extension
         return CString(_T(""));
-    else {
+    else
+    {
         CString strDirectory(strPath.Left(nIndex + 1));
         return strDirectory;
     }
 }
 
-CString GetFilename(const CString &strPath) {
+CString GetFilename(const CString& strPath)
+{
     int nIndex = strPath.ReverseFind('\\');
 
-    if (nIndex == -1) // No extension
+    if (nIndex == -1)  // No extension
         return CString(_T(""));
-    else {
+    else
+    {
         CString strFilename(strPath.Mid(nIndex + 1));
         return strFilename;
     }
 }
 
-CString GetExtension(const CString &strFilename) {
+CString GetExtension(const CString& strFilename)
+{
     int nIndex = strFilename.ReverseFind('.');
 
-    if (nIndex == -1) // No extension
+    if (nIndex == -1)  // No extension
         return CString(_T(""));
-    else {
+    else
+    {
         CString strExt(strFilename.Mid(nIndex + 1));
         strExt.MakeLower();
         return strExt;
     }
 }
 
-CString RemoveExtension(const CString &strFilename) {
+CString RemoveExtension(const CString& strFilename)
+{
     int nIndex = strFilename.ReverseFind('.');
 
-    if (nIndex == -1) // No extension
+    if (nIndex == -1)  // No extension
         return strFilename;
     else
         return strFilename.Left(nIndex);
 }
 
-bool FileExists(const CString &strFilename) {
+bool FileExists(const CString& strFilename)
+{
     if (strFilename.IsEmpty())
         return FALSE;
 
@@ -243,7 +266,8 @@ bool FileExists(const CString &strFilename) {
     return FALSE;
 }
 
-bool DirectoryExists(const CString &strDirectory) {
+bool DirectoryExists(const CString& strDirectory)
+{
     if (strDirectory.IsEmpty())
         return FALSE;
 
@@ -258,54 +282,36 @@ bool DirectoryExists(const CString &strDirectory) {
     return FALSE;
 }
 
-BOOL IsFullPath(const CString &strPath) {
+BOOL IsFullPath(const CString& strPath)
+{
     return DirectoryExists(GetDirectory(strPath));
 }
 
-static const char *f_pszInvalidNames[] = {
-    _T("CON"),
-    _T("PRN"),
-    _T("AUX"),
-    _T("CLOCK$"),
-    _T("NUL"),
-    _T("COM0"),
-    _T("COM1"),
-    _T("COM2"),
-    _T("COM3"),
-    _T("COM4"),
-    _T("COM5"),
-    _T("COM6"),
-    _T("COM7"),
-    _T("COM8"),
-    _T("COM9"),
-    _T("LPT0"),
-    _T("LPT1"),
-    _T("LPT2"),
-    _T("LPT3"),
-    _T("LPT4"),
-    _T("LPT5"),
-    _T("LPT6"),
-    _T("LPT7"),
-    _T("LPT8"),
-    _T("LPT9"),
+static const char* f_pszInvalidNames[] = {
+    _T("CON"),  _T("PRN"),  _T("AUX"),  _T("CLOCK$"), _T("NUL"),  _T("COM0"), _T("COM1"), _T("COM2"), _T("COM3"),
+    _T("COM4"), _T("COM5"), _T("COM6"), _T("COM7"),   _T("COM8"), _T("COM9"), _T("LPT0"), _T("LPT1"), _T("LPT2"),
+    _T("LPT3"), _T("LPT4"), _T("LPT5"), _T("LPT6"),   _T("LPT7"), _T("LPT8"), _T("LPT9"),
 };
 
 static const DWORD f_dwInvalidNames = sizeof(f_pszInvalidNames) / sizeof(f_pszInvalidNames[0]);
 
-BOOL IsValidName(const CString &strName) {
+BOOL IsValidName(const CString& strName)
+{
     for (DWORD i = 0; i < f_dwInvalidNames; i++)
         if (strName.CompareNoCase(f_pszInvalidNames[i]) == 0)
             return FALSE;
     return TRUE;
 }
 
-BOOL IsValidSubPath(CString strPath) {
+BOOL IsValidSubPath(CString strPath)
+{
     int nToken = max(strPath.ReverseFind('\\'), strPath.ReverseFind('/'));
 
     if (nToken == strPath.GetLength())
         return IsValidSubPath(strPath.Left(nToken - 1));
 
-    if (nToken > 0) {
+    if (nToken > 0)
+    {
         if (!IsValidName(strPath.Mid(nToken + 1)))
             return FALSE;
 
@@ -315,7 +321,8 @@ BOOL IsValidSubPath(CString strPath) {
     return TRUE;
 }
 
-BOOL IsValidPath(const CString &strPath) {
+BOOL IsValidPath(const CString& strPath)
+{
     if (!PathSearchAndQualify(strPath, NULL, 0))
         return FALSE;
 
@@ -328,12 +335,14 @@ BOOL IsValidPath(const CString &strPath) {
     return IsValidSubPath(strPath);
 }
 
-BOOL CreateDirectory(const CString &strDirectory) {
+BOOL CreateDirectory(const CString& strDirectory)
+{
     int nIndex = strDirectory.ReverseFind('\\');
     if (nIndex == -1)
         nIndex = strDirectory.ReverseFind('/');
 
-    if (nIndex > 2) {
+    if (nIndex > 2)
+    {
         CString strSubDirectory = strDirectory.Mid(0, nIndex);
         CreateDirectory(strSubDirectory);
     }
@@ -346,12 +355,14 @@ BOOL CreateDirectory(const CString &strDirectory) {
         return FALSE;
 }
 
-const TCHAR *GetCurrentFilter(const TCHAR *szFilter, int nIndex) {
+const TCHAR* GetCurrentFilter(const TCHAR* szFilter, int nIndex)
+{
     ASSERT(szFilter);
     ASSERT(szFilter[0]);
     ASSERT(nIndex >= 0);
 
-    while (szFilter && szFilter[0] && --nIndex) {
+    while (szFilter && szFilter[0] && --nIndex)
+    {
         szFilter += _tcslen(szFilter) + 1;
         szFilter += _tcslen(szFilter) + 1;
     }
@@ -362,23 +373,28 @@ const TCHAR *GetCurrentFilter(const TCHAR *szFilter, int nIndex) {
     return NULL;
 }
 
-BOOL GetFilterListFromOFN(CStringList &strFilterList, const OPENFILENAME &ofn) {
+BOOL GetFilterListFromOFN(CStringList& strFilterList, const OPENFILENAME& ofn)
+{
     ASSERT(ofn.lpstrFilter);
     ASSERT(ofn.lpstrFilter[0]);
     ASSERT(ofn.nFilterIndex > 0);
 
-    if (ofn.lpstrFilter && ofn.lpstrFilter[0] && ofn.nFilterIndex > 0) {
-        TCHAR *pszFilter = const_cast<TCHAR *>(ofn.lpstrFilter);
-        int nIndex = ofn.nFilterIndex;
-        while (pszFilter && pszFilter[0] && --nIndex) {
+    if (ofn.lpstrFilter && ofn.lpstrFilter[0] && ofn.nFilterIndex > 0)
+    {
+        TCHAR* pszFilter = const_cast<TCHAR*>(ofn.lpstrFilter);
+        int    nIndex    = ofn.nFilterIndex;
+        while (pszFilter && pszFilter[0] && --nIndex)
+        {
             pszFilter += _tcslen(pszFilter) + 1;
             pszFilter += _tcslen(pszFilter) + 1;
         }
-        if (pszFilter) {
+        if (pszFilter)
+        {
             pszFilter += _tcslen(pszFilter) + 1;
-            TCHAR *pszToken = NULL;
-            pszFilter = _tcstok_s(pszFilter, _T(";"), &pszToken);
-            while (pszFilter) {
+            TCHAR* pszToken = NULL;
+            pszFilter       = _tcstok_s(pszFilter, _T(";"), &pszToken);
+            while (pszFilter)
+            {
                 strFilterList.AddTail(pszFilter);
                 pszFilter = _tcstok_s(NULL, _T(";"), &pszToken);
             }
@@ -389,7 +405,8 @@ BOOL GetFilterListFromOFN(CStringList &strFilterList, const OPENFILENAME &ofn) {
     return FALSE;
 }
 
-void GetComboText(const CComboBox &combo, CString &rString) {
+void GetComboText(const CComboBox& combo, CString& rString)
+{
     if (combo.GetCurSel() != -1)
         combo.GetLBText(combo.GetCurSel(), rString);
     else
@@ -397,7 +414,8 @@ void GetComboText(const CComboBox &combo, CString &rString) {
 }
 
 #ifdef _WIN32
-int GetUsableTitleWidth(HWND hWnd) {
+int GetUsableTitleWidth(HWND hWnd)
+{
     if (hWnd == NULL)
         return 0;
 
@@ -426,4 +444,4 @@ int GetUsableTitleWidth(HWND hWnd) {
     return nWidth;
 }
 #endif
-#endif // __AFX_H__
+#endif  // __AFX_H__

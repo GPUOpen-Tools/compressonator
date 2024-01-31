@@ -1,11 +1,10 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
 #ifndef _JRT_HEURISTIC_KD_TREE_BUILDER_H_
 #define _JRT_HEURISTIC_KD_TREE_BUILDER_H_
-
 
 #include "jrtkdtreebuilder.h"
 #include "jrtboundingbox.h"
@@ -13,26 +12,24 @@
 
 /// \brief A smart KD tree builder which uses the surface area heuristic
 /// Most of the inspiration for this code comes from Havran's PhD thesis
-class JRTHeuristicKDTreeBuilder : public JRTKDTreeBuilder {
-  public:
-
-
-
-    struct TriangleBB {
+class JRTHeuristicKDTreeBuilder : public JRTKDTreeBuilder
+{
+public:
+    struct TriangleBB
+    {
         const JRTTriangle* pTri;
-        UINT nIndex;
+        UINT               nIndex;
         JRTBoundingBox     box;
 
         // state flag used to classify this BB with respect to current partitioning plane
-        mutable TriPlaneState       planeState;
-
+        mutable TriPlaneState planeState;
     };
 
-
-    struct Split {
-        float value;
+    struct Split
+    {
+        float    value;
         unsigned bMaxSplit : 1;
-        unsigned nTriBB    : 31;
+        unsigned nTriBB : 31;
 
         //bool bMaxSplit; /// Is this a max split (end of BB) or a min split (beginning of BB)
         //const TriangleBB* pTriBB;
@@ -40,17 +37,13 @@ class JRTHeuristicKDTreeBuilder : public JRTKDTreeBuilder {
 
     typedef std::vector<Split*> SplitVec;
 
-
-  protected:
-
-    virtual void BuildTreeImpl(const JRTBoundingBox& rBounds,
+protected:
+    virtual void BuildTreeImpl(const JRTBoundingBox&                  rBounds,
                                const std::vector<const JRTTriangle*>& rTris,
-                               std::vector<JRTKDNode>& rNodesOut,
-                               std::vector<UINT>& rTriIndicesOut);
+                               std::vector<JRTKDNode>&                rNodesOut,
+                               std::vector<UINT>&                     rTriIndicesOut);
 
-
-  private:
-
+private:
     /* void BuildTreeRecursive( UINT nDepth,
                               const JRTBoundingBox& rNodeBounds,
                               const std::vector<TriangleBB*> rBBs[3],
@@ -62,25 +55,27 @@ class JRTHeuristicKDTreeBuilder : public JRTKDTreeBuilder {
 
     void ClassifyBBs(SplitVec& rSplits, std::vector<TriangleBB>& rBBs, UINT eAxis, float fValue);
 
-    void LocateBestSplit(float fNodeBBInvArea,
+    void LocateBestSplit(float                 fNodeBBInvArea,
                          const JRTBoundingBox& rNodeBounds,
-                         const SplitVec splits[3],
-                         UINT eAxis, UINT nTriCount, float& fBestCost, bool& bSplit, UINT& eSplitAxis, float& fSplitValue);
+                         const SplitVec        splits[3],
+                         UINT                  eAxis,
+                         UINT                  nTriCount,
+                         float&                fBestCost,
+                         bool&                 bSplit,
+                         UINT&                 eSplitAxis,
+                         float&                fSplitValue);
 
-
-    void BuildTreeRecursive(UINT nDepth,
-                            const JRTBoundingBox& rNodeBounds,
-                            SplitVec splits[3],
+    void BuildTreeRecursive(UINT                      nDepth,
+                            const JRTBoundingBox&     rNodeBounds,
+                            SplitVec                  splits[3],
                             std::vector<TriangleBB*>& rBBsThisNode,
-                            JRTKDNode* pNode,
-                            std::vector<JRTKDNode>& rNodesOut,
-                            std::vector<UINT>& rTriIndicesOut);
+                            JRTKDNode*                pNode,
+                            std::vector<JRTKDNode>&   rNodesOut,
+                            std::vector<UINT>&        rTriIndicesOut);
 
     JRTBoundingBox m_scene_bounds;
 
-
     std::vector<TriangleBB> m_bbs;
-
 };
 
 #endif

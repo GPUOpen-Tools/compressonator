@@ -1,5 +1,5 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
@@ -16,19 +16,16 @@ class JRTBoundingBox;
 
 /// \brief The tree builder class is responsible for constructing a KD tree from triangle soup.
 /// The base implementation uses a stupid naive splitting heuristic
-class JRTKDTreeBuilder {
-  public:
-
+class JRTKDTreeBuilder
+{
+public:
     JRTKDTree* BuildTree(const std::vector<JRTMesh*>& rMeshes);
 
-  protected:
-
-    virtual void BuildTreeImpl(const JRTBoundingBox& rBounds,
+protected:
+    virtual void BuildTreeImpl(const JRTBoundingBox&                  rBounds,
                                const std::vector<const JRTTriangle*>& rTris,
-                               std::vector<JRTKDNode>& rNodesOut,
-                               std::vector<UINT>& rTriIndicesOut);
-
-
+                               std::vector<JRTKDNode>&                rNodesOut,
+                               std::vector<UINT>&                     rTriIndicesOut);
 };
 
 #endif

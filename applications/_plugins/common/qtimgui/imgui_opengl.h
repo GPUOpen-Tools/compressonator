@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2018-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,38 +20,47 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#ifndef  QTIMGUI_H
-#define  QTIMGUI_H
+#ifndef QTIMGUI_H
+#define QTIMGUI_H
 
 #include "imgui_openglrenderer.h"
 #include "QtWidgets/qwidget.h"
 
-class QImGUI_OpenGLWidgetWindowWrapper : public QImGUI_OpenGLWindowWrapper {
-  public:
-    QImGUI_OpenGLWidgetWindowWrapper(QWidget *w) : w(w) {}
+class QImGUI_OpenGLWidgetWindowWrapper : public QImGUI_OpenGLWindowWrapper
+{
+public:
+    QImGUI_OpenGLWidgetWindowWrapper(QWidget* w)
+        : w(w)
+    {
+    }
 
-    void installEventFilter(QObject *object) override {
+    void installEventFilter(QObject* object) override
+    {
         return w->installEventFilter(object);
     }
 
-    QSize size() const override {
+    QSize size() const override
+    {
         return w->size();
     }
 
-    qreal devicePixelRatio() const override {
+    qreal devicePixelRatio() const override
+    {
         return w->devicePixelRatioF();
     }
 
-    bool isActive() const override {
+    bool isActive() const override
+    {
         return w->isActiveWindow();
     }
 
-    QPoint mapFromGlobal(const QPoint &p) const override {
+    QPoint mapFromGlobal(const QPoint& p) const override
+    {
         return w->mapFromGlobal(p);
     }
 
-  private:
-    QWidget *w;
+private:
+    QWidget* w;
 };
 
 #endif

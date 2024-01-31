@@ -1,4 +1,4 @@
-add_library(CMP_Imgui)
+add_library(extern_imgui)
 
 set(IMGUI_SRCS
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/imgui/imconfig.h
@@ -26,22 +26,22 @@ set(IMGUI_SRCS
 
 )
 
-target_sources(CMP_Imgui PRIVATE
+target_sources(extern_imgui PRIVATE
     ${IMGUI_SRCS}
-    )
+)
 
-target_include_directories(CMP_Imgui
+target_include_directories(extern_imgui
     PRIVATE
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/imgui
     # these are required for the current backends enabled in CMP
     ${GLFW_INCLUDE_DIRS}
     ${Vulkan_INCLUDE_DIRS}
-    )
+)
 
-target_link_libraries(CMP_Imgui PRIVATE ExtGLFW)
+target_link_libraries(extern_imgui PRIVATE ExtGLFW)
 
-set_target_properties(CMP_Imgui PROPERTIES 
-    FOLDER "Libs"
-    )
+set_target_properties(extern_imgui PROPERTIES 
+    FOLDER ${PROJECT_FOLDER_APPS_LIBS}
+)
 
 # =======================================================================

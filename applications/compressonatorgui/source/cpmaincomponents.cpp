@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -310,7 +310,10 @@ cpMainComponents::cpMainComponents(QDockWidget* root_dock, QMainWindow* parent)
     //
     m_genmips = new CGenMips("Generate MIP Maps", NULL);
     m_genmips->hide();
-    connect(m_genmips, SIGNAL(signalGenerateMipmaps(CMP_CFilterParams, const std::vector<QTreeWidgetItem*>&)), this, SLOT(generateMipmaps(CMP_CFilterParams, const std::vector<QTreeWidgetItem*>&)));
+    connect(m_genmips,
+            SIGNAL(signalGenerateMipmaps(CMP_CFilterParams, const std::vector<QTreeWidgetItem*>&)),
+            this,
+            SLOT(generateMipmaps(CMP_CFilterParams, const std::vector<QTreeWidgetItem*>&)));
 
 #ifdef USE_3DCONVERT
     m_modelConvert = new CModelConvert("Convert 3D Models", NULL);
@@ -524,7 +527,7 @@ void cpMainComponents::OnWelcomePageButtonClick(QString& Request, QString& Msg)
 
         if (found)
         {
-            statusBar()->showMessage("Project Location: "+m_projectview->m_curProjectFilePathName);
+            statusBar()->showMessage("Project Location: " + m_projectview->m_curProjectFilePathName);
             setCurrentFile(m_projectview->m_curProjectFilePathName);
         }
     }
@@ -946,7 +949,7 @@ void cpMainComponents::generateMipmaps(CMP_CFilterParams CFilterParams, const st
 {
     if (!m_projectview || images.size() <= 0)
         return;
-    
+
     if (m_CompressStatusDialog)
     {
         m_CompressStatusDialog->onClearText();
@@ -960,8 +963,8 @@ void cpMainComponents::generateMipmaps(CMP_CFilterParams CFilterParams, const st
     {
         CMP_CFilterParams currImageParams = CFilterParams;
 
-        QVariant variant = image->data(TREE_SourceInfo, Qt::UserRole);
-        C_Source_Info* data = variant.value<C_Source_Info*>();
+        QVariant       variant = image->data(TREE_SourceInfo, Qt::UserRole);
+        C_Source_Info* data    = variant.value<C_Source_Info*>();
 
         // initial checks before creating the mipmaps
 
@@ -988,7 +991,7 @@ void cpMainComponents::generateMipmaps(CMP_CFilterParams CFilterParams, const st
         }
 
         // reset mipmaps that might already be present
-        
+
         if (data->m_MipImages->mipset->m_nMipLevels > 1 || data->m_MipImages->QImage_list[0].size() > 1)
         {
             for (int depth = 0; depth < data->m_MipImages->mipset->m_nDepth; ++depth)
@@ -1010,17 +1013,17 @@ void cpMainComponents::generateMipmaps(CMP_CFilterParams CFilterParams, const st
         {
             int minValidSize = data->m_Width;
 
-            int currWidth = data->m_Width;
+            int currWidth  = data->m_Width;
             int currHeight = data->m_Height;
 
             while (currWidth > currImageParams.nMinSize && currHeight > currImageParams.nMinSize)
             {
-                currWidth = currWidth >> 1;
+                currWidth  = currWidth >> 1;
                 currHeight = currHeight >> 1;
 
                 if (currWidth <= 1 || currHeight <= 1 || currWidth % 4 != 0 || currHeight % 4 != 0)
                     break;
-                
+
                 minValidSize = currWidth;
             }
 
@@ -1053,9 +1056,8 @@ void cpMainComponents::generateMipmaps(CMP_CFilterParams CFilterParams, const st
         }
 
         // Check if a plugin is avaliable for MipMap Generation
-        PluginInterface_Filters* g_plugin_MipMapFilter =
-            reinterpret_cast<PluginInterface_Filters*>(g_pluginManager.GetPlugin("FILTERS", "MIPMAP"));
-        
+        PluginInterface_Filters* g_plugin_MipMapFilter = reinterpret_cast<PluginInterface_Filters*>(g_pluginManager.GetPlugin("FILTERS", "MIPMAP"));
+
         CMP_INT result;
         if (g_plugin_MipMapFilter)
         {
@@ -1114,7 +1116,7 @@ void cpMainComponents::onGenerateMipmapsMenuClicked()
 {
     if (!m_projectview)
         return;
-    
+
     std::vector<QTreeWidgetItem*> images = m_projectview->GetAllSelectedImages();
 
     if (images.size() == 0)
@@ -1124,17 +1126,17 @@ void cpMainComponents::onGenerateMipmapsMenuClicked()
         return;
     }
 
-    int mipWidth = 0;
+    int mipWidth  = 0;
     int mipHeight = 0;
 
     if (images.size() == 1)
     {
         // directly use width and height if there is only one image being processed
 
-        QVariant v = images[0]->data(TREE_SourceInfo, Qt::UserRole);
+        QVariant       v    = images[0]->data(TREE_SourceInfo, Qt::UserRole);
         C_Source_Info* data = v.value<C_Source_Info*>();
 
-        mipWidth = data->m_Width;
+        mipWidth  = data->m_Width;
         mipHeight = data->m_Height;
     }
     else if (images.size() > 1)
@@ -1148,11 +1150,11 @@ void cpMainComponents::onGenerateMipmapsMenuClicked()
         // we use the dimensions of that square as our mipmap level 0 size
         for (const auto& image : images)
         {
-            QVariant v = image->data(TREE_SourceInfo, Qt::UserRole);
+            QVariant       v    = image->data(TREE_SourceInfo, Qt::UserRole);
             C_Source_Info* data = v.value<C_Source_Info*>();
 
             // width and height as a power of 2, rounded up to provide the full range
-            int widthPower = (int)ceil(log2(data->m_Width));
+            int widthPower  = (int)ceil(log2(data->m_Width));
             int heightPower = (int)ceil(log2(data->m_Height));
 
             int smallerPower = widthPower < heightPower ? widthPower : heightPower;
@@ -1163,7 +1165,7 @@ void cpMainComponents::onGenerateMipmapsMenuClicked()
 
         int mipSize = (int)pow(2, mipPower);
 
-        mipWidth = mipSize;
+        mipWidth  = mipSize;
         mipHeight = mipSize;
     }
 
@@ -1194,8 +1196,7 @@ void cpMainComponents::convertModels()
             v                  = item->data(TREE_SourceInfo, Qt::UserRole);
             switch (levelType)
             {
-            case TREETYPE_3DMODEL_DATA:
-            {
+            case TREETYPE_3DMODEL_DATA: {
                 C_3DModel_Info* m_data = v.value<C_3DModel_Info*>();
                 if (m_data)
                 {
@@ -1203,8 +1204,7 @@ void cpMainComponents::convertModels()
                 }
             }
             break;
-            case TREETYPE_3DSUBMODEL_DATA:
-            {
+            case TREETYPE_3DSUBMODEL_DATA: {
                 C_3DSubModel_Info* m_data = v.value<C_3DSubModel_Info*>();
                 if (m_data)
                 {
@@ -1748,8 +1748,7 @@ void cpMainComponents::AddImageCompSettings(QTreeWidgetItem* item, C_Destination
 
             switch (levelType)
             {
-            case TREETYPE_Add_destination_setting:
-            {
+            case TREETYPE_Add_destination_setting: {
                 if (data.m_isModelData)
                 {  // Adding a Mesh Buffer Data Node
                     C_Destination_Options* m_data = new C_Destination_Options;
@@ -1770,8 +1769,7 @@ void cpMainComponents::AddImageCompSettings(QTreeWidgetItem* item, C_Destination
                 }
                 break;
             }
-            case TREETYPE_Add_Model_destination_settings:
-            {
+            case TREETYPE_Add_Model_destination_settings: {
                 C_Destination_Options* m_data = new C_Destination_Options;
                 // copythe new data from comsettings dialog data
                 *m_data << data;
@@ -1812,8 +1810,7 @@ void cpMainComponents::AddImageCompSettings(QTreeWidgetItem* item, C_Destination
                 }
                 break;
             }
-            case TREETYPE_IMAGEFILE_DATA:
-            {  //for case no image item selected,only work for imagefile item
+            case TREETYPE_IMAGEFILE_DATA: {  //for case no image item selected,only work for imagefile item
                 if (data.m_isModelData)
                 {
                     return;
@@ -3019,7 +3016,7 @@ void cpMainComponents::onPropertyViewCompressImage(QString* FilePathName)
         QTreeWidgetItem* item = m_projectview->Tree_SetCurrentItem(*FilePathName);
         if (item != NULL)
         {
-            QVariant v = item->data(TREE_SourceInfo, Qt::UserRole);
+            QVariant               v      = item->data(TREE_SourceInfo, Qt::UserRole);
             C_Destination_Options* m_data = v.value<C_Destination_Options*>();
             if (m_data)
             {
@@ -3034,11 +3031,11 @@ void cpMainComponents::onPropertyViewCompressImage(QString* FilePathName)
                     QTreeWidgetItemIterator it(item);
                     while (*it)
                     {
-                        QVariant vc = (*it)->data(TREE_LevelType, Qt::UserRole);
-                        int levelType = vc.toInt();
+                        QVariant vc        = (*it)->data(TREE_LevelType, Qt::UserRole);
+                        int      levelType = vc.toInt();
                         if (levelType == TREETYPE_COMPRESSION_DATA || levelType == TREETYPE_MESH_DATA)
                         {
-                            v = (*it)->data(TREE_SourceInfo, Qt::UserRole);
+                            v                           = (*it)->data(TREE_SourceInfo, Qt::UserRole);
                             C_Destination_Options* data = v.value<C_Destination_Options*>();
                             if (data)
                             {
@@ -3135,7 +3132,6 @@ void cpMainComponents::onCompressionDone()
 #endif
     if (deleteImageAct)
         deleteImageAct->setEnabled(true);
-
 }
 
 // in future revisions: calls to onSourceImage() should be replaced newer code onSetToolBarActions()

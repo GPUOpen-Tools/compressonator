@@ -46,7 +46,7 @@ target_link_libraries(GPUDecode_Vulkan PRIVATE
 target_compile_definitions(GPUDecode_Vulkan PRIVATE BUILD_AS_PLUGIN_DLL=1)
 
 set_target_properties(GPUDecode_Vulkan PROPERTIES 
-    FOLDER "Plugin_Dynamic/GPU_DecodeView"
+    FOLDER ${PROJECT_FOLDER_SDK_PLUGIN_DYNAMIC}
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin/debug/plugins"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/release/plugins"
     )

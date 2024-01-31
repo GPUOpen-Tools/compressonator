@@ -1,6 +1,6 @@
 // AMD SampleDX12 sample code
 //
-// Copyright(c) 2017 Advanced Micro Devices, Inc.All rights reserved.
+// Copyright(c) 2017-2024 Advanced Micro Devices, Inc.All rights reserved.
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -19,10 +19,8 @@
 
 #pragma once
 
-
 #include <d3d12.h>
 
-#include "cmp_gltffeatures.h"
 #include "cmp_uploadheapdx12.h"
 #include "cmp_texturedx12.h"
 #include "cmp_dynamicbufferringdx12.h"
@@ -55,29 +53,37 @@ static const int cNumSwapBufs = 2;
 // This class deals with the GPU side of the sample and there is one instance per GPU.
 //
 
-
-class glTF_DX12RendererEx {
-  public:
-    struct State {
-        float time;
+class glTF_DX12RendererEx
+{
+public:
+    struct State
+    {
+        float      time;
         CMP_Camera camera;
         CMP_Camera light;
-        float depthBias;
-        float exposure;
-        float iblFactor;
-        float spotLightIntensity;
-        float glow;
-        int   toneMapper;
-        bool  bDrawBoundingBoxes;
-        bool  bDrawSkyDome;
-        bool  bGammaTestPattern;
+        float      depthBias;
+        float      exposure;
+        float      iblFactor;
+        float      spotLightIntensity;
+        float      glow;
+        int        toneMapper;
+        bool       bDrawBoundingBoxes;
+        bool       bDrawSkyDome;
+        bool       bGammaTestPattern;
     };
 
-    PluginManager *m_pluginManager;
-    void *m_msghandler;
-    DWORD m_TimeToLoadScene;
+    PluginManager* m_pluginManager;
+    void*          m_msghandler;
+    DWORD          m_TimeToLoadScene;
 
-    void OnCreate(ID3D12Device* pDevice, ID3D12CommandQueue* pDirectQueue, UINT node, UINT nodemask, void *pluginManager, void *msghandler, ImGuiRenderer_DX12 *ImGuiRenderer, QImGUI_WindowWrapper_DX12 *window);
+    void OnCreate(ID3D12Device*              pDevice,
+                  ID3D12CommandQueue*        pDirectQueue,
+                  UINT                       node,
+                  UINT                       nodemask,
+                  void*                      pluginManager,
+                  void*                      msghandler,
+                  ImGuiRenderer_DX12*        ImGuiRenderer,
+                  QImGUI_WindowWrapper_DX12* window);
     void OnDestroy();
 
     void OnCreateWindowSizeDependentResources(ID3D12Device* pDevice, DWORD Width, DWORD Height, UINT node, UINT nodemask);
@@ -86,66 +92,67 @@ class glTF_DX12RendererEx {
     void LoadScene(CMP_GLTFCommon* gltfData, void* pluginManager, void* msghandler);
     void UnloadScene();
 
-    std::vector<TimeStamp> &GetTimingValues() {
+    std::vector<TimeStamp>& GetTimingValues()
+    {
         return m_TimeStamps;
     }
 
-    void OnRender(State *pState, ID3D12Resource* pRenderTarget, D3D12_CPU_DESCRIPTOR_HANDLE *pRenderTargetSRV, ImGuiRenderer_DX12 *ImGuiRenderer, UserInterface *UI);
+    void OnRender(State*                       pState,
+                  ID3D12Resource*              pRenderTarget,
+                  D3D12_CPU_DESCRIPTOR_HANDLE* pRenderTargetSRV,
+                  ImGuiRenderer_DX12*          ImGuiRenderer,
+                  UserInterface*               UI);
 
-  private:
+private:
+    ID3D12Device*       m_pDevice;
+    ID3D12CommandQueue* m_pDirectQueue;
 
-    ID3D12Device                   *m_pDevice;
-    ID3D12CommandQueue             *m_pDirectQueue;
-
-    TextureDX12                      m_pDepthBuffer;
-    DSV                             m_DepthBufferDSV;
+    TextureDX12 m_pDepthBuffer;
+    DSV         m_DepthBufferDSV;
 
     // MSAA RT
-    TextureDX12                     m_pHDRMSAA;
-    CBV_SRV_UAV                     m_HDRSRVMSAA;
-    RTV                             m_HDRRTVMSAA;
+    TextureDX12 m_pHDRMSAA;
+    CBV_SRV_UAV m_HDRSRVMSAA;
+    RTV         m_HDRRTVMSAA;
 
     // Resolved RT
-    TextureDX12                     m_HDR;
-    CBV_SRV_UAV                     m_HDRSRV;
-    RTV                             m_HDRRTV;
+    TextureDX12 m_HDR;
+    CBV_SRV_UAV m_HDRSRV;
+    RTV         m_HDRRTV;
 
-    SkyDome                         m_skyDome;
+    SkyDome m_skyDome;
 
-    ToneMapping                     m_toneMapping;
+    ToneMapping m_toneMapping;
 
 #ifdef USE_BLOOM
     CMP_Bloom m_bloom;
 #endif
 
 #ifdef USE_SHADOWMAPS
-    DSV                             m_ShadowMapDSV;
-    Texture                         m_ShadowMap;
-    D3D12_VIEWPORT                  m_ShadowMapViewPort;
+    DSV            m_ShadowMapDSV;
+    Texture        m_ShadowMap;
+    D3D12_VIEWPORT m_ShadowMapViewPort;
 #endif
 
     // Initialize helper classes
-    ResourceViewHeapsDX12           m_Heaps;
-    UploadHeapDX12                  m_UploadHeap;
-    FenceDX12                       m_FrameFence;
-    DynamicBufferRingDX12           m_ConstantBufferRing;
-    StaticBufferPoolDX12            m_StaticBufferPool;
-    StaticConstantBufferPoolDX12    m_StaticConstantBufferPool;
-    CommandListRingDX12             m_CommandListRing;
-    GPUTimestampsDX12               m_GPUTimer;
+    ResourceViewHeapsDX12        m_Heaps;
+    UploadHeapDX12               m_UploadHeap;
+    FenceDX12                    m_FrameFence;
+    DynamicBufferRingDX12        m_ConstantBufferRing;
+    StaticBufferPoolDX12         m_StaticBufferPool;
+    StaticConstantBufferPoolDX12 m_StaticConstantBufferPool;
+    CommandListRingDX12          m_CommandListRing;
+    GPUTimestampsDX12            m_GPUTimer;
 
+    CMP_GltfPbr*   m_gltfPBR;
+    GltfDepthPass* m_gltfDepth;
+    GltfBBoxPass*  m_gltfBBox;
 
-    CMP_GltfPbr*                    m_gltfPBR;
-    GltfDepthPass                  *m_gltfDepth;
-    GltfBBoxPass                   *m_gltfBBox;
+    DWORD m_Width;
+    DWORD m_Height;
 
-    DWORD                           m_Width;
-    DWORD                           m_Height;
+    D3D12_VIEWPORT m_ViewPort;
+    D3D12_RECT     m_RectScissor;
 
-
-    D3D12_VIEWPORT                  m_ViewPort;
-    D3D12_RECT                      m_RectScissor;
-
-    std::vector<TimeStamp>          m_TimeStamps;
+    std::vector<TimeStamp> m_TimeStamps;
 };
-

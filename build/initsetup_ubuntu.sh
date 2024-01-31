@@ -1,19 +1,15 @@
 #run the following command to install any missing prerequisite to build or run Compressonatorcli
 version=`lsb_release --release | cut -f2`
 
-if [ $version = "20.04" ];then
-    echo "You have Ubuntu 20.04"
+if [ $version = "20.04" ] || [ $version = "18.04" ];then
+    echo "You have Ubuntu $version"
     sudo apt-get install libglew-dev libegl1-mesa-dev
-    # sudo apt-get install qtdeclarative5-dev
-    # openexr v2.2. is needed else have to build from source
-    sudo apt-get install libopenexr-dev
-    sudo apt-get install libilmbase-dev
-    sudo apt-get install libopencv-dev
-elif [ $version = "18.04" ];then
-    echo "You have Ubuntu 18.04"
-    sudo apt-get install libglew-dev libegl1-mesa-dev
+    sudo apt-get install libicu-dev
+    sudo apt-get install qtbase5-dev
     sudo apt-get install qtdeclarative5-dev
-    #openexr v2.2. is needed else have to build from source
+    sudo apt-get install qtwebengine5-dev
+    sudo apt-get install libqt5opengl5-dev
+    # openexr v2.2. is needed else have to build from source
     sudo apt-get install libopenexr-dev
     sudo apt-get install libilmbase-dev
     sudo apt-get install libopencv-dev

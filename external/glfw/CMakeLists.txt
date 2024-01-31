@@ -15,6 +15,8 @@ ExternalProject_Add(extern_glfw
     INSTALL_COMMAND cmake -E echo "Skipping install step."
 )
 
+set_target_properties(extern_glfw PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_EXTERNAL})
+
 add_library(ExtGLFW INTERFACE)
 
 set(GLFW_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/../common/lib/ext/glfw/include)

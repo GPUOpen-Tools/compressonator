@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -35,10 +35,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
 CCodec_Block::CCodec_Block(CodecType codecType)
-    : CCodec(codecType) {
-
+    : CCodec(codecType)
+{
 }
 
-CCodec_Block::~CCodec_Block() {
-
+CCodec_Block::~CCodec_Block()
+{
 }

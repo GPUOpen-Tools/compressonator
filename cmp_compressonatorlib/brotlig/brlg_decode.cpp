@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2022  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2022-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,10 +27,10 @@
 
 #include "brlg_decode.h"
 
-void (*BRLG_DecompressBlock)( void *in, void *out) = NULL;
+void (*BRLG_DecompressBlock)(void* in, void* out) = NULL;
 
-void BRLGBlockDecoder::DecompressBlock(CMP_BYTE out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-                                        CMP_BYTE  in[COMPRESSED_BLOCK_SIZE]) {
+void BRLGBlockDecoder::DecompressBlock(CMP_BYTE out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG], CMP_BYTE in[COMPRESSED_BLOCK_SIZE])
+{
     if (BRLG_DecompressBlock)
         BRLG_DecompressBlock(in, out);
 }

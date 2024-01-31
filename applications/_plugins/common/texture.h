@@ -1,163 +1,173 @@
-//////////////////////////////////////////////////////////////////////////////
+//=====================================================================
+// Copyright 2007-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2002-2006 (c), ATI Technologies Inc. All rights reserved.
 //
-//  File Name:   Texture.h
-//  Description: Definition of Texture structures as used by the ATI Texture
-//  Plugin API
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files(the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions :
 //
-//  Copyright (c) 2007,2008,2016    Advanced Micro Devices, Inc.
-//  Copyright (c) 2002-2006            ATI Technologies Inc.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
-//  Version:    1.5
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 //
-//////////////////////////////////////////////////////////////////////////////
-
-/// \file
-/// Texture.h declares both texture structures used by the Plugin SDK.
+/// \file Texture.h
+/// \version 1.5
+//
+//=====================================================================
 
 #if !defined(_TEXTURE_H_2D555CC1_F4D7_4F46_9ABF_D82418CBFFA6)
 #define _TEXTURE_H_2D555CC1_F4D7_4F46_9ABF_D82418CBFFA6
 
 #if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+#endif  // _MSC_VER > 1000
 
-#include "plugininterface.h"
+#include "compressonator.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 //palette sizes
-#define P1_PALETTE_SIZE 2     ///< The maximum number of palette entries for a 1-bit palette.  
-#define P2_PALETTE_SIZE 4     ///< The maximum number of palette entries for a 2-bit palette.
-#define P4_PALETTE_SIZE 16    ///< The maximum number of palette entries for a 4-bit palette.
-#define P8_PALETTE_SIZE 256   ///< The maximum number of palette entries for a 8-bit palette.
+#define P1_PALETTE_SIZE 2    ///< The maximum number of palette entries for a 1-bit palette.
+#define P2_PALETTE_SIZE 4    ///< The maximum number of palette entries for a 2-bit palette.
+#define P4_PALETTE_SIZE 16   ///< The maximum number of palette entries for a 4-bit palette.
+#define P8_PALETTE_SIZE 256  ///< The maximum number of palette entries for a 8-bit palette.
 
 //FourCC defines
 //Palettized
-#define CMP_FOURCC_P1                      CMP_MAKEFOURCC('P', '1', ' ', ' ') ///< FourCC code for 1-bit palletized textures.
-#define CMP_FOURCC_P2                      CMP_MAKEFOURCC('P', '2', ' ', ' ') ///< FourCC code for 2-bit palletized textures.
-#define CMP_FOURCC_P4                      CMP_MAKEFOURCC('P', '4', ' ', ' ') ///< FourCC code for 4-bit palletized textures.
-#define CMP_FOURCC_P8                      CMP_MAKEFOURCC('P', '8', ' ', ' ') ///< FourCC code for 8-bit palletized textures.
+#define CMP_FOURCC_P1 CMP_MAKEFOURCC('P', '1', ' ', ' ')  ///< FourCC code for 1-bit palletized textures.
+#define CMP_FOURCC_P2 CMP_MAKEFOURCC('P', '2', ' ', ' ')  ///< FourCC code for 2-bit palletized textures.
+#define CMP_FOURCC_P4 CMP_MAKEFOURCC('P', '4', ' ', ' ')  ///< FourCC code for 4-bit palletized textures.
+#define CMP_FOURCC_P8 CMP_MAKEFOURCC('P', '8', ' ', ' ')  ///< FourCC code for 8-bit palletized textures.
 //Grayscale
-#define CMP_FOURCC_G1                      CMP_MAKEFOURCC('G', '1', ' ', ' ') ///< FourCC code for 1-bit gray-scale textures.
-#define CMP_FOURCC_G2                      CMP_MAKEFOURCC('G', '2', ' ', ' ') ///< FourCC code for 2-bit gray-scale textures.
-#define CMP_FOURCC_G4                      CMP_MAKEFOURCC('G', '4', ' ', ' ') ///< FourCC code for 4-bit gray-scale textures.
-#define CMP_FOURCC_G8                      CMP_MAKEFOURCC('G', '8', ' ', ' ') ///< FourCC code for 8-bit gray-scale textures.
-#define CMP_FOURCC_G16                     CMP_MAKEFOURCC('G', '1', '6', ' ') ///< FourCC code for 16-bit gray-scale textures.
+#define CMP_FOURCC_G1 CMP_MAKEFOURCC('G', '1', ' ', ' ')   ///< FourCC code for 1-bit gray-scale textures.
+#define CMP_FOURCC_G2 CMP_MAKEFOURCC('G', '2', ' ', ' ')   ///< FourCC code for 2-bit gray-scale textures.
+#define CMP_FOURCC_G4 CMP_MAKEFOURCC('G', '4', ' ', ' ')   ///< FourCC code for 4-bit gray-scale textures.
+#define CMP_FOURCC_G8 CMP_MAKEFOURCC('G', '8', ' ', ' ')   ///< FourCC code for 8-bit gray-scale textures.
+#define CMP_FOURCC_G16 CMP_MAKEFOURCC('G', '1', '6', ' ')  ///< FourCC code for 16-bit gray-scale textures.
 //Grayscale and alpha channel
-#define CMP_FOURCC_AG1                     CMP_MAKEFOURCC('A', 'G', '1', ' ') ///< FourCC code for 1-bit gray-scale with alpha textures.
-#define CMP_FOURCC_AG2                     CMP_MAKEFOURCC('A', 'G', '2', ' ') ///< FourCC code for 2-bit gray-scale with alpha textures.
-#define CMP_FOURCC_AG4                     CMP_MAKEFOURCC('A', 'G', '4', ' ') ///< FourCC code for 4-bit gray-scale with alpha textures.
-#define CMP_FOURCC_AG8                     CMP_MAKEFOURCC('A', 'G', '8', ' ') ///< FourCC code for 8-bit gray-scale with alpha textures.
+#define CMP_FOURCC_AG1 CMP_MAKEFOURCC('A', 'G', '1', ' ')  ///< FourCC code for 1-bit gray-scale with alpha textures.
+#define CMP_FOURCC_AG2 CMP_MAKEFOURCC('A', 'G', '2', ' ')  ///< FourCC code for 2-bit gray-scale with alpha textures.
+#define CMP_FOURCC_AG4 CMP_MAKEFOURCC('A', 'G', '4', ' ')  ///< FourCC code for 4-bit gray-scale with alpha textures.
+#define CMP_FOURCC_AG8 CMP_MAKEFOURCC('A', 'G', '8', ' ')  ///< FourCC code for 8-bit gray-scale with alpha textures.
 //alpha
-#define CMP_FOURCC_A1                      CMP_MAKEFOURCC('A', '1', ' ', ' ') ///< FourCC code for 1-bit alpha textures.
-#define CMP_FOURCC_A2                      CMP_MAKEFOURCC('A', '2', ' ', ' ') ///< FourCC code for 2-bit alpha textures.
-#define CMP_FOURCC_A4                      CMP_MAKEFOURCC('A', '4', ' ', ' ') ///< FourCC code for 4-bit alpha textures.
-#define CMP_FOURCC_A8                      CMP_MAKEFOURCC('A', '8', ' ', ' ') ///< FourCC code for 8-bit alpha textures.
+#define CMP_FOURCC_A1 CMP_MAKEFOURCC('A', '1', ' ', ' ')  ///< FourCC code for 1-bit alpha textures.
+#define CMP_FOURCC_A2 CMP_MAKEFOURCC('A', '2', ' ', ' ')  ///< FourCC code for 2-bit alpha textures.
+#define CMP_FOURCC_A4 CMP_MAKEFOURCC('A', '4', ' ', ' ')  ///< FourCC code for 4-bit alpha textures.
+#define CMP_FOURCC_A8 CMP_MAKEFOURCC('A', '8', ' ', ' ')  ///< FourCC code for 8-bit alpha textures.
 
-#define CMP_FOURCC_ATI1N                   CMP_MAKEFOURCC('A', 'T', 'I', '1')
-#define CMP_FOURCC_ATI2N                   CMP_MAKEFOURCC('A', 'T', 'I', '2')
-#define CMP_FOURCC_ATI2N_XY                CMP_MAKEFOURCC('A', '2', 'X', 'Y')
-#define CMP_FOURCC_ATI2N_DXT5              CMP_MAKEFOURCC('A', '2', 'D', '5')
-#define CMP_FOURCC_DXT5_xGBR               CMP_MAKEFOURCC('x', 'G', 'B', 'R')
-#define CMP_FOURCC_DXT5_RxBG               CMP_MAKEFOURCC('R', 'x', 'B', 'G')
-#define CMP_FOURCC_DXT5_RBxG               CMP_MAKEFOURCC('R', 'B', 'x', 'G')
-#define CMP_FOURCC_DXT5_xRBG               CMP_MAKEFOURCC('x', 'R', 'B', 'G')
-#define CMP_FOURCC_DXT5_RGxB               CMP_MAKEFOURCC('R', 'G', 'x', 'B')
-#define CMP_FOURCC_DXT5_xGxR               CMP_MAKEFOURCC('x', 'G', 'x', 'R')
-#define CMP_FOURCC_APC1                    CMP_MAKEFOURCC('A', 'P', 'C', '1')
-#define CMP_FOURCC_APC2                    CMP_MAKEFOURCC('A', 'P', 'C', '2')
-#define CMP_FOURCC_APC3                    CMP_MAKEFOURCC('A', 'P', 'C', '3')
-#define CMP_FOURCC_APC4                    CMP_MAKEFOURCC('A', 'P', 'C', '4')
-#define CMP_FOURCC_APC5                    CMP_MAKEFOURCC('A', 'P', 'C', '5')
-#define CMP_FOURCC_APC6                    CMP_MAKEFOURCC('A', 'P', 'C', '6')
+#define CMP_FOURCC_ATI1N CMP_MAKEFOURCC('A', 'T', 'I', '1')
+#define CMP_FOURCC_ATI2N CMP_MAKEFOURCC('A', 'T', 'I', '2')
+#define CMP_FOURCC_ATI2N_XY CMP_MAKEFOURCC('A', '2', 'X', 'Y')
+#define CMP_FOURCC_ATI2N_DXT5 CMP_MAKEFOURCC('A', '2', 'D', '5')
+#define CMP_FOURCC_DXT5_xGBR CMP_MAKEFOURCC('x', 'G', 'B', 'R')
+#define CMP_FOURCC_DXT5_RxBG CMP_MAKEFOURCC('R', 'x', 'B', 'G')
+#define CMP_FOURCC_DXT5_RBxG CMP_MAKEFOURCC('R', 'B', 'x', 'G')
+#define CMP_FOURCC_DXT5_xRBG CMP_MAKEFOURCC('x', 'R', 'B', 'G')
+#define CMP_FOURCC_DXT5_RGxB CMP_MAKEFOURCC('R', 'G', 'x', 'B')
+#define CMP_FOURCC_DXT5_xGxR CMP_MAKEFOURCC('x', 'G', 'x', 'R')
+#define CMP_FOURCC_APC1 CMP_MAKEFOURCC('A', 'P', 'C', '1')
+#define CMP_FOURCC_APC2 CMP_MAKEFOURCC('A', 'P', 'C', '2')
+#define CMP_FOURCC_APC3 CMP_MAKEFOURCC('A', 'P', 'C', '3')
+#define CMP_FOURCC_APC4 CMP_MAKEFOURCC('A', 'P', 'C', '4')
+#define CMP_FOURCC_APC5 CMP_MAKEFOURCC('A', 'P', 'C', '5')
+#define CMP_FOURCC_APC6 CMP_MAKEFOURCC('A', 'P', 'C', '6')
 
-#define CMP_FOURCC_ATC_RGB                CMP_MAKEFOURCC('A', 'T', 'C', ' ')
-#define CMP_FOURCC_ATC_RGBA_EXPLICIT      CMP_MAKEFOURCC('A', 'T', 'C', 'A')
-#define CMP_FOURCC_ATC_RGBA_INTERP        CMP_MAKEFOURCC('A', 'T', 'C', 'I')
+#define CMP_FOURCC_ATC_RGB CMP_MAKEFOURCC('A', 'T', 'C', ' ')
+#define CMP_FOURCC_ATC_RGBA_EXPLICIT CMP_MAKEFOURCC('A', 'T', 'C', 'A')
+#define CMP_FOURCC_ATC_RGBA_INTERP CMP_MAKEFOURCC('A', 'T', 'C', 'I')
 
-#define CMP_FOURCC_ETC_RGB                CMP_MAKEFOURCC('E', 'T', 'C', ' ')
-#define CMP_FOURCC_ETC_RGBA_EXPLICIT      CMP_MAKEFOURCC('E', 'T', 'C', 'A')
-#define CMP_FOURCC_ETC_RGBA_INTERP        CMP_MAKEFOURCC('E', 'T', 'C', 'I')
+#define CMP_FOURCC_ETC_RGB CMP_MAKEFOURCC('E', 'T', 'C', ' ')
+#define CMP_FOURCC_ETC_RGBA_EXPLICIT CMP_MAKEFOURCC('E', 'T', 'C', 'A')
+#define CMP_FOURCC_ETC_RGBA_INTERP CMP_MAKEFOURCC('E', 'T', 'C', 'I')
 
 // Deprecated but still supported for decompression
 
-#define CMP_FOURCC_DXT5_GXRB               CMP_MAKEFOURCC('G', 'X', 'R', 'B')
-#define CMP_FOURCC_DXT5_GRXB               CMP_MAKEFOURCC('G', 'R', 'X', 'B')
-#define CMP_FOURCC_DXT5_RXGB               CMP_MAKEFOURCC('R', 'X', 'G', 'B')
-#define CMP_FOURCC_DXT5_BRGX               CMP_MAKEFOURCC('B', 'R', 'G', 'X')
+#define CMP_FOURCC_DXT5_GXRB CMP_MAKEFOURCC('G', 'X', 'R', 'B')
+#define CMP_FOURCC_DXT5_GRXB CMP_MAKEFOURCC('G', 'R', 'X', 'B')
+#define CMP_FOURCC_DXT5_RXGB CMP_MAKEFOURCC('R', 'X', 'G', 'B')
+#define CMP_FOURCC_DXT5_BRGX CMP_MAKEFOURCC('B', 'R', 'G', 'X')
 
-#define CMP_FOURCC_BC1                     CMP_MAKEFOURCC('B', 'C', '1', ' ')
-#define CMP_FOURCC_BC1U                    CMP_MAKEFOURCC('B', 'C', '1', 'U')
-#define CMP_FOURCC_BC2                     CMP_MAKEFOURCC('B', 'C', '2', ' ')
-#define CMP_FOURCC_BC2U                    CMP_MAKEFOURCC('B', 'C', '2', 'U')
-#define CMP_FOURCC_BC3                     CMP_MAKEFOURCC('B', 'C', '3', ' ')
-#define CMP_FOURCC_BC3U                    CMP_MAKEFOURCC('B', 'C', '3', 'U')
-#define CMP_FOURCC_BC4                     CMP_MAKEFOURCC('B', 'C', '4', ' ')
-#define CMP_FOURCC_BC4U                    CMP_MAKEFOURCC('B', 'C', '4', 'U')
-#define CMP_FOURCC_BC4S                    CMP_MAKEFOURCC('B', 'C', '4', 'S')
-#define CMP_FOURCC_BC4U                    CMP_MAKEFOURCC('B', 'C', '4', 'U')
-#define CMP_FOURCC_BC5                     CMP_MAKEFOURCC('B', 'C', '5', ' ')
-#define CMP_FOURCC_BC5U                    CMP_MAKEFOURCC('B', 'C', '5', 'U')
-#define CMP_FOURCC_BC5S                    CMP_MAKEFOURCC('B', 'C', '5', 'S')
+#define CMP_FOURCC_BC1 CMP_MAKEFOURCC('B', 'C', '1', ' ')
+#define CMP_FOURCC_BC1U CMP_MAKEFOURCC('B', 'C', '1', 'U')
+#define CMP_FOURCC_BC2 CMP_MAKEFOURCC('B', 'C', '2', ' ')
+#define CMP_FOURCC_BC2U CMP_MAKEFOURCC('B', 'C', '2', 'U')
+#define CMP_FOURCC_BC3 CMP_MAKEFOURCC('B', 'C', '3', ' ')
+#define CMP_FOURCC_BC3U CMP_MAKEFOURCC('B', 'C', '3', 'U')
+#define CMP_FOURCC_BC4 CMP_MAKEFOURCC('B', 'C', '4', ' ')
+#define CMP_FOURCC_BC4U CMP_MAKEFOURCC('B', 'C', '4', 'U')
+#define CMP_FOURCC_BC4S CMP_MAKEFOURCC('B', 'C', '4', 'S')
+#define CMP_FOURCC_BC4U CMP_MAKEFOURCC('B', 'C', '4', 'U')
+#define CMP_FOURCC_BC5 CMP_MAKEFOURCC('B', 'C', '5', ' ')
+#define CMP_FOURCC_BC5U CMP_MAKEFOURCC('B', 'C', '5', 'U')
+#define CMP_FOURCC_BC5S CMP_MAKEFOURCC('B', 'C', '5', 'S')
 
-#define CMP_FOURCC_DX10                    CMP_MAKEFOURCC('D', 'X', '1', '0')
+#define CMP_FOURCC_DX10 CMP_MAKEFOURCC('D', 'X', '1', '0')
 
 // Used for custom format or future DDS support (They are not supported by Direct X)
 
-#define CMP_FOURCC_BC6H                    CMP_MAKEFOURCC('B', 'C', '6', 'H')
-#define CMP_FOURCC_BC7                     CMP_MAKEFOURCC('B', 'C', '7', 'x')
+#define CMP_FOURCC_BC6H CMP_MAKEFOURCC('B', 'C', '6', 'H')
+#define CMP_FOURCC_BC7 CMP_MAKEFOURCC('B', 'C', '7', 'x')
 #if (OPTION_BUILD_ASTC == 1)
-#define CMP_FOURCC_ASTC                    CMP_MAKEFOURCC('A', 'S', 'T', 'C')
+#define CMP_FOURCC_ASTC CMP_MAKEFOURCC('A', 'S', 'T', 'C')
 #endif
 #ifdef USE_APC
-#define CMP_FOURCC_APC                     CMP_MAKEFOURCC('A', 'P', 'C', 'x')       // This is not a standard
+#define CMP_FOURCC_APC CMP_MAKEFOURCC('A', 'P', 'C', 'x')  // This is not a standard
 #endif
 #ifdef USE_GTC
-#define CMP_FOURCC_GTC                     CMP_MAKEFOURCC('G', 'T', 'C', 'x')       // This is not a standard
+#define CMP_FOURCC_GTC CMP_MAKEFOURCC('G', 'T', 'C', 'x')  // This is not a standard
 #endif
-#define CMP_FOURCC_BROTLIG                 CMP_MAKEFOURCC('B', 'R', 'L', 'G')       // This is not a standard
+#define CMP_FOURCC_BROTLIG CMP_MAKEFOURCC('B', 'R', 'L', 'G')  // This is not a standard
 #ifdef USE_BASIS
-#define CMP_FOURCC_BASIS                   CMP_MAKEFOURCC('B', 'A', 'S', '1')       // This is not a standard
+#define CMP_FOURCC_BASIS CMP_MAKEFOURCC('B', 'A', 'S', '1')  // This is not a standard
 #endif
 #ifdef USE_APC
-#define CMP_FOURCC_APC                     CMP_MAKEFOURCC('A', 'P', 'C', 'x')       // This is not a standard
+#define CMP_FOURCC_APC CMP_MAKEFOURCC('A', 'P', 'C', 'x')  // This is not a standard
 #endif
-#define CMP_FOURCC_ETC2_RGB                CMP_MAKEFOURCC('E', 'T', 'C', '2')       // GL_COMPRESSED_RGB8_ETC2
-#define CMP_FOURCC_ETC2_SRGB               CMP_MAKEFOURCC('E', 'T', 'C', 'S')       // None standard ref
-#define CMP_FOURCC_ETC2_RGBA               CMP_MAKEFOURCC('E', 'T', 'C', 'A')       // GL_COMPRESSED_RGBA8_ETC2_EAC
-#define CMP_FOURCC_ETC2_RGBA1              CMP_MAKEFOURCC('E', 'T', 'C', 'P')       // GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2
-#define CMP_FOURCC_ETC2_SRGBA              CMP_MAKEFOURCC('E', 'T', 'C', 'T')       // None standard ref
-#define CMP_FOURCC_ETC2_SRGBA1             CMP_MAKEFOURCC('E', 'T', 'C', 'U')       // None standard ref
+#define CMP_FOURCC_ETC2_RGB CMP_MAKEFOURCC('E', 'T', 'C', '2')     // GL_COMPRESSED_RGB8_ETC2
+#define CMP_FOURCC_ETC2_SRGB CMP_MAKEFOURCC('E', 'T', 'C', 'S')    // None standard ref
+#define CMP_FOURCC_ETC2_RGBA CMP_MAKEFOURCC('E', 'T', 'C', 'A')    // GL_COMPRESSED_RGBA8_ETC2_EAC
+#define CMP_FOURCC_ETC2_RGBA1 CMP_MAKEFOURCC('E', 'T', 'C', 'P')   // GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2
+#define CMP_FOURCC_ETC2_SRGBA CMP_MAKEFOURCC('E', 'T', 'C', 'T')   // None standard ref
+#define CMP_FOURCC_ETC2_SRGBA1 CMP_MAKEFOURCC('E', 'T', 'C', 'U')  // None standard ref
 
 /*
  * FOURCC codes for DX compressed-texture pixel formats
  */
-#define CMP_FOURCC_DXT1                    (CMP_MAKEFOURCC('D','X','T','1'))        // aka BC1
-#define CMP_FOURCC_DXT2                    (CMP_MAKEFOURCC('D','X','T','2'))        // aka BC2
-#define CMP_FOURCC_DXT3                    (CMP_MAKEFOURCC('D','X','T','3'))        // aka BC3
-#define CMP_FOURCC_DXT4                    (CMP_MAKEFOURCC('D','X','T','4'))        // aka BC4
-#define CMP_FOURCC_DXT5                    (CMP_MAKEFOURCC('D','X','T','5'))        // aka BC5
+#define CMP_FOURCC_DXT1 (CMP_MAKEFOURCC('D', 'X', 'T', '1'))  // aka BC1
+#define CMP_FOURCC_DXT2 (CMP_MAKEFOURCC('D', 'X', 'T', '2'))  // aka BC2
+#define CMP_FOURCC_DXT3 (CMP_MAKEFOURCC('D', 'X', 'T', '3'))  // aka BC3
+#define CMP_FOURCC_DXT4 (CMP_MAKEFOURCC('D', 'X', 'T', '4'))  // aka BC4
+#define CMP_FOURCC_DXT5 (CMP_MAKEFOURCC('D', 'X', 'T', '5'))  // aka BC5
 
-
-
-typedef enum {
-    MS_Default        = 0,
-    MS_AlphaPremult   = 1,
+typedef enum
+{
+    MS_Default           = 0,
+    MS_AlphaPremult      = 1,
     MS_DisableMipMapping = 2,
 } MS_Flags;
 
-
 /// A set of flags indicating cube-map faces.
-typedef enum {
-    MS_CF_None        = 0x00, ///< No cube-map faces.
-    MS_CF_PositiveX   = 0x01, ///< The positive-X cube-map face.
-    MS_CF_NegativeX   = 0x02, ///< The negative-X cube-map face.
-    MS_CF_PositiveY   = 0x04, ///< The positive-Y cube-map face.
-    MS_CF_NegativeY   = 0x08, ///< The negative-Y cube-map face.
-    MS_CF_PositiveZ   = 0x10, ///< The positive-Z cube-map face.
-    MS_CF_NegativeZ   = 0x20, ///< The negative-Z cube-map face.
-    MS_CF_All         = 0x3f, ///< All the cube-map faces.
+typedef enum
+{
+    MS_CF_None      = 0x00,  ///< No cube-map faces.
+    MS_CF_PositiveX = 0x01,  ///< The positive-X cube-map face.
+    MS_CF_NegativeX = 0x02,  ///< The negative-X cube-map face.
+    MS_CF_PositiveY = 0x04,  ///< The positive-Y cube-map face.
+    MS_CF_NegativeY = 0x08,  ///< The negative-Y cube-map face.
+    MS_CF_PositiveZ = 0x10,  ///< The positive-Z cube-map face.
+    MS_CF_NegativeZ = 0x20,  ///< The negative-Z cube-map face.
+    MS_CF_All       = 0x3f,  ///< All the cube-map faces.
 } MS_CubeFace;
 
 /// A MipLevel is the fundamental unit for containing texture data.
@@ -166,41 +176,45 @@ typedef enum {
 /// \sa \link TC_AppAllocateMipLevelData() TC_AppAllocateMipLevelData \endlink,
 /// \link TC_AppAllocateCompressedMipLevelData() TC_AppAllocateCompressedMipLevelData \endlink,
 /// \link MipSet \endlink
-typedef struct {
-    int             m_nWidth;         ///< Width of the data in pixels.
-    int             m_nHeight;        ///< Height of the data in pixels.
-    CMP_DWORD       m_dwLinearSize;   ///< Size of the data in bytes.
-    union {
-        CMP_BYTE*    m_pbData;         ///< A pointer to the texture data that this MipLevel contains.
-        CMP_WORD*    m_pwData;         ///< A pointer to the texture data that this MipLevel contains.
-        CMP_COLOR*   m_pcData;         ///< A pointer to the texture data that this MipLevel contains.
-        CMP_FLOAT*   m_pfData;         ///< A pointer to the texture data that this MipLevel contains.
-        CMP_HALFSHORT*    m_phfsData;  ///< A pointer to the texture data that this MipLevel contains.
-        CMP_DWORD*   m_pdwData;        ///< A pointer to the texture data that this MipLevel contains.
+typedef struct
+{
+    int       m_nWidth;        ///< Width of the data in pixels.
+    int       m_nHeight;       ///< Height of the data in pixels.
+    CMP_DWORD m_dwLinearSize;  ///< Size of the data in bytes.
+    union
+    {
+        CMP_BYTE*      m_pbData;    ///< A pointer to the texture data that this MipLevel contains.
+        CMP_WORD*      m_pwData;    ///< A pointer to the texture data that this MipLevel contains.
+        CMP_COLOR*     m_pcData;    ///< A pointer to the texture data that this MipLevel contains.
+        CMP_FLOAT*     m_pfData;    ///< A pointer to the texture data that this MipLevel contains.
+        CMP_HALFSHORT* m_phfsData;  ///< A pointer to the texture data that this MipLevel contains.
+        CMP_DWORD*     m_pdwData;   ///< A pointer to the texture data that this MipLevel contains.
     };
 } TXT_MipLevel;
 
-typedef TXT_MipLevel* TXT_MipLevelTable; ///< A pointer to a set of MipLevels.
+typedef TXT_MipLevel* TXT_MipLevelTable;  ///< A pointer to a set of MipLevels.
 
-
-typedef struct cmp_yuv_s {
-    CMP_BYTE **y;
-    CMP_BYTE **u;
-    CMP_BYTE **v;
-    CMP_BYTE **a;
-    CMP_BYTE **m;
+typedef struct cmp_yuv_s
+{
+    CMP_BYTE** y;
+    CMP_BYTE** u;
+    CMP_BYTE** v;
+    CMP_BYTE** a;
+    CMP_BYTE** m;
 } cmp_yuv_t;
 
-typedef struct cmp_rgb_s {
-    CMP_BYTE **r;
-    CMP_BYTE **g;
-    CMP_BYTE **b;
-    CMP_BYTE **a;
-    CMP_BYTE **m;
+typedef struct cmp_rgb_s
+{
+    CMP_BYTE** r;
+    CMP_BYTE** g;
+    CMP_BYTE** b;
+    CMP_BYTE** a;
+    CMP_BYTE** m;
 } cmp_rgb_t;
 
 // Data struct used for casting m_pReservedData ref
-typedef union mapset_data_u {
+typedef union mapset_data_u
+{
     cmp_rgb_t rgb;
     cmp_yuv_t yuv;
 } mapset_data_t;
@@ -253,18 +267,18 @@ CMP_DWORD GetChannelSize(ChannelFormat channelFormat);       //< \internal
 CMP_DWORD GetChannelCount(TextureDataType textureDataType);  //< \internal
 CMP_DWORD GetPixelSize(const MipSet& mipset);                //< \internal
 
-bool GetMipSetPixelColorARGB8888(const MipSet& mipset, int nMipLevel, int nFaceOrSlice, int nXpos, int nYpos, CMP_COLOR& color);        //< \internal
-bool GetMipSetPixelColorARGB2101010(const MipSet& mipset, int nMipLevel, int nFaceOrSlice, int nXpos, int nYpos, CMP_WORD color[4]);    //< \internal
-bool GetMipSetPixelColorARGB16161616(const MipSet& mipset, int nMipLevel, int nFaceOrSlice, int nXpos, int nYpos, CMP_WORD color[4]);   //< \internal
-bool GetMipSetPixelColorARGB32(const MipSet& mipset, int nMipLevel, int nFaceOrSlice, int nXpos, int nYpos, CMP_DWORD color[4]);        //< \internal
-bool GetMipSetPixelColorARGB32F(const MipSet& mipset, int nMipLevel, int nFaceOrSlice, int nXpos, int nYpos, float color[4]);       //< \internal
+bool GetMipSetPixelColorARGB8888(const MipSet& mipset, int nMipLevel, int nFaceOrSlice, int nXpos, int nYpos, CMP_COLOR& color);       //< \internal
+bool GetMipSetPixelColorARGB2101010(const MipSet& mipset, int nMipLevel, int nFaceOrSlice, int nXpos, int nYpos, CMP_WORD color[4]);   //< \internal
+bool GetMipSetPixelColorARGB16161616(const MipSet& mipset, int nMipLevel, int nFaceOrSlice, int nXpos, int nYpos, CMP_WORD color[4]);  //< \internal
+bool GetMipSetPixelColorARGB32(const MipSet& mipset, int nMipLevel, int nFaceOrSlice, int nXpos, int nYpos, CMP_DWORD color[4]);       //< \internal
+bool GetMipSetPixelColorARGB32F(const MipSet& mipset, int nMipLevel, int nFaceOrSlice, int nXpos, int nYpos, float color[4]);          //< \internal
 
 #ifdef __cplusplus
 };
 #endif
 
-#define UNREFERENCED_PARAMETER(P)          (P)
+#define UNREFERENCED_PARAMETER(P) (P)
 
 /////////////////////////////////////////////////////////////////////////////
 
-#endif // !defined(_AMD_TA_TEXTURE_H_INCLUDED_)
+#endif  // !defined(_AMD_TA_TEXTURE_H_INCLUDED_)

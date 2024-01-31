@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -36,7 +36,8 @@
 // Return Val:
 // Date:        4/9/2015
 // ---------------------------------------------------------------------------
-acCustomGraphicsView::acCustomGraphicsView() {
+acCustomGraphicsView::acCustomGraphicsView()
+{
     ID           = 0;
     mousechanged = false;
     //setCacheMode(QGraphicsView::CacheBackground);
@@ -52,12 +53,15 @@ acCustomGraphicsView::acCustomGraphicsView() {
 // Return Val:
 // Date:        4/9/2015
 // ---------------------------------------------------------------------------
-void acCustomGraphicsView::wheelEvent(QWheelEvent* event) {
+void acCustomGraphicsView::wheelEvent(QWheelEvent* event)
+{
     QGraphicsItem* itemPicked = itemAt(event->pos());
     // Found an item under the cursor
-    if (itemPicked) {
+    if (itemPicked)
+    {
         // Is the item our custome image
-        if (itemPicked->type() == (itemPicked->UserType + acCustomGraphicsTypes::IMAGE)) {
+        if (itemPicked->type() == (itemPicked->UserType + acCustomGraphicsTypes::IMAGE))
+        {
             acCustomGraphicsImageItem* item    = (acCustomGraphicsImageItem*)itemPicked;
             QPointF                    pos     = mapToScene(event->pos());
             QPointF                    localPt = item->mapFromScene(pos);
@@ -70,14 +74,16 @@ void acCustomGraphicsView::wheelEvent(QWheelEvent* event) {
             //double courseness = (event->modifiers() == Qt::ShiftModifier) ? 2.5 : 0.15;
             //double scaleFactor;
             // Zoom in
-            if (event->delta() > 0) {
+            if (event->delta() > 0)
+            {
                 emit OnWheelScaleUp(pos);
                 // scaleFactor = item->scale() + courseness;
                 // if (scaleFactor > 100)  scaleFactor = 100;
                 // item->setScale(scaleFactor);
             }
             // Zooming out
-            else {
+            else
+            {
                 //scaleFactor = item->scale() - courseness;
                 //if (scaleFactor <= 0)    scaleFactor = 0.1;
                 //item->setScale(scaleFactor);
@@ -101,14 +107,18 @@ void acCustomGraphicsView::wheelEvent(QWheelEvent* event) {
 // Return Val:
 // Date:        4/9/2015
 // ---------------------------------------------------------------------------
-void acCustomGraphicsView::mousePressEvent(QMouseEvent* event) {
+void acCustomGraphicsView::mousePressEvent(QMouseEvent* event)
+{
     QGraphicsItem* itemPicked = itemAt(event->pos());
     // Found an item under the cursor
-    if (itemPicked) {
+    if (itemPicked)
+    {
         // Is the item our custome image
-        if (itemPicked->type() == (itemPicked->UserType + acCustomGraphicsTypes::IMAGE)) {
+        if (itemPicked->type() == (itemPicked->UserType + acCustomGraphicsTypes::IMAGE))
+        {
             // User pressed the left mouse change its widget to Hand Cursor
-            if (event->button() == Qt::LeftButton) {
+            if (event->button() == Qt::LeftButton)
+            {
                 setCursor(Qt::ClosedHandCursor);
                 mousechanged = true;
                 emit OnMouseHandDown();
@@ -117,8 +127,10 @@ void acCustomGraphicsView::mousePressEvent(QMouseEvent* event) {
 
         // Item is Navigation and user selected Alt+left mouse Click
         // to resize the Image to fit current view window
-        if (itemPicked->type() == (itemPicked->UserType + acCustomGraphicsTypes::NAVIGATION_IMAGE)) {
-            if ((event->button() == Qt::LeftButton) && (event->modifiers() == Qt::ShiftModifier)) {
+        if (itemPicked->type() == (itemPicked->UserType + acCustomGraphicsTypes::NAVIGATION_IMAGE))
+        {
+            if ((event->button() == Qt::LeftButton) && (event->modifiers() == Qt::ShiftModifier))
+            {
                 emit resetImageView();
             }
         }
@@ -135,17 +147,20 @@ void acCustomGraphicsView::mousePressEvent(QMouseEvent* event) {
 // Return Val:
 // Date:        4/9/2015
 // ---------------------------------------------------------------------------
-void acCustomGraphicsView::mouseReleaseEvent(QMouseEvent* event) {
+void acCustomGraphicsView::mouseReleaseEvent(QMouseEvent* event)
+{
     QGraphicsView::mouseReleaseEvent(event);
     // User released the left mouse change restore the cursor widget
-    if (mousechanged) {
+    if (mousechanged)
+    {
         setCursor(Qt::ArrowCursor);
         mousechanged = false;
         emit OnMouseHandD();
     }
 }
 
-void acCustomGraphicsView::resizeEvent(QResizeEvent* event) {
+void acCustomGraphicsView::resizeEvent(QResizeEvent* event)
+{
     emit ResizeEvent(event);
 }
 
@@ -155,7 +170,8 @@ void acCustomGraphicsView::resizeEvent(QResizeEvent* event) {
 static int acCustomGraphicsScene_ID = 0;
 
 acCustomGraphicsScene::acCustomGraphicsScene(QObject* parent)
-    : QGraphicsScene(parent) {
+    : QGraphicsScene(parent)
+{
     acCustomGraphicsScene_ID++;
     ID = acCustomGraphicsScene_ID;
 
@@ -167,11 +183,13 @@ acCustomGraphicsScene::acCustomGraphicsScene(QObject* parent)
     cursorBlockY = 4;
 }
 
-bool acCustomGraphicsScene::isGridEnabled() {
+bool acCustomGraphicsScene::isGridEnabled()
+{
     return (!(m_gridenabled == eCustomGraphicsScene_Grids::None));
 }
 
-void acCustomGraphicsScene::gridEnabled(eCustomGraphicsScene_Grids enable) {
+void acCustomGraphicsScene::gridEnabled(eCustomGraphicsScene_Grids enable)
+{
     m_gridenabled = enable;
 }
 
@@ -182,7 +200,8 @@ void acCustomGraphicsScene::gridEnabled(eCustomGraphicsScene_Grids enable) {
 // Return Val:
 // Date:        4/9/2015
 // ---------------------------------------------------------------------------
-void acCustomGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* event) {
+void acCustomGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
+{
     QGraphicsScene::mousePressEvent(event);
 }
 
@@ -193,7 +212,8 @@ void acCustomGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* event) {
 // Return Val:
 // Date:        4/9/2015
 // ---------------------------------------------------------------------------
-void acCustomGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
+void acCustomGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+{
     QPointF scenePos = event->scenePos();
 
     //qDebug() << "*** acCustomGraphicsScene::mouseMoveEvent **** " << ID << "scenePos: rx:" << scenePos.rx() << "ry: " << scenePos.ry();
@@ -205,7 +225,8 @@ void acCustomGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
 
 #include <QPainter>
 
-void acCustomGraphicsScene::drawBackground(QPainter* painter, const QRectF& rect) {
+void acCustomGraphicsScene::drawBackground(QPainter* painter, const QRectF& rect)
+{
     // color Black
     QColor ColorBlack(0, 0, 0);
 
@@ -213,7 +234,8 @@ void acCustomGraphicsScene::drawBackground(QPainter* painter, const QRectF& rect
     QColor ColorWhite(255, 255, 255);
 
     // Draw a line grid
-    if (m_gridenabled != eCustomGraphicsScene_Grids::None) {
+    if (m_gridenabled != eCustomGraphicsScene_Grids::None)
+    {
         painter->setPen(Qt::white);
 
         // Start point for Horizonal steps
@@ -222,7 +244,8 @@ void acCustomGraphicsScene::drawBackground(QPainter* painter, const QRectF& rect
         //Start point for Virtical steps
         qreal startV = 0;
 
-        switch (m_gridenabled) {
+        switch (m_gridenabled)
+        {
         case eCustomGraphicsScene_Grids::Block: {
             QImage image(":/compressonatorgui/images/gridsolid.png");
             QBrush brush(image);
@@ -237,13 +260,15 @@ void acCustomGraphicsScene::drawBackground(QPainter* painter, const QRectF& rect
             // draw horizontal grid lines
             painter->setPen(QPen(ColorWhite));
 
-            for (qreal y = startH; y < rect.bottom();) {
+            for (qreal y = startH; y < rect.bottom();)
+            {
                 y += m_gridStep;
                 painter->drawLine(rect.left(), y, rect.right(), y);
             }
 
             // draw virtical grid lines
-            for (qreal x = startV; x < rect.right();) {
+            for (qreal x = startV; x < rect.right();)
+            {
                 x += m_gridStep;
                 painter->drawLine(x, rect.top(), x, rect.bottom());
             }
@@ -257,10 +282,12 @@ void acCustomGraphicsScene::drawBackground(QPainter* painter, const QRectF& rect
             // draw points
             painter->setPen(QPen(ColorWhite));
 
-            for (qreal y = startH; y < rect.bottom();) {
+            for (qreal y = startH; y < rect.bottom();)
+            {
                 y += m_gridStep;
                 // draw virtical grid lines
-                for (qreal x = startV; x < rect.right();) {
+                for (qreal x = startV; x < rect.right();)
+                {
                     x += m_gridStep;
                     painter->drawPoint(x, y);
                 }
@@ -274,7 +301,8 @@ void acCustomGraphicsScene::drawBackground(QPainter* painter, const QRectF& rect
             break;
         }
         }
-    } else
+    }
+    else
         painter->fillRect(rect, ColorBlack);
 }
 
@@ -290,14 +318,16 @@ void acCustomGraphicsScene::drawBackground(QPainter* painter, const QRectF& rect
 // ---------------------------------------------------------------------------
 
 acCustomGraphicsImageItem::acCustomGraphicsImageItem(QPixmap& ProcessedPixItem, QImage* OriginalImage)
-    : QGraphicsPixmapItem(ProcessedPixItem) {
+    : QGraphicsPixmapItem(ProcessedPixItem)
+{
     ID               = 0;
     m_ProcessedImage = ProcessedPixItem.toImage();
     m_refImage       = OriginalImage;
     setDefaults();
 }
 
-void acCustomGraphicsImageItem::setDefaults() {
+void acCustomGraphicsImageItem::setDefaults()
+{
     m_alpha = 255;
 
     //====================================================
@@ -328,10 +358,12 @@ void acCustomGraphicsImageItem::setDefaults() {
 // Date(DD/MM/YYYY):   02/11/2015
 // ---------------------------------------------------------------------------
 
-void acCustomGraphicsImageItem::UpdateImage() {
+void acCustomGraphicsImageItem::UpdateImage()
+{
     QImage image;
 
-    if (m_ShowPixelDiff  && m_refImage) {
+    if (m_ShowPixelDiff && m_refImage)
+    {
         // Pixel Diff
         QColor src;
         QColor dest;
@@ -346,8 +378,10 @@ void acCustomGraphicsImageItem::UpdateImage() {
         w = image.width();
         h = image.height();
 
-        for (int x = 0; x < w; x++) {
-            for (int y = 0; y < h; y++) {
+        for (int x = 0; x < w; x++)
+        {
+            for (int y = 0; y < h; y++)
+            {
                 src  = QColor(imageOriginal.pixel(x, y));
                 dest = QColor(imageProcessed.pixel(x, y));
 
@@ -374,27 +408,33 @@ void acCustomGraphicsImageItem::UpdateImage() {
 
                 if (m_ShowPixelDiff)
                     image.setPixel(x, y, diff.rgba());
-
             }
         }
 
         // switch off after first run
         m_ShowPixelDiff = false;
-    } else {
+    }
+    else
+    {
         if (m_UseProcessedImage)
             image = m_ProcessedImage;
         else
             image = acCustomGraphicsImageItem::pixmap().toImage();
 
         // Set channel mapping and Alpha
-        for (int x = 0; x < image.width(); x++) {
-            for (int y = 0; y < image.height(); y++) {
+        for (int x = 0; x < image.width(); x++)
+        {
+            for (int y = 0; y < image.height(); y++)
+            {
                 QColor color = image.pixelColor(x, y);
-                if (m_GrayScale) {
+                if (m_GrayScale)
+                {
                     // Note qGray() actually computes luminosity using the formula (r*11 + g*16 + b*5)/32.
                     int gray = (color.red() + color.green() + color.blue()) / 3;
                     image.setPixel(x, y, qRgb(gray, gray, gray));
-                } else {
+                }
+                else
+                {
                     if (!m_ChannelR)
                         color.setRed(0);
                     if (!m_ChannelG)
@@ -408,7 +448,8 @@ void acCustomGraphicsImageItem::UpdateImage() {
             }
         }
 
-        if (m_InvertImage) {
+        if (m_InvertImage)
+        {
             //Changed image.invertPixels(QImage::InvertRgba) to InvertRgb fix the exr invert issue-workaround for now--only exr falls into this if case
             //the InvertRgba seems not working, bmp and png both call else case InvertRgb, that's why they are working fine
             if (image.hasAlphaChannel())
@@ -417,13 +458,15 @@ void acCustomGraphicsImageItem::UpdateImage() {
                 image.invertPixels(QImage::InvertRgb);
         }
 
-        if (m_Mirrored) {
+        if (m_Mirrored)
+        {
             // Note the flip from what qt defined!
             image = image.mirrored(m_Mirrored_v, m_Mirrored_h);
         }
     }
 
-    if (m_ImageBrightness) {
+    if (m_ImageBrightness)
+    {
         m_ImageBrightness = false;
         if (m_iBrightness > 100)
             m_iBrightness = 100;
@@ -432,12 +475,14 @@ void acCustomGraphicsImageItem::UpdateImage() {
 
         // Set brightness
         int r, g, b;
-        for (int x = 0; x < image.width(); x++) {
-            for (int y = 0; y < image.height(); y++) {
+        for (int x = 0; x < image.width(); x++)
+        {
+            for (int y = 0; y < image.height(); y++)
+            {
                 QColor color = image.pixelColor(x, y);
-                r = (color.red() * m_fContrast) + m_iBrightness;
-                g = (color.green() * m_fContrast) + m_iBrightness;
-                b = (color.blue() * m_fContrast) + m_iBrightness;
+                r            = (color.red() * m_fContrast) + m_iBrightness;
+                g            = (color.green() * m_fContrast) + m_iBrightness;
+                b            = (color.blue() * m_fContrast) + m_iBrightness;
 
                 if (r > 255)
                     r = 255;
@@ -473,12 +518,14 @@ void acCustomGraphicsImageItem::UpdateImage() {
 // Date(M/D):   11/13/2015
 // ---------------------------------------------------------------------------
 
-void acCustomGraphicsImageItem::changeImage(QImage image) {
+void acCustomGraphicsImageItem::changeImage(QImage image)
+{
     m_ProcessedImage = image;
     setPixmap(QPixmap::fromImage(image));
 }
 
-void acCustomGraphicsImageItem::changeImageDiffRef(QImage* imageRef) {
+void acCustomGraphicsImageItem::changeImageDiffRef(QImage* imageRef)
+{
     m_refImage = imageRef;
 }
 
@@ -489,7 +536,8 @@ void acCustomGraphicsImageItem::changeImageDiffRef(QImage* imageRef) {
 // Date:        4/9/2015
 // ---------------------------------------------------------------------------
 acCustomGraphicsNavImageItem::acCustomGraphicsNavImageItem(QPixmap& PixItem)
-    : QGraphicsPixmapItem(PixItem) {
+    : QGraphicsPixmapItem(PixItem)
+{
 }
 
 // ---------------------------------------------------------------------------
@@ -499,19 +547,22 @@ acCustomGraphicsNavImageItem::acCustomGraphicsNavImageItem(QPixmap& PixItem)
 // Date:        4/9/2015
 // ---------------------------------------------------------------------------
 acCustomGraphicsNavWindow::acCustomGraphicsNavWindow(QRectF& Rec, QGraphicsItem* parent)
-    : QGraphicsRectItem(Rec, parent) {
+    : QGraphicsRectItem(Rec, parent)
+{
     ID = 0;
 }
 
 //
 // Central HUB for multiple images to relay mouse positions and events...
 //
-void acVirtualMouseHub::onVirtualMouseMoveEvent(QPointF* scenePos, QPointF* localPos, int onID) {
+void acVirtualMouseHub::onVirtualMouseMoveEvent(QPointF* scenePos, QPointF* localPos, int onID)
+{
     //qDebug() << "onVirtualMouseHUB " << onID << " rx : " << scenePos->rx() << " ry: " << scenePos->ry();
     emit VirtialMousePosition(scenePos, localPos, onID);
 }
 
-void acVirtualMouseHub::onVirtualSignalWheelEvent(QWheelEvent* theEvent, int ID) {
+void acVirtualMouseHub::onVirtualSignalWheelEvent(QWheelEvent* theEvent, int ID)
+{
     Q_UNUSED(theEvent);
     Q_UNUSED(ID);
     //qDebug() << "onVirtualSignalWheelEvent " << ID;

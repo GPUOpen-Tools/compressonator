@@ -1,29 +1,50 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files(the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions :
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
 //=====================================================================
 
 #include "acoglwidget.h"
 #include <math.h>
 #include "qopengltexture.h"
 
-#define GL_COMPRESSED_RED_RGTC1           0x8DBB // Also known as: DXT_BC5, LATC, RGTC, 3Dc, ATI2
-#define GL_COMPRESSED_SIGNED_RED_RGTC1    0x8DBC
-#define GL_COMPRESSED_RG_RGTC2            0x8DBD
-#define GL_COMPRESSED_SIGNED_RG_RGTC2     0x8DBE
+#define GL_COMPRESSED_RED_RGTC1 0x8DBB  // Also known as: DXT_BC5, LATC, RGTC, 3Dc, ATI2
+#define GL_COMPRESSED_SIGNED_RED_RGTC1 0x8DBC
+#define GL_COMPRESSED_RG_RGTC2 0x8DBD
+#define GL_COMPRESSED_SIGNED_RG_RGTC2 0x8DBE
 
-#define GL_COMPRESSED_RGBA_BPTC_UNORM         0x8E8C // Also known as: DXT_BC7
-#define GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM   0x8E8D
-#define GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT   0x8E8E
+#define GL_COMPRESSED_RGBA_BPTC_UNORM 0x8E8C  // Also known as: DXT_BC7
+#define GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM 0x8E8D
+#define GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT 0x8E8E
 #define GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT 0x8E8F
 
 extern PluginManager g_pluginManager;
 
-acOGLWidget::acOGLWidget(QWidget *parent) :
-    QOpenGLWidget(parent),
-    geometries(0) {
+acOGLWidget::acOGLWidget(QWidget* parent)
+    : QOpenGLWidget(parent)
+    , geometries(0)
+{
 }
 
-acOGLWidget::~acOGLWidget() {
+acOGLWidget::~acOGLWidget()
+{
     // Make sure the context is current when deleting the buffers.
     makeCurrent();
     delete geometries;
@@ -76,7 +97,8 @@ bool  acOGLWidget::loadMIPImage(MipSet *m_MipSet, CMIPS *cMips, int MIPLevel = 0
 
 //not in used- the function below not working
 //used qopenglwidget grabframebuffer for offscreen render
-void acOGLWidget::drawOffscreen() {
+void acOGLWidget::drawOffscreen()
+{
     QSurfaceFormat format;
     format.setMajorVersion(4);
     format.setMinorVersion(0);
@@ -93,11 +115,13 @@ void acOGLWidget::drawOffscreen() {
     context.makeCurrent(&window);
 
     //make sure it is current for painting
-    if (!m_isInitialized) {
+    if (!m_isInitialized)
+    {
         initializeGL();
         resizeGL(width(), height());
     }
-    if (!m_fbo || m_fbo->width() != width() || m_fbo->height() != height()) {
+    if (!m_fbo || m_fbo->width() != width() || m_fbo->height() != height())
+    {
         //allocate additional? FBO for rendering or resize it if widget size changed
         delete m_fbo;
         QOpenGLFramebufferObjectFormat format;
@@ -119,14 +143,14 @@ void acOGLWidget::drawOffscreen() {
     doneCurrent();
 }
 
-
-void acOGLWidget::initializeGL() {
+void acOGLWidget::initializeGL()
+{
     initializeOpenGLFunctions();
 
     //check opengl version
     QString version = QString((const char*)glGetString(GL_VERSION));
-    m_major_ver = version.left(version.indexOf(".")).toInt();
-    m_minor_ver = version.mid(version.indexOf(".") + 1, 1).toInt();
+    m_major_ver     = version.left(version.indexOf(".")).toInt();
+    m_minor_ver     = version.mid(version.indexOf(".") + 1, 1).toInt();
 
     qDebug() << m_major_ver << m_minor_ver;
 
@@ -144,11 +168,11 @@ void acOGLWidget::initializeGL() {
     //! [2]
 
     geometries = new GeometryEngine;
-
 }
 
 //! [3]
-void acOGLWidget::initShaders() {
+void acOGLWidget::initShaders()
+{
     // Compile vertex shader
     if (!program.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/AMDCompressGUI/Shaders/vshader.glsl"))
         close();
@@ -168,7 +192,8 @@ void acOGLWidget::initShaders() {
 //! [3]
 
 //! [4]
-void acOGLWidget::initTextures() {
+void acOGLWidget::initTextures()
+{
     glEnable(GL_TEXTURE_2D);
 
     // Typical Texture Generation
@@ -180,7 +205,8 @@ void acOGLWidget::initTextures() {
 }
 
 //! [4]
-void acOGLWidget::paintGL() {
+void acOGLWidget::paintGL()
+{
     // Clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -203,7 +229,8 @@ void acOGLWidget::paintGL() {
 //![4]
 
 //! [5]
-void acOGLWidget::resizeGL(int w, int h) {
+void acOGLWidget::resizeGL(int w, int h)
+{
     w = m_ImageW;
     h = m_ImageH;
     // Calculate aspect ratio

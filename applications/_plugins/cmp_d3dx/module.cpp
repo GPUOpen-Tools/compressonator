@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,36 +22,42 @@
 // THE SOFTWARE.
 //
 
-
 #include <windows.h>
 #include "module.h"
 
-CModule::CModule(void) {
+CModule::CModule(void)
+{
     m_hModule = NULL;
 }
 
-CModule::CModule(LPCTSTR lpModuleName) {
+CModule::CModule(LPCTSTR lpModuleName)
+{
     LoadModule(lpModuleName);
 }
 
-CModule::~CModule(void) {
+CModule::~CModule(void)
+{
     UnloadModule();
 }
 
-bool CModule::LoadModule(LPCTSTR lpModuleName) {
+bool CModule::LoadModule(LPCTSTR lpModuleName)
+{
     UnloadModule();
     return ((m_hModule = LoadLibrary(lpModuleName)) != NULL);
 }
 
-void CModule::UnloadModule() {
-    if(m_hModule) {
+void CModule::UnloadModule()
+{
+    if (m_hModule)
+    {
         FreeLibrary(m_hModule);
         m_hModule = NULL;
     }
 }
 
-FARPROC CModule::GetProcAddress(LPCSTR lpProcName) {
-    if(m_hModule)
+FARPROC CModule::GetProcAddress(LPCSTR lpProcName)
+{
+    if (m_hModule)
         return ::GetProcAddress(m_hModule, lpProcName);
     else
         return NULL;

@@ -20,10 +20,10 @@ set(Q_PROPERTY_PAGES_H
     qtvariantproperty.h
 )
 
-add_library(CMP_GUI_QPropertyPages STATIC ${Q_PROPERTY_PAGES_H} ${Q_PROPERTY_PAGES_SRC})
+add_library(extern_qtpropertybrowser STATIC ${Q_PROPERTY_PAGES_H} ${Q_PROPERTY_PAGES_SRC})
 
-target_link_libraries(CMP_GUI_QPropertyPages Qt5::Widgets)
+target_link_libraries(extern_qtpropertybrowser Qt5::Widgets)
 
-set_target_properties(CMP_GUI_QPropertyPages PROPERTIES
+set_target_properties(extern_qtpropertybrowser PROPERTIES
         AUTOMOC ON
-        FOLDER "Libs")
+        FOLDER ${PROJECT_FOLDER_APPS_EXTERNAL})

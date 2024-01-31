@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2017 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2017-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -35,11 +35,12 @@
 #include "accustomdockwidget.h"
 #include "cpprojectdata.h"
 
-class C3DModelCompare : public acCustomDockWidget {
+class C3DModelCompare : public acCustomDockWidget
+{
     Q_OBJECT
 
-  public:
-    C3DModelCompare(const QString title, QString file1, QString file2, bool isCompressed, QMainWindow *parent);
+public:
+    C3DModelCompare(const QString title, QString file1, QString file2, bool isCompressed, QMainWindow* parent);
     ~C3DModelCompare();
 
     bool createImageViews(bool isCompressedCompare);
@@ -53,52 +54,49 @@ class C3DModelCompare : public acCustomDockWidget {
     void showProgressBusy(QString Message);
     void hideProgressBusy(QString Message);
 
-  private:
-    bool                      m_setHorizontalView;
-    int                       m_manualModelViewFlip;
+private:
+    bool m_setHorizontalView;
+    int  m_manualModelViewFlip;
 
-    QWidget                   *m_newWidget;
-    QWidget                   *m_newInnerWidget;
-    QMainWindow               *m_MainWindow;
-    QVBoxLayout               *m_layout;
-    QGridLayout               *m_innerlayout;
+    QWidget*     m_newWidget;
+    QWidget*     m_newInnerWidget;
+    QMainWindow* m_MainWindow;
+    QVBoxLayout* m_layout;
+    QGridLayout* m_innerlayout;
 
-    QHBoxLayout               *m_innerHlayout;
-    QVBoxLayout               *m_innerVlayout;
+    QHBoxLayout* m_innerHlayout;
+    QVBoxLayout* m_innerVlayout;
 
-    cp3DModelView             *m_imageviewFile1;
+    cp3DModelView* m_imageviewFile1;
 
 #ifdef USE_IMGDIFF
-    cpImageView               *m_imageviewDiff;
-    CMipImages                *m_diffMips;
+    cpImageView* m_imageviewDiff;
+    CMipImages*  m_diffMips;
 #else
-    cp3DModelView             *m_imageviewDiff;
+    cp3DModelView* m_imageviewDiff;
 #endif
 
-    cp3DModelView             *m_imageviewFile2;
+    cp3DModelView* m_imageviewFile2;
 
-    C_AnalysisData             *m_imageAnalysis;
+    C_AnalysisData* m_imageAnalysis;
 
-    const QString              m_title;
-    QString                    m_sourceFile;
-    QString                    m_destFile;
+    const QString m_title;
+    QString       m_sourceFile;
+    QString       m_destFile;
 
-    QMainWindow               *m_parent;
-    QToolBar                  *m_dockToolBar;
-    QAction                   *hlayoutAct;
-    QAction                   *orilayoutAct;
-    QComboBox                  *m_CBManual_renderView;
+    QMainWindow* m_parent;
+    QToolBar*    m_dockToolBar;
+    QAction*     hlayoutAct;
+    QAction*     orilayoutAct;
+    QComboBox*   m_CBManual_renderView;
 
-  public slots:
+public slots:
     void changeLayout();
     void resetLayout();
     void onManual_renderView(int mode);
 
-  Q_SIGNALS:
-    void UpdateData(QObject *data);
-
-
+Q_SIGNALS:
+    void UpdateData(QObject* data);
 };
-
 
 #endif

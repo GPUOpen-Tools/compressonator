@@ -64,67 +64,67 @@ jobs:
         uses: microsoft/setup-msbuild@v1.1
 
       - name: Build Framework Release Win32
-        run: 'msbuild -target:build -property:Configuration=Release -property:Platform=Win32 -m VS2019\cmp_framework.sln'
+        run: 'msbuild -target:build -property:Configuration=Release -property:Platform=Win32 -m build_sdk\cmp_framework.sln'
 
       - name: Build Framework Debug Win32
-        run: 'msbuild -target:build -property:Configuration=Debug -property:Platform=Win32 -m VS2019\cmp_framework.sln'
+        run: 'msbuild -target:build -property:Configuration=Debug -property:Platform=Win32 -m build_sdk\cmp_framework.sln'
 
       - name: Build Framework Release x64
-        run: 'msbuild -target:build -property:Configuration=Release -property:Platform=x64 -m VS2019\cmp_framework.sln'
+        run: 'msbuild -target:build -property:Configuration=Release -property:Platform=x64 -m build_sdk\cmp_framework.sln'
       
       - name: Build Framework Debug x64
-        run: 'msbuild -target:build -property:Configuration=Debug -property:Platform=x64 -m VS2019\cmp_framework.sln'
+        run: 'msbuild -target:build -property:Configuration=Debug -property:Platform=x64 -m build_sdk\cmp_framework.sln'
 
       - name: Build Framework Release_MD Win32
-        run: 'msbuild -target:build -property:Configuration=Release_MD -property:Platform=Win32 -m VS2019\cmp_framework.sln'
+        run: 'msbuild -target:build -property:Configuration=Release_MD -property:Platform=Win32 -m build_sdk\cmp_framework.sln'
 
       - name: Build Framework Debug_MD Win32
-        run: 'msbuild -target:build -property:Configuration=Debug_MD -property:Platform=Win32 -m VS2019\cmp_framework.sln'
+        run: 'msbuild -target:build -property:Configuration=Debug_MD -property:Platform=Win32 -m build_sdk\cmp_framework.sln'
 
       - name: Build Framework Release_MD x64
-        run: 'msbuild -target:build -property:Configuration=Release_MD -property:Platform=x64 -m VS2019\cmp_framework.sln'
+        run: 'msbuild -target:build -property:Configuration=Release_MD -property:Platform=x64 -m build_sdk\cmp_framework.sln'
 
       - name: Build Framework Debug_MD x64
-        run: 'msbuild -target:build -property:Configuration=Debug_MD -property:Platform=x64 -m VS2019\cmp_framework.sln'
+        run: 'msbuild -target:build -property:Configuration=Debug_MD -property:Platform=x64 -m build_sdk\cmp_framework.sln'
 
       - name: Build Framework Release_DLL Win32
-        run: 'msbuild -target:build -property:Configuration=Release_DLL -property:Platform=Win32 -m VS2019\cmp_framework.sln'
+        run: 'msbuild -target:build -property:Configuration=Release_DLL -property:Platform=Win32 -m build_sdk\cmp_framework.sln'
 
       - name: Build Framework Debug_DLL Win32
-        run: 'msbuild -target:build -property:Configuration=Debug_DLL -property:Platform=Win32 -m VS2019\cmp_framework.sln'
+        run: 'msbuild -target:build -property:Configuration=Debug_DLL -property:Platform=Win32 -m build_sdk\cmp_framework.sln'
 
       - name: Build Framework Release_DLL x64
-        run: 'msbuild -target:build -property:Configuration=Release_DLL -property:Platform=x64 -m VS2019\cmp_framework.sln'
+        run: 'msbuild -target:build -property:Configuration=Release_DLL -property:Platform=x64 -m build_sdk\cmp_framework.sln'
 
       - name: Build Framework Debug_DLL x64
-        run: 'msbuild -target:build -property:Configuration=Debug_DLL -property:Platform=x64 -m VS2019\cmp_framework.sln'
+        run: 'msbuild -target:build -property:Configuration=Debug_DLL -property:Platform=x64 -m build_sdk\cmp_framework.sln'
 
       - name: Build Framework Release_MD_DLL Win32
-        run: 'msbuild -target:build -property:Configuration=Release_MD_DLL -property:Platform=Win32 -m VS2019\cmp_framework.sln'
+        run: 'msbuild -target:build -property:Configuration=Release_MD_DLL -property:Platform=Win32 -m build_sdk\cmp_framework.sln'
 
       - name: Build Framework Debug_MD_DLL Win32
-        run: 'msbuild -target:build -property:Configuration=Debug_MD_DLL -property:Platform=Win32 -m VS2019\cmp_framework.sln'
+        run: 'msbuild -target:build -property:Configuration=Debug_MD_DLL -property:Platform=Win32 -m build_sdk\cmp_framework.sln'
 
       - name: Build Framework Release_MD_DLL x64
-        run: 'msbuild -target:build -property:Configuration=Release_MD_DLL -property:Platform=x64 -m VS2019\cmp_framework.sln'
+        run: 'msbuild -target:build -property:Configuration=Release_MD_DLL -property:Platform=x64 -m build_sdk\cmp_framework.sln'
 
       - name: Build Framework Debug_MD_DLL x64
-        run: 'msbuild -target:build -property:Configuration=Debug_MD_DLL -property:Platform=x64 -m VS2019\cmp_framework.sln'
+        run: 'msbuild -target:build -property:Configuration=Debug_MD_DLL -property:Platform=x64 -m build_sdk\cmp_framework.sln'
 
       - name: Create folder structure for build results
         run: |
           mkdir CompressonatorFramework_result\lib\encoders
           mkdir CompressonatorFramework_result\include
-          mkdir CompressonatorFramework_result\lib\VS2019\x64
-          mkdir CompressonatorFramework_result\lib\VS2019\x86
+          mkdir CompressonatorFramework_result\lib\build_sdk\x64
+          mkdir CompressonatorFramework_result\lib\build_sdk\x86
 
       - name: Copy files into build results directory
         shell: bash
         run: |
-          cp build/Release*/x64/{*.lib,*.dll} CompressonatorFramework_result/lib/VS2019/x64/
-          cp build/Release*/Win32/{*.lib,*.dll} CompressonatorFramework_result/lib/VS2019/x86/
-          cp build/Debug*/x64/{*.lib,*.dll} CompressonatorFramework_result/lib/VS2019/x64/
-          cp build/Debug*/Win32/{*.lib,*.dll} CompressonatorFramework_result/lib/VS2019/x86/
+          cp build/Release*/x64/{*.lib,*.dll} CompressonatorFramework_result/lib/build_sdk/x64/
+          cp build/Release*/Win32/{*.lib,*.dll} CompressonatorFramework_result/lib/build_sdk/x86/
+          cp build/Debug*/x64/{*.lib,*.dll} CompressonatorFramework_result/lib/build_sdk/x64/
+          cp build/Debug*/Win32/{*.lib,*.dll} CompressonatorFramework_result/lib/build_sdk/x86/
           cp build/Release/x64/Plugins/Compute/{*.h,*.hlsl,*.cpp} CompressonatorFramework_result/lib/encoders/
           cp cmp_compressonatorlib/compressonator.h CompressonatorFramework_result/include/
 

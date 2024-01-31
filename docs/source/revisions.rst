@@ -3,6 +3,53 @@ Revision History
 
 For the latest documentation, please refer to:  http://compressonator.readthedocs.io/en/latest/
 
+V4.5
+~~~~
+January 2024
+
+**Features**
+
+- Improved Brotli-G Compression for BC1-BC5 textures
+
+    - The newest version of the Brotli-G SDK has been integrated into Compressonator, improving compression ratios for BC1-BC5 textures.
+    - Compressonator CLI will automatically detect supported BCn textures and apply preconditioning during Brotli-G compression.
+    - Preconditioning can be disabled with a new **NoPreconditionBRLG** option
+    - Further configuration of the preconditioning can be made with two new options: **DoSwizzleBRLG** and **DoDeltaEncodeBRLG** which might further reduce the size of the compressed output depending on the input texture
+
+- Brotli-G Packaging
+
+    - A new **PackageBRLG** option has been added that allows users to package multiple files together into a single compressed BRLG file.
+    - Given a folder as input to BRLG compression, this new option will combine all files in the folder and its subfolders together and compress them.
+    - Decompression works just as before, but if decompressing a packaged file the output will be multiple files, one for each that was originally compressed.
+    - The decompression will preserve the original subfolder structure.
+
+- ETC Codec Fixes
+
+    - Fixed the inconsistent behaviour in ETC codecs compared to other codecs, removing the erroneous red and blue channel swapping.
+
+- Mipmap Generation Changes
+
+    - Improvements to how Compressonator CLI handles input textures with existing mipmap levels.
+    - **nomipmap** option will always result in an output without any additional mipmap levels.
+    - **miplevels** option properly controls the number of mipmap levels in the output when the input has mipmap levels.
+
+- Build Improvements
+
+    - Fixed some issues with paths in Linux build script.
+    - Modified the CMake files so that KTX support can be toggled on or off.
+    - Removed dependency on OpenCV that used to persist even when only the SDK was built.
+    - Fixed build error on MacOS related to __local macro definition.
+    - Added missing function definitions to SDK binary builds.
+    - Support for Visual Studio Community was added to the windows build scripts.
+
+- Quality Improvements
+
+    - Fixed a few memory leaks.
+    - Updated documentation to better explain the purpose of the CMP Core's SetSrgbBCn functions.
+    - Added new Compressonator Framework code example showing how to compress external texture data.
+    - Fixed DDS file saving so that the DDSD_MIPMAPCOUNT flag isn't always set. 
+    - Cleaned up duplicate CalcBufferSize functions and added missing formats to the function.
+
 V4.4
 ~~~~
 July 2023

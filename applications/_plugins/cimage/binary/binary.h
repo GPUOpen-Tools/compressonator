@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2022 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2022-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,33 +29,33 @@
 
 #ifdef _WIN32
 // {C75917C1-330B-4AEA-B9A0-B0347DF3968F}
-static const GUID g_GUID = { 0xc75917c1, 0x330b, 0x4aea, { 0xb9, 0xa0, 0xb0, 0x34, 0x7d, 0xf3, 0x96, 0x8f } };
+static const GUID g_GUID = {0xc75917c1, 0x330b, 0x4aea, {0xb9, 0xa0, 0xb0, 0x34, 0x7d, 0xf3, 0x96, 0x8f}};
 
 #else
 static const GUID g_GUID = {0};
 #endif
 
-#define TC_PLUGIN_VERSION_MAJOR    1
-#define TC_PLUGIN_VERSION_MINOR    0
+#define TC_PLUGIN_VERSION_MAJOR 1
+#define TC_PLUGIN_VERSION_MINOR 0
 
-#define IDS_ERROR_FILE_OPEN             1
-#define IDS_ERROR_REGISTER_FILETYPE     2
-#define IDS_ERROR_NOT_BINARY            3
-#define IDS_ERROR_UNSUPPORTED_TYPE      4
-#define IDS_ERROR_OUTOFMEMORY           5
+#define IDS_ERROR_FILE_OPEN 1
+#define IDS_ERROR_REGISTER_FILETYPE 2
+#define IDS_ERROR_NOT_BINARY 3
+#define IDS_ERROR_UNSUPPORTED_TYPE 4
+#define IDS_ERROR_OUTOFMEMORY 5
 
-class Image_Plugin_BINARY : public PluginInterface_Image {
-  public:
+class Image_Plugin_BINARY : public PluginInterface_Image
+{
+public:
     Image_Plugin_BINARY();
-      virtual ~Image_Plugin_BINARY();
+    virtual ~Image_Plugin_BINARY();
 
     int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
-    int TC_PluginSetSharedIO(void *Shared);
+    int TC_PluginSetSharedIO(void* Shared);
     int TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSet);
     int TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSet);
-    int TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *srcTexture);
-    int TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *srcTexture);
-
+    int TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture* srcTexture);
+    int TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture* srcTexture);
 };
 
 extern CMIPS* BINARY_CMips;

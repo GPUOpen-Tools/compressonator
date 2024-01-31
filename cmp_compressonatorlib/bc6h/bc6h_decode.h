@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2014-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2014-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,15 +29,14 @@
 #include "bc6h_library.h"
 #include "bc6h_definitions.h"
 
-class BC6HBlockDecoder {
-  public:
-    BC6HBlockDecoder() {};
-    ~BC6HBlockDecoder() {};
-    void DecompressBlock(float out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],BYTE in[COMPRESSED_BLOCK_SIZE]);
+class BC6HBlockDecoder
+{
+public:
+    BC6HBlockDecoder(){};
+    ~BC6HBlockDecoder(){};
+    void DecompressBlock(float out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG], BYTE in[COMPRESSED_BLOCK_SIZE]);
 
-    bool bc6signed = false; // this is suppiled by user for compression for SIGNED_F16 or UNSIGNED_F16 or obtained during decompression
-
+    bool bc6signed = false;  // this is suppiled by user for compression for SIGNED_F16 or UNSIGNED_F16 or obtained during decompression
 };
-
 
 #endif

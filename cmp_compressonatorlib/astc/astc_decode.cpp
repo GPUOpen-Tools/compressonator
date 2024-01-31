@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -241,25 +241,20 @@
 //     update_imageblock_flags_cpu(blk, xdim, ydim, zdim);
 // }
 
-
-void ASTCBlockDecoder::DecompressBlock( BYTE BlockWidth,
-                                        BYTE BlockHeight,
-                                        BYTE bitness,
-                                        float   out[][4],
-                                        BYTE    in[ASTC_COMPRESSED_BLOCK_SIZE]) {
+void ASTCBlockDecoder::DecompressBlock(BYTE BlockWidth, BYTE BlockHeight, BYTE bitness, float out[][4], BYTE in[ASTC_COMPRESSED_BLOCK_SIZE])
+{
     // Results Buffer
-    astc_codec_image_cpu *img = allocate_image_cpu(bitness, BlockWidth, BlockHeight, 1, 0);
+    astc_codec_image_cpu* img = allocate_image_cpu(bitness, BlockWidth, BlockHeight, 1, 0);
     initialize_image_cpu(img);
 
-    ASTC_Encoder::uint8_t *bp = in;
-    physical_compressed_block_cpu pcb = *(physical_compressed_block_cpu *) bp;
+    ASTC_Encoder::uint8_t*        bp  = in;
+    physical_compressed_block_cpu pcb = *(physical_compressed_block_cpu*)bp;
     symbolic_compressed_block_cpu scb;
 
     physical_to_symbolic_cpu(BlockWidth, BlockHeight, 1, pcb, &scb);
 
-
-    swizzlepattern_cpu swz_decode = { 0, 1, 2, 3 };
-    imageblock_cpu pb;
+    swizzlepattern_cpu swz_decode = {0, 1, 2, 3};
+    imageblock_cpu     pb;
 
     // astc_decode_mode decode_mode1 = DECODE_HDR;
     // decompress_symbolic_block((astc_decode_mode)decode_mode1, BlockWidth, BlockHeight, 1, 0, 0, 0, (symbolic_compressed_block*)&scb, (imageblock_cpu *)&pb);
@@ -267,22 +262,23 @@ void ASTCBlockDecoder::DecompressBlock( BYTE BlockWidth,
     ASTC_Encoder::astc_decode_mode decode_mode = ASTC_Encoder::DECODE_HDR;
     decompress_symbolic_block_cpu(decode_mode, BlockWidth, BlockHeight, 1, 0, 0, 0, &scb, &pb);
 
-
-
     write_imageblock_cpu(img, &pb, BlockWidth, BlockHeight, 1, 0, 0, 0, swz_decode);
 
     // copy results to our output buffer
     int x, y, z;
-    int index=0;
+    int index = 0;
 
     int exsize = img->xsize + 2 * img->padding;
     int eysize = img->ysize + 2 * img->padding;
     int ezsize = (img->zsize == 1) ? 1 : img->zsize + 2 * img->padding;
 
-    if (img->imagedata8) {
+    if (img->imagedata8)
+    {
         for (z = 0; z < ezsize; z++)
-            for (y = 0; y < eysize; y++) {
-                for (x = 0; x < exsize; x++) {
+            for (y = 0; y < eysize; y++)
+            {
+                for (x = 0; x < exsize; x++)
+                {
                     out[index][0] = img->imagedata8[z][y][4 * x];
                     out[index][1] = img->imagedata8[z][y][4 * x + 1];
                     out[index][2] = img->imagedata8[z][y][4 * x + 2];
@@ -290,10 +286,13 @@ void ASTCBlockDecoder::DecompressBlock( BYTE BlockWidth,
                     index++;
                 }
             }
-    } else if (img->imagedata16) {
+    }
+    else if (img->imagedata16)
+    {
         for (z = 0; z < ezsize; z++)
             for (y = 0; y < eysize; y++)
-                for (x = 0; x < exsize; x++) {
+                for (x = 0; x < exsize; x++)
+                {
                     out[index][0] = img->imagedata16[z][y][4 * x];
                     out[index][1] = img->imagedata16[z][y][4 * x + 1];
                     out[index][2] = img->imagedata16[z][y][4 * x + 2];

@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Advanced Micro Devices, Inc. All rights reserved
+// Copyright (c) 2019-2024 Advanced Micro Devices, Inc. All rights reserved
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -27,7 +27,6 @@
 //     CMP_Framework_xx.lib  For static libs xx is either MD, MT or MDd or MTd,
 //                      When using DLL's make sure the CMP_Framework_xx_DLL.dll is in exe path
 
-
 #include <stdio.h>
 #include <string>
 
@@ -36,7 +35,8 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <time.h>
-double timeStampsec() {
+double timeStampsec()
+{
     static LARGE_INTEGER frequency;
     if (frequency.QuadPart == 0)
         QueryPerformanceFrequency(&frequency);
@@ -47,12 +47,13 @@ double timeStampsec() {
 }
 #endif
 
-bool g_bAbortCompression = false;   // If set true current compression will abort
+bool g_bAbortCompression = false;  // If set true current compression will abort
 
 //---------------------------------------------------------------------------
 // Sample loop back code called for each compression block been processed
 //---------------------------------------------------------------------------
-bool CompressionCallback(CMP_FLOAT fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+bool CompressionCallback(CMP_FLOAT fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
+{
     (pUser1);
     (pUser2);
 
@@ -61,10 +62,12 @@ bool CompressionCallback(CMP_FLOAT fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PT
     return g_bAbortCompression;
 }
 
-int main(int argc, char* argv[]) {
-    bool            bAbortCompression = false;
+int main(int argc, char* argv[])
+{
+    bool bAbortCompression = false;
 
-    if (argc < 4) {
+    if (argc < 4)
+    {
         std::printf("Example2.exe SourceFile DestFile Quality\n");
         std::printf("This example shows how to compress a single image\n");
         std::printf("to a compression format using a quality setting with HPC BC7 encoding\n");
@@ -76,21 +79,26 @@ int main(int argc, char* argv[]) {
     }
 
     // please note the params are not checked for errors
-    const char*     pszSourceFile = argv[1];
-    const char*     pszDestFile   = argv[2];
-    CMP_FLOAT fQuality;
+    const char* pszSourceFile = argv[1];
+    const char* pszDestFile   = argv[2];
+    CMP_FLOAT   fQuality;
 
-    try {
+    try
+    {
         fQuality = std::stof(argv[3]);
-        if (fQuality < 0.0f) {
+        if (fQuality < 0.0f)
+        {
             fQuality = 0.0f;
             std::printf("Warning: Quality setting is out of range using 0.0\n");
         }
-        if (fQuality > 1.0f) {
+        if (fQuality > 1.0f)
+        {
             fQuality = 1.0f;
             std::printf("Warning: Quality setting is out of range using 1.0\n");
         }
-    } catch (...) {
+    }
+    catch (...)
+    {
         std::printf("Error: Unable to process quality setting\n");
         return -1;
     }
@@ -109,14 +117,15 @@ int main(int argc, char* argv[]) {
     //
     // CMP_FORMAT      destFormat    = CMP_ParseFormat(argv[4]);
     //===================================================================================
-    CMP_FORMAT      destFormat = CMP_FORMAT_BC7;
+    CMP_FORMAT destFormat = CMP_FORMAT_BC7;
 
     //-------------------------------------------------------------------------------------------------------
     // Load the image, CMP_LoadTexture supports DDS, std_image and all compressonator runtime image plugins
     //-------------------------------------------------------------------------------------------------------
     CMP_MipSet MipSetIn;
     memset(&MipSetIn, 0, sizeof(CMP_MipSet));
-    if (CMP_LoadTexture(pszSourceFile, &MipSetIn) != CMP_OK) {
+    if (CMP_LoadTexture(pszSourceFile, &MipSetIn) != CMP_OK)
+    {
         std::printf("Error: Loading source file!\n");
         return -1;
     }
@@ -128,13 +137,13 @@ int main(int argc, char* argv[]) {
     // Users can select the total number of threads assigned to CPU processor cores using KernalOptions::Threads
     // when using GPU: The texture must have width and height as a multiple of 4
     //-----------------------------------------------------------------------------------------------------------
-    KernelOptions   kernel_options;
+    KernelOptions kernel_options;
     memset(&kernel_options, 0, sizeof(KernelOptions));
 
-    kernel_options.encodeWith   = CMP_HPC;      // Using HPC
-    kernel_options.format       = destFormat;   // Set the format to process
-    kernel_options.fquality     = fQuality;     // Set the quality of the result
-    kernel_options.threads      = 0;            // Auto setting
+    kernel_options.encodeWith = CMP_HPC;     // Using HPC
+    kernel_options.format     = destFormat;  // Set the format to process
+    kernel_options.fquality   = fQuality;    // Set the quality of the result
+    kernel_options.threads    = 0;           // Auto setting
 
     // Setup a results buffer for the processed file,
     // the content will be set after the source texture is processed
@@ -148,13 +157,13 @@ int main(int argc, char* argv[]) {
     double process_start_time = timeStampsec();
 #endif
 
-    CMP_ERROR   cmp_status = CMP_ProcessTexture(&MipSetIn, &MipSetCmp,kernel_options,CompressionCallback);
-    if (cmp_status != CMP_OK) {
+    CMP_ERROR cmp_status = CMP_ProcessTexture(&MipSetIn, &MipSetCmp, kernel_options, CompressionCallback);
+    if (cmp_status != CMP_OK)
+    {
         CMP_FreeMipSet(&MipSetIn);
-        std::printf("Error %d: Processing texture file\n",cmp_status);
+        std::printf("Error %d: Processing texture file\n", cmp_status);
         return -1;
     }
-
 
 #ifdef _WIN32
     double process_end_time = timeStampsec();
@@ -171,9 +180,9 @@ int main(int argc, char* argv[]) {
     CMP_FreeMipSet(&MipSetIn);
     CMP_FreeMipSet(&MipSetCmp);
 
-
-    if (cmp_status != CMP_OK) {
-        std::printf("Error %d: Saving processed file %s!\n",cmp_status,pszDestFile);
+    if (cmp_status != CMP_OK)
+    {
+        std::printf("Error %d: Saving processed file %s!\n", cmp_status, pszDestFile);
         return -1;
     }
 

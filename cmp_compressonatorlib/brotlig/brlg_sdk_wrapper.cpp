@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2022  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2022-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -33,13 +33,35 @@
 #include "BrotligCompute.h"
 #include "common/BrotligConstants.h"
 
-namespace BRLG {
+namespace BRLG
+{
 
-static char* brlg_error_str = nullptr;
+static char* g_errorString = nullptr;
+
+static BROTLIG_DATA_FORMAT GetBrotliGFormat(CMP_FORMAT format)
+{
+    if (format == CMP_FORMAT_BC1)
+        return BROTLIG_DATA_FORMAT_BC1;
+    else if (format == CMP_FORMAT_BC2)
+        return BROTLIG_DATA_FORMAT_BC2;
+    else if (format == CMP_FORMAT_BC3)
+        return BROTLIG_DATA_FORMAT_BC3;
+    else if (format == CMP_FORMAT_BC4 || format == CMP_FORMAT_BC4_S)
+        return BROTLIG_DATA_FORMAT_BC4;
+    else if (format == CMP_FORMAT_BC5 || format == CMP_FORMAT_BC5_S)
+        return BROTLIG_DATA_FORMAT_BC5;
+
+    return BROTLIG_DATA_FORMAT_UNKNOWN;
+}
+
+bool IsPreconditionFormat(CMP_FORMAT format)
+{
+    return GetBrotliGFormat(format) != BROTLIG_DATA_FORMAT_UNKNOWN;
+}
 
 char* GetLastErrorStr()
 {
-    return brlg_error_str;
+    return g_errorString;
 }
 
 uint32_t MaxCompressedSize(uint32_t uncompressedSize)
@@ -47,9 +69,22 @@ uint32_t MaxCompressedSize(uint32_t uncompressedSize)
     return BrotliG::MaxCompressedSize(uncompressedSize);
 }
 
-bool EncodeDataStream(const CMP_BYTE* inputData, uint32_t inputSize, CMP_BYTE* outputData, uint32_t* outputSize, uint32_t pageSize)
+bool EncodeDataStream(const CMP_BYTE* inputData, uint32_t inputSize, CMP_BYTE* outputData, uint32_t* outputSize, uint32_t pageSize, EncodeParameters params)
 {
-    BROTLIG_ERROR result = BrotliG::Encode(inputSize, inputData, outputSize, outputData, nullptr);
+    BrotliG::BrotligDataconditionParams brlgParams = {};
+
+    brlgParams.precondition   = params.precondition;
+    brlgParams.format         = GetBrotliGFormat(params.format);
+    brlgParams.widthInPixels  = params.textureWidth;
+    brlgParams.heightInPixels = params.textureHeight;
+    brlgParams.numMipLevels   = params.numMipmapLevels;
+    brlgParams.swizzle        = params.doSwizzle;
+    brlgParams.delta_encode   = params.doDeltaEncode;
+
+    if (brlgParams.format == BROTLIG_DATA_FORMAT_UNKNOWN)
+        brlgParams.precondition = false;
+
+    BROTLIG_ERROR result = BrotliG::Encode(inputSize, inputData, outputSize, outputData, pageSize, brlgParams, nullptr);
     return result == BROTLIG_ERROR::BROTLIG_OK;
 }
 
@@ -65,13 +100,13 @@ bool DecodeDataStreamGPU(const CMP_BYTE* inputData, uint32_t inputSize, CMP_BYTE
 
     if (!outputSize)
     {
-        brlg_error_str = "Output size is required for BrotliG GPU decoding";
+        g_errorString = "Output size is required for BrotliG GPU decoding";
         return false;
     }
-    
+
     if (!decoder.Setup(BROTLIG_GPUD_DEFAULT_MAX_STREAMS_PER_LAUNCH, BROTLIG_GPUD_DEFAULT_NUM_GROUPS))
     {
-        brlg_error_str = "Failed to initialize Brotli-G GPU Decoder";
+        g_errorString = "Failed to initialize Brotli-G GPU Decoder";
         return false;
     }
 
@@ -79,13 +114,13 @@ bool DecodeDataStreamGPU(const CMP_BYTE* inputData, uint32_t inputSize, CMP_BYTE
 
     if (!decoder.AddInput(inputData, inputSize, *outputSize, outputId))
     {
-        brlg_error_str = "Failed to add input data to Brotli-G GPU Decoder";
+        g_errorString = "Failed to add input data to Brotli-G GPU Decoder";
         return false;
     }
 
     if (!decoder.Execute())
     {
-        brlg_error_str = "Brotli-G GPU Decoder failed during execution";
+        g_errorString = "Brotli-G GPU Decoder failed during execution";
         return false;
     }
 
@@ -95,4 +130,4 @@ bool DecodeDataStreamGPU(const CMP_BYTE* inputData, uint32_t inputSize, CMP_BYTE
     return true;
 }
 
-}
+}  // namespace BRLG

@@ -1,11 +1,10 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
 #ifndef _TOOTLE_STRIPIFIER_H_
 #define _TOOTLE_STRIPIFIER_H_
-
 
 #include <cstddef>
 #include <list>
@@ -23,10 +22,10 @@ typedef DWORD _TIME;
 
 class Face;
 
-typedef unsigned int UINT;
-typedef std::list<Face*> FaceRefList;
-typedef std::list<Face>  FaceList;
-typedef std::vector<Face*> FaceStrip;
+typedef unsigned int           UINT;
+typedef std::list<Face*>       FaceRefList;
+typedef std::list<Face>        FaceList;
+typedef std::vector<Face*>     FaceStrip;
 typedef std::vector<FaceStrip> FaceStrips;
 
 typedef std::vector<UINT> VertList;
@@ -36,66 +35,77 @@ typedef std::vector<UINT> VertList;
 /// \brief Holds vertices, pointers to neighbors, and accessor functions for the face of a mesh
 ///
 //=========================================================================================================
-class Face {
-  public:
+class Face
+{
+public:
     //===================================================================//
     /// \brief Destructor
     //===================================================================//
-    ~Face() {}
+    ~Face()
+    {
+    }
 
     //===================================================================//
     /// \brief returns the index to the first vertex
     //===================================================================//
-    UINT First(void) const {
+    UINT First(void) const
+    {
         return m_vertexIndices[0];
     }
 
     //===================================================================//
     /// \brief returns the index to the second vertex
     //===================================================================//
-    UINT Second(void) const {
+    UINT Second(void) const
+    {
         return m_vertexIndices[1];
     }
 
     //===================================================================//
     /// \brief returns the index to the third vertex
     //===================================================================//
-    UINT Third(void) const {
+    UINT Third(void) const
+    {
         return m_vertexIndices[2];
     }
 
     //===================================================================//
     /// \brief returns the index to the specifed vertex of the face
     //===================================================================//
-    UINT VertexByIndex(UINT uiIndex) const {
+    UINT VertexByIndex(UINT uiIndex) const
+    {
         return m_vertexIndices[uiIndex];
     }
 
     //===================================================================//
     /// \brief retuns the number of neighbors the face has
     //===================================================================//
-    UINT Degree(void) const {
+    UINT Degree(void) const
+    {
         return m_uDegree;
     }
 
     //===================================================================//
     /// \brief returns a pointer to the array of neighbors
     //===================================================================//
-    Face** GetNeighbors(void) {
+    Face** GetNeighbors(void)
+    {
         return m_neighbors;
     }
 
     //===================================================================//
     /// \brief returns whether or not the face was processed
     //===================================================================//
-    bool WasProcessed(void) {
+    bool WasProcessed(void)
+    {
         return m_bProcessed;
     }
 
     //===================================================================//
     /// \brief Sets the face as being processed
     //===================================================================//
-    void Processed(void) {
+    void Processed(void)
+    {
         m_bProcessed = true;
     }
 
@@ -132,18 +142,20 @@ class Face {
     //===================================================================//
     /// \brief Set the ID of the face.
     //===================================================================//
-    void SetID(UINT nID) {
+    void SetID(UINT nID)
+    {
         m_nID = nID;
     }
 
     //===================================================================//
     /// \brief returns the ID of the face.
     //===================================================================//
-    UINT GetID(void) {
+    UINT GetID(void)
+    {
         return m_nID;
     }
 
-  private:
+private:
     friend class FaceManager;
     //===================================================================//
     /// \brief Constructor
@@ -171,9 +183,9 @@ class Face {
 /// \brief
 ///
 //=========================================================================================================
-class FaceManager {
-  public:
-
+class FaceManager
+{
+public:
     //===================================================================//
     /// \brief Constructor and Destructor
     //===================================================================//
@@ -193,14 +205,16 @@ class FaceManager {
     //===================================================================//
     /// \brief returns a VertList containing the efficient index buffer
     //===================================================================//
-    VertList GetStrippedList(void) {
+    VertList GetStrippedList(void)
+    {
         return m_vertList;
     }
 
     //===================================================================//
     /// \brief returns a vector containing the face remapping.
     //===================================================================//
-    std::vector<UINT> GetFaceRemap(void) {
+    std::vector<UINT> GetFaceRemap(void)
+    {
         return m_faceRemap;
     }
 
@@ -209,19 +223,18 @@ class FaceManager {
     //===================================================================//
     void ResizeFaceRemap(UINT nFaces);
 #ifdef _TIMING
-    _TIME m_tMakeNeighbors; /// Time spent in the call to MakeFace
-    _TIME m_tAdjLoop;       /// Time spent in the loop calculating face adjacency (expensive)
-    _TIME m_tAdjacency;     /// Time spent in the call to GetFaceAdjacency
-    _TIME m_tPush;          /// Time spent pushing new faces onto m_faces
-    _TIME m_tStripify;      /// Time spent stripifying the faces
-    _TIME m_tSortBins;      /// Time spent initially sorting m_faces into m_degreeBins
-    _TIME m_tDropNeighbors; /// Time spent removing neighbors from eachother and changing bins (expensive)
-    _TIME m_tAddFaces;      /// Time spent adding faces to the final strip
+    _TIME m_tMakeNeighbors;  /// Time spent in the call to MakeFace
+    _TIME m_tAdjLoop;        /// Time spent in the loop calculating face adjacency (expensive)
+    _TIME m_tAdjacency;      /// Time spent in the call to GetFaceAdjacency
+    _TIME m_tPush;           /// Time spent pushing new faces onto m_faces
+    _TIME m_tStripify;       /// Time spent stripifying the faces
+    _TIME m_tSortBins;       /// Time spent initially sorting m_faces into m_degreeBins
+    _TIME m_tDropNeighbors;  /// Time spent removing neighbors from eachother and changing bins (expensive)
+    _TIME m_tAddFaces;       /// Time spent adding faces to the final strip
 #endif
-  private:
-
+private:
     /// lists of faces with a specified number of neighbors
-    FaceRefList m_degreeBins[4]; // 0, 1, 2, or 3 neighbors
+    FaceRefList m_degreeBins[4];  // 0, 1, 2, or 3 neighbors
 
     /// list of all the faces created by the face manager
     FaceRefList m_faces;
@@ -231,7 +244,7 @@ class FaceManager {
 
     // a list containing the face remapping.
     // Entry i will contain the new position of face i in the reordered indices.
-    UINT m_nFaceRemapCount;                 // used to create ID for adding face into the strips
+    UINT              m_nFaceRemapCount;  // used to create ID for adding face into the strips
     std::vector<UINT> m_faceRemap;
 
     //===================================================================//
@@ -255,15 +268,16 @@ class FaceManager {
 /// \brief
 ///
 //=========================================================================================================
-class Stripifier {
-  public:
+class Stripifier
+{
+public:
     //===================================================================//
     /// \brief Generates an efficient vertex index buffer from the input vertex indices
     //===================================================================//
     static void Process(const unsigned int* pVertexIndicesIN,
-                        const unsigned int uiTriangleCount,
-                        unsigned int* pVertexIndicesOUT,
-                        unsigned int* pnFaceRemapOut);
+                        const unsigned int  uiTriangleCount,
+                        unsigned int*       pVertexIndicesOUT,
+                        unsigned int*       pnFaceRemapOut);
 };
 
-#endif // _TOOTLE_STRIPIFIER_H_
+#endif  // _TOOTLE_STRIPIFIER_H_

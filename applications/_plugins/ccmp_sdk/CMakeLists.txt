@@ -36,7 +36,7 @@ target_link_libraries(Plugin_CCMP_SDK PRIVATE
     Plugin_Common_HPCCompress
 
     CMP_Mesh
-    CMP_MeshOptimizer
+    extern_meshoptimizer
     GPU_Decode
 )
 

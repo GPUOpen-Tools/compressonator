@@ -31,7 +31,7 @@ target_link_libraries(Image_MipMap PRIVATE
 target_compile_definitions(Image_MipMap PRIVATE BUILD_AS_PLUGIN_DLL=1)
 
 set_target_properties(Image_MipMap PROPERTIES 
-    FOLDER "Plugin_Dynamic/ImageFx"
+    FOLDER ${PROJECT_FOLDER_SDK_PLUGIN_DYNAMIC}
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin/debug/plugins"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/release/plugins"
 )

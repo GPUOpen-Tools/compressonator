@@ -56,6 +56,9 @@
     <Filter Include="cmp_core">
       <UniqueIdentifier>{fd926361-980f-4269-ba6e-9c73108d5ba2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Encoders">
+      <UniqueIdentifier>{5ff508ca-ef81-40da-8041-9e0397e28bdb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\CMP_CompressonatorLib\ATC\Codec_ATC.cpp">
@@ -382,6 +385,78 @@
     <ClCompile Include="..\applications\_libs\cmp_math\cmp_math_common.cpp">
       <Filter>cmp_core</Filter>
     </ClCompile>
+    <ClCompile Include="..\cmp_framework\common\cmp_boxfilter.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cmp_framework\compute_base.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\common\cmp_fileio.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\common\cpu_timing.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\common\misc.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\common\pluginmanager.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\common\tc_plugininternal.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\ccmp_sdk\bcn.cpp">
+      <Filter>Source Files\Encoders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\ccmp_sdk\bc7\bc7.cpp">
+      <Filter>Source Files\Encoders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\ccmp_sdk\bc1\bc1.cpp">
+      <Filter>Source Files\Encoders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\ccmp_sdk\bc2\bc2.cpp">
+      <Filter>Source Files\Encoders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\ccmp_sdk\bc3\bc3.cpp">
+      <Filter>Source Files\Encoders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\ccmp_sdk\bc4\bc4.cpp">
+      <Filter>Source Files\Encoders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\ccmp_sdk\bc5\bc5.cpp">
+      <Filter>Source Files\Encoders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\ccmp_sdk\bc6\bc6h.cpp">
+      <Filter>Source Files\Encoders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\cimage\dds\dds_file.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\cimage\dds\dds_helpers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\cimage\dds\dds.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\cimage\dds\dds_dx10.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\ccmp_encode\hpc\ccpu_hpc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\ccmp_encode\hpc\cmp_hpc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\ccmp_encode\hpc\compute_cpu_hpc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\common\codec_common.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\common\texture_utils.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\CMP_CompressonatorLib\ATC\Codec_ATC.h">
@@ -612,9 +687,6 @@
     <ClInclude Include="..\CMP_CompressonatorLib\Compressonator.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\CMP_CompressonatorLib\Common\CommonTypes.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\CMP_Framework\Common\half\eLut.h">
       <Filter>Common\third_party</Filter>
     </ClInclude>
@@ -758,6 +830,105 @@
     </ClInclude>
     <ClInclude Include="..\applications\_libs\cmp_math\cpu_extensions.h">
       <Filter>cmp_core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_framework\common\cmp_boxfilter.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_framework\compute_base.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_libs\cmp_math\cmp_math_common.h">
+      <Filter>cmp_core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\common\cmp_fileio.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\common\cmp_plugininterface.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\common\common_kerneldef.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\common\cpu_timing.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\common\crc32.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\common\misc.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\common\pluginbase.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\common\plugininterface.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\common\pluginmanager.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\common\tc_pluginapi.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\common\tc_plugininternal.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\common\vectypes.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cmp_framework\common\mathmacros.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\ccmp_sdk\bcn.h">
+      <Filter>Source Files\Encoders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\ccmp_sdk\bc7\bc7.h">
+      <Filter>Source Files\Encoders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\ccmp_sdk\bc1\bc1.h">
+      <Filter>Source Files\Encoders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\ccmp_sdk\bc2\bc2.h">
+      <Filter>Source Files\Encoders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\ccmp_sdk\bc3\bc3.h">
+      <Filter>Source Files\Encoders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\ccmp_sdk\bc4\bc4.h">
+      <Filter>Source Files\Encoders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\ccmp_sdk\bc5\bc5.h">
+      <Filter>Source Files\Encoders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\ccmp_sdk\bc6\bc6h.h">
+      <Filter>Source Files\Encoders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\cimage\dds\dds_file.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\cimage\dds\dds_helpers.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\cimage\dds\dds.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\cimage\dds\dds_dx10.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\ccmp_encode\hpc\ccpu_hpc.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\ccmp_encode\hpc\cmp_hpc.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\ccmp_encode\hpc\compute_cpu_hpc.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\common\codec_common.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\common\texture_utils.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

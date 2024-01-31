@@ -1,5 +1,5 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
@@ -16,51 +16,47 @@
 ///         - If all polys on one side, shift split plane
 ///         - Choose axis with lowest spatial median cost (using SAH)
 
-class JRTH2KDTreeBuilder : public JRTKDTreeBuilder {
-  public:
-
-    void BuildTreeImpl(const JRTBoundingBox& rBounds,
+class JRTH2KDTreeBuilder : public JRTKDTreeBuilder
+{
+public:
+    void BuildTreeImpl(const JRTBoundingBox&                  rBounds,
                        const std::vector<const JRTTriangle*>& rTris,
-                       std::vector<JRTKDNode>& rNodesOut,
-                       std::vector<UINT>& rTriIndicesOut);
+                       std::vector<JRTKDNode>&                rNodesOut,
+                       std::vector<UINT>&                     rTriIndicesOut);
 
-  private:
-
-    struct SplitInfo {
-        Axis eAxis;
-        float fHeuristicValue; ///< Estimated cost of this split.  If 0, it means do not split
-        float fPosition;
+private:
+    struct SplitInfo
+    {
+        Axis              eAxis;
+        float             fHeuristicValue;  ///< Estimated cost of this split.  If 0, it means do not split
+        float             fPosition;
         std::vector<UINT> TrisFront;
         std::vector<UINT> TrisBack;
     };
 
-    void MakeLeaf(JRTKDNode* pNode,
-                  const std::vector<UINT>& rTrisThisNode,
-                  std::vector<JRTKDNode>& rNodesOut,
-                  std::vector<UINT>& rTriIndicesOut);
+    void MakeLeaf(JRTKDNode* pNode, const std::vector<UINT>& rTrisThisNode, std::vector<JRTKDNode>& rNodesOut, std::vector<UINT>& rTriIndicesOut);
 
-    void DoBuildTree(UINT nMaxDepth,
-                     JRTKDNode* pNode,
-                     const JRTBoundingBox& rBounds,
+    void DoBuildTree(UINT                                   nMaxDepth,
+                     JRTKDNode*                             pNode,
+                     const JRTBoundingBox&                  rBounds,
                      const std::vector<const JRTTriangle*>& rTris,
-                     std::vector<UINT>& rTrisThisNode,
-                     std::vector<JRTKDNode>& rNodesOut,
-                     std::vector<UINT>& rTriIndicesOut);
+                     std::vector<UINT>&                     rTrisThisNode,
+                     std::vector<JRTKDNode>&                rNodesOut,
+                     std::vector<UINT>&                     rTriIndicesOut);
 
-
-    void FindBestSplit(Axis eAxis,
-                       const JRTBoundingBox& rBounds,
+    void FindBestSplit(Axis                                   eAxis,
+                       const JRTBoundingBox&                  rBounds,
                        const std::vector<const JRTTriangle*>& rTris,
-                       const std::vector<UINT>& rTrisThisNode,
-                       SplitInfo* pSplitOut);
+                       const std::vector<UINT>&               rTrisThisNode,
+                       SplitInfo*                             pSplitOut);
 
-    void ClassifyTris(Axis eAxis,
-                      float fPosition,
-                      std::vector<UINT>& rTrisBack,
-                      std::vector<UINT>& rTrisFront,
-                      UINT& nStraddle,
-                      float& fTriMin,
-                      float& fTriMax,
+    void ClassifyTris(Axis                     eAxis,
+                      float                    fPosition,
+                      std::vector<UINT>&       rTrisBack,
+                      std::vector<UINT>&       rTrisFront,
+                      UINT&                    nStraddle,
+                      float&                   fTriMin,
+                      float&                   fTriMax,
                       const std::vector<UINT>& rTrisThisNode);
 
     float CostFunction(const JRTBoundingBox& rBounds, SplitInfo* pSlitOut);
@@ -68,12 +64,9 @@ class JRTH2KDTreeBuilder : public JRTKDTreeBuilder {
     // triangle bounding boxes,used to speed classification
     // these are arranged by axis so that they'll cache better
     typedef std::pair<float, float> FloatPair;
-    std::vector<FloatPair> m_BBX;
-    std::vector<FloatPair> m_BBY;
-    std::vector<FloatPair> m_BBZ;
+    std::vector<FloatPair>          m_BBX;
+    std::vector<FloatPair>          m_BBY;
+    std::vector<FloatPair>          m_BBZ;
 };
-
-
-
 
 #endif

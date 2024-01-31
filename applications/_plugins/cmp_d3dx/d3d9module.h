@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,8 +29,9 @@
 
 typedef IDirect3D9*(WINAPI FAR* Direct3DCreate9Proc)(UINT SDKVersion);
 
-class CD3D9Module : public CModule {
-  public:
+class CD3D9Module : public CModule
+{
+public:
     CD3D9Module();
     virtual ~CD3D9Module();
 
@@ -39,7 +40,7 @@ class CD3D9Module : public CModule {
 
     IDirect3D9* Direct3DCreate9(UINT SDKVersion);
 
-  protected:
+protected:
     virtual void UnloadModule();
 
     Direct3DCreate9Proc m_pDirect3DCreate9;

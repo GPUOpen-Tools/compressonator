@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -21,7 +21,6 @@
 // THE SOFTWARE.
 //=====================================================================
 
-
 #ifndef _APC_DEFINITIONS_H_
 #define _APC_DEFINITIONS_H_
 
@@ -33,46 +32,45 @@
 #define MAX_GT_THREADS 128
 
 // Size of a compressed block in bytes
-#define COMPRESSED_BLOCK_SIZE   16
+#define COMPRESSED_BLOCK_SIZE 16
 
-#define MAX_SUBSET_SIZE  16
+#define MAX_SUBSET_SIZE 16
 
 #define MAX_DIMENSION_BIG 4
 
 #ifndef min
 #ifdef _WIN32
-#define min(a,b) ((a) < (b) ? (a) : (b))
-#define max(a,b) ((a) > (b) ? (a) : (b))
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#define max(a, b) ((a) > (b) ? (a) : (b))
 #endif
 #endif
 
-typedef struct {
+typedef struct
+{
     // Original image size
-    int     m_srcWidth;
-    int     m_srcHeight;
+    int m_srcWidth;
+    int m_srcHeight;
     // Source block dimensions to compress
-    int     m_xdim;
-    int     m_ydim;
-    int     m_zdim;
+    int m_xdim;
+    int m_ydim;
+    int m_zdim;
     // Compression quality to apply during compression
-    float   m_quality;
+    float m_quality;
 } APC_Encode;
 
-
-typedef union {
-    struct {
+typedef union
+{
+    struct
+    {
         unsigned int blockTypeBit : 1;
     } TwoPartitionMode;
 
-    struct {
+    struct
+    {
         unsigned int blockTypeBit : 1;
     } ThreePartitionMode;
 
     unsigned int dwRawData[4];
 } APC6_BLOCK;
 
-
 #endif
-
-
-

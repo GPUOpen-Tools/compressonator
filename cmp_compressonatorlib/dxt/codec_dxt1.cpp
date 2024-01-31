@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -26,7 +26,7 @@
 //  Description: implementation of the CCodec_DXT1 class
 //
 //////////////////////////////////////////////////////////////////////////////
-#pragma warning(disable:4100)
+#pragma warning(disable : 4100)
 
 #include "common.h"
 #include "compressonator.h"
@@ -36,28 +36,31 @@
 #include "cmp_core.h"
 #endif
 
-
 //////////////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////////////
 
-CCodec_DXT1::CCodec_DXT1() :
-    CCodec_DXTC(CT_DXT1) {
-    m_bDXT1UseAlpha = false;
+CCodec_DXT1::CCodec_DXT1()
+    : CCodec_DXTC(CT_DXT1)
+{
+    m_bDXT1UseAlpha   = false;
     m_nAlphaThreshold = 0;
 }
 
-CCodec_DXT1::~CCodec_DXT1() {
-
+CCodec_DXT1::~CCodec_DXT1()
+{
 }
 
-bool CCodec_DXT1::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue) {
-    if(strcmp(pszParamName, "DXT1UseAlpha") == 0) {
-        m_bDXT1UseAlpha = (std::stoi(sValue) > 0) ? true : false;
+bool CCodec_DXT1::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
+{
+    if (strcmp(pszParamName, "DXT1UseAlpha") == 0)
+    {
+        m_bDXT1UseAlpha           = (std::stoi(sValue) > 0) ? true : false;
         m_BC15Options.m_bUseAlpha = m_bDXT1UseAlpha;
     }
-    else if(strcmp(pszParamName, "AlphaThreshold") == 0) {
-        m_nAlphaThreshold = (CMP_BYTE) (std::stoi(sValue) & 0xFF);
+    else if (strcmp(pszParamName, "AlphaThreshold") == 0)
+    {
+        m_nAlphaThreshold               = (CMP_BYTE)(std::stoi(sValue) & 0xFF);
         m_BC15Options.m_nAlphaThreshold = m_nAlphaThreshold;
     }
     else
@@ -65,13 +68,16 @@ bool CCodec_DXT1::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue) {
     return true;
 }
 
-bool CCodec_DXT1::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue) {
-    if(strcmp(pszParamName, "DXT1UseAlpha") == 0) {
-        m_bDXT1UseAlpha = dwValue ? true : false;
+bool CCodec_DXT1::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue)
+{
+    if (strcmp(pszParamName, "DXT1UseAlpha") == 0)
+    {
+        m_bDXT1UseAlpha           = dwValue ? true : false;
         m_BC15Options.m_bUseAlpha = m_bDXT1UseAlpha;
     }
-    else if(strcmp(pszParamName, "AlphaThreshold") == 0) {
-        m_nAlphaThreshold = (CMP_BYTE) dwValue;
+    else if (strcmp(pszParamName, "AlphaThreshold") == 0)
+    {
+        m_nAlphaThreshold               = (CMP_BYTE)dwValue;
         m_BC15Options.m_nAlphaThreshold = m_nAlphaThreshold;
     }
     else
@@ -79,12 +85,14 @@ bool CCodec_DXT1::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue) 
     return true;
 }
 
-bool CCodec_DXT1::GetParameter(const CMP_CHAR* pszParamName, CMP_DWORD& dwValue) {
-    if(strcmp(pszParamName, "DXT1UseAlpha") == 0) {
+bool CCodec_DXT1::GetParameter(const CMP_CHAR* pszParamName, CMP_DWORD& dwValue)
+{
+    if (strcmp(pszParamName, "DXT1UseAlpha") == 0)
+    {
         dwValue = m_BC15Options.m_bUseAlpha;
-
     }
-    else if(strcmp(pszParamName, "AlphaThreshold") == 0) {
+    else if (strcmp(pszParamName, "AlphaThreshold") == 0)
+    {
         dwValue = m_BC15Options.m_nAlphaThreshold;
     }
     else
@@ -92,17 +100,24 @@ bool CCodec_DXT1::GetParameter(const CMP_CHAR* pszParamName, CMP_DWORD& dwValue)
     return true;
 }
 
-CCodecBuffer* CCodec_DXT1::CreateBuffer(
-    CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-    CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData,CMP_DWORD dwDataSize) const {
-    return CreateCodecBuffer(CBT_4x4Block_4BPP, nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData,dwDataSize);
+CCodecBuffer* CCodec_DXT1::CreateBuffer(CMP_BYTE  nBlockWidth,
+                                        CMP_BYTE  nBlockHeight,
+                                        CMP_BYTE  nBlockDepth,
+                                        CMP_DWORD dwWidth,
+                                        CMP_DWORD dwHeight,
+                                        CMP_DWORD dwPitch,
+                                        CMP_BYTE* pData,
+                                        CMP_DWORD dwDataSize) const
+{
+    return CreateCodecBuffer(CBT_4x4Block_4BPP, nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData, dwDataSize);
 }
 
-CodecError CCodec_DXT1::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_DXT1::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
+{
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
 
-    if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
+    if (bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
         return CE_Unknown;
 
     const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
@@ -111,23 +126,29 @@ CodecError CCodec_DXT1::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
     bool bUseFixed = (!bufferIn.IsFloat() && bufferIn.GetChannelDepth() == 8 && !m_bUseFloat);
 
     float fAlphaThreshold = CONVERT_BYTE_TO_FLOAT(m_nAlphaThreshold);
-    for(CMP_DWORD j = 0; j < dwBlocksY; j++) {
-        for(CMP_DWORD i = 0; i < dwBlocksX; i++) {
+    for (CMP_DWORD j = 0; j < dwBlocksY; j++)
+    {
+        for (CMP_DWORD i = 0; i < dwBlocksX; i++)
+        {
             CMP_DWORD compressedBlock[2];
-            if(bUseFixed) {
+            if (bUseFixed)
+            {
                 CMP_BYTE srcBlock[BLOCK_SIZE_4X4X4];
-                bufferIn.ReadBlockRGBA(i*4, j*4, 4, 4, srcBlock);
+                bufferIn.ReadBlockRGBA(i * 4, j * 4, 4, 4, srcBlock);
                 CompressRGBBlock(srcBlock, compressedBlock, CalculateColourWeightings(srcBlock), true, m_bDXT1UseAlpha, m_nAlphaThreshold);
-            } else {
+            }
+            else
+            {
                 float srcBlock[BLOCK_SIZE_4X4X4];
-                bufferIn.ReadBlockRGBA(i*4, j*4, 4, 4, srcBlock);
+                bufferIn.ReadBlockRGBA(i * 4, j * 4, 4, 4, srcBlock);
                 CompressRGBBlock(srcBlock, compressedBlock, CalculateColourWeightings(srcBlock), true, m_bDXT1UseAlpha, fAlphaThreshold);
             }
-            bufferOut.WriteBlock(i*4, j*4, compressedBlock, 2);
+            bufferOut.WriteBlock(i * 4, j * 4, compressedBlock, 2);
         }
-        if(pFeedbackProc) {
+        if (pFeedbackProc)
+        {
             float fProgress = 100.f * (j * dwBlocksX) / (dwBlocksX * dwBlocksY);
-            if(pFeedbackProc(fProgress, pUser1, pUser2))
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
                 return CE_Aborted;
         }
     }
@@ -135,27 +156,35 @@ CodecError CCodec_DXT1::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
     return CE_OK;
 }
 
-CodecError CCodec_DXT1::Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_DXT1::Compress_Fast(CCodecBuffer&       bufferIn,
+                                      CCodecBuffer&       bufferOut,
+                                      Codec_Feedback_Proc pFeedbackProc,
+                                      CMP_DWORD_PTR       pUser1,
+                                      CMP_DWORD_PTR       pUser2)
+{
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
 
-    if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
+    if (bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
         return CE_Unknown;
 
     const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
     const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
 
     CMP_DWORD compressedBlock[2];
-    CMP_BYTE srcBlock[BLOCK_SIZE_4X4X4];
-    for(CMP_DWORD j = 0; j < dwBlocksY; j++) {
-        for(CMP_DWORD i = 0; i < dwBlocksX; i++) {
-            bufferIn.ReadBlockRGBA(i*4, j*4, 4, 4, srcBlock);
+    CMP_BYTE  srcBlock[BLOCK_SIZE_4X4X4];
+    for (CMP_DWORD j = 0; j < dwBlocksY; j++)
+    {
+        for (CMP_DWORD i = 0; i < dwBlocksX; i++)
+        {
+            bufferIn.ReadBlockRGBA(i * 4, j * 4, 4, 4, srcBlock);
             CompressRGBBlock_Fast(srcBlock, compressedBlock);
-            bufferOut.WriteBlock(i*4, j*4, compressedBlock, 2);
+            bufferOut.WriteBlock(i * 4, j * 4, compressedBlock, 2);
         }
-        if(pFeedbackProc) {
+        if (pFeedbackProc)
+        {
             float fProgress = 100.f * (j * dwBlocksX) / (dwBlocksX * dwBlocksY);
-            if(pFeedbackProc(fProgress, pUser1, pUser2))
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
                 return CE_Aborted;
         }
     }
@@ -163,74 +192,91 @@ CodecError CCodec_DXT1::Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& buff
     return CE_OK;
 }
 
-CodecError CCodec_DXT1::Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_DXT1::Compress_SuperFast(CCodecBuffer&       bufferIn,
+                                           CCodecBuffer&       bufferOut,
+                                           Codec_Feedback_Proc pFeedbackProc,
+                                           CMP_DWORD_PTR       pUser1,
+                                           CMP_DWORD_PTR       pUser2)
+{
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
 
-    if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
+    if (bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
         return CE_Unknown;
 
     const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
     const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
 
     CMP_DWORD compressedBlock[2];
-    CMP_BYTE srcBlock[BLOCK_SIZE_4X4X4];
-    for(CMP_DWORD j = 0; j < dwBlocksY; j++) {
-        for(CMP_DWORD i = 0; i < dwBlocksX; i++) {
-            bufferIn.ReadBlockRGBA(i*4, j*4, 4, 4, srcBlock);
+    CMP_BYTE  srcBlock[BLOCK_SIZE_4X4X4];
+    for (CMP_DWORD j = 0; j < dwBlocksY; j++)
+    {
+        for (CMP_DWORD i = 0; i < dwBlocksX; i++)
+        {
+            bufferIn.ReadBlockRGBA(i * 4, j * 4, 4, 4, srcBlock);
             CompressRGBBlock_SuperFast(srcBlock, compressedBlock);
-            bufferOut.WriteBlock(i*4, j*4, compressedBlock, 2);
+            bufferOut.WriteBlock(i * 4, j * 4, compressedBlock, 2);
         }
-        if(pFeedbackProc) {
+        if (pFeedbackProc)
+        {
             float fProgress = 100.f * (j * dwBlocksX) / (dwBlocksX * dwBlocksY);
-            if(pFeedbackProc(fProgress, pUser1, pUser2))
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
                 return CE_Aborted;
         }
     }
     return CE_OK;
 }
 
-
-CodecError CCodec_DXT1::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_DXT1::Decompress(CCodecBuffer&       bufferIn,
+                                   CCodecBuffer&       bufferOut,
+                                   Codec_Feedback_Proc pFeedbackProc,
+                                   CMP_DWORD_PTR       pUser1,
+                                   CMP_DWORD_PTR       pUser2)
+{
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
 
-    if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
+    if (bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
         return CE_Unknown;
 
-    const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
-    const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
-    const CMP_DWORD dwBlocksXY = dwBlocksX*dwBlocksY;
+    const CMP_DWORD dwBlocksX  = ((bufferIn.GetWidth() + 3) >> 2);
+    const CMP_DWORD dwBlocksY  = ((bufferIn.GetHeight() + 3) >> 2);
+    const CMP_DWORD dwBlocksXY = dwBlocksX * dwBlocksY;
 
     bool bUseFixed = (!bufferOut.IsFloat() && bufferOut.GetChannelDepth() == 8 && !m_bUseFloat);
 
-    for(CMP_DWORD j = 0; j < dwBlocksY; j++) {
-        for(CMP_DWORD i = 0; i < dwBlocksX; i++) {
+    for (CMP_DWORD j = 0; j < dwBlocksY; j++)
+    {
+        for (CMP_DWORD i = 0; i < dwBlocksX; i++)
+        {
             CMP_DWORD compressedBlock[2];
-            bufferIn.ReadBlock(i*4, j*4, compressedBlock, 2);
-            if(bUseFixed) {
+            bufferIn.ReadBlock(i * 4, j * 4, compressedBlock, 2);
+            if (bUseFixed)
+            {
                 CMP_BYTE destBlock[BLOCK_SIZE_4X4X4];
 #ifdef TEST_CMP_CORE_DECODER
-                DecompressBlockBC1((CMP_BYTE *)compressedBlock,destBlock);
+                DecompressBlockBC1((CMP_BYTE*)compressedBlock, destBlock);
 #else
                 DecompressRGBBlock(destBlock, compressedBlock, true);
 #endif
-                bufferOut.WriteBlockRGBA(i*4, j*4, 4, 4, destBlock);
-            } else {
+                bufferOut.WriteBlockRGBA(i * 4, j * 4, 4, 4, destBlock);
+            }
+            else
+            {
                 float destBlock[BLOCK_SIZE_4X4X4];
                 DecompressRGBBlock(destBlock, compressedBlock, true);
-                bufferOut.WriteBlockRGBA(i*4, j*4, 4, 4, destBlock);
+                bufferOut.WriteBlockRGBA(i * 4, j * 4, 4, 4, destBlock);
             }
         }
 
-        if (pFeedbackProc) {
+        if (pFeedbackProc)
+        {
             float fProgress = 100.f * (j * dwBlocksX) / dwBlocksXY;
-            if (pFeedbackProc(fProgress, pUser1, pUser2)) {
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
+            {
                 return CE_Aborted;
             }
         }
-
-
     }
 
     return CE_OK;

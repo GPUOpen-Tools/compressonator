@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright (c) 2018-2023    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2018-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -54,8 +54,6 @@
 #endif  // !WIN32 && !_WIN64
 #endif
 
-
-
 #define DXTC_OFFSET_ALPHA 0
 #define DXTC_OFFSET_RGB 2
 
@@ -84,19 +82,19 @@ Channel Bits
 
 #define MAX_BLOCK 64
 #define MAX_POINTS 16
-#define BLOCK_SIZE      MAX_BLOCK
-#define NUM_CHANNELS    4
-#define NUM_ENDPOINTS   2
-#define BLOCK_SIZE_4X4  16
-#define CMP_ALPHA_RAMP  8  // Number of Ramp Points used for Alpha Channels in BC5
+#define BLOCK_SIZE MAX_BLOCK
+#define NUM_CHANNELS 4
+#define NUM_ENDPOINTS 2
+#define BLOCK_SIZE_4X4 16
+#define CMP_ALPHA_RAMP 8  // Number of Ramp Points used for Alpha Channels in BC5
 
-#define ConstructColour(r, g, b) (((r) << 11) | ((g) << 5) | (b)) // same as BC1ConstructColour in common_api
+#define ConstructColour(r, g, b) (((r) << 11) | ((g) << 5) | (b))  // same as BC1ConstructColour in common_api
 
 #define BYTEPP 4
 #define CMP_QUALITY0 0.25f
 #define CMP_QUALITY1 0.50f
 #define CMP_QUALITY2 0.75f
-#define POS(x, y) (pos_on_axis[(x) + (y)*4])
+#define POS(x, y) (pos_on_axis[(x) + (y) * 4])
 
 // Find the first approximation of the line
 // Assume there is a linear relation
@@ -196,7 +194,7 @@ typedef struct
     CGU_UINT32 m_src_height;
 } CMP_BC15Options;
 
-typedef struct 
+typedef struct
 {
     CGU_Vec3i end_point0;
     CGU_Vec3i end_point1;
@@ -226,20 +224,23 @@ typedef struct
 
 typedef struct CMP_BC1_Block_t
 {
-    // Union struct not supported on GPU
-    // 8 Bytes Total
-    #ifndef ASPM_GPU
-    union {
-        struct { // 2 x 32bit 
+// Union struct not supported on GPU
+// 8 Bytes Total
+#ifndef ASPM_GPU
+    union
+    {
+        struct
+        {  // 2 x 32bit
             CGU_UINT32 colors;
             CGU_UINT32 indices;
         };
-        struct { // 8 x 8bit
+        struct
+        {  // 8 x 8bit
             CGU_UINT8 m_low_color[2];
             CGU_UINT8 m_high_color[2];
             CGU_UINT8 m_selectors[4];
         };
-    }; 
+    };
 
     inline void set_low_color(CGU_UINT16 c)
     {
@@ -251,10 +252,10 @@ typedef struct CMP_BC1_Block_t
         m_high_color[0] = static_cast<CGU_UINT8>(c & 0xFF);
         m_high_color[1] = static_cast<CGU_UINT8>((c >> 8) & 0xFF);
     }
-    #else
-            CGU_UINT32 colors;
-            CGU_UINT32 indices;
-    #endif
+#else
+    CGU_UINT32 colors;
+    CGU_UINT32 indices;
+#endif
 } CMP_BC1_Block;
 
 // Helper functions to cut precision of floats
@@ -352,9 +353,9 @@ static void SetDefaultBC15Options(CMP_BC15Options* BC15Options)
         BC15Options->m_src_width             = 4;
         BC15Options->m_src_height            = 4;
 #ifdef CMP_SET_BC13_DECODER_RGBA
-        BC15Options->m_mapDecodeRGBA         = true;
+        BC15Options->m_mapDecodeRGBA = true;
 #else
-        BC15Options->m_mapDecodeRGBA         = false;
+        BC15Options->m_mapDecodeRGBA = false;
 #endif
     }
 }
@@ -595,9 +596,9 @@ static CGU_FLOAT cmp_getRampError(CGU_FLOAT _Blk[BLOCK_SIZE_4X4],
     return error;
 }
 
-static CGU_FLOAT cmp_linearBlockRefine(CGU_FLOAT _Blk[BLOCK_SIZE_4X4],
-                                       CGU_FLOAT _Rpt[BLOCK_SIZE_4X4],
-                                       CGU_FLOAT _MaxError,
+static CGU_FLOAT cmp_linearBlockRefine(CGU_FLOAT                        _Blk[BLOCK_SIZE_4X4],
+                                       CGU_FLOAT                        _Rpt[BLOCK_SIZE_4X4],
+                                       CGU_FLOAT                        _MaxError,
                                        CMP_INOUT CGU_FLOAT CMP_PTRINOUT _min_ex,
                                        CMP_INOUT CGU_FLOAT CMP_PTRINOUT _max_ex,
                                        CGU_FLOAT                        _m_step,
@@ -1021,7 +1022,7 @@ static CGU_INT8 cmp_snormFloatToSInt(CGU_FLOAT fsnorm)
 #ifdef ASPM_GPU
     CGU_INT8 res = (CGU_INT8)fsnorm;
 #else
-    CGU_INT8  res       = static_cast<CGU_INT8>(fsnorm);
+    CGU_INT8 res = static_cast<CGU_INT8>(fsnorm);
 #endif
     return (res);
 }
@@ -1357,7 +1358,7 @@ static CGU_Vec2ui cmp_compressAlphaBlock(CMP_IN CGU_FLOAT alphaBlock[BLOCK_SIZE_
 #ifndef ASPM_GPU
         BC4_Snorm_block.data = 0LL;
 #else
-        BC4_Snorm_block.data         = 0;
+        BC4_Snorm_block.data = 0;
 #endif
 
         CGU_Vec2i reds;
@@ -1413,12 +1414,12 @@ static void cmp_getCompressedAlphaRamp(CGU_UINT8 alpha[8], const CGU_UINT32 comp
         alpha[6] = (CGU_UINT8)((2 * alpha[0] + 5 * alpha[1] + 3) / 7);  // bit code 110
         alpha[7] = (CGU_UINT8)((1 * alpha[0] + 6 * alpha[1] + 3) / 7);  // bit code 111
 #else
-        alpha[2]   = static_cast<CGU_UINT8>((6 * alpha[0] + 1 * alpha[1] + 3) / 7);  // bit code 010
-        alpha[3]   = static_cast<CGU_UINT8>((5 * alpha[0] + 2 * alpha[1] + 3) / 7);  // bit code 011
-        alpha[4]   = static_cast<CGU_UINT8>((4 * alpha[0] + 3 * alpha[1] + 3) / 7);  // bit code 100
-        alpha[5]   = static_cast<CGU_UINT8>((3 * alpha[0] + 4 * alpha[1] + 3) / 7);  // bit code 101
-        alpha[6]   = static_cast<CGU_UINT8>((2 * alpha[0] + 5 * alpha[1] + 3) / 7);  // bit code 110
-        alpha[7]   = static_cast<CGU_UINT8>((1 * alpha[0] + 6 * alpha[1] + 3) / 7);  // bit code 111
+        alpha[2] = static_cast<CGU_UINT8>((6 * alpha[0] + 1 * alpha[1] + 3) / 7);  // bit code 010
+        alpha[3] = static_cast<CGU_UINT8>((5 * alpha[0] + 2 * alpha[1] + 3) / 7);  // bit code 011
+        alpha[4] = static_cast<CGU_UINT8>((4 * alpha[0] + 3 * alpha[1] + 3) / 7);  // bit code 100
+        alpha[5] = static_cast<CGU_UINT8>((3 * alpha[0] + 4 * alpha[1] + 3) / 7);  // bit code 101
+        alpha[6] = static_cast<CGU_UINT8>((2 * alpha[0] + 5 * alpha[1] + 3) / 7);  // bit code 110
+        alpha[7] = static_cast<CGU_UINT8>((1 * alpha[0] + 6 * alpha[1] + 3) / 7);  // bit code 111
 #endif
     }
     else
@@ -1431,10 +1432,10 @@ static void cmp_getCompressedAlphaRamp(CGU_UINT8 alpha[8], const CGU_UINT32 comp
         alpha[4] = (CGU_UINT8)((2 * alpha[0] + 3 * alpha[1] + 2) / 5);  // Bit code 100
         alpha[5] = (CGU_UINT8)((1 * alpha[0] + 4 * alpha[1] + 2) / 5);  // Bit code 101
 #else
-        alpha[2]   = static_cast<CGU_UINT8>((4 * alpha[0] + 1 * alpha[1] + 2) / 5);  // Bit code 010
-        alpha[3]   = static_cast<CGU_UINT8>((3 * alpha[0] + 2 * alpha[1] + 2) / 5);  // Bit code 011
-        alpha[4]   = static_cast<CGU_UINT8>((2 * alpha[0] + 3 * alpha[1] + 2) / 5);  // Bit code 100
-        alpha[5]   = static_cast<CGU_UINT8>((1 * alpha[0] + 4 * alpha[1] + 2) / 5);  // Bit code 101
+        alpha[2] = static_cast<CGU_UINT8>((4 * alpha[0] + 1 * alpha[1] + 2) / 5);  // Bit code 010
+        alpha[3] = static_cast<CGU_UINT8>((3 * alpha[0] + 2 * alpha[1] + 2) / 5);  // Bit code 011
+        alpha[4] = static_cast<CGU_UINT8>((2 * alpha[0] + 3 * alpha[1] + 2) / 5);  // Bit code 100
+        alpha[5] = static_cast<CGU_UINT8>((1 * alpha[0] + 4 * alpha[1] + 2) / 5);  // Bit code 101
 #endif
         alpha[6] = 0;    // Bit code 110
         alpha[7] = 255;  // Bit code 111
@@ -1464,8 +1465,8 @@ static void cmp_decompressAlphaBlock(CGU_UINT8 alphaBlock[BLOCK_SIZE_4X4], const
     }
 }
 
-static void cmp_ProcessColors(CMP_INOUT CGU_Vec3f CMP_PTRINOUT colorMin,
-                              CMP_INOUT CGU_Vec3f CMP_PTRINOUT colorMax,
+static void cmp_ProcessColors(CMP_INOUT CGU_Vec3f CMP_PTRINOUT  colorMin,
+                              CMP_INOUT CGU_Vec3f CMP_PTRINOUT  colorMax,
                               CMP_INOUT CGU_UINT32 CMP_PTRINOUT c0,
                               CMP_INOUT CGU_UINT32 CMP_PTRINOUT c1,
                               CGU_INT                           setopt,
@@ -1800,30 +1801,34 @@ static float CMP_RGBBlockError(const CGU_Vec3f src_rgbBlock[BLOCK_SIZE_4X4], con
     return (serr.x + serr.y + serr.z) / 48.0f;
 }
 
-static CGU_FLOAT cpu_bcnComputeBestEndpoints(CGU_FLOAT endpointsOut[NUM_ENDPOINTS], CGU_FLOAT endpointsIn[NUM_ENDPOINTS], 
-                                            CGU_FLOAT prj[BLOCK_SIZE_4X4], CGU_FLOAT prjError[BLOCK_SIZE_4X4], CGU_FLOAT preMRep[BLOCK_SIZE_4X4],
-                                            int numColours)
+static CGU_FLOAT cpu_bcnComputeBestEndpoints(CGU_FLOAT endpointsOut[NUM_ENDPOINTS],
+                                             CGU_FLOAT endpointsIn[NUM_ENDPOINTS],
+                                             CGU_FLOAT prj[BLOCK_SIZE_4X4],
+                                             CGU_FLOAT prjError[BLOCK_SIZE_4X4],
+                                             CGU_FLOAT preMRep[BLOCK_SIZE_4X4],
+                                             int       numColours)
 {
     CGU_FLOAT minError = MAX_ERROR;
 
     const CGU_FLOAT searchStep = 0.025f;
 
-    const CGU_FLOAT lowStart = (endpointsIn[0] - 2.0f*searchStep > 0.0f) ?  endpointsIn[0] - 2.0f*searchStep : 0.0f;
-    const CGU_FLOAT highStart = (endpointsIn[1] + 2.0f*searchStep < 1.0f) ?  endpointsIn[1] + 2.0f*searchStep : 1.0f;
+    const CGU_FLOAT lowStart  = (endpointsIn[0] - 2.0f * searchStep > 0.0f) ? endpointsIn[0] - 2.0f * searchStep : 0.0f;
+    const CGU_FLOAT highStart = (endpointsIn[1] + 2.0f * searchStep < 1.0f) ? endpointsIn[1] + 2.0f * searchStep : 1.0f;
 
-    CGU_FLOAT lowStep = lowStart;
+    CGU_FLOAT lowStep  = lowStart;
     CGU_FLOAT highStep = highStart;
 
-    for(int low = 0; low < 8; ++low)
+    for (int low = 0; low < 8; ++low)
     {
-        for(int high = 0; high < 8; ++high)
+        for (int high = 0; high < 8; ++high)
         {
             // compute an error for the current pair of end points.
             CGU_FLOAT error = cmp_getRampErr(prj, prjError, preMRep, minError, lowStep, highStep, numColours);
 
-            if(error < minError) {
+            if (error < minError)
+            {
                 // save better result
-                minError = error;
+                minError        = error;
                 endpointsOut[0] = lowStep;
                 endpointsOut[1] = highStep;
             }
@@ -1853,8 +1858,8 @@ static CGU_Vec2ui CompressRGBBlock_FM(const CGU_Vec3f rgbBlockUVf[16], CMP_IN CG
     CGU_UINT32 c0              = 0;
     CGU_UINT32 c1              = 0;
     CGU_Vec2ui compressedBlock = {0, 0};
-    CGU_FLOAT  Q1CompErr = CMP_FLT_MAX;
-    CGU_Vec2ui Q1CompData = {0,0};
+    CGU_FLOAT  Q1CompErr       = CMP_FLT_MAX;
+    CGU_Vec2ui Q1CompData      = {0, 0};
 
     // -------------------------------------------------------------------------------------
     // (1) Find the array of unique pixel values and sum them to find their average position
@@ -1890,7 +1895,7 @@ static CGU_Vec2ui CompressRGBBlock_FM(const CGU_Vec3f rgbBlockUVf[16], CMP_IN CG
         CGU_UINT32 index = 0;
         if (c0 < c1)
         {
-            Q1CompData.x = (c0 << 16) | c1;
+            Q1CompData.x        = (c0 << 16) | c1;
             errLQ               = cmp_getIndicesRGB(CMP_REFINOUT index, rgbBlockUVf, srcMin, srcMax, false);
             Q1CompData.y        = index;
             CMP_PTRINOUT errout = errLQ;
@@ -2305,7 +2310,7 @@ static CMP_EndPoints CompressRGBBlock_Slow(CGU_Vec3f  BlkInBGRf_UV[BLOCK_SIZE_4X
 
         // GCC is being an awful being when it comes to goto-jumps.
         // So please bear with this.
-        CGU_FLOAT ErrG = 10000000.f;
+        CGU_FLOAT          ErrG = 10000000.f;
         ALIGN_16 CGU_FLOAT PreMRep[BLOCK_SIZE_4X4];
 
         LineDir.x = LineDir0[0];
@@ -2341,7 +2346,7 @@ static CMP_EndPoints CompressRGBBlock_Slow(CGU_Vec3f  BlkInBGRf_UV[BLOCK_SIZE_4X
             CGU_FLOAT PrjBnd[NUM_ENDPOINTS];
             PrjBnd[0] = 1000.0f;
             PrjBnd[1] = -1000.0f;
-            
+
             for (i = 0; i < BLOCK_SIZE_4X4; i++)
                 Prj0[i] = Prj[i] = PrjErr[i] = PreMRep[i] = 0.f;
 
@@ -2349,8 +2354,8 @@ static CMP_EndPoints CompressRGBBlock_Slow(CGU_Vec3f  BlkInBGRf_UV[BLOCK_SIZE_4X
             {
                 Prj0[i] = Prj[i] = dot(BlkSh[i], LineDir);
                 PrjErr[i]        = dot(BlkSh[i] - LineDir * Prj[i], BlkSh[i] - LineDir * Prj[i]);
-                PrjBnd[0]          = min(PrjBnd[0], Prj[i]);
-                PrjBnd[1]          = max(PrjBnd[1], Prj[i]);
+                PrjBnd[0]        = min(PrjBnd[0], Prj[i]);
+                PrjBnd[1]        = max(PrjBnd[1], Prj[i]);
             }
 
             //  2. Run 1 dimensional search (see scalar case) to find an (sub) optimal
@@ -2380,7 +2385,7 @@ static CMP_EndPoints CompressRGBBlock_Slow(CGU_Vec3f  BlkInBGRf_UV[BLOCK_SIZE_4X
 
             // find the best endpoints
             CGU_FLOAT Pos[NUM_ENDPOINTS] = {0.0f, 0.0f};
-            CGU_FLOAT StepErr = cpu_bcnComputeBestEndpoints(Pos, PrjBnd, Prj, PrjErr, PreMRep, dwUniqueColors);
+            CGU_FLOAT StepErr            = cpu_bcnComputeBestEndpoints(Pos, PrjBnd, Prj, PrjErr, PreMRep, dwUniqueColors);
 
             // inverse the scaling
             Pos[0] = Pos[0] * (Scl1 - Scl0) + Scl0;
@@ -2537,16 +2542,16 @@ static CMP_EndPoints CompressRGBBlock_Slow(CGU_Vec3f  BlkInBGRf_UV[BLOCK_SIZE_4X
 #endif
 
 // Process a rgbBlock which is normalized (0.0f ... 1.0f), signed normal is not implemented
-static CGU_Vec2ui CompressBlockBC1_RGBA_Internal(const CGU_Vec3f rgbBlockUVf[BLOCK_SIZE_4X4],
-                                                 const CGU_FLOAT BlockA[BLOCK_SIZE_4X4],
-                                                 CGU_Vec3f       channelWeights,
-                                                 CGU_UINT32      dwAlphaThreshold,
-                                                 CGU_UINT32      m_nRefinementSteps,
+static CGU_Vec2ui CompressBlockBC1_RGBA_Internal(const CGU_Vec3f  rgbBlockUVf[BLOCK_SIZE_4X4],
+                                                 const CGU_FLOAT  BlockA[BLOCK_SIZE_4X4],
+                                                 CGU_Vec3f        channelWeights,
+                                                 CGU_UINT32       dwAlphaThreshold,
+                                                 CGU_UINT32       m_nRefinementSteps,
                                                  CMP_IN CGU_FLOAT fquality,
                                                  CGU_BOOL         isSRGB)
 {
     CGU_Vec2ui cmpBlock = {0, 0};
-    CGU_FLOAT errLQ = 1e6f;
+    CGU_FLOAT  errLQ    = 1e6f;
 
     cmpBlock = CompressRGBBlock_FM(rgbBlockUVf, fquality, isSRGB, CMP_REFINOUT errLQ);
 
@@ -2614,7 +2619,7 @@ static CGU_Vec2ui CompressBlockBC1_RGBA_Internal(const CGU_Vec3f rgbBlockUVf[BLO
             // All are colors transparent
             EndPoints.Color0.x = EndPoints.Color0.y = EndPoints.Color0.z = 0.0f;
             EndPoints.Color1.x = EndPoints.Color1.y = EndPoints.Color0.z = 255.0f;
-            nCmpIndices = 0xFFFFFFFF;
+            nCmpIndices                                                  = 0xFFFFFFFF;
         }
         else
         {

@@ -1,5 +1,5 @@
 //=========================================================================
-// Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -166,7 +166,7 @@ void CDirectX::QueryProcessEnd(int miplevel)
                 float ElapsedSecondsPerTx = ElapsedSeconds / 16;
                 float TxPerSec            = 1 / ElapsedSecondsPerTx;
                 // time to process a 1M texels in a second
-                m_CmpMTxPerSec = TxPerSec / 1E6f; 
+                m_CmpMTxPerSec = TxPerSec / 1E6f;
             }
         }
     }
@@ -182,7 +182,6 @@ void CDirectX::ResetContext()
 
     ID3D11Buffer* nullBuffer[1] = {nullptr};
     m_pContext->CSSetConstantBuffers(0, 1, nullBuffer);
-
 }
 
 void CDirectX::RunComputeShader(ID3D11ComputeShader*       pComputeShader,
@@ -209,7 +208,6 @@ void CDirectX::RunComputeShader(ID3D11ComputeShader*       pComputeShader,
     QueryDispatchEnd(numBlocks);
 
     ResetContext();
-
 }
 
 //--------------------------------------------------------------------------------------
@@ -286,14 +284,14 @@ void CDirectX::Init()
     m_pDebug = nullptr;
 #endif
 
-    m_bc7_mode02  = true;   // uses 3 subsets
-    m_bc7_mode137 = true;   // uses 2 subsets
+    m_bc7_mode02  = true;  // uses 3 subsets
+    m_bc7_mode137 = true;  // uses 2 subsets
 
     m_BC7_pTryMode456CS = nullptr;
     m_BC7_pTryMode137CS = nullptr;
     m_BC7_pTryMode02CS  = nullptr;
 
-    m_BC6H_pTryModeG10CS  = nullptr; 
+    m_BC6H_pTryModeG10CS  = nullptr;
     m_BC6H_pTryModeLE10CS = nullptr;
 
     m_BCn_pEncodeBlockCS[ACTIVE_ENCODER_BC1] = nullptr;
@@ -989,8 +987,6 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer** ppDstTextureAsBufOut, int miplevel)
             m_initQueryOk = true;
         }
 
-
-
         //===================================================================================================================================================================
         // Create a Shader Resource View (SRV) for input texture
         {
@@ -1048,13 +1044,13 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer** ppDstTextureAsBufOut, int miplevel)
 #pragma warning(pop)
         }
 
-//===================================================================================================================================================================
+        //===================================================================================================================================================================
         D3D11_BUFFER_DESC sbOutTempDesc;
         {
-            sbOutTempDesc.BindFlags      = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
-            sbOutTempDesc.CPUAccessFlags = 0;
-            sbOutTempDesc.Usage          = D3D11_USAGE_DEFAULT;
-            sbOutTempDesc.MiscFlags      = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+            sbOutTempDesc.BindFlags           = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+            sbOutTempDesc.CPUAccessFlags      = 0;
+            sbOutTempDesc.Usage               = D3D11_USAGE_DEFAULT;
+            sbOutTempDesc.MiscFlags           = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
             sbOutTempDesc.StructureByteStride = sizeof(SharedIOData);
             sbOutTempDesc.ByteWidth           = NumOfBlocks * sizeof(SharedIOData);
 
@@ -1092,13 +1088,13 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer** ppDstTextureAsBufOut, int miplevel)
         }
 
         //===================================================================================================================================================================
-        int const MAX_BLOCK_BATCH = 64;
-        unsigned int start_block_id   = 0;
+        int const    MAX_BLOCK_BATCH = 64;
+        unsigned int start_block_id  = 0;
 
         m_num_blocks = NumOfBlocks;
 
         // BCn options to pass down to shaders
-        // this should match cbuffer cbCS : register( b0 ) in the shader code 
+        // this should match cbuffer cbCS : register( b0 ) in the shader code
         struct ShaderOptions
         {
             unsigned int tex_width;         // param[0]
@@ -1135,8 +1131,7 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer** ppDstTextureAsBufOut, int miplevel)
         // Run the BC1 to BC5, New BC7 Code Shaders
         //================================================
         if ((m_fmtEncode == DXGI_FORMAT_BC1_UNORM) || (m_fmtEncode == DXGI_FORMAT_BC2_UNORM) || (m_fmtEncode == DXGI_FORMAT_BC3_UNORM) ||
-            (m_fmtEncode == DXGI_FORMAT_BC4_UNORM) || (m_fmtEncode == DXGI_FORMAT_BC5_UNORM)
-        )
+            (m_fmtEncode == DXGI_FORMAT_BC4_UNORM) || (m_fmtEncode == DXGI_FORMAT_BC5_UNORM))
         {
             ID3D11ShaderResourceView* pSRVs[] = {pInputsourceSRV, nullptr};
             m_pContext->CSSetShader(m_BCn_pEncodeBlockCS[m_activeEncoder], nullptr, 0);
@@ -1181,7 +1176,7 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer** ppDstTextureAsBufOut, int miplevel)
                 m_pContext->CSSetConstantBuffers(0, 1, ppBufferNULL);
 
                 start_block_id += n;
-                NumOfBlocks    -= n;
+                NumOfBlocks -= n;
             }  // while num_blocks
             QueryProcessEnd(miplevel);
 
@@ -1245,7 +1240,7 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer** ppDstTextureAsBufOut, int miplevel)
                     RunComputeShader(m_BCn_pEncodeBlockCS[m_activeEncoder], pSRVs, 2, pCBCS, pCompressedBlockUAV, uThreadGroupCount2, 1, 1, n);
 
                     start_block_id += n;
-                    NumOfBlocks    -= n;
+                    NumOfBlocks -= n;
                 }  // while num_blocks
                 QueryProcessEnd(miplevel);
                 ResetContext();
@@ -1256,89 +1251,89 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer** ppDstTextureAsBufOut, int miplevel)
                 // Run the BC7 Shaders
                 //====================
                 if ((m_fmtEncode == DXGI_FORMAT_BC7_UNORM) || (m_fmtEncode == DXGI_FORMAT_BC7_UNORM_SRGB))
-            {
-                int                      modes137[3] = {1, 3, 7};
-                int                      modes02[2]  = {0, 2};
-                D3D11_MAPPED_SUBRESOURCE cbMapped;
-                unsigned int             n;
-                UINT                     uThreadGroupCount4;
-                UINT                     uThreadGroupCount;
-
-                QueryProcessBegin(miplevel);
-
-                while (NumOfBlocks > 0)
                 {
-                    if (NumOfBlocks >= MAX_BLOCK_BATCH)
-                    {
-                        n                  = MAX_BLOCK_BATCH;
-                        uThreadGroupCount  = n;
-                        uThreadGroupCount4 = 16;
-                    }
-                    else
-                    {
-                        n                  = NumOfBlocks;
-                        uThreadGroupCount  = n;
-                        uThreadGroupCount4 = __max(n / 4, 1);
-                        if ((uThreadGroupCount4 * 4) < n)
-                            uThreadGroupCount4++;
-                    }
+                    int                      modes137[3] = {1, 3, 7};
+                    int                      modes02[2]  = {0, 2};
+                    D3D11_MAPPED_SUBRESOURCE cbMapped;
+                    unsigned int             n;
+                    UINT                     uThreadGroupCount4;
+                    UINT                     uThreadGroupCount;
 
-                    ID3D11ShaderResourceView* pSRVs[] = {pInputsourceSRV, nullptr};
-                    {
-                        m_pContext->Map(pCBCS, 0, D3D11_MAP_WRITE_DISCARD, 0, &cbMapped);
-                        options.mode_id          = 6;
-                        options.start_block_id   = start_block_id;
-                        memcpy(cbMapped.pData, &options, sizeof(ShaderOptions));
-                        m_pContext->Unmap(pCBCS, 0);
-                    }
+                    QueryProcessBegin(miplevel);
 
-                    RunComputeShader(m_BC7_pTryMode456CS, pSRVs, 2, pCBCS, pErrBestModeUAV[0], uThreadGroupCount4, 1, 1, n);
-
-                    if (m_bc7_mode137)
+                    while (NumOfBlocks > 0)
                     {
-                        for (int i = 0; i < 3; ++i)
+                        if (NumOfBlocks >= MAX_BLOCK_BATCH)
+                        {
+                            n                  = MAX_BLOCK_BATCH;
+                            uThreadGroupCount  = n;
+                            uThreadGroupCount4 = 16;
+                        }
+                        else
+                        {
+                            n                  = NumOfBlocks;
+                            uThreadGroupCount  = n;
+                            uThreadGroupCount4 = __max(n / 4, 1);
+                            if ((uThreadGroupCount4 * 4) < n)
+                                uThreadGroupCount4++;
+                        }
+
+                        ID3D11ShaderResourceView* pSRVs[] = {pInputsourceSRV, nullptr};
                         {
                             m_pContext->Map(pCBCS, 0, D3D11_MAP_WRITE_DISCARD, 0, &cbMapped);
-                            options.mode_id        = modes137[i];
+                            options.mode_id        = 6;
                             options.start_block_id = start_block_id;
                             memcpy(cbMapped.pData, &options, sizeof(ShaderOptions));
                             m_pContext->Unmap(pCBCS, 0);
-
-                            // Mode 1: err1 -> err2
-                            // Mode 3: err2 -> err1
-                            // Mode 7: err1 -> err2
-                            pSRVs[1] = (i & 1) ? pErrBestModeSRV[1] : pErrBestModeSRV[0];
-                            RunComputeShader(m_BC7_pTryMode137CS, pSRVs, 2, pCBCS, pErrBestModeUAV[!(i & 1)], uThreadGroupCount, 1, 1, n);
                         }
-                    }
 
-                    if (m_bc7_mode02)
-                    {
-                        for (int i = 0; i < 2; ++i)
+                        RunComputeShader(m_BC7_pTryMode456CS, pSRVs, 2, pCBCS, pErrBestModeUAV[0], uThreadGroupCount4, 1, 1, n);
+
+                        if (m_bc7_mode137)
                         {
-                            m_pContext->Map(pCBCS, 0, D3D11_MAP_WRITE_DISCARD, 0, &cbMapped);
-                            options.mode_id          = modes02[i];
-                            options.start_block_id   = start_block_id;
-                            memcpy(cbMapped.pData, &options, sizeof(ShaderOptions));
-                            m_pContext->Unmap(pCBCS, 0);
+                            for (int i = 0; i < 3; ++i)
+                            {
+                                m_pContext->Map(pCBCS, 0, D3D11_MAP_WRITE_DISCARD, 0, &cbMapped);
+                                options.mode_id        = modes137[i];
+                                options.start_block_id = start_block_id;
+                                memcpy(cbMapped.pData, &options, sizeof(ShaderOptions));
+                                m_pContext->Unmap(pCBCS, 0);
 
-                            // Mode 0: err2 -> err1
-                            // Mode 2: err1 -> err2
-                            pSRVs[1] = (i & 1) ? pErrBestModeSRV[0] : pErrBestModeSRV[1];
-                            RunComputeShader(m_BC7_pTryMode02CS, pSRVs, 2, pCBCS, pErrBestModeUAV[i & 1], uThreadGroupCount, 1, 1, n);
+                                // Mode 1: err1 -> err2
+                                // Mode 3: err2 -> err1
+                                // Mode 7: err1 -> err2
+                                pSRVs[1] = (i & 1) ? pErrBestModeSRV[1] : pErrBestModeSRV[0];
+                                RunComputeShader(m_BC7_pTryMode137CS, pSRVs, 2, pCBCS, pErrBestModeUAV[!(i & 1)], uThreadGroupCount, 1, 1, n);
+                            }
                         }
-                    }
 
-                    pSRVs[1] = (m_bc7_mode02 || m_bc7_mode137) ? pErrBestModeSRV[1] : pErrBestModeSRV[0];
-                    RunComputeShader(m_BCn_pEncodeBlockCS[m_activeEncoder], pSRVs, 2, pCBCS, pCompressedBlockUAV, uThreadGroupCount4, 1, 1, n);
+                        if (m_bc7_mode02)
+                        {
+                            for (int i = 0; i < 2; ++i)
+                            {
+                                m_pContext->Map(pCBCS, 0, D3D11_MAP_WRITE_DISCARD, 0, &cbMapped);
+                                options.mode_id        = modes02[i];
+                                options.start_block_id = start_block_id;
+                                memcpy(cbMapped.pData, &options, sizeof(ShaderOptions));
+                                m_pContext->Unmap(pCBCS, 0);
 
-                    start_block_id += n;
-                    NumOfBlocks    -= n;
-                }  // while num_blocks
+                                // Mode 0: err2 -> err1
+                                // Mode 2: err1 -> err2
+                                pSRVs[1] = (i & 1) ? pErrBestModeSRV[0] : pErrBestModeSRV[1];
+                                RunComputeShader(m_BC7_pTryMode02CS, pSRVs, 2, pCBCS, pErrBestModeUAV[i & 1], uThreadGroupCount, 1, 1, n);
+                            }
+                        }
 
-                QueryProcessEnd(miplevel);
-                
-            }  // BC7
+                        pSRVs[1] = (m_bc7_mode02 || m_bc7_mode137) ? pErrBestModeSRV[1] : pErrBestModeSRV[0];
+                        RunComputeShader(m_BCn_pEncodeBlockCS[m_activeEncoder], pSRVs, 2, pCBCS, pCompressedBlockUAV, uThreadGroupCount4, 1, 1, n);
+
+                        start_block_id += n;
+                        NumOfBlocks -= n;
+                    }  // while num_blocks
+
+                    QueryProcessEnd(miplevel);
+
+                }  // BC7
 #endif
         }
     quit:

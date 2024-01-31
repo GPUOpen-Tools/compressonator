@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2021 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2021-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
 //=====================================================================
 //
@@ -69,7 +69,7 @@ inline T CeilDiv(T x, T y)
     return (x + y - 1) / y;
 }
 
-class GpuResources_dx11 
+class GpuResources_dx11
 {
 public:
     GpuResources_dx11();

@@ -1,5 +1,5 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 /// \brief The interface for the Tootle library.
@@ -17,49 +17,53 @@
 // @{
 
 /// The default vertex cache size
-#define TOOTLE_DEFAULT_VCACHE_SIZE  16
+#define TOOTLE_DEFAULT_VCACHE_SIZE 16
 
 /// The maximum allowed number of faces in the mesh
-#define TOOTLE_MAX_FACES            0x7fffffff
+#define TOOTLE_MAX_FACES 0x7fffffff
 
 /// The maximum allowed number of vertices in the mesh
-#define TOOTLE_MAX_VERTICES         0x7fffffff
+#define TOOTLE_MAX_VERTICES 0x7fffffff
 
 /// The parameter for TootleFastOptimize to create more clusters (lower number generates more clusters).
 /// This parameter decides where to put extra breaks to create more clusters (refer to the SIGGRAPH 2007 paper
 /// for the full description of the parameter.
-#define TOOTLE_DEFAULT_ALPHA        0.75f
+#define TOOTLE_DEFAULT_ALPHA 0.75f
 
 /// Enumeration for Tootle return codes
-enum TootleResult {
-    NA_TOOTLE_RESULT,          ///< Default invalid choice
-    TOOTLE_OK,                 ///< All is well
-    TOOTLE_INVALID_ARGS,       ///< Illegal arguments were passed.
-    TOOTLE_OUT_OF_MEMORY,      ///< Tootle ran out of memory while trying to complete the call
-    TOOTLE_3D_API_ERROR,       ///< Errors occurred while setting up the 3D API.  This generally means that D3D isn't
+enum TootleResult
+{
+    NA_TOOTLE_RESULT,      ///< Default invalid choice
+    TOOTLE_OK,             ///< All is well
+    TOOTLE_INVALID_ARGS,   ///< Illegal arguments were passed.
+    TOOTLE_OUT_OF_MEMORY,  ///< Tootle ran out of memory while trying to complete the call
+    TOOTLE_3D_API_ERROR,   ///< Errors occurred while setting up the 3D API.  This generally means that D3D isn't
     ///< installed properly
-    TOOTLE_INTERNAL_ERROR,     ///< Something happened that really, really shouldn't
-    TOOTLE_NOT_INITIALIZED     ///< Tootle was not initialized before a function call
+    TOOTLE_INTERNAL_ERROR,  ///< Something happened that really, really shouldn't
+    TOOTLE_NOT_INITIALIZED  ///< Tootle was not initialized before a function call
 };
 
 /// Enumeration for face winding order
-enum TootleFaceWinding {
-    NA_TOOTLE_FACE_WINDING,    ///< Default invalid choice
-    TOOTLE_CCW,                ///< Face is ordered counter-clockwise
-    TOOTLE_CW                  ///< Face is ordered clockwise
+enum TootleFaceWinding
+{
+    NA_TOOTLE_FACE_WINDING,  ///< Default invalid choice
+    TOOTLE_CCW,              ///< Face is ordered counter-clockwise
+    TOOTLE_CW                ///< Face is ordered clockwise
 };
 
 /// Enumeration for the algorithm for vertex optimization
-enum TootleVCacheOptimizer {
-    NA_TOOTLE_VCACHE_OPTIMIZER,   ///< Default invalid choice
-    TOOTLE_VCACHE_AUTO,           ///< If vertex cache size is less than 7, use TSTRIPS algorithm otherwise TIPSY.
-    TOOTLE_VCACHE_DIRECT3D,       ///< Use D3DXOptimizeFaces to optimize faces.
-    TOOTLE_VCACHE_LSTRIPS,        ///< Build a list like triangle strips to optimize faces.
-    TOOTLE_VCACHE_TIPSY           ///< Use TIPSY (the algorithm from SIGGRAPH 2007) to optimize faces.
+enum TootleVCacheOptimizer
+{
+    NA_TOOTLE_VCACHE_OPTIMIZER,  ///< Default invalid choice
+    TOOTLE_VCACHE_AUTO,          ///< If vertex cache size is less than 7, use TSTRIPS algorithm otherwise TIPSY.
+    TOOTLE_VCACHE_DIRECT3D,      ///< Use D3DXOptimizeFaces to optimize faces.
+    TOOTLE_VCACHE_LSTRIPS,       ///< Build a list like triangle strips to optimize faces.
+    TOOTLE_VCACHE_TIPSY          ///< Use TIPSY (the algorithm from SIGGRAPH 2007) to optimize faces.
 };
 
 /// Enumeration for the algorithm for overdraw optimization.
-enum TootleOverdrawOptimizer {
+enum TootleOverdrawOptimizer
+{
     NA_TOOTLE_OVERDRAW_OPTIMIZER,  ///< Default invalid choice.
     TOOTLE_OVERDRAW_AUTO,          ///< Use either Direct3D or raytracing to reorder clusters (depending on the number of clusters).
     TOOTLE_OVERDRAW_DIRECT3D,      ///< Use Direct3D rendering to reorder clusters to optimize overdraw (slow O(N^2)).
@@ -95,12 +99,12 @@ TootleResult TOOTLE_DLL TootleInit();
 /// \return                 Possible return codes:  TOOTLE_OK, TOOTLE_OUT_OF_MEMORY, TOOTLE_INVALID_ARGS
 //=================================================================================================================================
 TootleResult TOOTLE_DLL TootleOptimizeVCache(const unsigned int*   pnIB,
-        unsigned int          nFaces,
-        unsigned int          nVertices,
-        unsigned int          nCacheSize,
-        unsigned int*         pnIBOut,
-        unsigned int*         pnFaceRemapOut,
-        TootleVCacheOptimizer eVCacheOptimizer = TOOTLE_VCACHE_AUTO);
+                                             unsigned int          nFaces,
+                                             unsigned int          nVertices,
+                                             unsigned int          nCacheSize,
+                                             unsigned int*         pnIBOut,
+                                             unsigned int*         pnFaceRemapOut,
+                                             TootleVCacheOptimizer eVCacheOptimizer = TOOTLE_VCACHE_AUTO);
 
 //=================================================================================================================================
 ///  This function partitions a mesh into a set of connected, roughly planar clusters.  It generates a new mesh that is re-arranged
@@ -131,14 +135,14 @@ TootleResult TOOTLE_DLL TootleOptimizeVCache(const unsigned int*   pnIB,
 /// \return  Possible return codes:  TOOTLE_INVALID_ARGS, TOOTLE_OUT_OF_MEMORY, TOOTLE_OK
 //=================================================================================================================================
 TootleResult TOOTLE_DLL TootleClusterMesh(const void*         pVB,
-        const unsigned int* pnIB,
-        unsigned int        nVertices,
-        unsigned int        nFaces,
-        unsigned int        nVBStride,
-        unsigned int        nTargetClusters,
-        unsigned int*       pnClusteredIBOut,
-        unsigned int*       pnFaceClustersOut,
-        unsigned int*       pnFaceRemapOut);
+                                          const unsigned int* pnIB,
+                                          unsigned int        nVertices,
+                                          unsigned int        nFaces,
+                                          unsigned int        nVBStride,
+                                          unsigned int        nTargetClusters,
+                                          unsigned int*       pnClusteredIBOut,
+                                          unsigned int*       pnFaceClustersOut,
+                                          unsigned int*       pnFaceRemapOut);
 
 //=================================================================================================================================
 /// This function performs vertex cache optimization and clustering the mesh based on the algorithm from SIGGRAPH 2007.
@@ -159,13 +163,13 @@ TootleResult TOOTLE_DLL TootleClusterMesh(const void*         pVB,
 /// \return  Possible return codes:  TOOTLE_INVALID_ARGS, TOOTLE_OUT_OF_MEMORY or TOOTLE_OK
 //=================================================================================================================================
 TootleResult TOOTLE_DLL TootleFastOptimizeVCacheAndClusterMesh(const unsigned int* pnIB,
-        unsigned int        nFaces,
-        unsigned int        nVertices,
-        unsigned int        nCacheSize,
-        unsigned int*       pnIBOut,
-        unsigned int*       pnClustersOut,
-        unsigned int*       pnNumClustersOut,
-        float               fAlpha = TOOTLE_DEFAULT_ALPHA);
+                                                               unsigned int        nFaces,
+                                                               unsigned int        nVertices,
+                                                               unsigned int        nCacheSize,
+                                                               unsigned int*       pnIBOut,
+                                                               unsigned int*       pnClustersOut,
+                                                               unsigned int*       pnNumClustersOut,
+                                                               float               fAlpha = TOOTLE_DEFAULT_ALPHA);
 
 //=================================================================================================================================
 /// Given a clustered mesh, this function computes a cluster ordering that minimizes expected overdraw, and sorts the clusters
@@ -203,17 +207,17 @@ TootleResult TOOTLE_DLL TootleFastOptimizeVCacheAndClusterMesh(const unsigned in
 ///                                  TOOTLE_NOT_INITIALIZED
 //=================================================================================================================================
 TootleResult TOOTLE_DLL TootleOptimizeOverdraw(const void*             pVB,
-        const unsigned int*     pnIB,
-        unsigned int            nVertices,
-        unsigned int            nFaces,
-        unsigned int            nVBStride,
-        const float*            pfViewpoint,
-        unsigned int            nViewpoints,
-        TootleFaceWinding       eFrontWinding,
-        const unsigned int*     pnFaceClusters,
-        unsigned int*           pnIBOut,
-        unsigned int*           pnClusterRemapOut,
-        TootleOverdrawOptimizer eOverdrawOptimizer = TOOTLE_OVERDRAW_FAST);
+                                               const unsigned int*     pnIB,
+                                               unsigned int            nVertices,
+                                               unsigned int            nFaces,
+                                               unsigned int            nVBStride,
+                                               const float*            pfViewpoint,
+                                               unsigned int            nViewpoints,
+                                               TootleFaceWinding       eFrontWinding,
+                                               const unsigned int*     pnFaceClusters,
+                                               unsigned int*           pnIBOut,
+                                               unsigned int*           pnClusterRemapOut,
+                                               TootleOverdrawOptimizer eOverdrawOptimizer = TOOTLE_OVERDRAW_FAST);
 
 //=================================================================================================================================
 /// Frees all resources held by Tootle
@@ -291,15 +295,15 @@ TootleResult TOOTLE_DLL TootleOptimize(const void*             pVB,
 /// \return  Possible return codes:  TOOTLE_INVALID_ARGS, TOOTLE_OUT_OF_MEMORY or TOOTLE_OK
 //=================================================================================================================================
 TootleResult TOOTLE_DLL TootleFastOptimize(const void*         pVB,
-        const unsigned int* pnIB,
-        unsigned int        nVertices,
-        unsigned int        nFaces,
-        unsigned int        nVBStride,
-        unsigned int        nCacheSize,
-        TootleFaceWinding   eFrontWinding,
-        unsigned int*       pnIBOut,
-        unsigned int*       pnNumClustersOut,
-        float               fAlpha = TOOTLE_DEFAULT_ALPHA);
+                                           const unsigned int* pnIB,
+                                           unsigned int        nVertices,
+                                           unsigned int        nFaces,
+                                           unsigned int        nVBStride,
+                                           unsigned int        nCacheSize,
+                                           TootleFaceWinding   eFrontWinding,
+                                           unsigned int*       pnIBOut,
+                                           unsigned int*       pnNumClustersOut,
+                                           float               fAlpha = TOOTLE_DEFAULT_ALPHA);
 
 //=================================================================================================================================
 /// This is a utility function to optimize vertex cache on a clustered index buffer.  This function simply calls
@@ -326,13 +330,13 @@ TootleResult TOOTLE_DLL TootleFastOptimize(const void*         pVB,
 /// \return                 Possible return codes:  TOOTLE_OK, TOOTLE_OUT_OF_MEMORY, TOOTLE_INVALID_ARGS
 //=================================================================================================================================
 TootleResult TOOTLE_DLL TootleVCacheClusters(const unsigned int*   pnIB,
-        unsigned int          nFaces,
-        unsigned int          nVertices,
-        unsigned int          nCacheSize,
-        const unsigned int*   pnFaceClusters,
-        unsigned int*         pnIBOut,
-        unsigned int*         pnFaceRemapOut,
-        TootleVCacheOptimizer eVCacheOptimizer = TOOTLE_VCACHE_AUTO);
+                                             unsigned int          nFaces,
+                                             unsigned int          nVertices,
+                                             unsigned int          nCacheSize,
+                                             const unsigned int*   pnFaceClusters,
+                                             unsigned int*         pnIBOut,
+                                             unsigned int*         pnFaceRemapOut,
+                                             TootleVCacheOptimizer eVCacheOptimizer = TOOTLE_VCACHE_AUTO);
 
 //=================================================================================================================================
 /// A utility function to simulate vertex processing and measures the cache efficiency of an index buffer.
@@ -347,10 +351,7 @@ TootleResult TOOTLE_DLL TootleVCacheClusters(const unsigned int*   pnIB,
 ///                         triangle.
 /// \return  Possible return codes:  TOOTLE_OK, TOOTLE_OUT_OF_MEMORY, TOOTLE_INVALID_ARGS
 //=================================================================================================================================
-TootleResult TOOTLE_DLL TootleMeasureCacheEfficiency(const unsigned int* pnIB,
-        unsigned int        nFaces,
-        unsigned int        nCacheSize,
-        float*              pfEfficiencyOut);
+TootleResult TOOTLE_DLL TootleMeasureCacheEfficiency(const unsigned int* pnIB, unsigned int nFaces, unsigned int nCacheSize, float* pfEfficiencyOut);
 
 //=================================================================================================================================
 /// A utility function to measure the amount of overdraw that occurs over a set of views.  Overdraw is defined as the number of
@@ -380,16 +381,16 @@ TootleResult TOOTLE_DLL TootleMeasureCacheEfficiency(const unsigned int* pnIB,
 /// \return Possible return codes:  TOOTLE_INVALID_ARGS, TOOTLE_OUT_OF_MEMORY, TOOTLE_NOT_INITIALIZED, or TOOTLE_OK.
 //=================================================================================================================================
 TootleResult TOOTLE_DLL TootleMeasureOverdraw(const void*             pVB,
-        const unsigned int*     pnIB,
-        unsigned int            nVertices,
-        unsigned int            nFaces,
-        unsigned int            nVBStride,
-        const float*            pfViewpoint,
-        unsigned int            nViewpoints,
-        TootleFaceWinding       eFrontWinding,
-        float*                  pfAvgODOut,
-        float*                  pfMaxODOut,
-        TootleOverdrawOptimizer eOverdrawOptimizer = TOOTLE_OVERDRAW_DIRECT3D);
+                                              const unsigned int*     pnIB,
+                                              unsigned int            nVertices,
+                                              unsigned int            nFaces,
+                                              unsigned int            nVBStride,
+                                              const float*            pfViewpoint,
+                                              unsigned int            nViewpoints,
+                                              TootleFaceWinding       eFrontWinding,
+                                              float*                  pfAvgODOut,
+                                              float*                  pfMaxODOut,
+                                              TootleOverdrawOptimizer eOverdrawOptimizer = TOOTLE_OVERDRAW_DIRECT3D);
 
 //=================================================================================================================================
 /// This function rearrange the vertex buffer's memory location based on the index buffer.
@@ -415,13 +416,13 @@ TootleResult TOOTLE_DLL TootleMeasureOverdraw(const void*             pVB,
 /// \return Possible return codes: TOOTLE_INVALID_ARGS, TOOTLE_OUT_OF_MEMORY, or TOOTLE_OK
 //=================================================================================================================================
 TootleResult TOOTLE_DLL TootleOptimizeVertexMemory(const void*         pVB,
-        const unsigned int* pnIB,
-        unsigned int        nVertices,
-        unsigned int        nFaces,
-        unsigned int        nVBStride,
-        void*               pVBOut,
-        unsigned int*       pnIBOut,
-        unsigned int*       pnVertexRemapOut);
+                                                   const unsigned int* pnIB,
+                                                   unsigned int        nVertices,
+                                                   unsigned int        nFaces,
+                                                   unsigned int        nVBStride,
+                                                   void*               pVBOut,
+                                                   unsigned int*       pnIBOut,
+                                                   unsigned int*       pnVertexRemapOut);
 
 // @}
 

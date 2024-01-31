@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2014-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2014-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,23 +27,26 @@
 #include "bc6h_decode.h"
 #include "compressonator.h"
 
+extern bool g_LibraryInitialized;
 
-extern bool    g_LibraryInitialized;
+static BC6HBlockDecoder g_Decoder;
 
-static BC6HBlockDecoder  g_Decoder;
-
-extern "C" BC_ERROR CMP_CreateBC6HEncoder(CMP_BC6H_BLOCK_PARAMETERS user_settings, BC6HBlockEncoder** encoder ) {
-    if(!g_LibraryInitialized) {
+extern "C" BC_ERROR CMP_CreateBC6HEncoder(CMP_BC6H_BLOCK_PARAMETERS user_settings, BC6HBlockEncoder** encoder)
+{
+    if (!g_LibraryInitialized)
+    {
         return BC_ERROR_LIBRARY_NOT_INITIALIZED;
     }
 
-    if ( !encoder ) {
+    if (!encoder)
+    {
         return BC_ERROR_INVALID_PARAMETERS;
     }
 
-    *encoder = new  BC6HBlockEncoder(user_settings);
+    *encoder = new BC6HBlockEncoder(user_settings);
 
-    if ( !encoder ) {
+    if (!encoder)
+    {
         return BC_ERROR_OUT_OF_MEMORY;
     }
 
@@ -55,32 +58,37 @@ extern "C" BC_ERROR CMP_CreateBC6HEncoder(CMP_BC6H_BLOCK_PARAMETERS user_setting
 //
 //
 //
-extern "C" BC_ERROR CMP_EncodeBC6HBlock( BC6HBlockEncoder* encoder, float  in[BC6H_BLOCK_PIXELS][MAX_DIMENSION_BIG], BYTE* out ) {
-    if(!g_LibraryInitialized) {
+extern "C" BC_ERROR CMP_EncodeBC6HBlock(BC6HBlockEncoder* encoder, float in[BC6H_BLOCK_PIXELS][MAX_DIMENSION_BIG], BYTE* out)
+{
+    if (!g_LibraryInitialized)
+    {
         return BC_ERROR_LIBRARY_NOT_INITIALIZED;
     }
 
-    if( !encoder || !in || !out ) {
+    if (!encoder || !in || !out)
+    {
         return BC_ERROR_INVALID_PARAMETERS;
     }
 
-    encoder->CompressBlock( in, out );
+    encoder->CompressBlock(in, out);
 
     return BC_ERROR_NONE;
 }
-
 
 //
 // Decode a block and write it to the output
 //
 //
 //
-extern "C" BC_ERROR CMP_DecodeBC6HBlock( BYTE *in, float  out[BC_BLOCK_PIXELS][MAX_DIMENSION_BIG] ) {
-    if(!g_LibraryInitialized) {
+extern "C" BC_ERROR CMP_DecodeBC6HBlock(BYTE* in, float out[BC_BLOCK_PIXELS][MAX_DIMENSION_BIG])
+{
+    if (!g_LibraryInitialized)
+    {
         return BC_ERROR_LIBRARY_NOT_INITIALIZED;
     }
 
-    if( !in || !out ) {
+    if (!in || !out)
+    {
         return BC_ERROR_INVALID_PARAMETERS;
     }
 
@@ -88,18 +96,20 @@ extern "C" BC_ERROR CMP_DecodeBC6HBlock( BYTE *in, float  out[BC_BLOCK_PIXELS][M
     return BC_ERROR_NONE;
 }
 
-
 //
 // Destroys encoder object
 //
 //
 //
-extern "C" BC_ERROR CMP_DestroyBC6HEncoder( BC6HBlockEncoder* encoder ) {
-    if(!g_LibraryInitialized) {
+extern "C" BC_ERROR CMP_DestroyBC6HEncoder(BC6HBlockEncoder* encoder)
+{
+    if (!g_LibraryInitialized)
+    {
         return BC_ERROR_LIBRARY_NOT_INITIALIZED;
     }
 
-    if( !encoder ) {
+    if (!encoder)
+    {
         return BC_ERROR_INVALID_PARAMETERS;
     }
 
@@ -107,4 +117,3 @@ extern "C" BC_ERROR CMP_DestroyBC6HEncoder( BC6HBlockEncoder* encoder ) {
 
     return BC_ERROR_NONE;
 }
-

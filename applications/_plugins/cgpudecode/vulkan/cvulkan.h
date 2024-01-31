@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,24 +34,25 @@
 #include "plugininterface.h"
 
 // {D88C7EB3-38D3-4B75-BE14-22ED445156FE}
-static const GUID  g_GUID_VULKAN = { 0xd88c7eb3, 0x38d3, 0x4b75,{ 0xbe, 0x14, 0x22, 0xed, 0x44, 0x51, 0x56, 0xfe } };
+static const GUID g_GUID_VULKAN = {0xd88c7eb3, 0x38d3, 0x4b75, {0xbe, 0x14, 0x22, 0xed, 0x44, 0x51, 0x56, 0xfe}};
 
-
-#define TC_PLUGIN_VERSION_MAJOR    1
-#define TC_PLUGIN_VERSION_MINOR    0
+#define TC_PLUGIN_VERSION_MAJOR 1
+#define TC_PLUGIN_VERSION_MINOR 0
 
 using namespace GPU_Decode;
 
-class Plugin_CVulkan : public PluginInterface_GPUDecode {
-  public:
+class Plugin_CVulkan : public PluginInterface_GPUDecode
+{
+public:
     Plugin_CVulkan();
     virtual ~Plugin_CVulkan();
-    int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
-    int TC_Init(std::uint32_t Width, std::uint32_t Height, WNDPROC callback);
+    int       TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
+    int       TC_Init(std::uint32_t Width, std::uint32_t Height, WNDPROC callback);
     CMP_ERROR TC_Decompress(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture);
-    int TC_Close();
-  private:
-    TextureControl  *m_pGPUDecode;
+    int       TC_Close();
+
+private:
+    TextureControl* m_pGPUDecode;
 };
 
 #endif

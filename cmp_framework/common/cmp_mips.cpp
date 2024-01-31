@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2022-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2022 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -215,37 +215,37 @@ CMP_ERROR CMP_API CMP_CreateMipSet(CMP_MipSet* pMipSet, CMP_INT nWidth, CMP_INT 
     //-----------------------------------------------------------------------
     // Calculate the target compressed block buffer size (4 bytes x 4 bytes)
     //-----------------------------------------------------------------------
-    CMP_INT bytesPerChannel; // use m_ChannelFormat for this 
+    CMP_INT bytesPerChannel;  // use m_ChannelFormat for this
 
     switch (channelFormat)
     {
-        case CF_16bit:
-        case CF_Float16:
-            bytesPerChannel = 8;
-            break;
-        case CF_32bit:
-        case CF_Float32:
-            bytesPerChannel = 16;
-            break;
-        case CF_1010102:
-        case CF_2101010:
-        case CF_Float9995E:
-        case CF_YUV_420:
-        case CF_YUV_422:
-        case CF_YUV_444:
-        case CF_YUV_4444:
-            // toDo
-            return CMP_ERR_UNSUPPORTED_SOURCE_FORMAT;
-            break;
-        case CF_Compressed:
-            bytesPerChannel = 1;
-            break;
-        default:
-            bytesPerChannel = 4;
-            break;
+    case CF_16bit:
+    case CF_Float16:
+        bytesPerChannel = 8;
+        break;
+    case CF_32bit:
+    case CF_Float32:
+        bytesPerChannel = 16;
+        break;
+    case CF_1010102:
+    case CF_2101010:
+    case CF_Float9995E:
+    case CF_YUV_420:
+    case CF_YUV_422:
+    case CF_YUV_444:
+    case CF_YUV_4444:
+        // toDo
+        return CMP_ERR_UNSUPPORTED_SOURCE_FORMAT;
+        break;
+    case CF_Compressed:
+        bytesPerChannel = 1;
+        break;
+    default:
+        bytesPerChannel = 4;
+        break;
     }
 
-    pMipSet->dwDataSize     = (nWidth * nHeight) * bytesPerChannel;
+    pMipSet->dwDataSize = (nWidth * nHeight) * bytesPerChannel;
 
     //----------------------------------------------------------------
     // Allocate memory for the mip level 0
@@ -266,18 +266,18 @@ CMP_ERROR CMP_API CMP_CreateMipSet(CMP_MipSet* pMipSet, CMP_INT nWidth, CMP_INT 
 
 void CMP_calcMSE_PSNRb(MipLevel* pCurMipLevel, CMP_BYTE* pdata1, CMP_BYTE* pdata2, CMP_AnalysisData* pAnalysisData)
 {
-    CMP_UINT   RGBAChannels = pAnalysisData->channelBitMap;
-    CMP_FLOAT  mse;
-    CMP_FLOAT  mseR         = 0.0f;
-    CMP_FLOAT  mseG         = 0.0f;
-    CMP_FLOAT  mseB         = 0.0f;
-    CMP_FLOAT  mseA         = 0.0f;
-    CMP_FLOAT  mseRGBA      = 0.0f;
-    CMP_INT    totalPixelsR = 0;
-    CMP_INT    totalPixelsG = 0;
-    CMP_INT    totalPixelsB = 0;
-    CMP_INT    totalPixelsA = 0;
-    CMP_INT    totalPixels  = 0;
+    CMP_UINT  RGBAChannels = pAnalysisData->channelBitMap;
+    CMP_FLOAT mse;
+    CMP_FLOAT mseR         = 0.0f;
+    CMP_FLOAT mseG         = 0.0f;
+    CMP_FLOAT mseB         = 0.0f;
+    CMP_FLOAT mseA         = 0.0f;
+    CMP_FLOAT mseRGBA      = 0.0f;
+    CMP_INT   totalPixelsR = 0;
+    CMP_INT   totalPixelsG = 0;
+    CMP_INT   totalPixelsB = 0;
+    CMP_INT   totalPixelsA = 0;
+    CMP_INT   totalPixels  = 0;
 
     for (int y = 0; y < pCurMipLevel->m_nHeight; y++)
     {
@@ -373,20 +373,20 @@ void CMP_calcMSE_PSNRb(MipLevel* pCurMipLevel, CMP_BYTE* pdata1, CMP_BYTE* pdata
 
 void CMP_calcMSE_PSNR1010102(MipLevel* pCurMipLevel, CMP_DWORD* buffer1, CMP_DWORD* buffer2, CMP_AnalysisData* pAnalysisData)
 {
-    CMP_UINT RGBAChannels = pAnalysisData->channelBitMap;
-    CMP_FLOAT mse = 0.0f;
-    CMP_FLOAT mseR = 0.0f;
-    CMP_FLOAT mseG = 0.0f;
-    CMP_FLOAT mseB = 0.0f;
-    CMP_FLOAT mseA = 0.0f;
-    CMP_FLOAT mseRGBA = 0.0f;
-    CMP_INT totalPixelsR = 0;
-    CMP_INT totalPixelsG = 0;
-    CMP_INT totalPixelsB = 0;
-    CMP_INT totalPixelsA = 0;
-    CMP_INT totalPixels = 0;
+    CMP_UINT  RGBAChannels = pAnalysisData->channelBitMap;
+    CMP_FLOAT mse          = 0.0f;
+    CMP_FLOAT mseR         = 0.0f;
+    CMP_FLOAT mseG         = 0.0f;
+    CMP_FLOAT mseB         = 0.0f;
+    CMP_FLOAT mseA         = 0.0f;
+    CMP_FLOAT mseRGBA      = 0.0f;
+    CMP_INT   totalPixelsR = 0;
+    CMP_INT   totalPixelsG = 0;
+    CMP_INT   totalPixelsB = 0;
+    CMP_INT   totalPixelsA = 0;
+    CMP_INT   totalPixels  = 0;
 
-    for (uint32_t i = 0; i < pCurMipLevel->m_nHeight*pCurMipLevel->m_nWidth; ++i)
+    for (uint32_t i = 0; i < pCurMipLevel->m_nHeight * pCurMipLevel->m_nWidth; ++i)
     {
         // calc Gamma for the all active channels
         // Red channel
@@ -407,7 +407,7 @@ void CMP_calcMSE_PSNR1010102(MipLevel* pCurMipLevel, CMP_DWORD* buffer1, CMP_DWO
         {
             int32_t g1 = RGBA1010102_GET_G(buffer1[i]);
             int32_t g2 = RGBA1010102_GET_G(buffer2[i]);
-    
+
             mse = powf(abs(g1 - g2), 2);
             mseG += mse;
             mseRGBA += mse;
@@ -719,12 +719,12 @@ CMP_ERROR CMP_API CMP_MipSetAnlaysis(CMP_MipSet* src1, CMP_MipSet* src2, CMP_INT
         return CMP_ERR_INVALID_SOURCE_TEXTURE;
     if (src2->m_ChannelFormat == CF_Compressed)
         return CMP_ERR_INVALID_DEST_TEXTURE;
-    
+
     CMIPS CMips;
-    
+
     MipLevel* pCurMipLevel1;
     MipLevel* pCurMipLevel2;
-    
+
     pAnalysisData->mse  = 0.0f;
     pAnalysisData->psnr = 0.0f;
 
@@ -745,14 +745,14 @@ CMP_ERROR CMP_API CMP_MipSetAnlaysis(CMP_MipSet* src1, CMP_MipSet* src2, CMP_INT
     bool isSrc2Float = CMP_IsFloatFormat(src2->m_format);
 
     ConvertedBuffer src1Buffer;
-    src1Buffer.data = pCurMipLevel1->m_pbData;
+    src1Buffer.data     = pCurMipLevel1->m_pbData;
     src1Buffer.dataSize = pCurMipLevel1->m_dwLinearSize;
-    src1Buffer.format = src1->m_format;
+    src1Buffer.format   = src1->m_format;
 
     ConvertedBuffer src2Buffer;
-    src2Buffer.data = pCurMipLevel2->m_pbData;
+    src2Buffer.data     = pCurMipLevel2->m_pbData;
     src2Buffer.dataSize = pCurMipLevel2->m_dwLinearSize;
-    src2Buffer.format = src2->m_format;
+    src2Buffer.format   = src2->m_format;
 
     // some conversion might be needed
     if (src1ChannelFormat != src2ChannelFormat)
@@ -760,9 +760,11 @@ CMP_ERROR CMP_API CMP_MipSetAnlaysis(CMP_MipSet* src1, CMP_MipSet* src2, CMP_INT
         // For most cases we convert the "source" format to the "destination" format, except for in special cases like RGBA1010102
 
         if (src2ChannelFormat == CF_1010102)
-            src2Buffer = CreateCompatibleBuffer(src1->m_format, src2Buffer.format, src2Buffer.data, src2Buffer.dataSize, pCurMipLevel2->m_nWidth, pCurMipLevel2->m_nHeight, &floatParams);
+            src2Buffer = CreateCompatibleBuffer(
+                src1->m_format, src2Buffer.format, src2Buffer.data, src2Buffer.dataSize, pCurMipLevel2->m_nWidth, pCurMipLevel2->m_nHeight, &floatParams);
         else
-            src1Buffer = CreateCompatibleBuffer(src2->m_format, src1Buffer.format, src1Buffer.data, src1Buffer.dataSize, pCurMipLevel1->m_nWidth, pCurMipLevel1->m_nHeight, &floatParams);
+            src1Buffer = CreateCompatibleBuffer(
+                src2->m_format, src1Buffer.format, src1Buffer.data, src1Buffer.dataSize, pCurMipLevel1->m_nWidth, pCurMipLevel1->m_nHeight, &floatParams);
 
         src1ChannelFormat = GetChannelFormat(src1Buffer.format);
         src2ChannelFormat = GetChannelFormat(src2Buffer.format);
@@ -778,7 +780,7 @@ CMP_ERROR CMP_API CMP_MipSetAnlaysis(CMP_MipSet* src1, CMP_MipSet* src2, CMP_INT
     else if (src1ChannelFormat == CF_1010102 && src2ChannelFormat == CF_1010102)
         CMP_calcMSE_PSNR1010102(pCurMipLevel1, (CMP_DWORD*)src1Buffer.data, (CMP_DWORD*)src2Buffer.data, pAnalysisData);
     else
-        return CMP_ABORTED; // Format not supported
+        return CMP_ABORTED;  // Format not supported
 
     return CMP_OK;
 }
@@ -944,20 +946,21 @@ bool CMP_CMIPS::AllocateAllMipLevels(CMP_MipLevelTable* pMipLevelTable, CMP_Text
     //allocate each MipLevel that the table points to
     for (int i = 0; i < nLevelsToAllocate; i++)
     {
-        pMipLevelTable[i] = reinterpret_cast<CMP_MipLevel*>(calloc(sizeof(CMP_MipLevel), 1));
+        pMipLevelTable[i] = reinterpret_cast<CMP_MipLevel*>(calloc(1, sizeof(CMP_MipLevel)));
         //make sure it was allocated ok
         assert(pMipLevelTable[i]);
         if (!pMipLevelTable[i])
         {
             //free previous mipLevels
-            for (i -= 1; i >= 0; i--)
+            for (int j = 0; j < i; ++j)
             {
-                if (pMipLevelTable[i])
+                if (pMipLevelTable[j])
                 {
-                    free(pMipLevelTable[i]);
-                    pMipLevelTable[i] = NULL;
+                    free(pMipLevelTable[j]);
+                    pMipLevelTable[j] = NULL;
                 }
             }
+
             return false;
         }
     }
@@ -1126,8 +1129,8 @@ void CMP_CMIPS::FreeMipSet(CMP_MipSet* pMipSet)
             default:
                 assert(0);
             }
-            //free all miplevels and their data except the one use in gui view
-            for (int i = 0; i < nTotalOldMipLevels - 2; i++)
+
+            for (int i = 0; i < nTotalOldMipLevels; i++)
             {
                 if (pMipSet->m_pMipLevelTable[i]->m_pbData)
                 {

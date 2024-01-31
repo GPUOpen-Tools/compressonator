@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2023 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2023-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -33,9 +33,13 @@
 #define ALIGN_16 __attribute__((aligned(16)))
 #endif
 
-CGU_FLOAT sse_bc1ComputeBestEndpoints(CGU_FLOAT endpointsOut[2], CGU_FLOAT endpointsIn[2],
-                                      CGU_FLOAT prj[16], CGU_FLOAT prjError[16], CGU_FLOAT preMRep[16],
-                                      int numColours, int numPoints)
+CGU_FLOAT sse_bc1ComputeBestEndpoints(CGU_FLOAT endpointsOut[2],
+                                      CGU_FLOAT endpointsIn[2],
+                                      CGU_FLOAT prj[16],
+                                      CGU_FLOAT prjError[16],
+                                      CGU_FLOAT preMRep[16],
+                                      int       numColours,
+                                      int       numPoints)
 {
     static const CGU_FLOAT searchStep = 0.025f;
 
@@ -44,7 +48,7 @@ CGU_FLOAT sse_bc1ComputeBestEndpoints(CGU_FLOAT endpointsOut[2], CGU_FLOAT endpo
 
     CGU_FLOAT minError = 128000.0f;
 
-    CGU_FLOAT lowStep = lowStart;
+    CGU_FLOAT lowStep  = lowStart;
     CGU_FLOAT highStep = highStart;
 
     // init SIMD vectors
@@ -66,19 +70,19 @@ CGU_FLOAT sse_bc1ComputeBestEndpoints(CGU_FLOAT endpointsOut[2], CGU_FLOAT endpo
 
     __m128 zeroVector = _mm_setzero_ps();
 
-    for(int low = 0; low < 8; ++low)
+    for (int low = 0; low < 8; ++low)
     {
-        for(int high = 0; high < 8; ++high)
+        for (int high = 0; high < 8; ++high)
         {
             // init constant vectors
 
-            CGV_FLOAT stepScalar = (highStep - lowStep)/(numPoints - 1);
+            CGV_FLOAT stepScalar = (highStep - lowStep) / (numPoints - 1);
 
-            __m128 lowStepVector = _mm_set1_ps(lowStep);
-            __m128 highStepVector = _mm_set1_ps(highStep);
-            __m128 stepVector = _mm_set1_ps(stepScalar);
-            __m128 stepHVector = _mm_set1_ps(0.5f*stepScalar);
-            __m128 inverseStepVector = _mm_set1_ps(1.0f/stepScalar);
+            __m128 lowStepVector     = _mm_set1_ps(lowStep);
+            __m128 highStepVector    = _mm_set1_ps(highStep);
+            __m128 stepVector        = _mm_set1_ps(stepScalar);
+            __m128 stepHVector       = _mm_set1_ps(0.5f * stepScalar);
+            __m128 inverseStepVector = _mm_set1_ps(1.0f / stepScalar);
 
             // Calculate "del"
 
@@ -165,7 +169,7 @@ CGU_FLOAT sse_bc1ComputeBestEndpoints(CGU_FLOAT endpointsOut[2], CGU_FLOAT endpo
             _mm_store_ps(errorResult + 12, err3);
 
             CGV_FLOAT finalError = 0.0f;
-            for (unsigned int i = 0; i < numColours; ++i)
+            for (int i = 0; i < numColours; ++i)
             {
                 finalError += errorResult[i];
                 if (finalError >= minError)
@@ -175,9 +179,10 @@ CGU_FLOAT sse_bc1ComputeBestEndpoints(CGU_FLOAT endpointsOut[2], CGU_FLOAT endpo
                 }
             }
 
-            if(finalError < minError) {
+            if (finalError < minError)
+            {
                 // save better result
-                minError = finalError;
+                minError        = finalError;
                 endpointsOut[0] = lowStep;
                 endpointsOut[1] = highStep;
             }

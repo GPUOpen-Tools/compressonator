@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -40,57 +40,56 @@
 #include <qstyleoption.h>
 #include <qpainter.h>
 
-class acDockWidgetTitlebar : public QWidget {
+class acDockWidgetTitlebar : public QWidget
+{
     Q_OBJECT
 
-  private:
-    QWidget *parent;
-    QPoint cursor;
-    QLabel *m_label;
-    QHBoxLayout *m_layout;
+private:
+    QWidget*     parent;
+    QPoint       cursor;
+    QLabel*      m_label;
+    QHBoxLayout* m_layout;
 
-  public:
-
-    acDockWidgetTitlebar(QWidget *parent);
+public:
+    acDockWidgetTitlebar(QWidget* parent);
     ~acDockWidgetTitlebar();
 
-    void setButtonCloseEnabled(bool enabled);
-    void setButtonMinMaxEnabled(bool enabled);
-    void setButtonToolBarEnabled(bool enabled);
-    void setButtonToolBarShow(bool isShowing);
-    void setTitle(QString title);
+    void    setButtonCloseEnabled(bool enabled);
+    void    setButtonMinMaxEnabled(bool enabled);
+    void    setButtonToolBarEnabled(bool enabled);
+    void    setButtonToolBarShow(bool isShowing);
+    void    setTitle(QString title);
     QString getTitle();
-    bool m_close;
+    bool    m_close;
 
-  public slots:
+public slots:
     void OnToolBarClicked();
     void onMaximize();
     void onNormal();
     void onMinimize();
     void onClose();
 
-  Q_SIGNALS:
+Q_SIGNALS:
     void ToolBarCliked();
-    void OnAboutToClose(QString &Title);
+    void OnAboutToClose(QString& Title);
 
-  protected:
-    QWidget *m_parent;
+protected:
+    QWidget* m_parent;
 
     bool m_ButtonCloseEnabled;
     bool m_buttonToolBarEnabled;
 
-    QPushButton *m_buttonClose;
-    QPushButton *m_buttonMaximize;
-    QPushButton *m_buttonMinimize;
-    QPushButton *m_buttonNormal;
+    QPushButton* m_buttonClose;
+    QPushButton* m_buttonMaximize;
+    QPushButton* m_buttonMinimize;
+    QPushButton* m_buttonNormal;
 
-
-    QPushButton *m_buttonToolBar;
-    QIcon       *m_ToolBarIcon;
+    QPushButton* m_buttonToolBar;
+    QIcon*       m_ToolBarIcon;
 
     // QWidget Reimplementations
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent* event);
+    void mouseMoveEvent(QMouseEvent* event);
 };
 
 #endif

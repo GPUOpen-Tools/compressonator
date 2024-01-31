@@ -63,7 +63,7 @@
     endif()
 
     set_target_properties(CMP_Core PROPERTIES 
-        FOLDER "Libs"
+        FOLDER ${PROJECT_FOLDER_SDK_LIBS}
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
         ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
     )
@@ -92,7 +92,7 @@ if (UNIX)
 endif()
 
 set_target_properties(CMP_Core_SSE PROPERTIES 
-    FOLDER "Core_SIMD"
+    FOLDER ${PROJECT_FOLDER_SDK_LIBS}
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
@@ -118,7 +118,7 @@ else()
 endif()
 
 set_target_properties(CMP_Core_AVX PROPERTIES 
-    FOLDER "Core_SIMD"
+    FOLDER ${PROJECT_FOLDER_SDK_LIBS}
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
@@ -144,7 +144,7 @@ else()
 endif()
 
 set_target_properties(CMP_Core_AVX512 PROPERTIES 
-    FOLDER "Core_SIMD"
+    FOLDER ${PROJECT_FOLDER_SDK_LIBS}
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )

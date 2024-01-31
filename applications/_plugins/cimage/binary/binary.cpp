@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2022 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2022-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -138,7 +138,7 @@ int Image_Plugin_BINARY::TC_PluginFileLoadTexture(const char* pszFilename, MipSe
     }
 
     CMP_MipLevel* baseMipLevel = g_CMIPS->GetMipLevel(pMipSet, 0);
-    success = g_CMIPS->AllocateCompressedMipLevelData(baseMipLevel, fileSize, 1, fileSize);
+    success                    = g_CMIPS->AllocateCompressedMipLevelData(baseMipLevel, fileSize, 1, fileSize);
 
     if (!success)
     {
@@ -149,14 +149,18 @@ int Image_Plugin_BINARY::TC_PluginFileLoadTexture(const char* pszFilename, MipSe
 
     fread(baseMipLevel->m_pbData, baseMipLevel->m_dwLinearSize, 1, inFile);
 
-    pMipSet->m_format = CMP_FORMAT_BINARY;
-    pMipSet->m_nMipLevels = 1;
+    pMipSet->m_format          = CMP_FORMAT_BINARY;
+    pMipSet->m_nMipLevels      = 1;
     pMipSet->m_transcodeFormat = CMP_FORMAT_BINARY;
 
     // Saving the original file data
+    std::string fileName = CMP_GetFileName(pszFilename);
+
     BRLG_ExtraInfo* fileInfo = (BRLG_ExtraInfo*)calloc(1, sizeof(BRLG_ExtraInfo));
 
-    std::string fileName = CMP_GetFileName(pszFilename);
+    fileInfo->numChars = fileName.size() + 1;
+    fileInfo->fileName = (char*)calloc(fileInfo->numChars, sizeof(char));
+
     memcpy(fileInfo->fileName, fileName.c_str(), fileName.size());
 
     pMipSet->m_pReservedData = fileInfo;
@@ -177,13 +181,26 @@ int Image_Plugin_BINARY::TC_PluginFileSaveTexture(const char* fileName, MipSet* 
         return -1;
     }
 
+    // Check if the base directory of the file exists, if not we create it
+    std::string baseDirectory = CMP_GetBaseDir(std::string(fileName));
+    if (!baseDirectory.empty() && !CMP_DirExists(baseDirectory))
+    {
+        if (!CMP_CreateDir(baseDirectory))
+        {
+            if (BINARY_CMips)
+                BINARY_CMips->PrintError(
+                    "ERROR: Destination path \"%s\" is within a directory that doesn't exist and there was an error creating the directory.\n");
+            return -1;
+        }
+    }
+
     FILE* outFile = NULL;
 
     outFile = fopen(fileName, "wb");
     if (outFile == NULL)
     {
         if (BINARY_CMips)
-            BINARY_CMips->PrintError("Error: BINARY Plugin ID(%d) saving file = %s ", IDS_ERROR_FILE_OPEN, fileName);
+            BINARY_CMips->PrintError("ERROR: BINARY Plug-in failed to open file \"%s\"\n", fileName);
         return -1;
     }
 

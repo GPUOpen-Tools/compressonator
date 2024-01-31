@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2018-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,25 +30,28 @@
 #include <sstream>
 #include <iostream>
 
-class Shader {
-  public:
+class Shader
+{
+public:
     GLuint Program;
 
-    Shader() {};
+    Shader(){};
 
-    void build(const GLchar* vertexPath, const GLchar* fragmentPath, const GLchar* geometryPath = nullptr) {
+    void build(const GLchar* vertexPath, const GLchar* fragmentPath, const GLchar* geometryPath = nullptr)
+    {
         // 1. Retrieve the vertex/fragment source code from filePath
-        std::string vertexCode;
-        std::string fragmentCode;
-        std::string geometryCode;
+        std::string   vertexCode;
+        std::string   fragmentCode;
+        std::string   geometryCode;
         std::ifstream vShaderFile;
         std::ifstream fShaderFile;
         std::ifstream gShaderFile;
         // ensures ifstream objects can throw exceptions:
-        vShaderFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
-        fShaderFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
-        gShaderFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
-        try {
+        vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        gShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        try
+        {
             // Open files
             vShaderFile.open(vertexPath);
             fShaderFile.open(fragmentPath);
@@ -60,24 +63,27 @@ class Shader {
             vShaderFile.close();
             fShaderFile.close();
             // Convert stream into string
-            vertexCode = vShaderStream.str();
+            vertexCode   = vShaderStream.str();
             fragmentCode = fShaderStream.str();
             // If geometry shader path is present, also load a geometry shader
-            if(geometryPath != nullptr) {
+            if (geometryPath != nullptr)
+            {
                 gShaderFile.open(geometryPath);
                 std::stringstream gShaderStream;
                 gShaderStream << gShaderFile.rdbuf();
                 gShaderFile.close();
                 geometryCode = gShaderStream.str();
             }
-        } catch (std::ifstream::failure e) {
+        }
+        catch (std::ifstream::failure e)
+        {
             std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
         }
         const GLchar* vShaderCode = vertexCode.c_str();
-        const GLchar * fShaderCode = fragmentCode.c_str();
+        const GLchar* fShaderCode = fragmentCode.c_str();
         // 2. Compile shaders
         GLuint vertex, fragment;
-        GLint success;
+        GLint  success;
         GLchar infoLog[512];
         // Vertex Shader
         vertex = glCreateShader(GL_VERTEX_SHADER);
@@ -91,9 +97,10 @@ class Shader {
         checkCompileErrors(fragment, "FRAGMENT");
         // If geometry shader is given, compile geometry shader
         GLuint geometry;
-        if(geometryPath != nullptr) {
-            const GLchar * gShaderCode = geometryCode.c_str();
-            geometry = glCreateShader(GL_GEOMETRY_SHADER);
+        if (geometryPath != nullptr)
+        {
+            const GLchar* gShaderCode = geometryCode.c_str();
+            geometry                  = glCreateShader(GL_GEOMETRY_SHADER);
             glShaderSource(geometry, 1, &gShaderCode, NULL);
             glCompileShader(geometry);
             checkCompileErrors(geometry, "GEOMETRY");
@@ -102,37 +109,45 @@ class Shader {
         this->Program = glCreateProgram();
         glAttachShader(this->Program, vertex);
         glAttachShader(this->Program, fragment);
-        if(geometryPath != nullptr)
+        if (geometryPath != nullptr)
             glAttachShader(this->Program, geometry);
         glLinkProgram(this->Program);
         checkCompileErrors(this->Program, "PROGRAM");
         // Delete the shaders as they're linked into our program now and no longer necessery
         glDeleteShader(vertex);
         glDeleteShader(fragment);
-        if(geometryPath != nullptr)
+        if (geometryPath != nullptr)
             glDeleteShader(geometry);
-
     }
     // Uses the current shader
-    void Use() {
+    void Use()
+    {
         glUseProgram(this->Program);
     }
 
-  private:
-    void checkCompileErrors(GLuint shader, std::string type) {
-        GLint success;
+private:
+    void checkCompileErrors(GLuint shader, std::string type)
+    {
+        GLint  success;
         GLchar infoLog[1024];
-        if(type != "PROGRAM") {
+        if (type != "PROGRAM")
+        {
             glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-            if(!success) {
+            if (!success)
+            {
                 glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-                std::cout << "| ERROR::::SHADER-COMPILATION-ERROR of type: " << type << "|\n" << infoLog << "\n| -- --------------------------------------------------- -- |" << std::endl;
+                std::cout << "| ERROR::::SHADER-COMPILATION-ERROR of type: " << type << "|\n"
+                          << infoLog << "\n| -- --------------------------------------------------- -- |" << std::endl;
             }
-        } else {
+        }
+        else
+        {
             glGetProgramiv(shader, GL_LINK_STATUS, &success);
-            if(!success) {
+            if (!success)
+            {
                 glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-                std::cout << "| ERROR::::PROGRAM-LINKING-ERROR of type: " << type << "|\n" << infoLog << "\n| -- --------------------------------------------------- -- |" << std::endl;
+                std::cout << "| ERROR::::PROGRAM-LINKING-ERROR of type: " << type << "|\n"
+                          << infoLog << "\n| -- --------------------------------------------------- -- |" << std::endl;
             }
         }
     }

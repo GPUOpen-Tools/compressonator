@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -26,16 +26,18 @@
 #define _CODEC_ATC_H_INCLUDED_
 
 #include "codec_block_4x4.h"
+#include "codec_common.h"
 
 #define ATC_OFFSET_ALPHA 0
 #define ATC_OFFSET_RGB 2
 
-class CCodec_ATC : public CCodec_Block_4x4 {
-  public:
+class CCodec_ATC : public CCodec_Block_4x4
+{
+public:
     CCodec_ATC(CodecType codecType);
     virtual ~CCodec_ATC();
 
-  protected:
+protected:
     CodecError CompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2]);
     CodecError CompressRGBABlock_ExplicitAlpha(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[4]);
     CodecError CompressRGBABlock_InterpolatedAlpha(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[4]);
@@ -51,4 +53,4 @@ class CCodec_ATC : public CCodec_Block_4x4 {
     void EncodeAlphaBlock(CMP_DWORD compressedBlock[2], CMP_BYTE nEndpoints[2], CMP_BYTE nIndices[BLOCK_SIZE_4X4]);
     void GetCompressedAlphaRamp(CMP_BYTE alpha[8], CMP_DWORD compressedBlock[2]);
 };
-#endif // !defined(_CODEC_ATC_H_INCLUDED_)
+#endif  // !defined(_CODEC_ATC_H_INCLUDED_)
