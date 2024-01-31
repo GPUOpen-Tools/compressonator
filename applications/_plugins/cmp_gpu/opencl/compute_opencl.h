@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -28,7 +28,7 @@
 
 #include <cl/opencl.h>
 
-#include "common_def.h"                     // Updated at run time by COpenCL
+#include "common_def.h"  // Updated at run time by COpenCL
 
 #include "compute_base.h"
 #include "common_kerneldef.h"
@@ -41,22 +41,24 @@
 
 using namespace CMP_Compute_Base;
 
-#define NUM_THREADS   1                     // Number of threads per work group.(can have upto 64 Threads)
+#define NUM_THREADS 1  // Number of threads per work group.(can have upto 64 Threads)
 // #define USE_CRC32                        // Use source file checking first to update .cmp files at run time. (slows compute loading time)
 // Disable this definition to use .cmp files first and then try src if not found
 
-struct OpenCLBinary_Header {
-    unsigned int  version;
-    long          crc32;
+struct OpenCLBinary_Header
+{
+    unsigned int version;
+    long         crc32;
 };
 
-class COpenCL :public ComputeBase {
-  public:
-    COpenCL(void  *kerneloptions);
+class COpenCL : public ComputeBase
+{
+public:
+    COpenCL(void* kerneloptions);
     COpenCL(ComputeOptions CLOptions);
     ~COpenCL();
-    CMP_ERROR   Compress(KernelOptions *Options, MipSet &SrcTexture, MipSet &destTexture,CMP_Feedback_Proc pFeedback);
-    void        SetComputeOptions(ComputeOptions *CLOptions);
+    CMP_ERROR   Compress(KernelOptions* Options, MipSet& SrcTexture, MipSet& destTexture, CMP_Feedback_Proc pFeedback);
+    void        SetComputeOptions(ComputeOptions* CLOptions);
     float       GetProcessElapsedTimeMS();
     float       GetMTxPerSec();
     int         GetBlockSize();
@@ -64,84 +66,84 @@ class COpenCL :public ComputeBase {
     const char* GetVersion();
     int         GetMaxUCores();
 
-  private:
-    bool            m_initDeviceOk;
-    bool            m_programRun;
-    CMP_FORMAT      m_codecFormat;
+private:
+    bool       m_initDeviceOk;
+    bool       m_programRun;
+    CMP_FORMAT m_codecFormat;
 
     // Performance Info
-    bool            m_getPerfStats;
-    int             m_num_blocks;
-    float           m_CmpMTxPerSec;
-    float           m_computeShaderElapsedMS;
+    bool  m_getPerfStats;
+    int   m_num_blocks;
+    float m_CmpMTxPerSec;
+    float m_computeShaderElapsedMS;
 
     // Device Info
-    std::string     m_deviceName;
-    std::string     m_version;
-    cl_uint         m_maxUCores;
+    std::string m_deviceName;
+    std::string m_version;
+    cl_uint     m_maxUCores;
 
     // Internal
-    std::string     m_source_file;
-    KernelOptions   *m_kernel_options;
-    cl_uint         m_num_platforms;
-    cl_int          m_result;
-    cl_platform_id  m_platform_ids[MAX_PLATFORMS];
-    cl_platform_id  m_platform_id;
-    cl_device_id    m_device_id;
-    cl_context      m_context;
-    cl_program      m_program_encoder;
-    cl_kernel       m_kernel;
-    cl_mem          m_device_source_buffer;
-    cl_mem          m_device_destination_buffer;
-    cl_mem          m_Source_Info_buffer;
-    cl_mem          m_Encoder_buffer;
+    std::string      m_source_file;
+    KernelOptions*   m_kernel_options;
+    cl_uint          m_num_platforms;
+    cl_int           m_result;
+    cl_platform_id   m_platform_ids[MAX_PLATFORMS];
+    cl_platform_id   m_platform_id;
+    cl_device_id     m_device_id;
+    cl_context       m_context;
+    cl_program       m_program_encoder;
+    cl_kernel        m_kernel;
+    cl_mem           m_device_source_buffer;
+    cl_mem           m_device_destination_buffer;
+    cl_mem           m_Source_Info_buffer;
+    cl_mem           m_Encoder_buffer;
     cl_command_queue m_command_queue;
-    size_t          m_destination_size;
-    size_t          m_source_buffer_size;
-    cl_uint         m_width_in_blocks;
-    cl_uint         m_height_in_blocks;
+    size_t           m_destination_size;
+    size_t           m_source_buffer_size;
+    cl_uint          m_width_in_blocks;
+    cl_uint          m_height_in_blocks;
 
     // from NV code
     // cl_int          m_blocksPerLaunch;
-    cl_int          m_blocks;
+    cl_int m_blocks;
 
     // Options that users can override or add
-    bool            m_force_rebuild;
+    bool m_force_rebuild;
 
-
-    Source_Info     m_SourceInfo;
-    bool            m_svmSupport;
-    void            *m_svmData;
+    Source_Info m_SourceInfo;
+    bool        m_svmSupport;
+    void*       m_svmData;
 
     // OpenCL file (Binary or Source)
-    char            m_compile_options[256];
+    char m_compile_options[256];
 
-    union {
-        char            *buffer;
-        unsigned char   *ubuffer;
+    union
+    {
+        char*          buffer;
+        unsigned char* ubuffer;
     } p_program;
 
-    size_t          m_program_size;
-    bool            m_isBinary;
-    long            m_sourcefile_CRC32;
-    float           ocl_time_device = 0;
+    size_t m_program_size;
+    bool   m_isBinary;
+    long   m_sourcefile_CRC32;
+    float  ocl_time_device = 0;
 
     long file_size(FILE* p_file);
     bool load_file();
 
     // Need to fill these
-    BYTE* p_destination;
+    CMP_BYTE*   p_destination;
     CMP_Vec4uc* m_psource;
-    void Init();
-    bool GetPlatformID();
-    bool SearchForGPU();
-    bool GetDeviceInfo();
-    bool CreateContext();
-    bool Create_Program_File();
-    bool CreateProgramEncoder();
-    bool CreateIOBuffers();
-    bool RunKernel();
-    bool GetResults();
+    void        Init();
+    bool        GetPlatformID();
+    bool        SearchForGPU();
+    bool        GetDeviceInfo();
+    bool        CreateContext();
+    bool        Create_Program_File();
+    bool        CreateProgramEncoder();
+    bool        CreateIOBuffers();
+    bool        RunKernel();
+    bool        GetResults();
 
     void CleanUpProgramEncoder();
     void CleanUpKernelAndIOBuffers();

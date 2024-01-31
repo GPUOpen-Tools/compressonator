@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -41,50 +41,56 @@
 // This Class is defined as Static
 // to enable message handling via emit signals calls from static & global functions
 //
-class winMsgHandler : public QObject {
+class winMsgHandler : public QObject
+{
     Q_OBJECT
 
-  public:
-    winMsgHandler() {};
+public:
+    winMsgHandler(){};
 
 #ifdef _WIN32
-  Q_SIGNALS:
+Q_SIGNALS:
     void signalMessage(MSG& msg);
 #else
-  Q_SIGNALS:
+Q_SIGNALS:
     void signalMessage(QString& msg);
 #endif
 };
 
-class cpRenderWindow : public QWidget {
+class cpRenderWindow : public QWidget
+{
     Q_OBJECT
 
-  public:
+public:
     bool m_showViewOptions;
     WId  m_wid;
     bool m_usingWindowProc;
     bool m_viewingOriginalModel;
 
-    cpRenderWindow() {
-        m_plugin          = NULL;
-        m_viewOpen        = false;
-        m_wid             = 0L;
-        m_usingWindowProc = false;
+    cpRenderWindow()
+    {
+        m_plugin               = NULL;
+        m_viewOpen             = false;
+        m_wid                  = 0L;
+        m_usingWindowProc      = false;
         m_manual3DViewFlipMode = 0;
         m_viewingOriginalModel = true;
         this->setFocusPolicy(Qt::ClickFocus);
         qApp->installEventFilter(this);
     }
 
-    void setplugin(PluginInterface_3DModel* plugin) {
+    void setplugin(PluginInterface_3DModel* plugin)
+    {
         m_plugin = plugin;
     }
 
-    void setView(bool viewOpen) {
+    void setView(bool viewOpen)
+    {
         m_viewOpen = viewOpen;
     }
 
-    void setHwnd(HWND hwnd) {
+    void setHwnd(HWND hwnd)
+    {
         m_hwnd = hwnd;
     }
 
@@ -95,21 +101,21 @@ class cpRenderWindow : public QWidget {
     // Effective only when watching a 3DModel Diff
     void SetManualRenderFlip(int mode);
 
-  Q_SIGNALS:
+Q_SIGNALS:
     void signalModelKeyPressed(int key);
 
 #ifdef _WIN32
-  public slots:
+public slots:
     void localMessage(MSG& msg);
 #endif
 
-  private:
+private:
     bool nativeEvent(const QByteArray& eventType, void* message, long* result);
 
     void paintEvent(QPaintEvent* ev);
     bool eventFilter(QObject* obj, QEvent* ev);
     void resizeEvent(QResizeEvent*);
-    void  keyPressEvent(QKeyEvent *event);
+    void keyPressEvent(QKeyEvent* event);
 
     HWND                     m_hwnd;  // Handle to the window created for rendering the glTF views
     PluginInterface_3DModel* m_plugin;
@@ -117,16 +123,17 @@ class cpRenderWindow : public QWidget {
     int                      m_manual3DViewFlipMode;
 };
 
-class cp3DModelView : public acCustomDockWidget {
+class cp3DModelView : public acCustomDockWidget
+{
     Q_OBJECT
-  public:
+public:
     int m_showViewOptions;
     cp3DModelView(const QString filePathName, const QString filePathName2, const QString Title, QWidget* parent);
     ~cp3DModelView();
     void Clean3DModelView();
     void setManualViewFlip(int mode);
 
-  private:
+private:
     HWND m_hwnd;  // Handle to the window created for rendering the glTF views
 
     // Common for all
@@ -148,11 +155,11 @@ class cp3DModelView : public acCustomDockWidget {
     PluginInterface_3DModel_Loader* m_plugin_loader;
     bool                            m_isviewingDX12;
 
-  Q_SIGNALS:
+Q_SIGNALS:
     void UpdateData(QObject* data);
     void OnSetScale(int value);
 
-  public slots:
+public slots:
     void OnToolBarClicked();  // Hook into the CustomeWidgets TitleBars On Tool Button Clicked events
     void OnShowOptions();     // Toggles Overlayed Display Options in 3D Model Viewers
     void OnModelViewKeyPressed(int key);

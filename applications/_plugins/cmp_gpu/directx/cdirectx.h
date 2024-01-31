@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,31 +34,31 @@
 #include "compute_directX.h"
 #include "cmp_plugininterface.h"
 
-
 // {21DE462B-D6C5-4F2A-99A6-2514F087946E}
-static const GUID g_GUID_DIREXTX = { 0x21de462b, 0xd6c5, 0x4f2a,{ 0x99, 0xa6, 0x25, 0x14, 0xf0, 0x87, 0x94, 0x6e } };
+static const GUID g_GUID_DIREXTX = {0x21de462b, 0xd6c5, 0x4f2a, {0x99, 0xa6, 0x25, 0x14, 0xf0, 0x87, 0x94, 0x6e}};
 
-
-#define TC_PLUGIN_VERSION_MAJOR    1
-#define TC_PLUGIN_VERSION_MINOR    0
+#define TC_PLUGIN_VERSION_MAJOR 1
+#define TC_PLUGIN_VERSION_MINOR 0
 
 using namespace CMP_Compute_Base;
 
-class Plugin_CDirectX : public PluginInterface_Pipeline {
-  public:
+class Plugin_CDirectX : public PluginInterface_Pipeline
+{
+public:
     Plugin_CDirectX();
     virtual ~Plugin_CDirectX();
-    int             TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
-    int             TC_Init(void  *kernel_options);
-    int             TC_PluginSetSharedIO(void* Shared);
-    CMP_ERROR       TC_Compress(void  *kernel_options, MipSet  &SrcTexture, MipSet  &destTexture, CMP_Feedback_Proc pFeedback);
-    void            TC_SetComputeOptions(void *options);
-    char            *TC_ComputeSourceFile();
-    CMP_ERROR       TC_GetPerformanceStats(void* pPerfStats);
-    CMP_ERROR       TC_GetDeviceInfo(void* pDeviceInfo);
-    int             TC_Close();
-  private:
-    ComputeBase  *m_pComputeBase;
+    int       TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
+    int       TC_Init(void* kernel_options);
+    int       TC_PluginSetSharedIO(void* Shared);
+    CMP_ERROR TC_Compress(void* kernel_options, MipSet& SrcTexture, MipSet& destTexture, CMP_Feedback_Proc pFeedback);
+    void      TC_SetComputeOptions(void* options);
+    char*     TC_ComputeSourceFile();
+    CMP_ERROR TC_GetPerformanceStats(void* pPerfStats);
+    CMP_ERROR TC_GetDeviceInfo(void* pDeviceInfo);
+    int       TC_Close();
+
+private:
+    ComputeBase* m_pComputeBase;
 };
 
 #endif

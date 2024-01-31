@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,13 +22,11 @@
 // THE SOFTWARE.
 //
 
-
 #ifndef _DDS_DX10_H
 #define _DDS_DX10_H
 
 #include "tc_pluginapi.h"
 #include "dds_file.h"
-
 
 TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet);
 TC_PluginError SaveDDS_DX10(FILE* pFile, const MipSet* pMipSet);

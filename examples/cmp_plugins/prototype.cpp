@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright (c) 2021  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2021-2024  Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -72,7 +72,8 @@ int Plugin_Prototype::TC_PluginSetSharedIO(void* SharedCMips)
     {
         CMipsPrototype = reinterpret_cast<CMIPS*>(SharedCMips);
         return CMP_OK;
-    } else
+    }
+    else
         CMipsPrototype = NULL;
 
     return CMP_ERR_GENERIC;
@@ -89,5 +90,3 @@ int Plugin_Prototype::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
     pPluginVersion->dwPluginVersionMinor = TC_PLUGIN_VERSION_MINOR;
     return 0;
 }
-
-

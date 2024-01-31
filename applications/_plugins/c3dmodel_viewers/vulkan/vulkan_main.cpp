@@ -1,6 +1,6 @@
 // AMD AMDUtils code
 //
-// Copyright(c) 2018 Advanced Micro Devices, Inc.All rights reserved.
+// Copyright(c) 2018-2024 Advanced Micro Devices, Inc.All rights reserved.
 //
 // Vulkan Samples
 //
@@ -43,7 +43,8 @@ DECLARE_PLUGIN(Plugin_3DModelViewer_Vulkan)
 SET_PLUGIN_TYPE("3DMODEL_VIEWER")
 SET_PLUGIN_NAME("VULKAN")
 #else
-void *make_Plugin_3DModelViewer_Vulkan() {
+void* make_Plugin_3DModelViewer_Vulkan()
+{
     return new Plugin_3DModelViewer_Vulkan;
 }
 #endif
@@ -61,16 +62,18 @@ extern CMIPS* g_CMIPS;
 
 //using namespace ML_vulkan;
 
-
-Plugin_3DModelViewer_Vulkan::Plugin_3DModelViewer_Vulkan() {
-    m_gltfLoader = NULL;
+Plugin_3DModelViewer_Vulkan::Plugin_3DModelViewer_Vulkan()
+{
+    m_gltfLoader   = NULL;
     m_VulkanDevice = NULL;
-    m_hwnd = 0L;
-    m_ShowViewOk = false;
+    m_hwnd         = 0L;
+    m_ShowViewOk   = false;
 }
 
-Plugin_3DModelViewer_Vulkan::~Plugin_3DModelViewer_Vulkan() {
-    if (m_gltfLoader) {
+Plugin_3DModelViewer_Vulkan::~Plugin_3DModelViewer_Vulkan()
+{
+    if (m_gltfLoader)
+    {
         if (m_gltfLoader[0].m_filename.length() > 0)
             m_gltfLoader[0].Unload();
         if (m_gltfLoader[1].m_filename.length() > 0)
@@ -78,63 +81,77 @@ Plugin_3DModelViewer_Vulkan::~Plugin_3DModelViewer_Vulkan() {
     }
 }
 
-int Plugin_3DModelViewer_Vulkan::TC_PluginGetVersion(TC_PluginVersion *pPluginVersion) {
+int Plugin_3DModelViewer_Vulkan::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
+{
 #ifdef _WIN32
     pPluginVersion->guid = g_GUID;
 #endif
-    pPluginVersion->dwAPIVersionMajor = TC_API_VERSION_MAJOR;
-    pPluginVersion->dwAPIVersionMinor = TC_API_VERSION_MINOR;
+    pPluginVersion->dwAPIVersionMajor    = TC_API_VERSION_MAJOR;
+    pPluginVersion->dwAPIVersionMinor    = TC_API_VERSION_MINOR;
     pPluginVersion->dwPluginVersionMajor = TC_PLUGIN_VERSION_MAJOR;
     pPluginVersion->dwPluginVersionMinor = TC_PLUGIN_VERSION_MINOR;
     return 0;
 }
 
-int Plugin_3DModelViewer_Vulkan::TC_PluginSetSharedIO(void *Shared) {
-    if (Shared) {
-        VK_CMips = static_cast<CMIPS *>(Shared);
-        VK_CMips->m_infolevel = 0x01; // Turn on print Info
+int Plugin_3DModelViewer_Vulkan::TC_PluginSetSharedIO(void* Shared)
+{
+    if (Shared)
+    {
+        VK_CMips              = static_cast<CMIPS*>(Shared);
+        VK_CMips->m_infolevel = 0x01;  // Turn on print Info
         return 0;
     }
     return 1;
 }
 
-void Plugin_3DModelViewer_Vulkan::processMSG(void *message) {
-    if (m_VulkanDevice && m_ShowViewOk) {
+void Plugin_3DModelViewer_Vulkan::processMSG(void* message)
+{
+    if (m_VulkanDevice && m_ShowViewOk)
+    {
         m_VulkanDevice->OnEvent(message);
     }
 }
 
-bool Plugin_3DModelViewer_Vulkan::OnRenderView() {
-    if (m_VulkanDevice && m_ShowViewOk) {
+bool Plugin_3DModelViewer_Vulkan::OnRenderView()
+{
+    if (m_VulkanDevice && m_ShowViewOk)
+    {
         m_VulkanDevice->OnRender();
         return true;
     }
     return false;
 }
 
-void Plugin_3DModelViewer_Vulkan::OnReSizeView(CMP_LONG w, CMP_LONG h) {
-    if (m_VulkanDevice && m_ShowViewOk) {
+void Plugin_3DModelViewer_Vulkan::OnReSizeView(CMP_LONG w, CMP_LONG h)
+{
+    if (m_VulkanDevice && m_ShowViewOk)
+    {
         m_VulkanDevice->OnResize(w, h);
     }
 }
 
-void Plugin_3DModelViewer_Vulkan::CloseView() {
-    if (m_VulkanDevice) {
+void Plugin_3DModelViewer_Vulkan::CloseView()
+{
+    if (m_VulkanDevice)
+    {
         m_VulkanDevice->SetFullScreen(false);
         if (m_ShowViewOk)
             m_VulkanDevice->OnDestroy();
         delete m_VulkanDevice;
         m_VulkanDevice = NULL;
-        m_ShowViewOk = false;
+        m_ShowViewOk   = false;
     }
 }
 
-void *Plugin_3DModelViewer_Vulkan::ShowView(void *data) {
+void* Plugin_3DModelViewer_Vulkan::ShowView(void* data)
+{
     m_hwnd = reinterpret_cast<HWND>(data);
 
-    if (m_VulkanDevice) {
+    if (m_VulkanDevice)
+    {
         int res = m_VulkanDevice->OnCreate(m_hwnd);
-        if (res != VK_SUCCESS) {
+        if (res != VK_SUCCESS)
+        {
             delete m_VulkanDevice;
             m_VulkanDevice = NULL;
             return NULL;
@@ -157,12 +174,20 @@ void *Plugin_3DModelViewer_Vulkan::ShowView(void *data) {
 
 #ifdef USE_NATIVEWINDOW
 // this is the main message handler for the program
-LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
     return DefWindowProc(hWnd, message, wParam, lParam);
 }
 #endif
 
-void *Plugin_3DModelViewer_Vulkan::CreateView(void *ModelData, CMP_LONG Width, CMP_LONG Height, void *userHWND, void *pluginManager, void *msghandler, CMP_Feedback_Proc pFeedbackProc = NULL) {
+void* Plugin_3DModelViewer_Vulkan::CreateView(void*             ModelData,
+                                              CMP_LONG          Width,
+                                              CMP_LONG          Height,
+                                              void*             userHWND,
+                                              void*             pluginManager,
+                                              void*             msghandler,
+                                              CMP_Feedback_Proc pFeedbackProc = NULL)
+{
     m_ShowViewOk = false;
 
     // device already created!
@@ -174,8 +199,10 @@ void *Plugin_3DModelViewer_Vulkan::CreateView(void *ModelData, CMP_LONG Width, C
     m_gltfLoader = (CMP_GLTFCommon*)ModelData;
 
     // Check User Canceled status for long glTF file loads!!
-    if (VK_CMips) {
-        if (VK_CMips->m_canceled) {
+    if (VK_CMips)
+    {
+        if (VK_CMips->m_canceled)
+        {
             VK_CMips->m_canceled = false;
             return nullptr;
         }
@@ -186,30 +213,30 @@ void *Plugin_3DModelViewer_Vulkan::CreateView(void *ModelData, CMP_LONG Width, C
 
     // init window class
     ZeroMemory(&windowClass, sizeof(WNDCLASSEX));
-    windowClass.cbSize = sizeof(WNDCLASSEX);
-    windowClass.style = CS_HREDRAW | CS_VREDRAW;
-    windowClass.lpfnWndProc = WindowProc;
-    windowClass.hInstance = GetModuleHandle(NULL);
-    windowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+    windowClass.cbSize        = sizeof(WNDCLASSEX);
+    windowClass.style         = CS_HREDRAW | CS_VREDRAW;
+    windowClass.lpfnWndProc   = WindowProc;
+    windowClass.hInstance     = GetModuleHandle(NULL);
+    windowClass.hCursor       = LoadCursor(NULL, IDC_ARROW);
     windowClass.lpszClassName = L"WindowClass1";
     RegisterClassEx(&windowClass);
 
     RECT windowRect = {0, 0, Width, Height};
-    AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE); // adjust the size
+    AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);  // adjust the size
 
     // create the window and store a handle to it
     m_hwnd = CreateWindowEx(NULL,
-                            L"WindowClass1", // name of the window class
+                            L"WindowClass1",  // name of the window class
                             L"Native Window",
                             WS_OVERLAPPEDWINDOW,
                             100,
                             100,
                             windowRect.right - windowRect.left,
                             windowRect.bottom - windowRect.top,
-                            NULL,                  // we have no parent window, NULL
-                            NULL,                  // we aren't using menus, NULL
-                            windowClass.hInstance, // application handle
-                            NULL);                 // used with multiple windows, NULL
+                            NULL,                   // we have no parent window, NULL
+                            NULL,                   // we aren't using menus, NULL
+                            windowClass.hInstance,  // application handle
+                            NULL);                  // used with multiple windows, NULL
 #else
     //m_parent = (QWidget *)userHWND;
     //m_hwnd = reinterpret_cast<HWND> (m_parent->winId());
@@ -231,8 +258,10 @@ void *Plugin_3DModelViewer_Vulkan::CreateView(void *ModelData, CMP_LONG Width, C
     //    }
 
     // Check User Canceled status for Aborting Create Device!!
-    if (VK_CMips) {
-        if (VK_CMips->m_canceled) {
+    if (VK_CMips)
+    {
+        if (VK_CMips->m_canceled)
+        {
             VK_CMips->m_canceled = false;
             return nullptr;
         }

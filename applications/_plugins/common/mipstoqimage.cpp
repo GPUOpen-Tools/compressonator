@@ -1,14 +1,17 @@
-// AMD AMDUtils code
+//=====================================================================
+// Copyright 2019-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
+//=====================================================================
 //
-// Copyright(c) 2019 Advanced Micro Devices, Inc.All rights reserved.
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -16,6 +19,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+//
 
 #include "mipstoqimage.h"
 #include "format_conversion.h"
@@ -44,8 +48,10 @@ QImage* MIPS2QImage(CMIPS*, MipSet*, int, int, CMP_CompressOptions, CMP_Feedback
 
 static float cmp_clampf(float value, float min, float max)
 {
-    if (value < min) return min;
-    if (value > max) return max;
+    if (value < min)
+        return min;
+    if (value > max)
+        return max;
     return value;
 }
 
@@ -107,48 +113,39 @@ QImage::Format MipFormat2QFormat(MipSet* mipset)
 
     switch (mipset->m_ChannelFormat)
     {
-    case CF_8bit:
-    {
+    case CF_8bit: {
         format = QImage::Format_ARGB32;
         break;
     }
-    case CF_Float16:
-    {
+    case CF_Float16: {
         format = QImage::Format_ARGB32;
         break;
     }
-    case CF_Float32:
-    {
+    case CF_Float32: {
         format = QImage::Format_ARGB32;
         break;
     }
-    case CF_Float9995E:
-    {
+    case CF_Float9995E: {
         format = QImage::Format_ARGB32;
         break;
     }
-    case CF_Compressed:
-    {
+    case CF_Compressed: {
         break;
     }
-    case CF_16bit:
-    {
+    case CF_16bit: {
         format = QImage::Format_ARGB32;
         break;
     }
     case CF_2101010:
-    case CF_1010102:
-    {
+    case CF_1010102: {
         format = QImage::Format_ARGB32;
         break;
     }
-    case CF_32bit:
-    {
+    case CF_32bit: {
         format = QImage::Format_ARGB32;
         break;
     }
-    default:
-    {
+    default: {
         break;
     }
     }
@@ -168,14 +165,9 @@ int QImage2MIPS(QImage* image, CMIPS* m_CMips, MipSet* pMipSet, CMP_Feedback_Pro
     QImage::Format format = image->format();
 
     // Check supported format
-    if (!(  (format == QImage::Format_ARGB32) || 
-            (format == QImage::Format_ARGB32_Premultiplied) || 
-            (format == QImage::Format_RGB32) ||
-            (format == QImage::Format_Mono) || 
-            (format == QImage::Format_Grayscale8) ||
-            (format == QImage::Format_Indexed8)))
+    if (!((format == QImage::Format_ARGB32) || (format == QImage::Format_ARGB32_Premultiplied) || (format == QImage::Format_RGB32) ||
+          (format == QImage::Format_Mono) || (format == QImage::Format_Grayscale8) || (format == QImage::Format_Indexed8)))
     {
-
         return -1;
     }
 
@@ -291,7 +283,7 @@ QImage* MIPS2QImage(CMIPS* m_CMips, MipSet* tmpMipSet, int mipmapLevel, int dept
     }
 
     FloatParams params(&option);
-    QImage* image = NULL;
+    QImage*     image = NULL;
 
     if ((tmpMipSet->m_TextureDataType == TDT_ARGB) || (tmpMipSet->m_TextureDataType == TDT_XRGB))
     {
@@ -408,7 +400,8 @@ QImage* MIPS2QImage(CMIPS* m_CMips, MipSet* tmpMipSet, int mipmapLevel, int dept
                 }
             }
         }
-        else if (tmpMipSet->m_ChannelFormat == CF_1010102) {
+        else if (tmpMipSet->m_ChannelFormat == CF_1010102)
+        {
             // We have allocated a data buffer to fill get its referance
             CMP_DWORD* pData = mipLevel->m_pdwData;
             if (pData == NULL)
@@ -426,7 +419,7 @@ QImage* MIPS2QImage(CMIPS* m_CMips, MipSet* tmpMipSet, int mipmapLevel, int dept
             // the alpha of RGBA1010102 images in the GUI
             bool hasAlpha = false;
 
-            ConvertRGBA1010102ToRGBA8888((CMP_DWORD*)image->bits(), pData, mipLevel->m_nWidth*mipLevel->m_nHeight, hasAlpha);
+            ConvertRGBA1010102ToRGBA8888((CMP_DWORD*)image->bits(), pData, mipLevel->m_nWidth * mipLevel->m_nHeight, hasAlpha);
         }
         else
         {
@@ -462,17 +455,14 @@ QImage* MIPS2QImage(CMIPS* m_CMips, MipSet* tmpMipSet, int mipmapLevel, int dept
             // BC4 only Red channel is valid. All other channels are set equal to that channels value
             // Compressonator decoder also set Alpha to the red channel value!
             // The Alpha should be set to 255 if viewing in GUI!
-            if ((tmpMipSet->m_isDeCompressed == CMP_FORMAT_ATI1N) ||
-                (tmpMipSet->m_isDeCompressed == CMP_FORMAT_BC4) ||
+            if ((tmpMipSet->m_isDeCompressed == CMP_FORMAT_ATI1N) || (tmpMipSet->m_isDeCompressed == CMP_FORMAT_BC4) ||
                 (tmpMipSet->m_isDeCompressed == CMP_FORMAT_BC4_S))
             {
                 isFixedAlpha = true;
                 channels     = 0b0001;  // red only
             }
-            else 
-            if ((tmpMipSet->m_isDeCompressed == CMP_FORMAT_ATI2N) || 
-                (tmpMipSet->m_isDeCompressed == CMP_FORMAT_BC5) ||
-                (tmpMipSet->m_isDeCompressed == CMP_FORMAT_BC5_S))
+            else if ((tmpMipSet->m_isDeCompressed == CMP_FORMAT_ATI2N) || (tmpMipSet->m_isDeCompressed == CMP_FORMAT_BC5) ||
+                     (tmpMipSet->m_isDeCompressed == CMP_FORMAT_BC5_S))
             {
                 isFixedAlpha = true;
                 channels     = 0b0011;  // red + green only
@@ -488,7 +478,7 @@ QImage* MIPS2QImage(CMIPS* m_CMips, MipSet* tmpMipSet, int mipmapLevel, int dept
             }
 
             // Initialize the buffer
-            if (tmpMipSet->m_format == CMP_FORMAT_RGBA_8888_S) 
+            if (tmpMipSet->m_format == CMP_FORMAT_RGBA_8888_S)
             {
                 CMP_SBYTE* pData = mipLevel->m_psbData;
                 CMP_SBYTE  R, G, B, A;
@@ -529,7 +519,7 @@ QImage* MIPS2QImage(CMIPS* m_CMips, MipSet* tmpMipSet, int mipmapLevel, int dept
                         bB = ((nB * 0.5) + 0.5) * 255.0f;
                         bA = 255;
 
-                         //CMP_SBYTE_to_UBYTE(A);
+                        //CMP_SBYTE_to_UBYTE(A);
                         image->setPixel(x, y, qRgba(bR, bG, bB, 255));
                     }
                     if (pFeedbackProc)
@@ -543,8 +533,8 @@ QImage* MIPS2QImage(CMIPS* m_CMips, MipSet* tmpMipSet, int mipmapLevel, int dept
             else
             {
                 CMP_BYTE* pData = mipLevel->m_pbData;
-                CMP_BYTE R, G, B, A;
-                int      i = 0;
+                CMP_BYTE  R, G, B, A;
+                int       i = 0;
                 for (int y = 0; y < mipLevel->m_nHeight; y++)
                 {
                     for (int x = 0; x < mipLevel->m_nWidth; x++)

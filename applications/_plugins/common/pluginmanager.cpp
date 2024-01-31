@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016-2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -21,7 +21,7 @@
 //
 /// \file PluginManager.cpp
 /// \version 3.1
-/// \brief Declares the interface to the Compressonator & ArchitectMF SDK
+/// \brief Declares the interface to the Compressonator SDK
 //=====================================================================
 
 #include "pluginmanager.h"
@@ -221,13 +221,12 @@ void PluginManager::getPluginDetails(PluginDetails* curPlugin)
         if (textFunc)
             curPlugin->setCategory(textFunc());
 
-		PLUGIN_ULONGFUNC ulongFunc;
+        PLUGIN_ULONGFUNC ulongFunc;
         ulongFunc = reinterpret_cast<PLUGIN_ULONGFUNC>(GetProcAddress(dllHandle, "getPluginOptions"));
         if (ulongFunc)
             curPlugin->setOptions(ulongFunc());
         else
             curPlugin->setOptions(0);
-
 
         curPlugin->isRegistered = true;
 
@@ -250,7 +249,7 @@ void PluginManager::clearPluginList()
 
 bool PluginManager::fileExists(const std::string& abs_filename)
 {
-    bool ret = false;
+    bool  ret = false;
     FILE* fp;
 #ifdef _WIN32
     errno_t err = fopen_s(&fp, abs_filename.c_str(), "rb");
@@ -266,7 +265,6 @@ bool PluginManager::fileExists(const std::string& abs_filename)
     }
     return ret;
 }
-
 
 void PluginManager::getPluginList(char* SubFolderName, bool append)
 {
@@ -357,10 +355,13 @@ void PluginManager::getPluginList(char* SubFolderName, bool append)
 #endif
             if (len > 0)
             {
-                std::string s         = pPath;
-                char        delimiter = ';';
-                size_t      pos       = 0;
+                std::string s = pPath;
+
+                char   delimiter = ';';
+                size_t pos       = 0;
+
                 std::string token;
+
                 while ((pos = s.find(delimiter)) != std::string::npos)
                 {
                     token = s.substr(0, pos);
@@ -627,7 +628,7 @@ bool PluginManager::PluginSupported(char* type, char* name)
     return (false);
 }
 
-void PluginManager::getPluginListTypeNames(char* pluginType, std::vector<std::string> &TypeNames)
+void PluginManager::getPluginListTypeNames(char* pluginType, std::vector<std::string>& TypeNames)
 {
     TypeNames.clear();
     PluginDetails* plugin;
@@ -639,7 +640,7 @@ void PluginManager::getPluginListTypeNames(char* pluginType, std::vector<std::st
 
         pType = plugin->getType();
         if (strlen(pType) == 0)
-        { 
+        {
             getPluginDetails(plugin);
             pName = plugin->getName();
             pType = plugin->getType();
@@ -670,15 +671,15 @@ void PluginManager::getPluginListOptionNames(char* pluginType, unsigned long opt
 
         pType = plugin->getType();
         if (strlen(pType) == 0)
-        { 
+        {
             getPluginDetails(plugin);
-            pName = plugin->getName();
-            pType = plugin->getType();
+            pName    = plugin->getName();
+            pType    = plugin->getType();
             uOptions = plugin->getOptions();
         }
         else
         {
-            pName = plugin->getName();
+            pName    = plugin->getName();
             uOptions = plugin->getOptions();
         }
 
@@ -731,7 +732,7 @@ void PluginDetails::setUUID(char* nm)
 #endif
 }
 
-void PluginDetails::setOptions(unsigned long  uoptions)
+void PluginDetails::setOptions(unsigned long uoptions)
 {
     pluginOptions = uoptions;
 }
@@ -743,7 +744,7 @@ void PluginDetails::setType(char* nm)
 #else
     strcpy(pluginType, nm);
 #endif
-} 
+}
 
 void PluginDetails::setCategory(char* nm)
 {

@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -218,7 +218,6 @@ TC_PluginError LoadDDS_RGB8888_S(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet, boo
     return err;
 }
 
-
 TC_PluginError LoadDDS_ARGB2101010(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
 {
     pMipSet->m_TextureDataType    = TDT_ARGB;
@@ -423,10 +422,10 @@ TC_PluginError SaveDDS_ARGB8888(FILE* pFile, const MipSet* pMipSet)
     DDSD2 ddsd2;
     SetupDDSD(ddsd2, pMipSet, false);
 
-    ddsd2.lPitch                            = pMipSet->m_nWidth * 4;
-    ddsd2.ddpfPixelFormat.dwRGBBitCount     = 32;
+    ddsd2.lPitch                        = pMipSet->m_nWidth * 4;
+    ddsd2.ddpfPixelFormat.dwRGBBitCount = 32;
 
-    ddsd2.ddpfPixelFormat.dwFlags = DDPF_ALPHAPIXELS | DDPF_RGB;
+    ddsd2.ddpfPixelFormat.dwFlags           = DDPF_ALPHAPIXELS | DDPF_RGB;
     ddsd2.ddpfPixelFormat.dwRBitMask        = 0x00ff0000;
     ddsd2.ddpfPixelFormat.dwGBitMask        = 0x0000ff00;
     ddsd2.ddpfPixelFormat.dwBBitMask        = 0x000000ff;
@@ -479,7 +478,6 @@ TC_PluginError SaveDDS_RGBA8888_S(FILE* pFile, const MipSet* pMipSet)
     ddsd2.ddpfPixelFormat.dwBBitMask        = 0x00ff0000;
     ddsd2.ddpfPixelFormat.dwRGBAlphaBitMask = 0xff000000;
 
-
     if (pMipSet->m_TextureDataType == TDT_ARGB)
         ddsd2.ddpfPixelFormat.dwFlags |= DDPF_ALPHAPIXELS;
 
@@ -488,14 +486,18 @@ TC_PluginError SaveDDS_RGBA8888_S(FILE* pFile, const MipSet* pMipSet)
 
     int nSlices = (pMipSet->m_TextureType == TT_2D) ? 1 : CMP_MaxFacesOrSlices(pMipSet, 0);
     for (int nSlice = 0; nSlice < nSlices; nSlice++)
+    {
         for (int nMipLevel = 0; nMipLevel < pMipSet->m_nMipLevels; nMipLevel++)
         {
             CMP_BYTE* pbData = DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_pbData;
             CMP_BYTE* pData  = new uint8_t[DDS_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize];
-            CMP_BYTE  R,G,B,A;
-            int       i      = 0;
-            int       height = DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_nHeight;
-            int       width  = DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_nWidth;
+
+            CMP_BYTE R, G, B, A;
+
+            int i = 0;
+
+            int height = DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_nHeight;
+            int width  = DDS_CMips->GetMipLevel(pMipSet, nMipLevel, nSlice)->m_nWidth;
 
             // Map MipSet data to bitMapp output
             for (int y = 0; y < height; y++)
@@ -505,9 +507,11 @@ TC_PluginError SaveDDS_RGBA8888_S(FILE* pFile, const MipSet* pMipSet)
                     R = pbData[i];
                     G = pbData[i + 1];
                     B = pbData[i + 2];
-                    pData[i  ] = R;
-                    pData[i+1] = G;
-                    pData[i+2] = B;
+
+                    pData[i]     = R;
+                    pData[i + 1] = G;
+                    pData[i + 2] = B;
+
                     if (pMipSet->m_TextureDataType == TDT_ARGB)
                         A = pbData[i + 3];
                     else
@@ -520,6 +524,8 @@ TC_PluginError SaveDDS_RGBA8888_S(FILE* pFile, const MipSet* pMipSet)
             fwrite(pData, (DDS_CMips->GetMipLevel(pMipSet, nMipLevel)->m_dwLinearSize), 1, pFile);
             delete[] pData;
         }
+    }
+
     fclose(pFile);
 
     return PE_OK;

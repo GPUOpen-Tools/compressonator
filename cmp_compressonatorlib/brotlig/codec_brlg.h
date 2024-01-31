@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2014-2018  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2022-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,74 +28,59 @@
 #ifndef _CODEC_BRLG_H_INCLUDED_
 #define _CODEC_BRLG_H_INCLUDED_
 
-#include "compressonator.h"
+#include "codec_common.h"
 #include "codec_dxtc.h"
-#include "brlg_encode.h"
-#include "brlg_decode.h"
-
-#include <thread>
-
-extern BRLG_Encode g_BRLGEncode;
-
-struct BRLGEncodeThreadParam
-{
-    BRLGBlockEncoder* encoder;
-    // Max storage buffer for blocks size (256) change this for proper window sizes used in Brotli-G
-    CMP_BYTE             in[256];
-    CMP_BYTE             *out;
-    volatile CMP_BOOL    run;
-    volatile CMP_BOOL    exit;
-};
+#include "compressonator.h"
 
 class CCodec_BRLG : public CCodec_DXTC
 {
-  public:
-     CCodec_BRLG();
+public:
+    CCodec_BRLG();
     ~CCodec_BRLG();
 
-    virtual bool SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue);
-    virtual bool SetParameter(const CMP_CHAR* /*pszParamName*/, CMP_DWORD /*dwValue*/);
-    virtual bool SetParameter(const CMP_CHAR* /*pszParamName*/, CODECFLOAT /*fValue*/);
+    virtual bool SetParameter(const CMP_CHAR* paramName, CMP_CHAR* value);
+    virtual bool SetParameter(const CMP_CHAR* paramName, CMP_DWORD value);
+    virtual bool SetParameter(const CMP_CHAR* paramName, CODECFLOAT value);
 
     // Required interfaces
-    virtual CodecError Compress             (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Compress_Fast        (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Compress_SuperFast   (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Decompress           (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress(CCodecBuffer&       bufferIn,
+                                CCodecBuffer&       bufferOut,
+                                Codec_Feedback_Proc pFeedbackProc = NULL,
+                                CMP_DWORD_PTR       pUser1        = NULL,
+                                CMP_DWORD_PTR       pUser2        = NULL);
 
+    virtual CodecError Compress_Fast(CCodecBuffer&       bufferIn,
+                                     CCodecBuffer&       bufferOut,
+                                     Codec_Feedback_Proc pFeedbackProc = NULL,
+                                     CMP_DWORD_PTR       pUser1        = NULL,
+                                     CMP_DWORD_PTR       pUser2        = NULL);
 
-  private:
+    virtual CodecError Compress_SuperFast(CCodecBuffer&       bufferIn,
+                                          CCodecBuffer&       bufferOut,
+                                          Codec_Feedback_Proc pFeedbackProc = NULL,
+                                          CMP_DWORD_PTR       pUser1        = NULL,
+                                          CMP_DWORD_PTR       pUser2        = NULL);
 
-    BRLGEncodeThreadParam* m_EncodeParameterStorage;
+    virtual CodecError Decompress(CCodecBuffer&       bufferIn,
+                                  CCodecBuffer&       bufferOut,
+                                  Codec_Feedback_Proc pFeedbackProc = NULL,
+                                  CMP_DWORD_PTR       pUser1        = NULL,
+                                  CMP_DWORD_PTR       pUser2        = NULL);
 
-    // source block dimentions (typically 4x4x1)
-    int m_xdim;
-    int m_ydim;
+private:
+    // Brotli-G encoding parameters
+    CMP_DWORD m_pageSize;
+    CMP_WORD  m_numThreads;
+    bool      m_useGPUDecompression;
 
-    // User configurable variables
-    CMP_WORD    m_NumThreads;
-    bool m_UseGPUDecompression;
-    CMP_DWORD m_PageSize;
-
-    //Internal status
-    CMP_BOOL     m_LibraryInitialized;
-    CMP_BOOL     m_Use_MultiThreading;
-    CMP_INT      m_NumEncodingThreads;
-    CMP_WORD     m_LiveThreads;
-    CMP_WORD     m_LastThread;
-
-    // Encoders and decoders: for encding use the interfaces below
-    std::thread*         m_EncodingThreadHandle;
-    BRLGBlockEncoder*    m_encoder[128]; // Max 128 threads? make this a definition or variable size
-    BRLGBlockDecoder*    m_decoder;
-
-    // Encoder interfaces
-    CodecError    InitializeBRLGLibrary();
-    CodecError    EncodeBRLGBlock(
-        CMP_BYTE   *in, //[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-        CMP_BYTE   *out
-    );
-    CodecError    FinishBRLGEncoding(void);
+    // Preconditioning parameters
+    bool       m_doPrecondition;
+    CMP_DWORD  m_textureWidth;
+    CMP_DWORD  m_textureHeight;
+    CMP_FORMAT m_textureFormat;
+    CMP_DWORD  m_numMipmapLevels;
+    bool       m_doSwizzle;
+    bool       m_doDeltaEncode;
 };
 
-#endif // !defined(_CODEC_DXT5_H_INCLUDED_)
+#endif

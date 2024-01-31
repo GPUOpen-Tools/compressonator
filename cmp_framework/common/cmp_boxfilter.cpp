@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -31,7 +31,13 @@
 // the filter used for mipmap generation, holds pixel pointers for the four corners of the box
 union BoxFilter
 {
-    BoxFilter() : tl(0), tr(0), bl(0), br(0) {}
+    BoxFilter()
+        : tl(0)
+        , tr(0)
+        , bl(0)
+        , br(0)
+    {
+    }
 
     struct
     {
@@ -173,11 +179,13 @@ void CMP_SetMipSetGamma(MipSet* pMipSet, CMP_FLOAT Gamma)
             {
                 if (pMipSet->m_format == CMP_FORMAT_RGBA_8888_S)
                     CMP_SetMipLevelGammaLinearSB(pCurMipLevel, pCurMipLevel->m_psbData, Gamma, 4);
-                else 
+                else
                     CMP_SetMipLevelGammaLinearB(pCurMipLevel, pCurMipLevel->m_pbData, Gamma, 4);
             }
-            else if (pMipSet->m_ChannelFormat == CF_Float16) CMP_SetMipLevelGammaHalfShort(pCurMipLevel, pCurMipLevel->m_phfsData, Gamma, 4);
-            else if (pMipSet->m_ChannelFormat == CF_Float32) CMP_SetMipLevelGammaf(pCurMipLevel, pCurMipLevel->m_pfData, Gamma, 4);
+            else if (pMipSet->m_ChannelFormat == CF_Float16)
+                CMP_SetMipLevelGammaHalfShort(pCurMipLevel, pCurMipLevel->m_phfsData, Gamma, 4);
+            else if (pMipSet->m_ChannelFormat == CF_Float32)
+                CMP_SetMipLevelGammaf(pCurMipLevel, pCurMipLevel->m_pfData, Gamma, 4);
         }
     }
 }
@@ -192,15 +200,15 @@ void GenerateMipmapLevel(MipLevel* currMipLevel, MipLevel** prevMipLevels, uint3
 
     if (!currMipLevel || !prevMipLevels || !prevMipLevels[0] || numPrevLevels == 0)
         return;
-    
+
     bool heightsDifferent = currMipLevel->m_nHeight != prevMipLevels[0]->m_nHeight;
     bool widthsDifferent  = currMipLevel->m_nWidth != prevMipLevels[0]->m_nWidth;
     assert(heightsDifferent || widthsDifferent);
 
     CMP_ChannelFormat channelFormat = GetChannelFormat(format);
 
-    const uint32_t bytesPerChannel = GetChannelFormatBitSize(format)/8;
-    uint32_t bytesPerPixel = bytesPerChannel*numChannels;
+    const uint32_t bytesPerChannel = GetChannelFormatBitSize(format) / 8;
+    uint32_t       bytesPerPixel   = bytesPerChannel * numChannels;
 
     if (format == CMP_FORMAT_ARGB_2101010 || format == CMP_FORMAT_RGBA_1010102)
         bytesPerPixel = 4;
@@ -210,20 +218,20 @@ void GenerateMipmapLevel(MipLevel* currMipLevel, MipLevel** prevMipLevels, uint3
     // A set of 4 pixels per previous level, used for averaging the result value
     std::vector<BoxFilter> levels(numPrevLevels);
 
-    const uint32_t numPixelsPerBlock = sizeof(levels[0].pixels)/sizeof(levels[0].pixels[0]);
-    const uint32_t totalNumPixels = numPrevLevels*numPixelsPerBlock;
+    const uint32_t numPixelsPerBlock = sizeof(levels[0].pixels) / sizeof(levels[0].pixels[0]);
+    const uint32_t totalNumPixels    = numPrevLevels * numPixelsPerBlock;
 
     for (uint32_t y = 0; y < currMipLevel->m_nHeight; ++y)
     {
         // update all of the previous layer pixel pointers
         for (uint32_t i = 0; i < numPrevLevels; ++i)
         {
-            levels[i].tl = prevMipLevels[i]->m_pbData + 2*y*prevMipLevels[i]->m_nWidth*bytesPerPixel;
+            levels[i].tl = prevMipLevels[i]->m_pbData + 2 * y * prevMipLevels[i]->m_nWidth * bytesPerPixel;
 
             levels[i].bl = levels[i].tl;
             if (heightsDifferent)
-                levels[i].bl = levels[i].tl + prevMipLevels[i]->m_nWidth*bytesPerPixel;
-            
+                levels[i].bl = levels[i].tl + prevMipLevels[i]->m_nWidth * bytesPerPixel;
+
             levels[i].tr = levels[i].tl;
             levels[i].br = levels[i].bl;
             if (widthsDifferent)
@@ -259,7 +267,7 @@ void GenerateMipmapLevel(MipLevel* currMipLevel, MipLevel** prevMipLevels, uint3
                 a /= totalNumPixels;
 
                 CMP_DWORD pixelValue = (r << RGBA1010102_OFFSET_R) | (g << RGBA1010102_OFFSET_G) | (b << RGBA1010102_OFFSET_B) | (a << RGBA1010102_OFFSET_A);
-                
+
                 *((CMP_DWORD*)destPixel) = pixelValue;
                 destPixel += bytesPerPixel;
             }
@@ -270,7 +278,9 @@ void GenerateMipmapLevel(MipLevel* currMipLevel, MipLevel** prevMipLevels, uint3
                     CMP_SBYTE pixelValue = 0;
                     for (uint32_t j = 0; j < numPrevLevels; ++j)
                     {
-                        pixelValue += (*((CMP_SBYTE*)levels[j].tl + i) + *((CMP_SBYTE*)levels[j].tr + i) + *((CMP_SBYTE*)levels[j].bl + i) + *((CMP_SBYTE*)levels[j].br + i)) / 4;
+                        pixelValue += (*((CMP_SBYTE*)levels[j].tl + i) + *((CMP_SBYTE*)levels[j].tr + i) + *((CMP_SBYTE*)levels[j].bl + i) +
+                                       *((CMP_SBYTE*)levels[j].br + i)) /
+                                      4;
                     }
 
                     *((CMP_SBYTE*)destPixel) = pixelValue;
@@ -298,7 +308,9 @@ void GenerateMipmapLevel(MipLevel* currMipLevel, MipLevel** prevMipLevels, uint3
                     CMP_HALFSHORT pixelValue = 0;
                     for (uint32_t j = 0; j < numPrevLevels; ++j)
                     {
-                        pixelValue += (*((CMP_HALFSHORT*)levels[j].tl + i) + *((CMP_HALFSHORT*)levels[j].tr + i) + *((CMP_HALFSHORT*)levels[j].bl + i) + *((CMP_HALFSHORT*)levels[j].br + i)) / (CMP_HALFSHORT)4;
+                        pixelValue += (*((CMP_HALFSHORT*)levels[j].tl + i) + *((CMP_HALFSHORT*)levels[j].tr + i) + *((CMP_HALFSHORT*)levels[j].bl + i) +
+                                       *((CMP_HALFSHORT*)levels[j].br + i)) /
+                                      (CMP_HALFSHORT)4;
                     }
 
                     *((CMP_HALFSHORT*)destPixel) = pixelValue;
@@ -312,7 +324,9 @@ void GenerateMipmapLevel(MipLevel* currMipLevel, MipLevel** prevMipLevels, uint3
                     CMP_FLOAT pixelValue = 0;
                     for (uint32_t j = 0; j < numPrevLevels; ++j)
                     {
-                        pixelValue += (*((CMP_FLOAT*)levels[j].tl + i) + *((CMP_FLOAT*)levels[j].tr + i) + *((CMP_FLOAT*)levels[j].bl + i) + *((CMP_FLOAT*)levels[j].br + i)) / 4.0f;
+                        pixelValue += (*((CMP_FLOAT*)levels[j].tl + i) + *((CMP_FLOAT*)levels[j].tr + i) + *((CMP_FLOAT*)levels[j].bl + i) +
+                                       *((CMP_FLOAT*)levels[j].br + i)) /
+                                      4.0f;
                     }
 
                     *((CMP_FLOAT*)destPixel) = pixelValue;
@@ -327,10 +341,10 @@ void GenerateMipmapLevel(MipLevel* currMipLevel, MipLevel** prevMipLevels, uint3
             // move all pixel pointers over to the next block in the row
             for (uint32_t i = 0; i < numPrevLevels; ++i)
             {
-                levels[i].tl += bytesPerPixel*2;
-                levels[i].tr += bytesPerPixel*2;
-                levels[i].bl += bytesPerPixel*2;
-                levels[i].br += bytesPerPixel*2;
+                levels[i].tl += bytesPerPixel * 2;
+                levels[i].tr += bytesPerPixel * 2;
+                levels[i].bl += bytesPerPixel * 2;
+                levels[i].br += bytesPerPixel * 2;
             }
         }
     }
@@ -357,7 +371,8 @@ CMP_INT CMP_API CMP_GenerateMIPLevelsEx(CMP_MipSet* pMipSet, CMP_CFilterParams* 
         nHeight                  = CMP_MAX(nHeight >> 1, 1);
         CMP_INT nCurMipLevel     = pMipSet->m_nMipLevels;
         CMP_INT maxFacesOrSlices = CMP_MAX((pMipSet->m_TextureType == TT_VolumeTexture) ? (CMP_MaxFacesOrSlices(pMipSet, nCurMipLevel - 1) >> 1)
-                                                                                        : CMP_MaxFacesOrSlices(pMipSet, nCurMipLevel - 1),1);
+                                                                                        : CMP_MaxFacesOrSlices(pMipSet, nCurMipLevel - 1),
+                                           1);
 
         for (CMP_INT nFaceOrSlice = 0; nFaceOrSlice < maxFacesOrSlices; nFaceOrSlice++)
         {
@@ -389,10 +404,8 @@ CMP_INT CMP_API CMP_GenerateMIPLevelsEx(CMP_MipSet* pMipSet, CMP_CFilterParams* 
             {
                 //prev miplevel had 2 or more slices, so avg together slices
 
-                MipLevel* prevMipLevels[] = {
-                    CMips.GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice * 2),
-                    CMips.GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice * 2 + 1)
-                };
+                MipLevel* prevMipLevels[] = {CMips.GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice * 2),
+                                             CMips.GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice * 2 + 1)};
 
                 GenerateMipmapLevel(pThisMipLevel, prevMipLevels, 2, pMipSet->m_format);
             }
@@ -419,7 +432,7 @@ CMP_INT CMP_API CMP_GenerateMIPLevelsEx(CMP_MipSet* pMipSet, CMP_CFilterParams* 
 
 CMP_INT CMP_API CMP_GenerateMIPLevels(CMP_MipSet* pMipSet, CMP_INT nMinSize)
 {
-    CMP_CFilterParams CFilterParam = {};
+    CMP_CFilterParams CFilterParam  = {};
     CFilterParam.dwMipFilterOptions = 0;
     CFilterParam.nFilterType        = 0;
     CFilterParam.nMinSize           = nMinSize;

@@ -1,8 +1,6 @@
 # -------------------------------------------------------------------------
 # Vulkan
 
-message(STATUS "++++++++++++++++++ External-Vulkan")
-
 if (NOT OPTION_CMP_VULKAN)
     message("OPTION_CMP_VULKAN=OFF")
     return()
@@ -17,6 +15,10 @@ endif()
 set(VULKAN_SDK_PATH $ENV{VULKAN_DIR})
 
 message(STATUS "++++++++++++++++++ External-VULKAN  ${VULKAN_SDK_PATH}" )
+
+if (NOT EXISTS ${VULKAN_SDK_PATH})
+    message(FATAL_ERROR "The given Vulkan SDK path ${VULKAN_SDK_PATH} could not be found")
+endif()
 
 # Get Vulkan SDK version from file path
 
@@ -68,7 +70,7 @@ list(GET VULKAN_VERSION_LIST 2 VULKAN_PATCH_VERSION)
 #message("VULKAN DEBUG: major version ${VULKAN_MAJOR_VERSION}, minor version ${VULKAN_MINOR_VERSION}, patch version ${VULKAN_PATCH_VERSION}")
 
 if (${VULKAN_MAJOR_VERSION} LESS_EQUAL 1 AND ${VULKAN_MINOR_VERSION} LESS_EQUAL 2 AND ${VULKAN_PATCH_VERSION} LESS_EQUAL 141)
-     set(USE_OLD_VULKAN_LIBS ON)
+    set(USE_OLD_VULKAN_LIBS ON)
 endif()
 
 if (CMP_HOST_APPLE)

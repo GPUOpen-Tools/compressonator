@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Advanced Micro Devices, Inc. All rights reserved
+// Copyright (c) 2020-2024 Advanced Micro Devices, Inc. All rights reserved
 // Copyright (c) 2004-2006    ATI Technologies Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -41,7 +41,8 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <time.h>
-double timeStampsec() {
+double timeStampsec()
+{
     static LARGE_INTEGER frequency;
     if (frequency.QuadPart == 0)
         QueryPerformanceFrequency(&frequency);
@@ -52,12 +53,13 @@ double timeStampsec() {
 }
 #endif
 
-bool g_bAbortCompression = false;   // If set true current compression will abort
+bool g_bAbortCompression = false;  // If set true current compression will abort
 
 //---------------------------------------------------------------------------
 // Sample loop back code called for each compression block been processed
 //---------------------------------------------------------------------------
-bool CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+bool CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
+{
     UNREFERENCED_PARAMETER(pUser1);
     UNREFERENCED_PARAMETER(pUser2);
 
@@ -66,11 +68,13 @@ bool CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pU
     return g_bAbortCompression;
 }
 
-int main(int argc, const char* argv[]) {
+int main(int argc, const char* argv[])
+{
 #ifdef _WIN32
     double start_time = timeStampsec();
 #endif
-    if (argc < 4) {
+    if (argc < 4)
+    {
         std::printf("Example3 SourceFile DestFile Quality\n");
         std::printf("This example shows how to compress a single image\n");
         std::printf("to a BC7 compression format using single threaded low level\n");
@@ -85,29 +89,35 @@ int main(int argc, const char* argv[]) {
 
     // Note: No error checking is done on user arguments, so all parameters must be correct in this example
     // (files must exist, values correct format, etc..)
-    const char*     pszSourceFile = argv[1];
-    const char*     pszDestFile   = argv[2];
-    CMP_FORMAT      destFormat    = CMP_FORMAT_BC7;
-    CMP_FLOAT       fQuality;
+    const char* pszSourceFile = argv[1];
+    const char* pszDestFile   = argv[2];
+    CMP_FORMAT  destFormat    = CMP_FORMAT_BC7;
+    CMP_FLOAT   fQuality;
 
-    try {
+    try
+    {
         fQuality = std::stof(argv[3]);
-        if (fQuality < 0.0f) {
+        if (fQuality < 0.0f)
+        {
             fQuality = 0.0f;
             std::printf("Warning: Quality setting is out of range using 0.0\n");
         }
-        if (fQuality > 1.0f) {
+        if (fQuality > 1.0f)
+        {
             fQuality = 1.0f;
             std::printf("Warning: Quality setting is out of range using 1.0\n");
         }
-    } catch (...) {
+    }
+    catch (...)
+    {
         std::printf("Error: Unable to process quality setting\n");
         return -1;
     }
 
     // Load the source texture
     CMP_Texture srcTexture;
-    if (!LoadDDSFile(pszSourceFile, srcTexture)) {
+    if (!LoadDDSFile(pszSourceFile, srcTexture))
+    {
         std::printf("Error loading source file!\n");
 
         return 0;
@@ -118,26 +128,26 @@ int main(int argc, const char* argv[]) {
     // This example only works on 32 bit per pixel buffers formated as RGBA:8888
     // if the source is < 32 bit exit,
     //==========================================================================
-    if (!((srcTexture.format == CMP_FORMAT_RGBA_8888) ||
-            (srcTexture.format == CMP_FORMAT_BGRA_8888))) {
-        std::printf(
-            "Error This example works only on 32 bit per pixel image sources!\n");
+    if (!((srcTexture.format == CMP_FORMAT_RGBA_8888) || (srcTexture.format == CMP_FORMAT_BGRA_8888)))
+    {
+        std::printf("Error This example works only on 32 bit per pixel image sources!\n");
         return 0;
     }
 
     //==========================================================================
     // if the source format is BGRA swizzle it to RGBA_8888
     //==========================================================================
-    if (srcTexture.format == CMP_FORMAT_BGRA_8888) {
+    if (srcTexture.format == CMP_FORMAT_BGRA_8888)
+    {
         unsigned char blue;
-        for (CMP_DWORD i = 0; i < srcTexture.dwDataSize; i += 4) {
-            blue = srcTexture.pData[i];
-            srcTexture.pData[i] = srcTexture.pData[i + 2];
+        for (CMP_DWORD i = 0; i < srcTexture.dwDataSize; i += 4)
+        {
+            blue                    = srcTexture.pData[i];
+            srcTexture.pData[i]     = srcTexture.pData[i + 2];
             srcTexture.pData[i + 2] = blue;
         }
         srcTexture.format = CMP_FORMAT_RGBA_8888;
     }
-
 
     // Init dest memory to use for compressed texture
     CMP_Texture destTexture;
@@ -147,67 +157,69 @@ int main(int argc, const char* argv[]) {
     destTexture.dwPitch    = 0;
     destTexture.format     = destFormat;
     destTexture.dwDataSize = CMP_CalculateBufferSize(&destTexture);
-    destTexture.pData = (CMP_BYTE*)malloc(destTexture.dwDataSize);
+    destTexture.pData      = (CMP_BYTE*)malloc(destTexture.dwDataSize);
 
-    BC_ERROR   cmp_status;
+    BC_ERROR cmp_status;
 
     // Example 2 : Using Low level block access code valid only BC7 (and BC6H not shown in this example)
-    if (destTexture.format == CMP_FORMAT_BC7) {
-
+    if (destTexture.format == CMP_FORMAT_BC7)
+    {
         // Step 1: Initialize the Codec: Need to call it only once, repeated calls will return BC_ERROR_LIBRARY_ALREADY_INITIALIZED
-        if (CMP_InitializeBCLibrary() != BC_ERROR_NONE) {
+        if (CMP_InitializeBCLibrary() != BC_ERROR_NONE)
+        {
             std::printf("BC Codec already initialized!\n");
         }
 
         // Step 2: Create a BC7 Encoder
-        BC7BlockEncoder *BC7Encoder;
+        BC7BlockEncoder* BC7Encoder;
 
         // Note we are setting quality low for faster encoding in this sample
-        CMP_CreateBC7Encoder(
-            0.05,               // Quality set to low
-            0,                  // Do not restrict colors
-            0,                  // Do not restrict alpha
-            0xFF,               // Use all BC7 modes
-            1,                  // Performance set to optimal
-            &BC7Encoder);
+        CMP_CreateBC7Encoder(0.05,  // Quality set to low
+                             0,     // Do not restrict colors
+                             0,     // Do not restrict alpha
+                             0xFF,  // Use all BC7 modes
+                             1,     // Performance set to optimal
+                             &BC7Encoder);
 
         // Pointer to source data
-        CMP_BYTE *pdata = (CMP_BYTE *)srcTexture.pData;
+        CMP_BYTE* pdata = (CMP_BYTE*)srcTexture.pData;
 
-        const CMP_DWORD dwBlocksX = ((srcTexture.dwWidth  + 3) >> 2);
-        const CMP_DWORD dwBlocksY = ((srcTexture.dwHeight + 3) >> 2);
-        const CMP_DWORD dwBlocksXY = dwBlocksX*dwBlocksY;
+        const CMP_DWORD dwBlocksX  = ((srcTexture.dwWidth + 3) >> 2);
+        const CMP_DWORD dwBlocksY  = ((srcTexture.dwHeight + 3) >> 2);
+        const CMP_DWORD dwBlocksXY = dwBlocksX * dwBlocksY;
 
-        CMP_DWORD dstIndex  = 0;    // Destination block index
+        CMP_DWORD dstIndex  = 0;  // Destination block index
         CMP_DWORD srcStride = srcTexture.dwWidth * 4;
 
         // Step 4: Process the blocks
-        for (CMP_DWORD yBlock = 0; yBlock < dwBlocksY; yBlock++) {
-
-            for (CMP_DWORD xBlock = 0; xBlock < dwBlocksX; xBlock++) {
-
+        for (CMP_DWORD yBlock = 0; yBlock < dwBlocksY; yBlock++)
+        {
+            for (CMP_DWORD xBlock = 0; xBlock < dwBlocksX; xBlock++)
+            {
                 // Source block index start base: top left pixel of the 4x4 block
-                CMP_DWORD srcBlockIndex = (yBlock * srcStride * 4) + xBlock*16;
+                CMP_DWORD srcBlockIndex = (yBlock * srcStride * 4) + xBlock * 16;
 
                 // Get a input block of data to encode
                 // Currently the BC7 encoder is using double data formats
-                double blockToEncode[16][4];
+                double    blockToEncode[16][4];
                 CMP_DWORD srcIndex;
-                for (int row = 0; row < 4; row++) {
+                for (int row = 0; row < 4; row++)
+                {
                     srcIndex = srcBlockIndex + (srcStride * row);
-                    for (int col = 0; col < 4; col++) {
-                        blockToEncode[row*4 + col][BC_COMP_RED]   = (double)*(pdata+srcIndex++);
-                        blockToEncode[row*4 + col][BC_COMP_GREEN] = (double)*(pdata+srcIndex++);
-                        blockToEncode[row*4 + col][BC_COMP_BLUE]  = (double)*(pdata+srcIndex++);
-                        blockToEncode[row*4 + col][BC_COMP_ALPHA] = (double)*(pdata+srcIndex++);
+                    for (int col = 0; col < 4; col++)
+                    {
+                        blockToEncode[row * 4 + col][BC_COMP_RED]   = (double)*(pdata + srcIndex++);
+                        blockToEncode[row * 4 + col][BC_COMP_GREEN] = (double)*(pdata + srcIndex++);
+                        blockToEncode[row * 4 + col][BC_COMP_BLUE]  = (double)*(pdata + srcIndex++);
+                        blockToEncode[row * 4 + col][BC_COMP_ALPHA] = (double)*(pdata + srcIndex++);
                     }
                 }
 
                 // Call the block encoder : output is 128 bit compressed data
                 cmp_status = CMP_EncodeBC7Block(BC7Encoder, blockToEncode, (destTexture.pData + dstIndex));
-                if (cmp_status != BC_ERROR_NONE) {
-                    std::printf(
-                        "Compression error at block X = %d Block Y = %d \n",xBlock, yBlock);
+                if (cmp_status != BC_ERROR_NONE)
+                {
+                    std::printf("Compression error at block X = %d Block Y = %d \n", xBlock, yBlock);
                 }
                 dstIndex += 16;
 
@@ -215,7 +227,6 @@ int main(int argc, const char* argv[]) {
                 float fProgress = 100.f * (yBlock * dwBlocksX) / dwBlocksXY;
 
                 std::printf("\rCompression progress = %3.0f", fProgress);
-
             }
         }
 

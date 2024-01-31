@@ -1,0 +1,6 @@
+*.exr filter=lfs diff=lfs merge=lfs -text
+runtime/images/*.exr filter=lfs diff=lfs merge=lfs -text
+applications/_plugins/c3dmodel_viewers/gltf_dx12_ex/media/envmap/*.dds filter=lfs diff=lfs merge=lfs -text
+external/brotlig/lib/*.lib filter=lfs diff=lfs merge=lfs -text
+internal/tests/input/** filter=lfs diff=lfs merge=lfs -text
+cmp_unittests/test_data/* filter=lfs diff=lfs merge=lfs -text

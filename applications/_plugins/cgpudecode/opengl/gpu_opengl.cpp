@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2016-2018    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2016-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -36,21 +36,21 @@
 
 #include <assert.h>
 
-#if defined(_WIN32) //&& !defined(NO_LEGACY_BEHAVIOR)
-#pragma comment(lib, "opengl32.lib")     // Open GL
-#pragma comment(lib, "Glu32.lib")        // Glu 
-#pragma comment(lib, "glew32.lib")       // glew 
+#if defined(_WIN32)                   //&& !defined(NO_LEGACY_BEHAVIOR)
+#pragma comment(lib, "opengl32.lib")  // Open GL
+#pragma comment(lib, "Glu32.lib")     // Glu
+#pragma comment(lib, "glew32.lib")    // glew
 #else
 #ifdef _WIN32
-#pragma comment(lib, "opengl32.lib")     // Open GL
-#pragma comment(lib, "Glu32.lib")        // Glu 
+#pragma comment(lib, "opengl32.lib")  // Open GL
+#pragma comment(lib, "Glu32.lib")     // Glu
 //#ifdef _DEBUG
 //    #pragma comment(lib, "glew32d.lib")   // glew
 //#else
-#pragma comment(lib, "glew32.lib")   // glew
+#pragma comment(lib, "glew32.lib")    // glew
 //#endif
 #else
-#pragma comment(lib, "libglew32.lib")   // glew
+#pragma comment(lib, "libglew32.lib")  // glew
 #endif
 #endif
 
@@ -59,14 +59,17 @@ static_assert(sizeof(unsigned int) == sizeof(GLenum), "Inconsistent size for GLe
 
 using namespace GPU_Decode;
 
-GPU_OpenGL::GPU_OpenGL(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback):RenderWindow("OpenGL") {
+GPU_OpenGL::GPU_OpenGL(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback)
+    : RenderWindow("OpenGL")
+{
     //set default width and height if is 0
     if (Width <= 0)
         Width = 640;
     if (Height <= 0)
         Height = 480;
 
-    if (FAILED(InitWindow(Width, Height, callback))) {
+    if (FAILED(InitWindow(Width, Height, callback)))
+    {
         fprintf(stderr, "Failed to initialize Window. Please make sure GLEW is downloaded.\n");
         assert(0);
     }
@@ -74,13 +77,15 @@ GPU_OpenGL::GPU_OpenGL(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback):Rend
     EnableWindowContext(m_hWnd, &m_hDC, &m_hRC);
 }
 
-GPU_OpenGL::~GPU_OpenGL() {
+GPU_OpenGL::~GPU_OpenGL()
+{
 }
 
 //====================================================================================
 // #define SHOW_WINDOW
 
-void GPU_OpenGL::GLRender() {
+void GPU_OpenGL::GLRender()
+{
     // OpenGL animation code goes here
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -122,12 +127,13 @@ void GPU_OpenGL::GLRender() {
     //for debug when showwindow is enable
     SwapBuffers(m_hDC);
 #endif
-
 }
 
-unsigned int GPU_OpenGL::MIP2OLG_Format(const CMP_Texture* pSourceTexture) {
+unsigned int GPU_OpenGL::MIP2OLG_Format(const CMP_Texture* pSourceTexture)
+{
     GLenum m_GLnum;
-    switch (pSourceTexture->format) {
+    switch (pSourceTexture->format)
+    {
     case CMP_FORMAT_BC1:
     case CMP_FORMAT_DXT1:
         m_GLnum = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
@@ -226,16 +232,19 @@ unsigned int GPU_OpenGL::MIP2OLG_Format(const CMP_Texture* pSourceTexture) {
 }
 
 // load pre-compressed texture
-unsigned int GPU_OpenGL::LoadTexture(const CMP_Texture* pSourceTexture, bool wrap) {
+unsigned int GPU_OpenGL::LoadTexture(const CMP_Texture* pSourceTexture, bool wrap)
+{
     GLenum m_GLnum = MIP2OLG_Format(pSourceTexture);
-    if (m_GLnum == GL_INVALID_ENUM) {
+    if (m_GLnum == GL_INVALID_ENUM)
+    {
         fprintf(stderr, "Unsupported format.\n");
         return static_cast<unsigned int>(GLuint(-1));
     }
 
     // Initialize GLEW
-    glewExperimental = GL_TRUE; // Needed for core profile
-    if (glewInit() != GLEW_OK) {
+    glewExperimental = GL_TRUE;  // Needed for core profile
+    if (glewInit() != GLEW_OK)
+    {
         fprintf(stderr, "Failed to initialize GLEW. Please make sure GLEW is downloaded.\n");
         return GLuint(-1);
     }
@@ -256,8 +265,8 @@ unsigned int GPU_OpenGL::LoadTexture(const CMP_Texture* pSourceTexture, bool wra
 
     // if wrap is true, the texture wraps over at the edges (repeat)
     // false, the texture ends at the edges (clamp)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,wrap ? GL_REPEAT : GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,wrap ? GL_REPEAT : GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap ? GL_REPEAT : GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap ? GL_REPEAT : GL_CLAMP);
 
     // build texture MIP maps
     glTexParameterf(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
@@ -272,31 +281,31 @@ unsigned int GPU_OpenGL::LoadTexture(const CMP_Texture* pSourceTexture, bool wra
 }
 
 // Free Texture
-void GPU_OpenGL::FreeTexture(unsigned int texture) {
+void GPU_OpenGL::FreeTexture(unsigned int texture)
+{
     glDeleteTextures(1, static_cast<GLuint*>(&texture));
 }
 
 //=========================================================================================
 
-CMP_ERROR WINAPI GPU_OpenGL::Decompress(
-    const CMP_Texture* pSourceTexture,
-    CMP_Texture* pDestTexture
-) {
-
+CMP_ERROR WINAPI GPU_OpenGL::Decompress(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture)
+{
     GLint majVer = 0;
     GLint minVer = 0;
 
     glGetIntegerv(GL_MAJOR_VERSION, &majVer);
     glGetIntegerv(GL_MINOR_VERSION, &minVer);
 
-    if (majVer < 3 || (majVer < 3 && minVer < 2)) {
+    if (majVer < 3 || (majVer < 3 && minVer < 2))
+    {
         PrintInfo("Error: OpenGL 3.2 and up cannot be detected.\n");
-        fprintf(stderr, "Error: OpenGL 3.2 and up cannot be detected.\n" );
+        fprintf(stderr, "Error: OpenGL 3.2 and up cannot be detected.\n");
         return CMP_ERR_UNABLE_TO_INIT_DECOMPRESSLIB;
     }
 
     texture = LoadTexture(pSourceTexture, false);
-    if (texture == -1) {
+    if (texture == -1)
+    {
         return CMP_ERR_UNSUPPORTED_SOURCE_FORMAT;
     }
 
@@ -306,32 +315,33 @@ CMP_ERROR WINAPI GPU_OpenGL::Decompress(
 #endif
     //  Wait in Main message loop, until render is complete
     //  then exit
-    MSG msg = { 0 };
+    MSG msg       = {0};
     int loopcount = 0;
-    while (WM_QUIT != msg.message) {
-        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE) && (loopcount < 100)) {
+    while (WM_QUIT != msg.message)
+    {
+        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE) && (loopcount < 100))
+        {
             loopcount++;
             TranslateMessage(&msg);
-        } else {
+        }
+        else
+        {
             GLRender();
             break;
         }
     }
 
-    if (pDestTexture) {
-        if (pSourceTexture->format == CMP_FORMAT_ETC_RGB ||
-                pSourceTexture->format == CMP_FORMAT_ETC2_RGB ||
-                pSourceTexture->format == CMP_FORMAT_ETC2_RGBA ||
-                pSourceTexture->format == CMP_FORMAT_ETC2_RGBA1
-           )
-           glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_BGRA_EXT, GL_UNSIGNED_BYTE, pDestTexture->pData);
-        else if (pSourceTexture->format == CMP_FORMAT_ETC2_SRGB ||
-                 pSourceTexture->format == CMP_FORMAT_ETC2_SRGBA ||
-                 pSourceTexture->format == CMP_FORMAT_ETC2_SRGBA1
-                )
-           glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_BGRA_EXT, GL_BYTE, pDestTexture->pData);
-        else {
-            if ((pDestTexture->format == CMP_FORMAT_ARGB_16F) || // Fix or remove this line 
+    if (pDestTexture)
+    {
+        if (pSourceTexture->format == CMP_FORMAT_ETC_RGB || pSourceTexture->format == CMP_FORMAT_ETC2_RGB || pSourceTexture->format == CMP_FORMAT_ETC2_RGBA ||
+            pSourceTexture->format == CMP_FORMAT_ETC2_RGBA1)
+            glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_BGRA_EXT, GL_UNSIGNED_BYTE, pDestTexture->pData);
+        else if (pSourceTexture->format == CMP_FORMAT_ETC2_SRGB || pSourceTexture->format == CMP_FORMAT_ETC2_SRGBA ||
+                 pSourceTexture->format == CMP_FORMAT_ETC2_SRGBA1)
+            glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_BGRA_EXT, GL_BYTE, pDestTexture->pData);
+        else
+        {
+            if ((pDestTexture->format == CMP_FORMAT_ARGB_16F) ||  // Fix or remove this line
                 (pDestTexture->format == CMP_FORMAT_RGBA_16F))
             {
                 glReadPixels(0, 0, pDestTexture->dwWidth, pDestTexture->dwHeight, GL_RGBA, GL_HALF_FLOAT, pDestTexture->pData);
@@ -348,5 +358,5 @@ CMP_ERROR WINAPI GPU_OpenGL::Decompress(
     // free the texture
     FreeTexture(texture);
 
-    return CMP_OK; // msg.wParam;
+    return CMP_OK;  // msg.wParam;
 }

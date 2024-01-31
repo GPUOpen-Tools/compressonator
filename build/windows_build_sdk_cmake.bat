@@ -38,7 +38,7 @@ call "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDev
 goto :vscmdset
 
 :Community
-call "%ProgramFiles%\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"
+call "%ProgramFiles(x86)%\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"
 
 :vscmdset
 

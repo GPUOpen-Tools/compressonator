@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2006-2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2006-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -35,7 +35,5 @@
 #include "jmlvec3.h"
 #include "jmlmatrix.h"
 #include "jmlfuncs.h"
-
-
 
 #endif

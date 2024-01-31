@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2021 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2021-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
 //=====================================================================
 //
@@ -67,7 +67,7 @@ namespace NoScaling1_Linear1
 #include "gpuresources_fsr.h"
 #endif
 
-class GpuResources_cas: public GpuResources_fsr
+class GpuResources_cas : public GpuResources_fsr
 {
 public:
     GpuResources_cas();
@@ -83,14 +83,12 @@ private:
         varAU4(const1);
     };
 
-    static void GetShaderCode_CAS(  const BYTE*& outCode_NoScaling0,
-                                    size_t&      outCodeSize_NoScaling0,
-                                    const BYTE*& outCode_NoScaling1,
-                                    size_t&      outCodeSize_NoScaling1,
-                                    CMP_FORMAT   format,
-                                    bool         useSRGB);
-
+    static void GetShaderCode_CAS(const BYTE*& outCode_NoScaling0,
+                                  size_t&      outCodeSize_NoScaling0,
+                                  const BYTE*& outCode_NoScaling1,
+                                  size_t&      outCodeSize_NoScaling1,
+                                  CMP_FORMAT   format,
+                                  bool         useSRGB);
 };
-
 
 #endif

@@ -140,7 +140,7 @@ if (UNIX)
 endif()
 
 set_target_properties(CMP_Framework PROPERTIES 
-        FOLDER "Libs"
+        FOLDER ${PROJECT_FOLDER_SDK_LIBS}
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
         ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )

@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2018-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,40 +27,41 @@
 
 #include "tootlelib.h"
 #ifndef USE_ASSIMP
-#include "objloader.h"      // This should be removed and shared with Compressonator Common!
+#include "objloader.h"  // This should be removed and shared with Compressonator Common!
 #else
 #include "modeldata.h"
 #endif
 
 #ifdef _WIN32
 // {80EF74BA-CB47-4D21-9F98-000FE2C7CFB0}
-static const GUID g_GUID = { 0x80ef74ba, 0xcb47, 0x4d21,{ 0x9f, 0x98, 0x0, 0xf, 0xe2, 0xc7, 0xcf, 0xb0 } };
+static const GUID g_GUID = {0x80ef74ba, 0xcb47, 0x4d21, {0x9f, 0x98, 0x0, 0xf, 0xe2, 0xc7, 0xcf, 0xb0}};
 #else
-static const GUID g_GUID = { 0 };
+static const GUID g_GUID = {0};
 #endif
 
-#define TC_PLUGIN_VERSION_MAJOR    1
-#define TC_PLUGIN_VERSION_MINOR    0
-
+#define TC_PLUGIN_VERSION_MAJOR 1
+#define TC_PLUGIN_VERSION_MINOR 0
 
 //=================================================================================================================================
 /// Enumeration for the choice of test cases for tootle.
 //=================================================================================================================================
-enum TootleAlgorithm {
-    NA_TOOTLE_ALGORITHM,                // Default invalid choice.
-    TOOTLE_VCACHE_ONLY,                 // Only perform vertex cache optimization.
-    TOOTLE_CLUSTER_VCACHE_OVERDRAW,     // Call the clustering, optimize vertex cache and overdraw individually.
-    TOOTLE_FAST_VCACHECLUSTER_OVERDRAW, // Call the functions to optimize vertex cache and overdraw individually.  This is using
+enum TootleAlgorithm
+{
+    NA_TOOTLE_ALGORITHM,                 // Default invalid choice.
+    TOOTLE_VCACHE_ONLY,                  // Only perform vertex cache optimization.
+    TOOTLE_CLUSTER_VCACHE_OVERDRAW,      // Call the clustering, optimize vertex cache and overdraw individually.
+    TOOTLE_FAST_VCACHECLUSTER_OVERDRAW,  // Call the functions to optimize vertex cache and overdraw individually.  This is using
     //  the algorithm from SIGGRAPH 2007.
-    TOOTLE_OPTIMIZE,                    // Call a single function to optimize vertex cache, cluster and overdraw.
-    TOOTLE_FAST_OPTIMIZE                // Call a single function to optimize vertex cache, cluster and overdraw using
+    TOOTLE_OPTIMIZE,      // Call a single function to optimize vertex cache, cluster and overdraw.
+    TOOTLE_FAST_OPTIMIZE  // Call a single function to optimize vertex cache, cluster and overdraw using
     //  a fast algorithm from SIGGRAPH 2007.
 };
 
 //=================================================================================================================================
 /// A simple structure to hold Tootle statistics
 //=================================================================================================================================
-struct TootleStats {
+struct TootleStats
+{
     unsigned int nClusters;
     float        fVCacheIn;
     float        fVCacheOut;
@@ -84,35 +85,37 @@ const float INVALID_TIME = -1;
 //=================================================================================================================================
 /// A simple structure to store the settings for this sample app
 //=================================================================================================================================
-struct TootleSettings {
+struct TootleSettings
+{
     const char*           pMeshName;
     const char*           pDestMeshName;
     const char*           pViewpointName;
     unsigned int          nClustering;
     unsigned int          nCacheSize;
     TootleFaceWinding     eWinding;
-    TootleAlgorithm       algorithmChoice;         // five different types of algorithm to test Tootle
-    TootleVCacheOptimizer eVCacheOptimizer;        // the choice for vertex cache optimization algorithm, it can be either
+    TootleAlgorithm       algorithmChoice;   // five different types of algorithm to test Tootle
+    TootleVCacheOptimizer eVCacheOptimizer;  // the choice for vertex cache optimization algorithm, it can be either
     //  TOOTLE_VCACHE_AUTO, TOOTLE_VCACHE_LSTRIPS, TOOTLE_VCACHE_DIRECT3D or
     //  TOOTLE_VCACHE_TIPSY.
-    bool                  bOptimizeVertexMemory;   // true if you want to optimize vertex memory location, false to skip
-    bool                  bMeasureOverdraw;        // true if you want to measure overdraw, false to skip
+    bool bOptimizeVertexMemory;  // true if you want to optimize vertex memory location, false to skip
+    bool bMeasureOverdraw;       // true if you want to measure overdraw, false to skip
 };
 
-class Plugin_Mesh_Tootle: public PluginInterface_Mesh {
-  public:
+class Plugin_Mesh_Tootle : public PluginInterface_Mesh
+{
+public:
     Plugin_Mesh_Tootle();
     virtual ~Plugin_Mesh_Tootle();
     int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
-    int TC_PluginSetSharedIO(void *);
+    int TC_PluginSetSharedIO(void*);
 
     int Init();
     int CleanUp();
 
     void* ProcessMesh(void* data, void* setting, void* statsOut, CMP_Feedback_Proc pFeedbackProc);
 
-  private:
-    bool m_InitOK;
+private:
+    bool           m_InitOK;
     TootleSettings m_settings;
 
     // read the mesh from the OBJ file
@@ -123,20 +126,17 @@ class Plugin_Mesh_Tootle: public PluginInterface_Mesh {
     std::vector<ObjVertex3D> m_vertices;
 
     // read viewpoints if needed
-    std::vector<ObjVertex3D> m_viewpoints;
+    std::vector<ObjVertex3D>  m_viewpoints;
     std::vector<unsigned int> m_indices;
 
     // allocate an array to hold the cluster ID for each face
     std::vector<unsigned int> m_faceCluster;
-    unsigned int m_nNumClusters;
+    unsigned int              m_nNumClusters;
 
     std::vector<unsigned int> m_pnVertexRemapping;
-    unsigned int m_nReferencedVertices = 0;          // The actual total number of vertices referenced by the indices
-
-
+    unsigned int              m_nReferencedVertices = 0;  // The actual total number of vertices referenced by the indices
 };
 
-extern void *make_Plugin_Mesh_Tootle();
-
+extern void* make_Plugin_Mesh_Tootle();
 
 #endif

@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2014-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2014-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,23 +27,17 @@
 
 #include "astc/astc_definitions.h"
 
-class ASTCBlockDecoder {
-  public:
-    ASTCBlockDecoder()     {};
+class ASTCBlockDecoder
+{
+public:
+    ASTCBlockDecoder(){};
 
-    ~ASTCBlockDecoder() {};
+    ~ASTCBlockDecoder(){};
 
     // *out is determined by ImageData::m_DataType
-    void DecompressBlock(
-        BYTE BlockWidth,
-        BYTE BlockHeight,
-        BYTE bitness,
-        float  out[][4],
-        BYTE   in[ASTC_COMPRESSED_BLOCK_SIZE]);
+    void DecompressBlock(BYTE BlockWidth, BYTE BlockHeight, BYTE bitness, float out[][4], BYTE in[ASTC_COMPRESSED_BLOCK_SIZE]);
 
-  private:
-
+private:
 };
-
 
 #endif

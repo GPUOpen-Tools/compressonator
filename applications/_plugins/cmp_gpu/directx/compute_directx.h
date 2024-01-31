@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -47,15 +47,36 @@
 
 using namespace CMP_Compute_Base;
 
-#define SAFE_RELEASE( x ) { if ( x ) { x->Release(); x = nullptr; } }
+#define SAFE_RELEASE(x)   \
+    {                     \
+        if (x)            \
+        {                 \
+            x->Release(); \
+            x = nullptr;  \
+        }                 \
+    }
 UINT const MAX_QUERY_FRAME_NUM = 5;
 
 #ifndef V_GOTO
-#define V_GOTO( x ) { hr = (x); if ( FAILED(hr) ) {goto quit;} }
+#define V_GOTO(x)       \
+    {                   \
+        hr = (x);       \
+        if (FAILED(hr)) \
+        {               \
+            goto quit;  \
+        }               \
+    }
 #endif
 
 #ifndef V_RETURN
-#define V_RETURN( x )    { hr = (x); if( FAILED(hr) ) { return hr; } }
+#define V_RETURN(x)     \
+    {                   \
+        hr = (x);       \
+        if (FAILED(hr)) \
+        {               \
+            return hr;  \
+        }               \
+    }
 #endif
 
 //-------------------------------------------------
@@ -73,7 +94,6 @@ struct SharedIOData
     CGU_Vec4ui data2;
 };
 
-
 //---------------------------------------------------
 // Data structures for final compressed image blocks
 //---------------------------------------------------
@@ -87,30 +107,30 @@ struct OutCompressedStruct128Bits
     UINT color[4];
 };
 
+#define BLOCK_SIZE_Y 4
+#define BLOCK_SIZE_X 4
+#define BLOCK_SIZE (BLOCK_SIZE_Y * BLOCK_SIZE_X)
 
-#define BLOCK_SIZE_Y    4
-#define BLOCK_SIZE_X    4
-#define BLOCK_SIZE     (BLOCK_SIZE_Y * BLOCK_SIZE_X)
-
-#define ACTIVE_ENCODER_BC1  0
-#define ACTIVE_ENCODER_BC2  1
-#define ACTIVE_ENCODER_BC3  2
-#define ACTIVE_ENCODER_BC4  3
-#define ACTIVE_ENCODER_BC5  4
-#define ACTIVE_ENCODER_BC6  5
-#define ACTIVE_ENCODER_BC7  6
+#define ACTIVE_ENCODER_BC1 0
+#define ACTIVE_ENCODER_BC2 1
+#define ACTIVE_ENCODER_BC3 2
+#define ACTIVE_ENCODER_BC4 3
+#define ACTIVE_ENCODER_BC5 4
+#define ACTIVE_ENCODER_BC6 5
+#define ACTIVE_ENCODER_BC7 6
 
 // #define USE_COMMON_PIPELINE_API     // Reserved for updates on next release
 
 using Microsoft::WRL::ComPtr;
 
-class CDirectX :public ComputeBase {
-  public:
-    CDirectX(void *kerneloptions);
+class CDirectX : public ComputeBase
+{
+public:
+    CDirectX(void* kerneloptions);
     ~CDirectX();
 
-    CMP_ERROR   Compress(KernelOptions *Options, MipSet  &SrcTexture, MipSet  &destTexture,CMP_Feedback_Proc pFeedback);
-    void        SetComputeOptions(ComputeOptions *CLOptions);
+    CMP_ERROR   Compress(KernelOptions* Options, MipSet& SrcTexture, MipSet& destTexture, CMP_Feedback_Proc pFeedback);
+    void        SetComputeOptions(ComputeOptions* CLOptions);
     float       GetProcessElapsedTimeMS();
     float       GetMTxPerSec();
     int         GetBlockSize();
@@ -118,44 +138,45 @@ class CDirectX :public ComputeBase {
     const char* GetVersion();
     int         GetMaxUCores();
 
-  private:
-    bool            m_programRun;
-    CMP_FORMAT      m_codecFormat;
+private:
+    bool       m_programRun;
+    CMP_FORMAT m_codecFormat;
 
-    void    Init();
-    void    GetErrorMessages();
+    void Init();
+    void GetErrorMessages();
 
     // run time compile
-    ID3DBlob*       m_csBlob;         // For mains
-    ID3DBlob*       m_csBlobEx[4];    // For extended entry calls
-    HRESULT CompileComputeShader( _In_ LPCWSTR srcFile, _In_ LPCSTR entryPoint,_Outptr_ ID3DBlob** blob );
-    void    csBlobCleanUp();
+    ID3DBlob* m_csBlob;       // For mains
+    ID3DBlob* m_csBlobEx[4];  // For extended entry calls
+    HRESULT   CompileComputeShader(_In_ LPCWSTR srcFile, _In_ LPCSTR entryPoint, _Outptr_ ID3DBlob** blob);
+    void      csBlobCleanUp();
 
 #ifdef USE_COMMON_PIPELINE_API
-    long    file_size(FILE* p_file);
-    bool    load_file();
-    bool    Create_Program_File();
-    bool    CreateProgramEncoder();
-    void    CleanUpKernelAndIOBuffers();
-    void    CleanUpProgramEncoder();
-    bool    CreateIOBuffers();
-    bool    RunKernel();
-    bool    GetResults();
+    long file_size(FILE* p_file);
+    bool load_file();
+    bool Create_Program_File();
+    bool CreateProgramEncoder();
+    void CleanUpKernelAndIOBuffers();
+    void CleanUpProgramEncoder();
+    bool CreateIOBuffers();
+    bool RunKernel();
+    bool GetResults();
 
-    union {
-        char            *buffer;
-        unsigned char   *ubuffer;
+    union
+    {
+        char*          buffer;
+        unsigned char* ubuffer;
     } p_program;
 
-    size_t          m_program_size;
-    bool            m_isBinary;
+    size_t m_program_size;
+    bool   m_isBinary;
 #endif
 
     //-----------------------------------------
     HRESULT BuildBCnEncoder();
     HRESULT Create2DTexture();
     HRESULT GPU_Process();
-    HRESULT GPU_Encode(ID3D11Buffer** ppDstTextureAsBufOut,int miplevel);
+    HRESULT GPU_Encode(ID3D11Buffer** ppDstTextureAsBufOut, int miplevel);
     HRESULT GPU_CompressedBuffer(std::vector<ID3D11Buffer*>& subTextureAsBufs);
 
     bool CreateDevice();
@@ -166,37 +187,37 @@ class CDirectX :public ComputeBase {
 
     bool CheckCS4Suppot();
 
-    bool    m_getPerfStats;
-    float   m_computeShaderElapsedMS;       // Total Elapsed GPU Compute Time to process all the blocks
-    int     m_num_blocks;                   // Number of 4x4 pixel blocks
-    float   m_CmpMTxPerSec;                 // Number of Texels per second
-    bool    m_initDeviceOk;
-    bool    m_initQueryOk;
-    float   m_fAlphaWeight;
-    float   m_fquality;
-    int     m_activeEncoder;
+    bool  m_getPerfStats;
+    float m_computeShaderElapsedMS;  // Total Elapsed GPU Compute Time to process all the blocks
+    int   m_num_blocks;              // Number of 4x4 pixel blocks
+    float m_CmpMTxPerSec;            // Number of Texels per second
+    bool  m_initDeviceOk;
+    bool  m_initQueryOk;
+    float m_fAlphaWeight;
+    float m_fquality;
+    int   m_activeEncoder;
 
     // Additional BC7 Mode options to try over default modes 4,5 and 6
     bool m_bc7_mode02;
     bool m_bc7_mode137;
 
     // GPU Performance Monitoring
-    cpu_timer           m_cmpTimer;
-    ID3D11Query*        m_pQueryDisjoint;        // Checks for valid timestamp query
-    ID3D11Query*        m_pQueryBegin;           // Individual timestamp queries for Begin of shader exec
-    ID3D11Query*        m_pQueryEnd;             // Individual timestamp queries for End   of shader exec
-    bool                m_getGPUPerfStats;
-    unsigned int        m_totalnumBlocks;
-    float               m_GPUFrequency;
-    float               m_GPUFrequencyMin;
-    float               m_GPUFrequencyMax;
-    D3D11_QUERY_DESC    m_queryDisjointDesc;
-    D3D11_QUERY_DESC    m_pQueryBeginCS;
-    D3D11_QUERY_DESC    m_pQueryEndCS;
+    cpu_timer        m_cmpTimer;
+    ID3D11Query*     m_pQueryDisjoint;  // Checks for valid timestamp query
+    ID3D11Query*     m_pQueryBegin;     // Individual timestamp queries for Begin of shader exec
+    ID3D11Query*     m_pQueryEnd;       // Individual timestamp queries for End   of shader exec
+    bool             m_getGPUPerfStats;
+    unsigned int     m_totalnumBlocks;
+    float            m_GPUFrequency;
+    float            m_GPUFrequencyMin;
+    float            m_GPUFrequencyMax;
+    D3D11_QUERY_DESC m_queryDisjointDesc;
+    D3D11_QUERY_DESC m_pQueryBeginCS;
+    D3D11_QUERY_DESC m_pQueryEndCS;
 
     // Debug reports
 #if defined(_DEBUG)
-    ComPtr<ID3D11Debug>        m_pDebug;
+    ComPtr<ID3D11Debug> m_pDebug;
 #endif
 
     void QueryDispatchBegin();
@@ -205,27 +226,28 @@ class CDirectX :public ComputeBase {
     void QueryProcessEnd(int miplevel);
 
     // Shader execution
-    void RunComputeShader(
-        ID3D11ComputeShader* pComputeShader,
-        ID3D11ShaderResourceView** pShaderResourceViews,
-        UINT uNumSRVs,
-        ID3D11Buffer* pCBCS,
-        ID3D11UnorderedAccessView* pUnorderedAccessView,
-        UINT X, UINT Y, UINT Z,
-        UINT numBlocks);
+    void RunComputeShader(ID3D11ComputeShader*       pComputeShader,
+                          ID3D11ShaderResourceView** pShaderResourceViews,
+                          UINT                       uNumSRVs,
+                          ID3D11Buffer*              pCBCS,
+                          ID3D11UnorderedAccessView* pUnorderedAccessView,
+                          UINT                       X,
+                          UINT                       Y,
+                          UINT                       Z,
+                          UINT                       numBlocks);
 
     void ResetContext();
 
     // Device Info
-    std::string          m_deviceName;
-    std::string          m_version;
-    int                  m_maxUCores;
+    std::string m_deviceName;
+    std::string m_version;
+    int         m_maxUCores;
 
     // Internal
-    std::string          m_sourceShaderFile;
-    KernelOptions*       m_kernelOptions;
-    MipSet               m_SrcTexture;
-    MipSet               m_DstTexture;
+    std::string    m_sourceShaderFile;
+    KernelOptions* m_kernelOptions;
+    MipSet         m_SrcTexture;
+    MipSet         m_DstTexture;
 
     ID3D11Device*        m_pDevice;
     ID3D11DeviceContext* m_pContext;
@@ -237,7 +259,6 @@ class CDirectX :public ComputeBase {
     ID3D11ComputeShader* m_BC7_pTryMode137CS;
     ID3D11ComputeShader* m_BC7_pTryMode02CS;
     ID3D11ComputeShader* m_BCn_pEncodeBlockCS[7];
-
 };
 
 #endif

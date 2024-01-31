@@ -58,7 +58,7 @@ target_link_libraries(ModelViewer_Vulkan
         ExtGlslang
         ExtQt5Widgets
 
-        CMP_Imgui
+        extern_imgui
         CMP_Compressonator
         CMP_Framework
         CMP_GpuDecode
@@ -69,7 +69,7 @@ target_link_libraries(ModelViewer_Vulkan
 target_compile_definitions(ModelViewer_Vulkan PRIVATE BUILD_AS_PLUGIN_DLL=1)
 
 set_target_properties(ModelViewer_Vulkan PROPERTIES 
-    FOLDER "Plugin_Dynamic/3DModel_Viewers"
+    FOLDER ${PROJECT_FOLDER_APPS_PLUGIN_DYNAMIC}
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin/debug/plugins"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/release/plugins"
     )

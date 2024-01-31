@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2021 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2021-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
 //=====================================================================
 //
@@ -52,8 +52,7 @@
             throw std::runtime_error(__FILE__ "(" LINE_STRING "): FAILED( " #expr " )"); \
     } while (false)
 
-
-class GpuResources :  public GpuResources_cas
+class GpuResources : public GpuResources_cas
 {
 public:
     GpuResources();

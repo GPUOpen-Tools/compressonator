@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -21,23 +21,18 @@
 // THE SOFTWARE.
 //=====================================================================
 
-
 #ifndef _APC_DECODE_H_
 #define _APC_DECODE_H_
 
 #include "apc_definitions.h"
 
-class APCBlockDecoder {
-  public:
-    APCBlockDecoder() {};
-    ~APCBlockDecoder() {};
+class APCBlockDecoder
+{
+public:
+    APCBlockDecoder(){};
+    ~APCBlockDecoder(){};
 
-    void DecompressBlock(
-        CMP_BYTE   out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-        CMP_BYTE   cmp[COMPRESSED_BLOCK_SIZE]
-    );
-
+    void DecompressBlock(CMP_BYTE out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG], CMP_BYTE cmp[COMPRESSED_BLOCK_SIZE]);
 };
-
 
 #endif

@@ -37,5 +37,5 @@ target_link_libraries(CMP_Math PRIVATE
 )
 
 set_target_properties(CMP_Math PROPERTIES 
-    FOLDER "Libs"
-    )
+    FOLDER ${PROJECT_FOLDER_SDK_LIBS}
+)

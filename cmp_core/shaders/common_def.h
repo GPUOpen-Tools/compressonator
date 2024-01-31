@@ -1,5 +1,5 @@
 // ==================================================================================================
-// Copyright (c) 2007-2021 Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024 Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 // Copyright (c) <2014> <Michal Drobot>
 // ==================================================================================================
@@ -489,7 +489,6 @@ typedef CMP_Vec4f  CGV_Vec4f;
 #define CMP_GLOBAL
 
 #define CMP_KERNEL
-#define __local const
 #define __constant const
 #define CMP_CONSTANT const
 #define INLINE inline

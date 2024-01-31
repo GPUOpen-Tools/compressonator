@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -27,17 +27,18 @@
 #include "astc/astc_decode.h"
 #include "compressonator.h"
 
-
-extern CMP_BOOL g_LibraryInitialized;
-static ASTCBlockDecoder  g_Decoder;
+extern CMP_BOOL         g_LibraryInitialized;
+static ASTCBlockDecoder g_Decoder;
 
 // Need to remove these calls
-int astc_codec_unlink(const char *filename) {
+int astc_codec_unlink(const char* filename)
+{
     int res = remove(filename);
     return res;
 }
 
-void astc_codec_internal_error(const char *filename, int linenum) {
+void astc_codec_internal_error(const char* filename, int linenum)
+{
     printf("Internal error: File=%s Line=%d\n", filename, linenum);
 }
 
@@ -46,20 +47,18 @@ void astc_codec_internal_error(const char *filename, int linenum) {
 //
 //
 //
-extern "C" BC_ERROR CMP_DecodeASTCBlock( CMP_BYTE BlockWidth,
-        CMP_BYTE BlockHeight,
-        CMP_BYTE Bitness,
-        BYTE *in,
-        float out[][4]) {
-    if(!g_LibraryInitialized) {
+extern "C" BC_ERROR CMP_DecodeASTCBlock(CMP_BYTE BlockWidth, CMP_BYTE BlockHeight, CMP_BYTE Bitness, BYTE* in, float out[][4])
+{
+    if (!g_LibraryInitialized)
+    {
         return BC_ERROR_LIBRARY_NOT_INITIALIZED;
     }
 
-    if( !in || !out ) {
+    if (!in || !out)
+    {
         return BC_ERROR_INVALID_PARAMETERS;
     }
 
     g_Decoder.DecompressBlock(BlockWidth, BlockHeight, Bitness, out, in);
     return BC_ERROR_NONE;
 }
-

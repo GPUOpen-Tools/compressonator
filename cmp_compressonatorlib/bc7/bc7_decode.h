@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -26,19 +26,16 @@
 
 #include "bc7_definitions.h"
 
-class BC7BlockDecoder {
-  public:
-    BC7BlockDecoder() {};
-    ~BC7BlockDecoder() {};
+class BC7BlockDecoder
+{
+public:
+    BC7BlockDecoder(){};
+    ~BC7BlockDecoder(){};
 
-    void DecompressBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-                         CMP_BYTE   in[COMPRESSED_BLOCK_SIZE]);
+    void DecompressBlock(double out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG], CMP_BYTE in[COMPRESSED_BLOCK_SIZE]);
 
-  private:
-
-    void DecompressDualIndexBlock(double  out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-                                  CMP_BYTE   in[COMPRESSED_BLOCK_SIZE],
-                                  CMP_DWORD  endpoint[2][MAX_DIMENSION_BIG]);
+private:
+    void DecompressDualIndexBlock(double out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG], CMP_BYTE in[COMPRESSED_BLOCK_SIZE], CMP_DWORD endpoint[2][MAX_DIMENSION_BIG]);
 
     CMP_DWORD ReadBit(CMP_BYTE base[]);
     CMP_DWORD m_blockMode;
@@ -49,6 +46,5 @@ class BC7BlockDecoder {
     CMP_DWORD m_bitPosition;
     CMP_DWORD m_componentBits[MAX_DIMENSION_BIG];
 };
-
 
 #endif

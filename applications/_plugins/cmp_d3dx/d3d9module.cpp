@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,37 +24,48 @@
 
 #include "d3d9module.h"
 
-CD3D9Module::CD3D9Module(void) : CModule() {
+CD3D9Module::CD3D9Module(void)
+    : CModule()
+{
     m_pDirect3DCreate9 = NULL;
 }
 
-CD3D9Module::~CD3D9Module(void) {
+CD3D9Module::~CD3D9Module(void)
+{
     UnloadModule();
 }
 
-bool CD3D9Module::LoadModule() {
+bool CD3D9Module::LoadModule()
+{
     return LoadModule("D3D9.DLL");
 }
 
-bool CD3D9Module::LoadModule(LPCTSTR lpModuleName) {
-    if(__super::LoadModule(lpModuleName)) {
-        m_pDirect3DCreate9 = (Direct3DCreate9Proc) GetProcAddress("Direct3DCreate9");
-        if(!m_pDirect3DCreate9) {
+bool CD3D9Module::LoadModule(LPCTSTR lpModuleName)
+{
+    if (__super::LoadModule(lpModuleName))
+    {
+        m_pDirect3DCreate9 = (Direct3DCreate9Proc)GetProcAddress("Direct3DCreate9");
+        if (!m_pDirect3DCreate9)
+        {
             UnloadModule();
             return false;
-        } else
+        }
+        else
             return true;
-    } else
+    }
+    else
         return false;
 }
 
-void CD3D9Module::UnloadModule() {
+void CD3D9Module::UnloadModule()
+{
     __super::UnloadModule();
     m_pDirect3DCreate9 = NULL;
 }
 
-IDirect3D9* CD3D9Module::Direct3DCreate9(UINT SDKVersion) {
-    if(m_pDirect3DCreate9)
+IDirect3D9* CD3D9Module::Direct3DCreate9(UINT SDKVersion)
+{
+    if (m_pDirect3DCreate9)
         return m_pDirect3DCreate9(SDKVersion);
     else
         return NULL;

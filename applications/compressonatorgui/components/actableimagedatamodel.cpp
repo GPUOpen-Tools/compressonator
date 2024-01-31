@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -27,25 +27,28 @@
 // mymodel.cpp
 #include "actableimagedatamodel.h"
 
-acTableImageDataModel::acTableImageDataModel(int rowsize, int colsize, QObject *parent)
-    :QAbstractTableModel(parent) {
+acTableImageDataModel::acTableImageDataModel(int rowsize, int colsize, QObject* parent)
+    : QAbstractTableModel(parent)
+{
     m_maxrow = rowsize;
     m_maxcol = colsize;
 }
 
-int acTableImageDataModel::rowCount(const QModelIndex & /*parent*/) const {
+int acTableImageDataModel::rowCount(const QModelIndex& /*parent*/) const
+{
     return m_maxrow;
 }
 
-int acTableImageDataModel::columnCount(const QModelIndex & /*parent*/) const {
+int acTableImageDataModel::columnCount(const QModelIndex& /*parent*/) const
+{
     return m_maxcol;
 }
 
-QVariant acTableImageDataModel::data(const QModelIndex &index, int role) const {
-    if (role == Qt::DisplayRole) {
-        return QString("%1,%2")
-               .arg(index.row() + 1)
-               .arg(index.column() + 1);
+QVariant acTableImageDataModel::data(const QModelIndex& index, int role) const
+{
+    if (role == Qt::DisplayRole)
+    {
+        return QString("%1,%2").arg(index.row() + 1).arg(index.column() + 1);
     }
     return QVariant();
 }

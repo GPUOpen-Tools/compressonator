@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2018-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,11 +32,13 @@
 #include <cstdlib>
 #include <cstring>
 
-static int fixupIndex(int index, size_t size) {
+static int fixupIndex(int index, size_t size)
+{
     return (index >= 0) ? index - 1 : int(size) + index;
 }
 
-static int parseInt(const char* s, const char** end) {
+static int parseInt(const char* s, const char** end)
+{
     // skip whitespace
     while (*s == ' ' || *s == '\t')
         s++;
@@ -47,7 +49,8 @@ static int parseInt(const char* s, const char** end) {
 
     unsigned int result = 0;
 
-    for (;;) {
+    for (;;)
+    {
         if (unsigned(*s - '0') < 10)
             result = result * 10 + (*s - '0');
         else
@@ -62,9 +65,11 @@ static int parseInt(const char* s, const char** end) {
     return sign ? -int(result) : int(result);
 }
 
-static float parseFloat(const char* s, const char** end) {
+static float parseFloat(const char* s, const char** end)
+{
     static const double digits[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    static const double powers[] = {1e0, 1e+1, 1e+2, 1e+3, 1e+4, 1e+5, 1e+6, 1e+7, 1e+8, 1e+9, 1e+10, 1e+11, 1e+12, 1e+13, 1e+14, 1e+15, 1e+16, 1e+17, 1e+18, 1e+19, 1e+20, 1e+21, 1e+22};
+    static const double powers[] = {1e0,   1e+1,  1e+2,  1e+3,  1e+4,  1e+5,  1e+6,  1e+7,  1e+8,  1e+9,  1e+10, 1e+11,
+                                    1e+12, 1e+13, 1e+14, 1e+15, 1e+16, 1e+17, 1e+18, 1e+19, 1e+20, 1e+21, 1e+22};
 
     // skip whitespace
     while (*s == ' ' || *s == '\t')
@@ -76,18 +81,21 @@ static float parseFloat(const char* s, const char** end) {
 
     // read integer part
     double result = 0;
-    int power = 0;
+    int    power  = 0;
 
-    while (unsigned(*s - '0') < 10) {
+    while (unsigned(*s - '0') < 10)
+    {
         result = result * 10 + digits[*s - '0'];
         s++;
     }
 
     // read fractional part
-    if (*s == '.') {
+    if (*s == '.')
+    {
         s++;
 
-        while (unsigned(*s - '0') < 10) {
+        while (unsigned(*s - '0') < 10)
+        {
             result = result * 10 + digits[*s - '0'];
             s++;
             power--;
@@ -95,7 +103,8 @@ static float parseFloat(const char* s, const char** end) {
     }
 
     // read exponent part
-    if ((*s | ' ') == 'e') {
+    if ((*s | ' ') == 'e')
+    {
         s++;
 
         // read exponent sign
@@ -105,7 +114,8 @@ static float parseFloat(const char* s, const char** end) {
         // read exponent
         int exppower = 0;
 
-        while (unsigned(*s - '0') < 10) {
+        while (unsigned(*s - '0') < 10)
+        {
             exppower = exppower * 10 + (*s - '0');
             s++;
         }
@@ -127,7 +137,8 @@ static float parseFloat(const char* s, const char** end) {
         return float(sign * result * pow(10.0, power));
 }
 
-static const char* parseFace(const char* s, int& vi, int& vti, int& vni) {
+static const char* parseFace(const char* s, int& vi, int& vti, int& vni)
+{
     while (*s == ' ' || *s == '\t')
         s++;
 
@@ -150,8 +161,10 @@ static const char* parseFace(const char* s, int& vi, int& vti, int& vni) {
     return s;
 }
 
-void objParseLine(ObjFile& result, const char* line) {
-    if (line[0] == 'v' && line[1] == ' ') {
+void objParseLine(ObjFile& result, const char* line)
+{
+    if (line[0] == 'v' && line[1] == ' ')
+    {
         const char* s = line + 2;
 
         float x = parseFloat(s, &s);
@@ -161,7 +174,9 @@ void objParseLine(ObjFile& result, const char* line) {
         result.v.push_back(x);
         result.v.push_back(y);
         result.v.push_back(z);
-    } else if (line[0] == 'v' && line[1] == 't' && line[2] == ' ') {
+    }
+    else if (line[0] == 'v' && line[1] == 't' && line[2] == ' ')
+    {
         const char* s = line + 3;
 
         float u = parseFloat(s, &s);
@@ -171,7 +186,9 @@ void objParseLine(ObjFile& result, const char* line) {
         result.vt.push_back(u);
         result.vt.push_back(v);
         result.vt.push_back(w);
-    } else if (line[0] == 'v' && line[1] == 'n' && line[2] == ' ') {
+    }
+    else if (line[0] == 'v' && line[1] == 'n' && line[2] == ' ')
+    {
         const char* s = line + 3;
 
         float x = parseFloat(s, &s);
@@ -181,15 +198,18 @@ void objParseLine(ObjFile& result, const char* line) {
         result.vn.push_back(x);
         result.vn.push_back(y);
         result.vn.push_back(z);
-    } else if (line[0] == 'f' && line[1] == ' ') {
-        const char* s = line + 2;
-        int fv = 0;
+    }
+    else if (line[0] == 'f' && line[1] == ' ')
+    {
+        const char* s  = line + 2;
+        int         fv = 0;
 
-        size_t v = result.v.size() / 3;
+        size_t v  = result.v.size() / 3;
         size_t vt = result.vt.size() / 3;
         size_t vn = result.vn.size() / 3;
 
-        while (*s) {
+        while (*s)
+        {
             int vi = 0, vti = 0, vni = 0;
             s = parseFace(s, vi, vti, vni);
 
@@ -207,20 +227,23 @@ void objParseLine(ObjFile& result, const char* line) {
     }
 }
 
-bool objParseFile(ObjFile& result, const char* path) {
+bool objParseFile(ObjFile& result, const char* path)
+{
     FILE* file = fopen(path, "rb");
     if (!file)
         return false;
 
-    char buffer[65536];
+    char   buffer[65536];
     size_t size = 0;
 
-    while (!feof(file)) {
+    while (!feof(file))
+    {
         size += fread(buffer + size, 1, sizeof(buffer) - size, file);
 
         size_t line = 0;
 
-        while (line < size) {
+        while (line < size)
+        {
             // find the end of current line
             void* eol = memchr(buffer + line, '\n', size - line);
             if (!eol)
@@ -244,7 +267,8 @@ bool objParseFile(ObjFile& result, const char* path) {
         size -= line;
     }
 
-    if (size) {
+    if (size)
+    {
         // process last line
         assert(size < sizeof(buffer));
         buffer[size] = 0;
@@ -256,10 +280,12 @@ bool objParseFile(ObjFile& result, const char* path) {
     return true;
 }
 
-bool objValidate(const ObjFile& result) {
+bool objValidate(const ObjFile& result)
+{
     size_t total_indices = 0;
 
-    for (size_t face = 0; face < result.fv.size(); ++face) {
+    for (size_t face = 0; face < result.fv.size(); ++face)
+    {
         int fv = result.fv[face];
 
         if (fv < 3)
@@ -271,12 +297,13 @@ bool objValidate(const ObjFile& result) {
     if (total_indices * 3 != result.f.size())
         return false;
 
-    size_t v = result.v.size() / 3;
+    size_t v  = result.v.size() / 3;
     size_t vt = result.vt.size() / 3;
     size_t vn = result.vn.size() / 3;
 
-    for (size_t i = 0; i < result.f.size(); i += 3) {
-        int vi = result.f[i + 0];
+    for (size_t i = 0; i < result.f.size(); i += 3)
+    {
+        int vi  = result.f[i + 0];
         int vti = result.f[i + 1];
         int vni = result.f[i + 2];
 
@@ -296,10 +323,12 @@ bool objValidate(const ObjFile& result) {
     return true;
 }
 
-void objTriangulate(ObjFile& result) {
+void objTriangulate(ObjFile& result)
+{
     size_t total_indices = 0;
 
-    for (size_t face = 0; face < result.fv.size(); ++face) {
+    for (size_t face = 0; face < result.fv.size(); ++face)
+    {
         int fv = result.fv[face];
 
         assert(fv >= 3);
@@ -308,13 +337,15 @@ void objTriangulate(ObjFile& result) {
 
     std::vector<int> f(total_indices * 3);
 
-    size_t read = 0;
+    size_t read  = 0;
     size_t write = 0;
 
-    for (size_t face = 0; face < result.fv.size(); ++face) {
+    for (size_t face = 0; face < result.fv.size(); ++face)
+    {
         int fv = result.fv[face];
 
-        for (int i = 0; i + 2 < fv; ++i) {
+        for (int i = 0; i + 2 < fv; ++i)
+        {
             f[write + 0] = result.f[read + 0];
             f[write + 1] = result.f[read + 1];
             f[write + 2] = result.f[read + 2];

@@ -33,7 +33,7 @@ target_include_directories(ModelViewer_OpenGL PUBLIC
 target_link_libraries(ModelViewer_OpenGL PRIVATE
     CMP_Compressonator
     CMP_Framework
-    CMP_Imgui
+    extern_imgui
     CMP_Common              # CModel Data
     ExtOpenGL
     ExtQt5OpenGL
@@ -43,7 +43,7 @@ target_compile_definitions(ModelViewer_OpenGL PRIVATE BUILD_AS_PLUGIN_DLL=1)
 
 set_target_properties(ModelViewer_OpenGL PROPERTIES 
     AUTOMOC ON
-    FOLDER "Plugin_Dynamic/3DModel_Viewers"
+    FOLDER ${PROJECT_FOLDER_APPS_PLUGIN_DYNAMIC}
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin/debug/plugins"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/release/plugins"
     )

@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright (c) 2021  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2021-2024  Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -40,7 +40,9 @@
 
 #include "gpuresources_cas.h"
 
-GpuResources_cas::GpuResources_cas() { }
+GpuResources_cas::GpuResources_cas()
+{
+}
 
 void GpuResources_cas::InitBuffers_cas()
 {
@@ -92,11 +94,7 @@ void GpuResources_cas::CAS(float sharpness, ID3D11UnorderedAccessView* dstUav, u
 {
     ConstantBufferStructureCAS constBufStruct;
 
-    CasSetup(constBufStruct.const0, 
-             constBufStruct.const1, 
-             sharpness, 
-            (float)srcSize.x, (float)srcSize.y, 
-            (float)dstSize.x, (float)dstSize.y);
+    CasSetup(constBufStruct.const0, constBufStruct.const1, sharpness, (float)srcSize.x, (float)srcSize.y, (float)dstSize.x, (float)dstSize.y);
 
     m_DeviceContext->UpdateSubresource(m_ConstantBufferCAS, 0, NULL, &constBufStruct, sizeof(constBufStruct), 0);
 
@@ -110,6 +108,3 @@ void GpuResources_cas::CAS(float sharpness, ID3D11UnorderedAccessView* dstUav, u
     m_DeviceContext->CSSetUnorderedAccessViews(0, 1, &dstUav, nullptr);
     m_DeviceContext->Dispatch(CeilDiv(dstSize.x, 16u), CeilDiv(dstSize.y, 16u), 1);
 }
-
-
-

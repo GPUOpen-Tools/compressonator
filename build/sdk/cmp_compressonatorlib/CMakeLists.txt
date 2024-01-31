@@ -97,7 +97,7 @@ target_include_directories(CMP_Compressonator
                            )
 
 set_target_properties(CMP_Compressonator PROPERTIES 
-    FOLDER "Libs"
+    FOLDER ${PROJECT_FOLDER_SDK_LIBS}
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
@@ -123,4 +123,4 @@ if (OPTION_BUILD_BROTLIG)
     )
 endif()
 
-target_link_libraries(CMP_Compressonator PRIVATE CMP_Core)
+target_link_libraries(CMP_Compressonator PUBLIC CMP_Core)

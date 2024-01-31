@@ -1,5 +1,5 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
@@ -9,18 +9,20 @@
 #include "jrtcommon.h"
 #include "jrttriangleintersection.h"
 
-struct JRTHitInfo {
+struct JRTHitInfo
+{
     // the triangle that was hit
     const JRTMesh* pMesh;
-    UINT nIndex;
+    UINT           nIndex;
 
     Vec3f mPosition;
     Vec3f mNormal;
 };
 
-struct TootleRayHit {
+struct TootleRayHit
+{
     float t;
-    UINT nFaceID;
+    UINT  nFaceID;
 };
 
 class JRTCSGNode;
@@ -28,9 +30,9 @@ class JRTMesh;
 class JRTKDTree;
 class JRTBoundingBox;
 
-class JRTCore {
-  public:
-
+class JRTCore
+{
+public:
     static JRTCore* Build(const std::vector<JRTMesh*>& rPrims);
 
     ~JRTCore();
@@ -43,10 +45,9 @@ class JRTCore {
     /// Returns false if the ray misses the bounding box
     bool GetSceneBBHit(const Vec3f& rOrigin, const Vec3f& rDirection, Vec3f* pHitPt);
 
-    const JRTBoundingBox& GetSceneBB() const ;
+    const JRTBoundingBox& GetSceneBB() const;
 
-  private:
-
+private:
     JRTCore();
 
     TootleRayHit* m_pHitArray;

@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -29,18 +29,20 @@
 
 extern PluginManager g_pluginManager;
 
-
-cpTreeWidget::cpTreeWidget(QWidget *parent)
-    : QTreeWidget(parent) {
+cpTreeWidget::cpTreeWidget(QWidget* parent)
+    : QTreeWidget(parent)
+{
     m_currentItem = NULL;
     connect(this, SIGNAL(itemSelectionChanged()), this, SLOT(selChanged()));
     this->setMouseTracking(true);
 }
 
-cpTreeWidget::~cpTreeWidget() {
+cpTreeWidget::~cpTreeWidget()
+{
 }
 
-void cpTreeWidget::mouseMoveEvent(QMouseEvent  *event) {
+void cpTreeWidget::mouseMoveEvent(QMouseEvent* event)
+{
     QTreeWidget::mouseMoveEvent(event);
     // // Determin if ICON is clicked or Text
     // const QPoint mousePosition = event->pos();
@@ -58,125 +60,139 @@ void cpTreeWidget::mouseMoveEvent(QMouseEvent  *event) {
     // }
 }
 
-void cpTreeWidget::selChanged() {
+void cpTreeWidget::selChanged()
+{
 }
 
-void cpTreeWidget::mousePressEvent(QMouseEvent  *event) {
+void cpTreeWidget::mousePressEvent(QMouseEvent* event)
+{
     QTreeWidget::mousePressEvent(event);
 
     // Determin if ICON is clicked or Text
     const QPoint clickedPosition = event->pos();
-    const QRect itemRectangle = visualItemRect(itemAt(clickedPosition));
-    const int iconOffset = itemRectangle.height() - iconSize().height();
+    const QRect  itemRectangle   = visualItemRect(itemAt(clickedPosition));
+    const int    iconOffset      = itemRectangle.height() - iconSize().height();
 
     QRect iconRectangle;
     iconRectangle.setTopLeft(itemRectangle.topLeft() + QPoint(iconOffset, iconOffset));
     iconRectangle.setWidth(iconSize().width());
     iconRectangle.setHeight(iconSize().height());
     bool icon_clicked = false;
-    if (iconRectangle.contains(clickedPosition)) {
+    if (iconRectangle.contains(clickedPosition))
+    {
         //qDebug() << "ICON clicked";
         icon_clicked = true;
     }
 
-    if (currentItem()) {
+    if (currentItem())
+    {
         m_currentItem = currentItem();
     }
 
     emit event_mousePress(event, icon_clicked);
 }
 
-void cpTreeWidget::keyPressEvent(QKeyEvent* event) {
+void cpTreeWidget::keyPressEvent(QKeyEvent* event)
+{
     //bool SHIFT_Key = event->modifiers() & Qt::ShiftModifier;
-    bool CTRL_key  = event->modifiers() & Qt::ControlModifier;
+    bool CTRL_key = event->modifiers() & Qt::ControlModifier;
 
     QTreeWidget::keyPressEvent(event);
-    switch (event->key()) {
+    switch (event->key())
+    {
     case Qt::Key_Enter:
     case Qt::Key_Return: {
-        if (currentItem()) {
+        if (currentItem())
+        {
             emit QTreeWidget::itemDoubleClicked(currentItem(), 0);
         }
         break;
     }
     case Qt::Key_Space:
     case Qt::Key_Select: {
-        if (currentItem()) {
+        if (currentItem())
+        {
             emit QTreeWidget::itemClicked(currentItem(), 0);
         }
         break;
     }
     case Qt::Key_A: {
-        if (CTRL_key) {
+        if (CTRL_key)
+        {
             qDebug() << "CTRL-A";
         }
         break;
     }
     }
 
-    if (currentItem()) {
+    if (currentItem())
+    {
         m_currentItem = currentItem();
     }
 
     emit event_keyPress(event);
 }
 
-
-bool cpTreeWidget::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData *data, Qt::DropAction action) {
+bool cpTreeWidget::dropMimeData(QTreeWidgetItem* parent, int index, const QMimeData* data, Qt::DropAction action)
+{
     Q_UNUSED(action);
     Q_UNUSED(index);
     Q_UNUSED(parent);
 
-    if (!data) return false;
+    if (!data)
+        return false;
 
     QList<QUrl> urlList;
-    urlList = data->urls(); // retrieve list of urls
+    urlList = data->urls();  // retrieve list of urls
     QString filePathName;
 
-    foreach(QUrl url, urlList) { // iterate over list
+    foreach (QUrl url, urlList)
+    {  // iterate over list
         filePathName = url.toLocalFile();
 
         // Get file Extension and check if it can be loaded by our AMD plugin
-        QFileInfo fi(filePathName.toUpper());
-        QString name = fi.fileName();
-        QStringList list1 = name.split(".");
-        QString PlugInType = list1[list1.size() - 1];
-        QByteArray ba = PlugInType.toLatin1();
-        const char *Ext = ba.data();
+        QFileInfo   fi(filePathName.toUpper());
+        QString     name       = fi.fileName();
+        QStringList list1      = name.split(".");
+        QString     PlugInType = list1[list1.size() - 1];
+        QByteArray  ba         = PlugInType.toLatin1();
+        const char* Ext        = ba.data();
 
         qApp->setOverrideCursor(Qt::WaitCursor);
 
         QImageReader imageFormat(filePathName);
 
-        if (imageFormat.canRead()) {
+        if (imageFormat.canRead())
+        {
             emit DroppedImageItem(filePathName, index);
-        } else
+        }
+        else
             // check if its an AMD supported image item
-            if (g_pluginManager.PluginSupported("IMAGE", (char *)Ext)) {
+            if (g_pluginManager.PluginSupported("IMAGE", (char*)Ext))
+            {
                 emit DroppedImageItem(filePathName, index);
-            } else if (g_pluginManager.PluginSupported("3DMODEL_LOADER", (char *)Ext)) {
+            }
+            else if (g_pluginManager.PluginSupported("3DMODEL_LOADER", (char*)Ext))
+            {
                 emit DroppedImageItem(filePathName, index);
             }
 
         qApp->restoreOverrideCursor();
-
     }
 
     return true;
 }
 
-
-QStringList cpTreeWidget::mimeTypes () const {
+QStringList cpTreeWidget::mimeTypes() const
+{
     QStringList qstrList;
     // list of accepted mime types for drop
     qstrList.append("text/uri-list");
     return qstrList;
 }
 
-
-Qt::DropActions cpTreeWidget::supportedDropActions () const {
+Qt::DropActions cpTreeWidget::supportedDropActions() const
+{
     // returns what actions are supported when dropping
     return Qt::CopyAction | Qt::MoveAction;
 }
-
-

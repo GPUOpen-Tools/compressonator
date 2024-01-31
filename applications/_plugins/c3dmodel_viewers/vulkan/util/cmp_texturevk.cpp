@@ -24,7 +24,6 @@
 // http://go.microsoft.com/fwlink/?LinkId=248929
 
 #include "cmp_texturevk.h"
-#include "cmp_gltffeatures.h"
 #include "misc.h"
 #include "utilfuncs.h"
 #include "dxgi.h"

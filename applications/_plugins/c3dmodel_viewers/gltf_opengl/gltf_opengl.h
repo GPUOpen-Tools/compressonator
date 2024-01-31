@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2018-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -31,44 +31,41 @@
 
 #ifdef _WIN32
 // {79436B32-C8E1-45C9-99E3-AAA56B076A05}
-static const GUID g_GUID = { 0x79436b32, 0xc8e1, 0x45c9,{ 0x99, 0xe3, 0xaa, 0xa5, 0x6b, 0x7, 0x6a, 0x5 } };
+static const GUID g_GUID = {0x79436b32, 0xc8e1, 0x45c9, {0x99, 0xe3, 0xaa, 0xa5, 0x6b, 0x7, 0x6a, 0x5}};
 #else
-static const GUID g_GUID = { 0 };
+static const GUID g_GUID = {0};
 #endif
 
-#define TC_PLUGIN_VERSION_MAJOR    1
-#define TC_PLUGIN_VERSION_MINOR    0
+#define TC_PLUGIN_VERSION_MAJOR 1
+#define TC_PLUGIN_VERSION_MINOR 0
 
-CMIPS *OPENGL_CMips = NULL;
+CMIPS* OPENGL_CMips = NULL;
 
-
-class Plugin_glTF_OpenGL : public PluginInterface_3DModel {
-  public:
+class Plugin_glTF_OpenGL : public PluginInterface_3DModel
+{
+public:
     Plugin_glTF_OpenGL();
     virtual ~Plugin_glTF_OpenGL();
     int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
-    int TC_PluginSetSharedIO(void *Shared);
+    int TC_PluginSetSharedIO(void* Shared);
 
-    void *CreateView(void *ModelData,  CMP_LONG Width, CMP_LONG Height, void *userHWND, void *pluginManager, void *msghandler, CMP_Feedback_Proc pFeedbackProc);
-    void *ShowView(void *data);
-    void CloseView();
-    void processMSG(void *message);
+    void* CreateView(void* ModelData, CMP_LONG Width, CMP_LONG Height, void* userHWND, void* pluginManager, void* msghandler, CMP_Feedback_Proc pFeedbackProc);
+    void* ShowView(void* data);
+    void  CloseView();
+    void  processMSG(void* message);
 
     bool OnRenderView();
     void OnReSizeView(CMP_LONG w, CMP_LONG h);
 
     bool LoadModel(const char* pszFilename, const char* pszFilename2, CMP_Feedback_Proc pFeedbackProc = NULL);
 
-  private:
-
-
-    glTF_OGLDevice *m_glTF_OGLDevice;
+private:
+    glTF_OGLDevice* m_glTF_OGLDevice;
     std::string     m_FilePathName;
-    CMODEL_DATA    *m_model;
-    QWidget        *m_parent;
+    CMODEL_DATA*    m_model;
+    QWidget*        m_parent;
 };
 
-extern void *make_Plugin_glTF_OpenGL();
-
+extern void* make_Plugin_glTF_OpenGL();
 
 #endif

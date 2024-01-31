@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -36,18 +36,18 @@
 // Creation Date:       10/20/2015
 // ----------------------------------------------------------------------------------
 
-class acTableImageDataModel : public QAbstractTableModel {
+class acTableImageDataModel : public QAbstractTableModel
+{
     Q_OBJECT
-  public:
-    acTableImageDataModel(int rowsize, int colsize, QObject *parent);
-    int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
-    int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+public:
+    acTableImageDataModel(int rowsize, int colsize, QObject* parent);
+    int      rowCount(const QModelIndex& parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    int      columnCount(const QModelIndex& parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
 
-  private:
+private:
     int m_maxrow;
     int m_maxcol;
-
 };
 
 #endif

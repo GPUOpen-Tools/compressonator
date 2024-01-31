@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2007-2020    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024    Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006    ATI Technologies Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -58,7 +58,6 @@
 #define USE_OLD_SWIZZLE  //  Remove swizzle flag and abide by CMP_Formats
 #endif
 
-
 typedef half CMP_HALF;  ///< A 16-bit floating point number class
 
 #define QT_KEY_SPACE 0x20  // Qt::Key_Space = 0x20
@@ -95,16 +94,16 @@ typedef enum _AnalysisErrorCodeType
     ANALYSIS_MEMORY_ERROR3                         = 6,
     ANALYSIS_MEMORY_ERROR4                         = 7,
     ANALYSIS_MEMORY_ERROR5                         = 8,
-    ANALYSIS_ATSC_TRANCODE_WITH_GPU_NOT_SUPPORTED  = 9,         // Legacy : need to remove
+    ANALYSIS_ATSC_TRANCODE_WITH_GPU_NOT_SUPPORTED  = 9,  // Legacy : need to remove
     ANALYSIS_DECOMPRESSING_SOURCE                  = 10,
     ANALYSIS_ERROR_COMPRESSING_DESTINATION_TEXTURE = 11,
     ANALYSIS_MESH_COMPRESSION_FAILED               = 12,
     ANALYSIS_IMAGE_TESTFAILED                      = 13,
     ANALYSIS_RETRIEVE_IMAGE_PROPERTIES             = 14,
     ANALYSIS_DESTINATION_TYPE_NOT_SUPPORTED        = 15,
-    ANALYSIS_ASTC_DESTINATION_TYPE_NOT_SUPPORTED   = 16,        // Legacy 
-    ANALYSIS_ASTC_DESTINATION_FILE_FORMAT_NOTSET   = 17,        // Legacy 
-    ANALYSIS_ASTC_MIPMAP_DESTINATION_NOT_SUPPORTED = 18,        // Legacy 
+    ANALYSIS_ASTC_DESTINATION_TYPE_NOT_SUPPORTED   = 16,  // Legacy
+    ANALYSIS_ASTC_DESTINATION_FILE_FORMAT_NOTSET   = 17,  // Legacy
+    ANALYSIS_ASTC_MIPMAP_DESTINATION_NOT_SUPPORTED = 18,  // Legacy
     ANALYSIS_UNSUPPORTED_IMAGE_FORMAT              = 19,
     ANALYSIS_TRANSCODE_SRC_TO_DST_NOT_SUPPORTED    = 20,
     ANALYSIS_COMPRESSING_TEXTURE                   = 21,
@@ -183,13 +182,13 @@ extern void PrintInfo(const char* Format, ...);
 
 #define MINIMUM_WEIGHT_VALUE 0.01f
 
-#define AMD_CODEC_QUALITY_DEFAULT   0.05f ///< This is the default for most codecs
-#define AMD_CODEC_EXPOSURE_DEFAULT  0     ///< This is the default value set for exposure value of hdr/exr input image
-#define AMD_CODEC_DEFOG_DEFAULT     0     ///< This is the default value set for defog value of hdr/exr input image
-#define AMD_CODEC_KNEELOW_DEFAULT   0     ///< This is the default value set for kneelow value of hdr/exr input image
-#define AMD_CODEC_KNEEHIGH_DEFAULT  5     ///< This is the default value set for kneehigh value of hdr/exr input image
-#define AMD_CODEC_GAMMA_DEFAULT     2.2f  ///< This is the default value set for gamma value of hdr/exr input image
-#define AMD_CODEC_PAGE_SIZE_DEFAULT 32*1024*4 ///< This is the default for BrotliG compression
+#define AMD_CODEC_QUALITY_DEFAULT 0.05f    ///< This is the default for most codecs
+#define AMD_CODEC_EXPOSURE_DEFAULT 0       ///< This is the default value set for exposure value of hdr/exr input image
+#define AMD_CODEC_DEFOG_DEFAULT 0          ///< This is the default value set for defog value of hdr/exr input image
+#define AMD_CODEC_KNEELOW_DEFAULT 0        ///< This is the default value set for kneelow value of hdr/exr input image
+#define AMD_CODEC_KNEEHIGH_DEFAULT 5       ///< This is the default value set for kneehigh value of hdr/exr input image
+#define AMD_CODEC_GAMMA_DEFAULT 2.2f       ///< This is the default value set for gamma value of hdr/exr input image
+#define AMD_CODEC_PAGE_SIZE_DEFAULT 65536  ///< This is the default for Brotli-G compression
 
 #define CMP_MESH_COMP_LEVEL 7    ///< This is the default value set for draco compress level for mesh compression
 #define CMP_MESH_POS_BITS 14     ///< This is the default value set for draco position quantization bits for mesh compression
@@ -214,61 +213,5 @@ struct CMP_MAP_BYTES_SET
     CMP_BYTE B2;
     CMP_BYTE B3;
 };
-
-typedef enum _CodecType
-{
-    CT_Unknown = 0,
-    CT_None,
-    CT_DXT1,
-    CT_DXT3,
-    CT_DXT5,
-    CT_DXT5_xGBR,
-    CT_DXT5_RxBG,
-    CT_DXT5_RBxG,
-    CT_DXT5_xRBG,
-    CT_DXT5_RGxB,
-    CT_DXT5_xGxR,
-    CT_ATI1N,
-    CT_ATI1N_S,
-    CT_ATI2N,
-    CT_ATI2N_S,
-    CT_ATI2N_XY,
-    CT_ATI2N_XY_S,
-    CT_ATI2N_DXT5,
-    CT_ATC_RGB,
-    CT_ATC_RGBA_Explicit,
-    CT_ATC_RGBA_Interpolated,
-    CT_ETC_RGB,
-#ifdef SUPPORT_ETC_ALPHA
-    CT_ETC_RGBA_Explicit,
-    CT_ETC_RGBA_Interpolated,
-#endif  // SUPPORT_ETC_ALPHA
-    CT_ETC2_RGB,
-    CT_ETC2_SRGB,
-    CT_ETC2_RGBA,
-    CT_ETC2_RGBA1,
-    CT_ETC2_SRGBA,
-    CT_ETC2_SRGBA1,
-    CT_BC6H,
-    CT_BC6H_SF,
-    CT_BC7,
-#if (OPTION_BUILD_ASTC == 1)
-    CT_ASTC,
-#endif
-    CT_APC,
-    CT_GTC,
-#ifdef USE_BASIS
-    CT_BASIS,
-#endif
-    CT_BRLG,
-    CODECS_AMD_INTERNAL
-} CodecType;
-
-typedef enum _CODECError
-{
-    CE_OK = 0,
-    CE_Unknown,
-    CE_Aborted,
-} CodecError;
 
 #endif  // !COMMON_H

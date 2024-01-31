@@ -33,7 +33,7 @@ target_include_directories(GPUDecode_DirectX PRIVATE
 target_compile_definitions(GPUDecode_DirectX PRIVATE BUILD_AS_PLUGIN_DLL=1)
 
 set_target_properties(GPUDecode_DirectX PROPERTIES 
-    FOLDER "Plugin_Dynamic/GPU_DecodeView"
+    FOLDER ${PROJECT_FOLDER_SDK_PLUGIN_DYNAMIC}
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin/debug/plugins"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/release/plugins"
     )

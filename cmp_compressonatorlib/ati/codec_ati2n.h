@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -29,18 +29,32 @@
 #ifndef _CODEC_ATI2N_H_INCLUDED_
 #define _CODEC_ATI2N_H_INCLUDED_
 
+#include "codec_common.h"
 #include "codec_dxtc.h"
 
-class CCodec_ATI2N : public CCodec_DXTC {
-  public:
+class CCodec_ATI2N : public CCodec_DXTC
+{
+public:
     CCodec_ATI2N(CodecType codecType = CT_ATI2N);
     virtual ~CCodec_ATI2N();
 
-    virtual CodecError Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress(CCodecBuffer&       bufferIn,
+                                CCodecBuffer&       bufferOut,
+                                Codec_Feedback_Proc pFeedbackProc = NULL,
+                                CMP_DWORD_PTR       pUser1        = NULL,
+                                CMP_DWORD_PTR       pUser2        = NULL);
+    virtual CodecError Compress_Fast(CCodecBuffer&       bufferIn,
+                                     CCodecBuffer&       bufferOut,
+                                     Codec_Feedback_Proc pFeedbackProc = NULL,
+                                     CMP_DWORD_PTR       pUser1        = NULL,
+                                     CMP_DWORD_PTR       pUser2        = NULL);
+    virtual CodecError Decompress(CCodecBuffer&       bufferIn,
+                                  CCodecBuffer&       bufferOut,
+                                  Codec_Feedback_Proc pFeedbackProc = NULL,
+                                  CMP_DWORD_PTR       pUser1        = NULL,
+                                  CMP_DWORD_PTR       pUser2        = NULL);
 
-  protected:
+protected:
     CodecType m_codecType;
 };
 
@@ -66,5 +80,4 @@ protected:
     CodecType m_codecType;
 };
 
-
-#endif // !defined(_CODEC_ATI2N_H_INCLUDED_)
+#endif  // !defined(_CODEC_ATI2N_H_INCLUDED_)

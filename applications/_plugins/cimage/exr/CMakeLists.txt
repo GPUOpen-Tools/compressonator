@@ -36,4 +36,4 @@ if (UNIX)
     target_compile_definitions(Image_EXR PRIVATE _LINUX)
 endif()
 
-set_target_properties(Image_EXR PROPERTIES FOLDER "Plugin_Static/ImageIO")
+set_target_properties(Image_EXR PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_PLUGIN_STATIC})

@@ -1,6 +1,6 @@
 # CMakeCustomTargets CMakeLists.txt
 
-message(STATUS "++++++++++++++++++ External-QT " ${QT_DIR} )
+message(STATUS "++++++++++++++++++ External-QT " $ENV{QT_DIR})
 
 if (NOT OPTION_CMP_QT)
     message("OPTION_CMP_QT=OFF")
@@ -14,11 +14,13 @@ endif()
 # We set Qt5_DIR because it is needed for find_package to work, but we want to keep the consistency of the user environment variables
 set(ENV{Qt5_DIR} $ENV{QT_DIR})
 
-find_package(Qt5 COMPONENTS REQUIRED Core PATHS ${QT_DIR})
+find_package(Qt5 COMPONENTS REQUIRED Core PATHS $ENV{QT_DIR})
 
 get_target_property(QtCore_location Qt5::Core LOCATION)
 
-set(QT_LIB_DIR  ${_qt5Core_install_prefix})
+set(QT_LIB_DIR ${_qt5Core_install_prefix})
+
+message("Qt install library directory set to " ${QT_LIB_DIR})
 
 # ====================================================
 # QT_LIB_DIR
@@ -45,8 +47,14 @@ if (${LIB_PNG} STREQUAL "LIB_PNG-NOTFOUND")
     message(FATAL_ERROR "png library not found")
 endif()
 
+set(CMP_QT_COMPONENTS Core Widgets)
+
+if (OPTION_BUILD_APPS_CMP_GUI)
+    list(APPEND CMP_QT_COMPONENTS Gui Qml QuickWidgets WebEngineWidgets OpenGL Xml)
+endif()
+
 find_package(Qt5 REQUIRED QUIET
-    COMPONENTS Core Gui OpenGL Qml QuickWidgets WebEngineWidgets Widgets Xml
+    COMPONENTS ${CMP_QT_COMPONENTS}
     PATHS ${QT_FIND_ROOT_PATH}
     HINTS ${QT_DIR}
 )
@@ -56,9 +64,12 @@ add_library(ExtQt5 INTERFACE)
 target_link_libraries(ExtQt5 
     INTERFACE
         Qt5::Core
-        Qt5::Gui
         ${LIB_PNG}
 )
+
+if (OPTION_BUILD_APPS_CMP_GUI)
+    target_link_libraries(ExtQt5 INTERFACE Qt5::Gui)
+endif()
 
 if (CMP_HOST_APPLE)
     # find_package(LibLZMA REQUIRED QUIET)
@@ -68,49 +79,49 @@ if (CMP_HOST_APPLE)
     )
 endif()
 
-
-add_library(ExtQt5OpenGL INTERFACE)
-target_link_libraries(ExtQt5OpenGL
-    INTERFACE
-        Qt5::OpenGL
-)
-
 add_library(ExtQt5Widgets INTERFACE)
 target_link_libraries(ExtQt5Widgets
     INTERFACE    
         Qt5::Widgets
 )
 
-add_library(ExtQt5ForGUI INTERFACE)
-target_link_libraries(ExtQt5ForGUI 
-    INTERFACE
+if (OPTION_BUILD_APPS_CMP_GUI)
+    add_library(ExtQt5OpenGL INTERFACE)
+    target_link_libraries(ExtQt5OpenGL
+        INTERFACE
+        Qt5::OpenGL
+    )
+
+    add_library(ExtQt5ForGUI INTERFACE)
+    target_link_libraries(ExtQt5ForGUI 
+        INTERFACE
         ExtQt5
         Qt5::Qml
         Qt5::QuickWidgets
         Qt5::WebEngineWidgets 
         Qt5::Xml
 )
-
-if (CMP_HOST_LINUX)
-
-find_library(LIBICUDATA NAMES libicudata.so.56 PATHS ${QT_LIB_DIR}/lib)
-if (LIBICUDATA STREQUAL "LIBICUDATA-NOTFOUND")
-    message(FATAL_ERROR "libicudata not found in Qt submodule")
-endif()
-find_library(LIBICUUC NAMES libicuuc.so.56 PATHS ${QT_LIB_DIR}/lib)
-if (LIBICUUC STREQUAL "LIBICUUC-NOTFOUND")
-    message(FATAL_ERROR "libicuuc not found in Qt submodule")
-endif()
-find_library(LIBICUI18N NAMES libicui18n.so.56 PATHS ${QT_LIB_DIR}/lib)
-if (LIBICUI18N STREQUAL "LIBICUI18N-NOTFOUND")
-    message(FATAL_ERROR "libicui18n not found in Qt submodule")
 endif()
 
-target_link_libraries(ExtQt5ForGUI 
-    INTERFACE
-        ${LIBICUDATA}
-        ${LIBICUUC}
-        ${LIBICUI18N}
-)
+if (CMP_HOST_LINUX AND OPTION_BUILD_APPS_CMP_GUI)
 
+    find_library(LIBICUDATA NAMES libicudata.so.56 PATHS ${QT_LIB_DIR}/lib)
+    if (LIBICUDATA STREQUAL "LIBICUDATA-NOTFOUND")
+        message(FATAL_ERROR "libicudata not found in Qt submodule")
+    endif()
+    find_library(LIBICUUC NAMES libicuuc.so.56 PATHS ${QT_LIB_DIR}/lib)
+    if (LIBICUUC STREQUAL "LIBICUUC-NOTFOUND")
+        message(FATAL_ERROR "libicuuc not found in Qt submodule")
+    endif()
+    find_library(LIBICUI18N NAMES libicui18n.so.56 PATHS ${QT_LIB_DIR}/lib)
+    if (LIBICUI18N STREQUAL "LIBICUI18N-NOTFOUND")
+        message(FATAL_ERROR "libicui18n not found in Qt submodule")
+    endif()
+
+    target_link_libraries(ExtQt5ForGUI 
+        INTERFACE
+            ${LIBICUDATA}
+            ${LIBICUUC}
+            ${LIBICUI18N}
+    )
 endif()

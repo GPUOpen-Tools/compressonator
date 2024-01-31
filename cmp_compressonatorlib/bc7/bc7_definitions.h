@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -38,74 +38,78 @@
 #define FALSE 0
 
 // Largest possible size for an individual subset
-#define MAX_SUBSET_SIZE         16
+#define MAX_SUBSET_SIZE 16
 
 // Maximum number of possible subsets
-#define MAX_SUBSETS             3
+#define MAX_SUBSETS 3
 
 // Maximum number of index bits
-#define MAX_INDEX_BITS          4
+#define MAX_INDEX_BITS 4
 
 // Maximum number of partition types
-#define MAX_PARTITIONS          64
+#define MAX_PARTITIONS 64
 
 // Number of block types in the format
-#define NUM_BLOCK_TYPES         8
+#define NUM_BLOCK_TYPES 8
 
 // Size of a compressed block in bytes
-#define COMPRESSED_BLOCK_SIZE   16
+#define COMPRESSED_BLOCK_SIZE 16
 
 // If this define is set then 6-bit weights will be used for the ramp.
 // Otherwise the ramp will use a pure linear interpolation
-#define USE_FINAL_BC7_WEIGHTS   1
+#define USE_FINAL_BC7_WEIGHTS 1
 
 // If this is defined, ramp calculation is done via math floor and division.
 // Otherwise, ramp calculation is done by bit shifting
 #define USE_HIGH_PRECISION_INTERPOLATION_BC7
 
-#define MAX_PARTITIONS_TABLE (1+64+64) //cpu
+#define MAX_PARTITIONS_TABLE (1 + 64 + 64)  //cpu
 
-#define MAX_ENTRIES_QUANT_TRACE     16
-#define MAX_CLUSTERS_QUANT_TRACE    8
+#define MAX_ENTRIES_QUANT_TRACE 16
+#define MAX_CLUSTERS_QUANT_TRACE 8
 
-typedef enum _COMPONENT {
+typedef enum _COMPONENT
+{
     COMP_RED   = 0,
     COMP_GREEN = 1,
-    COMP_BLUE =  2,
+    COMP_BLUE  = 2,
     COMP_ALPHA = 3
 } COMPONENT;
 
 // Block component encoding
-typedef enum {
+typedef enum
+{
     NO_ALPHA,
     COMBINED_ALPHA,
     SEPARATE_ALPHA
-} CMP_BCE_cpu;              // cpu
+} CMP_BCE_cpu;  // cpu
 
 // Endpoint encoding type
-typedef enum {
+typedef enum
+{
     NO_PBIT,
     ONE_PBIT,
     TWO_PBIT,
     THREE_PBIT,
     FOUR_PBIT,
     FIVE_PBIT
-} CMP_PBIT_cpu;     // cpu
+} CMP_PBIT_cpu;  // cpu
 
 // Descriptor structure for block encodings
-typedef struct {
-    CMP_BCE_cpu encodingType;           // Type of block
-    CMP_DWORD   partitionBits;          // Number of bits for partition data
-    CMP_DWORD   rotationBits;           // Number of bits for component rotation
-    CMP_DWORD   indexModeBits;          // Number of bits for index selection
-    CMP_DWORD   scalarBits;             // Number of bits for one scalar endpoint
-    CMP_DWORD   vectorBits;             // Number of bits for one vector endpoint(excluding P bits)
-    CMP_PBIT_cpu  pBitType;               // Type of P-bit encoding
-    CMP_DWORD   subsetCount;            // Number of subsets
-    CMP_DWORD   indexBits[2];           // Number of bits per index in each index set
+typedef struct
+{
+    CMP_BCE_cpu  encodingType;   // Type of block
+    CMP_DWORD    partitionBits;  // Number of bits for partition data
+    CMP_DWORD    rotationBits;   // Number of bits for component rotation
+    CMP_DWORD    indexModeBits;  // Number of bits for index selection
+    CMP_DWORD    scalarBits;     // Number of bits for one scalar endpoint
+    CMP_DWORD    vectorBits;     // Number of bits for one vector endpoint(excluding P bits)
+    CMP_PBIT_cpu pBitType;       // Type of P-bit encoding
+    CMP_DWORD    subsetCount;    // Number of subsets
+    CMP_DWORD    indexBits[2];   // Number of bits per index in each index set
 } CMP_BTI;
 
-extern CMP_BTI bti_cpu[NUM_BLOCK_TYPES];        // cpu
+extern CMP_BTI bti_cpu[NUM_BLOCK_TYPES];  // cpu
 
 #include "mathmacros.h"
 

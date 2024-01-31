@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2006-2020 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2006-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -74,7 +74,7 @@ public:
         return vec128;
     };
 
-        // indexing
+    // indexing
 #ifdef __linux__
     inline const float& operator[](int i) const
     {
@@ -234,26 +234,30 @@ inline float SSEVec3Dot(const SSEVec4& a, const SSEVec4& b)
 
 // functions for SQRT, RSQ, RCP, MIN, MAX
 #ifdef CMP_USE_RSQ_RSQR
-inline SSEVec4 SSEVecQuickRCP(const SSEVec4& v) {
+inline SSEVec4 SSEVecQuickRCP(const SSEVec4& v)
+{
     return SSEVec4(_mm_rcp_ps(v.vec128));
 };
 
 // RCP with newton-raphson iteration.
-inline SSEVec4 SSEVecRCP(const SSEVec4& a) {
+inline SSEVec4 SSEVecRCP(const SSEVec4& a)
+{
     __m128 Ra0 = _mm_rcp_ps(a.vec128);
     return SSEVec4(_mm_sub_ps(_mm_add_ps(Ra0, Ra0), _mm_mul_ps(_mm_mul_ps(Ra0, a.vec128), Ra0)));
 };
 
-inline SSEVec4 SSEVecQuickRSQ(const SSEVec4& v)  {
+inline SSEVec4 SSEVecQuickRSQ(const SSEVec4& v)
+{
     return SSEVec4(_mm_rsqrt_ps(v.vec128));
 };
 
 // RSQ with newton-raphson iteration.
-inline SSEVec4 SSEVecRSQ(const SSEVec4& a) {
+inline SSEVec4 SSEVecRSQ(const SSEVec4& a)
+{
     static const SSEVec4 fvecf0pt5(0.5f);
     static const SSEVec4 fvecf3pt0(3.0f);
-    SSEVec4 Ra0 = _mm_rsqrt_ps(a.vec128);
-    return (fvecf0pt5 * Ra0) * (fvecf3pt0 - (a  * Ra0) * Ra0);
+    SSEVec4              Ra0 = _mm_rsqrt_ps(a.vec128);
+    return (fvecf0pt5 * Ra0) * (fvecf3pt0 - (a * Ra0) * Ra0);
 };
 
 #else

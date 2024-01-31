@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2023-2024, Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -19,48 +19,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-/// \file cpTreeWidget.h
-/// \version 2.21
-//
 //=====================================================================
 
-#ifndef CPTREEWIDGET_H
-#define CPTREEWIDGET_H
+#ifndef TEXTURE_UTILS_H_
+#define TEXTURE_UTILS_H_
 
-#include <QtWidgets>
-#include <QScrollArea>
-#include <QGridLayout>
-#include <QLabel>
-#include <QIcon>
-#include <QMap>
-#include <QFile>
+#include "compressonator.h"
 
-class cpTreeWidget : public QTreeWidget {
-    Q_OBJECT
-
-  public:
-    cpTreeWidget(QWidget *parent = 0);
-    ~cpTreeWidget();
-
-    virtual bool dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData *data, Qt::DropAction action);
-    QStringList mimeTypes() const;
-    Qt::DropActions supportedDropActions () const;
-    QTreeWidgetItem *m_currentItem;
-
-  private:
-    QString m_currToolTip;
-    void keyPressEvent(QKeyEvent* event);
-    void mousePressEvent(QMouseEvent  *event);
-    void mouseMoveEvent(QMouseEvent  *event);
-    QVariant data(const QModelIndex & index, int role);
-
-  private slots :
-    void selChanged();
-  signals:
-    void DroppedImageItem(QString &filePathName, int index);
-    void event_mousePress(QMouseEvent  *event, bool onIcon);
-    void event_keyPress(QKeyEvent *event);
-};
-
+CMP_DWORD CalcBufferSize(CMP_FORMAT format, CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight);
+CMP_ERROR CheckTexture(const CMP_Texture* pTexture, bool bSource);
 
 #endif

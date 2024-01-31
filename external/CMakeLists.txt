@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 
-set(FOLDER_NAME "External")
+set(FOLDER_NAME ${PROJECT_FOLDER_SDK_EXTERNAL})
 
 message(STATUS "++++++++++++++++++External CMakeList called" )
 
@@ -19,7 +19,7 @@ if (OPTION_BUILD_BROTLIG)
 endif()
 
 # enable KTX2 features
-if (OPTION_BUILD_KTX2)
+if(OPTION_BUILD_KTX2)
     include(${CMAKE_CURRENT_LIST_DIR}/ktx/CMakeLists.txt)
 endif()
 
@@ -41,6 +41,7 @@ find_package(Threads REQUIRED QUIET)
 if (OPTION_CMP_DIRECTX)
     message(STATUS "++++++++++++++++++ DIRECTX 12")
     add_library(ExtDirectX INTERFACE)
+
     target_link_libraries(ExtDirectX INTERFACE
         d3d12.lib
         dxgi.lib
@@ -63,7 +64,6 @@ endif()
 # ====================================================
 #                     OPENCV
 # ====================================================
-# Creates ExtOpenCV
 if (OPTION_CMP_OPENCV)
     list(APPEND CMAKE_FIND_ROOT_PATH ${CMAKE_CURRENT_LIST_DIR}/opencv/)
     message(STATUS "++++++++++++++++++  OPENCV" )
@@ -77,5 +77,4 @@ if (OPTION_BUILD_EXR)
     message(STATUS "++++++++++++++++++ O P E N E X R" )
     include(${CMAKE_CURRENT_LIST_DIR}/openexr/CMakeLists.txt)
 endif()
-
 

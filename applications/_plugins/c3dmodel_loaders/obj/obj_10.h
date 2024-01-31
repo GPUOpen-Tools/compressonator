@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2018-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,39 +23,41 @@
 #ifndef _PLUGIN_IMAGE_OBJ10_H
 #define _PLUGIN_IMAGE_OBJ10_H
 
-
 #include "plugininterface.h"
 #include "meshobjloader.h"
 #include "modeldata.h"
 
 #ifdef _WIN32
 // {73376578-3ABB-4F03-A595-95C8552DDFB1}
-static const GUID g_GUID = { 0x73376578, 0x3abb, 0x4f03,{ 0xa5, 0x95, 0x95, 0xc8, 0x55, 0x2d, 0xdf, 0xb1 } };
+static const GUID g_GUID = {0x73376578, 0x3abb, 0x4f03, {0xa5, 0x95, 0x95, 0xc8, 0x55, 0x2d, 0xdf, 0xb1}};
 
 #else
-static const GUID g_GUID = { 0 };
+static const GUID g_GUID = {0};
 #endif
 
-#define TC_PLUGIN_VERSION_MAJOR    1
-#define TC_PLUGIN_VERSION_MINOR    0
+#define TC_PLUGIN_VERSION_MAJOR 1
+#define TC_PLUGIN_VERSION_MINOR 0
 
-namespace cmp_ml_obj {
-CMIPS *DX12_CMips = NULL;
+namespace cmp_ml_obj
+{
+CMIPS* DX12_CMips = NULL;
 }
 
 using namespace cmp_ml_obj;
 
-class Plugin_obj_Loader : public PluginInterface_3DModel_Loader {
-  public:
+class Plugin_obj_Loader : public PluginInterface_3DModel_Loader
+{
+public:
     Plugin_obj_Loader();
     virtual ~Plugin_obj_Loader();
-    int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
-    int TC_PluginSetSharedIO(void *Shared);
-    void *GetModelData();
-    int LoadModelData(const char* pszFilename, const char* pszFilename2, void *pluginManager, void *msghandler, CMP_Feedback_Proc pFeedbackProc);
-    int SaveModelData(const char* pdstFilename, void* meshData);
-  private:
-    CMODEL_DATA                 m_ModelData[2];
+    int   TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
+    int   TC_PluginSetSharedIO(void* Shared);
+    void* GetModelData();
+    int   LoadModelData(const char* pszFilename, const char* pszFilename2, void* pluginManager, void* msghandler, CMP_Feedback_Proc pFeedbackProc);
+    int   SaveModelData(const char* pdstFilename, void* meshData);
+
+private:
+    CMODEL_DATA m_ModelData[2];
 
     std::vector<ObjVertexFinal> m_objVertices;
     std::vector<ObjFace>        m_objFaces;
@@ -63,15 +65,12 @@ class Plugin_obj_Loader : public PluginInterface_3DModel_Loader {
     std::vector<unsigned int>   m_faceCluster;
 
     const char*  pViewpointName = NULL;
-    const float* pViewpoints = NULL;
+    const float* pViewpoints    = NULL;
     unsigned int nViewpoints;
 
-
     MeshObjLoader m_loader;
-
 };
 
-extern void *make_Plugin_obj_Loader();
-
+extern void* make_Plugin_obj_Loader();
 
 #endif

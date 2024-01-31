@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -61,8 +61,7 @@ void cpImageView::oncpImageViewMousePosition(QPointF* scenePos, QPointF* localPo
 
         switch (m_ImageViewState)
         {
-        case eImageViewState::isOriginal:
-        {
+        case eImageViewState::isOriginal: {
             //m_labelTxtView->setText("Original");
             if (m_acImageView->m_imageItem_Original)
             {
@@ -82,7 +81,7 @@ void cpImageView::oncpImageViewMousePosition(QPointF* scenePos, QPointF* localPo
             {
                 if (m_OriginalMipImages->mipset)
                 {
-                    MipLevel* mipLevel = m_CMips->GetMipLevel(m_OriginalMipImages->mipset, m_acImageView->m_currentMiplevel,m_DepthLevel);
+                    MipLevel* mipLevel = m_CMips->GetMipLevel(m_OriginalMipImages->mipset, m_acImageView->m_currentMiplevel, m_DepthLevel);
                     if (mipLevel)
                     {
                         if (m_OriginalMipImages->mipset->m_format == CMP_FORMAT_RGBA_8888_S)
@@ -1455,12 +1454,9 @@ cpImageView::cpImageView(const QString filePathName,
 
     if (m_processedMipImages && (m_processedMipImages->mipset != NULL))
     {
-        if  (m_processedMipImages->mipset->m_format == CMP_FORMAT_ARGB_32F || 
-            (m_processedMipImages->mipset->m_format == CMP_FORMAT_ARGB_16F) ||
-            (m_processedMipImages->mipset->m_format == CMP_FORMAT_RGBA_16F) ||
-            (m_processedMipImages->mipset->m_format == CMP_FORMAT_RGBE_32F) || 
-            (m_processedMipImages->mipset->m_format == CMP_FORMAT_BC6H) ||
-            (m_processedMipImages->mipset->m_format == CMP_FORMAT_BC6H_SF))
+        if (m_processedMipImages->mipset->m_format == CMP_FORMAT_ARGB_32F || (m_processedMipImages->mipset->m_format == CMP_FORMAT_ARGB_16F) ||
+            (m_processedMipImages->mipset->m_format == CMP_FORMAT_RGBA_16F) || (m_processedMipImages->mipset->m_format == CMP_FORMAT_RGBE_32F) ||
+            (m_processedMipImages->mipset->m_format == CMP_FORMAT_BC6H) || (m_processedMipImages->mipset->m_format == CMP_FORMAT_BC6H_SF))
         {
             m_ExrProperties = new acEXRTool();
             // Tool list

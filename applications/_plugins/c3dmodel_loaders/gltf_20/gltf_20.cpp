@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2018-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -39,7 +39,8 @@ DECLARE_PLUGIN(Plugin_glTF_Loader)
 SET_PLUGIN_TYPE("3DMODEL_LOADER")
 SET_PLUGIN_NAME("GLTF")
 #else
-void *make_Plugin_glTF_Loader() {
+void* make_Plugin_glTF_Loader()
+{
     return new Plugin_glTF_Loader;
 }
 #endif
@@ -58,45 +59,50 @@ extern bool   g_bAbortCompression;
 extern CMIPS* g_CMIPS;
 #endif
 
-
 //using namespace ML_gltf20;
 
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
 
-Plugin_glTF_Loader::Plugin_glTF_Loader() {
-
+Plugin_glTF_Loader::Plugin_glTF_Loader()
+{
 }
 
-Plugin_glTF_Loader::~Plugin_glTF_Loader() {
+Plugin_glTF_Loader::~Plugin_glTF_Loader()
+{
 }
 
-int Plugin_glTF_Loader::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) {
+int Plugin_glTF_Loader::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
+{
 #ifdef _WIN32
-    pPluginVersion->guid                     = g_GUID;
+    pPluginVersion->guid = g_GUID;
 #endif
-    pPluginVersion->dwAPIVersionMajor        = TC_API_VERSION_MAJOR;
-    pPluginVersion->dwAPIVersionMinor        = TC_API_VERSION_MINOR;
-    pPluginVersion->dwPluginVersionMajor     = TC_PLUGIN_VERSION_MAJOR;
-    pPluginVersion->dwPluginVersionMinor     = TC_PLUGIN_VERSION_MINOR;
+    pPluginVersion->dwAPIVersionMajor    = TC_API_VERSION_MAJOR;
+    pPluginVersion->dwAPIVersionMinor    = TC_API_VERSION_MINOR;
+    pPluginVersion->dwPluginVersionMajor = TC_PLUGIN_VERSION_MAJOR;
+    pPluginVersion->dwPluginVersionMinor = TC_PLUGIN_VERSION_MINOR;
     return 0;
 }
 
-int Plugin_glTF_Loader::TC_PluginSetSharedIO(void *Shared) {
-    if (Shared) {
-        g_CMIPS = static_cast<CMIPS *>(Shared);
-        g_CMIPS->m_infolevel = 0x01; // Turn on print Info
+int Plugin_glTF_Loader::TC_PluginSetSharedIO(void* Shared)
+{
+    if (Shared)
+    {
+        g_CMIPS              = static_cast<CMIPS*>(Shared);
+        g_CMIPS->m_infolevel = 0x01;  // Turn on print Info
         return 0;
     }
     return 1;
 }
 
-void *Plugin_glTF_Loader::GetModelData() {
-    void *data = (void *)m_gltfLoader;
+void* Plugin_glTF_Loader::GetModelData()
+{
+    void* data = (void*)m_gltfLoader;
     return data;
 }
 
-static std::string GetFilePathExtension(const std::string &FileName) {
+static std::string GetFilePathExtension(const std::string& FileName)
+{
     if (FileName.find_last_of(".") != std::string::npos)
         return FileName.substr(FileName.find_last_of(".") + 1);
     return "";
@@ -106,18 +112,19 @@ static void SplitFilePath(const char* filePath, std::string& fileDir, std::strin
 {
     std::string filePathString(filePath);
 
-    fileDir = "";
+    fileDir  = "";
     fileName = filePathString;
 
     size_t fileNameIndex = filePathString.find_last_of("/\\");
     if (fileNameIndex != std::string::npos)
     {
-        fileDir = filePathString.substr(0, fileNameIndex + 1);
+        fileDir  = filePathString.substr(0, fileNameIndex + 1);
         fileName = filePathString.substr(fileNameIndex + 1, std::string::npos);
     }
 }
 
-int Plugin_glTF_Loader::LoadModelData(const char* pszFilename, const char* pszFilename2, void *pluginManager, void *msghandler, CMP_Feedback_Proc pFeedbackProc) {
+int Plugin_glTF_Loader::LoadModelData(const char* pszFilename, const char* pszFilename2, void* pluginManager, void* msghandler, CMP_Feedback_Proc pFeedbackProc)
+{
     int result = 0;
 
     m_gltfLoader[0].m_filename = "";
@@ -129,11 +136,11 @@ int Plugin_glTF_Loader::LoadModelData(const char* pszFilename, const char* pszFi
         std::string fileName;
         SplitFilePath(pszFilename, directory, fileName);
 
-        double timeNow = MillisecondsNow();
+        double timeNow                   = MillisecondsNow();
         m_gltfLoader[0].m_CommonLoadTime = 0;
 
         result = m_gltfLoader[0].Load(std::move(directory), std::move(fileName), g_CMIPS);
-        
+
         m_gltfLoader[0].m_CommonLoadTime = MillisecondsNow() - timeNow;
 
         if (result == 0)
@@ -144,27 +151,29 @@ int Plugin_glTF_Loader::LoadModelData(const char* pszFilename, const char* pszFi
 #ifdef USE_TINYGLTF2
         {
             tinygltf2::TinyGLTF loader;
-            std::string err;
-            bool ret = false;
-            std::string ext = GetFilePathExtension(pszFilename);
-            if (ext.compare("glb") == 0) {
+            std::string         err;
+            bool                ret = false;
+            std::string         ext = GetFilePathExtension(pszFilename);
+            if (ext.compare("glb") == 0)
+            {
                 // assume binary glTF.
                 ret = loader.LoadBinaryFromFile(&m_gltfLoader[0].m_model, &err, pszFilename);
-            } else {
+            }
+            else
+            {
                 // assume ascii glTF.
                 ret = loader.LoadASCIIFromFile(&m_gltfLoader[0].m_model, &err, pszFilename);
             }
-            if (!ret) {
+            if (!ret)
+            {
                 if (g_CMIPS)
                     g_CMIPS->Print("Failed to load gltf file: %s\n", pszFilename);
                 // return -1;  Ignore for now until we fully utilize the replacement:::
             }
-
         }
 #endif
-
-
-    } else
+    }
+    else
         return -1;
 
     if (pszFilename2 && strlen(pszFilename2) > 0)
@@ -173,11 +182,11 @@ int Plugin_glTF_Loader::LoadModelData(const char* pszFilename, const char* pszFi
         std::string fileName;
         SplitFilePath(pszFilename2, directory, fileName);
 
-        double timeNow = MillisecondsNow();
+        double timeNow                   = MillisecondsNow();
         m_gltfLoader[1].m_CommonLoadTime = 0;
 
         result = m_gltfLoader[1].Load(std::move(directory), std::move(fileName), g_CMIPS);
-        
+
         m_gltfLoader[1].m_CommonLoadTime = MillisecondsNow() - timeNow;
 
         if (result == 0)
@@ -188,36 +197,38 @@ int Plugin_glTF_Loader::LoadModelData(const char* pszFilename, const char* pszFi
 #ifdef USE_TINYGLTF2
         {
             tinygltf2::TinyGLTF loader;
-            std::string err;
-            bool ret = false;
-            std::string ext = GetFilePathExtension(pszFilename2);
-            if (ext.compare("glb") == 0) {
+            std::string         err;
+            bool                ret = false;
+            std::string         ext = GetFilePathExtension(pszFilename2);
+            if (ext.compare("glb") == 0)
+            {
                 // assume binary glTF.
                 ret = loader.LoadBinaryFromFile(&m_gltfLoader[1].m_model, &err, pszFilename2);
-            } else {
+            }
+            else
+            {
                 // assume ascii glTF.
                 ret = loader.LoadASCIIFromFile(&m_gltfLoader[1].m_model, &err, pszFilename2);
             }
-            if (!ret) {
+            if (!ret)
+            {
                 if (g_CMIPS)
                     g_CMIPS->Print("Failed to load .gltf file: %s", pszFilename2s);
 
                 // return -1;  Ignore for now until we fully utilize the replacement:::
             }
-
-
         }
 #endif
-
     }
-
 
     return result;
 }
 
-int Plugin_glTF_Loader::SaveModelData(const char* pdstFilename, void* meshData) {
+int Plugin_glTF_Loader::SaveModelData(const char* pdstFilename, void* meshData)
+{
     CMP_GLTFCommon* gltfData = reinterpret_cast<CMP_GLTFCommon*>(meshData);
-    if (!gltfData) {
+    if (!gltfData)
+    {
         if (g_CMIPS)
             g_CMIPS->Print("Failed to write .gltf file, data is empty: %s\n", pdstFilename);
 
@@ -230,7 +241,8 @@ int Plugin_glTF_Loader::SaveModelData(const char* pdstFilename, void* meshData) 
 
     int result = gltfData->Save(std::move(directory), std::move(fileName), g_CMIPS);
 
-    if (result != 0) {
+    if (result != 0)
+    {
         if (g_CMIPS)
             g_CMIPS->Print("Failed to write .gltf file: %s\n", pdstFilename);
 
@@ -238,7 +250,8 @@ int Plugin_glTF_Loader::SaveModelData(const char* pdstFilename, void* meshData) 
     }
 
     std::ofstream ofstreamdest(pdstFilename, std::ios_base::out);
-    if (!ofstreamdest) {
+    if (!ofstreamdest)
+    {
         if (g_CMIPS)
             g_CMIPS->Print("Failed to write .gltf file: %s\n", pdstFilename);
 
@@ -251,7 +264,8 @@ int Plugin_glTF_Loader::SaveModelData(const char* pdstFilename, void* meshData) 
 #ifdef USE_TINYGLTF2
     tinygltf2::TinyGLTF loader;
 
-    if (!loader.WriteGltfSceneToFile(&gltfData->m_model, pdstFilename)) {
+    if (!loader.WriteGltfSceneToFile(&gltfData->m_model, pdstFilename))
+    {
         if (g_CMIPS)
             g_CMIPS->Print("Failed to write .gltf file: %s\n", pdstFilename);
     }

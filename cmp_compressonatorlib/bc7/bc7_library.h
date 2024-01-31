@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -36,17 +36,15 @@
 #include "shake.h"
 
 // Maximum number of threads supported by the compressor
-#define MAX_BC7_THREADS     128
+#define MAX_BC7_THREADS 128
 
 // Number of image components
 #define BC7_COMPONENT_COUNT 4
 
 // Number of pixels in a BC7 block
-#define BC7_BLOCK_PIXELS   16
-
+#define BC7_BLOCK_PIXELS 16
 
 extern void Quant_DeInit();
 extern void Quant_Init();
-
 
 #endif

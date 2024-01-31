@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -21,31 +21,26 @@
 // THE SOFTWARE.
 //=====================================================================
 
-
 #ifndef _APC_ENCODE_H_
 #define _APC_ENCODE_H_
 
 #include <float.h>
 #include "apc_definitions.h"
 
-class APCBlockEncoder {
-  public:
-
-    APCBlockEncoder(
-        double quality
-    ) {
+class APCBlockEncoder
+{
+public:
+    APCBlockEncoder(double quality)
+    {
         m_quality = (float)quality;
     };
 
-    ~APCBlockEncoder()    {    };
+    ~APCBlockEncoder(){};
 
     // This routine compresses a block and returns the RMS error
-    double CompressBlock(
-        CMP_BYTE  *in,
-        CMP_BYTE  out[COMPRESSED_BLOCK_SIZE]
-    );
+    double CompressBlock(CMP_BYTE* in, CMP_BYTE out[COMPRESSED_BLOCK_SIZE]);
 
-  private:
+private:
     // Global data setup at initialisation time
     float m_quality;
 };

@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Advanced Micro Devices, Inc. All rights reserved
+// Copyright (c) 2020-2024 Advanced Micro Devices, Inc. All rights reserved
 // Copyright (c) 2004-2006    ATI Technologies Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -46,14 +46,14 @@
 #error This library needs at least a C++11 compliant compiler
 #endif
 
-
 #include <thread>
-#define MXT 2       // Max number of compressed sample formats to generate, this is limited by available system mem
+#define MXT 2  // Max number of compressed sample formats to generate, this is limited by available system mem
 
 #ifdef _WIN32
 #include <windows.h>
 #include <time.h>
-double timeStampsec() {
+double timeStampsec()
+{
     static LARGE_INTEGER frequency;
     if (frequency.QuadPart == 0)
         QueryPerformanceFrequency(&frequency);
@@ -63,21 +63,24 @@ double timeStampsec() {
     return now.QuadPart / double(frequency.QuadPart);
 }
 #endif
-bool g_bAbortCompression = false;   // If set true current compression will abort
+bool g_bAbortCompression = false;  // If set true current compression will abort
 
 //---------------------------------------------------------------------------
 // Sample loop back code called for each compression block been processed
 //---------------------------------------------------------------------------
-bool CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+bool CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
+{
     std::printf("\rCompression progress = %3.0f  ", fProgress);
     return g_bAbortCompression;
 }
 
-int main(int argc, const char* argv[]) {
+int main(int argc, const char* argv[])
+{
 #ifdef _WIN32
     double start_time = timeStampsec();
 #endif
-    if (argc < 4) {
+    if (argc < 4)
+    {
         std::printf("Example2.exe SourceFile BCnFormat1 BCnFormat2 Quality\n");
         std::printf("This example shows how to compress a single image into two\n");
         std::printf("different BCn compression formats using multi threading\n");
@@ -91,46 +94,51 @@ int main(int argc, const char* argv[]) {
 
     // Note: No error checking is done on user arguments, so all parameters must be correct in this example
     // (files must exist, values correct format, etc..)
-    const char*     pszSourceFile       = argv[1];
-    CMP_FORMAT      destFormat[MXT];
-    CMP_FLOAT       fQuality;
+    const char* pszSourceFile = argv[1];
+    CMP_FORMAT  destFormat[MXT];
+    CMP_FLOAT   fQuality;
 
     destFormat[0] = ParseFormat(argv[2]);
     destFormat[1] = ParseFormat(argv[3]);
 
-    if ((destFormat[0] == CMP_FORMAT_Unknown) || (destFormat[1] == CMP_FORMAT_Unknown)) {
+    if ((destFormat[0] == CMP_FORMAT_Unknown) || (destFormat[1] == CMP_FORMAT_Unknown))
+    {
         std::printf("Error: Unsupported BCn destination format\n");
         return 0;
     }
 
-    if (destFormat[0] == destFormat[1]) {
+    if (destFormat[0] == destFormat[1])
+    {
         std::printf("Error: Please try two different BCn formats for this example\n");
         return 0;
     }
 
-
-    try {
+    try
+    {
         fQuality = std::stof(argv[4]);
-        if (fQuality < 0.0f) {
+        if (fQuality < 0.0f)
+        {
             fQuality = 0.0f;
             std::printf("Warning: Quality setting is out of range using 0.0\n");
         }
-        if (fQuality > 1.0f) {
+        if (fQuality > 1.0f)
+        {
             fQuality = 1.0f;
             std::printf("Warning: Quality setting is out of range using 1.0\n");
         }
-    } catch (...) {
+    }
+    catch (...)
+    {
         std::printf("Error: Unable to process quality setting\n");
         return -1;
     }
-
-
 
     //==========================
     // Load Source Texture #1
     //==========================
     CMP_Texture srcTexture;
-    if (!LoadDDSFile(pszSourceFile, srcTexture)) {
+    if (!LoadDDSFile(pszSourceFile, srcTexture))
+    {
         std::printf("Error: Loading source file!\n");
         return 0;
     }
@@ -140,8 +148,8 @@ int main(int argc, const char* argv[]) {
     // This example only works on 32 bit per pixel buffers formated as RGBA:8888
     // if the source is < 32 bit exit,
     //==========================================================================
-    if (!((srcTexture.format == CMP_FORMAT_RGBA_8888) ||
-            (srcTexture.format == CMP_FORMAT_BGRA_8888))) {
+    if (!((srcTexture.format == CMP_FORMAT_RGBA_8888) || (srcTexture.format == CMP_FORMAT_BGRA_8888)))
+    {
         std::printf("Error This example works only on 32 bit per pixel image sources!\n");
         return 0;
     }
@@ -149,11 +157,13 @@ int main(int argc, const char* argv[]) {
     //==========================================================================
     // if the source format is BGRA swizzle it to RGBA_8888
     //==========================================================================
-    if (srcTexture.format == CMP_FORMAT_BGRA_8888) {
+    if (srcTexture.format == CMP_FORMAT_BGRA_8888)
+    {
         unsigned char blue;
-        for (CMP_DWORD i = 0; i < srcTexture.dwDataSize; i += 4) {
-            blue = srcTexture.pData[i];
-            srcTexture.pData[i] = srcTexture.pData[i + 2];
+        for (CMP_DWORD i = 0; i < srcTexture.dwDataSize; i += 4)
+        {
+            blue                    = srcTexture.pData[i];
+            srcTexture.pData[i]     = srcTexture.pData[i + 2];
             srcTexture.pData[i + 2] = blue;
         }
         srcTexture.format = CMP_FORMAT_RGBA_8888;
@@ -164,52 +174,56 @@ int main(int argc, const char* argv[]) {
     //===================================
     CMP_Texture destTexture[MXT];
 
-    for (int i = 0; i<MXT; i++) {
+    for (int i = 0; i < MXT; i++)
+    {
         destTexture[i].dwSize     = sizeof(destTexture[i]);
         destTexture[i].dwWidth    = srcTexture.dwWidth;
         destTexture[i].dwHeight   = srcTexture.dwHeight;
         destTexture[i].dwPitch    = 0;
         destTexture[i].format     = destFormat[i];
         destTexture[i].dwDataSize = CMP_CalculateBufferSize(&destTexture[i]);
-        destTexture[i].pData = (CMP_BYTE*)malloc(destTexture[i].dwDataSize);
+        destTexture[i].pData      = (CMP_BYTE*)malloc(destTexture[i].dwDataSize);
     }
 
     //=======================================
     // Set Compression Options for Textures
     //=======================================
     CMP_CompressOptions options = {0};
-    options.dwSize       = sizeof(options);
-    options.fquality     = fQuality;            // Quality
-    options.dwnumThreads = 0;                   // Number of threads to use per texture set to auto
+    options.dwSize              = sizeof(options);
+    options.fquality            = fQuality;  // Quality
+    options.dwnumThreads        = 0;         // Number of threads to use per texture set to auto
 
     //=====================================================
     // Compress the Texture to multiple compressed formats
     //=====================================================
     CMP_ERROR cmp_status;
-    try {
+    try
+    {
         //--------------------------------------------------------------------------------
         // Issue note: cmp_status3 is not used as an array!.
         // ie cmp_status3[MXT] in lambda calls - so status of results is Un-deterministic!
         //--------------------------------------------------------------------------------
         std::thread t3[MXT];
-        for (int i =0; i<MXT; i++)
-            t3[i] = std::thread([&]() {
-            cmp_status = CMP_ConvertTexture(&srcTexture, &destTexture[i], &options, &CompressionCallback);
-        });
+        for (int i = 0; i < MXT; i++)
+            t3[i] = std::thread([&]() { cmp_status = CMP_ConvertTexture(&srcTexture, &destTexture[i], &options, &CompressionCallback); });
 
         // Finish the encoders
-        for (int i = 0; i<MXT; i++)
+        for (int i = 0; i < MXT; i++)
             t3[i].join();
-    } catch (const std::exception& ex) {
-        std::printf("Error: %s\n",ex.what());
+    }
+    catch (const std::exception& ex)
+    {
+        std::printf("Error: %s\n", ex.what());
     }
 
     //======================================
     // Save Compressed Textures To DDS Files
     //======================================
     std::string str;
-    if (cmp_status == CMP_OK) {
-        for (int i = 0; i < MXT; i++) {
+    if (cmp_status == CMP_OK)
+    {
+        for (int i = 0; i < MXT; i++)
+        {
             str.clear();
             str.append("result_");
             str.append(std::to_string(i).c_str());
@@ -218,9 +232,12 @@ int main(int argc, const char* argv[]) {
         }
     }
 
-    if (srcTexture.pData)  free(srcTexture.pData);
-    for (int i = 0; i < MXT; i++) {
-        if (destTexture[i].pData) free(destTexture[i].pData);
+    if (srcTexture.pData)
+        free(srcTexture.pData);
+    for (int i = 0; i < MXT; i++)
+    {
+        if (destTexture[i].pData)
+            free(destTexture[i].pData);
     }
 
     std::printf("\n");

@@ -1,28 +1,29 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
 #ifndef _JRT_CORE_UTILS_H_
 #define _JRT_CORE_UTILS_H_
 
-enum Axis {
+enum Axis
+{
     X_AXIS = 0,
     Y_AXIS = 1,
     Z_AXIS = 2
 };
 
-inline void SWAP(float& a, float& b) {
+inline void SWAP(float& a, float& b)
+{
     float tmp = a;
-    a = b;
-    b = tmp;
+    a         = b;
+    b         = tmp;
 };
 
-
 // macros for projecting points onto axis-aligned planes
-#define UCOMP(P, axis)  P[ INDEX1[axis] ]
-#define VCOMP(P, axis)  P[ INDEX2[axis] ]
-#define WCOMP(P, axis)  P[ axis ];
+#define UCOMP(P, axis) P[INDEX1[axis]]
+#define VCOMP(P, axis) P[INDEX2[axis]]
+#define WCOMP(P, axis) P[axis];
 
 #define UCOMPINDEX(axis) INDEX1[axis];
 #define VCOMPINDEX(axis) INDEX2[axis];
@@ -37,7 +38,8 @@ extern const int INDEX2[3];
 //        Returns a value indicating whether a triangle is in front of,
 //        behind, or crossing an axis-aligned split plane
 //
-enum TriPlaneState {
+enum TriPlaneState
+{
     IN_FRONT,
     IN_BACK,
     STRADDLE

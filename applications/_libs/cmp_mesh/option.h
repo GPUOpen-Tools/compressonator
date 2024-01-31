@@ -1,5 +1,5 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
@@ -8,9 +8,12 @@
 
 #include <cstring>
 
-static inline int match(const char* opt, const char* lname) {
-    while (*lname && *opt && *opt != '=') {
-        if (*opt != *lname) {
+static inline int match(const char* opt, const char* lname)
+{
+    while (*lname && *opt && *opt != '=')
+    {
+        if (*opt != *lname)
+        {
             return 0;
         }
 
@@ -21,98 +24,114 @@ static inline int match(const char* opt, const char* lname) {
     return !(*lname) && (!(*opt) || *opt == '=');
 }
 
-class Option {
-  public:
+class Option
+{
+public:
     Option(void);
     void Reset(void);
-    int GetIndex(void);
-    typedef struct {
-        int sname;
+    int  GetIndex(void);
+    typedef struct
+    {
+        int         sname;
         const char* lname;
     } Definition;
-    enum State {
+    enum State
+    {
         DONE,
         LONG,
         SHORT,
         ARG
     };
-    int Parse(int argc, char* argv[], const Definition* def);
+    int         Parse(int argc, char* argv[], const Definition* def);
     const char* GetArgument(int argc, char* argv[]);
-  private:
-    void Advance(int argc, char* argv[]);
-    int index;
+
+private:
+    void        Advance(int argc, char* argv[]);
+    int         index;
     const char* where;
-    int state;
+    int         state;
 };
 
-Option::Option(void) {
+Option::Option(void)
+{
     Reset();
 }
 
-int
-Option::
-GetIndex(void) {
+int Option::GetIndex(void)
+{
     return index;
 }
 
-const char*
-Option::
-GetArgument(int argc, char* argv[]) {
+const char* Option::GetArgument(int argc, char* argv[])
+{
     Advance(argc, argv);
     const char* arg = where;
-    where = NULL;
+    where           = NULL;
     return arg;
 }
 
-void
-Option::
-Reset(void) {
+void Option::Reset(void)
+{
     index = 1;
     where = NULL;
     state = DONE;
 }
 
-void
-Option::
-Advance(int argc, char* argv[]) {
-    if (!where || !(*where)) {
-        if (index < argc) {
+void Option::Advance(int argc, char* argv[])
+{
+    if (!where || !(*where))
+    {
+        if (index < argc)
+        {
             where = argv[index++];
 
-            if (*where == '-') {
+            if (*where == '-')
+            {
                 where++;
 
-                if (*where == '-') {
+                if (*where == '-')
+                {
                     where++;
 
-                    if (!(*where)) {
+                    if (!(*where))
+                    {
                         state = DONE;
-                    } else {
+                    }
+                    else
+                    {
                         state = LONG;
                     }
-                } else {
+                }
+                else
+                {
                     state = SHORT;
                 }
-            } else {
+            }
+            else
+            {
                 state = ARG;
             }
-        } else {
+        }
+        else
+        {
             state = DONE;
         }
     }
 }
 
-int
-Option::
-Parse(int argc, char* argv[], const Definition* def) {
+int Option::Parse(int argc, char* argv[], const Definition* def)
+{
     // advance to next command line option if needed
     Advance(argc, argv);
 
     // move to next argument
-    switch (state) {
+    switch (state)
+    {
     case SHORT:
-        for (; def->sname; def++) {
-            if (def->sname == *where) {
+        for (; def->sname; def++)
+        {
+            if (def->sname == *where)
+            {
                 where++;
                 return def->sname;
             }
@@ -121,8 +140,10 @@ Parse(int argc, char* argv[], const Definition* def) {
         return '?';
 
     case LONG:
-        for (; def->lname; def++) {
-            if (match(where, def->lname)) {
+        for (; def->lname; def++)
+        {
+            if (match(where, def->lname))
+            {
                 where += strcspn(where, "=") + 1;
                 return def->sname;
             }

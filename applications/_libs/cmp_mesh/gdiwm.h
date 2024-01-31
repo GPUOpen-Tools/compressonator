@@ -1,5 +1,5 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
@@ -12,7 +12,6 @@
 \* -------------------------------------------------------------------------*/
 #ifdef _WIN32
 #include <windows.h>
-
 
 // forward declaration of window class
 class GDIWindow;
@@ -70,6 +69,6 @@ int GDIWMAddDialog(HWND hDlg);
 \* -------------------------------------------------------------------------*/
 LRESULT CALLBACK GDIMsgProc(HWND hWnd, UINT uMsg, UINT wParam, LONG lParam);
 
-#endif // GDIWM_H
+#endif  // GDIWM_H
 
 #endif

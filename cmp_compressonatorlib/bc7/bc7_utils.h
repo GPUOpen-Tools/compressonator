@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -26,20 +26,15 @@
 
 #include "bc7_definitions.h"
 
-extern void    WriteBit(CMP_BYTE   *base,
-                        int  offset,
-                        CMP_BYTE   bitVal);
+extern void WriteBit(CMP_BYTE* base, int offset, CMP_BYTE bitVal);
 
 extern void GetRamp(CMP_DWORD endpoint[][MAX_DIMENSION_BIG],
-                    double ramp[MAX_DIMENSION_BIG][(1<<MAX_INDEX_BITS)],
+                    double    ramp[MAX_DIMENSION_BIG][(1 << MAX_INDEX_BITS)],
                     CMP_DWORD clusters[2],
                     CMP_DWORD componentBits[MAX_DIMENSION_BIG]);
 
-extern void DecodeEndPoints(CMP_DWORD endpoint[][MAX_DIMENSION_BIG],
-                            CMP_DWORD componentBits[MAX_DIMENSION_BIG],
-                            float ep[][MAX_DIMENSION_BIG]);
+extern void DecodeEndPoints(CMP_DWORD endpoint[][MAX_DIMENSION_BIG], CMP_DWORD componentBits[MAX_DIMENSION_BIG], float ep[][MAX_DIMENSION_BIG]);
 
-extern const double  rampLerpWeights[5][1<<MAX_INDEX_BITS];
+extern const double rampLerpWeights[5][1 << MAX_INDEX_BITS];
 
 #endif
-

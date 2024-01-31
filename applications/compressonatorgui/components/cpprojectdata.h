@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -28,8 +28,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#if defined(_MSC_VER) 
-#pragma warning(disable:4996)  //'sscanf': This function or variable may be unsafe.
+#if defined(_MSC_VER)
+#pragma warning(disable : 4996)  //'sscanf': This function or variable may be unsafe.
 #endif
 
 #ifndef USE_MESHOPTIMIZER
@@ -55,16 +55,16 @@
 #include "modeldata.h"
 
 #define TREETYPE_Double_Click_here_to_add_files 0x00000001  // [+] Double Click here to add files ...
-#define TREETYPE_Add_destination_setting        0x00000002  // [+] Add destination setting ...
+#define TREETYPE_Add_destination_setting 0x00000002         // [+] Add destination setting ...
 #define TREETYPE_Add_Model_destination_settings 0x00000004  // Create a new copy of 3D source data node
-#define TREETYPE_IMAGEFILE_DATA                 0x00000008  // items column (1) uses new allocated varient data for C_FileProperties
-#define TREETYPE_3DMODEL_DATA                   0x00000010  // items column (1) uses new allocated varient data for C_FileProperties
-#define TREETYPE_VIEWIMAGE_ONLY_NODE            0x00000020  // Autogen data  that is part of a 3D  Image that is only viewed
-#define TREETYPE_VIEWMESH_ONLY_NODE             0x00000040  // Autogen data  that is part of a 3D  Image that is only viewed
-#define TREETYPE_3DSUBMODEL_DATA                0x00000080  // items column (1) uses new allocated varient data for C_FileProperties
-#define TREETYPE_COMPRESSION_DATA               0x00000100  // Texture saved as part of a 3D model
-#define TREETYPE_MESH_DATA                      0x00000200  // Mesh data node contains (Vertices, Index, ...)
-#define TREETYPE_DIFFVIEW                       0x00000400  // no item data, this id is used along with above for identifying docked widgets
+#define TREETYPE_IMAGEFILE_DATA 0x00000008                  // items column (1) uses new allocated varient data for C_FileProperties
+#define TREETYPE_3DMODEL_DATA 0x00000010                    // items column (1) uses new allocated varient data for C_FileProperties
+#define TREETYPE_VIEWIMAGE_ONLY_NODE 0x00000020             // Autogen data  that is part of a 3D  Image that is only viewed
+#define TREETYPE_VIEWMESH_ONLY_NODE 0x00000040              // Autogen data  that is part of a 3D  Image that is only viewed
+#define TREETYPE_3DSUBMODEL_DATA 0x00000080                 // items column (1) uses new allocated varient data for C_FileProperties
+#define TREETYPE_COMPRESSION_DATA 0x00000100                // Texture saved as part of a 3D model
+#define TREETYPE_MESH_DATA 0x00000200                       // Mesh data node contains (Vertices, Index, ...)
+#define TREETYPE_DIFFVIEW 0x00000400                        // no item data, this id is used along with above for identifying docked widgets
 
 #define TREE_LevelType 0   // Treeview index of data column variant data storage for TREETYPE_...
 #define TREE_SourceInfo 1  // Treeview index of data column variant data storage for Source data
@@ -410,8 +410,7 @@ signals:
     void dataChanged();
 };
 
-class C_Refine:
-    public C_Codec_Block
+class C_Refine : public C_Codec_Block
 {
     Q_OBJECT
     //Q_PROPERTY(bool Use_Refine_Steps READ isRefine_Steps WRITE setUseRefine_Steps)
@@ -426,7 +425,7 @@ public:
     void init()
     {
         Use_Refine_Steps = false;
-        Refine_Steps = 0;
+        Refine_Steps     = 0;
     }
 
     bool Use_Refine_Steps;
@@ -446,7 +445,7 @@ public:
         else
             Refine_Steps = RefineSteps;
 
-         m_data_has_been_changed = true;
+        m_data_has_been_changed = true;
         emit dataChanged();
 
         emit Refine_StepsChanged((QVariant&)Refine_Steps);
@@ -459,7 +458,7 @@ public:
 
     void setUseRefine_Steps(bool Refine_Steps)
     {
-        Use_Refine_Steps               = Refine_Steps;
+        Use_Refine_Steps        = Refine_Steps;
         m_data_has_been_changed = true;
         emit dataChanged();
     }
@@ -471,7 +470,7 @@ public:
 
     void setNoRefine_Steps(bool Refine_Steps)
     {
-        Use_Refine_Steps                = Refine_Steps;
+        Use_Refine_Steps        = Refine_Steps;
         m_data_has_been_changed = true;
         emit dataChanged();
     }
@@ -486,10 +485,9 @@ signals:
     void dataChanged();
 };
 
-class DXT1_Alpha :
-    public C_Refine
-    //public Compression_Speed
-    //public C_Codec_Block
+class DXT1_Alpha : public C_Refine
+//public Compression_Speed
+//public C_Codec_Block
 {
     Q_OBJECT
     //Q_PROPERTY(bool No_Alpha READ isNoAlpha WRITE setNoAlpha NOTIFY noAlphaChannel)
@@ -507,20 +505,22 @@ public:
         Threshold = 0;
     }
 
-    int  Threshold;
+    int Threshold;
 
     void setThreshold(int threshold)
     {
         if (threshold > 255)
             Threshold = 255;
 
-        else if (threshold <= 0) {
+        else if (threshold <= 0)
+        {
             Threshold = 0;
         }
-        else {
+        else
+        {
             Threshold = threshold;
         }
-    
+
         m_data_has_been_changed = true;
         emit dataChanged();
         emit thresholdChanged((QVariant&)threshold);
@@ -530,7 +530,6 @@ public:
     {
         return Threshold;
     }
-
 
 signals:
     void thresholdChanged(QVariant&);
@@ -663,9 +662,9 @@ class Mesh_Compression_Settings : public Channel_Weighting
     Q_PROPERTY(int x____Compression_Level READ getCompression_Level WRITE setCompression_Level)  // -cl compression level [0-10], most=10, least=0, default=7.
     Q_PROPERTY(int x____Position_Bits READ getPosition_Bits WRITE setPosition_Bits)  // -qp quantization bits for the position attribute, default=14 max 30
     Q_PROPERTY(int x____Tex_Coords_Bits READ getTex_Coords_Bits WRITE
-                                                                setTex_Coords_Bits)  // -qt quantization bits for the texture coordinate attribute, default=12 max 30, disabled = -1
+                   setTex_Coords_Bits)  // -qt quantization bits for the texture coordinate attribute, default=12 max 30, disabled = -1
     Q_PROPERTY(int x____Normals_Bits READ getNormals_Bits WRITE
-                                                          setNormals_Bits)  // -qn uantization bits for the normal vector attribute, default=10. max 30, disabled = -1
+                   setNormals_Bits)  // -qn uantization bits for the normal vector attribute, default=10. max 30, disabled = -1
     Q_PROPERTY(
         int x____Generic_Bits READ getGeneric_Bits WRITE setGeneric_Bits)  // -qg quantization bits for any generic attribute, default=8 max 30, disabled = -1
 #endif
@@ -1320,7 +1319,7 @@ public:
     QString m_CompressionTimeStr;
 };
 
-#define COMPRESS_OPTIONS_QUALITY     "Quality"
+#define COMPRESS_OPTIONS_QUALITY "Quality"
 #ifdef USE_ENABLEHQ
 #define COMPRESS_OPTIONS_HIGHQUALITY "EnableHQ"
 #endif
@@ -1361,17 +1360,17 @@ class C_Destination_Options : public C_Destination_Image
     Q_OBJECT
     Q_ENUMS(eCompression_options)
     Q_PROPERTY(eCompression_options Format READ getCompression WRITE setCompression NOTIFY compressionChanged)
-    Q_PROPERTY(double Quality  READ getQuality WRITE setQuality NOTIFY qualityChanged)
+    Q_PROPERTY(double Quality READ getQuality WRITE setQuality NOTIFY qualityChanged)
 #ifdef USE_ENABLEHQ
-    Q_PROPERTY(bool   EnableHQ READ getEnableHQ WRITE setEnableHQ NOTIFY enableHQChanged)
+    Q_PROPERTY(bool EnableHQ READ getEnableHQ WRITE setEnableHQ NOTIFY enableHQChanged)
 #endif
 
 public:
     enum eCompression_options
     {
 #ifdef USE_GUI_LOSSLESS_COMPRESSION
-       // Lossless GPU Based Compression Formats --------------------------------------------------------------------------------
-       BRLG,
+        // Lossless GPU Based Compression Formats --------------------------------------------------------------------------------
+        BRLG,
 #endif
 #ifdef USE_APC
         APC,
@@ -1439,8 +1438,6 @@ public:
 
         MESH_DATA,
 
-
-
     };
 
     C_Destination_Options()
@@ -1458,26 +1455,26 @@ public:
         m_DstWidth          = 0;
         m_DstHeight         = 0;
         //m_Encoding        = No_Encoding;
-        m_Quality           = AMD_CODEC_QUALITY_DEFAULT;
+        m_Quality = AMD_CODEC_QUALITY_DEFAULT;
 #ifdef USE_ENABLEHQ
-        m_EnableHQ          = false;  // Flag to enable added High Quality encoding
+        m_EnableHQ = false;  // Flag to enable added High Quality encoding
 #endif
-        m_isselected        = false;  // Flag to force Project View to use the datas child item in compression
+        m_isselected = false;  // Flag to force Project View to use the datas child item in compression
 
         // These items are not set by PropertyManager
         // they are done via seperate widgets
-        m_compname                  = "";
-        m_destFileNamePath          = "";
-        m_decompressedFileNamePath  = "";
-        m_editing                   = false;
-        m_iscompressedFormat        = false;  // Flag to indicate the target will be saved as a  compressed file
-        m_data_has_been_changed     = false;  // Set if any data has changed value
-        m_SourceIscompressedFormat  = false;  // Flag indicating source is compressed format
-        m_SourceIsFloatFormat       = false;
-        m_SourceImageSize           = 0;
-        m_SourceType                = 0;
-        m_modelSource               = "";
-        m_sourceFileNamePath        = "";
+        m_compname                 = "";
+        m_destFileNamePath         = "";
+        m_decompressedFileNamePath = "";
+        m_editing                  = false;
+        m_iscompressedFormat       = false;  // Flag to indicate the target will be saved as a  compressed file
+        m_data_has_been_changed    = false;  // Set if any data has changed value
+        m_SourceIscompressedFormat = false;  // Flag indicating source is compressed format
+        m_SourceIsFloatFormat      = false;
+        m_SourceImageSize          = 0;
+        m_SourceType               = 0;
+        m_modelSource              = "";
+        m_sourceFileNamePath       = "";
         m_Model_Images.clear();
         m_SubModel_Images.clear();
     }
@@ -1558,7 +1555,7 @@ public:
 #ifdef USE_ENABLEHQ
     bool getEnableHQ() const
     {
-         return m_EnableHQ;
+        return m_EnableHQ;
     }
 
     void setEnableHQ(bool enabled)
@@ -1598,22 +1595,22 @@ public:
         return false;
     }
 
-    QString            m_modelSource;
-    QString            m_modelDest;
-    QList<Model_Image> m_Model_Images;
-    QList<Model_Image> m_SubModel_Images;
-    QString            m_compname;
-    QString            m_sourceFileNamePath;
-    QString            m_destFileNamePath;
-    QString            m_decompressedFileNamePath;
+    QString              m_modelSource;
+    QString              m_modelDest;
+    QList<Model_Image>   m_Model_Images;
+    QList<Model_Image>   m_SubModel_Images;
+    QString              m_compname;
+    QString              m_sourceFileNamePath;
+    QString              m_destFileNamePath;
+    QString              m_decompressedFileNamePath;
     eCompression_options m_Compression;
-    bool               m_editing;
-    double             m_Quality;
+    bool                 m_editing;
+    double               m_Quality;
 #ifdef USE_ENABLEHQ
-    bool               m_EnableHQ;
+    bool m_EnableHQ;
 #endif
-    bool               m_iscompressedFormat;
-    bool               m_isModelData;  // m_compname is ModelData destination name else its a Texture
+    bool m_iscompressedFormat;
+    bool m_isModelData;  // m_compname is ModelData destination name else its a Texture
 
     CMipImages* m_MipImages;
     bool        m_isselected;
@@ -1759,14 +1756,14 @@ public:
 class C_Global_Process_Settings : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool   Enabled     READ getEnabled WRITE setEnabled)
+    Q_PROPERTY(bool Enabled READ getEnabled WRITE setEnabled)
     Q_PROPERTY(double Set_Quality READ getQuality WRITE setQuality)
-    Q_PROPERTY(int    Set_Refine_Steps READ getRefineSteps WRITE setRefineSteps)
+    Q_PROPERTY(int Set_Refine_Steps READ getRefineSteps WRITE setRefineSteps)
 
 public:
     C_Global_Process_Settings()
     {
-        m_Quality = 1.00;
+        m_Quality      = 1.00;
         m_Refine_Steps = 0;
     }
 
@@ -1774,10 +1771,9 @@ public:
     int    m_GlobalSettingEnabled;
     int    m_Refine_Steps;
 
-
     void setEnabled(bool setop)
     {
-        m_GlobalSettingEnabled = setop?1:0;
+        m_GlobalSettingEnabled = setop ? 1 : 0;
         emit globalPropertyChanged(m_GlobalSettingEnabled);
     }
 
@@ -1786,14 +1782,13 @@ public:
         return m_GlobalSettingEnabled;
     }
 
-
     void setQuality(double quality)
     {
         if (quality > 1.0)
             quality = 1.0;
         else if (quality <= 0)
         {
-            quality   = 0.0;
+            quality = 0.0;
         }
         m_Quality = quality;
     }
@@ -1810,7 +1805,7 @@ public:
             steps = 2;
         else if (steps < 0)
         {
-           steps = 0;
+            steps = 0;
         }
         m_Refine_Steps = steps;
         emit globalPropertyChanged(m_GlobalSettingEnabled);
@@ -1820,7 +1815,6 @@ public:
     {
         return m_Refine_Steps;
     }
-
 
 signals:
     void globalPropertyChanged(int&);
@@ -2263,7 +2257,7 @@ public:
     bool             m_logresults;
     bool             m_analysisResultTable;
     RenderModelsWith m_GLTFRenderWith;
-    bool m_useOriginalFileNames;
+    bool             m_useOriginalFileNames;
 
 signals:
     void ImageViewDecodeChanged(QVariant&);

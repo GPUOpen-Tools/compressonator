@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2014-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2014-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -39,7 +39,7 @@ typedef std::uint8_t BYTE;
 // notes: All of these definitions need changing some need to be variable!
 
 // Size of a compressed block in bytes : 128 bits
-#define ASTC_COMPRESSED_BLOCK_SIZE   16
+#define ASTC_COMPRESSED_BLOCK_SIZE 16
 
 //How many block candidates would be evaluated for every mode
 #define ASTC_SCB_CANDIDATES 4
@@ -52,10 +52,10 @@ typedef std::uint8_t BYTE;
 // ASTC Specification based data
 
 // OpenGL 4.0, table 3.2 (page 162)
-#define ASTC_GL_COMPRESSED          0x0000
-#define ASTC_GL_UNSIGNED_SHORT      0x1403
-#define ASTC_GL_HALF_FLOAT          0x140B
-#define ASTC_GL_FLOAT               0x1406
+#define ASTC_GL_COMPRESSED 0x0000
+#define ASTC_GL_UNSIGNED_SHORT 0x1403
+#define ASTC_GL_HALF_FLOAT 0x140B
+#define ASTC_GL_FLOAT 0x1406
 
 // Define this to be 1 to allow "illegal" block sizes
 #define DEBUG_ALLOW_ILLEGAL_BLOCK_SIZES 0

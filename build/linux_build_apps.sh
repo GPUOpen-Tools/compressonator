@@ -9,6 +9,7 @@ fi
 
 cd $WORKSPACE/compressonator/build
 python3 fetch_dependencies.py
+cd ..
 
 cd $WORKSPACE/compressonator
 

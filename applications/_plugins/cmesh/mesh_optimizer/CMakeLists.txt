@@ -17,13 +17,13 @@ target_link_libraries(Mesh_Optimizer
     PRIVATE
         CMP_Compressonator
         CMP_Framework
-        CMP_MeshOptimizer
+        extern_meshoptimizer
 )
 
 target_compile_definitions(Mesh_Optimizer PRIVATE BUILD_AS_PLUGIN_DLL=1)
 
 set_target_properties(Mesh_Optimizer PROPERTIES 
-        FOLDER "Plugin_Dynamic/Mesh_Compression"
+        FOLDER ${PROJECT_FOLDER_SDK_PLUGIN_DYNAMIC}
         RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin/debug/plugins"
         RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/release/plugins"
         )

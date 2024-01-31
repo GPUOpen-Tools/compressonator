@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2021-2023   Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2021-2024   Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -89,7 +89,7 @@ int CMP_CDECL SetQualityBC6(void* options, float fquality);
 int CMP_CDECL SetQualityBC7(void* options, float fquality);
 
 int CMP_CDECL SetAlphaThresholdBC1(void* options, unsigned char alphaThreshold);
-int CMP_CDECL SetRefineStepsBC1(void *options, unsigned int steps);
+int CMP_CDECL SetRefineStepsBC1(void* options, unsigned int steps);
 
 int CMP_CDECL SetMaskBC6(void* options, unsigned int mask);
 int CMP_CDECL SetMaskBC7(void* options, unsigned char mask);
@@ -97,8 +97,8 @@ int CMP_CDECL SetMaskBC7(void* options, unsigned char mask);
 int CMP_CDECL SetAlphaOptionsBC7(void* options, bool imageNeedsAlpha, bool colourRestrict, bool alphaRestrict);
 int CMP_CDECL SetErrorThresholdBC7(void* options, float minThreshold, float maxThreshold);
 
-// Set if the content is in sRGB color space (true) or linear (false).
-// The default is false.
+// Set whether you want the processing to be done in sRGB space (true) or not (false)
+// The default is false, but if set the input data will be converted to sRGB during compression
 int CMP_CDECL SetSrgbBC1(void* options, bool sRGB);
 int CMP_CDECL SetSrgbBC2(void* options, bool sRGB);
 int CMP_CDECL SetSrgbBC3(void* options, bool sRGB);
@@ -187,7 +187,7 @@ int CMP_CDECL CompressBlockBC5(const unsigned char* srcBlock1,
                                const unsigned char* srcBlock2,
                                unsigned int         srcStrideInBytes2,
                                unsigned char        cmpBlock[16],
-                               const void* options CMP_DEFAULTNULL);
+                               const void* options  CMP_DEFAULTNULL);
 
 int CMP_CDECL DecompressBlockBC5(const unsigned char cmpBlock[16],
                                  unsigned char       srcBlock1[16],
@@ -195,11 +195,11 @@ int CMP_CDECL DecompressBlockBC5(const unsigned char cmpBlock[16],
                                  const void* options CMP_DEFAULTNULL);
 
 // BC5 Signed channel
-int CMP_CDECL CompressBlockBC5S(const char*   srcBlock1,
-                                unsigned int  srcStrideInBytes1,
-                                const char*   srcBlock2,
-                                unsigned int  srcStrideInBytes2,
-                                unsigned char cmpBlock[16],
+int CMP_CDECL CompressBlockBC5S(const char*         srcBlock1,
+                                unsigned int        srcStrideInBytes1,
+                                const char*         srcBlock2,
+                                unsigned int        srcStrideInBytes2,
+                                unsigned char       cmpBlock[16],
                                 const void* options CMP_DEFAULTNULL);
 
 int CMP_CDECL DecompressBlockBC5S(const unsigned char cmpBlock[16], char srcBlock1[16], char srcBlock2[16], const void* options CMP_DEFAULTNULL);

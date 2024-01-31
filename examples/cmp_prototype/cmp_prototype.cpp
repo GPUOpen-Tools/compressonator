@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,7 +21,7 @@
 // THE SOFTWARE.
 //
 
-// The cmake sets up include paths to the SDK libs 
+// The cmake sets up include paths to the SDK libs
 // It also includes some external libs that were used in building CLI and GUI apps
 // This is a sample include used for both CPU and GPU shared code
 

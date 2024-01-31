@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2006-2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2006-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -26,10 +26,12 @@
 #include <xmmintrin.h>
 #include <stdlib.h>
 
-namespace JML {
+namespace JML
+{
 
-inline float RandomFloat() {
-    return (float)rand() / (float) RAND_MAX;
+inline float RandomFloat()
+{
+    return (float)rand() / (float)RAND_MAX;
 };
 
 #ifdef CMP_USE_RSQ_RSQR
@@ -48,24 +50,24 @@ inline float FastRSQ(float v)
     return (0.5f * frsq) * (3.0f - (v * frsq) * frsq);
 };
 #else
-inline float FastSQRT(float v) {
-    __m128 val  = _mm_set_ss(v);
-    val         = _mm_sqrt_ss(val);
+inline float FastSQRT(float v)
+{
+    __m128 val = _mm_set_ss(v);
+    val        = _mm_sqrt_ss(val);
     return (val.m128_f32[0]);
-
 };
 
-inline float FastRSQ(float v) {
-    __m128 val  = _mm_set_ss(v); 
+inline float FastRSQ(float v)
+{
+    __m128 val  = _mm_set_ss(v);
     __m128 val1 = _mm_set_ss(1.0f);
     val         = _mm_sqrt_ss(val);
     val         = _mm_div_ss(val1, val);
     float frsq  = val.m128_f32[0];
-    return (0.5f * frsq) * (3.0f - (v  * frsq) * frsq);
+    return (0.5f * frsq) * (3.0f - (v * frsq) * frsq);
 };
 #endif
 
-};
-
+};  // namespace JML
 
 #endif

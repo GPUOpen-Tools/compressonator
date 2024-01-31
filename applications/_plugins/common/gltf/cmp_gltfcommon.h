@@ -21,7 +21,6 @@
 
 #include "compressonator.h"
 #include "common.h"
-#include "cmp_gltffeatures.h"
 #include "cmp_gltfstructures.h"
 #include "modeldata.h"
 

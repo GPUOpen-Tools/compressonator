@@ -57,7 +57,7 @@ target_link_libraries(ModelViewer_DX12 PRIVATE
     CMP_Framework
     CMP_GUI_Gltf
     CMP_GpuDecode
-    CMP_Imgui
+    extern_imgui
     CMP_Common              # CModel Data
 )
 
@@ -65,7 +65,7 @@ target_compile_definitions(ModelViewer_DX12 PRIVATE BUILD_AS_PLUGIN_DLL=1)
 
 set_target_properties(ModelViewer_DX12 PROPERTIES 
     AUTOMOC ON
-    FOLDER "Plugin_Dynamic/3DModel_Viewers"
+    FOLDER ${PROJECT_FOLDER_APPS_PLUGIN_DYNAMIC}
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin/debug/plugins"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/release/plugins"
 )

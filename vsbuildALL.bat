@@ -12,8 +12,11 @@ python %CurrDir%\build\fetch_dependencies.py
 
 mkdir build\bin
 
+REM You can set extra options to send to CMake by passing in extra arguments
+set EXTRA_OPTIONS=%1
+
 cd build\bin
-cmake -G "Visual Studio 16 2019" ..\..\..\%CurrDirName%\
+cmake %EXTRA_OPTIONS% -G "Visual Studio 17 2022" -T v142 ..\..\..\%CurrDirName%\
 cd %CurrDir%
 
 

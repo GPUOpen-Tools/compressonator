@@ -89,5 +89,5 @@ if (OPTION_CMP_DIRECTX)
 endif()
 
 set_target_properties(CMP_Mesh PROPERTIES 
-    FOLDER "Libs"
-    )
+    FOLDER ${PROJECT_FOLDER_SDK_LIBS}
+)

@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,7 +21,6 @@
 // THE SOFTWARE.
 //
 
-
 // NOTES on conversions from AMD_Textures to Mips
 /*
                 CMP_Texture srcTexture;
@@ -41,7 +40,6 @@
                 destTexture.dwDataSize = srcTexture.dwDataSize >> 1;
                 destTexture.pData = (CMP_BYTE*) pOutputData;
 */
-
 
 /*
 Lib Dependancies and path
@@ -70,10 +68,10 @@ IMath.lib;Half.lib;IlmImf.lib;IlmThread.lib;Iex.lib;zlibstatic_d.lib;
 #include <string>
 #include "cexr.h"
 
-#pragma warning( push )
-#pragma warning(disable:4100)
-#pragma warning(disable:4800)
-#pragma warning(disable:5040)
+#pragma warning(push)
+#pragma warning(disable : 4100)
+#pragma warning(disable : 4800)
+#pragma warning(disable : 5040)
 #include <ImfTiledRgbaFile.h>
 #include <ImfHeader.h>
 #include <ImfMultiPartInputFile.h>
@@ -88,55 +86,55 @@ IMath.lib;Half.lib;IlmImf.lib;IlmThread.lib;Iex.lib;zlibstatic_d.lib;
 #include <ImfPixelType.h>
 #include <ImathFun.h>
 #include <ImfDeepFrameBuffer.h>
-#pragma warning( pop )
-
+#pragma warning(pop)
 
 #include "common.h"
 
-CMIPS *EXR_CMips = NULL;
+CMIPS* EXR_CMips = NULL;
 
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_EXR)
 SET_PLUGIN_TYPE("IMAGE")
 SET_PLUGIN_NAME("EXR")
 #else
-void *make_Plugin_EXR() {
+void* make_Plugin_EXR()
+{
     return new Plugin_EXR;
 }
 #endif
 
-#if defined(_WIN32) // && !defined(NO_LEGACY_BEHAVIOR)
+#if defined(_WIN32)  // && !defined(NO_LEGACY_BEHAVIOR)
 #ifdef _DEBUG
-#pragma comment(lib,"zlibstaticd.lib")
-#pragma comment(lib,"Imathd.lib")
-#pragma comment(lib,"halfd.lib")
-#pragma comment(lib,"IlmImfd.lib")
-#pragma comment(lib,"IlmThreadd.lib")
-#pragma comment(lib,"Iexd.lib")
+#pragma comment(lib, "zlibstaticd.lib")
+#pragma comment(lib, "Imathd.lib")
+#pragma comment(lib, "halfd.lib")
+#pragma comment(lib, "IlmImfd.lib")
+#pragma comment(lib, "IlmThreadd.lib")
+#pragma comment(lib, "Iexd.lib")
 #else
-#pragma comment(lib,"zlibstatic.lib")
-#pragma comment(lib,"Imath.lib")
-#pragma comment(lib,"half.lib")
-#pragma comment(lib,"IlmImf.lib")
-#pragma comment(lib,"IlmThread.lib")
-#pragma comment(lib,"Iex.lib")
+#pragma comment(lib, "zlibstatic.lib")
+#pragma comment(lib, "Imath.lib")
+#pragma comment(lib, "half.lib")
+#pragma comment(lib, "IlmImf.lib")
+#pragma comment(lib, "IlmThread.lib")
+#pragma comment(lib, "Iex.lib")
 #endif
 #else
 #include <OpenEXRConfig.h>
 #ifdef _DEBUG
-#define CMP_EXTERNAL_LibExt    "_d.lib"
+#define CMP_EXTERNAL_LibExt "_d.lib"
 #else
-#define CMP_EXTERNAL_LibExt    ".lib"
+#define CMP_EXTERNAL_LibExt ".lib"
 #endif
 
-#define CMP_VAUX_STR_EXP(__A)  #__A
-#define CMP_VAUX_STR(__A)      CMP_VAUX_STR_EXP(__A)
+#define CMP_VAUX_STR_EXP(__A) #__A
+#define CMP_VAUX_STR(__A) CMP_VAUX_STR_EXP(__A)
 
-#define OpenEXR_Imath_Lib     "Imath-" CMP_VAUX_STR(OPENEXR_VERSION_MAJOR) "_" CMP_VAUX_STR(OPENEXR_VERSION_MINOR) CMP_EXTERNAL_LibExt
-#define OpenEXR_half_Lib      "half-" CMP_VAUX_STR(OPENEXR_VERSION_MAJOR) "_" CMP_VAUX_STR(OPENEXR_VERSION_MINOR) CMP_EXTERNAL_LibExt
-#define OpenEXR_IlmImf_Lib    "IlmImf-" CMP_VAUX_STR(OPENEXR_VERSION_MAJOR) "_" CMP_VAUX_STR(OPENEXR_VERSION_MINOR) CMP_EXTERNAL_LibExt
+#define OpenEXR_Imath_Lib "Imath-" CMP_VAUX_STR(OPENEXR_VERSION_MAJOR) "_" CMP_VAUX_STR(OPENEXR_VERSION_MINOR) CMP_EXTERNAL_LibExt
+#define OpenEXR_half_Lib "half-" CMP_VAUX_STR(OPENEXR_VERSION_MAJOR) "_" CMP_VAUX_STR(OPENEXR_VERSION_MINOR) CMP_EXTERNAL_LibExt
+#define OpenEXR_IlmImf_Lib "IlmImf-" CMP_VAUX_STR(OPENEXR_VERSION_MAJOR) "_" CMP_VAUX_STR(OPENEXR_VERSION_MINOR) CMP_EXTERNAL_LibExt
 #define OpenEXR_IlmThread_Lib "IlmThread-" CMP_VAUX_STR(OPENEXR_VERSION_MAJOR) "_" CMP_VAUX_STR(OPENEXR_VERSION_MINOR) CMP_EXTERNAL_LibExt
-#define OpenEXR_Iex_Lib       "Iex-" CMP_VAUX_STR(OPENEXR_VERSION_MAJOR) "_" CMP_VAUX_STR(OPENEXR_VERSION_MINOR) CMP_EXTERNAL_LibExt
+#define OpenEXR_Iex_Lib "Iex-" CMP_VAUX_STR(OPENEXR_VERSION_MAJOR) "_" CMP_VAUX_STR(OPENEXR_VERSION_MINOR) CMP_EXTERNAL_LibExt
 
 #pragma comment(lib, OpenEXR_Imath_Lib)
 #pragma comment(lib, OpenEXR_half_Lib)
@@ -145,99 +143,107 @@ void *make_Plugin_EXR() {
 #pragma comment(lib, OpenEXR_Iex_Lib)
 #endif
 
-
-Plugin_EXR::Plugin_EXR() {
+Plugin_EXR::Plugin_EXR()
+{
     //MessageBox(0,"Construct","Plugin_EXR",MB_OK);
 }
 
-Plugin_EXR::~Plugin_EXR() {
+Plugin_EXR::~Plugin_EXR()
+{
     //MessageBox(0,"Destroy","Plugin_EXR",MB_OK);
 }
 
-int Plugin_EXR::TC_PluginSetSharedIO(void* Shared) {
-    if (Shared) {
-        EXR_CMips = static_cast<CMIPS *>(Shared);
+int Plugin_EXR::TC_PluginSetSharedIO(void* Shared)
+{
+    if (Shared)
+    {
+        EXR_CMips = static_cast<CMIPS*>(Shared);
         return 0;
     }
     return 1;
 }
 
-
-int Plugin_EXR::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) {
+int Plugin_EXR::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
+{
     //MessageBox(0,"TC_PluginGetVersion","Plugin_EXR",MB_OK);
 #ifdef _WIN32
-    pPluginVersion->guid                    = g_GUID;
+    pPluginVersion->guid = g_GUID;
 #endif
-    pPluginVersion->dwAPIVersionMajor        = TC_API_VERSION_MAJOR;
-    pPluginVersion->dwAPIVersionMinor        = TC_API_VERSION_MINOR;
-    pPluginVersion->dwPluginVersionMajor    = TC_PLUGIN_VERSION_MAJOR;
-    pPluginVersion->dwPluginVersionMinor    = TC_PLUGIN_VERSION_MINOR;
+    pPluginVersion->dwAPIVersionMajor    = TC_API_VERSION_MAJOR;
+    pPluginVersion->dwAPIVersionMinor    = TC_API_VERSION_MINOR;
+    pPluginVersion->dwPluginVersionMajor = TC_PLUGIN_VERSION_MAJOR;
+    pPluginVersion->dwPluginVersionMinor = TC_PLUGIN_VERSION_MINOR;
     return 0;
 }
 
-int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *srcTexture) {
+int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture* srcTexture)
+{
+    if (!CMP_FileExists(pszFilename))
+        return -1;
 
-    if (!CMP_FileExists( pszFilename )) return -1;
-
-    int width, height;
+    int    width, height;
     string inf = pszFilename;
 
     Array2D<Rgba> pixels;
-    int w, h;
+    int           w, h;
 
     Exr::fileinfo(inf, width, height);
     Exr::readRgba(inf, pixels, w, h);
 
-    srcTexture->dwSize            = sizeof(CMP_Texture);
-    srcTexture->dwWidth           = width;
-    srcTexture->dwHeight          = height;
-    srcTexture->dwPitch           = 0;
-    srcTexture->format            = CMP_FORMAT_RGBA_16F; // CMP_FORMAT_ARGB_16F;
-    srcTexture->dwDataSize        = 4*width*height*sizeof(CMP_HALFSHORT);
-    srcTexture->pData             = (CMP_BYTE*) malloc(srcTexture->dwDataSize);
+    srcTexture->dwSize     = sizeof(CMP_Texture);
+    srcTexture->dwWidth    = width;
+    srcTexture->dwHeight   = height;
+    srcTexture->dwPitch    = 0;
+    srcTexture->format     = CMP_FORMAT_RGBA_16F;  // CMP_FORMAT_ARGB_16F;
+    srcTexture->dwDataSize = 4 * width * height * sizeof(CMP_HALFSHORT);
+    srcTexture->pData      = (CMP_BYTE*)malloc(srcTexture->dwDataSize);
 
-    Rgba2Texture(pixels,(CMP_HALFSHORT *)srcTexture->pData,width,height);
+    Rgba2Texture(pixels, (CMP_HALFSHORT*)srcTexture->pData, width, height);
     return 0;
 }
 
-int Plugin_EXR::TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *srcTexture) {
-    int  image_width    = srcTexture->dwWidth;
-    int  image_height    = srcTexture->dwHeight;
-    Array2D<Rgba> pixels (image_height,image_width);
-    string sFile = pszFilename;
-    Texture2Rgba((CMP_HALFSHORT *)srcTexture->pData, pixels, image_width, image_height, CMP_FORMAT_Unknown);
-    Exr::writeRgba(sFile,pixels,image_width,image_height);
+int Plugin_EXR::TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture* srcTexture)
+{
+    int           image_width  = srcTexture->dwWidth;
+    int           image_height = srcTexture->dwHeight;
+    Array2D<Rgba> pixels(image_height, image_width);
+    string        sFile = pszFilename;
+    Texture2Rgba((CMP_HALFSHORT*)srcTexture->pData, pixels, image_width, image_height, CMP_FORMAT_Unknown);
+    Exr::writeRgba(sFile, pixels, image_width, image_height);
     return 0;
 }
-
 
 //#define NOMIPS_LEVEL_DATA
 #include "ImfVersion.h"
-bool allocateMipSet(Array<Rgba> &pixels, MipSet* pMipSet, int w, int h) {
-
-    if (!EXR_CMips->AllocateMipSet(pMipSet, CF_Float16, TDT_ARGB, TT_2D, w, h, 1)) { // depthsupport, what should nDepth be set as here?
+bool allocateMipSet(Array<Rgba>& pixels, MipSet* pMipSet, int w, int h)
+{
+    if (!EXR_CMips->AllocateMipSet(pMipSet, CF_Float16, TDT_ARGB, TT_2D, w, h, 1))
+    {  // depthsupport, what should nDepth be set as here?
         if (EXR_CMips)
             EXR_CMips->PrintError("Error(0): EXR Plugin ID(5)\n");
         return false;
     }
 
     // Allocate the permanent buffer and unpack the bitmap data into it
-    if (!EXR_CMips->AllocateMipLevelData(EXR_CMips->GetMipLevel(pMipSet, 0), w, h, CF_Float16, pMipSet->m_TextureDataType)) {
+    if (!EXR_CMips->AllocateMipLevelData(EXR_CMips->GetMipLevel(pMipSet, 0), w, h, CF_Float16, pMipSet->m_TextureDataType))
+    {
         if (EXR_CMips)
             EXR_CMips->PrintError("Error(0): EXR Plugin ID(6)\n");
         return false;
     }
 
     // MIPS structure defaults
-    pMipSet->m_dwFourCC = 0;
-    pMipSet->m_dwFourCC2 = 0;
-    pMipSet->m_nMipLevels = 1;
-    int i = 0;
-    CMP_HALFSHORT *MipData = EXR_CMips->GetMipLevel(pMipSet, 0)->m_phfsData;
+    pMipSet->m_dwFourCC    = 0;
+    pMipSet->m_dwFourCC2   = 0;
+    pMipSet->m_nMipLevels  = 1;
+    int            i       = 0;
+    CMP_HALFSHORT* MipData = EXR_CMips->GetMipLevel(pMipSet, 0)->m_phfsData;
 
     // Save the Half Data format value into a Float for processing later
-    for (int y = 0; y < h; ++y) {
-        for (int x = 0; x < w; ++x) {
+    for (int y = 0; y < h; ++y)
+    {
+        for (int x = 0; x < w; ++x)
+        {
             *MipData = pixels[i].r.bits();
             MipData++;
             *MipData = pixels[i].g.bits();
@@ -252,67 +258,68 @@ bool allocateMipSet(Array<Rgba> &pixels, MipSet* pMipSet, int w, int h) {
     return true;
 }
 
-int
-loadImage(const char fileName[],
-          const char layer[],
-          Header &header,
-          Array<Rgba> &pixels, MipSet* pMipSet) {
+int loadImage(const char fileName[], const char layer[], Header& header, Array<Rgba>& pixels, MipSet* pMipSet)
+{
     MultiPartInputFile inmaster(fileName);
-    InputPart in(inmaster, 0);
+    InputPart          in(inmaster, 0);
     header = in.header();
 
     ChannelList ch = header.channels();
 
-    if (ch.findChannel("Y")) {
+    if (ch.findChannel("Y"))
+    {
         //load as RGBA using array2D
         Array2D<Rgba> pixels;
-        int width, height;
-        int w, h;
+        int           width, height;
+        int           w, h;
 
         Exr::fileinfo(fileName, width, height);
         Exr::readRgba(fileName, pixels, w, h);
 
         CMP_Texture srcTexture;
-        srcTexture.dwSize = sizeof(CMP_Texture);
-        srcTexture.dwWidth = width;
-        srcTexture.dwHeight = height;
-        srcTexture.dwPitch = 0;
+        srcTexture.dwSize     = sizeof(CMP_Texture);
+        srcTexture.dwWidth    = width;
+        srcTexture.dwHeight   = height;
+        srcTexture.dwPitch    = 0;
         srcTexture.format     = CMP_FORMAT_RGBA_16F;  // CMP_FORMAT_ARGB_16F;
-        srcTexture.dwDataSize = 4 * width*height * sizeof(CMP_HALFSHORT);
-        srcTexture.pData = (CMP_BYTE*)malloc(srcTexture.dwDataSize);
+        srcTexture.dwDataSize = 4 * width * height * sizeof(CMP_HALFSHORT);
+        srcTexture.pData      = (CMP_BYTE*)malloc(srcTexture.dwDataSize);
 
         Rgba2Texture(pixels, (CMP_HALFSHORT*)srcTexture.pData, width, height);
 
-
-        if (!EXR_CMips->AllocateMipSet(pMipSet, CF_Float16, TDT_ARGB, TT_2D, width, height, 1)) { // depthsupport, what should nDepth be set as here?
+        if (!EXR_CMips->AllocateMipSet(pMipSet, CF_Float16, TDT_ARGB, TT_2D, width, height, 1))
+        {  // depthsupport, what should nDepth be set as here?
             if (EXR_CMips)
                 EXR_CMips->PrintError("Error(0): EXR Plugin ID(5)\n");
             return PE_Unknown;
         }
 
         // Allocate the permanent buffer and unpack the bitmap data into it
-        if (!EXR_CMips->AllocateMipLevelData(EXR_CMips->GetMipLevel(pMipSet, 0), width, height, CF_Float16, pMipSet->m_TextureDataType)) {
+        if (!EXR_CMips->AllocateMipLevelData(EXR_CMips->GetMipLevel(pMipSet, 0), width, height, CF_Float16, pMipSet->m_TextureDataType))
+        {
             if (EXR_CMips)
                 EXR_CMips->PrintError("Error(0): EXR Plugin ID(6)\n");
             return PE_Unknown;
         }
 
         // MIPS structure defaults
-        pMipSet->m_dwFourCC = 0;
-        pMipSet->m_dwFourCC2 = 0;
+        pMipSet->m_dwFourCC   = 0;
+        pMipSet->m_dwFourCC2  = 0;
         pMipSet->m_nMipLevels = 1;
 
-        CMP_BYTE *MipData = EXR_CMips->GetMipLevel(pMipSet, 0)->m_pbData;
+        CMP_BYTE* MipData = EXR_CMips->GetMipLevel(pMipSet, 0)->m_pbData;
 
         memcpy(MipData, srcTexture.pData, srcTexture.dwDataSize);
 
         free(srcTexture.pData);
-    } else {
-        Box2i &dataWindow = header.dataWindow();
-        int dw = dataWindow.max.x - dataWindow.min.x + 1;
-        int dh = dataWindow.max.y - dataWindow.min.y + 1;
-        int dx = dataWindow.min.x;
-        int dy = dataWindow.min.y;
+    }
+    else
+    {
+        Box2i& dataWindow = header.dataWindow();
+        int    dw         = dataWindow.max.x - dataWindow.min.x + 1;
+        int    dh         = dataWindow.max.y - dataWindow.min.y + 1;
+        int    dx         = dataWindow.min.x;
+        int    dy         = dataWindow.min.y;
 
         pixels.resizeErase(dw * dh);
         memset(pixels, 0, (dw * dh) * (sizeof(Rgba)));
@@ -321,43 +328,53 @@ loadImage(const char fileName[],
         size_t ys = dw * sizeof(Rgba);
 
         FrameBuffer fb;
-        Rgba *base = pixels - dx - dy * dw;
+        Rgba*       base = pixels - dx - dy * dw;
 
         fb.insert("R",
                   Slice(HALF,
-                        (char *)&base[0].r,
-                        xs, ys,
-                        1, 1,     // xSampling, ySampling
-                        0.0));    // fillValue
+                        (char*)&base[0].r,
+                        xs,
+                        ys,
+                        1,
+                        1,      // xSampling, ySampling
+                        0.0));  // fillValue
 
         fb.insert("G",
                   Slice(HALF,
-                        (char *)&base[0].g,
-                        xs, ys,
-                        1, 1,     // xSampling, ySampling
-                        0.0));    // fillValue
+                        (char*)&base[0].g,
+                        xs,
+                        ys,
+                        1,
+                        1,      // xSampling, ySampling
+                        0.0));  // fillValue
 
         fb.insert("B",
                   Slice(HALF,
-                        (char *)&base[0].b,
-                        xs, ys,
-                        1, 1,     // xSampling, ySampling
-                        0.0));    // fillValue
+                        (char*)&base[0].b,
+                        xs,
+                        ys,
+                        1,
+                        1,      // xSampling, ySampling
+                        0.0));  // fillValue
 
         fb.insert("A",
                   Slice(HALF,
-                        (char *)&base[0].a,
-                        xs, ys,
-                        1, 1,             // xSampling, ySampling
-                        1.0));    // fillValue
+                        (char*)&base[0].a,
+                        xs,
+                        ys,
+                        1,
+                        1,      // xSampling, ySampling
+                        1.0));  // fillValue
         in.setFrameBuffer(fb);
 
-
-        try {
+        try
+        {
             in.readPixels(dataWindow.min.y, dataWindow.max.y);
             if (!allocateMipSet(pixels, pMipSet, dw, dh))
                 return PE_Unknown;
-        } catch (const std::exception &e) {
+        }
+        catch (const std::exception& e)
+        {
             //
             // If some of the pixels in the file cannot be read,
             // print an error message, and return a partial image
@@ -371,34 +388,34 @@ loadImage(const char fileName[],
     return PE_OK;
 }
 
-int
-loadTiledImage(const char fileName[],
-               const char layer[],
-               int lx,
-               int ly,
-               Header &header,
-               Array<Rgba> &pixels, MipSet* pMipSet) {
+int loadTiledImage(const char fileName[], const char layer[], int lx, int ly, Header& header, Array<Rgba>& pixels, MipSet* pMipSet)
+{
     MultiPartInputFile inmaster(fileName);
-    TiledInputPart in(inmaster, 0);
+    TiledInputPart     in(inmaster, 0);
     header = in.header();
 
-    if (!in.isValidLevel(lx, ly)) {
+    if (!in.isValidLevel(lx, ly))
+    {
         //
         //for part doesn't have valid level
         //
         pixels.resizeErase(1);
         header.dataWindow() = Box2i(V2i(0, 0), V2i(0, 0));
 
-        std::cout << "Level (" << lx << ", " << ly << ") does "
-                  "not exist in part " << 0 << " of file "
-                  << fileName << "." << std::endl;
+        std::cout << "Level (" << lx << ", " << ly
+                  << ") does "
+                     "not exist in part "
+                  << 0 << " of file " << fileName << "." << std::endl;
         return PE_Unknown;
-    } else {
-        header.dataWindow() = in.dataWindowForLevel(lx, ly);
+    }
+    else
+    {
+        header.dataWindow()    = in.dataWindowForLevel(lx, ly);
         header.displayWindow() = header.dataWindow();
 
         ChannelList ch = header.channels();
-        if (ch.findChannel("Y")) {
+        if (ch.findChannel("Y"))
+        {
             //
             // Not handling YCA image right now
             //
@@ -408,51 +425,62 @@ loadTiledImage(const char fileName[],
             pixels.resizeErase(1);
             header.dataWindow() = Box2i(V2i(0, 0), V2i(0, 0));
             return PE_Unknown;
-        } else {
-            Box2i &dataWindow = header.dataWindow();
-            int dw = dataWindow.max.x - dataWindow.min.x + 1;
-            int dh = dataWindow.max.y - dataWindow.min.y + 1;
-            int dx = dataWindow.min.x;
-            int dy = dataWindow.min.y;
+        }
+        else
+        {
+            Box2i& dataWindow = header.dataWindow();
+            int    dw         = dataWindow.max.x - dataWindow.min.x + 1;
+            int    dh         = dataWindow.max.y - dataWindow.min.y + 1;
+            int    dx         = dataWindow.min.x;
+            int    dy         = dataWindow.min.y;
 
             pixels.resizeErase(dw * dh);
             memset(pixels, 0, (dw * dh) * (sizeof(Rgba)));
 
-            size_t xs = 1 * sizeof(Rgba);
-            size_t ys = dw * sizeof(Rgba);
+            size_t      xs = 1 * sizeof(Rgba);
+            size_t      ys = dw * sizeof(Rgba);
             FrameBuffer fb;
-            Rgba *base = pixels - dx - dy * dw;
+            Rgba*       base = pixels - dx - dy * dw;
 
             fb.insert("R",
                       Slice(HALF,
-                            (char *)&base[0].r,
-                            xs, ys,
-                            1, 1,         // xSampling, ySampling
-                            0.0));        // fillValue
+                            (char*)&base[0].r,
+                            xs,
+                            ys,
+                            1,
+                            1,      // xSampling, ySampling
+                            0.0));  // fillValue
 
             fb.insert("G",
                       Slice(HALF,
-                            (char *)&base[0].g,
-                            xs, ys,
-                            1, 1,         // xSampling, ySampling
-                            0.0));        // fillValue
+                            (char*)&base[0].g,
+                            xs,
+                            ys,
+                            1,
+                            1,      // xSampling, ySampling
+                            0.0));  // fillValue
 
             fb.insert("B",
                       Slice(HALF,
-                            (char *)&base[0].b,
-                            xs, ys,
-                            1, 1,         // xSampling, ySampling
-                            0.0));        // fillValue
+                            (char*)&base[0].b,
+                            xs,
+                            ys,
+                            1,
+                            1,      // xSampling, ySampling
+                            0.0));  // fillValue
 
             fb.insert("A",
                       Slice(HALF,
-                            (char *)&base[0].a,
-                            xs, ys,
-                            1, 1,         // xSampling, ySampling
-                            1.0));        // fillValue
+                            (char*)&base[0].a,
+                            xs,
+                            ys,
+                            1,
+                            1,      // xSampling, ySampling
+                            1.0));  // fillValue
             in.setFrameBuffer(fb);
 
-            try {
+            try
+            {
                 int tx = in.numXTiles(lx);
                 int ty = in.numYTiles(ly);
 
@@ -461,11 +489,14 @@ loadTiledImage(const char fileName[],
                 // the same order as they are stored in the file.
                 //
 
-                if (in.header().lineOrder() == INCREASING_Y) {
+                if (in.header().lineOrder() == INCREASING_Y)
+                {
                     for (int y = 0; y < ty; ++y)
                         for (int x = 0; x < tx; ++x)
                             in.readTile(x, y, lx, ly);
-                } else {
+                }
+                else
+                {
                     for (int y = ty - 1; y >= 0; --y)
                         for (int x = 0; x < tx; ++x)
                             in.readTile(x, y, lx, ly);
@@ -473,7 +504,9 @@ loadTiledImage(const char fileName[],
 
                 if (!allocateMipSet(pixels, pMipSet, dw, dh))
                     return PE_Unknown;
-            } catch (const std::exception &e) {
+            }
+            catch (const std::exception& e)
+            {
                 //
                 // If some of the tiles in the file cannot be read,
                 // print an error message, and return a partial image
@@ -483,39 +516,38 @@ loadTiledImage(const char fileName[],
                 std::cerr << e.what() << std::endl;
             }
         }
-
     }
 
     return PE_OK;
 }
 
-
-int
-loadPreviewImage(const char fileName[],
-                 Header &header,
-                 Array<Rgba> &pixels, MipSet* pMipSet) {
+int loadPreviewImage(const char fileName[], Header& header, Array<Rgba>& pixels, MipSet* pMipSet)
+{
     MultiPartInputFile inmaster(fileName);
-    InputPart in(inmaster, 0);
+    InputPart          in(inmaster, 0);
     header = in.header();
 
-    if (!in.header().hasPreviewImage()) {
+    if (!in.header().hasPreviewImage())
+    {
         //
         // If no preview, make a 100*100 display window
         //
-        header.dataWindow() = Box2i(V2i(0, 0), V2i(0, 0));
+        header.dataWindow()    = Box2i(V2i(0, 0), V2i(0, 0));
         header.displayWindow() = Box2i(V2i(0, 0), V2i(99, 99));
         pixels.resizeErase(1);
 
         std::cout << "Part " << 0 << " contains no preview image." << std::endl;
 
         return PE_Unknown;
-    } else {
-        const PreviewImage &preview = in.header().previewImage();
-        int w = preview.width();
-        int h = preview.height();
+    }
+    else
+    {
+        const PreviewImage& preview = in.header().previewImage();
+        int                 w       = preview.width();
+        int                 h       = preview.height();
 
-        header.displayWindow() = Box2i(V2i(0, 0), V2i(w - 1, h - 1));
-        header.dataWindow() = header.displayWindow();
+        header.displayWindow()    = Box2i(V2i(0, 0), V2i(w - 1, h - 1));
+        header.dataWindow()       = header.displayWindow();
         header.pixelAspectRatio() = 1;
 
         pixels.resizeErase(w * h);
@@ -525,9 +557,10 @@ loadPreviewImage(const char fileName[],
         // into linear 16-bit floating-point pixels.
         //
 
-        for (int i = 0; i < w * h; ++i) {
-            Rgba &p = pixels[i];
-            const PreviewRgba &q = preview.pixels()[i];
+        for (int i = 0; i < w * h; ++i)
+        {
+            Rgba&              p = pixels[i];
+            const PreviewRgba& q = preview.pixels()[i];
 
             p.r = 2.f * pow(q.r / 255.f, 2.2f);
             p.g = 2.f * pow(q.g / 255.f, 2.2f);
@@ -542,26 +575,25 @@ loadPreviewImage(const char fileName[],
     return PE_OK;
 }
 
-int
-loadImageChannel(const char fileName[],
-                 const char channelName[],
-                 Header &header,
-                 Array<Rgba> &pixels, MipSet* pMipSet) {
+int loadImageChannel(const char fileName[], const char channelName[], Header& header, Array<Rgba>& pixels, MipSet* pMipSet)
+{
     MultiPartInputFile inmaster(fileName);
-    InputPart in(inmaster, 0);
+    InputPart          in(inmaster, 0);
 
     header = in.header();
 
-    if (const Channel *ch = in.header().channels().findChannel(channelName)) {
-        Box2i &dataWindow = header.dataWindow();
-        int dw = dataWindow.max.x - dataWindow.min.x + 1;
-        int dh = dataWindow.max.y - dataWindow.min.y + 1;
-        int dx = dataWindow.min.x;
-        int dy = dataWindow.min.y;
+    if (const Channel* ch = in.header().channels().findChannel(channelName))
+    {
+        Box2i& dataWindow = header.dataWindow();
+        int    dw         = dataWindow.max.x - dataWindow.min.x + 1;
+        int    dh         = dataWindow.max.y - dataWindow.min.y + 1;
+        int    dx         = dataWindow.min.x;
+        int    dy         = dataWindow.min.y;
 
         pixels.resizeErase(dw * dh);
 
-        for (int i = 0; i < dw * dh; ++i) {
+        for (int i = 0; i < dw * dh; ++i)
+        {
             pixels[i].r = CMP_HALF::qNan();
             pixels[i].g = CMP_HALF::qNan();
             pixels[i].b = CMP_HALF::qNan();
@@ -569,18 +601,16 @@ loadImageChannel(const char fileName[],
         FrameBuffer fb;
 
         fb.insert(channelName,
-                  Slice(HALF,
-                        (char *)&pixels[-dx - dy * dw].g,
-                        sizeof(Rgba) * ch->xSampling,
-                        sizeof(Rgba) * ch->ySampling * dw,
-                        ch->xSampling,
-                        ch->ySampling));
+                  Slice(HALF, (char*)&pixels[-dx - dy * dw].g, sizeof(Rgba) * ch->xSampling, sizeof(Rgba) * ch->ySampling * dw, ch->xSampling, ch->ySampling));
 
         in.setFrameBuffer(fb);
 
-        try {
+        try
+        {
             in.readPixels(dataWindow.min.y, dataWindow.max.y);
-        } catch (const std::exception &e) {
+        }
+        catch (const std::exception& e)
+        {
             //
             // If some of the pixels in the file cannot be read,
             // print an error message, and return a partial image
@@ -590,16 +620,21 @@ loadImageChannel(const char fileName[],
             std::cerr << e.what() << std::endl;
         }
 
-        for (int i = 0; i < dw * dh; ++i) {
+        for (int i = 0; i < dw * dh; ++i)
+        {
             pixels[i].r = pixels[i].g;
             pixels[i].b = pixels[i].g;
         }
 
         if (!allocateMipSet(pixels, pMipSet, dw, dh))
             return PE_Unknown;
-    } else {
-        std::cerr << "Image file \"" << fileName << "\" has no "
-                  "channel named \"" << channelName << "\"." << std::endl;
+    }
+    else
+    {
+        std::cerr << "Image file \"" << fileName
+                  << "\" has no "
+                     "channel named \""
+                  << channelName << "\"." << std::endl;
 
         //
         //no data for this channel
@@ -611,40 +646,39 @@ loadImageChannel(const char fileName[],
     }
 
     return PE_OK;
-
 }
 
-int
-loadTiledImageChannel(const char fileName[],
-                      const char channelName[],
-                      int lx,
-                      int ly,
-                      Header &header,
-                      Array<Rgba> &pixels, MipSet* pMipSet) {
+int loadTiledImageChannel(const char fileName[], const char channelName[], int lx, int ly, Header& header, Array<Rgba>& pixels, MipSet* pMipSet)
+{
     MultiPartInputFile inmaster(fileName);
-    TiledInputPart in(inmaster, 0);
+    TiledInputPart     in(inmaster, 0);
 
-    if (!in.isValidLevel(lx, ly)) {
-        std::cerr<< "Level (" << lx << ", " << ly << ") does "
-                 "not exist in file " << fileName << ".";
+    if (!in.isValidLevel(lx, ly))
+    {
+        std::cerr << "Level (" << lx << ", " << ly
+                  << ") does "
+                     "not exist in file "
+                  << fileName << ".";
         return PE_Unknown;
     }
 
     header = in.header();
 
-    if (const Channel *ch = in.header().channels().findChannel(channelName)) {
-        header.dataWindow() = in.dataWindowForLevel(lx, ly);
+    if (const Channel* ch = in.header().channels().findChannel(channelName))
+    {
+        header.dataWindow()    = in.dataWindowForLevel(lx, ly);
         header.displayWindow() = header.dataWindow();
 
-        Box2i &dataWindow = header.dataWindow();
-        int dw = dataWindow.max.x - dataWindow.min.x + 1;
-        int dh = dataWindow.max.y - dataWindow.min.y + 1;
-        int dx = dataWindow.min.x;
-        int dy = dataWindow.min.y;
+        Box2i& dataWindow = header.dataWindow();
+        int    dw         = dataWindow.max.x - dataWindow.min.x + 1;
+        int    dh         = dataWindow.max.y - dataWindow.min.y + 1;
+        int    dx         = dataWindow.min.x;
+        int    dy         = dataWindow.min.y;
 
         pixels.resizeErase(dw * dh);
 
-        for (int i = 0; i < dw * dh; ++i) {
+        for (int i = 0; i < dw * dh; ++i)
+        {
             pixels[i].r = CMP_HALF::qNan();
             pixels[i].g = CMP_HALF::qNan();
             pixels[i].b = CMP_HALF::qNan();
@@ -653,16 +687,12 @@ loadTiledImageChannel(const char fileName[],
         FrameBuffer fb;
 
         fb.insert(channelName,
-                  Slice(HALF,
-                        (char *)&pixels[-dx - dy * dw].g,
-                        sizeof(Rgba) * ch->xSampling,
-                        sizeof(Rgba) * ch->ySampling * dw,
-                        ch->xSampling,
-                        ch->ySampling));
+                  Slice(HALF, (char*)&pixels[-dx - dy * dw].g, sizeof(Rgba) * ch->xSampling, sizeof(Rgba) * ch->ySampling * dw, ch->xSampling, ch->ySampling));
 
         in.setFrameBuffer(fb);
 
-        try {
+        try
+        {
             int tx = in.numXTiles(lx);
             int ty = in.numYTiles(ly);
 
@@ -671,16 +701,21 @@ loadTiledImageChannel(const char fileName[],
             // the same order as they are stored in the file.
             //
 
-            if (in.header().lineOrder() == INCREASING_Y) {
+            if (in.header().lineOrder() == INCREASING_Y)
+            {
                 for (int y = 0; y < ty; ++y)
                     for (int x = 0; x < tx; ++x)
                         in.readTile(x, y, lx, ly);
-            } else {
+            }
+            else
+            {
                 for (int y = ty - 1; y >= 0; --y)
                     for (int x = 0; x < tx; ++x)
                         in.readTile(x, y, lx, ly);
             }
-        } catch (const std::exception &e) {
+        }
+        catch (const std::exception& e)
+        {
             //
             // If some of the tiles in the file cannot be read,
             // print an error message, and return a partial image
@@ -690,16 +725,21 @@ loadTiledImageChannel(const char fileName[],
             std::cerr << e.what() << std::endl;
         }
 
-        for (int i = 0; i < dw * dh; ++i) {
+        for (int i = 0; i < dw * dh; ++i)
+        {
             pixels[i].r = pixels[i].g;
             pixels[i].b = pixels[i].g;
         }
 
         if (!allocateMipSet(pixels, pMipSet, dw, dh))
             return PE_Unknown;
-    } else {
-        std::cerr << "Image file \"" << fileName << "\" part " << 0 << " "
-                  "has no channel named \"" << channelName << "\"." << std::endl;
+    }
+    else
+    {
+        std::cerr << "Image file \"" << fileName << "\" part " << 0
+                  << " "
+                     "has no channel named \""
+                  << channelName << "\"." << std::endl;
 
         //
         //no data for this channel
@@ -709,36 +749,36 @@ loadTiledImageChannel(const char fileName[],
     }
 
     return PE_OK;
-
 }
 
-int
-loadDeepScanlineImage(MultiPartInputFile &inmaster,
-                      int &zsize,
-                      Header &header,
-                      Array<Rgba> &pixels,
-                      Array<float*> &zbuff,
-                      Array<unsigned int> &sampleCount,
-                      bool deepComp, MipSet* pMipSet) {
+int loadDeepScanlineImage(MultiPartInputFile&  inmaster,
+                          int&                 zsize,
+                          Header&              header,
+                          Array<Rgba>&         pixels,
+                          Array<float*>&       zbuff,
+                          Array<unsigned int>& sampleCount,
+                          bool                 deepComp,
+                          MipSet*              pMipSet)
+{
     DeepScanLineInputPart in(inmaster, 0);
     header = in.header();
 
-    Box2i &dataWindow = header.dataWindow();
-    int dw = dataWindow.max.x - dataWindow.min.x + 1;
-    int dh = dataWindow.max.y - dataWindow.min.y + 1;
-    int dx = dataWindow.min.x;
-    int dy = dataWindow.min.y;
+    Box2i& dataWindow = header.dataWindow();
+    int    dw         = dataWindow.max.x - dataWindow.min.x + 1;
+    int    dh         = dataWindow.max.y - dataWindow.min.y + 1;
+    int    dx         = dataWindow.min.x;
+    int    dy         = dataWindow.min.y;
 
     // display black right now
     pixels.resizeErase(dw * dh);
     memset(pixels, 0, (dw * dh) * (sizeof(Rgba)));
 
-    Array< CMP_HALF* > dataR;
-    Array< CMP_HALF* > dataG;
-    Array< CMP_HALF* > dataB;
+    Array<CMP_HALF*> dataR;
+    Array<CMP_HALF*> dataG;
+    Array<CMP_HALF*> dataB;
 
-    Array< float* > zback;
-    Array< CMP_HALF* > alpha;
+    Array<float*>    zback;
+    Array<CMP_HALF*> alpha;
 
     zsize = dw * dh;
     zbuff.resizeErase(zsize);
@@ -750,85 +790,74 @@ loadDeepScanlineImage(MultiPartInputFile &inmaster,
     dataB.resizeErase(dw * dh);
     sampleCount.resizeErase(dw * dh);
 
-    int rgbflag = 0;
+    int rgbflag      = 0;
     int deepCompflag = 0;
 
-    if (header.channels().findChannel("R")) {
+    if (header.channels().findChannel("R"))
+    {
         rgbflag = 1;
-    } else if (header.channels().findChannel("B")) {
+    }
+    else if (header.channels().findChannel("B"))
+    {
         rgbflag = 1;
-    } else if (header.channels().findChannel("G")) {
+    }
+    else if (header.channels().findChannel("G"))
+    {
         rgbflag = 1;
     }
 
-    if (header.channels().findChannel("Z") &&
-            header.channels().findChannel("A") &&
-            deepComp) {
+    if (header.channels().findChannel("Z") && header.channels().findChannel("A") && deepComp)
+    {
         deepCompflag = 1;
     }
 
     DeepFrameBuffer fb;
 
-    fb.insertSampleCountSlice(Slice(Imf::PixelType::UINT,
-                                    (char *)(&sampleCount[0]
-                                            - dx - dy * dw),
-                                    sizeof(unsigned int) * 1,
-                                    sizeof(unsigned int) * dw));
+    fb.insertSampleCountSlice(Slice(Imf::PixelType::UINT, (char*)(&sampleCount[0] - dx - dy * dw), sizeof(unsigned int) * 1, sizeof(unsigned int) * dw));
 
     fb.insert("Z",
               DeepSlice(Imf::PixelType::FLOAT,
-                        (char *)(&zbuff[0] - dx - dy * dw),
-                        sizeof(float *) * 1,    // xStride for pointer array
-                        sizeof(float *) * dw,   // yStride for pointer array
-                        sizeof(float) * 1));    // stride for z data sample
+                        (char*)(&zbuff[0] - dx - dy * dw),
+                        sizeof(float*) * 1,   // xStride for pointer array
+                        sizeof(float*) * dw,  // yStride for pointer array
+                        sizeof(float) * 1));  // stride for z data sample
     fb.insert("ZBack",
               DeepSlice(Imf::PixelType::FLOAT,
-                        (char *)(&zback[0] - dx - dy * dw),
-                        sizeof(float *) * 1,    // xStride for pointer array
-                        sizeof(float *) * dw,   // yStride for pointer array
-                        sizeof(float) * 1));    // stride for z data sample
+                        (char*)(&zback[0] - dx - dy * dw),
+                        sizeof(float*) * 1,   // xStride for pointer array
+                        sizeof(float*) * dw,  // yStride for pointer array
+                        sizeof(float) * 1));  // stride for z data sample
 
-    if (rgbflag) {
-        fb.insert("R",
-                  DeepSlice(HALF,
-                            (char *)(&dataR[0] - dx - dy * dw),
-                            sizeof(CMP_HALF *) * 1,
-                            sizeof(CMP_HALF *) * dw,
-                            sizeof(CMP_HALF) * 1));
+    if (rgbflag)
+    {
+        fb.insert("R", DeepSlice(HALF, (char*)(&dataR[0] - dx - dy * dw), sizeof(CMP_HALF*) * 1, sizeof(CMP_HALF*) * dw, sizeof(CMP_HALF) * 1));
 
-        fb.insert("G",
-                  DeepSlice(HALF,
-                            (char *)(&dataG[0] - dx - dy * dw),
-                            sizeof(CMP_HALF *) * 1,
-                            sizeof(CMP_HALF *) * dw,
-                            sizeof(CMP_HALF) * 1));
+        fb.insert("G", DeepSlice(HALF, (char*)(&dataG[0] - dx - dy * dw), sizeof(CMP_HALF*) * 1, sizeof(CMP_HALF*) * dw, sizeof(CMP_HALF) * 1));
 
-        fb.insert("B",
-                  DeepSlice(HALF,
-                            (char *)(&dataB[0] - dx - dy * dw),
-                            sizeof(CMP_HALF *) * 1,
-                            sizeof(CMP_HALF *) * dw,
-                            sizeof(CMP_HALF) * 1));
+        fb.insert("B", DeepSlice(HALF, (char*)(&dataB[0] - dx - dy * dw), sizeof(CMP_HALF*) * 1, sizeof(CMP_HALF*) * dw, sizeof(CMP_HALF) * 1));
     }
 
     fb.insert("A",
               DeepSlice(HALF,
-                        (char *)(&alpha[0] - dx - dy * dw),
-                        sizeof(CMP_HALF *) * 1,    // xStride for pointer array
-                        sizeof(CMP_HALF *) * dw,   // yStride for pointer array
-                        sizeof(CMP_HALF) * 1,      // stride for z data sample
-                        1, 1,                   // xSampling, ySampling
-                        1.0));                  // fillValue
+                        (char*)(&alpha[0] - dx - dy * dw),
+                        sizeof(CMP_HALF*) * 1,   // xStride for pointer array
+                        sizeof(CMP_HALF*) * dw,  // yStride for pointer array
+                        sizeof(CMP_HALF) * 1,    // stride for z data sample
+                        1,
+                        1,      // xSampling, ySampling
+                        1.0));  // fillValue
 
     in.setFrameBuffer(fb);
 
     in.readPixelSampleCounts(dataWindow.min.y, dataWindow.max.y);
 
-    for (int i = 0; i < dh * dw; i++) {
+    for (int i = 0; i < dh * dw; i++)
+    {
         zbuff[i] = new float[sampleCount[i]];
         zback[i] = new float[sampleCount[i]];
         alpha[i] = new CMP_HALF[sampleCount[i]];
-        if (rgbflag) {
+        if (rgbflag)
+        {
             dataR[i] = new CMP_HALF[sampleCount[i]];
             dataG[i] = new CMP_HALF[sampleCount[i]];
             dataB[i] = new CMP_HALF[sampleCount[i]];
@@ -837,7 +866,8 @@ loadDeepScanlineImage(MultiPartInputFile &inmaster,
 
     in.readPixels(dataWindow.min.y, dataWindow.max.y);
 
-    if (deepCompflag) {
+    if (deepCompflag)
+    {
         //
         //try deep compositing
         //
@@ -845,47 +875,62 @@ loadDeepScanlineImage(MultiPartInputFile &inmaster,
         comp.addSource(&in);
 
         FrameBuffer fbuffer;
-        Rgba *base = pixels - dx - dy * dw;
-        size_t xs = 1 * sizeof(Rgba);
-        size_t ys = dw * sizeof(Rgba);
+        Rgba*       base = pixels - dx - dy * dw;
+        size_t      xs   = 1 * sizeof(Rgba);
+        size_t      ys   = dw * sizeof(Rgba);
 
         fbuffer.insert("R",
                        Slice(HALF,
-                             (char *)&base[0].r,
-                             xs, ys,
-                             1, 1,     // xSampling, ySampling
-                             0.0));    // fillValue
+                             (char*)&base[0].r,
+                             xs,
+                             ys,
+                             1,
+                             1,      // xSampling, ySampling
+                             0.0));  // fillValue
 
         fbuffer.insert("G",
                        Slice(HALF,
-                             (char *)&base[0].g,
-                             xs, ys,
-                             1, 1,     // xSampling, ySampling
-                             0.0));    // fillValue
+                             (char*)&base[0].g,
+                             xs,
+                             ys,
+                             1,
+                             1,      // xSampling, ySampling
+                             0.0));  // fillValue
 
         fbuffer.insert("B",
                        Slice(HALF,
-                             (char *)&base[0].b,
-                             xs, ys,
-                             1, 1,     // xSampling, ySampling
-                             0.0));    // fillValue
+                             (char*)&base[0].b,
+                             xs,
+                             ys,
+                             1,
+                             1,      // xSampling, ySampling
+                             0.0));  // fillValue
 
         fbuffer.insert("A",
                        Slice(HALF,
-                             (char *)&base[0].a,
-                             xs, ys,
-                             1, 1,             // xSampling, ySampling
-                             1.0));    // fillValue
+                             (char*)&base[0].a,
+                             xs,
+                             ys,
+                             1,
+                             1,      // xSampling, ySampling
+                             1.0));  // fillValue
         comp.setFrameBuffer(fbuffer);
         comp.readPixels(dataWindow.min.y, dataWindow.max.y);
-    } else {
-        for (int i = 0; i < dh * dw; i++) {
-            if (sampleCount[i] > 0) {
-                if (rgbflag) {
+    }
+    else
+    {
+        for (int i = 0; i < dh * dw; i++)
+        {
+            if (sampleCount[i] > 0)
+            {
+                if (rgbflag)
+                {
                     pixels[i].r = dataR[i][0];
                     pixels[i].g = dataG[i][0];
                     pixels[i].b = dataB[i][0];
-                } else {
+                }
+                else
+                {
                     pixels[i].r = zbuff[i][0];
                     pixels[i].g = alpha[i][0];
                     pixels[i].b = zback[i][0];
@@ -898,37 +943,36 @@ loadDeepScanlineImage(MultiPartInputFile &inmaster,
         return PE_Unknown;
 
     return PE_OK;
-
 }
 
-
-int
-loadDeepTileImage(MultiPartInputFile &inmaster,
-                  int &zsize,
-                  Header &header,
-                  Array<Rgba> &pixels,
-                  Array<float*> &zbuff,
-                  Array<unsigned int> &sampleCount,
-                  bool deepComp, MipSet* pMipSet) {
+int loadDeepTileImage(MultiPartInputFile&  inmaster,
+                      int&                 zsize,
+                      Header&              header,
+                      Array<Rgba>&         pixels,
+                      Array<float*>&       zbuff,
+                      Array<unsigned int>& sampleCount,
+                      bool                 deepComp,
+                      MipSet*              pMipSet)
+{
     DeepTiledInputPart in(inmaster, 0);
     header = in.header();
 
-    Box2i &dataWindow = header.dataWindow();
-    int dw = dataWindow.max.x - dataWindow.min.x + 1;
-    int dh = dataWindow.max.y - dataWindow.min.y + 1;
-    int dx = dataWindow.min.x;
-    int dy = dataWindow.min.y;
+    Box2i& dataWindow = header.dataWindow();
+    int    dw         = dataWindow.max.x - dataWindow.min.x + 1;
+    int    dh         = dataWindow.max.y - dataWindow.min.y + 1;
+    int    dx         = dataWindow.min.x;
+    int    dy         = dataWindow.min.y;
 
     // display black right now
     pixels.resizeErase(dw * dh);
     memset(pixels, 0, (dw * dh) * (sizeof(Rgba)));
 
-    Array< CMP_HALF* > dataR;
-    Array< CMP_HALF* > dataG;
-    Array< CMP_HALF* > dataB;
+    Array<CMP_HALF*> dataR;
+    Array<CMP_HALF*> dataG;
+    Array<CMP_HALF*> dataB;
 
-    Array< float* > zback;
-    Array< CMP_HALF* > alpha;
+    Array<float*>    zback;
+    Array<CMP_HALF*> alpha;
 
     zsize = dw * dh;
     zbuff.resizeErase(zsize);
@@ -940,77 +984,62 @@ loadDeepTileImage(MultiPartInputFile &inmaster,
     dataB.resizeErase(dw * dh);
     sampleCount.resizeErase(dw * dh);
 
-    int rgbflag = 0;
+    int rgbflag      = 0;
     int deepCompflag = 0;
 
-    if (header.channels().findChannel("R")) {
+    if (header.channels().findChannel("R"))
+    {
         rgbflag = 1;
-    } else if (header.channels().findChannel("B")) {
+    }
+    else if (header.channels().findChannel("B"))
+    {
         rgbflag = 1;
-    } else if (header.channels().findChannel("G")) {
+    }
+    else if (header.channels().findChannel("G"))
+    {
         rgbflag = 1;
     }
 
-    if (header.channels().findChannel("Z") &&
-            header.channels().findChannel("A") &&
-            deepComp) {
+    if (header.channels().findChannel("Z") && header.channels().findChannel("A") && deepComp)
+    {
         deepCompflag = 1;
     }
 
     DeepFrameBuffer fb;
 
-    fb.insertSampleCountSlice(Slice(Imf::PixelType::UINT,
-                                    (char *)(&sampleCount[0]
-                                            - dx - dy * dw),
-                                    sizeof(unsigned int) * 1,
-                                    sizeof(unsigned int) * dw));
+    fb.insertSampleCountSlice(Slice(Imf::PixelType::UINT, (char*)(&sampleCount[0] - dx - dy * dw), sizeof(unsigned int) * 1, sizeof(unsigned int) * dw));
 
     fb.insert("Z",
               DeepSlice(Imf::PixelType::FLOAT,
-                        (char *)(&zbuff[0] - dx - dy * dw),
-                        sizeof(float *) * 1,    // xStride for pointer array
-                        sizeof(float *) * dw,   // yStride for pointer array
-                        sizeof(float) * 1));    // stride for z data sample
+                        (char*)(&zbuff[0] - dx - dy * dw),
+                        sizeof(float*) * 1,   // xStride for pointer array
+                        sizeof(float*) * dw,  // yStride for pointer array
+                        sizeof(float) * 1));  // stride for z data sample
     fb.insert("ZBack",
               DeepSlice(Imf::PixelType::FLOAT,
-                        (char *)(&zback[0] - dx - dy * dw),
-                        sizeof(float *) * 1,    // xStride for pointer array
-                        sizeof(float *) * dw,   // yStride for pointer array
-                        sizeof(float) * 1));    // stride for z data sample
+                        (char*)(&zback[0] - dx - dy * dw),
+                        sizeof(float*) * 1,   // xStride for pointer array
+                        sizeof(float*) * dw,  // yStride for pointer array
+                        sizeof(float) * 1));  // stride for z data sample
 
-    if (rgbflag) {
-        fb.insert("R",
-                  DeepSlice(HALF,
-                            (char *)(&dataR[0] - dx - dy * dw),
-                            sizeof(CMP_HALF *) * 1,
-                            sizeof(CMP_HALF *) * dw,
-                            sizeof(CMP_HALF) * 1));
+    if (rgbflag)
+    {
+        fb.insert("R", DeepSlice(HALF, (char*)(&dataR[0] - dx - dy * dw), sizeof(CMP_HALF*) * 1, sizeof(CMP_HALF*) * dw, sizeof(CMP_HALF) * 1));
 
-        fb.insert("G",
-                  DeepSlice(HALF,
-                            (char *)(&dataG[0] - dx - dy * dw),
-                            sizeof(CMP_HALF *) * 1,
-                            sizeof(CMP_HALF *) * dw,
-                            sizeof(CMP_HALF) * 1));
+        fb.insert("G", DeepSlice(HALF, (char*)(&dataG[0] - dx - dy * dw), sizeof(CMP_HALF*) * 1, sizeof(CMP_HALF*) * dw, sizeof(CMP_HALF) * 1));
 
-        fb.insert("B",
-                  DeepSlice(HALF,
-                            (char *)(&dataB[0] - dx - dy * dw),
-                            sizeof(CMP_HALF *) * 1,
-                            sizeof(CMP_HALF *) * dw,
-                            sizeof(CMP_HALF) * 1));
-
-
+        fb.insert("B", DeepSlice(HALF, (char*)(&dataB[0] - dx - dy * dw), sizeof(CMP_HALF*) * 1, sizeof(CMP_HALF*) * dw, sizeof(CMP_HALF) * 1));
     }
 
     fb.insert("A",
               DeepSlice(HALF,
-                        (char *)(&alpha[0] - dx - dy * dw),
-                        sizeof(CMP_HALF *) * 1,    // xStride for pointer array
-                        sizeof(CMP_HALF *) * dw,   // yStride for pointer array
-                        sizeof(CMP_HALF) * 1,      // stride for z data sample
-                        1, 1,                   // xSampling, ySampling
-                        1.0));                  // fillValue
+                        (char*)(&alpha[0] - dx - dy * dw),
+                        sizeof(CMP_HALF*) * 1,   // xStride for pointer array
+                        sizeof(CMP_HALF*) * dw,  // yStride for pointer array
+                        sizeof(CMP_HALF) * 1,    // stride for z data sample
+                        1,
+                        1,      // xSampling, ySampling
+                        1.0));  // fillValue
 
     in.setFrameBuffer(fb);
 
@@ -1019,11 +1048,13 @@ loadDeepTileImage(MultiPartInputFile &inmaster,
 
     in.readPixelSampleCounts(0, numXTiles - 1, 0, numYTiles - 1);
 
-    for (int i = 0; i < dh * dw; i++) {
+    for (int i = 0; i < dh * dw; i++)
+    {
         zbuff[i] = new float[sampleCount[i]];
         zback[i] = new float[sampleCount[i]];
         alpha[i] = new CMP_HALF[sampleCount[i]];
-        if (rgbflag) {
+        if (rgbflag)
+        {
             dataR[i] = new CMP_HALF[sampleCount[i]];
             dataG[i] = new CMP_HALF[sampleCount[i]];
             dataB[i] = new CMP_HALF[sampleCount[i]];
@@ -1032,16 +1063,19 @@ loadDeepTileImage(MultiPartInputFile &inmaster,
 
     in.readTiles(0, numXTiles - 1, 0, numYTiles - 1);
 
-    if (deepCompflag) {
+    if (deepCompflag)
+    {
         // Loop over all the pixels and comp manually
         // @ToDo implent deep compositing for the DeepTile case
-        for (int i = 0; i<zsize; ++i) {
-            float a = alpha[i][0];
+        for (int i = 0; i < zsize; ++i)
+        {
+            float a     = alpha[i][0];
             pixels[i].r = dataR[i][0];
             pixels[i].g = dataG[i][0];
             pixels[i].b = dataB[i][0];
 
-            for (unsigned int s = 1; s<sampleCount[i]; s++) {
+            for (unsigned int s = 1; s < sampleCount[i]; s++)
+            {
                 if (a >= 1.f)
                     break;
 
@@ -1051,14 +1085,21 @@ loadDeepTileImage(MultiPartInputFile &inmaster,
                 a += (1.f - a) * alpha[i][s];
             }
         }
-    } else {
-        for (int i = 0; i < dh * dw; i++) {
-            if (sampleCount[i] > 0) {
-                if (rgbflag) {
+    }
+    else
+    {
+        for (int i = 0; i < dh * dw; i++)
+        {
+            if (sampleCount[i] > 0)
+            {
+                if (rgbflag)
+                {
                     pixels[i].r = dataR[i][0];
                     pixels[i].g = dataG[i][0];
                     pixels[i].b = dataB[i][0];
-                } else {
+                }
+                else
+                {
                     pixels[i].r = zbuff[i][0];
                     pixels[i].g = alpha[i][0];
                     pixels[i].b = zback[i][0];
@@ -1071,11 +1112,12 @@ loadDeepTileImage(MultiPartInputFile &inmaster,
         return PE_Unknown;
 
     return PE_OK;
-
 }
 
-int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSet) {
-    if (!CMP_FileExists( pszFilename )) return -1;
+int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSet)
+{
+    if (!CMP_FileExists(pszFilename))
+        return -1;
 
     // uncomment the flag below to disable EXR mipmap loading / load only level 0
     // pMipSet->m_Flags |= MS_FLAG_DisableMipMapping;
@@ -1083,7 +1125,8 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
     bool isTile = false;
 
     int miplevels = 1;
-    try {
+    try
+    {
         TiledRgbaInputFile file(pszFilename);
         if (!file.isComplete())
             return PE_Unknown;
@@ -1097,32 +1140,36 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
         pMipSet->m_format = CMP_FORMAT_RGBA_16F;  // CMP_FORMAT_ARGB_16F;
 
         //handle mipmap exr load using Tile File
-        if (((isTile)) && (!(pMipSet->m_Flags & MS_FLAG_DisableMipMapping))) {
-            CMP_DWORD dwWidth = file.levelWidth(0);
+        if (((isTile)) && (!(pMipSet->m_Flags & MS_FLAG_DisableMipMapping)))
+        {
+            CMP_DWORD dwWidth  = file.levelWidth(0);
             CMP_DWORD dwHeight = file.levelHeight(0);
 
-            if (!EXR_CMips->AllocateMipSet(pMipSet, CF_Float16, TDT_ARGB, TT_2D, dwWidth, dwHeight, 1)) { // depthsupport, what should nDepth be set as here?
+            if (!EXR_CMips->AllocateMipSet(pMipSet, CF_Float16, TDT_ARGB, TT_2D, dwWidth, dwHeight, 1))
+            {  // depthsupport, what should nDepth be set as here?
                 return PE_Unknown;
             }
 
-            pMipSet->m_dwFourCC = 0;
+            pMipSet->m_dwFourCC  = 0;
             pMipSet->m_dwFourCC2 = 0;
 
             // if the mip levels stored in file is bigger then what we can handle reset the levels
             // to match ours
-            if (miplevels > pMipSet->m_nMaxMipLevels )
-                pMipSet->m_nMipLevels  = pMipSet->m_nMaxMipLevels;
+            if (miplevels > pMipSet->m_nMaxMipLevels)
+                pMipSet->m_nMipLevels = pMipSet->m_nMaxMipLevels;
             else
-                pMipSet->m_nMipLevels  = miplevels;
+                pMipSet->m_nMipLevels = miplevels;
 
             // No get the mip level data.
-            for (int i = 0; i < pMipSet->m_nMipLevels; i++) {
-                if (!file.isValidLevel(i, i)) {
+            for (int i = 0; i < pMipSet->m_nMipLevels; i++)
+            {
+                if (!file.isValidLevel(i, i))
+                {
                     pMipSet->m_nMipLevels = i;
                     break;
                 }
 
-                dwWidth = file.levelWidth(i);
+                dwWidth  = file.levelWidth(i);
                 dwHeight = file.levelHeight(i);
                 Array2D<Rgba> pixels(dwHeight, dwWidth);
                 pixels.resizeErase(dwHeight, dwWidth);
@@ -1134,17 +1181,22 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
                 if (!EXR_CMips->AllocateMipLevelData(EXR_CMips->GetMipLevel(pMipSet, i), dwWidth, dwHeight, CF_Float16, pMipSet->m_TextureDataType))
                     return PE_Unknown;
 
-                Rgba2Texture(pixels, (CMP_HALFSHORT* )EXR_CMips->GetMipLevel(pMipSet, i)->m_pbData, dwWidth, dwHeight);
+                Rgba2Texture(pixels, (CMP_HALFSHORT*)EXR_CMips->GetMipLevel(pMipSet, i)->m_pbData, dwWidth, dwHeight);
             }
             return PE_OK;
-        } // Tiled file
-    } catch (...) {
-        try {
-            int numparts = 0;
-            MultiPartInputFile *infile = new MultiPartInputFile(pszFilename);
-            numparts = infile->parts();
+        }  // Tiled file
+    }
+    catch (...)
+    {
+        try
+        {
+            int                 numparts = 0;
+            MultiPartInputFile* infile   = new MultiPartInputFile(pszFilename);
+            numparts                     = infile->parts();
             delete infile;
-        } catch (IEX_NAMESPACE::BaseExc &e) {
+        }
+        catch (IEX_NAMESPACE::BaseExc& e)
+        {
             if (EXR_CMips)
                 EXR_CMips->PrintError(e.what());
             return PE_Unknown;
@@ -1152,94 +1204,91 @@ int Plugin_EXR::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
     }
 
     //for non mipmap load
-    const char *channel = 0;
-    const char *layer = 0;
+    const char* channel = 0;
+    const char* layer   = 0;
 
-    Header header;
-    Array<Rgba>pixels;
-    Array<float*>zbuff;
+    Header              header;
+    Array<Rgba>         pixels;
+    Array<float*>       zbuff;
     Array<unsigned int> sampleCount;
     bool                deepComp = false;
-    bool preview = false;
-    int zsize =0;
+    bool                preview  = false;
+    int                 zsize    = 0;
 
     //loadImage
     MultiPartInputFile inmaster(pszFilename);
-    Header h = inmaster.header(0);
-    std::string  type = h.type();
+    Header             h    = inmaster.header(0);
+    std::string        type = h.type();
 
-    if (type == DEEPTILE) {
-        loadDeepTileImage(inmaster, zsize,
-                          header,
-                          pixels,
-                          zbuff,
-                          sampleCount,
-                          deepComp, pMipSet);
-    } else if (type == DEEPSCANLINE) {
-        loadDeepScanlineImage(inmaster,
-                              zsize,
-                              header,
-                              pixels,
-                              zbuff,
-                              sampleCount,
-                              deepComp, pMipSet);
+    if (type == DEEPTILE)
+    {
+        loadDeepTileImage(inmaster, zsize, header, pixels, zbuff, sampleCount, deepComp, pMipSet);
+    }
+    else if (type == DEEPSCANLINE)
+    {
+        loadDeepScanlineImage(inmaster, zsize, header, pixels, zbuff, sampleCount, deepComp, pMipSet);
     }
 
-
-    else if (preview) {
+    else if (preview)
+    {
         loadPreviewImage(pszFilename, header, pixels, pMipSet);
-    } else {
-        if (channel) {
-
-            loadImageChannel(pszFilename,
-                             channel,
-                             header,
-                             pixels, pMipSet);
-        } else {
-            loadImage(pszFilename,
-                      layer,
-                      header,
-                      pixels, pMipSet);
+    }
+    else
+    {
+        if (channel)
+        {
+            loadImageChannel(pszFilename, channel, header, pixels, pMipSet);
+        }
+        else
+        {
+            loadImage(pszFilename, layer, header, pixels, pMipSet);
         }
     }
     return PE_OK;
 }
 
-int Plugin_EXR::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSet) {
-    if(!TC_PluginFileSupportsFormat(NULL, pMipSet)) {
+int Plugin_EXR::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSet)
+{
+    if (!TC_PluginFileSupportsFormat(NULL, pMipSet))
+    {
         if (EXR_CMips)
-            EXR_CMips->PrintError("Error(%d): EXR Plugin ID(%d) Filename=%s\n unsupported format, EXR only support 16F type.",EL_Error,IDS_ERROR_UNSUPPORTED_TYPE,pszFilename);
+            EXR_CMips->PrintError(
+                "Error(%d): EXR Plugin ID(%d) Filename=%s\n unsupported format, EXR only support 16F type.", EL_Error, IDS_ERROR_UNSUPPORTED_TYPE, pszFilename);
         return PE_Unknown;
     }
 
     LevelMode levelMode = (pMipSet->m_nMipLevels > 1) ? MIPMAP_LEVELS : ONE_LEVEL;
 
     // Save Single EXR file
-    if (pMipSet->m_nMipLevels == 1) {
-
-        int  image_width    = pMipSet->m_nWidth;
-        int  image_height    = pMipSet->m_nHeight;
-        Array2D<Rgba> pixels (image_height,image_width);
+    if (pMipSet->m_nMipLevels == 1)
+    {
+        int           image_width  = pMipSet->m_nWidth;
+        int           image_height = pMipSet->m_nHeight;
+        Array2D<Rgba> pixels(image_height, image_width);
         pixels.resizeErase(image_height, image_width);
         string sFile = pszFilename;
 
-        CMP_HALFSHORT *data = EXR_CMips->GetMipLevel(pMipSet, 0)->m_phfsData;
+        CMP_HALFSHORT* data = EXR_CMips->GetMipLevel(pMipSet, 0)->m_phfsData;
 
         Texture2Rgba(data, pixels, image_width, image_height, pMipSet->m_isDeCompressed);
 
-        Exr::writeRgba(sFile,pixels,image_width,image_height);
+        Exr::writeRgba(sFile, pixels, image_width, image_height);
     }
     // Save Muliple MIP levels as TiledRGB
-    else {
+    else
+    {
         TiledRgbaOutputFile file(pszFilename, pMipSet->m_nWidth, pMipSet->m_nHeight, TILE_WIDTH, TILE_HEIGHT, levelMode, ROUND_DOWN);
-        for(int i = 0; i < file.numLevels(); i++) {
+        for (int i = 0; i < file.numLevels(); i++)
+        {
             Array2D<Rgba> pixels(file.levelHeight(i), file.levelWidth(i));
             pixels.resizeErase(file.levelHeight(i), file.levelWidth(i));
-            CMP_HALFSHORT *data = EXR_CMips->GetMipLevel(pMipSet, i)->m_phfsData;
+            CMP_HALFSHORT* data = EXR_CMips->GetMipLevel(pMipSet, i)->m_phfsData;
 
-            if(data) {
+            if (data)
+            {
                 Texture2Rgba(data, pixels, file.levelWidth(i), file.levelHeight(i), pMipSet->m_isDeCompressed);
-            } else
+            }
+            else
                 memset(data, 0, EXR_CMips->GetMipLevel(pMipSet, 0)->m_dwLinearSize);
 
             file.setFrameBuffer(pixels[0], 1, file.levelWidth(i));
@@ -1250,12 +1299,13 @@ int Plugin_EXR::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
     return PE_OK;
 }
 
-bool TC_PluginFileSupportsFormat(const HFILETYPE, const MipSet* pMipSet) {
+bool TC_PluginFileSupportsFormat(const HFILETYPE, const MipSet* pMipSet)
+{
     assert(pMipSet);
-    if(pMipSet == NULL)
+    if (pMipSet == NULL)
         return false;
 
-    if(pMipSet->m_TextureType != TT_2D)
+    if (pMipSet->m_TextureType != TT_2D)
         return false;
 
     return (pMipSet->m_ChannelFormat == CF_Float16) && (pMipSet->m_TextureDataType == TDT_ARGB || pMipSet->m_TextureDataType == TDT_XRGB) ? true : false;

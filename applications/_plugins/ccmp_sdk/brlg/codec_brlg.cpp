@@ -1,5 +1,5 @@
- //=====================================================================
-// Copyright (c) 2016-2022    Advanced Micro Devices, Inc. All rights reserved.
+//=====================================================================
+// Copyright (c) 2016-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -7,10 +7,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
@@ -27,31 +27,25 @@
 //#define BUILD_AS_PLUGIN_DLL
 
 #ifdef BUILD_AS_PLUGIN_DLL
- DECLARE_PLUGIN(Codec_Plugin_BRLG)
- SET_PLUGIN_TYPE("ENCODER")
+DECLARE_PLUGIN(Codec_Plugin_BRLG)
+SET_PLUGIN_TYPE("ENCODER")
 SET_PLUGIN_NAME("BRLG")
 #else
- void* make_Codec_Plugin_BRLG()
- {
-     return new Codec_Plugin_BRLG;
- }
+void* make_Codec_Plugin_BRLG()
+{
+    return new Codec_Plugin_BRLG;
+}
 #endif
 
 CMP_BRLGEncode g_BRLGEncodeOptions;
 
-#define GPU_BRLG_COMPUTEFILE       "./plugins/Compute/BRLG_Encode_kernel.cpp"
+#define GPU_BRLG_COMPUTEFILE "./plugins/Compute/BRLG_Encode_kernel.cpp"
 
-void CompressBlockBRLG_Internal(
-    CMP_Vec4uc  srcBlockTemp[MAX_SUBSET_SIZE],
-    CMP_GLOBAL  CGU_UINT8 *block_out,
-    CMP_GLOBAL  CMP_BRLGEncode *BRLGEncode);
+void CompressBlockBRLG_Internal(CMP_Vec4uc srcBlockTemp[MAX_SUBSET_SIZE], CMP_GLOBAL CGU_UINT8* block_out, CMP_GLOBAL CMP_BRLGEncode* BRLGEncode);
 
-void BRLG_DecompressBlock(
-    CMP_GLOBAL CGU_UINT8  out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-    CGU_UINT8  in[COMPRESSED_BLOCK_SIZE]);
+void BRLG_DecompressBlock(CMP_GLOBAL CGU_UINT8 out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG], CGU_UINT8 in[COMPRESSED_BLOCK_SIZE]);
 
 extern CGU_UINT8 g_maxModes;
-
 
 Codec_Plugin_BRLG::Codec_Plugin_BRLG()
 {
@@ -64,23 +58,23 @@ Codec_Plugin_BRLG::~Codec_Plugin_BRLG()
 
 int Codec_Plugin_BRLG::TC_PluginSetSharedIO(void* Shared)
 {
-    CMips = reinterpret_cast<CMIPS *> (Shared);
+    CMips = reinterpret_cast<CMIPS*>(Shared);
     return 0;
 }
 
 int Codec_Plugin_BRLG::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
-{ 
-    pPluginVersion->guid                    = g_GUID;
-    pPluginVersion->dwAPIVersionMajor       = TC_API_VERSION_MAJOR;
-    pPluginVersion->dwAPIVersionMinor       = TC_API_VERSION_MINOR;
-    pPluginVersion->dwPluginVersionMajor    = TC_PLUGIN_VERSION_MAJOR;
-    pPluginVersion->dwPluginVersionMinor    = TC_PLUGIN_VERSION_MINOR;
+{
+    pPluginVersion->guid                 = g_GUID;
+    pPluginVersion->dwAPIVersionMajor    = TC_API_VERSION_MAJOR;
+    pPluginVersion->dwAPIVersionMinor    = TC_API_VERSION_MINOR;
+    pPluginVersion->dwPluginVersionMajor = TC_PLUGIN_VERSION_MAJOR;
+    pPluginVersion->dwPluginVersionMinor = TC_PLUGIN_VERSION_MINOR;
     return 0;
 }
 
 void* Codec_Plugin_BRLG::TC_Create()
 {
-    return (void*) new BRLG_EncodeClass();
+    return (void*)new BRLG_EncodeClass();
 }
 
 void Codec_Plugin_BRLG::TC_Destroy(void* codec)
@@ -89,13 +83,12 @@ void Codec_Plugin_BRLG::TC_Destroy(void* codec)
     codec = nullptr;
 }
 
-
 char* Codec_Plugin_BRLG::TC_ComputeSourceFile(CGU_UINT32 Compute_type)
 {
     switch (Compute_type)
     {
     case CMP_Compute_type::CMP_GPU_OCL:
-            return(GPU_BRLG_COMPUTEFILE);
+        return (GPU_BRLG_COMPUTEFILE);
     }
 
     cmp_autodetected_cpufeatures(CMP_MATH_USE_CPU);
@@ -104,68 +97,75 @@ char* Codec_Plugin_BRLG::TC_ComputeSourceFile(CGU_UINT32 Compute_type)
 
 int Codec_Plugin_BRLG::TC_Init(void* kernel_options)
 {
-    m_KernelOptions = reinterpret_cast<KernelOptions *>(kernel_options);
+    m_KernelOptions = reinterpret_cast<KernelOptions*>(kernel_options);
 
-    if (!m_KernelOptions)    return (-1);
+    if (!m_KernelOptions)
+        return (-1);
 
     memset(&g_BRLGEncodeOptions, 0, sizeof(CMP_BRLGEncode));
 
-
-    g_BRLGEncodeOptions.m_srcSize = m_KernelOptions->width*m_KernelOptions->height;
+    g_BRLGEncodeOptions.m_srcSize = m_KernelOptions->width * m_KernelOptions->height;
 
     m_KernelOptions->data         = &g_BRLGEncodeOptions;
-    m_KernelOptions->size        = sizeof(g_BRLGEncodeOptions);
-    g_BRLGEncodeOptions.m_quality  = m_KernelOptions->fquality;
+    m_KernelOptions->size         = sizeof(g_BRLGEncodeOptions);
+    g_BRLGEncodeOptions.m_quality = m_KernelOptions->fquality;
 
-    return(0);
+    return (0);
 }
 
 void Codec_Plugin_BRLG::TC_Start(){};
 void Codec_Plugin_BRLG::TC_End(){};
 
-int BRLG_EncodeClass::DecompressBlock(void *cmpin, void *srcout)
+int BRLG_EncodeClass::DecompressBlock(void* cmpin, void* srcout)
 {
-    BRLG_DecompressBlock(CMP_GLOBAL (CGU_UINT8  (*)[MAX_DIMENSION_BIG])srcout, (CGU_UINT8 *)cmpin);
+    BRLG_DecompressBlock(CMP_GLOBAL(CGU_UINT8(*)[MAX_DIMENSION_BIG]) srcout, (CGU_UINT8*)cmpin);
     return 0;
 }
 
-int BRLG_EncodeClass::DecompressBlock(CGU_UINT32 xBlock, CGU_UINT32 yBlock, void *srcin, void *cmpout)
+int BRLG_EncodeClass::DecompressBlock(CGU_UINT32 xBlock, CGU_UINT32 yBlock, void* srcin, void* cmpout)
 {
     // ToDo: Implement block level decoder
-    if ((xBlock != 0) && (yBlock != 0)) return -1;
-    BRLG_DecompressBlock(CMP_GLOBAL(CGU_UINT8(*)[MAX_DIMENSION_BIG])cmpout, (CGU_UINT8 *)srcin);
+    if ((xBlock != 0) && (yBlock != 0))
+        return -1;
+    BRLG_DecompressBlock(CMP_GLOBAL(CGU_UINT8(*)[MAX_DIMENSION_BIG]) cmpout, (CGU_UINT8*)srcin);
     return 0;
 }
 
-int BRLG_EncodeClass::CompressTexture(void *srcin, void *cmpout,void *processOptions)
+int BRLG_EncodeClass::CompressTexture(void* srcin, void* cmpout, void* processOptions)
 {
     // ToDo: Implement texture level compression
-    if (processOptions == NULL) return -1;
-    if (srcin  == NULL) return -1;
-    if (cmpout == NULL) return -1;
+    if (processOptions == NULL)
+        return -1;
+    if (srcin == NULL)
+        return -1;
+    if (cmpout == NULL)
+        return -1;
     // MipSet* pSourceTexture  =  reinterpret_cast<MipSet *>(srcin);
     // MipSet* pDestTexture    =  reinterpret_cast<MipSet *>(cmpout);
     return 0;
 }
 
-int BRLG_EncodeClass::DecompressTexture(void *cmpin, void *srcout,void *processOptions)
+int BRLG_EncodeClass::DecompressTexture(void* cmpin, void* srcout, void* processOptions)
 {
     // ToDo: Implement texture level decompression
-    if (processOptions == NULL) return -1;
-    if (srcout == NULL) return -1;
-    if (cmpin  == NULL) return -1;
+    if (processOptions == NULL)
+        return -1;
+    if (srcout == NULL)
+        return -1;
+    if (cmpin == NULL)
+        return -1;
 
     // MipSet* pSourceTexture =  reinterpret_cast<MipSet *>(cmpin);
     // MipSet* pDestTexture   =  reinterpret_cast<MipSet *>(srcout);
     return 0;
 }
 
-int BRLG_EncodeClass::CompressBlock(void *in, void *out, void *blockoptions)
+int BRLG_EncodeClass::CompressBlock(void* in, void* out, void* blockoptions)
 {
-    CMP_BRLGEncode *brlg_Encode;
+    CMP_BRLGEncode* brlg_Encode;
     if (blockoptions != NULL)
     {
-        brlg_Encode = reinterpret_cast<CMP_BRLGEncode *>(blockoptions);
+        brlg_Encode = reinterpret_cast<CMP_BRLGEncode*>(blockoptions);
     }
     else
     {
@@ -173,33 +173,36 @@ int BRLG_EncodeClass::CompressBlock(void *in, void *out, void *blockoptions)
         brlg_Encode = &brlgDefault;
         SetDefaultBRLGOptions(brlg_Encode);
     }
-    
-    if (m_quality > 1.0f) m_quality = 1.0f;
+
+    if (m_quality > 1.0f)
+        m_quality = 1.0f;
     CompressBlockBRLG_Internal((CMP_Vec4uc*)in, (CGU_UINT8*)out, brlg_Encode);
     return 0;
 }
 
-int BRLG_EncodeClass::CompressBlock(CGU_UINT32 xBlock, CGU_UINT32 yBlock, void *in, void *out) 
+int BRLG_EncodeClass::CompressBlock(CGU_UINT32 xBlock, CGU_UINT32 yBlock, void* in, void* out)
 {
-    CMP_Vec4uc       *ImageSource = (CMP_Vec4uc *)in;
-    if ((m_srcHeight == 0)||(m_srcWidth==0))
+    CMP_Vec4uc* ImageSource = (CMP_Vec4uc*)in;
+    if ((m_srcHeight == 0) || (m_srcWidth == 0))
     {
-         return (-1);
+        return (-1);
     }
 
-    int width_in_blocks  = (m_srcWidth + 3) >> 2;
+    int width_in_blocks = (m_srcWidth + 3) >> 2;
 
-    unsigned int destI = (xBlock*COMPRESSED_BLOCK_SIZE) + (yBlock*width_in_blocks*COMPRESSED_BLOCK_SIZE);
-    int srcindex = 4 * (yBlock * m_srcWidth + xBlock);
-    int blkindex = 0;
+    unsigned int destI    = (xBlock * COMPRESSED_BLOCK_SIZE) + (yBlock * width_in_blocks * COMPRESSED_BLOCK_SIZE);
+    int          srcindex = 4 * (yBlock * m_srcWidth + xBlock);
+    int          blkindex = 0;
 
     CMP_Vec4uc srcData[16];
 
     //Check if it is a complete 4X4 block
-    if (((xBlock + 1)*BlockX <= m_srcWidth) && ((yBlock + 1)*BlockY <= m_srcHeight))
+    if (((xBlock + 1) * BlockX <= m_srcWidth) && ((yBlock + 1) * BlockY <= m_srcHeight))
     {
-        for (int j = 0; j < 4; j++) {
-            for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++)
+        {
+            for (int i = 0; i < 4; i++)
+            {
                 memcpy(&srcData[blkindex++], &ImageSource[srcindex++], sizeof(CMP_Vec4uc));
             }
             srcindex += (m_srcWidth - 4);
@@ -207,7 +210,7 @@ int BRLG_EncodeClass::CompressBlock(CGU_UINT32 xBlock, CGU_UINT32 yBlock, void *
     }
     else
     {
-        CGU_DWORD dwWidth = CMP_MIN(static_cast<unsigned int>(BlockX), m_srcWidth - xBlock*BlockX);
+        CGU_DWORD dwWidth = CMP_MIN(static_cast<unsigned int>(BlockX), m_srcWidth - xBlock * BlockX);
         CGU_DWORD i, j, srcIndex;
 
         //Go through line by line
@@ -217,7 +220,7 @@ int BRLG_EncodeClass::CompressBlock(CGU_UINT32 xBlock, CGU_UINT32 yBlock, void *
             srcIndex = ((yBlock * BlockY + j) * m_srcWidth + (xBlock * BlockX));
             for (i = 0; i < dwWidth; i++)
             {
-                memcpy(&srcData[j*BlockX + i], &ImageSource[srcIndex + i], sizeof(CMP_Vec4uc));
+                memcpy(&srcData[j * BlockX + i], &ImageSource[srcIndex + i], sizeof(CMP_Vec4uc));
             }
             if (i < BlockX)
                 PadLine(i, BlockX, 4, (CGU_UINT8*)&srcData[j * BlockX]);

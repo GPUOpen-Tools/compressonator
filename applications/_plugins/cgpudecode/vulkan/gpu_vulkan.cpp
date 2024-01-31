@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2016    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2016-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -1873,24 +1873,24 @@ void GPU_Vulkan::write(const CMP_Texture* pDestTexture)
 
                 for (x = 0; x < m_width; x++)
                 {
-                     udata.data = *row;
-                     sdata.sb[0] = udata.ub[0] - 127;
-                     sdata.sb[1] = udata.ub[1] - 127;
-                     sdata.sb[2] = udata.ub[2] - 127;
-                     sdata.sb[3] = udata.ub[3] - 127;
-                     *pData      = sdata.data;
+                    udata.data  = *row;
+                    sdata.sb[0] = udata.ub[0] - 127;
+                    sdata.sb[1] = udata.ub[1] - 127;
+                    sdata.sb[2] = udata.ub[2] - 127;
+                    sdata.sb[3] = udata.ub[3] - 127;
+                    *pData      = sdata.data;
 
                     row++;
                     pData++;
                 }
             }
             else
-            for (x = 0; x < m_width; x++)
-            {
-                *pData = *row;
-                row++;
-                pData++;
-            }
+                for (x = 0; x < m_width; x++)
+                {
+                    *pData = *row;
+                    row++;
+                    pData++;
+                }
         }
         else if (swapChain.colorFormat == VK_FORMAT_R16G16B16A16_SFLOAT)
         {

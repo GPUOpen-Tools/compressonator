@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -26,8 +26,9 @@
 
 #include "acdockwidgettitlebar.h"
 
-
-acDockWidgetTitlebar::acDockWidgetTitlebar(QWidget *parent) : parent(parent) {
+acDockWidgetTitlebar::acDockWidgetTitlebar(QWidget* parent)
+    : parent(parent)
+{
     QString PushButtonStyle("QPushButton {border:none; margin: 0px; padding: 0px } QPushButton:hover {border:1px solid black}");
 
     QPalette Pal(palette());
@@ -48,9 +49,8 @@ acDockWidgetTitlebar::acDockWidgetTitlebar(QWidget *parent) : parent(parent) {
     m_buttonToolBar->setToolTip("Show Tool Bar");
     m_buttonToolBarEnabled = true;
 
-
     // Get the OS close button icon
-    QStyle*style = qApp->style();
+    QStyle* style = qApp->style();
 
     QIcon minimizeIcon = style->standardIcon(QStyle::SP_TitleBarMinButton);
     // Create a maximize button and set its icon to that of the OS
@@ -85,11 +85,11 @@ acDockWidgetTitlebar::acDockWidgetTitlebar(QWidget *parent) : parent(parent) {
     m_ButtonCloseEnabled = true;
 
     // Reserve a label for the Titlebar
-    m_label = new QLabel("",this);
+    m_label = new QLabel("", this);
 
     // Set a layout for the new label and pushbutton
     m_layout = new QHBoxLayout(this);
-    m_layout->addWidget(m_label,Qt::AlignLeading);
+    m_layout->addWidget(m_label, Qt::AlignLeading);
     m_layout->addWidget(m_buttonToolBar);
     m_layout->addWidget(m_buttonMinimize);
     m_layout->addWidget(m_buttonNormal);
@@ -109,79 +109,87 @@ acDockWidgetTitlebar::acDockWidgetTitlebar(QWidget *parent) : parent(parent) {
     connect(m_buttonToolBar, SIGNAL(clicked()), this, SLOT(OnToolBarClicked()));
 
     setButtonMinMaxEnabled(false);
-
 }
 
-QString acDockWidgetTitlebar::getTitle() {
+QString acDockWidgetTitlebar::getTitle()
+{
     if (m_label)
         return (m_label->text());
     else
         return "_BadTitle_";
 }
 
-void acDockWidgetTitlebar::setTitle(QString title) {
+void acDockWidgetTitlebar::setTitle(QString title)
+{
     m_label->setText(title);
 }
 
-acDockWidgetTitlebar::~acDockWidgetTitlebar() {
-
+acDockWidgetTitlebar::~acDockWidgetTitlebar()
+{
 }
 
-
-void acDockWidgetTitlebar::onClose() {
+void acDockWidgetTitlebar::onClose()
+{
     if (m_parent)
         m_parent->close();
-    if (m_close) {
+    if (m_close)
+    {
         QString labelText = m_label->text();
-        emit OnAboutToClose(labelText);
+        emit    OnAboutToClose(labelText);
     }
 }
 
-
-void acDockWidgetTitlebar::onMinimize() {
+void acDockWidgetTitlebar::onMinimize()
+{
     if (m_parent)
         m_parent->showMinimized();
 }
 
-void acDockWidgetTitlebar::onMaximize() {
+void acDockWidgetTitlebar::onMaximize()
+{
     m_buttonNormal->show();
     m_buttonMaximize->hide();
     if (m_parent)
         m_parent->showMaximized();
 }
 
-
-void acDockWidgetTitlebar::onNormal() {
+void acDockWidgetTitlebar::onNormal()
+{
     m_buttonNormal->hide();
     m_buttonMaximize->show();
     if (m_parent)
         m_parent->showNormal();
 }
 
-
-
-void acDockWidgetTitlebar::setButtonMinMaxEnabled(bool enabled) {
-    if (enabled) {
+void acDockWidgetTitlebar::setButtonMinMaxEnabled(bool enabled)
+{
+    if (enabled)
+    {
         m_buttonMinimize->show();
         m_buttonNormal->hide();
         m_buttonMaximize->show();
-    } else {
+    }
+    else
+    {
         m_buttonMinimize->hide();
         m_buttonNormal->hide();
         m_buttonMaximize->hide();
     }
 }
 
-
-void acDockWidgetTitlebar::setButtonCloseEnabled(bool enabled) {
+void acDockWidgetTitlebar::setButtonCloseEnabled(bool enabled)
+{
     m_ButtonCloseEnabled = enabled;
     m_buttonClose->setEnabled(enabled);
-    if (enabled) {
+    if (enabled)
+    {
         m_buttonMinimize->show();
         m_buttonNormal->show();
         m_buttonMaximize->show();
         m_buttonClose->show();
-    } else {
+    }
+    else
+    {
         m_buttonMinimize->hide();
         m_buttonNormal->hide();
         m_buttonMaximize->hide();
@@ -189,8 +197,8 @@ void acDockWidgetTitlebar::setButtonCloseEnabled(bool enabled) {
     }
 }
 
-
-void acDockWidgetTitlebar::setButtonToolBarEnabled(bool enabled) {
+void acDockWidgetTitlebar::setButtonToolBarEnabled(bool enabled)
+{
     m_buttonToolBarEnabled = enabled;
     m_buttonToolBar->setEnabled(enabled);
     if (enabled)
@@ -199,26 +207,29 @@ void acDockWidgetTitlebar::setButtonToolBarEnabled(bool enabled) {
         m_buttonToolBar->hide();
 }
 
-void acDockWidgetTitlebar::setButtonToolBarShow(bool isShowing) {
+void acDockWidgetTitlebar::setButtonToolBarShow(bool isShowing)
+{
     if (isShowing)
         m_buttonToolBar->show();
     else
         m_buttonToolBar->hide();
 }
 
-
-void acDockWidgetTitlebar::mousePressEvent(QMouseEvent *event) {
+void acDockWidgetTitlebar::mousePressEvent(QMouseEvent* event)
+{
     //if (event->button() == Qt::LeftButton)
     //    cursor = event->globalPos() - geometry().topLeft();
     event->ignore();
 }
 
-void acDockWidgetTitlebar::mouseMoveEvent(QMouseEvent *event) {
+void acDockWidgetTitlebar::mouseMoveEvent(QMouseEvent* event)
+{
     //if (event->buttons() & Qt::LeftButton)
     //    parent->move(event->globalPos() - cursor);
     event->ignore();
 }
 
-void acDockWidgetTitlebar::OnToolBarClicked() {
+void acDockWidgetTitlebar::OnToolBarClicked()
+{
     emit ToolBarCliked();
 }

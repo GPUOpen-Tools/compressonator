@@ -1,5 +1,5 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
@@ -13,61 +13,59 @@
 #include <math.h>
 #include <float.h>
 
-
-
-inline void GetProjectedCoords(const double* P, unsigned int max_normal_comp, double& Pu, double& Pv) {
+inline void GetProjectedCoords(const double* P, unsigned int max_normal_comp, double& Pu, double& Pv)
+{
     Pu = UCOMP(P, max_normal_comp);
     Pv = VCOMP(P, max_normal_comp);
 }
 
-inline void GetProjectedCoords(const double* P, unsigned int max_normal_comp, float& Pu, float& Pv) {
+inline void GetProjectedCoords(const double* P, unsigned int max_normal_comp, float& Pu, float& Pv)
+{
     Pu = (float)UCOMP(P, max_normal_comp);
     Pv = (float)VCOMP(P, max_normal_comp);
 }
 
-
-
-
-inline void GetProjectedCoords(const float* P, unsigned int max_normal_comp, double& Pu, double& Pv) {
+inline void GetProjectedCoords(const float* P, unsigned int max_normal_comp, double& Pu, double& Pv)
+{
     Pu = UCOMP(P, max_normal_comp);
     Pv = VCOMP(P, max_normal_comp);
 }
 
-
-
-inline void GetProjectedCoords(const float* P, unsigned int max_normal_comp, float& Pu, float& Pv) {
+inline void GetProjectedCoords(const float* P, unsigned int max_normal_comp, float& Pu, float& Pv)
+{
     Pu = UCOMP(P, max_normal_comp);
     Pv = VCOMP(P, max_normal_comp);
 }
 
-
-inline void GetProjectedCoords(const SSEVec4& phit, unsigned int max_normal_comp, SSEVec4& out) {
+inline void GetProjectedCoords(const SSEVec4& phit, unsigned int max_normal_comp, SSEVec4& out)
+{
     out[0] = UCOMP(phit, max_normal_comp);
     out[1] = VCOMP(phit, max_normal_comp);
 }
 
-
-float Cross2D(float ux, float uy, float vx, float vy) {
+float Cross2D(float ux, float uy, float vx, float vy)
+{
     // thanks mathworld!!! :)
     return (ux * vy) - (uy * vx);
 }
 
-
-float TriArea2D(float u1, float v1, float u2, float v2) {
+float TriArea2D(float u1, float v1, float u2, float v2)
+{
     // thanks mathworld!!! :)
     float v = Cross2D(u1, v1, u2, v2);
     return 0.5f * fabs(v);
 }
 
-
-void PreprocessTri(const float* v1, const float* v2, const float* v3, JRTCoreTriangle* pTri) {
+void PreprocessTri(const float* v1, const float* v2, const float* v3, JRTCoreTriangle* pTri)
+{
     // compute triangle normal
 
     // a = v3-v1
     // b = v2-v1
     double a[3], b[3];
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         a[i] = v2[i] - v1[i];
         b[i] = v3[i] - v1[i];
     }
@@ -90,16 +88,18 @@ void PreprocessTri(const float* v1, const float* v2, const float* v3, JRTCoreTri
     // d = -N.P
     double d = 0;
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         d -= v1[i] * normal[i];
     }
-
 
     // find biggest normal component
     int maxcomp = 0;
 
-    for (int i = 1; i < 3; i++) {
-        if (fabs(normal[i]) > fabs(normal[maxcomp])) {
+    for (int i = 1; i < 3; i++)
+    {
+        if (fabs(normal[i]) > fabs(normal[maxcomp]))
+        {
             maxcomp = i;
         }
     }
@@ -110,7 +110,7 @@ void PreprocessTri(const float* v1, const float* v2, const float* v3, JRTCoreTri
     // but its in that one tech report.....
     // shame on me for not commenting as I code
 
-    pTri->Nd = (float) - d;
+    pTri->Nd = (float)-d;
     pTri->Nu = (float)UCOMP(normal, maxcomp);
     pTri->Nv = (float)VCOMP(normal, maxcomp);
 
@@ -121,7 +121,7 @@ void PreprocessTri(const float* v1, const float* v2, const float* v3, JRTCoreTri
     GetProjectedCoords(v1, maxcomp, pTri->V0u, pTri->V0v);
     GetProjectedCoords(a, maxcomp, pTri->E1u, pTri->E1v);
     GetProjectedCoords(b, maxcomp, pTri->E2u, pTri->E2v);
-    double cross = Cross2D(pTri->E1u,  pTri->E1v,  pTri->E2u,  pTri->E2v);
+    double cross = Cross2D(pTri->E1u, pTri->E1v, pTri->E2u, pTri->E2v);
 
     pTri->E1u /= (float)cross;
     pTri->E2u /= (float)cross;
@@ -129,16 +129,15 @@ void PreprocessTri(const float* v1, const float* v2, const float* v3, JRTCoreTri
     pTri->E2v /= (float)cross;
 }
 
-
-
-
-bool SegTest(float segU1, float segU2, float segV1, float segV2, float Pu, float Pv) {
+bool SegTest(float segU1, float segU2, float segV1, float segV2, float Pu, float Pv)
+{
     // U = aU1 + (1-a)U2
     // V = aV1 + (1-a)V2
     // assume U2 > U1
 
-    if (segU1 == segU2) {
-        return false;    //return (segU1 == Pu && (segV1 >= Pv || segV2 >= Pv));
+    if (segU1 == segU2)
+    {
+        return false;  //return (segU1 == Pu && (segV1 >= Pv || segV2 >= Pv));
     }
 
     // locate U = Pu on the segment
@@ -146,7 +145,8 @@ bool SegTest(float segU1, float segU2, float segV1, float segV2, float Pu, float
 
     assert(!cmp_isnan(alpha) && _finite(alpha));
 
-    if (alpha <= 0.0f || alpha > 1.0f) {
+    if (alpha <= 0.0f || alpha > 1.0f)
+    {
         return false;
     }
 
@@ -257,8 +257,14 @@ RETURN_TRUE:
 
 }*/
 
-
-bool RayTriangleIntersect(const JRTCoreTriangle* pTri, const float* origin, const float* direction, float tmin, float tmax, float* tout, float* /*barycentrics_out*/) {
+bool RayTriangleIntersect(const JRTCoreTriangle* pTri,
+                          const float*           origin,
+                          const float*           direction,
+                          float                  tmin,
+                          float                  tmax,
+                          float*                 tout,
+                          float* /*barycentrics_out*/)
+{
 #ifdef JRT_DETAILED_STATS
     JRTStats::Instance().nTotalTriTests++;
 #endif
@@ -273,29 +279,28 @@ bool RayTriangleIntersect(const JRTCoreTriangle* pTri, const float* origin, cons
     UINT nIndexU = UCOMPINDEX(pTri->max_normal_comp);
     UINT nIndexV = VCOMPINDEX(pTri->max_normal_comp);
 
-    float Du = direction[nIndexU];
-    float Dv = direction[nIndexV];
-    float Dw = direction[nIndexW];
+    float Du    = direction[nIndexU];
+    float Dv    = direction[nIndexV];
+    float Dw    = direction[nIndexW];
     float denom = ((Du * pTri->Nu) + (Dv * pTri->Nv) + Dw);
-    float NdotD = 1.0f / (float) denom;
+    float NdotD = 1.0f / (float)denom;
 
-    float Ou = origin[nIndexU];
-    float Ov = origin[nIndexV];
-    float Ow = origin[nIndexW];
+    float Ou    = origin[nIndexU];
+    float Ov    = origin[nIndexV];
+    float Ow    = origin[nIndexW];
     float NdotO = (Ou * pTri->Nu) + (Ov * pTri->Nv) + (Ow);
 
     float t = (pTri->Nd - NdotO) * NdotD;
 
     // if t is outside min/max range, or is parallel to plane, exit here
-    if (t > tmax || t < tmin || denom == 0.0f) {
+    if (t > tmax || t < tmin || denom == 0.0f)
+    {
         return false;
     }
-
 
 #ifdef JRT_DETAILED_STATS
     JRTStats::Instance().nTotalPastPlaneHit++;
 #endif
-
 
     assert(!cmp_isnan(t) && _finite(t) && t >= tmin && t <= tmax);
 
@@ -310,13 +315,12 @@ bool RayTriangleIntersect(const JRTCoreTriangle* pTri, const float* origin, cons
     Pu -= pTri->V0u;
     Pv -= pTri->V0v;
 
-
     float a = Pu * pTri->E2v - Pv * pTri->E2u;
-
 
     float b = pTri->E1u * Pv - pTri->E1v * Pu;
 
-    if (a < 0.0f || b < 0.0f || a + b > 1.0f) {
+    if (a < 0.0f || b < 0.0f || a + b > 1.0f)
+    {
         return false;
     }
 

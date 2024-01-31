@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -23,6 +23,8 @@
 
 #include "compute_gpuhw.h"
 
+#include <cstdarg>
+
 #ifdef USE_CPU_PERFORMANCE_COUNTERS
 #include "cpu_timing.h"  // can use CPU timing but pref is to use GPU counters
 #endif
@@ -39,11 +41,13 @@ extern CMIPS* GPU_HWMips;
 #define KERNEL_ARG_SOURCEINFO 2
 #define KERNEL_ARG_ENCODE 3
 
-static bool is64Bit() {
+static bool is64Bit()
+{
     return (sizeof(int*) == 8);
 }
 
-void PrintCGpu(const char* Format, ...) {
+void PrintCGpu(const char* Format, ...)
+{
     // define a pointer to save argument list
     va_list args;
     char    buff[1024];
@@ -52,9 +56,12 @@ void PrintCGpu(const char* Format, ...) {
     vsprintf_s(buff, Format, args);
     va_end(args);
 
-    if (GPU_HWMips) {
+    if (GPU_HWMips)
+    {
         GPU_HWMips->Print(buff);
-    } else {
+    }
+    else
+    {
         printf(buff);
     }
 }

@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2018-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -46,39 +46,36 @@
 
 // using namespace draco;
 
-
 #ifdef _WIN32
 // {25E831EF-9BC0-4D7C-AFD8-16BE6E0A40CB}
-static const GUID g_GUID =
-{ 0x25e831ef, 0x9bc0, 0x4d7c,{ 0xaf, 0xd8, 0x16, 0xbe, 0x6e, 0xa, 0x40, 0xcb } };
+static const GUID g_GUID = {0x25e831ef, 0x9bc0, 0x4d7c, {0xaf, 0xd8, 0x16, 0xbe, 0x6e, 0xa, 0x40, 0xcb}};
 
 #else
-static const GUID g_GUID = { 0 };
+static const GUID g_GUID = {0};
 #endif
 
-#define TC_PLUGIN_VERSION_MAJOR    1
-#define TC_PLUGIN_VERSION_MINOR    0
+#define TC_PLUGIN_VERSION_MAJOR 1
+#define TC_PLUGIN_VERSION_MINOR 0
 
-
-class Plugin_Mesh_Compressor : public PluginInterface_Mesh {
-  public:
+class Plugin_Mesh_Compressor : public PluginInterface_Mesh
+{
+public:
     Plugin_Mesh_Compressor();
     virtual ~Plugin_Mesh_Compressor();
     int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
-    int TC_PluginSetSharedIO(void *);
+    int TC_PluginSetSharedIO(void*);
 
     int Init();
     int CleanUp();
 
     void* ProcessMesh(void* data, void* setting, void* statsOut, CMP_Feedback_Proc pFeedbackProc);
 
-  private:
+private:
     bool m_InitOK;
-
 };
 
 #ifndef BUILD_AS_PLUGIN_DLL
-extern void *make_Plugin_Mesh_Compressor();
+extern void* make_Plugin_Mesh_Compressor();
 #endif
 
 #endif

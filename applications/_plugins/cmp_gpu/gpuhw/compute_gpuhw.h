@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -42,8 +42,9 @@
 
 using namespace CMP_Compute_Base;
 
-class CGpuHW : public ComputeBase {
-  public:
+class CGpuHW : public ComputeBase
+{
+public:
     CGpuHW(void* kerneloptions);
     CGpuHW(ComputeOptions CLOptions);
     ~CGpuHW();
@@ -64,7 +65,7 @@ class CGpuHW : public ComputeBase {
     void checkProgramStatus() const;
     void shader_destroy();
 
-  private:
+private:
     static void errorCallback(int error, const char* description);
 
     MipSet* m_source;
@@ -95,7 +96,7 @@ class CGpuHW : public ComputeBase {
     int         tupleIndex;
     bool        shouldGenerate;
 
-    size_t m_destination_size;
+    size_t       m_destination_size;
     unsigned int m_width_in_blocks;
     unsigned int m_height_in_blocks;
 
@@ -127,7 +128,8 @@ class CGpuHW : public ComputeBase {
     // OpenCL file (Binary or Source)
     char m_compile_options[256];
 
-    union {
+    union
+    {
         char*          buffer;
         unsigned char* ubuffer;
     } p_program;
@@ -137,14 +139,13 @@ class CGpuHW : public ComputeBase {
     float  time_device = 0;
 
     // Need to fill these
-    BYTE*       p_destination[MAX_MIPLEVEL_SUPPORTED];
-    CMP_BYTE*   m_psource;
-    void        Init();
-    bool        GetPlatformID();
-    bool        GetDeviceInfo();
-    bool        CreateContext();
-    bool        RunKernel();
-
+    CMP_BYTE* p_destination[MAX_MIPLEVEL_SUPPORTED];
+    CMP_BYTE* m_psource;
+    void      Init();
+    bool      GetPlatformID();
+    bool      GetDeviceInfo();
+    bool      CreateContext();
+    bool      RunKernel();
 };
 
 #endif
