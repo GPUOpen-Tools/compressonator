@@ -1,5 +1,5 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
@@ -11,12 +11,12 @@
 //=================================================================================================================================
 #include "stripifier.h"
 
-static const int START = 0;
-static const int LEFT = 1;
-static const int RIGHT = 2;
+static const int START  = 0;
+static const int LEFT   = 1;
+static const int RIGHT  = 2;
 static const int FINISH = 3;
 
-#ifdef _TIMING // if we define _TIMING, then we include Windows.h which defines ERROR
+#ifdef _TIMING  // if we define _TIMING, then we include Windows.h which defines ERROR
 #undef ERROR
 #endif
 static const int ERROR = 9;
@@ -31,15 +31,16 @@ static const int ERROR = 9;
 //          Constructor(s) (private) / Destructor(s) Block
 //
 //=================================================================================================================================
-Face::Face(UINT uVertexIndex1, UINT uVertexIndex2, UINT uVertexIndex3) {
+Face::Face(UINT uVertexIndex1, UINT uVertexIndex2, UINT uVertexIndex3)
+{
     m_vertexIndices[0] = uVertexIndex1;
     m_vertexIndices[1] = uVertexIndex2;
     m_vertexIndices[2] = uVertexIndex3;
-    m_uDegree = 0;
+    m_uDegree          = 0;
 
-    m_neighbors[0] = NULL; // neighbor between vertex 0 and 1
-    m_neighbors[1] = NULL; // neighbor between vertex 1 and 2
-    m_neighbors[2] = NULL; // neighbor between vertex 2 and 3
+    m_neighbors[0] = NULL;  // neighbor between vertex 0 and 1
+    m_neighbors[1] = NULL;  // neighbor between vertex 1 and 2
+    m_neighbors[2] = NULL;  // neighbor between vertex 2 and 3
 
     m_bProcessed = false;
 }
@@ -58,18 +59,21 @@ Face::Face(UINT uVertexIndex1, UINT uVertexIndex2, UINT uVertexIndex3) {
 ///
 /// \return the new number of neighbors
 //=================================================================================================================================
-UINT Face::AddNeighbor(Face* pFace, UINT uSide) {
-    if (m_uDegree < 3 && uSide < 3 && pFace != NULL) { // can't have more than 3 neighbors
-        m_neighbors[ uSide ] = pFace;
+UINT Face::AddNeighbor(Face* pFace, UINT uSide)
+{
+    if (m_uDegree < 3 && uSide < 3 && pFace != NULL)
+    {  // can't have more than 3 neighbors
+        m_neighbors[uSide] = pFace;
         return ++m_uDegree;
-    } else {
+    }
+    else
+    {
         // TODO: report too many neighbors
         //   OR: invalid side
         assert(!"INVALID NEIGHBOR OR SIDE");
     }
 
     return m_uDegree;
-
 }
 
 //=================================================================================================================================
@@ -79,18 +83,23 @@ UINT Face::AddNeighbor(Face* pFace, UINT uSide) {
 ///
 /// \return The number of neighbors remaining
 //=================================================================================================================================
-UINT Face::RemoveNeighbor(Face* pNeighbor) {
-    if (m_uDegree > 0 && pNeighbor != NULL) {
+UINT Face::RemoveNeighbor(Face* pNeighbor)
+{
+    if (m_uDegree > 0 && pNeighbor != NULL)
+    {
         const UINT uTmpDegree = m_uDegree;
 
-        for (UINT i = 0; i < 3; i++) {
-            if (pNeighbor == m_neighbors[i]) {
+        for (UINT i = 0; i < 3; i++)
+        {
+            if (pNeighbor == m_neighbors[i])
+            {
                 m_uDegree--;
                 m_neighbors[i] = NULL;
             }
         }
 
-        if (uTmpDegree == m_uDegree) {
+        if (uTmpDegree == m_uDegree)
+        {
             // TODO: report invalid neighbor
             assert(!"INVALID NEIGHBOR");
         }
@@ -106,13 +115,18 @@ UINT Face::RemoveNeighbor(Face* pNeighbor) {
 ///
 /// \return The number of neighbors remaining
 //=================================================================================================================================
-UINT Face::RemoveNeighbor(UINT uSide) {
-    if (uSide < 3) {
-        if (m_neighbors[ uSide ] != NULL) {
+UINT Face::RemoveNeighbor(UINT uSide)
+{
+    if (uSide < 3)
+    {
+        if (m_neighbors[uSide] != NULL)
+        {
             m_uDegree--;
-            m_neighbors[ uSide ] = NULL;
+            m_neighbors[uSide] = NULL;
         }
-    } else {
+    }
+    else
+    {
         // TODO: report invalid side
         assert(!"INVALID SIDE");
     }
@@ -127,9 +141,12 @@ UINT Face::RemoveNeighbor(UINT uSide) {
 ///
 /// \return Index to the edge that is to the right of the neighbor; ERROR if pNeighbor not a current neighbor
 //=================================================================================================================================
-UINT Face::GetRightEdge(Face* pNeighbor) {
-    for (UINT i = 0; i < 3; i++) {
-        if (m_neighbors[i] == pNeighbor) {
+UINT Face::GetRightEdge(Face* pNeighbor)
+{
+    for (UINT i = 0; i < 3; i++)
+    {
+        if (m_neighbors[i] == pNeighbor)
+        {
             return (i + 1) % 3;
         }
     }
@@ -144,9 +161,12 @@ UINT Face::GetRightEdge(Face* pNeighbor) {
 ///
 /// \return Index to the edge that is to the left of the neighbor; ERROR if pNeighbor not a current neighbor
 //=================================================================================================================================
-UINT Face::GetLeftEdge(Face* pNeighbor) {
-    for (UINT i = 0; i < 3; i++) {
-        if (m_neighbors[i] == pNeighbor) {
+UINT Face::GetLeftEdge(Face* pNeighbor)
+{
+    for (UINT i = 0; i < 3; i++)
+    {
+        if (m_neighbors[i] == pNeighbor)
+        {
             return (i + 2) % 3;
         }
     }
@@ -161,16 +181,18 @@ UINT Face::GetLeftEdge(Face* pNeighbor) {
 ///
 /// \return Index to the edge that is shared with the neighbor; ERROR if pNeighbor not a current neighbor
 //=================================================================================================================================
-UINT Face::GetEdge(Face* pNeighbor) {
-    for (UINT i = 0; i < 3; i++) {
-        if (m_neighbors[i] == pNeighbor) {
+UINT Face::GetEdge(Face* pNeighbor)
+{
+    for (UINT i = 0; i < 3; i++)
+    {
+        if (m_neighbors[i] == pNeighbor)
+        {
             return i;
         }
     }
 
     return ERROR;
 }
-
 
 //=================================================================================================================================
 //
@@ -183,12 +205,15 @@ UINT Face::GetEdge(Face* pNeighbor) {
 //          Constructor(s) / Destructor(s) Block
 //
 //=================================================================================================================================
-FaceManager::FaceManager(void) {
+FaceManager::FaceManager(void)
+{
     m_nFaceRemapCount = 0;
 }
 
-FaceManager::~FaceManager(void) {
-    for (FaceRefList::iterator f = m_faces.begin(); f != m_faces.end(); f++) {
+FaceManager::~FaceManager(void)
+{
+    for (FaceRefList::iterator f = m_faces.begin(); f != m_faces.end(); f++)
+    {
         delete *f;
     }
 }
@@ -209,7 +234,8 @@ FaceManager::~FaceManager(void) {
 ///
 /// \return false if memory could not be allocated for the face; true otherwise
 //=================================================================================================================================
-bool FaceManager::MakeFace(UINT uVertexIndex1, UINT uVertexIndex2, UINT uVertexIndex3, UINT nID) {
+bool FaceManager::MakeFace(UINT uVertexIndex1, UINT uVertexIndex2, UINT uVertexIndex3, UINT nID)
+{
 #ifdef _TIMING
     _TIME tMNStart;
     _TIME tAdjStart;
@@ -224,14 +250,16 @@ bool FaceManager::MakeFace(UINT uVertexIndex1, UINT uVertexIndex2, UINT uVertexI
     tMNStart = GetTime();
 #endif
 
-    int nAdjacency = -1;
-    Face* pIterFace = NULL;
+    int   nAdjacency = -1;
+    Face* pIterFace  = NULL;
 
-    for (FaceRefList::iterator f = m_faces.begin(); f != m_faces.end() && pFace->Degree() < 3; f++) {
+    for (FaceRefList::iterator f = m_faces.begin(); f != m_faces.end() && pFace->Degree() < 3; f++)
+    {
         pIterFace = *f;
 
         // finding adjacency is expensize, only do it if the face doesn't already have three neighbors
-        if (pIterFace->Degree() < 3) {
+        if (pIterFace->Degree() < 3)
+        {
 #ifdef _TIMING
             tAdjStart = GetTime();
 #endif
@@ -241,7 +269,8 @@ bool FaceManager::MakeFace(UINT uVertexIndex1, UINT uVertexIndex2, UINT uVertexI
             m_tAdjacency += (GetTime() - tAdjStart);
 #endif
 
-            if (nAdjacency >= 0) {
+            if (nAdjacency >= 0)
+            {
                 pFace->AddNeighbor(pIterFace, (nAdjacency / 10));
                 pIterFace->AddNeighbor(pFace, (nAdjacency % 10));
             }
@@ -272,41 +301,45 @@ bool FaceManager::MakeFace(UINT uVertexIndex1, UINT uVertexIndex2, UINT uVertexI
 ///
 /// \return true
 //=================================================================================================================================
-bool FaceManager::Stripify(void) {
+bool FaceManager::Stripify(void)
+{
 #ifdef _TIMING
     _TIME tStartStripify = GetTime();
 #endif
 
-    for (FaceRefList::iterator iFace = m_faces.begin(); iFace != m_faces.end(); iFace++) {
-        m_degreeBins[(*iFace)->Degree() ].push_front(*iFace);
+    for (FaceRefList::iterator iFace = m_faces.begin(); iFace != m_faces.end(); iFace++)
+    {
+        m_degreeBins[(*iFace)->Degree()].push_front(*iFace);
     }
 
 #ifdef _TIMING
     m_tSortBins += (GetTime() - tStartStripify);
 #endif
 
-    UINT uWalkMode = START;
+    UINT uWalkMode  = START;
     UINT uFirstTurn = START;
 
-    UINT nodesLeft = (UINT)m_faces.size();
-    bool bFirstDirection = true;
-    bool bRepeatedTurn = false;
-    int stripIndex = -1;
+    UINT       nodesLeft       = (UINT)m_faces.size();
+    bool       bFirstDirection = true;
+    bool       bRepeatedTurn   = false;
+    int        stripIndex      = -1;
     FaceStrips strips;
-    Face* pCurFace = NULL;
+    Face*      pCurFace = NULL;
 
     // variables that need to get declared before the switch statement
     Face* pNextFace = NULL;
     Face* pGateFace = NULL;
-    UINT uGateEdge;
-    UINT uBackEdge = 0;
-    UINT uFirstEdge = 1;
+    UINT  uGateEdge;
+    UINT  uBackEdge  = 0;
+    UINT  uFirstEdge = 1;
 
     // make sure that the starting edge is in the 0-2 range
     uFirstEdge %= 3;
 
-    while (nodesLeft > 0) {
-        if (uWalkMode == START) {
+    while (nodesLeft > 0)
+    {
+        if (uWalkMode == START)
+        {
             bFirstDirection = true;
             stripIndex++;
             strips.push_back(FaceStrip());
@@ -316,13 +349,15 @@ bool FaceManager::Stripify(void) {
             // stop when a face with lowest degree is found
             // this means we'll start along edges and the strip will work its way inward
             // Provided good improvement (~10%)
-            for (UINT uDegree = 0; uDegree < 4 && pCurFace == NULL; uDegree++) {
-                if (m_degreeBins[uDegree].size() > 0) {
+            for (UINT uDegree = 0; uDegree < 4 && pCurFace == NULL; uDegree++)
+            {
+                if (m_degreeBins[uDegree].size() > 0)
+                {
                     // pick a face that has not already been processed
-                    for (FaceRefList::iterator iter = m_degreeBins[uDegree].begin();
-                            iter != m_degreeBins[uDegree].end() && pCurFace == NULL;
-                            iter++) {
-                        if (*iter != NULL && (*iter)->WasProcessed() == false) {
+                    for (FaceRefList::iterator iter = m_degreeBins[uDegree].begin(); iter != m_degreeBins[uDegree].end() && pCurFace == NULL; iter++)
+                    {
+                        if (*iter != NULL && (*iter)->WasProcessed() == false)
+                        {
                             pCurFace = *(iter);
                         }
                     }
@@ -331,131 +366,161 @@ bool FaceManager::Stripify(void) {
 
             // first face has been chosen
             // now choose the direction to travel
-            uGateEdge = uFirstEdge;
-            pNextFace = NULL;
+            uGateEdge          = uFirstEdge;
+            pNextFace          = NULL;
             UINT uLowestDegree = 4;
 
-            for (UINT uEdge = 0; uEdge < 3; uEdge++) {
+            for (UINT uEdge = 0; uEdge < 3; uEdge++)
+            {
                 // use GateFace as a temporary place holder
-                pGateFace = pCurFace->GetNeighbors()[(uFirstEdge + uEdge) % 3 ];
+                pGateFace = pCurFace->GetNeighbors()[(uFirstEdge + uEdge) % 3];
 
-                if (pGateFace != NULL && pGateFace->WasProcessed() == false) {
-                    if (pGateFace->Degree() < uLowestDegree) {
+                if (pGateFace != NULL && pGateFace->WasProcessed() == false)
+                {
+                    if (pGateFace->Degree() < uLowestDegree)
+                    {
                         // make the next face the neighbor with the highest degree
                         uLowestDegree = pGateFace->Degree();
-                        pNextFace = pGateFace;
-                        uGateEdge = (uFirstEdge + uEdge) % 3;
-                        uBackEdge = pNextFace->GetEdge(pCurFace);
+                        pNextFace     = pGateFace;
+                        uGateEdge     = (uFirstEdge + uEdge) % 3;
+                        uBackEdge     = pNextFace->GetEdge(pCurFace);
                     }
                 }
             }
 
             // Add first face in this strip
-            AddFaceToStrip(pCurFace, strips[ stripIndex ], START, uGateEdge);
+            AddFaceToStrip(pCurFace, strips[stripIndex], START, uGateEdge);
             nodesLeft--;
 
-            if (pNextFace != NULL) {
-                uWalkMode = LEFT;
+            if (pNextFace != NULL)
+            {
+                uWalkMode  = LEFT;
                 uFirstTurn = START;
-            } else {
+            }
+            else
+            {
                 // no next face found
                 uWalkMode = FINISH;
             }
-        } // end if uWalkMode == START
+        }  // end if uWalkMode == START
 
-        if (uWalkMode == RIGHT) {
+        if (uWalkMode == RIGHT)
+        {
             UINT uEnterEdge = uBackEdge;
-            pCurFace = pNextFace;
-            pNextFace = NULL;
-            uGateEdge = (uBackEdge + 1) % 3;
-            pGateFace = pCurFace->GetNeighbors()[ uGateEdge ];
+            pCurFace        = pNextFace;
+            pNextFace       = NULL;
+            uGateEdge       = (uBackEdge + 1) % 3;
+            pGateFace       = pCurFace->GetNeighbors()[uGateEdge];
 
-            if (pGateFace != NULL && pGateFace->WasProcessed() == false) {
+            if (pGateFace != NULL && pGateFace->WasProcessed() == false)
+            {
                 bRepeatedTurn = false;
-                pNextFace = pGateFace;
-                uBackEdge = pNextFace->GetEdge(pCurFace);
-                uWalkMode = LEFT;
+                pNextFace     = pGateFace;
+                uBackEdge     = pNextFace->GetEdge(pCurFace);
+                uWalkMode     = LEFT;
 
-                if (uFirstTurn == START) {
+                if (uFirstTurn == START)
+                {
                     uFirstTurn = RIGHT;
                 }
-            } else {
+            }
+            else
+            {
                 // continuing to the right, need to indicate that it is a
                 // repeated turn, so the output of the vertices should be different!
                 bRepeatedTurn = true;
-                uGateEdge = (uBackEdge + 2) % 3;
-                pGateFace = pCurFace->GetNeighbors()[ uGateEdge ];
+                uGateEdge     = (uBackEdge + 2) % 3;
+                pGateFace     = pCurFace->GetNeighbors()[uGateEdge];
 
-                if (pGateFace != NULL && pGateFace->WasProcessed() == false) {
+                if (pGateFace != NULL && pGateFace->WasProcessed() == false)
+                {
                     pNextFace = pGateFace;
                     uBackEdge = pNextFace->GetEdge(pCurFace);
 
-                    if (uFirstTurn == START) {
+                    if (uFirstTurn == START)
+                    {
                         uFirstTurn = LEFT;
                     }
                 }
             }
 
-            if (bRepeatedTurn) {
-                AddFaceToStrip(pCurFace, strips[ stripIndex ], LEFT, uEnterEdge);
-            } else {
-                AddFaceToStrip(pCurFace, strips[ stripIndex ], RIGHT, uEnterEdge);
+            if (bRepeatedTurn)
+            {
+                AddFaceToStrip(pCurFace, strips[stripIndex], LEFT, uEnterEdge);
+            }
+            else
+            {
+                AddFaceToStrip(pCurFace, strips[stripIndex], RIGHT, uEnterEdge);
             }
 
             nodesLeft--;
 
-            if (pNextFace == NULL) {
+            if (pNextFace == NULL)
+            {
                 uWalkMode = FINISH;
             }
-        } else if (uWalkMode == LEFT) {
+        }
+        else if (uWalkMode == LEFT)
+        {
             UINT uEnterEdge = uBackEdge;
-            pCurFace = pNextFace;
-            pNextFace = NULL;
-            uGateEdge = (uBackEdge + 2) % 3;
-            pGateFace = pCurFace->GetNeighbors()[ uGateEdge ];
+            pCurFace        = pNextFace;
+            pNextFace       = NULL;
+            uGateEdge       = (uBackEdge + 2) % 3;
+            pGateFace       = pCurFace->GetNeighbors()[uGateEdge];
 
-            if (pGateFace != NULL && pGateFace->WasProcessed() == false) {
+            if (pGateFace != NULL && pGateFace->WasProcessed() == false)
+            {
                 bRepeatedTurn = false;
-                pNextFace = pGateFace;
-                uBackEdge = pNextFace->GetEdge(pCurFace);
-                uWalkMode = RIGHT;
+                pNextFace     = pGateFace;
+                uBackEdge     = pNextFace->GetEdge(pCurFace);
+                uWalkMode     = RIGHT;
 
-                if (uFirstTurn == START) {
+                if (uFirstTurn == START)
+                {
                     uFirstTurn = LEFT;
                 }
-            } else {
+            }
+            else
+            {
                 // continuing to the left, need to indicate that it is a
                 // repeated turn, so the output of the vertices should be different!
                 bRepeatedTurn = true;
-                uGateEdge = (uBackEdge + 1) % 3;
-                pGateFace = pCurFace->GetNeighbors()[ uGateEdge ];
+                uGateEdge     = (uBackEdge + 1) % 3;
+                pGateFace     = pCurFace->GetNeighbors()[uGateEdge];
 
-                if (pGateFace != NULL && pGateFace->WasProcessed() == false) {
+                if (pGateFace != NULL && pGateFace->WasProcessed() == false)
+                {
                     pNextFace = pGateFace;
                     uBackEdge = pNextFace->GetEdge(pCurFace);
 
-                    if (uFirstTurn == START) {
+                    if (uFirstTurn == START)
+                    {
                         uFirstTurn = RIGHT;
                     }
                 }
             }
 
-            if (bRepeatedTurn) {
-                AddFaceToStrip(pCurFace, strips[ stripIndex ], RIGHT, uEnterEdge);
-            } else {
-                AddFaceToStrip(pCurFace, strips[ stripIndex ], LEFT, uEnterEdge);
+            if (bRepeatedTurn)
+            {
+                AddFaceToStrip(pCurFace, strips[stripIndex], RIGHT, uEnterEdge);
+            }
+            else
+            {
+                AddFaceToStrip(pCurFace, strips[stripIndex], LEFT, uEnterEdge);
             }
 
             nodesLeft--;
 
-            if (pNextFace == NULL) {
+            if (pNextFace == NULL)
+            {
                 uWalkMode = FINISH;
             }
         }
 
-        if (uWalkMode == FINISH) {
+        if (uWalkMode == FINISH)
+        {
             bRepeatedTurn = false;
-            uWalkMode = START;
+            uWalkMode     = START;
 
             //int nStrips = strips.size() -1;
             //int nTris = strips[ nStrips ].size();
@@ -470,7 +535,6 @@ bool FaceManager::Stripify(void) {
             //   }
             //   printf("\n");
             //}
-
         }
     }
 
@@ -513,7 +577,8 @@ bool FaceManager::Stripify(void) {
 ///
 /// \return true
 //=================================================================================================================================
-bool FaceManager::DropNeighbors(Face& rFace, Face* pExceptNeighbor) {
+bool FaceManager::DropNeighbors(Face& rFace, Face* pExceptNeighbor)
+{
 #ifdef _TIMING
     _TIME tStart = GetTime();
 #endif
@@ -521,24 +586,27 @@ bool FaceManager::DropNeighbors(Face& rFace, Face* pExceptNeighbor) {
     Face** neighbors = rFace.GetNeighbors();
 
     // remove this face from the degree bins
-    m_degreeBins[ rFace.Degree() ].remove(&rFace);
+    m_degreeBins[rFace.Degree()].remove(&rFace);
 
     Face* pNeighbor = NULL;
 
     // re-bin the neighbors
-    for (unsigned int i = 0; i < 3; i++) {
+    for (unsigned int i = 0; i < 3; i++)
+    {
         pNeighbor = neighbors[i];
 
-        if (pNeighbor != NULL) {
-            if (pNeighbor != pExceptNeighbor) {
+        if (pNeighbor != NULL)
+        {
+            if (pNeighbor != pExceptNeighbor)
+            {
                 // Note that now the neighbors are only singly linked
                 // the striped Face knows it's neighbors, but the neighbors
                 // don't know the striped face.
-                m_degreeBins[ pNeighbor->Degree() ].remove(pNeighbor);
+                m_degreeBins[pNeighbor->Degree()].remove(pNeighbor);
 
                 // push on the back so that if the algorithm needs to start a new strip
                 // it is more likely to get a face whose vertex is already in the cache
-                m_degreeBins[ pNeighbor->RemoveNeighbor(&rFace) ].push_back(pNeighbor);
+                m_degreeBins[pNeighbor->RemoveNeighbor(&rFace)].push_back(pNeighbor);
 
                 rFace.RemoveNeighbor(pNeighbor);
             }
@@ -560,86 +628,114 @@ bool FaceManager::DropNeighbors(Face& rFace, Face* pExceptNeighbor) {
 ///
 /// \return -1 if the faces do share an edge; otherwise the ten's digit is the edge from cFace1 -> cFace2; the one's digit is the edge from cFace1 <- cFace2
 //=================================================================================================================================
-int FaceManager::GetFaceAdjacency(const Face& cFace1, const Face& cFace2) {
+int FaceManager::GetFaceAdjacency(const Face& cFace1, const Face& cFace2)
+{
     // the output is encoded in the following manner:
     // the ten's digit is the edge from cFace1 -> cFace2
     // the one's digit is the edge from cFace1 <- cFace2
 
-    bool uSharedVertices[3] = {false, false, false};
+    bool uSharedVertices[3]  = {false, false, false};
     bool uSharedVertsBack[3] = {false, false, false};
-    UINT uSharedVertCount = 0;
+    UINT uSharedVertCount    = 0;
 
     // first vert
-    if (cFace1.First() == cFace2.First()) {
+    if (cFace1.First() == cFace2.First())
+    {
         uSharedVertsBack[0] = true;
-        uSharedVertices[0] = true;
+        uSharedVertices[0]  = true;
         uSharedVertCount++;
-    } else if (cFace1.First() == cFace2.Second()) {
+    }
+    else if (cFace1.First() == cFace2.Second())
+    {
         uSharedVertsBack[1] = true;
-        uSharedVertices[0] = true;
+        uSharedVertices[0]  = true;
         uSharedVertCount++;
-    } else if (cFace1.First() == cFace2.Third()) {
+    }
+    else if (cFace1.First() == cFace2.Third())
+    {
         uSharedVertsBack[2] = true;
-        uSharedVertices[0] = true;
+        uSharedVertices[0]  = true;
         uSharedVertCount++;
     }
 
     // Second vert
-    if (cFace1.Second() == cFace2.First()) {
+    if (cFace1.Second() == cFace2.First())
+    {
         uSharedVertsBack[0] = true;
-        uSharedVertices[1] = true;
+        uSharedVertices[1]  = true;
         uSharedVertCount++;
-    } else if (cFace1.Second() == cFace2.Second()) {
+    }
+    else if (cFace1.Second() == cFace2.Second())
+    {
         uSharedVertsBack[1] = true;
-        uSharedVertices[1] = true;
+        uSharedVertices[1]  = true;
         uSharedVertCount++;
-    } else if (cFace1.Second() == cFace2.Third()) {
+    }
+    else if (cFace1.Second() == cFace2.Third())
+    {
         uSharedVertsBack[2] = true;
-        uSharedVertices[1] = true;
+        uSharedVertices[1]  = true;
         uSharedVertCount++;
     }
 
     // try to return early
-    if (uSharedVertCount == 0) {
+    if (uSharedVertCount == 0)
+    {
         // must have at least one shared vertex by now in order to share an edge
         return -1;
-    } else if (uSharedVertCount == 1) {
+    }
+    else if (uSharedVertCount == 1)
+    {
         // check third vert for being shared
-        if (cFace1.Third() == cFace2.First()) {
+        if (cFace1.Third() == cFace2.First())
+        {
             uSharedVertsBack[0] = true;
-            uSharedVertices[2] = true;
+            uSharedVertices[2]  = true;
             uSharedVertCount++;
-        } else if (cFace1.Third() == cFace2.Second()) {
+        }
+        else if (cFace1.Third() == cFace2.Second())
+        {
             uSharedVertsBack[1] = true;
-            uSharedVertices[2] = true;
+            uSharedVertices[2]  = true;
             uSharedVertCount++;
-        } else if (cFace1.Third() == cFace2.Third()) {
+        }
+        else if (cFace1.Third() == cFace2.Third())
+        {
             uSharedVertsBack[2] = true;
-            uSharedVertices[2] = true;
+            uSharedVertices[2]  = true;
             uSharedVertCount++;
         }
     }
 
-    if (uSharedVertCount == 2) {
+    if (uSharedVertCount == 2)
+    {
         // default, assume uSharedVertices[2] == false (vertices 0 and 1 are shared) from cFace1 -> cFace2
         int nEncoding = 0;
 
         // we know it is adjacent, and must use the 2nd vertex from cFace1
-        if (uSharedVertices[0] == false) {
+        if (uSharedVertices[0] == false)
+        {
             // if Vert0 is not set, then it must be edge 1 (verts 2 and 1) from cFace1 -> cFace2
             nEncoding = 10;
-        } else if (uSharedVertices[1] == false) {
+        }
+        else if (uSharedVertices[1] == false)
+        {
             // else it must be edge 2 from cFace1 -> cFace2
             nEncoding = 20;
         }
 
-        if (uSharedVertsBack[0] == false) {
+        if (uSharedVertsBack[0] == false)
+        {
             // if VertsBack 0 is not set, then it must be BackEdge 1 (verts 1 and 2)
             return nEncoding + 1;
-        } else if (uSharedVertsBack[1] == false) {
+        }
+        else if (uSharedVertsBack[1] == false)
+        {
             // if VertsBack 1 is not set, then it must be BackEdge 2 (verts 2 and 0)
             return nEncoding + 2;
-        } else {
+        }
+        else
+        {
             // only BackEdge 0 is left (verts 0 and 1)
             return nEncoding + 0;
         }
@@ -658,14 +754,19 @@ int FaceManager::GetFaceAdjacency(const Face& cFace1, const Face& cFace2) {
 ///
 /// \return false if pFace is null, or uDirection or uEdge are invalid indices; true otherwise
 //=================================================================================================================================
-bool FaceManager::AddFaceToStrip(Face* pFace, FaceStrip& rStrip, UINT uDirection, UINT uEdge) {
-    if (pFace == NULL || uDirection > 3 || uEdge > 3) {
+bool FaceManager::AddFaceToStrip(Face* pFace, FaceStrip& rStrip, UINT uDirection, UINT uEdge)
+{
+    if (pFace == NULL || uDirection > 3 || uEdge > 3)
+    {
         return false;
     }
 
-    if (rStrip.size() > 0) {
+    if (rStrip.size() > 0)
+    {
         DropNeighbors(*pFace, rStrip.back());
-    } else {
+    }
+    else
+    {
         // first Face in strip needs special attention
         DropNeighbors(*pFace, NULL);
     }
@@ -674,21 +775,26 @@ bool FaceManager::AddFaceToStrip(Face* pFace, FaceStrip& rStrip, UINT uDirection
     _TIME tStart = GetTime();
 #endif
 
-    if (uDirection == START) {
+    if (uDirection == START)
+    {
         //      printf( "Adding face: %d %d %d\n", pFace->VertexByIndex( (uEdge+2)%3 ),
         //                                         pFace->VertexByIndex( (uEdge+0)%3 ),
         //                                         pFace->VertexByIndex( (uEdge+1)%3 ) );
         m_vertList.push_back(pFace->VertexByIndex((uEdge + 2) % 3));
         m_vertList.push_back(pFace->VertexByIndex((uEdge + 0) % 3));
         m_vertList.push_back(pFace->VertexByIndex((uEdge + 1) % 3));
-    } else if (uDirection == RIGHT) {
+    }
+    else if (uDirection == RIGHT)
+    {
         //      printf( "Adding face: %d %d %d\n", pFace->VertexByIndex( (uEdge+0)%3 ),
         //                                         pFace->VertexByIndex( (uEdge+1)%3 ),
         //                                         pFace->VertexByIndex( (uEdge+2)%3 ) );
         m_vertList.push_back(pFace->VertexByIndex((uEdge + 0) % 3));
         m_vertList.push_back(pFace->VertexByIndex((uEdge + 1) % 3));
         m_vertList.push_back(pFace->VertexByIndex((uEdge + 2) % 3));
-    } else { // uDirection == LEFT
+    }
+    else
+    {  // uDirection == LEFT
         //      printf( "Adding face: %d %d %d\n", pFace->VertexByIndex( (uEdge+1)%3 ),
         //                                         pFace->VertexByIndex( (uEdge+2)%3 ),
         //                                         pFace->VertexByIndex( (uEdge+0)%3 ) );
@@ -697,7 +803,7 @@ bool FaceManager::AddFaceToStrip(Face* pFace, FaceStrip& rStrip, UINT uDirection
         m_vertList.push_back(pFace->VertexByIndex((uEdge + 0) % 3));
     }
 
-    m_faceRemap[ pFace->GetID() ] = m_nFaceRemapCount++;
+    m_faceRemap[pFace->GetID()] = m_nFaceRemapCount++;
 
     rStrip.push_back(pFace);
     pFace->Processed();
@@ -716,7 +822,8 @@ bool FaceManager::AddFaceToStrip(Face* pFace, FaceStrip& rStrip, UINT uDirection
 ///
 /// \return none
 //=================================================================================================================================
-void FaceManager::ResizeFaceRemap(UINT nFaces) {
+void FaceManager::ResizeFaceRemap(UINT nFaces)
+{
     assert(nFaces > 0);
 
     m_faceRemap.resize(nFaces);
@@ -731,10 +838,12 @@ void FaceManager::ResizeFaceRemap(UINT nFaces) {
 ///
 //=================================================================================================================================
 void Stripifier::Process(const unsigned int* pVertexIndicesIN,
-                         const unsigned int uiTriangleCount,
-                         unsigned int* pVertexIndicesOUT,
-                         unsigned int* pnFaceRemapOut) {
-    if (pVertexIndicesIN == NULL) {
+                         const unsigned int  uiTriangleCount,
+                         unsigned int*       pVertexIndicesOUT,
+                         unsigned int*       pnFaceRemapOut)
+{
+    if (pVertexIndicesIN == NULL)
+    {
         pVertexIndicesOUT = NULL;
         return;
     }
@@ -746,19 +855,21 @@ void Stripifier::Process(const unsigned int* pVertexIndicesIN,
     faceManager.ResizeFaceRemap(uiTriangleCount);
 
 #ifdef _TIMING
-    _TIME tStart = GetTime();
+    _TIME tStart                 = GetTime();
     faceManager.m_tMakeNeighbors = 0;
-    faceManager.m_tAdjacency = 0;
+    faceManager.m_tAdjacency     = 0;
     faceManager.m_tDropNeighbors = 0;
-    faceManager.m_tAddFaces = 0;
-    faceManager.m_tAdjLoop = 0;
-    faceManager.m_tPush = 0;
-    faceManager.m_tSortBins = 0;
+    faceManager.m_tAddFaces      = 0;
+    faceManager.m_tAdjLoop       = 0;
+    faceManager.m_tPush          = 0;
+    faceManager.m_tSortBins      = 0;
 #endif
 
     // create faces
-    for (UINT u = 0; u < uVertIndexSize; u += 3) {
-        if (false == faceManager.MakeFace(pVertexIndicesIN[u], pVertexIndicesIN[u + 1], pVertexIndicesIN[u + 2], u / 3)) {
+    for (UINT u = 0; u < uVertIndexSize; u += 3)
+    {
+        if (false == faceManager.MakeFace(pVertexIndicesIN[u], pVertexIndicesIN[u + 1], pVertexIndicesIN[u + 2], u / 3))
+        {
             pVertexIndicesOUT = NULL;
             return;
         }
@@ -789,15 +900,18 @@ void Stripifier::Process(const unsigned int* pVertexIndicesIN,
 
     VertList vl = faceManager.GetStrippedList();
 
-    for (UINT u = 0; u < uVertIndexSize; u++) {
-        pVertexIndicesOUT[ u ] = vl[ u ];
+    for (UINT u = 0; u < uVertIndexSize; u++)
+    {
+        pVertexIndicesOUT[u] = vl[u];
     }
 
-    if (pnFaceRemapOut) {
+    if (pnFaceRemapOut)
+    {
         std::vector<UINT> pnFaceRemap = faceManager.GetFaceRemap();
 
-        for (UINT i = 0; i < uiTriangleCount; i++) {
-            pnFaceRemapOut[ i ] = pnFaceRemap[ i ];
+        for (UINT i = 0; i < uiTriangleCount; i++)
+        {
+            pnFaceRemapOut[i] = pnFaceRemap[i];
         }
     }
 }

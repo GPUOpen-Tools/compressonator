@@ -2,7 +2,7 @@
 #define AMDCOMPRESS_DOC_H
 
 //=====================================================================
-// Copyright 2021 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2021-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -76,7 +76,6 @@ AMDCompress CLI Tool
 ///
 ///
 
-
 /************************************************
 *                VERSION HISTORY
 *************************************************/
@@ -101,11 +100,9 @@ AMDCompress CLI Tool
 /// \li    Added.ASTC output file format\n
 ///\n
 
-
 /************************************************
 *                COMMAND LINE OPTIONS
 *************************************************/
-
 
 /************************************************
 *                Using Command Line Optons
@@ -286,7 +283,6 @@ AMDCompress CLI Tool
 /// for use with AMD Compress CLI. These DLL's can be obtained from Qt web site by searching for "Qt image plugins"
 /// or similar sites.
 
-
 /*=======================================
             Compression Formats
 ==========================================*/
@@ -386,7 +382,6 @@ AMDCompress CLI Tool
 /// \section format12 BC7
 /// Is a high-quality compression format of RGB and RGBA data
 
-
 /************************************************
 *                DXTn
 *************************************************/
@@ -418,7 +413,6 @@ AMDCompress CLI Tool
 /// \section format21 DXT5_xGxR
 /// A two-component swizzled DXT5 format with the red component swizzled into the alpha channel & the green component in the green channel. Eight bits per pixel
 
-
 /************************************************
 *                ETCn
 *************************************************/
@@ -427,6 +421,4 @@ AMDCompress CLI Tool
 /// Ericsson Texture Compression - a compressed RGB format.
 ///
 
-
 #endif
-

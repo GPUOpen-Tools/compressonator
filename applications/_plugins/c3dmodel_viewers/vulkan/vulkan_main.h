@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2018-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,7 +23,6 @@
 #ifndef _PLUGIN_IMAGE_BMP_H
 #define _PLUGIN_IMAGE_BMP_H
 
-
 #include "cmp_plugininterface.h"
 #include "vulkan_device.h"
 
@@ -31,38 +30,40 @@
 
 #ifdef _WIN32
 // {3244041C-1A53-4E79-B417-842D5CEF33C0}
-static const GUID g_GUID = { 0x3244041c, 0x1a53, 0x4e79,{ 0xb4, 0x17, 0x84, 0x2d, 0x5c, 0xef, 0x33, 0xc0 } };
+static const GUID g_GUID = {0x3244041c, 0x1a53, 0x4e79, {0xb4, 0x17, 0x84, 0x2d, 0x5c, 0xef, 0x33, 0xc0}};
 
 #else
-static const GUID g_GUID = { 0 };
+static const GUID g_GUID = {0};
 #endif
 
-#define TC_PLUGIN_VERSION_MAJOR    1
-#define TC_PLUGIN_VERSION_MINOR    0
+#define TC_PLUGIN_VERSION_MAJOR 1
+#define TC_PLUGIN_VERSION_MINOR 0
 
-CMIPS *VK_CMips = NULL;
+CMIPS* VK_CMips = NULL;
 
-class Plugin_3DModelViewer_Vulkan : public PluginInterface_3DModel {
-  public:
+class Plugin_3DModelViewer_Vulkan : public PluginInterface_3DModel
+{
+public:
     Plugin_3DModelViewer_Vulkan();
     virtual ~Plugin_3DModelViewer_Vulkan();
     int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
-    int TC_PluginSetSharedIO(void *Shared);
+    int TC_PluginSetSharedIO(void* Shared);
 
-    void *CreateView(void *ModelData,  CMP_LONG Width, CMP_LONG Height, void *userHWND, void *pluginManager, void *msghandler, CMP_Feedback_Proc pFeedbackProc);
-    bool OnRenderView();
-    void CloseView();
-    void *ShowView(void *data);
-    void processMSG(void *message);
-    void OnReSizeView(CMP_LONG w, CMP_LONG h);
-  private:
-    bool                m_ShowViewOk;
-    Vulkan_Device      *m_VulkanDevice;
-    CMP_GLTFCommon*      m_gltfLoader;
-    HWND                m_hwnd;
-    QWidget             *m_parent;
+    void* CreateView(void* ModelData, CMP_LONG Width, CMP_LONG Height, void* userHWND, void* pluginManager, void* msghandler, CMP_Feedback_Proc pFeedbackProc);
+    bool  OnRenderView();
+    void  CloseView();
+    void* ShowView(void* data);
+    void  processMSG(void* message);
+    void  OnReSizeView(CMP_LONG w, CMP_LONG h);
+
+private:
+    bool            m_ShowViewOk;
+    Vulkan_Device*  m_VulkanDevice;
+    CMP_GLTFCommon* m_gltfLoader;
+    HWND            m_hwnd;
+    QWidget*        m_parent;
 };
 
-extern void *make_Plugin_3DModelViewer_Vulkan();
+extern void* make_Plugin_3DModelViewer_Vulkan();
 
 #endif

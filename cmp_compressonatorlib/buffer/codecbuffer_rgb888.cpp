@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2023  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -35,43 +35,52 @@
 //////////////////////////////////////////////////////////////////////////////
 
 const int nChannelCount = 3;
-const int nPixelSize = nChannelCount * sizeof(CMP_BYTE);
+const int nPixelSize    = nChannelCount * sizeof(CMP_BYTE);
 
-CCodecBuffer_RGB888::CCodecBuffer_RGB888(CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-                                        CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData,CMP_DWORD dwDataSize)
-                                        : CCodecBuffer(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData, dwDataSize)
+CCodecBuffer_RGB888::CCodecBuffer_RGB888(CMP_BYTE  nBlockWidth,
+                                         CMP_BYTE  nBlockHeight,
+                                         CMP_BYTE  nBlockDepth,
+                                         CMP_DWORD dwWidth,
+                                         CMP_DWORD dwHeight,
+                                         CMP_DWORD dwPitch,
+                                         CMP_BYTE* pData,
+                                         CMP_DWORD dwDataSize)
+    : CCodecBuffer(nBlockWidth, nBlockHeight, nBlockDepth, dwWidth, dwHeight, dwPitch, pData, dwDataSize)
 {
     CMP_DWORD dwMinPitch = dwWidth * nPixelSize;
     assert((m_dwPitch == 0) || (m_dwPitch >= dwMinPitch));
 
-    if(m_dwPitch < dwMinPitch)
+    if (m_dwPitch < dwMinPitch)
         m_dwPitch = dwMinPitch;
 
-    if(m_pData == NULL)
+    if (m_pData == NULL)
     {
         m_DataSize = m_dwPitch * m_dwHeight;
-        m_pData = (CMP_BYTE*) calloc(1, m_DataSize);
+        m_pData    = (CMP_BYTE*)calloc(1, m_DataSize);
     }
 
     m_dwFormat = CMP_FORMAT_RGB_888;
 }
 
-CCodecBuffer_RGB888::~CCodecBuffer_RGB888() {
-
+CCodecBuffer_RGB888::~CCodecBuffer_RGB888()
+{
 }
 
-void CCodecBuffer_RGB888::Copy(CCodecBuffer& srcBuffer) {
-    if(GetWidth() != srcBuffer.GetWidth() || GetHeight() != srcBuffer.GetHeight())
+void CCodecBuffer_RGB888::Copy(CCodecBuffer& srcBuffer)
+{
+    if (GetWidth() != srcBuffer.GetWidth() || GetHeight() != srcBuffer.GetHeight())
         return;
 
     const CMP_DWORD dwBlocksX = ((GetWidth() + 3) >> 2);
     const CMP_DWORD dwBlocksY = ((GetHeight() + 3) >> 2);
 
-    for(CMP_DWORD j = 0; j < dwBlocksY; j++) {
-        for(CMP_DWORD i = 0; i < dwBlocksX; i++) {
+    for (CMP_DWORD j = 0; j < dwBlocksY; j++)
+    {
+        for (CMP_DWORD i = 0; i < dwBlocksX; i++)
+        {
             CMP_BYTE block[BLOCK_SIZE_4X4X4];
-            srcBuffer.ReadBlockRGBA(i*4, j*4, 4, 4, block);
-            WriteBlockRGBA(i*4, j*4, 4, 4, block);
+            srcBuffer.ReadBlockRGBA(i * 4, j * 4, 4, 4, block);
+            WriteBlockRGBA(i * 4, j * 4, 4, 4, block);
         }
     }
 }
@@ -81,29 +90,29 @@ bool CCodecBuffer_RGB888::ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BY
     assert(x < GetWidth());
     assert(y < GetHeight());
 
-    if(x >= GetWidth() || y >= GetHeight())
+    if (x >= GetWidth() || y >= GetHeight())
         return false;
 
     CMP_DWORD dwWidth = cmp_minT(w, (GetWidth() - x));
 
     CMP_DWORD i, j;
-    for(j = 0; j < h && (y + j) < GetHeight(); j++)
+    for (j = 0; j < h && (y + j) < GetHeight(); j++)
     {
-        CMP_BYTE* pSrcData = (CMP_BYTE*)(GetData() + (y + j)*m_dwPitch + x*nChannelCount + dwChannelOffset);
-        
-        for(i = 0; i < dwWidth; i++)
+        CMP_BYTE* pSrcData = (CMP_BYTE*)(GetData() + (y + j) * m_dwPitch + x * nChannelCount + dwChannelOffset);
+
+        for (i = 0; i < dwWidth; i++)
         {
-            block[j*w + i] = *pSrcData;
+            block[j * w + i] = *pSrcData;
             pSrcData += nChannelCount;
         }
 
         // Pad line with previous values if necessary
-        if(i < w)
-            PadLine(i, w, 1, &block[j*w]);
+        if (i < w)
+            PadLine(i, w, 1, &block[j * w]);
     }
 
     // Pad block with previous values if necessary
-    if(j < h)
+    if (j < h)
         PadBlock(j, w, h, 1, block);
 
     return true;
@@ -114,18 +123,18 @@ bool CCodecBuffer_RGB888::WriteBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_B
     assert(x < GetWidth());
     assert(y < GetHeight());
 
-    if(x >= GetWidth() || y >= GetHeight())
+    if (x >= GetWidth() || y >= GetHeight())
         return false;
 
     CMP_DWORD dwWidth = cmp_minT(w, (GetWidth() - x));
 
-    for(CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); j++)
+    for (CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); j++)
     {
-        CMP_BYTE* pDestData = (CMP_BYTE*)(GetData() + (y + j)*m_dwPitch + x*nChannelCount + dwChannelOffset);
+        CMP_BYTE* pDestData = (CMP_BYTE*)(GetData() + (y + j) * m_dwPitch + x * nChannelCount + dwChannelOffset);
 
-        for(CMP_DWORD i = 0; i < dwWidth; i++)
+        for (CMP_DWORD i = 0; i < dwWidth; i++)
         {
-            *pDestData = block[j*dwWidth + i];
+            *pDestData = block[j * dwWidth + i];
             pDestData += nChannelCount;
         }
     }
@@ -135,7 +144,7 @@ bool CCodecBuffer_RGB888::WriteBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_B
 
 bool CCodecBuffer_RGB888::ReadBlockA(CMP_DWORD /*x*/, CMP_DWORD /*y*/, CMP_BYTE w, CMP_BYTE h, CMP_BYTE block[])
 {
-    memset(block, 255, w*h);
+    memset(block, 255, w * h);
     return true;
 }
 
@@ -179,19 +188,19 @@ bool CCodecBuffer_RGB888::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CM
     assert(x < GetWidth());
     assert(y < GetHeight());
 
-    if(x >= GetWidth() || y >= GetHeight())
+    if (x >= GetWidth() || y >= GetHeight())
         return false;
 
     CMP_DWORD dwWidth = cmp_minT(w, (GetWidth() - x));
 
-    CMP_DWORD* pdwBlock = (CMP_DWORD*) block;
-    CMP_DWORD i, j;
-    for(j = 0; j < h && (y + j) < GetHeight(); j++)
+    CMP_DWORD* pdwBlock = (CMP_DWORD*)block;
+    CMP_DWORD  i, j;
+    for (j = 0; j < h && (y + j) < GetHeight(); j++)
     {
-        CMP_BYTE* pSrcData = (CMP_BYTE*)(GetData() + (y + j)*m_dwPitch + x*nChannelCount);
-        CMP_BYTE* pDestData = (CMP_BYTE*)&pdwBlock[j*dwWidth];
-    
-        for(i = 0; i < dwWidth; i++)
+        CMP_BYTE* pSrcData  = (CMP_BYTE*)(GetData() + (y + j) * m_dwPitch + x * nChannelCount);
+        CMP_BYTE* pDestData = (CMP_BYTE*)&pdwBlock[j * dwWidth];
+
+        for (i = 0; i < dwWidth; i++)
         {
             *pDestData++ = *pSrcData++;
             *pDestData++ = *pSrcData++;
@@ -200,12 +209,12 @@ bool CCodecBuffer_RGB888::ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CM
         }
 
         // Pad block with previous values if necessary
-        if(i < w)
-            PadLine(i, w, 4, (CMP_BYTE*)&pdwBlock[j*w]);
+        if (i < w)
+            PadLine(i, w, 4, (CMP_BYTE*)&pdwBlock[j * w]);
     }
 
     // Pad block with previous values if necessary
-    if(j < h)
+    if (j < h)
         PadBlock(j, w, h, 4, (CMP_BYTE*)pdwBlock);
 
     return true;
@@ -216,18 +225,18 @@ bool CCodecBuffer_RGB888::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, C
     assert(x < GetWidth());
     assert(y < GetHeight());
 
-    if(x >= GetWidth() || y >= GetHeight())
+    if (x >= GetWidth() || y >= GetHeight())
         return false;
 
     CMP_DWORD  dwWidth  = cmp_minT(w, (GetWidth() - x));
-    CMP_DWORD* pdwBlock = (CMP_DWORD*) block;
+    CMP_DWORD* pdwBlock = (CMP_DWORD*)block;
 
-    for(CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); ++j)
+    for (CMP_DWORD j = 0; j < h && (y + j) < GetHeight(); ++j)
     {
-        CMP_BYTE* pSrcData = (CMP_BYTE*)(pdwBlock + j*dwWidth);
-        CMP_BYTE* pDestData = (CMP_BYTE*)(GetData() + (y + j)*m_dwPitch + x*nChannelCount);
+        CMP_BYTE* pSrcData  = (CMP_BYTE*)(pdwBlock + j * dwWidth);
+        CMP_BYTE* pDestData = (CMP_BYTE*)(GetData() + (y + j) * m_dwPitch + x * nChannelCount);
 
-        for(CMP_DWORD i = 0; i < dwWidth; i++)
+        for (CMP_DWORD i = 0; i < dwWidth; i++)
         {
             *pDestData++ = *pSrcData++;
             *pDestData++ = *pSrcData++;
@@ -238,5 +247,3 @@ bool CCodecBuffer_RGB888::WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, C
 
     return true;
 }
-
-

@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2021    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2021-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -43,7 +43,6 @@
 
 static CGU_Vec4ui CompressBlockBC6H_UNORM(CMP_IN CGU_Vec3f image_src[16], CMP_IN CGU_FLOAT fquality)
 {
-
     CGU_Vec4ui block = {0u, 0u, 0u, 0u};
 
 #ifdef USE_BETSY
@@ -54,8 +53,8 @@ static CGU_Vec4ui CompressBlockBC6H_UNORM(CMP_IN CGU_Vec3f image_src[16], CMP_IN
     block.z = cmp_out[2];
     block.w = cmp_out[3];
 #else
-    (fquality);     // unreferenced formal parameter
-    (image_src);    // unreferenced formal parameter
+    (fquality);   // unreferenced formal parameter
+    (image_src);  // unreferenced formal parameter
 #endif
 
     return block;

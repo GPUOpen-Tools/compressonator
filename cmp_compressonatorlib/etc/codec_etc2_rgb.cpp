@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2018  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -26,7 +26,7 @@
 //  Description: implementation of the CCodec_ATC class
 //
 //////////////////////////////////////////////////////////////////////////////
-#pragma warning(disable:4100)
+#pragma warning(disable : 4100)
 
 #include "common.h"
 #include "codec_etc2_rgb.h"
@@ -42,41 +42,52 @@ using namespace CMP;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////////////
 
-CCodec_ETC2_RGB::CCodec_ETC2_RGB(CodecType codecType):CCodec_ETC2(codecType) {
-
+CCodec_ETC2_RGB::CCodec_ETC2_RGB(CodecType codecType)
+    : CCodec_ETC2(codecType)
+{
 }
 
-CCodec_ETC2_RGB::~CCodec_ETC2_RGB() {
-
+CCodec_ETC2_RGB::~CCodec_ETC2_RGB()
+{
 }
 
-CCodecBuffer* CCodec_ETC2_RGB::CreateBuffer(
-    CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-    CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch, CMP_BYTE* pData,CMP_DWORD dwDataSize) const {
-    return CreateCodecBuffer(CBT_4x4Block_4BPP, 4,4,1,dwWidth, dwHeight, dwPitch, pData,dwDataSize);
+CCodecBuffer* CCodec_ETC2_RGB::CreateBuffer(CMP_BYTE  nBlockWidth,
+                                            CMP_BYTE  nBlockHeight,
+                                            CMP_BYTE  nBlockDepth,
+                                            CMP_DWORD dwWidth,
+                                            CMP_DWORD dwHeight,
+                                            CMP_DWORD dwPitch,
+                                            CMP_BYTE* pData,
+                                            CMP_DWORD dwDataSize) const
+{
+    return CreateCodecBuffer(CBT_4x4Block_4BPP, 4, 4, 1, dwWidth, dwHeight, dwPitch, pData, dwDataSize);
 }
 
-CodecError CCodec_ETC2_RGB::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2) {
+CodecError CCodec_ETC2_RGB::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+{
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
 
-    if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
+    if (bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
         return CE_Unknown;
 
     const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
     const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
 
-    CMP_BYTE srcBlock[BLOCK_SIZE_4X4X4];
+    CMP_BYTE  srcBlock[BLOCK_SIZE_4X4X4];
     CMP_DWORD compressedBlock[2];
-    for(CMP_DWORD j = 0; j < dwBlocksY; j++) {
-        for(CMP_DWORD i = 0; i < dwBlocksX; i++) {
-            bufferIn.ReadBlockRGBA(i*4, j*4, 4, 4, srcBlock);
+    for (CMP_DWORD j = 0; j < dwBlocksY; j++)
+    {
+        for (CMP_DWORD i = 0; i < dwBlocksX; i++)
+        {
+            bufferIn.ReadBlockRGBA(i * 4, j * 4, 4, 4, srcBlock);
             CompressRGBBlock(srcBlock, compressedBlock);
-            bufferOut.WriteBlock(i*4, j*4, compressedBlock, 2);
+            bufferOut.WriteBlock(i * 4, j * 4, compressedBlock, 2);
         }
-        if(pFeedbackProc) {
+        if (pFeedbackProc)
+        {
             float fProgress = 100.f * (j * dwBlocksX) / (dwBlocksX * dwBlocksY);
-            if(pFeedbackProc(fProgress, pUser1, pUser2))
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
                 return CE_Aborted;
         }
     }
@@ -84,36 +95,39 @@ CodecError CCodec_ETC2_RGB::Compress(CCodecBuffer& bufferIn, CCodecBuffer& buffe
     return CE_OK;
 }
 
-CodecError CCodec_ETC2_RGB::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2) {
+CodecError CCodec_ETC2_RGB::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+{
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
 
-    if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
+    if (bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
         return CE_Unknown;
 
-    const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
-    const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
-    const CMP_DWORD dwBlocksXY = dwBlocksX*dwBlocksY;
+    const CMP_DWORD dwBlocksX  = ((bufferIn.GetWidth() + 3) >> 2);
+    const CMP_DWORD dwBlocksY  = ((bufferIn.GetHeight() + 3) >> 2);
+    const CMP_DWORD dwBlocksXY = dwBlocksX * dwBlocksY;
 
     CMP_DWORD compressedBlock[2];
-    CMP_BYTE destBlock[BLOCK_SIZE_4X4X4];
+    CMP_BYTE  destBlock[BLOCK_SIZE_4X4X4];
     memset(destBlock, 0xFF, BLOCK_SIZE_4X4X4);
-    for(CMP_DWORD j = 0; j < dwBlocksY; j++) {
-        for(CMP_DWORD i = 0; i < dwBlocksX; i++) {
-            bufferIn.ReadBlock(i*4, j*4, compressedBlock, 2);
+    for (CMP_DWORD j = 0; j < dwBlocksY; j++)
+    {
+        for (CMP_DWORD i = 0; i < dwBlocksX; i++)
+        {
+            bufferIn.ReadBlock(i * 4, j * 4, compressedBlock, 2);
             DecompressRGBBlock(destBlock, compressedBlock);
-            bufferOut.WriteBlockRGBA(i*4, j*4, 4, 4, destBlock);
+            bufferOut.WriteBlockRGBA(i * 4, j * 4, 4, 4, destBlock);
         }
 
-        if (pFeedbackProc) {
+        if (pFeedbackProc)
+        {
             float fProgress = 100.f * (j * dwBlocksX) / dwBlocksXY;
-            if (pFeedbackProc(fProgress, pUser1, pUser2)) {
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
+            {
                 return CE_Aborted;
             }
         }
-
     }
 
     return CE_OK;
 }
-

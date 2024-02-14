@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -25,21 +25,22 @@
 #ifndef _3DQUANT_CONSTANTS_H_
 #define _3DQUANT_CONSTANTS_H_
 
-#define MAX_DIMENSION_BIG                    4
+#define MAX_DIMENSION_BIG 4
 
-#define DIMENSION                            4
-#define MAX_ENTRIES                            64
-#define MAX_ENTRIES_QUANT_TRACE                16
-#define MAX_CLUSTERS_BIG                    16
-#define MAX_CLUSTERS                        8
-#define MAX_SHAKE_SIZE                        32
+#define DIMENSION 4
+#define MAX_ENTRIES 64
+#define MAX_ENTRIES_QUANT_TRACE 16
+#define MAX_CLUSTERS_BIG 16
+#define MAX_CLUSTERS 8
+#define MAX_SHAKE_SIZE 32
 
-typedef enum {
+typedef enum
+{
     CART,
     SAME_PAR,
     BCC,
     SAME_FCC,
     FCC,
     FCC_SAME_BCC,
-} CMP_qt_cpu;               // cpu
+} CMP_qt_cpu;  // cpu
 #endif

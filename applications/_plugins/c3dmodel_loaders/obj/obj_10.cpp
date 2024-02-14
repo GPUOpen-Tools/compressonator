@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2018-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -46,13 +46,13 @@
 #include "objparser.h"
 #endif
 
-
 #ifdef BUILD_AS_PLUGIN_DLL
 DECLARE_PLUGIN(Plugin_obj_Loader)
 SET_PLUGIN_TYPE("3DMODEL_LOADER")
 SET_PLUGIN_NAME("OBJ")
 #else
-void *make_Plugin_obj_Loader() {
+void* make_Plugin_obj_Loader()
+{
     return new Plugin_obj_Loader;
 }
 #endif
@@ -69,49 +69,56 @@ extern CMIPS* g_CMIPS;
 
 //using namespace ML_obj;
 
-Plugin_obj_Loader::Plugin_obj_Loader() {
-
+Plugin_obj_Loader::Plugin_obj_Loader()
+{
 }
 
-Plugin_obj_Loader::~Plugin_obj_Loader() {
+Plugin_obj_Loader::~Plugin_obj_Loader()
+{
 }
 
-int Plugin_obj_Loader::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) {
+int Plugin_obj_Loader::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
+{
 #ifdef _WIN32
-    pPluginVersion->guid                     = g_GUID;
+    pPluginVersion->guid = g_GUID;
 #endif
-    pPluginVersion->dwAPIVersionMajor        = TC_API_VERSION_MAJOR;
-    pPluginVersion->dwAPIVersionMinor        = TC_API_VERSION_MINOR;
-    pPluginVersion->dwPluginVersionMajor     = TC_PLUGIN_VERSION_MAJOR;
-    pPluginVersion->dwPluginVersionMinor     = TC_PLUGIN_VERSION_MINOR;
+    pPluginVersion->dwAPIVersionMajor    = TC_API_VERSION_MAJOR;
+    pPluginVersion->dwAPIVersionMinor    = TC_API_VERSION_MINOR;
+    pPluginVersion->dwPluginVersionMajor = TC_PLUGIN_VERSION_MAJOR;
+    pPluginVersion->dwPluginVersionMinor = TC_PLUGIN_VERSION_MINOR;
     return 0;
 }
 
-int Plugin_obj_Loader::TC_PluginSetSharedIO(void *Shared) {
-    if (Shared) {
-        g_CMIPS = static_cast<CMIPS *>(Shared);
-        g_CMIPS->m_infolevel = 0x01; // Turn on print Info
+int Plugin_obj_Loader::TC_PluginSetSharedIO(void* Shared)
+{
+    if (Shared)
+    {
+        g_CMIPS              = static_cast<CMIPS*>(Shared);
+        g_CMIPS->m_infolevel = 0x01;  // Turn on print Info
         return 0;
     }
     return 1;
 }
 
-void *Plugin_obj_Loader::GetModelData() {
-    void *data = (void *)m_ModelData;
+void* Plugin_obj_Loader::GetModelData()
+{
+    void* data = (void*)m_ModelData;
     return data;
 }
 
-
 #ifdef USE_MESHOPTIMIZER
-static CMP_Mesh parseObj(const char* path, CMIPS *cmips, CMP_Feedback_Proc pFeedbackProc) {
+static CMP_Mesh parseObj(const char* path, CMIPS* cmips, CMP_Feedback_Proc pFeedbackProc)
+{
     ObjFile file;
 
-    if (cmips) {
+    if (cmips)
+    {
         cmips->SetProgress(0);
         cmips->Print("OBJ: ParseFile ...");
     }
 
-    if (!objParseFile(file, path) || !objValidate(file)) {
+    if (!objParseFile(file, path) || !objValidate(file))
+    {
         if (cmips)
             cmips->Print("Error loading %s\n", path);
         return CMP_Mesh();
@@ -121,59 +128,69 @@ static CMP_Mesh parseObj(const char* path, CMIPS *cmips, CMP_Feedback_Proc pFeed
         cmips->Print("OBJ: Triangulate");
     objTriangulate(file);
 
-
     //Assign data to Mesh
     CMP_Mesh result;
 
     size_t total_indices = file.f.size() / 3;
-    size_t  fsize = file.f.size();
-    int perf = (int)fsize / 100;
+    size_t fsize         = file.f.size();
+    int    perf          = (int)fsize / 100;
 
-    for (size_t i = 0; i < fsize; i += 3) {
-
-        int vi  = file.f[i + 0];    // Indices 0 to (total_indices -1) used to index Vertices
+    for (size_t i = 0; i < fsize; i += 3)
+    {
+        int vi  = file.f[i + 0];  // Indices 0 to (total_indices -1) used to index Vertices
         int vti = file.f[i + 1];
         int vni = file.f[i + 2];
 
-        result.indices.push_back(vi+1);     // Save indices starting value starts from 1 to total_indices
+        result.indices.push_back(vi + 1);  // Save indices starting value starts from 1 to total_indices
 
         Vertex V;
 
-        if (vi >= 0) {
+        if (vi >= 0)
+        {
             V.px = file.v[vi * 3 + 0];
             V.py = file.v[vi * 3 + 1];
             V.pz = file.v[vi * 3 + 2];
-        } else {
+        }
+        else
+        {
             // This should never happen we always have vertices!
             V.px = 0;
             V.py = 0;
             V.pz = 0;
         }
 
-        if (vni >= 0) {
+        if (vni >= 0)
+        {
             V.nx = file.vn[vni * 3 + 0];
             V.ny = file.vn[vni * 3 + 1];
             V.nz = file.vn[vni * 3 + 2];
-        } else {
+        }
+        else
+        {
             V.nx = 0;
             V.ny = 0;
             V.nz = 0;
         }
 
         // We dont support texture UV for now
-        if (vti >= 0) {
+        if (vti >= 0)
+        {
             V.tx = file.vt[vti * 3 + 0];
             V.ty = file.vt[vti * 3 + 1];
-        } else {
+        }
+        else
+        {
             V.tx = 0;
             V.ty = 0;
         }
 
         result.vertices.push_back(V);
 
-        if (pFeedbackProc && ((i % perf) == 0)) {
+        if (pFeedbackProc && ((i % perf) == 0))
+        {
             float fProgress = 100.f * ((float)(i) / fsize);
-            if (pFeedbackProc(fProgress, NULL, NULL)) {
+            if (pFeedbackProc(fProgress, NULL, NULL))
+            {
                 break;
             }
         }
@@ -246,103 +263,123 @@ static CMP_Mesh parseObj(const char* path, CMIPS *cmips, CMP_Feedback_Proc pFeed
 }
 #endif
 
-
-int Plugin_obj_Loader::LoadModelData(const char* pszFilename, const char* pszFilename2, void *pluginManager, void *msghandler, CMP_Feedback_Proc pFeedbackProc) {
+int Plugin_obj_Loader::LoadModelData(const char* pszFilename, const char* pszFilename2, void* pluginManager, void* msghandler, CMP_Feedback_Proc pFeedbackProc)
+{
     int result = 0;
 
-    if (pszFilename) {
-        clock_t start = clock();
+    if (pszFilename)
+    {
+        clock_t start               = clock();
         m_ModelData[0].m_model_name = pszFilename;
-        result = m_loader.LoadGeometry(pszFilename, m_ModelData[0], g_CMIPS, pFeedbackProc);
-        clock_t elapsed = clock() - start;
-        unsigned long loadTime = elapsed / (CLOCKS_PER_SEC / 1000);
-        m_ModelData[0].m_LoadTime = loadTime;
-    } else
+        result                      = m_loader.LoadGeometry(pszFilename, m_ModelData[0], g_CMIPS, pFeedbackProc);
+        clock_t       elapsed       = clock() - start;
+        unsigned long loadTime      = elapsed / (CLOCKS_PER_SEC / 1000);
+        m_ModelData[0].m_LoadTime   = loadTime;
+    }
+    else
         return -1;
 
     return result;
 }
 
-int Plugin_obj_Loader::SaveModelData(const char* pdstFilename, void* meshData) {
-    if (!pdstFilename) {
+int Plugin_obj_Loader::SaveModelData(const char* pdstFilename, void* meshData)
+{
+    if (!pdstFilename)
+    {
         PrintInfo("Invalid Filename.");
         return -1;
     }
-    if (!meshData) {
+    if (!meshData)
+    {
         PrintInfo("Invalid Mesh Data.");
         return -1;
     }
 
-    if (g_CMIPS) {
+    if (g_CMIPS)
+    {
         std::string sfullfilename = pdstFilename;
-        std::string sfilename = sfullfilename.substr(sfullfilename.find_last_of(".") + 1);
+        std::string sfilename     = sfullfilename.substr(sfullfilename.find_last_of(".") + 1);
 
         g_CMIPS->Print("Saving Output File %s...", sfilename.c_str());
     }
 
     std::ofstream outputFileStream(pdstFilename);
 
-    if (!outputFileStream) {
+    if (!outputFileStream)
+    {
         PrintInfo("Cannot open file to write.");
         return -1;
     }
 
     CMP_Mesh* modelData = (CMP_Mesh*)meshData;
-    int nVCount = (int)modelData->vertices.size();
-    int nICount = (int)modelData->indices.size();
+    int       nVCount   = (int)modelData->vertices.size();
+    int       nICount   = (int)modelData->indices.size();
 
-    bool hasVN = false; //has vertex normal
-    bool hasVT = false; // has texcoordinate
+    bool hasVN = false;  //has vertex normal
+    bool hasVT = false;  // has texcoordinate
 
-    int nTCount = 0; //texture coordinate count
+    int nTCount = 0;  //texture coordinate count
 
-    if (g_CMIPS) {
+    if (g_CMIPS)
+    {
         g_CMIPS->Print("Writing vertices...");
     }
-    for (int iv = 0; iv < nVCount; iv++) {
+    for (int iv = 0; iv < nVCount; iv++)
+    {
         outputFileStream << "v ";
-        outputFileStream << modelData->vertices[iv].px << " " << modelData->vertices[iv].py << " "
-                         << modelData->vertices[iv].pz << std::endl;
+        outputFileStream << modelData->vertices[iv].px << " " << modelData->vertices[iv].py << " " << modelData->vertices[iv].pz << std::endl;
 
-        if (modelData->vertices[iv].nx > 0 || modelData->vertices[iv].ny > 0 || modelData->vertices[iv].nz > 0) {
+        if (modelData->vertices[iv].nx > 0 || modelData->vertices[iv].ny > 0 || modelData->vertices[iv].nz > 0)
+        {
             hasVN = true;
         }
-        if (modelData->vertices[iv].tx > 0 || modelData->vertices[iv].ty > 0) {
+        if (modelData->vertices[iv].tx > 0 || modelData->vertices[iv].ty > 0)
+        {
             hasVT = true;
             nTCount++;
         }
     }
 
-    if (hasVN) {
-        if (g_CMIPS) {
+    if (hasVN)
+    {
+        if (g_CMIPS)
+        {
             g_CMIPS->Print("Writing vertices normals...");
         }
-        for (int iv = 0; iv < nVCount; iv++) {
+        for (int iv = 0; iv < nVCount; iv++)
+        {
             outputFileStream << "vn ";
-            outputFileStream << modelData->vertices[iv].nx << " " << modelData->vertices[iv].ny << " "
-                             << modelData->vertices[iv].nz << std::endl;
+            outputFileStream << modelData->vertices[iv].nx << " " << modelData->vertices[iv].ny << " " << modelData->vertices[iv].nz << std::endl;
         }
     }
 
-    if (hasVT) {
-        if (g_CMIPS) {
+    if (hasVT)
+    {
+        if (g_CMIPS)
+        {
             g_CMIPS->Print("Writing vertices texture...");
         }
-        for (int iv = 0; iv < nVCount; iv++) {
+        for (int iv = 0; iv < nVCount; iv++)
+        {
             outputFileStream << "vt ";
             outputFileStream << modelData->vertices[iv].tx << " " << modelData->vertices[iv].ty << std::endl;
         }
     }
 
-    if (g_CMIPS) {
+    if (g_CMIPS)
+    {
         g_CMIPS->Print("Writing faces...");
     }
-    for (int k = 0; k < nICount; k += 3) {
+    for (int k = 0; k < nICount; k += 3)
+    {
         outputFileStream << "f ";
-        for (int j = 0; j < 3; j++) {
-            if (hasVN) {
-                outputFileStream << modelData->indices[k + j] + 1 <<"//" << modelData->indices[k + j] + 1 << " ";
-            } else
+        for (int j = 0; j < 3; j++)
+        {
+            if (hasVN)
+            {
+                outputFileStream << modelData->indices[k + j] + 1 << "//" << modelData->indices[k + j] + 1 << " ";
+            }
+            else
                 outputFileStream << modelData->indices[k + j] + 1 << " ";
         }
         outputFileStream << std::endl;
@@ -350,7 +387,8 @@ int Plugin_obj_Loader::SaveModelData(const char* pdstFilename, void* meshData) {
 
     outputFileStream.close();
 
-    if (g_CMIPS) {
+    if (g_CMIPS)
+    {
         g_CMIPS->Print("Saving done successfully...");
     }
     return 0;

@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -30,7 +30,7 @@
 
 #include <stdint.h>
 
-typedef uint8_t BYTE;
+typedef uint8_t  BYTE;
 typedef uint16_t WORD;
 typedef uint32_t DWORD;
 
@@ -38,14 +38,13 @@ typedef uint32_t DWORD;
 extern "C" {
 #endif
 
-void DXTCV11CompressBlockSSE(DWORD *block_32, DWORD *block_dxtc);
+void DXTCV11CompressBlockSSE(DWORD* block_32, DWORD* block_dxtc);
 
 #ifdef _WIN32
-void __cdecl DXTCV11CompressBlockSSE2(DWORD *block_32, DWORD *block_dxtc);
+void __cdecl DXTCV11CompressBlockSSE2(DWORD* block_32, DWORD* block_dxtc);
 #endif
 
-
-void DXTCV11CompressBlockSSEMinimal(DWORD *block_32, DWORD *block_dxtc);
+void DXTCV11CompressBlockSSEMinimal(DWORD* block_32, DWORD* block_dxtc);
 void DXTCV11CompressBlockMinimal(DWORD block_32[16], DWORD block_dxtc[2]);
 
 void DXTCV11CompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2]);
@@ -56,12 +55,11 @@ void DXTCV11CompressExplicitAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2]);
 void DXTCV11CompressExplicitAlphaBlockMMX(BYTE block_8[16], DWORD block_dxtc[2]);
 #else
 void __fastcall DXTCV11CompressExplicitAlphaBlockMMX(BYTE block_8[16], DWORD block_dxtc[2]);
-#endif // !_WIN64
-#endif //_WIN32
+#endif  // !_WIN64
+#endif  //_WIN32
 
 #ifdef __cplusplus
 };
 #endif
-
 
 #endif /* AMD_DXTC_COMP_H */

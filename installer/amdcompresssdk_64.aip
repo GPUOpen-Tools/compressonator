@@ -27,7 +27,7 @@
     <ROW Property="ProductCode" Value="1033:{7D5A90D0-2DFF-41C3-9C7F-0A9760CA44D6} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="CompressonatorSDK"/>
-    <ROW Property="ProductVersion" Value="4.4.0" Type="32"/>
+    <ROW Property="ProductVersion" Value="4.5.0" Type="32"/>
     <ROW Property="SETUP_FILE_NAME" Value="CompressonatorSDK_x64_4.1."/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
     <ROW Property="UpgradeCode" Value="{78D0379B-C01A-49C4-A8C7-A41904A35199}"/>
@@ -48,7 +48,7 @@
     <ROW Directory="SHORTCUTDIR" Directory_Parent="TARGETDIR" DefaultDir="SHORTC~1|SHORTCUTDIR" IsPseudoRoot="1"/>
     <ROW Directory="Samples_Dir" Directory_Parent="APPDIR" DefaultDir="examples" DirectoryOptions="3"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
-    <ROW Directory="VS2015_Dir" Directory_Parent="Libs_Dir" DefaultDir="VS2019" DirectoryOptions="3"/>
+    <ROW Directory="VS2015_Dir" Directory_Parent="Libs_Dir" DefaultDir="bin" DirectoryOptions="3"/>
     <ROW Directory="common_Dir" Directory_Parent="Samples_Dir" DefaultDir="common" DirectoryOptions="3"/>
     <ROW Directory="sdk_example1_Dir" Directory_Parent="Samples_Dir" DefaultDir="SDK_EX~1|sdk_example1" DirectoryOptions="3"/>
     <ROW Directory="sdk_example2_Dir" Directory_Parent="Samples_Dir" DefaultDir="SDK_EX~2|sdk_example2" DirectoryOptions="3"/>

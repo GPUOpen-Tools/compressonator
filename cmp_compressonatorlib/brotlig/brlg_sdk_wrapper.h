@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2022  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2022-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,18 +30,39 @@
 
 #include "compressonator.h"
 
+namespace BRLG
+{
 
-namespace BRLG {
+struct EncodeParameters
+{
+    bool precondition;
+
+    CMP_FORMAT format;
+    CMP_DWORD  textureWidth;
+    CMP_DWORD  textureHeight;
+    CMP_DWORD  numMipmapLevels;
+
+    bool doSwizzle;
+    bool doDeltaEncode;
+};
+
+// A function used to determine if the given CMP_FORMAT has preconditioning support in the Brotli-G SDK
+bool IsPreconditionFormat(CMP_FORMAT format);
 
 uint32_t MaxCompressedSize(uint32_t uncompressedSize);
 
 char* GetLastErrorStr();
 
-bool EncodeDataStream(const CMP_BYTE* inputData, uint32_t inputSize, CMP_BYTE* outputData, uint32_t* outputSize, uint32_t pageSize);
+bool EncodeDataStream(const CMP_BYTE*  inputData,
+                      uint32_t         inputSize,
+                      CMP_BYTE*        outputData,
+                      uint32_t*        outputSize,
+                      uint32_t         pageSize,
+                      EncodeParameters params = {});
 
 bool DecodeDataStreamCPU(const CMP_BYTE* inputData, uint32_t inputSize, CMP_BYTE* outputData, uint32_t* outputSize);
 bool DecodeDataStreamGPU(const CMP_BYTE* inputData, uint32_t inputSize, CMP_BYTE* outputData, uint32_t* outputSize);
 
-}
+}  // namespace BRLG
 
 #endif

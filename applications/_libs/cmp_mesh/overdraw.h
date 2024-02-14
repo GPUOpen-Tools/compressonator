@@ -1,5 +1,5 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
@@ -11,7 +11,7 @@
 #include "feedback.h"
 #include <vector>
 
-#define TOOTLE_RAYTRACE_IMAGE_SIZE 512    // the image size used to optimize and measure overdraw using ray tracing implementation
+#define TOOTLE_RAYTRACE_IMAGE_SIZE 512  // the image size used to optimize and measure overdraw using ray tracing implementation
 
 class Soup;
 
@@ -36,9 +36,9 @@ TootleResult ODObjectOverdrawRaytrace(const float*        pfVB,
 TootleResult ODOverdrawGraph(const float*            pViewpoints,
                              unsigned int            nViewpoints,
                              bool                    bCullCCW,
-                             const std::vector<int>&       rClusters,
-                             const std::vector<int>&       rClusterOut,
-                             std::vector<t_edge>&          rGraphOut,
+                             const std::vector<int>& rClusters,
+                             const std::vector<int>& rClusterOut,
+                             std::vector<t_edge>&    rGraphOut,
                              TootleOverdrawOptimizer eOverdrawOptimizer);
 
 void ODCleanup();

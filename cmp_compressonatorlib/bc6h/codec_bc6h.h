@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2014-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2014-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,24 +28,27 @@
 #if !defined(_CODEC_BC6H_H_INCLUDED_)
 #define _CODEC_BC6H_H_INCLUDED_
 
-#include "compressonator.h"
-#include "codec_dxtc.h"
+#include <thread>
+
 #include "bc6h_encode.h"
 #include "bc6h_decode.h"
 #include "bc6h_library.h"
+#include "codec_common.h"
+#include "codec_dxtc.h"
+#include "compressonator.h"
 
-#include <thread>
-
-struct BC6HEncodeThreadParam {
-    BC6HBlockEncoder    *encoder;
-    float               in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
-    CMP_BYTE             *out;
-    volatile CMP_BOOL    run;
-    volatile CMP_BOOL    exit;
+struct BC6HEncodeThreadParam
+{
+    BC6HBlockEncoder* encoder;
+    float             in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
+    CMP_BYTE*         out;
+    volatile CMP_BOOL run;
+    volatile CMP_BOOL exit;
 };
 
-class CCodec_BC6H : public CCodec_DXTC {
-  public:
+class CCodec_BC6H : public CCodec_DXTC
+{
+public:
     CCodec_BC6H(CodecType codecType);
     ~CCodec_BC6H();
 
@@ -54,41 +57,54 @@ class CCodec_BC6H : public CCodec_DXTC {
     virtual bool SetParameter(const CMP_CHAR* /*pszParamName*/, CODECFLOAT /*fValue*/);
 
     // Required interfaces
-    virtual CodecError Compress             (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL,  CMP_DWORD_PTR pUser1 = NULL,  CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Compress_Fast        (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL,  CMP_DWORD_PTR pUser1 = NULL,  CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Compress_SuperFast   (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL,  CMP_DWORD_PTR pUser1 = NULL,  CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Decompress           (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL,  CMP_DWORD_PTR pUser1 = NULL,  CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress(CCodecBuffer&       bufferIn,
+                                CCodecBuffer&       bufferOut,
+                                Codec_Feedback_Proc pFeedbackProc = NULL,
+                                CMP_DWORD_PTR       pUser1        = NULL,
+                                CMP_DWORD_PTR       pUser2        = NULL);
+    virtual CodecError Compress_Fast(CCodecBuffer&       bufferIn,
+                                     CCodecBuffer&       bufferOut,
+                                     Codec_Feedback_Proc pFeedbackProc = NULL,
+                                     CMP_DWORD_PTR       pUser1        = NULL,
+                                     CMP_DWORD_PTR       pUser2        = NULL);
+    virtual CodecError Compress_SuperFast(CCodecBuffer&       bufferIn,
+                                          CCodecBuffer&       bufferOut,
+                                          Codec_Feedback_Proc pFeedbackProc = NULL,
+                                          CMP_DWORD_PTR       pUser1        = NULL,
+                                          CMP_DWORD_PTR       pUser2        = NULL);
+    virtual CodecError Decompress(CCodecBuffer&       bufferIn,
+                                  CCodecBuffer&       bufferOut,
+                                  Codec_Feedback_Proc pFeedbackProc = NULL,
+                                  CMP_DWORD_PTR       pUser1        = NULL,
+                                  CMP_DWORD_PTR       pUser2        = NULL);
 
-
-  private:
-    BC6HEncodeThreadParam *m_EncodeParameterStorage;
+private:
+    BC6HEncodeThreadParam* m_EncodeParameterStorage;
 
     // BC6H User configurable variables
-    CMP_WORD        m_ModeMask;
-    float           m_Quality;
-    CMP_WORD        m_NumThreads;
-    bool            m_bIsSigned;
-    bool            m_UsePatternRec;
-    float           m_Exposure;
+    CMP_WORD m_ModeMask;
+    float    m_Quality;
+    CMP_WORD m_NumThreads;
+    bool     m_bIsSigned;
+    bool     m_UsePatternRec;
+    float    m_Exposure;
 
     // BC6H Internal status
-    CMP_BOOL        m_LibraryInitialized;
-    CMP_BOOL        m_Use_MultiThreading;
-    CMP_INT         m_NumEncodingThreads;
-    CMP_WORD        m_LiveThreads;
-    CMP_WORD        m_LastThread;
+    CMP_BOOL m_LibraryInitialized;
+    CMP_BOOL m_Use_MultiThreading;
+    CMP_INT  m_NumEncodingThreads;
+    CMP_WORD m_LiveThreads;
+    CMP_WORD m_LastThread;
 
     // BC6H Encoders and decoders: for encding use the interfaces below
-    std::thread*         m_EncodingThreadHandle;
-    BC6HBlockEncoder*    m_encoder[BC6H_MAX_THREADS];
-    BC6HBlockDecoder*    m_decoder;
+    std::thread*      m_EncodingThreadHandle;
+    BC6HBlockEncoder* m_encoder[BC6H_MAX_THREADS];
+    BC6HBlockDecoder* m_decoder;
 
     // Encoder interfaces
-    CodecError    CInitializeBC6HLibrary();
-    CodecError    CEncodeBC6HBlock(float  in[BC6H_BLOCK_PIXELS][MAX_DIMENSION_BIG],CMP_BYTE *out);
-    CodecError    CFinishBC6HEncoding(void);
-
-
+    CodecError CInitializeBC6HLibrary();
+    CodecError CEncodeBC6HBlock(float in[BC6H_BLOCK_PIXELS][MAX_DIMENSION_BIG], CMP_BYTE* out);
+    CodecError CFinishBC6HEncoding(void);
 };
 
-#endif // !defined(_CODEC_DXT5_H_INCLUDED_)
+#endif  // !defined(_CODEC_DXT5_H_INCLUDED_)

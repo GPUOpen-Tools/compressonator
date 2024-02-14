@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -97,8 +97,8 @@ cpStartupPage::cpStartupPage(QWidget* parent)
     // Hide context menu:
     setContextMenuPolicy(Qt::NoContextMenu);
 #else
-    QString FontFamily = "helvetica";  // "helvetica, arial, sans-serif";
-    QString PageListStyle  = {
+    QString FontFamily    = "helvetica";  // "helvetica, arial, sans-serif";
+    QString PageListStyle = {
         "border-style: none;"
         "background-color:#F0F0F0;"
         "color:#551a8b;"
@@ -110,14 +110,12 @@ cpStartupPage::cpStartupPage(QWidget* parent)
         "QListWidget::item:selected {"
         "background-color:#F0F0F0;"
         "color:#551a8b;"
-        "}"
-        };
+        "}"};
 
-
-    QFont   HeaderFont(FontFamily, 14, QFont::Bold, true);
-    QFont   Titlefont(FontFamily, 14, QFont::Bold, true);
-    QFont   Selectfont(FontFamily, 10, QFont::Bold, false);
-    QFont   Messagefont(FontFamily, 10);
+    QFont HeaderFont(FontFamily, 14, QFont::Bold, true);
+    QFont Titlefont(FontFamily, 14, QFont::Bold, true);
+    QFont Selectfont(FontFamily, 10, QFont::Bold, false);
+    QFont Messagefont(FontFamily, 10);
 
     QVBoxLayout* m_Vlayout         = new QVBoxLayout();
     QHBoxLayout* m_HlayoutLinks    = new QHBoxLayout();
@@ -235,10 +233,9 @@ cpStartupPage::cpStartupPage(QWidget* parent)
 
     setLayout(m_Vlayout);
 
-   // parent->setStyleSheet("background-color:rgb(250, 250, 250);border:none;");
+    // parent->setStyleSheet("background-color:rgb(250, 250, 250);border:none;");
 #endif
 }
-
 
 #ifndef USE_QTWEBENGINE
 
@@ -305,7 +302,6 @@ void cpStartupPage::onRecentProjectsviewClicked(QListWidgetItem* item)
 cpStartupPage::~cpStartupPage()
 {
 }
-
 
 bool cpStartupPage::UpdateHTML(QVector<QString>& projectsNames)
 {

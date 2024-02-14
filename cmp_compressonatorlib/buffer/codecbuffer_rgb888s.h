@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2023  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -33,18 +33,35 @@
 
 class CCodecBuffer_RGB888S : public CCodecBuffer
 {
-  public:
-    CCodecBuffer_RGB888S(
-        CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-        CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0,CMP_DWORD dwDataSize = 0);
+public:
+    CCodecBuffer_RGB888S(CMP_BYTE  nBlockWidth,
+                         CMP_BYTE  nBlockHeight,
+                         CMP_BYTE  nBlockDepth,
+                         CMP_DWORD dwWidth,
+                         CMP_DWORD dwHeight,
+                         CMP_DWORD dwPitch    = 0,
+                         CMP_BYTE* pData      = 0,
+                         CMP_DWORD dwDataSize = 0);
     virtual ~CCodecBuffer_RGB888S();
 
     virtual void Copy(CCodecBuffer& srcBuffer);
 
-    virtual CodecBufferType GetBufferType() const { return CBT_RGB888S; };
-    virtual CMP_DWORD GetChannelDepth() const { return 8; };
-    virtual CMP_DWORD GetChannelCount() const { return 3; };
-    virtual bool IsFloat() const { return false; };
+    virtual CodecBufferType GetBufferType() const
+    {
+        return CBT_RGB888S;
+    };
+    virtual CMP_DWORD GetChannelDepth() const
+    {
+        return 8;
+    };
+    virtual CMP_DWORD GetChannelCount() const
+    {
+        return 3;
+    };
+    virtual bool IsFloat() const
+    {
+        return false;
+    };
 
     virtual bool ReadBlockR(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[]);
     virtual bool ReadBlockG(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[]);
@@ -59,9 +76,9 @@ class CCodecBuffer_RGB888S : public CCodecBuffer
     virtual bool ReadBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[]);
     virtual bool WriteBlockRGBA(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[]);
 
-  protected:
+protected:
     virtual bool ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[], CMP_DWORD dwChannelOffset);
     virtual bool WriteBlock(CMP_DWORD x, CMP_DWORD y, CMP_BYTE w, CMP_BYTE h, CMP_SBYTE block[], CMP_DWORD dwChannelOffset);
 };
 
-#endif // !defined(_CODECBUFFER_RGB888_H_INCLUDED_)
+#endif  // !defined(_CODECBUFFER_RGB888_H_INCLUDED_)

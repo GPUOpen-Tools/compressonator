@@ -2,7 +2,7 @@ Mesh Optimization
 =================
 
 Mesh optimization is only supported on Windows platform. 
-Reference CMP_MeshOptimizer lib for implementation details. 
+Reference extern_meshoptimizer lib for implementation details. 
 
 
 .. toctree::

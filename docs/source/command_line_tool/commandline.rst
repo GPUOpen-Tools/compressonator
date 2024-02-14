@@ -44,10 +44,10 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 +-----------------------+------------------------------------------------------------+
 | -doswizzle            | Swizzle the source images Red and Blue channels            |
 +-----------------------+------------------------------------------------------------+
-| -EncodeWith           | Compression with CPU, HPC, OCL, DXC, GPU.                  |
+| -EncodeWith           | Compression with CPU, HPC, OCL, DXC, or GPU                |
 |                       | Default is CPU.                                            |
 |                       | GPU will use GL Compress Extensions                        |
-|                       | OCL & DXC is only available on Windows Version             |
+|                       | OCL & DXC are only available on Windows                    |
 +-----------------------+------------------------------------------------------------+
 | -UseGPUDecompress     | By default decompression is done using CPU,                |
 |                       | when set OpenGL will be used by default, this can be       |
@@ -56,7 +56,12 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 | -UseMangledFileNames  | Turns on name mangling, meaning processed files will have  |
 |                       | codec information appended to the end of the file name.    |
 |                       | Useful if you want to process multiple files with the same |
-|                       | file name but different extensions.                        |
+|                       | file name but different extensions                         |
++-----------------------+------------------------------------------------------------+
+| -PackageBRLG          | Packages all files in a directory and its subdirectories   |
+|                       | into a single output BRLG file. This requires that BRLG is |
+|                       | also selected as the destinaiton format (either through    |
+|                       | the "fd" option or the destination file extension)         |
 +-----------------------+------------------------------------------------------------+
 |-\f\f  <ext>,...,<ext> | File filters used for selecting a subset of files in a     |
 |                       | directory folder for processing. The subset will contain   |
@@ -255,7 +260,17 @@ Usage CompressonatorCLI.exe [options] SourceFile DestFile
 +-----------------------------+----------------------------------------------------------+
 |-WeightB <value>             |The weighting of the Blue or Z Channel                    |
 +-----------------------------+----------------------------------------------------------+
-
+|-NoPreconditionBRLG          |Disable Brotli-G preconditioning of BCn textures          |
++-----------------------------+----------------------------------------------------------+
+|-DoSwizzleBRLG               |Enable block swizzling during Brotli-G preconditioning.   |
+|                             |This might further reduce the compressed output file size,|
+|                             |depending on the input texture                            |
++-----------------------------+----------------------------------------------------------+
+|-DoDeltaEncodeBRLG           |Enable delta encoding of colours during Brotli-G          |
+|                             |preconditioning.                                          |
+|                             |This might further reduce the compressed output file size,|
+|                             |depending on the input texture                            |
++-----------------------------+----------------------------------------------------------+
 
 +-----------------------------+----------------------------------------------------------+
 |Output Options               |                                                          |

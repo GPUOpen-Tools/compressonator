@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2018-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -38,79 +38,83 @@
 ///    - It does not support texture coordinates with three channels
 ///
 //=================================================================================================================================
-class MeshObjLoader {
-  public:
-
+class MeshObjLoader
+{
+public:
     /// Loads a mesh from a wavefront OBJ file
-    int LoadGeometry(const char* strFileName, CMODEL_DATA &mesh, CMIPS *cmips, CMP_Feedback_Proc pFeedbackProc);
+    int LoadGeometry(const char* strFileName, CMODEL_DATA& mesh, CMIPS* cmips, CMP_Feedback_Proc pFeedbackProc);
 
-
-  private:
-
+private:
     // VertexHashData
-    struct VertexHashData {
+    struct VertexHashData
+    {
         unsigned int vertexIndex;
         unsigned int texCoordIndex;
         unsigned int normalIndex;
 
         unsigned int finalIndex;
-    }; // End of VertexHashData
+    };  // End of VertexHashData
 
-    struct vertex_less : public std::less<VertexHashData> {
-        bool operator()(const VertexHashData& x, const VertexHashData& y) const {
-            if (x.vertexIndex < y.vertexIndex) {
+    struct vertex_less : public std::less<VertexHashData>
+    {
+        bool operator()(const VertexHashData& x, const VertexHashData& y) const
+        {
+            if (x.vertexIndex < y.vertexIndex)
+            {
                 return true;
             }
 
-            if (x.vertexIndex > y.vertexIndex) {
+            if (x.vertexIndex > y.vertexIndex)
+            {
                 return false;
             }
 
-            if (x.texCoordIndex < y.texCoordIndex) {
+            if (x.texCoordIndex < y.texCoordIndex)
+            {
                 return true;
             }
 
-            if (x.texCoordIndex > y.texCoordIndex) {
+            if (x.texCoordIndex > y.texCoordIndex)
+            {
                 return false;
             }
 
-            if (x.normalIndex < y.normalIndex) {
+            if (x.normalIndex < y.normalIndex)
+            {
                 return true;
             }
 
-            if (x.normalIndex > y.normalIndex) {
+            if (x.normalIndex > y.normalIndex)
+            {
                 return false;
             }
 
             return false;
-        }; // End of operator()
-    }; // End of vertex_less
+        };  // End of operator()
+    };      // End of vertex_less
 
     bool BuildModel(const std::vector<ObjVertex3D>& vertices,
                     const std::vector<ObjVertex3D>& normals,
                     const std::vector<ObjVertex2D>& texCoords,
-                    std::vector<ObjVertexFinal>& finalVertices,
-                    std::vector<ObjFace>& faces);
+                    std::vector<ObjVertexFinal>&    finalVertices,
+                    std::vector<ObjFace>&           faces);
 
     // Returns how many vertices are specified in one line read from OBJ
-    int  GetNumberOfVerticesInLine(const char* szLine);
+    int GetNumberOfVerticesInLine(const char* szLine);
 
     // Read vertex indices
-    void ReadVertexIndices(const char* szLine, int numVertsInLine,
-                           bool bHasTexCoords, bool bHasNormals,
-                           int* pVertIndices, int* pTexCoords, int* pNormals);
+    void ReadVertexIndices(const char* szLine, int numVertsInLine, bool bHasTexCoords, bool bHasNormals, int* pVertIndices, int* pTexCoords, int* pNormals);
 
     // Buildup vertex hash map
-    void MeshObjLoader::BuildFinalVertices( const std::vector<ObjVertex3D>& vertices,
-                                            const std::vector<ObjVertex3D>& normals,
-                                            const std::vector<ObjVertex2D>& texCoords,
-                                            std::vector<ObjFace>&     faces,
-                                            CMP_Mesh &meshData,
-                                            CMIPS *cmips,
-                                            CMP_Feedback_Proc pFeedbackProc);
+    void MeshObjLoader::BuildFinalVertices(const std::vector<ObjVertex3D>& vertices,
+                                           const std::vector<ObjVertex3D>& normals,
+                                           const std::vector<ObjVertex2D>& texCoords,
+                                           std::vector<ObjFace>&           faces,
+                                           CMP_Mesh&                       meshData,
+                                           CMIPS*                          cmips,
+                                           CMP_Feedback_Proc               pFeedbackProc);
 
-    void getFileNameExt(const char *FilePathName, char *fnameExt, int maxbuffsize);
+    void getFileNameExt(const char* FilePathName, char* fnameExt, int maxbuffsize);
 };
 
-
-#endif // _OBJLOADER_H_
+#endif  // _OBJLOADER_H_

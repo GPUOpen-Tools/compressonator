@@ -34,7 +34,7 @@ target_link_libraries(EncodeWith_GPU
 set(BUILD_PLUGIN_TARGET ${CMAKE_BINARY_DIR}/bin/debug/plugin)
 
 set_target_properties(EncodeWith_GPU PROPERTIES 
-    FOLDER "Plugin_Dynamic/GPU_EncodeWith"
+    FOLDER ${PROJECT_FOLDER_SDK_PLUGIN_DYNAMIC}
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin/debug/plugins"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/release/plugins"
     )

@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -26,7 +26,7 @@
 //  Description: implementation of the CCodec_DXT5 class
 //
 //////////////////////////////////////////////////////////////////////////////
-#pragma warning(disable:4100)
+#pragma warning(disable : 4100)
 
 #include "common.h"
 #include "codec_dxt5.h"
@@ -45,32 +45,33 @@ extern CompViewerClient g_CompClient;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////////////
 
-CCodec_DXT5::CCodec_DXT5() :
-    CCodec_DXTC(CT_DXT5) {
-
+CCodec_DXT5::CCodec_DXT5()
+    : CCodec_DXTC(CT_DXT5)
+{
 }
 
-CCodec_DXT5::~CCodec_DXT5() {
-
+CCodec_DXT5::~CCodec_DXT5()
+{
 }
 
-CodecError CCodec_DXT5::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_DXT5::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
+{
 #ifndef _WIN64  //todo: add sse2 feature for win64
-    if(m_nCompressionSpeed == CMP_Speed_SuperFast && m_bUseSSE2)
+    if (m_nCompressionSpeed == CMP_Speed_SuperFast && m_bUseSSE2)
         return Compress_SuperFast(bufferIn, bufferOut, pFeedbackProc, pUser1, pUser2);
-    else if((m_nCompressionSpeed == CMP_Speed_Fast || m_nCompressionSpeed == CMP_Speed_SuperFast) && m_bUseSSE)
+    else if ((m_nCompressionSpeed == CMP_Speed_Fast || m_nCompressionSpeed == CMP_Speed_SuperFast) && m_bUseSSE)
         return Compress_Fast(bufferIn, bufferOut, pFeedbackProc, pUser1, pUser2);
 #endif
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
 
-    if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
+    if (bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
         return CE_Unknown;
 
-
 #ifdef DXT5_COMPDEBUGGER
-    CompViewerClient    g_CompClient;
-    if (g_CompClient.connect()) {
+    CompViewerClient g_CompClient;
+    if (g_CompClient.connect())
+    {
         DbgTrace(("-------> Remote Server Connected"));
     }
 #endif
@@ -78,54 +79,58 @@ CodecError CCodec_DXT5::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
     const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
     const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
 
-
 #ifdef DXT5_COMPDEBUGGER
-    DbgTrace(("IN : BufferType %d ChannelCount %d ChannelDepth %d",bufferIn.GetBufferType(),bufferIn.GetChannelCount(),bufferIn.GetChannelDepth()));
-    DbgTrace(("   : Height %d Width %d Pitch %d isFloat %d",bufferIn.GetHeight(),bufferIn.GetWidth(),bufferIn.GetWidth(),bufferIn.IsFloat()));
+    DbgTrace(("IN : BufferType %d ChannelCount %d ChannelDepth %d", bufferIn.GetBufferType(), bufferIn.GetChannelCount(), bufferIn.GetChannelDepth()));
+    DbgTrace(("   : Height %d Width %d Pitch %d isFloat %d", bufferIn.GetHeight(), bufferIn.GetWidth(), bufferIn.GetWidth(), bufferIn.IsFloat()));
 
-    DbgTrace(("OUT: BufferType %d ChannelCount %d ChannelDepth %d",bufferOut.GetBufferType(),bufferOut.GetChannelCount(),bufferOut.GetChannelDepth()));
-    DbgTrace(("   : Height %d Width %d Pitch %d isFloat %d",bufferOut.GetHeight(),bufferOut.GetWidth(),bufferOut.GetWidth(),bufferOut.IsFloat()));
+    DbgTrace(("OUT: BufferType %d ChannelCount %d ChannelDepth %d", bufferOut.GetBufferType(), bufferOut.GetChannelCount(), bufferOut.GetChannelDepth()));
+    DbgTrace(("   : Height %d Width %d Pitch %d isFloat %d", bufferOut.GetHeight(), bufferOut.GetWidth(), bufferOut.GetWidth(), bufferOut.IsFloat()));
 #endif
-
 
     bool bUseFixed = (!bufferIn.IsFloat() && bufferIn.GetChannelDepth() == 8 && !m_bUseFloat);
 
-    for(CMP_DWORD j = 0; j < dwBlocksY; j++) {
-        for(CMP_DWORD i = 0; i < dwBlocksX; i++) {
+    for (CMP_DWORD j = 0; j < dwBlocksY; j++)
+    {
+        for (CMP_DWORD i = 0; i < dwBlocksX; i++)
+        {
             CMP_DWORD compressedBlock[4];
-            memset(compressedBlock,0,sizeof(compressedBlock));
-            if(bUseFixed) {
+            memset(compressedBlock, 0, sizeof(compressedBlock));
+            if (bUseFixed)
+            {
                 CMP_BYTE srcBlock[BLOCK_SIZE_4X4X4];
-                memset(srcBlock,0,sizeof(srcBlock));
-                bufferIn.ReadBlockRGBA(i*4, j*4, 4, 4, srcBlock);
+                memset(srcBlock, 0, sizeof(srcBlock));
+                bufferIn.ReadBlockRGBA(i * 4, j * 4, 4, 4, srcBlock);
 
 #ifdef DXT5_COMPDEBUGGER
-                g_CompClient.SendData(1,sizeof(srcBlock),srcBlock);
+                g_CompClient.SendData(1, sizeof(srcBlock), srcBlock);
 #endif
 
                 CompressRGBABlock(srcBlock, compressedBlock, CalculateColourWeightings(srcBlock));
-            } else {
+            }
+            else
+            {
                 float srcBlock[BLOCK_SIZE_4X4X4];
-                bufferIn.ReadBlockRGBA(i*4, j*4, 4, 4, srcBlock);
+                bufferIn.ReadBlockRGBA(i * 4, j * 4, 4, 4, srcBlock);
                 CompressRGBABlock(srcBlock, compressedBlock, CalculateColourWeightings(srcBlock));
             }
 
-            bufferOut.WriteBlock(i*4, j*4, compressedBlock, 4);
+            bufferOut.WriteBlock(i * 4, j * 4, compressedBlock, 4);
 
 #ifdef DXT5_COMPDEBUGGER
             //g_CompClient.SendData(2,sizeof(compressedBlock),(byte *)&compressedBlock[0]);
 #endif
 
-#ifdef DXT5_COMPDEBUGGER // Checks decompression it should match or be close to source
+#ifdef DXT5_COMPDEBUGGER  // Checks decompression it should match or be close to source
             CMP_BYTE destBlock[BLOCK_SIZE_4X4X4];
             DecompressRGBABlock(destBlock, compressedBlock);
-            g_CompClient.SendData(3,sizeof(destBlock),destBlock);
+            g_CompClient.SendData(3, sizeof(destBlock), destBlock);
 #endif
-
         }
-        if(pFeedbackProc) {
+        if (pFeedbackProc)
+        {
             float fProgress = 100.f * (j * dwBlocksX) / (dwBlocksX * dwBlocksY);
-            if(pFeedbackProc(fProgress, pUser1, pUser2)) {
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
+            {
 #ifdef DXT5_COMPDEBUGGER
                 g_CompClient.disconnect();
 #endif
@@ -140,27 +145,35 @@ CodecError CCodec_DXT5::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut
     return CE_OK;
 }
 
-CodecError CCodec_DXT5::Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_DXT5::Compress_Fast(CCodecBuffer&       bufferIn,
+                                      CCodecBuffer&       bufferOut,
+                                      Codec_Feedback_Proc pFeedbackProc,
+                                      CMP_DWORD_PTR       pUser1,
+                                      CMP_DWORD_PTR       pUser2)
+{
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
 
-    if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
+    if (bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
         return CE_Unknown;
 
     const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
     const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
 
     CMP_DWORD compressedBlock[4];
-    CMP_BYTE srcBlock[BLOCK_SIZE_4X4X4];
-    for(CMP_DWORD j = 0; j < dwBlocksY; j++) {
-        for(CMP_DWORD i = 0; i < dwBlocksX; i++) {
-            bufferIn.ReadBlockRGBA(i*4, j*4, 4, 4, srcBlock);
+    CMP_BYTE  srcBlock[BLOCK_SIZE_4X4X4];
+    for (CMP_DWORD j = 0; j < dwBlocksY; j++)
+    {
+        for (CMP_DWORD i = 0; i < dwBlocksX; i++)
+        {
+            bufferIn.ReadBlockRGBA(i * 4, j * 4, 4, 4, srcBlock);
             CompressRGBABlock_Fast(srcBlock, compressedBlock);
-            bufferOut.WriteBlock(i*4, j*4, compressedBlock, 4);
+            bufferOut.WriteBlock(i * 4, j * 4, compressedBlock, 4);
         }
-        if(pFeedbackProc) {
+        if (pFeedbackProc)
+        {
             float fProgress = 100.f * (j * dwBlocksX) / (dwBlocksX * dwBlocksY);
-            if(pFeedbackProc(fProgress, pUser1, pUser2))
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
                 return CE_Aborted;
         }
     }
@@ -168,27 +181,35 @@ CodecError CCodec_DXT5::Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& buff
     return CE_OK;
 }
 
-CodecError CCodec_DXT5::Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_DXT5::Compress_SuperFast(CCodecBuffer&       bufferIn,
+                                           CCodecBuffer&       bufferOut,
+                                           Codec_Feedback_Proc pFeedbackProc,
+                                           CMP_DWORD_PTR       pUser1,
+                                           CMP_DWORD_PTR       pUser2)
+{
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
 
-    if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
+    if (bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
         return CE_Unknown;
 
     const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
     const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
 
     CMP_DWORD compressedBlock[4];
-    CMP_BYTE srcBlock[BLOCK_SIZE_4X4X4];
-    for(CMP_DWORD j = 0; j < dwBlocksY; j++) {
-        for(CMP_DWORD i = 0; i < dwBlocksX; i++) {
-            bufferIn.ReadBlockRGBA(i*4, j*4, 4, 4, srcBlock);
+    CMP_BYTE  srcBlock[BLOCK_SIZE_4X4X4];
+    for (CMP_DWORD j = 0; j < dwBlocksY; j++)
+    {
+        for (CMP_DWORD i = 0; i < dwBlocksX; i++)
+        {
+            bufferIn.ReadBlockRGBA(i * 4, j * 4, 4, 4, srcBlock);
             CompressRGBABlock_SuperFast(srcBlock, compressedBlock);
-            bufferOut.WriteBlock(i*4, j*4, compressedBlock, 4);
+            bufferOut.WriteBlock(i * 4, j * 4, compressedBlock, 4);
         }
-        if(pFeedbackProc) {
+        if (pFeedbackProc)
+        {
             float fProgress = 100.f * (j * dwBlocksX) / (dwBlocksX * dwBlocksY);
-            if(pFeedbackProc(fProgress, pUser1, pUser2))
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
                 return CE_Aborted;
         }
     }
@@ -196,46 +217,56 @@ CodecError CCodec_DXT5::Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer&
     return CE_OK;
 }
 
-CodecError CCodec_DXT5::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_DXT5::Decompress(CCodecBuffer&       bufferIn,
+                                   CCodecBuffer&       bufferOut,
+                                   Codec_Feedback_Proc pFeedbackProc,
+                                   CMP_DWORD_PTR       pUser1,
+                                   CMP_DWORD_PTR       pUser2)
+{
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
 
-    if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
+    if (bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
         return CE_Unknown;
 
-    const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
-    const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
-    const CMP_DWORD dwBlocksXY = dwBlocksX*dwBlocksY;
+    const CMP_DWORD dwBlocksX  = ((bufferIn.GetWidth() + 3) >> 2);
+    const CMP_DWORD dwBlocksY  = ((bufferIn.GetHeight() + 3) >> 2);
+    const CMP_DWORD dwBlocksXY = dwBlocksX * dwBlocksY;
 
     bool bUseFixed = (!bufferOut.IsFloat() && bufferOut.GetChannelDepth() == 8 && !m_bUseFloat);
 
-    for(CMP_DWORD j = 0; j < dwBlocksY; j++) {
-        for(CMP_DWORD i = 0; i < dwBlocksX; i++) {
+    for (CMP_DWORD j = 0; j < dwBlocksY; j++)
+    {
+        for (CMP_DWORD i = 0; i < dwBlocksX; i++)
+        {
             CMP_DWORD compressedBlock[4];
-            bufferIn.ReadBlock(i*4, j*4, compressedBlock, 4);
-            if(bUseFixed) {
+            bufferIn.ReadBlock(i * 4, j * 4, compressedBlock, 4);
+            if (bUseFixed)
+            {
                 CMP_BYTE destBlock[BLOCK_SIZE_4X4X4];
 #ifdef TEST_CMP_CORE_DECODER
-                DecompressBlockBC3((CMP_BYTE *)compressedBlock,destBlock);
+                DecompressBlockBC3((CMP_BYTE*)compressedBlock, destBlock);
 #else
                 DecompressRGBABlock(destBlock, compressedBlock);
 #endif
-                bufferOut.WriteBlockRGBA(i*4, j*4, 4, 4, destBlock);
-            } else {
+                bufferOut.WriteBlockRGBA(i * 4, j * 4, 4, 4, destBlock);
+            }
+            else
+            {
                 float destBlock[BLOCK_SIZE_4X4X4];
                 DecompressRGBABlock(destBlock, compressedBlock);
-                bufferOut.WriteBlockRGBA(i*4, j*4, 4, 4, destBlock);
+                bufferOut.WriteBlockRGBA(i * 4, j * 4, 4, 4, destBlock);
             }
         }
 
-        if (pFeedbackProc) {
+        if (pFeedbackProc)
+        {
             float fProgress = 100.f * (j * dwBlocksX) / dwBlocksXY;
-            if (pFeedbackProc(fProgress, pUser1, pUser2)) {
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
+            {
                 return CE_Aborted;
             }
         }
-
-
     }
 
     return CE_OK;

@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2014-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2014-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,17 +24,19 @@
 #if !defined(_CODEC_ASTC_H_INCLUDED_)
 #define _CODEC_ASTC_H_INCLUDED_
 
-#include "compressonator.h"
-#include "codec_dxtc.h"
+#include <thread>
+
 #include "astc_encode.h"
 #include "astc_decode.h"
 #include "astc_library.h"
 #include "astc_definitions.h"
+#include "codec_common.h"
+#include "codec_dxtc.h"
+#include "compressonator.h"
 
-#include <thread>
-
-class CCodec_ASTC : public CCodec_DXTC {
-  public:
+class CCodec_ASTC : public CCodec_DXTC
+{
+public:
     CCodec_ASTC();
     ~CCodec_ASTC();
 
@@ -43,56 +45,54 @@ class CCodec_ASTC : public CCodec_DXTC {
     virtual bool SetParameter(const CMP_CHAR* /*pszParamName*/, CODECFLOAT /*fValue*/);
 
     // Required interfaces
-    virtual CodecError Compress             (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Decompress           (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress(CCodecBuffer&       bufferIn,
+                                CCodecBuffer&       bufferOut,
+                                Codec_Feedback_Proc pFeedbackProc = NULL,
+                                CMP_DWORD_PTR       pUser1        = NULL,
+                                CMP_DWORD_PTR       pUser2        = NULL);
+    virtual CodecError Decompress(CCodecBuffer&       bufferIn,
+                                  CCodecBuffer&       bufferOut,
+                                  Codec_Feedback_Proc pFeedbackProc = NULL,
+                                  CMP_DWORD_PTR       pUser1        = NULL,
+                                  CMP_DWORD_PTR       pUser2        = NULL);
 
-  private:
-
+private:
     // ASTC User configurable variables
-    CMP_WORD    m_NumThreads;
-    char        m_BlockRate[64];
+    CMP_WORD m_NumThreads;
+    char     m_BlockRate[64];
 
     // ASTC Internal status
-    CMP_BOOL    m_LibraryInitialized;
-    CMP_INT     m_NumEncodingThreads;
-    bool        m_AbortRequested;
+    CMP_BOOL m_LibraryInitialized;
+    CMP_INT  m_NumEncodingThreads;
+    bool     m_AbortRequested;
 
-    int m_xdim, m_ydim, m_zdim;        // Is now implamented and set by user ( defined in g_ASTCEncode )
-    float m_target_bitrate;            // defined in g_ASTCEncode
+    int   m_xdim, m_ydim, m_zdim;  // Is now implamented and set by user ( defined in g_ASTCEncode )
+    float m_target_bitrate;        // defined in g_ASTCEncode
 
     // ASTC Encoders and decoders: for encoding use the interfaces below
-    ASTCBlockDecoder*    m_decoder;
-    ASTCBlockEncoder*    m_encoder[MAX_ASTC_THREADS];
+    ASTCBlockDecoder* m_decoder;
+    ASTCBlockEncoder* m_encoder[MAX_ASTC_THREADS];
 
     // Encoder interfaces
-    std::thread         *m_EncodingThreadHandle;
+    std::thread* m_EncodingThreadHandle;
 
-    CodecError      EncodeASTCBlock(
-        astc_codec_image *input_image,
-        uint8_t *bp,
-        int xdim,
-        int ydim,
-        int zdim,
-        int x,
-        int y,
-        int z);
+    CodecError EncodeASTCBlock(astc_codec_image* input_image, uint8_t* bp, int xdim, int ydim, int zdim, int x, int y, int z);
 
-    CodecError      FinishASTCEncoding();
-    CodecError      InitializeASTCLibrary();
+    CodecError FinishASTCEncoding();
+    CodecError InitializeASTCLibrary();
 
     // Encoder interfaces
-    void find_closest_blockdim_2d(float target_bitrate, int *x, int *y, int consider_illegal);
-    void find_closest_blockdim_3d(float target_bitrate, int *x, int *y, int *z, int consider_illegal);
-    void find_closest_blockxy_2d(int *x, int *y, int consider_illegal);
+    void find_closest_blockdim_2d(float target_bitrate, int* x, int* y, int consider_illegal);
+    void find_closest_blockdim_3d(float target_bitrate, int* x, int* y, int* z, int consider_illegal);
+    void find_closest_blockxy_2d(int* x, int* y, int consider_illegal);
 
     // Internal status
-    CMP_BOOL    m_Use_MultiThreading;
-    CMP_WORD    m_LiveThreads;
-    CMP_WORD    m_LastThread;
+    CMP_BOOL m_Use_MultiThreading;
+    CMP_WORD m_LiveThreads;
+    CMP_WORD m_LastThread;
 
     // Speed and Quality
-    double  m_Quality;
-
+    double m_Quality;
 };
 
-#endif // !defined(_CODEC_ASTC_H_INCLUDED_)
+#endif  // !defined(_CODEC_ASTC_H_INCLUDED_)

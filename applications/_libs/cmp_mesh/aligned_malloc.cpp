@@ -1,5 +1,5 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
@@ -10,14 +10,15 @@
 #include <stdio.h>
 
 // a linked list node to store a coupled memory address of the original and aligned address.
-typedef struct llnode {
+typedef struct llnode
+{
     void*          original;  // store the original starting address
     void*          aligned;   // store the aligned starting address
     struct llnode* next;
 } node;
 
 static node* s_addressList = NULL;
-static void PrintList();
+static void  PrintList();
 template <typename T>
 static T GetNextPowerOfTwo(T nValue);
 
@@ -32,9 +33,11 @@ static T GetNextPowerOfTwo(T nValue);
 ///
 /// \return The starting address of the allocated memory.  The address will be aligned to the specified request.
 //=================================================================================================================================
-void* aligned_malloc(size_t bytes, size_t alignment) {
+void* aligned_malloc(size_t bytes, size_t alignment)
+{
     // sanity checks
-    if (bytes <= 0) {
+    if (bytes <= 0)
+    {
         return NULL;
     }
 
@@ -42,14 +45,15 @@ void* aligned_malloc(size_t bytes, size_t alignment) {
     alignment = (alignment <= 0) ? 1 : alignment;
 
     // make sure alignment is of power of 2.
-    if ((alignment & (alignment - 1)) != 0) {
+    if ((alignment & (alignment - 1)) != 0)
+    {
         // alignment is not of power of 2, round it to the next power of 2.
         alignment = GetNextPowerOfTwo(alignment);
 
 #if defined(_MSC_VER) && _MSC_VER < 1900
-        fprintf (stderr, "aligned_malloc: rounding the alignment to %Iu\n", alignment);
+        fprintf(stderr, "aligned_malloc: rounding the alignment to %Iu\n", alignment);
 #else
-        fprintf (stderr, "aligned_malloc: rounding the alignment to %zu\n", alignment);
+        fprintf(stderr, "aligned_malloc: rounding the alignment to %zu\n", alignment);
 #endif
     }
 
@@ -58,9 +62,10 @@ void* aligned_malloc(size_t bytes, size_t alignment) {
     // alignment - 1 bytes.
     size_t totalSize = bytes + alignment - 1;
 
-    void*  memory;
+    void* memory;
 
-    if ((memory = malloc(totalSize)) == NULL) {
+    if ((memory = malloc(totalSize)) == NULL)
+    {
         return NULL;
     }
 
@@ -68,28 +73,28 @@ void* aligned_malloc(size_t bytes, size_t alignment) {
     //  we do not need to use modulus operator.  The second line ensures that if the original address
     //  already address aligned, the offset should be 0.
     size_t offset;
-    offset = alignment - ((size_t) memory & (alignment - 1));
+    offset = alignment - ((size_t)memory & (alignment - 1));
     offset = (offset == alignment) ? 0 : offset;
 
     void* originalAddress = memory;
-    memory = (void*)((size_t) memory + offset);
+    memory                = (void*)((size_t)memory + offset);
 
     // Store a coupled entry of address and aligned address into a linked list so we can free the memory with the correct
     //  address in aligned_free() function.  The new coupled entry is prepended into the linked list.  The next code makes sure
     //  that the linked list does not store multiple entry of the same memory address.
     node* addressEntry;
 
-    for (addressEntry = s_addressList;
-            addressEntry != NULL;
-            addressEntry = addressEntry->next) {
-        if (addressEntry->aligned == memory) {
+    for (addressEntry = s_addressList; addressEntry != NULL; addressEntry = addressEntry->next)
+    {
+        if (addressEntry->aligned == memory)
+        {
             fprintf(stderr, "Error: malloc returns duplicate address.\n");
             free(originalAddress);
             return NULL;
         }
     }
 
-    addressEntry           = (node*) malloc(sizeof(node));
+    addressEntry           = (node*)malloc(sizeof(node));
     addressEntry->original = originalAddress;
     addressEntry->aligned  = memory;
     addressEntry->next     = s_addressList;
@@ -97,7 +102,6 @@ void* aligned_malloc(size_t bytes, size_t alignment) {
 
     return memory;
 }
-
 
 //=================================================================================================================================
 // Print the linked-list, used for debugging purposes.
@@ -128,8 +132,10 @@ void* aligned_malloc(size_t bytes, size_t alignment) {
 //
 // \return void
 //=================================================================================================================================
-void aligned_free(void* p) {
-    if (p == NULL) {
+void aligned_free(void* p)
+{
+    if (p == NULL)
+    {
         return;
     }
 
@@ -138,16 +144,17 @@ void aligned_free(void* p) {
 
     prevAddressEntry = s_addressList;
 
-    for (addressEntry = s_addressList;
-            addressEntry != NULL;
-            addressEntry = addressEntry->next) {
-        if (addressEntry->aligned == p) {
+    for (addressEntry = s_addressList; addressEntry != NULL; addressEntry = addressEntry->next)
+    {
+        if (addressEntry->aligned == p)
+        {
             free(addressEntry->original);
 
             prevAddressEntry->next = addressEntry->next;
 
             // if we are deleting the head node, update the head node
-            if (s_addressList == addressEntry) {
+            if (s_addressList == addressEntry)
+            {
                 s_addressList = addressEntry->next;
             }
 
@@ -173,15 +180,18 @@ void aligned_free(void* p) {
 // \return the next power of two
 //=================================================================================================================================
 template <typename T>
-T GetNextPowerOfTwo(T nValue) {
-    if (nValue < 1) {
+T GetNextPowerOfTwo(T nValue)
+{
+    if (nValue < 1)
+    {
         return 1;
     }
 
     nValue--;
 
     // change all the bits to the right of the highest significant bit to 1.
-    for (unsigned int i = 1; i <= 16; i *= 2) {
+    for (unsigned int i = 1; i <= 16; i *= 2)
+    {
         nValue |= (nValue >> i);
     }
 
@@ -189,4 +199,3 @@ T GetNextPowerOfTwo(T nValue) {
 
     return nValue;
 }
-

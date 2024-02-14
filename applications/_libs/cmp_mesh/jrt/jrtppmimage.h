@@ -1,23 +1,22 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
 #ifndef _IMAGE_H_
 #define _IMAGE_H_
 
-
-typedef struct tag_pixel {
+typedef struct tag_pixel
+{
     unsigned char r;
     unsigned char g;
     unsigned char b;
 
 } PIXEL;
 
-
-class JRTPPMImage {
-
-  public:
+class JRTPPMImage
+{
+public:
     /***************************
     * Image Constructor:
     *   Sets the width and height of the image, in pixels
@@ -41,17 +40,16 @@ class JRTPPMImage {
     *   Accessors for width and height are provided.
     *  they return the width or height of the image, in pixels
     ***************************/
-    inline int GetHeight() const {
+    inline int GetHeight() const
+    {
         return p_miHeight;
     };
-    inline int GetWidth() const {
+    inline int GetWidth() const
+    {
         return p_miWidth;
     };
 
-
-
     void SetPixel(int x, int y, float r, float g, float b);
-
 
     /***********************************************************
     * SaveFile
@@ -70,19 +68,15 @@ class JRTPPMImage {
     ************************************************************/
     bool LoadFile(const char* sFile);
 
-  private:
-
+private:
     void AllocPixels(int iWidth, int iHeight);
     void FreePixels();
 
     PIXEL* AccessPixel(int x, int y);
 
     PIXEL* p_mlpPixels;
-    int p_miHeight;
-    int p_miWidth;
-
+    int    p_miHeight;
+    int    p_miWidth;
 };
 
-
 #endif
-

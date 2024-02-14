@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -25,9 +25,9 @@
 
 #include "cpcompressstatus.h"
 
-CompressStatusDialog::CompressStatusDialog(const QString title, QWidget *parent) :
-    QDockWidget(parent)
-    // acCustomDockWidget(title, parent)
+CompressStatusDialog::CompressStatusDialog(const QString title, QWidget* parent)
+    : QDockWidget(parent)
+// acCustomDockWidget(title, parent)
 {
     m_parent       = parent;
     m_menu         = NULL;
@@ -62,20 +62,21 @@ CompressStatusDialog::CompressStatusDialog(const QString title, QWidget *parent)
 #ifdef USE_CLEAR_WIDGET
 
     m_newWidget = new QWidget(parent);
-    if (!m_newWidget) return;
+    if (!m_newWidget)
+        return;
 
     m_textBrowser->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(m_textBrowser, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(OnshowContextMenu(const QPoint&)));
 
-    m_menu = m_textBrowser->createStandardContextMenu();
+    m_menu  = m_textBrowser->createStandardContextMenu();
     m_clear = new QAction(tr("&Clear text"), this);
-    if (m_clear) {
+    if (m_clear)
+    {
         connect(m_clear, SIGNAL(triggered()), this, SLOT(onClearText()));
     }
     m_menu->addAction(m_clear);
 
-
-    m_newWidget = new QWidget(this);
+    m_newWidget    = new QWidget(this);
     m_btnClearText = new QPushButton("Clear ALL", this);
     //m_btnClearText->setMaximumHeight(16);
 
@@ -83,10 +84,9 @@ CompressStatusDialog::CompressStatusDialog(const QString title, QWidget *parent)
     m_layoutH->addWidget(m_btnClearText);
     m_layoutH->addStretch();
 
-
     connect(m_btnClearText, SIGNAL(pressed()), this, SLOT(onClearText()));
 
-   QGridLayout* m_layout = new QGridLayout(m_newWidget);
+    QGridLayout* m_layout = new QGridLayout(m_newWidget);
 
     m_layout->setSpacing(0);
     m_layout->setMargin(0);
@@ -102,38 +102,42 @@ CompressStatusDialog::CompressStatusDialog(const QString title, QWidget *parent)
 #endif
 }
 
-CompressStatusDialog::~CompressStatusDialog() {
+CompressStatusDialog::~CompressStatusDialog()
+{
     delete m_textBrowser;
 }
 
-
-void CompressStatusDialog::showOutput() {
+void CompressStatusDialog::showOutput()
+{
     show();
 }
 
-void CompressStatusDialog::hideOutput() {
+void CompressStatusDialog::hideOutput()
+{
     hide();
 }
 
-
-void CompressStatusDialog::appendText(QString text) {
+void CompressStatusDialog::appendText(QString text)
+{
     if (m_textBrowser)
         m_textBrowser->append(text);
 }
 
-void CompressStatusDialog::onClearText() {
+void CompressStatusDialog::onClearText()
+{
     if (m_textBrowser)
         m_textBrowser->clear();
 }
 
-void CompressStatusDialog::onShowContextMenu(const QPoint& point) {
+void CompressStatusDialog::onShowContextMenu(const QPoint& point)
+{
     Q_UNUSED(point);
     if (m_menu)
         m_menu->exec(QCursor::pos());
 }
 
-
-void CompressStatusDialog::closeEvent(QCloseEvent *event) {
+void CompressStatusDialog::closeEvent(QCloseEvent* event)
+{
     hide();
     event->ignore();
 }

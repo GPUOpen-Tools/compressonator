@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016-2020 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -85,258 +85,258 @@ acImageView::acImageView(const QString filePathName, QWidget* parent, CMipImages
     if (m_MipImages)
     {
         if (m_MipImages->QImage_list[0][0] != NULL)
-        for (int ii = 0; ii < CMP_MIPSET_MAX_DEPTHS; ii++)
-        {
-            if (m_MipImages->QImage_list[ii].size() > 0)
+            for (int ii = 0; ii < CMP_MIPSET_MAX_DEPTHS; ii++)
             {
-                // The scene is at 0,0 and set to the size of this display widget
-                m_graphicsScene = new acCustomGraphicsScene(this);
-
-                QSize size = this->size();
-
-                m_graphicsScene->setSceneRect(0, 0, size.width(), size.height());
-                m_graphicsScene->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
-
-                //==========================
-                // Add a QImage to the scene
-                //
-                // An image item this is been used for the main view
-                // Note if a compressed image is loaded ie BCn DDS file
-                // We will still have a default image file that is used as a temp
-                // The temp file is loaded via resource file ie: ":/compressonatorgui/images/compressedimageerror.png"
-                //==========================
-                m_ImageIndex           = 0;
-                QImage* image_original = NULL;
-                QPixmap pixmap_original;
-
-                if (m_OriginalMipImages)
+                if (m_MipImages->QImage_list[ii].size() > 0)
                 {
-                    image_original           = m_OriginalMipImages->QImage_list[m_depthIndex][m_ImageIndex];
-                    pixmap_original          = QPixmap::fromImage(*image_original, Qt::NoFormatConversion);
-                    m_imageItem_Original     = new acCustomGraphicsImageItem(pixmap_original, NULL);
-                    m_imageItem_Original->ID = m_graphicsScene->ID;
-                    m_imageItem_Original->setFlags(QGraphicsItem::ItemIsSelectable);
-                    m_graphicsScene->addItem(m_imageItem_Original);
-                    m_imageItem_Original->setVisible(false);
-                }
-                else
-                    m_imageItem_Original = NULL;
+                    // The scene is at 0,0 and set to the size of this display widget
+                    m_graphicsScene = new acCustomGraphicsScene(this);
 
-                QImage* image_processed = m_MipImages->QImage_list[m_depthIndex][m_ImageIndex];
+                    QSize size = this->size();
 
-                if (image_processed != NULL)
-                {
-                    QPixmap pixmap_processed = QPixmap::fromImage(*image_processed, Qt::NoFormatConversion);
+                    m_graphicsScene->setSceneRect(0, 0, size.width(), size.height());
+                    m_graphicsScene->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
 
-                    m_imageItem_Processed     = new acCustomGraphicsImageItem(pixmap_processed, image_original);
-                    m_imageItem_Processed->ID = m_graphicsScene->ID;
-                    m_imageItem_Processed->setFlags(QGraphicsItem::ItemIsSelectable);
-                    m_graphicsScene->addItem(m_imageItem_Processed);
-                }
+                    //==========================
+                    // Add a QImage to the scene
+                    //
+                    // An image item this is been used for the main view
+                    // Note if a compressed image is loaded ie BCn DDS file
+                    // We will still have a default image file that is used as a temp
+                    // The temp file is loaded via resource file ie: ":/compressonatorgui/images/compressedimageerror.png"
+                    //==========================
+                    m_ImageIndex           = 0;
+                    QImage* image_original = NULL;
+                    QPixmap pixmap_original;
 
-                m_imageItem_Processed->setVisible(true);
-
-#ifdef ENABLE_NAVIGATION
-                // Copy of the image view item (ToDo->Scale down to fit a smalled size)
-                // it will be positioned to bottom left corner of the graphics view
-                // and hidden by default, the view toggles on or off based on when
-                // a navigateButton is clicked
-                m_imageItemNav     = new acCustomGraphicsNavImageItem(QPixmap::fromImage((*image)));
-                m_imageItemNav->ID = m_graphicsScene->ID;
-                m_imageItemNav->setVisible(false);
-                m_imageItemNav->setFlags(QGraphicsItem::ItemIsSelectable);
-                m_graphicsScene->addItem(m_imageItemNav);
-
-                m_navigateButton = new QPushButton();
-                if (m_MipImages->MIPS2QtFailed)
-                {
-                    QString PushButtonStyle(
-                        "QPushButton {background: red; border:none; margin: 0px; padding: 0px } QPushButton:hover {border:1px solid black}");
-                    m_navigateButton->setStyleSheet(PushButtonStyle);
-                }
-
-                QPixmap pixmap(qt_navigate_png);
-
-                m_graphicsScene->addWidget(m_navigateButton);
-
-                // a scalled transparent window that is a child of the navigation view
-                // ToDo(s)
-                //   1.  when its moved the view of the main image will pan to match the box area
-                //   2.  scale the size of the box to that of acImageView widget size
-                //   3.  Keep the bounds of the move within the navigation window
-                acCustomGraphicsNavWindow* m_navWindow = new acCustomGraphicsNavWindow(QRectF(0, 0, 50, 50), m_imageItemNav);
-                m_navWindow->ID                        = m_graphicsScene->ID;
-                m_navWindow->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
-                m_navWindow->setOpacity(0.5);
-                m_navWindow->setPen(QPen(Qt::black));
-                m_navWindow->setBrush(Qt::white);
-                m_navigateButton->hide();
-#endif
-
-                //==========================
-                // Add Error message to the scene if there is error
-                //==========================
-                if (m_MipImages->errMsg != "")
-                {
-                    m_errMessage = new QLabel();
-                    if (m_errMessage != NULL)
+                    if (m_OriginalMipImages)
                     {
-                        QFont font = m_errMessage->font();
-                        font.setBold(true);
-                        font.setItalic(true);
-                        font.setPointSize(size.width() / 40);
-                        m_errMessage->setWordWrap(true);
-                        m_errMessage->setFont(font);
-                        m_errMessage->setFixedSize(size.width(), size.height());
-                        m_errMessage->setText(QString::fromStdString(m_MipImages->errMsg));
-                        m_errMessage->setAlignment(Qt::AlignCenter);
-                        m_graphicsScene->addWidget(m_errMessage);
+                        image_original           = m_OriginalMipImages->QImage_list[m_depthIndex][m_ImageIndex];
+                        pixmap_original          = QPixmap::fromImage(*image_original, Qt::NoFormatConversion);
+                        m_imageItem_Original     = new acCustomGraphicsImageItem(pixmap_original, NULL);
+                        m_imageItem_Original->ID = m_graphicsScene->ID;
+                        m_imageItem_Original->setFlags(QGraphicsItem::ItemIsSelectable);
+                        m_graphicsScene->addItem(m_imageItem_Original);
+                        m_imageItem_Original->setVisible(false);
                     }
-                }
+                    else
+                        m_imageItem_Original = NULL;
 
-                // The widget viewer for all of the items
-                m_imageGraphicsView     = new acCustomGraphicsView();
-                m_imageGraphicsView->ID = m_graphicsScene->ID;
-                m_imageGraphicsView->setVisible(false);
-                m_imageGraphicsView->setScene(m_graphicsScene);
-                m_imageGraphicsView->setFrameShadow(QFrame::Raised);
-                m_imageGraphicsView->centerOn(0, 0);
-                m_layout->addWidget(m_imageGraphicsView, 0, 0);
-                m_imageGraphicsView->ensureVisible(m_imageItem_Processed);
-                if (m_imageItem_Original)
-                    m_imageGraphicsView->ensureVisible(m_imageItem_Original);
-                m_imageGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-                m_imageGraphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+                    QImage* image_processed = m_MipImages->QImage_list[m_depthIndex][m_ImageIndex];
 
-                m_xPos = m_imageGraphicsView->horizontalScrollBar();
-                if (m_xPos)
-                {
-                    // These values should be refreshed each time the acImageView is resized
-                    // for now we are obtaining the constructors defaults
-                    m_defaultXPos_minimum = m_xPos->minimum();
-                    m_defaultXPos_maximum = m_xPos->maximum();
-                }
+                    if (image_processed != NULL)
+                    {
+                        QPixmap pixmap_processed = QPixmap::fromImage(*image_processed, Qt::NoFormatConversion);
 
-                m_yPos = m_imageGraphicsView->verticalScrollBar();
-                if (m_yPos)
-                {
-                    // These values should be refreshed each time the acImageView is resized
-                    // for now we are obtaining the constructors defaults
-                    m_defaultYPos_minimum = m_yPos->minimum();
-                    m_defaultYPos_maximum = m_yPos->maximum();
-                }
+                        m_imageItem_Processed     = new acCustomGraphicsImageItem(pixmap_processed, image_original);
+                        m_imageItem_Processed->ID = m_graphicsScene->ID;
+                        m_imageItem_Processed->setFlags(QGraphicsItem::ItemIsSelectable);
+                        m_graphicsScene->addItem(m_imageItem_Processed);
+                    }
 
-                // Public : Events from acCustomGraphics
-                connect(m_graphicsScene, SIGNAL(sceneMousePosition(QPointF*, int)), this, SLOT(onacImageViewMousePosition(QPointF*, int)));
-                connect(m_imageGraphicsView, SIGNAL(resetImageView()), this, SLOT(onResetImageView()));
-                connect(m_imageGraphicsView, SIGNAL(OnMouseHandDown()), this, SLOT(onMouseHandDown()));
-                connect(m_imageGraphicsView, SIGNAL(OnMouseHandD()), this, SLOT(onMouseHandD()));
-
-                connect(m_imageGraphicsView, SIGNAL(OnWheelScaleUp(QPointF&)), this, SLOT(onWheelScaleUp(QPointF&)));
-                connect(m_imageGraphicsView, SIGNAL(OnWheelScaleDown(QPointF&)), this, SLOT(onWheelScaleDown(QPointF&)));
+                    m_imageItem_Processed->setVisible(true);
 
 #ifdef ENABLE_NAVIGATION
-                connect(m_navigateButton, SIGNAL(released()), this, SLOT(onNavigateClicked()));
+                    // Copy of the image view item (ToDo->Scale down to fit a smalled size)
+                    // it will be positioned to bottom left corner of the graphics view
+                    // and hidden by default, the view toggles on or off based on when
+                    // a navigateButton is clicked
+                    m_imageItemNav     = new acCustomGraphicsNavImageItem(QPixmap::fromImage((*image)));
+                    m_imageItemNav->ID = m_graphicsScene->ID;
+                    m_imageItemNav->setVisible(false);
+                    m_imageItemNav->setFlags(QGraphicsItem::ItemIsSelectable);
+                    m_graphicsScene->addItem(m_imageItemNav);
+
+                    m_navigateButton = new QPushButton();
+                    if (m_MipImages->MIPS2QtFailed)
+                    {
+                        QString PushButtonStyle(
+                            "QPushButton {background: red; border:none; margin: 0px; padding: 0px } QPushButton:hover {border:1px solid black}");
+                        m_navigateButton->setStyleSheet(PushButtonStyle);
+                    }
+
+                    QPixmap pixmap(qt_navigate_png);
+
+                    m_graphicsScene->addWidget(m_navigateButton);
+
+                    // a scalled transparent window that is a child of the navigation view
+                    // ToDo(s)
+                    //   1.  when its moved the view of the main image will pan to match the box area
+                    //   2.  scale the size of the box to that of acImageView widget size
+                    //   3.  Keep the bounds of the move within the navigation window
+                    acCustomGraphicsNavWindow* m_navWindow = new acCustomGraphicsNavWindow(QRectF(0, 0, 50, 50), m_imageItemNav);
+                    m_navWindow->ID                        = m_graphicsScene->ID;
+                    m_navWindow->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+                    m_navWindow->setOpacity(0.5);
+                    m_navWindow->setPen(QPen(Qt::black));
+                    m_navWindow->setBrush(Qt::white);
+                    m_navigateButton->hide();
 #endif
 
-                //===============================
-                // Add a OpenGL Widget if needed
-                // to the GraphicsView
-                //===============================
-                if (m_MipImages && (m_MipImages->m_MipImageFormat == MIPIMAGE_FORMAT::Format_OpenGL))
-                {
-                    if (m_MipImages->mipset)
+                    //==========================
+                    // Add Error message to the scene if there is error
+                    //==========================
+                    if (m_MipImages->errMsg != "")
                     {
-                        if (m_MipImages->mipset->m_compressed)
+                        m_errMessage = new QLabel();
+                        if (m_errMessage != NULL)
                         {
-                            //Reserved: GPUDecode
+                            QFont font = m_errMessage->font();
+                            font.setBold(true);
+                            font.setItalic(true);
+                            font.setPointSize(size.width() / 40);
+                            m_errMessage->setWordWrap(true);
+                            m_errMessage->setFont(font);
+                            m_errMessage->setFixedSize(size.width(), size.height());
+                            m_errMessage->setText(QString::fromStdString(m_MipImages->errMsg));
+                            m_errMessage->setAlignment(Qt::AlignCenter);
+                            m_graphicsScene->addWidget(m_errMessage);
                         }
                     }
-                }
 
-                //==========================
-                // Shift the position of the
-                // added error message
-                //==========================
-                if (m_MipImages->errMsg != "")
-                {
-                    QGraphicsItem* m_errItem = m_imageGraphicsView->itemAt(0, 0);
-                    if (m_errItem)
-                        m_errItem->moveBy(size.width() / 4, size.height() / 4);
+                    // The widget viewer for all of the items
+                    m_imageGraphicsView     = new acCustomGraphicsView();
+                    m_imageGraphicsView->ID = m_graphicsScene->ID;
+                    m_imageGraphicsView->setVisible(false);
+                    m_imageGraphicsView->setScene(m_graphicsScene);
+                    m_imageGraphicsView->setFrameShadow(QFrame::Raised);
+                    m_imageGraphicsView->centerOn(0, 0);
+                    m_layout->addWidget(m_imageGraphicsView, 0, 0);
+                    m_imageGraphicsView->ensureVisible(m_imageItem_Processed);
+                    if (m_imageItem_Original)
+                        m_imageGraphicsView->ensureVisible(m_imageItem_Original);
+                    m_imageGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+                    m_imageGraphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
-                    if (m_errMessage)
+                    m_xPos = m_imageGraphicsView->horizontalScrollBar();
+                    if (m_xPos)
                     {
-                        m_imageItem_Processed->setVisible(false);
-                        if (m_imageItem_Original)
-                            m_imageItem_Original->setVisible(false);
+                        // These values should be refreshed each time the acImageView is resized
+                        // for now we are obtaining the constructors defaults
+                        m_defaultXPos_minimum = m_xPos->minimum();
+                        m_defaultXPos_maximum = m_xPos->maximum();
                     }
-                }
 
-                //==========================
-                // Add a image data Table
-                // to the GraphicsView
-                //==========================
-
-                if ((m_MipImages->m_Error == MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) && image_processed)
-                {
-                    QRect ImageSize = image_processed->rect();
-                    m_myModel       = new acTableImageDataModel(ImageSize.height(), ImageSize.width(), this);
-
-                    m_tableView = new QTableView(this);
-                    m_tableView->setAutoScroll(true);
-                    m_tableView->setModel(m_myModel);
-
-                    QWidget*     newWidget = new QWidget();
-                    QHBoxLayout* layout    = new QHBoxLayout();
-                    layout->addWidget(m_tableView);
-                    newWidget->setLayout(layout);
-
-                    m_graphicsScene->addWidget(newWidget);
-                    m_tableViewitem = m_imageGraphicsView->itemAt(0, 0);
-                    if (m_tableViewitem)
+                    m_yPos = m_imageGraphicsView->verticalScrollBar();
+                    if (m_yPos)
                     {
-                        m_tableViewitem->setOpacity(0.75);
-                        m_tableViewitem->hide();
+                        // These values should be refreshed each time the acImageView is resized
+                        // for now we are obtaining the constructors defaults
+                        m_defaultYPos_minimum = m_yPos->minimum();
+                        m_defaultYPos_maximum = m_yPos->maximum();
                     }
+
+                    // Public : Events from acCustomGraphics
+                    connect(m_graphicsScene, SIGNAL(sceneMousePosition(QPointF*, int)), this, SLOT(onacImageViewMousePosition(QPointF*, int)));
+                    connect(m_imageGraphicsView, SIGNAL(resetImageView()), this, SLOT(onResetImageView()));
+                    connect(m_imageGraphicsView, SIGNAL(OnMouseHandDown()), this, SLOT(onMouseHandDown()));
+                    connect(m_imageGraphicsView, SIGNAL(OnMouseHandD()), this, SLOT(onMouseHandD()));
+
+                    connect(m_imageGraphicsView, SIGNAL(OnWheelScaleUp(QPointF&)), this, SLOT(onWheelScaleUp(QPointF&)));
+                    connect(m_imageGraphicsView, SIGNAL(OnWheelScaleDown(QPointF&)), this, SLOT(onWheelScaleDown(QPointF&)));
+
+#ifdef ENABLE_NAVIGATION
+                    connect(m_navigateButton, SIGNAL(released()), this, SLOT(onNavigateClicked()));
+#endif
+
+                    //===============================
+                    // Add a OpenGL Widget if needed
+                    // to the GraphicsView
+                    //===============================
+                    if (m_MipImages && (m_MipImages->m_MipImageFormat == MIPIMAGE_FORMAT::Format_OpenGL))
+                    {
+                        if (m_MipImages->mipset)
+                        {
+                            if (m_MipImages->mipset->m_compressed)
+                            {
+                                //Reserved: GPUDecode
+                            }
+                        }
+                    }
+
+                    //==========================
+                    // Shift the position of the
+                    // added error message
+                    //==========================
+                    if (m_MipImages->errMsg != "")
+                    {
+                        QGraphicsItem* m_errItem = m_imageGraphicsView->itemAt(0, 0);
+                        if (m_errItem)
+                            m_errItem->moveBy(size.width() / 4, size.height() / 4);
+
+                        if (m_errMessage)
+                        {
+                            m_imageItem_Processed->setVisible(false);
+                            if (m_imageItem_Original)
+                                m_imageItem_Original->setVisible(false);
+                        }
+                    }
+
+                    //==========================
+                    // Add a image data Table
+                    // to the GraphicsView
+                    //==========================
+
+                    if ((m_MipImages->m_Error == MIPIMAGE_FORMAT_ERRORS::Format_NoErrors) && image_processed)
+                    {
+                        QRect ImageSize = image_processed->rect();
+                        m_myModel       = new acTableImageDataModel(ImageSize.height(), ImageSize.width(), this);
+
+                        m_tableView = new QTableView(this);
+                        m_tableView->setAutoScroll(true);
+                        m_tableView->setModel(m_myModel);
+
+                        QWidget*     newWidget = new QWidget();
+                        QHBoxLayout* layout    = new QHBoxLayout();
+                        layout->addWidget(m_tableView);
+                        newWidget->setLayout(layout);
+
+                        m_graphicsScene->addWidget(newWidget);
+                        m_tableViewitem = m_imageGraphicsView->itemAt(0, 0);
+                        if (m_tableViewitem)
+                        {
+                            m_tableViewitem->setOpacity(0.75);
+                            m_tableViewitem->hide();
+                        }
+                    }
+                    else
+                    {
+                        m_tableViewitem = NULL;
+                        m_tableView     = NULL;
+                    }
+
+                    //===============================
+                    // TopMost Layer: Mouse cursor
+                    // with color blocks
+                    //===============================
+                    m_linex = new QGraphicsLineItem();
+                    m_graphicsScene->addItem(m_linex);
+                    m_linex->setLine(0, 0, CURSOR_SIZE * 2, 0);
+
+                    m_liney = new QGraphicsLineItem();
+                    m_graphicsScene->addItem(m_liney);
+                    m_liney->setLine(0, 0, 0, CURSOR_SIZE * 2);
+
+                    QPen pen(Qt::white);
+                    m_linex->setPen(pen);
+                    m_liney->setPen(pen);
+
+                    m_linex->hide();
+                    m_liney->hide();
+
+                    m_rectBlocks = new QGraphicsRectItem(0, 0, m_graphicsScene->cursorBlockX, m_graphicsScene->cursorBlockY);
+                    m_graphicsScene->addItem(m_rectBlocks);
+                    m_rectBlocks->setPen(pen);
+                    m_rectBlocks->hide();
+
+                    //=============================
+                    // Set Visable items
+                    //=============================
+                    m_imageGraphicsView->setVisible(true);
+
+                    ManageScrollBars();
                 }
-                else
-                {
-                    m_tableViewitem = NULL;
-                    m_tableView     = NULL;
-                }
-
-                //===============================
-                // TopMost Layer: Mouse cursor
-                // with color blocks
-                //===============================
-                m_linex = new QGraphicsLineItem();
-                m_graphicsScene->addItem(m_linex);
-                m_linex->setLine(0, 0, CURSOR_SIZE * 2, 0);
-
-                m_liney = new QGraphicsLineItem();
-                m_graphicsScene->addItem(m_liney);
-                m_liney->setLine(0, 0, 0, CURSOR_SIZE * 2);
-
-                QPen pen(Qt::white);
-                m_linex->setPen(pen);
-                m_liney->setPen(pen);
-
-                m_linex->hide();
-                m_liney->hide();
-
-                m_rectBlocks = new QGraphicsRectItem(0, 0, m_graphicsScene->cursorBlockX, m_graphicsScene->cursorBlockY);
-                m_graphicsScene->addItem(m_rectBlocks);
-                m_rectBlocks->setPen(pen);
-                m_rectBlocks->hide();
-
-                //=============================
-                // Set Visable items
-                //=============================
-                m_imageGraphicsView->setVisible(true);
-
-                ManageScrollBars();
             }
-        }
     }
 
     setLayout(m_layout);
@@ -558,10 +558,10 @@ void acImageView::UpdatePixmapImage()
     else
         mipset = m_MipImages->mipset;
 
-    MipLevel* mipLevel = m_imageloader->getCMips()->GetMipLevel(mipset, m_currentMiplevel, m_depthIndex);
+    MipLevel*         mipLevel      = m_imageloader->getCMips()->GetMipLevel(mipset, m_currentMiplevel, m_depthIndex);
     CMP_ChannelFormat channelFormat = mipset->m_ChannelFormat;
-    FloatParams params(&m_imageloader->m_options);
-    
+    FloatParams       params(&m_imageloader->m_options);
+
     FloatToByte(workingImage.bits(), mipLevel->m_pfData, channelFormat, mipLevel->m_nWidth, mipLevel->m_nHeight, &params);
 
     m_imageItem_Processed->setPixmap(QPixmap::fromImage(workingImage));
@@ -1458,13 +1458,14 @@ void acImageView::processPSNR()
         CMP_ERROR status;
 
         if (m_OriginalMipImages->mipset->m_compressed)
-            status = CMP_MipSetAnlaysis(m_OriginalMipImages->decompressedMipSet, m_MipImages->decompressedMipSet, m_currentMiplevel, m_depthIndex, &analysisData);
+            status =
+                CMP_MipSetAnlaysis(m_OriginalMipImages->decompressedMipSet, m_MipImages->decompressedMipSet, m_currentMiplevel, m_depthIndex, &analysisData);
         else
             status = CMP_MipSetAnlaysis(m_OriginalMipImages->mipset, m_MipImages->decompressedMipSet, m_currentMiplevel, m_depthIndex, &analysisData);
 
         if (status == CMP_OK)
         {
-            m_MSE[m_currentMiplevel][m_depthIndex] = analysisData.mse;
+            m_MSE[m_currentMiplevel][m_depthIndex]  = analysisData.mse;
             m_PSNR[m_currentMiplevel][m_depthIndex] = analysisData.psnr;
         }
         else
@@ -1514,7 +1515,7 @@ void acImageView::onImageDepthChanged(int DepthLevel)
 {
     if (DepthLevel >= CMP_MIPSET_MAX_DEPTHS)
         DepthLevel = CMP_MIPSET_MAX_DEPTHS - 1;
-    
+
     if (m_MipImages)
     {
         m_depthIndex  = DepthLevel;

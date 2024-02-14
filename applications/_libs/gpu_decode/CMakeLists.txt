@@ -16,4 +16,4 @@ target_include_directories(CMP_GpuDecode PRIVATE
     ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
 )
 
-set_target_properties(CMP_GpuDecode PROPERTIES FOLDER "Libs")
+set_target_properties(CMP_GpuDecode PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})

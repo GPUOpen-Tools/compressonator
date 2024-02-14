@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2014-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2014-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // File : ASTC_Library.h
@@ -32,15 +32,15 @@
 #define _ASTC_LIBRARY_H_
 
 // Maximum number of threads supported by the compressor
-#define MAX_ASTC_THREADS     128
+#define MAX_ASTC_THREADS 128
 
 // Number of image components
 #define ASTC_COMPONENT_COUNT 4
 
 // Number of bytes in a ASTC Block
-#define ASTC_BLOCK_BYTES    (4*4)
+#define ASTC_BLOCK_BYTES (4 * 4)
 
 // Number of pixels in a ASTC block
-#define ASTC_BLOCK_PIXELS   ASTC_BLOCK_BYTES
+#define ASTC_BLOCK_PIXELS ASTC_BLOCK_BYTES
 
 #endif

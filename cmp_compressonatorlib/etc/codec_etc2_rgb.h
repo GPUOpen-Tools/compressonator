@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2018  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -29,18 +29,33 @@
 #ifndef _Codec_ETC2_RGB_H_INCLUDED_
 #define _Codec_ETC2_RGB_H_INCLUDED_
 
+#include "codec_common.h"
 #include "codec_etc2.h"
 
-class CCodec_ETC2_RGB : public CCodec_ETC2 {
-  public:
+class CCodec_ETC2_RGB : public CCodec_ETC2
+{
+public:
     CCodec_ETC2_RGB(CodecType codecType);
     virtual ~CCodec_ETC2_RGB();
 
-    virtual CCodecBuffer* CreateBuffer(
-        CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-        CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0,CMP_DWORD dwDataSize = 0) const;
+    virtual CCodecBuffer* CreateBuffer(CMP_BYTE  nBlockWidth,
+                                       CMP_BYTE  nBlockHeight,
+                                       CMP_BYTE  nBlockDepth,
+                                       CMP_DWORD dwWidth,
+                                       CMP_DWORD dwHeight,
+                                       CMP_DWORD dwPitch    = 0,
+                                       CMP_BYTE* pData      = 0,
+                                       CMP_DWORD dwDataSize = 0) const;
 
-    virtual CodecError Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress(CCodecBuffer&       bufferIn,
+                                CCodecBuffer&       bufferOut,
+                                Codec_Feedback_Proc pFeedbackProc = NULL,
+                                CMP_DWORD_PTR       pUser1        = NULL,
+                                CMP_DWORD_PTR       pUser2        = NULL);
+    virtual CodecError Decompress(CCodecBuffer&       bufferIn,
+                                  CCodecBuffer&       bufferOut,
+                                  Codec_Feedback_Proc pFeedbackProc = NULL,
+                                  CMP_DWORD_PTR       pUser1        = NULL,
+                                  CMP_DWORD_PTR       pUser2        = NULL);
 };
-#endif // !defined(_Codec_ETC_RGB_H_INCLUDED_)
+#endif  // !defined(_Codec_ETC_RGB_H_INCLUDED_)

@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2021 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2021-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -25,7 +25,7 @@
 #ifndef CMP_MATH_VEC4_H
 #define CMP_MATH_VEC4_H
 
-#pragma warning(disable : 4201) 
+#pragma warning(disable : 4201)
 
 //====================================================
 // Vector Class definitions for CPU & Intrinsics
@@ -205,11 +205,11 @@ class Vec3T
 public:
     union
     {
-        struct 
+        struct
         {
             T x, y, z;
         };
-        struct 
+        struct
         {
             T r, g, b;
         };
@@ -413,11 +413,11 @@ class Vec4T
 public:
     union
     {
-        struct 
+        struct
         {
             T x, y, z, w;
         };
-        struct 
+        struct
         {
             T r, g, b, a;
         };
@@ -482,7 +482,7 @@ public:
         return (T*)this;
     };
 
-     /// negate to -T
+    /// negate to -T
     //Vec4T<T> operator-() const;
 
     /// Assignment
@@ -573,10 +573,10 @@ public:
     };
 
     /** Negation operator. Returns the negative of the vector. */
-   const Vec4T<T> operator-() const
-   {
-       return Vec4T(-x, -y, -z, -w);
-   }
+    const Vec4T<T> operator-() const
+    {
+        return Vec4T(-x, -y, -z, -w);
+    }
 
     /// Left bit shift vector by a scalar
     const Vec4T<T> operator<<(const T& v) const
@@ -693,7 +693,7 @@ public:
         return vec128;
     };
 
-        // indexing
+    // indexing
 #ifndef _WIN32
     inline const float& operator[](int i) const
     {
@@ -845,4 +845,3 @@ typedef Vec4T<unsigned char> CGV_Vec4uc;  // unsigned 8  bit x,y,x,w
 #endif  // not ASPM_GPU
 
 #endif  // Header Guard
-

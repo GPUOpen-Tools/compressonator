@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,26 +23,32 @@
 //  File Name:   Compress.cpp
 //  Description: A library to compress/decompress textures
 //
-//  Revisions
-//  Apr 2014    -    Refactored Library
-//                   Code clean to support MSV 2010 and up
 //////////////////////////////////////////////////////////////////////////////
 
-#include "common.h"
-#include "compressonator.h"
 #include "compress.h"
-#include "atiformats.h"
+
 #include <assert.h>
 #include <algorithm>
+#include <thread>
 
 #ifdef _WIN32
 #include "windows.h"
 #include "sysinfoapi.h"
 #endif
 
-CMP_INT CMP_GetNumberOfProcessors() {
+#include "atiformats.h"
+#include "codec.h"
+#include "codec_common.h"
+#include "common.h"
+#include "compressonator.h"
+#include "texture_utils.h"
+
+#define MAX_THREADS 64
+
+CMP_INT CMP_GetNumberOfProcessors()
+{
 #ifndef _WIN32
-//    return sysconf(_SC_NPROCESSORS_ONLN);
+    //    return sysconf(_SC_NPROCESSORS_ONLN);
     return std::thread::hardware_concurrency();
 #else
     // Figure out how many cores there are on this machine
@@ -52,153 +58,11 @@ CMP_INT CMP_GetNumberOfProcessors() {
 #endif
 }
 
-
-CodecType GetCodecType(CMP_FORMAT format) {
-    switch(format) {
-    case CMP_FORMAT_RGBA_1010102:
-    case CMP_FORMAT_ARGB_2101010:
-        return CT_None;
-    case CMP_FORMAT_RGBA_8888:
-        return CT_None;
-    case CMP_FORMAT_BGRA_8888:
-        return CT_None;
-    case CMP_FORMAT_RGBA_8888_S:
-    case CMP_FORMAT_ARGB_8888:
-        return CT_None;
-    case CMP_FORMAT_BGR_888:
-        return CT_None;
-    case CMP_FORMAT_RGB_888:
-        return CT_None;
-    case CMP_FORMAT_RG_8:
-        return CT_None;
-    case CMP_FORMAT_R_8:
-        return CT_None;
-    case CMP_FORMAT_ARGB_16:
-        return CT_None;
-    case CMP_FORMAT_RG_16:
-        return CT_None;
-    case CMP_FORMAT_R_16:
-        return CT_None;
-    case CMP_FORMAT_ABGR_16F:
-    case CMP_FORMAT_ARGB_16F:
-    case CMP_FORMAT_RGBA_16F:
-        return CT_None;
-    case CMP_FORMAT_RG_16F:
-        return CT_None;
-    case CMP_FORMAT_R_16F:
-        return CT_None;
-    case CMP_FORMAT_ARGB_32F:
-    case CMP_FORMAT_RGBA_32F:
-    case CMP_FORMAT_ABGR_32F:
-        return CT_None;
-    case CMP_FORMAT_RG_32F:
-        return CT_None;
-    case CMP_FORMAT_R_32F:
-        return CT_None;
-    case CMP_FORMAT_RGBE_32F:
-        return CT_None;
-#ifdef ARGB_32_SUPPORT
-    case CMP_FORMAT_ARGB_32:
-        return CT_None;
-    case CMP_FORMAT_RG_32:
-        return CT_None;
-    case CMP_FORMAT_R_32:
-        return CT_None;
-#endif  // ARGB_32_SUPPORT
-    case CMP_FORMAT_DXT1:
-        return CT_DXT1;
-    case CMP_FORMAT_DXT3:
-        return CT_DXT3;
-    case CMP_FORMAT_DXT5:
-        return CT_DXT5;
-    case CMP_FORMAT_DXT5_xGBR:
-        return CT_DXT5_xGBR;
-    case CMP_FORMAT_DXT5_RxBG:
-        return CT_DXT5_RxBG;
-    case CMP_FORMAT_DXT5_RBxG:
-        return CT_DXT5_RBxG;
-    case CMP_FORMAT_DXT5_xRBG:
-        return CT_DXT5_xRBG;
-    case CMP_FORMAT_DXT5_RGxB:
-        return CT_DXT5_RGxB;
-    case CMP_FORMAT_DXT5_xGxR:
-        return CT_DXT5_xGxR;
-    case CMP_FORMAT_ATI1N:
-        return CT_ATI1N;
-    case CMP_FORMAT_ATI2N:
-        return CT_ATI2N;
-    case CMP_FORMAT_ATI2N_XY:
-        return CT_ATI2N_XY;
-    case CMP_FORMAT_ATI2N_DXT5:
-        return CT_ATI2N_DXT5;
-    case CMP_FORMAT_BC1:
-        return CT_DXT1;
-    case CMP_FORMAT_BC2:
-        return CT_DXT3;
-    case CMP_FORMAT_BC3:
-        return CT_DXT5;
-    case CMP_FORMAT_BC4:
-        return CT_ATI1N;
-    case CMP_FORMAT_BC4_S:
-        return CT_ATI1N_S;
-    case CMP_FORMAT_BC5:
-        return CT_ATI2N_XY;  // Red & Green channels
-    case CMP_FORMAT_BC5_S:
-        return CT_ATI2N_XY_S;  // Red & Green channels
-    case CMP_FORMAT_BC6H:
-        return CT_BC6H;
-    case CMP_FORMAT_BC6H_SF:
-        return CT_BC6H_SF;
-    case CMP_FORMAT_BC7:
-        return CT_BC7;
-#if (OPTION_BUILD_ASTC == 1)
-    case CMP_FORMAT_ASTC:
-        return CT_ASTC;
-#endif
-    case CMP_FORMAT_ATC_RGB:
-        return CT_ATC_RGB;
-    case CMP_FORMAT_ATC_RGBA_Explicit:
-        return CT_ATC_RGBA_Explicit;
-    case CMP_FORMAT_ATC_RGBA_Interpolated:
-        return CT_ATC_RGBA_Interpolated;
-    case CMP_FORMAT_ETC_RGB:
-        return CT_ETC_RGB;
-    case CMP_FORMAT_ETC2_RGB:
-        return CT_ETC2_RGB;
-    case CMP_FORMAT_ETC2_SRGB:
-        return CT_ETC2_SRGB;
-    case CMP_FORMAT_ETC2_RGBA:
-        return CT_ETC2_RGBA;
-    case CMP_FORMAT_ETC2_RGBA1:
-        return CT_ETC2_RGBA1;
-    case CMP_FORMAT_ETC2_SRGBA:
-        return CT_ETC2_SRGBA;
-    case CMP_FORMAT_ETC2_SRGBA1:
-        return CT_ETC2_SRGBA1;
-#ifdef USE_APC
-    case CMP_FORMAT_APC:
-        return CT_APC;
-#endif
-#ifdef USE_GTC
-    case CMP_FORMAT_GTC:
-        return CT_GTC;
-#endif
-    case CMP_FORMAT_BROTLIG:
-        return CT_BRLG;
-#ifdef USE_BASIS
-    case CMP_FORMAT_BASIS:
-        return CT_BASIS;
-#endif
-    case CMP_FORMAT_BINARY:
-        return CT_None;
-    default:
-        return CT_Unknown;
-    }
-}
-
-bool NeedSwizzle(CMP_FORMAT destformat) {
+static bool NeedSwizzle(CMP_FORMAT destformat)
+{
     // determin of the swizzle flag needs to be turned on!
-    switch (destformat) {
+    switch (destformat)
+    {
     case CMP_FORMAT_BC4:
     case CMP_FORMAT_BC4_S:
     case CMP_FORMAT_ATI1N:  // same as BC4
@@ -208,11 +72,11 @@ bool NeedSwizzle(CMP_FORMAT destformat) {
     case CMP_FORMAT_ATI2N_XY:    // same as ATI2N  with XY = Red & Green channels
     case CMP_FORMAT_ATI2N_DXT5:  // same as BC5
     case CMP_FORMAT_BC1:
-    case CMP_FORMAT_DXT1:        // same as BC1
+    case CMP_FORMAT_DXT1:  // same as BC1
     case CMP_FORMAT_BC2:
-    case CMP_FORMAT_DXT3:        // same as BC2
+    case CMP_FORMAT_DXT3:  // same as BC2
     case CMP_FORMAT_BC3:
-    case CMP_FORMAT_DXT5:        // same as BC3
+    case CMP_FORMAT_DXT5:  // same as BC3
     case CMP_FORMAT_ATC_RGB:
     case CMP_FORMAT_ATC_RGBA_Explicit:
     case CMP_FORMAT_ATC_RGBA_Interpolated:
@@ -225,8 +89,10 @@ bool NeedSwizzle(CMP_FORMAT destformat) {
     return false;
 }
 
-CMP_ERROR GetError(CodecError err) {
-    switch(err) {
+CMP_ERROR GetError(CodecError err)
+{
+    switch (err)
+    {
     case CE_OK:
         return CMP_OK;
     case CE_Aborted:
@@ -238,116 +104,160 @@ CMP_ERROR GetError(CodecError err) {
     }
 }
 
-CMP_ERROR CheckTexture(const CMP_Texture* pTexture, bool bSource) {
+#ifndef USE_OLD_SWIZZLE
 
-    if(pTexture == NULL)
-        return (bSource ? CMP_ERR_INVALID_SOURCE_TEXTURE : CMP_ERR_INVALID_DEST_TEXTURE);
+// For now this function will only handle a single case
+// where the source data remains the same size and only RGBA channels
+// are swizzled according output compressed formats,
+// if source is compressed then no change is performed
 
-    if (pTexture->pData == NULL)
-        return (bSource ? CMP_ERR_INVALID_SOURCE_TEXTURE : CMP_ERR_INVALID_DEST_TEXTURE);
+static void CMP_PrepareCMPSourceForIMG_Destination(CMP_Texture* destTexture, CMP_FORMAT srcFormat)
+{
+    CMP_DWORD  dwWidth      = destTexture->dwWidth;
+    CMP_DWORD  dwHeight     = destTexture->dwHeight;
+    CMP_FORMAT newDstFormat = destTexture->format;
+    CMP_BYTE*  pData;
 
-    if(pTexture->dwSize != sizeof(CMP_Texture))
-        return (bSource ? CMP_ERR_INVALID_SOURCE_TEXTURE : CMP_ERR_INVALID_DEST_TEXTURE);
+    pData = destTexture->pData;
 
-    if(pTexture->dwWidth <= 0 )
-        return (bSource ? CMP_ERR_INVALID_SOURCE_TEXTURE : CMP_ERR_INVALID_DEST_TEXTURE);
-
-    if(pTexture->dwHeight <= 0 )
-        return (bSource ? CMP_ERR_INVALID_SOURCE_TEXTURE : CMP_ERR_INVALID_DEST_TEXTURE);
-
-    if (!CMP_IsValidFormat(pTexture->format))
-        return (bSource ? CMP_ERR_UNSUPPORTED_SOURCE_FORMAT : CMP_ERR_UNSUPPORTED_DEST_FORMAT);
-
-    assert((pTexture->format != CMP_FORMAT_ARGB_8888 && pTexture->format != CMP_FORMAT_ARGB_2101010)
-           || pTexture->dwPitch == 0 || pTexture->dwPitch >= (pTexture->dwWidth*4));
-
-    assert((pTexture->format != CMP_FORMAT_RGBA_8888_S && pTexture->format != CMP_FORMAT_ARGB_2101010) || pTexture->dwPitch == 0 ||
-           pTexture->dwPitch >= (pTexture->dwWidth * 4));
-
-    if((pTexture->format == CMP_FORMAT_ARGB_8888 || pTexture->format == CMP_FORMAT_ARGB_2101010)
-            && pTexture->dwPitch != 0 && pTexture->dwPitch < (pTexture->dwWidth*4))
-        return (bSource ? CMP_ERR_UNSUPPORTED_SOURCE_FORMAT : CMP_ERR_UNSUPPORTED_DEST_FORMAT);
-
-    if ((pTexture->format == CMP_FORMAT_RGBA_8888_S || pTexture->format == CMP_FORMAT_ARGB_2101010) && pTexture->dwPitch != 0 &&
-        pTexture->dwPitch < (pTexture->dwWidth * 4))
-        return (bSource ? CMP_ERR_UNSUPPORTED_SOURCE_FORMAT : CMP_ERR_UNSUPPORTED_DEST_FORMAT);
-
-
-    CMP_DWORD dwDataSize = CMP_CalculateBufferSize(pTexture);
-    if(pTexture->dwDataSize < dwDataSize)
-        return (bSource ? CMP_ERR_INVALID_SOURCE_TEXTURE : CMP_ERR_INVALID_DEST_TEXTURE);
-
-    return CMP_OK;
+    switch (srcFormat)
+    {
+    // decompressed Data  is in the form BGRA
+    case CMP_FORMAT_ATI1N:
+    case CMP_FORMAT_ATI2N:
+    case CMP_FORMAT_ATI2N_XY:
+    case CMP_FORMAT_ATI2N_DXT5:
+    case CMP_FORMAT_ATC_RGB:
+    case CMP_FORMAT_ATC_RGBA_Explicit:
+    case CMP_FORMAT_ATC_RGBA_Interpolated:
+    case CMP_FORMAT_BC1:
+    case CMP_FORMAT_BC2:
+    case CMP_FORMAT_BC3:
+    case CMP_FORMAT_BC4:
+    case CMP_FORMAT_BC4_S:
+    case CMP_FORMAT_BC5:
+    case CMP_FORMAT_BC5_S:
+    case CMP_FORMAT_DXT1:
+    case CMP_FORMAT_DXT3:
+    case CMP_FORMAT_DXT5:
+    case CMP_FORMAT_DXT5_xGBR:
+    case CMP_FORMAT_DXT5_RxBG:
+    case CMP_FORMAT_DXT5_RBxG:
+    case CMP_FORMAT_DXT5_xRBG:
+    case CMP_FORMAT_DXT5_RGxB:
+    case CMP_FORMAT_DXT5_xGxR: {
+        switch (newDstFormat)
+        {
+        case CMP_FORMAT_BGRA_8888:
+            break;
+        case CMP_FORMAT_RGBA_8888: {
+            CMP_Map_Bytes(pData, dwWidth, dwHeight, {2, 1, 0, 3}, 4);
+            break;
+        }
+        default:
+            break;
+        }
+    }
+    // decompressed Data  is in the form RGBA_8888
+#if (OPTION_BUILD_ASTC == 1)
+    case CMP_FORMAT_ASTC:
+#endif
+    case CMP_FORMAT_BC6H:
+    case CMP_FORMAT_BC7:
+    case CMP_FORMAT_GT:
+    case CMP_FORMAT_ETC_RGB:
+    case CMP_FORMAT_ETC2_RGB:
+    case CMP_FORMAT_ETC2_SRGB:
+    case CMP_FORMAT_ETC2_RGBA:
+    case CMP_FORMAT_ETC2_RGBA1:
+    case CMP_FORMAT_ETC2_SRGBA:
+    case CMP_FORMAT_ETC2_SRGBA1: {
+        switch (newDstFormat)
+        {
+        case CMP_FORMAT_RGBA_8888:
+            break;
+        case CMP_FORMAT_BGRA_8888: {
+            CMP_Map_Bytes(pData, dwWidth, dwHeight, {2, 1, 0, 3}, 4);
+            break;
+        }
+        default:
+            break;
+        }
+    }
+    }
 }
 
-CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, CodecType destType) {
-    // Compressing
-    CCodec* pCodec = CreateCodec(destType);
-    assert(pCodec);
-    if(pCodec == NULL)
+#endif
+
+CMP_ERROR CodecCompressTexture(const CMP_Texture* srcTexture, CMP_Texture* destTexture, const CMP_CompressOptions* options, CMP_Feedback_Proc feedbackProc)
+{
+    CodecType destType = GetCodecType(destTexture->format);
+    if (destType == CT_Unknown)
+        return CMP_ERR_UNSUPPORTED_DEST_FORMAT;
+
+    CCodec* codec = CreateCodec(destType);
+    if (codec == NULL)
         return CMP_ERR_UNABLE_TO_INIT_CODEC;
 
     CMP_BOOL swizzleSrcBuffer = false;
 
     // Have we got valid options ?
-    if(pOptions && pOptions->dwSize == sizeof(CMP_CompressOptions)) {
+    if (options && options->dwSize == sizeof(CMP_CompressOptions))
+    {
         // Set weightings ?
-        if(pOptions->bUseChannelWeighting && (pOptions->fWeightingRed > 0.0 || pOptions->fWeightingGreen > 0.0 || pOptions->fWeightingBlue > 0.0)) {
-            pCodec->SetParameter("UseChannelWeighting", (CMP_DWORD) 1);
-            pCodec->SetParameter("WeightR",
-                                 pOptions->fWeightingRed > MINIMUM_WEIGHT_VALUE ?
-                                 (CODECFLOAT) pOptions->fWeightingRed : MINIMUM_WEIGHT_VALUE);
-            pCodec->SetParameter("WeightG",
-                                 pOptions->fWeightingGreen > MINIMUM_WEIGHT_VALUE ?
-                                 (CODECFLOAT) pOptions->fWeightingGreen : MINIMUM_WEIGHT_VALUE);
-            pCodec->SetParameter("WeightB",
-                                 pOptions->fWeightingBlue > MINIMUM_WEIGHT_VALUE ?
-                                 (CODECFLOAT) pOptions->fWeightingBlue : MINIMUM_WEIGHT_VALUE);
+        if (options->bUseChannelWeighting && (options->fWeightingRed > 0.0 || options->fWeightingGreen > 0.0 || options->fWeightingBlue > 0.0))
+        {
+            codec->SetParameter("UseChannelWeighting", (CMP_DWORD)1);
+            codec->SetParameter("WeightR", options->fWeightingRed > MINIMUM_WEIGHT_VALUE ? (CODECFLOAT)options->fWeightingRed : MINIMUM_WEIGHT_VALUE);
+            codec->SetParameter("WeightG", options->fWeightingGreen > MINIMUM_WEIGHT_VALUE ? (CODECFLOAT)options->fWeightingGreen : MINIMUM_WEIGHT_VALUE);
+            codec->SetParameter("WeightB", options->fWeightingBlue > MINIMUM_WEIGHT_VALUE ? (CODECFLOAT)options->fWeightingBlue : MINIMUM_WEIGHT_VALUE);
         }
-        pCodec->SetParameter("UseAdaptiveWeighting", (CMP_DWORD) pOptions->bUseAdaptiveWeighting);
-        pCodec->SetParameter("DXT1UseAlpha", (CMP_DWORD) pOptions->bDXT1UseAlpha);
-        pCodec->SetParameter("AlphaThreshold", (CMP_DWORD) pOptions->nAlphaThreshold);
-        if (pOptions->bUseRefinementSteps)
-            pCodec->SetParameter("RefineSteps", (CMP_DWORD) pOptions->nRefinementSteps);
+        codec->SetParameter("UseAdaptiveWeighting", (CMP_DWORD)options->bUseAdaptiveWeighting);
+        codec->SetParameter("DXT1UseAlpha", (CMP_DWORD)options->bDXT1UseAlpha);
+        codec->SetParameter("AlphaThreshold", (CMP_DWORD)options->nAlphaThreshold);
+        if (options->bUseRefinementSteps)
+            codec->SetParameter("RefineSteps", (CMP_DWORD)options->nRefinementSteps);
         // New override to that set quality if compresion for DXTn & ATInN codecs
-        if (pOptions->fquality != AMD_CODEC_QUALITY_DEFAULT) {
-            pCodec->SetParameter("Quality", (CODECFLOAT)pOptions->fquality);
+        if (options->fquality != AMD_CODEC_QUALITY_DEFAULT)
+        {
+            codec->SetParameter("Quality", (CODECFLOAT)options->fquality);
 #ifndef _WIN64
-            if (pOptions->fquality < 0.3)
-                pCodec->SetParameter("CompressionSpeed", (CMP_DWORD)CMP_Speed_SuperFast);
-            else if (pOptions->fquality < 0.6)
-                pCodec->SetParameter("CompressionSpeed", (CMP_DWORD)CMP_Speed_Fast);
+            if (options->fquality < 0.3)
+                codec->SetParameter("CompressionSpeed", (CMP_DWORD)CMP_Speed_SuperFast);
+            else if (options->fquality < 0.6)
+                codec->SetParameter("CompressionSpeed", (CMP_DWORD)CMP_Speed_Fast);
             else
 #endif
-                pCodec->SetParameter("CompressionSpeed", (CMP_DWORD)CMP_Speed_Normal);
-        } else
-            pCodec->SetParameter("CompressionSpeed", (CMP_DWORD)pOptions->nCompressionSpeed);
+                codec->SetParameter("CompressionSpeed", (CMP_DWORD)CMP_Speed_Normal);
+        }
+        else
+            codec->SetParameter("CompressionSpeed", (CMP_DWORD)options->nCompressionSpeed);
 
-
-        switch(destType) {
+        switch (destType)
+        {
         case CT_BC7:
-            pCodec->SetParameter("MultiThreading", (CMP_DWORD) !pOptions->bDisableMultiThreading);
+            codec->SetParameter("MultiThreading", (CMP_DWORD)!options->bDisableMultiThreading);
 
-            if (!pOptions->bDisableMultiThreading)
-                pCodec->SetParameter(CodecParameters::NumThreads, (CMP_DWORD) pOptions->dwnumThreads);
+            if (!options->bDisableMultiThreading)
+                codec->SetParameter(CodecParameters::NumThreads, (CMP_DWORD)options->dwnumThreads);
             else
-                pCodec->SetParameter(CodecParameters::NumThreads, (CMP_DWORD) 1);
+                codec->SetParameter(CodecParameters::NumThreads, (CMP_DWORD)1);
 
-            pCodec->SetParameter("ModeMask", (CMP_DWORD) pOptions->dwmodeMask);
-            pCodec->SetParameter("ColourRestrict", (CMP_DWORD) pOptions->brestrictColour);
-            pCodec->SetParameter("AlphaRestrict", (CMP_DWORD) pOptions->brestrictAlpha);
-            pCodec->SetParameter("Quality", (CODECFLOAT) pOptions->fquality);
+            codec->SetParameter("ModeMask", (CMP_DWORD)options->dwmodeMask);
+            codec->SetParameter("ColourRestrict", (CMP_DWORD)options->brestrictColour);
+            codec->SetParameter("AlphaRestrict", (CMP_DWORD)options->brestrictAlpha);
+            codec->SetParameter("Quality", (CODECFLOAT)options->fquality);
             break;
 #ifdef USE_BASIS
         case CT_BASIS:
 #endif
 #if (OPTION_BUILD_ASTC == 1)
         case CT_ASTC:
-            pCodec->SetParameter("Quality", (CODECFLOAT)pOptions->fquality);
-            if (!pOptions->bDisableMultiThreading)
-                pCodec->SetParameter(CodecParameters::NumThreads, (CMP_DWORD)pOptions->dwnumThreads);
+            codec->SetParameter("Quality", (CODECFLOAT)options->fquality);
+            if (!options->bDisableMultiThreading)
+                codec->SetParameter(CodecParameters::NumThreads, (CMP_DWORD)options->dwnumThreads);
             else
-                pCodec->SetParameter(CodecParameters::NumThreads, (CMP_DWORD)1);
+                codec->SetParameter(CodecParameters::NumThreads, (CMP_DWORD)1);
             break;
 #endif
 #ifdef USE_APC
@@ -357,38 +267,38 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
         case CT_GTC:
 #endif
 #ifdef USE_LOSSLESS_COMPRESSION
-        case CT_BRLG:
-        {
-            CMP_DWORD pageSize = pOptions->dwPageSize;
-            pCodec->SetParameter(CodecParameters::PageSize, pageSize ? pageSize : AMD_CODEC_PAGE_SIZE_DEFAULT);
-        } break;
+        case CT_BRLG: {
+            CMP_DWORD pageSize = options->dwPageSize;
+            codec->SetParameter(CodecParameters::PageSize, pageSize ? pageSize : AMD_CODEC_PAGE_SIZE_DEFAULT);
+        }
+        break;
 #endif
         case CT_BC6H:
         case CT_BC6H_SF:
-            pCodec->SetParameter("Quality", (CODECFLOAT)pOptions->fquality);
-            if (!pOptions->bDisableMultiThreading)
-                pCodec->SetParameter(CodecParameters::NumThreads, (CMP_DWORD)pOptions->dwnumThreads);
+            codec->SetParameter("Quality", (CODECFLOAT)options->fquality);
+            if (!options->bDisableMultiThreading)
+                codec->SetParameter(CodecParameters::NumThreads, (CMP_DWORD)options->dwnumThreads);
             else
-                pCodec->SetParameter(CodecParameters::NumThreads, (CMP_DWORD)1);
-#ifdef _DEBUG
-            // napatel : remove this after
-            // pCodec->SetParameter(CodecParameters::NumThreads, (CMP_DWORD)1);
-#endif
+                codec->SetParameter(CodecParameters::NumThreads, (CMP_DWORD)1);
             break;
         }
 
         // This will eventually replace the above code for setting codec options
-        if (pOptions->NumCmds > 0) {
-            int maxCmds=pOptions->NumCmds;
-            if (pOptions->NumCmds > AMD_MAX_CMDS) maxCmds = AMD_MAX_CMDS;
-            for (int i=0; i<maxCmds; i++)
-                pCodec->SetParameter(pOptions->CmdSet[i].strCommand, (CMP_CHAR*)pOptions->CmdSet[i].strParameter);
+        if (options->NumCmds > 0)
+        {
+            int maxCmds = options->NumCmds;
+            if (options->NumCmds > AMD_MAX_CMDS)
+                maxCmds = AMD_MAX_CMDS;
+            for (int i = 0; i < maxCmds; i++)
+                codec->SetParameter(options->CmdSet[i].strCommand, (CMP_CHAR*)options->CmdSet[i].strParameter);
         }
 
         // GPUOpen issue # 59 fix
-        CodecBufferType srcBufferType = GetCodecBufferType(pSourceTexture->format);
-        if (NeedSwizzle(pDestTexture->format)) {
-            switch (srcBufferType) {
+        CodecBufferType srcBufferType = GetCodecBufferType(srcTexture->format);
+        if (NeedSwizzle(destTexture->format))
+        {
+            switch (srcBufferType)
+            {
             case CBT_BGRA8888:
             case CBT_BGR888:
             case CBT_R8:
@@ -401,160 +311,293 @@ CMP_ERROR CompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestT
         }
     }
 
-    CodecBufferType srcBufferType = GetCodecBufferType(pSourceTexture->format);
+    CodecBufferType srcBufferType = GetCodecBufferType(srcTexture->format);
 
-    CCodecBuffer* pSrcBuffer  = CreateCodecBuffer(srcBufferType,
-                                pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight, pSourceTexture->nBlockDepth,
-                                pSourceTexture->dwWidth, pSourceTexture->dwHeight, pSourceTexture->dwPitch, pSourceTexture->pData,
-                                pSourceTexture->dwDataSize);
+    // There are some specific settings to configure when compressing to Brotli-G
+    if (destType == CT_BRLG)
+    {
+        // We always want to have the source data act as if it were binary data when compressing to Brotli-G
+        srcBufferType = GetCodecBufferType(CMP_FORMAT_BINARY);
 
-    CCodecBuffer* pDestBuffer = pCodec->CreateBuffer(
-                                    pDestTexture->nBlockWidth, pDestTexture->nBlockHeight, pDestTexture->nBlockDepth,
-                                    pDestTexture->dwWidth, pDestTexture->dwHeight, pDestTexture->dwPitch, pDestTexture->pData,
-                                    pDestTexture->dwDataSize);
+        if (srcTexture->format != CMP_FORMAT_BINARY)
+        {
+            codec->SetParameter(CodecParameters::Precondition, (CMP_DWORD)options->doPreconditionBRLG);
+            codec->SetParameter(CodecParameters::Swizzle, (CMP_DWORD)options->doSwizzleBRLG);
+            codec->SetParameter(CodecParameters::DeltaEncode, (CMP_DWORD)options->doDeltaEncodeBRLG);
 
-    assert(pSrcBuffer);
-    assert(pDestBuffer);
-    if(pSrcBuffer == NULL || pDestBuffer == NULL) {
-        SAFE_DELETE(pCodec);
-        SAFE_DELETE(pSrcBuffer);
-        SAFE_DELETE(pDestBuffer);
+            codec->SetParameter(CodecParameters::TextureFormat, (CMP_DWORD)srcTexture->format);
+            codec->SetParameter(CodecParameters::TextureWidth, srcTexture->dwWidth);
+            codec->SetParameter(CodecParameters::TextureHeight, srcTexture->dwHeight);
+
+            if (srcTexture->pMipSet)
+                codec->SetParameter(CodecParameters::MipmapLevels, (CMP_DWORD)(((CMP_MipSet*)srcTexture->pMipSet)->m_nMipLevels));
+        }
+    }
+
+    CCodecBuffer* srcBuffer = CreateCodecBuffer(srcBufferType,
+                                                srcTexture->nBlockWidth,
+                                                srcTexture->nBlockHeight,
+                                                srcTexture->nBlockDepth,
+                                                srcTexture->dwWidth,
+                                                srcTexture->dwHeight,
+                                                srcTexture->dwPitch,
+                                                srcTexture->pData,
+                                                srcTexture->dwDataSize);
+
+    CCodecBuffer* destBuffer = codec->CreateBuffer(destTexture->nBlockWidth,
+                                                   destTexture->nBlockHeight,
+                                                   destTexture->nBlockDepth,
+                                                   destTexture->dwWidth,
+                                                   destTexture->dwHeight,
+                                                   destTexture->dwPitch,
+                                                   destTexture->pData,
+                                                   destTexture->dwDataSize);
+
+    assert(srcBuffer);
+    assert(destBuffer);
+    if (srcBuffer == NULL || destBuffer == NULL)
+    {
+        SAFE_DELETE(codec);
+        SAFE_DELETE(srcBuffer);
+        SAFE_DELETE(destBuffer);
         return CMP_ERR_GENERIC;
     }
 
-    pSrcBuffer->SetFormat(pSourceTexture->format);
-    pDestBuffer->SetFormat(pDestTexture->format);
-
+    srcBuffer->SetFormat(srcTexture->format);
+    destBuffer->SetFormat(destTexture->format);
 
     // GPUOpen issue # 59 and #67 fix
-    pSrcBuffer->m_bSwizzle = swizzleSrcBuffer;
+    srcBuffer->m_bSwizzle = swizzleSrcBuffer;
+
     DISABLE_FP_EXCEPTIONS;
-    CodecError err = pCodec->Compress(*pSrcBuffer, *pDestBuffer, pFeedbackProc);
+    CodecError err = codec->Compress(*srcBuffer, *destBuffer, feedbackProc);
     RESTORE_FP_EXCEPTIONS;
 
-    pDestTexture->dwDataSize = pDestBuffer->GetDataSize();
+    destTexture->dwDataSize = destBuffer->GetDataSize();
 
-    SAFE_DELETE(pCodec);
-    SAFE_DELETE(pSrcBuffer);
-    SAFE_DELETE(pDestBuffer);
+    SAFE_DELETE(codec);
+    SAFE_DELETE(srcBuffer);
+    SAFE_DELETE(destBuffer);
 
     return GetError(err);
 }
 
+CMP_ERROR CodecDecompressTexture(const CMP_Texture* srcTexture, CMP_Texture* destTexture, const CMP_CompressOptions* options, CMP_Feedback_Proc feedbackProc)
+{
+    CodecType srcType = GetCodecType(srcTexture->format);
+    if (srcType == CT_Unknown)
+        return CMP_ERR_UNSUPPORTED_SOURCE_FORMAT;
+
+    CCodec* codec = CreateCodec(srcType);
+    assert(codec);
+
+    if (codec == NULL)
+        return CMP_ERR_UNABLE_TO_INIT_CODEC;
+
+    if (options && options->dwSize == sizeof(CMP_CompressOptions))
+    {
+        codec->SetParameter(CodecParameters::UseGPUDecompression, options->bUseGPUDecompress ? (CMP_DWORD)1 : (CMP_DWORD)0);
+    }
+
+    CCodecBuffer* srcBuffer = codec->CreateBuffer(srcTexture->nBlockWidth,
+                                                  srcTexture->nBlockHeight,
+                                                  srcTexture->nBlockDepth,
+                                                  srcTexture->dwWidth,
+                                                  srcTexture->dwHeight,
+                                                  srcTexture->dwPitch,
+                                                  srcTexture->pData,
+                                                  srcTexture->dwDataSize);
+
+    destTexture->nBlockWidth  = srcTexture->nBlockWidth;
+    destTexture->nBlockHeight = srcTexture->nBlockHeight;
+    destTexture->nBlockDepth  = srcTexture->nBlockDepth;
+
+    CodecBufferType destBufferType = GetCodecBufferType(destTexture->format);
+
+    if (srcTexture->format == CMP_FORMAT_BROTLIG)
+        destBufferType = GetCodecBufferType(CMP_FORMAT_BINARY);
+
+    CCodecBuffer* destBuffer = CreateCodecBuffer(destBufferType,
+                                                 destTexture->nBlockWidth,
+                                                 destTexture->nBlockHeight,
+                                                 destTexture->nBlockDepth,
+                                                 destTexture->dwWidth,
+                                                 destTexture->dwHeight,
+                                                 destTexture->dwPitch,
+                                                 destTexture->pData,
+                                                 destTexture->dwDataSize);
+
+    if (srcBuffer == NULL || destBuffer == NULL)
+    {
+        SAFE_DELETE(codec);
+        SAFE_DELETE(srcBuffer);
+        SAFE_DELETE(destBuffer);
+        return CMP_ERR_GENERIC;
+    }
+
+    DISABLE_FP_EXCEPTIONS;
+
+    srcBuffer->SetBlockHeight(srcTexture->nBlockHeight);
+    srcBuffer->SetBlockWidth(srcTexture->nBlockWidth);
+    srcBuffer->SetBlockDepth(srcTexture->nBlockDepth);
+    srcBuffer->SetFormat(srcTexture->format);
+    srcBuffer->SetTranscodeFormat(srcTexture->transcodeFormat);
+
+    destBuffer->SetBlockHeight(destTexture->nBlockHeight);
+    destBuffer->SetBlockWidth(destTexture->nBlockWidth);
+    destBuffer->SetBlockDepth(destTexture->nBlockDepth);
+    destBuffer->SetFormat(destTexture->format);
+
+    CodecError err1 = codec->Decompress(*srcBuffer, *destBuffer, feedbackProc);
+
+    RESTORE_FP_EXCEPTIONS;
+
+    destTexture->dwDataSize = destBuffer->GetDataSize();
+
+#ifndef USE_OLD_SWIZZLE
+    CMP_PrepareCMPSourceForIMG_Destination(destTexture, srcTexture->format);
+#endif
+
+    SAFE_DELETE(codec);
+    SAFE_DELETE(srcBuffer);
+    SAFE_DELETE(destBuffer);
+
+    return GetError(err1);
+}
+
 #ifdef THREADED_COMPRESS
 
-class CATICompressThreadData {
-  public:
+class CATICompressThreadData
+{
+public:
     CATICompressThreadData();
     ~CATICompressThreadData();
 
-    CCodec* m_pCodec;
-    CCodecBuffer* m_pSrcBuffer;
-    CCodecBuffer* m_pDestBuffer;
+    CCodec*           m_pCodec;
+    CCodecBuffer*     m_pSrcBuffer;
+    CCodecBuffer*     m_pDestBuffer;
     CMP_Feedback_Proc m_pFeedbackProc;
-    CodecError m_errorCode;
+    CodecError        m_errorCode;
 };
 
-CATICompressThreadData::CATICompressThreadData() : m_pCodec(NULL), m_pSrcBuffer(NULL), m_pDestBuffer(NULL),
-    m_pFeedbackProc(NULL),
-    m_errorCode( CE_OK ) {
+CATICompressThreadData::CATICompressThreadData()
+    : m_pCodec(NULL)
+    , m_pSrcBuffer(NULL)
+    , m_pDestBuffer(NULL)
+    , m_pFeedbackProc(NULL)
+    , m_errorCode(CE_OK)
+{
 }
 
-CATICompressThreadData::~CATICompressThreadData() {
+CATICompressThreadData::~CATICompressThreadData()
+{
     SAFE_DELETE(m_pCodec);
     SAFE_DELETE(m_pSrcBuffer);
     SAFE_DELETE(m_pDestBuffer);
 }
 
-void ThreadedCompressProc(void *lpParameter) {
-    CATICompressThreadData *pThreadData = (CATICompressThreadData*) lpParameter;
+void ThreadedCompressProc(void* lpParameter)
+{
+    CATICompressThreadData* pThreadData = (CATICompressThreadData*)lpParameter;
     DISABLE_FP_EXCEPTIONS;
     CodecError err = pThreadData->m_pCodec->Compress(*pThreadData->m_pSrcBuffer, *pThreadData->m_pDestBuffer, pThreadData->m_pFeedbackProc);
     RESTORE_FP_EXCEPTIONS;
     pThreadData->m_errorCode = err;
 }
 
-CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture, const CMP_CompressOptions* pOptions, CMP_Feedback_Proc pFeedbackProc, CodecType destType) {
+CMP_ERROR CodecCompressTextureThreaded(const CMP_Texture*         srcTexture,
+                                       CMP_Texture*               destTexture,
+                                       const CMP_CompressOptions* options,
+                                       CMP_Feedback_Proc          feedbackProc)
+{
+    CodecType destType = GetCodecType(destTexture->format);
+    if (destType == CT_Unknown)
+        return CMP_ERR_UNSUPPORTED_DEST_FORMAT;
+
     // Note function should not be called for the following Codecs....
-    if (destType == CT_BC7)     return CMP_ABORTED;
+    if (destType == CT_BC7)
+        return CMP_ABORTED;
 #ifdef USE_APC
     if (destType == CT_APC)
         return CMP_ABORTED;
 #endif
 #ifdef USE_GTC
-    if (destType == CT_GTC)     return CMP_ABORTED;
+    if (destType == CT_GTC)
+        return CMP_ABORTED;
 #endif
 #ifdef USE_LOSSLESS_COMPRESSION
-    if (destType == CT_BRLG)     return CMP_ABORTED;
+    if (destType == CT_BRLG)
+        return CMP_ABORTED;
 #endif
 #ifdef USE_BASIS
-    if (destType == CT_BASIS)   return CMP_ABORTED;
+    if (destType == CT_BASIS)
+        return CMP_ABORTED;
 #endif
 #if (OPTION_BUILD_ASTC == 1)
-    if (destType == CT_ASTC)  return CMP_ABORTED;
+    if (destType == CT_ASTC)
+        return CMP_ABORTED;
 #endif
-    CMP_DWORD dwMaxThreadCount = cmp_minT(f_dwProcessorCount, MAX_THREADS);
-    CMP_DWORD dwLinesRemaining = pDestTexture->dwHeight;
-    CMP_BYTE* pSourceData = pSourceTexture->pData;
-    CMP_BYTE* pDestData = pDestTexture->pData;
-    CMP_BOOL swizzleSrcBuffer = false;
+
+    CMP_DWORD dwMaxThreadCount = cmp_minT(CMP_GetNumberOfProcessors(), MAX_THREADS);
+    CMP_DWORD dwLinesRemaining = destTexture->dwHeight;
+    CMP_BYTE* pSourceData      = srcTexture->pData;
+    CMP_BYTE* pDestData        = destTexture->pData;
+    CMP_BOOL  swizzleSrcBuffer = false;
 
 #ifdef _DEBUG
-    if (
-        (pDestTexture->format == CMP_FORMAT_ETC2_RGBA) ||
-        (pDestTexture->format == CMP_FORMAT_ETC2_RGBA1)
-    )
+    if ((destTexture->format == CMP_FORMAT_ETC2_RGBA) || (destTexture->format == CMP_FORMAT_ETC2_RGBA1))
         dwMaxThreadCount = 1;
 #endif
 
     CATICompressThreadData aThreadData[MAX_THREADS];
-    std::thread ahThread[MAX_THREADS];
+    std::thread            ahThread[MAX_THREADS];
 
     CMP_DWORD dwThreadCount = 0;
-    for(CMP_DWORD dwThread = 0; dwThread < dwMaxThreadCount; dwThread++) {
+    for (CMP_DWORD dwThread = 0; dwThread < dwMaxThreadCount; dwThread++)
+    {
         CATICompressThreadData& threadData = aThreadData[dwThread];
 
         // Compressing
         threadData.m_pCodec = CreateCodec(destType);
         assert(threadData.m_pCodec);
-        if(threadData.m_pCodec == NULL)
+        if (threadData.m_pCodec == NULL)
             return CMP_ERR_UNABLE_TO_INIT_CODEC;
 
         // Have we got valid options ?
-        if(pOptions && pOptions->dwSize == sizeof(CMP_CompressOptions)) {
+        if (options && options->dwSize == sizeof(CMP_CompressOptions))
+        {
             // Set weightings ?
-            if(pOptions->bUseChannelWeighting && (pOptions->fWeightingRed > 0.0 || pOptions->fWeightingGreen > 0.0 || pOptions->fWeightingBlue > 0.0)) {
-                threadData.m_pCodec->SetParameter("UseChannelWeighting", (CMP_DWORD) 1);
+            if (options->bUseChannelWeighting && (options->fWeightingRed > 0.0 || options->fWeightingGreen > 0.0 || options->fWeightingBlue > 0.0))
+            {
+                threadData.m_pCodec->SetParameter("UseChannelWeighting", (CMP_DWORD)1);
                 threadData.m_pCodec->SetParameter("WeightR",
-                                                  pOptions->fWeightingRed > MINIMUM_WEIGHT_VALUE ?
-                                                  (CODECFLOAT) pOptions->fWeightingRed : MINIMUM_WEIGHT_VALUE);
-                threadData.m_pCodec->SetParameter("WeightG",
-                                                  pOptions->fWeightingGreen > MINIMUM_WEIGHT_VALUE ?
-                                                  (CODECFLOAT) pOptions->fWeightingGreen : MINIMUM_WEIGHT_VALUE);
+                                                  options->fWeightingRed > MINIMUM_WEIGHT_VALUE ? (CODECFLOAT)options->fWeightingRed : MINIMUM_WEIGHT_VALUE);
+                threadData.m_pCodec->SetParameter(
+                    "WeightG", options->fWeightingGreen > MINIMUM_WEIGHT_VALUE ? (CODECFLOAT)options->fWeightingGreen : MINIMUM_WEIGHT_VALUE);
                 threadData.m_pCodec->SetParameter("WeightB",
-                                                  pOptions->fWeightingBlue > MINIMUM_WEIGHT_VALUE ?
-                                                  (CODECFLOAT) pOptions->fWeightingBlue : MINIMUM_WEIGHT_VALUE);
+                                                  options->fWeightingBlue > MINIMUM_WEIGHT_VALUE ? (CODECFLOAT)options->fWeightingBlue : MINIMUM_WEIGHT_VALUE);
             }
-            threadData.m_pCodec->SetParameter("UseAdaptiveWeighting", (CMP_DWORD) pOptions->bUseAdaptiveWeighting);
-            threadData.m_pCodec->SetParameter("DXT1UseAlpha", (CMP_DWORD) pOptions->bDXT1UseAlpha);
-            threadData.m_pCodec->SetParameter("AlphaThreshold", (CMP_DWORD) pOptions->nAlphaThreshold);
-            threadData.m_pCodec->SetParameter("RefineSteps", (CMP_DWORD) pOptions->nRefinementSteps);
-            threadData.m_pCodec->SetParameter("Quality", (CODECFLOAT)pOptions->fquality);
+            threadData.m_pCodec->SetParameter("UseAdaptiveWeighting", (CMP_DWORD)options->bUseAdaptiveWeighting);
+            threadData.m_pCodec->SetParameter("DXT1UseAlpha", (CMP_DWORD)options->bDXT1UseAlpha);
+            threadData.m_pCodec->SetParameter("AlphaThreshold", (CMP_DWORD)options->nAlphaThreshold);
+            threadData.m_pCodec->SetParameter("RefineSteps", (CMP_DWORD)options->nRefinementSteps);
+            threadData.m_pCodec->SetParameter("Quality", (CODECFLOAT)options->fquality);
 
             // New override to that set quality if compresion for DXTn & ATInN codecs
-            if (pOptions->fquality != AMD_CODEC_QUALITY_DEFAULT) {
-                if (pOptions->fquality < 0.3)
+            if (options->fquality != AMD_CODEC_QUALITY_DEFAULT)
+            {
+                if (options->fquality < 0.3)
                     threadData.m_pCodec->SetParameter("CompressionSpeed", (CMP_DWORD)CMP_Speed_SuperFast);
-                else if (pOptions->fquality < 0.6)
+                else if (options->fquality < 0.6)
                     threadData.m_pCodec->SetParameter("CompressionSpeed", (CMP_DWORD)CMP_Speed_Fast);
                 else
                     threadData.m_pCodec->SetParameter("CompressionSpeed", (CMP_DWORD)CMP_Speed_Normal);
-            } else
-                threadData.m_pCodec->SetParameter("CompressionSpeed", (CMP_DWORD)pOptions->nCompressionSpeed);
+            }
+            else
+                threadData.m_pCodec->SetParameter("CompressionSpeed", (CMP_DWORD)options->nCompressionSpeed);
 
-
-
-            switch(destType) {
+            switch (destType)
+            {
             case CT_BC6H:
                 // Reserved
                 break;
@@ -562,21 +605,23 @@ CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture
 
             // This will eventually replace the above code for setting codec options
             // It is currently implemented with BC6H and can be expanded to other codec
-            if (pOptions->NumCmds > 0) {
-                int maxCmds = pOptions->NumCmds;
-                if (pOptions->NumCmds > AMD_MAX_CMDS) maxCmds = AMD_MAX_CMDS;
-                for (int i = 0; i<maxCmds; i++)
-                    threadData.m_pCodec->SetParameter(pOptions->CmdSet[i].strCommand, (CMP_CHAR*)pOptions->CmdSet[i].strParameter);
+            if (options->NumCmds > 0)
+            {
+                int maxCmds = options->NumCmds;
+                if (options->NumCmds > AMD_MAX_CMDS)
+                    maxCmds = AMD_MAX_CMDS;
+                for (int i = 0; i < maxCmds; i++)
+                    threadData.m_pCodec->SetParameter(options->CmdSet[i].strCommand, (CMP_CHAR*)options->CmdSet[i].strParameter);
             }
-
-
         }
 
-        CodecBufferType srcBufferType = GetCodecBufferType(pSourceTexture->format);
+        CodecBufferType srcBufferType = GetCodecBufferType(srcTexture->format);
 
         // GPUOpen issue # 59 fix
-        if (NeedSwizzle(pDestTexture->format)) {
-            switch (srcBufferType) {
+        if (NeedSwizzle(destTexture->format))
+        {
+            switch (srcBufferType)
+            {
             case CBT_BGRA8888:
             case CBT_BGR888:
             case CBT_R8:
@@ -589,55 +634,69 @@ CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture
         }
 
         CMP_DWORD dwThreadsRemaining = dwMaxThreadCount - dwThread;
-        CMP_DWORD dwHeight = 0;
-        if(dwThreadsRemaining > 1) {
+        CMP_DWORD dwHeight           = 0;
+        if (dwThreadsRemaining > 1)
+        {
             CMP_DWORD dwBlockHeight = threadData.m_pCodec->GetBlockHeight();
-            dwHeight = dwLinesRemaining / dwThreadsRemaining;
-            dwHeight = cmp_minT(((dwHeight + dwBlockHeight - 1) / dwBlockHeight) * dwBlockHeight, dwLinesRemaining); // Round by block height
+            dwHeight                = dwLinesRemaining / dwThreadsRemaining;
+            dwHeight                = cmp_minT(((dwHeight + dwBlockHeight - 1) / dwBlockHeight) * dwBlockHeight, dwLinesRemaining);  // Round by block height
             dwLinesRemaining -= dwHeight;
-        } else
+        }
+        else
             dwHeight = dwLinesRemaining;
 
-        if(dwHeight > 0) {
-
+        if (dwHeight > 0)
+        {
             threadData.m_pSrcBuffer = CreateCodecBuffer(srcBufferType,
-                                      pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight, pSourceTexture->nBlockDepth,
-                                      pSourceTexture->dwWidth, dwHeight, pSourceTexture->dwPitch, pSourceData,
-                                      pSourceTexture->dwDataSize);
-            threadData.m_pSrcBuffer->SetFormat(pSourceTexture->format);
+                                                        srcTexture->nBlockWidth,
+                                                        srcTexture->nBlockHeight,
+                                                        srcTexture->nBlockDepth,
+                                                        srcTexture->dwWidth,
+                                                        dwHeight,
+                                                        srcTexture->dwPitch,
+                                                        pSourceData,
+                                                        srcTexture->dwDataSize);
+            threadData.m_pSrcBuffer->SetFormat(srcTexture->format);
 
-            threadData.m_pDestBuffer = threadData.m_pCodec->CreateBuffer(
-                                           pDestTexture->nBlockWidth, pDestTexture->nBlockHeight, pDestTexture->nBlockDepth,
-                                           pDestTexture->dwWidth, dwHeight, pDestTexture->dwPitch, pDestData,
-                                           pDestTexture->dwDataSize);
-            threadData.m_pDestBuffer->SetFormat(pDestTexture->format);
+            threadData.m_pDestBuffer = threadData.m_pCodec->CreateBuffer(destTexture->nBlockWidth,
+                                                                         destTexture->nBlockHeight,
+                                                                         destTexture->nBlockDepth,
+                                                                         destTexture->dwWidth,
+                                                                         dwHeight,
+                                                                         destTexture->dwPitch,
+                                                                         pDestData,
+                                                                         destTexture->dwDataSize);
+            threadData.m_pDestBuffer->SetFormat(destTexture->format);
 
-            pSourceData += CalcBufferSize(pSourceTexture->format, pSourceTexture->dwWidth, dwHeight, pSourceTexture->dwPitch, pSourceTexture->nBlockWidth, pSourceTexture->nBlockHeight);
-            pDestData += CalcBufferSize(destType, pDestTexture->dwWidth, dwHeight, pDestTexture->nBlockWidth, pDestTexture->nBlockHeight);
+            pSourceData +=
+                CalcBufferSize(srcTexture->format, srcTexture->dwWidth, dwHeight, srcTexture->dwPitch, srcTexture->nBlockWidth, srcTexture->nBlockHeight);
+            pDestData += CalcBufferSize(destType, destTexture->dwWidth, dwHeight, destTexture->nBlockWidth, destTexture->nBlockHeight);
 
             assert(threadData.m_pSrcBuffer);
             assert(threadData.m_pDestBuffer);
-            if(threadData.m_pSrcBuffer == NULL || threadData.m_pDestBuffer == NULL)
+            if (threadData.m_pSrcBuffer == NULL || threadData.m_pDestBuffer == NULL)
                 return CMP_ERR_GENERIC;
 
             threadData.m_pSrcBuffer->m_bSwizzle = swizzleSrcBuffer;
-            threadData.m_pFeedbackProc = pFeedbackProc;
+            threadData.m_pFeedbackProc          = feedbackProc;
 
             ahThread[dwThreadCount++] = std::thread(ThreadedCompressProc, &threadData);
         }
     }
 
-    for ( CMP_DWORD dwThread = 0; dwThread < dwThreadCount; dwThread++ ) {
+    for (CMP_DWORD dwThread = 0; dwThread < dwThreadCount; dwThread++)
+    {
         std::thread& curThread = ahThread[dwThread];
 
         curThread.join();
     }
 
     CodecError err = CE_OK;
-    for(CMP_DWORD dwThread = 0; dwThread < dwThreadCount; dwThread++) {
+    for (CMP_DWORD dwThread = 0; dwThread < dwThreadCount; dwThread++)
+    {
         CATICompressThreadData& threadData = aThreadData[dwThread];
 
-        if(err == CE_OK)
+        if (err == CE_OK)
             err = threadData.m_errorCode;
 
         ahThread[dwThread] = std::thread();
@@ -645,5 +704,4 @@ CMP_ERROR ThreadedCompressTexture(const CMP_Texture* pSourceTexture, CMP_Texture
 
     return GetError(err);
 }
-#endif // THREADED_COMPRESS
-
+#endif  // THREADED_COMPRESS

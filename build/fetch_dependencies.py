@@ -104,7 +104,7 @@ gitMappingWin = {
     "https://github.com/apitrace/dxsdk"                             : [cmpCommon+"apitrace/dxsdk",  "master"],
     "https://github.com/ocornut/imgui"                              : [cmpCommon+"imgui",           "v1.85"],
     "https://github.com/glfw/glfw/"                                 : [cmpCommon+"glfw",            "3.3.2"],
-    "https://github.com/GPUOpen-LibrariesAndSDKs/brotli_g_sdk.git"  : [cmpCommon+"brotlig",         "main"],
+    "https://github.com/GPUOpen-LibrariesAndSDKs/brotli_g_sdk.git"  : [cmpCommon+"brotlig",         "main"]
 }
 
 # Libs to build on Linux
@@ -220,6 +220,7 @@ def downloadgit(key, path, reqdCommit):
             sys.exit(1)
         sys.stderr.flush()
         sys.stdout.flush()
+        
 for key in gitMapping:
     downloadgit(key, gitMapping[key][0], gitMapping[key][1])
 

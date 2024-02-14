@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2014-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2014-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,32 +28,36 @@
 #ifndef _CODEC_BC7_H_INCLUDED_
 #define _CODEC_BC7_H_INCLUDED_
 
-#include "compressonator.h"
-#include "codec_dxtc.h"
+#include <thread>
+
 #include "bc7_encode.h"
 #include "bc7_decode.h"
 #include "bc7_library.h"
-#include <thread>
+#include "codec_common.h"
+#include "codec_dxtc.h"
+#include "compressonator.h"
 
 // #define USE_THREADED_CALLBACKS  // This is experimental code to improve compression performance!
 #ifdef USE_THREADED_CALLBACKS
-typedef struct {
+typedef struct
+{
     float progress;
     bool  abort;
 } CMP_PROGRESS_THREAD;
 #endif
 
-
-struct BC7EncodeThreadParam {
-    BC7BlockEncoder    *encoder;
-    double    in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
-    CMP_BYTE    *out;
-    volatile CMP_BOOL    run;
-    volatile CMP_BOOL    exit;
+struct BC7EncodeThreadParam
+{
+    BC7BlockEncoder*  encoder;
+    double            in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG];
+    CMP_BYTE*         out;
+    volatile CMP_BOOL run;
+    volatile CMP_BOOL exit;
 };
 
-class CCodec_BC7 : public CCodec_DXTC {
-  public:
+class CCodec_BC7 : public CCodec_DXTC
+{
+public:
     CCodec_BC7();
     ~CCodec_BC7();
 
@@ -62,51 +66,65 @@ class CCodec_BC7 : public CCodec_DXTC {
     virtual bool SetParameter(const CMP_CHAR* /*pszParamName*/, CODECFLOAT /*fValue*/);
 
     // Required interfaces
-    virtual CodecError Compress             (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Compress_Fast        (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Compress_SuperFast   (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Decompress           (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress(CCodecBuffer&       bufferIn,
+                                CCodecBuffer&       bufferOut,
+                                Codec_Feedback_Proc pFeedbackProc = NULL,
+                                CMP_DWORD_PTR       pUser1        = NULL,
+                                CMP_DWORD_PTR       pUser2        = NULL);
+    virtual CodecError Compress_Fast(CCodecBuffer&       bufferIn,
+                                     CCodecBuffer&       bufferOut,
+                                     Codec_Feedback_Proc pFeedbackProc = NULL,
+                                     CMP_DWORD_PTR       pUser1        = NULL,
+                                     CMP_DWORD_PTR       pUser2        = NULL);
+    virtual CodecError Compress_SuperFast(CCodecBuffer&       bufferIn,
+                                          CCodecBuffer&       bufferOut,
+                                          Codec_Feedback_Proc pFeedbackProc = NULL,
+                                          CMP_DWORD_PTR       pUser1        = NULL,
+                                          CMP_DWORD_PTR       pUser2        = NULL);
+    virtual CodecError Decompress(CCodecBuffer&       bufferIn,
+                                  CCodecBuffer&       bufferOut,
+                                  Codec_Feedback_Proc pFeedbackProc = NULL,
+                                  CMP_DWORD_PTR       pUser1        = NULL,
+                                  CMP_DWORD_PTR       pUser2        = NULL);
 
-
-  private:
-    BC7EncodeThreadParam *m_EncodeParameterStorage;
+private:
+    BC7EncodeThreadParam* m_EncodeParameterStorage;
 
     // BC7 User configurable variables
-    CMP_DWORD   m_ModeMask;
-    double  m_Quality;
-    double  m_Performance;
-    CMP_BOOL    m_ColourRestrict;
-    CMP_BOOL    m_AlphaRestrict;
-    CMP_WORD    m_NumThreads;
-    CMP_BOOL    m_ImageNeedsAlpha;
-
+    CMP_DWORD m_ModeMask;
+    double    m_Quality;
+    double    m_Performance;
+    CMP_BOOL  m_ColourRestrict;
+    CMP_BOOL  m_AlphaRestrict;
+    CMP_WORD  m_NumThreads;
+    CMP_BOOL  m_ImageNeedsAlpha;
 
     // BC7 Internal status
-    CMP_BOOL     m_LibraryInitialized;
-    CMP_BOOL     m_Use_MultiThreading;
-    CMP_INT      m_NumEncodingThreads;
-    CMP_WORD     m_LiveThreads;
-    CMP_WORD     m_LastThread;
+    CMP_BOOL m_LibraryInitialized;
+    CMP_BOOL m_Use_MultiThreading;
+    CMP_INT  m_NumEncodingThreads;
+    CMP_WORD m_LiveThreads;
+    CMP_WORD m_LastThread;
 
     // BC7 Encoders and decoders: for encding use the interfaces below
-    std::thread*        m_EncodingThreadHandle;
-    BC7BlockEncoder*    m_encoder[MAX_BC7_THREADS];
-    BC7BlockDecoder*    m_decoder;
+    std::thread*     m_EncodingThreadHandle;
+    BC7BlockEncoder* m_encoder[MAX_BC7_THREADS];
+    BC7BlockDecoder* m_decoder;
 
     // Encoder interfaces
-    CodecError    InitializeBC7Library();
-    CodecError    EncodeBC7Block(double  in[BC7_BLOCK_PIXELS][MAX_DIMENSION_BIG],CMP_BYTE *out);
-    CodecError    FinishBC7Encoding(void);
+    CodecError InitializeBC7Library();
+    CodecError EncodeBC7Block(double in[BC7_BLOCK_PIXELS][MAX_DIMENSION_BIG], CMP_BYTE* out);
+    CodecError FinishBC7Encoding(void);
 
     static void Run();
 
 #ifdef USE_THREADED_CALLBACKS
-  public:
-    static CMP_PROGRESS_THREAD  m_progress;
-    static Codec_Feedback_Proc  m_user_pFeedbackProc;
-    static CMP_DWORD_PTR        m_pUser1;
-    static CMP_DWORD_PTR        m_pUser2;
+public:
+    static CMP_PROGRESS_THREAD m_progress;
+    static Codec_Feedback_Proc m_user_pFeedbackProc;
+    static CMP_DWORD_PTR       m_pUser1;
+    static CMP_DWORD_PTR       m_pUser2;
 #endif
 };
 
-#endif // !defined(_CODEC_DXT5_H_INCLUDED_)
+#endif  // !defined(_CODEC_DXT5_H_INCLUDED_)

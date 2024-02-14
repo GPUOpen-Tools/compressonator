@@ -20,6 +20,8 @@ if (CMP_HOST_WINDOWS)
             -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR}/../common/lib/ext/ktx
             -G ${CMAKE_GENERATOR}
     )
+
+    set_target_properties(extern_ktx PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_EXTERNAL})
 endif()
 
 #project(CompressonatorGLEW)
@@ -35,5 +37,4 @@ target_include_directories(ExtKTX INTERFACE
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/ktx/other_include
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/ktx/include
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/ktx/lib
-
 )

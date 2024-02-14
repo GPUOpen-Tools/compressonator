@@ -40,7 +40,7 @@ target_include_directories(EncodeWith_DXC PRIVATE
 )
 
 set_target_properties(EncodeWith_DXC PROPERTIES 
-    FOLDER "Plugin_Dynamic/GPU_EncodeWith"
+    FOLDER ${PROJECT_FOLDER_SDK_PLUGIN_DYNAMIC}
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin/debug/plugins"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/release/plugins"
     )

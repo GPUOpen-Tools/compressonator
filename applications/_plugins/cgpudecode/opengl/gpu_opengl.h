@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2016    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2016-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -30,31 +30,29 @@
 #include "gpu_decode.h"
 #include "compressonator.h"
 
-namespace GPU_Decode {
-class GPU_OpenGL : public RenderWindow {
-  public:
+namespace GPU_Decode
+{
+class GPU_OpenGL : public RenderWindow
+{
+public:
     GPU_OpenGL(CMP_DWORD Width, CMP_DWORD Height, WNDPROC callback);
     ~GPU_OpenGL();
 
-    virtual CMP_ERROR WINAPI Decompress(
-        const CMP_Texture* pSourceTexture,
-        CMP_Texture* pDestTexture
-    );
+    virtual CMP_ERROR WINAPI Decompress(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture);
 
     unsigned int MIP2OLG_Format(const CMP_Texture* pSourceTexture);
-    void GLRender();
+    void         GLRender();
 
-  private:
+private:
     unsigned int texture;
-    float theta = 0.0f;
-    bool b_glewInit = false;
+    float        theta      = 0.0f;
+    bool         b_glewInit = false;
 
-    unsigned int  LoadTexture(const CMP_Texture* pSourceTexture, bool wrap);
-    void    FreeTexture(unsigned int texture);
+    unsigned int LoadTexture(const CMP_Texture* pSourceTexture, bool wrap);
+    void         FreeTexture(unsigned int texture);
 };
-}
+}  // namespace GPU_Decode
 
 //---------------------------------------------------------------------------------
-
 
 #endif

@@ -1,6 +1,6 @@
 link_directories(
     ${CMAKE_BINARY_DIR}/lib         # build from source lib path
-    )
+)
 
 add_executable(sdk_example3)
 
@@ -8,7 +8,7 @@ add_dependencies(sdk_example3 dds_helper)
 
 target_sources(sdk_example3
     PRIVATE
-        sdk_example3.cpp
+    sdk_example3.cpp
 )
 
 target_include_directories(sdk_example3 PUBLIC
@@ -20,11 +20,11 @@ target_include_directories(sdk_example3 PUBLIC
 
 target_link_libraries(sdk_example3
     PRIVATE
-        dds_helper
-        CMP_Compressonator
+    dds_helper
+    CMP_Compressonator
 )
 
 set_target_properties(sdk_example3 PROPERTIES 
     FOLDER ${FOLDER_NAME}
     VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$(Configuration)"
-    )
+)

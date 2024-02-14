@@ -10,13 +10,17 @@ target_link_libraries(ExtDirectX INTERFACE
 )
 
 if (OPTION_BUILD_BROTLIG)
-    set(BROTLIG_ROOT_PATH ${COMPRESSONATOR_ROOT_PATH}/../common/lib/ext/brotlig)
+    # TODO: Change this back before the release
+    set(BROTLIG_ROOT_PATH ${COMPRESSONATOR_ROOT_PATH}/compressonator_internal/external/brotlig)
+    #set(BROTLIG_ROOT_PATH ${COMPRESSONATOR_ROOT_PATH}/../common/lib/ext/brotlig)
 
     ExternalProject_Add(extern_brotlig
         SOURCE_DIR ${BROTLIG_ROOT_PATH}
         BINARY_DIR ${BROTLIG_ROOT_PATH}/build
         INSTALL_COMMAND cmake -E echo "Skipping install step."
     )
+
+    set_target_properties(extern_brotlig PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_EXTERNAL})
 
     add_library(ExtBrotlig INTERFACE)
 

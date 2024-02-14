@@ -43,6 +43,10 @@ file(GLOB_RECURSE CMP_SRCS
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common/atiformats.h
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common/format_conversion.h
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common/format_conversion.cpp
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/codec_common.h
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/codec_common.cpp
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/texture_utils.h
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/texture_utils.cpp
 )
 
 if (OPTION_BUILD_ASTC)
@@ -74,7 +78,7 @@ add_library(CMP_Compressonator
 )
 
 target_include_directories(CMP_Compressonator
-    PRIVATE
+    PUBLIC
     ./
     # Lossy Compression
     apc
@@ -99,21 +103,21 @@ target_include_directories(CMP_Compressonator
     ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_math/
 )
 
-set_target_properties(CMP_Compressonator PROPERTIES FOLDER "Libs")
+set_target_properties(CMP_Compressonator PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})
 
 if (OPTION_BUILD_ASTC)
     target_include_directories(CMP_Compressonator
-        PRIVATE
+        PUBLIC
         astc
         astc/arm/
     )
 endif()
 
 if (OPTION_BUILD_BROTLIG)
-    target_include_directories(CMP_Compressonator PRIVATE brotlig)
+    target_include_directories(CMP_Compressonator PUBLIC ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib/brotlig)
 
     # should there be an error if OPTION_CMP_DIRECTX isn't ON?
-    target_link_libraries(CMP_Compressonator PRIVATE
+    target_link_libraries(CMP_Compressonator PUBLIC
         ExtBrotlig
         dxcompiler.lib
         dxgi.lib
@@ -124,4 +128,4 @@ endif()
 
 # TODO: More libraries should be linked like this when building so that we don't have to constantly repeat source file includes
 # Not just for CMP_Compressonator, do the same for the Framework and all other libraries
-target_link_libraries(CMP_Compressonator PRIVATE CMP_Core)
+target_link_libraries(CMP_Compressonator PUBLIC CMP_Core)

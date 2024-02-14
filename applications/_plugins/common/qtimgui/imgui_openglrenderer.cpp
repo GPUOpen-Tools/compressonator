@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2018-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,42 +30,44 @@
 #include <Qtgui/qcursor.h>
 #include <QtCore/qdebug.h>
 
-namespace qtimgui_opengl {
+namespace qtimgui_opengl
+{
 QHash<int, ImGuiKey> keyMap = {
-    { Qt::Key_Tab, ImGuiKey_Tab },
-    { Qt::Key_Left, ImGuiKey_LeftArrow },
-    { Qt::Key_Right, ImGuiKey_RightArrow },
-    { Qt::Key_Up, ImGuiKey_UpArrow },
-    { Qt::Key_Down, ImGuiKey_DownArrow },
-    { Qt::Key_PageUp, ImGuiKey_PageUp },
-    { Qt::Key_PageDown, ImGuiKey_PageDown },
-    { Qt::Key_Home, ImGuiKey_Home },
-    { Qt::Key_End, ImGuiKey_End },
-    { Qt::Key_Delete, ImGuiKey_Delete },
-    { Qt::Key_Backspace, ImGuiKey_Backspace },
-    { Qt::Key_Enter, ImGuiKey_Enter },
-    { Qt::Key_Escape, ImGuiKey_Escape },
-    { Qt::Key_A, ImGuiKey_A },
-    { Qt::Key_C, ImGuiKey_C },
-    { Qt::Key_V, ImGuiKey_V },
-    { Qt::Key_X, ImGuiKey_X },
-    { Qt::Key_Y, ImGuiKey_Y },
-    { Qt::Key_Z, ImGuiKey_Z },
+    {Qt::Key_Tab, ImGuiKey_Tab},
+    {Qt::Key_Left, ImGuiKey_LeftArrow},
+    {Qt::Key_Right, ImGuiKey_RightArrow},
+    {Qt::Key_Up, ImGuiKey_UpArrow},
+    {Qt::Key_Down, ImGuiKey_DownArrow},
+    {Qt::Key_PageUp, ImGuiKey_PageUp},
+    {Qt::Key_PageDown, ImGuiKey_PageDown},
+    {Qt::Key_Home, ImGuiKey_Home},
+    {Qt::Key_End, ImGuiKey_End},
+    {Qt::Key_Delete, ImGuiKey_Delete},
+    {Qt::Key_Backspace, ImGuiKey_Backspace},
+    {Qt::Key_Enter, ImGuiKey_Enter},
+    {Qt::Key_Escape, ImGuiKey_Escape},
+    {Qt::Key_A, ImGuiKey_A},
+    {Qt::Key_C, ImGuiKey_C},
+    {Qt::Key_V, ImGuiKey_V},
+    {Qt::Key_X, ImGuiKey_X},
+    {Qt::Key_Y, ImGuiKey_Y},
+    {Qt::Key_Z, ImGuiKey_Z},
 };
 
 QByteArray g_currentClipboardText;
-}
+}  // namespace qtimgui_opengl
 
 using namespace qtimgui_opengl;
 
-
-void ImGuiRenderer::initialize(QImGUI_OpenGLWindowWrapper *window) {
+void ImGuiRenderer::initialize(QImGUI_OpenGLWindowWrapper* window)
+{
     m_window.reset(window);
     initializeOpenGLFunctions();
     ImGui::CreateContext();
 
-    ImGuiIO &io = ImGui::GetIO();
-    for (ImGuiKey key : keyMap.values()) {
+    ImGuiIO& io = ImGui::GetIO();
+    for (ImGuiKey key : keyMap.values())
+    {
         io.KeyMap[key] = key;
     }
 
@@ -74,25 +76,26 @@ void ImGuiRenderer::initialize(QImGUI_OpenGLWindowWrapper *window) {
     //     instance()->renderDrawList(drawData);
     // };
 
-    io.SetClipboardTextFn = [](void *user_data, const char *text) {
+    io.SetClipboardTextFn = [](void* user_data, const char* text) {
         Q_UNUSED(user_data);
         QGuiApplication::clipboard()->setText(text);
     };
 
-    io.GetClipboardTextFn = [](void *user_data) {
+    io.GetClipboardTextFn = [](void* user_data) {
         Q_UNUSED(user_data);
         g_currentClipboardText = QGuiApplication::clipboard()->text().toUtf8();
-        return (const char *)g_currentClipboardText.data();
+        return (const char*)g_currentClipboardText.data();
     };
 
     window->installEventFilter(this);
 }
 
-void ImGuiRenderer::renderDrawList(ImDrawData *draw_data) {
+void ImGuiRenderer::renderDrawList(ImDrawData* draw_data)
+{
     // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
-    ImGuiIO& io = ImGui::GetIO();
-    int fb_width = (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x);
-    int fb_height = (int)(io.DisplaySize.y * io.DisplayFramebufferScale.y);
+    ImGuiIO& io        = ImGui::GetIO();
+    int      fb_width  = (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x);
+    int      fb_height = (int)(io.DisplaySize.y * io.DisplayFramebufferScale.y);
     if (fb_width == 0 || fb_height == 0)
         return;
     draw_data->ScaleClipRects(io.DisplayFramebufferScale);
@@ -127,9 +130,9 @@ void ImGuiRenderer::renderDrawList(ImDrawData *draw_data) {
     glGetIntegerv(GL_VIEWPORT, last_viewport);
     GLint last_scissor_box[4];
     glGetIntegerv(GL_SCISSOR_BOX, last_scissor_box);
-    GLboolean last_enable_blend = glIsEnabled(GL_BLEND);
-    GLboolean last_enable_cull_face = glIsEnabled(GL_CULL_FACE);
-    GLboolean last_enable_depth_test = glIsEnabled(GL_DEPTH_TEST);
+    GLboolean last_enable_blend        = glIsEnabled(GL_BLEND);
+    GLboolean last_enable_cull_face    = glIsEnabled(GL_CULL_FACE);
+    GLboolean last_enable_depth_test   = glIsEnabled(GL_DEPTH_TEST);
     GLboolean last_enable_scissor_test = glIsEnabled(GL_SCISSOR_TEST);
 
     // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled
@@ -143,33 +146,42 @@ void ImGuiRenderer::renderDrawList(ImDrawData *draw_data) {
     // Setup viewport, orthographic projection matrix
     glViewport(0, 0, (GLsizei)fb_width, (GLsizei)fb_height);
     const float ortho_projection[4][4] = {
-        { 2.0f/io.DisplaySize.x, 0.0f,                   0.0f, 0.0f },
-        { 0.0f,                  2.0f/-io.DisplaySize.y, 0.0f, 0.0f },
-        { 0.0f,                  0.0f,                  -1.0f, 0.0f },
-        {-1.0f,                  1.0f,                   0.0f, 1.0f },
+        {2.0f / io.DisplaySize.x, 0.0f, 0.0f, 0.0f},
+        {0.0f, 2.0f / -io.DisplaySize.y, 0.0f, 0.0f},
+        {0.0f, 0.0f, -1.0f, 0.0f},
+        {-1.0f, 1.0f, 0.0f, 1.0f},
     };
     glUseProgram(g_ShaderHandle);
     glUniform1i(g_AttribLocationTex, 0);
     glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
     glBindVertexArray(g_VaoHandle);
 
-    for (int n = 0; n < draw_data->CmdListsCount; n++) {
-        const ImDrawList* cmd_list = draw_data->CmdLists[n];
-        const ImDrawIdx* idx_buffer_offset = 0;
+    for (int n = 0; n < draw_data->CmdListsCount; n++)
+    {
+        const ImDrawList* cmd_list          = draw_data->CmdLists[n];
+        const ImDrawIdx*  idx_buffer_offset = 0;
 
         glBindBuffer(GL_ARRAY_BUFFER, g_VboHandle);
         glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)cmd_list->VtxBuffer.Size * sizeof(ImDrawVert), (const GLvoid*)cmd_list->VtxBuffer.Data, GL_STREAM_DRAW);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_ElementsHandle);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx), (const GLvoid*)cmd_list->IdxBuffer.Data, GL_STREAM_DRAW);
+        glBufferData(
+            GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx), (const GLvoid*)cmd_list->IdxBuffer.Data, GL_STREAM_DRAW);
 
-        for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
+        for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
+        {
             const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
-            if (pcmd->UserCallback) {
+            if (pcmd->UserCallback)
+            {
                 pcmd->UserCallback(cmd_list, pcmd);
-            } else {
+            }
+            else
+            {
                 glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->TextureId);
-                glScissor((int)pcmd->ClipRect.x, (int)(fb_height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
+                glScissor((int)pcmd->ClipRect.x,
+                          (int)(fb_height - pcmd->ClipRect.w),
+                          (int)(pcmd->ClipRect.z - pcmd->ClipRect.x),
+                          (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
                 glDrawElements(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, sizeof(ImDrawIdx) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, idx_buffer_offset);
             }
             idx_buffer_offset += pcmd->ElemCount;
@@ -185,24 +197,36 @@ void ImGuiRenderer::renderDrawList(ImDrawData *draw_data) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, last_element_array_buffer);
     glBlendEquationSeparate(last_blend_equation_rgb, last_blend_equation_alpha);
     glBlendFuncSeparate(last_blend_src_rgb, last_blend_dst_rgb, last_blend_src_alpha, last_blend_dst_alpha);
-    if (last_enable_blend) glEnable(GL_BLEND);
-    else glDisable(GL_BLEND);
-    if (last_enable_cull_face) glEnable(GL_CULL_FACE);
-    else glDisable(GL_CULL_FACE);
-    if (last_enable_depth_test) glEnable(GL_DEPTH_TEST);
-    else glDisable(GL_DEPTH_TEST);
-    if (last_enable_scissor_test) glEnable(GL_SCISSOR_TEST);
-    else glDisable(GL_SCISSOR_TEST);
+    if (last_enable_blend)
+        glEnable(GL_BLEND);
+    else
+        glDisable(GL_BLEND);
+    if (last_enable_cull_face)
+        glEnable(GL_CULL_FACE);
+    else
+        glDisable(GL_CULL_FACE);
+    if (last_enable_depth_test)
+        glEnable(GL_DEPTH_TEST);
+    else
+        glDisable(GL_DEPTH_TEST);
+    if (last_enable_scissor_test)
+        glEnable(GL_SCISSOR_TEST);
+    else
+        glDisable(GL_SCISSOR_TEST);
     glViewport(last_viewport[0], last_viewport[1], (GLsizei)last_viewport[2], (GLsizei)last_viewport[3]);
     glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
 }
 
-bool ImGuiRenderer::createFontsTexture() {
+bool ImGuiRenderer::createFontsTexture()
+{
     // Build texture atlas
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO&       io = ImGui::GetIO();
     unsigned char* pixels;
-    int width, height;
-    io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);   // Load as RGBA 32-bits (75% of the memory is wasted, but default font is so small) because it is more likely to be compatible with user's existing shaders. If your ImTextureId represent a higher-level concept than just a GL texture id, consider calling GetTexDataAsAlpha8() instead to save on GPU memory.
+    int            width, height;
+    io.Fonts->GetTexDataAsRGBA32(
+        &pixels,
+        &width,
+        &height);  // Load as RGBA 32-bits (75% of the memory is wasted, but default font is so small) because it is more likely to be compatible with user's existing shaders. If your ImTextureId represent a higher-level concept than just a GL texture id, consider calling GetTexDataAsAlpha8() instead to save on GPU memory.
 
     // Upload texture to graphics system
     GLint last_texture;
@@ -214,7 +238,7 @@ bool ImGuiRenderer::createFontsTexture() {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
     // Store our identifier
-    io.Fonts->TexID = (void *)(intptr_t)g_FontTexture;
+    io.Fonts->TexID = (void*)(intptr_t)g_FontTexture;
 
     // Restore state
     glBindTexture(GL_TEXTURE_2D, last_texture);
@@ -222,14 +246,15 @@ bool ImGuiRenderer::createFontsTexture() {
     return true;
 }
 
-bool ImGuiRenderer::createDeviceObjects() {
+bool ImGuiRenderer::createDeviceObjects()
+{
     // Backup GL state
     GLint last_texture, last_array_buffer, last_vertex_array;
     glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
     glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &last_array_buffer);
     glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &last_vertex_array);
 
-    const GLchar *vertex_shader =
+    const GLchar* vertex_shader =
         "#version 330\n"
         "uniform mat4 ProjMtx;\n"
         "in vec2 Position;\n"
@@ -256,8 +281,8 @@ bool ImGuiRenderer::createDeviceObjects() {
         "}\n";
 
     g_ShaderHandle = glCreateProgram();
-    g_VertHandle = glCreateShader(GL_VERTEX_SHADER);
-    g_FragHandle = glCreateShader(GL_FRAGMENT_SHADER);
+    g_VertHandle   = glCreateShader(GL_VERTEX_SHADER);
+    g_FragHandle   = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(g_VertHandle, 1, &vertex_shader, 0);
     glShaderSource(g_FragHandle, 1, &fragment_shader, 0);
     glCompileShader(g_VertHandle);
@@ -266,11 +291,11 @@ bool ImGuiRenderer::createDeviceObjects() {
     glAttachShader(g_ShaderHandle, g_FragHandle);
     glLinkProgram(g_ShaderHandle);
 
-    g_AttribLocationTex = glGetUniformLocation(g_ShaderHandle, "Texture");
-    g_AttribLocationProjMtx = glGetUniformLocation(g_ShaderHandle, "ProjMtx");
+    g_AttribLocationTex      = glGetUniformLocation(g_ShaderHandle, "Texture");
+    g_AttribLocationProjMtx  = glGetUniformLocation(g_ShaderHandle, "ProjMtx");
     g_AttribLocationPosition = glGetAttribLocation(g_ShaderHandle, "Position");
-    g_AttribLocationUV = glGetAttribLocation(g_ShaderHandle, "UV");
-    g_AttribLocationColor = glGetAttribLocation(g_ShaderHandle, "Color");
+    g_AttribLocationUV       = glGetAttribLocation(g_ShaderHandle, "UV");
+    g_AttribLocationColor    = glGetAttribLocation(g_ShaderHandle, "Color");
 
     glGenBuffers(1, &g_VboHandle);
     glGenBuffers(1, &g_ElementsHandle);
@@ -282,7 +307,7 @@ bool ImGuiRenderer::createDeviceObjects() {
     glEnableVertexAttribArray(g_AttribLocationUV);
     glEnableVertexAttribArray(g_AttribLocationColor);
 
-#define OFFSETOF(TYPE, ELEMENT) ((size_t)&(((TYPE *)0)->ELEMENT))
+#define OFFSETOF(TYPE, ELEMENT) ((size_t) & (((TYPE*)0)->ELEMENT))
     glVertexAttribPointer(g_AttribLocationPosition, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)OFFSETOF(ImDrawVert, pos));
     glVertexAttribPointer(g_AttribLocationUV, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)OFFSETOF(ImDrawVert, uv));
     glVertexAttribPointer(g_AttribLocationColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(ImDrawVert), (GLvoid*)OFFSETOF(ImDrawVert, col));
@@ -298,18 +323,19 @@ bool ImGuiRenderer::createDeviceObjects() {
     return true;
 }
 
-void ImGuiRenderer::newFrame() {
+void ImGuiRenderer::newFrame()
+{
     if (!g_FontTexture)
         createDeviceObjects();
 
     ImGuiIO& io = ImGui::GetIO();
 
     // Setup display size (every frame to accommodate for window resizing)
-    io.DisplaySize = ImVec2(m_window->size().width(), m_window->size().height());
+    io.DisplaySize             = ImVec2(m_window->size().width(), m_window->size().height());
     io.DisplayFramebufferScale = ImVec2(m_window->devicePixelRatio(), m_window->devicePixelRatio());
 
     // Setup time step
-    double current_time =  QDateTime::currentMSecsSinceEpoch() / double(1000);
+    double current_time = QDateTime::currentMSecsSinceEpoch() / double(1000);
     if ((g_Time > 0.0) && (current_time - g_Time) > 0.0)
         io.DeltaTime = (float)(current_time - g_Time);
     else
@@ -319,19 +345,23 @@ void ImGuiRenderer::newFrame() {
 
     // Setup inputs
     // (we already got mouse wheel, keyboard keys & characters from glfw callbacks polled in glfwPollEvents())
-    if (m_window->isActive()) {
-        auto pos = m_window->mapFromGlobal(QCursor::pos());
-        io.MousePos = ImVec2(pos.x(), pos.y());   // Mouse position in screen coordinates (set to -1,-1 if no mouse / on another screen, etc.)
-    } else {
-        io.MousePos = ImVec2(-1,-1);
+    if (m_window->isActive())
+    {
+        auto pos    = m_window->mapFromGlobal(QCursor::pos());
+        io.MousePos = ImVec2(pos.x(), pos.y());  // Mouse position in screen coordinates (set to -1,-1 if no mouse / on another screen, etc.)
+    }
+    else
+    {
+        io.MousePos = ImVec2(-1, -1);
     }
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         io.MouseDown[i] = g_MousePressed[i];
     }
 
     io.MouseWheel = g_MouseWheel;
-    g_MouseWheel = 0.0f;
+    g_MouseWheel  = 0.0f;
 
     // Hide OS mouse cursor if ImGui is drawing it
     // glfwSetInputMode(g_Window, GLFW_CURSOR, io.MouseDrawCursor ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL);
@@ -340,55 +370,63 @@ void ImGuiRenderer::newFrame() {
     ImGui::NewFrame();
 }
 
-void ImGuiRenderer::onMousePressedChange(QMouseEvent *event) {
+void ImGuiRenderer::onMousePressedChange(QMouseEvent* event)
+{
     g_MousePressed[0] = event->buttons() & Qt::LeftButton;
     g_MousePressed[1] = event->buttons() & Qt::RightButton;
     g_MousePressed[2] = event->buttons() & Qt::MiddleButton;
 }
 
-void ImGuiRenderer::onWheel(QWheelEvent *event) {
+void ImGuiRenderer::onWheel(QWheelEvent* event)
+{
     // 5 lines per unit
     g_MouseWheel += event->pixelDelta().y() / (5.0 * ImGui::GetTextLineHeight());
 }
 
-void ImGuiRenderer::onKeyPressRelease(QKeyEvent *event) {
+void ImGuiRenderer::onKeyPressRelease(QKeyEvent* event)
+{
     ImGuiIO& io = ImGui::GetIO();
-    if (keyMap.contains(event->key())) {
+    if (keyMap.contains(event->key()))
+    {
         io.KeysDown[keyMap[event->key()]] = event->type() == QEvent::KeyPress;
     }
 
-    if (event->type() == QEvent::KeyPress) {
+    if (event->type() == QEvent::KeyPress)
+    {
         QString text = event->text();
-        if (text.size() == 1) {
+        if (text.size() == 1)
+        {
             io.AddInputCharacter(text.at(0).unicode());
         }
     }
 
 #ifdef Q_OS_MAC
-    io.KeyCtrl = event->modifiers() & Qt::MetaModifier;
+    io.KeyCtrl  = event->modifiers() & Qt::MetaModifier;
     io.KeyShift = event->modifiers() & Qt::ShiftModifier;
-    io.KeyAlt = event->modifiers() & Qt::AltModifier;
-    io.KeySuper = event->modifiers() & Qt::ControlModifier; // Comamnd key
+    io.KeyAlt   = event->modifiers() & Qt::AltModifier;
+    io.KeySuper = event->modifiers() & Qt::ControlModifier;  // Comamnd key
 #else
-    io.KeyCtrl = event->modifiers() & Qt::ControlModifier;
+    io.KeyCtrl  = event->modifiers() & Qt::ControlModifier;
     io.KeyShift = event->modifiers() & Qt::ShiftModifier;
-    io.KeyAlt = event->modifiers() & Qt::AltModifier;
+    io.KeyAlt   = event->modifiers() & Qt::AltModifier;
     io.KeySuper = event->modifiers() & Qt::MetaModifier;
 #endif
 }
 
-bool ImGuiRenderer::eventFilter(QObject *watched, QEvent *event) {
-    switch (event->type()) {
+bool ImGuiRenderer::eventFilter(QObject* watched, QEvent* event)
+{
+    switch (event->type())
+    {
     case QEvent::MouseButtonPress:
     case QEvent::MouseButtonRelease:
-        this->onMousePressedChange(static_cast<QMouseEvent *>(event));
+        this->onMousePressedChange(static_cast<QMouseEvent*>(event));
         break;
     case QEvent::Wheel:
-        this->onWheel(static_cast<QWheelEvent *>(event));
+        this->onWheel(static_cast<QWheelEvent*>(event));
         break;
     case QEvent::KeyPress:
     case QEvent::KeyRelease:
-        this->onKeyPressRelease(static_cast<QKeyEvent *>(event));
+        this->onKeyPressRelease(static_cast<QKeyEvent*>(event));
         break;
     default:
         break;
@@ -396,7 +434,8 @@ bool ImGuiRenderer::eventFilter(QObject *watched, QEvent *event) {
     return QObject::eventFilter(watched, event);
 }
 
-void ImGuiRenderer::Draw() {
+void ImGuiRenderer::Draw()
+{
     ImGui::Render();
     ImDrawData* draw_data = ImGui::GetDrawData();
     renderDrawList(draw_data);

@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////////////////////////////
-//  Copyright (c) 2007,2008 Advanced Micro Devices, Inc.
+//  Copyright (c) 2007-2024 Advanced Micro Devices, Inc.
 //  Copyright (c) 2002-2006 ATI Technologies Inc.
 //
 //  File Name:   TC_PluginAPI.h
@@ -78,46 +78,48 @@ extern "C" {
 //#define ID_VIEW_RGBA                   ID_BASE+20  ///< \internal
 //
 typedef CMP_DWORD_PTR TC_HANDLE;  ///< Generic Texture API handle
-typedef TC_HANDLE HFILETYPE;  ///< Handle to a FileType.
-typedef TC_HANDLE HCODEC;     ///< Handle to a Codec.
-typedef TC_HANDLE HMIPPER;    ///< Handle to a Mipper.
-typedef TC_HANDLE HVIEWTYPE;  ///< \internal Handle to a ViewType.
-typedef TC_HANDLE HVIEW;      ///< \internal Handle to a View.
+typedef TC_HANDLE     HFILETYPE;  ///< Handle to a FileType.
+typedef TC_HANDLE     HCODEC;     ///< Handle to a Codec.
+typedef TC_HANDLE     HMIPPER;    ///< Handle to a Mipper.
+typedef TC_HANDLE     HVIEWTYPE;  ///< \internal Handle to a ViewType.
+typedef TC_HANDLE     HVIEW;      ///< \internal Handle to a View.
 #ifndef _WIN32
-typedef wchar_t TCHAR;
-typedef char* LPTSTR;
-typedef int HWND;
+typedef wchar_t   TCHAR;
+typedef char*     LPTSTR;
+typedef int       HWND;
 typedef CMP_DWORD FileSaveDialogProc;
 typedef CMP_DWORD CompressDialogProc;
 typedef CMP_DWORD GenerateMipsDialogProc;
-typedef int* GUID;
+typedef int*      GUID;
 typedef CMP_DWORD WNDPROC;
 #endif
 ///\def MAKEFOURCC(ch0, ch1, ch2, ch3)
 /// Utility macro for defining a FourCC code.
 #ifndef C_MAKEFOURCC
-#define C_MAKEFOURCC(ch0, ch1, ch2, ch3)                              \
-   ((CMP_DWORD)(CMP_BYTE)(ch0) | ((CMP_DWORD)(CMP_BYTE)(ch1) << 8) |   \
-   ((CMP_DWORD)(CMP_BYTE)(ch2) << 16) | ((CMP_DWORD)(CMP_BYTE)(ch3) << 24 ))
+#define C_MAKEFOURCC(ch0, ch1, ch2, ch3) \
+    ((CMP_DWORD)(CMP_BYTE)(ch0) | ((CMP_DWORD)(CMP_BYTE)(ch1) << 8) | ((CMP_DWORD)(CMP_BYTE)(ch2) << 16) | ((CMP_DWORD)(CMP_BYTE)(ch3) << 24))
 #endif
 
 /// A structure for storing compression parameters specific to each codec.
-typedef struct {
-    void*          pPluginSpecific;  ///< Usually used as a pointer to a user-defined structure that can contain all the necessary codec options.
-    const TCHAR*   pszTextParams;    ///< A string containing the command line options for the codec when the app is called from the command line.
+typedef struct
+{
+    void*        pPluginSpecific;  ///< Usually used as a pointer to a user-defined structure that can contain all the necessary codec options.
+    const TCHAR* pszTextParams;    ///< A string containing the command line options for the codec when the app is called from the command line.
 } TC_CompressParams;
 
 /// A structure for storing compression parameters specific to each codec.
-typedef struct {
-    void*          pPluginSpecific;  ///< Usually used as a pointer to a user-defined structure that can contain all the necessary file save options.
-    const TCHAR*   pszTextParams;    ///< A string containing the command line options for the file handler when the app is called from the command line.
+typedef struct
+{
+    void*        pPluginSpecific;  ///< Usually used as a pointer to a user-defined structure that can contain all the necessary file save options.
+    const TCHAR* pszTextParams;    ///< A string containing the command line options for the file handler when the app is called from the command line.
 } TC_FileSaveParams;
 
 /// A structure for storing mip generation parameters specific to each mipper.
-typedef struct {
-    int            nMinSize;         ///< The size in pixels used to determine how many mip levels to generate. Once all dimensions are less than or equal to nMinSize your mipper should generate no more mip levels.
-    void*          pPluginSpecific;  ///< Usually used as a pointer to a user-defined structure that can contain all the necessary mipper options.
-    const TCHAR*   pszTextParams;    ///< A string containing the command line options for the mipper when the app is called from the command line.
+typedef struct
+{
+    int nMinSize;  ///< The size in pixels used to determine how many mip levels to generate. Once all dimensions are less than or equal to nMinSize your mipper should generate no more mip levels.
+    void*        pPluginSpecific;  ///< Usually used as a pointer to a user-defined structure that can contain all the necessary mipper options.
+    const TCHAR* pszTextParams;    ///< A string containing the command line options for the mipper when the app is called from the command line.
 } TC_GenerateMipsParams;
 
 /// Error codes returned by application & plugin functions.
@@ -137,14 +139,16 @@ typedef struct {
 //} TC_ErrorLevel;
 
 /// \internal
-typedef enum {
+typedef enum
+{
     ER_OK,
     ER_Cancel,
     ER_Ignore,
 } TC_ErrorResponse;
 
 /// \internal
-typedef enum {
+typedef enum
+{
     TC_VM_Normal,
     TC_VM_Diff,
 } TC_ViewMode;
@@ -562,7 +566,11 @@ TC_PluginError TC_PluginViewCreateView(const HVIEWTYPE hViewType, HWND hParent, 
 ///
 /// \code
 /// \endcode
-TC_PluginError TC_PluginViewUpdateView(const HVIEW hView, const MipSet* pMipSetSourceRGBA, const MipSet* pMipSetCompressedRGBA, const MipSet* pMipSetCompressedData, const MipSet* pMipSetDiff);
+TC_PluginError TC_PluginViewUpdateView(const HVIEW   hView,
+                                       const MipSet* pMipSetSourceRGBA,
+                                       const MipSet* pMipSetCompressedRGBA,
+                                       const MipSet* pMipSetCompressedData,
+                                       const MipSet* pMipSetDiff);
 
 /// \internal
 ///
@@ -573,7 +581,11 @@ TC_PluginError TC_PluginViewUpdateView(const HVIEW hView, const MipSet* pMipSetS
 ///
 /// \code
 /// \endcode
-TC_PluginError TC_PluginViewUpdateViewTitles(const HVIEW hView, const TCHAR* pszTitle, const TCHAR* pszSourceTitle, const TCHAR* pszCompressedTitle, const TCHAR* pszDiffTitle);
+TC_PluginError TC_PluginViewUpdateViewTitles(const HVIEW  hView,
+                                             const TCHAR* pszTitle,
+                                             const TCHAR* pszSourceTitle,
+                                             const TCHAR* pszCompressedTitle,
+                                             const TCHAR* pszDiffTitle);
 
 /// \internal
 ///
@@ -585,7 +597,6 @@ TC_PluginError TC_PluginViewUpdateViewTitles(const HVIEW hView, const TCHAR* psz
 /// \code
 /// \endcode
 TC_PluginError TC_PluginViewReleaseView(HVIEW hView);
-
 
 /// Application Functions
 
@@ -804,7 +815,6 @@ HVIEWTYPE TC_AppRegisterViewType(TCHAR* pszViewDescription, bool bDefaultView);
 /// \remarks This functionality is not currently supported in the plugin SDK.
 void TC_AppUnregisterViewType(HVIEWTYPE hViewType);
 
-
 /// This function is used to get a pointer to a given MipLevel from a MipSet.
 /// \param[in] pMipSet A pointer to the MipSet that contains the MipLevel that you want a pointer to.
 /// \param[in] nMipLevel An int that indicates which MipLevel of the texture you want.
@@ -847,7 +857,13 @@ MipLevel* TC_AppGetMipLevel(const MipSet* pMipSet, int nMipLevel, int nFaceOrSli
 /// \sa \link TC_AppGetMipLevel() TC_AppGetMipLevel \endlink,
 /// \link TC_AppAllocateMipLevelData() TC_AppAllocateMipLevelData \endlink,
 /// \link TC_AppAllocateCompressedMipLevelData() TC_AppAllocateCompressedMipLevelData \endlink
-bool TC_AppAllocateMipSet(MipSet* pMipSet, ChannelFormat channelFormat, TextureDataType textureDataType, TextureType textureType, int nWidth, int nHeight, int nDepth = 1);
+bool TC_AppAllocateMipSet(MipSet*         pMipSet,
+                          ChannelFormat   channelFormat,
+                          TextureDataType textureDataType,
+                          TextureType     textureType,
+                          int             nWidth,
+                          int             nHeight,
+                          int             nDepth = 1);
 
 /// This function is called by plugins to allocate memory whenever an uncompressed MipLevel is being created. Usually needed by Codec Plugins' TC_PluginCodecDecompressTexture function when they are decompressing textures and some File Plugins' TC_PluginFileLoadTexture when they are converting a file on disk into an uncompressed texture in memory.
 /// \param[in, out] pMipLevel A pointer to the MipLevel whose m_pbData pointer will point to the allocated memory after this function call.
@@ -966,4 +982,4 @@ void TC_AppCheckCommand(HWND hParent, unsigned int nCommand, bool bCheck);
 
 /////////////////////////////////////////////////////////////////////////////
 
-#endif // !defined(_TC_PLUGINAPI_INCLUDED_)
+#endif  // !defined(_TC_PLUGINAPI_INCLUDED_)

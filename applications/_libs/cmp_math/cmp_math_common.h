@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2023 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2023-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -21,7 +21,6 @@
 //
 //=====================================================================
 
-
 #ifndef CMP_MATH_COMMON_H
 #define CMP_MATH_COMMON_H
 
@@ -30,15 +29,15 @@
 #ifndef ASPM_GPU
 
 #ifdef _WIN32
-#define CMP_Align(x)  __declspec(align(x))
+#define CMP_Align(x) __declspec(align(x))
 #else
-#define CMP_Align(x)  __attribute(aligned(x))
+#define CMP_Align(x) __attribute(aligned(x))
 #endif
 
-#define CMP_MATH_USE_AUTO   0
-#define CMP_MATH_USE_CPU    1
-#define CMP_MATH_USE_HPC    2
-#define CMP_MATH_USE_GPU    4
+#define CMP_MATH_USE_AUTO 0
+#define CMP_MATH_USE_CPU 1
+#define CMP_MATH_USE_HPC 2
+#define CMP_MATH_USE_GPU 4
 
 typedef unsigned char CMP_MATH_BYTE;
 typedef unsigned int  CMP_MATH_DWORD;
@@ -56,20 +55,19 @@ extern void cmp_set_cpu_features();
 // internal interfaces
 //==================================
 extern float cpu_clampf(float value, float minval, float maxval);
-extern float cpu_lerp2(CMP_Vec4uc C1, CMP_Vec4uc CA, CMP_Vec4uc CB, CMP_Vec4uc C2, CMP_MATH_BYTE *encode1, CMP_MATH_BYTE *encode2);
+extern float cpu_lerp2(CMP_Vec4uc C1, CMP_Vec4uc CA, CMP_Vec4uc CB, CMP_Vec4uc C2, CMP_MATH_BYTE* encode1, CMP_MATH_BYTE* encode2);
 extern float cpu_maxf(float l1, float r1);
 extern float cpu_minf(float l1, float r1);
-extern float cpu_rsqf(float *f);
-extern float cpu_sqrtf(float * pIn);
-
+extern float cpu_rsqf(float* f);
+extern float cpu_sqrtf(float* pIn);
 
 #ifndef __linux__
 extern float sse_clampf(float value, float minval, float maxval);
-extern float sse_lerp2(CMP_Vec4uc C1, CMP_Vec4uc CA, CMP_Vec4uc CB, CMP_Vec4uc C2, CMP_MATH_BYTE *encode1, CMP_MATH_BYTE *encode2);
+extern float sse_lerp2(CMP_Vec4uc C1, CMP_Vec4uc CA, CMP_Vec4uc CB, CMP_Vec4uc C2, CMP_MATH_BYTE* encode1, CMP_MATH_BYTE* encode2);
 extern float sse_maxf(float l1, float r1);
 extern float sse_minf(float l1, float r1);
-extern float sse_rsqf(float *v);
-extern float sse_sqrtf(  float *pIn );
+extern float sse_rsqf(float* v);
+extern float sse_sqrtf(float* pIn);
 #endif
 
 //==================================
@@ -77,12 +75,12 @@ extern float sse_sqrtf(  float *pIn );
 //==================================
 void cmp_autodetected_cpufeatures(CMP_MATH_BYTE set);
 
-extern float(*cmp_clampf2)(float value, float minval, float maxval);
-extern float(*cmp_lerp2)(CMP_Vec4uc C1, CMP_Vec4uc CA, CMP_Vec4uc CB, CMP_Vec4uc C2, CMP_MATH_BYTE *encode1, CMP_MATH_BYTE *encode2);
-extern float(*cmp_maxf2)(float l1, float r1);
-extern float(*cmp_minf2)(float l1, float r1);
-extern float(*cmp_rsqf2)(float *);
-extern float(*cmp_sqrtf2)(float *);
+extern float (*cmp_clampf2)(float value, float minval, float maxval);
+extern float (*cmp_lerp2)(CMP_Vec4uc C1, CMP_Vec4uc CA, CMP_Vec4uc CB, CMP_Vec4uc C2, CMP_MATH_BYTE* encode1, CMP_MATH_BYTE* encode2);
+extern float (*cmp_maxf2)(float l1, float r1);
+extern float (*cmp_minf2)(float l1, float r1);
+extern float (*cmp_rsqf2)(float*);
+extern float (*cmp_sqrtf2)(float*);
 
 #endif
 

@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,38 +27,39 @@
 #include "d3dx10.h"
 #include "Module.h"
 
-typedef struct {
-    const TCHAR*    szModuleName;
-    const TCHAR*    szDescription;
-    bool            bFound;
+typedef struct
+{
+    const TCHAR* szModuleName;
+    const TCHAR* szDescription;
+    bool         bFound;
 } D3DCompilerModule;
 
 extern D3DCompilerModule g_aD3DCompilerModules[];
-extern const DWORD g_dwD3DCompilerModules;
+extern const DWORD       g_dwD3DCompilerModules;
 
 typedef BOOL(WINAPI FAR* D3DXCheckVersionProc)(UINT D3DSdkVersion, UINT D3DX10SdkVersion);
 
-class CD3DCompilerModule : public CModule {
-  public:
+class CD3DCompilerModule : public CModule
+{
+public:
     CD3DCompilerModule();
     CD3DCompilerModule(LPCTSTR lpModuleName);
     virtual ~CD3DCompilerModule();
 
     virtual bool LoadModule(LPCTSTR lpModuleName);
 
-  protected:
+protected:
     virtual void UnloadModule();
 
     D3DXCheckVersionProc m_pD3DXCheckVersion;
 };
 
-
 #ifdef __cplusplus
 extern "C" {
-#endif // __cplusplus
+#endif  // __cplusplus
 
 DWORD LoadD3DCompiler(CD3DCompilerModule& D3DX10, CString& strD3DCompilerModule);
 
 #ifdef __cplusplus
 }
-#endif // __cplusplus
+#endif  // __cplusplus

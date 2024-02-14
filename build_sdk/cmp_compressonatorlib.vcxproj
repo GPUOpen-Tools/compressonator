@@ -405,7 +405,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/;../external/stb;../CMP_Framework;../applications/_plugins/ccmp_sdk</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -434,7 +434,7 @@
       </ExportNamedFunctions>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../Build/VS2019/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/build_sdk/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
@@ -444,7 +444,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/;../external/stb;../CMP_Framework;../applications/_plugins/ccmp_sdk</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -454,7 +454,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>../CMP_CompressonatorLib/CompressonatorLib.def</ModuleDefinitionFile>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../Build/VS2019/Debug/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/build_sdk/Debug/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CustomBuild>
       <Command>
@@ -483,7 +483,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/;../external/stb;../CMP_Framework;../applications/_plugins/ccmp_sdk</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -513,7 +513,7 @@
       </ExportNamedFunctions>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../Build/VS2019/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/build_sdk/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|Win32'">
@@ -523,7 +523,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN32;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/;../external/stb;../CMP_Framework;../applications/_plugins/ccmp_sdk</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -533,7 +533,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>../CMP_CompressonatorLib/CompressonatorLib.def</ModuleDefinitionFile>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../Build/VS2019/Debug_MD/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/build_sdk/Debug_MD/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CustomBuild>
       <Command>
@@ -562,7 +562,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/;../external/stb;../CMP_Framework;../applications/_plugins/ccmp_sdk</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -585,7 +585,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../Build/VS2019/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/build_sdk/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
@@ -595,7 +595,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/;../external/stb;../CMP_Framework;../applications/_plugins/ccmp_sdk</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -608,7 +608,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>../CMP_CompressonatorLib/CompressonatorLib.def</ModuleDefinitionFile>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../Build/VS2019/Debug/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/build_sdk/Debug/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -626,7 +626,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/;../external/stb;../CMP_Framework;../applications/_plugins/ccmp_sdk</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -650,7 +650,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../Build/VS2019/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/build_sdk/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MD_DLL|x64'">
@@ -660,7 +660,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN64;_DEBUG;_LIB;HALF_NO_STD;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/;../external/stb;../CMP_Framework;../applications/_plugins/ccmp_sdk</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -673,7 +673,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>../CMP_CompressonatorLib/CompressonatorLib.def</ModuleDefinitionFile>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../Build/VS2019/Debug_MD/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/build_sdk/Debug_MD/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -694,7 +694,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/;../external/stb;../CMP_Framework;../applications/_plugins/ccmp_sdk</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -729,7 +729,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../Build/VS2019/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/build_sdk/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
@@ -742,7 +742,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/;../external/stb;../CMP_Framework;../applications/_plugins/ccmp_sdk</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -757,7 +757,7 @@
       <ImportLibrary>
       </ImportLibrary>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../Build/VS2019/Release/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/build_sdk/Release/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CustomBuild>
       <Command>
@@ -790,7 +790,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/;../external/stb;../CMP_Framework;../applications/_plugins/ccmp_sdk</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -825,7 +825,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../Build/VS2019/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/build_sdk/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|Win32'">
@@ -838,7 +838,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN32;NDEBUG;_LIB;HALF_NO_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/;../external/stb;../CMP_Framework;../applications/_plugins/ccmp_sdk</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -853,7 +853,7 @@
       <ImportLibrary>
       </ImportLibrary>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../Build/VS2019/Release_MD/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/build_sdk/Release_MD/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CustomBuild>
       <Command>
@@ -885,7 +885,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/;../external/stb;../CMP_Framework;../applications/_plugins/ccmp_sdk</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -908,7 +908,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../Build/VS2019/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/build_sdk/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
@@ -920,7 +920,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/;../external/stb;../CMP_Framework;../applications/_plugins/ccmp_sdk</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -935,7 +935,7 @@
       <ImportLibrary>
       </ImportLibrary>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../Build/VS2019/Release/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/build_sdk/Release/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -955,7 +955,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/;../external/stb;../CMP_Framework;../applications/_plugins/ccmp_sdk</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -978,7 +978,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalLibraryDirectories>../Build/VS2019/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/build_sdk/$(Configuration)/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_MD_DLL|x64'">
@@ -990,7 +990,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_SSE;USE_SSE2;BASISU_NO_ITERATOR_DEBUG_LEVEL;BASISU_NO_ITERATOR_DEBUG_LEVELBASISU_NO_ITERATOR_DEBUG_LEVELWIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/BASIS;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../CMP_CompressonatorLib;../CMP_CompressonatorLib/ASTC;../CMP_CompressonatorLib/ASTC/ARM;../CMP_CompressonatorLib/ATC;../CMP_CompressonatorLib/ATI;../CMP_CompressonatorLib/BASIS;../CMP_CompressonatorLib/BC6H;../CMP_CompressonatorLib/BC7;../CMP_CompressonatorLib/Block;../CMP_CompressonatorLib/Buffer;../CMP_CompressonatorLib/Common;../CMP_CompressonatorLib/DXT;../CMP_CompressonatorLib/DXTC;../CMP_CompressonatorLib/ETC;../CMP_CompressonatorLib/ETC/etcpack;../CMP_CompressonatorLib/GT;../CMP_CompressonatorLib/APC;../CMP_Framework/Common;../CMP_Framework/Common/half;../Source/CMP_Transcoder/basis_universal;../Header/CMP_Math;../../Common/Src;../cmp_core/shaders;../cmp_core/source;../Header/Codec/Block;../Header/Codec/Buffer;../Header/Codec/DXT;../Header/Codec/DXTC;../Header/Codec/ETC;../Header/Codec/ETC/etcpack;../Header/Codec/GT;../Header/Internal;../Utils;../Source/Common;../applications/_plugins/common/;../applications/_libs/cmp_math/;../external/stb;../CMP_Framework;../applications/_plugins/ccmp_sdk</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -1005,7 +1005,7 @@
       <ImportLibrary>
       </ImportLibrary>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../Build/VS2019/Release_MD/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Build/build_sdk/Release_MD/$(Platform);../../Common/Lib/AMD/APPSDK/3-0/lib/x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -1019,7 +1019,29 @@
   <ItemGroup>
     <ClCompile Include="..\applications\_libs\cmp_math\cmp_math_common.cpp" />
     <ClCompile Include="..\applications\_libs\cmp_math\cpu_extensions.cpp" />
+    <ClCompile Include="..\applications\_plugins\ccmp_encode\hpc\ccpu_hpc.cpp" />
+    <ClCompile Include="..\applications\_plugins\ccmp_encode\hpc\cmp_hpc.cpp" />
+    <ClCompile Include="..\applications\_plugins\ccmp_encode\hpc\compute_cpu_hpc.cpp" />
+    <ClCompile Include="..\applications\_plugins\ccmp_sdk\bc1\bc1.cpp" />
+    <ClCompile Include="..\applications\_plugins\ccmp_sdk\bc2\bc2.cpp" />
+    <ClCompile Include="..\applications\_plugins\ccmp_sdk\bc3\bc3.cpp" />
+    <ClCompile Include="..\applications\_plugins\ccmp_sdk\bc4\bc4.cpp" />
+    <ClCompile Include="..\applications\_plugins\ccmp_sdk\bc5\bc5.cpp" />
+    <ClCompile Include="..\applications\_plugins\ccmp_sdk\bc6\bc6h.cpp" />
+    <ClCompile Include="..\applications\_plugins\ccmp_sdk\bc7\bc7.cpp" />
+    <ClCompile Include="..\applications\_plugins\ccmp_sdk\bcn.cpp" />
+    <ClCompile Include="..\applications\_plugins\cimage\dds\dds.cpp" />
+    <ClCompile Include="..\applications\_plugins\cimage\dds\dds_dx10.cpp" />
+    <ClCompile Include="..\applications\_plugins\cimage\dds\dds_file.cpp" />
+    <ClCompile Include="..\applications\_plugins\cimage\dds\dds_helpers.cpp" />
     <ClCompile Include="..\Applications\_Plugins\Common\ATIFormats.cpp" />
+    <ClCompile Include="..\applications\_plugins\common\cmp_fileio.cpp" />
+    <ClCompile Include="..\applications\_plugins\common\codec_common.cpp" />
+    <ClCompile Include="..\applications\_plugins\common\cpu_timing.cpp" />
+    <ClCompile Include="..\applications\_plugins\common\misc.cpp" />
+    <ClCompile Include="..\applications\_plugins\common\pluginmanager.cpp" />
+    <ClCompile Include="..\applications\_plugins\common\tc_plugininternal.cpp" />
+    <ClCompile Include="..\applications\_plugins\common\texture_utils.cpp" />
     <ClCompile Include="..\Applications\_Plugins\Common\utilfuncs.cpp" />
     <ClCompile Include="..\Applications\_Plugins\Common\format_conversion.cpp" />
     <ClCompile Include="..\CMP_CompressonatorLib\APC\APC_Decode.cpp" />
@@ -1122,15 +1144,47 @@
     <ClCompile Include="..\cmp_core\source\core_simd_avx.cpp" />
     <ClCompile Include="..\cmp_core\source\core_simd_avx512.cpp" />
     <ClCompile Include="..\cmp_core\source\core_simd_sse.cpp" />
+    <ClCompile Include="..\cmp_framework\common\cmp_boxfilter.cpp" />
     <ClCompile Include="..\CMP_Framework\Common\CMP_MIPS.cpp" />
     <ClCompile Include="..\CMP_Framework\Common\half\half.cpp" />
     <ClCompile Include="..\CMP_Framework\Common\HDR_Encode.cpp" />
+    <ClCompile Include="..\cmp_framework\compute_base.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\applications\_libs\cmp_math\cmp_math_common.h" />
     <ClInclude Include="..\applications\_libs\cmp_math\cpu_extensions.h" />
+    <ClInclude Include="..\applications\_plugins\ccmp_encode\hpc\ccpu_hpc.h" />
+    <ClInclude Include="..\applications\_plugins\ccmp_encode\hpc\cmp_hpc.h" />
+    <ClInclude Include="..\applications\_plugins\ccmp_encode\hpc\compute_cpu_hpc.h" />
+    <ClInclude Include="..\applications\_plugins\ccmp_sdk\bc1\bc1.h" />
+    <ClInclude Include="..\applications\_plugins\ccmp_sdk\bc2\bc2.h" />
+    <ClInclude Include="..\applications\_plugins\ccmp_sdk\bc3\bc3.h" />
+    <ClInclude Include="..\applications\_plugins\ccmp_sdk\bc4\bc4.h" />
+    <ClInclude Include="..\applications\_plugins\ccmp_sdk\bc5\bc5.h" />
+    <ClInclude Include="..\applications\_plugins\ccmp_sdk\bc6\bc6h.h" />
+    <ClInclude Include="..\applications\_plugins\ccmp_sdk\bc7\bc7.h" />
+    <ClInclude Include="..\applications\_plugins\ccmp_sdk\bcn.h" />
+    <ClInclude Include="..\applications\_plugins\cimage\dds\dds.h" />
+    <ClInclude Include="..\applications\_plugins\cimage\dds\dds_dx10.h" />
+    <ClInclude Include="..\applications\_plugins\cimage\dds\dds_file.h" />
+    <ClInclude Include="..\applications\_plugins\cimage\dds\dds_helpers.h" />
     <ClInclude Include="..\Applications\_Plugins\Common\ATIFormats.h" />
+    <ClInclude Include="..\applications\_plugins\common\cmp_fileio.h" />
+    <ClInclude Include="..\applications\_plugins\common\cmp_plugininterface.h" />
+    <ClInclude Include="..\applications\_plugins\common\codec_common.h" />
+    <ClInclude Include="..\applications\_plugins\common\common_kerneldef.h" />
+    <ClInclude Include="..\applications\_plugins\common\cpu_timing.h" />
+    <ClInclude Include="..\applications\_plugins\common\crc32.h" />
+    <ClInclude Include="..\applications\_plugins\common\misc.h" />
+    <ClInclude Include="..\applications\_plugins\common\pluginbase.h" />
+    <ClInclude Include="..\applications\_plugins\common\plugininterface.h" />
+    <ClInclude Include="..\applications\_plugins\common\pluginmanager.h" />
+    <ClInclude Include="..\applications\_plugins\common\tc_pluginapi.h" />
+    <ClInclude Include="..\applications\_plugins\common\tc_plugininternal.h" />
+    <ClInclude Include="..\applications\_plugins\common\texture_utils.h" />
     <ClInclude Include="..\Applications\_Plugins\Common\utilfuncs.h" />
     <ClInclude Include="..\Applications\_Plugins\Common\format_conversion.h" />
+    <ClInclude Include="..\applications\_plugins\common\vectypes.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\APC\APC_Decode.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\APC\APC_Definitions.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\APC\APC_Encode.h" />
@@ -1192,7 +1246,6 @@
     <ClInclude Include="..\cmp_compressonatorlib\buffer\codecbuffer_rgba8888s.h" />
     <ClInclude Include="..\cmp_compressonatorlib\common.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\Common\Codec.h" />
-    <ClInclude Include="..\CMP_CompressonatorLib\Common\CommonTypes.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\Common\CompClient.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\Common\Compress.h" />
     <ClInclude Include="..\CMP_CompressonatorLib\Common\debug.h" />
@@ -1244,6 +1297,7 @@
     <ClInclude Include="..\cmp_core\source\cmp_math_func.h" />
     <ClInclude Include="..\cmp_core\source\cmp_math_vec4.h" />
     <ClInclude Include="..\cmp_core\source\core_simd.h" />
+    <ClInclude Include="..\cmp_framework\common\cmp_boxfilter.h" />
     <ClInclude Include="..\CMP_Framework\Common\CMP_MIPS.h" />
     <ClInclude Include="..\CMP_Framework\Common\half\eLut.h" />
     <ClInclude Include="..\CMP_Framework\Common\half\half.h" />
@@ -1252,6 +1306,8 @@
     <ClInclude Include="..\CMP_Framework\Common\half\halfLimits.h" />
     <ClInclude Include="..\CMP_Framework\Common\half\toFloat.h" />
     <ClInclude Include="..\CMP_Framework\Common\HDR_Encode.h" />
+    <ClInclude Include="..\cmp_framework\common\mathmacros.h" />
+    <ClInclude Include="..\cmp_framework\compute_base.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\cmp_compressonatorlib\dxtc\dxtc_v11_compress_64.asm" />

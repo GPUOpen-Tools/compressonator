@@ -2,9 +2,9 @@
 
 COMPRESSONATOR_PROJECT_DIR="$( cd $( cd "$(dirname "$0")" ; pwd -P )/../ ; pwd -P )"
 
-BUILD_DIR=${COMPRESSONATOR_PROJECT_DIR}/build
+BUILD_DIR=${COMPRESSONATOR_PROJECT_DIR}/build/bin
 INSTALL_DIR=${COMPRESSONATOR_PROJECT_DIR}/build-out
-DEPENDENCIES_BUILD_DIR=${COMPRESSONATOR_PROJECT_DIR}/external/build
+DEPENDENCIES_BUILD_DIR=${COMPRESSONATOR_PROJECT_DIR}/external/bin
 DEPENDENCIES_INSTALL_DIR=${COMPRESSONATOR_PROJECT_DIR}/external/build-out
 DEPENDENCIES_CMAKE_DIR=${COMPRESSONATOR_PROJECT_DIR}/external/cmake
 
@@ -12,6 +12,10 @@ DEPENDENCIES_CMAKE_DIR=${COMPRESSONATOR_PROJECT_DIR}/external/cmake
 if [ "$(uname)" == "Darwin" ]; then
     export CMAKE_GENERATOR="Xcode"
 fi
+
+export VULKAN_DIR=/opt/VulkanSDK/1.2.141.2/
+export QT_DIR=/opt/qt/Qt5.9.2/5.9.2/gcc_64/
+export OPENCV_DIR=/opt/opencv/
 
 # Defaults
 CLEAN=0

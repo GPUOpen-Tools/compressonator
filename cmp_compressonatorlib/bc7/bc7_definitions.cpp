@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -30,12 +30,12 @@
 //  scalarBits, vectorBits, pBitType, subsetCount, {index0Bits, index1Bits}}
 //
 CMP_BTI bti_cpu[NUM_BLOCK_TYPES] = {
-    {NO_ALPHA,          4, 0, 0, 0, 12, TWO_PBIT, 3, {3, 0}},  // Format Mode 0
-    {NO_ALPHA,          6, 0, 0, 0, 18, ONE_PBIT, 2, {3, 0}},  // Format Mode 1
-    {NO_ALPHA,          6, 0, 0, 0, 15, NO_PBIT,  3, {2, 0}},  // Format Mode 2
-    {NO_ALPHA,          6, 0, 0, 0, 21, TWO_PBIT, 2, {2, 0}},  // Format Mode 3
-    {SEPARATE_ALPHA,    0, 2, 1, 6, 15, NO_PBIT,  1, {2, 3}},  // Format Mode 4
-    {SEPARATE_ALPHA,    0, 2, 0, 8, 21, NO_PBIT,  1, {2, 2}},  // Format Mode 5
-    {COMBINED_ALPHA,    0, 0, 0, 0, 28, TWO_PBIT, 1, {4, 0}},  // Format Mode 6
-    {COMBINED_ALPHA,    6, 0, 0, 0, 20, TWO_PBIT, 2, {2, 0}}   // Format Mode 7
+    {NO_ALPHA, 4, 0, 0, 0, 12, TWO_PBIT, 3, {3, 0}},        // Format Mode 0
+    {NO_ALPHA, 6, 0, 0, 0, 18, ONE_PBIT, 2, {3, 0}},        // Format Mode 1
+    {NO_ALPHA, 6, 0, 0, 0, 15, NO_PBIT, 3, {2, 0}},         // Format Mode 2
+    {NO_ALPHA, 6, 0, 0, 0, 21, TWO_PBIT, 2, {2, 0}},        // Format Mode 3
+    {SEPARATE_ALPHA, 0, 2, 1, 6, 15, NO_PBIT, 1, {2, 3}},   // Format Mode 4
+    {SEPARATE_ALPHA, 0, 2, 0, 8, 21, NO_PBIT, 1, {2, 2}},   // Format Mode 5
+    {COMBINED_ALPHA, 0, 0, 0, 0, 28, TWO_PBIT, 1, {4, 0}},  // Format Mode 6
+    {COMBINED_ALPHA, 6, 0, 0, 0, 20, TWO_PBIT, 2, {2, 0}}   // Format Mode 7
 };

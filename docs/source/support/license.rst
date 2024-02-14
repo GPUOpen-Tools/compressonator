@@ -41,7 +41,7 @@ PARAGRAPH.
 
 **Copyright and Trademarks**
 
-© 2023 Advanced Micro Devices, Inc. All rights reserved. AMD, the AMD
+© 2024 Advanced Micro Devices, Inc. All rights reserved. AMD, the AMD
 Arrow logo, ATI, the ATI logo, Radeon, FireStream, and combinations
 thereof are trade- marks of Advanced Micro Devices, Inc. OpenCL and the
 OpenCL logo are trade- marks of Apple Inc. used by permission by

@@ -15,7 +15,7 @@ set BUILDTMP=%ROOTDIR%\tmp
 
 set CMAKE_PATH=cmake
 set BUILD_SCRIPT_DIR=%~dp0
-set SCRIPT_DIR=%BUILD_SCRIPT_DIR%\..\build
+set SCRIPT_DIR=%BUILD_SCRIPT_DIR%\..\scripts
 set CURRENT_DIR=%CD%
 
 
@@ -26,9 +26,13 @@ REM PATH setup
 REM set Path=%PATH%C:\Python36;C:\Python36\Scripts;C:\Python36\Tools\Scripts;C:\Program Files\Python36\Scripts\;C:\Program Files\Python36\;
 
 REM Setting dependency locations for Compressonator
-set QT_DIR=C:\Qt\Qt5.12.6\5.12.6\msvc2017_64
-set VULKAN_DIR=C:\VulkanSDK\1.2.141.2
-set OPENCV_DIR=C:\opencv\
+IF NOT DEFINED QT_DIR set QT_DIR=C:\Qt\Qt5.12.6\5.12.6\msvc2017_64
+IF NOT DEFINED VULKAN_DIR set VULKAN_DIR=C:\VulkanSDK\1.2.141.2
+IF NOT DEFINED OPENCV_DIR set OPENCV_DIR=C:\opencv\
+
+echo Using Qt path: %QT_DIR%
+echo Using Vulkan SDK path: %VULKAN_DIR%
+echo Using OpenCV path: %OPENCV_DIR%
 
 REM "%WORKDIR%\compressonator\cmp_compressonatorLib\version.h" needs to be writable
 REM These lines are parsed to extract version information. The build number
@@ -44,6 +48,7 @@ for /f "delims=" %%a in ('python %SCRIPT_DIR%\get_version.py --minor') do @set M
 REM --------------------------------------------------------
 REM Get Common folder content: works only for Git repo
 REM --------------------------------------------------------
+rmdir /s /q %BUILD_SCRIPT_DIR%\..\..\common
 python %BUILD_SCRIPT_DIR%\fetch_dependencies.py
 
 REM -----------------------------------
@@ -54,39 +59,39 @@ IF [%BUILD_NUMBER%] == [] set BUILD_NUMBER=0
 set FILEVERSION="v%MAJOR%.%MINOR%.%BUILD_NUMBER%"
 python %SCRIPT_DIR%\update_version.py %MAJOR% %MINOR% %BUILD_NUMBER%
 
-REM ################################
-REM  Set Enviornment for (VS2019)
-REM ###############################
-if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise" goto :Enterprise
-if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Professional" goto :Professional
-if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\BuildTools" goto :Docker
-if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Community" goto :Community
+REM ###################################
+REM  Set Enviornment for Visual Studio
+REM ###################################
+if EXIST "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise" goto :Enterprise
+if EXIST "%ProgramFiles%\Microsoft Visual Studio\2022\Professional" goto :Professional
+if EXIST "%ProgramFiles%\Microsoft Visual Studio\2022\BuildTools" goto :Docker
+if EXIST "%ProgramFiles%\Microsoft Visual Studio\2022\Community" goto :Community
 
 echo on
-echo VS2019 is not installed on this machine
+echo VS2022 is not installed on this machine
 cd %WORKDIR%
 exit 1
 
 :Professional
 cd 
-call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Professional\Common7\Tools\VsDevCmd.bat"
+call "%ProgramFiles%\Microsoft Visual Studio\2022\Professional\Common7\Tools\VsDevCmd.bat"
 goto :vscmdset
 
 :Docker
-call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\BuildTools\Common7\Tools\VsDevCmd.bat"
+call "%ProgramFiles%\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat"
 goto :vscmdset
 
 :Enterprise
-call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\VsDevCmd.bat"
+call "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat"
 goto :vscmdset
 
 :Community
-call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Community\Common7\Tools\VsDevCmd.bat"
+call "%ProgramFiles%\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"
 
 :vscmdset
 
 REM #####################################################################################
-REM  Run cmake to generate VS2019 compressonator build all sln
+REM  Run cmake to generate compressonator build all sln
 REM #####################################################################################
 set CurrDir=%CD%
 for %%* in (.) do set CurrDirName=%%~nx*
@@ -94,7 +99,7 @@ IF EXIST %CurrDir%\build\bin (rmdir build\bin /s /q)
 mkdir build\bin
 
 cd build\bin
-cmake %CMAKE_ARGS% -DCMP_VERSION_MAJOR=%MAJOR% -DCMP_VERSION_MINOR=%MINOR% -DCMP_VERSION_BUILD_NUMBER=%BUILD_NUMBER% -G "Visual Studio 16 2019" ..\..\..\%CurrDirName%
+cmake %CMAKE_ARGS% -DCMP_VERSION_MAJOR=%MAJOR% -DCMP_VERSION_MINOR=%MINOR% -DCMP_VERSION_BUILD_NUMBER=%BUILD_NUMBER% -G "Visual Studio 17 2022" ..\..\..\%CurrDirName%
 cd %CurrDir%
 
 REM #####################################################################################

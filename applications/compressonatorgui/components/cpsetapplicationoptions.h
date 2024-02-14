@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -31,45 +31,46 @@
 #include "objectcontroller.h"
 #include <QtWidgets>
 
-class CSetApplicationOptions : public QDialog {
+class CSetApplicationOptions : public QDialog
+{
     Q_OBJECT
 
-  public:
-    CSetApplicationOptions(const QString title, QWidget *parent);
+public:
+    CSetApplicationOptions(const QString title, QWidget* parent);
     ~CSetApplicationOptions();
 
-    void SaveSettings(QString SettingsFile, QSettings::Format Format);
-    void LoadSettings(QString SettingsFile, QSettings::Format Format);
-    void UpdateViewData();
-    QTextBrowser  *m_infotext;
-    QtTreePropertyBrowser *m_browser;
+    void                   SaveSettings(QString SettingsFile, QSettings::Format Format);
+    void                   LoadSettings(QString SettingsFile, QSettings::Format Format);
+    void                   UpdateViewData();
+    QTextBrowser*          m_infotext;
+    QtTreePropertyBrowser* m_browser;
 
-  signals:
+signals:
     void OnAppSettingHide();
 
-  public slots:
+public slots:
     void onClose();
-    void oncurrentItemChanged(QtBrowserItem *item);
-    void onImageEncodeChanged(QVariant &value);
-    void onImageViewDecodeChanged(QVariant &value);
-    void onLogResultsChanged(QVariant &value);
+    void oncurrentItemChanged(QtBrowserItem* item);
+    void onImageEncodeChanged(QVariant& value);
+    void onImageViewDecodeChanged(QVariant& value);
+    void onLogResultsChanged(QVariant& value);
 
-  private:
+private:
     // Common for all
-    QWidget                     *m_newWidget;
+    QWidget* m_newWidget;
 
-    QVBoxLayout                 *m_layoutV;
-    const QString                m_title;
-    QWidget                     *m_parent;
-    QPushButton                 *m_PBClose;
-    ObjectController            *m_theController;
-    QtProperty                  *m_propAppOptions;
-    QtProperty                  *m_propAnalysisTable;
+    QVBoxLayout*      m_layoutV;
+    const QString     m_title;
+    QWidget*          m_parent;
+    QPushButton*      m_PBClose;
+    ObjectController* m_theController;
+    QtProperty*       m_propAppOptions;
+    QtProperty*       m_propAnalysisTable;
 };
 
 extern C_Application_Options g_Application_Options;
-extern bool g_useCPUDecode;
-extern bool g_useCPUEncode;
-extern MIPIMAGE_FORMAT g_gpudecodeFormat;
+extern bool                  g_useCPUDecode;
+extern bool                  g_useCPUEncode;
+extern MIPIMAGE_FORMAT       g_gpudecodeFormat;
 
 #endif

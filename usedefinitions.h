@@ -1,5 +1,5 @@
 //==============================================================================
-// Copyright (c) 2007-2020    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024    Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006    ATI Technologies Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -90,7 +90,6 @@
 // #define USE_CMP_TRANSCODE                        //  Future release:: Transcode BASIS/GTC to other compressed formats
 
 // To Be enabled in future releases
-// #define ARGB_32_SUPPORT                           // Enables 32bit Float channel formats
 // #define SUPPORT_ETC_ALPHA                         // for ATC_RGB output enable A
 // #define SHOW_PROCESS_MEMORY                       // display available CPU process memory
 // #define USE_BCN_IMAGE_DEBUG                       // Enables Combobox in Image View for low level BCn based block compression in debug mode

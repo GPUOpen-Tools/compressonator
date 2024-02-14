@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Advanced Micro Devices, Inc. All rights reserved
+// Copyright (c) 2020-2024 Advanced Micro Devices, Inc. All rights reserved
 // Copyright (c) 2004-2006    ATI Technologies Inc.
 //
 // Example1: Console application that demonstrates how to use the Compressonator SDK Lib
@@ -50,7 +50,8 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <time.h>
-double timeStampsec() {
+double timeStampsec()
+{
     static LARGE_INTEGER frequency;
     if (frequency.QuadPart == 0)
         QueryPerformanceFrequency(&frequency);
@@ -61,21 +62,24 @@ double timeStampsec() {
 }
 #endif
 
-bool g_bAbortCompression = false;   // If set true current compression will abort
+bool g_bAbortCompression = false;  // If set true current compression will abort
 
 //---------------------------------------------------------------------------
 // Sample loop back code called for each compression block been processed
 //---------------------------------------------------------------------------
-bool CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+bool CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
+{
     std::printf("\rCompression progress = %3.0f  ", fProgress);
     return g_bAbortCompression;
 }
 
-int main(int argc, const char* argv[]) {
+int main(int argc, const char* argv[])
+{
 #ifdef _WIN32
     double start_time = timeStampsec();
 #endif
-    if (argc < 5) {
+    if (argc < 5)
+    {
         std::printf("Example1 SourceFile DestFile Format Quality\n");
         std::printf("This example shows how to compress a single image\n");
         std::printf("to a compression format using a quality setting\n");
@@ -86,27 +90,33 @@ int main(int argc, const char* argv[]) {
         return 0;
     }
 
-    const char*     pszSourceFile = argv[1];
-    const char*     pszDestFile   = argv[2];
-    CMP_FORMAT      destFormat    = ParseFormat(argv[3]);
-    CMP_FLOAT       fQuality;
+    const char* pszSourceFile = argv[1];
+    const char* pszDestFile   = argv[2];
+    CMP_FORMAT  destFormat    = ParseFormat(argv[3]);
+    CMP_FLOAT   fQuality;
 
-    try {
+    try
+    {
         fQuality = std::stof(argv[4]);
-        if (fQuality < 0.0f) {
+        if (fQuality < 0.0f)
+        {
             fQuality = 0.0f;
             std::printf("Warning: Quality setting is out of range using 0.0\n");
         }
-        if (fQuality > 1.0f) {
+        if (fQuality > 1.0f)
+        {
             fQuality = 1.0f;
             std::printf("Warning: Quality setting is out of range using 1.0\n");
         }
-    } catch (...) {
+    }
+    catch (...)
+    {
         std::printf("Error: Unable to process quality setting\n");
         return -1;
     }
 
-    if (destFormat == CMP_FORMAT_Unknown) {
+    if (destFormat == CMP_FORMAT_Unknown)
+    {
         std::printf("Unsupported destination format\n");
         return 0;
     }
@@ -115,7 +125,8 @@ int main(int argc, const char* argv[]) {
     // Load Source Texture
     //==========================================
     CMP_Texture srcTexture;
-    if (!LoadDDSFile(pszSourceFile, srcTexture)) {
+    if (!LoadDDSFile(pszSourceFile, srcTexture))
+    {
         std::printf("Error loading source file!\n");
         return 0;
     }
@@ -125,8 +136,8 @@ int main(int argc, const char* argv[]) {
     // This example only works on 32 bit per pixel buffers formated as RGBA:8888
     // if the source is < 32 bit exit,
     //==========================================================================
-    if (!((srcTexture.format == CMP_FORMAT_RGBA_8888) ||
-            (srcTexture.format == CMP_FORMAT_BGRA_8888))) {
+    if (!((srcTexture.format == CMP_FORMAT_RGBA_8888) || (srcTexture.format == CMP_FORMAT_BGRA_8888)))
+    {
         std::printf("Error This example works only on 32 bit per pixel image sources!\n");
         return 0;
     }
@@ -134,11 +145,13 @@ int main(int argc, const char* argv[]) {
     //==========================================================================
     // if the source format is BGRA swizzle it to RGBA_8888
     //==========================================================================
-    if (srcTexture.format == CMP_FORMAT_BGRA_8888) {
+    if (srcTexture.format == CMP_FORMAT_BGRA_8888)
+    {
         unsigned char blue;
-        for (CMP_DWORD i = 0; i < srcTexture.dwDataSize; i += 4) {
-            blue = srcTexture.pData[i];
-            srcTexture.pData[i] = srcTexture.pData[i + 2];
+        for (CMP_DWORD i = 0; i < srcTexture.dwDataSize; i += 4)
+        {
+            blue                    = srcTexture.pData[i];
+            srcTexture.pData[i]     = srcTexture.pData[i + 2];
             srcTexture.pData[i + 2] = blue;
         }
         srcTexture.format = CMP_FORMAT_RGBA_8888;
@@ -148,28 +161,29 @@ int main(int argc, const char* argv[]) {
     // Initialize Compressed Destination
     //===================================
     CMP_Texture destTexture = {0};
-    destTexture.dwSize     = sizeof(destTexture);
-    destTexture.dwWidth    = srcTexture.dwWidth;
-    destTexture.dwHeight   = srcTexture.dwHeight;
-    destTexture.dwPitch    = srcTexture.dwWidth;
-    destTexture.format     = destFormat;
-    destTexture.dwDataSize = CMP_CalculateBufferSize(&destTexture);
-    destTexture.pData = (CMP_BYTE*)malloc(destTexture.dwDataSize);
+    destTexture.dwSize      = sizeof(destTexture);
+    destTexture.dwWidth     = srcTexture.dwWidth;
+    destTexture.dwHeight    = srcTexture.dwHeight;
+    destTexture.dwPitch     = srcTexture.dwWidth;
+    destTexture.format      = destFormat;
+    destTexture.dwDataSize  = CMP_CalculateBufferSize(&destTexture);
+    destTexture.pData       = (CMP_BYTE*)malloc(destTexture.dwDataSize);
 
     //==========================
     // Set Compression Options
     //==========================
     CMP_CompressOptions options = {0};
-    options.dwSize       = sizeof(options);
-    options.fquality     = fQuality;
-    options.dwnumThreads = 0;  // Uses auto, else set number of threads from 1..127 max
+    options.dwSize              = sizeof(options);
+    options.fquality            = fQuality;
+    options.dwnumThreads        = 0;  // Uses auto, else set number of threads from 1..127 max
 
     //==========================
     // Compress Texture
     //==========================
-    CMP_ERROR   cmp_status;
+    CMP_ERROR cmp_status;
     cmp_status = CMP_ConvertTexture(&srcTexture, &destTexture, &options, &CompressionCallback);
-    if (cmp_status != CMP_OK) {
+    if (cmp_status != CMP_OK)
+    {
         free(srcTexture.pData);
         free(destTexture.pData);
         std::printf("Compression returned an error %d\n", cmp_status);

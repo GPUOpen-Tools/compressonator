@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2021 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2021-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
 //=====================================================================
 //
@@ -73,7 +73,6 @@ public:
     void FSR_RCAS(bool hdr, float sharpness, ID3D11UnorderedAccessView* dstUav, uvec2 dstSize, ID3D11ShaderResourceView* srcSrv, uvec2 srcSize) const;
 
 private:
-
     struct ConstantBufferStructureFSR
     {
         varAU4(const0);
@@ -83,10 +82,9 @@ private:
         varAU4(sample);
     };
 
-    static void GetShaderCode_FSR_EASU(const BYTE*& outCode_FSR,size_t& outCodeSize_FSR);
-    static void GetShaderCode_FSR_BILINEAR(const BYTE*& outCode_FSR,size_t& outCodeSize_FSR);
-    static void GetShaderCode_FSR_RCAS(const BYTE*& outCode_FSR,size_t& outCodeSize_FSR);
+    static void GetShaderCode_FSR_EASU(const BYTE*& outCode_FSR, size_t& outCodeSize_FSR);
+    static void GetShaderCode_FSR_BILINEAR(const BYTE*& outCode_FSR, size_t& outCodeSize_FSR);
+    static void GetShaderCode_FSR_RCAS(const BYTE*& outCode_FSR, size_t& outCodeSize_FSR);
 };
-
 
 #endif

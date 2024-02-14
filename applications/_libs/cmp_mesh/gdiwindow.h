@@ -1,5 +1,5 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
@@ -9,45 +9,60 @@
 #include "gdiwm.h"
 #include "window.h"
 
-class GDIWindow: public Window {
-  public:
+class GDIWindow : public Window
+{
+public:
     typedef Window Superclass;
-    GDIWindow() {
+    GDIWindow()
+    {
         m_hWnd = NULL;
     }
-    virtual ~GDIWindow(void) { ; }
-    virtual void Destroy(void) {
+    virtual ~GDIWindow(void)
+    {
+        ;
+    }
+    virtual void Destroy(void)
+    {
         Superclass::Destroy();
         m_hWnd = NULL;
     }
-    virtual HWND GetHandle(void) {
+    virtual HWND GetHandle(void)
+    {
         return m_hWnd;
     }
-    virtual void SetHandle(HWND hWnd) {
+    virtual void SetHandle(HWND hWnd)
+    {
         this->m_hWnd = hWnd;
     }
-    virtual void Keyboard(unsigned char c, int x, int y) {
-        (void) x;
-        (void) y;
+    virtual void Keyboard(unsigned char c, int x, int y)
+    {
+        (void)x;
+        (void)y;
 
-        if (c == 'q' || c == 'Q') {
+        if (c == 'q' || c == 'Q')
+        {
             PostQuitMessage(0);
         }
     }
-    virtual void StartIdle(void) {
+    virtual void StartIdle(void)
+    {
         GDIWMStartIdle(this);
     }
-    virtual void StopIdle(void) {
+    virtual void StopIdle(void)
+    {
         GDIWMStopIdle(this);
     }
-    virtual void PostRedisplay(void) {
+    virtual void PostRedisplay(void)
+    {
         InvalidateRect(m_hWnd, NULL, FALSE);
     }
-    virtual LRESULT Default(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+    virtual LRESULT Default(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+    {
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
     }
-  protected:
+
+protected:
     HWND m_hWnd;
 };
 
-#endif // GDIWINDOW_H
+#endif  // GDIWINDOW_H

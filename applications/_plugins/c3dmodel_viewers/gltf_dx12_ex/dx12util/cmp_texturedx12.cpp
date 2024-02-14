@@ -24,7 +24,6 @@
 // http://go.microsoft.com/fwlink/?LinkId=248929
 
 
-#include "cmp_gltffeatures.h"
 #include "cmp_texturedx12.h"
 #include "dxgi.h"
 #include <assert.h>

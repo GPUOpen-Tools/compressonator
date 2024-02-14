@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2022  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2022-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -33,22 +33,18 @@
 
 class BRLGBlockEncoder
 {
-  public:
-
+public:
     BRLGBlockEncoder(double quality)
-      {
-          m_quality = (float)quality;
-      };
+    {
+        m_quality = (float)quality;
+    };
 
-      ~BRLGBlockEncoder(){};
+    ~BRLGBlockEncoder(){};
 
     // This routine compresses a block and returns any errors
-    double CompressBlock(
-        CMP_BYTE  *in,
-        CMP_BYTE   out[COMPRESSED_BLOCK_SIZE]
-    );
+    double CompressBlock(CMP_BYTE* in, CMP_BYTE out[COMPRESSED_BLOCK_SIZE]);
 
-  private:
+private:
     // Global data setup at initialisation time
     float m_quality;
 };

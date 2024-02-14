@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2018-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -45,7 +45,8 @@ static const GUID g_GUID = {0};
 //=================================================================================================================================
 /// A simple structure to store the settings for this mesh process
 //=================================================================================================================================
-struct MeshSettings {
+struct MeshSettings
+{
     const char* pMeshName;
     const char* pDestMeshName;
 
@@ -63,8 +64,9 @@ struct MeshSettings {
 
 static MeshSettings m_settings;
 
-class Plugin_Mesh_Optimizer : public PluginInterface_Mesh {
-  public:
+class Plugin_Mesh_Optimizer : public PluginInterface_Mesh
+{
+public:
     Plugin_Mesh_Optimizer();
     virtual ~Plugin_Mesh_Optimizer();
     int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
@@ -75,7 +77,7 @@ class Plugin_Mesh_Optimizer : public PluginInterface_Mesh {
 
     void* ProcessMesh(void* data, void* setting, void* statsOut, CMP_Feedback_Proc pFeedbackProc);
 
-  private:
+private:
     bool                  m_InitOK;
     std::vector<CMP_Mesh> m_copy;
 };

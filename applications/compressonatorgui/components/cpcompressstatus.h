@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -26,7 +26,6 @@
 #ifndef _CPCOMPRESSSTATUS_H
 #define _CPCOMPRESSSTATUS_H
 
-
 #include <qstring.h>
 #include <qimage.h>
 #include <qfileinfo.h>
@@ -42,37 +41,35 @@
 #include "pluginmanager.h"
 #include "accustomdockwidget.h"
 
-class CompressStatusDialog :
-    public QDockWidget
+class CompressStatusDialog : public QDockWidget
 // public acCustomDockWidget
 {
     Q_OBJECT
 
-  public:
-    CompressStatusDialog(const QString title,QWidget *parent);
+public:
+    CompressStatusDialog(const QString title, QWidget* parent);
     ~CompressStatusDialog();
 
     void appendText(QString text);
     void showOutput();
     void hideOutput();
 
-  private:
-    QTextBrowser  *m_textBrowser;
-    QPushButton   *m_btnClearText;
-    QWidget       *m_newWidget;
-    QHBoxLayout   *m_layoutH;
-    QVBoxLayout   *m_layoutV;
-    QWidget       *m_parent;
-    QAction       *m_clear;
-    QMenu         *m_menu;
+private:
+    QTextBrowser* m_textBrowser;
+    QPushButton*  m_btnClearText;
+    QWidget*      m_newWidget;
+    QHBoxLayout*  m_layoutH;
+    QVBoxLayout*  m_layoutV;
+    QWidget*      m_parent;
+    QAction*      m_clear;
+    QMenu*        m_menu;
 
-  protected:
-    void closeEvent(QCloseEvent *event);
+protected:
+    void closeEvent(QCloseEvent* event);
 
-  public slots:
+public slots:
     void onClearText();
     void onShowContextMenu(const QPoint&);
 };
-
 
 #endif

@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,42 +25,39 @@
 #ifndef _PLUGIN_BGR_H_004DF021_0993_4F67_A5E9_2313A7C30ADE
 #define _PLUGIN_BGR_H_004DF021_0993_4F67_A5E9_2313A7C30ADE
 
-#include "plugininterface.h"
+#include <vector>
+
 #include "cmp_plugininterface.h"
 
-#ifdef _WIN32
-// {004DF021-0993-4F67-A5E9-2313A7C30ADE}
-static const GUID g_GUID = {0x4df021, 0x993, 0x4f67, {0xa5, 0xe9, 0x23, 0x13, 0xa7, 0xc3, 0xa, 0xde}};
+#define BRLG_PLUGIN_VERSION_MAJOR 2
+#define BRLG_PLUGIN_VERSION_MINOR 0
 
-#else
-static const GUID g_GUID = {0};
-#endif
+#define BRLG_PLUGIN_ERROR_FILE_OPEN 1
+#define BRLG_PLUGIN_ERROR_REGISTER_FILETYPE 2
+#define BRLG_PLUGIN_ERROR_NOT_BRLG 3
+#define BRLG_PLUGIN_ERROR_UNSUPPORTED_TYPE 4
+#define BRLG_PLUGIN_ERROR_OUTOFMEMORY 5
 
-#define TC_PLUGIN_VERSION_MAJOR    1
-#define TC_PLUGIN_VERSION_MINOR    0
-
-#define IDS_ERROR_FILE_OPEN             1
-#define IDS_ERROR_REGISTER_FILETYPE     2
-#define IDS_ERROR_NOT_BRLG              3
-#define IDS_ERROR_UNSUPPORTED_TYPE      4
-#define IDS_ERROR_OUTOFMEMORY           5
-
-class Image_Plugin_BRLG : public PluginInterface_Image {
-  public:
+class Image_Plugin_BRLG : public PluginInterface_Image
+{
+public:
     Image_Plugin_BRLG();
-      virtual ~Image_Plugin_BRLG();
+    virtual ~Image_Plugin_BRLG();
 
-    int TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
-    int TC_PluginSetSharedIO(void *Shared);
-    int TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSet);
-    int TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSet);
-    int TC_PluginFileLoadTexture(const char* pszFilename, CMP_Texture *srcTexture);
-    int TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture *srcTexture);
+    int TC_PluginGetVersion(TC_PluginVersion* pluginVersion);
+    int TC_PluginSetSharedIO(void* sharedIO);
 
+    int TC_PluginFileLoadTexture(const char* fileName, MipSet* srcTexture);
+    int TC_PluginFileLoadTexture(const char* fileName, CMP_Texture* srcTexture);
+
+    int TC_PluginFileSaveTexture(const char* fileName, MipSet* srcTexture);
+    int TC_PluginFileSaveTexture(const char* fileName, CMP_Texture* srcTexture);
+
+    // These two functions are the only ones that fully support the new BRLG version 2 paradigm
+    // So in a way the older functions are deprecated, though they will still work
+    // But the loading especially should only be done through the new LoadPackagedTextures function
+    int LoadPackagedTextures(const char* srcFileName, std::vector<CMP_MipSet>& destTextures);
+    int SavePackagedTextures(const char* destFileName, const std::vector<CMP_MipSet>& srcTextures);
 };
-
-extern CMIPS* BRLG_CMips;
-extern void*  make_Codec_Plugin_BRLG();
-
 
 #endif

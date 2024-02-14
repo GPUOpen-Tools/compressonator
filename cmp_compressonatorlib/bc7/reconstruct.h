@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -28,73 +28,69 @@
 
 // continious recoustruction unclumped
 /*********************************/
-double reconstruct(
-    double data[MAX_ENTRIES][DIMENSION],  // input
-    int numEntries,                            // input
-    int index_[MAX_ENTRIES],            // input
-    double out[MAX_ENTRIES][DIMENSION], // output
-    int ns,                                // input
-    double direction [DIMENSION],        // output
-    double *step                        // output
+double reconstruct(double  data[MAX_ENTRIES][DIMENSION],  // input
+                   int     numEntries,                    // input
+                   int     index_[MAX_ENTRIES],           // input
+                   double  out[MAX_ENTRIES][DIMENSION],   // output
+                   int     ns,                            // input
+                   double  direction[DIMENSION],          // output
+                   double* step                           // output
 );
 /*********************************/
 
+double reconstruct_rnd(double  data[MAX_ENTRIES][DIMENSION],
+                       int     numEntries,
+                       int     index_[MAX_ENTRIES],
+                       double  out[MAX_ENTRIES][DIMENSION],
+                       int     ns,
+                       double  direction[DIMENSION],
+                       double* step);
+int    block_mean_rnd(double data_[MAX_ENTRIES][DIMENSION],
+                      int    numEntries,
+                      int    partition[MAX_ENTRIES],
+                      int    ns,
 
-double reconstruct_rnd(
-    double data[MAX_ENTRIES][DIMENSION],
-    int numEntries, int index_[MAX_ENTRIES],
-    double out[MAX_ENTRIES][DIMENSION],int ns,
-    double direction [DIMENSION],double *step
-);
-int block_mean_rnd(
-    double data_[MAX_ENTRIES][DIMENSION],
-    int numEntries,
-    int partition[MAX_ENTRIES],
-    int ns,
+                      double  mean[MAX_SUBSETS][DIMENSION],
+                      double* clip,
+                      double  mm[DIMENSION],
+                      double  ni[MAX_SUBSETS]  // norm
 
-    double mean[MAX_SUBSETS][DIMENSION],
-    double *clip,
-    double mm[DIMENSION],
-    double ni[MAX_SUBSETS]  // norm
-
-
-);
+   );
 /*****************************************/
 
-double ep_shaker_2(
-    double data[MAX_ENTRIES][DIMENSION],
-    int numEntries,
-    int index_[MAX_ENTRIES],
-    double out[MAX_ENTRIES][DIMENSION],
-    double direction [DIMENSION],
-    double *step,
-    int epo_code[2][DIMENSION],
-    int bits[3],
-    int bcc,
-    int nClusters,
-    int size
-) ;
+double ep_shaker_2(double  data[MAX_ENTRIES][DIMENSION],
+                   int     numEntries,
+                   int     index_[MAX_ENTRIES],
+                   double  out[MAX_ENTRIES][DIMENSION],
+                   double  direction[DIMENSION],
+                   double* step,
+                   int     epo_code[2][DIMENSION],
+                   int     bits[3],
+                   int     bcc,
+                   int     nClusters,
+                   int     size);
 
 /*****************************************/
 
-double ep_shaker_2__(
-    double data[MAX_ENTRIES][DIMENSION],
-    int numEntries, int index_[MAX_ENTRIES],
-    double out[MAX_ENTRIES][DIMENSION],int ns,
-    double direction [DIMENSION],double *step
-);
+double ep_shaker_2__(double  data[MAX_ENTRIES][DIMENSION],
+                     int     numEntries,
+                     int     index_[MAX_ENTRIES],
+                     double  out[MAX_ENTRIES][DIMENSION],
+                     int     ns,
+                     double  direction[DIMENSION],
+                     double* step);
 
 // good but broken (first one) ?????????????????????
-double ep_shaker(
-    double data[MAX_ENTRIES][DIMENSION],
-    int numEntries, int index_[MAX_ENTRIES],
-    double out[MAX_ENTRIES][DIMENSION],int ns,
-    double direction [DIMENSION],double *step,
-    int lock
-);
+double ep_shaker(double  data[MAX_ENTRIES][DIMENSION],
+                 int     numEntries,
+                 int     index_[MAX_ENTRIES],
+                 double  out[MAX_ENTRIES][DIMENSION],
+                 int     ns,
+                 double  direction[DIMENSION],
+                 double* step,
+                 int     lock);
 
-
-void printStep (void);
-void printCnt (void);
-void printStepHisto (void);
+void printStep(void);
+void printCnt(void);
+void printStepHisto(void);
 #endif

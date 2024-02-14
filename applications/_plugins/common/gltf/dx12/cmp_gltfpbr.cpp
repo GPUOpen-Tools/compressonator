@@ -19,7 +19,6 @@
 
 #include "cmp_gltfpbr.h"
 
-#include "cmp_gltffeatures.h"
 #include "cmp_gltfgetformat_dx12.h"
 #include "cmp_gltfhelpers_dx12.h"
 #include "cmp_gltfhelpers.h"

@@ -25,7 +25,7 @@ if (NOT CMP_VERSION_MAJOR)
 endif()
 
 if (NOT CMP_VERSION_MINOR)
-    set(CMP_VERSION_MINOR 4)
+    set(CMP_VERSION_MINOR 5)
 endif()
 
 if (NOT CMP_VERSION_BUILD_NUMBER)
@@ -40,6 +40,35 @@ message("Building Compressonator version ${PROJECT_VERSION_MAJOR}.${PROJECT_VERS
 # ------------------------------
 include(cmake/helperfunctions.cmake)
 
+
+# ------------------------------
+# Common compiler options
+# ------------------------------
+
+if (CMP_HOST_WINDOWS)
+    add_compile_options(/W4 /wd4201)
+#    add_compile_options(/W4 /WX /wd4201)
+elseif(CMP_HOST_LINUX)
+    add_compile_options(-Wall)
+#    add_compile_options(-Wall -Werror)
+endif()
+
+# ------------------------------------
+# Visual Studio project folder names
+# ------------------------------------
+
+set(PROJECT_FOLDER_SDK "SDK")
+set(PROJECT_FOLDER_SDK_LIBS "${PROJECT_FOLDER_SDK}/Libraries")
+set(PROJECT_FOLDER_SDK_EXTERNAL "${PROJECT_FOLDER_SDK}/External Libraries")
+set(PROJECT_FOLDER_SDK_PLUGIN_DYNAMIC "${PROJECT_FOLDER_SDK}/Plugins/Dynamic")
+set(PROJECT_FOLDER_SDK_PLUGIN_STATIC "${PROJECT_FOLDER_SDK}/Plugins/Static")
+set(PROJECT_FOLDER_SDK_EXAMPLES "${PROJECT_FOLDER_SDK}/Examples")
+
+set(PROJECT_FOLDER_APPS "Applications")
+set(PROJECT_FOLDER_APPS_LIBS "${PROJECT_FOLDER_APPS}/Libraries")
+set(PROJECT_FOLDER_APPS_EXTERNAL "${PROJECT_FOLDER_APPS}/External Libraries")
+set(PROJECT_FOLDER_APPS_PLUGIN_DYNAMIC "${PROJECT_FOLDER_APPS}/Plugins/Dynamic")
+set(PROJECT_FOLDER_APPS_PLUGIN_STATIC "${PROJECT_FOLDER_APPS}/Plugins/Static")
 
 #----------------------------------------
 # Check compiler feature support levels
@@ -63,7 +92,6 @@ else()
     set(COMPILER_SUPPORTS_CXX11 ON)
 endif()
 
-
 #---------------------------------------------------------------------------------
 # Provide default values for each build option
 #
@@ -76,10 +104,10 @@ endif()
 #---------------------------------------------------------------------------------
 option(OPTION_ENABLE_ALL_APPS             "Enable all apps"                 ON) # TODO rename to OPTION_BUILD_ALL
 option(OPTION_BUILD_CMP_SDK               "Build Compressonator SDK"        OFF)
-option(OPTION_BUILD_APPS_CMP_CLI          "Build Application: CLI"          OFF)
-option(OPTION_BUILD_APPS_CMP_GUI          "Build Application: GUI"          OFF)
-option(OPTION_BUILD_APPS_CMP_UNITTESTS    "Build Application: UnitTests"    OFF)
-option(OPTION_BUILD_APPS_CMP_EXAMPLES     "Build Application: Examples"     OFF)
+option(OPTION_BUILD_APPS_CMP_CLI          "Build Compressonator CLI"        OFF)
+option(OPTION_BUILD_APPS_CMP_GUI          "Build Compressonator GUI"        OFF)
+option(OPTION_BUILD_APPS_CMP_UNITTESTS    "Build Compressontor UnitTests"   OFF)
+option(OPTION_BUILD_APPS_CMP_EXAMPLES     "Build Compressontor Examples"    OFF)
 
 #--------------------------------------------------------------------------
 # Enable or Disable Specific Build Apps
@@ -90,8 +118,13 @@ if (OPTION_ENABLE_ALL_APPS)
     set(OPTION_BUILD_APPS_CMP_GUI          ON)
     set(OPTION_BUILD_APPS_CMP_UNITTESTS    ON)
     set(OPTION_BUILD_APPS_CMP_EXAMPLES     ON)
+else()
+    option(OPTION_BUILD_APPS_CMP_CLI       OFF)
+    option(OPTION_BUILD_APPS_CMP_GUI       OFF)
+    option(OPTION_BUILD_CMP_SDK            OFF)
+    option(OPTION_BUILD_APPS_CMP_UNITTESTS OFF)
+    option(OPTION_BUILD_APPS_CMP_EXAMPLES  OFF)
 endif()
-
 
 # Minimum Lib Dependencies for CLI, GUI, and SDK (GUI has additional lib requirements added later in this cmake)
 if (OPTION_BUILD_APPS_CMP_CLI OR OPTION_BUILD_APPS_CMP_GUI)
@@ -112,16 +145,20 @@ elseif (OPTION_BUILD_CMP_SDK)
     set(LIB_BUILD_GPUDECODE             ON)
 endif()
 
+if (OPTION_BUILD_APPS_CMP_VISION)
+    set(LIB_BUILD_COMPRESSONATOR_SDK ON)
+    set(LIB_BUILD_FRAMEWORK_SDK ON)
+endif()
+
 # The following options that have been removed
 set(LIB_BUILD_MESHCOMPRESSOR OFF)
 
 set(PROJECT_EXTERNAL_LIBDIR ${PROJECT_SOURCE_DIR}/../common/lib/ext)
 
-
 # ----------------------------------------------------------------------------
 # GPUOpen Source Code build options : These options are been revised for v4.2
 # ----------------------------------------------------------------------------
-#              OPTION                    DESCRIPTION               DEFAULT          REQUIREMENT
+#              OPTION                    DESCRIPTION         REQUESTED VALUE          REQUIREMENT
 cmp_option(OPTION_BUILD_KTX2         "Build CLI KTX2 Support"        ON     CMAKE_VERSION VERSION_GREATER "3.14.0")
 cmp_option(OPTION_BUILD_EXR          "Build CLI EXR Support"         ON     CMP_HOST_WINDOWS OR CMP_HOST_LINUX)
 cmp_option(OPTION_BUILD_GUI          "Build the GUI Application"     ON     CMP_HOST_WINDOWS OR OPTION_BUILD_APPS_CMP_GUI)
@@ -134,13 +171,12 @@ cmp_option(OPTION_CMP_GTC            "Use GTC Codec"                 OFF    TRUE
 cmp_option(OPTION_BUILD_BROTLIG      "Use Brotli-G Codec for CLI"    ON     CMP_HOST_WINDOWS)
 cmp_option(OPTION_BUILD_BROTLIG_GUI  "Use Brotli-G Codec for GUI"    OFF    TRUE) # In development for v4.4
 # Internal testing application
-option(OPTION_BUILD_INTERNAL_CMP_TEST "Build Internal Application: cmp_test" OFF)
+option(OPTION_BUILD_INTERNAL_CMP_TEST "Build Internal Application: cmp_test" ON)
 # No longer supported
 cmp_option(OPTION_BUILD_ASTC         "Build ASTC Support"            OFF    FALSE)
 cmp_option(OPTION_BUILD_DRACO        "Build CLI Draco Support"       OFF    FALSE)
 # this needs to be removed
 cmp_option(NO_LEGACY_BEHAVIOR   "Disables any legacy behavior (before CMake migration)"  ON  TRUE)
-
 
 # -----------------------------------------------------------------------------------
 # Code build definitions and features: These options are been revised for v4.2
@@ -175,7 +211,6 @@ add_compile_definitions(
     #USE_CMP_TRANSCODE                            # Future release:: Transcode BASIS/GTC to other compressed formats
 
     # Possible future releases features
-    #ARGB_32_SUPPORT                              # Enables 32bit Float channel formats
     #SUPPORT_ETC_ALPHA                            # for ATC_RGB output enable A
     #SHOW_PROCESS_MEMORY                          # display available CPU process memory
     #USE_BCN_IMAGE_DEBUG                          # Enables Combobox in Image View for low level BCn based block compression in debug mode
@@ -432,14 +467,18 @@ if (CMP_HOST_WINDOWS)
 
     # Unit tests
     if (OPTION_BUILD_APPS_CMP_UNITTESTS)
-          message("Build cmp unittests setup")
-         add_subdirectory(cmp_unittests)
+        message("Build cmp unittests setup")
+        add_subdirectory(cmp_unittests)
     endif()
 
     # CLI + GUI Automation testing
     if (OPTION_BUILD_INTERNAL_CMP_TEST)
-         message("Build cmp test setup")
-         add_subdirectory(compressonator_internal/applications/cmp_test)
+        if (EXISTS ${PROJECT_SOURCE_DIR}/compressonator_internal/applications/cmp_test)
+            message("Building CMP Test")
+            add_subdirectory(compressonator_internal/applications/cmp_test)
+        else()
+            message("Skipping CMP Test build because the directory could not be found")
+        endif()
     endif()
 
 endif()
@@ -468,13 +507,15 @@ if (CMP_HOST_WINDOWS)
         PATTERN "media" EXCLUDE
     )
 
-    install(
-        DIRECTORY ${QT_LIB_DIR}/plugins/imageformats DESTINATION plugins
-        FILES_MATCHING
-        PATTERN "qjpeg.dll"
-        PATTERN "qtga.dll"
-        PATTERN "qtiff.dll"
-    )
+    if (OPTION_CMP_QT)
+        install(
+            DIRECTORY ${QT_LIB_DIR}/plugins/imageformats DESTINATION plugins
+            FILES_MATCHING
+            PATTERN "qjpeg.dll"
+            PATTERN "qtga.dll"
+            PATTERN "qtiff.dll"
+        )
+    endif()
 
     install(
         DIRECTORY ${WINDOWS_BIN_PREFIX}/plugins/compute DESTINATION "plugins/"
@@ -489,20 +530,25 @@ if (CMP_HOST_WINDOWS)
     install(FILES ${WINDOWS_BIN_PREFIX}/texture.frag.spv ${WINDOWS_BIN_PREFIX}/texture.vert.spv DESTINATION ".")
 
 elseif (CMP_HOST_LINUX)
-    install(DIRECTORY ${QT_LIB_DIR}/plugins/imageformats DESTINATION plugins)
+    if (OPTION_CMP_QT)
+        install(DIRECTORY ${QT_LIB_DIR}/plugins/imageformats DESTINATION plugins)
+    endif()
+    
     install(PROGRAMS scripts/compressonatorcli DESTINATION ".")
     
     # Qt
 
-    set(QT_INSTALL_LIBS libQt5Core libQt5Gui libicui18n libicuuc libicudata)
+    if (OPTION_CMP_QT)
+        set(QT_INSTALL_LIBS libQt5Core)
 
-    foreach(QT_INSTALL_LIB ${QT_INSTALL_LIBS})
-        file(GLOB QT_LIB_VARIATIONS ${QT_LIB_DIR}/lib/${QT_INSTALL_LIB}.so*)
+        foreach(QT_INSTALL_LIB ${QT_INSTALL_LIBS})
+            file(GLOB QT_LIB_VARIATIONS ${QT_LIB_DIR}/lib/${QT_INSTALL_LIB}.so*)
 
-        foreach(QT_LIB_VARIATION ${QT_LIB_VARIATIONS})
-            install(FILES ${QT_LIB_VARIATION} DESTINATION qt)
+            foreach(QT_LIB_VARIATION ${QT_LIB_VARIATIONS})
+                install(FILES ${QT_LIB_VARIATION} DESTINATION qt)
+            endforeach()
         endforeach()
-    endforeach()
+    endif()
 
     # OpenCV, TBB, and extra
 

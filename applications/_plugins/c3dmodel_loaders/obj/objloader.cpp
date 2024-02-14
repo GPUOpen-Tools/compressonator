@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2018-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,12 +27,11 @@
 //=================================================================================================================================
 
 // ignore VC++ warnings about fopen, fscanf, etc being deprecated
-#if defined( _MSC_VER )
+#if defined(_MSC_VER)
 #if _MSC_VER >= 1400
 #define _CRT_SECURE_NO_DEPRECATE
 #endif
 #endif
-
 
 #include "objloader.h"
 #include <assert.h>
@@ -40,16 +39,11 @@
 #include <cstring>
 #include <map>
 
-
-
-
 //=================================================================================================================================
 //
 //          Constructor(s) / Destructor(s) Block
 //
 //=================================================================================================================================
-
-
 
 //=================================================================================================================================
 //
@@ -57,15 +51,14 @@
 //
 //=================================================================================================================================
 
-
 //=================================================================================================================================
 /// Loads a mesh from an OBJ file
 /// \param strFileName   The file name to load from
 /// \param mesh   objVertices  A set of vertices that is created from the OBJ
 ///               objFaces     A set of faces that is created from the OBJ
 //=================================================================================================================================
-int ObjLoader::LoadGeometry(const char* strFileName,CMODEL_DATA &mesh,  CMIPS *cmips, CMP_Feedback_Proc pFeedbackProc) {
-
+int ObjLoader::LoadGeometry(const char* strFileName, CMODEL_DATA& mesh, CMIPS* cmips, CMP_Feedback_Proc pFeedbackProc)
+{
     //----------------------------------------------------------------------
     // Data
     //----------------------------------------------------------------------
@@ -76,7 +69,7 @@ int ObjLoader::LoadGeometry(const char* strFileName,CMODEL_DATA &mesh,  CMIPS *c
     bool bHasTexCoords = false;
     bool bHasNormals   = false;
 
-    char cLine[256];    //A line of the obj file
+    char cLine[256];  //A line of the obj file
 
     //----------------------------------------------------------------------
     // Read OBJ file
@@ -84,14 +77,16 @@ int ObjLoader::LoadGeometry(const char* strFileName,CMODEL_DATA &mesh,  CMIPS *c
     FILE* pFile = fopen(strFileName, "rt");
 
     // Check if the file was opened
-    if (NULL == pFile) {
+    if (NULL == pFile)
+    {
         // Open failed
-        if (cmips) {
+        if (cmips)
+        {
             cmips->Print("Error: Open %s failed", strFileName);
         }
         return (-1);
 
-    } // end if ( NULL == pFile )
+    }  // end if ( NULL == pFile )
 
     // get file size for progress bar update
     fseek(pFile, 0L, SEEK_END);
@@ -99,37 +94,42 @@ int ObjLoader::LoadGeometry(const char* strFileName,CMODEL_DATA &mesh,  CMIPS *c
     fseek(pFile, 0L, SEEK_SET);
 
     //Read until we hit the end of the file
-    if (cmips) {
+    if (cmips)
+    {
         cmips->SetProgress(0);
         char fname[_MAX_FNAME];
         getFileNameExt(strFileName, fname, _MAX_FNAME);
         cmips->Print("Loading %s ...", fname);
     }
 
+    mesh.min_vertex = {FLT_MAX, FLT_MAX, FLT_MAX};  // used for bounding box
+    mesh.max_vertex = {0.0f, 0.0f, 0.0f};           // used for bounding box
 
-    mesh.min_vertex = { FLT_MAX,FLT_MAX, FLT_MAX }; // used for bounding box
-    mesh.max_vertex = { 0.0f,0.0f,0.0f } ; // used for bounding box
-
-    while (!feof(pFile)) {
+    while (!feof(pFile))
+    {
         //Check the first char in the line
         int iStart = fgetc(pFile);
 
         // skip blank lines
-        while ((iStart == 10) && (!feof(pFile))) {
+        while ((iStart == 10) && (!feof(pFile)))
+        {
             iStart = fgetc(pFile);
         }
 
-        if (feof(pFile)) {
+        if (feof(pFile))
+        {
             break;
         }
 
         //If the first letter is v, it is either a vertex, a text coord, or a vertex normal
-        if (iStart == 'v') {
+        if (iStart == 'v')
+        {
             //get the second char
             int iNext = fgetc(pFile);
 
             //if its a space, its a vertex coordinate
-            if (iNext == ' ' || iNext == '\t') {
+            if (iNext == ' ' || iNext == '\t')
+            {
                 ObjVertex3D vertex;
 
                 //get the line
@@ -139,20 +139,26 @@ int ObjLoader::LoadGeometry(const char* strFileName,CMODEL_DATA &mesh,  CMIPS *c
                 sscanf(cLine, " %f %f %f", &vertex.x, &vertex.y, &vertex.z);
 
                 // calc bounding box
-                if (vertex.x < mesh.min_vertex.x) mesh.min_vertex.x = vertex.x;
-                if (vertex.y < mesh.min_vertex.y) mesh.min_vertex.y = vertex.y;
-                if (vertex.z < mesh.min_vertex.z) mesh.min_vertex.z = vertex.z;
-                if (vertex.x > mesh.max_vertex.x) mesh.max_vertex.x = vertex.x;
-                if (vertex.y > mesh.max_vertex.y) mesh.max_vertex.y = vertex.y;
-                if (vertex.z > mesh.max_vertex.z) mesh.max_vertex.z = vertex.z;
-
+                if (vertex.x < mesh.min_vertex.x)
+                    mesh.min_vertex.x = vertex.x;
+                if (vertex.y < mesh.min_vertex.y)
+                    mesh.min_vertex.y = vertex.y;
+                if (vertex.z < mesh.min_vertex.z)
+                    mesh.min_vertex.z = vertex.z;
+                if (vertex.x > mesh.max_vertex.x)
+                    mesh.max_vertex.x = vertex.x;
+                if (vertex.y > mesh.max_vertex.y)
+                    mesh.max_vertex.y = vertex.y;
+                if (vertex.z > mesh.max_vertex.z)
+                    mesh.max_vertex.z = vertex.z;
 
                 //add to the vertex array
                 vertices.push_back(vertex);
-            } // End if
+            }  // End if
 
             //if its a t, its a texture coord
-            else if (iNext == 't') {
+            else if (iNext == 't')
+            {
                 ObjVertex2D texCoord;
 
                 //get the line
@@ -165,10 +171,11 @@ int ObjLoader::LoadGeometry(const char* strFileName,CMODEL_DATA &mesh,  CMIPS *c
                 texCoords.push_back(texCoord);
 
                 bHasTexCoords = true;
-            } // End else if
+            }  // End else if
 
             //if its an n its a normal
-            else if (iNext == 'n') {
+            else if (iNext == 'n')
+            {
                 ObjVertex3D normal;
 
                 //get the line
@@ -181,17 +188,19 @@ int ObjLoader::LoadGeometry(const char* strFileName,CMODEL_DATA &mesh,  CMIPS *c
                 normals.push_back(normal);
 
                 bHasNormals = true;
-            } // End else if
+            }  // End else if
 
             //else its something we don't support
-            else {
+            else
+            {
                 //scan the line and discard it
                 fgets(cLine, 256, pFile);
-            } // End else
-        } // End if
+            }  // End else
+        }      // End if
 
         //if the first letter is f, its a face
-        else if (iStart == 'f') {
+        else if (iStart == 'f')
+        {
             //read in the line
             fgets(cLine, 256, pFile);
 
@@ -204,10 +213,9 @@ int ObjLoader::LoadGeometry(const char* strFileName,CMODEL_DATA &mesh,  CMIPS *c
             assert(numVerts < 256);
             assert(numVerts > 0);
 
-            ReadVertexIndices(cLine, numVerts, bHasTexCoords, bHasNormals,
-                              vertexIndices, texCoordIndices, normalIndices);
+            ReadVertexIndices(cLine, numVerts, bHasTexCoords, bHasNormals, vertexIndices, texCoordIndices, normalIndices);
 
-            int fCount; // face count
+            int fCount;  // face count
 
             // Create triangles.
             //
@@ -217,7 +225,8 @@ int ObjLoader::LoadGeometry(const char* strFileName,CMODEL_DATA &mesh,  CMIPS *c
             // If there are 4 vertices, 2 triangles
             // If there are 5 vertices, 3 triangles
             // :
-            for (fCount = 0; fCount < numVerts - 2; fCount++) {
+            for (fCount = 0; fCount < numVerts - 2; fCount++)
+            {
                 ObjFace face;
                 face.vertexIndices[0] = vertexIndices[0];
                 face.vertexIndices[1] = vertexIndices[fCount + 1];
@@ -232,33 +241,33 @@ int ObjLoader::LoadGeometry(const char* strFileName,CMODEL_DATA &mesh,  CMIPS *c
                 face.normalIndices[2] = normalIndices[fCount + 2];
 
                 mesh.m_objFaces.push_back(face);
-            } // End for
-        } // End else if
+            }  // End for
+        }      // End else if
 
         //if it isn't any of those, we don't care about it
-        else {
+        else
+        {
             //read the whole line to advance
             fgets(cLine, 256, pFile);
-        } // End else
+        }  // End else
 
-
-        if (pFeedbackProc) {
+        if (pFeedbackProc)
+        {
             float fProgress = 100.f * ((float)(ftell(pFile)) / filelength);
-            if (pFeedbackProc(fProgress, NULL, NULL)) {
+            if (pFeedbackProc(fProgress, NULL, NULL))
+            {
                 break;
             }
         }
 
-    } // End while
+    }  // End while
 
     fclose(pFile);
 
     BuildFinalVertices(vertices, normals, texCoords, mesh.m_objFaces, mesh.m_objVertices, cmips, pFeedbackProc);
 
     return 0;
-} // End of LoadGeometry for CRmObjLoaderPlugIn
-
-
+}  // End of LoadGeometry for CRmObjLoaderPlugIn
 
 //=================================================================================================================================
 //
@@ -266,101 +275,116 @@ int ObjLoader::LoadGeometry(const char* strFileName,CMODEL_DATA &mesh,  CMIPS *c
 //
 //=================================================================================================================================
 
-
-
 //=================================================================================================================================
 /// Returns how many vertices are specified in one line read from OBJ
 /// \param szLine  The line of text to count vertices in
 //=================================================================================================================================
 
-int ObjLoader::GetNumberOfVerticesInLine(const char* szLine) {
-    int pos = 0;
-    int vertCount = 0;
+int ObjLoader::GetNumberOfVerticesInLine(const char* szLine)
+{
+    int  pos           = 0;
+    int  vertCount     = 0;
     bool bInsideVertex = false;
 
-    while (szLine[pos] != 0) {
-        if (((szLine[pos] >= '0') && (szLine[pos] <= '9')) ||
-                (szLine[pos] == '/')) {
-            if (bInsideVertex == false) {
+    while (szLine[pos] != 0)
+    {
+        if (((szLine[pos] >= '0') && (szLine[pos] <= '9')) || (szLine[pos] == '/'))
+        {
+            if (bInsideVertex == false)
+            {
                 vertCount++;
                 bInsideVertex = true;
-            } // End if
-        } // End if
-        else if (szLine[pos] == ' ') {
-            if (bInsideVertex) {
+            }  // End if
+        }      // End if
+        else if (szLine[pos] == ' ')
+        {
+            if (bInsideVertex)
+            {
                 bInsideVertex = false;
-            } // End if
-        } // End else
+            }  // End if
+        }      // End else
 
         pos++;
-    } // End while
+    }  // End while
 
     return vertCount;
-} // End of GetNumberOfVerticesInLine for CRmObjLoaderPlugIn
-
-
+}  // End of GetNumberOfVerticesInLine for CRmObjLoaderPlugIn
 
 //=================================================================================================================================
 /// Parses a face line
 //=============================================================================================================================
-void ObjLoader::ReadVertexIndices(const char* szLine, int numVertsInLine,
-                                  bool bHasTexCoords, bool bHasNormals,
-                                  int* pVertIndices, int* pTexCoords, int* pNormals) {
+void ObjLoader::ReadVertexIndices(const char* szLine,
+                                  int         numVertsInLine,
+                                  bool        bHasTexCoords,
+                                  bool        bHasNormals,
+                                  int*        pVertIndices,
+                                  int*        pTexCoords,
+                                  int*        pNormals)
+{
     const char* szNext = szLine;
 
-    while (((*szNext) < '0') || ((*szNext) > '9')) {
+    while (((*szNext) < '0') || ((*szNext) > '9'))
+    {
         // Skip any character that's not a number
         assert(*szNext != '\0');
         szNext++;
-    } // End while
+    }  // End while
 
     int i;
 
-    for (i = 0; i < numVertsInLine; i++) {
+    for (i = 0; i < numVertsInLine; i++)
+    {
         pVertIndices[i] = 0;
-        pTexCoords[i] = 0;
-        pNormals[i] = 0;
+        pTexCoords[i]   = 0;
+        pNormals[i]     = 0;
 
         int numRead;
 
-        if (bHasTexCoords && bHasNormals) {
+        if (bHasTexCoords && bHasNormals)
+        {
             numRead = sscanf(szNext, "%i/%i/%i", &pVertIndices[i], &pTexCoords[i], &pNormals[i]);
 
-            if (numRead != 3) {
+            if (numRead != 3)
+            {
                 sscanf(szNext, "%i//%i//%i", &pVertIndices[i], &pTexCoords[i], &pNormals[i]);
             }
-        } // End if
+        }  // End if
 
-        else if (!bHasTexCoords && bHasNormals) {
+        else if (!bHasTexCoords && bHasNormals)
+        {
             numRead = sscanf(szNext, "%i/%i", &pVertIndices[i], &pNormals[i]);
 
-            if (numRead != 2) {
+            if (numRead != 2)
+            {
                 sscanf(szNext, "%i//%i", &pVertIndices[i], &pNormals[i]);
             }
-        } // End if
+        }  // End if
 
-        else if (bHasTexCoords && !bHasNormals) {
+        else if (bHasTexCoords && !bHasNormals)
+        {
             numRead = sscanf(szNext, "%i/%i", &pVertIndices[i], &pTexCoords[i]);
 
-            if (numRead != 2) {
+            if (numRead != 2)
+            {
                 sscanf(szNext, "%i//%i", &pVertIndices[i], &pTexCoords[i]);
             }
-        } // End if
+        }  // End if
 
-        else {
+        else
+        {
             numRead = sscanf(szNext, "%i", &pVertIndices[i]);
-        } // End else
+        }  // End else
 
         szNext = strchr(szNext, ' ');
 
-        if (i < numVertsInLine - 1) {
+        if (i < numVertsInLine - 1)
+        {
             // If this is not the last one
             assert(szNext != NULL);
             szNext++;
-        } // End if
-    } // End for
-} // End of ReadVertexIndices for CRmObjLoaderPlugIn
-
+        }  // End if
+    }      // End for
+}  // End of ReadVertexIndices for CRmObjLoaderPlugIn
 
 //=================================================================================================================================
 /// Buildup vertex hash map and update each face's final vertex index
@@ -369,26 +393,31 @@ void ObjLoader::ReadVertexIndices(const char* szLine, int numVertsInLine,
 void ObjLoader::BuildFinalVertices(const std::vector<ObjVertex3D>& vertices,
                                    const std::vector<ObjVertex3D>& normals,
                                    const std::vector<ObjVertex2D>& texCoords,
-                                   std::vector<ObjFace>&     faces,
-                                   std::vector<ObjVertexFinal>& finalVertices,
-                                   CMIPS *cmips, CMP_Feedback_Proc pFeedbackProc) {
-    if (cmips) {
+                                   std::vector<ObjFace>&           faces,
+                                   std::vector<ObjVertexFinal>&    finalVertices,
+                                   CMIPS*                          cmips,
+                                   CMP_Feedback_Proc               pFeedbackProc)
+{
+    if (cmips)
+    {
         cmips->SetProgress(0);
         cmips->Print("Remove duplicate mesh vertices ...");
     }
 
     std::map<VertexHashData, VertexHashData, vertex_less> vertexHashMap;
 
-    int count = 0;
+    int          count = 0;
     unsigned int i;
 
-    for (i = 0; i < faces.size(); i++) {
+    for (i = 0; i < faces.size(); i++)
+    {
         ObjFace& face = faces[i];
 
         // OBj's index is 1 based, so subtract 1 to make it zero based indices
         int j;
 
-        for (j = 0; j < 3; j++) {
+        for (j = 0; j < 3; j++)
+        {
             VertexHashData vHash;
             vHash.finalIndex    = count;
             vHash.vertexIndex   = face.vertexIndices[j];
@@ -397,7 +426,8 @@ void ObjLoader::BuildFinalVertices(const std::vector<ObjVertex3D>& vertices,
 
             std::map<VertexHashData, VertexHashData, vertex_less>::iterator itr = vertexHashMap.find(vHash);
 
-            if (itr == vertexHashMap.end()) {
+            if (itr == vertexHashMap.end())
+            {
                 // If this combination of vertexIndex,texCoordIndex and normalIndex is nout found in map
                 vertexHashMap.insert(std::map<VertexHashData, VertexHashData, vertex_less>::value_type(vHash, vHash));
                 face.finalVertexIndices[j] = vHash.finalIndex;
@@ -406,43 +436,50 @@ void ObjLoader::BuildFinalVertices(const std::vector<ObjVertex3D>& vertices,
                 ObjVertexFinal finalVertex;
 
                 // OBJ's indices are 1 base, so subtract 1
-                if (vHash.vertexIndex > 0) {
+                if (vHash.vertexIndex > 0)
+                {
                     finalVertex.pos = vertices[vHash.vertexIndex - 1];
                 }
 
-                if (vHash.texCoordIndex > 0) {
+                if (vHash.texCoordIndex > 0)
+                {
                     finalVertex.texCoord = texCoords[vHash.texCoordIndex - 1];
                 }
 
-                if (vHash.normalIndex > 0) {
+                if (vHash.normalIndex > 0)
+                {
                     finalVertex.normal = normals[vHash.normalIndex - 1];
                 }
 
-                finalVertex.nNormalIndex = vHash.normalIndex;
+                finalVertex.nNormalIndex   = vHash.normalIndex;
                 finalVertex.nTexcoordIndex = vHash.texCoordIndex;
-                finalVertex.nVertexIndex = vHash.vertexIndex;
+                finalVertex.nVertexIndex   = vHash.vertexIndex;
                 finalVertices.push_back(finalVertex);
-            } // End if
-            else {
+            }  // End if
+            else
+            {
                 VertexHashData& vHashFound = (*itr).second;
                 face.finalVertexIndices[j] = vHashFound.finalIndex;
-            } // End else
-        } // End for
+            }  // End else
+        }      // End for
 
-        if (pFeedbackProc) {
+        if (pFeedbackProc)
+        {
             float fProgress = 100.f * ((float)(i) / faces.size());
-            if (pFeedbackProc(fProgress, NULL, NULL)) {
+            if (pFeedbackProc(fProgress, NULL, NULL))
+            {
                 break;
             }
         }
 
-    } // End for
-} // End of BuildFinalVertices for CRmObjLoaderPlugIn
+    }  // End for
+}  // End of BuildFinalVertices for CRmObjLoaderPlugIn
 
 //=================================================================================================================================
 // Utils: extract filename with extension from the full file name path
 //=================================================================================================================================
-void ObjLoader::getFileNameExt(const char *FilePathName, char *fnameExt, int maxbuffsize) {
+void ObjLoader::getFileNameExt(const char* FilePathName, char* fnameExt, int maxbuffsize)
+{
     char drive[_MAX_DRIVE];
     char dir[_MAX_DIR];
     char ext[_MAX_EXT];

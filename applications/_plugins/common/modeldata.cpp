@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -33,21 +33,20 @@
 #include <assert.h>
 #include "tc_plugininternal.h"
 
-
-
-CMODEL_DATA::CMODEL_DATA() {
+CMODEL_DATA::CMODEL_DATA()
+{
 #ifdef USE_ASSIMP
     m_Scene = nullptr;
 #endif
 }
 
-
-CMODEL_DATA::~CMODEL_DATA() {
+CMODEL_DATA::~CMODEL_DATA()
+{
 #ifdef USE_ASSIMP
-    if (m_Scene) {
+    if (m_Scene)
+    {
         delete m_Scene;
         m_Scene = nullptr;
     }
 #endif
 }
-

@@ -1,23 +1,23 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
 #ifndef _TRIORDER_H
 #define _TRIORDER_H
 
-#define TOOTLE_NONE (2147483647)            // 2^31 -1 (ideally should be 2^32-1 for max unsigned int).  However, int and
+#define TOOTLE_NONE (2147483647)  // 2^31 -1 (ideally should be 2^32-1 for max unsigned int).  However, int and
 // unsigned int are used interchangebly in the library.
 
 /// Perform vertex optimization only
-float FanVertOptimizeVCacheOnly(int*              piIndexBufferIn,
-                                int*              piIndexBufferOut,
-                                int               iNumVertices,
-                                int               iNumFaces,
-                                int               iCacheSize,
-                                int*              piScratch = NULL,
-                                int*              piClustersOut = NULL,
-                                int*              iNumClusters = NULL);
+float FanVertOptimizeVCacheOnly(int* piIndexBufferIn,
+                                int* piIndexBufferOut,
+                                int  iNumVertices,
+                                int  iNumFaces,
+                                int  iCacheSize,
+                                int* piScratch     = NULL,
+                                int* piClustersOut = NULL,
+                                int* iNumClusters  = NULL);
 
 /// The function below just clusters the mesh. It assumes it is already sorted and pre-clustered
 /// with "hard boundaries" during vertex cache optimization using the above function.
@@ -45,7 +45,6 @@ void FanVertOptimizeOverdrawOnly(float*            pfVertexPositionsIn,
                                  int*              piClustersIn,
                                  int               iNumClusters,
                                  int*              piScratch = NULL,
-                                 int*              piRemap = NULL);
-
+                                 int*              piRemap   = NULL);
 
 #endif

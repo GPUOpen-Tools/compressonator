@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright (c) 2021  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2021-2024  Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -22,7 +22,6 @@
 //==============================================================================
 #include "gpuresources_dx11.h"
 
-
 GpuResources_dx11::GpuResources_dx11()
 {
     D3D_FEATURE_LEVEL featureLevels[] = {D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0};
@@ -39,4 +38,3 @@ GpuResources_dx11::GpuResources_dx11()
                                &outFeatureLevel,                    // pFeatureLevel
                                &m_DeviceContext));                  // ppImmediateContext
 }
-

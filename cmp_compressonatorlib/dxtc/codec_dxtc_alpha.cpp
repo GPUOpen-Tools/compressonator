@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -38,12 +38,13 @@
 #pragma warning(disable : 4201)
 #endif
 
-CodecError CCodec_DXTC::CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]) {
-    BYTE nEndpoints[2][2];
-    BYTE nIndices[2][BLOCK_SIZE_4X4];
+CodecError CCodec_DXTC::CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2])
+{
+    BYTE  nEndpoints[2][2];
+    BYTE  nIndices[2][BLOCK_SIZE_4X4];
     float fError8 = CompBlock1X(alphaBlock, BLOCK_SIZE_4X4, nEndpoints[0], nIndices[0], 8, false, m_bUseSSE2, 8, 0, true);
     float fError6 = (fError8 == 0.f) ? FLT_MAX : CompBlock1X(alphaBlock, BLOCK_SIZE_4X4, nEndpoints[1], nIndices[1], 6, true, m_bUseSSE2, 8, 0, true);
-    if(fError8 <= fError6)
+    if (fError8 <= fError6)
         EncodeAlphaBlock(compressedBlock, nEndpoints[0], nIndices[0]);
     else
         EncodeAlphaBlock(compressedBlock, nEndpoints[1], nIndices[1]);
@@ -62,30 +63,30 @@ CodecError CCodec_DXTC::CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], 
 // #define GBL_SCH_STEP_MXQ 0.0175f
 // #define GBL_SCH_EXT_MXQ 0.154f
 // #define LCL_SCH_STEP_MXQ 0.45f
-// 
+//
 // #define GBL_SCH_STEP GBL_SCH_STEP_MXS
 // #define GBL_SCH_EXT GBL_SCH_EXT_MXS
 // #define LCL_SCH_STEP LCL_SCH_STEP_MXS
 // #endif
-// 
+//
 // #define SCH_STPS 3  // number of search steps to make at each end of interval
 // static CMP_CONSTANT CGU_FLOAT sMvF[] = {0.f, -1.f, 1.f, -2.f, 2.f, -3.f, 3.f, -4.f, 4.f, -5.f, 5.f, -6.f, 6.f, -7.f, 7.f, -8.f, 8.f};
 // #define MAX_POINTS 16
 // #define NUM_ENDPOINTS 2
 // #define CMP_ALPHA_RAMP 8
-// 
-// 
+//
+//
 // static CGU_INT QSortFCmp(const void* Elem1, const void* Elem2)
 // {
 //     CGU_INT ret = 0;
-// 
+//
 //     if (*(CGU_FLOAT*)Elem1 < *(CGU_FLOAT*)Elem2)
 //         ret = -1;
 //     else if (*(CGU_FLOAT*)Elem1 > *(CGU_FLOAT*)Elem2)
 //         ret = 1;
 //     return ret;
 // }
-// 
+//
 // static CGU_FLOAT cmp_getRampError(CGU_FLOAT _Blk[BLOCK_SIZE_4X4],
 //                                   CGU_FLOAT _Rpt[BLOCK_SIZE_4X4],
 //                                   CGU_FLOAT _maxerror,
@@ -98,24 +99,24 @@ CodecError CCodec_DXTC::CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], 
 //     const CGU_FLOAT step   = (_max_ex - _min_ex) / 7;  // (CGU_FLOAT)(dwNumPoints - 1);
 //     const CGU_FLOAT step_h = step * 0.5f;
 //     const CGU_FLOAT rstep  = 1.0f / step;
-// 
+//
 //     for (i = 0; i < _NmbrClrs; i++)
 //     {
 //         CGU_FLOAT v;
 //         // Work out which value in the block this select
 //         CGU_FLOAT del;
-// 
+//
 //         if ((del = _Blk[i] - _min_ex) <= 0)
 //             v = _min_ex;
 //         else if (_Blk[i] - _max_ex >= 0)
 //             v = _max_ex;
 //         else
 //             v = (floor((del + step_h) * rstep) * step) + _min_ex;
-// 
+//
 //         // And accumulate the error
 //         CGU_FLOAT del2 = (_Blk[i] - v);
 //         error += del2 * del2 * _Rpt[i];
-// 
+//
 //         // if we've already lost to the previous step bail out
 //         if (_maxerror < error)
 //         {
@@ -125,8 +126,8 @@ CodecError CCodec_DXTC::CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], 
 //     }
 //     return error;
 // }
-// 
-// 
+//
+//
 // static CGU_FLOAT cmp_linearBlockRefine(CGU_FLOAT _Blk[BLOCK_SIZE_4X4],
 //                                        CGU_FLOAT _Rpt[BLOCK_SIZE_4X4],
 //                                        CGU_FLOAT _MaxError,
@@ -139,16 +140,16 @@ CodecError CCodec_DXTC::CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], 
 // {
 //     // Start out assuming our endpoints are the min and max values we've
 //     // determined
-// 
+//
 //     // Attempt a (simple) progressive refinement step to reduce noise in the
 //     // output image by trying to find a better overall match for the endpoints.
-// 
+//
 //     CGU_FLOAT maxerror = _MaxError;
 //     CGU_FLOAT min_ex   = CMP_PTRINOUT _min_ex;
 //     CGU_FLOAT max_ex   = CMP_PTRINOUT _max_ex;
-// 
+//
 //     CGU_INT mode, bestmode;
-// 
+//
 //     do
 //     {
 //         CGU_FLOAT cr_min0 = min_ex;
@@ -158,13 +159,13 @@ CodecError CCodec_DXTC::CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], 
 //             // check each move (see sStep for direction)
 //             CGU_FLOAT cr_min = min_ex + _m_step * sMvF[mode / SCH_STPS];
 //             CGU_FLOAT cr_max = max_ex + _m_step * sMvF[mode % SCH_STPS];
-// 
+//
 //             cr_min = max(cr_min, _min_bnd);
 //             cr_max = min(cr_max, _max_bnd);
-// 
+//
 //             CGU_FLOAT error;
 //             error = cmp_getRampError(_Blk, _Rpt, maxerror, cr_min, cr_max, _NmbrClrs);
-// 
+//
 //             if (error < maxerror)
 //             {
 //                 maxerror = error;
@@ -173,7 +174,7 @@ CodecError CCodec_DXTC::CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], 
 //                 cr_max0  = cr_max;
 //             }
 //         }
-// 
+//
 //         if (bestmode != -1)
 //         {
 //             // make move (see sStep for direction)
@@ -181,21 +182,21 @@ CodecError CCodec_DXTC::CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], 
 //             max_ex = cr_max0;
 //         }
 //     } while (bestmode != -1);
-// 
+//
 //     CMP_PTRINOUT _min_ex = min_ex;
 //     CMP_PTRINOUT _max_ex = max_ex;
-// 
+//
 //     return maxerror;
 // }
-// 
+//
 // static CGU_Vec2i cmp_getLinearEndPoints(CGU_FLOAT _Blk[BLOCK_SIZE_4X4], CMP_IN CGU_FLOAT fquality, CMP_IN CGU_BOOL isSigned)
 // {
 //     CGU_UINT32 i;
 //     CGU_Vec2i  cmpMinMax;
-// 
+//
 //     CGU_FLOAT scalePts      = 1.0f; //isSigned ? 128.0f : 255.0f;
 //     CGU_FLOAT scaleOffset   = isSigned ? 0.25f  : 0.5f;
-// 
+//
 //     //================================================================
 //     // Bounding Box
 //     // lowest quality calculation to get min and max value to use
@@ -211,33 +212,33 @@ CodecError CCodec_DXTC::CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], 
 //         }
 //         return cmpMinMax;
 //     }
-// 
+//
 //     //================================================================
 //     // Do more calculations to get the best min and max values to use
 //     //================================================================
 //     CGU_FLOAT Ramp[2];
-// 
+//
 //     // Result defaults for SNORM or UNORM
 //     Ramp[0] = isSigned ? -1.0f : 0.0f;
 //     Ramp[1] = 1.0f;
-// 
+//
 //     CGU_FLOAT afUniqueValues[BLOCK_SIZE_4X4];
 //     CGU_FLOAT afValueRepeats[BLOCK_SIZE_4X4];
 //     for (i = 0; i < BLOCK_SIZE_4X4; i++)
 //         afUniqueValues[i] = afValueRepeats[i] = 0.f;
-// 
+//
 //     // For each unique value we compute the number of it appearances.
 //     CGU_FLOAT fBlk[BLOCK_SIZE_4X4];
-// 
+//
 //     memcpy(fBlk, _Blk, BLOCK_SIZE_4X4 * sizeof(CGU_FLOAT));
 //     qsort((void*)fBlk, (size_t)BLOCK_SIZE_4X4, sizeof(CGU_FLOAT), QSortFCmp);
-// 
+//
 //     CGU_FLOAT new_p = -2.0f;
-// 
+//
 //     CGU_UINT32 dwUniqueValues    = 0;
 //     afUniqueValues[0]            = 0.0f;
 //     CGU_BOOL requiresCalculation = true;
-// 
+//
 //     {
 //         // Ramp not fixed
 //         for (i = 0; i < BLOCK_SIZE_4X4; i++)
@@ -251,7 +252,7 @@ CodecError CCodec_DXTC::CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], 
 //             else if (dwUniqueValues)
 //                 afValueRepeats[dwUniqueValues - 1] += 1.f;
 //         }
-// 
+//
 //         // if number of unique colors is less or eq 2, we've done
 //         if (dwUniqueValues <= 2)
 //         {
@@ -263,7 +264,7 @@ CodecError CCodec_DXTC::CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], 
 //             requiresCalculation = false;
 //         }
 //     }  // Ramp not fixed
-// 
+//
 //     if (requiresCalculation)
 //     {
 //         CGU_FLOAT min_ex  = afUniqueValues[0];
@@ -272,13 +273,13 @@ CodecError CCodec_DXTC::CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], 
 //         CGU_FLOAT min_r = min_ex, max_r = max_ex;
 //         CGU_FLOAT gbl_l = 0, gbl_r = 0;
 //         CGU_FLOAT cntr = (min_r + max_r) / 2;
-// 
+//
 //         CGU_FLOAT gbl_err = MAX_ERROR;
 //         // Trying to avoid unnecessary calculations. Heuristics: after some analisis
 //         // it appears that in integer case, if the input interval not more then 48
 //         // we won't get much better
 //         bool wantsSearch = !((max_ex - min_ex) <= (48.f / scalePts));
-// 
+//
 //         if (wantsSearch)
 //         {
 //             // Search.
@@ -291,7 +292,7 @@ CodecError CCodec_DXTC::CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], 
 //             CGU_FLOAT gbl_rrb = (max_bnd < max_r + GBL_SCH_EXT) ? max_bnd : max_r + GBL_SCH_EXT;
 //             CGU_FLOAT gbl_lrb = (cntr < min_r + GBL_SCH_EXT) ? cntr : min_r + GBL_SCH_EXT;
 //             CGU_FLOAT gbl_rlb = (cntr > max_r - GBL_SCH_EXT) ? cntr : max_r - GBL_SCH_EXT;
-// 
+//
 //             for (CGU_FLOAT step_l = gbl_llb; step_l < gbl_lrb; step_l += GBL_SCH_STEP)
 //             {
 //                 for (CGU_FLOAT step_r = gbl_rrb; gbl_rlb <= step_r; step_r -= GBL_SCH_STEP)
@@ -307,25 +308,25 @@ CodecError CCodec_DXTC::CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], 
 //                     }
 //                 }
 //             }
-// 
+//
 //             min_r = gbl_l;
 //             max_r = gbl_r;
 //         }  // want search
-// 
+//
 //         // This is a refinement call. The function tries to make several small
 //         // stretches or squashes to minimize quantization error.
 //         CGU_FLOAT m_step = LCL_SCH_STEP / scalePts;
 //         cmp_linearBlockRefine(afUniqueValues, afValueRepeats, gbl_err, CMP_REFINOUT min_r, CMP_REFINOUT max_r, m_step, min_bnd, max_bnd, dwUniqueValues);
-// 
+//
 //         min_ex = min_r;
 //         max_ex = max_r;
 //         max_ex *= scalePts;
 //         min_ex *= scalePts;
-// 
+//
 //         Ramp[0] = floor(min_ex + scaleOffset);
 //         Ramp[1] = floor(max_ex + scaleOffset);
 //     }
-// 
+//
 //     // Ensure that the two endpoints are not the same
 //     // This is legal but serves no need & can break some optimizations in the compressor
 //     if (Ramp[0] == Ramp[1])
@@ -335,14 +336,12 @@ CodecError CCodec_DXTC::CompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], 
 //         else if (Ramp[1] > 0.0f)
 //             Ramp[1] = Ramp[1] - .1f;
 //     }
-// 
+//
 //     cmpMinMax.x = Ramp[0];
 //     cmpMinMax.y = Ramp[1];
-// 
+//
 //     return cmpMinMax;
 // }
-
-
 
 static CGU_INT8 cmp_SNormFloatToSInt(CGU_FLOAT fsnorm)
 {
@@ -382,7 +381,7 @@ static CGU_Vec2f cmp_OptimizeEndPoints(CGU_FLOAT* pPoints, CGU_INT8 cSteps, CGU_
         {
             if (pPoints[iPoint] < fX)
                 fX = pPoints[iPoint];
-    
+
             if (pPoints[iPoint] > fY)
                 fY = pPoints[iPoint];
         }
@@ -393,11 +392,11 @@ static CGU_Vec2f cmp_OptimizeEndPoints(CGU_FLOAT* pPoints, CGU_INT8 cSteps, CGU_
         {
             if (pPoints[iPoint] < fX && pPoints[iPoint] > MIN_VALUE)
                 fX = pPoints[iPoint];
-    
+
             if (pPoints[iPoint] > fY && pPoints[iPoint] < MAX_VALUE)
                 fY = pPoints[iPoint];
         }
-    
+
         if (fX == fY)
         {
             fY = MAX_VALUE;
@@ -461,12 +460,12 @@ static CGU_Vec2f cmp_OptimizeEndPoints(CGU_FLOAT* pPoints, CGU_INT8 cSteps, CGU_
             // steps to improve quality
             if (iStep < cSteps)
             {
-                fc          = (cStepsDiv - (CGU_FLOAT)iStep) / cStepsDiv;
-                fd          = (CGU_FLOAT)iStep / cStepsDiv;
+                fc              = (cStepsDiv - (CGU_FLOAT)iStep) / cStepsDiv;
+                fd              = (CGU_FLOAT)iStep / cStepsDiv;
                 CGU_FLOAT fDiff = pSteps[iStep] - pPoints[iPoint];
-                dX  += fc * fDiff;
+                dX += fc * fDiff;
                 d2X += fc * fc;
-                dY  += fd * fDiff;
+                dY += fd * fDiff;
                 d2Y += fd * fd;
             }
         }
@@ -497,33 +496,32 @@ static CGU_Vec2f cmp_OptimizeEndPoints(CGU_FLOAT* pPoints, CGU_INT8 cSteps, CGU_
 
 static CGU_Vec2i CMP_FindEndpointsAlphaBlockSnorm(CGU_FLOAT alphaBlockSnorm[])
 {
-
     //================================================================
     // Bounding Box
     // lowest quality calculation to get min and max value to use
     //================================================================
     CGU_Vec2f cmpMinMax;
-    cmpMinMax.x  = alphaBlockSnorm[0];
-    cmpMinMax.y  = alphaBlockSnorm[0];
+    cmpMinMax.x = alphaBlockSnorm[0];
+    cmpMinMax.y = alphaBlockSnorm[0];
 
-        for (CGU_UINT8 i = 0; i < BLOCK_SIZE_4X4; ++i)
+    for (CGU_UINT8 i = 0; i < BLOCK_SIZE_4X4; ++i)
+    {
+        if (alphaBlockSnorm[i] < cmpMinMax.x)
         {
-            if (alphaBlockSnorm[i] < cmpMinMax.x)
-            {
-                cmpMinMax.x = alphaBlockSnorm[i];
-            }
-            else if (alphaBlockSnorm[i] > cmpMinMax.y)
-            {
-                cmpMinMax.y = alphaBlockSnorm[i];
-            }
+            cmpMinMax.x = alphaBlockSnorm[i];
         }
+        else if (alphaBlockSnorm[i] > cmpMinMax.y)
+        {
+            cmpMinMax.y = alphaBlockSnorm[i];
+        }
+    }
 
     CGU_Vec2i endpoints;
     CGU_Vec2f fendpoints;
 
     // Are we done for lowest quality setting!
     // CGU_FLOAT fquality = 1.0f;
-    // 
+    //
     // if (fquality < CMP_QUALITY2) {
     //     endpoints.x = (CGU_INT8)(cmpMinMax.x);
     //     endpoints.y = (CGU_INT8)(cmpMinMax.y);
@@ -535,13 +533,13 @@ static CGU_Vec2i CMP_FindEndpointsAlphaBlockSnorm(CGU_FLOAT alphaBlockSnorm[])
     //================================================================
     if ((-1.0f == cmpMinMax.x || 1.0f == cmpMinMax.y))
     {
-        fendpoints = cmp_OptimizeEndPoints(alphaBlockSnorm, 6, true);
+        fendpoints  = cmp_OptimizeEndPoints(alphaBlockSnorm, 6, true);
         endpoints.x = cmp_SNormFloatToSInt(fendpoints.x);
         endpoints.y = cmp_SNormFloatToSInt(fendpoints.y);
     }
     else
     {
-        fendpoints = cmp_OptimizeEndPoints(alphaBlockSnorm, 8, true);
+        fendpoints  = cmp_OptimizeEndPoints(alphaBlockSnorm, 8, true);
         endpoints.x = cmp_SNormFloatToSInt(fendpoints.y);
         endpoints.y = cmp_SNormFloatToSInt(fendpoints.x);
     }
@@ -592,37 +590,42 @@ CodecError CCodec_DXTC::CompressAlphaBlockSNorm(CMP_FLOAT alphaBlockSnorm[BLOCK_
     return CE_OK;
 }
 
-CodecError CCodec_DXTC::CompressAlphaBlock_Fast(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]) {
+CodecError CCodec_DXTC::CompressAlphaBlock_Fast(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2])
+{
 #ifdef _WIN64
     CompressAlphaBlock(alphaBlock, compressedBlock);
-#else // !_WIN64
+#else  // !_WIN64
     DXTCV11CompressAlphaBlock(alphaBlock, compressedBlock);
 #endif
     return CE_OK;
 }
 
-CodecError CCodec_DXTC::CompressAlphaBlock(CODECFLOAT alphaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2]) {
-    BYTE nEndpoints[2][2];
-    BYTE nIndices[2][BLOCK_SIZE_4X4];
+CodecError CCodec_DXTC::CompressAlphaBlock(CODECFLOAT alphaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2])
+{
+    BYTE  nEndpoints[2][2];
+    BYTE  nIndices[2][BLOCK_SIZE_4X4];
     float fError8 = CompBlock1X(alphaBlock, BLOCK_SIZE_4X4, nEndpoints[0], nIndices[0], 8, false, m_bUseSSE2, 8, 0, true);
     float fError6 = (fError8 == 0.f) ? FLT_MAX : CompBlock1X(alphaBlock, BLOCK_SIZE_4X4, nEndpoints[1], nIndices[1], 6, true, m_bUseSSE2, 8, 0, true);
-    if(fError8 <= fError6)
+    if (fError8 <= fError6)
         EncodeAlphaBlock(compressedBlock, nEndpoints[0], nIndices[0]);
     else
         EncodeAlphaBlock(compressedBlock, nEndpoints[1], nIndices[1]);
     return CE_OK;
 }
 
-void CCodec_DXTC::EncodeAlphaBlock(CMP_DWORD compressedBlock[2], BYTE nEndpoints[2], BYTE nIndices[BLOCK_SIZE_4X4]) {
-    compressedBlock[0] = ((int)nEndpoints[0]) | (((int)nEndpoints[1])<<8);
+void CCodec_DXTC::EncodeAlphaBlock(CMP_DWORD compressedBlock[2], BYTE nEndpoints[2], BYTE nIndices[BLOCK_SIZE_4X4])
+{
+    compressedBlock[0] = ((int)nEndpoints[0]) | (((int)nEndpoints[1]) << 8);
     compressedBlock[1] = 0;
 
-    for(int i = 0; i < BLOCK_SIZE_4X4; i++) {
-        if(i < 5)
+    for (int i = 0; i < BLOCK_SIZE_4X4; i++)
+    {
+        if (i < 5)
             compressedBlock[0] |= (nIndices[i] & 0x7) << (16 + (i * 3));
-        else if(i > 5)
-            compressedBlock[1] |= (nIndices[i] & 0x7) << (2 + (i-6) * 3);
-        else {
+        else if (i > 5)
+            compressedBlock[1] |= (nIndices[i] & 0x7) << (2 + (i - 6) * 3);
+        else
+        {
             compressedBlock[0] |= (nIndices[i] & 0x1) << 31;
             compressedBlock[1] |= (nIndices[i] & 0x6) >> 1;
         }
@@ -632,17 +635,20 @@ void CCodec_DXTC::EncodeAlphaBlock(CMP_DWORD compressedBlock[2], BYTE nEndpoints
 //
 // This function decompresses a block
 //
-void CCodec_DXTC::DecompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]) {
+void CCodec_DXTC::DecompressAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2])
+{
     CMP_BYTE alpha[8];
     GetCompressedAlphaRamp(alpha, compressedBlock);
 
-    for(int i = 0; i < BLOCK_SIZE_4X4; i++) {
+    for (int i = 0; i < BLOCK_SIZE_4X4; i++)
+    {
         CMP_DWORD index;
-        if(i < 5)
+        if (i < 5)
             index = (compressedBlock[0] & (0x7 << (16 + (i * 3)))) >> (16 + (i * 3));
-        else if(i > 5)
-            index = (compressedBlock[1] & (0x7 << (2 + (i-6)*3))) >> (2 + (i-6)*3);
-        else {
+        else if (i > 5)
+            index = (compressedBlock[1] & (0x7 << (2 + (i - 6) * 3))) >> (2 + (i - 6) * 3);
+        else
+        {
             index = (compressedBlock[0] & 0x80000000) >> 31;
             index |= (compressedBlock[1] & 0x3) << 1;
         }
@@ -676,17 +682,20 @@ void CCodec_DXTC::DecompressAlphaBlockInt8(CMP_SBYTE alphaBlock[BLOCK_SIZE_4X4],
     }
 }
 
-void CCodec_DXTC::DecompressAlphaBlock(CODECFLOAT alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]) {
+void CCodec_DXTC::DecompressAlphaBlock(CODECFLOAT alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2])
+{
     CODECFLOAT alpha[8];
     GetCompressedAlphaRamp(alpha, compressedBlock);
 
-    for(int i = 0; i < BLOCK_SIZE_4X4; i++) {
+    for (int i = 0; i < BLOCK_SIZE_4X4; i++)
+    {
         CMP_DWORD index;
-        if(i < 5)
+        if (i < 5)
             index = (compressedBlock[0] & (0x7 << (16 + (i * 3)))) >> (16 + (i * 3));
-        else if(i > 5)
-            index = (compressedBlock[1] & (0x7 << (2 + (i-6)*3))) >> (2 + (i-6)*3);
-        else {
+        else if (i > 5)
+            index = (compressedBlock[1] & (0x7 << (2 + (i - 6) * 3))) >> (2 + (i - 6) * 3);
+        else
+        {
             index = (compressedBlock[0] & 0x80000000) >> 31;
             index |= (compressedBlock[1] & 0x3) << 1;
         }
@@ -697,25 +706,29 @@ void CCodec_DXTC::DecompressAlphaBlock(CODECFLOAT alphaBlock[BLOCK_SIZE_4X4], CM
 
 #define EXPLICIT_ALPHA_PIXEL_MASK 0xf
 #define EXPLICIT_ALPHA_PIXEL_BPP 4
-CodecError CCodec_DXTC::CompressExplicitAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]) {
+CodecError CCodec_DXTC::CompressExplicitAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2])
+{
     DXTCV11CompressExplicitAlphaBlock(alphaBlock, compressedBlock);
 
     return CE_OK;
 }
 
-CodecError CCodec_DXTC::CompressExplicitAlphaBlock_Fast(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]) {
+CodecError CCodec_DXTC::CompressExplicitAlphaBlock_Fast(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2])
+{
     // Should remove or update this:  DXTCV11CompressExplicitAlphaBlockMMX(alphaBlock, compressedBlock);
     CompressExplicitAlphaBlock(alphaBlock, compressedBlock);
     return CE_OK;
 }
 
-CodecError CCodec_DXTC::CompressExplicitAlphaBlock(CODECFLOAT alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]) {
+CodecError CCodec_DXTC::CompressExplicitAlphaBlock(CODECFLOAT alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2])
+{
     compressedBlock[0] = compressedBlock[1] = 0;
-    for(int i=0; i<16; i++) {
-        int nBlock = i < 8 ? 0 : 1;
+    for (int i = 0; i < 16; i++)
+    {
+        int      nBlock = i < 8 ? 0 : 1;
         CMP_BYTE cAlpha = CONVERT_FLOAT_TO_BYTE(alphaBlock[i]);
-        cAlpha = (CMP_BYTE) ((cAlpha + ((cAlpha >> EXPLICIT_ALPHA_PIXEL_BPP) < 0x8 ? 7 : 8) - (cAlpha >> EXPLICIT_ALPHA_PIXEL_BPP)) >> EXPLICIT_ALPHA_PIXEL_BPP);
-        if(cAlpha > EXPLICIT_ALPHA_PIXEL_MASK)
+        cAlpha = (CMP_BYTE)((cAlpha + ((cAlpha >> EXPLICIT_ALPHA_PIXEL_BPP) < 0x8 ? 7 : 8) - (cAlpha >> EXPLICIT_ALPHA_PIXEL_BPP)) >> EXPLICIT_ALPHA_PIXEL_BPP);
+        if (cAlpha > EXPLICIT_ALPHA_PIXEL_MASK)
             cAlpha = EXPLICIT_ALPHA_PIXEL_MASK;
         compressedBlock[nBlock] |= (cAlpha << ((i % 8) * EXPLICIT_ALPHA_PIXEL_BPP));
     }
@@ -726,69 +739,81 @@ CodecError CCodec_DXTC::CompressExplicitAlphaBlock(CODECFLOAT alphaBlock[BLOCK_S
 //
 // This function decompresses an explicit alpha block (DXT3)
 //
-void CCodec_DXTC::DecompressExplicitAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]) {
-    for(int i=0; i<16; i++) {
-        int nBlock = i < 8 ? 0 : 1;
-        CMP_BYTE cAlpha = (CMP_BYTE) ((compressedBlock[nBlock] >> ((i % 8) * EXPLICIT_ALPHA_PIXEL_BPP)) & EXPLICIT_ALPHA_PIXEL_MASK);
-        alphaBlock[i] = (CMP_BYTE) ((cAlpha << EXPLICIT_ALPHA_PIXEL_BPP) | cAlpha);
+void CCodec_DXTC::DecompressExplicitAlphaBlock(CMP_BYTE alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2])
+{
+    for (int i = 0; i < 16; i++)
+    {
+        int      nBlock = i < 8 ? 0 : 1;
+        CMP_BYTE cAlpha = (CMP_BYTE)((compressedBlock[nBlock] >> ((i % 8) * EXPLICIT_ALPHA_PIXEL_BPP)) & EXPLICIT_ALPHA_PIXEL_MASK);
+        alphaBlock[i]   = (CMP_BYTE)((cAlpha << EXPLICIT_ALPHA_PIXEL_BPP) | cAlpha);
     }
 }
 
-void CCodec_DXTC::DecompressExplicitAlphaBlock(CODECFLOAT alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2]) {
-    for(int i=0; i<16; i++) {
-        int nBlock = i < 8 ? 0 : 1;
-        CMP_BYTE cAlpha = (CMP_BYTE) ((compressedBlock[nBlock] >> ((i % 8) * EXPLICIT_ALPHA_PIXEL_BPP)) & EXPLICIT_ALPHA_PIXEL_MASK);
-        alphaBlock[i] = CONVERT_BYTE_TO_FLOAT((cAlpha << EXPLICIT_ALPHA_PIXEL_BPP) | cAlpha);
+void CCodec_DXTC::DecompressExplicitAlphaBlock(CODECFLOAT alphaBlock[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2])
+{
+    for (int i = 0; i < 16; i++)
+    {
+        int      nBlock = i < 8 ? 0 : 1;
+        CMP_BYTE cAlpha = (CMP_BYTE)((compressedBlock[nBlock] >> ((i % 8) * EXPLICIT_ALPHA_PIXEL_BPP)) & EXPLICIT_ALPHA_PIXEL_MASK);
+        alphaBlock[i]   = CONVERT_BYTE_TO_FLOAT((cAlpha << EXPLICIT_ALPHA_PIXEL_BPP) | cAlpha);
     }
 }
 
-void CCodec_DXTC::GetCompressedAlphaRamp(CMP_BYTE alpha[8], CMP_DWORD compressedBlock[2]) {
+void CCodec_DXTC::GetCompressedAlphaRamp(CMP_BYTE alpha[8], CMP_DWORD compressedBlock[2])
+{
     alpha[0] = (CMP_BYTE)(compressedBlock[0] & 0xff);
-    alpha[1] = (CMP_BYTE)((compressedBlock[0]>>8) & 0xff);
+    alpha[1] = (CMP_BYTE)((compressedBlock[0] >> 8) & 0xff);
 
-    if (alpha[0] > alpha[1]) {
+    if (alpha[0] > alpha[1])
+    {
         // 8-alpha block:  derive the other six alphas.
         // Bit code 000 = alpha_0, 001 = alpha_1, others are interpolated.
-        alpha[2] = static_cast<CMP_BYTE>((6 * alpha[0] + 1 * alpha[1] + 3) / 7);    // bit code 010
-        alpha[3] = static_cast<CMP_BYTE>((5 * alpha[0] + 2 * alpha[1] + 3) / 7);    // bit code 011
-        alpha[4] = static_cast<CMP_BYTE>((4 * alpha[0] + 3 * alpha[1] + 3) / 7);    // bit code 100
-        alpha[5] = static_cast<CMP_BYTE>((3 * alpha[0] + 4 * alpha[1] + 3) / 7);    // bit code 101
-        alpha[6] = static_cast<CMP_BYTE>((2 * alpha[0] + 5 * alpha[1] + 3) / 7);    // bit code 110
-        alpha[7] = static_cast<CMP_BYTE>((1 * alpha[0] + 6 * alpha[1] + 3) / 7);    // bit code 111
-    } else {
+        alpha[2] = static_cast<CMP_BYTE>((6 * alpha[0] + 1 * alpha[1] + 3) / 7);  // bit code 010
+        alpha[3] = static_cast<CMP_BYTE>((5 * alpha[0] + 2 * alpha[1] + 3) / 7);  // bit code 011
+        alpha[4] = static_cast<CMP_BYTE>((4 * alpha[0] + 3 * alpha[1] + 3) / 7);  // bit code 100
+        alpha[5] = static_cast<CMP_BYTE>((3 * alpha[0] + 4 * alpha[1] + 3) / 7);  // bit code 101
+        alpha[6] = static_cast<CMP_BYTE>((2 * alpha[0] + 5 * alpha[1] + 3) / 7);  // bit code 110
+        alpha[7] = static_cast<CMP_BYTE>((1 * alpha[0] + 6 * alpha[1] + 3) / 7);  // bit code 111
+    }
+    else
+    {
         // 6-alpha block.
         // Bit code 000 = alpha_0, 001 = alpha_1, others are interpolated.
         alpha[2] = static_cast<CMP_BYTE>((4 * alpha[0] + 1 * alpha[1] + 2) / 5);  // Bit code 010
         alpha[3] = static_cast<CMP_BYTE>((3 * alpha[0] + 2 * alpha[1] + 2) / 5);  // Bit code 011
         alpha[4] = static_cast<CMP_BYTE>((2 * alpha[0] + 3 * alpha[1] + 2) / 5);  // Bit code 100
         alpha[5] = static_cast<CMP_BYTE>((1 * alpha[0] + 4 * alpha[1] + 2) / 5);  // Bit code 101
-        alpha[6] = 0;                                      // Bit code 110
-        alpha[7] = 255;                                    // Bit code 111
+        alpha[6] = 0;                                                             // Bit code 110
+        alpha[7] = 255;                                                           // Bit code 111
     }
 }
 
-void CCodec_DXTC::GetCompressedAlphaRamp(CODECFLOAT alpha[8], CMP_DWORD compressedBlock[2]) {
+void CCodec_DXTC::GetCompressedAlphaRamp(CODECFLOAT alpha[8], CMP_DWORD compressedBlock[2])
+{
     alpha[0] = CONVERT_BYTE_TO_FLOAT(compressedBlock[0] & 0xff);
-    alpha[1] = CONVERT_BYTE_TO_FLOAT((compressedBlock[0]>>8) & 0xff);
+    alpha[1] = CONVERT_BYTE_TO_FLOAT((compressedBlock[0] >> 8) & 0xff);
 
-    if (alpha[0] > alpha[1]) {
+    if (alpha[0] > alpha[1])
+    {
         // 8-alpha block:  derive the other six alphas.
         // Bit code 000 = alpha_0, 001 = alpha_1, others are interpolated.
-        alpha[2] = (6 * alpha[0] + 1 * alpha[1]) / 7;    // bit code 010
-        alpha[3] = (5 * alpha[0] + 2 * alpha[1]) / 7;    // bit code 011
-        alpha[4] = (4 * alpha[0] + 3 * alpha[1]) / 7;    // bit code 100
-        alpha[5] = (3 * alpha[0] + 4 * alpha[1]) / 7;    // bit code 101
-        alpha[6] = (2 * alpha[0] + 5 * alpha[1]) / 7;    // bit code 110
-        alpha[7] = (1 * alpha[0] + 6 * alpha[1]) / 7;    // bit code 111
-    } else {
+        alpha[2] = (6 * alpha[0] + 1 * alpha[1]) / 7;  // bit code 010
+        alpha[3] = (5 * alpha[0] + 2 * alpha[1]) / 7;  // bit code 011
+        alpha[4] = (4 * alpha[0] + 3 * alpha[1]) / 7;  // bit code 100
+        alpha[5] = (3 * alpha[0] + 4 * alpha[1]) / 7;  // bit code 101
+        alpha[6] = (2 * alpha[0] + 5 * alpha[1]) / 7;  // bit code 110
+        alpha[7] = (1 * alpha[0] + 6 * alpha[1]) / 7;  // bit code 111
+    }
+    else
+    {
         // 6-alpha block.
         // Bit code 000 = alpha_0, 001 = alpha_1, others are interpolated.
         alpha[2] = (4 * alpha[0] + 1 * alpha[1]) / 5;  // Bit code 010
         alpha[3] = (3 * alpha[0] + 2 * alpha[1]) / 5;  // Bit code 011
         alpha[4] = (2 * alpha[0] + 3 * alpha[1]) / 5;  // Bit code 100
         alpha[5] = (1 * alpha[0] + 4 * alpha[1]) / 5;  // Bit code 101
-        alpha[6] = 0;                                      // Bit code 110
-        alpha[7] = 1.0f;                                   // Bit code 111
+        alpha[6] = 0;                                  // Bit code 110
+        alpha[7] = 1.0f;                               // Bit code 111
     }
 }
 
@@ -820,6 +845,3 @@ void CCodec_DXTC::GetCompressedAlphaRampS(CMP_SBYTE alpha[8], CMP_DWORD compress
         alpha[7] = 127;                                                            // Bit code 111
     }
 }
-
-
-

@@ -1,5 +1,5 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
@@ -13,42 +13,47 @@
 
 #include <algorithm>
 
-
 /// Cost of an intersection test relative to a node visit
 static const float INTERSECT_COST = 1.;
 
-
-typedef JRTHeuristicKDTreeBuilder::Split Split;
+typedef JRTHeuristicKDTreeBuilder::Split      Split;
 typedef JRTHeuristicKDTreeBuilder::TriangleBB TriangleBB;
-typedef JRTHeuristicKDTreeBuilder::SplitVec SplitVec;
+typedef JRTHeuristicKDTreeBuilder::SplitVec   SplitVec;
 
 /// This function is simply a predicate used with std::sort
-bool SplitLess(const Split& s1, const Split& s2) {
+bool SplitLess(const Split& s1, const Split& s2)
+{
     // if we have a degenerate bounding box, force splits to be ordered min, then max
-    if (s1.value == s2.value && s1.nTriBB == s2.nTriBB) {
+    if (s1.value == s2.value && s1.nTriBB == s2.nTriBB)
+    {
         return (!s1.bMaxSplit && s2.bMaxSplit);
-    } else {
+    }
+    else
+    {
         return s1.value < s2.value;
     }
 }
 
-
-bool BBLessX(const TriangleBB* bb1, const TriangleBB* bb2) {
+bool BBLessX(const TriangleBB* bb1, const TriangleBB* bb2)
+{
     return bb1->box.GetMin().x < bb2->box.GetMin().x;
 }
 
-bool BBLessY(const TriangleBB* bb1, const TriangleBB* bb2) {
+bool BBLessY(const TriangleBB* bb1, const TriangleBB* bb2)
+{
     return bb1->box.GetMin().y < bb2->box.GetMin().y;
 }
 
-bool BBLessZ(const TriangleBB* bb1, const TriangleBB* bb2) {
+bool BBLessZ(const TriangleBB* bb1, const TriangleBB* bb2)
+{
     return bb1->box.GetMin().z < bb2->box.GetMin().z;
 }
 
-
-void SortBBs(UINT eAxis, std::vector<TriangleBB*>& rBBs) {
+void SortBBs(UINT eAxis, std::vector<TriangleBB*>& rBBs)
+{
     // sort BBs along the axis
-    switch (eAxis) {
+    switch (eAxis)
+    {
     case X_AXIS:
         std::sort(rBBs.begin(), rBBs.end(), BBLessX);
         break;
@@ -63,8 +68,8 @@ void SortBBs(UINT eAxis, std::vector<TriangleBB*>& rBBs) {
     }
 }
 
-
-void JRTHeuristicKDTreeBuilder::ExtractSplits(UINT eAxis, const std::vector<TriangleBB>& rBBs, std::vector<Split>& rSplits, const JRTBoundingBox& rSceneBounds) {
+void JRTHeuristicKDTreeBuilder::ExtractSplits(UINT eAxis, const std::vector<TriangleBB>& rBBs, std::vector<Split>& rSplits, const JRTBoundingBox& rSceneBounds)
+{
     //rSplits.reserve( 2*rBBs.size() );
     // assumes BBs are sorted by this axis
 
@@ -73,25 +78,24 @@ void JRTHeuristicKDTreeBuilder::ExtractSplits(UINT eAxis, const std::vector<Tria
     srand(0);
 
     // collect the splits into seperate min and max face arrays
-    for (UINT i = 0; i < rBBs.size(); i++) {
-
+    for (UINT i = 0; i < rBBs.size(); i++)
+    {
         /* if( rBBs[i].pTri->GetMesh()->GetTriangleCount() > 120 )
          {
              if( i%2 == 0 )
                  continue;
          }*/
 
-
         Split minSplit;
-        minSplit.value = rBBs[i].box.GetMin()[eAxis];
+        minSplit.value     = rBBs[i].box.GetMin()[eAxis];
         minSplit.bMaxSplit = false;
-        minSplit.nTriBB = i;
+        minSplit.nTriBB    = i;
         rSplits.push_back(minSplit);
 
         Split maxSplit;
-        maxSplit.value = rBBs[i].box.GetMax()[eAxis];
+        maxSplit.value     = rBBs[i].box.GetMax()[eAxis];
         maxSplit.bMaxSplit = true;
-        maxSplit.nTriBB = i;
+        maxSplit.nTriBB    = i;
         rSplits.push_back(maxSplit);
     }
 
@@ -99,42 +103,43 @@ void JRTHeuristicKDTreeBuilder::ExtractSplits(UINT eAxis, const std::vector<Tria
     std::sort(rSplits.begin(), rSplits.end(), SplitLess);
 }
 
-
-void BuildBBs(const std::vector<const JRTTriangle*>& rTris, std::vector<TriangleBB>& rBBs) {
-
-
-    for (UINT i = 0; i < rTris.size(); i++) {
+void BuildBBs(const std::vector<const JRTTriangle*>& rTris, std::vector<TriangleBB>& rBBs)
+{
+    for (UINT i = 0; i < rTris.size(); i++)
+    {
         TriangleBB curr;
         curr.pTri = rTris[i];
 
         Vec3f verts[3];
-        verts[0] = rTris[i]->GetV1();
-        verts[1] = rTris[i]->GetV2();
-        verts[2] = rTris[i]->GetV3();
-        curr.box = JRTBoundingBox((const float*)&verts[0], 3);
+        verts[0]    = rTris[i]->GetV1();
+        verts[1]    = rTris[i]->GetV2();
+        verts[2]    = rTris[i]->GetV3();
+        curr.box    = JRTBoundingBox((const float*)&verts[0], 3);
         curr.nIndex = i;
 
         rBBs.push_back(curr);
     }
 }
 
-
-void PartitionBBs(UINT eAxis,
-                  float fPosition,
-                  const std::vector<TriangleBB*>& rBBs,
-                  std::vector<TriangleBB*>& rBack,
-                  std::vector<TriangleBB*>& rFront) {
+void PartitionBBs(UINT eAxis, float fPosition, const std::vector<TriangleBB*>& rBBs, std::vector<TriangleBB*>& rBack, std::vector<TriangleBB*>& rFront)
+{
     rBack.reserve(rBBs.size());
     rFront.reserve(rBBs.size());
 
-    for (UINT i = 0; i < rBBs.size(); i++) {
-        if (rBBs[i]->box.GetMin()[eAxis] >= fPosition) {
+    for (UINT i = 0; i < rBBs.size(); i++)
+    {
+        if (rBBs[i]->box.GetMin()[eAxis] >= fPosition)
+        {
             // its in front
             rFront.push_back(rBBs[i]);
-        } else if (rBBs[i]->box.GetMax()[eAxis] < fPosition) {
+        }
+        else if (rBBs[i]->box.GetMax()[eAxis] < fPosition)
+        {
             // its in back
             rBack.push_back(rBBs[i]);
-        } else {
+        }
+        else
+        {
             // it straddles
             rFront.push_back(rBBs[i]);
             rBack.push_back(rBBs[i]);
@@ -142,14 +147,15 @@ void PartitionBBs(UINT eAxis,
     }
 }
 
-
-
-void PartitionSplits(float /*fValue*/, UINT /*eAxis*/,  const SplitVec& rSplits, const std::vector<TriangleBB>& rBBs, SplitVec& rBack, SplitVec& rFront) {
+void PartitionSplits(float /*fValue*/, UINT /*eAxis*/, const SplitVec& rSplits, const std::vector<TriangleBB>& rBBs, SplitVec& rBack, SplitVec& rFront)
+{
     rFront.reserve(rSplits.size());
     rBack.reserve(rSplits.size());
 
-    for (UINT i = 0; i < rSplits.size(); i++) {
-        switch (rBBs[rSplits[i]->nTriBB].planeState) {
+    for (UINT i = 0; i < rSplits.size(); i++)
+    {
+        switch (rBBs[rSplits[i]->nTriBB].planeState)
+        {
         case IN_FRONT:
             // its in front
             rFront.push_back(rSplits[i]);
@@ -160,28 +166,36 @@ void PartitionSplits(float /*fValue*/, UINT /*eAxis*/,  const SplitVec& rSplits,
             rBack.push_back(rSplits[i]);
             break;
 
-        default: // STRADDLE
+        default:  // STRADDLE
             // it straddles
             rFront.push_back(rSplits[i]);
             rBack.push_back(rSplits[i]);
         }
-
     }
 }
 
-
-void JRTHeuristicKDTreeBuilder::LocateBestSplit(float /*fNodeBBInvArea*/, const JRTBoundingBox& rNodeBounds, const SplitVec splits[3], UINT axis, UINT nTriCount, float& fBestCost, bool& bSplit, UINT& eSplitAxis, float& fSplitValue) {
+void JRTHeuristicKDTreeBuilder::LocateBestSplit(float /*fNodeBBInvArea*/,
+                                                const JRTBoundingBox& rNodeBounds,
+                                                const SplitVec        splits[3],
+                                                UINT                  axis,
+                                                UINT                  nTriCount,
+                                                float&                fBestCost,
+                                                bool&                 bSplit,
+                                                UINT&                 eSplitAxis,
+                                                float&                fSplitValue)
+{
     JRTBoundingBox frontBounds = rNodeBounds, backBounds = rNodeBounds;
 
     // std::ofstream foo("foo.csv");
 
     const SplitVec& rSplitVec = splits[axis];
-    float fNodeMin = rNodeBounds.GetMin()[axis];
-    float fNodeMax = rNodeBounds.GetMax()[axis];
-    UINT nSplits = (UINT)rSplitVec.size();
+    float           fNodeMin  = rNodeBounds.GetMin()[axis];
+    float           fNodeMax  = rNodeBounds.GetMax()[axis];
+    UINT            nSplits   = (UINT)rSplitVec.size();
 
-    if (nSplits == 0) {
-        bSplit = false;
+    if (nSplits == 0)
+    {
+        bSplit     = false;
         eSplitAxis = X_AXIS;
         return;
     }
@@ -191,17 +205,21 @@ void JRTHeuristicKDTreeBuilder::LocateBestSplit(float /*fNodeBBInvArea*/, const 
     // - for each 'opening' plane, we compute the cost, and then increment the # of triangles
     //     on the 'behind' side of the plane (since the triangle will be behind all subsequent planes)
     //  For each 'closing' plane, we decrement the number of tris in front before computing the cost
-    UINT nTrisBehind = 0;
+    UINT nTrisBehind  = 0;
     UINT nTrisInFront = nTriCount;
-    UINT i = 0;
+    UINT i            = 0;
 
     // advance forwards past any splits which are before the bounding box start
     i = 0;
 
-    while (i < nSplits && rSplitVec[i]->value <= fNodeMin) {
-        if (rSplitVec[i]->bMaxSplit) {
+    while (i < nSplits && rSplitVec[i]->value <= fNodeMin)
+    {
+        if (rSplitVec[i]->bMaxSplit)
+        {
             nTrisInFront--;
-        } else {
+        }
+        else
+        {
             nTrisBehind++;
         }
 
@@ -209,7 +227,8 @@ void JRTHeuristicKDTreeBuilder::LocateBestSplit(float /*fNodeBBInvArea*/, const 
     }
 
     // figure out which split to stop at, start at the end and go backwards
-    while (nSplits > 0 && rSplitVec[nSplits - 1]->value >= fNodeMax) {
+    while (nSplits > 0 && rSplitVec[nSplits - 1]->value >= fNodeMax)
+    {
         nSplits--;
     }
 
@@ -225,7 +244,8 @@ void JRTHeuristicKDTreeBuilder::LocateBestSplit(float /*fNodeBBInvArea*/, const 
     float farea = bbSizeU * bbSizeV + bbSize[axis] * bbSizeU + bbSize[axis] * bbSizeV;
 
     // pre-compute the divide
-    if (farea == 0.0f) {
+    if (farea == 0.0f)
+    {
         farea = 0.00000001f;
     }
 
@@ -234,7 +254,8 @@ void JRTHeuristicKDTreeBuilder::LocateBestSplit(float /*fNodeBBInvArea*/, const 
     bool bHaveSplit = false;
 
     // iterate over all of the splits that lie inside the node bounding box
-    for (i = i; i < nSplits; i++) {
+    for (i = i; i < nSplits; i++)
+    {
         Split* localSplit = rSplitVec[i];
 
         nTrisInFront -= (localSplit->bMaxSplit) ? 1 : 0;
@@ -244,42 +265,49 @@ void JRTHeuristicKDTreeBuilder::LocateBestSplit(float /*fNodeBBInvArea*/, const 
 
         // compute surface area for each side of the box.  Note that we deliberately leave
         // off the multiply by two since it cancels out
-        float back_area = sa_const + (bbSizeU + bbSizeV) * (localSplit->value - fNodeMin);
+        float back_area  = sa_const + (bbSizeU + bbSizeV) * (localSplit->value - fNodeMin);
         float front_area = sa_const + (bbSizeU + bbSizeV) * (fNodeMax - localSplit->value);
-        float cost = 1.0f + INTERSECT_COST * farea * ((back_area * nTrisBehind) + (front_area * nTrisInFront));
+        float cost       = 1.0f + INTERSECT_COST * farea * ((back_area * nTrisBehind) + (front_area * nTrisInFront));
 
-        if (cost < fBestCost) {
-            fBestCost = cost;
+        if (cost < fBestCost)
+        {
+            fBestCost   = cost;
             fSplitValue = localSplit->value;
-            bHaveSplit = true;
-            JRT_ASSERT(fSplitValue >= rNodeBounds.GetMin()[axis] &&
-                       fSplitValue <= rNodeBounds.GetMax()[axis]);
+            bHaveSplit  = true;
+            JRT_ASSERT(fSplitValue >= rNodeBounds.GetMin()[axis] && fSplitValue <= rNodeBounds.GetMax()[axis]);
         }
-
     }
 
-    if (bHaveSplit) {
-        bSplit = true;
+    if (bHaveSplit)
+    {
+        bSplit     = true;
         eSplitAxis = (Axis)axis;
     }
 
     //foo.close();
 }
 
-
-void JRTHeuristicKDTreeBuilder::ClassifyBBs(JRTHeuristicKDTreeBuilder::SplitVec& rSplits, std::vector<TriangleBB>& rBBs, UINT eAxis, float fValue) {
-    for (UINT i = 0; i < rSplits.size(); i++) {
+void JRTHeuristicKDTreeBuilder::ClassifyBBs(JRTHeuristicKDTreeBuilder::SplitVec& rSplits, std::vector<TriangleBB>& rBBs, UINT eAxis, float fValue)
+{
+    for (UINT i = 0; i < rSplits.size(); i++)
+    {
         // classify only on max-splits for efficiency
-        if (rSplits[i]->bMaxSplit) {
-            TriangleBB* pBB = & rBBs[ rSplits[i]->nTriBB ];
+        if (rSplits[i]->bMaxSplit)
+        {
+            TriangleBB* pBB = &rBBs[rSplits[i]->nTriBB];
 
-            if (pBB->box.GetMin()[eAxis] >= fValue) {
+            if (pBB->box.GetMin()[eAxis] >= fValue)
+            {
                 // its in front
                 pBB->planeState = IN_FRONT;
-            } else if (pBB->box.GetMax()[eAxis] < fValue) {
+            }
+            else if (pBB->box.GetMax()[eAxis] < fValue)
+            {
                 // its in back
                 pBB->planeState = IN_BACK;
-            } else {
+            }
+            else
+            {
                 // it straddles
                 pBB->planeState = STRADDLE;
             }
@@ -287,14 +315,14 @@ void JRTHeuristicKDTreeBuilder::ClassifyBBs(JRTHeuristicKDTreeBuilder::SplitVec&
     }
 }
 
-
-void JRTHeuristicKDTreeBuilder::BuildTreeRecursive(UINT nDepthLimit,
-        const JRTBoundingBox& rNodeBounds,
-        SplitVec splits[3],
-        std::vector<TriangleBB*>& rBBsThisNode,
-        JRTKDNode* pNode,
-        std::vector<JRTKDNode>& rNodesOut,
-        std::vector<UINT>& rTrisOut) {
+void JRTHeuristicKDTreeBuilder::BuildTreeRecursive(UINT                      nDepthLimit,
+                                                   const JRTBoundingBox&     rNodeBounds,
+                                                   SplitVec                  splits[3],
+                                                   std::vector<TriangleBB*>& rBBsThisNode,
+                                                   JRTKDNode*                pNode,
+                                                   std::vector<JRTKDNode>&   rNodesOut,
+                                                   std::vector<UINT>&        rTrisOut)
+{
     UINT nTriCount = (UINT)rBBsThisNode.size();
 
     JRT_ASSERT(splits[0].size() == splits[1].size() && splits[1].size() == splits[2].size());
@@ -303,44 +331,47 @@ void JRTHeuristicKDTreeBuilder::BuildTreeRecursive(UINT nDepthLimit,
     float fBestCost = INTERSECT_COST * nTriCount;
 
     // find the optimal split
-    bool bSplit = false;
+    bool  bSplit = false;
     float fSplitValue;
-    UINT eSplitAxis = X_AXIS;
-
+    UINT  eSplitAxis = X_AXIS;
 
     float fNodeBBInvArea = 1.0f / Max(0.0000001f, rNodeBounds.GetSurfaceArea());
 
-    for (UINT axis = X_AXIS; axis <= Z_AXIS; axis++) {
+    for (UINT axis = X_AXIS; axis <= Z_AXIS; axis++)
+    {
         LocateBestSplit(fNodeBBInvArea, rNodeBounds, splits, axis, nTriCount, fBestCost, bSplit, eSplitAxis, fSplitValue);
     }
 
-
-    if (!bSplit || nDepthLimit == 0) {
+    if (!bSplit || nDepthLimit == 0)
+    {
         // we either don't want to split, or can't split, so make a leaf
-        pNode->leaf.is_leaf = true;
+        pNode->leaf.is_leaf        = true;
         pNode->leaf.triangle_count = 0;
         pNode->leaf.triangle_start = (UINT)rTrisOut.size();
 
-        for (UINT i = 0; i < rBBsThisNode.size(); i++) {
+        for (UINT i = 0; i < rBBsThisNode.size(); i++)
+        {
             // do robust tri-box clipping at the leaves
             const Vec3f* pV1 = &rBBsThisNode[i]->pTri->GetV1();
             const Vec3f* pV2 = &rBBsThisNode[i]->pTri->GetV2();
             const Vec3f* pV3 = &rBBsThisNode[i]->pTri->GetV3();
 
-            if (rNodeBounds.TriangleIntersect(pV1, pV2, pV3)) {
+            if (rNodeBounds.TriangleIntersect(pV1, pV2, pV3))
+            {
                 rTrisOut.push_back(rBBsThisNode[i]->nIndex);
                 pNode->leaf.triangle_count++;
             }
         }
-    } else {
+    }
+    else
+    {
         // make a non-leaf
 
-        pNode->inner.axis = eSplitAxis;
-        pNode->inner.is_leaf = false;
+        pNode->inner.axis     = eSplitAxis;
+        pNode->inner.is_leaf  = false;
         pNode->inner.position = fSplitValue;
 
-        JRT_ASSERT(fSplitValue > rNodeBounds.GetMin()[eSplitAxis] &&
-                   fSplitValue < rNodeBounds.GetMax()[eSplitAxis]);
+        JRT_ASSERT(fSplitValue > rNodeBounds.GetMin()[eSplitAxis] && fSplitValue < rNodeBounds.GetMax()[eSplitAxis]);
 
         ClassifyBBs(splits[0], m_bbs, eSplitAxis, fSplitValue);
 
@@ -348,7 +379,8 @@ void JRTHeuristicKDTreeBuilder::BuildTreeRecursive(UINT nDepthLimit,
         SplitVec frontSplits[3];
         SplitVec backSplits[3];
 
-        for (int j = X_AXIS; j <= Z_AXIS; j++) {
+        for (int j = X_AXIS; j <= Z_AXIS; j++)
+        {
             PartitionSplits(fSplitValue, eSplitAxis, splits[j], m_bbs, backSplits[j], frontSplits[j]);
 
             // clear old split vec to save memory
@@ -360,13 +392,13 @@ void JRTHeuristicKDTreeBuilder::BuildTreeRecursive(UINT nDepthLimit,
         std::vector<TriangleBB*> frontBBs;
         PartitionBBs(eSplitAxis, fSplitValue, rBBsThisNode, backBBs, frontBBs);
 
-        rBBsThisNode.clear(); // save memory
+        rBBsThisNode.clear();  // save memory
 
         // create new nodes
         // by convention, always create front child right before back child
         pNode->inner.front_offset = (UINT)rNodesOut.size();
-        UINT nFront = (UINT)rNodesOut.size();
-        UINT nBack = nFront + 1;
+        UINT nFront               = (UINT)rNodesOut.size();
+        UINT nBack                = nFront + 1;
         rNodesOut.push_back(JRTKDNode());
         rNodesOut.push_back(JRTKDNode());
 
@@ -375,20 +407,17 @@ void JRTHeuristicKDTreeBuilder::BuildTreeRecursive(UINT nDepthLimit,
         rNodeBounds.Split(eSplitAxis, fSplitValue, front_bounds, back_bounds);
 
         // recursively build the subtrees
-        BuildTreeRecursive(nDepthLimit - 1, front_bounds, frontSplits, frontBBs,  &rNodesOut[ nFront ], rNodesOut, rTrisOut);
-        BuildTreeRecursive(nDepthLimit - 1, back_bounds,  backSplits,  backBBs, &rNodesOut[ nBack ], rNodesOut, rTrisOut);
+        BuildTreeRecursive(nDepthLimit - 1, front_bounds, frontSplits, frontBBs, &rNodesOut[nFront], rNodesOut, rTrisOut);
+        BuildTreeRecursive(nDepthLimit - 1, back_bounds, backSplits, backBBs, &rNodesOut[nBack], rNodesOut, rTrisOut);
     }
 }
 
-
-
-
-void JRTHeuristicKDTreeBuilder::BuildTreeImpl(const JRTBoundingBox& rBounds,
-        const std::vector<const JRTTriangle*>& rTris,
-        std::vector<JRTKDNode>& rNodesOut,
-        std::vector<UINT>&      rTrisOut) {
-
-    rNodesOut.push_back(JRTKDNode());        // create root node
+void JRTHeuristicKDTreeBuilder::BuildTreeImpl(const JRTBoundingBox&                  rBounds,
+                                              const std::vector<const JRTTriangle*>& rTris,
+                                              std::vector<JRTKDNode>&                rNodesOut,
+                                              std::vector<UINT>&                     rTrisOut)
+{
+    rNodesOut.push_back(JRTKDNode());  // create root node
 
     // extract triangle BBs
     BuildBBs(rTris, m_bbs);
@@ -396,17 +425,20 @@ void JRTHeuristicKDTreeBuilder::BuildTreeImpl(const JRTBoundingBox& rBounds,
     // extract split planes
     std::vector<Split> splits[3];
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         ExtractSplits(i, m_bbs, splits[i], rBounds);
     }
 
     // build vectors of pointers to these split planes for shuffling around
     SplitVec splitPtrs[3];
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         splitPtrs[i].resize(splits[i].size());
 
-        for (int j = 0; j < (int)splits[i].size(); j++) {
+        for (int j = 0; j < (int)splits[i].size(); j++)
+        {
             splitPtrs[i][j] = &splits[i][j];
         }
     }
@@ -414,13 +446,10 @@ void JRTHeuristicKDTreeBuilder::BuildTreeImpl(const JRTBoundingBox& rBounds,
     // build vectors of pointers to BBs, also for shuffling around
     std::vector<TriangleBB*> bbPtrs;
 
-    for (int i = 0; i < (int)m_bbs.size(); i++) {
+    for (int i = 0; i < (int)m_bbs.size(); i++)
+    {
         bbPtrs.push_back(&m_bbs[i]);
     }
 
-    BuildTreeRecursive(JRTKDTree::MAX_TREE_DEPTH, rBounds,  splitPtrs, bbPtrs,  &rNodesOut[0], rNodesOut, rTrisOut);
-
-
-
+    BuildTreeRecursive(JRTKDTree::MAX_TREE_DEPTH, rBounds, splitPtrs, bbPtrs, &rNodesOut[0], rNodesOut, rTrisOut);
 }
-

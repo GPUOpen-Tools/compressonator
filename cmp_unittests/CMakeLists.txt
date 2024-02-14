@@ -14,8 +14,11 @@ target_sources(cmp_unittests
 
     core_simd_tests.cpp
     framework_tests.cpp
+    sdk_tests.cpp
     mipmap_tests.cpp
     codecbuffer_tests.cpp
+    codec_tests.cpp
+    fileio_test.cpp
 
     blockconstants.h
     bc6h_tests.cpp
@@ -31,6 +34,10 @@ target_include_directories(cmp_unittests
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/catch2
     ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
     ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib/buffer/
+    ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib/common/
+    ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib/block/
+    ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib/etc/
+    ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib/etc/etcpack/
     ${PROJECT_SOURCE_DIR}/cmp_framework/common/
     ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
 )
@@ -53,7 +60,7 @@ if(CMP_HOST_WINDOWS)
 endif()
 
 set_target_properties(cmp_unittests PROPERTIES 
-    FOLDER "Tests"
+    FOLDER ${PROJECT_FOLDER_APPS}
     OUTPUT_NAME "cmp_unittests" 
     VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$(Configuration)"
 )

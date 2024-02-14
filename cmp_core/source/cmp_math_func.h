@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -23,7 +23,6 @@
 #ifndef CMP_MATH_FUNC_H
 #define CMP_MATH_FUNC_H
 
-
 #include "common_def.h"
 
 #include <cmath>
@@ -40,48 +39,55 @@
 #include <algorithm>
 using namespace std;
 
-static CGU_INT QSortFCmp(const void *Elem1, const void *Elem2) {
+static CGU_INT QSortFCmp(const void* Elem1, const void* Elem2)
+{
     CGU_INT ret = 0;
 
-    if (*(CGU_FLOAT *)Elem1 < *(CGU_FLOAT *)Elem2)
+    if (*(CGU_FLOAT*)Elem1 < *(CGU_FLOAT*)Elem2)
         ret = -1;
-    else if (*(CGU_FLOAT *)Elem1 > *(CGU_FLOAT *)Elem2)
+    else if (*(CGU_FLOAT*)Elem1 > *(CGU_FLOAT*)Elem2)
         ret = 1;
     return ret;
 }
 
-static int QSortIntCmp(const void *Elem1, const void *Elem2) {
-    return (*(CGU_INT32 *)Elem1 - *(CGU_INT32 *)Elem2);
+static int QSortIntCmp(const void* Elem1, const void* Elem2)
+{
+    return (*(CGU_INT32*)Elem1 - *(CGU_INT32*)Elem2);
 }
 
-static CGU_FLOAT  dot(CMP_IN CGU_Vec3f Color,CMP_IN CGU_Vec3f Color2) {
-    CGU_FLOAT  ColorDot;
+static CGU_FLOAT dot(CMP_IN CGU_Vec3f Color, CMP_IN CGU_Vec3f Color2)
+{
+    CGU_FLOAT ColorDot;
     ColorDot = (Color.x * Color2.x) + (Color.y * Color2.y) + (Color.z * Color2.z);
     return ColorDot;
 }
 
-static CGU_FLOAT  dot(CMP_IN CGU_Vec2f Color,CMP_IN CGU_Vec2f Color2) {
-    CGU_FLOAT  ColorDot;
+static CGU_FLOAT dot(CMP_IN CGU_Vec2f Color, CMP_IN CGU_Vec2f Color2)
+{
+    CGU_FLOAT ColorDot;
     ColorDot = Color.x * Color2.x + Color.y * Color2.y;
     return ColorDot;
 }
 
-static CGU_Vec2f abs(CMP_IN CGU_Vec2f Color) {
-    CGU_Vec2f  ColorAbs;
+static CGU_Vec2f abs(CMP_IN CGU_Vec2f Color)
+{
+    CGU_Vec2f ColorAbs;
     ColorAbs.x = std::abs(Color.x);
     ColorAbs.y = std::abs(Color.y);
     return ColorAbs;
 }
 
-static CGU_Vec3f fabs(CMP_IN CGU_Vec3f Color) {
-    CGU_Vec3f  ColorAbs;
+static CGU_Vec3f fabs(CMP_IN CGU_Vec3f Color)
+{
+    CGU_Vec3f ColorAbs;
     ColorAbs.x = std::abs(Color.x);
     ColorAbs.y = std::abs(Color.y);
     ColorAbs.z = std::abs(Color.z);
     return ColorAbs;
 }
 
-static CGU_Vec3f round(CMP_IN CGU_Vec3f Color) {
+static CGU_Vec3f round(CMP_IN CGU_Vec3f Color)
+{
     CGU_Vec3f ColorRound;
     ColorRound.x = std::round(Color.x);
     ColorRound.y = std::round(Color.y);
@@ -89,14 +95,16 @@ static CGU_Vec3f round(CMP_IN CGU_Vec3f Color) {
     return ColorRound;
 }
 
-static CGU_Vec2f round(CMP_IN CGU_Vec2f Color) {
+static CGU_Vec2f round(CMP_IN CGU_Vec2f Color)
+{
     CGU_Vec2f ColorRound;
     ColorRound.x = std::round(Color.x);
     ColorRound.y = std::round(Color.y);
     return ColorRound;
 }
 
-static CGU_Vec3f ceil(CMP_IN CGU_Vec3f Color) {
+static CGU_Vec3f ceil(CMP_IN CGU_Vec3f Color)
+{
     CGU_Vec3f ColorCeil;
     ColorCeil.x = std::ceil(Color.x);
     ColorCeil.y = std::ceil(Color.y);
@@ -104,7 +112,8 @@ static CGU_Vec3f ceil(CMP_IN CGU_Vec3f Color) {
     return ColorCeil;
 }
 
-static CGU_Vec3f floor(CMP_IN CGU_Vec3f Color) {
+static CGU_Vec3f floor(CMP_IN CGU_Vec3f Color)
+{
     CGU_Vec3f Colorfloor;
     Colorfloor.x = std::floor(Color.x);
     Colorfloor.y = std::floor(Color.y);
@@ -112,15 +121,22 @@ static CGU_Vec3f floor(CMP_IN CGU_Vec3f Color) {
     return Colorfloor;
 }
 
-static CGU_Vec3f saturate(CGU_Vec3f value) {
-    if (value.x > 1.0f) value.x = 1.0f;
-    else if (value.x < 0.0f) value.x = 0.0f;
+static CGU_Vec3f saturate(CGU_Vec3f value)
+{
+    if (value.x > 1.0f)
+        value.x = 1.0f;
+    else if (value.x < 0.0f)
+        value.x = 0.0f;
 
-    if (value.y > 1.0f) value.y = 1.0f;
-    else if (value.y < 0.0f) value.y = 0.0f;
+    if (value.y > 1.0f)
+        value.y = 1.0f;
+    else if (value.y < 0.0f)
+        value.y = 0.0f;
 
-    if (value.z > 1.0f) value.z = 1.0f;
-    else if (value.z < 0.0f) value.z = 0.0f;
+    if (value.z > 1.0f)
+        value.z = 1.0f;
+    else if (value.z < 0.0f)
+        value.z = 0.0f;
 
     return value;
 }
@@ -131,5 +147,4 @@ static CGU_Vec3f saturate(CGU_Vec3f value) {
 // Core API which are shared between GPU & CPU
 //============================================================================
 
-#endif // Header Guard
-
+#endif  // Header Guard

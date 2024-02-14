@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -26,7 +26,7 @@
 //  Description: implementation of the CCodec_ATI2N_DXT5 class
 //
 //////////////////////////////////////////////////////////////////////////////
-#pragma warning(disable:4100)
+#pragma warning(disable : 4100)
 
 #include "common.h"
 #include "codec_ati2n_dxt5.h"
@@ -35,20 +35,25 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////////////
 
-CCodec_ATI2N_DXT5::CCodec_ATI2N_DXT5() :
-    CCodec_ATI2N(CT_ATI2N_DXT5) {
-
+CCodec_ATI2N_DXT5::CCodec_ATI2N_DXT5()
+    : CCodec_ATI2N(CT_ATI2N_DXT5)
+{
 }
 
-CCodec_ATI2N_DXT5::~CCodec_ATI2N_DXT5() {
-
+CCodec_ATI2N_DXT5::~CCodec_ATI2N_DXT5()
+{
 }
 
-CodecError CCodec_ATI2N_DXT5::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_ATI2N_DXT5::Compress(CCodecBuffer&       bufferIn,
+                                       CCodecBuffer&       bufferOut,
+                                       Codec_Feedback_Proc pFeedbackProc,
+                                       CMP_DWORD_PTR       pUser1,
+                                       CMP_DWORD_PTR       pUser2)
+{
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
 
-    if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
+    if (bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
         return CE_Unknown;
 
     const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
@@ -56,34 +61,41 @@ CodecError CCodec_ATI2N_DXT5::Compress(CCodecBuffer& bufferIn, CCodecBuffer& buf
 
     bool bUseFixed = (!bufferIn.IsFloat() && bufferIn.GetChannelDepth() == 8 && !m_bUseFloat);
 
-    for(CMP_DWORD j = 0; j < dwBlocksY; j++) {
-        for(CMP_DWORD i = 0; i < dwBlocksX; i++) {
+    for (CMP_DWORD j = 0; j < dwBlocksY; j++)
+    {
+        for (CMP_DWORD i = 0; i < dwBlocksX; i++)
+        {
             CMP_DWORD compressedBlock[4];
-            if(bUseFixed) {
+            if (bUseFixed)
+            {
                 CMP_BYTE srcBlock[BLOCK_SIZE_4X4X4];
                 CMP_BYTE tempBlock[BLOCK_SIZE_4X4X4];
-                bufferIn.ReadBlockRGBA(i*4, j*4, 4, 4, tempBlock);
-                for(CMP_DWORD k = 0; k < BLOCK_SIZE_4X4; k++)
-                    ((CMP_DWORD*) srcBlock)[k] = SWIZZLE_RGBA_xGxR(((CMP_DWORD*) tempBlock)[k]);
+                bufferIn.ReadBlockRGBA(i * 4, j * 4, 4, 4, tempBlock);
+                for (CMP_DWORD k = 0; k < BLOCK_SIZE_4X4; k++)
+                    ((CMP_DWORD*)srcBlock)[k] = SWIZZLE_RGBA_xGxR(((CMP_DWORD*)tempBlock)[k]);
                 CompressRGBABlock(srcBlock, compressedBlock);
-            } else {
+            }
+            else
+            {
                 float srcBlock[BLOCK_SIZE_4X4X4];
                 float tempBlock[BLOCK_SIZE_4X4X4];
-                bufferIn.ReadBlockRGBA(i*4, j*4, 4, 4, tempBlock);
-                for(CMP_DWORD k = 0; k < BLOCK_SIZE_4X4; k++) {
+                bufferIn.ReadBlockRGBA(i * 4, j * 4, 4, 4, tempBlock);
+                for (CMP_DWORD k = 0; k < BLOCK_SIZE_4X4; k++)
+                {
                     srcBlock[(k * 4) + RGBA32F_OFFSET_R] = 0;
-                    srcBlock[(k * 4) + RGBA32F_OFFSET_A] = tempBlock[(k* 4) + RGBA32F_OFFSET_R];
+                    srcBlock[(k * 4) + RGBA32F_OFFSET_A] = tempBlock[(k * 4) + RGBA32F_OFFSET_R];
                     srcBlock[(k * 4) + RGBA32F_OFFSET_B] = 0;
-                    srcBlock[(k * 4) + RGBA32F_OFFSET_G] = tempBlock[(k* 4) + RGBA32F_OFFSET_G];
+                    srcBlock[(k * 4) + RGBA32F_OFFSET_G] = tempBlock[(k * 4) + RGBA32F_OFFSET_G];
                 }
                 CompressRGBABlock(srcBlock, compressedBlock);
             }
-            bufferOut.WriteBlock(i*4, j*4, compressedBlock, 4);
+            bufferOut.WriteBlock(i * 4, j * 4, compressedBlock, 4);
         }
 
-        if(pFeedbackProc) {
+        if (pFeedbackProc)
+        {
             float fProgress = 100.f * (j * dwBlocksX) / (dwBlocksX * dwBlocksY);
-            if(pFeedbackProc(fProgress, pUser1, pUser2))
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
                 return CE_Aborted;
         }
     }
@@ -91,61 +103,74 @@ CodecError CCodec_ATI2N_DXT5::Compress(CCodecBuffer& bufferIn, CCodecBuffer& buf
     return CE_OK;
 }
 
-CodecError CCodec_ATI2N_DXT5::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_ATI2N_DXT5::Decompress(CCodecBuffer&       bufferIn,
+                                         CCodecBuffer&       bufferOut,
+                                         Codec_Feedback_Proc pFeedbackProc,
+                                         CMP_DWORD_PTR       pUser1,
+                                         CMP_DWORD_PTR       pUser2)
+{
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
 
-    if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
+    if (bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
         return CE_Unknown;
 
-    const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
-    const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
-    const CMP_DWORD dwBlocksXY = dwBlocksX*dwBlocksY;
+    const CMP_DWORD dwBlocksX  = ((bufferIn.GetWidth() + 3) >> 2);
+    const CMP_DWORD dwBlocksY  = ((bufferIn.GetHeight() + 3) >> 2);
+    const CMP_DWORD dwBlocksXY = dwBlocksX * dwBlocksY;
 
     bool bUseFixed = (!bufferOut.IsFloat() && bufferOut.GetChannelDepth() == 8 && !m_bUseFloat);
 
-    for(CMP_DWORD j = 0; j < dwBlocksY; j++) {
-        for(CMP_DWORD i = 0; i < dwBlocksX; i++) {
+    for (CMP_DWORD j = 0; j < dwBlocksY; j++)
+    {
+        for (CMP_DWORD i = 0; i < dwBlocksX; i++)
+        {
             CMP_DWORD compressedBlock[4];
-            bufferIn.ReadBlock(i*4, j*4, compressedBlock, 4);
-            if(bUseFixed) {
+            bufferIn.ReadBlock(i * 4, j * 4, compressedBlock, 4);
+            if (bUseFixed)
+            {
                 CMP_BYTE tempBlock[BLOCK_SIZE_4X4X4];
                 DecompressRGBABlock(tempBlock, compressedBlock);
 
                 CMP_BYTE destBlock[BLOCK_SIZE_4X4X4];
-                for(CMP_DWORD k = 0; k < BLOCK_SIZE_4X4; k++) {
+                for (CMP_DWORD k = 0; k < BLOCK_SIZE_4X4; k++)
+                {
                     // Bug Work Arround: This codec buffer is BGRA -> we expect data to be RGBA, the codec buffer is configured
                     // for BGRA and we want output as RGBA...
-                    destBlock[(k * 4) + 0] = tempBlock[(k* 4) + 3];
-                    destBlock[(k * 4) + 1] = tempBlock[(k* 4) + 1];
+                    destBlock[(k * 4) + 0] = tempBlock[(k * 4) + 3];
+                    destBlock[(k * 4) + 1] = tempBlock[(k * 4) + 1];
                     destBlock[(k * 4) + 2] = 0;
                     destBlock[(k * 4) + 3] = 0xff;
                 }
 
-                bufferOut.WriteBlockRGBA(i*4, j*4, 4, 4, destBlock);
-            } else {
+                bufferOut.WriteBlockRGBA(i * 4, j * 4, 4, 4, destBlock);
+            }
+            else
+            {
                 float tempBlock[BLOCK_SIZE_4X4X4];
                 DecompressRGBABlock(tempBlock, compressedBlock);
 
                 float destBlock[BLOCK_SIZE_4X4X4];
-                for(CMP_DWORD k = 0; k < BLOCK_SIZE_4X4; k++) {
-                    destBlock[(k * 4) + RGBA32F_OFFSET_R] = tempBlock[(k* 4) + RGBA32F_OFFSET_A];
-                    destBlock[(k * 4) + RGBA32F_OFFSET_G] = tempBlock[(k* 4) + RGBA32F_OFFSET_G];
+                for (CMP_DWORD k = 0; k < BLOCK_SIZE_4X4; k++)
+                {
+                    destBlock[(k * 4) + RGBA32F_OFFSET_R] = tempBlock[(k * 4) + RGBA32F_OFFSET_A];
+                    destBlock[(k * 4) + RGBA32F_OFFSET_G] = tempBlock[(k * 4) + RGBA32F_OFFSET_G];
                     destBlock[(k * 4) + RGBA32F_OFFSET_B] = 0.f;
                     destBlock[(k * 4) + RGBA32F_OFFSET_A] = 1.0;
                 }
 
-                bufferOut.WriteBlockRGBA(i*4, j*4, 4, 4, destBlock);
+                bufferOut.WriteBlockRGBA(i * 4, j * 4, 4, 4, destBlock);
             }
         }
 
-        if (pFeedbackProc) {
+        if (pFeedbackProc)
+        {
             float fProgress = 100.f * (j * dwBlocksX) / dwBlocksXY;
-            if (pFeedbackProc(fProgress, pUser1, pUser2)) {
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
+            {
                 return CE_Aborted;
             }
         }
-
     }
 
     return CE_OK;

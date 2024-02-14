@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -25,9 +25,9 @@
 
 #include "cpnewproject.h"
 
-cpNewProject::cpNewProject(QWidget *parent):
-    m_parent(parent) {
-
+cpNewProject::cpNewProject(QWidget* parent)
+    : m_parent(parent)
+{
     setWindowTitle("New Project");
     Qt::WindowFlags flags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
     setWindowFlags(flags);
@@ -35,7 +35,7 @@ cpNewProject::cpNewProject(QWidget *parent):
     // //--------------------------------
     // // Destination Name
     // //--------------------------------
-    QLabel *LName = new QLabel(tr("Name    "));
+    QLabel* LName = new QLabel(tr("Name    "));
     LName->setToolTip("Enter a name for the new project");
     m_LEName = new QLineEdit;
     m_LEName->setEchoMode(QLineEdit::Normal);
@@ -46,11 +46,11 @@ cpNewProject::cpNewProject(QWidget *parent):
     // =================================================P
     // Destination File
     // =================================================
-    QLabel *m_lFolder = new QLabel;
+    QLabel* m_lFolder = new QLabel;
     m_lFolder->setText("Location");
     m_lFolder->setToolTip("Set the project location");
     m_DestinationFolder = new QLineEdit;
-    m_PBDestFileFolder  = new QPushButton("...",this);
+    m_PBDestFileFolder  = new QPushButton("...", this);
     m_PBDestFileFolder->setAutoDefault(true);
     m_PBDestFileFolder->setToolTip("Open file browser");
     m_PBDestFileFolder->setMaximumWidth(30);
@@ -64,7 +64,7 @@ cpNewProject::cpNewProject(QWidget *parent):
     //================
     // Buttons
     //================
-    m_PBOk = new QPushButton("Ok");
+    m_PBOk     = new QPushButton("Ok");
     m_PBCancel = new QPushButton("Cancel");
     m_PBOk->setAutoDefault(true);
     m_PBCancel->setAutoDefault(true);
@@ -85,32 +85,39 @@ cpNewProject::cpNewProject(QWidget *parent):
     resize(400, 80);
 }
 
-void cpNewProject::keyPressEvent(QKeyEvent *event) {
-    if(event->key() == Qt::Key_Escape) {
+void cpNewProject::keyPressEvent(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Escape)
+    {
         this->close();
     }
-    if (event->modifiers().testFlag(Qt::AltModifier)) {
+    if (event->modifiers().testFlag(Qt::AltModifier))
+    {
         m_LEName->clearFocus();
         m_DestinationFolder->clearFocus();
-        if (event->key() == Qt::Key_O) {
+        if (event->key() == Qt::Key_O)
+        {
             onPBOk();
         }
-        if (event->key() == Qt::Key_C) {
+        if (event->key() == Qt::Key_C)
+        {
             onPBCancel();
         }
     }
     //enter is detected as Key_Return
-    if (event->key() == Qt::Key_Return) {
+    if (event->key() == Qt::Key_Return)
+    {
         this->onPBOk();
     }
 }
 
-void cpNewProject::GetNewFilePathName(QString OldFilePathName) {
+void cpNewProject::GetNewFilePathName(QString OldFilePathName)
+{
     m_LEName->setText("");
 
     // Strip old project name and get path only
     QFileInfo FilePathName(OldFilePathName);
-    QDir dir(FilePathName.absoluteDir());
+    QDir      dir(FilePathName.absoluteDir());
 
     // Geth the Project Dir
     QString ProjectFilePath = dir.absolutePath();
@@ -121,24 +128,26 @@ void cpNewProject::GetNewFilePathName(QString OldFilePathName) {
     show();
 }
 
-
-
-void cpNewProject::onPBCancel() {
+void cpNewProject::onPBCancel()
+{
     hide();
 }
 
-void cpNewProject::onPBOk() {
+void cpNewProject::onPBOk()
+{
     // Get file name as enetered by the user
     QString FileName = m_LEName->text();
 
     // Remove cprj extension from file name
-    if (FileName.contains(".cprj")) {
+    if (FileName.contains(".cprj"))
+    {
         QFileInfo FileInfo(FileName);
         FileName = FileInfo.baseName();
     }
 
     // Check if we have a name
-    if (FileName.size() == 0) {
+    if (FileName.size() == 0)
+    {
         QMessageBox msgBox;
         msgBox.setText("Please enter a project name");
         msgBox.exec();
@@ -157,14 +166,16 @@ void cpNewProject::onPBOk() {
 
     QCharRef c = Destination[Destination.length() - 1];
 
-    if ((c != '/') || (c != '\\')) Destination.append("/");
+    if ((c != '/') || (c != '\\'))
+        Destination.append("/");
 
     // now add the filename
     Destination.append(FileName);
 
     // check for pre-existing project that will get replaced with this new one
-    QFile fileexist(Destination +".cprj");
-    if (fileexist.exists()) {
+    QFile fileexist(Destination + ".cprj");
+    if (fileexist.exists())
+    {
         if (QMessageBox::question(this, "Project", "File already exists\nDo you want to continue?", QMessageBox::Yes | QMessageBox::No) == QMessageBox::No)
             return;
     }
@@ -173,10 +184,11 @@ void cpNewProject::onPBOk() {
     hide();
 }
 
-
-void cpNewProject::onDestFileFolder() {
+void cpNewProject::onDestFileFolder()
+{
     QString fileFolder = QFileDialog::getExistingDirectory(this, tr("Destination Folder"), m_DestinationFolder->text());
-    if (fileFolder.length() > 0) {
+    if (fileFolder.length() > 0)
+    {
         m_DestinationFolder->setText(fileFolder);
     }
 }

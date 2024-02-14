@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2020  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,12 +26,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#pragma warning(disable:4100)    // Ignore warnings of unreferenced formal parameters
+#pragma warning(disable : 4100)  // Ignore warnings of unreferenced formal parameters
 
 #include "compressonator.h"
 
 #ifdef USE_BASIS
-
 
 #ifdef _WIN32
 #include "common.h"
@@ -45,81 +44,104 @@
 
 #ifdef USE_FILEIO
 #include <stdio.h>
-FILE * basis_File = NULL;
-int basis_blockcount = 0;
-int basis_total_MSE = 0;
+FILE* basis_File       = NULL;
+int   basis_blockcount = 0;
+int   basis_total_MSE  = 0;
 #endif
 
 // New SDK interfaces used for using external runtime common encoder codec API's
-int  (*BASIS_CompressTexture)(void *in, void *out,void *processOptions) = NULL;
-int  (*BASIS_DecompressTexture)(void *in, void *out,void *processOptions) = NULL;
+int (*BASIS_CompressTexture)(void* in, void* out, void* processOptions)   = NULL;
+int (*BASIS_DecompressTexture)(void* in, void* out, void* processOptions) = NULL;
 
 //////////////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////////////
 
-CCodec_BASIS::CCodec_BASIS() : CCodec_DXTC(CT_BASIS) {
-    m_LibraryInitialized   = false;
-    m_quality = 0.05f;
-
+CCodec_BASIS::CCodec_BASIS()
+    : CCodec_DXTC(CT_BASIS)
+{
+    m_LibraryInitialized = false;
+    m_quality            = 0.05f;
 }
 
-bool CCodec_BASIS::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue) {
-    if (sValue == NULL) return false;
+bool CCodec_BASIS::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
+{
+    if (sValue == NULL)
+        return false;
 
-    if (strcmp(pszParamName, "Quality") == 0) {
+    if (strcmp(pszParamName, "Quality") == 0)
+    {
         m_quality = std::stof(sValue);
-        if ((m_quality < 0) || (m_quality > 1.0)) {
+        if ((m_quality < 0) || (m_quality > 1.0))
+        {
             return false;
         }
         return true;
-    } else
+    }
+    else
         return CCodec_DXTC::SetParameter(pszParamName, sValue);
 }
 
-bool CCodec_BASIS::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue) {
+bool CCodec_BASIS::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue)
+{
     return CCodec_DXTC::SetParameter(pszParamName, dwValue);
 }
 
-bool CCodec_BASIS::SetParameter(const CMP_CHAR* pszParamName, CODECFLOAT fValue) {
-    if (strcmp(pszParamName, "Quality") == 0) {
+bool CCodec_BASIS::SetParameter(const CMP_CHAR* pszParamName, CODECFLOAT fValue)
+{
+    if (strcmp(pszParamName, "Quality") == 0)
+    {
         m_quality = fValue;
         return true;
-    } else
+    }
+    else
         return CCodec_DXTC::SetParameter(pszParamName, fValue);
 }
 
-CCodec_BASIS::~CCodec_BASIS() {
-    if (m_LibraryInitialized) {
+CCodec_BASIS::~CCodec_BASIS()
+{
+    if (m_LibraryInitialized)
+    {
         m_LibraryInitialized = false;
     }
 }
 
-CodecError CCodec_BASIS::InitializeBASISLibrary() {
-    if (!m_LibraryInitialized) {
+CodecError CCodec_BASIS::InitializeBASISLibrary()
+{
+    if (!m_LibraryInitialized)
+    {
         m_LibraryInitialized = true;
     }
     return CE_OK;
 }
 
-CodecError CCodec_BASIS::EncodeBASISBlock(CMP_BYTE *in,  CMP_BYTE *out) {
+CodecError CCodec_BASIS::EncodeBASISBlock(CMP_BYTE* in, CMP_BYTE* out)
+{
     return CE_OK;
 }
 
-CodecError CCodec_BASIS::FinishBASISEncoding(void) {
-    if(!m_LibraryInitialized) {
+CodecError CCodec_BASIS::FinishBASISEncoding(void)
+{
+    if (!m_LibraryInitialized)
+    {
         return CE_Unknown;
     }
 
     return CE_OK;
 }
 
-CodecError CCodec_BASIS::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_BASIS::Compress(CCodecBuffer&       bufferIn,
+                                  CCodecBuffer&       bufferOut,
+                                  Codec_Feedback_Proc pFeedbackProc,
+                                  CMP_DWORD_PTR       pUser1,
+                                  CMP_DWORD_PTR       pUser2)
+{
     CodecError result = InitializeBASISLibrary();
-    if (result != CE_OK) return result;
+    if (result != CE_OK)
+        return result;
 
-
-    if (BASIS_CompressTexture) {
+    if (BASIS_CompressTexture)
+    {
         BASIS_CompressTexture(&bufferIn, &bufferOut, nullptr);
     }
 
@@ -131,26 +153,43 @@ CodecError CCodec_BASIS::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOu
     return result;
 }
 
-CodecError CCodec_BASIS::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_BASIS::Decompress(CCodecBuffer&       bufferIn,
+                                    CCodecBuffer&       bufferOut,
+                                    Codec_Feedback_Proc pFeedbackProc,
+                                    CMP_DWORD_PTR       pUser1,
+                                    CMP_DWORD_PTR       pUser2)
+{
     CodecError err = InitializeBASISLibrary();
-    if (err != CE_OK) return err;
+    if (err != CE_OK)
+        return err;
 
-    if (BASIS_DecompressTexture) {
+    if (BASIS_DecompressTexture)
+    {
         BASIS_DecompressTexture(&bufferIn, &bufferOut, nullptr);
     }
     return CE_OK;
 }
 
 // Not implemented
-CodecError CCodec_BASIS::Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_BASIS::Compress_Fast(CCodecBuffer&       bufferIn,
+                                       CCodecBuffer&       bufferOut,
+                                       Codec_Feedback_Proc pFeedbackProc,
+                                       CMP_DWORD_PTR       pUser1,
+                                       CMP_DWORD_PTR       pUser2)
+{
     return CE_OK;
 }
 
 // Not implemented
-CodecError CCodec_BASIS::Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_BASIS::Compress_SuperFast(CCodecBuffer&       bufferIn,
+                                            CCodecBuffer&       bufferOut,
+                                            Codec_Feedback_Proc pFeedbackProc,
+                                            CMP_DWORD_PTR       pUser1,
+                                            CMP_DWORD_PTR       pUser2)
+{
     return CE_OK;
 }
 
-#endif // USE_BASIS
+#endif  // USE_BASIS
 
 #endif

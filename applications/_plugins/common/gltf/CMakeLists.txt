@@ -6,9 +6,7 @@ set(GLTF_SRC
 )
 
 set(GLTF_H
-    cmp_defines.h
     cmp_gltfcommon.h
-    cmp_gltffeatures.h
     cmp_gltfhelpers.h
     cmp_gltfstructures.h
     cmp_error.h
@@ -27,5 +25,5 @@ target_include_directories(CMP_GUI_Gltf PRIVATE
   ${PROJECT_SOURCE_DIR}/../common/lib/ext/glm
 )
 
-set_target_properties(CMP_GUI_Gltf PROPERTIES FOLDER "Libs")
+set_target_properties(CMP_GUI_Gltf PROPERTIES FOLDER ${PROJECT_FOLDER_APPS_LIBS})
 

@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2018-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,7 +23,6 @@
 
 #include "mesh_tootle.h"
 
-
 #include "timer.h"
 #include "modeldata.h"
 #include "tc_pluginapi.h"
@@ -43,7 +42,8 @@ DECLARE_PLUGIN(Plugin_Mesh_Tootle)
 SET_PLUGIN_TYPE("MESH_OPTIMIZER")
 SET_PLUGIN_NAME("TOOTLE")
 #else
-void *make_Plugin_Mesh_Tootle() {
+void* make_Plugin_Mesh_Tootle()
+{
     return new Plugin_Mesh_Tootle;
 }
 #endif
@@ -58,53 +58,60 @@ extern CMIPS* g_CMIPS;
 
 //using namespace CMP_Mesh_Tootle;
 
-Plugin_Mesh_Tootle::Plugin_Mesh_Tootle() {
+Plugin_Mesh_Tootle::Plugin_Mesh_Tootle()
+{
     m_InitOK = false;
 
-    m_settings.pMeshName = NULL;
-    m_settings.pViewpointName = NULL;
-    m_settings.nClustering = 0;
-    m_settings.nCacheSize = TOOTLE_DEFAULT_VCACHE_SIZE;
-    m_settings.eWinding = TOOTLE_CW;
-    m_settings.algorithmChoice = TOOTLE_OPTIMIZE;
-    m_settings.eVCacheOptimizer = TOOTLE_VCACHE_AUTO;             // the auto selection as the default to optimize vertex cache
-    m_settings.bOptimizeVertexMemory = true;                           // default value is to optimize the vertex memory
-    m_settings.bMeasureOverdraw = false;                           // default is to skip measure overdraw
+    m_settings.pMeshName             = NULL;
+    m_settings.pViewpointName        = NULL;
+    m_settings.nClustering           = 0;
+    m_settings.nCacheSize            = TOOTLE_DEFAULT_VCACHE_SIZE;
+    m_settings.eWinding              = TOOTLE_CW;
+    m_settings.algorithmChoice       = TOOTLE_OPTIMIZE;
+    m_settings.eVCacheOptimizer      = TOOTLE_VCACHE_AUTO;  // the auto selection as the default to optimize vertex cache
+    m_settings.bOptimizeVertexMemory = true;                // default value is to optimize the vertex memory
+    m_settings.bMeasureOverdraw      = false;               // default is to skip measure overdraw
 }
 
-Plugin_Mesh_Tootle::~Plugin_Mesh_Tootle() {
+Plugin_Mesh_Tootle::~Plugin_Mesh_Tootle()
+{
     CleanUp();
 }
 
-int Plugin_Mesh_Tootle::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) {
+int Plugin_Mesh_Tootle::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
+{
 #ifdef _WIN32
-    pPluginVersion->guid                     = g_GUID;
+    pPluginVersion->guid = g_GUID;
 #endif
-    pPluginVersion->dwAPIVersionMajor        = TC_API_VERSION_MAJOR;
-    pPluginVersion->dwAPIVersionMinor        = TC_API_VERSION_MINOR;
-    pPluginVersion->dwPluginVersionMajor     = TC_PLUGIN_VERSION_MAJOR;
-    pPluginVersion->dwPluginVersionMinor     = TC_PLUGIN_VERSION_MINOR;
+    pPluginVersion->dwAPIVersionMajor    = TC_API_VERSION_MAJOR;
+    pPluginVersion->dwAPIVersionMinor    = TC_API_VERSION_MINOR;
+    pPluginVersion->dwPluginVersionMajor = TC_PLUGIN_VERSION_MAJOR;
+    pPluginVersion->dwPluginVersionMinor = TC_PLUGIN_VERSION_MINOR;
     return 0;
 }
 
-int Plugin_Mesh_Tootle::TC_PluginSetSharedIO(void *Shared) {
-    if (Shared) {
-        g_CMIPS = static_cast<CMIPS *>(Shared);
-        g_CMIPS->m_infolevel = 0x01; // Turn on print Info
+int Plugin_Mesh_Tootle::TC_PluginSetSharedIO(void* Shared)
+{
+    if (Shared)
+    {
+        g_CMIPS              = static_cast<CMIPS*>(Shared);
+        g_CMIPS->m_infolevel = 0x01;  // Turn on print Info
         return 0;
     }
     return 1;
 }
 
-
-int Plugin_Mesh_Tootle::Init() {
-    if (m_InitOK) return 0;
+int Plugin_Mesh_Tootle::Init()
+{
+    if (m_InitOK)
+        return 0;
 
     TootleResult result;
 
     // initialize Tootle
     result = TootleInit();
-    if (result != TOOTLE_OK) {
+    if (result != TOOTLE_OK)
+    {
         return -1;
     }
 
@@ -113,9 +120,10 @@ int Plugin_Mesh_Tootle::Init() {
     return 0;
 }
 
-
-int Plugin_Mesh_Tootle::CleanUp() {
-    if (m_InitOK) {
+int Plugin_Mesh_Tootle::CleanUp()
+{
+    if (m_InitOK)
+    {
         // clean up tootle
         TootleCleanup();
         m_InitOK = false;
@@ -123,7 +131,8 @@ int Plugin_Mesh_Tootle::CleanUp() {
     return 0;
 }
 
-void getFileName(const char *FilePathName, char *fnameExt, int maxbuffsize) {
+void getFileName(const char* FilePathName, char* fnameExt, int maxbuffsize)
+{
     std::string FileName = CMP_GetJustFileName(FilePathName);
     std::string FileExt  = CMP_GetJustFileExt(FilePathName);
     snprintf(fnameExt, maxbuffsize, "%s%s", FileName.c_str(), FileExt.c_str());
@@ -136,25 +145,30 @@ void getFileName(const char *FilePathName, char *fnameExt, int maxbuffsize) {
 /// \param rVertices   A vector which will be filled with vertex positions
 /// \param rIndices    A vector which will will be filled with face indices
 //=================================================================================================================================
-bool LoadViewpoints(const char* pFileName, std::vector<ObjVertex3D>& rViewPoints) {
+bool LoadViewpoints(const char* pFileName, std::vector<ObjVertex3D>& rViewPoints)
+{
     assert(pFileName);
 
     FILE* pFile = fopen(pFileName, "r");
 
-    if (!pFile) {
+    if (!pFile)
+    {
         return false;
     }
 
     int iSize;
 
-    if (fscanf(pFile, "%i\n", &iSize) != 1) {
+    if (fscanf(pFile, "%i\n", &iSize) != 1)
+    {
         return false;
     }
 
-    for (int i = 0; i < iSize; i++) {
+    for (int i = 0; i < iSize; i++)
+    {
         float x, y, z;
 
-        if (fscanf(pFile, "%f %f %f\n", &x, &y, &z) != 3) {
+        if (fscanf(pFile, "%f %f %f\n", &x, &y, &z) != 3)
+        {
             return false;
         }
 
@@ -182,35 +196,44 @@ bool LoadViewpoints(const char* pFileName, std::vector<ObjVertex3D>& rViewPoints
 ///
 /// \return True if successful.  False otherwise
 //=================================================================================================================================
-bool EmitModifiedObj(std::istream& rInput, std::ostream& rOutput, const std::vector<ObjVertexFinal>& rVertices,
-                     const std::vector<unsigned int>& rIndices, const unsigned int* vertexRemap,
-                     unsigned int nVertices) {
+bool EmitModifiedObj(std::istream&                      rInput,
+                     std::ostream&                      rOutput,
+                     const std::vector<ObjVertexFinal>& rVertices,
+                     const std::vector<unsigned int>&   rIndices,
+                     const unsigned int*                vertexRemap,
+                     unsigned int                       nVertices)
+{
     // store the original copy of vertices into an array
     // we need to do this because rVertices contains the reordered vertex by ObjLoader using a hash map.
     std::vector<ObjVertex3D> inputVertices;
-    inputVertices.reserve(rVertices.size());    // reserve at least this size, but the total input vertices might be larger.
+    inputVertices.reserve(rVertices.size());  // reserve at least this size, but the total input vertices might be larger.
 
     unsigned int nCount = 0;
 
-    while (!rInput.eof()) {
+    while (!rInput.eof())
+    {
         std::string currentLine;
         std::getline(rInput, currentLine, '\n');
         const char* pLineText = currentLine.c_str();
 
         //if there is an "f " before the first space, then this is a face line
-        if (strstr(pLineText, "f ") == strstr(pLineText, " ") - 1) {
+        if (strstr(pLineText, "f ") == strstr(pLineText, " ") - 1)
+        {
             // face line
-        } else if (strstr(pLineText, "v ") == strstr(pLineText, " ") - 1) {    // vertex line
+        }
+        else if (strstr(pLineText, "v ") == strstr(pLineText, " ") - 1)
+        {  // vertex line
             ObjVertex3D vert;
 
             // vertex line
-            sscanf(pLineText, "v %f %f %f", &vert.x, &vert.y,
-                   &vert.z);
+            sscanf(pLineText, "v %f %f %f", &vert.x, &vert.y, &vert.z);
 
             inputVertices.push_back(vert);
 
             nCount++;
-        } else {
+        }
+        else
+        {
             // not a face line, pass it through
             rOutput << currentLine << std::endl;
         }
@@ -222,17 +245,24 @@ bool EmitModifiedObj(std::istream& rInput, std::ostream& rOutput, const std::vec
     std::vector<unsigned int> vertexRemapping;
 
     // if there is no vertex remapping, create a default one
-    if (vertexRemap == NULL) {
+    if (vertexRemap == NULL)
+    {
         vertexRemapping.resize(nCount);
 
-        for (unsigned int i = 0; i < nCount; i++) {
+        for (unsigned int i = 0; i < nCount; i++)
+        {
             vertexRemapping[i] = i;
         }
-    } else {
+    }
+    else
+    {
         vertexRemapping.reserve(nCount);
-        if (nVertices >= nCount) {
+        if (nVertices >= nCount)
+        {
             vertexRemapping.assign(vertexRemap, vertexRemap + nCount);
-        } else {
+        }
+        else
+        {
             vertexRemapping.assign(vertexRemap, vertexRemap + rVertices.size());
         }
 
@@ -240,16 +270,19 @@ bool EmitModifiedObj(std::istream& rInput, std::ostream& rOutput, const std::vec
         //  they are not mapped by TootleOptimizeVertexMemory().
         //  In that case, we will reassign the unmapped vertices to the end of the vertex buffer.
 
-        for (unsigned int i = nVertices; i < nCount; i++) {
+        for (unsigned int i = nVertices; i < nCount; i++)
+        {
             vertexRemapping.push_back(i);
         }
 
         // print out the vertex mapping indexes in the output obj
         const unsigned int NUM_ITEMS_PER_LINE = 50;
         rOutput << "#vertexRemap = ";
-        for (unsigned int i = 0; i < nCount; ++i) {
+        for (unsigned int i = 0; i < nCount; ++i)
+        {
             rOutput << vertexRemapping[i] << " ";
-            if ((i + 1) % NUM_ITEMS_PER_LINE == 0) {
+            if ((i + 1) % NUM_ITEMS_PER_LINE == 0)
+            {
                 rOutput << std::endl << "#vertexRemap = ";
             }
         }
@@ -261,14 +294,17 @@ bool EmitModifiedObj(std::istream& rInput, std::ostream& rOutput, const std::vec
 
     unsigned int nVID;
 
-    for (unsigned int i = 0; i < nCount; i++) {
-        nVID = vertexRemapping[i];
+    for (unsigned int i = 0; i < nCount; i++)
+    {
+        nVID                         = vertexRemapping[i];
         inverseVertexRemapping[nVID] = i;
     }
 
     // make sure that vertexRemapping and inverseVertexRemapping is consistent
-    for (unsigned int i = 0; i < nCount; i++) {
-        if (inverseVertexRemapping[vertexRemapping[i]] != i) {
+    for (unsigned int i = 0; i < nCount; i++)
+    {
+        if (inverseVertexRemapping[vertexRemapping[i]] != i)
+        {
             std::cerr << "EmitModifiedObj: inverseVertexRemapping and vertexRemapping is not consistent.\n";
 
             return false;
@@ -276,29 +312,36 @@ bool EmitModifiedObj(std::istream& rInput, std::ostream& rOutput, const std::vec
     }
 
     // output the vertices
-    for (unsigned int i = 0; i < nCount; i++) {
+    for (unsigned int i = 0; i < nCount; i++)
+    {
         rOutput << "v ";
 
         // output the remapped vertices (require an inverse mapping).
         nVID = inverseVertexRemapping[i];
 
-        rOutput << inputVertices[nVID].x << " " << inputVertices[nVID].y << " "
-                << inputVertices[nVID].z << std::endl;
+        rOutput << inputVertices[nVID].x << " " << inputVertices[nVID].y << " " << inputVertices[nVID].z << std::endl;
     }
 
     // generate a new set of faces, using re-ordered index buffer
-    for (unsigned int i = 0; i < rIndices.size(); i += 3) {
+    for (unsigned int i = 0; i < rIndices.size(); i += 3)
+    {
         rOutput << "f ";
 
-        for (int j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++)
+        {
             const ObjVertexFinal& rVertex = rVertices[rIndices[i + j]];
             rOutput << 1 + vertexRemapping[rVertex.nVertexIndex - 1];
 
-            if (rVertex.nNormalIndex > 0 && rVertex.nTexcoordIndex) {
+            if (rVertex.nNormalIndex > 0 && rVertex.nTexcoordIndex)
+            {
                 rOutput << "/" << rVertex.nTexcoordIndex << "/" << rVertex.nNormalIndex;
-            } else if (rVertex.nNormalIndex > 0) {
+            }
+            else if (rVertex.nNormalIndex > 0)
+            {
                 rOutput << "//" << rVertex.nNormalIndex;
-            } else if (rVertex.nTexcoordIndex > 0) {
+            }
+            else if (rVertex.nTexcoordIndex > 0)
+            {
                 rOutput << "/" << rVertex.nTexcoordIndex;
             }
 
@@ -315,54 +358,68 @@ bool EmitModifiedObj(std::istream& rInput, std::ostream& rOutput, const std::vec
 //@param setting is user input setting from TootleSettings struct
 //@param pFeedbackProc used to show progress
 //@ return 0 if error in process, 1 when success
-void* Plugin_Mesh_Tootle::ProcessMesh(void* data, void* setting, void* statOut, CMP_Feedback_Proc pFeedbackProc) {
-    if (data == NULL) return 0;
-    if (setting == NULL) return 0;
+void* Plugin_Mesh_Tootle::ProcessMesh(void* data, void* setting, void* statOut, CMP_Feedback_Proc pFeedbackProc)
+{
+    if (data == NULL)
+        return 0;
+    if (setting == NULL)
+        return 0;
 
-    CMODEL_DATA *mesh = (CMODEL_DATA *)data;
+    CMODEL_DATA* mesh = (CMODEL_DATA*)data;
 #ifndef USE_ASSIMP
     m_objVertices = mesh->m_objVertices;
     m_vertices.resize(m_objVertices.size());
 
-    if (g_CMIPS) {
+    if (g_CMIPS)
+    {
         //g_CMIPS->SetProgress(0);
         g_CMIPS->Print("Processing Mesh. This may takes some time....");
         g_CMIPS->Print("Reading vertices, indices ...");
     }
 
-    for (unsigned int i = 0; i < m_vertices.size(); i++) {
+    for (unsigned int i = 0; i < m_vertices.size(); i++)
+    {
         m_vertices[i] = m_objVertices[i].pos;
     }
 
     m_objFaces = mesh->m_objFaces;
     m_indices.resize(m_objFaces.size() * 3);
-    for (unsigned int i = 0; i < m_indices.size(); i++) {
+    for (unsigned int i = 0; i < m_indices.size(); i++)
+    {
         m_indices[i] = m_objFaces[i / 3].finalVertexIndices[i % 3];
     }
 #else
-    if (mesh->m_Scene) {
-        if (mesh->m_Scene->HasMeshes()) {
-            for (int m = 0; m < mesh->m_Scene->mNumMeshes; m++) {
+    if (mesh->m_Scene)
+    {
+        if (mesh->m_Scene->HasMeshes())
+        {
+            for (int m = 0; m < mesh->m_Scene->mNumMeshes; m++)
+            {
                 m_objVertices.resize(mesh->m_Scene->mMeshes[m]->mNumVertices);
                 m_vertices.resize(m_objVertices.size());
-                for (unsigned int i = 0; i < m_objVertices.size(); i++) {
+                for (unsigned int i = 0; i < m_objVertices.size(); i++)
+                {
                     m_objVertices[i].pos.x = mesh->m_Scene->mMeshes[m]->mVertices[i].x;
                     m_objVertices[i].pos.y = mesh->m_Scene->mMeshes[m]->mVertices[i].y;
                     m_objVertices[i].pos.z = mesh->m_Scene->mMeshes[m]->mVertices[i].z;
-                    m_vertices[i] = m_objVertices[i].pos;
+                    m_vertices[i]          = m_objVertices[i].pos;
                 }
 
                 m_objFaces.resize(mesh->m_Scene->mMeshes[m]->mNumFaces);
-                for (int n = 0; n < mesh->m_Scene->mMeshes[m]->mNumFaces; n++) {
-                    for (int d = 0; d < mesh->m_Scene->mMeshes[m]->mFaces[n].mNumIndices; d++) {
+                for (int n = 0; n < mesh->m_Scene->mMeshes[m]->mNumFaces; n++)
+                {
+                    for (int d = 0; d < mesh->m_Scene->mMeshes[m]->mFaces[n].mNumIndices; d++)
+                    {
                         m_objFaces[n].finalVertexIndices[d] = mesh->m_Scene->mMeshes[m]->mFaces[n].mIndices[d];
                         m_indices.push_back(m_objFaces[n].finalVertexIndices[d]);
                     }
                 }
             }
-        } else
+        }
+        else
             return 0;
-    } else
+    }
+    else
         return 0;
 
 #endif
@@ -373,11 +430,14 @@ void* Plugin_Mesh_Tootle::ProcessMesh(void* data, void* setting, void* statOut, 
     //    Load viewpoints if necessary
     // ******************************************
 
-    if (strcmp(m_settings.pViewpointName, "") != 0) {
-        if (g_CMIPS) {
+    if (strcmp(m_settings.pViewpointName, "") != 0)
+    {
+        if (g_CMIPS)
+        {
             g_CMIPS->Print("Loading Viewpoints from file %s ...", m_settings.pViewpointName);
         }
-        if (!LoadViewpoints(m_settings.pViewpointName, m_viewpoints)) {
+        if (!LoadViewpoints(m_settings.pViewpointName, m_viewpoints))
+        {
             std::cerr << "Unable to load viewpoints from file: " << m_settings.pViewpointName;
             return 0;
         }
@@ -387,7 +447,8 @@ void* Plugin_Mesh_Tootle::ProcessMesh(void* data, void* setting, void* statOut, 
     const float* pViewpoints = NULL;
     unsigned int nViewpoints = (unsigned int)m_viewpoints.size();
 
-    if (m_viewpoints.size() > 0) {
+    if (m_viewpoints.size() > 0)
+    {
         pViewpoints = (const float*)&m_viewpoints[0];
     }
 
@@ -395,53 +456,60 @@ void* Plugin_Mesh_Tootle::ProcessMesh(void* data, void* setting, void* statOut, 
     //   Prepare the mesh and initialize stats variables
     // *****************************************************************
 
-    unsigned int  nFaces = (unsigned int)m_indices.size() / 3;
+    unsigned int  nFaces    = (unsigned int)m_indices.size() / 3;
     unsigned int  nVertices = (unsigned int)m_vertices.size();
-    float*        pfVB = (float*)&m_vertices[0];
-    unsigned int* pnIB = (unsigned int*)&m_indices[0];
-    unsigned int  nStride = 3 * sizeof(float);
+    float*        pfVB      = (float*)&m_vertices[0];
+    unsigned int* pnIB      = (unsigned int*)&m_indices[0];
+    unsigned int  nStride   = 3 * sizeof(float);
 
     // todo: tootle statistics tie to cpprojectdata
     TootleStats* stats = nullptr;
-    if (statOut != NULL) {
+    if (statOut != NULL)
+    {
         stats = ((TootleStats*)(statOut));
-    } else {
+    }
+    else
+    {
         stats = new TootleStats;
     }
 
     // initialize the timing variables
-    stats->fOptimizeVCacheTime = INVALID_TIME;
-    stats->fClusterMeshTime = INVALID_TIME;
-    stats->fVCacheClustersTime = INVALID_TIME;
+    stats->fOptimizeVCacheTime               = INVALID_TIME;
+    stats->fClusterMeshTime                  = INVALID_TIME;
+    stats->fVCacheClustersTime               = INVALID_TIME;
     stats->fOptimizeVCacheAndClusterMeshTime = INVALID_TIME;
-    stats->fOptimizeOverdrawTime = INVALID_TIME;
-    stats->fTootleOptimizeTime = INVALID_TIME;
-    stats->fTootleFastOptimizeTime = INVALID_TIME;
-    stats->fMeasureOverdrawTime = INVALID_TIME;
-    stats->fOptimizeVertexMemoryTime = INVALID_TIME;
-
+    stats->fOptimizeOverdrawTime             = INVALID_TIME;
+    stats->fTootleOptimizeTime               = INVALID_TIME;
+    stats->fTootleFastOptimizeTime           = INVALID_TIME;
+    stats->fMeasureOverdrawTime              = INVALID_TIME;
+    stats->fOptimizeVertexMemoryTime         = INVALID_TIME;
 
     TootleResult result;
 
     // measure input VCache efficiency
-    if (g_CMIPS) {
+    if (g_CMIPS)
+    {
         g_CMIPS->Print("Measuring Input Cache Efficiency ...");
     }
     result = TootleMeasureCacheEfficiency(pnIB, nFaces, m_settings.nCacheSize, &stats->fVCacheIn);
 
-    if (result != TOOTLE_OK) {
+    if (result != TOOTLE_OK)
+    {
         return 0;
     }
 
-    if (m_settings.bMeasureOverdraw) {
+    if (m_settings.bMeasureOverdraw)
+    {
         // measure input overdraw.  Note that we assume counter-clockwise vertex winding.
-        if (g_CMIPS) {
+        if (g_CMIPS)
+        {
             g_CMIPS->Print("Measuring Input Overdraw ...");
         }
-        result = TootleMeasureOverdraw(pfVB, pnIB, nVertices, nFaces, nStride, pViewpoints, nViewpoints, m_settings.eWinding,
-                                       &stats->fOverdrawIn, &stats->fMaxOverdrawIn);
+        result = TootleMeasureOverdraw(
+            pfVB, pnIB, nVertices, nFaces, nStride, pViewpoints, nViewpoints, m_settings.eWinding, &stats->fOverdrawIn, &stats->fMaxOverdrawIn);
 
-        if (result != TOOTLE_OK) {
+        if (result != TOOTLE_OK)
+        {
             return 0;
         }
     }
@@ -476,19 +544,22 @@ void* Plugin_Mesh_Tootle::ProcessMesh(void* data, void* setting, void* statOut, 
     // Tips: use v2.0 for fast optimization, and v1.2 to further improve the result by mix-matching the calls.
     // **********************************************************************************************************************
 
-    switch (m_settings.algorithmChoice) {
+    switch (m_settings.algorithmChoice)
+    {
     case TOOTLE_VCACHE_ONLY:
         // *******************************************************************************************************************
         // Perform Vertex Cache Optimization ONLY
         // *******************************************************************************************************************
 
         // Optimize vertex cache
-        if (g_CMIPS) {
+        if (g_CMIPS)
+        {
             g_CMIPS->Print("Optimizing using VCache only ...");
         }
         result = TootleOptimizeVCache(pnIB, nFaces, nVertices, m_settings.nCacheSize, pnIB, NULL, m_settings.eVCacheOptimizer);
 
-        if (result != TOOTLE_OK) {
+        if (result != TOOTLE_OK)
+        {
             PrintInfo("Error: %d", result);
             return 0;
         }
@@ -502,36 +573,41 @@ void* Plugin_Mesh_Tootle::ProcessMesh(void* data, void* setting, void* statOut, 
         // *******************************************************************************************************************
 
         // Cluster the mesh, and sort faces by cluster.
-        if (g_CMIPS) {
+        if (g_CMIPS)
+        {
             g_CMIPS->Print("Clustering mesh and sorting faces by cluster ...");
         }
         result = TootleClusterMesh(pfVB, pnIB, nVertices, nFaces, nStride, m_settings.nClustering, pnIB, &m_faceCluster[0], NULL);
 
-        if (result != TOOTLE_OK) {
-            PrintInfo("Error: %d",result);
+        if (result != TOOTLE_OK)
+        {
+            PrintInfo("Error: %d", result);
             return 0;
         }
 
         // Perform vertex cache optimization on the clustered mesh.
-        if (g_CMIPS) {
+        if (g_CMIPS)
+        {
             g_CMIPS->Print("Perform vertex cache optimization on the clustered mesh ...");
         }
-        result = TootleVCacheClusters(pnIB, nFaces, nVertices, m_settings.nCacheSize, &m_faceCluster[0],
-                                      pnIB, NULL, m_settings.eVCacheOptimizer);
+        result = TootleVCacheClusters(pnIB, nFaces, nVertices, m_settings.nCacheSize, &m_faceCluster[0], pnIB, NULL, m_settings.eVCacheOptimizer);
 
-        if (result != TOOTLE_OK) {
+        if (result != TOOTLE_OK)
+        {
             PrintInfo("Error: %d", result);
             return 0;
         }
 
         // Optimize the draw order (using v1.2 path: TOOTLE_OVERDRAW_AUTO, the default path is from v2.0--SIGGRAPH version).
-        if (g_CMIPS) {
+        if (g_CMIPS)
+        {
             g_CMIPS->Print("Optimizing Overdraw ...");
         }
-        result = TootleOptimizeOverdraw(pfVB, pnIB, nVertices, nFaces, nStride, pViewpoints, nViewpoints, m_settings.eWinding,
-                                        &m_faceCluster[0], pnIB, NULL, TOOTLE_OVERDRAW_AUTO);
+        result = TootleOptimizeOverdraw(
+            pfVB, pnIB, nVertices, nFaces, nStride, pViewpoints, nViewpoints, m_settings.eWinding, &m_faceCluster[0], pnIB, NULL, TOOTLE_OVERDRAW_AUTO);
 
-        if (result != TOOTLE_OK) {
+        if (result != TOOTLE_OK)
+        {
             PrintInfo("Error: %d", result);
             return 0;
         }
@@ -543,13 +619,15 @@ void* Plugin_Mesh_Tootle::ProcessMesh(void* data, void* setting, void* statOut, 
 
         // Optimize vertex cache and create cluster
         // The algorithm from SIGGRAPH combine the vertex cache optimization and clustering mesh into a single step
-        if (g_CMIPS) {
+        if (g_CMIPS)
+        {
             g_CMIPS->Print("Optimizing vertex cache and cluster mesh ...");
         }
-        result = TootleFastOptimizeVCacheAndClusterMesh(pnIB, nFaces, nVertices, m_settings.nCacheSize, pnIB,
-                 &m_faceCluster[0], &m_nNumClusters, TOOTLE_DEFAULT_ALPHA);
+        result = TootleFastOptimizeVCacheAndClusterMesh(
+            pnIB, nFaces, nVertices, m_settings.nCacheSize, pnIB, &m_faceCluster[0], &m_nNumClusters, TOOTLE_DEFAULT_ALPHA);
 
-        if (result != TOOTLE_OK) {
+        if (result != TOOTLE_OK)
+        {
             // an error detected
             PrintInfo("Error: %d", result);
             return 0;
@@ -559,13 +637,15 @@ void* Plugin_Mesh_Tootle::ProcessMesh(void* data, void* setting, void* statOut, 
         //  vcache computation from the new library with the overdraw optimization from the old library.
         //  TOOTLE_OVERDRAW_AUTO will choose between using Direct3D or CPU raytracing path.  This path is
         //  much slower than TOOTLE_OVERDRAW_FAST but usually produce 2x better results.
-        if (g_CMIPS) {
+        if (g_CMIPS)
+        {
             g_CMIPS->Print("Optimizing overdraw ...");
         }
-        result = TootleOptimizeOverdraw(pfVB, pnIB, nVertices, nFaces, nStride, NULL, 0,
-                                        m_settings.eWinding, &m_faceCluster[0], pnIB, NULL, TOOTLE_OVERDRAW_AUTO);
+        result =
+            TootleOptimizeOverdraw(pfVB, pnIB, nVertices, nFaces, nStride, NULL, 0, m_settings.eWinding, &m_faceCluster[0], pnIB, NULL, TOOTLE_OVERDRAW_AUTO);
 
-        if (result != TOOTLE_OK) {
+        if (result != TOOTLE_OK)
+        {
             // an error detected
             PrintInfo("Error: %d", result);
             return 0;
@@ -580,13 +660,25 @@ void* Plugin_Mesh_Tootle::ProcessMesh(void* data, void* setting, void* statOut, 
 
         // This function will compute the entire optimization (cluster mesh, vcache per cluster, and optimize overdraw).
         // It will use TOOTLE_OVERDRAW_FAST as the default overdraw optimization
-        if (g_CMIPS) {
+        if (g_CMIPS)
+        {
             g_CMIPS->Print("Optimizing: Clustering Mesh, optimize vcache per cluster and optimize overdraw...");
         }
-        result = TootleOptimize(pfVB, pnIB, nVertices, nFaces, nStride, m_settings.nCacheSize,
-                                pViewpoints, nViewpoints, m_settings.eWinding, pnIB, &m_nNumClusters, m_settings.eVCacheOptimizer);
+        result = TootleOptimize(pfVB,
+                                pnIB,
+                                nVertices,
+                                nFaces,
+                                nStride,
+                                m_settings.nCacheSize,
+                                pViewpoints,
+                                nViewpoints,
+                                m_settings.eWinding,
+                                pnIB,
+                                &m_nNumClusters,
+                                m_settings.eVCacheOptimizer);
 
-        if (result != TOOTLE_OK) {
+        if (result != TOOTLE_OK)
+        {
             PrintInfo("Error: %d", result);
             return 0;
         }
@@ -600,13 +692,15 @@ void* Plugin_Mesh_Tootle::ProcessMesh(void* data, void* setting, void* statOut, 
 
         // This function will compute the entire optimization (optimize vertex cache, cluster mesh, and optimize overdraw).
         // It will use TOOTLE_OVERDRAW_FAST as the default overdraw optimization
-        if (g_CMIPS) {
+        if (g_CMIPS)
+        {
             g_CMIPS->Print("(Fast Optimizing: Clustering Mesh, optimize vcache per cluster and optimize overdraw ...");
         }
-        result = TootleFastOptimize(pfVB, pnIB, nVertices, nFaces, nStride, m_settings.nCacheSize,
-                                    m_settings.eWinding, pnIB, &m_nNumClusters, TOOTLE_DEFAULT_ALPHA);
+        result =
+            TootleFastOptimize(pfVB, pnIB, nVertices, nFaces, nStride, m_settings.nCacheSize, m_settings.eWinding, pnIB, &m_nNumClusters, TOOTLE_DEFAULT_ALPHA);
 
-        if (result != TOOTLE_OK) {
+        if (result != TOOTLE_OK)
+        {
             PrintInfo("Error: %d", result);
             return 0;
         }
@@ -619,26 +713,31 @@ void* Plugin_Mesh_Tootle::ProcessMesh(void* data, void* setting, void* statOut, 
     }
 
     // measure output VCache efficiency
-    if (g_CMIPS) {
+    if (g_CMIPS)
+    {
         g_CMIPS->Print("Measuring Vcache Efficiency after process...");
     }
     result = TootleMeasureCacheEfficiency(pnIB, nFaces, m_settings.nCacheSize, &stats->fVCacheOut);
-    if (result != TOOTLE_OK) {
+    if (result != TOOTLE_OK)
+    {
         PrintInfo("Error: %d", result);
         return 0;
     }
 
-    if (m_settings.bMeasureOverdraw) {
+    if (m_settings.bMeasureOverdraw)
+    {
         // measure output overdraw
         timer.Reset();
-        if (g_CMIPS) {
+        if (g_CMIPS)
+        {
             g_CMIPS->Print("Measuring Overdraw after process...");
         }
-        result = TootleMeasureOverdraw(pfVB, pnIB, nVertices, nFaces, nStride, pViewpoints, nViewpoints, m_settings.eWinding,
-                                       &stats->fOverdrawOut, &stats->fMaxOverdrawOut);
+        result = TootleMeasureOverdraw(
+            pfVB, pnIB, nVertices, nFaces, nStride, pViewpoints, nViewpoints, m_settings.eWinding, &stats->fOverdrawOut, &stats->fMaxOverdrawOut);
         stats->fMeasureOverdrawTime = timer.GetElapsed();
 
-        if (result != TOOTLE_OK) {
+        if (result != TOOTLE_OK)
+        {
             PrintInfo("Error: %d", result);
             return 0;
         }
@@ -656,19 +755,23 @@ void* Plugin_Mesh_Tootle::ProcessMesh(void* data, void* setting, void* statOut, 
     //-----------------------------------------------------------------------------------------------------
     timer.Reset();
 
-    m_nReferencedVertices = 0;          // The actual total number of vertices referenced by the indices
-    if (m_settings.bOptimizeVertexMemory) {
+    m_nReferencedVertices = 0;  // The actual total number of vertices referenced by the indices
+    if (m_settings.bOptimizeVertexMemory)
+    {
         std::vector<unsigned int> pnIBTmp;
         pnIBTmp.resize(nFaces * 3);
 
         // compute the indices to be optimized for (the original pointed by the obj file).
-        for (unsigned int i = 0; i < m_indices.size(); i += 3) {
-            for (int j = 0; j < 3; j++) {
+        for (unsigned int i = 0; i < m_indices.size(); i += 3)
+        {
+            for (int j = 0; j < 3; j++)
+            {
                 const ObjVertexFinal& rVertex = m_objVertices[pnIB[i + j]];
-                pnIBTmp[i + j] = rVertex.nVertexIndex - 1; // index is off by 1
+                pnIBTmp[i + j]                = rVertex.nVertexIndex - 1;  // index is off by 1
 
                 // compute the max vertices
-                if (rVertex.nVertexIndex > m_nReferencedVertices) {
+                if (rVertex.nVertexIndex > m_nReferencedVertices)
+                {
                     m_nReferencedVertices = rVertex.nVertexIndex;
                 }
             }
@@ -680,13 +783,14 @@ void* Plugin_Mesh_Tootle::ProcessMesh(void* data, void* setting, void* statOut, 
         //  file input and output.
         //  In fact, we are sending the wrong vertex buffer here (it should be based on the original file instead of the
         //  rehashed vertices).  But, it is ok because we do not request the reordered vertex buffer as an output.
-        if (g_CMIPS) {
+        if (g_CMIPS)
+        {
             g_CMIPS->Print("Perform vertex memory optimization...");
         }
-        result = TootleOptimizeVertexMemory(pfVB, &pnIBTmp[0], m_nReferencedVertices, nFaces, nStride, NULL, NULL,
-                                            &m_pnVertexRemapping[0]);
+        result = TootleOptimizeVertexMemory(pfVB, &pnIBTmp[0], m_nReferencedVertices, nFaces, nStride, NULL, NULL, &m_pnVertexRemapping[0]);
 
-        if (result != TOOTLE_OK) {
+        if (result != TOOTLE_OK)
+        {
             PrintInfo("Error: %d", result);
             return 0;
         }
@@ -705,7 +809,8 @@ void* Plugin_Mesh_Tootle::ProcessMesh(void* data, void* setting, void* statOut, 
     std::ifstream inputStream(m_settings.pMeshName);
     std::ofstream outputFileStream(m_settings.pDestMeshName);
 
-    if (g_CMIPS) {
+    if (g_CMIPS)
+    {
 #ifdef _WIN32
         char fname[_MAX_FNAME];
         getFileName(m_settings.pDestMeshName, fname, _MAX_FNAME);
@@ -716,16 +821,20 @@ void* Plugin_Mesh_Tootle::ProcessMesh(void* data, void* setting, void* statOut, 
 
         g_CMIPS->Print("Saving Output File %s...", fname);
     }
-    if (m_settings.bOptimizeVertexMemory) {
+    if (m_settings.bOptimizeVertexMemory)
+    {
         bResult = EmitModifiedObj(inputStream, outputFileStream, m_objVertices, m_indices, &m_pnVertexRemapping[0], m_nReferencedVertices);
-    } else {
+    }
+    else
+    {
         bResult = EmitModifiedObj(inputStream, outputFileStream, m_objVertices, m_indices, NULL, 0);
     }
     return &bResult;
 #else
 
-    CMODEL_DATA *tempOut = (CMODEL_DATA*)mesh;  //by default output initialized with input
-    for (int i = 0; i < m_objVertices.size(); i++) {
+    CMODEL_DATA* tempOut = (CMODEL_DATA*)mesh;  //by default output initialized with input
+    for (int i = 0; i < m_objVertices.size(); i++)
+    {
         tempOut->m_Scene->mMeshes[0]->mVertices[i].x = m_objVertices[i].pos.x;
         tempOut->m_Scene->mMeshes[0]->mVertices[i].y = m_objVertices[i].pos.y;
         tempOut->m_Scene->mMeshes[0]->mVertices[i].z = m_objVertices[i].pos.z;
@@ -736,7 +845,8 @@ void* Plugin_Mesh_Tootle::ProcessMesh(void* data, void* setting, void* statOut, 
     }
 
     int ind = 0;
-    for (int n = 0; n < m_objFaces.size(); n++) {
+    for (int n = 0; n < m_objFaces.size(); n++)
+    {
         tempOut->m_Scene->mMeshes[0]->mFaces[n].mIndices[0] = m_indices.at(ind);
         ind++;
         tempOut->m_Scene->mMeshes[0]->mFaces[n].mIndices[1] = m_indices.at(ind);
@@ -747,6 +857,4 @@ void* Plugin_Mesh_Tootle::ProcessMesh(void* data, void* setting, void* statOut, 
     //dataOut = tempOut;
     return tempOut;
 #endif
-
 }
-

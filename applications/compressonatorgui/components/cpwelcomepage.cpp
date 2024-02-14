@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -29,31 +29,32 @@
 #include <QDesktopServices>
 #include "cpwelcomepage.h"
 
-
-CWelcomePage::CWelcomePage(const QString title, QWidget *parent)
+CWelcomePage::CWelcomePage(const QString title, QWidget* parent)
     : acCustomDockWidget(title, parent)
     , m_startUpPage(nullptr)
     , custTitleBar(nullptr)
     , m_newWidget(nullptr)
     , m_layout(nullptr)
     , m_title(title)
-    , m_parent(parent) {
+    , m_parent(parent)
+{
     custTitleBar = new acDockWidgetTitlebar(this);
     custTitleBar->setTitle(title);
     custTitleBar->setButtonToolBarEnabled(false);
     setTitleBarWidget(custTitleBar);
 
-    m_newWidget = new QWidget(parent);
+    m_newWidget   = new QWidget(parent);
     m_startUpPage = new cpStartupPage(this);
 
-    connect(m_startUpPage, SIGNAL(PageButtonClick(QString &, QString &)), this, SLOT(onWebPageButtonClick(QString &, QString &)));
+    connect(m_startUpPage, SIGNAL(PageButtonClick(QString&, QString&)), this, SLOT(onWebPageButtonClick(QString&, QString&)));
 
     m_layout = new QGridLayout(m_newWidget);
     m_layout->setSpacing(0);
     m_layout->setMargin(0);
     m_layout->setContentsMargins(0, 0, 0, 0);
 
-    if (m_startUpPage) {
+    if (m_startUpPage)
+    {
         m_layout->addWidget(m_startUpPage, 0, 0);
     }
 
@@ -62,28 +63,37 @@ CWelcomePage::CWelcomePage(const QString title, QWidget *parent)
     setWidget(m_newWidget);
 }
 
-void CWelcomePage::GoToAMDHomePage(QVector<QString>& projectsNames) {
+void CWelcomePage::GoToAMDHomePage(QVector<QString>& projectsNames)
+{
     if (m_startUpPage)
     {
         m_startUpPage->UpdateHTML(projectsNames);
     }
 }
 
-CWelcomePage::~CWelcomePage() {
+CWelcomePage::~CWelcomePage()
+{
 }
 
-void CWelcomePage::onWebPageButtonClick(QString &Request, QString &Msg) {
+void CWelcomePage::onWebPageButtonClick(QString& Request, QString& Msg)
+{
     bool requestContinueToApp = false;
 
     // skip unsupported requests
     // and process local web page request
 
-    if (Request.compare("open_project") == 0) requestContinueToApp = true;
-    else if (Request.compare("new_project") == 0) requestContinueToApp = true;
-    else if (Request.compare("show_quick_start") == 0) requestContinueToApp = true;
-    else if (Request.compare("show_help") == 0) requestContinueToApp = true;
-    else if (Request.compare("show_newfeatures") == 0) requestContinueToApp = true;
-    else if (Request.compare("show_website") == 0) {
+    if (Request.compare("open_project") == 0)
+        requestContinueToApp = true;
+    else if (Request.compare("new_project") == 0)
+        requestContinueToApp = true;
+    else if (Request.compare("show_quick_start") == 0)
+        requestContinueToApp = true;
+    else if (Request.compare("show_help") == 0)
+        requestContinueToApp = true;
+    else if (Request.compare("show_newfeatures") == 0)
+        requestContinueToApp = true;
+    else if (Request.compare("show_website") == 0)
+    {
         QDesktopServices::openUrl(QUrl(COMPRESSONATOR_HOME));
     }
 

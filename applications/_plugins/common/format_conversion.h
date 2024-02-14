@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2022 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2022-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -30,17 +30,17 @@
 #include "compressonator.h"
 
 // TODO: Replace the AMD_CODEC_EXPOSURE_DEFAULT, etc. values with these
-#define EXPOSURE_VALUE_DEFAULT  0.0f     ///< This is the default value set for exposure value of hdr/exr input image
-#define DEFOG_VALUE_DEFAULT     0.0f     ///< This is the default value set for defog value of hdr/exr input image
-#define KNEELOW_VALUE_DEFAULT   0.0f     ///< This is the default value set for kneelow value of hdr/exr input image
-#define KNEEHIGH_VALUE_DEFAULT  5.0f     ///< This is the default value set for kneehigh value of hdr/exr input image
-#define GAMMA_VALUE_DEFAULT     2.2f  ///< This is the default value set for gamma value of hdr/exr input image
+#define EXPOSURE_VALUE_DEFAULT 0.0f  ///< This is the default value set for exposure value of hdr/exr input image
+#define DEFOG_VALUE_DEFAULT 0.0f     ///< This is the default value set for defog value of hdr/exr input image
+#define KNEELOW_VALUE_DEFAULT 0.0f   ///< This is the default value set for kneelow value of hdr/exr input image
+#define KNEEHIGH_VALUE_DEFAULT 5.0f  ///< This is the default value set for kneehigh value of hdr/exr input image
+#define GAMMA_VALUE_DEFAULT 2.2f     ///< This is the default value set for gamma value of hdr/exr input image
 
 // TODO: these RGBA2101010 values might be wrong?
 #define RGBA2101010_OFFSET_A 30
 #define RGBA2101010_OFFSET_R 20
 #define RGBA2101010_OFFSET_G 10
-#define RGBA2101010_OFFSET_B  0
+#define RGBA2101010_OFFSET_B 0
 
 #define RGBA1010102_OFFSET_R 0
 #define RGBA1010102_OFFSET_G 10
@@ -68,8 +68,14 @@ struct FloatParams
     CMP_FLOAT kneeHigh;
     CMP_FLOAT gamma;
 
-    FloatParams() : defog(DEFOG_VALUE_DEFAULT), exposure(EXPOSURE_VALUE_DEFAULT), kneeLow(KNEELOW_VALUE_DEFAULT), 
-                        kneeHigh(KNEEHIGH_VALUE_DEFAULT), gamma(GAMMA_VALUE_DEFAULT) {}
+    FloatParams()
+        : defog(DEFOG_VALUE_DEFAULT)
+        , exposure(EXPOSURE_VALUE_DEFAULT)
+        , kneeLow(KNEELOW_VALUE_DEFAULT)
+        , kneeHigh(KNEEHIGH_VALUE_DEFAULT)
+        , gamma(GAMMA_VALUE_DEFAULT)
+    {
+    }
     explicit FloatParams(const CMP_AnalysisData* analysisData);
     explicit FloatParams(const CMP_CompressOptions* compressOptions);
 };
@@ -83,7 +89,7 @@ struct ConvertedBuffer
 {
     bool isBufferNew;
 
-    void* data;
+    void*     data;
     CMP_DWORD dataSize;
 
     CMP_FORMAT format;
@@ -98,7 +104,13 @@ struct ConvertedBuffer
 // Creates and returns a buffer that is compatible with the target format, using the given the source data and format
 ConvertedBuffer CreateCompatibleBuffer(CMP_FORMAT targetFormat, const MipSet* srcMipSet, const FloatParams* params = 0);
 ConvertedBuffer CreateCompatibleBuffer(CMP_FORMAT targetFormat, const CMP_Texture* srcTexture, const FloatParams* params = 0);
-ConvertedBuffer CreateCompatibleBuffer(CMP_FORMAT targetFormat, CMP_FORMAT srcFormat, void* srcData, CMP_DWORD srcDataSize, CMP_DWORD srcWidth, CMP_DWORD srcHeight, const FloatParams* params = 0);
+ConvertedBuffer CreateCompatibleBuffer(CMP_FORMAT         targetFormat,
+                                       CMP_FORMAT         srcFormat,
+                                       void*              srcData,
+                                       CMP_DWORD          srcDataSize,
+                                       CMP_DWORD          srcWidth,
+                                       CMP_DWORD          srcHeight,
+                                       const FloatParams* params = 0);
 
 // Converts 16-bit, 32-bit, or R9G9B9E5 floating point data into RGBA8888 format
 CMP_ERROR FloatToByte(CMP_BYTE* outBuffer, CMP_FLOAT* inBuffer, const MipSet* srcMipSet, const FloatParams* params);
