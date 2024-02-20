@@ -547,57 +547,6 @@ static CGU_Vec2i CMP_FindEndpointsAlphaBlockSnorm(CGU_FLOAT alphaBlockSnorm[])
     return endpoints;
 }
 
-static uint64_t cmp_getBlockPackedIndicesSNorm(CGU_Vec2f alphaMinMax, const float alphaBlockSnorm[], uint64_t data)
-{
-    CGU_FLOAT alpha[8];
-    alpha[0] = alphaMinMax.x;
-    alpha[1] = alphaMinMax.y;
-
-    if (alphaMinMax.x > alphaMinMax.y)
-    {
-        // 8-alpha block:  derive the other six alphas.
-        // Bit code 000 = alpha_0, 001 = alpha_1, others are interpolated.
-        alpha[2] = (alpha[0] * 6.0f + alpha[1]) / 7.0f;
-        alpha[3] = (alpha[0] * 5.0f + alpha[1] * 2.0f) / 7.0f;
-        alpha[4] = (alpha[0] * 4.0f + alpha[1] * 3.0f) / 7.0f;
-        alpha[5] = (alpha[0] * 3.0f + alpha[1] * 4.0f) / 7.0f;
-        alpha[6] = (alpha[0] * 2.0f + alpha[1] * 5.0f) / 7.0f;
-        alpha[7] = (alpha[0] + alpha[1] * 6.0f) / 7.0f;
-    }
-    else
-    {
-        // 6-alpha block.
-        // Bit code 000 = alpha_0, 001 = alpha_1, others are interpolated.
-        alpha[2] = (alpha[0] * 4.0f + alpha[1]) / 5.0f;
-        alpha[3] = (alpha[0] * 3.0f + alpha[1] * 2.0f) / 5.0f;
-        alpha[4] = (alpha[0] * 2.0f + alpha[1] * 3.0f) / 5.0f;
-        alpha[5] = (alpha[0] + alpha[1] * 4.0f) / 5.0f;
-        alpha[6] = -1.0f;
-        alpha[7] = 1.0f;
-    }
-
-    // Index all colors using best alpha value
-    for (CGU_UINT8 i = 0; i < BLOCK_SIZE_4X4; ++i)
-    {
-        CGU_UINT8 uBestIndex = 0;
-        CGU_FLOAT fBestDelta = CMP_FLOAT_MAX;
-        for (CGU_INT32 uIndex = 0; uIndex < 8; uIndex++)
-        {
-            CGU_FLOAT fCurrentDelta = fabsf(alpha[uIndex] - alphaBlockSnorm[i]);
-            if (fCurrentDelta < fBestDelta)
-            {
-                uBestIndex = (CGU_UINT8)(uIndex);
-                fBestDelta = fCurrentDelta;
-            }
-        }
-
-        data &= ~(uint64_t(0x07) << (3 * i + 16));
-        data |= (uint64_t(uBestIndex) << (3 * i + 16));
-    }
-
-    return data;
-}
-
 //=============================================================================
 
 CodecError CCodec_DXTC::CompressAlphaBlockSNorm(CMP_FLOAT alphaBlockSnorm[BLOCK_SIZE_4X4], CMP_DWORD compressedBlock[2])

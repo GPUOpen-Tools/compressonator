@@ -299,11 +299,12 @@ else()
 
     # filesystem support for c++14 
     if (COMPILER_SUPPORTS_CXX14)
-        add_definitions(-std=c++14)
+        set(CMAKE_CXX_STANDARD 14)
+        #add_definitions(-std=c++14)
         link_libraries(stdc++fs)
     else()
         if (CMP_HOST_LINUX)
-            add_definitions(-std=c++11)
+            set(CMAKE_CXX_STANDARD 11)
         endif()
     endif()
 
